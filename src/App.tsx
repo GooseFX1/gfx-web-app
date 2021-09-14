@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import { DarkModeProvider } from './context'
 import { AppLayout } from './layouts'
@@ -18,6 +18,7 @@ export default function App(): JSX.Element {
     <DarkModeProvider>
       <ThemeProvider>
         <BrowserRouter>
+          <Redirect from='/' to='/swap' />
           <Switch>
             <AppLayout>
               <WRAPPER>
