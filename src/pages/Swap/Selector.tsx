@@ -1,6 +1,6 @@
 import React, { Dispatch, FC, SetStateAction, useEffect, useMemo, useState } from 'react'
 import { Input } from 'antd'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { ArrowClicker, Modal } from '../../components'
 import { ISwapToken, useAccounts, useTokenRegistry } from '../../context'
 import { CenteredDiv, CenteredImg, SpaceBetweenDiv } from '../../styles'
