@@ -24,8 +24,8 @@ const WRAPPER = styled.div`
 export const SwapFrom: FC<{ height: string }> = ({ height }) => {
   const { getUIAmount } = useAccounts()
   const { rates } = useRates()
-  const { inTokenAmount, setInTokenAmount, setTokenA, tokenA, tokenB } = useSwap()
-  const [value, setValue] = useState(inTokenAmount)
+  const { setInTokenAmount, setTokenA, tokenA, tokenB } = useSwap()
+  const [value, setValue] = useState(0)
 
   const setHalf = () => tokenA && setValue(getUIAmount(tokenA.address) / 2)
   const setMax = () => tokenA && setValue(getUIAmount(tokenA.address))

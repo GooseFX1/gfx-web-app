@@ -1,22 +1,6 @@
-import React, { Dispatch, FC, SetStateAction } from 'react'
-import styled from 'styled-components'
-import { useDarkMode } from '../../context'
-import { CenteredImg, MainText, SpaceBetweenDiv, SVGToWhite } from '../../styles'
+import React from 'react'
 
-const HEADER_TITLE = MainText(styled.span`
-  font-size: 20px;
-  font-weight: bold;
-`)
-
-const HEADER_WRAPPER = styled(SpaceBetweenDiv)<{ $iconSize: string }>`
-  width: 100%;
-  > div {
-    ${({ $iconSize, theme }) => theme.measurements($iconSize)}
-    cursor: pointer;
-  }
-`
-
-export const Header: FC<{
+/* export const Header: FC<{
   showSettings: boolean,
   setShowSettings: Dispatch<SetStateAction<boolean>>
 }> = ({ showSettings, setShowSettings }) => {
@@ -41,4 +25,4 @@ export const Header: FC<{
       </CenteredImg>
     </HEADER_WRAPPER>
   )
-}
+} */
