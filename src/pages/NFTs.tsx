@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import styled from 'styled-components'
 
 const WRAPPER = styled.div`
-  color: black
+  color: ${({ theme }) => theme.text1};
 `
 
 export const NFTs: FC = () => {
