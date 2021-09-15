@@ -19,11 +19,12 @@ const TITLE = MainText(styled.span`
 `)
 
 export const Modal: FC<{
-  children: ReactNode,
-  setVisible: (x: boolean) => void,
-  title: string,
+  children: ReactNode
+  setVisible: (x: boolean) => void
+  title: string
   visible: boolean
-}> = ({ children, setVisible, title, visible }) => {
+  [x: string]: any
+}> = ({ children, setVisible, title, visible, ...props }) => {
   const { mode } = useDarkMode()
 
   return (
@@ -35,6 +36,7 @@ export const Modal: FC<{
       maskClosable={true}
       onCancel={() => setVisible(false)}
       visible={visible}
+      {...props}
     >
       <HEADER>
         <TITLE>{title}</TITLE>

@@ -8,6 +8,7 @@ const BODY = styled(CenteredDiv)`
   flex-direction: column;
   flex: 1;
   width: 100%;
+  margin: ${({ theme }) => theme.margins['4x']} 0;
 
   > div {
     display: flex;
@@ -53,9 +54,12 @@ const TOOLTIP_ICON = styled(CenteredImg)`
   margin-left: ${({ theme }) => theme.margins['1x']};
 `
 
-const TOOLTIP_TEXT = MainText(styled.span`
-  font-size: 9px;
-`)
+const TOOLTIP_TEXT = MainText(
+  styled.span`
+    font-size: 9px;
+  `,
+  'white'
+)
 
 export const Settings: FC = () => {
   const { mode } = useDarkMode()
@@ -69,15 +73,11 @@ export const Settings: FC = () => {
       position: relative;
       display: flex;
       flex: 5;
+      height: 38px;
       align-items: center;
       border: ${slippage > 0.05 ? `2px solid ${slippage > 0.15 ? 'red' : 'orange'}` : 'none'} !important;
       background-color: ${mode === 'dark' ? '#474747' : '#808080'};
       box-shadow: 0 4px 15px 2px rgb(0, 0, 0, ${mode === 'dark' ? '0.25' : '0.1'});
-    }
-
-    .ant-input {
-      font-size: 12px;
-      font-weight: 600;
     }
   `
 
