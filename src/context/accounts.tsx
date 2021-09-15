@@ -1,4 +1,14 @@
-import React, { FC, ReactNode, createContext, useContext, useEffect, useState } from 'react'
+import React, {
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
@@ -15,8 +25,13 @@ interface IAccounts {
 }
 
 interface IAccountsConfig {
-  accounts: IAccounts
+  balances: IAccounts
   fetching: boolean
+  getAmount: (x: string) => string
+  getUIAmount: (x: string) => number
+  getUIAmountString: (x: string) => string
+  setBalances: Dispatch<SetStateAction<IAccounts>>
+  setFetching: Dispatch<SetStateAction<boolean>>
 }
 
 const AccountsContext = createContext<IAccountsConfig | null>(null)
@@ -25,13 +40,14 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
   const { tokens: tokenRegistry } = useTokenRegistry()
   const { publicKey } = useWallet()
-  const [accounts, setAccounts] = useState<IAccountsConfig>({ accounts: {}, fetching: false })
+  const [balances, setBalances] = useState<IAccounts>({})
+  const [fetching, setFetching] = useState(false)
 
   useEffect(() => {
     let interval: NodeJS.Timer
     if (publicKey) {
       const fetch = async () => {
-        setAccounts(({ accounts }) => ({ accounts, fetching: true }))
+        setFetching(true)
         const [parsedAccounts, solAmount] = await Promise.all([
           connection.getParsedTokenAccountsByOwner(publicKey, { programId: TOKEN_PROGRAM_ID }),
           connection.getBalance(publicKey)
@@ -44,7 +60,8 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const amount = solAmount.toString()
         const uiAmount = solAmount / 10 ** 9
         accounts[SOLANA_REGISTRY_TOKEN_MINT] = { amount, decimals: 9, uiAmount, uiAmountString: uiAmount.toString() }
-        setAccounts(() => ({ accounts, fetching: false }))
+        setBalances(accounts)
+        setFetching(false)
       }
 
       fetch().catch(() => {})
@@ -54,7 +71,21 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return () => interval && clearInterval(interval)
   }, [connection, publicKey, tokenRegistry])
 
-  return <AccountsContext.Provider value={accounts}>{children}</AccountsContext.Provider>
+  return (
+    <AccountsContext.Provider
+      value={{
+        balances,
+        fetching,
+        getAmount: useCallback((address: string) => balances[address]?.amount || '0', [balances]),
+        getUIAmount: useCallback((address: string) => balances[address]?.uiAmount || 0, [balances]),
+        getUIAmountString: useCallback((address: string) => balances[address]?.uiAmountString || '0', [balances]),
+        setBalances,
+        setFetching
+      }}
+    >
+      {children}
+    </AccountsContext.Provider>
+  )
 }
 
 export const useAccounts = (): IAccountsConfig => {
@@ -63,6 +94,6 @@ export const useAccounts = (): IAccountsConfig => {
     throw new Error('Missing accounts context')
   }
 
-  const { accounts, fetching } = context
-  return { accounts, fetching }
+  const { balances, fetching, getAmount, getUIAmount, getUIAmountString, setBalances, setFetching } = context
+  return { balances, fetching, getAmount, getUIAmount, getUIAmountString, setBalances, setFetching }
 }

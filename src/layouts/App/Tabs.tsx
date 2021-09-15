@@ -54,7 +54,7 @@ export const Tabs: FC = () => {
 
   return (
     <WRAPPER $height={3.5} $width={50}>
-      {['/swap', '/NFTs', '/farm', '/trade'].map((path, index) => (
+      {['/swap', '/trade', '/NFTs', '/farm'].map((path, index) => (
         <TAB
           key={index}
           className={pathname === path ? 'active' : ''}

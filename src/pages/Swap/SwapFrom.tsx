@@ -3,7 +3,7 @@ import { Input } from 'antd'
 import styled from 'styled-components'
 import { Selector } from './Selector'
 import { AmountField } from './shared'
-import { useRates, useSwap } from '../../context'
+import { useAccounts, useRates, useSwap } from '../../context'
 import { CenteredDiv, SpaceBetweenDiv } from '../../styles'
 
 const QUICK_SELECT = styled(CenteredDiv)`
@@ -22,30 +22,15 @@ const WRAPPER = styled.div`
 `
 
 export const SwapFrom: FC<{ height: string }> = ({ height }) => {
+  const { getUIAmount } = useAccounts()
   const { rates } = useRates()
-  const { setTokenA, tokenA, tokenB } = useSwap()
-  const [value, setValue] = useState(tokenA?.toSwapAmount || 0)
+  const { inTokenAmount, setInTokenAmount, setTokenA, tokenA, tokenB } = useSwap()
+  const [value, setValue] = useState(inTokenAmount)
 
-  const setHalf = () => tokenA && setValue(tokenA.uiAmount / 2)
-  const setMax = () => tokenA && setValue(tokenA.uiAmount)
+  const setHalf = () => tokenA && setValue(getUIAmount(tokenA.address) / 2)
+  const setMax = () => tokenA && setValue(getUIAmount(tokenA.address))
 
-  useEffect(() => {
-    setTokenA((tokenA) => {
-      return (
-        tokenA && {
-          amount: tokenA.amount,
-          address: tokenA.address,
-          decimals: tokenA.decimals,
-          symbol: tokenA.symbol,
-          toSwapAmount: value * 10 ** tokenA.decimals,
-          uiAmount: tokenA.uiAmount,
-          uiAmountString: tokenA.uiAmountString
-        }
-      )
-    })
-  }, [setTokenA, value])
-
-  useEffect(() => setValue((tokenA?.toSwapAmount || 0) / 10 ** (tokenA?.decimals || 0)), [tokenA])
+  useEffect(() => setInTokenAmount(tokenA ? value * 10 ** tokenA.decimals : 0), [setInTokenAmount, tokenA, value])
 
   return (
     <WRAPPER>
@@ -59,7 +44,7 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
       <AmountField $height={height} $USDCValue={(rates.inValue * value).toString().slice(0, 8)}>
         <Selector height={height} otherToken={tokenB} setToken={setTokenA} token={tokenA} />
         <Input
-          maxLength={9}
+          maxLength={15}
           onChange={(x: BaseSyntheticEvent) => {
             const {
               target: { value }

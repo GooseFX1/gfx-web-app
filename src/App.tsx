@@ -22,10 +22,10 @@ export default function App(): JSX.Element {
           <Switch>
             <AppLayout>
               <WRAPPER>
-                <Route exact path="/farm" component={Farm} />
-                <Route exact path="/NFTs" component={NFTs} />
                 <Route exact path="/swap" component={Swap} />
                 <Route exact path="/trade" component={Trade} />
+                <Route exact path="/NFTs" component={NFTs} />
+                <Route exact path="/farm" component={Farm} />
               </WRAPPER>
             </AppLayout>
           </Switch>

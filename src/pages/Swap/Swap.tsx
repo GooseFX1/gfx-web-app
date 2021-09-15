@@ -37,17 +37,13 @@ export const Swap: FC = () => {
   }, [])
 
   const height = '55px'
-
   const localCSS = css`
     .ant-input {
       height: ${height};
       border-radius: 45px;
       border: none;
-      padding: 0 20px 0 120px;
+      padding-right: 20px;
       font-size: 16px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
   `
 

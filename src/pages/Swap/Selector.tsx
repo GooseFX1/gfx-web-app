@@ -26,7 +26,9 @@ const CLICKER = styled(SpaceBetweenDiv)`
         left: 0;
         bottom: -12px;
         ${({ theme }) => theme.mainText}
-        font-size: 7px;
+        color: white;
+        font-size: 8px;
+        white-space: nowrap;
       }
     }
   }
@@ -123,7 +125,7 @@ export const Selector: FC<{
   setToken: Dispatch<SetStateAction<ISwapToken | null>>
   token: ISwapToken | null
 }> = ({ height, otherToken, setToken, token }) => {
-  const { accounts } = useAccounts()
+  const { getUIAmountString } = useAccounts()
   const { tokens } = useTokenRegistry()
   const [filterKeywords, setFilterKeywords] = useState('')
   const [filteredTokens, setFilteredTokens] = useState(tokens)
@@ -132,9 +134,9 @@ export const Selector: FC<{
   const balance = useMemo(() => {
     if (!token) return '0'
 
-    const { decimals, uiAmountString } = token
-    return uiAmountString.slice(0, Math.min(decimals, 8))
-  }, [token])
+    const { address, decimals } = token
+    return getUIAmountString(address).slice(0, Math.min(decimals, 8))
+  }, [getUIAmountString, token])
 
   useEffect(() => {
     const r = new RegExp(filterKeywords, 'i')
@@ -162,16 +164,7 @@ export const Selector: FC<{
             <TOKEN
               key={index}
               onClick={async () => {
-                const { amount, uiAmount, uiAmountString } = accounts[address] || {}
-                setToken({
-                  address,
-                  amount: amount || '0',
-                  decimals,
-                  symbol,
-                  toSwapAmount: 0,
-                  uiAmount: uiAmount || 0,
-                  uiAmountString: uiAmountString || '0'
-                })
+                setToken({ address, decimals, symbol })
                 setVisible(false)
               }}
             >
