@@ -9,13 +9,13 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
       <SettingsProvider>
         <WalletProvider>
           <RatesProvider>
-              <TokenRegistryProvider>
-                <AccountsProvider>
-                  <Header />
-                  {children}
-                  <Footer />
-                </AccountsProvider>
-              </TokenRegistryProvider>
+            <TokenRegistryProvider>
+              <AccountsProvider>
+                <Header />
+                {children}
+                <Footer />
+              </AccountsProvider>
+            </TokenRegistryProvider>
           </RatesProvider>
         </WalletProvider>
       </SettingsProvider>

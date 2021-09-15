@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { AmountField } from './shared'
 import { Selector } from './Selector'
@@ -24,27 +24,8 @@ export const SwapTo: FC<{ height: string }> = ({ height }) => {
   const { outTokenAmount, setTokenB, tokenA, tokenB } = useSwap()
 
   const uiAmount = useMemo(() => {
-    return tokenB && outTokenAmount > 0
-      ? (outTokenAmount / 10 ** tokenB.decimals).toFixed(tokenB.decimals)
-      : '0'
+    return tokenB && outTokenAmount > 0 ? (outTokenAmount / 10 ** tokenB.decimals).toFixed(tokenB.decimals) : '0'
   }, [outTokenAmount, tokenB])
-
-  useEffect(
-    () =>
-      setTokenB(
-        (tokenB) =>
-          tokenB && {
-            address: tokenB.address,
-            amount: tokenB.amount,
-            decimals: tokenB.decimals,
-            uiAmount: tokenB.uiAmount,
-            uiAmountString: tokenB.uiAmountString,
-            symbol: tokenB.symbol,
-            toSwapAmount: parseFloat(uiAmount) * 10 ** tokenB.decimals
-          }
-      ),
-    [setTokenB, uiAmount]
-  )
 
   return (
     <WRAPPER>

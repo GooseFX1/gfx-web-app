@@ -26,6 +26,7 @@ interface IRates {
 interface IRatesToFetch {
   inToken?: ISwapToken
   outToken?: ISwapToken
+  swapRates?: () => Promise<void>
 }
 
 interface IRatesConfig {
@@ -51,7 +52,7 @@ export const RatesProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [ratesToFetch, setRatesToFetch] = useState<IRatesToFetch>({})
 
   let refreshTimeout: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
-  const timeoutDelay = 300
+  const timeoutDelay = 200
   const refreshRates = useCallback(() => {
     if (refreshTimeout.current) {
       clearTimeout(refreshTimeout.current)
@@ -59,7 +60,7 @@ export const RatesProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     setFetching(true)
     refreshTimeout.current = setTimeout(async () => {
-      const { inToken, outToken } = ratesToFetch
+      const { inToken, outToken, swapRates } = ratesToFetch
 
       const getValueFromSerum = async (symbol: string) => {
         const match = MARKETS.find(({ deprecated, name }) => !deprecated && name === `${symbol}/USDC`)
@@ -96,6 +97,10 @@ export const RatesProvider: FC<{ children: ReactNode }> = ({ children }) => {
         } catch (e) {
           setRates(({ inValue, outValuePerIn }) => ({ inValue, outValue: 0, outValuePerIn, time }))
         }
+      }
+
+      if (swapRates) {
+        await swapRates()
       }
 
       setFetching(false)
