@@ -1,13 +1,15 @@
 import React, { FC, MouseEventHandler, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useSwap, useWalletModal } from '../../context'
+import { useConnectionConfig, useSwap, useWalletModal } from '../../context'
+import { ADDRESSES } from '../../web3'
 
 enum Status {
   Connect = 0,
   CanSwap = 1,
   Enter = 2,
-  Exceeded = 3
+  Exceeded = 3,
+  PoolNotFound = 4
 }
 
 const BUTTON = styled.button<{ $status: Status }>`
@@ -19,7 +21,7 @@ const BUTTON = styled.button<{ $status: Status }>`
   background-color: ${({ $status, theme }) =>
     $status === Status.Connect ? theme.secondary3 : $status === Status.CanSwap ? theme.secondary2 : theme.grey4};
   cursor: ${({ $status }) =>
-    $status === Status.Connect || Status.CanSwap ? 'pointer' : $status === Status.Exceeded ? 'not-allowed' : 'initial'};
+    $status === Status.Connect || Status.CanSwap ? 'pointer' : $status === Status.Exceeded || $status === Status.PoolNotFound ? 'not-allowed' : 'initial'};
   span {
     font-size: 12px;
     font-weight: bold;
@@ -27,23 +29,32 @@ const BUTTON = styled.button<{ $status: Status }>`
 `
 
 export const SwapButton: FC = () => {
-  const { swapTokens, tokenA, tokenB } = useSwap()
+  const { network } = useConnectionConfig()
+  const { inTokenAmount, swapTokens, tokenA, tokenB } = useSwap()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
   const status = useMemo(() => {
+    const { seeds: { pools } } = ADDRESSES[network]
+
     if (!wallet || !publicKey) {
       return Status.Connect
-    } else if (!tokenA || !tokenB || !tokenA.toSwapAmount) {
+    } else if (!tokenA || !tokenB) {
       return Status.Enter
-    } else if (tokenA.toSwapAmount > parseFloat(tokenA.amount)) {
+    } else if (!pools[[tokenA.symbol, tokenB.symbol].sort((a, b) => a.localeCompare(b)).join('/')]) {
+      return Status.PoolNotFound
+    } else if (inTokenAmount === 0) {
+      return Status.Enter
+    } else if (inTokenAmount > parseFloat(tokenA.amount)) {
       return Status.Exceeded
     } else {
       return Status.CanSwap
     }
-  }, [publicKey, tokenA, tokenB, wallet])
+  }, [inTokenAmount, network, publicKey, tokenA, tokenB, wallet])
 
-  const content = useMemo(() => ['Connect wallet', 'Swap', 'Enter amount', 'Max amount exceeded'][status], [status])
+  const content = useMemo(() => (
+    ['Connect wallet', 'Swap', 'Enter amount', 'Max amount exceeded', 'Pool not found'][status]
+  ), [status])
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {

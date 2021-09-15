@@ -10,6 +10,8 @@ import { ISwapToken } from '../context'
 export const swap = async (
   tokenA: ISwapToken,
   tokenB: ISwapToken,
+  inTokenAmount: number,
+  outTokenAmount: number,
   slippage: number,
   wallet: WalletContextState,
   connection: Connection,
@@ -19,8 +21,8 @@ export const swap = async (
 
   const { lpTokenMint, pool } = await computePoolsPDAs(tokenA.symbol, tokenB.symbol, network)
 
-  const amountIn = new BN(tokenA.toSwapAmount)
-  const minimumAmountOut = new BN(tokenB.toSwapAmount * (1 - slippage))
+  const amountIn = new BN(inTokenAmount)
+  const minimumAmountOut = new BN(outTokenAmount * (1 - slippage))
 
   const [inTokenAtaPool, outTokenAtaPool, lpTokenAtaFee, inTokenAtaUser, outTokenAtaUser] = await Promise.all([
     await findAssociatedTokenAddress(pool, new PublicKey(tokenA.address)),

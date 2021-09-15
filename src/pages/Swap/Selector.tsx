@@ -26,7 +26,9 @@ const CLICKER = styled(SpaceBetweenDiv)`
         left: 0;
         bottom: -12px;
         ${({ theme }) => theme.mainText}
-        font-size: 7px;
+        color: white;
+        font-size: 8px;
+        white-space: nowrap;
       }
     }
   }
@@ -168,7 +170,6 @@ export const Selector: FC<{
                   amount: amount || '0',
                   decimals,
                   symbol,
-                  toSwapAmount: 0,
                   uiAmount: uiAmount || 0,
                   uiAmountString: uiAmountString || '0'
                 })

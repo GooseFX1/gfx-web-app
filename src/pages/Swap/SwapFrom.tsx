@@ -23,29 +23,13 @@ const WRAPPER = styled.div`
 
 export const SwapFrom: FC<{ height: string }> = ({ height }) => {
   const { rates } = useRates()
-  const { setTokenA, tokenA, tokenB } = useSwap()
-  const [value, setValue] = useState(tokenA?.toSwapAmount || 0)
+  const { inTokenAmount, setInTokenAmount, setTokenA, tokenA, tokenB } = useSwap()
+  const [value, setValue] = useState(inTokenAmount)
 
   const setHalf = () => tokenA && setValue(tokenA.uiAmount / 2)
   const setMax = () => tokenA && setValue(tokenA.uiAmount)
 
-  useEffect(() => {
-    setTokenA((tokenA) => {
-      return (
-        tokenA && {
-          amount: tokenA.amount,
-          address: tokenA.address,
-          decimals: tokenA.decimals,
-          symbol: tokenA.symbol,
-          toSwapAmount: value * 10 ** tokenA.decimals,
-          uiAmount: tokenA.uiAmount,
-          uiAmountString: tokenA.uiAmountString
-        }
-      )
-    })
-  }, [setTokenA, value])
-
-  useEffect(() => setValue((tokenA?.toSwapAmount || 0) / 10 ** (tokenA?.decimals || 0)), [tokenA])
+  useEffect(() => setInTokenAmount(value), [setInTokenAmount, value])
 
   return (
     <WRAPPER>
@@ -57,7 +41,7 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
         </QUICK_SELECT>
       </SpaceBetweenDiv>
       <AmountField $height={height} $USDCValue={(rates.inValue * value).toString().slice(0, 8)}>
-        <Selector height={height} otherToken={tokenB} setToken={setTokenA} token={tokenA} />
+        <Selector height={height} otherToken={tokenB} setToken={setTokenA} token={tokenA}/>
         <Input
           maxLength={9}
           onChange={(x: BaseSyntheticEvent) => {

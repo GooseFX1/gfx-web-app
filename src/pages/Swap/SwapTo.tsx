@@ -21,13 +21,13 @@ const WRAPPER = styled.div`
 
 export const SwapTo: FC<{ height: string }> = ({ height }) => {
   const { rates } = useRates()
-  const { setTokenB, tokenA, tokenB } = useSwap()
+  const { outTokenAmount, setTokenB, tokenA, tokenB } = useSwap()
 
   const uiAmount = useMemo(() => {
-    return tokenB && rates.outValueForSwap > 0
-      ? (rates.outValueForSwap / 10 ** tokenB.decimals).toFixed(tokenB.decimals)
+    return tokenB && outTokenAmount > 0
+      ? (outTokenAmount / 10 ** tokenB.decimals).toFixed(tokenB.decimals)
       : '0'
-  }, [rates.outValueForSwap, tokenB])
+  }, [outTokenAmount, tokenB])
 
   useEffect(
     () =>
