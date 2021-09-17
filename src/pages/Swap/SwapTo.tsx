@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { AmountField } from './shared'
 import { Selector } from './Selector'
-import { useRates, useSwap } from '../../context'
+import { useAccounts, useRates, useSwap } from '../../context'
 
 const WRAPPER = styled.div`
   margin-top: ${({ theme }) => theme.margins['2x']};
@@ -20,8 +20,16 @@ const WRAPPER = styled.div`
 `
 
 export const SwapTo: FC<{ height: string }> = ({ height }) => {
+  const { getUIAmountString } = useAccounts()
   const { rates } = useRates()
   const { outTokenAmount, setTokenB, tokenA, tokenB } = useSwap()
+
+  const balance = useMemo(() => {
+    if (!tokenB) return 0
+
+    const { address, decimals } = tokenB
+    return parseFloat(getUIAmountString(address).slice(0, Math.min(decimals, 8)))
+  }, [getUIAmountString, tokenB])
 
   const uiAmount = useMemo(() => {
     return tokenB && outTokenAmount > 0 ? (outTokenAmount / 10 ** tokenB.decimals).toFixed(tokenB.decimals) : '0'
@@ -30,7 +38,11 @@ export const SwapTo: FC<{ height: string }> = ({ height }) => {
   return (
     <WRAPPER>
       <span>To:</span>
-      <AmountField $height={height} $USDCValue={(rates.outValue * parseFloat(uiAmount)).toString().slice(0, 8)}>
+      <AmountField
+        $balance={balance}
+        $height={height}
+        $USDCValue={(rates.outValue * parseFloat(uiAmount)).toString().slice(0, 8)}
+      >
         <Selector height={height} otherToken={tokenA} setToken={setTokenB} token={tokenB} />
         <span>{uiAmount}</span>
       </AmountField>

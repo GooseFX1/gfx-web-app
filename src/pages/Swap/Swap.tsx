@@ -36,7 +36,7 @@ const WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   align-items: center;
   min-height: 430px;
-  width: 400px;
+  width: 450px;
   padding: ${({ theme }) => theme.margins['4x']};
   ${({ theme }) => theme.largeBorderRadius}
   background-color: ${({ theme }) => theme.bg3};
@@ -70,12 +70,7 @@ export const Swap: FC = () => {
   return (
     <SwapProvider>
       <WRAPPER>
-        <Modal
-          setVisible={setSettingsModalVisible}
-          style={{ width: '400px !important' }}
-          title="Settings"
-          visible={settingsModalVisible}
-        >
+        <Modal setVisible={setSettingsModalVisible} title="Settings" visible={settingsModalVisible}>
           <Settings />
         </Modal>
         <HEADER_WRAPPER $iconSize="24px">
