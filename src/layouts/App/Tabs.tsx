@@ -7,7 +7,7 @@ import { CenteredDiv, CenteredImg, MainText, SVGToGrey2, SVGToPrimary2, SVGToWhi
 const LABEL = MainText(styled.span`
   position: absolute;
   bottom: -${({ theme }) => theme.margins['3x']};
-  font-size: 10px;
+  font-size: 13px;
   color: ${({ theme }) => theme.text2};
   text-transform: capitalize;
 `)
@@ -22,7 +22,7 @@ const TAB_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['2x'])}
 `
 
-const WRAPPER = styled(CenteredDiv)<{ $height: number; $width: number; }>`
+const WRAPPER = styled(CenteredDiv)<{ $height: number; $width: number }>`
   position: relative;
   width: ${({ $width }) => $width * 8}px;
   padding: ${({ $height }) => $height}vh ${({ $width }) => $width}px;
@@ -35,11 +35,14 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $width: number; }>`
     padding: calc(${({ $height }) => $height}vh - ${({ theme }) => theme.margins['2x']} / 2) ${({ $width }) => $width}px;
     ${({ theme }) => theme.roundedBorders}
 
-    ${({ $width }) => [...Array(4).keys()].map((x) => `
+    ${({ $width }) =>
+      [...Array(4).keys()].map(
+        (x) => `
     &:nth-child(${x + 1}) {
       left: ${x * $width * 2}px;
     }
-    `)}
+    `
+      )}
   }
 
   a.active {
@@ -65,11 +68,11 @@ export const Tabs: FC = () => {
           <TAB_ICON>
             {(() => {
               if (pathname === path || (mode === 'dark' && hovered === index)) {
-                return <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`} alt='' />
+                return <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`} alt="" />
               } else if (hovered === index) {
-                return <SVGToPrimary2 src={`${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`} alt='' />
+                return <SVGToPrimary2 src={`${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`} alt="" />
               } else {
-                return <SVGToGrey2 src={`${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`} alt='' />
+                return <SVGToGrey2 src={`${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`} alt="" />
               }
             })()}
           </TAB_ICON>

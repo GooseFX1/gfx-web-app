@@ -1,8 +1,8 @@
-import React, { Dispatch, FC, SetStateAction, useEffect, useMemo, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { Input } from 'antd'
 import styled from 'styled-components'
 import { ArrowClicker, Modal } from '../../components'
-import { ISwapToken, useAccounts, useTokenRegistry } from '../../context'
+import { ISwapToken, useTokenRegistry } from '../../context'
 import { CenteredDiv, CenteredImg, SpaceBetweenDiv } from '../../styles'
 
 const BODY = styled.div`
@@ -15,22 +15,8 @@ const CLICKER = styled(SpaceBetweenDiv)`
   position: relative;
 
   > div > span {
-
-      &:first-child {
-        font-size: 12px;
-        font-weight: 600;
-      }
-      
-      &:last-child {
-        position: absolute;
-        left: 0;
-        bottom: -12px;
-        ${({ theme }) => theme.mainText}
-        color: white;
-        font-size: 8px;
-        white-space: nowrap;
-      }
-    }
+    font-size: 16px;
+    font-weight: 600;
   }
 
   > div:not(:last-child) {
@@ -38,13 +24,13 @@ const CLICKER = styled(SpaceBetweenDiv)`
   }
 
   > span {
-    font-size: 8px;
+    font-size: 10px;
     font-weight: 600;
   }
 `
 
 const CLICKER_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['2x'])}
+  ${({ theme }) => theme.measurements(theme.margins['2.5x'])}
   margin-left: ${({ theme }) => theme.margins['1x']};
   ${({ theme }) => theme.roundedBorders}
 `
@@ -125,18 +111,10 @@ export const Selector: FC<{
   setToken: Dispatch<SetStateAction<ISwapToken | null>>
   token: ISwapToken | null
 }> = ({ height, otherToken, setToken, token }) => {
-  const { getUIAmountString } = useAccounts()
   const { tokens } = useTokenRegistry()
   const [filterKeywords, setFilterKeywords] = useState('')
   const [filteredTokens, setFilteredTokens] = useState(tokens)
   const [visible, setVisible] = useState(false)
-
-  const balance = useMemo(() => {
-    if (!token) return '0'
-
-    const { address, decimals } = token
-    return getUIAmountString(address).slice(0, Math.min(decimals, 8))
-  }, [getUIAmountString, token])
 
   useEffect(() => {
     const r = new RegExp(filterKeywords, 'i')
@@ -187,7 +165,6 @@ export const Selector: FC<{
               <CLICKER_ICON>
                 <img src={`${process.env.PUBLIC_URL}/img/tokens/${token.symbol}.svg`} alt="" />
               </CLICKER_ICON>
-              <span>Balance: {balance}</span>
             </SpaceBetweenDiv>
           ) : (
             <span>Select a token</span>

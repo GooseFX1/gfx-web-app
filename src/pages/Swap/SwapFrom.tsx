@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, FC, useEffect, useState } from 'react'
+import React, { BaseSyntheticEvent, FC, useEffect, useMemo, useState } from 'react'
 import { Input } from 'antd'
 import styled from 'styled-components'
 import { Selector } from './Selector'
@@ -7,8 +7,13 @@ import { useAccounts, useRates, useSwap } from '../../context'
 import { CenteredDiv, SpaceBetweenDiv } from '../../styles'
 
 const QUICK_SELECT = styled(CenteredDiv)`
+  position: absolute;
+  right: 0;
+  top: -5px;
+
   span {
     margin-right: ${({ theme }) => theme.margins['2x']};
+    font-size: 11px;
     font-weight: bold;
     color: ${({ theme }) => theme.text1};
     cursor: pointer;
@@ -22,7 +27,7 @@ const WRAPPER = styled.div`
 `
 
 export const SwapFrom: FC<{ height: string }> = ({ height }) => {
-  const { getUIAmount } = useAccounts()
+  const { getUIAmount, getUIAmountString } = useAccounts()
   const { rates } = useRates()
   const { setInTokenAmount, setTokenA, tokenA, tokenB } = useSwap()
   const [value, setValue] = useState(0)
@@ -30,18 +35,29 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
   const setHalf = () => tokenA && setValue(getUIAmount(tokenA.address) / 2)
   const setMax = () => tokenA && setValue(getUIAmount(tokenA.address))
 
+  const balance = useMemo(() => {
+    if (!tokenA) return 0
+
+    const { address, decimals } = tokenA
+    return parseFloat(getUIAmountString(address).slice(0, Math.min(decimals, 8)))
+  }, [getUIAmountString, tokenA])
+
+  const showQuickSelect = useMemo(() => balance > 0, [balance])
+
   useEffect(() => setInTokenAmount(tokenA ? value * 10 ** tokenA.decimals : 0), [setInTokenAmount, tokenA, value])
 
   return (
     <WRAPPER>
       <SpaceBetweenDiv>
         <span>From:</span>
-        <QUICK_SELECT>
-          <span onClick={setHalf}>Half</span>
-          <span onClick={setMax}>Max</span>
-        </QUICK_SELECT>
+        {showQuickSelect && (
+          <QUICK_SELECT>
+            <span onClick={setHalf}>Half</span>
+            <span onClick={setMax}>Max</span>
+          </QUICK_SELECT>
+        )}
       </SpaceBetweenDiv>
-      <AmountField $height={height} $USDCValue={(rates.inValue * value).toString().slice(0, 8)}>
+      <AmountField $balance={balance} $height={height} $USDCValue={(rates.inValue * value).toString().slice(0, 8)}>
         <Selector height={height} otherToken={tokenB} setToken={setTokenA} token={tokenA} />
         <Input
           maxLength={15}
