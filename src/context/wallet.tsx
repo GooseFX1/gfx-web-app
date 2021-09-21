@@ -1,13 +1,11 @@
 import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
 import {
-  getBitpieWallet,
-  getCoin98Wallet,
-  getLedgerWallet,
   getMathWallet,
   getPhantomWallet,
   getSolflareWallet,
   getSolletWallet,
   getSolongWallet,
+  getSlopeWallet,
   getTorusWallet
 } from '@solana/wallet-adapter-wallets'
 import { WalletProvider as WalletAdapterProvider } from '@solana/wallet-adapter-react'
@@ -39,11 +37,9 @@ export const WalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
     () => [
       getPhantomWallet(),
       getSolflareWallet(),
-      getLedgerWallet(),
       getMathWallet(),
-      getBitpieWallet(),
-      getCoin98Wallet(),
       getSolongWallet(),
+      getSlopeWallet(),
       getTorusWallet({
         options: { clientId: 'Get a client ID @ https://developer.tor.us' }
       }),
