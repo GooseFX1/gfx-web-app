@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { UDFCompatibleDatafeed } from './udf-compatible-datafeed'
-import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget, ResolutionString } from '../../charting_library'
-import { useDarkMode } from '../../context'
+import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget, ResolutionString } from '../../../charting_library'
+import { useDarkMode } from '../../../context'
 
 const CONTAINER = styled.div`
   width: 80vw;
