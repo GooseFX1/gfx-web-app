@@ -60,8 +60,8 @@ export const Footer: FC = () => {
   return (
     <WRAPPER>
       <TEXT>
-        Copyright © 2021 Goose Labs, Inc. All rights reserved. Please trade with your own discretion and according to
-        your location’s laws and regulations.
+        Copyright © 2021 GooseFX. All rights reserved. Please trade with your own discretion and according to your
+        location’s laws and regulations.
       </TEXT>
       <SpaceBetweenDiv>
         <SpaceBetweenDiv>

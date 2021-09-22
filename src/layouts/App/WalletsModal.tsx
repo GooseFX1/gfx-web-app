@@ -77,15 +77,11 @@ export const WalletsModal: FC = () => {
   )
 
   return (
-    <Modal
-      setVisible={setVisible}
-      title="Connect to a wallet"
-      visible={visible}
-    >
+    <Modal setVisible={setVisible} title="Connect to a wallet" visible={visible}>
       <BODY>
         <DISCLAIMER>
-          By connecting a wallet, you agree to Goose Labs, Inc, <a>Terms of Service</a> and acknowledge that you have
-          read and you understand the&nbsp;
+          By connecting a wallet, you agree to GooseFX, <a>Terms of Service</a> and acknowledge that you have read and
+          you understand the&nbsp;
           <a href={`${LITEPAPER_ADDRESS}/#disclaimer`} target="_blank" rel="noopener noreferrer">
             GooseFX protocol disclaimer
           </a>
