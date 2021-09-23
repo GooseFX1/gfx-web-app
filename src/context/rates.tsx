@@ -12,9 +12,9 @@ import React, {
   useState
 } from 'react'
 import moment from 'moment'
-import { Market, MARKETS } from '@project-serum/serum'
 import { useConnectionConfig } from './settings'
 import { ISwapToken } from './swap'
+import { getLatestBid } from '../web3/serum'
 
 interface IRates {
   inValue: number
@@ -62,26 +62,11 @@ export const RatesProvider: FC<{ children: ReactNode }> = ({ children }) => {
     refreshTimeout.current = setTimeout(async () => {
       const { inToken, outToken, swapRates } = ratesToFetch
 
-      const getValueFromSerum = async (symbol: string) => {
-        const match = MARKETS.find(({ deprecated, name }) => !deprecated && name === `${symbol}/USDC`)
-        if (!match) {
-          throw new Error(`Market not found: ${symbol}/USDC`)
-        }
-
-        try {
-          const { address, programId } = match
-          const bids = await (await Market.load(connection, address, {}, programId)).loadBids(connection)
-          return bids.getL2(1)[0][0]
-        } catch (e) {
-          throw new Error('Error fetching exchange rate')
-        }
-      }
-
       if (inToken) {
         const time = moment().format('MMMM DD, h:mm a')
 
         try {
-          const inValue = await getValueFromSerum(inToken.symbol)
+          const inValue = await getLatestBid(connection, `${inToken.symbol}/USDC`)
           setRates(({ outValue, outValuePerIn }) => ({ inValue, outValue, outValuePerIn, time }))
         } catch (e) {
           setRates(({ outValue, outValuePerIn }) => ({ inValue: 0, outValue, outValuePerIn, time }))
@@ -92,7 +77,7 @@ export const RatesProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const time = moment().format('MMMM DD, h:mm a')
 
         try {
-          const outValue = await getValueFromSerum(outToken.symbol)
+          const outValue = await getLatestBid(connection, `${outToken.symbol}/USDC`)
           setRates(({ inValue, outValuePerIn }) => ({ inValue, outValue, outValuePerIn, time }))
         } catch (e) {
           setRates(({ inValue, outValuePerIn }) => ({ inValue, outValue: 0, outValuePerIn, time }))

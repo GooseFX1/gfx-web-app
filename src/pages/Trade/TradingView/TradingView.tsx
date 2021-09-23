@@ -1,26 +1,29 @@
 import React, { FC, useEffect, useRef } from 'react'
 import styled from 'styled-components'
+import * as saveLoadAdapter from './save-load-adapter'
 import { UDFCompatibleDatafeed } from './udf-compatible-datafeed'
-import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget, ResolutionString } from '../../../charting_library'
+import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget } from '../../../charting_library'
 import { useDarkMode } from '../../../context'
+import { flatten } from '../../../utils'
 
 const CONTAINER = styled.div`
   width: 80vw;
   height: 66vh;
 `
 
-export const TVChartContainer: FC<{
-  interval: string
-  symbol: string
-}> = ({ interval = 'D' as ResolutionString, symbol = 'BTC/USDC' }) => {
+export const TVChartContainer: FC<{ interval: string; symbol: string }> = ({ interval, symbol }) => {
   const { mode } = useDarkMode()
   const tvWidget = useRef<IChartingLibraryWidget | null>()
 
+  const chartProperties = JSON.parse(localStorage.getItem('chartproperties') || '{}')
+
   useEffect(() => {
+    const savedProperties = flatten(chartProperties, {
+      restrictTo: ['scalesProperties', 'paneProperties', 'tradingProperties'],
+    })
+
     const widgetOptions: ChartingLibraryWidgetOptions = {
       autosize: true,
-      charts_storage_api_version: '1.1',
-      charts_storage_url: 'https://saveload.tradingview.com',
       client_id: 'tradingview.com',
       container: 'tv_chart_container',
       datafeed: new UDFCompatibleDatafeed('https://serum-api.bonfida.com/tv'),
@@ -30,6 +33,45 @@ export const TVChartContainer: FC<{
       interval: interval as ChartingLibraryWidgetOptions['interval'],
       library_path: '/charting_library/',
       locale: 'en',
+      overrides: {
+        ...savedProperties,
+        'mainSeriesProperties.candleStyle.upColor': '#41C77A',
+        'mainSeriesProperties.candleStyle.downColor': '#F23B69',
+        'mainSeriesProperties.candleStyle.borderUpColor': '#41C77A',
+        'mainSeriesProperties.candleStyle.borderDownColor': '#F23B69',
+        'mainSeriesProperties.candleStyle.wickUpColor': '#41C77A',
+        'mainSeriesProperties.candleStyle.wickDownColor': '#F23B69',
+      },
+      // @ts-ignore
+      save_load_adapter: saveLoadAdapter,
+      settings_adapter: {
+        initialSettings: {
+          'trading.orderPanelSettingsBroker': JSON.stringify({
+            showRelativePriceControl: false,
+            showCurrencyRiskInQty: false,
+            showPercentRiskInQty: false,
+            showBracketsInCurrency: false,
+            showBracketsInPercent: false,
+          }),
+          'trading.chart.proterty': // "proterty"
+            localStorage.getItem('trading.chart.proterty') ||
+            JSON.stringify({
+              hideFloatingPanel: 1,
+            }),
+          'chart.favoriteDrawings':
+            localStorage.getItem('chart.favoriteDrawings') ||
+            JSON.stringify([]),
+          'chart.favoriteDrawingsPosition':
+            localStorage.getItem('chart.favoriteDrawingsPosition') ||
+            JSON.stringify({}),
+        },
+        setValue: (key, value) => {
+          localStorage.setItem(key, value);
+        },
+        removeValue: (key) => {
+          localStorage.removeItem(key);
+        },
+      },
       studies_overrides: {},
       symbol,
       theme: mode === 'dark' ? 'Dark' : 'Light',
