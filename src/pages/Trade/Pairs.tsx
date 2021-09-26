@@ -1,32 +1,27 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
-import { Swiper, SwiperSlide } from 'swiper/react'
 import { PairStats } from './PairStats'
-import 'swiper/swiper.less'
 
 const PAIRS_LIST = [
-  { symbol: 'BTC/USDC', type: 'crypto' },
-  { symbol: 'ETH/USDC', type: 'crypto' },
-  { symbol: 'SOL/USDC', type: 'crypto' },
-  { symbol: 'SRM/USDC', type: 'crypto' },
-  { symbol: 'ALEPH/USDC', type: 'crypto' },
-  // { symbol: 'LTC/USDC', type: 'crypto' },
-  { symbol: 'LINK/USDC', type: 'crypto' }
-  // { symbol: 'AAPL', type: 'stock' },
-  // { symbol: 'TSLA', type: 'stock' }
+  { decimals: 1, market: 'serum', symbol: 'BTC/USDC' },
+  { decimals: 2, market: 'serum', symbol: 'ETH/USDC' },
+  { decimals: 3, market: 'serum', symbol: 'SOL/USDC' },
+  { decimals: 2, market: 'pyth', symbol: 'LTC/USD' },
+  { decimals: 3, market: 'serum', symbol: 'LINK/USDC' },
+  { decimals: 2, market: 'pyth', symbol: 'AAPL/USD' },
+  { decimals: 2, market: 'pyth', symbol: 'TSLA/USD' }
 ]
 
-const WRAPPER = styled(Swiper)`
+const WRAPPER = styled.div`
+  display: flex;
   margin: ${({ theme }) => theme.margins['3x']} 0;
 `
 
 export const Pairs: FC = () => {
   return (
-    <WRAPPER spaceBetween={24} slidesPerView={5}>
-      {PAIRS_LIST.map(({ symbol, type }, index) => (
-        <SwiperSlide>
-          <PairStats key={index} symbol={symbol} type={type} />
-        </SwiperSlide>
+    <WRAPPER>
+      {PAIRS_LIST.map(({ decimals, market, symbol }, index) => (
+        <PairStats key={index} decimals={decimals} market={market} symbol={symbol} />
       ))}
     </WRAPPER>
   )

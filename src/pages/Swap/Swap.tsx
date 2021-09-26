@@ -6,7 +6,7 @@ import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
 import { Switch } from './Switch'
-import { useDarkMode, useSwap } from '../../context'
+import { SwapProvider, useDarkMode, useSwap } from '../../context'
 import { addAnalytics } from '../../utils'
 import { Modal } from '../../components'
 import { CenteredImg, MainText, SpaceBetweenDiv } from '../../styles'
@@ -61,7 +61,7 @@ const WRAPPER = styled.div`
   ${({ theme }) => theme.largeShadow}
 `
 
-export const Swap: FC = () => {
+const SwapContent: FC = () => {
   const { mode } = useDarkMode()
   const { refreshRates } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
@@ -111,5 +111,13 @@ export const Swap: FC = () => {
       </BODY>
       <SwapButton />
     </WRAPPER>
+  )
+}
+
+export const Swap: FC = () => {
+  return (
+    <SwapProvider>
+      <SwapContent />
+    </SwapProvider>
   )
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
-import { DarkModeProvider, SwapProvider } from './context'
+import { DarkModeProvider } from './context'
 import { AppLayout } from './layouts'
 import { Farm, NFTs, Swap, Trade } from './pages'
 import { CenteredDiv } from './styles'
@@ -22,15 +22,7 @@ export default function App(): JSX.Element {
           <Switch>
             <AppLayout>
               <WRAPPER>
-                <Route
-                  exact
-                  path="/swap"
-                  component={() => (
-                    <SwapProvider>
-                      <Swap />
-                    </SwapProvider>
-                  )}
-                />
+                <Route exact path="/swap" component={Swap} />
                 <Route exact path="/trade" component={Trade} />
                 <Route exact path="/NFTs" component={NFTs} />
                 <Route exact path="/farm" component={Farm} />

@@ -1,7 +1,8 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
-import { TVChartContainer } from './TradingView'
 import { Pairs } from './Pairs'
+import { TVChartContainer } from './TradingView'
+import { MarketProvider } from '../../context'
 
 const WRAPPER = styled.div`
   height: 100%;
@@ -9,11 +10,19 @@ const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
 `
 
-export const Trade: FC = () => {
+const TradeContent: FC = () => {
   return (
     <WRAPPER>
       <Pairs />
       <TVChartContainer interval={'D'} symbol={'BTC/USD'} />
     </WRAPPER>
+  )
+}
+
+export const Trade: FC = () => {
+  return (
+    <MarketProvider>
+      <TradeContent />
+    </MarketProvider>
   )
 }

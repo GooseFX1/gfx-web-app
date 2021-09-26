@@ -14,10 +14,10 @@ import React, {
 import moment from 'moment'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
+import { useAccounts } from './accounts'
 import { useConnectionConfig, useSlippageConfig } from './settings'
 import { notify } from '../utils'
-import { computePoolsPDAs, swap } from '../web3'
-import { getLatestBid } from '../web3/serum'
+import { computePoolsPDAs, getSerumLatestBid, swap } from '../web3'
 
 interface IRates {
   inValue: number
@@ -52,6 +52,7 @@ interface ISwapConfig {
 const SwapContext = createContext<ISwapConfig | null>(null)
 
 export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { fetchAccounts } = useAccounts()
   const { connection, network } = useConnectionConfig()
   const { slippage } = useSlippageConfig()
   const wallet = useWallet()
@@ -80,7 +81,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       if (tokenA) {
         try {
-          const inValue = await getLatestBid(connection, `${tokenA.symbol}/USDC`)
+          const inValue = await getSerumLatestBid(connection, `${tokenA.symbol}/USDC`)
           setRates(({ outValue, outValuePerIn }) => ({ inValue, outValue, outValuePerIn, time }))
         } catch (e) {
           setRates(({ outValue, outValuePerIn }) => ({ inValue: 0, outValue, outValuePerIn, time }))
@@ -89,7 +90,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       if (tokenB) {
         try {
-          const outValue = await getLatestBid(connection, `${tokenB.symbol}/USDC`)
+          const outValue = await getSerumLatestBid(connection, `${tokenB.symbol}/USDC`)
           setRates(({ inValue, outValuePerIn }) => ({ inValue, outValue, outValuePerIn, time }))
         } catch (e) {
           setRates(({ inValue, outValuePerIn }) => ({ inValue, outValue: 0, outValuePerIn, time }))
@@ -128,7 +129,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     try {
       const signature = await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
       notify({ type: 'success', message: 'Swap successful!', txid: signature })
-      setTimeout(async () => await refreshRates(), 1000)
+      setTimeout(() => wallet.publicKey && fetchAccounts(wallet.publicKey), 1000)
     } catch (e: any) {
       notify({ type: 'error', message: 'Swap failed', icon: 'error', description: e.message })
     }

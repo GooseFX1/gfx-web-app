@@ -19,7 +19,7 @@ export const TVChartContainer: FC<{ interval: string; symbol: string }> = ({ int
 
   useEffect(() => {
     const savedProperties = flatten(chartProperties, {
-      restrictTo: ['scalesProperties', 'paneProperties', 'tradingProperties'],
+      restrictTo: ['scalesProperties', 'tradingProperties']
     })
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
@@ -40,7 +40,7 @@ export const TVChartContainer: FC<{ interval: string; symbol: string }> = ({ int
         'mainSeriesProperties.candleStyle.borderUpColor': '#41C77A',
         'mainSeriesProperties.candleStyle.borderDownColor': '#F23B69',
         'mainSeriesProperties.candleStyle.wickUpColor': '#41C77A',
-        'mainSeriesProperties.candleStyle.wickDownColor': '#F23B69',
+        'mainSeriesProperties.candleStyle.wickDownColor': '#F23B69'
       },
       // @ts-ignore
       save_load_adapter: saveLoadAdapter,
@@ -51,26 +51,23 @@ export const TVChartContainer: FC<{ interval: string; symbol: string }> = ({ int
             showCurrencyRiskInQty: false,
             showPercentRiskInQty: false,
             showBracketsInCurrency: false,
-            showBracketsInPercent: false,
+            showBracketsInPercent: false
           }),
-          'trading.chart.proterty': // "proterty"
+          // "proterty"
+          'trading.chart.proterty':
             localStorage.getItem('trading.chart.proterty') ||
             JSON.stringify({
-              hideFloatingPanel: 1,
+              hideFloatingPanel: 1
             }),
-          'chart.favoriteDrawings':
-            localStorage.getItem('chart.favoriteDrawings') ||
-            JSON.stringify([]),
-          'chart.favoriteDrawingsPosition':
-            localStorage.getItem('chart.favoriteDrawingsPosition') ||
-            JSON.stringify({}),
+          'chart.favoriteDrawings': localStorage.getItem('chart.favoriteDrawings') || JSON.stringify([]),
+          'chart.favoriteDrawingsPosition': localStorage.getItem('chart.favoriteDrawingsPosition') || JSON.stringify({})
         },
         setValue: (key, value) => {
-          localStorage.setItem(key, value);
+          localStorage.setItem(key, value)
         },
         removeValue: (key) => {
-          localStorage.removeItem(key);
-        },
+          localStorage.removeItem(key)
+        }
       },
       studies_overrides: {},
       symbol,
@@ -85,11 +82,13 @@ export const TVChartContainer: FC<{ interval: string; symbol: string }> = ({ int
         const button = tvWidget.current!.createButton()
         button.setAttribute('title', 'Click to show a notification popup')
         button.classList.add('apply-common-tooltip')
-        button.addEventListener('click', () => tvWidget.current!.showNoticeDialog({
-          title: 'Notification',
-          body: 'TradingView Charting Library API works correctly',
-          callback: () => {}
-        }))
+        button.addEventListener('click', () =>
+          tvWidget.current!.showNoticeDialog({
+            title: 'Notification',
+            body: 'TradingView Charting Library API works correctly',
+            callback: () => {}
+          })
+        )
         button.innerHTML = 'Check API'
       })
     })
