@@ -7,8 +7,8 @@ import { useDarkMode } from '../../../context'
 import { flatten } from '../../../utils'
 
 const CONTAINER = styled.div`
-  width: 80vw;
-  height: 66vh;
+  width: 100%;
+  height: 45vh;
 `
 
 export const TVChartContainer: FC<{ interval: string; symbol: string }> = ({ interval, symbol }) => {

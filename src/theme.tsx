@@ -107,6 +107,7 @@ export function theme(mode: string): DefaultTheme {
     ...text(mode),
 
     margins: {
+      '0.5x': '4px',
       '1x': '8px',
       '1.5x': '12px',
       '2x': '16px',

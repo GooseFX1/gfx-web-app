@@ -26,7 +26,11 @@ interface IFeaturedPrices {
 interface IMarketConfig {
   featuredPrices: IFeaturedPrices
   fetching: boolean
+  formatSymbol: (x: string) => string
+  getAssetFromSymbol: (x: string) => string
+  selectedMarket: string
   setFeaturedList: Dispatch<SetStateAction<IFeaturedMarket[]>>
+  setSelectedMarket: Dispatch<SetStateAction<string>>
 }
 
 const MarketContext = createContext<IMarketConfig | null>(null)
@@ -36,6 +40,10 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [featuredList, setFeaturedList] = useState<IFeaturedMarket[]>([])
   const [featuredPrices, setFeaturedPrices] = useState<IFeaturedPrices>({})
   const [fetching, setFetching] = useState(true)
+  const [selectedMarket, setSelectedMarket] = useState('BTC/USDC')
+
+  const formatSymbol = (symbol: string) => symbol.replace('/', ' / ')
+  const getAssetFromSymbol = (symbol: string): string => symbol.slice(0, symbol.indexOf('/'))
 
   const fetchFeatured = useCallback(async () => {
     try {
@@ -55,8 +63,11 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [connection, featuredList])
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       try {
+        const serumMarkets = featuredList.filter(({ market }) => market === 'serum')
+
+
         const pythMarkets = featuredList.filter(({ market }) => market === 'pyth')
         const products = await fetchPythProducts(
           connection,
@@ -96,7 +107,11 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
       value={{
         featuredPrices,
         fetching,
-        setFeaturedList
+        formatSymbol,
+        getAssetFromSymbol,
+        selectedMarket,
+        setFeaturedList,
+        setSelectedMarket
       }}
     >
       {children}
@@ -110,6 +125,13 @@ export const useMarket = (): IMarketConfig => {
     throw new Error('Missing market context')
   }
 
-  const { featuredPrices, fetching, setFeaturedList } = context
-  return { featuredPrices, fetching, setFeaturedList }
+  return {
+    featuredPrices: context.featuredPrices,
+    fetching: context.fetching,
+    formatSymbol: context.formatSymbol,
+    getAssetFromSymbol: context.getAssetFromSymbol,
+    selectedMarket: context.selectedMarket,
+    setFeaturedList: context.setFeaturedList,
+    setSelectedMarket: context.setSelectedMarket
+  }
 }

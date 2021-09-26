@@ -54,6 +54,7 @@ export interface Text {
 declare module 'styled-components' {
   export interface DefaultTheme extends Colors, Text {
     margins: {
+      '0.5x': string
       '1x': string
       '1.5x': string
       '2x': string

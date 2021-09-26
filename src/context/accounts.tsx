@@ -57,9 +57,9 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const fetchAccounts = useCallback(
     (publicKey: PublicKey) => {
-      const subscriptions: number[] = []
+      const subscriptions: number[] = [];
 
-      ;(async () => {
+      (async () => {
         setFetching(true)
         const [parsedAccounts, solAmount] = await Promise.all([
           connection.getParsedTokenAccountsByOwner(publicKey, { programId: TOKEN_PROGRAM_ID }),

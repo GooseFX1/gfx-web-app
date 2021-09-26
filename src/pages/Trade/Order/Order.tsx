@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react'
 import styled from 'styled-components'
+import { Side, SideType } from './Side'
 
 const WRAPPER = styled.div`
   margin: ${({ theme }) => theme.margins['3x']} 0;
@@ -7,11 +8,11 @@ const WRAPPER = styled.div`
 `
 
 export const Order: FC = () => {
-  const [type, setType] = useState<'buy' | 'sell'>('buy')
+  const [side, setSide] = useState<SideType>('buy')
 
   return (
     <WRAPPER>
-      Order
+      <Side setSide={setSide} side={side} />
     </WRAPPER>
   )
 }

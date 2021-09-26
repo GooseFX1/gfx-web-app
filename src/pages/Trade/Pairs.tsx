@@ -14,6 +14,7 @@ const PAIRS_LIST = [
 
 const WRAPPER = styled.div`
   display: flex;
+  width: calc(100% + ${({ theme }) => theme.margins['3x']});
   margin: ${({ theme }) => theme.margins['3x']} 0;
 `
 

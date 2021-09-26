@@ -47,12 +47,12 @@ const STATS = styled.div`
 
 export const PairStats: FC<{ decimals: number; market: string; symbol: string }> = ({ decimals, market, symbol }) => {
   const { connection } = useConnectionConfig()
-  const { featuredPrices, setFeaturedList } = useMarket()
+  const { featuredPrices, formatSymbol, getAssetFromSymbol, setFeaturedList } = useMarket()
 
-  const asset = useMemo(() => symbol.slice(0, symbol.indexOf('/')), [symbol])
-  const formattedSymbol = useMemo(() => symbol.replace('/', ' / '), [symbol])
+  const asset = useMemo(() => getAssetFromSymbol(symbol), [getAssetFromSymbol, symbol])
+  const formattedSymbol = useMemo(() => formatSymbol(symbol), [formatSymbol, symbol])
   const past24HChange = '+245%'
-  const past24HChangeIcon = `price_${past24HChange[0] === '+' ? 'up' : 'down'}`
+  const past24HChangeIcon = `price_${past24HChange[0] === '+' ? 'up' : 'down'}.svg`
   const price = useMemo(() => featuredPrices[symbol], [featuredPrices, symbol])
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export const PairStats: FC<{ decimals: number; market: string; symbol: string }>
         </div>
         <div>
           <CHANGE_ICON>
-            <img src={`${process.env.PUBLIC_URL}/img/assets/${past24HChangeIcon}.svg`} alt="" />
+            <img src={`${process.env.PUBLIC_URL}/img/assets/${past24HChangeIcon}`} alt="" />
           </CHANGE_ICON>
           <span>{past24HChange}</span>
         </div>

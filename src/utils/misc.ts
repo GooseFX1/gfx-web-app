@@ -30,6 +30,10 @@ export function flatten(
   return result
 }
 
+export function shortenAddress(address: string, chars = 4): string {
+  return `${address.slice(0, chars)}...${address.slice(-chars)}`
+}
+
 export function useLocalStorageState(key: string, defaultState?: string) {
   const [state, setState] = useState(() => {
     const storedState = localStorage.getItem(key)
@@ -56,8 +60,4 @@ export function useLocalStorageState(key: string, defaultState?: string) {
   )
 
   return [state, setLocalStorageState]
-}
-
-export function shortenAddress(address: string, chars = 4): string {
-  return `${address.slice(0, chars)}...${address.slice(-chars)}`
 }
