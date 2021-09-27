@@ -3,17 +3,17 @@ import styled from 'styled-components'
 import { useMarket } from '../../../context'
 import { CenteredImg, MainText } from '../../../styles'
 
-export type SideType = 'buy' | 'sell'
+export type Side = 'buy' | 'sell'
 
 const CHANGE = styled(CenteredImg)`
   display: flex;
   margin-left: ${({ theme }) => theme.margins['1.5x']};
-  
+
   > div {
     ${({ theme }) => theme.measurements(theme.margins['1.5x'])}
     margin-right: ${({ theme }) => theme.margins['1x']};
   }
-  
+
   span {
     font-size: 10px;
     font-weight: bold;
@@ -54,7 +54,8 @@ const TICKER = MainText(styled.span`
 
 const WRAPPER = styled.div`
   display: flex;
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['6x']} ${({ theme }) => theme.margins['0.5x']} ${({ theme }) => theme.margins['1x']};
+  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['6x']}
+    ${({ theme }) => theme.margins['0.5x']} ${({ theme }) => theme.margins['1x']};
   border: solid 2.5px #9f9f9f;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
@@ -62,13 +63,13 @@ const WRAPPER = styled.div`
   border-bottom-right-radius: 20px;
 `
 
-export const Side: FC<{ setSide: Dispatch<SetStateAction<SideType>>, side: SideType }> = ({ setSide, side }) => {
-  const { formatSymbol, getAssetFromSymbol, selectedMarket } = useMarket()
-  const asset = useMemo(() => getAssetFromSymbol(selectedMarket), [getAssetFromSymbol, selectedMarket])
-  const formattedSymbol = useMemo(() => formatSymbol(selectedMarket), [formatSymbol, selectedMarket])
-  const past24HChange = '+245%'
-  const past24HChangeIcon = `price_${past24HChange[0] === '+' ? 'up' : 'down'}.svg`
-  const price = '42321321.1'
+export const Header: FC<{ setSide: Dispatch<SetStateAction<Side>>; side: Side }> = ({ setSide, side }) => {
+  const { formatSymbol, getAssetFromSymbol, marketsData, selectedMarket } = useMarket()
+
+  const asset = useMemo(() => getAssetFromSymbol(selectedMarket.symbol), [getAssetFromSymbol, selectedMarket])
+  const marketData = useMemo(() => marketsData[selectedMarket.symbol], [marketsData, selectedMarket.symbol])
+  const change24HIcon = useMemo(() => `price_${marketData.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData])
+  const formattedSymbol = useMemo(() => formatSymbol(selectedMarket.symbol), [formatSymbol, selectedMarket])
 
   return (
     <WRAPPER>
@@ -77,21 +78,15 @@ export const Side: FC<{ setSide: Dispatch<SetStateAction<SideType>>, side: SideT
       </ICON>
       <INFO>
         <div>
-          <TICKER>
-            {formattedSymbol}
-          </TICKER>
+          <TICKER>{formattedSymbol}</TICKER>
           <CHANGE>
             <CenteredImg>
-              <img src={`${process.env.PUBLIC_URL}/img/assets/${past24HChangeIcon}`} alt="" />
+              <img src={`${process.env.PUBLIC_URL}/img/assets/${change24HIcon}`} alt="" />
             </CenteredImg>
-            <span>
-              {past24HChange}
-            </span>
+            <span>{marketData.change24H}</span>
           </CHANGE>
         </div>
-        <PRICE>
-          Price: ${price}
-        </PRICE>
+        <PRICE>Price: $ {marketData.current}</PRICE>
         <SIDE>
           <span>Buy</span>
           <span>Sell</span>

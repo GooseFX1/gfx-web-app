@@ -1,7 +1,7 @@
-import React, { FC, useEffect, useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import { Spin } from 'antd'
 import styled from 'styled-components'
-import { useConnectionConfig, useMarket } from '../../context'
+import { useMarket } from '../../context'
 import { CenteredImg } from '../../styles'
 
 const ASSET_ICON = styled(CenteredImg)`
@@ -18,6 +18,10 @@ const INFO = styled.div`
 
   > div {
     ${({ theme }) => theme.flexCenter}
+
+    &:first-child {
+      cursor: pointer;
+    }
 
     span {
       margin-left: ${({ theme }) => theme.margins['1x']};
@@ -46,25 +50,23 @@ const STATS = styled.div`
 `
 
 export const PairStats: FC<{ decimals: number; market: string; symbol: string }> = ({ decimals, market, symbol }) => {
-  const { connection } = useConnectionConfig()
-  const { featuredPrices, formatSymbol, getAssetFromSymbol, setFeaturedList } = useMarket()
+  const { formatSymbol, getAssetFromSymbol, marketsData, selectedMarket, setSelectedMarket } = useMarket()
 
   const asset = useMemo(() => getAssetFromSymbol(symbol), [getAssetFromSymbol, symbol])
+  const marketData = useMemo(() => marketsData[symbol], [marketsData, symbol])
+  const change24HIcon = useMemo(() => `price_${marketData.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData, symbol])
   const formattedSymbol = useMemo(() => formatSymbol(symbol), [formatSymbol, symbol])
-  const past24HChange = '+245%'
-  const past24HChangeIcon = `price_${past24HChange[0] === '+' ? 'up' : 'down'}.svg`
-  const price = useMemo(() => featuredPrices[symbol], [featuredPrices, symbol])
 
-  useEffect(() => {
-    setFeaturedList((prevState) => [...prevState, { decimals, market, symbol }])
-
-    return () => setFeaturedList((prevState) => prevState.filter(({ symbol: x }) => x !== symbol))
-  }, [connection, decimals, market, setFeaturedList, symbol])
+  const handleClick = () => {
+    if (selectedMarket.symbol !== symbol) {
+      setSelectedMarket({ decimals, market, symbol })
+    }
+  }
 
   return (
     <STATS>
       <INFO>
-        <div>
+        <div onClick={handleClick}>
           <ASSET_ICON>
             <img src={`${process.env.PUBLIC_URL}/img/tokens/${asset}.svg`} alt="" />
           </ASSET_ICON>
@@ -72,12 +74,12 @@ export const PairStats: FC<{ decimals: number; market: string; symbol: string }>
         </div>
         <div>
           <CHANGE_ICON>
-            <img src={`${process.env.PUBLIC_URL}/img/assets/${past24HChangeIcon}`} alt="" />
+            <img src={`${process.env.PUBLIC_URL}/img/assets/${change24HIcon}`} alt="" />
           </CHANGE_ICON>
-          <span>{past24HChange}</span>
+          <span>{marketData.change24H}</span>
         </div>
       </INFO>
-      <PRICE>{price ? <span>$ {price}</span> : <Spin size="small" />}</PRICE>
+      <PRICE>{marketData.current ? <span>$ {marketData.current}</span> : <Spin size="small" />}</PRICE>
     </STATS>
   )
 }

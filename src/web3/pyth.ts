@@ -41,7 +41,7 @@ const getMultipleAccounts = async (connection: any, keys: string[], commitment: 
   return { keys, array }
 }
 
-export const getPriceFromPriceAccount = (product: AccountInfo<any>) => {
+export const getPriceFromPythPriceAccount = (product: AccountInfo<any>) => {
   return parsePriceData(product.data).price
 }
 
