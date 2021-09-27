@@ -15,9 +15,8 @@ export const TVChartContainer: FC<{ interval: string; symbol: string }> = ({ int
   const { mode } = useDarkMode()
   const tvWidget = useRef<IChartingLibraryWidget | null>()
 
-  const chartProperties = JSON.parse(localStorage.getItem('chartproperties') || '{}')
-
   useEffect(() => {
+    const chartProperties = JSON.parse(localStorage.getItem('chartproperties') || '{}')
     const savedProperties = flatten(chartProperties, {
       restrictTo: ['scalesProperties', 'tradingProperties']
     })

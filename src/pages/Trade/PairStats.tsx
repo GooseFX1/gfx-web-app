@@ -54,7 +54,7 @@ export const PairStats: FC<{ decimals: number; market: string; symbol: string }>
 
   const asset = useMemo(() => getAssetFromSymbol(symbol), [getAssetFromSymbol, symbol])
   const marketData = useMemo(() => marketsData[symbol], [marketsData, symbol])
-  const change24HIcon = useMemo(() => `price_${marketData.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData, symbol])
+  const change24HIcon = useMemo(() => `price_${marketData.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData])
   const formattedSymbol = useMemo(() => formatSymbol(symbol), [formatSymbol, symbol])
 
   const handleClick = () => {
