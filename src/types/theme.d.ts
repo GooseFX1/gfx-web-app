@@ -16,6 +16,7 @@ export interface Colors {
   bg1: Color
   bg2: Color
   bg3: Color
+  bg4: Color
   grey1: Color
   grey2: Color
   grey3: Color
@@ -26,7 +27,6 @@ export interface Colors {
   appLayoutFooterBorder: Color
   appLayoutFooterToggle: Color
   textBox: Color
-  tokenRegistryWallet: Color
   walletModalWallet: Color
 
   // primary

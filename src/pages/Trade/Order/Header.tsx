@@ -1,9 +1,13 @@
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import styled from 'styled-components'
 import { useMarket } from '../../../context'
-import { CenteredImg, MainText } from '../../../styles'
+import { CenteredImg, MainText, SVGToWhite } from '../../../styles'
 
 export type Side = 'buy' | 'sell'
+
+const ARROW = styled(CenteredImg)`
+  ${({ theme }) => theme.measurements(theme.margins['2x'])};
+`
 
 const CHANGE = styled(CenteredImg)`
   display: flex;
@@ -22,13 +26,14 @@ const CHANGE = styled(CenteredImg)`
 
 const ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['4x'])}
-  margin-right: ${({ theme }) => theme.margins['1.5x']};
 `
 
 const INFO = styled.div`
+  width: 100%;
+  margin: 0 ${({ theme }) => theme.margins['1.5x']};
+
   > div {
     display: flex;
-    justify-content: space-between;
     align-items: center;
   }
 `
@@ -41,10 +46,38 @@ const PRICE = MainText(styled.span`
   text-align: left;
 `)
 
-const SIDE = styled.div`
+const SIDE = styled.div<{ $side: Side }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
+  span {
+    cursor: pointer;
+    color: ${({ theme }) => theme.grey4};
+    font-size: 12px;
+    font-weight: bold;
+    
+    &:hover {
+      color: white;
+    }
+    
+    &:${({ $side }) => $side === 'buy' ? 'first' : 'last'}-child {
+      position: relative;
+      transition: none;
+      color: white;
+      
+      &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        bottom: calc(-1 * (2px + ${({ theme }) => theme.margins['1.5x']}));
+        left: calc(-1 * ${({ theme }) => theme.margins['2.5x']});
+        width: calc(100% + 2 * ${({ theme }) => theme.margins['2.5x']});
+        height: 2.5px;
+        background-color: ${({ theme }) => theme.secondary2};
+      }
+    }
+  }
 `
 
 const TICKER = MainText(styled.span`
@@ -54,13 +87,13 @@ const TICKER = MainText(styled.span`
 
 const WRAPPER = styled.div`
   display: flex;
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['6x']}
-    ${({ theme }) => theme.margins['0.5x']} ${({ theme }) => theme.margins['1x']};
+  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['1.5x']} ${({ theme }) => theme.margins['1.5x']};
   border: solid 2.5px #9f9f9f;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
+  background-color: ${({ theme }) => theme.bg4};
 `
 
 export const Header: FC<{ setSide: Dispatch<SetStateAction<Side>>; side: Side }> = ({ setSide, side }) => {
@@ -87,11 +120,14 @@ export const Header: FC<{ setSide: Dispatch<SetStateAction<Side>>; side: Side }>
           </CHANGE>
         </div>
         <PRICE>Price: $ {marketData.current}</PRICE>
-        <SIDE>
-          <span>Buy</span>
-          <span>Sell</span>
+        <SIDE $side={side}>
+          <span onClick={() => setSide('buy')}>Buy</span>
+          <span onClick={() => setSide('sell')}>Sell</span>
         </SIDE>
       </INFO>
+      <ARROW>
+        <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`} alt="" />
+      </ARROW>
     </WRAPPER>
   )
 }

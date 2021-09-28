@@ -11,14 +11,13 @@ const WRAPPER = styled.div`
   display: flex;
   height: 100%;
   width: 100vw;
-  color: ${({ theme }) => theme.text1};
 
   > div:first-child {
-    width: calc(100% - 250px - 2 * ${({ theme }) => theme.margins['3x']});
+    width: calc(100% - 265px - 2 * ${({ theme }) => theme.margins['3x']});
   }
 
   > div:last-child {
-    min-width: 250px;
+    min-width: 265px;
     margin: 0 ${({ theme }) => theme.margins['3x']};
   }
 `

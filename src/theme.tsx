@@ -58,6 +58,7 @@ export function colors(mode: string): Colors {
     bg1: mode === 'dark' ? '#1e1e1e' : white,
     bg2: mode === 'dark' ? '#1e1e1e' : '#eeeeee',
     bg3: mode === 'dark' ? '#2a2a2a' : white,
+    bg4: mode === 'dark' ? '#191919' : '#ababab',
     grey1: '#434343',
     grey2: '#4e4e4e',
     grey3: '#2a2a2a',
@@ -68,7 +69,6 @@ export function colors(mode: string): Colors {
     appLayoutFooterBorder: mode === 'dark' ? '#c4c4c4' : '#dedede',
     appLayoutFooterToggle: mode === 'dark' ? '#0c0c0c' : '#e1e1e1',
     textBox: mode === 'dark' ? '#474747' : '#808080',
-    tokenRegistryWallet: mode === 'dark' ? '#191919' : '#ababab',
     walletModalWallet: mode === 'dark' ? '#1e1e1e' : '#e1e1e1',
 
     // primary colors

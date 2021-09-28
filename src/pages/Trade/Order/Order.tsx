@@ -4,6 +4,7 @@ import { Header, Side } from './Header'
 
 const WRAPPER = styled.div`
   margin: ${({ theme }) => theme.margins['3x']} 0;
+  border-radius: 10px;
   background-color: ${({ theme }) => theme.bg3};
 `
 
