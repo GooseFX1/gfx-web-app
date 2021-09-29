@@ -35,11 +35,10 @@ interface IMarketsData {
   [symbol: string]: IMarketData
 }
 
-type Order = [number, number, BN, BN]
+export type MarketSide = 'asks' | 'bids'
 
-interface IOrderBook {
-  asks: Order[],
-  bids: Order[]
+type OrderBook = {
+  [x in MarketSide]: [number, number, BN, BN][]
 }
 
 interface IMarketConfig {
@@ -47,14 +46,12 @@ interface IMarketConfig {
   getAskFromSymbol: (x: string) => string
   getBidFromSymbol: (x: string) => string
   marketsData: IMarketsData
-  orderBook: IOrderBook
+  orderBook: OrderBook
   selectedMarket: IMarket
   setMarketsData: Dispatch<SetStateAction<IMarketsData>>
-  setOrderBook: Dispatch<SetStateAction<IOrderBook>>
+  setOrderBook: Dispatch<SetStateAction<OrderBook>>
   setSelectedMarket: Dispatch<SetStateAction<IMarket>>
 }
-
-export type MarketSide = 'asks' | 'bids'
 
 export const FEATURED_PAIRS_LIST = [
   { decimals: 1, market: 'serum', symbol: 'BTC/USDC' },
@@ -76,7 +73,7 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
       {}
     )
   )
-  const [orderBook, setOrderBook] = useState<IOrderBook>({ asks: [], bids: [] })
+  const [orderBook, setOrderBook] = useState<OrderBook>({ asks: [], bids: [] })
   const [selectedMarket, setSelectedMarket] = useState<IMarket>(FEATURED_PAIRS_LIST[0])
 
   const formatSymbol = (symbol: string) => symbol.replace('/', ' / ')
@@ -143,6 +140,7 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     return () => {
       cancelled = true
+      setOrderBook({ asks: [], bids: [] })
       subscriptions.forEach((subscription) => connection.removeAccountChangeListener(subscription))
     }
   }, [connection, handlePythSubscription])
@@ -160,9 +158,11 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
               const orderBook = Orderbook.decode(market, account.data).getL2(20)
               const newPrice = { [symbol]: { change24H: 0, current: Number(orderBook[0][0].toFixed(decimals)) } }
               setMarketsData((prevState: IMarketsData) => ({ ...prevState, ...newPrice }))
-              setOrderBook(prevState => ({ ...prevState, asks: { ...orderBook }}))
+              setOrderBook(prevState => ({ ...prevState, asks: [...orderBook] }))
             }),
-            subscribeToSerumOrderBook(connection, symbol, 'bids', (account, market) => setOrderBook(prevState => ({ ...prevState, bids: { ...Orderbook.decode(market, account.data).getL2(20) }})))
+            subscribeToSerumOrderBook(connection, symbol, 'bids', (account, market) => setOrderBook(prevState => (
+              { ...prevState, bids: [...Orderbook.decode(market, account.data).getL2(20) ]}
+            )))
           ])
           subs.forEach((sub) => subscriptions.push(sub))
         } catch (e: any) {

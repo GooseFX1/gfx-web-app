@@ -17,7 +17,10 @@ const WRAPPER = styled.div`
   }
 
   > div:last-child {
+    display: flex;
+    flex-direction: column;
     min-width: 265px;
+    height: 100%;
     margin: 0 ${({ theme }) => theme.margins['3x']};
   }
 `
