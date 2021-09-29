@@ -4,18 +4,28 @@ import { AmountField } from './shared'
 import { Selector } from './Selector'
 import { useAccounts, useRates, useSwap } from '../../context'
 
-const WRAPPER = styled.div`
-  margin-top: ${({ theme }) => theme.margins['2x']};
-  > span {
-    display: flex;
-    color: ${({ theme }) => theme.text1};
-  }
-  > div > span {
+const AMOUNT = styled.div`
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: flex-end;
+
+  span {
     display: block;
-    padding: 18px 20px 0 120px;
+    padding: 0 20px 0 120px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 100%;
+  }
+`
+
+const WRAPPER = styled.div`
+  margin-top: ${({ theme }) => theme.margins['2x']};
+
+  > span {
+    display: flex;
+    color: ${({ theme }) => theme.text1};
   }
 `
 
@@ -31,9 +41,10 @@ export const SwapTo: FC<{ height: string }> = ({ height }) => {
     return parseFloat(getUIAmountString(address).slice(0, Math.min(decimals, 8)))
   }, [getUIAmountString, tokenB])
 
-  const uiAmount = useMemo(() => {
-    return tokenB && outTokenAmount > 0 ? (outTokenAmount / 10 ** tokenB.decimals).toFixed(tokenB.decimals) : '0'
-  }, [outTokenAmount, tokenB])
+  const uiAmount = useMemo(
+    () => (tokenB && outTokenAmount > 0 ? (outTokenAmount / 10 ** tokenB.decimals).toFixed(tokenB.decimals) : '0'),
+    [outTokenAmount, tokenB]
+  )
 
   return (
     <WRAPPER>
@@ -44,7 +55,9 @@ export const SwapTo: FC<{ height: string }> = ({ height }) => {
         $USDCValue={(rates.outValue * parseFloat(uiAmount)).toString().slice(0, 8)}
       >
         <Selector height={height} otherToken={tokenA} setToken={setTokenB} token={tokenB} />
-        <span>{uiAmount}</span>
+        <AMOUNT>
+          <span>{uiAmount}</span>
+        </AMOUNT>
       </AmountField>
     </WRAPPER>
   )
