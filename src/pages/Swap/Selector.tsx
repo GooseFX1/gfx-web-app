@@ -13,6 +13,7 @@ const BODY = styled.div`
 
 const CLICKER = styled(SpaceBetweenDiv)`
   position: relative;
+  width: 67%;
 
   > div > span {
     font-size: 16px;
@@ -30,7 +31,7 @@ const CLICKER = styled(SpaceBetweenDiv)`
 `
 
 const CLICKER_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['2.5x'])}
+  ${({ theme }) => theme.measurements(theme.margins['2x'])}
   margin-left: ${({ theme }) => theme.margins['1x']};
   ${({ theme }) => theme.roundedBorders}
 `

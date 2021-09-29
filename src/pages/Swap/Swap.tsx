@@ -56,7 +56,7 @@ export const Swap: FC = () => {
     setSettingsModalVisible(true)
   }
 
-  const height = '55px'
+  const height = '65px'
   const localCSS = css`
     .ant-input {
       height: ${height};
