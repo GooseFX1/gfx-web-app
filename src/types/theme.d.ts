@@ -40,6 +40,8 @@ export interface Colors {
   secondary4: Color
 
   // other
+  asks: Color
+  bids: Color
   error: Color
   success: Color
 }

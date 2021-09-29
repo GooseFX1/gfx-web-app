@@ -9,6 +9,7 @@ import React, {
   useEffect,
   useState
 } from 'react'
+import BN from 'bn.js'
 import { Orderbook } from '@project-serum/serum'
 import { useConnectionConfig } from './settings'
 import { notify } from '../utils'
@@ -34,14 +35,26 @@ interface IMarketsData {
   [symbol: string]: IMarketData
 }
 
+type Order = [number, number, BN, BN]
+
+interface IOrderBook {
+  asks: Order[],
+  bids: Order[]
+}
+
 interface IMarketConfig {
   formatSymbol: (x: string) => string
-  getAssetFromSymbol: (x: string) => string
+  getAskFromSymbol: (x: string) => string
+  getBidFromSymbol: (x: string) => string
   marketsData: IMarketsData
+  orderBook: IOrderBook
   selectedMarket: IMarket
   setMarketsData: Dispatch<SetStateAction<IMarketsData>>
+  setOrderBook: Dispatch<SetStateAction<IOrderBook>>
   setSelectedMarket: Dispatch<SetStateAction<IMarket>>
 }
+
+export type MarketSide = 'asks' | 'bids'
 
 export const FEATURED_PAIRS_LIST = [
   { decimals: 1, market: 'serum', symbol: 'BTC/USDC' },
@@ -63,10 +76,12 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
       {}
     )
   )
+  const [orderBook, setOrderBook] = useState<IOrderBook>({ asks: [], bids: [] })
   const [selectedMarket, setSelectedMarket] = useState<IMarket>(FEATURED_PAIRS_LIST[0])
 
   const formatSymbol = (symbol: string) => symbol.replace('/', ' / ')
-  const getAssetFromSymbol = (symbol: string): string => symbol.slice(0, symbol.indexOf('/'))
+  const getAskFromSymbol = (symbol: string): string => symbol.slice(0, symbol.indexOf('/'))
+  const getBidFromSymbol = (symbol: string): string => symbol.slice(symbol.indexOf('/') + 1)
 
   const handlePythSubscription = useCallback(
     async (markets: IMarket[], subscriptions: number[]) => {
@@ -104,31 +119,24 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [connection]
   )
 
-  const handleSerumSubscription = useCallback(
-    async (symbol: string, decimals: number, subscriptions: number[]) => {
-      try {
-        subscriptions.push(
-          await subscribeToSerumOrderBook(connection, symbol, 'ask', (account, market) => {
-            const [[price]] = Orderbook.decode(market, account.data).getL2(1)
-            const newPrice = { [symbol]: { change24H: 0, current: Number(price.toFixed(decimals)) } }
-            setMarketsData((prevState: IMarketsData) => ({ ...prevState, ...newPrice }))
-          })
-        )
-      } catch (e: any) {
-        notify({ type: 'error', message: 'Error fetching serum markets', icon: 'error', description: e.message })
-      }
-    },
-    [connection]
-  )
-
   useEffect(() => {
     let cancelled = false
     const subscriptions: number[] = []
 
     const serumMarkets = FEATURED_PAIRS_LIST.filter(({ market }) => market === 'serum')
-    serumMarkets.forEach(
-      ({ decimals, symbol }) => !cancelled && handleSerumSubscription(symbol, decimals, subscriptions)
-    )
+    serumMarkets.forEach(async ({ decimals, symbol }) => {
+      if (!cancelled) {
+        try {
+          subscriptions.push(await subscribeToSerumOrderBook(connection, symbol, 'asks', (account, market) => {
+            const [[price]] = Orderbook.decode(market, account.data).getL2(1)
+            const newPrice = { [symbol]: { change24H: 0, current: Number(price.toFixed(decimals)) } }
+            setMarketsData((prevState: IMarketsData) => ({ ...prevState, ...newPrice }))
+          }))
+        } catch (e: any) {
+          notify({ type: 'error', message: 'Error fetching serum markets', icon: 'error', description: e.message })
+        }
+      }
+    })
 
     const pythMarkets = FEATURED_PAIRS_LIST.filter(({ market }) => market === 'pyth')
     !cancelled && handlePythSubscription(pythMarkets, subscriptions)
@@ -137,7 +145,7 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
       cancelled = true
       subscriptions.forEach((subscription) => connection.removeAccountChangeListener(subscription))
     }
-  }, [connection, handlePythSubscription, handleSerumSubscription])
+  }, [connection, handlePythSubscription])
 
   useEffect(() => {
     let cancelled = false
@@ -145,7 +153,22 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     const { decimals, market, symbol } = selectedMarket
     if (market === 'serum') {
-      !cancelled && handleSerumSubscription(symbol, decimals, subscriptions)
+      !cancelled && (async () => {
+        try {
+          const subs = await Promise.all([
+            subscribeToSerumOrderBook(connection, symbol, 'asks', (account, market) => {
+              const orderBook = Orderbook.decode(market, account.data).getL2(20)
+              const newPrice = { [symbol]: { change24H: 0, current: Number(orderBook[0][0].toFixed(decimals)) } }
+              setMarketsData((prevState: IMarketsData) => ({ ...prevState, ...newPrice }))
+              setOrderBook(prevState => ({ ...prevState, asks: { ...orderBook }}))
+            }),
+            subscribeToSerumOrderBook(connection, symbol, 'bids', (account, market) => setOrderBook(prevState => ({ ...prevState, bids: { ...Orderbook.decode(market, account.data).getL2(20) }})))
+          ])
+          subs.forEach((sub) => subscriptions.push(sub))
+        } catch (e: any) {
+          notify({ type: 'error', message: 'Error fetching serum order book', icon: 'error', description: e.message })
+        }
+      })()
     } else if (market === 'pyth') {
       !cancelled && handlePythSubscription([selectedMarket], subscriptions)
     }
@@ -154,16 +177,19 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
       cancelled = true
       subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
     }
-  }, [connection, handlePythSubscription, handleSerumSubscription, selectedMarket])
+  }, [connection, handlePythSubscription, selectedMarket])
 
   return (
     <MarketContext.Provider
       value={{
         formatSymbol,
-        getAssetFromSymbol,
+        getAskFromSymbol,
+        getBidFromSymbol,
         marketsData,
+        orderBook,
         selectedMarket,
         setMarketsData,
+        setOrderBook,
         setSelectedMarket
       }}
     >
@@ -180,10 +206,13 @@ export const useMarket = (): IMarketConfig => {
 
   return {
     formatSymbol: context.formatSymbol,
-    getAssetFromSymbol: context.getAssetFromSymbol,
+    getAskFromSymbol: context.getAskFromSymbol,
+    getBidFromSymbol: context.getBidFromSymbol,
     marketsData: context.marketsData,
+    orderBook: context.orderBook,
     selectedMarket: context.selectedMarket,
     setMarketsData: context.setMarketsData,
+    setOrderBook: context.setOrderBook,
     setSelectedMarket: context.setSelectedMarket
   }
 }

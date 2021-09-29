@@ -1,8 +1,7 @@
-import type { Colors, Text } from './types/theme'
-
 import React from 'react'
 import { ThemeProvider as StyledComponentsThemeProvider, css, DefaultTheme } from 'styled-components'
 import { useDarkMode } from './context'
+import type { Colors, Text } from './types/theme'
 
 const WIDTH_UP_TO = {
   upToExtraSmall: 500,
@@ -82,6 +81,8 @@ export function colors(mode: string): Colors {
     secondary4: '#d655fe',
 
     // other
+    asks: '#9b2c2c',
+    bids: '#459631',
     error: '#D60000',
     success: '#27AE60'
   }

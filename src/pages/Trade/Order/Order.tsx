@@ -1,19 +1,29 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
-import { Header, Side } from './Header'
+import { Header } from './Header'
+import { OrderButton } from './OrderButton'
+import { TypeSelector } from './TypeSelector'
+import { OrderProvider } from '../../../context'
 
 const WRAPPER = styled.div`
   margin: ${({ theme }) => theme.margins['3x']} 0;
+  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['1.5x']};
   border-radius: 10px;
   background-color: ${({ theme }) => theme.bg3};
+  
+  > div:not(:last-child) {
+    margin-bottom: ${({ theme }) => theme.margins['1.5x']};
+  }
 `
 
 export const Order: FC = () => {
-  const [side, setSide] = useState<Side>('buy')
-
   return (
-    <WRAPPER>
-      <Header setSide={setSide} side={side} />
-    </WRAPPER>
+    <OrderProvider>
+      <WRAPPER>
+        <Header />
+        <TypeSelector />
+        <OrderButton />
+      </WRAPPER>
+    </OrderProvider>
   )
 }

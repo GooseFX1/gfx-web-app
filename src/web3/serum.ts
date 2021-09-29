@@ -1,5 +1,6 @@
 import { Market, MARKETS } from '@project-serum/serum'
 import { AccountInfo, Connection } from '@solana/web3.js'
+import { MarketSide } from '../context'
 
 export const getSerumAsks = async (connection: Connection, symbol: string, canBeDeprecated: boolean = false) => {
   const { address, programId } = getSerumMarketInfo(symbol, canBeDeprecated)
@@ -32,11 +33,10 @@ export const getSerumMarketInfo = (symbol: string, canBeDeprecated: boolean = fa
 export const subscribeToSerumOrderBook = async (
   connection: Connection,
   symbol: string,
-  side: 'ask' | 'bid',
+  side: MarketSide,
   callback: (account: AccountInfo<Buffer>, market: Market) => void
 ): Promise<number> => {
   const { address, programId } = getSerumMarketInfo(symbol)
   const market = await Market.load(connection, address, undefined, programId)
-  const { asks, bids } = market.decoded
-  return connection.onAccountChange(side === 'ask' ? asks : bids, (account) => callback(account, market))
+  return connection.onAccountChange(market.decoded[side], (account) => callback(account, market))
 }

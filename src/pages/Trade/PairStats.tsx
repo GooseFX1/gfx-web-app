@@ -50,9 +50,9 @@ const STATS = styled.div`
 `
 
 export const PairStats: FC<{ decimals: number; market: string; symbol: string }> = ({ decimals, market, symbol }) => {
-  const { formatSymbol, getAssetFromSymbol, marketsData, selectedMarket, setSelectedMarket } = useMarket()
+  const { formatSymbol, getAskFromSymbol, marketsData, selectedMarket, setSelectedMarket } = useMarket()
 
-  const asset = useMemo(() => getAssetFromSymbol(symbol), [getAssetFromSymbol, symbol])
+  const asset = useMemo(() => getAskFromSymbol(symbol), [getAskFromSymbol, symbol])
   const marketData = useMemo(() => marketsData[symbol], [marketsData, symbol])
   const change24HIcon = useMemo(() => `price_${marketData.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData])
   const formattedSymbol = useMemo(() => formatSymbol(symbol), [formatSymbol, symbol])

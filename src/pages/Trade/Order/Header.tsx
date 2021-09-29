@@ -1,9 +1,7 @@
-import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
-import { useMarket } from '../../../context'
+import { AVAILABLE_ORDERS, OrderSide, useMarket, useOrder } from '../../../context'
 import { CenteredImg, MainText, SVGToWhite } from '../../../styles'
-
-export type Side = 'buy' | 'sell'
 
 const ARROW = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['2x'])};
@@ -46,7 +44,7 @@ const PRICE = MainText(styled.span`
   text-align: left;
 `)
 
-const SIDE = styled.div<{ $side: Side }>`
+const SIDE = styled.div<{ $side: OrderSide }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -70,8 +68,8 @@ const SIDE = styled.div<{ $side: Side }>`
         content: '';
         display: block;
         position: absolute;
-        bottom: calc(-1 * (2px + ${({ theme }) => theme.margins['1.5x']}));
-        left: calc(-1 * ${({ theme }) => theme.margins['2.5x']});
+        bottom: -14px;
+        left: -${({ theme }) => theme.margins['2.5x']};
         width: calc(100% + 2 * ${({ theme }) => theme.margins['2.5x']});
         height: 2.5px;
         background-color: ${({ theme }) => theme.secondary2};
@@ -87,6 +85,7 @@ const TICKER = MainText(styled.span`
 
 const WRAPPER = styled.div`
   display: flex;
+  margin: -${({ theme }) => theme.margins['2x']};
   padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['1.5x']} ${({ theme }) => theme.margins['1.5x']};
   border: solid 2.5px #9f9f9f;
   border-top-left-radius: 10px;
@@ -96,13 +95,17 @@ const WRAPPER = styled.div`
   background-color: ${({ theme }) => theme.bg4};
 `
 
-export const Header: FC<{ setSide: Dispatch<SetStateAction<Side>>; side: Side }> = ({ setSide, side }) => {
-  const { formatSymbol, getAssetFromSymbol, marketsData, selectedMarket } = useMarket()
+export const Header: FC = () => {
+  const { formatSymbol, getAskFromSymbol, marketsData, selectedMarket } = useMarket()
+  const { order, setOrder } = useOrder()
 
-  const asset = useMemo(() => getAssetFromSymbol(selectedMarket.symbol), [getAssetFromSymbol, selectedMarket])
+  const asset = useMemo(() => getAskFromSymbol(selectedMarket.symbol), [getAskFromSymbol, selectedMarket])
   const marketData = useMemo(() => marketsData[selectedMarket.symbol], [marketsData, selectedMarket.symbol])
   const change24HIcon = useMemo(() => `price_${marketData.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData])
   const formattedSymbol = useMemo(() => formatSymbol(selectedMarket.symbol), [formatSymbol, selectedMarket])
+
+  // @ts-ignore
+  const handleClick = (selectedSide: OrderSide) => setOrder(AVAILABLE_ORDERS.find(({ side }) => selectedSide === side))
 
   return (
     <WRAPPER>
@@ -120,9 +123,9 @@ export const Header: FC<{ setSide: Dispatch<SetStateAction<Side>>; side: Side }>
           </CHANGE>
         </div>
         <PRICE>Price: $ {marketData.current}</PRICE>
-        <SIDE $side={side}>
-          <span onClick={() => setSide('buy')}>Buy</span>
-          <span onClick={() => setSide('sell')}>Sell</span>
+        <SIDE $side={order.side}>
+          <span onClick={() => handleClick('buy')}>Buy</span>
+          <span onClick={() => handleClick('sell')}>Sell</span>
         </SIDE>
       </INFO>
       <ARROW>
