@@ -72,12 +72,14 @@ export const PairStats: FC<{ decimals: number; market: string; symbol: string }>
           </ASSET_ICON>
           <span>{formattedSymbol}</span>
         </div>
-        <div>
-          <CHANGE_ICON>
-            <img src={`${process.env.PUBLIC_URL}/img/assets/${change24HIcon}`} alt="" />
-          </CHANGE_ICON>
-          <span>{marketData.change24H}</span>
-        </div>
+        {marketData.change24H !== 0 && (
+          <div>
+            <CHANGE_ICON>
+              <img src={`${process.env.PUBLIC_URL}/img/assets/${change24HIcon}`} alt="" />
+            </CHANGE_ICON>
+            <span>{marketData.change24H}</span>
+          </div>
+        )}
       </INFO>
       <PRICE>{marketData.current ? <span>$ {marketData.current}</span> : <Spin size="small" />}</PRICE>
     </STATS>

@@ -11,11 +11,7 @@ const AMOUNT = styled.div`
   justify-content: flex-end;
 
   span {
-    display: block;
     padding: 0 20px 0 120px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     line-height: 100%;
   }
 `

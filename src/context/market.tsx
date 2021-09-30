@@ -63,17 +63,18 @@ export const FEATURED_PAIRS_LIST = [
   { decimals: 2, market: 'pyth', symbol: 'TSLA/USD' }
 ]
 
+const DEFAULT_MARKETS_DATA = FEATURED_PAIRS_LIST.reduce(
+  (acc: IMarketsData, it) => ({ ...acc, ...{ [it.symbol]: { change24H: 0, current: 0 } } }),
+  {}
+)
+const DEFAULT_ORDER_BOOK = { asks: [], bids: [] }
+
 const MarketContext = createContext<IMarketConfig | null>(null)
 
 export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
-  const [marketsData, setMarketsData] = useState<IMarketsData>(
-    FEATURED_PAIRS_LIST.reduce(
-      (acc: IMarketsData, it) => ({ ...acc, ...{ [it.symbol]: { change24H: 0, current: 0 } } }),
-      {}
-    )
-  )
-  const [orderBook, setOrderBook] = useState<OrderBook>({ asks: [], bids: [] })
+  const [marketsData, setMarketsData] = useState<IMarketsData>(DEFAULT_MARKETS_DATA)
+  const [orderBook, setOrderBook] = useState<OrderBook>(DEFAULT_ORDER_BOOK)
   const [selectedMarket, setSelectedMarket] = useState<IMarket>(FEATURED_PAIRS_LIST[0])
 
   const formatSymbol = (symbol: string) => symbol.replace('/', ' / ')
@@ -140,7 +141,8 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     return () => {
       cancelled = true
-      setOrderBook({ asks: [], bids: [] })
+      setMarketsData(DEFAULT_MARKETS_DATA)
+      setOrderBook(DEFAULT_ORDER_BOOK)
       subscriptions.forEach((subscription) => connection.removeAccountChangeListener(subscription))
     }
   }, [connection, handlePythSubscription])
@@ -175,6 +177,7 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     return () => {
       cancelled = true
+      setOrderBook(DEFAULT_ORDER_BOOK)
       subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
     }
   }, [connection, handlePythSubscription, selectedMarket])

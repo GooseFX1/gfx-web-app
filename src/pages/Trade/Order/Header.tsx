@@ -1,4 +1,5 @@
 import React, { FC, useMemo } from 'react'
+import { Skeleton } from 'antd'
 import styled from 'styled-components'
 import { AVAILABLE_ORDERS, OrderSide, useMarket, useOrder } from '../../../context'
 import { CenteredImg, MainText, SVGToWhite } from '../../../styles'
@@ -9,7 +10,6 @@ const ARROW = styled(CenteredImg)`
 
 const CHANGE = styled(CenteredImg)`
   display: flex;
-  margin-left: ${({ theme }) => theme.margins['1.5x']};
 
   > div {
     ${({ theme }) => theme.measurements(theme.margins['1.5x'])}
@@ -79,6 +79,7 @@ const SIDE = styled.div<{ $side: OrderSide }>`
 `
 
 const TICKER = MainText(styled.span`
+  margin-right: ${({ theme }) => theme.margins['1.5x']};
   font-size: 12px;
   font-weight: bold;
 `)
@@ -94,6 +95,10 @@ const WRAPPER = styled.div`
   border-bottom-right-radius: 20px;
   background-color: ${({ theme }) => theme.bg4};
 `
+
+const Loader: FC = () => {
+  return <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
+}
 
 export const Header: FC = () => {
   const { formatSymbol, getAskFromSymbol, marketsData, selectedMarket } = useMarket()
@@ -115,14 +120,21 @@ export const Header: FC = () => {
       <INFO>
         <div>
           <TICKER>{formattedSymbol}</TICKER>
-          <CHANGE>
-            <CenteredImg>
-              <img src={`${process.env.PUBLIC_URL}/img/assets/${change24HIcon}`} alt="" />
-            </CenteredImg>
-            <span>{marketData.change24H}</span>
-          </CHANGE>
+          {!marketData.change24H ? <Loader /> : (
+            <CHANGE>
+              <CenteredImg>
+                <img src={`${process.env.PUBLIC_URL}/img/assets/${change24HIcon}`} alt=""/>
+              </CenteredImg>
+              <span>{marketData.change24H}</span>
+            </CHANGE>
+          )}
         </div>
-        <PRICE>Price: $ {marketData.current}</PRICE>
+        <PRICE>
+          {!marketData.current
+            ? <Loader />
+            : <>Price: $ {marketData.current}</>
+          }
+        </PRICE>
         <SIDE $side={order.side}>
           <span onClick={() => handleClick('buy')}>Buy</span>
           <span onClick={() => handleClick('sell')}>Sell</span>
