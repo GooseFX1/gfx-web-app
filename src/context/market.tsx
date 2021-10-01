@@ -22,7 +22,7 @@ import {
 
 interface IMarket {
   decimals: number
-  market: string
+  market: MarketType
   symbol: string
 }
 
@@ -53,14 +53,16 @@ interface IMarketConfig {
   setSelectedMarket: Dispatch<SetStateAction<IMarket>>
 }
 
+export type MarketType = 'crypto' | 'synth'
+
 export const FEATURED_PAIRS_LIST = [
-  { decimals: 1, market: 'serum', symbol: 'BTC/USDC' },
-  { decimals: 2, market: 'serum', symbol: 'ETH/USDC' },
-  { decimals: 3, market: 'serum', symbol: 'SOL/USDC' },
-  { decimals: 2, market: 'pyth', symbol: 'LTC/USD' },
-  { decimals: 3, market: 'serum', symbol: 'LINK/USDC' },
-  { decimals: 2, market: 'pyth', symbol: 'AAPL/USD' },
-  { decimals: 2, market: 'pyth', symbol: 'TSLA/USD' }
+  { decimals: 1, market: 'crypto' as MarketType, symbol: 'BTC/USDC' },
+  { decimals: 2, market: 'crypto' as MarketType, symbol: 'ETH/USDC' },
+  { decimals: 3, market: 'crypto' as MarketType, symbol: 'SOL/USDC' },
+  { decimals: 2, market: 'synth' as MarketType, symbol: 'LTC/USD' },
+  { decimals: 3, market: 'crypto' as MarketType, symbol: 'LINK/USDC' },
+  { decimals: 2, market: 'synth' as MarketType, symbol: 'AAPL/USD' },
+  { decimals: 2, market: 'synth' as MarketType, symbol: 'TSLA/USD' }
 ]
 
 const DEFAULT_MARKETS_DATA = FEATURED_PAIRS_LIST.reduce(
@@ -121,23 +123,25 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
     let cancelled = false
     const subscriptions: number[] = []
 
-    const serumMarkets = FEATURED_PAIRS_LIST.filter(({ market }) => market === 'serum')
-    serumMarkets.forEach(async ({ decimals, symbol }) => {
+    const cryptoMarkets = FEATURED_PAIRS_LIST.filter(({ market }) => market === 'crypto')
+    cryptoMarkets.forEach(async ({ decimals, symbol }) => {
       if (!cancelled) {
         try {
-          subscriptions.push(await subscribeToSerumOrderBook(connection, symbol, 'asks', (account, market) => {
-            const [[price]] = Orderbook.decode(market, account.data).getL2(1)
-            const newPrice = { [symbol]: { change24H: 0, current: Number(price.toFixed(decimals)) } }
-            setMarketsData((prevState: IMarketsData) => ({ ...prevState, ...newPrice }))
-          }))
+          subscriptions.push(
+            await subscribeToSerumOrderBook(connection, symbol, 'asks', (account, market) => {
+              const [[price]] = Orderbook.decode(market, account.data).getL2(1)
+              const newPrice = { [symbol]: { change24H: 0, current: Number(price.toFixed(decimals)) } }
+              setMarketsData((prevState: IMarketsData) => ({ ...prevState, ...newPrice }))
+            })
+          )
         } catch (e: any) {
           notify({ type: 'error', message: 'Error fetching serum markets', icon: 'error', description: e.message })
         }
       }
     })
 
-    const pythMarkets = FEATURED_PAIRS_LIST.filter(({ market }) => market === 'pyth')
-    !cancelled && handlePythSubscription(pythMarkets, subscriptions)
+    const synthMarkets = FEATURED_PAIRS_LIST.filter(({ market }) => market === 'synth')
+    !cancelled && handlePythSubscription(synthMarkets, subscriptions)
 
     return () => {
       cancelled = true
@@ -152,26 +156,30 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const subscriptions: number[] = []
 
     const { decimals, market, symbol } = selectedMarket
-    if (market === 'serum') {
-      !cancelled && (async () => {
-        try {
-          const subs = await Promise.all([
-            subscribeToSerumOrderBook(connection, symbol, 'asks', (account, market) => {
-              const orderBook = Orderbook.decode(market, account.data).getL2(20)
-              const newPrice = { [symbol]: { change24H: 0, current: Number(orderBook[0][0].toFixed(decimals)) } }
-              setMarketsData((prevState: IMarketsData) => ({ ...prevState, ...newPrice }))
-              setOrderBook(prevState => ({ ...prevState, asks: [...orderBook] }))
-            }),
-            subscribeToSerumOrderBook(connection, symbol, 'bids', (account, market) => setOrderBook(prevState => (
-              { ...prevState, bids: [...Orderbook.decode(market, account.data).getL2(20) ]}
-            )))
-          ])
-          subs.forEach((sub) => subscriptions.push(sub))
-        } catch (e: any) {
-          notify({ type: 'error', message: 'Error fetching serum order book', icon: 'error', description: e.message })
-        }
-      })()
-    } else if (market === 'pyth') {
+    if (market === 'crypto') {
+      !cancelled &&
+        (async () => {
+          try {
+            const subs = await Promise.all([
+              subscribeToSerumOrderBook(connection, symbol, 'asks', (account, market) => {
+                const orderBook = Orderbook.decode(market, account.data).getL2(22)
+                const newPrice = { [symbol]: { change24H: 0, current: Number(orderBook[0][0].toFixed(decimals)) } }
+                setMarketsData((prevState: IMarketsData) => ({ ...prevState, ...newPrice }))
+                setOrderBook((prevState) => ({ ...prevState, asks: [...orderBook] }))
+              }),
+              subscribeToSerumOrderBook(connection, symbol, 'bids', (account, market) =>
+                setOrderBook((prevState) => ({
+                  ...prevState,
+                  bids: [...Orderbook.decode(market, account.data).getL2(22)]
+                }))
+              )
+            ])
+            subs.forEach((sub) => subscriptions.push(sub))
+          } catch (e: any) {
+            notify({ type: 'error', message: 'Error fetching serum order book', icon: 'error', description: e.message })
+          }
+        })()
+    } else if (market === 'synth') {
       !cancelled && handlePythSubscription([selectedMarket], subscriptions)
     }
 

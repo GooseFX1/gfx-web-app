@@ -1,51 +1,49 @@
 import React, { FC, ReactNode, createContext, useContext, Dispatch, SetStateAction, useState } from 'react'
 
+export type OrderDisplayType = 'market' | 'limit'
 export type OrderSide = 'buy' | 'sell'
-export type OrderType = 'limit' | 'limitStop' | 'market' | 'marketStop'
+export type OrderType = 'limit' | 'ioc' | 'postOnly'
 
-export interface IOrder {
+interface IOrder {
+  display: OrderDisplayType
+  isHidden: boolean
+  price: number
   side: OrderSide
-  text: string
-  tooltip: string
+  size: number
   type: OrderType
 }
 
-export const AVAILABLE_ORDERS: IOrder[] = [
+interface IOrderDisplay {
+  display: OrderDisplayType
+  side: OrderSide
+  text: string
+  tooltip: string
+}
+
+export const AVAILABLE_ORDERS: IOrderDisplay[] = [
   {
+    display: 'market',
     side: 'buy',
     text: 'Market',
-    tooltip: 'Market order is executed immediately at the best price available in the market.',
-    type: 'market'
+    tooltip: 'Market order is executed immediately at the best price available in the market.'
   },
   {
+    display: 'limit',
     side: 'buy',
     text: 'Limit',
-    tooltip: 'Limit order is executed only when the market reaches the price you specify.',
-    type: 'limit'
+    tooltip: 'Limit order is executed only when the market reaches the price you specify.'
   },
   {
+    display: 'market',
     side: 'sell',
     text: 'Market',
-    tooltip: 'Market order is executed immediately at the best price available in the market.',
-    type: 'market'
+    tooltip: 'Market order is executed immediately at the best price available in the market.'
   },
   {
+    display: 'limit',
     side: 'sell',
     text: 'Limit',
-    tooltip: 'Limit order is executed only when the market reaches the price you specify.',
-    type: 'limit'
-  },
-  {
-    side: 'sell',
-    text: 'Stop - loss',
-    tooltip: 'The Stop - Loss order will be executed when the market price reaches the stop price you specify.',
-    type: 'marketStop'
-  },
-  {
-    side: 'sell',
-    text: 'Stop - limit',
-    tooltip: 'The Stop - Limit order will be executed when the market price reaches the limit price you specify.',
-    type: 'limitStop'
+    tooltip: 'Limit order is executed only when the market reaches the price you specify.'
   }
 ]
 
@@ -57,13 +55,16 @@ interface IOrderConfig {
 const OrderContext = createContext<IOrderConfig | null>(null)
 
 export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [order, setOrder] = useState<IOrder>(AVAILABLE_ORDERS[0])
+  const [order, setOrder] = useState<IOrder>({
+    display: 'market',
+    isHidden: true,
+    price: 0,
+    side: 'buy',
+    size: 0,
+    type: 'limit'
+  })
 
-  return (
-    <OrderContext.Provider value={{ order, setOrder }}>
-      {children}
-    </OrderContext.Provider>
-  )
+  return <OrderContext.Provider value={{ order, setOrder }}>{children}</OrderContext.Provider>
 }
 
 export const useOrder = (): IOrderConfig => {

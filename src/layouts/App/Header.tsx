@@ -5,6 +5,7 @@ import { More } from './More'
 import { Tabs } from './Tabs'
 import { useDarkMode } from '../../context'
 import { CenteredDiv } from '../../styles'
+import { APP_LAYOUT_HEADER_HEIGHT } from '../../styles/constants'
 
 const BRAND = styled.a`
   ${({ theme }) => theme.flexCenter}
@@ -39,6 +40,7 @@ const BUTTONS = styled(CenteredDiv)`
 const WRAPPER = styled.nav`
   ${({ theme }) => theme.flexCenter}
   width: 100%;
+  height: ${APP_LAYOUT_HEADER_HEIGHT};
   padding: ${({ theme }) => theme.margins['4x']};
   background-color: ${({ theme }) => theme.bg2};
   z-index: 300;

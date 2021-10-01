@@ -1,7 +1,7 @@
-import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { ArrowDropdown, Tooltip } from '../../../components'
-import { AVAILABLE_ORDERS, IOrder, OrderSide, useOrder } from '../../../context'
+import { AVAILABLE_ORDERS, OrderDisplayType, OrderSide, useOrder } from '../../../context'
 
 const OVERLAY = styled.div`
   ${({ theme }) => theme.flexCenter}
@@ -10,7 +10,7 @@ const OVERLAY = styled.div`
   padding: ${({ theme }) => theme.margins['1.5x']} 0;
   ${({ theme }) => theme.smallBorderRadius}
   background-color: ${({ theme }) => theme.grey5};
-  
+
   > span {
     ${({ theme }) => theme.flexCenter}
     width: 100%;
@@ -50,27 +50,31 @@ const Overlay: FC<{
 }> = ({ setDropdownVisible, side }) => {
   const { setOrder } = useOrder()
 
-  const handleClick = (order: IOrder) => {
-    setOrder(order)
+  const handleClick = (display: OrderDisplayType) => {
+    setOrder((prevState) => ({ ...prevState, display }))
     setDropdownVisible(false)
   }
 
   return (
     <OVERLAY>
       {AVAILABLE_ORDERS.filter(({ side: x }) => x === side).map((order, index) => (
-        <span key={index} onClick={() => handleClick(order)}>{order.text}</span>
+        <span key={index} onClick={() => handleClick(order.display)}>
+          {order.text}
+        </span>
       ))}
     </OVERLAY>
   )
 }
 
 export const TypeSelector: FC = () => {
-  const { order, setOrder } = useOrder()
+  const { order } = useOrder()
   const [arrowRotation, setArrowRotation] = useState(false)
   const [dropdownVisible, setDropdownVisible] = useState(false)
 
-  // @ts-ignore
-  useEffect(() => setOrder(AVAILABLE_ORDERS.find(({ side }) => order.side === side)), [order.side, setOrder])
+  const displayedOrder = useMemo(
+    () => AVAILABLE_ORDERS.find(({ display, side }) => display === order.display && side === order.side),
+    [order.display, order.side]
+  )
 
   const handleClick = () => {
     setDropdownVisible(!dropdownVisible)
@@ -79,8 +83,8 @@ export const TypeSelector: FC = () => {
 
   return (
     <WRAPPER onClick={handleClick}>
-      <Tooltip>{order.tooltip}</Tooltip>
-      <span>{order.text}</span>
+      <Tooltip>{displayedOrder?.tooltip}</Tooltip>
+      <span>{displayedOrder?.text}</span>
       <ArrowDropdown
         arrowRotation={arrowRotation}
         offset={[20, 24]}

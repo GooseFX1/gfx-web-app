@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import styled from 'styled-components'
 import { useDarkMode } from '../../context'
 import { CenteredDiv, CenteredImg, MainText, SpaceBetweenDiv, SVGToWhite } from '../../styles'
+import { APP_LAYOUT_FOOTER_HEIGHT } from '../../styles/constants'
 
 const MODE_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['2x'])};
@@ -29,6 +30,7 @@ const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`
 `
 
 const WRAPPER = styled(SpaceBetweenDiv)`
+  height: ${APP_LAYOUT_FOOTER_HEIGHT};
   padding: ${({ theme }) => theme.margins['2x']};
   border-top: 1px solid ${({ theme }) => theme.appLayoutFooterBorder};
   background-color: ${({ theme }) => theme.bg2};

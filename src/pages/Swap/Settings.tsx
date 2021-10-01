@@ -82,14 +82,9 @@ export const Settings: FC = () => {
         <style>{localCSS}</style>
         <Input
           maxLength={6}
-          onChange={(x: BaseSyntheticEvent) => {
-            const {
-              target: { value }
-            } = x
-            if (!isNaN(value)) {
-              setValue(value >= 25 ? 25 : value)
-            }
-          }}
+          onChange={(x: BaseSyntheticEvent) =>
+            !isNaN(x.target.value) && setValue(x.target.value >= 25 ? 25 : x.target.value)
+          }
           pattern="\d+(\.\d+)?"
           placeholder={value.toString()}
           suffix={<span>%</span>}

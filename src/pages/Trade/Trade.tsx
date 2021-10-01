@@ -5,7 +5,7 @@ import { Order } from './Order'
 import { OrderBook } from './OrderBook'
 import { Pairs } from './Pairs'
 import { TVChartContainer } from './TradingView'
-import { MarketProvider, useMarket } from '../../context'
+import { MarketProvider, OrderProvider, useMarket } from '../../context'
 
 const WRAPPER = styled.div`
   display: flex;
@@ -20,7 +20,6 @@ const WRAPPER = styled.div`
     display: flex;
     flex-direction: column;
     min-width: 265px;
-    height: 100%;
     margin: 0 ${({ theme }) => theme.margins['3x']};
   }
 `
@@ -36,7 +35,9 @@ const TradeContent: FC = () => {
         <History />
       </div>
       <div>
-        <Order />
+        <OrderProvider>
+          <Order />
+        </OrderProvider>
         <OrderBook />
       </div>
     </WRAPPER>

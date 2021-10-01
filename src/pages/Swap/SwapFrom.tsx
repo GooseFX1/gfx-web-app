@@ -60,14 +60,7 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
         <Selector height={height} otherToken={tokenB} setToken={setTokenA} token={tokenA} />
         <Input
           maxLength={15}
-          onChange={(x: BaseSyntheticEvent) => {
-            const {
-              target: { value }
-            } = x
-            if (tokenA && !isNaN(value)) {
-              setValue(value)
-            }
-          }}
+          onChange={(x: BaseSyntheticEvent) => tokenA && !isNaN(x.target.value) && setValue(x.target.value)}
           pattern="\d+(\.\d+)?"
           placeholder={value.toString()}
           value={value}

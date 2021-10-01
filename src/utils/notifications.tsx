@@ -45,7 +45,13 @@ const TX_LINK = styled.a`
   }
 `
 
-export const notify = ({ description, icon, message, txid, type = 'info' }: {
+export const notify = ({
+  description,
+  icon,
+  message,
+  txid,
+  type = 'info'
+}: {
   message: string
   description?: string | ReactNode
   icon?: string
@@ -88,7 +94,7 @@ export const notify = ({ description, icon, message, txid, type = 'info' }: {
       backgroundColor: type === 'error' ? '#bb3535' : '#3735bb',
       borderRadius: '20px',
       padding: '32px 16px',
-      width: '320px'
+      minWidth: '320px'
     }
   })
 }

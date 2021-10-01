@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react'
-import { Spin } from 'antd'
+import { Skeleton } from 'antd'
 import styled from 'styled-components'
-import { useMarket } from '../../context'
+import { MarketType, useMarket } from '../../context'
 import { CenteredImg } from '../../styles'
 
 const ASSET_ICON = styled(CenteredImg)`
@@ -43,13 +43,21 @@ const PRICE = styled.div`
 `
 
 const STATS = styled.div`
-  width: 220px !important;
+  min-width: 160px;
   padding: ${({ theme }) => theme.margins['1.5x']} ${({ theme }) => theme.margins['2x']};
   ${({ theme }) => theme.smallBorderRadius}
   background-color: ${({ theme }) => theme.bg3};
 `
 
-export const PairStats: FC<{ decimals: number; market: string; symbol: string }> = ({ decimals, market, symbol }) => {
+const Loader: FC = () => {
+  return <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
+}
+
+export const PairStats: FC<{
+  decimals: number
+  market: MarketType
+  symbol: string
+}> = ({ decimals, market, symbol }) => {
   const { formatSymbol, getAskFromSymbol, marketsData, selectedMarket, setSelectedMarket } = useMarket()
 
   const asset = useMemo(() => getAskFromSymbol(symbol), [getAskFromSymbol, symbol])
@@ -72,7 +80,9 @@ export const PairStats: FC<{ decimals: number; market: string; symbol: string }>
           </ASSET_ICON>
           <span>{formattedSymbol}</span>
         </div>
-        {marketData.change24H !== 0 && (
+        {!marketData.change24H ? (
+          <Loader />
+        ) : (
           <div>
             <CHANGE_ICON>
               <img src={`${process.env.PUBLIC_URL}/img/assets/${change24HIcon}`} alt="" />
@@ -81,7 +91,7 @@ export const PairStats: FC<{ decimals: number; market: string; symbol: string }>
           </div>
         )}
       </INFO>
-      <PRICE>{marketData.current ? <span>$ {marketData.current}</span> : <Spin size="small" />}</PRICE>
+      <PRICE>{marketData.current ? <span>$ {marketData.current}</span> : <Loader />}</PRICE>
     </STATS>
   )
 }

@@ -114,6 +114,7 @@ export function theme(mode: string): DefaultTheme {
       '2x': '16px',
       '2.5x': '20px',
       '3x': '24px',
+      '3.5x': '28px',
       '4x': '32px',
       '4.5x': '36px',
       '5x': '40px',
@@ -131,7 +132,7 @@ export function theme(mode: string): DefaultTheme {
 
     mediaWidth: { ...mediaWidthTemplatesFrom, ...mediaWidthTemplatesUpTo },
 
-    mainTransitionTime: '300ms',
+    mainTransitionTime: '500ms',
 
     // css snippets
     flexCenter: css`

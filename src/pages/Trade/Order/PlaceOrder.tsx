@@ -7,7 +7,7 @@ const BUTTON = styled(MainButton)`
   width: 100%;
 `
 
-export const OrderButton: FC = () => {
+export const PlaceOrder: FC = () => {
   const { getAskFromSymbol, selectedMarket } = useMarket()
   const { order } = useOrder()
 
@@ -15,8 +15,11 @@ export const OrderButton: FC = () => {
   const buttonText = useMemo(() => `${order.side === 'buy' ? 'Buy' : 'Sell'} ${asset}`, [asset, order.side])
 
   return (
-    <BUTTON status='initial'>
-      <span>{buttonText}</span>
-    </BUTTON>
+    <div>
+      {order.price > 0 && <span>You will receive</span>}
+      <BUTTON status="initial">
+        <span>{buttonText}</span>
+      </BUTTON>
+    </div>
   )
 }

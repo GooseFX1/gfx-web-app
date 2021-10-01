@@ -5,8 +5,10 @@ import { MarketSide, useMarket } from '../../context'
 import { abbreviateNumber } from '../../utils'
 
 const HEADER = styled.div<{ $side: MarketSide }>`
-  margin: -${({ theme }) => theme.margins['2x']} -${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['1.5x']};
-  padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2.5x']} ${({ theme }) => theme.margins['1.5x']};
+  margin: -${({ theme }) => theme.margins['2x']} -${({ theme }) => theme.margins['2x']}
+    ${({ theme }) => theme.margins['1x']};
+  padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2.5x']}
+    ${({ theme }) => theme.margins['1.5x']};
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 20px;
@@ -28,9 +30,13 @@ const HEADER = styled.div<{ $side: MarketSide }>`
 
 const LOADER = styled(Skeleton.Input)`
   width: 100%;
-  
+
   span {
-    height: 12px !important;
+    height: 10px !important;
+
+    &:first-child {
+      margin-top: ${({ theme }) => theme.margins['0.5x']};
+    }
   }
 `
 
@@ -39,31 +45,20 @@ const ORDERS = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  height: 39vh;
-  overflow-y: scroll;
 `
 
-const ORDER = styled.div<{ $orderBookRatio: number, $side: MarketSide }>`
+const ORDER = styled.div`
   position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   margin: ${({ theme }) => theme.margins['0.5x']} 0;
-  
-  &:after {
-    content: '';
-    position: absolute;
-    right: 0;
-    width: ${({ $orderBookRatio }) => $orderBookRatio}%;
-    height: 100%;
-    background-color: ${({ theme, $side }) => theme[$side]}50;
-  }
-  
+
   span {
     flex: 1;
     font-size: 10px;
-    
+
     &:first-child {
       text-align: left;
     }
@@ -83,7 +78,7 @@ const SIDE = styled.div<{ $side: MarketSide }>`
     display: block;
     position: absolute;
     bottom: -6px;
-    left: ${({ $side }) => $side === 'bids' ? '-3' : '63'}%;
+    left: ${({ $side }) => ($side === 'bids' ? '-3' : '63')}%;
     width: 41%;
     height: 2px;
     ${({ theme }) => theme.roundedBorders}
@@ -98,20 +93,38 @@ const SIDE = styled.div<{ $side: MarketSide }>`
   }
 `
 
-const WRAPPER = styled.div`
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['1.5x']};
-  border-radius: 10px;
-  background-color: ${({ theme }) => theme.bg3};
+const SIZE = styled.span<{ $side: MarketSide }>`
+  position: absolute;
+  right: 0;
+  height: 100%;
+  background-color: ${({ theme, $side }) => theme[$side]}50;
 `
 
-const Loader: FC = () => <>{[...Array(15).keys()].map(() => <LOADER active size="small" />)}</>
+const WRAPPER = styled.div`
+  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['2x']}
+    ${({ theme }) => theme.margins['1.5x']};
+  border-radius: 10px;
+  background-color: ${({ theme }) => theme.bg3};
+  overflow: hidden;
+`
+
+const Loader: FC = () => (
+  <>
+    {[...Array(22).keys()].map((_, index) => (
+      <LOADER key={index} active size="small" />
+    ))}
+  </>
+)
 
 export const OrderBook: FC = () => {
   const { getBidFromSymbol, orderBook, selectedMarket } = useMarket()
   const [side, setSide] = useState<MarketSide>('bids')
 
   const bid = useMemo(() => getBidFromSymbol(selectedMarket.symbol), [getBidFromSymbol, selectedMarket.symbol])
-  const totalOrderBookValue = useMemo(() => orderBook[side].reduce((acc, [size, price]) => acc + size * price, 0), [orderBook, side])
+  const totalOrderBookValue = useMemo(
+    () => orderBook[side].reduce((acc, [size, price]) => acc + size * price, 0),
+    [orderBook, side]
+  )
 
   return (
     <WRAPPER>
@@ -123,24 +136,30 @@ export const OrderBook: FC = () => {
         <div>
           <span>Price ({bid})</span>
           <span>Amount</span>
-          <span>{(bid)} Value</span>
+          <span>{bid} Value</span>
         </div>
       </HEADER>
       <ORDERS>
-        {!orderBook[side].length
-          ? <Loader />
-          : orderBook[side].reduce((acc: { nodes: ReactNode[], totalValue: number }, [price, size], index) => {
-          const value = price * size
-          acc.totalValue += value
-          acc.nodes.push(
-            <ORDER key={index} $orderBookRatio={acc.totalValue / totalOrderBookValue * 100} $side={side}>
-              <span>${price}</span>
-              <span>{String(size).slice(0, 6)}</span>
-              <span>${abbreviateNumber(value, 2)}</span>
-            </ORDER>
-          )
-          return acc
-        }, { nodes: [], totalValue: 0 }).nodes}
+        {!orderBook[side].length ? (
+          <Loader />
+        ) : (
+          orderBook[side].reduce(
+            (acc: { nodes: ReactNode[]; totalValue: number }, [price, size], index) => {
+              const value = price * size
+              acc.totalValue += value
+              acc.nodes.push(
+                <ORDER key={index}>
+                  <span>${price}</span>
+                  <span>{String(size).slice(0, 6)}</span>
+                  <span>${abbreviateNumber(value, 2)}</span>
+                  <SIZE style={{ width: `${(acc.totalValue / totalOrderBookValue) * 100}%` }} $side={side} />
+                </ORDER>
+              )
+              return acc
+            },
+            { nodes: [], totalValue: 0 }
+          ).nodes
+        )}
       </ORDERS>
     </WRAPPER>
   )

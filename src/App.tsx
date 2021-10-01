@@ -4,12 +4,12 @@ import styled from 'styled-components'
 import { DarkModeProvider } from './context'
 import { AppLayout } from './layouts'
 import { Farm, NFTs, Swap, Trade } from './pages'
-import { CenteredDiv } from './styles'
+import { APP_PAGE_HEIGHT, CenteredDiv } from './styles'
 import ThemeProvider from './theme'
 import './App.less'
 
 const WRAPPER = styled(CenteredDiv)`
-  height: 100%;
+  height: ${APP_PAGE_HEIGHT};
   background-color: ${({ theme }) => theme.bg2};
 `
 

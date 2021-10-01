@@ -62,6 +62,7 @@ declare module 'styled-components' {
       '2x': string
       '2.5x': string
       '3x': string
+      '3.5x': string
       '4x': string
       '4.5x': string
       '5x': string
