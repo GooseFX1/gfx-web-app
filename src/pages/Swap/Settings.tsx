@@ -1,8 +1,9 @@
 import React, { BaseSyntheticEvent, FC, useEffect, useState } from 'react'
-import { Input, Tooltip } from 'antd'
+import { Input } from 'antd'
 import styled, { css } from 'styled-components'
+import { Tooltip } from '../../components'
 import { DEFAULT_SLIPPAGE, useDarkMode, useSlippageConfig } from '../../context'
-import { CenteredDiv, CenteredImg, MainText } from '../../styles'
+import { CenteredDiv, MainText } from '../../styles'
 
 const BODY = styled(CenteredDiv)`
   flex-direction: column;
@@ -49,18 +50,6 @@ const TITLE = MainText(styled.span`
   font-size: 12px;
 `)
 
-const TOOLTIP_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['1.5x'])}
-  margin-left: ${({ theme }) => theme.margins['1x']};
-`
-
-const TOOLTIP_TEXT = MainText(
-  styled.span`
-    font-size: 9px;
-  `,
-  'white'
-)
-
 export const Settings: FC = () => {
   const { mode } = useDarkMode()
   const { slippage, setSlippage } = useSlippageConfig()
@@ -85,34 +74,17 @@ export const Settings: FC = () => {
     <BODY>
       <div>
         <TITLE>Slippage tolerance</TITLE>
-        <Tooltip
-          arrowPointAtCenter
-          color="#121212"
-          overlayInnerStyle={{ borderRadius: '8px', display: 'flex', alignItems: 'center', padding: '8px' }}
-          placement="topLeft"
-          title={
-            <TOOLTIP_TEXT>
-              The minimum amount on how many tokens you will accept, in the event that the price increases or decreases.
-            </TOOLTIP_TEXT>
-          }
-        >
-          <TOOLTIP_ICON>
-            <img src={`${process.env.PUBLIC_URL}/img/assets/tooltip_${mode}_mode_icon.svg`} alt="tooltip" />
-          </TOOLTIP_ICON>
+        <Tooltip>
+          The minimum amount on how many tokens you will accept, in the event that the price increases or decreases.
         </Tooltip>
       </div>
       <div>
         <style>{localCSS}</style>
         <Input
           maxLength={6}
-          onChange={(x: BaseSyntheticEvent) => {
-            const {
-              target: { value }
-            } = x
-            if (!isNaN(value)) {
-              setValue(value >= 25 ? 25 : value)
-            }
-          }}
+          onChange={(x: BaseSyntheticEvent) =>
+            !isNaN(x.target.value) && setValue(x.target.value >= 25 ? 25 : x.target.value)
+          }
           pattern="\d+(\.\d+)?"
           placeholder={value.toString()}
           suffix={<span>%</span>}

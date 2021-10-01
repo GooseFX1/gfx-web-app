@@ -27,10 +27,11 @@ export const ArrowClicker: FC<{ arrowRotation?: boolean }> = ({ arrowRotation, .
 }
 
 export const ArrowDropdown: FC<{
-  arrowRotation?: boolean,
-  offset?: [number, number],
-  overlay: ReactElement | (() => ReactElement),
+  arrowRotation?: boolean
+  offset?: [number, number]
+  overlay: ReactElement | (() => ReactElement)
   setArrowRotation?: (x: boolean) => void
+  [x: string]: any
 }> = ({ arrowRotation, offset, overlay, setArrowRotation, ...props }) => {
   return (
     <Dropdown

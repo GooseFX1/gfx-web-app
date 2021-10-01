@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { AmountField } from './shared'
 import { Selector } from './Selector'
-import { useAccounts, useRates, useSwap } from '../../context'
+import { useAccounts, useSwap } from '../../context'
 
 const AMOUNT = styled.div`
   display: flex;
@@ -11,11 +11,7 @@ const AMOUNT = styled.div`
   justify-content: flex-end;
 
   span {
-    display: block;
     padding: 0 20px 0 120px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     line-height: 100%;
   }
 `
@@ -31,8 +27,7 @@ const WRAPPER = styled.div`
 
 export const SwapTo: FC<{ height: string }> = ({ height }) => {
   const { getUIAmountString } = useAccounts()
-  const { rates } = useRates()
-  const { outTokenAmount, setTokenB, tokenA, tokenB } = useSwap()
+  const { outTokenAmount, rates, setTokenB, tokenA, tokenB } = useSwap()
 
   const balance = useMemo(() => {
     if (!tokenB) return 0

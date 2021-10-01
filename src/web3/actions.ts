@@ -70,6 +70,5 @@ export const swap = async (
   transaction.add(...instructions)
 
   const signedTransaction = await wallet.signTransaction(transaction)
-
   return await connection.sendRawTransaction(signedTransaction.serialize())
 }

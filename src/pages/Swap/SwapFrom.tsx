@@ -3,7 +3,7 @@ import { Input } from 'antd'
 import styled from 'styled-components'
 import { Selector } from './Selector'
 import { AmountField } from './shared'
-import { useAccounts, useRates, useSwap } from '../../context'
+import { useAccounts, useSwap } from '../../context'
 import { CenteredDiv, SpaceBetweenDiv } from '../../styles'
 
 const QUICK_SELECT = styled(CenteredDiv)`
@@ -28,8 +28,7 @@ const WRAPPER = styled.div`
 
 export const SwapFrom: FC<{ height: string }> = ({ height }) => {
   const { getUIAmount, getUIAmountString } = useAccounts()
-  const { rates } = useRates()
-  const { setInTokenAmount, setTokenA, tokenA, tokenB } = useSwap()
+  const { rates, setInTokenAmount, setTokenA, tokenA, tokenB } = useSwap()
   const [value, setValue] = useState(0)
 
   const setHalf = () => tokenA && setValue(getUIAmount(tokenA.address) / 2)
@@ -61,14 +60,7 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
         <Selector height={height} otherToken={tokenB} setToken={setTokenA} token={tokenA} />
         <Input
           maxLength={15}
-          onChange={(x: BaseSyntheticEvent) => {
-            const {
-              target: { value }
-            } = x
-            if (tokenA && !isNaN(value)) {
-              setValue(value)
-            }
-          }}
+          onChange={(x: BaseSyntheticEvent) => tokenA && !isNaN(x.target.value) && setValue(x.target.value)}
           pattern="\d+(\.\d+)?"
           placeholder={value.toString()}
           value={value}

@@ -51,7 +51,7 @@ const INPUT = styled.div`
 
   > input {
     height: ${({ theme }) => theme.margins['5x']};
-    background-color: ${({ theme }) => theme.tokenRegistryWallet};
+    background-color: ${({ theme }) => theme.bg4};
     font-size: 12px;
     text-align: left;
   }

@@ -1,8 +1,7 @@
-import type { Colors, Text } from './types/theme'
-
 import React from 'react'
 import { ThemeProvider as StyledComponentsThemeProvider, css, DefaultTheme } from 'styled-components'
 import { useDarkMode } from './context'
+import type { Colors, Text } from './types/theme'
 
 const WIDTH_UP_TO = {
   upToExtraSmall: 500,
@@ -58,6 +57,7 @@ export function colors(mode: string): Colors {
     bg1: mode === 'dark' ? '#1e1e1e' : white,
     bg2: mode === 'dark' ? '#1e1e1e' : '#eeeeee',
     bg3: mode === 'dark' ? '#2a2a2a' : white,
+    bg4: mode === 'dark' ? '#191919' : '#ababab',
     grey1: '#434343',
     grey2: '#4e4e4e',
     grey3: '#2a2a2a',
@@ -68,7 +68,6 @@ export function colors(mode: string): Colors {
     appLayoutFooterBorder: mode === 'dark' ? '#c4c4c4' : '#dedede',
     appLayoutFooterToggle: mode === 'dark' ? '#0c0c0c' : '#e1e1e1',
     textBox: mode === 'dark' ? '#474747' : '#808080',
-    tokenRegistryWallet: mode === 'dark' ? '#191919' : '#ababab',
     walletModalWallet: mode === 'dark' ? '#1e1e1e' : '#e1e1e1',
 
     // primary colors
@@ -82,6 +81,8 @@ export function colors(mode: string): Colors {
     secondary4: '#d655fe',
 
     // other
+    asks: '#9b2c2c',
+    bids: '#459631',
     error: '#D60000',
     success: '#27AE60'
   }
@@ -107,11 +108,13 @@ export function theme(mode: string): DefaultTheme {
     ...text(mode),
 
     margins: {
+      '0.5x': '4px',
       '1x': '8px',
       '1.5x': '12px',
       '2x': '16px',
       '2.5x': '20px',
       '3x': '24px',
+      '3.5x': '28px',
       '4x': '32px',
       '4.5x': '36px',
       '5x': '40px',
@@ -129,7 +132,7 @@ export function theme(mode: string): DefaultTheme {
 
     mediaWidth: { ...mediaWidthTemplatesFrom, ...mediaWidthTemplatesUpTo },
 
-    mainTransitionTime: '300ms',
+    mainTransitionTime: '500ms',
 
     // css snippets
     flexCenter: css`

@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
-import { useRates, useSwap } from '../../context'
+import { useSwap } from '../../context'
 import { MainText } from '../../styles'
 
 const RATE = MainText(styled.span`
@@ -13,8 +13,7 @@ const RATE = MainText(styled.span`
 `)
 
 export const Rate: FC = () => {
-  const { rates } = useRates()
-  const { tokenA, tokenB } = useSwap()
+  const { rates, tokenA, tokenB } = useSwap()
 
   const rate = useMemo(() => {
     if (!tokenA) {

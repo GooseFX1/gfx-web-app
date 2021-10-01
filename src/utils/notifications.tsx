@@ -3,6 +3,10 @@ import { notification } from 'antd'
 import styled from 'styled-components'
 import { shortenAddress } from './misc'
 
+const CLOSE = styled.div`
+  background-color: red;
+`
+
 const CONTENT_ICON = styled.div`
   display: flex;
   justify-content: center;
@@ -30,10 +34,6 @@ const MESSAGE = styled.div`
 
 const DESCRIPTION = styled(MESSAGE)`
   margin-top: 16px;
-`
-
-const NONE = styled.div`
-  display: none;
 `
 
 const TX_LINK = styled.a`
@@ -69,12 +69,15 @@ export const notify = ({
     )
   }
 
+  const key = String(Math.random())
+
   ;(notification as any)[type]({
-    closeIcon: <NONE />,
+    closeIcon: <CLOSE />,
     description: description && (
       <DESCRIPTION>{typeof description === 'string' ? <span>{description}</span> : description}</DESCRIPTION>
     ),
-    icon: <NONE />,
+    icon: <div style={{ display: 'none' }} />,
+    key,
     message: (
       <MESSAGE>
         <span>{message}</span>
@@ -85,12 +88,13 @@ export const notify = ({
         )}
       </MESSAGE>
     ),
+    onClick: () => notification.close(key),
     placement: 'bottomLeft',
     style: {
       backgroundColor: type === 'error' ? '#bb3535' : '#3735bb',
       borderRadius: '20px',
       padding: '32px 16px',
-      width: '320px'
+      minWidth: '320px'
     }
   })
 }
