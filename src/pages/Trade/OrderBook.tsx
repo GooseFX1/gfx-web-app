@@ -119,10 +119,10 @@ const Loader: FC = () => (
 )
 
 export const OrderBook: FC = () => {
-  const { getBidFromSymbol, orderBook, selectedMarket } = useMarket()
+  const { getBidSymbolFromPair, orderBook, selectedMarket } = useMarket()
   const [side, setSide] = useState<MarketSide>('bids')
 
-  const bid = useMemo(() => getBidFromSymbol(selectedMarket.symbol), [getBidFromSymbol, selectedMarket.symbol])
+  const symbol = useMemo(() => getBidSymbolFromPair(selectedMarket.pair), [getBidSymbolFromPair, selectedMarket.pair])
   const totalOrderBookValue = useMemo(
     () => orderBook[side].reduce((acc, [size, price]) => acc + size * price, 0),
     [orderBook, side]
@@ -137,9 +137,9 @@ export const OrderBook: FC = () => {
           <span onClick={() => setSide('asks')}>Live sell orders</span>
         </SIDE>
         <div>
-          <span>Price ({bid})</span>
+          <span>Price ({symbol})</span>
           <span>Amount</span>
-          <span>{bid} Value</span>
+          <span>{symbol} Value</span>
         </div>
       </HEADER>
       <ORDERS>

@@ -4,11 +4,11 @@ import { MainButton } from '../../components'
 import { useAccounts, useConnectionConfig, useSwap, useWalletModal } from '../../context'
 import { ADDRESSES } from '../../web3'
 
-enum Status {
+enum State {
   Connect = 0,
   CanSwap = 1,
   Enter = 2,
-  Exceeded = 3,
+  BalanceExceeded = 3,
   PoolNotFound = 4
 }
 
@@ -19,56 +19,56 @@ export const SwapButton: FC = () => {
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
-  const status = useMemo(() => {
+  const state = useMemo(() => {
     const {
       seeds: { pools }
     } = ADDRESSES[network]
 
     if (!wallet || !publicKey) {
-      return Status.Connect
+      return State.Connect
     } else if (!tokenA || !tokenB) {
-      return Status.Enter
+      return State.Enter
     } else if (!pools[[tokenA.symbol, tokenB.symbol].sort((a, b) => a.localeCompare(b)).join('/')]) {
-      return Status.PoolNotFound
+      return State.PoolNotFound
     } else if (inTokenAmount === 0) {
-      return Status.Enter
+      return State.Enter
     } else if (inTokenAmount > parseFloat(getAmount(tokenA.address))) {
-      return Status.Exceeded
+      return State.BalanceExceeded
     } else {
-      return Status.CanSwap
+      return State.CanSwap
     }
   }, [getAmount, inTokenAmount, network, publicKey, tokenA, tokenB, wallet])
 
   const buttonStatus = useMemo(() => {
-    switch (status) {
-      case Status.CanSwap:
+    switch (state) {
+      case State.CanSwap:
         return 'action'
-      case Status.Connect:
+      case State.Connect:
         return 'interact'
-      case Status.Exceeded:
-      case Status.PoolNotFound:
+      case State.BalanceExceeded:
+      case State.PoolNotFound:
         return 'not-allowed'
       default:
         return 'initial'
     }
-  }, [status])
+  }, [state])
 
   const content = useMemo(
-    () => ['Connect wallet', 'Swap', 'Enter amount', 'Max amount exceeded', 'Pool not found'][status],
-    [status]
+    () => ['Connect wallet', 'Swap', 'Enter amount', 'Balance exceeded', 'Pool not found'][state],
+    [state]
   )
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
       if (!event.defaultPrevented) {
-        status === Status.CanSwap ? swapTokens() : !wallet ? setVisible(true) : connect().catch(() => {})
+        state === State.CanSwap ? swapTokens() : !wallet ? setVisible(true) : connect().catch(() => {})
       }
     },
-    [connect, setVisible, status, swapTokens, wallet]
+    [connect, setVisible, state, swapTokens, wallet]
   )
 
   return (
-    <MainButton status={buttonStatus} onClick={handleClick}>
+    <MainButton height='50px' status={buttonStatus} width='170px' onClick={handleClick}>
       <span>{content}</span>
     </MainButton>
   )

@@ -1,16 +1,9 @@
-import React, { BaseSyntheticEvent, FC, useMemo, useState } from 'react'
+import React, { BaseSyntheticEvent, FC, useEffect, useMemo, useState } from 'react'
 import { Input, Switch } from 'antd'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
+import { FieldHeader, InputCSS } from './shared'
 import { useMarket, useOrder } from '../../../context'
-
-const HEADER = styled.span`
-  display: block;
-  width: 100%;
-  margin-bottom: ${({ theme }) => theme.margins['0.5x']};
-  padding: 0 ${({ theme }) => theme.margins['0.5x']};
-  font-size: 11px;
-  text-align: left;
-`
+import { ellipseNumber } from '../../../utils'
 
 const TYPES = styled.div`
   display: flex;
@@ -35,44 +28,32 @@ const WRAPPER = styled.div<{ $display: boolean }>`
   max-height: ${({ $display }) => ($display ? '500px' : '0')};
   ${({ theme, $display }) => $display && `margin-bottom: ${theme.margins['1.5x']};`}
   overflow: hidden;
-  transition: max-height ${({ theme }) => theme.mainTransitionTime} ease-in-out;
 `
 
 export const LimitPrice: FC = () => {
+  const { getBidSymbolFromPair, selectedMarket } = useMarket()
   const { order, setOrder } = useOrder()
-  const { getBidFromSymbol, selectedMarket } = useMarket()
-  const [value, setValue] = useState(0)
+  const [price, setPrice] = useState(order.price)
 
-  const bid = useMemo(() => getBidFromSymbol(selectedMarket.symbol), [getBidFromSymbol, selectedMarket.symbol])
+  const symbol = useMemo(() => getBidSymbolFromPair(selectedMarket.pair), [getBidSymbolFromPair, selectedMarket.pair])
 
   const onChangeIOC = (checked: boolean) => setOrder((prevState) => ({ ...prevState, type: checked ? 'ioc' : 'limit' }))
   const onChangePost = (checked: boolean) =>
     setOrder((prevState) => ({ ...prevState, type: checked ? 'postOnly' : 'limit' }))
 
-  const localCSS = css`
-    .ant-input-affix-wrapper {
-      height: 39px;
-      border: none;
-      border-radius: 8px;
-      background-color: black;
-    }
-
-    .ant-input-affix-wrapper > input.ant-input {
-      text-align: left;
-    }
-  `
+  useEffect(() => setOrder(prevState => ({ ...prevState, price })), [price, setOrder])
 
   return (
     <WRAPPER $display={order.display === 'limit'}>
-      <HEADER>Limit price</HEADER>
-      <style>{localCSS}</style>
+      <style>{InputCSS}</style>
+      <FieldHeader>Limit price</FieldHeader>
       <Input
         maxLength={15}
-        onChange={(x: BaseSyntheticEvent) => !isNaN(x.target.value) && setValue(x.target.value)}
+        onChange={(x: BaseSyntheticEvent) => !isNaN(x.target.value) && setPrice(x.target.value)}
         pattern="\d+(\.\d+)?"
-        placeholder={value.toString()}
-        suffix={<span>{bid}</span>}
-        value={value}
+        placeholder={price.toString()}
+        suffix={<span>{symbol}</span>}
+        value={ellipseNumber(price)}
       />
       <TYPES>
         <div>

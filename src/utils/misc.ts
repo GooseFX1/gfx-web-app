@@ -19,6 +19,11 @@ export function chunks<T>(array: T[], size: number): T[][] {
   )
 }
 
+export function ellipseNumber(x: number | string | undefined, length: number = 15): string {
+  x = String(x || 0)
+  return x.length > length ? x.slice(0, length).concat('...') : x
+}
+
 export function flatten(
   obj: { [x: string]: any },
   { prefix = '', restrictTo }: { prefix?: string; restrictTo: string[] }

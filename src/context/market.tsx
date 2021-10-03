@@ -23,7 +23,7 @@ import {
 interface IMarket {
   decimals: number
   market: MarketType
-  symbol: string
+  pair: string
 }
 
 interface IMarketData {
@@ -32,7 +32,7 @@ interface IMarketData {
 }
 
 interface IMarketsData {
-  [symbol: string]: IMarketData
+  [x: string]: IMarketData
 }
 
 export type MarketSide = 'asks' | 'bids'
@@ -42,9 +42,9 @@ type OrderBook = {
 }
 
 interface IMarketConfig {
-  formatSymbol: (x: string) => string
-  getAskFromSymbol: (x: string) => string
-  getBidFromSymbol: (x: string) => string
+  formatPair: (x: string) => string
+  getAskSymbolFromPair: (x: string) => string
+  getBidSymbolFromPair: (x: string) => string
   marketsData: IMarketsData
   orderBook: OrderBook
   selectedMarket: IMarket
@@ -56,17 +56,17 @@ interface IMarketConfig {
 export type MarketType = 'crypto' | 'synth'
 
 export const FEATURED_PAIRS_LIST = [
-  { decimals: 1, market: 'crypto' as MarketType, symbol: 'BTC/USDC' },
-  { decimals: 2, market: 'crypto' as MarketType, symbol: 'ETH/USDC' },
-  { decimals: 3, market: 'crypto' as MarketType, symbol: 'SOL/USDC' },
-  { decimals: 2, market: 'synth' as MarketType, symbol: 'LTC/USD' },
-  { decimals: 3, market: 'crypto' as MarketType, symbol: 'LINK/USDC' },
-  { decimals: 2, market: 'synth' as MarketType, symbol: 'AAPL/USD' },
-  { decimals: 2, market: 'synth' as MarketType, symbol: 'TSLA/USD' }
+  { decimals: 1, market: 'crypto' as MarketType, pair: 'BTC/USDC' },
+  { decimals: 2, market: 'crypto' as MarketType, pair: 'ETH/USDC' },
+  { decimals: 3, market: 'crypto' as MarketType, pair: 'SOL/USDC' },
+  { decimals: 2, market: 'synth' as MarketType, pair: 'LTC/USD' },
+  { decimals: 3, market: 'crypto' as MarketType, pair: 'LINK/USDC' },
+  { decimals: 2, market: 'synth' as MarketType, pair: 'AAPL/USD' },
+  { decimals: 2, market: 'synth' as MarketType, pair: 'TSLA/USD' }
 ]
 
 const DEFAULT_MARKETS_DATA = FEATURED_PAIRS_LIST.reduce(
-  (acc: IMarketsData, it) => ({ ...acc, ...{ [it.symbol]: { change24H: 0, current: 0 } } }),
+  (acc: IMarketsData, it) => ({ ...acc, ...{ [it.pair]: { change24H: 0, current: 0 } } }),
   {}
 )
 const DEFAULT_ORDER_BOOK = { asks: [], bids: [] }
@@ -79,23 +79,23 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [orderBook, setOrderBook] = useState<OrderBook>(DEFAULT_ORDER_BOOK)
   const [selectedMarket, setSelectedMarket] = useState<IMarket>(FEATURED_PAIRS_LIST[0])
 
-  const formatSymbol = (symbol: string) => symbol.replace('/', ' / ')
-  const getAskFromSymbol = (symbol: string): string => symbol.slice(0, symbol.indexOf('/'))
-  const getBidFromSymbol = (symbol: string): string => symbol.slice(symbol.indexOf('/') + 1)
+  const formatPair = (symbol: string) => symbol.replace('/', ' / ')
+  const getAskSymbolFromPair = (pair: string): string => pair.slice(0, pair.indexOf('/'))
+  const getBidSymbolFromPair = (pair: string): string => pair.slice(pair.indexOf('/') + 1)
 
   const handlePythSubscription = useCallback(
     async (markets: IMarket[], subscriptions: number[]) => {
       try {
         const products = await fetchPythProducts(
           connection,
-          markets.map(({ symbol }) => symbol)
+          markets.map(({ pair }) => pair)
         )
         try {
           const accounts = await fetchPythPriceAccounts(connection, products)
           accounts.forEach(({ mint, symbol }) =>
             subscriptions.push(
               connection.onAccountChange(mint, (priceAccount) => {
-                const [{ decimals }] = FEATURED_PAIRS_LIST.filter(({ symbol: x }) => x === symbol)
+                const [{ decimals }] = FEATURED_PAIRS_LIST.filter(({ pair }) => pair === symbol)
                 const price = getPriceFromPythPriceAccount(priceAccount)
                 setMarketsData((prevState: IMarketsData) => ({
                   ...prevState,
@@ -124,13 +124,13 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const subscriptions: number[] = []
 
     const cryptoMarkets = FEATURED_PAIRS_LIST.filter(({ market }) => market === 'crypto')
-    cryptoMarkets.forEach(async ({ decimals, symbol }) => {
+    cryptoMarkets.forEach(async ({ decimals, pair }) => {
       if (!cancelled) {
         try {
           subscriptions.push(
-            await subscribeToSerumOrderBook(connection, symbol, 'asks', (account, market) => {
+            await subscribeToSerumOrderBook(connection, pair, 'asks', (account, market) => {
               const [[price]] = Orderbook.decode(market, account.data).getL2(1)
-              const newPrice = { [symbol]: { change24H: 0, current: Number(price.toFixed(decimals)) } }
+              const newPrice = { [pair]: { change24H: 0, current: Number(price.toFixed(decimals)) } }
               setMarketsData((prevState: IMarketsData) => ({ ...prevState, ...newPrice }))
             })
           )
@@ -155,19 +155,19 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
     let cancelled = false
     const subscriptions: number[] = []
 
-    const { decimals, market, symbol } = selectedMarket
+    const { decimals, market, pair } = selectedMarket
     if (market === 'crypto') {
       !cancelled &&
         (async () => {
           try {
             const subs = await Promise.all([
-              subscribeToSerumOrderBook(connection, symbol, 'asks', (account, market) => {
+              subscribeToSerumOrderBook(connection, pair, 'asks', (account, market) => {
                 const orderBook = Orderbook.decode(market, account.data).getL2(22)
-                const newPrice = { [symbol]: { change24H: 0, current: Number(orderBook[0][0].toFixed(decimals)) } }
+                const newPrice = { [pair]: { change24H: 0, current: Number(orderBook[0][0].toFixed(decimals)) } }
                 setMarketsData((prevState: IMarketsData) => ({ ...prevState, ...newPrice }))
                 setOrderBook((prevState) => ({ ...prevState, asks: [...orderBook] }))
               }),
-              subscribeToSerumOrderBook(connection, symbol, 'bids', (account, market) =>
+              subscribeToSerumOrderBook(connection, pair, 'bids', (account, market) =>
                 setOrderBook((prevState) => ({
                   ...prevState,
                   bids: [...Orderbook.decode(market, account.data).getL2(22)]
@@ -193,9 +193,9 @@ export const MarketProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <MarketContext.Provider
       value={{
-        formatSymbol,
-        getAskFromSymbol,
-        getBidFromSymbol,
+        formatPair,
+        getAskSymbolFromPair,
+        getBidSymbolFromPair,
         marketsData,
         orderBook,
         selectedMarket,
@@ -216,9 +216,9 @@ export const useMarket = (): IMarketConfig => {
   }
 
   return {
-    formatSymbol: context.formatSymbol,
-    getAskFromSymbol: context.getAskFromSymbol,
-    getBidFromSymbol: context.getBidFromSymbol,
+    formatPair: context.formatPair,
+    getAskSymbolFromPair: context.getAskSymbolFromPair,
+    getBidSymbolFromPair: context.getBidSymbolFromPair,
     marketsData: context.marketsData,
     orderBook: context.orderBook,
     selectedMarket: context.selectedMarket,

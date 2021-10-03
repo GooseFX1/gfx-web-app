@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, createContext, useContext, Dispatch, SetStateAction, useState } from 'react'
+import React, { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react'
 
 export type OrderDisplayType = 'market' | 'limit'
 export type OrderSide = 'buy' | 'sell'
@@ -10,6 +10,7 @@ interface IOrder {
   price: number
   side: OrderSide
   size: number
+  total: number
   type: OrderType
 }
 
@@ -49,6 +50,7 @@ export const AVAILABLE_ORDERS: IOrderDisplay[] = [
 
 interface IOrderConfig {
   order: IOrder
+  placeOrder: () => void
   setOrder: Dispatch<SetStateAction<IOrder>>
 }
 
@@ -61,10 +63,33 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     price: 0,
     side: 'buy',
     size: 0,
+    total: 0,
     type: 'limit'
   })
 
-  return <OrderContext.Provider value={{ order, setOrder }}>{children}</OrderContext.Provider>
+  useEffect(() => setOrder(prevState => ({ ...prevState, total: order.price * order.size })), [order.price, order.size])
+
+  useEffect(() => {
+    if (order.price > 0) {
+      setOrder(prevState => ({ ...prevState, size: order.total / order.price }))
+    }
+
+  /* eslint-disable-next-line react-hooks/exhaustive-deps */ // <- IMPORTANT
+  }, [order.total])
+
+  const placeOrder = () => console.log(order)
+
+  return (
+    <OrderContext.Provider
+      value={{
+        order,
+        placeOrder,
+        setOrder
+      }}
+    >
+      {children}
+    </OrderContext.Provider>
+  )
 }
 
 export const useOrder = (): IOrderConfig => {
@@ -73,6 +98,6 @@ export const useOrder = (): IOrderConfig => {
     throw new Error('Missing order context')
   }
 
-  const { order, setOrder } = context
-  return { order, setOrder }
+  const { order, placeOrder, setOrder } = context
+  return { order, placeOrder, setOrder }
 }

@@ -4,8 +4,7 @@ import { Connect } from './Connect'
 import { More } from './More'
 import { Tabs } from './Tabs'
 import { useDarkMode } from '../../context'
-import { CenteredDiv } from '../../styles'
-import { APP_LAYOUT_HEADER_HEIGHT } from '../../styles/constants'
+import { APP_LAYOUT_HEADER_HEIGHT, CenteredDiv } from '../../styles'
 
 const BRAND = styled.a`
   ${({ theme }) => theme.flexCenter}

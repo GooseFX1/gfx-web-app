@@ -31,7 +31,7 @@ const TradeContent: FC = () => {
     <WRAPPER>
       <div>
         <Pairs />
-        <TVChartContainer interval={'D'} symbol={selectedMarket.symbol} />
+        <TVChartContainer interval={'D'} symbol={selectedMarket.pair} />
         <History />
       </div>
       <div>

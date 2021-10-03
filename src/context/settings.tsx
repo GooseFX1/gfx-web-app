@@ -12,7 +12,6 @@ interface IEndpoint {
 
 export const ENDPOINTS: IEndpoint[] = [
   { chainId: ENV.MainnetBeta, endpoint: clusterApiUrl('mainnet-beta'), network: WalletAdapterNetwork.Mainnet },
-  { chainId: ENV.Testnet, endpoint: clusterApiUrl('testnet'), network: WalletAdapterNetwork.Testnet },
   { chainId: ENV.Devnet, endpoint: clusterApiUrl('devnet'), network: WalletAdapterNetwork.Devnet }
 ]
 

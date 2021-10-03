@@ -9,6 +9,7 @@ export interface Colors {
 
   // text
   text1: Color
+  text1h: Color
   text2: Color
   text3: Color
 
@@ -20,7 +21,6 @@ export interface Colors {
   grey1: Color
   grey2: Color
   grey3: Color
-  grey4: Color
   grey5: Color
 
   // speciality colors
@@ -87,6 +87,7 @@ declare module 'styled-components' {
       fromLarge: ThemedCssFunction<DefaultTheme>
     }
 
+    hapticTransitionTime: string
     mainTransitionTime: string
 
     // css snippets
