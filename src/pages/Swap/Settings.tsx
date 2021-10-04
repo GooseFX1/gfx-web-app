@@ -3,7 +3,7 @@ import { Input } from 'antd'
 import styled, { css } from 'styled-components'
 import { Tooltip } from '../../components'
 import { DEFAULT_SLIPPAGE, useDarkMode, useSlippageConfig } from '../../context'
-import { CenteredDiv, MainText } from '../../styles'
+import { CenteredDiv } from '../../styles'
 
 const BODY = styled(CenteredDiv)`
   flex-direction: column;
@@ -46,9 +46,10 @@ const BUTTON = styled.button`
   }
 `
 
-const TITLE = MainText(styled.span`
+const TITLE = styled.span`
   font-size: 12px;
-`)
+  color: ${({ theme }) => theme.text1};
+`
 
 export const Settings: FC = () => {
   const { mode } = useDarkMode()

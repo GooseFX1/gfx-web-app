@@ -37,7 +37,6 @@ const PRICE = styled.div`
   padding-top: ${({ theme }) => theme.margins['1x']};
 
   > span {
-    ${({ theme }) => theme.mainText}
     font-size: 12px;
   }
 `

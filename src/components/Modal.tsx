@@ -2,7 +2,7 @@ import React, { FC, ReactNode } from 'react'
 import { Modal as AntModal } from 'antd'
 import styled from 'styled-components'
 import { useDarkMode } from '../context'
-import { CenteredImg, MainText, SpaceBetweenDiv, SVGToWhite } from '../styles'
+import { CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../styles'
 
 const CLOSE_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements('14px')}
@@ -13,10 +13,11 @@ const HEADER = styled(SpaceBetweenDiv)`
   width: 100%;
 `
 
-const TITLE = MainText(styled.span`
+const TITLE = styled.span`
   font-size: 14px;
   font-weight: bold;
-`)
+  color: ${({ theme }) => theme.text1};
+`
 
 export const Modal: FC<{
   children: ReactNode

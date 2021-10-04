@@ -5,24 +5,25 @@ import { WalletName } from '@solana/wallet-adapter-wallets'
 import { Modal } from '../../components'
 import { LITEPAPER_ADDRESS } from '../../constants'
 import { useWalletModal } from '../../context'
-import { CenteredDiv, CenteredImg, MainText, SpaceBetweenDiv } from '../../styles'
+import { CenteredDiv, CenteredImg, SpaceBetweenDiv } from '../../styles'
 
 const BODY = styled(CenteredDiv)`
   flex-direction: column;
 `
 
-const DISCLAIMER = MainText(styled.span`
+const DISCLAIMER = styled.span`
   margin-top: ${({ theme }) => theme.margins['2x']};
   padding: ${({ theme }) => theme.margins['1x']};
   border: solid 1px ${({ theme }) => theme.grey2};
   ${({ theme }) => theme.smallBorderRadius}
   font-size: 8px;
   text-align: left;
+  color: ${({ theme }) => theme.text1};
 
   a {
     color: ${({ theme }) => theme.text3};
   }
-`)
+`
 
 const ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['4x'])}
@@ -34,9 +35,10 @@ const ICON = styled(CenteredImg)`
   }
 `
 
-const NAME = MainText(styled.span`
+const NAME = styled.span`
   font-size: 12px;
-`)
+  color: ${({ theme }) => theme.text1};
+`
 
 const WALLET = styled(SpaceBetweenDiv)`
   width: 100%;

@@ -1,4 +1,5 @@
 export * from './ArrowDropdown'
+export * from './Expand'
 export * from './MainButton'
 export * from './Modal'
 export * from './Tooltip'

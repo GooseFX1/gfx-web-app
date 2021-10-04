@@ -8,8 +8,8 @@ import { SwapTo } from './SwapTo'
 import { Switch } from './Switch'
 import { SwapProvider, useDarkMode, useSwap } from '../../context'
 import { addAnalytics } from '../../utils'
-import { Modal } from '../../components'
-import { CenteredImg, MainText, SpaceBetweenDiv } from '../../styles'
+import { Expand, Modal } from '../../components'
+import { CenteredImg, SpaceBetweenDiv } from '../../styles'
 
 const BODY = styled.div`
   position: relative;
@@ -19,10 +19,11 @@ const BODY = styled.div`
   margin: ${({ theme }) => theme.margins['4x']} 0;
 `
 
-const HEADER_TITLE = MainText(styled.span`
+const HEADER_TITLE = styled.span`
   font-size: 20px;
   font-weight: bold;
-`)
+  color: ${({ theme }) => theme.text1};
+`
 
 const HEADER_WRAPPER = styled(SpaceBetweenDiv)<{ $iconSize: string }>`
   width: 100%;
@@ -51,6 +52,7 @@ const REFRESH_RATE = styled(CenteredImg)`
 `
 
 const WRAPPER = styled.div`
+  position: relative;
   ${({ theme }) => theme.flexColumnNoWrap}
   align-items: center;
   min-height: 430px;
@@ -88,6 +90,7 @@ const SwapContent: FC = () => {
 
   return (
     <WRAPPER>
+      <Expand />
       <Modal setVisible={setSettingsModalVisible} title="Settings" visible={settingsModalVisible}>
         <Settings />
       </Modal>

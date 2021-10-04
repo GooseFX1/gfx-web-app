@@ -14,10 +14,14 @@ const Icon = styled(CenteredImg)`
 const Item = styled(MenuItem)`
   width: 130px;
 
-  a {
+  > a {
     display: flex;
     justify-content: space-between;
     width: 100%;
+
+    > span {
+      color: ${({ theme }) => theme.text1};
+    }
   }
 `
 

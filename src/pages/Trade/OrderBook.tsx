@@ -1,6 +1,7 @@
 import React, { FC, ReactNode, useMemo, useState } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
+import { Expand } from '../../components'
 import { MarketSide, useMarket } from '../../context'
 import { abbreviateNumber } from '../../utils'
 
@@ -101,6 +102,7 @@ const SIZE = styled.span<{ $side: MarketSide }>`
 `
 
 const WRAPPER = styled.div`
+  position: relative;
   padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['2x']}
     ${({ theme }) => theme.margins['1.5x']};
   border-radius: 10px;
@@ -128,6 +130,7 @@ export const OrderBook: FC = () => {
 
   return (
     <WRAPPER>
+      <Expand />
       <HEADER $side={side}>
         <SIDE $side={side}>
           <span onClick={() => setSide('bids')}>Live buy orders</span>

@@ -3,11 +3,11 @@ import { Select } from 'antd'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Menu, MenuItem } from './shared'
-import { ENDPOINTS, useConnectionConfig, useWalletModal } from '../../context'
 import { ArrowDropdown } from '../../components'
-import { CenteredImg, MainText } from '../../styles'
+import { ENDPOINTS, useConnectionConfig, useWalletModal } from '../../context'
+import { CenteredImg } from '../../styles'
 
-const _BUTTON = MainText(styled.button`
+const _BUTTON = styled.button`
   ${({ theme }) => theme.flexCenter}
   height: ${({ theme }) => theme.margins['5x']};
   border: none;
@@ -19,7 +19,7 @@ const _BUTTON = MainText(styled.button`
     color: white;
     cursor: pointer;
   }
-`)
+`
 
 const CONNECT_BUTTON = styled(_BUTTON)`
   padding: 0 ${({ theme }) => theme.margins['2x']};
@@ -33,7 +33,7 @@ const CONNECTED_BUTTON = styled(_BUTTON)`
 
 const NETWORK = styled.span`
   padding: 5px 0;
-  color: white !important;
+  color: ${({ theme }) => theme.text1};
   cursor: initial;
 `
 

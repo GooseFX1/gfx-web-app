@@ -1,17 +1,16 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
 import { useDarkMode } from '../../context'
-import { CenteredDiv, CenteredImg, MainText, SpaceBetweenDiv, SVGToWhite } from '../../styles'
-import { APP_LAYOUT_FOOTER_HEIGHT } from '../../styles/constants'
+import { APP_LAYOUT_FOOTER_HEIGHT, CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
 
 const MODE_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['2x'])};
 `
 
-const TEXT = MainText(styled.span`
+const TEXT = styled.span`
   font-size: 10px;
   color: ${({ theme }) => theme.text2};
-`)
+`
 
 const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`
   height: ${({ theme }) => theme.margins['3x']};
