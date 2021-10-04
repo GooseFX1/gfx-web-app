@@ -32,11 +32,11 @@ export const getSerumMarketInfo = (symbol: string, canBeDeprecated: boolean = fa
 
 export const subscribeToSerumOrderBook = async (
   connection: Connection,
-  symbol: string,
+  pair: string,
   side: MarketSide,
   callback: (account: AccountInfo<Buffer>, market: Market) => void
 ): Promise<number> => {
-  const { address, programId } = getSerumMarketInfo(symbol)
+  const { address, programId } = getSerumMarketInfo(pair)
   const market = await Market.load(connection, address, undefined, programId)
   return connection.onAccountChange(market.decoded[side], (account) => callback(account, market))
 }

@@ -55,18 +55,18 @@ const Loader: FC = () => {
 export const PairStats: FC<{
   decimals: number
   market: MarketType
-  symbol: string
-}> = ({ decimals, market, symbol }) => {
-  const { formatSymbol, getAskFromSymbol, marketsData, selectedMarket, setSelectedMarket } = useMarket()
+  pair: string
+}> = ({ decimals, market, pair }) => {
+  const { formatPair, getAskSymbolFromPair, marketsData, selectedMarket, setSelectedMarket } = useMarket()
 
-  const asset = useMemo(() => getAskFromSymbol(symbol), [getAskFromSymbol, symbol])
-  const marketData = useMemo(() => marketsData[symbol], [marketsData, symbol])
+  const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
+  const formattedPair = useMemo(() => formatPair(symbol), [formatPair, symbol])
+  const marketData = useMemo(() => marketsData[pair], [marketsData, pair])
   const change24HIcon = useMemo(() => `price_${marketData.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData])
-  const formattedSymbol = useMemo(() => formatSymbol(symbol), [formatSymbol, symbol])
 
   const handleClick = () => {
-    if (selectedMarket.symbol !== symbol) {
-      setSelectedMarket({ decimals, market, symbol })
+    if (selectedMarket.pair !== symbol) {
+      setSelectedMarket({ decimals, market, pair })
     }
   }
 
@@ -75,9 +75,9 @@ export const PairStats: FC<{
       <INFO>
         <div onClick={handleClick}>
           <ASSET_ICON>
-            <img src={`${process.env.PUBLIC_URL}/img/tokens/${asset}.svg`} alt="" />
+            <img src={`${process.env.PUBLIC_URL}/img/tokens/${symbol}.svg`} alt="" />
           </ASSET_ICON>
-          <span>{formattedSymbol}</span>
+          <span>{formattedPair}</span>
         </div>
         {!marketData.change24H ? (
           <Loader />

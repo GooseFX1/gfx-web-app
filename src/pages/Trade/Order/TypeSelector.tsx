@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import styled from 'styled-components'
 import { ArrowDropdown, Tooltip } from '../../../components'
 import { AVAILABLE_ORDERS, OrderDisplayType, OrderSide, useOrder } from '../../../context'
@@ -66,10 +66,13 @@ const Overlay: FC<{
   )
 }
 
-export const TypeSelector: FC = () => {
+export const TypeSelector: FC<{
+  arrowRotation: boolean
+  dropdownVisible: boolean
+  setArrowRotation: Dispatch<SetStateAction<boolean>>
+  setDropdownVisible: Dispatch<SetStateAction<boolean>>
+}> = ({ arrowRotation, dropdownVisible, setArrowRotation, setDropdownVisible }) => {
   const { order } = useOrder()
-  const [arrowRotation, setArrowRotation] = useState(false)
-  const [dropdownVisible, setDropdownVisible] = useState(false)
 
   const displayedOrder = useMemo(
     () => AVAILABLE_ORDERS.find(({ display, side }) => display === order.display && side === order.side),
@@ -77,8 +80,8 @@ export const TypeSelector: FC = () => {
   )
 
   const handleClick = () => {
-    setDropdownVisible(!dropdownVisible)
     setArrowRotation(!arrowRotation)
+    setDropdownVisible(!dropdownVisible)
   }
 
   return (

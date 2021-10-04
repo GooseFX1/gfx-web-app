@@ -3,10 +3,10 @@ import styled from 'styled-components'
 
 type Status = 'initial' | 'interact' | 'action' | 'not-allowed'
 
-const BUTTON = styled.button<{ $status: Status }>`
+const BUTTON = styled.button<{ $height: string, $status: Status, $width: string }>`
   ${({ theme }) => theme.flexCenter}
-  height: 50px;
-  width: 170px;
+  height: ${({ $height }) => $height};
+  width: ${({ $width }) => $width};
   border: none;
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ $status, theme }) =>
@@ -14,7 +14,7 @@ const BUTTON = styled.button<{ $status: Status }>`
       ? theme.secondary3
       : $status === 'action'
         ? theme.secondary2
-        : theme.grey4
+        : theme.text1h
   };
   cursor: ${({ $status }) => ($status === 'interact' || $status === 'action') ? 'pointer' : $status};
 
@@ -26,11 +26,13 @@ const BUTTON = styled.button<{ $status: Status }>`
 
 export const MainButton: FC<{
   children: ReactNode,
+  height: string,
   status: Status,
+  width: string,
   [x: string]: any
-}> = ({ children, status, ...props }) => {
+}> = ({ children, height, status, width, ...props }) => {
   return (
-    <BUTTON $status={status} {...props}>
+    <BUTTON $height={height} $status={status} $width={width} {...props}>
       {children}
     </BUTTON>
   )

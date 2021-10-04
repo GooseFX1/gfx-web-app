@@ -30,8 +30,8 @@ const WRAPPER = styled.div`
 export const Pairs: FC = () => {
   return (
     <WRAPPER>
-      {FEATURED_PAIRS_LIST.map(({ decimals, market, symbol }, index) => (
-        <PairStats key={index} decimals={decimals} market={market} symbol={symbol} />
+      {FEATURED_PAIRS_LIST.map(({ decimals, market, pair }, index) => (
+        <PairStats key={index} decimals={decimals} market={market} pair={pair} />
       ))}
     </WRAPPER>
   )

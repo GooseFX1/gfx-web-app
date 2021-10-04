@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react'
+import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
 import { OrderSide, useMarket, useOrder } from '../../../context'
@@ -67,10 +67,10 @@ const SIDE = styled.div<{ $display: boolean; $side: OrderSide }>`
 
   span {
     cursor: pointer;
-    color: ${({ theme }) => theme.grey4};
+    color: ${({ theme }) => theme.text1h};
     font-size: 12px;
     font-weight: bold;
-    transition: color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
+    transition: color ${({ theme }) => theme.hapticTransitionTime} ease-in-out;
 
     &:hover,
     &:${({ $side }) => ($side === 'buy' ? 'first' : 'last')}-child {
@@ -104,18 +104,26 @@ const Loader: FC = () => {
   return <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
 }
 
-export const Header: FC = () => {
-  const { formatSymbol, getAskFromSymbol, marketsData, selectedMarket } = useMarket()
+export const Header: FC<{
+  dropdownVisible: boolean
+  setArrowRotation: Dispatch<SetStateAction<boolean>>
+  setDropdownVisible: Dispatch<SetStateAction<boolean>>
+}> = ({ dropdownVisible, setArrowRotation, setDropdownVisible }) => {
+  const { formatPair, getAskSymbolFromPair, marketsData, selectedMarket } = useMarket()
   const { order, setOrder } = useOrder()
 
-  const asset = useMemo(() => getAskFromSymbol(selectedMarket.symbol), [getAskFromSymbol, selectedMarket])
-  const marketData = useMemo(() => marketsData[selectedMarket.symbol], [marketsData, selectedMarket.symbol])
+  const symbol = useMemo(() => getAskSymbolFromPair(selectedMarket.pair), [getAskSymbolFromPair, selectedMarket.pair])
+  const marketData = useMemo(() => marketsData[selectedMarket.pair], [marketsData, selectedMarket.pair])
   const change24HIcon = useMemo(() => `price_${marketData.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData])
-  const formattedSymbol = useMemo(() => formatSymbol(selectedMarket.symbol), [formatSymbol, selectedMarket])
+  const formattedPair = useMemo(() => formatPair(selectedMarket.pair), [formatPair, selectedMarket])
 
   const handleClick = (side: OrderSide) => {
     if (side === order.side) {
       setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))
+      if (dropdownVisible) {
+        setArrowRotation(false)
+        setDropdownVisible(false)
+      }
     } else {
       setOrder((prevState) => ({ ...prevState, isHidden: false, side }))
     }
@@ -124,11 +132,11 @@ export const Header: FC = () => {
   return (
     <WRAPPER>
       <ICON>
-        <img src={`${process.env.PUBLIC_URL}/img/tokens/${asset}.svg`} alt="" />
+        <img src={`${process.env.PUBLIC_URL}/img/tokens/${symbol}.svg`} alt="" />
       </ICON>
       <INFO>
         <div>
-          <TICKER>{formattedSymbol}</TICKER>
+          <TICKER>{formattedPair}</TICKER>
           {!marketData.change24H ? (
             <Loader />
           ) : (

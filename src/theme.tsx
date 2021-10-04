@@ -52,6 +52,7 @@ export function colors(mode: string): Colors {
     text1: mode === 'dark' ? white : black,
     text2: mode === 'dark' ? white : '#353535',
     text3: mode === 'dark' ? '#d655fe' : '#9625ae',
+    text1h: '#7d7d7d',
 
     // backgrounds / greys
     bg1: mode === 'dark' ? '#1e1e1e' : white,
@@ -61,7 +62,6 @@ export function colors(mode: string): Colors {
     grey1: '#434343',
     grey2: '#4e4e4e',
     grey3: '#2a2a2a',
-    grey4: '#7d7d7d',
     grey5: '#1a1a1a',
 
     // specialty colors
@@ -132,6 +132,7 @@ export function theme(mode: string): DefaultTheme {
 
     mediaWidth: { ...mediaWidthTemplatesFrom, ...mediaWidthTemplatesUpTo },
 
+    hapticTransitionTime: '200ms',
     mainTransitionTime: '500ms',
 
     // css snippets

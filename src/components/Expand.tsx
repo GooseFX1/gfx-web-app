@@ -22,7 +22,7 @@ const WRAPPER = styled.div`
   }
 `
 
-export const Expand: FC<{ [x: string]: any }> = ({ props }) => {
+export const Expand: FC<{ [x: string]: any }> = ({ ...props }) => {
   return (
     <WRAPPER {...props}>
       <span>•</span>
