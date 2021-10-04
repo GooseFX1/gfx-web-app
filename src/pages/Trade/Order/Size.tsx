@@ -31,11 +31,12 @@ export const Size: FC = () => {
 
   const ask = useMemo(() => getAskSymbolFromPair(selectedMarket.pair), [getAskSymbolFromPair, selectedMarket.pair])
   const bid = useMemo(() => getBidSymbolFromPair(selectedMarket.pair), [getBidSymbolFromPair, selectedMarket.pair])
-  const tokenInfo = useMemo(() => (
-    getTokenInfoFromSymbol(order.side === 'buy' ? bid : ask)
-  ), [ask, bid, getTokenInfoFromSymbol, order.side])
-  const step = useMemo(() => tokenInfo ? (1 / 10 ** Math.min(6, tokenInfo.decimals)) : 1, [tokenInfo])
-  const userBalance = useMemo(() => tokenInfo ? getUIAmount(tokenInfo.address) : 0, [tokenInfo, getUIAmount])
+  const tokenInfo = useMemo(
+    () => getTokenInfoFromSymbol(order.side === 'buy' ? bid : ask),
+    [ask, bid, getTokenInfoFromSymbol, order.side]
+  )
+  const step = useMemo(() => (tokenInfo ? 1 / 10 ** Math.min(6, tokenInfo.decimals) : 1), [tokenInfo])
+  const userBalance = useMemo(() => (tokenInfo ? getUIAmount(tokenInfo.address) : 0), [tokenInfo, getUIAmount])
 
   const localCSS = css`
     .ant-slider {
@@ -53,23 +54,23 @@ export const Size: FC = () => {
         maxLength={15}
         onChange={(x: BaseSyntheticEvent) => {
           if (!isNaN(x.target.value)) {
-            setOrder(prevState => ({ ...prevState, size: x.target.value }))
+            setOrder((prevState) => ({ ...prevState, size: x.target.value }))
           }
         }}
         pattern="\d+(\.\d+)?"
         placeholder={`Amount to ${order.side}`}
         suffix={<span>{ask}</span>}
-        value={order.size}
+        value={order.size || undefined}
       />
       <PICKER>
         <Slider
           max={userBalance}
           min={0}
-          onChange={size => setOrder(prevState => ({ ...prevState, size }))}
+          onChange={(size) => setOrder((prevState) => ({ ...prevState, size }))}
           step={step}
           value={order.size}
         />
-        <span onClick={() => setOrder(prevState => ({ ...prevState, size: userBalance }))}>Use Max</span>
+        <span onClick={() => setOrder((prevState) => ({ ...prevState, size: userBalance }))}>Use Max</span>
       </PICKER>
     </div>
   )

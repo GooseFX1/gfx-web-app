@@ -16,13 +16,13 @@ export const Total: FC = () => {
         maxLength={15}
         onChange={(x: BaseSyntheticEvent) => {
           if (!isNaN(x.target.value)) {
-            setOrder(prevState => ({ ...prevState, total: x.target.value }))
+            setOrder((prevState) => ({ ...prevState, total: x.target.value }))
           }
         }}
         pattern="\d+(\.\d+)?"
         placeholder={`Amount to ${order.side}`}
         suffix={<span>{symbol}</span>}
-        value={order.total}
+        value={(Math.floor(order.total * 100) / 100).toFixed(2)}
       />
     </div>
   )

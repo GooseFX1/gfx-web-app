@@ -37,8 +37,8 @@ const TradeContent: FC = () => {
       <div>
         <OrderProvider>
           <Order />
+          <OrderBook />
         </OrderProvider>
-        <OrderBook />
       </div>
     </WRAPPER>
   )

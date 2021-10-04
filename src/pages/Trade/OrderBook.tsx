@@ -2,7 +2,7 @@ import React, { FC, ReactNode, useMemo, useState } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
 import { Expand } from '../../components'
-import { MarketSide, useMarket } from '../../context'
+import { MarketSide, useMarket, useOrder } from '../../context'
 import { abbreviateNumber } from '../../utils'
 
 const HEADER = styled.div<{ $side: MarketSide }>`
@@ -62,6 +62,7 @@ const ORDER = styled.div`
 
     &:first-child {
       text-align: left;
+      cursor: pointer;
     }
 
     &:last-child {
@@ -120,6 +121,7 @@ const Loader: FC = () => (
 
 export const OrderBook: FC = () => {
   const { getBidSymbolFromPair, orderBook, selectedMarket } = useMarket()
+  const { setOrder } = useOrder()
   const [side, setSide] = useState<MarketSide>('bids')
 
   const symbol = useMemo(() => getBidSymbolFromPair(selectedMarket.pair), [getBidSymbolFromPair, selectedMarket.pair])
@@ -152,7 +154,7 @@ export const OrderBook: FC = () => {
               acc.totalValue += value
               acc.nodes.push(
                 <ORDER key={index}>
-                  <span>${price}</span>
+                  <span onClick={() => setOrder((prevState) => ({ ...prevState, price }))}>${price}</span>
                   <span>{String(size).slice(0, 6)}</span>
                   <span>${abbreviateNumber(value, 2)}</span>
                   <SIZE style={{ width: `${(acc.totalValue / totalOrderBookValue) * 100}%` }} $side={side} />
