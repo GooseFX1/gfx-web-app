@@ -8,7 +8,7 @@ import { SwapTo } from './SwapTo'
 import { Switch } from './Switch'
 import { SwapProvider, useDarkMode, useSwap } from '../../context'
 import { addAnalytics } from '../../utils'
-import { Expand, Modal } from '../../components'
+import { Modal } from '../../components'
 import { CenteredImg, SpaceBetweenDiv } from '../../styles'
 
 const BODY = styled.div`
@@ -52,7 +52,6 @@ const REFRESH_RATE = styled(CenteredImg)`
 `
 
 const WRAPPER = styled.div`
-  position: relative;
   ${({ theme }) => theme.flexColumnNoWrap}
   align-items: center;
   min-height: 430px;
@@ -90,7 +89,6 @@ const SwapContent: FC = () => {
 
   return (
     <WRAPPER>
-      <Expand />
       <Modal setVisible={setSettingsModalVisible} title="Settings" visible={settingsModalVisible}>
         <Settings />
       </Modal>
