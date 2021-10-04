@@ -1,8 +1,8 @@
-import React, { FC, ReactNode, useMemo, useState } from 'react'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useMemo, useState } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
 import { Expand } from '../../components'
-import { MarketSide, useMarket, useOrder } from '../../context'
+import { MarketSide, OrderSide, useMarket, useOrder } from '../../context'
 import { abbreviateNumber } from '../../utils'
 
 const HEADER = styled.div<{ $side: MarketSide }>`
@@ -132,7 +132,7 @@ export const OrderBook: FC = () => {
 
   return (
     <WRAPPER>
-      <Expand />
+      <Expand onClick={() => setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))} />
       <HEADER $side={side}>
         <SIDE $side={side}>
           <span onClick={() => setSide('bids')}>Live buy orders</span>
