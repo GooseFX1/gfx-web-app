@@ -2,15 +2,15 @@ import React, { FC, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { useDarkMode } from '../../context'
-import { CenteredDiv, CenteredImg, MainText, SVGToGrey2, SVGToPrimary2, SVGToWhite } from '../../styles'
+import { CenteredDiv, CenteredImg, SVGToGrey2, SVGToPrimary2, SVGToWhite } from '../../styles'
 
-const LABEL = MainText(styled.span`
+const LABEL = styled.span`
   position: absolute;
   bottom: -${({ theme }) => theme.margins['3x']};
   font-size: 13px;
   color: ${({ theme }) => theme.text2};
   text-transform: capitalize;
-`)
+`
 
 const TAB = styled(Link)`
   ${({ theme }) => theme.flexCenter}
@@ -57,7 +57,6 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     `
       )}
   }
-
 `
 
 export const Tabs: FC = () => {

@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
 import { OrderSide, useMarket, useOrder } from '../../../context'
-import { CenteredImg, MainText, SVGToWhite } from '../../../styles'
+import { CenteredImg, SVGToWhite } from '../../../styles'
 
 const ARROW = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['2x'])};
@@ -38,13 +38,13 @@ const INFO = styled.div`
   }
 `
 
-const PRICE = MainText(styled.span`
+const PRICE = styled.span`
   display: block;
   margin: ${({ theme }) => theme.margins['0.5x']} 0 ${({ theme }) => theme.margins['1.5x']};
   font-size: 10px;
   font-weight: bold;
   text-align: left;
-`)
+`
 
 const SIDE = styled.div<{ $display: boolean; $side: OrderSide }>`
   position: relative;
@@ -79,11 +79,11 @@ const SIDE = styled.div<{ $display: boolean; $side: OrderSide }>`
   }
 `
 
-const TICKER = MainText(styled.span`
+const TICKER = styled.span`
   margin-right: ${({ theme }) => theme.margins['1.5x']};
   font-size: 12px;
   font-weight: bold;
-`)
+`
 
 const WRAPPER = styled.div`
   position: relative;
