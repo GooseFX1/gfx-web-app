@@ -3,9 +3,9 @@ import { Dropdown } from 'antd'
 import styled from 'styled-components'
 import { SVGToWhite } from '../styles'
 
-const ARROW_CLICKER = styled.div<{ arrowRotation?: boolean }>`
+const ARROW_CLICKER = styled.div<{ $arrowRotation?: boolean; $measurements?: string }>`
   ${({ theme }) => theme.flexCenter}
-  ${({ theme }) => theme.measurements(theme.margins['1.5x'])}
+  ${({ theme, $measurements }) => theme.measurements($measurements ? $measurements : theme.margins['1.5x'])}
   margin-left: ${({ theme }) => theme.margins['1x']};
   border: none;
   background: transparent;
@@ -13,14 +13,17 @@ const ARROW_CLICKER = styled.div<{ arrowRotation?: boolean }>`
 
   img {
     ${({ theme }) => theme.measurements('inherit')}
-    ${({ arrowRotation }) => arrowRotation && 'transform: rotateZ(180deg);'}
+    ${({ $arrowRotation }) => $arrowRotation && 'transform: rotateZ(180deg);'}
     transition: transform 200ms ease-in-out;
   }
 `
 
-export const ArrowClicker: FC<{ arrowRotation?: boolean }> = ({ arrowRotation, ...props }) => {
+export const ArrowClicker: FC<{
+  arrowRotation?: boolean
+  measurements?: string
+}> = ({ arrowRotation, measurements, ...props }) => {
   return (
-    <ARROW_CLICKER arrowRotation={arrowRotation} {...props}>
+    <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements} {...props}>
       <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`} alt="arrow" />
     </ARROW_CLICKER>
   )
@@ -28,11 +31,12 @@ export const ArrowClicker: FC<{ arrowRotation?: boolean }> = ({ arrowRotation, .
 
 export const ArrowDropdown: FC<{
   arrowRotation?: boolean
+  measurements?: string
   offset?: [number, number]
   overlay: ReactElement | (() => ReactElement)
   setArrowRotation?: (x: boolean) => void
   [x: string]: any
-}> = ({ arrowRotation, offset, overlay, setArrowRotation, ...props }) => {
+}> = ({ arrowRotation, measurements, offset, overlay, setArrowRotation, ...props }) => {
   return (
     <Dropdown
       align={{ offset }}
@@ -43,7 +47,7 @@ export const ArrowDropdown: FC<{
       trigger={['click']}
       {...props}
     >
-      <ARROW_CLICKER arrowRotation={arrowRotation}>
+      <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements}>
         <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`} alt="arrow" />
       </ARROW_CLICKER>
     </Dropdown>
