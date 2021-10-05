@@ -71,14 +71,14 @@ export const Header: FC<{ setChartsVisible: Dispatch<SetStateAction<boolean>> }>
     <WRAPPER>
       <Expand onClick={() => setChartsVisible(prevState => !prevState)} />
       <PANELS $panel={panel}>
-        {[HistoryPanel.Orders, HistoryPanel.Trades, HistoryPanel.Balances].map((p) => (
-          <PANEL $active={p === panel}>
+        {[HistoryPanel.Orders, HistoryPanel.Trades, HistoryPanel.Balances].map((p, index) => (
+          <PANEL key={index} $active={p === panel}>
             <span onClick={() => setPanel(p)}>{p}</span>
           </PANEL>
         ))}
       </PANELS>
       <SpaceBetweenDiv>
-        {PANELS_FIELDS[panel].map((p) => <FIELD>{p}</FIELD>)}
+        {PANELS_FIELDS[panel].map((p, index) => <FIELD key={index}>{p}</FIELD>)}
       </SpaceBetweenDiv>
     </WRAPPER>
   )

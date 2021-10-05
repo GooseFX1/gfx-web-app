@@ -26,17 +26,15 @@ const PICKER = styled.div`
 export const Size: FC = () => {
   const { getUIAmount } = useAccounts()
   const { mode } = useDarkMode()
-  const { getAskSymbolFromPair, getBidSymbolFromPair, selectedMarket } = useMarket()
+  const { getAskSymbolFromPair, getSymbolFromPair, selectedMarket } = useMarket()
   const { order, setOrder } = useOrder()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
 
   const ask = useMemo(() => getAskSymbolFromPair(selectedMarket.pair), [getAskSymbolFromPair, selectedMarket.pair])
-  const bid = useMemo(() => getBidSymbolFromPair(selectedMarket.pair), [getBidSymbolFromPair, selectedMarket.pair])
   const tokenInfo = useMemo(
-    () => getTokenInfoFromSymbol(order.side === 'buy' ? bid : ask),
-    [ask, bid, getTokenInfoFromSymbol, order.side]
+    () => getTokenInfoFromSymbol(getSymbolFromPair(selectedMarket.pair, order.side)),
+    [getSymbolFromPair, getTokenInfoFromSymbol, order.side, selectedMarket.pair]
   )
-  const step = useMemo(() => (tokenInfo ? 1 / 10 ** Math.min(6, tokenInfo.decimals) : 1), [tokenInfo])
   const userBalance = useMemo(() => (tokenInfo ? getUIAmount(tokenInfo.address) : 0), [tokenInfo, getUIAmount])
 
   const localCSS = css`
@@ -71,7 +69,7 @@ export const Size: FC = () => {
           max={userBalance}
           min={0}
           onChange={(size) => setOrder((prevState) => ({ ...prevState, size }))}
-          step={step}
+          step={String(selectedMarket.tickSize).length - 2}
           value={order.size}
         />
         <span onClick={() => setOrder((prevState) => ({ ...prevState, size: userBalance }))}>Use Max</span>

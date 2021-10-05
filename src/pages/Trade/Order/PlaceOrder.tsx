@@ -13,18 +13,17 @@ enum State {
 
 export const PlaceOrder: FC = () => {
   const { getUIAmount } = useAccounts()
-  const { getAskSymbolFromPair, getBidSymbolFromPair, selectedMarket } = useMarket()
+  const { getAskSymbolFromPair, getSymbolFromPair, selectedMarket } = useMarket()
   const { order, placeOrder } = useOrder()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
   const ask = useMemo(() => getAskSymbolFromPair(selectedMarket.pair), [getAskSymbolFromPair, selectedMarket.pair])
-  const bid = useMemo(() => getBidSymbolFromPair(selectedMarket.pair), [getBidSymbolFromPair, selectedMarket.pair])
   const placeOrderText = useMemo(() => `${order.side === 'buy' ? 'Buy' : 'Sell'} ${ask}`, [ask, order.side])
 
   const state = useMemo(() => {
-    const tokenInfo = getTokenInfoFromSymbol(order.side === 'buy' ? bid : ask)
+    const tokenInfo = getTokenInfoFromSymbol(getSymbolFromPair(selectedMarket.pair, order.side))
 
     if (!publicKey) {
       return State.Connect
@@ -35,7 +34,7 @@ export const PlaceOrder: FC = () => {
     } else {
       return State.CanPlaceOrder
     }
-  }, [ask, bid, getTokenInfoFromSymbol, getUIAmount, order.side, order.size, publicKey])
+  }, [getSymbolFromPair, getTokenInfoFromSymbol, getUIAmount, order.side, order.size, publicKey, selectedMarket.pair])
 
   const buttonStatus = useMemo(() => {
     switch (state) {
