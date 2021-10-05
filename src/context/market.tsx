@@ -56,13 +56,13 @@ interface IMarketConfig {
 export type MarketType = 'crypto' | 'synth'
 
 export const FEATURED_PAIRS_LIST = [
-  { decimals: 1, market: 'crypto' as MarketType, pair: 'BTC/USDC' },
-  { decimals: 2, market: 'crypto' as MarketType, pair: 'ETH/USDC' },
+  /* { decimals: 1, market: 'crypto' as MarketType, pair: 'BTC/USDC' },
+  { decimals: 2, market: 'crypto' as MarketType, pair: 'ETH/USDC' }, */
   { decimals: 3, market: 'crypto' as MarketType, pair: 'SOL/USDC' },
-  { decimals: 2, market: 'synth' as MarketType, pair: 'LTC/USD' },
+  /* { decimals: 2, market: 'synth' as MarketType, pair: 'LTC/USD' },
   { decimals: 3, market: 'crypto' as MarketType, pair: 'LINK/USDC' },
   { decimals: 2, market: 'synth' as MarketType, pair: 'AAPL/USD' },
-  { decimals: 2, market: 'synth' as MarketType, pair: 'TSLA/USD' }
+  { decimals: 2, market: 'synth' as MarketType, pair: 'TSLA/USD' } */
 ]
 
 const DEFAULT_MARKETS_DATA = FEATURED_PAIRS_LIST.reduce(

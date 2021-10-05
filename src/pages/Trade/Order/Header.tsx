@@ -58,7 +58,7 @@ const SIDE = styled(SpaceBetweenDiv)<{ $display: boolean; $side: OrderSide }>`
     width: 43%;
     height: 2.5px;
     background-color: ${({ theme, $display, $side }) =>
-      $display ? theme[$side === 'buy' ? 'bids' : 'asks'] : '#9f9f9f'};
+      $display ? theme[$side === 'buy' ? 'bids' : 'asks'] : theme.cryptoOrderHeaderBorder};
     transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;
   }
 

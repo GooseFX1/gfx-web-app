@@ -84,7 +84,7 @@ export const TypeSelector: FC<{
 
   return (
     <WRAPPER onClick={handleClick}>
-      <Tooltip>{displayedOrder?.tooltip}</Tooltip>
+      <Tooltip dark>{displayedOrder?.tooltip}</Tooltip>
       <span>{displayedOrder?.text}</span>
       <ArrowDropdown
         arrowRotation={arrowRotation}

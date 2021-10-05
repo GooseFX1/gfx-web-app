@@ -46,7 +46,7 @@ export const History: FC<{
       <Header setChartsVisible={setChartsVisible} />
       <BODY>
         {publicKey ? content : (
-          <MainButton height={'50px'} status="interact" width={'160px'} onClick={handleClick}>
+          <MainButton height={'40px'} status="interact" width={'160px'} onClick={handleClick}>
             <span>Connect Wallet</span>
           </MainButton>
         )}
