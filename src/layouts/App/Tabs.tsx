@@ -4,6 +4,8 @@ import styled from 'styled-components'
 import { useDarkMode } from '../../context'
 import { CenteredDiv, CenteredImg, SVGToGrey2, SVGToPrimary2, SVGToWhite } from '../../styles'
 
+const TABS = ['/swap', '/crypto', '/synths', '/NFTs', '/farm']
+
 const LABEL = styled.span`
   position: absolute;
   bottom: -${({ theme }) => theme.margins['3x']};
@@ -24,7 +26,7 @@ const TAB_ICON = styled(CenteredImg)`
 
 const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: number }>`
   position: relative;
-  width: ${({ $width }) => $width * 8}px;
+  width: ${({ $width }) => $width * 2 * TABS.length}px;
   padding: ${({ $height }) => $height}vh ${({ $width }) => $width}px;
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.bg3};
@@ -38,7 +40,10 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     height: ${({ $height }) => $height * 2}vh;
     width: 100px;
     ${({ theme }) => theme.roundedBorders}
-    background-color: ${({ theme }) => theme.primary2};
+    background: linear-gradient(to right, ${({ theme, $index }) => theme.tabsGradients[$index]}, ${({
+      theme,
+      $index
+    }) => theme.tabsGradients[$index + 1]});
     transition: left ${({ theme }) => theme.mainTransitionTime} ease-in-out;
   }
 
@@ -49,7 +54,7 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     z-index: 1;
 
     ${({ $width }) =>
-      [...Array(4).keys()].map(
+      [...Array(TABS.length).keys()].map(
         (x) => `
     &:nth-child(${x + 1}) {
       left: ${x * $width * 2}px;
@@ -64,12 +69,11 @@ export const Tabs: FC = () => {
   const { pathname } = useLocation()
   const [hovered, setHovered] = useState(-1)
 
-  const tabs = useMemo(() => ['/swap', '/crypto', '/NFTs', '/farm'], [])
-  const index = useMemo(() => tabs.indexOf(pathname), [pathname, tabs])
+  const index = useMemo(() => TABS.indexOf(pathname), [pathname])
 
   return (
     <WRAPPER $height={3.5} $index={index} $width={50}>
-      {tabs.map((path, index) => (
+      {TABS.map((path, index) => (
         <TAB key={index} onMouseEnter={() => setHovered(index)} onMouseLeave={() => setHovered(-1)} to={path}>
           <TAB_ICON>
             {(() => {

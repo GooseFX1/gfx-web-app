@@ -67,6 +67,7 @@ export function colors(mode: string): Colors {
     // specialty colors
     appLayoutFooterBorder: mode === 'dark' ? '#c4c4c4' : '#dedede',
     appLayoutFooterToggle: mode === 'dark' ? '#0c0c0c' : '#e1e1e1',
+    tabsGradients: ['#3735bb', '#5232b9', '#672fb7', '#792cb4', '#8829b1', '#9625ae'],
     textBox: mode === 'dark' ? '#474747' : '#808080',
     walletModalWallet: mode === 'dark' ? '#1e1e1e' : '#e1e1e1',
 

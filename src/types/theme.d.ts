@@ -26,6 +26,7 @@ export interface Colors {
   // speciality colors
   appLayoutFooterBorder: Color
   appLayoutFooterToggle: Color
+  tabsGradients: Color[]
   textBox: Color
   walletModalWallet: Color
 
