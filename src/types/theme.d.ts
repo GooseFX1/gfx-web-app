@@ -27,11 +27,8 @@ export interface Colors {
   // speciality colors
   appLayoutFooterBorder: Color
   appLayoutFooterToggle: Color
-<<<<<<< HEAD
-  tabsGradients: Color[]
-=======
   cryptoOrderHeaderBorder: Color
->>>>>>> WIP
+  tabsGradients: Color[]
   textBox: Color
   walletModalWallet: Color
 

@@ -1,14 +1,9 @@
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
+import { MarketSelector } from './MarketSelector'
 import { OrderSide, useMarket, useOrder } from '../../../context'
-import { CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../../styles'
-
-const ARROW = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['2x'])};
-  margin-left: ${({ theme }) => theme.margins['2x']};
-  opacity: 0;
-`
+import { CenteredImg, SpaceBetweenDiv } from '../../../styles'
 
 const CHANGE = styled(CenteredImg)`
   display: flex;
@@ -151,9 +146,7 @@ export const Header: FC<{
           <span onClick={() => handleClick('sell')}>Sell</span>
         </SIDE>
       </INFO>
-      <ARROW>
-        <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`} alt="" />
-      </ARROW>
+      <MarketSelector />
     </WRAPPER>
   )
 }
