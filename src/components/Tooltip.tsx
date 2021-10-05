@@ -16,10 +16,14 @@ const TEXT = styled.span`
 `
 
 export const Tooltip: FC<{
+  dark?: boolean
+  lite?: boolean
   placement?: TooltipPlacement
   children: ReactNode
-}> = ({ placement = 'topLeft', children }) => {
+}> = ({ dark, lite, placement = 'topLeft', children }) => {
   const { mode } = useDarkMode()
+
+  const icon = `${process.env.PUBLIC_URL}/img/assets/tooltip_${dark ? 'dark' : lite ? 'lite' : mode}_mode_icon.svg`
 
   return (
     <ANTDTooltip
@@ -30,7 +34,7 @@ export const Tooltip: FC<{
       title={<TEXT>{children}</TEXT>}
     >
       <ICON>
-        <img src={`${process.env.PUBLIC_URL}/img/assets/tooltip_${mode}_mode_icon.svg`} alt="tooltip" />
+        <img src={icon} alt="tooltip" />
       </ICON>
     </ANTDTooltip>
   )
