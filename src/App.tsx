@@ -23,7 +23,7 @@ export default function App(): JSX.Element {
             <AppLayout>
               <WRAPPER>
                 <Route exact path="/swap" component={Swap} />
-                <Route exact path="/trade" component={Trade} />
+                <Route exact path="/crypto" component={Trade} />
                 <Route exact path="/NFTs" component={NFTs} />
                 <Route exact path="/farm" component={Farm} />
               </WRAPPER>

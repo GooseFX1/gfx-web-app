@@ -64,7 +64,7 @@ export const Tabs: FC = () => {
   const { pathname } = useLocation()
   const [hovered, setHovered] = useState(-1)
 
-  const tabs = useMemo(() => ['/swap', '/trade', '/NFTs', '/farm'], [])
+  const tabs = useMemo(() => ['/swap', '/crypto', '/NFTs', '/farm'], [])
   const index = useMemo(() => tabs.indexOf(pathname), [pathname, tabs])
 
   return (

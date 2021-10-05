@@ -33,7 +33,7 @@ const CONNECTED_BUTTON = styled(_BUTTON)`
 
 const NETWORK = styled.span`
   padding: 5px 0;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text1} !important;
   cursor: initial;
 `
 
