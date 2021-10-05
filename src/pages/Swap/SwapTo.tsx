@@ -6,9 +6,9 @@ import { useAccounts, useSwap } from '../../context'
 
 const AMOUNT = styled.div`
   display: flex;
-  height: 100%;
-  align-items: center;
   justify-content: flex-end;
+  align-items: center;
+  height: 100%;
 
   span {
     padding: 0 20px 0 120px;

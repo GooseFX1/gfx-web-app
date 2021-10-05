@@ -63,8 +63,8 @@ export const Settings: FC = () => {
       position: relative;
       display: flex;
       flex: 5;
-      height: 38px;
       align-items: center;
+      height: 38px;
       border: ${slippage > 0.05 ? `2px solid ${slippage > 0.15 ? 'red' : 'orange'}` : 'none'} !important;
       background-color: ${mode === 'dark' ? '#474747' : '#808080'};
       box-shadow: 0 4px 15px 2px rgb(0, 0, 0, ${mode === 'dark' ? '0.25' : '0.1'});

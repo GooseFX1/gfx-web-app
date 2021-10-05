@@ -2,8 +2,9 @@ import React, { Dispatch, FC, ReactNode, SetStateAction, useMemo, useState } fro
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
 import { Expand } from '../../components'
-import { MarketSide, OrderSide, useMarket, useOrder } from '../../context'
+import { MarketSide, useMarket, useOrder } from '../../context'
 import { abbreviateNumber } from '../../utils'
+import { SpaceBetweenDiv } from '../../styles'
 
 const HEADER = styled.div<{ $side: MarketSide }>`
   margin: -${({ theme }) => theme.margins['2x']} -${({ theme }) => theme.margins['2x']}
@@ -17,15 +18,9 @@ const HEADER = styled.div<{ $side: MarketSide }>`
   background-color: ${({ theme, $side }) => theme[$side]};
   transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
 
-  > div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    &:last-child span {
-      flex: 1;
-      font-size: 11px;
-    }
+  > div:last-child span {
+    flex: 1;
+    font-size: 11px;
   }
 `
 
@@ -71,7 +66,7 @@ const ORDER = styled.div`
   }
 `
 
-const SIDE = styled.div<{ $side: MarketSide }>`
+const SIDE = styled(SpaceBetweenDiv)<{ $side: MarketSide }>`
   position: relative;
   margin-bottom: ${({ theme }) => theme.margins['2x']};
 
@@ -119,7 +114,11 @@ const Loader: FC = () => (
   </>
 )
 
-export const OrderBook: FC = () => {
+export const OrderBook: FC<{
+  dropdownVisible: boolean
+  setArrowRotation: Dispatch<SetStateAction<boolean>>
+  setDropdownVisible: Dispatch<SetStateAction<boolean>>
+}> = ({ dropdownVisible, setArrowRotation, setDropdownVisible }) => {
   const { getBidSymbolFromPair, orderBook, selectedMarket } = useMarket()
   const { setOrder } = useOrder()
   const [side, setSide] = useState<MarketSide>('bids')
@@ -130,19 +129,27 @@ export const OrderBook: FC = () => {
     [orderBook, side]
   )
 
+  const handleClick = () => {
+    setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))
+    if (dropdownVisible) {
+      setArrowRotation(false)
+      setDropdownVisible(false)
+    }
+  }
+
   return (
     <WRAPPER>
-      <Expand onClick={() => setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))} />
+      <Expand onClick={handleClick} />
       <HEADER $side={side}>
         <SIDE $side={side}>
           <span onClick={() => setSide('bids')}>Live buy orders</span>
           <span onClick={() => setSide('asks')}>Live sell orders</span>
         </SIDE>
-        <div>
+        <SpaceBetweenDiv>
           <span>Price ({symbol})</span>
           <span>Amount</span>
           <span>{symbol} Value</span>
-        </div>
+        </SpaceBetweenDiv>
       </HEADER>
       <ORDERS>
         {!orderBook[side].length ? (

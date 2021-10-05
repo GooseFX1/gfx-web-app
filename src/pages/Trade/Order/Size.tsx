@@ -1,8 +1,8 @@
 import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
 import { Input, Slider } from 'antd'
 import styled, { css } from 'styled-components'
-import { FieldHeader, InputCSS } from './shared'
-import { useAccounts, useMarket, useOrder, useTokenRegistry } from '../../../context'
+import { FieldHeader } from './shared'
+import { useAccounts, useDarkMode, useMarket, useOrder, useTokenRegistry } from '../../../context'
 
 const PICKER = styled.div`
   display: flex;
@@ -25,6 +25,7 @@ const PICKER = styled.div`
 
 export const Size: FC = () => {
   const { getUIAmount } = useAccounts()
+  const { mode } = useDarkMode()
   const { getAskSymbolFromPair, getBidSymbolFromPair, selectedMarket } = useMarket()
   const { order, setOrder } = useOrder()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
@@ -39,15 +40,18 @@ export const Size: FC = () => {
   const userBalance = useMemo(() => (tokenInfo ? getUIAmount(tokenInfo.address) : 0), [tokenInfo, getUIAmount])
 
   const localCSS = css`
-    .ant-slider {
+    .order-size .ant-input-affix-wrapper {
+      background-color: ${mode === 'dark' ? '#191919' : '#525252'};
+    }
+
+    .order-size .ant-slider {
       flex: 1;
       margin: 8px;
     }
   `
 
   return (
-    <div>
-      <style>{InputCSS}</style>
+    <div className="order-size">
       <style>{localCSS}</style>
       <FieldHeader>Size</FieldHeader>
       <Input

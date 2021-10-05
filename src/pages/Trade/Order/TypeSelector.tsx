@@ -2,6 +2,7 @@ import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import styled from 'styled-components'
 import { ArrowDropdown, Tooltip } from '../../../components'
 import { AVAILABLE_ORDERS, OrderDisplayType, OrderSide, useOrder } from '../../../context'
+import { SpaceBetweenDiv } from '../../../styles'
 
 const OVERLAY = styled.div`
   ${({ theme }) => theme.flexCenter}
@@ -9,7 +10,7 @@ const OVERLAY = styled.div`
   width: calc(265px - 2 * ${({ theme }) => theme.margins['1x']});
   padding: ${({ theme }) => theme.margins['1.5x']} 0;
   ${({ theme }) => theme.smallBorderRadius}
-  background-color: ${({ theme }) => theme.grey5};
+  background-color: #131313;
 
   > span {
     ${({ theme }) => theme.flexCenter}
@@ -19,7 +20,7 @@ const OVERLAY = styled.div`
     font-weight: bold;
 
     &:hover {
-      background-color: ${({ theme }) => theme.bg2};
+      background-color: #1f1f1f;
       cursor: pointer;
     }
 
@@ -29,10 +30,7 @@ const OVERLAY = styled.div`
   }
 `
 
-const WRAPPER = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+const WRAPPER = styled(SpaceBetweenDiv)`
   padding: ${({ theme }) => theme.margins['1.5x']};
   ${({ theme }) => theme.smallBorderRadius}
   background-color: ${({ theme }) => theme.grey5};

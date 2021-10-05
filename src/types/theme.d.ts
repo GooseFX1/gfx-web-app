@@ -21,12 +21,17 @@ export interface Colors {
   grey1: Color
   grey2: Color
   grey3: Color
+  grey4: Color
   grey5: Color
 
   // speciality colors
   appLayoutFooterBorder: Color
   appLayoutFooterToggle: Color
+<<<<<<< HEAD
   tabsGradients: Color[]
+=======
+  cryptoOrderHeaderBorder: Color
+>>>>>>> WIP
   textBox: Color
   walletModalWallet: Color
 

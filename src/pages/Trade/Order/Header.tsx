@@ -2,7 +2,7 @@ import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
 import { OrderSide, useMarket, useOrder } from '../../../context'
-import { CenteredImg, SVGToWhite } from '../../../styles'
+import { CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../../styles'
 
 const ARROW = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['2x'])};
@@ -46,11 +46,8 @@ const PRICE = styled.span`
   text-align: left;
 `
 
-const SIDE = styled.div<{ $display: boolean; $side: OrderSide }>`
+const SIDE = styled(SpaceBetweenDiv)<{ $display: boolean; $side: OrderSide }>`
   position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 
   &:after {
     content: '';
@@ -91,12 +88,12 @@ const WRAPPER = styled.div`
   margin: -${({ theme }) => theme.margins['2x']};
   padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['1.5x']}
     ${({ theme }) => theme.margins['1.5x']};
-  border: solid 2.5px #9f9f9f;
+  border: solid 2.5px ${({ theme }) => theme.cryptoOrderHeaderBorder};
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
-  background-color: ${({ theme }) => theme.bg4};
+  background-color: ${({ theme }) => theme.grey4};
   ${({ theme }) => theme.largeShadow}
 `
 

@@ -62,6 +62,7 @@ export function colors(mode: string): Colors {
     grey1: '#434343',
     grey2: '#4e4e4e',
     grey3: '#2a2a2a',
+    grey4: '#121212',
     grey5: '#1a1a1a',
 
     // specialty colors
@@ -69,6 +70,7 @@ export function colors(mode: string): Colors {
     appLayoutFooterToggle: mode === 'dark' ? '#0c0c0c' : '#e1e1e1',
     tabsGradients: ['#3735bb', '#5232b9', '#672fb7', '#792cb4', '#8829b1', '#9625ae'],
     textBox: mode === 'dark' ? '#474747' : '#808080',
+    cryptoOrderHeaderBorder: mode === 'dark' ? '#9f9f9f' : white,
     walletModalWallet: mode === 'dark' ? '#1e1e1e' : '#e1e1e1',
 
     // primary colors
