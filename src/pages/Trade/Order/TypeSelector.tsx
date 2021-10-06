@@ -1,13 +1,13 @@
-import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
+import React, { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { ArrowDropdown, Tooltip } from '../../../components'
 import { AVAILABLE_ORDERS, OrderDisplayType, OrderSide, useOrder } from '../../../context'
-import { SpaceBetweenDiv } from '../../../styles'
+import { SpaceBetweenDiv, TRADE_ORDER_WIDTH } from '../../../styles'
 
-const OVERLAY = styled.div`
+const SELECTOR = styled.div`
   ${({ theme }) => theme.flexCenter}
   flex-direction: column;
-  width: calc(265px - 2 * ${({ theme }) => theme.margins['1x']});
+  width: ${({ theme }) => `calc(${TRADE_ORDER_WIDTH} - 2 * ${theme.margins['1x']})`};
   padding: ${({ theme }) => theme.margins['1.5x']} 0;
   ${({ theme }) => theme.smallBorderRadius}
   background-color: #131313;
@@ -34,7 +34,6 @@ const WRAPPER = styled(SpaceBetweenDiv)`
   padding: ${({ theme }) => theme.margins['1.5x']};
   ${({ theme }) => theme.smallBorderRadius}
   background-color: ${({ theme }) => theme.grey5};
-  cursor: pointer;
 
   > span {
     font-size: 12px;
@@ -43,34 +42,33 @@ const WRAPPER = styled(SpaceBetweenDiv)`
 `
 
 const Overlay: FC<{
+  setArrowRotation: Dispatch<SetStateAction<boolean>>
   setDropdownVisible: Dispatch<SetStateAction<boolean>>
   side: OrderSide
-}> = ({ setDropdownVisible, side }) => {
+}> = ({ setArrowRotation, setDropdownVisible, side }) => {
   const { setOrder } = useOrder()
 
   const handleClick = (display: OrderDisplayType) => {
     setOrder((prevState) => ({ ...prevState, display }))
+    setArrowRotation(false)
     setDropdownVisible(false)
   }
 
   return (
-    <OVERLAY>
+    <SELECTOR>
       {AVAILABLE_ORDERS.filter(({ side: x }) => x === side).map((order, index) => (
         <span key={index} onClick={() => handleClick(order.display)}>
           {order.text}
         </span>
       ))}
-    </OVERLAY>
+    </SELECTOR>
   )
 }
 
-export const TypeSelector: FC<{
-  arrowRotation: boolean
-  dropdownVisible: boolean
-  setArrowRotation: Dispatch<SetStateAction<boolean>>
-  setDropdownVisible: Dispatch<SetStateAction<boolean>>
-}> = ({ arrowRotation, dropdownVisible, setArrowRotation, setDropdownVisible }) => {
+export const TypeSelector: FC = () => {
   const { order } = useOrder()
+  const [arrowRotation, setArrowRotation] = useState(false)
+  const [dropdownVisible, setDropdownVisible] = useState(false)
 
   const displayedOrder = useMemo(
     () => AVAILABLE_ORDERS.find(({ display, side }) => display === order.display && side === order.side),
@@ -83,13 +81,16 @@ export const TypeSelector: FC<{
   }
 
   return (
-    <WRAPPER onClick={handleClick}>
+    <WRAPPER>
       <Tooltip dark>{displayedOrder?.tooltip}</Tooltip>
       <span>{displayedOrder?.text}</span>
       <ArrowDropdown
         arrowRotation={arrowRotation}
         offset={[20, 24]}
-        overlay={<Overlay setDropdownVisible={setDropdownVisible} side={order.side} />}
+        onVisibleChange={handleClick}
+        overlay={
+          <Overlay setArrowRotation={setArrowRotation} setDropdownVisible={setDropdownVisible} side={order.side} />
+        }
         visible={dropdownVisible}
       />
     </WRAPPER>

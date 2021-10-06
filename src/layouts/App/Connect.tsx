@@ -1,4 +1,4 @@
-import React, { FC, MouseEventHandler, useCallback, useMemo, useState } from 'react'
+import React, { Dispatch, FC, MouseEventHandler, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { Select } from 'antd'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -48,7 +48,7 @@ const WALLET_ICON = styled(CenteredImg)`
   }
 `
 
-const Overlay: FC<{ setArrowRotation: (x: boolean) => void }> = ({ setArrowRotation }) => {
+const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ setArrowRotation }) => {
   const { endpoint, setEndpoint } = useConnectionConfig()
   const { disconnect, publicKey, wallet } = useWallet()
   const { setVisible: setWalletModalVisible } = useWalletModal()
@@ -109,10 +109,10 @@ const Overlay: FC<{ setArrowRotation: (x: boolean) => void }> = ({ setArrowRotat
   )
 }
 
-export const WalletConnectButton: FC<{ arrowRotation: boolean; setArrowRotation: (x: boolean) => void }> = ({
-  arrowRotation,
-  setArrowRotation
-}) => {
+export const WalletConnectButton: FC<{
+  arrowRotation: boolean
+  setArrowRotation: Dispatch<SetStateAction<boolean>>
+}> = ({ arrowRotation, setArrowRotation }) => {
   const { wallet, connect, connecting, connected } = useWallet()
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
@@ -136,15 +136,15 @@ export const WalletConnectButton: FC<{ arrowRotation: boolean; setArrowRotation:
         <ArrowDropdown
           arrowRotation={arrowRotation}
           offset={[0, 30]}
+          onVisibleChange={setArrowRotation}
           overlay={<Overlay setArrowRotation={setArrowRotation} />}
-          setArrowRotation={setArrowRotation}
         />
       )}
     </CONNECT_BUTTON>
   )
 }
 
-const WalletModalButton: FC<{ arrowRotation: boolean; setArrowRotation: (x: boolean) => void }> = ({
+const WalletModalButton: FC<{ arrowRotation: boolean; setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({
   arrowRotation,
   setArrowRotation
 }) => {
@@ -163,8 +163,8 @@ const WalletModalButton: FC<{ arrowRotation: boolean; setArrowRotation: (x: bool
       <ArrowDropdown
         arrowRotation={arrowRotation}
         offset={[9, 30]}
+        onVisibleChange={setArrowRotation}
         overlay={<Overlay setArrowRotation={setArrowRotation} />}
-        setArrowRotation={setArrowRotation}
       />
     </CONNECT_BUTTON>
   )
@@ -198,7 +198,7 @@ export const Connect: FC = () => {
         arrowRotation={arrowRotation}
         offset={[9, 30]}
         overlay={<Overlay setArrowRotation={setArrowRotation} />}
-        setArrowRotation={setArrowRotation}
+        onVisibleChange={setArrowRotation}
       />
     </CONNECTED_BUTTON>
   )

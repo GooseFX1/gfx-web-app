@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction } from 'react'
+import React, { FC } from 'react'
 import styled, { css } from 'styled-components'
 import { Header } from './Header'
 import { LimitPrice } from './LimitPrice'
@@ -35,12 +35,7 @@ const WRAPPER = styled.div`
   background-color: ${({ theme }) => theme.bg3};
 `
 
-export const Order: FC<{
-  arrowRotation: boolean
-  dropdownVisible: boolean
-  setArrowRotation: Dispatch<SetStateAction<boolean>>
-  setDropdownVisible: Dispatch<SetStateAction<boolean>>
-}> = ({ arrowRotation, dropdownVisible, setArrowRotation, setDropdownVisible }) => {
+export const Order: FC = () => {
   const { order } = useOrder()
 
   const localCSS = css`
@@ -57,18 +52,9 @@ export const Order: FC<{
 
   return (
     <WRAPPER>
-      <Header
-        dropdownVisible={dropdownVisible}
-        setArrowRotation={setArrowRotation}
-        setDropdownVisible={setDropdownVisible}
-      />
+      <Header />
       <CONTENT $display={!order.isHidden}>
-        <TypeSelector
-          arrowRotation={arrowRotation}
-          dropdownVisible={dropdownVisible}
-          setArrowRotation={setArrowRotation}
-          setDropdownVisible={setDropdownVisible}
-        />
+        <TypeSelector />
         <Size />
         <LimitPrice />
         <Total />

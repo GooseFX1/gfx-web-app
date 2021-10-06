@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, ReactNode, SetStateAction, useMemo, useState } from 'react'
+import React, { FC, ReactNode, useMemo, useState } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
 import { Expand } from '../../components'
@@ -114,11 +114,7 @@ const Loader: FC = () => (
   </>
 )
 
-export const OrderBook: FC<{
-  dropdownVisible: boolean
-  setArrowRotation: Dispatch<SetStateAction<boolean>>
-  setDropdownVisible: Dispatch<SetStateAction<boolean>>
-}> = ({ dropdownVisible, setArrowRotation, setDropdownVisible }) => {
+export const OrderBook: FC = () => {
   const { getBidSymbolFromPair, orderBook, selectedMarket } = useMarket()
   const { setOrder } = useOrder()
   const [side, setSide] = useState<MarketSide>('bids')
@@ -129,13 +125,7 @@ export const OrderBook: FC<{
     [orderBook, side]
   )
 
-  const handleClick = () => {
-    setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))
-    if (dropdownVisible) {
-      setArrowRotation(false)
-      setDropdownVisible(false)
-    }
-  }
+  const handleClick = () => setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))
 
   return (
     <WRAPPER>

@@ -12,9 +12,9 @@ export enum HistoryPanel {
 }
 
 export const PANELS_FIELDS: { [x in HistoryPanel]: string[] } = {
-  [HistoryPanel.Orders]: ['Market', 'Side', 'Price (USD)', 'Amount', 'Time'],
-  [HistoryPanel.Trades]: ['Market', 'Buy/Sell', 'Amount', 'Price (USD)', 'Liquidity', 'Fees (USD)', 'Time'],
-  [HistoryPanel.Balances]: ['Coin', 'Wallet Balance', 'Orders', 'Unsettled']
+  [HistoryPanel.Orders]: ['Market', 'Side', 'Size', 'Price (USD)'],
+  [HistoryPanel.Trades]: ['Market', 'Side', 'Size', 'Price (USD)', 'Liquidity', 'Fees (USD)'],
+  [HistoryPanel.Balances]: ['Coin', 'Orders', 'Unsettled', 'Action']
 }
 
 interface ITradeHistoryConfig {

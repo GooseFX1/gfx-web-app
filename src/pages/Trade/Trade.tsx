@@ -6,6 +6,7 @@ import { OrderBook } from './OrderBook'
 import { Pairs } from './Pairs'
 import { TVChartContainer } from './TradingView'
 import { MarketProvider, OrderProvider, TradeHistoryProvider, useMarket } from '../../context'
+import { TRADE_ORDER_WIDTH } from '../../styles'
 
 const WRAPPER = styled.div`
   display: flex;
@@ -13,13 +14,13 @@ const WRAPPER = styled.div`
   width: 100vw;
 
   > div:first-child {
-    width: calc(100% - 265px - 2 * ${({ theme }) => theme.margins['3x']});
+    width: calc(100% - ${TRADE_ORDER_WIDTH} - 2 * ${({ theme }) => theme.margins['3x']});
   }
 
   > div:last-child {
     display: flex;
     flex-direction: column;
-    min-width: 265px;
+    width: ${TRADE_ORDER_WIDTH};
     margin: 0 ${({ theme }) => theme.margins['3x']};
   }
 `
@@ -27,8 +28,6 @@ const WRAPPER = styled.div`
 const TradeContent: FC = () => {
   const { selectedMarket } = useMarket()
   const [chartsVisible, setChartsVisible] = useState(true)
-  const [orderTypeSelectorArrow, setOrderTypeSelectorArrow] = useState(false)
-  const [orderTypeSelectorDropdown, setOrderTypeSelectorDropdown] = useState(false)
 
   return (
     <WRAPPER>
@@ -41,17 +40,8 @@ const TradeContent: FC = () => {
       </div>
       <div>
         <OrderProvider>
-          <Order
-            arrowRotation={orderTypeSelectorArrow}
-            dropdownVisible={orderTypeSelectorDropdown}
-            setArrowRotation={setOrderTypeSelectorArrow}
-            setDropdownVisible={setOrderTypeSelectorDropdown}
-          />
-          <OrderBook
-            dropdownVisible={orderTypeSelectorDropdown}
-            setArrowRotation={setOrderTypeSelectorArrow}
-            setDropdownVisible={setOrderTypeSelectorDropdown}
-          />
+          <Order />
+          <OrderBook />
         </OrderProvider>
       </div>
     </WRAPPER>
