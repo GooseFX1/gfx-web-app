@@ -1,6 +1,6 @@
 export * from './accounts'
+export * from './crypto'
 export * from './dark_mode'
-export * from './market'
 export * from './order'
 export * from './settings'
 export * from './swap'

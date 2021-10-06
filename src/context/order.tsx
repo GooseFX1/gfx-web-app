@@ -9,14 +9,16 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { serumPlaceOrder } from '../web3'
-import { useConnectionConfig } from './settings'
-import { useMarket } from './market'
+import { MARKETS } from '@project-serum/serum'
 import { TokenInfo } from '@solana/spl-token-registry'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
+import { useCrypto } from './crypto'
+import { useConnectionConfig } from './settings'
 import { useTokenRegistry } from './token_registry'
+import { SUPPORTED_TOKEN_LIST } from '../constants'
 import { notify } from '../utils'
+import { serumPlaceOrder } from '../web3'
 
 export type OrderDisplayType = 'market' | 'limit'
 export type OrderSide = 'buy' | 'sell'
@@ -38,6 +40,12 @@ interface IOrderDisplay {
   text: string
   tooltip: string
 }
+
+export const AVAILABLE_MARKETS = MARKETS.filter(({ deprecated, name }) => {
+  const ask = (name: string) => name.slice(0, name.indexOf('/'))
+  const isWrappedStableCoin = name[name.indexOf('/') + 1] === 'W'
+  return !deprecated && !isWrappedStableCoin && SUPPORTED_TOKEN_LIST.find((token) => ask(name) === token)
+}).sort((a, b) => a.name.localeCompare(b.name))
 
 export const AVAILABLE_ORDERS: IOrderDisplay[] = [
   /* {
@@ -76,7 +84,7 @@ const OrderContext = createContext<IOrderConfig | null>(null)
 
 export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
-  const { getSymbolFromPair, selectedMarket } = useMarket()
+  const { getSymbolFromPair, selectedCrypto } = useCrypto()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const wallet = useWallet()
   const [order, setOrder] = useState<IOrder>({
@@ -89,28 +97,30 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     type: 'limit'
   })
 
-  useEffect(() => setOrder(prevState => ({ ...prevState, total: order.price * order.size })), [order.price, order.size])
+  useEffect(
+    () => setOrder((prevState) => ({ ...prevState, total: order.price * order.size })),
+    [order.price, order.size]
+  )
 
   useEffect(() => {
     if (order.price > 0) {
-      setOrder(prevState => ({ ...prevState, size: order.total / order.price }))
+      setOrder((prevState) => ({ ...prevState, size: order.total / order.price }))
     }
 
-  /* eslint-disable-next-line react-hooks/exhaustive-deps */ // <- IMPORTANT
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */ // <- IMPORTANT
   }, [order.total])
 
   const placeOrder = useCallback(async () => {
     const messageOrderType = `${order.display.charAt(0).toUpperCase()}${order.display.slice(1)} order`
 
     try {
-      const { address: mint } = getTokenInfoFromSymbol(getSymbolFromPair(selectedMarket.pair, order.side)) as TokenInfo
-      const l = await serumPlaceOrder(connection, selectedMarket.pair, order, wallet, new PublicKey(mint))
-      console.log(l)
+      const { address: mint } = getTokenInfoFromSymbol(getSymbolFromPair(selectedCrypto.pair, order.side)) as TokenInfo
+      await serumPlaceOrder(connection, selectedCrypto.pair, order, wallet, new PublicKey(mint))
       notify({ type: 'success', message: `${messageOrderType} placed successfully!` })
     } catch (e: any) {
       notify({ type: 'error', message: `${messageOrderType} failed`, icon: 'error', description: e.message })
     }
-  }, [connection, getSymbolFromPair, getTokenInfoFromSymbol, order, wallet, selectedMarket.pair])
+  }, [connection, getSymbolFromPair, getTokenInfoFromSymbol, order, wallet, selectedCrypto.pair])
 
   return (
     <OrderContext.Provider

@@ -7,36 +7,44 @@ import { useDarkMode } from '../../context'
 import { APP_LAYOUT_HEADER_HEIGHT, CenteredDiv } from '../../styles'
 
 const BRAND = styled.a`
+  position: absolute;
+  top: ${({ theme }) => theme.margins['5x']};
   ${({ theme }) => theme.flexCenter}
-  float: left;
   width: auto;
-  padding: ${({ theme }) => theme.margins['1x']};
   font-size: 40px;
   font-weight: bold;
   line-height: 20px;
 
-  img {
-    position: fixed;
-    width: auto;
-    object-fit: contain;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    left: ${({ theme }) => theme.margins['3x']};
+    height: 40px;
+  `}
+  ${({ theme }) => theme.mediaWidth.fromSmall`
+    left: 58px;
+    height: 50px;
+  `}
 
-    ${({ theme }) => theme.mediaWidth.upToSmall`
-      left: ${({ theme }) => theme.margins['2x']};
-      height: 40px;
-    `}
-    ${({ theme }) => theme.mediaWidth.fromSmall`
-      left: 50px;
-      height: 50px;
-    `}
+  img {
+    ${({ theme }) => theme.measurements('inherit')}
+    object-fit: contain;
   }
 `
 
 const BUTTONS = styled(CenteredDiv)`
-  position: fixed;
-  right: 50px;
+  position: absolute;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    right: ${({ theme }) => theme.margins['3x']};
+    height: 40px;
+  `}
+  ${({ theme }) => theme.mediaWidth.fromSmall`
+    right: 58px;
+    height: 50px;
+  `}
 `
 
 const WRAPPER = styled.nav`
+  position: relative;
   ${({ theme }) => theme.flexCenter}
   width: 100%;
   height: ${APP_LAYOUT_HEADER_HEIGHT};

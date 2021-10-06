@@ -77,12 +77,14 @@ export const Tabs: FC = () => {
         <TAB key={index} onMouseEnter={() => setHovered(index)} onMouseLeave={() => setHovered(-1)} to={path}>
           <TAB_ICON>
             {(() => {
+              const icon = `${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`
+
               if (pathname === path || (mode === 'dark' && hovered === index)) {
-                return <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`} alt="" />
+                return <SVGToWhite src={icon} alt="" />
               } else if (hovered === index) {
-                return <SVGToPrimary2 src={`${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`} alt="" />
+                return <SVGToPrimary2 src={icon} alt="" />
               } else {
-                return <SVGToGrey2 src={`${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`} alt="" />
+                return <SVGToGrey2 src={icon} alt="" />
               }
             })()}
           </TAB_ICON>

@@ -2,7 +2,7 @@ import React, { FC, ReactNode, createContext, useContext, Dispatch, SetStateActi
 import { useLocalStorageState } from '../utils'
 import { getSerumOpenOrders } from '../web3'
 import { useConnectionConfig } from './settings'
-import { useMarket } from './market'
+import { useCrypto } from './crypto'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 export enum HistoryPanel {
@@ -26,15 +26,15 @@ const TradeHistoryContext = createContext<ITradeHistoryConfig | null>(null)
 
 export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
-  const { selectedMarket } = useMarket()
+  const { selectedCrypto } = useCrypto()
   const { publicKey } = useWallet()
   const [panel, setPanel] = useLocalStorageState('historyPanel', HistoryPanel.Orders)
 
   useEffect(() => {
     if (publicKey) {
-      getSerumOpenOrders(connection, selectedMarket.pair, publicKey)
+      getSerumOpenOrders(connection, selectedCrypto.pair, publicKey)
     }
-  }, [connection, publicKey, selectedMarket.pair])
+  }, [connection, publicKey, selectedCrypto.pair])
 
   return (
     <TradeHistoryContext.Provider
