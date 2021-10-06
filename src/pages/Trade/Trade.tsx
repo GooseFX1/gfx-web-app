@@ -1,11 +1,12 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import styled from 'styled-components'
 import { History } from './History'
 import { Order } from './Order'
 import { OrderBook } from './OrderBook'
 import { Pairs } from './Pairs'
 import { TVChartContainer } from './TradingView'
-import { MarketProvider, OrderProvider, useMarket } from '../../context'
+import { MarketProvider, OrderProvider, TradeHistoryProvider, useMarket } from '../../context'
+import { TRADE_ORDER_WIDTH } from '../../styles'
 
 const WRAPPER = styled.div`
   display: flex;
@@ -13,26 +14,29 @@ const WRAPPER = styled.div`
   width: 100vw;
 
   > div:first-child {
-    width: calc(100% - 265px - 2 * ${({ theme }) => theme.margins['3x']});
+    width: calc(100% - ${TRADE_ORDER_WIDTH} - 2 * ${({ theme }) => theme.margins['3x']});
   }
 
   > div:last-child {
     display: flex;
     flex-direction: column;
-    min-width: 265px;
+    width: ${TRADE_ORDER_WIDTH};
     margin: 0 ${({ theme }) => theme.margins['3x']};
   }
 `
 
 const TradeContent: FC = () => {
   const { selectedMarket } = useMarket()
+  const [chartsVisible, setChartsVisible] = useState(true)
 
   return (
     <WRAPPER>
       <div>
         <Pairs />
-        <TVChartContainer interval={'D'} symbol={selectedMarket.pair} />
-        <History />
+        <TVChartContainer interval={'D'} symbol={selectedMarket.pair} visible={chartsVisible} />
+        <TradeHistoryProvider>
+          <History chartsVisible={chartsVisible} setChartsVisible={setChartsVisible} />
+        </TradeHistoryProvider>
       </div>
       <div>
         <OrderProvider>

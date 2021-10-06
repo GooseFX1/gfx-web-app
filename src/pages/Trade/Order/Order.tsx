@@ -1,5 +1,5 @@
-import React, { FC, useState } from 'react'
-import styled from 'styled-components'
+import React, { FC } from 'react'
+import styled, { css } from 'styled-components'
 import { Header } from './Header'
 import { LimitPrice } from './LimitPrice'
 import { PlaceOrder } from './PlaceOrder'
@@ -37,27 +37,29 @@ const WRAPPER = styled.div`
 
 export const Order: FC = () => {
   const { order } = useOrder()
-  const [arrowRotation, setArrowRotation] = useState(false)
-  const [dropdownVisible, setDropdownVisible] = useState(false)
+
+  const localCSS = css`
+    .ant-input-affix-wrapper {
+      height: 39px;
+      border: none;
+      border-radius: 8px;
+    }
+  
+    .ant-input-affix-wrapper > input.ant-input {
+      text-align: left;
+    }
+  `
 
   return (
     <WRAPPER>
-      <Header
-        dropdownVisible={dropdownVisible}
-        setArrowRotation={setArrowRotation}
-        setDropdownVisible={setDropdownVisible}
-      />
+      <Header />
       <CONTENT $display={!order.isHidden}>
-        <TypeSelector
-          arrowRotation={arrowRotation}
-          dropdownVisible={dropdownVisible}
-          setArrowRotation={setArrowRotation}
-          setDropdownVisible={setDropdownVisible}
-        />
+        <TypeSelector />
         <Size />
         <LimitPrice />
         <Total />
         <PlaceOrder />
+        <style>{localCSS}</style>
       </CONTENT>
     </WRAPPER>
   )

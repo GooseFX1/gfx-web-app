@@ -1,8 +1,8 @@
-import React, { BaseSyntheticEvent, FC, MouseEventHandler, useCallback, useMemo } from 'react'
+import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
 import { Input, Slider } from 'antd'
 import styled, { css } from 'styled-components'
-import { FieldHeader, InputCSS } from './shared'
-import { useAccounts, useMarket, useOrder, useTokenRegistry } from '../../../context'
+import { FieldHeader } from './shared'
+import { useAccounts, useDarkMode, useMarket, useOrder, useTokenRegistry } from '../../../context'
 
 const PICKER = styled.div`
   display: flex;
@@ -25,29 +25,31 @@ const PICKER = styled.div`
 
 export const Size: FC = () => {
   const { getUIAmount } = useAccounts()
-  const { getAskSymbolFromPair, getBidSymbolFromPair, selectedMarket } = useMarket()
+  const { mode } = useDarkMode()
+  const { getAskSymbolFromPair, getSymbolFromPair, selectedMarket } = useMarket()
   const { order, setOrder } = useOrder()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
 
   const ask = useMemo(() => getAskSymbolFromPair(selectedMarket.pair), [getAskSymbolFromPair, selectedMarket.pair])
-  const bid = useMemo(() => getBidSymbolFromPair(selectedMarket.pair), [getBidSymbolFromPair, selectedMarket.pair])
   const tokenInfo = useMemo(
-    () => getTokenInfoFromSymbol(order.side === 'buy' ? bid : ask),
-    [ask, bid, getTokenInfoFromSymbol, order.side]
+    () => getTokenInfoFromSymbol(getSymbolFromPair(selectedMarket.pair, order.side)),
+    [getSymbolFromPair, getTokenInfoFromSymbol, order.side, selectedMarket.pair]
   )
-  const step = useMemo(() => (tokenInfo ? 1 / 10 ** Math.min(6, tokenInfo.decimals) : 1), [tokenInfo])
   const userBalance = useMemo(() => (tokenInfo ? getUIAmount(tokenInfo.address) : 0), [tokenInfo, getUIAmount])
 
   const localCSS = css`
-    .ant-slider {
+    .order-size .ant-input-affix-wrapper {
+      background-color: ${mode === 'dark' ? '#191919' : '#525252'};
+    }
+
+    .order-size .ant-slider {
       flex: 1;
       margin: 8px;
     }
   `
 
   return (
-    <div>
-      <style>{InputCSS}</style>
+    <div className="order-size">
       <style>{localCSS}</style>
       <FieldHeader>Size</FieldHeader>
       <Input
@@ -67,7 +69,7 @@ export const Size: FC = () => {
           max={userBalance}
           min={0}
           onChange={(size) => setOrder((prevState) => ({ ...prevState, size }))}
-          step={step}
+          step={String(selectedMarket.tickSize).length - 2}
           value={order.size}
         />
         <span onClick={() => setOrder((prevState) => ({ ...prevState, size: userBalance }))}>Use Max</span>

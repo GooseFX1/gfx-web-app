@@ -5,13 +5,13 @@ import { Menu, MenuItem } from './shared'
 import { LITEPAPER_ADDRESS, SOCIAL_MEDIAS } from '../../constants'
 import { CenteredImg } from '../../styles'
 
-const Icon = styled(CenteredImg)`
+const ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['4.5x'])}
   margin-left: ${({ theme }) => theme.margins['2x']};
   cursor: pointer;
 `
 
-const Item = styled(MenuItem)`
+const ITEM = styled(MenuItem)`
   width: 130px;
 
   > a {
@@ -37,12 +37,12 @@ const Overlay: FC = () => {
   return (
     <Menu>
       {['docs', 'discord', 'twitter', 'telegram', 'medium'].map((item, index) => (
-        <Item key={index}>
+        <ITEM key={index}>
           <a href={target[item]} target="_blank" rel="noopener noreferrer">
             <span>{item}</span>
             <img src={`${process.env.PUBLIC_URL}/img/assets/${item}_small.svg`} alt={item} />
           </a>
-        </Item>
+        </ITEM>
       ))}
     </Menu>
   )
@@ -57,9 +57,9 @@ export const More: FC = () => {
       placement="bottomLeft"
       trigger={['click']}
     >
-      <Icon>
+      <ICON>
         <img src={`${process.env.PUBLIC_URL}/img/assets/more_icon.svg`} alt="more" />
-      </Icon>
+      </ICON>
     </Dropdown>
   )
 }

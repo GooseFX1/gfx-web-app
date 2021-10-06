@@ -6,12 +6,19 @@ import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget } from '..
 import { useDarkMode } from '../../../context'
 import { flatten } from '../../../utils'
 
-const CONTAINER = styled.div`
+const CONTAINER = styled.div<{ $visible: boolean }>`
   width: 100%;
   height: 45vh;
+  max-height: ${({ $visible }) => $visible ? '1000px' : '0' };
+  opacity: ${({ $visible }) => ($visible ? '1' : '0')};
+  transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;
 `
 
-export const TVChartContainer: FC<{ interval: string; symbol: string }> = ({ interval, symbol }) => {
+export const TVChartContainer: FC<{
+  interval: string
+  symbol: string
+  visible: boolean
+}> = ({ interval, symbol, visible }) => {
   const { mode } = useDarkMode()
   const tvWidget = useRef<IChartingLibraryWidget | null>()
 
@@ -100,5 +107,5 @@ export const TVChartContainer: FC<{ interval: string; symbol: string }> = ({ int
     }
   }, [interval, mode, symbol])
 
-  return <CONTAINER id="tv_chart_container" />
+  return <CONTAINER id="tv_chart_container" $visible={visible} />
 }

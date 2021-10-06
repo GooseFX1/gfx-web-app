@@ -4,8 +4,35 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { Connection, PublicKey, Transaction, TransactionInstruction, TransactionSignature } from '@solana/web3.js'
+import { getSerumMarket } from './serum'
 import { computePoolsPDAs, findAssociatedTokenAddress, getLPProgram } from './utils'
-import { ISwapToken } from '../context'
+import { IOrder, ISwapToken } from '../context'
+
+export const serumPlaceOrder = async (
+  connection: Connection,
+  pair: string,
+  order: IOrder,
+  wallet: WalletContextState,
+  mint: PublicKey
+) => {
+  if (!wallet.publicKey || !wallet.signTransaction) return
+
+  const [market, payer] = await Promise.all([
+    getSerumMarket(connection, pair),
+    findAssociatedTokenAddress(wallet.publicKey, mint)
+  ])
+
+  const { signers, transaction } = await market.makePlaceOrderTransaction(connection, {
+    owner: wallet.publicKey,
+    payer,
+    side: order.side,
+    price: order.price,
+    size: order.size,
+    orderType: order.type
+  })
+
+  return await connection.sendTransaction(transaction, signers)
+}
 
 export const swap = async (
   tokenA: ISwapToken,
@@ -32,7 +59,7 @@ export const swap = async (
     await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenB.address))
   ])
 
-  let instructions: TransactionInstruction[] = []
+  const instructions: TransactionInstruction[] = []
 
   if (!(await connection.getAccountInfo(outTokenAtaUser))) {
     instructions.push(

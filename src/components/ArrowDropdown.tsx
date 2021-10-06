@@ -33,15 +33,15 @@ export const ArrowDropdown: FC<{
   arrowRotation?: boolean
   measurements?: string
   offset?: [number, number]
+  onVisibleChange: (x: boolean) => void
   overlay: ReactElement | (() => ReactElement)
-  setArrowRotation?: (x: boolean) => void
   [x: string]: any
-}> = ({ arrowRotation, measurements, offset, overlay, setArrowRotation, ...props }) => {
+}> = ({ arrowRotation, measurements, offset, onVisibleChange, overlay, ...props }) => {
   return (
     <Dropdown
       align={{ offset }}
       destroyPopupOnHide
-      onVisibleChange={setArrowRotation}
+      onVisibleChange={onVisibleChange}
       overlay={overlay}
       placement="bottomRight"
       trigger={['click']}

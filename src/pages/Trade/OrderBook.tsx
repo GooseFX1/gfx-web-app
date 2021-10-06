@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { Expand } from '../../components'
 import { MarketSide, useMarket, useOrder } from '../../context'
 import { abbreviateNumber } from '../../utils'
+import { SpaceBetweenDiv } from '../../styles'
 
 const HEADER = styled.div<{ $side: MarketSide }>`
   margin: -${({ theme }) => theme.margins['2x']} -${({ theme }) => theme.margins['2x']}
@@ -17,15 +18,9 @@ const HEADER = styled.div<{ $side: MarketSide }>`
   background-color: ${({ theme, $side }) => theme[$side]};
   transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
 
-  > div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    &:last-child span {
-      flex: 1;
-      font-size: 11px;
-    }
+  > div:last-child span {
+    flex: 1;
+    font-size: 11px;
   }
 `
 
@@ -71,7 +66,7 @@ const ORDER = styled.div`
   }
 `
 
-const SIDE = styled.div<{ $side: MarketSide }>`
+const SIDE = styled(SpaceBetweenDiv)<{ $side: MarketSide }>`
   position: relative;
   margin-bottom: ${({ theme }) => theme.margins['2x']};
 
@@ -130,19 +125,21 @@ export const OrderBook: FC = () => {
     [orderBook, side]
   )
 
+  const handleClick = () => setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))
+
   return (
     <WRAPPER>
-      <Expand />
+      <Expand onClick={handleClick} />
       <HEADER $side={side}>
         <SIDE $side={side}>
           <span onClick={() => setSide('bids')}>Live buy orders</span>
           <span onClick={() => setSide('asks')}>Live sell orders</span>
         </SIDE>
-        <div>
+        <SpaceBetweenDiv>
           <span>Price ({symbol})</span>
           <span>Amount</span>
           <span>{symbol} Value</span>
-        </div>
+        </SpaceBetweenDiv>
       </HEADER>
       <ORDERS>
         {!orderBook[side].length ? (

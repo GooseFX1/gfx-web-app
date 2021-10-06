@@ -1,8 +1,8 @@
 import React, { BaseSyntheticEvent, FC, useEffect, useMemo, useState } from 'react'
 import { Input, Switch } from 'antd'
-import styled from 'styled-components'
-import { FieldHeader, InputCSS } from './shared'
-import { useMarket, useOrder } from '../../../context'
+import styled, { css } from 'styled-components'
+import { FieldHeader } from './shared'
+import { useDarkMode, useMarket, useOrder } from '../../../context'
 import { ellipseNumber } from '../../../utils'
 
 const TYPES = styled.div`
@@ -20,6 +20,7 @@ const TYPES = styled.div`
       margin-right: ${({ theme }) => theme.margins['1x']};
       font-size: 10px;
       font-weight: bold;
+      color: ${({ theme }) => theme.text2};
     }
   }
 `
@@ -31,6 +32,7 @@ const WRAPPER = styled.div<{ $display: boolean }>`
 `
 
 export const LimitPrice: FC = () => {
+  const { mode } = useDarkMode()
   const { getBidSymbolFromPair, selectedMarket } = useMarket()
   const { order, setOrder } = useOrder()
   const [price, setPrice] = useState(order.price)
@@ -43,9 +45,15 @@ export const LimitPrice: FC = () => {
 
   useEffect(() => setOrder(prevState => ({ ...prevState, price })), [price, setOrder])
 
+  const localCSS = css`
+    .order-price .ant-input-affix-wrapper {
+      background-color: ${mode === 'dark' ? '#191919' : '#525252'};
+    }
+  `
+
   return (
-    <WRAPPER $display={order.display === 'limit'}>
-      <style>{InputCSS}</style>
+    <WRAPPER className="order-price" $display={order.display === 'limit'}>
+      <style>{localCSS}</style>
       <FieldHeader>Limit price</FieldHeader>
       <Input
         maxLength={15}

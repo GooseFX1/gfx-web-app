@@ -1,14 +1,9 @@
-import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
+import { MarketSelector } from './MarketSelector'
 import { OrderSide, useMarket, useOrder } from '../../../context'
-import { CenteredImg, SVGToWhite } from '../../../styles'
-
-const ARROW = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['2x'])};
-  margin-left: ${({ theme }) => theme.margins['2x']};
-  opacity: 0;
-`
+import { CenteredImg, SpaceBetweenDiv } from '../../../styles'
 
 const CHANGE = styled(CenteredImg)`
   display: flex;
@@ -46,11 +41,8 @@ const PRICE = styled.span`
   text-align: left;
 `
 
-const SIDE = styled.div<{ $display: boolean; $side: OrderSide }>`
+const SIDE = styled(SpaceBetweenDiv)<{ $display: boolean; $side: OrderSide }>`
   position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 
   &:after {
     content: '';
@@ -61,7 +53,7 @@ const SIDE = styled.div<{ $display: boolean; $side: OrderSide }>`
     width: 43%;
     height: 2.5px;
     background-color: ${({ theme, $display, $side }) =>
-      $display ? theme[$side === 'buy' ? 'bids' : 'asks'] : '#9f9f9f'};
+      $display ? theme[$side === 'buy' ? 'bids' : 'asks'] : theme.cryptoOrderHeaderBorder};
     transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;
   }
 
@@ -83,20 +75,21 @@ const TICKER = styled.span`
   margin-right: ${({ theme }) => theme.margins['1.5x']};
   font-size: 12px;
   font-weight: bold;
+  white-space: nowrap;
 `
 
 const WRAPPER = styled.div`
   position: relative;
   display: flex;
   margin: -${({ theme }) => theme.margins['2x']};
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['1.5x']}
-    ${({ theme }) => theme.margins['1.5x']};
-  border: solid 2.5px #9f9f9f;
+  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['3x']}
+    ${({ theme }) => theme.margins['1.5x']} ${({ theme }) => theme.margins['1.5x']};
+  border: solid 2.5px ${({ theme }) => theme.cryptoOrderHeaderBorder};
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
-  background-color: ${({ theme }) => theme.bg4};
+  background-color: ${({ theme }) => theme.grey4};
   ${({ theme }) => theme.largeShadow}
 `
 
@@ -104,26 +97,18 @@ const Loader: FC = () => {
   return <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
 }
 
-export const Header: FC<{
-  dropdownVisible: boolean
-  setArrowRotation: Dispatch<SetStateAction<boolean>>
-  setDropdownVisible: Dispatch<SetStateAction<boolean>>
-}> = ({ dropdownVisible, setArrowRotation, setDropdownVisible }) => {
+export const Header: FC = () => {
   const { formatPair, getAskSymbolFromPair, marketsData, selectedMarket } = useMarket()
   const { order, setOrder } = useOrder()
 
   const symbol = useMemo(() => getAskSymbolFromPair(selectedMarket.pair), [getAskSymbolFromPair, selectedMarket.pair])
   const marketData = useMemo(() => marketsData[selectedMarket.pair], [marketsData, selectedMarket.pair])
-  const change24HIcon = useMemo(() => `price_${marketData.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData])
+  const change24HIcon = useMemo(() => `price_${marketData?.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData])
   const formattedPair = useMemo(() => formatPair(selectedMarket.pair), [formatPair, selectedMarket])
 
   const handleClick = (side: OrderSide) => {
     if (side === order.side) {
       setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))
-      if (dropdownVisible) {
-        setArrowRotation(false)
-        setDropdownVisible(false)
-      }
     } else {
       setOrder((prevState) => ({ ...prevState, isHidden: false, side }))
     }
@@ -137,7 +122,7 @@ export const Header: FC<{
       <INFO>
         <div>
           <TICKER>{formattedPair}</TICKER>
-          {!marketData.change24H ? (
+          {!marketData || !marketData.change24H ? (
             <Loader />
           ) : (
             <CHANGE>
@@ -148,15 +133,13 @@ export const Header: FC<{
             </CHANGE>
           )}
         </div>
-        <PRICE>{!marketData.current ? <Loader /> : <>Price: $ {marketData.current}</>}</PRICE>
+        <PRICE>{!marketData || !marketData.current ? <Loader /> : <>Price: $ {marketData.current}</>}</PRICE>
         <SIDE $display={!order.isHidden} $side={order.side}>
           <span onClick={() => handleClick('buy')}>Buy</span>
           <span onClick={() => handleClick('sell')}>Sell</span>
         </SIDE>
       </INFO>
-      <ARROW>
-        <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`} alt="" />
-      </ARROW>
+      <MarketSelector />
     </WRAPPER>
   )
 }
