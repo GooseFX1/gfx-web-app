@@ -1,5 +1,6 @@
 import React, { FC, useMemo } from 'react'
 import { Skeleton } from 'antd'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { MarketType, useCrypto } from '../../context'
 import { CenteredImg } from '../../styles'
@@ -56,19 +57,27 @@ const Loader: FC = () => {
 
 export const PairStats: FC<{
   decimals: number
-  market: MarketType
   pair: string
-}> = ({ decimals, market, pair }) => {
+  type: MarketType
+}> = ({ decimals, pair, type }) => {
   const { formatPair, getAskSymbolFromPair, marketsData, selectedCrypto, setSelectedCrypto } = useCrypto()
+  const history = useHistory()
 
   const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
-  const formattedPair = useMemo(() => formatPair(selectedCrypto.pair), [formatPair, selectedCrypto.pair])
+  const formattedPair = useMemo(() => formatPair(pair), [formatPair, pair])
   const marketData = useMemo(() => marketsData[pair], [marketsData, pair])
   // const change24HIcon = useMemo(() => `price_${marketData.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData])
 
+  const icon = useMemo(() => {
+    const folder = type === 'crypto' ? 'tokens' : ''
+    return `${process.env.PUBLIC_URL}/img/tokens/${symbol}.svg`
+  }, [])
+
   const handleClick = () => {
-    if (selectedCrypto.pair !== symbol) {
-      setSelectedCrypto({ decimals, market, pair })
+    if (type === 'synth') {
+      history.push('/synths')
+    } else if (selectedCrypto.pair !== symbol) {
+      setSelectedCrypto({ decimals, pair, type })
     }
   }
 
@@ -77,7 +86,7 @@ export const PairStats: FC<{
       <INFO>
         <div onClick={handleClick}>
           <ASSET_ICON>
-            <img src={`${process.env.PUBLIC_URL}/img/tokens/${symbol}.svg`} alt="" />
+            <img src={icon} alt="" />
           </ASSET_ICON>
           <span>{formattedPair}</span>
         </div>

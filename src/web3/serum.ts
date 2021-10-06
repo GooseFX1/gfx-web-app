@@ -44,7 +44,7 @@ export const getSerumOpenOrders = async (
   canBeDeprecated: boolean = false
 ) => {
   const { address, programId } = await getSerumMarket(connection, pair, canBeDeprecated)
-  await OpenOrders.findForMarketAndOwner(connection, address, owner, programId)
+  await OpenOrders.findForOwner(connection, owner, programId)
 }
 
 export const subscribeToSerumOrderBook = async (

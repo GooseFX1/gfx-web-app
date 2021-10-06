@@ -23,9 +23,9 @@ import {
 
 interface ICrypto {
   decimals: number
-  market: MarketType
   pair: string
   tickSize?: number
+  type: MarketType
 }
 
 interface ICryptoData {
@@ -59,13 +59,13 @@ interface ICryptoConfig {
 export type MarketType = 'crypto' | 'synth'
 
 export const FEATURED_PAIRS_LIST = [
-  /* { decimals: 1, market: 'crypto' as MarketType, pair: 'BTC/USDC' },
-  { decimals: 2, market: 'crypto' as MarketType, pair: 'ETH/USDC' }, */
-  { decimals: 3, market: 'crypto' as MarketType, pair: 'SOL/USDC' }
-  /* { decimals: 2, market: 'synth' as MarketType, pair: 'LTC/USD' },
-  { decimals: 3, market: 'crypto' as MarketType, pair: 'LINK/USDC' },
-  { decimals: 2, market: 'synth' as MarketType, pair: 'AAPL/USD' },
-  { decimals: 2, market: 'synth' as MarketType, pair: 'TSLA/USD' } */
+  { decimals: 1, pair: 'BTC/USDC', type: 'crypto' as MarketType },
+  { decimals: 2, pair: 'ETH/USDC', type: 'crypto' as MarketType },
+  { decimals: 3, pair: 'SOL/USDC', type: 'crypto' as MarketType },
+  { decimals: 2, pair: 'LTC/USD', type: 'synth' as MarketType },
+  { decimals: 3, pair: 'LINK/USDC', type: 'crypto' as MarketType },
+  { decimals: 2, pair: 'AAPL/USD', type: 'synth' as MarketType },
+  { decimals: 2, pair: 'TSLA/USD', type: 'synth' as MarketType }
 ]
 
 const DEFAULT_MARKETS_DATA = FEATURED_PAIRS_LIST.reduce(
@@ -129,7 +129,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     let cancelled = false
     const subscriptions: number[] = []
 
-    const cryptoMarkets = FEATURED_PAIRS_LIST.filter(({ market }) => market === 'crypto')
+    const cryptoMarkets = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'crypto')
     cryptoMarkets.forEach(async ({ decimals, pair }) => {
       if (!cancelled) {
         try {
@@ -147,7 +147,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
     })
 
-    const synthMarkets = FEATURED_PAIRS_LIST.filter(({ market }) => market === 'synth')
+    const synthMarkets = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'synth')
     !cancelled && handlePythSubscription(synthMarkets, subscriptions)
 
     return () => {
@@ -161,9 +161,9 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     let cancelled = false
     const subscriptions: number[] = []
-    const { decimals, market, pair } = selectedCrypto
+    const { decimals, pair, type } = selectedCrypto
 
-    if (market === 'crypto') {
+    if (type === 'crypto') {
       !cancelled &&
         (async () => {
           try {

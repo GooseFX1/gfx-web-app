@@ -1,8 +1,8 @@
-import React, { FC, ReactNode, createContext, useContext, Dispatch, SetStateAction, useEffect } from 'react'
+import React, { FC, ReactNode, createContext, useContext, Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { useCrypto } from './crypto'
+import { useConnectionConfig } from './settings'
 import { useLocalStorageState } from '../utils'
 import { getSerumOpenOrders } from '../web3'
-import { useConnectionConfig } from './settings'
-import { useCrypto } from './crypto'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 export enum HistoryPanel {
@@ -18,8 +18,11 @@ export const PANELS_FIELDS: { [x in HistoryPanel]: string[] } = {
 }
 
 interface ITradeHistoryConfig {
+  balances: number[]
+  openOrders: number[]
   panel: HistoryPanel
   setPanel: Dispatch<SetStateAction<HistoryPanel>>
+  tradeHistory: number[]
 }
 
 const TradeHistoryContext = createContext<ITradeHistoryConfig | null>(null)
@@ -28,19 +31,32 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   const { connection } = useConnectionConfig()
   const { selectedCrypto } = useCrypto()
   const { publicKey } = useWallet()
+  const [balances, setBalances] = useState([])
+  const [openOrders, setOpenOrders] = useState([])
+  const [tradeHistory, setTradeHistory] = useState([])
   const [panel, setPanel] = useLocalStorageState('historyPanel', HistoryPanel.Orders)
 
   useEffect(() => {
     if (publicKey) {
-      getSerumOpenOrders(connection, selectedCrypto.pair, publicKey)
+      (async() => {
+        try {
+          const l = await getSerumOpenOrders(connection, selectedCrypto.pair, publicKey)
+          console.log(l)
+        } catch (e: any) {
+          console.error(e)
+        }
+      })()
     }
   }, [connection, publicKey, selectedCrypto.pair])
 
   return (
     <TradeHistoryContext.Provider
       value={{
+        balances,
+        openOrders,
         panel,
-        setPanel
+        setPanel,
+        tradeHistory
       }}
     >
       {children}
@@ -54,6 +70,6 @@ export const useTradeHistory = (): ITradeHistoryConfig => {
     throw new Error('Missing trade history context')
   }
 
-  const { panel, setPanel } = context
-  return { panel, setPanel }
+  const { balances, openOrders, panel, setPanel, tradeHistory } = context
+  return { balances, openOrders, panel, setPanel, tradeHistory }
 }

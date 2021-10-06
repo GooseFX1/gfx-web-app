@@ -62,7 +62,7 @@ const Overlay: FC<{
   const handleClick = useCallback(
     (pair: string) => {
       setArrowRotation(false)
-      setSelectedCrypto({ decimals: 3, market: 'crypto', pair })
+      setSelectedCrypto({ decimals: 3, pair, type: 'crypto' })
       setVisible(false)
     },
     [setArrowRotation, setSelectedCrypto, setVisible]
