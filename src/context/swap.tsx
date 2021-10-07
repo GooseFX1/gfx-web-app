@@ -125,16 +125,17 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const swapTokens = async () => {
     if (!tokenA || !tokenB) return
 
-    notify({ message: 'Swap in progress...' })
+    const inTokens = `${inTokenAmount / 10 ** tokenA.decimals} ${tokenA.symbol}`
+    const outTokens = `${outTokenAmount / 10 ** tokenB.decimals} ${tokenB.symbol}`
+    notify({ message: `Trying to swap ${inTokens} for at least ${outTokens}...` })
+
     try {
       const signature = await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
-      const inTokens = `${inTokenAmount / 10 ** tokenA.decimals} ${tokenA.symbol}`
-      const outTokens = `${outTokenAmount / 10 ** tokenB.decimals} ${tokenB.symbol}`
       notify({
         type: 'success',
         message: 'Swap successful!',
         description: `You traded ${inTokens} for at least ${outTokens}`,
-        icon: 'swap_success',
+        icon: 'success',
         txid: signature
       })
       setTimeout(() => wallet.publicKey && fetchAccounts(wallet.publicKey), 1000)
@@ -163,7 +164,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const interval = setInterval(() => refreshRates(), 10000)
 
     return () => clearInterval(interval)
-  })
+  }, [refreshRates])
 
   return (
     <SwapContext.Provider

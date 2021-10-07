@@ -8,18 +8,15 @@ import { Connection, PublicKey, Transaction, TransactionSignature } from '@solan
 import { computePoolsPDAs, findAssociatedTokenAddress, getLPProgram } from './utils'
 import { IOrder, ISwapToken } from '../context'
 
-const createAssociatedTokenAccountIx = (
-  mint: PublicKey,
-  associatedAccount: PublicKey,
-  owner: PublicKey
-) => Token.createAssociatedTokenAccountInstruction(
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-  mint,
-  associatedAccount,
-  owner,
-  owner
-)
+const createAssociatedTokenAccountIx = (mint: PublicKey, associatedAccount: PublicKey, owner: PublicKey) =>
+  Token.createAssociatedTokenAccountInstruction(
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+    TOKEN_PROGRAM_ID,
+    mint,
+    associatedAccount,
+    owner,
+    owner
+  )
 
 const signTransaction = async (connection: Connection, transaction: Transaction, wallet: any) => {
   if (!wallet.signTransaction) return
@@ -35,12 +32,7 @@ const signAndSendRawTransaction = async (connection: Connection, transaction: Tr
   return await connection.sendRawTransaction(signedTransaction.serialize())
 }
 
-export const cancelCryptoOrder = async (
-  connection: Connection,
-  market: Market,
-  order: Order,
-  wallet: any
-) => {
+export const cancelCryptoOrder = async (connection: Connection, market: Market, order: Order, wallet: any) => {
   if (!wallet.publicKey) return
 
   const tx = await market.makeCancelOrderTransaction(connection, wallet.publicKey, order)
@@ -50,7 +42,7 @@ export const cancelCryptoOrder = async (
 export const placeCryptoOrder = async (connection: Connection, market: Market, order: IOrder, wallet: any) => {
   if (!wallet.publicKey || !wallet.signTransaction) return
 
-  const mint = order.side === 'buy' ? market.baseMintAddress : market.quoteMintAddress // TODO SWITCH ?
+  const mint = order.side === 'buy' ? market.quoteMintAddress : market.baseMintAddress // TODO SWITCH ?
   const payer = await findAssociatedTokenAddress(wallet.publicKey, mint)
   const { transaction } = await market.makePlaceOrderTransaction(connection, {
     owner: wallet.publicKey,

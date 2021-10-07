@@ -21,6 +21,15 @@ const HEADER = styled.div<{ $side: MarketSide }>`
   > div:last-child span {
     flex: 1;
     font-size: 11px;
+
+    &:first-child {
+      text-align: left;
+      cursor: pointer;
+    }
+
+    &:last-child {
+      text-align: right;
+    }
   }
 `
 
@@ -57,12 +66,16 @@ const ORDER = styled.div`
     flex: 1;
     font-size: 10px;
 
+    &:not(:last-child) {
+      z-index: 2;
+    }
+
     &:first-child {
       text-align: left;
       cursor: pointer;
     }
 
-    &:last-child {
+    &:nth-child(3) {
       text-align: right;
     }
   }

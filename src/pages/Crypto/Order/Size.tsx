@@ -1,27 +1,8 @@
 import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
 import { Input, Slider } from 'antd'
-import styled, { css } from 'styled-components'
-import { FieldHeader } from './shared'
+import { css } from 'styled-components'
+import { FieldHeader, Picker } from './shared'
 import { useAccounts, useDarkMode, useCrypto, useOrder, useTokenRegistry } from '../../../context'
-
-const PICKER = styled.div`
-  display: flex;
-  align-items: center;
-
-  span {
-    margin-left: ${({ theme }) => theme.margins['1.5x']};
-    font-size: 10px;
-    font-weight: bold;
-    whitespace: no-wrap;
-    cursor: pointer;
-    color: ${({ theme }) => theme.text1h};
-    transition: color ${({ theme }) => theme.hapticTransitionTime} ease-in-out;
-
-    &:hover {
-      color: ${({ theme }) => theme.text1};
-    }
-  }
-`
 
 export const Size: FC = () => {
   const { getUIAmount } = useAccounts()
@@ -64,16 +45,18 @@ export const Size: FC = () => {
         suffix={<span>{ask}</span>}
         value={order.size || undefined}
       />
-      <PICKER>
-        <Slider
-          max={userBalance}
-          min={0}
-          onChange={(size) => setOrder((prevState) => ({ ...prevState, size }))}
-          step={selectedCrypto.market && String(selectedCrypto.market.tickSize).length - 2}
-          value={order.size}
-        />
-        <span onClick={() => setOrder((prevState) => ({ ...prevState, size: userBalance }))}>Use Max</span>
-      </PICKER>
+      {order.side === 'sell' && (
+        <Picker>
+          <Slider
+            max={userBalance}
+            min={0}
+            onChange={(size) => setOrder((prevState) => ({ ...prevState, size }))}
+            step={selectedCrypto.market && String(selectedCrypto.market.tickSize).length - 2}
+            value={order.size}
+          />
+          <span onClick={() => setOrder((prevState) => ({ ...prevState, size: userBalance }))}>Use Max</span>
+        </Picker>
+      )}
     </div>
   )
 }
