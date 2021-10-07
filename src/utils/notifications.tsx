@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react'
 import { notification } from 'antd'
 import styled from 'styled-components'
-import { shortenAddress } from './misc'
 
 const CLOSE = styled.div`
   background-color: red;
@@ -33,15 +32,26 @@ const MESSAGE = styled.div`
 `
 
 const DESCRIPTION = styled(MESSAGE)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-top: 16px;
+  
+  > span {
+    width: 100%;
+  }
 `
 
 const TX_LINK = styled.a`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: 16px;
   color: white;
 
-  &:hover {
-    color: white;
+  &:hover > span {
     text-decoration-line: underline;
+    color: white;
   }
 `
 
@@ -61,9 +71,9 @@ export const notify = ({ description, icon, message, txid, type = 'info' }: INot
   if (txid) {
     description = (
       <>
-        <span>Transaction ID:</span>
+        <span>{description}</span>
         <TX_LINK href={'https://solscan.io/tx/' + txid} target="_blank" rel="noopener noreferrer">
-          {shortenAddress(txid, 8)}
+          <span>View on Solscan</span>
         </TX_LINK>
       </>
     )

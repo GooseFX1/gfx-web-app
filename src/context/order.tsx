@@ -17,7 +17,7 @@ import { useCrypto } from './crypto'
 import { useConnectionConfig } from './settings'
 import { useTokenRegistry } from './token_registry'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
-import { notify } from '../utils'
+import { capitalizeFirstLetter, notify } from '../utils'
 import { placeCryptoOrder } from '../web3'
 
 export type OrderDisplayType = 'market' | 'limit'
@@ -84,8 +84,7 @@ const OrderContext = createContext<IOrderConfig | null>(null)
 
 export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
-  const { getSymbolFromPair, selectedCrypto } = useCrypto()
-  const { getTokenInfoFromSymbol } = useTokenRegistry()
+  const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
   const wallet = useWallet()
   const [order, setOrder] = useState<IOrder>({
     display: 'limit',
@@ -111,16 +110,19 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [order.total])
 
   const placeOrder = useCallback(async () => {
-    const messageOrderType = `${order.display.charAt(0).toUpperCase()}${order.display.slice(1)} order`
-
     try {
-      const { address: mint } = getTokenInfoFromSymbol(getSymbolFromPair(selectedCrypto.pair, order.side)) as TokenInfo
-      await placeCryptoOrder(connection, selectedCrypto.market as Market, order, wallet, new PublicKey(mint))
-      notify({ type: 'success', message: `${messageOrderType} placed successfully!` })
+      await placeCryptoOrder(connection, selectedCrypto.market as Market, order, wallet)
+      const ask = getAskSymbolFromPair(selectedCrypto.pair)
+      notify({
+        type: 'success',
+        message: `${capitalizeFirstLetter(order.display)} order placed successfully!`,
+        description: `${capitalizeFirstLetter(order.side)}ing ${order.size} ${ask} at ${order.price}$ each`,
+        icon: 'trade_success'
+      })
     } catch (e: any) {
-      notify({ type: 'error', message: `${messageOrderType} failed`, icon: 'error' }, e)
+      notify({ type: 'error', message: `${capitalizeFirstLetter(order.display)} failed`, icon: 'trade_error' }, e)
     }
-  }, [order, getTokenInfoFromSymbol, getSymbolFromPair, selectedCrypto.pair, selectedCrypto.market, connection, wallet])
+  }, [connection, getAskSymbolFromPair, order, selectedCrypto.market, selectedCrypto.pair, wallet])
 
   return (
     <OrderContext.Provider

@@ -1,7 +1,7 @@
 import React, { FC, ReactNode } from 'react'
 import styled from 'styled-components'
 
-type Status = 'initial' | 'interact' | 'action' | 'not-allowed'
+type Status = 'initial' | 'action' | 'not-allowed'
 
 const BUTTON = styled.button<{ $height: string, $status: Status, $width: string }>`
   ${({ theme }) => theme.flexCenter}
@@ -9,15 +9,15 @@ const BUTTON = styled.button<{ $height: string, $status: Status, $width: string 
   width: ${({ $width }) => $width};
   border: none;
   ${({ theme }) => theme.roundedBorders}
-  ${({ theme }) => theme.smallShadow}
-  background-color: ${({ $status, theme }) =>
-    ($status === 'initial' || $status === 'interact')
-      ? theme.secondary3
-      : $status === 'action'
-        ? theme.secondary2
-        : theme.text1h
-  };
-  cursor: ${({ $status }) => ($status === 'interact' || $status === 'action') ? 'pointer' : $status};
+  background-color: ${({ $status, theme }) => $status === 'action' ? theme.secondary3 : theme.text1h};
+  cursor: ${({ $status }) => $status === 'action' ? 'pointer' : $status};
+  transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
+
+  ${({ theme, $status }) => $status === 'action' && `
+    &:hover {
+      background-color: ${theme.secondary2};
+    }
+  `}
 
   span {
     font-size: 12px;

@@ -27,7 +27,8 @@ export const PlaceOrder: FC = () => {
     if (!publicKey) {
       return State.Connect
     }
-    if (!order.size) {
+    // @ts-ignore
+    if (!order.size || order.size === '0') {
       return State.NullAmount
     }
     if (!tokenInfo || order.size > getUIAmount(tokenInfo.address)) {
@@ -40,9 +41,8 @@ export const PlaceOrder: FC = () => {
   const buttonStatus = useMemo(() => {
     switch (state) {
       case State.CanPlaceOrder:
-        return 'action'
       case State.Connect:
-        return 'interact'
+        return 'action'
       case State.NullAmount:
       case State.BalanceExceeded:
         return 'not-allowed'

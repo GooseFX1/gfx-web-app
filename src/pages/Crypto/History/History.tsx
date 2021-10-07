@@ -59,7 +59,7 @@ export const History: FC<{
           content
         ) : (
           <CONNECT>
-            <MainButton height={'40px'} status="interact" width={'160px'} onClick={handleClick}>
+            <MainButton height={'40px'} status="action" width={'160px'} onClick={handleClick}>
               <span>Connect Wallet</span>
             </MainButton>
           </CONNECT>

@@ -13,6 +13,10 @@ export function abbreviateNumber(num: number, fixed: number): String {
   return d + ['', 'K', 'M', 'B', 'T'][k]
 }
 
+export function capitalizeFirstLetter(s: string): string {
+  return `${s.charAt(0).toUpperCase()}${s.slice(1)}`
+}
+
 export function chunks<T>(array: T[], size: number): T[][] {
   return Array.apply<number, T[], T[][]>(0, new Array(Math.ceil(array.length / size))).map((_, index) =>
     array.slice(index * size, (index + 1) * size)

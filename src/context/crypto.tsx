@@ -105,10 +105,10 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
             )
           )
         } catch (e: any) {
-          notify({ type: 'error', message: 'Error fetching pyth price accounts', icon: 'error' }, e)
+          notify({ type: 'error', message: 'Error fetching pyth price accounts', icon: 'rate_error' }, e)
         }
       } catch (e: any) {
-        notify({ type: 'error', message: 'Error fetching pyth products', icon: 'error' }, e)
+        notify({ type: 'error', message: 'Error fetching pyth products', icon: 'rate_error' }, e)
       }
     },
     [connection]
@@ -131,7 +131,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
             })
           )
         } catch (e: any) {
-          notify({ type: 'error', message: 'Error fetching serum markets', icon: 'error' }, e)
+          notify({ type: 'error', message: 'Error fetching serum markets', icon: 'rate_error' }, e)
         }
       }
     })
@@ -180,7 +180,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
             subs.forEach((sub) => subscriptions.push(sub))
           } catch (e: any) {
-            notify({ type: 'error', message: 'Error fetching serum order book', icon: 'error' }, e)
+            notify({ type: 'error', message: 'Error fetching serum order book', icon: 'rate_error' }, e)
           }
         })()
     }

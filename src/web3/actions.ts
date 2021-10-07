@@ -47,15 +47,10 @@ export const cancelCryptoOrder = async (
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-export const placeCryptoOrder = async (
-  connection: Connection,
-  market: Market,
-  order: IOrder,
-  wallet: any,
-  mint: PublicKey
-) => {
+export const placeCryptoOrder = async (connection: Connection, market: Market, order: IOrder, wallet: any) => {
   if (!wallet.publicKey || !wallet.signTransaction) return
 
+  const mint = order.side === 'buy' ? market.baseMintAddress : market.quoteMintAddress // TODO SWITCH ?
   const payer = await findAssociatedTokenAddress(wallet.publicKey, mint)
   const { transaction } = await market.makePlaceOrderTransaction(connection, {
     owner: wallet.publicKey,

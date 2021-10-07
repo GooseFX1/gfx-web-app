@@ -128,7 +128,15 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     notify({ message: 'Swap in progress...' })
     try {
       const signature = await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
-      notify({ type: 'success', message: 'Swap successful!', txid: signature })
+      const inTokens = `${inTokenAmount / 10 ** tokenA.decimals} ${tokenA.symbol}`
+      const outTokens = `${outTokenAmount / 10 ** tokenB.decimals} ${tokenB.symbol}`
+      notify({
+        type: 'success',
+        message: 'Swap successful!',
+        description: `You traded ${inTokens} for at least ${outTokens}`,
+        icon: 'swap_success',
+        txid: signature
+      })
       setTimeout(() => wallet.publicKey && fetchAccounts(wallet.publicKey), 1000)
     } catch (e: any) {
       notify({ type: 'error', message: 'Swap failed', icon: 'error' }, e)
