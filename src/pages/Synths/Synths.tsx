@@ -6,5 +6,5 @@ const WRAPPER = styled.div`
 `
 
 export const Synths: FC = () => {
-  return <WRAPPER>Coming Soon</WRAPPER>
+  return <WRAPPER>Coming Soon - Test</WRAPPER>
 }
