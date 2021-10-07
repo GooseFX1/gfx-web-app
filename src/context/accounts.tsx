@@ -9,12 +9,12 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
+import { TOKEN_PROGRAM_ID, WRAPPED_SOL_MINT } from '@project-serum/serum/lib/token-instructions'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { useConnectionConfig } from './settings'
 import { useTokenRegistry } from './token_registry'
-import { findAssociatedTokenAddress, SOLANA_REGISTRY_TOKEN_MINT } from '../web3'
+import { findAssociatedTokenAddress } from '../web3'
 
 interface IAccounts {
   [mint: string]: {
@@ -75,7 +75,7 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
         const amount = solAmount.toString()
         const uiAmount = solAmount / 10 ** 9
-        accounts[SOLANA_REGISTRY_TOKEN_MINT] = { amount, decimals: 9, uiAmount, uiAmountString: uiAmount.toString() }
+        accounts[WRAPPED_SOL_MINT.toString()] = { amount, decimals: 9, uiAmount, uiAmountString: uiAmount.toString() }
         setBalances(accounts)
         setFetching(false)
       })()

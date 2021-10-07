@@ -69,7 +69,7 @@ export const Size: FC = () => {
           max={userBalance}
           min={0}
           onChange={(size) => setOrder((prevState) => ({ ...prevState, size }))}
-          step={String(selectedCrypto.tickSize).length - 2}
+          step={selectedCrypto.market && String(selectedCrypto.market.tickSize).length - 2}
           value={order.size}
         />
         <span onClick={() => setOrder((prevState) => ({ ...prevState, size: userBalance }))}>Use Max</span>

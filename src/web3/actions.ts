@@ -1,28 +1,63 @@
 import { BN } from '@project-serum/anchor'
+import { Market, OpenOrders } from '@project-serum/serum'
+import { Order } from '@project-serum/serum/lib/market'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { WalletContextState } from '@solana/wallet-adapter-react'
-import { Connection, PublicKey, Transaction, TransactionInstruction, TransactionSignature } from '@solana/web3.js'
-import { getSerumMarket } from './serum'
+import { Connection, PublicKey, Transaction, TransactionSignature } from '@solana/web3.js'
 import { computePoolsPDAs, findAssociatedTokenAddress, getLPProgram } from './utils'
 import { IOrder, ISwapToken } from '../context'
 
-export const serumPlaceOrder = async (
+const createAssociatedTokenAccountIx = (
+  mint: PublicKey,
+  associatedAccount: PublicKey,
+  owner: PublicKey
+) => Token.createAssociatedTokenAccountInstruction(
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+  mint,
+  associatedAccount,
+  owner,
+  owner
+)
+
+const signTransaction = async (connection: Connection, transaction: Transaction, wallet: any) => {
+  if (!wallet.signTransaction) return
+
+  transaction.feePayer = wallet.publicKey
+  transaction.recentBlockhash = (await connection.getRecentBlockhash('max')).blockhash
+
+  return await wallet.signTransaction(transaction)
+}
+
+const signAndSendRawTransaction = async (connection: Connection, transaction: Transaction, wallet: any) => {
+  const signedTransaction = await signTransaction(connection, transaction, wallet)
+  return await connection.sendRawTransaction(signedTransaction.serialize())
+}
+
+export const cancelCryptoOrder = async (
   connection: Connection,
-  pair: string,
+  market: Market,
+  order: Order,
+  wallet: any
+) => {
+  if (!wallet.publicKey) return
+
+  const tx = await market.makeCancelOrderTransaction(connection, wallet.publicKey, order)
+  return await signAndSendRawTransaction(connection, tx, wallet)
+}
+
+export const placeCryptoOrder = async (
+  connection: Connection,
+  market: Market,
   order: IOrder,
-  wallet: WalletContextState,
+  wallet: any,
   mint: PublicKey
 ) => {
   if (!wallet.publicKey || !wallet.signTransaction) return
 
-  const [market, payer] = await Promise.all([
-    getSerumMarket(connection, pair),
-    findAssociatedTokenAddress(wallet.publicKey, mint)
-  ])
-
-  const { signers, transaction } = await market.makePlaceOrderTransaction(connection, {
+  const payer = await findAssociatedTokenAddress(wallet.publicKey, mint)
+  const { transaction } = await market.makePlaceOrderTransaction(connection, {
     owner: wallet.publicKey,
     payer,
     side: order.side,
@@ -31,7 +66,41 @@ export const serumPlaceOrder = async (
     orderType: order.type
   })
 
-  return await connection.sendTransaction(transaction, signers)
+  return await signAndSendRawTransaction(connection, transaction, wallet)
+}
+
+export const settleCryptoFunds = async (
+  connection: Connection,
+  market: Market,
+  openOrders: OpenOrders,
+  wallet: any
+) => {
+  if (!wallet.publicKey) return
+
+  const tx = new Transaction()
+
+  let baseWallet, quoteWallet
+  const [[baseAccount], [quoteAccount]] = await Promise.all([
+    market.findBaseTokenAccountsForOwner(connection, openOrders.owner),
+    market.findQuoteTokenAccountsForOwner(connection, openOrders.owner)
+  ])
+
+  baseWallet = baseAccount?.pubkey
+  if (!baseWallet) {
+    baseWallet = await findAssociatedTokenAddress(wallet.publicKey, market.baseMintAddress)
+    tx.add(createAssociatedTokenAccountIx(market.baseMintAddress, baseWallet, wallet.publicKey))
+  }
+
+  quoteWallet = quoteAccount?.pubkey
+  if (!quoteWallet) {
+    quoteWallet = await findAssociatedTokenAddress(wallet.publicKey, market.quoteMintAddress)
+    tx.add(createAssociatedTokenAccountIx(market.quoteMintAddress, quoteWallet, wallet.publicKey))
+  }
+
+  const { transaction } = await market.makeSettleFundsTransaction(connection, openOrders, baseWallet, quoteWallet)
+  tx.add(transaction)
+
+  return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
 export const swap = async (
@@ -40,11 +109,11 @@ export const swap = async (
   inTokenAmount: number,
   outTokenAmount: number,
   slippage: number,
-  wallet: WalletContextState,
+  wallet: any,
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<TransactionSignature | undefined> => {
-  if (!wallet.publicKey || !wallet.signTransaction) return
+  if (!wallet.publicKey) return
 
   const { lpTokenMint, pool } = await computePoolsPDAs(tokenA.symbol, tokenB.symbol, network)
 
@@ -59,19 +128,10 @@ export const swap = async (
     await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenB.address))
   ])
 
-  const instructions: TransactionInstruction[] = []
+  const tx = new Transaction()
 
   if (!(await connection.getAccountInfo(outTokenAtaUser))) {
-    instructions.push(
-      Token.createAssociatedTokenAccountInstruction(
-        ASSOCIATED_TOKEN_PROGRAM_ID,
-        TOKEN_PROGRAM_ID,
-        new PublicKey(tokenB.address),
-        outTokenAtaUser,
-        wallet.publicKey,
-        wallet.publicKey
-      )
-    )
+    tx.add(createAssociatedTokenAccountIx(new PublicKey(tokenB.address), outTokenAtaUser, wallet.publicKey))
   }
 
   const accounts = {
@@ -87,15 +147,7 @@ export const swap = async (
   }
 
   const { instruction } = getLPProgram(wallet, connection, network)
-  const swapIx = await instruction.swap(amountIn, minimumAmountOut, { accounts })
-  instructions.push(swapIx)
+  tx.add(await instruction.swap(amountIn, minimumAmountOut, { accounts }))
 
-  const transaction = new Transaction({
-    feePayer: wallet.publicKey,
-    recentBlockhash: (await connection.getRecentBlockhash()).blockhash
-  })
-  transaction.add(...instructions)
-
-  const signedTransaction = await wallet.signTransaction(transaction)
-  return await connection.sendRawTransaction(signedTransaction.serialize())
+  return signAndSendRawTransaction(connection, tx, wallet)
 }

@@ -1,32 +1,37 @@
 import { Market, MARKETS, OpenOrders } from '@project-serum/serum'
+import { Order } from '@project-serum/serum/lib/market'
 import { AccountInfo, Connection, PublicKey } from '@solana/web3.js'
-import { MarketSide } from '../context'
+import { AVAILABLE_MARKETS, MarketSide } from '../context'
 
-export const getSerumAsks = async (connection: Connection, pair: string, canBeDeprecated: boolean = false) => {
-  const market = await getSerumMarket(connection, pair, canBeDeprecated)
+const getAsks = async (connection: Connection, pair: string, canBeDeprecated: boolean = false) => {
+  const market = await getMarket(connection, pair, canBeDeprecated)
   return await market.loadAsks(connection)
 }
 
-export const getSerumBids = async (connection: Connection, pair: string, canBeDeprecated: boolean = false) => {
-  const market = await getSerumMarket(connection, pair, canBeDeprecated)
+const getBids = async (connection: Connection, pair: string, canBeDeprecated: boolean = false) => {
+  const market = await getMarket(connection, pair, canBeDeprecated)
   return await market.loadBids(connection)
 }
 
-export const getSerumLatestBid = async (connection: Connection, pair: string, canBeDeprecated: boolean = false) => {
-  const [[price]] = (await getSerumBids(connection, pair, canBeDeprecated)).getL2(1)
-  return price
+const getLatestBid = async (connection: Connection, pair: string, canBeDeprecated: boolean = false) => {
+  const [[latestBid]] = (await getBids(connection, pair, canBeDeprecated)).getL2(1)
+  return latestBid
 }
 
-export const getSerumMarket = async (
+const getMarket = async (
   connection: Connection,
   pair: string,
   canBeDeprecated: boolean = false
 ): Promise<Market> => {
-  const { address, programId } = getSerumMarketInfo(pair, canBeDeprecated)
+  const { address, programId } = getMarketInfo(pair, canBeDeprecated)
   return await Market.load(connection, address, undefined, programId)
 }
 
-export const getSerumMarketInfo = (pair: string, canBeDeprecated: boolean = false) => {
+const getMarketFromAddress = (address: PublicKey) => {
+  return AVAILABLE_MARKETS.find(({ address: x }) => x.toString() === address.toString())
+}
+
+const getMarketInfo = (pair: string, canBeDeprecated: boolean = false) => {
   const match = MARKETS.find(
     ({ deprecated, name }) => name === pair && ((!canBeDeprecated && !deprecated) || canBeDeprecated)
   )
@@ -37,21 +42,31 @@ export const getSerumMarketInfo = (pair: string, canBeDeprecated: boolean = fals
   return match
 }
 
-export const getSerumOpenOrders = async (
-  connection: Connection,
-  pair: string,
-  owner: PublicKey,
-  canBeDeprecated: boolean = false
-) => {
-  const { address, programId } = await getSerumMarket(connection, pair, canBeDeprecated)
-  await OpenOrders.findForOwner(connection, owner, programId)
+const getOpenOrders = async (connection: Connection, market: Market, owner: PublicKey): Promise<OpenOrders[]> => {
+  return await market.findOpenOrdersAccountsForOwner(connection, owner)
 }
 
-export const subscribeToSerumOrderBook = async (
+const getOrders = async (connection: Connection, market: Market, owner: PublicKey): Promise<Order[]> => {
+  return await market.loadOrdersForOwner(connection, owner)
+}
+
+const subscribeToOrderBook = async (
   connection: Connection,
   market: Market,
   side: MarketSide,
   callback: (account: AccountInfo<Buffer>, market: Market) => void
 ): Promise<number> => {
   return connection.onAccountChange(market.decoded[side], (account) => callback(account, market))
+}
+
+export const serum = {
+  getAsks,
+  getBids,
+  getLatestBid,
+  getMarket,
+  getMarketFromAddress,
+  getMarketInfo,
+  getOpenOrders,
+  getOrders,
+  subscribeToOrderBook
 }

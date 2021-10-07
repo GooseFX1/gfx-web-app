@@ -41,11 +41,7 @@ const getMultipleAccounts = async (connection: any, keys: string[], commitment: 
   return { keys, array }
 }
 
-export const getPriceFromPythPriceAccount = (product: AccountInfo<any>) => {
-  return parsePriceData(product.data).price
-}
-
-export const fetchPythPriceAccounts = async (
+const fetchPriceAccounts = async (
   connection: Connection,
   products: ProductData[]
 ): Promise<{ mint: PublicKey; price: number; symbol: string }[]> => {
@@ -61,7 +57,7 @@ export const fetchPythPriceAccounts = async (
   })
 }
 
-export const fetchPythProducts = async (connection: Connection, markets?: string[]): Promise<ProductData[]> => {
+const fetchProducts = async (connection: Connection, markets?: string[]): Promise<ProductData[]> => {
   let allProductAccountKeys: PublicKey[] = []
   let anotherMappingAccount: PublicKey | null = ORACLE_PUBLIC_KEY
   do {
@@ -82,4 +78,14 @@ export const fetchPythProducts = async (connection: Connection, markets?: string
   )
   const productsData = products.array.map((p) => parseProductData(p.data))
   return markets ? productsData.filter(({ product }) => markets.includes(product.symbol)) : productsData
+}
+
+const getPriceFromPriceAccount = (product: AccountInfo<any>) => {
+  return parsePriceData(product.data).price
+}
+
+export const pyth = {
+  fetchPriceAccounts,
+  fetchProducts,
+  getPriceFromPriceAccount
 }

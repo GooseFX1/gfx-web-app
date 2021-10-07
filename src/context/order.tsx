@@ -9,7 +9,7 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { MARKETS } from '@project-serum/serum'
+import { Market, MARKETS } from '@project-serum/serum'
 import { TokenInfo } from '@solana/spl-token-registry'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
@@ -18,7 +18,7 @@ import { useConnectionConfig } from './settings'
 import { useTokenRegistry } from './token_registry'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
 import { notify } from '../utils'
-import { serumPlaceOrder } from '../web3'
+import { placeCryptoOrder } from '../web3'
 
 export type OrderDisplayType = 'market' | 'limit'
 export type OrderSide = 'buy' | 'sell'
@@ -115,12 +115,12 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     try {
       const { address: mint } = getTokenInfoFromSymbol(getSymbolFromPair(selectedCrypto.pair, order.side)) as TokenInfo
-      await serumPlaceOrder(connection, selectedCrypto.pair, order, wallet, new PublicKey(mint))
+      await placeCryptoOrder(connection, selectedCrypto.market as Market, order, wallet, new PublicKey(mint))
       notify({ type: 'success', message: `${messageOrderType} placed successfully!` })
     } catch (e: any) {
-      notify({ type: 'error', message: `${messageOrderType} failed`, icon: 'error', description: e.message })
+      notify({ type: 'error', message: `${messageOrderType} failed`, icon: 'error' }, e)
     }
-  }, [connection, getSymbolFromPair, getTokenInfoFromSymbol, order, wallet, selectedCrypto.pair])
+  }, [order, getTokenInfoFromSymbol, getSymbolFromPair, selectedCrypto.pair, selectedCrypto.market, connection, wallet])
 
   return (
     <OrderContext.Provider

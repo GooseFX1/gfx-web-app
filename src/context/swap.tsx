@@ -17,7 +17,7 @@ import { PublicKey } from '@solana/web3.js'
 import { useAccounts } from './accounts'
 import { useConnectionConfig, useSlippageConfig } from './settings'
 import { notify } from '../utils'
-import { computePoolsPDAs, getSerumLatestBid, swap } from '../web3'
+import { computePoolsPDAs, serum, swap } from '../web3'
 
 interface IRates {
   inValue: number
@@ -81,7 +81,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       if (tokenA) {
         try {
-          const inValue = await getSerumLatestBid(connection, `${tokenA.symbol}/USDC`)
+          const inValue = await serum.getLatestBid(connection, `${tokenA.symbol}/USDC`)
           setRates(({ outValue, outValuePerIn }) => ({ inValue, outValue, outValuePerIn, time }))
         } catch (e) {
           setRates(({ outValue, outValuePerIn }) => ({ inValue: 0, outValue, outValuePerIn, time }))
@@ -90,7 +90,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       if (tokenB) {
         try {
-          const outValue = await getSerumLatestBid(connection, `${tokenB.symbol}/USDC`)
+          const outValue = await serum.getLatestBid(connection, `${tokenB.symbol}/USDC`)
           setRates(({ inValue, outValuePerIn }) => ({ inValue, outValue, outValuePerIn, time }))
         } catch (e) {
           setRates(({ inValue, outValuePerIn }) => ({ inValue, outValue: 0, outValuePerIn, time }))
@@ -123,7 +123,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [connection, inTokenAmount, network, setRates, tokenA, tokenB])
 
   const swapTokens = async () => {
-    if (!wallet.publicKey || !tokenA || !tokenB) return
+    if (!tokenA || !tokenB) return
 
     notify({ message: 'Swap in progress...' })
     try {
@@ -131,7 +131,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       notify({ type: 'success', message: 'Swap successful!', txid: signature })
       setTimeout(() => wallet.publicKey && fetchAccounts(wallet.publicKey), 1000)
     } catch (e: any) {
-      notify({ type: 'error', message: 'Swap failed', icon: 'error', description: e.message })
+      notify({ type: 'error', message: 'Swap failed', icon: 'error' }, e)
     }
   }
 

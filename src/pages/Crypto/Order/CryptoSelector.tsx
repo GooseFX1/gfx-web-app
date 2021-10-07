@@ -73,7 +73,7 @@ const Overlay: FC<{
       AVAILABLE_MARKETS.map(({ name }, index) => (
         <MARKET key={index} onClick={() => handleClick(name)}>
           <CenteredImg>
-            <img src={`${process.env.PUBLIC_URL}/img/tokens/${getAskSymbolFromPair(name)}.svg`} alt="" />
+            <img src={`${process.env.PUBLIC_URL}/img/crypto/${getAskSymbolFromPair(name)}.svg`} alt="" />
           </CenteredImg>
           <span>{name}</span>
         </MARKET>

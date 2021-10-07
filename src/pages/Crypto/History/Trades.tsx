@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
 
 export const Trades: FC = () => {
-  return <div>No trade history</div>
+  return <span>No trade history</span>
 }

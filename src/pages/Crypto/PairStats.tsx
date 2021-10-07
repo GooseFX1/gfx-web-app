@@ -68,11 +68,6 @@ export const PairStats: FC<{
   const marketData = useMemo(() => marketsData[pair], [marketsData, pair])
   // const change24HIcon = useMemo(() => `price_${marketData.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData])
 
-  const icon = useMemo(() => {
-    const folder = type === 'crypto' ? 'tokens' : ''
-    return `${process.env.PUBLIC_URL}/img/tokens/${symbol}.svg`
-  }, [])
-
   const handleClick = () => {
     if (type === 'synth') {
       history.push('/synths')
@@ -86,7 +81,7 @@ export const PairStats: FC<{
       <INFO>
         <div onClick={handleClick}>
           <ASSET_ICON>
-            <img src={icon} alt="" />
+            <img src={`${process.env.PUBLIC_URL}/img/${type}/${symbol}.svg`} alt="" />
           </ASSET_ICON>
           <span>{formattedPair}</span>
         </div>

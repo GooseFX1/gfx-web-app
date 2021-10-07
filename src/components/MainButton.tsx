@@ -9,6 +9,7 @@ const BUTTON = styled.button<{ $height: string, $status: Status, $width: string 
   width: ${({ $width }) => $width};
   border: none;
   ${({ theme }) => theme.roundedBorders}
+  ${({ theme }) => theme.smallShadow}
   background-color: ${({ $status, theme }) =>
     ($status === 'initial' || $status === 'interact')
       ? theme.secondary3

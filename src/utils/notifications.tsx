@@ -45,24 +45,24 @@ const TX_LINK = styled.a`
   }
 `
 
-export const notify = ({
-  description,
-  icon,
-  message,
-  txid,
-  type = 'info'
-}: {
+interface INotifyParams {
   message: string
   description?: string | ReactNode
   icon?: string
   txid?: string
   type?: string
-}) => {
+}
+
+export const notify = ({ description, icon, message, txid, type = 'info' }: INotifyParams, e?: any) => {
+  if (e) {
+    description = e.message
+  }
+
   if (txid) {
     description = (
       <>
         <span>Transaction ID:</span>
-        <TX_LINK href={'https://explorer.solana.com/tx/' + txid} target="_blank" rel="noopener noreferrer">
+        <TX_LINK href={'https://solscan.io/tx/' + txid} target="_blank" rel="noopener noreferrer">
           {shortenAddress(txid, 8)}
         </TX_LINK>
       </>
