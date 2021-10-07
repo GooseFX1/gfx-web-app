@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, FC, useEffect, useMemo, useState } from 'react'
+import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
 import { Input, Switch } from 'antd'
 import styled, { css } from 'styled-components'
 import { FieldHeader } from './shared'
@@ -35,15 +35,12 @@ export const LimitPrice: FC = () => {
   const { mode } = useDarkMode()
   const { getBidSymbolFromPair, selectedCrypto } = useCrypto()
   const { order, setOrder } = useOrder()
-  const [price, setPrice] = useState(order.price)
 
   const symbol = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
 
   const onChangeIOC = (checked: boolean) => setOrder((prevState) => ({ ...prevState, type: checked ? 'ioc' : 'limit' }))
   const onChangePost = (checked: boolean) =>
     setOrder((prevState) => ({ ...prevState, type: checked ? 'postOnly' : 'limit' }))
-
-  useEffect(() => setOrder((prevState) => ({ ...prevState, price })), [price, setOrder])
 
   const localCSS = css`
     .order-price .ant-input-affix-wrapper {
@@ -57,11 +54,13 @@ export const LimitPrice: FC = () => {
       <FieldHeader>Limit price</FieldHeader>
       <Input
         maxLength={15}
-        onChange={(x: BaseSyntheticEvent) => !isNaN(x.target.value) && setPrice(x.target.value)}
+        onChange={(x: BaseSyntheticEvent) => {
+          !isNaN(x.target.value) && setOrder(prevState => ({ ...prevState, price: x.target.value }))
+        }}
         pattern="\d+(\.\d+)?"
-        placeholder={price.toString()}
+        placeholder={order.price.toString()}
         suffix={<span>{symbol}</span>}
-        value={ellipseNumber(price)}
+        value={ellipseNumber(order.price)}
       />
       <TYPES>
         <div>

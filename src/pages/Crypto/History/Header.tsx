@@ -4,8 +4,13 @@ import { Expand } from '../../../components'
 import { HistoryPanel, PANELS_FIELDS, useTradeHistory } from '../../../context'
 import { SpaceBetweenDiv } from '../../../styles'
 
-const FIELD = styled.span`
+const FIELD = styled.span<{ $width: number }>`
+  width: ${({ $width }) => $width}%;
   font-size: 12px;
+`
+
+const FIELDS = styled(SpaceBetweenDiv)`
+  margin: 0 -${({ theme }) => theme.margins['5x']};
 `
 
 const PANEL = styled.div<{ $active: boolean }>`
@@ -36,7 +41,7 @@ const PANEL = styled.div<{ $active: boolean }>`
 
 const PANELS = styled(SpaceBetweenDiv)<{ $panel: HistoryPanel }>`
   position: relative;
-  margin-bottom: ${({ theme }) => theme.margins['1x']};
+  margin-bottom: ${({ theme }) => theme.margins['1.5x']};
 
   &:after {
     content: '';
@@ -83,11 +88,11 @@ export const Header: FC<{ setChartsVisible: Dispatch<SetStateAction<boolean>> }>
           </PANEL>
         ))}
       </PANELS>
-      <SpaceBetweenDiv>
+      <FIELDS>
         {PANELS_FIELDS[panel].map((p, index) => (
-          <FIELD key={index}>{p}</FIELD>
+          <FIELD key={index} $width={100 / PANELS_FIELDS[panel].length}>{p}</FIELD>
         ))}
-      </SpaceBetweenDiv>
+      </FIELDS>
     </WRAPPER>
   )
 }

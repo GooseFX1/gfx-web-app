@@ -2,23 +2,23 @@ import React, {
   createContext,
   Dispatch,
   FC,
+  MutableRefObject,
   ReactNode,
   SetStateAction,
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState
 } from 'react'
-import { MARKETS } from '@project-serum/serum'
-import { TokenInfo } from '@solana/spl-token-registry'
+import { Market, MARKETS } from '@project-serum/serum'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { PublicKey } from '@solana/web3.js'
 import { useCrypto } from './crypto'
 import { useConnectionConfig } from './settings'
-import { useTokenRegistry } from './token_registry'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
-import { notify } from '../utils'
-import { serumPlaceOrder } from '../web3'
+import { capitalizeFirstLetter, notify } from '../utils'
+import { placeCryptoOrder } from '../web3'
+import { useTradeHistory } from './trade_history'
 
 export type OrderDisplayType = 'market' | 'limit'
 export type OrderSide = 'buy' | 'sell'
@@ -84,8 +84,8 @@ const OrderContext = createContext<IOrderConfig | null>(null)
 
 export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
-  const { getSymbolFromPair, selectedCrypto } = useCrypto()
-  const { getTokenInfoFromSymbol } = useTokenRegistry()
+  const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
+  const { fetchOpenOrders } = useTradeHistory()
   const wallet = useWallet()
   const [order, setOrder] = useState<IOrder>({
     display: 'limit',
@@ -96,6 +96,23 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     total: 0,
     type: 'limit'
   })
+
+  let tickSizeTimeout: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
+  const timeoutDelay = 500
+  const roundSizeToTickSize = useCallback(() => {
+    if (tickSizeTimeout.current) {
+      clearTimeout(tickSizeTimeout.current)
+    }
+
+    tickSizeTimeout.current = setTimeout(async () => {
+      if (selectedCrypto.market) {
+        const { tickSize } = selectedCrypto.market
+        setOrder((prevState) => ({ ...prevState, size: Math.floor(order.size / tickSize) * tickSize }))
+      }
+    }, timeoutDelay)
+  }, [order.size, selectedCrypto.market])
+
+  useEffect(() => roundSizeToTickSize(), [order.size, roundSizeToTickSize])
 
   useEffect(
     () => setOrder((prevState) => ({ ...prevState, total: order.price * order.size })),
@@ -111,16 +128,20 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [order.total])
 
   const placeOrder = useCallback(async () => {
-    const messageOrderType = `${order.display.charAt(0).toUpperCase()}${order.display.slice(1)} order`
-
     try {
-      const { address: mint } = getTokenInfoFromSymbol(getSymbolFromPair(selectedCrypto.pair, order.side)) as TokenInfo
-      await serumPlaceOrder(connection, selectedCrypto.pair, order, wallet, new PublicKey(mint))
-      notify({ type: 'success', message: `${messageOrderType} placed successfully!` })
+      await placeCryptoOrder(connection, selectedCrypto.market as Market, order, wallet)
+      const ask = getAskSymbolFromPair(selectedCrypto.pair)
+      notify({
+        type: 'success',
+        message: `${capitalizeFirstLetter(order.display)} order placed successfully!`,
+        description: `${capitalizeFirstLetter(order.side)}ing ${order.size} ${ask} at ${order.price}$ each`,
+        icon: 'trade_success'
+      })
+      setTimeout(() => fetchOpenOrders(), 4500)
     } catch (e: any) {
-      notify({ type: 'error', message: `${messageOrderType} failed`, icon: 'error', description: e.message })
+      notify({ type: 'error', message: `${capitalizeFirstLetter(order.display)} failed`, icon: 'trade_error' }, e)
     }
-  }, [connection, getSymbolFromPair, getTokenInfoFromSymbol, order, wallet, selectedCrypto.pair])
+  }, [connection, fetchOpenOrders, getAskSymbolFromPair, order, selectedCrypto.market, selectedCrypto.pair, wallet])
 
   return (
     <OrderContext.Provider

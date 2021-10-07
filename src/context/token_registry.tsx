@@ -1,8 +1,9 @@
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
+import { WRAPPED_SOL_MINT } from '@project-serum/serum/lib/token-instructions'
 import { ENV, TokenInfo, TokenListProvider } from '@solana/spl-token-registry'
 import { useConnectionConfig } from './settings'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
-import { SOLANA_REGISTRY_TOKEN_MINT, TOKEN_A, TOKEN_B } from '../web3'
+import { TOKEN_A, TOKEN_B } from '../web3'
 
 interface ITokenRegistryConfig {
   getTokenInfoFromSymbol: (x: string) => TokenInfo | undefined
@@ -21,7 +22,7 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
     (async () => {
       const list = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
       const filteredList = list.filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
-      filteredList.push({ address: SOLANA_REGISTRY_TOKEN_MINT, chainId, decimals: 9, name: 'Solana', symbol: 'SOL' })
+      filteredList.push({ address: WRAPPED_SOL_MINT.toString(), chainId, decimals: 9, name: 'Solana', symbol: 'SOL' })
 
       if (chainId === ENV.Devnet) {
         filteredList.push({ address: TOKEN_A, chainId, decimals: 9, name: 'Token A', symbol: 'TKNA' })

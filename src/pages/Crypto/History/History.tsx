@@ -10,7 +10,13 @@ import { HistoryPanel, useTradeHistory, useWalletModal } from '../../../context'
 import { CenteredDiv } from '../../../styles'
 
 const BODY = styled(CenteredDiv)`
-  margin-top: ${({ theme }) => theme.margins['3x']};
+  flex-direction: column;
+  margin: ${({ theme }) => theme.margins['3x']} -${({ theme }) => theme.margins['5x']} 0;
+  padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['3x']};
+
+  > div:not(:last-child) {
+    margin-bottom: ${({ theme }) => theme.margins['1x']};
+  }
 `
 
 const CONNECT = styled.div`
@@ -53,7 +59,7 @@ export const History: FC<{
           content
         ) : (
           <CONNECT>
-            <MainButton height={'40px'} status="interact" width={'160px'} onClick={handleClick}>
+            <MainButton height={'40px'} status="action" width={'160px'} onClick={handleClick}>
               <span>Connect Wallet</span>
             </MainButton>
           </CONNECT>

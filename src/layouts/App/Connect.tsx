@@ -24,11 +24,21 @@ const _BUTTON = styled.button`
 const CONNECT_BUTTON = styled(_BUTTON)`
   padding: 0 ${({ theme }) => theme.margins['2x']};
   background-color: ${({ theme }) => theme.secondary3};
+  cursor: pointer;
+  transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.secondary2};
+  }
 `
 
 const CONNECTED_BUTTON = styled(_BUTTON)`
   padding: 0 ${({ theme }) => theme.margins['1.5x']} 0 ${({ theme }) => theme.margins['1x']};
   background-image: linear-gradient(to left, ${({ theme }) => theme.secondary2}, ${({ theme }) => theme.primary2});
+
+  > span {
+    cursor: initial !important;
+  }
 `
 
 const NETWORK = styled.span`

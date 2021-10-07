@@ -51,7 +51,7 @@ const SIDE = styled(SpaceBetweenDiv)<{ $display: boolean; $side: OrderSide }>`
     bottom: -14.5px;
     left: ${({ $side }) => ($side === 'buy' ? '-20' : '113')}px;
     width: 43%;
-    height: 2.5px;
+    height: 2px;
     background-color: ${({ theme, $display, $side }) =>
       $display ? theme[$side === 'buy' ? 'bids' : 'asks'] : theme.cryptoOrderHeaderBorder};
     transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;
@@ -117,7 +117,7 @@ export const Header: FC = () => {
   return (
     <WRAPPER>
       <ICON>
-        <img src={`${process.env.PUBLIC_URL}/img/tokens/${symbol}.svg`} alt="" />
+        <img src={`${process.env.PUBLIC_URL}/img/crypto/${symbol}.svg`} alt="" />
       </ICON>
       <INFO>
         <div>

@@ -32,19 +32,19 @@ const TradeContent: FC = () => {
 
   return (
     <WRAPPER>
-      <div>
-        <Pairs />
-        <TVChartContainer interval={'D'} symbol={selectedCrypto.pair} visible={chartsVisible} />
-        <TradeHistoryProvider>
+      <TradeHistoryProvider>
+        <div>
+          <Pairs />
+          <TVChartContainer interval={'D'} symbol={selectedCrypto.pair} visible={chartsVisible} />
           <History chartsVisible={chartsVisible} setChartsVisible={setChartsVisible} />
-        </TradeHistoryProvider>
-      </div>
-      <div>
-        <OrderProvider>
-          <Order />
-          <OrderBook />
-        </OrderProvider>
-      </div>
+        </div>
+        <div>
+          <OrderProvider>
+            <Order />
+            <OrderBook />
+          </OrderProvider>
+        </div>
+      </TradeHistoryProvider>
     </WRAPPER>
   )
 }

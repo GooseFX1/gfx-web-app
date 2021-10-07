@@ -148,7 +148,7 @@ export const Selector: FC<{
               }}
             >
               <TOKEN_ICON>
-                <img src={`${process.env.PUBLIC_URL}/img/tokens/${symbol}.svg`} alt="" />
+                <img src={`${process.env.PUBLIC_URL}/img/crypto/${symbol}.svg`} alt="" />
               </TOKEN_ICON>
               <div>
                 <span>{symbol}</span>
@@ -164,7 +164,7 @@ export const Selector: FC<{
             <SpaceBetweenDiv>
               <span>{token.symbol}</span>
               <CLICKER_ICON>
-                <img src={`${process.env.PUBLIC_URL}/img/tokens/${token.symbol}.svg`} alt="" />
+                <img src={`${process.env.PUBLIC_URL}/img/crypto/${token.symbol}.svg`} alt="" />
               </CLICKER_ICON>
             </SpaceBetweenDiv>
           ) : (

@@ -42,9 +42,8 @@ export const SwapButton: FC = () => {
   const buttonStatus = useMemo(() => {
     switch (state) {
       case State.CanSwap:
-        return 'action'
       case State.Connect:
-        return 'interact'
+        return 'action'
       case State.BalanceExceeded:
       case State.PoolNotFound:
         return 'not-allowed'

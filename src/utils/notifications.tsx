@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react'
 import { notification } from 'antd'
 import styled from 'styled-components'
-import { shortenAddress } from './misc'
 
 const CLOSE = styled.div`
   background-color: red;
@@ -33,37 +32,48 @@ const MESSAGE = styled.div`
 `
 
 const DESCRIPTION = styled(MESSAGE)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-top: 16px;
-`
-
-const TX_LINK = styled.a`
-  color: white;
-
-  &:hover {
-    color: white;
-    text-decoration-line: underline;
+  
+  > span {
+    width: 100%;
   }
 `
 
-export const notify = ({
-  description,
-  icon,
-  message,
-  txid,
-  type = 'info'
-}: {
+const TX_LINK = styled.a`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: 16px;
+  color: white;
+
+  &:hover > span {
+    text-decoration-line: underline;
+    color: white;
+  }
+`
+
+interface INotifyParams {
   message: string
   description?: string | ReactNode
   icon?: string
   txid?: string
   type?: string
-}) => {
+}
+
+export const notify = ({ description, icon, message, txid, type = 'info' }: INotifyParams, e?: any) => {
+  if (e) {
+    description = e.message
+  }
+
   if (txid) {
     description = (
       <>
-        <span>Transaction ID:</span>
-        <TX_LINK href={'https://explorer.solana.com/tx/' + txid} target="_blank" rel="noopener noreferrer">
-          {shortenAddress(txid, 8)}
+        <span>{description}</span>
+        <TX_LINK href={'https://solscan.io/tx/' + txid} target="_blank" rel="noopener noreferrer">
+          <span>View on Solscan</span>
         </TX_LINK>
       </>
     )
