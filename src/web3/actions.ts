@@ -50,10 +50,10 @@ export const placeCryptoOrder = async (connection: Connection, market: Market, o
   const receiverMint = order.side === 'buy' ? market.baseMintAddress : market.quoteMintAddress
   const receiverATA = await findAssociatedTokenAddress(wallet.publicKey, receiverMint)
 
-  /* const { value } = await connection.getParsedAccountInfo(receiverATA)
+  const { value } = await connection.getParsedAccountInfo(receiverATA)
   if (!value) {
     tx.add(createAssociatedTokenAccountIx(receiverMint, receiverATA, wallet.publicKey))
-  } */
+  }
 
   tx.add(market.makeMatchOrdersTransaction(5))
 
