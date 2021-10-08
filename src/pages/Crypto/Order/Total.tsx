@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, FC, useEffect, useMemo } from 'react'
+import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
 import { Input, Slider } from 'antd'
 import { css } from 'styled-components'
 import { FieldHeader, Picker } from './shared'
@@ -18,13 +18,6 @@ export const Total: FC = () => {
   )
   const userBalance = useMemo(() => (tokenInfo ? getUIAmount(tokenInfo.address) : 0), [tokenInfo, getUIAmount])
 
-  useEffect(() => {
-    const focusinChange = (x: any) => x.target === document.getElementById('total-input') && setFocused('total')
-    document.addEventListener('focusin', focusinChange)
-
-    return () => document.removeEventListener('focusin', focusinChange)
-  }, [setFocused])
-
   const localCSS = css`
     .order-total .ant-input-affix-wrapper {
       background-color: ${mode === 'dark' ? '#191919' : '#bdbdbd'};
@@ -43,11 +36,13 @@ export const Total: FC = () => {
       <Input
         id="total-input"
         maxLength={15}
+        onBlur={() => setFocused(undefined)}
         onChange={(x: BaseSyntheticEvent) => {
           if (!isNaN(x.target.value)) {
             setOrder((prevState) => ({ ...prevState, total: x.target.value }))
           }
         }}
+        onFocus={() => setFocused('total')}
         pattern="\d+(\.\d+)?"
         placeholder={`Amount to ${order.side}`}
         suffix={<span>{bid}</span>}

@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, FC, useEffect, useMemo } from 'react'
+import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
 import { Input, Slider } from 'antd'
 import { css } from 'styled-components'
 import { FieldHeader, Picker } from './shared'
@@ -19,13 +19,6 @@ export const Size: FC = () => {
   )
   const userBalance = useMemo(() => (tokenInfo ? getUIAmount(tokenInfo.address) : 0), [tokenInfo, getUIAmount])
 
-  useEffect(() => {
-    const focusinChange = (x: any) => x.target === document.getElementById('size-input') && setFocused('size')
-    document.addEventListener('focusin', focusinChange)
-
-    return () => document.removeEventListener('focusin', focusinChange)
-  }, [setFocused])
-
   const localCSS = css`
     .order-size .ant-input-affix-wrapper {
       background-color: ${mode === 'dark' ? '#191919' : '#525252'};
@@ -44,11 +37,13 @@ export const Size: FC = () => {
       <Input
         id="size-input"
         maxLength={15}
+        onBlur={() => setFocused(undefined)}
         onChange={(x: BaseSyntheticEvent) => {
           if (!isNaN(x.target.value)) {
             setOrder((prevState) => ({ ...prevState, size: x.target.value }))
           }
         }}
+        onFocus={() => setFocused('size')}
         pattern="\d+(\.\d+)?"
         placeholder={`Amount to ${order.side}`}
         suffix={<span>{ask}</span>}

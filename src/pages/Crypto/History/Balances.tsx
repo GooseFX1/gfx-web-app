@@ -13,16 +13,13 @@ const WRAPPER = styled.div`
 `
 
 export const Balances: FC = () => {
-  const {
-    getAskSymbolFromPair,
-    getBidSymbolFromPair,
-    selectedCrypto: { market }
-  } = useCrypto()
+  const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto } = useCrypto()
   const { getPairFromMarketAddress, openOrders, settleFunds } = useTradeHistory()
 
   const content = useMemo(
     () =>
       openOrders.map((openOrder, index) => {
+        const { market } = selectedCrypto
         const pair = getPairFromMarketAddress(openOrder.market)
         const baseAvailable = market?.baseSplSizeToNumber(openOrder.baseTokenFree)
         const baseBalance = market?.baseSplSizeToNumber(openOrder.baseTokenTotal.sub(openOrder.baseTokenFree))
@@ -73,7 +70,7 @@ export const Balances: FC = () => {
           </WRAPPER>
         )
       }),
-    [getAskSymbolFromPair, getBidSymbolFromPair, getPairFromMarketAddress, market, openOrders, settleFunds]
+    [getAskSymbolFromPair, getBidSymbolFromPair, getPairFromMarketAddress, openOrders, selectedCrypto, settleFunds]
   )
 
   return <>{!openOrders.length ? <span>No balances</span> : content}</>

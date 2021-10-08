@@ -13,10 +13,10 @@ import { Order } from '@project-serum/serum/lib/market'
 import { OpenOrders } from '@project-serum/serum'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
+import { useCrypto } from './crypto'
 import { useConnectionConfig } from './settings'
 import { notify, useLocalStorageState } from '../utils'
 import { cancelCryptoOrder, serum, settleCryptoFunds } from '../web3'
-import { useCrypto } from './crypto'
 
 export enum HistoryPanel {
   Orders = 'Open Orders',
@@ -44,7 +44,7 @@ interface ITradeHistoryConfig {
   panel: HistoryPanel
   setPanel: Dispatch<SetStateAction<HistoryPanel>>
   settleFunds: (x: OpenOrders, y: number, z: string) => Promise<void>
-  tradeHistory: number[]
+  tradeHistory: any[]
 }
 
 const TradeHistoryContext = createContext<ITradeHistoryConfig | null>(null)
@@ -73,7 +73,6 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
     if (wallet.publicKey && selectedCrypto.market) {
       try {
         const marketsOrders = await serum.getOrders(connection, selectedCrypto.market, wallet.publicKey as PublicKey)
-        console.log(selectedCrypto.market.address.toString(), marketsOrders)
         setOrders(marketsOrders.map((marketOrder) => ({ order: marketOrder, name: selectedCrypto.pair })))
       } catch (e: any) {
         notify({ type: 'error', message: `Error fetching open orders from serum market`, icon: 'error' }, e)
@@ -125,14 +124,14 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   )
 
   useEffect(() => {
-    switch (panel) {
-      case HistoryPanel.Balances:
-        ;(async () => fetchBalances())()
-        return
-      case HistoryPanel.Orders:
-        ;(async () => fetchOpenOrders())()
-        return
-    }
+    setOpenOrders([])
+    setOrders([])
+    setTradeHistory([])
+  }, [selectedCrypto])
+
+  useEffect(() => {
+    panel === HistoryPanel.Balances && fetchBalances()
+    panel === HistoryPanel.Orders && fetchOpenOrders()
   }, [fetchBalances, fetchOpenOrders, panel])
 
   return (

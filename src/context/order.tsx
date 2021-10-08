@@ -15,7 +15,7 @@ import { useCrypto } from './crypto'
 import { useConnectionConfig } from './settings'
 import { useTradeHistory } from './trade_history'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
-import { capitalizeFirstLetter, notify, removeFloatingPointError } from '../utils'
+import { capitalizeFirstLetter, floorValue, notify, removeFloatingPointError } from '../utils'
 import { placeCryptoOrder } from '../web3'
 
 type OrderInput = undefined | 'price' | 'size' | 'total'
@@ -118,10 +118,12 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     try {
       await placeCryptoOrder(connection, selectedCrypto.market as Market, order, wallet)
       const ask = getAskSymbolFromPair(selectedCrypto.pair)
+      const price = floorValue(order.price, selectedCrypto.market?.tickSize)
+      const size = floorValue(order.size, selectedCrypto.market?.minOrderSize)
       notify({
         type: 'success',
         message: `${capitalizeFirstLetter(order.display)} order placed successfully!`,
-        description: `${capitalizeFirstLetter(order.side)}ing ${order.size} ${ask} at $${order.price} each`,
+        description: `${capitalizeFirstLetter(order.side)}ing ${size} ${ask} at $${price} each`,
         icon: 'trade_success'
       })
       setTimeout(() => fetchOpenOrders(), 4500)
