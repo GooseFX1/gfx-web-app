@@ -31,19 +31,19 @@ export const PlaceOrder: FC = () => {
     if (!order.size || order.size === '0') {
       return State.NullAmount
     }
-    if (!tokenInfo || order.size > getUIAmount(tokenInfo.address)) {
+
+    if (!tokenInfo || order[order.side === 'buy' ? 'total' : 'size'] > getUIAmount(tokenInfo.address)) {
       return State.BalanceExceeded
-    } else {
-      return State.CanPlaceOrder
     }
-  }, [getSymbolFromPair, getTokenInfoFromSymbol, getUIAmount, order.side, order.size, publicKey, selectedCrypto.pair])
+
+    return State.CanPlaceOrder
+  }, [getSymbolFromPair, getTokenInfoFromSymbol, getUIAmount, order, publicKey, selectedCrypto.pair])
 
   const buttonStatus = useMemo(() => {
     switch (state) {
       case State.CanPlaceOrder:
       case State.Connect:
         return 'action'
-      case State.NullAmount:
       case State.BalanceExceeded:
         return 'not-allowed'
       default:

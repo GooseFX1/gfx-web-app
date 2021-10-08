@@ -54,9 +54,9 @@ export type MarketType = 'crypto' | 'synth'
 
 export const FEATURED_PAIRS_LIST = [
   // { decimals: 1, pair: 'BTC/USDC', type: 'crypto' as MarketType },
-  // { decimals: 2, pair: 'ETH/USDC', type: 'crypto' as MarketType },
+  { decimals: 2, pair: 'ETH/USDC', type: 'crypto' as MarketType },
   // { decimals: 2, pair: 'LTC/USD', type: 'synth' as MarketType },
-  { decimals: 3, pair: 'SOL/USDC', type: 'crypto' as MarketType },
+  { decimals: 3, pair: 'SOL/USDC', type: 'crypto' as MarketType }
   // { decimals: 3, pair: 'LINK/USDC', type: 'crypto' as MarketType },
   // { decimals: 2, pair: 'AAPL/USD', type: 'synth' as MarketType },
   // { decimals: 2, pair: 'TSLA/USD', type: 'synth' as MarketType }
@@ -119,14 +119,14 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const subscriptions: number[] = []
 
     const cryptoMarkets = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'crypto')
-    cryptoMarkets.forEach(async ({ decimals, pair }) => {
+    cryptoMarkets.forEach(async ({ pair }) => {
       if (!cancelled) {
         try {
           const market = await serum.getMarket(connection, pair)
           subscriptions.push(
             await serum.subscribeToOrderBook(connection, market, 'asks', (account, market) => {
-              const [[price]] = Orderbook.decode(market, account.data).getL2(1)
-              const newPrice = { [pair]: { change24H: 0, current: Number(price.toFixed(decimals)) } }
+              const [[current]] = Orderbook.decode(market, account.data).getL2(1)
+              const newPrice = { [pair]: { change24H: 0, current } }
               setMarketsData((prevState: ICryptoMarkets) => ({ ...prevState, ...newPrice }))
             })
           )
@@ -160,22 +160,17 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
             const subs = await Promise.all([
               serum.subscribeToOrderBook(connection, market, 'asks', (account, market) => {
-                const orderBook = Orderbook.decode(market, account.data).getL2(20)
-                const newPrice = {
-                  [selectedCrypto.pair]: {
-                    change24H: 0,
-                    current: Number(orderBook[0][0].toFixed(selectedCrypto.decimals))
-                  }
-                }
-                setMarketsData((prevState: ICryptoMarkets) => ({ ...prevState, ...newPrice }))
-                setOrderBook((prevState) => ({ ...prevState, asks: [...orderBook] }))
-              }),
-              serum.subscribeToOrderBook(connection, market, 'bids', (account, market) =>
-                setOrderBook((prevState) => ({
+                const asks = Orderbook.decode(market, account.data).getL2(20)
+                setMarketsData((prevState: ICryptoMarkets) => ({
                   ...prevState,
-                  bids: [...Orderbook.decode(market, account.data).getL2(20)]
+                  ...{ [selectedCrypto.pair]: { change24H: 0, current: asks[0][0] } }
                 }))
-              )
+                setOrderBook((prevState) => ({ ...prevState, asks }))
+              }),
+              serum.subscribeToOrderBook(connection, market, 'bids', (account, market) => {
+                const bids = Orderbook.decode(market, account.data).getL2(20)
+                setOrderBook((prevState) => ({ ...prevState, bids }))
+              })
             ])
 
             subs.forEach((sub) => subscriptions.push(sub))
@@ -190,7 +185,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setOrderBook(DEFAULT_ORDER_BOOK)
       subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
     }
-  }, [connection, handlePythSubscription, selectedCrypto.decimals, selectedCrypto.pair, selectedCrypto.type])
+  }, [connection, handlePythSubscription, selectedCrypto.pair, selectedCrypto.type])
 
   return (
     <CryptoContext.Provider

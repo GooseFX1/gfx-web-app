@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
+import React, { BaseSyntheticEvent, FC, useEffect, useMemo } from 'react'
 import { Input, Switch } from 'antd'
 import styled, { css } from 'styled-components'
 import { FieldHeader } from './shared'
@@ -34,13 +34,20 @@ const WRAPPER = styled.div<{ $display: boolean }>`
 export const LimitPrice: FC = () => {
   const { mode } = useDarkMode()
   const { getBidSymbolFromPair, selectedCrypto } = useCrypto()
-  const { order, setOrder } = useOrder()
+  const { order, setFocused, setOrder } = useOrder()
 
   const symbol = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
 
   const onChangeIOC = (checked: boolean) => setOrder((prevState) => ({ ...prevState, type: checked ? 'ioc' : 'limit' }))
   const onChangePost = (checked: boolean) =>
     setOrder((prevState) => ({ ...prevState, type: checked ? 'postOnly' : 'limit' }))
+
+  useEffect(() => {
+    const focusinChange = (x: any) => x.target === document.getElementById('price-input') && setFocused('price')
+    document.addEventListener('focusin', focusinChange)
+
+    return () => document.removeEventListener('focusin', focusinChange)
+  }, [setFocused])
 
   const localCSS = css`
     .order-price .ant-input-affix-wrapper {
@@ -53,9 +60,10 @@ export const LimitPrice: FC = () => {
       <style>{localCSS}</style>
       <FieldHeader>Limit price</FieldHeader>
       <Input
+        id="price-input"
         maxLength={15}
         onChange={(x: BaseSyntheticEvent) => {
-          !isNaN(x.target.value) && setOrder(prevState => ({ ...prevState, price: x.target.value }))
+          !isNaN(x.target.value) && setOrder((prevState) => ({ ...prevState, price: x.target.value }))
         }}
         pattern="\d+(\.\d+)?"
         placeholder={order.price.toString()}

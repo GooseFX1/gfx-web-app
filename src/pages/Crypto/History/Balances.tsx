@@ -24,42 +24,50 @@ export const Balances: FC = () => {
     () =>
       openOrders.map((openOrder, index) => {
         const pair = getPairFromMarketAddress(openOrder.market)
-        const baseOrdersAvailable = market!.baseSplSizeToNumber(openOrder.baseTokenFree)
-        const baseOrdersBalance = market!.baseSplSizeToNumber(openOrder.baseTokenTotal.sub(openOrder.baseTokenFree))
-        const quoteOrdersAvailable = market!.quoteSplSizeToNumber(openOrder.quoteTokenFree)
-        const quoteOrdersBalance = market!.quoteSplSizeToNumber(openOrder.quoteTokenTotal.sub(openOrder.quoteTokenFree))
+        const baseAvailable = market?.baseSplSizeToNumber(openOrder.baseTokenFree)
+        const baseBalance = market?.baseSplSizeToNumber(openOrder.baseTokenTotal.sub(openOrder.baseTokenFree))
+        const quoteAvailable = market?.quoteSplSizeToNumber(openOrder.quoteTokenFree)
+        const quoteBalance = market?.quoteSplSizeToNumber(openOrder.quoteTokenTotal.sub(openOrder.quoteTokenFree))
 
         return (
           <WRAPPER key={index}>
             <Entry $entriesLength={PANELS_FIELDS[HistoryPanel.Balances].length}>
               <span>{getAskSymbolFromPair(pair)}</span>
-              <span>{baseOrdersBalance}</span>
-              <span>{baseOrdersAvailable}</span>
+              <span>{baseBalance}</span>
+              <span>{baseAvailable}</span>
               <div>
-                <MainButton
-                  height="30px"
-                  onClick={() => settleFunds(openOrder, baseOrdersBalance, getAskSymbolFromPair(pair))}
-                  status="action"
-                  width="150px"
-                >
-                  <span>Settle funds</span>
-                </MainButton>
+                {!baseAvailable ? (
+                  <span />
+                ) : (
+                  <MainButton
+                    height="30px"
+                    onClick={() => settleFunds(openOrder, baseAvailable, getAskSymbolFromPair(pair))}
+                    status="action"
+                    width="150px"
+                  >
+                    <span>Settle funds</span>
+                  </MainButton>
+                )}
               </div>
             </Entry>
             <Entry $entriesLength={PANELS_FIELDS[HistoryPanel.Balances].length}>
               <span>{getBidSymbolFromPair(pair)}</span>
-              <span>{quoteOrdersBalance}</span>
-              <span>{quoteOrdersAvailable}</span>
+              <span>{quoteBalance}</span>
+              <span>{quoteAvailable}</span>
               <div>
-                <MainButton
-                  height="30px"
-                  onClick={() => settleFunds(openOrder, quoteOrdersBalance, getBidSymbolFromPair(pair))}
-                  status="action"
-                  width="150px"
-                >
-                  {' '}
-                  <span>Settle funds</span>
-                </MainButton>
+                {!quoteAvailable ? (
+                  <span />
+                ) : (
+                  <MainButton
+                    height="30px"
+                    onClick={() => settleFunds(openOrder, quoteAvailable, getBidSymbolFromPair(pair))}
+                    status="action"
+                    width="150px"
+                  >
+                    {' '}
+                    <span>Settle funds</span>
+                  </MainButton>
+                )}
               </div>
             </Entry>
           </WRAPPER>

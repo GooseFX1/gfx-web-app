@@ -55,17 +55,14 @@ const Loader: FC = () => {
   return <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
 }
 
-export const PairStats: FC<{
-  decimals: number
-  pair: string
-  type: MarketType
-}> = ({ decimals, pair, type }) => {
+export const PairStats: FC<{ decimals: number; pair: string; type: MarketType }> = ({ decimals, pair, type }) => {
   const { formatPair, getAskSymbolFromPair, marketsData, selectedCrypto, setSelectedCrypto } = useCrypto()
   const history = useHistory()
 
-  const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
   const formattedPair = useMemo(() => formatPair(pair), [formatPair, pair])
   const marketData = useMemo(() => marketsData[pair], [marketsData, pair])
+  const displayPrice = useMemo(() => marketData.current !== 0, [marketData])
+  const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
   // const change24HIcon = useMemo(() => `price_${marketData.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData])
 
   const handleClick = () => {
@@ -96,7 +93,7 @@ export const PairStats: FC<{
           </div>
         ) TODO RESTORE */}
       </INFO>
-      <PRICE>{marketData.current ? <span>$ {marketData.current}</span> : <Loader />}</PRICE>
+      <PRICE>{displayPrice ? <span>$ {marketData.current}</span> : <Loader />}</PRICE>
     </STATS>
   )
 }
