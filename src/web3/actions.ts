@@ -40,10 +40,23 @@ export const cancelCryptoOrder = async (connection: Connection, market: Market, 
 }
 
 export const placeCryptoOrder = async (connection: Connection, market: Market, order: IOrder, wallet: any) => {
-  if (!wallet.publicKey || !wallet.signTransaction) return
+  if (!wallet.publicKey) return
 
-  const mint = order.side === 'buy' ? market.quoteMintAddress : market.baseMintAddress // TODO SWITCH ?
+  const tx = new Transaction()
+
+  const mint = order.side === 'buy' ? market.quoteMintAddress : market.baseMintAddress
   const payer = await findAssociatedTokenAddress(wallet.publicKey, mint)
+
+  const receiverMint = order.side === 'buy' ? market.baseMintAddress : market.quoteMintAddress
+  const receiverATA = await findAssociatedTokenAddress(wallet.publicKey, receiverMint)
+
+  /* const { value } = await connection.getParsedAccountInfo(receiverATA)
+  if (!value) {
+    tx.add(createAssociatedTokenAccountIx(receiverMint, receiverATA, wallet.publicKey))
+  } */
+
+  tx.add(market.makeMatchOrdersTransaction(5))
+
   const { transaction } = await market.makePlaceOrderTransaction(connection, {
     owner: wallet.publicKey,
     payer,
@@ -52,8 +65,10 @@ export const placeCryptoOrder = async (connection: Connection, market: Market, o
     size: order.size,
     orderType: order.type
   })
+  tx.add(transaction)
+  tx.add(market.makeMatchOrdersTransaction(5))
 
-  return await signAndSendRawTransaction(connection, transaction, wallet)
+  return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
 export const settleCryptoFunds = async (

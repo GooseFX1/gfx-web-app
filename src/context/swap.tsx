@@ -71,10 +71,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   let refreshTimeout: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
   const timeoutDelay = 200
   const refreshRates = useCallback(async () => {
-    if (refreshTimeout.current) {
-      clearTimeout(refreshTimeout.current)
-    }
-
+    refreshTimeout.current && clearTimeout(refreshTimeout.current)
     refreshTimeout.current = setTimeout(async () => {
       setFetching(true)
       const time = moment().format('MMMM DD, h:mm a')

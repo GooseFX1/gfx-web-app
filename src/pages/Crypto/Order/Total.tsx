@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, FC, useEffect, useMemo, useState } from 'react'
+import React, { BaseSyntheticEvent, FC, useEffect, useMemo } from 'react'
 import { Input, Slider } from 'antd'
 import { css } from 'styled-components'
 import { FieldHeader, Picker } from './shared'
@@ -8,9 +8,8 @@ export const Total: FC = () => {
   const { getUIAmount } = useAccounts()
   const { mode } = useDarkMode()
   const { getBidSymbolFromPair, getSymbolFromPair, selectedCrypto } = useCrypto()
-  const { order, setOrder } = useOrder()
+  const { order, setFocused, setOrder } = useOrder()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
-  const [isFocused, setIsFocused] = useState(false)
 
   const bid = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
   const tokenInfo = useMemo(
@@ -18,6 +17,13 @@ export const Total: FC = () => {
     [getSymbolFromPair, getTokenInfoFromSymbol, order.side, selectedCrypto.pair]
   )
   const userBalance = useMemo(() => (tokenInfo ? getUIAmount(tokenInfo.address) : 0), [tokenInfo, getUIAmount])
+
+  useEffect(() => {
+    const focusinChange = (x: any) => x.target === document.getElementById('total-input') && setFocused('total')
+    document.addEventListener('focusin', focusinChange)
+
+    return () => document.removeEventListener('focusin', focusinChange)
+  }, [setFocused])
 
   const localCSS = css`
     .order-total .ant-input-affix-wrapper {
@@ -29,13 +35,6 @@ export const Total: FC = () => {
       margin: 8px;
     }
   `
-
-  useEffect(() => {
-    const focusinChange = (x: any) => setIsFocused(x.target === document.getElementById('total-input'))
-    document.addEventListener('focusin', focusinChange)
-
-    return () => document.removeEventListener('focusin', focusinChange)
-  }, [])
 
   return (
     <div className="order-total">
@@ -52,7 +51,7 @@ export const Total: FC = () => {
         pattern="\d+(\.\d+)?"
         placeholder={`Amount to ${order.side}`}
         suffix={<span>{bid}</span>}
-        value={isFocused ? order.total : (Math.floor(order.total * 100) / 100).toFixed(2)}
+        value={order.total}
       />
       {order.side === 'buy' && (
         <Picker>
@@ -60,10 +59,17 @@ export const Total: FC = () => {
             max={userBalance}
             min={0}
             onChange={(total) => setOrder((prevState) => ({ ...prevState, total }))}
-            step={selectedCrypto.market && String(selectedCrypto.market.tickSize).length - 2}
+            step={selectedCrypto.market?.tickSize}
             value={order.total}
           />
-          <span onClick={() => setOrder((prevState) => ({ ...prevState, total: userBalance }))}>Use Max</span>
+          <span
+            onClick={() => {
+              setFocused('total')
+              setOrder((prevState) => ({ ...prevState, total: userBalance }))
+            }}
+          >
+            Use Max
+          </span>
         </Picker>
       )}
     </div>

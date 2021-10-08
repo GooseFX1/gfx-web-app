@@ -1,14 +1,15 @@
-import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
+import React, { BaseSyntheticEvent, FC, useEffect, useMemo } from 'react'
 import { Input, Slider } from 'antd'
 import { css } from 'styled-components'
 import { FieldHeader, Picker } from './shared'
 import { useAccounts, useDarkMode, useCrypto, useOrder, useTokenRegistry } from '../../../context'
+import { floorValue } from '../../../utils'
 
 export const Size: FC = () => {
   const { getUIAmount } = useAccounts()
   const { mode } = useDarkMode()
   const { getAskSymbolFromPair, getSymbolFromPair, selectedCrypto } = useCrypto()
-  const { order, setOrder } = useOrder()
+  const { order, setFocused, setOrder } = useOrder()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
 
   const ask = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
@@ -17,6 +18,13 @@ export const Size: FC = () => {
     [getSymbolFromPair, getTokenInfoFromSymbol, order.side, selectedCrypto.pair]
   )
   const userBalance = useMemo(() => (tokenInfo ? getUIAmount(tokenInfo.address) : 0), [tokenInfo, getUIAmount])
+
+  useEffect(() => {
+    const focusinChange = (x: any) => x.target === document.getElementById('size-input') && setFocused('size')
+    document.addEventListener('focusin', focusinChange)
+
+    return () => document.removeEventListener('focusin', focusinChange)
+  }, [setFocused])
 
   const localCSS = css`
     .order-size .ant-input-affix-wrapper {
@@ -34,6 +42,7 @@ export const Size: FC = () => {
       <style>{localCSS}</style>
       <FieldHeader>Size</FieldHeader>
       <Input
+        id="size-input"
         maxLength={15}
         onChange={(x: BaseSyntheticEvent) => {
           if (!isNaN(x.target.value)) {
@@ -48,13 +57,24 @@ export const Size: FC = () => {
       {order.side === 'sell' && (
         <Picker>
           <Slider
+            id="size-input"
             max={userBalance}
             min={0}
             onChange={(size) => setOrder((prevState) => ({ ...prevState, size }))}
-            step={selectedCrypto.market && String(selectedCrypto.market.tickSize).length - 2}
+            step={selectedCrypto.market?.minOrderSize}
             value={order.size}
           />
-          <span onClick={() => setOrder((prevState) => ({ ...prevState, size: userBalance }))}>Use Max</span>
+          <span
+            onClick={() => {
+              setFocused('size')
+              setOrder((prevState) => ({
+                ...prevState,
+                size: floorValue(userBalance, selectedCrypto.market?.minOrderSize)
+              }))
+            }}
+          >
+            Use Max
+          </span>
         </Picker>
       )}
     </div>

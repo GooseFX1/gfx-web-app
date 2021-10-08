@@ -3,8 +3,8 @@ import { Skeleton } from 'antd'
 import styled from 'styled-components'
 import { Expand } from '../../components'
 import { MarketSide, useCrypto, useOrder } from '../../context'
-import { abbreviateNumber } from '../../utils'
 import { SpaceBetweenDiv, TRADE_ORDER_WIDTH } from '../../styles'
+import { abbreviateNumber, removeFloatingPointError } from '../../utils'
 
 const HEADER = styled.div<{ $side: MarketSide }>`
   margin: -${({ theme }) => theme.margins['2x']} -${({ theme }) => theme.margins['2x']}
@@ -171,7 +171,7 @@ export const OrderBook: FC = () => {
               acc.nodes.push(
                 <ORDER key={index}>
                   <span onClick={() => setOrder((prevState) => ({ ...prevState, price }))}>${price}</span>
-                  <span>{String(size).slice(0, 6)}</span>
+                  <span>{removeFloatingPointError(size)}</span>
                   <span>${abbreviateNumber(value, 2)}</span>
                   <SIZE style={{ width: `${(acc.totalValue / totalOrderBookValue) * 100}%` }} $side={side} />
                 </ORDER>

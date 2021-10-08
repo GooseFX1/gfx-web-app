@@ -10,12 +10,12 @@ import React, {
   useState
 } from 'react'
 import { Order } from '@project-serum/serum/lib/market'
+import { OpenOrders } from '@project-serum/serum'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { PublicKey } from '@solana/web3.js'
 import { useConnectionConfig } from './settings'
 import { notify, useLocalStorageState } from '../utils'
 import { cancelCryptoOrder, serum, settleCryptoFunds } from '../web3'
-import { OpenOrders } from '@project-serum/serum'
-import { PublicKey } from '@solana/web3.js'
 import { useCrypto } from './crypto'
 
 export enum HistoryPanel {
@@ -51,7 +51,7 @@ const TradeHistoryContext = createContext<ITradeHistoryConfig | null>(null)
 
 export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
-  const { selectedCrypto } = useCrypto()
+  const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
   const wallet = useWallet()
   const [openOrders, setOpenOrders] = useState<OpenOrders[]>([])
   const [orders, setOrders] = useState<IOrder[]>([])
@@ -73,6 +73,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
     if (wallet.publicKey && selectedCrypto.market) {
       try {
         const marketsOrders = await serum.getOrders(connection, selectedCrypto.market, wallet.publicKey as PublicKey)
+        console.log(selectedCrypto.market.address.toString(), marketsOrders)
         setOrders(marketsOrders.map((marketOrder) => ({ order: marketOrder, name: selectedCrypto.pair })))
       } catch (e: any) {
         notify({ type: 'error', message: `Error fetching open orders from serum market`, icon: 'error' }, e)
@@ -86,7 +87,15 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
     if (selectedCrypto.market) {
       try {
         const signature = await cancelCryptoOrder(connection, selectedCrypto.market, order.order, wallet)
-        notify({ type: 'success', message: 'Order cancelled successfully', icon: 'success', txid: signature })
+        const ask = getAskSymbolFromPair(selectedCrypto.pair)
+        const { price, side, size } = order.order
+        notify({
+          type: 'success',
+          message: 'Action successful',
+          description: `Cancelled ${side} order of ${size} ${ask} at $${price} each`,
+          icon: 'success',
+          txid: signature
+        })
         setTimeout(() => fetchOpenOrders(), 4500)
       } catch (e: any) {
         notify({ type: 'error', message: `Error cancelling order`, icon: 'error', description: e.message })

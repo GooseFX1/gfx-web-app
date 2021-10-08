@@ -2,24 +2,23 @@ import React, {
   createContext,
   Dispatch,
   FC,
-  MutableRefObject,
   ReactNode,
   SetStateAction,
   useCallback,
   useContext,
   useEffect,
-  useRef,
   useState
 } from 'react'
 import { Market, MARKETS } from '@project-serum/serum'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useCrypto } from './crypto'
 import { useConnectionConfig } from './settings'
-import { SUPPORTED_TOKEN_LIST } from '../constants'
-import { capitalizeFirstLetter, notify } from '../utils'
-import { placeCryptoOrder } from '../web3'
 import { useTradeHistory } from './trade_history'
+import { SUPPORTED_TOKEN_LIST } from '../constants'
+import { capitalizeFirstLetter, notify, removeFloatingPointError } from '../utils'
+import { placeCryptoOrder } from '../web3'
 
+type OrderInput = undefined | 'price' | 'size' | 'total'
 export type OrderDisplayType = 'market' | 'limit'
 export type OrderSide = 'buy' | 'sell'
 export type OrderType = 'limit' | 'ioc' | 'postOnly'
@@ -77,6 +76,7 @@ export const AVAILABLE_ORDERS: IOrderDisplay[] = [
 interface IOrderConfig {
   order: IOrder
   placeOrder: () => void
+  setFocused: Dispatch<SetStateAction<OrderInput>>
   setOrder: Dispatch<SetStateAction<IOrder>>
 }
 
@@ -87,6 +87,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
   const { fetchOpenOrders } = useTradeHistory()
   const wallet = useWallet()
+  const [focused, setFocused] = useState<OrderInput>(undefined)
   const [order, setOrder] = useState<IOrder>({
     display: 'limit',
     isHidden: true,
@@ -97,35 +98,21 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     type: 'limit'
   })
 
-  let tickSizeTimeout: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
-  const timeoutDelay = 500
-  const roundSizeToTickSize = useCallback(() => {
-    if (tickSizeTimeout.current) {
-      clearTimeout(tickSizeTimeout.current)
-    }
-
-    tickSizeTimeout.current = setTimeout(async () => {
-      if (selectedCrypto.market) {
-        const { tickSize } = selectedCrypto.market
-        setOrder((prevState) => ({ ...prevState, size: Math.floor(order.size / tickSize) * tickSize }))
-      }
-    }, timeoutDelay)
-  }, [order.size, selectedCrypto.market])
-
-  useEffect(() => roundSizeToTickSize(), [order.size, roundSizeToTickSize])
-
-  useEffect(
-    () => setOrder((prevState) => ({ ...prevState, total: order.price * order.size })),
-    [order.price, order.size]
-  )
-
   useEffect(() => {
-    if (order.price > 0) {
-      setOrder((prevState) => ({ ...prevState, size: order.total / order.price }))
+    switch (focused) {
+      case 'price':
+      case 'size':
+        return setOrder((prevState) => ({
+          ...prevState,
+          total: removeFloatingPointError((order.price || 1) * order.size)
+        }))
+      case 'total':
+        return setOrder((prevState) => ({
+          ...prevState,
+          size: removeFloatingPointError(order.total / (order.price || 1))
+        }))
     }
-
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */ // <- IMPORTANT
-  }, [order.total])
+  }, [focused, order.price, order.size, order.total, selectedCrypto.market])
 
   const placeOrder = useCallback(async () => {
     try {
@@ -134,7 +121,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       notify({
         type: 'success',
         message: `${capitalizeFirstLetter(order.display)} order placed successfully!`,
-        description: `${capitalizeFirstLetter(order.side)}ing ${order.size} ${ask} at ${order.price}$ each`,
+        description: `${capitalizeFirstLetter(order.side)}ing ${order.size} ${ask} at $${order.price} each`,
         icon: 'trade_success'
       })
       setTimeout(() => fetchOpenOrders(), 4500)
@@ -148,6 +135,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       value={{
         order,
         placeOrder,
+        setFocused,
         setOrder
       }}
     >
@@ -162,6 +150,6 @@ export const useOrder = (): IOrderConfig => {
     throw new Error('Missing order context')
   }
 
-  const { order, placeOrder, setOrder } = context
-  return { order, placeOrder, setOrder }
+  const { order, placeOrder, setFocused, setOrder } = context
+  return { order, placeOrder, setFocused, setOrder }
 }
