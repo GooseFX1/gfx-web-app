@@ -4,7 +4,7 @@ import { Order } from '@project-serum/serum/lib/market'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { Connection, PublicKey, Transaction, TransactionSignature } from '@solana/web3.js'
+import { Connection, PublicKey, Signer, Transaction, TransactionSignature } from '@solana/web3.js'
 import { computePoolsPDAs, findAssociatedTokenAddress, getLPProgram } from './utils'
 import { IOrder, ISwapToken } from '../context'
 
@@ -18,18 +18,35 @@ const createAssociatedTokenAccountIx = (mint: PublicKey, associatedAccount: Publ
     owner
   )
 
-const signTransaction = async (connection: Connection, transaction: Transaction, wallet: any) => {
+const signTransaction = async (
+  connection: Connection,
+  transaction: Transaction,
+  wallet: any,
+  ...signers: Array<Signer>
+) => {
   if (!wallet.signTransaction) return
 
   transaction.feePayer = wallet.publicKey
   transaction.recentBlockhash = (await connection.getRecentBlockhash('max')).blockhash
+  transaction = await wallet.signTransaction(transaction)
 
-  return await wallet.signTransaction(transaction)
+  for (const signer of signers) {
+    transaction.partialSign(signer)
+  }
+
+  return transaction
 }
 
-const signAndSendRawTransaction = async (connection: Connection, transaction: Transaction, wallet: any) => {
-  const signedTransaction = await signTransaction(connection, transaction, wallet)
-  return await connection.sendRawTransaction(signedTransaction.serialize())
+const signAndSendRawTransaction = async (
+  connection: Connection,
+  transaction: Transaction,
+  wallet: any,
+  ...signers: Array<Signer>
+) => {
+  const signedTransaction = await signTransaction(connection, transaction, wallet, ...signers)
+  const data = signedTransaction!.serialize()
+
+  return await connection.sendRawTransaction(data)
 }
 
 export const cancelCryptoOrder = async (connection: Connection, market: Market, order: Order, wallet: any) => {
@@ -57,7 +74,7 @@ export const placeCryptoOrder = async (connection: Connection, market: Market, o
 
   tx.add(market.makeMatchOrdersTransaction(5))
 
-  const { transaction } = await market.makePlaceOrderTransaction(connection, {
+  const { transaction, signers } = await market.makePlaceOrderTransaction(connection, {
     owner: wallet.publicKey,
     payer,
     side: order.side,
@@ -68,7 +85,7 @@ export const placeCryptoOrder = async (connection: Connection, market: Market, o
   tx.add(transaction)
   tx.add(market.makeMatchOrdersTransaction(5))
 
-  return await signAndSendRawTransaction(connection, tx, wallet)
+  return await signAndSendRawTransaction(connection, tx, wallet, ...signers)
 }
 
 export const settleCryptoFunds = async (
