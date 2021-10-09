@@ -3,12 +3,14 @@ import styled from 'styled-components'
 import { Entry } from './shared'
 import { MainButton } from '../../../components'
 import { HistoryPanel, PANELS_FIELDS, useCrypto, useTradeHistory } from '../../../context'
+import { CenteredDiv } from '../../../styles'
 
-const WRAPPER = styled.div`
+const WRAPPER = styled(CenteredDiv)`
+  flex-direction: column;
   width: 100%;
 
-  > div:first-child {
-    margin-bottom: ${({ theme }) => theme.margins['1x']};
+  > div:not(:last-child) {
+    margin-bottom: ${({ theme }) => theme.margins['1.5x']};
   }
 `
 
@@ -32,41 +34,31 @@ export const Balances: FC = () => {
               <span>{getAskSymbolFromPair(pair)}</span>
               <span>{baseBalance}</span>
               <span>{baseAvailable}</span>
-              <div>
-                {!baseAvailable ? (
-                  <span />
-                ) : (
-                  <MainButton
-                    height="30px"
-                    onClick={() => settleFunds(openOrder, baseAvailable, getAskSymbolFromPair(pair))}
-                    status="action"
-                    width="150px"
-                  >
-                    <span>Settle funds</span>
-                  </MainButton>
-                )}
-              </div>
             </Entry>
             <Entry $entriesLength={PANELS_FIELDS[HistoryPanel.Balances].length}>
               <span>{getBidSymbolFromPair(pair)}</span>
               <span>{quoteBalance}</span>
               <span>{quoteAvailable}</span>
-              <div>
-                {!quoteAvailable ? (
-                  <span />
-                ) : (
-                  <MainButton
-                    height="30px"
-                    onClick={() => settleFunds(openOrder, quoteAvailable, getBidSymbolFromPair(pair))}
-                    status="action"
-                    width="150px"
-                  >
-                    {' '}
-                    <span>Settle funds</span>
-                  </MainButton>
-                )}
-              </div>
             </Entry>
+            {((baseAvailable && baseAvailable > 0) || (quoteAvailable && quoteAvailable > 0)) && (
+              <MainButton
+                height="30px"
+                onClick={() =>
+                  settleFunds(
+                    openOrder,
+                    baseAvailable,
+                    quoteAvailable,
+                    getAskSymbolFromPair(pair),
+                    getBidSymbolFromPair(pair)
+                  )
+                }
+                status="action"
+                width="150px"
+              >
+                {' '}
+                <span>Settle balances</span>
+              </MainButton>
+            )}
           </WRAPPER>
         )
       }),

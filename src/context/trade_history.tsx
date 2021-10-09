@@ -27,7 +27,7 @@ export enum HistoryPanel {
 export const PANELS_FIELDS: { [x in HistoryPanel]: string[] } = {
   [HistoryPanel.Orders]: ['Market', 'Side', 'Size', 'Price (USD)', 'Action'],
   [HistoryPanel.Trades]: ['Market', 'Side', 'Size', 'Price (USD)', 'Liquidity', 'Fees (USD)'],
-  [HistoryPanel.Balances]: ['Coin', 'Orders', 'Unsettled', 'Action']
+  [HistoryPanel.Balances]: ['Coin', 'Orders', 'Unsettled']
 }
 
 interface IOrder {
@@ -43,7 +43,7 @@ interface ITradeHistoryConfig {
   openOrders: OpenOrders[]
   panel: HistoryPanel
   setPanel: Dispatch<SetStateAction<HistoryPanel>>
-  settleFunds: (x: OpenOrders, y: number, z: string) => Promise<void>
+  settleFunds: (x: OpenOrders, yA: number | undefined, zA: number | undefined, yB: string, zB: string) => Promise<void>
   tradeHistory: any[]
 }
 
@@ -90,7 +90,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
         const { price, side, size } = order.order
         notify({
           type: 'success',
-          message: 'Action successful',
+          message: 'Cancelled order successfully',
           description: `Cancelled ${side} order of ${size} ${ask} at $${price} each`,
           icon: 'success',
           txid: signature
@@ -102,14 +102,22 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
     }
   }
 
-  const settleFunds = async (openOrder: OpenOrders, balance: number, symbol: string) => {
+  const settleFunds = async (
+    openOrder: OpenOrders,
+    baseAvailable: number | undefined,
+    quoteAvailable: number | undefined,
+    baseSymbol: string,
+    quoteSymbol: string
+  ) => {
     if (selectedCrypto.market) {
       try {
         const signature = await settleCryptoFunds(connection, selectedCrypto.market, openOrder, wallet)
+        const baseTokens = baseAvailable && `${baseAvailable} ${baseSymbol}`
+        const quoteTokens = quoteAvailable && `${quoteAvailable} ${quoteSymbol}`
         notify({
           type: 'success',
-          message: 'Action successful',
-          description: `Settled ${balance} ${symbol}`,
+          message: 'Settled balances successfully',
+          description: `Settled ${[baseTokens, quoteTokens].filter((x) => x).join(' and ')}`,
           icon: 'success',
           txid: signature
         })

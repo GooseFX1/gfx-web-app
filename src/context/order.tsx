@@ -117,12 +117,10 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [focused, order.price, order.size, order.total, selectedCrypto.market])
 
-  const currentCryptoPrice = useMemo(() => marketsData[selectedCrypto.pair].current, [marketsData, selectedCrypto.pair])
+  const marketPrice = useMemo(() => marketsData[selectedCrypto.pair]?.current, [marketsData, selectedCrypto.pair])
   useEffect(() => {
-    if (!order.price) {
-      setOrder((prevState) => ({ ...prevState, price: currentCryptoPrice }))
-    }
-  }, [currentCryptoPrice, order.price])
+    !order.price && marketPrice && setOrder((prevState) => ({ ...prevState, price: marketPrice }))
+  }, [marketPrice, order.price])
 
   const placeOrder = useCallback(async () => {
     try {

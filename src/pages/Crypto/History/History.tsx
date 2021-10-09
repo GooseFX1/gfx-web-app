@@ -15,7 +15,7 @@ const BODY = styled(CenteredDiv)`
   padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['3x']};
 
   > div:not(:last-child) {
-    margin-bottom: ${({ theme }) => theme.margins['1x']};
+    margin-bottom: ${({ theme }) => theme.margins['1.5x']};
   }
 `
 

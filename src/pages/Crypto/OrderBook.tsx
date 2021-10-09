@@ -131,7 +131,7 @@ const Loader: FC = () => (
 
 export const OrderBook: FC = () => {
   const { getBidSymbolFromPair, orderBook, selectedCrypto } = useCrypto()
-  const { order, setOrder } = useOrder()
+  const { order, setFocused, setOrder } = useOrder()
   const [side, setSide] = useState<MarketSide>('bids')
 
   const slicedOrderBook = useMemo(
@@ -170,7 +170,14 @@ export const OrderBook: FC = () => {
               acc.totalValue += value
               acc.nodes.push(
                 <ORDER key={index}>
-                  <span onClick={() => setOrder((prevState) => ({ ...prevState, price }))}>${price}</span>
+                  <span
+                    onClick={() => {
+                      setOrder((prevState) => ({ ...prevState, price }))
+                      setFocused('price')
+                    }}
+                  >
+                    ${price}
+                  </span>
                   <span>{removeFloatingPointError(size)}</span>
                   <span>${abbreviateNumber(value, 2)}</span>
                   <SIZE style={{ width: `${(acc.totalValue / totalOrderBookValue) * 100}%` }} $side={side} />
