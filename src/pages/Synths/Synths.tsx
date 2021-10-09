@@ -29,11 +29,11 @@ width: 100%;
 const RIGHTGRID = styled.div`
   ${({ theme }) => theme.mediaWidth.fromLarge`
   height: 85vh;
-  width: 100%;
+  width: 400px;
 `};
   ${({ theme }) => theme.mediaWidth.upToLarge`
 height: 85vh;
-width: 100%;
+width: 375px;
 `};
   margin-top: ${({ theme }) => theme.margins['8x']};
 `
@@ -49,7 +49,7 @@ export const Synths: FC = () => {
           </LEFTGRID>
         </Col>
 
-        <Col flex={1.25}>
+        <Col>
           <RIGHTGRID>
             <RightContainer></RightContainer>
           </RIGHTGRID>

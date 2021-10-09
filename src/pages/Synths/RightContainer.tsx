@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import styled from 'styled-components'
+import { MyPortfolio } from './MyPortfolio'
 
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -11,9 +12,7 @@ const WRAPPER = styled.div`
 height: 85vh;
 width: 100%;
 `};
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
   background-color: ${({ theme }) => theme.bg3};
@@ -23,7 +22,9 @@ width: 100%;
 export const RightContainer: FC = () => {
   return (
     <div>
-      <WRAPPER>Coming Soon</WRAPPER>
+      <WRAPPER>
+        <MyPortfolio></MyPortfolio>
+      </WRAPPER>
     </div>
   )
 }
