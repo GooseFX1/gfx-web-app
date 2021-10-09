@@ -7,6 +7,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState
 } from 'react'
 import { Market, MARKETS } from '@project-serum/serum'
@@ -84,19 +85,21 @@ const OrderContext = createContext<IOrderConfig | null>(null)
 
 export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
-  const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
+  const { getAskSymbolFromPair, marketsData, selectedCrypto } = useCrypto()
   const { fetchOpenOrders } = useTradeHistory()
   const wallet = useWallet()
   const [focused, setFocused] = useState<OrderInput>(undefined)
   const [order, setOrder] = useState<IOrder>({
     display: 'limit',
-    isHidden: true,
+    isHidden: false,
     price: 0,
     side: 'buy',
     size: 0,
     total: 0,
     type: 'limit'
   })
+
+  useEffect(() => setOrder((prevState) => ({ ...prevState, price: 0, size: 0, total: 0 })), [selectedCrypto])
 
   useEffect(() => {
     switch (focused) {
@@ -113,6 +116,13 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }))
     }
   }, [focused, order.price, order.size, order.total, selectedCrypto.market])
+
+  const currentCryptoPrice = useMemo(() => marketsData[selectedCrypto.pair].current, [marketsData, selectedCrypto.pair])
+  useEffect(() => {
+    if (!order.price) {
+      setOrder((prevState) => ({ ...prevState, price: currentCryptoPrice }))
+    }
+  }, [currentCryptoPrice, order.price])
 
   const placeOrder = useCallback(async () => {
     try {

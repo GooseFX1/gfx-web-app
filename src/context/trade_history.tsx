@@ -102,26 +102,23 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
     }
   }
 
-  const settleFunds = useCallback(
-    async (openOrder: OpenOrders, balance: number, symbol: string) => {
-      if (selectedCrypto.market) {
-        try {
-          const signature = await settleCryptoFunds(connection, selectedCrypto.market, openOrder, wallet)
-          notify({
-            type: 'success',
-            message: 'Action successful',
-            description: `Settled ${balance} ${symbol}`,
-            icon: 'success',
-            txid: signature
-          })
-          setTimeout(() => fetchBalances(), 4500)
-        } catch (e: any) {
-          notify({ type: 'error', message: `Error settling funds`, icon: 'error', description: e.message })
-        }
+  const settleFunds = async (openOrder: OpenOrders, balance: number, symbol: string) => {
+    if (selectedCrypto.market) {
+      try {
+        const signature = await settleCryptoFunds(connection, selectedCrypto.market, openOrder, wallet)
+        notify({
+          type: 'success',
+          message: 'Action successful',
+          description: `Settled ${balance} ${symbol}`,
+          icon: 'success',
+          txid: signature
+        })
+        setTimeout(() => fetchBalances(), 4500)
+      } catch (e: any) {
+        notify({ type: 'error', message: `Error settling funds`, icon: 'error', description: e.message })
       }
-    },
-    [connection, fetchBalances, selectedCrypto.market, wallet]
-  )
+    }
+  }
 
   useEffect(() => {
     setOpenOrders([])
