@@ -21,7 +21,7 @@ const TAB = styled(Link)`
 `
 
 const TAB_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['2x'])}
+  ${({ theme }) => theme.measurements(theme.margins['3x'])}
 `
 
 const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: number }>`
