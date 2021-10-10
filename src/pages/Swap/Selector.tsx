@@ -3,7 +3,7 @@ import { Input } from 'antd'
 import styled from 'styled-components'
 import { ArrowClicker, Modal } from '../../components'
 import { ISwapToken, useTokenRegistry } from '../../context'
-import { CenteredDiv, CenteredImg, SpaceBetweenDiv } from '../../styles'
+import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
 
 const BODY = styled.div`
   height: 33vh;
@@ -37,6 +37,7 @@ const CLICKER_ICON = styled(CenteredImg)`
 `
 
 const INPUT = styled.div`
+  position: relative;
   margin-top: ${({ theme }) => theme.margins['2x']};
 
   &:after {
@@ -49,12 +50,19 @@ const INPUT = styled.div`
     background-color: ${({ theme }) => theme.text1};
   }
 
-  > input {
+  input {
     height: ${({ theme }) => theme.margins['5x']};
     background-color: ${({ theme }) => theme.bg4};
     font-size: 12px;
     text-align: left;
   }
+`
+
+const MAGNIFYING_GLASS = styled(CenteredImg)`
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  ${({ theme }) => theme.measurements(theme.margins['2x'])}
 `
 
 const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
@@ -131,12 +139,13 @@ export const Selector: FC<{
       <Modal setVisible={setVisible} title="Select a token" visible={visible}>
         <INPUT>
           <Input
+            onChange={(x: any) => setFilterKeywords(x.target.value)}
             placeholder="Search name or paste address"
             value={filterKeywords}
-            onChange={(x: any) => {
-              setFilterKeywords(x.target.value)
-            }}
           />
+          <MAGNIFYING_GLASS>
+            <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/magnifying_glass.svg`} alt="" />
+          </MAGNIFYING_GLASS>
         </INPUT>
         <BODY>
           {filteredTokens.map(({ address, chainId, decimals, name, symbol }, index) => (

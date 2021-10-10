@@ -1,4 +1,5 @@
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
+import { Input } from 'antd'
 import styled from 'styled-components'
 import { ArrowDropdown } from '../../../components'
 import { AVAILABLE_MARKETS, useCrypto } from '../../../context'
@@ -8,6 +9,13 @@ const ARROW = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['2x'])};
   margin-left: ${({ theme }) => theme.margins['2x']};
   cursor: pointer;
+`
+
+const MAGNIFYING_GLASS = styled(CenteredImg)`
+  position: absolute;
+  top: 20px;
+  right: 10px;
+  ${({ theme }) => theme.measurements(theme.margins['2x'])}
 `
 
 const MARKET = styled.div`
@@ -39,16 +47,21 @@ const MARKET = styled.div`
 `
 
 const SELECTOR = styled.div`
+  position: relative;
   ${({ theme }) => theme.flexCenter}
   flex-direction: column;
-  width: ${TRADE_ORDER_WIDTH};
+  width: calc(${TRADE_ORDER_WIDTH} - 20px);
   padding: ${({ theme }) => theme.margins['1.5x']} 0;
   ${({ theme }) => theme.smallBorderRadius}
   background-color: #131313;
+
+  input {
+    text-align: left;
+  }
 `
 
 const WRAPPER = styled.div`
-  max-height: 300px;
+  max-height: 290px;
   width: 100%;
   overflow: scroll;
 `
@@ -58,6 +71,8 @@ const Overlay: FC<{
   setVisible: Dispatch<SetStateAction<boolean>>
 }> = ({ setArrowRotation, setVisible }) => {
   const { getAskSymbolFromPair, setSelectedCrypto } = useCrypto()
+  const [filterKeywords, setFilterKeywords] = useState('')
+  const [filteredMarkets, setFilteredMarkets] = useState(AVAILABLE_MARKETS)
 
   const handleClick = useCallback(
     (pair: string) => {
@@ -70,7 +85,7 @@ const Overlay: FC<{
 
   const markets = useMemo(
     () =>
-      AVAILABLE_MARKETS.map(({ name }, index) => (
+      filteredMarkets.map(({ name }, index) => (
         <MARKET key={index} onClick={() => handleClick(name)}>
           <CenteredImg>
             <img src={`${process.env.PUBLIC_URL}/img/crypto/${getAskSymbolFromPair(name)}.svg`} alt="" />
@@ -78,11 +93,23 @@ const Overlay: FC<{
           <span>{name}</span>
         </MARKET>
       )),
-    [getAskSymbolFromPair, handleClick]
+    [filteredMarkets, getAskSymbolFromPair, handleClick]
   )
+
+  useEffect(() => {
+    setFilteredMarkets(AVAILABLE_MARKETS.filter(({ name }) => new RegExp(filterKeywords, 'i').test(name)))
+  }, [filterKeywords])
 
   return (
     <SELECTOR>
+      <Input
+        onChange={(x: any) => setFilterKeywords(x.target.value)}
+        placeholder="Search market"
+        value={filterKeywords}
+      />
+      <MAGNIFYING_GLASS>
+        <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/magnifying_glass.svg`} alt="" />
+      </MAGNIFYING_GLASS>
       <WRAPPER>{markets}</WRAPPER>
     </SELECTOR>
   )
@@ -101,7 +128,7 @@ export const CryptoSelector: FC = () => {
     <ArrowDropdown
       arrowRotation={arrowRotation}
       measurements="16px"
-      offset={[26, 26]}
+      offset={[16, 26]}
       onVisibleChange={handleClick}
       onClick={handleClick}
       overlay={<Overlay setArrowRotation={setArrowRotation} setVisible={setVisible} />}

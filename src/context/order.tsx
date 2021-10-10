@@ -2,12 +2,14 @@ import React, {
   createContext,
   Dispatch,
   FC,
+  MutableRefObject,
   ReactNode,
   SetStateAction,
   useCallback,
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react'
 import { Market, MARKETS } from '@project-serum/serum'
@@ -16,7 +18,7 @@ import { useCrypto } from './crypto'
 import { useConnectionConfig } from './settings'
 import { useTradeHistory } from './trade_history'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
-import { capitalizeFirstLetter, floorValue, notify, removeFloatingPointError } from '../utils'
+import { capitalizeFirstLetter, decimalModulo, floorValue, notify, removeFloatingPointError } from '../utils'
 import { placeCryptoOrder } from '../web3'
 
 type OrderInput = undefined | 'price' | 'size' | 'total'
@@ -117,6 +119,29 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [focused, order.price, order.size, order.total, selectedCrypto.market])
 
+  const throttleDelay = 300
+  let sizeThrottle: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
+  const floorSize = useCallback(async () => {
+    sizeThrottle.current && clearTimeout(sizeThrottle.current)
+    sizeThrottle.current = setTimeout(async () => {
+      setOrder((prevState) => ({ ...prevState, size: floorValue(order.size, selectedCrypto.market?.minOrderSize) }))
+    }, throttleDelay)
+  }, [order.size, selectedCrypto.market?.minOrderSize])
+  useEffect(() => {
+    ;(async () => await floorSize())()
+  }, [floorSize, order.size])
+
+  let priceThrottle: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
+  const floorPrice = useCallback(async () => {
+    priceThrottle.current && clearTimeout(priceThrottle.current)
+    priceThrottle.current = setTimeout(async () => {
+      setOrder((prevState) => ({ ...prevState, price: floorValue(order.price, selectedCrypto.market?.tickSize) }))
+    }, throttleDelay)
+  }, [order.price, selectedCrypto.market?.tickSize])
+  useEffect(() => {
+    ;(async () => await floorPrice())()
+  }, [floorPrice, order.price])
+
   const marketPrice = useMemo(() => marketsData[selectedCrypto.pair]?.current, [marketsData, selectedCrypto.pair])
   useEffect(() => {
     !order.price && marketPrice && setOrder((prevState) => ({ ...prevState, price: marketPrice }))
@@ -124,6 +149,15 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const placeOrder = useCallback(async () => {
     try {
+      if (!selectedCrypto.market) {
+        throw new Error(`Market not selected`)
+      }
+      if (decimalModulo(order.price, selectedCrypto.market.tickSize)) {
+        throw new Error(`Price must be a multiple of ${selectedCrypto.market.tickSize}`)
+      }
+      if (decimalModulo(order.size, selectedCrypto.market.minOrderSize)) {
+        throw new Error(`Size must be a multiple of ${selectedCrypto.market.minOrderSize}`)
+      }
       await placeCryptoOrder(connection, selectedCrypto.market as Market, order, wallet)
       const ask = getAskSymbolFromPair(selectedCrypto.pair)
       const price = floorValue(order.price, selectedCrypto.market?.tickSize)
@@ -136,7 +170,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
       setTimeout(() => fetchOpenOrders(), 4500)
     } catch (e: any) {
-      notify({ type: 'error', message: `${capitalizeFirstLetter(order.display)} failed`, icon: 'trade_error' }, e)
+      notify({ type: 'error', message: `${capitalizeFirstLetter(order.display)} order failed`, icon: 'trade_error' }, e)
     }
   }, [connection, fetchOpenOrders, getAskSymbolFromPair, order, selectedCrypto.market, selectedCrypto.pair, wallet])
 

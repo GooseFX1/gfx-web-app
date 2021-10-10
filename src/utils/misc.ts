@@ -55,36 +55,6 @@ export function flatten(
   return result
 }
 
-export function floorValue(n: number, value: number | undefined): number {
-  if (!value) {
-    return n
-  }
-
-  return removeFloatingPointError(Math.floor(n / value) * value)
-}
-
-export function removeFloatingPointError(n: number): number {
-  const s = n.toString()
-
-  const dotPosition = s.indexOf('.')
-  if (dotPosition === -1) {
-    return n
-  }
-
-  const match = /(\d)\1{5,}/.exec(s.slice(dotPosition + 1))
-  if (match) {
-    const errorPosition = dotPosition + match.index + 1
-    const errorDigit = Number(s[errorPosition])
-    if (errorDigit < 5) {
-      n = parseFloat(s.slice(0, errorPosition))
-    } else {
-      n = (parseFloat(s.slice(0, errorPosition)) * 10 ** match.index + 1) / 10 ** match.index
-    }
-  }
-
-  return n
-}
-
 export function shortenAddress(address: string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`
 }
