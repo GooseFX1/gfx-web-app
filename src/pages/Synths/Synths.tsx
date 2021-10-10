@@ -29,7 +29,7 @@ width: 100%;
 const RIGHTGRID = styled.div`
   ${({ theme }) => theme.mediaWidth.fromLarge`
   height: 85vh;
-  width: 400px;
+  width: 425px;
 `};
   ${({ theme }) => theme.mediaWidth.upToLarge`
 height: 85vh;
