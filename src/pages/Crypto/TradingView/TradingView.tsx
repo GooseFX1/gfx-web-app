@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import * as saveLoadAdapter from './save-load-adapter'
-import { UDFCompatibleDatafeed } from './udf-compatible-datafeed'
 import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget } from '../../../charting_library'
 import { useDarkMode } from '../../../context'
 import { flatten } from '../../../utils'
@@ -32,7 +31,7 @@ export const TVChartContainer: FC<{
       autosize: true,
       client_id: 'tradingview.com',
       container: 'tv_chart_container',
-      datafeed: new UDFCompatibleDatafeed('https://serum-api.bonfida.com/tv'),
+      datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed('https://demo_feed.tradingview.com'),
       disabled_features: ['use_localstorage_for_settings'],
       enabled_features: ['study_templates'],
       fullscreen: false,
@@ -76,7 +75,7 @@ export const TVChartContainer: FC<{
         }
       },
       studies_overrides: {},
-      symbol,
+      symbol: 'AAPL',
       theme: mode === 'dark' ? 'Dark' : 'Light',
       user_id: 'public_user_id'
     }
