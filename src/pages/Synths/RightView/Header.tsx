@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
-import { Tooltip } from '../../components/Tooltip'
+import { Tooltip } from '../../../components/Tooltip'
 
 const WRAPPER = styled.div`
   height: fit-content;
@@ -33,7 +33,7 @@ const POSITION = styled.div`
   padding-bottom: 5px;
 `
 
-export const MyPortfolioHeader: FC = () => {
+export const Header: FC = () => {
   return (
     <WRAPPER>
       <Col span={24}>

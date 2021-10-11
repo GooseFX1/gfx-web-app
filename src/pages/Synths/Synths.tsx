@@ -1,9 +1,9 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
-import { RightContainer } from './RightContainer'
-import { LeftTopContainer } from './LeftTopContainer'
-import { LeftBottomContainer } from './LeftBottomContainer'
+import { RightContainer } from './RightView/Container'
+import { TopContainer } from './LeftTopView/Container'
+import { BottomContainer } from './LeftBottomView/Container'
 
 const WRAPPER = styled.div`
   height: 100%;
@@ -29,7 +29,7 @@ width: 100%;
 const RIGHTGRID = styled.div`
   ${({ theme }) => theme.mediaWidth.fromLarge`
   height: 85vh;
-  width: 425px;
+  width: 30vw;
 `};
   ${({ theme }) => theme.mediaWidth.upToLarge`
 height: 85vh;
@@ -44,8 +44,8 @@ export const Synths: FC = () => {
       <Row gutter={60}>
         <Col flex={3.75}>
           <LEFTGRID>
-            <LeftTopContainer></LeftTopContainer>
-            <LeftBottomContainer></LeftBottomContainer>
+            <TopContainer></TopContainer>
+            <BottomContainer></BottomContainer>
           </LEFTGRID>
         </Col>
 
