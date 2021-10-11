@@ -19,6 +19,6 @@ width: 100%;
   ${({ theme }) => theme.largeShadow}
 `
 
-export const LeftTopContainer: FC = () => {
+export const TopContainer: FC = () => {
   return <WRAPPER>Coming Soon</WRAPPER>
 }

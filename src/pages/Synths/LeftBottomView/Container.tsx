@@ -1,30 +1,25 @@
 import { FC } from 'react'
 import styled from 'styled-components'
-import { MyPortfolio } from './MyPortfolio'
 
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
   ${({ theme }) => theme.mediaWidth.fromLarge`
-  height: 85vh;
+  height: 50%;
   width: 100%;
 `};
   ${({ theme }) => theme.mediaWidth.upToLarge`
-height: 85vh;
+height: 55%;
 width: 100%;
 `};
-
-  border-top-right-radius: 20px;
-  border-top-left-radius: 20px;
+  margin-top: 7%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  ${({ theme }) => theme.largeBorderRadius};
   background-color: ${({ theme }) => theme.bg3};
   ${({ theme }) => theme.largeShadow}
 `
 
-export const RightContainer: FC = () => {
-  return (
-    <div>
-      <WRAPPER>
-        <MyPortfolio></MyPortfolio>
-      </WRAPPER>
-    </div>
-  )
+export const BottomContainer: FC = () => {
+  return <WRAPPER>Coming Soon</WRAPPER>
 }

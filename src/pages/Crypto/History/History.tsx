@@ -25,8 +25,8 @@ const CONNECT = styled.div`
 
 const WRAPPER = styled.div<{ chartsVisible: boolean }>`
   margin-top: ${({ theme, chartsVisible }) => (chartsVisible ? theme.margins['3x'] : '0')};
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['2x']}
-    ${({ theme }) => theme.margins['1.5x']};
+  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['2x']};
+  ${({ theme }) => theme.margins['1.5x']};
   border-radius: 10px;
   background-color: ${({ theme }) => theme.bg3};
   transition: margin-top ${({ theme }) => theme.mainTransitionTime} ease-in-out;

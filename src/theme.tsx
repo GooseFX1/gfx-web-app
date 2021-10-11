@@ -52,6 +52,7 @@ export function colors(mode: string): Colors {
     text1: mode === 'dark' ? white : black,
     text2: mode === 'dark' ? white : '#353535',
     text3: mode === 'dark' ? '#d655fe' : '#9625ae',
+    text4: mode === 'dark' ? white : '#636363',
     text1h: '#7d7d7d',
 
     // backgrounds / greys
