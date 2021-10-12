@@ -60,8 +60,8 @@ const PANELS = styled(SpaceBetweenDiv)<{ $panel: HistoryPanel }>`
 const WRAPPER = styled.div`
   position: relative;
   margin: -${({ theme }) => theme.margins['2x']};
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['5x']}
-    ${({ theme }) => theme.margins['1.5x']};
+  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['5x']};
+  ${({ theme }) => theme.margins['1.5x']};
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 20px;

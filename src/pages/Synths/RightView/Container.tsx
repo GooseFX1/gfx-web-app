@@ -9,8 +9,8 @@ const WRAPPER = styled.div`
   width: 100%;
 `};
   ${({ theme }) => theme.mediaWidth.upToLarge`
-height: 85vh;
-width: 100%;
+  height: 85vh;
+  width: 100%;
 `};
 
   border-top-right-radius: 20px;
