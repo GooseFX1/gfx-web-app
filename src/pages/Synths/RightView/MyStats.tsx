@@ -1,8 +1,8 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 import { Row, Col, Progress } from 'antd'
-import { Tooltip } from '../../../components/Tooltip'
 import { useDarkMode } from '../../../context'
+import { ProgressRow } from './ProgressRow'
 
 const WRAPPER = styled.div`
   height: 150px;
@@ -62,7 +62,7 @@ const PROGRESS = styled.div`
 `};
 `
 
-export const MyStats: FC = () => {
+export const MyStats: FC<{}> = () => {
   const { mode } = useDarkMode()
   const value = mode === 'dark' ? '#1e1e1e' : '#e2e2e2'
   return (
@@ -71,75 +71,37 @@ export const MyStats: FC = () => {
         <Row>
           <TITLE>My Stats</TITLE>
         </Row>
-        <WIDGETWRAP>
-          <Row align={'middle'}>
-            <Col flex={1}>
-              <DATA>Debt</DATA>
-            </Col>
-            <Col flex={1}>
-              <POSITION>
-                <Tooltip>
-                  The minimum amount on how many tokens you will accept, in the event that the price increases or
-                  decreases.
-                </Tooltip>
-              </POSITION>
-            </Col>
-            <Col flex={5}>
-              <PROGRESS>
-                <Progress percent={50} showInfo={false} strokeWidth={16} strokeColor={'#5654f2'} trailColor={value} />
-              </PROGRESS>
-            </Col>
-            <Col flex={1}>
-              <NUMBER>000,000.00 USD</NUMBER>
-            </Col>
-          </Row>
-        </WIDGETWRAP>
-        <WIDGETWRAP>
-          <Row align={'middle'}>
-            <Col flex={1}>
-              <DATA>Collateral</DATA>
-            </Col>
-            <Col flex={1}>
-              <POSITION>
-                <Tooltip>
-                  The minimum amount on how many tokens you will accept, in the event that the price increases or
-                  decreases.
-                </Tooltip>
-              </POSITION>
-            </Col>
-            <Col flex={5}>
-              <PROGRESS>
-                <Progress percent={30} showInfo={false} strokeWidth={16} strokeColor={'#cf5ae8'} trailColor={value} />
-              </PROGRESS>
-            </Col>
-            <Col flex={1}>
-              <NUMBER>000,000.00 USD</NUMBER>
-            </Col>
-          </Row>
-        </WIDGETWRAP>
-        <WIDGETWRAP>
-          <Row align={'middle'}>
-            <Col flex={1}>
-              <DATA>C-Ratio</DATA>
-            </Col>
-            <Col flex={1}>
-              <POSITION>
-                <Tooltip>
-                  The minimum amount on how many tokens you will accept, in the event that the price increases or
-                  decreases.
-                </Tooltip>
-              </POSITION>
-            </Col>
-            <Col flex={5}>
-              <PROGRESS>
-                <Progress percent={60} showInfo={false} strokeWidth={16} strokeColor={'#bb7535'} trailColor={value} />
-              </PROGRESS>
-            </Col>
-            <Col flex={1}>
-              <NUMBER>125% / No Minting</NUMBER>
-            </Col>
-          </Row>
-        </WIDGETWRAP>
+
+        <ProgressRow
+          title={'Debt'}
+          tooltip={'eferferf erfefer erferf'}
+          number={'000,000.00 USD'}
+          percent={60}
+          showInfo={false}
+          strokeWidth={16}
+          strokeColor={'#5654f2'}
+          trailColor={value}
+        ></ProgressRow>
+        <ProgressRow
+          title={'Collateral'}
+          tooltip={'eferferf erfefer erferf'}
+          number={'000,000.00 USD'}
+          percent={30}
+          showInfo={false}
+          strokeWidth={16}
+          strokeColor={'#cf5ae8'}
+          trailColor={value}
+        ></ProgressRow>
+        <ProgressRow
+          title={'C-Ratio'}
+          tooltip={'eferferf erfefer erferf'}
+          number={'125%/No Minting'}
+          percent={50}
+          showInfo={false}
+          strokeWidth={16}
+          strokeColor={'#bb7535'}
+          trailColor={value}
+        ></ProgressRow>
       </Col>
     </WRAPPER>
   )
