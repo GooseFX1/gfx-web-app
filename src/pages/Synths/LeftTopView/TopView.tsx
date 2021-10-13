@@ -1,9 +1,13 @@
-import { Menu } from 'antd'
+import { Button, Menu } from 'antd'
 import { Dispatch, FC, SetStateAction, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { ArrowDropdown } from '../../../components'
-import { Row, Col } from 'antd'
+import { Row, Col, Select, Tabs } from 'antd'
 import { HeaderBar } from '../../../components/HeaderBar'
+import React from 'react'
+import { useDarkMode } from '../../../context'
+import { SVGToWhite } from '../../../styles'
+const { TabPane } = Tabs
 
 const BUTTON = styled.button`
   display: flex;
@@ -52,56 +56,36 @@ const MENUITEM = styled.div`
   background-color: #3f3f3f;
 `
 
-const Overlay: FC<{
-  setArrowRotation: Dispatch<SetStateAction<boolean>>
-  setVisible: Dispatch<SetStateAction<boolean>>
-}> = ({ setArrowRotation, setVisible }) => {
-  return (
-    <MENU>
-      <Menu>
-        <MENUITEM>
-          <Menu.Item>1st menu item</Menu.Item>
-        </MENUITEM>
-        <MENUITEM>
-          <Menu.Item>1st menu item</Menu.Item>
-        </MENUITEM>
-        <MENUITEM>
-          <Menu.Item>1st menu item</Menu.Item>
-        </MENUITEM>
-        <MENUITEM>
-          <Menu.Item>1st menu item</Menu.Item>
-        </MENUITEM>
-      </Menu>
-    </MENU>
+const Nav = ['Deposit', 'Mint', 'Swap', 'Burn', 'Withdraw', 'Rewards']
+
+const OperationsSlot = {
+  left: (
+    <Select
+      bordered={false}
+      style={{ background: '#3735bb' }}
+      suffixIcon={
+        <SVGToWhite
+          src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
+          alt="arrow"
+          style={{ height: 20, width: 20 }}
+        />
+      }
+    ></Select>
   )
 }
-
 export const TopView: FC = () => {
-  const [arrowRotation, setArrowRotation] = useState(false)
-  const [visible, setVisible] = useState(false)
-
-  const handleClick = () => {
-    setArrowRotation(!arrowRotation)
-    setVisible(!visible)
-  }
   return (
-    <HeaderBar height={'80px'} width={'100%'}>
-      <BUTTON style={{ backgroundColor: '#3735bb' }}>
-        <Row>
-          <TEXT>Sp 500 pool </TEXT>
-          <ARROW>
-            <ArrowDropdown
-              arrowRotation={arrowRotation}
-              measurements="16px"
-              offset={[26, 26]}
-              overlay={<Overlay setArrowRotation={setArrowRotation} setVisible={setVisible} />}
-              onVisibleChange={handleClick}
-              onClick={handleClick}
-              visible={visible}
-            />
-          </ARROW>
-        </Row>
-      </BUTTON>
-    </HeaderBar>
+    <div>
+      <Tabs
+        tabBarExtraContent={OperationsSlot}
+        tabBarStyle={{ height: 80, backgroundColor: '#121212', borderRadius: 20 }}
+      >
+        {Nav.map((value, index) => (
+          <TabPane key={index} tab={value}>
+            Content of tab 3
+          </TabPane>
+        ))}
+      </Tabs>
+    </div>
   )
 }

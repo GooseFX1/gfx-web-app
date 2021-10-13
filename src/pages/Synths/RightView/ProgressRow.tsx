@@ -20,14 +20,6 @@ const NUMBER = styled.span`
   justify-content: right;
   font-weight: 400;
   color: ${({ theme }) => theme.text1};
-  ${({ theme }) => theme.mediaWidth.fromLarge`
-  
-  width: 125px;
-`};
-  ${({ theme }) => theme.mediaWidth.upToLarge`
- 
-  width: 110px;
-`};
 `
 const POSITION = styled.div`
   display: flex;

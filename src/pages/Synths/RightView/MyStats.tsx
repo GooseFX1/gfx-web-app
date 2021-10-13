@@ -67,14 +67,14 @@ export const MyStats: FC<{}> = () => {
   const value = mode === 'dark' ? '#1e1e1e' : '#e2e2e2'
   return (
     <WRAPPER>
-      <Col span={24}>
+      <Col>
         <Row>
           <TITLE>My Stats</TITLE>
         </Row>
 
         <ProgressRow
           title={'Debt'}
-          tooltip={'eferferf erfefer erferf'}
+          tooltip={'The current USD denominated value of your debt that must be repaid.'}
           number={'000,000.00 USD'}
           percent={60}
           showInfo={false}
@@ -84,7 +84,9 @@ export const MyStats: FC<{}> = () => {
         ></ProgressRow>
         <ProgressRow
           title={'Collateral'}
-          tooltip={'eferferf erfefer erferf'}
+          tooltip={
+            'The current USD denominated value of your deposited collateral. Prices of collaterals are provided by decentralized Pyth oracles.'
+          }
           number={'000,000.00 USD'}
           percent={30}
           showInfo={false}
@@ -94,7 +96,9 @@ export const MyStats: FC<{}> = () => {
         ></ProgressRow>
         <ProgressRow
           title={'C-Ratio'}
-          tooltip={'eferferf erfefer erferf'}
+          tooltip={
+            'Current value of your debt based on the debt of the platform. Max borrow represents the maximal debt that you can mint - if your debt increases beyond this value, your position can be liquidated. You can mint if your collateral ratio is greater than 200% and you may be liquidated if your collateral ratio falls below 120%.'
+          }
           number={'125%/No Minting'}
           percent={50}
           showInfo={false}
