@@ -3,6 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 
 export const ADDRESSES: {
   [network in WalletAdapterNetwork]: {
+    pool: PublicKey
     seeds: {
       pools: {
         [pair: string]: PublicKey
@@ -12,14 +13,17 @@ export const ADDRESSES: {
   }
 } = {
   'mainnet-beta': {
+    pool: PublicKey.default,
     seeds: { pools: {} },
     swap: PublicKey.default
   },
   testnet: {
+    pool: PublicKey.default,
     seeds: { pools: {} },
     swap: PublicKey.default
   },
   devnet: {
+    pool: PublicKey.default,
     seeds: {
       pools: {
         'TKNA/TKNB': new PublicKey('Ga9vweHkkvxRVeadA3NRGx2RHfFs6w2t4hKRmBinQzYL')

@@ -1,11 +1,8 @@
-import { Program, Provider } from '@project-serum/anchor'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
-import { ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { WalletContextState } from '@solana/wallet-adapter-react'
 import { Connection, PublicKey, Signer, Transaction } from '@solana/web3.js'
 import { ADDRESSES } from './ids'
-const SwapIDL = require('./idl/swap.json')
 
 export const computePoolsPDAs = async (
   tokenASymbol: string,
@@ -27,6 +24,16 @@ export const computePoolsPDAs = async (
   return { lpTokenMint, pool }
 }
 
+export const createAssociatedTokenAccountIx = (mint: PublicKey, associatedAccount: PublicKey, owner: PublicKey) =>
+  Token.createAssociatedTokenAccountInstruction(
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+    TOKEN_PROGRAM_ID,
+    mint,
+    associatedAccount,
+    owner,
+    owner
+  )
+
 export const findAssociatedTokenAddress = async (
   walletAddress: PublicKey,
   tokenMintAddress: PublicKey
@@ -38,13 +45,6 @@ export const findAssociatedTokenAddress = async (
     )
   )[0]
 }
-
-export const getLPProgram = (
-  wallet: WalletContextState,
-  connection: Connection,
-  network: WalletAdapterNetwork
-): Program =>
-  new Program(SwapIDL, ADDRESSES[network].swap, new Provider(connection, wallet as any, { commitment: 'processed' }))
 
 export const signAndSendRawTransaction = async (
   connection: Connection,
