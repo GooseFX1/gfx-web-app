@@ -62,27 +62,43 @@ const OperationsSlot = {
   left: (
     <Select
       bordered={false}
-      style={{ background: '#3735bb' }}
+      style={{ background: '#3735bb', color: 'white', fontSize: 15, height: 80 }}
+      defaultValue="Sp 500 pool"
       suffixIcon={
         <SVGToWhite
           src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
           alt="arrow"
-          style={{ height: 20, width: 20 }}
+          style={{ height: 15, width: 15, marginRight: 15 }}
         />
       }
     ></Select>
   )
 }
+
 export const TopView: FC = () => {
   return (
     <div>
       <Tabs
         tabBarExtraContent={OperationsSlot}
+        centered={true}
+        tabBarGutter={40}
         tabBarStyle={{ height: 80, backgroundColor: '#121212', borderRadius: 20 }}
       >
         {Nav.map((value, index) => (
           <TabPane key={index} tab={value}>
-            Content of tab 3
+            {index === 0
+              ? 'View one'
+              : index === 1
+              ? 'View two'
+              : index === 2
+              ? 'View three'
+              : index === 3
+              ? 'View four'
+              : index === 4
+              ? 'View five'
+              : index === 5
+              ? 'View six'
+              : null}
           </TabPane>
         ))}
       </Tabs>
