@@ -1,24 +1,39 @@
 import { BN, Program, Provider } from '@project-serum/anchor'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { Connection, PublicKey, Transaction, TransactionSignature } from '@solana/web3.js'
-import {
-  computePoolsPDAs,
-  createAssociatedTokenAccountIx,
-  findAssociatedTokenAddress,
-  signAndSendRawTransaction
-} from './utils'
-import { ISwapToken } from '../context'
 import { WalletContextState } from '@solana/wallet-adapter-react'
+import { Connection, PublicKey, Transaction, TransactionSignature } from '@solana/web3.js'
 import { ADDRESSES } from './ids'
+import { createAssociatedTokenAccountIx, findAssociatedTokenAddress, signAndSendRawTransaction } from './utils'
+import { ISwapToken } from '../context'
 const SwapIDL = require('./idl/swap.json')
 
-const getSwapProgram = (
-  wallet: WalletContextState,
-  connection: Connection,
+const getSwapProgram = (wallet: WalletContextState, connection: Connection, network: WalletAdapterNetwork): Program =>
+  new Program(
+    SwapIDL,
+    ADDRESSES[network].programs.swap.address,
+    new Provider(connection, wallet as any, { commitment: 'processed' })
+  )
+
+export const computePoolsPDAs = async (
+  tokenASymbol: string,
+  tokenBSymbol: string,
   network: WalletAdapterNetwork
-): Program =>
-  new Program(SwapIDL, ADDRESSES[network].swap, new Provider(connection, wallet as any, { commitment: 'processed' }))
+): Promise<{ lpTokenMint: PublicKey; pool: PublicKey }> => {
+  const {
+    pools,
+    programs: { swap: { address } }
+  } = ADDRESSES[network]
+  const pair = pools[[tokenASymbol, tokenBSymbol].sort((a, b) => a.localeCompare(b)).join('/')]
+  const poolSeed = [new Buffer('GFXPool', 'utf-8'), new PublicKey(pair.address).toBuffer()]
+  const mintSeed = [new Buffer('GFXLPMint', 'utf-8'), new PublicKey(pair.address).toBuffer()]
+  const PDAs = await Promise.all([
+    PublicKey.findProgramAddress(mintSeed, address),
+    PublicKey.findProgramAddress(poolSeed, address)
+  ])
+  const [[lpTokenMint], [pool]] = PDAs
+  return { lpTokenMint, pool }
+}
 
 export const swap = async (
   tokenA: ISwapToken,

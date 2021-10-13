@@ -2,98 +2,147 @@ import { Program, Provider } from '@project-serum/anchor'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
-import { Connection, SystemProgram, Transaction } from '@solana/web3.js'
+import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 import { ADDRESSES } from './ids'
-import { signAndSendRawTransaction } from './utils'
+import { findAssociatedTokenAddress, signAndSendRawTransaction } from './utils'
 const PoolIDL = require('./idl/pool.json')
 
+const getUserAccount = async (
+  pool: string,
+  wallet: any,
+  network: WalletAdapterNetwork
+) => await PublicKey.findProgramAddress([
+    new Buffer('UserAccount', 'utf-8'),
+    new PublicKey(ADDRESSES[network].pools[pool].address).toBuffer(),
+    new PublicKey(wallet.publicKey).toBuffer()
+  ],
+  ADDRESSES[network].programs.pool.address)
+
 const getPoolProgram = (wallet: WalletContextState, connection: Connection, network: WalletAdapterNetwork): Program =>
-  new Program(PoolIDL, ADDRESSES[network].pool, new Provider(connection, wallet as any, { commitment: 'processed' }))
+  new Program(
+    PoolIDL,
+    ADDRESSES[network].programs.pool.address,
+    new Provider(connection, wallet as any, { commitment: 'processed' })
+  )
 
-const burn = async (amount: number, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
+const burn = async (
+  amount: number,
+  pool: string,
+  synth: string,
+  wallet: any,
+  connection: Connection,
+  network: WalletAdapterNetwork
+) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
 
-  /*  const accounts = {
-    controller,
-    listing,
-    pool,
-    priceAggregator,
+  const { mints, programs, pools } = ADDRESSES[network]
+  const accounts = {
+    controller: programs.pool.controller,
+    listing: pools[pool].listing,
+    pool: pools[pool].address,
+    priceAggregator: programs.pool.priceAggregator,
     tokenProgram: TOKEN_PROGRAM_ID,
-    synthMint,
-    userAccount,
-    userAta,
+    synthMint: mints[synth],
+    userAccount: await getUserAccount(pool, wallet, network),
+    userAta: await findAssociatedTokenAddress(wallet.publicKey, mints[synth]),
     userWallet: wallet.publicKey
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.burn(amount, { accounts })) */
+  tx.add(await instruction.burn(amount, { accounts }))
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-const claim = async (amount: number, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
+const claim = async (
+  amount: number,
+  pool: string,
+  wallet: any,
+  connection: Connection,
+  network: WalletAdapterNetwork
+) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
 
-  /*  const accounts = {
-    controller,
-    listing,
-    pool,
-    priceAggregator,
+  const { mints, programs, pools } = ADDRESSES[network]
+  const accounts = {
+    controller: programs.pool.controller,
+    listing: pools[pool].listing,
+    pool: pools[pool].address,
+    priceAggregator: programs.pool.priceAggregator,
     tokenProgram: TOKEN_PROGRAM_ID,
-    usdMint,
-    userAccount,
-    userAta,
+    usdMint: mints.gUSD,
+    userAccount: await getUserAccount(pool, wallet, network),
+    userAta: await findAssociatedTokenAddress(wallet.publicKey, mints.gUSD),
     userWallet: wallet.publicKey
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.claimFee({ accounts })) */
+  tx.add(await instruction.claimFee({ accounts }))
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-const deposit = async (amount: number, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
+const deposit = async (
+  amount: number,
+  pool: string,
+  wallet: any,
+  connection: Connection,
+  network: WalletAdapterNetwork
+) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
 
-  /* const accounts = {
-    controller,
-    listing,
-    pool,
-    poolAta,
-    priceAggregator,
+  const { mints, programs, pools } = ADDRESSES[network]
+  const accounts = {
+    controller: programs.pool.controller,
+    listing: pools[pool].listing,
+    pool: pools[pool].address,
+    poolAta: await findAssociatedTokenAddress(programs.pool.address, mints.GOFX),
+    priceAggregator: programs.pool.priceAggregator,
     tokenProgram: TOKEN_PROGRAM_ID,
-    userAccount,
-    userAta,
+    userAccount: await getUserAccount(pool, wallet, network),
+    userAta: await findAssociatedTokenAddress(wallet.publicKey, mints.GOFX),
     userWallet: wallet.publicKey
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.depositCollateral(amount, { accounts })) */
+  tx.add(await instruction.depositCollateral(amount, { accounts }))
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-const initialize = async (wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
+const initialize = async (
+  pool: string,
+  wallet: any,
+  connection: Connection,
+  network: WalletAdapterNetwork
+) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
 
-  /* const accounts = {
-    controller,
-    payer,
-    pool,
+  const { programs, pools } = ADDRESSES[network]
+  const [userAccount, bump] = await PublicKey.findProgramAddress([
+    new Buffer('UserAccount', 'utf-8'),
+    new PublicKey(pools[pool].address).toBuffer(),
+    new PublicKey(wallet.publicKey).toBuffer()
+  ], programs.pool.address)
+
+  const accounts = {
+    controller: programs.pool.controller,
+    payer: wallet.publicKey,
+    pool: pools[pool].address,
     systemProgram: SystemProgram.programId,
     userAccount
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.initializeUser(bump, { accounts })) */
+  tx.add(await instruction.initializeUser(bump, { accounts }))
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
@@ -103,94 +152,118 @@ const liquidate = async (amount: number, wallet: any, connection: Connection, ne
 
   const tx = new Transaction()
 
-  /*  const accounts = {
-    collateralVault,
-    controller,
-    liquidatedTokenMint,
-    liquidatorCollateralAta,
-    liquidatorLiquidatedTokenAta,
-    liquidatorWallet,
-    listing,
-    pool,
-    priceAggregator,
+  const { mints, programs, pools } = ADDRESSES[network]
+  const accounts = {
+    collateralVault: await findAssociatedTokenAddress(programs.pool.address, mints.GOFX),
+    controller: ADDRESSES[network].programs.pool.controller,
+    // liquidatedTokenMint,
+    // liquidatorCollateralAta, <- gofx
+    // liquidatorLiquidatedTokenAta,
+    // liquidatorWallet,
+    // listing,
+    // pool,
+    priceAggregator: ADDRESSES[network].programs.pool.priceAggregator,
     tokenProgram: TOKEN_PROGRAM_ID,
-    victimUserAccount,
-    victimWallet
+    // victimUserAccount,
+    // victimWallet
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.liquidate(amount, { accounts })) */
+  tx.add(await instruction.liquidate(amount, { accounts }))
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-const mint = async (amount: number, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
+const mint = async (
+  amount: number,
+  pool: string,
+  synth: string,
+  wallet: any,
+  connection: Connection, network: WalletAdapterNetwork
+) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
 
-  /*  const accounts = {
-    controller,
-    listing,
-    pool,
-    priceAggregator,
-    synthMint,
+  const { mints, programs, pools } = ADDRESSES[network]
+  const accounts = {
+    controller: programs.pool.controller,
+    listing: pools[pool].listing,
+    pool: pools[pool].address,
+    priceAggregator: ADDRESSES[network].programs.pool.priceAggregator,
+    synthMint: mints[synth],
     tokenProgram: TOKEN_PROGRAM_ID,
-    userAccount,
-    userAta,
+    userAccount: await getUserAccount(pool, wallet, network),
+    userAta: findAssociatedTokenAddress(wallet.publicKey, mints[synth]),
     userWallet: wallet.publicKey
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.mint(amount, { accounts })) */
+  tx.add(await instruction.mint(amount, { accounts }))
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-const swap = async (amount: number, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
+const swap = async (
+  amount: number,
+  pool: string,
+  inToken: string,
+  outToken: string,
+  wallet: any,
+  connection: Connection,
+  network: WalletAdapterNetwork
+) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
 
-  /*  const accounts = {
-    controller,
-    listing,
-    inTokenMint,
-    outTokenMint,
-    pool,
-    priceAggregator,
+  const { mints, programs, pools } = ADDRESSES[network]
+  const accounts = {
+    controller: programs.pool.controller,
+    listing: pools[pool].listing,
+    inTokenMint: mints[inToken],
+    outTokenMint: mints[outToken],
+    pool: pools[pool].address,
+    priceAggregator: ADDRESSES[network].programs.pool.priceAggregator,
     tokenProgram: TOKEN_PROGRAM_ID,
-    userAccount,
-    userInTokenAta,
-    userOutTokenAta,
+    userAccount: await getUserAccount(pool, wallet, network),
+    userInTokenAta: await findAssociatedTokenAddress(wallet.publicKey, mints[inToken]),
+    userOutTokenAta: await findAssociatedTokenAddress(wallet.publicKey, mints[outToken]),
     userWallet: wallet.publicKey
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.swap(amount, { accounts })) */
+  tx.add(await instruction.swap(amount, { accounts }))
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-const withdraw = async (amount: number, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
+const withdraw = async (
+  amount: number,
+  pool: string,
+  wallet: any,
+  connection: Connection,
+  network: WalletAdapterNetwork
+) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
 
-  /*  const accounts = {
-    controller,
-    listing,
-    pool,
-    poolAta,
-    priceAggregator,
+  const { mints, programs, pools } = ADDRESSES[network]
+  const accounts = {
+    controller: programs.pool.controller,
+    listing: pools[pool].listing,
+    pool: pools[pool].address,
+    poolAta: await findAssociatedTokenAddress(programs.pool.address, mints.GOFX),
+    priceAggregator: programs.pool.priceAggregator,
     tokenProgram: TOKEN_PROGRAM_ID,
-    userAccount,
-    userAta,
+    userAccount: await getUserAccount(pool, wallet, network),
+    userAta: await findAssociatedTokenAddress(wallet.publicKey, mints.GOFX),
     userWallet: wallet.publicKey
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.withdrawCollateral(amount, { accounts })) */
+  tx.add(await instruction.withdrawCollateral(amount, { accounts }))
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
