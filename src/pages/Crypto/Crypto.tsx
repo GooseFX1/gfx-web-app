@@ -35,7 +35,7 @@ const TradeContent: FC = () => {
       <TradeHistoryProvider>
         <div>
           <Pairs />
-          <TVChartContainer interval={'D'} symbol={selectedCrypto.pair} visible={chartsVisible} />
+          <TVChartContainer symbol={selectedCrypto.pair} visible={chartsVisible} />
           <History chartsVisible={chartsVisible} setChartsVisible={setChartsVisible} />
         </div>
         <div>

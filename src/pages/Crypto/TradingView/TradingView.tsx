@@ -13,11 +13,7 @@ const CONTAINER = styled.div<{ $visible: boolean }>`
   transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;
 `
 
-export const TVChartContainer: FC<{
-  interval: string
-  symbol: string
-  visible: boolean
-}> = ({ interval, symbol, visible }) => {
+export const TVChartContainer: FC<{ symbol: string; visible: boolean }> = ({ symbol, visible }) => {
   const { mode } = useDarkMode()
   const tvWidget = useRef<IChartingLibraryWidget | null>()
 
@@ -31,11 +27,26 @@ export const TVChartContainer: FC<{
       autosize: true,
       client_id: 'tradingview.com',
       container: 'tv_chart_container',
-      datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed('https://demo_feed.tradingview.com'),
-      disabled_features: ['use_localstorage_for_settings'],
+      datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed('https://serum-api.bonfida.com/tv'),
+      disabled_features: [
+        'use_localstorage_for_settings',
+        'volume_force_overlay',
+        'left_toolbar',
+        'show_logo_on_all_charts',
+        'caption_buttons_text_if_possible',
+        'header_settings',
+        'header_compare',
+        'compare_symbol',
+        'header_screenshot',
+        'header_widget_dom_node',
+        'header_saveload',
+        'header_undo_redo',
+        'show_interval_dialog_on_key_press',
+        'header_symbol_search'
+      ],
       enabled_features: ['study_templates'],
       fullscreen: false,
-      interval: interval as ChartingLibraryWidgetOptions['interval'],
+      interval: '60' as ChartingLibraryWidgetOptions['interval'],
       library_path: '/charting_library/',
       locale: 'en',
       overrides: {
@@ -75,7 +86,7 @@ export const TVChartContainer: FC<{
         }
       },
       studies_overrides: {},
-      symbol: 'AAPL',
+      symbol,
       theme: mode === 'dark' ? 'Dark' : 'Light',
       user_id: 'public_user_id'
     }
@@ -104,7 +115,7 @@ export const TVChartContainer: FC<{
         tvWidget.current = null
       }
     }
-  }, [interval, mode, symbol])
+  }, [mode, symbol])
 
   return <CONTAINER id="tv_chart_container" $visible={visible} />
 }
