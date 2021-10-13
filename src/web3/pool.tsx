@@ -7,24 +7,15 @@ import { ADDRESSES } from './ids'
 import { signAndSendRawTransaction } from './utils'
 const PoolIDL = require('./idl/pool.json')
 
-const getPoolProgram = (
-  wallet: WalletContextState,
-  connection: Connection,
-  network: WalletAdapterNetwork
-): Program =>
+const getPoolProgram = (wallet: WalletContextState, connection: Connection, network: WalletAdapterNetwork): Program =>
   new Program(PoolIDL, ADDRESSES[network].pool, new Provider(connection, wallet as any, { commitment: 'processed' }))
 
-const burn = async (
-  amount: number,
-  wallet: any,
-  connection: Connection,
-  network: WalletAdapterNetwork
-) => {
+const burn = async (amount: number, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
 
-  const accounts = {
+  /*  const accounts = {
     controller,
     listing,
     pool,
@@ -37,22 +28,17 @@ const burn = async (
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.burn(amount, { accounts }))
+  tx.add(await instruction.burn(amount, { accounts })) */
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-const claim = async (
-  amount: number,
-  wallet: any,
-  connection: Connection,
-  network: WalletAdapterNetwork
-) => {
+const claim = async (amount: number, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
 
-  const accounts = {
+  /*  const accounts = {
     controller,
     listing,
     pool,
@@ -65,22 +51,17 @@ const claim = async (
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.claimFee({ accounts }))
+  tx.add(await instruction.claimFee({ accounts })) */
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-const deposit = async (
-  amount: number,
-  wallet: any,
-  connection: Connection,
-  network: WalletAdapterNetwork
-) => {
+const deposit = async (amount: number, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
 
-  const accounts = {
+  /* const accounts = {
     controller,
     listing,
     pool,
@@ -93,21 +74,17 @@ const deposit = async (
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.depositCollateral(amount, { accounts }))
+  tx.add(await instruction.depositCollateral(amount, { accounts })) */
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-const initialize = async (
-  wallet: any,
-  connection: Connection,
-  network: WalletAdapterNetwork
-) => {
+const initialize = async (wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
 
-  const accounts = {
+  /* const accounts = {
     controller,
     payer,
     pool,
@@ -116,22 +93,17 @@ const initialize = async (
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.initializeUser(bump, { accounts }))
+  tx.add(await instruction.initializeUser(bump, { accounts })) */
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-const liquidate = async (
-  amount: number,
-  wallet: any,
-  connection: Connection,
-  network: WalletAdapterNetwork
-) => {
+const liquidate = async (amount: number, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
 
-  const accounts = {
+  /*  const accounts = {
     collateralVault,
     controller,
     liquidatedTokenMint,
@@ -147,22 +119,17 @@ const liquidate = async (
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.liquidate(amount, { accounts }))
+  tx.add(await instruction.liquidate(amount, { accounts })) */
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-const mint = async (
-  amount: number,
-  wallet: any,
-  connection: Connection,
-  network: WalletAdapterNetwork
-) => {
+const mint = async (amount: number, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
 
-  const accounts = {
+  /*  const accounts = {
     controller,
     listing,
     pool,
@@ -175,22 +142,17 @@ const mint = async (
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.mint(amount, { accounts }))
+  tx.add(await instruction.mint(amount, { accounts })) */
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-const swap = async (
-  amount: number,
-  wallet: any,
-  connection: Connection,
-  network: WalletAdapterNetwork
-) => {
+const swap = async (amount: number, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
 
-  const accounts = {
+  /*  const accounts = {
     controller,
     listing,
     inTokenMint,
@@ -205,22 +167,17 @@ const swap = async (
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.swap(amount, { accounts }))
+  tx.add(await instruction.swap(amount, { accounts })) */
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-const withdraw = async (
-  amount: number,
-  wallet: any,
-  connection: Connection,
-  network: WalletAdapterNetwork
-) => {
+const withdraw = async (amount: number, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
 
-  const accounts = {
+  /*  const accounts = {
     controller,
     listing,
     pool,
@@ -233,7 +190,7 @@ const withdraw = async (
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.withdrawCollateral(amount, { accounts }))
+  tx.add(await instruction.withdrawCollateral(amount, { accounts })) */
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }

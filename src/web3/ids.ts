@@ -5,6 +5,9 @@ export const ADDRESSES: {
   [network in WalletAdapterNetwork]: {
     pool: PublicKey
     seeds: {
+      mints: {
+        [token: string]: PublicKey
+      }
       pools: {
         [pair: string]: PublicKey
       }
@@ -14,17 +17,23 @@ export const ADDRESSES: {
 } = {
   'mainnet-beta': {
     pool: PublicKey.default,
-    seeds: { pools: {} },
+    seeds: {
+      mints: {},
+      pools: {}
+    },
     swap: PublicKey.default
   },
   testnet: {
     pool: PublicKey.default,
-    seeds: { pools: {} },
+    seeds: { mints: {}, pools: {} },
     swap: PublicKey.default
   },
   devnet: {
-    pool: PublicKey.default,
+    pool: new PublicKey('Wo2kK51ruxwnM38VrqWSZCMjX1Mmcu4yBMcfg83Nufp'),
     seeds: {
+      mints: {
+        GOFX: new PublicKey('2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6')
+      },
       pools: {
         'TKNA/TKNB': new PublicKey('Ga9vweHkkvxRVeadA3NRGx2RHfFs6w2t4hKRmBinQzYL')
       }
