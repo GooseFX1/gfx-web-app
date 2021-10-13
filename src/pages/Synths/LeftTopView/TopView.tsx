@@ -7,7 +7,10 @@ import { HeaderBar } from '../../../components/HeaderBar'
 import React from 'react'
 import { useDarkMode } from '../../../context'
 import { SVGToWhite } from '../../../styles'
+
 const { TabPane } = Tabs
+
+const { Option } = Select
 
 const BUTTON = styled.button`
   display: flex;
@@ -62,8 +65,15 @@ const OperationsSlot = {
   left: (
     <Select
       bordered={false}
-      style={{ background: '#3735bb', color: 'white', fontSize: 15, height: 80 }}
+      style={{ backgroundColor: '#3735bb', color: 'white', fontSize: 15, height: 80 }}
       defaultValue="Sp 500 pool"
+      dropdownStyle={{
+        height: '27.5vh',
+        borderRadius: 20,
+        backgroundColor: '#525252',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
       suffixIcon={
         <SVGToWhite
           src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
@@ -71,7 +81,32 @@ const OperationsSlot = {
           style={{ height: 15, width: 15, marginRight: 15 }}
         />
       }
-    ></Select>
+    >
+      <Option
+        value="Sp 500"
+        style={{ height: 50, alignItems: 'center', marginTop: 10, color: 'white', backgroundColor: 'transparent' }}
+      >
+        Sp 500 pool
+      </Option>
+      <Option
+        value="Dow Jones"
+        style={{ height: 50, alignItems: 'center', color: 'white', backgroundColor: 'transparent' }}
+      >
+        Dow Jones pool
+      </Option>
+      <Option
+        value="Nasdaq"
+        style={{ height: 50, alignItems: 'center', color: 'white', backgroundColor: 'transparent' }}
+      >
+        Nasdaq pool
+      </Option>
+      <Option
+        value="Russel"
+        style={{ height: 50, alignItems: 'center', color: 'white', backgroundColor: 'transparent' }}
+      >
+        Russel 2000 pool
+      </Option>
+    </Select>
   )
 }
 
