@@ -63,6 +63,7 @@ export const DepositView: FC = () => {
               imageWidth={'30px'}
               backgroundColor={'#494949'}
               width={'100px'}
+              justifyItems={''}
             ></BlockTail>
           }
         ></InputBlock>

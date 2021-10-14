@@ -58,11 +58,12 @@ export const WithdrawView: FC = () => {
           addOn={
             <BlockTail
               image={`${process.env.PUBLIC_URL}/img/synths/GOFX.svg`}
-              text={<span>GFX</span>}
+              text={<span style={{ paddingLeft: 20 }}>GFX</span>}
               imageHeight={'30px'}
               imageWidth={'30px'}
               backgroundColor={'#494949'}
               width={'100px'}
+              justifyItems={''}
             ></BlockTail>
           }
         ></InputBlock>

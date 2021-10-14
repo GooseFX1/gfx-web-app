@@ -63,6 +63,7 @@ export const RewardsView: FC = () => {
               imageWidth={'30px'}
               backgroundColor={'#121212'}
               width={'auto'}
+              justifyItems={''}
             ></BlockTail>
           }
         ></InfoBlock>

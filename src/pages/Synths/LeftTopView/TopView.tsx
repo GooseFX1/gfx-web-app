@@ -11,6 +11,7 @@ import { DepositView } from './DepositView'
 import { MintView } from './MintView'
 import { WithdrawView } from './WithdrawView'
 import { RewardsView } from './RewardsView'
+import { BurnView } from './BurnView'
 
 const { TabPane } = Tabs
 
@@ -22,10 +23,11 @@ const OperationsSlot = {
   left: (
     <Select
       bordered={false}
-      style={{ backgroundColor: '#3735bb', color: 'white', fontSize: 15, height: 80 }}
+      style={{ backgroundColor: '#3735bb', color: 'white', fontSize: 15, height: 80, paddingTop: 25 }}
       defaultValue="Sp 500 pool"
       dropdownStyle={{
-        height: '27.5vh',
+        height: '30vh',
+        width: '150px',
         borderRadius: 20,
         backgroundColor: '#525252',
         justifyContent: 'center',
@@ -48,7 +50,7 @@ const OperationsSlot = {
       <Option value="Nasdaq" style={{ height: 50, alignItems: 'center', color: 'white' }}>
         Nasdaq pool
       </Option>
-      <Option value="Russel" style={{ height: 50, alignItems: 'center', color: 'white' }}>
+      <Option value="Russel" style={{ height: 50, alignItems: 'center', marginBottom: 10, color: 'white' }}>
         Russel 2000 pool
       </Option>
     </Select>
@@ -67,17 +69,17 @@ export const TopView: FC = () => {
         {Nav.map((value, index) => (
           <TabPane key={index} tab={value}>
             {index === 0 ? (
-              <DepositView></DepositView>
+              <DepositView />
             ) : index === 1 ? (
-              'View two'
+              <MintView />
             ) : index === 2 ? (
               'View three'
             ) : index === 3 ? (
-              'View four'
+              <BurnView />
             ) : index === 4 ? (
-              <WithdrawView></WithdrawView>
+              <WithdrawView />
             ) : index === 5 ? (
-              <RewardsView></RewardsView>
+              <RewardsView />
             ) : null}
           </TabPane>
         ))}

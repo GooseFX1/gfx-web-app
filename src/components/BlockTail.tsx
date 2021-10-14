@@ -8,7 +8,8 @@ export const BlockTail: FC<{
   text: ReactElement
   backgroundColor: string
   width: string
-}> = ({ image, imageHeight, imageWidth, text, backgroundColor, width }) => {
+  justifyItems: string
+}> = ({ image, imageHeight, imageWidth, text, backgroundColor, width, justifyItems }) => {
   return (
     <Row
       justify={'space-around'}
@@ -20,7 +21,8 @@ export const BlockTail: FC<{
         width: width,
         borderTopRightRadius: 10,
         borderBottomRightRadius: 10,
-        paddingRight: 10
+        paddingRight: 10,
+        justifyContent: justifyItems
       }}
     >
       <img src={image} style={{ height: imageHeight, width: imageWidth }} />
