@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { MainText } from '../../styles'
 
 export const Menu = styled.ul`
   width: fit-content;
@@ -7,10 +8,10 @@ export const Menu = styled.ul`
   ${({ theme }) => theme.smallBorderRadius}
   list-style-type: none;
   ${({ theme }) => theme.smallShadow}
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.grey3};
 `
 
-export const MenuItem = styled.li`
+export const MenuItem = MainText(styled.li`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -33,6 +34,6 @@ export const MenuItem = styled.li`
   span {
     font-size: 12px;
     text-transform: capitalize;
-    color: ${({ theme }) => theme.text1};
+    color: white;
   }
-`
+`)

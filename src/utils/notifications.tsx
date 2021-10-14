@@ -1,10 +1,7 @@
 import React, { ReactNode } from 'react'
 import { notification } from 'antd'
 import styled from 'styled-components'
-
-const CLOSE = styled.div`
-  background-color: red;
-`
+import { shortenAddress } from './misc'
 
 const CONTENT_ICON = styled.div`
   display: flex;
@@ -32,62 +29,52 @@ const MESSAGE = styled.div`
 `
 
 const DESCRIPTION = styled(MESSAGE)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   margin-top: 16px;
-  
-  > span {
-    width: 100%;
-  }
+`
+
+const NONE = styled.div`
+  display: none;
 `
 
 const TX_LINK = styled.a`
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  margin-top: 16px;
   color: white;
 
-  &:hover > span {
-    text-decoration-line: underline;
+  &:hover {
     color: white;
+    text-decoration-line: underline;
   }
 `
 
-interface INotifyParams {
+export const notify = ({
+  description,
+  icon,
+  message,
+  txid,
+  type = 'info'
+}: {
   message: string
   description?: string | ReactNode
   icon?: string
   txid?: string
   type?: string
-}
-
-export const notify = ({ description, icon, message, txid, type = 'info' }: INotifyParams, e?: any) => {
-  if (e) {
-    description = e.message
-  }
-
+}) => {
   if (txid) {
     description = (
       <>
-        <span>{description}</span>
-        <TX_LINK href={'https://solscan.io/tx/' + txid} target="_blank" rel="noopener noreferrer">
-          <span>View on Solscan</span>
+        <span>Transaction ID:</span>
+        <TX_LINK href={'https://explorer.solana.com/tx/' + txid} target="_blank" rel="noopener noreferrer">
+          {shortenAddress(txid, 8)}
         </TX_LINK>
       </>
     )
   }
 
-  const key = String(Math.random())
-
   ;(notification as any)[type]({
-    closeIcon: <CLOSE />,
+    closeIcon: <NONE />,
     description: description && (
       <DESCRIPTION>{typeof description === 'string' ? <span>{description}</span> : description}</DESCRIPTION>
     ),
-    icon: <div style={{ display: 'none' }} />,
-    key,
+    icon: <NONE />,
     message: (
       <MESSAGE>
         <span>{message}</span>
@@ -98,13 +85,12 @@ export const notify = ({ description, icon, message, txid, type = 'info' }: INot
         )}
       </MESSAGE>
     ),
-    onClick: () => notification.close(key),
     placement: 'bottomLeft',
     style: {
       backgroundColor: type === 'error' ? '#bb3535' : '#3735bb',
       borderRadius: '20px',
       padding: '32px 16px',
-      minWidth: '320px'
+      width: '320px'
     }
   })
 }

@@ -1,6 +1,3 @@
 export * from './ArrowDropdown'
-export * from './Expand'
-export * from './MainButton'
+export * from './ExplorerLink'
 export * from './Modal'
-export * from './Tooltip'
-export * from './HeaderBar'

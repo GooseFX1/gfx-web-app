@@ -1,13 +1,13 @@
-import React, { Dispatch, FC, MouseEventHandler, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { FC, MouseEventHandler, useCallback, useMemo, useState } from 'react'
 import { Select } from 'antd'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Menu, MenuItem } from './shared'
-import { ArrowDropdown } from '../../components'
 import { ENDPOINTS, useConnectionConfig, useWalletModal } from '../../context'
-import { CenteredImg } from '../../styles'
+import { ArrowDropdown } from '../../components'
+import { CenteredImg, MainText } from '../../styles'
 
-const _BUTTON = styled.button`
+const _BUTTON = MainText(styled.button`
   ${({ theme }) => theme.flexCenter}
   height: ${({ theme }) => theme.margins['5x']};
   border: none;
@@ -19,31 +19,21 @@ const _BUTTON = styled.button`
     color: white;
     cursor: pointer;
   }
-`
+`)
 
 const CONNECT_BUTTON = styled(_BUTTON)`
   padding: 0 ${({ theme }) => theme.margins['2x']};
   background-color: ${({ theme }) => theme.secondary3};
-  cursor: pointer;
-  transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
-
-  &:hover {
-    background-color: ${({ theme }) => theme.secondary2};
-  }
 `
 
 const CONNECTED_BUTTON = styled(_BUTTON)`
   padding: 0 ${({ theme }) => theme.margins['1.5x']} 0 ${({ theme }) => theme.margins['1x']};
   background-image: linear-gradient(to left, ${({ theme }) => theme.secondary2}, ${({ theme }) => theme.primary2});
-
-  > span {
-    cursor: initial !important;
-  }
 `
 
 const NETWORK = styled.span`
   padding: 5px 0;
-  color: ${({ theme }) => theme.text1} !important;
+  color: white !important;
   cursor: initial;
 `
 
@@ -58,7 +48,7 @@ const WALLET_ICON = styled(CenteredImg)`
   }
 `
 
-const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ setArrowRotation }) => {
+const Overlay: FC<{ setArrowRotation: (x: boolean) => void }> = ({ setArrowRotation }) => {
   const { endpoint, setEndpoint } = useConnectionConfig()
   const { disconnect, publicKey, wallet } = useWallet()
   const { setVisible: setWalletModalVisible } = useWalletModal()
@@ -119,10 +109,10 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
   )
 }
 
-export const WalletConnectButton: FC<{
-  arrowRotation: boolean
-  setArrowRotation: Dispatch<SetStateAction<boolean>>
-}> = ({ arrowRotation, setArrowRotation }) => {
+export const WalletConnectButton: FC<{ arrowRotation: boolean; setArrowRotation: (x: boolean) => void }> = ({
+  arrowRotation,
+  setArrowRotation
+}) => {
   const { wallet, connect, connecting, connected } = useWallet()
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
@@ -146,15 +136,15 @@ export const WalletConnectButton: FC<{
         <ArrowDropdown
           arrowRotation={arrowRotation}
           offset={[0, 30]}
-          onVisibleChange={setArrowRotation}
           overlay={<Overlay setArrowRotation={setArrowRotation} />}
+          setArrowRotation={setArrowRotation}
         />
       )}
     </CONNECT_BUTTON>
   )
 }
 
-const WalletModalButton: FC<{ arrowRotation: boolean; setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({
+const WalletModalButton: FC<{ arrowRotation: boolean; setArrowRotation: (x: boolean) => void }> = ({
   arrowRotation,
   setArrowRotation
 }) => {
@@ -173,8 +163,8 @@ const WalletModalButton: FC<{ arrowRotation: boolean; setArrowRotation: Dispatch
       <ArrowDropdown
         arrowRotation={arrowRotation}
         offset={[9, 30]}
-        onVisibleChange={setArrowRotation}
         overlay={<Overlay setArrowRotation={setArrowRotation} />}
+        setArrowRotation={setArrowRotation}
       />
     </CONNECT_BUTTON>
   )
@@ -208,7 +198,7 @@ export const Connect: FC = () => {
         arrowRotation={arrowRotation}
         offset={[9, 30]}
         overlay={<Overlay setArrowRotation={setArrowRotation} />}
-        onVisibleChange={setArrowRotation}
+        setArrowRotation={setArrowRotation}
       />
     </CONNECTED_BUTTON>
   )

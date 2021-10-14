@@ -9,12 +9,11 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { TOKEN_PROGRAM_ID, WRAPPED_SOL_MINT } from '@project-serum/serum/lib/token-instructions'
+import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Connection, PublicKey } from '@solana/web3.js'
 import { useConnectionConfig } from './settings'
 import { useTokenRegistry } from './token_registry'
-import { findAssociatedTokenAddress } from '../web3'
+import { SOLANA_REGISTRY_TOKEN_MINT } from '../web3'
 
 interface IAccounts {
   [mint: string]: {
@@ -27,7 +26,6 @@ interface IAccounts {
 
 interface IAccountsConfig {
   balances: IAccounts
-  fetchAccounts: (x: PublicKey) => number[]
   fetching: boolean
   getAmount: (x: string) => string
   getUIAmount: (x: string) => number
@@ -45,61 +43,38 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [balances, setBalances] = useState<IAccounts>({})
   const [fetching, setFetching] = useState(false)
 
-  const handleAccountChange = async (sub: number[], connection: Connection, owner: PublicKey, mint: PublicKey) => {
-    const associatedTokenAddress = await findAssociatedTokenAddress(owner, mint)
-    sub.push(
-      connection.onAccountChange(associatedTokenAddress, async () => {
-        const [{ account }] = (await connection.getParsedTokenAccountsByOwner(owner, { mint })).value
-        setBalances((prevState) => ({ ...prevState, [mint.toString()]: account.data.parsed.info.tokenAmount }))
-      })
-    )
-  }
-
-  const fetchAccounts = useCallback(
-    (publicKey: PublicKey) => {
-      const subscriptions: number[] = [];
-
-      (async () => {
+  useEffect(() => {
+    let interval: NodeJS.Timer
+    if (publicKey) {
+      const fetch = async () => {
         setFetching(true)
         const [parsedAccounts, solAmount] = await Promise.all([
           connection.getParsedTokenAccountsByOwner(publicKey, { programId: TOKEN_PROGRAM_ID }),
           connection.getBalance(publicKey)
         ])
-
         const accounts = parsedAccounts.value.reduce((acc: IAccounts, { account }) => {
           const { mint, tokenAmount } = account.data.parsed.info
           acc[mint] = tokenAmount
-          handleAccountChange(subscriptions, connection, publicKey, new PublicKey(mint))
           return acc
         }, {})
-
         const amount = solAmount.toString()
         const uiAmount = solAmount / 10 ** 9
-        accounts[WRAPPED_SOL_MINT.toString()] = { amount, decimals: 9, uiAmount, uiAmountString: uiAmount.toString() }
+        accounts[SOLANA_REGISTRY_TOKEN_MINT] = { amount, decimals: 9, uiAmount, uiAmountString: uiAmount.toString() }
         setBalances(accounts)
         setFetching(false)
-      })()
+      }
 
-      return subscriptions
-    },
-    [connection]
-  )
-
-  useEffect(() => {
-    let cancelled = false
-    const subscriptions: number[] = !cancelled && publicKey ? fetchAccounts(publicKey) : []
-
-    return () => {
-      cancelled = true
-      subscriptions.forEach((subscription) => connection.removeAccountChangeListener(subscription))
+      fetch().catch(() => {})
+      interval = setInterval(fetch, 10000)
     }
-  }, [connection, fetchAccounts, publicKey, tokenRegistry])
+
+    return () => interval && clearInterval(interval)
+  }, [connection, publicKey, tokenRegistry])
 
   return (
     <AccountsContext.Provider
       value={{
         balances,
-        fetchAccounts,
         fetching,
         getAmount: useCallback((address: string) => balances[address]?.amount || '0', [balances]),
         getUIAmount: useCallback((address: string) => balances[address]?.uiAmount || 0, [balances]),
@@ -119,14 +94,6 @@ export const useAccounts = (): IAccountsConfig => {
     throw new Error('Missing accounts context')
   }
 
-  return {
-    balances: context.balances,
-    fetching: context.fetching,
-    fetchAccounts: context.fetchAccounts,
-    getAmount: context.getAmount,
-    getUIAmount: context.getUIAmount,
-    getUIAmountString: context.getUIAmountString,
-    setBalances: context.setBalances,
-    setFetching: context.setFetching
-  }
+  const { balances, fetching, getAmount, getUIAmount, getUIAmountString, setBalances, setFetching } = context
+  return { balances, fetching, getAmount, getUIAmount, getUIAmountString, setBalances, setFetching }
 }

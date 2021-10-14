@@ -6,10 +6,10 @@ import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
 import { Switch } from './Switch'
-import { SwapProvider, useDarkMode, useSwap } from '../../context'
+import { SwapProvider, useDarkMode } from '../../context'
 import { addAnalytics } from '../../utils'
 import { Modal } from '../../components'
-import { CenteredImg, SpaceBetweenDiv } from '../../styles'
+import { CenteredImg, MainText, SpaceBetweenDiv } from '../../styles'
 
 const BODY = styled.div`
   position: relative;
@@ -19,36 +19,17 @@ const BODY = styled.div`
   margin: ${({ theme }) => theme.margins['4x']} 0;
 `
 
-const HEADER_TITLE = styled.span`
+const HEADER_TITLE = MainText(styled.span`
   font-size: 20px;
   font-weight: bold;
-  color: ${({ theme }) => theme.text1};
-`
+`)
 
 const HEADER_WRAPPER = styled(SpaceBetweenDiv)<{ $iconSize: string }>`
   width: 100%;
-
   > div {
-    display: flex;
-
-    > div {
-      ${({ $iconSize, theme }) => theme.measurements($iconSize)}
-      cursor: pointer;
-
-      &:first-child {
-        margin-right: ${({ theme }) => theme.margins['3x']};
-      }
-
-      &:last-child {
-        padding-top: 6px;
-      }
-    }
+    ${({ $iconSize, theme }) => theme.measurements($iconSize)}
+    cursor: pointer;
   }
-`
-
-const REFRESH_RATE = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['4x'])};
-  cursor: pointer;
 `
 
 const WRAPPER = styled.div`
@@ -62,9 +43,8 @@ const WRAPPER = styled.div`
   ${({ theme }) => theme.largeShadow}
 `
 
-const SwapContent: FC = () => {
+export const Swap: FC = () => {
   const { mode } = useDarkMode()
-  const { refreshRates } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
 
   useEffect(() => {
@@ -88,37 +68,26 @@ const SwapContent: FC = () => {
   `
 
   return (
-    <WRAPPER>
-      <Modal setVisible={setSettingsModalVisible} title="Settings" visible={settingsModalVisible}>
-        <Settings />
-      </Modal>
-      <HEADER_WRAPPER $iconSize="24px">
-        <HEADER_TITLE>Swap</HEADER_TITLE>
-        <div>
-          <REFRESH_RATE onClick={refreshRates}>
-            <img src={`${process.env.PUBLIC_URL}/img/assets/refresh_rate.svg`} alt="" />
-          </REFRESH_RATE>
+    <SwapProvider>
+      <WRAPPER>
+        <Modal setVisible={setSettingsModalVisible} title="Settings" visible={settingsModalVisible}>
+          <Settings />
+        </Modal>
+        <HEADER_WRAPPER $iconSize="24px">
+          <HEADER_TITLE>Swap</HEADER_TITLE>
           <CenteredImg onClick={onClick}>
             <img src={`${process.env.PUBLIC_URL}/img/assets/settings_${mode}_mode.svg`} alt="settings" />
           </CenteredImg>
-        </div>
-      </HEADER_WRAPPER>
-      <Rate />
-      <BODY>
-        <style>{localCSS}</style>
-        <SwapFrom height={height} />
-        <Switch />
-        <SwapTo height={height} />
-      </BODY>
-      <SwapButton />
-    </WRAPPER>
-  )
-}
-
-export const Swap: FC = () => {
-  return (
-    <SwapProvider>
-      <SwapContent />
+        </HEADER_WRAPPER>
+        <Rate />
+        <BODY>
+          <style>{localCSS}</style>
+          <SwapFrom height={height} />
+          <Switch />
+          <SwapTo height={height} />
+        </BODY>
+        <SwapButton />
+      </WRAPPER>
     </SwapProvider>
   )
 }

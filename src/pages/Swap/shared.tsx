@@ -28,7 +28,7 @@ export const AmountField = styled.div<{ $balance: number; $height: string; $USDC
       position: absolute;
       right: ${theme.margins['2.5x']};
       bottom: ${theme.margins['1x']};
-      ${theme.mainText}
+      font-family: 'Montserrat';
       font-size: 8px;
       font-weight: 500;
       color: white;
@@ -46,3 +46,15 @@ export const AmountField = styled.div<{ $balance: number; $height: string; $USDC
     text-align: right;
   }
 `
+
+/*
+      &:last-child {
+        position: absolute;
+        left: 0;
+        bottom: -12px;
+        ${({ theme }) => theme.mainText}
+        color: white;
+        font-size: 8px;
+        white-space: nowrap;
+      }
+ */

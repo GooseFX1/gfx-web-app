@@ -1,16 +1,21 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
-import { useDarkMode } from '../../context'
-import { APP_LAYOUT_FOOTER_HEIGHT, CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
+import { useDarkMode, useRates } from '../../context'
+import { CenteredDiv, CenteredImg, MainText, SpaceBetweenDiv, SVGToWhite } from '../../styles'
 
 const MODE_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['2x'])};
 `
 
-const TEXT = styled.span`
+const REFRESH_RATE = styled(CenteredImg)`
+  ${({ theme }) => theme.measurements(theme.margins['4x'])};
+  cursor: pointer;
+`
+
+const TEXT = MainText(styled.span`
   font-size: 10px;
   color: ${({ theme }) => theme.text2};
-`
+`)
 
 const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`
   height: ${({ theme }) => theme.margins['3x']};
@@ -29,12 +34,15 @@ const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`
 `
 
 const WRAPPER = styled(SpaceBetweenDiv)`
-  height: ${APP_LAYOUT_FOOTER_HEIGHT};
   padding: ${({ theme }) => theme.margins['2x']};
   border-top: 1px solid ${({ theme }) => theme.appLayoutFooterBorder};
   background-color: ${({ theme }) => theme.bg2};
 
-  div > div {
+  > div > div:first-child {
+    margin-right: ${({ theme }) => theme.margins['6x']};
+  }
+
+  div > div > div {
     &:first-child {
       margin-right: ${({ theme }) => theme.margins['1x']};
     }
@@ -47,6 +55,7 @@ const WRAPPER = styled(SpaceBetweenDiv)`
 
 export const Footer: FC = () => {
   const { mode, toggleMode } = useDarkMode()
+  const { refreshRates } = useRates()
 
   return (
     <WRAPPER>
@@ -55,23 +64,31 @@ export const Footer: FC = () => {
         location’s laws and regulations.
       </TEXT>
       <SpaceBetweenDiv>
-        <MODE_ICON>
-          {mode === 'dark' ? (
-            <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/lite_mode.svg`} alt="" />
-          ) : (
-            <img src={`${process.env.PUBLIC_URL}/img/assets/lite_mode.svg`} alt="" />
-          )}
-        </MODE_ICON>
-        <TOGGLE $mode={mode} onClick={toggleMode}>
-          <div />
-        </TOGGLE>
-        <MODE_ICON>
-          {mode === 'dark' ? (
-            <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/dark_mode.svg`} alt="" />
-          ) : (
-            <img src={`${process.env.PUBLIC_URL}/img/assets/dark_mode.svg`} alt="" />
-          )}
-        </MODE_ICON>
+        <SpaceBetweenDiv>
+          <TEXT>Refresh Rate</TEXT>
+          <REFRESH_RATE onClick={refreshRates}>
+            <img src={`${process.env.PUBLIC_URL}/img/assets/refresh_rate.svg`} alt="" />
+          </REFRESH_RATE>
+        </SpaceBetweenDiv>
+        <SpaceBetweenDiv>
+          <MODE_ICON>
+            {mode === 'dark' ? (
+              <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/lite_mode.svg`} alt="" />
+            ) : (
+              <img src={`${process.env.PUBLIC_URL}/img/assets/lite_mode.svg`} alt="" />
+            )}
+          </MODE_ICON>
+          <TOGGLE $mode={mode} onClick={toggleMode}>
+            <div />
+          </TOGGLE>
+          <MODE_ICON>
+            {mode === 'dark' ? (
+              <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/dark_mode.svg`} alt="" />
+            ) : (
+              <img src={`${process.env.PUBLIC_URL}/img/assets/dark_mode.svg`} alt="" />
+            )}
+          </MODE_ICON>
+        </SpaceBetweenDiv>
       </SpaceBetweenDiv>
     </WRAPPER>
   )

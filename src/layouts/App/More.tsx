@@ -5,23 +5,19 @@ import { Menu, MenuItem } from './shared'
 import { LITEPAPER_ADDRESS, SOCIAL_MEDIAS } from '../../constants'
 import { CenteredImg } from '../../styles'
 
-const ICON = styled(CenteredImg)`
+const Icon = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['4.5x'])}
   margin-left: ${({ theme }) => theme.margins['2x']};
   cursor: pointer;
 `
 
-const ITEM = styled(MenuItem)`
+const Item = styled(MenuItem)`
   width: 130px;
 
-  > a {
+  a {
     display: flex;
     justify-content: space-between;
     width: 100%;
-
-    > span {
-      color: ${({ theme }) => theme.text1};
-    }
   }
 `
 
@@ -37,12 +33,12 @@ const Overlay: FC = () => {
   return (
     <Menu>
       {['docs', 'discord', 'twitter', 'telegram', 'medium'].map((item, index) => (
-        <ITEM key={index}>
+        <Item key={index}>
           <a href={target[item]} target="_blank" rel="noopener noreferrer">
             <span>{item}</span>
             <img src={`${process.env.PUBLIC_URL}/img/assets/${item}_small.svg`} alt={item} />
           </a>
-        </ITEM>
+        </Item>
       ))}
     </Menu>
   )
@@ -57,9 +53,9 @@ export const More: FC = () => {
       placement="bottomLeft"
       trigger={['click']}
     >
-      <ICON>
+      <Icon>
         <img src={`${process.env.PUBLIC_URL}/img/assets/more_icon.svg`} alt="more" />
-      </ICON>
+      </Icon>
     </Dropdown>
   )
 }

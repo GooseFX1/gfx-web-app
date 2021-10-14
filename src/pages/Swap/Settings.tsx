@@ -1,9 +1,8 @@
 import React, { BaseSyntheticEvent, FC, useEffect, useState } from 'react'
-import { Input } from 'antd'
+import { Input, Tooltip } from 'antd'
 import styled, { css } from 'styled-components'
-import { Tooltip } from '../../components'
 import { DEFAULT_SLIPPAGE, useDarkMode, useSlippageConfig } from '../../context'
-import { CenteredDiv } from '../../styles'
+import { CenteredDiv, CenteredImg, MainText } from '../../styles'
 
 const BODY = styled(CenteredDiv)`
   flex-direction: column;
@@ -46,10 +45,21 @@ const BUTTON = styled.button`
   }
 `
 
-const TITLE = styled.span`
+const TITLE = MainText(styled.span`
   font-size: 12px;
-  color: ${({ theme }) => theme.text1};
+`)
+
+const TOOLTIP_ICON = styled(CenteredImg)`
+  ${({ theme }) => theme.measurements(theme.margins['1.5x'])}
+  margin-left: ${({ theme }) => theme.margins['1x']};
 `
+
+const TOOLTIP_TEXT = MainText(
+  styled.span`
+    font-size: 9px;
+  `,
+  'white'
+)
 
 export const Settings: FC = () => {
   const { mode } = useDarkMode()
@@ -63,8 +73,8 @@ export const Settings: FC = () => {
       position: relative;
       display: flex;
       flex: 5;
-      align-items: center;
       height: 38px;
+      align-items: center;
       border: ${slippage > 0.05 ? `2px solid ${slippage > 0.15 ? 'red' : 'orange'}` : 'none'} !important;
       background-color: ${mode === 'dark' ? '#474747' : '#808080'};
       box-shadow: 0 4px 15px 2px rgb(0, 0, 0, ${mode === 'dark' ? '0.25' : '0.1'});
@@ -75,17 +85,34 @@ export const Settings: FC = () => {
     <BODY>
       <div>
         <TITLE>Slippage tolerance</TITLE>
-        <Tooltip>
-          The minimum amount on how many tokens you will accept, in the event that the price increases or decreases.
+        <Tooltip
+          arrowPointAtCenter
+          color="#121212"
+          overlayInnerStyle={{ borderRadius: '8px', display: 'flex', alignItems: 'center', padding: '8px' }}
+          placement="topLeft"
+          title={
+            <TOOLTIP_TEXT>
+              The minimum amount on how many tokens you will accept, in the event that the price increases or decreases.
+            </TOOLTIP_TEXT>
+          }
+        >
+          <TOOLTIP_ICON>
+            <img src={`${process.env.PUBLIC_URL}/img/assets/tooltip_${mode}_mode_icon.svg`} alt="tooltip" />
+          </TOOLTIP_ICON>
         </Tooltip>
       </div>
       <div>
         <style>{localCSS}</style>
         <Input
           maxLength={6}
-          onChange={(x: BaseSyntheticEvent) =>
-            !isNaN(x.target.value) && setValue(x.target.value >= 25 ? 25 : x.target.value)
-          }
+          onChange={(x: BaseSyntheticEvent) => {
+            const {
+              target: { value }
+            } = x
+            if (!isNaN(value)) {
+              setValue(value >= 25 ? 25 : value)
+            }
+          }}
           pattern="\d+(\.\d+)?"
           placeholder={value.toString()}
           suffix={<span>%</span>}

@@ -1,4 +1,5 @@
 export const LITEPAPER_ADDRESS = 'https://docs.goosefx.io'
+export const LANDING_PAGE_VIDEO = "https://media.goosefx.io/bgvid.mp4"
 export const SOCIAL_MEDIAS: { [key: string]: string } = {
   discord: "https://discord.gg/cDEPXpY26q",
   medium: "https://medium.com/goosefx",
