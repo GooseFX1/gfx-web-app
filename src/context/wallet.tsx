@@ -1,5 +1,6 @@
 import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from 'react'
 import {
+  getLedgerWallet,
   getMathWallet,
   getPhantomWallet,
   getSolflareWallet,
@@ -37,6 +38,7 @@ export const WalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
     () => [
       getPhantomWallet(),
       getSolflareWallet(),
+      getLedgerWallet(),
       getMathWallet(),
       getSolongWallet(),
       getSlopeWallet(),

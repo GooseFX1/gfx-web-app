@@ -4,17 +4,53 @@ import { Connect } from './Connect'
 import { More } from './More'
 import { Tabs } from './Tabs'
 import { useDarkMode } from '../../context'
-import { Brand, CenteredDiv, NavBar } from '../../styles'
+import { APP_LAYOUT_HEADER_HEIGHT, CenteredDiv } from '../../styles'
 
-const BUTTONS = styled(CenteredDiv)`
-  position: fixed;
-  right: 50px;
+const BRAND = styled.a`
+  position: absolute;
+  top: ${({ theme }) => theme.margins['5x']};
+  ${({ theme }) => theme.flexCenter}
+  width: auto;
+  font-size: 40px;
+  font-weight: bold;
+  line-height: 20px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    left: ${({ theme }) => theme.margins['3x']};
+    height: 40px;
+  `}
+  ${({ theme }) => theme.mediaWidth.fromSmall`
+    left: 58px;
+    height: 50px;
+  `}
+
+  img {
+    ${({ theme }) => theme.measurements('inherit')}
+    object-fit: contain;
+  }
 `
 
-const WRAPPER = styled(NavBar)`
-  justify-content: center;
+const BUTTONS = styled(CenteredDiv)`
+  position: absolute;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    right: ${({ theme }) => theme.margins['3x']};
+    height: 40px;
+  `}
+  ${({ theme }) => theme.mediaWidth.fromSmall`
+    right: 58px;
+    height: 50px;
+  `}
+`
+
+const WRAPPER = styled.nav`
+  position: relative;
+  ${({ theme }) => theme.flexCenter}
+  width: 100%;
+  height: ${APP_LAYOUT_HEADER_HEIGHT};
   padding: ${({ theme }) => theme.margins['4x']};
   background-color: ${({ theme }) => theme.bg2};
+  z-index: 300;
 `
 
 export const Header: FC = () => {
@@ -22,7 +58,7 @@ export const Header: FC = () => {
 
   return (
     <WRAPPER id="menu">
-      <Brand href="/">
+      <BRAND href="/">
         <img
           id="logo"
           srcSet={`${process.env.PUBLIC_URL}/img/assets/gfx_logo_gradient_${mode}@3x.webp 232w,
@@ -31,7 +67,7 @@ export const Header: FC = () => {
           src={`${process.env.PUBLIC_URL}/img/assets/gfx_logo_gradient_${mode}.webp`}
           alt="GFX Logo"
         />
-      </Brand>
+      </BRAND>
       <Tabs />
       <BUTTONS>
         <Connect />

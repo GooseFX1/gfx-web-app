@@ -1,8 +1,8 @@
 import React, { Dispatch, FC, ReactNode, SetStateAction, useContext, useMemo } from 'react'
 import { ENV } from '@solana/spl-token-registry'
-import { clusterApiUrl, Connection } from '@solana/web3.js'
-import { useLocalStorageState } from '../utils'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { Connection } from '@solana/web3.js'
+import { useLocalStorageState } from '../utils'
 
 interface IEndpoint {
   chainId: ENV
@@ -11,9 +11,8 @@ interface IEndpoint {
 }
 
 export const ENDPOINTS: IEndpoint[] = [
-  { chainId: ENV.MainnetBeta, endpoint: clusterApiUrl('mainnet-beta'), network: WalletAdapterNetwork.Mainnet },
-  { chainId: ENV.Testnet, endpoint: clusterApiUrl('testnet'), network: WalletAdapterNetwork.Testnet },
-  { chainId: ENV.Devnet, endpoint: clusterApiUrl('devnet'), network: WalletAdapterNetwork.Devnet }
+  { chainId: ENV.MainnetBeta, endpoint: 'https://solana-api.projectserum.com', network: WalletAdapterNetwork.Mainnet },
+  { chainId: ENV.Devnet, endpoint: 'https://api.devnet.solana.com', network: WalletAdapterNetwork.Devnet }
 ]
 
 interface ISettingsConfig {

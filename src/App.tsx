@@ -3,13 +3,13 @@ import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import { DarkModeProvider } from './context'
 import { AppLayout } from './layouts'
-import { Farm, NFTs, Swap, Trade } from './pages'
-import { CenteredDiv } from './styles'
+import { Crypto, Farm, NFTs, Swap, Synths } from './pages'
+import { APP_PAGE_HEIGHT, CenteredDiv } from './styles'
 import ThemeProvider from './theme'
 import './App.less'
 
 const WRAPPER = styled(CenteredDiv)`
-  height: 100%;
+  min-height: ${APP_PAGE_HEIGHT};
   background-color: ${({ theme }) => theme.bg2};
 `
 
@@ -18,12 +18,13 @@ export default function App(): JSX.Element {
     <DarkModeProvider>
       <ThemeProvider>
         <BrowserRouter>
-          <Redirect from='/' to='/swap' />
+          <Redirect from="/" to="/swap" />
           <Switch>
             <AppLayout>
               <WRAPPER>
                 <Route exact path="/swap" component={Swap} />
-                <Route exact path="/trade" component={Trade} />
+                <Route exact path="/crypto" component={Crypto} />
+                <Route exact path="/synths" component={Synths} />
                 <Route exact path="/NFTs" component={NFTs} />
                 <Route exact path="/farm" component={Farm} />
               </WRAPPER>
