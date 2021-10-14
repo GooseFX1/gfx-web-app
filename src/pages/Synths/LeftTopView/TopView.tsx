@@ -10,6 +10,7 @@ import { SVGToWhite } from '../../../styles'
 import { DepositView } from './DepositView'
 import { MintView } from './MintView'
 import { WithdrawView } from './WithdrawView'
+import { RewardsView } from './RewardsView'
 
 const { TabPane } = Tabs
 
@@ -76,7 +77,7 @@ export const TopView: FC = () => {
             ) : index === 4 ? (
               <WithdrawView></WithdrawView>
             ) : index === 5 ? (
-              'View six'
+              <RewardsView></RewardsView>
             ) : null}
           </TabPane>
         ))}

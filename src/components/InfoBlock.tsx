@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, ReactElement } from 'react'
 import styled from 'styled-components'
 import { Row } from 'antd'
 
@@ -26,6 +26,13 @@ const TEXT = styled.div`
   padding-bottom: 10px;
 `
 
+const TAIL = styled.div`
+  margin-top: 2.5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
 export const InfoBlock: FC<{
   height: string
   width: string
@@ -34,9 +41,9 @@ export const InfoBlock: FC<{
   fontSize: string
   bottomMargin: string
   borderRadius: string
-  textOne: string
-  textTwo: string
-}> = ({ height, width, color, backgroundColor, fontSize, borderRadius, textOne, textTwo, bottomMargin }) => {
+  text: string
+  tail: ReactElement
+}> = ({ height, width, color, backgroundColor, fontSize, borderRadius, text, tail, bottomMargin }) => {
   return (
     <INFOBLOCK
       $height={height}
@@ -48,8 +55,8 @@ export const InfoBlock: FC<{
       $bottomMargin={bottomMargin}
     >
       <Row justify={'space-between'}>
-        <TEXT>{textOne}</TEXT>
-        <TEXT> {textTwo}</TEXT>
+        <TEXT>{text}</TEXT>
+        <TAIL>{tail}</TAIL>
       </Row>
     </INFOBLOCK>
   )

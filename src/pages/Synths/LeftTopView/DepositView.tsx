@@ -5,7 +5,7 @@ import { Col, Input, Row } from 'antd'
 import { InfoBlock } from '../../../components/InfoBlock'
 import { MainButton } from '../../../components'
 import { InputBlock } from '../../../components/InputBlock'
-import { InfoBlockTail } from '../../../components/InfoBlockTail'
+import { BlockTail } from '../../../components/BlockTail'
 
 const TITLEBOX = styled.div`
   color: white;
@@ -51,17 +51,19 @@ export const DepositView: FC = () => {
           width={'100%'}
           color={'#fff'}
           backgroundColor={'#4a4949'}
-          fontSize={'12'}
+          fontSize={'14px'}
           bottomMargin={'40px'}
           borderRadius={'10px'}
           defaultValue={''}
           addOn={
-            <InfoBlockTail
+            <BlockTail
               image={`${process.env.PUBLIC_URL}/img/synths/GOFX.svg`}
-              text={'GFX'}
+              text={<span>GFX</span>}
               imageHeight={'30px'}
               imageWidth={'30px'}
-            ></InfoBlockTail>
+              backgroundColor={'#494949'}
+              width={'100px'}
+            ></BlockTail>
           }
         ></InputBlock>
       }
@@ -79,8 +81,8 @@ export const DepositView: FC = () => {
           fontSize={'14px'}
           bottomMargin={'40px'}
           borderRadius={'10px'}
-          textOne={'150.345678'}
-          textTwo={'GFX'}
+          text={'150.345678'}
+          tail={<span style={{ paddingRight: 20 }}>GFX</span>}
         ></InfoBlock>
       }
       button={
