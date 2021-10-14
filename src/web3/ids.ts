@@ -4,12 +4,16 @@ import { PublicKey } from '@solana/web3.js'
 export const ADDRESSES: {
   [network in WalletAdapterNetwork]: {
     mints: {
-      [token: string]: PublicKey
+      [token: string]: {
+        address: PublicKey
+        type: 'crypto' | 'synth'
+      }
     }
     pools: {
       [pair: string]: {
-        address: PublicKey,
+        address: PublicKey
         listing: PublicKey
+        type: 'crypto' | 'synth'
       }
     }
     programs: {
@@ -54,19 +58,21 @@ export const ADDRESSES: {
   },
   devnet: {
     mints: {
-      GOFX: new PublicKey('2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'),
-      GUSD: new PublicKey('8e9DijtBDU1swHentbMS91z5NkuWe1xos9dLX7A2R39J'),
-      gBTC: new PublicKey('HeprdyqtmWbxk9DNkiaLJkZimKf2juTdT8VdHDDd6ZbC'),
-      gETH: new PublicKey('4DLS3s4u4LEbDU1rT6h5qz5Gm58T6dJYHNNZpc9z887K')
+      GOFX: { address: new PublicKey('2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'), type: 'crypto' },
+      gBTC: { address: new PublicKey('HeprdyqtmWbxk9DNkiaLJkZimKf2juTdT8VdHDDd6ZbC'), type: 'synth' },
+      gETH: { address: new PublicKey('4DLS3s4u4LEbDU1rT6h5qz5Gm58T6dJYHNNZpc9z887K'), type: 'synth' },
+      gUSD: { address: new PublicKey('8e9DijtBDU1swHentbMS91z5NkuWe1xos9dLX7A2R39J'), type: 'synth' }
     },
     pools: {
       POOL_A: {
         address: new PublicKey('4hkhVuQkpJJDhpvjEn65LmwuPnAZoMzjXdQ5FjW5KcpY'),
-        listing: new PublicKey('QwtKuSQcz8rdY5T3ZBavkoFZev777rcJ1BFWe5KHvVW')
+        listing: new PublicKey('QwtKuSQcz8rdY5T3ZBavkoFZev777rcJ1BFWe5KHvVW'),
+        type: 'synth'
       },
       'TKNA/TKNB': {
         address: new PublicKey('Ga9vweHkkvxRVeadA3NRGx2RHfFs6w2t4hKRmBinQzYL'),
-        listing: PublicKey.default
+        listing: PublicKey.default,
+        type: 'crypto'
       }
     },
     programs: {
