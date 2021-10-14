@@ -13,8 +13,6 @@ interface ISynthsConfig {
   setPool: Dispatch<SetStateAction<string>>
   setSynth: Dispatch<SetStateAction<string>>
   synth: string
-  swapInToken: string
-  swapOutToken: string
 }
 
 const SynthsContext = createContext<ISynthsConfig | null>(null)
