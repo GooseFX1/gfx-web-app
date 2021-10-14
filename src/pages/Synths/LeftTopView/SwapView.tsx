@@ -5,11 +5,11 @@ import { TopView } from './TopView'
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
   ${({ theme }) => theme.mediaWidth.fromLarge`
-  height: auto;
+
   width: 100%;
 `};
   ${({ theme }) => theme.mediaWidth.upToLarge`
-height: auto;
+
 width: 100%;
 `};
   ${({ theme }) => theme.largeBorderRadius};
@@ -17,10 +17,6 @@ width: 100%;
   ${({ theme }) => theme.largeShadow}
 `
 
-export const TopContainer: FC = () => {
-  return (
-    <WRAPPER>
-      <TopView></TopView>
-    </WRAPPER>
-  )
+export const SwapView: FC = () => {
+  return <WRAPPER></WRAPPER>
 }

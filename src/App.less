@@ -24,15 +24,46 @@ span:hover {
   transition: color 300ms ease-in-out;
 }
 
-.ant-input-affix-wrapper {
-  border-radius: 45px;
+.ant-input-affix-wrapper:active {
+  border-width: 0px;
 }
 
-.ant-input,
 .ant-input-affix-wrapper {
   font-family: Montserrat;
   font-weight: 500;
   text-align: right;
+}
+
+.ant-input {
+  height: 45px;
+  border: none;
+  outline: none;
+  color: white;
+  border-radius: 20px;
+}
+
+.ant-input:focus {
+  outline: none !important;
+  border-color: #719ece00;
+  box-shadow: 0 0 0px #719ece00;
+}
+
+.ant-btn::after {
+  outline: none !important;
+  animation: 0s !important;
+  border-color: transparent !important;
+}
+
+.ant-input-group-addon {
+  width: 100px;
+  height: 45px;
+  border-bottom-right-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 0px;
+  outline: none;
+  border: none;
+  align-content: center;
+  align-items: center;
 }
 
 .ant-tabs-nav {

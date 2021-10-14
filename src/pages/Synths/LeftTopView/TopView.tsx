@@ -7,57 +7,13 @@ import { HeaderBar } from '../../../components/HeaderBar'
 import React from 'react'
 import { useDarkMode } from '../../../context'
 import { SVGToWhite } from '../../../styles'
+import { DepositView } from './DepositView'
+import { MintView } from './MintView'
+import { WithdrawView } from './WithdrawView'
 
 const { TabPane } = Tabs
 
 const { Option } = Select
-
-const BUTTON = styled.button`
-  display: flex;
-  justify-content: right;
-  align-items: center;
-  height: 80px;
-  width: 175px;
-  border: none;
-  border-radius: 20px;
-`
-const TEXT = styled.span`
-  display: flex;
-  justify-content: left;
-  align-items: flex-start;
-  font-size: 14px;
-  margin-right: 20px;
-  color: white;
-  font-weight: 500;
-`
-const ARROW = styled.div`
-  display: flex;
-  justify-content: left;
-  align-items: flex-start;
-  margin-right: 10px;
-  margin-top: 2px;
-`
-
-const MENU = styled.div`
-  width: 175px;
-  margin-top: 12%;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin-right: 10px;
-  border-radius: 20px;
-  background-color: #131212;
-`
-
-const MENUITEM = styled.div`
-  margin-top: 0px;
-  margin-bottom: 0px;
-  height: '100%';
-  padding-bottom: 8px;
-  padding-top: 8px;
-  width: 175px;
-  border-radius: 5px;
-  background-color: #3f3f3f;
-`
 
 const Nav = ['Deposit', 'Mint', 'Swap', 'Burn', 'Withdraw', 'Rewards']
 
@@ -82,28 +38,16 @@ const OperationsSlot = {
         />
       }
     >
-      <Option
-        value="Sp 500"
-        style={{ height: 50, alignItems: 'center', marginTop: 10, color: 'white', backgroundColor: 'transparent' }}
-      >
+      <Option value="Sp 500" style={{ height: 50, alignItems: 'center', marginTop: 10, color: 'white' }}>
         Sp 500 pool
       </Option>
-      <Option
-        value="Dow Jones"
-        style={{ height: 50, alignItems: 'center', color: 'white', backgroundColor: 'transparent' }}
-      >
+      <Option value="Dow Jones" style={{ height: 50, alignItems: 'center', color: 'white' }}>
         Dow Jones pool
       </Option>
-      <Option
-        value="Nasdaq"
-        style={{ height: 50, alignItems: 'center', color: 'white', backgroundColor: 'transparent' }}
-      >
+      <Option value="Nasdaq" style={{ height: 50, alignItems: 'center', color: 'white' }}>
         Nasdaq pool
       </Option>
-      <Option
-        value="Russel"
-        style={{ height: 50, alignItems: 'center', color: 'white', backgroundColor: 'transparent' }}
-      >
+      <Option value="Russel" style={{ height: 50, alignItems: 'center', color: 'white' }}>
         Russel 2000 pool
       </Option>
     </Select>
@@ -121,19 +65,19 @@ export const TopView: FC = () => {
       >
         {Nav.map((value, index) => (
           <TabPane key={index} tab={value}>
-            {index === 0
-              ? 'View one'
-              : index === 1
-              ? 'View two'
-              : index === 2
-              ? 'View three'
-              : index === 3
-              ? 'View four'
-              : index === 4
-              ? 'View five'
-              : index === 5
-              ? 'View six'
-              : null}
+            {index === 0 ? (
+              <DepositView></DepositView>
+            ) : index === 1 ? (
+              'View two'
+            ) : index === 2 ? (
+              'View three'
+            ) : index === 3 ? (
+              'View four'
+            ) : index === 4 ? (
+              <WithdrawView></WithdrawView>
+            ) : index === 5 ? (
+              'View six'
+            ) : null}
           </TabPane>
         ))}
       </Tabs>
