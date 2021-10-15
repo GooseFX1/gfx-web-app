@@ -3,7 +3,6 @@ import { Dispatch, FC, SetStateAction, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { ArrowDropdown } from '../../../components'
 import { Row, Col, Select, Tabs } from 'antd'
-import { HeaderBar } from '../../../components/HeaderBar'
 import React from 'react'
 import { useDarkMode } from '../../../context'
 import { SVGToWhite } from '../../../styles'
@@ -12,6 +11,7 @@ import { MintView } from './MintView'
 import { WithdrawView } from './WithdrawView'
 import { RewardsView } from './RewardsView'
 import { BurnView } from './BurnView'
+import { SwapView } from './SwapView'
 
 const { TabPane } = Tabs
 
@@ -73,7 +73,7 @@ export const TopView: FC = () => {
             ) : index === 1 ? (
               <MintView />
             ) : index === 2 ? (
-              'View three'
+              <SwapView />
             ) : index === 3 ? (
               <BurnView />
             ) : index === 4 ? (

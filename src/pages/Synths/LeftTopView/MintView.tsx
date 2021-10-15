@@ -89,7 +89,7 @@ export const MintView: FC = () => {
                   <Option value="1" style={{ height: 40, alignItems: 'center', marginTop: 10, color: 'white' }}>
                     <BlockTail
                       image={`${process.env.PUBLIC_URL}/img/synths/GOFX.svg`}
-                      text={<span style={{ marginLeft: 15, fontSize: 13 }}>gUSD</span>}
+                      text={<span style={{ marginLeft: 15, fontSize: 13, color: 'white' }}>gUSD</span>}
                       imageHeight={'20px'}
                       imageWidth={'20px'}
                       backgroundColor={'transparent'}
@@ -100,7 +100,7 @@ export const MintView: FC = () => {
                   <Option value="2" style={{ height: 40, alignItems: 'center', color: 'white' }}>
                     <BlockTail
                       image={`${process.env.PUBLIC_URL}/img/synths/GOFX.svg`}
-                      text={<span style={{ marginLeft: 15, fontSize: 13 }}>gAAPL</span>}
+                      text={<span style={{ marginLeft: 15, fontSize: 13, color: 'white' }}>gAAPL</span>}
                       imageHeight={'20px'}
                       imageWidth={'20px'}
                       backgroundColor={'transparent'}
@@ -111,7 +111,7 @@ export const MintView: FC = () => {
                   <Option value="3" style={{ height: 40, alignItems: 'center', color: 'white' }}>
                     <BlockTail
                       image={`${process.env.PUBLIC_URL}/img/synths/GOFX.svg`}
-                      text={<span style={{ marginLeft: 15, fontSize: 13 }}>gGOOG</span>}
+                      text={<span style={{ marginLeft: 15, fontSize: 13, color: 'white' }}>gGOOG</span>}
                       imageHeight={'20px'}
                       imageWidth={'20px'}
                       backgroundColor={'transparent'}
@@ -122,7 +122,7 @@ export const MintView: FC = () => {
                   <Option value="4" style={{ height: 40, alignItems: 'center', color: 'white' }}>
                     <BlockTail
                       image={`${process.env.PUBLIC_URL}/img/synths/GOFX.svg`}
-                      text={<span style={{ marginLeft: 15, fontSize: 13 }}>gFB</span>}
+                      text={<span style={{ marginLeft: 15, fontSize: 13, color: 'white' }}>gFB</span>}
                       imageHeight={'20px'}
                       imageWidth={'20px'}
                       backgroundColor={'transparent'}
@@ -133,7 +133,7 @@ export const MintView: FC = () => {
                   <Option value="5" style={{ height: 40, alignItems: 'center', color: 'white' }}>
                     <BlockTail
                       image={`${process.env.PUBLIC_URL}/img/synths/GOFX.svg`}
-                      text={<span style={{ marginLeft: 15, fontSize: 13 }}>gUSD</span>}
+                      text={<span style={{ marginLeft: 15, fontSize: 13, color: 'white' }}>gUSD</span>}
                       imageHeight={'20px'}
                       imageWidth={'20px'}
                       backgroundColor={'transparent'}
@@ -144,7 +144,7 @@ export const MintView: FC = () => {
                   <Option value="6" style={{ height: 40, alignItems: 'center', color: 'white' }}>
                     <BlockTail
                       image={`${process.env.PUBLIC_URL}/img/synths/GOFX.svg`}
-                      text={<span style={{ marginLeft: 15, fontSize: 13 }}>gUSD</span>}
+                      text={<span style={{ marginLeft: 15, fontSize: 13, color: 'white' }}>gUSD</span>}
                       imageHeight={'20px'}
                       imageWidth={'20px'}
                       backgroundColor={'transparent'}
@@ -155,7 +155,7 @@ export const MintView: FC = () => {
                   <Option value="7" style={{ height: 40, alignItems: 'center', color: 'white' }}>
                     <BlockTail
                       image={`${process.env.PUBLIC_URL}/img/synths/GOFX.svg`}
-                      text={<span style={{ marginLeft: 15, fontSize: 13 }}>gUSD</span>}
+                      text={<span style={{ marginLeft: 15, fontSize: 13, color: 'white' }}>gUSD</span>}
                       imageHeight={'20px'}
                       imageWidth={'20px'}
                       backgroundColor={'transparent'}
@@ -166,7 +166,7 @@ export const MintView: FC = () => {
                   <Option value="8" style={{ height: 40, alignItems: 'center', color: 'white' }}>
                     <BlockTail
                       image={`${process.env.PUBLIC_URL}/img/synths/GOFX.svg`}
-                      text={<span style={{ marginLeft: 15, fontSize: 13 }}>gUSD</span>}
+                      text={<span style={{ marginLeft: 15, fontSize: 13, color: 'white' }}>gUSD</span>}
                       imageHeight={'20px'}
                       imageWidth={'20px'}
                       backgroundColor={'transparent'}
