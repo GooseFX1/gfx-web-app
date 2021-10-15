@@ -920,9 +920,7 @@
           },
           {
             "name": "feeRatesLen",
-            "type": {
-              "defined": "usize"
-            }
+            "type": "u64"
           },
           {
             "name": "collectorRate",
@@ -1035,6 +1033,30 @@
                 "defined": "Decimal"
               }
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Decimal",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "hi",
+            "type": "u32"
+          },
+          {
+            "name": "mid",
+            "type": "u32"
+          },
+          {
+            "name": "lo",
+            "type": "u32"
+          },
+          {
+            "name": "flag",
+            "type": "u32"
           }
         ]
       }
@@ -1204,5 +1226,8 @@
       "name": "WithdrawViolatesMM",
       "msg": "[G018] Withdraw violates the maintenance margin requirement"
     }
-  ]
+  ],
+  "metadata": {
+    "address": "2Lyovr5fDDDkAUEiw4cfTas3KMNkWmRe9ciPQEKstCFL"
+  }
 }

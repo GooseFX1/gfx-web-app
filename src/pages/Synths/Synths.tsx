@@ -4,6 +4,7 @@ import { Row, Col } from 'antd'
 import { RightContainer } from './RightView/Container'
 import { TopContainer } from './LeftTopView/Container'
 import { BottomContainer } from './LeftBottomView/Container'
+import { SynthsProvider, useSynths } from '../../context/synths'
 
 const WRAPPER = styled.div`
   height: 100%;
@@ -38,6 +39,12 @@ width: 375px;
   margin-top: ${({ theme }) => theme.margins['8x']};
 `
 
+const A: FC = () => {
+  const { deposit } = useSynths()
+
+  return <button onClick={() => deposit()}>CLICK ME!</button>
+}
+
 export const Synths: FC = () => {
   return (
     <WRAPPER>
@@ -49,6 +56,9 @@ export const Synths: FC = () => {
           </LEFTGRID>
         </Col>
 
+        <SynthsProvider>
+          <A />
+        </SynthsProvider>
         <Col>
           <RIGHTGRID>
             <RightContainer></RightContainer>
