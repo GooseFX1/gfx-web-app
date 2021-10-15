@@ -30,7 +30,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { mints, pools } = ADDRESSES[network]
   const [action, setAction] = useState<SynthAction>('deposit')
   // const [amount, setAmount] = useState<number>(0)
-  const [amount, setAmount] = useState<number>(1000)
+  const [amount, setAmount] = useState<number>(5000)
   const [poolName, setPoolName] = useState<string>(Object.entries(pools).filter(([_, { type }]) => type === 'synth')[0][0])
   // const [synth, setSynth] = useState<string>(Object.entries(mints).filter(([_, { type }]) => type === 'synth')[0][0])
   const [synth, setSynth] = useState<string>('gUSD')
