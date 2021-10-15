@@ -40,9 +40,17 @@ width: 375px;
 `
 
 const A: FC = () => {
-  const { deposit } = useSynths()
+  const { burn, claim, deposit, mint, withdraw } = useSynths()
 
-  return <button onClick={() => deposit()}>CLICK ME!</button>
+  return (
+    <div>
+      <button onClick={() => burn()}>BURN</button>
+      <button onClick={() => claim()}>CLAIM</button>
+      <button onClick={() => deposit()}>DEPOSIT</button>
+      <button onClick={() => mint()}>MINT</button>
+      <button onClick={() => withdraw()}>WITHDRAW</button>
+    </div>
+  )
 }
 
 export const Synths: FC = () => {

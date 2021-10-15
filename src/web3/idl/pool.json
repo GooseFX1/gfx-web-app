@@ -1043,11 +1043,11 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "hi",
+            "name": "flags",
             "type": "u32"
           },
           {
-            "name": "mid",
+            "name": "hi",
             "type": "u32"
           },
           {
@@ -1055,7 +1055,7 @@
             "type": "u32"
           },
           {
-            "name": "flag",
+            "name": "mid",
             "type": "u32"
           }
         ]

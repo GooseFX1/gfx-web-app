@@ -6,7 +6,7 @@ import { createAssociatedTokenAccountIx, findAssociatedTokenAddress, signAndSend
 import { IOrder } from '../context'
 
 const cancelOrder = async (connection: Connection, market: Market, order: Order, wallet: any) => {
-  if (!wallet.publicKey) return
+  if (!wallet.publicKey || !wallet.signTransaction) return
 
   const tx = new Transaction()
 
@@ -18,7 +18,7 @@ const cancelOrder = async (connection: Connection, market: Market, order: Order,
 }
 
 const placeOrder = async (connection: Connection, market: Market, order: IOrder, wallet: any) => {
-  if (!wallet.publicKey) return
+  if (!wallet.publicKey || !wallet.signTransaction) return
 
   const tx = new Transaction()
 
@@ -57,7 +57,7 @@ const settleFunds = async (
   openOrders: OpenOrders,
   wallet: any
 ) => {
-  if (!wallet.publicKey) return
+  if (!wallet.publicKey || !wallet.signTransaction) return
 
   const tx = new Transaction()
 

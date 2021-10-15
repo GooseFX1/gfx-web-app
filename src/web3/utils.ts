@@ -30,8 +30,6 @@ export const signAndSendRawTransaction = async (
   wallet: any,
   ...signers: Array<Signer>
 ) => {
-  if (!wallet.signTransaction) return
-
   transaction.feePayer = wallet.publicKey
   transaction.recentBlockhash = (await connection.getRecentBlockhash('max')).blockhash
   signers.forEach((signer) => transaction.partialSign(signer))

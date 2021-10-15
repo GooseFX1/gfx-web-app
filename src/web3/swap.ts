@@ -45,13 +45,15 @@ export const swap = async (
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<TransactionSignature | undefined> => {
-  if (!wallet.publicKey) return
+  if (!wallet.publicKey || !wallet.signTransaction) return
 
-  const { lpTokenMint, pool } = await computePoolsPDAs(tokenA.symbol, tokenB.symbol, network)
+  const { instruction } = getSwapProgram(wallet, connection, network)
+  const tx = new Transaction()
 
   const amountIn = new BN(inTokenAmount)
   const minimumAmountOut = new BN(outTokenAmount * (1 - slippage))
 
+  const { lpTokenMint, pool } = await computePoolsPDAs(tokenA.symbol, tokenB.symbol, network)
   const [inTokenAtaPool, outTokenAtaPool, lpTokenAtaFee, inTokenAtaUser, outTokenAtaUser] = await Promise.all([
     await findAssociatedTokenAddress(pool, new PublicKey(tokenA.address)),
     await findAssociatedTokenAddress(pool, new PublicKey(tokenB.address)),
@@ -59,8 +61,6 @@ export const swap = async (
     await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenA.address)),
     await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenB.address))
   ])
-
-  const tx = new Transaction()
 
   if (!(await connection.getAccountInfo(outTokenAtaUser))) {
     tx.add(createAssociatedTokenAccountIx(new PublicKey(tokenB.address), outTokenAtaUser, wallet.publicKey))
@@ -78,8 +78,6 @@ export const swap = async (
     splProgram: TOKEN_PROGRAM_ID
   }
 
-  const { instruction } = getSwapProgram(wallet, connection, network)
   tx.add(await instruction.swap(amountIn, minimumAmountOut, { accounts }))
-
   return signAndSendRawTransaction(connection, tx, wallet)
 }

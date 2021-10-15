@@ -6,6 +6,7 @@ export const ADDRESSES: {
     mints: {
       [token: string]: {
         address: PublicKey
+        decimals: number
         type: 'crypto' | 'synth'
       }
     }
@@ -58,10 +59,26 @@ export const ADDRESSES: {
   },
   devnet: {
     mints: {
-      GOFX: { address: new PublicKey('2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'), type: 'crypto' },
-      gBTC: { address: new PublicKey('HeprdyqtmWbxk9DNkiaLJkZimKf2juTdT8VdHDDd6ZbC'), type: 'synth' },
-      gETH: { address: new PublicKey('4DLS3s4u4LEbDU1rT6h5qz5Gm58T6dJYHNNZpc9z887K'), type: 'synth' },
-      gUSD: { address: new PublicKey('8e9DijtBDU1swHentbMS91z5NkuWe1xos9dLX7A2R39J'), type: 'synth' }
+      GOFX: {
+        address: new PublicKey('2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'),
+        decimals: 9,
+        type: 'crypto'
+      },
+      gBTC: {
+        address: new PublicKey('HeprdyqtmWbxk9DNkiaLJkZimKf2juTdT8VdHDDd6ZbC'),
+        decimals: 8,
+        type: 'synth'
+      },
+      gETH: {
+        address: new PublicKey('4DLS3s4u4LEbDU1rT6h5qz5Gm58T6dJYHNNZpc9z887K'),
+        decimals: 8,
+        type: 'synth'
+      },
+      gUSD: {
+        address: new PublicKey('8e9DijtBDU1swHentbMS91z5NkuWe1xos9dLX7A2R39J'),
+        decimals: 2,
+        type: 'synth'
+      }
     },
     pools: {
       POOL_A: {
