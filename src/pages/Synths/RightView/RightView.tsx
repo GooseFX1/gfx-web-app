@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 import { Header } from './Header'
-import Chart from './Chart'
+import AreaChart from './AreaChart'
 import { Timeline } from './Timeline'
 import { MyStats } from './MyStats'
 
@@ -15,7 +15,7 @@ export const RightView: FC = () => {
   return (
     <WRAPPER>
       <Header></Header>
-      <Chart></Chart>
+      <AreaChart></AreaChart>
       <Timeline></Timeline>
       <MyStats></MyStats>
     </WRAPPER>

@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 import { BottomView } from './BottomView'
+import DoughnutChart from './DoughnutChart'
 
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -14,6 +15,14 @@ width: 100%;
 `};
 `
 
+const CENTER = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 30px;
+  padding-bottom: 35px;
+`
+
 export const CollateralView: FC = () => {
   return (
     <WRAPPER>
@@ -25,6 +34,9 @@ export const CollateralView: FC = () => {
           borderBottomRightRadius: 20
         }}
       ></div>
+      <CENTER>
+        <DoughnutChart />
+      </CENTER>
     </WRAPPER>
   )
 }

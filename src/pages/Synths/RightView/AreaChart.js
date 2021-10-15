@@ -7,7 +7,7 @@ const WRAPPER = styled.div`
   width: '100%';
 `
 
-export default function Chart() {
+export default function AreaChart() {
   const { mode } = useDarkMode()
 
   const setGradient = () => {
