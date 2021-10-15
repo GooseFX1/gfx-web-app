@@ -19,7 +19,7 @@ import { useConnectionConfig } from './settings'
 import { useTradeHistory } from './trade_history'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
 import { capitalizeFirstLetter, decimalModulo, floorValue, notify, removeFloatingPointError } from '../utils'
-import { placeCryptoOrder } from '../web3'
+import { crypto } from '../web3'
 
 type OrderInput = undefined | 'price' | 'size' | 'total'
 export type OrderDisplayType = 'market' | 'limit'
@@ -158,7 +158,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (decimalModulo(order.size, selectedCrypto.market.minOrderSize)) {
         throw new Error(`Size must be a multiple of ${selectedCrypto.market.minOrderSize}`)
       }
-      await placeCryptoOrder(connection, selectedCrypto.market as Market, order, wallet)
+      await crypto.placeOrder(connection, selectedCrypto.market as Market, order, wallet)
       const ask = getAskSymbolFromPair(selectedCrypto.pair)
       const price = floorValue(order.price, selectedCrypto.market?.tickSize)
       const size = floorValue(order.size, selectedCrypto.market?.minOrderSize)

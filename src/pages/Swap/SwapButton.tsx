@@ -20,15 +20,13 @@ export const SwapButton: FC = () => {
   const { setVisible } = useWalletModal()
 
   const state = useMemo(() => {
-    const {
-      seeds: { pools }
-    } = ADDRESSES[network]
+    const { pools } = ADDRESSES[network]
 
     if (!wallet || !publicKey) {
       return State.Connect
     } else if (!tokenA || !tokenB) {
       return State.Enter
-    } else if (!pools[[tokenA.symbol, tokenB.symbol].sort((a, b) => a.localeCompare(b)).join('/')]) {
+    } else if (!pools[[tokenA.symbol, tokenB.symbol].sort((a, b) => a.localeCompare(b)).join('/')].address) {
       return State.PoolNotFound
     } else if (inTokenAmount === 0) {
       return State.Enter

@@ -16,7 +16,7 @@ import { PublicKey } from '@solana/web3.js'
 import { useCrypto } from './crypto'
 import { useConnectionConfig } from './settings'
 import { notify, useLocalStorageState } from '../utils'
-import { cancelCryptoOrder, serum, settleCryptoFunds } from '../web3'
+import { crypto, serum } from '../web3'
 
 export enum HistoryPanel {
   Orders = 'Open Orders',
@@ -85,7 +85,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   const cancelOrder = async (order: IOrder) => {
     if (selectedCrypto.market) {
       try {
-        const signature = await cancelCryptoOrder(connection, selectedCrypto.market, order.order, wallet)
+        const signature = await crypto.cancelOrder(connection, selectedCrypto.market, order.order, wallet)
         const ask = getAskSymbolFromPair(selectedCrypto.pair)
         const { price, side, size } = order.order
         notify({
@@ -111,7 +111,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   ) => {
     if (selectedCrypto.market) {
       try {
-        const signature = await settleCryptoFunds(connection, selectedCrypto.market, openOrder, wallet)
+        const signature = await crypto.settleFunds(connection, selectedCrypto.market, openOrder, wallet)
         const baseTokens = baseAvailable && `${baseAvailable} ${baseSymbol}`
         const quoteTokens = quoteAvailable && `${quoteAvailable} ${quoteSymbol}`
         notify({

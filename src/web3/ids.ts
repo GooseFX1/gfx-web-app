@@ -3,29 +3,88 @@ import { PublicKey } from '@solana/web3.js'
 
 export const ADDRESSES: {
   [network in WalletAdapterNetwork]: {
-    seeds: {
-      pools: {
-        [pair: string]: PublicKey
+    mints: {
+      [token: string]: {
+        address: PublicKey
+        type: 'crypto' | 'synth'
       }
     }
-    swap: PublicKey
+    pools: {
+      [pair: string]: {
+        address: PublicKey
+        listing: PublicKey
+        type: 'crypto' | 'synth'
+      }
+    }
+    programs: {
+      pool: {
+        address: PublicKey
+        controller: PublicKey
+        priceAggregator: PublicKey
+      }
+      swap: {
+        address: PublicKey
+      }
+    }
   }
 } = {
   'mainnet-beta': {
-    seeds: { pools: {} },
-    swap: PublicKey.default
+    mints: {},
+    pools: {},
+    programs: {
+      pool: {
+        address: PublicKey.default,
+        controller: PublicKey.default,
+        priceAggregator: PublicKey.default
+      },
+      swap: {
+        address: PublicKey.default
+      }
+    }
   },
   testnet: {
-    seeds: { pools: {} },
-    swap: PublicKey.default
+    mints: {},
+    pools: {},
+    programs: {
+      pool: {
+        address: PublicKey.default,
+        controller: PublicKey.default,
+        priceAggregator: PublicKey.default
+      },
+      swap: {
+        address: PublicKey.default
+      }
+    }
   },
   devnet: {
-    seeds: {
-      pools: {
-        'TKNA/TKNB': new PublicKey('Ga9vweHkkvxRVeadA3NRGx2RHfFs6w2t4hKRmBinQzYL')
+    mints: {
+      GOFX: { address: new PublicKey('2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'), type: 'crypto' },
+      gBTC: { address: new PublicKey('HeprdyqtmWbxk9DNkiaLJkZimKf2juTdT8VdHDDd6ZbC'), type: 'synth' },
+      gETH: { address: new PublicKey('4DLS3s4u4LEbDU1rT6h5qz5Gm58T6dJYHNNZpc9z887K'), type: 'synth' },
+      gUSD: { address: new PublicKey('8e9DijtBDU1swHentbMS91z5NkuWe1xos9dLX7A2R39J'), type: 'synth' }
+    },
+    pools: {
+      POOL_A: {
+        address: new PublicKey('4hkhVuQkpJJDhpvjEn65LmwuPnAZoMzjXdQ5FjW5KcpY'),
+        listing: new PublicKey('QwtKuSQcz8rdY5T3ZBavkoFZev777rcJ1BFWe5KHvVW'),
+        type: 'synth'
+      },
+      'TKNA/TKNB': {
+        address: new PublicKey('Ga9vweHkkvxRVeadA3NRGx2RHfFs6w2t4hKRmBinQzYL'),
+        listing: PublicKey.default,
+        type: 'crypto'
       }
     },
-    swap: new PublicKey('A4HxR7CUzKiudjCRWajsazoSNQ4YHGU5QvE3NgB6fRLd')
+    programs: {
+      pool: {
+        address: new PublicKey('Wo2kK51ruxwnM38VrqWSZCMjX1Mmcu4yBMcfg83Nufp'),
+        controller: new PublicKey('Agf85Co1n9NTTzy36rGUen4kCEBzhvkKyks8rTLdVeP8'),
+        priceAggregator: new PublicKey('pZ1frxrqntkZN2zCwRBS4Z6Ur3fFaCswvzUti57ukHw')
+      },
+      swap: {
+        address: new PublicKey('A4HxR7CUzKiudjCRWajsazoSNQ4YHGU5QvE3NgB6fRLd')
+      }
+    }
   }
 }
 

@@ -1,24 +1,11 @@
-import { BN } from '@project-serum/anchor'
+import { Connection, PublicKey, Transaction } from '@solana/web3.js'
 import { Market, OpenOrders } from '@project-serum/serum'
 import { Order } from '@project-serum/serum/lib/market'
-import { TOKEN_PROGRAM_ID, WRAPPED_SOL_MINT } from '@project-serum/serum/lib/token-instructions'
-import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { Connection, PublicKey, Transaction, TransactionSignature } from '@solana/web3.js'
-import { computePoolsPDAs, findAssociatedTokenAddress, getLPProgram, signAndSendRawTransaction } from './utils'
-import { IOrder, ISwapToken } from '../context'
+import { WRAPPED_SOL_MINT } from '@project-serum/serum/lib/token-instructions'
+import { createAssociatedTokenAccountIx, findAssociatedTokenAddress, signAndSendRawTransaction } from './utils'
+import { IOrder } from '../context'
 
-const createAssociatedTokenAccountIx = (mint: PublicKey, associatedAccount: PublicKey, owner: PublicKey) =>
-  Token.createAssociatedTokenAccountInstruction(
-    ASSOCIATED_TOKEN_PROGRAM_ID,
-    TOKEN_PROGRAM_ID,
-    mint,
-    associatedAccount,
-    owner,
-    owner
-  )
-
-export const cancelCryptoOrder = async (connection: Connection, market: Market, order: Order, wallet: any) => {
+const cancelOrder = async (connection: Connection, market: Market, order: Order, wallet: any) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
@@ -30,7 +17,7 @@ export const cancelCryptoOrder = async (connection: Connection, market: Market, 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-export const placeCryptoOrder = async (connection: Connection, market: Market, order: IOrder, wallet: any) => {
+const placeOrder = async (connection: Connection, market: Market, order: IOrder, wallet: any) => {
   if (!wallet.publicKey) return
 
   const tx = new Transaction()
@@ -64,7 +51,7 @@ export const placeCryptoOrder = async (connection: Connection, market: Market, o
   return await signAndSendRawTransaction(connection, tx, wallet, ...signers)
 }
 
-export const settleCryptoFunds = async (
+const settleFunds = async (
   connection: Connection,
   market: Market,
   openOrders: OpenOrders,
@@ -98,51 +85,8 @@ export const settleCryptoFunds = async (
   return await signAndSendRawTransaction(connection, tx, wallet, ...signers)
 }
 
-export const swap = async (
-  tokenA: ISwapToken,
-  tokenB: ISwapToken,
-  inTokenAmount: number,
-  outTokenAmount: number,
-  slippage: number,
-  wallet: any,
-  connection: Connection,
-  network: WalletAdapterNetwork
-): Promise<TransactionSignature | undefined> => {
-  if (!wallet.publicKey) return
-
-  const { lpTokenMint, pool } = await computePoolsPDAs(tokenA.symbol, tokenB.symbol, network)
-
-  const amountIn = new BN(inTokenAmount)
-  const minimumAmountOut = new BN(outTokenAmount * (1 - slippage))
-
-  const [inTokenAtaPool, outTokenAtaPool, lpTokenAtaFee, inTokenAtaUser, outTokenAtaUser] = await Promise.all([
-    await findAssociatedTokenAddress(pool, new PublicKey(tokenA.address)),
-    await findAssociatedTokenAddress(pool, new PublicKey(tokenB.address)),
-    await findAssociatedTokenAddress(pool, lpTokenMint),
-    await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenA.address)),
-    await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenB.address))
-  ])
-
-  const tx = new Transaction()
-
-  if (!(await connection.getAccountInfo(outTokenAtaUser))) {
-    tx.add(createAssociatedTokenAccountIx(new PublicKey(tokenB.address), outTokenAtaUser, wallet.publicKey))
-  }
-
-  const accounts = {
-    pool,
-    inTokenAtaPool,
-    outTokenAtaPool,
-    lpTokenMint,
-    lpTokenAtaFee,
-    userWallet: wallet.publicKey,
-    inTokenAtaUser,
-    outTokenAtaUser,
-    splProgram: TOKEN_PROGRAM_ID
-  }
-
-  const { instruction } = getLPProgram(wallet, connection, network)
-  tx.add(await instruction.swap(amountIn, minimumAmountOut, { accounts }))
-
-  return signAndSendRawTransaction(connection, tx, wallet)
+export const crypto = {
+  cancelOrder,
+  placeOrder,
+  settleFunds
 }
