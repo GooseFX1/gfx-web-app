@@ -1,8 +1,8 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import styled from 'styled-components'
 import { Pools } from './Pools'
 import { Portfolio } from './Portfolio'
-import { BottomContainer } from './LeftBottomView/Container'
+import { Positions } from './Positions'
 import { SynthsProvider } from '../../context'
 
 const WRAPPER = styled.div`
@@ -24,12 +24,15 @@ const WRAPPER = styled.div`
       width: 60%;
       margin-right: ${({ theme }) => theme.margins['5x']};
     `};
+
+    > div:last-child {
+      margin-top: ${({ theme }) => theme.margins['5x']};
+    }
   }
 
   > div:last-child {
     ${({ theme }) => theme.mediaWidth.upToLarge`
       width: 100%;
-      margin-top: ${({ theme }) => theme.margins['5x']};
     `};
     ${({ theme }) => theme.mediaWidth.fromLarge`
       width: 40%;
@@ -38,11 +41,13 @@ const WRAPPER = styled.div`
 `
 
 export const SynthsContent: FC = () => {
+  const [poolsVisible, setPoolsVisible] = useState(true)
+
   return (
     <WRAPPER>
       <div>
         <Pools />
-        <BottomContainer />
+        <Positions poolsVisible={poolsVisible} setPoolsVisible={setPoolsVisible} />
       </div>
       <div>
         <Portfolio />

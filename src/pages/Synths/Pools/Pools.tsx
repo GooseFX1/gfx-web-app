@@ -38,14 +38,13 @@ const TAB = styled.div`
 const TABS = styled(SpaceBetweenDiv)`
   flex: 1;
   padding: ${({ theme }) => theme.margins['3x']} ${({ theme }) => theme.margins['4x']};
-  
+
   > span:not(:last-child) {
     margin-right: ${({ theme }) => theme.margins['4x']};
   }
 `
 
 const WRAPPER = styled.div`
-  height: 100%;
   ${({ theme }) => theme.largeBorderRadius}
   ${({ theme }) => theme.largeShadow}
   background-color: ${({ theme }) => theme.bg3};

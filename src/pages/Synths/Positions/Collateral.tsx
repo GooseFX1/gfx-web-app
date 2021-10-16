@@ -61,13 +61,10 @@ const RIGHT = styled.div`
   padding-top: 25px;
 `
 
-export const CollateralView: FC = () => {
+export const Collateral: FC = () => {
   return (
     <WRAPPER>
-      <BOTTOMTAB />
       <CONT>
-        <TITLE>Collateral Structure</TITLE>
-
         <Row align={'top'} justify={'space-around'}>
           <LEFT>
             <Col flex={2}>
