@@ -1,10 +1,8 @@
-import React, { Dispatch, FC, ReactNode, SetStateAction, createContext, useContext, useState } from 'react'
+import React, { Dispatch, FC, ReactNode, SetStateAction, createContext, useContext, useState, useMemo } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
 import { notify } from '../utils'
-import { ADDRESSES, pool } from '../web3'
-
-type SynthAction = 'burn' | 'claim' | 'deposit' | 'mint' | 'swap' | 'withdraw'
+import { ADDRESSES, Mint, Pool, pool } from '../web3'
 
 interface IUserAccount {
   collateral: number
@@ -13,14 +11,14 @@ interface IUserAccount {
 }
 
 interface ISynthsConfig {
-  action: SynthAction
   amount: number
+  availableMints: [string, Mint][]
+  availablePools: [string, Pool][]
   burn: () => Promise<void>
   claim: () => Promise<void>
   deposit: () => Promise<void>
   mint: () => Promise<void>
   poolName: string
-  setAction: Dispatch<SetStateAction<SynthAction>>
   setAmount: Dispatch<SetStateAction<number>>
   setPoolName: Dispatch<SetStateAction<string>>
   setSynth: Dispatch<SetStateAction<string>>
@@ -36,12 +34,13 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection, network } = useConnectionConfig()
   const wallet = useWallet()
   const { mints, pools } = ADDRESSES[network]
-  const [action, setAction] = useState<SynthAction>('deposit')
+
+  const availableMints = useMemo(() => Object.entries(mints).filter(([_, { type }]) => type === 'synth'), [mints])
+  const availablePools = useMemo(() => Object.entries(pools).filter(([_, { type }]) => type === 'synth'), [pools])
+
   const [amount, setAmount] = useState<number>(0)
-  const [poolName, setPoolName] = useState<string>(
-    Object.entries(pools).filter(([_, { type }]) => type === 'synth')[0][0]
-  )
-  const [synth, setSynth] = useState<string>(Object.entries(mints).filter(([_, { type }]) => type === 'synth')[0][0])
+  const [poolName, setPoolName] = useState<string>(availablePools[0][0])
+  const [synth, setSynth] = useState<string>(availableMints[0][0])
   const [userAccount, setUserAccount] = useState<IUserAccount>({ collateral: 150000, debt: 27000, value: 420000 })
 
   const burn = async () => {
@@ -124,14 +123,14 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <SynthsContext.Provider
       value={{
-        action,
         amount,
+        availableMints,
+        availablePools,
         burn,
         claim,
         deposit,
         mint,
         poolName,
-        setAction,
         setAmount,
         setPoolName,
         setSynth,
@@ -153,14 +152,14 @@ export const useSynths = (): ISynthsConfig => {
   }
 
   return {
-    action: context.action,
     amount: context.amount,
+    availableMints: context.availableMints,
+    availablePools: context.availablePools,
     burn: context.burn,
     claim: context.claim,
     deposit: context.deposit,
     mint: context.mint,
     poolName: context.poolName,
-    setAction: context.setAction,
     setAmount: context.setAmount,
     setPoolName: context.setPoolName,
     setSynth: context.setSynth,

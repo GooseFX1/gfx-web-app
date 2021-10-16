@@ -1,21 +1,25 @@
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { PublicKey } from '@solana/web3.js'
 
+export type Mint = {
+  address: PublicKey
+  decimals: number
+  type: 'crypto' | 'synth'
+}
+
+export type Pool = {
+  address: PublicKey
+  listing: PublicKey
+  type: 'crypto' | 'synth'
+}
+
 export const ADDRESSES: {
   [network in WalletAdapterNetwork]: {
     mints: {
-      [token: string]: {
-        address: PublicKey
-        decimals: number
-        type: 'crypto' | 'synth'
-      }
+      [token: string]: Mint
     }
     pools: {
-      [pair: string]: {
-        address: PublicKey
-        listing: PublicKey
-        type: 'crypto' | 'synth'
-      }
+      [pair: string]: Pool
     }
     programs: {
       pool: {

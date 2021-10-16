@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
+import { Pools } from './Pools'
 import { Portfolio } from './Portfolio'
-import { TopContainer } from './LeftTopView/Container'
 import { BottomContainer } from './LeftBottomView/Container'
 import { SynthsProvider } from '../../context'
 
@@ -41,7 +41,7 @@ export const SynthsContent: FC = () => {
   return (
     <WRAPPER>
       <div>
-        <TopContainer />
+        <Pools />
         <BottomContainer />
       </div>
       <div>
