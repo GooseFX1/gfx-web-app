@@ -4,9 +4,8 @@ import { Claim } from './Claim'
 import { DepositWithdraw } from './DepositWithdraw'
 import { MintBurn } from './MintBurn'
 import { PoolSelector } from './PoolSelector'
+import { Swap } from './Swap'
 import { SpaceBetweenDiv } from '../../../styles'
-
-import { SwapView } from './SwapView'
 
 const HEADER = styled(SpaceBetweenDiv)<{ $tab: number }>`
   ${({ theme }) => theme.largeBorderRadius}
@@ -39,6 +38,10 @@ const TAB = styled.div`
 const TABS = styled(SpaceBetweenDiv)`
   flex: 1;
   padding: ${({ theme }) => theme.margins['3x']} ${({ theme }) => theme.margins['4x']};
+  
+  > span:not(:last-child) {
+    margin-right: ${({ theme }) => theme.margins['4x']};
+  }
 `
 
 const WRAPPER = styled.div`
@@ -54,7 +57,7 @@ export const Pools: FC = () => {
   const tabs = [
     { component: <DepositWithdraw action="deposit" />, display: 'Deposit' },
     { component: <MintBurn action="mint" />, display: 'Mint' },
-    { component: <SwapView />, display: 'Swap' },
+    { component: <Swap />, display: 'Swap' },
     { component: <MintBurn action="burn" />, display: 'Burn' },
     { component: <DepositWithdraw action="withdraw" />, display: 'Withdraw' },
     { component: <Claim />, display: 'Rewards' }

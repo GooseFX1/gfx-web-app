@@ -5,11 +5,10 @@ import { Settings } from './Settings'
 import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
-import { Switch } from './Switch'
-import { SwapProvider, useDarkMode, useSwap } from '../../context'
-import { addAnalytics } from '../../utils'
 import { Modal } from '../../components'
+import { SwapProvider, useDarkMode, useSwap } from '../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../styles'
+import { addAnalytics } from '../../utils'
 
 const BODY = styled.div`
   position: relative;
@@ -51,6 +50,15 @@ const REFRESH_RATE = styled(CenteredImg)`
   cursor: pointer;
 `
 
+const SWITCH = styled(CenteredImg)<{ measurements: number }>`
+  position: absolute;
+  top: calc(50% - ${({ measurements }) => measurements}px / 2 + ${({ theme }) => theme.margins['2x']});
+  left: calc(50% - ${({ measurements }) => measurements}px / 2);
+  ${({ measurements, theme }) => theme.measurements(measurements + 'px')}
+  z-index: 1;
+  cursor: pointer;
+`
+
 const WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   align-items: center;
@@ -64,7 +72,7 @@ const WRAPPER = styled.div`
 
 const SwapContent: FC = () => {
   const { mode } = useDarkMode()
-  const { refreshRates } = useSwap()
+  const { refreshRates, switchTokens } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
 
   useEffect(() => {
@@ -107,7 +115,9 @@ const SwapContent: FC = () => {
       <BODY>
         <style>{localCSS}</style>
         <SwapFrom height={height} />
-        <Switch />
+        <SWITCH measurements={80} onClick={switchTokens}>
+          <img src={`${process.env.PUBLIC_URL}/img/assets/swap_switch_${mode}_mode.svg`} alt="switch" />
+        </SWITCH>
         <SwapTo height={height} />
       </BODY>
       <SwapButton />

@@ -2,8 +2,8 @@ import React, { BaseSyntheticEvent, FC, MouseEventHandler, useCallback, useMemo 
 import { Input } from 'antd'
 import styled, { css } from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { Available, Button, Inputs, InputHeader, InputWrapper } from './shared'
 import { SynthSelector } from './SynthSelector'
-import { MainButton } from '../../../components'
 import { useAccounts, useConnectionConfig, useDarkMode, useSynths, useWalletModal } from '../../../context'
 import { SpaceBetweenDiv } from '../../../styles'
 import { capitalizeFirstLetter } from '../../../utils'
@@ -16,64 +16,10 @@ enum State {
   AvailableAmountExceeded = 3
 }
 
-const AVAILABLE = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap}
-  width: 40%;
-  text-align: left;
-
-  > div {
-    height: 39px;
-    margin-top: ${({ theme }) => theme.margins['1x']};
-    padding: 4px 11px;
-    ${({ theme }) => theme.smallBorderRadius}
-    background-color: ${({ theme }) => theme.bg5};
-  }
-
-  > span {
-    font-size: 12px;
-    font-weight: bold;
-    color: ${({ theme }) => theme.text1};
-  }
-`
-
-const BUTTON = styled(MainButton)`
-  margin-left: auto;
-`
-
 const SELECTOR = styled.div`
   position: absolute;
   bottom: 7px;
   right: 10px;
-`
-
-const INPUT = styled.div`
-  position: relative;
-  ${({ theme }) => theme.flexColumnNoWrap}
-  width: 60%;
-  margin-right: ${({ theme }) => theme.margins['3x']};
-`
-
-const INPUTS = styled(SpaceBetweenDiv)`
-  margin-bottom: ${({ theme }) => theme.margins['5x']};
-`
-
-const INPUT_HEADER = styled(SpaceBetweenDiv)`
-  margin-bottom: ${({ theme }) => theme.margins['1x']};
-
-  span {
-    font-size: 12px;
-    font-weight: bold;
-    color: ${({ theme }) => theme.text1};
-  }
-
-  > span:last-child {
-    color: ${({ theme }) => theme.text1h};
-
-    &:hover {
-      color: ${({ theme }) => theme.text1};
-      cursor: pointer;
-    }
-  }
 `
 
 export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
@@ -146,13 +92,13 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
 
   return (
     <>
-      <INPUTS>
+      <Inputs>
         <style>{localCSS}</style>
-        <INPUT>
-          <INPUT_HEADER>
+        <InputWrapper>
+          <InputHeader>
             <span>{capitalizeFirstLetter(action)}</span>
             <span onClick={() => setAmount(userBalance)}>Use Max</span>
-          </INPUT_HEADER>
+          </InputHeader>
           <Input
             maxLength={15}
             onChange={(x: BaseSyntheticEvent) => !isNaN(x.target.value) && setAmount(x.target.value)}
@@ -163,18 +109,18 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
           <SELECTOR>
             <SynthSelector />
           </SELECTOR>
-        </INPUT>
-        <AVAILABLE>
+        </InputWrapper>
+        <Available>
           <span>Available GOFX</span>
           <SpaceBetweenDiv>
             <span>{userAccount.collateral}</span>
             <span>GOFX</span>
           </SpaceBetweenDiv>
-        </AVAILABLE>
-      </INPUTS>
-      <BUTTON height="50px" onClick={handleClick} status={buttonStatus} width="40%">
+        </Available>
+      </Inputs>
+      <Button height="50px" onClick={handleClick} status={buttonStatus} width="40%">
         <span>{content}</span>
-      </BUTTON>
+      </Button>
     </>
   )
 }

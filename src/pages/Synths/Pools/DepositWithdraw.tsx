@@ -1,9 +1,9 @@
 import React, { BaseSyntheticEvent, FC, MouseEventHandler, useCallback, useMemo } from 'react'
 import { Input } from 'antd'
-import styled, { css } from 'styled-components'
+import { css } from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { Available, Button, Inputs, InputHeader, InputWrapper, Synth } from './shared'
 import { SynthToken } from './SynthToken'
-import { MainButton } from '../../../components'
 import { useAccounts, useConnectionConfig, useDarkMode, useSynths, useWalletModal } from '../../../context'
 import { SpaceBetweenDiv } from '../../../styles'
 import { capitalizeFirstLetter } from '../../../utils'
@@ -15,66 +15,6 @@ enum State {
   NullAmount = 2,
   BalanceExceeded = 3
 }
-
-const AVAILABLE = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap}
-  width: 40%;
-  text-align: left;
-
-  > div {
-    height: 39px;
-    margin-top: ${({ theme }) => theme.margins['1x']};
-    padding: 4px 11px;
-    ${({ theme }) => theme.smallBorderRadius}
-    background-color: ${({ theme }) => theme.bg5};
-  }
-
-  > span {
-    font-size: 12px;
-    font-weight: bold;
-    color: ${({ theme }) => theme.text1};
-  }
-`
-
-const BUTTON = styled(MainButton)`
-  margin-left: auto;
-`
-
-const INPUT = styled.div`
-  position: relative;
-  ${({ theme }) => theme.flexColumnNoWrap}
-  width: 60%;
-  margin-right: ${({ theme }) => theme.margins['3x']};
-`
-
-const INPUTS = styled(SpaceBetweenDiv)`
-  margin-bottom: ${({ theme }) => theme.margins['5x']};
-`
-
-const INPUT_HEADER = styled(SpaceBetweenDiv)`
-  margin-bottom: ${({ theme }) => theme.margins['1x']};
-
-  span {
-    font-size: 12px;
-    font-weight: bold;
-    color: ${({ theme }) => theme.text1};
-  }
-
-  > span:last-child {
-    color: ${({ theme }) => theme.text1h};
-
-    &:hover {
-      color: ${({ theme }) => theme.text1};
-      cursor: pointer;
-    }
-  }
-`
-
-const SYNTH = styled.div`
-  position: absolute;
-  bottom: 7px;
-  right: 10px;
-`
 
 export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action }) => {
   const { getUIAmount } = useAccounts()
@@ -146,13 +86,13 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
 
   return (
     <>
-      <INPUTS>
+      <Inputs>
         <style>{localCSS}</style>
-        <INPUT>
-          <INPUT_HEADER>
+        <InputWrapper>
+          <InputHeader>
             <span>{capitalizeFirstLetter(action)}</span>
             <span onClick={() => setAmount(userBalance)}>Use Max</span>
-          </INPUT_HEADER>
+          </InputHeader>
           <Input
             maxLength={15}
             onChange={(x: BaseSyntheticEvent) => !isNaN(x.target.value) && setAmount(x.target.value)}
@@ -160,21 +100,21 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
             placeholder={`Amount to ${action}`}
             value={amount || undefined}
           />
-          <SYNTH>
+          <Synth>
             <SynthToken synth="GOFX" />
-          </SYNTH>
-        </INPUT>
-        <AVAILABLE>
+          </Synth>
+        </InputWrapper>
+        <Available>
           <span>Available GOFX</span>
           <SpaceBetweenDiv>
             <span>{userBalance}</span>
             <span>GOFX</span>
           </SpaceBetweenDiv>
-        </AVAILABLE>
-      </INPUTS>
-      <BUTTON height="50px" onClick={handleClick} status={buttonStatus} width="40%">
+        </Available>
+      </Inputs>
+      <Button height="50px" onClick={handleClick} status={buttonStatus} width="40%">
         <span>{content}</span>
-      </BUTTON>
+      </Button>
     </>
   )
 }

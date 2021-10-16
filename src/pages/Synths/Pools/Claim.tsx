@@ -2,7 +2,7 @@ import React, { FC, MouseEventHandler, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { SynthToken } from './SynthToken'
-import { MainButton } from '../../../components'
+import { Button, Synth } from './shared'
 import { useSynths, useWalletModal } from '../../../context'
 import { SpaceBetweenDiv } from '../../../styles'
 
@@ -11,10 +11,6 @@ enum State {
   CanExecute = 1,
   NullAmount = 2
 }
-
-const BUTTON = styled(MainButton)`
-  margin-left: auto;
-`
 
 const REWARDS = styled(SpaceBetweenDiv)`
   margin-bottom: ${({ theme }) => theme.margins['5x']};
@@ -39,12 +35,6 @@ const REWARDS = styled(SpaceBetweenDiv)`
       color: ${({ theme }) => theme.text1};
     }
   }
-`
-
-const SYNTH = styled.div`
-  position: absolute;
-  bottom: 7px;
-  right: 10px;
 `
 
 export const Claim: FC = () => {
@@ -95,24 +85,24 @@ export const Claim: FC = () => {
           <span>Historical</span>
           <SpaceBetweenDiv>
             <span>{allTime}</span>
-            <SYNTH>
+            <Synth>
               <SynthToken synth="gUSD" />
-            </SYNTH>
+            </Synth>
           </SpaceBetweenDiv>
         </div>
         <div>
           <span>Current</span>
           <SpaceBetweenDiv>
             <span>{current}</span>
-            <SYNTH>
+            <Synth>
               <SynthToken synth="gUSD" />
-            </SYNTH>
+            </Synth>
           </SpaceBetweenDiv>
         </div>
       </REWARDS>
-      <BUTTON height="50px" onClick={handleClick} status={buttonStatus} width="40%">
+      <Button height="50px" onClick={handleClick} status={buttonStatus} width="40%">
         <span>{content}</span>
-      </BUTTON>
+      </Button>
     </>
   )
 }
