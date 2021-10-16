@@ -15,6 +15,10 @@ height: auto;
 width: 100%;
 `};
 `
+const CONT = styled.div`
+  margin-bottom: 40px;
+`
+
 const BOTTOMTAB = styled.div`
   height: 40px;
   background-color: #121212;
@@ -38,9 +42,8 @@ const LEFT = styled.div`
   display: flex;
   justify-content: left;
   align-items: center;
-  padding-top: 20px;
+  padding-top: 25px;
   padding-left: 15px;
-  padding-bottom: 20px;
 `
 
 const CENTER = styled.div`
@@ -48,22 +51,20 @@ const CENTER = styled.div`
   justify-content: center;
   align-items: center;
   padding-top: 0px;
-  padding-bottom: 30px;
 `
 
 const RIGHT = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 20px;
-  padding-bottom: 30px;
+  padding-top: 25px;
 `
 
 export const CollateralView: FC = () => {
   return (
     <WRAPPER>
       <BOTTOMTAB />
-      <div style={{ height: 'auto', overflow: 'auto' }}>
+      <CONT>
         <TITLE>Collateral Structure</TITLE>
 
         <Row align={'top'} justify={'space-around'}>
@@ -83,7 +84,7 @@ export const CollateralView: FC = () => {
             </Col>
           </RIGHT>
         </Row>
-      </div>
+      </CONT>
     </WRAPPER>
   )
 }

@@ -13,7 +13,7 @@ const WRAPPER = styled.div`
   width: 100%;
 `};
   ${({ theme }) => theme.mediaWidth.upToLarge`
-  height: auto;
+  height: 40vh;
   width: 100%;
 `}
 `

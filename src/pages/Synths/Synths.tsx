@@ -41,7 +41,7 @@ width: 100%;
 export const Synths: FC = () => {
   return (
     <WRAPPER>
-      <Row gutter={60} justify={'space-around'}>
+      <Row gutter={40} justify={'space-around'}>
         <Col flex={3}>
           <LEFTGRID>
             <TopContainer></TopContainer>

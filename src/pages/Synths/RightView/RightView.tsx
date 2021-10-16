@@ -7,6 +7,7 @@ import { MyStats } from './MyStats'
 
 const WRAPPER = styled.div`
   height: 'auto';
+  width: 50vh;
   padding: 0;
   margin: 0;
   color: ${({ theme }) => theme.text1};
