@@ -9,7 +9,7 @@ import { CollateralView } from './CollateralView'
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
   ${({ theme }) => theme.mediaWidth.fromLarge`
-  height: 45vh;
+  height: 50vh;
   width: 100%;
 `};
   ${({ theme }) => theme.mediaWidth.upToLarge`
