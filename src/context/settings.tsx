@@ -11,8 +11,16 @@ interface IEndpoint {
 }
 
 export const ENDPOINTS: IEndpoint[] = [
-  { chainId: ENV.MainnetBeta, endpoint: 'https://solana-api.projectserum.com', network: WalletAdapterNetwork.Mainnet },
-  { chainId: ENV.Devnet, endpoint: 'https://api.devnet.solana.com', network: WalletAdapterNetwork.Devnet }
+  {
+    chainId: ENV.MainnetBeta,
+    endpoint: 'https://solana-api.projectserum.com',
+    network: WalletAdapterNetwork.Mainnet
+  },
+  {
+    chainId: ENV.Devnet,
+    endpoint: 'https://restless-blue-leaf.solana-devnet.quiknode.pro/061fb972cd25346376ab1d7a93c2e8fc628ae60a/',
+    network: WalletAdapterNetwork.Devnet
+  }
 ]
 
 interface ISettingsConfig {
