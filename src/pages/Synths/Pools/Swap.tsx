@@ -2,9 +2,8 @@ import React, { FC, MouseEventHandler, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Button } from './shared'
-import { useConnectionConfig, useDarkMode, useSynths, useWalletModal } from '../../../context'
+import { SwapProvider, useAccounts, useDarkMode, useSwap, useWalletModal } from '../../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../../styles'
-import { ADDRESSES } from '../../../web3'
 
 enum State {
   Connect = 0,
@@ -19,28 +18,26 @@ const SWITCH = styled(CenteredImg)<{ measurements: number }>`
   cursor: pointer;
 `
 
-export const Swap: FC = () => {
-  const { network } = useConnectionConfig()
+const SwapContent: FC = () => {
+  const { getAmount } = useAccounts()
   const { mode } = useDarkMode()
-  const { swap } = useSynths()
+  const { inTokenAmount, swapTokens, tokenA, tokenB } = useSwap()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
   const state = useMemo(() => {
-    const { pools } = ADDRESSES[network]
-
     if (!wallet || !publicKey) {
       return State.Connect
-    // } else if (!tokenA || !tokenB) {
-    //  return State.Enter
-    // } else if (inTokenAmount === 0) {
-    //   return State.Enter
+    } else if (!tokenA || !tokenB) {
+      return State.Enter
+    } else if (inTokenAmount === 0) {
+      return State.Enter
     } else if (inTokenAmount > parseFloat(getAmount(tokenA.address))) {
       return State.BalanceExceeded
     } else {
       return State.CanSwap
     }
-  }, [network, publicKey, wallet])
+  }, [getAmount, inTokenAmount, publicKey, tokenA, tokenB, wallet])
 
   const buttonStatus = useMemo(() => {
     switch (state) {
@@ -62,10 +59,10 @@ export const Swap: FC = () => {
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
       if (!event.defaultPrevented) {
-        state === State.CanSwap ? swap() : !wallet ? setVisible(true) : connect().catch(() => {})
+        state === State.CanSwap ? swapTokens() : !wallet ? setVisible(true) : connect().catch(() => {})
       }
     },
-    [connect, setVisible, state, swap, wallet]
+    [connect, setVisible, state, swapTokens, wallet]
   )
 
   return (
@@ -85,5 +82,13 @@ export const Swap: FC = () => {
         <span>{content}</span>
       </Button>
     </>
+  )
+}
+
+export const Swap: FC = () => {
+  return (
+    <SwapProvider>
+      <SwapContent />
+    </SwapProvider>
   )
 }

@@ -3,7 +3,7 @@ import { WRAPPED_SOL_MINT } from '@project-serum/serum/lib/token-instructions'
 import { ENV, TokenInfo, TokenListProvider } from '@solana/spl-token-registry'
 import { useConnectionConfig } from './settings'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
-import { TOKEN_A, TOKEN_B } from '../web3'
+import { GOFX, TOKEN_B } from '../web3'
 
 interface ITokenRegistryConfig {
   getTokenInfoFromSymbol: (x: string) => TokenInfo | undefined
@@ -25,7 +25,7 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
       filteredList.push({ address: WRAPPED_SOL_MINT.toString(), chainId, decimals: 9, name: 'Solana', symbol: 'SOL' })
 
       if (chainId === ENV.Devnet) {
-        filteredList.push({ address: TOKEN_A, chainId, decimals: 9, name: 'Token A', symbol: 'TKNA' })
+        filteredList.push({ address: GOFX, chainId, decimals: 9, name: 'GooseFX', symbol: 'GOFX' })
         filteredList.push({ address: TOKEN_B, chainId, decimals: 9, name: 'Token B', symbol: 'TKNB' })
       }
 

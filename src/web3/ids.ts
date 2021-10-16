@@ -34,8 +34,25 @@ export const ADDRESSES: {
   }
 } = {
   'mainnet-beta': {
-    mints: {},
-    pools: {},
+    mints: {
+      GOFX: {
+        address: new PublicKey('2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'),
+        decimals: 9,
+        type: 'crypto'
+      },
+      gUSD: {
+        address: PublicKey.default,
+        decimals: 2,
+        type: 'synth'
+      },
+    },
+    pools: {
+      POOL_A: {
+        address: new PublicKey('4hkhVuQkpJJDhpvjEn65LmwuPnAZoMzjXdQ5FjW5KcpY'),
+        listing: new PublicKey('QwtKuSQcz8rdY5T3ZBavkoFZev777rcJ1BFWe5KHvVW'),
+        type: 'synth'
+      },
+    },
     programs: {
       pool: {
         address: PublicKey.default,
@@ -105,7 +122,7 @@ export const ADDRESSES: {
         listing: new PublicKey('QwtKuSQcz8rdY5T3ZBavkoFZev777rcJ1BFWe5KHvVW'),
         type: 'synth'
       },
-      'TKNA/TKNB': {
+      'GOFX/TKNB': {
         address: new PublicKey('Ga9vweHkkvxRVeadA3NRGx2RHfFs6w2t4hKRmBinQzYL'),
         listing: PublicKey.default,
         type: 'crypto'
@@ -124,5 +141,5 @@ export const ADDRESSES: {
   }
 }
 
-export const TOKEN_A = '2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'
+export const GOFX = '2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'
 export const TOKEN_B = '8FUPzLY58ojDaj5yh1MKwyJnGNhCDMbStbHNVkBQ9KjJ'
