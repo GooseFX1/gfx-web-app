@@ -35,8 +35,8 @@ export const Swap: FC = () => {
     //  return State.Enter
     // } else if (inTokenAmount === 0) {
     //   return State.Enter
-    // } else if (inTokenAmount > parseFloat(getAmount(tokenA.address))) {
-    //   return State.BalanceExceeded
+    } else if (inTokenAmount > parseFloat(getAmount(tokenA.address))) {
+      return State.BalanceExceeded
     } else {
       return State.CanSwap
     }
@@ -65,7 +65,7 @@ export const Swap: FC = () => {
         state === State.CanSwap ? swap() : !wallet ? setVisible(true) : connect().catch(() => {})
       }
     },
-    [connect, setVisible, state, swapTokens, wallet]
+    [connect, setVisible, state, swap, wallet]
   )
 
   return (

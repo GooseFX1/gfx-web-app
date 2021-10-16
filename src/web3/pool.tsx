@@ -241,8 +241,9 @@ const mint = async (
 }
 
 /* const swap = async (
-  amount: number,
   pool: string,
+  inTokenAmount: number,
+  outTokenAmount: number,
   inToken: string,
   outToken: string,
   wallet: any,
@@ -254,17 +255,22 @@ const mint = async (
   const { mints, programs, pools } = ADDRESSES[network]
   const tx = new Transaction()
 
+  const userOutTokenAta = await findAssociatedTokenAddress(wallet.publicKey, mints[outToken].address)
+  if (!(await connection.getAccountInfo(userOutTokenAta))) {
+    tx.add(createAssociatedTokenAccountIx(new PublicKey(mints[outToken].address), userOutTokenAta, wallet.publicKey))
+  }
+
   const accounts = {
     controller: programs.pool.controller,
     listing: pools[pool].listing,
-    inTokenMint: mints[inToken],
-    outTokenMint: mints[outToken],
+    inTokenMint: mints[inToken].address,
+    outTokenMint: mints[outToken].address,
     pool: pools[pool].address,
     priceAggregator: ADDRESSES[network].programs.pool.priceAggregator,
     tokenProgram: TOKEN_PROGRAM_ID,
     userAccount: await getUserAccountPublicKey(pool, wallet, network),
     userInTokenAta: await findAssociatedTokenAddress(wallet.publicKey, mints[inToken].address),
-    userOutTokenAta: await findAssociatedTokenAddress(wallet.publicKey, mints[outToken].address),
+    userOutTokenAta,
     userWallet: wallet.publicKey
   }
 
