@@ -1,15 +1,17 @@
 import React, { BaseSyntheticEvent, FC, MouseEventHandler, useCallback, useMemo } from 'react'
 import { Input } from 'antd'
 import styled, { css } from 'styled-components'
-import { useAccounts, useConnectionConfig, useDarkMode, useSynths } from '../../../context'
-import { SpaceBetweenDiv } from '../../../styles'
-import { ADDRESSES } from '../../../web3'
-import { MainButton } from '../../../components'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { SynthToken } from './SynthToken'
+import { MainButton } from '../../../components'
+import { useAccounts, useConnectionConfig, useDarkMode, useSynths, useWalletModal } from '../../../context'
+import { SpaceBetweenDiv } from '../../../styles'
+import { capitalizeFirstLetter } from '../../../utils'
+import { ADDRESSES } from '../../../web3'
 
 enum State {
   Connect = 0,
-  CanDeposit = 1,
+  CanExecute = 1,
   NullAmount = 2,
   BalanceExceeded = 3
 }
@@ -34,10 +36,25 @@ const AVAILABLE = styled.div`
   }
 `
 
+const BUTTON = styled(MainButton)`
+  margin-left: auto;
+`
+
+const GOFX = styled.div`
+  position: absolute;
+  bottom: 7px;
+  right: 10px;
+`
+
 const INPUT = styled.div`
+  position: relative;
   ${({ theme }) => theme.flexColumnNoWrap}
   width: 60%;
   margin-right: ${({ theme }) => theme.margins['3x']};
+`
+
+const INPUTS = styled(SpaceBetweenDiv)`
+  margin-bottom: ${({ theme }) => theme.margins['5x']};
 `
 
 const INPUT_HEADER = styled(SpaceBetweenDiv)`
@@ -50,8 +67,8 @@ const INPUT_HEADER = styled(SpaceBetweenDiv)`
   }
 
   > span:last-child {
-    color: ${({ theme }) => theme.text1h};    
-    
+    color: ${({ theme }) => theme.text1h};
+
     &:hover {
       color: ${({ theme }) => theme.text1};
       cursor: pointer;
@@ -59,14 +76,19 @@ const INPUT_HEADER = styled(SpaceBetweenDiv)`
   }
 `
 
-export const Deposit: FC = () => {
+export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action }) => {
   const { getUIAmount } = useAccounts()
   const { network } = useConnectionConfig()
   const { mode } = useDarkMode()
-  const { publicKey } = useWallet()
-  const { amount, setAmount } = useSynths()
+  const { connect, publicKey, wallet } = useWallet()
+  const { setVisible } = useWalletModal()
+  const { amount, deposit, setAmount, userAccount, withdraw } = useSynths()
 
-  const userBalance = useMemo(() => getUIAmount(ADDRESSES[network].mints.GOFX.address.toString()), [getUIAmount, network])
+  const userBalance = useMemo(
+    () =>
+      action === 'deposit' ? getUIAmount(ADDRESSES[network].mints.GOFX.address.toString()) : userAccount.collateral,
+    [action, getUIAmount, network, userAccount.collateral]
+  )
 
   const state = useMemo(() => {
     if (!publicKey) {
@@ -81,16 +103,35 @@ export const Deposit: FC = () => {
       return State.BalanceExceeded
     }
 
-    return State.CanDeposit
+    return State.CanExecute
   }, [amount, publicKey, userBalance])
+
+  const buttonStatus = useMemo(() => {
+    switch (state) {
+      case State.CanExecute:
+      case State.Connect:
+        return 'action'
+      case State.BalanceExceeded:
+        return 'not-allowed'
+      default:
+        return 'initial'
+    }
+  }, [state])
+
+  const canExecuteText = useMemo(() => capitalizeFirstLetter(action), [action])
+  const content = useMemo(
+    () => ['Connect wallet', canExecuteText, canExecuteText, 'Balance exceeded'][state],
+    [canExecuteText, state]
+  )
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
       if (!event.defaultPrevented) {
-        state === State.CanDeposit ? placeOrder() : !wallet ? setVisible(true) : connect().catch(() => {})
+        const f = action === 'deposit' ? deposit : withdraw
+        state === State.CanExecute ? f() : !wallet ? setVisible(true) : connect().catch(() => {})
       }
     },
-    [connect, placeOrder, setVisible, state, wallet]
+    [action, connect, deposit, setVisible, state, wallet, withdraw]
   )
 
   const localCSS = css`
@@ -105,23 +146,23 @@ export const Deposit: FC = () => {
 
   return (
     <>
-      <SpaceBetweenDiv>
+      <INPUTS>
         <style>{localCSS}</style>
         <INPUT>
           <INPUT_HEADER>
-            <span>Deposit</span>
-            <span onClick={() => setAmount(userBalance)}>
-              Use Max
-            </span>
+            <span>{capitalizeFirstLetter(action)}</span>
+            <span onClick={() => setAmount(userBalance)}>Use Max</span>
           </INPUT_HEADER>
           <Input
             maxLength={15}
             onChange={(x: BaseSyntheticEvent) => !isNaN(x.target.value) && setAmount(x.target.value)}
             pattern="\d+(\.\d+)?"
-            placeholder={'Amount to deposit'}
-            // suffix={<span>{ask}</span>}
+            placeholder={`Amount to ${action}`}
             value={amount || undefined}
           />
+          <GOFX>
+            <SynthToken token="GOFX" />
+          </GOFX>
         </INPUT>
         <AVAILABLE>
           <span>Available GOFX</span>
@@ -130,10 +171,10 @@ export const Deposit: FC = () => {
             <span>GOFX</span>
           </SpaceBetweenDiv>
         </AVAILABLE>
-      </SpaceBetweenDiv>
-      <MainButton height="50px" onClick={handleClick} status={buttonStatus} width="100%">
-        <span>test</span>
-      </MainButton>
+      </INPUTS>
+      <BUTTON height="50px" onClick={handleClick} status={buttonStatus} width="40%">
+        <span>{content}</span>
+      </BUTTON>
     </>
   )
 }

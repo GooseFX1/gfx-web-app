@@ -1,13 +1,12 @@
 import React, { FC, ReactNode, useState } from 'react'
 import styled from 'styled-components'
-import { Deposit } from './Deposit'
+import { DepositWithdraw } from './DepositWithdraw'
 import { PoolSelector } from './PoolSelector'
 import { SpaceBetweenDiv } from '../../../styles'
 
 import { MintView } from './MintView'
 import { SwapView } from './SwapView'
 import { BurnView } from './BurnView'
-import { WithdrawView } from './WithdrawView'
 import { RewardsView } from './RewardsView'
 
 const HEADER = styled(SpaceBetweenDiv)<{ $tab: number }>`
@@ -34,7 +33,8 @@ const HEADER = styled(SpaceBetweenDiv)<{ $tab: number }>`
 `
 
 const TAB = styled.div`
-  padding: ${({ theme }) => theme.margins['5x']} ${({ theme }) => theme.margins['3x']} ${({ theme }) => theme.margins['3x']};
+  padding: ${({ theme }) => theme.margins['5x']} ${({ theme }) => theme.margins['3x']}
+    ${({ theme }) => theme.margins['3x']};
 `
 
 const TABS = styled(SpaceBetweenDiv)`
@@ -53,11 +53,11 @@ export const Pools: FC = () => {
   const [tab, setTab] = useState(0)
 
   const tabs = [
-    { component: <Deposit />, display: 'Deposit' },
+    { component: <DepositWithdraw action="deposit" />, display: 'Deposit' },
     { component: <MintView />, display: 'Mint' },
     { component: <SwapView />, display: 'Swap' },
     { component: <BurnView />, display: 'Burn' },
-    { component: <WithdrawView />, display: 'Withdraw' },
+    { component: <DepositWithdraw action="withdraw" />, display: 'Withdraw' },
     { component: <RewardsView />, display: 'Rewards' }
   ] as { component: ReactNode; display: string }[]
 
@@ -73,9 +73,7 @@ export const Pools: FC = () => {
           ))}
         </TABS>
       </HEADER>
-      <TAB>
-        {tabs[tab].component}
-      </TAB>
+      <TAB>{tabs[tab].component}</TAB>
     </WRAPPER>
   )
 }
