@@ -5,11 +5,11 @@ import { RightView } from './RightView'
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
   ${({ theme }) => theme.mediaWidth.fromLarge`
-  height: 85vh;
+  height: 100vh;
   width: 100%;
 `};
   ${({ theme }) => theme.mediaWidth.upToLarge`
-  height: 85vh;
+  height: 100vh;
   width: 100%;
 `};
 

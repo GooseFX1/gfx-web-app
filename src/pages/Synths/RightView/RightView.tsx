@@ -6,6 +6,7 @@ import { Timeline } from './Timeline'
 import { MyStats } from './MyStats'
 
 const WRAPPER = styled.div`
+  height: 'auto';
   padding: 0;
   margin: 0;
   color: ${({ theme }) => theme.text1};

@@ -6,6 +6,18 @@ import { Row, Col, Select, Tabs } from 'antd'
 import { GtokensView } from './GtokensView'
 import { CollateralView } from './CollateralView'
 
+const WRAPPER = styled.div`
+  color: ${({ theme }) => theme.text1};
+  ${({ theme }) => theme.mediaWidth.fromLarge`
+  height: 40vh;
+  width: 100%;
+`};
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+  height: auto;
+  width: 100%;
+`}
+`
+
 const { TabPane } = Tabs
 
 const { Option } = Select
@@ -14,7 +26,7 @@ const Nav = ['gtokens', 'Collateral']
 
 export const BottomView: FC = () => {
   return (
-    <div>
+    <WRAPPER>
       <div
         style={{
           backgroundColor: '#121212',
@@ -42,6 +54,6 @@ export const BottomView: FC = () => {
           </TabPane>
         ))}
       </Tabs>
-    </div>
+    </WRAPPER>
   )
 }
