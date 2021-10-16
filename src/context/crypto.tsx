@@ -158,6 +158,11 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
             const market = await serum.getMarket(connection, selectedCrypto.pair)
             setSelectedCrypto((prevState) => ({ ...prevState, market }))
 
+            const asks = await serum.getAsks(connection, selectedCrypto.pair)
+            setOrderBook((prevState) => ({ ...prevState, asks: asks.getL2(20) }))
+            const bids = await serum.getBids(connection, selectedCrypto.pair)
+            setOrderBook((prevState) => ({ ...prevState, bids: bids.getL2(20) }))
+
             const subs = await Promise.all([
               serum.subscribeToOrderBook(connection, market, 'asks', (account, market) => {
                 const asks = Orderbook.decode(market, account.data).getL2(20)
