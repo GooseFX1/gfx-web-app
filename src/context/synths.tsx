@@ -12,7 +12,7 @@ interface IUserAccount {
 
 interface ISynthsConfig {
   amount: number
-  availableMints: [string, Mint][]
+  availableSynths: [string, Mint][]
   availablePools: [string, Pool][]
   burn: () => Promise<void>
   claim: () => Promise<void>
@@ -35,12 +35,12 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useWallet()
   const { mints, pools } = ADDRESSES[network]
 
-  const availableMints = useMemo(() => Object.entries(mints).filter(([_, { type }]) => type === 'synth'), [mints])
+  const availableSynths = useMemo(() => Object.entries(mints).filter(([_, { type }]) => type === 'synth'), [mints])
   const availablePools = useMemo(() => Object.entries(pools).filter(([_, { type }]) => type === 'synth'), [pools])
 
   const [amount, setAmount] = useState<number>(0)
   const [poolName, setPoolName] = useState<string>(availablePools[0][0])
-  const [synth, setSynth] = useState<string>(availableMints[0][0])
+  const [synth, setSynth] = useState<string>(availableSynths[0][0])
   const [userAccount, setUserAccount] = useState<IUserAccount>({ collateral: 150000, debt: 27000, value: 420000 })
 
   const burn = async () => {
@@ -124,7 +124,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     <SynthsContext.Provider
       value={{
         amount,
-        availableMints,
+        availableSynths,
         availablePools,
         burn,
         claim,
@@ -153,7 +153,7 @@ export const useSynths = (): ISynthsConfig => {
 
   return {
     amount: context.amount,
-    availableMints: context.availableMints,
+    availableSynths: context.availableSynths,
     availablePools: context.availablePools,
     burn: context.burn,
     claim: context.claim,

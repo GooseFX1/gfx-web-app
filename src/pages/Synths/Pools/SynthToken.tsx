@@ -13,13 +13,13 @@ const WRAPPER = styled(CenteredDiv)`
   }
 `
 
-export const SynthToken: FC<{ token: string }> = ({ token }) => {
+export const SynthToken: FC<{ synth: string }> = ({ synth }) => {
   return (
     <WRAPPER>
       <CenteredImg>
-        <img src={`${process.env.PUBLIC_URL}/img/synths/${token}.svg`} alt="" />
+        <img src={`${process.env.PUBLIC_URL}/img/synths/${synth}.svg`} alt="" />
       </CenteredImg>
-      <span>{token}</span>
+      <span>{synth}</span>
     </WRAPPER>
   )
 }

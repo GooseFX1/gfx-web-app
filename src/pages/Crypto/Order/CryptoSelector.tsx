@@ -5,12 +5,6 @@ import { ArrowDropdown } from '../../../components'
 import { AVAILABLE_MARKETS, useCrypto } from '../../../context'
 import { CenteredImg, SVGToWhite, TRADE_ORDER_WIDTH } from '../../../styles'
 
-const ARROW = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['2x'])};
-  margin-left: ${({ theme }) => theme.margins['2x']};
-  cursor: pointer;
-`
-
 const MAGNIFYING_GLASS = styled(CenteredImg)`
   position: absolute;
   top: 20px;
@@ -133,10 +127,6 @@ export const CryptoSelector: FC = () => {
       onClick={handleClick}
       overlay={<Overlay setArrowRotation={setArrowRotation} setVisible={setVisible} />}
       visible={visible}
-    >
-      <ARROW>
-        <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`} alt="" />
-      </ARROW>
-    </ArrowDropdown>
+    />
   )
 }

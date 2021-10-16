@@ -68,19 +68,34 @@ export const ADDRESSES: {
         decimals: 9,
         type: 'crypto'
       },
-      gBTC: {
+      gUSD: {
+        address: new PublicKey('8e9DijtBDU1swHentbMS91z5NkuWe1xos9dLX7A2R39J'),
+        decimals: 2,
+        type: 'synth'
+      },
+      gAAPL: {
         address: new PublicKey('HeprdyqtmWbxk9DNkiaLJkZimKf2juTdT8VdHDDd6ZbC'),
         decimals: 8,
         type: 'synth'
       },
-      gETH: {
+      gAMZN: {
         address: new PublicKey('4DLS3s4u4LEbDU1rT6h5qz5Gm58T6dJYHNNZpc9z887K'),
         decimals: 8,
         type: 'synth'
       },
-      gUSD: {
-        address: new PublicKey('8e9DijtBDU1swHentbMS91z5NkuWe1xos9dLX7A2R39J'),
-        decimals: 2,
+      gFB: {
+        address: new PublicKey('4DLS3s4u4LEbDU1rT6h5qz5Gm58T6dJYHNNZpc9z887K'),
+        decimals: 8,
+        type: 'synth'
+      },
+      gGOOGL: {
+        address: new PublicKey('4DLS3s4u4LEbDU1rT6h5qz5Gm58T6dJYHNNZpc9z887K'),
+        decimals: 8,
+        type: 'synth'
+      },
+      gTSLA: {
+        address: new PublicKey('4DLS3s4u4LEbDU1rT6h5qz5Gm58T6dJYHNNZpc9z887K'),
+        decimals: 8,
         type: 'synth'
       }
     },

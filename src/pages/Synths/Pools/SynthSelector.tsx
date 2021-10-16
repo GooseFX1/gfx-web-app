@@ -2,14 +2,16 @@ import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'reac
 import styled from 'styled-components'
 import { ArrowDropdown } from '../../../components'
 import { useSynths } from '../../../context'
-import { CenteredDiv } from '../../../styles'
+import { CenteredDiv, CenteredImg } from '../../../styles'
+import { SynthToken } from './SynthToken'
 
 const SELECTOR = styled.div`
   position: relative;
-  ${({ theme }) => theme.flexCenter}
-  flex-direction: column;
+  height: 160px;
+  width: 200px;
   padding: ${({ theme }) => theme.margins['1.5x']} 0;
   ${({ theme }) => theme.smallBorderRadius}
+  overflow-y: scroll;
   background-color: #525252;
 
   > span {
@@ -23,17 +25,32 @@ const SELECTOR = styled.div`
   }
 `
 
-const WRAPPER = styled(CenteredDiv)`
-  padding: ${({ theme }) => theme.margins['3x']};
-  ${({ theme }) => theme.largeBorderRadius}
-  ${({ theme }) => theme.largeShadow}
-  background-color: ${({ theme }) => theme.primary2};
+const SYNTH = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 24%;
+
+  &:hover {
+    background-color: #1f1f1f;
+    cursor: pointer;
+  }
+
+  > div {
+    ${({ theme }) => theme.measurements(theme.margins['3x'])}
+    margin-right: ${({ theme }) => theme.margins['2x']};
+  }
 
   > span {
-    margin-right: ${({ theme }) => theme.margins['3x']};
+    display: flex;
+    align-items: center;
+    padding: ${({ theme }) => theme.margins['1.5x']} 0;
     font-size: 12px;
     font-weight: bold;
-    color: white !important;
+
+    &:not(:last-child) {
+      margin-bottom: ${({ theme }) => theme.margins['1.5x']};
+    }
   }
 `
 
@@ -41,30 +58,33 @@ const Overlay: FC<{
   setArrowRotation: Dispatch<SetStateAction<boolean>>
   setVisible: Dispatch<SetStateAction<boolean>>
 }> = ({ setArrowRotation, setVisible }) => {
-  const { availablePools, setPoolName } = useSynths()
+  const { availableSynths, setSynth } = useSynths()
 
   const handleClick = useCallback(
-    (pool: string) => {
+    (synth: string) => {
       setArrowRotation(false)
-      setPoolName(pool)
+      setSynth(synth)
       setVisible(false)
     },
-    [setArrowRotation, setPoolName, setVisible]
+    [setArrowRotation, setSynth, setVisible]
   )
 
   return (
     <SELECTOR>
-      {availablePools.map(([pool], index) => (
-        <span key={index} onClick={() => handleClick(pool)}>
-          {pool}
-        </span>
+      {availableSynths.map(([synth], index) => (
+        <SYNTH key={index} onClick={() => handleClick(synth)}>
+          <CenteredImg>
+            <img src={`${process.env.PUBLIC_URL}/img/synths/${synth}.svg`} alt="" />
+          </CenteredImg>
+          <span>{synth}</span>
+        </SYNTH>
       ))}
     </SELECTOR>
   )
 }
 
-export const PoolSelector: FC = () => {
-  const { poolName } = useSynths()
+export const SynthSelector: FC = () => {
+  const { synth } = useSynths()
   const [arrowRotation, setArrowRotation] = useState(false)
   const [visible, setVisible] = useState(false)
 
@@ -74,17 +94,17 @@ export const PoolSelector: FC = () => {
   }
 
   return (
-    <WRAPPER>
-      <span>{poolName}</span>
+    <CenteredDiv>
+      <SynthToken synth={synth} />
       <ArrowDropdown
         arrowRotation={arrowRotation}
-        measurements="14px"
-        offset={[28, 30]}
+        measurements="12px"
+        offset={[10, 30]}
         onVisibleChange={handleClick}
         onClick={handleClick}
         overlay={<Overlay setArrowRotation={setArrowRotation} setVisible={setVisible} />}
         visible={visible}
       />
-    </WRAPPER>
+    </CenteredDiv>
   )
 }

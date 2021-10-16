@@ -2,7 +2,7 @@ import React, { BaseSyntheticEvent, FC, MouseEventHandler, useCallback, useMemo 
 import { Input } from 'antd'
 import styled, { css } from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { SynthToken } from './SynthToken'
+import { SynthSelector } from './SynthSelector'
 import { MainButton } from '../../../components'
 import { useAccounts, useConnectionConfig, useDarkMode, useSynths, useWalletModal } from '../../../context'
 import { SpaceBetweenDiv } from '../../../styles'
@@ -13,7 +13,7 @@ enum State {
   Connect = 0,
   CanExecute = 1,
   NullAmount = 2,
-  BalanceExceeded = 3
+  AvailableAmountExceeded = 3
 }
 
 const AVAILABLE = styled.div`
@@ -38,6 +38,12 @@ const AVAILABLE = styled.div`
 
 const BUTTON = styled(MainButton)`
   margin-left: auto;
+`
+
+const SELECTOR = styled.div`
+  position: absolute;
+  bottom: 7px;
+  right: 10px;
 `
 
 const INPUT = styled.div`
@@ -70,24 +76,18 @@ const INPUT_HEADER = styled(SpaceBetweenDiv)`
   }
 `
 
-const SYNTH = styled.div`
-  position: absolute;
-  bottom: 7px;
-  right: 10px;
-`
-
-export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action }) => {
+export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
   const { getUIAmount } = useAccounts()
   const { network } = useConnectionConfig()
   const { mode } = useDarkMode()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
-  const { amount, deposit, setAmount, userAccount, withdraw } = useSynths()
+  const { amount, burn, mint, setAmount, synth, userAccount } = useSynths()
 
+  const cRatioExceeded = useMemo(() => false, [])
   const userBalance = useMemo(
-    () =>
-      action === 'deposit' ? getUIAmount(ADDRESSES[network].mints.GOFX.address.toString()) : userAccount.collateral,
-    [action, getUIAmount, network, userAccount.collateral]
+    () => getUIAmount(ADDRESSES[network].mints[synth].address.toString()),
+    [getUIAmount, network, synth]
   )
 
   const state = useMemo(() => {
@@ -99,19 +99,19 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
       return State.NullAmount
     }
 
-    if (amount > userBalance) {
-      return State.BalanceExceeded
+    if ((action === 'burn' && amount > userBalance) || (action === 'mint' && cRatioExceeded)) {
+      return State.AvailableAmountExceeded
     }
 
     return State.CanExecute
-  }, [amount, publicKey, userBalance])
+  }, [action, amount, cRatioExceeded, publicKey, userBalance])
 
   const buttonStatus = useMemo(() => {
     switch (state) {
       case State.CanExecute:
       case State.Connect:
         return 'action'
-      case State.BalanceExceeded:
+      case State.AvailableAmountExceeded:
         return 'not-allowed'
       default:
         return 'initial'
@@ -120,18 +120,18 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
 
   const canExecuteText = useMemo(() => capitalizeFirstLetter(action), [action])
   const content = useMemo(
-    () => ['Connect wallet', canExecuteText, canExecuteText, 'Balance exceeded'][state],
+    () => ['Connect wallet', canExecuteText, canExecuteText, 'Available amount exceeded'][state],
     [canExecuteText, state]
   )
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
       if (!event.defaultPrevented) {
-        const f = action === 'deposit' ? deposit : withdraw
+        const f = action === 'burn' ? burn : mint
         state === State.CanExecute ? f() : !wallet ? setVisible(true) : connect().catch(() => {})
       }
     },
-    [action, connect, deposit, setVisible, state, wallet, withdraw]
+    [action, burn, connect, mint, setVisible, state, wallet]
   )
 
   const localCSS = css`
@@ -160,14 +160,14 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
             placeholder={`Amount to ${action}`}
             value={amount || undefined}
           />
-          <SYNTH>
-            <SynthToken synth="GOFX" />
-          </SYNTH>
+          <SELECTOR>
+            <SynthSelector />
+          </SELECTOR>
         </INPUT>
         <AVAILABLE>
           <span>Available GOFX</span>
           <SpaceBetweenDiv>
-            <span>{userBalance}</span>
+            <span>{userAccount.collateral}</span>
             <span>GOFX</span>
           </SpaceBetweenDiv>
         </AVAILABLE>

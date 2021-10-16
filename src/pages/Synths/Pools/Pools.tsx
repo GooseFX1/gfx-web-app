@@ -1,13 +1,12 @@
 import React, { FC, ReactNode, useState } from 'react'
 import styled from 'styled-components'
+import { Claim } from './Claim'
 import { DepositWithdraw } from './DepositWithdraw'
+import { MintBurn } from './MintBurn'
 import { PoolSelector } from './PoolSelector'
 import { SpaceBetweenDiv } from '../../../styles'
 
-import { MintView } from './MintView'
 import { SwapView } from './SwapView'
-import { BurnView } from './BurnView'
-import { RewardsView } from './RewardsView'
 
 const HEADER = styled(SpaceBetweenDiv)<{ $tab: number }>`
   ${({ theme }) => theme.largeBorderRadius}
@@ -54,11 +53,11 @@ export const Pools: FC = () => {
 
   const tabs = [
     { component: <DepositWithdraw action="deposit" />, display: 'Deposit' },
-    { component: <MintView />, display: 'Mint' },
+    { component: <MintBurn action="mint" />, display: 'Mint' },
     { component: <SwapView />, display: 'Swap' },
-    { component: <BurnView />, display: 'Burn' },
+    { component: <MintBurn action="burn" />, display: 'Burn' },
     { component: <DepositWithdraw action="withdraw" />, display: 'Withdraw' },
-    { component: <RewardsView />, display: 'Rewards' }
+    { component: <Claim />, display: 'Rewards' }
   ] as { component: ReactNode; display: string }[]
 
   return (
