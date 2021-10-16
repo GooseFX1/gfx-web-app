@@ -11,12 +11,13 @@ const WRAPPER = styled.div`
   width: 100%;
 `};
   ${({ theme }) => theme.mediaWidth.upToLarge`
-height: auto;
+height: 100%;
 width: 100%;
 `};
 `
 const CONT = styled.div`
-  margin-bottom: 40px;
+  height: 'auto';
+  padding-bottom: 30px;
 `
 
 const BOTTOMTAB = styled.div`
