@@ -5,7 +5,7 @@ import { Tooltip } from '../../../components'
 import { SpaceBetweenDiv } from '../../../styles'
 
 const PROGRESS_BAR = styled(Progress)`
-  width: 170px;
+  flex: 1;
   margin: 0 ${({ theme }) => theme.margins['3x']};
 `
 
@@ -23,9 +23,10 @@ const WRAPPER = styled.div`
   align-items: center;
 
   > span {
-    flex: 1;
+    width: 100px;
     font-size: 11px;
     text-align: right;
+    white-space: nowrap;
     color: ${({ theme }) => theme.text1};
   }
 `

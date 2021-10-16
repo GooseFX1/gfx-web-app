@@ -1,9 +1,9 @@
 import React, { FC, ReactNode, useState } from 'react'
 import styled from 'styled-components'
+import { Deposit } from './Deposit'
 import { PoolSelector } from './PoolSelector'
 import { SpaceBetweenDiv } from '../../../styles'
 
-import { DepositView } from './DepositView'
 import { MintView } from './MintView'
 import { SwapView } from './SwapView'
 import { BurnView } from './BurnView'
@@ -33,31 +33,27 @@ const HEADER = styled(SpaceBetweenDiv)<{ $tab: number }>`
   }
 `
 
+const TAB = styled.div`
+  padding: ${({ theme }) => theme.margins['5x']} ${({ theme }) => theme.margins['3x']} ${({ theme }) => theme.margins['3x']};
+`
+
 const TABS = styled(SpaceBetweenDiv)`
   flex: 1;
   padding: ${({ theme }) => theme.margins['3x']} ${({ theme }) => theme.margins['4x']};
 `
 
 const WRAPPER = styled.div`
-  color: ${({ theme }) => theme.text1};
-  ${({ theme }) => theme.mediaWidth.fromLarge`
-  height: auto;
-  width: 100%;
-`};
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-height: auto;
-width: 100%;
-`};
-  ${({ theme }) => theme.largeBorderRadius};
-  background-color: ${({ theme }) => theme.bg3};
+  height: 100%;
+  ${({ theme }) => theme.largeBorderRadius}
   ${({ theme }) => theme.largeShadow}
+  background-color: ${({ theme }) => theme.bg3};
 `
 
 export const Pools: FC = () => {
   const [tab, setTab] = useState(0)
 
   const tabs = [
-    { component: <DepositView />, display: 'Deposit' },
+    { component: <Deposit />, display: 'Deposit' },
     { component: <MintView />, display: 'Mint' },
     { component: <SwapView />, display: 'Swap' },
     { component: <BurnView />, display: 'Burn' },
@@ -77,7 +73,9 @@ export const Pools: FC = () => {
           ))}
         </TABS>
       </HEADER>
-      {tabs[tab].component}
+      <TAB>
+        {tabs[tab].component}
+      </TAB>
     </WRAPPER>
   )
 }

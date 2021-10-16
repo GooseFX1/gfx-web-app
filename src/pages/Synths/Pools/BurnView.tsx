@@ -36,7 +36,8 @@ const INPUT = styled.div`
 export const BurnView: FC = () => {
   const { Option } = Select
 
-  return (
+  return <div>A</div>
+  /* return (
     <Frame
       rowGutterValue={45}
       firstColFlexValue={4}
@@ -141,5 +142,5 @@ export const BurnView: FC = () => {
         </MainButton>
       }
     ></Frame>
-  )
+  ) */
 }

@@ -31,7 +31,8 @@ const INPUT = styled.div`
 `
 
 export const RewardsView: FC = () => {
-  return (
+  return <div>A</div>
+  /* return (
     <Frame
       rowGutterValue={25}
       firstColFlexValue={2.5}
@@ -92,5 +93,5 @@ export const RewardsView: FC = () => {
         </MainButton>
       }
     ></Frame>
-  )
+  ) */
 }

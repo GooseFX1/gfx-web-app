@@ -19,7 +19,8 @@ const SELECTOR = styled.div`
   background-color: #525252;
 
   > span {
-    padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['8x']};
+    padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['6x']};
+    font-weight: bold;
 
     &:hover {
       background-color: #1f1f1f;
@@ -31,13 +32,14 @@ const SELECTOR = styled.div`
 const WRAPPER = styled(CenteredDiv)`
   padding: ${({ theme }) => theme.margins['3x']};
   ${({ theme }) => theme.largeBorderRadius}
+  ${({ theme }) => theme.largeShadow}
   background-color: ${({ theme }) => theme.primary2};
 
   > span {
     margin-right: ${({ theme }) => theme.margins['3x']};
     font-size: 12px;
     font-weight: bold;
-    color: white;
+    color: white !important;
   }
 `
 
@@ -83,7 +85,7 @@ export const PoolSelector: FC = () => {
       <ArrowDropdown
         arrowRotation={arrowRotation}
         measurements="16px"
-        offset={[40, 30]}
+        offset={[28, 30]}
         onVisibleChange={handleClick}
         onClick={handleClick}
         overlay={<Overlay setArrowRotation={setArrowRotation} setVisible={setVisible} />}

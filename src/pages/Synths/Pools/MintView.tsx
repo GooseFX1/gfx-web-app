@@ -36,8 +36,9 @@ const INPUT = styled.div`
 export const MintView: FC = () => {
   const { Option } = Select
 
-  return (
-    <Frame
+  return <div>A</div>
+  /* return (
+    {<Frame
       rowGutterValue={45}
       firstColFlexValue={4}
       secondColFlexValue={1.5}
@@ -141,5 +142,5 @@ export const MintView: FC = () => {
         </MainButton>
       }
     ></Frame>
-  )
+  ) */
 }

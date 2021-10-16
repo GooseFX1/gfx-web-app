@@ -31,7 +31,8 @@ const INPUT = styled.div`
 `
 
 export const WithdrawView: FC = () => {
-  return (
+  return <div>A</div>
+  /* return (
     <Frame
       rowGutterValue={45}
       firstColFlexValue={4}
@@ -92,5 +93,5 @@ export const WithdrawView: FC = () => {
         </MainButton>
       }
     ></Frame>
-  )
+  ) */
 }

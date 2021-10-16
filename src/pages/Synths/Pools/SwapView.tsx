@@ -54,7 +54,8 @@ export const SwapView: FC = () => {
       font-size: 16px;
     }
   `
-  return (
+  return <div>A</div>
+  /* return (
     <SwapFrame
       rowGutterValue={25}
       firstColFlexValue={2}
@@ -99,5 +100,5 @@ export const SwapView: FC = () => {
         </div>
       }
     ></SwapFrame>
-  )
+  ) */
 }
