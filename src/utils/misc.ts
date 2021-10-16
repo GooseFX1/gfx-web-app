@@ -55,6 +55,11 @@ export function flatten(
   return result
 }
 
+export function monetaryFormatValue(n: number): string {
+  const formatter = Intl.NumberFormat('en-US')
+  return formatter.format(n)
+}
+
 export function shortenAddress(address: string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`
 }

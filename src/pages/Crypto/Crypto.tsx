@@ -26,7 +26,7 @@ const WRAPPER = styled.div`
   }
 `
 
-const TradeContent: FC = () => {
+const CryptoContent: FC = () => {
   const { selectedCrypto } = useCrypto()
   const [chartsVisible, setChartsVisible] = useState(true)
 
@@ -52,7 +52,7 @@ const TradeContent: FC = () => {
 export const Crypto: FC = () => {
   return (
     <CryptoProvider>
-      <TradeContent />
+      <CryptoContent />
     </CryptoProvider>
   )
 }

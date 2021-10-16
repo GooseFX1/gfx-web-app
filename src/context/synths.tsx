@@ -6,6 +6,12 @@ import { ADDRESSES, pool } from '../web3'
 
 type SynthAction = 'burn' | 'claim' | 'deposit' | 'mint' | 'swap' | 'withdraw'
 
+interface IUserAccount {
+  collateral: number
+  debt: number
+  value: number
+}
+
 interface ISynthsConfig {
   action: SynthAction
   amount: number
@@ -18,7 +24,9 @@ interface ISynthsConfig {
   setAmount: Dispatch<SetStateAction<number>>
   setPoolName: Dispatch<SetStateAction<string>>
   setSynth: Dispatch<SetStateAction<string>>
+  setUserAccount: Dispatch<SetStateAction<IUserAccount>>
   synth: string
+  userAccount: IUserAccount
   withdraw: () => Promise<void>
 }
 
@@ -29,11 +37,12 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useWallet()
   const { mints, pools } = ADDRESSES[network]
   const [action, setAction] = useState<SynthAction>('deposit')
-  // const [amount, setAmount] = useState<number>(0)
-  const [amount, setAmount] = useState<number>(5000)
-  const [poolName, setPoolName] = useState<string>(Object.entries(pools).filter(([_, { type }]) => type === 'synth')[0][0])
-  // const [synth, setSynth] = useState<string>(Object.entries(mints).filter(([_, { type }]) => type === 'synth')[0][0])
-  const [synth, setSynth] = useState<string>('gUSD')
+  const [amount, setAmount] = useState<number>(0)
+  const [poolName, setPoolName] = useState<string>(
+    Object.entries(pools).filter(([_, { type }]) => type === 'synth')[0][0]
+  )
+  const [synth, setSynth] = useState<string>(Object.entries(mints).filter(([_, { type }]) => type === 'synth')[0][0])
+  const [userAccount, setUserAccount] = useState<IUserAccount>({ collateral: 150000, debt: 27000, value: 420000 })
 
   const burn = async () => {
     try {
@@ -126,7 +135,9 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setAmount,
         setPoolName,
         setSynth,
+        setUserAccount,
         synth,
+        userAccount,
         withdraw
       }}
     >
@@ -153,7 +164,9 @@ export const useSynths = (): ISynthsConfig => {
     setAmount: context.setAmount,
     setPoolName: context.setPoolName,
     setSynth: context.setSynth,
+    setUserAccount: context.setUserAccount,
     synth: context.synth,
+    userAccount: context.userAccount,
     withdraw: context.withdraw
   }
 }
