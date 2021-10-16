@@ -1,11 +1,13 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 import { Header } from './Header'
-import Chart from './Chart'
+import AreaChart from './AreaChart'
 import { Timeline } from './Timeline'
 import { MyStats } from './MyStats'
 
 const WRAPPER = styled.div`
+  height: 'auto';
+  width: 50vh;
   padding: 0;
   margin: 0;
   color: ${({ theme }) => theme.text1};
@@ -15,7 +17,7 @@ export const RightView: FC = () => {
   return (
     <WRAPPER>
       <Header></Header>
-      <Chart></Chart>
+      <AreaChart></AreaChart>
       <Timeline></Timeline>
       <MyStats></MyStats>
     </WRAPPER>

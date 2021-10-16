@@ -5,11 +5,11 @@ import { BottomView } from './BottomView'
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
   ${({ theme }) => theme.mediaWidth.fromLarge`
-  height: 50%;
+  height: auto;
   width: 100%;
 `};
   ${({ theme }) => theme.mediaWidth.upToLarge`
-height: 55%;
+height: auto;
 width: 100%;
 `};
   margin-top: 7%;

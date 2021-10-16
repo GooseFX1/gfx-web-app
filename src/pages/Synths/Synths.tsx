@@ -17,11 +17,11 @@ const WRAPPER = styled.div`
 
 const LEFTGRID = styled.div`
   ${({ theme }) => theme.mediaWidth.fromLarge`
-height: 85vh;
+height: auto;
 width: 100%;
 `};
   ${({ theme }) => theme.mediaWidth.upToLarge`
-height: 85vh;
+height: auto;
 width: 100%;
 
 `};
@@ -29,12 +29,12 @@ width: 100%;
 `
 const RIGHTGRID = styled.div`
   ${({ theme }) => theme.mediaWidth.fromLarge`
-  height: 85vh;
-  width: 30vw;
+  height: 80vh;
+  width: 100%;
 `};
   ${({ theme }) => theme.mediaWidth.upToLarge`
-height: 85vh;
-width: 375px;
+height: 80vh;
+width: 100%;
 `};
   margin-top: ${({ theme }) => theme.margins['8x']};
 `
@@ -56,8 +56,8 @@ const A: FC = () => {
 export const Synths: FC = () => {
   return (
     <WRAPPER>
-      <Row gutter={60}>
-        <Col flex={3.75}>
+      <Row gutter={40} justify={'space-around'}>
+        <Col flex={3}>
           <LEFTGRID>
             <TopContainer></TopContainer>
             <BottomContainer></BottomContainer>

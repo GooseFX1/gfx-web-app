@@ -5,11 +5,11 @@ import { TopView } from './TopView'
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
   ${({ theme }) => theme.mediaWidth.fromLarge`
-  height: 45%;
+  height: auto;
   width: 100%;
 `};
   ${({ theme }) => theme.mediaWidth.upToLarge`
-height: 45%;
+height: auto;
 width: 100%;
 `};
   ${({ theme }) => theme.largeBorderRadius};

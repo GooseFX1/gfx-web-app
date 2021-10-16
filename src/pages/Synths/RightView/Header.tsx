@@ -40,9 +40,7 @@ export const Header: FC = () => {
         <Row align={'middle'}>
           <TITLE>My Portfolio</TITLE>
           <POSITION>
-            <Tooltip>
-              The minimum amount on how many tokens you will accept, in the event that the price increases or decreases.
-            </Tooltip>
+            <Tooltip>The current USD denominated value of your portfolio.</Tooltip>
           </POSITION>
         </Row>
         <Row>
