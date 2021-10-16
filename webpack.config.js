@@ -5,22 +5,10 @@ module.exports = {
   module: {
     rules: [
       {
-        loader: require.resolve('file-loader'),
-        exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/, /\.wasm$/],
-      },
-      {
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
       },
-      {
-        test: /\.wasm$/,
-        include: path.resolve(__dirname, "src"),
-        use: [{
-          loader: require.resolve("wasm-loader"),
-          options: {}
-        }],
-      }
     ],
   },
   resolve: {

@@ -5,8 +5,14 @@ import { WalletContextState } from '@solana/wallet-adapter-react'
 import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 import { ADDRESSES } from './ids'
 import { createAssociatedTokenAccountIx, findAssociatedTokenAddress, signAndSendRawTransaction } from './utils'
-import { Decimal, decimalToNumber } from 'decimaljs_bg/decimal'
 const PoolIDL = require('./idl/pool.json')
+
+type Decimal = {
+  flags: number
+  hi: number
+  mid: number
+  lo: number
+}
 
 type UserAccount = {
   bump: number
@@ -88,7 +94,9 @@ const claim = async (
   }
 
   const { collateralAmount } = (await account.userAccount.fetch(userAccount)) as UserAccount
-  const amount = decimalToNumber(collateralAmount)
+  const { flags, hi, mid, lo } = collateralAmount
+  // const amount = (await import("decimaljs_bg")).decimal2number(flags, hi, lo, mid)
+  const amount = (await import("wasm")).add_two_ints(1, 2)
   console.log(amount)
 
   const userAta = await findAssociatedTokenAddress(wallet.publicKey, mints.gUSD.address)
