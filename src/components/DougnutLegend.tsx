@@ -19,7 +19,7 @@ const VALUE = styled.span`
   font-size: 12px;
   font-family: 'Montserrat';
   font-weight: 500;
-  width: 75px;
+  width: 60px;
   margin-left: 10px;
   text-align: left;
 `
