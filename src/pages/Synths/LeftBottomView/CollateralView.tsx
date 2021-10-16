@@ -1,7 +1,8 @@
 import { FC } from 'react'
 import styled from 'styled-components'
-import { BottomView } from './BottomView'
 import DoughnutChart from './DoughnutChart'
+import { Row, Col, Select, Tabs } from 'antd'
+import { DoughnutLegend } from '../../../components/DougnutLegend'
 
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -14,29 +15,75 @@ height: auto;
 width: 100%;
 `};
 `
+const BOTTOMTAB = styled.div`
+  height: 40px;
+  background-color: #121212;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+`
+
+const TITLE = styled.span`
+  background-color: #2a2a2a;
+  font-size: 15px;
+  font-family: 'Montserrat';
+  font-weight: 500;
+  display: flex;
+  justify-content: left;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 60px;
+`
+
+const LEFT = styled.div`
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding-top: 20px;
+  padding-left: 15px;
+  padding-bottom: 20px;
+`
 
 const CENTER = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 30px;
-  padding-bottom: 35px;
+  padding-top: 0px;
+  padding-bottom: 30px;
+`
+
+const RIGHT = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
+  padding-bottom: 30px;
 `
 
 export const CollateralView: FC = () => {
   return (
     <WRAPPER>
-      <div
-        style={{
-          height: 40,
-          backgroundColor: '#121212',
-          borderBottomLeftRadius: 20,
-          borderBottomRightRadius: 20
-        }}
-      ></div>
-      <CENTER>
-        <DoughnutChart />
-      </CENTER>
+      <BOTTOMTAB />
+      <div style={{ height: 'auto', overflow: 'auto' }}>
+        <TITLE>Collateral Structure</TITLE>
+
+        <Row align={'top'} justify={'space-around'}>
+          <LEFT>
+            <Col flex={2}>
+              <DoughnutLegend backgroundColor={'#7d338c'} value={'gUSD'} percentage={'50%'} />
+              <DoughnutLegend backgroundColor={'#bc4747'} value={'gTSLA'} percentage={'25%'} />
+              <DoughnutLegend backgroundColor={'#5a58e9'} value={'gFB'} percentage={'15%'} />
+            </Col>
+          </LEFT>
+          <CENTER>
+            <DoughnutChart />
+          </CENTER>
+          <RIGHT>
+            <Col flex={2}>
+              <DoughnutLegend backgroundColor={'#379620'} value={'gGOOG'} percentage={'10%'} />
+            </Col>
+          </RIGHT>
+        </Row>
+      </div>
     </WRAPPER>
   )
 }
