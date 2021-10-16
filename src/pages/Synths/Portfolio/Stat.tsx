@@ -31,10 +31,10 @@ const WRAPPER = styled.div`
 `
 
 export const Stat: FC<{
-  title: string
-  tooltip: string
   percent: number
   strokeColor: string
+  title: string
+  tooltip: string
   trailColor: string
   value: string
 }> = ({ title, tooltip, percent, strokeColor, trailColor, value }) => {

@@ -31,10 +31,11 @@ export const Stats: FC = () => {
   const { userAccount } = useSynths()
   const trailColor = mode === 'dark' ? '#1e1e1e' : '#e2e2e2'
 
-  const cRatio = useMemo(() => {
-    const percentage = (userAccount.collateral / userAccount.debt) * 100
-    return `${percentage.toFixed(2)}%`
-  }, [userAccount.collateral, userAccount.debt])
+  const cRatio = useMemo(
+    () => 100 / (userAccount.debt / userAccount.collateral),
+    [userAccount.collateral, userAccount.debt]
+  )
+  const cRatioPercentage = useMemo(() => cRatio - 100, [cRatio])
 
   return (
     <WRAPPER>
@@ -62,10 +63,10 @@ export const Stats: FC = () => {
         tooltip={
           'Current value of your debt based on the debt of the platform. Max borrow represents the maximal debt that you can mint - if your debt increases beyond this value, your position can be liquidated. You can mint if and only if your collateral ratio is greater than 200%, and you may be liquidated if your collateral ratio falls below 120%.'
         }
-        percent={50}
-        strokeColor={'#bb7535'}
+        percent={cRatioPercentage}
+        strokeColor={cRatioPercentage > 45 ? '#27AE60' : cRatioPercentage > 30 ? '#bb7535' : '#D60000'}
         trailColor={trailColor}
-        value={cRatio}
+        value={`${cRatio.toFixed(2)}%`}
       />
     </WRAPPER>
   )
