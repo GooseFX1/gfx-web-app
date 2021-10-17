@@ -31,10 +31,10 @@ export const Stats: FC = () => {
   const { userAccount } = useSynths()
   const trailColor = mode === 'dark' ? '#1e1e1e' : '#e2e2e2'
 
-  const cRatio = useMemo(
-    () => 100 / (userAccount.debt / userAccount.collateral),
-    [userAccount.collateral, userAccount.debt]
-  )
+  const cRatio = useMemo(() => {
+    const { collateral, debt } = userAccount
+    return !collateral || !debt ? 0 : 100 / (userAccount.debt / userAccount.collateral)
+  }, [userAccount])
   const cRatioPercentage = useMemo(() => cRatio - 100, [cRatio])
 
   return (

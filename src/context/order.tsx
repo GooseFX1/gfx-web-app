@@ -18,7 +18,7 @@ import { useCrypto } from './crypto'
 import { useConnectionConfig } from './settings'
 import { useTradeHistory } from './trade_history'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
-import { capitalizeFirstLetter, decimalModulo, floorValue, notify, removeFloatingPointError } from '../utils'
+import { capitalizeFirstLetter, floorValue, notify, removeFloatingPointError } from '../utils'
 import { crypto } from '../web3'
 
 type OrderInput = undefined | 'price' | 'size' | 'total'
