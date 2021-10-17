@@ -40,7 +40,7 @@ const REWARDS = styled(SpaceBetweenDiv)`
 export const Claim: FC = () => {
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
-  const { claim, userAccount } = useSynths()
+  const { claim, loading, userAccount } = useSynths()
 
   const allTime = useMemo(() => '?', [])
   const current = useMemo(() => userAccount.fees, [userAccount.fees])
@@ -100,7 +100,7 @@ export const Claim: FC = () => {
           </SpaceBetweenDiv>
         </div>
       </REWARDS>
-      <Button height="50px" onClick={handleClick} status={buttonStatus} width="40%">
+      <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
         <span>{content}</span>
       </Button>
     </>

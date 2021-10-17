@@ -35,6 +35,7 @@ interface ISynthsConfig {
   burn: () => Promise<void>
   claim: () => Promise<void>
   deposit: () => Promise<void>
+  loading: boolean
   mint: () => Promise<void>
   poolName: string
   setAmount: Dispatch<SetStateAction<number>>
@@ -59,11 +60,14 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const availablePools = useMemo(() => Object.entries(pools).filter(([_, { type }]) => type === 'synth'), [pools])
 
   const [amount, setAmount] = useState<number>(0)
+  const [loading, setLoading] = useState(false)
   const [poolName, setPoolName] = useState<string>(availablePools[0][0])
   const [synth, setSynth] = useState<string>(availableSynths[0][0])
   const [userAccount, setUserAccount] = useState<IUserAccount>(DEFAULT_USER_ACCOUNT)
 
   const burn = async () => {
+    setLoading(true)
+
     try {
       const signature = await pool.burn(amount, poolName, synth, wallet, connection, network)
       notify({
@@ -76,10 +80,14 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } catch (e: any) {
       notify({ type: 'error', message: `Error burning`, icon: 'error' }, e)
     }
+
+    setLoading(false)
   }
 
   const claim = async () => {
     if (wallet.publicKey && wallet.signTransaction) {
+      setLoading(true)
+
       try {
         const [signature, amount] = await pool.claim(poolName, wallet, connection, network)
         notify({
@@ -92,10 +100,14 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       } catch (e: any) {
         notify({ type: 'error', message: `Error claiming`, icon: 'error' }, e)
       }
+
+      setLoading(false)
     }
   }
 
   const deposit = async () => {
+    setLoading(true)
+
     try {
       const signature = await pool.deposit(amount, poolName, wallet, connection, network)
       notify({
@@ -108,9 +120,13 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } catch (e: any) {
       notify({ type: 'error', message: `Error depositing`, icon: 'error' }, e)
     }
+
+    setLoading(false)
   }
 
   const mint = async () => {
+    setLoading(true)
+
     try {
       const signature = await pool.mint(amount, poolName, synth, wallet, connection, network)
       notify({
@@ -123,9 +139,13 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } catch (e: any) {
       notify({ type: 'error', message: `Error minting`, icon: 'error' }, e)
     }
+
+    setLoading(false)
   }
 
   const withdraw = async () => {
+    setLoading(true)
+
     try {
       const signature = await pool.withdraw(amount, poolName, wallet, connection, network)
       notify({
@@ -138,13 +158,15 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } catch (e: any) {
       notify({ type: 'error', message: `Error withdrawing`, icon: 'error' }, e)
     }
+
+    setLoading(false)
   }
 
   useEffect(() => {
     const subscriptions: number[] = []
 
     const updateUserAccount = async () => {
-      const { decimal2number } = (await import("decimaljs_bg"))
+      const { decimal2number } = await import('decimaljs_bg')
       const userAccountFieldToNumber = (x: Decimal) => decimal2number(x.flags, x.hi, x.lo, x.mid)
 
       const userAccount = await pool.userAccount(poolName, wallet, connection, network)
@@ -158,10 +180,11 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
     }
 
-    wallet.publicKey && updateUserAccount().then(async () => {
-      const userAccountAta = await pool.getUserAccountPublicKey(poolName, wallet, network)
-      subscriptions.push(connection.onAccountChange(userAccountAta, updateUserAccount))
-    })
+    wallet.publicKey &&
+      updateUserAccount().then(async () => {
+        const userAccountAta = await pool.getUserAccountPublicKey(poolName, wallet, network)
+        subscriptions.push(connection.onAccountChange(userAccountAta, updateUserAccount))
+      })
 
     return () => {
       setUserAccount(DEFAULT_USER_ACCOUNT)
@@ -178,6 +201,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         burn,
         claim,
         deposit,
+        loading,
         mint,
         poolName,
         setAmount,
@@ -207,6 +231,7 @@ export const useSynths = (): ISynthsConfig => {
     burn: context.burn,
     claim: context.claim,
     deposit: context.deposit,
+    loading: context.loading,
     mint: context.mint,
     poolName: context.poolName,
     setAmount: context.setAmount,

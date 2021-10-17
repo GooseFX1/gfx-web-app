@@ -16,7 +16,7 @@ const WRAPPER = styled(CenteredDiv)`
 
 export const Balances: FC = () => {
   const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto } = useCrypto()
-  const { getPairFromMarketAddress, openOrders, settleFunds } = useTradeHistory()
+  const { getPairFromMarketAddress, loading, openOrders, settleFunds } = useTradeHistory()
 
   const content = useMemo(
     () =>
@@ -28,25 +28,29 @@ export const Balances: FC = () => {
         const quoteAvailable = market?.quoteSplSizeToNumber(openOrder.quoteTokenFree)
         const quoteBalance = market?.quoteSplSizeToNumber(openOrder.quoteTokenTotal.sub(openOrder.quoteTokenFree))
 
-        const settleButton = (baseAvailable ?? 0) > 0 || (quoteAvailable ?? 0) > 0 ? (
-          <MainButton
-            height="30px"
-            onClick={() =>
-              settleFunds(
-                openOrder,
-                baseAvailable,
-                quoteAvailable,
-                getAskSymbolFromPair(pair),
-                getBidSymbolFromPair(pair)
-              )
-            }
-            status="action"
-            width="150px"
-          >
-            {' '}
-            <span>Settle balances</span>
-          </MainButton>
-        ) : <div />
+        const settleButton =
+          (baseAvailable ?? 0) > 0 || (quoteAvailable ?? 0) > 0 ? (
+            <MainButton
+              height="30px"
+              loading={loading}
+              onClick={() =>
+                settleFunds(
+                  openOrder,
+                  baseAvailable,
+                  quoteAvailable,
+                  getAskSymbolFromPair(pair),
+                  getBidSymbolFromPair(pair)
+                )
+              }
+              status="action"
+              width="150px"
+            >
+              {' '}
+              <span>Settle balances</span>
+            </MainButton>
+          ) : (
+            <div />
+          )
 
         return (
           <WRAPPER key={index}>
@@ -64,7 +68,15 @@ export const Balances: FC = () => {
           </WRAPPER>
         )
       }),
-    [getAskSymbolFromPair, getBidSymbolFromPair, getPairFromMarketAddress, openOrders, selectedCrypto, settleFunds]
+    [
+      getAskSymbolFromPair,
+      getBidSymbolFromPair,
+      getPairFromMarketAddress,
+      loading,
+      openOrders,
+      selectedCrypto,
+      settleFunds
+    ]
   )
 
   return <>{!openOrders.length ? <span>No balances</span> : content}</>

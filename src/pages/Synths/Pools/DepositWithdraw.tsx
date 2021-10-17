@@ -20,9 +20,9 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
   const { getUIAmount } = useAccounts()
   const { network } = useConnectionConfig()
   const { mode } = useDarkMode()
+  const { amount, deposit, loading, setAmount, userAccount, withdraw } = useSynths()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
-  const { amount, deposit, setAmount, userAccount, withdraw } = useSynths()
 
   const userBalance = useMemo(
     () =>
@@ -112,7 +112,7 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
           </SpaceBetweenDiv>
         </Available>
       </Inputs>
-      <Button height="50px" onClick={handleClick} status={buttonStatus} width="40%">
+      <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
         <span>{content}</span>
       </Button>
     </>

@@ -39,6 +39,7 @@ interface ITradeHistoryConfig {
   cancelOrder: (x: IOrder) => Promise<void>
   fetchOpenOrders: () => Promise<void>
   getPairFromMarketAddress: (x: PublicKey) => string
+  loading: boolean
   orders: IOrder[]
   openOrders: OpenOrders[]
   panel: HistoryPanel
@@ -53,6 +54,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   const { connection } = useConnectionConfig()
   const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
   const wallet = useWallet()
+  const [loading, setLoading] = useState(false)
   const [openOrders, setOpenOrders] = useState<OpenOrders[]>([])
   const [orders, setOrders] = useState<IOrder[]>([])
   const [tradeHistory, setTradeHistory] = useState([])
@@ -83,6 +85,8 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   const getPairFromMarketAddress = (address: PublicKey) => serum.getMarketFromAddress(address)!.name
 
   const cancelOrder = async (order: IOrder) => {
+    setLoading(true)
+
     if (selectedCrypto.market) {
       try {
         const signature = await crypto.cancelOrder(connection, selectedCrypto.market, order.order, wallet)
@@ -100,6 +104,8 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
         notify({ type: 'error', message: `Error cancelling order`, icon: 'error', description: e.message })
       }
     }
+
+    setLoading(false)
   }
 
   const settleFunds = async (
@@ -110,6 +116,8 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
     quoteSymbol: string
   ) => {
     if (selectedCrypto.market) {
+      setLoading(true)
+
       try {
         const signature = await crypto.settleFunds(connection, selectedCrypto.market, openOrder, wallet)
         const baseTokens = baseAvailable && `${baseAvailable} ${baseSymbol}`
@@ -126,6 +134,8 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
         notify({ type: 'error', message: `Error settling funds`, icon: 'error', description: e.message })
       }
     }
+
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -145,6 +155,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
         cancelOrder,
         fetchOpenOrders,
         getPairFromMarketAddress,
+        loading,
         openOrders,
         orders,
         panel,
@@ -167,6 +178,7 @@ export const useTradeHistory = (): ITradeHistoryConfig => {
   return {
     cancelOrder: context.cancelOrder,
     fetchOpenOrders: context.fetchOpenOrders,
+    loading: context.loading,
     getPairFromMarketAddress: context.getPairFromMarketAddress,
     openOrders: context.openOrders,
     orders: context.orders,

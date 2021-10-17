@@ -77,6 +77,7 @@ export const AVAILABLE_ORDERS: IOrderDisplay[] = [
 ]
 
 interface IOrderConfig {
+  loading: boolean
   order: IOrder
   placeOrder: () => void
   setFocused: Dispatch<SetStateAction<OrderInput>>
@@ -91,6 +92,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { fetchOpenOrders } = useTradeHistory()
   const wallet = useWallet()
   const [focused, setFocused] = useState<OrderInput>(undefined)
+  const [loading, setLoading] = useState(false)
   const [order, setOrder] = useState<IOrder>({
     display: 'limit',
     isHidden: false,
@@ -148,6 +150,8 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [marketPrice, order.price])
 
   const placeOrder = useCallback(async () => {
+    setLoading(true)
+
     try {
       if (!selectedCrypto.market) {
         throw new Error(`Market not selected`)
@@ -172,11 +176,14 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } catch (e: any) {
       notify({ type: 'error', message: `${capitalizeFirstLetter(order.display)} order failed`, icon: 'trade_error' }, e)
     }
+
+    setLoading(false)
   }, [connection, fetchOpenOrders, getAskSymbolFromPair, order, selectedCrypto.market, selectedCrypto.pair, wallet])
 
   return (
     <OrderContext.Provider
       value={{
+        loading,
         order,
         placeOrder,
         setFocused,
@@ -194,6 +201,6 @@ export const useOrder = (): IOrderConfig => {
     throw new Error('Missing order context')
   }
 
-  const { order, placeOrder, setFocused, setOrder } = context
-  return { order, placeOrder, setFocused, setOrder }
+  const { loading, order, placeOrder, setFocused, setOrder } = context
+  return { loading, order, placeOrder, setFocused, setOrder }
 }

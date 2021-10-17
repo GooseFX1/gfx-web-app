@@ -21,7 +21,7 @@ const SWITCH = styled(CenteredImg)<{ measurements: number }>`
 const SwapContent: FC = () => {
   const { getAmount } = useAccounts()
   const { mode } = useDarkMode()
-  const { inTokenAmount, swapTokens, tokenA, tokenB } = useSwap()
+  const { inTokenAmount, loading, swapTokens, tokenA, tokenB } = useSwap()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
@@ -51,10 +51,7 @@ const SwapContent: FC = () => {
     }
   }, [state])
 
-  const content = useMemo(
-    () => ['Connect wallet', 'Swap', 'Enter amount', 'Balance exceeded'][state],
-    [state]
-  )
+  const content = useMemo(() => ['Connect wallet', 'Swap', 'Enter amount', 'Balance exceeded'][state], [state])
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
@@ -68,17 +65,13 @@ const SwapContent: FC = () => {
   return (
     <>
       <SpaceBetweenDiv>
-        <div>
-          A
-        </div>
+        <div>A</div>
         <SWITCH measurements={80}>
           <img src={`${process.env.PUBLIC_URL}/img/assets/swap_switch_${mode}_mode.svg`} alt="switch" />
         </SWITCH>
-        <div>
-          B
-        </div>
+        <div>B</div>
       </SpaceBetweenDiv>
-      <Button height="50px" onClick={handleClick} status={buttonStatus} width="40%">
+      <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
         <span>{content}</span>
       </Button>
     </>

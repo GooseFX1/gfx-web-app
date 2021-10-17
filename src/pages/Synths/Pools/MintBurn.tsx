@@ -26,9 +26,9 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
   const { getUIAmount } = useAccounts()
   const { network } = useConnectionConfig()
   const { mode } = useDarkMode()
+  const { amount, burn, loading, mint, setAmount, synth } = useSynths()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
-  const { amount, burn, mint, setAmount, synth } = useSynths()
 
   const cRatioExceeded = useMemo(() => false, [])
   const userBalance = useMemo(() => {
@@ -121,7 +121,7 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
           </SpaceBetweenDiv>
         </Available>
       </Inputs>
-      <Button height="50px" onClick={handleClick} status={buttonStatus} width="40%">
+      <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
         <span>{content}</span>
       </Button>
     </>

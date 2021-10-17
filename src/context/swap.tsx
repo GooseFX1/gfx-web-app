@@ -35,6 +35,7 @@ export interface ISwapToken {
 interface ISwapConfig {
   fetching: boolean
   inTokenAmount: number
+  loading: boolean
   outTokenAmount: number
   rates: IRates
   refreshRates: () => void
@@ -58,6 +59,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useWallet()
   const [fetching, setFetching] = useState(false)
   const [inTokenAmount, setInTokenAmount] = useState(0)
+  const [loading, setLoading] = useState(false)
   const [outTokenAmount, setOutTokenAmount] = useState(0)
   const [rates, setRates] = useState<IRates>({
     inValue: 0,
@@ -122,6 +124,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const swapTokens = async () => {
     if (!tokenA || !tokenB) return
 
+    setLoading(true)
     const inTokens = `${inTokenAmount / 10 ** tokenA.decimals} ${tokenA.symbol}`
     const outTokens = `${outTokenAmount / 10 ** tokenB.decimals} ${tokenB.symbol}`
     notify({ message: `Trying to swap ${inTokens} for at least ${outTokens}...` })
@@ -139,6 +142,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } catch (e: any) {
       notify({ type: 'error', message: 'Swap failed', icon: 'error' }, e)
     }
+
+    setLoading(false)
   }
 
   const switchTokens = () => {
@@ -168,6 +173,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       value={{
         fetching,
         inTokenAmount,
+        loading,
         outTokenAmount,
         rates,
         refreshRates,
@@ -196,6 +202,7 @@ export const useSwap = (): ISwapConfig => {
   return {
     fetching: context.fetching,
     inTokenAmount: context.inTokenAmount,
+    loading: context.loading,
     outTokenAmount: context.outTokenAmount,
     rates: context.rates,
     refreshRates: context.refreshRates,
