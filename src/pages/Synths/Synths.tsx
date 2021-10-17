@@ -4,6 +4,7 @@ import { Pools } from './Pools'
 import { Portfolio } from './Portfolio'
 import { Positions } from './Positions'
 import { SynthsProvider } from '../../context'
+import { removeFloatingPointError } from '../../utils'
 
 const WRAPPER = styled.div`
   display: flex;

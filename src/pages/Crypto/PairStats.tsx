@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { MarketType, useCrypto } from '../../context'
 import { CenteredImg } from '../../styles'
+import { removeFloatingPointError } from '../../utils'
 
 const ASSET_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['2x'])}
@@ -93,7 +94,7 @@ export const PairStats: FC<{ decimals: number; pair: string; type: MarketType }>
           </div>
         ) TODO RESTORE */}
       </INFO>
-      <PRICE>{displayPrice ? <span>$ {marketData.current}</span> : <Loader />}</PRICE>
+      <PRICE>{displayPrice ? <span>$ {removeFloatingPointError(marketData.current)}</span> : <Loader />}</PRICE>
     </STATS>
   )
 }

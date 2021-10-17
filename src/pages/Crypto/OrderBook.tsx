@@ -176,7 +176,7 @@ export const OrderBook: FC = () => {
                       setFocused('price')
                     }}
                   >
-                    ${price}
+                    ${removeFloatingPointError(price)}
                   </span>
                   <span>{removeFloatingPointError(size)}</span>
                   <span>${abbreviateNumber(value, 2)}</span>
