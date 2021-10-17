@@ -55,11 +55,11 @@ export type MarketType = 'crypto' | 'synth'
 export const FEATURED_PAIRS_LIST = [
   { decimals: 1, pair: 'BTC/USDC', type: 'crypto' as MarketType },
   { decimals: 2, pair: 'ETH/USDC', type: 'crypto' as MarketType },
-  { decimals: 2, pair: 'LTC/USD', type: 'synth' as MarketType },
   { decimals: 3, pair: 'SOL/USDC', type: 'crypto' as MarketType },
   { decimals: 3, pair: 'LINK/USDC', type: 'crypto' as MarketType },
-  { decimals: 2, pair: 'AAPL/USD', type: 'synth' as MarketType },
-  { decimals: 2, pair: 'TSLA/USD', type: 'synth' as MarketType }
+  { decimals: 2, pair: 'gAAPL/gUSD', type: 'synth' as MarketType },
+  { decimals: 2, pair: 'gFB/gUSD', type: 'synth' as MarketType },
+  { decimals: 2, pair: 'gTSLA/gUSD', type: 'synth' as MarketType }
 ]
 
 const DEFAULT_MARKETS_DATA = FEATURED_PAIRS_LIST.reduce(

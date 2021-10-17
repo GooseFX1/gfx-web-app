@@ -17,7 +17,7 @@ export const SynthToken: FC<{ synth: string }> = ({ synth }) => {
   return (
     <WRAPPER>
       <CenteredImg>
-        <img src={`${process.env.PUBLIC_URL}/img/synths/${synth}.svg`} alt="" />
+        <img src={`${process.env.PUBLIC_URL}/img/synth/${synth}.svg`} alt="" />
       </CenteredImg>
       <span>{synth}</span>
     </WRAPPER>

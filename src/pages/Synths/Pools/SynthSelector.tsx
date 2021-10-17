@@ -74,7 +74,7 @@ const Overlay: FC<{
       {availableSynths.map(([synth], index) => (
         <SYNTH key={index} onClick={() => handleClick(synth)}>
           <CenteredImg>
-            <img src={`${process.env.PUBLIC_URL}/img/synths/${synth}.svg`} alt="" />
+            <img src={`${process.env.PUBLIC_URL}/img/synth/${synth}.svg`} alt="" />
           </CenteredImg>
           <span>{synth}</span>
         </SYNTH>
