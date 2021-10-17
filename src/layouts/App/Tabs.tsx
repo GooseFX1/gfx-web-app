@@ -14,7 +14,7 @@ const LABEL = styled.span`
   text-transform: capitalize;
 `
 
-const TAB = styled(Link)`
+const TAB = styled.div`
   ${({ theme }) => theme.flexCenter}
   position: absolute;
   flex-direction: column;
@@ -47,7 +47,7 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     transition: left ${({ theme }) => theme.mainTransitionTime} ease-in-out;
   }
 
-  > a {
+  > div {
     width: ${({ $width }) => $width}px;
     padding: calc(${({ $height }) => $height}vh - ${({ theme }) => theme.margins['2x']} / 2) ${({ $width }) => $width}px;
     ${({ theme }) => theme.roundedBorders}
@@ -74,20 +74,22 @@ export const Tabs: FC = () => {
   return (
     <WRAPPER $height={3.5} $index={index} $width={50}>
       {TABS.map((path, index) => (
-        <TAB key={index} onMouseEnter={() => setHovered(index)} onMouseLeave={() => setHovered(-1)} to={path}>
-          <TAB_ICON>
-            {(() => {
-              const icon = `${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`
+        <TAB key={index}>
+          <Link onMouseEnter={() => setHovered(index)} onMouseLeave={() => setHovered(-1)} to={path}>
+            <TAB_ICON>
+              {(() => {
+                const icon = `${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`
 
-              if (pathname === path || (mode === 'dark' && hovered === index)) {
-                return <SVGToWhite src={icon} alt="" />
-              } else if (hovered === index) {
-                return <SVGToPrimary2 src={icon} alt="" />
-              } else {
-                return <SVGToGrey2 src={icon} alt="" />
-              }
-            })()}
-          </TAB_ICON>
+                if (pathname === path || (mode === 'dark' && hovered === index)) {
+                  return <SVGToWhite src={icon} alt="" />
+                } else if (hovered === index) {
+                  return <SVGToPrimary2 src={icon} alt="" />
+                } else {
+                  return <SVGToGrey2 src={icon} alt="" />
+                }
+              })()}
+            </TAB_ICON>
+          </Link>
           <LABEL>{path.slice(1)}</LABEL>
         </TAB>
       ))}

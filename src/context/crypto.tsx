@@ -151,31 +151,38 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     let cancelled = false
     const subscriptions: number[] = []
 
-    selectedCrypto.type === 'crypto' && !cancelled && (async () => {
-      try {
-        const market = await serum.getMarket(connection, selectedCrypto.pair)
-        setSelectedCrypto((prevState) => ({ ...prevState, market }))
+    selectedCrypto.type === 'crypto' &&
+      !cancelled &&
+      (async () => {
+        try {
+          const market = await serum.getMarket(connection, selectedCrypto.pair)
+          setSelectedCrypto((prevState) => ({ ...prevState, market }))
 
-        const subs = await Promise.all([
-          serum.subscribeToOrderBook(connection, market, 'asks', (account, market) => {
-            const asks = Orderbook.decode(market, account.data).getL2(20)
-            setMarketsData((prevState: ICryptoMarkets) => ({
-              ...prevState,
-              ...{ [selectedCrypto.pair]: { change24H: 0, current: asks[0][0] } }
-            }))
-            setOrderBook((prevState) => ({ ...prevState, asks }))
-          }),
-          serum.subscribeToOrderBook(connection, market, 'bids', (account, market) => {
-            const bids = Orderbook.decode(market, account.data).getL2(20)
-            setOrderBook((prevState) => ({ ...prevState, bids }))
-          })
-        ])
+          const asks = await serum.getAsks(connection, selectedCrypto.pair)
+          setOrderBook((prevState) => ({ ...prevState, asks: asks.getL2(20) }))
+          const bids = await serum.getBids(connection, selectedCrypto.pair)
+          setOrderBook((prevState) => ({ ...prevState, bids: bids.getL2(20) }))
 
-        subs.forEach((sub) => subscriptions.push(sub))
-      } catch (e: any) {
-        notify({ type: 'error', message: 'Error fetching serum order book', icon: 'rate_error' }, e)
-      }
-    })()
+          const subs = await Promise.all([
+            serum.subscribeToOrderBook(connection, market, 'asks', (account, market) => {
+              const asks = Orderbook.decode(market, account.data).getL2(20)
+              setMarketsData((prevState: ICryptoMarkets) => ({
+                ...prevState,
+                ...{ [selectedCrypto.pair]: { change24H: 0, current: asks[0][0] } }
+              }))
+              setOrderBook((prevState) => ({ ...prevState, asks }))
+            }),
+            serum.subscribeToOrderBook(connection, market, 'bids', (account, market) => {
+              const bids = Orderbook.decode(market, account.data).getL2(20)
+              setOrderBook((prevState) => ({ ...prevState, bids }))
+            })
+          ])
+
+          subs.forEach((sub) => subscriptions.push(sub))
+        } catch (e: any) {
+          notify({ type: 'error', message: 'Error fetching serum order book', icon: 'rate_error' }, e)
+        }
+      })()
 
     return () => {
       cancelled = true
