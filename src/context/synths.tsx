@@ -166,7 +166,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const subscriptions: number[] = []
 
     const updateUserAccount = async () => {
-      const { decimal2number } = await import('decimaljs_bg')
+      const { decimal2number } = await import('decimaljs')
       const userAccountFieldToNumber = (x: Decimal) => decimal2number(x.flags, x.hi, x.lo, x.mid)
 
       const userAccount = await pool.userAccount(poolName, wallet, connection, network)
