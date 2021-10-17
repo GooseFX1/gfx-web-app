@@ -26,7 +26,7 @@ export const SwapButton: FC = () => {
       return State.Connect
     } else if (!tokenA || !tokenB) {
       return State.Enter
-    } else if (!pools[[tokenA.symbol, tokenB.symbol].sort((a, b) => a.localeCompare(b)).join('/')].address) {
+    } else if (!pools[[tokenA.symbol, tokenB.symbol].sort((a, b) => a.localeCompare(b)).join('/')]?.address) {
       return State.PoolNotFound
     } else if (inTokenAmount === 0) {
       return State.Enter
