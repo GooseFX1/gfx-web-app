@@ -28,13 +28,16 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
   const { mode } = useDarkMode()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
-  const { amount, burn, mint, setAmount, synth, userAccount } = useSynths()
+  const { amount, burn, mint, setAmount, synth } = useSynths()
 
   const cRatioExceeded = useMemo(() => false, [])
-  const userBalance = useMemo(
-    () => getUIAmount(ADDRESSES[network].mints[synth].address.toString()),
-    [getUIAmount, network, synth]
-  )
+  const userBalance = useMemo(() => {
+    if (action === 'burn') {
+      return getUIAmount(ADDRESSES[network].mints[synth].address.toString())
+    } else {
+      return 0
+    }
+  }, [action, getUIAmount, network, synth])
 
   const state = useMemo(() => {
     if (!publicKey) {
@@ -111,10 +114,10 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
           </SELECTOR>
         </InputWrapper>
         <Available>
-          <span>Available GOFX</span>
+          <span>Available {synth}</span>
           <SpaceBetweenDiv>
-            <span>{userAccount.collateral}</span>
-            <span>GOFX</span>
+            <span>{userBalance}</span>
+            <span>{synth}</span>
           </SpaceBetweenDiv>
         </Available>
       </Inputs>

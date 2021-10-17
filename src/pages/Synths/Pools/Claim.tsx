@@ -40,10 +40,10 @@ const REWARDS = styled(SpaceBetweenDiv)`
 export const Claim: FC = () => {
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
-  const { claim } = useSynths()
+  const { claim, userAccount } = useSynths()
 
-  const allTime = useMemo(() => 12390, [])
-  const current = useMemo(() => 120, [])
+  const allTime = useMemo(() => '?', [])
+  const current = useMemo(() => userAccount.fees, [userAccount.fees])
 
   const state = useMemo(() => {
     if (!publicKey) {

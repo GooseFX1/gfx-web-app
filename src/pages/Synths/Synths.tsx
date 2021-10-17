@@ -20,6 +20,7 @@ const WRAPPER = styled.div`
     ${({ theme }) => theme.mediaWidth.upToLarge`
       width: 100%;
     `};
+
     ${({ theme }) => theme.mediaWidth.fromLarge`
       width: 60%;
       margin-right: ${({ theme }) => theme.margins['5x']};
@@ -33,7 +34,9 @@ const WRAPPER = styled.div`
   > div:last-child {
     ${({ theme }) => theme.mediaWidth.upToLarge`
       width: 100%;
+      margin-top: ${({ theme }) => theme.margins['5x']};
     `};
+
     ${({ theme }) => theme.mediaWidth.fromLarge`
       width: 40%;
     `};

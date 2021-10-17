@@ -1,7 +1,7 @@
 import React from 'react'
 import { Doughnut } from 'react-chartjs-2'
 import styled from 'styled-components'
-import { useDarkMode } from '../../../context'
+import { useDarkMode } from '../../../../context'
 
 const CHARTBOX = styled.div`
   height: 180px;
@@ -11,6 +11,7 @@ const CHARTBOX = styled.div`
 export default function DoughnutChart() {
   const { mode } = useDarkMode()
   const value = mode === 'dark' ? '#2a2a2a' : '#fff'
+
   return (
     <CHARTBOX>
       <Doughnut

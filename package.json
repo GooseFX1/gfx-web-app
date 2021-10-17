@@ -28,6 +28,7 @@
     "chart.js": "^3.5.1",
     "craco-less": "^1.18.0",
     "customize-cra": "^1.0.0",
+    "decimaljs": "file:./wasm",
     "echarts": "^5.1.2",
     "emailjs-com": "^3.2.0",
     "eventemitter3": "^4.0.7",

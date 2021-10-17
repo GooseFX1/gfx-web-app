@@ -28,6 +28,26 @@ export const Balances: FC = () => {
         const quoteAvailable = market?.quoteSplSizeToNumber(openOrder.quoteTokenFree)
         const quoteBalance = market?.quoteSplSizeToNumber(openOrder.quoteTokenTotal.sub(openOrder.quoteTokenFree))
 
+        const settleButton = (baseAvailable ?? 0) > 0 || (quoteAvailable ?? 0) > 0 ? (
+          <MainButton
+            height="30px"
+            onClick={() =>
+              settleFunds(
+                openOrder,
+                baseAvailable,
+                quoteAvailable,
+                getAskSymbolFromPair(pair),
+                getBidSymbolFromPair(pair)
+              )
+            }
+            status="action"
+            width="150px"
+          >
+            {' '}
+            <span>Settle balances</span>
+          </MainButton>
+        ) : <div />
+
         return (
           <WRAPPER key={index}>
             <Entry $entriesLength={PANELS_FIELDS[HistoryPanel.Balances].length}>
@@ -40,25 +60,7 @@ export const Balances: FC = () => {
               <span>{quoteBalance}</span>
               <span>{quoteAvailable}</span>
             </Entry>
-            {((baseAvailable && baseAvailable > 0) || (quoteAvailable && quoteAvailable > 0)) && (
-              <MainButton
-                height="30px"
-                onClick={() =>
-                  settleFunds(
-                    openOrder,
-                    baseAvailable,
-                    quoteAvailable,
-                    getAskSymbolFromPair(pair),
-                    getBidSymbolFromPair(pair)
-                  )
-                }
-                status="action"
-                width="150px"
-              >
-                {' '}
-                <span>Settle balances</span>
-              </MainButton>
-            )}
+            {settleButton}
           </WRAPPER>
         )
       }),

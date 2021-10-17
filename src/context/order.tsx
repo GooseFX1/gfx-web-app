@@ -152,12 +152,12 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (!selectedCrypto.market) {
         throw new Error(`Market not selected`)
       }
-      if (decimalModulo(order.price, selectedCrypto.market.tickSize)) {
+      /* if (decimalModulo(order.price, selectedCrypto.market.tickSize)) {
         throw new Error(`Price must be a multiple of ${selectedCrypto.market.tickSize}`)
       }
       if (decimalModulo(order.size, selectedCrypto.market.minOrderSize)) {
         throw new Error(`Size must be a multiple of ${selectedCrypto.market.minOrderSize}`)
-      }
+      } */ // TODO FIX
       await crypto.placeOrder(connection, selectedCrypto.market as Market, order, wallet)
       const ask = getAskSymbolFromPair(selectedCrypto.pair)
       const price = floorValue(order.price, selectedCrypto.market?.tickSize)

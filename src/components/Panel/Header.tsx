@@ -1,7 +1,7 @@
 import React, { Dispatch, FC, SetStateAction } from 'react'
 import styled from 'styled-components'
-import { Expand } from './Expand'
-import { SpaceBetweenDiv } from '../styles'
+import { Expand } from '../Expand'
+import { SpaceBetweenDiv } from '../../styles'
 
 const FIELD = styled.span<{ $width: number }>`
   width: ${({ $width }) => $width}%;
@@ -65,8 +65,7 @@ const PANELS = styled(SpaceBetweenDiv)<{
 
 const WRAPPER = styled.div`
   position: relative;
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['5x']};
-  ${({ theme }) => theme.margins['1.5x']};
+  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['5x']} ${({ theme }) => theme.margins['1.5x']};
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 20px;
@@ -75,7 +74,7 @@ const WRAPPER = styled.div`
   ${({ theme }) => theme.largeShadow}
 `
 
-export const PanelHeader: FC<{
+export const Header: FC<{
   activePanel: any
   centerLabels?: boolean
   expand: Dispatch<SetStateAction<boolean>>

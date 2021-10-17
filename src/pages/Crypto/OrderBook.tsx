@@ -7,10 +7,10 @@ import { SpaceBetweenDiv, TRADE_ORDER_WIDTH } from '../../styles'
 import { abbreviateNumber, removeFloatingPointError } from '../../utils'
 
 const HEADER = styled.div<{ $side: MarketSide }>`
-  margin: -${({ theme }) => theme.margins['2x']} -${({ theme }) => theme.margins['2x']};
-  ${({ theme }) => theme.margins['1x']};
-  padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2.5x']};
-  ${({ theme }) => theme.margins['1.5x']};
+  margin: -${({ theme }) => theme.margins['2x']} -${({ theme }) => theme.margins['2x']}
+    ${({ theme }) => theme.margins['1x']};
+  padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2.5x']}
+    ${({ theme }) => theme.margins['1.5x']};
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 20px;
@@ -114,8 +114,8 @@ const SIZE = styled.span<{ $side: MarketSide }>`
 
 const WRAPPER = styled.div`
   position: relative;
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['2x']};
-  ${({ theme }) => theme.margins['1.5x']};
+  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['2x']}
+    ${({ theme }) => theme.margins['1.5x']};
   border-radius: 10px;
   background-color: ${({ theme }) => theme.bg3};
   overflow: hidden;

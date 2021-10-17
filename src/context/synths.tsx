@@ -1,12 +1,30 @@
-import React, { Dispatch, FC, ReactNode, SetStateAction, createContext, useContext, useState, useMemo } from 'react'
+import React, {
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
 import { notify } from '../utils'
 import { ADDRESSES, Mint, Pool, pool } from '../web3'
 
+type Decimal = {
+  flags: number
+  hi: number
+  mid: number
+  lo: number
+}
+
 interface IUserAccount {
   collateral: number
   debt: number
+  fees: number
   value: number
 }
 
@@ -28,6 +46,8 @@ interface ISynthsConfig {
   withdraw: () => Promise<void>
 }
 
+const DEFAULT_USER_ACCOUNT = { collateral: 0, debt: 0, fees: 0, value: 0 }
+
 const SynthsContext = createContext<ISynthsConfig | null>(null)
 
 export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -41,7 +61,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [amount, setAmount] = useState<number>(0)
   const [poolName, setPoolName] = useState<string>(availablePools[0][0])
   const [synth, setSynth] = useState<string>(availableSynths[0][0])
-  const [userAccount, setUserAccount] = useState<IUserAccount>({ collateral: 150000, debt: 27000, value: 420000 })
+  const [userAccount, setUserAccount] = useState<IUserAccount>(DEFAULT_USER_ACCOUNT)
 
   const burn = async () => {
     try {
@@ -119,6 +139,35 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       notify({ type: 'error', message: `Error withdrawing`, icon: 'error' }, e)
     }
   }
+
+  useEffect(() => {
+    const subscriptions: number[] = []
+
+    const updateUserAccount = async () => {
+      const { decimal2number } = (await import("decimaljs_bg"))
+      const userAccountFieldToNumber = (x: Decimal) => decimal2number(x.flags, x.hi, x.lo, x.mid)
+
+      const userAccount = await pool.userAccount(poolName, wallet, connection, network)
+      if (userAccount) {
+        setUserAccount({
+          collateral: userAccountFieldToNumber(userAccount.collateralAmount),
+          debt: 1,
+          fees: userAccountFieldToNumber(userAccount.claimableFee),
+          value: userAccountFieldToNumber(userAccount.shares)
+        })
+      }
+    }
+
+    wallet.publicKey && updateUserAccount().then(async () => {
+      const userAccountAta = await pool.getUserAccountPublicKey(poolName, wallet, network)
+      subscriptions.push(connection.onAccountChange(userAccountAta, updateUserAccount))
+    })
+
+    return () => {
+      setUserAccount(DEFAULT_USER_ACCOUNT)
+      subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
+    }
+  }, [connection, network, poolName, wallet])
 
   return (
     <SynthsContext.Provider

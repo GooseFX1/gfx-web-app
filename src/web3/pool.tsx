@@ -22,26 +22,6 @@ type UserAccount = {
   shares: Decimal
 }
 
-const getUserAccountInfo = async (pool: string, wallet: any, network: WalletAdapterNetwork) =>
-  await PublicKey.findProgramAddress(
-    [
-      new Buffer('UserAccount', 'utf-8'),
-      new PublicKey(ADDRESSES[network].pools[pool].address).toBuffer(),
-      new PublicKey(wallet.publicKey).toBuffer()
-    ],
-    ADDRESSES[network].programs.pool.address
-  )
-
-const getUserAccountPublicKey = async (pool: string, wallet: any, network: WalletAdapterNetwork) =>
-  (await getUserAccountInfo(pool, wallet, network))[0]
-
-const getPoolProgram = (wallet: WalletContextState, connection: Connection, network: WalletAdapterNetwork): Program =>
-  new Program(
-    PoolIDL,
-    ADDRESSES[network].programs.pool.address,
-    new Provider(connection, wallet as any, { commitment: 'processed' })
-  )
-
 const burn = async (
   amount: number,
   pool: string,
@@ -95,9 +75,7 @@ const claim = async (
 
   const { collateralAmount } = (await account.userAccount.fetch(userAccount)) as UserAccount
   const { flags, hi, mid, lo } = collateralAmount
-  // const amount = (await import("decimaljs_bg")).decimal2number(flags, hi, lo, mid)
-  const amount = 42 // (await import("wasm")).add_two_ints(1, 2)
-  console.log(amount)
+  const amount = (await import("decimaljs_bg")).decimal2number(flags, hi, lo, mid)
 
   const userAta = await findAssociatedTokenAddress(wallet.publicKey, mints.gUSD.address)
   if (!(await connection.getParsedAccountInfo(userAta)).value) {
@@ -154,6 +132,26 @@ const deposit = async (
   tx.add(await instruction.depositCollateral(new BN(amount), { accounts }))
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
+
+const getPoolProgram = (wallet: WalletContextState, connection: Connection, network: WalletAdapterNetwork): Program =>
+  new Program(
+    PoolIDL,
+    ADDRESSES[network].programs.pool.address,
+    new Provider(connection, wallet as any, { commitment: 'processed' })
+  )
+
+const getUserAccountInfo = async (pool: string, wallet: any, network: WalletAdapterNetwork) =>
+  await PublicKey.findProgramAddress(
+    [
+      new Buffer('UserAccount', 'utf-8'),
+      new PublicKey(ADDRESSES[network].pools[pool].address).toBuffer(),
+      new PublicKey(wallet.publicKey).toBuffer()
+    ],
+    ADDRESSES[network].programs.pool.address
+  )
+
+const getUserAccountPublicKey = async (pool: string, wallet: any, network: WalletAdapterNetwork) =>
+  (await getUserAccountInfo(pool, wallet, network))[0]
 
 const initialize = async (pool: string, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
   const { programs, pools } = ADDRESSES[network]
@@ -280,6 +278,20 @@ const mint = async (
   return await signAndSendRawTransaction(connection, tx, wallet)
 } */
 
+const userAccount = async (
+  pool: string,
+  wallet: any,
+  connection: Connection,
+  network: WalletAdapterNetwork
+): Promise<UserAccount | undefined> => {
+  const { account } = getPoolProgram(wallet, connection, network)
+
+  const userAccount = await getUserAccountPublicKey(pool, wallet, network)
+  if ((await connection.getParsedAccountInfo(userAccount)).value) {
+    return await account.userAccount.fetch(userAccount) as UserAccount
+  }
+}
+
 const withdraw = async (
   amount: number,
   pool: string,
@@ -314,8 +326,10 @@ export const pool = {
   burn,
   claim,
   deposit,
+  getUserAccountPublicKey,
   // liquidate,
   mint,
   // swap,
+  userAccount,
   withdraw
 }
