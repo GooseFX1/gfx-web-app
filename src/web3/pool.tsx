@@ -238,7 +238,8 @@ const mint = async (
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-/* const swap = async (
+const swap = async (
+  amount: number,
   pool: string,
   inTokenAmount: number,
   outTokenAmount: number,
@@ -276,7 +277,7 @@ const mint = async (
   tx.add(await instruction.swap(new BN(amount), { accounts }))
 
   return await signAndSendRawTransaction(connection, tx, wallet)
-} */
+}
 
 const userAccount = async (
   pool: string,
@@ -329,7 +330,7 @@ export const pool = {
   getUserAccountPublicKey,
   // liquidate,
   mint,
-  // swap,
+  swap,
   userAccount,
   withdraw
 }

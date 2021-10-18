@@ -11,9 +11,9 @@ import React, {
 } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
+import { ISwapToken } from './swap'
 import { notify } from '../utils'
 import { ADDRESSES, Mint, Pool, pool } from '../web3'
-import { ISwapToken } from './swap'
 
 type Decimal = {
   flags: number
@@ -21,6 +21,8 @@ type Decimal = {
   mid: number
   lo: number
 }
+
+type SwapInput = undefined | 'from' | 'to'
 
 interface ISynthsConfig {
   amount: number
@@ -33,6 +35,7 @@ interface ISynthsConfig {
   mint: () => Promise<void>
   poolName: string
   setAmount: Dispatch<SetStateAction<number>>
+  setFocused: Dispatch<SetStateAction<SwapInput>>
   setPoolName: Dispatch<SetStateAction<string>>
   setSynth: Dispatch<SetStateAction<string>>
   setSynthSwap: Dispatch<SetStateAction<ISynthSwap>>
@@ -40,6 +43,7 @@ interface ISynthsConfig {
   synth: string
   synthPrices: ISynthPrices
   synthSwap: ISynthSwap
+  swap: () => Promise<void>
   userAccount: IUserAccount
   withdraw: () => Promise<void>
 }
@@ -75,6 +79,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const availablePools = useMemo(() => Object.entries(pools).filter(([_, { type }]) => type === 'synth'), [pools])
 
   const [amount, setAmount] = useState(0)
+  const [focused, setFocused] = useState<SwapInput>(undefined)
   const [loading, setLoading] = useState(false)
   const [poolName, setPoolName] = useState(availablePools[0][0])
   const [synth, setSynth] = useState(availableSynths[0][0])
@@ -160,6 +165,39 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setLoading(false)
   }
 
+  const swap = async () => {
+    const { inToken, inTokenAmount, outToken, outTokenAmount } = synthSwap
+
+    if (inToken && outToken) {
+      setLoading(true)
+
+      try {
+        const signature = await pool.swap(
+          amount,
+          poolName,
+          inTokenAmount,
+          outTokenAmount,
+          inToken.symbol,
+          outToken.symbol,
+          wallet,
+          connection,
+          network
+        )
+        notify({
+          type: 'success',
+          message: 'Swap successful!',
+          description: `Swap ${inTokenAmount} ${inToken.symbol} for ${outTokenAmount} ${outToken.symbol}`,
+          icon: 'success',
+          txid: signature
+        })
+      } catch (e: any) {
+        notify({ type: 'error', message: `Error swapping`, icon: 'error' }, e)
+      }
+
+      setLoading(false)
+    }
+  }
+
   const withdraw = async () => {
     setLoading(true)
 
@@ -222,10 +260,12 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         mint,
         poolName,
         setAmount,
+        setFocused,
         setPoolName,
         setSynth,
         setSynthSwap,
         setUserAccount,
+        swap,
         synth,
         synthPrices,
         synthSwap,
@@ -238,7 +278,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 }
 
-export const useSynths = (): ISynthsConfig => {
+export const useSynths = () => {
   const context = useContext(SynthsContext)
   if (!context) {
     throw new Error('Missing synths context')
@@ -257,12 +297,26 @@ export const useSynths = (): ISynthsConfig => {
     setAmount: context.setAmount,
     setPoolName: context.setPoolName,
     setSynth: context.setSynth,
-    setSynthSwap: context.setSynthSwap,
     setUserAccount: context.setUserAccount,
     synth: context.synth,
     synthPrices: context.synthPrices,
-    synthSwap: context.synthSwap,
     userAccount: context.userAccount,
     withdraw: context.withdraw
+  }
+}
+
+export const useSynthSwap = () => {
+  const context = useContext(SynthsContext)
+  if (!context) {
+    throw new Error('Missing synths context')
+  }
+
+  return {
+    availableSynths: context.availableSynths,
+    loading: context.loading,
+    setFocused: context.setFocused,
+    swap: context.swap,
+    setSynthSwap: context.setSynthSwap,
+    synthSwap: context.synthSwap
   }
 }

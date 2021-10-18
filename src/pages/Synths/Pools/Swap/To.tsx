@@ -1,13 +1,16 @@
 import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
-import { useAccounts, useSynths } from '../../../../context'
+import { Selector } from './Selector'
+import { useAccounts, useSynthSwap } from '../../../../context'
 import { FlexColumnDiv } from '../../../../styles'
 
-const AMOUNT = styled(FlexColumnDiv)`
+const AMOUNT = styled(FlexColumnDiv)<{ $height: string }>`
+  position: relative;
   align-items: center;
   justify-content: flex-end;
-  height: 50px;
-  padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2.5x']} ${({ theme }) => theme.margins['1x']} 0;
+  height: ${({ $height }) => $height};
+  padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2.5x']}
+    ${({ theme }) => theme.margins['1x']} 0;
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.textBox};
 
@@ -35,7 +38,7 @@ const AMOUNT = styled(FlexColumnDiv)`
 
 const HEADER = styled.div`
   position: absolute;
-  top: -24px;
+  top: -20px;
   font-weight: bold;
 `
 
@@ -44,9 +47,9 @@ const WRAPPER = styled(FlexColumnDiv)`
   flex: 1;
 `
 
-export const To: FC = () => {
+export const To: FC<{ height: string }> = ({ height }) => {
   const { getUIAmountString } = useAccounts()
-  const { synthSwap } = useSynths()
+  const { synthSwap } = useSynthSwap()
 
   const balance = useMemo(() => {
     if (!synthSwap.outToken) return 0
@@ -59,14 +62,15 @@ export const To: FC = () => {
     return (
       synthSwap.outToken &&
       synthSwap.outTokenAmount &&
-      `At least ${(synthSwap.outTokenAmount).toString().slice(0, 8)} ${synthSwap.outToken?.symbol}`
+      `At least ${synthSwap.outTokenAmount.toString().slice(0, 8)} ${synthSwap.outToken?.symbol}`
     )
   }, [synthSwap.outToken, synthSwap.outTokenAmount])
 
   return (
     <WRAPPER>
       <HEADER>To:</HEADER>
-      <AMOUNT>
+      <AMOUNT $height={height}>
+        <Selector otherToken={synthSwap.inToken} side="out" token={synthSwap.outToken} />
         <span>{synthSwap.outTokenAmount}</span>
         {value && <span>{value}</span>}
       </AMOUNT>

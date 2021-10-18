@@ -86,40 +86,40 @@ export const ADDRESSES: {
         type: 'crypto'
       },
       gUSD: {
-        address: new PublicKey('8e9DijtBDU1swHentbMS91z5NkuWe1xos9dLX7A2R39J'),
+        address: new PublicKey('EXceVxfi8hbEoDWMpYq621kTVvBi53oMXih3REnGG9o3'),
         decimals: 2,
         type: 'synth'
       },
       gAAPL: {
-        address: new PublicKey('HeprdyqtmWbxk9DNkiaLJkZimKf2juTdT8VdHDDd6ZbC'),
+        address: new PublicKey('qUY4zvt1wk3qiMjF2F2J771AyLsYeeDTbBP7PbrNoD6'),
         decimals: 8,
         type: 'synth'
       },
       gAMZN: {
-        address: new PublicKey('4DLS3s4u4LEbDU1rT6h5qz5Gm58T6dJYHNNZpc9z887K'),
+        address: new PublicKey('Ab3umoUA2DHHRnaDFAF7qnZDFmr9DyHidLh8riaQGg2D'),
         decimals: 8,
         type: 'synth'
       },
       gFB: {
-        address: new PublicKey('4DLS3s4u4LEbDU1rT6h5qz5Gm58T6dJYHNNZpc9z887K'),
+        address: new PublicKey('F3qSM2ZY9K4JsV1aj8wneTK8aP8QUa76sgpePB2bbqCK'),
         decimals: 8,
         type: 'synth'
       },
       gGOOGL: {
-        address: new PublicKey('4DLS3s4u4LEbDU1rT6h5qz5Gm58T6dJYHNNZpc9z887K'),
+        address: new PublicKey('3KGstBKxV3iX4ftPCLxt3Q3BEwAF8UueAMmLUDeZNwLa'),
         decimals: 8,
         type: 'synth'
       },
       gTSLA: {
-        address: new PublicKey('4DLS3s4u4LEbDU1rT6h5qz5Gm58T6dJYHNNZpc9z887K'),
+        address: new PublicKey('DUYUVTVeTKXqbQCGq2jCegbNXv2LjP89DVuhPh6HgXRd'),
         decimals: 8,
         type: 'synth'
       }
     },
     pools: {
-      POOL_A: {
-        address: new PublicKey('4hkhVuQkpJJDhpvjEn65LmwuPnAZoMzjXdQ5FjW5KcpY'),
-        listing: new PublicKey('QwtKuSQcz8rdY5T3ZBavkoFZev777rcJ1BFWe5KHvVW'),
+      POOL_0: {
+        address: new PublicKey('8fCDoLwnNAMY2NArYkLGSNfpkk4VfGaxLJDx4f5CsZik'),
+        listing: new PublicKey('E9kqgZ3PqbTEVnFKcTBEZwKS8BVE8cAyhWa9RstGSYTE'),
         type: 'synth'
       },
       'GOFX/TKNB': {
@@ -130,9 +130,9 @@ export const ADDRESSES: {
     },
     programs: {
       pool: {
-        address: new PublicKey('Wo2kK51ruxwnM38VrqWSZCMjX1Mmcu4yBMcfg83Nufp'),
-        controller: new PublicKey('Agf85Co1n9NTTzy36rGUen4kCEBzhvkKyks8rTLdVeP8'),
-        priceAggregator: new PublicKey('pZ1frxrqntkZN2zCwRBS4Z6Ur3fFaCswvzUti57ukHw')
+        address: new PublicKey('29S8DHSwXLSwTSj25Tdx8Q8vAVqAmZ1TycnJYLp3owk5'),
+        controller: new PublicKey('FCngovJKv3V4QdHVaxY1dKE8EJsE7dLJB6Z6ANZUQr9E'),
+        priceAggregator: new PublicKey('9vaQXLp6emaTWSNTJ9nCEZyzSPNCVURgSry9YEGbJAm7')
       },
       swap: {
         address: new PublicKey('A4HxR7CUzKiudjCRWajsazoSNQ4YHGU5QvE3NgB6fRLd')

@@ -15,6 +15,7 @@ import { Connection, PublicKey } from '@solana/web3.js'
 import { useConnectionConfig } from './settings'
 import { useTokenRegistry } from './token_registry'
 import { findAssociatedTokenAddress } from '../web3'
+import { notify } from '../utils'
 
 interface IAccounts {
   [mint: string]: {
@@ -57,26 +58,32 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const fetchAccounts = useCallback(
     (publicKey: PublicKey) => {
-      const subscriptions: number[] = [];
+      const subscriptions: number[] = []
 
-      (async () => {
+      ;(async () => {
         setFetching(true)
-        const [parsedAccounts, solAmount] = await Promise.all([
-          connection.getParsedTokenAccountsByOwner(publicKey, { programId: TOKEN_PROGRAM_ID }),
-          connection.getBalance(publicKey)
-        ])
 
-        const accounts = parsedAccounts.value.reduce((acc: IAccounts, { account }) => {
-          const { mint, tokenAmount } = account.data.parsed.info
-          acc[mint] = tokenAmount
-          handleAccountChange(subscriptions, connection, publicKey, new PublicKey(mint))
-          return acc
-        }, {})
+        try {
+          const [parsedAccounts, solAmount] = await Promise.all([
+            connection.getParsedTokenAccountsByOwner(publicKey, { programId: TOKEN_PROGRAM_ID }),
+            connection.getBalance(publicKey)
+          ])
 
-        const amount = solAmount.toString()
-        const uiAmount = solAmount / 10 ** 9
-        accounts[WRAPPED_SOL_MINT.toString()] = { amount, decimals: 9, uiAmount, uiAmountString: uiAmount.toString() }
-        setBalances(accounts)
+          const accounts = parsedAccounts.value.reduce((acc: IAccounts, { account }) => {
+            const { mint, tokenAmount } = account.data.parsed.info
+            acc[mint] = tokenAmount
+            handleAccountChange(subscriptions, connection, publicKey, new PublicKey(mint))
+            return acc
+          }, {})
+
+          const amount = solAmount.toString()
+          const uiAmount = solAmount / 10 ** 9
+          accounts[WRAPPED_SOL_MINT.toString()] = { amount, decimals: 9, uiAmount, uiAmountString: uiAmount.toString() }
+          setBalances(accounts)
+        } catch (e: any) {
+          notify({ type: 'error', message: `Error fetching accounts`, icon: 'error' }, e)
+        }
+
         setFetching(false)
       })()
 

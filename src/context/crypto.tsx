@@ -14,6 +14,7 @@ import { Market, Orderbook } from '@project-serum/serum'
 import { useConnectionConfig } from './settings'
 import { notify } from '../utils'
 import { pyth, serum } from '../web3'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 
 interface ICrypto {
   decimals: number
@@ -71,7 +72,7 @@ const DEFAULT_ORDER_BOOK = { asks: [], bids: [] }
 const CryptoContext = createContext<ICryptoConfig | null>(null)
 
 export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { connection } = useConnectionConfig()
+  const { connection, network } = useConnectionConfig()
   const [marketsData, setMarketsData] = useState<ICryptoMarkets>(DEFAULT_MARKETS_DATA)
   const [orderBook, setOrderBook] = useState<OrderBook>(DEFAULT_ORDER_BOOK)
   const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(FEATURED_PAIRS_LIST[0])
@@ -119,22 +120,23 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const subscriptions: number[] = []
 
     const cryptoMarkets = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'crypto')
-    cryptoMarkets.forEach(async ({ pair }) => {
-      if (!cancelled) {
-        try {
-          const market = await serum.getMarket(connection, pair)
-          subscriptions.push(
-            await serum.subscribeToOrderBook(connection, market, 'asks', (account, market) => {
-              const [[current]] = Orderbook.decode(market, account.data).getL2(1)
-              const newPrice = { [pair]: { change24H: 0, current } }
-              setMarketsData((prevState: ICryptoMarkets) => ({ ...prevState, ...newPrice }))
-            })
-          )
-        } catch (e: any) {
-          notify({ type: 'error', message: 'Error fetching serum markets', icon: 'rate_error' }, e)
+    network === WalletAdapterNetwork.Mainnet &&
+      cryptoMarkets.forEach(async ({ pair }) => {
+        if (!cancelled) {
+          try {
+            const market = await serum.getMarket(connection, pair)
+            subscriptions.push(
+              await serum.subscribeToOrderBook(connection, market, 'asks', (account, market) => {
+                const [[current]] = Orderbook.decode(market, account.data).getL2(1)
+                const newPrice = { [pair]: { change24H: 0, current } }
+                setMarketsData((prevState: ICryptoMarkets) => ({ ...prevState, ...newPrice }))
+              })
+            )
+          } catch (e: any) {
+            notify({ type: 'error', message: 'Error fetching serum markets', icon: 'rate_error' }, e)
+          }
         }
-      }
-    })
+      })
 
     const synthMarkets = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'synth')
     !cancelled && handlePythSubscription(synthMarkets, subscriptions)
@@ -151,7 +153,8 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     let cancelled = false
     const subscriptions: number[] = []
 
-    selectedCrypto.type === 'crypto' &&
+    network === WalletAdapterNetwork.Mainnet &&
+      selectedCrypto.type === 'crypto' &&
       !cancelled &&
       (async () => {
         try {
@@ -189,7 +192,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setOrderBook(DEFAULT_ORDER_BOOK)
       subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
     }
-  }, [connection, handlePythSubscription, selectedCrypto.pair, selectedCrypto.type])
+  }, [connection, handlePythSubscription, network, selectedCrypto.pair, selectedCrypto.type])
 
   return (
     <CryptoContext.Provider

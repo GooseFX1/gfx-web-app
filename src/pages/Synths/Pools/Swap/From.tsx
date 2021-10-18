@@ -1,16 +1,20 @@
-import React, { FC, useMemo } from 'react'
-import styled from 'styled-components'
-import { useAccounts, useSynths } from '../../../../context'
+import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
+import { Input } from 'antd'
+import styled, { css } from 'styled-components'
+import { Selector } from './Selector'
+import { useAccounts, useDarkMode, useSynthSwap } from '../../../../context'
 import { FlexColumnDiv, SpaceBetweenDiv } from '../../../../styles'
 
-const AMOUNT = styled(FlexColumnDiv)`
+const AMOUNT = styled(FlexColumnDiv)<{ $height: string }>`
+  position: relative;
   align-items: center;
   justify-content: flex-end;
-  height: 50px;
-  padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2.5x']} ${({ theme }) => theme.margins['1x']} 0;
+  height: ${({ $height }) => $height};
+  padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2.5x']}
+    ${({ theme }) => theme.margins['1x']} 0;
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.textBox};
-  
+
   span {
     display: flex;
     justify-content: flex-end;
@@ -27,16 +31,30 @@ const AMOUNT = styled(FlexColumnDiv)`
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  
+
   span:last-child {
     text-align: right;
   }
 `
 
-const HEADER = styled.div`
+const HEADER = styled(SpaceBetweenDiv)`
   position: absolute;
-  top: -24px;
-  font-weight: bold;
+  top: -20px;
+  width: 90%;
+
+  span {
+    font-weight: bold;
+  }
+
+  span:last-child {
+    font-size: 11px;
+    color: ${({ theme }) => theme.text1h};
+
+    &:hover {
+      color: ${({ theme }) => theme.text1};
+      cursor: pointer;
+    }
+  }
 `
 
 const WRAPPER = styled(FlexColumnDiv)`
@@ -44,9 +62,10 @@ const WRAPPER = styled(FlexColumnDiv)`
   flex: 1;
 `
 
-export const From: FC = () => {
+export const From: FC<{ height: string }> = ({ height }) => {
   const { getUIAmountString } = useAccounts()
-  const { synthSwap } = useSynths()
+  const { mode } = useDarkMode()
+  const { setFocused, setSynthSwap, synthSwap } = useSynthSwap()
 
   const balance = useMemo(() => {
     if (!synthSwap.outToken) return 0
@@ -59,9 +78,25 @@ export const From: FC = () => {
     return (
       synthSwap.outToken &&
       synthSwap.outTokenAmount &&
-      `At least ${(synthSwap.outTokenAmount).toString().slice(0, 8)} ${synthSwap.outToken?.symbol}`
+      `At least ${synthSwap.outTokenAmount.toString().slice(0, 8)} ${synthSwap.outToken?.symbol}`
     )
   }, [synthSwap.outToken, synthSwap.outTokenAmount])
+
+  const localCSS = css`
+    .ant-input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 50px;
+      border: none;
+      border-radius: 50px;
+    }
+
+    .ant-input-affix-wrapper > input.ant-input {
+      height: 50px;
+      text-align: left;
+    }
+  `
 
   return (
     <WRAPPER>
@@ -69,9 +104,23 @@ export const From: FC = () => {
         <span>From:</span>
         <span>Use MAX</span>
       </HEADER>
-      <AMOUNT>
-        <span>{synthSwap.outTokenAmount}</span>
-        {value && <span>{value}</span>}
+      <AMOUNT $height={height}>
+        <style>{localCSS}</style>
+        <Selector otherToken={synthSwap.inToken} side="in" token={synthSwap.outToken} />
+        <Input
+          maxLength={15}
+          onBlur={() => setFocused(undefined)}
+          onChange={(x: BaseSyntheticEvent) => {
+            if (synthSwap.inToken && !isNaN(x.target.value)) {
+              setSynthSwap((prevState) => ({ ...prevState, inTokenAmount: x.target.value }))
+            }
+          }}
+          onFocus={() => setFocused('from')}
+          pattern="\d+(\.\d+)?"
+          placeholder={synthSwap.inTokenAmount.toString()}
+          value={synthSwap.inTokenAmount}
+        />
+        <span>{value}</span>
       </AMOUNT>
     </WRAPPER>
   )
