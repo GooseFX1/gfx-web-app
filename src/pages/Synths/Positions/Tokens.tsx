@@ -15,16 +15,7 @@ const TOKEN = styled(SpaceBetweenDiv)`
     ${({ theme }) => theme.flexCenter}
   }
 
-  > div > span {
-    cursor: pointer;
-
-    &:hover {
-      color: ${({ theme }) => theme.secondary4};
-    }
-  }
-
-  > span,
-  > div > span {
+  span {
     font-size: 12px;
     color: ${({ theme }) => theme.text1};
   }
@@ -54,16 +45,16 @@ export const Tokens: FC = () => {
   return (
     <WRAPPER>
       {tokens.map(({ mint, uiAmount }, index) => {
-        const [synth] = availableSynths.find(([name, { address }]) => mint === address.toString()) || ['']
+        const [synth] = availableSynths.find(([_, { address }]) => mint === address.toString()) || ['']
 
         return (
           <TOKEN key={index}>
             <SynthToken size="small" synth={synth} />
-            <span>1000</span>
-            <span>1000</span>
+            <span>-</span>
+            <span>-</span>
             <span>{uiAmount}</span>
-            <span>1000</span>
-            <span>1000</span>
+            <span>-</span>
+            <span>-</span>
           </TOKEN>
         )
       })}
