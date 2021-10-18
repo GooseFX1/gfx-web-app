@@ -1,8 +1,8 @@
 import React, { FC, MouseEventHandler, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { SynthToken } from './SynthToken'
 import { Button, Synth } from './shared'
+import { SynthToken } from '../SynthToken'
 import { useSynths, useWalletModal } from '../../../context'
 import { SpaceBetweenDiv } from '../../../styles'
 
@@ -86,7 +86,7 @@ export const Claim: FC = () => {
           <SpaceBetweenDiv>
             <span>{allTime}</span>
             <Synth>
-              <SynthToken synth="gUSD" />
+              <SynthToken size="large" synth="gUSD" />
             </Synth>
           </SpaceBetweenDiv>
         </div>
@@ -95,7 +95,7 @@ export const Claim: FC = () => {
           <SpaceBetweenDiv>
             <span>{current}</span>
             <Synth>
-              <SynthToken synth="gUSD" />
+              <SynthToken size="large" synth="gUSD" />
             </Synth>
           </SpaceBetweenDiv>
         </div>

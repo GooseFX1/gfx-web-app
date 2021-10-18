@@ -4,9 +4,8 @@ import { ArrowDropdown } from '../../../components'
 import { useSynths } from '../../../context'
 import { CenteredDiv } from '../../../styles'
 
-const SELECTOR = styled.div`
+const SELECTOR = styled(CenteredDiv)`
   position: relative;
-  ${({ theme }) => theme.flexCenter}
   flex-direction: column;
   padding: ${({ theme }) => theme.margins['1.5x']} 0;
   ${({ theme }) => theme.smallBorderRadius}

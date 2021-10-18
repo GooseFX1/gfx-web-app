@@ -3,7 +3,7 @@ import { Input } from 'antd'
 import styled from 'styled-components'
 import { ArrowDropdown } from '../../../components'
 import { AVAILABLE_MARKETS, useCrypto } from '../../../context'
-import { CenteredImg, SVGToWhite, TRADE_ORDER_WIDTH } from '../../../styles'
+import { CenteredDiv, CenteredImg, SVGToWhite, TRADE_ORDER_WIDTH } from '../../../styles'
 
 const MAGNIFYING_GLASS = styled(CenteredImg)`
   position: absolute;
@@ -40,9 +40,8 @@ const MARKET = styled.div`
   }
 `
 
-const SELECTOR = styled.div`
+const SELECTOR = styled(CenteredDiv)`
   position: relative;
-  ${({ theme }) => theme.flexCenter}
   flex-direction: column;
   width: calc(${TRADE_ORDER_WIDTH} - 20px);
   padding: ${({ theme }) => theme.margins['1.5x']} 0;

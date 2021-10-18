@@ -3,7 +3,7 @@ import { Input } from 'antd'
 import { css } from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Available, Button, Inputs, InputHeader, InputWrapper, Synth } from './shared'
-import { SynthToken } from './SynthToken'
+import { SynthToken } from '../SynthToken'
 import { useAccounts, useConnectionConfig, useDarkMode, useSynths, useWalletModal } from '../../../context'
 import { SpaceBetweenDiv } from '../../../styles'
 import { capitalizeFirstLetter } from '../../../utils'
@@ -101,7 +101,7 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
             value={amount || undefined}
           />
           <Synth>
-            <SynthToken synth="GOFX" />
+            <SynthToken size="large" synth="GOFX" />
           </Synth>
         </InputWrapper>
         <Available>

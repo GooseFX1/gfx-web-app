@@ -14,8 +14,7 @@ const WRAPPER = styled.div`
   `};
 
   > div:first-child {
-    display: flex;
-    flex-direction: column;
+    ${({ theme }) => theme.flexColumnNoWrap}
 
     ${({ theme }) => theme.mediaWidth.upToLarge`
       width: 100%;

@@ -14,8 +14,7 @@ const LABEL = styled.span`
   text-transform: capitalize;
 `
 
-const TAB = styled.div`
-  ${({ theme }) => theme.flexCenter}
+const TAB = styled(CenteredDiv)`
   position: absolute;
   flex-direction: column;
 `

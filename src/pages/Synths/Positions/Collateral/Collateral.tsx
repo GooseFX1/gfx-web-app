@@ -1,13 +1,10 @@
 import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { Chart } from './Chart'
-import { SpaceBetweenDiv } from '../../../../styles'
+import { SpaceBetweenDiv, SpaceEvenlyDiv } from '../../../../styles'
 
-const INFORMATION = styled.div<{ $synthsLength: number }>`
-  display: flex;
+const INFORMATION = styled(SpaceBetweenDiv)<{ $synthsLength: number }>`
   flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
   min-height: 150px;
 
   > div {
@@ -62,9 +59,7 @@ const SPECIFIC = styled(SpaceBetweenDiv)<{ $color: string; $synthsLength: number
   }
 `
 
-const WRAPPER = styled.div`
-  display: flex;
-  justify-content: space-evenly;
+const WRAPPER = styled(SpaceEvenlyDiv)`
   align-items: center;
   width: 100%;
   padding: 0 ${({ theme }) => theme.margins['3x']};

@@ -19,8 +19,7 @@ const WRAPPER = styled.div`
   }
 
   > div:last-child {
-    display: flex;
-    flex-direction: column;
+    ${({ theme }) => theme.flexColumnNoWrap}
     width: ${TRADE_ORDER_WIDTH};
     margin: 0 ${({ theme }) => theme.margins['3x']};
   }

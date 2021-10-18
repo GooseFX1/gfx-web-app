@@ -1,11 +1,11 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
+import { CenteredDiv } from '../styles'
 
-const WRAPPER = styled.div`
+const WRAPPER = styled(CenteredDiv)`
   position: absolute;
   top: 3px;
   left: calc(50% - 10px);
-  ${({ theme }) => theme.flexCenter}
   width: 20px;
   height: 4px;
   border-radius: 50px;

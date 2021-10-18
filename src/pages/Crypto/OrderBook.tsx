@@ -46,8 +46,7 @@ const LOADER = styled(Skeleton.Input)`
 `
 
 const ORDERS = styled.div<{ $visible: boolean }>`
-  display: flex;
-  flex-direction: column;
+  ${({ theme }) => theme.flexColumnNoWrap}
   justify-content: space-between;
   align-items: center;
   max-height: ${({ $visible }) => ($visible ? '1000px' : '212px')};

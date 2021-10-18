@@ -21,6 +21,10 @@ type Decimal = {
   lo: number
 }
 
+interface ISynthPrices {
+  [x: string]: number
+}
+
 interface IUserAccount {
   collateral: number
   debt: number
@@ -43,6 +47,7 @@ interface ISynthsConfig {
   setSynth: Dispatch<SetStateAction<string>>
   setUserAccount: Dispatch<SetStateAction<IUserAccount>>
   synth: string
+  synthPrices: ISynthPrices
   userAccount: IUserAccount
   withdraw: () => Promise<void>
 }
@@ -59,10 +64,11 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const availableSynths = useMemo(() => Object.entries(mints).filter(([_, { type }]) => type === 'synth'), [mints])
   const availablePools = useMemo(() => Object.entries(pools).filter(([_, { type }]) => type === 'synth'), [pools])
 
-  const [amount, setAmount] = useState<number>(0)
+  const [amount, setAmount] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [poolName, setPoolName] = useState<string>(availablePools[0][0])
-  const [synth, setSynth] = useState<string>(availableSynths[0][0])
+  const [poolName, setPoolName] = useState(availablePools[0][0])
+  const [synth, setSynth] = useState(availableSynths[0][0])
+  const [synthPrices, setSynthPrices] = useState<ISynthPrices>({})
   const [userAccount, setUserAccount] = useState<IUserAccount>(DEFAULT_USER_ACCOUNT)
 
   const burn = async () => {
@@ -209,6 +215,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSynth,
         setUserAccount,
         synth,
+        synthPrices,
         userAccount,
         withdraw
       }}
@@ -239,6 +246,7 @@ export const useSynths = (): ISynthsConfig => {
     setSynth: context.setSynth,
     setUserAccount: context.setUserAccount,
     synth: context.synth,
+    synthPrices: context.synthPrices,
     userAccount: context.userAccount,
     withdraw: context.withdraw
   }

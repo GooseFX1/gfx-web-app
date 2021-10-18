@@ -1,9 +1,9 @@
 import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
 import styled from 'styled-components'
+import { SynthToken } from '../SynthToken'
 import { ArrowDropdown } from '../../../components'
 import { useSynths } from '../../../context'
 import { CenteredDiv, CenteredImg } from '../../../styles'
-import { SynthToken } from './SynthToken'
 
 const SELECTOR = styled.div`
   position: relative;
@@ -95,7 +95,7 @@ export const SynthSelector: FC = () => {
 
   return (
     <CenteredDiv>
-      <SynthToken synth={synth} />
+      <SynthToken size="large" synth={synth} />
       <ArrowDropdown
         arrowRotation={arrowRotation}
         measurements="12px"

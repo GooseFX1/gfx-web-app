@@ -8,6 +8,7 @@ import { CenteredDiv } from '../../styles'
 
 const BODY = styled(CenteredDiv)`
   flex-direction: column;
+  height: 100%;
   padding: ${({ theme }) => theme.margins['3x']} 0;
 
   > div:not(:last-child) {
@@ -19,7 +20,9 @@ const CONNECT = styled.div`
   margin: ${({ theme }) => theme.margins['3x']} 0;
 `
 
-const WRAPPER = styled.div<{ $coverVisible: boolean }>`
+const WRAPPER = styled.div<{ $coverVisible: boolean; $minHeight?: string }>`
+  ${({ theme }) => theme.flexColumnNoWrap}
+  ${({ $minHeight }) => $minHeight && `min-height: ${$minHeight};`}
   margin-top: ${({ theme, $coverVisible }) => ($coverVisible ? theme.margins['3x'] : '0')};
   ${({ theme }) => theme.largeBorderRadius}
   ${({ theme }) => theme.largeShadow}
@@ -35,6 +38,7 @@ export const Panel: FC<{
   expand: Dispatch<SetStateAction<boolean>>
   fields: { [x: string]: string[] }
   justify: string
+  minHeight?: string
   panels: any[]
   setPanel: Dispatch<SetStateAction<any>>
   underlinePositions: string[]
@@ -47,6 +51,7 @@ export const Panel: FC<{
   expand,
   fields,
   justify,
+  minHeight,
   panels,
   setPanel,
   underlinePositions,
@@ -65,7 +70,7 @@ export const Panel: FC<{
   )
 
   return (
-    <WRAPPER $coverVisible={coverVisible}>
+    <WRAPPER $coverVisible={coverVisible} $minHeight={minHeight}>
       <Header
         activePanel={activePanel}
         centerLabels={centerLabels}
@@ -78,7 +83,9 @@ export const Panel: FC<{
         underlineWidths={underlineWidths}
       />
       <BODY>
-        {publicKey ? children : (
+        {publicKey ? (
+          children
+        ) : (
           <CONNECT>
             <MainButton height={'40px'} status="action" width={'160px'} onClick={handleClick}>
               <span>Connect Wallet</span>

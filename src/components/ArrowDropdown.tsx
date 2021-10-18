@@ -1,10 +1,9 @@
 import React, { FC, ReactElement } from 'react'
 import { Dropdown } from 'antd'
 import styled from 'styled-components'
-import { SVGToWhite } from '../styles'
+import { CenteredDiv, SVGToWhite } from '../styles'
 
-const ARROW_CLICKER = styled.div<{ $arrowRotation?: boolean; $measurements?: string }>`
-  ${({ theme }) => theme.flexCenter}
+const ARROW_CLICKER = styled(CenteredDiv)<{ $arrowRotation?: boolean; $measurements?: string }>`
   ${({ theme, $measurements }) => theme.measurements($measurements ? $measurements : theme.margins['1.5x'])}
   margin-left: ${({ theme }) => theme.margins['1x']};
   border: none;

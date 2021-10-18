@@ -5,8 +5,7 @@ import { useDarkMode, useSynths } from '../../../context'
 import { monetaryFormatValue } from '../../../utils'
 
 const WRAPPER = styled.div`
-  display: flex;
-  flex-direction: column;
+  ${({ theme }) => theme.flexColumnNoWrap}
   justify-content: flex-start;
   padding: ${({ theme }) => theme.margins['4x']} ${({ theme }) => theme.margins['3x']};
 
