@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const AmountField = styled.div<{ $balance: number; $height: string; $USDCValue?: string }>`
+export const AmountField = styled.div<{ $balance: number; $height: string; $value?: string }>`
   position: relative;
   height: ${({ $height }) => $height};
   margin-top: ${({ theme }) => theme.margins['2x']};
@@ -19,12 +19,11 @@ export const AmountField = styled.div<{ $balance: number; $height: string; $USDC
     white-space: nowrap;
   }
 
-  ${({ theme, $USDCValue }) =>
-    $USDCValue &&
-    parseFloat($USDCValue) > 0 &&
+  ${({ theme, $value }) =>
+    $value &&
     `
     &:after {
-      content: '${$USDCValue} USDC';
+      content: '${$value}';
       position: absolute;
       right: ${theme.margins['2.5x']};
       bottom: ${theme.margins['1x']};

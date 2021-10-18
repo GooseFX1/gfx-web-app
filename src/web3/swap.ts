@@ -22,7 +22,9 @@ export const computePoolsPDAs = async (
 ): Promise<{ lpTokenMint: PublicKey; pool: PublicKey }> => {
   const {
     pools,
-    programs: { swap: { address } }
+    programs: {
+      swap: { address }
+    }
   } = ADDRESSES[network]
   const pair = pools[[tokenASymbol, tokenBSymbol].sort((a, b) => a.localeCompare(b)).join('/')]
   const poolSeed = [new Buffer('GFXPool', 'utf-8'), new PublicKey(pair.address).toBuffer()]
@@ -50,8 +52,8 @@ export const swap = async (
   const { instruction } = getSwapProgram(wallet, connection, network)
   const tx = new Transaction()
 
-  const amountIn = new BN(inTokenAmount)
-  const minimumAmountOut = new BN(outTokenAmount * (1 - slippage))
+  const amountIn = new BN(inTokenAmount * 10 ** tokenA.decimals)
+  const minimumAmountOut = new BN(outTokenAmount * 10 ** tokenB.decimals * (1 - slippage))
 
   const { lpTokenMint, pool } = await computePoolsPDAs(tokenA.symbol, tokenB.symbol, network)
   const [inTokenAtaPool, outTokenAtaPool, lpTokenAtaFee, inTokenAtaUser, outTokenAtaUser] = await Promise.all([

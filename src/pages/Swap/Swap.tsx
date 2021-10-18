@@ -72,7 +72,7 @@ const WRAPPER = styled.div`
 
 const SwapContent: FC = () => {
   const { mode } = useDarkMode()
-  const { refreshRates, switchTokens } = useSwap()
+  const { refreshRates, setFocused, switchTokens } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
 
   useEffect(() => {
@@ -115,7 +115,13 @@ const SwapContent: FC = () => {
       <BODY>
         <style>{localCSS}</style>
         <SwapFrom height={height} />
-        <SWITCH measurements={80} onClick={switchTokens}>
+        <SWITCH
+          measurements={80}
+          onClick={() => {
+            setFocused('from')
+            switchTokens()
+          }}
+        >
           <img src={`${process.env.PUBLIC_URL}/img/assets/swap_switch_${mode}_mode.svg`} alt="switch" />
         </SWITCH>
         <SwapTo height={height} />

@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, ReactNode, SetStateAction, useState } from 'react'
+import React, { FC, ReactNode, useState } from 'react'
 import styled from 'styled-components'
 import { Claim } from './Claim'
 import { DepositWithdraw } from './DepositWithdraw'

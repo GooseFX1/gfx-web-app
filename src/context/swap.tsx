@@ -19,8 +19,12 @@ import { useConnectionConfig, useSlippageConfig } from './settings'
 import { notify } from '../utils'
 import { computePoolsPDAs, serum, swap } from '../web3'
 
-interface IRates {
+type SwapInput = undefined | 'from' | 'to'
+
+interface IPool {
+  inAmount: number
   inValue: number
+  outAmount: number
   outValue: number
   outValuePerIn: number
   time: string
@@ -37,11 +41,12 @@ interface ISwapConfig {
   inTokenAmount: number
   loading: boolean
   outTokenAmount: number
-  rates: IRates
+  pool: IPool
   refreshRates: () => void
+  setFocused: Dispatch<SetStateAction<SwapInput>>
   setInTokenAmount: Dispatch<SetStateAction<number>>
   setOutTokenAmount: Dispatch<SetStateAction<number>>
-  setRates: Dispatch<SetStateAction<IRates>>
+  setPool: Dispatch<SetStateAction<IPool>>
   setTokenA: Dispatch<SetStateAction<ISwapToken | null>>
   setTokenB: Dispatch<SetStateAction<ISwapToken | null>>
   swapTokens: () => void
@@ -61,8 +66,11 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [inTokenAmount, setInTokenAmount] = useState(0)
   const [loading, setLoading] = useState(false)
   const [outTokenAmount, setOutTokenAmount] = useState(0)
-  const [rates, setRates] = useState<IRates>({
+  const [focused, setFocused] = useState<SwapInput>(undefined)
+  const [pool, setPool] = useState<IPool>({
+    inAmount: 0,
     inValue: 0,
+    outAmount: 0,
     outValue: 0,
     outValuePerIn: 0,
     time: moment().format('MMMM DD, h:mm a')
@@ -79,54 +87,79 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const time = moment().format('MMMM DD, h:mm a')
 
       if (tokenA) {
+        let inValue = 0
+
         try {
-          const inValue = await serum.getLatestBid(connection, `${tokenA.symbol}/USDC`)
-          setRates(({ outValue, outValuePerIn }) => ({ inValue, outValue, outValuePerIn, time }))
-        } catch (e) {
-          setRates(({ outValue, outValuePerIn }) => ({ inValue: 0, outValue, outValuePerIn, time }))
-        }
+          inValue = await serum.getLatestBid(connection, `${tokenA.symbol}/USDC`)
+        } catch (e) {}
+
+        setPool(({ inAmount, outAmount, outValue, outValuePerIn }) => ({
+          inAmount,
+          inValue,
+          outAmount,
+          outValue,
+          outValuePerIn,
+          time
+        }))
       }
 
       if (tokenB) {
+        let outValue = 0
+
         try {
-          const outValue = await serum.getLatestBid(connection, `${tokenB.symbol}/USDC`)
-          setRates(({ inValue, outValuePerIn }) => ({ inValue, outValue, outValuePerIn, time }))
-        } catch (e) {
-          setRates(({ inValue, outValuePerIn }) => ({ inValue, outValue: 0, outValuePerIn, time }))
-        }
+          outValue = await serum.getLatestBid(connection, `${tokenB.symbol}/USDC`)
+        } catch (e) {}
+
+        setPool(({ inAmount, inValue, outAmount, outValuePerIn }) => ({
+          inAmount,
+          inValue,
+          outAmount,
+          outValue,
+          outValuePerIn,
+          time
+        }))
       }
 
       if (tokenA && tokenB) {
+        let inAmount = 0
+        let outAmount = 0
+        let outValuePerIn = 0
+
         try {
+          const { decimals } = tokenA
           const { pool } = await computePoolsPDAs(tokenA.symbol, tokenB.symbol, network)
           const [aAccount, bAccount] = await Promise.all([
             connection.getParsedTokenAccountsByOwner(pool, { mint: new PublicKey(tokenA.address) }),
             connection.getParsedTokenAccountsByOwner(pool, { mint: new PublicKey(tokenB.address) })
           ])
 
-          const a = parseFloat(aAccount.value[0].account.data.parsed.info.tokenAmount.amount)
-          const b = parseFloat(bAccount.value[0].account.data.parsed.info.tokenAmount.amount)
-          const outTokenAmount = inTokenAmount > 0 ? b - (a * b) / (a + inTokenAmount) : 0
-          const outValuePerIn = b - (a * b) / (a + 10 ** tokenA.decimals)
-
-          setOutTokenAmount(outTokenAmount)
-          setRates(({ inValue, outValue }) => ({ inValue, outValue, outValuePerIn, time }))
+          inAmount = parseFloat(aAccount.value[0].account.data.parsed.info.tokenAmount.amount)
+          outAmount = parseFloat(bAccount.value[0].account.data.parsed.info.tokenAmount.amount)
+          outValuePerIn = (outAmount - (inAmount * outAmount) / (inAmount + 10 ** decimals)) / 10 ** decimals
         } catch (e) {
           setOutTokenAmount(0)
-          setRates(({ inValue, outValue }) => ({ inValue, outValue, outValuePerIn: 0, time }))
         }
+
+        setPool(({ inValue, outValue }) => ({
+          inAmount,
+          inValue,
+          outAmount,
+          outValue,
+          outValuePerIn,
+          time
+        }))
       }
 
       setFetching(false)
     }, timeoutDelay)
-  }, [connection, inTokenAmount, network, setRates, tokenA, tokenB])
+  }, [connection, network, setPool, tokenA, tokenB])
 
   const swapTokens = async () => {
     if (!tokenA || !tokenB) return
 
     setLoading(true)
-    const inTokens = `${inTokenAmount / 10 ** tokenA.decimals} ${tokenA.symbol}`
-    const outTokens = `${outTokenAmount / 10 ** tokenB.decimals} ${tokenB.symbol}`
+    const inTokens = `${inTokenAmount} ${tokenA.symbol}`
+    const outTokens = `${outTokenAmount * (1 - slippage)} ${tokenB.symbol}`
     notify({ message: `Trying to swap ${inTokens} for at least ${outTokens}...` })
 
     try {
@@ -159,6 +192,18 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [connection])
 
   useEffect(() => {
+    if (tokenA && tokenB && focused === 'from') {
+      let outTokenAmount = 0
+      if (inTokenAmount) {
+        const { inAmount, outAmount } = pool
+        outTokenAmount = outAmount - (inAmount * outAmount) / (inAmount + inTokenAmount * 10 ** tokenA.decimals)
+      }
+
+      setOutTokenAmount(outTokenAmount / 10 ** tokenA.decimals)
+    }
+  }, [focused, inTokenAmount, pool, slippage, tokenA, tokenB])
+
+  useEffect(() => {
     refreshRates().then()
   }, [inTokenAmount, refreshRates, tokenA, tokenB])
 
@@ -175,11 +220,12 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         inTokenAmount,
         loading,
         outTokenAmount,
-        rates,
+        pool,
         refreshRates,
+        setFocused,
         setInTokenAmount,
         setOutTokenAmount,
-        setRates,
+        setPool,
         setTokenA,
         setTokenB,
         swapTokens,
@@ -204,11 +250,12 @@ export const useSwap = (): ISwapConfig => {
     inTokenAmount: context.inTokenAmount,
     loading: context.loading,
     outTokenAmount: context.outTokenAmount,
-    rates: context.rates,
+    pool: context.pool,
     refreshRates: context.refreshRates,
+    setFocused: context.setFocused,
     setInTokenAmount: context.setInTokenAmount,
     setOutTokenAmount: context.setOutTokenAmount,
-    setRates: context.setRates,
+    setPool: context.setPool,
     setTokenA: context.setTokenA,
     setTokenB: context.setTokenB,
     swapTokens: context.swapTokens,
