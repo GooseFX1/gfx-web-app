@@ -32,11 +32,10 @@ const MESSAGE = styled.div`
 `
 
 const DESCRIPTION = styled(MESSAGE)`
-  display: flex;
-  flex-direction: column;
+  ${({ theme }) => theme.flexColumnNoWrap}
   align-items: center;
   margin-top: 16px;
-  
+
   > span {
     width: 100%;
   }

@@ -12,21 +12,17 @@ const RATE = styled.span`
 `
 
 export const Rate: FC = () => {
-  const { rates, tokenA, tokenB } = useSwap()
+  const { pool, tokenA, tokenB } = useSwap()
 
-  const rate = useMemo(() => {
-    if (!tokenA) {
-      return 0
-    }
-
-    const { decimals } = tokenA
-    return (rates.outValuePerIn / 10 ** decimals).toString().slice(0, Math.min(decimals, 8))
-  }, [rates.outValuePerIn, tokenA])
+  const rate = useMemo(
+    () => (!tokenA ? 0 : pool.outValuePerIn.toString().slice(0, Math.min(tokenA.decimals, 8))),
+    [pool.outValuePerIn, tokenA]
+  )
 
   return (
     <RATE>
-      {rates.time}{' '}
-      {tokenA && tokenB && rates.outValuePerIn > 0 && (
+      {pool.time}{' '}
+      {tokenA && tokenB && pool.outValuePerIn > 0 && (
         <span>
           (1 {tokenA.symbol} = {rate} {tokenB.symbol})
         </span>

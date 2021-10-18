@@ -29,8 +29,8 @@ const CONTENT = styled.div<{ $display: boolean }>`
 
 const WRAPPER = styled.div`
   margin-bottom: ${({ theme }) => theme.margins['3x']};
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['2x']}
-    ${({ theme }) => theme.margins['1.5x']};
+  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['2x']};
+  ${({ theme }) => theme.margins['1.5x']};
   border-radius: 10px;
   background-color: ${({ theme }) => theme.bg3};
 `

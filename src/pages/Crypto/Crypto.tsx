@@ -19,14 +19,13 @@ const WRAPPER = styled.div`
   }
 
   > div:last-child {
-    display: flex;
-    flex-direction: column;
+    ${({ theme }) => theme.flexColumnNoWrap}
     width: ${TRADE_ORDER_WIDTH};
     margin: 0 ${({ theme }) => theme.margins['3x']};
   }
 `
 
-const TradeContent: FC = () => {
+const CryptoContent: FC = () => {
   const { selectedCrypto } = useCrypto()
   const [chartsVisible, setChartsVisible] = useState(true)
 
@@ -52,7 +51,7 @@ const TradeContent: FC = () => {
 export const Crypto: FC = () => {
   return (
     <CryptoProvider>
-      <TradeContent />
+      <CryptoContent />
     </CryptoProvider>
   )
 }

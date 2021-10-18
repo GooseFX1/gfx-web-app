@@ -3,13 +3,7 @@ import { Input } from 'antd'
 import styled from 'styled-components'
 import { ArrowDropdown } from '../../../components'
 import { AVAILABLE_MARKETS, useCrypto } from '../../../context'
-import { CenteredImg, SVGToWhite, TRADE_ORDER_WIDTH } from '../../../styles'
-
-const ARROW = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['2x'])};
-  margin-left: ${({ theme }) => theme.margins['2x']};
-  cursor: pointer;
-`
+import { CenteredDiv, CenteredImg, SVGToWhite, TRADE_ORDER_WIDTH } from '../../../styles'
 
 const MAGNIFYING_GLASS = styled(CenteredImg)`
   position: absolute;
@@ -46,9 +40,8 @@ const MARKET = styled.div`
   }
 `
 
-const SELECTOR = styled.div`
+const SELECTOR = styled(CenteredDiv)`
   position: relative;
-  ${({ theme }) => theme.flexCenter}
   flex-direction: column;
   width: calc(${TRADE_ORDER_WIDTH} - 20px);
   padding: ${({ theme }) => theme.margins['1.5x']} 0;
@@ -133,10 +126,6 @@ export const CryptoSelector: FC = () => {
       onClick={handleClick}
       overlay={<Overlay setArrowRotation={setArrowRotation} setVisible={setVisible} />}
       visible={visible}
-    >
-      <ARROW>
-        <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`} alt="" />
-      </ARROW>
-    </ArrowDropdown>
+    />
   )
 }

@@ -18,8 +18,8 @@ import { useCrypto } from './crypto'
 import { useConnectionConfig } from './settings'
 import { useTradeHistory } from './trade_history'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
-import { capitalizeFirstLetter, decimalModulo, floorValue, notify, removeFloatingPointError } from '../utils'
-import { placeCryptoOrder } from '../web3'
+import { capitalizeFirstLetter, floorValue, notify, removeFloatingPointError } from '../utils'
+import { crypto } from '../web3'
 
 type OrderInput = undefined | 'price' | 'size' | 'total'
 export type OrderDisplayType = 'market' | 'limit'
@@ -77,6 +77,7 @@ export const AVAILABLE_ORDERS: IOrderDisplay[] = [
 ]
 
 interface IOrderConfig {
+  loading: boolean
   order: IOrder
   placeOrder: () => void
   setFocused: Dispatch<SetStateAction<OrderInput>>
@@ -91,6 +92,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { fetchOpenOrders } = useTradeHistory()
   const wallet = useWallet()
   const [focused, setFocused] = useState<OrderInput>(undefined)
+  const [loading, setLoading] = useState(false)
   const [order, setOrder] = useState<IOrder>({
     display: 'limit',
     isHidden: false,
@@ -148,17 +150,19 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [marketPrice, order.price])
 
   const placeOrder = useCallback(async () => {
+    setLoading(true)
+
     try {
       if (!selectedCrypto.market) {
         throw new Error(`Market not selected`)
       }
-      if (decimalModulo(order.price, selectedCrypto.market.tickSize)) {
+      /* if (decimalModulo(order.price, selectedCrypto.market.tickSize)) {
         throw new Error(`Price must be a multiple of ${selectedCrypto.market.tickSize}`)
       }
       if (decimalModulo(order.size, selectedCrypto.market.minOrderSize)) {
         throw new Error(`Size must be a multiple of ${selectedCrypto.market.minOrderSize}`)
-      }
-      await placeCryptoOrder(connection, selectedCrypto.market as Market, order, wallet)
+      } */ // TODO FIX
+      await crypto.placeOrder(connection, selectedCrypto.market as Market, order, wallet)
       const ask = getAskSymbolFromPair(selectedCrypto.pair)
       const price = floorValue(order.price, selectedCrypto.market?.tickSize)
       const size = floorValue(order.size, selectedCrypto.market?.minOrderSize)
@@ -172,11 +176,14 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } catch (e: any) {
       notify({ type: 'error', message: `${capitalizeFirstLetter(order.display)} order failed`, icon: 'trade_error' }, e)
     }
+
+    setLoading(false)
   }, [connection, fetchOpenOrders, getAskSymbolFromPair, order, selectedCrypto.market, selectedCrypto.pair, wallet])
 
   return (
     <OrderContext.Provider
       value={{
+        loading,
         order,
         placeOrder,
         setFocused,
@@ -194,6 +201,6 @@ export const useOrder = (): IOrderConfig => {
     throw new Error('Missing order context')
   }
 
-  const { order, placeOrder, setFocused, setOrder } = context
-  return { order, placeOrder, setFocused, setOrder }
+  const { loading, order, placeOrder, setFocused, setOrder } = context
+  return { loading, order, placeOrder, setFocused, setOrder }
 }

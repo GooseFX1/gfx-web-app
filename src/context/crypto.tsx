@@ -55,11 +55,11 @@ export type MarketType = 'crypto' | 'synth'
 export const FEATURED_PAIRS_LIST = [
   { decimals: 1, pair: 'BTC/USDC', type: 'crypto' as MarketType },
   { decimals: 2, pair: 'ETH/USDC', type: 'crypto' as MarketType },
-  { decimals: 2, pair: 'LTC/USD', type: 'synth' as MarketType },
   { decimals: 3, pair: 'SOL/USDC', type: 'crypto' as MarketType },
   { decimals: 3, pair: 'LINK/USDC', type: 'crypto' as MarketType },
-  { decimals: 2, pair: 'AAPL/USD', type: 'synth' as MarketType },
-  { decimals: 2, pair: 'TSLA/USD', type: 'synth' as MarketType }
+  { decimals: 2, pair: 'gAAPL/gUSD', type: 'synth' as MarketType },
+  { decimals: 2, pair: 'gFB/gUSD', type: 'synth' as MarketType },
+  { decimals: 2, pair: 'gTSLA/gUSD', type: 'synth' as MarketType }
 ]
 
 const DEFAULT_MARKETS_DATA = FEATURED_PAIRS_LIST.reduce(
@@ -151,39 +151,38 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     let cancelled = false
     const subscriptions: number[] = []
 
-    if (selectedCrypto.type === 'crypto') {
+    selectedCrypto.type === 'crypto' &&
       !cancelled &&
-        (async () => {
-          try {
-            const market = await serum.getMarket(connection, selectedCrypto.pair)
-            setSelectedCrypto((prevState) => ({ ...prevState, market }))
+      (async () => {
+        try {
+          const market = await serum.getMarket(connection, selectedCrypto.pair)
+          setSelectedCrypto((prevState) => ({ ...prevState, market }))
 
-            const asks = await serum.getAsks(connection, selectedCrypto.pair)
-            setOrderBook((prevState) => ({ ...prevState, asks: asks.getL2(20) }))
-            const bids = await serum.getBids(connection, selectedCrypto.pair)
-            setOrderBook((prevState) => ({ ...prevState, bids: bids.getL2(20) }))
+          const asks = await serum.getAsks(connection, selectedCrypto.pair)
+          setOrderBook((prevState) => ({ ...prevState, asks: asks.getL2(20) }))
+          const bids = await serum.getBids(connection, selectedCrypto.pair)
+          setOrderBook((prevState) => ({ ...prevState, bids: bids.getL2(20) }))
 
-            const subs = await Promise.all([
-              serum.subscribeToOrderBook(connection, market, 'asks', (account, market) => {
-                const asks = Orderbook.decode(market, account.data).getL2(20)
-                setMarketsData((prevState: ICryptoMarkets) => ({
-                  ...prevState,
-                  ...{ [selectedCrypto.pair]: { change24H: 0, current: asks[0][0] } }
-                }))
-                setOrderBook((prevState) => ({ ...prevState, asks }))
-              }),
-              serum.subscribeToOrderBook(connection, market, 'bids', (account, market) => {
-                const bids = Orderbook.decode(market, account.data).getL2(20)
-                setOrderBook((prevState) => ({ ...prevState, bids }))
-              })
-            ])
+          const subs = await Promise.all([
+            serum.subscribeToOrderBook(connection, market, 'asks', (account, market) => {
+              const asks = Orderbook.decode(market, account.data).getL2(20)
+              setMarketsData((prevState: ICryptoMarkets) => ({
+                ...prevState,
+                ...{ [selectedCrypto.pair]: { change24H: 0, current: asks[0][0] } }
+              }))
+              setOrderBook((prevState) => ({ ...prevState, asks }))
+            }),
+            serum.subscribeToOrderBook(connection, market, 'bids', (account, market) => {
+              const bids = Orderbook.decode(market, account.data).getL2(20)
+              setOrderBook((prevState) => ({ ...prevState, bids }))
+            })
+          ])
 
-            subs.forEach((sub) => subscriptions.push(sub))
-          } catch (e: any) {
-            notify({ type: 'error', message: 'Error fetching serum order book', icon: 'rate_error' }, e)
-          }
-        })()
-    }
+          subs.forEach((sub) => subscriptions.push(sub))
+        } catch (e: any) {
+          notify({ type: 'error', message: 'Error fetching serum order book', icon: 'rate_error' }, e)
+        }
+      })()
 
     return () => {
       cancelled = true

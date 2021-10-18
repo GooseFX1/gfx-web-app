@@ -2,10 +2,9 @@ import React, { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { ArrowDropdown, Tooltip } from '../../../components'
 import { AVAILABLE_ORDERS, OrderDisplayType, OrderSide, useOrder } from '../../../context'
-import { SpaceBetweenDiv, TRADE_ORDER_WIDTH } from '../../../styles'
+import { CenteredDiv, SpaceBetweenDiv, TRADE_ORDER_WIDTH } from '../../../styles'
 
-const SELECTOR = styled.div`
-  ${({ theme }) => theme.flexCenter}
+const SELECTOR = styled(CenteredDiv)`
   flex-direction: column;
   width: ${({ theme }) => `calc(${TRADE_ORDER_WIDTH} - 2 * ${theme.margins['1x']})`};
   padding: ${({ theme }) => theme.margins['1.5x']} 0;

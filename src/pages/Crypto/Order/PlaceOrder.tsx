@@ -13,7 +13,7 @@ enum State {
 export const PlaceOrder: FC = () => {
   const { getUIAmount } = useAccounts()
   const { getAskSymbolFromPair, getSymbolFromPair, selectedCrypto } = useCrypto()
-  const { order, placeOrder } = useOrder()
+  const { loading, order, placeOrder } = useOrder()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
@@ -66,7 +66,7 @@ export const PlaceOrder: FC = () => {
   )
 
   return (
-    <MainButton height="50px" onClick={handleClick} status={buttonStatus} width="100%">
+    <MainButton height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="100%">
       <span>{content}</span>
     </MainButton>
   )

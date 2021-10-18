@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, FC, useEffect, useMemo, useState } from 'react'
+import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
 import { Input } from 'antd'
 import styled from 'styled-components'
 import { Selector } from './Selector'
@@ -28,11 +28,21 @@ const WRAPPER = styled.div`
 
 export const SwapFrom: FC<{ height: string }> = ({ height }) => {
   const { getUIAmount, getUIAmountString } = useAccounts()
-  const { rates, setInTokenAmount, setTokenA, tokenA, tokenB } = useSwap()
-  const [value, setValue] = useState(0)
+  const { inTokenAmount, pool, setFocused, setInTokenAmount, setTokenA, tokenA, tokenB } = useSwap()
 
-  const setHalf = () => tokenA && setValue(getUIAmount(tokenA.address) / 2)
-  const setMax = () => tokenA && setValue(getUIAmount(tokenA.address))
+  const setHalf = () => {
+    if (tokenA) {
+      setFocused('from')
+      setInTokenAmount(getUIAmount(tokenA.address) / 2)
+    }
+  }
+
+  const setMax = () => {
+    if (tokenA) {
+      setFocused('from')
+      setInTokenAmount(getUIAmount(tokenA.address))
+    }
+  }
 
   const balance = useMemo(() => {
     if (!tokenA) return 0
@@ -43,7 +53,9 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
 
   const showQuickSelect = useMemo(() => balance > 0, [balance])
 
-  useEffect(() => setInTokenAmount(tokenA ? value * 10 ** tokenA.decimals : 0), [setInTokenAmount, tokenA, value])
+  const value = useMemo(() => {
+    return inTokenAmount && pool.inValue && `${(pool.inValue * inTokenAmount).toString().slice(0, 8)} USDC`
+  }, [inTokenAmount, pool.inValue])
 
   return (
     <WRAPPER>
@@ -56,14 +68,16 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
           </QUICK_SELECT>
         )}
       </SpaceBetweenDiv>
-      <AmountField $balance={balance} $height={height} $USDCValue={(rates.inValue * value).toString().slice(0, 8)}>
+      <AmountField $balance={balance} $height={height} $value={value || undefined}>
         <Selector height={height} otherToken={tokenB} setToken={setTokenA} token={tokenA} />
         <Input
           maxLength={15}
-          onChange={(x: BaseSyntheticEvent) => tokenA && !isNaN(x.target.value) && setValue(x.target.value)}
+          onBlur={() => setFocused(undefined)}
+          onChange={(x: BaseSyntheticEvent) => tokenA && !isNaN(x.target.value) && setInTokenAmount(x.target.value)}
+          onFocus={() => setFocused('from')}
           pattern="\d+(\.\d+)?"
-          placeholder={value.toString()}
-          value={value}
+          placeholder={inTokenAmount.toString()}
+          value={inTokenAmount}
         />
       </AmountField>
     </WRAPPER>

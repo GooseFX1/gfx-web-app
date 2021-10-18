@@ -1,0 +1,14 @@
+{
+  "name": "decimaljs",
+  "version": "0.1.0",
+  "files": [
+    "decimaljs_bg.wasm",
+    "decimaljs.js",
+    "decimaljs_bg.js",
+    "decimaljs.d.ts"
+  ],
+  "module": "decimaljs.js",
+  "types": "decimaljs.d.ts",
+  "sideEffects": false,
+  "type": "module"
+}

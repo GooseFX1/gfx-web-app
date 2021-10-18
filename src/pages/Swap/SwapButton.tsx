@@ -15,20 +15,18 @@ enum State {
 export const SwapButton: FC = () => {
   const { getAmount } = useAccounts()
   const { network } = useConnectionConfig()
-  const { inTokenAmount, swapTokens, tokenA, tokenB } = useSwap()
+  const { inTokenAmount, loading, swapTokens, tokenA, tokenB } = useSwap()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
   const state = useMemo(() => {
-    const {
-      seeds: { pools }
-    } = ADDRESSES[network]
+    const { pools } = ADDRESSES[network]
 
     if (!wallet || !publicKey) {
       return State.Connect
     } else if (!tokenA || !tokenB) {
       return State.Enter
-    } else if (!pools[[tokenA.symbol, tokenB.symbol].sort((a, b) => a.localeCompare(b)).join('/')]) {
+    } else if (!pools[[tokenA.symbol, tokenB.symbol].sort((a, b) => a.localeCompare(b)).join('/')]?.address) {
       return State.PoolNotFound
     } else if (inTokenAmount === 0) {
       return State.Enter
@@ -67,7 +65,7 @@ export const SwapButton: FC = () => {
   )
 
   return (
-    <MainButton height='50px' status={buttonStatus} width='170px' onClick={handleClick}>
+    <MainButton height="50px" loading={loading} status={buttonStatus} width="170px" onClick={handleClick}>
       <span>{content}</span>
     </MainButton>
   )
