@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState } from 'react'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useState } from 'react'
 import styled from 'styled-components'
 import { Claim } from './Claim'
 import { DepositWithdraw } from './DepositWithdraw'
@@ -44,13 +44,17 @@ const TABS = styled(SpaceBetweenDiv)`
   }
 `
 
-const WRAPPER = styled.div`
+const WRAPPER = styled.div<{ $visible: boolean }>`
+  height: 280px;
+  max-height: ${({ $visible }) => ($visible ? '280px' : '0')};
   ${({ theme }) => theme.largeBorderRadius}
   ${({ theme }) => theme.largeShadow}
   background-color: ${({ theme }) => theme.bg3};
+  opacity: ${({ $visible }) => ($visible ? '1' : '0')};
+  transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;
 `
 
-export const Pools: FC = () => {
+export const Pools: FC<{ poolsVisible: boolean }> = ({ poolsVisible }) => {
   const [tab, setTab] = useState(0)
 
   const tabs = [
@@ -63,7 +67,7 @@ export const Pools: FC = () => {
   ] as { component: ReactNode; display: string }[]
 
   return (
-    <WRAPPER>
+    <WRAPPER $visible={poolsVisible}>
       <HEADER $tab={tab}>
         <PoolSelector />
         <TABS>

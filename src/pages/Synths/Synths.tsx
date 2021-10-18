@@ -49,7 +49,7 @@ export const SynthsContent: FC = () => {
   return (
     <WRAPPER>
       <div>
-        <Pools />
+        <Pools poolsVisible={poolsVisible} />
         <Positions poolsVisible={poolsVisible} setPoolsVisible={setPoolsVisible} />
       </div>
       <div>
