@@ -9,13 +9,16 @@ const TABS = ['/swap', '/crypto', '/synths', '/NFTs', '/farm']
 const LABEL = styled.span`
   position: absolute;
   bottom: -${({ theme }) => theme.margins['3x']};
+  height: ${({ theme }) => theme.margins['3x']};
+  width: 7vw;
+  ${({ theme }) => theme.flexCenter}
   font-size: 13px;
   color: ${({ theme }) => theme.text2};
   text-transform: capitalize;
 `
 
-const TAB = styled(CenteredDiv)`
-  position: absolute;
+const TAB = styled(Link)`
+  ${({ theme }) => theme.flexCenter}
   flex-direction: column;
 `
 
@@ -26,7 +29,6 @@ const TAB_ICON = styled(CenteredImg)`
 const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: number }>`
   position: relative;
   width: ${({ $width }) => $width * 2 * TABS.length}px;
-  padding: ${({ $height }) => $height}vh ${({ $width }) => $width}px;
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.bg3};
   ${({ theme }) => theme.smallShadow}
@@ -36,7 +38,7 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     position: absolute;
     left: ${({ $index, $width }) => 2 * $index * $width}px;
     display: block;
-    height: ${({ $height }) => $height * 2}vh;
+    height: 100%;
     width: 100px;
     ${({ theme }) => theme.roundedBorders}
     background: linear-gradient(to right, ${({ theme, $index }) => theme.tabsGradients[$index]}, ${({
@@ -46,7 +48,7 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     transition: left ${({ theme }) => theme.mainTransitionTime} ease-in-out;
   }
 
-  > div {
+  > a {
     width: ${({ $width }) => $width}px;
     padding: calc(${({ $height }) => $height}vh - ${({ theme }) => theme.margins['2x']} / 2) ${({ $width }) => $width}px;
     ${({ theme }) => theme.roundedBorders}
@@ -73,22 +75,20 @@ export const Tabs: FC = () => {
   return (
     <WRAPPER $height={3.5} $index={index} $width={50}>
       {TABS.map((path, index) => (
-        <TAB key={index}>
-          <Link onMouseEnter={() => setHovered(index)} onMouseLeave={() => setHovered(-1)} to={path}>
-            <TAB_ICON>
-              {(() => {
-                const icon = `${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`
+        <TAB key={index} onMouseEnter={() => setHovered(index)} onMouseLeave={() => setHovered(-1)} to={path}>
+          <TAB_ICON>
+            {(() => {
+              const icon = `${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`
 
-                if (pathname === path || (mode === 'dark' && hovered === index)) {
-                  return <SVGToWhite src={icon} alt="" />
-                } else if (hovered === index) {
-                  return <SVGToPrimary2 src={icon} alt="" />
-                } else {
-                  return <SVGToGrey2 src={icon} alt="" />
-                }
-              })()}
-            </TAB_ICON>
-          </Link>
+              if (pathname === path || (mode === 'dark' && hovered === index)) {
+                return <SVGToWhite src={icon} alt="" />
+              } else if (hovered === index) {
+                return <SVGToPrimary2 src={icon} alt="" />
+              } else {
+                return <SVGToGrey2 src={icon} alt="" />
+              }
+            })()}
+          </TAB_ICON>
           <LABEL>{path.slice(1)}</LABEL>
         </TAB>
       ))}
