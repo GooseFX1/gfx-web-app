@@ -13,8 +13,6 @@ enum State {
 }
 
 const REWARDS = styled(SpaceBetweenDiv)`
-  margin-bottom: ${({ theme }) => theme.margins['5x']};
-
   > div {
     position: relative;
     ${({ theme }) => theme.flexColumnNoWrap}

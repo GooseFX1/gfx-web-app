@@ -85,7 +85,7 @@ export const Collateral: FC = () => {
   return (
     <WRAPPER>
       <INFORMATION $synthsLength={synthsLength}>
-        <span>Collateral structure</span>
+        <span>Debt structure</span>
         <div>
           {synths.map((name, index) => (
             <SPECIFIC key={index} $color={synthColor[name].background} $synthsLength={synthsLength}>

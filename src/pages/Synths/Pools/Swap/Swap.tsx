@@ -1,9 +1,11 @@
 import React, { FC, MouseEventHandler, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Button } from './shared'
-import { SwapProvider, useAccounts, useDarkMode, useSwap, useWalletModal } from '../../../context'
-import { CenteredImg, SpaceBetweenDiv } from '../../../styles'
+import { From } from './From'
+import { To } from './To'
+import { Button } from '../shared'
+import { SwapProvider, useAccounts, useDarkMode, useSwap, useWalletModal } from '../../../../context'
+import { CenteredImg, SpaceBetweenDiv } from '../../../../styles'
 
 enum State {
   Connect = 0,
@@ -65,11 +67,11 @@ const SwapContent: FC = () => {
   return (
     <>
       <SpaceBetweenDiv>
-        <div>A</div>
+        <From />
         <SWITCH measurements={80}>
           <img src={`${process.env.PUBLIC_URL}/img/assets/swap_switch_${mode}_mode.svg`} alt="switch" />
         </SWITCH>
-        <div>B</div>
+        <To />
       </SpaceBetweenDiv>
       <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
         <span>{content}</span>

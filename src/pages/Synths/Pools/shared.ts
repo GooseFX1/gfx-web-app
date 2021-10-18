@@ -26,10 +26,6 @@ export const Button = styled(MainButton)`
   margin-left: auto;
 `
 
-export const Inputs = styled(SpaceBetweenDiv)`
-  margin-bottom: ${({ theme }) => theme.margins['5x']};
-`
-
 export const InputHeader = styled(SpaceBetweenDiv)`
   margin-bottom: ${({ theme }) => theme.margins['1x']};
 

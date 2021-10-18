@@ -5,7 +5,7 @@ import { DepositWithdraw } from './DepositWithdraw'
 import { MintBurn } from './MintBurn'
 import { PoolSelector } from './PoolSelector'
 import { Swap } from './Swap'
-import { SpaceBetweenDiv } from '../../../styles'
+import { FlexColumnDiv, SpaceBetweenDiv } from '../../../styles'
 
 const HEADER = styled(SpaceBetweenDiv)<{ $tab: number }>`
   ${({ theme }) => theme.largeBorderRadius}
@@ -30,7 +30,9 @@ const HEADER = styled(SpaceBetweenDiv)<{ $tab: number }>`
   }
 `
 
-const TAB = styled.div`
+const TAB = styled(FlexColumnDiv)`
+  justify-content: space-between;
+  height: 100%;
   padding: ${({ theme }) => theme.margins['5x']} ${({ theme }) => theme.margins['3x']}
     ${({ theme }) => theme.margins['3x']};
 `
@@ -44,7 +46,7 @@ const TABS = styled(SpaceBetweenDiv)`
   }
 `
 
-const WRAPPER = styled.div<{ $visible: boolean }>`
+const WRAPPER = styled(FlexColumnDiv)<{ $visible: boolean }>`
   height: 280px;
   max-height: ${({ $visible }) => ($visible ? '280px' : '0')};
   ${({ theme }) => theme.largeBorderRadius}

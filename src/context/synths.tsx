@@ -13,23 +13,13 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
 import { notify } from '../utils'
 import { ADDRESSES, Mint, Pool, pool } from '../web3'
+import { ISwapToken } from './swap'
 
 type Decimal = {
   flags: number
   hi: number
   mid: number
   lo: number
-}
-
-interface ISynthPrices {
-  [x: string]: number
-}
-
-interface IUserAccount {
-  collateral: number
-  debt: number
-  fees: number
-  value: number
 }
 
 interface ISynthsConfig {
@@ -45,11 +35,31 @@ interface ISynthsConfig {
   setAmount: Dispatch<SetStateAction<number>>
   setPoolName: Dispatch<SetStateAction<string>>
   setSynth: Dispatch<SetStateAction<string>>
+  setSynthSwap: Dispatch<SetStateAction<ISynthSwap>>
   setUserAccount: Dispatch<SetStateAction<IUserAccount>>
   synth: string
   synthPrices: ISynthPrices
+  synthSwap: ISynthSwap
   userAccount: IUserAccount
   withdraw: () => Promise<void>
+}
+
+interface ISynthPrices {
+  [x: string]: number
+}
+
+interface ISynthSwap {
+  inToken?: ISwapToken
+  inTokenAmount: number
+  outToken?: ISwapToken
+  outTokenAmount: number
+}
+
+interface IUserAccount {
+  collateral: number
+  debt: number
+  fees: number
+  value: number
 }
 
 const DEFAULT_USER_ACCOUNT = { collateral: 0, debt: 0, fees: 0, value: 0 }
@@ -69,6 +79,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [poolName, setPoolName] = useState(availablePools[0][0])
   const [synth, setSynth] = useState(availableSynths[0][0])
   const [synthPrices, setSynthPrices] = useState<ISynthPrices>({})
+  const [synthSwap, setSynthSwap] = useState<ISynthSwap>({ inTokenAmount: 0, outTokenAmount: 0 })
   const [userAccount, setUserAccount] = useState<IUserAccount>(DEFAULT_USER_ACCOUNT)
 
   const burn = async () => {
@@ -213,9 +224,11 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setAmount,
         setPoolName,
         setSynth,
+        setSynthSwap,
         setUserAccount,
         synth,
         synthPrices,
+        synthSwap,
         userAccount,
         withdraw
       }}
@@ -244,9 +257,11 @@ export const useSynths = (): ISynthsConfig => {
     setAmount: context.setAmount,
     setPoolName: context.setPoolName,
     setSynth: context.setSynth,
+    setSynthSwap: context.setSynthSwap,
     setUserAccount: context.setUserAccount,
     synth: context.synth,
     synthPrices: context.synthPrices,
+    synthSwap: context.synthSwap,
     userAccount: context.userAccount,
     withdraw: context.withdraw
   }

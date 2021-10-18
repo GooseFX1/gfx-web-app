@@ -2,7 +2,7 @@ import React, { BaseSyntheticEvent, FC, MouseEventHandler, useCallback, useMemo 
 import { Input } from 'antd'
 import { css } from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Available, Button, Inputs, InputHeader, InputWrapper, Synth } from './shared'
+import { Available, Button, InputHeader, InputWrapper, Synth } from './shared'
 import { SynthToken } from '../SynthToken'
 import { useAccounts, useConnectionConfig, useDarkMode, useSynths, useWalletModal } from '../../../context'
 import { SpaceBetweenDiv } from '../../../styles'
@@ -86,7 +86,7 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
 
   return (
     <>
-      <Inputs>
+      <SpaceBetweenDiv>
         <style>{localCSS}</style>
         <InputWrapper>
           <InputHeader>
@@ -111,7 +111,7 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
             <span>GOFX</span>
           </SpaceBetweenDiv>
         </Available>
-      </Inputs>
+      </SpaceBetweenDiv>
       <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
         <span>{content}</span>
       </Button>

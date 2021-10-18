@@ -2,7 +2,7 @@ import React, { BaseSyntheticEvent, FC, MouseEventHandler, useCallback, useMemo 
 import { Input } from 'antd'
 import styled, { css } from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Available, Button, Inputs, InputHeader, InputWrapper } from './shared'
+import { Available, Button, InputHeader, InputWrapper } from './shared'
 import { SynthSelector } from './SynthSelector'
 import { useAccounts, useConnectionConfig, useDarkMode, useSynths, useWalletModal } from '../../../context'
 import { SpaceBetweenDiv } from '../../../styles'
@@ -95,7 +95,7 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
 
   return (
     <>
-      <Inputs>
+      <SpaceBetweenDiv>
         <style>{localCSS}</style>
         <InputWrapper>
           <InputHeader>
@@ -120,7 +120,7 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
             <span>{synth}</span>
           </SpaceBetweenDiv>
         </Available>
-      </Inputs>
+      </SpaceBetweenDiv>
       <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
         <span>{content}</span>
       </Button>
