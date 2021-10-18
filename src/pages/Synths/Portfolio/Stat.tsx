@@ -18,13 +18,13 @@ const TITLE = styled(SpaceBetweenDiv)`
   }
 `
 
-const WRAPPER = styled.div`
+const WRAPPER = styled.div<{ $progressBar: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
 
   > span {
-    width: 100px;
+    ${({ $progressBar }) => !$progressBar && 'width: 100px;'}
     font-size: 11px;
     text-align: right;
     white-space: nowrap;
@@ -33,26 +33,29 @@ const WRAPPER = styled.div`
 `
 
 export const Stat: FC<{
-  percent: number
-  strokeColor: string
+  percent?: number
+  progressBar?: boolean
+  strokeColor?: string
   title: string
   tooltip: string
-  trailColor: string
+  trailColor?: string
   value: string
-}> = ({ title, tooltip, percent, strokeColor, trailColor, value }) => {
+}> = ({ title, tooltip, percent, progressBar = false, strokeColor, trailColor, value }) => {
   return (
-    <WRAPPER>
+    <WRAPPER $progressBar={progressBar}>
       <TITLE>
         <span>{title}</span>
         <Tooltip>{tooltip}</Tooltip>
       </TITLE>
-      <PROGRESS_BAR
-        percent={percent}
-        showInfo={false}
-        strokeWidth={16}
-        strokeColor={strokeColor}
-        trailColor={trailColor}
-      />
+      {progressBar && (
+        <PROGRESS_BAR
+          percent={percent}
+          showInfo={false}
+          strokeWidth={16}
+          strokeColor={strokeColor}
+          trailColor={trailColor}
+        />
+      )}
       <span>{value}</span>
     </WRAPPER>
   )
