@@ -42,9 +42,6 @@ export const Stats: FC = () => {
       <Stat
         title={'Debt'}
         tooltip={'The current USD denominated value of your debt that must be repaid.'}
-        percent={60}
-        strokeColor={'#5654f2'}
-        trailColor={trailColor}
         value={`${monetaryFormatValue(userAccount.debt)} USD`}
       />
       <Stat
@@ -52,9 +49,6 @@ export const Stats: FC = () => {
         tooltip={
           'The current USD denominated value of your deposited collateral. Prices of collaterals are provided by decentralized Pyth oracles.'
         }
-        percent={30}
-        strokeColor={'#cf5ae8'}
-        trailColor={trailColor}
         value={`${monetaryFormatValue(userAccount.collateral)} USD`}
       />
       <Stat
@@ -63,6 +57,7 @@ export const Stats: FC = () => {
           'Current value of your debt based on the debt of the platform. Max borrow represents the maximal debt that you can mint - if your debt increases beyond this value, your position can be liquidated. You can mint if and only if your collateral ratio is greater than 200%, and you may be liquidated if your collateral ratio falls below 120%.'
         }
         percent={cRatioPercentage}
+        progressBar
         strokeColor={cRatioPercentage > 45 ? '#27AE60' : cRatioPercentage > 30 ? '#bb7535' : '#D60000'}
         trailColor={trailColor}
         value={`${cRatio.toFixed(2)}%`}
