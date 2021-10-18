@@ -75,7 +75,7 @@ const claim = async (
 
   const { collateralAmount } = (await account.userAccount.fetch(userAccount)) as UserAccount
   const { flags, hi, mid, lo } = collateralAmount
-  const amount = (await import('decimaljs')).decimal2number(flags, hi, lo, mid)
+  const amount = (await import('gfx_stocks_pool')).decimal2number(flags, hi, lo, mid)
 
   const userAta = await findAssociatedTokenAddress(wallet.publicKey, mints.gUSD.address)
   if (!(await connection.getParsedAccountInfo(userAta)).value) {
