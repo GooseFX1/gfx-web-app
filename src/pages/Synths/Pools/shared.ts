@@ -26,7 +26,7 @@ export const AvailableSynth = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 0 24%;
+  padding: 0 15%;
 
   &:hover {
     background-color: #1f1f1f;
@@ -53,8 +53,7 @@ export const AvailableSynth = styled.div`
 
 export const AvailableSynthsSelector = styled.div`
   position: relative;
-  height: 160px;
-  width: 200px;
+  ${({ theme }) => theme.measurements('160px')}
   padding: ${({ theme }) => theme.margins['1.5x']} 0;
   ${({ theme }) => theme.smallBorderRadius}
   overflow-y: scroll;

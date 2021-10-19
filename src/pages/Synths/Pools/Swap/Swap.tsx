@@ -64,16 +64,16 @@ const SwapContent: FC = () => {
     [connect, setVisible, state, swap, wallet]
   )
 
-  const height = '50px'
+  const height = '60px'
 
   return (
     <>
       <SpaceBetweenDiv>
-        {/* <From height={height} /> */}
+        <From height={height} />
         <SWITCH measurements={80}>
           <img src={`${process.env.PUBLIC_URL}/img/assets/swap_switch_${mode}_mode.svg`} alt="switch" />
         </SWITCH>
-        {/* <To height={height} /> */}
+        <To height={height} />
       </SpaceBetweenDiv>
       <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
         <span>{content}</span>

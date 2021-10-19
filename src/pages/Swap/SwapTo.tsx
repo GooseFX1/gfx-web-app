@@ -9,6 +9,7 @@ const AMOUNT = styled.div`
   height: 100%;
   align-items: center;
   justify-content: flex-end;
+
   span {
     display: block;
     padding: 0 20px 0 120px;

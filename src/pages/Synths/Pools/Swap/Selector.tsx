@@ -1,15 +1,35 @@
-import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { AvailableSynth, AvailableSynthsSelector } from '../shared'
 import { SynthToken } from '../../SynthToken'
 import { ArrowDropdown } from '../../../../components'
 import { ISwapToken, useSynthSwap } from '../../../../context'
-import { CenteredDiv, CenteredImg } from '../../../../styles'
+import { CenteredImg, FlexColumnDiv, SpaceBetweenDiv } from '../../../../styles'
 
-const WRAPPER = styled(CenteredDiv)`
+const WRAPPER = styled(FlexColumnDiv)<{ $height: string }>`
   position: absolute;
   top: 0;
   left: 0;
+  align-items: flex-start;
+  height: ${({ $height }) => $height};
+  width: 48%;
+  padding: ${({ theme }) => theme.margins['2x']};
+  ${({ theme }) => theme.roundedBorders}
+  background-color: ${({ theme }) => theme.grey5};
+  z-index: 1;
+
+  > div {
+    ${({ theme }) => theme.measurements('100%')}
+
+    > span {
+      font-size: 10px;
+      font-weight: bold;
+    }
+  }
+
+  > span {
+    font-size: 8px;
+  }
 `
 
 const Overlay: FC<{
@@ -34,25 +54,30 @@ const Overlay: FC<{
 
   return (
     <AvailableSynthsSelector>
-      {availableSynths.map((synth, index) => (
-        <AvailableSynth key={index} onClick={() => handleClick(synth)}>
-          <CenteredImg>
-            <img src={`${process.env.PUBLIC_URL}/img/synth/${synth[0]}.svg`} alt="" />
-          </CenteredImg>
-          <span>{synth[0]}</span>
-        </AvailableSynth>
-      ))}
+      {availableSynths
+        .filter(([name]) => name !== otherToken?.symbol)
+        .map((synth, index) => (
+          <AvailableSynth key={index} onClick={() => handleClick(synth)}>
+            <CenteredImg>
+              <img src={`${process.env.PUBLIC_URL}/img/synth/${synth[0]}.svg`} alt="" />
+            </CenteredImg>
+            <span>{synth[0]}</span>
+          </AvailableSynth>
+        ))}
     </AvailableSynthsSelector>
   )
 }
 
 export const Selector: FC<{
+  height: string
   otherToken?: ISwapToken
   side: 'in' | 'out'
   token?: ISwapToken
-}> = ({ otherToken, side, token }) => {
+}> = ({ height, otherToken, side, token }) => {
   const [arrowRotation, setArrowRotation] = useState(false)
   const [visible, setVisible] = useState(false)
+
+  const userBalance = useMemo(() => 0, [])
 
   const handleClick = () => {
     setArrowRotation(!arrowRotation)
@@ -60,19 +85,22 @@ export const Selector: FC<{
   }
 
   return (
-    <WRAPPER>
-      {token ? <SynthToken size="large" synth={token.symbol} /> : <span>CHOOSE</span>}
-      <ArrowDropdown
-        arrowRotation={arrowRotation}
-        measurements="12px"
-        offset={[10, 30]}
-        onVisibleChange={handleClick}
-        onClick={handleClick}
-        overlay={
-          <Overlay otherToken={otherToken} setArrowRotation={setArrowRotation} setVisible={setVisible} side={side} />
-        }
-        visible={visible}
-      />
+    <WRAPPER $height={height}>
+      <SpaceBetweenDiv>
+        {token ? <SynthToken size="medium" synth={token.symbol} /> : <span>Select a token</span>}
+        <ArrowDropdown
+          arrowRotation={arrowRotation}
+          measurements="12px"
+          offset={[35, 30]}
+          onVisibleChange={handleClick}
+          onClick={handleClick}
+          overlay={
+            <Overlay otherToken={otherToken} setArrowRotation={setArrowRotation} setVisible={setVisible} side={side} />
+          }
+          visible={visible}
+        />
+      </SpaceBetweenDiv>
+      {userBalance > 0 && <span>Balance: {userBalance}</span>}
     </WRAPPER>
   )
 }

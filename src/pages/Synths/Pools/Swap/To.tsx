@@ -14,14 +14,14 @@ const AMOUNT = styled(FlexColumnDiv)<{ $height: string }>`
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.textBox};
 
-  span {
+  > span {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     width: 100%;
   }
 
-  span:first-child {
+  > span:nth-child(2) {
     height: 100%;
     ${({ theme }) => theme.roundedBorders}
     font-size: 16px;
@@ -31,7 +31,7 @@ const AMOUNT = styled(FlexColumnDiv)<{ $height: string }>`
     text-overflow: ellipsis;
   }
 
-  span:last-child {
+  > span:last-child {
     text-align: right;
   }
 `
@@ -70,9 +70,8 @@ export const To: FC<{ height: string }> = ({ height }) => {
     <WRAPPER>
       <HEADER>To:</HEADER>
       <AMOUNT $height={height}>
-        <Selector otherToken={synthSwap.inToken} side="out" token={synthSwap.outToken} />
+        <Selector height={height} otherToken={synthSwap.inToken} side="out" token={synthSwap.outToken} />
         <span>{synthSwap.outTokenAmount}</span>
-        {value && <span>{value}</span>}
       </AMOUNT>
     </WRAPPER>
   )

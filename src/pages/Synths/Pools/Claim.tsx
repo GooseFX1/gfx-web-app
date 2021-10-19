@@ -4,7 +4,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Button, Synth } from './shared'
 import { SynthToken } from '../SynthToken'
 import { useSynths, useWalletModal } from '../../../context'
-import { SpaceBetweenDiv } from '../../../styles'
+import { CenteredDiv, SpaceBetweenDiv } from '../../../styles'
 
 enum State {
   Connect = 0,
@@ -12,7 +12,7 @@ enum State {
   NullAmount = 2
 }
 
-const REWARDS = styled(SpaceBetweenDiv)`
+const REWARDS = styled(CenteredDiv)`
   > div {
     position: relative;
     ${({ theme }) => theme.flexColumnNoWrap}
@@ -40,8 +40,7 @@ export const Claim: FC = () => {
   const { setVisible } = useWalletModal()
   const { claim, loading, userAccount } = useSynths()
 
-  const allTime = useMemo(() => '?', [])
-  const current = useMemo(() => userAccount.fees, [userAccount.fees])
+  const current = useMemo(() => userAccount.fees.toFixed(2), [userAccount.fees])
 
   const state = useMemo(() => {
     if (!publicKey) {
@@ -79,7 +78,7 @@ export const Claim: FC = () => {
   return (
     <>
       <REWARDS>
-        <div>
+        {/* <div>
           <span>Historical</span>
           <SpaceBetweenDiv>
             <span>{allTime}</span>
@@ -87,7 +86,7 @@ export const Claim: FC = () => {
               <SynthToken size="large" synth="gUSD" />
             </Synth>
           </SpaceBetweenDiv>
-        </div>
+        </div> */}
         <div>
           <span>Current</span>
           <SpaceBetweenDiv>

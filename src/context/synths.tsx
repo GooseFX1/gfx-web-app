@@ -170,7 +170,9 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     if (inToken && outToken) {
       setLoading(true)
-
+      const inTokens = `${inTokenAmount} ${inToken.symbol}`
+      const outTokens = `${outTokenAmount} ${outToken.symbol}`
+      notify({ message: `Trying to swap ${inTokens} for at least ${outTokens}...` })
       try {
         const signature = await pool.swap(
           amount,
@@ -186,7 +188,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         notify({
           type: 'success',
           message: 'Swap successful!',
-          description: `Swap ${inTokenAmount} ${inToken.symbol} for ${outTokenAmount} ${outToken.symbol}`,
+          description: `Swap ${inTokens} for ${outTokens}`,
           icon: 'success',
           txid: signature
         })

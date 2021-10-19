@@ -2,22 +2,21 @@ import React, { FC } from 'react'
 import styled from 'styled-components'
 import { CenteredDiv, CenteredImg } from '../../styles'
 
-const WRAPPER = styled(CenteredDiv)<{ $size: 'small' | 'large' }>`
+const WRAPPER = styled(CenteredDiv)<{ $size: 'small' | 'medium' | 'large' }>`
+  ${({ $size }) => $size === 'medium' && 'flex-direction: row-reverse;'}
+
   > div {
     ${({ theme, $size }) => theme.measurements(theme.margins[$size === 'small' ? '2x' : '3x'])}
-    margin-right: ${({ theme }) => theme.margins['1x']};
+    margin-${({ $size }) => ($size === 'medium' ? 'left' : 'right')}: ${({ theme }) => theme.margins['1x']};
   }
 
-  ${({ $size }) =>
-    $size === 'large' &&
-    `
-    > span {
-      font-weight: bold;
-    }
-  `}
+  > span {
+    font-size: ${({ $size }) => ($size === 'medium' ? '12px' : '14px')};
+    font-weight: ${({ $size }) => ($size === 'large' ? 'bold' : '500')};
+  }
 `
 
-export const SynthToken: FC<{ size: 'small' | 'large'; synth: string }> = ({ size, synth }) => {
+export const SynthToken: FC<{ size: 'small' | 'medium' | 'large'; synth: string }> = ({ size, synth }) => {
   return (
     <WRAPPER $size={size}>
       <CenteredImg>

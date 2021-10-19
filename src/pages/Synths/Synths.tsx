@@ -7,6 +7,7 @@ import { SynthsProvider } from '../../context'
 
 const WRAPPER = styled.div`
   display: flex;
+  width: 80vw;
   padding: ${({ theme }) => theme.margins['5x']} 0;
 
   ${({ theme }) => theme.mediaWidth.upToLarge`

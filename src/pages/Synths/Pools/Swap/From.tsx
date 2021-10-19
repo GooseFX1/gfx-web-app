@@ -15,24 +15,14 @@ const AMOUNT = styled(FlexColumnDiv)<{ $height: string }>`
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.textBox};
 
-  span {
+  > span {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     width: 100%;
   }
 
-  span:first-child {
-    height: 100%;
-    ${({ theme }) => theme.roundedBorders}
-    font-size: 16px;
-    font-weight: bold;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  span:last-child {
+  > span:last-child {
     text-align: right;
   }
 `
@@ -63,16 +53,13 @@ const WRAPPER = styled(FlexColumnDiv)`
 `
 
 export const From: FC<{ height: string }> = ({ height }) => {
-  const { getUIAmountString } = useAccounts()
-  const { mode } = useDarkMode()
+  const { getUIAmount } = useAccounts()
   const { setFocused, setSynthSwap, synthSwap } = useSynthSwap()
 
-  const balance = useMemo(() => {
-    if (!synthSwap.outToken) return 0
-
-    const { address, decimals } = synthSwap.outToken
-    return parseFloat(getUIAmountString(address).slice(0, Math.min(decimals, 8)))
-  }, [getUIAmountString, synthSwap.outToken])
+  const userBalance = useMemo(
+    () => (synthSwap.inToken ? getUIAmount(synthSwap.inToken.address) : 0),
+    [getUIAmount, synthSwap.inToken]
+  )
 
   const value = useMemo(() => {
     return (
@@ -87,13 +74,13 @@ export const From: FC<{ height: string }> = ({ height }) => {
       position: absolute;
       top: 0;
       left: 0;
-      height: 50px;
+      height: ${height};
       border: none;
       border-radius: 50px;
     }
 
     .ant-input-affix-wrapper > input.ant-input {
-      height: 50px;
+      height: ${height};
       text-align: left;
     }
   `
@@ -102,13 +89,13 @@ export const From: FC<{ height: string }> = ({ height }) => {
     <WRAPPER>
       <HEADER>
         <span>From:</span>
-        <span>Use MAX</span>
+        <span onClick={() => setSynthSwap((prevState) => ({ ...prevState, inTokenAmount: userBalance }))}>Use MAX</span>
       </HEADER>
       <AMOUNT $height={height}>
         <style>{localCSS}</style>
-        <Selector otherToken={synthSwap.inToken} side="in" token={synthSwap.outToken} />
+        <Selector height={height} otherToken={synthSwap.outToken} side="in" token={synthSwap.inToken} />
         <Input
-          maxLength={15}
+          maxLength={11}
           onBlur={() => setFocused(undefined)}
           onChange={(x: BaseSyntheticEvent) => {
             if (synthSwap.inToken && !isNaN(x.target.value)) {
@@ -120,7 +107,6 @@ export const From: FC<{ height: string }> = ({ height }) => {
           placeholder={synthSwap.inTokenAmount.toString()}
           value={synthSwap.inTokenAmount}
         />
-        <span>{value}</span>
       </AMOUNT>
     </WRAPPER>
   )
