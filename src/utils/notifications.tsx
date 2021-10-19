@@ -63,8 +63,16 @@ interface INotifyParams {
 }
 
 export const notify = ({ description, icon, message, txid, type = 'info' }: INotifyParams, e?: any) => {
+  let { format_error_code } = await import('gfx_stocks_pool') // how to fix this?
   if (e) {
     description = e.message
+    if (description !== null && description !== undefined) {
+      let re = /custom program error: (0x\d+)/
+      let match = description.toString().match(re)
+      if (match) {
+        description = format_error_code(parseInt(match[0]))
+      }
+    }
   }
 
   if (txid) {
