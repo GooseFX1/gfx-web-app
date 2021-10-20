@@ -1,10 +1,10 @@
-import React, { FC, ReactNode, createContext, useContext, useEffect, useState } from 'react'
+import React, { FC, ReactNode, createContext, useContext, useEffect, useState, Dispatch, SetStateAction } from 'react'
 import { Orderbook } from '@project-serum/serum'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { FEATURED_PAIRS_LIST } from './crypto'
 import { useConnectionConfig } from './settings'
 import { notify } from '../utils'
-import { pyth, serum } from '../web3'
+import { ADDRESSES, pyth, serum } from '../web3'
 
 interface IPrices {
   [x: string]: {
@@ -15,6 +15,7 @@ interface IPrices {
 
 interface IPricesConfig {
   prices: IPrices
+  setPrices: Dispatch<SetStateAction<IPrices>>
 }
 
 const PricesContext = createContext<IPricesConfig | null>(null)
@@ -49,12 +50,11 @@ export const PricesProvider: FC<{ children: ReactNode }> = ({ children }) => {
           }
         }
       })
+
     ;(async () => {
       try {
-        const products = await pyth.fetchProducts(
-          connection,
-          FEATURED_PAIRS_LIST.map(({ pair }) => pair)
-        )
+        const synths = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'synth').map(({ pair }) => pair)
+        const products = await pyth.fetchProducts(connection, network, synths)
         try {
           const accounts = await pyth.fetchPriceAccounts(connection, products)
           accounts.forEach(({ mint, price, symbol }) => {
@@ -83,7 +83,16 @@ export const PricesProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [connection, network])
 
-  return <PricesContext.Provider value={{ prices }}>{children}</PricesContext.Provider>
+  return (
+    <PricesContext.Provider
+      value={{
+        prices,
+        setPrices
+      }}
+    >
+      {children}
+    </PricesContext.Provider>
+  )
 }
 
 export const usePrices = (): IPricesConfig => {
@@ -92,6 +101,6 @@ export const usePrices = (): IPricesConfig => {
     throw new Error('Missing prices context')
   }
 
-  const { prices } = context
-  return { prices }
+  const { prices, setPrices } = context
+  return { prices, setPrices }
 }

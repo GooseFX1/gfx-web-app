@@ -56,7 +56,7 @@ export const From: FC<{ height: string }> = ({ height }) => {
   const { getUIAmount } = useAccounts()
   const { setFocused, setSynthSwap, synthSwap } = useSynthSwap()
 
-  const userBalance = useMemo(
+  const balance = useMemo(
     () => (synthSwap.inToken ? getUIAmount(synthSwap.inToken.address) : 0),
     [getUIAmount, synthSwap.inToken]
   )
@@ -89,11 +89,17 @@ export const From: FC<{ height: string }> = ({ height }) => {
     <WRAPPER>
       <HEADER>
         <span>From:</span>
-        <span onClick={() => setSynthSwap((prevState) => ({ ...prevState, inTokenAmount: userBalance }))}>Use MAX</span>
+        <span onClick={() => setSynthSwap((prevState) => ({ ...prevState, inTokenAmount: balance }))}>Use MAX</span>
       </HEADER>
       <AMOUNT $height={height}>
         <style>{localCSS}</style>
-        <Selector height={height} otherToken={synthSwap.outToken} side="in" token={synthSwap.inToken} />
+        <Selector
+          balance={balance}
+          height={height}
+          otherToken={synthSwap.outToken}
+          side="in"
+          token={synthSwap.inToken}
+        />
         <Input
           maxLength={11}
           onBlur={() => setFocused(undefined)}

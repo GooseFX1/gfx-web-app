@@ -1,36 +1,20 @@
 import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { Chart } from './Chart'
-import { SpaceBetweenDiv, SpaceEvenlyDiv } from '../../../../styles'
+import { usePrices, useSynths } from '../../../../context'
+import { FlexColumnDiv, SpaceBetweenDiv, SpaceEvenlyDiv } from '../../../../styles'
 
-const INFORMATION = styled(SpaceBetweenDiv)<{ $synthsLength: number }>`
+const INFORMATION = styled(SpaceBetweenDiv)`
   flex-direction: column;
   min-height: 150px;
-
-  > div {
-    display: grid;
-    grid-template-columns: repeat(${({ $synthsLength }) => ($synthsLength > 5 ? 2 : 1)}, 1fr);
-    flex: 1;
-  }
 
   > span {
     margin-bottom: ${({ theme }) => theme.margins['3x']};
   }
 `
 
-const SPECIFIC = styled(SpaceBetweenDiv)<{ $color: string; $synthsLength: number }>`
-  ${({ theme, $synthsLength }) =>
-    !($synthsLength % 2)
-      ? `
-    &:nth-child(odd) {
-      margin-right: ${theme.margins['3x']};
-    }
-  `
-      : `
-    &:not(:last-child) {
-      margin-bottom: ${theme.margins['3x']};
-    }
-  `}
+const SPECIFIC = styled(SpaceBetweenDiv)<{ $color: string }>`
+  margin-bottom: ${({ theme }) => theme.margins['3x']};
 
   > div {
     ${({ theme }) => theme.measurements(theme.margins['1.5x'])}
@@ -47,6 +31,7 @@ const SPECIFIC = styled(SpaceBetweenDiv)<{ $color: string; $synthsLength: number
   > span:last-child {
     display: flex;
     align-items: center;
+    min-width: 150px;
 
     &:before {
       content: '';
@@ -70,33 +55,42 @@ const WRAPPER = styled(SpaceEvenlyDiv)`
 `
 
 export const Collateral: FC = () => {
+  const { prices } = usePrices()
+  const { poolAccount } = useSynths()
   const synthColor = {
     gAAPL: { background: 'gray', hover: 'cyan' },
-    gAMZN: { background: 'yellow', hover: 'cyan' },
-    gFB: { background: 'blue', hover: 'cyan' },
-    gGOOGL: { background: 'green', hover: 'cyan' },
+    gBTC: { background: 'yellow', hover: 'cyan' },
+    gETH: { background: 'blue', hover: 'cyan' },
+    gGOOG: { background: 'green', hover: 'cyan' },
     gTSLA: { background: 'red', hover: 'cyan' },
     gUSD: { background: 'silver', hover: 'cyan' }
   } as { [x: string]: { background: string; hover: string } }
 
-  const synths = useMemo(() => ['gUSD', 'gTSLA', 'gAMZN', 'gFB', 'gGOOGL'].sort((a, b) => a.localeCompare(b)), [])
-  const synthsLength = useMemo(() => synths.length, [synths.length])
+  const synths = useMemo(() => Object.keys(poolAccount.debt).sort((a, b) => a.localeCompare(b)), [poolAccount.debt])
+  const synthDebt = useMemo(() => {
+    const totalDebt = Object.entries(poolAccount.debt).reduce((acc, [synth, debt]) => {
+      return acc + debt * prices[synth].current
+    }, 0)
+    return Object.entries(poolAccount.debt)
+      .sort(([a], [b, _]) => a.localeCompare(b))
+      .map(([synth, debt]) => ({ synth, percentage: (debt * prices[synth].current) / totalDebt }))
+  }, [poolAccount.debt, prices])
 
   return (
     <WRAPPER>
-      <INFORMATION $synthsLength={synthsLength}>
+      <INFORMATION>
         <span>Debt structure</span>
-        <div>
-          {synths.map((name, index) => (
-            <SPECIFIC key={index} $color={synthColor[name].background} $synthsLength={synthsLength}>
+        <FlexColumnDiv>
+          {synthDebt.map(({ percentage, synth }, index) => (
+            <SPECIFIC key={index} $color={synthColor[synth].background}>
               <div />
-              <span>{name}</span>
-              <span>50%</span>
+              <span>{synth}</span>
+              <span>{(percentage * 100).toFixed(2)}%</span>
             </SPECIFIC>
           ))}
-        </div>
+        </FlexColumnDiv>
       </INFORMATION>
-      <Chart synths={synths} synthColor={synthColor} />
+      <Chart data={synthDebt.map(({ percentage }) => percentage)} synths={synths} synthColor={synthColor} />
     </WRAPPER>
   )
 }

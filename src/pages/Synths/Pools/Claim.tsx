@@ -38,25 +38,24 @@ const REWARDS = styled(CenteredDiv)`
 export const Claim: FC = () => {
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
-  const { claim, loading, poolAccount, userAccount } = useSynths()
+  const { claim, loading, userAccount, userPortfolio } = useSynths()
 
-  const current = useMemo(() => {
-    const claimableFees = userAccount.claimableFee.toFixed(2)
-    const pendingFees = userAccount.shares * (poolAccount.shareRate - userAccount.shareRate)
-    return claimableFees + pendingFees
-  }, [poolAccount.shareRate, userAccount.claimableFee, userAccount.shareRate, userAccount.shares])
+  const current = useMemo(
+    () => (userAccount.claimableFee + userPortfolio.pendingFees).toFixed(2),
+    [userAccount.claimableFee, userPortfolio.pendingFees]
+  )
 
   const state = useMemo(() => {
     if (!publicKey) {
       return State.Connect
     }
     // @ts-ignore
-    if (!current) {
+    if (userAccount.claimableFee < 0.01) {
       return State.NullAmount
     }
 
     return State.CanExecute
-  }, [current, publicKey])
+  }, [publicKey, userAccount.claimableFee])
 
   const buttonStatus = useMemo(() => {
     switch (state) {
@@ -94,7 +93,7 @@ export const Claim: FC = () => {
         <div>
           <span>Current</span>
           <SpaceBetweenDiv>
-            <span>{current}</span>
+            <span>{userAccount.claimableFee < 0.1 ? 0 : current}</span>
             <Synth>
               <SynthToken size="large" synth="gUSD" />
             </Synth>

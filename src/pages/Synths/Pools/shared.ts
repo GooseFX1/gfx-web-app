@@ -13,6 +13,11 @@ export const Available = styled.div`
     padding: 4px 11px;
     ${({ theme }) => theme.smallBorderRadius}
     background-color: ${({ theme }) => theme.bg5};
+
+    > span:first-child {
+      ${({ theme }) => theme.ellipse}
+      margin-right: ${({ theme }) => theme.margins['1x']};
+    }
   }
 
   > span {

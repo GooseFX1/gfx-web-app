@@ -14,8 +14,26 @@ type Decimal = {
   lo: number
 }
 
-type ListingAccount = {
+type Debt = {
+  debt: Decimal
+  maxDebt: Decimal
+  mint: PublicKey
+}
 
+type Index = {
+  key: PublicKey
+  index: number
+}
+
+type ListingAccount = {
+  collateral: {
+    initialMargin: Decimal
+    maintenanceMargin: Decimal
+    mint: PublicKey
+  }
+  pool: PublicKey
+  synths: Debt[]
+  usd: Debt
 }
 
 type PoolAccount = {
@@ -23,6 +41,18 @@ type PoolAccount = {
 }
 
 type PriceAggregatorAccount = {
+  controller: PublicKey
+  prices: {
+    len: number
+    buffer: {
+      decimal: number
+      price: Decimal
+      status: number
+      updatedAt: BN
+    }[]
+    feedIndex: Index[]
+    mintIndex: Index[]
+  }
 }
 
 type UserAccount = {
@@ -69,24 +99,17 @@ const burn = async (
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-const claim = async (
-  pool: string,
-  wallet: any,
-  connection: Connection,
-  network: WalletAdapterNetwork
-): Promise<[string, number]> => {
+const claim = async (pool: string, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
+  if (!wallet.publicKey || !wallet.signTransaction) return
+
   const { mints, programs, pools } = ADDRESSES[network]
-  const { account, instruction } = getPoolProgram(wallet, connection, network)
+  const { instruction } = getPoolProgram(wallet, connection, network)
   const tx = new Transaction()
 
   const userAccount = await getUserAccountPublicKey(pool, wallet, network)
   if (!(await connection.getParsedAccountInfo(userAccount)).value) {
     tx.add(await initialize(pool, wallet, connection, network))
   }
-
-  const { claimableFee } = (await account.userAccount.fetch(userAccount)) as UserAccount
-  const { flags, hi, mid, lo } = claimableFee
-  const amount = (await import('gfx_stocks_pool')).decimal2number(flags, hi, lo, mid) * 10 ** 2
 
   const userAta = await findAssociatedTokenAddress(wallet.publicKey, mints.gUSD.address)
   if (!(await connection.getParsedAccountInfo(userAta)).value) {
@@ -106,7 +129,7 @@ const claim = async (
   }
 
   tx.add(await instruction.claimFee({ accounts }))
-  return [await signAndSendRawTransaction(connection, tx, wallet), amount]
+  return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
 const deposit = async (
@@ -218,7 +241,7 @@ const listingAccount = async (
   wallet: any,
   connection: Connection,
   network: WalletAdapterNetwork
-): Promise<PriceAggregatorAccount> => {
+): Promise<ListingAccount> => {
   const { pools } = ADDRESSES[network]
   const { account } = getPoolProgram(wallet, connection, network)
 

@@ -3,30 +3,29 @@ import { Doughnut } from 'react-chartjs-2'
 import styled from 'styled-components'
 import { useDarkMode } from '../../../../context'
 
-const CHARTBOX = styled.div`
-  height: 180px;
-  width: 180px;
+const WRAPPER = styled.div`
+  ${({ theme }) => theme.measurements('180px')}
 `
 
 export const Chart: FC<{
+  data: number[]
   synths: string[]
   synthColor: { [x: string]: { background: string; hover: string } }
-}> = ({ synths, synthColor }) => {
+}> = ({ data, synths, synthColor }) => {
   const { mode } = useDarkMode()
-  const value = mode === 'dark' ? '#2a2a2a' : '#fff'
 
   return (
-    <CHARTBOX>
+    <WRAPPER>
       <Doughnut
         data={{
           labels: synths,
           datasets: [
             {
               label: '# of Votes',
-              data: [20, 30, 50, 12, 100],
+              data,
               backgroundColor: Object.values(synthColor).map(({ background }) => background),
               hoverBackgroundColor: Object.values(synthColor).map(({ hover }) => hover),
-              borderColor: value,
+              borderColor: mode === 'dark' ? '#2a2a2a' : '#fff',
               borderWidth: 3
             }
           ]
@@ -44,6 +43,6 @@ export const Chart: FC<{
           }
         }}
       />
-    </CHARTBOX>
+    </WRAPPER>
   )
 }

@@ -22,7 +22,7 @@ export const History: FC<{
       justify="space-between"
       panels={[HistoryPanel.Orders, HistoryPanel.Trades, HistoryPanel.Balances]}
       setPanel={setPanel}
-      underlinePositions={['-4px', 'calc(50% - 84px)', 'calc(100% - 72px)']}
+      underlinePositions={['-4px', 'calc(50% - 70px)', 'calc(100% - 72px)']}
       underlineWidths={['102px', '166px', '78px']}
     >
       {content}

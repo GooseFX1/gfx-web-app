@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Selector } from './Selector'
 import { useAccounts, useSynthSwap } from '../../../../context'
 import { FlexColumnDiv } from '../../../../styles'
+import { ellipseNumber } from '../../../../utils'
 
 const AMOUNT = styled(FlexColumnDiv)<{ $height: string }>`
   position: relative;
@@ -22,13 +23,11 @@ const AMOUNT = styled(FlexColumnDiv)<{ $height: string }>`
   }
 
   > span:nth-child(2) {
+    display: flex;
     height: 100%;
+    padding-left: 128px;
     ${({ theme }) => theme.roundedBorders}
-    font-size: 16px;
-    font-weight: bold;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    ${({ theme }) => theme.ellipse}
   }
 
   > span:last-child {
@@ -70,8 +69,14 @@ export const To: FC<{ height: string }> = ({ height }) => {
     <WRAPPER>
       <HEADER>To:</HEADER>
       <AMOUNT $height={height}>
-        <Selector height={height} otherToken={synthSwap.inToken} side="out" token={synthSwap.outToken} />
-        <span>{synthSwap.outTokenAmount}</span>
+        <Selector
+          balance={balance}
+          height={height}
+          otherToken={synthSwap.inToken}
+          side="out"
+          token={synthSwap.outToken}
+        />
+        <span>{ellipseNumber(synthSwap.outTokenAmount, 9)}</span>
       </AMOUNT>
     </WRAPPER>
   )

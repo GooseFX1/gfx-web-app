@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { Stat } from './Stat'
-import { useDarkMode, useSynths } from '../../../context'
+import { useDarkMode, usePrices, useSynths } from '../../../context'
 import { monetaryFormatValue } from '../../../utils'
 
 const WRAPPER = styled.div`
@@ -27,29 +27,25 @@ const WRAPPER = styled.div`
 
 export const Stats: FC = () => {
   const { mode } = useDarkMode()
-  const { userAccount } = useSynths()
+  const { userAccount, userPortfolio } = useSynths()
   const trailColor = mode === 'dark' ? '#1e1e1e' : '#e2e2e2'
 
-  const cRatio = useMemo(() => {
-    const { collateralAmount, shares } = userAccount
-    return !collateralAmount || !shares ? 0 : 100 / (userAccount.shares / userAccount.collateralAmount)
-  }, [userAccount])
-  const cRatioPercentage = useMemo(() => cRatio - 100, [cRatio])
+  const cRatioPercentage = useMemo(() => userPortfolio.cRatio - 100, [userPortfolio.cRatio])
 
   return (
     <WRAPPER>
       <span>Portfolio Stats</span>
       <Stat
         title={'Debt'}
-        tooltip={'The current USD denominated value of your debt that must be repaid.'}
-        value={`${monetaryFormatValue(userAccount.shares)} USD`}
+        tooltip={'The current gUSD denominated value of your debt that must be repaid.'}
+        value={`${monetaryFormatValue(userAccount.shares)} gUSD`}
       />
       <Stat
         title={'Collateral'}
         tooltip={
-          'The current USD denominated value of your deposited collateral. Prices of collaterals are provided by decentralized Pyth oracles.'
+          'The current gUSD denominated value of your deposited collateral. Prices of collaterals are provided by decentralized Pyth oracles.'
         }
-        value={`${monetaryFormatValue(userAccount.collateralAmount)} USD`}
+        value={`${monetaryFormatValue(userPortfolio.cValue)} gUSD`}
       />
       <Stat
         title={'C-Ratio'}
@@ -60,7 +56,7 @@ export const Stats: FC = () => {
         progressBar
         strokeColor={cRatioPercentage > 45 ? '#27AE60' : cRatioPercentage > 30 ? '#bb7535' : '#D60000'}
         trailColor={trailColor}
-        value={`${cRatio.toFixed(2)}%`}
+        value={`${userPortfolio.cRatio.toFixed(2)}%`}
       />
     </WRAPPER>
   )

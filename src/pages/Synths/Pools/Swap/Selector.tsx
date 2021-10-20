@@ -69,11 +69,12 @@ const Overlay: FC<{
 }
 
 export const Selector: FC<{
+  balance: number
   height: string
   otherToken?: ISwapToken
   side: 'in' | 'out'
   token?: ISwapToken
-}> = ({ height, otherToken, side, token }) => {
+}> = ({ balance, height, otherToken, side, token }) => {
   const [arrowRotation, setArrowRotation] = useState(false)
   const [visible, setVisible] = useState(false)
 
@@ -83,6 +84,8 @@ export const Selector: FC<{
     setArrowRotation(!arrowRotation)
     setVisible(!visible)
   }
+
+  console.log(balance)
 
   return (
     <WRAPPER $height={height}>

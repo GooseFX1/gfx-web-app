@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Available, Button, InputHeader, InputWrapper } from './shared'
 import { SynthSelector } from './SynthSelector'
-import { useAccounts, useConnectionConfig, useDarkMode, useSynths, useWalletModal } from '../../../context'
+import { useAccounts, useConnectionConfig, useDarkMode, usePrices, useSynths, useWalletModal } from '../../../context'
 import { SpaceBetweenDiv } from '../../../styles'
 import { capitalizeFirstLetter } from '../../../utils'
 import { ADDRESSES } from '../../../web3'
@@ -26,7 +26,8 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
   const { getUIAmount } = useAccounts()
   const { network } = useConnectionConfig()
   const { mode } = useDarkMode()
-  const { amount, burn, loading, mint, setAmount, synth } = useSynths()
+  const { prices } = usePrices()
+  const { amount, burn, loading, mint, setAmount, synth, userAccount } = useSynths()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
@@ -35,9 +36,10 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
     if (action === 'burn') {
       return getUIAmount(ADDRESSES[network].mints[synth].address.toString())
     } else {
-      return 0
+      const cValue = (userAccount.cAmount * prices.GOFX?.current || 0) * 0.5
+      return Math.max((cValue - userAccount.shares) / prices[synth].current, 0)
     }
-  }, [action, getUIAmount, network, synth])
+  }, [action, getUIAmount, network, prices, synth, userAccount.cAmount, userAccount.shares])
 
   const state = useMemo(() => {
     if (!publicKey) {
@@ -85,11 +87,16 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
 
   const localCSS = css`
     .ant-input {
+      display: flex;
       height: 39px;
       border: none;
       border-radius: 8px;
+      padding-right: 120px;
       background-color: ${mode === 'dark' ? '#4a4949' : '#bdbdbd'};
       text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   `
 

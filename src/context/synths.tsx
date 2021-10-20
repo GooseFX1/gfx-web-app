@@ -14,6 +14,7 @@ import { useConnectionConfig } from './settings'
 import { ISwapToken } from './swap'
 import { notify } from '../utils'
 import { ADDRESSES, Mint, Pool, pool } from '../web3'
+import { usePrices } from './prices'
 
 type Decimal = {
   flags: number
@@ -25,6 +26,7 @@ type Decimal = {
 type SwapInput = undefined | 'from' | 'to'
 
 interface IPoolAccount {
+  debt: { [x: string]: number }
   shareRate: number
 }
 
@@ -44,10 +46,12 @@ interface ISynthsConfig {
   setPoolName: Dispatch<SetStateAction<string>>
   setSynth: Dispatch<SetStateAction<string>>
   setSynthSwap: Dispatch<SetStateAction<ISynthSwap>>
+  switchTokens: () => void
   synth: string
   synthSwap: ISynthSwap
   swap: () => Promise<void>
   userAccount: IUserAccount
+  userPortfolio: IUserPortfolio
   withdraw: () => Promise<void>
 }
 
@@ -60,18 +64,26 @@ interface ISynthSwap {
 
 interface IUserAccount {
   claimableFee: number
-  collateralAmount: number
+  cAmount: number
   shareRate: number
   shares: number
 }
 
-const DEFAULT_POOL_ACCOUNT = { shareRate: 0 }
-const DEFAULT_USER_ACCOUNT = { claimableFee: 0, collateralAmount: 0, debt: 0, shareRate: 0, shares: 0 }
+interface IUserPortfolio {
+  cRatio: number
+  cValue: number
+  pendingFees: number
+}
+
+const DEFAULT_POOL_ACCOUNT = { debt: {}, shareRate: 0 }
+const DEFAULT_USER_ACCOUNT = { claimableFee: 0, cAmount: 0, debt: 0, shareRate: 0, shares: 0 }
+const DEFAULT_USER_PORTFOLIO = { cRatio: 0, cValue: 0, pendingFees: 0 }
 
 const SynthsContext = createContext<ISynthsConfig | null>(null)
 
 export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection, network } = useConnectionConfig()
+  const { prices, setPrices } = usePrices()
   const wallet = useWallet()
   const { mints, pools } = ADDRESSES[network]
 
@@ -86,6 +98,11 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [synth, setSynth] = useState(availableSynths[0][0])
   const [synthSwap, setSynthSwap] = useState<ISynthSwap>({ inTokenAmount: 0, outTokenAmount: 0 })
   const [userAccount, setUserAccount] = useState<IUserAccount>(DEFAULT_USER_ACCOUNT)
+  const [userPortfolio, setUserPortfolio] = useState<IUserPortfolio>(DEFAULT_USER_PORTFOLIO)
+
+  const switchTokens = () => {
+    setSynthSwap((prevState) => ({ ...prevState, inToken: prevState.outToken, outToken: prevState.inToken }))
+  }
 
   const burn = async () => {
     setLoading(true)
@@ -95,7 +112,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       await notify({
         type: 'success',
         message: 'Burn successful!',
-        description: `Burnt ${amount} ${synth}`,
+        description: `Burned ${amount} ${synth}`,
         icon: 'success',
         txid: signature
       })
@@ -111,11 +128,11 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setLoading(true)
 
       try {
-        const [signature, amount] = await pool.claim(poolName, wallet, connection, network)
+        const signature = await pool.claim(poolName, wallet, connection, network)
         await notify({
           type: 'success',
           message: 'Claim successful!',
-          description: `Claimed ${amount} gUSD`,
+          description: `Claimed ${userAccount.claimableFee + userPortfolio.pendingFees} gUSD`,
           icon: 'success',
           txid: signature
         })
@@ -172,7 +189,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setLoading(true)
       const inTokens = `${inTokenAmount} ${inToken.symbol}`
       const outTokens = `${outTokenAmount} ${outToken.symbol}`
-      await notify({ message: `Trying to swap ${inTokens} for at least ${outTokens}...` })
+      await notify({ message: `Trying to swap ${inTokens} for ${outTokens}...` })
       try {
         const signature = await pool.swap(
           poolName,
@@ -227,18 +244,34 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     const updatePoolAccount = async () => {
       try {
-        const [listingAccount, poolAccount] = await Promise.all([
+        const [listingAccount, poolAccount, priceAggregatorAccount] = await Promise.all([
           pool.listingAccount(poolName, wallet, connection, network),
           pool.poolAccount(poolName, wallet, connection, network),
-          // pool.priceAggregatorAccount(poolName, wallet, connection, network)
+          pool.priceAggregatorAccount(poolName, wallet, connection, network)
         ])
 
-        console.log((listingAccount as any).synths.forEach(async (x: any) => console.log(await fieldToNumber(x))))
-        const [shareRate] = await Promise.all([
-          fieldToNumber(poolAccount.shareRate)
-        ])
+        const debt: { [x: string]: number } = { gUSD: await fieldToNumber(listingAccount.usd.debt) }
+        for (const { debt: synthDebt, mint } of listingAccount.synths) {
+          const synth = availableSynths.find(([_, { address }]) => mint.equals(address))
+          if (synth) {
+            debt[synth[0]] = await fieldToNumber(synthDebt)
+          }
+        }
 
-        setPoolAccount(({ shareRate }))
+        setPoolAccount({ debt, shareRate: await fieldToNumber(poolAccount.shareRate) })
+
+        const { buffer, mintIndex } = priceAggregatorAccount.prices
+        const { address: GOFX } = ADDRESSES[network].mints.GOFX
+        setPrices((prevState) => ({ ...prevState, gUSD: { change24H: 0, current: 1 } }))
+        for (const { key, index } of mintIndex) {
+          const current = await fieldToNumber(buffer[index].price)
+          if (key.equals(GOFX)) {
+            setPrices((prevState) => ({ ...prevState, GOFX: { current } }))
+          } else {
+            const synth = availableSynths.find(([_, { address }]) => address.equals(key))
+            synth && setPrices((prevState) => ({ ...prevState, [synth[0]]: { current } }))
+          }
+        }
       } catch (e: any) {
         await notify({ type: 'error', message: `Error updating pool account`, icon: 'error' }, e)
       }
@@ -248,14 +281,14 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       try {
         const userAccount = await pool.userAccount(poolName, wallet, connection, network)
         if (userAccount) {
-          const [collateralAmount, claimableFee, shareRate, shares] = await Promise.all([
+          const [cAmount, claimableFee, shareRate, shares] = await Promise.all([
             fieldToNumber(userAccount.collateralAmount),
             fieldToNumber(userAccount.claimableFee),
             fieldToNumber(userAccount.shareRate),
             fieldToNumber(userAccount.shares)
           ])
 
-          setUserAccount({ collateralAmount, claimableFee, shareRate, shares })
+          setUserAccount({ cAmount, claimableFee, shareRate, shares })
         }
       } catch (e: any) {
         await notify({ type: 'error', message: `Error updating user account`, icon: 'error' }, e)
@@ -277,7 +310,27 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setUserAccount(DEFAULT_USER_ACCOUNT)
       subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
     }
-  }, [connection, network, poolName, wallet])
+  }, [availableSynths, connection, network, poolName, setPrices, wallet])
+
+  useEffect(() => {
+    const cValue = userAccount.cAmount * prices.GOFX?.current
+    setUserPortfolio({
+      cRatio: (cValue / userAccount.shares) * 100,
+      cValue,
+      pendingFees: userAccount.shares * (poolAccount.shareRate - userAccount.shareRate)
+    })
+  }, [poolAccount.shareRate, prices.GOFX, userAccount.cAmount, userAccount.shareRate, userAccount.shares])
+
+  useEffect(() => {
+    if (synthSwap.inToken && synthSwap.outToken) {
+      const inTokenPrice = prices[synthSwap.inToken.symbol].current
+      const outTokenPrice = prices[synthSwap.outToken.symbol].current
+      setSynthSwap((prevState) => ({
+        ...prevState,
+        outTokenAmount: (synthSwap.inTokenAmount * inTokenPrice) / outTokenPrice
+      }))
+    }
+  }, [prices, synthSwap.inToken, synthSwap.inTokenAmount, synthSwap.outToken])
 
   return (
     <SynthsContext.Provider
@@ -298,9 +351,11 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSynth,
         setSynthSwap,
         swap,
+        switchTokens,
         synth,
         synthSwap,
         userAccount,
+        userPortfolio,
         withdraw
       }}
     >
@@ -331,6 +386,7 @@ export const useSynths = () => {
     setSynth: context.setSynth,
     synth: context.synth,
     userAccount: context.userAccount,
+    userPortfolio: context.userPortfolio,
     withdraw: context.withdraw
   }
 }
@@ -347,6 +403,7 @@ export const useSynthSwap = () => {
     setFocused: context.setFocused,
     swap: context.swap,
     setSynthSwap: context.setSynthSwap,
+    switchTokens: context.switchTokens,
     synthSwap: context.synthSwap
   }
 }

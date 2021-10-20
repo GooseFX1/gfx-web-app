@@ -141,6 +141,11 @@ export function theme(mode: string): DefaultTheme {
     mainTransitionTime: '500ms',
 
     // css snippets
+    ellipse: css`
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    `,
     flexCenter: css`
       display: flex;
       justify-content: center;

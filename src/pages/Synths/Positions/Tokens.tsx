@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { SynthToken } from '../SynthToken'
-import { IAccount, useAccounts, useSynths } from '../../../context'
+import { IAccount, useAccounts, usePrices, useSynths } from '../../../context'
 import { FlexColumnDiv, SpaceBetweenDiv } from '../../../styles'
 
 const TOKEN = styled(SpaceBetweenDiv)`
@@ -19,7 +19,7 @@ const TOKEN = styled(SpaceBetweenDiv)`
   }
 
   span {
-    font-size: 12px;
+    font-size: 11px;
     color: ${({ theme }) => theme.text1};
   }
 `
@@ -35,16 +35,18 @@ const WRAPPER = styled(FlexColumnDiv)`
 
 export const Tokens: FC = () => {
   const { balances } = useAccounts()
+  const { prices } = usePrices()
   const { availableSynths } = useSynths()
 
   const tokens = useMemo(
-    () => Object.entries(balances)
-      .map(([mint, amount]) => {
-        const synth = availableSynths.find(([_, { address }]) => mint === address.toString())
-        return synth ? ({ ...amount, name: synth[0] }) : undefined
-      })
-      .filter((x): x is ({ name: string } & IAccount) => !!x)
-      .sort((a, b) => a.name.localeCompare(b.name)),
+    () =>
+      Object.entries(balances)
+        .map(([mint, amount]) => {
+          const synth = availableSynths.find(([_, { address }]) => mint === address.toString())
+          return synth ? { ...amount, name: synth[0] } : undefined
+        })
+        .filter((x): x is { name: string } & IAccount => !!x)
+        .sort((a, b) => a.name.localeCompare(b.name)),
     [availableSynths, balances]
   )
 
@@ -53,9 +55,9 @@ export const Tokens: FC = () => {
       {tokens.map(({ name, uiAmount }, index) => (
         <TOKEN key={index}>
           <SynthToken size="small" synth={name} />
+          <span>{prices[name]?.current}</span>
           <span>-</span>
-          <span>-</span>
-          <span>{uiAmount}</span>
+          <span>{uiAmount.toFixed(3)}</span>
           <span>-</span>
           <span>-</span>
         </TOKEN>

@@ -4,7 +4,7 @@ import { css } from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Available, Button, InputHeader, InputWrapper, Synth } from './shared'
 import { SynthToken } from '../SynthToken'
-import { useAccounts, useConnectionConfig, useDarkMode, useSynths, useWalletModal } from '../../../context'
+import { useAccounts, useConnectionConfig, useDarkMode, usePrices, useSynths, useWalletModal } from '../../../context'
 import { SpaceBetweenDiv } from '../../../styles'
 import { capitalizeFirstLetter } from '../../../utils'
 import { ADDRESSES } from '../../../web3'
@@ -20,15 +20,19 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
   const { getUIAmount } = useAccounts()
   const { network } = useConnectionConfig()
   const { mode } = useDarkMode()
+  const { prices } = usePrices()
   const { amount, deposit, loading, setAmount, userAccount, withdraw } = useSynths()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
-  const userBalance = useMemo(
-    () =>
-      action === 'deposit' ? getUIAmount(ADDRESSES[network].mints.GOFX.address.toString()) : userAccount.collateralAmount,
-    [action, getUIAmount, network, userAccount.collateralAmount]
-  )
+  const userBalance = useMemo(() => {
+    if (action === 'deposit') {
+      return getUIAmount(ADDRESSES[network].mints.GOFX.address.toString())
+    } else {
+      const balance = userAccount.cAmount - (userAccount.shares * 2) / (prices.GOFX.current || 1)
+      return balance > 0.000001 ? balance : 0
+    }
+  }, [action, getUIAmount, network, prices.GOFX, userAccount.cAmount, userAccount.shares])
 
   const state = useMemo(() => {
     if (!publicKey) {
@@ -76,11 +80,16 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
 
   const localCSS = css`
     .ant-input {
+      display: flex;
       height: 39px;
       border: none;
       border-radius: 8px;
+      padding-right: 120px;
       background-color: ${mode === 'dark' ? '#4a4949' : '#bdbdbd'};
       text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   `
 

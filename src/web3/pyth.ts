@@ -1,8 +1,9 @@
 import { parseMappingData, parsePriceData, parseProductData, ProductData } from '@pythnetwork/client'
 import { AccountInfo, Connection, PublicKey } from '@solana/web3.js'
 import { chunks } from '../utils'
-
-const ORACLE_PUBLIC_KEY = new PublicKey('AHtgzX45WTKfkPG53L6WYhGEXwQkN1BVknET3sVsLL8J')
+import { ADDRESSES } from './ids'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { add } from 'husky'
 
 const getMultipleAccountsCore = async (connection: any, keys: string[], commitment: string) => {
   const args = connection._buildArgs([keys], commitment, 'base64')
@@ -57,9 +58,15 @@ const fetchPriceAccounts = async (
   })
 }
 
-const fetchProducts = async (connection: Connection, markets?: string[]): Promise<ProductData[]> => {
+const fetchProducts = async (
+  connection: Connection,
+  network: WalletAdapterNetwork,
+  markets?: string[]
+): Promise<ProductData[]> => {
+  const { address } = ADDRESSES[network].programs.pythOracle
+
   let allProductAccountKeys: PublicKey[] = []
-  let anotherMappingAccount: PublicKey | null = ORACLE_PUBLIC_KEY
+  let anotherMappingAccount: PublicKey | null = address
   do {
     const accountInfo = await connection.getAccountInfo(anotherMappingAccount)
     if (!accountInfo || !accountInfo.data) {

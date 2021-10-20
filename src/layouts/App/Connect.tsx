@@ -91,7 +91,7 @@ const Overlay: FC<{
       {wallet && (
         <MenuItem
           onClick={() => {
-            disconnect().catch(() => {})
+            disconnect().then()
             setArrowRotation(false)
           }}
         >

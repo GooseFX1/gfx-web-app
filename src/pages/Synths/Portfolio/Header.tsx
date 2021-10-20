@@ -45,7 +45,7 @@ export const Header: FC = () => {
     <WRAPPER>
       <TITLE>
         <span>Portfolio Overview</span>
-        <Tooltip>The current USD denominated value of your portfolio.</Tooltip>
+        <Tooltip>The current gUSD denominated value of your portfolio.</Tooltip>
       </TITLE>
       <span>{formattedValue} gUSD</span>
       {/* <span>30/12/16</span> */}

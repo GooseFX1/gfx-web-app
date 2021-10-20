@@ -96,6 +96,7 @@ declare module 'styled-components' {
     mainTransitionTime: string
 
     // css snippets
+    ellipse: FlattenSimpleInterpolation
     flexCenter: FlattenSimpleInterpolation
     flexColumnNoWrap: FlattenSimpleInterpolation
     flexRowNoWrap: FlattenSimpleInterpolation

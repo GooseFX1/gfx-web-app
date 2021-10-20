@@ -30,8 +30,8 @@ export const Positions: FC<{
       minHeight={'350px'}
       panels={[panels[0].display, panels[1].display]}
       setPanel={setPanel}
-      underlinePositions={['103px', '375px']}
-      underlineWidths={['70px', '78px']}
+      underlinePositions={['calc(33% - 45px)', 'calc(66% - 26px)']}
+      underlineWidths={['68px', '78px']}
     >
       {panels.find(({ display }) => display === panel)!.component}
     </Panel>

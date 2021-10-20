@@ -27,6 +27,9 @@ export const ADDRESSES: {
         controller: PublicKey
         priceAggregator: PublicKey
       }
+      pythOracle: {
+        address: PublicKey
+      }
       swap: {
         address: PublicKey
       }
@@ -60,7 +63,7 @@ export const ADDRESSES: {
         decimals: 8,
         type: 'synth'
       },
-      gGOOGL: {
+      gGOOG: {
         address: PublicKey.default,
         decimals: 8,
         type: 'synth'
@@ -84,6 +87,9 @@ export const ADDRESSES: {
         controller: PublicKey.default,
         priceAggregator: PublicKey.default
       },
+      pythOracle: {
+        address: new PublicKey('AHtgzX45WTKfkPG53L6WYhGEXwQkN1BVknET3sVsLL8J')
+      },
       swap: {
         address: PublicKey.default
       }
@@ -97,6 +103,9 @@ export const ADDRESSES: {
         address: PublicKey.default,
         controller: PublicKey.default,
         priceAggregator: PublicKey.default
+      },
+      pythOracle: {
+        address: PublicKey.default
       },
       swap: {
         address: PublicKey.default
@@ -120,17 +129,17 @@ export const ADDRESSES: {
         decimals: 8,
         type: 'synth'
       },
-      gAMZN: {
+      gBTC: {
         address: new PublicKey('Ab3umoUA2DHHRnaDFAF7qnZDFmr9DyHidLh8riaQGg2D'),
         decimals: 8,
         type: 'synth'
       },
-      gFB: {
+      gETH: {
         address: new PublicKey('F3qSM2ZY9K4JsV1aj8wneTK8aP8QUa76sgpePB2bbqCK'),
         decimals: 8,
         type: 'synth'
       },
-      gGOOGL: {
+      gGOOG: {
         address: new PublicKey('3KGstBKxV3iX4ftPCLxt3Q3BEwAF8UueAMmLUDeZNwLa'),
         decimals: 8,
         type: 'synth'
@@ -158,6 +167,9 @@ export const ADDRESSES: {
         address: new PublicKey('29S8DHSwXLSwTSj25Tdx8Q8vAVqAmZ1TycnJYLp3owk5'),
         controller: new PublicKey('FCngovJKv3V4QdHVaxY1dKE8EJsE7dLJB6Z6ANZUQr9E'),
         priceAggregator: new PublicKey('DzmwQxTM53FvY5HBUQzRdaAsL6bgQ1R1gePqmPvGnYee')
+      },
+      pythOracle: {
+        address: new PublicKey('BmA9Z6FjioHJPpjT39QazZyhDRUdZy2ezwx4GiDdE2u2')
       },
       swap: {
         address: new PublicKey('A4HxR7CUzKiudjCRWajsazoSNQ4YHGU5QvE3NgB6fRLd')

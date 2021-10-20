@@ -1243,9 +1243,7 @@
           },
           {
             "name": "status",
-            "type": {
-              "defined": "PriceStatus"
-            }
+            "type": "u32"
           },
           {
             "name": "updatedAt",

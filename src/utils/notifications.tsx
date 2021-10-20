@@ -32,7 +32,8 @@ const MESSAGE = styled.div`
 `
 
 const DESCRIPTION = styled(MESSAGE)`
-  ${({ theme }) => theme.flexColumnNoWrap}
+  display: flex;
+  flex-direction: column;
   align-items: center;
   margin-top: 16px;
 
