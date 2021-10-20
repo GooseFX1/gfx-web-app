@@ -14,8 +14,15 @@ type Decimal = {
   lo: number
 }
 
+type ListingAccount = {
+
+}
+
 type PoolAccount = {
   shareRate: Decimal
+}
+
+type PriceAggregatorAccount = {
 }
 
 type UserAccount = {
@@ -79,7 +86,7 @@ const claim = async (
 
   const { claimableFee } = (await account.userAccount.fetch(userAccount)) as UserAccount
   const { flags, hi, mid, lo } = claimableFee
-  const amount = (await import('gfx_stocks_pool')).decimal2number(flags, hi, lo, mid)
+  const amount = (await import('gfx_stocks_pool')).decimal2number(flags, hi, lo, mid) * 10 ** 2
 
   const userAta = await findAssociatedTokenAddress(wallet.publicKey, mints.gUSD.address)
   if (!(await connection.getParsedAccountInfo(userAta)).value) {
@@ -206,6 +213,18 @@ const initialize = async (pool: string, wallet: any, connection: Connection, net
   return await signAndSendRawTransaction(connection, tx, wallet)
 } */
 
+const listingAccount = async (
+  pool: string,
+  wallet: any,
+  connection: Connection,
+  network: WalletAdapterNetwork
+): Promise<PriceAggregatorAccount> => {
+  const { pools } = ADDRESSES[network]
+  const { account } = getPoolProgram(wallet, connection, network)
+
+  return (await account.listing.fetch(pools[pool].listing)) as ListingAccount
+}
+
 const mint = async (
   amount: number,
   pool: string,
@@ -251,8 +270,19 @@ const poolAccount = async (
   const { pools } = ADDRESSES[network]
   const { account } = getPoolProgram(wallet, connection, network)
 
-  console.log(await account.pool.fetch(pools[pool].address))
   return (await account.pool.fetch(pools[pool].address)) as PoolAccount
+}
+
+const priceAggregatorAccount = async (
+  pool: string,
+  wallet: any,
+  connection: Connection,
+  network: WalletAdapterNetwork
+): Promise<PriceAggregatorAccount> => {
+  const { programs } = ADDRESSES[network]
+  const { account } = getPoolProgram(wallet, connection, network)
+
+  return (await account.priceAggregator.fetch(programs.pool.priceAggregator)) as PriceAggregatorAccount
 }
 
 const swap = async (
@@ -344,8 +374,10 @@ export const pool = {
   deposit,
   getUserAccountPublicKey,
   // liquidate,
+  listingAccount,
   mint,
   poolAccount,
+  priceAggregatorAccount,
   swap,
   userAccount,
   withdraw

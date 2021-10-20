@@ -157,7 +157,7 @@ export const ADDRESSES: {
       pool: {
         address: new PublicKey('29S8DHSwXLSwTSj25Tdx8Q8vAVqAmZ1TycnJYLp3owk5'),
         controller: new PublicKey('FCngovJKv3V4QdHVaxY1dKE8EJsE7dLJB6Z6ANZUQr9E'),
-        priceAggregator: new PublicKey('9vaQXLp6emaTWSNTJ9nCEZyzSPNCVURgSry9YEGbJAm7')
+        priceAggregator: new PublicKey('DzmwQxTM53FvY5HBUQzRdaAsL6bgQ1R1gePqmPvGnYee')
       },
       swap: {
         address: new PublicKey('A4HxR7CUzKiudjCRWajsazoSNQ4YHGU5QvE3NgB6fRLd')

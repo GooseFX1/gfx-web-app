@@ -134,7 +134,8 @@ const SwapContent: FC = () => {
 export const Swap: FC = () => {
   return (
     <SwapProvider>
-      <SwapContent />
+      {/* <SwapContent /> */}
+      Coming Soon
     </SwapProvider>
   )
 }

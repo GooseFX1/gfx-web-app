@@ -4,7 +4,7 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { FEATURED_PAIRS_LIST } from './crypto'
 import { useConnectionConfig } from './settings'
 import { notify } from '../utils'
-import { ADDRESSES, Mint, pool, pyth, serum } from '../web3'
+import { pyth, serum } from '../web3'
 
 interface IPrices {
   [x: string]: {

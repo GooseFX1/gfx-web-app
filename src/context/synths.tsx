@@ -115,7 +115,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         await notify({
           type: 'success',
           message: 'Claim successful!',
-          description: `Claimed ${amount / 1000} gUSD`,
+          description: `Claimed ${amount} gUSD`,
           icon: 'success',
           txid: signature
         })
@@ -226,25 +226,39 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
 
     const updatePoolAccount = async () => {
-      const poolAccount = await pool.poolAccount(poolName, wallet, connection, network)
-      const [shareRate] = await Promise.all([
-        fieldToNumber(poolAccount.shareRate)
-      ])
+      try {
+        const [listingAccount, poolAccount] = await Promise.all([
+          pool.listingAccount(poolName, wallet, connection, network),
+          pool.poolAccount(poolName, wallet, connection, network),
+          // pool.priceAggregatorAccount(poolName, wallet, connection, network)
+        ])
 
-      setPoolAccount(({ shareRate }))
+        console.log((listingAccount as any).synths.forEach(async (x: any) => console.log(await fieldToNumber(x))))
+        const [shareRate] = await Promise.all([
+          fieldToNumber(poolAccount.shareRate)
+        ])
+
+        setPoolAccount(({ shareRate }))
+      } catch (e: any) {
+        await notify({ type: 'error', message: `Error updating pool account`, icon: 'error' }, e)
+      }
     }
 
     const updateUserAccount = async () => {
-      const userAccount = await pool.userAccount(poolName, wallet, connection, network)
-      if (userAccount) {
-        const [collateralAmount, claimableFee, shareRate, shares] = await Promise.all([
-          fieldToNumber(userAccount.collateralAmount),
-          fieldToNumber(userAccount.claimableFee),
-          fieldToNumber(userAccount.shareRate),
-          fieldToNumber(userAccount.shares)
-        ])
+      try {
+        const userAccount = await pool.userAccount(poolName, wallet, connection, network)
+        if (userAccount) {
+          const [collateralAmount, claimableFee, shareRate, shares] = await Promise.all([
+            fieldToNumber(userAccount.collateralAmount),
+            fieldToNumber(userAccount.claimableFee),
+            fieldToNumber(userAccount.shareRate),
+            fieldToNumber(userAccount.shares)
+          ])
 
-        setUserAccount({ collateralAmount, claimableFee, shareRate, shares })
+          setUserAccount({ collateralAmount, claimableFee, shareRate, shares })
+        }
+      } catch (e: any) {
+        await notify({ type: 'error', message: `Error updating user account`, icon: 'error' }, e)
       }
     }
 

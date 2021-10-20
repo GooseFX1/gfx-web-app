@@ -5,8 +5,16 @@ import { Order } from './Order'
 import { OrderBook } from './OrderBook'
 import { Pairs } from './Pairs'
 import { TVChartContainer } from './TradingView'
-import { CryptoProvider, OrderProvider, PricesProvider, TradeHistoryProvider, useCrypto } from '../../context'
+import {
+  CryptoProvider,
+  OrderProvider,
+  PricesProvider,
+  TradeHistoryProvider,
+  useConnectionConfig,
+  useCrypto
+} from '../../context'
 import { TRADE_ORDER_WIDTH } from '../../styles'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 
 const WRAPPER = styled.div`
   display: flex;
@@ -49,7 +57,9 @@ const CryptoContent: FC = () => {
 }
 
 export const Crypto: FC = () => {
-  return (
+  const { network } = useConnectionConfig()
+
+  return network === WalletAdapterNetwork.Devnet ? <>Please connect to Mainnet-Beta</> : (
     <PricesProvider>
       <CryptoProvider>
         <CryptoContent />
