@@ -8,14 +8,14 @@ const TOKEN = styled(SpaceBetweenDiv)`
   width: 100%;
 
   > * {
-    width: calc(100% / 6);
+    width: calc(100% / 4);
   }
 
   > div {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding-left: ${({ theme }) => theme.margins['1.5x']};
+    padding-left: ${({ theme }) => theme.margins['5x']};
   }
 
   span {
@@ -50,24 +50,17 @@ export const Tokens: FC = () => {
     [availableSynths, balances]
   )
 
-  const userPoolRatio = useMemo(
-    () => userAccount.shareRate / poolAccount.shareRate,
-    [poolAccount.shareRate, userAccount.shareRate]
-  )
-
   return (
     <WRAPPER>
       {tokens.map(({ name, uiAmount }, index) => {
         const match = poolAccount.debt.find(({ synth }) => name === synth)
-        const debt = match ? (match.amount * userPoolRatio).toFixed(2) : 0
+        const debt = match ? (match.percentage * userAccount.shares).toFixed(2) : 0
 
         return (
           <TOKEN key={index}>
             <SynthToken size="small" synth={name} />
             <span>{prices[name]?.current}</span>
-            <span>-</span>
             <span>{uiAmount.toFixed(3)}</span>
-            <span>-</span>
             <span>{debt}</span>
           </TOKEN>
         )

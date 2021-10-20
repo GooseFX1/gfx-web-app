@@ -54,7 +54,7 @@ const WRAPPER = styled(SpaceEvenlyDiv)`
   }
 `
 
-export const Collateral: FC = () => {
+export const Debt: FC = () => {
   const { poolAccount } = useSynths()
   const synthColor = {
     gAAPL: { background: 'gray', hover: 'cyan' },
@@ -64,8 +64,6 @@ export const Collateral: FC = () => {
     gTSLA: { background: 'red', hover: 'cyan' },
     gUSD: { background: 'silver', hover: 'cyan' }
   } as { [x: string]: { background: string; hover: string } }
-
-  console.log('1')
 
   return (
     <WRAPPER>
