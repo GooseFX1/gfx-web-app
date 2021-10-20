@@ -519,10 +519,7 @@
         {
           "name": "seed",
           "type": {
-            "array": [
-              "u8",
-              32
-            ]
+            "array": ["u8", 32]
           }
         },
         {
@@ -608,10 +605,7 @@
         {
           "name": "seed",
           "type": {
-            "array": [
-              "u8",
-              32
-            ]
+            "array": ["u8", 32]
           }
         },
         {
@@ -661,7 +655,7 @@
       ]
     },
     {
-      "name": "appendListing",
+      "name": "appendToListing",
       "accounts": [
         {
           "name": "controller",
@@ -692,7 +686,38 @@
       "args": []
     },
     {
-      "name": "appendPriceAggregator",
+      "name": "removeFromListing",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "listing",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "appendToPriceAggregator",
       "accounts": [
         {
           "name": "controller",
@@ -744,10 +769,7 @@
         {
           "name": "seed",
           "type": {
-            "array": [
-              "u8",
-              32
-            ]
+            "array": ["u8", 32]
           }
         },
         {
@@ -761,38 +783,7 @@
       ]
     },
     {
-      "name": "removeListing",
-      "accounts": [
-        {
-          "name": "controller",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "pool",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "listing",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "mint",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "admin",
-          "isMut": false,
-          "isSigner": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "removePriceAggregator",
+      "name": "removeFromPriceAggregator",
       "accounts": [
         {
           "name": "controller",
@@ -816,6 +807,32 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "migratePriceAggregator",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "priceAggregator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newPriceAggregator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -827,10 +844,7 @@
           {
             "name": "seed",
             "type": {
-              "array": [
-                "u8",
-                32
-              ]
+              "array": ["u8", 32]
             }
           },
           {
@@ -849,6 +863,45 @@
       }
     },
     {
+      "name": "Listing",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool",
+            "type": "publicKey"
+          },
+          {
+            "name": "collateral",
+            "type": {
+              "defined": "Collateral"
+            }
+          },
+          {
+            "name": "usd",
+            "type": {
+              "defined": "Synth"
+            }
+          },
+          {
+            "name": "len",
+            "type": "u32"
+          },
+          {
+            "name": "synths",
+            "type": {
+              "array": [
+                {
+                  "defined": "Synth"
+                },
+                256
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "Pool",
       "type": {
         "kind": "struct",
@@ -856,10 +909,7 @@
           {
             "name": "seed",
             "type": {
-              "array": [
-                "u8",
-                32
-              ]
+              "array": ["u8", 32]
             }
           },
           {
@@ -920,7 +970,7 @@
           },
           {
             "name": "feeRatesLen",
-            "type": "u64"
+            "type": "u32"
           },
           {
             "name": "collectorRate",
@@ -937,6 +987,30 @@
           {
             "name": "delayTolerance",
             "type": "u64"
+          },
+          {
+            "name": "unused",
+            "type": {
+              "array": ["u8", 128]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PriceAggregator",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "controller",
+            "type": "publicKey"
+          },
+          {
+            "name": "prices",
+            "type": {
+              "defined": "Prices"
+            }
           }
         ]
       }
@@ -973,12 +1047,66 @@
             "type": {
               "defined": "Decimal"
             }
+          },
+          {
+            "name": "unused",
+            "type": {
+              "array": ["u8", 128]
+            }
           }
         ]
       }
     }
   ],
   "types": [
+    {
+      "name": "Synth",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "publicKey"
+          },
+          {
+            "name": "debt",
+            "type": {
+              "defined": "Decimal"
+            }
+          },
+          {
+            "name": "maxDebt",
+            "type": {
+              "defined": "Decimal"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Collateral",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "publicKey"
+          },
+          {
+            "name": "initialMargin",
+            "type": {
+              "defined": "Decimal"
+            }
+          },
+          {
+            "name": "maintenanceMargin",
+            "type": {
+              "defined": "Decimal"
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "PoolConfig",
       "type": {
@@ -1033,6 +1161,95 @@
                 "defined": "Decimal"
               }
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PubkeyIndex",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "key",
+            "type": "publicKey"
+          },
+          {
+            "name": "index",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Prices",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "len",
+            "type": "u32"
+          },
+          {
+            "name": "buffer",
+            "type": {
+              "array": [
+                {
+                  "defined": "Price"
+                },
+                512
+              ]
+            }
+          },
+          {
+            "name": "mintIndex",
+            "type": {
+              "array": [
+                {
+                  "defined": "PubkeyIndex"
+                },
+                512
+              ]
+            }
+          },
+          {
+            "name": "feedIndex",
+            "type": {
+              "array": [
+                {
+                  "defined": "PubkeyIndex"
+                },
+                512
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Price",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "decimal",
+            "type": "u8"
+          },
+          {
+            "name": "price",
+            "type": {
+              "defined": "Decimal"
+            }
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": "PriceStatus"
+            }
+          },
+          {
+            "name": "updatedAt",
+            "type": "u64"
           }
         ]
       }
@@ -1225,9 +1442,14 @@
       "code": 318,
       "name": "WithdrawViolatesMM",
       "msg": "[G018] Withdraw violates the maintenance margin requirement"
+    },
+    {
+      "code": 319,
+      "name": "DowngradeMigration",
+      "msg": "[G019] Migrate to a smaller account is not allowed"
     }
   ],
   "metadata": {
-    "address": "2Lyovr5fDDDkAUEiw4cfTas3KMNkWmRe9ciPQEKstCFL"
+    "address": "29S8DHSwXLSwTSj25Tdx8Q8vAVqAmZ1TycnJYLp3owk5"
   }
 }

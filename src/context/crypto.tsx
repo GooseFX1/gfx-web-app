@@ -1,13 +1,4 @@
-import React, {
-  createContext,
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState
-} from 'react'
+import React, { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react'
 import BN from 'bn.js'
 import { Market, Orderbook } from '@project-serum/serum'
 import { useConnectionConfig } from './settings'
@@ -46,9 +37,9 @@ export const FEATURED_PAIRS_LIST = [
   { decimals: 2, pair: 'ETH/USDC', type: 'crypto' as MarketType },
   { decimals: 3, pair: 'SOL/USDC', type: 'crypto' as MarketType },
   { decimals: 3, pair: 'LINK/USDC', type: 'crypto' as MarketType },
-  { decimals: 2, pair: 'gAAPL/gUSD', type: 'synth' as MarketType },
-  { decimals: 2, pair: 'gFB/gUSD', type: 'synth' as MarketType },
-  { decimals: 2, pair: 'gTSLA/gUSD', type: 'synth' as MarketType }
+  { decimals: 2, pair: 'AAPL/USD', type: 'synth' as MarketType },
+  { decimals: 2, pair: 'AMZN/USD', type: 'synth' as MarketType },
+  { decimals: 2, pair: 'TSLA/USD', type: 'synth' as MarketType }
 ]
 
 const DEFAULT_ORDER_BOOK = { asks: [], bids: [] }

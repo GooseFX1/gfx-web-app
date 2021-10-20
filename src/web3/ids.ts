@@ -36,7 +36,7 @@ export const ADDRESSES: {
   'mainnet-beta': {
     mints: {
       GOFX: {
-        address: new PublicKey('2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'),
+        address: PublicKey.default,
         decimals: 9,
         type: 'crypto'
       },
@@ -44,12 +44,37 @@ export const ADDRESSES: {
         address: PublicKey.default,
         decimals: 2,
         type: 'synth'
+      },
+      gAAPL: {
+        address: PublicKey.default,
+        decimals: 8,
+        type: 'synth'
+      },
+      gAMZN: {
+        address: PublicKey.default,
+        decimals: 8,
+        type: 'synth'
+      },
+      gFB: {
+        address: PublicKey.default,
+        decimals: 8,
+        type: 'synth'
+      },
+      gGOOGL: {
+        address: PublicKey.default,
+        decimals: 8,
+        type: 'synth'
+      },
+      gTSLA: {
+        address: PublicKey.default,
+        decimals: 8,
+        type: 'synth'
       }
     },
     pools: {
-      POOL_A: {
-        address: new PublicKey('4hkhVuQkpJJDhpvjEn65LmwuPnAZoMzjXdQ5FjW5KcpY'),
-        listing: new PublicKey('QwtKuSQcz8rdY5T3ZBavkoFZev777rcJ1BFWe5KHvVW'),
+      POOL_0: {
+        address: PublicKey.default,
+        listing: PublicKey.default,
         type: 'synth'
       }
     },

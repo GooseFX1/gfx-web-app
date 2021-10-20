@@ -74,12 +74,17 @@ export const PairStats: FC<{ decimals: number; pair: string; type: MarketType }>
     }
   }
 
+  const assetIcon = useMemo(
+    () => `${process.env.PUBLIC_URL}/img/${type}/${type === 'synth' ? `g${symbol}` : symbol}.svg`,
+    [symbol, type]
+  )
+
   return (
     <STATS>
       <INFO>
         <div onClick={handleClick}>
           <ASSET_ICON>
-            <img src={`${process.env.PUBLIC_URL}/img/${type}/${symbol}.svg`} alt="" />
+            <img src={assetIcon} alt="" />
           </ASSET_ICON>
           <span>{formattedPair}</span>
         </div>
@@ -94,9 +99,7 @@ export const PairStats: FC<{ decimals: number; pair: string; type: MarketType }>
           </div>
         ) TODO RESTORE */}
       </INFO>
-      <PRICE>
-        {!price ? <Loader /> : (<span>$ {removeFloatingPointError(price.current)}</span>)}
-      </PRICE>
+      <PRICE>{!price ? <Loader /> : <span>$ {removeFloatingPointError(price.current)}</span>}</PRICE>
     </STATS>
   )
 }
