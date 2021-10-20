@@ -1,9 +1,10 @@
 import React, { FC, useState } from 'react'
 import styled from 'styled-components'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Pools } from './Pools'
 import { Portfolio } from './Portfolio'
 import { Positions } from './Positions'
-import { PricesProvider, SynthsProvider } from '../../context'
+import { PricesProvider, SynthsProvider, useConnectionConfig } from '../../context'
 
 const WRAPPER = styled.div`
   display: flex;
@@ -60,7 +61,11 @@ export const SynthsContent: FC = () => {
 }
 
 export const Synths: FC = () => {
-  return (
+  const { network } = useConnectionConfig()
+
+  return network === WalletAdapterNetwork.Mainnet ? (
+    <>Please connect to devnet</>
+  ) : (
     <PricesProvider>
       <SynthsProvider>
         <SynthsContent />
