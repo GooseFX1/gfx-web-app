@@ -1,12 +1,12 @@
 import React, { FC, useState } from 'react'
 import styled from 'styled-components'
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { History } from './History'
 import { Order } from './Order'
 import { OrderBook } from './OrderBook'
 import { Pairs } from './Pairs'
 import { TVChartContainer } from './TradingView'
 import {
+  ENDPOINTS,
   CryptoProvider,
   OrderProvider,
   PricesProvider,
@@ -15,6 +15,7 @@ import {
   useCrypto
 } from '../../context'
 import { TRADE_ORDER_WIDTH } from '../../styles'
+import { notify } from '../../utils'
 
 const WRAPPER = styled.div`
   display: flex;
@@ -23,6 +24,7 @@ const WRAPPER = styled.div`
   margin: ${({ theme }) => theme.margins['3x']} 0;
 
   > div:first-child {
+    margin-left: ${({ theme }) => theme.margins['3x']};
     width: calc(100% - ${TRADE_ORDER_WIDTH} - 2 * ${({ theme }) => theme.margins['3x']});
   }
 
@@ -57,11 +59,14 @@ const CryptoContent: FC = () => {
 }
 
 export const Crypto: FC = () => {
-  const { network } = useConnectionConfig()
+  const { endpoint, setEndpoint } = useConnectionConfig()
 
-  return network === WalletAdapterNetwork.Devnet ? (
-    <>Please connect to mainnet-beta</>
-  ) : (
+  if (endpoint !== ENDPOINTS[0].endpoint) {
+    notify({ message: 'Switched to mainnet' })
+    setEndpoint(ENDPOINTS[0].endpoint)
+  }
+
+  return (
     <PricesProvider>
       <CryptoProvider>
         <CryptoContent />

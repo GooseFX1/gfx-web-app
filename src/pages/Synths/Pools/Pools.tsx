@@ -40,7 +40,6 @@ const TAB = styled(FlexColumnDiv)`
 const TABS = styled(SpaceBetweenDiv)`
   flex: 1;
   padding: ${({ theme }) => theme.margins['3x']} ${({ theme }) => theme.margins['4x']};
-  overflow-x: scroll;
 
   > span:not(:last-child) {
     margin-right: ${({ theme }) => theme.margins['4x']};

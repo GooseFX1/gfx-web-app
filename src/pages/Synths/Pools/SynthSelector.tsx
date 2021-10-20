@@ -1,9 +1,14 @@
 import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
+import styled from 'styled-components'
 import { AvailableSynth, AvailableSynthsSelector } from './shared'
 import { SynthToken } from '../SynthToken'
 import { ArrowDropdown } from '../../../components'
 import { useSynths } from '../../../context'
 import { CenteredDiv, CenteredImg } from '../../../styles'
+
+const WRAPPER = styled(CenteredDiv)`
+  cursor: pointer;
+`
 
 const Overlay: FC<{
   setArrowRotation: Dispatch<SetStateAction<boolean>>
@@ -22,14 +27,16 @@ const Overlay: FC<{
 
   return (
     <AvailableSynthsSelector>
-      {availableSynths.map(([synth], index) => (
-        <AvailableSynth key={index} onClick={() => handleClick(synth)}>
-          <CenteredImg>
-            <img src={`${process.env.PUBLIC_URL}/img/synth/${synth}.svg`} alt="" />
-          </CenteredImg>
-          <span>{synth}</span>
-        </AvailableSynth>
-      ))}
+      {availableSynths
+        .filter(([synth, _]) => synth !== 'GOFX')
+        .map(([synth], index) => (
+          <AvailableSynth key={index} onClick={() => handleClick(synth)}>
+            <CenteredImg>
+              <img src={`${process.env.PUBLIC_URL}/img/synth/${synth}.svg`} alt="" />
+            </CenteredImg>
+            <span>{synth}</span>
+          </AvailableSynth>
+        ))}
     </AvailableSynthsSelector>
   )
 }
@@ -45,7 +52,7 @@ export const SynthSelector: FC = () => {
   }
 
   return (
-    <CenteredDiv>
+    <WRAPPER onClick={handleClick}>
       <SynthToken size="large" synth={synth} />
       <ArrowDropdown
         arrowRotation={arrowRotation}
@@ -56,6 +63,6 @@ export const SynthSelector: FC = () => {
         overlay={<Overlay setArrowRotation={setArrowRotation} setVisible={setVisible} />}
         visible={visible}
       />
-    </CenteredDiv>
+    </WRAPPER>
   )
 }

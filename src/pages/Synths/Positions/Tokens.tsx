@@ -45,25 +45,33 @@ export const Tokens: FC = () => {
           const synth = availableSynths.find(([_, { address }]) => mint === address.toString())
           return synth ? { ...amount, name: synth[0] } : undefined
         })
-        .filter((x): x is { name: string } & IAccount => !!x)
+        .filter((x): x is { name: string } & IAccount => !!x && x.name !== 'GOFX')
         .sort((a, b) => a.name.localeCompare(b.name)),
     [availableSynths, balances]
   )
 
-  const userDebtRate = userAccount.shareRate / poolAccount.shareRate * 100
+  const userPoolRatio = useMemo(
+    () => userAccount.shareRate / poolAccount.shareRate,
+    [poolAccount.shareRate, userAccount.shareRate]
+  )
 
   return (
     <WRAPPER>
-      {tokens.map(({ name, uiAmount }, index) => (
-        <TOKEN key={index}>
-          <SynthToken size="small" synth={name} />
-          <span>{prices[name]?.current}</span>
-          <span>-</span>
-          <span>{uiAmount.toFixed(3)}</span>
-          <span>-</span>
-          <span>-</span>
-        </TOKEN>
-      ))}
+      {tokens.map(({ name, uiAmount }, index) => {
+        const match = poolAccount.debt.find(({ synth }) => name === synth)
+        const debt = match ? (match.amount * userPoolRatio).toFixed(2) : 0
+
+        return (
+          <TOKEN key={index}>
+            <SynthToken size="small" synth={name} />
+            <span>{prices[name]?.current}</span>
+            <span>-</span>
+            <span>{uiAmount.toFixed(3)}</span>
+            <span>-</span>
+            <span>{debt}</span>
+          </TOKEN>
+        )
+      })}
     </WRAPPER>
   )
 }

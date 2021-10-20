@@ -1,17 +1,10 @@
 import React, { Dispatch, FC, MouseEventHandler, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { Select } from 'antd'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Menu, MenuItem } from './shared'
 import { ArrowDropdown } from '../../components'
-import { ENDPOINTS, useConnectionConfig, useWalletModal } from '../../context'
+import { useWalletModal } from '../../context'
 import { CenteredImg } from '../../styles'
-
-const NETWORK = styled.span`
-  padding: 5px 0;
-  color: ${({ theme }) => theme.text1} !important;
-  cursor: initial;
-`
 
 const WALLET_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['3x'])}
@@ -56,11 +49,7 @@ const WRAPPER = styled.button<{ $connected: boolean }>`
   }
 `
 
-const Overlay: FC<{
-  setArrowRotation: Dispatch<SetStateAction<boolean>>
-  setVisible: Dispatch<SetStateAction<boolean>>
-}> = ({ setArrowRotation, setVisible }) => {
-  const { endpoint, setEndpoint } = useConnectionConfig()
+const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ setArrowRotation }) => {
   const { disconnect, publicKey, wallet } = useWallet()
   const { setVisible: setWalletModalVisible } = useWalletModal()
 
@@ -99,27 +88,6 @@ const Overlay: FC<{
           <img src={`${process.env.PUBLIC_URL}/img/assets/disconnect.svg`} alt="disconnect" />
         </MenuItem>
       )}
-      <MenuItem>
-        <NETWORK>Network:</NETWORK>
-        <Select
-          bordered={false}
-          dropdownStyle={{ minWidth: 'fit-content' }}
-          onSelect={(endpoint: string) => {
-            setArrowRotation(false)
-            setEndpoint(endpoint)
-            setVisible(false)
-          }}
-          showArrow={false}
-          size="small"
-          value={endpoint}
-        >
-          {ENDPOINTS.map(({ endpoint, network }) => (
-            <Select.Option value={endpoint} key={endpoint}>
-              {network}
-            </Select.Option>
-          ))}
-        </Select>
-      </MenuItem>
     </Menu>
   )
 }
@@ -161,13 +129,15 @@ export const Connect: FC = () => {
         </WALLET_ICON>
       )}
       <span onClick={onSpanClick}>{content}</span>
-      <ArrowDropdown
-        arrowRotation={arrowRotation}
-        offset={[9, 30]}
-        overlay={<Overlay setArrowRotation={setArrowRotation} setVisible={setVisible} />}
-        onVisibleChange={onArrowDropdownClick}
-        visible={visible}
-      />
+      {wallet && (
+        <ArrowDropdown
+          arrowRotation={arrowRotation}
+          offset={[9, 30]}
+          overlay={<Overlay setArrowRotation={setArrowRotation} />}
+          onVisibleChange={onArrowDropdownClick}
+          visible={visible}
+        />
+      )}
     </WRAPPER>
   )
 }

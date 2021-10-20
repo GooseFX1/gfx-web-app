@@ -1,10 +1,10 @@
 import React, { FC, useState } from 'react'
 import styled from 'styled-components'
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Pools } from './Pools'
 import { Portfolio } from './Portfolio'
 import { Positions } from './Positions'
-import { PricesProvider, SynthsProvider, useConnectionConfig } from '../../context'
+import { ENDPOINTS, PricesProvider, SynthsProvider, useConnectionConfig } from '../../context'
+import { notify } from '../../utils'
 
 const WRAPPER = styled.div`
   display: flex;
@@ -61,11 +61,14 @@ export const SynthsContent: FC = () => {
 }
 
 export const Synths: FC = () => {
-  const { network } = useConnectionConfig()
+  const { endpoint, setEndpoint } = useConnectionConfig()
 
-  return network === WalletAdapterNetwork.Mainnet ? (
-    <>Please connect to devnet</>
-  ) : (
+  if (endpoint !== ENDPOINTS[1].endpoint) {
+    notify({ message: 'Synths is in beta. Switched to devnet' })
+    setEndpoint(ENDPOINTS[1].endpoint)
+  }
+
+  return (
     <PricesProvider>
       <SynthsProvider>
         <SynthsContent />

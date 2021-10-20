@@ -7,7 +7,8 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useState, useCallback
+  useState,
+  useCallback
 } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
@@ -24,7 +25,11 @@ type Decimal = {
 }
 
 interface IPoolAccount {
-  debt: { percentage: number, synth: string }[]
+  debt: {
+    amount: number
+    percentage: number
+    synth: string
+  }[]
   shareRate: number
   synths: string[]
 }
@@ -85,7 +90,10 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useWallet()
 
   const availableSynths = useMemo(() => Object.entries(ADDRESSES[network].mints), [network])
-  const availablePools = useMemo(() => Object.entries(ADDRESSES[network].pools).filter(([_, { type }]) => type === 'synth'), [network])
+  const availablePools = useMemo(
+    () => Object.entries(ADDRESSES[network].pools).filter(([_, { type }]) => type === 'synth'),
+    [network]
+  )
 
   const [amount, setAmount] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -291,30 +299,36 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [availableSynths, connection, network, poolName, setPrices, updatePrices, updateUserAccount, wallet])
 
   const updatePoolAccount = useCallback(async () => {
-    const [listingAccount, poolAccount] = await Promise.all([
-      pool.listingAccount(poolName, wallet, connection, network),
-      pool.poolAccount(poolName, wallet, connection, network)
-    ])
+    try {
+      const [listingAccount, poolAccount] = await Promise.all([
+        pool.listingAccount(poolName, wallet, connection, network),
+        pool.poolAccount(poolName, wallet, connection, network)
+      ])
 
-    const debt: { [x: string]: number } = { gUSD: await fieldToNumber(listingAccount.usd.debt) }
-    for (const { debt: synthDebt, mint } of listingAccount.synths) {
-      const synth = availableSynths.find(([_, { address }]) => mint.equals(address))
-      if (synth) {
-        debt[synth[0]] = await fieldToNumber(synthDebt)
+      const debt: { [x: string]: number } = { gUSD: await fieldToNumber(listingAccount.usd.debt) }
+      for (const { debt: synthDebt, mint } of listingAccount.synths) {
+        const synth = availableSynths.find(([_, { address }]) => mint.equals(address))
+        if (synth) {
+          debt[synth[0]] = await fieldToNumber(synthDebt)
+        }
       }
-    }
-    const synths = Object.keys(debt).sort((a, b) => a.localeCompare(b))
-    const totalDebt = Object.entries(debt).reduce((acc, [synth, debt]) => {
-      return acc + debt * prices[synth]?.current
-    }, 0)
+      const synths = Object.keys(debt).sort((a, b) => a.localeCompare(b))
+      const totalDebt = Object.entries(debt).reduce((acc, [synth, debt]) => {
+        return acc + debt * prices[synth]?.current
+      }, 0)
 
-    setPoolAccount({
-      debt: Object.entries(debt)
-        .sort(([a], [b, _]) => a.localeCompare(b))
-        .map(([synth, debt]) => ({ percentage: (debt * prices[synth]?.current) / totalDebt, synth })),
-      shareRate: await fieldToNumber(poolAccount.shareRate),
-      synths
-    })
+      setPoolAccount({
+        debt: Object.entries(debt)
+          .sort(([a], [b, _]) => a.localeCompare(b))
+          .map(([synth, amount]) => ({
+            amount,
+            percentage: (amount * prices[synth]?.current) / totalDebt,
+            synth
+          })),
+        shareRate: await fieldToNumber(poolAccount.shareRate),
+        synths
+      })
+    } catch (e) {}
   }, [availableSynths, connection, network, poolName, prices, wallet])
 
   useEffect(() => {

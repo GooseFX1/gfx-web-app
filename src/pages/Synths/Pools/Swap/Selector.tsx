@@ -17,6 +17,7 @@ const WRAPPER = styled(FlexColumnDiv)<{ $height: string }>`
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.grey5};
   z-index: 1;
+  cursor: pointer;
 
   > div {
     ${({ theme }) => theme.measurements('100%')}
@@ -55,7 +56,7 @@ const Overlay: FC<{
   return (
     <AvailableSynthsSelector>
       {availableSynths
-        .filter(([name]) => name !== otherToken?.symbol)
+        .filter(([name]) => name !== otherToken?.symbol && name !== 'GOFX')
         .map((synth, index) => (
           <AvailableSynth key={index} onClick={() => handleClick(synth)}>
             <CenteredImg>
@@ -88,7 +89,7 @@ export const Selector: FC<{
   console.log(balance)
 
   return (
-    <WRAPPER $height={height}>
+    <WRAPPER $height={height} onClick={handleClick}>
       <SpaceBetweenDiv>
         {token ? <SynthToken size="medium" synth={token.symbol} /> : <span>Select a token</span>}
         <ArrowDropdown
