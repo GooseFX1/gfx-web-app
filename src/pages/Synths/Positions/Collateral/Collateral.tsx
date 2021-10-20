@@ -66,7 +66,6 @@ export const Collateral: FC = () => {
     gUSD: { background: 'silver', hover: 'cyan' }
   } as { [x: string]: { background: string; hover: string } }
 
-  const synths = useMemo(() => Object.keys(poolAccount.debt).sort((a, b) => a.localeCompare(b)), [poolAccount.debt])
   const synthDebt = useMemo(() => {
     const totalDebt = Object.entries(poolAccount.debt).reduce((acc, [synth, debt]) => {
       return acc + debt * prices[synth].current
@@ -90,7 +89,7 @@ export const Collateral: FC = () => {
           ))}
         </FlexColumnDiv>
       </INFORMATION>
-      <Chart data={synthDebt.map(({ percentage }) => percentage)} synths={synths} synthColor={synthColor} />
+      <Chart data={synthDebt.map(({ percentage }) => percentage)} synths={poolAccount.synths} synthColor={synthColor} />
     </WRAPPER>
   )
 }

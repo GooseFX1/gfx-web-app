@@ -36,7 +36,7 @@ const WRAPPER = styled(FlexColumnDiv)`
 export const Tokens: FC = () => {
   const { balances } = useAccounts()
   const { prices } = usePrices()
-  const { availableSynths } = useSynths()
+  const { availableSynths, poolAccount, userAccount } = useSynths()
 
   const tokens = useMemo(
     () =>
@@ -49,6 +49,8 @@ export const Tokens: FC = () => {
         .sort((a, b) => a.name.localeCompare(b.name)),
     [availableSynths, balances]
   )
+
+  const userDebtRate = userAccount.shareRate / poolAccount.shareRate * 100
 
   return (
     <WRAPPER>

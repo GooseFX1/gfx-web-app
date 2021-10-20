@@ -125,7 +125,7 @@ const Overlay: FC<{
 }
 
 export const Connect: FC = () => {
-  const { connect, connecting, publicKey, wallet } = useWallet()
+  const { connect, publicKey, wallet } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
   const [arrowRotation, setArrowRotation] = useState(false)
   const [visible, setVisible] = useState(false)

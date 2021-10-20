@@ -23,11 +23,10 @@ type Decimal = {
   lo: number
 }
 
-type SwapInput = undefined | 'from' | 'to'
-
 interface IPoolAccount {
   debt: { [x: string]: number }
   shareRate: number
+  synths: string[]
 }
 
 interface ISynthsConfig {
@@ -42,7 +41,6 @@ interface ISynthsConfig {
   poolAccount: IPoolAccount
   poolName: string
   setAmount: Dispatch<SetStateAction<number>>
-  setFocused: Dispatch<SetStateAction<SwapInput>>
   setPoolName: Dispatch<SetStateAction<string>>
   setSynth: Dispatch<SetStateAction<string>>
   setSynthSwap: Dispatch<SetStateAction<ISynthSwap>>
@@ -75,7 +73,7 @@ interface IUserPortfolio {
   pendingFees: number
 }
 
-const DEFAULT_POOL_ACCOUNT = { debt: {}, shareRate: 0 }
+const DEFAULT_POOL_ACCOUNT = { debt: {}, shareRate: 0, synths: [] }
 const DEFAULT_USER_ACCOUNT = { claimableFee: 0, cAmount: 0, debt: 0, shareRate: 0, shares: 0 }
 const DEFAULT_USER_PORTFOLIO = { cRatio: 0, cValue: 0, pendingFees: 0 }
 
@@ -91,10 +89,9 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const availablePools = useMemo(() => Object.entries(pools).filter(([_, { type }]) => type === 'synth'), [pools])
 
   const [amount, setAmount] = useState(0)
-  const [focused, setFocused] = useState<SwapInput>(undefined)
   const [loading, setLoading] = useState(false)
   const [poolName, setPoolName] = useState(availablePools[0][0])
-  const [poolAccount, setPoolAccount] = useState(DEFAULT_POOL_ACCOUNT)
+  const [poolAccount, setPoolAccount] = useState<IPoolAccount>(DEFAULT_POOL_ACCOUNT)
   const [synth, setSynth] = useState(availableSynths[0][0])
   const [synthSwap, setSynthSwap] = useState<ISynthSwap>({ inTokenAmount: 0, outTokenAmount: 0 })
   const [userAccount, setUserAccount] = useState<IUserAccount>(DEFAULT_USER_ACCOUNT)
@@ -250,16 +247,6 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           pool.priceAggregatorAccount(poolName, wallet, connection, network)
         ])
 
-        const debt: { [x: string]: number } = { gUSD: await fieldToNumber(listingAccount.usd.debt) }
-        for (const { debt: synthDebt, mint } of listingAccount.synths) {
-          const synth = availableSynths.find(([_, { address }]) => mint.equals(address))
-          if (synth) {
-            debt[synth[0]] = await fieldToNumber(synthDebt)
-          }
-        }
-
-        setPoolAccount({ debt, shareRate: await fieldToNumber(poolAccount.shareRate) })
-
         const { buffer, mintIndex } = priceAggregatorAccount.prices
         const { address: GOFX } = ADDRESSES[network].mints.GOFX
         setPrices((prevState) => ({ ...prevState, gUSD: { change24H: 0, current: 1 } }))
@@ -272,6 +259,20 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
             synth && setPrices((prevState) => ({ ...prevState, [synth[0]]: { current } }))
           }
         }
+
+        const debt: { [x: string]: number } = { gUSD: await fieldToNumber(listingAccount.usd.debt) }
+        for (const { debt: synthDebt, mint } of listingAccount.synths) {
+          const synth = availableSynths.find(([_, { address }]) => mint.equals(address))
+          if (synth) {
+            debt[synth[0]] = await fieldToNumber(synthDebt)
+          }
+        }
+        const synths = Object.keys(debt).sort((a, b) => a.localeCompare(b))
+        setPoolAccount({
+          debt,
+          shareRate: await fieldToNumber(poolAccount.shareRate),
+          synths
+        })
       } catch (e: any) {
         await notify({ type: 'error', message: `Error updating pool account`, icon: 'error' }, e)
       }
@@ -346,7 +347,6 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         poolAccount,
         poolName,
         setAmount,
-        setFocused,
         setPoolName,
         setSynth,
         setSynthSwap,
@@ -400,7 +400,6 @@ export const useSynthSwap = () => {
   return {
     availableSynths: context.availableSynths,
     loading: context.loading,
-    setFocused: context.setFocused,
     swap: context.swap,
     setSynthSwap: context.setSynthSwap,
     switchTokens: context.switchTokens,

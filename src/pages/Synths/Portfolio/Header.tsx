@@ -39,7 +39,7 @@ const WRAPPER = styled.div`
 export const Header: FC = () => {
   const { userAccount } = useSynths()
 
-  const formattedValue = useMemo(() => monetaryFormatValue(userAccount.shareRate), [userAccount.shareRate])
+  const formattedValue = useMemo(() => monetaryFormatValue(userAccount.shares), [userAccount.shares])
 
   return (
     <WRAPPER>

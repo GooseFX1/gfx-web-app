@@ -54,7 +54,7 @@ const WRAPPER = styled(FlexColumnDiv)`
 
 export const From: FC<{ height: string }> = ({ height }) => {
   const { getUIAmount } = useAccounts()
-  const { setFocused, setSynthSwap, synthSwap } = useSynthSwap()
+  const { setSynthSwap, synthSwap } = useSynthSwap()
 
   const balance = useMemo(
     () => (synthSwap.inToken ? getUIAmount(synthSwap.inToken.address) : 0),
@@ -102,13 +102,11 @@ export const From: FC<{ height: string }> = ({ height }) => {
         />
         <Input
           maxLength={11}
-          onBlur={() => setFocused(undefined)}
           onChange={(x: BaseSyntheticEvent) => {
             if (synthSwap.inToken && !isNaN(x.target.value)) {
               setSynthSwap((prevState) => ({ ...prevState, inTokenAmount: x.target.value }))
             }
           }}
-          onFocus={() => setFocused('from')}
           pattern="\d+(\.\d+)?"
           placeholder={synthSwap.inTokenAmount.toString()}
           value={synthSwap.inTokenAmount}

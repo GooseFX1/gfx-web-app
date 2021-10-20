@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { Stat } from './Stat'
-import { useDarkMode, usePrices, useSynths } from '../../../context'
+import { useDarkMode, useSynths } from '../../../context'
 import { monetaryFormatValue } from '../../../utils'
 
 const WRAPPER = styled.div`

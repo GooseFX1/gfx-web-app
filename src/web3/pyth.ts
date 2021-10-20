@@ -3,7 +3,6 @@ import { AccountInfo, Connection, PublicKey } from '@solana/web3.js'
 import { chunks } from '../utils'
 import { ADDRESSES } from './ids'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { add } from 'husky'
 
 const getMultipleAccountsCore = async (connection: any, keys: string[], commitment: string) => {
   const args = connection._buildArgs([keys], commitment, 'base64')
