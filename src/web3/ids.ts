@@ -4,7 +4,6 @@ import { PublicKey } from '@solana/web3.js'
 export type Mint = {
   address: PublicKey
   decimals: number
-  type: 'crypto' | 'synth'
 }
 
 export type Pool = {
@@ -40,38 +39,31 @@ export const ADDRESSES: {
     mints: {
       GOFX: {
         address: PublicKey.default,
-        decimals: 9,
-        type: 'crypto'
+        decimals: 9
       },
       gUSD: {
         address: PublicKey.default,
-        decimals: 2,
-        type: 'synth'
+        decimals: 2
       },
       gAAPL: {
         address: PublicKey.default,
-        decimals: 8,
-        type: 'synth'
+        decimals: 8
       },
       gAMZN: {
         address: PublicKey.default,
-        decimals: 8,
-        type: 'synth'
+        decimals: 8
       },
       gFB: {
         address: PublicKey.default,
-        decimals: 8,
-        type: 'synth'
+        decimals: 8
       },
       gGOOG: {
         address: PublicKey.default,
-        decimals: 8,
-        type: 'synth'
+        decimals: 8
       },
       gTSLA: {
         address: PublicKey.default,
-        decimals: 8,
-        type: 'synth'
+        decimals: 8
       }
     },
     pools: {
@@ -116,38 +108,31 @@ export const ADDRESSES: {
     mints: {
       GOFX: {
         address: new PublicKey('2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'),
-        decimals: 9,
-        type: 'crypto'
+        decimals: 9
       },
       gUSD: {
         address: new PublicKey('EXceVxfi8hbEoDWMpYq621kTVvBi53oMXih3REnGG9o3'),
-        decimals: 2,
-        type: 'synth'
+        decimals: 2
       },
       gAAPL: {
         address: new PublicKey('qUY4zvt1wk3qiMjF2F2J771AyLsYeeDTbBP7PbrNoD6'),
-        decimals: 8,
-        type: 'synth'
+        decimals: 8
       },
       gBTC: {
         address: new PublicKey('Ab3umoUA2DHHRnaDFAF7qnZDFmr9DyHidLh8riaQGg2D'),
-        decimals: 8,
-        type: 'synth'
+        decimals: 8
       },
       gETH: {
         address: new PublicKey('F3qSM2ZY9K4JsV1aj8wneTK8aP8QUa76sgpePB2bbqCK'),
-        decimals: 8,
-        type: 'synth'
+        decimals: 8
       },
       gGOOG: {
         address: new PublicKey('3KGstBKxV3iX4ftPCLxt3Q3BEwAF8UueAMmLUDeZNwLa'),
-        decimals: 8,
-        type: 'synth'
+        decimals: 8
       },
       gTSLA: {
         address: new PublicKey('DUYUVTVeTKXqbQCGq2jCegbNXv2LjP89DVuhPh6HgXRd'),
-        decimals: 8,
-        type: 'synth'
+        decimals: 8
       }
     },
     pools: {

@@ -7,7 +7,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useState
+  useState, useCallback
 } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
@@ -24,7 +24,7 @@ type Decimal = {
 }
 
 interface IPoolAccount {
-  debt: { [x: string]: number }
+  debt: { percentage: number, synth: string }[]
   shareRate: number
   synths: string[]
 }
@@ -73,7 +73,7 @@ interface IUserPortfolio {
   pendingFees: number
 }
 
-const DEFAULT_POOL_ACCOUNT = { debt: {}, shareRate: 0, synths: [] }
+const DEFAULT_POOL_ACCOUNT = { debt: [], shareRate: 0, synths: [] }
 const DEFAULT_USER_ACCOUNT = { claimableFee: 0, cAmount: 0, debt: 0, shareRate: 0, shares: 0 }
 const DEFAULT_USER_PORTFOLIO = { cRatio: 0, cValue: 0, pendingFees: 0 }
 
@@ -83,10 +83,9 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection, network } = useConnectionConfig()
   const { prices, setPrices } = usePrices()
   const wallet = useWallet()
-  const { mints, pools } = ADDRESSES[network]
 
-  const availableSynths = useMemo(() => Object.entries(mints).filter(([_, { type }]) => type === 'synth'), [mints])
-  const availablePools = useMemo(() => Object.entries(pools).filter(([_, { type }]) => type === 'synth'), [pools])
+  const availableSynths = useMemo(() => Object.entries(ADDRESSES[network].mints), [network])
+  const availablePools = useMemo(() => Object.entries(ADDRESSES[network].pools).filter(([_, { type }]) => type === 'synth'), [network])
 
   const [amount, setAmount] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -231,74 +230,54 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setLoading(false)
   }
 
+  const fieldToNumber = async (x: Decimal) => {
+    const { decimal2number } = await import('gfx_stocks_pool')
+    return decimal2number(x.flags, x.hi, x.lo, x.mid)
+  }
+
+  const updatePrices = useCallback(async () => {
+    try {
+      const { buffer, mintIndex } = (await pool.priceAggregatorAccount(poolName, wallet, connection, network)).prices
+      const { address: GOFX } = ADDRESSES[network].mints.GOFX
+      setPrices((prevState) => ({ ...prevState, gUSD: { change24H: 0, current: 1 } }))
+      for (const { key, index } of mintIndex) {
+        const current = await fieldToNumber(buffer[index].price)
+        if (key.equals(GOFX)) {
+          setPrices((prevState) => ({ ...prevState, GOFX: { current } }))
+        } else {
+          const synth = availableSynths.find(([_, { address }]) => address.equals(key))
+          synth && setPrices((prevState) => ({ ...prevState, [synth[0]]: { current } }))
+        }
+      }
+    } catch (e: any) {
+      await notify({ type: 'error', message: `Error updating pool account`, icon: 'error' }, e)
+    }
+  }, [availableSynths, connection, network, poolName, setPrices, wallet])
+
+  const updateUserAccount = useCallback(async () => {
+    try {
+      const userAccount = await pool.userAccount(poolName, wallet, connection, network)
+      if (userAccount) {
+        const [cAmount, claimableFee, shareRate, shares] = await Promise.all([
+          fieldToNumber(userAccount.collateralAmount),
+          fieldToNumber(userAccount.claimableFee),
+          fieldToNumber(userAccount.shareRate),
+          fieldToNumber(userAccount.shares)
+        ])
+
+        setUserAccount({ cAmount, claimableFee, shareRate, shares })
+      }
+    } catch (e: any) {
+      await notify({ type: 'error', message: `Error updating user account`, icon: 'error' }, e)
+    }
+  }, [connection, network, poolName, wallet])
+
   useEffect(() => {
     const subscriptions: number[] = []
 
-    const fieldToNumber = async (x: Decimal) => {
-      const { decimal2number } = await import('gfx_stocks_pool')
-      return decimal2number(x.flags, x.hi, x.lo, x.mid)
-    }
-
-    const updatePoolAccount = async () => {
-      try {
-        const [listingAccount, poolAccount, priceAggregatorAccount] = await Promise.all([
-          pool.listingAccount(poolName, wallet, connection, network),
-          pool.poolAccount(poolName, wallet, connection, network),
-          pool.priceAggregatorAccount(poolName, wallet, connection, network)
-        ])
-
-        const { buffer, mintIndex } = priceAggregatorAccount.prices
-        const { address: GOFX } = ADDRESSES[network].mints.GOFX
-        setPrices((prevState) => ({ ...prevState, gUSD: { change24H: 0, current: 1 } }))
-        for (const { key, index } of mintIndex) {
-          const current = await fieldToNumber(buffer[index].price)
-          if (key.equals(GOFX)) {
-            setPrices((prevState) => ({ ...prevState, GOFX: { current } }))
-          } else {
-            const synth = availableSynths.find(([_, { address }]) => address.equals(key))
-            synth && setPrices((prevState) => ({ ...prevState, [synth[0]]: { current } }))
-          }
-        }
-
-        const debt: { [x: string]: number } = { gUSD: await fieldToNumber(listingAccount.usd.debt) }
-        for (const { debt: synthDebt, mint } of listingAccount.synths) {
-          const synth = availableSynths.find(([_, { address }]) => mint.equals(address))
-          if (synth) {
-            debt[synth[0]] = await fieldToNumber(synthDebt)
-          }
-        }
-        const synths = Object.keys(debt).sort((a, b) => a.localeCompare(b))
-        setPoolAccount({
-          debt,
-          shareRate: await fieldToNumber(poolAccount.shareRate),
-          synths
-        })
-      } catch (e: any) {
-        await notify({ type: 'error', message: `Error updating pool account`, icon: 'error' }, e)
-      }
-    }
-
-    const updateUserAccount = async () => {
-      try {
-        const userAccount = await pool.userAccount(poolName, wallet, connection, network)
-        if (userAccount) {
-          const [cAmount, claimableFee, shareRate, shares] = await Promise.all([
-            fieldToNumber(userAccount.collateralAmount),
-            fieldToNumber(userAccount.claimableFee),
-            fieldToNumber(userAccount.shareRate),
-            fieldToNumber(userAccount.shares)
-          ])
-
-          setUserAccount({ cAmount, claimableFee, shareRate, shares })
-        }
-      } catch (e: any) {
-        await notify({ type: 'error', message: `Error updating user account`, icon: 'error' }, e)
-      }
-    }
-
     if (wallet.publicKey) {
-      updatePoolAccount().then(async () => {
-        subscriptions.push(connection.onAccountChange(ADDRESSES[network].pools[poolName].address, updatePoolAccount))
+      updatePrices().then(async () => {
+        subscriptions.push(connection.onAccountChange(ADDRESSES[network].pools[poolName].address, updatePrices))
       })
       updateUserAccount().then(async () => {
         const userAccountAta = await pool.getUserAccountPublicKey(poolName, wallet, network)
@@ -307,11 +286,50 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
 
     return () => {
-      setPoolAccount(DEFAULT_POOL_ACCOUNT)
-      setUserAccount(DEFAULT_USER_ACCOUNT)
       subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
     }
-  }, [availableSynths, connection, network, poolName, setPrices, wallet])
+  }, [availableSynths, connection, network, poolName, setPrices, updatePrices, updateUserAccount, wallet])
+
+  const updatePoolAccount = useCallback(async () => {
+    const [listingAccount, poolAccount] = await Promise.all([
+      pool.listingAccount(poolName, wallet, connection, network),
+      pool.poolAccount(poolName, wallet, connection, network)
+    ])
+
+    const debt: { [x: string]: number } = { gUSD: await fieldToNumber(listingAccount.usd.debt) }
+    for (const { debt: synthDebt, mint } of listingAccount.synths) {
+      const synth = availableSynths.find(([_, { address }]) => mint.equals(address))
+      if (synth) {
+        debt[synth[0]] = await fieldToNumber(synthDebt)
+      }
+    }
+    const synths = Object.keys(debt).sort((a, b) => a.localeCompare(b))
+    const totalDebt = Object.entries(debt).reduce((acc, [synth, debt]) => {
+      return acc + debt * prices[synth]?.current
+    }, 0)
+
+    setPoolAccount({
+      debt: Object.entries(debt)
+        .sort(([a], [b, _]) => a.localeCompare(b))
+        .map(([synth, debt]) => ({ percentage: (debt * prices[synth]?.current) / totalDebt, synth })),
+      shareRate: await fieldToNumber(poolAccount.shareRate),
+      synths
+    })
+  }, [availableSynths, connection, network, poolName, prices, wallet])
+
+  useEffect(() => {
+    const subscriptions: number[] = []
+
+    if (wallet.publicKey) {
+      updatePoolAccount().then(async () => {
+        subscriptions.push(connection.onAccountChange(ADDRESSES[network].pools[poolName].address, updatePoolAccount))
+      })
+    }
+
+    return () => {
+      subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
+    }
+  }, [availableSynths, connection, network, poolName, prices, updatePoolAccount, wallet])
 
   useEffect(() => {
     const cValue = userAccount.cAmount * prices.GOFX?.current

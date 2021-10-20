@@ -1,7 +1,7 @@
-import React, { FC, useMemo } from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import { Chart } from './Chart'
-import { usePrices, useSynths } from '../../../../context'
+import { useSynths } from '../../../../context'
 import { FlexColumnDiv, SpaceBetweenDiv, SpaceEvenlyDiv } from '../../../../styles'
 
 const INFORMATION = styled(SpaceBetweenDiv)`
@@ -55,7 +55,6 @@ const WRAPPER = styled(SpaceEvenlyDiv)`
 `
 
 export const Collateral: FC = () => {
-  const { prices } = usePrices()
   const { poolAccount } = useSynths()
   const synthColor = {
     gAAPL: { background: 'gray', hover: 'cyan' },
@@ -66,21 +65,14 @@ export const Collateral: FC = () => {
     gUSD: { background: 'silver', hover: 'cyan' }
   } as { [x: string]: { background: string; hover: string } }
 
-  const synthDebt = useMemo(() => {
-    const totalDebt = Object.entries(poolAccount.debt).reduce((acc, [synth, debt]) => {
-      return acc + debt * prices[synth].current
-    }, 0)
-    return Object.entries(poolAccount.debt)
-      .sort(([a], [b, _]) => a.localeCompare(b))
-      .map(([synth, debt]) => ({ synth, percentage: (debt * prices[synth].current) / totalDebt }))
-  }, [poolAccount.debt, prices])
+  console.log('1')
 
   return (
     <WRAPPER>
       <INFORMATION>
         <span>Debt structure</span>
         <FlexColumnDiv>
-          {synthDebt.map(({ percentage, synth }, index) => (
+          {poolAccount.debt.map(({ percentage, synth }, index) => (
             <SPECIFIC key={index} $color={synthColor[synth].background}>
               <div />
               <span>{synth}</span>
@@ -89,7 +81,11 @@ export const Collateral: FC = () => {
           ))}
         </FlexColumnDiv>
       </INFORMATION>
-      <Chart data={synthDebt.map(({ percentage }) => percentage)} synths={poolAccount.synths} synthColor={synthColor} />
+      <Chart
+        data={poolAccount.debt.map(({ percentage }) => percentage)}
+        synths={poolAccount.synths}
+        synthColor={synthColor}
+      />
     </WRAPPER>
   )
 }
