@@ -5,7 +5,7 @@ import { Order } from './Order'
 import { OrderBook } from './OrderBook'
 import { Pairs } from './Pairs'
 import { TVChartContainer } from './TradingView'
-import { CryptoProvider, OrderProvider, TradeHistoryProvider, useCrypto } from '../../context'
+import { CryptoProvider, OrderProvider, PricesProvider, TradeHistoryProvider, useCrypto } from '../../context'
 import { TRADE_ORDER_WIDTH } from '../../styles'
 
 const WRAPPER = styled.div`
@@ -50,8 +50,10 @@ const CryptoContent: FC = () => {
 
 export const Crypto: FC = () => {
   return (
-    <CryptoProvider>
-      <CryptoContent />
-    </CryptoProvider>
+    <PricesProvider>
+      <CryptoProvider>
+        <CryptoContent />
+      </CryptoProvider>
+    </PricesProvider>
   )
 }

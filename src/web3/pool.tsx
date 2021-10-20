@@ -14,6 +14,10 @@ type Decimal = {
   lo: number
 }
 
+type PoolAccount = {
+  shareRate: Decimal
+}
+
 type UserAccount = {
   bump: number
   claimableFee: Decimal
@@ -73,8 +77,8 @@ const claim = async (
     tx.add(await initialize(pool, wallet, connection, network))
   }
 
-  const { collateralAmount } = (await account.userAccount.fetch(userAccount)) as UserAccount
-  const { flags, hi, mid, lo } = collateralAmount
+  const { claimableFee } = (await account.userAccount.fetch(userAccount)) as UserAccount
+  const { flags, hi, mid, lo } = claimableFee
   const amount = (await import('gfx_stocks_pool')).decimal2number(flags, hi, lo, mid)
 
   const userAta = await findAssociatedTokenAddress(wallet.publicKey, mints.gUSD.address)
@@ -238,11 +242,22 @@ const mint = async (
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
+const poolAccount = async (
+  pool: string,
+  wallet: any,
+  connection: Connection,
+  network: WalletAdapterNetwork
+): Promise<PoolAccount> => {
+  const { pools } = ADDRESSES[network]
+  const { account } = getPoolProgram(wallet, connection, network)
+
+  console.log(await account.pool.fetch(pools[pool].address))
+  return (await account.pool.fetch(pools[pool].address)) as PoolAccount
+}
+
 const swap = async (
-  amount: number,
   pool: string,
   inTokenAmount: number,
-  outTokenAmount: number,
   inToken: string,
   outToken: string,
   wallet: any,
@@ -274,7 +289,7 @@ const swap = async (
   }
 
   const { instruction } = getPoolProgram(wallet, connection, network)
-  tx.add(await instruction.swap(new BN(amount), { accounts }))
+  tx.add(await instruction.swap(new BN(inTokenAmount), { accounts }))
 
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
@@ -330,6 +345,7 @@ export const pool = {
   getUserAccountPublicKey,
   // liquidate,
   mint,
+  poolAccount,
   swap,
   userAccount,
   withdraw

@@ -66,7 +66,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
         const openOrders = await serum.getOpenOrders(connection, selectedCrypto.market, wallet.publicKey as PublicKey)
         setOpenOrders(openOrders)
       } catch (e: any) {
-        notify({ type: 'error', message: `Error fetching balances from serum market`, icon: 'error' }, e)
+        await notify({ type: 'error', message: `Error fetching balances from serum market`, icon: 'error' }, e)
       }
     }
   }, [connection, selectedCrypto.market, wallet.publicKey])
@@ -77,7 +77,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
         const marketsOrders = await serum.getOrders(connection, selectedCrypto.market, wallet.publicKey as PublicKey)
         setOrders(marketsOrders.map((marketOrder) => ({ order: marketOrder, name: selectedCrypto.pair })))
       } catch (e: any) {
-        notify({ type: 'error', message: `Error fetching open orders from serum market`, icon: 'error' }, e)
+        await notify({ type: 'error', message: `Error fetching open orders from serum market`, icon: 'error' }, e)
       }
     }
   }, [connection, selectedCrypto.market, selectedCrypto.pair, wallet.publicKey])
@@ -92,7 +92,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
         const signature = await crypto.cancelOrder(connection, selectedCrypto.market, order.order, wallet)
         const ask = getAskSymbolFromPair(selectedCrypto.pair)
         const { price, side, size } = order.order
-        notify({
+        await notify({
           type: 'success',
           message: 'Cancelled order successfully',
           description: `Cancelled ${side} order of ${size} ${ask} at $${price} each`,
@@ -101,7 +101,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
         })
         setTimeout(() => fetchOpenOrders(), 4500)
       } catch (e: any) {
-        notify({ type: 'error', message: `Error cancelling order`, icon: 'error', description: e.message })
+        await notify({ type: 'error', message: `Error cancelling order`, icon: 'error', description: e.message })
       }
     }
 
@@ -122,7 +122,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
         const signature = await crypto.settleFunds(connection, selectedCrypto.market, openOrder, wallet)
         const baseTokens = baseAvailable && `${baseAvailable} ${baseSymbol}`
         const quoteTokens = quoteAvailable && `${quoteAvailable} ${quoteSymbol}`
-        notify({
+        await notify({
           type: 'success',
           message: 'Settled balances successfully',
           description: `Settled ${[baseTokens, quoteTokens].filter((x) => x).join(' and ')}`,
@@ -131,7 +131,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
         })
         setTimeout(() => fetchBalances(), 4500)
       } catch (e: any) {
-        notify({ type: 'error', message: `Error settling funds`, icon: 'error', description: e.message })
+        await notify({ type: 'error', message: `Error settling funds`, icon: 'error', description: e.message })
       }
     }
 

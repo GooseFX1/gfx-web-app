@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
 import { CryptoSelector } from './CryptoSelector'
-import { OrderSide, useCrypto, useOrder } from '../../../context'
+import { OrderSide, useCrypto, useOrder, usePrices } from '../../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../../styles'
 
 /* const CHANGE = styled(CenteredImg)`
@@ -98,11 +98,12 @@ const Loader: FC = () => {
 }
 
 export const Header: FC = () => {
-  const { formatPair, getAskSymbolFromPair, marketsData, selectedCrypto } = useCrypto()
+  const { formatPair, getAskSymbolFromPair, selectedCrypto } = useCrypto()
+  const { prices } = usePrices()
   const { order, setOrder } = useOrder()
 
   const symbol = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
-  const marketData = useMemo(() => marketsData[selectedCrypto.pair], [marketsData, selectedCrypto.pair])
+  const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
   // const change24HIcon = useMemo(() => `price_${marketData?.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData])
   const formattedPair = useMemo(() => formatPair(selectedCrypto.pair), [formatPair, selectedCrypto])
 

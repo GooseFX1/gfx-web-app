@@ -17,13 +17,15 @@ import { useTokenRegistry } from './token_registry'
 import { findAssociatedTokenAddress } from '../web3'
 import { notify } from '../utils'
 
+export type IAccount = {
+  amount: string
+  decimals: number
+  uiAmount: number
+  uiAmountString: string
+}
+
 interface IAccounts {
-  [mint: string]: {
-    amount: string
-    decimals: number
-    uiAmount: number
-    uiAmountString: string
-  }
+  [mint: string]: IAccount
 }
 
 interface IAccountsConfig {
@@ -81,7 +83,7 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           accounts[WRAPPED_SOL_MINT.toString()] = { amount, decimals: 9, uiAmount, uiAmountString: uiAmount.toString() }
           setBalances(accounts)
         } catch (e: any) {
-          notify({ type: 'error', message: `Error fetching accounts`, icon: 'error' }, e)
+          await notify({ type: 'error', message: `Error fetching accounts`, icon: 'error' }, e)
         }
 
         setFetching(false)

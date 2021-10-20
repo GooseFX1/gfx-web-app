@@ -24,6 +24,10 @@ type Decimal = {
 
 type SwapInput = undefined | 'from' | 'to'
 
+interface IPoolAccount {
+  shareRate: number
+}
+
 interface ISynthsConfig {
   amount: number
   availableSynths: [string, Mint][]
@@ -33,23 +37,18 @@ interface ISynthsConfig {
   deposit: () => Promise<void>
   loading: boolean
   mint: () => Promise<void>
+  poolAccount: IPoolAccount
   poolName: string
   setAmount: Dispatch<SetStateAction<number>>
   setFocused: Dispatch<SetStateAction<SwapInput>>
   setPoolName: Dispatch<SetStateAction<string>>
   setSynth: Dispatch<SetStateAction<string>>
   setSynthSwap: Dispatch<SetStateAction<ISynthSwap>>
-  setUserAccount: Dispatch<SetStateAction<IUserAccount>>
   synth: string
-  synthPrices: ISynthPrices
   synthSwap: ISynthSwap
   swap: () => Promise<void>
   userAccount: IUserAccount
   withdraw: () => Promise<void>
-}
-
-interface ISynthPrices {
-  [x: string]: number
 }
 
 interface ISynthSwap {
@@ -60,13 +59,14 @@ interface ISynthSwap {
 }
 
 interface IUserAccount {
-  collateral: number
-  debt: number
-  fees: number
-  value: number
+  claimableFee: number
+  collateralAmount: number
+  shareRate: number
+  shares: number
 }
 
-const DEFAULT_USER_ACCOUNT = { collateral: 0, debt: 0, fees: 0, value: 0 }
+const DEFAULT_POOL_ACCOUNT = { shareRate: 0 }
+const DEFAULT_USER_ACCOUNT = { claimableFee: 0, collateralAmount: 0, debt: 0, shareRate: 0, shares: 0 }
 
 const SynthsContext = createContext<ISynthsConfig | null>(null)
 
@@ -82,8 +82,8 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [focused, setFocused] = useState<SwapInput>(undefined)
   const [loading, setLoading] = useState(false)
   const [poolName, setPoolName] = useState(availablePools[0][0])
+  const [poolAccount, setPoolAccount] = useState(DEFAULT_POOL_ACCOUNT)
   const [synth, setSynth] = useState(availableSynths[0][0])
-  const [synthPrices, setSynthPrices] = useState<ISynthPrices>({})
   const [synthSwap, setSynthSwap] = useState<ISynthSwap>({ inTokenAmount: 0, outTokenAmount: 0 })
   const [userAccount, setUserAccount] = useState<IUserAccount>(DEFAULT_USER_ACCOUNT)
 
@@ -92,7 +92,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     try {
       const signature = await pool.burn(amount, poolName, synth, wallet, connection, network)
-      notify({
+      await notify({
         type: 'success',
         message: 'Burn successful!',
         description: `Burnt ${amount} ${synth}`,
@@ -100,7 +100,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         txid: signature
       })
     } catch (e: any) {
-      notify({ type: 'error', message: `Error burning`, icon: 'error' }, e)
+      await notify({ type: 'error', message: `Error burning`, icon: 'error' }, e)
     }
 
     setLoading(false)
@@ -112,15 +112,15 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       try {
         const [signature, amount] = await pool.claim(poolName, wallet, connection, network)
-        notify({
+        await notify({
           type: 'success',
           message: 'Claim successful!',
-          description: `Claimed ${amount} gUSD`,
+          description: `Claimed ${amount / 1000} gUSD`,
           icon: 'success',
           txid: signature
         })
       } catch (e: any) {
-        notify({ type: 'error', message: `Error claiming`, icon: 'error' }, e)
+        await notify({ type: 'error', message: `Error claiming`, icon: 'error' }, e)
       }
 
       setLoading(false)
@@ -132,7 +132,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     try {
       const signature = await pool.deposit(amount, poolName, wallet, connection, network)
-      notify({
+      await notify({
         type: 'success',
         message: 'Deposit successful!',
         description: `Deposited ${amount} GOFX`,
@@ -140,7 +140,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         txid: signature
       })
     } catch (e: any) {
-      notify({ type: 'error', message: `Error depositing`, icon: 'error' }, e)
+      await notify({ type: 'error', message: `Error depositing`, icon: 'error' }, e)
     }
 
     setLoading(false)
@@ -151,7 +151,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     try {
       const signature = await pool.mint(amount, poolName, synth, wallet, connection, network)
-      notify({
+      await notify({
         type: 'success',
         message: 'Mint successful!',
         description: `Minted ${amount} ${synth}`,
@@ -159,7 +159,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         txid: signature
       })
     } catch (e: any) {
-      notify({ type: 'error', message: `Error minting`, icon: 'error' }, e)
+      await notify({ type: 'error', message: `Error minting`, icon: 'error' }, e)
     }
 
     setLoading(false)
@@ -172,20 +172,18 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setLoading(true)
       const inTokens = `${inTokenAmount} ${inToken.symbol}`
       const outTokens = `${outTokenAmount} ${outToken.symbol}`
-      notify({ message: `Trying to swap ${inTokens} for at least ${outTokens}...` })
+      await notify({ message: `Trying to swap ${inTokens} for at least ${outTokens}...` })
       try {
         const signature = await pool.swap(
-          amount,
           poolName,
-          inTokenAmount,
-          outTokenAmount,
+          inTokenAmount * 10 ** inToken.decimals,
           inToken.symbol,
           outToken.symbol,
           wallet,
           connection,
           network
         )
-        notify({
+        await notify({
           type: 'success',
           message: 'Swap successful!',
           description: `Swap ${inTokens} for ${outTokens}`,
@@ -193,7 +191,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           txid: signature
         })
       } catch (e: any) {
-        notify({ type: 'error', message: `Error swapping`, icon: 'error' }, e)
+        await notify({ type: 'error', message: `Error swapping`, icon: 'error' }, e)
       }
 
       setLoading(false)
@@ -205,7 +203,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     try {
       const signature = await pool.withdraw(amount, poolName, wallet, connection, network)
-      notify({
+      await notify({
         type: 'success',
         message: 'Withdrawal successful!',
         description: `Withdrew ${amount} ${synth}`,
@@ -213,7 +211,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         txid: signature
       })
     } catch (e: any) {
-      notify({ type: 'error', message: `Error withdrawing`, icon: 'error' }, e)
+      await notify({ type: 'error', message: `Error withdrawing`, icon: 'error' }, e)
     }
 
     setLoading(false)
@@ -222,28 +220,46 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     const subscriptions: number[] = []
 
-    const updateUserAccount = async () => {
+    const fieldToNumber = async (x: Decimal) => {
       const { decimal2number } = await import('gfx_stocks_pool')
-      const userAccountFieldToNumber = (x: Decimal) => decimal2number(x.flags, x.hi, x.lo, x.mid)
+      return decimal2number(x.flags, x.hi, x.lo, x.mid)
+    }
 
+    const updatePoolAccount = async () => {
+      const poolAccount = await pool.poolAccount(poolName, wallet, connection, network)
+      const [shareRate] = await Promise.all([
+        fieldToNumber(poolAccount.shareRate)
+      ])
+
+      setPoolAccount(({ shareRate }))
+    }
+
+    const updateUserAccount = async () => {
       const userAccount = await pool.userAccount(poolName, wallet, connection, network)
       if (userAccount) {
-        setUserAccount({
-          collateral: userAccountFieldToNumber(userAccount.collateralAmount),
-          debt: 1,
-          fees: userAccountFieldToNumber(userAccount.claimableFee),
-          value: userAccountFieldToNumber(userAccount.shares)
-        })
+        const [collateralAmount, claimableFee, shareRate, shares] = await Promise.all([
+          fieldToNumber(userAccount.collateralAmount),
+          fieldToNumber(userAccount.claimableFee),
+          fieldToNumber(userAccount.shareRate),
+          fieldToNumber(userAccount.shares)
+        ])
+
+        setUserAccount({ collateralAmount, claimableFee, shareRate, shares })
       }
     }
 
-    wallet.publicKey &&
+    if (wallet.publicKey) {
+      updatePoolAccount().then(async () => {
+        subscriptions.push(connection.onAccountChange(ADDRESSES[network].pools[poolName].address, updatePoolAccount))
+      })
       updateUserAccount().then(async () => {
         const userAccountAta = await pool.getUserAccountPublicKey(poolName, wallet, network)
         subscriptions.push(connection.onAccountChange(userAccountAta, updateUserAccount))
       })
+    }
 
     return () => {
+      setPoolAccount(DEFAULT_POOL_ACCOUNT)
       setUserAccount(DEFAULT_USER_ACCOUNT)
       subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
     }
@@ -260,16 +276,15 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         deposit,
         loading,
         mint,
+        poolAccount,
         poolName,
         setAmount,
         setFocused,
         setPoolName,
         setSynth,
         setSynthSwap,
-        setUserAccount,
         swap,
         synth,
-        synthPrices,
         synthSwap,
         userAccount,
         withdraw
@@ -295,13 +310,12 @@ export const useSynths = () => {
     deposit: context.deposit,
     loading: context.loading,
     mint: context.mint,
+    poolAccount: context.poolAccount,
     poolName: context.poolName,
     setAmount: context.setAmount,
     setPoolName: context.setPoolName,
     setSynth: context.setSynth,
-    setUserAccount: context.setUserAccount,
     synth: context.synth,
-    synthPrices: context.synthPrices,
     userAccount: context.userAccount,
     withdraw: context.withdraw
   }

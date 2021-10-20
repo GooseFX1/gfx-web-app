@@ -4,7 +4,6 @@ import React, {
   FC,
   ReactNode,
   SetStateAction,
-  useCallback,
   useContext,
   useEffect,
   useState
@@ -13,7 +12,7 @@ import BN from 'bn.js'
 import { Market, Orderbook } from '@project-serum/serum'
 import { useConnectionConfig } from './settings'
 import { notify } from '../utils'
-import { pyth, serum } from '../web3'
+import { serum } from '../web3'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 
 interface ICrypto {
@@ -21,15 +20,6 @@ interface ICrypto {
   market?: Market
   pair: string
   type: MarketType
-}
-
-interface ICryptoData {
-  change24H: number
-  current: number
-}
-
-interface ICryptoMarkets {
-  [x: string]: ICryptoData
 }
 
 export type MarketSide = 'asks' | 'bids'
@@ -43,10 +33,8 @@ interface ICryptoConfig {
   getAskSymbolFromPair: (x: string) => string
   getBidSymbolFromPair: (x: string) => string
   getSymbolFromPair: (x: string, y: 'buy' | 'sell') => string
-  marketsData: ICryptoMarkets
   orderBook: OrderBook
   selectedCrypto: ICrypto
-  setMarketsData: Dispatch<SetStateAction<ICryptoMarkets>>
   setOrderBook: Dispatch<SetStateAction<OrderBook>>
   setSelectedCrypto: Dispatch<SetStateAction<ICrypto>>
 }
@@ -63,17 +51,12 @@ export const FEATURED_PAIRS_LIST = [
   { decimals: 2, pair: 'gTSLA/gUSD', type: 'synth' as MarketType }
 ]
 
-const DEFAULT_MARKETS_DATA = FEATURED_PAIRS_LIST.reduce(
-  (acc: ICryptoMarkets, it) => ({ ...acc, ...{ [it.pair]: { change24H: 0, current: 0 } } }),
-  {}
-)
 const DEFAULT_ORDER_BOOK = { asks: [], bids: [] }
 
 const CryptoContext = createContext<ICryptoConfig | null>(null)
 
 export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection, network } = useConnectionConfig()
-  const [marketsData, setMarketsData] = useState<ICryptoMarkets>(DEFAULT_MARKETS_DATA)
   const [orderBook, setOrderBook] = useState<OrderBook>(DEFAULT_ORDER_BOOK)
   const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(FEATURED_PAIRS_LIST[0])
 
@@ -83,71 +66,6 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const getSymbolFromPair = (pair: string, side: 'buy' | 'sell'): string => {
     return side === 'buy' ? getBidSymbolFromPair(pair) : getAskSymbolFromPair(pair)
   }
-
-  const handlePythSubscription = useCallback(
-    async (markets: ICrypto[], subscriptions: number[]) => {
-      try {
-        const products = await pyth.fetchProducts(
-          connection,
-          markets.map(({ pair }) => pair)
-        )
-        try {
-          const accounts = await pyth.fetchPriceAccounts(connection, products)
-          accounts.forEach(({ mint, symbol }) =>
-            subscriptions.push(
-              connection.onAccountChange(mint, (priceAccount) => {
-                const [{ decimals }] = FEATURED_PAIRS_LIST.filter(({ pair }) => pair === symbol)
-                const price = pyth.getPriceFromPriceAccount(priceAccount)
-                setMarketsData((prevState: ICryptoMarkets) => ({
-                  ...prevState,
-                  ...{ [symbol]: { change24H: 0, current: Number(price.toFixed(decimals)) } }
-                }))
-              })
-            )
-          )
-        } catch (e: any) {
-          notify({ type: 'error', message: 'Error fetching pyth price accounts', icon: 'rate_error' }, e)
-        }
-      } catch (e: any) {
-        notify({ type: 'error', message: 'Error fetching pyth products', icon: 'rate_error' }, e)
-      }
-    },
-    [connection]
-  )
-
-  useEffect(() => {
-    let cancelled = false
-    const subscriptions: number[] = []
-
-    const cryptoMarkets = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'crypto')
-    network === WalletAdapterNetwork.Mainnet &&
-      cryptoMarkets.forEach(async ({ pair }) => {
-        if (!cancelled) {
-          try {
-            const market = await serum.getMarket(connection, pair)
-            subscriptions.push(
-              await serum.subscribeToOrderBook(connection, market, 'asks', (account, market) => {
-                const [[current]] = Orderbook.decode(market, account.data).getL2(1)
-                const newPrice = { [pair]: { change24H: 0, current } }
-                setMarketsData((prevState: ICryptoMarkets) => ({ ...prevState, ...newPrice }))
-              })
-            )
-          } catch (e: any) {
-            notify({ type: 'error', message: 'Error fetching serum markets', icon: 'rate_error' }, e)
-          }
-        }
-      })
-
-    const synthMarkets = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'synth')
-    !cancelled && handlePythSubscription(synthMarkets, subscriptions)
-
-    return () => {
-      cancelled = true
-      setMarketsData(DEFAULT_MARKETS_DATA)
-      setOrderBook(DEFAULT_ORDER_BOOK)
-      subscriptions.forEach((subscription) => connection.removeAccountChangeListener(subscription))
-    }
-  }, [connection, handlePythSubscription])
 
   useEffect(() => {
     let cancelled = false
@@ -169,10 +87,6 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
           const subs = await Promise.all([
             serum.subscribeToOrderBook(connection, market, 'asks', (account, market) => {
               const asks = Orderbook.decode(market, account.data).getL2(20)
-              setMarketsData((prevState: ICryptoMarkets) => ({
-                ...prevState,
-                ...{ [selectedCrypto.pair]: { change24H: 0, current: asks[0][0] } }
-              }))
               setOrderBook((prevState) => ({ ...prevState, asks }))
             }),
             serum.subscribeToOrderBook(connection, market, 'bids', (account, market) => {
@@ -183,7 +97,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
           subs.forEach((sub) => subscriptions.push(sub))
         } catch (e: any) {
-          notify({ type: 'error', message: 'Error fetching serum order book', icon: 'rate_error' }, e)
+          await notify({ type: 'error', message: 'Error fetching serum order book', icon: 'rate_error' }, e)
         }
       })()
 
@@ -192,7 +106,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setOrderBook(DEFAULT_ORDER_BOOK)
       subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
     }
-  }, [connection, handlePythSubscription, network, selectedCrypto.pair, selectedCrypto.type])
+  }, [connection, network, selectedCrypto.pair, selectedCrypto.type])
 
   return (
     <CryptoContext.Provider
@@ -201,10 +115,8 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         getAskSymbolFromPair,
         getBidSymbolFromPair,
         getSymbolFromPair,
-        marketsData,
         orderBook,
-        selectedCrypto: selectedCrypto,
-        setMarketsData,
+        selectedCrypto,
         setOrderBook,
         setSelectedCrypto
       }}
@@ -225,10 +137,8 @@ export const useCrypto = (): ICryptoConfig => {
     getAskSymbolFromPair: context.getAskSymbolFromPair,
     getBidSymbolFromPair: context.getBidSymbolFromPair,
     getSymbolFromPair: context.getSymbolFromPair,
-    marketsData: context.marketsData,
     orderBook: context.orderBook,
     selectedCrypto: context.selectedCrypto,
-    setMarketsData: context.setMarketsData,
     setOrderBook: context.setOrderBook,
     setSelectedCrypto: context.setSelectedCrypto
   }

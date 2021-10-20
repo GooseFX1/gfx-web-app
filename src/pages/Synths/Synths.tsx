@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Pools } from './Pools'
 import { Portfolio } from './Portfolio'
 import { Positions } from './Positions'
-import { SynthsProvider } from '../../context'
+import { PricesProvider, SynthsProvider } from '../../context'
 
 const WRAPPER = styled.div`
   display: flex;
@@ -61,8 +61,10 @@ export const SynthsContent: FC = () => {
 
 export const Synths: FC = () => {
   return (
-    <SynthsProvider>
-      <SynthsContent />
-    </SynthsProvider>
+    <PricesProvider>
+      <SynthsProvider>
+        <SynthsContent />
+      </SynthsProvider>
+    </PricesProvider>
   )
 }

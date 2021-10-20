@@ -31,8 +31,8 @@ export const Stats: FC = () => {
   const trailColor = mode === 'dark' ? '#1e1e1e' : '#e2e2e2'
 
   const cRatio = useMemo(() => {
-    const { collateral, debt } = userAccount
-    return !collateral || !debt ? 0 : 100 / (userAccount.debt / userAccount.collateral)
+    const { collateralAmount, shares } = userAccount
+    return !collateralAmount || !shares ? 0 : 100 / (userAccount.shares / userAccount.collateralAmount)
   }, [userAccount])
   const cRatioPercentage = useMemo(() => cRatio - 100, [cRatio])
 
@@ -42,14 +42,14 @@ export const Stats: FC = () => {
       <Stat
         title={'Debt'}
         tooltip={'The current USD denominated value of your debt that must be repaid.'}
-        value={`${monetaryFormatValue(userAccount.debt)} USD`}
+        value={`${monetaryFormatValue(userAccount.shares)} USD`}
       />
       <Stat
         title={'Collateral'}
         tooltip={
           'The current USD denominated value of your deposited collateral. Prices of collaterals are provided by decentralized Pyth oracles.'
         }
-        value={`${monetaryFormatValue(userAccount.collateral)} USD`}
+        value={`${monetaryFormatValue(userAccount.collateralAmount)} USD`}
       />
       <Stat
         title={'C-Ratio'}

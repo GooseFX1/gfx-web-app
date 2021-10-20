@@ -15,6 +15,7 @@ import React, {
 import { Market, MARKETS } from '@project-serum/serum'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useCrypto } from './crypto'
+import { usePrices } from './prices'
 import { useConnectionConfig } from './settings'
 import { useTradeHistory } from './trade_history'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
@@ -88,7 +89,8 @@ const OrderContext = createContext<IOrderConfig | null>(null)
 
 export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
-  const { getAskSymbolFromPair, marketsData, selectedCrypto } = useCrypto()
+  const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
+  const { prices } = usePrices()
   const { fetchOpenOrders } = useTradeHistory()
   const wallet = useWallet()
   const [focused, setFocused] = useState<OrderInput>(undefined)
@@ -144,7 +146,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     ;(async () => await floorPrice())()
   }, [floorPrice, order.price])
 
-  const marketPrice = useMemo(() => marketsData[selectedCrypto.pair]?.current, [marketsData, selectedCrypto.pair])
+  const marketPrice = useMemo(() => prices[selectedCrypto.pair]?.current, [prices, selectedCrypto.pair])
   useEffect(() => {
     !order.price && marketPrice && setOrder((prevState) => ({ ...prevState, price: marketPrice }))
   }, [marketPrice, order.price])
@@ -166,7 +168,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const ask = getAskSymbolFromPair(selectedCrypto.pair)
       const price = floorValue(order.price, selectedCrypto.market?.tickSize)
       const size = floorValue(order.size, selectedCrypto.market?.minOrderSize)
-      notify({
+      await notify({
         type: 'success',
         message: `${capitalizeFirstLetter(order.display)} order placed successfully!`,
         description: `${capitalizeFirstLetter(order.side)}ing ${size} ${ask} at $${price} each`,
@@ -174,7 +176,11 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
       setTimeout(() => fetchOpenOrders(), 4500)
     } catch (e: any) {
-      notify({ type: 'error', message: `${capitalizeFirstLetter(order.display)} order failed`, icon: 'trade_error' }, e)
+      await notify({
+        type: 'error',
+        message: `${capitalizeFirstLetter(order.display)} order failed`,
+        icon: 'trade_error'
+      }, e)
     }
 
     setLoading(false)

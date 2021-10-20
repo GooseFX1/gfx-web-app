@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { SynthToken } from '../SynthToken'
-import { useAccounts, useSynths } from '../../../context'
+import { IAccount, useAccounts, useSynths } from '../../../context'
 import { FlexColumnDiv, SpaceBetweenDiv } from '../../../styles'
 
 const TOKEN = styled(SpaceBetweenDiv)`
@@ -12,7 +12,10 @@ const TOKEN = styled(SpaceBetweenDiv)`
   }
 
   > div {
-    ${({ theme }) => theme.flexCenter}
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: ${({ theme }) => theme.margins['1.5x']};
   }
 
   span {
@@ -35,29 +38,28 @@ export const Tokens: FC = () => {
   const { availableSynths } = useSynths()
 
   const tokens = useMemo(
-    () =>
-      Object.entries(balances)
-        .filter(([mint, _]) => availableSynths.map(([_, { address }]) => address.toString()).includes(mint))
-        .map(([mint, amount]) => ({ ...amount, mint })),
+    () => Object.entries(balances)
+      .map(([mint, amount]) => {
+        const synth = availableSynths.find(([_, { address }]) => mint === address.toString())
+        return synth ? ({ ...amount, name: synth[0] }) : undefined
+      })
+      .filter((x): x is ({ name: string } & IAccount) => !!x)
+      .sort((a, b) => a.name.localeCompare(b.name)),
     [availableSynths, balances]
   )
 
   return (
     <WRAPPER>
-      {tokens.map(({ mint, uiAmount }, index) => {
-        const [synth] = availableSynths.find(([_, { address }]) => mint === address.toString()) || ['']
-
-        return (
-          <TOKEN key={index}>
-            <SynthToken size="small" synth={synth} />
-            <span>-</span>
-            <span>-</span>
-            <span>{uiAmount}</span>
-            <span>-</span>
-            <span>-</span>
-          </TOKEN>
-        )
-      })}
+      {tokens.map(({ name, uiAmount }, index) => (
+        <TOKEN key={index}>
+          <SynthToken size="small" synth={name} />
+          <span>-</span>
+          <span>-</span>
+          <span>{uiAmount}</span>
+          <span>-</span>
+          <span>-</span>
+        </TOKEN>
+      ))}
     </WRAPPER>
   )
 }

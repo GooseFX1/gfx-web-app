@@ -114,7 +114,7 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
           </SELECTOR>
         </InputWrapper>
         <Available>
-          <span>Available {synth}</span>
+          <span>Available</span>
           <SpaceBetweenDiv>
             <span>{userBalance}</span>
             <span>{synth}</span>

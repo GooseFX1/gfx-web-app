@@ -38,9 +38,13 @@ const REWARDS = styled(CenteredDiv)`
 export const Claim: FC = () => {
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
-  const { claim, loading, userAccount } = useSynths()
+  const { claim, loading, poolAccount, userAccount } = useSynths()
 
-  const current = useMemo(() => userAccount.fees.toFixed(2), [userAccount.fees])
+  const current = useMemo(() => {
+    const claimableFees = userAccount.claimableFee.toFixed(2)
+    const pendingFees = userAccount.shares * (poolAccount.shareRate - userAccount.shareRate)
+    return claimableFees + pendingFees
+  }, [poolAccount.shareRate, userAccount.claimableFee, userAccount.shareRate, userAccount.shares])
 
   const state = useMemo(() => {
     if (!publicKey) {

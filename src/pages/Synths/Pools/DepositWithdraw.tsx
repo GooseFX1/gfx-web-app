@@ -26,8 +26,8 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
 
   const userBalance = useMemo(
     () =>
-      action === 'deposit' ? getUIAmount(ADDRESSES[network].mints.GOFX.address.toString()) : userAccount.collateral,
-    [action, getUIAmount, network, userAccount.collateral]
+      action === 'deposit' ? getUIAmount(ADDRESSES[network].mints.GOFX.address.toString()) : userAccount.collateralAmount,
+    [action, getUIAmount, network, userAccount.collateralAmount]
   )
 
   const state = useMemo(() => {
@@ -105,7 +105,7 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
           </Synth>
         </InputWrapper>
         <Available>
-          <span>Available GOFX</span>
+          <span>Available</span>
           <SpaceBetweenDiv>
             <span>{userBalance}</span>
             <span>GOFX</span>
