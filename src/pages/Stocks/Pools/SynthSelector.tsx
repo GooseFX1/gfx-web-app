@@ -27,15 +27,14 @@ const Overlay: FC<{
 
   return (
     <AvailableSynthsSelector>
-      {availableSynths
-        .map(([synth], index) => (
-          <AvailableSynth key={index} onClick={() => handleClick(synth)}>
-            <CenteredImg>
-              <img src={`${process.env.PUBLIC_URL}/img/synth/${synth}.svg`} alt="" />
-            </CenteredImg>
-            <span>{synth}</span>
-          </AvailableSynth>
-        ))}
+      {availableSynths.map(([synth], index) => (
+        <AvailableSynth key={index} onClick={() => handleClick(synth)}>
+          <CenteredImg>
+            <img src={`${process.env.PUBLIC_URL}/img/synth/${synth}.svg`} alt="" />
+          </CenteredImg>
+          <span>{synth}</span>
+        </AvailableSynth>
+      ))}
     </AvailableSynthsSelector>
   )
 }

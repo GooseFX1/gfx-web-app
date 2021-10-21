@@ -1,5 +1,5 @@
 export * from './Farm'
 export * from './NFTs'
+export * from './Stocks'
 export * from './Swap'
-export * from './Synths'
 export * from './Crypto'

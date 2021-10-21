@@ -40,7 +40,7 @@ const WRAPPER = styled.div`
   }
 `
 
-export const SynthsContent: FC = () => {
+export const StocksContext: FC = () => {
   const [poolsVisible, setPoolsVisible] = useState(true)
 
   return (
@@ -56,7 +56,7 @@ export const SynthsContent: FC = () => {
   )
 }
 
-export const Synths: FC = () => {
+export const Stocks: FC = () => {
   const { endpoint, setEndpoint } = useConnectionConfig()
 
   if (endpoint !== ENDPOINTS[1].endpoint) {
@@ -67,7 +67,7 @@ export const Synths: FC = () => {
   return (
     <PricesProvider>
       <SynthsProvider>
-        <SynthsContent />
+        <StocksContext />
       </SynthsProvider>
     </PricesProvider>
   )

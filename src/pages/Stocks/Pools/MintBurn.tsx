@@ -36,7 +36,7 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
     if (action === 'burn') {
       return getUIAmount(ADDRESSES[network].mints[synth].address.toString())
     } else {
-      return Math.max((userPortfolio.cValue / 2 - userPortfolio.debt) / prices[synth]?.current, 0)
+      return Math.max((userPortfolio.cValue / 2 - userPortfolio.debt) / prices[synth]?.current, 0) || 0
     }
   }, [action, getUIAmount, network, prices, synth, userPortfolio.cValue, userPortfolio.debt])
 
