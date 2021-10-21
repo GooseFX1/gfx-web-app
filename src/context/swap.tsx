@@ -19,7 +19,7 @@ import { useConnectionConfig, useSlippageConfig } from './settings'
 import { notify } from '../utils'
 import { computePoolsPDAs, serum, swap } from '../web3'
 
-type SwapInput = undefined | 'from' | 'to'
+export type SwapInput = undefined | 'from' | 'to'
 
 interface IPool {
   inAmount: number

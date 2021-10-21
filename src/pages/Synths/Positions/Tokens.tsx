@@ -46,7 +46,7 @@ export const Tokens: FC = () => {
       poolAccount.synthsDebt.map(({ percentage, synth }) => {
         const price = prices[synth]?.current || 0
         const debtValue = userPortfolio.debt * percentage
-        const size = balances[ADDRESSES[network].mints[synth].address.toString()].uiAmount
+        const size = balances[ADDRESSES[network].mints[synth].address.toString()]?.uiAmount || 0
         return { debt: debtValue / price, debtValue, price, size, synth }
       }),
     [balances, network, poolAccount.synthsDebt, prices, userPortfolio.debt]

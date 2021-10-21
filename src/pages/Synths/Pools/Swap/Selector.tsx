@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { AvailableSynth, AvailableSynthsSelector } from '../shared'
 import { SynthToken } from '../../SynthToken'
@@ -13,7 +13,7 @@ const WRAPPER = styled(FlexColumnDiv)<{ $height: string }>`
   align-items: flex-start;
   height: ${({ $height }) => $height};
   width: 48%;
-  padding: ${({ theme }) => theme.margins['2x']};
+  padding: 10px ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['1.5x']};
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.grey5};
   z-index: 1;
@@ -30,6 +30,7 @@ const WRAPPER = styled(FlexColumnDiv)<{ $height: string }>`
 
   > span {
     font-size: 8px;
+    whitespace: no-wrap;
   }
 `
 
@@ -39,18 +40,15 @@ const Overlay: FC<{
   setVisible: Dispatch<SetStateAction<boolean>>
   side: 'in' | 'out'
 }> = ({ otherToken, setArrowRotation, setVisible, side }) => {
-  const { availableSynths, setSynthSwap } = useSynthSwap()
+  const { availableSynths, setInToken, setOutToken } = useSynthSwap()
 
   const handleClick = useCallback(
     ([symbol, { address, decimals }]) => {
       setArrowRotation(false)
-      setSynthSwap((prevState) => ({
-        ...prevState,
-        [side === 'in' ? 'inToken' : 'outToken']: { address, decimals, symbol }
-      }))
+      side === 'in' ? setInToken({ address, decimals, symbol }) : setOutToken({ address, decimals, symbol })
       setVisible(false)
     },
-    [setArrowRotation, setSynthSwap, setVisible, side]
+    [setArrowRotation, setInToken, setOutToken, setVisible, side]
   )
 
   return (
@@ -79,8 +77,6 @@ export const Selector: FC<{
   const [arrowRotation, setArrowRotation] = useState(false)
   const [visible, setVisible] = useState(false)
 
-  const userBalance = useMemo(() => 0, [])
-
   const handleClick = () => {
     setArrowRotation(!arrowRotation)
     setVisible(!visible)
@@ -102,7 +98,7 @@ export const Selector: FC<{
           visible={visible}
         />
       </SpaceBetweenDiv>
-      {userBalance > 0 && <span>Balance: {userBalance}</span>}
+      {balance > 0 && <span>Balance: {balance.toFixed(3)}</span>}
     </WRAPPER>
   )
 }

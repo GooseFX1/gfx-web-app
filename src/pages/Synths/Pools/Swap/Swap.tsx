@@ -1,5 +1,5 @@
 import React, { FC, MouseEventHandler, useCallback, useMemo } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { From } from './From'
 import { To } from './To'
@@ -23,23 +23,23 @@ const SWITCH = styled(CenteredImg)<{ measurements: number }>`
 const SwapContent: FC = () => {
   const { getAmount } = useAccounts()
   const { mode } = useDarkMode()
-  const { loading, swap, switchTokens, synthSwap } = useSynthSwap()
+  const { inToken, inTokenAmount, loading, outToken, swap, switchTokens } = useSynthSwap()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
   const state = useMemo(() => {
     if (!wallet || !publicKey) {
       return State.Connect
-    } else if (!synthSwap.inToken || !synthSwap.outToken) {
+    } else if (!inToken || !outToken) {
       return State.Enter
-    } else if (synthSwap.inTokenAmount === 0) {
+    } else if (inTokenAmount === 0) {
       return State.Enter
-    } else if (synthSwap.inTokenAmount > parseFloat(getAmount(synthSwap.inToken.address))) {
+    } else if (inTokenAmount > parseFloat(getAmount(inToken.address))) {
       return State.BalanceExceeded
     } else {
       return State.CanSwap
     }
-  }, [getAmount, publicKey, synthSwap.inToken, synthSwap.inTokenAmount, synthSwap.outToken, wallet])
+  }, [getAmount, inToken, inTokenAmount, outToken, publicKey, wallet])
 
   const buttonStatus = useMemo(() => {
     switch (state) {
@@ -66,9 +66,27 @@ const SwapContent: FC = () => {
 
   const height = '60px'
 
+  const localCSS = css`
+    .ant-input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: ${height};
+      border: none;
+      border-radius: 50px;
+      font-weight: bold;
+    }
+
+    .ant-input-affix-wrapper > input.ant-input {
+      height: ${height};
+      text-align: left;
+    }
+  `
+
   return (
     <>
       <SpaceBetweenDiv>
+        <style>{localCSS}</style>
         <From height={height} />
         <SWITCH measurements={80} onClick={switchTokens}>
           <img src={`${process.env.PUBLIC_URL}/img/assets/swap_switch_${mode}_mode.svg`} alt="switch" />

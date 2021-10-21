@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { Tooltip } from '../../../components'
-import { IAccount, useAccounts, usePrices, useSynths } from '../../../context'
+import { useAccounts, usePrices, useSynths } from '../../../context'
 import { monetaryFormatValue } from '../../../utils'
 
 const TITLE = styled.div`
@@ -41,16 +41,13 @@ export const Header: FC = () => {
   const { prices } = usePrices()
   const { availableSynths, userPortfolio } = useSynths()
 
-  const value = useMemo(
-    () =>
-      availableSynths.reduce(
-        (acc, [synth, { address }]) => acc + balances[address.toString()]?.uiAmount * prices[synth]?.current,
-        0
-      ) +
-      userPortfolio.cValue -
-      userPortfolio.debt,
-    [availableSynths, balances, prices, userPortfolio.cValue, userPortfolio.debt]
-  )
+  const value = useMemo(() => {
+    const synthsValue = availableSynths.reduce((acc, [synth, { address }]) => {
+      return acc + balances[address.toString()]?.uiAmount * prices[synth]?.current
+    }, 0)
+
+    return (synthsValue || 0) + userPortfolio.cValue - userPortfolio.debt
+  }, [availableSynths, balances, prices, userPortfolio.cValue, userPortfolio.debt])
 
   return (
     <WRAPPER>

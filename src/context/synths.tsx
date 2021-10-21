@@ -12,7 +12,7 @@ import React, {
 } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
-import { ISwapToken } from './swap'
+import { ISwapToken, SwapInput } from './swap'
 import { notify } from '../utils'
 import { ADDRESSES, Mint, Pool, pool } from '../web3'
 import { usePrices } from './prices'
@@ -43,28 +43,28 @@ interface ISynthsConfig {
   burn: () => Promise<void>
   claim: () => Promise<void>
   deposit: () => Promise<void>
+  inToken?: ISwapToken
+  inTokenAmount: number
   loading: boolean
   mint: () => Promise<void>
+  outToken?: ISwapToken
+  outTokenAmount: number
   poolAccount: IPoolAccount
   poolName: string
   setAmount: Dispatch<SetStateAction<number>>
+  setFocused: Dispatch<SetStateAction<SwapInput>>
+  setInToken: Dispatch<SetStateAction<ISwapToken | undefined>>
+  setInTokenAmount: Dispatch<SetStateAction<number>>
+  setOutToken: Dispatch<SetStateAction<ISwapToken | undefined>>
+  setOutTokenAmount: Dispatch<SetStateAction<number>>
   setPoolName: Dispatch<SetStateAction<string>>
   setSynth: Dispatch<SetStateAction<string>>
-  setSynthSwap: Dispatch<SetStateAction<ISynthSwap>>
   switchTokens: () => void
   synth: string
-  synthSwap: ISynthSwap
   swap: () => Promise<void>
   userAccount: IUserAccount
   userPortfolio: IUserPortfolio
   withdraw: () => Promise<void>
-}
-
-interface ISynthSwap {
-  inToken?: ISwapToken
-  inTokenAmount: number
-  outToken?: ISwapToken
-  outTokenAmount: number
 }
 
 interface IUserAccount {
@@ -102,16 +102,21 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 
   const [amount, setAmount] = useState(0)
+  const [focused, setFocused] = useState<SwapInput>(undefined)
+  const [inToken, setInToken] = useState<ISwapToken | undefined>()
+  const [inTokenAmount, setInTokenAmount] = useState(0)
+  const [outToken, setOutToken] = useState<ISwapToken | undefined>()
+  const [outTokenAmount, setOutTokenAmount] = useState(0)
   const [loading, setLoading] = useState(false)
   const [poolName, setPoolName] = useState(availablePools[0][0])
   const [poolAccount, setPoolAccount] = useState<IPoolAccount>(DEFAULT_POOL_ACCOUNT)
   const [synth, setSynth] = useState(availableSynths[0][0])
-  const [synthSwap, setSynthSwap] = useState<ISynthSwap>({ inTokenAmount: 0, outTokenAmount: 0 })
   const [userAccount, setUserAccount] = useState<IUserAccount>(DEFAULT_USER_ACCOUNT)
   const [userPortfolio, setUserPortfolio] = useState<IUserPortfolio>(DEFAULT_USER_PORTFOLIO)
 
   const switchTokens = () => {
-    setSynthSwap((prevState) => ({ ...prevState, inToken: prevState.outToken, outToken: prevState.inToken }))
+    setInToken(outToken)
+    setOutToken(inToken)
   }
 
   const burn = async () => {
@@ -193,8 +198,6 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   const swap = async () => {
-    const { inToken, inTokenAmount, outToken, outTokenAmount } = synthSwap
-
     if (inToken && outToken) {
       setLoading(true)
       const inTokens = `${inTokenAmount} ${inToken.symbol}`
@@ -352,9 +355,9 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [availableSynths, connection, network, poolName, prices, updatePoolAccount, wallet])
 
   useEffect(() => {
-    const cValue = userAccount.cAmount * prices.GOFX?.current
-    const debt = (poolAccount.totalDebt * userAccount.shares) / poolAccount.totalShares
-    const cRatio = (100 * cValue) / debt
+    const cValue = userAccount.cAmount * prices.GOFX?.current || 0
+    const debt = (poolAccount.totalDebt * userAccount.shares) / poolAccount.totalShares || 0
+    const cRatio = (100 * cValue) / debt || 0
     const pendingFees = debt * (poolAccount.shareRate - userAccount.shareRate)
     setUserPortfolio({ cRatio, cValue, debt, pendingFees })
   }, [
@@ -368,15 +371,16 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   ])
 
   useEffect(() => {
-    if (synthSwap.inToken && synthSwap.outToken) {
-      const inTokenPrice = prices[synthSwap.inToken.symbol].current
-      const outTokenPrice = prices[synthSwap.outToken.symbol].current
-      setSynthSwap((prevState) => ({
-        ...prevState,
-        outTokenAmount: (synthSwap.inTokenAmount * inTokenPrice) / outTokenPrice
-      }))
+    if (inToken && outToken) {
+      const inTokenPrice = prices[inToken.symbol].current
+      const outTokenPrice = prices[outToken.symbol].current
+      if (focused === 'from') {
+        setOutTokenAmount(((inTokenAmount * inTokenPrice) / outTokenPrice) * 0.995)
+      } else {
+        setInTokenAmount(((outTokenAmount * outTokenPrice) / inTokenPrice) * 1.005)
+      }
     }
-  }, [prices, synthSwap.inToken, synthSwap.inTokenAmount, synthSwap.outToken])
+  }, [focused, inToken, inTokenAmount, outToken, outTokenAmount, prices])
 
   return (
     <SynthsContext.Provider
@@ -387,18 +391,25 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         burn,
         claim,
         deposit,
+        inToken,
+        inTokenAmount,
         loading,
         mint,
+        outToken,
+        outTokenAmount,
         poolAccount,
         poolName,
         setAmount,
+        setFocused,
+        setInToken,
+        setInTokenAmount,
+        setOutToken,
+        setOutTokenAmount,
         setPoolName,
         setSynth,
-        setSynthSwap,
         swap,
         switchTokens,
         synth,
-        synthSwap,
         userAccount,
         userPortfolio,
         withdraw
@@ -444,10 +455,17 @@ export const useSynthSwap = () => {
 
   return {
     availableSynths: context.availableSynths,
+    inToken: context.inToken,
+    inTokenAmount: context.inTokenAmount,
     loading: context.loading,
+    outToken: context.outToken,
+    outTokenAmount: context.outTokenAmount,
+    setFocused: context.setFocused,
+    setInToken: context.setInToken,
+    setInTokenAmount: context.setInTokenAmount,
+    setOutToken: context.setOutToken,
+    setOutTokenAmount: context.setOutTokenAmount,
     swap: context.swap,
-    setSynthSwap: context.setSynthSwap,
-    switchTokens: context.switchTokens,
-    synthSwap: context.synthSwap
+    switchTokens: context.switchTokens
   }
 }

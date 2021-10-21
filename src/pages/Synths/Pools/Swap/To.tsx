@@ -1,83 +1,51 @@
-import React, { FC, useMemo } from 'react'
-import styled from 'styled-components'
+import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
+import { Input } from 'antd'
 import { Selector } from './Selector'
-import { useAccounts, useSynthSwap } from '../../../../context'
-import { FlexColumnDiv } from '../../../../styles'
+import { Amount, Header, Wrapper } from './shared'
+import { useAccounts, usePrices, useSynths, useSynthSwap } from '../../../../context'
 import { ellipseNumber } from '../../../../utils'
 
-const AMOUNT = styled(FlexColumnDiv)<{ $height: string }>`
-  position: relative;
-  align-items: center;
-  justify-content: flex-end;
-  height: ${({ $height }) => $height};
-  padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2.5x']}
-    ${({ theme }) => theme.margins['1x']} 0;
-  ${({ theme }) => theme.roundedBorders}
-  background-color: ${({ theme }) => theme.textBox};
-
-  > span {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    width: 100%;
-  }
-
-  > span:nth-child(2) {
-    display: flex;
-    height: 100%;
-    padding-left: 128px;
-    ${({ theme }) => theme.roundedBorders}
-    ${({ theme }) => theme.ellipse}
-  }
-
-  > span:last-child {
-    text-align: right;
-  }
-`
-
-const HEADER = styled.div`
-  position: absolute;
-  top: -20px;
-  font-weight: bold;
-`
-
-const WRAPPER = styled(FlexColumnDiv)`
-  position: relative;
-  flex: 1;
-`
-
 export const To: FC<{ height: string }> = ({ height }) => {
-  const { getUIAmountString } = useAccounts()
-  const { synthSwap } = useSynthSwap()
+  const { getUIAmount } = useAccounts()
+  const { prices } = usePrices()
+  const { poolAccount, userPortfolio } = useSynths()
+  const { inToken, outToken, outTokenAmount, setFocused, setOutTokenAmount } = useSynthSwap()
 
-  const balance = useMemo(() => {
-    if (!synthSwap.outToken) return 0
+  const balance = useMemo(() => (outToken ? getUIAmount(outToken.address) : 0), [getUIAmount, outToken])
 
-    const { address, decimals } = synthSwap.outToken
-    return parseFloat(getUIAmountString(address).slice(0, Math.min(decimals, 8)))
-  }, [getUIAmountString, synthSwap.outToken])
+  const debt = useMemo(() => {
+    if (!outToken) {
+      return 0
+    }
 
-  const value = useMemo(() => {
-    return (
-      synthSwap.outToken &&
-      synthSwap.outTokenAmount &&
-      `At least ${synthSwap.outTokenAmount.toString().slice(0, 8)} ${synthSwap.outToken?.symbol}`
-    )
-  }, [synthSwap.outToken, synthSwap.outTokenAmount])
+    const poolDebt = poolAccount.synthsDebt.find(({ synth }) => synth === outToken!.symbol)
+    const price = prices[outToken.symbol]?.current
+    return poolDebt && price ? (userPortfolio.debt * poolDebt.percentage) / price - balance : 0
+  }, [outToken, poolAccount.synthsDebt, prices, userPortfolio.debt, balance])
 
   return (
-    <WRAPPER>
-      <HEADER>To:</HEADER>
-      <AMOUNT $height={height}>
-        <Selector
-          balance={balance}
-          height={height}
-          otherToken={synthSwap.inToken}
-          side="out"
-          token={synthSwap.outToken}
+    <Wrapper>
+      <Header>
+        <span>To:</span>
+        <span
+          onClick={() => {
+            setFocused('to')
+            setOutTokenAmount(debt)
+          }}
+        >
+          Cover Debt
+        </span>
+      </Header>
+      <Amount $height={height}>
+        <Selector balance={balance} height={height} otherToken={inToken} side="out" token={outToken} />
+        <Input
+          maxLength={11}
+          onChange={(x: BaseSyntheticEvent) => outToken && !isNaN(x.target.value) && setOutTokenAmount(x.target.value)}
+          pattern="\d+(\.\d+)?"
+          placeholder={outTokenAmount.toString()}
+          value={ellipseNumber(outTokenAmount, 10)}
         />
-        <span>{ellipseNumber(synthSwap.outTokenAmount, 9)}</span>
-      </AMOUNT>
-    </WRAPPER>
+      </Amount>
+    </Wrapper>
   )
 }
