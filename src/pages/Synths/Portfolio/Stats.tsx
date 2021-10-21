@@ -27,18 +27,22 @@ const WRAPPER = styled.div`
 
 export const Stats: FC = () => {
   const { mode } = useDarkMode()
-  const { userAccount, userPortfolio } = useSynths()
+  const { userPortfolio } = useSynths()
   const trailColor = mode === 'dark' ? '#1e1e1e' : '#e2e2e2'
 
   const cRatioPercentage = useMemo(() => userPortfolio.cRatio - 100, [userPortfolio.cRatio])
+  const formattedCRatio = useMemo(() => {
+    const monetaryRatio = monetaryFormatValue(Math.min(userPortfolio.cRatio, 10000))
+    return userPortfolio.cRatio > 10000 ? `> ${monetaryRatio}%` : `${monetaryRatio}%`
+  }, [userPortfolio])
 
   return (
     <WRAPPER>
       <span>Portfolio Stats</span>
       <Stat
         title={'Debt'}
-        tooltip={'The current gUSD denominated value of your debt that must be repaid.'}
-        value={`${monetaryFormatValue(userAccount.shares)} gUSD`}
+        tooltip={'The current gUSD denominated value of your synthsDebt that must be repaid.'}
+        value={`${monetaryFormatValue(userPortfolio.debt)} gUSD`}
       />
       <Stat
         title={'Collateral'}
@@ -50,13 +54,13 @@ export const Stats: FC = () => {
       <Stat
         title={'C-Ratio'}
         tooltip={
-          'Current value of your debt based on the debt of the platform. Max borrow represents the maximal debt that you can mint - if your debt increases beyond this value, your position can be liquidated. You can mint if and only if your collateral ratio is greater than 200%, and you may be liquidated if your collateral ratio falls below 120%.'
+          'Current value of your synthsDebt based on the synthsDebt of the platform. Max borrow represents the maximal synthsDebt that you can mint - if your synthsDebt increases beyond this value, your position can be liquidated. You can mint if and only if your collateral ratio is greater than 200%, and you may be liquidated if your collateral ratio falls below 120%.'
         }
         percent={cRatioPercentage}
         progressBar
         strokeColor={cRatioPercentage > 45 ? '#27AE60' : cRatioPercentage > 30 ? '#bb7535' : '#D60000'}
         trailColor={trailColor}
-        value={`${userPortfolio.cRatio.toFixed(2)}%`}
+        value={formattedCRatio}
       />
     </WRAPPER>
   )

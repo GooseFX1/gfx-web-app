@@ -24,12 +24,8 @@ const WRAPPER = styled.div`
 
     ${({ theme }) => theme.mediaWidth.fromLarge`
       width: 60%;
-      margin-right: ${({ theme }) => theme.margins['5x']};
+      margin-right: ${({ theme }) => theme.margins['3x']};
     `};
-
-    > div:last-child {
-      margin-top: ${({ theme }) => theme.margins['5x']};
-    }
   }
 
   > div:last-child {

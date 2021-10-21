@@ -38,6 +38,7 @@ type ListingAccount = {
 
 type PoolAccount = {
   shareRate: Decimal
+  totalShares: Decimal
 }
 
 type PriceAggregatorAccount = {

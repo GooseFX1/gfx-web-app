@@ -39,16 +39,17 @@ const WRAPPER = styled.div`
 export const Header: FC = () => {
   const { balances } = useAccounts()
   const { prices } = usePrices()
-  const { availableSynths, userAccount, userPortfolio } = useSynths()
-
-  console.log(availableSynths)
-  console.log(balances[availableSynths[0][1].address.toString()])
+  const { availableSynths, userPortfolio } = useSynths()
 
   const value = useMemo(
-    () => availableSynths.reduce((acc, [synth, { address }]) => (
-      acc + balances[address.toString()]?.uiAmount * prices[synth]?.current
-    ), 0) + userPortfolio.cValue - userAccount.shares,
-    [availableSynths, balances, prices, userAccount.shares, userPortfolio.cValue]
+    () =>
+      availableSynths.reduce(
+        (acc, [synth, { address }]) => acc + balances[address.toString()]?.uiAmount * prices[synth]?.current,
+        0
+      ) +
+      userPortfolio.cValue -
+      userPortfolio.debt,
+    [availableSynths, balances, prices, userPortfolio.cValue, userPortfolio.debt]
   )
 
   return (

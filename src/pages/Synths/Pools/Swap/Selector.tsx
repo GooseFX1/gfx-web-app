@@ -86,8 +86,6 @@ export const Selector: FC<{
     setVisible(!visible)
   }
 
-  console.log(balance)
-
   return (
     <WRAPPER $height={height} onClick={handleClick}>
       <SpaceBetweenDiv>

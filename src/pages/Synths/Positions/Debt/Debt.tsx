@@ -11,6 +11,10 @@ const INFORMATION = styled(SpaceBetweenDiv)`
   > span {
     margin-bottom: ${({ theme }) => theme.margins['3x']};
   }
+
+  span {
+    color: ${({ theme }) => theme.text1};
+  }
 `
 
 const SPECIFIC = styled(SpaceBetweenDiv)<{ $color: string }>`
@@ -39,7 +43,7 @@ const SPECIFIC = styled(SpaceBetweenDiv)<{ $color: string }>`
       height: 2px;
       width: 50px;
       margin: 0 ${({ theme }) => theme.margins['2x']};
-      background-color: white;
+      background-color: ${({ theme }) => theme.text1};
     }
   }
 `
@@ -70,7 +74,7 @@ export const Debt: FC = () => {
       <INFORMATION>
         <span>Debt structure</span>
         <FlexColumnDiv>
-          {poolAccount.debt.map(({ percentage, synth }, index) => (
+          {poolAccount.synthsDebt.map(({ percentage, synth }, index) => (
             <SPECIFIC key={index} $color={synthColor[synth].background}>
               <div />
               <span>{synth}</span>
@@ -80,8 +84,8 @@ export const Debt: FC = () => {
         </FlexColumnDiv>
       </INFORMATION>
       <Chart
-        data={poolAccount.debt.map(({ percentage }) => percentage)}
-        synths={poolAccount.synths}
+        data={poolAccount.synthsDebt.map(({ percentage }) => percentage)}
+        synths={poolAccount.synthsDebt.map(({ synth }) => synth)}
         synthColor={synthColor}
       />
     </WRAPPER>

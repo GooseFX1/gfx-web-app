@@ -1,14 +1,14 @@
 import React, {
+  createContext,
   Dispatch,
   FC,
   ReactNode,
   SetStateAction,
-  createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
-  useState,
-  useCallback
+  useState
 } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
@@ -16,6 +16,7 @@ import { ISwapToken } from './swap'
 import { notify } from '../utils'
 import { ADDRESSES, Mint, Pool, pool } from '../web3'
 import { usePrices } from './prices'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 
 type Decimal = {
   flags: number
@@ -25,13 +26,14 @@ type Decimal = {
 }
 
 interface IPoolAccount {
-  debt: {
+  shareRate: number
+  synthsDebt: {
     amount: number
     percentage: number
     synth: string
   }[]
-  shareRate: number
-  synths: string[]
+  totalDebt: number
+  totalShares: number
 }
 
 interface ISynthsConfig {
@@ -75,12 +77,13 @@ interface IUserAccount {
 interface IUserPortfolio {
   cRatio: number
   cValue: number
+  debt: number
   pendingFees: number
 }
 
-const DEFAULT_POOL_ACCOUNT = { debt: [], shareRate: 0, synths: [] }
+const DEFAULT_POOL_ACCOUNT = { shareRate: 0, synthsDebt: [], totalDebt: 0, totalShares: 0 }
 const DEFAULT_USER_ACCOUNT = { claimableFee: 0, cAmount: 0, debt: 0, shareRate: 0, shares: 0 }
-const DEFAULT_USER_PORTFOLIO = { cRatio: 0, cValue: 0, pendingFees: 0 }
+const DEFAULT_USER_PORTFOLIO = { cRatio: 0, cValue: 0, debt: 0, pendingFees: 0 }
 
 const SynthsContext = createContext<ISynthsConfig | null>(null)
 
@@ -286,7 +289,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     const subscriptions: number[] = []
 
-    if (wallet.publicKey) {
+    if (wallet.publicKey && network === WalletAdapterNetwork.Devnet) {
       updatePrices().then(() => {
         subscriptions.push(connection.onAccountChange(ADDRESSES[network].programs.pool.priceAggregator, updatePrices))
       })
@@ -315,29 +318,29 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           debt[synth[0]] = await fieldToNumber(synthDebt)
         }
       }
-      const synths = Object.keys(debt).sort((a, b) => a.localeCompare(b))
       const totalDebt = Object.entries(debt).reduce((acc, [synth, debt]) => {
         return acc + debt * prices[synth]?.current
       }, 0)
 
       setPoolAccount({
-        debt: Object.entries(debt)
+        shareRate: await fieldToNumber(poolAccount.shareRate),
+        synthsDebt: Object.entries(debt)
           .sort(([a], [b, _]) => a.localeCompare(b))
           .map(([synth, amount]) => ({
             amount,
             percentage: (amount * prices[synth]?.current) / totalDebt,
             synth
           })),
-        shareRate: await fieldToNumber(poolAccount.shareRate),
-        synths
+        totalDebt,
+        totalShares: await fieldToNumber(poolAccount.totalShares)
       })
     } catch (e) {}
   }, [availableSynths, connection, network, poolName, prices, wallet])
 
   useEffect(() => {
-    const subscriptions: number[] = []
+    let subscriptions: number[] = []
 
-    if (wallet.publicKey) {
+    if (wallet.publicKey && network === WalletAdapterNetwork.Devnet) {
       updatePoolAccount().then(async () => {
         subscriptions.push(connection.onAccountChange(ADDRESSES[network].pools[poolName].address, updatePoolAccount))
       })
@@ -350,12 +353,19 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     const cValue = userAccount.cAmount * prices.GOFX?.current
-    setUserPortfolio({
-      cRatio: (cValue / userAccount.shares) * 100,
-      cValue,
-      pendingFees: userAccount.shares * (poolAccount.shareRate - userAccount.shareRate)
-    })
-  }, [poolAccount.shareRate, prices.GOFX, userAccount.cAmount, userAccount.shareRate, userAccount.shares])
+    const debt = (poolAccount.totalDebt * userAccount.shares) / poolAccount.totalShares
+    const cRatio = (100 * cValue) / debt
+    const pendingFees = debt * (poolAccount.shareRate - userAccount.shareRate)
+    setUserPortfolio({ cRatio, cValue, debt, pendingFees })
+  }, [
+    poolAccount.shareRate,
+    poolAccount.totalDebt,
+    poolAccount.totalShares,
+    prices.GOFX,
+    userAccount.cAmount,
+    userAccount.shareRate,
+    userAccount.shares
+  ])
 
   useEffect(() => {
     if (synthSwap.inToken && synthSwap.outToken) {

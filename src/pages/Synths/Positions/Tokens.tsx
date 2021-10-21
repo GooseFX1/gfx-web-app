@@ -1,14 +1,16 @@
 import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { SynthToken } from '../SynthToken'
-import { IAccount, useAccounts, usePrices, useSynths } from '../../../context'
+import { useAccounts, useConnectionConfig, usePrices, useSynths } from '../../../context'
 import { FlexColumnDiv, SpaceBetweenDiv } from '../../../styles'
+import { monetaryFormatValue } from '../../../utils'
+import { ADDRESSES } from '../../../web3'
 
 const TOKEN = styled(SpaceBetweenDiv)`
   width: 100%;
 
   > * {
-    width: calc(100% / 4);
+    width: 20%;
   }
 
   > div {
@@ -35,36 +37,32 @@ const WRAPPER = styled(FlexColumnDiv)`
 
 export const Tokens: FC = () => {
   const { balances } = useAccounts()
+  const { network } = useConnectionConfig()
   const { prices } = usePrices()
-  const { availableSynths, poolAccount, userAccount } = useSynths()
+  const { poolAccount, userPortfolio } = useSynths()
 
   const tokens = useMemo(
     () =>
-      Object.entries(balances)
-        .map(([mint, amount]) => {
-          const synth = availableSynths.find(([_, { address }]) => mint === address.toString())
-          return synth ? { ...amount, name: synth[0] } : undefined
-        })
-        .filter((x): x is { name: string } & IAccount => !!x && x.name !== 'GOFX')
-        .sort((a, b) => a.name.localeCompare(b.name)),
-    [availableSynths, balances]
+      poolAccount.synthsDebt.map(({ percentage, synth }) => {
+        const price = prices[synth]?.current || 0
+        const debtValue = userPortfolio.debt * percentage
+        const size = balances[ADDRESSES[network].mints[synth].address.toString()].uiAmount
+        return { debt: debtValue / price, debtValue, price, size, synth }
+      }),
+    [balances, network, poolAccount.synthsDebt, prices, userPortfolio.debt]
   )
 
   return (
     <WRAPPER>
-      {tokens.map(({ name, uiAmount }, index) => {
-        const match = poolAccount.debt.find(({ synth }) => name === synth)
-        const debt = match ? (match.percentage * userAccount.shares).toFixed(2) : 0
-
-        return (
-          <TOKEN key={index}>
-            <SynthToken size="small" synth={name} />
-            <span>{prices[name]?.current}</span>
-            <span>{uiAmount.toFixed(3)}</span>
-            <span>{debt}</span>
-          </TOKEN>
-        )
-      })}
+      {tokens.map(({ debt, debtValue, price, size, synth }, index) => (
+        <TOKEN key={index}>
+          <SynthToken size="small" synth={synth} />
+          <span>{monetaryFormatValue(price)}</span>
+          <span>{size.toFixed(2)}</span>
+          <span>{debt.toFixed(2)}</span>
+          <span>{monetaryFormatValue(debtValue)}</span>
+        </TOKEN>
+      ))}
     </WRAPPER>
   )
 }
