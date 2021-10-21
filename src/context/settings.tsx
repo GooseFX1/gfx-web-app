@@ -16,7 +16,11 @@ export const ENDPOINTS: IEndpoint[] = [
     endpoint: 'https://green-little-wind.solana-mainnet.quiknode.pro/0e3bb9a62cf850ee8a4cf68dbb92aef6d4c97d0b/',
     network: WalletAdapterNetwork.Mainnet
   },
-  { chainId: ENV.Devnet, endpoint: 'https://api.devnet.solana.com/', network: WalletAdapterNetwork.Devnet }
+  {
+    chainId: ENV.Devnet,
+    endpoint: 'https://proud-wild-wind.solana-devnet.quiknode.pro/a76ab49000e972f1bc6e4080c8536c87f99f662a/',
+    network: WalletAdapterNetwork.Devnet
+  }
 ]
 
 interface ISettingsConfig {
