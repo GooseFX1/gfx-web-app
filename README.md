@@ -1,21 +1,14 @@
 # goosefx
 GooseFX
 
-Welcome to GooseFX, an AMM (automated market maker) platform with peer shared yield farming and perpetual swaps and tokenized stocks built on the Solana blockchain and Serum DEX (decentralized exchange).
+Welcome to GooseFX, a DeFi platform an all encompassing protocol for your DeFi needs.
 
 Key Features of GooseFX:
-- Peer Shared Yield Farming
+- NFT Store
+- Yield Farming
 - Perpetual Swaps with Margin
 - Tokenized Stocks
 - Options (Exotic + Vanilla) - (TBD)
-
-Peer Shared Yield Farming:
-This solves the need for a 1:1 ratio of collateral put up by a single user. Imagine the following scenario:
-
-User A has 100 ABC token
-User B has 100 XYZ token
-
-Instead of having User A buy 100 ABC and 100 XYZ, it matches with another person in the swap pool with 100 ABC and splits the APR 50/50 (or whichever the ratio of said pool is). This way, both upside and downside are shared in a peer to peer decentralized manner.
 
 # Running Locally:
 ```
