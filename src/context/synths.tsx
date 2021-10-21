@@ -84,6 +84,7 @@ interface IUserPortfolio {
 const DEFAULT_POOL_ACCOUNT = { shareRate: 0, synthsDebt: [], totalDebt: 0, totalShares: 0 }
 const DEFAULT_USER_ACCOUNT = { claimableFee: 0, cAmount: 0, debt: 0, shareRate: 0, shares: 0 }
 const DEFAULT_USER_PORTFOLIO = { cRatio: 0, cValue: 0, debt: 0, pendingFees: 0 }
+const REFRESH_TIMEOUT = 10000
 
 const SynthsContext = createContext<ISynthsConfig | null>(null)
 
@@ -290,22 +291,11 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [connection, network, poolName, wallet])
 
   useEffect(() => {
-    const subscriptions: number[] = []
-
     if (wallet.publicKey && network === WalletAdapterNetwork.Devnet) {
-      updatePrices().then(() => {
-        subscriptions.push(connection.onAccountChange(ADDRESSES[network].programs.pool.priceAggregator, updatePrices))
-      })
-      updateUserAccount().then(async () => {
-        const userAccountAta = await pool.getUserAccountPublicKey(poolName, wallet, network)
-        subscriptions.push(connection.onAccountChange(userAccountAta, updateUserAccount))
-      })
+      updatePrices().then(() => setInterval(() => updatePrices(), REFRESH_TIMEOUT))
+      updateUserAccount().then(() => setInterval(() => updateUserAccount(), REFRESH_TIMEOUT))
     }
-
-    return () => {
-      subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
-    }
-  }, [availableSynths, connection, network, poolName, setPrices, updatePrices, updateUserAccount, wallet])
+  }, [network, updatePrices, updateUserAccount, wallet.publicKey])
 
   const updatePoolAccount = useCallback(async () => {
     try {
@@ -341,18 +331,10 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [availableSynths, connection, network, poolName, prices, wallet])
 
   useEffect(() => {
-    let subscriptions: number[] = []
-
     if (wallet.publicKey && network === WalletAdapterNetwork.Devnet) {
-      updatePoolAccount().then(async () => {
-        subscriptions.push(connection.onAccountChange(ADDRESSES[network].pools[poolName].address, updatePoolAccount))
-      })
+      updatePoolAccount().then(() => setInterval(() => updatePoolAccount(), REFRESH_TIMEOUT))
     }
-
-    return () => {
-      subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
-    }
-  }, [availableSynths, connection, network, poolName, prices, updatePoolAccount, wallet])
+  }, [network, updatePoolAccount, wallet.publicKey])
 
   useEffect(() => {
     const cValue = userAccount.cAmount * prices.GOFX?.current || 0
@@ -372,8 +354,8 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (inToken && outToken) {
-      const inTokenPrice = prices[inToken.symbol].current
-      const outTokenPrice = prices[outToken.symbol].current
+      const inTokenPrice = prices[inToken.symbol]?.current
+      const outTokenPrice = prices[outToken.symbol]?.current
       if (focused === 'from') {
         setOutTokenAmount(((inTokenAmount * inTokenPrice) / outTokenPrice) * 0.995)
       } else {
