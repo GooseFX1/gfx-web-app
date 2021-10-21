@@ -28,7 +28,6 @@ const Overlay: FC<{
   return (
     <AvailableSynthsSelector>
       {availableSynths
-        .filter(([synth, _]) => synth !== 'GOFX')
         .map(([synth], index) => (
           <AvailableSynth key={index} onClick={() => handleClick(synth)}>
             <CenteredImg>

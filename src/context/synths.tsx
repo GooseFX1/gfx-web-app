@@ -89,7 +89,10 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { prices, setPrices } = usePrices()
   const wallet = useWallet()
 
-  const availableSynths = useMemo(() => Object.entries(ADDRESSES[network].mints), [network])
+  const availableSynths = useMemo(
+    () => Object.entries(ADDRESSES[network].mints).filter(([synth, _]) => synth !== 'GOFX'),
+    [network]
+  )
   const availablePools = useMemo(
     () => Object.entries(ADDRESSES[network].pools).filter(([_, { type }]) => type === 'synth'),
     [network]
@@ -284,8 +287,8 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const subscriptions: number[] = []
 
     if (wallet.publicKey) {
-      updatePrices().then(async () => {
-        subscriptions.push(connection.onAccountChange(ADDRESSES[network].pools[poolName].address, updatePrices))
+      updatePrices().then(() => {
+        subscriptions.push(connection.onAccountChange(ADDRESSES[network].programs.pool.priceAggregator, updatePrices))
       })
       updateUserAccount().then(async () => {
         const userAccountAta = await pool.getUserAccountPublicKey(poolName, wallet, network)

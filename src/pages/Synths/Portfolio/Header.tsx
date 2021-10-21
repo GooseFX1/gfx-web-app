@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { Tooltip } from '../../../components'
-import { useSynths } from '../../../context'
+import { IAccount, useAccounts, usePrices, useSynths } from '../../../context'
 import { monetaryFormatValue } from '../../../utils'
 
 const TITLE = styled.div`
@@ -37,9 +37,19 @@ const WRAPPER = styled.div`
 `
 
 export const Header: FC = () => {
-  const { userAccount } = useSynths()
+  const { balances } = useAccounts()
+  const { prices } = usePrices()
+  const { availableSynths, userAccount, userPortfolio } = useSynths()
 
-  const formattedValue = useMemo(() => monetaryFormatValue(userAccount.shares), [userAccount.shares])
+  console.log(availableSynths)
+  console.log(balances[availableSynths[0][1].address.toString()])
+
+  const value = useMemo(
+    () => availableSynths.reduce((acc, [synth, { address }]) => (
+      acc + balances[address.toString()]?.uiAmount * prices[synth]?.current
+    ), 0) + userPortfolio.cValue - userAccount.shares,
+    [availableSynths, balances, prices, userAccount.shares, userPortfolio.cValue]
+  )
 
   return (
     <WRAPPER>
@@ -47,7 +57,7 @@ export const Header: FC = () => {
         <span>Portfolio Overview</span>
         <Tooltip>The current gUSD denominated value of your portfolio.</Tooltip>
       </TITLE>
-      <span>{formattedValue} gUSD</span>
+      <span>{monetaryFormatValue(value)} gUSD</span>
       {/* <span>30/12/16</span> */}
     </WRAPPER>
   )
