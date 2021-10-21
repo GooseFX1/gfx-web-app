@@ -21,7 +21,7 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
   const { network } = useConnectionConfig()
   const { mode } = useDarkMode()
   const { prices } = usePrices()
-  const { amount, deposit, loading, setAmount, userAccount, withdraw } = useSynths()
+  const { amount, deposit, loading, setAmount, userPortfolio, withdraw } = useSynths()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
@@ -29,10 +29,10 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
     if (action === 'deposit') {
       return getUIAmount(ADDRESSES[network].mints.GOFX.address.toString())
     } else {
-      const balance = userAccount.cAmount - (userAccount.shares * 2) / (prices.GOFX.current || 1)
-      return balance > 0.000001 ? balance : 0
+      const balance = (userPortfolio.cValue - userPortfolio.debt * 2) / prices.GOFX?.current
+      return !isNaN(balance) && balance > 0.000001 ? balance : 0
     }
-  }, [action, getUIAmount, network, prices.GOFX, userAccount.cAmount, userAccount.shares])
+  }, [action, getUIAmount, network, prices.GOFX, userPortfolio.cValue, userPortfolio.debt])
 
   const state = useMemo(() => {
     if (!publicKey) {

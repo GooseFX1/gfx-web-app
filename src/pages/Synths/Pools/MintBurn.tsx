@@ -27,7 +27,7 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
   const { network } = useConnectionConfig()
   const { mode } = useDarkMode()
   const { prices } = usePrices()
-  const { amount, burn, loading, mint, setAmount, synth, userAccount } = useSynths()
+  const { amount, burn, loading, mint, setAmount, synth, userPortfolio } = useSynths()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
@@ -36,10 +36,9 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
     if (action === 'burn') {
       return getUIAmount(ADDRESSES[network].mints[synth].address.toString())
     } else {
-      const cValue = (userAccount.cAmount * prices.GOFX?.current || 0) * 0.5
-      return Math.max((cValue - userAccount.shares) / prices[synth].current, 0)
+      return Math.max((userPortfolio.cValue / 2 - userPortfolio.debt) / prices[synth]?.current, 0)
     }
-  }, [action, getUIAmount, network, prices, synth, userAccount.cAmount, userAccount.shares])
+  }, [action, getUIAmount, network, prices, synth, userPortfolio.cValue, userPortfolio.debt])
 
   const state = useMemo(() => {
     if (!publicKey) {
