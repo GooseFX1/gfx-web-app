@@ -360,9 +360,9 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (inToken && outToken) {
       const inTokenPrice = prices[inToken.symbol]?.current
       const outTokenPrice = prices[outToken.symbol]?.current
-      if (focused === 'from') {
+      if (focused === 'from' && outTokenPrice > 0) {
         setOutTokenAmount(((inTokenAmount * inTokenPrice) / outTokenPrice) * 0.995)
-      } else {
+      } else if (focused === 'to' && inTokenPrice > 0) {
         setInTokenAmount(((outTokenAmount * outTokenPrice) / inTokenPrice) * 1.005)
       }
     }

@@ -41,7 +41,9 @@ export const From: FC<{ height: string }> = ({ height }) => {
         <div>
           <Input
             maxLength={11}
+            onBlur={() => setFocused(undefined)}
             onChange={(x: BaseSyntheticEvent) => inToken && !isNaN(x.target.value) && setInTokenAmount(x.target.value)}
+            onFocus={() => setFocused('from')}
             pattern="\d+(\.\d+)?"
             placeholder={inTokenAmount.toString()}
             value={ellipseNumber(inTokenAmount, 10)}

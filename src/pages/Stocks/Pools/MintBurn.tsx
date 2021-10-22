@@ -88,7 +88,7 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
       case 'burn':
         return 'Burning gTokens will reduce overall debt by the corresponding gUSD value.'
       case 'mint':
-        return 'Minting gTokens will increase debt. Minting is enabled as long as collateral ratio remains superior to 200%.'
+        return 'Minting gTokens will increase debt. Minting is enabled as long as collateral ratio remains greater than 200%.'
     }
   }, [action])
 
