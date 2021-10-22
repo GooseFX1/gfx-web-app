@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { History } from './History'
 import { Order } from './Order'
@@ -9,7 +9,6 @@ import {
   ENDPOINTS,
   CryptoProvider,
   OrderProvider,
-  PricesProvider,
   TradeHistoryProvider,
   useConnectionConfig,
   useCrypto
@@ -59,18 +58,19 @@ const CryptoContent: FC = () => {
 }
 
 export const Crypto: FC = () => {
-  const { endpoint, setEndpoint } = useConnectionConfig()
+  const { endpoint, setEndpoint, setRoute } = useConnectionConfig()
 
-  if (endpoint !== ENDPOINTS[0].endpoint) {
-    notify({ message: 'Switched to mainnet' })
-    setEndpoint(ENDPOINTS[0].endpoint)
-  }
+  useEffect(() => {
+    setRoute('/crypto')
+    if (endpoint !== ENDPOINTS[0].endpoint) {
+      notify({ message: 'Switched to mainnet' })
+      setEndpoint(ENDPOINTS[0].endpoint)
+    }
+  }, [endpoint, setEndpoint, setRoute])
 
   return (
-    <PricesProvider>
-      <CryptoProvider>
-        <CryptoContent />
-      </CryptoProvider>
-    </PricesProvider>
+    <CryptoProvider>
+      <CryptoContent />
+    </CryptoProvider>
   )
 }

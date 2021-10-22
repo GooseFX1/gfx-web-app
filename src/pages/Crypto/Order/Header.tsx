@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
 import { CryptoSelector } from './CryptoSelector'
-import { OrderSide, useCrypto, useOrder, usePrices } from '../../../context'
+import { OrderSide, useCrypto, useOrder } from '../../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../../styles'
 
 /* const CHANGE = styled(CenteredImg)`
@@ -98,8 +98,7 @@ const Loader: FC = () => {
 }
 
 export const Header: FC = () => {
-  const { formatPair, getAskSymbolFromPair, selectedCrypto } = useCrypto()
-  const { prices } = usePrices()
+  const { formatPair, getAskSymbolFromPair, prices, selectedCrypto } = useCrypto()
   const { order, setOrder } = useOrder()
 
   const symbol = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])

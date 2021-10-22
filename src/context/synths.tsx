@@ -10,13 +10,12 @@ import React, {
   useMemo,
   useState
 } from 'react'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
 import { ISwapToken, SwapInput } from './swap'
 import { notify } from '../utils'
 import { ADDRESSES, Mint, Pool, pool } from '../web3'
-import { usePrices } from './prices'
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 
 type Decimal = {
   flags: number
@@ -36,6 +35,12 @@ interface IPoolAccount {
   totalShares: number
 }
 
+interface IPrices {
+  [x: string]: {
+    current: number
+  }
+}
+
 interface ISynthsConfig {
   amount: number
   availableSynths: [string, Mint][]
@@ -51,6 +56,7 @@ interface ISynthsConfig {
   outTokenAmount: number
   poolAccount: IPoolAccount
   poolName: string
+  prices: IPrices
   setAmount: Dispatch<SetStateAction<number>>
   setFocused: Dispatch<SetStateAction<SwapInput>>
   setInToken: Dispatch<SetStateAction<ISwapToken | undefined>>
@@ -84,13 +90,12 @@ interface IUserPortfolio {
 const DEFAULT_POOL_ACCOUNT = { shareRate: 0, synthsDebt: [], totalDebt: 0, totalShares: 0 }
 const DEFAULT_USER_ACCOUNT = { claimableFee: 0, cAmount: 0, debt: 0, shareRate: 0, shares: 0 }
 const DEFAULT_USER_PORTFOLIO = { cRatio: 0, cValue: 0, debt: 0, pendingFees: 0 }
-const REFRESH_TIMEOUT = 10000
+const REFRESH_INTERVAL = 30000
 
 const SynthsContext = createContext<ISynthsConfig | null>(null)
 
 export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection, network } = useConnectionConfig()
-  const { prices, setPrices } = usePrices()
   const wallet = useWallet()
 
   const availableSynths = useMemo(
@@ -111,6 +116,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [loading, setLoading] = useState(false)
   const [poolName, setPoolName] = useState(availablePools[0][0])
   const [poolAccount, setPoolAccount] = useState<IPoolAccount>(DEFAULT_POOL_ACCOUNT)
+  const [prices, setPrices] = useState<IPrices>({})
   const [synth, setSynth] = useState(availableSynths[0][0])
   const [userAccount, setUserAccount] = useState<IUserAccount>(DEFAULT_USER_ACCOUNT)
   const [userPortfolio, setUserPortfolio] = useState<IUserPortfolio>(DEFAULT_USER_PORTFOLIO)
@@ -255,18 +261,20 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const updatePrices = useCallback(async () => {
     try {
+      const newPrices: IPrices = { gUSD: { current: 1 } }
       const { buffer, mintIndex } = (await pool.priceAggregatorAccount(poolName, wallet, connection, network)).prices
       const { address: GOFX } = ADDRESSES[network].mints.GOFX
-      setPrices((prevState) => ({ ...prevState, gUSD: { change24H: 0, current: 1 } }))
       for (const { key, index } of mintIndex) {
         const current = await fieldToNumber(buffer[index].price)
         if (key.equals(GOFX)) {
-          setPrices((prevState) => ({ ...prevState, GOFX: { current } }))
+          newPrices.GOFX = { current }
         } else {
           const synth = availableSynths.find(([_, { address }]) => address.equals(key))
-          synth && setPrices((prevState) => ({ ...prevState, [synth[0]]: { current } }))
+          synth && (newPrices[synth[0]] = { current })
         }
       }
+
+      setPrices(newPrices)
     } catch (e: any) {
       await notify({ type: 'error', message: `Error updating pool account`, icon: 'error' }, e)
     }
@@ -291,9 +299,14 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [connection, network, poolName, wallet])
 
   useEffect(() => {
+    const intervals: NodeJS.Timer[] = []
     if (wallet.publicKey && network === WalletAdapterNetwork.Devnet) {
-      updatePrices().then(() => setInterval(() => updatePrices(), REFRESH_TIMEOUT))
-      updateUserAccount().then(() => setInterval(() => updateUserAccount(), REFRESH_TIMEOUT))
+      updatePrices().then(() => intervals.push(setInterval(() => updatePrices(), REFRESH_INTERVAL)))
+      updateUserAccount().then(() => intervals.push(setInterval(() => updateUserAccount(), REFRESH_INTERVAL)))
+    }
+
+    return () => {
+      intervals.forEach((interval) => clearInterval(interval))
     }
   }, [network, updatePrices, updateUserAccount, wallet.publicKey])
 
@@ -332,7 +345,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (wallet.publicKey && network === WalletAdapterNetwork.Devnet) {
-      updatePoolAccount().then(() => setInterval(() => updatePoolAccount(), REFRESH_TIMEOUT))
+      updatePoolAccount().then(() => setInterval(() => updatePoolAccount(), REFRESH_INTERVAL))
     }
   }, [network, updatePoolAccount, wallet.publicKey])
 
@@ -381,6 +394,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         outTokenAmount,
         poolAccount,
         poolName,
+        prices,
         setAmount,
         setFocused,
         setInToken,
@@ -419,6 +433,7 @@ export const useSynths = () => {
     mint: context.mint,
     poolAccount: context.poolAccount,
     poolName: context.poolName,
+    prices: context.prices,
     setAmount: context.setAmount,
     setPoolName: context.setPoolName,
     setSynth: context.setSynth,
@@ -442,6 +457,7 @@ export const useSynthSwap = () => {
     loading: context.loading,
     outToken: context.outToken,
     outTokenAmount: context.outTokenAmount,
+    prices: context.prices,
     setFocused: context.setFocused,
     setInToken: context.setInToken,
     setInTokenAmount: context.setInTokenAmount,

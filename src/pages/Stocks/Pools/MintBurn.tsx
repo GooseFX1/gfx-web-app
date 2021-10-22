@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Available, Button, InputHeader, InputWrapper } from './shared'
 import { SynthSelector } from './SynthSelector'
-import { useAccounts, useConnectionConfig, useDarkMode, usePrices, useSynths, useWalletModal } from '../../../context'
+import { useAccounts, useConnectionConfig, useDarkMode, useSynths, useWalletModal } from '../../../context'
 import { SpaceBetweenDiv } from '../../../styles'
 import { capitalizeFirstLetter } from '../../../utils'
 import { ADDRESSES } from '../../../web3'
@@ -26,8 +26,7 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
   const { getUIAmount } = useAccounts()
   const { network } = useConnectionConfig()
   const { mode } = useDarkMode()
-  const { prices } = usePrices()
-  const { amount, burn, loading, mint, setAmount, synth, userPortfolio } = useSynths()
+  const { amount, burn, loading, mint, prices, setAmount, synth, userPortfolio } = useSynths()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 

@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { Tooltip } from '../../../components'
-import { useAccounts, usePrices, useSynths } from '../../../context'
+import { useAccounts, useSynths } from '../../../context'
 import { monetaryFormatValue } from '../../../utils'
 
 const TITLE = styled.div`
@@ -38,8 +38,7 @@ const WRAPPER = styled.div`
 
 export const Header: FC = () => {
   const { balances } = useAccounts()
-  const { prices } = usePrices()
-  const { availableSynths, userPortfolio } = useSynths()
+  const { availableSynths, prices, userPortfolio } = useSynths()
 
   const value = useMemo(() => {
     const synthsValue = availableSynths.reduce((acc, [synth, { address }]) => {

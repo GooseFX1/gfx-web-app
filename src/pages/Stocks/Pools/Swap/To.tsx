@@ -2,13 +2,12 @@ import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
 import { Input } from 'antd'
 import { Selector } from './Selector'
 import { Amount, Header, Wrapper } from './shared'
-import { useAccounts, usePrices, useSynths, useSynthSwap } from '../../../../context'
+import { useAccounts, useSynths, useSynthSwap } from '../../../../context'
 import { ellipseNumber } from '../../../../utils'
 
 export const To: FC<{ height: string }> = ({ height }) => {
   const { getUIAmount } = useAccounts()
-  const { prices } = usePrices()
-  const { poolAccount, userPortfolio } = useSynths()
+  const { poolAccount, prices, userPortfolio } = useSynths()
   const { inToken, outToken, outTokenAmount, setFocused, setOutTokenAmount } = useSynthSwap()
 
   const balance = useMemo(() => (outToken ? getUIAmount(outToken.address) : 0), [getUIAmount, outToken])

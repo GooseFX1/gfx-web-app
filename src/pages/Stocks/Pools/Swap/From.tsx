@@ -3,7 +3,7 @@ import { Input } from 'antd'
 import styled from 'styled-components'
 import { Selector } from './Selector'
 import { Amount, Header, Wrapper } from './shared'
-import { useAccounts, usePrices, useSynthSwap } from '../../../../context'
+import { useAccounts, useSynthSwap } from '../../../../context'
 import { ellipseNumber, monetaryFormatValue } from '../../../../utils'
 
 const VALUE = styled.span`
@@ -14,8 +14,7 @@ const VALUE = styled.span`
 
 export const From: FC<{ height: string }> = ({ height }) => {
   const { getUIAmount } = useAccounts()
-  const { prices } = usePrices()
-  const { inToken, inTokenAmount, outToken, setFocused, setInTokenAmount } = useSynthSwap()
+  const { inToken, inTokenAmount, outToken, prices, setFocused, setInTokenAmount } = useSynthSwap()
 
   const balance = useMemo(() => (inToken ? getUIAmount(inToken.address) : 0), [getUIAmount, inToken])
 

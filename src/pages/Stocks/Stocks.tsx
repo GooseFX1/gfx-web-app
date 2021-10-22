@@ -1,9 +1,9 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Pools } from './Pools'
 import { Portfolio } from './Portfolio'
 import { Positions } from './Positions'
-import { ENDPOINTS, PricesProvider, SynthsProvider, useConnectionConfig } from '../../context'
+import { ENDPOINTS, SynthsProvider, useConnectionConfig } from '../../context'
 import { notify } from '../../utils'
 
 const WRAPPER = styled.div`
@@ -57,18 +57,19 @@ export const StocksContext: FC = () => {
 }
 
 export const Stocks: FC = () => {
-  const { endpoint, setEndpoint } = useConnectionConfig()
+  const { endpoint, setEndpoint, setRoute } = useConnectionConfig()
 
-  if (endpoint !== ENDPOINTS[1].endpoint) {
-    notify({ message: 'Synths is in beta. Switched to devnet' })
-    setEndpoint(ENDPOINTS[1].endpoint)
-  }
+  useEffect(() => {
+    setRoute('/stocks')
+    if (endpoint !== ENDPOINTS[1].endpoint) {
+      notify({ message: 'Synths is in beta. Switched to devnet' })
+      setEndpoint(ENDPOINTS[1].endpoint)
+    }
+  }, [endpoint, setEndpoint, setRoute])
 
   return (
-    <PricesProvider>
-      <SynthsProvider>
-        <StocksContext />
-      </SynthsProvider>
-    </PricesProvider>
+    <SynthsProvider>
+      <StocksContext />
+    </SynthsProvider>
   )
 }

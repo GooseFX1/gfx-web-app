@@ -15,7 +15,6 @@ import React, {
 import { Market, MARKETS } from '@project-serum/serum'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useCrypto } from './crypto'
-import { usePrices } from './prices'
 import { useConnectionConfig } from './settings'
 import { useTradeHistory } from './trade_history'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
@@ -89,8 +88,7 @@ const OrderContext = createContext<IOrderConfig | null>(null)
 
 export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
-  const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
-  const { prices } = usePrices()
+  const { getAskSymbolFromPair, prices, selectedCrypto } = useCrypto()
   const { fetchOpenOrders } = useTradeHistory()
   const wallet = useWallet()
   const [focused, setFocused] = useState<OrderInput>(undefined)
@@ -176,11 +174,14 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
       setTimeout(() => fetchOpenOrders(), 4500)
     } catch (e: any) {
-      await notify({
-        type: 'error',
-        message: `${capitalizeFirstLetter(order.display)} order failed`,
-        icon: 'trade_error'
-      }, e)
+      await notify(
+        {
+          type: 'error',
+          message: `${capitalizeFirstLetter(order.display)} order failed`,
+          icon: 'trade_error'
+        },
+        e
+      )
     }
 
     setLoading(false)

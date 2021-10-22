@@ -28,7 +28,9 @@ interface ISettingsConfig {
   connection: Connection
   endpoint: string
   network: WalletAdapterNetwork
+  route: string
   setEndpoint: Dispatch<SetStateAction<string>>
+  setRoute: Dispatch<SetStateAction<string>>
   setSlippage: Dispatch<SetStateAction<number>>
   slippage: number
 }
@@ -53,12 +55,13 @@ export function useConnectionConfig() {
     throw new Error('Missing settings context')
   }
 
-  const { chainId, connection, endpoint, network, setEndpoint } = context
-  return { chainId, connection, endpoint, network, setEndpoint }
+  const { chainId, connection, endpoint, network, route, setEndpoint, setRoute } = context
+  return { chainId, connection, endpoint, network, route, setEndpoint, setRoute }
 }
 
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [endpoint, setEndpoint] = useState(ENDPOINTS[0].endpoint)
+  const [route, setRoute] = useLocalStorageState('route', '/swap')
   const [slippage, setSlippage] = useLocalStorageState('slippage', DEFAULT_SLIPPAGE.toString())
 
   const connection = useMemo(() => new Connection(endpoint, 'recent'), [endpoint])
@@ -72,9 +75,11 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         connection,
         endpoint,
         network,
+        route,
         setEndpoint,
-        slippage: parseFloat(slippage),
-        setSlippage: (val) => setSlippage(val.toString())
+        setRoute,
+        setSlippage: (val) => setSlippage(val.toString()),
+        slippage: parseFloat(slippage)
       }}
     >
       {children}

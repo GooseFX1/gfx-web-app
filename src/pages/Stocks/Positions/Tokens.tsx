@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { SynthToken } from '../SynthToken'
-import { useAccounts, useConnectionConfig, usePrices, useSynths } from '../../../context'
+import { useAccounts, useConnectionConfig, useSynths } from '../../../context'
 import { FlexColumnDiv, SpaceBetweenDiv } from '../../../styles'
 import { monetaryFormatValue } from '../../../utils'
 import { ADDRESSES } from '../../../web3'
@@ -38,15 +38,14 @@ const WRAPPER = styled(FlexColumnDiv)`
 export const Tokens: FC = () => {
   const { balances } = useAccounts()
   const { network } = useConnectionConfig()
-  const { prices } = usePrices()
-  const { poolAccount, userPortfolio } = useSynths()
+  const { poolAccount, prices, userPortfolio } = useSynths()
 
   const tokens = useMemo(
     () =>
       poolAccount.synthsDebt.map(({ percentage, synth }) => {
-        const price = prices[synth]?.current || 0
+        const price = prices[synth]?.current
         const debtValue = userPortfolio.debt * percentage
-        const size = balances[ADDRESSES[network].mints[synth].address.toString()]?.uiAmount || 0
+        const size = balances[ADDRESSES[network].mints[synth].address.toString()]?.uiAmount
         return { debt: debtValue / price, debtValue, price, size, synth }
       }),
     [balances, network, poolAccount.synthsDebt, prices, userPortfolio.debt]

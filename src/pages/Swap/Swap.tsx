@@ -6,7 +6,7 @@ import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
 import { Modal } from '../../components'
-import { SwapProvider, useDarkMode, useSwap } from '../../context'
+import { SwapProvider, useConnectionConfig, useDarkMode, useSwap } from '../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../styles'
 import { addAnalytics } from '../../utils'
 
@@ -132,6 +132,12 @@ const SwapContent: FC = () => {
 }
 
 export const Swap: FC = () => {
+  const { setRoute } = useConnectionConfig()
+
+  useEffect(() => {
+    setRoute('/swap')
+  }, [setRoute])
+
   return (
     <SwapProvider>
       {/* <SwapContent /> */}
