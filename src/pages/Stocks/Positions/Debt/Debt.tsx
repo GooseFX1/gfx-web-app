@@ -14,7 +14,9 @@ const INFORMATION = styled(SpaceBetweenDiv)`
 `
 
 const SPECIFIC = styled(SpaceBetweenDiv)<{ $color: string }>`
-  margin-bottom: ${({ theme }) => theme.margins['3x']};
+  &:not(:last-child) {
+    margin-bottom: ${({ theme }) => theme.margins['3x']};
+  }
 
   > div {
     ${({ theme }) => theme.measurements(theme.margins['1.5x'])}
