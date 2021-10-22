@@ -18,7 +18,7 @@ export const ENDPOINTS: IEndpoint[] = [
   },
   {
     chainId: ENV.Devnet,
-    endpoint: 'https://api.devnet.solana.com',
+    endpoint: 'https://proud-wild-wind.solana-devnet.quiknode.pro/a76ab49000e972f1bc6e4080c8536c87f99f662a/',
     network: WalletAdapterNetwork.Devnet
   }
 ]
@@ -28,9 +28,7 @@ interface ISettingsConfig {
   connection: Connection
   endpoint: string
   network: WalletAdapterNetwork
-  route: string
   setEndpoint: Dispatch<SetStateAction<string>>
-  setRoute: Dispatch<SetStateAction<string>>
   setSlippage: Dispatch<SetStateAction<number>>
   slippage: number
 }
@@ -55,13 +53,12 @@ export function useConnectionConfig() {
     throw new Error('Missing settings context')
   }
 
-  const { chainId, connection, endpoint, network, route, setEndpoint, setRoute } = context
-  return { chainId, connection, endpoint, network, route, setEndpoint, setRoute }
+  const { chainId, connection, endpoint, network, setEndpoint } = context
+  return { chainId, connection, endpoint, network, setEndpoint }
 }
 
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [endpoint, setEndpoint] = useState(ENDPOINTS[0].endpoint)
-  const [route, setRoute] = useLocalStorageState('route', '/swap')
   const [slippage, setSlippage] = useLocalStorageState('slippage', DEFAULT_SLIPPAGE.toString())
 
   const connection = useMemo(() => new Connection(endpoint, 'recent'), [endpoint])
@@ -75,9 +72,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         connection,
         endpoint,
         network,
-        route,
         setEndpoint,
-        setRoute,
         setSlippage: (val) => setSlippage(val.toString()),
         slippage: parseFloat(slippage)
       }}

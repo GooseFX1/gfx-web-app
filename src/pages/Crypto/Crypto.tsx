@@ -58,15 +58,14 @@ const CryptoContent: FC = () => {
 }
 
 export const Crypto: FC = () => {
-  const { endpoint, setEndpoint, setRoute } = useConnectionConfig()
+  const { endpoint, setEndpoint } = useConnectionConfig()
 
   useEffect(() => {
-    setRoute('/crypto')
     if (endpoint !== ENDPOINTS[0].endpoint) {
       notify({ message: 'Switched to mainnet' })
       setEndpoint(ENDPOINTS[0].endpoint)
     }
-  }, [endpoint, setEndpoint, setRoute])
+  }, [endpoint, setEndpoint])
 
   return (
     <CryptoProvider>

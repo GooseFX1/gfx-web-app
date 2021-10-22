@@ -61,15 +61,14 @@ export const StocksContext: FC = () => {
 }
 
 export const Stocks: FC = () => {
-  const { endpoint, setEndpoint, setRoute } = useConnectionConfig()
+  const { endpoint, setEndpoint } = useConnectionConfig()
 
   useEffect(() => {
-    setRoute('/stocks')
     if (endpoint !== ENDPOINTS[1].endpoint) {
       notify({ message: 'Synths is in alpha. Switched to devnet' })
       setEndpoint(ENDPOINTS[1].endpoint)
     }
-  }, [endpoint, setEndpoint, setRoute])
+  }, [endpoint, setEndpoint])
 
   return (
     <SynthsProvider>
