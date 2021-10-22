@@ -18,7 +18,7 @@ export const ENDPOINTS: IEndpoint[] = [
   },
   {
     chainId: ENV.Devnet,
-    endpoint: 'https://proud-wild-wind.solana-devnet.quiknode.pro/a76ab49000e972f1bc6e4080c8536c87f99f662a/',
+    endpoint: 'https://api.devnet.solana.com',
     network: WalletAdapterNetwork.Devnet
   }
 ]

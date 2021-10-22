@@ -2,7 +2,7 @@ import React, { BaseSyntheticEvent, FC, MouseEventHandler, useCallback, useMemo 
 import { Input } from 'antd'
 import { css } from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Available, Button, InputHeader, InputWrapper, Synth } from './shared'
+import { Available, Bottom, Button, InputHeader, InputWrapper, Synth } from './shared'
 import { SynthToken } from '../SynthToken'
 import { useAccounts, useConnectionConfig, useDarkMode, useSynths, useWalletModal } from '../../../context'
 import { SpaceBetweenDiv } from '../../../styles'
@@ -25,11 +25,12 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
   const { setVisible } = useWalletModal()
 
   const userBalance = useMemo(() => {
-    if (action === 'deposit') {
-      return getUIAmount(ADDRESSES[network].mints.GOFX.address.toString())
-    } else {
-      const balance = (userPortfolio.cValue - userPortfolio.debt * 2) / prices.GOFX?.current
-      return !isNaN(balance) && balance > 0.000001 ? balance : 0
+    switch (action) {
+      case 'deposit':
+        return getUIAmount(ADDRESSES[network].mints.GOFX.address.toString())
+      case 'withdraw':
+        const balance = (userPortfolio.cValue - userPortfolio.debt * 2) / prices.GOFX?.current
+        return !isNaN(balance) && balance > 0.000001 ? balance : 0
     }
   }, [action, getUIAmount, network, prices.GOFX, userPortfolio.cValue, userPortfolio.debt])
 
@@ -77,6 +78,15 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
     [action, connect, deposit, setVisible, state, wallet, withdraw]
   )
 
+  const helper = useMemo(() => {
+    switch (action) {
+      case 'deposit':
+        return 'Deposited GOFX will serve as collateral to mint gTokens.'
+      case 'withdraw':
+        return 'In order to withdraw your collateral, you will need to restore your collateral ratio to above 200%.'
+    }
+  }, [action])
+
   const localCSS = css`
     .ant-input {
       display: flex;
@@ -120,9 +130,12 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
           </SpaceBetweenDiv>
         </Available>
       </SpaceBetweenDiv>
-      <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
-        <span>{content}</span>
-      </Button>
+      <Bottom>
+        <span>{helper}</span>
+        <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
+          <span>{content}</span>
+        </Button>
+      </Bottom>
     </>
   )
 }

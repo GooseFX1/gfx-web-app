@@ -16,7 +16,7 @@ export const Positions: FC<{
 
   const fields = {
     gTokens: ['Market', 'Current Price', 'Amount', 'Debt', 'Debt (gUSD)', 'Delta'],
-    Debt: ['']
+    Debt: ['Pool debt structure']
   }
 
   return (

@@ -8,10 +8,6 @@ const INFORMATION = styled(SpaceBetweenDiv)`
   flex-direction: column;
   min-height: 150px;
 
-  > span {
-    margin-bottom: ${({ theme }) => theme.margins['3x']};
-  }
-
   span {
     color: ${({ theme }) => theme.text1};
   }
@@ -72,7 +68,6 @@ export const Debt: FC = () => {
   return (
     <WRAPPER>
       <INFORMATION>
-        <span>Debt structure</span>
         <FlexColumnDiv>
           {poolAccount.synthsDebt.map(({ percentage, synth }, index) => (
             <SPECIFIC key={index} $color={synthColor[synth].background}>

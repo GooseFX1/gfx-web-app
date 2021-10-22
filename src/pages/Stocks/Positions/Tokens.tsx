@@ -57,8 +57,8 @@ export const Tokens: FC = () => {
         <TOKEN key={index}>
           <SynthToken size="small" synth={synth} />
           <span>{monetaryFormatValue(price)}</span>
-          <span>{size.toFixed(2)}</span>
-          <span>{debt.toFixed(2)}</span>
+          <span>{(size || 0).toFixed(2)}</span>
+          <span>{(debt || 0).toFixed(2)}</span>
           <span>{monetaryFormatValue(debtValue)}</span>
           <span>{monetaryFormatValue(size - debt)}</span>
         </TOKEN>

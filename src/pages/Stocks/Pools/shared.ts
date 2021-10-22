@@ -75,6 +75,18 @@ export const AvailableSynthsSelector = styled.div`
   }
 `
 
+export const Bottom = styled.div`
+  display: flex;
+  align-items: center;
+
+  > span {
+    width: 30%;
+    font-size: 10px;
+    text-align: left;
+    color: ${({ theme }) => theme.text1};
+  }
+`
+
 export const Button = styled(MainButton)`
   margin-left: auto;
 `

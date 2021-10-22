@@ -17,6 +17,8 @@ import { ISwapToken, SwapInput } from './swap'
 import { notify } from '../utils'
 import { ADDRESSES, Mint, Pool, pool } from '../web3'
 
+const gfx_stocks_pool = import('gfx_stocks_pool')
+
 type Decimal = {
   flags: number
   hi: number
@@ -43,8 +45,8 @@ interface IPrices {
 
 interface ISynthsConfig {
   amount: number
-  availableSynths: [string, Mint][]
   availablePools: [string, Pool][]
+  availableSynths: [string, Mint][]
   burn: () => Promise<void>
   claim: () => Promise<void>
   deposit: () => Promise<void>
@@ -90,7 +92,7 @@ interface IUserPortfolio {
 const DEFAULT_POOL_ACCOUNT = { shareRate: 0, synthsDebt: [], totalDebt: 0, totalShares: 0 }
 const DEFAULT_USER_ACCOUNT = { claimableFee: 0, cAmount: 0, debt: 0, shareRate: 0, shares: 0 }
 const DEFAULT_USER_PORTFOLIO = { cRatio: 0, cValue: 0, debt: 0, pendingFees: 0 }
-const REFRESH_INTERVAL = 30000
+const REFRESH_INTERVAL = 10000
 
 const SynthsContext = createContext<ISynthsConfig | null>(null)
 
@@ -98,13 +100,13 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection, network } = useConnectionConfig()
   const wallet = useWallet()
 
-  const availableSynths = useMemo(
-    () => Object.entries(ADDRESSES[network].mints).filter(([synth, _]) => synth !== 'GOFX'),
-    [network]
-  )
   const availablePools = useMemo(
     () => Object.entries(ADDRESSES[network].pools).filter(([_, { type }]) => type === 'synth'),
-    [network]
+    []
+  )
+  const availableSynths = useMemo(
+    () => Object.entries(ADDRESSES[network].mints).filter(([synth, _]) => synth !== 'GOFX'),
+    []
   )
 
   const [amount, setAmount] = useState(0)
@@ -255,32 +257,30 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   const fieldToNumber = async (x: Decimal) => {
-    const { decimal2number } = await import('gfx_stocks_pool')
-    return decimal2number(x.flags, x.hi, x.lo, x.mid)
+    return (await gfx_stocks_pool).decimal2number(x.flags, x.hi, x.lo, x.mid)
   }
 
-  const updatePrices = useCallback(async () => {
+  const updateAccounts = useCallback(async () => {
+    const prices: IPrices = { gUSD: { current: 1 } }
+
     try {
-      const newPrices: IPrices = { gUSD: { current: 1 } }
       const { buffer, mintIndex } = (await pool.priceAggregatorAccount(poolName, wallet, connection, network)).prices
       const { address: GOFX } = ADDRESSES[network].mints.GOFX
       for (const { key, index } of mintIndex) {
         const current = await fieldToNumber(buffer[index].price)
         if (key.equals(GOFX)) {
-          newPrices.GOFX = { current }
+          prices.GOFX = { current }
         } else {
           const synth = availableSynths.find(([_, { address }]) => address.equals(key))
-          synth && (newPrices[synth[0]] = { current })
+          synth && (prices[synth[0]] = { current })
         }
       }
 
-      setPrices(newPrices)
+      setPrices((prevState) => ({ ...prevState, ...prices }))
     } catch (e: any) {
       await notify({ type: 'error', message: `Error updating pool account`, icon: 'error' }, e)
     }
-  }, [availableSynths, connection, network, poolName, setPrices, wallet])
 
-  const updateUserAccount = useCallback(async () => {
     try {
       const userAccount = await pool.userAccount(poolName, wallet, connection, network)
       if (userAccount) {
@@ -296,21 +296,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } catch (e: any) {
       await notify({ type: 'error', message: `Error updating user account`, icon: 'error' }, e)
     }
-  }, [connection, network, poolName, wallet])
 
-  useEffect(() => {
-    const intervals: NodeJS.Timer[] = []
-    if (wallet.publicKey && network === WalletAdapterNetwork.Devnet) {
-      updatePrices().then(() => intervals.push(setInterval(() => updatePrices(), REFRESH_INTERVAL)))
-      updateUserAccount().then(() => intervals.push(setInterval(() => updateUserAccount(), REFRESH_INTERVAL)))
-    }
-
-    return () => {
-      intervals.forEach((interval) => clearInterval(interval))
-    }
-  }, [network, updatePrices, updateUserAccount, wallet.publicKey])
-
-  const updatePoolAccount = useCallback(async () => {
     try {
       const [listingAccount, poolAccount] = await Promise.all([
         pool.listingAccount(poolName, wallet, connection, network),
@@ -341,13 +327,18 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         totalShares: await fieldToNumber(poolAccount.totalShares)
       })
     } catch (e) {}
-  }, [availableSynths, connection, network, poolName, prices, wallet])
+  }, [connection, network, poolName, wallet])
 
   useEffect(() => {
+    let interval: NodeJS.Timer
     if (wallet.publicKey && network === WalletAdapterNetwork.Devnet) {
-      updatePoolAccount().then(() => setInterval(() => updatePoolAccount(), REFRESH_INTERVAL))
+      updateAccounts().then(() => (interval = setInterval(() => updateAccounts(), REFRESH_INTERVAL)))
     }
-  }, [network, updatePoolAccount, wallet.publicKey])
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [network, updateAccounts, wallet.publicKey])
 
   useEffect(() => {
     const cValue = userAccount.cAmount * prices.GOFX?.current || 0
@@ -381,8 +372,8 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     <SynthsContext.Provider
       value={{
         amount,
-        availableSynths,
         availablePools,
+        availableSynths,
         burn,
         claim,
         deposit,
@@ -424,8 +415,8 @@ export const useSynths = () => {
 
   return {
     amount: context.amount,
-    availableSynths: context.availableSynths,
     availablePools: context.availablePools,
+    availableSynths: context.availableSynths,
     burn: context.burn,
     claim: context.claim,
     deposit: context.deposit,

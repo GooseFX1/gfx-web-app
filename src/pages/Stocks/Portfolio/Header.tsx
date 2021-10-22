@@ -46,7 +46,7 @@ export const Header: FC = () => {
     }, 0)
 
     return (synthsValue || 0) + userPortfolio.cValue - userPortfolio.debt
-  }, [availableSynths, balances, prices, userPortfolio.cValue, userPortfolio.debt])
+  }, [balances, prices, userPortfolio.cValue, userPortfolio.debt])
 
   return (
     <WRAPPER>
