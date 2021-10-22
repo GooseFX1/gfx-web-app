@@ -15,7 +15,7 @@ export const Positions: FC<{
   ] as { component: ReactNode; display: string }[]
 
   const fields = {
-    gTokens: ['Market', 'Current Price', 'Amount', 'Debt', 'Debt (gUSD)'],
+    gTokens: ['Market', 'Current Price', 'Amount', 'Debt', 'Debt (gUSD)', 'Delta'],
     Debt: ['']
   }
 

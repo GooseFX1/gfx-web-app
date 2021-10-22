@@ -60,6 +60,7 @@ export const Tokens: FC = () => {
           <span>{size.toFixed(2)}</span>
           <span>{debt.toFixed(2)}</span>
           <span>{monetaryFormatValue(debtValue)}</span>
+          <span>{monetaryFormatValue(size - debt)}</span>
         </TOKEN>
       ))}
     </WRAPPER>
