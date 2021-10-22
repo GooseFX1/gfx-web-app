@@ -8,11 +8,15 @@ import { notify } from '../../utils'
 
 const WRAPPER = styled.div`
   display: flex;
-  width: 80vw;
   padding: ${({ theme }) => theme.margins['5x']} 0;
 
   ${({ theme }) => theme.mediaWidth.upToLarge`
     flex-direction: column;
+    width: 60vw;
+  `};
+
+  ${({ theme }) => theme.mediaWidth.fromLarge`
+    width: 80vw;
   `};
 
   > div:first-child {
@@ -62,7 +66,7 @@ export const Stocks: FC = () => {
   useEffect(() => {
     setRoute('/stocks')
     if (endpoint !== ENDPOINTS[1].endpoint) {
-      notify({ message: 'Synths is in beta. Switched to devnet' })
+      notify({ message: 'Synths is in alpha. Switched to devnet' })
       setEndpoint(ENDPOINTS[1].endpoint)
     }
   }, [endpoint, setEndpoint, setRoute])

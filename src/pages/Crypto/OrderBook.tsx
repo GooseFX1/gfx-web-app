@@ -64,6 +64,7 @@ const ORDER = styled.div`
   span {
     flex: 1;
     font-size: 10px;
+    color: ${({ theme }) => theme.text1};
 
     &:not(:last-child) {
       z-index: 2;

@@ -2,7 +2,7 @@ import React, { BaseSyntheticEvent, FC, MouseEventHandler, useCallback, useMemo 
 import { Input } from 'antd'
 import styled, { css } from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Available, Button, InputHeader, InputWrapper } from './shared'
+import { Available, Bottom, Button, InputHeader, InputWrapper } from './shared'
 import { SynthSelector } from './SynthSelector'
 import { useAccounts, useConnectionConfig, useDarkMode, useSynths, useWalletModal } from '../../../context'
 import { SpaceBetweenDiv } from '../../../styles'
@@ -83,6 +83,15 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
     [action, burn, connect, mint, setVisible, state, wallet]
   )
 
+  const helper = useMemo(() => {
+    switch (action) {
+      case 'burn':
+        return 'Burning gTokens will reduce overall debt by the corresponding gUSD value.'
+      case 'mint':
+        return 'Minting gTokens will increase debt. Minting is enabled as long as collateral ratio remains superior to 200%.'
+    }
+  }, [action])
+
   const localCSS = css`
     .ant-input {
       display: flex;
@@ -126,9 +135,12 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
           </SpaceBetweenDiv>
         </Available>
       </SpaceBetweenDiv>
-      <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
-        <span>{content}</span>
-      </Button>
+      <Bottom>
+        <span>{helper}</span>
+        <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
+          <span>{content}</span>
+        </Button>
+      </Bottom>
     </>
   )
 }

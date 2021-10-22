@@ -83,7 +83,7 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
       case 'deposit':
         return 'Deposited GOFX will serve as collateral to mint gTokens.'
       case 'withdraw':
-        return 'In order to withdraw your collateral, you will need to restore your collateral ratio to above 200%.'
+        return 'In order to withdraw collateral, debt needs to be reduced by burning gTokens to restore a collateral radio > 200%.'
     }
   }, [action])
 

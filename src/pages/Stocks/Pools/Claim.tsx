@@ -1,7 +1,7 @@
 import React, { FC, MouseEventHandler, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Button, Synth } from './shared'
+import { Bottom, Button, Synth } from './shared'
 import { SynthToken } from '../SynthToken'
 import { useSynths, useWalletModal } from '../../../context'
 import { CenteredDiv, SpaceBetweenDiv } from '../../../styles'
@@ -100,9 +100,12 @@ export const Claim: FC = () => {
           </SpaceBetweenDiv>
         </div>
       </REWARDS>
-      <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
-        <span>{content}</span>
-      </Button>
+      <Bottom>
+        <span>Fees are earned by providing GOFX as collateral in a pool.</span>
+        <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
+          <span>{content}</span>
+        </Button>
+      </Bottom>
     </>
   )
 }

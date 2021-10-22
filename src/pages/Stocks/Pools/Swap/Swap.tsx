@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { From } from './From'
 import { To } from './To'
-import { Button } from '../shared'
+import { Bottom, Button } from '../shared'
 import { SwapProvider, useAccounts, useDarkMode, useSynthSwap, useWalletModal } from '../../../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../../../styles'
 
@@ -93,9 +93,12 @@ const SwapContent: FC = () => {
         </SWITCH>
         <To height={height} />
       </SpaceBetweenDiv>
-      <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
-        <span>{content}</span>
-      </Button>
+      <Bottom>
+        <span />
+        <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
+          <span>{content}</span>
+        </Button>
+      </Bottom>
     </>
   )
 }

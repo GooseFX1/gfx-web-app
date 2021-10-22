@@ -102,11 +102,11 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const availablePools = useMemo(
     () => Object.entries(ADDRESSES[network].pools).filter(([_, { type }]) => type === 'synth'),
-    []
+    [network]
   )
   const availableSynths = useMemo(
     () => Object.entries(ADDRESSES[network].mints).filter(([synth, _]) => synth !== 'GOFX'),
-    []
+    [network]
   )
 
   const [amount, setAmount] = useState(0)
@@ -327,7 +327,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         totalShares: await fieldToNumber(poolAccount.totalShares)
       })
     } catch (e) {}
-  }, [connection, network, poolName, wallet])
+  }, [availableSynths, connection, network, poolName, wallet])
 
   useEffect(() => {
     let interval: NodeJS.Timer
