@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
-import { useConnectionConfig } from './context'
 import { AppLayout } from './layouts'
 import { Crypto, Farm, NFTs, Stocks, Swap } from './pages'
 import { APP_PAGE_HEIGHT, CenteredDiv } from './styles'
@@ -12,11 +11,9 @@ const WRAPPER = styled(CenteredDiv)`
 `
 
 export const Router: FC = () => {
-  const { route } = useConnectionConfig()
-
   return (
     <BrowserRouter>
-      <Redirect from="/" to={route} />
+      <Redirect from="/" to="/swap" />
       <Switch>
         <AppLayout>
           <WRAPPER>
