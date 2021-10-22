@@ -99,11 +99,12 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
       border: none;
       border-radius: 8px;
       padding-right: 120px;
-      background-color: ${mode === 'dark' ? '#4a4949' : '#bdbdbd'};
+      background-color: ${mode === 'dark' ? '#4a4949' : '#adadad'};
       text-align: left;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      transition: none;
     }
   `
 

@@ -53,7 +53,8 @@ const WRAPPER = styled(FlexColumnDiv)<{ $visible: boolean }>`
   ${({ theme }) => theme.largeShadow}
   background-color: ${({ theme }) => theme.bg3};
   opacity: ${({ $visible }) => ($visible ? '1' : '0')};
-  transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;
+  transition: opacity ${({ theme }) => theme.mainTransitionTime} ease-in-out,
+    max-height ${({ theme }) => theme.mainTransitionTime} ease-in-out;
 `
 
 export const Pools: FC<{ poolsVisible: boolean }> = ({ poolsVisible }) => {
