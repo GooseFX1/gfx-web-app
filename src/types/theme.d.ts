@@ -16,11 +16,14 @@ export interface Colors {
   bg1: Color
   bg2: Color
   bg3: Color
+  bg4: Color
+  bg5: Color
   grey1: Color
   grey2: Color
   grey3: Color
   grey4: Color
   grey5: Color
+  darkButton: Color
 
   // speciality colors
   appLayoutFooterBorder: Color
@@ -28,6 +31,7 @@ export interface Colors {
   textBox: Color
   tokenRegistryWallet: Color
   walletModalWallet: Color
+  searchbarBackground: Color
 
   // primary
   primary1: Color
