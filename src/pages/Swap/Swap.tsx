@@ -6,9 +6,9 @@ import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
 import { Modal } from '../../components'
-import { SwapProvider, useDarkMode, useSwap } from '../../context'
+import { ENDPOINTS, SwapProvider, useConnectionConfig, useDarkMode, useSwap } from '../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../styles'
-import { addAnalytics } from '../../utils'
+import { addAnalytics, notify } from '../../utils'
 
 const BODY = styled.div`
   position: relative;
@@ -132,10 +132,18 @@ const SwapContent: FC = () => {
 }
 
 export const Swap: FC = () => {
+  const { endpoint, setEndpoint } = useConnectionConfig()
+
+  useEffect(() => {
+    if (endpoint !== ENDPOINTS[1].endpoint) {
+      notify({ message: 'Swap is in alpha. Switched to devnet' })
+      setEndpoint(ENDPOINTS[1].endpoint)
+    }
+  }, [endpoint, setEndpoint])
+
   return (
     <SwapProvider>
-      {/* <SwapContent /> */}
-      Coming Soon
+      <SwapContent />
     </SwapProvider>
   )
 }

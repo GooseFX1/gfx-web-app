@@ -1,9 +1,9 @@
 export const LITEPAPER_ADDRESS = 'https://docs.goosefx.io'
 export const SOCIAL_MEDIAS: { [key: string]: string } = {
-  discord: "https://discord.gg/cDEPXpY26q",
-  medium: "https://medium.com/goosefx",
-  telegram: "https://www.t.me/goosefx",
-  twitter: "https://www.twitter.com/GooseFX1"
+  discord: 'https://discord.gg/cDEPXpY26q',
+  medium: 'https://medium.com/goosefx',
+  telegram: 'https://www.t.me/goosefx',
+  twitter: 'https://www.twitter.com/GooseFX1'
 }
 
 export const SUPPORTED_TOKEN_LIST = [
@@ -18,6 +18,7 @@ export const SUPPORTED_TOKEN_LIST = [
   'FIDA',
   'FRONT',
   'FTT',
+  'GOFX',
   'HGET',
   'HNT',
   'HXRO',
@@ -55,6 +56,5 @@ export const SUPPORTED_TOKEN_LIST = [
   'USDT',
   'WOO',
   'XRP',
-  'YFI',
-  'xCOPE'
+  'YFI'
 ]

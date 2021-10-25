@@ -38,7 +38,7 @@ export const ADDRESSES: {
   'mainnet-beta': {
     mints: {
       GOFX: {
-        address: PublicKey.default,
+        address: new PublicKey('GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
         decimals: 9
       },
       gUSD: {
@@ -162,6 +162,3 @@ export const ADDRESSES: {
     }
   }
 }
-
-export const GOFX = '2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'
-export const TOKEN_B = '8FUPzLY58ojDaj5yh1MKwyJnGNhCDMbStbHNVkBQ9KjJ'

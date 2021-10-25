@@ -1,9 +1,8 @@
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
-import { WRAPPED_SOL_MINT } from '@project-serum/serum/lib/token-instructions'
 import { ENV, TokenInfo, TokenListProvider } from '@solana/spl-token-registry'
 import { useConnectionConfig } from './settings'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
-import { GOFX, TOKEN_B } from '../web3'
+import { ADDRESSES } from '../web3'
 
 interface ITokenRegistryConfig {
   getTokenInfoFromSymbol: (x: string) => TokenInfo | undefined
@@ -19,26 +18,24 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
   const getTokenInfoFromSymbol = (symbol: string) => tokens.find(({ symbol: x }) => x === symbol)
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       const list = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
       const filteredList = list.filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
-      filteredList.push({ address: WRAPPED_SOL_MINT.toString(), chainId, decimals: 9, name: 'Solana', symbol: 'SOL' })
+
+      console.log(filteredList)
 
       if (chainId === ENV.Devnet) {
-        filteredList.push({ address: GOFX, chainId, decimals: 9, name: 'GooseFX', symbol: 'GOFX' })
-        filteredList.push({ address: TOKEN_B, chainId, decimals: 9, name: 'Token B', symbol: 'TKNB' })
+        filteredList.push({
+          address: ADDRESSES.devnet.mints.GOFX.address.toString(),
+          chainId,
+          decimals: 9,
+          name: 'GooseFX',
+          symbol: 'GOFX'
+        })
       }
 
-      const formattedList = filteredList
-        .map(({ address, chainId, decimals, name, symbol }) => ({
-          address,
-          chainId,
-          decimals,
-          name: name.replace(' (Sollet)', ''),
-          symbol
-        }))
-        .sort(({ symbol: a }, { symbol: b }) => a.localeCompare(b))
-      setTokens(formattedList)
+      filteredList.sort(({ symbol: a }, { symbol: b }) => a.localeCompare(b))
+      setTokens(filteredList)
     })()
   }, [chainId])
 
