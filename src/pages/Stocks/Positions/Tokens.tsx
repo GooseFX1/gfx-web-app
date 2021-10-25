@@ -56,11 +56,12 @@ export const Tokens: FC = () => {
       {tokens.map(({ debt, debtValue, price, size, synth }, index) => (
         <TOKEN key={index}>
           <SynthToken size="small" synth={synth} />
-          <span>{monetaryFormatValue(price)}</span>
+          <span>${monetaryFormatValue(price)}</span>
           <span>{(size || 0).toFixed(2)}</span>
-          <span>{(debt || 0).toFixed(2)}</span>
-          <span>{monetaryFormatValue(debtValue)}</span>
-          <span>{monetaryFormatValue(size - debt)}</span>
+          <span>
+            {(debt || 0).toFixed(2)} ( ${monetaryFormatValue(debtValue)} )
+          </span>
+          <span>{synth === 'gUSD' ? '-' : (size - debt).toFixed(2)}</span>
         </TOKEN>
       ))}
     </WRAPPER>

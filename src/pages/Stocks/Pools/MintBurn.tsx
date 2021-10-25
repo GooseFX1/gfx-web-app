@@ -32,10 +32,14 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
 
   const cRatioExceeded = useMemo(() => false, [])
   const userBalance = useMemo(() => {
-    if (action === 'burn') {
-      return getUIAmount(ADDRESSES[network].mints[synth].address.toString())
-    } else {
-      return Math.max((userPortfolio.cValue / 2 - userPortfolio.debt) / prices[synth]?.current, 0) || 0
+    const { address, decimals } = ADDRESSES[network].mints[synth]
+
+    switch (action) {
+      case 'burn':
+        return Number(getUIAmount(address.toString()).toFixed(decimals))
+      case 'mint':
+        const value = userPortfolio.cValue / 2 - userPortfolio.debt
+        return Math.max(Number(((0.995 * value) / prices[synth]?.current).toFixed(decimals)), 0) || 0
     }
   }, [action, getUIAmount, network, prices, synth, userPortfolio.cValue, userPortfolio.debt])
 

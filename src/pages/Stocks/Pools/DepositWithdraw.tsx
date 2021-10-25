@@ -25,12 +25,14 @@ export const DepositWithdraw: FC<{ action: 'deposit' | 'withdraw' }> = ({ action
   const { setVisible } = useWalletModal()
 
   const userBalance = useMemo(() => {
+    const { address, decimals } = ADDRESSES[network].mints.GOFX
+
     switch (action) {
       case 'deposit':
-        return getUIAmount(ADDRESSES[network].mints.GOFX.address.toString())
+        return Number(getUIAmount(address.toString()).toFixed(decimals))
       case 'withdraw':
         const balance = (userPortfolio.cValue - userPortfolio.debt * 2) / prices.GOFX?.current
-        return !isNaN(balance) && balance > 0.000001 ? balance : 0
+        return !isNaN(balance) && balance > 0.000001 ? Number(balance.toFixed(decimals)) : 0
     }
   }, [action, getUIAmount, network, prices.GOFX, userPortfolio.cValue, userPortfolio.debt])
 
