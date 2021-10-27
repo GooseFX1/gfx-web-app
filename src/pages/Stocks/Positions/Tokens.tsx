@@ -61,7 +61,7 @@ export const Tokens: FC = () => {
           <span>
             {(debt || 0).toFixed(2)} ( ${monetaryFormatValue(debtValue)} )
           </span>
-          <span>{synth === 'gUSD' ? '-' : (size - debt).toFixed(2)}</span>
+          <span>{synth === 'gUSD' ? '-' : ((size - debt) || 0).toFixed(2)}</span>
         </TOKEN>
       ))}
     </WRAPPER>

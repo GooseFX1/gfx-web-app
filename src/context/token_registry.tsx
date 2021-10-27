@@ -22,8 +22,6 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
       const list = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
       const filteredList = list.filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
 
-      console.log(filteredList)
-
       if (chainId === ENV.Devnet) {
         filteredList.push({
           address: ADDRESSES.devnet.mints.GOFX.address.toString(),

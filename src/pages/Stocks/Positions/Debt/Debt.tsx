@@ -72,10 +72,10 @@ export const Debt: FC = () => {
       <INFORMATION>
         <FlexColumnDiv>
           {poolAccount.synthsDebt.map(({ percentage, synth }, index) => (
-            <SPECIFIC key={index} $color={synthColor[synth].background}>
+            <SPECIFIC key={index} $color={'silver' /* synthColor[synth].background */}>
               <div />
               <span>{synth}</span>
-              <span>{(percentage * 100).toFixed(2)}%</span>
+              <span>{((percentage * 100) || 0).toFixed(2)}%</span>
             </SPECIFIC>
           ))}
         </FlexColumnDiv>

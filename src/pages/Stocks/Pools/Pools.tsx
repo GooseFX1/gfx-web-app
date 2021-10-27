@@ -2,6 +2,7 @@ import React, { FC, ReactNode, useState } from 'react'
 import styled from 'styled-components'
 import { Claim } from './Claim'
 import { DepositWithdraw } from './DepositWithdraw'
+import { Faucet } from './Faucet'
 import { MintBurn } from './MintBurn'
 import { PoolSelector } from './PoolSelector'
 import { Swap } from './Swap'
@@ -66,7 +67,8 @@ export const Pools: FC<{ poolsVisible: boolean }> = ({ poolsVisible }) => {
     { component: <Swap />, display: 'Swap' },
     { component: <MintBurn action="burn" />, display: 'Burn' },
     { component: <DepositWithdraw action="withdraw" />, display: 'Withdraw' },
-    { component: <Claim />, display: 'Rewards' }
+    { component: <Claim />, display: 'Rewards' },
+    { component: <Faucet />, display: 'Faucet' },
   ] as { component: ReactNode; display: string }[]
 
   return (

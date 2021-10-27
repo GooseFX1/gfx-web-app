@@ -23,8 +23,10 @@ export const Chart: FC<{
             {
               label: '# of Votes',
               data,
-              backgroundColor: Object.values(synthColor).map(({ background }) => background),
-              hoverBackgroundColor: Object.values(synthColor).map(({ hover }) => hover),
+              backgroundColor: 'silver',
+              hoverBackgroundColor: 'red',
+              // backgroundColor: Object.values(synthColor).map(({ background }) => background),
+              // hoverBackgroundColor: Object.values(synthColor).map(({ hover }) => hover),
               borderColor: mode === 'dark' ? '#2a2a2a' : '#fff',
               borderWidth: 3
             }

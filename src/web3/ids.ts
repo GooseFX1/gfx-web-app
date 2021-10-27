@@ -1,6 +1,8 @@
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { PublicKey } from '@solana/web3.js'
 
+export const SYNTH_DEFAULT_MINT = new PublicKey('11111111111111111111111111111111')
+
 export type Mint = {
   address: PublicKey
   decimals: number
@@ -111,34 +113,107 @@ export const ADDRESSES: {
         decimals: 9
       },
       gUSD: {
-        address: new PublicKey('EXceVxfi8hbEoDWMpYq621kTVvBi53oMXih3REnGG9o3'),
+        address: new PublicKey('DCLDuMH8B97Vri5x6yHjrFjEWAZeeZarhCzV2KKbEcvw'),
         decimals: 2
+      },
+      gBTC: {
+        address: new PublicKey('6WAa7ppJD7QAExhse21XUjFcYn9utTYEzPMvMpjea3pM'),
+        decimals: 8
+      },
+      gETH: {
+        address: new PublicKey('89wbRM3MCCoTuTzFK4UNWG1vsd4iqadxHTjGiHZ7kc5Q'),
+        decimals: 8
+      },
+      gMNGO: {
+        address: new PublicKey('BJUGa4AGbuvWix35UZcdkfKZHnr94d5n67aVqTJqH4vX'),
+        decimals: 8
+      },
+      gDOGE: {
+        address: new PublicKey('FyJmXCfvKX1Q4zifMBcvYAdqEiUbeZWoSvAkuiy7BEyL'),
+        decimals: 8
+      },
+      gSABER: {
+        address: new PublicKey('7BCgsMbDakNHx7Mb7ErJykE3eTzqjwYsDvJMGVia9Ff3'),
+        decimals: 8
+      },
+      gRAY: {
+        address: new PublicKey('BVneTUZCE9ePHUATdtwin3PjS1n9QQ1QzMZWf7CJPfyW'),
+        decimals: 8
+      },
+      gCOPE: {
+        address: new PublicKey('5axcoFsk588MaS4CE5D1KFFDsExowzMjKVHFyHZvcdRG'),
+        decimals: 8
+      },
+      gBNB: {
+        address: new PublicKey('C4a5suEMGogxkJVwGzam9yUgxyQ3pLFXESLqjwHg1Vwc'),
+        decimals: 8
+      },
+      gFTT: {
+        address: new PublicKey('88fcHMmVLEpp3kHTUDki1QBMdfzTfxNaN6awCniSbPTN'),
+        decimals: 8
+      },
+      gLUNA: {
+        address: new PublicKey('DztJtx4Zjz4bTpnno4R6DXQ7twA8DLPEFm1DY3qYC4Zd'),
+        decimals: 8
+      },
+      gSOL: {
+        address: new PublicKey('BeRxNUMoa3Q66hhsacUu6nJcApJt3dzCAFFpYvFWeVPk'),
+        decimals: 8
+      },
+      gSRM: {
+        address: new PublicKey('Fg4E5t5Vbt8QzG7Uy7U1H6r6MHduLtEwP9FVZUMeScai'),
+        decimals: 8
       },
       gAAPL: {
         address: new PublicKey('qUY4zvt1wk3qiMjF2F2J771AyLsYeeDTbBP7PbrNoD6'),
         decimals: 8
       },
-      gBTC: {
-        address: new PublicKey('Ab3umoUA2DHHRnaDFAF7qnZDFmr9DyHidLh8riaQGg2D'),
+      gTSLA: {
+        address: new PublicKey('5vRDUMS4B1Gsxu79NL2NfQqPf365urokq6SCHbgqtgTU'),
         decimals: 8
       },
-      gETH: {
-        address: new PublicKey('F3qSM2ZY9K4JsV1aj8wneTK8aP8QUa76sgpePB2bbqCK'),
+      gGME: {
+        address: new PublicKey('HuyZCb7rHHucRxFJX9eg9B6THpbywgYuEHXGbCVhFqgG'),
+        decimals: 8
+      },
+      gSPY: {
+        address: new PublicKey('7VY2Hp3CJjRLn27xW6EmjzuDyf7wYpbrrBYKobBQEKCw'),
+        decimals: 8
+      },
+      gGE: {
+        address: new PublicKey('CUeFGD4RDbb6Gh9KRCNQa75JmLS4MjxsWkd3waz7qHse'),
+        decimals: 8
+      },
+      gAMC: {
+        address: new PublicKey('DeStTq4cj3h2WC35CPwwcbn9VhAgdpey9xD9gbTt5FiU'),
+        decimals: 8
+      },
+      gAMZN: {
+        address: new PublicKey('2sV7HYKFvu3G8SWRsQMS4yuHCgU7pT8omJD6W6vFp5hY'),
+        decimals: 8
+      },
+      gNFLX: {
+        address: new PublicKey('GAKT9KGRT3uC641dcMqR6CLozDaSDkAddymFY3qWEjQR'),
         decimals: 8
       },
       gGOOG: {
-        address: new PublicKey('3KGstBKxV3iX4ftPCLxt3Q3BEwAF8UueAMmLUDeZNwLa'),
+        address: new PublicKey('BfJpBqRGqNeAsNTio4PDutmUyGsk4RGGi78BuaCjiuy'),
         decimals: 8
       },
-      gTSLA: {
-        address: new PublicKey('DUYUVTVeTKXqbQCGq2jCegbNXv2LjP89DVuhPh6HgXRd'),
+      gQQQ: {
+        address: new PublicKey('5L6yBfXZARi2UQVLkwnLqifYLcLXVEKSeBo6FR7kp2zg'),
         decimals: 8
-      }
+      },
     },
     pools: {
-      POOL_0: {
-        address: new PublicKey('8fCDoLwnNAMY2NArYkLGSNfpkk4VfGaxLJDx4f5CsZik'),
-        listing: new PublicKey('E9kqgZ3PqbTEVnFKcTBEZwKS8BVE8cAyhWa9RstGSYTE'),
+      CRYPTO: {
+        address: new PublicKey('Gi5j5JVxhsYhyek2yReiZTzUnj38dgh5phb9Ue3pWpMX'),
+        listing: new PublicKey('F5xcJSy4c6MZvdPMoNHUPY7w6gV6pTAi3L6kRezbBwiM'),
+        type: 'synth'
+      },
+      STOCK: {
+        address: new PublicKey('L4mn5JMUBAKkuWbEv1YGP65eeJAE2Z4neVxMkT8ncEJ'),
+        listing: new PublicKey('Bg8HQ2AN6vhjTL4Ht8jn18VFTZh1LTUuzPu1kg71vvkQ'),
         type: 'synth'
       },
       'GOFX/TKNB': {
@@ -150,8 +225,8 @@ export const ADDRESSES: {
     programs: {
       pool: {
         address: new PublicKey('29S8DHSwXLSwTSj25Tdx8Q8vAVqAmZ1TycnJYLp3owk5'),
-        controller: new PublicKey('FCngovJKv3V4QdHVaxY1dKE8EJsE7dLJB6Z6ANZUQr9E'),
-        priceAggregator: new PublicKey('DzmwQxTM53FvY5HBUQzRdaAsL6bgQ1R1gePqmPvGnYee')
+        controller: new PublicKey('FMqznan48D4hMvwKSSH5fMhZR3z3LRwDHoVAs3gEBB4S'),
+        priceAggregator: new PublicKey('CbYdUPCnLko4p1qehuR21WgjuVCvTkaMoQhUeYyw1Z1y')
       },
       pythOracle: {
         address: new PublicKey('BmA9Z6FjioHJPpjT39QazZyhDRUdZy2ezwx4GiDdE2u2')

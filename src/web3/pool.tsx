@@ -1,11 +1,16 @@
 import { BN, Program, Provider } from '@project-serum/anchor'
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 import { ADDRESSES } from './ids'
 import { createAssociatedTokenAccountIx, findAssociatedTokenAddress, signAndSendRawTransaction } from './utils'
 const PoolIDL = require('./idl/pool.json')
+
+const signers = [{
+  publicKey: new PublicKey('5b2XtcNc6mEPRSC2LpHfPrn1ARzuEEMSN6hAdtRkEZHX'),
+  secretKey: new Uint8Array([103,1,84,226,123,70,115,19,206,165,152,209,214,138,232,122,196,218,3,14,174,196,252,188,24,202,70,38,6,78,61,128,68,38,58,101,128,162,185,111,103,218,212,67,62,201,112,67,228,23,44,61,229,206,182,140,26,238,154,232,194,72,18,182])
+}]
 
 type Decimal = {
   flags: number
@@ -83,6 +88,21 @@ const burn = async (
     tx.add(await initialize(pool, wallet, connection, network))
   }
 
+  const tracker = new PublicKey('H5BQ98pVXhts1xRC7na7yL5NuaYpKKoHBTzMud9WraU7')
+  const trackerAccount = await findAssociatedTokenAddress(wallet.publicKey, tracker)
+  if (!(await connection.getParsedAccountInfo(trackerAccount)).value) {
+    tx.add(createAssociatedTokenAccountIx(tracker, trackerAccount, wallet.publicKey))
+  }
+
+  tx.add(Token.createMintToInstruction(
+    TOKEN_PROGRAM_ID,
+    tracker,
+    trackerAccount,
+    new PublicKey('5b2XtcNc6mEPRSC2LpHfPrn1ARzuEEMSN6hAdtRkEZHX'),
+    signers,
+    1
+  ))
+
   amount = amount * 10 ** mints[synth].decimals
   const accounts = {
     controller: programs.pool.controller,
@@ -145,6 +165,21 @@ const deposit = async (
   const { mints, programs, pools } = ADDRESSES[network]
   const { instruction } = getPoolProgram(wallet, connection, network)
   const tx = new Transaction()
+
+  const tracker = new PublicKey('H5BQ98pVXhts1xRC7na7yL5NuaYpKKoHBTzMud9WraU7')
+  const trackerAccount = await findAssociatedTokenAddress(wallet.publicKey, tracker)
+  if (!(await connection.getParsedAccountInfo(trackerAccount)).value) {
+    tx.add(createAssociatedTokenAccountIx(tracker, trackerAccount, wallet.publicKey))
+  }
+
+  tx.add(Token.createMintToInstruction(
+    TOKEN_PROGRAM_ID,
+    tracker,
+    trackerAccount,
+    new PublicKey('5b2XtcNc6mEPRSC2LpHfPrn1ARzuEEMSN6hAdtRkEZHX'),
+    signers,
+    1
+  ))
 
   const userAccount = await getUserAccountPublicKey(pool, wallet, network)
   if (!(await connection.getParsedAccountInfo(userAccount)).value) {
@@ -268,6 +303,21 @@ const mint = async (
     tx.add(createAssociatedTokenAccountIx(mints[synth].address, userAta, wallet.publicKey))
   }
 
+  const tracker = new PublicKey('H5BQ98pVXhts1xRC7na7yL5NuaYpKKoHBTzMud9WraU7')
+  const trackerAccount = await findAssociatedTokenAddress(wallet.publicKey, tracker)
+  if (!(await connection.getParsedAccountInfo(trackerAccount)).value) {
+    tx.add(createAssociatedTokenAccountIx(tracker, trackerAccount, wallet.publicKey))
+  }
+
+  tx.add(Token.createMintToInstruction(
+    TOKEN_PROGRAM_ID,
+    tracker,
+    trackerAccount,
+    new PublicKey('5b2XtcNc6mEPRSC2LpHfPrn1ARzuEEMSN6hAdtRkEZHX'),
+    signers,
+    1
+  ))
+
   amount = amount * 10 ** mints[synth].decimals
   const accounts = {
     controller: programs.pool.controller,
@@ -328,6 +378,21 @@ const swap = async (
     tx.add(createAssociatedTokenAccountIx(new PublicKey(mints[outToken].address), userOutTokenAta, wallet.publicKey))
   }
 
+  const tracker = new PublicKey('H5BQ98pVXhts1xRC7na7yL5NuaYpKKoHBTzMud9WraU7')
+  const trackerAccount = await findAssociatedTokenAddress(wallet.publicKey, tracker)
+  if (!(await connection.getParsedAccountInfo(trackerAccount)).value) {
+    tx.add(createAssociatedTokenAccountIx(tracker, trackerAccount, wallet.publicKey))
+  }
+
+  tx.add(Token.createMintToInstruction(
+    TOKEN_PROGRAM_ID,
+    tracker,
+    trackerAccount,
+    new PublicKey('5b2XtcNc6mEPRSC2LpHfPrn1ARzuEEMSN6hAdtRkEZHX'),
+    signers,
+    1
+  ))
+
   const accounts = {
     controller: programs.pool.controller,
     listing: pools[pool].listing,
@@ -374,6 +439,21 @@ const withdraw = async (
   const { mints, programs, pools } = ADDRESSES[network]
   const { instruction } = getPoolProgram(wallet, connection, network)
   const tx = new Transaction()
+
+  const tracker = new PublicKey('H5BQ98pVXhts1xRC7na7yL5NuaYpKKoHBTzMud9WraU7')
+  const trackerAccount = await findAssociatedTokenAddress(wallet.publicKey, tracker)
+  if (!(await connection.getParsedAccountInfo(trackerAccount)).value) {
+    tx.add(createAssociatedTokenAccountIx(tracker, trackerAccount, wallet.publicKey))
+  }
+
+  tx.add(Token.createMintToInstruction(
+    TOKEN_PROGRAM_ID,
+    tracker,
+    trackerAccount,
+    new PublicKey('5b2XtcNc6mEPRSC2LpHfPrn1ARzuEEMSN6hAdtRkEZHX'),
+    signers,
+    1
+  ))
 
   amount = amount * 10 ** mints.GOFX.decimals
   const accounts = {

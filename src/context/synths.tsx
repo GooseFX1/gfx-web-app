@@ -15,7 +15,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
 import { ISwapToken, SwapInput } from './swap'
 import { notify } from '../utils'
-import { ADDRESSES, Mint, Pool, pool } from '../web3'
+import { ADDRESSES, Mint, Pool, pool, SYNTH_DEFAULT_MINT } from '../web3'
 
 const gfx_stocks_pool = import('gfx_stocks_pool')
 
@@ -92,7 +92,7 @@ interface IUserPortfolio {
 const DEFAULT_POOL_ACCOUNT = { shareRate: 0, synthsDebt: [], totalDebt: 0, totalShares: 0 }
 const DEFAULT_USER_ACCOUNT = { claimableFee: 0, cAmount: 0, debt: 0, shareRate: 0, shares: 0 }
 const DEFAULT_USER_PORTFOLIO = { cRatio: 0, cValue: 0, debt: 0, pendingFees: 0 }
-const REFRESH_INTERVAL = 1000
+const REFRESH_INTERVAL = 3000
 
 const SynthsContext = createContext<ISynthsConfig | null>(null)
 
@@ -104,12 +104,9 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     () => Object.entries(ADDRESSES[network].pools).filter(([_, { type }]) => type === 'synth'),
     [network]
   )
-  const availableSynths = useMemo(
-    () => Object.entries(ADDRESSES[network].mints).filter(([synth, _]) => synth !== 'GOFX'),
-    [network]
-  )
 
   const [amount, setAmount] = useState(0)
+  const [availableSynths, setAvailableSynths] = useState<[string, Mint][]>([])
   const [focused, setFocused] = useState<SwapInput>(undefined)
   const [inToken, setInToken] = useState<ISwapToken | undefined>()
   const [inTokenAmount, setInTokenAmount] = useState(0)
@@ -119,7 +116,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [poolName, setPoolName] = useState(availablePools[0][0])
   const [poolAccount, setPoolAccount] = useState<IPoolAccount>(DEFAULT_POOL_ACCOUNT)
   const [prices, setPrices] = useState<IPrices>({})
-  const [synth, setSynth] = useState(availableSynths[0][0])
+  const [synth, setSynth] = useState('gUSD')
   const [userAccount, setUserAccount] = useState<IUserAccount>(DEFAULT_USER_ACCOUNT)
   const [userPortfolio, setUserPortfolio] = useState<IUserPortfolio>(DEFAULT_USER_PORTFOLIO)
 
@@ -259,6 +256,23 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const fieldToNumber = async (x: Decimal) => {
     return (await gfx_stocks_pool).decimal2number(x.flags, x.hi, x.lo, x.mid)
   }
+
+  useEffect(() => {
+    console.log('1');
+    (async () => {
+      const availableSynths = []
+      const listingAccount = await pool.listingAccount(poolName, wallet, connection, network)
+      const mints = Object.entries(ADDRESSES[network].mints)
+      for (const { mint } of listingAccount.synths) {
+        if (!mint.equals(SYNTH_DEFAULT_MINT)) {
+          const match = mints.find(([_, { address }]) => address.equals(mint))
+          match && availableSynths.push(match)
+        }
+      }
+
+      setAvailableSynths(availableSynths)
+    })()
+  }, [connection, network, poolName, wallet])
 
   const updateAccounts = useCallback(async () => {
     const prices: IPrices = { gUSD: { current: 1 } }
