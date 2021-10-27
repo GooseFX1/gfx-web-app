@@ -1,41 +1,10 @@
-import React, { FC, MouseEventHandler, useCallback, useMemo, useState } from 'react'
-import { Select } from 'antd'
+import React, { Dispatch, FC, MouseEventHandler, SetStateAction, useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Menu, MenuItem } from './shared'
-import { ENDPOINTS, useConnectionConfig, useWalletModal } from '../../context'
 import { ArrowDropdown } from '../../components'
-import { CenteredImg, MainText } from '../../styles'
-
-const _BUTTON = MainText(styled.button`
-  ${({ theme }) => theme.flexCenter}
-  height: ${({ theme }) => theme.margins['5x']};
-  border: none;
-  ${({ theme }) => theme.roundedBorders}
-
-  span {
-    font-size: 12px;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-  }
-`)
-
-const CONNECT_BUTTON = styled(_BUTTON)`
-  padding: 0 ${({ theme }) => theme.margins['2x']};
-  background-color: ${({ theme }) => theme.secondary3};
-`
-
-const CONNECTED_BUTTON = styled(_BUTTON)`
-  padding: 0 ${({ theme }) => theme.margins['1.5x']} 0 ${({ theme }) => theme.margins['1x']};
-  background-image: linear-gradient(to left, ${({ theme }) => theme.secondary2}, ${({ theme }) => theme.primary2});
-`
-
-const NETWORK = styled.span`
-  padding: 5px 0;
-  color: white !important;
-  cursor: initial;
-`
+import { useWalletModal } from '../../context'
+import { CenteredImg } from '../../styles'
 
 const WALLET_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['3x'])}
@@ -48,8 +17,39 @@ const WALLET_ICON = styled(CenteredImg)`
   }
 `
 
-const Overlay: FC<{ setArrowRotation: (x: boolean) => void }> = ({ setArrowRotation }) => {
-  const { endpoint, setEndpoint } = useConnectionConfig()
+const WRAPPER = styled.button<{ $connected: boolean }>`
+  padding: 0 ${({ theme }) => theme.margins['2x']};
+  ${({ theme, $connected }) => $connected && `padding-left: ${theme.margins['1.5x']};`}
+  ${({ theme }) => theme.flexCenter}
+  height: ${({ theme }) => theme.margins['5x']};
+  border: none;
+  ${({ theme }) => theme.roundedBorders}
+  background-color: ${({ theme }) => theme.secondary3};
+  transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.secondary2};
+  }
+
+  ${({ theme, $connected }) =>
+    $connected &&
+    `
+    background-image: linear-gradient(to left, ${theme.secondary2}, ${theme.primary2});
+
+    > span {
+      cursor: initial !important;
+    }
+  `}
+
+  span {
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+  }
+`
+
+const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ setArrowRotation }) => {
   const { disconnect, publicKey, wallet } = useWallet()
   const { setVisible: setWalletModalVisible } = useWalletModal()
 
@@ -80,7 +80,7 @@ const Overlay: FC<{ setArrowRotation: (x: boolean) => void }> = ({ setArrowRotat
       {wallet && (
         <MenuItem
           onClick={() => {
-            disconnect().catch(() => {})
+            disconnect().then()
             setArrowRotation(false)
           }}
         >
@@ -88,118 +88,54 @@ const Overlay: FC<{ setArrowRotation: (x: boolean) => void }> = ({ setArrowRotat
           <img src={`${process.env.PUBLIC_URL}/img/assets/disconnect.svg`} alt="disconnect" />
         </MenuItem>
       )}
-      <MenuItem>
-        <NETWORK>Network:</NETWORK>
-        <Select
-          bordered={false}
-          dropdownStyle={{ minWidth: 'fit-content' }}
-          onSelect={setEndpoint}
-          showArrow={false}
-          size="small"
-          value={endpoint}
-        >
-          {ENDPOINTS.map(({ endpoint, network }) => (
-            <Select.Option value={endpoint} key={endpoint}>
-              {network}
-            </Select.Option>
-          ))}
-        </Select>
-      </MenuItem>
     </Menu>
   )
 }
 
-export const WalletConnectButton: FC<{ arrowRotation: boolean; setArrowRotation: (x: boolean) => void }> = ({
-  arrowRotation,
-  setArrowRotation
-}) => {
-  const { wallet, connect, connecting, connected } = useWallet()
-
-  const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
-    (event) => {
-      if (!event.defaultPrevented) connect().catch(() => {})
-    },
-    [connect]
-  )
-
-  const content = useMemo(() => {
-    if (connecting) return 'Connecting ...'
-    if (connected) return `Connected with ${wallet?.name}`
-    if (wallet) return `Connect with ${wallet.name}`
-    return `Connect`
-  }, [connecting, connected, wallet])
-
-  return (
-    <CONNECT_BUTTON>
-      <span onClick={handleClick}>{content}</span>
-      {!connecting && (
-        <ArrowDropdown
-          arrowRotation={arrowRotation}
-          offset={[0, 30]}
-          overlay={<Overlay setArrowRotation={setArrowRotation} />}
-          setArrowRotation={setArrowRotation}
-        />
-      )}
-    </CONNECT_BUTTON>
-  )
-}
-
-const WalletModalButton: FC<{ arrowRotation: boolean; setArrowRotation: (x: boolean) => void }> = ({
-  arrowRotation,
-  setArrowRotation
-}) => {
-  const { setVisible: setWalletModalVisible } = useWalletModal()
-
-  const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
-    (event) => {
-      if (!event.defaultPrevented) setWalletModalVisible(true)
-    },
-    [setWalletModalVisible]
-  )
-
-  return (
-    <CONNECT_BUTTON>
-      <span onClick={handleClick}>Connect Wallet</span>
-      <ArrowDropdown
-        arrowRotation={arrowRotation}
-        offset={[9, 30]}
-        overlay={<Overlay setArrowRotation={setArrowRotation} />}
-        setArrowRotation={setArrowRotation}
-      />
-    </CONNECT_BUTTON>
-  )
-}
-
 export const Connect: FC = () => {
-  const { publicKey, wallet } = useWallet()
+  const { connect, publicKey, wallet } = useWallet()
+  const { setVisible: setModalVisible } = useWalletModal()
   const [arrowRotation, setArrowRotation] = useState(false)
+  const [visible, setVisible] = useState(false)
 
   const base58 = useMemo(() => publicKey?.toBase58(), [publicKey])
-  const content = useMemo(
-    () => (!wallet || !base58 ? null : base58.substr(0, 4) + '..' + base58.substr(-4, 4)),
-    [wallet, base58]
+  const content = useMemo(() => {
+    if (!wallet) {
+      return 'Connect Wallet'
+    } else if (!base58) {
+      return `Connect with ${wallet.name}`
+    } else {
+      return base58.substr(0, 4) + '..' + base58.substr(-4, 4)
+    }
+  }, [wallet, base58])
+
+  const onSpanClick: MouseEventHandler<HTMLButtonElement> = useCallback(
+    (event) => {
+      !event.defaultPrevented && !wallet ? setModalVisible(true) : connect().catch(() => {})
+    },
+    [connect, setModalVisible, wallet]
   )
 
-  if (!wallet) {
-    return <WalletModalButton arrowRotation={arrowRotation} setArrowRotation={setArrowRotation} />
-  }
-
-  if (!base58) {
-    return <WalletConnectButton arrowRotation={arrowRotation} setArrowRotation={setArrowRotation} />
+  const onArrowDropdownClick = () => {
+    setArrowRotation(!arrowRotation)
+    setVisible(!visible)
   }
 
   return (
-    <CONNECTED_BUTTON>
-      <WALLET_ICON>
-        <img src={wallet?.icon} alt={`${wallet?.name}_icon`} />
-      </WALLET_ICON>
-      <span>{content}</span>
-      <ArrowDropdown
-        arrowRotation={arrowRotation}
-        offset={[9, 30]}
-        overlay={<Overlay setArrowRotation={setArrowRotation} />}
-        setArrowRotation={setArrowRotation}
-      />
-    </CONNECTED_BUTTON>
+    <WRAPPER $connected={!!base58}>
+      {wallet && base58 && (
+        <WALLET_ICON>
+          <img src={wallet.icon} alt={`${wallet.name}_icon`} />
+        </WALLET_ICON>
+      )}
+      <span onClick={onSpanClick}>{content}</span>
+      {wallet && (
+        <ArrowDropdown
+          arrowRotation={arrowRotation}
+          offset={[9, 30]}
+          overlay={<Overlay setArrowRotation={setArrowRotation} />}
+        />
+      )}
+    </WRAPPER>
   )
 }

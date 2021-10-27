@@ -11,9 +11,19 @@ export const CenteredImg = styled(CenteredDiv)`
   }
 `
 
+export const FlexColumnDiv = styled.div`
+  ${({ theme }) => theme.flexColumnNoWrap}
+`
+
 export const SpaceBetweenDiv = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
+`
+
+export const SpaceEvenlyDiv = styled.div`
+  display: flex;
+  justify-content: space-evenly;
   align-items: center;
 `
 

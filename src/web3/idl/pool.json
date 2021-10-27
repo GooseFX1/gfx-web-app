@@ -1,0 +1,1453 @@
+{
+  "version": "0.0.0",
+  "name": "pool",
+  "instructions": [
+    {
+      "name": "initializeUser",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "bump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "depositCollateral",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "priceAggregator",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "listing",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "poolAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userWallet",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "withdrawCollateral",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "priceAggregator",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "listing",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "poolAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userWallet",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "mint",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "priceAggregator",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "listing",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "synthMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userWallet",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "burn",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "priceAggregator",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "listing",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "synthMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userWallet",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "swap",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "priceAggregator",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "listing",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "inTokenMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "outTokenMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userInTokenAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userOutTokenAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userWallet",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "liquidate",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "priceAggregator",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "listing",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "collateralVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liquidatedTokenMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liquidatorLiquidatedTokenAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liquidatorCollateralAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "victimUserAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "victimWallet",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "liquidatorWallet",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "claimFee",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "priceAggregator",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "listing",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "usdMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userWallet",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "updateSynths",
+      "accounts": [
+        {
+          "name": "priceAggregator",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initializeController",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "priceAggregator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "collateralMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "collateralFeed",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "usdMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "seed",
+          "type": {
+            "array": ["u8", 32]
+          }
+        },
+        {
+          "name": "controllerBump",
+          "type": "u8"
+        },
+        {
+          "name": "usdMintBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "initializePool",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "listing",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "collateralMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "poolCollateralAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "usdMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "feeCollectorUsdAta",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "seed",
+          "type": {
+            "array": ["u8", 32]
+          }
+        },
+        {
+          "name": "bump",
+          "type": "u8"
+        },
+        {
+          "name": "initialMargin",
+          "type": {
+            "defined": "Decimal"
+          }
+        },
+        {
+          "name": "maintenanceMargin",
+          "type": {
+            "defined": "Decimal"
+          }
+        }
+      ]
+    },
+    {
+      "name": "configPool",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "config",
+          "type": {
+            "defined": "PoolConfig"
+          }
+        }
+      ]
+    },
+    {
+      "name": "appendToListing",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "listing",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "removeFromListing",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "listing",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "appendToPriceAggregator",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "priceAggregator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "feed",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "payer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "seed",
+          "type": {
+            "array": ["u8", 32]
+          }
+        },
+        {
+          "name": "bump",
+          "type": "u8"
+        },
+        {
+          "name": "decimal",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "removeFromPriceAggregator",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "priceAggregator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "migratePriceAggregator",
+      "accounts": [
+        {
+          "name": "controller",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "priceAggregator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newPriceAggregator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Controller",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "seed",
+            "type": {
+              "array": ["u8", 32]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "admin",
+            "type": "publicKey"
+          },
+          {
+            "name": "priceAggregator",
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Listing",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool",
+            "type": "publicKey"
+          },
+          {
+            "name": "collateral",
+            "type": {
+              "defined": "Collateral"
+            }
+          },
+          {
+            "name": "usd",
+            "type": {
+              "defined": "Synth"
+            }
+          },
+          {
+            "name": "len",
+            "type": "u32"
+          },
+          {
+            "name": "synths",
+            "type": {
+              "array": [
+                {
+                  "defined": "Synth"
+                },
+                256
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Pool",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "seed",
+            "type": {
+              "array": ["u8", 32]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "suspended",
+            "type": "bool"
+          },
+          {
+            "name": "feeCollector",
+            "type": "publicKey"
+          },
+          {
+            "name": "feeCollected",
+            "type": {
+              "defined": "Decimal"
+            }
+          },
+          {
+            "name": "listing",
+            "type": "publicKey"
+          },
+          {
+            "name": "totalShares",
+            "type": {
+              "defined": "Decimal"
+            }
+          },
+          {
+            "name": "shareRate",
+            "type": {
+              "defined": "Decimal"
+            }
+          },
+          {
+            "name": "feeRates",
+            "type": {
+              "array": [
+                {
+                  "defined": "Decimal"
+                },
+                10
+              ]
+            }
+          },
+          {
+            "name": "feeRateThresholds",
+            "type": {
+              "array": [
+                {
+                  "defined": "Decimal"
+                },
+                10
+              ]
+            }
+          },
+          {
+            "name": "feeRatesLen",
+            "type": "u32"
+          },
+          {
+            "name": "collectorRate",
+            "type": {
+              "defined": "Decimal"
+            }
+          },
+          {
+            "name": "penaltyToLiquidator",
+            "type": {
+              "defined": "Decimal"
+            }
+          },
+          {
+            "name": "delayTolerance",
+            "type": "u64"
+          },
+          {
+            "name": "unused",
+            "type": {
+              "array": ["u8", 128]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PriceAggregator",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "controller",
+            "type": "publicKey"
+          },
+          {
+            "name": "prices",
+            "type": {
+              "defined": "Prices"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "UserAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "shares",
+            "type": {
+              "defined": "Decimal"
+            }
+          },
+          {
+            "name": "shareRate",
+            "type": {
+              "defined": "Decimal"
+            }
+          },
+          {
+            "name": "claimableFee",
+            "type": {
+              "defined": "Decimal"
+            }
+          },
+          {
+            "name": "collateralAmount",
+            "type": {
+              "defined": "Decimal"
+            }
+          },
+          {
+            "name": "unused",
+            "type": {
+              "array": ["u8", 128]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "Synth",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "publicKey"
+          },
+          {
+            "name": "debt",
+            "type": {
+              "defined": "Decimal"
+            }
+          },
+          {
+            "name": "maxDebt",
+            "type": {
+              "defined": "Decimal"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Collateral",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "publicKey"
+          },
+          {
+            "name": "initialMargin",
+            "type": {
+              "defined": "Decimal"
+            }
+          },
+          {
+            "name": "maintenanceMargin",
+            "type": {
+              "defined": "Decimal"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PoolConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "listing",
+            "type": {
+              "option": "publicKey"
+            }
+          },
+          {
+            "name": "feeRate",
+            "type": {
+              "option": {
+                "defined": "Decimal"
+              }
+            }
+          },
+          {
+            "name": "feeThreshold",
+            "type": {
+              "option": {
+                "defined": "Decimal"
+              }
+            }
+          },
+          {
+            "name": "suspended",
+            "type": {
+              "option": "bool"
+            }
+          },
+          {
+            "name": "delayTolerance",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "collectorRate",
+            "type": {
+              "option": {
+                "defined": "Decimal"
+              }
+            }
+          },
+          {
+            "name": "penaltyToLiquidator",
+            "type": {
+              "option": {
+                "defined": "Decimal"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PubkeyIndex",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "key",
+            "type": "publicKey"
+          },
+          {
+            "name": "index",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Prices",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "len",
+            "type": "u32"
+          },
+          {
+            "name": "buffer",
+            "type": {
+              "array": [
+                {
+                  "defined": "Price"
+                },
+                512
+              ]
+            }
+          },
+          {
+            "name": "mintIndex",
+            "type": {
+              "array": [
+                {
+                  "defined": "PubkeyIndex"
+                },
+                512
+              ]
+            }
+          },
+          {
+            "name": "feedIndex",
+            "type": {
+              "array": [
+                {
+                  "defined": "PubkeyIndex"
+                },
+                512
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Price",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "decimal",
+            "type": "u8"
+          },
+          {
+            "name": "price",
+            "type": {
+              "defined": "Decimal"
+            }
+          },
+          {
+            "name": "status",
+            "type": "u32"
+          },
+          {
+            "name": "updatedAt",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Decimal",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "flags",
+            "type": "u32"
+          },
+          {
+            "name": "hi",
+            "type": "u32"
+          },
+          {
+            "name": "lo",
+            "type": "u32"
+          },
+          {
+            "name": "mid",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PriceStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Unknown"
+          },
+          {
+            "name": "Trading"
+          },
+          {
+            "name": "Halted"
+          },
+          {
+            "name": "Auction"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CorpAction",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "NoCorpAct"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PriceType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Unknown"
+          },
+          {
+            "name": "Price"
+          },
+          {
+            "name": "TWAP"
+          },
+          {
+            "name": "Volatility"
+          }
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "name": "UserCreated",
+      "fields": [
+        {
+          "name": "who",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "pool",
+          "type": "publicKey",
+          "index": false
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 300,
+      "name": "VaultOwnership",
+      "msg": "[G000] Vault not owned by the program"
+    },
+    {
+      "code": 301,
+      "name": "MinimumAmount",
+      "msg": "[G001] Tokenized stocks amount is lower than minimum amount"
+    },
+    {
+      "code": 302,
+      "name": "DifferentScale",
+      "msg": "[G002] Scale is different"
+    },
+    {
+      "code": 303,
+      "name": "ContractAddressNotCorrect",
+      "msg": "[G003] Contract address is incorrect"
+    },
+    {
+      "code": 304,
+      "name": "OracleOutdated",
+      "msg": "[G004] The oracle is outdated"
+    },
+    {
+      "code": 305,
+      "name": "ListingFull",
+      "msg": "[G005] The listing account is full"
+    },
+    {
+      "code": 306,
+      "name": "Suspended",
+      "msg": "[G006] The pool is suspended"
+    },
+    {
+      "code": 307,
+      "name": "InitialMarginViolation",
+      "msg": "[G007] The mint amount violates the initial margin"
+    },
+    {
+      "code": 308,
+      "name": "MaxDebtExceeded",
+      "msg": "[G008] Max debt exceeded for a synth"
+    },
+    {
+      "code": 309,
+      "name": "WashTrade",
+      "msg": "[G009] Wash trade is not allowed"
+    },
+    {
+      "code": 310,
+      "name": "SynthNotInList",
+      "msg": "[G010] The synth address is not in listing"
+    },
+    {
+      "code": 311,
+      "name": "MarketNotOpen",
+      "msg": "[G011] The market is not open"
+    },
+    {
+      "code": 312,
+      "name": "MarginRatioInvalid",
+      "msg": "[G012] Margin ratio is not valid"
+    },
+    {
+      "code": 313,
+      "name": "SynthNotInAggregator",
+      "msg": "[G013] The synth address is not in price aggregator"
+    },
+    {
+      "code": 314,
+      "name": "SynthAlreadyInList",
+      "msg": "[G014] The synth address is already in listing"
+    },
+    {
+      "code": 315,
+      "name": "SynthAlreadyInAggregator",
+      "msg": "[G015] The synth address is already in price aggregator"
+    },
+    {
+      "code": 316,
+      "name": "PriceAggregatorFull",
+      "msg": "[G016] The price aggregator is full"
+    },
+    {
+      "code": 317,
+      "name": "PriceAggregatorEmpty",
+      "msg": "[G017] The price aggregator is empty"
+    },
+    {
+      "code": 318,
+      "name": "WithdrawViolatesMM",
+      "msg": "[G018] Withdraw violates the maintenance margin requirement"
+    },
+    {
+      "code": 319,
+      "name": "DowngradeMigration",
+      "msg": "[G019] Migrate to a smaller account is not allowed"
+    }
+  ],
+  "metadata": {
+    "address": "29S8DHSwXLSwTSj25Tdx8Q8vAVqAmZ1TycnJYLp3owk5"
+  }
+}

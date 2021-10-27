@@ -1,3 +1,3 @@
-export * from './components'
-export * from './text'
+export * from './constants'
 export * from './utils'
+export * from './text'

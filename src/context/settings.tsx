@@ -1,8 +1,8 @@
-import React, { Dispatch, FC, ReactNode, SetStateAction, useContext, useMemo } from 'react'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useContext, useMemo, useState } from 'react'
 import { ENV } from '@solana/spl-token-registry'
-import { clusterApiUrl, Connection } from '@solana/web3.js'
-import { useLocalStorageState } from '../utils'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { Connection } from '@solana/web3.js'
+import { useLocalStorageState } from '../utils'
 
 interface IEndpoint {
   chainId: ENV
@@ -11,9 +11,16 @@ interface IEndpoint {
 }
 
 export const ENDPOINTS: IEndpoint[] = [
-  { chainId: ENV.MainnetBeta, endpoint: clusterApiUrl('mainnet-beta'), network: WalletAdapterNetwork.Mainnet },
-  { chainId: ENV.Testnet, endpoint: clusterApiUrl('testnet'), network: WalletAdapterNetwork.Testnet },
-  { chainId: ENV.Devnet, endpoint: clusterApiUrl('devnet'), network: WalletAdapterNetwork.Devnet }
+  {
+    chainId: ENV.MainnetBeta,
+    endpoint: 'https://green-little-wind.solana-mainnet.quiknode.pro/0e3bb9a62cf850ee8a4cf68dbb92aef6d4c97d0b/',
+    network: WalletAdapterNetwork.Mainnet
+  },
+  {
+    chainId: ENV.Devnet,
+    endpoint: 'https://muddy-rough-leaf.solana-devnet.quiknode.pro/542f5d1429c8b5bfaaf947ca4be72847c2e24859/',
+    network: WalletAdapterNetwork.Devnet
+  }
 ]
 
 interface ISettingsConfig {
@@ -51,7 +58,7 @@ export function useConnectionConfig() {
 }
 
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [endpoint, setEndpoint] = useLocalStorageState('endpoint', ENDPOINTS[0].endpoint)
+  const [endpoint, setEndpoint] = useState(ENDPOINTS[0].endpoint)
   const [slippage, setSlippage] = useLocalStorageState('slippage', DEFAULT_SLIPPAGE.toString())
 
   const connection = useMemo(() => new Connection(endpoint, 'recent'), [endpoint])
@@ -66,8 +73,8 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         endpoint,
         network,
         setEndpoint,
-        slippage: parseFloat(slippage),
-        setSlippage: (val) => setSlippage(val.toString())
+        setSlippage: (val) => setSlippage(val.toString()),
+        slippage: parseFloat(slippage)
       }}
     >
       {children}

@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const AmountField = styled.div<{ $balance: number; $height: string; $USDCValue?: string }>`
+export const AmountField = styled.div<{ $balance: number; $height: string; $value?: string }>`
   position: relative;
   height: ${({ $height }) => $height};
   margin-top: ${({ theme }) => theme.margins['2x']};
@@ -19,16 +19,15 @@ export const AmountField = styled.div<{ $balance: number; $height: string; $USDC
     white-space: nowrap;
   }
 
-  ${({ theme, $USDCValue }) =>
-    $USDCValue &&
-    parseFloat($USDCValue) > 0 &&
+  ${({ theme, $value }) =>
+    $value &&
     `
     &:after {
-      content: '${$USDCValue} USDC';
+      content: '${$value}';
       position: absolute;
       right: ${theme.margins['2.5x']};
       bottom: ${theme.margins['1x']};
-      font-family: 'Montserrat';
+      ${theme.mainText}
       font-size: 8px;
       font-weight: 500;
       color: white;
@@ -46,15 +45,3 @@ export const AmountField = styled.div<{ $balance: number; $height: string; $USDC
     text-align: right;
   }
 `
-
-/*
-      &:last-child {
-        position: absolute;
-        left: 0;
-        bottom: -12px;
-        ${({ theme }) => theme.mainText}
-        color: white;
-        font-size: 8px;
-        white-space: nowrap;
-      }
- */

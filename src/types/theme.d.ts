@@ -9,8 +9,10 @@ export interface Colors {
 
   // text
   text1: Color
+  text1h: Color
   text2: Color
   text3: Color
+  text4: Color
 
   // backgrounds / greys
   bg1: Color
@@ -28,8 +30,9 @@ export interface Colors {
   // speciality colors
   appLayoutFooterBorder: Color
   appLayoutFooterToggle: Color
+  cryptoOrderHeaderBorder: Color
+  tabsGradients: Color[]
   textBox: Color
-  tokenRegistryWallet: Color
   walletModalWallet: Color
   searchbarBackground: Color
 
@@ -44,6 +47,8 @@ export interface Colors {
   secondary4: Color
 
   // other
+  asks: Color
+  bids: Color
   error: Color
   success: Color
 }
@@ -58,11 +63,13 @@ export interface Text {
 declare module 'styled-components' {
   export interface DefaultTheme extends Colors, Text {
     margins: {
+      '0.5x': string
       '1x': string
       '1.5x': string
       '2x': string
       '2.5x': string
       '3x': string
+      '3.5x': string
       '4x': string
       '4.5x': string
       '5x': string
@@ -87,9 +94,11 @@ declare module 'styled-components' {
       fromLarge: ThemedCssFunction<DefaultTheme>
     }
 
+    hapticTransitionTime: string
     mainTransitionTime: string
 
     // css snippets
+    ellipse: FlattenSimpleInterpolation
     flexCenter: FlattenSimpleInterpolation
     flexColumnNoWrap: FlattenSimpleInterpolation
     flexRowNoWrap: FlattenSimpleInterpolation
