@@ -174,7 +174,7 @@ export const ADDRESSES: {
         decimals: 8
       },
       gAAPL: {
-        address: new PublicKey('qUY4zvt1wk3qiMjF2F2J771AyLsYeeDTbBP7PbrNoD6'),
+        address: new PublicKey('9sqW7s2oDvCw291grpzuRQ1Y4x38ABNVEqoCyyBZFpUv'),
         decimals: 8
       },
       gTSLA: {
