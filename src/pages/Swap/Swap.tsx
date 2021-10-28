@@ -5,11 +5,10 @@ import { Settings } from './Settings'
 import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
-import { Switch } from './Switch'
-import { SwapProvider, useDarkMode } from '../../context'
-import { addAnalytics } from '../../utils'
 import { Modal } from '../../components'
-import { CenteredImg, MainText, SpaceBetweenDiv } from '../../styles'
+import { ENDPOINTS, SwapProvider, useConnectionConfig, useDarkMode, useSwap } from '../../context'
+import { CenteredImg, SpaceBetweenDiv } from '../../styles'
+import { addAnalytics, notify } from '../../utils'
 
 const BODY = styled.div`
   position: relative;
@@ -19,17 +18,45 @@ const BODY = styled.div`
   margin: ${({ theme }) => theme.margins['4x']} 0;
 `
 
-const HEADER_TITLE = MainText(styled.span`
+const HEADER_TITLE = styled.span`
   font-size: 20px;
   font-weight: bold;
-`)
+  color: ${({ theme }) => theme.text1};
+`
 
 const HEADER_WRAPPER = styled(SpaceBetweenDiv)<{ $iconSize: string }>`
   width: 100%;
+
   > div {
-    ${({ $iconSize, theme }) => theme.measurements($iconSize)}
-    cursor: pointer;
+    display: flex;
+
+    > div {
+      ${({ $iconSize, theme }) => theme.measurements($iconSize)}
+      cursor: pointer;
+
+      &:first-child {
+        margin-right: ${({ theme }) => theme.margins['3x']};
+      }
+
+      &:last-child {
+        padding-top: 6px;
+      }
+    }
   }
+`
+
+const REFRESH_RATE = styled(CenteredImg)`
+  ${({ theme }) => theme.measurements(theme.margins['4x'])};
+  cursor: pointer;
+`
+
+const SWITCH = styled(CenteredImg)<{ measurements: number }>`
+  position: absolute;
+  top: calc(50% - ${({ measurements }) => measurements}px / 2 + ${({ theme }) => theme.margins['2x']});
+  left: calc(50% - ${({ measurements }) => measurements}px / 2);
+  ${({ measurements, theme }) => theme.measurements(measurements + 'px')}
+  z-index: 1;
+  cursor: pointer;
 `
 
 const WRAPPER = styled.div`
@@ -43,8 +70,9 @@ const WRAPPER = styled.div`
   ${({ theme }) => theme.largeShadow}
 `
 
-export const Swap: FC = () => {
+const SwapContent: FC = () => {
   const { mode } = useDarkMode()
+  const { refreshRates, setFocused, switchTokens } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
 
   useEffect(() => {
@@ -68,26 +96,54 @@ export const Swap: FC = () => {
   `
 
   return (
-    <SwapProvider>
-      <WRAPPER>
-        <Modal setVisible={setSettingsModalVisible} title="Settings" visible={settingsModalVisible}>
-          <Settings />
-        </Modal>
-        <HEADER_WRAPPER $iconSize="24px">
-          <HEADER_TITLE>Swap</HEADER_TITLE>
+    <WRAPPER>
+      <Modal setVisible={setSettingsModalVisible} title="Settings" visible={settingsModalVisible}>
+        <Settings />
+      </Modal>
+      <HEADER_WRAPPER $iconSize="24px">
+        <HEADER_TITLE>Swap</HEADER_TITLE>
+        <div>
+          <REFRESH_RATE onClick={refreshRates}>
+            <img src={`${process.env.PUBLIC_URL}/img/assets/refresh_rate.svg`} alt="" />
+          </REFRESH_RATE>
           <CenteredImg onClick={onClick}>
             <img src={`${process.env.PUBLIC_URL}/img/assets/settings_${mode}_mode.svg`} alt="settings" />
           </CenteredImg>
-        </HEADER_WRAPPER>
-        <Rate />
-        <BODY>
-          <style>{localCSS}</style>
-          <SwapFrom height={height} />
-          <Switch />
-          <SwapTo height={height} />
-        </BODY>
-        <SwapButton />
-      </WRAPPER>
+        </div>
+      </HEADER_WRAPPER>
+      <Rate />
+      <BODY>
+        <style>{localCSS}</style>
+        <SwapFrom height={height} />
+        <SWITCH
+          measurements={80}
+          onClick={() => {
+            setFocused('from')
+            switchTokens()
+          }}
+        >
+          <img src={`${process.env.PUBLIC_URL}/img/assets/swap_switch_${mode}_mode.svg`} alt="switch" />
+        </SWITCH>
+        <SwapTo height={height} />
+      </BODY>
+      <SwapButton />
+    </WRAPPER>
+  )
+}
+
+export const Swap: FC = () => {
+  const { endpoint, setEndpoint } = useConnectionConfig()
+
+  useEffect(() => {
+    if (endpoint !== ENDPOINTS[1].endpoint) {
+      notify({ message: 'Swap is in alpha. Switched to devnet' })
+      setEndpoint(ENDPOINTS[1].endpoint)
+    }
+  }, [endpoint, setEndpoint])
+
+  return (
+    <SwapProvider>
+      <SwapContent />
     </SwapProvider>
   )
 }

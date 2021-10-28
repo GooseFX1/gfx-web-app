@@ -1,34 +1,28 @@
 import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
-import { useRates, useSwap } from '../../context'
-import { MainText } from '../../styles'
+import { useSwap } from '../../context'
 
-const RATE = MainText(styled.span`
+const RATE = styled.span`
   width: 100%;
   margin-top: ${({ theme }) => theme.margins['2x']};
   font-size: 10px;
   font-weight: bold;
   text-align: left;
   color: ${({ theme }) => theme.text1};
-`)
+`
 
 export const Rate: FC = () => {
-  const { rates } = useRates()
-  const { tokenA, tokenB } = useSwap()
+  const { pool, tokenA, tokenB } = useSwap()
 
-  const rate = useMemo(() => {
-    if (!tokenA) {
-      return 0
-    }
-
-    const { decimals } = tokenA
-    return (rates.outValuePerIn / 10 ** decimals).toString().slice(0, Math.min(decimals, 8))
-  }, [rates.outValuePerIn, tokenA])
+  const rate = useMemo(
+    () => (!tokenA ? 0 : pool.outValuePerIn.toString().slice(0, Math.min(tokenA.decimals, 8))),
+    [pool.outValuePerIn, tokenA]
+  )
 
   return (
     <RATE>
-      {rates.time}{' '}
-      {tokenA && tokenB && rates.outValuePerIn > 0 && (
+      {pool.time}{' '}
+      {tokenA && tokenB && pool.outValuePerIn > 0 && (
         <span>
           (1 {tokenA.symbol} = {rate} {tokenB.symbol})
         </span>

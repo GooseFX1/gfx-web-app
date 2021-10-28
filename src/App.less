@@ -1,51 +1,55 @@
-@import "~antd/dist/antd.dark.less";
+@import '~antd/dist/antd.dark.less';
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 .App {
-    height: 100%;
-    text-align: center;
-    min-width: 100%;
-    display: flex;
-    flex-direction: column;
+  min-width: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
 }
 
-a, span {
-    font-family: Montserrat;
-    font-weight: 500;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: normal;
+a,
+span {
+  font-family: Montserrat;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
 }
 
 a:hover,
 span:hover {
-    transition: color 300ms ease-in-out;
+  transition: color 300ms ease-in-out;
 }
 
 .ant-input-affix-wrapper {
-    border-radius: 45px;
+  border-radius: 45px;
 }
 
 .ant-input,
 .ant-input-affix-wrapper {
-    font-family: Montserrat;
-    font-weight: 500;
-    text-align: right;
+  font-family: Montserrat;
+  font-weight: 500;
+  text-align: right;
 }
 
 .ant-modal {
-    width: 350px !important;
+  width: 350px !important;
 }
 
 .ant-modal-content {
-    background-color: transparent;
-    border-radius: 20px;
+  background-color: transparent;
+  border-radius: 20px;
+}
+
+.ant-notification-notice {
+  cursor: pointer;
 }
 
 .ant-notification-notice-with-icon .ant-notification-notice-description,
 .ant-notification-notice-with-icon .ant-notification-notice-message {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }

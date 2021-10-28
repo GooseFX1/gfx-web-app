@@ -1,0 +1,13 @@
+{
+  "name": "gfx-stocks-pool",
+  "version": "0.1.0",
+  "files": [
+    "gfx_stocks_pool_bg.wasm",
+    "gfx_stocks_pool.js",
+    "gfx_stocks_pool_bg.js",
+    "gfx_stocks_pool.d.ts"
+  ],
+  "module": "gfx_stocks_pool.js",
+  "types": "gfx_stocks_pool.d.ts",
+  "sideEffects": false
+}
