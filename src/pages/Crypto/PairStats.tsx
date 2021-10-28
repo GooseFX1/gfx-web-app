@@ -67,7 +67,7 @@ export const PairStats: FC<{ decimals: number; pair: string; type: MarketType }>
 
   const handleClick = () => {
     if (type === 'synth') {
-      history.push('/synths')
+      history.push('/stocks')
     } else if (selectedCrypto.pair !== symbol) {
       setSelectedCrypto({ decimals, pair, type })
     }
