@@ -10,7 +10,7 @@ const TOKEN = styled(SpaceBetweenDiv)`
   width: 100%;
 
   > * {
-    width: 20%;
+    width: 25%;
   }
 
   > div {
