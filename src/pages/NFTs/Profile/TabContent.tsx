@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import DropdowButton from '../../../layouts/App/DropDownButton'
 import { colors } from '../../../theme'
 import SearchBar from '../SearchBar'
+import TableList from './TableList'
 import Card from './Card'
 import NoContent from './NoContent'
 
@@ -17,6 +18,7 @@ const TAB_CONTENT = styled.div`
   .search-group {
     display: flex;
     align-items: center;
+    margin-bottom: 33px;
     > div:nth-child(1) {
       height: 43px;
       padding: 0 20px;
@@ -41,7 +43,7 @@ const TAB_CONTENT = styled.div`
   .cards-list {
     display: flex;
     flex-wrap: wrap;
-    margin: 33px -12px 0;
+    margin: 0 -12px;
     .card-item {
       width: 20%;
       padding: 0 12px;
@@ -64,28 +66,34 @@ interface Props {
 const TabContent = ({ data, type }: Props) => {
   return (
     <TAB_CONTENT>
-      <div className="actions-group">
-        <div className="search-group">
-          <SearchBar />
-          <div className="total-result">{data && data.length > 0 ? '2,335 Items' : '0 Item'}</div>
-        </div>
-        <DropdowButton
-          style={sortButtonn}
-          title="Sort"
-          options={[
-            { name: 'Name', icon: 'all' },
-            { name: 'Time', icon: 'art' }
-          ]}
-        />
-      </div>
-      {data && data.length > 0 ? (
-        <div className="cards-list">
-          {data.map((n: number, index: number) => (
-            <Card key={index} data={{ order: n, type: type }} />
-          ))}
-        </div>
+      {type === 'activity' ? (
+        <TableList />
       ) : (
-        <NoContent type={type} />
+        <>
+          <div className="actions-group">
+            <div className="search-group">
+              <SearchBar />
+              <div className="total-result">{data && data.length > 0 ? '2,335 Items' : '0 Item'}</div>
+            </div>
+            <DropdowButton
+              style={sortButtonn}
+              title="Sort"
+              options={[
+                { name: 'Name', icon: 'all' },
+                { name: 'Time', icon: 'art' }
+              ]}
+            />
+          </div>
+          {data && data.length > 0 ? (
+            <div className="cards-list">
+              {data.map((n: number, index: number) => (
+                <Card key={index} data={{ order: n, type: type }} />
+              ))}
+            </div>
+          ) : (
+            <NoContent type={type} />
+          )}
+        </>
       )}
     </TAB_CONTENT>
   )

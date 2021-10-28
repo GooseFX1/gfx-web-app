@@ -47,7 +47,7 @@ const TabProfile = () => {
           <TabContent type="favorited" data={[1, 2, 4, 5, 5, 6, 7, 8, 9, 10]} />
         </TabPane>
         <TabPane tab="Activity" key="4">
-          Content of Tab Activity
+          <TabContent type="activity" data={[1, 2, 4, 5, 5, 6, 7, 8, 9, 10]} />
         </TabPane>
       </Tabs>
     </TAB_PROFILE>
