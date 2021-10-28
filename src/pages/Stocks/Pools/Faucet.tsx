@@ -131,7 +131,7 @@ export const Faucet: FC = () => {
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
       if (!event.defaultPrevented) {
-        state === State.CanExecute ? mint() : !wallet ? setVisible(true) : wallet.connect().catch(() => {})
+        state === State.CanExecute ? mint() : !wallet.wallet ? setVisible(true) : wallet.connect().catch(() => {})
       }
     },
     [mint, setVisible, state, wallet]
