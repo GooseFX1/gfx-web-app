@@ -10,7 +10,7 @@ export type Mint = {
 
 export type Pool = {
   address: PublicKey
-  listing: PublicKey
+  listing?: PublicKey
   type: 'crypto' | 'synth'
 }
 
@@ -69,10 +69,19 @@ export const ADDRESSES: {
       }
     },
     pools: {
-      POOL_0: {
+      CRYPTO: {
         address: PublicKey.default,
         listing: PublicKey.default,
         type: 'synth'
+      },
+      STOCK: {
+        address: PublicKey.default,
+        listing: PublicKey.default,
+        type: 'synth'
+      },
+      'GOFX/TKNB': {
+        address: PublicKey.default,
+        type: 'crypto'
       }
     },
     programs: {
@@ -203,7 +212,7 @@ export const ADDRESSES: {
       gQQQ: {
         address: new PublicKey('5L6yBfXZARi2UQVLkwnLqifYLcLXVEKSeBo6FR7kp2zg'),
         decimals: 8
-      },
+      }
     },
     pools: {
       CRYPTO: {
@@ -218,7 +227,6 @@ export const ADDRESSES: {
       },
       'GOFX/TKNB': {
         address: new PublicKey('Ga9vweHkkvxRVeadA3NRGx2RHfFs6w2t4hKRmBinQzYL'),
-        listing: PublicKey.default,
         type: 'crypto'
       }
     },

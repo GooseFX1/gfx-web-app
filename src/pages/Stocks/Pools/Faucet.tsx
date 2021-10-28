@@ -51,10 +51,7 @@ export const Faucet: FC = () => {
   const { loading } = useSynths()
   const wallet = useWallet()
 
-  const current = useMemo(
-    () => getUIAmount(ADDRESSES[network].mints.GOFX.address.toString()),
-    [getUIAmount, network]
-  )
+  const current = useMemo(() => getUIAmount(ADDRESSES[network].mints.GOFX.address.toString()), [getUIAmount, network])
 
   const state = useMemo(() => {
     if (!wallet.publicKey) {
@@ -89,29 +86,36 @@ export const Faucet: FC = () => {
         tx.add(createAssociatedTokenAccountIx(address, userAta, wallet.publicKey))
       }
 
-      const signers = [{
-        publicKey: new PublicKey('5b2XtcNc6mEPRSC2LpHfPrn1ARzuEEMSN6hAdtRkEZHX'),
-        secretKey: new Uint8Array([103,1,84,226,123,70,115,19,206,165,152,209,214,138,232,122,196,218,3,14,174,196,252,188,24,202,70,38,6,78,61,128,68,38,58,101,128,162,185,111,103,218,212,67,62,201,112,67,228,23,44,61,229,206,182,140,26,238,154,232,194,72,18,182])
-      }]
+      const signers = [
+        {
+          publicKey: new PublicKey('5b2XtcNc6mEPRSC2LpHfPrn1ARzuEEMSN6hAdtRkEZHX'),
+          secretKey: new Uint8Array([
+            103, 1, 84, 226, 123, 70, 115, 19, 206, 165, 152, 209, 214, 138, 232, 122, 196, 218, 3, 14, 174, 196, 252,
+            188, 24, 202, 70, 38, 6, 78, 61, 128, 68, 38, 58, 101, 128, 162, 185, 111, 103, 218, 212, 67, 62, 201, 112,
+            67, 228, 23, 44, 61, 229, 206, 182, 140, 26, 238, 154, 232, 194, 72, 18, 182
+          ])
+        }
+      ]
 
-      tx.add(Token.createMintToInstruction(
-        TOKEN_PROGRAM_ID,
-        address,
-        userAta,
-        new PublicKey('5b2XtcNc6mEPRSC2LpHfPrn1ARzuEEMSN6hAdtRkEZHX'),
-        signers,
-        100 * 10 ** decimals
-      ))
+      tx.add(
+        Token.createMintToInstruction(
+          TOKEN_PROGRAM_ID,
+          address,
+          userAta,
+          new PublicKey('5b2XtcNc6mEPRSC2LpHfPrn1ARzuEEMSN6hAdtRkEZHX'),
+          signers,
+          1000 * 10 ** decimals
+        )
+      )
 
       await signAndSendRawTransaction(connection, tx, wallet, ...signers)
-      notify({ message: "Received 100 GOFX. Enjoy fren." });
+      notify({ message: 'Received 100 GOFX. Enjoy fren.' })
     } else {
       notify({
-        description:
-          "You already have (or had) GOFX tokens fren.",
-        message: "Failed to use GOFX faucet.",
-        type: "error",
-      });
+        description: 'You already have (or had) GOFX tokens fren.',
+        message: 'Failed to use GOFX faucet.',
+        type: 'error'
+      })
     }
   }, [connection, network, wallet])
 

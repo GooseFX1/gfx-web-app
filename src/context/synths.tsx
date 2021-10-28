@@ -92,7 +92,7 @@ interface IUserPortfolio {
 const DEFAULT_POOL_ACCOUNT = { shareRate: 0, synthsDebt: [], totalDebt: 0, totalShares: 0 }
 const DEFAULT_USER_ACCOUNT = { claimableFee: 0, cAmount: 0, debt: 0, shareRate: 0, shares: 0 }
 const DEFAULT_USER_PORTFOLIO = { cRatio: 0, cValue: 0, debt: 0, pendingFees: 0 }
-const REFRESH_INTERVAL = 3000
+const REFRESH_INTERVAL = 1000
 
 const SynthsContext = createContext<ISynthsConfig | null>(null)
 
@@ -258,19 +258,21 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   useEffect(() => {
-    console.log('1');
-    (async () => {
-      const availableSynths = []
-      const listingAccount = await pool.listingAccount(poolName, wallet, connection, network)
-      const mints = Object.entries(ADDRESSES[network].mints)
-      for (const { mint } of listingAccount.synths) {
-        if (!mint.equals(SYNTH_DEFAULT_MINT)) {
-          const match = mints.find(([_, { address }]) => address.equals(mint))
-          match && availableSynths.push(match)
+    ;(async () => {
+      try {
+        const availableSynths: [string, Mint][] = []
+        const listingAccount = await pool.listingAccount(poolName, wallet, connection, network)
+        const mints = Object.entries(ADDRESSES[network].mints)
+        availableSynths.push(mints.find(([name, _]) => name === 'gUSD'))
+        for (const { mint } of listingAccount.synths) {
+          if (!mint.equals(SYNTH_DEFAULT_MINT)) {
+            const match = mints.find(([_, { address }]) => address.equals(mint))
+            match && availableSynths.push(match)
+          }
         }
-      }
 
-      setAvailableSynths(availableSynths)
+        setAvailableSynths(availableSynths)
+      } catch (e) {}
     })()
   }, [connection, network, poolName, wallet])
 
@@ -283,7 +285,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       for (const { key, index } of mintIndex) {
         const current = await fieldToNumber(buffer[index].price)
         if (key.equals(GOFX)) {
-          prices.GOFX = { current }
+          prices.GOFX = { current: 1.21 }
         } else {
           const synth = availableSynths.find(([_, { address }]) => address.equals(key))
           synth && (prices[synth[0]] = { current })
@@ -346,7 +348,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     let interval: NodeJS.Timer
     if (wallet.publicKey && network === WalletAdapterNetwork.Devnet) {
-      updateAccounts().then(() => (interval = setInterval(() => updateAccounts(), REFRESH_INTERVAL)))
+      interval = setInterval(() => updateAccounts(), REFRESH_INTERVAL)
     }
 
     return () => {
@@ -357,7 +359,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     const cValue = userAccount.cAmount * prices.GOFX?.current || 0
     const debt = (poolAccount.totalDebt * userAccount.shares) / poolAccount.totalShares || 0
-    const cRatio = (100 * cValue) / debt || 0
+    const cRatio = (100 * cValue) / debt
     const pendingFees = debt * (poolAccount.shareRate - userAccount.shareRate)
     setUserPortfolio({ cRatio, cValue, debt, pendingFees })
   }, [

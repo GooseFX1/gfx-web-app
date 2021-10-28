@@ -27,6 +27,7 @@ const WRAPPER = styled(CenteredDiv)`
   ${({ theme }) => theme.largeBorderRadius}
   ${({ theme }) => theme.largeShadow}
   background-color: ${({ theme }) => theme.primary2};
+  cursor: pointer;
 
   > span {
     margin-right: ${({ theme }) => theme.margins['3x']};
@@ -73,7 +74,7 @@ export const PoolSelector: FC = () => {
   }
 
   return (
-    <WRAPPER>
+    <WRAPPER onClick={handleClick}>
       <span>{poolName}</span>
       <ArrowDropdown
         arrowRotation={arrowRotation}
