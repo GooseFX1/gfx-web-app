@@ -363,7 +363,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     const cValue = userAccount.cAmount * prices.GOFX?.current || 0
     const debt = (poolAccount.totalDebt * userAccount.shares) / poolAccount.totalShares || 0
-    const cRatio = (100 * cValue) / debt
+    const cRatio = (100 * cValue) / debt || 0
     const pendingFees = debt * (poolAccount.shareRate - userAccount.shareRate)
     setUserPortfolio({ cRatio, cValue, debt, pendingFees })
   }, [

@@ -62,13 +62,13 @@ export const Pools: FC<{ poolsVisible: boolean }> = ({ poolsVisible }) => {
   const [tab, setTab] = useState(0)
 
   const tabs = [
+    { component: <Faucet />, display: 'Faucet' },
     { component: <DepositWithdraw action="deposit" />, display: 'Deposit' },
     { component: <MintBurn action="mint" />, display: 'Mint' },
     { component: <Swap />, display: 'Swap' },
     { component: <MintBurn action="burn" />, display: 'Burn' },
     { component: <DepositWithdraw action="withdraw" />, display: 'Withdraw' },
-    { component: <Claim />, display: 'Rewards' },
-    { component: <Faucet />, display: 'Faucet' },
+    { component: <Claim />, display: 'Rewards' }
   ] as { component: ReactNode; display: string }[]
 
   return (

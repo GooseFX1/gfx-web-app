@@ -59,12 +59,29 @@ const WRAPPER = styled(SpaceEvenlyDiv)`
 export const Debt: FC = () => {
   const { poolAccount } = useSynths()
   const synthColor = {
-    gAAPL: { background: 'gray', hover: 'cyan' },
-    gBTC: { background: 'yellow', hover: 'cyan' },
-    gETH: { background: 'blue', hover: 'cyan' },
-    gGOOG: { background: 'green', hover: 'cyan' },
-    gTSLA: { background: 'red', hover: 'cyan' },
-    gUSD: { background: 'silver', hover: 'cyan' }
+    gAAPL: { background: 'red', hover: 'red' },
+    gAMC: { background: 'red', hover: 'red' },
+    gAMZN: { background: 'red', hover: 'red' },
+    gBNB: { background: 'rgb(233, 188, 78)', hover: 'rgb(253, 208, 98)' },
+    gBTC: { background: 'rgb(232, 152, 61)', hover: 'rgb(252, 172, 81)' },
+    gCOPE: { background: 'rgb(0, 0, 0)', hover: 'rgb(20, 20, 20)' },
+    gDOGE: { background: 'rgb(182, 160, 71)', hover: 'rgb(202, 180, 91)' },
+    gETH: { background: 'rgb(108, 125, 223)', hover: 'rgb(128, 145, 243)' },
+    gFTT: { background: 'rgb(73, 163, 191)', hover: 'rgb(93, 183, 211)' },
+    gGE: { background: 'red', hover: 'red' },
+    gGME: { background: 'red', hover: 'red' },
+    gGOOG: { background: 'red', hover: 'red' },
+    gLUNA: { background: 'rgb(27, 40, 79)', hover: 'rgb(47, 60, 99)' },
+    gMNGO: { background: 'rgb(220, 112, 75)', hover: 'rgb(240, 132, 95)' },
+    gNFLX: { background: 'red', hover: 'red' },
+    gQQQ: { background: 'red', hover: 'red' },
+    gRAY: { background: 'rgb(58, 82, 184)', hover: 'rgb(78, 102, 204)' },
+    gSABER: { background: 'rgb(102, 100, 242)', hover: 'rgb(122, 120, 255)' },
+    gSOL: { background: 'rgb(157, 91, 199)', hover: 'rgb(177, 111, 219)' },
+    gSPY: { background: 'red', hover: 'red' },
+    gSRM: { background: 'rgb(30, 64, 73)', hover: 'rgb(50, 84, 93)' },
+    gTSLA: { background: 'red', hover: 'red' },
+    gUSD: { background: 'rgb(235, 235, 235)', hover: 'rgb(255, 255, 255)' }
   } as { [x: string]: { background: string; hover: string } }
 
   return (
@@ -72,10 +89,10 @@ export const Debt: FC = () => {
       <INFORMATION>
         <FlexColumnDiv>
           {poolAccount.synthsDebt.map(({ percentage, synth }, index) => (
-            <SPECIFIC key={index} $color={'silver' /* synthColor[synth].background */}>
+            <SPECIFIC key={index} $color={synthColor[synth].background}>
               <div />
               <span>{synth}</span>
-              <span>{((percentage * 100) || 0).toFixed(2)}%</span>
+              <span>{(percentage * 100 || 0).toFixed(2)}%</span>
             </SPECIFIC>
           ))}
         </FlexColumnDiv>

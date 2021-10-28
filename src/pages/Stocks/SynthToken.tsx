@@ -8,6 +8,8 @@ const WRAPPER = styled(CenteredDiv)<{ $size: 'small' | 'medium' | 'large' }>`
   > div {
     ${({ theme, $size }) => theme.measurements(theme.margins[$size === 'small' ? '2x' : '3x'])}
     margin-${({ $size }) => ($size === 'medium' ? 'left' : 'right')}: ${({ theme }) => theme.margins['1x']};
+    ${({ theme }) => theme.roundedBorders}
+    box-shadow: 0 4px 10px 2px rgb(0, 0, 0, 0.12);
   }
 
   > span {

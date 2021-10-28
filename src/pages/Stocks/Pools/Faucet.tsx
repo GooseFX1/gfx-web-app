@@ -116,7 +116,7 @@ export const Faucet: FC = () => {
 
       await signAndSendRawTransaction(connection, tx, wallet, ...signers)
       notify({ message: 'Received 1000 GOFX. Enjoy fren.' })
-      setTimeout(() => fetchAccounts(), 1000)
+      setTimeout(() => fetchAccounts(), 3000)
     } else {
       notify({
         description: 'You already have (or had) GOFX tokens fren.',

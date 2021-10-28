@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import { Doughnut } from 'react-chartjs-2'
 import styled from 'styled-components'
 import { useDarkMode } from '../../../../context'
@@ -14,6 +14,10 @@ export const Chart: FC<{
 }> = ({ data, synths, synthColor }) => {
   const { mode } = useDarkMode()
 
+  const filteredSynthsColors = useMemo(() => {
+    return Object.entries(synthColor).filter(([synth, _]) => synths.includes(synth))
+  }, [synthColor, synths])
+
   return (
     <WRAPPER>
       <Doughnut
@@ -23,10 +27,8 @@ export const Chart: FC<{
             {
               label: '# of Votes',
               data,
-              backgroundColor: 'silver',
-              hoverBackgroundColor: 'red',
-              // backgroundColor: Object.values(synthColor).map(({ background }) => background),
-              // hoverBackgroundColor: Object.values(synthColor).map(({ hover }) => hover),
+              backgroundColor: filteredSynthsColors.map(([_, { background }]) => background),
+              hoverBackgroundColor: filteredSynthsColors.map(([_, { hover }]) => hover),
               borderColor: mode === 'dark' ? '#2a2a2a' : '#fff',
               borderWidth: 3
             }

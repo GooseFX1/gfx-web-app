@@ -26,24 +26,22 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
   const { getUIAmount } = useAccounts()
   const { network } = useConnectionConfig()
   const { mode } = useDarkMode()
-  const { amount, burn, loading, mint, poolAccount, prices, setAmount, synth, userPortfolio } = useSynths()
+  const { amount, burn, loading, mint, prices, setAmount, synth, userPortfolio } = useSynths()
   const { connect, publicKey, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
-  const cRatioExceeded = useMemo(() => false, [])
   const userBalance = useMemo(() => {
     const { address, decimals } = ADDRESSES[network].mints[synth]
 
     switch (action) {
       case 'burn':
-        const { percentage } = poolAccount.synthsDebt.find(({ synth: x }) => x === synth)
-        const debt = (userPortfolio.debt * (percentage || 0)) / prices[synth]?.current
+        const debt = userPortfolio.debt / prices[synth]?.current
         return Number(Math.min(debt, getUIAmount(address.toString())).toFixed(decimals))
       case 'mint':
         const value = userPortfolio.cValue / 2 - userPortfolio.debt
         return Math.max(Number(((0.9995 * value) / prices[synth]?.current).toFixed(decimals)), 0) || 0
     }
-  }, [action, getUIAmount, network, poolAccount.synthsDebt, prices, synth, userPortfolio.cValue, userPortfolio.debt])
+  }, [action, getUIAmount, network, prices, synth, userPortfolio.cValue, userPortfolio.debt])
 
   const state = useMemo(() => {
     if (!publicKey) {
@@ -54,12 +52,12 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
       return State.NullAmount
     }
 
-    if ((action === 'burn' && amount > userBalance) || (action === 'mint' && cRatioExceeded)) {
+    if (amount > userBalance) {
       return State.AvailableAmountExceeded
     }
 
     return State.CanExecute
-  }, [action, amount, cRatioExceeded, publicKey, userBalance])
+  }, [amount, publicKey, userBalance])
 
   const buttonStatus = useMemo(() => {
     switch (state) {
