@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import HeaderNFT from './HeaderNFT'
 import NFTCarousel from './NFTCarousel'
 import NFTFooter from './NFTFooter'
+import { Profile } from './Profile/Profile'
+import { useRouteMatch, Route, Switch } from 'react-router-dom'
 
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -33,15 +35,23 @@ const SCROLLING_CONTENT = styled.div`
 `
 
 export const NFTs: FC = () => {
+  const { path } = useRouteMatch()
   return (
     <WRAPPER>
       <BODY_NFT>
-        <HeaderNFT />
-        <SCROLLING_CONTENT>
-          <NFTCarousel showTopArrow isLaunch />
-          <NFTCarousel />
-          <NFTFooter />
-        </SCROLLING_CONTENT>
+        <Switch>
+          <Route exact path={path}>
+            <>
+              <HeaderNFT />
+              <SCROLLING_CONTENT>
+                <NFTCarousel showTopArrow isLaunch />
+                <NFTCarousel />
+                <NFTFooter />
+              </SCROLLING_CONTENT>
+            </>
+          </Route>
+          <Route exact path="/NFTs/profile" component={Profile} />
+        </Switch>
       </BODY_NFT>
     </WRAPPER>
   )
