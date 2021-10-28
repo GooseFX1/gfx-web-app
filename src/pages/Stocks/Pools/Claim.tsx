@@ -101,7 +101,7 @@ export const Claim: FC = () => {
         </div>
       </REWARDS>
       <Bottom>
-        <span>Fees are earned by providing GOFX as collateral in a pool.</span>
+        <span>Fees are earned by keeping gTokens debts in a pool.</span>
         <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
           <span>{content}</span>
         </Button>
