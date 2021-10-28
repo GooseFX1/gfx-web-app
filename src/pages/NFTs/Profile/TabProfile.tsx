@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Tabs } from 'antd'
+import TabContent from './TabContent'
 
 const { TabPane } = Tabs
 
@@ -37,7 +38,7 @@ const TabProfile = () => {
     <TAB_PROFILE>
       <Tabs defaultActiveKey="1" centered>
         <TabPane tab="Collected" key="1">
-          Content of Tab Collected
+          <TabContent type="collected" data={[1, 2, 4, 5, 5, 6, 7, 8, 9, 10]} />
         </TabPane>
         <TabPane tab="Created" key="2">
           Content of Tab Created

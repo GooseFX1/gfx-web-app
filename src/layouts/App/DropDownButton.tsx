@@ -50,7 +50,7 @@ const Overlay: FC<{ onOptionClick: (currentOption: string) => void; options: Arr
 
 const DropdowButton: FC<{ title: string; options?: Array<{ name: string; icon: string }>; style?: any }> = ({
   title,
-  options,
+  options = exDropdowData,
   style
 }) => {
   const [arrowRotation, setArrowRotation] = useState(false)
@@ -70,7 +70,7 @@ const DropdowButton: FC<{ title: string; options?: Array<{ name: string; icon: s
         arrow
         arrowRotation={arrowRotation}
         offset={[9, 30]}
-        overlay={<Overlay options={exDropdowData} onOptionClick={onOptionClick} />}
+        overlay={<Overlay options={options} onOptionClick={onOptionClick} />}
         setArrowRotation={setArrowRotation}
       />
     </DropDownWrapper>

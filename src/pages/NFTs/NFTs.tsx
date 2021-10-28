@@ -23,7 +23,7 @@ const BODY_NFT = styled.div`
   margin-top: 60px;
   margin-bottom: 60px;
   box-shadow: 0 7px 15px 9px rgba(13, 13, 13, 0.25);
-  background-color: ${({ theme }) => theme.bg4};
+  background-color: ${({ theme }) => theme.bg3};
   position: relative;
   display: flex;
   flex-direction: column;
@@ -50,7 +50,11 @@ export const NFTs: FC = () => {
               </SCROLLING_CONTENT>
             </>
           </Route>
-          <Route exact path="/NFTs/profile" component={Profile} />
+          <Route exact path="/NFTs/profile">
+            <SCROLLING_CONTENT>
+              <Profile />
+            </SCROLLING_CONTENT>
+          </Route>
         </Switch>
       </BODY_NFT>
     </WRAPPER>
