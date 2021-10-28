@@ -12,6 +12,7 @@ import React, {
 } from 'react'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { useAccounts } from './accounts'
 import { useConnectionConfig } from './settings'
 import { ISwapToken, SwapInput } from './swap'
 import { notify } from '../utils'
@@ -97,6 +98,7 @@ const REFRESH_INTERVAL = 1000
 const SynthsContext = createContext<ISynthsConfig | null>(null)
 
 export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { fetchAccounts } = useAccounts()
   const { connection, network } = useConnectionConfig()
   const wallet = useWallet()
 
@@ -188,7 +190,8 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setLoading(true)
 
     try {
-      const signature = await pool.mint(amount, poolName, synth, wallet, connection, network)
+      const [signature, fetch] = await pool.mint(amount, poolName, synth, wallet, connection, network)
+      fetch && setTimeout(() => fetchAccounts(), 1000)
       await notify({
         type: 'success',
         message: 'Mint successful!',
@@ -210,7 +213,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const outTokens = `${outTokenAmount} ${outToken.symbol}`
       await notify({ message: `Trying to swap ${inTokens} for ${outTokens}...` })
       try {
-        const signature = await pool.swap(
+        const [signature, fetch] = await pool.swap(
           poolName,
           inTokenAmount * 10 ** inToken.decimals,
           inToken.symbol,
@@ -219,6 +222,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           connection,
           network
         )
+        fetch && setTimeout(() => fetchAccounts(), 1000)
         await notify({
           type: 'success',
           message: 'Swap successful!',

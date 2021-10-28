@@ -171,7 +171,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         icon: 'success',
         txid: signature
       })
-      setTimeout(() => wallet.publicKey && fetchAccounts(wallet.publicKey), 1000)
+      setTimeout(() => wallet.publicKey && fetchAccounts(), 1000)
     } catch (e: any) {
       notify({ type: 'error', message: 'Swap failed', icon: 'error' }, e)
     }

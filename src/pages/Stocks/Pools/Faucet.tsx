@@ -45,7 +45,7 @@ const REWARDS = styled(CenteredDiv)`
 `
 
 export const Faucet: FC = () => {
-  const { getUIAmount } = useAccounts()
+  const { fetchAccounts, getUIAmount } = useAccounts()
   const { connection, network } = useConnectionConfig()
   const { setVisible } = useWalletModal()
   const { loading } = useSynths()
@@ -81,6 +81,12 @@ export const Faucet: FC = () => {
     if (!(await connection.getParsedAccountInfo(userAta)).value) {
       const tx = new Transaction()
 
+      const tracker = new PublicKey('H5BQ98pVXhts1xRC7na7yL5NuaYpKKoHBTzMud9WraU7')
+      const trackerAccount = await findAssociatedTokenAddress(wallet.publicKey, tracker)
+      if (!(await connection.getParsedAccountInfo(trackerAccount)).value) {
+        tx.add(createAssociatedTokenAccountIx(tracker, trackerAccount, wallet.publicKey))
+      }
+
       const userAta = await findAssociatedTokenAddress(wallet.publicKey, address)
       if (!(await connection.getParsedAccountInfo(userAta)).value) {
         tx.add(createAssociatedTokenAccountIx(address, userAta, wallet.publicKey))
@@ -109,7 +115,8 @@ export const Faucet: FC = () => {
       )
 
       await signAndSendRawTransaction(connection, tx, wallet, ...signers)
-      notify({ message: 'Received 100 GOFX. Enjoy fren.' })
+      notify({ message: 'Received 1000 GOFX. Enjoy fren.' })
+      setTimeout(() => fetchAccounts(), 1000)
     } else {
       notify({
         description: 'You already have (or had) GOFX tokens fren.',

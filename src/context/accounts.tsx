@@ -30,7 +30,7 @@ interface IAccounts {
 
 interface IAccountsConfig {
   balances: IAccounts
-  fetchAccounts: (x: PublicKey) => number[]
+  fetchAccounts: () => number[]
   fetching: boolean
   getAmount: (x: string) => string
   getUIAmount: (x: string) => number
@@ -58,45 +58,42 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     )
   }
 
-  const fetchAccounts = useCallback(
-    (publicKey: PublicKey) => {
-      const subscriptions: number[] = []
+  const fetchAccounts = useCallback(() => {
+    const subscriptions: number[] = []
 
-      ;(async () => {
-        setFetching(true)
+    ;(async () => {
+      setFetching(true)
 
-        try {
-          const [parsedAccounts, solAmount] = await Promise.all([
-            connection.getParsedTokenAccountsByOwner(publicKey, { programId: TOKEN_PROGRAM_ID }),
-            connection.getBalance(publicKey)
-          ])
+      try {
+        const [parsedAccounts, solAmount] = await Promise.all([
+          connection.getParsedTokenAccountsByOwner(publicKey, { programId: TOKEN_PROGRAM_ID }),
+          connection.getBalance(publicKey)
+        ])
 
-          const accounts = parsedAccounts.value.reduce((acc: IAccounts, { account }) => {
-            const { mint, tokenAmount } = account.data.parsed.info
-            acc[mint] = tokenAmount
-            handleAccountChange(subscriptions, connection, publicKey, new PublicKey(mint))
-            return acc
-          }, {})
+        const accounts = parsedAccounts.value.reduce((acc: IAccounts, { account }) => {
+          const { mint, tokenAmount } = account.data.parsed.info
+          acc[mint] = tokenAmount
+          handleAccountChange(subscriptions, connection, publicKey, new PublicKey(mint))
+          return acc
+        }, {})
 
-          const amount = solAmount.toString()
-          const uiAmount = solAmount / 10 ** 9
-          accounts[WRAPPED_SOL_MINT.toString()] = { amount, decimals: 9, uiAmount, uiAmountString: uiAmount.toString() }
-          setBalances(accounts)
-        } catch (e: any) {
-          await notify({ type: 'error', message: `Error fetching accounts`, icon: 'error' }, e)
-        }
+        const amount = solAmount.toString()
+        const uiAmount = solAmount / 10 ** 9
+        accounts[WRAPPED_SOL_MINT.toString()] = { amount, decimals: 9, uiAmount, uiAmountString: uiAmount.toString() }
+        setBalances(accounts)
+      } catch (e: any) {
+        await notify({ type: 'error', message: `Error fetching accounts`, icon: 'error' }, e)
+      }
 
-        setFetching(false)
-      })()
+      setFetching(false)
+    })()
 
-      return subscriptions
-    },
-    [connection]
-  )
+    return subscriptions
+  }, [connection, publicKey])
 
   useEffect(() => {
     let cancelled = false
-    const subscriptions: number[] = !cancelled && publicKey ? fetchAccounts(publicKey) : []
+    const subscriptions: number[] = !cancelled && publicKey ? fetchAccounts() : []
 
     return () => {
       cancelled = true

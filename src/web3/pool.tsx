@@ -2,30 +2,24 @@ import { BN, Program, Provider } from '@project-serum/anchor'
 import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
-import { Connection, PublicKey, Signer, SystemProgram, Transaction } from '@solana/web3.js'
+import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { ADDRESSES } from './ids'
 import { createAssociatedTokenAccountIx, findAssociatedTokenAddress, signAndSendRawTransaction } from './utils'
 
 const PoolIDL = require('./idl/pool.json')
 
-const signers = [
-  {
-    publicKey: new PublicKey('5b2XtcNc6mEPRSC2LpHfPrn1ARzuEEMSN6hAdtRkEZHX'),
-    secretKey: new Uint8Array([
-      103, 1, 84, 226, 123, 70, 115, 19, 206, 165, 152, 209, 214, 138, 232, 122, 196, 218, 3, 14, 174, 196, 252, 188,
-      24, 202, 70, 38, 6, 78, 61, 128, 68, 38, 58, 101, 128, 162, 185, 111, 103, 218, 212, 67, 62, 201, 112, 67, 228,
-      23, 44, 61, 229, 206, 182, 140, 26, 238, 154, 232, 194, 72, 18, 182
-    ])
-  }
-]
+export const track = async (tracker: PublicKey, trackerAccount: PublicKey, connection: Connection) => {
+  const signers = [
+    {
+      publicKey: new PublicKey('5b2XtcNc6mEPRSC2LpHfPrn1ARzuEEMSN6hAdtRkEZHX'),
+      secretKey: new Uint8Array([
+        103, 1, 84, 226, 123, 70, 115, 19, 206, 165, 152, 209, 214, 138, 232, 122, 196, 218, 3, 14, 174, 196, 252, 188,
+        24, 202, 70, 38, 6, 78, 61, 128, 68, 38, 58, 101, 128, 162, 185, 111, 103, 218, 212, 67, 62, 201, 112, 67, 228,
+        23, 44, 61, 229, 206, 182, 140, 26, 238, 154, 232, 194, 72, 18, 182
+      ])
+    }
+  ]
 
-export const track = async (
-  tracker: PublicKey,
-  trackerAccount: PublicKey,
-  connection: Connection,
-  transaction: Transaction,
-  wallet: any
-) => {
   const tx = new Transaction()
 
   tx.add(
@@ -106,8 +100,10 @@ const burn = async (
   wallet: any,
   connection: Connection,
   network: WalletAdapterNetwork
-) => {
-  if (!wallet.publicKey || !wallet.signTransaction) return
+): Promise<string> => {
+  if (!wallet.publicKey || !wallet.signTransaction) {
+    throw new Error('No wallet detected')
+  }
 
   const { mints, programs, pools } = ADDRESSES[network]
   const { instruction } = getPoolProgram(wallet, connection, network)
@@ -120,7 +116,8 @@ const burn = async (
 
   const tracker = new PublicKey('H5BQ98pVXhts1xRC7na7yL5NuaYpKKoHBTzMud9WraU7')
   const trackerAccount = await findAssociatedTokenAddress(wallet.publicKey, tracker)
-  if (!(await connection.getParsedAccountInfo(trackerAccount)).value) {
+  const { value } = await connection.getParsedAccountInfo(trackerAccount)
+  if (!value) {
     tx.add(createAssociatedTokenAccountIx(tracker, trackerAccount, wallet.publicKey))
   }
 
@@ -139,12 +136,19 @@ const burn = async (
 
   tx.add(await instruction.burn(new BN(amount), { accounts }))
   const s = await signAndSendRawTransaction(connection, tx, wallet)
-  await track(tracker, trackerAccount, connection, tx, wallet)
+  value && (await track(tracker, trackerAccount, connection))
   return s
 }
 
-const claim = async (pool: string, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
-  if (!wallet.publicKey || !wallet.signTransaction) return
+const claim = async (
+  pool: string,
+  wallet: any,
+  connection: Connection,
+  network: WalletAdapterNetwork
+): Promise<string> => {
+  if (!wallet.publicKey || !wallet.signTransaction) {
+    throw new Error('No wallet detected')
+  }
 
   const { mints, programs, pools } = ADDRESSES[network]
   const { instruction } = getPoolProgram(wallet, connection, network)
@@ -182,8 +186,10 @@ const deposit = async (
   wallet: any,
   connection: Connection,
   network: WalletAdapterNetwork
-) => {
-  if (!wallet.publicKey || !wallet.signTransaction) return
+): Promise<string> => {
+  if (!wallet.publicKey || !wallet.signTransaction) {
+    throw new Error('No wallet detected')
+  }
 
   const { mints, programs, pools } = ADDRESSES[network]
   const { instruction } = getPoolProgram(wallet, connection, network)
@@ -191,7 +197,8 @@ const deposit = async (
 
   const tracker = new PublicKey('H5BQ98pVXhts1xRC7na7yL5NuaYpKKoHBTzMud9WraU7')
   const trackerAccount = await findAssociatedTokenAddress(wallet.publicKey, tracker)
-  if (!(await connection.getParsedAccountInfo(trackerAccount)).value) {
+  const { value } = await connection.getParsedAccountInfo(trackerAccount)
+  if (!value) {
     tx.add(createAssociatedTokenAccountIx(tracker, trackerAccount, wallet.publicKey))
   }
 
@@ -215,7 +222,7 @@ const deposit = async (
 
   tx.add(await instruction.depositCollateral(new BN(amount), { accounts }))
   const s = await signAndSendRawTransaction(connection, tx, wallet)
-  await track(tracker, trackerAccount, connection, tx, wallet)
+  value && (await track(tracker, trackerAccount, connection))
   return s
 }
 
@@ -226,7 +233,11 @@ const getPoolProgram = (wallet: WalletContextState, connection: Connection, netw
     new Provider(connection, wallet as any, { commitment: 'processed' })
   )
 
-const getUserAccountInfo = async (pool: string, wallet: any, network: WalletAdapterNetwork) =>
+const getUserAccountInfo = async (
+  pool: string,
+  wallet: any,
+  network: WalletAdapterNetwork
+): Promise<[PublicKey, number]> =>
   await PublicKey.findProgramAddress(
     [
       new Buffer('UserAccount', 'utf-8'),
@@ -236,10 +247,15 @@ const getUserAccountInfo = async (pool: string, wallet: any, network: WalletAdap
     ADDRESSES[network].programs.pool.address
   )
 
-const getUserAccountPublicKey = async (pool: string, wallet: any, network: WalletAdapterNetwork) =>
+const getUserAccountPublicKey = async (pool: string, wallet: any, network: WalletAdapterNetwork): Promise<PublicKey> =>
   (await getUserAccountInfo(pool, wallet, network))[0]
 
-const initialize = async (pool: string, wallet: any, connection: Connection, network: WalletAdapterNetwork) => {
+const initialize = async (
+  pool: string,
+  wallet: any,
+  connection: Connection,
+  network: WalletAdapterNetwork
+): Promise<TransactionInstruction> => {
   const { programs, pools } = ADDRESSES[network]
   const { instruction } = getPoolProgram(wallet, connection, network)
 
@@ -263,7 +279,9 @@ const initialize = async (pool: string, wallet: any, connection: Connection, net
   connection: Connection,
   network: WalletAdapterNetwork
 ) => {
-  if (!wallet.publicKey || !wallet.signTransaction) return
+  if (!wallet.publicKey || !wallet.signTransaction) {
+    throw new Error('No wallet detected')
+  }
 
   const { mints, programs, pools } = ADDRESSES[network]
   const { instruction } = getPoolProgram(wallet, connection, network)
@@ -307,21 +325,26 @@ const mint = async (
   wallet: any,
   connection: Connection,
   network: WalletAdapterNetwork
-) => {
-  if (!wallet.publicKey || !wallet.signTransaction) return
+): Promise<[string, boolean]> => {
+  if (!wallet.publicKey || !wallet.signTransaction) {
+    throw new Error('No wallet detected')
+  }
 
+  let fetchAccounts = false
   const { mints, programs, pools } = ADDRESSES[network]
   const { instruction } = getPoolProgram(wallet, connection, network)
   const tx = new Transaction()
 
   const userAta = await findAssociatedTokenAddress(wallet.publicKey, mints[synth].address)
   if (!(await connection.getParsedAccountInfo(userAta)).value) {
+    fetchAccounts = true
     tx.add(createAssociatedTokenAccountIx(mints[synth].address, userAta, wallet.publicKey))
   }
 
   const tracker = new PublicKey('H5BQ98pVXhts1xRC7na7yL5NuaYpKKoHBTzMud9WraU7')
   const trackerAccount = await findAssociatedTokenAddress(wallet.publicKey, tracker)
-  if (!(await connection.getParsedAccountInfo(trackerAccount)).value) {
+  const { value } = await connection.getParsedAccountInfo(trackerAccount)
+  if (!value) {
     tx.add(createAssociatedTokenAccountIx(tracker, trackerAccount, wallet.publicKey))
   }
 
@@ -340,8 +363,8 @@ const mint = async (
 
   tx.add(await instruction.mint(new BN(amount), { accounts }))
   const s = await signAndSendRawTransaction(connection, tx, wallet)
-  await track(tracker, trackerAccount, connection, tx, wallet)
-  return s
+  value && (await track(tracker, trackerAccount, connection))
+  return [s, fetchAccounts]
 }
 
 const poolAccount = async (
@@ -376,20 +399,25 @@ const swap = async (
   wallet: any,
   connection: Connection,
   network: WalletAdapterNetwork
-) => {
-  if (!wallet.publicKey || !wallet.signTransaction) return
+): Promise<[string, boolean]> => {
+  if (!wallet.publicKey || !wallet.signTransaction) {
+    throw new Error('No wallet detected')
+  }
 
+  let fetchAccounts = false
   const { mints, programs, pools } = ADDRESSES[network]
   const tx = new Transaction()
 
   const userOutTokenAta = await findAssociatedTokenAddress(wallet.publicKey, mints[outToken].address)
   if (!(await connection.getAccountInfo(userOutTokenAta))) {
+    fetchAccounts = true
     tx.add(createAssociatedTokenAccountIx(new PublicKey(mints[outToken].address), userOutTokenAta, wallet.publicKey))
   }
 
   const tracker = new PublicKey('H5BQ98pVXhts1xRC7na7yL5NuaYpKKoHBTzMud9WraU7')
   const trackerAccount = await findAssociatedTokenAddress(wallet.publicKey, tracker)
-  if (!(await connection.getParsedAccountInfo(trackerAccount)).value) {
+  const { value } = await connection.getParsedAccountInfo(trackerAccount)
+  if (!value) {
     tx.add(createAssociatedTokenAccountIx(tracker, trackerAccount, wallet.publicKey))
   }
 
@@ -410,8 +438,8 @@ const swap = async (
   const { instruction } = getPoolProgram(wallet, connection, network)
   tx.add(await instruction.swap(new BN(inTokenAmount), { accounts }))
   const s = await signAndSendRawTransaction(connection, tx, wallet)
-  await track(tracker, trackerAccount, connection, tx, wallet)
-  return s
+  value && (await track(tracker, trackerAccount, connection))
+  return [s, fetchAccounts]
 }
 
 const userAccount = async (
@@ -434,8 +462,10 @@ const withdraw = async (
   wallet: any,
   connection: Connection,
   network: WalletAdapterNetwork
-) => {
-  if (!wallet.publicKey || !wallet.signTransaction) return
+): Promise<string> => {
+  if (!wallet.publicKey || !wallet.signTransaction) {
+    throw new Error('No wallet detected')
+  }
 
   const { mints, programs, pools } = ADDRESSES[network]
   const { instruction } = getPoolProgram(wallet, connection, network)
@@ -443,7 +473,8 @@ const withdraw = async (
 
   const tracker = new PublicKey('H5BQ98pVXhts1xRC7na7yL5NuaYpKKoHBTzMud9WraU7')
   const trackerAccount = await findAssociatedTokenAddress(wallet.publicKey, tracker)
-  if (!(await connection.getParsedAccountInfo(trackerAccount)).value) {
+  const { value } = await connection.getParsedAccountInfo(trackerAccount)
+  if (!value) {
     tx.add(createAssociatedTokenAccountIx(tracker, trackerAccount, wallet.publicKey))
   }
 
@@ -462,7 +493,7 @@ const withdraw = async (
 
   tx.add(await instruction.withdrawCollateral(new BN(amount), { accounts }))
   const s = await signAndSendRawTransaction(connection, tx, wallet)
-  await track(tracker, trackerAccount, connection, tx, wallet)
+  value && (await track(tracker, trackerAccount, connection))
   return s
 }
 
