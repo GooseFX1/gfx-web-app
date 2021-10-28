@@ -80,8 +80,8 @@ const TabContent = ({ data, type }: Props) => {
       </div>
       {data && data.length > 0 ? (
         <div className="cards-list">
-          {data.map((card: number, index: number) => (
-            <Card key={index} order={card} />
+          {data.map((n: number, index: number) => (
+            <Card key={index} data={{ order: n, type: type }} />
           ))}
         </div>
       ) : (

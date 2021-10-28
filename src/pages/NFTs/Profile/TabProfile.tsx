@@ -41,10 +41,10 @@ const TabProfile = () => {
           <TabContent type="collected" data={[1, 2, 4, 5, 5, 6, 7, 8, 9, 10]} />
         </TabPane>
         <TabPane tab="Created" key="2">
-          <TabContent type="created" data={[1, 2, 4, 5, 5, 6, 7, 8, 9, 10]} />
+          <TabContent type="created" data={[]} />
         </TabPane>
         <TabPane tab="Favorited" key="3">
-          Content of Tab Favorited
+          <TabContent type="favorited" data={[1, 2, 4, 5, 5, 6, 7, 8, 9, 10]} />
         </TabPane>
         <TabPane tab="Activity" key="4">
           Content of Tab Activity
