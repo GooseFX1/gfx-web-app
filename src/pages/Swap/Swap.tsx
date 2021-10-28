@@ -132,7 +132,9 @@ const SwapContent: FC = () => {
 }
 
 export const Swap: FC = () => {
-  const { endpoint, setEndpoint } = useConnectionConfig()
+  return <WRAPPER>Coming Soon</WRAPPER>
+
+  /* const { endpoint, setEndpoint } = useConnectionConfig()
 
   useEffect(() => {
     if (endpoint !== ENDPOINTS[1].endpoint) {
@@ -145,5 +147,5 @@ export const Swap: FC = () => {
     <SwapProvider>
       <SwapContent />
     </SwapProvider>
-  )
+  ) */
 }
