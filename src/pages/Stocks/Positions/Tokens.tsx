@@ -58,10 +58,10 @@ export const Tokens: FC = () => {
           <SynthToken size="small" synth={synth} />
           <span>${monetaryFormatValue(price)}</span>
           <span>{(size || 0).toFixed(2)}</span>
-          <span>
+          {/* <span>
             {(debt || 0).toFixed(2)} ( ${monetaryFormatValue(debtValue)} )
-          </span>
-          <span>{synth === 'gUSD' ? '-' : ((size - debt) || 0).toFixed(2)}</span>
+          </span> */}
+          <span>{synth === 'gUSD' ? '-' : (size - debt || 0).toFixed(2)}</span>
         </TOKEN>
       ))}
     </WRAPPER>
