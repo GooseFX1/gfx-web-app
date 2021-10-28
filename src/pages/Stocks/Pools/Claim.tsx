@@ -93,7 +93,7 @@ export const Claim: FC = () => {
         <div>
           <span>Current</span>
           <SpaceBetweenDiv>
-            <span>{userAccount.claimableFee < 0.1 ? 0 : current}</span>
+            <span>{userAccount.claimableFee < 0.01 ? 0 : current}</span>
             <Synth>
               <SynthToken size="large" synth="gUSD" />
             </Synth>
