@@ -17,36 +17,36 @@ const products = [
   { id: 5, title: 'Corrupt Catz', pieces: 441 }
 ]
 
-const CarouselWrapper = styled.div`
+const CAROUSEL_WRAPPER = styled.div`
   display: flex;
   flex-direction: column;
-  margin-left: 45px;
+  margin-left: ${({ theme }) => theme.margins['6x']};
 `
 
-const HeaderCarousel = styled.div`
+const HEADER_CAROUSEL = styled.div`
   display: flex;
   margin: 34px 0;
   align-items: center;
 `
 
-const TopArrow = styled(ArrowClicker)`
+const TOP_ARROW = styled(ArrowClicker)`
   width: 21px;
   flex: 1;
   align-self: center;
 `
 
-const LeftArrow = styled(ArrowClicker)`
+const LEFT_ARROW = styled(ArrowClicker)`
   width: 14px;
   transform: rotateZ(90deg);
-  margin-right: 16px;
+  margin-right: ${({ theme }) => theme.margins['2x']};
 `
 
-const RightArrow = styled(ArrowClicker)`
+const RIGHT_ARROW = styled(ArrowClicker)`
   width: 14px;
   transform: rotateZ(270deg);
 `
 
-const TitleCarousel = MainText(styled.span`
+const TITLE_CAROUSEL = MainText(styled.span`
   font-size: 18px;
   font-weight: bold;
   text-align: left;
@@ -54,25 +54,25 @@ const TitleCarousel = MainText(styled.span`
   flex: 1;
 `)
 
-const HeaderEndCarousel = styled.div`
+const HEADER_END_CAROUSEL = styled.div`
   flex: 1;
   flex-direction: row;
   justify-content: flex-end;
   display: flex;
   align-items: center;
-  padding-right: 16px;
+  padding-right: ${({ theme }) => theme.margins['2x']};
 `
 
-const LaunchButton = styled(ButtonWrapper)`
+const LAUNCH_BUTTON = styled(ButtonWrapper)`
   height: 40px;
   background-color: ${({ theme }) => theme.primary2};
-  margin-right: 16px;
+  margin-right: ${({ theme }) => theme.margins['2x']};
 `
 
-const SortButton = styled(ButtonWrapper)`
+const SORT_BUTTON = styled(ButtonWrapper)`
   height: 40px;
   background-color: ${({ theme }) => theme.secondary2};
-  margin-right: 16px;
+  margin-right: ${({ theme }) => theme.margins['2x']};
   justify-content: space-between;
 `
 
@@ -94,32 +94,32 @@ const NFTCarousel: FC<{ isLaunch?: boolean; showTopArrow?: boolean }> = ({ isLau
   const slickPrev = () => slickRef?.current?.slickPrev()
 
   return (
-    <CarouselWrapper>
-      <HeaderCarousel>
-        <TitleCarousel>Popular Collection</TitleCarousel>
-        {showTopArrow && <TopArrow mode={mode} arrowRotation />}
-        <HeaderEndCarousel>
+    <CAROUSEL_WRAPPER>
+      <HEADER_CAROUSEL>
+        <TITLE_CAROUSEL>Popular Collection</TITLE_CAROUSEL>
+        {showTopArrow && <TOP_ARROW mode={mode} arrowRotation />}
+        <HEADER_END_CAROUSEL>
           {isLaunch ? (
-            <LaunchButton>
+            <LAUNCH_BUTTON>
               <span>Launch your collection</span>
-            </LaunchButton>
+            </LAUNCH_BUTTON>
           ) : (
-            <SortButton>
+            <SORT_BUTTON>
               <span>Sort by</span>
               <ArrowClicker />
-            </SortButton>
+            </SORT_BUTTON>
           )}
 
-          <LeftArrow mode={mode} onClick={slickPrev} />
-          <RightArrow mode={mode} onClick={slickNext} />
-        </HeaderEndCarousel>
-      </HeaderCarousel>
+          <LEFT_ARROW mode={mode} onClick={slickPrev} />
+          <RIGHT_ARROW mode={mode} onClick={slickNext} />
+        </HEADER_END_CAROUSEL>
+      </HEADER_CAROUSEL>
       <Slider ref={slickRef} {...settings}>
         {products.map((item) => {
           return <NFTImageCarouselItem key={item.id} item={item} />
         })}
       </Slider>
-    </CarouselWrapper>
+    </CAROUSEL_WRAPPER>
   )
 }
 

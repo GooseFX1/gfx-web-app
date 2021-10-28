@@ -6,14 +6,14 @@ import { MainText } from '../../styles'
 import FooterCarousel from './FooterCarousel'
 import { ButtonWrapper } from './NFTButton'
 
-const TopArrow = styled(ArrowClicker)`
+const TOP_ARROW = styled(ArrowClicker)`
   width: 21px;
   flex: 1;
   align-self: center;
   margin-bottom: 30px;
 `
 
-const SubscribeNewLetter = styled.div`
+const SUBSCRIBE_NEW_LETTER = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -21,36 +21,39 @@ const SubscribeNewLetter = styled.div`
   padding: 60px 0 30px 0;
 `
 
-const FooterWrapper = styled.div`
+const FOOTER_WRAPPER = styled.div`
   display: flex;
   flex-direction: column;
 `
 
-const SubscribeText = MainText(styled.span`
+const SUBSCRIBE_TEXT = MainText(styled.span`
   font-size: 20px;
   font-weight: 600;
   text-align: center;
   color: ${({ theme }) => theme.text1};
 `)
 
-const BottomFooter = styled.div`
+const BOTTOM_FOOTER = styled.div<{ mode?: string }>`
   display: flex;
   flex-direction: column;
   flex-grow: 0;
   padding: 40px 0;
   border-radius: 20px;
-  background-image: linear-gradient(to bottom, #000, rgba(0, 0, 0, 0));
+  background-image: ${({ mode }) =>
+    mode === 'dark'
+      ? 'linear-gradient(to bottom, #000, rgba(0, 0, 0, 0))'
+      : 'linear-gradient(to bottom, #e0e0e0, #fff 20%)'};
   justify-content: center;
   align-items: center;
 `
-const FooterText = MainText(styled.div<{ size: number }>`
+const FOOTER_TEXT = MainText(styled.div<{ size: number }>`
   font-size: ${({ size }) => `${size}px`};
   font-weight: 500;
   text-align: center;
   color: ${({ theme }) => theme.text1};
 `)
 
-const FollowUsWrapper = styled.div`
+const FOLLOW_US_WRAPPER = styled.div`
   justify-content: center;
   display: flex;
   flex-direction: row;
@@ -58,7 +61,7 @@ const FollowUsWrapper = styled.div`
   margin-top: 43px;
 `
 
-const FollowUsButton = styled(ButtonWrapper)`
+const FOLLOW_US_BUTTON = styled(ButtonWrapper)`
   background-color: ${({ theme }) => theme.secondary2};
   height: 60px;
   padding: 0 55px;
@@ -68,22 +71,22 @@ const FollowUsButton = styled(ButtonWrapper)`
 const NFTFooter = () => {
   const { mode } = useDarkMode()
   return (
-    <FooterWrapper>
-      <SubscribeNewLetter>
-        <TopArrow mode={mode} arrowRotation />
-        <SubscribeText>Subscrbie to our newsletter.</SubscribeText>
-      </SubscribeNewLetter>
-      <BottomFooter>
+    <FOOTER_WRAPPER>
+      <SUBSCRIBE_NEW_LETTER>
+        <TOP_ARROW mode={mode} arrowRotation />
+        <SUBSCRIBE_TEXT>Subscrbie to our newsletter.</SUBSCRIBE_TEXT>
+      </SUBSCRIBE_NEW_LETTER>
+      <BOTTOM_FOOTER mode={mode}>
         <FooterCarousel />
-        <FooterText size={18}>Never miss any drop again!</FooterText>
-        <FollowUsWrapper>
-          <FooterText size={20}>Follow us in twitter! @gosefx1</FooterText>
-          <FollowUsButton>
+        <FOOTER_TEXT size={18}>Never miss any drop again!</FOOTER_TEXT>
+        <FOLLOW_US_WRAPPER>
+          <FOOTER_TEXT size={20}>Follow us in twitter! @gosefx1</FOOTER_TEXT>
+          <FOLLOW_US_BUTTON>
             <span>Follow Us</span>
-          </FollowUsButton>
-        </FollowUsWrapper>
-      </BottomFooter>
-    </FooterWrapper>
+          </FOLLOW_US_BUTTON>
+        </FOLLOW_US_WRAPPER>
+      </BOTTOM_FOOTER>
+    </FOOTER_WRAPPER>
   )
 }
 

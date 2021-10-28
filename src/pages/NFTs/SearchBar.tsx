@@ -2,7 +2,7 @@ import { Image } from 'antd'
 import React from 'react'
 import styled from 'styled-components'
 
-const SearchBarWrapper = styled.div`
+const SEARCH_BAR_WRAPPER = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -31,10 +31,10 @@ const SearchBarWrapper = styled.div`
 
 const SearchBar = () => {
   return (
-    <SearchBarWrapper>
+    <SEARCH_BAR_WRAPPER>
       <input placeholder="Search by nft or creator" />
-      <Image src={`${process.env.PUBLIC_URL}/img/assets/search.png`} />
-    </SearchBarWrapper>
+      <Image preview={false} src={`${process.env.PUBLIC_URL}/img/assets/search.png`} />
+    </SEARCH_BAR_WRAPPER>
   )
 }
 

@@ -1,10 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
+import DropdowButton from '../../layouts/App/DropDownButton'
+import { colors } from '../../theme'
 import HeaderButton from './HeaderButton'
 import NFTAvatar from './NFTAvatar'
 import SearchBar from './SearchBar'
 
-const HeaderWrapper = styled.div`
+const HEADER_WRAPPER = styled.div`
   height: 117px;
   padding: 30px;
   border-radius: 20px;
@@ -15,44 +17,51 @@ const HeaderWrapper = styled.div`
   align-items: center;
 `
 
-const AvatarWrapper = styled.div`
+const AVATAR_WRAPPER = styled.div`
   flex: 1;
   justify-content: flex-start;
   align-items: flex-start;
   display: flex;
 `
 
-const RestHeaderWrapper = styled.div`
+const REST_HEADER_WRAPPER = styled.div`
   flex: 2;
   flex-direction: row;
   display: flex;
   align-items: center;
 `
 
-const ButtonSection = styled.div`
+const BUTTON_SELECTION = styled.div`
   display: flex;
   flex-direction: row;
 `
 
-const EmptyDiv = styled.div`
+const EMPTY_DIV = styled.div`
   width: 34px;
 `
 
+const categoryButton = {
+  width: 132,
+  height: 50,
+  backgroundColor: colors('lite').secondary2,
+  justifyContent: 'space-between'
+}
+
 const HeaderNFT = () => {
   return (
-    <HeaderWrapper>
-      <AvatarWrapper>
+    <HEADER_WRAPPER>
+      <AVATAR_WRAPPER>
         <NFTAvatar src="error" />
-      </AvatarWrapper>
-      <RestHeaderWrapper>
+      </AVATAR_WRAPPER>
+      <REST_HEADER_WRAPPER>
         <SearchBar />
-        <ButtonSection>
-          <HeaderButton isDropDown title="Category" />
-          <EmptyDiv />
+        <BUTTON_SELECTION>
+          <DropdowButton style={categoryButton} title="Category" />
+          <EMPTY_DIV />
           <HeaderButton title="Create" />
-        </ButtonSection>
-      </RestHeaderWrapper>
-    </HeaderWrapper>
+        </BUTTON_SELECTION>
+      </REST_HEADER_WRAPPER>
+    </HEADER_WRAPPER>
   )
 }
 

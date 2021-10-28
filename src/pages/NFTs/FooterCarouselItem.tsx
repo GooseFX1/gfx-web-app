@@ -2,7 +2,7 @@ import { Image } from 'antd'
 import React, { FC } from 'react'
 import styled from 'styled-components'
 
-const FooterImage = styled(Image)`
+const FOOTER_IMAGE = styled(Image)`
   width: 110px;
   aspect-ratio: 1;
   border-radius: 10px;
@@ -10,7 +10,7 @@ const FooterImage = styled(Image)`
 `
 
 const FooterCarouselItem: FC<{ item?: any }> = () => {
-  return <FooterImage preview={false} src={`${process.env.PUBLIC_URL}/img/assets/footer-demo.png`} />
+  return <FOOTER_IMAGE preview={false} src={`${process.env.PUBLIC_URL}/img/assets/footer-demo.png`} />
 }
 
 export default FooterCarouselItem

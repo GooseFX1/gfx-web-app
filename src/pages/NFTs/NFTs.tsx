@@ -14,11 +14,12 @@ const WRAPPER = styled.div`
   min-width: 0px;
 `
 
-const BODYNFT = styled.div`
+const BODY_NFT = styled.div`
   width: 90%;
   height: 686px;
   border-radius: 20px;
-  margin: 61px 0;
+  margin-top: 60px;
+  margin-bottom: 60px;
   box-shadow: 0 7px 15px 9px rgba(13, 13, 13, 0.25);
   background-color: ${({ theme }) => theme.bg4};
   position: relative;
@@ -26,7 +27,7 @@ const BODYNFT = styled.div`
   flex-direction: column;
 `
 
-const ScrollingContent = styled.div`
+const SCROLLING_CONTENT = styled.div`
   overflow-y: scroll;
   overflow-x: hidden;
 `
@@ -34,14 +35,14 @@ const ScrollingContent = styled.div`
 export const NFTs: FC = () => {
   return (
     <WRAPPER>
-      <BODYNFT>
+      <BODY_NFT>
         <HeaderNFT />
-        <ScrollingContent>
+        <SCROLLING_CONTENT>
           <NFTCarousel showTopArrow isLaunch />
           <NFTCarousel />
           <NFTFooter />
-        </ScrollingContent>
-      </BODYNFT>
+        </SCROLLING_CONTENT>
+      </BODY_NFT>
     </WRAPPER>
   )
 }

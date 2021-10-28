@@ -1,7 +1,5 @@
 import React from 'react'
 import Slider from 'react-slick'
-// import 'slick-carousel/slick/slick.css'
-// import 'slick-carousel/slick/slick-theme.css'
 import FooterCarouselItem from './FooterCarouselItem'
 import styled from 'styled-components'
 
@@ -24,7 +22,7 @@ const products = [
   { id: 16, title: 'Corrupt Catz', pieces: 441 }
 ]
 
-const FooterSlider = styled(Slider)`
+const FOOTER_SLIDER = styled(Slider)`
   width: 100%;
   margin-bottom: 48px;
 `
@@ -37,11 +35,11 @@ const settings = {
 
 const FooterCarousel = () => {
   return (
-    <FooterSlider {...settings}>
+    <FOOTER_SLIDER {...settings}>
       {products.map((item) => {
         return <FooterCarouselItem key={item.id} item={item} />
       })}
-    </FooterSlider>
+    </FOOTER_SLIDER>
   )
 }
 
