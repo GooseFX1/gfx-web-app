@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Menu, Dropdown, Button } from 'antd'
 import { useHistory } from 'react-router-dom'
+import PopupProfile from './PopupProfile'
 
 const HEADER_PROFILE = styled.div`
   position: relative;
@@ -144,6 +145,9 @@ const menu = (
 )
 const HeaderProfile = () => {
   const history = useHistory()
+  const [visible, setVisible] = useState(false)
+  const handleOk = () => setVisible(false)
+  const handleCancel = () => setVisible(false)
   return (
     <HEADER_PROFILE>
       <img
@@ -154,7 +158,12 @@ const HeaderProfile = () => {
       />
       <div className="avatar-profile-wrap">
         <img className="avatar-profile" src={`${process.env.PUBLIC_URL}/img/assets/avatar-profile.png`} alt="" />
-        <img className="edit-icon" src={`${process.env.PUBLIC_URL}/img/assets/edit.svg`} alt="" />
+        <img
+          className="edit-icon"
+          src={`${process.env.PUBLIC_URL}/img/assets/edit.svg`}
+          alt=""
+          onClick={() => setVisible(true)}
+        />
       </div>
       <div className="name-wrap">
         <span className="name">yeoohr</span>
@@ -179,6 +188,7 @@ const HeaderProfile = () => {
           </Button>
         </DROPDOWN>
       </div>
+      <PopupProfile visible={visible} handleOk={handleOk} handleCancel={handleCancel} />
     </HEADER_PROFILE>
   )
 }
