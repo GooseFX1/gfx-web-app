@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { useDarkMode } from '../../context'
 import { CenteredDiv, CenteredImg, SVGToGrey2, SVGToPrimary2, SVGToWhite } from '../../styles'
 
-const TABS = ['/swap', '/crypto', '/stocks', '/NFTs', '/farm']
+const TABS = ['/swap', '/crypto', '/synths', '/NFTs', '/farm']
 
 const LABEL = styled.span`
   position: absolute;

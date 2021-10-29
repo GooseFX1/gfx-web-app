@@ -124,7 +124,7 @@ export const Faucet: FC = () => {
         type: 'error'
       })
     }
-  }, [connection, network, wallet])
+  }, [connection, fetchAccounts, network, wallet])
 
   const content = useMemo(() => ['Connect wallet', 'Mint me some sweet GOFX', 'Faucet already used'][state], [state])
 
