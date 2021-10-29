@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import NFTCarousel from './NFTCarousel'
 import NFTFooter from './NFTFooter'
 import { Header } from './Header'
+import { MyCreatedNFT } from './CreateNFT'
 import { Profile } from './Profile'
 import { useRouteMatch, Route, Switch } from 'react-router-dom'
 
@@ -50,6 +51,11 @@ export const NFTs: FC = () => {
           <Route exact path="/NFTs/profile">
             <SCROLLING_CONTENT>
               <Profile />
+            </SCROLLING_CONTENT>
+          </Route>
+          <Route exact path="/NFTs/profile/my-created-NFT">
+            <SCROLLING_CONTENT>
+              <MyCreatedNFT />
             </SCROLLING_CONTENT>
           </Route>
         </Switch>
