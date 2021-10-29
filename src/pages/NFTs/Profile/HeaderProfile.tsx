@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Menu, Dropdown, Button } from 'antd'
 import { useHistory } from 'react-router-dom'
-import PopupProfile from './PopupProfile'
+import { PopupProfile } from './PopupProfile'
 
 const HEADER_PROFILE = styled.div`
   position: relative;
@@ -143,7 +143,8 @@ const menu = (
     </Menu.Item>
   </MENU_LIST>
 )
-const HeaderProfile = () => {
+
+export const HeaderProfile = () => {
   const history = useHistory()
   const [visible, setVisible] = useState(false)
   const handleOk = () => setVisible(false)
@@ -192,5 +193,3 @@ const HeaderProfile = () => {
     </HEADER_PROFILE>
   )
 }
-
-export default HeaderProfile

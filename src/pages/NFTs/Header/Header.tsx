@@ -1,10 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Categories } from './Categories'
-import { SearchBar } from './SearchBar'
-import { SpaceBetweenDiv } from '../../../styles'
 import NFTAvatar from '../NFTAvatar'
 import { ButtonWrapper } from '../NFTButton'
+import { SearchBar } from '../SearchBar'
+import { SpaceBetweenDiv } from '../../../styles'
 
 const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
   padding: ${({ theme }) => theme.margins['3x']};

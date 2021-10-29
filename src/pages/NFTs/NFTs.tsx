@@ -40,14 +40,12 @@ export const NFTs: FC = () => {
       <BODY_NFT>
         <Switch>
           <Route exact path={path}>
-            <>
-              <Header />
-              <SCROLLING_CONTENT>
-                <NFTCarousel showTopArrow isLaunch />
-                <NFTCarousel />
-                <NFTFooter />
-              </SCROLLING_CONTENT>
-            </>
+            <Header />
+            <SCROLLING_CONTENT>
+              <NFTCarousel showTopArrow isLaunch />
+              <NFTCarousel />
+              <NFTFooter />
+            </SCROLLING_CONTENT>
           </Route>
           <Route exact path="/NFTs/profile">
             <SCROLLING_CONTENT>

@@ -130,6 +130,4 @@ export const columns = [
   }
 ]
 
-const TableList = () => <TABLE columns={columns} dataSource={mockData} pagination={false} bordered={false} />
-
-export default TableList
+export const TableList = () => <TABLE columns={columns} dataSource={mockData} pagination={false} bordered={false} />

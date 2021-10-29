@@ -44,7 +44,6 @@ const CARD = styled.div`
       margin-right: 12px;
       padding-top: 6px;
     }
-
     .heart-red,
     .heart-empty {
       width: 15px;
@@ -96,7 +95,7 @@ type Props = {
   data: CardData
 }
 
-const Card = ({ data }: Props) => (
+export const Card = ({ data }: Props) => (
   <div className="card-item">
     <CARD>
       <img className="card-image" src={`${process.env.PUBLIC_URL}/img/assets/card-1.png`} alt="" />
@@ -133,4 +132,3 @@ const Card = ({ data }: Props) => (
     </CARD>
   </div>
 )
-export default Card

@@ -8,7 +8,6 @@ const NO_CONTENT = styled.div`
     max-width: 160px;
     margin-bottom: 20px;
   }
-
   .main-text {
     font-size: 17px;
     font-weight: 600;
@@ -20,7 +19,6 @@ const NO_CONTENT = styled.div`
     font-weight: 500;
     color: #a0a0a0;
   }
-
   .btn {
     min-width: 132px;
     height: 41px;
@@ -68,7 +66,7 @@ const options = {
   }
 }
 
-const NoContent = ({ type }: Props) => {
+export const NoContent = ({ type }: Props) => {
   const obj = options[type]
   return (
     <NO_CONTENT>
@@ -83,5 +81,3 @@ const NoContent = ({ type }: Props) => {
     </NO_CONTENT>
   )
 }
-
-export default NoContent

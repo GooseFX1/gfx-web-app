@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Tabs } from 'antd'
-import TabContent from './TabContent'
+import { TabContent } from './TabContent'
 
 const { TabPane } = Tabs
 
@@ -18,7 +18,6 @@ const TAB_PROFILE = styled.div`
       }
     }
   }
-
   .ant-tabs-tab {
     color: #616161;
     font-size: 18px;
@@ -33,7 +32,7 @@ const TAB_PROFILE = styled.div`
   }
 `
 
-const TabProfile = () => {
+export const TabProfile = () => {
   return (
     <TAB_PROFILE>
       <Tabs defaultActiveKey="1" centered>
@@ -47,11 +46,9 @@ const TabProfile = () => {
           <TabContent type="favorited" data={[1, 2, 4, 5, 5, 6, 7, 8, 9, 10]} />
         </TabPane>
         <TabPane tab="Activity" key="4">
-          <TabContent type="activity" data={[1, 2, 4, 5, 5, 6, 7, 8, 9, 10]} />
+          Content of Tab Activity
         </TabPane>
       </Tabs>
     </TAB_PROFILE>
   )
 }
-
-export default TabProfile

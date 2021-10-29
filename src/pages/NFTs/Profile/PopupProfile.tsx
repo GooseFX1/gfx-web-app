@@ -18,21 +18,17 @@ const POPUP_PROFILE = styled(Modal)`
       font-weight: 600;
     }
   }
-
   .ant-modal-content {
     border-radius: 0;
     box-shadow: none;
   }
-
   .ant-modal-body {
     padding: 30px 45px;
   }
-
   .ant-modal-close {
     top: 23px;
     right: 35px;
   }
-
   .ant-modal-close-x {
     width: auto;
     height: auto;
@@ -42,7 +38,6 @@ const POPUP_PROFILE = styled(Modal)`
       color: #fff;
     }
   }
-
   .avatar-wrapper {
     background-color: #000;
     border-style: dashed;
@@ -139,7 +134,7 @@ interface Props {
   handleCancel: () => void
 }
 
-const PopupProfile = ({ visible, handleOk, handleCancel }: Props) => {
+export const PopupProfile = ({ visible, handleOk, handleCancel }: Props) => {
   const [form] = Form.useForm()
 
   return (
@@ -205,5 +200,3 @@ const PopupProfile = ({ visible, handleOk, handleCancel }: Props) => {
     </POPUP_PROFILE>
   )
 }
-
-export default PopupProfile
