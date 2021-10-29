@@ -93,7 +93,7 @@ interface IUserPortfolio {
 const DEFAULT_POOL_ACCOUNT = { shareRate: 0, synthsDebt: [], totalDebt: 0, totalShares: 0 }
 const DEFAULT_USER_ACCOUNT = { claimableFee: 0, cAmount: 0, debt: 0, shareRate: 0, shares: 0 }
 const DEFAULT_USER_PORTFOLIO = { cRatio: 0, cValue: 0, debt: 0, pendingFees: 0 }
-const REFRESH_INTERVAL = 1000
+const REFRESH_INTERVAL = 2000
 
 const SynthsContext = createContext<ISynthsConfig | null>(null)
 
