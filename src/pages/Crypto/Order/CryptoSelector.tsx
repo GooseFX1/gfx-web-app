@@ -16,24 +16,20 @@ const MARKET = styled.div`
   display: flex;
   align-items: center;
   padding: 0 24%;
-
   &:hover {
     background-color: #1f1f1f;
     cursor: pointer;
   }
-
   > div {
     ${({ theme }) => theme.measurements(theme.margins['3x'])}
     margin-right: ${({ theme }) => theme.margins['2x']};
   }
-
   > span {
     display: flex;
     align-items: center;
     padding: ${({ theme }) => theme.margins['1.5x']} 0;
     font-size: 12px;
     font-weight: bold;
-
     &:not(:last-child) {
       margin-bottom: ${({ theme }) => theme.margins['1.5x']};
     }
@@ -47,7 +43,6 @@ const SELECTOR = styled(CenteredDiv)`
   padding: ${({ theme }) => theme.margins['1.5x']} 0;
   ${({ theme }) => theme.smallBorderRadius}
   background-color: #131313;
-
   input {
     text-align: left;
   }

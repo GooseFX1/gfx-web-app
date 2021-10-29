@@ -9,7 +9,6 @@ const ARROW_CLICKER = styled(CenteredDiv)<{ $arrowRotation?: boolean; $measureme
   border: none;
   background: transparent;
   cursor: pointer;
-
   img {
     ${({ theme }) => theme.measurements('inherit')}
     ${({ $arrowRotation }) => $arrowRotation && 'transform: rotateZ(180deg);'}
@@ -20,6 +19,7 @@ const ARROW_CLICKER = styled(CenteredDiv)<{ $arrowRotation?: boolean; $measureme
 export const ArrowClicker: FC<{
   arrowRotation?: boolean
   measurements?: string
+  [x: string]: any
 }> = ({ arrowRotation, measurements, ...props }) => {
   return (
     <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements} {...props}>

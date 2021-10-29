@@ -18,11 +18,7 @@ const getLatestBid = async (connection: Connection, pair: string, canBeDeprecate
   return latestBid
 }
 
-const getMarket = async (
-  connection: Connection,
-  pair: string,
-  canBeDeprecated: boolean = false
-): Promise<Market> => {
+const getMarket = async (connection: Connection, pair: string, canBeDeprecated: boolean = false): Promise<Market> => {
   const { address, programId } = getMarketInfo(pair, canBeDeprecated)
   return await Market.load(connection, address, undefined, programId)
 }

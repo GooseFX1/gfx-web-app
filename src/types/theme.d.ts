@@ -25,6 +25,7 @@ export interface Colors {
   grey3: Color
   grey4: Color
   grey5: Color
+  darkButton: Color
 
   // speciality colors
   appLayoutFooterBorder: Color
@@ -33,6 +34,7 @@ export interface Colors {
   tabsGradients: Color[]
   textBox: Color
   walletModalWallet: Color
+  searchbarBackground: Color
 
   // primary
   primary1: Color

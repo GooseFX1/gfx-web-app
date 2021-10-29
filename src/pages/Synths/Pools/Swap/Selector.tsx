@@ -18,16 +18,13 @@ const WRAPPER = styled(FlexColumnDiv)<{ $height: string }>`
   background-color: ${({ theme }) => theme.grey5};
   z-index: 1;
   cursor: pointer;
-
   > div {
     ${({ theme }) => theme.measurements('100%')}
-
     > span {
       font-size: 10px;
       font-weight: bold;
     }
   }
-
   > span {
     font-size: 8px;
     whitespace: no-wrap;

@@ -10,11 +10,9 @@ const SELECTOR = styled(CenteredDiv)`
   padding: ${({ theme }) => theme.margins['1.5x']} 0;
   ${({ theme }) => theme.smallBorderRadius}
   background-color: #525252;
-
   > span {
     padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['6x']};
     font-weight: bold;
-
     &:hover {
       background-color: #1f1f1f;
       cursor: pointer;
@@ -28,7 +26,6 @@ const WRAPPER = styled(CenteredDiv)`
   ${({ theme }) => theme.largeShadow}
   background-color: ${({ theme }) => theme.primary2};
   cursor: pointer;
-
   > span {
     margin-right: ${({ theme }) => theme.margins['3x']};
     font-size: 12px;

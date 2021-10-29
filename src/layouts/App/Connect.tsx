@@ -135,7 +135,6 @@ export const Connect: FC = () => {
           offset={[9, 30]}
           overlay={<Overlay setArrowRotation={setArrowRotation} />}
           onVisibleChange={onArrowDropdownClick}
-          visible={visible}
         />
       )}
     </WRAPPER>
