@@ -132,7 +132,7 @@ const SwapContent: FC = () => {
 }
 
 export const Swap: FC = () => {
-  return <WRAPPER>Coming Soon</WRAPPER>
+  return <span>Coming Soon</span>
 
   /* const { endpoint, setEndpoint } = useConnectionConfig()
 

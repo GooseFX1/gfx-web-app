@@ -44,7 +44,7 @@ const WRAPPER = styled.div`
   }
 `
 
-export const StocksContext: FC = () => {
+export const SynthsContent: FC = () => {
   const [poolsVisible, setPoolsVisible] = useState(true)
 
   return (
@@ -60,7 +60,7 @@ export const StocksContext: FC = () => {
   )
 }
 
-export const Stocks: FC = () => {
+export const Synths: FC = () => {
   const { endpoint, setEndpoint } = useConnectionConfig()
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export const Stocks: FC = () => {
 
   return (
     <SynthsProvider>
-      <StocksContext />
+      <SynthsContent />
     </SynthsProvider>
   )
 }
