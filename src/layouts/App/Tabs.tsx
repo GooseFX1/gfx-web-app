@@ -70,7 +70,11 @@ export const Tabs: FC = () => {
   const { pathname } = useLocation()
   const [hovered, setHovered] = useState(-1)
 
-  const index = useMemo(() => TABS.indexOf(pathname), [pathname])
+  const cleanedPathName = useMemo(() => {
+    const match = pathname.slice(1).indexOf('/')
+    return match !== -1 ? pathname.slice(0, pathname.slice(1).indexOf('/') + 1) : pathname
+  }, [pathname])
+  const index = useMemo(() => TABS.indexOf(cleanedPathName), [cleanedPathName])
 
   return (
     <WRAPPER $height={3.5} $index={index} $width={50}>
@@ -80,7 +84,7 @@ export const Tabs: FC = () => {
             {(() => {
               const icon = `${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`
 
-              if (pathname === path || (mode === 'dark' && hovered === index)) {
+              if (cleanedPathName === path || (mode === 'dark' && hovered === index)) {
                 return <SVGToWhite src={icon} alt="" />
               } else if (hovered === index) {
                 return <SVGToPrimary2 src={icon} alt="" />
