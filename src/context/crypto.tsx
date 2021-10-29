@@ -10,7 +10,7 @@ import React, {
   useState
 } from 'react'
 import BN from 'bn.js'
-import { Market, Orderbook } from '@project-serum/serum'
+import { Market } from '@project-serum/serum'
 import { useConnectionConfig } from './settings'
 import { notify } from '../utils'
 import { pyth, serum } from '../web3'
@@ -61,7 +61,7 @@ export const FEATURED_PAIRS_LIST = [
 ]
 
 const DEFAULT_ORDER_BOOK = { asks: [], bids: [] }
-const REFRESH_INTERVAL = 1000
+const REFRESH_INTERVAL = 5000
 
 const CryptoContext = createContext<ICryptoConfig | null>(null)
 
@@ -77,6 +77,34 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const getSymbolFromPair = (pair: string, side: 'buy' | 'sell'): string => {
     return side === 'buy' ? getBidSymbolFromPair(pair) : getAskSymbolFromPair(pair)
   }
+
+  const fetchOrderBook = useCallback(async () => {
+    try {
+      const market = await serum.getMarket(connection, selectedCrypto.pair)
+      setSelectedCrypto((prevState) => ({ ...prevState, market }))
+
+      const asks = await serum.getAsks(connection, selectedCrypto.pair)
+      setOrderBook((prevState) => ({ ...prevState, asks: asks.getL2(20) }))
+      const bids = await serum.getBids(connection, selectedCrypto.pair)
+      setOrderBook((prevState) => ({ ...prevState, bids: bids.getL2(20) }))
+
+      /* const subs = await Promise.all([
+        serum.subscribeToOrderBook(connection, market, 'asks', (account, market) => {
+          console.log('sub')
+          const asks = Orderbook.decode(market, account.data).getL2(20)
+          setOrderBook((prevState) => ({ ...prevState, asks }))
+        }),
+        serum.subscribeToOrderBook(connection, market, 'bids', (account, market) => {
+          const bids = Orderbook.decode(market, account.data).getL2(20)
+          setOrderBook((prevState) => ({ ...prevState, bids }))
+        })
+      ])
+
+      subs.forEach((sub) => subscriptions.push(sub)) */
+    } catch (e: any) {
+      await notify({ type: 'error', message: 'Error fetching serum order book', icon: 'rate_error' }, e)
+    }
+  }, [connection, selectedCrypto.pair])
 
   const fetchPrices = useCallback(async () => {
     let cancelled = false
@@ -115,54 +143,17 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [connection, network])
 
   useEffect(() => {
-    const intervals: NodeJS.Timer[] = []
-    fetchPrices().then(() => intervals.push(setInterval(() => fetchPrices(), REFRESH_INTERVAL)))
+    const intervals = []
+    if (network === WalletAdapterNetwork.Mainnet) {
+      intervals.push(setInterval(() => fetchPrices(), REFRESH_INTERVAL))
+      intervals.push(setInterval(() => fetchOrderBook(), REFRESH_INTERVAL))
+    }
 
     return () => {
       intervals.forEach((interval) => clearInterval(interval))
-    }
-  }, [connection, fetchPrices, network])
-
-  useEffect(() => {
-    let cancelled = false
-    const subscriptions: number[] = []
-
-    network === WalletAdapterNetwork.Mainnet &&
-      selectedCrypto.type === 'crypto' &&
-      !cancelled &&
-      (async () => {
-        try {
-          const market = await serum.getMarket(connection, selectedCrypto.pair)
-          setSelectedCrypto((prevState) => ({ ...prevState, market }))
-
-          const asks = await serum.getAsks(connection, selectedCrypto.pair)
-          setOrderBook((prevState) => ({ ...prevState, asks: asks.getL2(20) }))
-          const bids = await serum.getBids(connection, selectedCrypto.pair)
-          setOrderBook((prevState) => ({ ...prevState, bids: bids.getL2(20) }))
-
-          const subs = await Promise.all([
-            serum.subscribeToOrderBook(connection, market, 'asks', (account, market) => {
-              const asks = Orderbook.decode(market, account.data).getL2(20)
-              setOrderBook((prevState) => ({ ...prevState, asks }))
-            }),
-            serum.subscribeToOrderBook(connection, market, 'bids', (account, market) => {
-              const bids = Orderbook.decode(market, account.data).getL2(20)
-              setOrderBook((prevState) => ({ ...prevState, bids }))
-            })
-          ])
-
-          subs.forEach((sub) => subscriptions.push(sub))
-        } catch (e: any) {
-          await notify({ type: 'error', message: 'Error fetching serum order book', icon: 'rate_error' }, e)
-        }
-      })()
-
-    return () => {
-      cancelled = true
       setOrderBook(DEFAULT_ORDER_BOOK)
-      subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
     }
-  }, [connection, network, selectedCrypto.pair, selectedCrypto.type])
+  }, [connection, fetchOrderBook, fetchPrices, network, selectedCrypto.pair, selectedCrypto.type])
 
   return (
     <CryptoContext.Provider
