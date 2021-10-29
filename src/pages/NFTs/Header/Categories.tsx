@@ -8,7 +8,7 @@ const WRAPPER = styled.button`
   justify-content: space-between;
   align-items: center;
   height: 50px;
-  width: 140px;
+  width: 150px;
   border: none;
   ${({ theme }) => theme.roundedBorders}
   padding: 0 ${({ theme }) => theme.margins['2x']};
