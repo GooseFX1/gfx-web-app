@@ -20,7 +20,7 @@ export const Router: FC = () => {
             <Route exact path="/swap" component={Swap} />
             <Route exact path="/crypto" component={Crypto} />
             <Route exact path="/synths" component={Synths} />
-            <Route exact path="/NFTs" component={NFTs} />
+            <Route path="/NFTs" component={NFTs} />
             <Route exact path="/farm" component={Farm} />
           </WRAPPER>
         </AppLayout>
