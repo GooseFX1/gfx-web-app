@@ -1,10 +1,11 @@
-import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { AvailableSynth, AvailableSynthsSelector } from './shared'
-import { SynthToken } from '../SynthToken'
-import { ArrowDropdown } from '../../../components'
-import { useSynths } from '../../../context'
-import { CenteredDiv, CenteredImg } from '../../../styles'
+import { PublicKey } from '@solana/web3.js'
+import { AvailableSynth, AvailableSynthsSelector } from '../shared'
+import { SynthToken } from '../../SynthToken'
+import { ArrowDropdown } from '../../../../components'
+import { useAccounts, useSynths } from '../../../../context'
+import { CenteredDiv, CenteredImg } from '../../../../styles'
 
 const WRAPPER = styled(CenteredDiv)`
   cursor: pointer;
@@ -14,7 +15,8 @@ const Overlay: FC<{
   setArrowRotation: Dispatch<SetStateAction<boolean>>
   setVisible: Dispatch<SetStateAction<boolean>>
 }> = ({ setArrowRotation, setVisible }) => {
-  const { availableSynths, setSynth } = useSynths()
+  const { getUIAmount } = useAccounts()
+  const { availableSynths, prices, setSynth } = useSynths()
 
   const handleClick = useCallback(
     (synth: string) => {
@@ -25,14 +27,36 @@ const Overlay: FC<{
     [setArrowRotation, setSynth, setVisible]
   )
 
+  const synths = useMemo(() => {
+    const synths: [string, { address: PublicKey; balance: number; decimals: number; value: number }][] =
+      availableSynths.map(([synth, { address, decimals }]) => {
+        const balance = getUIAmount(address.toString())
+        const value = balance * prices[synth]?.current
+
+        return [
+          synth,
+          {
+            address,
+            balance,
+            decimals,
+            value
+          }
+        ]
+      })
+
+    synths.sort(([_, { value: a }], [__, { value: b }]) => b - a)
+    return synths
+  }, [availableSynths, getUIAmount, prices])
+
   return (
     <AvailableSynthsSelector>
-      {availableSynths.map(([synth], index) => (
+      {synths.map(([synth, { balance }], index) => (
         <AvailableSynth key={index} onClick={() => handleClick(synth)}>
           <CenteredImg>
             <img src={`${process.env.PUBLIC_URL}/img/synth/${synth}.svg`} alt="" />
           </CenteredImg>
           <span>{synth}</span>
+          <span>{balance.toFixed(2)}</span>
         </AvailableSynth>
       ))}
     </AvailableSynthsSelector>
