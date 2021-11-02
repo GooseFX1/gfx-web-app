@@ -21,6 +21,17 @@ enum State {
   NullAmount = 2
 }
 
+const BOTTOM = styled(Bottom)`
+  a > span {
+    color: white;
+    text-decoration: underline;
+
+    &:hover {
+      color: ${({ theme }) => theme.text3};
+    }
+  }
+`
+
 const REWARDS = styled(CenteredDiv)`
   > div {
     position: relative;
@@ -150,12 +161,22 @@ export const Faucet: FC = () => {
           </SpaceBetweenDiv>
         </div>
       </REWARDS>
-      <Bottom>
-        <span>Get yourself some sweet sweet GOFX to start trading synthetic assets.</span>
+      <BOTTOM>
+        <span>
+          Get yourself some sweet sweet GOFX to start trading synthetic assets. Read our trading guide&nbsp;
+          <a
+            href="https://medium.com/goosefx/goosefx-synthetic-asset-trading-guide-alpha-devnet-launch-fd023414667"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>here</span>
+          </a>
+          .
+        </span>
         <Button height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="40%">
           <span>{content}</span>
         </Button>
-      </Bottom>
+      </BOTTOM>
     </>
   )
 }
