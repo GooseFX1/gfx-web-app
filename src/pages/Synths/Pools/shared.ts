@@ -38,27 +38,30 @@ export const AvailableSynth = styled.div`
     cursor: pointer;
   }
 
-  > div {
+  div {
     ${({ theme }) => theme.measurements(theme.margins['3x'])}
     margin-right: ${({ theme }) => theme.margins['2x']};
   }
 
-  > span {
+  span {
     display: flex;
     align-items: center;
     padding: ${({ theme }) => theme.margins['1.5x']} 0;
     font-size: 12px;
     font-weight: bold;
+  }
 
-    &:not(:last-child) {
-      margin-bottom: ${({ theme }) => theme.margins['1.5x']};
-    }
+  span:nth-child(3) {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
   }
 `
 
 export const AvailableSynthsSelector = styled.div`
   position: relative;
-  ${({ theme }) => theme.measurements('160px')}
+  height: 200px;
+  width: 250px;
   padding: ${({ theme }) => theme.margins['1.5x']} 0;
   ${({ theme }) => theme.smallBorderRadius}
   overflow-y: scroll;

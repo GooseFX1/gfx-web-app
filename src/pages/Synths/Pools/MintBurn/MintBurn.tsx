@@ -2,12 +2,12 @@ import React, { BaseSyntheticEvent, FC, MouseEventHandler, useCallback, useMemo 
 import { Input } from 'antd'
 import styled, { css } from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Available, Bottom, Button, InputHeader, InputWrapper } from './shared'
 import { SynthSelector } from './SynthSelector'
-import { useAccounts, useConnectionConfig, useDarkMode, useSynths, useWalletModal } from '../../../context'
-import { SpaceBetweenDiv } from '../../../styles'
-import { capitalizeFirstLetter } from '../../../utils'
-import { ADDRESSES } from '../../../web3'
+import { Available, Bottom, Button, InputHeader, InputWrapper } from '../shared'
+import { useAccounts, useConnectionConfig, useDarkMode, useSynths, useWalletModal } from '../../../../context'
+import { SpaceBetweenDiv } from '../../../../styles'
+import { capitalizeFirstLetter } from '../../../../utils'
+import { ADDRESSES } from '../../../../web3'
 
 enum State {
   Connect = 0,
