@@ -40,7 +40,7 @@ export const MainButton: FC<{
 }> = ({ children, height, loading = false, status, width, ...props }) => {
   return (
     <BUTTON $height={height} $status={status} $width={width} {...props}>
-      {loading ? <Loader /> : children}
+      {loading ? <Loader smallButton={height !== '50px'} /> : children}
     </BUTTON>
   )
 }

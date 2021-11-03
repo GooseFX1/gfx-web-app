@@ -20,6 +20,7 @@ import { useTradeHistory } from './trade_history'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
 import { capitalizeFirstLetter, floorValue, notify, removeFloatingPointError } from '../utils'
 import { crypto } from '../web3'
+import { useAccounts } from './accounts'
 
 type OrderInput = undefined | 'price' | 'size' | 'total'
 export type OrderDisplayType = 'market' | 'limit'
@@ -87,6 +88,7 @@ interface IOrderConfig {
 const OrderContext = createContext<IOrderConfig | null>(null)
 
 export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { fetchAccounts } = useAccounts()
   const { connection } = useConnectionConfig()
   const { getAskSymbolFromPair, prices, selectedCrypto } = useCrypto()
   const { fetchOpenOrders } = useTradeHistory()
@@ -156,12 +158,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (!selectedCrypto.market) {
         throw new Error(`Market not selected`)
       }
-      /* if (decimalModulo(order.price, selectedCrypto.market.tickSize)) {
-        throw new Error(`Price must be a multiple of ${selectedCrypto.market.tickSize}`)
-      }
-      if (decimalModulo(order.size, selectedCrypto.market.minOrderSize)) {
-        throw new Error(`Size must be a multiple of ${selectedCrypto.market.minOrderSize}`)
-      } */ // TODO FIX
+
       await crypto.placeOrder(connection, selectedCrypto.market as Market, order, wallet)
       const ask = getAskSymbolFromPair(selectedCrypto.pair)
       const price = floorValue(order.price, selectedCrypto.market?.tickSize)
@@ -172,7 +169,10 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         description: `${capitalizeFirstLetter(order.side)}ing ${size} ${ask} at $${price} each`,
         icon: 'trade_success'
       })
-      setTimeout(() => fetchOpenOrders(), 4500)
+      setTimeout(() => {
+        fetchAccounts()
+        fetchOpenOrders()
+      }, 3000)
     } catch (e: any) {
       await notify(
         {
