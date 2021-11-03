@@ -90,8 +90,8 @@ const SIDE = styled(SpaceBetweenDiv)<{ $side: MarketSide }>`
     display: block;
     position: absolute;
     bottom: -6px;
-    left: ${({ $side }) => ($side === 'bids' ? '0' : `calc(${TRADE_ORDER_WIDTH} - 20px - 39%)`)};
-    width: ${({ $side }) => ($side === 'bids' ? '33%' : '31%')};
+    left: ${({ $side }) => ($side === 'bids' ? '0' : `calc(${TRADE_ORDER_WIDTH} - 20px - 55%)`)};
+    width: ${({ $side }) => ($side === 'bids' ? '36.5%' : '35%')};
     height: 2px;
     ${({ theme }) => theme.roundedBorders}
     background-color: white;

@@ -121,7 +121,7 @@ export const CryptoSelector: FC = () => {
     <ArrowDropdown
       arrowRotation={arrowRotation}
       measurements="16px"
-      offset={[16, 26]}
+      offset={[27, 26]}
       onVisibleChange={handleClick}
       onClick={handleClick}
       overlay={<Overlay setArrowRotation={setArrowRotation} setVisible={setVisible} />}
