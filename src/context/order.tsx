@@ -21,6 +21,7 @@ import { SUPPORTED_TOKEN_LIST } from '../constants'
 import { capitalizeFirstLetter, floorValue, notify, removeFloatingPointError } from '../utils'
 import { crypto } from '../web3'
 import { useAccounts } from './accounts'
+import { PublicKey } from '@solana/web3.js'
 
 type OrderInput = undefined | 'price' | 'size' | 'total'
 export type OrderDisplayType = 'market' | 'limit'
@@ -44,11 +45,21 @@ interface IOrderDisplay {
   tooltip: string
 }
 
-export const AVAILABLE_MARKETS = MARKETS.filter(({ deprecated, name }) => {
-  const ask = (name: string) => name.slice(0, name.indexOf('/'))
-  const isWrappedStableCoin = name[name.indexOf('/') + 1] === 'W'
-  return !deprecated && !isWrappedStableCoin && SUPPORTED_TOKEN_LIST.find((token) => ask(name) === token)
-}).sort((a, b) => a.name.localeCompare(b.name))
+export const AVAILABLE_MARKETS = (() => {
+  const markets = MARKETS.filter(({ deprecated, name }) => {
+    const ask = (name: string) => name.slice(0, name.indexOf('/'))
+    const isWrappedStableCoin = name[name.indexOf('/') + 1] === 'W'
+    return !deprecated && !isWrappedStableCoin && SUPPORTED_TOKEN_LIST.find((token) => ask(name) === token)
+  })
+  markets.push({
+    name: 'GOFX/USDC',
+    programId: new PublicKey('9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin'),
+    deprecated: false,
+    address: new PublicKey('2wgi2FabNsSDdb8dke9mHFB67QtMYjYa318HpSqyJLDD')
+  })
+  markets.sort((a, b) => a.name.localeCompare(b.name))
+  return markets
+})()
 
 export const AVAILABLE_ORDERS: IOrderDisplay[] = [
   /* {
