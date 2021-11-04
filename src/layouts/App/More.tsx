@@ -7,7 +7,7 @@ import { CenteredImg } from '../../styles'
 
 const ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['4.5x'])}
-  margin-left: ${({ theme }) => theme.margins['2x']};
+  ${({ theme }) => theme.smallShadow}
   cursor: pointer;
 `
 

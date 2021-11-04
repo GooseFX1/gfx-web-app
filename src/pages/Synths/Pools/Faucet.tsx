@@ -23,7 +23,7 @@ enum State {
 
 const BOTTOM = styled(Bottom)`
   a > span {
-    color: white;
+    color: ${({ theme }) => theme.text1};
     text-decoration: underline;
 
     &:hover {

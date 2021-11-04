@@ -39,7 +39,7 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
         return Number(Math.min(debt, getUIAmount(address.toString())).toFixed(decimals))
       case 'mint':
         const value = userPortfolio.cValue / 2 - userPortfolio.debt
-        return Math.max(Number(((0.9995 * value) / prices[synth]?.current).toFixed(decimals)), 0) || 0
+        return Math.max(Number(((0.9995 * value) / prices[synth]?.current).toFixed(decimals)), 0)
     }
   }, [action, getUIAmount, network, prices, synth, userPortfolio.cValue, userPortfolio.debt])
 
@@ -135,7 +135,7 @@ export const MintBurn: FC<{ action: 'burn' | 'mint' }> = ({ action }) => {
         <Available>
           <span>Available</span>
           <SpaceBetweenDiv>
-            <span>{userBalance}</span>
+            <span>{userBalance || 0}</span>
             <span>{synth}</span>
           </SpaceBetweenDiv>
         </Available>

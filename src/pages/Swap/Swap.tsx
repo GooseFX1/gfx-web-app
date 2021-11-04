@@ -70,6 +70,10 @@ const WRAPPER = styled.div`
   ${({ theme }) => theme.largeShadow}
 `
 
+const W = styled.div`
+  color: ${({ theme }) => theme.text1};
+`
+
 const SwapContent: FC = () => {
   const { mode } = useDarkMode()
   const { refreshRates, setFocused, switchTokens } = useSwap()
@@ -132,7 +136,7 @@ const SwapContent: FC = () => {
 }
 
 export const Swap: FC = () => {
-  return <span>Coming Soon</span>
+  return <W>Coming Soon</W>
 
   /* const { endpoint, setEndpoint } = useConnectionConfig()
 

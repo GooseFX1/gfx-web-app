@@ -151,7 +151,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     let interval: NodeJS.Timer
     if (network === WalletAdapterNetwork.Mainnet) {
-      interval = setInterval(() => fetchPrices(), REFRESH_INTERVAL)
+      fetchPrices().then(() => (interval = setInterval(() => fetchPrices(), REFRESH_INTERVAL)))
     }
 
     return () => {
@@ -162,7 +162,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     let interval: NodeJS.Timer
     if (network === WalletAdapterNetwork.Mainnet) {
-      interval = setInterval(() => fetchOrderBook(), REFRESH_INTERVAL)
+      fetchOrderBook().then(() => (interval = setInterval(() => fetchOrderBook(), REFRESH_INTERVAL)))
     }
 
     return () => {

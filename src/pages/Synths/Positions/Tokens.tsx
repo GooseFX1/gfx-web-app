@@ -40,6 +40,8 @@ export const Tokens: FC = () => {
   const { network } = useConnectionConfig()
   const { poolAccount, prices, userPortfolio } = useSynths()
 
+  console.log(poolAccount.synthsDebt)
+
   const tokens = useMemo(
     () =>
       poolAccount.synthsDebt.map(({ percentage, synth }) => {
