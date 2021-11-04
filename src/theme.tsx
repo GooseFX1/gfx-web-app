@@ -130,6 +130,7 @@ export function theme(mode: string): DefaultTheme {
       '4x': '32px',
       '4.5x': '36px',
       '5x': '40px',
+      '5.5x': '44px',
       '6x': '48px',
       '7x': '56px',
       '8x': '64px'

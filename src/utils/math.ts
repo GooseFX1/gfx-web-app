@@ -41,3 +41,8 @@ export const nFormatter = (n: number, digits = 1, withPlus = false): string => {
   if (n >= 1e9 && n < 1e12) return `${+(n / 1e9).toFixed(digits)}B ${withPlus ? '+' : ''}`
   if (n >= 1e12) return `${+(n / 1e12).toFixed(digits)}T ${withPlus ? '+' : ''}`
 }
+
+// Format money 1000 --> 1.000
+export const moneyFormatter = (number: number, currency = '') => {
+  return number.toLocaleString('de-DE') + currency
+}

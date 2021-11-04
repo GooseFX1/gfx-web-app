@@ -75,6 +75,7 @@ declare module 'styled-components' {
       '4x': string
       '4.5x': string
       '5x': string
+      '5.5x': string
       '6x': string
       '7x': string
       '8x': string

@@ -15,6 +15,7 @@ const STATS = styled(Row)`
 const STATS_ITEM = styled(Col)`
   align-items: center;
   position: relative;
+  color: #fff;
 
   .stats-item-quantity {
     font-size: 17px;

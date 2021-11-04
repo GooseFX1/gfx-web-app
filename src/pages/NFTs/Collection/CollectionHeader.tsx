@@ -9,7 +9,7 @@ import { statsData } from './mockData'
 
 const COLLECTION_HEADER = styled.div`
   position: relative;
-  height: 288px;
+  height: 290px;
   padding: ${({ theme }) => theme.margins['3x']};
   border-radius: 20px;
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
