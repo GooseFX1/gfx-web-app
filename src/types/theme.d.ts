@@ -36,6 +36,7 @@ export interface Colors {
   textBox: Color
   walletModalWallet: Color
   searchbarBackground: Color
+  collectionHeader: Color
 
   // primary
   primary1: Color

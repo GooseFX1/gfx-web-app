@@ -5,6 +5,7 @@ import NFTFooter from './NFTFooter'
 import { Header } from './Header'
 import { MyCreatedNFT } from './CreateNFT'
 import { Profile } from './Profile'
+import { Collection } from './Collection'
 import { useRouteMatch, Route, Switch } from 'react-router-dom'
 
 const WRAPPER = styled.div`
@@ -56,6 +57,11 @@ export const NFTs: FC = () => {
           <Route exact path="/NFTs/profile/my-created-NFT">
             <SCROLLING_CONTENT>
               <MyCreatedNFT />
+            </SCROLLING_CONTENT>
+          </Route>
+          <Route exact path="/NFTs/collection">
+            <SCROLLING_CONTENT>
+              <Collection />
             </SCROLLING_CONTENT>
           </Route>
         </Switch>

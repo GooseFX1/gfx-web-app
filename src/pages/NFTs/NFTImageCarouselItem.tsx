@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { useDarkMode } from '../../context'
 import { colors } from '../../theme'
 import { ButtonWrapper } from './NFTButton'
+import { useHistory } from 'react-router'
 
 const CAROUSEL_IMAGE = styled(Image)`
   cursor: pointer;
@@ -124,11 +125,15 @@ const UpcomingInfo = ({ item }: any) => {
 }
 
 const NFTImageCarouselItem = ({ item }: any) => {
+  const history = useHistory()
+  const goToCollection = () => history.push('/NFTs/collection')
+
   return (
     <CAROUSEL_ITEM>
       <CAROUSEL_IMAGE
         preview={false}
         src="https://images.unsplash.com/photo-1634985492257-06c8ee26b770?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1932&q=80"
+        onClick={goToCollection}
       />
       {/* <UpcomingInfo item={item} /> */}
       <LaunchPadInfo item={item} />

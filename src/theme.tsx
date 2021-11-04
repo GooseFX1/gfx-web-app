@@ -77,6 +77,10 @@ export function colors(mode: string): Colors {
     textBox: mode === 'dark' ? '#474747' : '#808080',
     walletModalWallet: mode === 'dark' ? '#1e1e1e' : '#e1e1e1',
     searchbarBackground: mode === 'dark' ? '#1e1e1e' : '#ababab',
+    collectionHeader:
+      mode === 'dark'
+        ? 'linear-gradient(0, #131313 0%, transparent 100%)'
+        : 'linear-gradient(0deg,rgba(0,0,0,1) 3%,rgba(30,30,30,1) 43%)',
 
     // primary colors
     primary1: '#302eb8',
