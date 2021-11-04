@@ -71,7 +71,7 @@ const Overlay: FC<{
         ]
       })
 
-    synths.sort(([_, { value: a }], [__, { value: b }]) => b - a)
+    synths.sort(([a, { value: va }], [b, { value: vb }]) => vb - va || a.localeCompare(b))
     return synths
   }, [availableSynths, getUIAmount, otherToken?.symbol, prices])
 

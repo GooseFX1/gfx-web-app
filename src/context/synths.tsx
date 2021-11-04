@@ -337,7 +337,7 @@ export const SynthsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setPoolAccount({
         shareRate: await fieldToNumber(poolAccount.shareRate),
         synthsDebt: Object.entries(debt)
-          .sort(([a], [b, _]) => a.localeCompare(b))
+          .sort(([a, _], [b, __]) => (a === 'gUSD' && -1) || (b === 'gUSD' && 1) || a.localeCompare(b))
           .map(([synth, amount]) => ({
             amount,
             percentage: (amount * prices[synth]?.current) / totalDebt,

@@ -25,7 +25,7 @@ const SELECTOR = styled(CenteredDiv)`
 const WRAPPER = styled(CenteredDiv)`
   padding: ${({ theme }) => theme.margins['3x']};
   ${({ theme }) => theme.largeBorderRadius}
-  ${({ theme }) => theme.largeShadow}
+  ${({ theme }) => theme.smallShadow}
   background-color: ${({ theme }) => theme.primary2};
   cursor: pointer;
 

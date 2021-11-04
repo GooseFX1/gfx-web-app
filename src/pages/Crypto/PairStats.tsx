@@ -98,7 +98,7 @@ export const PairStats: FC<{ decimals: number; pair: string; type: MarketType }>
           </div>
         ) TODO RESTORE */}
       </INFO>
-      <PRICE>{!price ? <Loader /> : <span>$ {removeFloatingPointError(price.current)}</span>}</PRICE>
+      <PRICE>{!price || !price.current ? <Loader /> : <span>$ {removeFloatingPointError(price.current)}</span>}</PRICE>
     </STATS>
   )
 }

@@ -196,7 +196,16 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
 
     setLoading(false)
-  }, [connection, fetchOpenOrders, getAskSymbolFromPair, order, selectedCrypto.market, selectedCrypto.pair, wallet])
+  }, [
+    connection,
+    fetchAccounts,
+    fetchOpenOrders,
+    getAskSymbolFromPair,
+    order,
+    selectedCrypto.market,
+    selectedCrypto.pair,
+    wallet
+  ])
 
   return (
     <OrderContext.Provider

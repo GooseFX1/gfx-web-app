@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
 import { Connect } from './Connect'
+import { GoFX } from './GoFX'
 import { More } from './More'
 import { Tabs } from './Tabs'
 import { useDarkMode } from '../../context'
@@ -41,6 +42,10 @@ const BUTTONS = styled(CenteredDiv)`
     right: 58px;
     height: 50px;
   `}
+  
+  > *:not(:last-child) {
+    margin-right: ${({ theme }) => theme.margins['2x']};
+  }
 `
 
 const WRAPPER = styled.nav`
@@ -70,6 +75,7 @@ export const Header: FC = () => {
       </BRAND>
       <Tabs />
       <BUTTONS>
+        <GoFX />
         <Connect />
         <More />
       </BUTTONS>
