@@ -11,6 +11,7 @@ const BUTTON = styled.button<{ $height: string; $status: Status; $width: string 
   width: ${({ $width }) => $width};
   border: none;
   ${({ theme }) => theme.roundedBorders}
+  ${({ theme }) => theme.smallShadow}
   background-color: ${({ $status, theme }) => ($status === 'action' ? theme.secondary3 : theme.text1h)};
   cursor: ${({ $status }) => ($status === 'action' ? 'pointer' : $status)};
   transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
@@ -40,7 +41,7 @@ export const MainButton: FC<{
 }> = ({ children, height, loading = false, status, width, ...props }) => {
   return (
     <BUTTON $height={height} $status={status} $width={width} {...props}>
-      {loading ? <Loader /> : children}
+      {loading ? <Loader smallButton={height !== '50px'} /> : children}
     </BUTTON>
   )
 }
