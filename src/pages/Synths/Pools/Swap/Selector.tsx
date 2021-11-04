@@ -1,9 +1,10 @@
-import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
+import { PublicKey } from '@solana/web3.js'
 import { AvailableSynth, AvailableSynthsSelector } from '../shared'
 import { SynthToken } from '../../SynthToken'
 import { ArrowDropdown } from '../../../../components'
-import { ISwapToken, useSynthSwap } from '../../../../context'
+import { ISwapToken, useAccounts, useSynthSwap } from '../../../../context'
 import { CenteredImg, FlexColumnDiv, SpaceBetweenDiv } from '../../../../styles'
 
 const WRAPPER = styled(FlexColumnDiv)<{ $height: string }>`
@@ -37,7 +38,8 @@ const Overlay: FC<{
   setVisible: Dispatch<SetStateAction<boolean>>
   side: 'in' | 'out'
 }> = ({ otherToken, setArrowRotation, setVisible, side }) => {
-  const { availableSynths, setInToken, setOutToken } = useSynthSwap()
+  const { getUIAmount } = useAccounts()
+  const { availableSynths, prices, setInToken, setOutToken } = useSynthSwap()
 
   const handleClick = useCallback(
     ([symbol, { address, decimals }]) => {
@@ -48,18 +50,39 @@ const Overlay: FC<{
     [setArrowRotation, setInToken, setOutToken, setVisible, side]
   )
 
+  const synths = useMemo(() => {
+    const synths: [string, { address: PublicKey; balance: number; decimals: number; value: number }][] = availableSynths
+      .filter(([name]) => name !== otherToken?.symbol && name !== 'GOFX')
+      .map(([synth, { address, decimals }]) => {
+        const balance = getUIAmount(address.toString())
+        const value = balance * prices[synth]?.current
+
+        return [
+          synth,
+          {
+            address,
+            balance,
+            decimals,
+            value
+          }
+        ]
+      })
+
+    synths.sort(([a, { value: va }], [b, { value: vb }]) => vb - va || a.localeCompare(b))
+    return synths
+  }, [availableSynths, getUIAmount, otherToken?.symbol, prices])
+
   return (
     <AvailableSynthsSelector>
-      {availableSynths
-        .filter(([name]) => name !== otherToken?.symbol && name !== 'GOFX')
-        .map((synth, index) => (
-          <AvailableSynth key={index} onClick={() => handleClick(synth)}>
-            <CenteredImg>
-              <img src={`${process.env.PUBLIC_URL}/img/synth/${synth[0]}.svg`} alt="" />
-            </CenteredImg>
-            <span>{synth[0]}</span>
-          </AvailableSynth>
-        ))}
+      {synths.map((synth, index) => (
+        <AvailableSynth key={index} onClick={() => handleClick(synth)}>
+          <CenteredImg>
+            <img src={`${process.env.PUBLIC_URL}/img/synth/${synth[0]}.svg`} alt="" />
+          </CenteredImg>
+          <span>{synth[0]}</span>
+          <span>{synth[1].balance.toFixed(2)}</span>
+        </AvailableSynth>
+      ))}
     </AvailableSynthsSelector>
   )
 }
@@ -86,7 +109,7 @@ export const Selector: FC<{
         <ArrowDropdown
           arrowRotation={arrowRotation}
           measurements="12px"
-          offset={[35, 30]}
+          offset={[125, 33]}
           onVisibleChange={handleClick}
           onClick={handleClick}
           overlay={

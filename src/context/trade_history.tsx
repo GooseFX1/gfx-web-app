@@ -99,7 +99,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
           icon: 'success',
           txid: signature
         })
-        setTimeout(() => fetchOpenOrders(), 4500)
+        setTimeout(() => fetchOpenOrders(), 3000)
       } catch (e: any) {
         await notify({ type: 'error', message: `Error cancelling order`, icon: 'error', description: e.message })
       }
@@ -129,7 +129,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
           icon: 'success',
           txid: signature
         })
-        setTimeout(() => fetchBalances(), 4500)
+        setTimeout(() => fetchBalances(), 3000)
       } catch (e: any) {
         await notify({ type: 'error', message: `Error settling funds`, icon: 'error', description: e.message })
       }

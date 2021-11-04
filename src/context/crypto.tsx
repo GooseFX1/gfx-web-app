@@ -11,10 +11,10 @@ import React, {
 } from 'react'
 import BN from 'bn.js'
 import { Market } from '@project-serum/serum'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { useConnectionConfig } from './settings'
 import { notify } from '../utils'
 import { pyth, serum } from '../web3'
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 
 interface ICrypto {
   decimals: number
@@ -51,6 +51,7 @@ interface ICryptoConfig {
 export type MarketType = 'crypto' | 'synth'
 
 export const FEATURED_PAIRS_LIST = [
+  { decimals: 3, pair: 'GOFX/USDC', type: 'crypto' as MarketType },
   { decimals: 1, pair: 'BTC/USDC', type: 'crypto' as MarketType },
   { decimals: 2, pair: 'ETH/USDC', type: 'crypto' as MarketType },
   { decimals: 3, pair: 'SOL/USDC', type: 'crypto' as MarketType },
@@ -80,13 +81,9 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const fetchOrderBook = useCallback(async () => {
     try {
-      const market = await serum.getMarket(connection, selectedCrypto.pair)
-      setSelectedCrypto((prevState) => ({ ...prevState, market }))
-
       const asks = await serum.getAsks(connection, selectedCrypto.pair)
-      setOrderBook((prevState) => ({ ...prevState, asks: asks.getL2(20) }))
       const bids = await serum.getBids(connection, selectedCrypto.pair)
-      setOrderBook((prevState) => ({ ...prevState, bids: bids.getL2(20) }))
+      setOrderBook((prevState) => ({ ...prevState, asks: asks.getL2(20), bids: bids.getL2(20) }))
 
       /* const subs = await Promise.all([
         serum.subscribeToOrderBook(connection, market, 'asks', (account, market) => {
@@ -143,17 +140,36 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [connection, network])
 
   useEffect(() => {
-    const intervals = []
+    ;(async () => {
+      try {
+        const market = await serum.getMarket(connection, selectedCrypto.pair)
+        setSelectedCrypto((prevState) => ({ ...prevState, market }))
+      } catch (e) {}
+    })()
+  }, [connection, selectedCrypto.pair])
+
+  useEffect(() => {
+    let interval: NodeJS.Timer
     if (network === WalletAdapterNetwork.Mainnet) {
-      intervals.push(setInterval(() => fetchPrices(), REFRESH_INTERVAL))
-      intervals.push(setInterval(() => fetchOrderBook(), REFRESH_INTERVAL))
+      fetchPrices().then(() => (interval = setInterval(() => fetchPrices(), REFRESH_INTERVAL)))
     }
 
     return () => {
-      intervals.forEach((interval) => clearInterval(interval))
+      clearInterval(interval)
+    }
+  }, [fetchPrices, network])
+
+  useEffect(() => {
+    let interval: NodeJS.Timer
+    if (network === WalletAdapterNetwork.Mainnet) {
+      fetchOrderBook().then(() => (interval = setInterval(() => fetchOrderBook(), REFRESH_INTERVAL)))
+    }
+
+    return () => {
+      clearInterval(interval)
       setOrderBook(DEFAULT_ORDER_BOOK)
     }
-  }, [connection, fetchOrderBook, fetchPrices, network, selectedCrypto.pair, selectedCrypto.type])
+  }, [fetchOrderBook, network])
 
   return (
     <CryptoContext.Provider

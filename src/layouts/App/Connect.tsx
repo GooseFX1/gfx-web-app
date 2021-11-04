@@ -24,6 +24,7 @@ const WRAPPER = styled.button<{ $connected: boolean }>`
   height: ${({ theme }) => theme.margins['5x']};
   border: none;
   ${({ theme }) => theme.roundedBorders}
+  ${({ theme }) => theme.smallShadow}
   background-color: ${({ theme }) => theme.secondary3};
   transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
 

@@ -20,6 +20,8 @@ import { useTradeHistory } from './trade_history'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
 import { capitalizeFirstLetter, floorValue, notify, removeFloatingPointError } from '../utils'
 import { crypto } from '../web3'
+import { useAccounts } from './accounts'
+import { PublicKey } from '@solana/web3.js'
 
 type OrderInput = undefined | 'price' | 'size' | 'total'
 export type OrderDisplayType = 'market' | 'limit'
@@ -43,11 +45,21 @@ interface IOrderDisplay {
   tooltip: string
 }
 
-export const AVAILABLE_MARKETS = MARKETS.filter(({ deprecated, name }) => {
-  const ask = (name: string) => name.slice(0, name.indexOf('/'))
-  const isWrappedStableCoin = name[name.indexOf('/') + 1] === 'W'
-  return !deprecated && !isWrappedStableCoin && SUPPORTED_TOKEN_LIST.find((token) => ask(name) === token)
-}).sort((a, b) => a.name.localeCompare(b.name))
+export const AVAILABLE_MARKETS = (() => {
+  const markets = MARKETS.filter(({ deprecated, name }) => {
+    const ask = (name: string) => name.slice(0, name.indexOf('/'))
+    const isWrappedStableCoin = name[name.indexOf('/') + 1] === 'W'
+    return !deprecated && !isWrappedStableCoin && SUPPORTED_TOKEN_LIST.find((token) => ask(name) === token)
+  })
+  markets.push({
+    name: 'GOFX/USDC',
+    programId: new PublicKey('9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin'),
+    deprecated: false,
+    address: new PublicKey('2wgi2FabNsSDdb8dke9mHFB67QtMYjYa318HpSqyJLDD')
+  })
+  markets.sort((a, b) => a.name.localeCompare(b.name))
+  return markets
+})()
 
 export const AVAILABLE_ORDERS: IOrderDisplay[] = [
   /* {
@@ -87,6 +99,7 @@ interface IOrderConfig {
 const OrderContext = createContext<IOrderConfig | null>(null)
 
 export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { fetchAccounts } = useAccounts()
   const { connection } = useConnectionConfig()
   const { getAskSymbolFromPair, prices, selectedCrypto } = useCrypto()
   const { fetchOpenOrders } = useTradeHistory()
@@ -156,12 +169,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (!selectedCrypto.market) {
         throw new Error(`Market not selected`)
       }
-      /* if (decimalModulo(order.price, selectedCrypto.market.tickSize)) {
-        throw new Error(`Price must be a multiple of ${selectedCrypto.market.tickSize}`)
-      }
-      if (decimalModulo(order.size, selectedCrypto.market.minOrderSize)) {
-        throw new Error(`Size must be a multiple of ${selectedCrypto.market.minOrderSize}`)
-      } */ // TODO FIX
+
       await crypto.placeOrder(connection, selectedCrypto.market as Market, order, wallet)
       const ask = getAskSymbolFromPair(selectedCrypto.pair)
       const price = floorValue(order.price, selectedCrypto.market?.tickSize)
@@ -172,7 +180,10 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         description: `${capitalizeFirstLetter(order.side)}ing ${size} ${ask} at $${price} each`,
         icon: 'trade_success'
       })
-      setTimeout(() => fetchOpenOrders(), 4500)
+      setTimeout(() => {
+        fetchAccounts()
+        fetchOpenOrders()
+      }, 3000)
     } catch (e: any) {
       await notify(
         {
@@ -185,7 +196,16 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
 
     setLoading(false)
-  }, [connection, fetchOpenOrders, getAskSymbolFromPair, order, selectedCrypto.market, selectedCrypto.pair, wallet])
+  }, [
+    connection,
+    fetchAccounts,
+    fetchOpenOrders,
+    getAskSymbolFromPair,
+    order,
+    selectedCrypto.market,
+    selectedCrypto.pair,
+    wallet
+  ])
 
   return (
     <OrderContext.Provider

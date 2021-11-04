@@ -28,6 +28,15 @@ const getMarketFromAddress = (address: PublicKey) => {
 }
 
 const getMarketInfo = (pair: string, canBeDeprecated: boolean = false) => {
+  if (pair === 'GOFX/USDC') {
+    return {
+      name: 'GOFX/USDC',
+      programId: new PublicKey('9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin'),
+      deprecated: false,
+      address: new PublicKey('2wgi2FabNsSDdb8dke9mHFB67QtMYjYa318HpSqyJLDD')
+    }
+  }
+
   const match = MARKETS.find(
     ({ deprecated, name }) => name === pair && ((!canBeDeprecated && !deprecated) || canBeDeprecated)
   )
