@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 import { CollectionHeader } from './CollectionHeader'
 import { CollectionTabs } from './CollectionTabs'
 

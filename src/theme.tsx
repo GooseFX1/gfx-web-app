@@ -133,7 +133,10 @@ export function theme(mode: string): DefaultTheme {
       '5.5x': '44px',
       '6x': '48px',
       '7x': '56px',
-      '8x': '64px'
+      '8x': '64px',
+      '9x': '72px',
+      '10x': '80px',
+      '11x': '88px'
     },
 
     largeShadow: css`

@@ -2,24 +2,25 @@ import styled from 'styled-components'
 import { Dropdown, Menu } from 'antd'
 
 export const StyledHeaderProfile = styled.div<{ mode?: string }>`
+  ${({ theme, mode }) => `
   position: relative;
   height: 260px;
-  padding: 25px;
-  border-radius: 20px;
+  padding: ${theme.margins['3x']};
+  ${theme.largeBorderRadius}
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
   background: rgb(30, 30, 30);
-  background: ${({ mode }) =>
-    mode === 'dark' ? 'linear-gradient(0deg, rgba(0, 0, 0, 1) 3%, rgba(30, 30, 30, 1) 43%)' : '#fff'};
+  background: ${mode === 'dark' ? 'linear-gradient(0deg, rgba(0, 0, 0, 1) 3%, rgba(30, 30, 30, 1) 43%)' : theme.white};
   .back-icon {
     position: absolute;
     top: 55px;
     left: 55px;
     transform: rotate(90deg);
     width: 36px;
-    filter: ${({ mode }) =>
+    filter: ${
       mode === 'dark'
         ? 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'
-        : '#000'};
+        : '#000'
+    };
     cursor: pointer;
   }
   .avatar-profile-wrap {
@@ -41,30 +42,26 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
     }
   }
   .name-wrap {
-    margin-top: ${({ theme }) => theme.margins['1x']};
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin-top: ${theme.margins['1x']};
+    ${theme.flexCenter}
   }
   .name {
-    color: ${({ theme }) => theme.text1};
+    color: ${theme.text1};
     font-size: 18px;
     display: inline-block;
-    margin-right: ${({ theme }) => theme.margins['1x']};
+    margin-right: ${theme.margins['1x']};
   }
   .check-icon {
     width: 20px;
     height: 20px;
   }
   .social-list {
-    margin-top: ${({ theme }) => theme.margins['2x']};
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin-top: ${theme.margins['2x']};
+    ${theme.flexCenter}
     .social-item {
       display: inline-block;
       width: 35px;
-      margin: 0 ${({ theme }) => theme.margins['1x']};
+      margin: 0 ${theme.margins['1x']};
     }
     .social-icon {
       width: 35px;
@@ -76,16 +73,17 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
     top: 44px;
     right: 21px;
     .btn-create {
-      color: #fff;
+      color: ${theme.white};
       background-color: #3735bb;
       height: 41px;
       min-width: 132px;
-      border-radius: 45px;
+      ${theme.roundedBorders}
       font-size: 13px;
       border: none;
       cursor: pointer;
     }
   }
+`}
 `
 export const StyledDropdown = styled(Dropdown)`
   width: auto;
@@ -99,16 +97,17 @@ export const StyledDropdown = styled(Dropdown)`
   }
 `
 export const StyledMenu = styled(Menu)`
+  ${({ theme }) => `
   font-size: 12px;
-  color: #fff;
-  background-color: #000;
+  color: ${theme.white};
+  background-color: ${theme.black};
   min-width: 208px;
-  padding: 10px 0;
-  border-radius: 10px;
-  margin-top: ${({ theme }) => theme.margins['2x']};
+  padding: ${theme.margins['1x']} 0;
+  ${theme.smallBorderRadius}
+  margin-top: ${theme.margins['2x']};
   position: relative;
   li {
-    padding: 8px 23px;
+    padding: ${theme.margins['1x']} ${theme.margins['3x']};
   }
   &:before {
     border-right-color: transparent;
@@ -128,4 +127,5 @@ export const StyledMenu = styled(Menu)`
     transform: rotate(45deg);
     content: '';
   }
+`}
 `

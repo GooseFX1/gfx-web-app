@@ -79,6 +79,9 @@ declare module 'styled-components' {
       '6x': string
       '7x': string
       '8x': string
+      '9x': string
+      '10x': string
+      '11x': string
     }
 
     // shadows

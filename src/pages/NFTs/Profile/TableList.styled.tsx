@@ -2,19 +2,20 @@ import styled from 'styled-components'
 import { Table } from 'antd'
 
 export const StyledTableList = styled(Table)`
+  ${({ theme }) => `
   .item {
     display: flex;
     align-items: center;
     .image {
       width: 30px;
       height: 30px;
-      border-radius: 5px;
+      ${theme.smallBorderRadius}
     }
     .text {
       font-size: 12px;
       font-weight: 500;
-      color: ${({ theme }) => theme.text1};
-      padding-left: 10px;
+      color: ${theme.text1};
+      padding-left: ${theme.margins['1x']};
     }
   }
 
@@ -26,10 +27,10 @@ export const StyledTableList = styled(Table)`
       height: 24px;
     }
     .price {
-      color: ${({ theme }) => theme.text1};
+      color: ${theme.text1};
       font-size: 10px;
       font-weight: 600;
-      padding-left: 7px;
+      padding-left: ${theme.margins['1x']};
     }
   }
   .from,
@@ -43,7 +44,7 @@ export const StyledTableList = styled(Table)`
   .text-normal {
     font-size: 15px;
     font-weight: 500;
-    color: ${({ theme }) => theme.text1};
+    color: ${theme.text1};
   }
 
   .ant-table-thead {
@@ -52,8 +53,8 @@ export const StyledTableList = styled(Table)`
         border: none;
         font-size: 16px;
         font-weight: 700;
-        color: ${({ theme }) => theme.text1};
-        background-color: ${({ theme }) => theme.bg3};
+        color: ${theme.text1};
+        background-color: ${theme.bg3};
         &:before {
           content: none !important;
         }
@@ -63,15 +64,16 @@ export const StyledTableList = styled(Table)`
   .ant-table-tbody {
     > tr {
       > td {
-        background-color: ${({ theme }) => theme.bg3};
+        background-color: ${theme.bg3};
         border: none;
-        color: ${({ theme }) => theme.text1};
+        color: ${theme.text1};
       }
       &.ant-table-row:hover {
         > td {
-          background-color: ${({ theme }) => theme.bg6};
+          background-color: ${theme.bg6};
         }
       }
     }
   }
+`}
 `

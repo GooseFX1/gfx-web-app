@@ -1,14 +1,13 @@
+import React from 'react'
 import { Row } from 'antd'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
+import { MainButton } from '../../../components/MainButton'
 
-const CARD = styled.div<{ status: string }>`
-  padding: ${({ theme }) => theme.margins['2.5x']};
+const CARD = styled.div<{ type: string; status: string }>`
   padding-bottom: ${({ theme }) => theme.margins['1.5x']};
   border-radius: 15px;
-  background-color: #171717;
   cursor: pointer;
-  opacity: ${({ status }) => (status === 'sold_out' ? 0.6 : 1)};
 
   .card-image-wrapper {
     position: relative;
@@ -16,9 +15,6 @@ const CARD = styled.div<{ status: string }>`
     margin: 0 auto;
 
     .card-image {
-      min-width: 185x;
-      max-width: 185x;
-      height: 190px;
       object-fit: contain;
       border-radius: 15px;
     }
@@ -59,32 +55,114 @@ const CARD = styled.div<{ status: string }>`
     .card-favorite-heart {
       margin-right: ${({ theme }) => theme.margins['0.5x']};
     }
+
+    .card-favorite-number {
+      color: #4b4b4b;
+      font-size: 13px;
+      font-weight: 600;
+    }
   }
+
+  ${({ type, status, theme }) => {
+    switch (type) {
+      case 'carousel':
+        return css`
+          padding: ${theme.margins['2.5x']};
+          opacity: ${status === 'sold_out' ? 0.6 : 1};
+          background-color: #171717;
+
+          .card-image {
+            min-width: 185x;
+            max-width: 185x;
+            height: 190px;
+          }
+
+          .card-favorite {
+            display: ${status === 'sold_out' ? 'none' : 'inline-block'};
+          }
+
+          .card-name,
+          .card-price,
+          .card-remaining {
+            color: ${theme.white};
+          }
+
+          .card-info .card-favorite-number-highlight {
+            color: ${({ theme }) => theme.white};
+          }
+        `
+      case 'grid':
+        return css`
+          .card-image {
+            width: 100%;
+            height: auto;
+          }
+
+          .card-remaining {
+            display: none;
+          }
+
+          .card-name,
+          .card-price {
+            color: ${({ theme }) => theme.text1};
+          }
+
+          .card-name {
+            font-size: 16px;
+          }
+
+          .card-price {
+            font-size: 15px;
+          }
+
+          .card-info .card-favorite-number-highlight {
+            color: ${({ theme }) => theme.text1};
+          }
+        `
+    }
+  }}
 `
 
-const CARD_BUTTON = styled.button<{ status: string }>`
-  padding: ${({ theme }) => `${theme.margins['1x']} ${theme.margins['1.5x']}`};
-  background-color: ${({ status }) => {
-    switch (status) {
-      case 'auctioning':
-        return '#3735bb'
-      case 'sold_out':
-        return '#bb3535'
-    }
-  }};
-  min-width: 76px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: none;
+const CARD_BUTTON = styled(MainButton)<{ cardType: string; cardStatus: string }>`
   border-radius: 50px;
-  font-size: 9px;
-  cursor: ${({ status }) => (status === 'sold_out' ? 'not-allowed' : 'pointer')};
+  color: ${({ theme }) => theme.white};
 
   &:hover {
     opacity: 0.8;
   }
+
+  ${({ cardType, cardStatus, theme }) => {
+    switch (cardType) {
+      case 'carousel':
+        return css`
+          background-color: ${cardStatus === 'auctioning' ? '#3735bb' : '#bb3535'};
+          cursor: ${cardStatus === 'sold_out' ? 'not-allowed' : 'pointer'};
+          font-size: 9px;
+          padding: ${theme.margins['1x']} ${theme.margins['1.5x']};
+        `
+      case 'grid':
+        return css`
+          height: 34px;
+          background-color: ${theme.primary2};
+          font-size: 11px;
+          font-weight: 600;
+          padding: ${theme.margins['1x']} ${theme.margins['2x']};
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+          min-width: 82px;
+        `
+    }
+  }}
 `
+
+const getButtonText = (type: string, status: string): string => {
+  switch (type) {
+    case 'carousel':
+      if (status === 'sold_out') return 'Sold Out'
+      return 'Bid'
+    case 'grid':
+      return 'Buy Now'
+  }
+}
 
 interface CardData {
   id: string
@@ -104,9 +182,9 @@ type Props = {
   data: CardData
 }
 
-export const Card = ({ data, className, ...rest }: Props) => {
+export const Card = ({ type, data, className, ...rest }: Props) => {
   return (
-    <CARD status={data.status} {...rest}>
+    <CARD type={type} status={data.status} {...rest}>
       <div className="card-image-wrapper">
         <img className="card-image" src={`${process.env.PUBLIC_URL}/img/assets/card-1.png`} alt="" />
         <div className="card-remaining">{data.remaining}</div>
@@ -124,30 +202,32 @@ export const Card = ({ data, className, ...rest }: Props) => {
             )}
           </Row>
           <Row align="middle">
-            {data.status !== 'sold_out' && (
-              <Row align="middle">
-                {(data.isFavorite && (
-                  <img
-                    className="card-favorite-heart"
-                    src={`${process.env.PUBLIC_URL}/img/assets/heart-red.svg`}
-                    alt=""
-                  />
-                )) || (
-                  <img
-                    className="card-favorite-heart"
-                    src={`${process.env.PUBLIC_URL}/img/assets/heart-empty.svg`}
-                    alt=""
-                  />
-                )}
-                <span className="like-count">{data.hearts}</span>
-              </Row>
-            )}
+            <Row align="middle" className="card-favorite">
+              {(data.isFavorite && (
+                <img
+                  className="card-favorite-heart"
+                  src={`${process.env.PUBLIC_URL}/img/assets/heart-red.svg`}
+                  alt=""
+                />
+              )) || (
+                <img
+                  className="card-favorite-heart"
+                  src={`${process.env.PUBLIC_URL}/img/assets/heart-empty.svg`}
+                  alt=""
+                />
+              )}
+              <span className={`card-favorite-number ${data.isFavorite ? 'card-favorite-number-highlight' : ''}`}>
+                {data.hearts}
+              </span>
+            </Row>
           </Row>
         </Row>
       </div>
       <Row justify="space-between" align="middle">
         <div className="card-price">{`${moneyFormatter(data.price)} SOL`}</div>
-        <CARD_BUTTON status={data.status}>{`${data.status === 'sold_out' ? 'Sold Out' : 'Bid'}`}</CARD_BUTTON>
+        <CARD_BUTTON height="34px" width="76px" radius="50px" cardStatus={data.status} cardType={type}>
+          {getButtonText(type, data.status)}
+        </CARD_BUTTON>
       </Row>
     </CARD>
   )

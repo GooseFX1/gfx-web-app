@@ -1,3 +1,4 @@
+import React from 'react'
 import { Button, Col, Dropdown, Menu, Row } from 'antd'
 import { SearchBar } from '../SearchBar'
 import { Sort } from './Sort'

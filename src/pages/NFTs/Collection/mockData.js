@@ -5,12 +5,12 @@ export const statsData = [
   { title: 'Volume traded', total: 22300, unit: '' }
 ]
 
-export const liveAuctionsNFTs = [
+export const NFTsData = [
   {
     id: '1',
     thumbnail: '',
     name: 'Genesis #3504',
-    price: 200000,
+    price: 1499,
     status: 'sold_out',
     hearts: 0,
     remaining: '02d:20h:10min',
@@ -21,7 +21,7 @@ export const liveAuctionsNFTs = [
     id: '2',
     thumbnail: '',
     name: 'Genesis #3504',
-    price: 200000,
+    price: 10000,
     status: 'auctioning',
     hearts: 0,
     remaining: '02d:20h:10min',
@@ -32,7 +32,7 @@ export const liveAuctionsNFTs = [
     id: '3',
     thumbnail: '',
     name: 'Genesis #3504',
-    price: 200000,
+    price: 420,
     status: 'auctioning',
     hearts: 8,
     remaining: '02d:20h:10min',
@@ -43,7 +43,7 @@ export const liveAuctionsNFTs = [
     id: '4',
     thumbnail: '',
     name: 'Genesis #3504',
-    price: 200000,
+    price: 420,
     status: 'auctioning',
     hearts: 14,
     remaining: '02d:20h:10min',
@@ -54,7 +54,7 @@ export const liveAuctionsNFTs = [
     id: '5',
     thumbnail: '',
     name: 'Genesis #3504',
-    price: 200000,
+    price: 2500,
     status: 'auctioning',
     hearts: 14,
     remaining: '02d:20h:10min',
@@ -76,7 +76,7 @@ export const liveAuctionsNFTs = [
     id: '7',
     thumbnail: '',
     name: 'Genesis #3504',
-    price: 200000,
+    price: 220000,
     status: 'auctioning',
     hearts: 14,
     remaining: '02d:20h:10min',

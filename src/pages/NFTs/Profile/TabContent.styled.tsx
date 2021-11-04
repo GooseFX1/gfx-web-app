@@ -1,7 +1,8 @@
 import styled from 'styled-components'
 
 export const StyledTabContent = styled.div`
-  padding: 6px 40px 22px;
+  ${({ theme }) => `
+  padding: ${theme.margins['1x']} ${theme.margins['5x']} ${theme.margins['3x']};
   .actions-group {
     display: flex;
     align-items: center;
@@ -13,7 +14,7 @@ export const StyledTabContent = styled.div`
     width: 100%;
     > div:nth-child(1) {
       height: 43px;
-      padding: 0 20px;
+      padding: 0 ${theme.margins['2.5x']};
       max-width: 430px;
     }
     input {
@@ -32,11 +33,12 @@ export const StyledTabContent = styled.div`
   .cards-list {
     display: flex;
     flex-wrap: wrap;
-    margin: ${({ theme }) => theme.margins['4x']} -${({ theme }) => theme.margins['1.5x']} 0;
+    margin: ${theme.margins['4x']} -${theme.margins['1.5x']} 0;
     .card-item {
       width: 20%;
-      padding: 0 12px;
-      margin-bottom: 24px;
+      padding: 0 ${theme.margins['1.5x']};
+      margin-bottom: ${theme.margins['3x']};
     }
   }
+`}
 `

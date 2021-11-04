@@ -2,18 +2,18 @@ import styled from 'styled-components'
 import { Modal, Form } from 'antd'
 
 export const StyledPopupEditMyCreatedNFT = styled(Modal)`
-  background-color: ${({ theme }) => theme.bg3};
+  ${({ theme }) => `
+  background-color: ${theme.bg3};
   border-radius: 20px;
   width: 620px !important;
-  height: 700px;
   .ant-modal-header {
-    border-radius: 20px;
-    background-color: ${({ theme }) => theme.bg3};
-    padding: 30px 45px 0 45px;
+    ${theme.largeBorderRadius};
+    background-color: ${theme.bg3};
+    padding: ${theme.margins['3.5x']} ${theme.margins['5.5x']} 0 ${theme.margins['5.5x']};
     border: none;
     .ant-modal-title {
       font-size: 25px;
-      color: ${({ theme }) => theme.text1};
+      color: ${theme.text1};
       font-weight: 600;
     }
   }
@@ -22,24 +22,25 @@ export const StyledPopupEditMyCreatedNFT = styled(Modal)`
     box-shadow: none;
   }
   .ant-modal-body {
-    padding: 30px 45px 15px;
+    padding: ${theme.margins['3.5x']} ${theme.margins['5.5x']} ${theme.margins['2x']};
   }
   .ant-modal-footer {
     border: none;
+    padding: ${theme.margins['1x']} ${theme.margins['5.5x']};
     .ant-btn:not(.ant-btn-primary) {
       font-size: 18px;
       font-weight: 600;
       border: none;
-      margin-right: ${({ theme }) => theme.margins['2x']};
-      color: ${({ theme }) => theme.text2};
+      margin-right: ${theme.margins['2x']};
+      color: ${theme.text2};
     }
     .ant-btn-primary {
       width: 245px;
       height: 60px;
       font-size: 18px;
       font-weight: 600;
-      color: ${({ theme }) => theme.text1};
-      border-radius: 60px;
+      color: ${theme.text1};
+      ${theme.roundedBorders};
       background: #7d7d7d;
       border: none;
     }
@@ -54,17 +55,17 @@ export const StyledPopupEditMyCreatedNFT = styled(Modal)`
     font-size: 26px;
     line-height: 1;
     svg {
-      color: ${({ theme }) => theme.text1};
+      color: ${theme.text1};
     }
   }
   .avatar-wrapper {
-    background-color: ${({ theme }) => theme.bg3};
+    background-color: ${theme.bg3};
     border-style: dashed;
     border-color: #848484;
     border-width: 2px;
-    border-radius: 20px;
-    padding: 25px;
-    margin-bottom: ${({ theme }) => theme.margins['4x']};
+    ${theme.largeBorderRadius};
+    padding: ${theme.margins['3x']};
+    margin-bottom: ${theme.margins['4x']};
     .image-group {
       display: flex;
       align-items: center;
@@ -75,9 +76,9 @@ export const StyledPopupEditMyCreatedNFT = styled(Modal)`
       border-radius: 5px;
     }
     .note {
-      padding-left: 57px;
       font-size: 14px;
-      color: ${({ theme }) => theme.text1};
+      padding-left: ${theme.margins['7x']};
+      color: ${theme.text1};
     }
     .image-wrap {
       position: relative;
@@ -87,9 +88,7 @@ export const StyledPopupEditMyCreatedNFT = styled(Modal)`
         height: 100%;
         top: 0;
         right: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        ${theme.flexCenter}
         font-size: 30px;
         opacity: 0;
       }
@@ -101,7 +100,7 @@ export const StyledPopupEditMyCreatedNFT = styled(Modal)`
     }
     .ant-upload-list {
       border: none;
-      border-radius: 6px;
+      ${theme.smallBorderRadius}
       position: relative;
       width: 104px;
       height: 104px;
@@ -121,23 +120,25 @@ export const StyledPopupEditMyCreatedNFT = styled(Modal)`
       border: none;
     }
   }
+  `}
 `
 
 export const StyledFormEditCreatedNFT = styled(Form)`
+  ${({ theme }) => `
   .half-width {
     flex: 1;
     width: 50%;
-    margin: 0 ${({ theme }) => theme.margins['1x']};
+    margin: 0 ${theme.margins['1x']};
   }
   .full-width {
     display: flex;
-    margin: 0 -${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2x']};
+    margin: 0 -${theme.margins['1x']} ${theme.margins['2x']};
     &.last-item {
       align-items: center;
     }
   }
   .ant-form-item {
-    margin-bottom: ${({ theme }) => theme.margins['1x']};
+    margin-bottom: ${theme.margins['1x']};
   }
   .hint {
     font-size: 9px;
@@ -148,7 +149,7 @@ export const StyledFormEditCreatedNFT = styled(Form)`
     label {
       font-size: 17px;
       font-weight: 600;
-      color: ${({ theme }) => theme.text1};
+      color: ${theme.text1};
       line-height: 1;
     }
     .ant-form-item-optional {
@@ -161,7 +162,8 @@ export const StyledFormEditCreatedNFT = styled(Form)`
       border: none;
       border-radius: 0;
       border-bottom: 2px solid #a8a8a8;
-      color: ${({ theme }) => theme.text1};
+      color: ${theme.text1};
+      padding-left: 0px;
       font-size: 12px;
       text-align: left;
       &:focus {
@@ -172,7 +174,7 @@ export const StyledFormEditCreatedNFT = styled(Form)`
       width: 195px;
       height: 41px;
       border-radius: 41px;
-      margin-top: ${({ theme }) => theme.margins['2x']};
+      margin-top: ${theme.margins['2x']};
       background: #9625ae;
       border: none;
       input {
@@ -189,14 +191,14 @@ export const StyledFormEditCreatedNFT = styled(Form)`
     align-items: center;
     font-size: 17px;
     font-weight: 600;
-    color: ${({ theme }) => theme.text1};
+    color: ${theme.text1};
     line-height: 1;
-    margin-bottom: ${({ theme }) => theme.margins['1x']};
+    margin-bottom: ${theme.margins['1x']};
     .heart-purple {
       width: 35px;
       height: 35px;
-      margin-left: ${({ theme }) => theme.margins['1x']};
-      padding-top: 8px;
+      margin-left: ${theme.margins['1x']};
+      padding-top: ${theme.margins['1x']};
     }
   }
   .description {
@@ -211,7 +213,7 @@ export const StyledFormEditCreatedNFT = styled(Form)`
       height: 32px;
       border-radius: 2px;
       color: #bebebe;
-      margin-right: ${({ theme }) => theme.margins['1x']};
+      margin-right: ${theme.margins['1x']};
       font-size: 13px;
       font-weight: 600;
       text-align: center;
@@ -223,15 +225,5 @@ export const StyledFormEditCreatedNFT = styled(Form)`
       }
     }
   }
-  .btn-save {
-    margin-top: ${({ theme }) => theme.margins['4x']};
-    width: 100%;
-    font-size: 17px;
-    font-weight: 600;
-    line-height: 50px;
-    height: 53px;
-    border-radius: 53px;
-    border: none;
-    background: #9625ae;
-  }
+  `}
 `
