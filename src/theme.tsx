@@ -61,6 +61,7 @@ export function colors(mode: string): Colors {
     bg3: mode === 'dark' ? '#2a2a2a' : white,
     bg4: mode === 'dark' ? '#171717' : '#f4f4f4',
     bg5: mode === 'dark' ? black : '#e0e0e0',
+    bg6: mode === 'dark' ? 'black' : 'gray',
     grey1: '#434343',
     grey2: '#4e4e4e',
     grey3: '#2a2a2a',

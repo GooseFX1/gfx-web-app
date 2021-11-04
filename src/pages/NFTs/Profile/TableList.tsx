@@ -1,76 +1,7 @@
 import React from 'react'
-import styled from 'styled-components'
-import { Table } from 'antd'
 import { mockData } from './mockData'
+import { StyledTableList } from './TableList.styled'
 
-const TABLE = styled(Table)`
-  .item {
-    display: flex;
-    align-items: center;
-    .image {
-      width: 30px;
-      height: 30px;
-      border-radius: 5px;
-    }
-    .text {
-      font-size: 12px;
-      font-weight: 500;
-      color: #fff;
-      padding-left: 10px;
-    }
-  }
-
-  .price-wrap {
-    display: flex;
-    align-items: center;
-    .image {
-      width: 24px;
-      height: 24px;
-    }
-    .price {
-      color: #fff;
-      font-size: 10px;
-      font-weight: 600;
-      padding-left: 7px;
-    }
-  }
-  .from,
-  .to {
-    font-size: 15px;
-    font-weight: 600;
-    color: #9a4ef6;
-    text-align: center;
-  }
-
-  .text-normal {
-    font-size: 15px;
-    font-weight: 500;
-    color: #fff;
-  }
-
-  .ant-table-thead {
-    > tr {
-      > th {
-        border: none;
-        font-size: 16px;
-        font-weight: 700;
-        color: #fff;
-        background: #2a2a2a;
-        &:before {
-          content: none !important;
-        }
-      }
-    }
-  }
-  .ant-table-tbody {
-    > tr {
-      > td {
-        background: #2a2a2a;
-        border: none;
-      }
-    }
-  }
-`
 export const columns = [
   {
     title: 'Event',
@@ -130,4 +61,6 @@ export const columns = [
   }
 ]
 
-export const TableList = () => <TABLE columns={columns} dataSource={mockData} pagination={false} bordered={false} />
+export const TableList = () => (
+  <StyledTableList columns={columns} dataSource={mockData} pagination={false} bordered={false} />
+)

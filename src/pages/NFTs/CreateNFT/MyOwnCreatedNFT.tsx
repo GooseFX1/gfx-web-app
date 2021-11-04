@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { myCreatedNFTData } from './mockData'
+import { myOwnNFTData } from './mockData'
 import { MyNFT } from './MyNFT'
 
-export const MyCreatedNFT = () => {
+export const MyOwnNFT = () => {
   const [visible, setVisible] = useState(false)
   const handleOk = () => setVisible(false)
   const handleCancel = () => setVisible(false)
@@ -13,7 +13,7 @@ export const MyCreatedNFT = () => {
       visible={visible}
       handleOk={handleOk}
       handleCancel={handleCancel}
-      data={myCreatedNFTData}
+      data={myOwnNFTData}
       backUrl="/NFTs/profile"
     />
   )
