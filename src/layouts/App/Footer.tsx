@@ -12,6 +12,11 @@ const MODE_ICON = styled(CenteredImg)`
 const TEXT = styled.span`
   font-size: 10px;
   color: ${({ theme }) => theme.text2};
+
+  span {
+    color: ${({ theme }) => theme.text3};
+    cursor: pointer;
+  }
 `
 
 const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`
@@ -71,8 +76,10 @@ export const Footer: FC = () => {
       <PrivacyPolicy setVisible={setPrivacyPolicyVisible} visible={privacyPolicyVisible} />
       <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
       <TEXT>
-        Copyright © 2021 GooseFX. All rights reserved. Please trade with your own discretion and according to your
-        location’s laws and regulations.
+        Copyright © 2021 GooseFX. All rights reserved. Please trade with your own discretion. Certain features may be
+        unavailable to your geographic location. Please refer to our&nbsp;
+        <span onClick={handleTOS}>Terms of Service</span>&nbsp;and&nbsp;
+        <span onClick={handlePrivacyPolicy}>Privacy Policy</span>.
       </TEXT>
       <SpaceBetweenDiv>
         <MODE_ICON>
