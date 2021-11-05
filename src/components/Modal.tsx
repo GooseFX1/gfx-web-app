@@ -21,22 +21,29 @@ const TITLE = styled.span`
 
 export const Modal: FC<{
   children: ReactNode
+  large?: boolean
   setVisible: (x: boolean) => void
   title: string
   visible: boolean
   [x: string]: any
-}> = ({ children, setVisible, title, visible, ...props }) => {
+}> = ({ children, large = false, setVisible, title, visible, ...props }) => {
   const { mode } = useDarkMode()
 
   return (
     <AntModal
-      bodyStyle={{ backgroundColor: mode === 'dark' ? '#2a2a2a' : 'white', borderRadius: '20px' }}
-      centered={true}
+      bodyStyle={{
+        backgroundColor: mode === 'dark' ? '#2a2a2a' : 'white',
+        borderRadius: '20px',
+        maxHeight: '80vh',
+        overflowY: 'scroll'
+      }}
+      centered
       closable={false}
       footer={null}
-      maskClosable={true}
+      maskClosable
       onCancel={() => setVisible(false)}
       visible={visible}
+      width={large ? '50vw' : 350}
       {...props}
     >
       <HEADER>
