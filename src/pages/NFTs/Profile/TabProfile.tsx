@@ -16,7 +16,7 @@ const tabPanes = [
   {
     order: '3',
     name: 'Favorited',
-    component: <TabContent type="favorited" data={[1, 2, 4, 5, 5, 6, 7, 8, 9, 10]} />
+    component: <TabContent type="favorited" data={[1, 2, 3, 4, 5]} />
   },
   {
     order: '4',

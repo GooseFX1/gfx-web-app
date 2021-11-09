@@ -23,10 +23,17 @@ cursor: pointer;
 .other {
   color: ${theme.text1};
   font-size: 15px;
+  font-family: Montserrat;
+}
+.name,
+.number {
   font-weight: 600;
 }
 .number {
-  margin-bottom: ${theme.margins['0.5']};
+  margin-bottom: ${theme.margins['0.5x']};
+}
+.other {
+  font-weight: 500;
 }
 .check-icon {
   margin-left: ${theme.margins['0.5x']};
@@ -39,6 +46,13 @@ cursor: pointer;
   position: absolute;
   right: 0;
   top: -5px;
+  &.favorited-group {
+    top: 5px;
+    .like-count {
+      color: #fff;
+      font-size: 14px;
+    }
+  }
   .heart-purple {
     width: 32px;
     height: 32px;
@@ -84,7 +98,6 @@ cursor: pointer;
   .card-logo {
     width: 50px;
     height: auto;
-    background: ${theme.bg6};
     border-radius: 4px;
   }
 }

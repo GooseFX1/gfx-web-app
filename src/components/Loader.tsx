@@ -1,12 +1,12 @@
 import React, { FC } from 'react'
 import styled, { css } from 'styled-components'
 
-const LOADER = styled.div<{ $small: boolean }>`
+const LOADER = styled.div`
   position: absolute;
   top: 0;
   ${({ theme }) => theme.measurements(theme.margins['1x'])}
   border-radius: 50%;
-  font-size: ${({ $small }) => ($small ? '8px' : '12px')};
+  font-size: 12px;
   color: white;
   text-indent: -9999em;
   -webkit-animation-fill-mode: both;
@@ -43,7 +43,7 @@ const LOADER = styled.div<{ $small: boolean }>`
   }
 `
 
-export const Loader: FC<{ smallButton?: boolean }> = ({ smallButton = false }) => {
+export const Loader: FC = () => {
   const localCSS = css`
     @-webkit-keyframes loader {
       0%,
@@ -71,7 +71,7 @@ export const Loader: FC<{ smallButton?: boolean }> = ({ smallButton = false }) =
   return (
     <>
       <style>{localCSS}</style>
-      <LOADER $small={smallButton} />
+      <LOADER />
     </>
   )
 }

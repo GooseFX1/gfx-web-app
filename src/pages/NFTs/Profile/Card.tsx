@@ -29,17 +29,20 @@ export const Card = ({ data }: Props) => {
             <img className="check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`} alt="" />
           </div>
           <div className="other">2,900 SOL</div>
-          <div className="like-group">
-            {data?.type === 'favorited' ? (
+          {data?.type === 'favorited' ? (
+            <div className="like-group favorited-group">
               <img className="heart-red" src={`${process.env.PUBLIC_URL}/img/assets/heart-red.svg`} alt="" />
-            ) : (
+              <span className="like-count">{data?.order}</span>
+            </div>
+          ) : (
+            <div className="like-group">
               <>
                 <img className="heart-purple" src={`${process.env.PUBLIC_URL}/img/assets/heart-purple.svg`} alt="" />
                 <img className="heart-empty" src={`${process.env.PUBLIC_URL}/img/assets/heart-empty.svg`} alt="" />
               </>
-            )}
-            <span className="like-count">{data?.order}</span>
-          </div>
+              <span className="like-count">{data?.order}</span>
+            </div>
+          )}
           <div className="option">
             {data?.type === 'favorited' ? (
               <div className="price-group">

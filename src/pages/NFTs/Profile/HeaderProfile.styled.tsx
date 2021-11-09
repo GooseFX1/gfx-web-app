@@ -15,7 +15,7 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
     top: 55px;
     left: 55px;
     transform: rotate(90deg);
-    width: 36px;
+    width: 26px;
     filter: ${
       mode === 'dark'
         ? 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'

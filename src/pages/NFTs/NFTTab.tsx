@@ -21,12 +21,18 @@ const NFT_TAB = styled.div`
   .ant-tabs-tab {
     color: #616161;
     font-size: 18px;
+    .ant-tabs-tab-btn {
+      font-weight: 500;
+      font-family: Montserrat;
+      font-size: 17px;
+    }
     + .ant-tabs-tab {
       margin: 0 0 0 ${({ theme }) => theme.margins['7x']};
     }
     &.ant-tabs-tab-active {
       .ant-tabs-tab-btn {
         color: #fff;
+        font-weight: 600;
       }
     }
   }

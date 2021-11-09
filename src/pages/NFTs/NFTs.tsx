@@ -1,8 +1,6 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
-import NFTCarousel from './NFTCarousel'
-import NFTFooter from './NFTFooter'
-import { Header } from './Header'
+import NFTHome from './Home/NFTHome'
 import { MyCreatedNFT } from './CreateNFT'
 import { Profile } from './Profile'
 import { Collection } from './Collection'
@@ -35,6 +33,7 @@ const BODY_NFT = styled.div`
 const SCROLLING_CONTENT = styled.div`
   overflow-y: scroll;
   overflow-x: hidden;
+  height: 200vh;
 `
 
 export const NFTs: FC = () => {
@@ -44,36 +43,19 @@ export const NFTs: FC = () => {
     <WRAPPER>
       <BODY_NFT>
         <Switch>
-          <NFTDetailsProvider>
-            <Route exact path={path}>
-              <Header />
-              <SCROLLING_CONTENT>
-                <NFTCarousel showTopArrow isLaunch />
-                <NFTCarousel />
-                <NFTFooter />
-              </SCROLLING_CONTENT>
-            </Route>
-            <Route exact path="/NFTs/profile">
-              <SCROLLING_CONTENT>
-                <Profile />
-              </SCROLLING_CONTENT>
-            </Route>
-            <Route exact path="/NFTs/profile/my-created-NFT">
-              <SCROLLING_CONTENT>
-                <MyCreatedNFT />
-              </SCROLLING_CONTENT>
-            </Route>
-            <Route exact path="/NFTs/collection">
-              <SCROLLING_CONTENT>
-                <Collection />
-              </SCROLLING_CONTENT>
-            </Route>
-            <Route exact path="/NFTs/live-auction/:id">
-              <SCROLLING_CONTENT>
-                <LiveAuctionNFT />
-              </SCROLLING_CONTENT>
-            </Route>
-          </NFTDetailsProvider>
+          <Route exact path={path}>
+            <NFTHome />
+          </Route>
+          <Route exact path="/NFTs/profile">
+            <SCROLLING_CONTENT>
+              <Profile />
+            </SCROLLING_CONTENT>
+          </Route>
+          <Route exact path="/NFTs/profile/my-created-NFT">
+            <SCROLLING_CONTENT>
+              <MyCreatedNFT />
+            </SCROLLING_CONTENT>
+          </Route>
         </Switch>
       </BODY_NFT>
     </WRAPPER>

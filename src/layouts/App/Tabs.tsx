@@ -8,11 +8,11 @@ const TABS = ['/swap', '/crypto', '/synths', '/NFTs', '/farm']
 
 const LABEL = styled.span`
   position: absolute;
-  bottom: -${({ theme }) => theme.margins['3x']};
-  height: ${({ theme }) => theme.margins['3x']};
+  bottom: -${({ theme }) => theme.margins['4x']};
+  height: 14px;
   width: 7vw;
   ${({ theme }) => theme.flexCenter}
-  font-size: 13px;
+  font-size: 10px;
   color: ${({ theme }) => theme.text2};
   text-transform: capitalize;
 `
@@ -93,7 +93,7 @@ export const Tabs: FC = () => {
               }
             })()}
           </TAB_ICON>
-          <LABEL>{path.slice(1)}</LABEL>
+          <LABEL>{path === '/NFTs' ? 'Nft’s' : path.slice(1)}</LABEL>
         </TAB>
       ))}
     </WRAPPER>
