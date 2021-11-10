@@ -59,7 +59,9 @@ export const HeaderProfile = () => {
         </a>
       </div>
       <div className="action-wrap">
-        <button className="btn-create">Create</button>
+        <button className="btn-create">
+          <span>Create</span>
+        </button>
         <StyledDropdown overlay={menu} trigger={['click']} placement="bottomRight" arrow>
           <Button>
             <img className="more-icon" src={`${process.env.PUBLIC_URL}/img/assets/more_icon.svg`} alt="more" />

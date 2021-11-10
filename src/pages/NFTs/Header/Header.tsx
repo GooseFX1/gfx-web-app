@@ -11,6 +11,8 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
   ${({ theme }) => theme.largeBorderRadius}
   ${({ theme }) => theme.smallShadow}
   background-color: ${({ theme }) => theme.bg3};
+  box-shadow: 0 1px 5px 6px rgb(0 0 0 / 29%);
+  z-index: 2;
 
   > *:not(:nth-child(2)) {
     flex: 2;

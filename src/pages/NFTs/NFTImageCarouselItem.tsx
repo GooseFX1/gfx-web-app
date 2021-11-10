@@ -34,8 +34,7 @@ const CAROUSEL_SUB_TITLE = styled.span`
 const CAROUSEL_ITEM = styled.div`
   display: flex;
   flex-direction: column;
-  margin-left: 30;
-  margin-right: 45px;
+  margin-right: ${({ theme }) => theme.margins['4x']}; ;
 `
 
 const UP_COMMING_FOOTER = styled.div`
@@ -133,7 +132,7 @@ const NFTImageCarouselItem = ({ item }: any) => {
       <CAROUSEL_IMAGE
         preview={false}
         src="https://images.unsplash.com/photo-1634985492257-06c8ee26b770?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1932&q=80"
-        onClick={goToCollection}
+        // onClick={goToCollection}
       />
       {/* <UpcomingInfo item={item} /> */}
       <LaunchPadInfo item={item} />

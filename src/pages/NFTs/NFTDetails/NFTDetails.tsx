@@ -9,7 +9,7 @@ import { NFTDEtailsProviderMode } from '../../../types/nft_details'
 const NFT_DETAILS = styled.div`
   ${({ theme }) => `
 position: relative;
-height: 71vh;
+min-height: 71vh;
 padding: ${theme.margins['9x']} ${theme.margins['11x']} ${theme.margins['3x']} ${theme.margins['11x']};
 margin: 0 auto;
 background-color: ${theme.bg3};

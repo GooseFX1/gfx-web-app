@@ -16,7 +16,7 @@ const RIGHT_SECTION = styled.div`
   .rs-title {
     font-size: 18px;
     font-weight: 600;
-    margin-bottom: ${({ theme }) => theme.margins['0.5x']};
+    margin-bottom: ${({ theme }) => theme.margins['1x']};
   }
 
   .rs-type {
@@ -66,7 +66,7 @@ const RIGHT_SECTION = styled.div`
 const GRID_INFO = styled(Row)`
   width: 100%;
   max-width: 384px;
-  margin-bottom: ${({ theme }) => theme.margins['2.5x']};
+  margin-bottom: ${({ theme }) => theme.margins['3x']};
 
   .gi-item {
     .gi-item-category-title {

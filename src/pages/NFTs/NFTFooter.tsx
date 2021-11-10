@@ -73,13 +73,13 @@ const NFTFooter = () => {
     <FOOTER_WRAPPER>
       <SUBSCRIBE_NEW_LETTER>
         <TOP_ARROW mode={mode} arrowRotation />
-        <SUBSCRIBE_TEXT>Subscrbie to our newsletter.</SUBSCRIBE_TEXT>
+        <SUBSCRIBE_TEXT>Subscribe to our newsletter.</SUBSCRIBE_TEXT>
       </SUBSCRIBE_NEW_LETTER>
       <BOTTOM_FOOTER mode={mode}>
         <FooterCarousel />
         <FOOTER_TEXT size={18}>Never miss any drop again!</FOOTER_TEXT>
         <FOLLOW_US_WRAPPER>
-          <FOOTER_TEXT size={20}>Follow us in twitter! @gosefx1</FOOTER_TEXT>
+          <FOOTER_TEXT size={20}>Follow us in twitter! @goosefx1</FOOTER_TEXT>
           <FOLLOW_US_BUTTON>
             <span>Follow Us</span>
           </FOLLOW_US_BUTTON>

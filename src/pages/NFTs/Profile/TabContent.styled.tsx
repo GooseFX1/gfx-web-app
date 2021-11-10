@@ -7,6 +7,7 @@ export const StyledTabContent = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-top: ${theme.margins['1.5x']};
   }
   .search-group {
     display: flex;
@@ -16,6 +17,7 @@ export const StyledTabContent = styled.div`
       height: 43px;
       padding: 0 ${theme.margins['2.5x']};
       max-width: 430px;
+      margin-left: 0;
     }
     input {
       width: 277px;

@@ -42,21 +42,23 @@ export const NFTs: FC = () => {
   return (
     <WRAPPER>
       <BODY_NFT>
-        <Switch>
-          <Route exact path={path}>
-            <NFTHome />
-          </Route>
-          <Route exact path="/NFTs/profile">
-            <SCROLLING_CONTENT>
-              <Profile />
-            </SCROLLING_CONTENT>
-          </Route>
-          <Route exact path="/NFTs/profile/my-created-NFT">
-            <SCROLLING_CONTENT>
-              <MyCreatedNFT />
-            </SCROLLING_CONTENT>
-          </Route>
-        </Switch>
+        <NFTDetailsProvider>
+          <Switch>
+            <Route exact path={path}>
+              <NFTHome />
+            </Route>
+            <Route exact path="/NFTs/profile">
+              <SCROLLING_CONTENT>
+                <Profile />
+              </SCROLLING_CONTENT>
+            </Route>
+            <Route exact path="/NFTs/profile/my-created-NFT">
+              <SCROLLING_CONTENT>
+                <MyCreatedNFT />
+              </SCROLLING_CONTENT>
+            </Route>
+          </Switch>
+        </NFTDetailsProvider>
       </BODY_NFT>
     </WRAPPER>
   )

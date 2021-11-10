@@ -80,13 +80,15 @@ const HEADER_BIG_SLIDER = styled(HEADER_SLIDER)<{ isBigVisible: boolean }>`
   visibility: ${(props) => (props.isBigVisible ? 'visible' : 'hidden')};
   transition: all 300ms;
   transform: ${(props) => (props.isBigVisible ? 'scale(1)' : 'scale(0)')};
+  z-index: 2;
 `
 
 const HEADER_SMALL_SLIDER = styled(HEADER_SLIDER)<{ isBigVisible: boolean }>`
   visibility: ${(props) => (!props.isBigVisible ? 'visible' : 'hidden')};
   transition: all 300ms ${(props) => (!props.isBigVisible ? 'ease-in' : 'ease-out')};
   transform: ${(props) => (!props.isBigVisible ? 'scale(1)' : 'scale(0)')};
-  height: ${(props) => (!props.isBigVisible ? '95px !important' : '0px !important')};
+  height: ${(props) => (!props.isBigVisible ? '100px !important' : '0px !important')};
+  margin-top: ${(props) => (!props.isBigVisible ? '-5px' : '0')};
 `
 
 const BIG_SLIDER_WRAPPER = styled.div<{ imgUrl: string }>`
@@ -103,7 +105,8 @@ const SMALL_SLIDER_WRAPPER = styled.div<{ imgUrl: string; isBigVisible: boolean 
   flex-direction: row !important;
   align-items: center !important;
   justify-content: center !important;
-  height: ${(props) => (!props.isBigVisible ? '95px !important' : '0px !important')};
+  height: ${(props) => (!props.isBigVisible ? '100px !important' : '0px !important')};
+  margin-top: ${(props) => (!props.isBigVisible ? '-5px' : '0')};
   position: relative;
 `
 
@@ -159,6 +162,7 @@ const NFTHeaderCarousel: FC<{ isBig?: boolean; isBigVisible?: boolean }> = ({ is
             isBigVisible={isBigVisible}
             key={dummy.id}
             imgUrl={`${process.env.PUBLIC_URL}/img/assets/image.png`}
+            // imgUrl={`https://placeimg.com/1250/513`}
           >
             <CENTER_SMALL_TEXT>{dummy.text}</CENTER_SMALL_TEXT>
             <BUTTON_EXPLORE>
