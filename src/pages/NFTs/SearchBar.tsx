@@ -26,10 +26,10 @@ const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)`
   }
 `
 
-export const SearchBar = () => {
+export const SearchBar = ({ placeholder, ...rest }: any) => {
   return (
-    <SEARCH_BAR_WRAPPER>
-      <input placeholder="Search by nft or creator" />
+    <SEARCH_BAR_WRAPPER {...rest}>
+      <input placeholder={placeholder || 'Search by nft or creator'} />
       <Image preview={false} src={`${process.env.PUBLIC_URL}/img/assets/search.png`} />
     </SEARCH_BAR_WRAPPER>
   )

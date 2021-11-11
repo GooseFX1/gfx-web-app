@@ -23,7 +23,7 @@ const CAROUSEL_WRAPPER = styled.div`
 
 const HEADER_CAROUSEL = styled.div`
   display: flex;
-  margin: 34px 0;
+  margin: ${({ theme }) => theme.margins['4x']} 0;
   align-items: center;
 `
 
@@ -77,6 +77,7 @@ const SORT_BUTTON = styled(ButtonWrapper)`
 const settings = {
   infinite: false,
   speed: 500,
+  swipeToSlide: true,
   slidesToScroll: 2,
   snapCenter: true,
   initialSlide: 0,

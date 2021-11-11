@@ -61,6 +61,7 @@ export function colors(mode: string): Colors {
     bg3: mode === 'dark' ? '#2a2a2a' : white,
     bg4: mode === 'dark' ? '#171717' : '#f4f4f4',
     bg5: mode === 'dark' ? black : '#e0e0e0',
+    bg6: mode === 'dark' ? 'black' : 'gray',
     grey1: '#434343',
     grey2: '#4e4e4e',
     grey3: '#2a2a2a',
@@ -76,6 +77,10 @@ export function colors(mode: string): Colors {
     textBox: mode === 'dark' ? '#474747' : '#808080',
     walletModalWallet: mode === 'dark' ? '#1e1e1e' : '#e1e1e1',
     searchbarBackground: mode === 'dark' ? '#1e1e1e' : '#ababab',
+    collectionHeader:
+      mode === 'dark'
+        ? 'linear-gradient(0, #131313 0%, transparent 100%)'
+        : 'linear-gradient(0deg,rgba(0,0,0,1) 3%,rgba(30,30,30,1) 43%)',
 
     // primary colors
     primary1: '#302eb8',
@@ -125,9 +130,13 @@ export function theme(mode: string): DefaultTheme {
       '4x': '32px',
       '4.5x': '36px',
       '5x': '40px',
+      '5.5x': '44px',
       '6x': '48px',
       '7x': '56px',
-      '8x': '64px'
+      '8x': '64px',
+      '9x': '72px',
+      '10x': '80px',
+      '11x': '88px'
     },
 
     largeShadow: css`

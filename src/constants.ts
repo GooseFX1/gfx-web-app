@@ -25,6 +25,7 @@ export const SUPPORTED_TOKEN_LIST = [
   'KARMA',
   'KEEP',
   'KIN',
+  'LIKE',
   'LINK',
   'LUA',
   'MAPS',
