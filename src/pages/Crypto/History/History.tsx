@@ -19,11 +19,15 @@ export const History: FC<{
       coverVisible={chartsVisible}
       expand={() => setChartsVisible((prevState) => !prevState)}
       fields={PANELS_FIELDS}
-      justify="space-between"
-      panels={[HistoryPanel.Orders, HistoryPanel.Trades, HistoryPanel.Balances]}
+      justify="space-evenly"
+      // justify="space-between"
+      panels={[HistoryPanel.Orders, HistoryPanel.Balances]}
+      // panels={[HistoryPanel.Orders, HistoryPanel.Trades, HistoryPanel.Balances]}
       setPanel={setPanel}
-      underlinePositions={['-4px', 'calc(50% - 70px)', 'calc(100% - 72px)']}
-      underlineWidths={['102px', '166px', '78px']}
+      underlinePositions={['calc(33% - 54px)', 'calc(67% - 19px)']}
+      // underlinePositions={['-4px', 'calc(50% - 70px)', 'calc(100% - 72px)']}
+      underlineWidths={['102px', '72px']}
+      // underlineWidths={['102px', '166px', '78px']}
     >
       {content}
     </Panel>
