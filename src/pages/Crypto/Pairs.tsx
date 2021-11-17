@@ -32,7 +32,6 @@ const WRAPPER = styled.div`
 `
 
 export const Pairs: FC = () => {
-  console.log(FEATURED_PAIRS_LIST)
   return (
     <WRAPPER>
       {FEATURED_PAIRS_LIST.map(({ decimals, pair, type }, index) => (

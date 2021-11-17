@@ -9,6 +9,7 @@ import {
   ENDPOINTS,
   CryptoProvider,
   OrderProvider,
+  OrderBookProvider,
   TradeHistoryProvider,
   useConnectionConfig,
   useCrypto
@@ -49,7 +50,9 @@ const CryptoContent: FC = () => {
         <div>
           <OrderProvider>
             <Order />
-            <OrderBook />
+            <OrderBookProvider>
+              <OrderBook />
+            </OrderBookProvider>
           </OrderProvider>
         </div>
       </TradeHistoryProvider>

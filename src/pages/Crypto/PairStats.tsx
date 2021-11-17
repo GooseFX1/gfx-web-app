@@ -21,10 +21,6 @@ const INFO = styled.div`
   > div {
     ${({ theme }) => theme.flexCenter}
 
-    &:first-child {
-      cursor: pointer;
-    }
-
     span {
       margin-left: ${({ theme }) => theme.margins['1x']};
       font-size: 10px;
@@ -50,6 +46,7 @@ const STATS = styled.div`
   padding: ${({ theme }) => theme.margins['1.5x']} ${({ theme }) => theme.margins['2x']};
   ${({ theme }) => theme.smallBorderRadius}
   background-color: ${({ theme }) => theme.bg3};
+  cursor: pointer;
 `
 
 const Loader: FC = () => {
@@ -79,9 +76,9 @@ export const PairStats: FC<{ decimals: number; pair: string; type: MarketType }>
   )
 
   return (
-    <STATS>
+    <STATS onClick={handleClick}>
       <INFO>
-        <div onClick={handleClick}>
+        <div>
           <ASSET_ICON>
             <img src={assetIcon} alt="" />
           </ASSET_ICON>
