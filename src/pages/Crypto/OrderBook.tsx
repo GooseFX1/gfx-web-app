@@ -2,7 +2,7 @@ import React, { FC, ReactNode, useMemo, useState } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
 import { Expand } from '../../components'
-import { MarketSide, useCrypto, useOrder } from '../../context'
+import { MarketSide, useCrypto, useOrder, useOrderBook } from '../../context'
 import { SpaceBetweenDiv, TRADE_ORDER_WIDTH } from '../../styles'
 import { abbreviateNumber, removeFloatingPointError } from '../../utils'
 
@@ -130,8 +130,9 @@ const Loader: FC = () => (
 )
 
 export const OrderBook: FC = () => {
-  const { getBidSymbolFromPair, orderBook, selectedCrypto } = useCrypto()
+  const { getBidSymbolFromPair, selectedCrypto } = useCrypto()
   const { order, setFocused, setOrder } = useOrder()
+  const { orderBook } = useOrderBook()
   const [side, setSide] = useState<MarketSide>('bids')
 
   const slicedOrderBook = useMemo(

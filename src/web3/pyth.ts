@@ -2,7 +2,6 @@ import { parseMappingData, parsePriceData, parseProductData, ProductData } from 
 import { AccountInfo, Connection, PublicKey } from '@solana/web3.js'
 import { chunks } from '../utils'
 import { ADDRESSES } from './ids'
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 
 const getMultipleAccountsCore = async (connection: any, keys: string[], commitment: string) => {
   const args = connection._buildArgs([keys], commitment, 'base64')
@@ -44,7 +43,7 @@ const getMultipleAccounts = async (connection: any, keys: string[], commitment: 
 const fetchPriceAccounts = async (
   connection: Connection,
   products: ProductData[]
-): Promise<{ mint: PublicKey; price: number; symbol: string }[]> => {
+): Promise<{ priceAccountKey: PublicKey; price: number; symbol: string }[]> => {
   const prices = await getMultipleAccounts(
     connection,
     products.map((p) => p.priceAccountKey.toBase58()),
@@ -53,16 +52,12 @@ const fetchPriceAccounts = async (
   return prices.array.map(({ data }, index) => {
     const { product, priceAccountKey } = products[index]
     const { price } = parsePriceData(data)
-    return { mint: priceAccountKey, price, symbol: product.symbol }
+    return { priceAccountKey, price, symbol: product.symbol }
   })
 }
 
-const fetchProducts = async (
-  connection: Connection,
-  network: WalletAdapterNetwork,
-  markets?: string[]
-): Promise<ProductData[]> => {
-  const { address } = ADDRESSES[network].programs.pythOracle
+const fetchProducts = async (connection: Connection, markets?: string[]): Promise<ProductData[]> => {
+  const { address } = ADDRESSES['mainnet-beta'].programs.pythOracle
 
   let allProductAccountKeys: PublicKey[] = []
   let anotherMappingAccount: PublicKey | null = address

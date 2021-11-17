@@ -1,8 +1,10 @@
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Connection } from '@solana/web3.js'
 import { CenteredDiv, CenteredImg } from '../../styles'
 import { serum } from '../../web3'
+import { Orderbook } from '@project-serum/serum'
+import { ENDPOINTS } from '../../context'
 
 const WRAPPER = styled(CenteredDiv)`
   padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2x']}
@@ -25,24 +27,30 @@ const WRAPPER = styled(CenteredDiv)`
 export const GoFX: FC = () => {
   const [price, setPrice] = useState(0)
 
-  const fetchPrice = useCallback(async () => {
-    setPrice(
-      await serum.getLatestBid(
-        new Connection(
-          'https://green-little-wind.solana-mainnet.quiknode.pro/0e3bb9a62cf850ee8a4cf68dbb92aef6d4c97d0b/',
-          'recent'
-        ),
-        'GOFX/USDC'
-      )
-    )
-  }, [])
-
   useEffect(() => {
-    let interval: NodeJS.Timer
-    fetchPrice().then(() => (interval = setInterval(() => fetchPrice(), 3000)))
+    let cancelled = false
+    const subscriptions: number[] = []
+    const connection = new Connection(ENDPOINTS[2].endpoint, 'recent')
 
-    return () => clearInterval(interval)
-  }, [fetchPrice])
+    !cancelled &&
+      (async () => {
+        const market = await serum.getMarket(connection, 'GOFX/USDC')
+        const [[latestBid]] = (await market.loadBids(connection)).getL2(1)
+        setPrice(latestBid)
+
+        subscriptions.push(
+          await serum.subscribeToOrderBook(connection, market, 'bids', (account, market) => {
+            const [[current]] = Orderbook.decode(market, account.data).getL2(20)
+            setPrice(current)
+          })
+        )
+      })()
+
+    return () => {
+      cancelled = true
+      subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
+    }
+  }, [setPrice])
 
   return (
     <WRAPPER>
