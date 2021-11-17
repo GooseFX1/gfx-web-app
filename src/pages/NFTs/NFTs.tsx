@@ -62,6 +62,16 @@ export const NFTs: FC = () => {
                 <MyCreatedNFT type="own" />
               </SCROLLING_CONTENT>
             </Route>
+            <Route exact path="/NFTs/collection">
+              <SCROLLING_CONTENT>
+                <Collection />
+              </SCROLLING_CONTENT>
+            </Route>
+            <Route exact path="/NFTs/live-auction/:id">
+              <SCROLLING_CONTENT>
+                <LiveAuctionNFT />
+              </SCROLLING_CONTENT>
+            </Route>
           </Switch>
         </NFTDetailsProvider>
       </BODY_NFT>
