@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { Modal, Form } from 'antd'
 
-export const StyledPopupEditMyCreatedNFT = styled(Modal)`
+export const StyledEditMyNFT = styled(Modal)`
   ${({ theme }) => `
   background-color: ${theme.bg3};
   border-radius: 20px;

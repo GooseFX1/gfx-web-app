@@ -1,59 +1,103 @@
 export const myCreatedNFTData = {
-  name: 'Genesis #3886',
+  src: 'https://placeimg.com/465/465',
+  title: 'Auction ends in:',
+  likedCount: '7',
+  days: '03',
+  hours: '11',
+  minutes: '20',
   type: 'Created By You',
-  image: `${process.env.PUBLIC_URL}/img/assets/card-1.png`,
-  isFavorite: false,
-  hearts: 6,
-  remaining: {
-    days: '04',
-    hours: '30',
-    minutes: '35'
-  },
-  price: 150000,
-  fiat: '21,900 USD aprox',
-  percent: '+ 1.15 %',
-  intro: '9,999 levitating 3D cities ready to expand, conquer and defend into the metaverse',
+  price: '69 SOL',
+  priceUSD: '(10,902 USD aprox)',
+  percent: '+1.15%',
+  subTitle: 'Ethernal #03',
+  description: 'Etheranl is a collection of 1/1 beautifull abstract pieces taken from the mind Jackson Pollock.',
   creator: {
-    title: 'Solcities',
-    thumbnail: `${process.env.PUBLIC_URL}/img/assets/avatar@3x.png`
+    image: 'https://placeimg.com/30/30',
+    name: 'yeoohr'
   },
   collection: {
-    title: 'Solcities',
-    thumbnail: `${process.env.PUBLIC_URL}/img/assets/avatar@3x.png`
+    image: 'https://placeimg.com/30/30',
+    name: 'Ethernal'
   },
   category: {
-    title: 'Metaverse',
-    thumbnail: `${process.env.PUBLIC_URL}/img/assets/avatar@3x.png`
-  }
+    image: 'https://placeimg.com/30/30',
+    name: 'Art'
+  },
+  table: [
+    {
+      title: 'Mint address',
+      content: 'uHT2....4s6'
+    },
+    {
+      title: 'Token address',
+      content: 'QWRA2a...JK5'
+    },
+    {
+      title: 'Owner',
+      content: 'CY5ui...WE4'
+    },
+    {
+      title: 'Artist Royalties',
+      content: '5.5%'
+    },
+    {
+      title: 'Transaction Fee',
+      content: '2%'
+    }
+  ]
 }
 
 export const myOwnNFTData = {
-  name: 'Genesis #3886',
+  src: 'https://placeimg.com/465/465',
+  title: 'Auction ends in:',
+  likedCount: '7',
+  days: '06',
+  hours: '11',
+  minutes: '04',
   type: 'Owned By You',
-  image: `${process.env.PUBLIC_URL}/img/assets/card-1.png`,
-  isFavorite: false,
-  hearts: 6,
-  remaining: {
-    days: '04',
-    hours: '30',
-    minutes: '35'
-  },
-  price: 150000,
-  fiat: '21,900 USD aprox',
-  percent: '+ 1.15 %',
-  intro: '9,999 levitating 3D cities ready to expand, conquer and defend into the metaverse',
+  price: '69 SOL',
+  priceUSD: '(10,902 USD aprox)',
+  percent: '+3.22%',
+  subTitle: '#1695',
+  description: 'Corrupt Catz hail from all over the globe - a special species of 5,684 felines. ',
   creator: {
-    title: 'Solcities',
-    thumbnail: `${process.env.PUBLIC_URL}/img/assets/avatar@3x.png`
+    image: 'https://placeimg.com/30/30',
+    name: 'Corrupt...'
   },
   collection: {
-    title: 'Solcities',
-    thumbnail: `${process.env.PUBLIC_URL}/img/assets/avatar@3x.png`
+    image: 'https://placeimg.com/30/30',
+    name: 'The lions'
   },
   category: {
-    title: 'Metaverse',
-    thumbnail: `${process.env.PUBLIC_URL}/img/assets/avatar@3x.png`
-  }
+    image: 'https://placeimg.com/30/30',
+    name: 'Art'
+  },
+  table: [
+    {
+      title: 'Mint address',
+      content: 'uHT2....4s6'
+    },
+    {
+      title: 'Token address',
+      content: 'QWRA2a...JK5'
+    },
+    {
+      title: 'Owner',
+      content: 'CY5ui...WE4'
+    },
+    {
+      title: 'Artist Royalties',
+      content: '5.5%'
+    },
+    {
+      title: 'Transaction Fee',
+      content: '2%'
+    },
+    {
+      title: 'Fee',
+      content: '2%'
+    }
+  ]
 }
 
 export const detailTabData = [

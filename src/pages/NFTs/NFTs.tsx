@@ -54,7 +54,12 @@ export const NFTs: FC = () => {
             </Route>
             <Route exact path="/NFTs/profile/my-created-NFT">
               <SCROLLING_CONTENT>
-                <MyCreatedNFT />
+                <MyCreatedNFT type="created" />
+              </SCROLLING_CONTENT>
+            </Route>
+            <Route exact path="/NFTs/profile/my-own-NFT">
+              <SCROLLING_CONTENT>
+                <MyCreatedNFT type="own" />
               </SCROLLING_CONTENT>
             </Route>
           </Switch>

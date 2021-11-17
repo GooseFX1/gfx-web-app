@@ -4,15 +4,16 @@ import { DownOutlined, PlusOutlined } from '@ant-design/icons'
 import moment from 'moment'
 import { UploadChangeParam } from 'antd/lib/upload'
 import { UploadFile } from 'antd/lib/upload/interface'
-import { StyledPopupEditMyCreatedNFT, StyledFormEditCreatedNFT } from './PopupEditMyCreatedNFT.styled'
+import { StyledEditMyNFT, StyledFormEditCreatedNFT } from './EditMyNFT.styled'
 
 interface Props {
   visible: boolean
   handleOk: () => void
   handleCancel: () => void
+  type: string
 }
 
-export const PopupEditMyCreatedNFT = ({ visible, handleOk, handleCancel }: Props) => {
+export const EditMyNFT = ({ visible, handleOk, handleCancel, type }: Props) => {
   const [form] = Form.useForm()
   const [avatar, setAvatar] = useState<any>()
 
@@ -21,30 +22,34 @@ export const PopupEditMyCreatedNFT = ({ visible, handleOk, handleCancel }: Props
   }
 
   return (
-    <StyledPopupEditMyCreatedNFT
-      title="Edit your NFT"
+    <StyledEditMyNFT
+      title={type === 'own' ? null : 'Edit your NFT'}
       visible={visible}
       onOk={handleOk}
+      centered
       onCancel={handleCancel}
       cancelText="Cancel"
       okText="Save Changes"
+      style={{ height: type === 'own' ? '340px' : '700px' }}
     >
-      <div className="avatar-wrapper">
-        <div className="image-group">
-          <Upload className="avatar-image" listType="picture-card" maxCount={1} onChange={handleAvatar}>
-            <div className="image-wrap">
-              {!avatar && <img className="img-current avatar-image" src="https://placeimg.com/104/104" alt="" />}
-              <div className="icon-upload">
-                <PlusOutlined />
+      {type !== 'own' && (
+        <div className="avatar-wrapper">
+          <div className="image-group">
+            <Upload className="avatar-image" listType="picture-card" maxCount={1} onChange={handleAvatar}>
+              <div className="image-wrap">
+                {!avatar && <img className="img-current avatar-image" src="https://placeimg.com/104/104" alt="" />}
+                <div className="icon-upload">
+                  <PlusOutlined />
+                </div>
               </div>
+            </Upload>
+            <div className="note">
+              <div>PNG, GIF, MP4 or AVI</div>
+              <div>Max 50mb</div>
             </div>
-          </Upload>
-          <div className="note">
-            <div>PNG, GIF, MP4 or AVI</div>
-            <div>Max 50mb</div>
           </div>
         </div>
-      </div>
+      )}
       <StyledFormEditCreatedNFT
         form={form}
         layout="vertical"
@@ -54,20 +59,22 @@ export const PopupEditMyCreatedNFT = ({ visible, handleOk, handleCancel }: Props
           royalties: '30'
         }}
       >
-        <div className="full-width">
-          <div className="half-width">
-            <Form.Item label="Title" name="title">
-              <Input />
-            </Form.Item>
-            <div className="hint">12 of 20 charcaters limit</div>
+        {type !== 'own' && (
+          <div className="full-width">
+            <div className="half-width">
+              <Form.Item label="Title" name="title">
+                <Input />
+              </Form.Item>
+              <div className="hint">12 of 20 charcaters limit</div>
+            </div>
+            <div className="half-width">
+              <Form.Item label="Description" name="description">
+                <Input />
+              </Form.Item>
+              <div className="hint">67 of 70 charcaters limit</div>
+            </div>
           </div>
-          <div className="half-width">
-            <Form.Item label="Description" name="description">
-              <Input />
-            </Form.Item>
-            <div className="hint">67 of 70 charcaters limit</div>
-          </div>
-        </div>
+        )}
         <div className="full-width">
           <div className="half-width">
             <Form.Item label="Expiration day" name="expiration">
@@ -107,6 +114,6 @@ export const PopupEditMyCreatedNFT = ({ visible, handleOk, handleCancel }: Props
           </div>
         </div>
       </StyledFormEditCreatedNFT>
-    </StyledPopupEditMyCreatedNFT>
+    </StyledEditMyNFT>
   )
 }

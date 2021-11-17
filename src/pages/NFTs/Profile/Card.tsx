@@ -15,8 +15,9 @@ export const Card = ({ data }: Props) => {
   const history = useHistory()
 
   const goMyCreatedNFT = () => {
-    if (data?.type !== 'created') return
-    history.push('/NFTs/profile/my-created-NFT')
+    if (data?.type === 'created') history.push('/NFTs/profile/my-created-NFT')
+    if (data?.type === 'collected') history.push('/NFTs/profile/my-own-NFT')
+    return
   }
   return (
     <div className="card-item">
