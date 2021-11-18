@@ -9,9 +9,10 @@ interface CardData {
 
 type Props = {
   data: CardData
+  isExplore?: boolean
 }
 
-export const Card = ({ data }: Props) => {
+export const Card = ({ data, isExplore }: Props) => {
   const history = useHistory()
 
   const goMyCreatedNFT = () => {
@@ -45,7 +46,9 @@ export const Card = ({ data }: Props) => {
             </div>
           )}
           <div className="option">
-            {data?.type === 'favorited' ? (
+            {isExplore ? (
+              <button className="buy-now-btn">Buy now</button>
+            ) : data?.type === 'favorited' ? (
               <div className="price-group">
                 <span className="text">Last</span>
                 <img className="price-image" src={`${process.env.PUBLIC_URL}/img/assets/price.svg`} alt="" />

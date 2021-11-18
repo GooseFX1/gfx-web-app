@@ -47,9 +47,10 @@ type TabPanesType = {
 type Props = {
   defaultActiveKey?: string
   tabPanes: Array<TabPanesType>
+  isExplore?: boolean
 }
 
-export const NFTTab = ({ tabPanes, defaultActiveKey = '1' }: Props) => {
+export const NFTTab = ({ tabPanes, isExplore, defaultActiveKey = '1' }: Props) => {
   return (
     <NFT_TAB>
       <Tabs defaultActiveKey={defaultActiveKey} centered>

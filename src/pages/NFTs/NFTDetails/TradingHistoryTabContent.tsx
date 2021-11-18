@@ -1,68 +1,70 @@
 import { Table, Row, Col } from 'antd'
 import { FC } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { ITradingHistoryTabItemData } from '../../../types/nft_details'
 
 const TRADING_HISTORY_TAB_CONTENT = styled.div`
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 500;
-
-  .thtc-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    transform: translateY(-24px);
-    padding: 0 ${({ theme }) => theme.margins['1.5x']};
-
-    .thtc-header-item {
-      padding: 0 ${({ theme }) => theme.margins['1x']};
-    }
-  }
-
-  .thtc-table {
+  ${({ theme }) => css`
+    position: relative;
+    z-index: 2;
     width: 100%;
     height: 100%;
-    padding: ${({ theme }) => `${theme.margins['0.5x']} ${theme.margins['1.5x']}`};
-    overflow-y: auto;
-  }
-
-  .thtc-event-epx {
-    color: #ff6464;
-  }
-
-  .thtc-solana-logo {
-    width: 15px;
-    height: 15px;
-  }
-
-  .thtc-from-to {
-    font-weight: 600;
-    color: #9a4ef6;
-  }
-
-  .thtc-align-right {
-    text-align: right;
-  }
-
-  .ant-table {
+    color: #fff;
     font-size: 11px;
     font-weight: 500;
 
-    thead {
-      display: none;
+    .thtc-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      transform: translateY(-24px);
+      padding: 0 ${theme.margins['1.5x']};
+
+      .thtc-header-item {
+        padding: 0 ${theme.margins['1x']};
+      }
     }
 
-    .ant-table-tbody > tr > td {
-      border-bottom: none;
-      padding: ${({ theme }) => theme.margins['1x']};
+    .thtc-table {
+      width: 100%;
+      height: 100%;
+      padding: ${theme.margins['0.5x']} ${theme.margins['1.5x']};
+      overflow-y: auto;
     }
-  }
+
+    .thtc-event-epx {
+      color: #ff6464;
+    }
+
+    .thtc-solana-logo {
+      width: 15px;
+      height: 15px;
+    }
+
+    .thtc-from-to {
+      font-weight: 600;
+      color: #9a4ef6;
+    }
+
+    .thtc-align-right {
+      text-align: right;
+    }
+
+    .ant-table {
+      font-size: 11px;
+      font-weight: 500;
+
+      thead {
+        display: none;
+      }
+
+      .ant-table-tbody > tr > td {
+        border-bottom: none;
+        padding: ${theme.margins['1x']};
+      }
+    }
+  `}
 `
 
 const columns = [
@@ -127,7 +129,7 @@ export const TradingHistoryTabContent: FC<{ data: ITradingHistoryTabItemData[] }
     <TRADING_HISTORY_TAB_CONTENT {...rest}>
       <Row className="thtc-header" justify="space-between" align="middle">
         {columns.map((column) => (
-          <Col className="thtc-header-item" style={{ width: column.width }}>
+          <Col className="thtc-header-item" style={{ width: column.width }} key={column.key}>
             {column.title}
           </Col>
         ))}

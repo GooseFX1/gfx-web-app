@@ -1,13 +1,15 @@
 export const myCreatedNFTData = {
-  src: 'https://placeimg.com/465/465',
+  image: 'https://placeimg.com/465/465',
   title: 'Auction ends in:',
   likedCount: '7',
-  days: '03',
-  hours: '11',
-  minutes: '20',
+  remaining: {
+    days: '03',
+    hours: '11',
+    minutes: '20'
+  },
   type: 'Created By You',
   price: '69 SOL',
-  priceUSD: '(10,902 USD aprox)',
+  fiat: '(10,902 USD aprox)',
   percent: '+1.15%',
   subTitle: 'Ethernal #03',
   description: 'Etheranl is a collection of 1/1 beautifull abstract pieces taken from the mind Jackson Pollock.',
@@ -48,15 +50,17 @@ export const myCreatedNFTData = {
 }
 
 export const myOwnNFTData = {
-  src: 'https://placeimg.com/465/465',
+  image: 'https://placeimg.com/465/465',
   title: 'Auction ends in:',
   likedCount: '7',
-  days: '06',
-  hours: '11',
-  minutes: '04',
+  remaining: {
+    days: '06',
+    hours: '11',
+    minutes: '04'
+  },
   type: 'Owned By You',
   price: '69 SOL',
-  priceUSD: '(10,902 USD aprox)',
+  fiat: '(10,902 USD aprox)',
   percent: '+3.22%',
   subTitle: '#1695',
   description: 'Corrupt Catz hail from all over the globe - a special species of 5,684 felines. ',

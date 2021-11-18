@@ -4,7 +4,7 @@ import { Modal, Form } from 'antd'
 export const StyledEditMyNFT = styled(Modal)`
   ${({ theme }) => `
   background-color: ${theme.bg3};
-  border-radius: 20px;
+  ${theme.largeBorderRadius}
   width: 620px !important;
   .ant-modal-header {
     ${theme.largeBorderRadius};

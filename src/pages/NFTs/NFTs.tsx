@@ -5,6 +5,8 @@ import { MyCreatedNFT } from './CreateNFT'
 import { Profile } from './Profile'
 import { Collection } from './Collection'
 import { LiveAuctionNFT } from './LiveAuctionNFT'
+import { FixedPriceNFT } from './FixedPriceNFT'
+import { OpenBidNFT } from './OpenBidNFT'
 import { useRouteMatch, Route, Switch } from 'react-router-dom'
 import { NFTDetailsProvider } from '../../context'
 
@@ -70,6 +72,16 @@ export const NFTs: FC = () => {
             <Route exact path="/NFTs/live-auction/:id">
               <SCROLLING_CONTENT>
                 <LiveAuctionNFT />
+              </SCROLLING_CONTENT>
+            </Route>
+            <Route exact path="/NFTs/fixed-price/:id">
+              <SCROLLING_CONTENT>
+                <FixedPriceNFT />
+              </SCROLLING_CONTENT>
+            </Route>
+            <Route exact path="/NFTs/open-bid/:id">
+              <SCROLLING_CONTENT>
+                <OpenBidNFT />
               </SCROLLING_CONTENT>
             </Route>
           </Switch>

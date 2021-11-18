@@ -12,27 +12,16 @@ export const MyCreatedNFT = ({ type }: Props) => {
   const handleCancel = () => setVisible(false)
   const { fetchGeneral, fetchDetailTab, fetchTradingHistoryTab } = useNFTDetails()
 
-  fetchGeneral(myCreatedNFTData)
+  fetchGeneral(type === 'created' ? myCreatedNFTData : myOwnNFTData)
   fetchDetailTab(detailTabData)
   fetchTradingHistoryTab(tradingHistoryTabData)
 
-  return type === 'created' ? (
+  return (
     <MyNFT
       setVisible={setVisible}
       visible={visible}
       handleOk={handleOk}
       handleCancel={handleCancel}
-      data={myCreatedNFTData}
-      type={type}
-      backUrl="/NFTs/profile"
-    />
-  ) : (
-    <MyNFT
-      setVisible={setVisible}
-      visible={visible}
-      handleOk={handleOk}
-      handleCancel={handleCancel}
-      data={myOwnNFTData}
       type={type}
       backUrl="/NFTs/profile"
     />

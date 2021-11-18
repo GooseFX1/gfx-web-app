@@ -4,7 +4,7 @@ import { useNFTDetails } from '../../../context'
 import { NFTDetailsGeneralData, detailTabData, tradingHistoryTabData, attributesTabContentData } from './mockData'
 import { BidModal } from './BidModal'
 
-export const LiveAuctionNFT: FC = () => {
+export const OpenBidNFT: FC = () => {
   const [visible, setVisible] = useState(false)
   const { fetchGeneral, fetchDetailTab, fetchTradingHistoryTab, fetchAttributesTab } = useNFTDetails()
 
@@ -15,7 +15,7 @@ export const LiveAuctionNFT: FC = () => {
 
   return (
     <>
-      <NFTDetails mode="live-auction-NFT" handleClickPrimaryButton={() => setVisible(true)} />
+      <NFTDetails mode="open-bid-NFT" handleClickPrimaryButton={() => setVisible(true)} />
       <BidModal visible={visible} setVisible={setVisible} />
     </>
   )

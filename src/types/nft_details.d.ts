@@ -37,6 +37,7 @@ export interface INFTDetailsGeneralData {
   name?: string
   price?: number
   fiat?: string
+  isForCharity?: string
   percent?: string
   intro?: string
   creator?: IInfoItemData
@@ -44,7 +45,7 @@ export interface INFTDetailsGeneralData {
   category?: IInfoItemData
 }
 
-export type NFTDEtailsProviderMode = 'live-auction-NFT' | 'my-created-NFT'
+export type NFTDEtailsProviderMode = 'live-auction-NFT' | 'my-created-NFT' | 'fixed-price-NFT' | 'open-bid-NFT'
 
 export interface INFTDetailsConfig {
   general: INFTDetailsGeneralData

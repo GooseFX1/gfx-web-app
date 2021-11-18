@@ -8,9 +8,10 @@ import { StyledTabContent } from './TabContent.styled'
 interface Props {
   type: string
   data?: Array<number>
+  isExplore?: boolean
 }
 
-export const TabContent = ({ data, type }: Props) => {
+export const TabContent = ({ data, type, isExplore }: Props) => {
   return (
     <StyledTabContent>
       {type !== 'activity' && (
@@ -25,7 +26,7 @@ export const TabContent = ({ data, type }: Props) => {
         type !== 'activity' ? (
           <div className="cards-list">
             {data.map((n: number, index: number) => (
-              <Card key={index} data={{ order: n, type: type }} />
+              <Card key={index} data={{ order: n, type: type }} isExplore={isExplore} />
             ))}
           </div>
         ) : (
