@@ -122,3 +122,70 @@ export const detailTabData = [
     value: '2%'
   }
 ]
+
+export const tradingHistoryTabData = [
+  {
+    id: '1',
+    event: 'list',
+    price: 150,
+    from: 'Evan34',
+    to: '',
+    date: '11/10/21'
+  },
+  {
+    id: '2',
+    event: 'offer',
+    price: 120.5678,
+    from: 'capital_1',
+    to: '',
+    date: '09/10/21'
+  },
+  {
+    id: '3',
+    event: 'offer',
+    price: 135.556,
+    from: 'MLBmodel',
+    to: 'Chirsstoo',
+    date: '02/10/21'
+  },
+  {
+    id: '4',
+    event: 'sale',
+    price: 121.134,
+    from: 'Chirsstoo',
+    to: '',
+    date: '25/09/21'
+  },
+  {
+    id: '5',
+    event: 'list',
+    price: 150,
+    from: 'Evan34',
+    to: 'Chirsstoo',
+    date: '11/10/21'
+  },
+  {
+    id: '6',
+    event: 'offer',
+    price: 120.5678,
+    from: 'capital_1',
+    to: '',
+    date: '09/10/21'
+  },
+  {
+    id: '7',
+    event: 'offer',
+    price: 135.556,
+    from: 'MLBmodel',
+    to: '',
+    date: '02/10/21'
+  },
+  {
+    id: '8',
+    event: 'sale',
+    price: 121.134,
+    from: 'Chirsstoo',
+    to: '',
+    date: '25/09/21'
+  }
+]

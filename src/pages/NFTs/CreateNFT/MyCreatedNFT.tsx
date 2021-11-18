@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { myCreatedNFTData, myOwnNFTData, detailTabData } from './mockData'
+import { myCreatedNFTData, myOwnNFTData, detailTabData, tradingHistoryTabData } from './mockData'
 import { MyNFT } from './MyNFT'
 import { useNFTDetails } from '../../../context'
 
@@ -10,10 +10,11 @@ export const MyCreatedNFT = ({ type }: Props) => {
   const [visible, setVisible] = useState(false)
   const handleOk = () => setVisible(false)
   const handleCancel = () => setVisible(false)
-  const { fetchGeneral, fetchDetailTab } = useNFTDetails()
+  const { fetchGeneral, fetchDetailTab, fetchTradingHistoryTab } = useNFTDetails()
 
   fetchGeneral(myCreatedNFTData)
   fetchDetailTab(detailTabData)
+  fetchTradingHistoryTab(tradingHistoryTabData)
 
   return type === 'created' ? (
     <MyNFT

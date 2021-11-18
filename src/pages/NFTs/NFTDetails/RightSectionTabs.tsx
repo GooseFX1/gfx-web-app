@@ -4,6 +4,7 @@ import { DetailsTabContent } from './DetailsTabContent'
 import { useNFTDetails } from '../../../context'
 import { NFTDEtailsProviderMode } from '../../../types/nft_details'
 import { FC } from 'react'
+import { TradingHistoryTabContent } from './TradingHistoryTabContent'
 
 const { TabPane } = Tabs
 
@@ -24,6 +25,17 @@ position: relative;
     .ant-tabs-nav-list {
       width: 100%;
       justify-content: space-around;
+    }
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #131313;
+      border-radius: 15px 15px 0 0;
     }
   }
 }
@@ -117,7 +129,7 @@ export const RightSectionTabs: FC<{ mode: NFTDEtailsProviderMode; handleClickPri
   handleClickPrimaryButton,
   ...rest
 }) => {
-  const { detailTab } = useNFTDetails()
+  const { detailTab, tradingHistoryTab } = useNFTDetails()
 
   return (
     <RIGHT_SECTION_TABS {...rest}>
@@ -125,7 +137,9 @@ export const RightSectionTabs: FC<{ mode: NFTDEtailsProviderMode; handleClickPri
         <TabPane tab="Details" key="1">
           <DetailsTabContent data={detailTab} />
         </TabPane>
-        <TabPane tab="Trading History" key="2"></TabPane>
+        <TabPane tab="Trading History" key="2">
+          <TradingHistoryTabContent data={tradingHistoryTab} />
+        </TabPane>
         <TabPane tab="Attributes" key="3"></TabPane>
       </Tabs>
       <Row className="rst-footer">
