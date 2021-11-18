@@ -110,11 +110,15 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
           try {
             const accounts = await pyth.fetchPriceAccounts(connection, products)
             for (const { price, priceAccountKey, symbol } of accounts) {
-              setPrices((prevState) => ({ ...prevState, [symbol]: { current: parseFloat(price.toFixed(2)) } }))
+              if (price) {
+                setPrices((prevState) => ({ ...prevState, [symbol]: { current: parseFloat(price.toFixed(2)) } }))
+              }
               subscriptions.push(
                 connection.onAccountChange(priceAccountKey, ({ data }) => {
                   const { price } = parsePriceData(data)
-                  setPrices((prevState) => ({ ...prevState, [symbol]: { current: parseFloat(price.toFixed(2)) } }))
+                  if (price) {
+                    setPrices((prevState) => ({ ...prevState, [symbol]: { current: parseFloat(price.toFixed(2)) } }))
+                  }
                 })
               )
             }
