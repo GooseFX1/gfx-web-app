@@ -115,3 +115,26 @@ export const tradingHistoryTabData = [
     date: '25/09/21'
   }
 ]
+
+export const attributesTabContentData = [
+  {
+    title: 'Atmpsphere',
+    value: 'Ocen Spary'
+  },
+  {
+    title: 'Underground',
+    value: 'Night Moonstones'
+  },
+  {
+    title: 'Land',
+    value: 'Glass Atlantis'
+  },
+  {
+    title: 'Resources',
+    value: 'Minerals'
+  },
+  {
+    title: 'Transaction Fee',
+    value: '2%'
+  }
+]

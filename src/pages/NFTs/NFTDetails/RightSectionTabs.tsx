@@ -5,6 +5,8 @@ import { useNFTDetails } from '../../../context'
 import { NFTDEtailsProviderMode } from '../../../types/nft_details'
 import { FC } from 'react'
 import { TradingHistoryTabContent } from './TradingHistoryTabContent'
+import { AttributesTabContent } from './AttributesTabContent'
+import { useState } from 'react'
 
 const { TabPane } = Tabs
 
@@ -129,18 +131,21 @@ export const RightSectionTabs: FC<{ mode: NFTDEtailsProviderMode; handleClickPri
   handleClickPrimaryButton,
   ...rest
 }) => {
-  const { detailTab, tradingHistoryTab } = useNFTDetails()
+  const { detailTab, tradingHistoryTab, attributesTab } = useNFTDetails()
+  const [activeTab, setActiveTab] = useState('1')
 
   return (
     <RIGHT_SECTION_TABS {...rest}>
-      <Tabs defaultActiveKey="1" centered>
+      <Tabs defaultActiveKey="1" centered onChange={(key) => setActiveTab(key)}>
         <TabPane tab="Details" key="1">
           <DetailsTabContent data={detailTab} />
         </TabPane>
         <TabPane tab="Trading History" key="2">
           <TradingHistoryTabContent data={tradingHistoryTab} />
         </TabPane>
-        <TabPane tab="Attributes" key="3"></TabPane>
+        <TabPane tab="Attributes" key="3">
+          <AttributesTabContent data={attributesTab} />
+        </TabPane>
       </Tabs>
       <Row className="rst-footer">
         <Col className="rst-footer-bid-button">

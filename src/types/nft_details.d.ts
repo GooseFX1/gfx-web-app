@@ -17,6 +17,11 @@ export interface ITradingHistoryTabItemData {
   date?: string
 }
 
+export interface IAttributesTabItemData {
+  title?: string
+  value?: string
+}
+
 export interface IRemainingPanelData {
   days: string
   hours: string
@@ -45,7 +50,9 @@ export interface INFTDetailsConfig {
   general: INFTDetailsGeneralData
   detailTab: IDetailTabItemData[]
   tradingHistoryTab: ITradingHistoryTabItemData[]
+  attributesTab: IAttributesTabItemData[]
   fetchGeneral: (general) => void
   fetchDetailTab: (detailTab) => void
   fetchTradingHistoryTab: (tradingHistoryTab) => void
+  fetchAttributesTab: (attributesTab) => void
 }

@@ -22,7 +22,7 @@ const REMAINING_PANEL = styled(Row)`
   .rp-text {
     font-size: 12px;
     font-weight: 600;
-    margin-left: ${({ theme }) => theme.margins['0.5x']};
+    margin-left: ${({ theme }) => theme.margins['1x']};
   }
 `
 
