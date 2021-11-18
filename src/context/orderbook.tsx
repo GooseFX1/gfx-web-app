@@ -26,7 +26,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   useEffect(() => {
     let cancelled = false
     const subscriptions: number[] = []
-    const connection = new Connection(ENDPOINTS[2].endpoint, 'recent')
+    const connection = new Connection(ENDPOINTS[1].endpoint, 'recent')
 
     !cancelled &&
       (async () => {

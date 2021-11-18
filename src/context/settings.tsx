@@ -13,7 +13,7 @@ interface IEndpoint {
 export const ENDPOINTS: IEndpoint[] = [
   {
     chainId: ENV.MainnetBeta,
-    endpoint: 'https://green-little-wind.solana-mainnet.quiknode.pro/0e3bb9a62cf850ee8a4cf68dbb92aef6d4c97d0b/',
+    endpoint: 'https://ssc-dao.genesysgo.net',
     network: WalletAdapterNetwork.Mainnet
   },
   {
@@ -24,6 +24,11 @@ export const ENDPOINTS: IEndpoint[] = [
   {
     chainId: ENV.MainnetBeta,
     endpoint: 'https://solana-api.projectserum.com',
+    network: WalletAdapterNetwork.Mainnet
+  },
+  {
+    chainId: ENV.MainnetBeta,
+    endpoint: 'https://green-little-wind.solana-mainnet.quiknode.pro/0e3bb9a62cf850ee8a4cf68dbb92aef6d4c97d0b/',
     network: WalletAdapterNetwork.Mainnet
   }
 ]

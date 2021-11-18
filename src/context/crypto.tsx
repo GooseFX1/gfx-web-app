@@ -68,7 +68,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return side === 'buy' ? getBidSymbolFromPair(pair) : getAskSymbolFromPair(pair)
   }
 
-  const connection = useMemo(() => new Connection(ENDPOINTS[2].endpoint, 'recent'), [])
+  const connection = useMemo(() => new Connection(ENDPOINTS[1].endpoint, 'recent'), [])
 
   useEffect(() => {
     ;(async () => {
