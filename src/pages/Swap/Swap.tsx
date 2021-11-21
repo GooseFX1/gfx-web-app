@@ -6,9 +6,9 @@ import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
 import { Modal } from '../../components'
-import { ENDPOINTS, SwapProvider, useConnectionConfig, useDarkMode, useSwap } from '../../context'
+import { useDarkMode, useSwap } from '../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../styles'
-import { addAnalytics, notify } from '../../utils'
+import { addAnalytics } from '../../utils'
 
 const BODY = styled.div`
   position: relative;
