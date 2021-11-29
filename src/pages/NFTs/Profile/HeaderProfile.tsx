@@ -54,7 +54,7 @@ export const HeaderProfile = ({ isExplore }: Props) => {
         className="back-icon"
         src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
         alt=""
-        onClick={() => history.goBack()}
+        onClick={() => history.push('/NFTs')}
       />
       <div className="avatar-profile-wrap">
         <img className="avatar-profile" src={`${process.env.PUBLIC_URL}/img/assets/avatar-profile.png`} alt="" />

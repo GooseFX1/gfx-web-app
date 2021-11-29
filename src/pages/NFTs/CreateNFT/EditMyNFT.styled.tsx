@@ -156,6 +156,21 @@ export const StyledFormEditCreatedNFT = styled(Form)`
       color: #8a8a8a;
       font-size: 12px;
     }
+    > label {
+      &.ant-form-item-required {
+        &:not(.ant-form-item-required-mark-optional) {
+          &::before {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+  .ant-input-number {
+    border: none;
+  }
+  .ant-input-number:focus, .ant-input-number-focused {
+    box-shadow: none;
   }
   .ant-form-item-control-input {
     input {
@@ -224,6 +239,27 @@ export const StyledFormEditCreatedNFT = styled(Form)`
         background: #9625ae;
       }
     }
+  }
+  .actions {
+    text-align: right;
+    padding-top: ${theme.margins['3.5x']};
+  }
+  .cancel-btn {
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    margin-right: ${theme.margins['2x']};
+    color: ${theme.text2};
+  }
+  .save-changes-btn {
+    width: 245px;
+    height: 60px;
+    font-size: 18px;
+    font-weight: 600;
+    color: ${theme.text1};
+    ${theme.roundedBorders};
+    background: #7d7d7d;
+    border: none;
   }
   `}
 `

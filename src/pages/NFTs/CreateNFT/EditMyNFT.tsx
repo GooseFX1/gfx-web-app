@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Form, Input, DatePicker, Upload } from 'antd'
+import { Form, Input, InputNumber, DatePicker, Upload, Button } from 'antd'
 import { DownOutlined, PlusOutlined } from '@ant-design/icons'
 import moment from 'moment'
 import { UploadChangeParam } from 'antd/lib/upload'
@@ -17,19 +17,34 @@ export const EditMyNFT = ({ visible, handleOk, handleCancel, type }: Props) => {
   const [form] = Form.useForm()
   const [avatar, setAvatar] = useState<any>()
 
+  const initialValues = {
+    title: 'Ethernal #03',
+    description: 'Etheranl is a collection of 1/1 beau...',
+    royalties: '30',
+    expiration: moment('01/01/2015', 'DD/MM/YYYY')
+  }
+
   const handleAvatar = (file: UploadChangeParam<UploadFile<any>>) => {
     setAvatar(file.fileList[0])
+  }
+
+  const onFinish = (values: any) => {
+    handleOk()
+  }
+
+  const onCancel = () => {
+    form.setFieldsValue(initialValues)
+    handleCancel()
   }
 
   return (
     <StyledEditMyNFT
       title={type === 'own' ? null : 'Edit your NFT'}
       visible={visible}
-      onOk={handleOk}
       centered
-      onCancel={handleCancel}
-      cancelText="Cancel"
-      okText="Save Changes"
+      footer={null}
+      maskClosable
+      onCancel={onCancel}
       style={{ height: type === 'own' ? '340px' : '700px' }}
     >
       {type !== 'own' && (
@@ -50,26 +65,22 @@ export const EditMyNFT = ({ visible, handleOk, handleCancel, type }: Props) => {
           </div>
         </div>
       )}
-      <StyledFormEditCreatedNFT
-        form={form}
-        layout="vertical"
-        initialValues={{
-          title: 'Ethernal #03',
-          description: 'Etheranl is a collection of 1/1 beau...',
-          royalties: '30'
-        }}
-      >
+      <StyledFormEditCreatedNFT form={form} layout="vertical" initialValues={initialValues} onFinish={onFinish}>
         {type !== 'own' && (
           <div className="full-width">
             <div className="half-width">
-              <Form.Item label="Title" name="title">
-                <Input />
+              <Form.Item label="Title" name="title" rules={[{ required: true, message: 'Please input title!' }]}>
+                <Input maxLength={20} />
               </Form.Item>
               <div className="hint">12 of 20 charcaters limit</div>
             </div>
             <div className="half-width">
-              <Form.Item label="Description" name="description">
-                <Input />
+              <Form.Item
+                label="Description"
+                name="description"
+                rules={[{ required: true, message: 'Please input description!' }]}
+              >
+                <Input maxLength={70} />
               </Form.Item>
               <div className="hint">67 of 70 charcaters limit</div>
             </div>
@@ -77,7 +88,11 @@ export const EditMyNFT = ({ visible, handleOk, handleCancel, type }: Props) => {
         )}
         <div className="full-width">
           <div className="half-width">
-            <Form.Item label="Expiration day" name="expiration">
+            <Form.Item
+              label="Expiration day"
+              name="expiration"
+              rules={[{ required: true, message: 'Please input expiration day!' }]}
+            >
               <DatePicker
                 format="DD/MM/YYYY"
                 defaultValue={moment('01/01/2015', 'DD/MM/YYYY')}
@@ -86,8 +101,12 @@ export const EditMyNFT = ({ visible, handleOk, handleCancel, type }: Props) => {
             </Form.Item>
           </div>
           <div className="half-width">
-            <Form.Item label="Royalties" name="royalties">
-              <Input />
+            <Form.Item
+              label="Royalties"
+              name="royalties"
+              rules={[{ required: true, message: 'Please input royalties!' }]}
+            >
+              <InputNumber max={60} />
             </Form.Item>
             <div className="hint">
               <div>Suggested 10%, 20%, 30%</div>
@@ -112,6 +131,14 @@ export const EditMyNFT = ({ visible, handleOk, handleCancel, type }: Props) => {
               <div className="item">100%</div>
             </div>
           </div>
+        </div>
+        <div className="actions">
+          <Button type="default" className="cancel-btn" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="primary" htmlType="submit" className="save-changes-btn">
+            Save Changes
+          </Button>
         </div>
       </StyledFormEditCreatedNFT>
     </StyledEditMyNFT>

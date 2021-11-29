@@ -44,8 +44,7 @@ export const StyledPopupProfile = styled(Modal)`
     border-color: #848484;
     border-width: 2px;
     ${theme.largeBorderRadius}
-    padding: 25px;
-    margin-bottom: ${theme.margins['4x']}
+    padding: ${theme.margins['3x']};
     .image-group {
       display: flex;
       align-items: center;
@@ -120,6 +119,7 @@ export const StyledPopupProfile = styled(Modal)`
 `
 export const StyledFormProfile = styled(Form)`
   ${({ theme }) => `
+  margin-top: ${theme.margins['3x']};
   .half-width {
     flex: 1;
     width: 50%;
@@ -147,12 +147,24 @@ export const StyledFormProfile = styled(Form)`
       color: #8a8a8a;
       font-size: 12px;
     }
+
+    .ant-form-item-required {
+      &::after {
+        content: '(required)';
+        font-size: 12px;
+        color: #8a8a8a;
+        display: inline-block;
+        padding-left: ${theme.margins['0.5x']}
+      }
+    }
   }
   .ant-form-item-control-input {
     input {
       border: none;
       border-radius: 0;
       border-bottom: 2px solid #a8a8a8;
+      text-align: left;
+      padding-left: 0;
       &:focus {
         box-shadow: none;
       }
