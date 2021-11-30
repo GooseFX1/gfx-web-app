@@ -30,5 +30,5 @@ export function removeFloatingPointError(n: number): number {
     }
   }
 
-  return n
+  return parseFloat(n.toFixed(3))
 }
