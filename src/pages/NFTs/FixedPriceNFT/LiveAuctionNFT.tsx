@@ -2,9 +2,9 @@ import { FC, useState } from 'react'
 import { NFTDetails } from '../NFTDetails'
 import { useNFTDetails } from '../../../context'
 import { NFTDetailsGeneralData, detailTabData, tradingHistoryTabData, attributesTabContentData } from './mockData'
-import { BidModal } from './BidModal'
+import { PurchaseModal } from './PurchaseModal'
 
-export const LiveAuctionNFT: FC = () => {
+export const FixedPriceNFT: FC = () => {
   const [visible, setVisible] = useState(false)
   const { fetchGeneral, fetchDetailTab, fetchTradingHistoryTab, fetchAttributesTab } = useNFTDetails()
 
@@ -15,8 +15,8 @@ export const LiveAuctionNFT: FC = () => {
 
   return (
     <>
-      <NFTDetails mode="live-auction-NFT" handleClickPrimaryButton={() => setVisible(true)} />
-      <BidModal visible={visible} setVisible={setVisible} />
+      <NFTDetails mode="fixed-price-NFT" handleClickPrimaryButton={() => setVisible(true)} />
+      <PurchaseModal visible={visible} setVisible={setVisible} />
     </>
   )
 }

@@ -8,6 +8,20 @@ export interface IDetailTabItemData {
   value?: string
 }
 
+export interface ITradingHistoryTabItemData {
+  id?: string
+  price?: number
+  event?: string
+  from?: string
+  to?: string
+  date?: string
+}
+
+export interface IAttributesTabItemData {
+  title?: string
+  value?: string
+}
+
 export interface IRemainingPanelData {
   days: string
   hours: string
@@ -23,6 +37,7 @@ export interface INFTDetailsGeneralData {
   name?: string
   price?: number
   fiat?: string
+  isForCharity?: string
   percent?: string
   intro?: string
   creator?: IInfoItemData
@@ -30,11 +45,15 @@ export interface INFTDetailsGeneralData {
   category?: IInfoItemData
 }
 
-export type NFTDEtailsProviderMode = 'live-auction-NFT' | 'my-created-NFT'
+export type NFTDEtailsProviderMode = 'live-auction-NFT' | 'my-created-NFT' | 'fixed-price-NFT' | 'open-bid-NFT'
 
 export interface INFTDetailsConfig {
   general: INFTDetailsGeneralData
   detailTab: IDetailTabItemData[]
+  tradingHistoryTab: ITradingHistoryTabItemData[]
+  attributesTab: IAttributesTabItemData[]
   fetchGeneral: (general) => void
   fetchDetailTab: (detailTab) => void
+  fetchTradingHistoryTab: (tradingHistoryTab) => void
+  fetchAttributesTab: (attributesTab) => void
 }

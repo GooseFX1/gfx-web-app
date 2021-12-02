@@ -1,29 +1,31 @@
 import { Row } from 'antd'
 import { FC } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { IRemainingPanelData } from '../../../types/nft_details'
 
 const REMAINING_PANEL = styled(Row)`
-  width: 100%;
-  padding: ${({ theme }) => `${theme.margins['2x']} ${theme.margins['4.5x']}`};
-  background-color: #131313;
-  ${({ theme }) => `${theme.largeBorderRadius}`};
-  color: #fff;
+  ${({ theme }) => css`
+    width: 100%;
+    padding: ${theme.margins['2x']} ${theme.margins['4.5x']};
+    background-color: #131313;
+    ${theme.largeBorderRadius}
+    color: #fff;
 
-  .rp-bubble {
-    font-size: 18px;
-    font-weight: 500;
-    border-radius: 50%;
-    background-color: #000;
-    width: 40px;
-    height: 40px;
-  }
+    .rp-bubble {
+      font-size: 18px;
+      font-weight: 500;
+      border-radius: 50%;
+      background-color: #000;
+      width: 40px;
+      height: 40px;
+    }
 
-  .rp-text {
-    font-size: 12px;
-    font-weight: 600;
-    margin-left: ${({ theme }) => theme.margins['0.5x']};
-  }
+    .rp-text {
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: ${theme.margins['1x']};
+    }
+  `}
 `
 
 export const RemainingPanel: FC<{ time: IRemainingPanelData }> = ({ time, ...rest }) => {

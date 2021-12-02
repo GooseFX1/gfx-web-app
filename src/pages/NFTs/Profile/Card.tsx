@@ -9,14 +9,16 @@ interface CardData {
 
 type Props = {
   data: CardData
+  isExplore?: boolean
 }
 
-export const Card = ({ data }: Props) => {
+export const Card = ({ data, isExplore }: Props) => {
   const history = useHistory()
 
   const goMyCreatedNFT = () => {
-    if (data?.type !== 'created') return
-    history.push('/NFTs/profile/my-created-NFT')
+    if (['favorited', 'created'].includes(data?.type)) history.push('/NFTs/profile/my-created-NFT')
+    if (data?.type === 'collected') history.push('/NFTs/profile/my-own-NFT')
+    return
   }
   return (
     <div className="card-item">
@@ -44,7 +46,9 @@ export const Card = ({ data }: Props) => {
             </div>
           )}
           <div className="option">
-            {data?.type === 'favorited' ? (
+            {isExplore ? (
+              <button className="buy-now-btn">Buy now</button>
+            ) : data?.type === 'favorited' ? (
               <div className="price-group">
                 <span className="text">Last</span>
                 <img className="price-image" src={`${process.env.PUBLIC_URL}/img/assets/price.svg`} alt="" />

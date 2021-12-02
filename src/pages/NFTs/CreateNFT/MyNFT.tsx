@@ -1,19 +1,21 @@
-import { PopupEditMyCreatedNFT } from './PopupEditMyCreatedNFT'
+import React from 'react'
 import { NFTDetails } from '../NFTDetails'
+import { EditMyNFT } from './EditMyNFT'
 
 interface Props {
   visible: boolean
   setVisible: (value: boolean) => void
   handleOk: () => void
   handleCancel: () => void
-  backUrl: string
+  type: string
+  backUrl?: string
 }
 
-export const MyNFT = ({ visible, setVisible, handleCancel, handleOk, backUrl }: Props) => {
+export const MyNFT = ({ visible, setVisible, handleCancel, handleOk, backUrl, type }: Props) => {
   return (
     <>
-      <NFTDetails mode="my-created-NFT" handleClickPrimaryButton={() => setVisible(true)} />
-      <PopupEditMyCreatedNFT visible={visible} handleOk={handleOk} handleCancel={handleCancel} />
+      <NFTDetails mode="my-created-NFT" backUrl={backUrl} handleClickPrimaryButton={() => setVisible(true)} />
+      <EditMyNFT type={type} visible={visible} handleOk={handleOk} handleCancel={handleCancel} />
     </>
   )
 }

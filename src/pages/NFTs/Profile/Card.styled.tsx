@@ -77,6 +77,17 @@ cursor: pointer;
   position: absolute;
   bottom: 0;
   right: 0;
+  .buy-now-btn {
+    width: 72px;
+    height: 29px;
+    border-radius: 29px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 11px;
+    border: none;
+    line-height: 23px;
+    background-color: #3735bb;
+  }
   .price-group {
     display: flex;
     font-size: 12px;

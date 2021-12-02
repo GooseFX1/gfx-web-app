@@ -1,8 +1,6 @@
-import React from 'react'
 import { Row } from 'antd'
 import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
-import { MainButton } from '../../../components/MainButton'
 
 const CARD = styled.div<{ type: string; status: string }>`
   padding-bottom: ${({ theme }) => theme.margins['1.5x']};
@@ -123,7 +121,12 @@ const CARD = styled.div<{ type: string; status: string }>`
   }}
 `
 
-const CARD_BUTTON = styled(MainButton)<{ cardType: string; cardStatus: string }>`
+const CARD_BUTTON = styled.button<{ cardType: string; cardStatus: string }>`
+  min-width: 76px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
   border-radius: 50px;
   color: ${({ theme }) => theme.white};
 
@@ -148,7 +151,6 @@ const CARD_BUTTON = styled(MainButton)<{ cardType: string; cardStatus: string }>
           font-weight: 600;
           padding: ${theme.margins['1x']} ${theme.margins['2x']};
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-          min-width: 82px;
         `
     }
   }}
@@ -225,7 +227,7 @@ export const Card = ({ type, data, className, ...rest }: Props) => {
       </div>
       <Row justify="space-between" align="middle">
         <div className="card-price">{`${moneyFormatter(data.price)} SOL`}</div>
-        <CARD_BUTTON height="34px" width="76px" radius="50px" cardStatus={data.status} cardType={type}>
+        <CARD_BUTTON cardStatus={data.status} cardType={type}>
           {getButtonText(type, data.status)}
         </CARD_BUTTON>
       </Row>

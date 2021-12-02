@@ -10,6 +10,7 @@ export const NFTDetailsGeneralData = {
   },
   price: 150000,
   fiat: '21,900 USD aprox',
+  isForCharity: true,
   percent: '+ 1.15 %',
   intro: '9,999 levitating 3D cities ready to expand, conquer and defend into the metaverse',
   creator: {

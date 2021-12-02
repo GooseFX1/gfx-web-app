@@ -53,6 +53,8 @@ export function colors(mode: string): Colors {
     text2: mode === 'dark' ? white : '#353535',
     text3: mode === 'dark' ? '#d655fe' : '#9625ae',
     text4: mode === 'dark' ? white : '#636363',
+    text5: mode === 'dark' ? '#949494' : '#fff',
+    text6: mode === 'dark' ? '#cccccc' : '#353535',
     text1h: '#7d7d7d',
 
     // backgrounds / greys
@@ -62,6 +64,8 @@ export function colors(mode: string): Colors {
     bg4: mode === 'dark' ? '#171717' : '#f4f4f4',
     bg5: mode === 'dark' ? black : '#e0e0e0',
     bg6: mode === 'dark' ? 'black' : 'gray',
+    bg7: mode === 'dark' ? '#131313' : 'gray',
+    bg8: mode === 'dark' ? 'rgba(64, 64, 64, 0.22)' : 'gray',
     grey1: '#434343',
     grey2: '#4e4e4e',
     grey3: '#2a2a2a',

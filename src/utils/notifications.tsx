@@ -56,7 +56,7 @@ const TX_LINK = styled.a`
 `
 
 interface INotifyParams {
-  message: string
+  message: string | ReactNode
   description?: string | ReactNode
   icon?: string
   txid?: string
@@ -95,16 +95,19 @@ export const notify = async ({ description, icon, message, txid, type = 'info' }
     ),
     icon: <div style={{ display: 'none' }} />,
     key,
-    message: (
-      <MESSAGE>
-        <span>{message}</span>
-        {icon && (
-          <CONTENT_ICON>
-            <img src={`${process.env.PUBLIC_URL}/img/assets/notify_${icon}.svg`} alt="icon" />
-          </CONTENT_ICON>
-        )}
-      </MESSAGE>
-    ),
+    message:
+      typeof message === 'string' ? (
+        <MESSAGE>
+          <span>{message}</span>
+          {icon && (
+            <CONTENT_ICON>
+              <img src={`${process.env.PUBLIC_URL}/img/assets/notify_${icon}.svg`} alt="icon" />
+            </CONTENT_ICON>
+          )}
+        </MESSAGE>
+      ) : (
+        message
+      ),
     onClick: () => notification.close(key),
     placement: 'bottomLeft',
     style: {
