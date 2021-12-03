@@ -23,11 +23,16 @@ export const Modal: FC<{
   children: ReactNode
   large?: boolean
   setVisible: (x: boolean) => void
+  onCancel?: () => void
   title: string
   visible: boolean
   [x: string]: any
-}> = ({ children, large = false, setVisible, title, visible, ...props }) => {
+}> = ({ children, onCancel, large = false, setVisible, title, visible, ...props }) => {
   const { mode } = useDarkMode()
+  const handleCancel = () => {
+    onCancel && onCancel()
+    setVisible(false)
+  }
 
   return (
     <AntModal
@@ -40,15 +45,15 @@ export const Modal: FC<{
       centered
       closable={false}
       footer={null}
+      onCancel={handleCancel}
       maskClosable
-      onCancel={() => setVisible(false)}
       visible={visible}
       width={large ? '50vw' : 350}
       {...props}
     >
       <HEADER>
         <TITLE>{title}</TITLE>
-        <CLOSE_ICON onClick={() => setVisible(false)}>
+        <CLOSE_ICON className="modal-close-icon" onClick={handleCancel}>
           {mode === 'dark' ? (
             <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/cross.svg`} alt="close" />
           ) : (

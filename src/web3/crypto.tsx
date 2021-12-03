@@ -51,12 +51,7 @@ const placeOrder = async (connection: Connection, market: Market, order: IOrder,
   return await signAndSendRawTransaction(connection, tx, wallet, ...signers)
 }
 
-const settleFunds = async (
-  connection: Connection,
-  market: Market,
-  openOrders: OpenOrders,
-  wallet: any
-) => {
+const settleFunds = async (connection: Connection, market: Market, openOrders: OpenOrders, wallet: any) => {
   if (!wallet.publicKey || !wallet.signTransaction) return
 
   const tx = new Transaction()
