@@ -27,7 +27,7 @@ export const Modal: FC<{
   title: string
   visible: boolean
   [x: string]: any
-}> = ({ children, large = false, setVisible, title, visible, ...props }) => {
+}> = ({ children, onCancel, large = false, setVisible, title, visible, ...props }) => {
   const { mode } = useDarkMode()
   const handleCancel = () => {
     onCancel && onCancel()
