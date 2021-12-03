@@ -30,7 +30,7 @@ export function removeFloatingPointError(n: number): number {
     }
   }
 
-  return n
+  return parseFloat(n.toFixed(3))
 }
 
 // Format 35.200 --> 35.2k

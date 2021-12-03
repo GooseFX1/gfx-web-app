@@ -1,5 +1,7 @@
-import React, { FC } from 'react'
+import React, { FC, useCallback, useState } from 'react'
 import styled from 'styled-components'
+import { PrivacyPolicy } from './PrivacyPolicy'
+import { TermsOfService } from './TermsOfService'
 import { useDarkMode } from '../../context'
 import { APP_LAYOUT_FOOTER_HEIGHT, CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
 
@@ -10,6 +12,11 @@ const MODE_ICON = styled(CenteredImg)`
 const TEXT = styled.span`
   font-size: 10px;
   color: ${({ theme }) => theme.text2};
+
+  span {
+    color: ${({ theme }) => theme.text3};
+    cursor: pointer;
+  }
 `
 
 const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`
@@ -47,12 +54,32 @@ const WRAPPER = styled(SpaceBetweenDiv)`
 
 export const Footer: FC = () => {
   const { mode, toggleMode } = useDarkMode()
+  const [privacyPolicyVisible, setPrivacyPolicyVisible] = useState(false)
+  const [termsOfServiceVisible, setTermsOfServiceVisible] = useState(false)
+
+  const handlePrivacyPolicy = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      if (!event.defaultPrevented) setPrivacyPolicyVisible(true)
+    },
+    [setPrivacyPolicyVisible]
+  )
+
+  const handleTOS = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      if (!event.defaultPrevented) setTermsOfServiceVisible(true)
+    },
+    [setTermsOfServiceVisible]
+  )
 
   return (
     <WRAPPER>
+      <PrivacyPolicy setVisible={setPrivacyPolicyVisible} visible={privacyPolicyVisible} />
+      <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
       <TEXT>
-        Copyright © 2021 GooseFX. All rights reserved. Please trade with your own discretion and according to your
-        location’s laws and regulations.
+        Copyright © 2021 GooseFX. All rights reserved. Please trade with your own discretion. Certain features may be
+        unavailable to your geographic location. Please refer to our&nbsp;
+        <span onClick={handleTOS}>Terms of Service</span>&nbsp;and&nbsp;
+        <span onClick={handlePrivacyPolicy}>Privacy Policy</span>.
       </TEXT>
       <SpaceBetweenDiv>
         <MODE_ICON>

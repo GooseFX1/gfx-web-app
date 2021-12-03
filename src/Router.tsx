@@ -13,7 +13,7 @@ const WRAPPER = styled(CenteredDiv)`
 export const Router: FC = () => {
   return (
     <BrowserRouter>
-      <Redirect from="/" to="/swap" />
+      <Redirect from="/" to="/crypto" />
       <Switch>
         <AppLayout>
           <WRAPPER>

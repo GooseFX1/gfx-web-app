@@ -3,18 +3,8 @@ import { Order } from '@project-serum/serum/lib/market'
 import { AccountInfo, Connection, PublicKey } from '@solana/web3.js'
 import { AVAILABLE_MARKETS, MarketSide } from '../context'
 
-const getAsks = async (connection: Connection, pair: string, canBeDeprecated: boolean = false) => {
-  const market = await getMarket(connection, pair, canBeDeprecated)
-  return await market.loadAsks(connection)
-}
-
-const getBids = async (connection: Connection, pair: string, canBeDeprecated: boolean = false) => {
-  const market = await getMarket(connection, pair, canBeDeprecated)
-  return await market.loadBids(connection)
-}
-
 const getLatestBid = async (connection: Connection, pair: string, canBeDeprecated: boolean = false) => {
-  const [[latestBid]] = (await getBids(connection, pair, canBeDeprecated)).getL2(1)
+  const [[latestBid]] = (await (await getMarket(connection, pair, canBeDeprecated)).loadBids(connection)).getL2(1)
   return latestBid
 }
 
@@ -65,8 +55,6 @@ const subscribeToOrderBook = async (
 }
 
 export const serum = {
-  getAsks,
-  getBids,
   getLatestBid,
   getMarket,
   getMarketFromAddress,

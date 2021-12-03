@@ -1,7 +1,8 @@
-import React, { FC, useCallback } from 'react'
+import React, { FC, useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletName } from '@solana/wallet-adapter-wallets'
+import { TermsOfService } from './TermsOfService'
 import { Modal } from '../../components'
 import { LITEPAPER_ADDRESS } from '../../constants'
 import { useWalletModal } from '../../context'
@@ -20,8 +21,10 @@ const DISCLAIMER = styled.span`
   text-align: left;
   color: ${({ theme }) => theme.text1};
 
-  a {
+  a,
+  span {
     color: ${({ theme }) => theme.text3};
+    cursor: pointer;
   }
 `
 
@@ -62,12 +65,20 @@ const WALLET = styled(SpaceBetweenDiv)`
 export const WalletsModal: FC = () => {
   const { wallets, select } = useWallet()
   const { setVisible, visible } = useWalletModal()
+  const [termsOfServiceVisible, setTermsOfServiceVisible] = useState(false)
 
   const handleCancel = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
       if (!event.defaultPrevented) setVisible(false)
     },
     [setVisible]
+  )
+
+  const handleTOS = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      if (!event.defaultPrevented) setTermsOfServiceVisible(true)
+    },
+    [setTermsOfServiceVisible]
   )
 
   const handleWalletClick = useCallback(
@@ -82,8 +93,9 @@ export const WalletsModal: FC = () => {
     <Modal setVisible={setVisible} title="Connect to a wallet" visible={visible}>
       <BODY>
         <DISCLAIMER>
-          By connecting a wallet, you agree to GooseFX, <a>Terms of Service</a> and acknowledge that you have read and
-          you understand the&nbsp;
+          <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
+          By connecting a wallet, you agree to GooseFX,&nbsp;<span onClick={handleTOS}>Terms of Service</span>
+          &nbsp;and acknowledge that you have read and you understand the&nbsp;
           <a href={`${LITEPAPER_ADDRESS}/#disclaimer`} target="_blank" rel="noopener noreferrer">
             GooseFX protocol disclaimer
           </a>
