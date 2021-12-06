@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
 import { RightSectionTabs } from './RightSectionTabs'
 import { useNFTDetails } from '../../../context'
-import { NFTDEtailsProviderMode } from '../../../types/nft_details'
+import { MintItemViewStatus, NFTDEtailsProviderMode } from '../../../types/nft_details'
 
 const RIGHT_SECTION = styled.div`
   ${({ theme }) => css`
@@ -110,19 +110,19 @@ const GRID_INFO = styled(Row)`
   `}
 `
 
-export const RightSection: FC<{ mode: NFTDEtailsProviderMode; handleClickPrimaryButton: () => void }> = ({
-  mode,
-  handleClickPrimaryButton,
-  ...rest
-}) => {
+export const RightSection: FC<{
+  mode: NFTDEtailsProviderMode
+  status: MintItemViewStatus
+  handleClickPrimaryButton: () => void
+}> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
   const { general } = useNFTDetails()
   const { name, price, creator, collection, category, fiat, percent, intro, isForCharity } = general
-
+  const isMintItemView = mode === 'mint-item-view'
   return (
     <RIGHT_SECTION {...rest}>
       <Row justify="space-between">
-        <Col className="rs-title">Current Bid:</Col>
-        {general?.type && <Col className="rs-type">{general.type}</Col>}
+        <Col className="rs-title">{isMintItemView ? 'Price' : 'Current Bid'}</Col>
+        {!isMintItemView && general?.type && <Col className="rs-type">{general.type}</Col>}
       </Row>
       <Row align="middle" gutter={8} className="rs-prices">
         <Col>
@@ -130,17 +130,23 @@ export const RightSection: FC<{ mode: NFTDEtailsProviderMode; handleClickPrimary
         </Col>
         <Col className="rs-price">{`${moneyFormatter(price)} SOL`}</Col>
         <Col className="rs-fiat">{`(${fiat})`}</Col>
-        <Col>
-          <Row>
-            <img src={`${process.env.PUBLIC_URL}/img/assets/increase-arrow.svg`} alt="" />
-            <div className="rs-percent">{percent}</div>
-          </Row>
-        </Col>
+        {!isMintItemView && (
+          <Col>
+            <Row>
+              <img src={`${process.env.PUBLIC_URL}/img/assets/increase-arrow.svg`} alt="" />
+              <div className="rs-percent">{percent}</div>
+            </Row>
+          </Col>
+        )}
       </Row>
       <Row justify="space-between" align="middle">
         <Col>
-          <div className="rs-name">{name}</div>
-          <div className="rs-intro">{intro}</div>
+          {mode !== 'mint-item-view' && (
+            <>
+              <div className="rs-name">{name}</div>
+              <div className="rs-intro">{intro}</div>
+            </>
+          )}
         </Col>
         {isForCharity && (
           <Row align="middle">
@@ -175,7 +181,7 @@ export const RightSection: FC<{ mode: NFTDEtailsProviderMode; handleClickPrimary
           </Row>
         </Col>
       </GRID_INFO>
-      <RightSectionTabs mode={mode} handleClickPrimaryButton={handleClickPrimaryButton} />
+      <RightSectionTabs mode={mode} status={status} handleClickPrimaryButton={handleClickPrimaryButton} />
     </RIGHT_SECTION>
   )
 }

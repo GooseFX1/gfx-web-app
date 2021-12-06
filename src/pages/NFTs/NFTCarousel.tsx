@@ -85,7 +85,18 @@ const settings = {
   variableWidth: true
 }
 
-const NFTCarousel: FC<{ isLaunch?: boolean; showTopArrow?: boolean }> = ({ isLaunch, showTopArrow }) => {
+export enum NFTCarouselType {
+  launchPad,
+  upcomming,
+  popular
+}
+
+const NFTCarousel: FC<{ isLaunch?: boolean; showTopArrow?: boolean; title?: string; type?: NFTCarouselType }> = ({
+  isLaunch,
+  showTopArrow,
+  title,
+  type
+}) => {
   const slickRef = React.useRef<any>()
 
   const slickNext = () => slickRef?.current?.slickNext()
@@ -94,7 +105,7 @@ const NFTCarousel: FC<{ isLaunch?: boolean; showTopArrow?: boolean }> = ({ isLau
   return (
     <CAROUSEL_WRAPPER>
       <HEADER_CAROUSEL>
-        <TITLE_CAROUSEL>Popular Collection</TITLE_CAROUSEL>
+        <TITLE_CAROUSEL>{title}</TITLE_CAROUSEL>
         {showTopArrow && <TOP_ARROW arrowRotation />}
         <HEADER_END_CAROUSEL>
           {isLaunch ? (
@@ -113,9 +124,9 @@ const NFTCarousel: FC<{ isLaunch?: boolean; showTopArrow?: boolean }> = ({ isLau
         </HEADER_END_CAROUSEL>
       </HEADER_CAROUSEL>
       <Slider ref={slickRef} {...settings}>
-        {products.map((item) => (
-          <NFTImageCarouselItem key={item.id} item={item} />
-        ))}
+        {products.map((item) => {
+          return <NFTImageCarouselItem type={type} key={item.id} item={item} />
+        })}
       </Slider>
     </CAROUSEL_WRAPPER>
   )

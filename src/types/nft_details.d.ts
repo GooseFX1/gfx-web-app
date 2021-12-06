@@ -45,8 +45,14 @@ export interface INFTDetailsGeneralData {
   category?: IInfoItemData
 }
 
-export type NFTDEtailsProviderMode = 'live-auction-NFT' | 'my-created-NFT' | 'fixed-price-NFT' | 'open-bid-NFT'
+export type NFTDEtailsProviderMode =
+  | 'live-auction-NFT'
+  | 'my-created-NFT'
+  | 'fixed-price-NFT'
+  | 'open-bid-NFT'
+  | 'mint-item-view'
 
+export type MintItemViewStatus = '' | 'placed' | 'successful' | 'unsuccessful'
 export interface INFTDetailsConfig {
   general: INFTDetailsGeneralData
   detailTab: IDetailTabItemData[]

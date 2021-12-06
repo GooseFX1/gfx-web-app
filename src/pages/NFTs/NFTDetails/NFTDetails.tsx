@@ -1,10 +1,11 @@
+import React from 'react'
 import { Row } from 'antd'
 import { FC } from 'react'
 import { useHistory } from 'react-router'
 import styled, { css } from 'styled-components'
 import { RightSection } from './RightSection'
 import { LeftSection } from './LeftSection'
-import { NFTDEtailsProviderMode } from '../../../types/nft_details'
+import { NFTDEtailsProviderMode, MintItemViewStatus } from '../../../types/nft_details'
 
 const NFT_DETAILS = styled.div`
   ${({ theme }) => css`
@@ -48,30 +49,34 @@ const NFT_DETAILS = styled.div`
   `}
 `
 
-export const NFTDetails: FC<{ mode: NFTDEtailsProviderMode; handleClickPrimaryButton: () => void; backUrl?: string }> =
-  ({ mode, backUrl, handleClickPrimaryButton, ...rest }) => {
-    const history = useHistory()
+export const NFTDetails: FC<{
+  mode: NFTDEtailsProviderMode
+  handleClickPrimaryButton: () => void
+  status?: MintItemViewStatus
+  backUrl?: string
+}> = ({ mode, status = '', backUrl, handleClickPrimaryButton, ...rest }) => {
+  const history = useHistory()
 
-    return (
-      <NFT_DETAILS {...rest}>
-        <img
-          className="nd-back-icon"
-          src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
-          alt="back"
-          onClick={() => {
-            backUrl ? history.push(backUrl) : history.goBack()
-          }}
-        />
-        <div className="nd-content-wrapper">
-          <Row className="nd-content" justify="space-between">
-            <div className="nd-preview">
-              <LeftSection mode={mode} />
-            </div>
-            <div className="nd-details">
-              <RightSection mode={mode} handleClickPrimaryButton={handleClickPrimaryButton} />
-            </div>
-          </Row>
-        </div>
-      </NFT_DETAILS>
-    )
-  }
+  return (
+    <NFT_DETAILS {...rest}>
+      <img
+        className="nd-back-icon"
+        src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
+        alt="back"
+        onClick={() => {
+          backUrl ? history.push(backUrl) : history.goBack()
+        }}
+      />
+      <div className="nd-content-wrapper">
+        <Row className="nd-content" justify="space-between">
+          <div className="nd-preview">
+            <LeftSection mode={mode} />
+          </div>
+          <div className="nd-details">
+            <RightSection mode={mode} status={status} handleClickPrimaryButton={handleClickPrimaryButton} />
+          </div>
+        </Row>
+      </div>
+    </NFT_DETAILS>
+  )
+}
