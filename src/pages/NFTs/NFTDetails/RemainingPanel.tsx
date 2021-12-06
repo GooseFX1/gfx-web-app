@@ -28,7 +28,7 @@ const REMAINING_PANEL = styled(Row)`
   `}
 `
 
-export const RemainingPanel: FC<{ time: IRemainingPanelData }> = ({ time, ...rest }) => {
+export const TimePanel: FC<{ time: IRemainingPanelData }> = ({ time, ...rest }) => {
   return (
     <REMAINING_PANEL justify="space-between" {...rest}>
       <Row align="middle">
