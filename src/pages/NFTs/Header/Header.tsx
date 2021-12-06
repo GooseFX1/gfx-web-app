@@ -5,6 +5,7 @@ import NFTAvatar from '../NFTAvatar'
 import { ButtonWrapper } from '../NFTButton'
 import { SearchBar } from '../SearchBar'
 import { SpaceBetweenDiv } from '../../../styles'
+import { useHistory } from 'react-router-dom'
 
 const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
   padding: ${({ theme }) => theme.margins['3x']};
@@ -50,6 +51,10 @@ const CREATE = styled(ButtonWrapper)`
 `
 
 export const Header = () => {
+  const history = useHistory()
+  const onCreateCollectible = () => {
+    history.push('/NFTs/create-a-collectible')
+  }
   return (
     <HEADER_WRAPPER>
       <AVATAR_WRAPPER>
@@ -58,7 +63,7 @@ export const Header = () => {
       <SearchBar />
       <BUTTON_SELECTION>
         <Categories />
-        <CREATE>
+        <CREATE onClick={onCreateCollectible}>
           <span>Create</span>
         </CREATE>
       </BUTTON_SELECTION>

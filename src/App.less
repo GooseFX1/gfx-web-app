@@ -42,6 +42,45 @@ span:hover {
 
 .ant-notification-notice {
   cursor: pointer;
+  &.mint {
+    width: 270px;
+    height: 120px;
+    border-radius: 20px;
+    padding: 12px 19px;
+    .ant-notification-notice-close,
+    .ant-notification-notice-icon {
+      display: none;
+    }
+
+    .ant-notification-notice-description {
+      font-size: 11px;
+      font-weight: 700;
+      padding-right: 17%;
+      position: relative;
+      .text {
+        margin-bottom: 6px;
+      }
+      .unsuccessful {
+        &.text-0 {
+          margin-bottom: 22px;
+        }
+      }
+      img {
+        position: absolute;
+        top: 3px;
+        right: -3px;
+        left: auto;
+        width: 23px;
+        height: 23px;
+      }
+    }
+    &.ant-notification-notice-error {
+      background: #bb3535;
+    }
+    &.ant-notification-notice-info {
+      background: #3735bb;
+    }
+  }
 }
 
 .ant-notification-notice-with-icon .ant-notification-notice-description,

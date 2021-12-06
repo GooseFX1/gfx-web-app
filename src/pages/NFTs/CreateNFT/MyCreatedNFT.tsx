@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { myCreatedNFTData, myOwnNFTData, detailTabData, tradingHistoryTabData } from './mockData'
 import { MyNFT } from './MyNFT'
+import { MintItemView } from './MintItemView'
 import { useNFTDetails } from '../../../context'
 
 type Props = {
@@ -16,7 +17,15 @@ export const MyCreatedNFT = ({ type }: Props) => {
   fetchDetailTab(detailTabData)
   fetchTradingHistoryTab(tradingHistoryTabData)
 
-  return (
+  return type === 'mint' ? (
+    <MintItemView
+      setVisible={setVisible}
+      visible={visible}
+      handleOk={handleOk}
+      handleCancel={handleCancel}
+      backUrl="/NFTs/profile"
+    />
+  ) : (
     <MyNFT
       setVisible={setVisible}
       visible={visible}

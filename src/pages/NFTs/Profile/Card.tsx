@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { StyledCard } from './Card.styled'
+import { SellYourNFTView } from '../SellNFT/SellYourNFTView'
 
 interface CardData {
   order: number
@@ -15,6 +16,10 @@ type Props = {
 export const Card = ({ data, isExplore }: Props) => {
   const history = useHistory()
 
+  const [visible, setVisible] = useState(false)
+  const handleOk = () => setVisible(false)
+  const handleCancel = () => setVisible(false)
+
   const goMyCreatedNFT = () => {
     if (['favorited', 'created'].includes(data?.type)) history.push('/NFTs/profile/my-created-NFT')
     if (data?.type === 'collected') history.push('/NFTs/profile/my-own-NFT')
@@ -22,8 +27,13 @@ export const Card = ({ data, isExplore }: Props) => {
   }
   return (
     <div className="card-item">
-      <StyledCard onClick={goMyCreatedNFT}>
-        <img className="card-image" src={`${process.env.PUBLIC_URL}/img/assets/card-1.png`} alt="" />
+      <StyledCard>
+        <img
+          className="card-image"
+          src={`${process.env.PUBLIC_URL}/img/assets/card-1.png`}
+          alt=""
+          onClick={goMyCreatedNFT}
+        />
         <div className="info">
           <div className="name">#0028</div>
           <div className="number">
@@ -54,12 +64,17 @@ export const Card = ({ data, isExplore }: Props) => {
                 <img className="price-image" src={`${process.env.PUBLIC_URL}/img/assets/price.svg`} alt="" />
                 <span className="price-number">35</span>
               </div>
+            ) : [1, 2].includes(data?.order) ? (
+              <button className="sell-now-btn" onClick={() => setVisible(true)}>
+                Sell now
+              </button>
             ) : (
               <img className="card-logo" src={`${process.env.PUBLIC_URL}/img/assets/card-logo-1.svg`} alt="" />
             )}
           </div>
         </div>
       </StyledCard>
+      <SellYourNFTView visible={visible} handleOk={handleOk} handleCancel={handleCancel} />
     </div>
   )
 }

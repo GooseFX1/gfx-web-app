@@ -1,3 +1,4 @@
+// import { SellYourNFTView } from '../SellNFT/SellYourNFTView'
 import React from 'react'
 import { NFTDetails } from '../NFTDetails'
 import { EditMyNFT } from './EditMyNFT'
@@ -15,6 +16,8 @@ export const MyNFT = ({ visible, setVisible, handleCancel, handleOk, backUrl, ty
   return (
     <>
       <NFTDetails mode="my-created-NFT" backUrl={backUrl} handleClickPrimaryButton={() => setVisible(true)} />
+      {/* To test Sell your NFT View, please uncomment this line below */}
+      {/* <SellYourNFTView visible={visible} handleOk={handleOk} handleCancel={handleCancel} /> */}
       <EditMyNFT type={type} visible={visible} handleOk={handleOk} handleCancel={handleCancel} />
     </>
   )

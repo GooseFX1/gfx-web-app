@@ -7,6 +7,7 @@ ${theme.largeBorderRadius}
 background-color: ${theme.bg4};
 padding: ${theme.margins['2x']} ${theme.margins['2.5x']};
 cursor: pointer;
+z-index: 2;
 .card-image {
   max-width: 245px;
   width: 100%;
@@ -77,6 +78,7 @@ cursor: pointer;
   position: absolute;
   bottom: 0;
   right: 0;
+  .sell-now-btn,
   .buy-now-btn {
     width: 72px;
     height: 29px;
@@ -87,6 +89,9 @@ cursor: pointer;
     border: none;
     line-height: 23px;
     background-color: #3735bb;
+    position: relative;
+    cursor: pointer;
+    z-index: 5;
   }
   .price-group {
     display: flex;

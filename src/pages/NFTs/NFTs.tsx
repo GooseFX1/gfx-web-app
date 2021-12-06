@@ -2,7 +2,10 @@ import React, { FC } from 'react'
 import styled from 'styled-components'
 import NFTHome from './Home/NFTHome'
 import { MyCreatedNFT } from './CreateNFT'
+import { Collectible } from './Collectible'
+import { UpLoadNFT } from './Collectible/UpLoadNFT'
 import { Profile } from './Profile'
+import { Explore } from './Profile/Explore'
 import { Collection } from './Collection'
 import { LiveAuctionNFT } from './LiveAuctionNFT'
 import { FixedPriceNFT } from './FixedPriceNFT'
@@ -54,6 +57,11 @@ export const NFTs: FC = () => {
                 <Profile />
               </SCROLLING_CONTENT>
             </Route>
+            <Route exact path="/NFTs/profile/explore">
+              <SCROLLING_CONTENT>
+                <Explore />
+              </SCROLLING_CONTENT>
+            </Route>
             <Route exact path="/NFTs/profile/my-created-NFT">
               <SCROLLING_CONTENT>
                 <MyCreatedNFT type="created" />
@@ -62,6 +70,11 @@ export const NFTs: FC = () => {
             <Route exact path="/NFTs/profile/my-own-NFT">
               <SCROLLING_CONTENT>
                 <MyCreatedNFT type="own" />
+              </SCROLLING_CONTENT>
+            </Route>
+            <Route exact path="/NFTs/profile/mint-NFT">
+              <SCROLLING_CONTENT>
+                <MyCreatedNFT type="mint" />
               </SCROLLING_CONTENT>
             </Route>
             <Route exact path="/NFTs/collection">
@@ -82,6 +95,14 @@ export const NFTs: FC = () => {
             <Route exact path="/NFTs/open-bid/:id">
               <SCROLLING_CONTENT>
                 <OpenBidNFT />
+              </SCROLLING_CONTENT>
+            </Route>
+            <Route exact path="/NFTs/create-a-collectible">
+              <Collectible />
+            </Route>
+            <Route exact path="/NFTs/single-upload-your-file">
+              <SCROLLING_CONTENT>
+                <UpLoadNFT />
               </SCROLLING_CONTENT>
             </Route>
           </Switch>

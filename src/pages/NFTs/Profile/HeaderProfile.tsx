@@ -3,16 +3,15 @@ import { Menu, Button } from 'antd'
 import { useHistory } from 'react-router-dom'
 import { PopupProfile } from './PopupProfile'
 import PopupCompleteProfile from './PopupCompleteProfile'
+import { ShareProfile } from './ShareProfile'
 import { useDarkMode } from '../../../context'
 import { StyledHeaderProfile, StyledDropdown, StyledMenu } from './HeaderProfile.styled'
 
-const menu = (isExplore: boolean) =>
+const menu = (isExplore: boolean, setVisibleShareProfile: (b: boolean) => void) =>
   isExplore ? (
     <StyledMenu>
       <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="/share">
-          Share
-        </a>
+        <div onClick={() => setVisibleShareProfile(true)}>Share</div>
       </Menu.Item>
       <Menu.Item>
         <a target="_blank" rel="noopener noreferrer" href="/report">
@@ -23,9 +22,7 @@ const menu = (isExplore: boolean) =>
   ) : (
     <StyledMenu>
       <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="/share-profile">
-          Share profile
-        </a>
+        <div onClick={() => setVisibleShareProfile(true)}>Share Profile</div>
       </Menu.Item>
       <Menu.Item>
         <a target="_blank" rel="noopener noreferrer" href="/help">
@@ -43,7 +40,8 @@ export const HeaderProfile = ({ isExplore }: Props) => {
   const history = useHistory()
   const { mode } = useDarkMode()
   const [visible, setVisible] = useState(false)
-  const [visibleCompletePopup, setVisibleCompletePopup] = useState(true)
+  const [visibleShareProfile, setVisibleShareProfile] = useState(false)
+  const [visibleCompletePopup, setVisibleCompletePopup] = useState(!isExplore)
   const onSkip = () => setVisibleCompletePopup(false)
   const onContinue = () => setVisibleCompletePopup(false)
   const handleOk = () => setVisible(false)
@@ -54,7 +52,7 @@ export const HeaderProfile = ({ isExplore }: Props) => {
         className="back-icon"
         src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
         alt=""
-        onClick={() => history.push('/NFTs')}
+        onClick={() => history.push(isExplore ? '/NFTs/profile' : '/NFTs')}
       />
       <div className="avatar-profile-wrap">
         <img className="avatar-profile" src={`${process.env.PUBLIC_URL}/img/assets/avatar-profile.png`} alt="" />
@@ -67,7 +65,12 @@ export const HeaderProfile = ({ isExplore }: Props) => {
       </div>
       <div className="name-wrap">
         <span className="name">yeoohr</span>
-        <img className="check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`} alt="" />
+        <img
+          className="check-icon"
+          src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`}
+          alt=""
+          onClick={() => history.push('/NFTs/profile/explore')}
+        />
       </div>
       <div className="social-list">
         <a className="social-item" href="/twitter">
@@ -86,13 +89,19 @@ export const HeaderProfile = ({ isExplore }: Props) => {
             <span>Create</span>
           </button>
         )}
-        <StyledDropdown overlay={menu(isExplore)} trigger={['click']} placement="bottomRight" arrow>
+        <StyledDropdown
+          overlay={menu(isExplore, setVisibleShareProfile)}
+          trigger={['click']}
+          placement="bottomRight"
+          arrow
+        >
           <Button>
             <img className="more-icon" src={`${process.env.PUBLIC_URL}/img/assets/more_icon.svg`} alt="more" />
           </Button>
         </StyledDropdown>
       </div>
       <PopupProfile visible={visible} setVisible={setVisible} handleOk={handleOk} handleCancel={handleCancel} />
+      <ShareProfile visible={visibleShareProfile} handleCancel={() => setVisibleShareProfile(false)} />
       <PopupCompleteProfile visible={visibleCompletePopup} handleOk={onSkip} handleCancel={onContinue} />
     </StyledHeaderProfile>
   )

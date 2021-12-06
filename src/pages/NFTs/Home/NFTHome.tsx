@@ -2,8 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 import { Header } from '../Header'
 import NFTHeaderCarousel from '../NFTHeaderCarousel'
-import NFTCarousel from '../NFTCarousel'
 import NFTFooter from '../NFTFooter'
+import NFTCarousel, { NFTCarouselType } from '../NFTCarousel'
 
 const SCROLLING_CONTENT = styled.div`
   overflow-y: scroll;
@@ -39,8 +39,9 @@ const NFTHome = () => {
       <NFTHeaderCarousel isBig={false} isBigVisible={isBigCarouselVisible} />
       <SCROLLING_CONTENT onScroll={onScroll}>
         <NFTHeaderCarousel isBig isBigVisible={isBigCarouselVisible} />
-        <NFTCarousel showTopArrow isLaunch />
-        <NFTCarousel />
+        <NFTCarousel type={NFTCarouselType.launchPad} title="Launchpad" showTopArrow isLaunch />
+        <NFTCarousel type={NFTCarouselType.upcomming} title="Upcoming Collections" />
+        <NFTCarousel type={NFTCarouselType.popular} title="Popular Collections" />
         <NFTFooter />
       </SCROLLING_CONTENT>
     </>

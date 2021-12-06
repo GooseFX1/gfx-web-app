@@ -1,9 +1,10 @@
 import { Image, Progress } from 'antd'
-import React from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import { useDarkMode } from '../../context'
 import { colors } from '../../theme'
 import { ButtonWrapper } from './NFTButton'
+import { NFTCarouselType } from './NFTCarousel'
 import { useHistory } from 'react-router'
 
 const CAROUSEL_IMAGE = styled(Image)`
@@ -41,7 +42,12 @@ const UP_COMMING_FOOTER = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  ${({ theme }) => theme.margins['3.5x']};
+  margin-top: ${({ theme }) => theme.margins['3.5x']};
+`
+const GROUP_BLOCK_TEXTS = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 `
 
 const COUNT_DOWN_TEXT = styled.span`
@@ -90,9 +96,14 @@ const MINT_BUTTON = styled(ButtonWrapper)`
 const LEFT_INFO_LAUNCHPAD = styled.div`
   flex: 1;
 `
+const POPULAR_FOOTER = styled.div`
+  margin-top: ${({ theme }) => theme.margins['3x']};
+`
 
 const LaunchPadInfo = ({ item }: any) => {
   const { mode } = useDarkMode()
+  const history = useHistory()
+  const goToMint = () => history.push('/NFTs/profile/mint-NFT')
   return (
     <LAUNCH_PAD_FOOTER>
       <LEFT_INFO_LAUNCHPAD>
@@ -102,20 +113,20 @@ const LaunchPadInfo = ({ item }: any) => {
           <Progress showInfo={false} percent={30} trailColor={colors(mode).searchbarBackground} strokeColor="#9625ae" />
         </PROGRESS_WRAPPER>
       </LEFT_INFO_LAUNCHPAD>
-      <MINT_BUTTON>
+      <MINT_BUTTON onClick={goToMint}>
         <span>Mint</span>
       </MINT_BUTTON>
     </LAUNCH_PAD_FOOTER>
   )
 }
 
-const UpcomingInfo = ({ item }: any) => {
+const UpCommingInfo = ({ item }: any) => {
   return (
     <UP_COMMING_FOOTER>
-      <div>
+      <GROUP_BLOCK_TEXTS>
         <CAROUSEL_LABEL> {item.title}</CAROUSEL_LABEL>
         <CAROUSEL_SUB_TITLE>{item.pieces} mint pieces</CAROUSEL_SUB_TITLE>
-      </div>
+      </GROUP_BLOCK_TEXTS>
       <COUNT_DOWN_TEXT>
         <span>Starts: 05d:10h:01min</span>
       </COUNT_DOWN_TEXT>
@@ -123,10 +134,32 @@ const UpcomingInfo = ({ item }: any) => {
   )
 }
 
-const NFTImageCarouselItem = ({ item }: any) => {
+const PopularInfo = ({ item }: any) => {
+  return (
+    <POPULAR_FOOTER>
+      <GROUP_BLOCK_TEXTS>
+        <CAROUSEL_LABEL> {item.title}</CAROUSEL_LABEL>
+        <CAROUSEL_SUB_TITLE>{item.pieces} mint pieces</CAROUSEL_SUB_TITLE>
+      </GROUP_BLOCK_TEXTS>
+    </POPULAR_FOOTER>
+  )
+}
+
+const NFTImageCarouselItem: FC<{ item: any; type?: NFTCarouselType }> = ({ item, type }) => {
   const history = useHistory()
   const goToCollection = () => history.push('/NFTs/collection')
-
+  const renderItemFooter = () => {
+    switch (type) {
+      case NFTCarouselType.launchPad:
+        return <LaunchPadInfo item={item} />
+      case NFTCarouselType.upcomming:
+        return <UpCommingInfo item={item} />
+      case NFTCarouselType.popular:
+        return <PopularInfo item={item} />
+      default:
+        return <LaunchPadInfo item={item} />
+    }
+  }
   return (
     <CAROUSEL_ITEM>
       <CAROUSEL_IMAGE
@@ -134,8 +167,7 @@ const NFTImageCarouselItem = ({ item }: any) => {
         src="https://images.unsplash.com/photo-1634985492257-06c8ee26b770?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1932&q=80"
         onClick={goToCollection}
       />
-      {/* <UpcomingInfo item={item} /> */}
-      <LaunchPadInfo item={item} />
+      {renderItemFooter()}
     </CAROUSEL_ITEM>
   )
 }

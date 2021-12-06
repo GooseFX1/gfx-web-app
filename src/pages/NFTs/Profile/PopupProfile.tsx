@@ -14,9 +14,6 @@ interface Props {
 
 export const PopupProfile = ({ visible, setVisible, handleOk, handleCancel }: Props) => {
   const [form] = Form.useForm()
-  const onSaveChanges = () => {
-    setVisible(false)
-  }
 
   const initialValues = {
     creator_name: 'yeoohr',
