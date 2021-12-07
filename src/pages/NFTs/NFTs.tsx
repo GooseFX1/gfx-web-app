@@ -4,6 +4,7 @@ import NFTHome from './Home/NFTHome'
 import { MyCreatedNFT } from './CreateNFT'
 import { Collectible } from './Collectible'
 import { UpLoadNFT } from './Collectible/UpLoadNFT'
+import { LiveAuction } from './Collectible/LiveAuction'
 import { Profile } from './Profile'
 import { Explore } from './Profile/Explore'
 import { Collection } from './Collection'
@@ -103,6 +104,11 @@ export const NFTs: FC = () => {
             <Route exact path="/NFTs/single-upload-your-file">
               <SCROLLING_CONTENT>
                 <UpLoadNFT />
+              </SCROLLING_CONTENT>
+            </Route>
+            <Route exact path="/NFTs/live-auction">
+              <SCROLLING_CONTENT>
+                <LiveAuction />
               </SCROLLING_CONTENT>
             </Route>
           </Switch>

@@ -16,6 +16,9 @@ export const STYLED_SELL_CATEGORY = styled(Row)`
       background: #131313;
       ${({ theme }) => theme.largeBorderRadius};
       border: 1px solid rgba(255, 255, 255, 0.5);
+      &.active {
+        border-color: #fff;
+      }
     }
     .item-text {
       margin-top: ${({ theme }) => theme.margins['1x']};
@@ -46,7 +49,11 @@ export const SellCategory = () => {
       {dataCategories.map((item, index) => (
         <Col>
           <div className="item-wrap">
-            <img className="item-image" src={`${process.env.PUBLIC_URL}/img/assets/${item?.icon}.svg`} alt="" />
+            <img
+              className={`${index === 0 ? 'active' : ''} item-image`}
+              src={`${process.env.PUBLIC_URL}/img/assets/${item?.icon}.svg`}
+              alt=""
+            />
             <div className="item-text">{item?.name}</div>
           </div>
         </Col>

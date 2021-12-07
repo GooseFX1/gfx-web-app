@@ -23,9 +23,9 @@ const DROP_CONTAINER = styled.div`
 `
 
 const UploadZone = () => {
-  const onDrop = React.useCallback((acceptedFiles) => {
+  /* const onDrop = React.useCallback((acceptedFiles) => {
     // Do something with the files
-  }, [])
+  }, []) */
 
   const TITLE_UPLOAD = MainText(styled.div`
     font-size: 17px;

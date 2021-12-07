@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { Button } from 'antd'
 import { ArrowClicker } from '../../../components'
 import { MainText } from '../../../styles'
 import { ButtonWrapper } from '../NFTButton'
@@ -11,12 +10,15 @@ import { useHistory } from 'react-router-dom'
 import { UploadCustom } from './UploadCustom'
 import { NewCollection } from './NewCollection'
 import { AddProperty } from './AddProperty'
+import isEmpty from 'lodash/isEmpty'
 
 const UPLOAD_CONTENT = styled.div`
   flex: 1;
   display: flex;
   flex-direction: row;
   padding: ${({ theme }) => theme.margins['5x']};
+  width: 90%;
+  margin: 0 auto;
 `
 
 const LEFT_ARROW = styled(ArrowClicker)`
@@ -44,7 +46,7 @@ const UPLOAD_INFO_CONTAINER = styled.div`
 const PREVIEW_UPLOAD_CONTAINER = styled.div`
   flex: 1;
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   flex-direction: column;
   margin-left: ${({ theme }) => theme.margins['6x']};
   margin-right: ${({ theme }) => theme.margins['3x']};
@@ -72,6 +74,7 @@ const NEXT_BUTTON = styled(ButtonWrapper)`
   padding: ${({ theme }) => `${theme.margins['2x']} ${theme.margins['6x']}`};
   align-self: flex-end;
   background-color: ${({ theme }) => theme.secondary2};
+  margin-top: ${({ theme }) => theme.margins['5x']};
   &:disabled {
     background-color: #7d7d7d;
   }
@@ -140,6 +143,13 @@ const STYLED_PROPERTY_BLOCK = styled.div`
 export const UpLoadNFT = () => {
   const history = useHistory()
   const [previewImage, setPreviewImage] = useState<any>()
+  const [status, setStatus] = useState('') // TODO case ('failed') when API is available
+  const initInfo = {
+    title: '',
+    desc: ''
+  }
+  const [info, setInfo] = useState({ ...initInfo })
+  const [disabled, setDisabled] = useState(true)
 
   const [visible, setVisible] = useState(false)
   const [visibleProperty, setVisibleProperty] = useState(false)
@@ -157,20 +167,48 @@ export const UpLoadNFT = () => {
       setPropertyList(temp)
     }
   }
+  // title, desc
+  const onChange = ({ e, id }) => {
+    const { value } = e.target
+    const temp = { ...info }
+    temp[id] = value
+    setInfo(temp)
+  }
+
+  const onLiveAuction = () => {
+    history.push({
+      pathname: '/NFTs/live-auction',
+      state: {
+        info,
+        previewImage: previewImage,
+        status
+      }
+    })
+  }
+
+  useEffect(() => {
+    if (info?.title && info?.desc && !isEmpty(previewImage)) {
+      setDisabled(false)
+    } else setDisabled(true)
+  }, [info, previewImage])
 
   return (
     <>
       <UPLOAD_CONTENT>
-        <LEFT_ARROW onClick={() => history.goBack()} />
+        <LEFT_ARROW onClick={() => history.push('/NFTs/create-a-collectible')} />
         <UPLOAD_FIELD_CONTAINER>
           <UPLOAD_INFO_CONTAINER>
             <SECTION_TITLE>1. Upload your file</SECTION_TITLE>
-            <UploadCustom setPreviewImage={setPreviewImage} />
+            <UploadCustom setPreviewImage={setPreviewImage} setStatus={setStatus} status={status} />
             <SECTION_TITLE>2. Item settings</SECTION_TITLE>
             <INPUT_SECTION>
-              <InfoInput title="Title" placeholder="Name your item" />
+              <InfoInput title="Title" placeholder="Name your item" onChange={(e) => onChange({ e, id: 'title' })} />
               <SPACE />
-              <InfoInput title="Description" placeholder="Describe your item" />
+              <InfoInput
+                title="Description"
+                placeholder="Describe your item"
+                onChange={(e) => onChange({ e, id: 'desc' })}
+              />
             </INPUT_SECTION>
             <BOTTOM_BUTTON_SECTION>
               <BottomButtonUpload flex={2.5} type={BottomButtonUploadType.text} title="Number of copies" />
@@ -215,8 +253,8 @@ export const UpLoadNFT = () => {
             </STYLED_PROPERTY_BLOCK>
           </UPLOAD_INFO_CONTAINER>
           <PREVIEW_UPLOAD_CONTAINER>
-            <PreviewImage file={previewImage} />
-            <NEXT_BUTTON>
+            <PreviewImage file={previewImage} status={status} info={info} />
+            <NEXT_BUTTON onClick={onLiveAuction} disabled={disabled}>
               <span>Next steps</span>
             </NEXT_BUTTON>
           </PREVIEW_UPLOAD_CONTAINER>
