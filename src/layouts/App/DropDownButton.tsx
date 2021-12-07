@@ -34,19 +34,21 @@ const exDropdowData = [
   { name: 'Unverified', icon: 'unverified' }
 ]
 
-const Overlay: FC<{ onOptionClick: (currentOption: string) => void; options: Array<{ name: string; icon: string }> }> =
-  ({ onOptionClick, options }) => {
-    return (
-      <Menu>
-        {options.map((item) => (
-          <MenuItem onClick={() => onOptionClick(item.name)}>
-            <span>{item.name}</span>
-            <img src={`${process.env.PUBLIC_URL}/img/assets/${item.icon}.svg`} alt="disconnect" />
-          </MenuItem>
-        ))}
-      </Menu>
-    )
-  }
+const Overlay: FC<{
+  onOptionClick: (currentOption: string) => void
+  options: Array<{ name: string; icon: string }>
+}> = ({ onOptionClick, options }) => {
+  return (
+    <Menu>
+      {options.map((item) => (
+        <MenuItem onClick={() => onOptionClick(item.name)}>
+          <span>{item.name}</span>
+          <img src={`${process.env.PUBLIC_URL}/img/assets/${item.icon}.svg`} alt="disconnect" />
+        </MenuItem>
+      ))}
+    </Menu>
+  )
+}
 
 const DropdowButton: FC<{ title: string; options?: Array<{ name: string; icon: string }>; style?: any }> = ({
   title,

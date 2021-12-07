@@ -6,7 +6,8 @@ import NFTFooter from '../NFTFooter'
 import NFTCarousel, { NFTCarouselType } from '../NFTCarousel'
 
 const SCROLLING_CONTENT = styled.div`
-  overflow-y: scroll;
+  overflow-y: overlay;
+  width: 101%;
   overflow-x: hidden;
   position: relative;
 `
