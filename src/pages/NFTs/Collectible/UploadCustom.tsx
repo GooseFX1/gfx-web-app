@@ -12,6 +12,7 @@ const ButtonUpload = styled(ButtonWrapper)`
 `
 const STYLED_UPLOAD_CUSTOM = styled.div`
   ${({ theme }) => css`
+    position: relative;
     ${theme.largeBorderRadius}
     border: solid 2px #848484;
     border-style: dashed;
@@ -103,12 +104,33 @@ const STYLED_UPLOAD_CUSTOM = styled.div`
     }
   `}
 `
+const STYLED_UPLOAD_ERROR = styled.div`
+  .image-broken {
+    width: 83px;
+    height: 83px;
+  }
+  .desc-failed {
+    font-family: Montserrat;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-top: ${({ theme }) => theme.margins['3x']};
+  }
+  .remove-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+  }
+`
 
 interface Props {
   setPreviewImage: (value: any) => void
+  setStatus: (value: any) => void
+  status: string
 }
 
-export const UploadCustom = ({ setPreviewImage }: Props) => {
+export const UploadCustom = ({ setPreviewImage, setStatus, status }: Props) => {
   const [uploadedfile, setFile] = useState<any>()
 
   const handleAvatar = async (file: UploadChangeParam<UploadFile<any>>) => {
@@ -116,22 +138,37 @@ export const UploadCustom = ({ setPreviewImage }: Props) => {
     setPreviewImage(file.fileList[0])
   }
 
+  const onRemove = () => setStatus('')
+
   return (
     <STYLED_UPLOAD_CUSTOM>
-      <div className="image-group">
-        <Upload className="avatar-image" listType="picture-card" maxCount={1} onChange={handleAvatar}>
-          <div className="image-wrap"></div>
-          {!uploadedfile && (
-            <div className="note">
-              <div className="title">PNG, GIF, MP4 or AVI</div>
-              <div className="desc">Max 20Mb</div>
-              <ButtonUpload>
-                <span>Choose file</span>
-              </ButtonUpload>
-            </div>
-          )}
-        </Upload>
-      </div>
+      {status === 'failed' ? (
+        <STYLED_UPLOAD_ERROR>
+          <img className="image-broken" src={`${process.env.PUBLIC_URL}/img/assets/image-broken.svg`} alt="" />
+          <div className="desc-failed">Your file is broken or corrupted, pelase try again.</div>
+          <img
+            className="remove-icon"
+            src={`${process.env.PUBLIC_URL}/img/assets/remove-icon.svg`}
+            alt=""
+            onClick={onRemove}
+          />
+        </STYLED_UPLOAD_ERROR>
+      ) : (
+        <div className="image-group">
+          <Upload className="avatar-image" listType="picture-card" maxCount={1} onChange={handleAvatar}>
+            <div className="image-wrap"></div>
+            {!uploadedfile && (
+              <div className="note">
+                <div className="title">PNG, GIF, MP4 or AVI</div>
+                <div className="desc">Max 20Mb</div>
+                <ButtonUpload>
+                  <span>Choose file</span>
+                </ButtonUpload>
+              </div>
+            )}
+          </Upload>
+        </div>
+      )}
     </STYLED_UPLOAD_CUSTOM>
   )
 }

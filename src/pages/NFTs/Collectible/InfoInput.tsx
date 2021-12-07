@@ -41,11 +41,15 @@ const STYLED_INPUT = styled.input`
   }
 `
 
-const InfoInput: FC<{ title: string; placeholder: string }> = ({ title, placeholder }) => {
+const InfoInput: FC<{ title: string; placeholder: string; onChange: (val: any) => void }> = ({
+  title,
+  placeholder,
+  onChange
+}) => {
   return (
     <INPUT_CONTAINER>
       <INPUT_TITLE>{title}</INPUT_TITLE>
-      <STYLED_INPUT placeholder={placeholder} />
+      <STYLED_INPUT placeholder={placeholder} onChange={onChange} />
       <INPUT_LIMIT>0 of 20 characters limit</INPUT_LIMIT>
     </INPUT_CONTAINER>
   )

@@ -1,10 +1,16 @@
 import React from 'react'
 import { Upload } from 'antd'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { MainText } from '../../../styles'
 
+interface Info {
+  title: string
+  desc: string
+}
 interface Props {
-  file: any
+  file?: any
+  status?: string
+  info?: Info
 }
 
 const PREVIEW_CONTAINER = styled.div`
@@ -49,6 +55,13 @@ const IMAGE_CONTAINER = styled.image`
   aspect-ratio: 1;
   border-radius: 20px;
   background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .image-broken {
+    width: 140px;
+    height: 140px;
+  }
 `
 
 const PREVIEW_TEXT = MainText(styled.span`
@@ -77,11 +90,15 @@ const BOTTOM_INFO = styled.div`
   flex-direction: column;
 `
 
-const PreviewImage = ({ file }: Props) => {
+const PreviewImage = ({ file, status, info }: Props) => {
   return (
     <PREVIEW_CONTAINER>
       <PREVIEW_TEXT>Preview</PREVIEW_TEXT>
-      {file ? (
+      {status === 'failed' ? (
+        <IMAGE_CONTAINER>
+          <img className="image-broken" src={`${process.env.PUBLIC_URL}/img/assets/image-broken.svg`} alt="" />
+        </IMAGE_CONTAINER>
+      ) : file ? (
         <Upload
           action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
           listType="picture-card"
@@ -92,8 +109,8 @@ const PreviewImage = ({ file }: Props) => {
         <IMAGE_CONTAINER />
       )}
       <BOTTOM_INFO>
-        <NAME_TEXT>Name your item</NAME_TEXT>
-        <DESCRIBE_TEXT>Describe your item</DESCRIBE_TEXT>
+        <NAME_TEXT>{info?.title || 'Name your item'}</NAME_TEXT>
+        <DESCRIBE_TEXT>{info?.desc || 'Describe your item'}</DESCRIBE_TEXT>
       </BOTTOM_INFO>
     </PREVIEW_CONTAINER>
   )
