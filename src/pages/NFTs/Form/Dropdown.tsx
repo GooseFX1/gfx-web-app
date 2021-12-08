@@ -1,7 +1,9 @@
 import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
 import styled from 'styled-components'
+import { DatePicker } from 'antd'
 import { Menu, MenuItem } from '../../../layouts/App/shared'
 import { ArrowDropdown } from '../../../components'
+import { OverlayConsumer } from '../../../context/overlay'
 
 const WRAPPER = styled.button`
   display: flex;
@@ -39,7 +41,10 @@ const Overlay: FC<{
   setCurrentTitle: Dispatch<SetStateAction<string>>
   setDropdownVisible: Dispatch<SetStateAction<boolean>>
   days: any
-}> = ({ setArrowRotation, setCurrentTitle, setDropdownVisible, days }) => {
+  open: boolean
+  setOpen: (val: boolean) => void
+  doOverlay: (val: boolean) => void
+}> = ({ setArrowRotation, setCurrentTitle, setDropdownVisible, days, open, setOpen, doOverlay }) => {
   const handleClick = useCallback(
     (name: string) => {
       setArrowRotation(false)
@@ -49,16 +54,41 @@ const Overlay: FC<{
     [setArrowRotation, setCurrentTitle, setDropdownVisible]
   )
 
+  const onClickItem = ({ index, name }) => {
+    if (index === 4) {
+      setOpen(true)
+      doOverlay(true)
+    } else {
+      handleClick(name)
+      setOpen(false)
+    }
+  }
+
   return (
     <STYLED_MENU>
-      {days.map((item) => (
-        <MenuItem onClick={() => handleClick(item.name)}>
+      {days.map((item, index) => (
+        <MenuItem onClick={() => onClickItem({ index, name: item?.name })}>
           <span>{item.name}</span>
         </MenuItem>
       ))}
     </STYLED_MENU>
   )
 }
+
+const STYLED_DROPDOWN = styled.div`
+  position: relative;
+  .date-picker-custom {
+    height: 50px !important;
+    width: 195px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: 0;
+    opacity: 0;
+  }
+`
 
 type DropdownProps = {
   days: any
@@ -74,23 +104,52 @@ export const Dropdown = ({ days }: DropdownProps) => {
     setDropdownVisible(!dropdownVisible)
   }
 
+  const [open, setOpen] = useState(false)
+
+  const onChangeDate = (date, dtStr) => {}
+
+  const onOk = ({ value, doOverlay }) => {
+    setCurrentTitle(value.format('YYYY-MM-DD HH:mm'))
+    setOpen(false)
+    doOverlay(false)
+  }
+
   return (
-    <WRAPPER onClick={handleClick}>
-      <span>{currentTitle}</span>
-      <ArrowDropdown
-        arrowRotation={arrowRotation}
-        offset={[9, 30]}
-        onVisibleChange={handleClick}
-        overlay={
-          <Overlay
-            setArrowRotation={setArrowRotation}
-            setCurrentTitle={setCurrentTitle}
-            setDropdownVisible={setDropdownVisible}
-            days={days}
-          />
-        }
-        visible={dropdownVisible}
-      />
-    </WRAPPER>
+    <OverlayConsumer>
+      {({ doOverlay }) => (
+        <STYLED_DROPDOWN>
+          {open && (
+            <DatePicker
+              className="date-picker-custom"
+              open={open}
+              onChange={onChangeDate}
+              showTime
+              format="YYYY-MM-DD HH:mm"
+              onOk={(value) => onOk({ value, doOverlay })}
+            />
+          )}
+          <WRAPPER onClick={handleClick}>
+            <span>{currentTitle}</span>
+            <ArrowDropdown
+              arrowRotation={arrowRotation}
+              offset={[9, 30]}
+              onVisibleChange={handleClick}
+              overlay={
+                <Overlay
+                  setArrowRotation={setArrowRotation}
+                  setCurrentTitle={setCurrentTitle}
+                  setDropdownVisible={setDropdownVisible}
+                  days={days}
+                  open={open}
+                  setOpen={setOpen}
+                  doOverlay={doOverlay}
+                />
+              }
+              visible={dropdownVisible}
+            />
+          </WRAPPER>
+        </STYLED_DROPDOWN>
+      )}
+    </OverlayConsumer>
   )
 }
