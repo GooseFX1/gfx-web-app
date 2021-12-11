@@ -17,7 +17,8 @@ const BRAND = styled.a`
   line-height: 20px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    left: ${({ theme }) => theme.margins['3x']};
+    position: relative;
+    top: ${({ theme }) => theme.margins['1x']};
     height: 40px;
   `}
   ${({ theme }) => theme.mediaWidth.fromSmall`
@@ -35,6 +36,7 @@ const BUTTONS = styled(CenteredDiv)`
   position: absolute;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
+    position: relative;
     right: ${({ theme }) => theme.margins['3x']};
     height: 40px;
   `}
@@ -50,12 +52,20 @@ const BUTTONS = styled(CenteredDiv)`
 
 const WRAPPER = styled.nav`
   position: relative;
-  ${({ theme }) => theme.flexCenter}
   width: 100%;
   height: ${APP_LAYOUT_HEADER_HEIGHT};
   padding: ${({ theme }) => theme.margins['4x']};
   background-color: ${({ theme }) => theme.bg2};
   z-index: 300;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    ${({ theme }) => theme.flexColumnNoWrap};
+    height: auto;
+    padding: ${({ theme }) => theme.margins['1x']};
+  `}
+  ${({ theme }) => theme.mediaWidth.fromSmall`
+    ${({ theme }) => theme.flexCenter}
+  `}
 `
 
 export const Header: FC = () => {

@@ -57,13 +57,20 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     ${({ $width }) =>
       [...Array(TABS.length).keys()].map(
         (x) => `
-    &:nth-child(${x + 1}) {
-      left: ${x * $width * 2}px;
-    }
-    `
+          &:nth-child(${x + 1}) {
+            left: ${x * $width * 2}px;
+          }
+        `
       )}
   }
 `
+// ${({ theme }) => theme.mediaWidth.upToSmall`
+//   width: 100%;
+
+//   > a {
+//     padding: calc(3.5vh - 16px / 2) calc(100vw/10);
+//   }
+// `}
 
 export const Tabs: FC = () => {
   const { mode } = useDarkMode()
