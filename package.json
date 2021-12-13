@@ -54,9 +54,6 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "predeploy": "git pull --ff-only && yarn && yarn build",
-    "deploy": "gh-pages -d build",
-    "deploy:ar": "arweave deploy-dir build --key-file ",
     "format:fix": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|css|md)\"",
     "prepare": "husky install",
     "upgrade": "yarn-upgrade-all"
