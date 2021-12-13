@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { AppLayout } from './layouts'
 import { Crypto, Farm, NFTs, Synths, Swap } from './pages'
 import { APP_PAGE_HEIGHT, CenteredDiv } from './styles'
+import useBlacklisted from './utils/useBlacklisted'
 
 const WRAPPER = styled(CenteredDiv)`
   min-height: ${APP_PAGE_HEIGHT};
@@ -11,6 +12,9 @@ const WRAPPER = styled(CenteredDiv)`
 `
 
 export const Router: FC = () => {
+  const blacklisted = useBlacklisted()
+  console.log('blacklisted', blacklisted)
+
   return (
     <BrowserRouter>
       <Redirect from="/" to="/crypto" />
@@ -19,8 +23,19 @@ export const Router: FC = () => {
           <WRAPPER>
             <Route exact path="/swap" component={Swap} />
             <Route exact path="/crypto" component={Crypto} />
-            <Route exact path="/synths" component={Synths} />
-            <Route exact path="/NFTs" component={NFTs} />
+            <Route
+              exact
+              path="/synths"
+              component={() => {
+                if (blacklisted) {
+                  window.location.href = 'https://goosefx.io/restricted'
+                  return null
+                } else {
+                  return <Synths />
+                }
+              }}
+            />
+            <Route path="/NFTs" component={NFTs} />
             <Route exact path="/farm" component={Farm} />
           </WRAPPER>
         </AppLayout>

@@ -10,19 +10,16 @@ const SELECTOR = styled(CenteredDiv)`
   padding: ${({ theme }) => theme.margins['1.5x']} 0;
   ${({ theme }) => theme.smallBorderRadius}
   background-color: #131313;
-
   > span {
     ${({ theme }) => theme.flexCenter}
     width: 100%;
     padding: ${({ theme }) => theme.margins['1.5x']} 0;
     font-size: 12px;
     font-weight: bold;
-
     &:hover {
       background-color: #1f1f1f;
       cursor: pointer;
     }
-
     &:not(:last-child) {
       margin-bottom: ${({ theme }) => theme.margins['1.5x']};
     }
@@ -33,7 +30,6 @@ const WRAPPER = styled(SpaceBetweenDiv)`
   padding: ${({ theme }) => theme.margins['1.5x']};
   ${({ theme }) => theme.smallBorderRadius}
   background-color: ${({ theme }) => theme.grey5};
-
   > span {
     font-size: 12px;
     font-weight: bold;

@@ -1,0 +1,32 @@
+import React from 'react'
+import { StyledPopupCompletedProfile } from './PopupCompleteProfile.styled'
+
+interface Props {
+  visible: boolean
+  handleOk: () => void
+  handleCancel: () => void
+}
+
+const PopupCompleteProfile = ({ visible, handleOk, handleCancel }: Props) => {
+  return (
+    <StyledPopupCompletedProfile title={null} visible={visible} onOk={handleOk} onCancel={handleCancel} footer={null}>
+      <img
+        className="completed-profile-image"
+        src={`${process.env.PUBLIC_URL}/img/assets/completed-profile.png`}
+        alt=""
+      />
+      <div className="title">Get the full experience!</div>
+      <div className="desc">Complete your profile and enjoy the full experince of our marketplace.</div>
+      <div className="button-group">
+        <button className="skip-btn" onClick={handleCancel}>
+          Skip
+        </button>
+        <button className="continue-btn" onClick={handleOk}>
+          Continue
+        </button>
+      </div>
+    </StyledPopupCompletedProfile>
+  )
+}
+
+export default PopupCompleteProfile

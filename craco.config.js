@@ -1,4 +1,4 @@
-const CracoLessPlugin = require("craco-less");
+const CracoLessPlugin = require('craco-less')
 const path = require('path')
 
 module.exports = {
@@ -8,18 +8,18 @@ module.exports = {
       options: {
         lessLoaderOptions: {
           lessOptions: {
-            javascriptEnabled: true,
-          },
-        },
-      },
-    },
+            javascriptEnabled: true
+          }
+        }
+      }
+    }
   ],
   webpack: {
     configure: (webpackConfig) => {
       const wasmExtensionRegExp = /\.wasm$/
       webpackConfig.resolve.extensions.push('.wasm')
-      webpackConfig.module.rules.forEach(rule => {
-        (rule.oneOf || []).forEach(oneOf => {
+      webpackConfig.module.rules.forEach((rule) => {
+        ;(rule.oneOf || []).forEach((oneOf) => {
           if (oneOf.loader && oneOf.loader.indexOf('file-loader') >= 0) {
             oneOf.exclude.push(wasmExtensionRegExp)
           }
@@ -33,6 +33,6 @@ module.exports = {
       })
 
       return webpackConfig
-    },
-  },
-};
+    }
+  }
+}

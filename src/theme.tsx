@@ -53,19 +53,25 @@ export function colors(mode: string): Colors {
     text2: mode === 'dark' ? white : '#353535',
     text3: mode === 'dark' ? '#d655fe' : '#9625ae',
     text4: mode === 'dark' ? white : '#636363',
+    text5: mode === 'dark' ? '#949494' : '#fff',
+    text6: mode === 'dark' ? '#cccccc' : '#353535',
     text1h: '#7d7d7d',
 
     // backgrounds / greys
     bg1: mode === 'dark' ? '#1e1e1e' : white,
     bg2: mode === 'dark' ? '#1e1e1e' : '#eeeeee',
     bg3: mode === 'dark' ? '#2a2a2a' : white,
-    bg4: mode === 'dark' ? '#191919' : '#ababab',
-    bg5: mode === 'dark' ? '#191919' : '#525252',
+    bg4: mode === 'dark' ? '#171717' : '#f4f4f4',
+    bg5: mode === 'dark' ? black : '#e0e0e0',
+    bg6: mode === 'dark' ? 'black' : 'gray',
+    bg7: mode === 'dark' ? '#131313' : 'gray',
+    bg8: mode === 'dark' ? 'rgba(64, 64, 64, 0.22)' : 'gray',
     grey1: '#434343',
     grey2: '#4e4e4e',
     grey3: '#2a2a2a',
     grey4: '#121212',
     grey5: '#1a1a1a',
+    darkButton: '#000000',
 
     // specialty colors
     appLayoutFooterBorder: mode === 'dark' ? '#c4c4c4' : '#dedede',
@@ -74,6 +80,11 @@ export function colors(mode: string): Colors {
     tabsGradients: ['#3735bb', '#5232b9', '#672fb7', '#792cb4', '#8829b1', '#9625ae'],
     textBox: mode === 'dark' ? '#474747' : '#808080',
     walletModalWallet: mode === 'dark' ? '#1e1e1e' : '#e1e1e1',
+    searchbarBackground: mode === 'dark' ? '#1e1e1e' : '#ababab',
+    collectionHeader:
+      mode === 'dark'
+        ? 'linear-gradient(0, #131313 0%, transparent 100%)'
+        : 'linear-gradient(0deg,rgba(0,0,0,1) 3%,rgba(30,30,30,1) 43%)',
 
     // primary colors
     primary1: '#302eb8',
@@ -123,9 +134,13 @@ export function theme(mode: string): DefaultTheme {
       '4x': '32px',
       '4.5x': '36px',
       '5x': '40px',
+      '5.5x': '44px',
       '6x': '48px',
       '7x': '56px',
-      '8x': '64px'
+      '8x': '64px',
+      '9x': '72px',
+      '10x': '80px',
+      '11x': '88px'
     },
 
     largeShadow: css`

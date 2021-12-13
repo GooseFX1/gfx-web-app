@@ -4,14 +4,14 @@ import { Loader } from './Loader'
 
 type Status = 'initial' | 'action' | 'not-allowed'
 
-const BUTTON = styled.button<{ $height: string; $status: Status; $width: string }>`
+const BUTTON = styled.button<{ $height: string; $status: Status; $width: string; $radius: string }>`
   position: relative;
   ${({ theme }) => theme.flexCenter}
   height: ${({ $height }) => $height};
   width: ${({ $width }) => $width};
   border: none;
+  border-radius: ${({ $radius }) => $radius};
   ${({ theme }) => theme.roundedBorders}
-  ${({ theme }) => theme.smallShadow}
   background-color: ${({ $status, theme }) => ($status === 'action' ? theme.secondary3 : theme.text1h)};
   cursor: ${({ $status }) => ($status === 'action' ? 'pointer' : $status)};
   transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
@@ -37,11 +37,12 @@ export const MainButton: FC<{
   loading?: boolean
   status: Status
   width: string
+  radius?: string
   [x: string]: any
-}> = ({ children, height, loading = false, status, width, ...props }) => {
+}> = ({ children, height, loading = false, status, width, radius, ...props }) => {
   return (
-    <BUTTON $height={height} $status={status} $width={width} {...props}>
-      {loading ? <Loader smallButton={height !== '50px'} /> : children}
+    <BUTTON $height={height} $status={status} $width={width} $radius={radius} {...props}>
+      {loading ? <Loader /> : children}
     </BUTTON>
   )
 }

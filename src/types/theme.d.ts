@@ -13,6 +13,8 @@ export interface Colors {
   text2: Color
   text3: Color
   text4: Color
+  text5: Color
+  text6: Color
 
   // backgrounds / greys
   bg1: Color
@@ -20,11 +22,15 @@ export interface Colors {
   bg3: Color
   bg4: Color
   bg5: Color
+  bg6: Color
+  bg7: Color
+  bg8: Color
   grey1: Color
   grey2: Color
   grey3: Color
   grey4: Color
   grey5: Color
+  darkButton: Color
 
   // speciality colors
   appLayoutFooterBorder: Color
@@ -33,6 +39,8 @@ export interface Colors {
   tabsGradients: Color[]
   textBox: Color
   walletModalWallet: Color
+  searchbarBackground: Color
+  collectionHeader: Color
 
   // primary
   primary1: Color
@@ -71,9 +79,13 @@ declare module 'styled-components' {
       '4x': string
       '4.5x': string
       '5x': string
+      '5.5x': string
       '6x': string
       '7x': string
       '8x': string
+      '9x': string
+      '10x': string
+      '11x': string
     }
 
     // shadows

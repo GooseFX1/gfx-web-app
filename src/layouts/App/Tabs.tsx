@@ -8,11 +8,11 @@ const TABS = ['/swap', '/crypto', '/synths', '/NFTs', '/farm']
 
 const LABEL = styled.span`
   position: absolute;
-  bottom: -${({ theme }) => theme.margins['3x']};
-  height: ${({ theme }) => theme.margins['3x']};
+  bottom: -${({ theme }) => theme.margins['4x']};
+  height: 14px;
   width: 7vw;
   ${({ theme }) => theme.flexCenter}
-  font-size: 13px;
+  font-size: 10px;
   color: ${({ theme }) => theme.text2};
   text-transform: capitalize;
 `
@@ -70,7 +70,11 @@ export const Tabs: FC = () => {
   const { pathname } = useLocation()
   const [hovered, setHovered] = useState(-1)
 
-  const index = useMemo(() => TABS.indexOf(pathname), [pathname])
+  const cleanedPathName = useMemo(() => {
+    const match = pathname.slice(1).indexOf('/')
+    return match !== -1 ? pathname.slice(0, pathname.slice(1).indexOf('/') + 1) : pathname
+  }, [pathname])
+  const index = useMemo(() => TABS.indexOf(cleanedPathName), [cleanedPathName])
 
   return (
     <WRAPPER $height={3.5} $index={index} $width={50}>
@@ -80,7 +84,7 @@ export const Tabs: FC = () => {
             {(() => {
               const icon = `${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`
 
-              if (pathname === path || (mode === 'dark' && hovered === index)) {
+              if (cleanedPathName === path || (mode === 'dark' && hovered === index)) {
                 return <SVGToWhite src={icon} alt="" />
               } else if (hovered === index) {
                 return <SVGToPrimary2 src={icon} alt="" />
@@ -89,7 +93,7 @@ export const Tabs: FC = () => {
               }
             })()}
           </TAB_ICON>
-          <LABEL>{path.slice(1)}</LABEL>
+          <LABEL>{path === '/NFTs' ? 'Nft’s' : path.slice(1)}</LABEL>
         </TAB>
       ))}
     </WRAPPER>

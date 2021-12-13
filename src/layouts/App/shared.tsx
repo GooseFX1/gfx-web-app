@@ -21,7 +21,7 @@ export const MenuItem = styled.li`
   }
 
   &:not(:last-child) {
-    margin-bottom: ${({ theme }) => theme.margins['1.5x']};
+    padding-bottom: ${({ theme }) => theme.margins['1.5x']};
   }
 
   img {

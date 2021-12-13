@@ -87,7 +87,7 @@ export const Panel: FC<{
           children
         ) : (
           <CONNECT>
-            <MainButton height="30px" status="action" width="160px" onClick={handleClick}>
+            <MainButton height={'40px'} status="action" width={'160px'} onClick={handleClick}>
               <span>Connect Wallet</span>
             </MainButton>
           </CONNECT>

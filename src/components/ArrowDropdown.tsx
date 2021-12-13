@@ -1,5 +1,5 @@
 import React, { FC, ReactElement } from 'react'
-import { Dropdown } from 'antd'
+import { Dropdown, Row } from 'antd'
 import styled from 'styled-components'
 import { CenteredDiv, SVGToWhite } from '../styles'
 
@@ -9,7 +9,6 @@ const ARROW_CLICKER = styled(CenteredDiv)<{ $arrowRotation?: boolean; $measureme
   border: none;
   background: transparent;
   cursor: pointer;
-
   img {
     ${({ theme }) => theme.measurements('inherit')}
     ${({ $arrowRotation }) => $arrowRotation && 'transform: rotateZ(180deg);'}
@@ -20,6 +19,7 @@ const ARROW_CLICKER = styled(CenteredDiv)<{ $arrowRotation?: boolean; $measureme
 export const ArrowClicker: FC<{
   arrowRotation?: boolean
   measurements?: string
+  [x: string]: any
 }> = ({ arrowRotation, measurements, ...props }) => {
   return (
     <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements} {...props}>
@@ -34,21 +34,25 @@ export const ArrowDropdown: FC<{
   offset?: [number, number]
   onVisibleChange: (x: boolean) => void
   overlay: ReactElement | (() => ReactElement)
+  children?: ReactElement | (() => ReactElement)
   [x: string]: any
-}> = ({ arrowRotation, measurements, offset, onVisibleChange, overlay, ...props }) => {
+}> = ({ arrowRotation, measurements, offset, onVisibleChange, overlay, placement, children, ...props }) => {
   return (
     <Dropdown
       align={{ offset }}
       destroyPopupOnHide
       onVisibleChange={onVisibleChange}
       overlay={overlay}
-      placement="bottomRight"
+      placement={placement || 'bottomRight'}
       trigger={['click']}
       {...props}
     >
-      <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements}>
-        <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`} alt="arrow" />
-      </ARROW_CLICKER>
+      <Row align="middle" wrap={false}>
+        {children}
+        <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements}>
+          <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`} alt="arrow" />
+        </ARROW_CLICKER>
+      </Row>
     </Dropdown>
   )
 }
