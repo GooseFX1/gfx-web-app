@@ -111,6 +111,7 @@ declare module 'styled-components' {
     ellipse: FlattenSimpleInterpolation
     flexCenter: FlattenSimpleInterpolation
     flexColumnNoWrap: FlattenSimpleInterpolation
+    flexColumnReverse: FlattenSimpleInterpolation
     flexRowNoWrap: FlattenSimpleInterpolation
     largeBorderRadius: FlattenSimpleInterpolation
     smallBorderRadius: FlattenSimpleInterpolation

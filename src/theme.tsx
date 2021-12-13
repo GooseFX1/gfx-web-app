@@ -170,6 +170,10 @@ export function theme(mode: string): DefaultTheme {
       display: flex;
       flex-flow: column nowrap;
     `,
+    flexColumnReverse: css`
+      display: flex;
+      flex-flow: column-reverse nowrap;
+    `,
     flexRowNoWrap: css`
       display: flex;
       flex-flow: row nowrap;
