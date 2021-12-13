@@ -29,6 +29,12 @@ const WRAPPER = styled.div`
       margin-right: ${({ theme }) => theme.margins['3x']};
     }
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100vw;
+    margin-right: -${({ theme }) => theme.margins['1x']};
+    margin-left: -${({ theme }) => theme.margins['1x']};
+  `}
 `
 
 export const Pairs: FC = () => {

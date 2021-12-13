@@ -26,13 +26,29 @@ const WRAPPER = styled.div`
   > div:first-child {
     margin-left: ${({ theme }) => theme.margins['3x']};
     width: calc(100% - ${TRADE_ORDER_WIDTH} - 2 * ${({ theme }) => theme.margins['3x']});
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      width: 100%;
+      margin: 0;
+      padding: ${({ theme }) => theme.margins['1x']};
+    `}
   }
 
   > div:last-child {
-    ${({ theme }) => theme.flexColumnNoWrap}
+    ${({ theme }) => theme.flexColumnNoWrap};
     width: ${TRADE_ORDER_WIDTH};
     margin: 0 ${({ theme }) => theme.margins['3x']};
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      width: 100%;
+      margin: 0;
+      padding: ${({ theme }) => theme.margins['1x']};
+    `}
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    ${({ theme }) => theme.flexColumnReverse};
+  `}
 `
 
 const CryptoContent: FC = () => {
