@@ -9,6 +9,10 @@ const ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['4.5x'])}
   margin-left: ${({ theme }) => theme.margins['2x']};
   cursor: pointer;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-left: ${({ theme }) => theme.margins['1x']};
+  `}
 `
 
 const ITEM = styled(MenuItem)`

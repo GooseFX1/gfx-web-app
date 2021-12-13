@@ -20,7 +20,9 @@ const BRAND = styled.a`
     position: relative;
     top: ${({ theme }) => theme.margins['1x']};
     height: 40px;
+    margin-bottom: ${({ theme }) => theme.margins['3x']};
   `}
+
   ${({ theme }) => theme.mediaWidth.fromSmall`
     left: 58px;
     height: 50px;
@@ -35,19 +37,22 @@ const BRAND = styled.a`
 const BUTTONS = styled(CenteredDiv)`
   position: absolute;
 
+  > *:not(:last-child) {
+    margin-right: ${({ theme }) => theme.margins['2x']};
+  }
+
   ${({ theme }) => theme.mediaWidth.upToSmall`
     position: relative;
-    right: ${({ theme }) => theme.margins['3x']};
-    height: 40px;
+
+    > *:not(:last-child) {
+      margin-right: ${({ theme }) => theme.margins['1x']};
+    }
   `}
+
   ${({ theme }) => theme.mediaWidth.fromSmall`
     right: 58px;
     height: 50px;
   `}
-  
-  > *:not(:last-child) {
-    margin-right: ${({ theme }) => theme.margins['2x']};
-  }
 `
 
 const WRAPPER = styled.nav`
