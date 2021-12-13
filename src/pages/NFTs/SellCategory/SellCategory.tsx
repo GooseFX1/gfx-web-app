@@ -9,6 +9,7 @@ export const STYLED_SELL_CATEGORY = styled(Row)`
     display: flex;
     flex-direction: column;
     align-items: center;
+    cursor: pointer;
     .item-image {
       width: 114px;
       height: 114px;
@@ -16,7 +17,12 @@ export const STYLED_SELL_CATEGORY = styled(Row)`
       background: #131313;
       ${({ theme }) => theme.largeBorderRadius};
       border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
       &.active {
+        border-color: #fff;
+      }
+      &:hover {
+        opacity: 0.8;
         border-color: #fff;
       }
     }
@@ -43,14 +49,19 @@ const dataCategories = [
   }
 ]
 
-export const SellCategory = () => {
+interface ICategory {
+  category?: number
+  setCategory?: (val: number) => void
+}
+
+export const SellCategory = ({ category, setCategory }: ICategory) => {
   return (
     <STYLED_SELL_CATEGORY justify="space-between">
       {dataCategories.map((item, index) => (
         <Col>
-          <div className="item-wrap">
+          <div className="item-wrap" onClick={() => setCategory(index)}>
             <img
-              className={`${index === 0 ? 'active' : ''} item-image`}
+              className={`${index === category ? 'active' : ''} item-image`}
               src={`${process.env.PUBLIC_URL}/img/assets/${item?.icon}.svg`}
               alt=""
             />
