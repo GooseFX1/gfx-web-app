@@ -1,7 +1,7 @@
 import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
 import styled from 'styled-components'
-import { Menu, MenuItem } from '../../../layouts/App/shared'
-import { ArrowDropdown } from '../../../components'
+import { Menu, MenuItem } from '../layouts/App/shared'
+import { ArrowDropdown } from '../components'
 
 const WRAPPER = styled.button`
   display: flex;
@@ -21,27 +21,17 @@ const WRAPPER = styled.button`
   }
 `
 
-const categories = [
-  { name: 'All', icon: 'all' },
-  { name: 'Art', icon: 'art' },
-  { name: 'Defi', icon: 'defi' },
-  { name: 'Domains', icon: 'domains' },
-  { name: 'Games', icon: 'games' },
-  { name: 'Memes', icon: 'memes' },
-  { name: 'Metaverse', icon: 'metaverse' },
-  { name: 'Music', icon: 'music' },
-  { name: 'Photography', icon: 'photography' },
-  { name: 'Punks', icon: 'punks' },
-  { name: 'Sports', icon: 'sports' },
-  { name: 'Verified', icon: 'verified' },
-  { name: 'Unverified', icon: 'unverified' }
-]
+type CategoryItem = {
+  name: string
+  icon: string
+}
 
 const Overlay: FC<{
   setArrowRotation: Dispatch<SetStateAction<boolean>>
   setCurrentTitle: Dispatch<SetStateAction<string>>
   setDropdownVisible: Dispatch<SetStateAction<boolean>>
-}> = ({ setArrowRotation, setCurrentTitle, setDropdownVisible }) => {
+  categories: Array<CategoryItem>
+}> = ({ setArrowRotation, setCurrentTitle, setDropdownVisible, categories }) => {
   const handleClick = useCallback(
     (name: string) => {
       setArrowRotation(false)
@@ -63,9 +53,12 @@ const Overlay: FC<{
   )
 }
 
-export const Categories: FC = () => {
+export const Categories: FC<{
+  categories: CategoryItem[]
+  [x: string]: any
+}> = ({ categories, ...rest }) => {
   const [arrowRotation, setArrowRotation] = useState(false)
-  const [currentTitle, setCurrentTitle] = useState(categories[0].name)
+  const [currentTitle, setCurrentTitle] = useState(categories[0]?.name)
   const [dropdownVisible, setDropdownVisible] = useState(false)
 
   const handleClick = () => {
@@ -74,7 +67,7 @@ export const Categories: FC = () => {
   }
 
   return (
-    <WRAPPER onClick={handleClick}>
+    <WRAPPER onClick={handleClick} {...rest}>
       <span>{currentTitle}</span>
       <ArrowDropdown
         arrowRotation={arrowRotation}
@@ -85,6 +78,7 @@ export const Categories: FC = () => {
             setArrowRotation={setArrowRotation}
             setCurrentTitle={setCurrentTitle}
             setDropdownVisible={setDropdownVisible}
+            categories={categories}
           />
         }
         visible={dropdownVisible}

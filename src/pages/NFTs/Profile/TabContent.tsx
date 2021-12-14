@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card } from './Card'
 import { NoContent } from './NoContent'
-import { SearchBar } from '../SearchBar'
+import { SearchBar } from '../../../components'
 import { TableList } from './TableList'
 import { StyledTabContent } from './TabContent.styled'
 
