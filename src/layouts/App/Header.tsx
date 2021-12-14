@@ -17,9 +17,12 @@ const BRAND = styled.a`
   line-height: 20px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    left: ${({ theme }) => theme.margins['3x']};
+    position: relative;
+    top: ${({ theme }) => theme.margins['1x']};
     height: 40px;
+    margin-bottom: ${({ theme }) => theme.margins['3x']};
   `}
+
   ${({ theme }) => theme.mediaWidth.fromSmall`
     left: 58px;
     height: 50px;
@@ -34,28 +37,40 @@ const BRAND = styled.a`
 const BUTTONS = styled(CenteredDiv)`
   position: absolute;
 
+  > *:not(:last-child) {
+    margin-right: ${({ theme }) => theme.margins['2x']};
+  }
+
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    right: ${({ theme }) => theme.margins['3x']};
-    height: 40px;
+    position: relative;
+
+    > *:not(:last-child) {
+      margin-right: ${({ theme }) => theme.margins['1x']};
+    }
   `}
+
   ${({ theme }) => theme.mediaWidth.fromSmall`
     right: 58px;
     height: 50px;
   `}
-  
-  > *:not(:last-child) {
-    margin-right: ${({ theme }) => theme.margins['2x']};
-  }
 `
 
 const WRAPPER = styled.nav`
   position: relative;
-  ${({ theme }) => theme.flexCenter}
   width: 100%;
   height: ${APP_LAYOUT_HEADER_HEIGHT};
   padding: ${({ theme }) => theme.margins['4x']};
   background-color: ${({ theme }) => theme.bg2};
   z-index: 300;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    ${({ theme }) => theme.flexColumnNoWrap};
+    height: auto;
+    padding: ${({ theme }) => theme.margins['1x']};
+  `}
+  ${({ theme }) => theme.mediaWidth.fromSmall`
+    ${({ theme }) => theme.flexCenter}
+  `}
 `
 
 export const Header: FC = () => {

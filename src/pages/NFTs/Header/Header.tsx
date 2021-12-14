@@ -1,11 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Categories } from './Categories'
 import NFTAvatar from '../NFTAvatar'
 import { ButtonWrapper } from '../NFTButton'
-import { SearchBar } from '../SearchBar'
+import { SearchBar, Categories } from '../../../components'
 import { SpaceBetweenDiv } from '../../../styles'
 import { useHistory } from 'react-router-dom'
+import { categories } from './mockData'
 
 const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
   padding: ${({ theme }) => theme.margins['3x']};
@@ -62,7 +62,7 @@ export const Header = () => {
       </AVATAR_WRAPPER>
       <SearchBar />
       <BUTTON_SELECTION>
-        <Categories />
+        <Categories categories={categories} />
         <CREATE onClick={onCreateCollectible}>
           <span>Create</span>
         </CREATE>

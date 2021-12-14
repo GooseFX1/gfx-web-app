@@ -1,7 +1,7 @@
 import { Image } from 'antd'
 import React from 'react'
 import styled from 'styled-components'
-import { SpaceBetweenDiv } from '../../styles'
+import { SpaceBetweenDiv } from '../styles'
 
 const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)`
   width: 100%;

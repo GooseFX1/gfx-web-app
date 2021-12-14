@@ -57,11 +57,27 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     ${({ $width }) =>
       [...Array(TABS.length).keys()].map(
         (x) => `
-    &:nth-child(${x + 1}) {
-      left: ${x * $width * 2}px;
-    }
-    `
+          &:nth-child(${x + 1}) {
+            left: ${x * $width * 2}px;
+          }
+        `
       )}
+  }
+
+  @media (max-width: 720px) {
+    width: 100%;
+    margin-bottom: 50px;
+
+    > a {
+      width: calc(100% / ${TABS.length});
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+
+    &:after {
+      width: calc((100% / ${TABS.length}) + ${({ theme }) => theme.margins['2x']});
+      left: calc(${({ $index, $width }) => $index} * (100% / ${TABS.length}) - ${({ theme }) => theme.margins['1x']});
+    }
   }
 `
 
