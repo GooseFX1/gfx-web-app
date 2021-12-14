@@ -3,7 +3,14 @@ import styled from 'styled-components'
 import { PrivacyPolicy } from './PrivacyPolicy'
 import { TermsOfService } from './TermsOfService'
 import { useDarkMode } from '../../context'
-import { APP_LAYOUT_FOOTER_HEIGHT, CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
+import {
+  APP_LAYOUT_FOOTER_HEIGHT,
+  APP_LAYOUT_FOOTER_HEIGHT_MOBILE,
+  CenteredDiv,
+  CenteredImg,
+  SpaceBetweenDiv,
+  SVGToWhite
+} from '../../styles'
 
 const MODE_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['2x'])};
@@ -12,6 +19,7 @@ const MODE_ICON = styled(CenteredImg)`
 const TEXT = styled.span`
   font-size: 10px;
   color: ${({ theme }) => theme.text2};
+  margin-right: ${({ theme }) => theme.margins['1x']};
 
   span {
     color: ${({ theme }) => theme.text3};
@@ -50,6 +58,11 @@ const WRAPPER = styled(SpaceBetweenDiv)`
       margin-left: ${({ theme }) => theme.margins['1x']};
     }
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    height: ${APP_LAYOUT_FOOTER_HEIGHT_MOBILE};
+    padding: ${({ theme }) => theme.margins['1x']};
+  `}
 `
 
 export const Footer: FC = () => {
