@@ -7,7 +7,7 @@ import PreviewImage from './PreviewImage'
 import { useHistory } from 'react-router-dom'
 import { SellCategory } from '../SellCategory/SellCategory'
 import { FormDoubleItem } from '../Form/FormDoubleItem'
-import { dataFormRow1, dataFormRow2, dataDonate, startingDays, expirationDays } from './mockData'
+import { dataFormRow2, dataFormFixedRow2, dataDonate, startingDays, expirationDays } from './mockData'
 import { Donate } from '../Form/Donate'
 import { GroupButton } from '../GroupButton/GroupButton'
 import isEmpty from 'lodash/isEmpty'
@@ -75,6 +75,14 @@ const STYLED_FORM = styled(Form)`
     max-width: 174px;
   }
 `
+const STYLED_DESCRIPTION = styled.div`
+  font-family: Montserrat;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: left;
+  color: #fff;
+  padding-bottom: ${({ theme }) => theme.margins['5x']} !important;
+`
 
 export const LiveAuction = () => {
   const [form] = Form.useForm()
@@ -94,6 +102,7 @@ export const LiveAuction = () => {
   const [settingData, setSettingData] = useState<any>({ ...initSettingData })
   const [liveData, setLiveData] = useState<any>({ ...initLiveData })
   const [disabled, setDisabled] = useState(true)
+  const [category, setCategory] = useState(0)
 
   useEffect(() => {
     const { state = {} } = history.location
@@ -122,13 +131,27 @@ export const LiveAuction = () => {
         <UPLOAD_FIELD_CONTAINER>
           <UPLOAD_INFO_CONTAINER>
             <SECTION_TITLE>3. Sale type</SECTION_TITLE>
-            <SellCategory />
+            <SellCategory setCategory={setCategory} category={category} />
 
-            <SECTION_TITLE>4. Live auction settings</SECTION_TITLE>
+            <SECTION_TITLE>
+              {category === 0 && '4. Live auction settings'}
+              {category === 2 && '4. Fixed price settings'}
+            </SECTION_TITLE>
             <STYLED_FORM form={form} layout="vertical" initialValues={{}}>
-              <FormDoubleItem startingDays={startingDays} expirationDays={expirationDays} className="mb-3x" />
-              <FormDoubleItem data={dataFormRow2} className="mb-3x" onChange={onChange} />
-              <Donate {...dataDonate} />
+              {category === 0 && (
+                <>
+                  <FormDoubleItem startingDays={startingDays} expirationDays={expirationDays} className="mb-3x" />
+                  <FormDoubleItem data={dataFormRow2} className="mb-3x" onChange={onChange} />
+                </>
+              )}
+              {category === 1 && (
+                <STYLED_DESCRIPTION>
+                  Open bids are open to any amount and they will be closed after a scuccessful bid agreement or if the
+                  creator decides to remove it.
+                </STYLED_DESCRIPTION>
+              )}
+              {category === 2 && <FormDoubleItem data={dataFormFixedRow2} className="mb-3x" onChange={onChange} />}
+              <Donate {...dataDonate} label={category === 1 ? '4. Donate for charity' : '5. Donate for charity'} />
             </STYLED_FORM>
           </UPLOAD_INFO_CONTAINER>
           <PREVIEW_UPLOAD_CONTAINER>

@@ -41,7 +41,7 @@ export const Donate = ({ label, desc, percents }: Props) => {
   return (
     <STYLED_DONATE align="middle">
       <Col span={12}>
-        <LabelSection isIcon label={label} />
+        <LabelSection isIcon label={label} size="20px" />
         <div className="description">{desc}</div>
       </Col>
       <Col span={12}>

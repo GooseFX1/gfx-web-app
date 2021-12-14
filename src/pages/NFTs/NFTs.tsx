@@ -43,6 +43,12 @@ const SCROLLING_CONTENT = styled.div`
   height: 200vh;
 `
 
+const SCROLLING_OVERLAY = styled.div`
+  overflow-y: overlay;
+  overflow-x: hidden;
+  width: 101%;
+`
+
 export const NFTs: FC = () => {
   const { path } = useRouteMatch()
 
@@ -56,9 +62,9 @@ export const NFTs: FC = () => {
                 <NFTHome />
               </Route>
               <Route exact path="/NFTs/profile">
-                <SCROLLING_CONTENT>
+                <SCROLLING_OVERLAY>
                   <Profile />
-                </SCROLLING_CONTENT>
+                </SCROLLING_OVERLAY>
               </Route>
               <Route exact path="/NFTs/profile/explore">
                 <SCROLLING_CONTENT>
@@ -81,19 +87,19 @@ export const NFTs: FC = () => {
                 </SCROLLING_CONTENT>
               </Route>
               <Route exact path="/NFTs/collection">
-                <SCROLLING_CONTENT>
+                <SCROLLING_OVERLAY>
                   <Collection />
-                </SCROLLING_CONTENT>
+                </SCROLLING_OVERLAY>
               </Route>
               <Route exact path="/NFTs/live-auction/:id">
-                <SCROLLING_CONTENT>
+                <SCROLLING_OVERLAY>
                   <LiveAuctionNFT />
-                </SCROLLING_CONTENT>
+                </SCROLLING_OVERLAY>
               </Route>
               <Route exact path="/NFTs/fixed-price/:id">
-                <SCROLLING_CONTENT>
+                <SCROLLING_OVERLAY>
                   <FixedPriceNFT />
-                </SCROLLING_CONTENT>
+                </SCROLLING_OVERLAY>
               </Route>
               <Route exact path="/NFTs/open-bid/:id">
                 <SCROLLING_CONTENT>
@@ -104,14 +110,14 @@ export const NFTs: FC = () => {
                 <Collectible />
               </Route>
               <Route exact path="/NFTs/single-upload-your-file">
-                <SCROLLING_CONTENT>
+                <SCROLLING_OVERLAY>
                   <UpLoadNFT />
-                </SCROLLING_CONTENT>
+                </SCROLLING_OVERLAY>
               </Route>
               <Route exact path="/NFTs/live-auction">
-                <SCROLLING_CONTENT>
+                <SCROLLING_OVERLAY>
                   <LiveAuction />
-                </SCROLLING_CONTENT>
+                </SCROLLING_OVERLAY>
               </Route>
             </Switch>
           </NFTDetailsProvider>

@@ -46,6 +46,34 @@ export const dataFormRow2 = [
     type: 'input'
   }
 ]
+export const dataFormFixedRow2 = [
+  {
+    label: 'Price',
+    name: 'minimumBid',
+    defaultValue: '',
+    placeholder: 'Enter price',
+    hint: (
+      <div>
+        Bids below the minimum wont <div>be accepted</div>
+      </div>
+    ),
+    unit: 'SOL',
+    type: 'input'
+  },
+  {
+    label: 'Royalties',
+    name: 'royalties',
+    defaultValue: '',
+    placeholder: 'Enter royalties',
+    hint: (
+      <div>
+        Suggested 10%, 20%, 30% <div>Max. 60%</div>
+      </div>
+    ),
+    unit: '%',
+    type: 'input'
+  }
+]
 export const dataDonate = {
   label: '5. Donate for charity',
   desc: 'We will donate a percentage of the total price for people in need.',

@@ -1,4 +1,4 @@
-# goosefx
+# gfx-web-app
 
 GooseFX
 
@@ -44,5 +44,3 @@ Ssh into the instance and run `./update_frontend.sh`.
 We use Cloudfront and S3 as our asset pipeline. Optimize and compress the image and then upload it to the goosefx/assets bucket on s3. Once uploaded the image will be available through the link media.goosefx.io/<image-name>
 
 All Rights Reserved 2021 Copyright.
-
-# gfx-web-app
