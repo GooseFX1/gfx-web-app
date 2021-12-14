@@ -1,5 +1,5 @@
 import { Button, Col, Dropdown, Menu, Row } from 'antd'
-import { SearchBar } from '../SearchBar'
+import { SearchBar } from '../../../components'
 import { Sort } from './Sort'
 import { Stats } from './Stats'
 import { useHistory } from 'react-router-dom'

@@ -254,7 +254,7 @@ export const UpLoadNFT = () => {
           </UPLOAD_INFO_CONTAINER>
           <PREVIEW_UPLOAD_CONTAINER>
             <PreviewImage file={previewImage} status={status} info={info} />
-            <NEXT_BUTTON onClick={onLiveAuction} disabled={disabled}>
+            <NEXT_BUTTON onClick={onLiveAuction} disabled={false}>
               <span>Next steps</span>
             </NEXT_BUTTON>
           </PREVIEW_UPLOAD_CONTAINER>
