@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { mockData } from './mockData'
-import styled from 'styled-components'
-import { Table } from 'antd'
+import styled, { css } from 'styled-components'
+import { Table, Button } from 'antd'
+import { columns } from './Columns'
 
-export const StyledTableList = styled(Table)`
+const STYLED_TABLE_LIST = styled(Table)`
   ${({ theme }) => `
   max-width: 99%;
   .ant-table {
@@ -49,6 +50,12 @@ export const StyledTableList = styled(Table)`
           background-color: transparent;
         }
       }
+      &.ant-table-expanded-row {
+        > td {
+          padding: 0;
+          border-bottom: 0;
+        }
+      }
       > td {
         background-color: ${theme.bg3};
         border-color: #8c8c8c;
@@ -66,123 +73,182 @@ export const StyledTableList = styled(Table)`
       }
     }
   }
+
+  .expanded-active {
+    cursor: pointer;
+    transform: rotate(180deg);
+  }
 `}
 `
-const STYLED_TITLE = styled.div`
+
+const STYLED_EXPANDED_CONTENT = styled.div`
+  padding-top: ${({ theme }) => theme.margins['4x']};
+  padding-right: ${({ theme }) => theme.margins['10x']};
+  padding-bottom: ${({ theme }) => theme.margins['7x']};
+  padding-left: ${({ theme }) => theme.margins['4x']};
+  background-image: linear-gradient(to bottom, #39253e, rgba(42, 42, 42, 0));
   display: flex;
   align-items: center;
-  justify-content: center;
+`
+
+const STYLED_LEFT_CONTENT = styled.div`
+  width: 23%;
+  .left-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 270px;
+    margin: 0 auto;
+  }
+  .farm-logo {
+    width: 60px;
+    height: 60px;
+  }
+  button {
+    width: 169px;
+    height: 52px;
+    line-height: 42px;
+    border-radius: 52px;
+    font-family: Montserrat;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    color: #fff;
+    background-color: #6b33b0 !important;
+    border-color: #6b33b0 !important;
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+`
+const STYLED_RIGHT_CONTENT = styled.div`
+  width: 77%;
+  display: flex;
+  .right-inner {
+    flex-wrap: wrap;
+    max-width: 720px;
+    display: flex;
+    margin-right: 0;
+    margin-left: auto;
+  }
+`
+const STYLED_SOL = styled.div`
+  width: 300px;
+  height: 60px;
+  background-color: #111;
+  border-radius: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 ${({ theme }) => theme.margins['4x']};
+  margin: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2x']};
+  .value {
+    font-family: Montserrat;
+    font-size: 22px;
+    font-weight: 600;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: #b1b1b1;
+  }
   .text {
     font-family: Montserrat;
     font-size: 15px;
-    font-weight: 500;
-    text-align: left;
-    color: #fff;
-  }
-  .info-icon {
-    width: 15px;
-    height: auto;
-    display: block;
-    margin-left: ${({ theme }) => theme.margins['1x']};
-  }
-
-  .arrow-down {
-    width: 14px;
-    height: auto;
-    display: block;
-    margin-left: ${({ theme }) => theme.margins['1x']};
-  }
-`
-
-const STYLED_NAME = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  .text {
-    font-size: 18px;
     font-weight: 600;
-    color: #fff;
-    max-width: 90px;
-    margin-left: ${({ theme }) => theme.margins['2.5x']};
+    text-align: center;
+    color: #b1b1b1;
+    display: flex;
   }
-  .farm-image {
-    width: 91px;
-    height: 41px;
-    display: block;
-  }
-
-  .percent-100 {
-    width: 36px;
-    height: auto;
-    display: block;
-    margin-left: ${({ theme }) => theme.margins['2.5x']};
+  .text-2 {
+    margin-left: ${({ theme }) => theme.margins['1.5x']};
   }
 `
-
-const STYLED_EARNED = styled.div`
+const STYLED_STAKE = styled.div`
+  width: 300px;
+  height: 51px;
+  border-radius: 51px;
+  background-color: #1e1e1e;
+  line-height: 49px;
   font-family: Montserrat;
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 600;
-  color: #b1b1b1;
   text-align: center;
+  color: #b1b1b1;
+  margin: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2x']};
+`
+const STYLED_EXPAND_ICON = styled.img<{ expanded: boolean }>`
+  ${({ expanded }) => css`
+    cursor: pointer;
+    transform: ${expanded ? 'rotate(180deg)' : 'rotate(0)'};
+  `}
 `
 
-const Title = (text, isInfo, isArrowDown) => (
-  <STYLED_TITLE>
-    <div className="text">{text}</div>
-    {isInfo && <img className="info-icon" src={`${process.env.PUBLIC_URL}/img/assets/info-icon.svg`} alt="" />}
-    {isArrowDown && <img className="arrow-down" src={`${process.env.PUBLIC_URL}/img/assets/arrow-down.svg`} alt="" />}
-  </STYLED_TITLE>
-)
+const ExpandIcon = (props) => {
+  const { expanded, record, onClick } = props
+  return (
+    <STYLED_EXPAND_ICON
+      expanded={expanded}
+      src={`${process.env.PUBLIC_URL}/img/assets/arrow-down-large.svg`}
+      onClick={() => onClick(record.id)}
+      alt=""
+    />
+  )
+}
 
-export const columns = [
-  {
-    title: Title('Name', false, true),
-    dataIndex: 'name',
-    key: 'name',
-    width: '15%',
-    render: (text) => (
-      <STYLED_NAME>
-        <img className="farm-image" src={`${process.env.PUBLIC_URL}/img/assets/farm-name.svg`} alt="" />
-        <div className="text">{text}</div>
-        <img className="percent-100" src={`${process.env.PUBLIC_URL}/img/assets/percent-100.svg`} alt="" />
-      </STYLED_NAME>
-    )
-  },
-  {
-    title: Title('Earned', 1, 1),
-    dataIndex: 'earned',
-    key: 'earned',
-    width: '10%',
-    render: (text) => <STYLED_EARNED>{text}</STYLED_EARNED>
-  },
-  {
-    title: Title('APR', 1, 1),
-    dataIndex: 'apr',
-    key: 'apr',
-    width: '12%',
-    render: (text) => <div className="apr normal-text">{text}</div>
-  },
-  {
-    title: Title('Rewards', 1, 1),
-    dataIndex: 'rewards',
-    key: 'rewards',
-    render: (text) => <div className="rewards normal-text">{text}</div>
-  },
-  {
-    title: Title('Liquidity', 1, 1),
-    dataIndex: 'liquidity',
-    key: 'liquidity',
-    render: (text) => <div className="liquidity normal-text">{text}</div>
-  },
-  {
-    title: Title('Volume (24h)', false, true),
-    dataIndex: 'volume',
-    key: 'volume',
-    render: (text) => <div className="volume normal-text">{text}</div>
+const ExpandedContent = () => {
+  return (
+    <STYLED_EXPANDED_CONTENT>
+      <STYLED_LEFT_CONTENT>
+        <div className="left-inner">
+          <img src={`${process.env.PUBLIC_URL}/img/assets/farm-logo.svg`} alt="" />
+          <Button type="primary">
+            <span>Connect Wallet</span>
+          </Button>
+        </div>
+      </STYLED_LEFT_CONTENT>
+      <STYLED_RIGHT_CONTENT>
+        <div className="right-inner">
+          {[0, 1, 2, 3].map((item) =>
+            item < 2 ? (
+              <STYLED_SOL>
+                <div className="value">0.00 SOL</div>
+                <div className="text">
+                  <div className="text-1">Half</div>
+                  <div className="text-2">Max</div>
+                </div>
+              </STYLED_SOL>
+            ) : (
+              <STYLED_STAKE>{item === 2 ? 'Stake' : 'Unstake and claim'}</STYLED_STAKE>
+            )
+          )}
+        </div>
+      </STYLED_RIGHT_CONTENT>
+    </STYLED_EXPANDED_CONTENT>
+  )
+}
+
+export const TableList = () => {
+  const [eKeys, setEKeys] = useState([])
+  const onExpandIcon = (id) => {
+    const temp = [...eKeys]
+    const j = temp.indexOf(id)
+    if (j > -1) temp.splice(j, 1)
+    else temp.push(id)
+    setEKeys(temp)
   }
-]
-
-export const TableList = () => (
-  <StyledTableList columns={columns} dataSource={mockData} pagination={false} bordered={false} />
-)
+  return (
+    <STYLED_TABLE_LIST
+      rowKey="id"
+      columns={columns}
+      dataSource={mockData}
+      pagination={false}
+      bordered={false}
+      expandedRowKeys={eKeys}
+      expandedRowRender={(r) => <ExpandedContent />}
+      expandIcon={(ps) => <ExpandIcon {...ps} onClick={onExpandIcon} />}
+      expandIconColumnIndex={6}
+    />
+  )
+}

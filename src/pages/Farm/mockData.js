@@ -1,5 +1,6 @@
 export const mockData = [
   {
+    id: '1',
     name: 'SRM GOFX',
     earned: '0',
     apr: '56%',
@@ -8,6 +9,7 @@ export const mockData = [
     volume: '$ 47,856'
   },
   {
+    id: '2',
     name: 'SRM GOFX',
     earned: '0',
     apr: '56%',
@@ -16,6 +18,7 @@ export const mockData = [
     volume: '$ 47,856'
   },
   {
+    id: '3',
     name: 'SRM GOFX',
     earned: '0',
     apr: '56%',
@@ -24,6 +27,7 @@ export const mockData = [
     volume: '$ 47,856'
   },
   {
+    id: '4',
     name: 'SRM GOFX',
     earned: '0',
     apr: '56%',
@@ -32,6 +36,7 @@ export const mockData = [
     volume: '$ 47,856'
   },
   {
+    id: '5',
     name: 'SRM GOFX',
     earned: '0',
     apr: '56%',
@@ -40,6 +45,7 @@ export const mockData = [
     volume: '$ 47,856'
   },
   {
+    id: '6',
     name: 'SRM GOFX',
     earned: '0',
     apr: '56%',
