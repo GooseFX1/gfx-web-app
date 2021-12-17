@@ -6,7 +6,8 @@ export const mockData = [
     apr: '56%',
     rewards: 'SRM 40% /  GOFX 60%',
     liquidity: '$ 350,114,029',
-    volume: '$ 47,856'
+    volume: '$ 47,856',
+    connected: true
   },
   {
     id: '2',
@@ -15,7 +16,8 @@ export const mockData = [
     apr: '56%',
     rewards: 'SRM 40% /  GOFX 60%',
     liquidity: '$ 350,114,029',
-    volume: '$ 47,856'
+    volume: '$ 47,856',
+    connected: false
   },
   {
     id: '3',
@@ -24,7 +26,8 @@ export const mockData = [
     apr: '56%',
     rewards: 'SRM 40% /  GOFX 60%',
     liquidity: '$ 350,114,029',
-    volume: '$ 47,856'
+    volume: '$ 47,856',
+    connected: true
   },
   {
     id: '4',
@@ -33,7 +36,8 @@ export const mockData = [
     apr: '56%',
     rewards: 'SRM 40% /  GOFX 60%',
     liquidity: '$ 350,114,029',
-    volume: '$ 47,856'
+    volume: '$ 47,856',
+    connected: false
   },
   {
     id: '5',
@@ -42,7 +46,8 @@ export const mockData = [
     apr: '56%',
     rewards: 'SRM 40% /  GOFX 60%',
     liquidity: '$ 350,114,029',
-    volume: '$ 47,856'
+    volume: '$ 47,856',
+    connected: true
   },
   {
     id: '6',
@@ -69,4 +74,19 @@ export const categories = [
   { name: 'Sports', icon: 'sports' },
   { name: 'Verified', icon: 'verified' },
   { name: 'Unverified', icon: 'unverified' }
+]
+
+export const stakedEarnedMockData = [
+  {
+    id: '0',
+    title: 'Staked',
+    value: '55.4589 SOL',
+    price: '$ 13,254.67 usd'
+  },
+  {
+    id: '1',
+    title: 'Earned',
+    value: '0.78234 SOL',
+    price: '$ 187.761 usd'
+  }
 ]
