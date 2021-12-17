@@ -109,7 +109,7 @@ export const Tabs: FC = () => {
               }
             })()}
           </TAB_ICON>
-          <LABEL>{path === '/NFTs' ? 'Nft’s' : path.slice(1)}</LABEL>
+          <LABEL>{path === '/NFTs' ? 'NFTs' : path.slice(1)}</LABEL>
         </TAB>
       ))}
     </WRAPPER>

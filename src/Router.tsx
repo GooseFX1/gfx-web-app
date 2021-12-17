@@ -35,7 +35,7 @@ export const Router: FC = () => {
                 }
               }}
             />
-            <Route path="/NFTs" component={NFTs} />
+            {/* <Route path="/NFTs" component={NFTs} /> */}
             <Route exact path="/farm" component={Farm} />
           </WRAPPER>
         </AppLayout>
