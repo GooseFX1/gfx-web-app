@@ -1,10 +1,20 @@
-import React, { Dispatch, FC, MouseEventHandler, SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, {
+  Dispatch,
+  FC,
+  MouseEventHandler,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+  useEffect
+} from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Menu, MenuItem } from './shared'
 import { ArrowDropdown } from '../../components'
 import { useWalletModal } from '../../context'
 import { CenteredImg } from '../../styles'
+import { Loader } from '../../components'
 
 const WALLET_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['3x'])}
@@ -15,6 +25,10 @@ const WALLET_ICON = styled(CenteredImg)`
   img {
     ${({ theme }) => theme.measurements(theme.margins['1.5x'])}
   }
+`
+const WRAPPED_LOADER = styled.div`
+  width: 40px;
+  margin: 0 -12px 0 12px;
 `
 
 const WRAPPER = styled.button<{ $connected: boolean }>`
@@ -94,7 +108,7 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
 }
 
 export const Connect: FC = () => {
-  const { connect, publicKey, wallet } = useWallet()
+  const { connect, publicKey, wallet, ready, connected } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
   const [arrowRotation, setArrowRotation] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -104,7 +118,11 @@ export const Connect: FC = () => {
     if (!wallet) {
       return 'Connect Wallet'
     } else if (!base58) {
-      return `Connect with ${wallet.name}`
+      return (
+        <WRAPPED_LOADER>
+          <Loader />
+        </WRAPPED_LOADER>
+      )
     } else {
       return base58.substr(0, 4) + '..' + base58.substr(-4, 4)
     }
@@ -112,15 +130,32 @@ export const Connect: FC = () => {
 
   const onSpanClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
-      !event.defaultPrevented && !wallet ? setModalVisible(true) : connect().catch(() => {})
+      if (!event.defaultPrevented && !wallet) {
+        setModalVisible(true)
+      }
     },
-    [connect, setModalVisible, wallet]
+    [setModalVisible, wallet]
   )
 
   const onArrowDropdownClick = () => {
     setArrowRotation(!arrowRotation)
     setVisible(!visible)
   }
+
+  // watches for a selected wallet returned from modal
+  useEffect(() => {
+    if (ready && !base58 && !connected) {
+      connect().catch(() => {})
+    }
+  }, [ready])
+
+  // watches for disconnection of wallet
+  useEffect(() => {
+    if (ready && !base58 && !connected) {
+      // timeout used for smooth loading that matches the rate of tab slider
+      setTimeout(() => connect().catch(() => {}), 400)
+    }
+  }, [connected])
 
   return (
     <WRAPPER $connected={!!base58}>
