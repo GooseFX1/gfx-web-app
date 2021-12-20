@@ -15,6 +15,19 @@ const LABEL = styled.span`
   text-transform: capitalize;
 `
 
+const CollapsibleWrapper = styled.div`
+  position: absolute;
+  width: 48px;
+  height: 24px;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  bottom: -24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ theme }) => theme.bg3};
+`
+
 const TAB = styled(Link)`
   ${({ theme }) => theme.flexCenter}
   flex-direction: column;
@@ -98,7 +111,6 @@ export const Tabs: FC = () => {
   const index = useMemo(() => TABS.indexOf(cleanedPathName), [cleanedPathName])
 
   const handleCollapse = (val) => {
-    console.log('val?', val)
     setCollapse(val)
   }
 
@@ -136,19 +148,7 @@ const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => v
   }
 
   return (
-    <div
-      style={{
-        position: 'absolute',
-        width: 48,
-        height: 24,
-        borderBottomLeftRadius: 24,
-        borderBottomRightRadius: 24,
-        bottom: -24,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        background: 'black'
-      }}
+    <CollapsibleWrapper
       onClick={() => {
         handleCollapse()
       }}
@@ -158,6 +158,6 @@ const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => v
       ) : (
         <SVGToGrey2 style={{ transform: `rotate(${collapse ? 180 : 0}deg)` }} src={icon} alt="" />
       )}
-    </div>
+    </CollapsibleWrapper>
   )
 }

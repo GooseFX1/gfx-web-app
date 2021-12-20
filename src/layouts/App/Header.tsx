@@ -34,6 +34,8 @@ const BRAND = styled.a`
   }
 `
 
+const RefreshWrapper = styled.a``
+
 const BUTTONS = styled(CenteredDiv)`
   position: absolute;
 
@@ -90,7 +92,9 @@ export const Header: FC = () => {
       </BRAND>
       <Tabs />
       <BUTTONS>
-        <GoFX />
+        <RefreshWrapper href="/">
+          <img src={`${process.env.PUBLIC_URL}/img/assets/refresh.svg`} alt="" />
+        </RefreshWrapper>
         <Connect />
         <More />
       </BUTTONS>
