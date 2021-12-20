@@ -8,7 +8,7 @@ const TABS = ['/swap', '/crypto', '/synths', '/NFTs', '/farm']
 
 const LABEL = styled.span`
   position: absolute;
-  bottom: -${({ theme }) => theme.margins['4x']};
+  bottom: -${({ theme }) => theme.margins['2x']};
   height: 14px;
   width: 7vw;
   ${({ theme }) => theme.flexCenter}
@@ -32,6 +32,12 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.bg3};
 
+  .arrow-down {
+    width: 14px;
+    height: auto;
+    display: block;
+  }
+
   &:after {
     content: '';
     position: absolute;
@@ -50,7 +56,8 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
 
   > a {
     width: ${({ $width }) => $width}px;
-    padding: calc(${({ $height }) => $height}vh - ${({ theme }) => theme.margins['2x']} / 2) ${({ $width }) => $width}px;
+    padding: calc(${({ $height }) => $height - 1}vh - ${({ theme }) => theme.margins['2x']} / 2)
+      ${({ $width }) => $width}px;
     ${({ theme }) => theme.roundedBorders}
     z-index: 1;
 
@@ -85,12 +92,18 @@ export const Tabs: FC = () => {
   const { mode } = useDarkMode()
   const { pathname } = useLocation()
   const [hovered, setHovered] = useState(-1)
+  const [collapse, setCollapse] = useState(false)
 
   const cleanedPathName = useMemo(() => {
     const match = pathname.slice(1).indexOf('/')
     return match !== -1 ? pathname.slice(0, pathname.slice(1).indexOf('/') + 1) : pathname
   }, [pathname])
   const index = useMemo(() => TABS.indexOf(cleanedPathName), [cleanedPathName])
+
+  const handleCollapse = (val) => {
+    console.log('val?', val)
+    setCollapse(val)
+  }
 
   return (
     <WRAPPER $height={3.5} $index={index} $width={50}>
@@ -107,9 +120,36 @@ export const Tabs: FC = () => {
               }
             })()}
           </TAB_ICON>
-          <LABEL>{path === '/NFTs' ? 'NFTs' : path.slice(1)}</LABEL>
+
+          {collapse && <LABEL>{path.slice(1)}</LABEL>}
+          {path === '/synths' && <Collapsible collapse={collapse} onCollapse={handleCollapse} />}
         </TAB>
       ))}
     </WRAPPER>
+  )
+}
+
+const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => void }> = ({ collapse, onCollapse }) => {
+  const { mode } = useDarkMode()
+
+  const icon = `${process.env.PUBLIC_URL}/img/assets/arrow-down.svg`
+
+  const handleCollapse = () => {
+    onCollapse(!collapse)
+  }
+
+  return (
+    <div
+      style={{ position: 'absolute', bottom: 0 }}
+      onClick={() => {
+        handleCollapse()
+      }}
+    >
+      {mode === 'dark' ? (
+        <img style={{ transform: `rotate(${collapse ? 180 : 0}deg)` }} src={icon} alt="" />
+      ) : (
+        <SVGToGrey2 style={{ transform: `rotate(${collapse ? 180 : 0}deg)` }} src={icon} alt="" />
+      )}
+    </div>
   )
 }
