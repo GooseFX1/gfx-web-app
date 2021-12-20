@@ -187,6 +187,10 @@ export function theme(mode: string): DefaultTheme {
     roundedBorders: css`
       border-radius: 50px;
     `,
+    headerRoundedBorders: css`
+      border-bottom-left-radius: 50px;
+      border-bottom-right-radius: 50px;
+    `,
 
     // mixins
     measurements: (size) => css`

@@ -9,7 +9,7 @@ import { APP_LAYOUT_HEADER_HEIGHT, CenteredDiv } from '../../styles'
 
 const BRAND = styled.a`
   position: absolute;
-  top: ${({ theme }) => theme.margins['5x']};
+  top: ${({ theme }) => theme.margins['2x']};
   ${({ theme }) => theme.flexCenter}
   width: auto;
   font-size: 40px;
@@ -60,7 +60,9 @@ const WRAPPER = styled.nav`
   width: 100%;
   height: ${APP_LAYOUT_HEADER_HEIGHT};
   padding: ${({ theme }) => theme.margins['4x']};
-  background-color: ${({ theme }) => theme.bg2};
+  ${({ theme }) => theme.roundedBorders}
+  background-color: ${({ theme }) => theme.bg3};
+  ${({ theme }) => theme.smallShadow}
   z-index: 300;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`

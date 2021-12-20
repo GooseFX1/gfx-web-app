@@ -31,16 +31,16 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
   width: ${({ $width }) => $width * 2 * TABS.length}px;
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.bg3};
-  ${({ theme }) => theme.smallShadow}
 
   &:after {
     content: '';
     position: absolute;
-    left: ${({ $index, $width }) => 2 * $index * $width}px;
+    left: ${({ $index, $width }) => 2 * $index * $width + 26}px;
+    top: 0;
     display: block;
-    height: 100%;
-    width: 100px;
-    ${({ theme }) => theme.roundedBorders}
+    height: 8px;
+    width: 44px;
+    ${({ theme }) => theme.headerRoundedBorders}
     background: linear-gradient(to right, ${({ theme, $index }) => theme.tabsGradients[$index]}, ${({
       theme,
       $index
@@ -100,16 +100,14 @@ export const Tabs: FC = () => {
             {(() => {
               const icon = `${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`
 
-              if (cleanedPathName === path || (mode === 'dark' && hovered === index)) {
-                return <SVGToWhite src={icon} alt="" />
-              } else if (hovered === index) {
-                return <SVGToPrimary2 src={icon} alt="" />
+              if (cleanedPathName === path || hovered === index) {
+                return mode === 'dark' ? <SVGToWhite src={icon} alt="" /> : <SVGToPrimary2 src={icon} alt="" />
               } else {
                 return <SVGToGrey2 src={icon} alt="" />
               }
             })()}
           </TAB_ICON>
-          <LABEL>{path === '/NFTs' ? 'Nft’s' : path.slice(1)}</LABEL>
+          <LABEL>{path === '/NFTs' ? 'NFTs' : path.slice(1)}</LABEL>
         </TAB>
       ))}
     </WRAPPER>
