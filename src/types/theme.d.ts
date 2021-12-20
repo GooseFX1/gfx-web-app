@@ -116,6 +116,7 @@ declare module 'styled-components' {
     largeBorderRadius: FlattenSimpleInterpolation
     smallBorderRadius: FlattenSimpleInterpolation
     roundedBorders: FlattenSimpleInterpolation
+    headerRoundedBorders: FlattenSimpleInterpolation
 
     // mixins
     measurements: (number) => FlattenSimpleInterpolation

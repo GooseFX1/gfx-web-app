@@ -7,7 +7,7 @@ import { APP_PAGE_HEIGHT, CenteredDiv } from './styles'
 import useBlacklisted from './utils/useBlacklisted'
 
 const WRAPPER = styled(CenteredDiv)`
-  min-height: ${APP_PAGE_HEIGHT};
+  flex: 1;
   background-color: ${({ theme }) => theme.bg2};
 `
 
