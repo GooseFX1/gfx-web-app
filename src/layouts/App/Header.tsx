@@ -11,7 +11,7 @@ const BRAND = styled.a`
   position: absolute;
   top: ${({ theme }) => theme.margins['2x']};
   ${({ theme }) => theme.flexCenter}
-  width: auto;
+  width: 62px;
   font-size: 40px;
   font-weight: bold;
   line-height: 20px;
@@ -58,9 +58,7 @@ const BUTTONS = styled(CenteredDiv)`
 const WRAPPER = styled.nav`
   position: relative;
   width: 100%;
-  height: ${APP_LAYOUT_HEADER_HEIGHT};
-  padding: ${({ theme }) => theme.margins['4x']};
-  ${({ theme }) => theme.roundedBorders}
+  ${({ theme }) => theme.headerRoundedBorders}
   background-color: ${({ theme }) => theme.bg3};
   ${({ theme }) => theme.smallShadow}
   z-index: 300;

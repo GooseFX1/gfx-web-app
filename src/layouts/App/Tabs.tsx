@@ -7,8 +7,6 @@ import { CenteredDiv, CenteredImg, SVGToGrey2, SVGToPrimary2, SVGToWhite } from 
 const TABS = ['/swap', '/crypto', '/synths', '/NFTs', '/farm']
 
 const LABEL = styled.span`
-  position: absolute;
-  bottom: -${({ theme }) => theme.margins['2x']};
   height: 14px;
   width: 7vw;
   ${({ theme }) => theme.flexCenter}
@@ -23,12 +21,12 @@ const TAB = styled(Link)`
 `
 
 const TAB_ICON = styled(CenteredImg)`
+  margin-bottom: 10px;
   ${({ theme }) => theme.measurements(theme.margins['3x'])}
 `
 
 const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: number }>`
   position: relative;
-  width: ${({ $width }) => $width * 2 * TABS.length}px;
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.bg3};
 
@@ -41,7 +39,7 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
   &:after {
     content: '';
     position: absolute;
-    left: ${({ $index, $width }) => 2 * $index * $width + 26}px;
+    left: ${({ $index, $width }) => 2 * $index * 40 + 18}px;
     top: 0;
     display: block;
     height: 8px;
@@ -56,8 +54,7 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
 
   > a {
     width: ${({ $width }) => $width}px;
-    padding: calc(${({ $height }) => $height - 1}vh - ${({ theme }) => theme.margins['2x']} / 2)
-      ${({ $width }) => $width}px;
+    padding: 29px 40px 19px;
     ${({ theme }) => theme.roundedBorders}
     z-index: 1;
 
@@ -122,9 +119,9 @@ export const Tabs: FC = () => {
           </TAB_ICON>
 
           {collapse && <LABEL>{path.slice(1)}</LABEL>}
-          {path === '/synths' && <Collapsible collapse={collapse} onCollapse={handleCollapse} />}
         </TAB>
       ))}
+      <Collapsible collapse={collapse} onCollapse={handleCollapse} />
     </WRAPPER>
   )
 }
@@ -140,7 +137,18 @@ const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => v
 
   return (
     <div
-      style={{ position: 'absolute', bottom: 0 }}
+      style={{
+        position: 'absolute',
+        width: 48,
+        height: 24,
+        borderBottomLeftRadius: 24,
+        borderBottomRightRadius: 24,
+        bottom: -24,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        background: 'black'
+      }}
       onClick={() => {
         handleCollapse()
       }}
