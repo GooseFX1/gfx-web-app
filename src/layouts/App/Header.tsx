@@ -91,7 +91,7 @@ const CollapsibleWrapper = styled.div`
 
 export const Header: FC = () => {
   const { mode } = useDarkMode()
-  const [collapse, setCollapse] = useState(false)
+  const [collapse, setCollapse] = useState(true)
 
   const handleCollapse = (val) => {
     setCollapse(val)
