@@ -1,11 +1,10 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import styled from 'styled-components'
 import { Connect } from './Connect'
-import { GoFX } from './GoFX'
 import { More } from './More'
 import { Tabs } from './Tabs'
 import { useDarkMode } from '../../context'
-import { APP_LAYOUT_HEADER_HEIGHT, CenteredDiv } from '../../styles'
+import { SVGToGrey2, CenteredDiv } from '../../styles'
 
 const BRAND = styled.a`
   position: absolute;
@@ -34,7 +33,9 @@ const BRAND = styled.a`
   }
 `
 
-const RefreshWrapper = styled.a``
+const RefreshWrapper = styled.a`
+  padding: 14px;
+`
 
 const BUTTONS = styled(CenteredDiv)`
   position: absolute;
@@ -75,29 +76,77 @@ const WRAPPER = styled.nav`
   `}
 `
 
+const CollapsibleWrapper = styled.div`
+  position: absolute;
+  width: 48px;
+  height: 24px;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+  bottom: -24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ theme }) => theme.bg3};
+`
+
 export const Header: FC = () => {
   const { mode } = useDarkMode()
+  const [collapse, setCollapse] = useState(false)
+
+  const handleCollapse = (val) => {
+    setCollapse(val)
+  }
 
   return (
     <WRAPPER id="menu">
-      <BRAND href="/">
-        <img
-          id="logo"
-          srcSet={`${process.env.PUBLIC_URL}/img/assets/gfx_logo_gradient_${mode}@3x.webp 232w,
+      {collapse && (
+        <>
+          <BRAND href="/">
+            <img
+              id="logo"
+              srcSet={`${process.env.PUBLIC_URL}/img/assets/gfx_logo_gradient_${mode}@3x.webp 232w,
                ${process.env.PUBLIC_URL}/img/assets/gfx_logo_gradient_${mode}@2x.webp 155w,
                ${process.env.PUBLIC_URL}/img/assets/gfx_logo_gradient_${mode}.webp 78w`}
-          src={`${process.env.PUBLIC_URL}/img/assets/gfx_logo_gradient_${mode}.webp`}
-          alt="GFX Logo"
-        />
-      </BRAND>
-      <Tabs />
-      <BUTTONS>
-        <RefreshWrapper href="/">
-          <img src={`${process.env.PUBLIC_URL}/img/assets/refresh.svg`} alt="" />
-        </RefreshWrapper>
-        <Connect />
-        <More />
-      </BUTTONS>
+              src={`${process.env.PUBLIC_URL}/img/assets/gfx_logo_gradient_${mode}.webp`}
+              alt="GFX Logo"
+            />
+          </BRAND>
+          <Tabs />
+          <BUTTONS>
+            <RefreshWrapper href="/">
+              <img src={`${process.env.PUBLIC_URL}/img/assets/refresh.svg`} alt="" />
+            </RefreshWrapper>
+            <Connect />
+            <More />
+          </BUTTONS>
+        </>
+      )}
+
+      <Collapsible collapse={collapse} onCollapse={handleCollapse} />
     </WRAPPER>
+  )
+}
+
+const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => void }> = ({ collapse, onCollapse }) => {
+  const { mode } = useDarkMode()
+
+  const icon = `${process.env.PUBLIC_URL}/img/assets/arrow-down.svg`
+
+  const handleCollapse = () => {
+    onCollapse(!collapse)
+  }
+
+  return (
+    <CollapsibleWrapper
+      onClick={() => {
+        handleCollapse()
+      }}
+    >
+      {mode === 'dark' ? (
+        <img style={{ transform: `rotate(${collapse ? 180 : 0}deg)` }} src={icon} alt="" />
+      ) : (
+        <SVGToGrey2 style={{ transform: `rotate(${collapse ? 180 : 0}deg)` }} src={icon} alt="" />
+      )}
+    </CollapsibleWrapper>
   )
 }
