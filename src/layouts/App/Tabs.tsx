@@ -15,19 +15,6 @@ const LABEL = styled.span`
   text-transform: capitalize;
 `
 
-const CollapsibleWrapper = styled.div`
-  position: absolute;
-  width: 48px;
-  height: 24px;
-  border-bottom-left-radius: 24px;
-  border-bottom-right-radius: 24px;
-  bottom: -24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${({ theme }) => theme.bg3};
-`
-
 const TAB = styled(Link)`
   ${({ theme }) => theme.flexCenter}
   flex-direction: column;
@@ -102,17 +89,12 @@ export const Tabs: FC = () => {
   const { mode } = useDarkMode()
   const { pathname } = useLocation()
   const [hovered, setHovered] = useState(-1)
-  const [collapse, setCollapse] = useState(false)
 
   const cleanedPathName = useMemo(() => {
     const match = pathname.slice(1).indexOf('/')
     return match !== -1 ? pathname.slice(0, pathname.slice(1).indexOf('/') + 1) : pathname
   }, [pathname])
   const index = useMemo(() => TABS.indexOf(cleanedPathName), [cleanedPathName])
-
-  const handleCollapse = (val) => {
-    setCollapse(val)
-  }
 
   return (
     <WRAPPER $height={3.5} $index={index} $width={50}>
@@ -130,34 +112,9 @@ export const Tabs: FC = () => {
             })()}
           </TAB_ICON>
 
-          {collapse && <LABEL>{path.slice(1)}</LABEL>}
+          <LABEL>{path.slice(1)}</LABEL>
         </TAB>
       ))}
-      <Collapsible collapse={collapse} onCollapse={handleCollapse} />
     </WRAPPER>
-  )
-}
-
-const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => void }> = ({ collapse, onCollapse }) => {
-  const { mode } = useDarkMode()
-
-  const icon = `${process.env.PUBLIC_URL}/img/assets/arrow-down.svg`
-
-  const handleCollapse = () => {
-    onCollapse(!collapse)
-  }
-
-  return (
-    <CollapsibleWrapper
-      onClick={() => {
-        handleCollapse()
-      }}
-    >
-      {mode === 'dark' ? (
-        <img style={{ transform: `rotate(${collapse ? 180 : 0}deg)` }} src={icon} alt="" />
-      ) : (
-        <SVGToGrey2 style={{ transform: `rotate(${collapse ? 180 : 0}deg)` }} src={icon} alt="" />
-      )}
-    </CollapsibleWrapper>
   )
 }
