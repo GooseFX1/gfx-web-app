@@ -59,6 +59,7 @@ const STYLED_TOGGLE = styled.div`
     }
     &.ant-switch-checked {
       .ant-switch-inner {
+        background: #bb3535;
         margin-right: 0;
         margin-left: auto;
         transition: margin 0.3s ease;

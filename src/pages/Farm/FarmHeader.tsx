@@ -41,7 +41,7 @@ export const FarmHeader = () => (
     <STYLED_RIGHT>
       <SearchBar className="search-bar" placeholder="Search by token symbol" />
       <Categories className="categories" categories={categories} />
-      <Toggle className="live" checkedChildren="Unlive" unCheckedChildren="Live" defaultChecked />
+      <Toggle className="live" checkedChildren="Ended" unCheckedChildren="Live" defaultUnchecked />
     </STYLED_RIGHT>
   </STYLED_FARM_HEADER>
 )
