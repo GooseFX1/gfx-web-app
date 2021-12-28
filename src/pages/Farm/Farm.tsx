@@ -14,8 +14,7 @@ const WRAPPER = styled.div`
 `
 
 const BODY_NFT = styled.div`
-  width: calc(100% - 8vw);
-  height: 71vh;
+  width: calc(100% - 2vw);
   ${({ theme }) => theme.largeBorderRadius};
   box-shadow: 0 7px 15px 9px rgba(13, 13, 13, 0.25);
   background-color: ${({ theme }) => theme.bg3};

@@ -16,7 +16,8 @@ const WRAPPER = styled.div`
   `};
 
   ${({ theme }) => theme.mediaWidth.fromLarge`
-    width: 80vw;
+    width: 98vw;
+    
   `};
 
   > div:first-child {
