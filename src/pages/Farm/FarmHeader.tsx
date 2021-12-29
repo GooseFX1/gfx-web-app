@@ -32,8 +32,8 @@ const STYLED_RIGHT = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  padding-left: ${({ theme }) => theme.margins['11x']};c
+  justify-content: flex-start;
+  padding-left: ${({ theme }) => theme.margins['11x']};
 `
 export const FarmHeader = () => (
   <STYLED_FARM_HEADER>

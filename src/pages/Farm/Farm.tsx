@@ -14,31 +14,37 @@ const WRAPPER = styled.div`
 `
 
 const BODY_NFT = styled.div`
-  width: calc(100% - 2vw);
+  height: 100vh;
+  width: 100vw;
   ${({ theme }) => theme.largeBorderRadius};
   box-shadow: 0 7px 15px 9px rgba(13, 13, 13, 0.25);
   background-color: ${({ theme }) => theme.bg3};
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-x: overlay;
+  background: #181818;
 `
 
 const SCROLLING_OVERLAY = styled.div`
   overflow-y: overlay;
-  overflow-x: hidden;
+  overflow-x: overlay;
   width: 101%;
+  position: relative;
+  overflow: overlay;
 `
 
 export const Farm: FC = () => {
   return (
     <WRAPPER>
-      <BODY_NFT>
-        <SCROLLING_OVERLAY>
+      <div>
+        <BODY_NFT>
+          <SCROLLING_OVERLAY />
           <FarmHeader />
           <TableList />
-        </SCROLLING_OVERLAY>
-      </BODY_NFT>
+          <SCROLLING_OVERLAY />
+        </BODY_NFT>
+      </div>
     </WRAPPER>
   )
 }

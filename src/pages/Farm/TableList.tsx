@@ -48,7 +48,7 @@ const STYLED_TABLE_LIST = styled(Table)`
     > tr {
       &:first-child {
         td {
-          background-color: transparent;
+          background-color: ${({ theme }) => theme.bg3};
         }
       }
       &.ant-table-expanded-row {
