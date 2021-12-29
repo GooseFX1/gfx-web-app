@@ -19,6 +19,9 @@ export const Total: FC = () => {
   const userBalance = useMemo(() => (tokenInfo ? getUIAmount(tokenInfo.address) : 0), [tokenInfo, getUIAmount])
 
   const localCSS = css`
+    .order-total {
+      padding: 0 2px;
+    }
     .order-total .ant-input-affix-wrapper {
       background-color: ${mode === 'dark' ? '#191919' : '#bdbdbd'};
     }

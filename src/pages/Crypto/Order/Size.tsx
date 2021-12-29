@@ -20,6 +20,10 @@ export const Size: FC = () => {
   const userBalance = useMemo(() => (tokenInfo ? getUIAmount(tokenInfo.address) : 0), [tokenInfo, getUIAmount])
 
   const localCSS = css`
+    .order-size {
+      padding: 0 2px;
+    }
+
     .order-size .ant-input-affix-wrapper {
       background-color: ${mode === 'dark' ? '#191919' : '#525252'};
     }
@@ -39,9 +43,7 @@ export const Size: FC = () => {
         maxLength={15}
         onBlur={() => setFocused(undefined)}
         onChange={(x: BaseSyntheticEvent) => {
-          if (!isNaN(x.target.value)) {
-            setOrder((prevState) => ({ ...prevState, size: x.target.value }))
-          }
+          !isNaN(x.target.value) && setOrder((prevState) => ({ ...prevState, size: x.target.value }))
         }}
         onFocus={() => setFocused('size')}
         pattern="\d+(\.\d+)?"
