@@ -43,6 +43,9 @@ export const LimitPrice: FC = () => {
     setOrder((prevState) => ({ ...prevState, type: checked ? 'postOnly' : 'limit' }))
 
   const localCSS = css`
+    .order-price {
+      padding: 0 2px;
+    }
     .order-price .ant-input-affix-wrapper {
       background-color: ${mode === 'dark' ? '#191919' : '#525252'};
     }

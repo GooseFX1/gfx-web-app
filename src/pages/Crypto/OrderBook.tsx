@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useMemo, useState } from 'react'
+import React, { FC, ReactNode, useMemo, useState, MouseEvent } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
 import { Expand } from '../../components'
@@ -24,7 +24,6 @@ const HEADER = styled.div<{ $side: MarketSide }>`
 
     &:first-child {
       text-align: left;
-      cursor: pointer;
     }
 
     &:last-child {
@@ -73,10 +72,23 @@ const ORDER = styled.div`
     &:first-child {
       text-align: left;
       cursor: pointer;
+
+      &:hover {
+        font-weight: bold;
+      }
+    }
+
+    &:nth-child(2) {
+      cursor: pointer;
+
+      &:hover {
+        font-weight: bold;
+      }
     }
 
     &:nth-child(3) {
       text-align: right;
+      cursor: auto;
     }
   }
 `
@@ -145,11 +157,21 @@ export const OrderBook: FC = () => {
     [slicedOrderBook]
   )
 
-  const handleClick = () => setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))
+  const handleExpandToggle = () => setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))
+
+  const handleSetPrice = (price: number) => {
+    setOrder((prevState) => ({ ...prevState, price }))
+    setFocused('price')
+  }
+
+  const handleSetSize = (size: number) => {
+    setOrder((prevState) => ({ ...prevState, size }))
+    setFocused('size')
+  }
 
   return (
     <WRAPPER>
-      <Expand onClick={handleClick} />
+      <Expand onClick={handleExpandToggle} />
       <HEADER $side={side}>
         <SIDE $side={side}>
           <span onClick={() => setSide('bids')}>Live buy orders</span>
@@ -171,15 +193,12 @@ export const OrderBook: FC = () => {
               acc.totalValue += value
               acc.nodes.push(
                 <ORDER key={index}>
-                  <span
-                    onClick={() => {
-                      setOrder((prevState) => ({ ...prevState, price }))
-                      setFocused('price')
-                    }}
-                  >
+                  <span onClick={(e: MouseEvent<HTMLSpanElement>) => handleSetPrice(price)}>
                     ${removeFloatingPointError(price)}
                   </span>
-                  <span>{removeFloatingPointError(size)}</span>
+                  <span onClick={(e: MouseEvent<HTMLSpanElement>) => handleSetSize(size)}>
+                    {removeFloatingPointError(size)}
+                  </span>
                   <span>${abbreviateNumber(value, 2)}</span>
                   <SIZE style={{ width: `${(acc.totalValue / totalOrderBookValue) * 100}%` }} $side={side} />
                 </ORDER>
