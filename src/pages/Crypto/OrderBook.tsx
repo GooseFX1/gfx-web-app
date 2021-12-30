@@ -48,7 +48,10 @@ const ORDERS = styled.div<{ $visible: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   justify-content: space-between;
   align-items: center;
-  max-height: ${({ $visible }) => ($visible ? '1000px' : '212px')};
+  max-height: ${({ $visible }) => ($visible ? '330px' : 'auto')};
+  padding-right: 2px;
+  overflow-y: scroll;
+  ${({ theme }) => theme.customScrollBar('4px')};
   transition: max-height ${({ theme }) => theme.mainTransitionTime} ease-in-out;
 `
 
@@ -123,11 +126,10 @@ const SIZE = styled.span<{ $side: MarketSide }>`
   height: 100%;
   background-color: ${({ theme, $side }) => theme[$side]}50;
 `
-
 const WRAPPER = styled.div`
   position: relative;
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['2x']}
-    ${({ theme }) => theme.margins['1.5x']};
+  padding: ${({ theme }) => theme.margins['2x']} calc(${({ theme }) => theme.margins['2x']} - 2px)
+    ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['1.5x']};
   border-radius: 10px;
   background-color: ${({ theme }) => theme.bg3};
   overflow: hidden;
