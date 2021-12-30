@@ -37,7 +37,7 @@ const STYLED_RIGHT = styled.div`
 `
 export const FarmHeader = () => (
   <STYLED_FARM_HEADER>
-    <Toggle text="Staked Only" />
+    <Toggle className="toggle" text="Staked Only" defaultUnchecked />
     <STYLED_RIGHT>
       <SearchBar className="search-bar" placeholder="Search by token symbol" />
       <Categories className="categories" categories={categories} />

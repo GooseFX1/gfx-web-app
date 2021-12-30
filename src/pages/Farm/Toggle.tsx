@@ -15,6 +15,9 @@ const STYLED_TOGGLE = styled.div`
     height: 45px;
     background: #000;
     border: none;
+    &.ant-switch-checked {
+      background: linear-gradient(to bottom, #9625ae, #411c48);
+    }
   }
   .gray {
     width: 97px;
