@@ -10,8 +10,6 @@ import { useOrder } from '../../../context'
 
 const CONTENT = styled.div<{ $display: boolean }>`
   position: relative;
-  opacity: ${({ $display }) => ($display ? '1' : '0')};
-  max-height: ${({ $display }) => ($display ? '1000px' : '0')};
   overflow: hidden;
   transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;
 
