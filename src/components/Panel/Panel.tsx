@@ -10,6 +10,7 @@ const BODY = styled(CenteredDiv)`
   flex-direction: column;
   height: 100%;
   padding: ${({ theme }) => theme.margins['3x']} 0;
+  min-height: 138px;
 
   > div:not(:last-child) {
     margin-bottom: ${({ theme }) => theme.margins['1.5x']};
