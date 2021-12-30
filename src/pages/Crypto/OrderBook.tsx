@@ -105,7 +105,7 @@ const SIDE = styled(SpaceBetweenDiv)<{ $side: MarketSide }>`
     display: block;
     position: absolute;
     bottom: -6px;
-    left: ${({ $side }) => ($side === 'bids' ? '0' : `calc(${TRADE_ORDER_WIDTH} - 20px - 55%)`)};
+    left: ${({ $side }) => ($side === 'bids' ? '0' : `calc(${TRADE_ORDER_WIDTH} - 12px - 55%)`)};
     width: ${({ $side }) => ($side === 'bids' ? '36.5%' : '35%')};
     height: 2px;
     ${({ theme }) => theme.roundedBorders}
