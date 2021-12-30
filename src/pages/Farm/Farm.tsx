@@ -22,7 +22,9 @@ const BODY_NFT = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow-x: overlay;
+
+  overflow-y: scroll;
+  overflow-x: scroll;
   background: #181818;
 `
 
@@ -40,6 +42,8 @@ export const Farm: FC = () => {
       <div>
         <BODY_NFT>
           <SCROLLING_OVERLAY />
+          <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
           <FarmHeader />
           <TableList />
           <SCROLLING_OVERLAY />
