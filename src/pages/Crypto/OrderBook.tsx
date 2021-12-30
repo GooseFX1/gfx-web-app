@@ -34,6 +34,7 @@ const HEADER = styled.div<{ $side: MarketSide }>`
 
 const LOADER = styled(Skeleton.Input)`
   width: 100%;
+  max-height: 328px;
 
   span {
     height: 10px !important;
@@ -48,7 +49,7 @@ const ORDERS = styled.div<{ $visible: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   justify-content: space-between;
   align-items: center;
-  max-height: ${({ $visible }) => ($visible ? '330px' : 'auto')};
+  max-height: ${({ $visible }) => ($visible ? '328px' : 'auto')};
   padding-right: 2px;
   overflow-y: scroll;
   ${({ theme }) => theme.customScrollBar('4px')};
@@ -185,7 +186,7 @@ export const OrderBook: FC = () => {
           <span>{symbol} Value</span>
         </SpaceBetweenDiv>
       </HEADER>
-      <ORDERS $visible={order.isHidden}>
+      <ORDERS $visible={order.isHidden || !slicedOrderBook.length}>
         {!slicedOrderBook.length ? (
           <Loader />
         ) : (
