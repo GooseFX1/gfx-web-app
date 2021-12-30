@@ -31,6 +31,7 @@ export interface Colors {
   grey4: Color
   grey5: Color
   darkButton: Color
+  scrollBarColor: Color
 
   // speciality colors
   appLayoutFooterBorder: Color
@@ -120,5 +121,6 @@ declare module 'styled-components' {
 
     // mixins
     measurements: (number) => FlattenSimpleInterpolation
+    customScrollBar: (number) => FlattenInterpolation<ThemeProps<DefaultTheme>>
   }
 }

@@ -72,6 +72,7 @@ export function colors(mode: string): Colors {
     grey4: '#121212',
     grey5: '#1a1a1a',
     darkButton: '#000000',
+    scrollBarColor: mode === 'dark' ? '#434343' : '#e0e0e0',
 
     // specialty colors
     appLayoutFooterBorder: mode === 'dark' ? '#c4c4c4' : '#dedede',
@@ -196,6 +197,23 @@ export function theme(mode: string): DefaultTheme {
     measurements: (size) => css`
       height: ${size};
       width: ${size};
+    `,
+
+    customScrollBar: (size) => css`
+      scrollbar-width: thin;
+      scrollbar-color: ${({ theme }) => theme.scrollBarColor} transparent;
+
+      &::-webkit-scrollbar {
+        width: ${size};
+      }
+
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: ${({ theme }) => theme.scrollBarColor};
+        border-radius: 20px;
     `
   }
 }
