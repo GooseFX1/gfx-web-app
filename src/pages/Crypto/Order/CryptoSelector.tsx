@@ -7,8 +7,8 @@ import { CenteredDiv, CenteredImg, SVGToWhite, TRADE_ORDER_WIDTH } from '../../.
 
 const MAGNIFYING_GLASS = styled(CenteredImg)`
   position: absolute;
-  top: 20px;
-  right: 10px;
+  top: 16px;
+  right: 16px;
   ${({ theme }) => theme.measurements(theme.margins['2x'])}
 `
 
@@ -40,7 +40,7 @@ const SELECTOR = styled(CenteredDiv)`
   position: relative;
   flex-direction: column;
   width: calc(${TRADE_ORDER_WIDTH} - 20px);
-  padding: ${({ theme }) => theme.margins['1.5x']} 0;
+  padding: ${({ theme }) => theme.margins['1x']};
   ${({ theme }) => theme.smallBorderRadius}
   background-color: #131313;
   input {
@@ -51,7 +51,10 @@ const SELECTOR = styled(CenteredDiv)`
 const WRAPPER = styled.div`
   max-height: 290px;
   width: 100%;
-  overflow: scroll;
+  margin-top: ${({ theme }) => theme.margins['0.5x']};
+  overflow-y: scroll;
+  overflow-x: hidden;
+  ${({ theme }) => theme.customScrollBar('4px')}
 `
 
 const Overlay: FC<{
