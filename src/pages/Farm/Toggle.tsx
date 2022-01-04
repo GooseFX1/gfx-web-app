@@ -67,6 +67,8 @@ const STYLED_TOGGLE = styled.div`
         margin-right: 0;
         margin-left: auto;
         transition: margin 0.3s ease;
+        background: #bb3535;
+        border-color: #bb3535;
       }
     }
   }
