@@ -21,7 +21,7 @@ const COLLECTION_HEADER = styled.div`
     left: 55px;
     transform: rotate(90deg);
     width: 36px;
-    filter: invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%);
+    filter: ${({ theme }) => theme.filterBackIcon};
     cursor: pointer;
   }
 
@@ -39,7 +39,7 @@ const COLLECTION_HEADER = styled.div`
   }
 
   .collection-name {
-    color: #fff;
+    color: ${({ theme }) => theme.text7};
     font-size: 18px;
     display: inline-block;
     margin-right: ${({ theme }) => theme.margins['1x']};
@@ -57,7 +57,7 @@ const COLLECTION_HEADER = styled.div`
 
     .collection-search-bar {
       width: unset;
-      background-color: #404040;
+      background-color: ${({ theme }) => theme.searchbarSmallBackground};
 
       > input {
         height: unset;
@@ -76,6 +76,7 @@ const COLLECTION_HEADER = styled.div`
   .collection-cities {
     font-size: 12px;
     font-weight: 500;
+    color: ${({ theme }) => theme.text8};
   }
 `
 const DROPDOWN = styled(Dropdown)`

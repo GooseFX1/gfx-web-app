@@ -18,6 +18,7 @@ const RIGHT_SECTION = styled.div`
       font-size: 18px;
       font-weight: 600;
       margin-bottom: ${theme.margins['1x']};
+      color: ${theme.text7};
     }
 
     .rs-type {
@@ -36,17 +37,20 @@ const RIGHT_SECTION = styled.div`
       .rs-price {
         font-size: 25px;
         font-weight: bold;
+        color: ${theme.text8};
       }
 
       .rs-fiat {
         font-size: 14px;
         font-weight: 500;
+        color: ${theme.text8};
       }
 
       .rs-percent {
         font-size: 11px;
         font-weight: 600;
         margin-left: ${theme.margins['0.5x']};
+        color: ${theme.text8};
       }
     }
 
@@ -54,6 +58,7 @@ const RIGHT_SECTION = styled.div`
       font-size: 22px;
       font-weight: 600;
       margin-bottom: ${theme.margins['0.5x']};
+      color: ${theme.text7};
     }
 
     .rs-intro {
@@ -61,6 +66,7 @@ const RIGHT_SECTION = styled.div`
       font-weight: 500;
       max-width: 254px;
       margin-bottom: ${theme.margins['1.5x']};
+      color: ${theme.text8};
     }
 
     .rs-charity-text {
@@ -68,6 +74,7 @@ const RIGHT_SECTION = styled.div`
       font-weight: 600;
       max-width: 64px;
       margin-left: ${theme.margins['1.5x']};
+      color: ${theme.text8};
     }
   `}
 `
@@ -83,6 +90,7 @@ const GRID_INFO = styled(Row)`
       font-size: 16px;
       font-weight: 600;
       margin-bottom: ${theme.margins['1x']};
+      color: ${theme.text7};
     }
 
     .gi-item-thumbnail-wrapper {
@@ -100,12 +108,14 @@ const GRID_INFO = styled(Row)`
     .gi-item-thumbnail {
       width: 30px;
       height: 30px;
+      border-radius: 50%;
       margin-right: ${theme.margins['1x']};
     }
 
     .gi-item-title {
       font-size: 14px;
       font-weight: 500;
+      color: ${theme.text8};
     }
   `}
 `
@@ -160,7 +170,7 @@ export const RightSection: FC<{
           <div className="gi-item-category-title">Creator</div>
           <Row align="middle">
             <div className="gi-item-thumbnail-wrapper">
-              <img className="gi-item-thumbnail" src={creator?.thumbnail} alt="" />
+              <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
               <img className="gi-item-check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`} alt="" />
             </div>
             <div className="gi-item-title">{creator?.title}</div>
@@ -169,14 +179,14 @@ export const RightSection: FC<{
         <Col className="gi-item">
           <div className="gi-item-category-title">Collection</div>
           <Row align="middle">
-            <img className="gi-item-thumbnail" src={collection?.thumbnail} alt="" />
+            <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
             <div className="gi-item-title">{collection?.title}</div>
           </Row>
         </Col>
         <Col className="gi-item">
           <div className="gi-item-category-title">Category</div>
           <Row align="middle">
-            <img className="gi-item-thumbnail" src={category?.thumbnail} alt="" />
+            <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
             <div className="gi-item-title">{category?.title}</div>
           </Row>
         </Col>

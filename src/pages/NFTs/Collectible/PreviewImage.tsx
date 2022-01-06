@@ -15,7 +15,7 @@ interface Props {
 
 const PREVIEW_CONTAINER = styled.div`
   border-radius: 20px;
-  background-color: #131313;
+  background-color: ${({ theme }) => theme.avatarBackground};
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -54,7 +54,7 @@ const IMAGE_CONTAINER = styled.image`
   width: 70%;
   aspect-ratio: 1;
   border-radius: 20px;
-  background-color: #000;
+  background-color: ${({ theme }) => theme.avatarInnerBackground};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -67,21 +67,21 @@ const IMAGE_CONTAINER = styled.image`
 const PREVIEW_TEXT = MainText(styled.span`
   font-size: 14px;
   font-weight: 500;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text7} !important;
   margin-bottom: ${({ theme }) => theme.margins['1x']};
 `)
 
 const NAME_TEXT = MainText(styled.span`
   font-size: 15px;
   font-weight: 600;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text7} !important;
   margin-bottom: ${({ theme }) => theme.margins['1x']};
 `)
 
 const DESCRIBE_TEXT = MainText(styled.span`
   font-size: 12px;
   font-weight: 500;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text8} !important;
   margin-bottom: ${({ theme }) => theme.margins['1x']};
 `)
 

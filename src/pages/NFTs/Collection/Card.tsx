@@ -38,6 +38,7 @@ const CARD = styled.div<{ type: string; status: string }>`
       font-size: 15px;
       font-weight: 600;
       margin-right: ${({ theme }) => theme.margins['0.5x']};
+      font-family: Montserrat;
     }
 
     .card-price {
@@ -100,9 +101,12 @@ const CARD = styled.div<{ type: string; status: string }>`
             display: none;
           }
 
-          .card-name,
+          .card-name {
+            color: ${({ theme }) => theme.text7};
+          }
+
           .card-price {
-            color: ${({ theme }) => theme.text1};
+            color: ${({ theme }) => theme.text8};
           }
 
           .card-name {
@@ -115,6 +119,14 @@ const CARD = styled.div<{ type: string; status: string }>`
 
           .card-info .card-favorite-number-highlight {
             color: ${({ theme }) => theme.text1};
+          }
+
+          .card-info .card-favorite-number {
+            color: ${({ theme }) => theme.text10};
+          }
+
+          .card-info .card-favorite-heart {
+            filter: ${({ theme }) => theme.filterHeartIcon};
           }
         `
     }
@@ -129,6 +141,7 @@ const CARD_BUTTON = styled.button<{ cardType: string; cardStatus: string }>`
   border: none;
   border-radius: 50px;
   color: ${({ theme }) => theme.white};
+  font-family: Montserrat;
 
   &:hover {
     opacity: 0.8;

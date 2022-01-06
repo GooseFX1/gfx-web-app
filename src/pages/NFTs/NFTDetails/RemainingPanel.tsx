@@ -7,15 +7,15 @@ const REMAINING_PANEL = styled(Row)`
   ${({ theme }) => css`
     width: 100%;
     padding: ${theme.margins['2x']} ${theme.margins['4.5x']};
-    background-color: #131313;
+    background-color: ${theme.timePanelBackground};
     ${theme.largeBorderRadius}
-    color: #fff;
+    color: ${theme.text7};
 
     .rp-bubble {
       font-size: 18px;
       font-weight: 500;
       border-radius: 50%;
-      background-color: #000;
+      background-color: ${theme.bg0};
       width: 40px;
       height: 40px;
     }
@@ -24,6 +24,7 @@ const REMAINING_PANEL = styled(Row)`
       font-size: 12px;
       font-weight: 600;
       margin-left: ${theme.margins['1x']};
+      color: ${theme.text7};
     }
   `}
 `

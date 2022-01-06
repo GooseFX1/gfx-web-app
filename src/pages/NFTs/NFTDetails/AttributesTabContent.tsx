@@ -17,13 +17,14 @@ const ATTRIBUTES_TAB_CONTENT = styled.div`
 const ATTRIBUTES_ITEM = styled.div`
   height: 60px;
   border-radius: 10px;
-  background-color: #2a2a2a;
+  background-color: ${({ theme }) => theme.atrributeBg};
   padding: ${({ theme }) => theme.margins['1x']};
 
   .ai-title {
     font-size: 11px;
     font-weight: 500;
-    color: #616161;
+    color: ${({ theme }) => theme.text9};
+    background-color: ${({ theme }) => theme.atrributeBg};
   }
 
   .ai-value {
