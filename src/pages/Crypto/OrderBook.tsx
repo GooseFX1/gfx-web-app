@@ -34,6 +34,7 @@ const HEADER = styled.div<{ $side: MarketSide }>`
 
 const LOADER = styled(Skeleton.Input)`
   width: 100%;
+  max-height: 328px;
 
   span {
     height: 10px !important;
@@ -48,7 +49,7 @@ const ORDERS = styled.div<{ $visible: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   justify-content: space-between;
   align-items: center;
-  max-height: ${({ $visible }) => ($visible ? '330px' : 'auto')};
+  max-height: ${({ $visible }) => ($visible ? '328px' : 'auto')};
   padding-right: 2px;
   overflow-y: scroll;
   ${({ theme }) => theme.customScrollBar('4px')};
@@ -105,7 +106,7 @@ const SIDE = styled(SpaceBetweenDiv)<{ $side: MarketSide }>`
     display: block;
     position: absolute;
     bottom: -6px;
-    left: ${({ $side }) => ($side === 'bids' ? '0' : `calc(${TRADE_ORDER_WIDTH} - 20px - 55%)`)};
+    left: ${({ $side }) => ($side === 'bids' ? '0' : `calc(${TRADE_ORDER_WIDTH} - 12px - 55%)`)};
     width: ${({ $side }) => ($side === 'bids' ? '36.5%' : '35%')};
     height: 2px;
     ${({ theme }) => theme.roundedBorders}
@@ -185,7 +186,7 @@ export const OrderBook: FC = () => {
           <span>{symbol} Value</span>
         </SpaceBetweenDiv>
       </HEADER>
-      <ORDERS $visible={order.isHidden}>
+      <ORDERS $visible={order.isHidden || !slicedOrderBook.length}>
         {!slicedOrderBook.length ? (
           <Loader />
         ) : (

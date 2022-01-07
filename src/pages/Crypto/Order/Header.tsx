@@ -49,11 +49,10 @@ const SIDE = styled(SpaceBetweenDiv)<{ $display: boolean; $side: OrderSide }>`
     display: block;
     position: absolute;
     bottom: -14.5px;
-    left: ${({ $side }) => ($side === 'buy' ? '-20' : '113')}px;
+    left: ${({ $side }) => ($side === 'buy' ? '-17' : '95')}px;
     width: 43%;
     height: 2px;
-    background-color: ${({ theme, $display, $side }) =>
-      $display ? theme[$side === 'buy' ? 'bids' : 'asks'] : theme.cryptoOrderHeaderBorder};
+    background-color: ${({ theme, $display, $side }) => theme[$side === 'buy' ? 'bids' : 'asks']};
     transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;
   }
 
@@ -106,11 +105,9 @@ export const Header: FC = () => {
   // const change24HIcon = useMemo(() => `price_${marketData?.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData])
   const formattedPair = useMemo(() => formatPair(selectedCrypto.pair), [formatPair, selectedCrypto])
 
-  const handleClick = (side: OrderSide) => {
-    if (side === order.side) {
-      setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))
-    } else {
-      setOrder((prevState) => ({ ...prevState, isHidden: false, side }))
+  const handleSelectOrderSide = (side: OrderSide) => {
+    if (side !== order.side) {
+      setOrder((prevState) => ({ ...prevState, side }))
     }
   }
 
@@ -135,8 +132,8 @@ export const Header: FC = () => {
         </div>
         <PRICE>{!marketData || !marketData.current ? <Loader /> : <>Price: $ {marketData.current}</>}</PRICE>
         <SIDE $display={!order.isHidden} $side={order.side}>
-          <span onClick={() => handleClick('buy')}>Buy</span>
-          <span onClick={() => handleClick('sell')}>Sell</span>
+          <span onClick={() => handleSelectOrderSide('buy')}>Buy</span>
+          <span onClick={() => handleSelectOrderSide('sell')}>Sell</span>
         </SIDE>
       </INFO>
       <CryptoSelector />
