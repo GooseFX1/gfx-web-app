@@ -50,11 +50,12 @@ const Overlay: FC<{
   )
 }
 
-const DropdowButton: FC<{ title: string; options?: Array<{ name: string; icon: string }>; style?: any }> = ({
-  title,
-  options,
-  style
-}) => {
+const DropdowButton: FC<{
+  title: string
+  options?: Array<{ name: string; icon: string }>
+  style?: any
+  className?: string
+}> = ({ title, options, style, className }) => {
   const [arrowRotation, setArrowRotation] = useState(false)
   const [currentTitle, setCurrentTitle] = useState(title)
 
@@ -66,7 +67,7 @@ const DropdowButton: FC<{ title: string; options?: Array<{ name: string; icon: s
   }
 
   return (
-    <DROP_DOWN_WRAPPER style={style}>
+    <DROP_DOWN_WRAPPER style={style} className={className}>
       <span onClick={handleClick}>{currentTitle}</span>
       <ArrowDropdown
         arrow

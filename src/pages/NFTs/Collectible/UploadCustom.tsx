@@ -16,7 +16,7 @@ const STYLED_UPLOAD_CUSTOM = styled.div`
     ${theme.largeBorderRadius}
     border: solid 2px #848484;
     border-style: dashed;
-    background-color: #131313;
+    background-color: ${theme.avatarBackground};
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -41,11 +41,11 @@ const STYLED_UPLOAD_CUSTOM = styled.div`
       width: 300px;
       .title {
         font-size: 17px;
-        color: ${({ theme }) => theme.text1};
+        color: ${({ theme }) => theme.text7};
       }
       .desc {
         font-size: 11px;
-        color: ${({ theme }) => theme.text1};
+        color: ${({ theme }) => theme.text7};
         margin-top: ${({ theme }) => theme.margins['1x']};
         margin-bottom: ${({ theme }) => theme.margins['2.5x']};
       }

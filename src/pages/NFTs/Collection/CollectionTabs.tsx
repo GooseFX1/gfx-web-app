@@ -26,8 +26,9 @@ const COLLECTION_TABS = styled.div`
   }
 
   .ant-tabs-tab {
-    color: #616161;
+    color: ${({ theme }) => theme.tabNameColor};
     font-size: 18px;
+    font-family: Montserrat;
 
     + .ant-tabs-tab {
       margin: 0 0 0 ${({ theme }) => `${theme.margins['7x']}`};
@@ -35,7 +36,8 @@ const COLLECTION_TABS = styled.div`
 
     &.ant-tabs-tab-active {
       .ant-tabs-tab-btn {
-        color: #fff;
+        color: ${({ theme }) => theme.text7};
+        font-weight: 600;
       }
     }
   }

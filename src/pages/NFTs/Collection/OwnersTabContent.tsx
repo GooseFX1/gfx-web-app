@@ -15,8 +15,9 @@ const OWNERS_TAB = styled(Row)`
     }
 
     .owners-tab-name {
-      color: ${theme.text1};
+      color: ${theme.text8};
       margin-top: ${theme.margins['1.5x']};
+      font-family: Montserrat;
     }
   `}
 `

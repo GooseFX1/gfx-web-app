@@ -4,7 +4,7 @@ import { Modal } from 'antd'
 
 export const StyledPopupCompletedProfile = styled(Modal)`
   ${({ theme }) => `
-  background: #2a2a2a;
+  background: ${theme.bg3};
   ${theme.largeBorderRadius}
   width: 747px !important;
   height: 686px;
@@ -24,13 +24,13 @@ export const StyledPopupCompletedProfile = styled(Modal)`
     margin-top: ${theme.margins['5x']};
     font-size: 30px;
     font-weight: 600;
-    color: #fff;
+    color: ${theme.text7};
   }
   .desc {
     margin-top: ${theme.margins['2.5x']};
     font-size: 20px;
     font-weight: 500;
-    color: #fff;
+    color: ${theme.text8};
   }
   .ant-modal-body {
     padding: ${theme.margins['3.5x']} 155px;
@@ -45,7 +45,7 @@ export const StyledPopupCompletedProfile = styled(Modal)`
     .skip-btn {
       font-size: 20px;
       font-weight: 500;
-      color: #fff;
+      color: ${theme.text8};
       background-color: transparent;
       border: none;
       cursor: pointer;

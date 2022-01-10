@@ -35,7 +35,7 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: #131313;
+        background-color: ${theme.tabContentBidBackground};
         border-radius: 15px 15px 0 0;
       }
     }
@@ -74,7 +74,7 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
 
     .ant-tabs-content-holder {
       height: 260px;
-      background-color: #131313;
+      background-color: ${theme.tabContentBidBackground};
       transform: translateY(-32px);
       padding-top: ${({ theme }) => theme.margins['4x']};
       padding-bottom: ${({ theme }) => theme.margins['8x']};
@@ -93,7 +93,8 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
       padding: ${theme.margins['2x']};
       border-radius: 0 0 25px 25px;
       backdrop-filter: blur(20px);
-      background: linear-gradient(90deg, rgba(25, 25, 25, 0.8) 0%, #131313 100%);
+      border-top: 1px solid ${theme.borderColorTabBidFooter};
+      background: ${theme.tabContentBidFooterBackground};
 
       .rst-footer-bid-button {
         flex: 1;

@@ -5,7 +5,7 @@ import { MainText } from '../../../styles'
 const INPUT_TITLE = MainText(styled.span`
   font-size: 17px;
   font-weight: 600;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text8} !important;
   text-align: left;
   margin-top: ${({ theme }) => theme.margins['1.5x']};
   margin-bottom: ${({ theme }) => theme.margins['1x']};
@@ -14,7 +14,7 @@ const INPUT_TITLE = MainText(styled.span`
 const INPUT_LIMIT = MainText(styled.span`
   font-size: 9px;
   font-weight: 600;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text8} !important;
   text-align: left;
   margin-top: ${({ theme }) => theme.margins['1x']};
 `)
@@ -29,7 +29,7 @@ const STYLED_INPUT = styled.input`
   height: 55px;
   width: 100%;
   border-radius: 10px;
-  background-color: #131313;
+  background-color: ${({ theme }) => theme.inputBg};
   padding: ${({ theme }) => `${theme.margins['1x']}`};
   border: none;
   ::placeholder {

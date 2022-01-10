@@ -4,7 +4,7 @@ export const StyledCard = styled.div`
   ${({ theme }) => `
 max-width: 285px;
 ${theme.largeBorderRadius}
-background-color: ${theme.bg4};
+background-color: #171717;
 padding: ${theme.margins['2x']} ${theme.margins['2.5x']};
 cursor: pointer;
 z-index: 2;
@@ -22,7 +22,7 @@ z-index: 2;
 .name,
 .number,
 .other {
-  color: ${theme.text1};
+  color: #fff;
   font-size: 15px;
   font-family: Montserrat;
 }

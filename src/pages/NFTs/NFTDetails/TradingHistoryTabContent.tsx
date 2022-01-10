@@ -33,6 +33,12 @@ const TRADING_HISTORY_TAB_CONTENT = styled.div`
       overflow-y: auto;
     }
 
+    .price-value,
+    .thtc-align-right,
+    .thtc-event {
+      color: ${theme.text7};
+    }
+
     .thtc-event-epx {
       color: #ff6464;
     }
@@ -54,6 +60,7 @@ const TRADING_HISTORY_TAB_CONTENT = styled.div`
     .ant-table {
       font-size: 11px;
       font-weight: 500;
+      background: ${theme.tradingHistoryTabContentBackground};
 
       thead {
         display: none;
@@ -63,6 +70,9 @@ const TRADING_HISTORY_TAB_CONTENT = styled.div`
         border-bottom: none;
         padding: ${theme.margins['1x']};
       }
+    }
+    .ant-table-tbody > tr.ant-table-row:hover > td {
+      background: ${theme.hoverTrTableBackground};
     }
   `}
 `
@@ -96,7 +106,7 @@ const columns = [
         <Col>
           <img className="thtc-solana-logo" src={`${process.env.PUBLIC_URL}/img/assets/solana-logo.png`} alt="" />
         </Col>
-        <Col>{value}</Col>
+        <Col className="price-value">{value}</Col>
       </Row>
     ),
     width: '23%'

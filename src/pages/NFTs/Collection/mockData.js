@@ -8,7 +8,7 @@ export const statsData = [
 export const NFTsData = [
   {
     id: '1',
-    thumbnail: '',
+    thumbnail: 'https://placeimg.com/30/30',
     name: 'Genesis #3504',
     price: 1499,
     status: 'sold_out',
@@ -19,7 +19,7 @@ export const NFTsData = [
   },
   {
     id: '2',
-    thumbnail: '',
+    thumbnail: 'https://placeimg.com/30/30',
     name: 'Genesis #3504',
     price: 10000,
     status: 'auctioning',
@@ -30,7 +30,7 @@ export const NFTsData = [
   },
   {
     id: '3',
-    thumbnail: '',
+    thumbnail: 'https://placeimg.com/30/30',
     name: 'Genesis #3504',
     price: 420,
     status: 'auctioning',
@@ -41,7 +41,7 @@ export const NFTsData = [
   },
   {
     id: '4',
-    thumbnail: '',
+    thumbnail: 'https://placeimg.com/30/30',
     name: 'Genesis #3504',
     price: 420,
     status: 'auctioning',
@@ -52,7 +52,7 @@ export const NFTsData = [
   },
   {
     id: '5',
-    thumbnail: '',
+    thumbnail: 'https://placeimg.com/30/30',
     name: 'Genesis #3504',
     price: 2500,
     status: 'auctioning',
@@ -63,7 +63,7 @@ export const NFTsData = [
   },
   {
     id: '6',
-    thumbnail: '',
+    thumbnail: 'https://placeimg.com/30/30',
     name: 'Genesis #3504',
     price: 200000,
     status: 'auctioning',
@@ -74,7 +74,7 @@ export const NFTsData = [
   },
   {
     id: '7',
-    thumbnail: '',
+    thumbnail: 'https://placeimg.com/30/30',
     name: 'Genesis #3504',
     price: 220000,
     status: 'auctioning',
