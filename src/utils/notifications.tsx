@@ -55,15 +55,20 @@ const TX_LINK = styled.a`
   }
 `
 
+type IStyles = {
+  [x: string]: string
+}
+
 interface INotifyParams {
   message: string | ReactNode
   description?: string | ReactNode
   icon?: string
   txid?: string
   type?: string
+  styles?: IStyles
 }
 
-export const notify = async ({ description, icon, message, txid, type = 'info' }: INotifyParams, e?: any) => {
+export const notify = async ({ description, icon, message, txid, type = 'info', styles }: INotifyParams, e?: any) => {
   if (e) {
     description = e.message
     if (description !== null && description !== undefined) {
@@ -114,7 +119,8 @@ export const notify = async ({ description, icon, message, txid, type = 'info' }
       backgroundColor: type === 'error' ? '#bb3535' : '#3735bb',
       borderRadius: '20px',
       padding: '32px 16px',
-      minWidth: '320px'
+      minWidth: '320px',
+      ...styles
     }
   })
 }

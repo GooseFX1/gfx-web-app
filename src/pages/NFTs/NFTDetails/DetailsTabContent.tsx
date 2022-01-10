@@ -16,6 +16,10 @@ const DETAILS_TAB_CONTENT = styled.div`
 
       .dtc-item-value {
         color: #949494;
+        color: ${theme.text8};
+      }
+      .dtc-item-title {
+        color: ${theme.text7};
       }
     }
   `}

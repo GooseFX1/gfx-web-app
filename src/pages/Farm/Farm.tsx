@@ -1,7 +1,8 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import styled from 'styled-components'
 import { TableList } from './TableList'
 import { FarmHeader } from './FarmHeader'
+import { mockDataSource } from './mockData'
 
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -14,31 +15,51 @@ const WRAPPER = styled.div`
 `
 
 const BODY_NFT = styled.div`
-  width: calc(100% - 2vw);
+  height: 100vh;
+  width: 100vw;
   ${({ theme }) => theme.largeBorderRadius};
   box-shadow: 0 7px 15px 9px rgba(13, 13, 13, 0.25);
   background-color: ${({ theme }) => theme.bg3};
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+
+  overflow-y: scroll;
+  overflow-x: scroll;
+  background: #181818;
 `
 
 const SCROLLING_OVERLAY = styled.div`
   overflow-y: overlay;
-  overflow-x: hidden;
+  overflow-x: overlay;
   width: 101%;
+  position: relative;
+  overflow: overlay;
 `
 
 export const Farm: FC = () => {
+  const [dataSource, setDataSource] = useState(mockDataSource)
+  const onFilter = (val) => {
+    if (val === 'All pools') {
+      setDataSource(mockDataSource)
+      return
+    }
+    const tmp = JSON.parse(JSON.stringify(mockDataSource))
+    const filteredData = tmp.filter((item) => item.type === val)
+    setDataSource(filteredData)
+  }
   return (
     <WRAPPER>
-      <BODY_NFT>
-        <SCROLLING_OVERLAY>
-          <FarmHeader />
-          <TableList />
-        </SCROLLING_OVERLAY>
-      </BODY_NFT>
+      <div>
+        <BODY_NFT>
+          <SCROLLING_OVERLAY />
+          <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <FarmHeader onFilter={onFilter} />
+          <TableList dataSource={dataSource} />
+          <SCROLLING_OVERLAY />
+        </BODY_NFT>
+      </div>
     </WRAPPER>
   )
 }

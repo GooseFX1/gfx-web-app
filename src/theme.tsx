@@ -49,15 +49,21 @@ export function colors(mode: string): Colors {
     black,
 
     // text
+    text0: mode === 'dark' ? black : white,
     text1: mode === 'dark' ? white : black,
     text2: mode === 'dark' ? white : '#353535',
     text3: mode === 'dark' ? '#d655fe' : '#9625ae',
     text4: mode === 'dark' ? white : '#636363',
     text5: mode === 'dark' ? '#949494' : '#fff',
     text6: mode === 'dark' ? '#cccccc' : '#353535',
+    text7: mode === 'dark' ? white : '#3C3C3C',
+    text8: mode === 'dark' ? white : '#636363',
+    text9: mode === 'dark' ? '#616161' : '#3C3C3C',
+    text10: mode === 'dark' ? '#4b4b4b' : '#BDBDBD',
     text1h: '#7d7d7d',
 
     // backgrounds / greys
+    bg0: mode === 'dark' ? '#000' : '#fff',
     bg1: mode === 'dark' ? '#1e1e1e' : white,
     bg2: mode === 'dark' ? '#1e1e1e' : '#eeeeee',
     bg3: mode === 'dark' ? '#2a2a2a' : white,
@@ -72,6 +78,7 @@ export function colors(mode: string): Colors {
     grey4: '#121212',
     grey5: '#1a1a1a',
     darkButton: '#000000',
+    scrollBarColor: mode === 'dark' ? '#434343' : '#e0e0e0',
 
     // specialty colors
     appLayoutFooterBorder: mode === 'dark' ? '#c4c4c4' : '#dedede',
@@ -81,10 +88,49 @@ export function colors(mode: string): Colors {
     textBox: mode === 'dark' ? '#474747' : '#808080',
     walletModalWallet: mode === 'dark' ? '#1e1e1e' : '#e1e1e1',
     searchbarBackground: mode === 'dark' ? '#1e1e1e' : '#ababab',
-    collectionHeader:
-      mode === 'dark'
-        ? 'linear-gradient(0, #131313 0%, transparent 100%)'
-        : 'linear-gradient(0deg,rgba(0,0,0,1) 3%,rgba(30,30,30,1) 43%)',
+    searchbarSmallBackground: mode === 'dark' ? '#404040' : '#ababab',
+    collectionHeader: mode === 'dark' ? 'linear-gradient(0, #131313 0%, transparent 100%)' : '#fff',
+
+    // modal
+    closeIconColor: mode === 'dark' ? '#fff' : '#000',
+
+    // avatar
+    avatarBackground: mode === 'dark' ? '#000' : '#CACACA',
+    avatarInnerBackground: mode === 'dark' ? '#000' : '#7D7D7D',
+
+    // upload image
+    uploadImageBackground: mode === 'dark' ? '#131313' : '#CACACA',
+
+    // input bg
+    inputBg: mode === 'dark' ? '#131313' : '#CACACA',
+
+    // btn Icon (Plus, add more), btn Next Step Background
+    btnIconBg: mode === 'dark' ? '#9625ae' : '#7D7D7D',
+    btnNextStepBg: mode === 'dark' ? '#9625ae' : '#7D7D7D',
+
+    // time panel
+    timePanelBackground: mode === 'dark' ? '#131313' : '#CACACA',
+
+    // nft detail
+    nftDetailBackground: mode === 'dark' ? '#2a2a2a' : '#f4f4f4',
+
+    // tab content current bid
+    tabContentBidBackground: mode === 'dark' ? '#131313' : '#fff',
+    tabContentBidFooterBackground:
+      mode === 'dark' ? 'linear-gradient(90deg, rgba(25, 25, 25, 0.8) 0%, #131313 100%)' : 'rgba(64, 64, 64, 0.02)',
+    borderColorTabBidFooter: mode === 'dark' ? '#131313' : '#EAEAEA',
+
+    // trading history tab content
+    tradingHistoryTabContentBackground: mode === 'dark' ? '#141414' : '#fff',
+
+    // hover tr table
+    hoverTrTableBackground: mode === 'dark' ? '#262626' : 'rgba(64, 64, 64, 0.2)',
+
+    // atrribute tab content
+    atrributeBg: mode === 'dark' ? '#2a2a2a' : '#B0B0B0',
+
+    // main tab
+    tabNameColor: mode === 'dark' ? '#616161' : '#8F8F8F',
 
     // primary colors
     primary1: '#302eb8',
@@ -100,7 +146,18 @@ export function colors(mode: string): Colors {
     asks: '#9b2c2c',
     bids: '#459631',
     error: '#D60000',
-    success: '#27AE60'
+    success: '#27AE60',
+
+    // filter
+    filterBackIcon:
+      mode === 'dark'
+        ? 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'
+        : '#000',
+
+    filterHeartIcon:
+      mode === 'dark'
+        ? '#131313'
+        : 'invert(75%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'
   }
 }
 
@@ -196,6 +253,23 @@ export function theme(mode: string): DefaultTheme {
     measurements: (size) => css`
       height: ${size};
       width: ${size};
+    `,
+
+    customScrollBar: (size) => css`
+      scrollbar-width: thin;
+      scrollbar-color: ${({ theme }) => theme.scrollBarColor} transparent;
+
+      &::-webkit-scrollbar {
+        width: ${size};
+      }
+
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: ${({ theme }) => theme.scrollBarColor};
+        border-radius: 20px;
     `
   }
 }

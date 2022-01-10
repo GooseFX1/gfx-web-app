@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { ArrowClicker } from '../../../components'
 import { MainText } from '../../../styles'
 import { ButtonWrapper } from '../NFTButton'
 import BottomButtonUpload, { BottomButtonUploadType } from './BottomButtonUpload'
@@ -19,14 +18,17 @@ const UPLOAD_CONTENT = styled.div`
   padding: ${({ theme }) => theme.margins['5x']};
   width: 90%;
   margin: 0 auto;
-`
 
-const LEFT_ARROW = styled(ArrowClicker)`
-  width: 30px;
-  transform: rotateZ(90deg);
-  margin-right: ${({ theme }) => theme.margins['5x']};
-  margin-left: 0;
-  margin-top: ${({ theme }) => theme.margins['1x']};
+  .upload-NFT-back-icon {
+    transform: rotate(90deg);
+    width: 30px;
+    height: 30px;
+    filter: ${({ theme }) => theme.filterBackIcon};
+    cursor: pointer;
+    margin-right: ${({ theme }) => theme.margins['5x']};
+    margin-left: 0;
+    margin-top: ${({ theme }) => theme.margins['1x']};
+  }
 `
 
 const UPLOAD_FIELD_CONTAINER = styled.div`
@@ -55,7 +57,7 @@ const PREVIEW_UPLOAD_CONTAINER = styled.div`
 const SECTION_TITLE = MainText(styled.span`
   font-size: 20px;
   font-weight: 600;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text7} !important;
   text-align: left;
 `)
 
@@ -73,7 +75,7 @@ const NEXT_BUTTON = styled(ButtonWrapper)`
   height: 60;
   padding: ${({ theme }) => `${theme.margins['2x']} ${theme.margins['6x']}`};
   align-self: flex-end;
-  background-color: ${({ theme }) => theme.secondary2};
+  background-color: ${({ theme }) => theme.btnNextStepBg};
   margin-top: ${({ theme }) => theme.margins['5x']};
   &:disabled {
     background-color: #7d7d7d;
@@ -195,7 +197,12 @@ export const UpLoadNFT = () => {
   return (
     <>
       <UPLOAD_CONTENT>
-        <LEFT_ARROW onClick={() => history.push('/NFTs/create-a-collectible')} />
+        <img
+          className="upload-NFT-back-icon"
+          src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
+          alt="back"
+          onClick={() => history.push('/NFTs/create-a-collectible')}
+        />
         <UPLOAD_FIELD_CONTAINER>
           <UPLOAD_INFO_CONTAINER>
             <SECTION_TITLE>1. Upload your file</SECTION_TITLE>

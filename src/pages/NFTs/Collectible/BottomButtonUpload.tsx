@@ -18,12 +18,16 @@ const UPLOAD_FIELD_WRAPPER = styled.div<{ flex?: number }>`
   flex-direction: column;
   margin-top: ${({ theme }) => theme.margins['2.5x']};
   margin-right: ${({ theme }) => theme.margins['2.5x']};
+
+  .category {
+    background-color: ${({ theme }) => theme.btnIconBg} !important;
+  }
 `
 
 const TITLE = MainText(styled.span`
   font-size: 17px;
   font-weight: 600;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text8} !important;
   text-align: left;
   margin-bottom: ${({ theme }) => theme.margins['1x']};
 `)
@@ -33,7 +37,7 @@ const BUTTON_PLUS_WRAPPER = styled(ButtonWrapper)`
   height: 41px;
   justify-content: space-between;
   align-items: center;
-  background-color: ${({ theme }) => theme.secondary2};
+  background-color: ${({ theme }) => theme.btnIconBg};
   &:disabled {
     background-color: #7d7d7d;
   }
@@ -51,12 +55,13 @@ const UPLOAD_TEXT = MainText(styled.div`
   font-weight: 800;
   color: #7d7d7d !important;
   text-align: left;
+  line-height: 41px !important;
+  height: 41px;
 `)
 
 const categoryButton = {
   width: 132,
   height: 41,
-  backgroundColor: colors('lite').secondary2,
   justifyContent: 'space-between'
 }
 
@@ -82,7 +87,9 @@ const BottomButtonUpload: FC<{
         </BUTTON_PLUS_WRAPPER>
       )}
 
-      {type === BottomButtonUploadType.category && <DropdowButton style={categoryButton} title="Choose" />}
+      {type === BottomButtonUploadType.category && (
+        <DropdowButton className="category" style={categoryButton} title="Choose" />
+      )}
 
       {type === BottomButtonUploadType.text && <UPLOAD_TEXT>Single item 1/1</UPLOAD_TEXT>}
     </UPLOAD_FIELD_WRAPPER>

@@ -1,7 +1,9 @@
-import React from 'react'
-import { stakedEarnedMockData } from './mockData'
+import React, { useState } from 'react'
+import { stakedEarnedMockData, messageMockData, stakeOrClaimInfoMockData } from './mockData'
 import styled from 'styled-components'
-import { Button } from 'antd'
+import { Button, Row, Col } from 'antd'
+import { MainButton } from '../../components'
+import { notify } from '../../utils'
 
 const STYLED_EXPANDED_ROW = styled.div`
   padding-top: ${({ theme }) => theme.margins['4x']};
@@ -58,8 +60,6 @@ const STYLED_RIGHT_CONTENT = styled.div`
     width: 64%;
   }
   .right-inner {
-    flex-wrap: wrap;
-    max-width: 720px;
     display: flex;
     margin-right: 0;
     margin-left: auto;
@@ -78,13 +78,19 @@ const STYLED_SOL = styled.div`
   .value {
     font-family: Montserrat;
     font-size: 22px;
-    font-weight: 600;
+    font-weight: 500;
     font-stretch: normal;
     font-style: normal;
     line-height: normal;
     letter-spacing: normal;
     text-align: center;
-    color: #b1b1b1;
+    color: '#b1b1b1';
+  }
+  &.active {
+    .value {
+      color: #fff;
+      font-weight: 600;
+    }
   }
   .text {
     font-family: Montserrat;
@@ -98,7 +104,7 @@ const STYLED_SOL = styled.div`
     margin-left: ${({ theme }) => theme.margins['1.5x']};
   }
 `
-const STYLED_STAKE_PILL = styled.div`
+const STYLED_STAKE_PILL = styled(MainButton)`
   width: 300px;
   height: 51px;
   border-radius: 51px;
@@ -110,6 +116,13 @@ const STYLED_STAKE_PILL = styled.div`
   text-align: center;
   color: #b1b1b1;
   margin: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['1.5x']} 0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  &.active,
+  &:hover {
+    background: #050505;
+    color: #fff;
+  }
 `
 
 const STYLED_STAKED_EARNED_CONTENT = styled.div`
@@ -120,7 +133,6 @@ const STYLED_STAKED_EARNED_CONTENT = styled.div`
     max-width: 150px;
     min-width: 130px;
     margin-right: ${({ theme }) => theme.margins['7x']};
-
     .title,
     .value {
       font-family: Montserrat;
@@ -158,8 +170,90 @@ const STYLED_DESC = styled.div`
   }
 `
 
+const MESSAGE = styled.div`
+  margin: -12px 0;
+  font-size: 12px;
+  font-weight: 700;
+
+  .m-title {
+    margin-bottom: 16px;
+  }
+
+  .m-icon {
+    width: 20.5px;
+    height: 20px;
+  }
+
+  p {
+    line-height: 1.3;
+    max-width: 200px;
+  }
+`
+
 export const ExpandedContent = ({ record }: any) => {
   const { connected } = record
+  const initState = [
+    {
+      id: 0,
+      selected: false,
+      isLoading: false
+    },
+    {
+      id: 1,
+      selected: false,
+      isLoading: false
+    }
+  ]
+  const [status, setStatus] = useState(initState)
+  const [count, setCount] = useState(0)
+  const onClickStake = (index) => {
+    const tmp = JSON.parse(JSON.stringify(status))
+    if (!tmp[index].selected) {
+      tmp[index].selected = true
+      setStatus(tmp)
+      return
+    }
+    const _count = count + 1
+    setCount(_count)
+    tmp[index].isLoading = true
+    setStatus(tmp)
+    const type = _count % 2 === 0 ? 'info' : 'error'
+    setTimeout(() => {
+      const temp = JSON.parse(JSON.stringify(status))
+      temp[index].isLoading = false
+      setStatus(temp)
+      notify({
+        message: (
+          <MESSAGE>
+            <Row className="m-title" justify="space-between" align="middle">
+              <Col>{messageMockData[index][type].title}</Col>
+              <Col>
+                <img
+                  className="m-icon"
+                  src={`${process.env.PUBLIC_URL}/img/assets/${messageMockData[index][type].icon}.svg`}
+                  alt=""
+                />
+              </Col>
+            </Row>
+            {type === 'info' ? (
+              <>
+                <div>{messageMockData[index][type]?.text1}</div>
+                <div>{messageMockData[index][type]?.text2}</div>
+                <div>{messageMockData[index][type]?.text3}</div>
+              </>
+            ) : (
+              <p>{messageMockData[index][type]?.text1}</p>
+            )}
+          </MESSAGE>
+        ),
+        styles: {
+          maxWidth: '270px',
+          minWidth: '220px'
+        },
+        type
+      })
+    }, 1000)
+  }
   return (
     <STYLED_EXPANDED_ROW>
       <STYLED_EXPANDED_CONTENT>
@@ -185,19 +279,25 @@ export const ExpandedContent = ({ record }: any) => {
         </STYLED_LEFT_CONTENT>
         <STYLED_RIGHT_CONTENT className={`${connected ? 'connected' : 'disconnected'}`}>
           <div className="right-inner">
-            {[0, 1, 2, 3].map((item) =>
-              item < 2 ? (
-                <STYLED_SOL>
-                  <div className="value">0.00 SOL</div>
+            {stakeOrClaimInfoMockData.map((item) => (
+              <div className="SOL-item">
+                <STYLED_SOL className={status[item.id].selected ? 'active' : ''}>
+                  <div className="value">{item.value}</div>
                   <div className="text">
                     <div className="text-1">Half</div>
                     <div className="text-2">Max</div>
                   </div>
                 </STYLED_SOL>
-              ) : (
-                <STYLED_STAKE_PILL>{item === 2 ? 'Stake' : 'Unstake and claim'}</STYLED_STAKE_PILL>
-              )
-            )}
+                <STYLED_STAKE_PILL
+                  className={status[item.id].selected ? 'active' : ''}
+                  loading={status[item.id].isLoading}
+                  disabled={status[item.id].isLoading}
+                  onClick={() => onClickStake(item.id)}
+                >
+                  {item.action}
+                </STYLED_STAKE_PILL>
+              </div>
+            ))}
           </div>
         </STYLED_RIGHT_CONTENT>
       </STYLED_EXPANDED_CONTENT>

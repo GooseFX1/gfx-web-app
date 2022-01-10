@@ -30,7 +30,6 @@ const STYLED_TITLE = styled.div`
 const STYLED_NAME = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
   .text {
     font-size: 18px;
     font-weight: 600;
@@ -38,10 +37,13 @@ const STYLED_NAME = styled.div`
     max-width: 90px;
     margin-left: ${({ theme }) => theme.margins['2.5x']};
   }
-  .farm-image {
-    width: 91px;
+  .coin-image {
+    width: 41px;
     height: 41px;
     display: block;
+    &.double-sided {
+      width: 91px;
+    }
   }
 
   .percent-100 {
@@ -74,9 +76,13 @@ export const columns = [
     dataIndex: 'name',
     key: 'name',
     width: '15%',
-    render: (text) => (
+    render: (text, record) => (
       <STYLED_NAME>
-        <img className="farm-image" src={`${process.env.PUBLIC_URL}/img/assets/farm-name.svg`} alt="" />
+        <img
+          className={`coin-image ${record.type === 'Double Sided' ? 'double-sided' : ''}`}
+          src={`${process.env.PUBLIC_URL}/img/assets/${text.replace(' ', '-')}-icon.svg`}
+          alt=""
+        />
         <div className="text">{text}</div>
         <img className="percent-100" src={`${process.env.PUBLIC_URL}/img/assets/percent-100.svg`} alt="" />
       </STYLED_NAME>

@@ -26,6 +26,7 @@ const LEFT_SECTION = styled.div`
       .ls-end-text {
         font-size: 12px;
         font-weight: 600;
+        color: ${theme.text7};
       }
 
       .ls-favorite {

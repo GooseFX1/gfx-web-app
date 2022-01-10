@@ -13,7 +13,7 @@ const NFT_DETAILS = styled.div`
     height: 71vh;
     padding: ${theme.margins['9x']} ${theme.margins['11x']} ${theme.margins['3x']} ${theme.margins['11x']};
     margin: 0 auto;
-    background-color: ${theme.bg3};
+    background-color: ${theme.nftDetailBackground};
     overflow-y: auto;
     ${theme.flexCenter}
 
@@ -29,7 +29,7 @@ const NFT_DETAILS = styled.div`
       left: 30px;
       transform: rotate(90deg);
       width: 25px;
-      filter: invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%);
+      filter: ${theme.filterBackIcon};
       cursor: pointer;
     }
 

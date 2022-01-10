@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { mockData } from './mockData'
 import styled, { css } from 'styled-components'
 import { Table } from 'antd'
 import { columns } from './Columns'
@@ -48,7 +47,7 @@ const STYLED_TABLE_LIST = styled(Table)`
     > tr {
       &:first-child {
         td {
-          background-color: transparent;
+          background-color: ${({ theme }) => theme.bg3};
         }
       }
       &.ant-table-expanded-row {
@@ -101,7 +100,7 @@ const ExpandIcon = (props) => {
   )
 }
 
-export const TableList = () => {
+export const TableList = ({ dataSource }: any) => {
   const [eKeys, setEKeys] = useState([])
   const onExpandIcon = (id) => {
     const temp = [...eKeys]
@@ -114,7 +113,7 @@ export const TableList = () => {
     <STYLED_TABLE_LIST
       rowKey="id"
       columns={columns}
-      dataSource={mockData}
+      dataSource={dataSource}
       pagination={false}
       bordered={false}
       expandedRowKeys={eKeys}

@@ -15,6 +15,9 @@ const STYLED_TOGGLE = styled.div`
     height: 45px;
     background: #000;
     border: none;
+    &.ant-switch-checked {
+      background: linear-gradient(to bottom, #9625ae, #411c48);
+    }
   }
   .gray {
     width: 97px;
@@ -58,11 +61,14 @@ const STYLED_TOGGLE = styled.div`
       display: none;
     }
     &.ant-switch-checked {
+      background: black;
       .ant-switch-inner {
         background: #bb3535;
         margin-right: 0;
         margin-left: auto;
         transition: margin 0.3s ease;
+        background: #bb3535;
+        border-color: #bb3535;
       }
     }
   }

@@ -8,6 +8,7 @@ export interface Colors {
   black: Color
 
   // text
+  text0: Color
   text1: Color
   text1h: Color
   text2: Color
@@ -15,8 +16,13 @@ export interface Colors {
   text4: Color
   text5: Color
   text6: Color
+  text7: Color
+  text8: Color
+  text9: Color
+  text10: Color
 
   // backgrounds / greys
+  bg0: Color
   bg1: Color
   bg2: Color
   bg3: Color
@@ -31,6 +37,7 @@ export interface Colors {
   grey4: Color
   grey5: Color
   darkButton: Color
+  scrollBarColor: Color
 
   // speciality colors
   appLayoutFooterBorder: Color
@@ -40,7 +47,48 @@ export interface Colors {
   textBox: Color
   walletModalWallet: Color
   searchbarBackground: Color
+  searchbarSmallBackground: Color
   collectionHeader: Color
+
+  // modal
+  closeIconColor: Color
+
+  // avatar
+  avatarBackground: Color
+  avatarInnerBackground: Color
+
+  // upload image
+  uploadImageBackground: Color
+
+  // input bg
+  inputBg: Color
+
+  // btn Icon (Plus, add more), btn Next Step Background
+  btnIconBg: Color
+  btnNextStepBg: Color
+
+  // time panel
+  timePanelBackground: Color
+
+  // nft detail
+  nftDetailBackground: Color
+
+  // tab content current bid
+  tabContentBidBackground: Color
+  tabContentBidFooterBackground: Color
+  borderColorTabBidFooter: Color
+
+  // trading history tab content
+  tradingHistoryTabContentBackground: Color
+
+  // hover tr table
+  hoverTrTableBackground: Color
+
+  // atrribute tab content
+  atrributeBg: Color
+
+  // main tab
+  tabNameColor: Color
 
   // primary
   primary1: Color
@@ -57,6 +105,10 @@ export interface Colors {
   bids: Color
   error: Color
   success: Color
+
+  // Filter
+  filterBackIcon: Color
+  filterHeartIcon: Color
 }
 
 export type Font = string
@@ -120,5 +172,6 @@ declare module 'styled-components' {
 
     // mixins
     measurements: (number) => FlattenSimpleInterpolation
+    customScrollBar: (number) => FlattenInterpolation<ThemeProps<DefaultTheme>>
   }
 }

@@ -34,6 +34,7 @@ const HEADER = styled.div<{ $side: MarketSide }>`
 
 const LOADER = styled(Skeleton.Input)`
   width: 100%;
+  max-height: 328px;
 
   span {
     height: 10px !important;
@@ -48,7 +49,10 @@ const ORDERS = styled.div<{ $visible: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   justify-content: space-between;
   align-items: center;
-  max-height: ${({ $visible }) => ($visible ? '1000px' : '212px')};
+  max-height: ${({ $visible }) => ($visible ? '328px' : 'auto')};
+  padding-right: 2px;
+  overflow-y: scroll;
+  ${({ theme }) => theme.customScrollBar('4px')};
   transition: max-height ${({ theme }) => theme.mainTransitionTime} ease-in-out;
 `
 
@@ -102,7 +106,7 @@ const SIDE = styled(SpaceBetweenDiv)<{ $side: MarketSide }>`
     display: block;
     position: absolute;
     bottom: -6px;
-    left: ${({ $side }) => ($side === 'bids' ? '0' : `calc(${TRADE_ORDER_WIDTH} - 20px - 55%)`)};
+    left: ${({ $side }) => ($side === 'bids' ? '0' : `calc(${TRADE_ORDER_WIDTH} - 12px - 55%)`)};
     width: ${({ $side }) => ($side === 'bids' ? '36.5%' : '35%')};
     height: 2px;
     ${({ theme }) => theme.roundedBorders}
@@ -123,11 +127,10 @@ const SIZE = styled.span<{ $side: MarketSide }>`
   height: 100%;
   background-color: ${({ theme, $side }) => theme[$side]}50;
 `
-
 const WRAPPER = styled.div`
   position: relative;
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['2x']}
-    ${({ theme }) => theme.margins['1.5x']};
+  padding: ${({ theme }) => theme.margins['2x']} calc(${({ theme }) => theme.margins['2x']} - 2px)
+    ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['1.5x']};
   border-radius: 10px;
   background-color: ${({ theme }) => theme.bg3};
   overflow: hidden;
@@ -183,7 +186,7 @@ export const OrderBook: FC = () => {
           <span>{symbol} Value</span>
         </SpaceBetweenDiv>
       </HEADER>
-      <ORDERS $visible={order.isHidden}>
+      <ORDERS $visible={order.isHidden || !slicedOrderBook.length}>
         {!slicedOrderBook.length ? (
           <Loader />
         ) : (

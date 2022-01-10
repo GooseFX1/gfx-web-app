@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Image } from 'antd'
-import { ArrowClicker } from '../../../components'
 import { MainText } from '../../../styles'
 import { useHistory } from 'react-router-dom'
 
@@ -11,27 +10,29 @@ const UPLOAD_CONTENT = styled.div`
   align-items: center;
   flex-direction: column;
   padding: ${({ theme }) => theme.margins['8x']} ${({ theme }) => theme.margins['6x']};
-`
+  position: relative;
 
-const LEFT_ARROW = styled(ArrowClicker)`
-  width: 30px;
-  transform: rotateZ(90deg);
-  margin-right: ${({ theme }) => theme.margins['2x']};
-  position: absolute;
-  left: ${({ theme }) => theme.margins['6x']};
-  top: ${({ theme }) => theme.margins['6x']};
+  .collectible-back-icon {
+    position: absolute;
+    top: 55px;
+    left: 55px;
+    transform: rotate(90deg);
+    width: 36px;
+    filter: ${({ theme }) => theme.filterBackIcon};
+    cursor: pointer;
+  }
 `
 
 const TITLE = MainText(styled.div`
   font-size: 30px;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text7} !important;
   text-align: center;
   font-weight: 600;
 `)
 
 const DESCRIPTION = MainText(styled.div`
   font-size: 15px;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text8} !important;
   text-align: center;
   font-weight: 600;
   margin-top: ${({ theme }) => theme.margins['4x']};
@@ -40,7 +41,7 @@ const DESCRIPTION = MainText(styled.div`
 
 const SMALL_DESCRIPTION = MainText(styled.div`
   font-size: 13px;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text8} !important;
   text-align: center;
   font-weight: 600;
   margin-bottom: ${({ theme }) => theme.margins['6x']};
@@ -50,7 +51,7 @@ const UPLOAD_FILED = styled.div`
   width: 250px;
   height: 250px;
   border-radius: 20px;
-  background-color: #131313;
+  background-color: ${({ theme }) => theme.uploadImageBackground};
   cursor: pointer;
   justify-content: center;
   align-items: center;
@@ -81,11 +82,12 @@ const UPLOAD_SECTION = styled.div`
 const IMAGE_COUNT_DESC = styled(DESCRIPTION)`
   margin-top: ${({ theme }) => theme.margins['2.5x']};
   margin-bottom: ${({ theme }) => 0};
+  color: #fff !important;
 `
 
 const UPLOAD_TEXT = MainText(styled.div`
   font-size: 20px;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text8} !important;
   text-align: center;
   font-weight: 600;
   margin-top: ${({ theme }) => theme.margins['4x']};
@@ -96,7 +98,12 @@ export const Collectible = () => {
   return (
     <>
       <UPLOAD_CONTENT>
-        <LEFT_ARROW onClick={() => history.goBack()} />
+        <img
+          className="collectible-back-icon"
+          src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
+          alt="back"
+          onClick={() => history.goBack()}
+        />
         <TITLE>Create a collectible</TITLE>
         <DESCRIPTION>
           Choose “Single” if you want your collectible to be one of a kind

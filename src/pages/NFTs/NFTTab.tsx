@@ -31,7 +31,7 @@ const NFT_TAB = styled.div`
     }
     &.ant-tabs-tab-active {
       .ant-tabs-tab-btn {
-        color: #fff;
+        color: ${({ theme }) => theme.text7};
         font-weight: 600;
       }
     }

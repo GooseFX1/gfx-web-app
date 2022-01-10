@@ -1,8 +1,9 @@
-import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
+import React, { BaseSyntheticEvent, FC, useMemo, useCallback, useRef } from 'react'
 import { Input, Slider } from 'antd'
 import { css } from 'styled-components'
 import { FieldHeader, Picker } from './shared'
 import { useDarkMode, useCrypto, useOrder, useTokenRegistry, useAccounts } from '../../../context'
+import { removeFloatingPointError, debounce } from '../../../utils'
 
 export const Total: FC = () => {
   const { getUIAmount } = useAccounts()
@@ -32,6 +33,13 @@ export const Total: FC = () => {
     }
   `
 
+  const handleSliderChange = (total: number) =>
+    setOrder((prevState) => ({
+      ...prevState,
+      size: removeFloatingPointError(total / (order.price || 1)),
+      total
+    }))
+
   return (
     <div className="order-total">
       <style>{localCSS}</style>
@@ -56,7 +64,7 @@ export const Total: FC = () => {
           <Slider
             max={userBalance}
             min={0}
-            onChange={(total) => setOrder((prevState) => ({ ...prevState, total }))}
+            onChange={handleSliderChange}
             step={selectedCrypto.market?.tickSize}
             value={order.total}
           />

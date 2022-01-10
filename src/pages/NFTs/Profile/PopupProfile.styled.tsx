@@ -3,18 +3,18 @@ import { Modal, Form } from 'antd'
 
 export const StyledPopupProfile = styled(Modal)`
   ${({ theme }) => `
-  background: #2a2a2a;
+  background: ${theme.bg3};
   ${theme.largeBorderRadius}
   width: 500px !important;
   height: 757px;
   .ant-modal-header {
     ${theme.largeBorderRadius}
-    background: #2a2a2a;
+    background: ${theme.bg3};
     padding: ${theme.margins['4x']} ${theme.margins['5.5x']} 0 ${theme.margins['5.5x']};
     border: none;
     .ant-modal-title {
       font-size: 25px;
-      color: #fff;
+      color: ${theme.text7};
       font-weight: 600;
     }
   }
@@ -35,11 +35,11 @@ export const StyledPopupProfile = styled(Modal)`
     font-size: 26px;
     line-height: 1;
     svg {
-      color: #fff;
+      color: ${theme.closeIconColor};
     }
   }
   .avatar-wrapper {
-    background-color: #000;
+    background-color: ${theme.avatarBackground};
     border-style: dashed;
     border-color: #848484;
     border-width: 2px;
@@ -56,7 +56,7 @@ export const StyledPopupProfile = styled(Modal)`
     }
     .text {
       font-size: 10px;
-      color: #fff;
+      color: ${theme.text8};
       text-align: center;
       max-width: 70px;
       margin-top: ${theme.margins['0.5x']};
@@ -64,7 +64,7 @@ export const StyledPopupProfile = styled(Modal)`
     .note {
       padding-left: ${theme.margins['2.5x']};
       font-size: 14px;
-      color: #fff;
+      color: ${theme.text8};
     }
     .image-wrap {
       position: relative;
@@ -140,7 +140,7 @@ export const StyledFormProfile = styled(Form)`
     label {
       font-size: 17px;
       font-weight: 600;
-      color: #fff;
+      color: ${theme.text7};
       line-height: 1;
     }
     .ant-form-item-optional {
@@ -165,6 +165,7 @@ export const StyledFormProfile = styled(Form)`
       border-bottom: 2px solid #a8a8a8;
       text-align: left;
       padding-left: 0;
+      color: ${theme.text8};
       &:focus {
         box-shadow: none;
       }
@@ -173,7 +174,7 @@ export const StyledFormProfile = styled(Form)`
   .section-label {
     font-size: 17px;
     font-weight: 600;
-    color: #fff;
+    color: ${theme.text7};
     line-height: 1;
     margin: ${theme.margins['3x']} 0 ${theme.margins['2x']};
   }
