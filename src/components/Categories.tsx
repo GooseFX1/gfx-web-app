@@ -21,6 +21,41 @@ const WRAPPER = styled.button`
   }
 `
 
+const STYLED_POOL_MENU = styled(Menu)`
+  &.dot-menu {
+    min-width: 251px;
+    background-color: #1e1e1e;
+    padding: ${({ theme }) => theme.margins['4.5x']} ${({ theme }) => theme.margins['2.5x']};
+    li {
+      padding-bottom: 25px;
+      display: flex;
+      span {
+        font-family: Avenir;
+        font-size: 15px;
+        font-weight: 900;
+        color: #fff;
+      }
+      .black-dot {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #0f0f0f;
+        display: flex;
+        align-items: center;
+      }
+
+      .green-dot {
+        width: 12px;
+        height: 12px;
+        margin: 0 auto;
+        border-radius: 50%;
+        background-color: #50bb35;
+        display: block;
+      }
+    }
+  }
+`
+
 type CategoryItem = {
   name: string
   icon: string
@@ -31,32 +66,41 @@ const Overlay: FC<{
   setCurrentTitle: Dispatch<SetStateAction<string>>
   setDropdownVisible: Dispatch<SetStateAction<boolean>>
   categories: Array<CategoryItem>
-}> = ({ setArrowRotation, setCurrentTitle, setDropdownVisible, categories }) => {
+  currentTitle?: string
+  type?: string
+  onChange?: (val: any) => void
+}> = ({ setArrowRotation, setCurrentTitle, setDropdownVisible, categories, currentTitle, type, onChange }) => {
   const handleClick = useCallback(
     (name: string) => {
       setArrowRotation(false)
       setCurrentTitle(name)
       setDropdownVisible(false)
+      onChange && onChange(name)
     },
-    [setArrowRotation, setCurrentTitle, setDropdownVisible]
+    [onChange, setArrowRotation, setCurrentTitle, setDropdownVisible]
   )
-
   return (
-    <Menu>
+    <STYLED_POOL_MENU className={`${type === 'dot' ? 'dot-menu' : ''}`}>
       {categories.map((item) => (
-        <MenuItem onClick={() => handleClick(item.name)}>
+        <MenuItem onClick={() => handleClick(item.name)} className={`${currentTitle === item.name ? 'active' : ''}`}>
           <span>{item.name}</span>
-          <img src={`${process.env.PUBLIC_URL}/img/assets/${item.icon}.svg`} alt="disconnect" />
+          {type !== 'dot' ? (
+            <img src={`${process.env.PUBLIC_URL}/img/assets/${item.icon}.svg`} alt="disconnect" />
+          ) : (
+            <span className="black-dot">{currentTitle === item.name && <span className="green-dot"></span>}</span>
+          )}
         </MenuItem>
       ))}
-    </Menu>
+    </STYLED_POOL_MENU>
   )
 }
 
 export const Categories: FC<{
   categories: CategoryItem[]
+  type?: string
   [x: string]: any
-}> = ({ categories, ...rest }) => {
+  onChange?: (title: string) => void
+}> = ({ categories, type, onChange, ...rest }) => {
   const [arrowRotation, setArrowRotation] = useState(false)
   const [currentTitle, setCurrentTitle] = useState(categories[0]?.name)
   const [dropdownVisible, setDropdownVisible] = useState(false)
@@ -79,6 +123,9 @@ export const Categories: FC<{
             setCurrentTitle={setCurrentTitle}
             setDropdownVisible={setDropdownVisible}
             categories={categories}
+            currentTitle={currentTitle}
+            type={type}
+            onChange={onChange}
           />
         }
         visible={dropdownVisible}

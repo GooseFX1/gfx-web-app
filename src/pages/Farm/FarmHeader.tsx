@@ -18,10 +18,16 @@ const STYLED_FARM_HEADER = styled.div`
       background: #000;
     }
   }
-  .categories {
+  .pools {
     height: 60px;
-    min-width: 150px;
+    max-width: 132px;
     margin-left: ${({ theme }) => theme.margins['4.5x']};
+    > span {
+      font-family: Montserrat;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
   }
   .live {
     margin-left: ${({ theme }) => theme.margins['4.5x']};
@@ -35,12 +41,12 @@ const STYLED_RIGHT = styled.div`
   justify-content: flex-start;
   padding-left: ${({ theme }) => theme.margins['11x']};
 `
-export const FarmHeader = () => (
+export const FarmHeader = ({ onFilter }: any) => (
   <STYLED_FARM_HEADER>
     <Toggle className="toggle" text="Staked Only" defaultUnchecked />
     <STYLED_RIGHT>
       <SearchBar className="search-bar" placeholder="Search by token symbol" />
-      <Categories className="categories" categories={categories} />
+      <Categories className="pools" categories={categories} />
       <Toggle className="live" checkedChildren="Ended" unCheckedChildren="Live" defaultUnchecked />
     </STYLED_RIGHT>
   </STYLED_FARM_HEADER>

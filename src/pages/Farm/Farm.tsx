@@ -1,7 +1,8 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import styled from 'styled-components'
 import { TableList } from './TableList'
 import { FarmHeader } from './FarmHeader'
+import { mockDataSource } from './mockData'
 
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -37,6 +38,16 @@ const SCROLLING_OVERLAY = styled.div`
 `
 
 export const Farm: FC = () => {
+  const [dataSource, setDataSource] = useState(mockDataSource)
+  const onFilter = (val) => {
+    if (val === 'All pools') {
+      setDataSource(mockDataSource)
+      return
+    }
+    const tmp = JSON.parse(JSON.stringify(mockDataSource))
+    const filteredData = tmp.filter((item) => item.type === val)
+    setDataSource(filteredData)
+  }
   return (
     <WRAPPER>
       <div>
@@ -44,8 +55,8 @@ export const Farm: FC = () => {
           <SCROLLING_OVERLAY />
           <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
-          <FarmHeader />
-          <TableList />
+          <FarmHeader onFilter={onFilter} />
+          <TableList dataSource={dataSource} />
           <SCROLLING_OVERLAY />
         </BODY_NFT>
       </div>
