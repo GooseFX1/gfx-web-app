@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Header } from '../Header'
 import NFTHeaderCarousel from '../NFTHeaderCarousel'
 import NFTFooter from '../NFTFooter'
-import NFTCarousel, { NFTCarouselType } from '../NFTCarousel'
+import CollectionCarousel, { COLLECTION_TYPES } from '../CollectionCarousel'
+import apiClient from '../../../api'
+import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
+// import { allCollections, featuredCollections, upcomingCollections } from './mockData'
 
 const SCROLLING_CONTENT = styled.div`
   overflow-y: overlay;
@@ -13,9 +16,61 @@ const SCROLLING_CONTENT = styled.div`
 `
 
 const NFTHome = () => {
-  const prevScrollY = React.useRef(0)
-  const [goingUp, setGoingUp] = React.useState(false)
-  const [isBigCarouselVisible, setBisCarouselVisible] = React.useState(true)
+  const prevScrollY = useRef(0)
+  const [goingUp, setGoingUp] = useState<boolean>(false)
+  const [isBigCarouselVisible, setBisCarouselVisible] = useState<boolean>(true)
+  const [allCollections, setAllCollections] = useState<Array<any>>([])
+  const [featuredCollections, setFeaturedCollections] = useState<Array<any>>([])
+  const [upcomingCollections, setUpcomingCollections] = useState<Array<any>>([])
+  const [isAllLoading, setIsAllLoading] = useState<boolean>(false)
+  const [isUpcomingLoading, setIsUpcomingLoading] = useState<boolean>(false)
+  const [isFeaturedLoading, setIsFeaturedLoading] = useState<boolean>(false)
+
+  // TODO: move to a custom context provider
+  const getAllCollections = async () => {
+    try {
+      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS)
+      setAllCollections(res.data)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsFeaturedLoading(false)
+    }
+  }
+
+  const getFeaturedCollections = async () => {
+    try {
+      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.FEATURED_COLLECTIONS)
+      setFeaturedCollections(res.data)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsFeaturedLoading(false)
+    }
+  }
+
+  const getUpcomingCollections = async () => {
+    try {
+      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.UPCOMING_COLLECTIONS)
+      setUpcomingCollections(res.data)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsUpcomingLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    setIsAllLoading(true)
+    getAllCollections()
+
+    setIsFeaturedLoading(true)
+    getFeaturedCollections()
+
+    setIsUpcomingLoading(true)
+    getUpcomingCollections()
+    return () => {}
+  }, [])
 
   const onScroll = (e) => {
     const currentScrollY = e.target.scrollTop
@@ -40,9 +95,26 @@ const NFTHome = () => {
       <NFTHeaderCarousel isBig={false} isBigVisible={isBigCarouselVisible} />
       <SCROLLING_CONTENT onScroll={onScroll}>
         <NFTHeaderCarousel isBig isBigVisible={isBigCarouselVisible} />
-        <NFTCarousel type={NFTCarouselType.launchPad} title="Launchpad" showTopArrow isLaunch />
-        <NFTCarousel type={NFTCarouselType.upcomming} title="Upcoming Collections" />
-        <NFTCarousel type={NFTCarouselType.popular} title="Popular Collections" />
+        <CollectionCarousel
+          collections={allCollections}
+          collectionType={COLLECTION_TYPES.NFT_COLLECTION}
+          title="Launchpad"
+          showTopArrow
+          isLaunch
+          isLoading={isAllLoading}
+        />
+        <CollectionCarousel
+          collections={upcomingCollections}
+          collectionType={COLLECTION_TYPES.NFT_UPCOMING_COLLECTION}
+          title="Upcoming Collections"
+          isLoading={isUpcomingLoading}
+        />
+        <CollectionCarousel
+          collections={featuredCollections}
+          collectionType={COLLECTION_TYPES.NFT_FEATURED_COLLECTION}
+          title="Popular Collections"
+          isLoading={isFeaturedLoading}
+        />
         <NFTFooter />
       </SCROLLING_CONTENT>
     </>
