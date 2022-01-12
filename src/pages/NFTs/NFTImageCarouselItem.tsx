@@ -4,8 +4,8 @@ import styled from 'styled-components'
 import { useDarkMode } from '../../context'
 import { colors } from '../../theme'
 import { ButtonWrapper } from './NFTButton'
-import { NFTCarouselType } from './NFTCarousel'
 import { useHistory } from 'react-router'
+import { COLLECTION_TYPES } from './CollectionCarousel'
 
 const CAROUSEL_IMAGE = styled(Image)`
   cursor: pointer;
@@ -35,7 +35,7 @@ const CAROUSEL_SUB_TITLE = styled.span`
 const CAROUSEL_ITEM = styled.div`
   display: flex;
   flex-direction: column;
-  margin-right: ${({ theme }) => theme.margins['4x']}; ;
+  padding: 0 ${({ theme }) => theme.margins['4x']}; ;
 `
 
 const UP_COMMING_FOOTER = styled.div`
@@ -138,35 +138,46 @@ const PopularInfo = ({ item }: any) => {
   return (
     <POPULAR_FOOTER>
       <GROUP_BLOCK_TEXTS>
-        <CAROUSEL_LABEL> {item.title}</CAROUSEL_LABEL>
+        <CAROUSEL_LABEL> {item.featured_collection_name}</CAROUSEL_LABEL>
         <CAROUSEL_SUB_TITLE>{item.pieces} mint pieces</CAROUSEL_SUB_TITLE>
       </GROUP_BLOCK_TEXTS>
     </POPULAR_FOOTER>
   )
 }
 
-const NFTImageCarouselItem: FC<{ item: any; type?: NFTCarouselType }> = ({ item, type }) => {
+const NFTImageCarouselItem: FC<{ item: any; type: string }> = ({ item, type }) => {
   const history = useHistory()
   const goToCollection = () => history.push('/NFTs/collection')
+
   const renderItemFooter = () => {
     switch (type) {
-      case NFTCarouselType.launchPad:
+      case COLLECTION_TYPES.NFT_COLLECTION:
         return <LaunchPadInfo item={item} />
-      case NFTCarouselType.upcomming:
+      case COLLECTION_TYPES.NFT_UPCOMING_COLLECTION:
         return <UpCommingInfo item={item} />
-      case NFTCarouselType.popular:
+      case COLLECTION_TYPES.NFT_FEATURED_COLLECTION:
         return <PopularInfo item={item} />
       default:
         return <LaunchPadInfo item={item} />
     }
   }
+  // TODO: return placeholder image for  default case and case of item.banner being an empty string
+  const renderImage = () => {
+    switch (type) {
+      case COLLECTION_TYPES.NFT_COLLECTION:
+        return item.banner_link
+      case COLLECTION_TYPES.NFT_UPCOMING_COLLECTION:
+        return item.upcoming_collection_banner_url
+      case COLLECTION_TYPES.NFT_FEATURED_COLLECTION:
+        return item.featured_collection_banner_url
+      default:
+        return ''
+    }
+  }
+
   return (
     <CAROUSEL_ITEM>
-      <CAROUSEL_IMAGE
-        preview={false}
-        src="https://images.unsplash.com/photo-1634985492257-06c8ee26b770?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1932&q=80"
-        onClick={goToCollection}
-      />
+      <CAROUSEL_IMAGE preview={false} src={renderImage()} onClick={goToCollection} />
       {renderItemFooter()}
     </CAROUSEL_ITEM>
   )
