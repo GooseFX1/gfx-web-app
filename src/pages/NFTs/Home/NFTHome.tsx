@@ -4,7 +4,8 @@ import { Header } from '../Header'
 import NFTHeaderCarousel from '../NFTHeaderCarousel'
 import NFTFooter from '../NFTFooter'
 import CollectionCarousel, { COLLECTION_TYPES } from '../CollectionCarousel'
-import apiClient, { NFT_MARKET_API } from '../../../api/api'
+import apiClient from '../../../api'
+import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
 // import { allCollections, featuredCollections, upcomingCollections } from './mockData'
 
 const SCROLLING_CONTENT = styled.div`
@@ -28,7 +29,7 @@ const NFTHome = () => {
   // TODO: move to a custom context provider
   const getAllCollections = async () => {
     try {
-      const res = await apiClient().get(NFT_MARKET_API.ALL_COLLECTIONS)
+      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS)
       setAllCollections(res.data)
     } catch (err) {
       console.error(err)
@@ -39,7 +40,7 @@ const NFTHome = () => {
 
   const getFeaturedCollections = async () => {
     try {
-      const res = await apiClient().get(NFT_MARKET_API.FEATURED_COLLECTIONS)
+      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.FEATURED_COLLECTIONS)
       setFeaturedCollections(res.data)
     } catch (err) {
       console.error(err)
@@ -50,7 +51,7 @@ const NFTHome = () => {
 
   const getUpcomingCollections = async () => {
     try {
-      const res = await apiClient().get(NFT_MARKET_API.UPCOMING_COLLECTIONS)
+      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.UPCOMING_COLLECTIONS)
       setUpcomingCollections(res.data)
     } catch (err) {
       console.error(err)
