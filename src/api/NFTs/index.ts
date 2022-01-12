@@ -1,10 +1,6 @@
-import axios from 'axios'
+export const NFT_API_BASE = 'nest-api'
 
-export const API_BASE_URL = `https://${
-  process.env.NODE_ENV === 'production' ? 'nest-api' : 'nest-api.staging'
-}.goosefx.io`
-
-export enum NFT_MARKET_API {
+export enum NFT_API_ENDPOINTS {
   SESSION_USER = '/user',
   USER_ACTIVITY = '/user-activity',
   ALL_COLLECTIONS = '/all-collections',
@@ -17,12 +13,3 @@ export enum NFT_MARKET_API {
   BID = '/bid',
   ASK = '/ask'
 }
-
-const apiClient = () => {
-  return axios.create({
-    baseURL: API_BASE_URL,
-    responseType: 'json'
-  })
-}
-
-export default apiClient
