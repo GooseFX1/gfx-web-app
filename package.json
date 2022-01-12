@@ -51,7 +51,7 @@
     "workbox-webpack-plugin": "^6.2.4"
   },
   "scripts": {
-    "start": "PORT=8080 craco start",
+    "start": "PORT=3000 craco start",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
