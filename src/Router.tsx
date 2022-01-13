@@ -3,7 +3,7 @@ import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import { AppLayout } from './layouts'
 import { Crypto, Farm, NFTs, Synths, Swap } from './pages'
-import { APP_PAGE_HEIGHT, CenteredDiv } from './styles'
+import { CenteredDiv } from './styles'
 import useBlacklisted from './utils/useBlacklisted'
 
 const WRAPPER = styled(CenteredDiv)`
