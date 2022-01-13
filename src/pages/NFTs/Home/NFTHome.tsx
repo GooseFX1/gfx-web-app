@@ -1,12 +1,10 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, FC } from 'react'
 import styled from 'styled-components'
 import { Header } from '../Header'
 import NFTHeaderCarousel from '../NFTHeaderCarousel'
 import NFTFooter from '../NFTFooter'
 import CollectionCarousel, { COLLECTION_TYPES } from '../CollectionCarousel'
-import apiClient from '../../../api'
-import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
-// import { allCollections, featuredCollections, upcomingCollections } from './mockData'
+import { NFTCollectionProvider, useNFTCollection } from '../../../context'
 
 const SCROLLING_CONTENT = styled.div`
   overflow-y: overlay;
@@ -15,60 +13,31 @@ const SCROLLING_CONTENT = styled.div`
   position: relative;
 `
 
-const NFTHome = () => {
+const NFTLandingPage: FC = (): JSX.Element => {
+  const {
+    allCollections,
+    featuredCollections,
+    upcomingCollections,
+    fetchAllCollections,
+    fetchFeaturedCollections,
+    fetchUpcomingCollections
+  } = useNFTCollection()
   const prevScrollY = useRef(0)
   const [goingUp, setGoingUp] = useState<boolean>(false)
   const [isBigCarouselVisible, setBisCarouselVisible] = useState<boolean>(true)
-  const [allCollections, setAllCollections] = useState<Array<any>>([])
-  const [featuredCollections, setFeaturedCollections] = useState<Array<any>>([])
-  const [upcomingCollections, setUpcomingCollections] = useState<Array<any>>([])
   const [isAllLoading, setIsAllLoading] = useState<boolean>(false)
-  const [isUpcomingLoading, setIsUpcomingLoading] = useState<boolean>(false)
   const [isFeaturedLoading, setIsFeaturedLoading] = useState<boolean>(false)
-
-  // TODO: move to a custom context provider
-  const getAllCollections = async () => {
-    try {
-      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS)
-      setAllCollections(res.data)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setIsFeaturedLoading(false)
-    }
-  }
-
-  const getFeaturedCollections = async () => {
-    try {
-      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.FEATURED_COLLECTIONS)
-      setFeaturedCollections(res.data)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setIsFeaturedLoading(false)
-    }
-  }
-
-  const getUpcomingCollections = async () => {
-    try {
-      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.UPCOMING_COLLECTIONS)
-      setUpcomingCollections(res.data)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setIsUpcomingLoading(false)
-    }
-  }
+  const [isUpcomingLoading, setIsUpcomingLoading] = useState<boolean>(false)
 
   useEffect(() => {
     setIsAllLoading(true)
-    getAllCollections()
+    fetchAllCollections().then((res) => setIsAllLoading(false))
 
     setIsFeaturedLoading(true)
-    getFeaturedCollections()
+    fetchFeaturedCollections().then((res) => setIsFeaturedLoading(false))
 
     setIsUpcomingLoading(true)
-    getUpcomingCollections()
+    fetchUpcomingCollections().then((res) => setIsUpcomingLoading(false))
     return () => {}
   }, [])
 
@@ -118,6 +87,14 @@ const NFTHome = () => {
         <NFTFooter />
       </SCROLLING_CONTENT>
     </>
+  )
+}
+
+const NFTHome: FC = (): JSX.Element => {
+  return (
+    <NFTCollectionProvider>
+      <NFTLandingPage />
+    </NFTCollectionProvider>
   )
 }
 
