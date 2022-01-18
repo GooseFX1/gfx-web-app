@@ -5,7 +5,10 @@ const DOMAIN = `${process.env.NODE_ENV === 'production' ? '' : 'staging.'}goosef
 const apiClient = (base: string) => {
   return axios.create({
     baseURL: `https://${base}.${DOMAIN}`,
-    responseType: 'json'
+    responseType: 'json',
+    headers: {
+      'Content-Type': 'application/json'
+    }
   })
 }
 
