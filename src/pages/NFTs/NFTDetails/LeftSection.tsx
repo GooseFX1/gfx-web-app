@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { useNFTDetails } from '../../../context'
 import { TimePanel } from './RemainingPanel'
 import { ProgressPanel } from './ProgressPanel'
-import { NFTDEtailsProviderMode } from '../../../types/nft_details'
+import { NFTDetailsProviderMode } from '../../../types/nft_details'
 import { ReactComponent as FixedPriceIcon } from '../../../assets/fixed-price.svg'
 import { ReactComponent as OpenBidIcon } from '../../../assets/open-bid.svg'
 
@@ -57,14 +57,21 @@ const LEFT_SECTION = styled.div`
   `}
 `
 
-export const LeftSection: FC<{ mode: NFTDEtailsProviderMode }> = ({ mode, ...rest }) => {
+export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...rest }) => {
   const { general } = useNFTDetails()
-  const { image, isFavorite, hearts, remaining } = general
+  const isFavorite = true
+  const hearts = 12
+  const remaining = {
+    days: '10',
+    hours: '2',
+    minutes: '43'
+  }
+
   const isShowReamingTime = mode === 'my-created-NFT' || mode === 'live-auction-NFT'
 
   return (
     <LEFT_SECTION {...rest}>
-      <img className="ls-image" src={image} alt="" />
+      <img className="ls-image" src={general.image_url} alt="" />
       <div className="ls-bottom-panel">
         <Row justify={mode !== 'mint-item-view' ? 'space-between' : 'start'} align="middle" className="ls-favorite">
           <Col>{isShowReamingTime && <div className="ls-end-text">Auction ends in:</div>}</Col>
