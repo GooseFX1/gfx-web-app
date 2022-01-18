@@ -1,6 +1,7 @@
 import { Row } from 'antd'
 import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
+import { ISingleNFT } from '../../../types/nft_details.d'
 
 const CARD = styled.div<{ type: string; status: string }>`
   padding-bottom: ${({ theme }) => theme.margins['1.5x']};
@@ -179,36 +180,34 @@ const getButtonText = (type: string, status: string): string => {
   }
 }
 
-interface CardData {
-  id: string
-  thumbnail: string
-  name: string
-  price: number
-  status: string
-  hearts: number
-  remaining: string
-  isFeatured: boolean
-  isFavorite: boolean
-}
-
 type Props = {
   type: 'carousel' | 'grid'
   className?: string
-  data: CardData
+  singleNFT: ISingleNFT
 }
 
-export const Card = ({ type, data, className, ...rest }: Props) => {
+export const Card = ({ type, singleNFT, className, ...rest }: Props) => {
+  const localNFT = {
+    ...singleNFT,
+    price: 1499,
+    status: 'sold_out',
+    hearts: 0,
+    remaining: '02d:20h:10min',
+    isFeatured: false,
+    isFavorite: false
+  }
+
   return (
-    <CARD type={type} status={data.status} {...rest}>
+    <CARD type={type} status={localNFT.status} {...rest}>
       <div className="card-image-wrapper">
-        <img className="card-image" src={`${process.env.PUBLIC_URL}/img/assets/card-1.png`} alt="" />
-        <div className="card-remaining">{data.remaining}</div>
+        <img className="card-image" src={localNFT.image_url} alt="" />
+        <div className="card-remaining">{localNFT.remaining}</div>
       </div>
       <div className="card-info">
         <Row justify="space-between" align="middle">
           <Row align="middle">
-            <div className="card-name">{data.name}</div>
-            {data.isFeatured && (
+            <div className="card-name">{localNFT.nft_name}</div>
+            {localNFT.isFeatured && (
               <img
                 className="card-featured-heart"
                 src={`${process.env.PUBLIC_URL}/img/assets/heart-purple.svg`}
@@ -218,7 +217,7 @@ export const Card = ({ type, data, className, ...rest }: Props) => {
           </Row>
           <Row align="middle">
             <Row align="middle" className="card-favorite">
-              {(data.isFavorite && (
+              {(localNFT.isFavorite && (
                 <img
                   className="card-favorite-heart"
                   src={`${process.env.PUBLIC_URL}/img/assets/heart-red.svg`}
@@ -231,17 +230,17 @@ export const Card = ({ type, data, className, ...rest }: Props) => {
                   alt=""
                 />
               )}
-              <span className={`card-favorite-number ${data.isFavorite ? 'card-favorite-number-highlight' : ''}`}>
-                {data.hearts}
+              <span className={`card-favorite-number ${localNFT.isFavorite ? 'card-favorite-number-highlight' : ''}`}>
+                {localNFT.hearts}
               </span>
             </Row>
           </Row>
         </Row>
       </div>
       <Row justify="space-between" align="middle">
-        <div className="card-price">{`${moneyFormatter(data.price)} SOL`}</div>
-        <CARD_BUTTON cardStatus={data.status} cardType={type}>
-          {getButtonText(type, data.status)}
+        <div className="card-price">{`${moneyFormatter(localNFT.price)} SOL`}</div>
+        <CARD_BUTTON cardStatus={localNFT.status} cardType={type}>
+          {getButtonText(type, localNFT.status)}
         </CARD_BUTTON>
       </Row>
     </CARD>

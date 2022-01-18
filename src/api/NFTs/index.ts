@@ -7,6 +7,7 @@ export enum NFT_API_ENDPOINTS {
   FEATURED_COLLECTIONS = '/featured-collections',
   UPCOMING_COLLECTIONS = '/upcoming-collections',
   SINGLE_COLLECTION = '/collection',
+  LIVE_AUCTIONS = '/live-auctions',
   OPEN_BID = '/open-bid',
   FIXED_PRICE = '/fixed-price',
   SINGLE_NFT = '/nft',

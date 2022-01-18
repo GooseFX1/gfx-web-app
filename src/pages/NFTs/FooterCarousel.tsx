@@ -1,30 +1,53 @@
 import React from 'react'
 import Slider from 'react-slick'
-import FooterCarouselItem from './FooterCarouselItem'
 import styled from 'styled-components'
+import { ISingleNFT } from '../../types/nft_details.d'
+import { Image } from 'antd'
+import { useHistory } from 'react-router-dom'
 
-const products = [
-  { id: 1, title: 'Corrupt Catz', pieces: 441 },
-  { id: 2, title: 'Corrupt Catz', pieces: 441 },
-  { id: 3, title: 'Corrupt Catz', pieces: 441 },
-  { id: 4, title: 'Corrupt Catz', pieces: 441 },
-  { id: 5, title: 'Corrupt Catz', pieces: 441 },
-  { id: 6, title: 'Corrupt Catz', pieces: 441 },
-  { id: 7, title: 'Corrupt Catz', pieces: 441 },
-  { id: 8, title: 'Corrupt Catz', pieces: 441 },
-  { id: 9, title: 'Corrupt Catz', pieces: 441 },
-  { id: 10, title: 'Corrupt Catz', pieces: 441 },
-  { id: 11, title: 'Corrupt Catz', pieces: 441 },
-  { id: 12, title: 'Corrupt Catz', pieces: 441 },
-  { id: 13, title: 'Corrupt Catz', pieces: 441 },
-  { id: 14, title: 'Corrupt Catz', pieces: 441 },
-  { id: 15, title: 'Corrupt Catz', pieces: 441 },
-  { id: 16, title: 'Corrupt Catz', pieces: 441 }
+const products: Array<ISingleNFT> = [
+  {
+    non_fungible_id: 11,
+    nft_name: 'Thugbirdz #1234',
+    nft_description: 'A premint thugbird',
+    mint_address: '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5',
+    metadata_url: 'RANDOM_URL',
+    image_url: null,
+    animation_url: null,
+    collection_id: 14
+  },
+  {
+    non_fungible_id: 11,
+    nft_name: 'Thugbirdz #1234',
+    nft_description: 'A premint thugbird',
+    mint_address: '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5',
+    metadata_url: 'RANDOM_URL',
+    image_url: null,
+    animation_url: null,
+    collection_id: 14
+  },
+  {
+    non_fungible_id: 11,
+    nft_name: 'Thugbirdz #1234',
+    nft_description: 'A premint thugbird',
+    mint_address: '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5',
+    metadata_url: 'RANDOM_URL',
+    image_url: null,
+    animation_url: null,
+    collection_id: 14
+  }
 ]
 
 const FOOTER_SLIDER = styled(Slider)`
   width: 100%;
   margin-bottom: 48px;
+`
+
+const FOOTER_IMAGE = styled(Image)`
+  width: 110px;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  margin-right: 50px;
 `
 
 const settings = {
@@ -34,10 +57,24 @@ const settings = {
 }
 
 const FooterCarousel = () => {
+  const history = useHistory()
+
+  const handleItemClick = (id: number) => {
+    history.push('/NFTs/live-auction/11')
+  }
+
   return (
     <FOOTER_SLIDER {...settings}>
-      {products.map((item) => {
-        return <FooterCarouselItem key={item.id} item={item} />
+      {products.map((item: ISingleNFT) => {
+        return (
+          <div key={item.non_fungible_id}>
+            <FOOTER_IMAGE
+              preview={false}
+              src={`${process.env.PUBLIC_URL}/img/assets/footer-demo.png`}
+              onClick={(e) => handleItemClick(item.non_fungible_id)}
+            />
+          </div>
+        )
       })}
     </FOOTER_SLIDER>
   )

@@ -7,7 +7,7 @@ import { Loader } from '../../../components'
 import { NFTDetails } from '../NFTDetails'
 import { useNFTDetails } from '../../../context'
 // import { NFTDetailsGeneralData, detailTabData, tradingHistoryTabData, attributesTabContentData } from './mockData'
-import { BidModal } from './BidModal'
+import { PurchaseModal } from './PurchaseModal'
 
 const WRAPPED_LOADER = styled.div`
   position: relative;
@@ -17,7 +17,7 @@ const WRAPPED_LOADER = styled.div`
   align-items: center;
 `
 
-export const OpenBidNFT: FC = () => {
+export const FixedPriceNFT: FC = () => {
   const params = useParams<IAppParams>()
   const [visible, setVisible] = useState(false)
   const [err, setErr] = useState(false)
@@ -42,8 +42,8 @@ export const OpenBidNFT: FC = () => {
     <h2>Something went wrong fetching NFT details</h2>
   ) : (
     <>
-      <NFTDetails mode="open-bid-NFT" handleClickPrimaryButton={() => setVisible(true)} />
-      <BidModal visible={visible} setVisible={setVisible} />
+      <NFTDetails mode="fixed-price-NFT" handleClickPrimaryButton={() => setVisible(true)} />
+      <PurchaseModal visible={visible} setVisible={setVisible} />
     </>
   )
 }

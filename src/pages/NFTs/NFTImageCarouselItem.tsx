@@ -5,7 +5,7 @@ import { useDarkMode } from '../../context'
 import { colors } from '../../theme'
 import { ButtonWrapper } from './NFTButton'
 import { useHistory } from 'react-router'
-import { COLLECTION_TYPES } from './CollectionCarousel'
+import { COLLECTION_TYPES } from '../../types/nft_collections.d'
 
 const CAROUSEL_IMAGE = styled(Image)`
   cursor: pointer;
@@ -147,7 +147,20 @@ const PopularInfo = ({ item }: any) => {
 
 const NFTImageCarouselItem: FC<{ item: any; type: string }> = ({ item, type }) => {
   const history = useHistory()
-  const goToCollection = () => history.push('/NFTs/collection')
+
+  const goToCollection = () => {
+    switch (type) {
+      case COLLECTION_TYPES.NFT_COLLECTION:
+      case COLLECTION_TYPES.NFT_FEATURED_COLLECTION:
+        history.push(`/NFTs/collection/${item.collection_id}`)
+        break
+      case COLLECTION_TYPES.NFT_UPCOMING_COLLECTION:
+        history.push(`/NFTs/collection/${item.upcoming_id}`)
+        break
+      default:
+        console.error('Error: NFT Collection type not correct')
+    }
+  }
 
   const renderItemFooter = () => {
     switch (type) {

@@ -1,8 +1,7 @@
 import styled, { css } from 'styled-components'
 import { Col, Row, Tabs, notification } from 'antd'
-import { DetailsTabContent } from './DetailsTabContent'
 import { useNFTDetails } from '../../../context'
-import { MintItemViewStatus, NFTDEtailsProviderMode } from '../../../types/nft_details'
+import { MintItemViewStatus, NFTDetailsProviderMode } from '../../../types/nft_details'
 import { TradingHistoryTabContent } from './TradingHistoryTabContent'
 import { AttributesTabContent } from './AttributesTabContent'
 import { useState, FC } from 'react'
@@ -129,8 +128,64 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
     }
   `}
 `
+const DETAILS_TAB_CONTENT = styled.div`
+  ${({ theme }) => css`
+    height: 100%;
+    padding: ${theme.margins['0.5x']} ${theme.margins['3x']};
+    color: ${theme.white};
 
-const getButtonText = (mode: NFTDEtailsProviderMode): string => {
+    .dtc-item {
+      padding: ${theme.margins['0.5x']} 0;
+      font-size: 14px;
+      font-weight: 500;
+
+      .dtc-item-value {
+        color: #949494;
+        color: ${theme.text8};
+      }
+      .dtc-item-title {
+        color: ${theme.text7};
+      }
+    }
+  `}
+`
+
+export const tradingHistoryTab = [
+  {
+    id: '1',
+    event: 'list',
+    price: 150,
+    from: 'Evan34',
+    to: '',
+    date: '11/10/21'
+  },
+  {
+    id: '2',
+    event: 'offer',
+    price: 120.5678,
+    from: 'capital_1',
+    to: '',
+    date: '09/10/21'
+  },
+  {
+    id: '3',
+    event: 'offer',
+    price: 135.556,
+    from: 'MLBmodel',
+    to: 'Chirsstoo',
+    date: '02/10/21'
+  },
+  {
+    id: '4',
+    event: 'sale',
+    price: 121.134,
+    from: 'Chirsstoo',
+    to: '',
+    date: '25/09/21'
+  }
+]
+
+const getButtonText = (mode: NFTDetailsProviderMode): string => {
   switch (mode) {
     case 'live-auction-NFT':
     case 'open-bid-NFT':
@@ -145,12 +200,34 @@ const getButtonText = (mode: NFTDEtailsProviderMode): string => {
 }
 
 export const RightSectionTabs: FC<{
-  mode: NFTDEtailsProviderMode
+  mode: NFTDetailsProviderMode
   status: MintItemViewStatus
   handleClickPrimaryButton: () => void
 }> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
-  const { detailTab, tradingHistoryTab, attributesTab } = useNFTDetails()
+  const { general, nftMetadata } = useNFTDetails()
   const [activeTab, setActiveTab] = useState('1')
+  const nftData = [
+    {
+      title: 'Mint address',
+      value: general.mint_address
+    },
+    {
+      title: 'Token address',
+      value: 'need data'
+    },
+    {
+      title: 'Owner',
+      value: nftMetadata.properties.creators[0].address
+    },
+    {
+      title: 'Artist Royalties',
+      value: nftMetadata.seller_fee_basis_points
+    },
+    {
+      title: 'Transaction Fee',
+      value: 'need data'
+    }
+  ]
 
   const desc = {
     successful: [
@@ -160,6 +237,7 @@ export const RightSectionTabs: FC<{
     ],
     unsuccessful: ['Item unsucessfully minted!', 'Please try again, if the error persists please contact support.']
   }
+
   const openNotification = (status, desc) => {
     if (!['successful', 'unsuccessful'].includes(status)) {
       return
@@ -214,13 +292,20 @@ export const RightSectionTabs: FC<{
         ) : (
           <>
             <TabPane tab="Details" key="1">
-              <DetailsTabContent data={detailTab} />
+              <DETAILS_TAB_CONTENT {...rest}>
+                {nftData.map((item, index) => (
+                  <Row justify="space-between" align="middle" className="dtc-item" key={index}>
+                    <Col className="dtc-item-title">{item.title}</Col>
+                    <Col className="dtc-item-value">{item.value}</Col>
+                  </Row>
+                ))}
+              </DETAILS_TAB_CONTENT>
             </TabPane>
             <TabPane tab="Trading History" key="2">
               <TradingHistoryTabContent data={tradingHistoryTab} />
             </TabPane>
             <TabPane tab="Attributes" key="3">
-              <AttributesTabContent data={attributesTab} />
+              <AttributesTabContent data={nftMetadata.attributes} />
             </TabPane>
           </>
         )}

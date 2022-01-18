@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
 import { RightSectionTabs } from './RightSectionTabs'
 import { useNFTDetails } from '../../../context'
-import { MintItemViewStatus, NFTDEtailsProviderMode } from '../../../types/nft_details'
+import { MintItemViewStatus, NFTDetailsProviderMode } from '../../../types/nft_details'
 
 const RIGHT_SECTION = styled.div`
   ${({ theme }) => css`
@@ -121,18 +121,25 @@ const GRID_INFO = styled(Row)`
 `
 
 export const RightSection: FC<{
-  mode: NFTDEtailsProviderMode
+  mode: NFTDetailsProviderMode
   status: MintItemViewStatus
   handleClickPrimaryButton: () => void
 }> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
-  const { general } = useNFTDetails()
-  const { name, price, creator, collection, category, fiat, percent, intro, isForCharity } = general
+  const { general, nftMetadata } = useNFTDetails()
+
+  const price = 150
+  const fiat = '21,900 USD aprox'
+  const percent = '+ 1.15 %'
+  const collectionDescr = '9,999 levitating 3D cities ready to expand, conquer and defend into the metaverse'
+  const isForCharity = true
+
   const isMintItemView = mode === 'mint-item-view'
+
   return (
     <RIGHT_SECTION {...rest}>
       <Row justify="space-between">
         <Col className="rs-title">{isMintItemView ? 'Price' : 'Current Bid'}</Col>
-        {!isMintItemView && general?.type && <Col className="rs-type">{general.type}</Col>}
+        {!isMintItemView && <Col className="rs-type">{mode}</Col>}
       </Row>
       <Row align="middle" gutter={8} className="rs-prices">
         <Col>
@@ -153,8 +160,8 @@ export const RightSection: FC<{
         <Col>
           {mode !== 'mint-item-view' && (
             <>
-              <div className="rs-name">{name}</div>
-              <div className="rs-intro">{intro}</div>
+              <div className="rs-name">{general.nft_name}</div>
+              <div className="rs-intro">{collectionDescr}</div>
             </>
           )}
         </Col>
@@ -173,21 +180,21 @@ export const RightSection: FC<{
               <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
               <img className="gi-item-check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`} alt="" />
             </div>
-            <div className="gi-item-title">{creator?.title}</div>
+            <div className="gi-item-title">{nftMetadata.collection.name}</div>
           </Row>
         </Col>
         <Col className="gi-item">
           <div className="gi-item-category-title">Collection</div>
           <Row align="middle">
             <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-            <div className="gi-item-title">{collection?.title}</div>
+            <div className="gi-item-title">{nftMetadata.collection.name}</div>
           </Row>
         </Col>
         <Col className="gi-item">
           <div className="gi-item-category-title">Category</div>
           <Row align="middle">
             <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-            <div className="gi-item-title">{category?.title}</div>
+            <div className="gi-item-title">{nftMetadata.properties.category}</div>
           </Row>
         </Col>
       </GRID_INFO>

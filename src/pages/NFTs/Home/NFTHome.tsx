@@ -3,8 +3,9 @@ import styled from 'styled-components'
 import { Header } from '../Header'
 import NFTHeaderCarousel from '../NFTHeaderCarousel'
 import NFTFooter from '../NFTFooter'
-import CollectionCarousel, { COLLECTION_TYPES } from '../CollectionCarousel'
-import { NFTCollectionProvider, useNFTCollection } from '../../../context'
+import CollectionCarousel from '../CollectionCarousel'
+import { NFTCollectionProvider, useNFTCollections } from '../../../context'
+import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
 
 const SCROLLING_CONTENT = styled.div`
   overflow-y: overlay;
@@ -21,7 +22,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
     fetchAllCollections,
     fetchFeaturedCollections,
     fetchUpcomingCollections
-  } = useNFTCollection()
+  } = useNFTCollections()
   const prevScrollY = useRef(0)
   const [goingUp, setGoingUp] = useState<boolean>(false)
   const [isBigCarouselVisible, setBisCarouselVisible] = useState<boolean>(true)

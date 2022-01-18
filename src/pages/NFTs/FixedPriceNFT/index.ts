@@ -1,1 +1,1 @@
-export * from './LiveAuctionNFT'
+export * from './FixedPriceNFT'
