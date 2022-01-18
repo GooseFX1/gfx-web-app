@@ -1,3 +1,5 @@
+import { Categories } from './../components/Categories'
+import { INFTAsk } from './nft_details.d'
 export interface IInfoItemData {
   thumbnail: string
   title: string
@@ -28,24 +30,90 @@ export interface IRemainingPanelData {
   minutes: string
 }
 
-export interface INFTDetailsGeneralData {
-  image?: string
-  type?: string
-  isFavorite?: boolean
-  hearts?: number
-  remaining?: RemainingPanelTimeType
-  name?: string
-  price?: number
-  fiat?: string
-  isForCharity?: string
-  percent?: string
-  intro?: string
-  creator?: IInfoItemData
-  collection?: IInfoItemData
-  category?: IInfoItemData
+// export interface INFTDetailsGeneralData {
+//   image?: string
+//   type?: string
+//   isFavorite?: boolean
+//   hearts?: number
+//   remaining?: RemainingPanelTimeType
+//   name?: string
+//   price?: number
+//   fiat?: string
+//   isForCharity?: string
+//   percent?: string
+//   intro?: string
+//   creator?: IInfoItemData
+//   collection?: IInfoItemData
+//   category?: IInfoItemData
+// }
+
+export interface ISingleNFT {
+  non_fungible_id: number
+  nft_name: string
+  nft_description: string
+  mint_address: string
+  metadata_url: string
+  image_url: string | null
+  animation_url: string | null
+  collection_id: number
 }
 
-export type NFTDEtailsProviderMode =
+export interface INFTMetadata {
+  name: string
+  symbol: string
+  description: string
+  seller_fee_basis_points: number
+  external_url: string
+  image: string
+  attributes: Array<IAttributesTabItemData>
+  collection: { name: string; family: string }
+  properties: {
+    files: Array<{ uri: string; type: string }>
+    category: string
+    maxSupply: number
+    creators: Array<{ address: string; share: number }>
+  }
+}
+
+export interface INFTBid {
+  bid_id: number
+  clock: string
+  tx_sig: string
+  wallet_key: string
+  auction_house_key: string
+  token_account_key: string
+  auction_house_treasury_mint_key: string
+  token_account_mint_key: string
+  buyer_price: string
+  token_size: string
+  non_fungible_id: number
+  collection_id: number
+  user_id: number
+}
+
+export interface INFTAsk {
+  ask_id: number
+  clock: string
+  tx_sig: string
+  wallet_key: string
+  auction_house_key: string
+  token_account_key: string
+  auction_house_treasury_mint_key: string
+  token_account_mint_key: string
+  buyer_price: string
+  token_size: string
+  non_fungible_id: number
+  collection_id: number
+  user_id: number
+}
+
+export interface INFTDetailsGeneralData {
+  data: Array<ISingleNFT>
+  bids: Array<INFTBid>
+  asks: Array<INFTAsk>
+}
+
+export type NFTDetailsProviderMode =
   | 'live-auction-NFT'
   | 'my-created-NFT'
   | 'fixed-price-NFT'
@@ -53,13 +121,11 @@ export type NFTDEtailsProviderMode =
   | 'mint-item-view'
 
 export type MintItemViewStatus = '' | 'placed' | 'successful' | 'unsuccessful'
+
 export interface INFTDetailsConfig {
-  general: INFTDetailsGeneralData
-  detailTab: IDetailTabItemData[]
-  tradingHistoryTab: ITradingHistoryTabItemData[]
-  attributesTab: IAttributesTabItemData[]
-  fetchGeneral: (general) => void
-  fetchDetailTab: (detailTab) => void
-  fetchTradingHistoryTab: (tradingHistoryTab) => void
-  fetchAttributesTab: (attributesTab) => void
+  general: ISingleNFT
+  nftMetadata: INFTMetadata
+  bids: Array<INFTBid>
+  asks: Array<INFTAsk>
+  fetchGeneral: (id: string) => Promise<any>
 }
