@@ -1,16 +1,16 @@
 import { Button, Col, Dropdown, Menu, Row } from 'antd'
+import styled from 'styled-components'
 import { SearchBar } from '../../../components'
 import { Sort } from './Sort'
 import { Stats } from './Stats'
 import { useHistory } from 'react-router-dom'
-import styled from 'styled-components'
-
-import { statsData } from './mockData'
+import { useNFTCollections } from '../../../context'
 
 const COLLECTION_HEADER = styled.div`
   position: relative;
-  height: 290px;
-  padding: ${({ theme }) => theme.margins['3x']};
+  height: auto;
+  padding: ${({ theme }) => theme.margins['3x']} ${({ theme }) => theme.margins['3x']}
+    ${({ theme }) => theme.margins['4.5x']};
   border-radius: 20px;
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
   background: ${({ theme }) => theme.collectionHeader};
@@ -67,13 +67,14 @@ const COLLECTION_HEADER = styled.div`
     }
   }
 
-  .collection-cities,
   .collection-stats {
     color: #fff;
     margin-top: ${({ theme }) => theme.margins['2x']};
   }
 
   .collection-cities {
+    color: #fff;
+    padding: ${({ theme }) => theme.margins['2x']};
     font-size: 12px;
     font-weight: 500;
     color: ${({ theme }) => theme.text8};
@@ -143,6 +144,13 @@ const menu = (
 
 export const CollectionHeader = () => {
   const history = useHistory()
+  const { singleCollection } = useNFTCollections()
+  const statsData = [
+    { title: 'Items', total: singleCollection.size, unit: '' },
+    { title: 'Owners', total: null, unit: '' },
+    { title: 'Price floor', total: null, unit: 'SOL' },
+    { title: 'Volume traded', total: null, unit: '' }
+  ]
 
   return (
     <COLLECTION_HEADER>
@@ -154,10 +162,16 @@ export const CollectionHeader = () => {
       />
       <Row justify="center">
         <Col>
-          <img className="collection-avatar" src={`${process.env.PUBLIC_URL}/img/assets/avatar@3x.png`} alt="" />
+          <img className="collection-avatar" src={singleCollection.profile_pic_link} alt="" />
           <div className="collection-name-wrap">
-            <span className="collection-name">Solcities</span>
-            <img className="collection-check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`} alt="" />
+            <span className="collection-name">{singleCollection.collection_name}</span>
+            {singleCollection.is_verified && (
+              <img
+                className="collection-check-icon"
+                src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`}
+                alt=""
+              />
+            )}
           </div>
         </Col>
       </Row>
@@ -165,7 +179,7 @@ export const CollectionHeader = () => {
         <Stats stats={statsData} />
       </Row>
       <Row justify="center" className="collection-cities">
-        9,999 3D levitating cities of the metaverse on Solana.
+        {singleCollection.collection_description}
       </Row>
       <Row className="collection-action-wrap">
         <SearchBar className="collection-search-bar" placeholder="Search by nft or owner" />
