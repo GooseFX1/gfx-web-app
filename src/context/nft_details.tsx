@@ -1,48 +1,51 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react'
-import {
-  INFTDetailsConfig,
-  INFTDetailsGeneralData,
-  IDetailTabItemData,
-  ITradingHistoryTabItemData,
-  IAttributesTabItemData
-} from '../types/nft_details.d'
+import apiClient from '../api'
+import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
+import { customFetch } from '../utils'
+import { INFTDetailsConfig, ISingleNFT, INFTMetadata, INFTBid, INFTAsk } from '../types/nft_details.d'
 
 const NFTDetailsContext = createContext<INFTDetailsConfig | null>(null)
 
 export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [general, setGeneral] = useState<INFTDetailsGeneralData>({})
-  const [detailTab, setDetailTab] = useState<IDetailTabItemData[]>([])
-  const [tradingHistoryTab, setTradingHistoryTab] = useState<ITradingHistoryTabItemData[]>([])
-  const [attributesTab, setAttributesTab] = useState<IAttributesTabItemData[]>([])
+  const [general, setGeneral] = useState<ISingleNFT>()
+  const [nftMetadata, setNftMetadata] = useState<INFTMetadata>()
+  const [asks, setAsks] = useState<Array<INFTAsk>>([])
+  const [bids, setBids] = useState<Array<INFTBid>>([])
 
-  // TODO: Handler API here
-  const fetchGeneral = useCallback((generalData) => {
-    setGeneral(generalData)
+  const fetchGeneral = useCallback(async (id: string): Promise<any> => {
+    try {
+      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?id=${id}`)
+      const nft = await res.data
+
+      await fetchMetaData(nft.metadata_url)
+
+      setGeneral(nft.data[0])
+      setAsks(nft.bids)
+      setBids(nft.asks)
+      return res
+    } catch (err) {
+      return err
+    }
   }, [])
 
-  const fetchDetailTab = useCallback((detailTabData) => {
-    setDetailTab(detailTabData)
-  }, [])
-
-  const fetchTradingHistoryTab = useCallback((tradingHistoryData) => {
-    setTradingHistoryTab(tradingHistoryData)
-  }, [])
-
-  const fetchAttributesTab = useCallback((fetchAttributesTabData) => {
-    setAttributesTab(fetchAttributesTabData)
+  const fetchMetaData = useCallback(async (url: string): Promise<any> => {
+    try {
+      const res = await customFetch(url)
+      const nftMetadata = await res
+      setNftMetadata(nftMetadata)
+    } catch (err) {
+      console.error(err)
+    }
   }, [])
 
   return (
     <NFTDetailsContext.Provider
       value={{
         general,
-        detailTab,
-        tradingHistoryTab,
-        attributesTab,
-        fetchGeneral,
-        fetchDetailTab,
-        fetchTradingHistoryTab,
-        fetchAttributesTab
+        nftMetadata,
+        bids,
+        asks,
+        fetchGeneral
       }}
     >
       {children}
@@ -58,12 +61,9 @@ export const useNFTDetails = (): INFTDetailsConfig => {
 
   return {
     general: context.general,
-    detailTab: context.detailTab,
-    tradingHistoryTab: context.tradingHistoryTab,
-    attributesTab: context.attributesTab,
-    fetchGeneral: context.fetchGeneral,
-    fetchDetailTab: context.fetchDetailTab,
-    fetchTradingHistoryTab: context.fetchTradingHistoryTab,
-    fetchAttributesTab: context.fetchAttributesTab
+    nftMetadata: context.nftMetadata,
+    bids: context.bids,
+    asks: context.asks,
+    fetchGeneral: context.fetchGeneral
   }
 }
