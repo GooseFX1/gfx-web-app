@@ -30,6 +30,9 @@ const STYLED_MENU = styled(Menu)`
   li {
     margin-bottom: ${({ theme }) => theme.margins['2x']};
     padding-bottom: 0 !important;
+    > span {
+      color: #fff;
+    }
     &:last-child {
       margin-bottom: 0 !important;
     }

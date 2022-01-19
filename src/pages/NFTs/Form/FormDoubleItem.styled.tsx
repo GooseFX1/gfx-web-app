@@ -12,7 +12,7 @@ export const StyledFormDoubleItem = styled(Row)`
   }
   .hint {
     font-size: 9px;
-    color: #b9b9b9;
+    color: ${({ theme }) => theme.hintInputColor};
     text-align: left;
     margin-top: 7px;
   }
@@ -21,7 +21,7 @@ export const StyledFormDoubleItem = styled(Row)`
     label {
       font-size: 17px;
       font-weight: 600;
-      color: ${({ theme }) => theme.text1};
+      color: ${({ theme }) => theme.text8};
       line-height: 1;
     }
     .ant-form-item-optional {
@@ -39,7 +39,7 @@ export const StyledFormDoubleItem = styled(Row)`
       border: none;
       border-radius: 0;
       border-bottom: 2px solid #a8a8a8;
-      color: ${({ theme }) => theme.text1};
+      color: ${({ theme }) => theme.text8};
       font-size: 12px;
       padding-left: 0;
       text-align: left;

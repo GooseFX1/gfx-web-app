@@ -15,7 +15,7 @@ export const STYLED_DONATE = styled(Row)`
     .item {
       height: 32px;
       border-radius: 2px;
-      color: #bebebe;
+      color: ${({ theme }) => theme.text11};
       margin-right: ${({ theme }) => theme.margins['1x']};
       font-size: 13px;
       font-weight: 600;

@@ -20,6 +20,8 @@ export interface Colors {
   text8: Color
   text9: Color
   text10: Color
+  text11: Color
+  text12: Color
 
   // backgrounds / greys
   bg0: Color
@@ -62,10 +64,23 @@ export interface Colors {
 
   // input bg
   inputBg: Color
+  hintInputColor: Color
 
   // btn Icon (Plus, add more), btn Next Step Background
   btnIconBg: Color
   btnNextStepBg: Color
+
+  // add properties
+  iconRemoveBg: Color
+  inputPropertyBg: Color
+  inputFence: Color
+  propertyBg: Color
+  propertyItemBg: Color
+  typePropertyColor: Color
+
+  // sell categories
+  sellTabBg: Color
+  sellTabActiveBg: Color
 
   // time panel
   timePanelBackground: Color

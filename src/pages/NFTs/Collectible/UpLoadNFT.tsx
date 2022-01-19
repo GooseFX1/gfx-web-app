@@ -10,6 +10,7 @@ import { UploadCustom } from './UploadCustom'
 import { NewCollection } from './NewCollection'
 import { AddProperty } from './AddProperty'
 import isEmpty from 'lodash/isEmpty'
+import { useDarkMode } from '../../../context'
 
 const UPLOAD_CONTENT = styled.div`
   flex: 1;
@@ -102,21 +103,21 @@ const STYLED_PROPERTY_BLOCK = styled.div`
     align-items: center;
     padding: ${({ theme }) => `${theme.margins['1x']}`};
     border-radius: 10px;
-    background-color: #131313;
+    background-color: ${({ theme }) => theme.propertyBg};
   }
   .property-item {
     width: 100px;
     height: 40px;
     padding: 2px ${({ theme }) => `${theme.margins['1x']}`};
     border-radius: 10px;
-    background-color: #000;
+    background-color: ${({ theme }) => theme.propertyItemBg};
     position: relative;
     margin-right: 10px;
     .type {
       font-family: Montserrat;
       font-size: 11px;
       font-weight: 500;
-      color: #565656;
+      color: ${({ theme }) => theme.typePropertyColor};
       text-align: left;
     }
     .name {
@@ -138,11 +139,17 @@ const STYLED_PROPERTY_BLOCK = styled.div`
         width: 100%;
         height: auto;
       }
+      &.lite {
+        background: #2a2a2a;
+        padding: 5px;
+        border-radius: 50%;
+      }
     }
   }
 `
 
 export const UpLoadNFT = () => {
+  const { mode } = useDarkMode()
   const history = useHistory()
   const [previewImage, setPreviewImage] = useState<any>()
   const [status, setStatus] = useState('') // TODO case ('failed') when API is available
@@ -246,10 +253,12 @@ export const UpLoadNFT = () => {
                     <div className="property-item" key={item?.id}>
                       <div className="type">{item?.type}</div>
                       <div className="name">{item?.name}</div>
-                      <div className="close-btn" onClick={() => onRemove(item?.id)}>
+                      <div className={`close-btn ${mode}`} onClick={() => onRemove(item?.id)}>
                         <img
                           className="close-white-icon"
-                          src={`${process.env.PUBLIC_URL}/img/assets/close-gray.svg`}
+                          src={`${process.env.PUBLIC_URL}/img/assets/${
+                            mode === 'dark' ? 'close-gray' : 'remove-property'
+                          }.svg`}
                           alt=""
                         />
                       </div>
