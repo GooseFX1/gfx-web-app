@@ -206,10 +206,11 @@ export const RightSectionTabs: FC<{
 }> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
   const { general, nftMetadata } = useNFTDetails()
   const [activeTab, setActiveTab] = useState('1')
+  const { mint_address } = general
   const nftData = [
     {
       title: 'Mint address',
-      value: general.mint_address
+      value: `${mint_address.substr(0, 4)}...${mint_address.substr(-4, 4)}`
     },
     {
       title: 'Token address',
@@ -217,7 +218,7 @@ export const RightSectionTabs: FC<{
     },
     {
       title: 'Owner',
-      value: nftMetadata.properties.creators[0].address
+      value: 'need data'
     },
     {
       title: 'Artist Royalties',
