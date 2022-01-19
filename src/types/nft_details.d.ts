@@ -66,13 +66,13 @@ export interface INFTMetadata {
   external_url: string
   image: string
   attributes: Array<IAttributesTabItemData>
-  collection: { name: string; family: string }
   properties: {
     files: Array<{ uri: string; type: string }>
     category: string
-    maxSupply: number
-    creators: Array<{ address: string; share: number }>
+    maxSupply?: number
+    creators: Array<{ address: string; share: number; verified?: boolean }>
   }
+  collection?: { name: string; family: string }
 }
 
 export interface INFTBid {

@@ -112,10 +112,27 @@ const GRID_INFO = styled(Row)`
       margin-right: ${theme.margins['1x']};
     }
 
+    .gi-item-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-right: ${theme.margins['1x']};
+      background: ${theme.bg1};
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
+      img {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
     .gi-item-title {
       font-size: 14px;
       font-weight: 500;
       color: ${theme.text8};
+      text-transform: capitalize;
     }
   `}
 `
@@ -130,16 +147,20 @@ export const RightSection: FC<{
   const price = 150
   const fiat = '21,900 USD aprox'
   const percent = '+ 1.15 %'
-  const collectionDescr = '9,999 levitating 3D cities ready to expand, conquer and defend into the metaverse'
   const isForCharity = true
 
   const isMintItemView = mode === 'mint-item-view'
 
-  return (
+  if (nftMetadata === null) {
+    return <div>Error loading metadata</div>
+  }
+
+  return nftMetadata === undefined ? (
+    <div>...loading metadata</div>
+  ) : (
     <RIGHT_SECTION {...rest}>
       <Row justify="space-between">
         <Col className="rs-title">{isMintItemView ? 'Price' : 'Current Bid'}</Col>
-        {!isMintItemView && <Col className="rs-type">{mode}</Col>}
       </Row>
       <Row align="middle" gutter={8} className="rs-prices">
         <Col>
@@ -161,7 +182,7 @@ export const RightSection: FC<{
           {mode !== 'mint-item-view' && (
             <>
               <div className="rs-name">{general.nft_name}</div>
-              <div className="rs-intro">{collectionDescr}</div>
+              <div className="rs-intro">{nftMetadata.description}</div>
             </>
           )}
         </Col>
@@ -173,27 +194,42 @@ export const RightSection: FC<{
         )}
       </Row>
       <GRID_INFO justify="space-between">
-        <Col className="gi-item">
-          <div className="gi-item-category-title">Creator</div>
-          <Row align="middle">
-            <div className="gi-item-thumbnail-wrapper">
+        {nftMetadata.collection && (
+          <Col className="gi-item">
+            <div className="gi-item-category-title">Creator</div>
+            <Row align="middle">
+              <div className="gi-item-thumbnail-wrapper">
+                <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
+                <img
+                  className="gi-item-check-icon"
+                  src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`}
+                  alt=""
+                />
+              </div>
+              <div className="gi-item-title">{nftMetadata.collection.name}</div>
+            </Row>
+          </Col>
+        )}
+        {nftMetadata.collection && (
+          <Col className="gi-item">
+            <div className="gi-item-category-title">Collection</div>
+            <Row align="middle">
               <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-              <img className="gi-item-check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`} alt="" />
-            </div>
-            <div className="gi-item-title">{nftMetadata.collection.name}</div>
-          </Row>
-        </Col>
-        <Col className="gi-item">
-          <div className="gi-item-category-title">Collection</div>
-          <Row align="middle">
-            <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-            <div className="gi-item-title">{nftMetadata.collection.name}</div>
-          </Row>
-        </Col>
+              <div className="gi-item-title">{nftMetadata.collection.name}</div>
+            </Row>
+          </Col>
+        )}
         <Col className="gi-item">
           <div className="gi-item-category-title">Category</div>
           <Row align="middle">
-            <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
+            <div className="gi-item-icon">
+              <img
+                src={`${process.env.PUBLIC_URL}/img/assets/${
+                  nftMetadata.properties.category === 'image' ? 'art' : nftMetadata.properties.category
+                }.svg`}
+                alt=""
+              />
+            </div>
             <div className="gi-item-title">{nftMetadata.properties.category}</div>
           </Row>
         </Col>

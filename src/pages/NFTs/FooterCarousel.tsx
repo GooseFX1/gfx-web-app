@@ -1,42 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Slider from 'react-slick'
 import styled from 'styled-components'
 import { ISingleNFT } from '../../types/nft_details.d'
 import { Image } from 'antd'
 import { useHistory } from 'react-router-dom'
-
-const products: Array<ISingleNFT> = [
-  {
-    non_fungible_id: 11,
-    nft_name: 'Thugbirdz #1234',
-    nft_description: 'A premint thugbird',
-    mint_address: '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5',
-    metadata_url: 'RANDOM_URL',
-    image_url: null,
-    animation_url: null,
-    collection_id: 14
-  },
-  {
-    non_fungible_id: 11,
-    nft_name: 'Thugbirdz #1234',
-    nft_description: 'A premint thugbird',
-    mint_address: '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5',
-    metadata_url: 'RANDOM_URL',
-    image_url: null,
-    animation_url: null,
-    collection_id: 14
-  },
-  {
-    non_fungible_id: 11,
-    nft_name: 'Thugbirdz #1234',
-    nft_description: 'A premint thugbird',
-    mint_address: '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5',
-    metadata_url: 'RANDOM_URL',
-    image_url: null,
-    animation_url: null,
-    collection_id: 14
-  }
-]
+import { NFT_API_ENDPOINTS, fetchSingleCollectionTabContent } from '../../api/NFTs'
 
 const FOOTER_SLIDER = styled(Slider)`
   width: 100%;
@@ -58,24 +26,37 @@ const settings = {
 
 const FooterCarousel = () => {
   const history = useHistory()
+  const [nfts, setNfts] = useState<Array<ISingleNFT>>()
+  const [err, setErr] = useState(false)
+
+  useEffect(() => {
+    fetchSingleCollectionTabContent(NFT_API_ENDPOINTS.OPEN_BID, `2`).then((res) => {
+      if (res.response && res.response.status !== 200) {
+        setErr(true)
+      }
+      setNfts(res.data.slice(0, 25))
+    })
+
+    return () => {}
+  }, [])
 
   const handleItemClick = (id: number) => {
-    history.push('/NFTs/live-auction/11')
+    history.push(`/NFTs/fixed-price/${id}`)
   }
 
   return (
     <FOOTER_SLIDER {...settings}>
-      {products.map((item: ISingleNFT) => {
-        return (
+      {nfts === undefined ? (
+        <div>...loading</div>
+      ) : err ? (
+        <div>error loading random nfts</div>
+      ) : (
+        nfts.map((item: ISingleNFT) => (
           <div key={item.non_fungible_id}>
-            <FOOTER_IMAGE
-              preview={false}
-              src={`${process.env.PUBLIC_URL}/img/assets/footer-demo.png`}
-              onClick={(e) => handleItemClick(item.non_fungible_id)}
-            />
+            <FOOTER_IMAGE preview={false} src={item.image_url} onClick={(e) => handleItemClick(item.non_fungible_id)} />
           </div>
-        )
-      })}
+        ))
+      )}
     </FOOTER_SLIDER>
   )
 }

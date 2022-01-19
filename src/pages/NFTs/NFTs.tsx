@@ -39,7 +39,6 @@ const BODY_NFT = styled.div`
 const SCROLLING_CONTENT = styled.div`
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 200vh;
 `
 
 const SCROLLING_OVERLAY = styled.div`
