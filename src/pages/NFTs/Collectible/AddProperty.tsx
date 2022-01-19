@@ -24,7 +24,7 @@ const STYLED_ADD_PROPERTY = styled(PopupCustom)`
     .ant-modal-body {
       ${theme.largeBorderRadius}
       padding: 0;
-      background-color: #2a2a2a;
+      background-color: ${theme.bg3};
     }
     .body-wrap {
       padding: ${theme.margins['4x']};
@@ -44,11 +44,11 @@ const STYLED_ADD_PROPERTY = styled(PopupCustom)`
       font-family: Montserrat;
       font-size: 25px;
       font-weight: 600;
-      color: #fff;
+      color: ${theme.text7};
       margin-bottom: ${theme.margins['3x']};
     }
     .desc {
-      color: #909090;
+      color: ${theme.text12};
       font-family: Montserrat;
       font-size: 16px;
       font-weight: 500;
@@ -92,7 +92,7 @@ const STYLED_ADD_GROUP = styled.div`
         font-size: 18px;
         font-weight: 600;
         text-align: left;
-        color: #fff;
+        color: ${theme.text7};
         padding-left: ${theme.margins['2.5x']};
       }
     }
@@ -108,7 +108,7 @@ const STYLED_ADD_BODY = styled.div`
     .close-btn {
       width: 55px;
       height: 55px;
-      background: #131313;
+      background: ${theme.iconRemoveBg};
       border-radius: 50%;
       margin-right: ${theme.margins['2x']};
       line-height: 51px;
@@ -118,7 +118,7 @@ const STYLED_ADD_BODY = styled.div`
     input {
       width: 180px;
       height: 55px;
-      background-color: #131313;
+      background-color: ${theme.inputPropertyBg};
       border: none;
       text-align: left;
       font-family: Montserrat;
@@ -146,7 +146,7 @@ const STYLED_ADD_BODY = styled.div`
       &:before {
         content: '';
         width: 3px;
-        background: #2a2a2a;
+        background: ${theme.inputFence};
         height: 42px;
         position: absolute;
         top: 6px;

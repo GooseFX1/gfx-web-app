@@ -14,12 +14,13 @@ export const STYLED_SELL_CATEGORY = styled(Row)`
       width: 114px;
       height: 114px;
       padding: ${({ theme }) => theme.margins['3.5x']};
-      background: #131313;
+      background: ${({ theme }) => theme.sellTabBg};
       ${({ theme }) => theme.largeBorderRadius};
       border: 1px solid rgba(255, 255, 255, 0.5);
       transition: all 0.3s ease;
       &.active {
         border-color: #fff;
+        background: ${({ theme }) => theme.sellTabActiveBg};
       }
       &:hover {
         opacity: 0.8;
@@ -30,6 +31,7 @@ export const STYLED_SELL_CATEGORY = styled(Row)`
       margin-top: ${({ theme }) => theme.margins['1x']};
       font-size: 14px;
       font-weight: 600;
+      color: ${({ theme }) => theme.text8};
     }
   }
 `

@@ -7,7 +7,7 @@ export const STYLED_LABLE = styled.span<{ size: string }>`
     align-items: center;
     font-size: ${size};
     font-weight: 600;
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.text8};
     line-height: 1;
     margin-bottom: ${({ theme }) => theme.margins['1x']};
     .heart-purple {

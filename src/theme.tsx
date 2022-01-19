@@ -60,6 +60,8 @@ export function colors(mode: string): Colors {
     text8: mode === 'dark' ? white : '#636363',
     text9: mode === 'dark' ? '#616161' : '#3C3C3C',
     text10: mode === 'dark' ? '#4b4b4b' : '#BDBDBD',
+    text11: mode === 'dark' ? '#bebebe' : '#636363',
+    text12: mode === 'dark' ? '#909090' : '#636363',
     text1h: '#7d7d7d',
 
     // backgrounds / greys
@@ -103,10 +105,23 @@ export function colors(mode: string): Colors {
 
     // input bg
     inputBg: mode === 'dark' ? '#131313' : '#CACACA',
+    hintInputColor: mode === 'dark' ? '#b9b9b9' : '#636363',
 
     // btn Icon (Plus, add more), btn Next Step Background
     btnIconBg: mode === 'dark' ? '#9625ae' : '#7D7D7D',
     btnNextStepBg: mode === 'dark' ? '#9625ae' : '#7D7D7D',
+
+    // add properties
+    iconRemoveBg: mode === 'dark' ? '#131313' : '#7D7D7D',
+    inputPropertyBg: mode === 'dark' ? '#131313' : '#A7A7A7',
+    inputFence: mode === 'dark' ? '#2a2a2a' : '#C7C7C7',
+    propertyBg: mode === 'dark' ? '#131313' : '#C7C7C7',
+    propertyItemBg: mode === 'dark' ? '#000' : '#7D7D7D',
+    typePropertyColor: mode === 'dark' ? '#565656' : '#C7C7C7',
+
+    // sell categories
+    sellTabBg: mode === 'dark' ? '#131313' : '#CACACA',
+    sellTabActiveBg: mode === 'dark' ? '#131313' : '#404040',
 
     // time panel
     timePanelBackground: mode === 'dark' ? '#131313' : '#CACACA',
