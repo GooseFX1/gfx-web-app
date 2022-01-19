@@ -26,7 +26,7 @@ export const LiveAuctionNFT: FC = () => {
 
   useEffect(() => {
     fetchGeneral(params.nftId).then((res) => {
-      if (res.response.status !== 200) {
+      if ((res.response && res.response.status !== 200) || res.isAxiosError) {
         setErr(true)
       }
       setLoading(false)
