@@ -8,16 +8,16 @@ const NFTDetailsContext = createContext<INFTDetailsConfig | null>(null)
 
 export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [general, setGeneral] = useState<ISingleNFT>()
-  const [nftMetadata, setNftMetadata] = useState<INFTMetadata>()
+  const [nftMetadata, setNftMetadata] = useState<INFTMetadata | null>()
   const [asks, setAsks] = useState<Array<INFTAsk>>([])
   const [bids, setBids] = useState<Array<INFTBid>>([])
 
   const fetchGeneral = useCallback(async (id: string): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?id=${id}`)
+      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?nft_id=${id}`)
       const nft = await res.data
 
-      await fetchMetaData(nft.metadata_url)
+      await fetchMetaData(nft.data[0].metadata_url)
 
       setGeneral(nft.data[0])
       setAsks(nft.bids)
@@ -35,6 +35,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
       setNftMetadata(nftMetadata)
     } catch (err) {
       console.error(err)
+      setNftMetadata(null)
     }
   }, [])
 
