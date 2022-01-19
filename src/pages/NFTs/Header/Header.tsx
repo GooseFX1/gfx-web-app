@@ -1,11 +1,15 @@
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
-import NFTAvatar from '../NFTAvatar'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useHistory } from 'react-router-dom'
+import { Image } from 'antd'
 import { ButtonWrapper } from '../NFTButton'
 import { SearchBar, Categories } from '../../../components'
 import { SpaceBetweenDiv } from '../../../styles'
-import { useHistory } from 'react-router-dom'
 import { categories } from './mockData'
+import { useLocalStorageState } from '../../../utils'
+import PopupCompleteProfile from '../Profile/PopupCompleteProfile'
+import { useNFTProfile } from '../../../context'
 
 const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
   padding: ${({ theme }) => theme.margins['3x']};
@@ -50,15 +54,66 @@ const CREATE = styled(ButtonWrapper)`
   }
 `
 
+const AVATAR_NFT = styled(Image)`
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  cursor: pointer;
+`
+
 export const Header = () => {
   const history = useHistory()
+  const { sessionUser, fetchSessionUser } = useNFTProfile()
+  const { connected, publicKey } = useWallet()
+  const [isFirstTimeUser, setIsFirstTimeUser] = useLocalStorageState(`sessionUserInit`, 'true')
+  const [visibleCompletePopup, setVisibleCompletePopup] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (connected && publicKey) {
+      if (!sessionUser) {
+        fetchSessionUser('address', `${publicKey}`).then((res) => {
+          if (res.response && res.response.status !== 200) {
+            console.error(res)
+          } else {
+            if (res.data.length === 0 && isFirstTimeUser === 'true') {
+              setTimeout(() => setVisibleCompletePopup(true), 750)
+            }
+          }
+        })
+      }
+    }
+    return () => {}
+  }, [publicKey, connected])
+
+  const handleDismissModal = useCallback(() => {
+    setIsFirstTimeUser('1')
+    setVisibleCompletePopup(false)
+  }, [setIsFirstTimeUser, setVisibleCompletePopup])
+
+  const onSkip = useCallback(() => handleDismissModal(), [handleDismissModal])
+  const onContinue = useCallback(() => {
+    handleDismissModal()
+    history.push({ pathname: '/NFTs/profile', state: { isCreatingProfile: true } })
+  }, [handleDismissModal])
+
   const onCreateCollectible = () => {
     history.push('/NFTs/create-a-collectible')
   }
+
+  const goProfile = () => history.push(`/NFTs/profile`)
+
   return (
     <HEADER_WRAPPER>
+      <PopupCompleteProfile visible={visibleCompletePopup} handleOk={onContinue} handleCancel={onSkip} />
       <AVATAR_WRAPPER>
-        <NFTAvatar src="error" />
+        {connected && publicKey && (
+          <AVATAR_NFT
+            fallback={`${process.env.PUBLIC_URL}/img/assets/avatar.png`}
+            src={sessionUser ? sessionUser.profile_pic_link : ''}
+            preview={false}
+            onClick={goProfile}
+          />
+        )}
       </AVATAR_WRAPPER>
       <SearchBar />
       <BUTTON_SELECTION>
