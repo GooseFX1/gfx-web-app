@@ -8,15 +8,6 @@ import {
 import apiClient from '../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
 
-export const fetchSingleCollectionTabContent = async (endpoint: string, id: string): Promise<any> => {
-  try {
-    const res = await apiClient(NFT_API_BASE).get(`${endpoint}?collection_id=${id}`)
-    return await res
-  } catch (err) {
-    return err
-  }
-}
-
 export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [singleCollection, setSingleCollection] = useState<NFTCollection>()
   const [allCollections, setAllCollections] = useState<Array<NFTCollection>>([])

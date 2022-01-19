@@ -29,4 +29,4 @@ const PopupCompleteProfile = ({ visible, handleOk, handleCancel }: Props) => {
   )
 }
 
-export default PopupCompleteProfile
+export default React.memo(PopupCompleteProfile)

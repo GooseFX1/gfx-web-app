@@ -2,9 +2,9 @@ import { useState, useEffect, FC } from 'react'
 import { useHistory } from 'react-router'
 import styled, { css } from 'styled-components'
 import { Card } from './Card'
-import { useNFTCollections, fetchSingleCollectionTabContent } from '../../../context'
+import { useNFTCollections } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
-import { NFT_API_ENDPOINTS } from '../../../api/NFTs'
+import { NFT_API_ENDPOINTS, fetchSingleCollectionTabContent } from '../../../api/NFTs'
 import { Loader } from '../../../components'
 
 const WRAPPER = styled.div`
