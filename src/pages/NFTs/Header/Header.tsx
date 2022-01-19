@@ -86,7 +86,7 @@ export const Header = () => {
   }, [publicKey, connected])
 
   const handleDismissModal = useCallback(() => {
-    setIsFirstTimeUser('1')
+    setIsFirstTimeUser('false')
     setVisibleCompletePopup(false)
   }, [setIsFirstTimeUser, setVisibleCompletePopup])
 
