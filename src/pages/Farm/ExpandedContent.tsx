@@ -10,7 +10,7 @@ const STYLED_EXPANDED_ROW = styled.div`
   padding-right: ${({ theme }) => theme.margins['10x']};
   padding-bottom: ${({ theme }) => theme.margins['7x']};
   padding-left: ${({ theme }) => theme.margins['4x']};
-  background-image: linear-gradient(to bottom, #39253e, rgba(42, 42, 42, 0));
+  background-image: ${({ theme }) => theme.expendedRowBg};
 `
 
 const STYLED_EXPANDED_CONTENT = styled.div`
@@ -68,7 +68,7 @@ const STYLED_RIGHT_CONTENT = styled.div`
 const STYLED_SOL = styled.div`
   width: 300px;
   height: 60px;
-  background-color: #111;
+  background-color: ${({ theme }) => theme.solPillBg};
   border-radius: 60px;
   display: flex;
   align-items: center;
@@ -84,7 +84,7 @@ const STYLED_SOL = styled.div`
     line-height: normal;
     letter-spacing: normal;
     text-align: center;
-    color: '#b1b1b1';
+    color: ${({ theme }) => theme.text15};
   }
   &.active {
     .value {
@@ -97,7 +97,7 @@ const STYLED_SOL = styled.div`
     font-size: 15px;
     font-weight: 600;
     text-align: center;
-    color: #b1b1b1;
+    color: ${({ theme }) => theme.text14};
     display: flex;
   }
   .text-2 {
@@ -108,13 +108,13 @@ const STYLED_STAKE_PILL = styled(MainButton)`
   width: 300px;
   height: 51px;
   border-radius: 51px;
-  background-color: #1e1e1e;
+  background-color: ${({ theme }) => theme.stakePillBg};
   line-height: 49px;
   font-family: Montserrat;
   font-size: 14px;
   font-weight: 600;
   text-align: center;
-  color: #b1b1b1;
+  color: ${({ theme }) => theme.text14};
   margin: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['1.5x']} 0;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -138,13 +138,13 @@ const STYLED_STAKED_EARNED_CONTENT = styled.div`
       font-family: Montserrat;
       font-size: 20px;
       font-weight: 600;
-      color: #fff;
+      color: ${({ theme }) => theme.text7};
     }
     .price {
       font-family: Montserrat;
       font-size: 16px;
       font-weight: 500;
-      color: rgba(255, 255, 255, 0.55);
+      color: ${({ theme }) => theme.text13};
     }
     .value,
     .price {
@@ -160,13 +160,14 @@ const STYLED_DESC = styled.div`
     font-family: Montserrat;
     font-size: 14px;
     font-weight: 500;
-    color: #fff;
+    color: ${({ theme }) => theme.text7};
   }
   .value {
     font-family: Montserrat;
     font-size: 14px;
     font-weight: 600;
     color: #fff;
+    color: ${({ theme }) => theme.text8};
   }
 `
 

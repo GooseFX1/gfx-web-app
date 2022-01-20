@@ -34,7 +34,7 @@ const FooterCarousel = () => {
       if (res.response && res.response.status !== 200) {
         setErr(true)
       }
-      setNfts(res.data.slice(0, 25))
+      setNfts((res.data || []).slice(0, 25))
     })
 
     return () => {}

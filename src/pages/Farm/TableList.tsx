@@ -6,7 +6,7 @@ import { ExpandedContent } from './ExpandedContent'
 
 const STYLED_TABLE_LIST = styled(Table)`
   ${({ theme }) => `
-  max-width: 99%;
+  max-width: 100%;
   .ant-table {
     background-color: #2a2a2a;
   }
@@ -15,7 +15,7 @@ const STYLED_TABLE_LIST = styled(Table)`
     font-size: 17px;
     font-weight: 600;
     text-align: center;
-    color: #fff;
+    color: ${theme.text8};;
   }
   .ant-table-container table > thead > tr:first-child th:first-child {
     border-bottom-left-radius: 30px;
@@ -25,6 +25,7 @@ const STYLED_TABLE_LIST = styled(Table)`
   }
   .ant-table-thead {
     background-color: #181818;
+    background: ${theme.farmHeaderBg};
     border-bottom-left-radius: 30px;
     border-bottom-right-radius: 30px;
     box-shadow: 0px 8px 6px -3px rgb(0 0 0 / 30%);
@@ -68,7 +69,7 @@ const STYLED_TABLE_LIST = styled(Table)`
       }
       &.ant-table-row:hover {
         > td {
-          background-color: ${theme.bg6} !important;
+          background-color: ${theme.hoverTrFarmBg} !important;
         }
       }
     }
@@ -85,6 +86,7 @@ const STYLED_EXPAND_ICON = styled.img<{ expanded: boolean }>`
   ${({ expanded }) => css`
     cursor: pointer;
     transform: ${expanded ? 'rotate(180deg)' : 'rotate(0)'};
+    filter: ${({ theme }) => theme.filterDownIcon};
   `}
 `
 
