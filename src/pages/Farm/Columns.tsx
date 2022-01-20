@@ -33,7 +33,7 @@ const STYLED_NAME = styled.div`
   .text {
     font-size: 18px;
     font-weight: 600;
-    color: #fff;
+    color: ${({ theme }) => theme.text8};
     max-width: 90px;
     margin-left: ${({ theme }) => theme.margins['2.5x']};
   }

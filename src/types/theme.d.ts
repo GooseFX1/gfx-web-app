@@ -22,6 +22,9 @@ export interface Colors {
   text10: Color
   text11: Color
   text12: Color
+  text13: Color
+  text14: Color
+  text15: Color
 
   // backgrounds / greys
   bg0: Color
@@ -108,6 +111,14 @@ export interface Colors {
   // primary
   primary1: Color
   primary2: Color
+
+  // farm
+  farmHeaderBg: Color
+  solPillBg: Color
+  stakePillBg: Color
+  hoverTrFarmBg: Color
+  expendedRowBg: Color
+  filterDownIcon: Color
 
   // secondary
   secondary1: Color

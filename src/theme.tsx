@@ -62,6 +62,9 @@ export function colors(mode: string): Colors {
     text10: mode === 'dark' ? '#4b4b4b' : '#BDBDBD',
     text11: mode === 'dark' ? '#bebebe' : '#636363',
     text12: mode === 'dark' ? '#909090' : '#636363',
+    text13: mode === 'dark' ? 'rgba(255, 255, 255, 0.55)' : '#636363',
+    text14: mode === 'dark' ? '#b1b1b1' : '#fff',
+    text15: mode === 'dark' ? '#b1b1b1' : '#7C7C7C',
     text1h: '#7d7d7d',
 
     // backgrounds / greys
@@ -146,6 +149,20 @@ export function colors(mode: string): Colors {
 
     // main tab
     tabNameColor: mode === 'dark' ? '#616161' : '#8F8F8F',
+
+    // farm
+    farmHeaderBg: mode === 'dark' ? '#181818' : '#313131',
+    solPillBg: mode === 'dark' ? '#111' : '#313131',
+    stakePillBg: mode === 'dark' ? '#1e1e1e' : 'rgba(49, 49, 49, 0.5)',
+    hoverTrFarmBg: mode === 'dark' ? 'rgba(64, 64, 64, 0.7)' : 'rgba(64, 64, 64, 0.05)',
+    expendedRowBg:
+      mode === 'dark'
+        ? 'linear-gradient(to bottom, #39253e, rgba(42, 42, 42, 0))'
+        : 'linear-gradient(to bottom, rgba(134, 7, 160, 0.6), rgba(255, 255, 255, 0))',
+    filterDownIcon:
+      mode === 'dark'
+        ? '#000'
+        : 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)',
 
     // primary colors
     primary1: '#302eb8',
