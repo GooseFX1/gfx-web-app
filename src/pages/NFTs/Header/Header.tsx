@@ -75,7 +75,7 @@ export const Header = () => {
           if (res.response && res.response.status !== 200) {
             console.error(res)
           } else {
-            if (res.data.length === 0 && isFirstTimeUser === 'true') {
+            if ((res?.data?.length || 0) === 0 && isFirstTimeUser === 'true') {
               setTimeout(() => setVisibleCompletePopup(true), 750)
             }
           }

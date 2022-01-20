@@ -8,7 +8,22 @@ import { NFT_API_ENDPOINTS, fetchSingleCollectionTabContent } from '../../api/NF
 
 const FOOTER_SLIDER = styled(Slider)`
   width: 100%;
-  margin-bottom: 48px;
+  margin-bottom: ${({ theme }) => theme.margins['6x']};
+  padding: 0 ${({ theme }) => theme.margins['11x']};
+  .slick-arrow {
+    width: 40px;
+    height: 40px;
+    z-index: 10;
+    &:before {
+      font-size: 40px;
+    }
+  }
+  .slick-prev {
+    left: 20px;
+  }
+  .slick-next {
+    right: 35px;
+  }
 `
 
 const FOOTER_IMAGE = styled(Image)`
