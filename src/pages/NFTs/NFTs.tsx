@@ -23,6 +23,7 @@ const WRAPPER = styled.div`
   justify-content: center;
   min-height: 0px;
   min-width: 0px;
+  font-family: Montserrat;
 `
 
 const BODY_NFT = styled.div`
