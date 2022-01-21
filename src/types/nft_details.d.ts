@@ -1,4 +1,3 @@
-import { Categories } from './../components/Categories'
 import { INFTAsk } from './nft_details.d'
 export interface IInfoItemData {
   thumbnail: string
@@ -22,6 +21,8 @@ export interface ITradingHistoryTabItemData {
 export interface IAttributesTabItemData {
   title?: string
   value?: string
+  display_type?: string
+  trait_type?: string
 }
 
 export interface IRemainingPanelData {
@@ -30,24 +31,27 @@ export interface IRemainingPanelData {
   minutes: string
 }
 
-// export interface INFTDetailsGeneralData {
-//   image?: string
-//   type?: string
-//   isFavorite?: boolean
-//   hearts?: number
-//   remaining?: RemainingPanelTimeType
-//   name?: string
-//   price?: number
-//   fiat?: string
-//   isForCharity?: string
-//   percent?: string
-//   intro?: string
-//   creator?: IInfoItemData
-//   collection?: IInfoItemData
-//   category?: IInfoItemData
-// }
+export type NFTCreator = { address: string; share: number; verified?: boolean }
 
-export interface ISingleNFT {
+export type NFTTopLevelNFTData = {
+  data: {
+    creators: Array<NFTCreator>
+    name: string
+    sellerFeeBasisPoints: number
+    symbol: string
+    uri: string
+  }
+  edition: any
+  editionNonce: null | any
+  isMutable: number
+  key: number
+  masterEdition: any
+  mint: string
+  primarySaleHappened: number
+  updateAuthority: string
+}
+
+export type ISingleNFT = {
   non_fungible_id: number
   nft_name: string
   nft_description: string
@@ -58,7 +62,7 @@ export interface ISingleNFT {
   collection_id: number
 }
 
-export interface INFTMetadata {
+export type INFTMetadata = {
   name: string
   symbol: string
   description: string
@@ -70,12 +74,12 @@ export interface INFTMetadata {
     files: Array<{ uri: string; type: string }>
     category: string
     maxSupply?: number
-    creators: Array<{ address: string; share: number; verified?: boolean }>
+    creators: Array<NFTCreator>
   }
   collection?: { name: string; family: string }
 }
 
-export interface INFTBid {
+export type INFTBid = {
   bid_id: number
   clock: string
   tx_sig: string
@@ -91,7 +95,7 @@ export interface INFTBid {
   user_id: number
 }
 
-export interface INFTAsk {
+export type INFTAsk = {
   ask_id: number
   clock: string
   tx_sig: string

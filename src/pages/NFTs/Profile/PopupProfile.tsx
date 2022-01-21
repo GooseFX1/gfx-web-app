@@ -24,23 +24,28 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
   const isCompletingProfile = useMemo(() => sessionUser.user_id === null, [sessionUser])
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const handleAvatar = (file: UploadChangeParam<UploadFile<any>>) => {
-    setAvatar(file.fileList[0])
-  }
+  // const handleAvatar = (file: UploadChangeParam<UploadFile<any>>) => {
+  //   setAvatar(file.fileList[0])
+  // }
 
   const onFinish = (values: any) => {
-    validateUserFields(values)
-
     setIsLoading(true)
+    if (sessionUser.user_id === null) {
+      completeProfile()
+    } else {
+      updateProfile(values)
+    }
+  }
+
+  const onCancel = () => {
+    form.setFieldsValue(sessionUser)
+    handleCancel()
+  }
+
+  const completeProfile = () => {
     completeNFTUserProfile(sessionUser.pubkey).then((res) => {
+      console.dir(res)
       if (res.response && res.response.status === 200 && res.response.data === true) {
-        updateNFTUser({ ...values }).then((res) => {
-          if (res === true) {
-            history.push(`NFTs/profile/${sessionUser.nickname}`)
-          } else {
-            console.error(`Error fetching user ${sessionUser.pubkey}`)
-          }
-        })
       } else {
         console.error('Error Completing Profile')
         setIsLoading(false)
@@ -48,9 +53,14 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
     })
   }
 
-  const onCancel = () => {
-    form.setFieldsValue(sessionUser)
-    handleCancel()
+  const updateProfile = (updatedProfile: INFTProfile) => {
+    updateNFTUser(updatedProfile).then((res) => {
+      if (res === true) {
+        history.push(`NFTs/profile/${sessionUser.nickname}`)
+      } else {
+        console.error(`Error fetching user ${sessionUser.nickname}`)
+      }
+    })
   }
 
   const validateUserFields = (profiledata: INFTProfile): INFTProfile => {
@@ -66,7 +76,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
         maskClosable
         onCancel={onCancel}
       >
-        <div className="avatar-wrapper">
+        {/* <div className="avatar-wrapper">
           <div className="image-group">
             <div>
               <Upload className="avatar-image" listType="picture-card" maxCount={1} onChange={handleAvatar}>
@@ -94,7 +104,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
               <div>(Gif's work too).</div>
             </div>
           </div>
-        </div>
+        </div> */}
         <StyledFormProfile
           form={form}
           layout="vertical"
@@ -118,6 +128,12 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
               </Form.Item>
               <div className="hint">Will be used as public URL</div>
             </div>
+          </div>
+          <Form.Item name="profile_pic_link" label="Profile Image">
+            <Input />
+          </Form.Item>
+          <div className="hint" style={{ marginBottom: '12px' }}>
+            Use a link from https://imgur.com etc.
           </div>
           <Form.Item name="bio" label="Bio">
             <Input />

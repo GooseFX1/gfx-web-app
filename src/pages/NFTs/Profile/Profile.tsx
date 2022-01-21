@@ -1,12 +1,12 @@
 import React, { useState, useEffect, FC } from 'react'
-import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
+import { useWallet } from '@solana/wallet-adapter-react'
+import styled from 'styled-components'
 import { HeaderProfile } from './HeaderProfile'
 import { TabProfile } from './TabProfile'
 import { Loader } from '../../../components'
 import { IAppParams } from '../../../types/app_params.d'
 import { useNFTProfile } from '../../../context'
-import { useWallet } from '@solana/wallet-adapter-react'
 
 const WRAPPED_LOADER = styled.div`
   position: relative;
@@ -29,6 +29,7 @@ export const Profile: FC = (): JSX.Element => {
     } else {
       setLoading(false)
     }
+
     return () => {}
   }, [])
 

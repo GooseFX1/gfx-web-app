@@ -1,6 +1,18 @@
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
 import { Connection, PublicKey, Signer, Transaction } from '@solana/web3.js'
+import { getHashedName, getNameAccountKey, NameRegistryState } from '@solana/spl-name-service'
+
+export const SOL_TLD_AUTHORITY = new PublicKey('58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx')
+
+export const isValidSolanaAddress = (address: string) => {
+  try {
+    new PublicKey(address)
+    return true
+  } catch (error) {
+    return false
+  }
+}
 
 export const createAssociatedTokenAccountIx = (mint: PublicKey, associatedAccount: PublicKey, owner: PublicKey) =>
   Token.createAssociatedTokenAccountInstruction(
@@ -37,4 +49,53 @@ export const signAndSendRawTransaction = async (
   transaction = await wallet.signTransaction(transaction)
 
   return await connection.sendRawTransaction(transaction!.serialize())
+}
+
+export const getInputKey = async (input: any) => {
+  const hashedInputName = await getHashedName(input)
+  const inputDomainKey = await getNameAccountKey(hashedInputName, undefined, SOL_TLD_AUTHORITY)
+  return { inputDomainKey, hashedInputName }
+}
+
+interface ISolDomainToWalletAddress {
+  domainName: string
+  connection: Connection
+}
+
+export const resolveDomainToWalletAddress = async ({
+  domainName: rawText,
+  connection
+}: ISolDomainToWalletAddress): Promise<string> => {
+  const input = rawText?.trim?.()
+  const errorCantResolve = new Error("Can't resolve provided name into valid Solana address =(")
+
+  // throw and error if input is not provided
+  if (!input) {
+    return Promise.reject(errorCantResolve)
+  }
+
+  const isValidSolana = isValidSolanaAddress(input)
+  if (isValidSolana) {
+    return Promise.resolve(input)
+  }
+
+  const inputLowerCased = input?.toLowerCase()
+  const isSolDamain = inputLowerCased?.endsWith?.('.sol')
+
+  if (isSolDamain) {
+    // get domain part before .sol
+    const domainName = inputLowerCased.split('.sol')[0]
+    const { inputDomainKey } = await getInputKey(domainName)
+
+    const registry = await NameRegistryState.retrieve(connection, inputDomainKey)
+
+    const owner = registry?.owner?.toBase58?.()
+
+    if (owner) {
+      return Promise.resolve(owner)
+    }
+  }
+
+  // throw error if had no luck get valid Solana address
+  return Promise.reject(errorCantResolve)
 }
