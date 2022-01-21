@@ -108,7 +108,7 @@ export const Footer: FC = () => {
       <PrivacyPolicy setVisible={setPrivacyPolicyVisible} visible={privacyPolicyVisible} />
       <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
       <TEXT>
-        Copyright © 2021 Goose Labs, Inc. All rights reserved. Please trade with your own discretion and according to
+        Copyright © 2022 Goose Labs, Inc. All rights reserved. Please trade with your own discretion and according to
         your location’s laws and regulations.
       </TEXT>
       <SpaceBetweenDiv>
