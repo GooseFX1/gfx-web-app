@@ -112,10 +112,6 @@ export const Footer: FC = () => {
         your location’s laws and regulations.
       </TEXT>
       <SpaceBetweenDiv>
-        <REFRESH_ICON>
-          <span>Refresh Rate</span>
-          <img src={`${process.env.PUBLIC_URL}/img/assets/refresh-icon.png`} alt="" />
-        </REFRESH_ICON>
         <MODE_ICON>
           {mode === 'dark' ? (
             <SVGToWhite className="moon-image" src={`${process.env.PUBLIC_URL}/img/assets/lite_mode.svg`} alt="" />
