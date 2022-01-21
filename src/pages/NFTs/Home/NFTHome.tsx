@@ -14,6 +14,13 @@ const SCROLLING_CONTENT = styled.div`
   position: relative;
 `
 
+const SCROLLING_CONTENT_100 = styled.div`
+  overflow-y: overlay;
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
+`
+
 const NFTLandingPage: FC = (): JSX.Element => {
   const {
     allCollections,
@@ -63,7 +70,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
     <>
       <Header />
       <NFTHeaderCarousel isBig={false} isBigVisible={isBigCarouselVisible} />
-      <SCROLLING_CONTENT onScroll={onScroll}>
+      <SCROLLING_CONTENT_100 onScroll={onScroll}>
         <NFTHeaderCarousel isBig isBigVisible={isBigCarouselVisible} />
         <CollectionCarousel
           collections={allCollections}
@@ -86,7 +93,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
           isLoading={isFeaturedLoading}
         />
         <NFTFooter />
-      </SCROLLING_CONTENT>
+      </SCROLLING_CONTENT_100>
     </>
   )
 }

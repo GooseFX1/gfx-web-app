@@ -14,10 +14,32 @@ import {
 
 const MODE_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margins['2x'])};
+  .moon-image {
+    width: 18px;
+    height: 18px;
+    margin-right: ${({ theme }) => theme.margins['1x']};
+  }
+  .brightness-image {
+    width: 22px;
+    height: 22px;
+  }
+`
+const REFRESH_ICON = styled.div`
+  margin-right: ${({ theme }) => theme.margins['6x']};
+
+  span {
+    font-size: 11px;
+    margin-right: ${({ theme }) => theme.margins['1x']};
+    color: ${({ theme }) => theme.text2};
+  }
+  img {
+    width: 37px;
+    height: 37px;
+  }
 `
 
 const TEXT = styled.span`
-  font-size: 10px;
+  font-size: 11px;
   color: ${({ theme }) => theme.text2};
   margin-right: ${({ theme }) => theme.margins['1x']};
 
@@ -28,9 +50,10 @@ const TEXT = styled.span`
 `
 
 const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`
-  height: ${({ theme }) => theme.margins['3x']};
-  width: ${({ theme }) => theme.margins['6x']};
+  height: 30px;
+  width: 60px;
   border-radius: 30px;
+  margin-right: ${({ theme }) => theme.margins['5x']};
   background-color: ${({ theme }) => theme.appLayoutFooterToggle};
   &:hover {
     cursor: pointer;
@@ -45,17 +68,13 @@ const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`
 
 const WRAPPER = styled(SpaceBetweenDiv)`
   height: ${APP_LAYOUT_FOOTER_HEIGHT};
-  padding: ${({ theme }) => theme.margins['2x']};
+  padding: ${({ theme }) => theme.margins['5x']};
   border-top: 1px solid ${({ theme }) => theme.appLayoutFooterBorder};
   background-color: ${({ theme }) => theme.bg2};
 
   div > div {
-    &:first-child {
+    &:nth-child(2) {
       margin-right: ${({ theme }) => theme.margins['1x']};
-    }
-
-    &:last-child {
-      margin-left: ${({ theme }) => theme.margins['1x']};
     }
   }
 
@@ -89,17 +108,19 @@ export const Footer: FC = () => {
       <PrivacyPolicy setVisible={setPrivacyPolicyVisible} visible={privacyPolicyVisible} />
       <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
       <TEXT>
-        Copyright © 2021 GooseFX. All rights reserved. Please trade with your own discretion. Certain features may be
-        unavailable to your geographic location. Please refer to our&nbsp;
-        <span onClick={handleTOS}>Terms of Service</span>&nbsp;and&nbsp;
-        <span onClick={handlePrivacyPolicy}>Privacy Policy</span>.
+        Copyright © 2021 Goose Labs, Inc. All rights reserved. Please trade with your own discretion and according to
+        your location’s laws and regulations.
       </TEXT>
       <SpaceBetweenDiv>
+        <REFRESH_ICON>
+          <span>Refresh Rate</span>
+          <img src={`${process.env.PUBLIC_URL}/img/assets/refresh-icon.png`} alt="" />
+        </REFRESH_ICON>
         <MODE_ICON>
           {mode === 'dark' ? (
-            <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/lite_mode.svg`} alt="" />
+            <SVGToWhite className="moon-image" src={`${process.env.PUBLIC_URL}/img/assets/lite_mode.svg`} alt="" />
           ) : (
-            <img src={`${process.env.PUBLIC_URL}/img/assets/lite_mode.svg`} alt="" />
+            <img className="moon-image" src={`${process.env.PUBLIC_URL}/img/assets/lite_mode.svg`} alt="" />
           )}
         </MODE_ICON>
         <TOGGLE $mode={mode} onClick={toggleMode}>
@@ -107,9 +128,13 @@ export const Footer: FC = () => {
         </TOGGLE>
         <MODE_ICON>
           {mode === 'dark' ? (
-            <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/dark_mode.svg`} alt="" />
+            <SVGToWhite
+              className="brightness-image"
+              src={`${process.env.PUBLIC_URL}/img/assets/dark_mode.svg`}
+              alt=""
+            />
           ) : (
-            <img src={`${process.env.PUBLIC_URL}/img/assets/dark_mode.svg`} alt="" />
+            <img className="brightness-image" src={`${process.env.PUBLIC_URL}/img/assets/dark_mode.svg`} alt="" />
           )}
         </MODE_ICON>
       </SpaceBetweenDiv>
