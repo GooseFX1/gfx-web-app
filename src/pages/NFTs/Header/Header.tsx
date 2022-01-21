@@ -72,12 +72,12 @@ export const Header = () => {
     if (connected && publicKey) {
       if (!sessionUser) {
         fetchSessionUser('address', `${publicKey}`).then((res) => {
-          if (res.response && res.response.status !== 200) {
-            console.error(res)
-          } else {
+          if (res && res.status === 200) {
             if (res.data.length === 0 && isFirstTimeUser === 'true') {
               setTimeout(() => setVisibleCompletePopup(true), 750)
             }
+          } else {
+            console.error(res)
           }
         })
       }
