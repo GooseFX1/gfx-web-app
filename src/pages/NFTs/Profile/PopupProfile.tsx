@@ -1,13 +1,11 @@
-import React, { useState, useMemo } from 'react'
-import { useHistory } from 'react-router-dom'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Form, Input, Upload, Button } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
-import { UploadChangeParam } from 'antd/lib/upload'
-import { UploadFile } from 'antd/lib/upload/interface'
+// import { PlusOutlined } from '@ant-design/icons'
+// import { UploadChangeParam } from 'antd/lib/upload'
+// import { UploadFile } from 'antd/lib/upload/interface'
 import { StyledPopupProfile, StyledFormProfile } from './PopupProfile.styled'
 import { useNFTProfile } from '../../../context'
 import { completeNFTUserProfile, updateNFTUser } from '../../../api/NFTs'
-import { ILocationState } from '../../../types/app_params.d'
 import { INFTProfile } from '../../../types/nft_profile.d'
 
 interface Props {
@@ -17,23 +15,28 @@ interface Props {
 }
 
 export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
-  const { sessionUser } = useNFTProfile()
-  const history = useHistory<ILocationState>()
+  const { sessionUser, setSessionUser } = useNFTProfile()
   const [form] = Form.useForm()
-  const [avatar, setAvatar] = useState<any>()
+  // const [avatar, setAvatar] = useState<any>()
   const isCompletingProfile = useMemo(() => sessionUser.user_id === null, [sessionUser])
   const [isLoading, setIsLoading] = useState<boolean>(false)
-
   // const handleAvatar = (file: UploadChangeParam<UploadFile<any>>) => {
   //   setAvatar(file.fileList[0])
   // }
 
-  const onFinish = (values: any) => {
+  useEffect(() => {
+    form.setFieldsValue(sessionUser)
+
+    return () => form.setFieldsValue(undefined)
+  }, [sessionUser])
+
+  const onFinish = (profileFormData: any) => {
     setIsLoading(true)
     if (sessionUser.user_id === null) {
-      completeProfile()
+      completeProfile(profileFormData)
     } else {
-      updateProfile(values)
+      const updatedProfile = { ...profileFormData, user_id: sessionUser.user_id }
+      updateProfile(updatedProfile)
     }
   }
 
@@ -42,10 +45,25 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
     handleCancel()
   }
 
-  const completeProfile = () => {
+  const completeProfile = (profileFormData: INFTProfile) => {
+    if (sessionUser.pubkey.length === 0) {
+      console.error('Error: Invalid Public Key')
+      return
+    }
+
     completeNFTUserProfile(sessionUser.pubkey).then((res) => {
       console.dir(res)
-      if (res.response && res.response.status === 200 && res.response.data === true) {
+      if (res && res.status === 200 && res.data) {
+        const profile = res.data[0]
+
+        const forUpdate = {
+          ...profileFormData,
+          user_id: profile.user_id,
+          pubkey: profile.pubkey,
+          is_verified: profile.is_verified
+        }
+
+        updateProfile(forUpdate)
       } else {
         console.error('Error Completing Profile')
         setIsLoading(false)
@@ -53,18 +71,17 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
     })
   }
 
-  const updateProfile = (updatedProfile: INFTProfile) => {
+  const updateProfile = async (updatedProfile: INFTProfile) => {
     updateNFTUser(updatedProfile).then((res) => {
-      if (res === true) {
-        history.push(`NFTs/profile/${sessionUser.nickname}`)
+      if (res && res.status === 200 && res.data === true) {
+        setIsLoading(false)
+        setSessionUser(updatedProfile)
+        setVisible(false)
       } else {
-        console.error(`Error fetching user ${sessionUser.nickname}`)
+        setIsLoading(false)
+        console.error(`Error Updating user ${sessionUser.nickname}`)
       }
     })
-  }
-
-  const validateUserFields = (profiledata: INFTProfile): INFTProfile => {
-    return profiledata
   }
 
   return (
