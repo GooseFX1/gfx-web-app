@@ -14,6 +14,8 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
       const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SESSION_USER}?${type}=${parameter}`)
       if (res.data.length > 0) {
         setSessionUser(res.data[0])
+      } else {
+        setUnamedUser(type, parameter)
       }
       return res
     } catch (err) {
@@ -30,6 +32,22 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
       return err
     }
   }, [])
+
+  const setUnamedUser = (type: UserFetchType, parameter: any) => {
+    setSessionUser({
+      user_id: type === 'user_id' ? parameter : null,
+      pubkey: type === 'address' ? parameter : '',
+      nickname: type === 'nickname' ? parameter : 'Unnamed',
+      email: '',
+      bio: '',
+      twitter_link: '',
+      instagram_link: '',
+      facebook_link: '',
+      youtube_link: '',
+      profile_pic_link: '',
+      is_verified: false
+    })
+  }
 
   return (
     <NFTProfileContext.Provider

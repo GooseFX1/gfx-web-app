@@ -1,12 +1,13 @@
 import React, { useState, useEffect, FC } from 'react'
-import { useParams } from 'react-router-dom'
+// import { useParams } from 'react-router-dom'
+// import { IAppParams } from '../../../types/app_params.d'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
 import { HeaderProfile } from './HeaderProfile'
 import { TabProfile } from './TabProfile'
 import { Loader } from '../../../components'
-import { IAppParams } from '../../../types/app_params.d'
 import { useNFTProfile } from '../../../context'
+import { unnamedUser } from './unnamedUser'
 
 const WRAPPED_LOADER = styled.div`
   position: relative;
@@ -17,47 +18,37 @@ const WRAPPED_LOADER = styled.div`
 `
 
 export const Profile: FC = (): JSX.Element => {
-  const params = useParams<IAppParams>()
+  // const params = useParams<IAppParams>()
   const [err, setErr] = useState(false)
   const [loading, setLoading] = useState(true)
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
-  const { publicKey } = useWallet()
+  const { connected, publicKey } = useWallet()
 
   useEffect(() => {
-    if (!sessionUser) {
-      params.userId ? getUserByParam(params.userId) : setUnnamedUser()
+    if (connected && publicKey) {
+      if (!sessionUser || sessionUser.pubkey !== `${publicKey}`) {
+        fetchUser(`${publicKey}`)
+      }
+      setLoading(false)
     } else {
+      setUnnamedUser()
       setLoading(false)
     }
 
     return () => {}
-  }, [])
+  }, [publicKey, connected])
 
-  const getUserByParam = (param: string) => {
-    fetchSessionUser('nickname', param).then((res) => {
-      if (res.response && res.response.status !== 200) {
+  const fetchUser = (param: string) => {
+    fetchSessionUser('address', `${publicKey}`).then((res) => {
+      if (!res || (res.response && res.response.status !== 200) || res.isAxiosError) {
+        console.error(res)
         setErr(true)
-      } else {
-        setLoading(false)
       }
     })
   }
 
   const setUnnamedUser = () => {
-    setSessionUser({
-      user_id: null,
-      pubkey: `${publicKey}`,
-      nickname: 'Unnamed',
-      email: '',
-      bio: '',
-      twitter_link: '',
-      instagram_link: '',
-      facebook_link: '',
-      youtube_link: '',
-      profile_pic_link: '',
-      is_verified: false
-    })
-
+    setSessionUser(unnamedUser)
     setLoading(false)
   }
 
