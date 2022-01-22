@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { Menu, Button } from 'antd'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory, useLocation } from 'react-router-dom'
+import { Menu, Button, Image } from 'antd'
+import { useNFTProfile, useDarkMode } from '../../../context'
+import { ILocationState } from '../../../types/app_params.d'
 import { PopupProfile } from './PopupProfile'
 import { ShareProfile } from './ShareProfile'
-import { useDarkMode } from '../../../context'
 import { StyledHeaderProfile, StyledDropdown, StyledMenu } from './HeaderProfile.styled'
-import { ILocationState } from '../../../types/app_params.d'
-import { useNFTProfile } from '../../../context'
-import { Image } from 'antd'
+import { MainButton } from '../../../components'
+import { CenteredDiv } from '../../../styles'
 
 const menu = (setVisibleShareProfile: (b: boolean) => void) => (
   <StyledMenu>
@@ -37,6 +38,7 @@ type Props = {
 export const HeaderProfile = ({ isExplore }: Props) => {
   const location = useLocation<ILocationState>()
   const history = useHistory()
+  const { connected, publicKey } = useWallet()
   const { sessionUser } = useNFTProfile()
   const { mode } = useDarkMode()
   const [visible, setVisible] = useState(false)
@@ -70,12 +72,14 @@ export const HeaderProfile = ({ isExplore }: Props) => {
           preview={false}
           alt={sessionUser.nickname}
         />
-        <img
-          className="edit-icon"
-          src={`${process.env.PUBLIC_URL}/img/assets/edit.svg`}
-          alt=""
-          onClick={() => setVisible(true)}
-        />
+        {sessionUser.user_id && (
+          <img
+            className="edit-icon"
+            src={`${process.env.PUBLIC_URL}/img/assets/edit.svg`}
+            alt=""
+            onClick={() => setVisible(true)}
+          />
+        )}
       </div>
       <div className="name-wrap">
         <span className="name">{sessionUser.nickname}</span>
@@ -89,6 +93,13 @@ export const HeaderProfile = ({ isExplore }: Props) => {
         )}
       </div>
       <div className="social-list">
+        {!sessionUser.user_id && connected && publicKey && (
+          <CenteredDiv>
+            <MainButton height="30px" onClick={() => setVisible(true)} status="action" width="150px">
+              <span>Complete Profile</span>
+            </MainButton>
+          </CenteredDiv>
+        )}
         {sessionUser.twitter_link && (
           <a className="social-item" href={sessionUser.twitter_link} target={'_blank'} rel={'noreferrer'}>
             <img className="social-icon" src={`${process.env.PUBLIC_URL}/img/assets/twitter.svg`} alt="" />
@@ -105,22 +116,24 @@ export const HeaderProfile = ({ isExplore }: Props) => {
           </a>
         )}
         {sessionUser.youtube_link && (
-          <a className="social-item" href={sessionUser.youtube_link} target={'_blank'} rel={'noreferrer'}>
+          <a className="social-item-yt" href={sessionUser.youtube_link} target={'_blank'} rel={'noreferrer'}>
             <img className="social-icon" src={`${process.env.PUBLIC_URL}/img/assets/youtube.png`} alt="" />
           </a>
         )}
       </div>
-      <div className="action-wrap">
-        <button className="btn-create">
-          <span>Create</span>
-        </button>
+      {sessionUser.is_verified && (
+        <div className="action-wrap">
+          <button className="btn-create">
+            <span>Create</span>
+          </button>
 
-        <StyledDropdown overlay={menu(setVisibleShareProfile)} trigger={['click']} placement="bottomRight" arrow>
-          <Button>
-            <img className="more-icon" src={`${process.env.PUBLIC_URL}/img/assets/more_icon.svg`} alt="more" />
-          </Button>
-        </StyledDropdown>
-      </div>
+          <StyledDropdown overlay={menu(setVisibleShareProfile)} trigger={['click']} placement="bottomRight" arrow>
+            <Button>
+              <img className="more-icon" src={`${process.env.PUBLIC_URL}/img/assets/more_icon.svg`} alt="more" />
+            </Button>
+          </StyledDropdown>
+        </div>
+      )}
       <PopupProfile visible={visible} setVisible={setVisible} handleCancel={handleCancel} />
       <ShareProfile visible={visibleShareProfile} handleCancel={() => setVisibleShareProfile(false)} />
     </StyledHeaderProfile>
