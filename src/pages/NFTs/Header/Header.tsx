@@ -63,14 +63,14 @@ const AVATAR_NFT = styled(Image)`
 
 export const Header = () => {
   const history = useHistory()
-  const { sessionUser, fetchSessionUser } = useNFTProfile()
+  const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
   const { connected, publicKey } = useWallet()
   const [isFirstTimeUser, setIsFirstTimeUser] = useLocalStorageState(`sessionUserInit`, 'true')
   const [visibleCompletePopup, setVisibleCompletePopup] = useState<boolean>(false)
 
   useEffect(() => {
     if (connected && publicKey) {
-      if (!sessionUser) {
+      if (!sessionUser || sessionUser.pubkey !== `${publicKey}`) {
         fetchSessionUser('address', `${publicKey}`).then((res) => {
           if (res && res.status === 200) {
             if (res.data.length === 0 && isFirstTimeUser === 'true') {
@@ -81,6 +81,8 @@ export const Header = () => {
           }
         })
       }
+    } else {
+      setSessionUser(undefined)
     }
     return () => {}
   }, [publicKey, connected])
