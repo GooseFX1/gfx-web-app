@@ -4,7 +4,7 @@ import React, { useState, useEffect, FC } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
 import { HeaderProfile } from './HeaderProfile'
-import { TabProfile } from './TabProfile'
+import { ContentProfile } from './ContentProfile'
 import { Loader } from '../../../components'
 import { useNFTProfile } from '../../../context'
 import { unnamedUser } from './unnamedUser'
@@ -61,7 +61,7 @@ export const Profile: FC = (): JSX.Element => {
   ) : (
     <>
       <HeaderProfile />
-      <TabProfile />
+      <ContentProfile />
     </>
   )
 }
