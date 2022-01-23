@@ -7,7 +7,7 @@ export type UserFetchType = 'address' | 'user_id' | 'nickname'
 
 export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [sessionUser, setSessionUser] = useState<INFTProfile>()
-  const [userActivity, setUserActivity] = useState<Array<INFTUserActivity>>([])
+  const [userActivity, setUserActivity] = useState<INFTUserActivity[]>([])
 
   const fetchSessionUser = useCallback(async (type: UserFetchType, parameter: string | number): Promise<any> => {
     try {
@@ -26,6 +26,8 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const fetchUserActivity = useCallback(async (id: number): Promise<any> => {
     try {
       const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.USER_ACTIVITY}?user_id=${id}`)
+      console.log(res)
+
       setUserActivity(res.data)
       return res
     } catch (err) {
@@ -56,6 +58,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         setSessionUser,
         fetchSessionUser,
         userActivity,
+        setUserActivity,
         fetchUserActivity
       }}
     >
@@ -77,6 +80,7 @@ export const useNFTProfile = (): INFTProfileConfig => {
     setSessionUser: context.setSessionUser,
     fetchSessionUser: context.fetchSessionUser,
     userActivity: context.userActivity,
+    setUserActivity: context.setUserActivity,
     fetchUserActivity: context.fetchUserActivity
   }
 }
