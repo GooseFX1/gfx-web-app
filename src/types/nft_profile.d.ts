@@ -30,5 +30,6 @@ export interface INFTProfileConfig {
   setSessionUser: Dispatch<SetStateAction<INFTProfile>>
   fetchSessionUser: (type: UserFetchType, parameter: string | number) => Promise<any>
   userActivity: Array<INFTUserActivity>
+  setUserActivity: Dispatch<SetStateAction<INFTUserActivity[]>>
   fetchUserActivity: (id: number) => Promise<any>
 }

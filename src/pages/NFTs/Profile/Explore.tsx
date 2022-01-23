@@ -1,10 +1,10 @@
 import React, { FC } from 'react'
 import { HeaderProfile } from './HeaderProfile'
-import { TabProfile } from './TabProfile'
+import { ContentProfile } from './ContentProfile'
 
 export const Explore: FC = () => (
   <>
     <HeaderProfile isExplore />
-    <TabProfile isExplore />
+    <ContentProfile isExplore />
   </>
 )
