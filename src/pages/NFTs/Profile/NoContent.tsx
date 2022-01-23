@@ -67,14 +67,14 @@ const options = {
   }
 }
 
-export const NoContent = ({ type }: Props) => {
+const NoContent = ({ type }: Props) => {
   const history = useHistory()
   const obj = options[type]
 
   const handleNoContentClick = (e) => {
     switch (type) {
       case 'collected':
-        history.push('NFTs')
+        history.push('/NFTs')
         break
       default:
         console.error('Profile button issue')
@@ -94,3 +94,5 @@ export const NoContent = ({ type }: Props) => {
     </NO_CONTENT>
   )
 }
+
+export default React.memo(NoContent)
