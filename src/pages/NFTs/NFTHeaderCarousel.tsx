@@ -98,6 +98,7 @@ const BIG_SLIDER_WRAPPER = styled.div<{ imgUrl: string }>`
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
+  border-radius: 0 0 20px 20px;
 `
 const SMALL_SLIDER_WRAPPER = styled.div<{ imgUrl: string; isBigVisible: boolean }>`
   background-image: url(${({ imgUrl }) => imgUrl});
