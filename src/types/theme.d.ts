@@ -117,6 +117,7 @@ export interface Colors {
   solPillBg: Color
   stakePillBg: Color
   hoverTrFarmBg: Color
+  tableHeaderBoxShadow: Color
   expendedRowBg: Color
   filterDownIcon: Color
 
