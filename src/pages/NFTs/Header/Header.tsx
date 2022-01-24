@@ -13,11 +13,12 @@ import { useNFTProfile } from '../../../context'
 
 const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
   padding: ${({ theme }) => theme.margins['3x']};
+  margin-bottom: -${({ theme }) => theme.margins['1x']};
   ${({ theme }) => theme.largeBorderRadius}
   ${({ theme }) => theme.smallShadow}
   background-color: ${({ theme }) => theme.bg3};
   box-shadow: 0 1px 5px 6px rgb(0 0 0 / 29%);
-  z-index: 2;
+  z-index: 5;
 
   > *:not(:nth-child(2)) {
     flex: 2;

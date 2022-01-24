@@ -9,7 +9,7 @@ import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
 
 const SCROLLING_CONTENT = styled.div`
   overflow-y: overlay;
-  width: 101%;
+  width: 100%;
   overflow-x: hidden;
   position: relative;
 `
