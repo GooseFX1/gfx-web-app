@@ -8,7 +8,7 @@ const STYLED_TABLE_LIST = styled(Table)`
   ${({ theme }) => `
   max-width: 100%;
   .ant-table {
-    background-color: #2a2a2a;
+    background-color: ${theme.bg3};;
   }
   .normal-text {
     font-family: Montserrat;
@@ -28,7 +28,7 @@ const STYLED_TABLE_LIST = styled(Table)`
     background: ${theme.farmHeaderBg};
     border-bottom-left-radius: 30px;
     border-bottom-right-radius: 30px;
-    box-shadow: 0px 8px 6px -3px rgb(0 0 0 / 30%);
+    box-shadow: ${theme.tableHeaderBoxShadow};
     > tr {
       > th {
         border: none;

@@ -155,6 +155,7 @@ export function colors(mode: string): Colors {
     solPillBg: mode === 'dark' ? '#111' : '#313131',
     stakePillBg: mode === 'dark' ? '#1e1e1e' : 'rgba(49, 49, 49, 0.5)',
     hoverTrFarmBg: mode === 'dark' ? 'rgba(64, 64, 64, 0.7)' : 'rgba(64, 64, 64, 0.05)',
+    tableHeaderBoxShadow: mode === 'dark' ? '0px 8px 6px -3px rgb(0 0 0 / 30%)' : 'none',
     expendedRowBg:
       mode === 'dark'
         ? 'linear-gradient(to bottom, #39253e, rgba(42, 42, 42, 0))'
