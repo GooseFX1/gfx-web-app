@@ -19,8 +19,9 @@ export const Tooltip: FC<{
   dark?: boolean
   lite?: boolean
   placement?: TooltipPlacement
+  color?: string
   children: ReactNode
-}> = ({ dark, lite, placement = 'topLeft', children }) => {
+}> = ({ dark, lite, placement = 'topLeft', color = '#4b4b4b', children }) => {
   const { mode } = useDarkMode()
 
   const icon = `${process.env.PUBLIC_URL}/img/assets/tooltip_${dark ? 'dark' : lite ? 'lite' : mode}_mode_icon.svg`
@@ -28,7 +29,7 @@ export const Tooltip: FC<{
   return (
     <ANTDTooltip
       arrowPointAtCenter
-      color="#4b4b4b"
+      color={color}
       overlayInnerStyle={{ borderRadius: '8px', display: 'flex', alignItems: 'center', padding: '8px' }}
       placement={placement}
       title={<TEXT>{children}</TEXT>}
