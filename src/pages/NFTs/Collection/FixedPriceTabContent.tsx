@@ -46,7 +46,7 @@ export const FixedPriceTabContent: FC = ({ ...rest }) => {
       if (res.response && res.response.status !== 200) {
         setErr(true)
       }
-      setLocalFixedPrice(res)
+      setLocalFixedPrice(res?.data?.nft_data?.slice(0, 25))
     })
 
     return () => {}
@@ -68,7 +68,7 @@ export const FixedPriceTabContent: FC = ({ ...rest }) => {
         <FIXED_PRICE_TAB {...rest}>
           {localFixedPrice.map((item: ISingleNFT) => (
             <div onClick={() => goToFixedPriceDetails(item.non_fungible_id)}>
-              <Card type="grid" key={item.non_fungible_id} singleNFT={item} />
+              <Card key={item.non_fungible_id} singleNFT={item} tab="fixed" />
             </div>
           ))}
         </FIXED_PRICE_TAB>

@@ -2,7 +2,6 @@ import { useState, useEffect, FC } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { Card } from './Card'
-import { Col, Row } from 'antd'
 import { useNFTCollections } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { NFT_API_ENDPOINTS, fetchSingleCollectionTabContent } from '../../../api/NFTs'
@@ -12,18 +11,22 @@ const WRAPPER = styled.div`
   min-height: 410px;
 `
 
-const LIVE_AUCTIONS_TAB = styled(Row)`
+const LIVE_AUCTIONS_TAB = styled.div`
   ${({ theme }) => css`
-    overflow-x: auto;
-    padding-top: ${theme.margins['5.5x']};
-    padding-bottom: ${theme.margins['5.5x']};
-    padding-left: ${theme.margins['4x']};
+    overflow-y: auto;
+    padding: ${theme.margins['5.5x']} ${theme.margins['4x']};
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    grid-gap: ${theme.margins['6x']};
 
     &::-webkit-scrollbar {
       display: none;
     }
   `}
 `
+// grid-template-columns: repeat(5, 1fr);
 
 const EMPTY_MSG = styled.div`
   ${({ theme }) => theme.flexCenter}
@@ -47,7 +50,7 @@ export const LiveAuctionsTabContent: FC = ({ ...rest }) => {
         if (res.response && res.response.status !== 200) {
           setErr(true)
         }
-        setLocalLiveAuction(res)
+        setLocalLiveAuction(res?.data || null)
       }
     )
 
@@ -68,13 +71,11 @@ export const LiveAuctionsTabContent: FC = ({ ...rest }) => {
         <EMPTY_MSG>Error loading live auction NFTs</EMPTY_MSG>
       ) : localLiveAuction.length > 0 ? (
         <LIVE_AUCTIONS_TAB {...rest}>
-          <Row wrap={false} gutter={43}>
-            {localLiveAuction.map((item: ISingleNFT) => (
-              <Col onClick={() => goToLiveAuctionDetails(item.non_fungible_id)}>
-                <Card type="carousel" key={item.non_fungible_id} singleNFT={item} />
-              </Col>
-            ))}
-          </Row>
+          {localLiveAuction.map((item: ISingleNFT) => (
+            <div onClick={() => goToLiveAuctionDetails(item.non_fungible_id)}>
+              <Card key={item.non_fungible_id} singleNFT={item} tab="auction" />
+            </div>
+          ))}
         </LIVE_AUCTIONS_TAB>
       ) : (
         <EMPTY_MSG>No NFTs</EMPTY_MSG>
