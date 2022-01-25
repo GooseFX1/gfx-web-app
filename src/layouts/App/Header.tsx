@@ -8,7 +8,6 @@ import { SVGToGrey2, CenteredDiv } from '../../styles'
 
 const BRAND = styled.a`
   position: absolute;
-  top: ${({ theme }) => theme.margins['3x']};
   ${({ theme }) => theme.flexCenter}
   width: 84px;
   font-size: 40px;
