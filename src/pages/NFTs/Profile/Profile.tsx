@@ -56,7 +56,7 @@ export const Profile: FC = (): JSX.Element => {
     <WRAPPED_LOADER>
       <Loader />
     </WRAPPED_LOADER>
-  ) : err ? (
+  ) : err || !sessionUser ? (
     <h2>Something went wrong fetching user profile</h2>
   ) : (
     <>
