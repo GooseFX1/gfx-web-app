@@ -29,6 +29,7 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
   position: relative;
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.bg3};
+  height: 80px;
 
   .arrow-down {
     width: 14px;
@@ -57,6 +58,16 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     padding: 29px 40px 19px;
     ${({ theme }) => theme.roundedBorders}
     z-index: 1;
+
+    > div {
+      height: 27px;
+      width: auto;
+    }
+
+    img {
+      height: 27px;
+      width: auto;
+    }
 
     ${({ $width }) =>
       [...Array(TABS.length).keys()].map(
