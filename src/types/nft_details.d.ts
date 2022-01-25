@@ -77,6 +77,7 @@ export type INFTMetadata = {
     creators: Array<NFTCreator>
   }
   collection?: { name: string; family: string }
+  update_authority?: string
 }
 
 export type INFTBid = {

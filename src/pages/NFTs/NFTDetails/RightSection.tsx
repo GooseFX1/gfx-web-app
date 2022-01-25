@@ -64,9 +64,11 @@ const RIGHT_SECTION = styled.div`
     .rs-intro {
       font-size: 12px;
       font-weight: 500;
-      max-width: 254px;
+      max-width: 300px;
+      max-height: 100px;
       margin-bottom: ${theme.margins['1.5x']};
       color: ${theme.text8};
+      overflow: scroll;
     }
 
     .rs-charity-text {

@@ -1,10 +1,12 @@
+import { useEffect, useState, FC, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { Col, Row, Tabs, notification } from 'antd'
 import { useNFTDetails } from '../../../context'
 import { MintItemViewStatus, NFTDetailsProviderMode } from '../../../types/nft_details'
 import { TradingHistoryTabContent } from './TradingHistoryTabContent'
 import { AttributesTabContent } from './AttributesTabContent'
-import { useState, FC } from 'react'
+import { getParsedAccountByMint } from '../../../web3'
+import { useConnectionConfig } from '../../../context'
 
 const { TabPane } = Tabs
 
@@ -19,8 +21,8 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
       .ant-tabs-nav-wrap {
         background-color: #000;
         border-radius: 15px 15px 25px 25px;
-        padding-top: ${theme.margins['1x']};
-        padding-bottom: ${activeTab === '3' ? theme.margins['1x'] : theme.margins['2.5x']};
+        padding-top: ${theme.margins['1.5x']};
+        padding-bottom: ${theme.margins['1.5x']};
         .ant-tabs-nav-list {
           justify-content: space-around;
           width: 100%;
@@ -150,41 +152,6 @@ const DETAILS_TAB_CONTENT = styled.div`
   `}
 `
 
-export const tradingHistoryTab = [
-  {
-    id: '1',
-    event: 'list',
-    price: 150,
-    from: 'Evan34',
-    to: '',
-    date: '11/10/21'
-  },
-  {
-    id: '2',
-    event: 'offer',
-    price: 120.5678,
-    from: 'capital_1',
-    to: '',
-    date: '09/10/21'
-  },
-  {
-    id: '3',
-    event: 'offer',
-    price: 135.556,
-    from: 'MLBmodel',
-    to: 'Chirsstoo',
-    date: '02/10/21'
-  },
-  {
-    id: '4',
-    event: 'sale',
-    price: 121.134,
-    from: 'Chirsstoo',
-    to: '',
-    date: '25/09/21'
-  }
-]
-
 const getButtonText = (mode: NFTDetailsProviderMode): string => {
   switch (mode) {
     case 'live-auction-NFT':
@@ -204,31 +171,86 @@ export const RightSectionTabs: FC<{
   status: MintItemViewStatus
   handleClickPrimaryButton: () => void
 }> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
-  const { general, nftMetadata } = useNFTDetails()
   const [activeTab, setActiveTab] = useState('1')
+  const { general, nftMetadata } = useNFTDetails()
   const { mint_address } = general
-  const nftData = [
-    {
-      title: 'Mint address',
-      value: `${mint_address.substr(0, 4)}...${mint_address.substr(-4, 4)}`
-    },
-    {
-      title: 'Token address',
-      value: 'need data'
-    },
-    {
-      title: 'Owner',
-      value: 'need data'
-    },
-    {
-      title: 'Artist Royalties',
-      value: nftMetadata.seller_fee_basis_points
-    },
-    {
-      title: 'Transaction Fee',
-      value: 'need data'
-    }
-  ]
+  const { connection } = useConnectionConfig()
+  const [nftOwner, setNFTOwner] = useState<string>()
+  const [tokenAddres, setTokenAddress] = useState<string>()
+
+  const nftData = useMemo(() => {
+    return [
+      {
+        title: 'Mint address',
+        value: `${mint_address.substr(0, 4)}...${mint_address.substr(-4, 4)}`
+      },
+      {
+        title: 'Token Address',
+        value: tokenAddres ? `${tokenAddres.substr(0, 4)}...${tokenAddres.substr(-4, 4)}` : ''
+      },
+      {
+        title: 'Owner',
+        value: nftOwner ? `${nftOwner.substr(0, 6)}...${nftOwner.substr(-4, 4)}` : ''
+      },
+      {
+        title: 'Artist Royalties',
+        value: `${(nftMetadata.seller_fee_basis_points / 100).toFixed(2)}%`
+      },
+      {
+        title: 'Transaction Fee',
+        value: 'need data'
+      }
+    ]
+  }, [mint_address, general, nftOwner, tokenAddres])
+
+  const tradingHistoryTab = useMemo(
+    () => [
+      {
+        id: '1',
+        event: 'list',
+        price: 150,
+        from: 'Evan34',
+        to: '',
+        date: '11/10/21'
+      },
+      {
+        id: '2',
+        event: 'offer',
+        price: 120.5678,
+        from: 'capital_1',
+        to: '',
+        date: '09/10/21'
+      },
+      {
+        id: '3',
+        event: 'offer',
+        price: 135.556,
+        from: 'MLBmodel',
+        to: 'Chirsstoo',
+        date: '02/10/21'
+      },
+      {
+        id: '4',
+        event: 'sale',
+        price: 121.134,
+        from: 'Chirsstoo',
+        to: '',
+        date: '25/09/21'
+      }
+    ],
+    [nftMetadata]
+  )
+
+  useEffect(() => {
+    getParsedAccountByMint({
+      mintAddress: `${mint_address}`,
+      connection: connection
+    }).then((res) => {
+      const owner = res !== undefined ? res.account?.data?.parsed?.info.owner : ''
+      setNFTOwner(owner)
+      setTokenAddress(res.pubkey)
+    })
+  }, [])
 
   const desc = {
     successful: [
