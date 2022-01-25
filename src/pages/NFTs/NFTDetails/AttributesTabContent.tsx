@@ -39,7 +39,7 @@ export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ d
     <ATTRIBUTES_TAB_CONTENT {...rest}>
       {data.map((item, index) => (
         <ATTRIBUTES_ITEM key={index}>
-          <div className="ai-title">{item.title}</div>
+          <div className="ai-title">{item.trait_type}</div>
           <div className="ai-value">{item.value}</div>
         </ATTRIBUTES_ITEM>
       ))}
