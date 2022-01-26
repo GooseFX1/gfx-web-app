@@ -12,21 +12,20 @@ const WRAPPER = styled.div`
   justify-content: center;
   min-height: 0px;
   min-width: 0px;
+  font-family: Montserrat;
 `
 
 const BODY_NFT = styled.div`
   height: 100vh;
   width: 100vw;
-  ${({ theme }) => theme.largeBorderRadius};
-  box-shadow: 0 7px 15px 9px rgba(13, 13, 13, 0.25);
   background-color: ${({ theme }) => theme.bg3};
   position: relative;
   display: flex;
   flex-direction: column;
-
   overflow-y: scroll;
-  overflow-x: scroll;
-  background: #181818;
+  overflow-x: hidden;
+  background: ${({ theme }) => theme.farmContainerBg};
+  padding: 0 ${({ theme }) => theme.margins['8x']} ${({ theme }) => theme.margins['8x']};
 `
 
 const SCROLLING_OVERLAY = styled.div`

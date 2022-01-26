@@ -34,9 +34,9 @@ const BUTTON = styled.button<{ $height: string; $status: Status; $width: string;
 export const MainButton: FC<{
   children: ReactNode
   height: string
-  loading?: boolean
   status: Status
   width: string
+  loading?: boolean
   radius?: string
   [x: string]: any
 }> = ({ children, height, loading = false, status, width, radius, ...props }) => {

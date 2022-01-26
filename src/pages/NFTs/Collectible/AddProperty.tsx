@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { Button, Input } from 'antd'
 import styled from 'styled-components'
 import { PopupCustom } from '../Popup/PopupCustom'
-import isEmpty from 'lodash/isEmpty'
+import { createUUID } from '../../../utils'
 
 interface Item {
-  id: number
+  id: string
   type: string
   name: string
 }
@@ -24,7 +24,7 @@ const STYLED_ADD_PROPERTY = styled(PopupCustom)`
     .ant-modal-body {
       ${theme.largeBorderRadius}
       padding: 0;
-      background-color: #2a2a2a;
+      background-color: ${theme.bg3};
     }
     .body-wrap {
       padding: ${theme.margins['4x']};
@@ -44,11 +44,11 @@ const STYLED_ADD_PROPERTY = styled(PopupCustom)`
       font-family: Montserrat;
       font-size: 25px;
       font-weight: 600;
-      color: #fff;
+      color: ${theme.text7};
       margin-bottom: ${theme.margins['3x']};
     }
     .desc {
-      color: #909090;
+      color: ${theme.text12};
       font-family: Montserrat;
       font-size: 16px;
       font-weight: 500;
@@ -92,13 +92,17 @@ const STYLED_ADD_GROUP = styled.div`
         font-size: 18px;
         font-weight: 600;
         text-align: left;
-        color: #fff;
+        color: ${theme.text7};
         padding-left: ${theme.margins['2.5x']};
       }
     }
   `}
 `
 const STYLED_ADD_BODY = styled.div`
+  max-height: 34vh;
+  overflow: scroll;
+  margin-bottom: 8px;
+
   ${({ theme }) => `
     .add-item {
       display: flex;
@@ -108,7 +112,7 @@ const STYLED_ADD_BODY = styled.div`
     .close-btn {
       width: 55px;
       height: 55px;
-      background: #131313;
+      background: ${theme.iconRemoveBg};
       border-radius: 50%;
       margin-right: ${theme.margins['2x']};
       line-height: 51px;
@@ -118,7 +122,7 @@ const STYLED_ADD_BODY = styled.div`
     input {
       width: 180px;
       height: 55px;
-      background-color: #131313;
+      background-color: ${theme.inputPropertyBg};
       border: none;
       text-align: left;
       font-family: Montserrat;
@@ -146,7 +150,7 @@ const STYLED_ADD_BODY = styled.div`
       &:before {
         content: '';
         width: 3px;
-        background: #2a2a2a;
+        background: ${theme.inputFence};
         height: 42px;
         position: absolute;
         top: 6px;
@@ -181,36 +185,39 @@ const STYLED_ADD_MORE_BTN = styled(Button)`
 `
 
 export const AddProperty = ({ visible, handleCancel, handleOk, propertyList, setPropertyList }: Props) => {
-  const [disabled, setDisabled] = useState(true)
-  const [counter, setCounter] = useState(1)
+  // TODO: add auto focus to input on component mount
+  const [disabled, setDisabled] = useState(false)
   const initData = [
     {
-      id: 1,
+      id: createUUID(),
       type: '',
       name: ''
     }
   ]
-  const tempProperties = JSON.parse(JSON.stringify(propertyList))
-  const [realData, setRealData] = useState(isEmpty(tempProperties) ? initData : tempProperties)
-  const onAdd = (number) => {
-    const temp = JSON.parse(JSON.stringify(realData))
-    temp.push({
-      id: number + 1,
-      type: '',
-      name: ''
-    })
-    setRealData(temp)
-    setCounter(number + 1)
+
+  const [realData, setRealData] = useState(propertyList.length > 0 ? propertyList : initData)
+
+  useEffect(() => {
+    checkDisabled(realData)
+  }, [realData])
+
+  const onAdd = () => {
+    setRealData((prevData) => [
+      {
+        id: createUUID(),
+        type: '',
+        name: ''
+      },
+      ...prevData
+    ])
   }
+
   const onRemove = (id) => {
     if (realData.length === 1) return
-    const temp = JSON.parse(JSON.stringify(realData))
-    const index = temp.findIndex((item) => item.id === id)
-    if (index !== -1) {
-      temp.splice(index, 1)
-      setRealData(temp)
-    }
+
+    setRealData((prevData) => prevData.filter((item) => item.id !== id))
   }
+
   const onChange = ({ e, id }) => {
     const { name, value } = e.target
     const temp = JSON.parse(JSON.stringify(realData))
@@ -221,6 +228,7 @@ export const AddProperty = ({ visible, handleCancel, handleOk, propertyList, set
       checkDisabled(realData)
     }
   }
+
   const checkDisabled = (list) => {
     const temp = JSON.parse(JSON.stringify(list))
 
@@ -239,13 +247,10 @@ export const AddProperty = ({ visible, handleCancel, handleOk, propertyList, set
     handleOk()
   }
 
-  useEffect(() => {
-    checkDisabled(realData)
-  }, [realData])
   return (
     <STYLED_ADD_PROPERTY
       width="500px"
-      height="600px"
+      height="800px"
       title={null}
       visible={visible}
       onCancel={handleCancel}
@@ -293,7 +298,7 @@ export const AddProperty = ({ visible, handleCancel, handleOk, propertyList, set
             </div>
           ))}
         </STYLED_ADD_BODY>
-        <STYLED_ADD_MORE_BTN onClick={() => onAdd(counter)}>Add more</STYLED_ADD_MORE_BTN>
+        <STYLED_ADD_MORE_BTN onClick={() => onAdd()}>Add more</STYLED_ADD_MORE_BTN>
       </STYLED_ADD_GROUP>
 
       <div className="btn-wrap">

@@ -60,6 +60,11 @@ export function colors(mode: string): Colors {
     text8: mode === 'dark' ? white : '#636363',
     text9: mode === 'dark' ? '#616161' : '#3C3C3C',
     text10: mode === 'dark' ? '#4b4b4b' : '#BDBDBD',
+    text11: mode === 'dark' ? '#bebebe' : '#636363',
+    text12: mode === 'dark' ? '#909090' : '#636363',
+    text13: mode === 'dark' ? 'rgba(255, 255, 255, 0.55)' : '#636363',
+    text14: mode === 'dark' ? '#b1b1b1' : '#fff',
+    text15: mode === 'dark' ? '#b1b1b1' : '#7C7C7C',
     text1h: '#7d7d7d',
 
     // backgrounds / greys
@@ -103,10 +108,23 @@ export function colors(mode: string): Colors {
 
     // input bg
     inputBg: mode === 'dark' ? '#131313' : '#CACACA',
+    hintInputColor: mode === 'dark' ? '#b9b9b9' : '#636363',
 
     // btn Icon (Plus, add more), btn Next Step Background
     btnIconBg: mode === 'dark' ? '#9625ae' : '#7D7D7D',
     btnNextStepBg: mode === 'dark' ? '#9625ae' : '#7D7D7D',
+
+    // add properties
+    iconRemoveBg: mode === 'dark' ? '#131313' : '#7D7D7D',
+    inputPropertyBg: mode === 'dark' ? '#131313' : '#A7A7A7',
+    inputFence: mode === 'dark' ? '#2a2a2a' : '#C7C7C7',
+    propertyBg: mode === 'dark' ? '#131313' : '#C7C7C7',
+    propertyItemBg: mode === 'dark' ? '#000' : '#7D7D7D',
+    typePropertyColor: mode === 'dark' ? '#565656' : '#C7C7C7',
+
+    // sell categories
+    sellTabBg: mode === 'dark' ? '#131313' : '#CACACA',
+    sellTabActiveBg: mode === 'dark' ? '#131313' : '#404040',
 
     // time panel
     timePanelBackground: mode === 'dark' ? '#131313' : '#CACACA',
@@ -132,6 +150,23 @@ export function colors(mode: string): Colors {
     // main tab
     tabNameColor: mode === 'dark' ? '#616161' : '#8F8F8F',
 
+    // farm
+    farmContainerBg: mode === 'dark' ? '#1e1e1e' : '#eee',
+    farmHeaderBg: mode === 'dark' ? '#181818' : '#313131',
+    solPillBg: mode === 'dark' ? '#111' : '#313131',
+    stakePillBg: mode === 'dark' ? '#1e1e1e' : 'rgba(49, 49, 49, 0.5)',
+    hoverTrFarmBg: mode === 'dark' ? 'rgba(64, 64, 64, 0.7)' : 'rgba(64, 64, 64, 0.05)',
+    tableHeaderBoxShadow: mode === 'dark' ? '0px 8px 6px -3px rgb(0 0 0 / 30%)' : 'none',
+    tableListBoxShadow: mode === 'dark' ? 'none' : '-2px 27px 30px -10px rgb(189 189 189 / 25%)',
+    expendedRowBg:
+      mode === 'dark'
+        ? 'linear-gradient(to bottom, #39253e, rgba(42, 42, 42, 0))'
+        : 'linear-gradient(to bottom, rgba(134, 7, 160, 0.6), rgba(255, 255, 255, 0))',
+    filterDownIcon:
+      mode === 'dark'
+        ? '#000'
+        : 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)',
+
     // primary colors
     primary1: '#302eb8',
     primary2: '#3735bb',
@@ -141,6 +176,7 @@ export function colors(mode: string): Colors {
     secondary2: '#9625ae',
     secondary3: '#6b33b0',
     secondary4: '#d655fe',
+    secondary5: '#3735bb',
 
     // other
     asks: '#9b2c2c',

@@ -4,6 +4,7 @@ import { DatePicker } from 'antd'
 import { Menu, MenuItem } from '../../../layouts/App/shared'
 import { ArrowDropdown } from '../../../components'
 import { OverlayConsumer } from '../../../context/overlay'
+import { useDarkMode } from '../../../context'
 
 const WRAPPER = styled.button`
   display: flex;
@@ -30,6 +31,9 @@ const STYLED_MENU = styled(Menu)`
   li {
     margin-bottom: ${({ theme }) => theme.margins['2x']};
     padding-bottom: 0 !important;
+    > span {
+      color: #fff;
+    }
     &:last-child {
       margin-bottom: 0 !important;
     }
@@ -95,6 +99,7 @@ type DropdownProps = {
 }
 
 export const Dropdown = ({ days }: DropdownProps) => {
+  const { mode } = useDarkMode()
   const [arrowRotation, setArrowRotation] = useState(false)
   const [currentTitle, setCurrentTitle] = useState(days[0].name)
   const [dropdownVisible, setDropdownVisible] = useState(false)
@@ -121,6 +126,7 @@ export const Dropdown = ({ days }: DropdownProps) => {
           {open && (
             <DatePicker
               className="date-picker-custom"
+              dropdownClassName={mode === 'lite' ? 'light-date-pick-popup' : ''}
               open={open}
               onChange={onChangeDate}
               showTime

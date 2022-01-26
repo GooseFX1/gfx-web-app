@@ -1,6 +1,10 @@
-import React from 'react'
-import { mockData } from './mockData'
+import React, { useState, useEffect } from 'react'
 import { StyledTableList } from './TableList.styled'
+
+import NoContent from './NoContent'
+import { SearchBar } from '../../../components'
+import { StyledTabContent } from './TabContent.styled'
+// import { INFTMetadata } from '../../../types/nft_details.d'
 
 export const columns = [
   {
@@ -61,6 +65,38 @@ export const columns = [
   }
 ]
 
-export const TableList = () => (
-  <StyledTableList columns={columns} dataSource={mockData} pagination={false} bordered={false} />
-)
+interface IActivity {
+  data: any
+}
+
+const Activity = (props: IActivity) => {
+  const [activity, setActivity] = useState<any>()
+
+  useEffect(() => {
+    setActivity(props.data)
+
+    return () => {
+      setActivity(undefined)
+    }
+  }, [props.data])
+
+  return (
+    <StyledTabContent>
+      <div className="actions-group">
+        <div className="search-group">
+          <SearchBar />
+          <div className="total-result">{activity && activity.length > 0 ? `${activity.length}` : '0'} Items</div>
+        </div>
+      </div>
+      {!activity ? (
+        <div>...Loading</div>
+      ) : activity.length > 0 ? (
+        <StyledTableList columns={columns} dataSource={activity} pagination={false} bordered={false} />
+      ) : (
+        <NoContent type={'activity'} />
+      )}
+    </StyledTabContent>
+  )
+}
+
+export default Activity

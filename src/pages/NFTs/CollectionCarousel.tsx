@@ -3,22 +3,14 @@ import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import styled from 'styled-components'
-import { ArrowClicker } from '../../components'
+import { ArrowClicker, Loader } from '../../components'
 import { ButtonWrapper } from './NFTButton'
 import NFTImageCarouselItem from './NFTImageCarouselItem'
-
-const products = [
-  { id: 1, title: 'Corrupt Catz', pieces: 441 },
-  { id: 2, title: 'Corrupt Catz', pieces: 441 },
-  { id: 3, title: 'Corrupt Catz', pieces: 441 },
-  { id: 4, title: 'Corrupt Catz', pieces: 441 },
-  { id: 5, title: 'Corrupt Catz', pieces: 441 }
-]
-
+import { NFTCollection, NFTFeaturedCollection, NFTUpcomingCollection } from '../../types/nft_collections.d'
 const CAROUSEL_WRAPPER = styled.div`
   display: flex;
   flex-direction: column;
-  margin-left: ${({ theme }) => theme.margins['6x']};
+  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['6x']};
 `
 
 const HEADER_CAROUSEL = styled.div`
@@ -74,6 +66,19 @@ const SORT_BUTTON = styled(ButtonWrapper)`
   justify-content: space-between;
 `
 
+const EMPTY_CAROUSEL = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 132px;
+  background-color: ${({ theme }) => theme.bg8};
+`
+
+const WRAPPED_LOADER = styled.div`
+  position: relative;
+  height: 48px;
+`
+
 const settings = {
   infinite: false,
   speed: 500,
@@ -85,17 +90,22 @@ const settings = {
   variableWidth: true
 }
 
-export enum NFTCarouselType {
-  launchPad,
-  upcomming,
-  popular
+export interface ICollectionCarousel {
+  collections: Array<NFTCollection | NFTFeaturedCollection | NFTUpcomingCollection>
+  collectionType: string
+  isLoading: boolean
+  isLaunch?: boolean
+  showTopArrow?: boolean
+  title?: string
 }
 
-const NFTCarousel: FC<{ isLaunch?: boolean; showTopArrow?: boolean; title?: string; type?: NFTCarouselType }> = ({
+const CollectionCarousel: FC<ICollectionCarousel> = ({
   isLaunch,
   showTopArrow,
   title,
-  type
+  collections,
+  collectionType,
+  isLoading
 }) => {
   const slickRef = React.useRef<any>()
 
@@ -123,13 +133,25 @@ const NFTCarousel: FC<{ isLaunch?: boolean; showTopArrow?: boolean; title?: stri
           <RIGHT_ARROW onClick={slickNext} />
         </HEADER_END_CAROUSEL>
       </HEADER_CAROUSEL>
-      <Slider ref={slickRef} {...settings}>
-        {products.map((item) => {
-          return <NFTImageCarouselItem type={type} key={item.id} item={item} />
-        })}
-      </Slider>
+      {collections.length > 0 ? (
+        <Slider ref={slickRef} {...settings}>
+          {collections.map((item: NFTCollection | NFTFeaturedCollection | NFTUpcomingCollection, i: number) => (
+            <NFTImageCarouselItem key={i} item={item} type={collectionType} />
+          ))}
+        </Slider>
+      ) : (
+        <EMPTY_CAROUSEL>
+          {isLoading ? (
+            <WRAPPED_LOADER>
+              <Loader />
+            </WRAPPED_LOADER>
+          ) : (
+            'No Collections Listed'
+          )}
+        </EMPTY_CAROUSEL>
+      )}
     </CAROUSEL_WRAPPER>
   )
 }
 
-export default NFTCarousel
+export default CollectionCarousel

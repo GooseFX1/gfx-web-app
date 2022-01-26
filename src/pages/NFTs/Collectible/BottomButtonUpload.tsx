@@ -38,6 +38,7 @@ const BUTTON_PLUS_WRAPPER = styled(ButtonWrapper)`
   justify-content: space-between;
   align-items: center;
   background-color: ${({ theme }) => theme.btnIconBg};
+
   &:disabled {
     background-color: #7d7d7d;
   }
@@ -47,7 +48,7 @@ const BUTTON_ADD_MORE_WRAPPER = styled(ButtonWrapper)`
   height: 41px;
   justify-content: center;
   align-items: center;
-  background-color: #3735bb;
+  background-color: ${({ theme }) => theme.secondary2};
 `
 
 const UPLOAD_TEXT = MainText(styled.div`
@@ -70,7 +71,7 @@ const BottomButtonUpload: FC<{
   title: string
   flex?: number
   buttonTitle?: string
-  onClick?: () => void
+  onClick?: (value?: any) => void
 }> = ({ title, type, flex, buttonTitle, onClick }) => {
   return (
     <UPLOAD_FIELD_WRAPPER flex={flex}>
@@ -88,7 +89,7 @@ const BottomButtonUpload: FC<{
       )}
 
       {type === BottomButtonUploadType.category && (
-        <DropdowButton className="category" style={categoryButton} title="Choose" />
+        <DropdowButton className="category" style={categoryButton} title="Choose" handleSelect={onClick} />
       )}
 
       {type === BottomButtonUploadType.text && <UPLOAD_TEXT>Single item 1/1</UPLOAD_TEXT>}

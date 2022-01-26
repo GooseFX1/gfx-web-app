@@ -63,6 +63,19 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
       width: 35px;
       margin: 0 ${theme.margins['1x']};
     }
+    .social-item-yt {
+      height: 35px;
+      width: 35px;
+      background-color: #0d0d0d;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      img {
+        height: 25px;
+        width: 25px;
+      }
+    }
     .social-icon {
       width: 35px;
       height: 35px;

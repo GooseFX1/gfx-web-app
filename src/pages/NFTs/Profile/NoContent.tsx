@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useHistory } from 'react-router-dom'
 
 const NO_CONTENT = styled.div`
   margin: 0 auto;
@@ -66,18 +67,32 @@ const options = {
   }
 }
 
-export const NoContent = ({ type }: Props) => {
+const NoContent = ({ type }: Props) => {
+  const history = useHistory()
   const obj = options[type]
+
+  const handleNoContentClick = (e) => {
+    switch (type) {
+      case 'collected':
+        history.push('/NFTs')
+        break
+      default:
+        console.error('Profile button issue')
+    }
+  }
+
   return (
     <NO_CONTENT>
       <img className="no-data-image" src={`${process.env.PUBLIC_URL}/img/assets/${type}-no-data.png`} alt="" />
       <div className="main-text">{obj.mainText}</div>
       <div className="sub-text">{obj.subText}</div>
       {obj.textButton && (
-        <button className="btn" style={{ background: obj.bgButton }}>
+        <button className="btn" style={{ background: obj.bgButton }} onClick={handleNoContentClick}>
           {obj.textButton}
         </button>
       )}
     </NO_CONTENT>
   )
 }
+
+export default React.memo(NoContent)

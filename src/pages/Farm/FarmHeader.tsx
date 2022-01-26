@@ -9,7 +9,10 @@ const STYLED_FARM_HEADER = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: ${({ theme }) => theme.margins['4x']} ${({ theme }) => theme.margins['5x']};
-  background: #181818;
+  background: ${({ theme }) => theme.farmHeaderBg};
+  box-shadow: 0 7px 15px 9px rgba(13, 13, 13, 0.25);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
   .search-bar {
     height: 60px;
     margin: 0;

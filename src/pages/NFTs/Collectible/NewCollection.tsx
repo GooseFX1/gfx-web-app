@@ -16,12 +16,15 @@ const STYLED_POPUP = styled(PopupCustom)`
       right: 35px;
       top: 35px;
       left: auto;
+      svg {
+        color: ${theme.text7};
+      }
     }
     .title {
       font-family: Montserrat;
       font-size: 25px;
       font-weight: 600;
-      color: #fff;
+      color: ${theme.text7};
       margin-bottom: ${theme.margins['4x']};
     }
   `}
@@ -29,7 +32,7 @@ const STYLED_POPUP = styled(PopupCustom)`
 
 const STYLED_AVATAR = styled.div`
   ${({ theme }) => `
-    background-color: #000;
+    background-color: ${theme.avatarBackground};
     border-style: dashed;
     border-color: #848484;
     border-width: 2px;
@@ -49,15 +52,17 @@ const STYLED_AVATAR = styled.div`
     }
     .text {
       font-size: 10px;
-      color: #fff;
+      color: ${theme.text8};
       text-align: center;
       max-width: 70px;
       margin-top: ${theme.margins['0.5x']};
     }
     .note {
-      padding: 0 ${theme.margins['2.5x']};
+      padding-left: ${theme.margins['2.5x']};
+      padding-right: ${theme.margins['1x']};
       font-size: 14px;
-      color: #fff;
+      color: ${theme.text8};
+      font-family: Montserrat;
     }
     .choose-file-btn-wrap {
       width: 85px;
@@ -138,13 +143,14 @@ const STYLED_FORM = styled(Form)`
     }
     .hint {
       font-size: 9px;
+      color: ${theme.text8};
     }
     .ant-form-item-label {
       padding-bottom: 0;
       label {
         font-size: 17px;
         font-weight: 600;
-        color: #fff;
+        color: ${theme.text7};
         line-height: 1;
       }
       .ant-form-item-optional {
@@ -169,6 +175,10 @@ const STYLED_FORM = styled(Form)`
         border-bottom: 2px solid #a8a8a8;
         text-align: left;
         padding-left: 0;
+        color: ${theme.text8};
+        &:placeholder {
+          color: ${theme.text8};
+        }
         &:focus {
           box-shadow: none;
         }
@@ -183,13 +193,14 @@ const STYLED_CREATE_BTN = styled(Button)<{ disabled: boolean }>`
     width: 100%;
     font-size: 17px;
     font-weight: 600;
-    line-height: 50px;
+    line-height: 45px;
     height: 53px;
     ${theme.roundedBorders}
     border: none;
-    background: ${disabled ? '#7d7d7d' : '#9625ae'};
+    background: ${disabled ? '#7d7d7d !important' : theme.btnNextStepBg};
+    color: #fff !important;
     &:hover {
-      background: ${disabled ? '#7d7d7d' : '#9625ae'};
+      background: ${disabled ? '#7d7d7d !important' : theme.btnNextStepBg};
       opacity: 0.8;
     }
   `}
@@ -197,22 +208,23 @@ const STYLED_CREATE_BTN = styled(Button)<{ disabled: boolean }>`
 
 interface Props {
   visible: boolean
-  handleOk: () => void
+  handleSubmit: (collection: any) => void
   handleCancel: () => void
 }
 
-export const NewCollection = ({ visible, handleOk, handleCancel }: Props) => {
+const NewCollection = ({ visible, handleSubmit, handleCancel }: Props) => {
   const initialValues = {
-    display_name: '',
+    collection_name: '',
     symbol: '',
     description: '',
     short_url: ''
   }
   const requiredObj = {
-    display_name: '',
+    collection_name: '',
     symbol: '',
     short_url: ''
   }
+
   const [disabled, setDisabled] = useState(true)
   const onChange = (e) => {
     const { id, value } = e.target
@@ -225,24 +237,16 @@ export const NewCollection = ({ visible, handleOk, handleCancel }: Props) => {
       setDisabled(false)
     })
   }
-  const onFinish = () => {}
-  const [form] = Form.useForm()
 
+  const [form] = Form.useForm()
   const [avatar, setAvatar] = useState<any>()
 
   const handleAvatar = (file: UploadChangeParam<UploadFile<any>>) => {
     setAvatar(file.fileList[0])
   }
+
   return (
-    <STYLED_POPUP
-      width="500px"
-      height="596px"
-      title={null}
-      visible={visible}
-      onOk={handleOk}
-      onCancel={handleCancel}
-      footer={null}
-    >
+    <STYLED_POPUP width="500px" height="596px" title={null} visible={visible} onCancel={handleCancel} footer={null}>
       <h3 className="title">New collection</h3>
       <STYLED_AVATAR>
         <div className="image-group">
@@ -279,12 +283,12 @@ export const NewCollection = ({ visible, handleOk, handleCancel }: Props) => {
         layout="vertical"
         requiredMark="optional"
         initialValues={initialValues}
-        onFinish={onFinish}
+        onFinish={handleSubmit}
       >
         <div className="full-width">
           <div className="half-width">
             <Form.Item
-              name="display_name"
+              name="collection_name"
               label="Display name"
               rules={[{ required: true, message: 'Please input display name!' }]}
             >
@@ -323,3 +327,5 @@ export const NewCollection = ({ visible, handleOk, handleCancel }: Props) => {
     </STYLED_POPUP>
   )
 }
+
+export default React.memo(NewCollection)

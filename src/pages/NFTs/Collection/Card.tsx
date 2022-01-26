@@ -1,8 +1,9 @@
 import { Row } from 'antd'
 import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
+import { ISingleNFT } from '../../../types/nft_details.d'
 
-const CARD = styled.div<{ type: string; status: string }>`
+const CARD = styled.div<{ status: string }>`
   padding-bottom: ${({ theme }) => theme.margins['1.5x']};
   border-radius: 15px;
   cursor: pointer;
@@ -62,78 +63,67 @@ const CARD = styled.div<{ type: string; status: string }>`
     }
   }
 
-  ${({ type, status, theme }) => {
-    switch (type) {
-      case 'carousel':
-        return css`
-          padding: ${theme.margins['2.5x']};
-          opacity: ${status === 'sold_out' ? 0.6 : 1};
-          background-color: #171717;
+  ${({ status, theme }) => {
+    return css`
+      padding: ${theme.margins['2.5x']};
+      opacity: ${status === 'sold_out' ? 0.6 : 1};
+      background-color: #171717;
 
-          .card-image {
-            min-width: 185x;
-            max-width: 185x;
-            height: 190px;
-          }
+      .card-image {
+        width: 100%;
+        height: 190px;
+      }
 
-          .card-favorite {
-            display: ${status === 'sold_out' ? 'none' : 'inline-block'};
-          }
+      .card-remaining {
+        display: none;
+      }
 
-          .card-name,
-          .card-price,
-          .card-remaining {
-            color: ${theme.white};
-          }
+      .card-name {
+        color: ${({ theme }) => theme.text7};
+      }
 
-          .card-info .card-favorite-number-highlight {
-            color: ${({ theme }) => theme.white};
-          }
-        `
-      case 'grid':
-        return css`
-          .card-image {
-            width: 100%;
-            height: auto;
-          }
+      .card-price {
+        color: ${({ theme }) => theme.text8};
+      }
 
-          .card-remaining {
-            display: none;
-          }
+      .card-name {
+        font-size: 16px;
+      }
 
-          .card-name {
-            color: ${({ theme }) => theme.text7};
-          }
+      .card-price {
+        font-size: 15px;
+      }
 
-          .card-price {
-            color: ${({ theme }) => theme.text8};
-          }
+      .card-info .card-favorite-number-highlight {
+        color: ${({ theme }) => theme.text1};
+      }
 
-          .card-name {
-            font-size: 16px;
-          }
+      .card-info .card-favorite-number {
+        color: ${({ theme }) => theme.text10};
+      }
 
-          .card-price {
-            font-size: 15px;
-          }
+      .card-info .card-favorite-heart {
+        filter: ${({ theme }) => theme.filterHeartIcon};
+      }
 
-          .card-info .card-favorite-number-highlight {
-            color: ${({ theme }) => theme.text1};
-          }
+      .card-favorite {
+        display: ${status === 'sold_out' ? 'none' : 'inline-block'};
+      }
 
-          .card-info .card-favorite-number {
-            color: ${({ theme }) => theme.text10};
-          }
+      .card-name,
+      .card-price,
+      .card-remaining {
+        color: ${theme.white};
+      }
 
-          .card-info .card-favorite-heart {
-            filter: ${({ theme }) => theme.filterHeartIcon};
-          }
-        `
-    }
+      .card-info .card-favorite-number-highlight {
+        color: ${({ theme }) => theme.white};
+      }
+    `
   }}
 `
 
-const CARD_BUTTON = styled.button<{ cardType: string; cardStatus: string }>`
+const CARD_BUTTON = styled.button<{ cardStatus: string }>`
   min-width: 76px;
   display: flex;
   justify-content: center;
@@ -147,68 +137,61 @@ const CARD_BUTTON = styled.button<{ cardType: string; cardStatus: string }>`
     opacity: 0.8;
   }
 
-  ${({ cardType, cardStatus, theme }) => {
-    switch (cardType) {
-      case 'carousel':
-        return css`
-          background-color: ${cardStatus === 'auctioning' ? '#3735bb' : '#bb3535'};
-          cursor: ${cardStatus === 'sold_out' ? 'not-allowed' : 'pointer'};
-          font-size: 9px;
-          padding: ${theme.margins['1x']} ${theme.margins['1.5x']};
-        `
-      case 'grid':
-        return css`
-          height: 34px;
-          background-color: ${theme.primary2};
-          font-size: 11px;
-          font-weight: 600;
-          padding: ${theme.margins['1x']} ${theme.margins['2x']};
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        `
-    }
+  ${({ cardStatus, theme }) => {
+    return css`
+      height: 34px;
+      background-color: ${cardStatus === 'sold_out' ? '#bb3535' : '#3735bb'};
+      cursor: ${cardStatus === 'sold_out' ? 'not-allowed' : 'pointer'};
+      font-size: 11px;
+      font-weight: 600;
+      padding: ${theme.margins['1x']} ${theme.margins['2x']};
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    `
   }}
 `
 
-const getButtonText = (type: string, status: string): string => {
-  switch (type) {
-    case 'carousel':
+const getButtonText = (status: string, tabType: string): string => {
+  switch (tabType) {
+    case 'bid':
+    case 'auction':
       if (status === 'sold_out') return 'Sold Out'
       return 'Bid'
-    case 'grid':
+    case 'fixed':
+      if (status === 'sold_out') return 'Sold Out'
       return 'Buy Now'
+    default:
+      return 'Bid'
   }
 }
 
-interface CardData {
-  id: string
-  thumbnail: string
-  name: string
-  price: number
-  status: string
-  hearts: number
-  remaining: string
-  isFeatured: boolean
-  isFavorite: boolean
-}
-
 type Props = {
-  type: 'carousel' | 'grid'
   className?: string
-  data: CardData
+  singleNFT: ISingleNFT
+  tab?: string
 }
 
-export const Card = ({ type, data, className, ...rest }: Props) => {
+export const Card = ({ singleNFT, tab, className, ...rest }: Props) => {
+  const localNFT = {
+    ...singleNFT,
+    price: 1499,
+    status: 'auctioning',
+    hearts: 0,
+    remaining: '02d:20h:10min',
+    isFeatured: false,
+    isFavorite: false
+  }
+
   return (
-    <CARD type={type} status={data.status} {...rest}>
+    <CARD status={localNFT.status} {...rest}>
       <div className="card-image-wrapper">
-        <img className="card-image" src={`${process.env.PUBLIC_URL}/img/assets/card-1.png`} alt="" />
-        <div className="card-remaining">{data.remaining}</div>
+        <img className="card-image" src={localNFT.image_url} alt="" />
+        <div className="card-remaining">{localNFT.remaining}</div>
       </div>
       <div className="card-info">
         <Row justify="space-between" align="middle">
           <Row align="middle">
-            <div className="card-name">{data.name}</div>
-            {data.isFeatured && (
+            <div className="card-name">{localNFT.nft_name}</div>
+            {localNFT.isFeatured && (
               <img
                 className="card-featured-heart"
                 src={`${process.env.PUBLIC_URL}/img/assets/heart-purple.svg`}
@@ -218,7 +201,7 @@ export const Card = ({ type, data, className, ...rest }: Props) => {
           </Row>
           <Row align="middle">
             <Row align="middle" className="card-favorite">
-              {(data.isFavorite && (
+              {(localNFT.isFavorite && (
                 <img
                   className="card-favorite-heart"
                   src={`${process.env.PUBLIC_URL}/img/assets/heart-red.svg`}
@@ -231,18 +214,16 @@ export const Card = ({ type, data, className, ...rest }: Props) => {
                   alt=""
                 />
               )}
-              <span className={`card-favorite-number ${data.isFavorite ? 'card-favorite-number-highlight' : ''}`}>
-                {data.hearts}
+              <span className={`card-favorite-number ${localNFT.isFavorite ? 'card-favorite-number-highlight' : ''}`}>
+                {localNFT.hearts}
               </span>
             </Row>
           </Row>
         </Row>
       </div>
       <Row justify="space-between" align="middle">
-        <div className="card-price">{`${moneyFormatter(data.price)} SOL`}</div>
-        <CARD_BUTTON cardStatus={data.status} cardType={type}>
-          {getButtonText(type, data.status)}
-        </CARD_BUTTON>
+        <div className="card-price">{`${moneyFormatter(localNFT.price)} SOL`}</div>
+        <CARD_BUTTON cardStatus={localNFT.status}>{getButtonText(localNFT.status, tab)}</CARD_BUTTON>
       </Row>
     </CARD>
   )

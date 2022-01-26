@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { Tooltip } from '../../components/Tooltip'
 
 const STYLED_TITLE = styled.div`
   display: flex;
@@ -33,7 +34,7 @@ const STYLED_NAME = styled.div`
   .text {
     font-size: 18px;
     font-weight: 600;
-    color: #fff;
+    color: ${({ theme }) => theme.text8};
     max-width: 90px;
     margin-left: ${({ theme }) => theme.margins['2.5x']};
   }
@@ -62,17 +63,27 @@ const STYLED_EARNED = styled.div`
   text-align: center;
 `
 
-const Title = (text, isInfo, isArrowDown) => (
+const HeaderTooltip = (text: string) => {
+  return (
+    <img className="info-icon" src={`${process.env.PUBLIC_URL}/img/assets/info-icon.svg`} alt="" /> && (
+      <Tooltip dark placement="bottomLeft" color="#000000">
+        <p>{text}</p>
+      </Tooltip>
+    )
+  )
+}
+
+const Title = (text: string, infoText: string, isArrowDown: boolean) => (
   <STYLED_TITLE>
     <div className="text">{text}</div>
-    {isInfo && <img className="info-icon" src={`${process.env.PUBLIC_URL}/img/assets/info-icon.svg`} alt="" />}
+    {infoText && HeaderTooltip(infoText)}
     {isArrowDown && <img className="arrow-down" src={`${process.env.PUBLIC_URL}/img/assets/arrow-down.svg`} alt="" />}
   </STYLED_TITLE>
 )
 
 export const columns = [
   {
-    title: Title('Name', false, true),
+    title: Title('Name', '', true),
     dataIndex: 'name',
     key: 'name',
     width: '15%',
@@ -89,33 +100,33 @@ export const columns = [
     )
   },
   {
-    title: Title('Earned', 1, 1),
+    title: Title('Earned', '', true),
     dataIndex: 'earned',
     key: 'earned',
     width: '10%',
     render: (text) => <STYLED_EARNED>{text}</STYLED_EARNED>
   },
   {
-    title: Title('APR', 1, 1),
+    title: Title('APR', 'Yearly deposit earned on your deposit.', true),
     dataIndex: 'apr',
     key: 'apr',
     width: '12%',
     render: (text) => <div className="apr normal-text">{text}</div>
   },
   {
-    title: Title('Rewards', 1, 1),
+    title: Title('Rewards', '', true),
     dataIndex: 'rewards',
     key: 'rewards',
     render: (text) => <div className="rewards normal-text">{text}</div>
   },
   {
-    title: Title('Liquidity', 1, 1),
+    title: Title('Liquidity', "Total value of funds in this farm's liquidity pool.", true),
     dataIndex: 'liquidity',
     key: 'liquidity',
     render: (text) => <div className="liquidity normal-text">{text}</div>
   },
   {
-    title: Title('Volume (24h)', false, true),
+    title: Title('Volume (24h)', '', true),
     dataIndex: 'volume',
     key: 'volume',
     width: '12%',

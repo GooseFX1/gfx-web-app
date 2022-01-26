@@ -102,6 +102,7 @@ span:hover {
   background: #2a2a2a;
   border-radius: 20px;
   z-index: 1000;
+  font-family: Montserrat;
   .ant-picker-panel-container {
     background: #2a2a2a;
     box-shadow: none;
@@ -311,5 +312,85 @@ span:hover {
   .ant-picker-month-panel,
   .ant-picker-year-panel {
     width: 100%;
+  }
+}
+
+.light-date-pick-popup {
+  &.ant-picker-dropdown {
+    background: #fff;
+    .ant-picker-panel-container {
+      background: #fff;
+      &::before {
+        color: #3c3c3c;
+      }
+    }
+    .ant-picker-cell-in-view {
+      color: #3c3c3c !important;
+    }
+    .ant-picker-cell {
+      color: #dadada;
+    }
+    .ant-picker-header-view {
+      button {
+        color: #3c3c3c;
+      }
+    }
+    .ant-picker-cell-in-view {
+      &.ant-picker-cell-selected,
+      &.ant-picker-cell-range-start,
+      &.ant-picker-cell-range-end {
+        .ant-picker-cell-inner {
+          background-color: #9625ae;
+        }
+      }
+    }
+    .ant-picker-super-prev-icon,
+    .ant-picker-super-next-icon {
+      &:before {
+        border-color: #3c3c3c;
+      }
+    }
+    .ant-picker-content {
+      tr {
+        th {
+          color: #3c3c3c;
+        }
+      }
+    }
+    .ant-picker-time-panel {
+      .ant-picker-header {
+        &::before {
+          color: #3c3c3c;
+        }
+        .ant-picker-header-view {
+          color: #3c3c3c;
+        }
+      }
+      .ant-picker-content {
+        &::before {
+          color: #747474;
+        }
+      }
+    }
+    .ant-picker-time-panel-column {
+      .ant-picker-time-panel-cell-inner {
+        color: #3c3c3c;
+      }
+      .ant-picker-time-panel-cell-selected {
+        .ant-picker-time-panel-cell-inner {
+          background-color: #9625ae;
+          color: #fff;
+        }
+      }
+      &:not(:first-child) {
+        border-left: 1px solid #636363;
+      }
+    }
+  }
+  .ant-picker-header {
+    border-bottom: 1px solid #acacac;
+    button {
+      color: #636363;
+    }
   }
 }

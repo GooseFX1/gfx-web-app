@@ -1,21 +1,53 @@
-import React from 'react'
+import React, { useRef, useState, useEffect, FC } from 'react'
 import styled from 'styled-components'
 import { Header } from '../Header'
 import NFTHeaderCarousel from '../NFTHeaderCarousel'
 import NFTFooter from '../NFTFooter'
-import NFTCarousel, { NFTCarouselType } from '../NFTCarousel'
+import CollectionCarousel from '../CollectionCarousel'
+import { NFTCollectionProvider, useNFTCollections } from '../../../context'
+import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
 
 const SCROLLING_CONTENT = styled.div`
   overflow-y: overlay;
-  width: 101%;
+  width: 100%;
   overflow-x: hidden;
   position: relative;
 `
 
-const NFTHome = () => {
-  const prevScrollY = React.useRef(0)
-  const [goingUp, setGoingUp] = React.useState(false)
-  const [isBigCarouselVisible, setBisCarouselVisible] = React.useState(true)
+const SCROLLING_CONTENT_100 = styled.div`
+  overflow-y: overlay;
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
+`
+
+const NFTLandingPage: FC = (): JSX.Element => {
+  const {
+    allCollections,
+    featuredCollections,
+    upcomingCollections,
+    fetchAllCollections,
+    fetchFeaturedCollections,
+    fetchUpcomingCollections
+  } = useNFTCollections()
+  const prevScrollY = useRef(0)
+  const [goingUp, setGoingUp] = useState<boolean>(false)
+  const [isBigCarouselVisible, setBisCarouselVisible] = useState<boolean>(true)
+  const [isAllLoading, setIsAllLoading] = useState<boolean>(false)
+  const [isFeaturedLoading, setIsFeaturedLoading] = useState<boolean>(false)
+  const [isUpcomingLoading, setIsUpcomingLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    setIsAllLoading(true)
+    fetchAllCollections().then((res) => setIsAllLoading(false))
+
+    setIsFeaturedLoading(true)
+    fetchFeaturedCollections().then((res) => setIsFeaturedLoading(false))
+
+    setIsUpcomingLoading(true)
+    fetchUpcomingCollections().then((res) => setIsUpcomingLoading(false))
+    return () => {}
+  }, [])
 
   const onScroll = (e) => {
     const currentScrollY = e.target.scrollTop
@@ -38,14 +70,39 @@ const NFTHome = () => {
     <>
       <Header />
       <NFTHeaderCarousel isBig={false} isBigVisible={isBigCarouselVisible} />
-      <SCROLLING_CONTENT onScroll={onScroll}>
+      <SCROLLING_CONTENT_100 onScroll={onScroll}>
         <NFTHeaderCarousel isBig isBigVisible={isBigCarouselVisible} />
-        <NFTCarousel type={NFTCarouselType.launchPad} title="Launchpad" showTopArrow isLaunch />
-        <NFTCarousel type={NFTCarouselType.upcomming} title="Upcoming Collections" />
-        <NFTCarousel type={NFTCarouselType.popular} title="Popular Collections" />
+        <CollectionCarousel
+          collections={allCollections}
+          collectionType={COLLECTION_TYPES.NFT_COLLECTION}
+          title="Launchpad"
+          showTopArrow
+          isLaunch
+          isLoading={isAllLoading}
+        />
+        <CollectionCarousel
+          collections={upcomingCollections}
+          collectionType={COLLECTION_TYPES.NFT_UPCOMING_COLLECTION}
+          title="Upcoming Collections"
+          isLoading={isUpcomingLoading}
+        />
+        <CollectionCarousel
+          collections={featuredCollections}
+          collectionType={COLLECTION_TYPES.NFT_FEATURED_COLLECTION}
+          title="Popular Collections"
+          isLoading={isFeaturedLoading}
+        />
         <NFTFooter />
-      </SCROLLING_CONTENT>
+      </SCROLLING_CONTENT_100>
     </>
+  )
+}
+
+const NFTHome: FC = (): JSX.Element => {
+  return (
+    <NFTCollectionProvider>
+      <NFTLandingPage />
+    </NFTCollectionProvider>
   )
 }
 

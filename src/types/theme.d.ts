@@ -20,6 +20,11 @@ export interface Colors {
   text8: Color
   text9: Color
   text10: Color
+  text11: Color
+  text12: Color
+  text13: Color
+  text14: Color
+  text15: Color
 
   // backgrounds / greys
   bg0: Color
@@ -62,10 +67,23 @@ export interface Colors {
 
   // input bg
   inputBg: Color
+  hintInputColor: Color
 
   // btn Icon (Plus, add more), btn Next Step Background
   btnIconBg: Color
   btnNextStepBg: Color
+
+  // add properties
+  iconRemoveBg: Color
+  inputPropertyBg: Color
+  inputFence: Color
+  propertyBg: Color
+  propertyItemBg: Color
+  typePropertyColor: Color
+
+  // sell categories
+  sellTabBg: Color
+  sellTabActiveBg: Color
 
   // time panel
   timePanelBackground: Color
@@ -94,11 +112,23 @@ export interface Colors {
   primary1: Color
   primary2: Color
 
+  // farm
+  farmContainerBg: Color
+  farmHeaderBg: Color
+  solPillBg: Color
+  stakePillBg: Color
+  hoverTrFarmBg: Color
+  tableHeaderBoxShadow: Color
+  tableListBoxShadow: Color
+  expendedRowBg: Color
+  filterDownIcon: Color
+
   // secondary
   secondary1: Color
   secondary2: Color
   secondary3: Color
   secondary4: Color
+  secondary5: Color
 
   // other
   asks: Color

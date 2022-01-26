@@ -1,108 +1,141 @@
-import React, { useState } from 'react'
-import { Menu, Button } from 'antd'
-import { useHistory } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useHistory, useLocation } from 'react-router-dom'
+import { Menu, Button, Image } from 'antd'
+import { useNFTProfile, useDarkMode } from '../../../context'
+import { ILocationState } from '../../../types/app_params.d'
 import { PopupProfile } from './PopupProfile'
-import PopupCompleteProfile from './PopupCompleteProfile'
 import { ShareProfile } from './ShareProfile'
-import { useDarkMode } from '../../../context'
 import { StyledHeaderProfile, StyledDropdown, StyledMenu } from './HeaderProfile.styled'
+import { MainButton } from '../../../components'
+import { CenteredDiv } from '../../../styles'
 
-const menu = (isExplore: boolean, setVisibleShareProfile: (b: boolean) => void) =>
-  isExplore ? (
-    <StyledMenu>
-      <Menu.Item>
-        <div onClick={() => setVisibleShareProfile(true)}>Share</div>
-      </Menu.Item>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="/report">
-          Report
-        </a>
-      </Menu.Item>
-    </StyledMenu>
-  ) : (
-    <StyledMenu>
-      <Menu.Item>
-        <div onClick={() => setVisibleShareProfile(true)}>Share Profile</div>
-      </Menu.Item>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="/help">
-          Help
-        </a>
-      </Menu.Item>
-    </StyledMenu>
-  )
+const menu = (setVisibleShareProfile: (b: boolean) => void) => (
+  <StyledMenu>
+    <Menu.Item>
+      <div onClick={() => setVisibleShareProfile(true)}>Share</div>
+    </Menu.Item>
+    <Menu.Item>
+      <a target="_blank" rel="noopener noreferrer" href="/report">
+        Report
+      </a>
+    </Menu.Item>
+    <Menu.Item>
+      <div onClick={() => setVisibleShareProfile(true)}>Share Profile</div>
+    </Menu.Item>
+    <Menu.Item>
+      <a target="_blank" rel="noopener noreferrer" href="/help">
+        Help
+      </a>
+    </Menu.Item>
+  </StyledMenu>
+)
 
 type Props = {
   isExplore?: boolean
 }
 
 export const HeaderProfile = ({ isExplore }: Props) => {
+  const location = useLocation<ILocationState>()
   const history = useHistory()
+  const { connected, publicKey } = useWallet()
+  const { sessionUser } = useNFTProfile()
   const { mode } = useDarkMode()
   const [visible, setVisible] = useState(false)
   const [visibleShareProfile, setVisibleShareProfile] = useState(false)
-  const [visibleCompletePopup, setVisibleCompletePopup] = useState(!isExplore)
-  const onSkip = () => setVisibleCompletePopup(false)
-  const onContinue = () => setVisibleCompletePopup(false)
-  const handleOk = () => setVisible(false)
   const handleCancel = () => setVisible(false)
+
+  useEffect(() => {
+    isCreatingProfile()
+    return () => {}
+  }, [])
+
+  const isCreatingProfile = (): void => {
+    if (location.state && location.state.isCreatingProfile) {
+      setVisible(true)
+    }
+  }
+
   return (
     <StyledHeaderProfile mode={mode}>
       <img
         className="back-icon"
         src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
-        alt=""
+        alt="arrow-icon"
         onClick={() => history.push(isExplore ? '/NFTs/profile' : '/NFTs')}
       />
       <div className="avatar-profile-wrap">
-        <img className="avatar-profile" src={`${process.env.PUBLIC_URL}/img/assets/avatar-profile.png`} alt="" />
-        <img
-          className="edit-icon"
-          src={`${process.env.PUBLIC_URL}/img/assets/edit.svg`}
-          alt=""
-          onClick={() => setVisible(true)}
+        <Image
+          className="avatar-profile"
+          fallback={`${process.env.PUBLIC_URL}/img/assets/avatar.png`}
+          src={sessionUser.profile_pic_link}
+          preview={false}
+          alt={sessionUser.nickname}
         />
+        {sessionUser.user_id && (
+          <img
+            className="edit-icon"
+            src={`${process.env.PUBLIC_URL}/img/assets/edit.svg`}
+            alt=""
+            onClick={() => setVisible(true)}
+          />
+        )}
       </div>
       <div className="name-wrap">
-        <span className="name">yeoohr</span>
-        <img
-          className="check-icon"
-          src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`}
-          alt=""
-          onClick={() => history.push('/NFTs/profile/explore')}
-        />
+        <span className="name">{sessionUser.nickname}</span>
+        {sessionUser.is_verified && (
+          <img
+            className="check-icon"
+            src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`}
+            alt=""
+            onClick={() => history.push('/NFTs/profile/explore')}
+          />
+        )}
       </div>
       <div className="social-list">
-        <a className="social-item" href="/twitter">
-          <img className="social-icon" src={`${process.env.PUBLIC_URL}/img/assets/twitter.svg`} alt="" />
-        </a>
-        <a className="social-item" href="/instagram">
-          <img className="social-icon" src={`${process.env.PUBLIC_URL}/img/assets/instagram.svg`} alt="" />
-        </a>
-        <a className="social-item" href="/facebook">
-          <img className="social-icon" src={`${process.env.PUBLIC_URL}/img/assets/facebook.svg`} alt="" />
-        </a>
+        {!sessionUser.user_id && connected && publicKey && (
+          <CenteredDiv>
+            <MainButton height="30px" onClick={() => setVisible(true)} status="action" width="150px">
+              <span>Complete Profile</span>
+            </MainButton>
+          </CenteredDiv>
+        )}
+        {sessionUser.twitter_link && (
+          <a className="social-item" href={sessionUser.twitter_link} target={'_blank'} rel={'noreferrer'}>
+            <img className="social-icon" src={`${process.env.PUBLIC_URL}/img/assets/twitter.svg`} alt="" />
+          </a>
+        )}
+        {sessionUser.instagram_link && (
+          <a className="social-item" href={sessionUser.instagram_link} target={'_blank'} rel={'noreferrer'}>
+            <img className="social-icon" src={`${process.env.PUBLIC_URL}/img/assets/instagram.svg`} alt="" />
+          </a>
+        )}
+        {sessionUser.facebook_link && (
+          <a className="social-item" href={sessionUser.facebook_link} target={'_blank'} rel={'noreferrer'}>
+            <img className="social-icon" src={`${process.env.PUBLIC_URL}/img/assets/facebook.svg`} alt="" />
+          </a>
+        )}
+        {sessionUser.youtube_link && (
+          <a className="social-item-yt" href={sessionUser.youtube_link} target={'_blank'} rel={'noreferrer'}>
+            <img className="social-icon" src={`${process.env.PUBLIC_URL}/img/assets/youtube.png`} alt="" />
+          </a>
+        )}
       </div>
-      <div className="action-wrap">
-        {!isExplore && (
+      {sessionUser.is_verified && (
+        <div className="action-wrap">
           <button className="btn-create">
             <span>Create</span>
           </button>
-        )}
-        <StyledDropdown
-          overlay={menu(isExplore, setVisibleShareProfile)}
-          trigger={['click']}
-          placement="bottomRight"
-          arrow
-        >
-          <Button>
-            <img className="more-icon" src={`${process.env.PUBLIC_URL}/img/assets/more_icon.svg`} alt="more" />
-          </Button>
-        </StyledDropdown>
-      </div>
-      <PopupProfile visible={visible} setVisible={setVisible} handleOk={handleOk} handleCancel={handleCancel} />
+
+          <StyledDropdown overlay={menu(setVisibleShareProfile)} trigger={['click']} placement="bottomRight" arrow>
+            <Button>
+              <img className="more-icon" src={`${process.env.PUBLIC_URL}/img/assets/more_icon.svg`} alt="more" />
+            </Button>
+          </StyledDropdown>
+        </div>
+      )}
+      <PopupProfile visible={visible} setVisible={setVisible} handleCancel={handleCancel} />
       <ShareProfile visible={visibleShareProfile} handleCancel={() => setVisibleShareProfile(false)} />
-      <PopupCompleteProfile visible={visibleCompletePopup} handleOk={onSkip} handleCancel={onContinue} />
     </StyledHeaderProfile>
   )
 }

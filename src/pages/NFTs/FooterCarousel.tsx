@@ -1,45 +1,53 @@
-import React from 'react'
-import Slider from 'react-slick'
-import FooterCarouselItem from './FooterCarouselItem'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { ISingleNFT } from '../../types/nft_details.d'
+import { Image } from 'antd'
+import { NFT_API_ENDPOINTS, fetchSingleCollectionTabContent } from '../../api/NFTs'
 
-const products = [
-  { id: 1, title: 'Corrupt Catz', pieces: 441 },
-  { id: 2, title: 'Corrupt Catz', pieces: 441 },
-  { id: 3, title: 'Corrupt Catz', pieces: 441 },
-  { id: 4, title: 'Corrupt Catz', pieces: 441 },
-  { id: 5, title: 'Corrupt Catz', pieces: 441 },
-  { id: 6, title: 'Corrupt Catz', pieces: 441 },
-  { id: 7, title: 'Corrupt Catz', pieces: 441 },
-  { id: 8, title: 'Corrupt Catz', pieces: 441 },
-  { id: 9, title: 'Corrupt Catz', pieces: 441 },
-  { id: 10, title: 'Corrupt Catz', pieces: 441 },
-  { id: 11, title: 'Corrupt Catz', pieces: 441 },
-  { id: 12, title: 'Corrupt Catz', pieces: 441 },
-  { id: 13, title: 'Corrupt Catz', pieces: 441 },
-  { id: 14, title: 'Corrupt Catz', pieces: 441 },
-  { id: 15, title: 'Corrupt Catz', pieces: 441 },
-  { id: 16, title: 'Corrupt Catz', pieces: 441 }
-]
-
-const FOOTER_SLIDER = styled(Slider)`
+const FOOTER_LIST_CARD = styled.div`
   width: 100%;
-  margin-bottom: 48px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: ${({ theme }) => theme.margins['6x']};
+  padding: 0 ${({ theme }) => theme.margins['11x']};
 `
 
-const settings = {
-  variableWidth: true,
-  infinite: false,
-  slidesToScroll: 2
-}
+const FOOTER_IMAGE = styled(Image)`
+  width: 110px;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  margin: 0 ${({ theme }) => theme.margins['3x']};
+`
 
 const FooterCarousel = () => {
+  const [nfts, setNfts] = useState<Array<ISingleNFT>>()
+  const [err, setErr] = useState(false)
+
+  useEffect(() => {
+    fetchSingleCollectionTabContent(NFT_API_ENDPOINTS.OPEN_BID, `2`).then((res) => {
+      if (res.response && res.response.status !== 200) {
+        setErr(true)
+      }
+      setNfts((res.data || []).slice(0, 10))
+    })
+
+    return () => {}
+  }, [])
+
   return (
-    <FOOTER_SLIDER {...settings}>
-      {products.map((item) => {
-        return <FooterCarouselItem key={item.id} item={item} />
-      })}
-    </FOOTER_SLIDER>
+    <FOOTER_LIST_CARD>
+      {nfts === undefined ? (
+        <div>...loading</div>
+      ) : err ? (
+        <div>error loading random nfts</div>
+      ) : (
+        nfts.map((item: ISingleNFT) => (
+          <div key={item.non_fungible_id}>
+            <FOOTER_IMAGE preview={false} src={item.image_url} />
+          </div>
+        ))
+      )}
+    </FOOTER_LIST_CARD>
   )
 }
 
