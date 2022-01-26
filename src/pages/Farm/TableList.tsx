@@ -8,7 +8,10 @@ const STYLED_TABLE_LIST = styled(Table)`
   ${({ theme }) => `
   max-width: 100%;
   .ant-table {
-    background-color: ${theme.bg3};
+    background: ${theme.bg3};
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    box-shadow: ${theme.tableListBoxShadow};
   }
   .normal-text {
     font-family: Montserrat;
@@ -18,9 +21,11 @@ const STYLED_TABLE_LIST = styled(Table)`
     color: ${theme.text8};
   }
   .ant-table-container table > thead > tr:first-child th:first-child {
+    border-top-left-radius: 0;
     border-bottom-left-radius: 30px;
   }
   .ant-table-container table > thead > tr:first-child th:last-child {
+    border-top-right-radius: 0;
     border-bottom-right-radius: 30px;
   }
   .ant-table-thead {
@@ -46,11 +51,6 @@ const STYLED_TABLE_LIST = styled(Table)`
   }
   .ant-table-tbody {
     > tr {
-      &:first-child {
-        td {
-          background-color: ${({ theme }) => theme.bg3};
-        }
-      }
       &.ant-table-expanded-row {
         > td {
           padding: 0;
@@ -64,7 +64,13 @@ const STYLED_TABLE_LIST = styled(Table)`
       }
       &:last-child {
         td {
-          border-bottom: none;
+          border: none;
+          &:first-child {
+            border-bottom-left-radius: 20px;
+          }
+          &:last-child {
+            border-bottom-right-radius: 20px;
+          }
         }
       }
       &.ant-table-row:hover {

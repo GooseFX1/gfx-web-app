@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { useState, FC } from 'react'
 import styled from 'styled-components'
 import { MainText } from '../../../styles'
 
@@ -41,18 +41,22 @@ const STYLED_INPUT = styled.input`
   }
 `
 
-const InfoInput: FC<{ title: string; placeholder: string; onChange: (val: any) => void }> = ({
-  title,
-  placeholder,
-  onChange
-}) => {
+const InfoInput: FC<{
+  title: string
+  placeholder: string
+  value: string
+  maxLength: number
+  onChange: (val: any) => void
+}> = ({ title, maxLength, placeholder, onChange, value }) => {
   return (
     <INPUT_CONTAINER>
       <INPUT_TITLE>{title}</INPUT_TITLE>
-      <STYLED_INPUT placeholder={placeholder} onChange={onChange} />
-      <INPUT_LIMIT>0 of 20 characters limit</INPUT_LIMIT>
+      <STYLED_INPUT value={value} placeholder={placeholder} onChange={onChange} maxLength={maxLength} />
+      <INPUT_LIMIT>
+        {value.length} of {maxLength} characters limit
+      </INPUT_LIMIT>
     </INPUT_CONTAINER>
   )
 }
 
-export default InfoInput
+export default React.memo(InfoInput)

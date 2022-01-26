@@ -4,6 +4,7 @@ import { Menu, MenuItem } from './shared'
 import { ArrowDropdown } from '../../components'
 import { MainText } from '../../styles'
 
+// TODO: refactor this component and '../../components/Categories.tsx' into one component
 const DROP_DOWN_WRAPPER = MainText(styled.button`
   ${({ theme }) => theme.flexCenter}
   height: ${({ theme }) => theme.margins['5x']};
@@ -52,23 +53,23 @@ const Overlay: FC<{
 
 const DropdowButton: FC<{
   title: string
+  handleSelect: (selectedOption: string) => void
   options?: Array<{ name: string; icon: string }>
   style?: any
   className?: string
-}> = ({ title, options, style, className }) => {
+}> = ({ title, handleSelect, options, style, className }) => {
   const [arrowRotation, setArrowRotation] = useState(false)
   const [currentTitle, setCurrentTitle] = useState(title)
 
-  const handleClick = () => {}
-
-  const onOptionClick = (currentOption: string) => {
+  const onOptionClick = (selectedOption: string) => {
     setArrowRotation(false)
-    setCurrentTitle(currentOption)
+    setCurrentTitle(selectedOption)
+    handleSelect(selectedOption)
   }
 
   return (
     <DROP_DOWN_WRAPPER style={style} className={className}>
-      <span onClick={handleClick}>{currentTitle}</span>
+      <span>{currentTitle}</span>
       <ArrowDropdown
         arrow
         arrowRotation={arrowRotation}

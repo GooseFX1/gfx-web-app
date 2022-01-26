@@ -16,8 +16,9 @@ const OPEN_BIDS_TAB = styled.div`
     overflow-y: auto;
     padding: ${theme.margins['5.5x']} ${theme.margins['4x']};
 
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
     grid-gap: ${theme.margins['6x']};
 
     &::-webkit-scrollbar {
@@ -46,7 +47,7 @@ export const OpenBidsTabContent: FC = ({ ...rest }) => {
       if (res.response && res.response.status !== 200) {
         setErr(true)
       }
-      setLocalOpenBid(res.data.slice(0, 25))
+      setLocalOpenBid(res?.data?.slice(0, 25))
     })
 
     return () => {}
@@ -69,7 +70,7 @@ export const OpenBidsTabContent: FC = ({ ...rest }) => {
         <OPEN_BIDS_TAB {...rest}>
           {localOpenBid.map((item: ISingleNFT) => (
             <div onClick={() => goToOpenBidDetails(item.non_fungible_id)}>
-              <Card type="grid" key={item.non_fungible_id} singleNFT={item} />
+              <Card key={item.non_fungible_id} singleNFT={item} tab="bid" />
             </div>
           ))}
         </OPEN_BIDS_TAB>

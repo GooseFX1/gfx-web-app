@@ -158,7 +158,7 @@ export const LiveAuction = () => {
                 </STYLED_DESCRIPTION>
               )}
               {category === 2 && <FormDoubleItem data={dataFormFixedRow2} className="mb-3x" onChange={onChange} />}
-              <Donate {...dataDonate} label={category === 1 ? '4. Donate for charity' : '5. Donate for charity'} />
+              <Donate {...dataDonate} label={`${category === 1 ? '4.' : '5.'} Donate for charity`} />
             </STYLED_FORM>
           </UPLOAD_INFO_CONTAINER>
           <PREVIEW_UPLOAD_CONTAINER>
