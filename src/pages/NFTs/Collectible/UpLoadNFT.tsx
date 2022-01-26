@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
+import { useHistory } from 'react-router-dom'
+import isEmpty from 'lodash/isEmpty'
 import styled from 'styled-components'
+
+import { useNFTDetails } from '../../../context'
 import { MainText } from '../../../styles'
-import { ButtonWrapper } from '../NFTButton'
 import BottomButtonUpload, { BottomButtonUploadType } from './BottomButtonUpload'
 import InfoInput from './InfoInput'
 import PreviewImage from './PreviewImage'
-import { useHistory } from 'react-router-dom'
 import { UploadCustom } from './UploadCustom'
-import { NewCollection } from './NewCollection'
+import NewCollection from './NewCollection'
 import { AddProperty } from './AddProperty'
-import isEmpty from 'lodash/isEmpty'
 import { useDarkMode } from '../../../context'
 
 const UPLOAD_CONTENT = styled.div`
@@ -17,7 +18,7 @@ const UPLOAD_CONTENT = styled.div`
   display: flex;
   flex-direction: row;
   padding: ${({ theme }) => theme.margins['5x']};
-  width: 90%;
+
   margin: 0 auto;
 
   .upload-NFT-back-icon {
@@ -40,7 +41,7 @@ const UPLOAD_FIELD_CONTAINER = styled.div`
 
 const UPLOAD_INFO_CONTAINER = styled.div`
   display: flex;
-  flex: 1;
+  flex: 1.4;
   flex-direction: column;
   justify-content: flex-start;
   margin-right: ${({ theme }) => theme.margins['6x']};
@@ -49,10 +50,7 @@ const UPLOAD_INFO_CONTAINER = styled.div`
 const PREVIEW_UPLOAD_CONTAINER = styled.div`
   flex: 1;
   display: flex;
-  /* justify-content: space-between; */
   flex-direction: column;
-  margin-left: ${({ theme }) => theme.margins['6x']};
-  margin-right: ${({ theme }) => theme.margins['3x']};
 `
 
 const SECTION_TITLE = MainText(styled.span`
@@ -72,12 +70,36 @@ const SPACE = styled.div`
   width: ${({ theme }) => theme.margins['6x']};
 `
 
-const NEXT_BUTTON = styled(ButtonWrapper)`
-  height: 60;
+const BUTTON_SECTION = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`
+
+const FLAT_BUTTON = styled.button`
+  height: 60px;
+  width: 200px;
   padding: ${({ theme }) => `${theme.margins['2x']} ${theme.margins['6x']}`};
-  align-self: flex-end;
-  background-color: ${({ theme }) => theme.btnNextStepBg};
+  text-align: center;
+  color: ${({ theme }) => theme.white};
+  background: transparent;
   margin-top: ${({ theme }) => theme.margins['5x']};
+  margin-right: ${({ theme }) => theme.margins['2x']};
+  border: none;
+  ${({ theme }) => theme.roundedBorders};
+  cursor: pointer;
+`
+
+const NEXT_BUTTON = styled.button`
+  height: 60px;
+  width: 245px;
+  padding: ${({ theme }) => `${theme.margins['2x']} ${theme.margins['6x']}`};
+  text-align: center;
+  background-color: ${({ theme }) => theme.secondary5};
+  margin-top: ${({ theme }) => theme.margins['5x']};
+  border: none;
+  ${({ theme }) => theme.roundedBorders};
+  cursor: pointer;
+
   &:disabled {
     background-color: #7d7d7d;
   }
@@ -151,57 +173,97 @@ const STYLED_PROPERTY_BLOCK = styled.div`
 export const UpLoadNFT = () => {
   const { mode } = useDarkMode()
   const history = useHistory()
+  const { uploadNFTData, setUploadNFTData } = useNFTDetails()
   const [previewImage, setPreviewImage] = useState<any>()
   const [status, setStatus] = useState('') // TODO case ('failed') when API is available
-  const initInfo = {
-    title: '',
-    desc: ''
-  }
-  const [info, setInfo] = useState({ ...initInfo })
   const [disabled, setDisabled] = useState(true)
+  const [collectionModal, setCollectionModal] = useState(false)
+  const [propertyModal, setPropertyModal] = useState(false)
 
-  const [visible, setVisible] = useState(false)
-  const [visibleProperty, setVisibleProperty] = useState(false)
-  const handleOk = () => setVisible(false)
-  const handleCancel = () => setVisible(false)
+  useEffect(() => {
+    if (uploadNFTData === undefined) {
+      setUploadNFTData({
+        title: '',
+        image: '',
+        description: '',
+        number_of_copies: 1,
+        category: '',
+        properties: [],
+        collection: {
+          collection_name: '',
+          description: '',
+          image: '',
+          symbol: '',
+          short_url: ''
+        }
+      })
+    }
 
-  // Property block
-  const [propertyList, setPropertyList] = useState([])
+    return () => {}
+  }, [])
 
-  const onRemove = (id) => {
-    const temp = JSON.parse(JSON.stringify(propertyList))
+  useEffect(() => {
+    if (uploadNFTData?.title && uploadNFTData?.collection && !isEmpty(previewImage)) {
+      setDisabled(false)
+    } else {
+      setDisabled(true)
+    }
+  }, [uploadNFTData, previewImage])
+
+  useEffect(() => {
+    setUploadNFTData((prevNFTData) => ({ ...prevNFTData, image: previewImage }))
+  }, [previewImage])
+
+  const handleSubmitCollection = useCallback((collection: any) => {
+    setUploadNFTData((prevNFTData) => ({ ...prevNFTData, collection: collection }))
+    setCollectionModal(false)
+  }, [])
+
+  const handleCancelCollection = () => {
+    setCollectionModal(false)
+  }
+
+  // title, desc
+  const handleInputChange = useCallback(
+    ({ e, id }) => {
+      const { value } = e.target
+      const temp = { ...uploadNFTData }
+      temp[id] = value
+      setUploadNFTData(temp)
+    },
+    [uploadNFTData]
+  )
+
+  const handlePropertyListChange = (propertyList: any) => {
+    setUploadNFTData((prevNFTData) => ({ ...prevNFTData, properties: propertyList }))
+  }
+
+  const handleRemoveProperty = (id) => {
+    const temp = JSON.parse(JSON.stringify(uploadNFTData.properties))
     const index = temp.findIndex((item) => item?.id === id)
     if (index !== -1) {
       temp.splice(index, 1)
-      setPropertyList(temp)
+      setUploadNFTData((prevNFTData) => ({ ...prevNFTData, properties: temp }))
     }
   }
-  // title, desc
-  const onChange = ({ e, id }) => {
-    const { value } = e.target
-    const temp = { ...info }
-    temp[id] = value
-    setInfo(temp)
+
+  const handleUploadNFT = () => {
+    console.log('CREATE NFT')
+    console.log(uploadNFTData)
   }
 
-  const onLiveAuction = () => {
-    history.push({
-      pathname: '/NFTs/live-auction',
-      state: {
-        info,
-        previewImage: previewImage,
-        status
-      }
-    })
+  const handleSaveNFTAsDraft = () => {
+    console.log('Save NFT As Draft ')
+    console.log(uploadNFTData)
   }
 
-  useEffect(() => {
-    if (info?.title && info?.desc && !isEmpty(previewImage)) {
-      setDisabled(false)
-    } else setDisabled(true)
-  }, [info, previewImage])
+  const handleSelectCategory = useCallback((selectedCategory) => {
+    setUploadNFTData((prevNFTData) => ({ ...prevNFTData, category: selectedCategory }))
+  }, [])
 
-  return (
+  return uploadNFTData === undefined ? (
+    <div>...Loading</div>
+  ) : (
     <>
       <UPLOAD_CONTENT>
         <img
@@ -216,44 +278,61 @@ export const UpLoadNFT = () => {
             <UploadCustom setPreviewImage={setPreviewImage} setStatus={setStatus} status={status} />
             <SECTION_TITLE>2. Item settings</SECTION_TITLE>
             <INPUT_SECTION>
-              <InfoInput title="Title" placeholder="Name your item" onChange={(e) => onChange({ e, id: 'title' })} />
+              <InfoInput
+                value={uploadNFTData.title}
+                title="Title"
+                maxLength={20}
+                placeholder="Name your item"
+                onChange={(e) => handleInputChange({ e, id: 'title' })}
+              />
               <SPACE />
               <InfoInput
+                value={uploadNFTData.description}
                 title="Description"
+                maxLength={120}
                 placeholder="Describe your item"
-                onChange={(e) => onChange({ e, id: 'desc' })}
+                onChange={(e) => handleInputChange({ e, id: 'description' })}
               />
             </INPUT_SECTION>
             <BOTTOM_BUTTON_SECTION>
               <BottomButtonUpload flex={2.5} type={BottomButtonUploadType.text} title="Number of copies" />
-              <BottomButtonUpload flex={2} type={BottomButtonUploadType.category} title="Category" />
               <BottomButtonUpload
                 flex={2}
-                buttonTitle="Create"
+                onClick={handleSelectCategory}
+                type={BottomButtonUploadType.category}
+                title="Category"
+              />
+              <BottomButtonUpload
+                flex={2}
+                buttonTitle={
+                  uploadNFTData.collection.collection_name.length > 0
+                    ? uploadNFTData.collection.collection_name
+                    : 'Collection'
+                }
                 type={BottomButtonUploadType.plus}
-                title="Collection"
-                onClick={() => setVisible(true)}
+                title={'Collection'}
+                onClick={() => setCollectionModal(true)}
               />
             </BOTTOM_BUTTON_SECTION>
             <STYLED_PROPERTY_BLOCK>
               <BottomButtonUpload
                 flex={2}
-                buttonTitle={propertyList && propertyList.length > 0 ? 'Add more' : 'Add'}
+                buttonTitle={uploadNFTData && uploadNFTData.properties.length > 0 ? 'Add more' : 'Add'}
                 type={
-                  propertyList && propertyList.length > 0
+                  uploadNFTData && uploadNFTData.properties.length > 0
                     ? BottomButtonUploadType.add_more
                     : BottomButtonUploadType.plus
                 }
                 title="Properties"
-                onClick={() => setVisibleProperty(true)}
+                onClick={() => setPropertyModal(true)}
               />
-              {propertyList && propertyList.length > 0 && (
+              {uploadNFTData && uploadNFTData.properties.length > 0 && (
                 <div className="property-result">
-                  {propertyList.map((item) => (
+                  {uploadNFTData.properties.map((item) => (
                     <div className="property-item" key={item?.id}>
                       <div className="type">{item?.type}</div>
                       <div className="name">{item?.name}</div>
-                      <div className={`close-btn ${mode}`} onClick={() => onRemove(item?.id)}>
+                      <div className={`close-btn ${mode}`} onClick={() => handleRemoveProperty(item?.id)}>
                         <img
                           className="close-white-icon"
                           src={`${process.env.PUBLIC_URL}/img/assets/${
@@ -269,21 +348,32 @@ export const UpLoadNFT = () => {
             </STYLED_PROPERTY_BLOCK>
           </UPLOAD_INFO_CONTAINER>
           <PREVIEW_UPLOAD_CONTAINER>
-            <PreviewImage file={previewImage} status={status} info={info} />
-            <NEXT_BUTTON onClick={onLiveAuction} disabled={false}>
-              <span>Next steps</span>
-            </NEXT_BUTTON>
+            <PreviewImage
+              file={previewImage}
+              status={status}
+              info={{ title: uploadNFTData.title, collectionName: uploadNFTData.collection.collection_name }}
+            />
+            <BUTTON_SECTION>
+              <FLAT_BUTTON onClick={handleSaveNFTAsDraft}> Save as draft</FLAT_BUTTON>
+              <NEXT_BUTTON onClick={handleUploadNFT} disabled={disabled || status === 'failed'}>
+                <span>Create</span>
+              </NEXT_BUTTON>
+            </BUTTON_SECTION>
           </PREVIEW_UPLOAD_CONTAINER>
         </UPLOAD_FIELD_CONTAINER>
       </UPLOAD_CONTENT>
-      <NewCollection visible={visible} handleOk={handleOk} handleCancel={handleCancel} />
-      {visibleProperty && (
+      <NewCollection
+        visible={collectionModal}
+        handleSubmit={handleSubmitCollection}
+        handleCancel={handleCancelCollection}
+      />
+      {propertyModal && (
         <AddProperty
-          visible={visibleProperty}
-          handleCancel={() => setVisibleProperty(false)}
-          handleOk={() => setVisibleProperty(false)}
-          propertyList={propertyList}
-          setPropertyList={setPropertyList}
+          visible={propertyModal}
+          handleCancel={() => setPropertyModal(false)}
+          handleOk={() => setPropertyModal(false)}
+          propertyList={uploadNFTData.properties}
+          setPropertyList={handlePropertyListChange}
         />
       )}
     </>

@@ -3,16 +3,6 @@ import { Upload } from 'antd'
 import styled from 'styled-components'
 import { MainText } from '../../../styles'
 
-interface Info {
-  title: string
-  desc: string
-}
-interface Props {
-  file?: any
-  status?: string
-  info?: Info
-}
-
 const PREVIEW_CONTAINER = styled.div`
   border-radius: 20px;
   background-color: ${({ theme }) => theme.avatarBackground};
@@ -23,6 +13,7 @@ const PREVIEW_CONTAINER = styled.div`
   width: 90%;
   aspect-ratio: 1;
   align-self: flex-end;
+  padding: ${({ theme }) => theme.margins['2.5x']};
 
   .ant-upload-list-picture-card-container {
     width: 350px;
@@ -65,21 +56,21 @@ const IMAGE_CONTAINER = styled.image`
 `
 
 const PREVIEW_TEXT = MainText(styled.span`
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 500;
   color: ${({ theme }) => theme.text7} !important;
   margin-bottom: ${({ theme }) => theme.margins['1x']};
 `)
 
 const NAME_TEXT = MainText(styled.span`
-  font-size: 15px;
+  font-size: 22px;
   font-weight: 600;
   color: ${({ theme }) => theme.text7} !important;
   margin-bottom: ${({ theme }) => theme.margins['1x']};
 `)
 
 const DESCRIBE_TEXT = MainText(styled.span`
-  font-size: 12px;
+  font-size: 20px;
   font-weight: 500;
   color: ${({ theme }) => theme.text8} !important;
   margin-bottom: ${({ theme }) => theme.margins['1x']};
@@ -89,6 +80,17 @@ const BOTTOM_INFO = styled.div`
   display: flex;
   flex-direction: column;
 `
+
+interface Info {
+  title: string
+  collectionName: string
+}
+
+interface Props {
+  file?: any
+  status?: string
+  info?: Info
+}
 
 const PreviewImage = ({ file, status, info }: Props) => {
   return (
@@ -110,7 +112,7 @@ const PreviewImage = ({ file, status, info }: Props) => {
       )}
       <BOTTOM_INFO>
         <NAME_TEXT>{info?.title || 'Name your item'}</NAME_TEXT>
-        <DESCRIBE_TEXT>{info?.desc || 'Describe your item'}</DESCRIBE_TEXT>
+        <DESCRIBE_TEXT>{info?.collectionName || 'Collection'}</DESCRIBE_TEXT>
       </BOTTOM_INFO>
     </PREVIEW_CONTAINER>
   )

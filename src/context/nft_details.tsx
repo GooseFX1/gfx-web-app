@@ -8,6 +8,7 @@ const NFTDetailsContext = createContext<INFTDetailsConfig | null>(null)
 
 export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [general, setGeneral] = useState<ISingleNFT>()
+  const [uploadNFTData, setUploadNFTData] = useState<any>()
   const [nftMetadata, setNftMetadata] = useState<INFTMetadata | null>()
   const [asks, setAsks] = useState<Array<INFTAsk>>([])
   const [bids, setBids] = useState<Array<INFTBid>>([])
@@ -46,7 +47,9 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         nftMetadata,
         bids,
         asks,
-        fetchGeneral
+        fetchGeneral,
+        uploadNFTData,
+        setUploadNFTData
       }}
     >
       {children}
@@ -65,6 +68,8 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     nftMetadata: context.nftMetadata,
     bids: context.bids,
     asks: context.asks,
-    fetchGeneral: context.fetchGeneral
+    fetchGeneral: context.fetchGeneral,
+    uploadNFTData: context.uploadNFTData,
+    setUploadNFTData: context.setUploadNFTData
   }
 }

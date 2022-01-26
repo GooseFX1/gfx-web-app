@@ -126,6 +126,7 @@ export interface Colors {
   secondary2: Color
   secondary3: Color
   secondary4: Color
+  secondary5: Color
 
   // other
   asks: Color
