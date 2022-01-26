@@ -30,7 +30,13 @@ export const Tooltip: FC<{
     <ANTDTooltip
       arrowPointAtCenter
       color={color}
-      overlayInnerStyle={{ borderRadius: '8px', display: 'flex', alignItems: 'center', padding: '8px' }}
+      overlayInnerStyle={{
+        borderRadius: '8px',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '8px 8px 0',
+        maxWidth: '132px'
+      }}
       placement={placement}
       title={<TEXT>{children}</TEXT>}
     >
