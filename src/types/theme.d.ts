@@ -113,11 +113,13 @@ export interface Colors {
   primary2: Color
 
   // farm
+  farmContainerBg: Color
   farmHeaderBg: Color
   solPillBg: Color
   stakePillBg: Color
   hoverTrFarmBg: Color
   tableHeaderBoxShadow: Color
+  tableListBoxShadow: Color
   expendedRowBg: Color
   filterDownIcon: Color
 
