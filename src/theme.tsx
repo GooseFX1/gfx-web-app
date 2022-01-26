@@ -174,6 +174,7 @@ export function colors(mode: string): Colors {
     secondary2: '#9625ae',
     secondary3: '#6b33b0',
     secondary4: '#d655fe',
+    secondary5: '#3735bb',
 
     // other
     asks: '#9b2c2c',
