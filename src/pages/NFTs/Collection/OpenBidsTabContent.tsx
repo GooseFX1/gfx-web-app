@@ -39,7 +39,7 @@ const WRAPPED_LOADER = styled.div`
 export const OpenBidsTabContent = ({ filter, ...rest }) => {
   const { singleCollection } = useNFTCollections()
   const history = useHistory()
-  const [localOpenBid, setLocalOpenBid] = useState<Array<ISingleNFT>>([])
+  const [localOpenBid, setLocalOpenBid] = useState<Array<ISingleNFT>>()
   const [fileredLocalOpenBid, setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>()
   const [err, setErr] = useState(false)
 
@@ -56,11 +56,15 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
   }, [])
 
   useEffect(() => {
-    let filteredData = localOpenBid.filter(
-      (i) => i.nft_name.toLowerCase().includes(filter.toLowerCase()) || `${i.non_fungible_id}`.includes(filter)
-    )
+    if (localOpenBid) {
+      let filteredData = localOpenBid.filter(
+        (i) =>
+          i.nft_name.toLowerCase().includes(filter.trim().toLowerCase()) ||
+          `${i.non_fungible_id}`.includes(filter.trim())
+      )
 
-    setFilteredLocalOpenBid(filteredData.slice(0, 25))
+      setFilteredLocalOpenBid(filteredData.slice(0, 25))
+    }
   }, [filter, localOpenBid])
 
   const goToOpenBidDetails = (id: number): void => history.push(`/NFTs/open-bid/${id}`)
@@ -68,7 +72,7 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
   // TODO: lazy loader for the thousands of nfts
   return (
     <WRAPPER>
-      {localOpenBid === undefined ? (
+      {fileredLocalOpenBid === undefined ? (
         <EMPTY_MSG>
           <WRAPPED_LOADER>
             <Loader />
@@ -76,7 +80,7 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
         </EMPTY_MSG>
       ) : err ? (
         <EMPTY_MSG>Error loading open bid NFTs</EMPTY_MSG>
-      ) : localOpenBid.length > 0 ? (
+      ) : fileredLocalOpenBid.length > 0 ? (
         <OPEN_BIDS_TAB {...rest}>
           {fileredLocalOpenBid.map((item: ISingleNFT) => (
             <div onClick={() => goToOpenBidDetails(item.non_fungible_id)}>

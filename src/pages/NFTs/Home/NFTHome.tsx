@@ -75,7 +75,9 @@ const NFTLandingPage: FC = (): JSX.Element => {
   }
 
   function filterCollection(collections, filter) {
-    let filteredCollections = collections.filter((i) => i.collection_name.toLowerCase().includes(filter.toLowerCase()))
+    let filteredCollections = collections.filter((i) =>
+      i.collection_name.toLowerCase().includes(filter.trim().toLowerCase())
+    )
     return filteredCollections
   }
 

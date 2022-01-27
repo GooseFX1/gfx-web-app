@@ -32,7 +32,8 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     if (collectedItems) {
       let filteredData = collectedItems.filter(
         (i) =>
-          i.name.toLowerCase().includes(search.toLowerCase()) || i.symbol.toLowerCase().includes(search.toLowerCase())
+          i.name.toLowerCase().includes(search.trim().toLowerCase()) ||
+          i.symbol.toLowerCase().includes(search.trim().toLowerCase())
       )
       setFilteredCollectedItems(filteredData)
     }
