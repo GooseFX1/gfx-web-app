@@ -113,11 +113,13 @@ export interface Colors {
   primary2: Color
 
   // farm
+  farmContainerBg: Color
   farmHeaderBg: Color
   solPillBg: Color
   stakePillBg: Color
   hoverTrFarmBg: Color
   tableHeaderBoxShadow: Color
+  tableListBoxShadow: Color
   expendedRowBg: Color
   filterDownIcon: Color
 
@@ -126,6 +128,7 @@ export interface Colors {
   secondary2: Color
   secondary3: Color
   secondary4: Color
+  secondary5: Color
 
   // other
   asks: Color

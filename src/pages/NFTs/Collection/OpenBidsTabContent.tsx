@@ -16,8 +16,9 @@ const OPEN_BIDS_TAB = styled.div`
     overflow-y: auto;
     padding: ${theme.margins['5.5x']} ${theme.margins['4x']};
 
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
     grid-gap: ${theme.margins['6x']};
 
     &::-webkit-scrollbar {
@@ -79,7 +80,7 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
         <OPEN_BIDS_TAB {...rest}>
           {fileredLocalOpenBid.map((item: ISingleNFT) => (
             <div onClick={() => goToOpenBidDetails(item.non_fungible_id)}>
-              <Card type="grid" key={item.non_fungible_id} singleNFT={item} />
+              <Card key={item.non_fungible_id} singleNFT={item} tab="bid" />
             </div>
           ))}
         </OPEN_BIDS_TAB>

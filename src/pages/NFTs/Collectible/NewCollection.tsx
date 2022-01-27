@@ -208,22 +208,23 @@ const STYLED_CREATE_BTN = styled(Button)<{ disabled: boolean }>`
 
 interface Props {
   visible: boolean
-  handleOk: () => void
+  handleSubmit: (collection: any) => void
   handleCancel: () => void
 }
 
-export const NewCollection = ({ visible, handleOk, handleCancel }: Props) => {
+const NewCollection = ({ visible, handleSubmit, handleCancel }: Props) => {
   const initialValues = {
-    display_name: '',
+    collection_name: '',
     symbol: '',
     description: '',
     short_url: ''
   }
   const requiredObj = {
-    display_name: '',
+    collection_name: '',
     symbol: '',
     short_url: ''
   }
+
   const [disabled, setDisabled] = useState(true)
   const onChange = (e) => {
     const { id, value } = e.target
@@ -236,24 +237,16 @@ export const NewCollection = ({ visible, handleOk, handleCancel }: Props) => {
       setDisabled(false)
     })
   }
-  const onFinish = () => {}
-  const [form] = Form.useForm()
 
+  const [form] = Form.useForm()
   const [avatar, setAvatar] = useState<any>()
 
   const handleAvatar = (file: UploadChangeParam<UploadFile<any>>) => {
     setAvatar(file.fileList[0])
   }
+
   return (
-    <STYLED_POPUP
-      width="500px"
-      height="596px"
-      title={null}
-      visible={visible}
-      onOk={handleOk}
-      onCancel={handleCancel}
-      footer={null}
-    >
+    <STYLED_POPUP width="500px" height="596px" title={null} visible={visible} onCancel={handleCancel} footer={null}>
       <h3 className="title">New collection</h3>
       <STYLED_AVATAR>
         <div className="image-group">
@@ -290,12 +283,12 @@ export const NewCollection = ({ visible, handleOk, handleCancel }: Props) => {
         layout="vertical"
         requiredMark="optional"
         initialValues={initialValues}
-        onFinish={onFinish}
+        onFinish={handleSubmit}
       >
         <div className="full-width">
           <div className="half-width">
             <Form.Item
-              name="display_name"
+              name="collection_name"
               label="Display name"
               rules={[{ required: true, message: 'Please input display name!' }]}
             >
@@ -334,3 +327,5 @@ export const NewCollection = ({ visible, handleOk, handleCancel }: Props) => {
     </STYLED_POPUP>
   )
 }
+
+export default React.memo(NewCollection)

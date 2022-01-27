@@ -133,4 +133,6 @@ export interface INFTDetailsConfig {
   bids: Array<INFTBid>
   asks: Array<INFTAsk>
   fetchGeneral: (id: string) => Promise<any>
+  uploadNFTData: any
+  setUploadNFTData: any
 }
