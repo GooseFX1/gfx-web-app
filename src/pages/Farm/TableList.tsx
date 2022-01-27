@@ -18,7 +18,7 @@ const STYLED_TABLE_LIST = styled(Table)`
     font-size: 17px;
     font-weight: 600;
     text-align: center;
-    color: ${theme.text8};;
+    color: ${theme.text8};
   }
   .ant-table-container table > thead > tr:first-child th:first-child {
     border-top-left-radius: 0;
@@ -81,6 +81,41 @@ const STYLED_TABLE_LIST = styled(Table)`
     }
   }
 
+  .ant-pagination-item {
+    a {
+      display: inline;
+    }
+
+    &:hover{
+      a {
+        color: ${theme.white};
+      }
+    }
+
+    &:hover{
+      border-color: ${theme.white};
+    }
+  }
+
+  .ant-pagination-item-active {
+    border-color: transparent;
+    a {
+      color: ${theme.text8};
+    }
+
+    &:hover {
+      border-color: ${theme.grey1};
+    }
+  }
+
+  .ant-pagination-item-link {
+    &:hover {
+      border-color: ${theme.white};
+      color: ${theme.white};
+    }
+  }
+
+
   .expanded-active {
     cursor: pointer;
     transform: rotate(180deg);
@@ -109,7 +144,10 @@ const ExpandIcon = (props) => {
 }
 
 export const TableList = ({ dataSource }: any) => {
+  const PAGE_SIZE = 10
+
   const [eKeys, setEKeys] = useState([])
+
   const onExpandIcon = (id) => {
     const temp = [...eKeys]
     const j = temp.indexOf(id)
@@ -117,17 +155,20 @@ export const TableList = ({ dataSource }: any) => {
     else temp.push(id)
     setEKeys(temp)
   }
+
   return (
-    <STYLED_TABLE_LIST
-      rowKey="id"
-      columns={columns}
-      dataSource={dataSource}
-      pagination={false}
-      bordered={false}
-      expandedRowKeys={eKeys}
-      expandedRowRender={(r) => <ExpandedContent record={r} />}
-      expandIcon={(ps) => <ExpandIcon {...ps} onClick={onExpandIcon} />}
-      expandIconColumnIndex={6}
-    />
+    <div>
+      <STYLED_TABLE_LIST
+        rowKey="id"
+        columns={columns}
+        dataSource={dataSource}
+        pagination={{ pageSize: PAGE_SIZE, position: ['bottomLeft'] }}
+        bordered={false}
+        expandedRowKeys={eKeys}
+        expandedRowRender={(r) => <ExpandedContent record={r} />}
+        expandIcon={(ps) => <ExpandIcon {...ps} onClick={onExpandIcon} />}
+        expandIconColumnIndex={6}
+      />
+    </div>
   )
 }
