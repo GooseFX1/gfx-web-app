@@ -57,7 +57,7 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
 
   useEffect(() => {
     if (localOpenBid) {
-      let filteredData = localOpenBid.filter(
+      const filteredData = localOpenBid.filter(
         (i) =>
           i.nft_name.toLowerCase().includes(filter.trim().toLowerCase()) ||
           `${i.non_fungible_id}`.includes(filter.trim())
