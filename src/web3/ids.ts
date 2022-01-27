@@ -291,6 +291,8 @@ export interface PublicKeyStringAndAccount<T> {
   account: AccountInfo<T>
 }
 
+export const AR_SOL_HOLDER_ID = new PublicKey('6FKvsq4ydWFci6nGq9ckbjYMtnmaqAoatz5c9XWjiDuS')
+
 export const WRAPPED_SOL_MINT = new PublicKey('So11111111111111111111111111111111111111112')
 
 export const TOKEN_PROGRAM_ID = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA')
