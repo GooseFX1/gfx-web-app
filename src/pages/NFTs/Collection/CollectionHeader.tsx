@@ -142,7 +142,7 @@ const menu = (
   </MENU_LIST>
 )
 
-export const CollectionHeader = () => {
+export const CollectionHeader = ({ setFilter, filter }) => {
   const history = useHistory()
   const { singleCollection } = useNFTCollections()
   const statsData = [
@@ -182,7 +182,12 @@ export const CollectionHeader = () => {
         {singleCollection.collection_description}
       </Row>
       <Row className="collection-action-wrap">
-        <SearchBar className="collection-search-bar" placeholder="Search by nft or owner" />
+        <SearchBar
+          className="collection-search-bar"
+          placeholder="Search by nft or owner"
+          setFilter={setFilter}
+          filter={filter}
+        />
         <Sort />
         <DROPDOWN overlay={menu} trigger={['click']} placement="bottomRight" align={{ offset: [0, 26] }}>
           <Button>

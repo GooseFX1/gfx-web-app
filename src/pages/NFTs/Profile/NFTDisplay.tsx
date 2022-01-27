@@ -14,6 +14,8 @@ interface INFTDisplay {
 
 const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const [collectedItems, setCollectedItems] = useState<INFTMetadata[]>()
+  const [filteredCollectedItems, setFilteredCollectedItems] = useState<INFTMetadata[]>()
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     if (props.data && props.data.length > 0) {
@@ -25,6 +27,21 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
       setCollectedItems(undefined)
     }
   }, [props.data])
+
+  useEffect(() => {
+    if (collectedItems) {
+      let filteredData = collectedItems.filter(
+        (i) =>
+          i.name.toLowerCase().includes(search.trim().toLowerCase()) ||
+          i.symbol.toLowerCase().includes(search.trim().toLowerCase())
+      )
+      setFilteredCollectedItems(filteredData)
+    }
+
+    return () => {
+      setFilteredCollectedItems(undefined)
+    }
+  }, [search, collectedItems])
 
   const fetchNFTDetails = async (nftData: any) => {
     var data = Object.keys(nftData).map((key) => nftData[key])
@@ -44,17 +61,18 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     <StyledTabContent>
       <div className="actions-group">
         <div className="search-group">
-          <SearchBar />
+          <SearchBar filter={search} setFilter={setSearch} />
           <div className="total-result">
-            {collectedItems && collectedItems.length > 0 ? `${collectedItems.length}` : '0'} Items
+            {filteredCollectedItems && filteredCollectedItems.length > 0 ? `${filteredCollectedItems.length}` : '0'}{' '}
+            Items
           </div>
         </div>
       </div>
-      {!collectedItems ? (
+      {!filteredCollectedItems ? (
         <div>...Loading</div>
-      ) : collectedItems && collectedItems.length > 0 ? (
+      ) : filteredCollectedItems && filteredCollectedItems.length > 0 ? (
         <div className="cards-list">
-          {collectedItems.map((nftMetaData: INFTMetadata, index: number) => (
+          {filteredCollectedItems.map((nftMetaData: INFTMetadata, index: number) => (
             <Card key={index} data={nftMetaData} />
           ))}
         </div>

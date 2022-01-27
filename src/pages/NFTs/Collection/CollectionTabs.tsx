@@ -43,18 +43,18 @@ const COLLECTION_TABS = styled.div`
   }
 `
 
-export const CollectionTabs = () => {
+export const CollectionTabs = ({ filter }) => {
   return (
     <COLLECTION_TABS>
       <Tabs defaultActiveKey="1" centered>
-        <TabPane tab="Live Auctions" key="1">
+        {/* <TabPane tab="Live Auctions" key="1">
           <LiveAuctionsTabContent />
-        </TabPane>
+        </TabPane> */}
         <TabPane tab="Fixed Price" key="2">
           <FixedPriceTabContent />
         </TabPane>
         <TabPane tab="Open Bids" key="3">
-          <OpenBidsTabContent />
+          <OpenBidsTabContent filter={filter} />
         </TabPane>
         <TabPane tab="Owners" key="4">
           <OwnersTabContent />

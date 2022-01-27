@@ -1,5 +1,5 @@
 import { Image } from 'antd'
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { SpaceBetweenDiv } from '../styles'
 
@@ -26,10 +26,14 @@ const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)`
   }
 `
 
-export const SearchBar = ({ placeholder, ...rest }: any) => {
+export const SearchBar = ({ placeholder, setFilter, filter, ...rest }: any) => {
   return (
     <SEARCH_BAR_WRAPPER {...rest}>
-      <input placeholder={placeholder || 'Search by nft or creator'} />
+      <input
+        placeholder={placeholder || 'Search by nft or creator'}
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
+      />
       <Image preview={false} src={`${process.env.PUBLIC_URL}/img/assets/search.png`} />
     </SEARCH_BAR_WRAPPER>
   )
