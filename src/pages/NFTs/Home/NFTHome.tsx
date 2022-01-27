@@ -6,7 +6,6 @@ import NFTFooter from '../NFTFooter'
 import CollectionCarousel from '../CollectionCarousel'
 import { NFTCollectionProvider, useNFTCollections } from '../../../context'
 import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
-import { allCollections } from './mockData'
 
 const SCROLLING_CONTENT = styled.div`
   overflow-y: overlay;
@@ -52,11 +51,6 @@ const NFTLandingPage: FC = (): JSX.Element => {
     return () => {}
   }, [])
 
-  useEffect(() => {
-    let newCollections = filterCollection(allCollections, search)
-    setMainCollections(newCollections)
-  }, [search, allCollections])
-
   const onScroll = (e) => {
     const currentScrollY = e.target.scrollTop
     if (prevScrollY.current < currentScrollY && goingUp) {
@@ -72,13 +66,6 @@ const NFTLandingPage: FC = (): JSX.Element => {
     } else {
       setBisCarouselVisible(true)
     }
-  }
-
-  function filterCollection(collections, filter) {
-    let filteredCollections = collections.filter((i) =>
-      i.collection_name.toLowerCase().includes(filter.trim().toLowerCase())
-    )
-    return filteredCollections
   }
 
   return (
