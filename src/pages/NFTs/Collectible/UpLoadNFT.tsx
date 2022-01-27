@@ -180,6 +180,22 @@ export const UpLoadNFT = () => {
   const [collectionModal, setCollectionModal] = useState(false)
   const [propertyModal, setPropertyModal] = useState(false)
 
+  const [attributes, setAttributes] = useState<IMetadataExtension>({
+    name: '',
+    symbol: '',
+    description: '',
+    external_url: '',
+    image: '',
+    animation_url: undefined,
+    attributes: undefined,
+    seller_fee_basis_points: 0,
+    creators: [],
+    properties: {
+      files: [],
+      category: MetadataCategory.Image
+    }
+  })
+
   useEffect(() => {
     if (uploadNFTData === undefined) {
       setUploadNFTData({
@@ -213,6 +229,45 @@ export const UpLoadNFT = () => {
   useEffect(() => {
     setUploadNFTData((prevNFTData) => ({ ...prevNFTData, image: previewImage }))
   }, [previewImage])
+
+  const mint = async () => {
+    const metadata = {
+      name: attributes.name,
+      symbol: attributes.symbol,
+      creators: attributes.creators,
+      description: attributes.description,
+      sellerFeeBasisPoints: attributes.seller_fee_basis_points,
+      image: attributes.image,
+      animation_url: attributes.animation_url,
+      attributes: attributes.attributes,
+      external_url: attributes.external_url,
+      properties: {
+        files: attributes.properties.files,
+        category: attributes.properties?.category
+      }
+    }
+    setStepsVisible(false)
+    setMinting(true)
+
+    try {
+      const _nft = await mintNFT(
+        connection,
+        wallet,
+        endpoint.name,
+        files,
+        metadata,
+        setNFTcreateProgress,
+        attributes.properties?.maxSupply
+      )
+
+      if (_nft) setNft(_nft)
+      setAlertMessage('')
+    } catch (e: any) {
+      setAlertMessage(e.message)
+    } finally {
+      setMinting(false)
+    }
+  }
 
   const handleSubmitCollection = useCallback((collection: any) => {
     setUploadNFTData((prevNFTData) => ({ ...prevNFTData, collection: collection }))
