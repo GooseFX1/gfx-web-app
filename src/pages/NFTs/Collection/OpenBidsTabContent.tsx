@@ -35,10 +35,11 @@ const WRAPPED_LOADER = styled.div`
   height: 48px;
 `
 
-export const OpenBidsTabContent: FC = ({ ...rest }) => {
+export const OpenBidsTabContent = ({ filter, ...rest }) => {
   const { singleCollection } = useNFTCollections()
   const history = useHistory()
-  const [localOpenBid, setLocalOpenBid] = useState<Array<ISingleNFT>>()
+  const [localOpenBid, setLocalOpenBid] = useState<Array<ISingleNFT>>([])
+  const [fileredLocalOpenBid, setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>()
   const [err, setErr] = useState(false)
 
   useEffect(() => {
@@ -46,11 +47,20 @@ export const OpenBidsTabContent: FC = ({ ...rest }) => {
       if (res.response && res.response.status !== 200) {
         setErr(true)
       }
-      setLocalOpenBid(res.data.slice(0, 25))
+
+      setLocalOpenBid(res.data)
     })
 
     return () => {}
   }, [])
+
+  useEffect(() => {
+    let filteredData = localOpenBid.filter(
+      (i) => i.nft_name.toLowerCase().includes(filter.toLowerCase()) || `${i.non_fungible_id}`.includes(filter)
+    )
+
+    setFilteredLocalOpenBid(filteredData.slice(0, 25))
+  }, [filter, localOpenBid])
 
   const goToOpenBidDetails = (id: number): void => history.push(`/NFTs/open-bid/${id}`)
 
@@ -67,7 +77,7 @@ export const OpenBidsTabContent: FC = ({ ...rest }) => {
         <EMPTY_MSG>Error loading open bid NFTs</EMPTY_MSG>
       ) : localOpenBid.length > 0 ? (
         <OPEN_BIDS_TAB {...rest}>
-          {localOpenBid.map((item: ISingleNFT) => (
+          {fileredLocalOpenBid.map((item: ISingleNFT) => (
             <div onClick={() => goToOpenBidDetails(item.non_fungible_id)}>
               <Card type="grid" key={item.non_fungible_id} singleNFT={item} />
             </div>

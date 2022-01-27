@@ -6,6 +6,7 @@ import NFTFooter from '../NFTFooter'
 import CollectionCarousel from '../CollectionCarousel'
 import { NFTCollectionProvider, useNFTCollections } from '../../../context'
 import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
+import { allCollections } from './mockData'
 
 const SCROLLING_CONTENT = styled.div`
   overflow-y: overlay;
@@ -36,6 +37,8 @@ const NFTLandingPage: FC = (): JSX.Element => {
   const [isAllLoading, setIsAllLoading] = useState<boolean>(false)
   const [isFeaturedLoading, setIsFeaturedLoading] = useState<boolean>(false)
   const [isUpcomingLoading, setIsUpcomingLoading] = useState<boolean>(false)
+  const [search, setSearch] = useState<string>('')
+  const [mainCollections, setMainCollections] = useState(allCollections)
 
   useEffect(() => {
     setIsAllLoading(true)
@@ -48,6 +51,11 @@ const NFTLandingPage: FC = (): JSX.Element => {
     fetchUpcomingCollections().then((res) => setIsUpcomingLoading(false))
     return () => {}
   }, [])
+
+  useEffect(() => {
+    let newCollections = filterCollection(allCollections, search)
+    setMainCollections(newCollections)
+  }, [search, allCollections])
 
   const onScroll = (e) => {
     const currentScrollY = e.target.scrollTop
@@ -66,14 +74,19 @@ const NFTLandingPage: FC = (): JSX.Element => {
     }
   }
 
+  function filterCollection(collections, filter) {
+    let filteredCollections = collections.filter((i) => i.collection_name.toLowerCase().includes(filter.toLowerCase()))
+    return filteredCollections
+  }
+
   return (
     <>
-      <Header />
+      <Header setFilter={setSearch} filter={search} />
       <NFTHeaderCarousel isBig={false} isBigVisible={isBigCarouselVisible} />
       <SCROLLING_CONTENT_100 onScroll={onScroll}>
         <NFTHeaderCarousel isBig isBigVisible={isBigCarouselVisible} />
         <CollectionCarousel
-          collections={allCollections}
+          collections={mainCollections}
           collectionType={COLLECTION_TYPES.NFT_COLLECTION}
           title="Launchpad"
           showTopArrow

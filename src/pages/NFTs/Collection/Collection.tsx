@@ -21,6 +21,7 @@ export const Collection: FC = (): JSX.Element => {
   const { fetchSingleCollection } = useNFTCollections()
   const [err, setErr] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     fetchSingleCollection(params.collectionId).then((res) => {
@@ -41,8 +42,8 @@ export const Collection: FC = (): JSX.Element => {
     <h2>Something went wrong fetching the collection details</h2>
   ) : (
     <>
-      <CollectionHeader />
-      <CollectionTabs />
+      <CollectionHeader setFilter={setSearch} filter={search} />
+      <CollectionTabs filter={search} />
     </>
   )
 }
