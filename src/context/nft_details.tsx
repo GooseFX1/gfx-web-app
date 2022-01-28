@@ -3,12 +3,13 @@ import apiClient from '../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
 import { customFetch } from '../utils'
 import { INFTDetailsConfig, ISingleNFT, INFTMetadata, INFTBid, INFTAsk } from '../types/nft_details.d'
+import { IMetadataExtension } from '../web3'
 
 const NFTDetailsContext = createContext<INFTDetailsConfig | null>(null)
 
 export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [general, setGeneral] = useState<ISingleNFT>()
-  const [uploadNFTData, setUploadNFTData] = useState<any>()
+  const [nftMintingData, setNftMintingData] = useState<IMetadataExtension>()
   const [nftMetadata, setNftMetadata] = useState<INFTMetadata | null>()
   const [asks, setAsks] = useState<Array<INFTAsk>>([])
   const [bids, setBids] = useState<Array<INFTBid>>([])
@@ -48,8 +49,8 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         bids,
         asks,
         fetchGeneral,
-        uploadNFTData,
-        setUploadNFTData
+        nftMintingData,
+        setNftMintingData
       }}
     >
       {children}
@@ -69,7 +70,7 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     bids: context.bids,
     asks: context.asks,
     fetchGeneral: context.fetchGeneral,
-    uploadNFTData: context.uploadNFTData,
-    setUploadNFTData: context.setUploadNFTData
+    nftMintingData: context.nftMintingData,
+    setNftMintingData: context.setNftMintingData
   }
 }
