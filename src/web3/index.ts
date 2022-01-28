@@ -1,4 +1,4 @@
-export * from './accounts'
+export * from './account'
 export * from './crypto'
 export * from './ids'
 export * from './metaplex'
