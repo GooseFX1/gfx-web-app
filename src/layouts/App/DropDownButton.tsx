@@ -19,31 +19,17 @@ const DROP_DOWN_WRAPPER = MainText(styled.button`
   }
 `)
 
-const exDropdowData = [
-  { name: 'All', icon: 'all' },
-  { name: 'Art', icon: 'art' },
-  { name: 'Defi', icon: 'defi' },
-  { name: 'Domains', icon: 'domains' },
-  { name: 'Games', icon: 'games' },
-  { name: 'Memes', icon: 'memes' },
-  { name: 'Metaverse', icon: 'metaverse' },
-  { name: 'Music', icon: 'music' },
-  { name: 'Photography', icon: 'photography' },
-  { name: 'Punks', icon: 'punks' },
-  { name: 'Sports', icon: 'sports' },
-  { name: 'Verified', icon: 'verified' },
-  { name: 'Unverified', icon: 'unverified' }
-]
+type listItem = { displayName: string; value: string; icon: string }
 
 const Overlay: FC<{
-  onOptionClick: (currentOption: string) => void
-  options: Array<{ name: string; icon: string }>
+  onOptionClick: (currentOption: listItem) => void
+  options: Array<listItem>
 }> = ({ onOptionClick, options }) => {
   return (
     <Menu>
       {options.map((item) => (
-        <MenuItem onClick={() => onOptionClick(item.name)}>
-          <span>{item.name}</span>
+        <MenuItem onClick={() => onOptionClick(item)}>
+          <span>{item.displayName}</span>
           <img src={`${process.env.PUBLIC_URL}/img/assets/${item.icon}.svg`} alt="disconnect" />
         </MenuItem>
       ))}
@@ -51,20 +37,20 @@ const Overlay: FC<{
   )
 }
 
-const DropdowButton: FC<{
+const DropdownButton: FC<{
   title: string
   handleSelect: (selectedOption: string) => void
-  options?: Array<{ name: string; icon: string }>
+  options: Array<listItem>
   style?: any
   className?: string
 }> = ({ title, handleSelect, options, style, className }) => {
   const [arrowRotation, setArrowRotation] = useState(false)
   const [currentTitle, setCurrentTitle] = useState(title)
 
-  const onOptionClick = (selectedOption: string) => {
+  const onOptionClick = (item: listItem) => {
     setArrowRotation(false)
-    setCurrentTitle(selectedOption)
-    handleSelect(selectedOption)
+    setCurrentTitle(item.displayName)
+    handleSelect(item.value)
   }
 
   return (
@@ -75,11 +61,11 @@ const DropdowButton: FC<{
         arrowRotation={arrowRotation}
         offset={[9, 30]}
         onVisibleChange={(visible: boolean) => {}}
-        overlay={<Overlay options={exDropdowData} onOptionClick={onOptionClick} />}
+        overlay={<Overlay options={options} onOptionClick={onOptionClick} />}
         setArrowRotation={setArrowRotation}
       />
     </DROP_DOWN_WRAPPER>
   )
 }
 
-export default DropdowButton
+export default DropdownButton
