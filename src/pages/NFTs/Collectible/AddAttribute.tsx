@@ -4,20 +4,7 @@ import styled from 'styled-components'
 import { PopupCustom } from '../Popup/PopupCustom'
 import { createUUID } from '../../../utils'
 
-interface Item {
-  id: string
-  type: string
-  name: string
-}
-
-interface Props {
-  visible: boolean
-  handleCancel: () => void
-  handleOk: () => void
-  propertyList: Item[]
-  setPropertyList: (items: Array<Item>) => void
-}
-
+//#region styles
 const STYLED_ADD_PROPERTY = styled(PopupCustom)`
   ${({ theme }) => `
     background: transparent;
@@ -183,19 +170,34 @@ const STYLED_ADD_MORE_BTN = styled(Button)`
     }
   `}
 `
+//#endregion
 
-export const AddProperty = ({ visible, handleCancel, handleOk, propertyList, setPropertyList }: Props) => {
+interface Item {
+  id: string
+  trait_type: string
+  value: string
+}
+
+interface Props {
+  visible: boolean
+  handleCancel: () => void
+  handleOk: () => void
+  attributeList: Item[]
+  setAttributeList: (items: Array<Item>) => void
+}
+
+const AddAttribute = ({ visible, handleCancel, handleOk, attributeList, setAttributeList }: Props) => {
   // TODO: add auto focus to input on component mount
   const [disabled, setDisabled] = useState(false)
   const initData = [
     {
       id: createUUID(),
-      type: '',
-      name: ''
+      trait_type: '',
+      value: ''
     }
   ]
 
-  const [realData, setRealData] = useState(propertyList.length > 0 ? propertyList : initData)
+  const [realData, setRealData] = useState(attributeList.length > 0 ? attributeList : initData)
 
   useEffect(() => {
     checkDisabled(realData)
@@ -205,8 +207,8 @@ export const AddProperty = ({ visible, handleCancel, handleOk, propertyList, set
     setRealData((prevData) => [
       {
         id: createUUID(),
-        type: '',
-        name: ''
+        trait_type: '',
+        value: ''
       },
       ...prevData
     ])
@@ -243,7 +245,7 @@ export const AddProperty = ({ visible, handleCancel, handleOk, propertyList, set
   }
 
   const onSave = () => {
-    setPropertyList(realData)
+    setAttributeList(realData)
     handleOk()
   }
 
@@ -258,9 +260,9 @@ export const AddProperty = ({ visible, handleCancel, handleOk, propertyList, set
       centered
     >
       <div className="body-wrap">
-        <h1 className="title">Add Properties</h1>
+        <h1 className="title">Add Attributes</h1>
         <div className="desc">
-          Properties show up in the atributtes section inside each item view and can be filtered using sort by.
+          Attributes show up in the atributtes section inside each item view and can be filtered using sort by.
         </div>
       </div>
       <STYLED_ADD_GROUP>
@@ -281,18 +283,18 @@ export const AddProperty = ({ visible, handleCancel, handleOk, propertyList, set
               </div>
               <div className="input-wrap">
                 <Input
-                  name="type"
+                  name="trait_type"
                   className="input-type"
                   placeholder="Character"
-                  defaultValue={item?.type}
+                  defaultValue={item?.trait_type}
                   onChange={(e) => onChange({ e: e, id: item?.id })}
                 />
               </div>
               <Input
-                name="name"
+                name="value"
                 className="input-name"
                 placeholder="Male"
-                defaultValue={item?.name}
+                defaultValue={item?.value}
                 onChange={(e) => onChange({ e: e, id: item?.id })}
               />
             </div>
@@ -315,3 +317,5 @@ export const AddProperty = ({ visible, handleCancel, handleOk, propertyList, set
     </STYLED_ADD_PROPERTY>
   )
 }
+
+export default AddAttribute
