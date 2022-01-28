@@ -84,23 +84,24 @@ const STYLED_TABLE_LIST = styled(Table)`
   .ant-pagination-item {
     a {
       display: inline;
+      color: ${theme.text6};
     }
 
     &:hover{
       a {
-        color: ${theme.white};
+        color: ${theme.text6};
       }
     }
 
     &:hover{
-      border-color: ${theme.white};
+      border-color: ${theme.text6};
     }
   }
 
   .ant-pagination-item-active {
     border-color: transparent;
     a {
-      color: ${theme.text8};
+      color: ${theme.text6};
     }
 
     &:hover {
@@ -109,9 +110,11 @@ const STYLED_TABLE_LIST = styled(Table)`
   }
 
   .ant-pagination-item-link {
+    color: ${theme.text6};
+
     &:hover {
-      border-color: ${theme.white};
-      color: ${theme.white};
+      border-color: ${theme.text6};
+      color: ${theme.text6};
     }
   }
 
