@@ -2,6 +2,7 @@ import React from 'react'
 import { Upload } from 'antd'
 import styled from 'styled-components'
 import { MainText } from '../../../styles'
+import { useNFTDetails } from '../../../context'
 
 const PREVIEW_CONTAINER = styled.div`
   border-radius: 20px;
@@ -89,10 +90,11 @@ interface Info {
 interface Props {
   file?: any
   status?: string
-  info?: Info
 }
 
-const PreviewImage = ({ file, status, info }: Props) => {
+const PreviewImage = ({ file, status }: Props) => {
+  const { nftMintingData } = useNFTDetails()
+
   return (
     <PREVIEW_CONTAINER>
       <PREVIEW_TEXT>Preview</PREVIEW_TEXT>
@@ -111,8 +113,7 @@ const PreviewImage = ({ file, status, info }: Props) => {
         <IMAGE_CONTAINER />
       )}
       <BOTTOM_INFO>
-        <NAME_TEXT>{info?.title || 'Name your item'}</NAME_TEXT>
-        <DESCRIBE_TEXT>{info?.collectionName || 'Collection'}</DESCRIBE_TEXT>
+        <NAME_TEXT>{nftMintingData?.name || 'Name your item'}</NAME_TEXT>
       </BOTTOM_INFO>
     </PREVIEW_CONTAINER>
   )
