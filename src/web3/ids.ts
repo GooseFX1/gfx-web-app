@@ -1,5 +1,5 @@
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { PublicKey } from '@solana/web3.js'
+import { AccountInfo, PublicKey } from '@solana/web3.js'
 
 export const SYNTH_DEFAULT_MINT = new PublicKey('11111111111111111111111111111111')
 
