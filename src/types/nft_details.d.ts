@@ -1,4 +1,6 @@
 import { INFTAsk } from './nft_details.d'
+import { IMetadataExtension } from '../web3'
+
 export interface IInfoItemData {
   thumbnail: string
   title: string
@@ -133,6 +135,6 @@ export interface INFTDetailsConfig {
   bids: Array<INFTBid>
   asks: Array<INFTAsk>
   fetchGeneral: (id: string) => Promise<any>
-  uploadNFTData: any
-  setUploadNFTData: any
+  nftMintingData: IMetadataExtension | undefined
+  setNftMintingData: Dispatch<SetStateAction<IMetadataExtension>>
 }
