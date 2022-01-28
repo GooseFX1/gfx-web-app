@@ -1,11 +1,13 @@
 import { SystemProgram, SYSVAR_RENT_PUBKEY, TransactionInstruction } from '@solana/web3.js'
-import { programIds } from '../utils/programIds'
+import { programIds } from '../programIds'
+import { toPublicKey } from '../ids'
 import { deserializeUnchecked, serialize } from 'borsh'
 import BN from 'bn.js'
-import { findProgramAddress, toPublicKey } from './utils'
+import { findProgramAddress } from '../utils'
 import { StringPublicKey } from './types.d'
 
-export const METADATA_PREFIX = 'metadata'
+import { METADATA_PREFIX, MetaplexMetadata, MetadataKey, Creator, Data } from '../metaplex'
+
 export const EDITION = 'edition'
 export const RESERVATION = 'reservation'
 
@@ -34,15 +36,6 @@ export const MAX_METADATA_LEN =
 export const MAX_EDITION_LEN = 1 + 32 + 8 + 200
 
 export const EDITION_MARKER_BIT_SIZE = 248
-
-export enum MetadataKey {
-  Uninitialized = 0,
-  MetadataV1 = 4,
-  EditionV1 = 1,
-  MasterEditionV1 = 2,
-  MasterEditionV2 = 6,
-  EditionMarker = 7
-}
 
 export enum MetadataCategory {
   Audio = 'audio',
@@ -176,38 +169,6 @@ export class Edition {
     this.key = MetadataKey.EditionV1
     this.parent = args.parent
     this.edition = args.edition
-  }
-}
-export class Creator {
-  address: StringPublicKey
-  verified: boolean
-  share: number
-
-  constructor(args: { address: StringPublicKey; verified: boolean; share: number }) {
-    this.address = args.address
-    this.verified = args.verified
-    this.share = args.share
-  }
-}
-
-export class Data {
-  name: string
-  symbol: string
-  uri: string
-  sellerFeeBasisPoints: number
-  creators: Creator[] | null
-  constructor(args: {
-    name: string
-    symbol: string
-    uri: string
-    sellerFeeBasisPoints: number
-    creators: Creator[] | null
-  }) {
-    this.name = args.name
-    this.symbol = args.symbol
-    this.uri = args.uri
-    this.sellerFeeBasisPoints = args.sellerFeeBasisPoints
-    this.creators = args.creators
   }
 }
 
@@ -430,6 +391,48 @@ export const METADATA_SCHEMA = new Map<any, any>([
       fields: [
         ['key', 'u8'],
         ['ledger', [31]]
+      ]
+    }
+  ]
+])
+
+// TODO: reconcile met
+export const PARSE_NFT_ACCOUNT_SCHEMA = new Map<any, any>([
+  [
+    Data,
+    {
+      kind: 'struct',
+      fields: [
+        ['name', 'string'],
+        ['symbol', 'string'],
+        ['uri', 'string'],
+        ['sellerFeeBasisPoints', 'u16'],
+        ['creators', { kind: 'option', type: [Creator] }]
+      ]
+    }
+  ],
+  [
+    MetaplexMetadata,
+    {
+      kind: 'struct',
+      fields: [
+        ['key', 'u8'],
+        ['updateAuthority', 'pubkey'],
+        ['mint', 'pubkey'],
+        ['data', Data],
+        ['primarySaleHappened', 'u8'], // bool
+        ['isMutable', 'u8'] // bool
+      ]
+    }
+  ],
+  [
+    Creator,
+    {
+      kind: 'struct',
+      fields: [
+        ['address', 'pubkey'],
+        ['verified', 'u8'],
+        ['share', 'u8']
       ]
     }
   ]
