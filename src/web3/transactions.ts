@@ -11,7 +11,8 @@ import {
   TransactionInstruction,
   TransactionSignature
 } from '@solana/web3.js'
-import log from 'loglevel'
+
+import { WalletAdapter, WalletNotConnectedError } from '@solana/wallet-adapter-base'
 
 interface BlockhashAndFeeCalculator {
   blockhash: Blockhash
@@ -40,6 +41,51 @@ export const envFor = (connection: Connection): string => {
 
 export const explorerLinkFor = (txid: TransactionSignature, connection: Connection): string => {
   return `https://explorer.solana.com/tx/${txid}?cluster=${envFor(connection)}`
+}
+
+export const sendTransactionWithRetry = async (
+  connection: Connection,
+  wallet: WalletAdapter | any,
+  instructions: TransactionInstruction[],
+  signers: Keypair[],
+  commitment: Commitment = 'singleGossip',
+  includesFeePayer: boolean = false,
+  block?: BlockhashAndFeeCalculator,
+  beforeSend?: () => void
+) => {
+  if (!wallet.publicKey) throw new WalletNotConnectedError()
+
+  let transaction = new Transaction()
+  instructions.forEach((instruction) => transaction.add(instruction))
+  transaction.recentBlockhash = (block || (await connection.getRecentBlockhash(commitment))).blockhash
+
+  if (includesFeePayer) {
+    transaction.setSigners(...signers.map((s) => s.publicKey))
+  } else {
+    transaction.setSigners(
+      // fee payed by the wallet owner
+      wallet.publicKey,
+      ...signers.map((s) => s.publicKey)
+    )
+  }
+
+  if (signers.length > 0) {
+    transaction.partialSign(...signers)
+  }
+  if (!includesFeePayer) {
+    transaction = await wallet.signTransaction(transaction)
+  }
+
+  if (beforeSend) {
+    beforeSend()
+  }
+
+  const { txid, slot } = await sendSignedTransaction({
+    connection,
+    signedTransaction: transaction
+  })
+
+  return { txid, slot }
 }
 
 export const sendTransactionWithRetryWithKeypair = async (
@@ -85,8 +131,8 @@ export const sendTransactionWithRetryWithKeypair = async (
 }
 
 export async function sendSignedTransaction({
-  signedTransaction,
   connection,
+  signedTransaction,
   timeout = DEFAULT_TIMEOUT
 }: {
   signedTransaction: Transaction
@@ -103,7 +149,7 @@ export async function sendSignedTransaction({
     skipPreflight: true
   })
 
-  log.debug('Started awaiting confirmation for', txid)
+  console.log('Started awaiting confirmation for', txid)
 
   let done = false
   ;(async () => {
@@ -120,13 +166,13 @@ export async function sendSignedTransaction({
     if (!confirmation) throw new Error('Timed out awaiting confirmation on transaction')
 
     if (confirmation.err) {
-      log.error(confirmation.err)
+      console.error(confirmation.err)
       throw new Error('Transaction failed: Custom instruction error')
     }
 
     slot = confirmation?.slot || 0
   } catch (err) {
-    log.error('Timeout Error caught', err)
+    console.error('Timeout Error caught', err)
     if (err.timeout) {
       throw new Error('Timed out awaiting confirmation on transaction')
     }
@@ -134,7 +180,7 @@ export async function sendSignedTransaction({
     try {
       simulateResult = (await simulateTransaction(connection, signedTransaction, 'single')).value
     } catch (e) {
-      log.error('Simulate Transaction error', e)
+      console.error('Simulate Transaction error', e)
     }
     if (simulateResult && simulateResult.err) {
       if (simulateResult.logs) {
@@ -152,7 +198,7 @@ export async function sendSignedTransaction({
     done = true
   }
 
-  log.debug('Latency (ms)', txid, getUnixTs() - startTime)
+  console.log('Latency (ms)', txid, getUnixTs() - startTime)
   return { txid, slot }
 }
 
@@ -203,7 +249,7 @@ export async function awaitTransactionSignatureConfirmation(
         return
       }
       done = true
-      log.warn('Rejecting for timeout...')
+      console.log('Rejecting for timeout...')
       reject({ timeout: true })
     }, timeout)
     try {
@@ -217,10 +263,10 @@ export async function awaitTransactionSignatureConfirmation(
             confirmations: 0
           }
           if (result.err) {
-            log.warn('Rejected via websocket', result.err)
+            console.log('Rejected via websocket', result.err)
             reject(status)
           } else {
-            log.debug('Resolved via websocket', result)
+            console.log('Resolved via websocket', result)
             resolve(status)
           }
         },
@@ -228,7 +274,7 @@ export async function awaitTransactionSignatureConfirmation(
       )
     } catch (e) {
       done = true
-      log.error('WS error in setup', txid, e)
+      console.error('WS error in setup', txid, e)
     }
     while (!done && queryStatus) {
       // eslint-disable-next-line no-loop-func
@@ -239,22 +285,22 @@ export async function awaitTransactionSignatureConfirmation(
           console.log(explorerLinkFor(txid, connection))
           if (!done) {
             if (!status) {
-              log.debug('REST null result for', txid, status)
+              console.log('REST null result for', txid, status)
             } else if (status.err) {
-              log.error('REST error for', txid, status)
+              console.error('REST error for', txid, status)
               done = true
               reject(status.err)
             } else if (!status.confirmations) {
-              log.error('REST no confirmations for', txid, status)
+              console.error('REST no confirmations for', txid, status)
             } else {
-              log.debug('REST confirmation for', txid, status)
+              console.log('REST confirmation for', txid, status)
               done = true
               resolve(status)
             }
           }
         } catch (e) {
           if (!done) {
-            log.error('REST connection error: txid', txid, e)
+            console.error('REST connection error: txid', txid, e)
           }
         }
       })()
@@ -265,6 +311,6 @@ export async function awaitTransactionSignatureConfirmation(
   //@ts-ignore
   if (connection._signatureSubscriptions[subId]) connection.removeSignatureListener(subId)
   done = true
-  log.debug('Returning status', status)
+  console.log('Returning status', status)
   return status
 }
