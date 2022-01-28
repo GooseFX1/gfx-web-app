@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import isEmpty from 'lodash/isEmpty'
 import styled from 'styled-components'
 
-import { useNFTDetails } from '../../../context'
 import { MainText } from '../../../styles'
 import BottomButtonUpload, { BottomButtonUploadType } from './BottomButtonUpload'
 import InfoInput from './InfoInput'
 import PreviewImage from './PreviewImage'
 import { UploadCustom } from './UploadCustom'
-import NewCollection from './NewCollection'
-import { AddProperty } from './AddProperty'
-import { useDarkMode } from '../../../context'
+import AddAttribute from './AddAttribute'
+import { useDarkMode, useNFTDetails, useConnectionConfig } from '../../../context'
+import { mintNFT, MetadataCategory, StringPublicKey } from '../../../web3'
 
+//#region styles
 const UPLOAD_CONTENT = styled.div`
   flex: 1;
   display: flex;
@@ -169,48 +170,40 @@ const STYLED_PROPERTY_BLOCK = styled.div`
     }
   }
 `
+//#endregion
 
-export const UpLoadNFT = () => {
+export const UpLoadNFT = (): JSX.Element => {
   const { mode } = useDarkMode()
   const history = useHistory()
-  const { uploadNFTData, setUploadNFTData } = useNFTDetails()
+  const { nftMintingData, setNftMintingData } = useNFTDetails()
+  const wallet = useWallet()
+  const { connection } = useConnectionConfig()
+
   const [previewImage, setPreviewImage] = useState<any>()
   const [status, setStatus] = useState('') // TODO case ('failed') when API is available
   const [disabled, setDisabled] = useState(true)
-  const [collectionModal, setCollectionModal] = useState(false)
-  const [propertyModal, setPropertyModal] = useState(false)
-
-  const [attributes, setAttributes] = useState<IMetadataExtension>({
-    name: '',
-    symbol: '',
-    description: '',
-    external_url: '',
-    image: '',
-    animation_url: undefined,
-    attributes: undefined,
-    seller_fee_basis_points: 0,
-    creators: [],
-    properties: {
-      files: [],
-      category: MetadataCategory.Image
-    }
-  })
+  const [attributesModal, setAttributesModal] = useState(false)
+  const [localAttributes, setLocalAttributes] = useState([])
+  const [minting, setMinting] = useState(false)
+  const [nftCreateProgress, setNFTcreateProgress] = useState()
+  const [nft, setNft] = useState<{ metadataAccount: StringPublicKey } | undefined>(undefined)
 
   useEffect(() => {
-    if (uploadNFTData === undefined) {
-      setUploadNFTData({
-        title: '',
-        image: '',
+    if (nftMintingData === undefined) {
+      setNftMintingData({
+        name: '',
+        symbol: '',
         description: '',
-        number_of_copies: 1,
-        category: '',
-        properties: [],
-        collection: {
-          collection_name: '',
-          description: '',
-          image: '',
-          symbol: '',
-          short_url: ''
+        external_url: '',
+        image: '',
+        animation_url: undefined,
+        attributes: undefined,
+        seller_fee_basis_points: 0,
+        creators: [],
+        properties: {
+          files: [],
+          category: MetadataCategory.Image,
+          maxSupply: 1
         }
       })
     }
@@ -219,104 +212,81 @@ export const UpLoadNFT = () => {
   }, [])
 
   useEffect(() => {
-    if (uploadNFTData?.title && uploadNFTData?.collection && !isEmpty(previewImage)) {
+    if (nftMintingData?.name && nftMintingData?.description && !isEmpty(previewImage)) {
       setDisabled(false)
     } else {
       setDisabled(true)
     }
-  }, [uploadNFTData, previewImage])
+  }, [nftMintingData, previewImage])
 
   useEffect(() => {
-    setUploadNFTData((prevNFTData) => ({ ...prevNFTData, image: previewImage }))
+    setNftMintingData((prevNFTData) => ({ ...prevNFTData, image: previewImage }))
   }, [previewImage])
 
+  useEffect(() => {
+    setNftMintingData((prevData) => ({
+      ...prevData,
+      attributes: localAttributes.map((attr) => ({ trait_type: attr.trait_type, value: attr.value }))
+    }))
+  }, [setNftMintingData, localAttributes])
+
   const mint = async () => {
-    const metadata = {
-      name: attributes.name,
-      symbol: attributes.symbol,
-      creators: attributes.creators,
-      description: attributes.description,
-      sellerFeeBasisPoints: attributes.seller_fee_basis_points,
-      image: attributes.image,
-      animation_url: attributes.animation_url,
-      attributes: attributes.attributes,
-      external_url: attributes.external_url,
-      properties: {
-        files: attributes.properties.files,
-        category: attributes.properties?.category
-      }
-    }
-    setStepsVisible(false)
     setMinting(true)
 
     try {
       const _nft = await mintNFT(
         connection,
         wallet,
-        endpoint.name,
-        files,
-        metadata,
+        'devnet',
+        previewImage,
+        nftMintingData,
         setNFTcreateProgress,
-        attributes.properties?.maxSupply
+        nftMintingData.properties.maxSupply
       )
+      //single or multiple (maxsupply)
 
       if (_nft) setNft(_nft)
-      setAlertMessage('')
+      prompt('')
     } catch (e: any) {
-      setAlertMessage(e.message)
+      prompt(e.message)
     } finally {
       setMinting(false)
     }
-  }
-
-  const handleSubmitCollection = useCallback((collection: any) => {
-    setUploadNFTData((prevNFTData) => ({ ...prevNFTData, collection: collection }))
-    setCollectionModal(false)
-  }, [])
-
-  const handleCancelCollection = () => {
-    setCollectionModal(false)
   }
 
   // title, desc
   const handleInputChange = useCallback(
     ({ e, id }) => {
       const { value } = e.target
-      const temp = { ...uploadNFTData }
+      const temp = { ...nftMintingData }
       temp[id] = value
-      setUploadNFTData(temp)
+      setNftMintingData(temp)
     },
-    [uploadNFTData]
+    [nftMintingData]
   )
 
-  const handlePropertyListChange = (propertyList: any) => {
-    setUploadNFTData((prevNFTData) => ({ ...prevNFTData, properties: propertyList }))
+  const handleAttributeListChange = (attributeList: any) => {
+    setLocalAttributes(attributeList)
   }
 
-  const handleRemoveProperty = (id) => {
-    const temp = JSON.parse(JSON.stringify(uploadNFTData.properties))
-    const index = temp.findIndex((item) => item?.id === id)
-    if (index !== -1) {
-      temp.splice(index, 1)
-      setUploadNFTData((prevNFTData) => ({ ...prevNFTData, properties: temp }))
-    }
-  }
+  const handleRemoveAttribute = (id: string) =>
+    setLocalAttributes((prevAttr) => prevAttr.filter((attr) => attr.id !== id))
 
   const handleUploadNFT = () => {
     console.log('CREATE NFT')
-    console.log(uploadNFTData)
+    console.log(nftMintingData)
   }
 
   const handleSaveNFTAsDraft = () => {
     console.log('Save NFT As Draft ')
-    console.log(uploadNFTData)
+    console.log(nftMintingData)
   }
 
   const handleSelectCategory = useCallback((selectedCategory) => {
-    setUploadNFTData((prevNFTData) => ({ ...prevNFTData, category: selectedCategory }))
+    setNftMintingData((prevNFTData) => ({ ...prevNFTData, category: selectedCategory }))
   }, [])
 
-  return uploadNFTData === undefined ? (
+  return nftMintingData === undefined ? (
     <div>...Loading</div>
   ) : (
     <>
@@ -334,15 +304,15 @@ export const UpLoadNFT = () => {
             <SECTION_TITLE>2. Item settings</SECTION_TITLE>
             <INPUT_SECTION>
               <InfoInput
-                value={uploadNFTData.title}
-                title="Title"
+                value={nftMintingData.name}
+                title="Name"
                 maxLength={20}
                 placeholder="Name your item"
-                onChange={(e) => handleInputChange({ e, id: 'title' })}
+                onChange={(e) => handleInputChange({ e, id: 'name' })}
               />
               <SPACE />
               <InfoInput
-                value={uploadNFTData.description}
+                value={nftMintingData.description}
                 title="Description"
                 maxLength={120}
                 placeholder="Describe your item"
@@ -357,37 +327,22 @@ export const UpLoadNFT = () => {
                 type={BottomButtonUploadType.category}
                 title="Category"
               />
-              <BottomButtonUpload
-                flex={2}
-                buttonTitle={
-                  uploadNFTData.collection.collection_name.length > 0
-                    ? uploadNFTData.collection.collection_name
-                    : 'Collection'
-                }
-                type={BottomButtonUploadType.plus}
-                title={'Collection'}
-                onClick={() => setCollectionModal(true)}
-              />
             </BOTTOM_BUTTON_SECTION>
             <STYLED_PROPERTY_BLOCK>
               <BottomButtonUpload
                 flex={2}
-                buttonTitle={uploadNFTData && uploadNFTData.properties.length > 0 ? 'Add more' : 'Add'}
-                type={
-                  uploadNFTData && uploadNFTData.properties.length > 0
-                    ? BottomButtonUploadType.add_more
-                    : BottomButtonUploadType.plus
-                }
-                title="Properties"
-                onClick={() => setPropertyModal(true)}
+                buttonTitle={localAttributes.length > 0 ? 'Add more' : 'Add'}
+                type={localAttributes.length > 0 ? BottomButtonUploadType.add_more : BottomButtonUploadType.plus}
+                title="Attributes"
+                onClick={() => setAttributesModal(true)}
               />
-              {uploadNFTData && uploadNFTData.properties.length > 0 && (
+              {localAttributes.length > 0 && (
                 <div className="property-result">
-                  {uploadNFTData.properties.map((item) => (
-                    <div className="property-item" key={item?.id}>
-                      <div className="type">{item?.type}</div>
-                      <div className="name">{item?.name}</div>
-                      <div className={`close-btn ${mode}`} onClick={() => handleRemoveProperty(item?.id)}>
+                  {localAttributes.map((item) => (
+                    <div className="property-item" key={item.id}>
+                      <div className="type">{item.trait_type}</div>
+                      <div className="name">{item.value}</div>
+                      <div className={`close-btn ${mode}`} onClick={() => handleRemoveAttribute(item.id)}>
                         <img
                           className="close-white-icon"
                           src={`${process.env.PUBLIC_URL}/img/assets/${
@@ -403,11 +358,7 @@ export const UpLoadNFT = () => {
             </STYLED_PROPERTY_BLOCK>
           </UPLOAD_INFO_CONTAINER>
           <PREVIEW_UPLOAD_CONTAINER>
-            <PreviewImage
-              file={previewImage}
-              status={status}
-              info={{ title: uploadNFTData.title, collectionName: uploadNFTData.collection.collection_name }}
-            />
+            <PreviewImage file={previewImage} status={status} />
             <BUTTON_SECTION>
               <FLAT_BUTTON onClick={handleSaveNFTAsDraft}> Save as draft</FLAT_BUTTON>
               <NEXT_BUTTON onClick={handleUploadNFT} disabled={disabled || status === 'failed'}>
@@ -417,18 +368,14 @@ export const UpLoadNFT = () => {
           </PREVIEW_UPLOAD_CONTAINER>
         </UPLOAD_FIELD_CONTAINER>
       </UPLOAD_CONTENT>
-      <NewCollection
-        visible={collectionModal}
-        handleSubmit={handleSubmitCollection}
-        handleCancel={handleCancelCollection}
-      />
-      {propertyModal && (
-        <AddProperty
-          visible={propertyModal}
-          handleCancel={() => setPropertyModal(false)}
-          handleOk={() => setPropertyModal(false)}
-          propertyList={uploadNFTData.properties}
-          setPropertyList={handlePropertyListChange}
+
+      {attributesModal && (
+        <AddAttribute
+          visible={attributesModal}
+          handleCancel={() => setAttributesModal(false)}
+          handleOk={() => setAttributesModal(false)}
+          attributeList={localAttributes}
+          setAttributeList={handleAttributeListChange}
         />
       )}
     </>
