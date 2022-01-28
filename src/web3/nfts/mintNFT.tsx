@@ -1,23 +1,26 @@
-import { createMint } from '@oyster/common'
 import React, { Dispatch, SetStateAction } from 'react'
 import { MintLayout, Token } from '@solana/spl-token'
 import { Keypair, Connection, SystemProgram, TransactionInstruction, LAMPORTS_PER_SOL } from '@solana/web3.js'
-
+import { WalletContextState } from '@solana/wallet-adapter-react'
 import {
   AR_SOL_HOLDER_ID,
-  Attribute,
-  WalletSigner,
   toPublicKey,
   StringPublicKey,
   findProgramAddress,
-  Creator,
   Data,
-  sendTransactionWithRetry,
   createMasterEdition,
-  ENDPOINT_NAME,
   createMetadata,
-  createAssociatedTokenAccountInstruction
-} from '../../web3'
+  createAssociatedTokenAccountInstruction,
+  createMint,
+  programIds,
+  IMetadataExtension
+} from '../index'
+
+import { ENDPOINT_NAME } from './types.d'
+import { updateMetadata } from './metadata'
+
+import { sendTransactionWithRetry } from '../transactions'
+
 import crypto from 'crypto'
 
 import BN from 'bn.js'
@@ -70,21 +73,10 @@ const uploadToArweave = async (data: FormData): Promise<IArweaveResult> => {
 
 export const mintNFT = async (
   connection: Connection,
-  wallet: WalletSigner | undefined,
+  wallet: WalletContextState | undefined,
   endpoint: ENDPOINT_NAME,
   files: File[],
-  metadata: {
-    name: string
-    symbol: string
-    description: string
-    image: string | undefined
-    animation_url: string | undefined
-    attributes: Attribute[] | undefined
-    external_url: string
-    properties: any
-    creators: Creator[] | null
-    sellerFeeBasisPoints: number
-  },
+  metadata: IMetadataExtension,
   progressCallback: Dispatch<SetStateAction<number>>,
   maxSupply?: number
 ): Promise<{
@@ -96,7 +88,7 @@ export const mintNFT = async (
     name: metadata.name,
     symbol: metadata.symbol,
     description: metadata.description,
-    seller_fee_basis_points: metadata.sellerFeeBasisPoints,
+    seller_fee_basis_points: metadata.seller_fee_basis_points,
     image: metadata.image,
     animation_url: metadata.animation_url,
     attributes: metadata.attributes,
@@ -166,7 +158,7 @@ export const mintNFT = async (
       symbol: metadata.symbol,
       name: metadata.name,
       uri: ' '.repeat(64), // size of url for arweave
-      sellerFeeBasisPoints: metadata.sellerFeeBasisPoints,
+      sellerFeeBasisPoints: metadata.seller_fee_basis_points,
       creators: metadata.creators
     }),
     payerPublicKey,
@@ -233,7 +225,7 @@ export const mintNFT = async (
         symbol: metadata.symbol,
         uri: arweaveLink,
         creators: metadata.creators,
-        sellerFeeBasisPoints: metadata.sellerFeeBasisPoints
+        sellerFeeBasisPoints: metadata.seller_fee_basis_points
       }),
       undefined,
       undefined,
@@ -290,7 +282,7 @@ export const mintNFT = async (
 
     const txid = await sendTransactionWithRetry(connection, wallet, updateInstructions, updateSigners)
 
-    notify({
+    alert({
       message: 'Art created on Solana',
       description: (
         <a href={arweaveLink} target="_blank" rel="noopener noreferrer">
@@ -312,7 +304,7 @@ export const mintNFT = async (
 }
 
 export const prepPayForFilesTxn = async (
-  wallet: WalletSigner,
+  wallet: WalletContextState,
   files: File[],
   metadata: any
 ): Promise<{
