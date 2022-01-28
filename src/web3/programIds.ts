@@ -1,6 +1,6 @@
 import { PublicKey } from '@solana/web3.js'
-import { ORACLE_ID } from '..'
-import { findProgramAddress } from '../utils'
+import { ORACLE_ID } from './ids'
+import { findProgramAddress } from './utils'
 
 import {
   METADATA_PROGRAM_ID,
