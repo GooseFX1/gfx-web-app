@@ -162,7 +162,7 @@ export const LiveAuction = () => {
             </STYLED_FORM>
           </UPLOAD_INFO_CONTAINER>
           <PREVIEW_UPLOAD_CONTAINER>
-            <PreviewImage file={settingData?.previewImage} status={settingData?.status} info={settingData?.info} />
+            <PreviewImage file={settingData?.previewImage} status={settingData?.status} />
             <GroupButton
               text1="Save as a draft"
               text2="Sell item"
