@@ -6,6 +6,8 @@ import { Card } from './Card'
 import NoContent from './NoContent'
 import { SearchBar } from '../../../components'
 import { StyledTabContent } from './TabContent.styled'
+import { useLocation } from 'react-router-dom'
+import { ILocationState } from '../../../types/app_params.d'
 
 interface INFTDisplay {
   type: 'collected' | 'created' | 'favorited'
@@ -13,9 +15,15 @@ interface INFTDisplay {
 }
 
 const NFTDisplay = (props: INFTDisplay): JSX.Element => {
+  const location = useLocation<ILocationState>()
   const [collectedItems, setCollectedItems] = useState<INFTMetadata[]>()
   const [filteredCollectedItems, setFilteredCollectedItems] = useState<INFTMetadata[]>()
   const [search, setSearch] = useState('')
+  const [newlyMintedNFT, setNewlyMintedNFT] = useState(undefined)
+
+  useEffect(() => {
+    relocatedFromNFTMint()
+  }, [])
 
   useEffect(() => {
     if (props.data && props.data.length > 0) {
@@ -55,6 +63,12 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
       }
     }
     return nfts
+  }
+
+  const relocatedFromNFTMint = (): void => {
+    if (location.state && location.state.newlyMintedNFT) {
+      setNewlyMintedNFT(location.state.newlyMintedNFT)
+    }
   }
 
   return (
