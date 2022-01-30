@@ -9,8 +9,11 @@ import BottomButtonUpload, { BottomButtonUploadType } from './BottomButtonUpload
 import InfoInput from './InfoInput'
 import PreviewImage from './PreviewImage'
 import { UploadCustom } from './UploadCustom'
+import MintPaymentConfirmation from './MintPaymentConfirmation'
+import UploadProgress from './UploadProgress'
 import AddAttribute from './AddAttribute'
-import { useDarkMode, useNFTDetails, useConnectionConfig } from '../../../context'
+import RoyaltiesStep from './RoyaltiesStep'
+import { useDarkMode, useNFTDetails, useConnectionConfig, ENDPOINTS } from '../../../context'
 import { mintNFT, MetadataCategory, StringPublicKey } from '../../../web3'
 
 //#region styles
@@ -108,7 +111,8 @@ const NEXT_BUTTON = styled.button`
 
 const BOTTOM_BUTTON_SECTION = styled.div`
   display: flex;
-  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 `
 
 const STYLED_PROPERTY_BLOCK = styled.div`
@@ -177,51 +181,41 @@ export const UpLoadNFT = (): JSX.Element => {
   const history = useHistory()
   const { nftMintingData, setNftMintingData } = useNFTDetails()
   const wallet = useWallet()
-  const { connection } = useConnectionConfig()
+  const { connection, setEndpoint } = useConnectionConfig()
+  const [localFiles, setLocalFiles] = useState<any>()
+  const [filesForUpload, setFilesForUpload] = useState<File[]>([])
+  const [creatorModal, setCreatorModal] = useState(false)
 
-  const [previewImage, setPreviewImage] = useState<any>()
-  const [status, setStatus] = useState('') // TODO case ('failed') when API is available
   const [disabled, setDisabled] = useState(true)
   const [attributesModal, setAttributesModal] = useState(false)
   const [localAttributes, setLocalAttributes] = useState([])
-  const [minting, setMinting] = useState(false)
-  const [nftCreateProgress, setNFTcreateProgress] = useState()
-  const [nft, setNft] = useState<{ metadataAccount: StringPublicKey } | undefined>(undefined)
+  const [isConfirmingMintPrice, setIsConfirmingMintPrice] = useState(false)
+  const [isMinting, setIsMinting] = useState(false)
+  const [nftCreateProgress, setNFTcreateProgress] = useState<number>(0)
+  const [mintedNFT, setMintedNFT] = useState<{ metadataAccount: StringPublicKey } | undefined>(undefined)
 
   useEffect(() => {
+    setEndpoint(ENDPOINTS[1].endpoint)
+
     if (nftMintingData === undefined) {
-      setNftMintingData({
-        name: '',
-        symbol: '',
-        description: '',
-        external_url: '',
-        image: '',
-        animation_url: undefined,
-        attributes: undefined,
-        seller_fee_basis_points: 0,
-        creators: [],
-        properties: {
-          files: [],
-          category: MetadataCategory.Image,
-          maxSupply: 1
-        }
-      })
+      setNftInitState()
     }
 
     return () => {}
   }, [])
 
   useEffect(() => {
-    if (nftMintingData?.name && nftMintingData?.description && !isEmpty(previewImage)) {
+    if (
+      nftMintingData?.name &&
+      nftMintingData?.description &&
+      !isEmpty(filesForUpload) &&
+      nftMintingData?.creators.length > 0
+    ) {
       setDisabled(false)
     } else {
       setDisabled(true)
     }
-  }, [nftMintingData, previewImage])
-
-  useEffect(() => {
-    setNftMintingData((prevNFTData) => ({ ...prevNFTData, image: previewImage }))
-  }, [previewImage])
+  }, [nftMintingData, filesForUpload])
 
   useEffect(() => {
     setNftMintingData((prevData) => ({
@@ -230,28 +224,47 @@ export const UpLoadNFT = (): JSX.Element => {
     }))
   }, [setNftMintingData, localAttributes])
 
-  const mint = async () => {
-    setMinting(true)
+  const handleUploadNFT = () => {
+    console.log('Confirm Price')
+    setIsConfirmingMintPrice(true)
+  }
 
+  const handleConfirmMint = async () => {
+    setIsMinting(true)
+    setIsConfirmingMintPrice(false)
+  }
+
+  const mint = async () => {
     try {
       const _nft = await mintNFT(
         connection,
         wallet,
         'devnet',
-        previewImage,
+        filesForUpload,
         nftMintingData,
         setNFTcreateProgress,
         nftMintingData.properties.maxSupply
       )
       //single or multiple (maxsupply)
 
-      if (_nft) setNft(_nft)
-      prompt('')
+      if (_nft) {
+        console.log(_nft)
+        setMintedNFT(_nft)
+      }
     } catch (e: any) {
-      prompt(e.message)
+      console.dir(e)
     } finally {
-      setMinting(false)
+      setNFTcreateProgress(0)
+      setIsMinting(false)
+      setLocalFiles(undefined)
+      setFilesForUpload(undefined)
+      setLocalAttributes([])
+      setNftInitState()
     }
+  }
+
+  const handleCompletedMint = () => {
+    history.push({ pathname: '/NFTs/profile', state: { newlyMintedNFT: mintedNFT } })
   }
 
   // title, desc
@@ -272,19 +285,36 @@ export const UpLoadNFT = (): JSX.Element => {
   const handleRemoveAttribute = (id: string) =>
     setLocalAttributes((prevAttr) => prevAttr.filter((attr) => attr.id !== id))
 
-  const handleUploadNFT = () => {
-    console.log('CREATE NFT')
-    console.log(nftMintingData)
-  }
-
-  const handleSaveNFTAsDraft = () => {
-    console.log('Save NFT As Draft ')
-    console.log(nftMintingData)
-  }
-
   const handleSelectCategory = useCallback((selectedCategory) => {
     setNftMintingData((prevNFTData) => ({ ...prevNFTData, category: selectedCategory }))
   }, [])
+
+  const handleSubmitCollection = useCallback(() => {
+    setCreatorModal(false)
+  }, [])
+
+  const handleCancelCollection = () => {
+    setCreatorModal(false)
+  }
+
+  const setNftInitState = () => {
+    setNftMintingData({
+      name: '',
+      symbol: '',
+      description: '',
+      external_url: '',
+      image: '',
+      animation_url: undefined,
+      attributes: undefined,
+      sellerFeeBasisPoints: 0,
+      creators: [],
+      properties: {
+        files: [],
+        category: MetadataCategory.Image,
+        maxSupply: 1
+      }
+    })
+  }
 
   return nftMintingData === undefined ? (
     <div>...Loading</div>
@@ -300,7 +330,14 @@ export const UpLoadNFT = (): JSX.Element => {
         <UPLOAD_FIELD_CONTAINER>
           <UPLOAD_INFO_CONTAINER>
             <SECTION_TITLE>1. Upload your file</SECTION_TITLE>
-            <UploadCustom setPreviewImage={setPreviewImage} setStatus={setStatus} status={status} />
+
+            <UploadCustom
+              setFilesForUpload={setFilesForUpload}
+              setPreviewImage={setLocalFiles}
+              nftMintingData={nftMintingData}
+              setNftMintingData={setNftMintingData}
+            />
+
             <SECTION_TITLE>2. Item settings</SECTION_TITLE>
             <INPUT_SECTION>
               <InfoInput
@@ -320,12 +357,18 @@ export const UpLoadNFT = (): JSX.Element => {
               />
             </INPUT_SECTION>
             <BOTTOM_BUTTON_SECTION>
-              <BottomButtonUpload flex={2.5} type={BottomButtonUploadType.text} title="Number of copies" />
               <BottomButtonUpload
-                flex={2}
+                flex={1}
                 onClick={handleSelectCategory}
                 type={BottomButtonUploadType.category}
                 title="Category"
+              />
+              <BottomButtonUpload
+                flex={1}
+                buttonTitle={'Creator Info'}
+                type={BottomButtonUploadType.plus}
+                title={'Creator Info'}
+                onClick={() => setCreatorModal(true)}
               />
             </BOTTOM_BUTTON_SECTION>
             <STYLED_PROPERTY_BLOCK>
@@ -358,16 +401,23 @@ export const UpLoadNFT = (): JSX.Element => {
             </STYLED_PROPERTY_BLOCK>
           </UPLOAD_INFO_CONTAINER>
           <PREVIEW_UPLOAD_CONTAINER>
-            <PreviewImage file={previewImage} status={status} />
+            <PreviewImage file={localFiles} />
             <BUTTON_SECTION>
-              <FLAT_BUTTON onClick={handleSaveNFTAsDraft}> Save as draft</FLAT_BUTTON>
-              <NEXT_BUTTON onClick={handleUploadNFT} disabled={disabled || status === 'failed'}>
-                <span>Create</span>
+              <NEXT_BUTTON onClick={handleUploadNFT} disabled={disabled}>
+                <span>Next Steps</span>
               </NEXT_BUTTON>
             </BUTTON_SECTION>
           </PREVIEW_UPLOAD_CONTAINER>
         </UPLOAD_FIELD_CONTAINER>
       </UPLOAD_CONTENT>
+
+      <RoyaltiesStep
+        visible={creatorModal}
+        setNftMintingData={setNftMintingData}
+        nftMintingData={nftMintingData}
+        handleSubmit={handleSubmitCollection}
+        handleCancel={handleCancelCollection}
+      />
 
       {attributesModal && (
         <AddAttribute
@@ -378,6 +428,18 @@ export const UpLoadNFT = (): JSX.Element => {
           setAttributeList={handleAttributeListChange}
         />
       )}
+
+      {isConfirmingMintPrice && (
+        <MintPaymentConfirmation
+          attributes={nftMintingData}
+          files={filesForUpload}
+          connection={connection}
+          confirm={() => handleConfirmMint()}
+          returnToDetails={setIsConfirmingMintPrice}
+        />
+      )}
+
+      {isMinting && <UploadProgress mint={mint} step={nftCreateProgress} confirm={handleCompletedMint} />}
     </>
   )
 }
