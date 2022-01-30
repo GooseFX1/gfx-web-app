@@ -86,6 +86,39 @@ export function useLocalStorageState(key: string, defaultState?: string) {
   return [state, setLocalStorageState]
 }
 
+type UseStorageReturnValue = {
+  getItem: (key: string) => string
+  setItem: (key: string, value: string) => boolean
+  removeItem: (key: string) => void
+}
+
+export const useLocalStorage = (): UseStorageReturnValue => {
+  const isBrowser: boolean = ((): boolean => typeof window !== 'undefined')()
+
+  const getItem = (key: string): string => {
+    return isBrowser ? window.localStorage[key] : ''
+  }
+
+  const setItem = (key: string, value: string): boolean => {
+    if (isBrowser) {
+      window.localStorage.setItem(key, value)
+      return true
+    }
+
+    return false
+  }
+
+  const removeItem = (key: string): void => {
+    window.localStorage.removeItem(key)
+  }
+
+  return {
+    getItem,
+    setItem,
+    removeItem
+  }
+}
+
 export function debounce(callback: any, wait: number) {
   let timeout
   return (...args) => {
@@ -101,4 +134,12 @@ export const createUUID = () => {
       v = c == 'x' ? r : (r & 0x3) | 0x8
     return v.toString(16)
   })
+}
+
+export const getLast = <T>(arr: T[]) => {
+  if (arr.length <= 0) {
+    return undefined
+  }
+
+  return arr[arr.length - 1]
 }

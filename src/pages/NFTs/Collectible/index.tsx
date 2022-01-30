@@ -9,7 +9,6 @@ const UPLOAD_CONTENT = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  padding: ${({ theme }) => theme.margins['8x']} ${({ theme }) => theme.margins['6x']};
   position: relative;
 
   .collectible-back-icon {
@@ -102,7 +101,7 @@ export const Collectible = () => {
           className="collectible-back-icon"
           src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
           alt="back"
-          onClick={() => history.goBack()}
+          onClick={() => history.push('/NFTs')}
         />
         <TITLE>Create a collectible</TITLE>
         <DESCRIPTION>

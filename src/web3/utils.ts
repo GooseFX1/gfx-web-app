@@ -2,6 +2,7 @@ import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
 import { Connection, PublicKey, Signer, Transaction } from '@solana/web3.js'
 import { getHashedName, getNameAccountKey, NameRegistryState } from '@solana/spl-name-service'
+import { useLocalStorage } from '../utils'
 
 export const SOL_TLD_AUTHORITY = new PublicKey('58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx')
 
@@ -98,4 +99,34 @@ export const resolveDomainToWalletAddress = async ({
 
   // throw error if had no luck get valid Solana address
   return Promise.reject(errorCantResolve)
+}
+
+// TODO: reconcile this function with other similar definition in the codebase
+export const findProgramAddress = async (seeds: (Buffer | Uint8Array)[], programId: PublicKey) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const localStorage = useLocalStorage()
+  const key: string = `pda-${seeds.reduce((agg, item) => agg + item.toString('hex'), '')}${programId.toString()}`
+
+  const cached = localStorage.getItem(key)
+  if (cached) {
+    const value = JSON.parse(cached)
+
+    return [value.key, parseInt(value.nonce)] as [string, number]
+  }
+
+  const result = await PublicKey.findProgramAddress(seeds, programId)
+
+  try {
+    localStorage.setItem(
+      key,
+      JSON.stringify({
+        key: result[0].toBase58(),
+        nonce: result[1]
+      })
+    )
+  } catch {
+    // ignore
+  }
+
+  return [result[0].toBase58(), result[1]] as [string, number]
 }

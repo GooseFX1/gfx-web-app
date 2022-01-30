@@ -1,9 +1,17 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
-import DropdowButton from '../../../layouts/App/DropDownButton'
+import DropdownButton from '../../../layouts/App/DropDownButton'
 import { MainText } from '../../../styles'
-import { colors } from '../../../theme'
 import { ButtonWrapper } from '../NFTButton'
+import { MetadataCategory } from '../../../web3'
+
+const categoryOptions = [
+  { displayName: 'Audio', value: MetadataCategory.Audio, icon: 'music' },
+  { displayName: 'Video', value: MetadataCategory.Video, icon: 'memes' },
+  { displayName: 'Image', value: MetadataCategory.Image, icon: 'art' },
+  { displayName: 'VR', value: MetadataCategory.VR, icon: 'metaverse' },
+  { displayName: 'HTML', value: MetadataCategory.HTML, icon: 'domains' }
+]
 
 export enum BottomButtonUploadType {
   text,
@@ -89,7 +97,13 @@ const BottomButtonUpload: FC<{
       )}
 
       {type === BottomButtonUploadType.category && (
-        <DropdowButton className="category" style={categoryButton} title="Choose" handleSelect={onClick} />
+        <DropdownButton
+          className="category"
+          style={categoryButton}
+          title="Choose"
+          handleSelect={onClick}
+          options={categoryOptions}
+        />
       )}
 
       {type === BottomButtonUploadType.text && <UPLOAD_TEXT>Single item 1/1</UPLOAD_TEXT>}

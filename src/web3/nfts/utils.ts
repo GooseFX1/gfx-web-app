@@ -1,17 +1,14 @@
 import { deserializeUnchecked } from 'borsh'
 import { PublicKey } from '@solana/web3.js'
-import { METADATA_SCHEMA, Metadata, METADATA_PREFIX, METADATA_PROGRAM } from '../metaplex'
-import { extendBorsh } from '../../utils'
-
-export const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'
-
-extendBorsh()
+import { METADATA_PREFIX, METADATA_PROGRAM, MetaplexMetadata } from '../metaplex'
+import { PARSE_NFT_ACCOUNT_SCHEMA } from './metadata'
 
 const metaProgamPublicKey = new PublicKey(METADATA_PROGRAM)
 const metaProgamPublicKeyBuffer = metaProgamPublicKey.toBuffer()
 const metaProgamPrefixBuffer = Buffer.from(METADATA_PREFIX)
 
-export const decodeTokenMetadata = async (buffer: Buffer) => deserializeUnchecked(METADATA_SCHEMA, Metadata, buffer)
+export const decodeTokenMetadata = async (buffer: Buffer) =>
+  deserializeUnchecked(PARSE_NFT_ACCOUNT_SCHEMA, MetaplexMetadata, buffer)
 
 /**
  * Get Addresses of Metadata account assosiated with Mint Token

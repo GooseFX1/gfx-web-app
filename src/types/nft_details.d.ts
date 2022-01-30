@@ -1,4 +1,6 @@
 import { INFTAsk } from './nft_details.d'
+import { Creator } from '../web3'
+
 export interface IInfoItemData {
   thumbnail: string
   title: string
@@ -32,6 +34,19 @@ export interface IRemainingPanelData {
 }
 
 export type NFTCreator = { address: string; share: number; verified?: boolean }
+
+export interface IMetadataContext {
+  name: string
+  symbol: string
+  description: string
+  image: string | undefined
+  animation_url: string | undefined
+  attributes: Attribute[] | undefined
+  external_url: string
+  properties: any
+  creators: Creator[] | null
+  sellerFeeBasisPoints: number
+}
 
 export type NFTTopLevelNFTData = {
   data: {
@@ -133,6 +148,6 @@ export interface INFTDetailsConfig {
   bids: Array<INFTBid>
   asks: Array<INFTAsk>
   fetchGeneral: (id: string) => Promise<any>
-  uploadNFTData: any
-  setUploadNFTData: any
+  nftMintingData: IMetadataContext | undefined
+  setNftMintingData: Dispatch<SetStateAction<IMetadataContext>>
 }

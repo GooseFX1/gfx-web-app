@@ -37,7 +37,6 @@ const NFTLandingPage: FC = (): JSX.Element => {
   const [isFeaturedLoading, setIsFeaturedLoading] = useState<boolean>(false)
   const [isUpcomingLoading, setIsUpcomingLoading] = useState<boolean>(false)
   const [search, setSearch] = useState<string>('')
-  const [mainCollections, setMainCollections] = useState(allCollections)
 
   useEffect(() => {
     setIsAllLoading(true)
@@ -75,7 +74,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
       <SCROLLING_CONTENT_100 onScroll={onScroll}>
         <NFTHeaderCarousel isBig isBigVisible={isBigCarouselVisible} />
         <CollectionCarousel
-          collections={mainCollections}
+          collections={allCollections}
           collectionType={COLLECTION_TYPES.NFT_COLLECTION}
           title="Launchpad"
           showTopArrow
