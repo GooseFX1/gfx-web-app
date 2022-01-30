@@ -135,3 +135,11 @@ export const createUUID = () => {
     return v.toString(16)
   })
 }
+
+export const getLast = <T>(arr: T[]) => {
+  if (arr.length <= 0) {
+    return undefined
+  }
+
+  return arr[arr.length - 1]
+}
