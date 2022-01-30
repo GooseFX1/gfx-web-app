@@ -1,10 +1,16 @@
-import React, { useState } from 'react'
-import { Upload } from 'antd'
+import React, { useState, useEffect } from 'react'
+import { Upload, Typography } from 'antd'
 import { UploadChangeParam } from 'antd/lib/upload'
 import { UploadFile } from 'antd/lib/upload/interface'
-import { ButtonWrapper } from '../NFTButton'
 import styled, { css } from 'styled-components'
+import { ButtonWrapper } from '../NFTButton'
+import { MetadataCategory, MetadataFile } from '../../../web3'
+import { getLast } from '../../../utils'
+import { IMetadataContext } from '../../../types/nft_details.d'
 
+const { Text } = Typography
+
+//#region styles
 const ButtonUpload = styled(ButtonWrapper)`
   background-color: ${({ theme }) => theme.primary2};
   padding: ${({ theme }) => `${theme.margins['1x']} ${theme.margins['4x']} `};
@@ -123,26 +129,104 @@ const STYLED_UPLOAD_ERROR = styled.div`
     cursor: pointer;
   }
 `
+//#endregion
 
 interface Props {
   setPreviewImage: (value: any) => void
-  setStatus: (value: any) => void
-  status: string
+  setFilesForUpload: (value: File[]) => void
+  nftMintingData: IMetadataContext
+  setNftMintingData: (data: IMetadataContext) => void
 }
 
-export const UploadCustom = ({ setPreviewImage, setStatus, status }: Props) => {
-  const [uploadedfile, setFile] = useState<any>()
+export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingData, setNftMintingData }: Props) => {
+  const [coverArtError, setCoverArtError] = useState<string>()
+  const [coverFile, setCoverFile] = useState<File | undefined>()
+  const [mainFile, setMainFile] = useState<File | undefined>()
+  const [customURL, setCustomURL] = useState<string>('')
+  const [localFile, setLocalFile] = useState<any>()
 
-  const handleAvatar = async (file: UploadChangeParam<UploadFile<any>>) => {
-    setFile(file.fileList[0])
-    setPreviewImage(file.fileList[0])
+  useEffect(() => {
+    handleDone()
+  }, [coverFile, mainFile, customURL])
+
+  const handleDone = async () => {
+    setNftMintingData({
+      ...nftMintingData,
+      properties: {
+        ...nftMintingData.properties,
+        files: [coverFile, mainFile, customURL]
+          .filter((f) => f)
+          .map((f) => {
+            const uri = typeof f === 'string' ? f : f?.name || ''
+            const type = typeof f === 'string' || !f ? 'unknown' : f.type || getLast(f.name.split('.')) || 'unknown'
+
+            return {
+              uri,
+              type
+            } as MetadataFile
+          })
+      },
+      image: coverFile?.name || customURL || '',
+      animation_url:
+        nftMintingData.properties?.category !== MetadataCategory.Image && customURL
+          ? customURL
+          : mainFile && mainFile.name
+    })
+
+    const url = await fetch(customURL).then((res) => res.blob())
+    const files = [coverFile, mainFile, customURL ? new File([url], customURL) : ''].filter((f) => f) as File[]
+    setFilesForUpload(files)
   }
 
-  const onRemove = () => setStatus('')
+  const handleFileChange = async (info: UploadChangeParam<UploadFile<any>>) => {
+    setLocalFile(info.fileList[0])
+    setPreviewImage(info.fileList[0])
+
+    const file = info.file.originFileObj
+
+    if (!file) {
+      return
+    }
+
+    const sizeKB = file.size / 1024
+
+    if (sizeKB < 25) {
+      setCoverArtError(
+        `The file ${file.name} is too small. It is ${Math.round(10 * sizeKB) / 10}KB but should be at least 25KB.`
+      )
+      return
+    }
+
+    setCoverFile(file)
+    setCoverArtError(undefined)
+  }
+
+  const onRemove = () => {
+    setLocalFile(undefined)
+    setPreviewImage(undefined)
+    setCoverArtError(undefined)
+  }
+
+  const acceptableFiles = (category: MetadataCategory) => {
+    switch (category) {
+      case MetadataCategory.Audio:
+        return '.mp3,.flac,.wav'
+      case MetadataCategory.Image:
+        return '.png,.jpg,.gif'
+      case MetadataCategory.Video:
+        return '.mp4,.mov,.webm'
+      case MetadataCategory.VR:
+        return '.glb'
+      case MetadataCategory.HTML:
+        return '.html'
+      default:
+        return ''
+    }
+  }
 
   return (
     <STYLED_UPLOAD_CUSTOM>
-      {status === 'failed' ? (
+      {coverArtError ? (
         <STYLED_UPLOAD_ERROR>
           <img className="image-broken" src={`${process.env.PUBLIC_URL}/img/assets/image-broken.svg`} alt="" />
           <div className="desc-failed">Your file is broken or corrupted, pelase try again.</div>
@@ -152,12 +236,23 @@ export const UploadCustom = ({ setPreviewImage, setStatus, status }: Props) => {
             alt=""
             onClick={onRemove}
           />
+          {localFile && coverArtError && (
+            <div>
+              <Text type="danger">{coverArtError}</Text>
+            </div>
+          )}
         </STYLED_UPLOAD_ERROR>
       ) : (
-        <div className="image-group">
-          <Upload className="avatar-image" listType="picture-card" maxCount={1} onChange={handleAvatar}>
+        <div className="image-group" style={{ flexFlow: 'column' }}>
+          <Upload
+            className="avatar-image"
+            listType="picture-card"
+            maxCount={1}
+            onChange={handleFileChange}
+            accept={acceptableFiles(nftMintingData.properties?.category)}
+          >
             <div className="image-wrap"></div>
-            {!uploadedfile && (
+            {!localFile && (
               <div className="note">
                 <div className="title">PNG, GIF, MP4 or AVI</div>
                 <div className="desc">Max 20Mb</div>
