@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Upload } from 'antd'
 import styled from 'styled-components'
 import { MainText } from '../../../styles'
@@ -34,7 +34,7 @@ const PREVIEW_CONTAINER = styled.div`
     position: relative;
     width: 350px;
     height: 350px;
-    margin: 0 auto;
+    margin: ${({ theme }) => theme.margins['1x']} auto;
   }
   .ant-upload-list-item {
     padding: 0 !important;
@@ -67,7 +67,6 @@ const NAME_TEXT = MainText(styled.span`
   font-size: 22px;
   font-weight: 600;
   color: ${({ theme }) => theme.text7} !important;
-  margin-bottom: ${({ theme }) => theme.margins['1x']};
 `)
 
 const DESCRIBE_TEXT = MainText(styled.span`
@@ -82,18 +81,17 @@ const BOTTOM_INFO = styled.div`
   flex-direction: column;
 `
 
-interface Info {
-  title: string
-  collectionName: string
-}
-
 interface Props {
-  file?: any
+  file: any
   status?: string
 }
 
 const PreviewImage = ({ file, status }: Props) => {
   const { nftMintingData } = useNFTDetails()
+
+  useEffect(() => {
+    // console.log(file)
+  }, [file])
 
   return (
     <PREVIEW_CONTAINER>
