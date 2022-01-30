@@ -2,14 +2,13 @@ import { createContext, FC, ReactNode, useCallback, useContext, useState } from 
 import apiClient from '../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
 import { customFetch } from '../utils'
-import { INFTDetailsConfig, ISingleNFT, INFTMetadata, INFTBid, INFTAsk } from '../types/nft_details.d'
-import { IMetadataExtension } from '../web3'
+import { INFTDetailsConfig, ISingleNFT, INFTMetadata, INFTBid, INFTAsk, IMetadataContext } from '../types/nft_details.d'
 
 const NFTDetailsContext = createContext<INFTDetailsConfig | null>(null)
 
 export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [general, setGeneral] = useState<ISingleNFT>()
-  const [nftMintingData, setNftMintingData] = useState<IMetadataExtension>()
+  const [nftMintingData, setNftMintingData] = useState<IMetadataContext>()
   const [nftMetadata, setNftMetadata] = useState<INFTMetadata | null>()
   const [asks, setAsks] = useState<Array<INFTAsk>>([])
   const [bids, setBids] = useState<Array<INFTBid>>([])
