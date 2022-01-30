@@ -2,9 +2,6 @@ import { deserializeUnchecked } from 'borsh'
 import { PublicKey } from '@solana/web3.js'
 import { METADATA_PREFIX, METADATA_PROGRAM, MetaplexMetadata } from '../metaplex'
 import { PARSE_NFT_ACCOUNT_SCHEMA } from './metadata'
-import { extendBorsh } from '../../utils'
-
-extendBorsh()
 
 const metaProgamPublicKey = new PublicKey(METADATA_PROGRAM)
 const metaProgamPublicKeyBuffer = metaProgamPublicKey.toBuffer()
