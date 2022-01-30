@@ -167,7 +167,6 @@ export const mintNFT = async (
     instructions,
     wallet.publicKey.toBase58()
   )
-
   progressCallback(2)
 
   // TODO: enable when using payer account to avoid 2nd popup

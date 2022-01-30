@@ -1,4 +1,4 @@
-import { SystemProgram, SYSVAR_RENT_PUBKEY, TransactionInstruction, PublicKey } from '@solana/web3.js'
+import { SystemProgram, SYSVAR_RENT_PUBKEY, TransactionInstruction } from '@solana/web3.js'
 import { programIds } from '../programIds'
 import { toPublicKey } from '../ids'
 import { deserializeUnchecked, serialize } from 'borsh'
