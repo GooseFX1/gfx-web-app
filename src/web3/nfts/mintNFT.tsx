@@ -12,9 +12,9 @@ import {
   createMetadata,
   createAssociatedTokenAccountInstruction,
   createMint,
-  programIds,
-  IMetadataExtension
+  programIds
 } from '../index'
+import { IMetadataContext } from '../../types/nft_details.d'
 
 import { ENDPOINT_NAME } from './types.d'
 import { updateMetadata } from './metadata'
@@ -76,7 +76,7 @@ export const mintNFT = async (
   wallet: WalletContextState | undefined,
   endpoint: ENDPOINT_NAME,
   files: File[],
-  metadata: IMetadataExtension,
+  metadata: IMetadataContext,
   progressCallback: Dispatch<SetStateAction<number>>,
   maxSupply?: number
 ): Promise<{
@@ -88,7 +88,7 @@ export const mintNFT = async (
     name: metadata.name,
     symbol: metadata.symbol,
     description: metadata.description,
-    seller_fee_basis_points: metadata.seller_fee_basis_points,
+    seller_fee_basis_points: metadata.sellerFeeBasisPoints,
     image: metadata.image,
     animation_url: metadata.animation_url,
     attributes: metadata.attributes,
@@ -158,7 +158,7 @@ export const mintNFT = async (
       symbol: metadata.symbol,
       name: metadata.name,
       uri: ' '.repeat(64), // size of url for arweave
-      sellerFeeBasisPoints: metadata.seller_fee_basis_points,
+      sellerFeeBasisPoints: metadata.sellerFeeBasisPoints,
       creators: metadata.creators
     }),
     payerPublicKey,
@@ -167,6 +167,7 @@ export const mintNFT = async (
     instructions,
     wallet.publicKey.toBase58()
   )
+
   progressCallback(2)
 
   // TODO: enable when using payer account to avoid 2nd popup
@@ -225,7 +226,7 @@ export const mintNFT = async (
         symbol: metadata.symbol,
         uri: arweaveLink,
         creators: metadata.creators,
-        sellerFeeBasisPoints: metadata.seller_fee_basis_points
+        sellerFeeBasisPoints: metadata.sellerFeeBasisPoints
       }),
       undefined,
       undefined,
@@ -247,8 +248,8 @@ export const mintNFT = async (
     )
 
     progressCallback(7)
-    // // In this instruction, mint authority will be removed from the main mint, while
-    // // minting authority will be maintained for the Printing mint (which we want.)
+    // In this instruction, mint authority will be removed from the main mint, while
+    // minting authority will be maintained for the Printing mint (which we want.)
     await createMasterEdition(
       maxSupply !== undefined ? new BN(maxSupply) : undefined,
       mintKey,
@@ -282,7 +283,7 @@ export const mintNFT = async (
 
     const txid = await sendTransactionWithRetry(connection, wallet, updateInstructions, updateSigners)
 
-    alert({
+    console.log({
       message: 'Art created on Solana',
       description: (
         <a href={arweaveLink} target="_blank" rel="noopener noreferrer">
