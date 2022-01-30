@@ -1,12 +1,14 @@
-import { SystemProgram, SYSVAR_RENT_PUBKEY, TransactionInstruction } from '@solana/web3.js'
+import { SystemProgram, SYSVAR_RENT_PUBKEY, TransactionInstruction, PublicKey } from '@solana/web3.js'
 import { programIds } from '../programIds'
 import { toPublicKey } from '../ids'
 import { deserializeUnchecked, serialize } from 'borsh'
-import BN from 'bn.js'
 import { findProgramAddress } from '../utils'
+import { extendBorsh } from '../../utils'
 import { StringPublicKey } from './types.d'
-
 import { METADATA_PREFIX, MetaplexMetadata, MetadataKey, Creator, Data } from '../metaplex'
+import BN from 'bn.js'
+
+extendBorsh()
 
 export const EDITION = 'edition'
 export const RESERVATION = 'reservation'
@@ -289,7 +291,6 @@ export const METADATA_SCHEMA = new Map<any, any>([
       ]
     }
   ],
-
   [
     CreateMasterEditionArgs,
     {
