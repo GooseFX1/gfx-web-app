@@ -1,7 +1,7 @@
-import { StringPublicKey } from './nfts/types'
-
 const METADATA_PREFIX = 'metadata'
 const METADATA_PROGRAM = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
+
+export type StringPublicKey = string
 
 export enum MetadataKey {
   Uninitialized = 0,

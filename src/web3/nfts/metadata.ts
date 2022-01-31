@@ -4,8 +4,7 @@ import { toPublicKey } from '../ids'
 import { deserializeUnchecked, serialize } from 'borsh'
 import { findProgramAddress } from '../utils'
 import { extendBorsh } from '../../utils'
-import { StringPublicKey } from './types.d'
-import { METADATA_PREFIX, MetaplexMetadata, MetadataKey, Creator, Data } from '../metaplex'
+import { StringPublicKey, METADATA_PREFIX, MetaplexMetadata, MetadataKey, Creator, Data } from '../metaplex'
 import BN from 'bn.js'
 
 extendBorsh()

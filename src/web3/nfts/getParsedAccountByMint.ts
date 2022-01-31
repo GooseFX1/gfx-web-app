@@ -1,6 +1,6 @@
 import { PublicKey, Connection, ParsedAccountData } from '@solana/web3.js'
 import { TOKEN_PROGRAM_ID } from '../ids'
-import { StringPublicKey } from './types'
+import { StringPublicKey } from '../metaplex'
 
 interface IGetParsedAccountByMint {
   mintAddress: StringPublicKey
