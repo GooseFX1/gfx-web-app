@@ -1,6 +1,6 @@
 import { WalletAdapter } from '@solana/wallet-adapter-base'
-import { PublicKey } from '@solana/web3.js'
-
+import { ENV as ChainId } from '@solana/spl-token-registry'
+import { clusterApiUrl } from '@solana/web3.js'
 export type ENDPOINT_NAME = 'mainnet-beta' | 'testnet' | 'devnet' | 'localnet' | 'lending'
 
 type Endpoint = {
@@ -31,14 +31,6 @@ export const ENDPOINTS: Array<Endpoint> = [
   }
 ]
 
-export type StringPublicKey = string
-
-export type Creator = {
-  address: PublicKey
-  verified: boolean
-  share: number
-}
-
 export type WalletSigner = Pick<WalletAdapter, 'publicKey' | 'signTransaction' | 'signAllTransactions'>
 
 interface PromiseFulfilledResult<T> {
@@ -52,24 +44,3 @@ interface PromiseRejectedResult {
 }
 
 type PromiseSettledResult<T> = PromiseFulfilledResult<T> | PromiseRejectedResult
-
-export class Data {
-  name: string
-  symbol: string
-  uri: string
-  sellerFeeBasisPoints: number
-  creators: Creator[] | null
-  constructor(args: {
-    name: string
-    symbol: string
-    uri: string
-    sellerFeeBasisPoints: number
-    creators: Creator[] | null
-  }) {
-    this.name = args.name
-    this.symbol = args.symbol
-    this.uri = args.uri
-    this.sellerFeeBasisPoints = args.sellerFeeBasisPoints
-    this.creators = args.creators
-  }
-}
