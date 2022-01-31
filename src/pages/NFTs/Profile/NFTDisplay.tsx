@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
 import { INFTMetadata } from '../../../types/nft_details.d'
+import { notify } from '../../../utils'
 
 import { Card } from './Card'
 import NoContent from './NoContent'
@@ -19,11 +20,24 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const [collectedItems, setCollectedItems] = useState<INFTMetadata[]>()
   const [filteredCollectedItems, setFilteredCollectedItems] = useState<INFTMetadata[]>()
   const [search, setSearch] = useState('')
-  const [newlyMintedNFT, setNewlyMintedNFT] = useState(undefined)
 
-  useEffect(() => {
-    relocatedFromNFTMint()
-  }, [])
+  const newlyMintedNFT = useMemo(() => {
+    if (location.state && location.state.newlyMintedNFT) {
+      if (props.type === 'collected')
+        notify({
+          type: 'success',
+          message: 'NFT Successfully created',
+          description: `${location.state.newlyMintedNFT.name}`,
+          icon: 'success'
+        })
+
+      return location.state.newlyMintedNFT
+    } else {
+      return undefined
+    }
+  }, [location])
+
+  console.log(newlyMintedNFT)
 
   useEffect(() => {
     if (props.data && props.data.length > 0) {
@@ -65,12 +79,6 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     return nfts
   }
 
-  const relocatedFromNFTMint = (): void => {
-    if (location.state && location.state.newlyMintedNFT) {
-      setNewlyMintedNFT(location.state.newlyMintedNFT)
-    }
-  }
-
   return (
     <StyledTabContent>
       <div className="actions-group">
@@ -86,8 +94,8 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
         <div>...Loading</div>
       ) : filteredCollectedItems && filteredCollectedItems.length > 0 ? (
         <div className="cards-list">
-          {filteredCollectedItems.map((nftMetaData: INFTMetadata, index: number) => (
-            <Card key={index} data={nftMetaData} />
+          {filteredCollectedItems.map((nftData: INFTMetadata, index: number) => (
+            <Card key={index} data={nftData} border={nftData.name === newlyMintedNFT?.name} />
           ))}
         </div>
       ) : (
