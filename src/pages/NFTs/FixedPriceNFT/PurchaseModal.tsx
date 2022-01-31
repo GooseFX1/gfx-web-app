@@ -1,7 +1,8 @@
 import { Col, Row } from 'antd'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { MainButton, Modal } from '../../../components'
+import { useNFTDetails } from '../../../context'
 
 // TODO: Set variables to demo here
 const notEnough = false
@@ -136,6 +137,16 @@ const PURCHASE_MODAL = styled(Modal)`
 
 export const PurchaseModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }> = (props) => {
   const { setVisible, visible } = props
+  const { nftMetadata } = useNFTDetails()
+
+  const creator = useMemo(() => {
+    if (nftMetadata.properties.creators.length > 0) {
+      const addr = nftMetadata.properties.creators[0].address
+      return `${addr.substr(0, 4)}...${addr.substr(-4, 4)}`
+    } else {
+      return nftMetadata.collection.name
+    }
+  }, [nftMetadata])
 
   return (
     <PURCHASE_MODAL setVisible={setVisible} title="" visible={visible}>
@@ -143,7 +154,7 @@ export const PurchaseModal: FC<{ setVisible: (x: boolean) => void; visible: bool
       <Row className="pm-title" align="middle" gutter={4}>
         <Col className="pm-title-bold">(Name of the NFT)</Col>
         <Col>by</Col>
-        <Col className="pm-title-bold">(Name of the artist)</Col>.
+        <Col className="pm-title-bold">{creator}</Col>.
       </Row>
       <div className="pm-confirm">
         <div className="pm-confirm-text-1">You are about to pay</div>

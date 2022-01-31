@@ -7,6 +7,7 @@ import { TradingHistoryTabContent } from './TradingHistoryTabContent'
 import { AttributesTabContent } from './AttributesTabContent'
 import { getParsedAccountByMint } from '../../../web3'
 import { useConnectionConfig } from '../../../context'
+import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 
 const { TabPane } = Tabs
 
@@ -172,7 +173,7 @@ export const RightSectionTabs: FC<{
   handleClickPrimaryButton: () => void
 }> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
   const [activeTab, setActiveTab] = useState('1')
-  const { general, nftMetadata } = useNFTDetails()
+  const { general, nftMetadata, bids } = useNFTDetails()
   const { mint_address } = general
   const { connection } = useConnectionConfig()
   const [nftOwner, setNFTOwner] = useState<string>()
@@ -198,7 +199,7 @@ export const RightSectionTabs: FC<{
       },
       {
         title: 'Transaction Fee',
-        value: 'need data'
+        value: `${NFT_MARKET_TRANSACTION_FEE}%`
       }
     ]
   }, [mint_address, general, nftOwner, tokenAddres])
@@ -325,7 +326,7 @@ export const RightSectionTabs: FC<{
               </DETAILS_TAB_CONTENT>
             </TabPane>
             <TabPane tab="Trading History" key="2">
-              <TradingHistoryTabContent data={tradingHistoryTab} />
+              <TradingHistoryTabContent mode={mode} bids={bids} data={tradingHistoryTab} />
             </TabPane>
             <TabPane tab="Attributes" key="3">
               <AttributesTabContent data={nftMetadata.attributes} />

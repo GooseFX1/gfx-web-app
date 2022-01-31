@@ -1,13 +1,18 @@
-import { Col, Row } from 'antd'
-import { FC, useState } from 'react'
+import { FC, useState, useEffect, useMemo } from 'react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
+import { Col, Row } from 'antd'
 import { MainButton, Modal } from '../../../components'
 import { notify } from '../../../utils'
+import { useNFTProfile, useNFTDetails } from '../../../context'
+import { ISingleNFT } from '../../../types/nft_details'
+import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 
 // TODO: Set variables to demo here
 const notEnough = false
 const isVerified = true
 
+//#region styles
 const BUTTON = styled(MainButton)`
   ${({ theme }) => `
   cursor: pointer;
@@ -17,6 +22,10 @@ const BUTTON = styled(MainButton)`
 
   &:hover {
     opacity: 0.8;
+  }
+
+  &:disabled {
+    background-color: #7d7d7d;
   }
 
   &.bm-bid-button {
@@ -59,6 +68,7 @@ const PURCHASE_MODAL = styled(Modal)`
     color: ${({ theme }) => theme.text1};
     font-size: 20px;
     font-weight: 500;
+    text-align: center;
   }
 
   .bm-title-bold {
@@ -84,6 +94,11 @@ const PURCHASE_MODAL = styled(Modal)`
       font-weight: 600;
       margin-bottom: -${({ theme }) => theme.margins['1x']};
       color: ${({ theme }) => theme.text1};
+      background: transparent;
+      border: 0px;
+      width: 60%;
+      align-self: center;
+      text-align: center;
 
       &:after {
         content: 'SOL';
@@ -91,6 +106,13 @@ const PURCHASE_MODAL = styled(Modal)`
         right: -60px;
         bottom: 12px;
         font-size: 22px;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: inherit;
+        -webkit-box-shadow: none;
+        box-shadow: none;
       }
     }
 
@@ -180,21 +202,85 @@ const MESSAGE = styled.div`
     height: 20px;
   }
 `
+//#endregion
 
-export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }> = (props) => {
-  const { setVisible, visible } = props
+export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean; details?: ISingleNFT }> = (props) => {
+  const { setVisible, visible, details } = props
   const [mode, setMode] = useState('bid')
+  const { sessionUser, fetchSessionUser } = useNFTProfile()
+  const { connected, publicKey } = useWallet()
+  const { nftMetadata, bidOnSingleNFT } = useNFTDetails()
   const [isLoading, setIsLoading] = useState(false)
+  const [bidPrice, setBidPrice] = useState('')
+  const creator = useMemo(() => {
+    if (nftMetadata.properties.creators.length > 0) {
+      const addr = nftMetadata.properties.creators[0].address
+      return `${addr.substr(0, 4)}...${addr.substr(-4, 4)}`
+    } else {
+      return nftMetadata.collection.name
+    }
+  }, [nftMetadata])
 
   const onCancel = () => setMode('bid')
   const reviewBid = () => setMode('review')
-  const confirmBid = () => {
-    setIsLoading(true)
-    // TODO: Fake API
-    setTimeout(() => {
+
+  useEffect(() => {
+    if (connected && publicKey) {
+      if (!sessionUser || sessionUser.pubkey !== `${publicKey}`) {
+        fetchUser()
+      }
       setIsLoading(false)
-      setVisible(false)
-      setMode('bid')
+    } else {
+      setIsLoading(false)
+      notify({
+        type: 'error',
+        message: (
+          <MESSAGE>
+            <div>Couldn't fetch user data, please connect your wallet and refresh this page.</div>
+          </MESSAGE>
+        )
+      })
+    }
+
+    return () => {}
+  }, [publicKey, connected])
+
+  const fetchUser = () => {
+    fetchSessionUser('address', `${publicKey}`).then((res) => {
+      if (!res || (res.response && res.response.status !== 200) || res.isAxiosError) {
+        notify({
+          type: 'error',
+          message: (
+            <MESSAGE>
+              <div>Couldn't fetch user data, please refresh this page.</div>
+            </MESSAGE>
+          )
+        })
+      }
+    })
+  }
+
+  const confirmBid = async () => {
+    setIsLoading(true)
+    const bidObject = {
+      clock: Date.now() + '', // string, not a number
+      tx_sig: 'RANDOM_TX_SIG_HERE',
+      wallet_key: 'WALLET_KEY_HERE',
+      auction_house_key: 'AUCTION_HOUSE_KEY_HERE',
+      token_account_key: 'RANDOM_TOKEN_ACCOUNT_KEY_HERE',
+      auction_house_treasury_mint_key: 'AUCTION_HOUSE_TREASURY_KEY_HERE',
+      token_account_mint_key: 'TOKEN_ACCOUNT_MINT_KEY_HERE',
+      buyer_price: 1.03 * Number(bidPrice) + '',
+      token_size: 'TOKEN_SIZE_HERE',
+      non_fungible_id: details.non_fungible_id,
+      collection_id: details.collection_id,
+      user_id: sessionUser?.user_id
+    }
+
+    try {
+      const res = await bidOnSingleNFT(bidObject)
+      console.dir(res)
+
       notify({
         message: (
           <MESSAGE>
@@ -204,25 +290,77 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
                 <img className="m-icon" src={`${process.env.PUBLIC_URL}/img/assets/bid-success-icon.svg`} alt="" />
               </Col>
             </Row>
-            <div>Genesis #3886, Solcities</div>
-            <div>My bid: 150.5 SOL (up to 160.5 SOL)</div>
+            <div>{details?.nft_name}</div>
+            <div>My bid: {`${bidPrice} (up to ${1.03 * Number(bidPrice)})`}</div>
           </MESSAGE>
         )
       })
-    }, 1000)
+      setBidPrice('')
+      setMode('bid')
+      setVisible(false)
+    } catch (error) {
+      console.dir(error)
+      notify({
+        type: 'error',
+        message: (
+          <MESSAGE>
+            <Row className="m-title" justify="space-between" align="middle">
+              <Col>Live auction bid error!</Col>
+              <Col>
+                <img className="m-icon" src={`${process.env.PUBLIC_URL}/img/assets/close-white-icon.svg`} alt="" />
+              </Col>
+            </Row>
+            <div>Please try again, if the error persists please contact support.</div>
+          </MESSAGE>
+        )
+      })
+    } finally {
+      setIsLoading(false)
+    }
+
+    // // TODO: Fake API
+    // setTimeout(() => {
+    //   setIsLoading(false)
+    //   setVisible(false)
+    //   setMode('bid')
+    //   notify({
+    //     message: (
+    //       <MESSAGE>
+    //         <Row className="m-title" justify="space-between" align="middle">
+    //           <Col>Live auction bid sucessfull!</Col>
+    //           <Col>
+    //             <img className="m-icon" src={`${process.env.PUBLIC_URL}/img/assets/bid-success-icon.svg`} alt="" />
+    //           </Col>
+    //         </Row>
+    //         <div>Genesis #3886, Solcities</div>
+    //         <div>My bid: 150.5 SOL (up to 160.5 SOL)</div>
+    //       </MESSAGE>
+    //     )
+    //   })
+    // }, 1000)
   }
 
+  const handleBidInput = (e) => {
+    if (!isNaN(Number(e.target.value))) {
+      setBidPrice(e.target.value)
+      if (e.target.value.length === 0) {
+        setMode('bid')
+      }
+    }
+  }
+
+  // TODO: change usd approx to real figure using conversion rate
   return (
     <PURCHASE_MODAL setVisible={setVisible} title="" visible={visible} onCancel={onCancel}>
       <div className="bm-title">You are about to purchase a</div>
-      <Row className="bm-title" align="middle" gutter={4}>
-        <Col className="bm-title-bold">(Name of the NFT)</Col>
+      <Row className="bm-title" align="middle" justify="center" gutter={4}>
+        <Col className="bm-title-bold">{details?.nft_name || '(Name of the NFT)'}</Col>
         <Col>by</Col>
-        <Col className="bm-title-bold">(Name of the artist)</Col>.
+        <Col className="bm-title-bold">{creator}</Col>
       </Row>
       <div className="bm-confirm">
         <div className="bm-confirm-text-1">Place your bid:</div>
-        <div className="bm-confirm-price">000.000</div>
+        <input value={bidPrice} onChange={handleBidInput} className="bm-confirm-price" placeholder="000.000" />
         <div className="bm-confirm-text-2">
           {mode === 'bid' ? 'There is no minimum amount this is an open bid.' : '25,366.9 USD aprox'}
         </div>
@@ -234,16 +372,16 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
               <Col>Bid up to</Col>
               <Col>
                 <Row className="bm-details-price" justify="space-between" align="middle">
-                  <Col>160.55</Col>
+                  <Col>{bidPrice}</Col>
                   <Col>SOL</Col>
                 </Row>
               </Col>
             </Row>
             <Row justify="space-between" align="middle">
-              <Col>Service fee</Col>
+              <Col>Service fee ({`${NFT_MARKET_TRANSACTION_FEE}%`})</Col>
               <Col>
                 <Row className="bm-details-price" justify="space-between" align="middle">
-                  <Col>0.33</Col>
+                  <Col>{((NFT_MARKET_TRANSACTION_FEE / 100) * Number(bidPrice)).toFixed(3)}</Col>
                   <Col>SOL</Col>
                 </Row>
               </Col>
@@ -252,7 +390,7 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
               <Col>Total </Col>
               <Col>
                 <Row className="bm-details-price" justify="space-between" align="middle">
-                  <Col>160.88</Col>
+                  <Col>{(Number(bidPrice) * (NFT_MARKET_TRANSACTION_FEE / 100) + Number(bidPrice)).toFixed(3)}</Col>
                   <Col>SOL</Col>
                 </Row>
               </Col>
@@ -285,8 +423,9 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
           status="initial"
           width="100%"
           height="53px"
-          className={`bm-bid-button ${notEnough ? 'bm-bid-button-disabled' : ''}`}
+          className={`bm-bid-button ${notEnough || bidPrice.length === 0 ? 'bm-bid-button-disabled' : ''}`}
           onClick={reviewBid}
+          disabled={notEnough || bidPrice.length === 0}
         >
           Review bid
         </BUTTON>

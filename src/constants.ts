@@ -1,4 +1,4 @@
-export const LITEPAPER_ADDRESS = 'https://docs.goosefx.io'
+export const LITEPAPER_ADDRESS: string = 'https://docs.goosefx.io'
 export const SOCIAL_MEDIAS: { [key: string]: string } = {
   discord: 'https://discord.gg/cDEPXpY26q',
   medium: 'https://medium.com/goosefx',
@@ -58,3 +58,5 @@ export const SUPPORTED_TOKEN_LIST = [
   'XRP',
   'YFI'
 ]
+
+export const NFT_MARKET_TRANSACTION_FEE: number = 1

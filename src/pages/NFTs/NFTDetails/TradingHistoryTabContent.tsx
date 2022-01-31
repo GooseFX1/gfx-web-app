@@ -1,7 +1,7 @@
 import { Table, Row, Col } from 'antd'
 import { FC } from 'react'
 import styled, { css } from 'styled-components'
-import { ITradingHistoryTabItemData } from '../../../types/nft_details'
+import { ITradingHistoryTabItemData, INFTBid, NFTDetailsProviderMode } from '../../../types/nft_details'
 
 const TRADING_HISTORY_TAB_CONTENT = styled.div`
   ${({ theme }) => css`
@@ -31,6 +31,15 @@ const TRADING_HISTORY_TAB_CONTENT = styled.div`
       height: 100%;
       padding: ${theme.margins['0.5x']} ${theme.margins['1.5x']};
       overflow-y: auto;
+    }
+
+    .thtc-not-found {
+      width: 100%;
+      height: 100%;
+      padding: ${theme.margins['0.5x']} ${theme.margins['1.5x']};
+      display: grid;
+      place-items: center;
+      font-size: 14px;
     }
 
     .price-value,
@@ -134,7 +143,58 @@ const columns = [
   }
 ]
 
-export const TradingHistoryTabContent: FC<{ data: ITradingHistoryTabItemData[] }> = ({ data, ...rest }) => {
+const bidColumns = [
+  {
+    key: 'event',
+    dataIndex: 'event',
+    title: 'Event',
+    render: () => {
+      return <div className="thtc-event">Bid</div>
+    },
+    width: '19%'
+  },
+  {
+    key: 'buyer_price',
+    dataIndex: 'buyer_price',
+    title: 'Price',
+    render: (value: string) => (
+      <Row gutter={5} align="middle">
+        <Col>
+          <img className="thtc-solana-logo" src={`${process.env.PUBLIC_URL}/img/assets/solana-logo.png`} alt="" />
+        </Col>
+        <Col className="price-value">{value}</Col>
+      </Row>
+    ),
+    width: '23%'
+  },
+  {
+    key: 'wallet_key',
+    dataIndex: 'wallet_key',
+    title: 'From',
+    render: (value: string) => <div className="thtc-from-to">{value}</div>,
+    width: '19%'
+  },
+  {
+    key: 'token_account_mint_key',
+    dataIndex: 'token_account_mint_key',
+    title: 'To',
+    render: (value: string) => <div className="thtc-from-to">{value}</div>,
+    width: '19%'
+  },
+  {
+    key: 'clock',
+    dataIndex: 'clock',
+    title: <div className="thtc-align-right">Date</div>,
+    render: (value: string) => <div className="thtc-align-right">{value}</div>,
+    width: '20%'
+  }
+]
+
+export const TradingHistoryTabContent: FC<{
+  data: ITradingHistoryTabItemData[]
+  mode: NFTDetailsProviderMode
+  bids: INFTBid[]
+}> = ({ data, mode, bids, ...rest }) => {
   return (
     <TRADING_HISTORY_TAB_CONTENT {...rest}>
       <Row className="thtc-header" justify="space-between" align="middle">
@@ -144,9 +204,22 @@ export const TradingHistoryTabContent: FC<{ data: ITradingHistoryTabItemData[] }
           </Col>
         ))}
       </Row>
-      <div className="thtc-table">
-        <Table columns={columns} dataSource={data} pagination={false} />
-      </div>
+      {mode == 'open-bid-NFT' ? (
+        bids.length == 0 ? (
+          <div className="thtc-not-found">
+            <h3>Open Bids</h3>
+            <p>No bids so far, be the first to bid for this amazing piece.</p>
+          </div>
+        ) : (
+          <div className="thtc-table">
+            <Table columns={bidColumns} dataSource={bids} pagination={false} />
+          </div>
+        )
+      ) : (
+        <div className="thtc-table">
+          <Table columns={columns} dataSource={data} pagination={false} />
+        </div>
+      )}
     </TRADING_HISTORY_TAB_CONTENT>
   )
 }

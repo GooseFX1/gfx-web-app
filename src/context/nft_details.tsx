@@ -40,12 +40,24 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
+  const bidOnSingleNFT = useCallback(async (paramValue: string): Promise<any> => {
+    try {
+      const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.BID}`, {
+        bid: paramValue
+      })
+      return await res
+    } catch (err) {
+      return err
+    }
+  }, [])
+
   return (
     <NFTDetailsContext.Provider
       value={{
         general,
         nftMetadata,
         bids,
+        bidOnSingleNFT,
         asks,
         fetchGeneral,
         nftMintingData,
@@ -67,6 +79,7 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     general: context.general,
     nftMetadata: context.nftMetadata,
     bids: context.bids,
+    bidOnSingleNFT: context.bidOnSingleNFT,
     asks: context.asks,
     fetchGeneral: context.fetchGeneral,
     nftMintingData: context.nftMintingData,
