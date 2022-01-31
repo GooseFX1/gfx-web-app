@@ -36,10 +36,11 @@ const WRAPPED_LOADER = styled.div`
   height: 48px;
 `
 
-export const OpenBidsTabContent: FC = ({ ...rest }) => {
+export const OpenBidsTabContent = ({ filter, ...rest }) => {
   const { singleCollection } = useNFTCollections()
   const history = useHistory()
   const [localOpenBid, setLocalOpenBid] = useState<Array<ISingleNFT>>()
+  const [fileredLocalOpenBid, setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>()
   const [err, setErr] = useState(false)
 
   useEffect(() => {
@@ -47,18 +48,31 @@ export const OpenBidsTabContent: FC = ({ ...rest }) => {
       if (res.response && res.response.status !== 200) {
         setErr(true)
       }
-      setLocalOpenBid(res?.data?.slice(0, 25))
+
+      setLocalOpenBid(res.data)
     })
 
     return () => {}
   }, [])
+
+  useEffect(() => {
+    if (localOpenBid) {
+      const filteredData = localOpenBid.filter(
+        (i) =>
+          i.nft_name.toLowerCase().includes(filter.trim().toLowerCase()) ||
+          `${i.non_fungible_id}`.includes(filter.trim())
+      )
+
+      setFilteredLocalOpenBid(filteredData.slice(0, 25))
+    }
+  }, [filter, localOpenBid])
 
   const goToOpenBidDetails = (id: number): void => history.push(`/NFTs/open-bid/${id}`)
 
   // TODO: lazy loader for the thousands of nfts
   return (
     <WRAPPER>
-      {localOpenBid === undefined ? (
+      {fileredLocalOpenBid === undefined ? (
         <EMPTY_MSG>
           <WRAPPED_LOADER>
             <Loader />
@@ -66,9 +80,9 @@ export const OpenBidsTabContent: FC = ({ ...rest }) => {
         </EMPTY_MSG>
       ) : err ? (
         <EMPTY_MSG>Error loading open bid NFTs</EMPTY_MSG>
-      ) : localOpenBid.length > 0 ? (
+      ) : fileredLocalOpenBid.length > 0 ? (
         <OPEN_BIDS_TAB {...rest}>
-          {localOpenBid.map((item: ISingleNFT) => (
+          {fileredLocalOpenBid.map((item: ISingleNFT) => (
             <div onClick={() => goToOpenBidDetails(item.non_fungible_id)}>
               <Card key={item.non_fungible_id} singleNFT={item} tab="bid" />
             </div>

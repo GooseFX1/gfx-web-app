@@ -1,7 +1,8 @@
 import styled from 'styled-components'
 
-export const StyledCard = styled.div`
-  ${({ theme }) => `
+export const StyledCard = styled.div<{ $border?: boolean }>`
+  ${({ theme, $border }) => `
+  border: ${$border ? '1px solid white' : 'none'};
 max-width: 285px;
 ${theme.largeBorderRadius}
 background-color: #171717;

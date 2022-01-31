@@ -44,16 +44,16 @@ const STYLED_INPUT = styled.input`
 const InfoInput: FC<{
   title: string
   placeholder: string
-  value: string
+  value: string | undefined
   maxLength: number
   onChange: (val: any) => void
 }> = ({ title, maxLength, placeholder, onChange, value }) => {
   return (
     <INPUT_CONTAINER>
       <INPUT_TITLE>{title}</INPUT_TITLE>
-      <STYLED_INPUT value={value} placeholder={placeholder} onChange={onChange} maxLength={maxLength} />
+      <STYLED_INPUT value={value ? value : ''} placeholder={placeholder} onChange={onChange} maxLength={maxLength} />
       <INPUT_LIMIT>
-        {value.length} of {maxLength} characters limit
+        {value ? value.length : 0} of {maxLength} characters limit
       </INPUT_LIMIT>
     </INPUT_CONTAINER>
   )

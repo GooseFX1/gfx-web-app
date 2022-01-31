@@ -62,7 +62,7 @@ const AVATAR_NFT = styled(Image)`
   cursor: pointer;
 `
 
-export const Header = () => {
+export const Header = ({ setFilter, filter }) => {
   const history = useHistory()
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
   const { connected, publicKey } = useWallet()
@@ -100,7 +100,7 @@ export const Header = () => {
   }, [handleDismissModal])
 
   const onCreateCollectible = () => {
-    history.push('/NFTs/create-a-collectible')
+    history.push('/NFTs/create')
   }
 
   const goProfile = () => history.push(`/NFTs/profile`)
@@ -118,7 +118,7 @@ export const Header = () => {
           />
         )}
       </AVATAR_WRAPPER>
-      <SearchBar />
+      <SearchBar setFilter={setFilter} filter={filter} />
       <BUTTON_SELECTION>
         <Categories categories={categories} />
         <CREATE onClick={onCreateCollectible}>

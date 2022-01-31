@@ -6,4 +6,5 @@ export interface IAppParams {
 
 export interface ILocationState {
   isCreatingProfile?: boolean
+  newlyMintedNFT?: any
 }

@@ -6,10 +6,11 @@ import { INFTMetadata } from '../../../types/nft_details.d'
 
 type Props = {
   data: INFTMetadata
+  border?: boolean
   isExplore?: boolean
 }
 
-export const Card = ({ data, isExplore }: Props) => {
+export const Card = ({ data, border, isExplore }: Props) => {
   // const history = useHistory()
 
   const [visible, setVisible] = useState(false)
@@ -24,7 +25,7 @@ export const Card = ({ data, isExplore }: Props) => {
 
   return (
     <div className="card-item">
-      <StyledCard>
+      <StyledCard $border={border}>
         <img className="card-image" src={data.image} alt="" onClick={goMyCreatedNFT} />
         <div className="info">
           <div className="name">{data.name}</div>

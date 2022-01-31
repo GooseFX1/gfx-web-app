@@ -1,6 +1,6 @@
 import { PublicKey, Connection, ParsedAccountData } from '@solana/web3.js'
-import { TOKEN_PROGRAM } from './utils'
-import { StringPublicKey } from './types'
+import { TOKEN_PROGRAM_ID } from '../ids'
+import { StringPublicKey } from '../metaplex'
 
 interface IGetParsedAccountByMint {
   mintAddress: StringPublicKey
@@ -23,7 +23,7 @@ export const getParsedAccountByMint = async ({
   connection,
   stringifyPubKeys = true
 }: IGetParsedAccountByMint) => {
-  const res = await connection.getParsedProgramAccounts(new PublicKey(TOKEN_PROGRAM), {
+  const res = await connection.getParsedProgramAccounts(new PublicKey(TOKEN_PROGRAM_ID), {
     filters: [
       { dataSize: 165 },
       {

@@ -1,15 +1,16 @@
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { Image } from 'antd'
 import { MainText } from '../../../styles'
-import { useHistory } from 'react-router-dom'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { notify } from '../../../utils'
 
 const UPLOAD_CONTENT = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
   flex-direction: column;
-  padding: ${({ theme }) => theme.margins['8x']} ${({ theme }) => theme.margins['6x']};
   position: relative;
 
   .collectible-back-icon {
@@ -93,8 +94,21 @@ const UPLOAD_TEXT = MainText(styled.div`
   margin-top: ${({ theme }) => theme.margins['4x']};
 `)
 
-export const Collectible = () => {
+export const Collectible = (): JSX.Element => {
   const history = useHistory()
+  const { connected, publicKey } = useWallet()
+
+  const handleSelectSingleCollectable = async () => {
+    if (connected && publicKey) {
+      history.push('/NFTs/create-single')
+    } else {
+      notify({
+        message: 'A walelt must be connected to mint an NFT',
+        type: 'error'
+      })
+    }
+  }
+
   return (
     <>
       <UPLOAD_CONTENT>
@@ -102,7 +116,7 @@ export const Collectible = () => {
           className="collectible-back-icon"
           src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
           alt="back"
-          onClick={() => history.goBack()}
+          onClick={() => history.push('/NFTs')}
         />
         <TITLE>Create a collectible</TITLE>
         <DESCRIPTION>
@@ -118,7 +132,7 @@ export const Collectible = () => {
                 draggable={false}
                 preview={false}
                 src={`${process.env.PUBLIC_URL}/img/assets/single-upload.png`}
-                onClick={() => history.push('/NFTs/single-upload-your-file')}
+                onClick={handleSelectSingleCollectable}
               />
               <IMAGE_COUNT_DESC>1/1</IMAGE_COUNT_DESC>
             </UPLOAD_FILED>

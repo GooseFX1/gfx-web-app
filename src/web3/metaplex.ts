@@ -1,7 +1,7 @@
-import { StringPublicKey } from './nfts/types'
-
 const METADATA_PREFIX = 'metadata'
 const METADATA_PROGRAM = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
+
+export type StringPublicKey = string
 
 export enum MetadataKey {
   Uninitialized = 0,
@@ -24,7 +24,8 @@ export class Creator {
   }
 }
 
-class Metadata {
+// TODO: Reconcile MetaplexMetadata and Metadata class
+class MetaplexMetadata {
   key: MetadataKey
   updateAuthority: StringPublicKey
   mint: StringPublicKey
@@ -54,6 +55,7 @@ class Metadata {
     this.editionNonce = args.editionNonce ?? null
   }
 }
+
 export class Data {
   name: string
   symbol: string
@@ -75,45 +77,4 @@ export class Data {
   }
 }
 
-const METADATA_SCHEMA = new Map<any, any>([
-  [
-    Data,
-    {
-      kind: 'struct',
-      fields: [
-        ['name', 'string'],
-        ['symbol', 'string'],
-        ['uri', 'string'],
-        ['sellerFeeBasisPoints', 'u16'],
-        ['creators', { kind: 'option', type: [Creator] }]
-      ]
-    }
-  ],
-  [
-    Metadata,
-    {
-      kind: 'struct',
-      fields: [
-        ['key', 'u8'],
-        ['updateAuthority', 'pubkey'],
-        ['mint', 'pubkey'],
-        ['data', Data],
-        ['primarySaleHappened', 'u8'], // bool
-        ['isMutable', 'u8'] // bool
-      ]
-    }
-  ],
-  [
-    Creator,
-    {
-      kind: 'struct',
-      fields: [
-        ['address', 'pubkey'],
-        ['verified', 'u8'],
-        ['share', 'u8']
-      ]
-    }
-  ]
-])
-
-export { METADATA_SCHEMA, METADATA_PREFIX, METADATA_PROGRAM, Metadata }
+export { MetaplexMetadata, METADATA_PREFIX, METADATA_PROGRAM }

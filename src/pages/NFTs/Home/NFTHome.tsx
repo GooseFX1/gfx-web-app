@@ -36,6 +36,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
   const [isAllLoading, setIsAllLoading] = useState<boolean>(false)
   const [isFeaturedLoading, setIsFeaturedLoading] = useState<boolean>(false)
   const [isUpcomingLoading, setIsUpcomingLoading] = useState<boolean>(false)
+  const [search, setSearch] = useState<string>('')
 
   useEffect(() => {
     setIsAllLoading(true)
@@ -68,7 +69,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
 
   return (
     <>
-      <Header />
+      <Header setFilter={setSearch} filter={search} />
       <NFTHeaderCarousel isBig={false} isBigVisible={isBigCarouselVisible} />
       <SCROLLING_CONTENT_100 onScroll={onScroll}>
         <NFTHeaderCarousel isBig isBigVisible={isBigCarouselVisible} />

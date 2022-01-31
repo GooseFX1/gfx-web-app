@@ -3,9 +3,9 @@ import chunks from 'lodash.chunk'
 import orderBy from 'lodash.orderby'
 import { decodeTokenMetadata, getSolanaMetadataAddress } from './utils'
 import { isValidSolanaAddress } from '../utils'
-import { TOKEN_PROGRAM } from './utils'
-import { Metadata } from '../metaplex'
-import { StringPublicKey, PromiseSettledResult, PromiseFulfilledResult } from './types'
+import { TOKEN_PROGRAM_ID } from '../ids'
+import { MetaplexMetadata, StringPublicKey } from '../metaplex'
+import { PromiseSettledResult, PromiseFulfilledResult } from './types'
 
 // sanitize: Remove possible rusts empty string symbols `\x00` from the values
 // sort: tokens by Update Authority (read by Collection)
@@ -37,7 +37,7 @@ export const getParsedNftAccountsByOwner = async ({
 
   // gets all accounts owned by user and created by SPL Token Program includes all NFTs, Coins, Tokens, etc.
   const { value: splAccounts } = await connection.getParsedTokenAccountsByOwner(new PublicKey(publicAddress), {
-    programId: new PublicKey(TOKEN_PROGRAM)
+    programId: new PublicKey(TOKEN_PROGRAM_ID)
   })
 
   // filters out coins. assumes NFT is SPL token with decimals === 0 and amount at least 1
@@ -86,7 +86,7 @@ export const getParsedNftAccountsByOwner = async ({
     .filter(onlySuccessfullPromises)
     .filter(onlyNftsWithMetadata)
     .map((p) => {
-      const { value } = p as PromiseFulfilledResult<Metadata>
+      const { value } = p as PromiseFulfilledResult<MetaplexMetadata>
       return sanitize ? sanitizeTokenMeta(value) : value
     })
     .map((token) => (stringifyPubKeys ? publicKeyToString(token) : token))
@@ -101,7 +101,7 @@ export const getParsedNftAccountsByOwner = async ({
   return accountsFiltered
 }
 
-const sanitizeTokenMeta = (tokenData: Metadata) => ({
+const sanitizeTokenMeta = (tokenData: MetaplexMetadata) => ({
   ...tokenData,
   data: {
     ...tokenData?.data,
@@ -112,7 +112,7 @@ const sanitizeTokenMeta = (tokenData: Metadata) => ({
 })
 
 // Convert all PublicKey to string
-const publicKeyToString = (tokenData: Metadata) => ({
+const publicKeyToString = (tokenData: MetaplexMetadata) => ({
   ...tokenData,
   mint: tokenData?.mint?.toString?.(),
   updateAuthority: tokenData?.updateAuthority?.toString?.(),
@@ -132,7 +132,7 @@ const onlySuccessfullPromises = (result: PromiseSettledResult<unknown>): boolean
   result && result.status === 'fulfilled'
 
 // Remove any NFT Metadata Account which doesn't have uri field = invalid
-const onlyNftsWithMetadata = (t: PromiseSettledResult<Metadata>) => {
-  const uri = (t as PromiseFulfilledResult<Metadata>).value.data?.uri?.replace?.(/\0/g, '')
+const onlyNftsWithMetadata = (t: PromiseSettledResult<MetaplexMetadata>) => {
+  const uri = (t as PromiseFulfilledResult<MetaplexMetadata>).value.data?.uri?.replace?.(/\0/g, '')
   return uri !== '' && uri !== undefined
 }
