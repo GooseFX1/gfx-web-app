@@ -17,8 +17,8 @@ const PREVIEW_CONTAINER = styled.div`
   padding: ${({ theme }) => theme.margins['2.5x']};
 
   .ant-upload-list-picture-card-container {
-    width: 350px;
-    height: 350px;
+    width: 100%;
+    height: auto;
   }
   .ant-upload-list-picture-card .ant-upload-list-item-info {
     &:before {
@@ -32,8 +32,8 @@ const PREVIEW_CONTAINER = styled.div`
     border: none;
     border-radius: 10px;
     position: relative;
-    width: 350px;
-    height: 350px;
+    width: 100%;
+    height: auto;
     margin: ${({ theme }) => theme.margins['1x']} auto;
   }
   .ant-upload-list-item {
