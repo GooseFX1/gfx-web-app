@@ -133,7 +133,7 @@ export const LiveAuction = () => {
           className="live-auction-back-icon"
           src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
           alt="back"
-          onClick={() => history.push('/NFTs/single-upload-your-file')}
+          onClick={() => history.push('/NFTs/create-single')}
         />
         <UPLOAD_FIELD_CONTAINER>
           <UPLOAD_INFO_CONTAINER>
@@ -167,7 +167,7 @@ export const LiveAuction = () => {
               text1="Save as a draft"
               text2="Sell item"
               disabled={disabled}
-              onClick1={() => history.push('/NFTs/single-upload-your-file')}
+              onClick1={() => history.push('/NFTs/create-single')}
             />
           </PREVIEW_UPLOAD_CONTAINER>
         </UPLOAD_FIELD_CONTAINER>
