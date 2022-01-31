@@ -35,6 +35,7 @@ const NFT_DETAILS = styled.div`
 
     .nd-content {
       height: 100%;
+      margin-top: 150px;
     }
 
     .nd-preview {
