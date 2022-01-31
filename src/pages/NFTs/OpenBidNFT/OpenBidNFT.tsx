@@ -23,12 +23,14 @@ export const OpenBidNFT: FC = () => {
   const [err, setErr] = useState(false)
   const [loading, setLoading] = useState(true)
   const { fetchGeneral } = useNFTDetails()
+  const [details, setDetails] = useState()
 
   useEffect(() => {
     fetchGeneral(params.nftId).then((res) => {
       if ((res.response && res.response.status !== 200) || res.isAxiosError) {
         setErr(true)
       }
+      setDetails(res.data.data[0])
       setLoading(false)
     })
     return () => {}
@@ -43,7 +45,7 @@ export const OpenBidNFT: FC = () => {
   ) : (
     <>
       <NFTDetails mode="open-bid-NFT" handleClickPrimaryButton={() => setVisible(true)} />
-      <BidModal visible={visible} setVisible={setVisible} />
+      <BidModal details={details} visible={visible} setVisible={setVisible} />
     </>
   )
 }

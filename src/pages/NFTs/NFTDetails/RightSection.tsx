@@ -1,5 +1,5 @@
+import React, { useMemo, FC } from 'react'
 import { Col, Row } from 'antd'
-import { FC } from 'react'
 import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
 import { RightSectionTabs } from './RightSectionTabs'
@@ -65,10 +65,8 @@ const RIGHT_SECTION = styled.div`
       font-size: 12px;
       font-weight: 500;
       max-width: 300px;
-      max-height: 100px;
       margin-bottom: ${theme.margins['1.5x']};
       color: ${theme.text8};
-      overflow: scroll;
     }
 
     .rs-charity-text {
@@ -145,6 +143,14 @@ export const RightSection: FC<{
   handleClickPrimaryButton: () => void
 }> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
   const { general, nftMetadata } = useNFTDetails()
+  const creator = useMemo(() => {
+    if (nftMetadata.properties.creators.length > 0) {
+      const addr = nftMetadata.properties.creators[0].address
+      return `${addr.substr(0, 4)}...${addr.substr(-4, 4)}`
+    } else {
+      return nftMetadata.collection.name
+    }
+  }, [nftMetadata])
 
   const price = 150
   const fiat = '21,900 USD aprox'
@@ -208,7 +214,7 @@ export const RightSection: FC<{
                   alt=""
                 />
               </div>
-              <div className="gi-item-title">{nftMetadata.collection.name}</div>
+              <div className="gi-item-title">{creator}</div>
             </Row>
           </Col>
         )}
