@@ -146,6 +146,7 @@ export interface INFTDetailsConfig {
   general: ISingleNFT
   nftMetadata: INFTMetadata
   bids: Array<INFTBid>
+  bidOnSingleNFT: any
   asks: Array<INFTAsk>
   fetchGeneral: (id: string) => Promise<any>
   nftMintingData: IMetadataContext | undefined
