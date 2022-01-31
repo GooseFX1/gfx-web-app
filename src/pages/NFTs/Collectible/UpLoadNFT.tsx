@@ -13,8 +13,9 @@ import MintPaymentConfirmation from './MintPaymentConfirmation'
 import UploadProgress from './UploadProgress'
 import AddAttribute from './AddAttribute'
 import RoyaltiesStep from './RoyaltiesStep'
-import { useDarkMode, useNFTDetails, useConnectionConfig, ENDPOINTS } from '../../../context'
-import { mintNFT, MetadataCategory, StringPublicKey } from '../../../web3'
+import { useDarkMode, useNFTDetails, useConnectionConfig } from '../../../context'
+import { mintNFT, MetadataCategory, ENDPOINTS } from '../../../web3'
+import { notify } from '../../../utils'
 
 //#region styles
 const UPLOAD_CONTENT = styled.div`
@@ -42,7 +43,18 @@ const UPLOAD_FIELD_CONTAINER = styled.div`
   flex: 1;
   flex-direction: row;
 `
-
+const CONTAINER = styled.div`
+  position: absolute;
+  top: 0px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: #1e1e1e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`
 const UPLOAD_INFO_CONTAINER = styled.div`
   display: flex;
   flex: 1.4;
@@ -181,7 +193,7 @@ export const UpLoadNFT = (): JSX.Element => {
   const history = useHistory()
   const { nftMintingData, setNftMintingData } = useNFTDetails()
   const wallet = useWallet()
-  const { connection, setEndpoint } = useConnectionConfig()
+  const { connection } = useConnectionConfig()
   const [localFiles, setLocalFiles] = useState<any>()
   const [filesForUpload, setFilesForUpload] = useState<File[]>([])
   const [creatorModal, setCreatorModal] = useState(false)
@@ -192,16 +204,20 @@ export const UpLoadNFT = (): JSX.Element => {
   const [isConfirmingMintPrice, setIsConfirmingMintPrice] = useState(false)
   const [isMinting, setIsMinting] = useState(false)
   const [nftCreateProgress, setNFTcreateProgress] = useState<number>(0)
-  const [mintedNFT, setMintedNFT] = useState<{ metadataAccount: StringPublicKey } | undefined>(undefined)
+  const [congrats, setCongrats] = useState<boolean>(false)
 
   useEffect(() => {
-    setEndpoint(ENDPOINTS[1].endpoint)
-
     if (nftMintingData === undefined) {
       setNftInitState()
     }
 
-    return () => {}
+    return () => {
+      setLocalFiles(undefined)
+      setFilesForUpload(undefined)
+      setCongrats(false)
+      setLocalAttributes([])
+      setNftInitState()
+    }
   }, [])
 
   useEffect(() => {
@@ -236,10 +252,10 @@ export const UpLoadNFT = (): JSX.Element => {
 
   const mint = async () => {
     try {
-      const _nft = await mintNFT(
+      const res = await mintNFT(
         connection,
         wallet,
-        'devnet',
+        ENDPOINTS[0].name,
         filesForUpload,
         nftMintingData,
         setNFTcreateProgress,
@@ -247,24 +263,30 @@ export const UpLoadNFT = (): JSX.Element => {
       )
       //single or multiple (maxsupply)
 
+      const _nft = await res
       if (_nft) {
-        console.log(_nft)
-        setMintedNFT(_nft)
+        setCongrats(true)
+        handleCompletedMint(_nft.metadataAccount, nftMintingData.name)
       }
     } catch (e: any) {
-      console.dir(e)
+      notify({
+        message: `${e.message}: ${e.name}`,
+        type: 'error'
+      })
     } finally {
       setNFTcreateProgress(0)
       setIsMinting(false)
-      setLocalFiles(undefined)
-      setFilesForUpload(undefined)
-      setLocalAttributes([])
-      setNftInitState()
     }
   }
 
-  const handleCompletedMint = () => {
-    history.push({ pathname: '/NFTs/profile', state: { newlyMintedNFT: mintedNFT } })
+  const handleCompletedMint = (metadataAccount: string, name: string) => {
+    setCongrats(true)
+    setTimeout(() => {
+      history.push({
+        pathname: '/NFTs/profile',
+        state: { newlyMintedNFT: { name: name, metadataAccount: metadataAccount } }
+      })
+    }, 1500)
   }
 
   // title, desc
@@ -325,7 +347,7 @@ export const UpLoadNFT = (): JSX.Element => {
           className="upload-NFT-back-icon"
           src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
           alt="back"
-          onClick={() => history.push('/NFTs/create-a-collectible')}
+          onClick={() => history.push('/NFTs/create')}
         />
         <UPLOAD_FIELD_CONTAINER>
           <UPLOAD_INFO_CONTAINER>
@@ -439,7 +461,13 @@ export const UpLoadNFT = (): JSX.Element => {
         />
       )}
 
-      {isMinting && <UploadProgress mint={mint} step={nftCreateProgress} confirm={handleCompletedMint} />}
+      {isMinting && <UploadProgress mint={mint} step={nftCreateProgress} />}
+
+      {congrats && (
+        <CONTAINER>
+          <SECTION_TITLE>Congrats! Your NFT has succcessfully minted 🎉</SECTION_TITLE>
+        </CONTAINER>
+      )}
     </>
   )
 }

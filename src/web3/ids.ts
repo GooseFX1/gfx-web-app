@@ -1,5 +1,6 @@
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { AccountInfo, PublicKey } from '@solana/web3.js'
+import { StringPublicKey } from './metaplex'
 
 export const SYNTH_DEFAULT_MINT = new PublicKey('11111111111111111111111111111111')
 
@@ -245,8 +246,6 @@ export const ADDRESSES: {
     }
   }
 }
-
-export type StringPublicKey = string
 
 export class LazyAccountInfoProxy<T> {
   executable: boolean = false

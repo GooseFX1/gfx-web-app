@@ -10,6 +10,8 @@ const CONTAINER = styled.div`
   bottom: 0;
   left: 0;
   background: #1e1e1e;
+  z-index: 1000;
+
   .ant-card {
     background: transparent;
   }
@@ -27,14 +29,23 @@ const CONTAINER = styled.div`
   .ant-steps-item-title {
     font-weight: 700;
   }
+  .ant-steps-item-finish .ant-steps-item-icon {
+    border-color: ${({ theme }) => theme.secondary1};
+    background-color: ${({ theme }) => theme.secondary1};
+  }
+  .ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-tail::after {
+    background-color: ${({ theme }) => theme.secondary1};
+  }
+  .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
+    color: white;
+  }
 `
 //#endregion
 
-const UploadProgress = (props: { mint: Function; confirm: Function; step: number }) => {
+const UploadProgress = (props: { mint: Function; step: number }) => {
   useEffect(() => {
     const func = async () => {
       await props.mint()
-      props.confirm()
     }
     func()
   }, [])

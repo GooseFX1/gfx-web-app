@@ -100,7 +100,7 @@ export const Header = ({ setFilter, filter }) => {
   }, [handleDismissModal])
 
   const onCreateCollectible = () => {
-    history.push('/NFTs/create-a-collectible')
+    history.push('/NFTs/create')
   }
 
   const goProfile = () => history.push(`/NFTs/profile`)

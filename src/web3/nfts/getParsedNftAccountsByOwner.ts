@@ -4,8 +4,8 @@ import orderBy from 'lodash.orderby'
 import { decodeTokenMetadata, getSolanaMetadataAddress } from './utils'
 import { isValidSolanaAddress } from '../utils'
 import { TOKEN_PROGRAM_ID } from '../ids'
-import { MetaplexMetadata } from '../metaplex'
-import { StringPublicKey, PromiseSettledResult, PromiseFulfilledResult } from './types'
+import { MetaplexMetadata, StringPublicKey } from '../metaplex'
+import { PromiseSettledResult, PromiseFulfilledResult } from './types'
 
 // sanitize: Remove possible rusts empty string symbols `\x00` from the values
 // sort: tokens by Update Authority (read by Collection)
