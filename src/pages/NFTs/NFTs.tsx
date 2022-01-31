@@ -103,10 +103,10 @@ export const NFTs: FC = () => {
                       <OpenBidNFT />
                     </SCROLLING_CONTENT>
                   </Route>
-                  <Route exact path="/NFTs/create-a-collectible">
+                  <Route exact path="/NFTs/create">
                     <Collectible />
                   </Route>
-                  <Route exact path="/NFTs/single-upload-your-file">
+                  <Route exact path="/NFTs/create-single">
                     <SCROLLING_OVERLAY>
                       <UpLoadNFT />
                     </SCROLLING_OVERLAY>
