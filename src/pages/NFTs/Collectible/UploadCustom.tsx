@@ -87,6 +87,9 @@ const STYLED_UPLOAD_CUSTOM = styled.div`
       left: 0;
       top: 0;
     }
+    .ant-upload-list-item-actions > a {
+      display: none;
+    }
     .ant-upload-list {
       border: none;
       border-radius: 10px;
@@ -179,8 +182,13 @@ export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingDat
   }
 
   const handleFileChange = async (info: UploadChangeParam<UploadFile<any>>) => {
-    setLocalFile(info.fileList[0])
-    setPreviewImage(info.fileList[0])
+    let mainFile = info.fileList[0]
+    if (mainFile) {
+      mainFile.error = null
+      delete mainFile.status
+    }
+    setLocalFile(mainFile)
+    setPreviewImage(mainFile)
 
     const file = info.file.originFileObj
 
@@ -245,6 +253,8 @@ export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingDat
             maxCount={1}
             onChange={handleFileChange}
             accept={acceptableFiles(nftMintingData.properties?.category)}
+            onPreview={() => {}}
+            beforeUpload={(e) => false}
           >
             <div className="image-wrap"></div>
             {!localFile && (
