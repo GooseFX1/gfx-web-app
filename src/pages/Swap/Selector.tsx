@@ -144,7 +144,7 @@ export const Selector: FC<{
             value={filterKeywords}
           />
           <MAGNIFYING_GLASS>
-            <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/magnifying_glass.svg`} alt="" />
+            <SVGToWhite src={`/img/assets/magnifying_glass.svg`} alt="" />
           </MAGNIFYING_GLASS>
         </INPUT>
         <BODY>
@@ -157,7 +157,7 @@ export const Selector: FC<{
               }}
             >
               <TOKEN_ICON>
-                <img src={`${process.env.PUBLIC_URL}/img/crypto/${symbol}.svg`} alt="" />
+                <img src={`/img/crypto/${symbol}.svg`} alt="" />
               </TOKEN_ICON>
               <div>
                 <span>{symbol}</span>
@@ -173,7 +173,7 @@ export const Selector: FC<{
             <SpaceBetweenDiv>
               <span>{token.symbol}</span>
               <CLICKER_ICON>
-                <img src={`${process.env.PUBLIC_URL}/img/crypto/${token.symbol}.svg`} alt="" />
+                <img src={`/img/crypto/${token.symbol}.svg`} alt="" />
               </CLICKER_ICON>
             </SpaceBetweenDiv>
           ) : (

@@ -10,11 +10,7 @@ interface Props {
 const PopupCompleteProfile = ({ visible, handleOk, handleCancel }: Props) => {
   return (
     <StyledPopupCompletedProfile title={null} visible={visible} onOk={handleOk} onCancel={handleCancel} footer={null}>
-      <img
-        className="completed-profile-image"
-        src={`${process.env.PUBLIC_URL}/img/assets/completed-profile.png`}
-        alt=""
-      />
+      <img className="completed-profile-image" src={`/img/assets/completed-profile.png`} alt="" />
       <div className="title">Get the full experience!</div>
       <div className="desc">Complete your profile and enjoy the full experince of our marketplace.</div>
       <div className="button-group">

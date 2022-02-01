@@ -191,29 +191,13 @@ export const Card = ({ singleNFT, tab, className, ...rest }: Props) => {
         <Row justify="space-between" align="middle">
           <Row align="middle">
             <div className="card-name">{localNFT.nft_name}</div>
-            {localNFT.isFeatured && (
-              <img
-                className="card-featured-heart"
-                src={`${process.env.PUBLIC_URL}/img/assets/heart-purple.svg`}
-                alt=""
-              />
-            )}
+            {localNFT.isFeatured && <img className="card-featured-heart" src={`/img/assets/heart-purple.svg`} alt="" />}
           </Row>
           <Row align="middle">
             <Row align="middle" className="card-favorite">
               {(localNFT.isFavorite && (
-                <img
-                  className="card-favorite-heart"
-                  src={`${process.env.PUBLIC_URL}/img/assets/heart-red.svg`}
-                  alt=""
-                />
-              )) || (
-                <img
-                  className="card-favorite-heart"
-                  src={`${process.env.PUBLIC_URL}/img/assets/heart-empty.svg`}
-                  alt=""
-                />
-              )}
+                <img className="card-favorite-heart" src={`/img/assets/heart-red.svg`} alt="" />
+              )) || <img className="card-favorite-heart" src={`/img/assets/heart-empty.svg`} alt="" />}
               <span className={`card-favorite-number ${localNFT.isFavorite ? 'card-favorite-number-highlight' : ''}`}>
                 {localNFT.hearts}
               </span>

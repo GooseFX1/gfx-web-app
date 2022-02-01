@@ -1,6 +1,6 @@
 export const NFTDetailsGeneralData = {
   name: 'Genesis #3886',
-  image: `${process.env.PUBLIC_URL}/img/assets/card-1.png`,
+  image: `/img/assets/card-1.png`,
   isFavorite: true,
   hearts: 6,
   remaining: {
@@ -15,15 +15,15 @@ export const NFTDetailsGeneralData = {
   intro: '9,999 levitating 3D cities ready to expand, conquer and defend into the metaverse',
   creator: {
     title: 'Solcities',
-    thumbnail: `${process.env.PUBLIC_URL}/img/assets/avatar@3x.png`
+    thumbnail: `/img/assets/avatar@3x.png`
   },
   collection: {
     title: 'Solcities',
-    thumbnail: `${process.env.PUBLIC_URL}/img/assets/avatar@3x.png`
+    thumbnail: `/img/assets/avatar@3x.png`
   },
   category: {
     title: 'Metaverse',
-    thumbnail: `${process.env.PUBLIC_URL}/img/assets/avatar@3x.png`
+    thumbnail: `/img/assets/avatar@3x.png`
   }
 }
 

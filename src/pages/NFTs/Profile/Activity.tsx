@@ -19,7 +19,7 @@ export const columns = [
     key: 'item',
     render: (record) => (
       <div className="item">
-        <img className="image" src={`${process.env.PUBLIC_URL}/img/assets/card-1.png`} alt="" />
+        <img className="image" src={`/img/assets/card-1.png`} alt="" />
         <div className="text">
           <div className="text-name">{record?.name}</div>
           <div className="text-other">{record?.other}</div>
@@ -34,7 +34,7 @@ export const columns = [
     width: '22%',
     render: (price) => (
       <div className="price-wrap">
-        <img className="image" src={`${process.env.PUBLIC_URL}/img/assets/price.svg`} alt="" />
+        <img className="image" src={`/img/assets/price.svg`} alt="" />
         <span className="price">{price}</span>
       </div>
     )

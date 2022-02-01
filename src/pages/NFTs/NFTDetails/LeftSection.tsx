@@ -77,14 +77,8 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
           <Col>{isShowReamingTime && <div className="ls-end-text">Auction ends in:</div>}</Col>
           {mode !== 'mint-item-view' && (
             <Row align="middle">
-              {(isFavorite && (
-                <img className="ls-favorite-heart" src={`${process.env.PUBLIC_URL}/img/assets/heart-red.svg`} alt="" />
-              )) || (
-                <img
-                  className="ls-favorite-heart"
-                  src={`${process.env.PUBLIC_URL}/img/assets/heart-empty.svg`}
-                  alt=""
-                />
+              {(isFavorite && <img className="ls-favorite-heart" src={`/img/assets/heart-red.svg`} alt="" />) || (
+                <img className="ls-favorite-heart" src={`/img/assets/heart-empty.svg`} alt="" />
               )}
               <span className={`ls-favorite-number ${isFavorite ? 'ls-favorite-number-highlight' : ''}`}>{hearts}</span>
             </Row>

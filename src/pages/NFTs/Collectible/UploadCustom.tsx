@@ -228,14 +228,9 @@ export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingDat
     <STYLED_UPLOAD_CUSTOM>
       {coverArtError ? (
         <STYLED_UPLOAD_ERROR>
-          <img className="image-broken" src={`${process.env.PUBLIC_URL}/img/assets/image-broken.svg`} alt="" />
+          <img className="image-broken" src={`/img/assets/image-broken.svg`} alt="" />
           <div className="desc-failed">Your file is broken or corrupted, pelase try again.</div>
-          <img
-            className="remove-icon"
-            src={`${process.env.PUBLIC_URL}/img/assets/remove-icon.svg`}
-            alt=""
-            onClick={onRemove}
-          />
+          <img className="remove-icon" src={`/img/assets/remove-icon.svg`} alt="" onClick={onRemove} />
           {localFile && coverArtError && (
             <div>
               <Text type="danger">{coverArtError}</Text>

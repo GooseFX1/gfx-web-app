@@ -118,7 +118,7 @@ export const EditMyNFT = ({ visible, handleOk, handleCancel, type }: Props) => {
           <div className="half-width">
             <div className="label-section">
               Donate for charity
-              <img className="heart-purple" src={`${process.env.PUBLIC_URL}/img/assets/heart-purple.svg`} alt="" />
+              <img className="heart-purple" src={`/img/assets/heart-purple.svg`} alt="" />
             </div>
             <div className="description">We will donate a percentage of the total price for people in need.</div>
           </div>

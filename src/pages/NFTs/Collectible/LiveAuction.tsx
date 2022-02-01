@@ -131,7 +131,7 @@ export const LiveAuction = () => {
       <UPLOAD_CONTENT>
         <img
           className="live-auction-back-icon"
-          src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
+          src={`/img/assets/arrow.svg`}
           alt="back"
           onClick={() => history.push('/NFTs/create-single')}
         />

@@ -23,7 +23,7 @@ export const ArrowClicker: FC<{
 }> = ({ arrowRotation, measurements, ...props }) => {
   return (
     <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements} {...props}>
-      <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`} alt="arrow" />
+      <SVGToWhite src={`/img/assets/arrow.svg`} alt="arrow" />
     </ARROW_CLICKER>
   )
 }
@@ -50,7 +50,7 @@ export const ArrowDropdown: FC<{
       <Row align="middle" wrap={false}>
         {children}
         <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements}>
-          <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`} alt="arrow" />
+          <SVGToWhite src={`/img/assets/arrow.svg`} alt="arrow" />
         </ARROW_CLICKER>
       </Row>
     </Dropdown>

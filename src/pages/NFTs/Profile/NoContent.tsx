@@ -83,7 +83,7 @@ const NoContent = ({ type }: Props) => {
 
   return (
     <NO_CONTENT>
-      <img className="no-data-image" src={`${process.env.PUBLIC_URL}/img/assets/${type}-no-data.png`} alt="" />
+      <img className="no-data-image" src={`/img/assets/${type}-no-data.png`} alt="" />
       <div className="main-text">{obj.mainText}</div>
       <div className="sub-text">{obj.subText}</div>
       {obj.textButton && (

@@ -32,8 +32,8 @@ export const OwnersTabContent: FC = ({ ...rest }) => {
           <Image
             className="owners-tab-avatar"
             preview={false}
-            src={`${process.env.PUBLIC_URL}/img/assets/avatar@3x.png`}
-            fallback={`${process.env.PUBLIC_URL}/img/assets/avatar@3x.png`}
+            src={`/img/assets/avatar@3x.png`}
+            fallback={`/img/assets/avatar@3x.png`}
             alt=""
           />
           <div className="owners-tab-name">Owner Name</div>

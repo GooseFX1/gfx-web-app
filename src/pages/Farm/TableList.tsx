@@ -139,7 +139,7 @@ const ExpandIcon = (props) => {
   return (
     <STYLED_EXPAND_ICON
       expanded={expanded}
-      src={`${process.env.PUBLIC_URL}/img/assets/arrow-down-large.svg`}
+      src={`/img/assets/arrow-down-large.svg`}
       onClick={() => onClick(record.id)}
       alt=""
     />

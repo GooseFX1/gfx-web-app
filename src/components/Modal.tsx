@@ -56,9 +56,9 @@ export const Modal: FC<{
         <TITLE>{title}</TITLE>
         <CLOSE_ICON className="modal-close-icon" onClick={handleCancel}>
           {mode === 'dark' ? (
-            <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/cross.svg`} alt="close" />
+            <SVGToWhite src={`/img/assets/cross.svg`} alt="close" />
           ) : (
-            <img src={`${process.env.PUBLIC_URL}/img/assets/cross.svg`} alt="close" />
+            <img src={`/img/assets/cross.svg`} alt="close" />
           )}
         </CLOSE_ICON>
       </HEADER>

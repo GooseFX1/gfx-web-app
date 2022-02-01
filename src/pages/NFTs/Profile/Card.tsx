@@ -30,19 +30,19 @@ export const Card = ({ data, border, isExplore }: Props) => {
         <div className="info">
           <div className="name">{data.name}</div>
           <div className="number">
-            <img className="check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`} alt="" />
+            <img className="check-icon" src={`/img/assets/check-icon.png`} alt="" />
           </div>
           <div className="other">price</div>
           {data.name === 'favorited' ? (
             <div className="like-group favorited-group">
-              <img className="heart-red" src={`${process.env.PUBLIC_URL}/img/assets/heart-red.svg`} alt="" />
+              <img className="heart-red" src={`/img/assets/heart-red.svg`} alt="" />
               <span className="like-count">{data.name}</span>
             </div>
           ) : (
             <div className="like-group">
               <>
-                <img className="heart-purple" src={`${process.env.PUBLIC_URL}/img/assets/heart-purple.svg`} alt="" />
-                <img className="heart-empty" src={`${process.env.PUBLIC_URL}/img/assets/heart-empty.svg`} alt="" />
+                <img className="heart-purple" src={`/img/assets/heart-purple.svg`} alt="" />
+                <img className="heart-empty" src={`/img/assets/heart-empty.svg`} alt="" />
               </>
               <span className="like-count">0</span>
             </div>
@@ -53,7 +53,7 @@ export const Card = ({ data, border, isExplore }: Props) => {
             ) : data.name === 'favorited' ? (
               <div className="price-group">
                 <span className="text">Last</span>
-                <img className="price-image" src={`${process.env.PUBLIC_URL}/img/assets/price.svg`} alt="" />
+                <img className="price-image" src={`/img/assets/price.svg`} alt="" />
                 <span className="price-number">35</span>
               </div>
             ) : [1, 2].includes(data.name.length) ? (
@@ -61,7 +61,7 @@ export const Card = ({ data, border, isExplore }: Props) => {
                 Sell now
               </button>
             ) : (
-              <img className="card-logo" src={`${process.env.PUBLIC_URL}/img/assets/card-logo-1.svg`} alt="" />
+              <img className="card-logo" src={`/img/assets/card-logo-1.svg`} alt="" />
             )}
           </div>
         </div>

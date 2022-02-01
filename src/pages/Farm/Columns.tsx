@@ -65,7 +65,7 @@ const STYLED_EARNED = styled.div`
 
 const HeaderTooltip = (text: string) => {
   return (
-    <img className="info-icon" src={`${process.env.PUBLIC_URL}/img/assets/info-icon.svg`} alt="" /> && (
+    <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
       <Tooltip dark placement="bottomLeft" color="#000000">
         <p>{text}</p>
       </Tooltip>
@@ -77,7 +77,7 @@ const Title = (text: string, infoText: string, isArrowDown: boolean) => (
   <STYLED_TITLE>
     <div className="text">{text}</div>
     {infoText && HeaderTooltip(infoText)}
-    {isArrowDown && <img className="arrow-down" src={`${process.env.PUBLIC_URL}/img/assets/arrow-down.svg`} alt="" />}
+    {isArrowDown && <img className="arrow-down" src={`/img/assets/arrow-down.svg`} alt="" />}
   </STYLED_TITLE>
 )
 
@@ -91,11 +91,11 @@ export const columns = [
       <STYLED_NAME>
         <img
           className={`coin-image ${record.type === 'Double Sided' ? 'double-sided' : ''}`}
-          src={`${process.env.PUBLIC_URL}/img/assets/${text.replace(' ', '-')}-icon.svg`}
+          src={`/img/assets/${text.replace(' ', '-')}-icon.svg`}
           alt=""
         />
         <div className="text">{text}</div>
-        <img className="percent-100" src={`${process.env.PUBLIC_URL}/img/assets/percent-100.svg`} alt="" />
+        <img className="percent-100" src={`/img/assets/percent-100.svg`} alt="" />
       </STYLED_NAME>
     )
   },

@@ -114,9 +114,9 @@ export const Footer: FC = () => {
       <SpaceBetweenDiv>
         <MODE_ICON>
           {mode === 'dark' ? (
-            <SVGToWhite className="moon-image" src={`${process.env.PUBLIC_URL}/img/assets/lite_mode.svg`} alt="" />
+            <SVGToWhite className="moon-image" src={`/img/assets/lite_mode.svg`} alt="" />
           ) : (
-            <img className="moon-image" src={`${process.env.PUBLIC_URL}/img/assets/lite_mode.svg`} alt="" />
+            <img className="moon-image" src={`/img/assets/lite_mode.svg`} alt="" />
           )}
         </MODE_ICON>
         <TOGGLE $mode={mode} onClick={toggleMode}>
@@ -124,13 +124,9 @@ export const Footer: FC = () => {
         </TOGGLE>
         <MODE_ICON>
           {mode === 'dark' ? (
-            <SVGToWhite
-              className="brightness-image"
-              src={`${process.env.PUBLIC_URL}/img/assets/dark_mode.svg`}
-              alt=""
-            />
+            <SVGToWhite className="brightness-image" src={`/img/assets/dark_mode.svg`} alt="" />
           ) : (
-            <img className="brightness-image" src={`${process.env.PUBLIC_URL}/img/assets/dark_mode.svg`} alt="" />
+            <img className="brightness-image" src={`/img/assets/dark_mode.svg`} alt="" />
           )}
         </MODE_ICON>
       </SpaceBetweenDiv>

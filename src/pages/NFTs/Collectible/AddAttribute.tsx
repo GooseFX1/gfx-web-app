@@ -275,11 +275,7 @@ const AddAttribute = ({ visible, handleCancel, handleOk, attributeList, setAttri
           {realData.map((item) => (
             <div className="add-item" key={item?.id}>
               <div className="close-btn" onClick={() => onRemove(item?.id)}>
-                <img
-                  className="close-white-icon"
-                  src={`${process.env.PUBLIC_URL}/img/assets/close-white-icon.svg`}
-                  alt=""
-                />
+                <img className="close-white-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
               </div>
               <div className="input-wrap">
                 <Input

@@ -108,10 +108,10 @@ const SwapContent: FC = () => {
         <HEADER_TITLE>Swap</HEADER_TITLE>
         <div>
           <REFRESH_RATE onClick={refreshRates}>
-            <img src={`${process.env.PUBLIC_URL}/img/assets/refresh_rate.svg`} alt="" />
+            <img src={`/img/assets/refresh_rate.svg`} alt="" />
           </REFRESH_RATE>
           <CenteredImg onClick={onClick}>
-            <img src={`${process.env.PUBLIC_URL}/img/assets/settings_${mode}_mode.svg`} alt="settings" />
+            <img src={`/img/assets/settings_${mode}_mode.svg`} alt="settings" />
           </CenteredImg>
         </div>
       </HEADER_WRAPPER>
@@ -126,7 +126,7 @@ const SwapContent: FC = () => {
             switchTokens()
           }}
         >
-          <img src={`${process.env.PUBLIC_URL}/img/assets/swap_switch_${mode}_mode.svg`} alt="switch" />
+          <img src={`/img/assets/swap_switch_${mode}_mode.svg`} alt="switch" />
         </SWITCH>
         <SwapTo height={height} />
       </BODY>

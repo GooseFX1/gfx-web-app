@@ -92,7 +92,7 @@ const BottomButtonUpload: FC<{
       {type === BottomButtonUploadType.plus && (
         <BUTTON_PLUS_WRAPPER onClick={onClick}>
           <span>{buttonTitle}</span>
-          <img src={`${process.env.PUBLIC_URL}/img/assets/plus.svg`} alt="Create" />
+          <img src={`/img/assets/plus.svg`} alt="Create" />
         </BUTTON_PLUS_WRAPPER>
       )}
 

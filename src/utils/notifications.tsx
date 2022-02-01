@@ -106,7 +106,7 @@ export const notify = async ({ description, icon, message, txid, type = 'info', 
           <span>{message}</span>
           {icon && (
             <CONTENT_ICON>
-              <img src={`${process.env.PUBLIC_URL}/img/assets/notify_${icon}.svg`} alt="icon" />
+              <img src={`/img/assets/notify_${icon}.svg`} alt="icon" />
             </CONTENT_ICON>
           )}
         </MESSAGE>

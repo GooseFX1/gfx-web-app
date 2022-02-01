@@ -287,7 +287,7 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean; 
             <Row className="m-title" justify="space-between" align="middle">
               <Col>Live auction bid sucessfull!</Col>
               <Col>
-                <img className="m-icon" src={`${process.env.PUBLIC_URL}/img/assets/bid-success-icon.svg`} alt="" />
+                <img className="m-icon" src={`/img/assets/bid-success-icon.svg`} alt="" />
               </Col>
             </Row>
             <div>{details?.nft_name}</div>
@@ -307,7 +307,7 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean; 
             <Row className="m-title" justify="space-between" align="middle">
               <Col>Live auction bid error!</Col>
               <Col>
-                <img className="m-icon" src={`${process.env.PUBLIC_URL}/img/assets/close-white-icon.svg`} alt="" />
+                <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
               </Col>
             </Row>
             <div>Please try again, if the error persists please contact support.</div>
@@ -329,7 +329,7 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean; 
     //         <Row className="m-title" justify="space-between" align="middle">
     //           <Col>Live auction bid sucessfull!</Col>
     //           <Col>
-    //             <img className="m-icon" src={`${process.env.PUBLIC_URL}/img/assets/bid-success-icon.svg`} alt="" />
+    //             <img className="m-icon" src={`/img/assets/bid-success-icon.svg`} alt="" />
     //           </Col>
     //         </Row>
     //         <div>Genesis #3886, Solcities</div>
@@ -405,7 +405,7 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean; 
         <Col>
           <img
             className="bm-check-icon"
-            src={`${process.env.PUBLIC_URL}/img/assets/${isVerified ? 'check-icon.png' : 'close-icon.svg'}`}
+            src={`/img/assets/${isVerified ? 'check-icon.png' : 'close-icon.svg'}`}
             alt=""
           />
         </Col>

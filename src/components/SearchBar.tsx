@@ -34,7 +34,7 @@ export const SearchBar = ({ placeholder, setFilter, filter, ...rest }: any) => {
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
       />
-      <Image preview={false} src={`${process.env.PUBLIC_URL}/img/assets/search.png`} />
+      <Image preview={false} src={`/img/assets/search.png`} />
     </SEARCH_BAR_WRAPPER>
   )
 }

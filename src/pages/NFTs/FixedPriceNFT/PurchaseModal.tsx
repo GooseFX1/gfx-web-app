@@ -203,7 +203,7 @@ export const PurchaseModal: FC<{ setVisible: (x: boolean) => void; visible: bool
         <Col>
           <img
             className="pm-check-icon"
-            src={`${process.env.PUBLIC_URL}/img/assets/${isVerified ? 'check-icon.png' : 'close-icon.svg'}`}
+            src={`/img/assets/${isVerified ? 'check-icon.png' : 'close-icon.svg'}`}
             alt=""
           />
         </Col>

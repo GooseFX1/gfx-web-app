@@ -44,7 +44,7 @@ const Overlay: FC = () => {
         <ITEM key={index}>
           <a href={target[item]} target="_blank" rel="noopener noreferrer">
             <span>{item}</span>
-            <img src={`${process.env.PUBLIC_URL}/img/assets/${item}_small.svg`} alt={item} />
+            <img src={`/img/assets/${item}_small.svg`} alt={item} />
           </a>
         </ITEM>
       ))}
@@ -62,7 +62,7 @@ export const More: FC = () => {
       trigger={['click']}
     >
       <ICON>
-        <img src={`${process.env.PUBLIC_URL}/img/assets/more_icon.svg`} alt="more" />
+        <img src={`/img/assets/more_icon.svg`} alt="more" />
       </ICON>
     </Dropdown>
   )
