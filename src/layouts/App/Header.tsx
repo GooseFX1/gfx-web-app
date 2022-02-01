@@ -103,17 +103,17 @@ export const Header: FC = () => {
           <BRAND href="/">
             <img
               id="logo"
-              srcSet={`${process.env.PUBLIC_URL}/img/assets/gfx_logo_gradient_${mode}@3x.webp 232w,
-               ${process.env.PUBLIC_URL}/img/assets/gfx_logo_gradient_${mode}@2x.webp 155w,
-               ${process.env.PUBLIC_URL}/img/assets/gfx_logo_gradient_${mode}.webp 78w`}
-              src={`${process.env.PUBLIC_URL}/img/assets/gfx_logo_gradient_${mode}.webp`}
+              srcSet={`/img/assets/gfx_logo_gradient_${mode}@3x.webp 232w,
+               /img/assets/gfx_logo_gradient_${mode}@2x.webp 155w,
+               /img/assets/gfx_logo_gradient_${mode}.webp 78w`}
+              src={`/img/assets/gfx_logo_gradient_${mode}.webp`}
               alt="GFX Logo"
             />
           </BRAND>
           <Tabs />
           <BUTTONS>
             <RefreshWrapper href="/">
-              <img src={`${process.env.PUBLIC_URL}/img/assets/refresh.svg`} alt="" />
+              <img src={`/img/assets/refresh.svg`} alt="" />
             </RefreshWrapper>
             <Connect />
             <More />
@@ -129,7 +129,7 @@ export const Header: FC = () => {
 const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => void }> = ({ collapse, onCollapse }) => {
   const { mode } = useDarkMode()
 
-  const icon = `${process.env.PUBLIC_URL}/img/assets/arrow-down.svg`
+  const icon = `/img/assets/arrow-down.svg`
 
   const handleCollapse = () => {
     onCollapse(!collapse)

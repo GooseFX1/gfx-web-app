@@ -114,7 +114,7 @@ export const Collectible = (): JSX.Element => {
       <UPLOAD_CONTENT>
         <img
           className="collectible-back-icon"
-          src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
+          src={`/img/assets/arrow.svg`}
           alt="back"
           onClick={() => history.push('/NFTs')}
         />
@@ -128,18 +128,14 @@ export const Collectible = (): JSX.Element => {
         <UPLOAD_SECTION>
           <UPLOAD_FILED_CONTAINER_LEFT>
             <UPLOAD_FILED onClick={handleSelectSingleCollectable}>
-              <Image draggable={false} preview={false} src={`${process.env.PUBLIC_URL}/img/assets/single-upload.png`} />
+              <Image draggable={false} preview={false} src={`/img/assets/single-upload.png`} />
               <IMAGE_COUNT_DESC>1/1</IMAGE_COUNT_DESC>
             </UPLOAD_FILED>
             <UPLOAD_TEXT>Single</UPLOAD_TEXT>
           </UPLOAD_FILED_CONTAINER_LEFT>
           <UPLOAD_FILED_CONTAINER_RIGHT>
             <UPLOAD_FILED>
-              <Image
-                draggable={false}
-                preview={false}
-                src={`${process.env.PUBLIC_URL}/img/assets/multiple-upload.png`}
-              />
+              <Image draggable={false} preview={false} src={`/img/assets/multiple-upload.png`} />
               <IMAGE_COUNT_DESC>1/100</IMAGE_COUNT_DESC>
             </UPLOAD_FILED>
             <UPLOAD_TEXT>Multiple</UPLOAD_TEXT>

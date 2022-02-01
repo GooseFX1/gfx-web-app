@@ -271,7 +271,7 @@ export const RightSectionTabs: FC<{
         {desc[status].map((item, index) => (
           <div className={`text text-${index} ${status}`}>{item}</div>
         ))}
-        <img src={`${process.env.PUBLIC_URL}/img/assets/${status}.svg`} alt="" />
+        <img src={`/img/assets/${status}.svg`} alt="" />
       </>
     )
     if (status === 'successful') {
@@ -339,7 +339,7 @@ export const RightSectionTabs: FC<{
           <button onClick={handleButton}>{getButtonText(mode)}</button>
         </Col>
         <Col className="rst-footer-share-button">
-          <img src={`${process.env.PUBLIC_URL}/img/assets/share.svg`} alt="" />
+          <img src={`/img/assets/share.svg`} alt="" />
         </Col>
       </Row>
     </RIGHT_SECTION_TABS>

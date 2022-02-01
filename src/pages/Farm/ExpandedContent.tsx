@@ -229,11 +229,7 @@ export const ExpandedContent = ({ record }: any) => {
             <Row className="m-title" justify="space-between" align="middle">
               <Col>{messageMockData[index][type].title}</Col>
               <Col>
-                <img
-                  className="m-icon"
-                  src={`${process.env.PUBLIC_URL}/img/assets/${messageMockData[index][type].icon}.svg`}
-                  alt=""
-                />
+                <img className="m-icon" src={`/img/assets/${messageMockData[index][type].icon}.svg`} alt="" />
               </Col>
             </Row>
             {type === 'info' ? (
@@ -260,7 +256,7 @@ export const ExpandedContent = ({ record }: any) => {
       <STYLED_EXPANDED_CONTENT>
         <STYLED_LEFT_CONTENT className={`${connected ? 'connected' : 'disconnected'}`}>
           <div className="left-inner">
-            <img src={`${process.env.PUBLIC_URL}/img/assets/farm-logo.svg`} alt="" />
+            <img src={`/img/assets/farm-logo.svg`} alt="" />
             {connected ? (
               <STYLED_STAKED_EARNED_CONTENT>
                 {stakedEarnedMockData.map((item: any) => (

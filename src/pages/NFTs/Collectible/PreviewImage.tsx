@@ -98,7 +98,7 @@ const PreviewImage = ({ file, status }: Props) => {
       <PREVIEW_TEXT>Preview</PREVIEW_TEXT>
       {status === 'failed' ? (
         <IMAGE_CONTAINER>
-          <img className="image-broken" src={`${process.env.PUBLIC_URL}/img/assets/image-broken.svg`} alt="" />
+          <img className="image-broken" src={`/img/assets/image-broken.svg`} alt="" />
         </IMAGE_CONTAINER>
       ) : file ? (
         <Upload

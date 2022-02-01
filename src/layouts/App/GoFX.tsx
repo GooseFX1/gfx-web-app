@@ -55,7 +55,7 @@ export const GoFX: FC = () => {
   return (
     <WRAPPER>
       <CenteredImg>
-        <img src={`${process.env.PUBLIC_URL}/img/crypto/GOFX.svg`} alt="" />
+        <img src={`/img/crypto/GOFX.svg`} alt="" />
       </CenteredImg>
       <span>${price}</span>
     </WRAPPER>

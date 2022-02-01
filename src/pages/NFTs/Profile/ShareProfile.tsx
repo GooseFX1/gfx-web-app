@@ -62,7 +62,7 @@ export const ShareProfile = ({ visible, handleCancel }: Props) => {
         {['twitter', 'telegram', 'facebook', 'copy link'].map((item) => (
           <div className="social-item" key={item}>
             <div className="social-icon">
-              <img src={`${process.env.PUBLIC_URL}/img/assets/${item.replace(' ', '-')}-circle.svg`} alt="" />
+              <img src={`/img/assets/${item.replace(' ', '-')}-circle.svg`} alt="" />
             </div>
             <div className="social-text">{item}</div>
           </div>

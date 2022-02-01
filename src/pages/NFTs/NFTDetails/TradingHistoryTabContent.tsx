@@ -113,7 +113,7 @@ const columns = [
     render: (value: string) => (
       <Row gutter={5} align="middle">
         <Col>
-          <img className="thtc-solana-logo" src={`${process.env.PUBLIC_URL}/img/assets/solana-logo.png`} alt="" />
+          <img className="thtc-solana-logo" src={`/img/assets/solana-logo.png`} alt="" />
         </Col>
         <Col className="price-value">{value}</Col>
       </Row>
@@ -160,7 +160,7 @@ const bidColumns = [
     render: (value: string) => (
       <Row gutter={5} align="middle">
         <Col>
-          <img className="thtc-solana-logo" src={`${process.env.PUBLIC_URL}/img/assets/solana-logo.png`} alt="" />
+          <img className="thtc-solana-logo" src={`/img/assets/solana-logo.png`} alt="" />
         </Col>
         <Col className="price-value">{value}</Col>
       </Row>

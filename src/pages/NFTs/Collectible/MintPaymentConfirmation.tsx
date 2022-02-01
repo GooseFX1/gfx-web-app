@@ -96,7 +96,7 @@ const MintPaymentConfirmation = (props: {
     <CONTAINER>
       <img
         className="upload-NFT-back-icon"
-        src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
+        src={`/img/assets/arrow.svg`}
         alt="back"
         onClick={() => props.returnToDetails(false)}
       />
@@ -113,7 +113,7 @@ const MintPaymentConfirmation = (props: {
           {cost ? (
             <p>
               <span style={{ marginRight: '8px' }}>
-                <img src={`${process.env.PUBLIC_URL}/img/assets/SOL-icon.svg`} alt={'sol-symbol'} />
+                <img src={`/img/assets/SOL-icon.svg`} alt={'sol-symbol'} />
               </span>
               {cost.toFixed(5)}
             </p>

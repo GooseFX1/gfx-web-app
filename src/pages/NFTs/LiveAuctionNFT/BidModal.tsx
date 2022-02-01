@@ -242,7 +242,7 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
             <Row className="m-title" justify="space-between" align="middle">
               <Col>Live auction bid sucessfull!</Col>
               <Col>
-                <img className="m-icon" src={`${process.env.PUBLIC_URL}/img/assets/bid-success-icon.svg`} alt="" />
+                <img className="m-icon" src={`/img/assets/bid-success-icon.svg`} alt="" />
               </Col>
             </Row>
             <div>Genesis #3886, Solcities</div>
@@ -315,7 +315,7 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
       )}
       <Row className="bm-verified" align="middle" gutter={8}>
         <Col>
-          <img className="bm-check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`} alt="" />
+          <img className="bm-check-icon" src={`/img/assets/check-icon.png`} alt="" />
         </Col>
         <Col>This is a verfied creator</Col>
       </Row>

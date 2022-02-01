@@ -103,7 +103,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
                       className="img-current avatar-image"
                       src={`${
                         !sessionUser.profile_pic_link || sessionUser.profile_pic_link === ''
-                          ? `${process.env.PUBLIC_URL}/img/assets/avatar.png}`
+                          ? `/img/assets/avatar.png}`
                           : sessionUser.profile_pic_link
                       }`}
                       alt="profile"
