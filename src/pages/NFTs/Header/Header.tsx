@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, MouseEventHandler } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { useWalletModal } from '../../../context'
 import { useHistory } from 'react-router-dom'
 import { Image } from 'antd'
 import { ButtonWrapper } from '../NFTButton'
@@ -61,6 +62,28 @@ const AVATAR_NFT = styled(Image)`
   height: 56px;
   cursor: pointer;
 `
+const CONNECT_BTN = styled.button`
+  padding: 0 ${({ theme }) => theme.margins['2x']};
+  ${({ theme }) => theme.flexCenter}
+  height: ${({ theme }) => theme.margins['5x']};
+  border: none;
+  ${({ theme }) => theme.roundedBorders}
+  ${({ theme }) => theme.smallShadow}
+  background-color: ${({ theme }) => theme.secondary3};
+  transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.secondary2};
+  }
+
+  span {
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    white-space: nowrap;
+  }
+`
 
 export const Header = ({ setFilter, filter }) => {
   const history = useHistory()
@@ -68,6 +91,7 @@ export const Header = ({ setFilter, filter }) => {
   const { connected, publicKey } = useWallet()
   const [isFirstTimeUser, setIsFirstTimeUser] = useLocalStorageState(`sessionUserInit`, 'true')
   const [visibleCompletePopup, setVisibleCompletePopup] = useState<boolean>(false)
+  const { setVisible: setModalVisible } = useWalletModal()
 
   useEffect(() => {
     if (connected && publicKey) {
@@ -105,13 +129,22 @@ export const Header = ({ setFilter, filter }) => {
 
   const goProfile = () => history.push(`/NFTs/profile`)
 
+  const handleWalletModal: MouseEventHandler<HTMLButtonElement> = useCallback(
+    (event) => {
+      if (!event.defaultPrevented && !connected && !publicKey) {
+        setModalVisible(true)
+      }
+    },
+    [setModalVisible, publicKey, connected]
+  )
+
   return (
     <HEADER_WRAPPER>
       <PopupCompleteProfile visible={visibleCompletePopup} handleOk={onContinue} handleCancel={onSkip} />
       <AVATAR_WRAPPER>
         {connected && publicKey && (
           <AVATAR_NFT
-            fallback={`${process.env.PUBLIC_URL}/img/assets/avatar.png`}
+            fallback={`${window.origin}/img/assets/avatar.png`}
             src={sessionUser ? sessionUser.profile_pic_link : ''}
             preview={false}
             onClick={goProfile}
@@ -121,9 +154,15 @@ export const Header = ({ setFilter, filter }) => {
       <SearchBar setFilter={setFilter} filter={filter} />
       <BUTTON_SELECTION>
         <Categories categories={categories} />
-        <CREATE onClick={onCreateCollectible}>
-          <span>Create</span>
-        </CREATE>
+        {connected && publicKey ? (
+          <CREATE onClick={onCreateCollectible}>
+            <span>Create</span>
+          </CREATE>
+        ) : (
+          <CONNECT_BTN onClick={handleWalletModal}>
+            <span>Connect Wallet</span>
+          </CONNECT_BTN>
+        )}
       </BUTTON_SELECTION>
     </HEADER_WRAPPER>
   )
