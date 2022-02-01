@@ -41,6 +41,7 @@ const WRAPPER = styled.button<{ $connected: boolean }>`
   ${({ theme }) => theme.smallShadow}
   background-color: ${({ theme }) => theme.secondary3};
   transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
+  cursor: pointer;
 
   &:hover {
     background-color: ${({ theme }) => theme.secondary2};
@@ -60,7 +61,6 @@ const WRAPPER = styled.button<{ $connected: boolean }>`
     font-size: 12px;
     font-weight: bold;
     color: white;
-    cursor: pointer;
   }
 `
 
@@ -79,7 +79,7 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
           }}
         >
           <span>Copy Address</span>
-          <img src={`${process.env.PUBLIC_URL}/img/assets/copy_address.svg`} alt="copy_address" />
+          <img src={`${window.origin}/img/assets/copy_address.svg`} alt="copy_address" />
         </MenuItem>
       )}
       {wallet && (
@@ -89,7 +89,7 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
           }}
         >
           <span>Change Wallet</span>
-          <img src={`${process.env.PUBLIC_URL}/img/assets/wallet.svg`} alt="change_wallet" />
+          <img src={`${window.origin}/img/assets/wallet.svg`} alt="change_wallet" />
         </MenuItem>
       )}
       {wallet && (
@@ -100,7 +100,7 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
           }}
         >
           <span>Disconnect</span>
-          <img src={`${process.env.PUBLIC_URL}/img/assets/disconnect.svg`} alt="disconnect" />
+          <img src={`${window.origin}/img/assets/disconnect.svg`} alt="disconnect" />
         </MenuItem>
       )}
     </Menu>
