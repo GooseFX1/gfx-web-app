@@ -255,7 +255,7 @@ export const UpLoadNFT = (): JSX.Element => {
       const res = await mintNFT(
         connection,
         wallet,
-        ENDPOINTS[0].name,
+        ENDPOINTS[2].name,
         filesForUpload,
         nftMintingData,
         setNFTcreateProgress,
@@ -270,7 +270,7 @@ export const UpLoadNFT = (): JSX.Element => {
       }
     } catch (e: any) {
       notify({
-        message: `${e.message}: ${e.name}`,
+        message: `${e.name}: ${e.message}`,
         type: 'error'
       })
     } finally {
@@ -281,6 +281,7 @@ export const UpLoadNFT = (): JSX.Element => {
 
   const handleCompletedMint = (metadataAccount: string, name: string) => {
     setCongrats(true)
+
     setTimeout(() => {
       history.push({
         pathname: '/NFTs/profile',
@@ -345,7 +346,7 @@ export const UpLoadNFT = (): JSX.Element => {
       <UPLOAD_CONTENT>
         <img
           className="upload-NFT-back-icon"
-          src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
+          src={`/img/assets/arrow.svg`}
           alt="back"
           onClick={() => history.push('/NFTs/create')}
         />
@@ -410,9 +411,7 @@ export const UpLoadNFT = (): JSX.Element => {
                       <div className={`close-btn ${mode}`} onClick={() => handleRemoveAttribute(item.id)}>
                         <img
                           className="close-white-icon"
-                          src={`${process.env.PUBLIC_URL}/img/assets/${
-                            mode === 'dark' ? 'close-gray' : 'remove-property'
-                          }.svg`}
+                          src={`/img/assets/${mode === 'dark' ? 'close-gray' : 'remove-property'}.svg`}
                           alt=""
                         />
                       </div>

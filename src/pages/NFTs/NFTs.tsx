@@ -1,4 +1,5 @@
-import React, { FC } from 'react'
+import React, { useEffect, FC } from 'react'
+import { useRouteMatch, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import NFTHome from './Home/NFTHome'
 import { MyCreatedNFT } from './CreateNFT'
@@ -11,9 +12,15 @@ import { Collection } from './Collection'
 import { LiveAuctionNFT } from './LiveAuctionNFT'
 import { FixedPriceNFT } from './FixedPriceNFT'
 import { OpenBidNFT } from './OpenBidNFT'
-import { useRouteMatch, Route, Switch } from 'react-router-dom'
-import { NFTProfileProvider, NFTCollectionProvider, NFTDetailsProvider } from '../../context'
 import { OverlayProvider } from '../../context/overlay'
+import {
+  NFTProfileProvider,
+  NFTCollectionProvider,
+  NFTDetailsProvider,
+  ENDPOINTS,
+  useConnectionConfig
+} from '../../context'
+import { notify } from '../../utils'
 
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -46,6 +53,14 @@ const SCROLLING_OVERLAY = styled.div`
 
 export const NFTs: FC = () => {
   const { path } = useRouteMatch()
+  const { endpoint, setEndpoint } = useConnectionConfig()
+
+  useEffect(() => {
+    if (endpoint !== ENDPOINTS[1].endpoint) {
+      notify({ message: `Switched to ${ENDPOINTS[1].network}` })
+      setEndpoint(ENDPOINTS[1].endpoint)
+    }
+  }, [endpoint, setEndpoint])
 
   return (
     <OverlayProvider>
