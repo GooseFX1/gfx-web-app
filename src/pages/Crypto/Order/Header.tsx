@@ -114,7 +114,7 @@ export const Header: FC = () => {
   return (
     <WRAPPER>
       <ICON>
-        <img src={`${process.env.PUBLIC_URL}/img/crypto/${symbol}.svg`} alt="" />
+        <img src={`/img/crypto/${symbol}.svg`} alt="" />
       </ICON>
       <INFO>
         <div>
@@ -124,7 +124,7 @@ export const Header: FC = () => {
           ) : (
             <CHANGE>
               <CenteredImg>
-                <img src={`${process.env.PUBLIC_URL}/img/assets/${change24HIcon}`} alt="" />
+                <img src={`/img/assets/${change24HIcon}`} alt="" />
               </CenteredImg>
               <span>{marketData.change24H}</span>
             </CHANGE>

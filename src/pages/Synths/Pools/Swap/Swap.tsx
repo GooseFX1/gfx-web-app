@@ -89,7 +89,7 @@ const SwapContent: FC = () => {
         <style>{localCSS}</style>
         <From height={height} />
         <SWITCH measurements={80} onClick={switchTokens}>
-          <img src={`${process.env.PUBLIC_URL}/img/assets/swap_switch_${mode}_mode.svg`} alt="switch" />
+          <img src={`/img/assets/swap_switch_${mode}_mode.svg`} alt="switch" />
         </SWITCH>
         <To height={height} />
       </SpaceBetweenDiv>

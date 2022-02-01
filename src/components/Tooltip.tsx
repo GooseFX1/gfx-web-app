@@ -24,7 +24,7 @@ export const Tooltip: FC<{
 }> = ({ dark, lite, placement = 'topLeft', color = '#4b4b4b', children }) => {
   const { mode } = useDarkMode()
 
-  const icon = `${process.env.PUBLIC_URL}/img/assets/tooltip_${dark ? 'dark' : lite ? 'lite' : mode}_mode_icon.svg`
+  const icon = `/img/assets/tooltip_${dark ? 'dark' : lite ? 'lite' : mode}_mode_icon.svg`
 
   return (
     <ANTDTooltip

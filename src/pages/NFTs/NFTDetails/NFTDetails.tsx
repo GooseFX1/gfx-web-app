@@ -62,7 +62,7 @@ export const NFTDetails: FC<{
     <NFT_DETAILS {...rest}>
       <img
         className="nd-back-icon"
-        src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
+        src={`/img/assets/arrow.svg`}
         alt="back"
         onClick={() => {
           backUrl ? history.push(backUrl) : history.goBack()

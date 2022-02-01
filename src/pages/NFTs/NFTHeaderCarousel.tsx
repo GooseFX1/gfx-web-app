@@ -146,7 +146,7 @@ const NFTHeaderCarousel: FC<{ isBig?: boolean; isBigVisible?: boolean }> = ({ is
     <HEADER_BIG_SLIDER isBigVisible={isBigVisible} {...settings}>
       {dummyData.map((dummy) => {
         return (
-          <BIG_SLIDER_WRAPPER key={dummy.id} imgUrl={`${process.env.PUBLIC_URL}/img/assets/image.png`}>
+          <BIG_SLIDER_WRAPPER key={dummy.id} imgUrl={`/img/assets/image.png`}>
             <CENTER_TEXT>{dummy.text}</CENTER_TEXT>
             <BUTTON_APPLY>
               <span>Apply</span>
@@ -162,7 +162,7 @@ const NFTHeaderCarousel: FC<{ isBig?: boolean; isBigVisible?: boolean }> = ({ is
           <SMALL_SLIDER_WRAPPER
             isBigVisible={isBigVisible}
             key={dummy.id}
-            imgUrl={`${process.env.PUBLIC_URL}/img/assets/image.png`}
+            imgUrl={`/img/assets/image.png`}
             // imgUrl={`https://placeimg.com/1250/513`}
           >
             <CENTER_SMALL_TEXT>{dummy.text}</CENTER_SMALL_TEXT>

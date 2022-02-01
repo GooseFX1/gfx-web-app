@@ -22,7 +22,7 @@ export const SynthToken: FC<{ size: 'small' | 'medium' | 'large'; synth: string 
   return (
     <WRAPPER $size={size}>
       <CenteredImg>
-        <img src={`${process.env.PUBLIC_URL}/img/synth/${synth}.svg`} alt="" />
+        <img src={`/img/synth/${synth}.svg`} alt="" />
       </CenteredImg>
       <span>{synth}</span>
     </WRAPPER>

@@ -172,14 +172,14 @@ export const RightSection: FC<{
       </Row>
       <Row align="middle" gutter={8} className="rs-prices">
         <Col>
-          <img className="rs-solana-logo" src={`${process.env.PUBLIC_URL}/img/assets/solana-logo.png`} alt="" />
+          <img className="rs-solana-logo" src={`/img/assets/solana-logo.png`} alt="" />
         </Col>
         <Col className="rs-price">{`${moneyFormatter(price)} SOL`}</Col>
         <Col className="rs-fiat">{`(${fiat})`}</Col>
         {!isMintItemView && (
           <Col>
             <Row>
-              <img src={`${process.env.PUBLIC_URL}/img/assets/increase-arrow.svg`} alt="" />
+              <img src={`/img/assets/increase-arrow.svg`} alt="" />
               <div className="rs-percent">{percent}</div>
             </Row>
           </Col>
@@ -196,7 +196,7 @@ export const RightSection: FC<{
         </Col>
         {isForCharity && (
           <Row align="middle">
-            <img src={`${process.env.PUBLIC_URL}/img/assets/heart-charity.svg`} alt="" />
+            <img src={`/img/assets/heart-charity.svg`} alt="" />
             <div className="rs-charity-text">Auction for charity</div>
           </Row>
         )}
@@ -208,11 +208,7 @@ export const RightSection: FC<{
             <Row align="middle">
               <div className="gi-item-thumbnail-wrapper">
                 <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-                <img
-                  className="gi-item-check-icon"
-                  src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`}
-                  alt=""
-                />
+                <img className="gi-item-check-icon" src={`/img/assets/check-icon.png`} alt="" />
               </div>
               <div className="gi-item-title">{creator}</div>
             </Row>
@@ -232,7 +228,7 @@ export const RightSection: FC<{
           <Row align="middle">
             <div className="gi-item-icon">
               <img
-                src={`${process.env.PUBLIC_URL}/img/assets/${
+                src={`/img/assets/${
                   nftMetadata.properties.category === 'image' ? 'art' : nftMetadata.properties.category
                 }.svg`}
                 alt=""

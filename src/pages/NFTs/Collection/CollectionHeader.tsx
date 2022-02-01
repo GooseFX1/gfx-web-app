@@ -154,23 +154,14 @@ export const CollectionHeader = ({ setFilter, filter }) => {
 
   return (
     <COLLECTION_HEADER>
-      <img
-        className="collection-back-icon"
-        src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
-        alt="back"
-        onClick={() => history.goBack()}
-      />
+      <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
       <Row justify="center">
         <Col>
           <img className="collection-avatar" src={singleCollection.profile_pic_link} alt="" />
           <div className="collection-name-wrap">
             <span className="collection-name">{singleCollection.collection_name}</span>
             {singleCollection.is_verified && (
-              <img
-                className="collection-check-icon"
-                src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`}
-                alt=""
-              />
+              <img className="collection-check-icon" src={`/img/assets/check-icon.png`} alt="" />
             )}
           </div>
         </Col>
@@ -191,11 +182,7 @@ export const CollectionHeader = ({ setFilter, filter }) => {
         <Sort />
         <DROPDOWN overlay={menu} trigger={['click']} placement="bottomRight" align={{ offset: [0, 26] }}>
           <Button>
-            <img
-              className="collection-more-icon"
-              src={`${process.env.PUBLIC_URL}/img/assets/more_icon.svg`}
-              alt="more"
-            />
+            <img className="collection-more-icon" src={`/img/assets/more_icon.svg`} alt="more" />
           </Button>
         </DROPDOWN>
       </Row>

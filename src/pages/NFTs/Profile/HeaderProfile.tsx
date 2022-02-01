@@ -60,25 +60,20 @@ export const HeaderProfile = ({ isExplore }: Props) => {
     <StyledHeaderProfile mode={mode}>
       <img
         className="back-icon"
-        src={`${process.env.PUBLIC_URL}/img/assets/arrow.svg`}
+        src={`/img/assets/arrow.svg`}
         alt="arrow-icon"
         onClick={() => history.push(isExplore ? '/NFTs/profile' : '/NFTs')}
       />
       <div className="avatar-profile-wrap">
         <Image
           className="avatar-profile"
-          fallback={`${process.env.PUBLIC_URL}/img/assets/avatar.png`}
+          fallback={`/img/assets/avatar.png`}
           src={sessionUser.profile_pic_link}
           preview={false}
           alt={sessionUser.nickname}
         />
         {sessionUser.user_id && (
-          <img
-            className="edit-icon"
-            src={`${process.env.PUBLIC_URL}/img/assets/edit.svg`}
-            alt=""
-            onClick={() => setVisible(true)}
-          />
+          <img className="edit-icon" src={`/img/assets/edit.svg`} alt="" onClick={() => setVisible(true)} />
         )}
       </div>
       <div className="name-wrap">
@@ -86,7 +81,7 @@ export const HeaderProfile = ({ isExplore }: Props) => {
         {sessionUser.is_verified && (
           <img
             className="check-icon"
-            src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`}
+            src={`/img/assets/check-icon.png`}
             alt=""
             onClick={() => history.push('/NFTs/profile/explore')}
           />
@@ -102,22 +97,22 @@ export const HeaderProfile = ({ isExplore }: Props) => {
         )}
         {sessionUser.twitter_link && (
           <a className="social-item" href={sessionUser.twitter_link} target={'_blank'} rel={'noreferrer'}>
-            <img className="social-icon" src={`${process.env.PUBLIC_URL}/img/assets/twitter.svg`} alt="" />
+            <img className="social-icon" src={`/img/assets/twitter.svg`} alt="" />
           </a>
         )}
         {sessionUser.instagram_link && (
           <a className="social-item" href={sessionUser.instagram_link} target={'_blank'} rel={'noreferrer'}>
-            <img className="social-icon" src={`${process.env.PUBLIC_URL}/img/assets/instagram.svg`} alt="" />
+            <img className="social-icon" src={`/img/assets/instagram.svg`} alt="" />
           </a>
         )}
         {sessionUser.facebook_link && (
           <a className="social-item" href={sessionUser.facebook_link} target={'_blank'} rel={'noreferrer'}>
-            <img className="social-icon" src={`${process.env.PUBLIC_URL}/img/assets/facebook.svg`} alt="" />
+            <img className="social-icon" src={`/img/assets/facebook.svg`} alt="" />
           </a>
         )}
         {sessionUser.youtube_link && (
           <a className="social-item-yt" href={sessionUser.youtube_link} target={'_blank'} rel={'noreferrer'}>
-            <img className="social-icon" src={`${process.env.PUBLIC_URL}/img/assets/youtube.png`} alt="" />
+            <img className="social-icon" src={`/img/assets/youtube.png`} alt="" />
           </a>
         )}
       </div>
@@ -129,7 +124,7 @@ export const HeaderProfile = ({ isExplore }: Props) => {
 
           <StyledDropdown overlay={menu(setVisibleShareProfile)} trigger={['click']} placement="bottomRight" arrow>
             <Button>
-              <img className="more-icon" src={`${process.env.PUBLIC_URL}/img/assets/more_icon.svg`} alt="more" />
+              <img className="more-icon" src={`/img/assets/more_icon.svg`} alt="more" />
             </Button>
           </StyledDropdown>
         </div>

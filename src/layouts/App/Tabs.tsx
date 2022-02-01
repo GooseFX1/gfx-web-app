@@ -113,7 +113,7 @@ export const Tabs: FC = () => {
         <TAB key={index} onMouseEnter={() => setHovered(index)} onMouseLeave={() => setHovered(-1)} to={path}>
           <TAB_ICON>
             {(() => {
-              const icon = `${process.env.PUBLIC_URL}/img/assets${path}_icon.svg`
+              const icon = `/img/assets${path}_icon.svg`
 
               if (cleanedPathName === path || hovered === index) {
                 return mode === 'dark' ? <SVGToWhite src={icon} alt="" /> : <SVGToPrimary2 src={icon} alt="" />

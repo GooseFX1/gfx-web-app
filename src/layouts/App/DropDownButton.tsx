@@ -30,7 +30,7 @@ const Overlay: FC<{
       {options.map((item) => (
         <MenuItem onClick={() => onOptionClick(item)}>
           <span>{item.displayName}</span>
-          <img src={`${process.env.PUBLIC_URL}/img/assets/${item.icon}.svg`} alt="disconnect" />
+          <img src={`/img/assets/${item.icon}.svg`} alt="disconnect" />
         </MenuItem>
       ))}
     </Menu>

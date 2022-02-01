@@ -79,7 +79,7 @@ const Overlay: FC<{
       filteredMarkets.map(({ name }, index) => (
         <MARKET key={index} onClick={() => handleClick(name)}>
           <CenteredImg>
-            <img src={`${process.env.PUBLIC_URL}/img/crypto/${getAskSymbolFromPair(name)}.svg`} alt="" />
+            <img src={`/img/crypto/${getAskSymbolFromPair(name)}.svg`} alt="" />
           </CenteredImg>
           <span>{name}</span>
         </MARKET>
@@ -99,7 +99,7 @@ const Overlay: FC<{
         value={filterKeywords}
       />
       <MAGNIFYING_GLASS>
-        <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/magnifying_glass.svg`} alt="" />
+        <SVGToWhite src={`/img/assets/magnifying_glass.svg`} alt="" />
       </MAGNIFYING_GLASS>
       <WRAPPER>{markets}</WRAPPER>
     </SELECTOR>

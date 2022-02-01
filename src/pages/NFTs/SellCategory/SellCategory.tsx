@@ -64,7 +64,7 @@ export const SellCategory = ({ category, setCategory }: ICategory) => {
           <div className="item-wrap" onClick={() => setCategory(index)}>
             <img
               className={`${index === category ? 'active' : ''} item-image`}
-              src={`${process.env.PUBLIC_URL}/img/assets/${item?.icon}.svg`}
+              src={`/img/assets/${item?.icon}.svg`}
               alt=""
             />
             <div className="item-text">{item?.name}</div>

@@ -70,10 +70,7 @@ export const PairStats: FC<{ decimals: number; pair: string; type: MarketType }>
     }
   }
 
-  const assetIcon = useMemo(
-    () => `${process.env.PUBLIC_URL}/img/${type}/${type === 'synth' ? `g${symbol}` : symbol}.svg`,
-    [symbol, type]
-  )
+  const assetIcon = useMemo(() => `/img/${type}/${type === 'synth' ? `g${symbol}` : symbol}.svg`, [symbol, type])
 
   return (
     <STATS onClick={handleClick}>
@@ -89,7 +86,7 @@ export const PairStats: FC<{ decimals: number; pair: string; type: MarketType }>
         ) : (
           <div>
             <CHANGE_ICON>
-              <img src={`${process.env.PUBLIC_URL}/img/assets/${change24HIcon}`} alt="" />
+              <img src={`/img/assets/${change24HIcon}`} alt="" />
             </CHANGE_ICON>
             <span>{price.change24H}</span>
           </div>
