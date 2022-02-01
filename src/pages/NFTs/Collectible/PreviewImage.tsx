@@ -102,7 +102,7 @@ const PreviewImage = ({ file, status }: Props) => {
         </IMAGE_CONTAINER>
       ) : file ? (
         <Upload
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          beforeUpload={(e) => false}
           listType="picture-card"
           maxCount={1}
           fileList={[file]}

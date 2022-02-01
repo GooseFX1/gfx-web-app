@@ -254,6 +254,7 @@ export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingDat
             onChange={handleFileChange}
             accept={acceptableFiles(nftMintingData.properties?.category)}
             onPreview={() => {}}
+            beforeUpload={(e) => false}
           >
             <div className="image-wrap"></div>
             {!localFile && (
