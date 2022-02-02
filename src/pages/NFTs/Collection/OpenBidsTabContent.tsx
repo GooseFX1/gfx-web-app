@@ -4,7 +4,6 @@ import styled, { css } from 'styled-components'
 import { Card } from './Card'
 import { useNFTCollections } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
-import { NFT_API_ENDPOINTS, fetchSingleCollectionTabContent } from '../../../api/NFTs'
 import { Loader } from '../../../components'
 
 const WRAPPER = styled.div`
@@ -37,23 +36,17 @@ const WRAPPED_LOADER = styled.div`
 `
 
 export const OpenBidsTabContent = ({ filter, ...rest }) => {
-  const { singleCollection } = useNFTCollections()
+  const { openBidWithinCollection } = useNFTCollections()
   const history = useHistory()
   const [localOpenBid, setLocalOpenBid] = useState<Array<ISingleNFT>>()
   const [fileredLocalOpenBid, setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>()
-  const [err, setErr] = useState(false)
 
   useEffect(() => {
-    fetchSingleCollectionTabContent(NFT_API_ENDPOINTS.OPEN_BID, `${singleCollection.collection_id}`).then((res) => {
-      if (res.response && res.response.status !== 200) {
-        setErr(true)
-      }
-
-      setLocalOpenBid(res.data)
-    })
-
+    if (openBidWithinCollection) {
+      setLocalOpenBid(openBidWithinCollection.open_bid)
+    }
     return () => {}
-  }, [])
+  }, [openBidWithinCollection])
 
   useEffect(() => {
     if (localOpenBid) {
@@ -78,8 +71,6 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
             <Loader />
           </WRAPPED_LOADER>
         </EMPTY_MSG>
-      ) : err ? (
-        <EMPTY_MSG>Error loading open bid NFTs</EMPTY_MSG>
       ) : fileredLocalOpenBid.length > 0 ? (
         <OPEN_BIDS_TAB {...rest}>
           {fileredLocalOpenBid.map((item: ISingleNFT) => (
