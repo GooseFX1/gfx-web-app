@@ -143,16 +143,46 @@ interface Props {
 
 export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingData, setNftMintingData }: Props) => {
   const [coverArtError, setCoverArtError] = useState<string>()
-  const [coverFile, setCoverFile] = useState<File | undefined>()
+  // const [coverFile, setCoverFile] = useState<File | undefined>()
   const [mainFile, setMainFile] = useState<File | undefined>()
   const [customURL, setCustomURL] = useState<string>('')
   const [localFile, setLocalFile] = useState<any>()
 
-  useEffect(() => {
-    handleDone()
-  }, [coverFile, mainFile, customURL])
+  const handleFileChange = async (info: UploadChangeParam<UploadFile<any>>) => {
+    let mainFile = info.fileList[0]
 
-  const handleDone = async () => {
+    if (mainFile) {
+      mainFile.error = null
+      delete mainFile.status
+    }
+    setLocalFile(mainFile)
+    setPreviewImage(mainFile)
+  }
+
+  const handleBeforeUpload = (file: File) => {
+    setFile(file)
+    return false
+  }
+
+  const setFile = async (file: File) => {
+    if (!file) {
+      return
+    }
+
+    const sizeKB = file.size / 1024
+
+    if (sizeKB < 25) {
+      setCoverArtError(
+        `The file ${file.name} is too small. It is ${Math.round(10 * sizeKB) / 10}KB but should be at least 25KB.`
+      )
+      return
+    }
+
+    setCoverArtError(undefined)
+    setFileForMint(file)
+  }
+
+  const setFileForMint = async (coverFile: File) => {
     setNftMintingData({
       ...nftMintingData,
       properties: {
@@ -178,41 +208,24 @@ export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingDat
 
     const url = await fetch(customURL).then((res) => res.blob())
     const files = [coverFile, mainFile, customURL ? new File([url], customURL) : ''].filter((f) => f) as File[]
+
     setFilesForUpload(files)
-  }
-
-  const handleFileChange = async (info: UploadChangeParam<UploadFile<any>>) => {
-    let mainFile = info.fileList[0]
-    if (mainFile) {
-      mainFile.error = null
-      delete mainFile.status
-    }
-    setLocalFile(mainFile)
-    setPreviewImage(mainFile)
-
-    const file = info.file.originFileObj
-
-    if (!file) {
-      return
-    }
-
-    const sizeKB = file.size / 1024
-
-    if (sizeKB < 25) {
-      setCoverArtError(
-        `The file ${file.name} is too small. It is ${Math.round(10 * sizeKB) / 10}KB but should be at least 25KB.`
-      )
-      return
-    }
-
-    setCoverFile(file)
-    setCoverArtError(undefined)
   }
 
   const onRemove = () => {
     setLocalFile(undefined)
     setPreviewImage(undefined)
     setCoverArtError(undefined)
+
+    setNftMintingData({
+      ...nftMintingData,
+      properties: {
+        ...nftMintingData.properties,
+        files: []
+      },
+      image: '',
+      animation_url: ''
+    })
   }
 
   const acceptableFiles = (category: MetadataCategory) => {
@@ -254,7 +267,8 @@ export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingDat
             onChange={handleFileChange}
             accept={acceptableFiles(nftMintingData.properties?.category)}
             onPreview={() => {}}
-            beforeUpload={(e) => false}
+            beforeUpload={handleBeforeUpload}
+            onRemove={onRemove}
           >
             <div className="image-wrap"></div>
             {!localFile && (
