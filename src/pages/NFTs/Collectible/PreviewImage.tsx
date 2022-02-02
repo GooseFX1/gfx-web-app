@@ -14,7 +14,7 @@ const PREVIEW_CONTAINER = styled.div`
   width: 90%;
   aspect-ratio: 1;
   align-self: flex-end;
-  padding: ${({ theme }) => theme.margins['2.5x']};
+  padding: ${({ theme }) => theme.margins['2.5x']} ${({ theme }) => theme.margins['5x']};
 
   .ant-upload-list-picture-card-container {
     width: 100%;
