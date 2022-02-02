@@ -1,18 +1,22 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react'
 import {
   INFTCollectionConfig,
+  IOpenBidWithinCollection,
+  IFixedPriceWithinCollection,
   NFTCollection,
   NFTFeaturedCollection,
   NFTUpcomingCollection
 } from '../types/nft_collections.d'
 import apiClient from '../api'
-import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
+import { NFT_API_BASE, NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../api/NFTs'
 
 export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [singleCollection, setSingleCollection] = useState<NFTCollection>()
   const [allCollections, setAllCollections] = useState<Array<NFTCollection>>([])
   const [featuredCollections, setFeaturedCollections] = useState<Array<NFTFeaturedCollection>>([])
   const [upcomingCollections, setUpcomingCollections] = useState<Array<NFTUpcomingCollection>>([])
+  const [fixedPriceWithinCollection, setFixedPriceWithinCollection] = useState<IFixedPriceWithinCollection>()
+  const [openBidWithinCollection, setOpenBidWithinCollection] = useState<IOpenBidWithinCollection>()
 
   const fetchAllCollections = useCallback(async (loadingCallback: (isLoading: boolean) => void) => {
     try {
@@ -47,10 +51,36 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
       const res = await apiClient(NFT_API_BASE).get(
         `${NFT_API_ENDPOINTS.SINGLE_COLLECTION}?${isName ? 'collection_name' : 'collection_id'}=${paramValue}`
       )
-      const collectionData = await res.data[0]
+      const collectionData = await res.data
       setSingleCollection(collectionData)
-      return await res
+      const fpData = await fetchFixedPriceWithinCollection(collectionData.collection_id)
+      setFixedPriceWithinCollection(fpData)
+      const obData = await fetchOpenBidsWithinCollection(collectionData.collection_id)
+      setOpenBidWithinCollection(obData)
+      return res
     } catch (err) {
+      return err
+    }
+  }, [])
+
+  const fetchFixedPriceWithinCollection = useCallback(async (id: number): Promise<any> => {
+    try {
+      const res = await fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.FIXED_PRICE, `${id}`)
+      const collectionData = await res.data
+      return { ...collectionData, nft_data: collectionData.nft_data.slice(0, 25) }
+    } catch (err) {
+      console.error(err)
+      return err
+    }
+  }, [])
+
+  const fetchOpenBidsWithinCollection = useCallback(async (id: number): Promise<any> => {
+    try {
+      const res = await fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.OPEN_BID, `${id}`)
+      const collectionData = await res.data
+      return { ...collectionData, open_bid: collectionData.open_bid.slice(0, 25) }
+    } catch (err) {
+      console.error(err)
       return err
     }
   }, [])
@@ -65,7 +95,9 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
         fetchFeaturedCollections,
         fetchUpcomingCollections,
         singleCollection,
-        fetchSingleCollection
+        fetchSingleCollection,
+        fixedPriceWithinCollection,
+        openBidWithinCollection
       }}
     >
       {children}
@@ -89,6 +121,8 @@ export const useNFTCollections = (): INFTCollectionConfig => {
     fetchFeaturedCollections: context.fetchFeaturedCollections,
     fetchUpcomingCollections: context.fetchUpcomingCollections,
     singleCollection: context.singleCollection,
-    fetchSingleCollection: context.fetchSingleCollection
+    fetchSingleCollection: context.fetchSingleCollection,
+    fixedPriceWithinCollection: context.fixedPriceWithinCollection,
+    openBidWithinCollection: context.openBidWithinCollection
   }
 }
