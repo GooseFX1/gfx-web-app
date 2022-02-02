@@ -4,7 +4,7 @@ import { Header } from '../Header'
 import NFTHeaderCarousel from '../NFTHeaderCarousel'
 import NFTFooter from '../NFTFooter'
 import CollectionCarousel from '../CollectionCarousel'
-import { NFTCollectionProvider, useNFTCollections } from '../../../context'
+import { useNFTCollections } from '../../../context'
 import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
 
 const SCROLLING_CONTENT = styled.div`
@@ -99,12 +99,4 @@ const NFTLandingPage: FC = (): JSX.Element => {
   )
 }
 
-const NFTHome: FC = (): JSX.Element => {
-  return (
-    <NFTCollectionProvider>
-      <NFTLandingPage />
-    </NFTCollectionProvider>
-  )
-}
-
-export default NFTHome
+export default NFTLandingPage

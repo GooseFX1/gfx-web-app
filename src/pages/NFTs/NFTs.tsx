@@ -1,7 +1,7 @@
 import React, { useEffect, FC } from 'react'
 import { useRouteMatch, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
-import NFTHome from './Home/NFTHome'
+import NFTLandingPage from './Home/NFTHome'
 import { MyCreatedNFT } from './CreateNFT'
 import { Collectible } from './Collectible'
 import { UpLoadNFT } from './Collectible/UpLoadNFT'
@@ -71,7 +71,7 @@ export const NFTs: FC = () => {
               <BODY_NFT>
                 <Switch>
                   <Route exact path={path}>
-                    <NFTHome />
+                    <NFTLandingPage />
                   </Route>
                   <Route exact path={['/NFTs/profile', '/NFTs/profile/:userId']}>
                     <SCROLLING_OVERLAY>
@@ -126,7 +126,7 @@ export const NFTs: FC = () => {
                       <UpLoadNFT />
                     </SCROLLING_OVERLAY>
                   </Route>
-                  <Route exact path="/NFTs/live-auction">
+                  <Route exact path="/NFTs/sell">
                     <SCROLLING_OVERLAY>
                       <LiveAuction />
                     </SCROLLING_OVERLAY>

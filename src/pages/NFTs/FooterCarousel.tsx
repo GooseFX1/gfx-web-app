@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { ISingleNFT } from '../../types/nft_details.d'
 import { Image } from 'antd'
-import { NFT_API_ENDPOINTS, fetchSingleCollectionTabContent } from '../../api/NFTs'
+import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../api/NFTs'
 
 const FOOTER_LIST_CARD = styled.div`
   width: 100%;
@@ -24,11 +24,12 @@ const FooterCarousel = () => {
   const [err, setErr] = useState(false)
 
   useEffect(() => {
-    fetchSingleCollectionTabContent(NFT_API_ENDPOINTS.OPEN_BID, `2`).then((res) => {
+    fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.OPEN_BID, `2`).then((res) => {
       if (res.response && res.response.status !== 200) {
         setErr(true)
       }
-      setNfts((res.data || []).slice(0, 10))
+
+      setNfts(res.data.open_bid.slice(0, 10))
     })
 
     return () => {}

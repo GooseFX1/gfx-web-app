@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { Card } from './Card'
 import { useNFTCollections } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
-import { NFT_API_ENDPOINTS, fetchSingleCollectionTabContent } from '../../../api/NFTs'
+import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
 import { Loader } from '../../../components'
 
 const WRAPPER = styled.div`
@@ -45,7 +45,7 @@ export const LiveAuctionsTabContent: FC = ({ ...rest }) => {
   const [err, setErr] = useState(false)
 
   useEffect(() => {
-    fetchSingleCollectionTabContent(NFT_API_ENDPOINTS.LIVE_AUCTIONS, `${singleCollection.collection_id}`).then(
+    fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.LIVE_AUCTIONS, `${singleCollection.collection_id}`).then(
       (res) => {
         if (res.response && res.response.status !== 200) {
           setErr(true)

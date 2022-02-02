@@ -1,3 +1,5 @@
+import { ISingleNFT } from './nft_details.d'
+
 export enum COLLECTION_TYPES {
   NFT_COLLECTION = 'NFTCollection',
   NFT_FEATURED_COLLECTION = 'NFTFeaturedCollection',
@@ -6,17 +8,34 @@ export enum COLLECTION_TYPES {
 
 export type NFTCollection = {
   collection_id: number
-  collection_name: string
-  collection_description: string
-  profile_pic_link: string
-  banner_link: string | null
-  banner_2_link: string | null
-  banner_3_link: string | null
-  title: string
-  tagline: string
-  size: number
-  category_tags: string
-  is_verified: boolean
+  collection_floor: null | number
+  collection: {
+    collection_id: number
+    collection_name: string
+    collection_description: string
+    profile_pic_link: string
+    banner_link: string | null
+    banner_2_link: string | null
+    banner_3_link: string | null
+    title: string
+    tagline: string
+    size: number
+    category_tags: string
+    is_verified: boolean
+  }
+}
+
+export interface IFixedPriceWithinCollection {
+  collection_floor: null | number
+  collection_id: number
+  nft_data: any[]
+  nft_prices: any[]
+}
+
+export interface IOpenBidWithinCollection {
+  collection_floor: null
+  collection_id: number
+  open_bid: ISingleNFT[]
 }
 
 export type NFTFeaturedCollection = {
@@ -43,4 +62,6 @@ export interface INFTCollectionConfig {
   fetchUpcomingCollections: any
   singleCollection: NFTCollection
   fetchSingleCollection: (id: string) => Promise<any>
+  fixedPriceWithinCollection: IFixedPriceWithinCollection
+  openBidWithinCollection: IOpenBidWithinCollection
 }
