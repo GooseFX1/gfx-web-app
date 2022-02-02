@@ -5,7 +5,7 @@ import { useNFTDetails } from '../../../context'
 import { MintItemViewStatus, NFTDetailsProviderMode } from '../../../types/nft_details'
 import { TradingHistoryTabContent } from './TradingHistoryTabContent'
 import { AttributesTabContent } from './AttributesTabContent'
-import { getParsedAccountByMint } from '../../../web3'
+import { getParsedAccountByMint, StringPublicKey } from '../../../web3'
 import { useConnectionConfig } from '../../../context'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 
@@ -244,12 +244,14 @@ export const RightSectionTabs: FC<{
 
   useEffect(() => {
     getParsedAccountByMint({
-      mintAddress: `${mint_address}`,
+      mintAddress: mint_address as StringPublicKey,
       connection: connection
     }).then((res) => {
-      const owner = res !== undefined ? res.account?.data?.parsed?.info.owner : ''
-      setNFTOwner(owner)
-      setTokenAddress(res.pubkey)
+      if (res) {
+        const owner = res !== undefined ? res.account?.data?.parsed?.info.owner : ''
+        setNFTOwner(owner)
+        setTokenAddress(res.pubkey)
+      }
     })
   }, [])
 
@@ -266,6 +268,7 @@ export const RightSectionTabs: FC<{
     if (!['successful', 'unsuccessful'].includes(status)) {
       return
     }
+
     const description = (
       <>
         {desc[status].map((item, index) => (
@@ -274,6 +277,7 @@ export const RightSectionTabs: FC<{
         <img src={`/img/assets/${status}.svg`} alt="" />
       </>
     )
+
     if (status === 'successful') {
       notification.info({
         message: null,
