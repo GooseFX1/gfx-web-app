@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Tabs } from 'antd'
-import { LiveAuctionsTabContent } from './LiveAuctionsTabContent'
+// import { LiveAuctionsTabContent } from './LiveAuctionsTabContent'
 import { FixedPriceTabContent } from './FixedPriceTabContent'
 import { OpenBidsTabContent } from './OpenBidsTabContent'
 import { OwnersTabContent } from './OwnersTabContent'
