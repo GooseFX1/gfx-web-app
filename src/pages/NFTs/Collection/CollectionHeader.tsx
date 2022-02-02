@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Button, Col, Dropdown, Menu, Row } from 'antd'
 import styled from 'styled-components'
 import { SearchBar } from '../../../components'
@@ -144,33 +145,43 @@ const menu = (
 
 export const CollectionHeader = ({ setFilter, filter }) => {
   const history = useHistory()
-  const { singleCollection } = useNFTCollections()
-  const statsData = [
-    { title: 'Items', total: singleCollection.size, unit: '' },
-    { title: 'Owners', total: null, unit: '' },
-    { title: 'Price floor', total: null, unit: 'SOL' },
-    { title: 'Volume traded', total: null, unit: '' }
-  ]
+  const { singleCollection, fixedPriceWithinCollection } = useNFTCollections()
+  const [localStats, setLocalStats] = useState<any[]>([])
 
-  return (
+  useEffect(() => {
+    if (singleCollection && fixedPriceWithinCollection) {
+      setLocalStats([
+        { title: 'Items', total: singleCollection.collection[0].size, unit: '' },
+        { title: 'Owners', total: 0, unit: '' },
+        {
+          title: 'Price floor',
+          total: `${fixedPriceWithinCollection.collection_floor ? fixedPriceWithinCollection.collection_floor : '0'}`,
+          unit: 'SOL'
+        },
+        { title: 'Volume traded', total: fixedPriceWithinCollection.nft_prices.length, unit: '' }
+      ])
+    }
+  }, [fixedPriceWithinCollection, singleCollection])
+
+  return fixedPriceWithinCollection && singleCollection ? (
     <COLLECTION_HEADER>
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
       <Row justify="center">
         <Col>
-          <img className="collection-avatar" src={singleCollection.profile_pic_link} alt="" />
+          <img className="collection-avatar" src={singleCollection.collection[0].profile_pic_link} alt="" />
           <div className="collection-name-wrap">
-            <span className="collection-name">{singleCollection.collection_name}</span>
-            {singleCollection.is_verified && (
+            <span className="collection-name">{singleCollection.collection[0].collection_name}</span>
+            {singleCollection.collection[0].is_verified && (
               <img className="collection-check-icon" src={`/img/assets/check-icon.png`} alt="" />
             )}
           </div>
         </Col>
       </Row>
       <Row justify="center" className="collection-stats">
-        <Stats stats={statsData} />
+        <Stats stats={localStats} />
       </Row>
       <Row justify="center" className="collection-cities">
-        {singleCollection.collection_description}
+        {singleCollection.collection[0].collection_description}
       </Row>
       <Row className="collection-action-wrap">
         <SearchBar
@@ -187,5 +198,7 @@ export const CollectionHeader = ({ setFilter, filter }) => {
         </DROPDOWN>
       </Row>
     </COLLECTION_HEADER>
+  ) : (
+    <div>loading</div>
   )
 }

@@ -34,7 +34,7 @@ export const updateNFTUser = async (updatedUser: INFTProfile): Promise<any> => {
   }
 }
 
-export const fetchSingleCollectionTabContent = async (endpoint: string, id: string): Promise<any> => {
+export const fetchSingleCollectionBySalesType = async (endpoint: string, id: string): Promise<any> => {
   try {
     const res = await apiClient(NFT_API_BASE).get(`${endpoint}?collection_id=${id}`)
     return await res
