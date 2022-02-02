@@ -18,23 +18,23 @@ const WRAPPED_LOADER = styled.div`
 
 export const Collection: FC = (): JSX.Element => {
   const params = useParams<IAppParams>()
-  const { fetchSingleCollection } = useNFTCollections()
+  const { singleCollection, fixedPriceWithinCollection, fetchSingleCollection } = useNFTCollections()
   const [err, setErr] = useState(false)
-  const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    fetchSingleCollection(params.collectionId).then((res) => {
-      if (res.response && res.response.status !== 200) {
-        setErr(true)
-      }
-      setLoading(false)
-    })
+    if (!singleCollection || `${singleCollection.collection_id}` !== params.collectionId) {
+      fetchSingleCollection(params.collectionId).then((res) => {
+        if (res.response && res.response.status !== 200) {
+          setErr(true)
+        }
+      })
+    }
 
     return () => {}
   }, [])
 
-  return loading ? (
+  return !fixedPriceWithinCollection || !singleCollection ? (
     <WRAPPED_LOADER>
       <Loader />
     </WRAPPED_LOADER>
