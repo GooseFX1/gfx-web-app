@@ -81,8 +81,8 @@ const SUB_TITLE = MainText(styled.span`
   font-weight: 600;
   color: ${({ theme }) => theme.text8} !important;
   text-align: left;
-  margin-top: ${({ theme }) => theme.margins['2.5x']};
-  margin-bottom: ${({ theme }) => theme.margins['1.5x']};
+  margin-top: ${({ theme }) => theme.margin(2.5)};
+  margin-bottom: ${({ theme }) => theme.margin(1.5)};
 `)
 
 const INPUT_SECTION = styled.div`
@@ -134,7 +134,7 @@ const BOTTOM_BUTTON_SECTION = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: ${({ theme }) => `${theme.margins['8x']}`};
+  margin-top: ${({ theme }) => `${theme.margin(8)}`};
 `
 
 const STYLED_PROPERTY_BLOCK = styled.div`

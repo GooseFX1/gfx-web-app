@@ -88,8 +88,8 @@ const STYLED_ADD_GROUP = styled.div`
 const STYLED_ADD_BODY = styled.div`
   max-height: 34vh;
   overflow-y: scroll;
-  margin-bottom: ${({ theme }) => theme.margins['1x']};
-  padding-right: ${({ theme }) => theme.margins['1.5x']};
+  margin-bottom: ${({ theme }) => theme.margin(1)};
+  padding-right: ${({ theme }) => theme.margin(1.5)};
 
   ${({ theme }) => `
     .add-item {
