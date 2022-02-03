@@ -2,6 +2,7 @@ import { createContext, FC, ReactNode, useCallback, useContext, useState } from 
 import apiClient from '../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
 import { customFetch } from '../utils'
+import { getParsedNftAccountsByOwner } from '../web3'
 import { INFTDetailsConfig, ISingleNFT, INFTMetadata, INFTBid, INFTAsk, IMetadataContext } from '../types/nft_details.d'
 
 const NFTDetailsContext = createContext<INFTDetailsConfig | null>(null)
@@ -45,11 +46,42 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
       const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.BID}`, {
         bid: paramValue
       })
-      return await res
+      return res
     } catch (err) {
       return err
     }
   }, [])
+
+  const fetchExternalNFTs = useCallback(
+    async (paramValue: any, connection: any, nftData: INFTMetadata): Promise<any> => {
+      try {
+        const nfts = await getParsedNftAccountsByOwner({
+          publicAddress: `${paramValue}`,
+          connection: connection
+        })
+
+        var data = nfts.filter((i: any) => i.data.name == nftData.name)[0]
+        if (data) {
+          let singleNFT = {
+            non_fungible_id: data.key,
+            nft_name: nftData.name,
+            nft_description: nftData.description,
+            mint_address: data.mint,
+            metadata_url: data.data.uri,
+            image_url: nftData.image,
+            animation_url: null,
+            collection_id: null
+          }
+          setGeneral(singleNFT)
+        }
+        setNftMetadata(nftData)
+      } catch (error) {
+        console.log(error)
+        setNftMetadata(null)
+      }
+    },
+    []
+  )
 
   return (
     <NFTDetailsContext.Provider
@@ -61,7 +93,8 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         asks,
         fetchGeneral,
         nftMintingData,
-        setNftMintingData
+        setNftMintingData,
+        fetchExternalNFTs
       }}
     >
       {children}
@@ -83,6 +116,7 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     asks: context.asks,
     fetchGeneral: context.fetchGeneral,
     nftMintingData: context.nftMintingData,
-    setNftMintingData: context.setNftMintingData
+    setNftMintingData: context.setNftMintingData,
+    fetchExternalNFTs: context.fetchExternalNFTs
   }
 }

@@ -143,9 +143,10 @@ export const RightSection: FC<{
   handleClickPrimaryButton: () => void
 }> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
   const { general, nftMetadata } = useNFTDetails()
+  console.log({ nftMetadata, general })
   const creator = useMemo(() => {
-    if (nftMetadata.properties.creators.length > 0) {
-      const addr = nftMetadata.properties.creators[0].address
+    if (nftMetadata?.properties?.creators?.length > 0) {
+      const addr = nftMetadata?.properties?.creators?.[0]?.address
       return `${addr.substr(0, 4)}...${addr.substr(-4, 4)}`
     } else {
       return nftMetadata.collection.name
@@ -189,7 +190,7 @@ export const RightSection: FC<{
         <Col>
           {mode !== 'mint-item-view' && (
             <>
-              <div className="rs-name">{general.nft_name}</div>
+              <div className="rs-name">{general?.nft_name || nftMetadata?.name}</div>
               <div className="rs-intro">{nftMetadata.description}</div>
             </>
           )}

@@ -58,7 +58,7 @@ const LEFT_SECTION = styled.div`
 `
 
 export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...rest }) => {
-  const { general } = useNFTDetails()
+  const { general, nftMetadata } = useNFTDetails()
   const isFavorite = true
   const hearts = 12
   const remaining = {
@@ -71,7 +71,7 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
 
   return (
     <LEFT_SECTION {...rest}>
-      <img className="ls-image" src={general.image_url} alt="" />
+      <img className="ls-image" src={general?.image_url || nftMetadata?.image} alt="" />
       <div className="ls-bottom-panel">
         <Row justify={mode !== 'mint-item-view' ? 'space-between' : 'start'} align="middle" className="ls-favorite">
           <Col>{isShowReamingTime && <div className="ls-end-text">Auction ends in:</div>}</Col>
