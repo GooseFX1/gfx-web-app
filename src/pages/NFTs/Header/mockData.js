@@ -13,3 +13,7 @@ export const categories = [
   { name: 'Verified', icon: 'verified' },
   { name: 'Unverified', icon: 'unverified' }
 ]
+export const coins = [
+  { name: 'SOL', icon: 'all' },
+  { name: 'TRX', icon: 'art' }
+]
