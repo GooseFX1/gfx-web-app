@@ -87,24 +87,30 @@ const STYLED_ADD_GROUP = styled.div`
 `
 const STYLED_ADD_BODY = styled.div`
   max-height: 34vh;
-  overflow: scroll;
-  margin-bottom: 8px;
+  overflow-y: scroll;
+  margin-bottom: ${({ theme }) => theme.margins['1x']};
+  padding-right: ${({ theme }) => theme.margins['1.5x']};
 
   ${({ theme }) => `
     .add-item {
       display: flex;
       align-items: center;
-      margin-bottom: ${theme.margins['3x']}
+      margin-top: ${theme.margins['1.5x']};
+      margin-bottom: ${theme.margins['1.5x']};
     }
     .close-btn {
-      width: 55px;
-      height: 55px;
+      width: 35px;
+      height: 35px;
       background: ${theme.iconRemoveBg};
       border-radius: 50%;
       margin-right: ${theme.margins['2x']};
-      line-height: 51px;
+      line-height: 35px;
       text-align: center;
       cursor: pointer;
+      .close-white-icon {
+        width: 19px;
+        height: auto;
+      }
     }
     input {
       width: 180px;
