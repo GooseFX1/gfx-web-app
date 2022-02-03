@@ -29,7 +29,7 @@ z-index: 1000;
 .ant-modal-header {
   ${theme.largeBorderRadius};
   background-color: ${theme.bg3};
-  padding: ${theme.margins['3.5x']} ${theme.margins['5.5x']} 0 ${theme.margins['5.5x']};
+  padding: ${theme.margin(3.5)} ${theme.margin(5.5)} 0 ${theme.margin(5.5)};
   border: none;
   .ant-modal-title {
     font-size: 25px;
