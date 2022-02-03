@@ -130,13 +130,13 @@ const CENTER_TEXT = styled.div`
 
 const BUTTON_APPLY = styled(ButtonWrapper)`
   background-color: ${({ theme }) => theme.primary2};
-  padding: ${({ theme }) => `${theme.margins['1.5x']}  ${theme.margins['7x']}`};
-  margin-top: ${({ theme }) => theme.margins['6x']};
+  padding: ${({ theme }) => `${theme.margin(1.5)}  ${theme.margin(7)}`};
+  margin-top: ${({ theme }) => theme.margin(6)};
 `
 
 const BUTTON_EXPLORE = styled(ButtonWrapper)`
   background-color: ${({ theme }) => theme.primary2};
-  padding: ${({ theme }) => `${theme.margins['1.5x']}  ${theme.margins['2x']}`};
+  padding: ${({ theme }) => `${theme.margin(1.5)}  ${theme.margin(2)}`};
   position: absolute;
   right: 70px;
 `

@@ -15,7 +15,7 @@ const BODY = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   justify-content: space-between;
   ${({ theme }) => theme.measurements('100%')}
-  margin: ${({ theme }) => theme.margins['4x']} 0;
+  margin: ${({ theme }) => theme.margin(4)} 0;
 `
 
 const HEADER_TITLE = styled.span`
@@ -35,7 +35,7 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)<{ $iconSize: string }>`
       cursor: pointer;
 
       &:first-child {
-        margin-right: ${({ theme }) => theme.margins['3x']};
+        margin-right: ${({ theme }) => theme.margin(3)};
       }
 
       &:last-child {
@@ -46,13 +46,13 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)<{ $iconSize: string }>`
 `
 
 const REFRESH_RATE = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['4x'])};
+  ${({ theme }) => theme.measurements(theme.margin(4))};
   cursor: pointer;
 `
 
 const SWITCH = styled(CenteredImg)<{ measurements: number }>`
   position: absolute;
-  top: calc(50% - ${({ measurements }) => measurements}px / 2 + ${({ theme }) => theme.margins['2x']});
+  top: calc(50% - ${({ measurements }) => measurements}px / 2 + ${({ theme }) => theme.margin(2)});
   left: calc(50% - ${({ measurements }) => measurements}px / 2);
   ${({ measurements, theme }) => theme.measurements(measurements + 'px')}
   z-index: 1;
@@ -64,7 +64,7 @@ const WRAPPER = styled.div`
   align-items: center;
   min-height: 430px;
   width: 450px;
-  padding: ${({ theme }) => theme.margins['4x']};
+  padding: ${({ theme }) => theme.margin(4)};
   ${({ theme }) => theme.largeBorderRadius}
   background-color: ${({ theme }) => theme.bg3};
   ${({ theme }) => theme.largeShadow}

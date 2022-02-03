@@ -7,10 +7,10 @@ import { MainText } from '../../styles'
 // TODO: refactor this component and '../../components/Categories.tsx' into one component
 const DROP_DOWN_WRAPPER = MainText(styled.button`
   ${({ theme }) => theme.flexCenter}
-  height: ${({ theme }) => theme.margins['5x']};
+  height: ${({ theme }) => theme.margin(5)};
   border: none;
   ${({ theme }) => theme.roundedBorders}
-  padding: 0 ${({ theme }) => theme.margins['2x']};
+  padding: 0 ${({ theme }) => theme.margin(2)};
   span {
     font-size: 12px;
     font-weight: bold;

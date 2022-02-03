@@ -6,14 +6,14 @@ import { CenteredDiv, SpaceBetweenDiv, TRADE_ORDER_WIDTH } from '../../../styles
 
 const SELECTOR = styled(CenteredDiv)`
   flex-direction: column;
-  width: ${({ theme }) => `calc(${TRADE_ORDER_WIDTH} - 2 * ${theme.margins['1x']})`};
-  padding: ${({ theme }) => theme.margins['1.5x']} 0;
+  width: ${({ theme }) => `calc(${TRADE_ORDER_WIDTH} - 2 * ${theme.margin(1)})`};
+  padding: ${({ theme }) => theme.margin(1.5)} 0;
   ${({ theme }) => theme.smallBorderRadius}
   background-color: #131313;
   > span {
     ${({ theme }) => theme.flexCenter}
     width: 100%;
-    padding: ${({ theme }) => theme.margins['1.5x']} 0;
+    padding: ${({ theme }) => theme.margin(1.5)} 0;
     font-size: 12px;
     font-weight: bold;
     &:hover {
@@ -21,13 +21,13 @@ const SELECTOR = styled(CenteredDiv)`
       cursor: pointer;
     }
     &:not(:last-child) {
-      margin-bottom: ${({ theme }) => theme.margins['1.5x']};
+      margin-bottom: ${({ theme }) => theme.margin(1.5)};
     }
   }
 `
 
 const WRAPPER = styled(SpaceBetweenDiv)`
-  padding: ${({ theme }) => theme.margins['1.5x']};
+  padding: ${({ theme }) => theme.margin(1.5)};
   ${({ theme }) => theme.smallBorderRadius}
   background-color: ${({ theme }) => theme.grey5};
   > span {

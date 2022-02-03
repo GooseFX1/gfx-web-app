@@ -8,7 +8,7 @@ const STYLED_FARM_HEADER = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: ${({ theme }) => theme.margins['4x']} ${({ theme }) => theme.margins['5x']};
+  padding: ${({ theme }) => theme.margin(4)} ${({ theme }) => theme.margin(5)};
   background: ${({ theme }) => theme.farmHeaderBg};
   box-shadow: 0 7px 15px 9px rgba(13, 13, 13, 0.25);
   border-top-left-radius: 20px;
@@ -24,7 +24,7 @@ const STYLED_FARM_HEADER = styled.div`
   .pools {
     height: 60px;
     max-width: 132px;
-    margin-left: ${({ theme }) => theme.margins['4.5x']};
+    margin-left: ${({ theme }) => theme.margin(4.5)};
     > span {
       font-family: Montserrat;
       font-size: 14px;
@@ -33,7 +33,7 @@ const STYLED_FARM_HEADER = styled.div`
     }
   }
   .live {
-    margin-left: ${({ theme }) => theme.margins['4.5x']};
+    margin-left: ${({ theme }) => theme.margin(4.5)};
   }
 `
 
@@ -42,7 +42,7 @@ const STYLED_RIGHT = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding-left: ${({ theme }) => theme.margins['11x']};
+  padding-left: ${({ theme }) => theme.margin(11)};
 `
 export const FarmHeader = ({ onFilter }: any) => (
   <STYLED_FARM_HEADER>

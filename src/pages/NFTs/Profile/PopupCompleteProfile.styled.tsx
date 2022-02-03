@@ -21,26 +21,26 @@ export const StyledPopupCompletedProfile = styled(Modal)`
     display: block;
   }
   .title {
-    margin-top: ${theme.margins['5x']};
+    margin-top: ${theme.margin(5)};
     font-size: 30px;
     font-weight: 600;
     color: ${theme.text7};
   }
   .desc {
-    margin-top: ${theme.margins['2.5x']};
+    margin-top: ${theme.margin(2.5)};
     font-size: 20px;
     font-weight: 500;
     color: ${theme.text8};
   }
   .ant-modal-body {
-    padding: ${theme.margins['3.5x']} 155px;
+    padding: ${theme.margin(3.5)} 155px;
   }
   .ant-modal-close {
     display: none;
   }
   .button-group {
     display: flex;
-    margin-top: ${theme.margins['3x']};
+    margin-top: ${theme.margin(3)};
     justify-content: center;
     .skip-btn {
       font-size: 20px;
@@ -53,8 +53,8 @@ export const StyledPopupCompletedProfile = styled(Modal)`
     .continue-btn {
       width: 169px;
       height: 52px;
-      margin-left: ${theme.margins['3.5x']};
-      padding: ${theme.margins['1.5x']} ${theme.margins['3x']} ${theme.margins['1.5x']};
+      margin-left: ${theme.margin(3.5)};
+      padding: ${theme.margin(1.5)} ${theme.margin(3)} ${theme.margin(1.5)};
       border-radius: 45px;
       color: #fff;
       background-color: #9625ae;

@@ -10,12 +10,12 @@ import { NFTCollection, NFTFeaturedCollection, NFTUpcomingCollection } from '../
 const CAROUSEL_WRAPPER = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['6x']};
+  padding: ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(6)};
 `
 
 const HEADER_CAROUSEL = styled.div`
   display: flex;
-  margin: ${({ theme }) => theme.margins['4x']} 0;
+  margin: ${({ theme }) => theme.margin(4)} 0;
   align-items: center;
 `
 
@@ -28,7 +28,7 @@ const TOP_ARROW = styled(ArrowClicker)`
 const LEFT_ARROW = styled(ArrowClicker)`
   width: 14px;
   transform: rotateZ(90deg);
-  margin-right: ${({ theme }) => theme.margins['2x']};
+  margin-right: ${({ theme }) => theme.margin(2)};
 `
 
 const RIGHT_ARROW = styled(ArrowClicker)`
@@ -50,19 +50,19 @@ const HEADER_END_CAROUSEL = styled.div`
   justify-content: flex-end;
   display: flex;
   align-items: center;
-  padding-right: ${({ theme }) => theme.margins['2x']};
+  padding-right: ${({ theme }) => theme.margin(2)};
 `
 
 const LAUNCH_BUTTON = styled(ButtonWrapper)`
   height: 40px;
   background-color: ${({ theme }) => theme.primary2};
-  margin-right: ${({ theme }) => theme.margins['2x']};
+  margin-right: ${({ theme }) => theme.margin(2)};
 `
 
 const SORT_BUTTON = styled(ButtonWrapper)`
   height: 40px;
   background-color: ${({ theme }) => theme.secondary2};
-  margin-right: ${({ theme }) => theme.margins['2x']};
+  margin-right: ${({ theme }) => theme.margin(2)};
   justify-content: space-between;
 `
 

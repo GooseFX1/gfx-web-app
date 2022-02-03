@@ -15,7 +15,7 @@ const UPLOAD_CONTENT = styled.div`
   flex: 1;
   display: flex;
   flex-direction: row;
-  padding: ${({ theme }) => theme.margins['5x']};
+  padding: ${({ theme }) => theme.margin(5)};
   width: 90%;
   margin: 0 auto;
 
@@ -25,9 +25,9 @@ const UPLOAD_CONTENT = styled.div`
     height: 30px;
     filter: ${({ theme }) => theme.filterBackIcon};
     cursor: pointer;
-    margin-right: ${({ theme }) => theme.margins['5x']};
+    margin-right: ${({ theme }) => theme.margin(5)};
     margin-left: 0;
-    margin-top: ${({ theme }) => theme.margins['1x']};
+    margin-top: ${({ theme }) => theme.margin(1)};
   }
 `
 
@@ -42,7 +42,7 @@ const UPLOAD_INFO_CONTAINER = styled.div`
   flex: 1;
   flex-direction: column;
   justify-content: flex-start;
-  margin-right: ${({ theme }) => theme.margins['6x']};
+  margin-right: ${({ theme }) => theme.margin(6)};
 `
 
 const PREVIEW_UPLOAD_CONTAINER = styled.div`
@@ -50,8 +50,8 @@ const PREVIEW_UPLOAD_CONTAINER = styled.div`
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  margin-left: ${({ theme }) => theme.margins['6x']};
-  margin-right: ${({ theme }) => theme.margins['3x']};
+  margin-left: ${({ theme }) => theme.margin(6)};
+  margin-right: ${({ theme }) => theme.margin(3)};
 `
 
 const SECTION_TITLE = MainText(styled.span`
@@ -59,12 +59,12 @@ const SECTION_TITLE = MainText(styled.span`
   font-weight: 600;
   color: ${({ theme }) => theme.text7} !important;
   text-align: left;
-  margin-bottom: ${({ theme }) => theme.margins['3x']};
+  margin-bottom: ${({ theme }) => theme.margin(3)};
 `)
 
 const STYLED_FORM = styled(Form)`
   .mb-3x {
-    margin-bottom: ${({ theme }) => theme.margins['3x']} !important;
+    margin-bottom: ${({ theme }) => theme.margin(3)} !important;
   }
 
   .ant-form-item-control-input-content {
@@ -83,7 +83,7 @@ const STYLED_DESCRIPTION = styled.div`
   font-weight: 600;
   text-align: left;
   color: #fff;
-  padding-bottom: ${({ theme }) => theme.margins['5x']} !important;
+  padding-bottom: ${({ theme }) => theme.margin(5)} !important;
 `
 
 export const LiveAuction = () => {

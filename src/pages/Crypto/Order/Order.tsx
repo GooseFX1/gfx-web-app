@@ -15,19 +15,19 @@ const CONTENT = styled.div<{ $display: boolean }>`
 
   > div {
     &:first-child {
-      margin: ${({ theme }) => theme.margins['3.5x']} 0 ${({ theme }) => theme.margins['1.5x']};
+      margin: ${({ theme }) => theme.margin(3.5)} 0 ${({ theme }) => theme.margin(1.5)};
     }
 
     &:nth-child(2),
     &:nth-child(4) {
-      margin-bottom: ${({ theme }) => theme.margins['1.5x']};
+      margin-bottom: ${({ theme }) => theme.margin(1.5)};
     }
   }
 `
 
 const WRAPPER = styled.div`
-  margin-bottom: ${({ theme }) => theme.margins['3x']};
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['2x']};
+  margin-bottom: ${({ theme }) => theme.margin(3)};
+  padding: ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(2)};
   border-radius: 10px;
   background-color: ${({ theme }) => theme.bg3};
 `

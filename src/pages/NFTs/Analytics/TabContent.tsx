@@ -3,14 +3,14 @@ import { useNFTCollections } from '../../../context'
 
 const TAB_CONTENT = styled.div`
   background: #1e1e1e;
-  padding: ${({ theme }) => `${theme.margins['4x']}`} 32px 0;
+  padding: ${({ theme }) => `${theme.margin(4)}`} 32px 0;
   display: flex;
   flex-wrap: wrap;
 `
 const ANALYTIC_ITEM = styled.div`
   width: 25%;
-  padding-right: ${({ theme }) => theme.margins['3x']};
-  margin-bottom: ${({ theme }) => theme.margins['3x']};
+  padding-right: ${({ theme }) => theme.margin(3)};
+  margin-bottom: ${({ theme }) => theme.margin(3)};
   display: flex;
   .analytic-image {
     width: 100px;
@@ -19,7 +19,7 @@ const ANALYTIC_ITEM = styled.div`
   }
 
   .analytic-content {
-    padding-left: ${({ theme }) => theme.margins['3.5x']};
+    padding-left: ${({ theme }) => theme.margin(3.5)};
     text-align: left;
   }
 
@@ -33,7 +33,7 @@ const ANALYTIC_ITEM = styled.div`
     img {
       width: 20px;
       height: 20px;
-      margin-left: ${({ theme }) => theme.margins['1x']};
+      margin-left: ${({ theme }) => theme.margin(1)};
     }
   }
 
@@ -44,18 +44,18 @@ const ANALYTIC_ITEM = styled.div`
     img {
       width: 33px;
       height: 33px;
-      margin-left: ${({ theme }) => theme.margins['1x']};
+      margin-left: ${({ theme }) => theme.margin(1)};
     }
   }
 
   .progress {
     display: flex;
     align-items: center;
-    margin-top: ${({ theme }) => theme.margins['1x']};
+    margin-top: ${({ theme }) => theme.margin(1)};
     img {
       width: 22px;
       height: 13px;
-      margin-right: ${({ theme }) => theme.margins['1x']};
+      margin-right: ${({ theme }) => theme.margin(1)};
     }
     .percent {
       font-size: 15px;

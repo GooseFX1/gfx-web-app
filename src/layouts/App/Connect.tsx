@@ -17,13 +17,13 @@ import { CenteredImg } from '../../styles'
 import { Loader } from '../../components'
 
 const WALLET_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['3x'])}
-  margin-right: ${({ theme }) => theme.margins['2x']};
+  ${({ theme }) => theme.measurements(theme.margin(3))}
+  margin-right: ${({ theme }) => theme.margin(2)};
   ${({ theme }) => theme.roundedBorders}
   background-color: black;
 
   img {
-    ${({ theme }) => theme.measurements(theme.margins['1.5x'])}
+    ${({ theme }) => theme.measurements(theme.margin(1.5))}
   }
 `
 const WRAPPED_LOADER = styled.div`
@@ -32,10 +32,10 @@ const WRAPPED_LOADER = styled.div`
 `
 
 const WRAPPER = styled.button<{ $connected: boolean }>`
-  padding: 0 ${({ theme }) => theme.margins['2x']};
-  ${({ theme, $connected }) => $connected && `padding-left: ${theme.margins['1.5x']};`}
+  padding: 0 ${({ theme }) => theme.margin(2)};
+  ${({ theme, $connected }) => $connected && `padding-left: ${theme.margin(1.5)};`}
   ${({ theme }) => theme.flexCenter}
-  height: ${({ theme }) => theme.margins['5x']};
+  height: ${({ theme }) => theme.margin(5)};
   border: none;
   ${({ theme }) => theme.roundedBorders}
   ${({ theme }) => theme.smallShadow}

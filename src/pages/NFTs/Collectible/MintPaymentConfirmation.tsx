@@ -29,9 +29,9 @@ const CONTAINER = styled.div`
     height: 30px;
     filter: ${({ theme }) => theme.filterBackIcon};
     cursor: pointer;
-    margin-right: ${({ theme }) => theme.margins['5x']};
+    margin-right: ${({ theme }) => theme.margin(5)};
     margin-left: 0;
-    margin-top: ${({ theme }) => theme.margins['1x']};
+    margin-top: ${({ theme }) => theme.margin(1)};
   }
 `
 const LOADER = styled.div`
@@ -44,7 +44,7 @@ const LOADER = styled.div`
 const NEXT_BUTTON = styled.button`
   height: 60px;
   width: 245px;
-  padding: ${({ theme }) => `${theme.margins['2x']} ${theme.margins['6x']}`};
+  padding: ${({ theme }) => `${theme.margin(2)} ${theme.margin(6)}`};
   text-align: center;
   background-color: ${({ theme }) => theme.secondary5};
   border: none;

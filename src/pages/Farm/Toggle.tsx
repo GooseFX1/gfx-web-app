@@ -79,7 +79,7 @@ const STYLED_TOGGLE = styled.div`
     font-weight: 600;
     text-align: left;
     color: #fff;
-    margin-left: ${({ theme }) => theme.margins['2x']};
+    margin-left: ${({ theme }) => theme.margin(2)};
     max-width: 77px;
   }
 `

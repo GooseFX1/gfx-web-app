@@ -17,14 +17,14 @@ const STYLED_TITLE = styled.div`
     width: 15px;
     height: auto;
     display: block;
-    margin-left: ${({ theme }) => theme.margins['1x']};
+    margin-left: ${({ theme }) => theme.margin(1)};
   }
 
   .arrow-down {
     width: 14px;
     height: auto;
     display: block;
-    margin-left: ${({ theme }) => theme.margins['1x']};
+    margin-left: ${({ theme }) => theme.margin(1)};
   }
 `
 
@@ -36,7 +36,7 @@ const STYLED_NAME = styled.div`
     font-weight: 600;
     color: ${({ theme }) => theme.text8};
     max-width: 90px;
-    margin-left: ${({ theme }) => theme.margins['2.5x']};
+    margin-left: ${({ theme }) => theme.margin(2.5)};
   }
   .coin-image {
     width: 41px;
@@ -51,7 +51,7 @@ const STYLED_NAME = styled.div`
     width: 36px;
     height: auto;
     display: block;
-    margin-left: ${({ theme }) => theme.margins['2.5x']};
+    margin-left: ${({ theme }) => theme.margin(2.5)};
   }
 `
 

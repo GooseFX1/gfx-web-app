@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const Menu = styled.ul`
   width: fit-content;
   min-width: 140px;
-  padding: ${({ theme }) => theme.margins['1.5x']} ${({ theme }) => theme.margins['2x']};
+  padding: ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(2)};
   ${({ theme }) => theme.smallBorderRadius}
   list-style-type: none;
   ${({ theme }) => theme.smallShadow}
@@ -21,12 +21,12 @@ export const MenuItem = styled.li`
   }
 
   &:not(:last-child) {
-    padding-bottom: ${({ theme }) => theme.margins['1.5x']};
+    padding-bottom: ${({ theme }) => theme.margin(1.5)};
   }
 
   img {
-    ${({ theme }) => theme.measurements(theme.margins['1.5x'])}
-    margin-left: ${({ theme }) => theme.margins['1x']};
+    ${({ theme }) => theme.measurements(theme.margin(1.5))}
+    margin-left: ${({ theme }) => theme.margin(1)};
     object-fit: contain;
   }
 

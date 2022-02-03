@@ -8,7 +8,7 @@ import { notify } from '../../utils'
 
 const WRAPPER = styled.div`
   display: flex;
-  padding: ${({ theme }) => theme.margins['5x']} 0;
+  padding: ${({ theme }) => theme.margin(5)} 0;
 
   ${({ theme }) => theme.mediaWidth.upToLarge`
     flex-direction: column;
@@ -29,14 +29,14 @@ const WRAPPER = styled.div`
 
     ${({ theme }) => theme.mediaWidth.fromLarge`
       width: 60%;
-      margin-right: ${({ theme }) => theme.margins['3x']};
+      margin-right: ${({ theme }) => theme.margin(3)};
     `};
   }
 
   > div:last-child {
     ${({ theme }) => theme.mediaWidth.upToLarge`
       width: 100%;
-      margin-top: ${({ theme }) => theme.margins['5x']};
+      margin-top: ${({ theme }) => theme.margin(5)};
     `};
 
     ${({ theme }) => theme.mediaWidth.fromLarge`

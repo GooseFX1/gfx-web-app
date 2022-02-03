@@ -21,7 +21,7 @@ const CONTAINER = styled.div`
     font-weight: 700;
   }
   .ant-steps-vertical > .ant-steps-item {
-    padding: ${({ theme }) => theme.margins['1x']} 0;
+    padding: ${({ theme }) => theme.margin(1)} 0;
   }
   .ant-steps-item-icon {
     line-height: 30px;

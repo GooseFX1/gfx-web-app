@@ -21,7 +21,7 @@ const LEFT_SECTION = styled.div`
     }
 
     .ls-bottom-panel {
-      margin-top: ${theme.margins['2.5x']};
+      margin-top: ${theme.margin(2.5)};
 
       .ls-end-text {
         font-size: 12px;
@@ -30,13 +30,13 @@ const LEFT_SECTION = styled.div`
       }
 
       .ls-favorite {
-        margin-bottom: ${theme.margins['2x']};
+        margin-bottom: ${theme.margin(2)};
       }
 
       .ls-favorite-heart {
         width: 21px;
         height: 21px;
-        margin-right: ${theme.margins['0.5x']};
+        margin-right: ${theme.margin(0.5)};
       }
 
       .ls-favorite-number {

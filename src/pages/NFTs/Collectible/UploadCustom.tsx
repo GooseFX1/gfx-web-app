@@ -13,7 +13,7 @@ const { Text } = Typography
 //#region styles
 const ButtonUpload = styled(ButtonWrapper)`
   background-color: ${({ theme }) => theme.primary2};
-  padding: ${({ theme }) => `${theme.margins['1x']} ${theme.margins['4x']} `};
+  padding: ${({ theme }) => `${theme.margin(1)} ${theme.margin(4)} `};
   margin: 0 auto;
 `
 const STYLED_UPLOAD_CUSTOM = styled.div`
@@ -27,10 +27,10 @@ const STYLED_UPLOAD_CUSTOM = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-top: ${({ theme }) => theme.margins['6x']};
-    padding-bottom: ${({ theme }) => theme.margins['6x']};
-    margin-top: ${({ theme }) => theme.margins['3x']};
-    margin-bottom: ${({ theme }) => theme.margins['3x']};
+    padding-top: ${({ theme }) => theme.margin(6)};
+    padding-bottom: ${({ theme }) => theme.margin(6)};
+    margin-top: ${({ theme }) => theme.margin(3)};
+    margin-bottom: ${({ theme }) => theme.margin(3)};
     .image-group {
       display: flex;
       align-items: center;
@@ -41,7 +41,7 @@ const STYLED_UPLOAD_CUSTOM = styled.div`
       border-radius: 50%;
     }
     .note {
-      padding-left: ${theme.margins['2.5x']};
+      padding-left: ${theme.margin(2.5)};
       font-size: 14px;
       color: #fff;
       width: 300px;
@@ -52,8 +52,8 @@ const STYLED_UPLOAD_CUSTOM = styled.div`
       .desc {
         font-size: 11px;
         color: ${({ theme }) => theme.text7};
-        margin-top: ${({ theme }) => theme.margins['1x']};
-        margin-bottom: ${({ theme }) => theme.margins['2.5x']};
+        margin-top: ${({ theme }) => theme.margin(1)};
+        margin-bottom: ${({ theme }) => theme.margin(2.5)};
       }
     }
     .image-wrap {
@@ -123,7 +123,7 @@ const STYLED_UPLOAD_ERROR = styled.div`
     font-size: 13px;
     font-weight: 600;
     color: #fff;
-    margin-top: ${({ theme }) => theme.margins['3x']};
+    margin-top: ${({ theme }) => theme.margin(3)};
   }
   .remove-icon {
     position: absolute;

@@ -13,11 +13,11 @@ import {
 } from '../../styles'
 
 const MODE_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['2x'])};
+  ${({ theme }) => theme.measurements(theme.margin(2))};
   .moon-image {
     width: 18px;
     height: 18px;
-    margin-right: ${({ theme }) => theme.margins['1x']};
+    margin-right: ${({ theme }) => theme.margin(1)};
   }
   .brightness-image {
     width: 22px;
@@ -25,11 +25,11 @@ const MODE_ICON = styled(CenteredImg)`
   }
 `
 const REFRESH_ICON = styled.div`
-  margin-right: ${({ theme }) => theme.margins['6x']};
+  margin-right: ${({ theme }) => theme.margin(6)};
 
   span {
     font-size: 11px;
-    margin-right: ${({ theme }) => theme.margins['1x']};
+    margin-right: ${({ theme }) => theme.margin(1)};
     color: ${({ theme }) => theme.text2};
   }
   img {
@@ -41,7 +41,7 @@ const REFRESH_ICON = styled.div`
 const TEXT = styled.span`
   font-size: 11px;
   color: ${({ theme }) => theme.text2};
-  margin-right: ${({ theme }) => theme.margins['1x']};
+  margin-right: ${({ theme }) => theme.margin(1)};
 
   span {
     color: ${({ theme }) => theme.text3};
@@ -53,34 +53,34 @@ const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`
   height: 30px;
   width: 60px;
   border-radius: 30px;
-  margin-right: ${({ theme }) => theme.margins['5x']};
+  margin-right: ${({ theme }) => theme.margin(5)};
   background-color: ${({ theme }) => theme.appLayoutFooterToggle};
   &:hover {
     cursor: pointer;
   }
   > div {
-    ${({ theme }) => theme.measurements(theme.margins['2.5x'])}
+    ${({ theme }) => theme.measurements(theme.margin(2.5))}
     ${({ theme }) => theme.roundedBorders}
     background-color: ${({ theme }) => theme.secondary2};
-    transform: translateX(${({ $mode }) => ($mode === 'dark' ? '-' : '')}${({ theme }) => theme.margins['1.5x']});
+    transform: translateX(${({ $mode }) => ($mode === 'dark' ? '-' : '')}${({ theme }) => theme.margin(1.5)});
   }
 `
 
 const WRAPPER = styled(SpaceBetweenDiv)`
   height: ${APP_LAYOUT_FOOTER_HEIGHT};
-  padding: ${({ theme }) => theme.margins['5x']};
+  padding: ${({ theme }) => theme.margin(5)};
   border-top: 1px solid ${({ theme }) => theme.appLayoutFooterBorder};
   background-color: ${({ theme }) => theme.bg2};
 
   div > div {
     &:nth-child(2) {
-      margin-right: ${({ theme }) => theme.margins['1x']};
+      margin-right: ${({ theme }) => theme.margin(1)};
     }
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     height: ${APP_LAYOUT_FOOTER_HEIGHT_MOBILE};
-    padding: ${({ theme }) => theme.margins['1x']};
+    padding: ${({ theme }) => theme.margin(1)};
   `}
 `
 

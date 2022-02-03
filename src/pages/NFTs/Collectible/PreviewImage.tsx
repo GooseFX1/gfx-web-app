@@ -14,7 +14,7 @@ const PREVIEW_CONTAINER = styled.div`
   width: 90%;
   aspect-ratio: 1;
   align-self: flex-end;
-  padding: ${({ theme }) => theme.margins['2.5x']} ${({ theme }) => theme.margins['5x']};
+  padding: ${({ theme }) => theme.margin(2.5)} ${({ theme }) => theme.margin(5)};
 
   .ant-upload-list-picture-card-container {
     width: 100%;
@@ -34,7 +34,7 @@ const PREVIEW_CONTAINER = styled.div`
     position: relative;
     width: 100%;
     height: auto;
-    margin: ${({ theme }) => theme.margins['1x']} auto;
+    margin: ${({ theme }) => theme.margin(1)} auto;
   }
   .ant-upload-list-item {
     padding: 0 !important;
@@ -60,7 +60,7 @@ const PREVIEW_TEXT = MainText(styled.span`
   font-size: 20px;
   font-weight: 500;
   color: ${({ theme }) => theme.text7} !important;
-  margin-bottom: ${({ theme }) => theme.margins['1x']};
+  margin-bottom: ${({ theme }) => theme.margin(1)};
 `)
 
 const NAME_TEXT = MainText(styled.span`
@@ -73,7 +73,7 @@ const DESCRIBE_TEXT = MainText(styled.span`
   font-size: 20px;
   font-weight: 500;
   color: ${({ theme }) => theme.text8} !important;
-  margin-bottom: ${({ theme }) => theme.margins['1x']};
+  margin-bottom: ${({ theme }) => theme.margin(1)};
 `)
 
 const BOTTOM_INFO = styled.div`

@@ -15,11 +15,11 @@ const FIXED_PRICE_TAB = styled.div`
   min-height: 410px;
   ${({ theme }) => css`
     overflow-y: auto;
-    padding: ${theme.margins['5.5x']} ${theme.margins['4x']};
+    padding: ${theme.margin(5.5)} ${theme.margin(4)};
 
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    grid-gap: ${theme.margins['6x']};
+    grid-gap: ${theme.margin(6)};
 
     &::-webkit-scrollbar {
       display: none;

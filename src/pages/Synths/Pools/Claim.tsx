@@ -21,7 +21,7 @@ const REWARDS = styled(CenteredDiv)`
 
     > div {
       height: 39px;
-      margin-top: ${({ theme }) => theme.margins['1x']};
+      margin-top: ${({ theme }) => theme.margin(1)};
       padding: 4px 11px;
       ${({ theme }) => theme.smallBorderRadius}
       background-color: ${({ theme }) => theme.bg5};

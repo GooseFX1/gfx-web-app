@@ -34,16 +34,15 @@ const HEADER = styled(SpaceBetweenDiv)<{ $tab: number }>`
 const TAB = styled(FlexColumnDiv)`
   justify-content: space-between;
   height: 100%;
-  padding: ${({ theme }) => theme.margins['5x']} ${({ theme }) => theme.margins['3x']}
-    ${({ theme }) => theme.margins['3x']};
+  padding: ${({ theme }) => theme.margin(5)} ${({ theme }) => theme.margin(3)} ${({ theme }) => theme.margin(3)};
 `
 
 const TABS = styled(SpaceBetweenDiv)`
   flex: 1;
-  padding: ${({ theme }) => theme.margins['3x']} ${({ theme }) => theme.margins['4x']};
+  padding: ${({ theme }) => theme.margin(3)} ${({ theme }) => theme.margin(4)};
 
   > span:not(:last-child) {
-    margin-right: ${({ theme }) => theme.margins['4x']};
+    margin-right: ${({ theme }) => theme.margin(4)};
   }
 `
 

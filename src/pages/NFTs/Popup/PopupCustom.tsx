@@ -19,7 +19,7 @@ export const STYLED_POPUP = styled(Modal)<{ width: string; height: string }>`
   }
 
   .ant-modal-body {
-    padding: ${({ theme }) => theme.margins['8x']} ${({ theme }) => theme.margins['9x']};
+    padding: ${({ theme }) => theme.margin(8)} ${({ theme }) => theme.margin(9)};
   }
 
   .ant-modal-content {

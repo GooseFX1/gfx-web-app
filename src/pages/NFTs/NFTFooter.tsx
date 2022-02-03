@@ -57,7 +57,7 @@ const FOLLOW_US_WRAPPER = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-top: ${({ theme }) => theme.margins['3.5x']};
+  margin-top: ${({ theme }) => theme.margin(3.5)};
 `
 
 const FOLLOW_US_BUTTON = styled(ButtonWrapper)`

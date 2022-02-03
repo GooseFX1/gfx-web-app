@@ -55,8 +55,8 @@ const PURCHASE_MODAL = styled(Modal)`
   }
 
   .ant-modal-body {
-    padding: ${({ theme }) => theme.margins['4.5x']};
-    padding-bottom: ${({ theme }) => theme.margins['1x']};
+    padding: ${({ theme }) => theme.margin(4.5)};
+    padding-bottom: ${({ theme }) => theme.margin(1)};
   }
 
   .modal-close-icon {
@@ -77,7 +77,7 @@ const PURCHASE_MODAL = styled(Modal)`
 
   .bm-confirm {
     margin-left: 0 auto;
-    margin-top: ${({ theme }) => theme.margins['4.5x']};
+    margin-top: ${({ theme }) => theme.margin(4.5)};
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -92,7 +92,7 @@ const PURCHASE_MODAL = styled(Modal)`
       position: relative;
       font-size: 50px;
       font-weight: 600;
-      margin-bottom: -${({ theme }) => theme.margins['1x']};
+      margin-bottom: -${({ theme }) => theme.margin(1)};
       color: ${({ theme }) => theme.text1};
       background: transparent;
       border: 0px;
@@ -126,8 +126,8 @@ const PURCHASE_MODAL = styled(Modal)`
   }
 
   .bm-verified {
-    margin-top: ${({ theme }) => theme.margins['3x']};
-    margin-bottom: ${({ theme }) => theme.margins['3x']};
+    margin-top: ${({ theme }) => theme.margin(3)};
+    margin-bottom: ${({ theme }) => theme.margin(3)};
     font-size: 14px;
     font-weight: 600;
     color: ${({ theme }) => theme.text5};
@@ -144,7 +144,7 @@ const PURCHASE_MODAL = styled(Modal)`
 
   .bm-not-enough-funds {
     visibility: hidden;
-    margin-top: ${({ theme }) => theme.margins['1x']};
+    margin-top: ${({ theme }) => theme.margin(1)};
     text-align: center;
     font-size: 13px;
     font-weight: 600;
@@ -153,27 +153,27 @@ const PURCHASE_MODAL = styled(Modal)`
 
   .bm-not-enough-visible {
     visibility: visible;
-    padding-bottom: ${({ theme }) => theme.margins['1x']};
+    padding-bottom: ${({ theme }) => theme.margin(1)};
   }
 
   .bm-review-alert {
     font-size: 10px;
     font-weight: 600;
-    padding-bottom: ${({ theme }) => theme.margins['2x']};
+    padding-bottom: ${({ theme }) => theme.margin(2)};
     color: ${({ theme }) => theme.text5};
   }
 
   .bm-details {
     min-height: 100px;
-    margin-top: ${({ theme }) => theme.margins['3.5x']};
-    margin-bottom: ${({ theme }) => theme.margins['1x']};
+    margin-top: ${({ theme }) => theme.margin(3.5)};
+    margin-bottom: ${({ theme }) => theme.margin(1)};
     font-size: 15px;
     font-weight: 600;
     color: ${({ theme }) => theme.text1};
 
     .bm-details-price {
       width: 100px;
-      margin-top: ${({ theme }) => theme.margins['0.5x']};
+      margin-top: ${({ theme }) => theme.margin(0.5)};
     }
 
     .bm-details-total {

@@ -9,8 +9,8 @@ import { CenteredImg, SpaceBetweenDiv } from '../../../styles'
   display: flex;
 
   > div {
-    ${({ theme }) => theme.measurements(theme.margins['1.5x'])}
-    margin-right: ${({ theme }) => theme.margins['1x']};
+    ${({ theme }) => theme.measurements(theme.margin(1.5))}
+    margin-right: ${({ theme }) => theme.margin(1)};
   }
 
   span {
@@ -20,12 +20,12 @@ import { CenteredImg, SpaceBetweenDiv } from '../../../styles'
 ` */
 
 const ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['4x'])}
+  ${({ theme }) => theme.measurements(theme.margin(4))}
 `
 
 const INFO = styled.div`
   width: 100%;
-  margin: 0 ${({ theme }) => theme.margins['1.5x']};
+  margin: 0 ${({ theme }) => theme.margin(1.5)};
 
   > div {
     display: flex;
@@ -35,7 +35,7 @@ const INFO = styled.div`
 
 const PRICE = styled.span`
   display: block;
-  margin: ${({ theme }) => theme.margins['0.5x']} 0 ${({ theme }) => theme.margins['1.5x']};
+  margin: ${({ theme }) => theme.margin(0.5)} 0 ${({ theme }) => theme.margin(1.5)};
   font-size: 10px;
   font-weight: bold;
   text-align: left;
@@ -71,7 +71,7 @@ const SIDE = styled(SpaceBetweenDiv)<{ $display: boolean; $side: OrderSide }>`
 `
 
 const TICKER = styled.span`
-  margin-right: ${({ theme }) => theme.margins['1.5x']};
+  margin-right: ${({ theme }) => theme.margin(1.5)};
   font-size: 12px;
   font-weight: bold;
   white-space: nowrap;
@@ -80,9 +80,9 @@ const TICKER = styled.span`
 const WRAPPER = styled.div`
   position: relative;
   display: flex;
-  margin: -${({ theme }) => theme.margins['2x']};
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['3x']}
-    ${({ theme }) => theme.margins['1.5x']} ${({ theme }) => theme.margins['1.5x']};
+  margin: -${({ theme }) => theme.margin(2)};
+  padding: ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(3)} ${({ theme }) => theme.margin(1.5)}
+    ${({ theme }) => theme.margin(1.5)};
   border: solid 2.5px ${({ theme }) => theme.cryptoOrderHeaderBorder};
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;

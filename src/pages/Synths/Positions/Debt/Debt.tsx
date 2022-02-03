@@ -15,12 +15,12 @@ const INFORMATION = styled(SpaceBetweenDiv)`
 
 const SPECIFIC = styled(SpaceBetweenDiv)<{ $color: string }>`
   &:not(:last-child) {
-    margin-bottom: ${({ theme }) => theme.margins['3x']};
+    margin-bottom: ${({ theme }) => theme.margin(3)};
   }
 
   > div {
-    ${({ theme }) => theme.measurements(theme.margins['1.5x'])}
-    margin-right: ${({ theme }) => theme.margins['1x']};
+    ${({ theme }) => theme.measurements(theme.margin(1.5))}
+    margin-right: ${({ theme }) => theme.margin(1)};
     ${({ theme }) => theme.roundedBorders}
     background-color: ${({ $color }) => $color};
   }
@@ -40,7 +40,7 @@ const SPECIFIC = styled(SpaceBetweenDiv)<{ $color: string }>`
       display: block;
       height: 2px;
       width: 50px;
-      margin: 0 ${({ theme }) => theme.margins['2x']};
+      margin: 0 ${({ theme }) => theme.margin(2)};
       background-color: ${({ theme }) => theme.text1};
     }
   }
@@ -49,10 +49,10 @@ const SPECIFIC = styled(SpaceBetweenDiv)<{ $color: string }>`
 const WRAPPER = styled(SpaceEvenlyDiv)`
   align-items: center;
   width: 100%;
-  padding: 0 ${({ theme }) => theme.margins['3x']};
+  padding: 0 ${({ theme }) => theme.margin(3)};
 
   > *:last-child {
-    margin-left: ${({ theme }) => theme.margins['4x']};
+    margin-left: ${({ theme }) => theme.margin(4)};
   }
 `
 

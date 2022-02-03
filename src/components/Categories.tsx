@@ -11,7 +11,7 @@ const WRAPPER = styled.button`
   width: 150px;
   border: none;
   ${({ theme }) => theme.roundedBorders}
-  padding: 0 ${({ theme }) => theme.margins['2x']};
+  padding: 0 ${({ theme }) => theme.margin(2)};
   background-color: ${({ theme }) => theme.secondary2};
   cursor: pointer;
 
@@ -25,7 +25,7 @@ const STYLED_POOL_MENU = styled(Menu)`
   &.dot-menu {
     min-width: 251px;
     background-color: #1e1e1e;
-    padding: ${({ theme }) => theme.margins['4.5x']} ${({ theme }) => theme.margins['2.5x']};
+    padding: ${({ theme }) => theme.margin(4.5)} ${({ theme }) => theme.margin(2.5)};
     li {
       padding-bottom: 25px;
       display: flex;

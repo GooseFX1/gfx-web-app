@@ -21,28 +21,28 @@ const WRAPPER = styled.div`
   display: flex;
   height: 100%;
   width: 100vw;
-  margin: ${({ theme }) => theme.margins['3x']} 0;
+  margin: ${({ theme }) => theme.margin(3)} 0;
 
   > div:first-child {
-    margin-left: ${({ theme }) => theme.margins['3x']};
-    width: calc(100% - ${TRADE_ORDER_WIDTH} - 2 * ${({ theme }) => theme.margins['3x']});
+    margin-left: ${({ theme }) => theme.margin(3)};
+    width: calc(100% - ${TRADE_ORDER_WIDTH} - 2 * ${({ theme }) => theme.margin(3)});
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
       width: 100%;
       margin: 0;
-      padding: ${({ theme }) => theme.margins['1x']};
+      padding: ${({ theme }) => theme.margin(1)};
     `}
   }
 
   > div:last-child {
     ${({ theme }) => theme.flexColumnNoWrap};
     width: ${TRADE_ORDER_WIDTH};
-    margin: 0 ${({ theme }) => theme.margins['3x']};
+    margin: 0 ${({ theme }) => theme.margin(3)};
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
       width: 100%;
       margin: 0;
-      padding: ${({ theme }) => theme.margins['1x']};
+      padding: ${({ theme }) => theme.margin(1)};
     `}
   }
 

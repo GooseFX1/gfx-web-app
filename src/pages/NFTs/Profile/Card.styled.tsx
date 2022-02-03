@@ -6,7 +6,7 @@ export const StyledCard = styled.div<{ $border?: boolean }>`
 max-width: 285px;
 ${theme.largeBorderRadius}
 background-color: #171717;
-padding: ${theme.margins['2x']} ${theme.margins['2.5x']};
+padding: ${theme.margin(2)} ${theme.margin(2.5)};
 cursor: pointer;
 z-index: 2;
 .card-image {
@@ -16,7 +16,7 @@ z-index: 2;
   ${theme.largeBorderRadius}
 }
 .info {
-  margin-top: ${theme.margins['1.5x']};
+  margin-top: ${theme.margin(1.5)};
   position: relative;
   text-align: left;
 }
@@ -32,13 +32,13 @@ z-index: 2;
   font-weight: 600;
 }
 .number {
-  margin-bottom: ${theme.margins['0.5x']};
+  margin-bottom: ${theme.margin(0.5)};
 }
 .other {
   font-weight: 500;
 }
 .check-icon {
-  margin-left: ${theme.margins['0.5x']};
+  margin-left: ${theme.margin(0.5)};
   width: 14px;
   height: auto;
 }
@@ -58,15 +58,15 @@ z-index: 2;
   .heart-purple {
     width: 32px;
     height: 32px;
-    margin-right: ${theme.margins['1.5x']};
-    padding-top: ${theme.margins['1x']};
+    margin-right: ${theme.margin(1.5)};
+    padding-top: ${theme.margin(1)};
   }
 
   .heart-red,
   .heart-empty {
     width: 15px;
     height: 15px;
-    margin-right: ${theme.margins['0.5x']};
+    margin-right: ${theme.margin(0.5)};
   }
   .like-count {
     color: #4b4b4b;
@@ -99,12 +99,12 @@ z-index: 2;
     font-size: 12px;
     .text {
       color: #ababab;
-      margin-right: ${theme.margins['0.5x']};
+      margin-right: ${theme.margin(0.5)};
       display: inline-block;
     }
   }
   .price-number {
-    margin-left: ${theme.margins['0.5x']};
+    margin-left: ${theme.margin(0.5)};
     display: inline-block;
     color: ${theme.text1};
   }

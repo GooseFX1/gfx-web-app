@@ -11,7 +11,7 @@ const NFT_DETAILS = styled.div`
   ${({ theme }) => css`
     position: relative;
     height: 71vh;
-    padding: ${theme.margins['9x']} ${theme.margins['11x']} ${theme.margins['3x']} ${theme.margins['11x']};
+    padding: ${theme.margin(9)} ${theme.margin(11)} ${theme.margin(3)} ${theme.margin(11)};
     margin: 0 auto;
     background-color: ${theme.nftDetailBackground};
     overflow-y: auto;
