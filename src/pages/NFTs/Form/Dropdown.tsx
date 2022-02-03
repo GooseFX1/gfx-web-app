@@ -14,7 +14,7 @@ const WRAPPER = styled.button`
   width: 195px;
   border: none;
   ${({ theme }) => theme.roundedBorders}
-  padding: 0 ${({ theme }) => theme.margins['2x']};
+  padding: 0 ${({ theme }) => theme.margin(2)};
   background-color: ${({ theme }) => theme.secondary2};
   cursor: pointer;
 
@@ -27,9 +27,9 @@ const STYLED_MENU = styled(Menu)`
   min-width: 195px;
   ${({ theme }) => theme.largeBorderRadius}
   background-color: #131313;
-  padding: ${({ theme }) => theme.margins['4x']} ${({ theme }) => theme.margins['3.5x']};
+  padding: ${({ theme }) => theme.margin(4)} ${({ theme }) => theme.margin(3.5)};
   li {
-    margin-bottom: ${({ theme }) => theme.margins['2x']};
+    margin-bottom: ${({ theme }) => theme.margin(2)};
     padding-bottom: 0 !important;
     > span {
       color: #fff;

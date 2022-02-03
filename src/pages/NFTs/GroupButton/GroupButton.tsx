@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 export const STYLED_GROUP_BUTTON = styled.div`
-  margin-top: ${({ theme }) => theme.margins['5x']};
+  margin-top: ${({ theme }) => theme.margin(5)};
   display: flex;
   justify-content: space-around;
   width: 90%;
@@ -13,7 +13,7 @@ export const STYLED_GROUP_BUTTON = styled.div`
     font-size: 18px;
     font-weight: 600;
     border: none;
-    margin-right: ${({ theme }) => theme.margins['2x']};
+    margin-right: ${({ theme }) => theme.margin(2)};
     color: #ffffff;
     background: transparent;
     cursor: pointer;

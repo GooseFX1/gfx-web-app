@@ -4,8 +4,8 @@ export const StyledMyNFT = styled.div`
   ${({ theme }) => `
   display: flex;
   justify-content: space-between;
-  padding: ${theme.margins['9x']} ${theme.margins['11x']};
-  margin: ${theme.margins['2x']} 0;
+  padding: ${theme.margin(9, 11)};
+  margin: ${theme.margin(2)} 0;
   text-align: left;
   max-width: 1250px;
   margin: 0 auto;
@@ -25,14 +25,14 @@ export const StyledMyNFT = styled.div`
     width: 50%;
   }
   .block-left {
-    padding-right: ${theme.margins['11x']};
+    padding-right: ${theme.margin(11)};
     .my-created-NFT-image {
       width: 100%;
       height: auto;
       ${theme.largeBorderRadius}
     }
     .heading {
-      margin: ${theme.margins['2x']} 0;
+      margin: ${theme.margin(2)} 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -52,7 +52,7 @@ export const StyledMyNFT = styled.div`
           font-size: 18px;
           font-weight: 600;
           color: #636363;
-          margin-left: ${theme.margins['1x']};
+          margin-left: ${theme.margin(1)};
           display: inline-block;
         }
       }
@@ -60,14 +60,14 @@ export const StyledMyNFT = styled.div`
     .countdown {
       height: 75px;
       background-color: ${theme.bg5};
-      padding: 0 ${theme.margins['4.5x']};
+      padding: 0 ${theme.margin(4.5)};
       ${theme.largeBorderRadius}
       display: flex;
       align-items: center;
       justify-content: space-around;
       .unit {
         & + .unit {
-          margin-left: ${theme.margins['7.5x']};
+          margin-left: ${theme.margin(7.5)};
         }
       }
       .number {
@@ -81,7 +81,7 @@ export const StyledMyNFT = styled.div`
         background-color: ${theme.bg7};
         line-height: 40px;
         text-align: center;
-        margin-right: ${theme.margins['1x']};
+        margin-right: ${theme.margin(1)};
       }
       .text {
         font-size: 12px;
@@ -91,11 +91,11 @@ export const StyledMyNFT = styled.div`
     }
   }
   .block-right {
-    padding-left: ${theme.margins['11x']};
+    padding-left: ${theme.margin(11)};
     .heading {
       display: flex;
       justify-content: space-between;
-      margin-bottom: ${theme.margins['1.5x']};
+      margin-bottom: ${theme.margin(1.5)};
       .text-1 {
         font-size: 18px;
         font-weight: 600;
@@ -110,28 +110,28 @@ export const StyledMyNFT = styled.div`
     .price-group {
       display: flex;
       align-items: center;
-      margin-bottom: ${theme.margins['2x']};
+      margin-bottom: ${theme.margin(2)};
       .price-sol-image {
         width: 32px;
         height: 32px;
-        margin-right: ${theme.margins['1.5x']};
+        margin-right: ${theme.margin(1.5)};
       }
       .price {
         font-size: 25px;
         font-weight: bold;
         color: ${theme.text1};
-        margin-right: ${theme.margins['1.5x']};
+        margin-right: ${theme.margin(1.5)};
       }
       .price-usd {
         font-size: 14px;
         font-weight: 500;
         color: ${theme.text1};
-        margin-right: ${theme.margins['1.5x']};
+        margin-right: ${theme.margin(1.5)};
       }
       .progress-image {
         width: 14px;
         height: auto;
-        margin-right: ${theme.margins['1x']};
+        margin-right: ${theme.margin(1)};
       }
       .percent {
         font-size: 11px;
@@ -140,7 +140,7 @@ export const StyledMyNFT = styled.div`
       }
     }
     .title {
-      margin-bottom: ${theme.margins['1x']};;
+      margin-bottom: ${theme.margin(1)};;
       font-size: 22px;
       font-weight: 600;
       color: ${theme.text1};
@@ -149,14 +149,14 @@ export const StyledMyNFT = styled.div`
       font-size: 12px;
       font-weight: 500;
       color: ${theme.text1};
-      margin-bottom: ${theme.margins['1.5x']};;
+      margin-bottom: ${theme.margin(1.5)};;
     }
     .collection-group {
       display: flex;
       align-items: center;
-      margin-bottom: ${theme.margins['2x']};;
+      margin-bottom: ${theme.margin(2)};;
       .item {
-        margin-right: ${theme.margins['5x']};;
+        margin-right: ${theme.margin(5)};;
         .image {
           display: flex;
           align-items: center;
@@ -170,7 +170,7 @@ export const StyledMyNFT = styled.div`
           border-radius: 50%;
           width: 30px;
           height: 30px;
-          margin-right: ${theme.margins['1x']};;
+          margin-right: ${theme.margin(1)};;
         }
       }
       .title {
@@ -188,24 +188,24 @@ export const StyledMyNFT = styled.div`
         justify-content: space-between;
         background-color: ${theme.bg5};
         ${theme.largeBorderRadius}
-        padding: ${theme.margins['3x']};
+        padding: ${theme.margin(3)};
         font-size: 14px;
         font-weight: 600;
         color: ${theme.text1};
         .info-item {
           & + .info-item {
-            margin-left: ${theme.margins['7x']};
+            margin-left: ${theme.margin(7)};
           }
         }
       }
       .content {
-        padding: ${theme.margins['1.5x']} ${theme.margins['3x']};
+        padding: ${theme.margin(1.5, 3)};
         .content-row {
           display: flex;
           justify-content: space-around;
           width: 100%;
           & + .content-row {
-            margin-top: ${theme.margins['1.5x']};
+            margin-top: ${theme.margin(1.5)};
           }
           .text-1 {
             font-size: 14px;
@@ -226,14 +226,14 @@ export const StyledMyNFT = styled.div`
       .actions {
         background: ${theme.bg8};
         border-radius: 0 0 20px 20px;
-        padding: ${theme.margins['2x']} ${theme.margins['3x']} ${theme.margins['1.5x']};
+        padding: ${theme.margin(2, 3, 1.5)};
         display: flex;
         flex-wrap: wrap;
         justify-content: space-around;
         .btn-edit {
           border: none;
           width: calc(100% - 76px);
-          margin-right: ${theme.margins['1x']};;
+          margin-right: ${theme.margin(1)};;
           height: 60px;
           line-height: 60px;
           border-radius: 29px;
@@ -245,7 +245,7 @@ export const StyledMyNFT = styled.div`
         }
         .share-link {
           display: inline-block;
-          margin-left: ${theme.margins['1x']};
+          margin-left: ${theme.margin(1)};
           .share-image {
             width: 60px;
             height: 60px;

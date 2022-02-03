@@ -9,22 +9,22 @@ import { CenteredDiv } from '../../styles'
 const BODY = styled(CenteredDiv)`
   flex-direction: column;
   height: 100%;
-  padding: ${({ theme }) => theme.margins['3x']} 0;
+  padding: ${({ theme }) => theme.margin(3)} 0;
   min-height: 138px;
 
   > div:not(:last-child) {
-    margin-bottom: ${({ theme }) => theme.margins['1.5x']};
+    margin-bottom: ${({ theme }) => theme.margin(1.5)};
   }
 `
 
 const CONNECT = styled.div`
-  margin: ${({ theme }) => theme.margins['3x']} 0;
+  margin: ${({ theme }) => theme.margin(3)} 0;
 `
 
 const WRAPPER = styled.div<{ $coverVisible: boolean; $minHeight?: string }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   ${({ $minHeight }) => $minHeight && `min-height: ${$minHeight};`}
-  margin-top: ${({ theme, $coverVisible }) => ($coverVisible ? theme.margins['3x'] : '0')};
+  margin-top: ${({ theme, $coverVisible }) => ($coverVisible ? theme.margin(3) : '0')};
   ${({ theme }) => theme.largeBorderRadius}
   ${({ theme }) => theme.largeShadow}
   background-color: ${({ theme }) => theme.bg3};

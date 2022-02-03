@@ -17,7 +17,7 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
   ${({ theme }) => `
     .ant-modal-body {
-      padding: ${theme.margins['3.5x']} ${theme.margins['6x']} ${theme.margins['4x']};
+      padding: ${theme.margin(3.5)} ${theme.margin(6)} ${theme.margin(4)};
     }
     .ant-modal-close {
       right: 35px;
@@ -32,7 +32,7 @@ const STYLED_POPUP = styled(PopupCustom)`
       font-size: 25px;
       font-weight: 600;
       color: ${theme.text7};
-      margin-bottom: ${theme.margins['4x']};
+      margin-bottom: ${theme.margin(4)};
     }
   `}
 `
@@ -41,12 +41,12 @@ const TITLE = MainText(styled.p`
   font-weight: 600;
   color: ${({ theme }) => theme.text8} !important;
   text-align: left;
-  margin-bottom: ${({ theme }) => theme.margins['2x']};
+  margin-bottom: ${({ theme }) => theme.margin(2)};
 `)
 
 const STYLED_CREATE_BTN = styled.button<{ disabled: boolean }>`
   ${({ theme, disabled }) => `
-    margin-top: ${theme.margins['3.5x']};
+    margin-top: ${theme.margin(3.5)};
     width: 100%;
     font-size: 17px;
     font-weight: 600;

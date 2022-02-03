@@ -7,7 +7,7 @@ import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../sty
 
 const BODY = styled.div`
   height: 33vh;
-  margin: 0 -${({ theme }) => theme.margins['3x']};
+  margin: 0 -${({ theme }) => theme.margin(3)};
   overflow-y: auto;
 `
 
@@ -31,27 +31,27 @@ const CLICKER = styled(SpaceBetweenDiv)`
 `
 
 const CLICKER_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['2x'])}
-  margin-left: ${({ theme }) => theme.margins['1x']};
+  ${({ theme }) => theme.measurements(theme.margin(2))}
+  margin-left: ${({ theme }) => theme.margin(1)};
   ${({ theme }) => theme.roundedBorders}
 `
 
 const INPUT = styled.div`
   position: relative;
-  margin-top: ${({ theme }) => theme.margins['2x']};
+  margin-top: ${({ theme }) => theme.margin(2)};
 
   &:after {
     content: '';
     display: block;
     height: 1px;
-    width: calc(100% + ${({ theme }) => theme.margins['3x']} * 2);
-    margin-top: ${({ theme }) => theme.margins['2x']};
-    margin-left: -${({ theme }) => theme.margins['3x']};
+    width: calc(100% + ${({ theme }) => theme.margin(3)} * 2);
+    margin-top: ${({ theme }) => theme.margin(2)};
+    margin-left: -${({ theme }) => theme.margin(3)};
     background-color: ${({ theme }) => theme.text1};
   }
 
   input {
-    height: ${({ theme }) => theme.margins['5x']};
+    height: ${({ theme }) => theme.margin(5)};
     background-color: ${({ theme }) => theme.bg4};
     font-size: 12px;
     text-align: left;
@@ -62,7 +62,7 @@ const MAGNIFYING_GLASS = styled(CenteredImg)`
   position: absolute;
   top: 12px;
   right: 12px;
-  ${({ theme }) => theme.measurements(theme.margins['2x'])}
+  ${({ theme }) => theme.measurements(theme.margin(2))}
 `
 
 const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
@@ -79,7 +79,7 @@ const TOKEN = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['3x']};
+  padding: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(3)};
   cursor: pointer;
 
   &:hover {
@@ -108,8 +108,8 @@ const TOKEN = styled.div`
 `
 
 const TOKEN_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['4x'])}
-  margin-right: ${({ theme }) => theme.margins['2x']};
+  ${({ theme }) => theme.measurements(theme.margin(4))}
+  margin-right: ${({ theme }) => theme.margin(2)};
   ${({ theme }) => theme.roundedBorders}
   box-shadow: 0 4px 10px 1px rgb(0 0 0 / 20%);
 `

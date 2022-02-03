@@ -150,25 +150,7 @@ export interface Text {
 
 declare module 'styled-components' {
   export interface DefaultTheme extends Colors, Text {
-    margins: {
-      '0.5x': string
-      '1x': string
-      '1.5x': string
-      '2x': string
-      '2.5x': string
-      '3x': string
-      '3.5x': string
-      '4x': string
-      '4.5x': string
-      '5x': string
-      '5.5x': string
-      '6x': string
-      '7x': string
-      '8x': string
-      '9x': string
-      '10x': string
-      '11x': string
-    }
+    margin: (size1?: number, size2?: number, size3?: number, size4?: number) => string
 
     // shadows
     largeShadow: FlattenSimpleInterpolation

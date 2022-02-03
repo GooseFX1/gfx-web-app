@@ -24,8 +24,8 @@ const UPLOAD_FIELD_WRAPPER = styled.div<{ flex?: number }>`
   display: flex;
   flex: ${({ flex }) => flex || 1};
   flex-direction: column;
-  margin-top: ${({ theme }) => theme.margins['2.5x']};
-  margin-right: ${({ theme }) => theme.margins['2.5x']};
+  margin-top: ${({ theme }) => theme.margin(2.5)};
+  margin-right: ${({ theme }) => theme.margin(2.5)};
 
   .category {
     background-color: ${({ theme }) => theme.btnIconBg} !important;
@@ -37,7 +37,7 @@ const TITLE = MainText(styled.span`
   font-weight: 600;
   color: ${({ theme }) => theme.text8} !important;
   text-align: left;
-  margin-bottom: ${({ theme }) => theme.margins['1x']};
+  margin-bottom: ${({ theme }) => theme.margin(1)};
 `)
 
 const BUTTON_PLUS_WRAPPER = styled(ButtonWrapper)`

@@ -10,7 +10,7 @@ export const StyledPopupProfile = styled(Modal)`
   .ant-modal-header {
     ${theme.largeBorderRadius}
     background: ${theme.bg3};
-    padding: ${theme.margins['4x']} ${theme.margins['5.5x']} 0 ${theme.margins['5.5x']};
+    padding: ${theme.margin(4)} ${theme.margin(5.5)} 0 ${theme.margin(5.5)};
     border: none;
     .ant-modal-title {
       font-size: 25px;
@@ -23,7 +23,7 @@ export const StyledPopupProfile = styled(Modal)`
     box-shadow: none;
   }
   .ant-modal-body {
-    padding: ${theme.margins['4x']} ${theme.margins['5.5x']};
+    padding: ${theme.margin(4)} ${theme.margin(5.5)};
   }
   .ant-modal-close {
     top: 23px;
@@ -44,7 +44,7 @@ export const StyledPopupProfile = styled(Modal)`
     border-color: #848484;
     border-width: 2px;
     ${theme.largeBorderRadius}
-    padding: ${theme.margins['3x']};
+    padding: ${theme.margin(3)};
     .image-group {
       display: flex;
       align-items: center;
@@ -59,10 +59,10 @@ export const StyledPopupProfile = styled(Modal)`
       color: ${theme.text8};
       text-align: center;
       max-width: 70px;
-      margin-top: ${theme.margins['0.5x']};
+      margin-top: ${theme.margin(0.5)};
     }
     .note {
-      padding-left: ${theme.margins['2.5x']};
+      padding-left: ${theme.margin(2.5)};
       font-size: 14px;
       color: ${theme.text8};
     }
@@ -119,18 +119,18 @@ export const StyledPopupProfile = styled(Modal)`
 `
 export const StyledFormProfile = styled(Form)`
   ${({ theme }) => `
-  margin-top: ${theme.margins['3x']};
+  margin-top: ${theme.margin(3)};
   .half-width {
     flex: 1;
     width: 50%;
-    margin: 0 ${theme.margins['1x']};
+    margin: 0 ${theme.margin(1)};
   }
   .full-width {
     display: flex;
-    margin: 0 -${theme.margins['0.5x']} ${theme.margins['1x']};;
+    margin: 0 -${theme.margin(0.5)} ${theme.margin(1)};;
   }
   .ant-form-item {
-    margin-bottom: ${theme.margins['1x']};
+    margin-bottom: ${theme.margin(1)};
   }
   .hint {
     font-size: 9px;
@@ -154,7 +154,7 @@ export const StyledFormProfile = styled(Form)`
         font-size: 12px;
         color: #8a8a8a;
         display: inline-block;
-        padding-left: ${theme.margins['0.5x']}
+        padding-left: ${theme.margin(0.5)}
       }
     }
   }
@@ -176,10 +176,10 @@ export const StyledFormProfile = styled(Form)`
     font-weight: 600;
     color: ${theme.text7};
     line-height: 1;
-    margin: ${theme.margins['3x']} 0 ${theme.margins['2x']};
+    margin: ${theme.margin(3)} 0 ${theme.margin(2)};
   }
   .btn-save {
-    margin-top: ${theme.margins['3.5x']};
+    margin-top: ${theme.margin(3.5)};
     width: 100%;
     font-size: 17px;
     font-weight: 600;

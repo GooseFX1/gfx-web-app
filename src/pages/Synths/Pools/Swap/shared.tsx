@@ -6,8 +6,7 @@ export const Amount = styled(FlexColumnDiv)<{ $height: string }>`
   align-items: center;
   justify-content: flex-end;
   height: ${({ $height }) => $height};
-  padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2.5x']}
-    ${({ theme }) => theme.margins['1x']} 0;
+  padding: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(2.5)} ${({ theme }) => theme.margin(1)} 0;
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.textBox};
 

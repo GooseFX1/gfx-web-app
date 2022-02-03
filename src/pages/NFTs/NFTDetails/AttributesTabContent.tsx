@@ -6,8 +6,8 @@ const ATTRIBUTES_TAB_CONTENT = styled.div`
   ${({ theme }) => css`
     display: grid;
     grid-template-columns: repeat(2, minmax(auto, 50%));
-    grid-gap: ${theme.margins['1.5x']};
-    padding: ${theme.margins['2x']} ${theme.margins['3x']};
+    grid-gap: ${theme.margin(1.5)};
+    padding: ${theme.margin(2)} ${theme.margin(3)};
     height: 100%;
     color: #fff;
     overflow-y: auto;
@@ -18,7 +18,7 @@ const ATTRIBUTES_ITEM = styled.div`
   height: 60px;
   border-radius: 10px;
   background-color: ${({ theme }) => theme.atrributeBg};
-  padding: ${({ theme }) => theme.margins['1x']};
+  padding: ${({ theme }) => theme.margin(1)};
 
   .ai-title {
     font-size: 11px;

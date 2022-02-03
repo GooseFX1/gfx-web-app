@@ -21,7 +21,7 @@ const AMOUNT = styled.div`
 `
 
 const WRAPPER = styled.div`
-  margin-top: ${({ theme }) => theme.margins['2x']};
+  margin-top: ${({ theme }) => theme.margin(2)};
 
   > span {
     display: flex;

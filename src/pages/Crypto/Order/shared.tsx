@@ -3,8 +3,8 @@ import styled from 'styled-components'
 export const FieldHeader = styled.span`
   display: block;
   width: 100%;
-  margin-bottom: ${({ theme }) => theme.margins['0.5x']};
-  padding: 0 ${({ theme }) => theme.margins['0.5x']};
+  margin-bottom: ${({ theme }) => theme.margin(0.5)};
+  padding: 0 ${({ theme }) => theme.margin(0.5)};
   font-size: 11px;
   text-align: left;
   color: ${({ theme }) => theme.text2};
@@ -15,7 +15,7 @@ export const Picker = styled.div`
   align-items: center;
 
   span {
-    margin-left: ${({ theme }) => theme.margins['1.5x']};
+    margin-left: ${({ theme }) => theme.margin(1.5)};
     font-size: 10px;
     font-weight: bold;
     whitespace: no-wrap;

@@ -8,7 +8,7 @@ const { TabPane } = Tabs
 
 const ANALYTICS_TABS = styled.div`
   background: #1e1e1e;
-  padding: ${({ theme }) => theme.margins['1.5x']} ${({ theme }) => theme.margins['4x']} 6px;
+  padding: ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(4)} 6px;
   position: relative;
 
   .ant-tabs-ink-bar {
@@ -79,7 +79,7 @@ const ANALYTICS_DROPDOWN = styled.div`
     font-weight: 600;
     color: #fff;
     margin-bottom: 0;
-    margin-right: ${({ theme }) => theme.margins['3x']};
+    margin-right: ${({ theme }) => theme.margin(3)};
     color: #fff;
   }
   .analytics-dropwdown {

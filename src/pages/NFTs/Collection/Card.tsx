@@ -4,7 +4,7 @@ import { moneyFormatter } from '../../../utils'
 import { ISingleNFT } from '../../../types/nft_details.d'
 
 const CARD = styled.div<{ status: string }>`
-  padding-bottom: ${({ theme }) => theme.margins['1.5x']};
+  padding-bottom: ${({ theme }) => theme.margin(1.5)};
   border-radius: 15px;
   cursor: pointer;
 
@@ -22,7 +22,7 @@ const CARD = styled.div<{ status: string }>`
       position: absolute;
       right: 10px;
       bottom: 7px;
-      padding: ${({ theme }) => `${theme.margins['0.5x']} ${theme.margins['1x']}`};
+      padding: ${({ theme }) => `${theme.margin(0.5)} ${theme.margin(1)}`};
       background-color: #000;
       border-radius: 15px;
       font-size: 9px;
@@ -31,14 +31,14 @@ const CARD = styled.div<{ status: string }>`
 
   .card-info {
     height: 30px;
-    margin-top: ${({ theme }) => theme.margins['2x']};
-    margin-bottom: ${({ theme }) => theme.margins['0.5x']};
+    margin-top: ${({ theme }) => theme.margin(2)};
+    margin-bottom: ${({ theme }) => theme.margin(0.5)};
     text-align: left;
 
     .card-name {
       font-size: 15px;
       font-weight: 600;
-      margin-right: ${({ theme }) => theme.margins['0.5x']};
+      margin-right: ${({ theme }) => theme.margin(0.5)};
       font-family: Montserrat;
     }
 
@@ -53,7 +53,7 @@ const CARD = styled.div<{ status: string }>`
     }
 
     .card-favorite-heart {
-      margin-right: ${({ theme }) => theme.margins['0.5x']};
+      margin-right: ${({ theme }) => theme.margin(0.5)};
     }
 
     .card-favorite-number {
@@ -65,7 +65,7 @@ const CARD = styled.div<{ status: string }>`
 
   ${({ status, theme }) => {
     return css`
-      padding: ${theme.margins['2.5x']};
+      padding: ${theme.margin(2.5)};
       opacity: ${status === 'sold_out' ? 0.6 : 1};
       background-color: #171717;
 
@@ -144,7 +144,7 @@ const CARD_BUTTON = styled.button<{ cardStatus: string }>`
       cursor: ${cardStatus === 'sold_out' ? 'not-allowed' : 'pointer'};
       font-size: 11px;
       font-weight: 600;
-      padding: ${theme.margins['1x']} ${theme.margins['2x']};
+      padding: ${theme.margin(1)} ${theme.margin(2)};
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     `
   }}

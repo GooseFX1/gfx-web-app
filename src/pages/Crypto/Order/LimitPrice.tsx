@@ -8,16 +8,16 @@ import { ellipseNumber } from '../../../utils'
 const TYPES = styled.div`
   display: flex;
   align-items: center;
-  margin-top: ${({ theme }) => theme.margins['0.5x']};
-  padding: 0 ${({ theme }) => theme.margins['0.5x']};
+  margin-top: ${({ theme }) => theme.margin(0.5)};
+  padding: 0 ${({ theme }) => theme.margin(0.5)};
 
   > div {
     &:first-child {
-      margin-right: ${({ theme }) => theme.margins['2x']};
+      margin-right: ${({ theme }) => theme.margin(2)};
     }
 
     span {
-      margin-right: ${({ theme }) => theme.margins['1x']};
+      margin-right: ${({ theme }) => theme.margin(1)};
       font-size: 10px;
       font-weight: bold;
       color: ${({ theme }) => theme.text2};
@@ -27,7 +27,7 @@ const TYPES = styled.div`
 
 const WRAPPER = styled.div<{ $display: boolean }>`
   max-height: ${({ $display }) => ($display ? '500px' : '0')};
-  ${({ theme, $display }) => $display && `margin-bottom: ${theme.margins['1.5x']};`}
+  ${({ theme, $display }) => $display && `margin-bottom: ${theme.margin(1.5)};`}
   overflow: hidden;
 `
 

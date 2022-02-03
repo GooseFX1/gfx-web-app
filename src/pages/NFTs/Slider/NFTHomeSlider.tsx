@@ -8,7 +8,7 @@ import { MainButton } from '../../../components/MainButton'
 
 const CAROUSEL_WRAPPER = styled.div`
   background: #1e1e1e;
-  padding: 0 ${({ theme }) => theme.margins['4x']};
+  padding: 0 ${({ theme }) => theme.margin(4)};
   .slick-prev,
   .slick-next {
     width: 50px;
@@ -32,7 +32,7 @@ const CAROUSEL_WRAPPER = styled.div`
   }
 `
 const SLIDER_ITEM = styled.div`
-  margin-right: ${({ theme }) => theme.margins['4x']};
+  margin-right: ${({ theme }) => theme.margin(4)};
   position: relative;
   width: 40%;
   .home-slider-image {
@@ -54,7 +54,7 @@ const SLIDER_ITEM = styled.div`
       line-height: 48px;
       margin: 0;
       & + .home-slider-button {
-        margin-top: ${({ theme }) => theme.margins['5x']};
+        margin-top: ${({ theme }) => theme.margin(5)};
       }
     }
     .home-slider-desc {
@@ -62,10 +62,10 @@ const SLIDER_ITEM = styled.div`
       font-weight: 600;
       line-height: 17px;
       color: #fff;
-      margin-top: ${({ theme }) => theme.margins['2x']};
+      margin-top: ${({ theme }) => theme.margin(2)};
     }
     .home-slider-button {
-      margin: ${({ theme }) => theme.margins['2x']} auto 0;
+      margin: ${({ theme }) => theme.margin(2)} auto 0;
     }
   }
 `

@@ -6,7 +6,7 @@ const { TabPane } = Tabs
 
 const NFT_TAB = styled.div`
   z-index: 3;
-  margin-top: -${({ theme }) => theme.margins['6x']};
+  margin-top: -${({ theme }) => theme.margin(6)};
   .ant-tabs-ink-bar {
     display: none;
   }
@@ -27,7 +27,7 @@ const NFT_TAB = styled.div`
       font-size: 17px;
     }
     + .ant-tabs-tab {
-      margin: 0 0 0 ${({ theme }) => theme.margins['7x']};
+      margin: 0 0 0 ${({ theme }) => theme.margin(7)};
     }
     &.ant-tabs-tab-active {
       .ant-tabs-tab-btn {

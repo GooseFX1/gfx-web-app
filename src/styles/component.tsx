@@ -5,7 +5,7 @@ export const Brand = styled.a`
   ${({ theme }) => theme.flexCenter}
   float: left;
   width: auto;
-  padding: ${({ theme }) => theme.margins['1x']};
+  padding: ${({ theme }) => theme.margin(1)};
   font-size: 40px;
   font-weight: bold;
   line-height: 20px;
@@ -16,7 +16,7 @@ export const Brand = styled.a`
     object-fit: contain;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
-      left: ${({ theme }) => theme.margins['2x']};
+      left: ${({ theme }) => theme.margin(2)};
       height: 40px;
     `}
     ${({ theme }) => theme.mediaWidth.fromSmall`

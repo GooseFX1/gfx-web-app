@@ -16,7 +16,7 @@ export const STYLED_DONATE = styled(Row)`
       height: 32px;
       border-radius: 2px;
       color: ${({ theme }) => theme.text11};
-      margin-right: ${({ theme }) => theme.margins['1x']};
+      margin-right: ${({ theme }) => theme.margin(1)};
       font-size: 13px;
       font-weight: 600;
       text-align: center;

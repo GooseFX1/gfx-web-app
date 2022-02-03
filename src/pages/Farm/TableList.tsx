@@ -42,7 +42,7 @@ const STYLED_TABLE_LIST = styled(Table)`
         color: ${theme.text1};
         background-color: transparent;
         padding-top: 0;
-        padding-bottom: ${theme.margins['2x']};
+        padding-bottom: ${theme.margin(2)};
         &:before {
           content: none !important;
         }
@@ -60,7 +60,7 @@ const STYLED_TABLE_LIST = styled(Table)`
       > td {
         background-color: ${theme.bg3};
         border-color: #8c8c8c;
-        padding-bottom: ${theme.margins['4x']};
+        padding-bottom: ${theme.margin(4)};
       }
       &:last-child {
         td {

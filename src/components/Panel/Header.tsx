@@ -9,7 +9,7 @@ const FIELD = styled.span<{ $width: number }>`
 `
 
 const FIELDS = styled(SpaceBetweenDiv)`
-  margin: 0 -${({ theme }) => theme.margins['5x']};
+  margin: 0 -${({ theme }) => theme.margin(5)};
 `
 
 const PANEL = styled.div<{ $active: boolean; $centerLabels: boolean }>`
@@ -46,7 +46,7 @@ const PANELS = styled(SpaceBetweenDiv)<{
   justify-content: ${({ $justify }) => $justify};
   align-items: center;
   position: relative;
-  margin-bottom: ${({ theme }) => theme.margins['1.5x']};
+  margin-bottom: ${({ theme }) => theme.margin(1.5)};
 
   &:after {
     content: '';
@@ -63,8 +63,7 @@ const PANELS = styled(SpaceBetweenDiv)<{
 
 const WRAPPER = styled.div`
   position: relative;
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['5x']}
-    ${({ theme }) => theme.margins['1.5x']};
+  padding: ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(5)} ${({ theme }) => theme.margin(1.5)};
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 20px;

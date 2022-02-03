@@ -7,8 +7,8 @@ const INPUT_TITLE = MainText(styled.span`
   font-weight: 600;
   color: ${({ theme }) => theme.text8} !important;
   text-align: left;
-  margin-top: ${({ theme }) => theme.margins['1.5x']};
-  margin-bottom: ${({ theme }) => theme.margins['1x']};
+  margin-top: ${({ theme }) => theme.margin(1.5)};
+  margin-bottom: ${({ theme }) => theme.margin(1)};
 `)
 
 const INPUT_LIMIT = MainText(styled.span`
@@ -16,7 +16,7 @@ const INPUT_LIMIT = MainText(styled.span`
   font-weight: 600;
   color: ${({ theme }) => theme.text8} !important;
   text-align: left;
-  margin-top: ${({ theme }) => theme.margins['1x']};
+  margin-top: ${({ theme }) => theme.margin(1)};
 `)
 
 const INPUT_CONTAINER = styled.div`
@@ -30,7 +30,7 @@ const STYLED_INPUT = styled.input`
   width: 100%;
   border-radius: 10px;
   background-color: ${({ theme }) => theme.inputBg};
-  padding: ${({ theme }) => `${theme.margins['1x']}`};
+  padding: ${({ theme }) => `${theme.margin(1)}`};
   border: none;
   ::placeholder {
     color: #636363;

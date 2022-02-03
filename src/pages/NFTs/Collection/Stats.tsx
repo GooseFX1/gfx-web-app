@@ -6,7 +6,7 @@ import { nFormatter } from '../../../utils'
 type StatsItemType = { title: string; total: number; unit: string }
 
 const STATS = styled(Row)`
-  padding: ${({ theme }) => `${theme.margins['1.5x']} ${theme.margins['2.5x']}`};
+  padding: ${({ theme }) => `${theme.margin(1.5)} ${theme.margin(2.5)}`};
   border-radius: 47px;
   background-color: #131313;
   color: #fff;
@@ -20,7 +20,7 @@ const STATS_ITEM = styled(Col)`
   .stats-item-quantity {
     font-size: 17px;
     font-weight: 600;
-    margin-bottom: ${({ theme }) => `-${theme.margins['0.5x']}`};
+    margin-bottom: ${({ theme }) => `-${theme.margin(0.5)}`};
   }
 
   .stats-item-title {

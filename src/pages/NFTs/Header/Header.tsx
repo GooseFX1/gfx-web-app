@@ -13,10 +13,10 @@ import PopupCompleteProfile from '../Profile/PopupCompleteProfile'
 import { useNFTProfile } from '../../../context'
 
 const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
-  padding-top: ${({ theme }) => theme.margins['5.5x']};
-  padding-bottom: ${({ theme }) => theme.margins['3x']};
-  padding-left: ${({ theme }) => theme.margins['4x']};
-  padding-right: ${({ theme }) => theme.margins['4x']};
+  padding-top: ${({ theme }) => theme.margin(5.5)};
+  padding-bottom: ${({ theme }) => theme.margin(3)};
+  padding-left: ${({ theme }) => theme.margin(4)};
+  padding-right: ${({ theme }) => theme.margin(4)};
   z-index: 5;
   background: #1e1e1e;
   justify-content: flex-start;
@@ -36,7 +36,7 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
   .categories {
     height: 45px;
     width: 150px;
-    margin-left: ${({ theme }) => theme.margins['2.5x']};
+    margin-left: ${({ theme }) => theme.margin(2.5)};
     span {
       font-weight: 500;
       font-size: 15px;
@@ -45,10 +45,10 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
   .coins {
     height: 45px;
     width: 68px;
-    margin-left: ${({ theme }) => theme.margins['2.5x']};
+    margin-left: ${({ theme }) => theme.margin(2.5)};
     border-radius: 13px;
     background: #2a2a2a;
-    padding: 0 ${({ theme }) => theme.margins['1x']};
+    padding: 0 ${({ theme }) => theme.margin(1)};
     span {
       font-weight: 500;
       font-size: 15px;
@@ -56,7 +56,7 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
     }
   }
   .connect-wl-btn {
-    margin-left: ${({ theme }) => theme.margins['2.5x']};
+    margin-left: ${({ theme }) => theme.margin(2.5)};
   }
 `
 
@@ -71,7 +71,7 @@ const BUTTON_SELECTION = styled.div`
   justify-content: flex-end;
 
   > button:last-child {
-    margin-left: ${({ theme }) => theme.margins['3x']};
+    margin-left: ${({ theme }) => theme.margin(3)};
   }
 `
 
