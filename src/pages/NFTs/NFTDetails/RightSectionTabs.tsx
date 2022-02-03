@@ -164,6 +164,8 @@ const getButtonText = (mode: NFTDetailsProviderMode): string => {
       return 'Mint'
     case 'fixed-price-NFT':
       return 'Buy now'
+    case 'my-external-NFT':
+      return 'Sell NFT'
   }
 }
 

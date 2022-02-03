@@ -67,14 +67,14 @@ export type NFTTopLevelNFTData = {
 }
 
 export type ISingleNFT = {
-  non_fungible_id: number
+  non_fungible_id: number | null
   nft_name: string
   nft_description: string
   mint_address: string
   metadata_url: string
   image_url: string | null
   animation_url: string | null
-  collection_id: number
+  collection_id: number | null
 }
 
 export type INFTMetadata = {
@@ -139,6 +139,7 @@ export type NFTDetailsProviderMode =
   | 'fixed-price-NFT'
   | 'open-bid-NFT'
   | 'mint-item-view'
+  | 'my-external-NFT'
 
 export type MintItemViewStatus = '' | 'placed' | 'successful' | 'unsuccessful'
 
@@ -151,4 +152,5 @@ export interface INFTDetailsConfig {
   fetchGeneral: (id: string) => Promise<any>
   nftMintingData: IMetadataContext | undefined
   setNftMintingData: Dispatch<SetStateAction<IMetadataContext>>
+  fetchExternalNFTs?: (param: any, connection: any, nft: INFTMetadata) => Promise<any>
 }

@@ -5,7 +5,7 @@ import { useHistory } from 'react-router'
 import styled, { css } from 'styled-components'
 import { RightSection } from './RightSection'
 import { LeftSection } from './LeftSection'
-import { NFTDetailsProviderMode, MintItemViewStatus } from '../../../types/nft_details'
+import { NFTDetailsProviderMode, MintItemViewStatus, INFTMetadata } from '../../../types/nft_details'
 
 const NFT_DETAILS = styled.div`
   ${({ theme }) => css`
@@ -55,6 +55,7 @@ export const NFTDetails: FC<{
   handleClickPrimaryButton: () => void
   status?: MintItemViewStatus
   backUrl?: string
+  arbData?: INFTMetadata
 }> = ({ mode, status = '', backUrl, handleClickPrimaryButton, ...rest }) => {
   const history = useHistory()
 
