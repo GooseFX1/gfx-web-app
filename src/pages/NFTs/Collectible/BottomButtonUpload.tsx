@@ -20,13 +20,12 @@ export enum BottomButtonUploadType {
   add_more
 }
 
-const UPLOAD_FIELD_WRAPPER = styled.div<{ flex?: number }>`
+const UPLOAD_FIELD_WRAPPER = styled.div<{ flex?: number; isShownTitle?: Boolean }>`
   display: flex;
   flex: ${({ flex }) => flex || 1};
   flex-direction: column;
-  margin-top: ${({ theme }) => theme.margin(2.5)};
+  ${({ isShownTitle }) => (isShownTitle ? `margin-top: ${({ theme }) => theme.margin(2.5)};` : '')}
   margin-right: ${({ theme }) => theme.margin(2.5)};
-
   .category {
     background-color: ${({ theme }) => theme.btnIconBg} !important;
   }
@@ -75,15 +74,16 @@ const categoryButton = {
 }
 
 const BottomButtonUpload: FC<{
+  wrapperClass?: string
   type: BottomButtonUploadType
-  title: string
+  title?: string
   flex?: number
   buttonTitle?: string
   onClick?: (value?: any) => void
-}> = ({ title, type, flex, buttonTitle, onClick }) => {
+}> = ({ title, type, flex, buttonTitle, onClick, wrapperClass }) => {
   return (
-    <UPLOAD_FIELD_WRAPPER flex={flex}>
-      <TITLE>{title}</TITLE>
+    <UPLOAD_FIELD_WRAPPER isShownTitle={!!title} flex={flex} className={wrapperClass}>
+      {title && <TITLE>{title}</TITLE>}
       {type === BottomButtonUploadType.add_more && (
         <BUTTON_ADD_MORE_WRAPPER onClick={onClick}>
           <span>{buttonTitle}</span>

@@ -76,6 +76,15 @@ const SECTION_TITLE = MainText(styled.span`
   text-align: left;
 `)
 
+const SUB_TITLE = MainText(styled.span`
+  font-size: 17px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.text8} !important;
+  text-align: left;
+  margin-top: ${({ theme }) => theme.margins['2.5x']};
+  margin-bottom: ${({ theme }) => theme.margins['1.5x']};
+`)
+
 const INPUT_SECTION = styled.div`
   display: flex;
   flex-direction: row;
@@ -125,25 +134,16 @@ const BOTTOM_BUTTON_SECTION = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: ${({ theme }) => `${theme.margins['8x']}`};
 `
 
 const STYLED_PROPERTY_BLOCK = styled.div`
   display: flex;
-  align-items: flex-end;
-  > div {
-    &:first-child {
-      width: 128px;
-    }
-  }
-  .property-result {
-    width: calc(100% - 145px);
-    height: 60px;
-    display: flex;
-    align-items: center;
-    padding: ${({ theme }) => `${theme.margin(1)}`};
-    border-radius: 10px;
-    background-color: ${({ theme }) => theme.propertyBg};
-  }
+  align-items: center;
+  border-radius: 15px;
+  background-color: ${({ theme }) => theme.propertyBg};
+  padding: ${({ theme }) => `${theme.margin(1.5)}`};
+
   .property-item {
     width: 100px;
     height: 40px;
@@ -186,6 +186,7 @@ const STYLED_PROPERTY_BLOCK = styled.div`
     }
   }
 `
+
 //#endregion
 
 export const UpLoadNFT = (): JSX.Element => {
@@ -394,31 +395,29 @@ export const UpLoadNFT = (): JSX.Element => {
                 onClick={() => setCreatorModal(true)}
               />
             </BOTTOM_BUTTON_SECTION>
+            <SUB_TITLE>Attributes</SUB_TITLE>
             <STYLED_PROPERTY_BLOCK>
+              {localAttributes.length > 0 &&
+                localAttributes.map((item) => (
+                  <div className="property-item" key={item.id}>
+                    <div className="type">{item.trait_type}</div>
+                    <div className="name">{item.value}</div>
+                    <div className={`close-btn ${mode}`} onClick={() => handleRemoveAttribute(item.id)}>
+                      <img
+                        className="close-white-icon"
+                        src={`/img/assets/${mode === 'dark' ? 'close-gray' : 'remove-property'}.svg`}
+                        alt=""
+                      />
+                    </div>
+                  </div>
+                ))}
               <BottomButtonUpload
+                wrapperClass="add-more"
                 flex={2}
-                buttonTitle={localAttributes.length > 0 ? 'Add more' : 'Add'}
-                type={localAttributes.length > 0 ? BottomButtonUploadType.add_more : BottomButtonUploadType.plus}
-                title="Attributes"
+                buttonTitle="Add"
+                type={BottomButtonUploadType.plus}
                 onClick={() => setAttributesModal(true)}
               />
-              {localAttributes.length > 0 && (
-                <div className="property-result">
-                  {localAttributes.map((item) => (
-                    <div className="property-item" key={item.id}>
-                      <div className="type">{item.trait_type}</div>
-                      <div className="name">{item.value}</div>
-                      <div className={`close-btn ${mode}`} onClick={() => handleRemoveAttribute(item.id)}>
-                        <img
-                          className="close-white-icon"
-                          src={`/img/assets/${mode === 'dark' ? 'close-gray' : 'remove-property'}.svg`}
-                          alt=""
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </STYLED_PROPERTY_BLOCK>
           </UPLOAD_INFO_CONTAINER>
           <PREVIEW_UPLOAD_CONTAINER>
