@@ -25,11 +25,11 @@ const FooterCarousel = () => {
 
   useEffect(() => {
     fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.OPEN_BID, `2`).then((res) => {
-      if (res.response && res.response.status !== 200) {
+      if ((res.response && res.response.status !== 200) || !res.response || !res.response.status) {
         setErr(true)
+      } else {
+        setNfts(res.data.open_bid.slice(0, 10))
       }
-
-      setNfts(res.data.open_bid.slice(0, 10))
     })
 
     return () => {}
