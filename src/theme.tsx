@@ -216,24 +216,27 @@ export function theme(mode: string): DefaultTheme {
     ...colors(mode),
     ...text(mode),
 
-    margins: {
-      '0.5x': '4px',
-      '1x': '8px',
-      '1.5x': '12px',
-      '2x': '16px',
-      '2.5x': '20px',
-      '3x': '24px',
-      '3.5x': '28px',
-      '4x': '32px',
-      '4.5x': '36px',
-      '5x': '40px',
-      '5.5x': '44px',
-      '6x': '48px',
-      '7x': '56px',
-      '8x': '64px',
-      '9x': '72px',
-      '10x': '80px',
-      '11x': '88px'
+    margin: (size1?: number, size2?: number, size3?: number, size4?: number) => {
+      let pixelStr = ''
+      if (typeof size1 === 'number') {
+        pixelStr = `${size1 * 8}px`
+      } else {
+        return '8px'
+      }
+      if (typeof size2 === 'number') {
+        pixelStr = `${pixelStr} ${size2 * 8}px`
+      } else {
+        return pixelStr
+      }
+      if (typeof size3 === 'number') {
+        pixelStr = `${pixelStr} ${size3 * 8}px`
+      } else {
+        return pixelStr
+      }
+      if (typeof size4 === 'number') {
+        pixelStr = `${pixelStr} ${size4 * 8}px`
+      }
+      return pixelStr
     },
 
     largeShadow: css`

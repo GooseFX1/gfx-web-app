@@ -35,14 +35,14 @@ const CAROUSEL_SUB_TITLE = styled.span`
 const CAROUSEL_ITEM = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0 ${({ theme }) => theme.margins['4x']}; ;
+  padding: 0 ${({ theme }) => theme.margin(4)}; ;
 `
 
 const UP_COMMING_FOOTER = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-top: ${({ theme }) => theme.margins['3.5x']};
+  margin-top: ${({ theme }) => theme.margin(3.5)};
 `
 const GROUP_BLOCK_TEXTS = styled.div`
   display: flex;
@@ -68,20 +68,20 @@ const COUNT_DOWN_TEXT = styled.span`
 const LAUNCH_PAD_FOOTER = styled.div`
   display: flex;
   flex-direction: row;
-  margin-top: ${({ theme }) => theme.margins['3x']};
+  margin-top: ${({ theme }) => theme.margin(3)};
 `
 
 const PROGRESS_TEXT = styled.span`
   color: ${({ theme }) => theme.text2};
   font-size: 14px;
-  margin-right: ${({ theme }) => theme.margins['1x']};
+  margin-right: ${({ theme }) => theme.margin(1)};
 `
 
 const PROGRESS_WRAPPER = styled.div`
   display: flex;
   flex-direction: row;
   flex: 1;
-  margin-top: ${({ theme }) => theme.margins['1x']}; ;
+  margin-top: ${({ theme }) => theme.margin(1)}; ;
 `
 
 const MINT_BUTTON = styled(ButtonWrapper)`
@@ -90,14 +90,14 @@ const MINT_BUTTON = styled(ButtonWrapper)`
   background-color: ${({ theme }) => theme.primary2};
   justify-content: center;
   align-items: center;
-  margin-left: ${({ theme }) => theme.margins['3x']};
+  margin-left: ${({ theme }) => theme.margin(3)};
 `
 
 const LEFT_INFO_LAUNCHPAD = styled.div`
   flex: 1;
 `
 const POPULAR_FOOTER = styled.div`
-  margin-top: ${({ theme }) => theme.margins['3x']};
+  margin-top: ${({ theme }) => theme.margin(3)};
 `
 
 const LaunchPadInfo = ({ item }: any) => {

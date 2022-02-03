@@ -13,8 +13,8 @@ const BODY = styled(CenteredDiv)`
 `
 
 const DISCLAIMER = styled.span`
-  margin-top: ${({ theme }) => theme.margins['2x']};
-  padding: ${({ theme }) => theme.margins['1x']};
+  margin-top: ${({ theme }) => theme.margin(2)};
+  padding: ${({ theme }) => theme.margin(1)};
   border: solid 1px ${({ theme }) => theme.grey2};
   ${({ theme }) => theme.smallBorderRadius}
   font-size: 8px;
@@ -29,12 +29,12 @@ const DISCLAIMER = styled.span`
 `
 
 const ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['4x'])}
+  ${({ theme }) => theme.measurements(theme.margin(4))}
   ${({ theme }) => theme.roundedBorders}
   background-color: black;
 
   img {
-    ${({ theme }) => theme.measurements(theme.margins['2x'])}
+    ${({ theme }) => theme.measurements(theme.margin(2))}
   }
 `
 
@@ -45,10 +45,10 @@ const NAME = styled.span`
 
 const WALLET = styled(SpaceBetweenDiv)`
   width: 100%;
-  margin-top: ${({ theme }) => theme.margins['2x']};
-  padding: ${({ theme }) => theme.margins['1x']};
-  padding-left: ${({ theme }) => theme.margins['2x']};
-  border-radius: ${({ theme }) => theme.margins['3x']};
+  margin-top: ${({ theme }) => theme.margin(2)};
+  padding: ${({ theme }) => theme.margin(1)};
+  padding-left: ${({ theme }) => theme.margin(2)};
+  border-radius: ${({ theme }) => theme.margin(3)};
   background-color: ${({ theme }) => theme.walletModalWallet};
   ${({ theme }) => theme.smallShadow}
   cursor: pointer;

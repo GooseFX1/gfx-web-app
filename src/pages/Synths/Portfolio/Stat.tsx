@@ -7,7 +7,7 @@ import { SpaceBetweenDiv } from '../../../styles'
 const PROGRESS_BAR = styled(Progress)`
   flex: 1;
   min-width: 150px;
-  margin: 0 ${({ theme }) => theme.margins['3x']};
+  margin: 0 ${({ theme }) => theme.margin(3)};
 `
 
 const TITLE = styled(SpaceBetweenDiv)`

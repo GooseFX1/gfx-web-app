@@ -6,12 +6,12 @@ import { LITEPAPER_ADDRESS, SOCIAL_MEDIAS } from '../../constants'
 import { CenteredImg } from '../../styles'
 
 const ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['4.5x'])}
-  margin-left: ${({ theme }) => theme.margins['2x']};
+  ${({ theme }) => theme.measurements(theme.margin(4.5))}
+  margin-left: ${({ theme }) => theme.margin(2)};
   cursor: pointer;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-left: ${({ theme }) => theme.margins['1x']};
+    margin-left: ${({ theme }) => theme.margin(1)};
   `}
 `
 

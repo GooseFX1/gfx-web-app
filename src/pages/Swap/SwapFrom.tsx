@@ -12,7 +12,7 @@ const QUICK_SELECT = styled(CenteredDiv)`
   top: -5px;
 
   span {
-    margin-right: ${({ theme }) => theme.margins['2x']};
+    margin-right: ${({ theme }) => theme.margin(2)};
     font-size: 11px;
     font-weight: bold;
     color: ${({ theme }) => theme.text1};

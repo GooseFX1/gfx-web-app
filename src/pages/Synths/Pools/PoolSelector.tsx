@@ -7,11 +7,11 @@ import { CenteredDiv } from '../../../styles'
 const SELECTOR = styled(CenteredDiv)`
   position: relative;
   flex-direction: column;
-  padding: ${({ theme }) => theme.margins['1.5x']} 0;
+  padding: ${({ theme }) => theme.margin(1.5)} 0;
   ${({ theme }) => theme.smallBorderRadius}
   background-color: #525252;
   > span {
-    padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['6x']};
+    padding: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(6)};
     font-weight: bold;
     &:hover {
       background-color: #1f1f1f;
@@ -21,13 +21,13 @@ const SELECTOR = styled(CenteredDiv)`
 `
 
 const WRAPPER = styled(CenteredDiv)`
-  padding: ${({ theme }) => theme.margins['3x']};
+  padding: ${({ theme }) => theme.margin(3)};
   ${({ theme }) => theme.largeBorderRadius}
   ${({ theme }) => theme.smallShadow}
   background-color: ${({ theme }) => theme.primary2};
   cursor: pointer;
   > span {
-    margin-right: ${({ theme }) => theme.margins['3x']};
+    margin-right: ${({ theme }) => theme.margin(3)};
     font-size: 12px;
     font-weight: bold;
     color: white !important;

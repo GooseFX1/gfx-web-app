@@ -9,7 +9,7 @@ const BODY = styled(CenteredDiv)`
   flex-direction: column;
   flex: 1;
   width: 100%;
-  margin: ${({ theme }) => theme.margins['4x']} 0;
+  margin: ${({ theme }) => theme.margin(4)} 0;
 
   > div {
     display: flex;
@@ -17,14 +17,14 @@ const BODY = styled(CenteredDiv)`
     width: 100%;
 
     &:nth-child(2) {
-      margin: ${({ theme }) => theme.margins['3x']} 0;
+      margin: ${({ theme }) => theme.margin(3)} 0;
     }
   }
 `
 
 const BUTTON = styled.button`
   flex: 2;
-  padding: ${({ theme }) => theme.margins['1x']};
+  padding: ${({ theme }) => theme.margin(1)};
   border: none;
   ${({ theme }) => theme.roundedBorders}
   ${({ theme }) => theme.smallShadow}
@@ -33,7 +33,7 @@ const BUTTON = styled.button`
   transition: background-color 200ms ease-in-out;
 
   &:not(:first-child) {
-    margin-left: ${({ theme }) => theme.margins['3x']};
+    margin-left: ${({ theme }) => theme.margin(3)};
   }
 
   &:hover {

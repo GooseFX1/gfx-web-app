@@ -9,14 +9,14 @@ export const Available = styled.div`
 
   > div {
     height: 39px;
-    margin-top: ${({ theme }) => theme.margins['1x']};
+    margin-top: ${({ theme }) => theme.margin(1)};
     padding: 4px 11px;
     ${({ theme }) => theme.smallBorderRadius}
     background-color: ${({ theme }) => theme.bg5};
 
     > span:first-child {
       ${({ theme }) => theme.ellipse}
-      margin-right: ${({ theme }) => theme.margins['1x']};
+      margin-right: ${({ theme }) => theme.margin(1)};
     }
   }
 
@@ -39,14 +39,14 @@ export const AvailableSynth = styled.div`
   }
 
   div {
-    ${({ theme }) => theme.measurements(theme.margins['3x'])}
-    margin-right: ${({ theme }) => theme.margins['2x']};
+    ${({ theme }) => theme.measurements(theme.margin(3))}
+    margin-right: ${({ theme }) => theme.margin(2)};
   }
 
   span {
     display: flex;
     align-items: center;
-    padding: ${({ theme }) => theme.margins['1.5x']} 0;
+    padding: ${({ theme }) => theme.margin(1.5)} 0;
     font-size: 12px;
     font-weight: bold;
   }
@@ -62,13 +62,13 @@ export const AvailableSynthsSelector = styled.div`
   position: relative;
   height: 200px;
   width: 250px;
-  padding: ${({ theme }) => theme.margins['1.5x']} 0;
+  padding: ${({ theme }) => theme.margin(1.5)} 0;
   ${({ theme }) => theme.smallBorderRadius}
   overflow-y: scroll;
   background-color: #525252;
 
   > span {
-    padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['6x']};
+    padding: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(6)};
     font-weight: bold;
 
     &:hover {
@@ -95,7 +95,7 @@ export const Button = styled(MainButton)`
 `
 
 export const InputHeader = styled(SpaceBetweenDiv)`
-  margin-bottom: ${({ theme }) => theme.margins['1x']};
+  margin-bottom: ${({ theme }) => theme.margin(1)};
 
   span {
     font-size: 12px;
@@ -117,7 +117,7 @@ export const InputWrapper = styled.div`
   position: relative;
   ${({ theme }) => theme.flexColumnNoWrap}
   width: 60%;
-  margin-right: ${({ theme }) => theme.margins['3x']};
+  margin-right: ${({ theme }) => theme.margin(3)};
 `
 
 export const Synth = styled.div`

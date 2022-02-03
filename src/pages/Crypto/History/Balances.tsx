@@ -10,7 +10,7 @@ const WRAPPER = styled(CenteredDiv)`
   width: 100%;
 
   > div:not(:last-child) {
-    margin-bottom: ${({ theme }) => theme.margins['1.5x']};
+    margin-bottom: ${({ theme }) => theme.margin(1.5)};
   }
 `
 

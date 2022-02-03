@@ -9,7 +9,7 @@ export const StyledEditMyNFT = styled(Modal)`
   .ant-modal-header {
     ${theme.largeBorderRadius};
     background-color: ${theme.bg3};
-    padding: ${theme.margins['3.5x']} ${theme.margins['5.5x']} 0 ${theme.margins['5.5x']};
+    padding: ${theme.margin(3.5)} ${theme.margin(5.5)} 0 ${theme.margin(5.5)};
     border: none;
     .ant-modal-title {
       font-size: 25px;
@@ -22,16 +22,16 @@ export const StyledEditMyNFT = styled(Modal)`
     box-shadow: none;
   }
   .ant-modal-body {
-    padding: ${theme.margins['3.5x']} ${theme.margins['5.5x']} ${theme.margins['2x']};
+    padding: ${theme.margin(3.5)} ${theme.margin(5.5)} ${theme.margin(2)};
   }
   .ant-modal-footer {
     border: none;
-    padding: ${theme.margins['1x']} ${theme.margins['5.5x']};
+    padding: ${theme.margin(1)} ${theme.margin(5.5)};
     .ant-btn:not(.ant-btn-primary) {
       font-size: 18px;
       font-weight: 600;
       border: none;
-      margin-right: ${theme.margins['2x']};
+      margin-right: ${theme.margin(2)};
       color: ${theme.text2};
     }
     .ant-btn-primary {
@@ -64,8 +64,8 @@ export const StyledEditMyNFT = styled(Modal)`
     border-color: #848484;
     border-width: 2px;
     ${theme.largeBorderRadius};
-    padding: ${theme.margins['3x']};
-    margin-bottom: ${theme.margins['4x']};
+    padding: ${theme.margin(3)};
+    margin-bottom: ${theme.margin(4)};
     .image-group {
       display: flex;
       align-items: center;
@@ -77,7 +77,7 @@ export const StyledEditMyNFT = styled(Modal)`
     }
     .note {
       font-size: 14px;
-      padding-left: ${theme.margins['7x']};
+      padding-left: ${theme.margin(7)};
       color: ${theme.text1};
     }
     .image-wrap {
@@ -128,17 +128,17 @@ export const StyledFormEditCreatedNFT = styled(Form)`
   .half-width {
     flex: 1;
     width: 50%;
-    margin: 0 ${theme.margins['1x']};
+    margin: 0 ${theme.margin(1)};
   }
   .full-width {
     display: flex;
-    margin: 0 -${theme.margins['1x']} ${theme.margins['2x']};
+    margin: 0 -${theme.margin(1)} ${theme.margin(2)};
     &.last-item {
       align-items: center;
     }
   }
   .ant-form-item {
-    margin-bottom: ${theme.margins['1x']};
+    margin-bottom: ${theme.margin(1)};
   }
   .hint {
     font-size: 9px;
@@ -189,7 +189,7 @@ export const StyledFormEditCreatedNFT = styled(Form)`
       width: 195px;
       height: 41px;
       border-radius: 41px;
-      margin-top: ${theme.margins['2x']};
+      margin-top: ${theme.margin(2)};
       background: #9625ae;
       border: none;
       input {
@@ -208,12 +208,12 @@ export const StyledFormEditCreatedNFT = styled(Form)`
     font-weight: 600;
     color: ${theme.text1};
     line-height: 1;
-    margin-bottom: ${theme.margins['1x']};
+    margin-bottom: ${theme.margin(1)};
     .heart-purple {
       width: 35px;
       height: 35px;
-      margin-left: ${theme.margins['1x']};
-      padding-top: ${theme.margins['1x']};
+      margin-left: ${theme.margin(1)};
+      padding-top: ${theme.margin(1)};
     }
   }
   .description {
@@ -228,7 +228,7 @@ export const StyledFormEditCreatedNFT = styled(Form)`
       height: 32px;
       border-radius: 2px;
       color: #bebebe;
-      margin-right: ${theme.margins['1x']};
+      margin-right: ${theme.margin(1)};
       font-size: 13px;
       font-weight: 600;
       text-align: center;
@@ -242,13 +242,13 @@ export const StyledFormEditCreatedNFT = styled(Form)`
   }
   .actions {
     text-align: right;
-    padding-top: ${theme.margins['3.5x']};
+    padding-top: ${theme.margin(3.5)};
   }
   .cancel-btn {
     font-size: 18px;
     font-weight: 600;
     border: none;
-    margin-right: ${theme.margins['2x']};
+    margin-right: ${theme.margin(2)};
     color: ${theme.text2};
   }
   .save-changes-btn {

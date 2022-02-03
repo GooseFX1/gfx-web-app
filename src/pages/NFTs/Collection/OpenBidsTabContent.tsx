@@ -13,12 +13,12 @@ const WRAPPER = styled.div`
 const OPEN_BIDS_TAB = styled.div`
   ${({ theme }) => css`
     overflow-y: auto;
-    padding: ${theme.margins['5.5x']} ${theme.margins['4x']};
+    padding: ${theme.margin(5.5)} ${theme.margin(4)};
 
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    grid-gap: ${theme.margins['6x']};
+    grid-gap: ${theme.margin(6)};
 
     &::-webkit-scrollbar {
       display: none;

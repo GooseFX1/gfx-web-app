@@ -4,8 +4,8 @@ import styled from 'styled-components'
 import { CenteredDiv, SVGToWhite } from '../styles'
 
 const ARROW_CLICKER = styled(CenteredDiv)<{ $arrowRotation?: boolean; $measurements?: string }>`
-  ${({ theme, $measurements }) => theme.measurements($measurements ? $measurements : theme.margins['1.5x'])}
-  margin-left: ${({ theme }) => theme.margins['1x']};
+  ${({ theme, $measurements }) => theme.measurements($measurements ? $measurements : theme.margin(1.5))}
+  margin-left: ${({ theme }) => theme.margin(1)};
   border: none;
   background: transparent;
   cursor: pointer;

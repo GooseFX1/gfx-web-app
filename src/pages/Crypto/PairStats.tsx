@@ -7,11 +7,11 @@ import { CenteredImg } from '../../styles'
 import { removeFloatingPointError } from '../../utils'
 
 const ASSET_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['2x'])}
+  ${({ theme }) => theme.measurements(theme.margin(2))}
 `
 
 /* const CHANGE_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['1x'])}
+  ${({ theme }) => theme.measurements(theme.margin(1))}
 ` */
 
 const INFO = styled.div`
@@ -22,7 +22,7 @@ const INFO = styled.div`
     ${({ theme }) => theme.flexCenter}
 
     span {
-      margin-left: ${({ theme }) => theme.margins['1x']};
+      margin-left: ${({ theme }) => theme.margin(1)};
       font-size: 10px;
       font-weight: bold;
       color: ${({ theme }) => theme.text1};
@@ -32,8 +32,8 @@ const INFO = styled.div`
 
 const PRICE = styled.div`
   display: flex;
-  height: ${({ theme }) => theme.margins['3x']};
-  padding-top: ${({ theme }) => theme.margins['1x']};
+  height: ${({ theme }) => theme.margin(3)};
+  padding-top: ${({ theme }) => theme.margin(1)};
 
   > span {
     font-size: 12px;
@@ -43,7 +43,7 @@ const PRICE = styled.div`
 
 const STATS = styled.div`
   min-width: 160px;
-  padding: ${({ theme }) => theme.margins['1.5x']} ${({ theme }) => theme.margins['2x']};
+  padding: ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(2)};
   ${({ theme }) => theme.smallBorderRadius}
   background-color: ${({ theme }) => theme.bg3};
   cursor: pointer;

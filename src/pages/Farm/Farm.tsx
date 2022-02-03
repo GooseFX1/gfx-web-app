@@ -25,7 +25,7 @@ const BODY_NFT = styled.div`
   overflow-y: scroll;
   overflow-x: hidden;
   background: ${({ theme }) => theme.farmContainerBg};
-  padding: 0 ${({ theme }) => theme.margins['8x']} ${({ theme }) => theme.margins['8x']};
+  padding: 0 ${({ theme }) => theme.margin(8)} ${({ theme }) => theme.margin(8)};
 `
 
 const SCROLLING_OVERLAY = styled.div`

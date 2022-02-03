@@ -4,7 +4,7 @@ import { useSwap } from '../../context'
 
 const RATE = styled.span`
   width: 100%;
-  margin-top: ${({ theme }) => theme.margins['2x']};
+  margin-top: ${({ theme }) => theme.margin(2)};
   font-size: 10px;
   font-weight: bold;
   text-align: left;

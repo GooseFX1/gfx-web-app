@@ -7,12 +7,12 @@ const PROGRESS_PANEL = styled.div`
     font-weight: 600;
     text-align: right;
     color: ${({ theme }) => theme.text1};
-    margin-top: ${({ theme }) => theme.margins['1x']};
-    margin-right: ${({ theme }) => theme.margins['9x']};
+    margin-top: ${({ theme }) => theme.margin(1)};
+    margin-right: ${({ theme }) => theme.margin(9)};
   }
   .ant-progress-outer {
-    padding-right: ${({ theme }) => theme.margins['9x']};
-    margin-right: -${({ theme }) => theme.margins['7x']};
+    padding-right: ${({ theme }) => theme.margin(9)};
+    margin-right: -${({ theme }) => theme.margin(7)};
   }
   .ant-progress-text {
     font-size: 20px;

@@ -9,7 +9,7 @@ const MAGNIFYING_GLASS = styled(CenteredImg)`
   position: absolute;
   top: 16px;
   right: 16px;
-  ${({ theme }) => theme.measurements(theme.margins['2x'])}
+  ${({ theme }) => theme.measurements(theme.margin(2))}
 `
 
 const MARKET = styled.div`
@@ -21,17 +21,17 @@ const MARKET = styled.div`
     cursor: pointer;
   }
   > div {
-    ${({ theme }) => theme.measurements(theme.margins['3x'])}
-    margin-right: ${({ theme }) => theme.margins['2x']};
+    ${({ theme }) => theme.measurements(theme.margin(3))}
+    margin-right: ${({ theme }) => theme.margin(2)};
   }
   > span {
     display: flex;
     align-items: center;
-    padding: ${({ theme }) => theme.margins['1.5x']} 0;
+    padding: ${({ theme }) => theme.margin(1.5)} 0;
     font-size: 12px;
     font-weight: bold;
     &:not(:last-child) {
-      margin-bottom: ${({ theme }) => theme.margins['1.5x']};
+      margin-bottom: ${({ theme }) => theme.margin(1.5)};
     }
   }
 `
@@ -40,7 +40,7 @@ const SELECTOR = styled(CenteredDiv)`
   position: relative;
   flex-direction: column;
   width: calc(${TRADE_ORDER_WIDTH} - 20px);
-  padding: ${({ theme }) => theme.margins['1x']};
+  padding: ${({ theme }) => theme.margin(1)};
   ${({ theme }) => theme.smallBorderRadius}
   background-color: #131313;
   input {
@@ -51,7 +51,7 @@ const SELECTOR = styled(CenteredDiv)`
 const WRAPPER = styled.div`
   max-height: 290px;
   width: 100%;
-  margin-top: ${({ theme }) => theme.margins['0.5x']};
+  margin-top: ${({ theme }) => theme.margin(0.5)};
   overflow-y: scroll;
   overflow-x: hidden;
   ${({ theme }) => theme.customScrollBar('4px')}

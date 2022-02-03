@@ -6,10 +6,10 @@ import { MainButton } from '../../components'
 import { notify } from '../../utils'
 
 const STYLED_EXPANDED_ROW = styled.div`
-  padding-top: ${({ theme }) => theme.margins['4x']};
-  padding-right: ${({ theme }) => theme.margins['10x']};
-  padding-bottom: ${({ theme }) => theme.margins['7x']};
-  padding-left: ${({ theme }) => theme.margins['4x']};
+  padding-top: ${({ theme }) => theme.margin(4)};
+  padding-right: ${({ theme }) => theme.margin(10)};
+  padding-bottom: ${({ theme }) => theme.margin(7)};
+  padding-left: ${({ theme }) => theme.margin(4)};
   background-image: ${({ theme }) => theme.expendedRowBg};
 `
 
@@ -47,7 +47,7 @@ const STYLED_LEFT_CONTENT = styled.div`
     color: #fff;
     background-color: #6b33b0 !important;
     border-color: #6b33b0 !important;
-    margin-left: ${({ theme }) => theme.margins['4x']};
+    margin-left: ${({ theme }) => theme.margin(4)};
     &:hover {
       opacity: 0.8;
     }
@@ -73,8 +73,8 @@ const STYLED_SOL = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 ${({ theme }) => theme.margins['4x']};
-  margin: 0 ${({ theme }) => theme.margins['1.5x']} ${({ theme }) => theme.margins['1x']};
+  padding: 0 ${({ theme }) => theme.margin(4)};
+  margin: 0 ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(1)};
   .value {
     font-family: Montserrat;
     font-size: 22px;
@@ -101,7 +101,7 @@ const STYLED_SOL = styled.div`
     display: flex;
   }
   .text-2 {
-    margin-left: ${({ theme }) => theme.margins['1.5x']};
+    margin-left: ${({ theme }) => theme.margin(1.5)};
   }
 `
 const STYLED_STAKE_PILL = styled(MainButton)`
@@ -115,7 +115,7 @@ const STYLED_STAKE_PILL = styled(MainButton)`
   font-weight: 600;
   text-align: center;
   color: ${({ theme }) => theme.text14};
-  margin: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['1.5x']} 0;
+  margin: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(1.5)} 0;
   transition: all 0.3s ease;
   cursor: pointer;
   &.active,
@@ -128,11 +128,11 @@ const STYLED_STAKE_PILL = styled(MainButton)`
 const STYLED_STAKED_EARNED_CONTENT = styled.div`
   display: flex;
   align-items: center;
-  margin-left: ${({ theme }) => theme.margins['4x']};
+  margin-left: ${({ theme }) => theme.margin(4)};
   .info-item {
     max-width: 150px;
     min-width: 130px;
-    margin-right: ${({ theme }) => theme.margins['7x']};
+    margin-right: ${({ theme }) => theme.margin(7)};
     .title,
     .value {
       font-family: Montserrat;
@@ -148,7 +148,7 @@ const STYLED_STAKED_EARNED_CONTENT = styled.div`
     }
     .value,
     .price {
-      margin-bottom: ${({ theme }) => theme.margins['0.5x']};
+      margin-bottom: ${({ theme }) => theme.margin(0.5)};
     }
   }
 `
@@ -156,7 +156,7 @@ const STYLED_STAKED_EARNED_CONTENT = styled.div`
 const STYLED_DESC = styled.div`
   display: flex;
   .text {
-    margin-right: ${({ theme }) => theme.margins['1x']};
+    margin-right: ${({ theme }) => theme.margin(1)};
     font-family: Montserrat;
     font-size: 14px;
     font-weight: 500;

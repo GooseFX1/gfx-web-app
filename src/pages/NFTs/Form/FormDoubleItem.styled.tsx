@@ -4,11 +4,11 @@ import { Row } from 'antd'
 export const StyledFormDoubleItem = styled(Row)`
   .dropdown-item {
     .ant-form-item-label {
-      margin-bottom: ${({ theme }) => theme.margins['2x']};
+      margin-bottom: ${({ theme }) => theme.margin(2)};
     }
   }
   .ant-form-item {
-    margin-bottom: ${({ theme }) => theme.margins['1x']};
+    margin-bottom: ${({ theme }) => theme.margin(1)};
   }
   .hint {
     font-size: 9px;
@@ -30,8 +30,8 @@ export const StyledFormDoubleItem = styled(Row)`
     }
   }
   .ant-form-item-control-input-content {
-    padding: 0 ${({ theme }) => theme.margins['2x']};
-    margin: 0 -${({ theme }) => theme.margins['2x']};
+    padding: 0 ${({ theme }) => theme.margin(2)};
+    margin: 0 -${({ theme }) => theme.margin(2)};
   }
   .ant-form-item-control-input {
     position: relative;
@@ -53,13 +53,13 @@ export const StyledFormDoubleItem = styled(Row)`
       font-size: 15px;
       font-weight: 800;
       color: #a8a8a8;
-      right: ${({ theme }) => theme.margins['4x']};
+      right: ${({ theme }) => theme.margin(4)};
     }
     .ant-picker {
       width: 195px;
       height: 41px;
       border-radius: 41px;
-      margin-top: ${({ theme }) => theme.margins['2x']};
+      margin-top: ${({ theme }) => theme.margin(2)};
       background: #9625ae;
       border: none;
       input {

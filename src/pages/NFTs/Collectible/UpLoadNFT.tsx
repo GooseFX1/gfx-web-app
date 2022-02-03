@@ -22,7 +22,7 @@ const UPLOAD_CONTENT = styled.div`
   flex: 1;
   display: flex;
   flex-direction: row;
-  padding: ${({ theme }) => theme.margins['5x']};
+  padding: ${({ theme }) => theme.margin(5)};
 
   margin: 0 auto;
 
@@ -32,9 +32,9 @@ const UPLOAD_CONTENT = styled.div`
     height: 30px;
     filter: ${({ theme }) => theme.filterBackIcon};
     cursor: pointer;
-    margin-right: ${({ theme }) => theme.margins['5x']};
+    margin-right: ${({ theme }) => theme.margin(5)};
     margin-left: 0;
-    margin-top: ${({ theme }) => theme.margins['1x']};
+    margin-top: ${({ theme }) => theme.margin(1)};
   }
 `
 
@@ -60,7 +60,7 @@ const UPLOAD_INFO_CONTAINER = styled.div`
   flex: 1.4;
   flex-direction: column;
   justify-content: flex-start;
-  margin-right: ${({ theme }) => theme.margins['6x']};
+  margin-right: ${({ theme }) => theme.margin(6)};
 `
 
 const PREVIEW_UPLOAD_CONTAINER = styled.div`
@@ -81,8 +81,8 @@ const SUB_TITLE = MainText(styled.span`
   font-weight: 600;
   color: ${({ theme }) => theme.text8} !important;
   text-align: left;
-  margin-top: ${({ theme }) => theme.margins['2.5x']};
-  margin-bottom: ${({ theme }) => theme.margins['1.5x']};
+  margin-top: ${({ theme }) => theme.margin(2.5)};
+  margin-bottom: ${({ theme }) => theme.margin(1.5)};
 `)
 
 const INPUT_SECTION = styled.div`
@@ -92,7 +92,7 @@ const INPUT_SECTION = styled.div`
 `
 
 const SPACE = styled.div`
-  width: ${({ theme }) => theme.margins['6x']};
+  width: ${({ theme }) => theme.margin(6)};
 `
 
 const BUTTON_SECTION = styled.div`
@@ -103,12 +103,12 @@ const BUTTON_SECTION = styled.div`
 const FLAT_BUTTON = styled.button`
   height: 60px;
   width: 200px;
-  padding: ${({ theme }) => `${theme.margins['2x']} ${theme.margins['6x']}`};
+  padding: ${({ theme }) => `${theme.margin(2)} ${theme.margin(6)}`};
   text-align: center;
   color: ${({ theme }) => theme.white};
   background: transparent;
-  margin-top: ${({ theme }) => theme.margins['5x']};
-  margin-right: ${({ theme }) => theme.margins['2x']};
+  margin-top: ${({ theme }) => theme.margin(5)};
+  margin-right: ${({ theme }) => theme.margin(2)};
   border: none;
   ${({ theme }) => theme.roundedBorders};
   cursor: pointer;
@@ -117,10 +117,10 @@ const FLAT_BUTTON = styled.button`
 const NEXT_BUTTON = styled.button`
   height: 60px;
   width: 245px;
-  padding: ${({ theme }) => `${theme.margins['2x']} ${theme.margins['6x']}`};
+  padding: ${({ theme }) => `${theme.margin(2)} ${theme.margin(6)}`};
   text-align: center;
   background-color: ${({ theme }) => theme.secondary5};
-  margin-top: ${({ theme }) => theme.margins['5x']};
+  margin-top: ${({ theme }) => theme.margin(5)};
   border: none;
   ${({ theme }) => theme.roundedBorders};
   cursor: pointer;
@@ -134,7 +134,7 @@ const BOTTOM_BUTTON_SECTION = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: ${({ theme }) => `${theme.margins['8x']}`};
+  margin-top: ${({ theme }) => `${theme.margin(8)}`};
 `
 
 const STYLED_PROPERTY_BLOCK = styled.div`
@@ -142,12 +142,12 @@ const STYLED_PROPERTY_BLOCK = styled.div`
   align-items: center;
   border-radius: 15px;
   background-color: ${({ theme }) => theme.propertyBg};
-  padding: ${({ theme }) => `${theme.margins['1.5x']}`};
+  padding: ${({ theme }) => `${theme.margin(1.5)}`};
 
   .property-item {
     width: 100px;
     height: 40px;
-    padding: 2px ${({ theme }) => `${theme.margins['1x']}`};
+    padding: 2px ${({ theme }) => `${theme.margin(1)}`};
     border-radius: 10px;
     background-color: ${({ theme }) => theme.propertyItemBg};
     position: relative;

@@ -17,7 +17,7 @@ const TOKEN = styled(SpaceBetweenDiv)`
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding-left: ${({ theme }) => theme.margins['5x']};
+    padding-left: ${({ theme }) => theme.margin(5)};
   }
 
   span {
@@ -31,7 +31,7 @@ const WRAPPER = styled(FlexColumnDiv)`
   ${({ theme }) => theme.measurements('100%')}
 
   > div:not(:last-child) {
-    margin-bottom: ${({ theme }) => theme.margins['2.5x']};
+    margin-bottom: ${({ theme }) => theme.margin(2.5)};
   }
 `
 

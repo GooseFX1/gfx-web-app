@@ -8,15 +8,15 @@ const FOOTER_LIST_CARD = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: ${({ theme }) => theme.margins['6x']};
-  padding: 0 ${({ theme }) => theme.margins['11x']};
+  margin-bottom: ${({ theme }) => theme.margin(6)};
+  padding: 0 ${({ theme }) => theme.margin(11)};
 `
 
 const FOOTER_IMAGE = styled(Image)`
   width: 110px;
   aspect-ratio: 1;
   border-radius: 10px;
-  margin: 0 ${({ theme }) => theme.margins['3x']};
+  margin: 0 ${({ theme }) => theme.margin(3)};
 `
 
 const FooterCarousel = () => {

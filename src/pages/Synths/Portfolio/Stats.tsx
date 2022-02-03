@@ -7,10 +7,10 @@ import { monetaryFormatValue } from '../../../utils'
 const WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   justify-content: flex-start;
-  padding: ${({ theme }) => theme.margins['4x']} ${({ theme }) => theme.margins['3x']};
+  padding: ${({ theme }) => theme.margin(4)} ${({ theme }) => theme.margin(3)};
 
   > div:nth-child(3) {
-    margin: ${({ theme }) => theme.margins['3x']} 0;
+    margin: ${({ theme }) => theme.margin(3)} 0;
   }
 
   span {
@@ -18,7 +18,7 @@ const WRAPPER = styled.div`
   }
 
   > span {
-    margin-bottom: ${({ theme }) => theme.margins['2x']};
+    margin-bottom: ${({ theme }) => theme.margin(2)};
     font-weight: bold;
     text-align: left;
     color: ${({ theme }) => theme.text1};

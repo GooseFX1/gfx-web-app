@@ -3,14 +3,14 @@ import styled from 'styled-components'
 
 export const STYLED_PREVIEW_PICTURE = styled.div`
   text-align: center;
-  padding: ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['5x']};
+  padding: ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(5)};
   background: #131313;
   ${({ theme }) => theme.largeBorderRadius};
 
   .preview {
     font-size: 14px;
     font-weight: 500;
-    margin-bottom: ${({ theme }) => theme.margins['1x']};
+    margin-bottom: ${({ theme }) => theme.margin(1)};
   }
 
   .main-image {
@@ -29,7 +29,7 @@ export const STYLED_PREVIEW_PICTURE = styled.div`
     font-size: 12px;
     font-weight: 500;
     line-height: 1;
-    margin-top: ${({ theme }) => theme.margins['1x']};
+    margin-top: ${({ theme }) => theme.margin(1)};
   }
 `
 

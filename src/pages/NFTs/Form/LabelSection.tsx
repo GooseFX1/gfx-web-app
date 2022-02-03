@@ -9,12 +9,12 @@ export const STYLED_LABLE = styled.span<{ size: string }>`
     font-weight: 600;
     color: ${({ theme }) => theme.text8};
     line-height: 1;
-    margin-bottom: ${({ theme }) => theme.margins['1x']};
+    margin-bottom: ${({ theme }) => theme.margin(1)};
     .heart-purple {
       width: 35px;
       height: 35px;
-      margin-left: ${({ theme }) => theme.margins['1x']};
-      padding-top: ${({ theme }) => theme.margins['1x']};
+      margin-left: ${({ theme }) => theme.margin(1)};
+      padding-top: ${({ theme }) => theme.margin(1)};
     }
   `}
 `

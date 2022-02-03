@@ -14,7 +14,7 @@ const WRAPPER = styled(FlexColumnDiv)<{ $height: string }>`
   align-items: flex-start;
   height: ${({ $height }) => $height};
   width: 48%;
-  padding: 10px ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['1.5x']};
+  padding: 10px ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(1.5)};
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.grey5};
   z-index: 1;

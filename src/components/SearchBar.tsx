@@ -5,13 +5,13 @@ import { SpaceBetweenDiv } from '../styles'
 
 const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)`
   width: 100%;
-  margin: 0 ${({ theme }) => theme.margins['3x']};
-  padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['3x']};
+  margin: 0 ${({ theme }) => theme.margin(3)};
+  padding: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(3)};
   border-radius: 45px;
   background-color: ${({ theme }) => theme.searchbarBackground};
 
   > input {
-    height: ${({ theme }) => theme.margins['5x']};
+    height: ${({ theme }) => theme.margin(5)};
     font-size: 16px;
     text-align: left;
     background-color: ${({ theme }) => theme.searchbarBackground};

@@ -14,11 +14,11 @@ const STYLED_ADD_PROPERTY = styled(PopupCustom)`
       background-color: ${theme.bg3};
     }
     .body-wrap {
-      padding: ${theme.margins['4x']};
+      padding: ${theme.margin(4)};
     }
     .btn-wrap {
-      margin-top: ${theme.margins['3.5x']};
-      padding: ${theme.margins['2.5x']} ${theme.margins['4x']};
+      margin-top: ${theme.margin(3.5)};
+      padding: ${theme.margin(2.5)} ${theme.margin(4)};
       background: rgba(64, 64, 64, 0.22);
       border-radius: 0 0 20px 20px;
     }
@@ -32,7 +32,7 @@ const STYLED_ADD_PROPERTY = styled(PopupCustom)`
       font-size: 25px;
       font-weight: 600;
       color: ${theme.text7};
-      margin-bottom: ${theme.margins['3x']};
+      margin-bottom: ${theme.margin(3)};
     }
     .desc {
       color: ${theme.text12};
@@ -63,15 +63,15 @@ const STYLED_CREATE_BTN = styled(Button)<{ disabled: boolean }>`
 
 const STYLED_ADD_GROUP = styled.div`
   ${({ theme }) => `
-    padding: 0 ${theme.margins['4x']};
+    padding: 0 ${theme.margin(4)};
     .add-header {
       display: flex;
       align-items: center;
-      margin-bottom: ${theme.margins['2x']};
+      margin-bottom: ${theme.margin(2)};
       .empty {
         width: 55px;
         height: 20px;
-        margin-right: ${theme.margins['2x']};
+        margin-right: ${theme.margin(2)};
       }
       .text {
         width: 180px;
@@ -80,7 +80,7 @@ const STYLED_ADD_GROUP = styled.div`
         font-weight: 600;
         text-align: left;
         color: ${theme.text7};
-        padding-left: ${theme.margins['2.5x']};
+        padding-left: ${theme.margin(2.5)};
       }
     }
   `}
@@ -88,22 +88,22 @@ const STYLED_ADD_GROUP = styled.div`
 const STYLED_ADD_BODY = styled.div`
   max-height: 34vh;
   overflow-y: scroll;
-  margin-bottom: ${({ theme }) => theme.margins['1x']};
-  padding-right: ${({ theme }) => theme.margins['1.5x']};
+  margin-bottom: ${({ theme }) => theme.margin(1)};
+  padding-right: ${({ theme }) => theme.margin(1.5)};
 
   ${({ theme }) => `
     .add-item {
       display: flex;
       align-items: center;
-      margin-top: ${theme.margins['1.5x']};
-      margin-bottom: ${theme.margins['1.5x']};
+      margin-top: ${theme.margin(1.5)};
+      margin-bottom: ${theme.margin(1.5)};
     }
     .close-btn {
       width: 35px;
       height: 35px;
       background: ${theme.iconRemoveBg};
       border-radius: 50%;
-      margin-right: ${theme.margins['2x']};
+      margin-right: ${theme.margin(2)};
       line-height: 35px;
       text-align: center;
       cursor: pointer;
@@ -122,7 +122,7 @@ const STYLED_ADD_BODY = styled.div`
       font-size: 18px;
       font-weight: 500;
       color: #fff;
-      padding-left: ${theme.margins['2.5x']};
+      padding-left: ${theme.margin(2.5)};
       &:focus {
         box-shadow: none;
       }
