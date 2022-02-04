@@ -59,17 +59,17 @@ interface ICategory {
 export const SellCategory = ({ category, setCategory }: ICategory) => {
   return (
     <STYLED_SELL_CATEGORY justify="space-between">
-      {dataCategories.map((item, index) => (
-        <Col>
-          <div className="item-wrap" onClick={() => setCategory(index)}>
-            <img
-              className={`${index === category ? 'active' : ''} item-image`}
-              src={`/img/assets/${item?.icon}.svg`}
-              alt=""
-            />
-            <div className="item-text">{item?.name}</div>
-          </div>
-        </Col>
+      {dataCategories.map(i=>i.name == 'live-action'?null:i).map((item, index) => (
+        item && <Col>
+        <div className="item-wrap" onClick={() => setCategory(index)}>
+          <img
+            className={`${index === category ? 'active' : ''} item-image`}
+            src={`/img/assets/${item?.icon}.svg`}
+            alt=""
+          />
+          <div className="item-text">{item?.name}</div>
+        </div>
+      </Col>
       ))}
     </STYLED_SELL_CATEGORY>
   )

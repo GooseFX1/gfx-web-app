@@ -1,4 +1,4 @@
-import { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react'
+import { createContext, FC, ReactNode, useCallback, useContext, useState, useReducer } from 'react'
 import apiClient from '../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
 import { customFetch } from '../utils'
@@ -13,6 +13,15 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const [nftMetadata, setNftMetadata] = useState<INFTMetadata | null>()
   const [asks, setAsks] = useState<Array<INFTAsk>>([])
   const [bids, setBids] = useState<Array<INFTBid>>([])
+  const initialState = {
+    type: "fixed-price",
+    expiration: "1",
+    bid: '0',
+    price: '0',
+    royalties: '3'
+  }
+  const reducer = (state, newState)=>({...state, ...newState})
+  const [userInput, setUserInput] = useReducer(reducer, initialState)
 
   const fetchGeneral = useCallback(async (id: string): Promise<any> => {
     try {
@@ -82,6 +91,30 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     },
     []
   )
+
+  const updateUserInput = useCallback(async (paramValue: any): Promise<void> => {
+    try{
+      setUserInput({paramValue})
+    }catch(error){
+      console.log(error)
+    }
+  },[])
+
+  const fetchUserInput = useCallback(async (): Promise<any> => {
+    try{
+      return userInput
+    }catch(error){
+      console.log(error)
+    }
+  },[])
+
+  const sellNFT = useCallback(async (): Promise<any> => {
+    try{
+      return userInput
+    }catch(error){
+      console.log(error)
+    }
+  },[])
 
   return (
     <NFTDetailsContext.Provider
