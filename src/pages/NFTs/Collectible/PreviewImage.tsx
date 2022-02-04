@@ -84,9 +84,10 @@ const BOTTOM_INFO = styled.div`
 interface Props {
   file: any
   status?: string
+  image_url?: string
 }
 
-const PreviewImage = ({ file, status }: Props) => {
+const PreviewImage = ({ file, status, image_url }: Props) => {
   const { nftMintingData } = useNFTDetails()
   const { mode } = useDarkMode()
 

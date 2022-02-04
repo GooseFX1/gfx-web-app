@@ -153,4 +153,7 @@ export interface INFTDetailsConfig {
   nftMintingData: IMetadataContext | undefined
   setNftMintingData: Dispatch<SetStateAction<IMetadataContext>>
   fetchExternalNFTs?: (param: any, connection: any, nft: INFTMetadata) => Promise<any>
+  updateUserInput?: (params: any) => Promise<any>
+  fetchUserInput?: () => Promise<any>
+  sellNFT?: (params: any) => Promise<any>
 }

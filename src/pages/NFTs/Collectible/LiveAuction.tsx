@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { Form } from 'antd'
+import { Form, Col, Row } from 'antd'
 import { MainText } from '../../../styles'
+import { useWallet } from '@solana/wallet-adapter-react'
 import PreviewImage from './PreviewImage'
 import { useHistory } from 'react-router-dom'
+import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { SellCategory } from '../SellCategory/SellCategory'
 import { FormDoubleItem } from '../Form/FormDoubleItem'
+import { notify } from '../../../utils'
 import { dataFormRow2, dataFormFixedRow2, dataDonate, startingDays, expirationDays } from './mockData'
 import { Donate } from '../Form/Donate'
 import { GroupButton } from '../GroupButton/GroupButton'
@@ -85,6 +88,20 @@ const STYLED_DESCRIPTION = styled.div`
   color: #fff;
   padding-bottom: ${({ theme }) => theme.margin(5)} !important;
 `
+const MESSAGE = styled.div`
+  margin: -12px 0;
+  font-size: 12px;
+  font-weight: 700;
+
+  .m-title {
+    margin-bottom: 16px;
+  }
+
+  .m-icon {
+    width: 20.5px;
+    height: 20px;
+  }
+`
 
 export const LiveAuction = () => {
   const [form] = Form.useForm()
@@ -104,7 +121,11 @@ export const LiveAuction = () => {
   const [settingData, setSettingData] = useState<any>({ ...initSettingData })
   const [liveData, setLiveData] = useState<any>({ ...initLiveData })
   const [disabled, setDisabled] = useState(true)
-  const [category, setCategory] = useState(0)
+  const [category, setCategory] = useState(1)
+  const { general, nftMetadata, updateUserInput, sellNFT, fetchExternalNFTs } = useNFTDetails()
+  const { sessionUser } = useNFTProfile()
+  const { publicKey, connected } = useWallet()
+  const { connection } = useConnectionConfig()
 
   useEffect(() => {
     const { state = {} } = history.location
@@ -113,18 +134,94 @@ export const LiveAuction = () => {
     }
   }, [history.location, history.location.state])
 
+  useEffect(() => {
+    if (connected) {
+      fetchExternalNFTs(publicKey, connection, nftMetadata)
+    }
+  }, [])
+
   const onChange = ({ e, id }) => {
     const { value } = e.target
     const temp = { ...liveData }
     temp[id] = value
+    if (id == 'minimumBid') {
+      updateUserInput({ price: value })
+    } else {
+      updateUserInput({ royalty: value })
+    }
     setLiveData(temp)
   }
 
   useEffect(() => {
-    if (liveData?.minimumBid && liveData?.royalties) {
+    if (category == 2) {
+      if (liveData?.minimumBid && liveData?.royalties) {
+        setDisabled(false)
+      } else setDisabled(true)
+    } else {
       setDisabled(false)
-    } else setDisabled(true)
-  }, [liveData])
+    }
+  }, [liveData, category])
+
+  const confirmBid = async () => {
+    const sellObject = {
+      clock: Date.now() + '', // string, not a number
+      tx_sig: 'RANDOM_TX_SIG_HERE',
+      wallet_key: `${publicKey}`,
+      auction_house_key: 'AUCTION_HOUSE_KEY_HERE',
+      token_account_key: 'RANDOM_TOKEN_ACCOUNT_KEY_HERE',
+      auction_house_treasury_mint_key: 'AUCTION_HOUSE_TREASURY_KEY_HERE',
+      token_account_mint_key: general?.mint_address,
+      buyer_price: liveData['minimumBid'] || '0',
+      token_size: 'TOKEN_SIZE_HERE',
+      non_fungible_id: 11, //chnage this when you get the nft id
+      collection_id: nftMetadata?.collection || 11, // and this too
+      user_id: sessionUser?.user_id
+    }
+
+    try {
+      const res = await sellNFT(sellObject)
+
+      if (res) {
+        notify({
+          message: (
+            <MESSAGE>
+              <Row className="m-title" justify="space-between" align="middle">
+                <Col>NFT listing sucessfull!</Col>
+                <Col>
+                  <img className="m-icon" src={`/img/assets/bid-success-icon.svg`} alt="" />
+                </Col>
+              </Row>
+              <div>{nftMetadata?.name}</div>
+              <div>My price: {`${liveData['minimumBid']}`}</div>
+            </MESSAGE>
+          )
+        })
+      } else {
+        throw new Error()
+      }
+      // setBidPrice('')
+      // setMode('bid')
+      // setVisible(false)
+    } catch (error) {
+      console.dir(error)
+      notify({
+        type: 'error',
+        message: (
+          <MESSAGE>
+            <Row className="m-title" justify="space-between" align="middle">
+              <Col>NFT Listing error!</Col>
+              <Col>
+                <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+              </Col>
+            </Row>
+            <div>Please try again, if the error persists please contact support.</div>
+          </MESSAGE>
+        )
+      })
+    } finally {
+      //setIsLoading(false)
+    }
+  }
 
   return (
     <>
@@ -141,7 +238,7 @@ export const LiveAuction = () => {
             <SellCategory setCategory={setCategory} category={category} />
 
             <SECTION_TITLE>
-              {category === 0 && '4. Live auction settings'}
+              {category === 1 && '4. Open Bid settings'}
               {category === 2 && '4. Fixed price settings'}
             </SECTION_TITLE>
             <STYLED_FORM form={form} layout="vertical" initialValues={{}}>
@@ -162,12 +259,17 @@ export const LiveAuction = () => {
             </STYLED_FORM>
           </UPLOAD_INFO_CONTAINER>
           <PREVIEW_UPLOAD_CONTAINER>
-            <PreviewImage file={settingData?.previewImage} status={settingData?.status} />
+            <PreviewImage
+              file={settingData?.previewImage}
+              image_url={nftMetadata?.image}
+              status={settingData?.status}
+            />
             <GroupButton
               text1="Save as a draft"
               text2="Sell item"
               disabled={disabled}
               onClick1={() => history.push('/NFTs/create-single')}
+              onClick2={() => confirmBid()}
             />
           </PREVIEW_UPLOAD_CONTAINER>
         </UPLOAD_FIELD_CONTAINER>
