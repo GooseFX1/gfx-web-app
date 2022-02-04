@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
-import { Row, Col, Slider, InputNumber, Typography } from 'antd'
+import { Row, Col, Slider, InputNumber, Typography, Button } from 'antd'
+import InfoInput from './InfoInput'
 import { PopupCustom } from '../Popup/PopupCustom'
 import { Creator, StringPublicKey } from '../../../web3'
-import { MainText } from '../../../styles'
 const { Text } = Typography
 
 //#region styles
 const STYLED_POPUP = styled(PopupCustom)`
   * {
     font-family: 'Montserrat';
+    color: ${({ theme }) => theme.text2};
   }
+
   .ant-input-number {
     width: 100%;
   }
   ${({ theme }) => `
     .ant-modal-body {
-      padding: ${theme.margin(3.5)} ${theme.margin(6)} ${theme.margin(4)};
+      padding: ${theme.margin(3.5)} ${theme.margin(6)} ${theme.margin(2)};
     }
     .ant-modal-close {
       right: 35px;
@@ -36,17 +38,10 @@ const STYLED_POPUP = styled(PopupCustom)`
     }
   `}
 `
-const TITLE = MainText(styled.p`
-  font-size: 17px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.text8} !important;
-  text-align: left;
-  margin-bottom: ${({ theme }) => theme.margin(2)};
-`)
 
-const STYLED_CREATE_BTN = styled.button<{ disabled: boolean }>`
-  ${({ theme, disabled }) => `
-    margin-top: ${theme.margin(3.5)};
+const STYLED_CREATE_BTN = styled(Button)`
+  ${({ theme }) => `
+    margin-top: ${theme.margin(2)};
     width: 100%;
     font-size: 17px;
     font-weight: 600;
@@ -54,13 +49,91 @@ const STYLED_CREATE_BTN = styled.button<{ disabled: boolean }>`
     height: 53px;
     ${theme.roundedBorders}
     border: none;
-    background: ${disabled ? '#7d7d7d !important' : theme.btnNextStepBg};
-    color: #fff !important;
+    background-color: #9625ae;
+    span {
+      color: #fff !important;
+    }
     &:hover {
-      background: ${disabled ? '#7d7d7d !important' : theme.btnNextStepBg};
+      background-color: #9625ae;
+    }
+  `}
+`
+
+const BUTTON_PLUS_WRAPPER = styled(Button)<{ disabled: boolean }>`
+  margin-top: 8px;
+  ${({ theme, disabled }) => `
+    width: 143px;
+    height: 45px;
+    border-radius: 29px;
+    background-color: #3735bb;
+    background: ${disabled ? '#7d7d7d' : ' #3735bb'} !important;
+    color: #fff;
+    border: none;
+    margin-left: auto;
+    margin-right: 0;
+    display: block;
+    span {
+      color: #fff !important;
+    }
+    &:hover, &:focus {
+      background-color: #3735bb;
+      color: #fff;
       opacity: 0.8;
     }
   `}
+`
+
+const CREATOR_CONTAINER = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin: ${({ theme }) => theme.margin(1)} 0px;
+
+  .close-btn {
+    width: 35px;
+    height: 35px;
+    background: ${({ theme }) => theme.iconRemoveBg};
+    border-radius: 50%;
+    margin-right: ${({ theme }) => theme.margin(2)};
+    line-height: 31px;
+    text-align: center;
+    cursor: pointer;
+    .close-white-icon {
+      width: 17px;
+      height: auto;
+    }
+  }
+  .label {
+    margin-right: ${({ theme }) => theme.margin(2)};
+    font-weight: 700;
+    font-size: 22px;
+  }
+  .input {
+    width: 72px;
+
+    .ant-input-number-focused {
+      border-color: white;
+    }
+  }
+  .slider {
+    margin-left: auto;
+    width: 150px;
+    margin-right: ${({ theme }) => theme.margin(1)};
+
+    .ant-slider {
+      :hover {
+        .ant-slider-handle {
+          border-color: #9625ae;
+        }
+      }
+    }
+    .ant-slider-track {
+      background-color: #9625ae;
+    }
+    .ant-slider-handle {
+      border-color: #9625ae;
+    }
+  }
 `
 //#endregion
 
@@ -85,7 +158,8 @@ interface Props {
 
 const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmit, handleCancel }: Props) => {
   // const file = nftMintingData.image;
-  const { publicKey, connected } = useWallet()
+  const { publicKey } = useWallet()
+  const [inputVal, setInputVal] = useState<any>()
   const [creators, setCreators] = useState<Array<UserValue>>([])
   const [fixedCreators, setFixedCreators] = useState<Array<UserValue>>([])
   const [royalties, setRoyalties] = useState<Array<Royalty>>([])
@@ -94,24 +168,19 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
 
   useEffect(() => {
     if (publicKey) {
-      const key = publicKey.toBase58()
-      setFixedCreators([
-        {
-          key,
-          label: key,
-          value: key
-        }
-      ])
+      initializeComponent()
     }
   }, [])
 
   useEffect(() => {
-    setRoyalties(
-      [...fixedCreators, ...creators].map((creator) => ({
-        creatorKey: creator.key,
-        amount: Math.trunc(100 / [...fixedCreators, ...creators].length)
-      }))
-    )
+    if (visible) {
+      setRoyalties(
+        [...fixedCreators, ...creators].map((creator) => ({
+          creatorKey: creator.key,
+          amount: Math.trunc(100 / [...fixedCreators, ...creators].length)
+        }))
+      )
+    }
   }, [creators, fixedCreators])
 
   useEffect(() => {
@@ -122,6 +191,49 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
 
     setTotalRoyaltiesShare(total)
   }, [royalties])
+
+  const initializeComponent = () => {
+    const key = publicKey.toBase58()
+    if (nftMintingData.creators.length === 0 && fixedCreators.length === 0 && creators.length === 0) {
+      initializeCreator(key)
+    } else {
+      handleSetCurrentCreators(key, nftMintingData.creators)
+    }
+  }
+
+  const initializeCreator = (key: string) => {
+    const initCreator = [
+      {
+        key,
+        label: key,
+        value: key
+      }
+    ]
+    setFixedCreators(initCreator)
+    setRoyalties(
+      initCreator.map((creator) => ({
+        creatorKey: key,
+        amount: 100
+      }))
+    )
+  }
+
+  const handleSetCurrentCreators = (key: StringPublicKey, creatorsFromMetadata: Creator[]) => {
+    const creators: UserValue[] = creatorsFromMetadata.map((c) => ({
+      key: c.address,
+      label: c.address,
+      value: c.address
+    }))
+
+    setCreators(creators.filter((c) => c.key !== key))
+    setFixedCreators(creators.filter((c) => c.key === key))
+    setRoyalties(
+      creatorsFromMetadata.map((creator) => ({
+        creatorKey: creator.address,
+        amount: creator.share
+      }))
+    )
+  }
 
   const handleSaveCreatorInfo = () => {
     // Find all royalties that are invalid (0)
@@ -156,23 +268,56 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
     handleSubmit()
   }
 
+  const handleRemoveCreator = (key: any) => {
+    setCreators((prev) => prev.filter((cr) => cr.key !== key))
+    setFixedCreators((prev) => prev.filter((cr) => cr.key !== key))
+  }
+
+  const handleAddCreator = () => {
+    const existingKeys = [...creators.map((c) => c.key), ...fixedCreators.map((c) => c.key)]
+    if (inputVal.length > 0 && !existingKeys.includes(inputVal)) {
+      setCreators((prev) => [
+        ...prev,
+        {
+          key: inputVal,
+          label: inputVal,
+          value: inputVal
+        }
+      ])
+
+      setInputVal(undefined)
+    }
+  }
+
   return (
     <>
-      <STYLED_POPUP width="500px" height="596px" title={null} visible={visible} onCancel={handleCancel} footer={null}>
+      <STYLED_POPUP
+        width="532px"
+        height={'auto'}
+        title={null}
+        visible={visible}
+        onCancel={() => {
+          initializeComponent()
+          handleCancel()
+        }}
+        footer={null}
+      >
         <h3 className="title">Set royalties and splits</h3>
         <div>
-          <Row className="" style={{ marginBottom: 20 }}>
+          <Row className="">
             <p>Royalties ensure that you continue to get compensated for your work after its initial sale.</p>
           </Row>
-          <Row className="" style={{ marginBottom: 20 }}>
-            <label className="">
+          <Row className="">
+            <Col span={18}>
               <span className="">Royalty Percentage</span>
               <p>This is how much of each secondary sale will be paid out to the creators.</p>
+            </Col>
+            <Col span={6}>
               <InputNumber
                 autoFocus
                 min={0}
                 max={100}
-                placeholder="Between 0 and 100"
+                placeholder=" 0 - 100"
                 onChange={(val: number) => {
                   setNftMintingData({
                     ...nftMintingData,
@@ -181,7 +326,7 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
                 }}
                 className="royalties-input"
               />
-            </label>
+            </Col>
           </Row>
           {[...fixedCreators, ...creators].length > 0 && (
             <Row>
@@ -195,36 +340,28 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
                   creators={[...fixedCreators, ...creators]}
                   royalties={royalties}
                   setRoyalties={setRoyalties}
+                  removeCreator={handleRemoveCreator}
                   isShowErrors={isShowErrors}
                 />
               </label>
             </Row>
           )}
           <Row>
-            <span onClick={() => console.log(true)} style={{ padding: 10, marginBottom: 10 }}>
-              <span
-                style={{
-                  color: 'white',
-                  fontSize: 25,
-                  padding: '0px 8px 3px 8px',
-                  background: 'rgb(57, 57, 57)',
-                  borderRadius: '50%',
-                  marginRight: 5,
-                  verticalAlign: 'middle'
-                }}
-              >
-                +
-              </span>
-              <span
-                style={{
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  verticalAlign: 'middle',
-                  lineHeight: 1
-                }}
-              >
-                Add another creator
-              </span>
-            </span>
+            <InfoInput
+              type="input"
+              onChange={(e) => setInputVal(e.target.value)}
+              placeholder={'Creator Public Key'}
+              value={inputVal}
+            />
+          </Row>
+          <Row justify="end">
+            <BUTTON_PLUS_WRAPPER
+              onClick={handleAddCreator}
+              disabled={!inputVal || inputVal.length === 0}
+              className="add-more"
+            >
+              <span>Add Creator</span>
+            </BUTTON_PLUS_WRAPPER>
             {/* <MetaplexModal visible={showCreatorsModal} onCancel={() => setShowCreatorsModal(false)}>
               <label className="action-field" style={{ width: '100%' }}>
                 <span className="field-title">Creators</span>
@@ -234,7 +371,7 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
           </Row>
           {isShowErrors && totalRoyaltyShares !== 100 && (
             <Row>
-              <Text type="danger" style={{ paddingBottom: 14 }}>
+              <Text type="danger">
                 The split percentages for each creator must add up to 100%. Current total split percentage is{' '}
                 {totalRoyaltyShares}%.
               </Text>
@@ -255,10 +392,11 @@ interface IRoylatySplit {
   creators: Array<UserValue>
   royalties: Array<Royalty>
   setRoyalties: Function
+  removeCreator: (key: string) => void
   isShowErrors?: boolean
 }
 
-const RoyaltiesSplitter = ({ creators, royalties, setRoyalties, isShowErrors }: IRoylatySplit) => {
+const RoyaltiesSplitter = ({ creators, royalties, setRoyalties, isShowErrors, removeCreator }: IRoylatySplit) => {
   return (
     <Col>
       <Row gutter={[0, 24]}>
@@ -280,32 +418,35 @@ const RoyaltiesSplitter = ({ creators, royalties, setRoyalties, isShowErrors }: 
           }
 
           return (
-            <Col span={24} key={idx}>
-              <Row align="middle" gutter={[0, 4]} style={{ margin: '5px auto' }}>
-                <Col span={10} style={{ padding: 10 }}>
-                  {`${creator.label.substr(0, 4)}...${creator.label.substr(-4, 4)}`}
-                </Col>
-                <Col span={4}>
-                  <InputNumber<number>
-                    min={0}
-                    max={100}
-                    formatter={(value) => `${value}%`}
-                    value={amt}
-                    parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
-                    onChange={handleChangeShare}
-                    className="royalties-input"
-                  />
-                </Col>
-                <Col span={10} style={{ paddingLeft: 12 }}>
-                  <Slider value={amt} onChange={handleChangeShare} />
-                </Col>
-                {isShowErrors && amt === 0 && (
-                  <Col style={{ paddingLeft: 12 }}>
-                    <Text type="danger">The split percentage for this creator cannot be 0%.</Text>
-                  </Col>
-                )}
-              </Row>
-            </Col>
+            <CREATOR_CONTAINER>
+              <div className="close-btn" onClick={() => removeCreator(creator.key)}>
+                <img className="close-white-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+              </div>
+
+              <div className={'label'}>{`${creator.label.substr(0, 4)}...${creator.label.substr(-4, 4)}`}</div>
+
+              <div className={'slider'}>
+                <Slider value={amt} onChange={handleChangeShare} />
+              </div>
+
+              <div className={'input'}>
+                <InputNumber<number>
+                  min={0}
+                  max={100}
+                  formatter={(value) => `${value}%`}
+                  value={amt}
+                  parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
+                  onChange={handleChangeShare}
+                  className="royalties-input"
+                />
+              </div>
+
+              {isShowErrors && amt === 0 && (
+                <div>
+                  <Text type="danger">The split percentage for this creator cannot be 0%.</Text>
+                </div>
+              )}
+            </CREATOR_CONTAINER>
           )
         })}
       </Row>

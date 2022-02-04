@@ -6,7 +6,7 @@ import { useNFTDetails } from '../../../context'
 
 const PREVIEW_CONTAINER = styled.div`
   border-radius: 20px;
-  background-color: ${({ theme }) => theme.avatarBackground};
+  background-color: ${({ theme }) => theme.propertyBg};
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -69,12 +69,10 @@ const NAME_TEXT = MainText(styled.span`
   color: ${({ theme }) => theme.text7} !important;
 `)
 
-const DESCRIBE_TEXT = MainText(styled.span`
-  font-size: 20px;
-  font-weight: 500;
-  color: ${({ theme }) => theme.text8} !important;
-  margin-bottom: ${({ theme }) => theme.margin(1)};
-`)
+const SUPPORT_TEXT = styled(NAME_TEXT)`
+  font-weight: 800;
+  margin-top: ${({ theme }) => theme.margin(2)};
+`
 
 const BOTTOM_INFO = styled.div`
   display: flex;
@@ -109,10 +107,17 @@ const PreviewImage = ({ file, status }: Props) => {
           onPreview={() => {}}
         />
       ) : (
-        <IMAGE_CONTAINER />
+        <IMAGE_CONTAINER>
+          <img className="image-broken" src={`/img/assets/nft-preview.svg`} alt="nft-preview" />
+        </IMAGE_CONTAINER>
       )}
       <BOTTOM_INFO>
         <NAME_TEXT>{nftMintingData?.name || 'Name your item'}</NAME_TEXT>
+        <SUPPORT_TEXT>
+          {nftMintingData?.properties.maxSupply === 1
+            ? 'Single item 1/1'
+            : `Multiple items (${nftMintingData?.properties.maxSupply})`}
+        </SUPPORT_TEXT>
       </BOTTOM_INFO>
     </PREVIEW_CONTAINER>
   )

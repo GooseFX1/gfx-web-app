@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { ArrowClicker } from '../../components'
 import { useDarkMode } from '../../context'
 import FooterCarousel from './FooterCarousel'
-import { ButtonWrapper } from './NFTButton'
+import { MainButton } from '../../styles'
 
 const TOP_ARROW = styled(ArrowClicker)`
   width: 21px;
@@ -60,11 +60,23 @@ const FOLLOW_US_WRAPPER = styled.div`
   margin-top: ${({ theme }) => theme.margin(3.5)};
 `
 
-const FOLLOW_US_BUTTON = styled(ButtonWrapper)`
-  background-color: ${({ theme }) => theme.secondary2};
+const FOLLOW_US_BUTTON = styled.a`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
   height: 60px;
   padding: 0 55px;
   margin-left: 30px;
+  color: white;
+  background-color: ${({ theme }) => theme.secondary2};
+  transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;
+  ${({ theme }) => theme.roundedBorders};
+  box-shadow: 0 0 0 0 transparent;
+  :hover {
+    color: white;
+    box-shadow: 0 3px 6px 1px #00000045;
+  }
 `
 
 const NFTFooter = () => {
@@ -80,7 +92,7 @@ const NFTFooter = () => {
         <FOOTER_TEXT size={18}>Never miss any drop again!</FOOTER_TEXT>
         <FOLLOW_US_WRAPPER>
           <FOOTER_TEXT size={20}>Follow us in twitter! @goosefx1</FOOTER_TEXT>
-          <FOLLOW_US_BUTTON>
+          <FOLLOW_US_BUTTON href={'https://twitter.com/GooseFX1'} target={'_blank'}>
             <span>Follow Us</span>
           </FOLLOW_US_BUTTON>
         </FOLLOW_US_WRAPPER>
