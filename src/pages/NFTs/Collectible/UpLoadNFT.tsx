@@ -210,7 +210,7 @@ const BUTTON_PLUS_WRAPPER = styled(ButtonWrapper)`
   height: 41px;
   justify-content: space-between;
   align-items: center;
-  background-color: ${({ theme }) => theme.btnIconBg};
+  background-color: #9625ae;
   margin-bottom: ${({ theme }) => theme.margin(1.5)};
 
   &.add-more {

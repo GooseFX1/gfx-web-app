@@ -11,7 +11,9 @@ const { Text } = Typography
 const STYLED_POPUP = styled(PopupCustom)`
   * {
     font-family: 'Montserrat';
+    color: ${({ theme }) => theme.text2};
   }
+
   .ant-input-number {
     width: 100%;
   }
@@ -37,8 +39,8 @@ const STYLED_POPUP = styled(PopupCustom)`
   `}
 `
 
-const STYLED_CREATE_BTN = styled.button<{ disabled: boolean }>`
-  ${({ theme, disabled }) => `
+const STYLED_CREATE_BTN = styled(Button)`
+  ${({ theme }) => `
     margin-top: ${theme.margin(2)};
     width: 100%;
     font-size: 17px;
@@ -47,11 +49,12 @@ const STYLED_CREATE_BTN = styled.button<{ disabled: boolean }>`
     height: 53px;
     ${theme.roundedBorders}
     border: none;
-    background: ${disabled ? '#7d7d7d !important' : theme.btnNextStepBg};
-    color: #fff !important;
+    background-color: #9625ae;
+    span {
+      color: #fff !important;
+    }
     &:hover {
-      background: ${disabled ? '#7d7d7d !important' : theme.btnNextStepBg};
-      opacity: 0.8;
+      background-color: #9625ae;
     }
   `}
 `
@@ -69,7 +72,9 @@ const BUTTON_PLUS_WRAPPER = styled(Button)<{ disabled: boolean }>`
     margin-left: auto;
     margin-right: 0;
     display: block;
-
+    span {
+      color: #fff !important;
+    }
     &:hover, &:focus {
       background-color: #3735bb;
       color: #fff;
