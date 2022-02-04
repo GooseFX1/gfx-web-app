@@ -213,7 +213,7 @@ const BUTTON_PLUS_WRAPPER = styled(ButtonWrapper)`
   background-color: ${({ theme }) => theme.btnIconBg};
   margin-bottom: ${({ theme }) => theme.margin(1.5)};
 
-  .add-more {
+  &.add-more {
     width: 100px;
   }
 
