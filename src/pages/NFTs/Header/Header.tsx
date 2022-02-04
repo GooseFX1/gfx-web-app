@@ -19,13 +19,14 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
   padding-right: ${({ theme }) => theme.margin(4)};
   z-index: 5;
   background: #1e1e1e;
-  justify-content: flex-start;
+  justify-content: space-between;
 
   .search-bar {
-    width: 40%;
+    width: 100%;
     background: #2a2a2a;
     height: 45px;
-    margin: 0;
+    margin-left: ${({ theme }) => theme.margin(2.5)};
+
     > input {
       background: #2a2a2a;
       &::placeholder {
@@ -36,7 +37,6 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
   .categories {
     height: 45px;
     width: 150px;
-    margin-left: ${({ theme }) => theme.margin(2.5)};
     span {
       font-weight: 500;
       font-size: 15px;
@@ -64,11 +64,13 @@ const AVATAR_WRAPPER = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  flex-grow: 2;
 `
 
 const BUTTON_SELECTION = styled.div`
   display: flex;
   justify-content: flex-end;
+  flex-grow: 1;
 
   > button:last-child {
     margin-left: ${({ theme }) => theme.margin(3)};
@@ -77,10 +79,20 @@ const BUTTON_SELECTION = styled.div`
 
 const CREATE = styled(ButtonWrapper)`
   justify-content: center;
-  height: 50px;
-  width: 140px;
-  background-color: ${({ theme }) => theme.darkButton};
-
+  height: 45px;
+  width: 132px;
+  background-color: ${({ theme }) => theme.secondary5};
+  margin-left: ${({ theme }) => theme.margin(2)};
+  span {
+    color: white;
+  }
+`
+const SELL = styled(ButtonWrapper)`
+  justify-content: center;
+  height: 45px;
+  width: 132px;
+  background-color: #bb3535;
+  margin-left: ${({ theme }) => theme.margin(2)};
   span {
     color: white;
   }
@@ -158,14 +170,19 @@ export const Header = ({ setFilter, filter }) => {
             onClick={goProfile}
           />
         )}
-      </AVATAR_WRAPPER>
-      <SearchBar className="search-bar" setFilter={setFilter} filter={filter} />
-      <BUTTON_SELECTION>
+        <SearchBar className="search-bar" setFilter={setFilter} filter={filter} />
         <Categories categories={categories} className="categories" />
+      </AVATAR_WRAPPER>
+      <BUTTON_SELECTION>
         {connected && publicKey ? (
-          <CREATE onClick={onCreateCollectible}>
-            <span>Create</span>
-          </CREATE>
+          <div style={{ display: 'flex' }}>
+            <SELL onClick={() => console.log('got to selling')}>
+              <span>Sell</span>
+            </SELL>
+            <CREATE onClick={onCreateCollectible}>
+              <span>Create</span>
+            </CREATE>
+          </div>
         ) : (
           <MainButton
             className="connect-wl-btn"
