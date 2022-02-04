@@ -27,8 +27,7 @@ const STYLED_UPLOAD_CUSTOM = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-top: ${({ theme }) => theme.margin(6)};
-    padding-bottom: ${({ theme }) => theme.margin(6)};
+    height: 200px;
     margin-top: ${({ theme }) => theme.margin(3)};
     margin-bottom: ${({ theme }) => theme.margin(3)};
     .image-group {
