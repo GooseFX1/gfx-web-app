@@ -6,7 +6,7 @@ import { useNFTDetails } from '../../../context'
 
 const PREVIEW_CONTAINER = styled.div`
   border-radius: 20px;
-  background-color: ${({ theme }) => theme.avatarBackground};
+  background-color: ${({ theme }) => theme.propertyBg};
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -14,7 +14,7 @@ const PREVIEW_CONTAINER = styled.div`
   width: 90%;
   aspect-ratio: 1;
   align-self: flex-end;
-  padding: ${({ theme }) => theme.margins['2.5x']} ${({ theme }) => theme.margins['5x']};
+  padding: ${({ theme }) => theme.margin(2.5)} ${({ theme }) => theme.margin(5)};
 
   .ant-upload-list-picture-card-container {
     width: 100%;
@@ -34,7 +34,7 @@ const PREVIEW_CONTAINER = styled.div`
     position: relative;
     width: 100%;
     height: auto;
-    margin: ${({ theme }) => theme.margins['1x']} auto;
+    margin: ${({ theme }) => theme.margin(1)} auto;
   }
   .ant-upload-list-item {
     padding: 0 !important;
@@ -60,7 +60,7 @@ const PREVIEW_TEXT = MainText(styled.span`
   font-size: 20px;
   font-weight: 500;
   color: ${({ theme }) => theme.text7} !important;
-  margin-bottom: ${({ theme }) => theme.margins['1x']};
+  margin-bottom: ${({ theme }) => theme.margin(1)};
 `)
 
 const NAME_TEXT = MainText(styled.span`
@@ -69,12 +69,10 @@ const NAME_TEXT = MainText(styled.span`
   color: ${({ theme }) => theme.text7} !important;
 `)
 
-const DESCRIBE_TEXT = MainText(styled.span`
-  font-size: 20px;
-  font-weight: 500;
-  color: ${({ theme }) => theme.text8} !important;
-  margin-bottom: ${({ theme }) => theme.margins['1x']};
-`)
+const SUPPORT_TEXT = styled(NAME_TEXT)`
+  font-weight: 800;
+  margin-top: ${({ theme }) => theme.margin(2)};
+`
 
 const BOTTOM_INFO = styled.div`
   display: flex;
@@ -109,10 +107,17 @@ const PreviewImage = ({ file, status }: Props) => {
           onPreview={() => {}}
         />
       ) : (
-        <IMAGE_CONTAINER />
+        <IMAGE_CONTAINER>
+          <img className="image-broken" src={`/img/assets/nft-preview.svg`} alt="nft-preview" />
+        </IMAGE_CONTAINER>
       )}
       <BOTTOM_INFO>
         <NAME_TEXT>{nftMintingData?.name || 'Name your item'}</NAME_TEXT>
+        <SUPPORT_TEXT>
+          {nftMintingData?.properties.maxSupply === 1
+            ? 'Single item 1/1'
+            : `Multiple items (${nftMintingData?.properties.maxSupply})`}
+        </SUPPORT_TEXT>
       </BOTTOM_INFO>
     </PREVIEW_CONTAINER>
   )

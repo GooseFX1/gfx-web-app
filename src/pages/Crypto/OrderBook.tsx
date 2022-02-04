@@ -7,10 +7,8 @@ import { SpaceBetweenDiv, TRADE_ORDER_WIDTH } from '../../styles'
 import { abbreviateNumber, removeFloatingPointError } from '../../utils'
 
 const HEADER = styled.div<{ $side: MarketSide }>`
-  margin: -${({ theme }) => theme.margins['2x']} -${({ theme }) => theme.margins['2x']}
-    ${({ theme }) => theme.margins['1x']};
-  padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2.5x']}
-    ${({ theme }) => theme.margins['1.5x']};
+  margin: -${({ theme }) => theme.margin(2)} -${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(1)};
+  padding: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(2.5)} ${({ theme }) => theme.margin(1.5)};
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 20px;
@@ -40,7 +38,7 @@ const LOADER = styled(Skeleton.Input)`
     height: 10px !important;
 
     &:first-child {
-      margin-top: ${({ theme }) => theme.margins['0.5x']};
+      margin-top: ${({ theme }) => theme.margin(0.5)};
     }
   }
 `
@@ -62,7 +60,7 @@ const ORDER = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin: ${({ theme }) => theme.margins['0.5x']} 0;
+  margin: ${({ theme }) => theme.margin(0.5)} 0;
 
   span {
     flex: 1;
@@ -99,7 +97,7 @@ const ORDER = styled.div`
 
 const SIDE = styled(SpaceBetweenDiv)<{ $side: MarketSide }>`
   position: relative;
-  margin-bottom: ${({ theme }) => theme.margins['2x']};
+  margin-bottom: ${({ theme }) => theme.margin(2)};
 
   &:after {
     content: '';
@@ -129,8 +127,8 @@ const SIZE = styled.span<{ $side: MarketSide }>`
 `
 const WRAPPER = styled.div`
   position: relative;
-  padding: ${({ theme }) => theme.margins['2x']} calc(${({ theme }) => theme.margins['2x']} - 2px)
-    ${({ theme }) => theme.margins['2x']} ${({ theme }) => theme.margins['1.5x']};
+  padding: ${({ theme }) => theme.margin(2)} calc(${({ theme }) => theme.margin(2)} - 2px)
+    ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(1.5)};
   border-radius: 10px;
   background-color: ${({ theme }) => theme.bg3};
   overflow: hidden;

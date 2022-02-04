@@ -7,8 +7,8 @@ const INPUT_TITLE = MainText(styled.span`
   font-weight: 600;
   color: ${({ theme }) => theme.text8} !important;
   text-align: left;
-  margin-top: ${({ theme }) => theme.margins['1.5x']};
-  margin-bottom: ${({ theme }) => theme.margins['1x']};
+  margin-top: ${({ theme }) => theme.margin(1.5)};
+  margin-bottom: ${({ theme }) => theme.margin(1)};
 `)
 
 const INPUT_LIMIT = MainText(styled.span`
@@ -16,7 +16,7 @@ const INPUT_LIMIT = MainText(styled.span`
   font-weight: 600;
   color: ${({ theme }) => theme.text8} !important;
   text-align: left;
-  margin-top: ${({ theme }) => theme.margins['1x']};
+  margin-top: ${({ theme }) => theme.margin(1)};
 `)
 
 const INPUT_CONTAINER = styled.div`
@@ -30,8 +30,24 @@ const STYLED_INPUT = styled.input`
   width: 100%;
   border-radius: 10px;
   background-color: ${({ theme }) => theme.inputBg};
-  padding: ${({ theme }) => `${theme.margins['1x']}`};
+  padding: ${({ theme }) => `${theme.margin(1.5)}`};
   border: none;
+  ::placeholder {
+    color: #636363;
+    font-size: 12px;
+  }
+  &:focus {
+    outline-width: 0;
+  }
+`
+const STYLED_TEXTAREA = styled.textarea`
+  height: 65px;
+  width: 100%;
+  border-radius: 10px;
+  background-color: ${({ theme }) => theme.inputBg};
+  padding: ${({ theme }) => `${theme.margin(1.5)}`};
+  border: none;
+  line-height: 22px;
   ::placeholder {
     color: #636363;
     font-size: 12px;
@@ -42,19 +58,31 @@ const STYLED_INPUT = styled.input`
 `
 
 const InfoInput: FC<{
-  title: string
   placeholder: string
   value: string | undefined
-  maxLength: number
+  type: 'input' | 'textarea'
   onChange: (val: any) => void
-}> = ({ title, maxLength, placeholder, onChange, value }) => {
+  title?: string
+  maxLength?: number
+}> = ({ title, maxLength, placeholder, onChange, value, type }) => {
   return (
     <INPUT_CONTAINER>
-      <INPUT_TITLE>{title}</INPUT_TITLE>
-      <STYLED_INPUT value={value ? value : ''} placeholder={placeholder} onChange={onChange} maxLength={maxLength} />
-      <INPUT_LIMIT>
-        {value ? value.length : 0} of {maxLength} characters limit
-      </INPUT_LIMIT>
+      {title && <INPUT_TITLE>{title}</INPUT_TITLE>}
+      {type === 'input' ? (
+        <STYLED_INPUT value={value ? value : ''} placeholder={placeholder} onChange={onChange} maxLength={maxLength} />
+      ) : (
+        <STYLED_TEXTAREA
+          value={value ? value : ''}
+          placeholder={placeholder}
+          onChange={onChange}
+          maxLength={maxLength}
+        />
+      )}
+      {maxLength && (
+        <INPUT_LIMIT>
+          {value ? value.length : 0} of {maxLength} characters limit
+        </INPUT_LIMIT>
+      )}
     </INPUT_CONTAINER>
   )
 }

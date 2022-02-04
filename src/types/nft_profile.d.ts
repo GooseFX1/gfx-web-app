@@ -25,6 +25,24 @@ export interface INFTUserActivity {
   non_fungible_id: number
 }
 
+export type INFTMetadata = {
+  name: string
+  symbol: string
+  description: string
+  seller_fee_basis_points: number
+  external_url: string
+  image: string
+  attributes: Array<IAttributesTabItemData>
+  properties: {
+    files: Array<{ uri: string; type: string }>
+    category: string
+    maxSupply?: number
+    creators: Array<NFTCreator>
+  }
+  collection?: { name: string; family: string }
+  update_authority?: string
+}
+
 export interface INFTProfileConfig {
   sessionUser: INFTProfile
   setSessionUser: Dispatch<SetStateAction<INFTProfile>>
@@ -32,4 +50,6 @@ export interface INFTProfileConfig {
   userActivity: Array<INFTUserActivity>
   setUserActivity: Dispatch<SetStateAction<INFTUserActivity[]>>
   fetchUserActivity: (id: number) => Promise<any>
+  nftMetadata: Array<INFTMetadata>
+  fetchExternalNFTs: (address: string) => Promise<any>
 }

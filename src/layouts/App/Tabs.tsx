@@ -22,7 +22,7 @@ const TAB = styled(Link)`
 
 const TAB_ICON = styled(CenteredImg)`
   margin-bottom: 10px;
-  ${({ theme }) => theme.measurements(theme.margins['3x'])}
+  ${({ theme }) => theme.measurements(theme.margin(3))}
 `
 
 const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: number }>`
@@ -90,8 +90,8 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     }
 
     &:after {
-      width: calc((100% / ${TABS.length}) + ${({ theme }) => theme.margins['2x']});
-      left: calc(${({ $index, $width }) => $index} * (100% / ${TABS.length}) - ${({ theme }) => theme.margins['1x']});
+      width: calc((100% / ${TABS.length}) + ${({ theme }) => theme.margin(2)});
+      left: calc(${({ $index, $width }) => $index} * (100% / ${TABS.length}) - ${({ theme }) => theme.margin(1)});
     }
   }
 `

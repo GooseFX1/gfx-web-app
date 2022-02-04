@@ -22,8 +22,8 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
       .ant-tabs-nav-wrap {
         background-color: #000;
         border-radius: 15px 15px 25px 25px;
-        padding-top: ${theme.margins['1.5x']};
-        padding-bottom: ${theme.margins['1.5x']};
+        padding-top: ${theme.margin(1.5)};
+        padding-bottom: ${theme.margin(1.5)};
         .ant-tabs-nav-list {
           justify-content: space-around;
           width: 100%;
@@ -70,7 +70,7 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
 
     .desc {
       font-size: 11px;
-      padding: ${({ theme }) => theme.margins['3x']};
+      padding: ${({ theme }) => theme.margin(3)};
       font-family: Montserrat;
     }
 
@@ -78,8 +78,8 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
       height: 260px;
       background-color: ${theme.tabContentBidBackground};
       transform: translateY(-32px);
-      padding-top: ${({ theme }) => theme.margins['4x']};
-      padding-bottom: ${({ theme }) => theme.margins['8x']};
+      padding-top: ${({ theme }) => theme.margin(4)};
+      padding-bottom: ${({ theme }) => theme.margin(8)};
       border-radius: 0 0 25px 25px;
 
       .ant-tabs-content {
@@ -92,7 +92,7 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
       position: absolute;
       left: 0;
       bottom: 0;
-      padding: ${theme.margins['2x']};
+      padding: ${theme.margin(2)};
       border-radius: 0 0 25px 25px;
       backdrop-filter: blur(20px);
       border-top: 1px solid ${theme.borderColorTabBidFooter};
@@ -100,7 +100,7 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
 
       .rst-footer-bid-button {
         flex: 1;
-        margin-right: ${theme.margins['1.5x']};
+        margin-right: ${theme.margin(1.5)};
         color: #fff;
 
         button {
@@ -112,7 +112,7 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
           font-weight: 600;
           border: none;
           border-radius: 29px;
-          padding: 0 ${theme.margins['2x']};
+          padding: 0 ${theme.margin(2)};
           background-color: ${theme.primary2};
 
           &:hover {
@@ -134,11 +134,11 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
 const DETAILS_TAB_CONTENT = styled.div`
   ${({ theme }) => css`
     height: 100%;
-    padding: ${theme.margins['0.5x']} ${theme.margins['3x']};
+    padding: ${theme.margin(0.5)} ${theme.margin(3)};
     color: ${theme.white};
 
     .dtc-item {
-      padding: ${theme.margins['0.5x']} 0;
+      padding: ${theme.margin(0.5)} 0;
       font-size: 14px;
       font-weight: 500;
 
@@ -164,6 +164,8 @@ const getButtonText = (mode: NFTDetailsProviderMode): string => {
       return 'Mint'
     case 'fixed-price-NFT':
       return 'Buy now'
+    case 'my-external-NFT':
+      return 'Sell NFT'
   }
 }
 

@@ -7,15 +7,15 @@ import { Orderbook } from '@project-serum/serum'
 import { ENDPOINTS } from '../../context'
 
 const WRAPPER = styled(CenteredDiv)`
-  padding: ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['2x']}
-    ${({ theme }) => theme.margins['1x']} ${({ theme }) => theme.margins['1x']};
+  padding: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(1)}
+    ${({ theme }) => theme.margin(1)};
   ${({ theme }) => theme.largeBorderRadius}
   ${({ theme }) => theme.smallShadow}
   background-color: ${({ theme }) => theme.primary2};
 
   > div {
-    ${({ theme }) => theme.measurements(theme.margins['3x'])}
-    margin-right: ${({ theme }) => theme.margins['1x']};
+    ${({ theme }) => theme.measurements(theme.margin(3))}
+    margin-right: ${({ theme }) => theme.margin(1)};
   }
 
   > span {

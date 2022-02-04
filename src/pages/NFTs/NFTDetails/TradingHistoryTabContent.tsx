@@ -19,24 +19,24 @@ const TRADING_HISTORY_TAB_CONTENT = styled.div`
       left: 0;
       right: 0;
       transform: translateY(-24px);
-      padding: 0 ${theme.margins['1.5x']};
+      padding: 0 ${theme.margin(1.5)};
 
       .thtc-header-item {
-        padding: 0 ${theme.margins['1x']};
+        padding: 0 ${theme.margin(1)};
       }
     }
 
     .thtc-table {
       width: 100%;
       height: 100%;
-      padding: ${theme.margins['0.5x']} ${theme.margins['1.5x']};
+      padding: ${theme.margin(0.5)} ${theme.margin(1.5)};
       overflow-y: auto;
     }
 
     .thtc-not-found {
       width: 100%;
       height: 100%;
-      padding: ${theme.margins['0.5x']} ${theme.margins['1.5x']};
+      padding: ${theme.margin(0.5)} ${theme.margin(1.5)};
       display: grid;
       place-items: center;
       font-size: 14px;
@@ -77,7 +77,7 @@ const TRADING_HISTORY_TAB_CONTENT = styled.div`
 
       .ant-table-tbody > tr > td {
         border-bottom: none;
-        padding: ${theme.margins['1x']};
+        padding: ${theme.margin(1)};
       }
     }
     .ant-table-tbody > tr.ant-table-row:hover > td {

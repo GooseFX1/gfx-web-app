@@ -10,8 +10,7 @@ import { useNFTCollections } from '../../../context'
 const COLLECTION_HEADER = styled.div`
   position: relative;
   height: auto;
-  padding: ${({ theme }) => theme.margins['3x']} ${({ theme }) => theme.margins['3x']}
-    ${({ theme }) => theme.margins['4.5x']};
+  padding: ${({ theme }) => theme.margin(3)} ${({ theme }) => theme.margin(3)} ${({ theme }) => theme.margin(4.5)};
   border-radius: 20px;
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
   background: ${({ theme }) => theme.collectionHeader};
@@ -33,7 +32,7 @@ const COLLECTION_HEADER = styled.div`
   }
 
   .collection-name-wrap {
-    margin-top: ${({ theme }) => theme.margins['1.5x']};
+    margin-top: ${({ theme }) => theme.margin(1.5)};
     display: flex;
     justify-content: center;
     align-items: center;
@@ -43,7 +42,7 @@ const COLLECTION_HEADER = styled.div`
     color: ${({ theme }) => theme.text7};
     font-size: 18px;
     display: inline-block;
-    margin-right: ${({ theme }) => theme.margins['1x']};
+    margin-right: ${({ theme }) => theme.margin(1)};
   }
 
   .collection-check-icon {
@@ -63,19 +62,19 @@ const COLLECTION_HEADER = styled.div`
       > input {
         height: unset;
         background-color: unset;
-        margin-right: ${({ theme }) => theme.margins['4.5x']};
+        margin-right: ${({ theme }) => theme.margin(4.5)};
       }
     }
   }
 
   .collection-stats {
     color: #fff;
-    margin-top: ${({ theme }) => theme.margins['2x']};
+    margin-top: ${({ theme }) => theme.margin(2)};
   }
 
   .collection-cities {
     color: #fff;
-    padding: ${({ theme }) => theme.margins['2x']};
+    padding: ${({ theme }) => theme.margin(2)};
     font-size: 12px;
     font-weight: 500;
     color: ${({ theme }) => theme.text8};
@@ -86,7 +85,7 @@ const DROPDOWN = styled(Dropdown)`
   padding: 0;
   border: none;
   background: transparent;
-  margin-left: ${({ theme }) => theme.margins['3x']};
+  margin-left: ${({ theme }) => theme.margin(3)};
 
   .collection-more-icon {
     width: 43px;
@@ -103,10 +102,10 @@ const MENU_LIST = styled(Menu)`
   min-width: 120px;
   border-radius: 10px;
   position: relative;
-  padding: ${({ theme }) => theme.margins['1.5x']};
+  padding: ${({ theme }) => theme.margin(1.5)};
 
   li {
-    padding: ${({ theme }) => `${theme.margins['.5x']} ${theme.margins['1.5x']}`};
+    padding: ${({ theme }) => `${theme.margin(0.5)} ${theme.margin(1.5)}`};
     font-size: 11px;
     text-align: center;
     color: ${({ theme }) => theme.text1};
@@ -158,7 +157,7 @@ export const CollectionHeader = ({ setFilter, filter }) => {
           total: `${fixedPriceWithinCollection.collection_floor ? fixedPriceWithinCollection.collection_floor : '0'}`,
           unit: 'SOL'
         },
-        { title: 'Volume traded', total: fixedPriceWithinCollection.nft_prices.length, unit: '' }
+        { title: 'Volume traded', total: singleCollection.collection_vol.yearly, unit: 'yr' }
       ])
     }
   }, [fixedPriceWithinCollection, singleCollection])

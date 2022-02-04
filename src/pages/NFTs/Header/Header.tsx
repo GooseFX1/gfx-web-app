@@ -5,28 +5,58 @@ import { useWalletModal } from '../../../context'
 import { useHistory } from 'react-router-dom'
 import { Image } from 'antd'
 import { ButtonWrapper } from '../NFTButton'
-import { SearchBar, Categories } from '../../../components'
+import { SearchBar, Categories, MainButton } from '../../../components'
 import { SpaceBetweenDiv } from '../../../styles'
-import { categories } from './mockData'
+import { categories, coins } from './mockData'
 import { useLocalStorageState } from '../../../utils'
 import PopupCompleteProfile from '../Profile/PopupCompleteProfile'
 import { useNFTProfile } from '../../../context'
 
 const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
-  padding: ${({ theme }) => theme.margins['3x']};
-  margin-bottom: -${({ theme }) => theme.margins['1x']};
-  ${({ theme }) => theme.largeBorderRadius}
-  ${({ theme }) => theme.smallShadow}
-  background-color: ${({ theme }) => theme.bg3};
-  box-shadow: 0 1px 5px 6px rgb(0 0 0 / 29%);
+  padding-top: ${({ theme }) => theme.margin(5.5)};
+  padding-bottom: ${({ theme }) => theme.margin(3)};
+  padding-left: ${({ theme }) => theme.margin(4)};
+  padding-right: ${({ theme }) => theme.margin(4)};
   z-index: 5;
+  background: #1e1e1e;
+  justify-content: space-between;
 
-  > *:not(:nth-child(2)) {
-    flex: 2;
+  .search-bar {
+    width: 100%;
+    background: #2a2a2a;
+    height: 45px;
+    margin-left: ${({ theme }) => theme.margin(2.5)};
+
+    > input {
+      background: #2a2a2a;
+      &::placeholder {
+        color: rgba(114, 114, 114, 1);
+      }
+    }
   }
-
-  > *:nth-child(2) {
-    flex: 3;
+  .categories {
+    height: 45px;
+    width: 150px;
+    span {
+      font-weight: 500;
+      font-size: 15px;
+    }
+  }
+  .coins {
+    height: 45px;
+    width: 68px;
+    margin-left: ${({ theme }) => theme.margin(2.5)};
+    border-radius: 13px;
+    background: #2a2a2a;
+    padding: 0 ${({ theme }) => theme.margin(1)};
+    span {
+      font-weight: 500;
+      font-size: 15px;
+      text-transform: uppercase;
+    }
+  }
+  .connect-wl-btn {
+    margin-left: ${({ theme }) => theme.margin(2.5)};
   }
 `
 
@@ -34,23 +64,35 @@ const AVATAR_WRAPPER = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  flex-grow: 2;
 `
 
 const BUTTON_SELECTION = styled.div`
   display: flex;
   justify-content: flex-end;
+  flex-grow: 1;
 
   > button:last-child {
-    margin-left: ${({ theme }) => theme.margins['3x']};
+    margin-left: ${({ theme }) => theme.margin(3)};
   }
 `
 
 const CREATE = styled(ButtonWrapper)`
   justify-content: center;
-  height: 50px;
-  width: 140px;
-  background-color: ${({ theme }) => theme.darkButton};
-
+  height: 45px;
+  width: 132px;
+  background-color: ${({ theme }) => theme.secondary5};
+  margin-left: ${({ theme }) => theme.margin(2)};
+  span {
+    color: white;
+  }
+`
+const SELL = styled(ButtonWrapper)`
+  justify-content: center;
+  height: 45px;
+  width: 132px;
+  background-color: #bb3535;
+  margin-left: ${({ theme }) => theme.margin(2)};
   span {
     color: white;
   }
@@ -61,28 +103,6 @@ const AVATAR_NFT = styled(Image)`
   width: 56px;
   height: 56px;
   cursor: pointer;
-`
-const CONNECT_BTN = styled.button`
-  padding: 0 ${({ theme }) => theme.margins['2x']};
-  ${({ theme }) => theme.flexCenter}
-  height: ${({ theme }) => theme.margins['5x']};
-  border: none;
-  ${({ theme }) => theme.roundedBorders}
-  ${({ theme }) => theme.smallShadow}
-  background-color: ${({ theme }) => theme.secondary3};
-  transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
-  cursor: pointer;
-
-  &:hover {
-    background-color: ${({ theme }) => theme.secondary2};
-  }
-
-  span {
-    font-size: 12px;
-    font-weight: bold;
-    color: white;
-    white-space: nowrap;
-  }
 `
 
 export const Header = ({ setFilter, filter }) => {
@@ -144,25 +164,37 @@ export const Header = ({ setFilter, filter }) => {
       <AVATAR_WRAPPER>
         {connected && publicKey && (
           <AVATAR_NFT
-            fallback={`${window.origin}/img/assets/avatar.png`}
+            fallback={`${window.origin}/img/assets/avatar.svg`}
             src={sessionUser ? sessionUser.profile_pic_link : ''}
             preview={false}
             onClick={goProfile}
           />
         )}
+        <SearchBar className="search-bar" setFilter={setFilter} filter={filter} />
+        <Categories categories={categories} className="categories" />
       </AVATAR_WRAPPER>
-      <SearchBar setFilter={setFilter} filter={filter} />
       <BUTTON_SELECTION>
-        <Categories categories={categories} />
         {connected && publicKey ? (
-          <CREATE onClick={onCreateCollectible}>
-            <span>Create</span>
-          </CREATE>
+          <div style={{ display: 'flex' }}>
+            <SELL onClick={() => console.log('got to selling')}>
+              <span>Sell</span>
+            </SELL>
+            <CREATE onClick={onCreateCollectible}>
+              <span>Create</span>
+            </CREATE>
+          </div>
         ) : (
-          <CONNECT_BTN onClick={handleWalletModal}>
+          <MainButton
+            className="connect-wl-btn"
+            height={'45px'}
+            status="action"
+            width={'168px'}
+            onClick={handleWalletModal}
+          >
             <span>Connect Wallet</span>
-          </CONNECT_BTN>
+          </MainButton>
         )}
+        <Categories categories={coins} className="coins" />
       </BUTTON_SELECTION>
     </HEADER_WRAPPER>
   )

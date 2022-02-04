@@ -12,26 +12,26 @@ import { dataFormRow1, dataFormRow2, dataDonate, mockDataPicture } from './mockD
 
 export const StyledSellYourNFTView = styled.div`
   .ant-modal-body {
-    padding: ${({ theme }) => theme.margins['8x']} ${({ theme }) => theme.margins['9x']};
+    padding: ${({ theme }) => theme.margin(8)} ${({ theme }) => theme.margin(9)};
   }
 `
 
 const STYLED_FORM = styled(Form)`
   display: flex;
   .mb-3x {
-    margin-bottom: ${({ theme }) => theme.margins['3x']} !important;
+    margin-bottom: ${({ theme }) => theme.margin(3)} !important;
   }
 `
 
 const STYLED_LEFT_CONTENT = styled.div`
   width: 60%;
-  padding-left: ${({ theme }) => theme.margins['7x']};
-  padding-right: ${({ theme }) => theme.margins['10x']};
+  padding-left: ${({ theme }) => theme.margin(7)};
+  padding-right: ${({ theme }) => theme.margin(10)};
 `
 
 const STYLED_RIGHT_CONTENT = styled.div`
   width: 40%;
-  padding-left: ${({ theme }) => theme.margins['2x']};
+  padding-left: ${({ theme }) => theme.margin(2)};
 `
 
 interface Props {

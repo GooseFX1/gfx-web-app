@@ -12,7 +12,7 @@ const WRAPPER = styled.button`
   width: 100px;
   border: none;
   ${({ theme }) => theme.roundedBorders}
-  padding: 0 ${({ theme }) => theme.margins['2x']};
+  padding: 0 ${({ theme }) => theme.margin(2)};
   background-color: ${({ theme }) => theme.secondary2};
 
   span {
@@ -34,8 +34,8 @@ const MENU = styled(Menu)`
   position: relative;
   background-color: ${({ theme }) => theme.bg6};
   border-radius: 10px;
-  padding: ${({ theme }) => theme.margins['1x']};
-  padding-top: ${({ theme }) => theme.margins['1.5x']};
+  padding: ${({ theme }) => theme.margin(1)};
+  padding-top: ${({ theme }) => theme.margin(1.5)};
   min-width: 120px;
 
   &:before {
@@ -64,7 +64,7 @@ const MENU_ITEM = styled(MenuItem)`
   text-align: center;
 
   &li {
-    padding-bottom: ${({ theme }) => theme.margins['1.25x']};
+    padding-bottom: ${({ theme }) => theme.margin(1.25)};
   }
 
   > span {

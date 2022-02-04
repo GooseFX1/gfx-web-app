@@ -16,10 +16,10 @@ const DROP_CONTAINER = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: ${({ theme }) => theme.margins['6x']};
-  padding-bottom: ${({ theme }) => theme.margins['6x']};
-  margin-top: ${({ theme }) => theme.margins['3x']};
-  margin-bottom: ${({ theme }) => theme.margins['3x']};
+  padding-top: ${({ theme }) => theme.margin(6)};
+  padding-bottom: ${({ theme }) => theme.margin(6)};
+  margin-top: ${({ theme }) => theme.margin(3)};
+  margin-bottom: ${({ theme }) => theme.margin(3)};
 `
 
 const UploadZone = () => {
@@ -34,14 +34,14 @@ const UploadZone = () => {
 
   const ButtonUpload = styled(ButtonWrapper)`
     background-color: ${({ theme }) => theme.primary2};
-    padding: ${({ theme }) => `${theme.margins['1x']} ${theme.margins['4x']} `};
+    padding: ${({ theme }) => `${theme.margin(1)} ${theme.margin(4)} `};
   `
 
   const DESC_UPLOAD = MainText(styled.div`
     font-size: 11px;
     color: ${({ theme }) => theme.text1};
-    margin-top: ${({ theme }) => theme.margins['1x']};
-    margin-bottom: ${({ theme }) => theme.margins['2.5x']};
+    margin-top: ${({ theme }) => theme.margin(1)};
+    margin-bottom: ${({ theme }) => theme.margin(2.5)};
   `)
 
   const props = {

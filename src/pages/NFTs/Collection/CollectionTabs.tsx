@@ -9,7 +9,7 @@ const { TabPane } = Tabs
 
 const COLLECTION_TABS = styled.div`
   z-index: 3;
-  margin-top: ${({ theme }) => `-${theme.margins['6x']}`};
+  margin-top: ${({ theme }) => `-${theme.margin(6)}`};
 
   .ant-tabs-ink-bar {
     display: none;
@@ -31,7 +31,7 @@ const COLLECTION_TABS = styled.div`
     font-family: Montserrat;
 
     + .ant-tabs-tab {
-      margin: 0 0 0 ${({ theme }) => `${theme.margins['7x']}`};
+      margin: 0 0 0 ${({ theme }) => `${theme.margin(7)}`};
     }
 
     &.ant-tabs-tab-active {

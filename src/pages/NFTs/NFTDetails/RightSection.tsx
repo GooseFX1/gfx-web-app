@@ -17,7 +17,7 @@ const RIGHT_SECTION = styled.div`
     .rs-title {
       font-size: 18px;
       font-weight: 600;
-      margin-bottom: ${theme.margins['1x']};
+      margin-bottom: ${theme.margin(1)};
       color: ${theme.text7};
     }
 
@@ -27,7 +27,7 @@ const RIGHT_SECTION = styled.div`
     }
 
     .rs-prices {
-      margin-bottom: ${theme.margins['1x']};
+      margin-bottom: ${theme.margin(1)};
 
       .rs-solana-logo {
         width: 43px;
@@ -49,7 +49,7 @@ const RIGHT_SECTION = styled.div`
       .rs-percent {
         font-size: 11px;
         font-weight: 600;
-        margin-left: ${theme.margins['0.5x']};
+        margin-left: ${theme.margin(0.5)};
         color: ${theme.text8};
       }
     }
@@ -57,7 +57,7 @@ const RIGHT_SECTION = styled.div`
     .rs-name {
       font-size: 22px;
       font-weight: 600;
-      margin-bottom: ${theme.margins['0.5x']};
+      margin-bottom: ${theme.margin(0.5)};
       color: ${theme.text7};
     }
 
@@ -65,7 +65,7 @@ const RIGHT_SECTION = styled.div`
       font-size: 12px;
       font-weight: 500;
       max-width: 300px;
-      margin-bottom: ${theme.margins['1.5x']};
+      margin-bottom: ${theme.margin(1.5)};
       color: ${theme.text8};
     }
 
@@ -73,7 +73,7 @@ const RIGHT_SECTION = styled.div`
       font-size: 12px;
       font-weight: 600;
       max-width: 64px;
-      margin-left: ${theme.margins['1.5x']};
+      margin-left: ${theme.margin(1.5)};
       color: ${theme.text8};
     }
   `}
@@ -83,13 +83,13 @@ const GRID_INFO = styled(Row)`
   ${({ theme }) => css`
   width: 100%;
   max-width: 384px;
-  margin-bottom: ${theme.margins['3x']};
+  margin-bottom: ${theme.margin(3)};
 
   .gi-item {
     .gi-item-category-title {
       font-size: 16px;
       font-weight: 600;
-      margin-bottom: ${theme.margins['1x']};
+      margin-bottom: ${theme.margin(1)};
       color: ${theme.text7};
     }
 
@@ -109,14 +109,14 @@ const GRID_INFO = styled(Row)`
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      margin-right: ${theme.margins['1x']};
+      margin-right: ${theme.margin(1)};
     }
 
     .gi-item-icon {
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      margin-right: ${theme.margins['1x']};
+      margin-right: ${theme.margin(1)};
       background: ${theme.bg1};
       display: flex;
       justify-content: center;
@@ -143,9 +143,10 @@ export const RightSection: FC<{
   handleClickPrimaryButton: () => void
 }> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
   const { general, nftMetadata } = useNFTDetails()
+  console.log({ nftMetadata, general })
   const creator = useMemo(() => {
-    if (nftMetadata.properties.creators.length > 0) {
-      const addr = nftMetadata.properties.creators[0].address
+    if (nftMetadata?.properties?.creators?.length > 0) {
+      const addr = nftMetadata?.properties?.creators?.[0]?.address
       return `${addr.substr(0, 4)}...${addr.substr(-4, 4)}`
     } else {
       return nftMetadata.collection.name
@@ -189,7 +190,7 @@ export const RightSection: FC<{
         <Col>
           {mode !== 'mint-item-view' && (
             <>
-              <div className="rs-name">{general.nft_name}</div>
+              <div className="rs-name">{general?.nft_name || nftMetadata?.name}</div>
               <div className="rs-intro">{nftMetadata.description}</div>
             </>
           )}

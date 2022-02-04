@@ -3,7 +3,7 @@ import { Row, Col } from 'antd'
 import styled from 'styled-components'
 
 export const STYLED_SELL_CATEGORY = styled(Row)`
-  margin-bottom: ${({ theme }) => theme.margins['3x']};
+  margin-bottom: ${({ theme }) => theme.margin(3)};
 
   .item-wrap {
     display: flex;
@@ -13,7 +13,7 @@ export const STYLED_SELL_CATEGORY = styled(Row)`
     .item-image {
       width: 114px;
       height: 114px;
-      padding: ${({ theme }) => theme.margins['3.5x']};
+      padding: ${({ theme }) => theme.margin(3.5)};
       background: ${({ theme }) => theme.sellTabBg};
       ${({ theme }) => theme.largeBorderRadius};
       border: 1px solid rgba(255, 255, 255, 0.5);
@@ -28,7 +28,7 @@ export const STYLED_SELL_CATEGORY = styled(Row)`
       }
     }
     .item-text {
-      margin-top: ${({ theme }) => theme.margins['1x']};
+      margin-top: ${({ theme }) => theme.margin(1)};
       font-size: 14px;
       font-weight: 600;
       color: ${({ theme }) => theme.text8};

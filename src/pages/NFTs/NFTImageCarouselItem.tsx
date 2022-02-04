@@ -7,12 +7,25 @@ import { ButtonWrapper } from './NFTButton'
 import { useHistory } from 'react-router'
 import { COLLECTION_TYPES } from '../../types/nft_collections.d'
 
+const CAROUSEL_ITEM = styled.div`
+  width: 450px;
+  height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 0 ${({ theme }) => theme.margin(4)};
+
+  .ant-image {
+  }
+`
+
 const CAROUSEL_IMAGE = styled(Image)`
+  height: auto;
+  width: auto;
   cursor: pointer;
   background-size: cover;
-  height: 220px;
-  width: auto;
-  border-radius: 20px;
 `
 
 const CAROUSEL_LABEL = styled.span`
@@ -32,17 +45,11 @@ const CAROUSEL_SUB_TITLE = styled.span`
   margin-top: 0.5rem;
 `
 
-const CAROUSEL_ITEM = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0 ${({ theme }) => theme.margins['4x']}; ;
-`
-
 const UP_COMMING_FOOTER = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-top: ${({ theme }) => theme.margins['3.5x']};
+  margin-top: ${({ theme }) => theme.margin(3.5)};
 `
 const GROUP_BLOCK_TEXTS = styled.div`
   display: flex;
@@ -68,20 +75,20 @@ const COUNT_DOWN_TEXT = styled.span`
 const LAUNCH_PAD_FOOTER = styled.div`
   display: flex;
   flex-direction: row;
-  margin-top: ${({ theme }) => theme.margins['3x']};
+  margin-top: ${({ theme }) => theme.margin(3)};
 `
 
 const PROGRESS_TEXT = styled.span`
   color: ${({ theme }) => theme.text2};
   font-size: 14px;
-  margin-right: ${({ theme }) => theme.margins['1x']};
+  margin-right: ${({ theme }) => theme.margin(1)};
 `
 
 const PROGRESS_WRAPPER = styled.div`
   display: flex;
   flex-direction: row;
   flex: 1;
-  margin-top: ${({ theme }) => theme.margins['1x']}; ;
+  margin-top: ${({ theme }) => theme.margin(1)}; ;
 `
 
 const MINT_BUTTON = styled(ButtonWrapper)`
@@ -90,14 +97,14 @@ const MINT_BUTTON = styled(ButtonWrapper)`
   background-color: ${({ theme }) => theme.primary2};
   justify-content: center;
   align-items: center;
-  margin-left: ${({ theme }) => theme.margins['3x']};
+  margin-left: ${({ theme }) => theme.margin(3)};
 `
 
 const LEFT_INFO_LAUNCHPAD = styled.div`
   flex: 1;
 `
 const POPULAR_FOOTER = styled.div`
-  margin-top: ${({ theme }) => theme.margins['3x']};
+  margin-top: ${({ theme }) => theme.margin(3)};
 `
 
 const LaunchPadInfo = ({ item }: any) => {
@@ -178,7 +185,7 @@ const NFTImageCarouselItem: FC<{ item: any; type: string }> = ({ item, type }) =
   const renderImage = () => {
     switch (type) {
       case COLLECTION_TYPES.NFT_COLLECTION:
-        return item.banner_link
+        return item.banner_link.length > 0 ? item.banner_link : item.profile_pic_link
       case COLLECTION_TYPES.NFT_UPCOMING_COLLECTION:
         return item.upcoming_collection_banner_url
       case COLLECTION_TYPES.NFT_FEATURED_COLLECTION:
@@ -191,7 +198,7 @@ const NFTImageCarouselItem: FC<{ item: any; type: string }> = ({ item, type }) =
   return (
     <CAROUSEL_ITEM>
       <CAROUSEL_IMAGE preview={false} src={renderImage()} onClick={goToCollection} />
-      {renderItemFooter()}
+      {/* {renderItemFooter()} */}
     </CAROUSEL_ITEM>
   )
 }

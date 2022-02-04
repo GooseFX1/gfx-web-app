@@ -6,8 +6,8 @@ import { useDarkMode } from '../context'
 import { CenteredImg } from '../styles'
 
 const ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margins['1.5x'])}
-  margin-left: ${({ theme }) => theme.margins['1x']};
+  ${({ theme }) => theme.measurements(theme.margin(1.5))}
+  margin-left: ${({ theme }) => theme.margin(1)};
 `
 
 const TEXT = styled.span`

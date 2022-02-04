@@ -6,7 +6,7 @@ const ownersData = [...Array(100).keys()]
 
 const OWNERS_TAB = styled(Row)`
   ${({ theme }) => css`
-    padding: ${theme.margins['5.5x']} ${theme.margins['4x']};
+    padding: ${theme.margin(5.5)} ${theme.margin(4)};
 
     .owners-tab-avatar {
       width: 100px;
@@ -16,7 +16,7 @@ const OWNERS_TAB = styled(Row)`
 
     .owners-tab-name {
       color: ${theme.text8};
-      margin-top: ${theme.margins['1.5x']};
+      margin-top: ${theme.margin(1.5)};
       font-family: Montserrat;
     }
   `}

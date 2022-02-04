@@ -15,7 +15,7 @@ export const StyledTableList = styled(Table)`
       font-size: 12px;
       font-weight: 500;
       color: ${theme.text1};
-      padding-left: ${theme.margins['1x']};
+      padding-left: ${theme.margin(1)};
     }
   }
 
@@ -30,7 +30,7 @@ export const StyledTableList = styled(Table)`
       color: ${theme.text1};
       font-size: 10px;
       font-weight: 600;
-      padding-left: ${theme.margins['1x']};
+      padding-left: ${theme.margin(1)};
     }
   }
   .from,

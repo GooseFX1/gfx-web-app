@@ -6,7 +6,7 @@ import { IRemainingPanelData } from '../../../types/nft_details'
 const REMAINING_PANEL = styled(Row)`
   ${({ theme }) => css`
     width: 100%;
-    padding: ${theme.margins['2x']} ${theme.margins['4.5x']};
+    padding: ${theme.margin(2)} ${theme.margin(4.5)};
     background-color: ${theme.timePanelBackground};
     ${theme.largeBorderRadius}
     color: ${theme.text7};
@@ -23,7 +23,7 @@ const REMAINING_PANEL = styled(Row)`
     .rp-text {
       font-size: 12px;
       font-weight: 600;
-      margin-left: ${theme.margins['1x']};
+      margin-left: ${theme.margin(1)};
       color: ${theme.text7};
     }
   `}

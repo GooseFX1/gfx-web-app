@@ -6,8 +6,8 @@ const WRAPPER = styled(CenteredDiv)<{ $size: 'small' | 'medium' | 'large' }>`
   ${({ $size }) => $size === 'medium' && 'flex-direction: row-reverse;'}
 
   > div {
-    ${({ theme, $size }) => theme.measurements(theme.margins[$size === 'small' ? '2x' : '3x'])}
-    margin-${({ $size }) => ($size === 'medium' ? 'left' : 'right')}: ${({ theme }) => theme.margins['1x']};
+    ${({ theme, $size }) => theme.measurements(theme.margin($size === 'small' ? 2 : 3))}
+    margin-${({ $size }) => ($size === 'medium' ? 'left' : 'right')}: ${({ theme }) => theme.margin(1)};
     ${({ theme }) => theme.roundedBorders}
     box-shadow: 0 4px 10px 2px rgb(0, 0, 0, 0.12);
   }

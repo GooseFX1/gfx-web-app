@@ -5,8 +5,8 @@ import { FEATURED_PAIRS_LIST } from '../../context'
 
 const WRAPPER = styled.div`
   display: -webkit-box;
-  width: calc(100% + 2 * ${({ theme }) => theme.margins['3x']});
-  margin: 0 -${({ theme }) => theme.margins['3x']} ${({ theme }) => theme.margins['3x']};
+  width: calc(100% + 2 * ${({ theme }) => theme.margin(3)});
+  margin: 0 -${({ theme }) => theme.margin(3)} ${({ theme }) => theme.margin(3)};
   overflow: scroll;
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -23,17 +23,17 @@ const WRAPPER = styled.div`
   }
 
   > div {
-    margin-left: ${({ theme }) => theme.margins['3x']};
+    margin-left: ${({ theme }) => theme.margin(3)};
 
     &:last-child {
-      margin-right: ${({ theme }) => theme.margins['3x']};
+      margin-right: ${({ theme }) => theme.margin(3)};
     }
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100vw;
-    margin-right: -${({ theme }) => theme.margins['1x']};
-    margin-left: -${({ theme }) => theme.margins['1x']};
+    margin-right: -${({ theme }) => theme.margin(1)};
+    margin-left: -${({ theme }) => theme.margin(1)};
   `}
 `
 

@@ -9,6 +9,12 @@ export enum COLLECTION_TYPES {
 export type NFTCollection = {
   collection_id: number
   collection_floor: null | number
+  collection_vol: {
+    daily: number
+    monthly: number
+    weekly: number
+    yearly: number
+  }
   collection: {
     collection_id: number
     collection_name: string

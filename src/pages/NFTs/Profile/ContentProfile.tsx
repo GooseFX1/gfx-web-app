@@ -24,7 +24,7 @@ export const ContentProfile = ({ isExplore }: Props) => {
     () => [
       {
         order: '1',
-        name: `Collected (${collectedItems ? collectedItems.length : 0})`,
+        name: `Items (${collectedItems ? collectedItems.length : 0})`,
         component: <NFTDisplay data={collectedItems} type={'collected'} />
       },
       {

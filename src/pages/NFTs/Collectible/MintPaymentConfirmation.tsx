@@ -6,45 +6,53 @@ import { Connection } from '@solana/web3.js'
 import { LAMPORT_MULTIPLIER, MAX_METADATA_LEN, getAssetCostToStore } from '../../../web3'
 import { IMetadataContext } from '../../../types/nft_details.d'
 import { Loader } from '../../../components'
+import { PopupCustom } from '../Popup/PopupCustom'
 
-const CONTAINER = styled.div`
-  position: absolute;
-  top: 0px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #1e1e1e;
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  z-index: 1000;
-
-  .upload-NFT-back-icon {
-    position: absolute;
-    top: 32px;
-    left: 32px;
-    transform: rotate(90deg);
-    width: 30px;
-    height: 30px;
-    filter: ${({ theme }) => theme.filterBackIcon};
-    cursor: pointer;
-    margin-right: ${({ theme }) => theme.margins['5x']};
-    margin-left: 0;
-    margin-top: ${({ theme }) => theme.margins['1x']};
-  }
+const CUSTOM_CONTAINER = styled(PopupCustom)`
+  ${({ theme }) => `
+    * {
+      font-family: 'Montserrat';
+    }
+    background: transparent;
+    .ant-modal-body {
+      ${theme.largeBorderRadius}
+      padding: 0;
+      background-color: ${theme.bg3};
+    }
+    .body-wrap {
+      padding: ${theme.margin(4)};
+    }
+    .btn-wrap {
+      margin-top: ${theme.margin(3.5)};
+      padding: ${theme.margin(2.5)} ${theme.margin(4)};
+      background: rgba(64, 64, 64, 0.22);
+      border-radius: 0 0 20px 20px;
+    }
+    .ant-modal-close {
+      right: 30px;
+      top: 35px;
+      left: auto;
+    }
+    .desc {
+      color: ${theme.text12};
+      font-family: Montserrat;
+      font-size: 16px;
+      font-weight: 500;
+    }
+  `}
 `
+
 const LOADER = styled.div`
   position: relative;
-  height: 60px;
+  height: 54px;
   margin-bottom: 1em;
   display: flex;
   justify-content: center;
 `
-const NEXT_BUTTON = styled.button`
+const MINT_BUTTON = styled.button`
+  width: 508px;
   height: 60px;
-  width: 245px;
-  padding: ${({ theme }) => `${theme.margins['2x']} ${theme.margins['6x']}`};
+  padding: ${({ theme }) => `${theme.margin(2)} ${theme.margin(6)}`};
   text-align: center;
   background-color: ${({ theme }) => theme.secondary5};
   border: none;
@@ -55,12 +63,39 @@ const NEXT_BUTTON = styled.button`
     background-color: #7d7d7d;
   }
 `
+const DISPLAY_NUMBER = styled.span`
+  font-size: 58.7px;
+  font-weight: 600;
+  line-height: 54px;
+  margin: 0px ${({ theme }) => theme.margin(1)};
+`
+const HEADER = styled.span`
+  margin-bottom: ${({ theme }) => theme.margin(2)};
+  font-size: 22px;
+  font-weight: 600;
+`
+const TITLE = styled.p`
+  font-size: 30px;
+  font-weight: 600;
+  margin-bottom: ${({ theme }) => theme.margin(5)};
+`
+const TICKER = styled.span`
+  font-size: 25.8px;
+  font-weight: 600;
+`
+const SOL_ICON = styled.span`
+  img {
+    width: 50px;
+    height: 50px;
+  }
+`
 
 const MintPaymentConfirmation = (props: {
   confirm: () => void
   attributes: IMetadataContext
   files: File[]
   connection: Connection
+  visible: boolean
   returnToDetails: (bool: boolean) => void
 }): JSX.Element => {
   const [cost, setCost] = useState(0)
@@ -92,44 +127,61 @@ const MintPaymentConfirmation = (props: {
       })
   }, [files, metadata, setCost])
 
+  useEffect(() => {
+    return () => setCost(0)
+  }, [props.visible])
+
   return (
-    <CONTAINER>
-      <img
-        className="upload-NFT-back-icon"
-        src={`/img/assets/arrow.svg`}
-        alt="back"
-        onClick={() => props.returnToDetails(false)}
-      />
-      <div>
-        <h2>2. Calculate Mint Cost</h2>
-      </div>
-      <Row className="content-action" justify="space-around">
-        <Col className="section" style={{ minWidth: 300 }}>
-          <div>
-            <h3>Royalty Percentage</h3>
-            <p>{props.attributes.sellerFeeBasisPoints / 100}%</p>
-          </div>
-          <h3>Cost to Mint</h3>
-          {cost ? (
-            <p>
-              <span style={{ marginRight: '8px' }}>
-                <img src={`/img/assets/SOL-icon.svg`} alt={'sol-symbol'} />
-              </span>
-              {cost.toFixed(5)}
-            </p>
-          ) : (
+    <CUSTOM_CONTAINER
+      width="500px"
+      height="800px"
+      title={null}
+      visible={props.visible}
+      onCancel={() => props.returnToDetails(false)}
+      footer={null}
+      centered
+    >
+      <div className="body-wrap">
+        <Row className="content-action" justify="center">
+          <TITLE className="title">Calculate Mint Cost</TITLE>
+        </Row>
+        <Row className="content-action" justify="center">
+          <HEADER>Royalty Percentage</HEADER>
+        </Row>
+        <Row className="content-action" justify="center">
+          <DISPLAY_NUMBER>{props.attributes.sellerFeeBasisPoints / 100}%</DISPLAY_NUMBER>
+        </Row>
+        <br />
+        <br />
+        <br />
+
+        <Row className="content-action" justify="center">
+          <HEADER>Cost to Mint</HEADER>
+        </Row>
+        {cost !== 0 ? (
+          <Row className="content-action" justify="center" align="bottom">
+            <SOL_ICON style={{ marginRight: '8px' }}>
+              <img src={`/img/assets/SOL-icon.svg`} alt={'sol-symbol'} />
+            </SOL_ICON>
+            <DISPLAY_NUMBER>{cost.toFixed(5)}</DISPLAY_NUMBER>
+            <TICKER>SOL</TICKER>
+          </Row>
+        ) : (
+          <Row className="content-action" justify="center" align="middle">
             <LOADER>
               <Loader />
             </LOADER>
-          )}
-        </Col>
-      </Row>
-      <Row justify="center">
-        <NEXT_BUTTON onClick={props.confirm}>
-          <span>Mint NFT</span>
-        </NEXT_BUTTON>
-      </Row>
-    </CONTAINER>
+          </Row>
+        )}
+        <br />
+        <br />
+        <Row justify="center">
+          <MINT_BUTTON onClick={props.confirm}>
+            <span>Mint NFT</span>
+          </MINT_BUTTON>
+        </Row>
+      </div>
+    </CUSTOM_CONTAINER>
   )
 }
 

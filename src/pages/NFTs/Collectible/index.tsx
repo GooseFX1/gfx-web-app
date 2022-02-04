@@ -1,10 +1,11 @@
 import React from 'react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { Image } from 'antd'
 import { MainText } from '../../../styles'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { notify } from '../../../utils'
+import { useDarkMode } from '../../../context'
 
 const UPLOAD_CONTENT = styled.div`
   flex: 1;
@@ -36,8 +37,8 @@ const DESCRIPTION = MainText(styled.div`
   color: ${({ theme }) => theme.text8} !important;
   text-align: center;
   font-weight: 600;
-  margin-top: ${({ theme }) => theme.margins['4x']};
-  margin-bottom: ${({ theme }) => theme.margins['4x']};
+  margin-top: ${({ theme }) => theme.margin(4)};
+  margin-bottom: ${({ theme }) => theme.margin(4)};
 `)
 
 const SMALL_DESCRIPTION = MainText(styled.div`
@@ -45,10 +46,11 @@ const SMALL_DESCRIPTION = MainText(styled.div`
   color: ${({ theme }) => theme.text8} !important;
   text-align: center;
   font-weight: 600;
-  margin-bottom: ${({ theme }) => theme.margins['6x']};
+  margin-bottom: ${({ theme }) => theme.margin(6)};
 `)
 
 const UPLOAD_FILED = styled.div`
+  position: relative;
   width: 250px;
   height: 250px;
   border-radius: 20px;
@@ -67,10 +69,10 @@ const UPLOAD_FIELD_CONTAINER = styled.div`
 `
 
 const UPLOAD_FILED_CONTAINER_LEFT = styled(UPLOAD_FIELD_CONTAINER)`
-  margin-right: ${({ theme }) => theme.margins['6x']};
+  margin-right: ${({ theme }) => theme.margin(6)};
 `
 const UPLOAD_FILED_CONTAINER_RIGHT = styled(UPLOAD_FIELD_CONTAINER)`
-  margin-left: ${({ theme }) => theme.margins['6x']};
+  margin-left: ${({ theme }) => theme.margin(6)};
 `
 
 const UPLOAD_SECTION = styled.div`
@@ -79,9 +81,25 @@ const UPLOAD_SECTION = styled.div`
   align-items: center;
   justify-content: center;
 `
+const COVER = styled(UPLOAD_SECTION)<{ $mode: boolean }>`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  color: ${({ theme }) => theme.text1};
+  font-size: 22px;
+  font-weight: 600;
+  background-color: ${({ $mode }) => ($mode ? 'rgb(0 0 0 / 66%)' : 'rgb(202 202 202 / 71%)')};
+  border-radius: 20px;
+  z-index: 10;
+  cursor: default;
+`
 
 const IMAGE_COUNT_DESC = styled(DESCRIPTION)`
-  margin-top: ${({ theme }) => theme.margins['2.5x']};
+  margin-top: ${({ theme }) => theme.margin(2.5)};
   margin-bottom: ${({ theme }) => 0};
   color: #fff !important;
 `
@@ -91,12 +109,13 @@ const UPLOAD_TEXT = MainText(styled.div`
   color: ${({ theme }) => theme.text8} !important;
   text-align: center;
   font-weight: 600;
-  margin-top: ${({ theme }) => theme.margins['4x']};
+  margin-top: ${({ theme }) => theme.margin(4)};
 `)
 
 export const Collectible = (): JSX.Element => {
   const history = useHistory()
   const { connected, publicKey } = useWallet()
+  const { mode } = useDarkMode()
 
   const handleSelectSingleCollectable = async () => {
     if (connected && publicKey) {
@@ -135,6 +154,7 @@ export const Collectible = (): JSX.Element => {
           </UPLOAD_FILED_CONTAINER_LEFT>
           <UPLOAD_FILED_CONTAINER_RIGHT>
             <UPLOAD_FILED>
+              <COVER $mode={mode === 'dark'}>Coming soon...</COVER>
               <Image draggable={false} preview={false} src={`/img/assets/multiple-upload.png`} />
               <IMAGE_COUNT_DESC>1/100</IMAGE_COUNT_DESC>
             </UPLOAD_FILED>

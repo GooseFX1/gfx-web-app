@@ -1,11 +1,22 @@
 import React, { useRef, useState, useEffect, FC } from 'react'
 import styled from 'styled-components'
 import { Header } from '../Header'
-import NFTHeaderCarousel from '../NFTHeaderCarousel'
+import { NFTHomeSlider } from '../Slider/NFTHomeSlider'
+import { AnalyticsTabs } from '../Analytics/Tab'
 import NFTFooter from '../NFTFooter'
 import CollectionCarousel from '../CollectionCarousel'
 import { useNFTCollections } from '../../../context'
 import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
+
+const BODY_NFT_HOME = styled.div`
+  width: 100%;
+  box-shadow: 0 7px 15px 9px rgba(13, 13, 13, 0.25);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #333;
+`
 
 const SCROLLING_CONTENT = styled.div`
   overflow-y: overlay;
@@ -32,7 +43,6 @@ const NFTLandingPage: FC = (): JSX.Element => {
   } = useNFTCollections()
   const prevScrollY = useRef(0)
   const [goingUp, setGoingUp] = useState<boolean>(false)
-  const [isBigCarouselVisible, setBisCarouselVisible] = useState<boolean>(true)
   const [isAllLoading, setIsAllLoading] = useState<boolean>(false)
   const [isFeaturedLoading, setIsFeaturedLoading] = useState<boolean>(false)
   const [isUpcomingLoading, setIsUpcomingLoading] = useState<boolean>(false)
@@ -59,29 +69,23 @@ const NFTLandingPage: FC = (): JSX.Element => {
       setGoingUp(true)
     }
     prevScrollY.current = currentScrollY
-    console.log('currentScrollY', currentScrollY)
-    if (currentScrollY >= 402.5) {
-      setBisCarouselVisible(false)
-    } else {
-      setBisCarouselVisible(true)
-    }
   }
 
   return (
     <>
       <Header setFilter={setSearch} filter={search} />
-      <NFTHeaderCarousel isBig={false} isBigVisible={isBigCarouselVisible} />
+      <NFTHomeSlider />
+      <AnalyticsTabs />
       <SCROLLING_CONTENT_100 onScroll={onScroll}>
-        <NFTHeaderCarousel isBig isBigVisible={isBigCarouselVisible} />
         <CollectionCarousel
           collections={allCollections}
           collectionType={COLLECTION_TYPES.NFT_COLLECTION}
-          title="Launchpad"
+          title="Populare Collections"
           showTopArrow
           isLaunch
           isLoading={isAllLoading}
         />
-        <CollectionCarousel
+        {/* <CollectionCarousel
           collections={upcomingCollections}
           collectionType={COLLECTION_TYPES.NFT_UPCOMING_COLLECTION}
           title="Upcoming Collections"
@@ -92,7 +96,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
           collectionType={COLLECTION_TYPES.NFT_FEATURED_COLLECTION}
           title="Popular Collections"
           isLoading={isFeaturedLoading}
-        />
+        /> */}
         <NFTFooter />
       </SCROLLING_CONTENT_100>
     </>

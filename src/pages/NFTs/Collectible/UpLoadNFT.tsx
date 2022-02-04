@@ -5,8 +5,8 @@ import isEmpty from 'lodash/isEmpty'
 import styled from 'styled-components'
 
 import { MainText } from '../../../styles'
-import BottomButtonUpload, { BottomButtonUploadType } from './BottomButtonUpload'
 import InfoInput from './InfoInput'
+import { Categories } from '../../../components'
 import PreviewImage from './PreviewImage'
 import { UploadCustom } from './UploadCustom'
 import MintPaymentConfirmation from './MintPaymentConfirmation'
@@ -16,15 +16,14 @@ import RoyaltiesStep from './RoyaltiesStep'
 import { useDarkMode, useNFTDetails, useConnectionConfig } from '../../../context'
 import { mintNFT, MetadataCategory, ENDPOINTS } from '../../../web3'
 import { notify } from '../../../utils'
+import { ButtonWrapper } from '../NFTButton'
 
 //#region styles
 const UPLOAD_CONTENT = styled.div`
   flex: 1;
   display: flex;
   flex-direction: row;
-  padding: ${({ theme }) => theme.margins['5x']};
-
-  margin: 0 auto;
+  padding: ${({ theme }) => theme.margin(4)} 0px;
 
   .upload-NFT-back-icon {
     transform: rotate(90deg);
@@ -32,9 +31,9 @@ const UPLOAD_CONTENT = styled.div`
     height: 30px;
     filter: ${({ theme }) => theme.filterBackIcon};
     cursor: pointer;
-    margin-right: ${({ theme }) => theme.margins['5x']};
+    margin-right: ${({ theme }) => theme.margin(5)};
     margin-left: 0;
-    margin-top: ${({ theme }) => theme.margins['1x']};
+    margin-top: ${({ theme }) => theme.margin(1)};
   }
 `
 
@@ -57,16 +56,17 @@ const CONTAINER = styled.div`
 `
 const UPLOAD_INFO_CONTAINER = styled.div`
   display: flex;
-  flex: 1.4;
+  width: 52%;
   flex-direction: column;
   justify-content: flex-start;
-  margin-right: ${({ theme }) => theme.margins['6x']};
+  margin-right: ${({ theme }) => theme.margin(4)};
 `
 
 const PREVIEW_UPLOAD_CONTAINER = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 `
 
 const SECTION_TITLE = MainText(styled.span`
@@ -76,6 +76,15 @@ const SECTION_TITLE = MainText(styled.span`
   text-align: left;
 `)
 
+const SUB_TITLE = MainText(styled.span`
+  font-size: 17px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.text8} !important;
+  text-align: left;
+  margin-top: ${({ theme }) => theme.margin(2.5)};
+  margin-bottom: ${({ theme }) => theme.margin(1.5)};
+`)
+
 const INPUT_SECTION = styled.div`
   display: flex;
   flex-direction: row;
@@ -83,7 +92,7 @@ const INPUT_SECTION = styled.div`
 `
 
 const SPACE = styled.div`
-  width: ${({ theme }) => theme.margins['6x']};
+  width: ${({ theme }) => theme.margin(6)};
 `
 
 const BUTTON_SECTION = styled.div`
@@ -94,12 +103,12 @@ const BUTTON_SECTION = styled.div`
 const FLAT_BUTTON = styled.button`
   height: 60px;
   width: 200px;
-  padding: ${({ theme }) => `${theme.margins['2x']} ${theme.margins['6x']}`};
+  padding: ${({ theme }) => `${theme.margin(2)} ${theme.margin(6)}`};
   text-align: center;
   color: ${({ theme }) => theme.white};
   background: transparent;
-  margin-top: ${({ theme }) => theme.margins['5x']};
-  margin-right: ${({ theme }) => theme.margins['2x']};
+  margin-top: ${({ theme }) => theme.margin(5)};
+  margin-right: ${({ theme }) => theme.margin(2)};
   border: none;
   ${({ theme }) => theme.roundedBorders};
   cursor: pointer;
@@ -108,10 +117,10 @@ const FLAT_BUTTON = styled.button`
 const NEXT_BUTTON = styled.button`
   height: 60px;
   width: 245px;
-  padding: ${({ theme }) => `${theme.margins['2x']} ${theme.margins['6x']}`};
+  padding: ${({ theme }) => `${theme.margin(2)} ${theme.margin(6)}`};
   text-align: center;
   background-color: ${({ theme }) => theme.secondary5};
-  margin-top: ${({ theme }) => theme.margins['5x']};
+  margin-top: ${({ theme }) => theme.margin(5)};
   border: none;
   ${({ theme }) => theme.roundedBorders};
   cursor: pointer;
@@ -125,33 +134,30 @@ const BOTTOM_BUTTON_SECTION = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: ${({ theme }) => `${theme.margin(2)}`};
 `
 
 const STYLED_PROPERTY_BLOCK = styled.div`
   display: flex;
-  align-items: flex-end;
-  > div {
-    &:first-child {
-      width: 128px;
-    }
-  }
-  .property-result {
-    width: calc(100% - 145px);
-    height: 60px;
-    display: flex;
-    align-items: center;
-    padding: ${({ theme }) => `${theme.margins['1x']}`};
-    border-radius: 10px;
-    background-color: ${({ theme }) => theme.propertyBg};
-  }
+  align-items: center;
+  flex-wrap: wrap;
+  border-radius: 15px;
+  background-color: ${({ theme }) => theme.propertyBg};
+  padding: ${({ theme }) => theme.margin(1.5)};
+  padding-bottom: 0px;
+  max-height: 162px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
   .property-item {
     width: 100px;
     height: 40px;
-    padding: 2px ${({ theme }) => `${theme.margins['1x']}`};
+    padding: 2px ${({ theme }) => theme.margin(1)};
     border-radius: 10px;
     background-color: ${({ theme }) => theme.propertyItemBg};
     position: relative;
-    margin-right: 10px;
+    margin-right: ${({ theme }) => theme.margin(1)};
+    margin-bottom: ${({ theme }) => theme.margin(1)};
     .type {
       font-family: Montserrat;
       font-size: 11px;
@@ -184,6 +190,35 @@ const STYLED_PROPERTY_BLOCK = styled.div`
         border-radius: 50%;
       }
     }
+  }
+  ${({ theme }) => theme.customScrollBar('4px')};
+`
+const SELECTION_SECTION = styled.div`
+  text-align: left;
+  flex-grow: 1;
+`
+
+const SECTION_HEADING = MainText(styled.div`
+  font-size: 17px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.text8} !important;
+  margin-bottom: ${({ theme }) => theme.margin(1)};
+`)
+
+const BUTTON_PLUS_WRAPPER = styled(ButtonWrapper)`
+  width: 132px;
+  height: 41px;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #9625ae;
+  margin-bottom: ${({ theme }) => theme.margin(1.5)};
+
+  &.add-more {
+    width: 100px;
+  }
+
+  &:disabled {
+    background-color: #7d7d7d;
   }
 `
 //#endregion
@@ -316,7 +351,11 @@ export const UpLoadNFT = (): JSX.Element => {
     setCreatorModal(false)
   }, [])
 
-  const handleCancelCollection = () => {
+  const handleCancelCreatorData = () => {
+    setNftMintingData((prev) => {
+      console.log(prev)
+      return prev
+    })
     setCreatorModal(false)
   }
 
@@ -338,6 +377,14 @@ export const UpLoadNFT = (): JSX.Element => {
       }
     })
   }
+
+  const categoryOptions = [
+    { name: 'Audio', value: MetadataCategory.Audio, icon: 'music' },
+    { name: 'Video', value: MetadataCategory.Video, icon: 'memes' },
+    { name: 'Image', value: MetadataCategory.Image, icon: 'art' },
+    { name: 'VR', value: MetadataCategory.VR, icon: 'metaverse' },
+    { name: 'HTML', value: MetadataCategory.HTML, icon: 'domains' }
+  ]
 
   return nftMintingData === undefined ? (
     <div>...Loading</div>
@@ -366,6 +413,7 @@ export const UpLoadNFT = (): JSX.Element => {
               <InfoInput
                 value={nftMintingData.name}
                 title="Name"
+                type={'input'}
                 maxLength={20}
                 placeholder="Name your item"
                 onChange={(e) => handleInputChange({ e, id: 'name' })}
@@ -374,51 +422,54 @@ export const UpLoadNFT = (): JSX.Element => {
               <InfoInput
                 value={nftMintingData.description}
                 title="Description"
+                type={'textarea'}
                 maxLength={120}
                 placeholder="Describe your item"
                 onChange={(e) => handleInputChange({ e, id: 'description' })}
               />
             </INPUT_SECTION>
             <BOTTOM_BUTTON_SECTION>
-              <BottomButtonUpload
-                flex={1}
-                onClick={handleSelectCategory}
-                type={BottomButtonUploadType.category}
-                title="Category"
-              />
-              <BottomButtonUpload
-                flex={1}
-                buttonTitle={'Creator Info'}
-                type={BottomButtonUploadType.plus}
-                title={'Creator Info'}
-                onClick={() => setCreatorModal(true)}
-              />
+              <SELECTION_SECTION>
+                <SECTION_HEADING>Category</SECTION_HEADING>
+                <Categories
+                  categories={categoryOptions}
+                  className="category"
+                  onChange={handleSelectCategory}
+                  style={{
+                    width: 132,
+                    height: 41,
+                    justifyContent: 'space-around'
+                  }}
+                />
+              </SELECTION_SECTION>
+              <SELECTION_SECTION>
+                <SECTION_HEADING>Creator Info</SECTION_HEADING>
+                <BUTTON_PLUS_WRAPPER onClick={() => setCreatorModal(true)}>
+                  <span>Creator Info</span>
+                  <img src={`/img/assets/plus.svg`} alt="Create" />
+                </BUTTON_PLUS_WRAPPER>
+              </SELECTION_SECTION>
             </BOTTOM_BUTTON_SECTION>
+            <SUB_TITLE>Attributes</SUB_TITLE>
             <STYLED_PROPERTY_BLOCK>
-              <BottomButtonUpload
-                flex={2}
-                buttonTitle={localAttributes.length > 0 ? 'Add more' : 'Add'}
-                type={localAttributes.length > 0 ? BottomButtonUploadType.add_more : BottomButtonUploadType.plus}
-                title="Attributes"
-                onClick={() => setAttributesModal(true)}
-              />
-              {localAttributes.length > 0 && (
-                <div className="property-result">
-                  {localAttributes.map((item) => (
-                    <div className="property-item" key={item.id}>
-                      <div className="type">{item.trait_type}</div>
-                      <div className="name">{item.value}</div>
-                      <div className={`close-btn ${mode}`} onClick={() => handleRemoveAttribute(item.id)}>
-                        <img
-                          className="close-white-icon"
-                          src={`/img/assets/${mode === 'dark' ? 'close-gray' : 'remove-property'}.svg`}
-                          alt=""
-                        />
-                      </div>
+              {localAttributes.length > 0 &&
+                localAttributes.map((item) => (
+                  <div className="property-item" key={item.id}>
+                    <div className="type">{item.trait_type}</div>
+                    <div className="name">{item.value}</div>
+                    <div className={`close-btn ${mode}`} onClick={() => handleRemoveAttribute(item.id)}>
+                      <img
+                        className="close-white-icon"
+                        src={`/img/assets/${mode === 'dark' ? 'close-gray' : 'remove-property'}.svg`}
+                        alt=""
+                      />
                     </div>
-                  ))}
-                </div>
-              )}
+                  </div>
+                ))}
+              <BUTTON_PLUS_WRAPPER onClick={() => setAttributesModal(true)} className="add-more">
+                <span>Add</span>
+                <img src={`/img/assets/plus.svg`} alt="add" />
+              </BUTTON_PLUS_WRAPPER>
             </STYLED_PROPERTY_BLOCK>
           </UPLOAD_INFO_CONTAINER>
           <PREVIEW_UPLOAD_CONTAINER>
@@ -437,7 +488,7 @@ export const UpLoadNFT = (): JSX.Element => {
         setNftMintingData={setNftMintingData}
         nftMintingData={nftMintingData}
         handleSubmit={handleSubmitCollection}
-        handleCancel={handleCancelCollection}
+        handleCancel={handleCancelCreatorData}
       />
 
       {attributesModal && (
@@ -455,6 +506,7 @@ export const UpLoadNFT = (): JSX.Element => {
           attributes={nftMintingData}
           files={filesForUpload}
           connection={connection}
+          visible={isConfirmingMintPrice}
           confirm={() => handleConfirmMint()}
           returnToDetails={setIsConfirmingMintPrice}
         />

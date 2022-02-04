@@ -16,9 +16,9 @@ const BRAND = styled.a`
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     position: relative;
-    top: ${({ theme }) => theme.margins['1x']};
+    top: ${({ theme }) => theme.margin(1)};
     height: 40px;
-    margin-bottom: ${({ theme }) => theme.margins['3x']};
+    margin-bottom: ${({ theme }) => theme.margin(3)};
   `}
 
   ${({ theme }) => theme.mediaWidth.fromSmall`
@@ -40,14 +40,14 @@ const BUTTONS = styled(CenteredDiv)`
   position: absolute;
 
   > *:not(:last-child) {
-    margin-right: ${({ theme }) => theme.margins['2x']};
+    margin-right: ${({ theme }) => theme.margin(2)};
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     position: relative;
 
     > *:not(:last-child) {
-      margin-right: ${({ theme }) => theme.margins['1x']};
+      margin-right: ${({ theme }) => theme.margin(1)};
     }
   `}
 
@@ -68,7 +68,7 @@ const WRAPPER = styled.nav`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     ${({ theme }) => theme.flexColumnNoWrap};
     height: auto;
-    padding: ${({ theme }) => theme.margins['1x']};
+    padding: ${({ theme }) => theme.margin(1)};
   `}
   ${({ theme }) => theme.mediaWidth.fromSmall`
     ${({ theme }) => theme.flexCenter}

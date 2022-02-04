@@ -5,7 +5,7 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
   ${({ theme, mode }) => `
   position: relative;
   height: 260px;
-  padding: ${theme.margins['3x']};
+  padding: ${theme.margin(3)};
   ${theme.largeBorderRadius}
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
   background: rgb(30, 30, 30);
@@ -42,26 +42,26 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
     }
   }
   .name-wrap {
-    margin-top: ${theme.margins['1x']};
+    margin-top: ${theme.margin(1)};
     ${theme.flexCenter}
   }
   .name {
     color: ${theme.text1};
     font-size: 18px;
     display: inline-block;
-    margin-right: ${theme.margins['1x']};
+    margin-right: ${theme.margin(1)};
   }
   .check-icon {
     width: 20px;
     height: 20px;
   }
   .social-list {
-    margin-top: ${theme.margins['2x']};
+    margin-top: ${theme.margin(2)};
     ${theme.flexCenter}
     .social-item {
       display: inline-block;
       width: 35px;
-      margin: 0 ${theme.margins['1x']};
+      margin: 0 ${theme.margin(1)};
     }
     .social-item-yt {
       height: 35px;
@@ -103,7 +103,7 @@ export const StyledDropdown = styled(Dropdown)`
   padding: 0;
   border: none;
   background: transparent;
-  margin-left: ${({ theme }) => theme.margins['3x']};
+  margin-left: ${({ theme }) => theme.margin(3)};
   .more-icon {
     width: 43px;
     height: 41px;
@@ -115,12 +115,12 @@ export const StyledMenu = styled(Menu)`
   color: ${theme.white};
   background-color: ${theme.black};
   min-width: 208px;
-  padding: ${theme.margins['1x']} 0;
+  padding: ${theme.margin(1)} 0;
   ${theme.smallBorderRadius}
-  margin-top: ${theme.margins['2x']};
+  margin-top: ${theme.margin(2)};
   position: relative;
   li {
-    padding: ${theme.margins['1x']} ${theme.margins['3x']};
+    padding: ${theme.margin(1)} ${theme.margin(3)};
   }
   &:before {
     border-right-color: transparent;

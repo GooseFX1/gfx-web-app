@@ -14,11 +14,11 @@ const STYLED_ADD_PROPERTY = styled(PopupCustom)`
       background-color: ${theme.bg3};
     }
     .body-wrap {
-      padding: ${theme.margins['4x']};
+      padding: ${theme.margin(4)};
     }
     .btn-wrap {
-      margin-top: ${theme.margins['3.5x']};
-      padding: ${theme.margins['2.5x']} ${theme.margins['4x']};
+      margin-top: ${theme.margin(3.5)};
+      padding: ${theme.margin(2.5)} ${theme.margin(4)};
       background: rgba(64, 64, 64, 0.22);
       border-radius: 0 0 20px 20px;
     }
@@ -32,7 +32,7 @@ const STYLED_ADD_PROPERTY = styled(PopupCustom)`
       font-size: 25px;
       font-weight: 600;
       color: ${theme.text7};
-      margin-bottom: ${theme.margins['3x']};
+      margin-bottom: ${theme.margin(3)};
     }
     .desc {
       color: ${theme.text12};
@@ -63,15 +63,15 @@ const STYLED_CREATE_BTN = styled(Button)<{ disabled: boolean }>`
 
 const STYLED_ADD_GROUP = styled.div`
   ${({ theme }) => `
-    padding: 0 ${theme.margins['4x']};
+    padding: 0 ${theme.margin(4)};
     .add-header {
       display: flex;
       align-items: center;
-      margin-bottom: ${theme.margins['2x']};
+      margin-bottom: ${theme.margin(2)};
       .empty {
         width: 55px;
         height: 20px;
-        margin-right: ${theme.margins['2x']};
+        margin-right: ${theme.margin(2)};
       }
       .text {
         width: 180px;
@@ -80,31 +80,38 @@ const STYLED_ADD_GROUP = styled.div`
         font-weight: 600;
         text-align: left;
         color: ${theme.text7};
-        padding-left: ${theme.margins['2.5x']};
+        padding-left: ${theme.margin(2.5)};
       }
     }
   `}
 `
 const STYLED_ADD_BODY = styled.div`
   max-height: 34vh;
-  overflow: scroll;
-  margin-bottom: 8px;
+  overflow-y: scroll;
+  margin-bottom: ${({ theme }) => theme.margin(1)};
+  padding-right: ${({ theme }) => theme.margin(1.5)};
+  overflow-x: hidden;
 
   ${({ theme }) => `
     .add-item {
       display: flex;
       align-items: center;
-      margin-bottom: ${theme.margins['3x']}
+      margin-top: ${theme.margin(1.5)};
+      margin-bottom: ${theme.margin(1.5)};
     }
     .close-btn {
-      width: 55px;
-      height: 55px;
+      width: 35px;
+      height: 35px;
       background: ${theme.iconRemoveBg};
       border-radius: 50%;
-      margin-right: ${theme.margins['2x']};
-      line-height: 51px;
+      margin-right: ${theme.margin(2)};
+      line-height: 31px;
       text-align: center;
       cursor: pointer;
+      .close-white-icon {
+        width: 17px;
+        height: auto;
+      }
     }
     input {
       width: 180px;
@@ -116,7 +123,7 @@ const STYLED_ADD_BODY = styled.div`
       font-size: 18px;
       font-weight: 500;
       color: #fff;
-      padding-left: ${theme.margins['2.5x']};
+      padding-left: ${theme.margin(2.5)};
       &:focus {
         box-shadow: none;
       }
@@ -150,6 +157,8 @@ const STYLED_ADD_BODY = styled.div`
       border-radius: 0 42px 43px 0;
     }
   `}
+
+  ${({ theme }) => theme.customScrollBar('4px')};
 `
 
 const STYLED_ADD_MORE_BTN = styled(Button)`
@@ -187,8 +196,10 @@ interface Props {
 }
 
 const AddAttribute = ({ visible, handleCancel, handleOk, attributeList, setAttributeList }: Props) => {
-  // TODO: add auto focus to input on component mount
+  const inputType = React.useRef(null)
+
   const [disabled, setDisabled] = useState(false)
+
   const initData = [
     {
       id: createUUID(),
@@ -203,6 +214,10 @@ const AddAttribute = ({ visible, handleCancel, handleOk, attributeList, setAttri
     checkDisabled(realData)
   }, [realData])
 
+  useEffect(() => {
+    inputType && inputType.current.focus()
+  }, [])
+
   const onAdd = () => {
     setRealData((prevData) => [
       {
@@ -212,6 +227,8 @@ const AddAttribute = ({ visible, handleCancel, handleOk, attributeList, setAttri
       },
       ...prevData
     ])
+
+    setTimeout(() => inputType && inputType.current.focus(), 10)
   }
 
   const onRemove = (id) => {
@@ -224,6 +241,15 @@ const AddAttribute = ({ visible, handleCancel, handleOk, attributeList, setAttri
     const { name, value } = e.target
     const temp = JSON.parse(JSON.stringify(realData))
     const index = temp.findIndex((item) => item.id === id)
+
+    const whitepaceCheck = value.trim()
+    if (whitepaceCheck.length === 0) {
+      temp[index][name] = ''
+      setRealData(temp)
+      checkDisabled(realData)
+      return
+    }
+
     if (index !== -1) {
       temp[index][name] = value
       setRealData(temp)
@@ -235,7 +261,8 @@ const AddAttribute = ({ visible, handleCancel, handleOk, attributeList, setAttri
     const temp = JSON.parse(JSON.stringify(list))
 
     for (const item of temp) {
-      const empty = Object.values(item).some((val) => !val)
+      const empty = Object.values(item).some((val: string) => !val || val.length === 0)
+
       if (empty) {
         setDisabled(true)
         break
@@ -244,8 +271,17 @@ const AddAttribute = ({ visible, handleCancel, handleOk, attributeList, setAttri
     }
   }
 
+  const handleAddMore = () => {
+    onAdd()
+  }
+
   const onSave = () => {
-    setAttributeList(realData)
+    const cleanedValues = realData.map((attr) => ({
+      ...attr,
+      trait_type: attr.trait_type.trim(),
+      value: attr.value.trim()
+    }))
+    setAttributeList(cleanedValues)
     handleOk()
   }
 
@@ -283,6 +319,9 @@ const AddAttribute = ({ visible, handleCancel, handleOk, attributeList, setAttri
                   className="input-type"
                   placeholder="Character"
                   defaultValue={item?.trait_type}
+                  value={item ? item.trait_type : ''}
+                  autoComplete="off"
+                  ref={inputType}
                   onChange={(e) => onChange({ e: e, id: item?.id })}
                 />
               </div>
@@ -291,12 +330,14 @@ const AddAttribute = ({ visible, handleCancel, handleOk, attributeList, setAttri
                 className="input-name"
                 placeholder="Male"
                 defaultValue={item?.value}
+                value={item ? item.value : ''}
+                autoComplete="off"
                 onChange={(e) => onChange({ e: e, id: item?.id })}
               />
             </div>
           ))}
         </STYLED_ADD_BODY>
-        <STYLED_ADD_MORE_BTN onClick={() => onAdd()}>Add more</STYLED_ADD_MORE_BTN>
+        <STYLED_ADD_MORE_BTN onClick={handleAddMore}>Add more</STYLED_ADD_MORE_BTN>
       </STYLED_ADD_GROUP>
 
       <div className="btn-wrap">

@@ -21,7 +21,7 @@ const LEFT_SECTION = styled.div`
     }
 
     .ls-bottom-panel {
-      margin-top: ${theme.margins['2.5x']};
+      margin-top: ${theme.margin(2.5)};
 
       .ls-end-text {
         font-size: 12px;
@@ -30,13 +30,13 @@ const LEFT_SECTION = styled.div`
       }
 
       .ls-favorite {
-        margin-bottom: ${theme.margins['2x']};
+        margin-bottom: ${theme.margin(2)};
       }
 
       .ls-favorite-heart {
         width: 21px;
         height: 21px;
-        margin-right: ${theme.margins['0.5x']};
+        margin-right: ${theme.margin(0.5)};
       }
 
       .ls-favorite-number {
@@ -58,7 +58,7 @@ const LEFT_SECTION = styled.div`
 `
 
 export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...rest }) => {
-  const { general } = useNFTDetails()
+  const { general, nftMetadata } = useNFTDetails()
   const isFavorite = true
   const hearts = 12
   const remaining = {
@@ -71,7 +71,7 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
 
   return (
     <LEFT_SECTION {...rest}>
-      <img className="ls-image" src={general.image_url} alt="" />
+      <img className="ls-image" src={general?.image_url || nftMetadata?.image} alt="" />
       <div className="ls-bottom-panel">
         <Row justify={mode !== 'mint-item-view' ? 'space-between' : 'start'} align="middle" className="ls-favorite">
           <Col>{isShowReamingTime && <div className="ls-end-text">Auction ends in:</div>}</Col>

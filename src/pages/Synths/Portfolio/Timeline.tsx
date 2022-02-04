@@ -9,14 +9,14 @@ const WRAPPER = styled(CenteredDiv)`
 
 const BUTTON = styled.button`
   ${({ theme }) => theme.flexCenter}
-  padding: 0 ${({ theme }) => theme.margins['2x']};
+  padding: 0 ${({ theme }) => theme.margin(2)};
   border: none;
   ${({ theme }) => theme.largeBorderRadius}
   background-color: ${({ theme }) => theme.bg3};
   cursor: pointer;
 
   &:not(:first-child) {
-    margin-left: ${({ theme }) => theme.margins['2x']};
+    margin-left: ${({ theme }) => theme.margin(2)};
   }
 
   &:hover {
@@ -29,7 +29,7 @@ const BUTTON = styled.button`
   }
 
   > span {
-    padding: ${({ theme }) => theme.margins['1x']} 0;
+    padding: ${({ theme }) => theme.margin(1)} 0;
     font-size: 10px;
     font-weight: 600;
     color: ${({ theme }) => theme.text4};

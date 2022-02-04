@@ -10,7 +10,7 @@ interface Props {
 const STYLED_SHARE_PROFILE = styled(PopupCustom)`
   ${({ theme }) => `
     .ant-modal-body {
-      padding: ${theme.margins['5x']} ${theme.margins['7x']};
+      padding: ${theme.margin(5)} ${theme.margin(7)};
     }
     .ant-modal-close {
       right: 35px;
@@ -22,15 +22,15 @@ const STYLED_SHARE_PROFILE = styled(PopupCustom)`
       font-size: 25px;
       font-weight: 600;
       color: #fff;
-      margin-bottom: ${theme.margins['4x']};
+      margin-bottom: ${theme.margin(4)};
     }
     .social-list {
       display: flex;
       align-item: center;
-      margin: 0 -${theme.margins['2x']};
+      margin: 0 -${theme.margin(2)};
     }
     .social-item {
-      padding: 0 ${theme.margins['2x']};
+      padding: 0 ${theme.margin(2)};
       img {
         cursor: pointer;
       }
