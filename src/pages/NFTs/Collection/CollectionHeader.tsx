@@ -157,7 +157,7 @@ export const CollectionHeader = ({ setFilter, filter }) => {
           total: `${fixedPriceWithinCollection.collection_floor ? fixedPriceWithinCollection.collection_floor : '0'}`,
           unit: 'SOL'
         },
-        { title: 'Volume traded', total: fixedPriceWithinCollection.nft_prices.length, unit: '' }
+        { title: 'Volume traded', total: singleCollection.collection_vol.yearly, unit: 'yr' }
       ])
     }
   }, [fixedPriceWithinCollection, singleCollection])
