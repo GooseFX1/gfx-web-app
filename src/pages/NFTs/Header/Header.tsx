@@ -164,7 +164,7 @@ export const Header = ({ setFilter, filter }) => {
       <AVATAR_WRAPPER>
         {connected && publicKey && (
           <AVATAR_NFT
-            fallback={`${window.origin}/img/assets/avatar.png`}
+            fallback={`${window.origin}/img/assets/avatar.svg`}
             src={sessionUser ? sessionUser.profile_pic_link : ''}
             preview={false}
             onClick={goProfile}

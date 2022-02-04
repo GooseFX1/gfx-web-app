@@ -67,7 +67,7 @@ export const HeaderProfile = ({ isExplore }: Props) => {
       <div className="avatar-profile-wrap">
         <Image
           className="avatar-profile"
-          fallback={`/img/assets/avatar.png`}
+          fallback={`/img/assets/avatar.svg`}
           src={sessionUser.profile_pic_link}
           preview={false}
           alt={sessionUser.nickname}
