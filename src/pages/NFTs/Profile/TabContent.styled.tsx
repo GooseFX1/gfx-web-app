@@ -37,8 +37,9 @@ export const StyledTabContent = styled.div`
     flex-wrap: wrap;
     margin: ${theme.margin(4)} -${theme.margin(1.5)} 0;
     .card-item {
-      width: 20%;
-      padding: 0 ${theme.margin(1.5)};
+      width: 226px;
+      margin-left: 25px;
+      margin-right: 25px;
       margin-bottom: ${theme.margin(3)};
     }
   }
