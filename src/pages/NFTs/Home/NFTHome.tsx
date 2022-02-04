@@ -80,12 +80,12 @@ const NFTLandingPage: FC = (): JSX.Element => {
         <CollectionCarousel
           collections={allCollections}
           collectionType={COLLECTION_TYPES.NFT_COLLECTION}
-          title="Launchpad"
+          title="Populare Collections"
           showTopArrow
           isLaunch
           isLoading={isAllLoading}
         />
-        <CollectionCarousel
+        {/* <CollectionCarousel
           collections={upcomingCollections}
           collectionType={COLLECTION_TYPES.NFT_UPCOMING_COLLECTION}
           title="Upcoming Collections"
@@ -96,7 +96,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
           collectionType={COLLECTION_TYPES.NFT_FEATURED_COLLECTION}
           title="Popular Collections"
           isLoading={isFeaturedLoading}
-        />
+        /> */}
         <NFTFooter />
       </SCROLLING_CONTENT_100>
     </>

@@ -7,12 +7,25 @@ import { ButtonWrapper } from './NFTButton'
 import { useHistory } from 'react-router'
 import { COLLECTION_TYPES } from '../../types/nft_collections.d'
 
+const CAROUSEL_ITEM = styled.div`
+  width: 450px;
+  height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 0 ${({ theme }) => theme.margin(4)};
+
+  .ant-image {
+  }
+`
+
 const CAROUSEL_IMAGE = styled(Image)`
+  height: auto;
+  width: auto;
   cursor: pointer;
   background-size: cover;
-  height: 220px;
-  width: auto;
-  border-radius: 20px;
 `
 
 const CAROUSEL_LABEL = styled.span`
@@ -30,12 +43,6 @@ const CAROUSEL_SUB_TITLE = styled.span`
   color: ${({ theme }) => theme.text1};
   flex: 1;
   margin-top: 0.5rem;
-`
-
-const CAROUSEL_ITEM = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0 ${({ theme }) => theme.margin(4)}; ;
 `
 
 const UP_COMMING_FOOTER = styled.div`
@@ -178,7 +185,7 @@ const NFTImageCarouselItem: FC<{ item: any; type: string }> = ({ item, type }) =
   const renderImage = () => {
     switch (type) {
       case COLLECTION_TYPES.NFT_COLLECTION:
-        return item.banner_link
+        return item.banner_link.length > 0 ? item.banner_link : item.profile_pic_link
       case COLLECTION_TYPES.NFT_UPCOMING_COLLECTION:
         return item.upcoming_collection_banner_url
       case COLLECTION_TYPES.NFT_FEATURED_COLLECTION:
@@ -191,7 +198,7 @@ const NFTImageCarouselItem: FC<{ item: any; type: string }> = ({ item, type }) =
   return (
     <CAROUSEL_ITEM>
       <CAROUSEL_IMAGE preview={false} src={renderImage()} onClick={goToCollection} />
-      {renderItemFooter()}
+      {/* {renderItemFooter()} */}
     </CAROUSEL_ITEM>
   )
 }

@@ -24,8 +24,8 @@ const FooterCarousel = () => {
   const [err, setErr] = useState(false)
 
   useEffect(() => {
-    fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.OPEN_BID, `2`).then((res) => {
-      if ((res.response && res.response.status !== 200) || !res.response || !res.response.status) {
+    fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.OPEN_BID, '2').then((res) => {
+      if ((res.response && res.response.status !== 200) || res.isAxiosError) {
         setErr(true)
       } else {
         setNfts(res.data.open_bid.slice(0, 10))
@@ -38,7 +38,11 @@ const FooterCarousel = () => {
   return (
     <FOOTER_LIST_CARD>
       {nfts === undefined ? (
-        <div>...loading</div>
+        Array.apply('null', Array(10)).map((i) => (
+          <div key={i}>
+            <FOOTER_IMAGE preview={false} src={`${window.origin}/img/assets/nft-preview.svg`} />
+          </div>
+        ))
       ) : err ? (
         <div>error loading random nfts</div>
       ) : (

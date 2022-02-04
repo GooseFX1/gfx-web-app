@@ -1,4 +1,4 @@
-import { Row } from 'antd'
+import { Row, Image } from 'antd'
 import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
 import { ISingleNFT } from '../../../types/nft_details.d'
@@ -11,11 +11,17 @@ const CARD = styled.div<{ status: string }>`
   .card-image-wrapper {
     position: relative;
     width: fit-content;
+    min-width: 190px;
     margin: 0 auto;
 
+    .ant-image-mask {
+      display: none;
+    }
     .card-image {
       object-fit: contain;
       border-radius: 15px;
+      width: 100%;
+      height: 190px;
     }
 
     .card-remaining {
@@ -68,11 +74,6 @@ const CARD = styled.div<{ status: string }>`
       padding: ${theme.margin(2.5)};
       opacity: ${status === 'sold_out' ? 0.6 : 1};
       background-color: #171717;
-
-      .card-image {
-        width: 100%;
-        height: 190px;
-      }
 
       .card-remaining {
         display: none;
@@ -184,7 +185,12 @@ export const Card = ({ singleNFT, tab, className, ...rest }: Props) => {
   return (
     <CARD status={localNFT.status} {...rest}>
       <div className="card-image-wrapper">
-        <img className="card-image" src={localNFT.image_url} alt="" />
+        <Image
+          fallback={`${window.origin}/img/assets/nft-preview.svg`}
+          className="card-image"
+          src={localNFT ? localNFT.image_url : ''}
+          alt="nft"
+        />
         <div className="card-remaining">{localNFT.remaining}</div>
       </div>
       <div className="card-info">
