@@ -19,20 +19,14 @@ const HEADER_CAROUSEL = styled.div`
   align-items: center;
 `
 
-const TOP_ARROW = styled(ArrowClicker)`
-  width: 21px;
-  flex: 1;
-  align-self: center;
-`
-
 const LEFT_ARROW = styled(ArrowClicker)`
-  width: 14px;
+  width: 21px;
   transform: rotateZ(90deg);
   margin-right: ${({ theme }) => theme.margin(2)};
 `
 
 const RIGHT_ARROW = styled(ArrowClicker)`
-  width: 14px;
+  width: 21px;
   transform: rotateZ(270deg);
 `
 
@@ -95,18 +89,10 @@ export interface ICollectionCarousel {
   collectionType: string
   isLoading: boolean
   isLaunch?: boolean
-  showTopArrow?: boolean
   title?: string
 }
 
-const CollectionCarousel: FC<ICollectionCarousel> = ({
-  isLaunch,
-  showTopArrow,
-  title,
-  collections,
-  collectionType,
-  isLoading
-}) => {
+const CollectionCarousel: FC<ICollectionCarousel> = ({ isLaunch, title, collections, collectionType, isLoading }) => {
   const slickRef = React.useRef<any>()
 
   const slickNext = () => slickRef?.current?.slickNext()
@@ -116,18 +102,17 @@ const CollectionCarousel: FC<ICollectionCarousel> = ({
     <CAROUSEL_WRAPPER>
       <HEADER_CAROUSEL>
         <TITLE_CAROUSEL>{title}</TITLE_CAROUSEL>
-        {showTopArrow && <TOP_ARROW arrowRotation />}
         <HEADER_END_CAROUSEL>
-          {isLaunch ? (
+          {/* {isLaunch ? (
             <LAUNCH_BUTTON>
               <span>Launch your collection</span>
             </LAUNCH_BUTTON>
           ) : (
-            <SORT_BUTTON>
-              <span>Sort by</span>
-              <ArrowClicker />
-            </SORT_BUTTON>
-          )}
+          )} */}
+          <SORT_BUTTON>
+            <span>Sort by</span>
+            <ArrowClicker />
+          </SORT_BUTTON>
 
           <LEFT_ARROW onClick={slickPrev} />
           <RIGHT_ARROW onClick={slickNext} />

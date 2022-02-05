@@ -1,5 +1,5 @@
 import React from 'react'
-import { Row } from 'antd'
+import { Row, Col } from 'antd'
 import { FC } from 'react'
 import { useHistory } from 'react-router'
 import styled, { css } from 'styled-components'
@@ -8,21 +8,15 @@ import { LeftSection } from './LeftSection'
 import { NFTDetailsProviderMode, MintItemViewStatus, INFTMetadata } from '../../../types/nft_details'
 
 const NFT_DETAILS = styled.div`
+  height: 100%;
+  margin: 0 auto;
+  padding-top: ${({ theme }) => theme.margin(6)};
+
+  .nd-content {
+    height: 100%;
+  }
+
   ${({ theme }) => css`
-    position: relative;
-    height: 71vh;
-    padding: ${theme.margin(9)} ${theme.margin(11)} ${theme.margin(3)} ${theme.margin(11)};
-    margin: 0 auto;
-    background-color: ${theme.nftDetailBackground};
-    overflow-y: auto;
-    ${theme.flexCenter}
-
-    .nd-content-wrapper {
-      width: 100%;
-      max-width: 1052px;
-      margin: 0 auto;
-    }
-
     .nd-back-icon {
       position: absolute;
       top: 40px;
@@ -32,22 +26,10 @@ const NFT_DETAILS = styled.div`
       filter: ${theme.filterBackIcon};
       cursor: pointer;
     }
-
-    .nd-content {
-      height: 100%;
-      margin-top: 150px;
-    }
-
-    .nd-preview {
-      width: 100%;
-      max-width: 456px;
-    }
-
     .nd-details {
-      width: 100%;
-      max-width: 430px;
+      height: 100%;
     }
-  `}
+  `};
 `
 
 export const NFTDetails: FC<{
@@ -69,16 +51,15 @@ export const NFTDetails: FC<{
           backUrl ? history.push(backUrl) : history.goBack()
         }}
       />
-      <div className="nd-content-wrapper">
-        <Row className="nd-content" justify="space-between">
-          <div className="nd-preview">
-            <LeftSection mode={mode} />
-          </div>
-          <div className="nd-details">
-            <RightSection mode={mode} status={status} handleClickPrimaryButton={handleClickPrimaryButton} />
-          </div>
-        </Row>
-      </div>
+
+      <Row gutter={[12, 16]} className="nd-content" justify="space-around">
+        <Col sm={9} xl={9} xxl={6} className="nd-preview">
+          <LeftSection mode={mode} />
+        </Col>
+        <Col sm={12} xl={9} xxl={7} className="nd-details">
+          <RightSection mode={mode} status={status} handleClickPrimaryButton={handleClickPrimaryButton} />
+        </Col>
+      </Row>
     </NFT_DETAILS>
   )
 }

@@ -10,7 +10,7 @@ const CONTAINER = styled.div`
   right: 0;
   bottom: 0;
   left: 0;
-  background: #1e1e1e;
+  background: ${({ theme }) => theme.bg2};
   z-index: 1000;
 
   .ant-steps-item-content,
@@ -27,10 +27,30 @@ const CONTAINER = styled.div`
     padding: 0;
   }
   .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-icon {
-    background: #1e1e1e;
+    background: ${({ theme }) => theme.bg2};
     color: ${({ theme }) => theme.text1};
     border: 2px solid ${({ theme }) => theme.text1};
     font-weight: 700;
+  }
+
+  .ant-steps-item-active {
+    .ant-steps-item-icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 55px;
+      width: 55px;
+      margin: 0 auto;
+      line-height: 30px;
+      border-color: ${({ theme }) => theme.text1};
+
+      .ant-steps-icon,
+      .ant-steps-item-title,
+      .ant-steps-item-description {
+        color: ${({ theme }) => theme.text1};
+        opacity: 1;
+      }
+    }
   }
 
   .ant-steps-item {
@@ -50,8 +70,15 @@ const CONTAINER = styled.div`
     width: 55px;
     margin: 0 auto;
     line-height: 30px;
+    border-color: ${({ theme }) => theme.text1};
+
+    .ant-steps-icon {
+      color: ${({ theme }) => theme.text1};
+      opacity: 0.3;
+    }
   }
   .ant-steps-item-title {
+    color: ${({ theme }) => theme.text1} !important;
     height: 42px;
     width: 100%;
     font-weight: 700;
@@ -61,8 +88,10 @@ const CONTAINER = styled.div`
     white-space: normal;
     padding: 0 8px;
     margin-top: ${({ theme }) => theme.margin(1)};
+    opacity: 0.3;
   }
   .ant-steps-item-description {
+    color: ${({ theme }) => theme.text1} !important;
     width: 100%;
     max-width: 100% !important;
     padding: 0 8px;
@@ -87,6 +116,9 @@ const CONTAINER = styled.div`
       background-repeat: no-repeat;
       background-position: center;
     }
+    .ant-steps-item-title {
+      opacity: 1;
+    }
     .ant-steps-item-description {
       opacity: 1;
     }
@@ -95,6 +127,7 @@ const CONTAINER = styled.div`
     }
     .ant-steps-item-icon > .ant-steps-icon {
       color: white;
+      opacity: 1;
     }
   }
   .ant-steps-item-title::after {
@@ -122,7 +155,7 @@ const CAPTION = styled.div`
 `
 const HEADING = styled(CenteredDiv)`
   flex-direction: column;
-  height: 50vh;
+  height: 58vh;
   .minting-image {
     height: 205px;
     width: 205px;

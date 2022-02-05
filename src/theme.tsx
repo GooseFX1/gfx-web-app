@@ -70,7 +70,7 @@ export function colors(mode: string): Colors {
     // backgrounds / greys
     bg0: mode === 'dark' ? '#000' : '#fff',
     bg1: mode === 'dark' ? '#1e1e1e' : white,
-    bg2: mode === 'dark' ? '#1e1e1e' : '#eeeeee',
+    bg2: mode === 'dark' ? '#131313' : '#eeeeee',
     bg3: mode === 'dark' ? '#2a2a2a' : white,
     bg4: mode === 'dark' ? '#171717' : '#f4f4f4',
     bg5: mode === 'dark' ? black : '#e0e0e0',
@@ -104,7 +104,7 @@ export function colors(mode: string): Colors {
     avatarInnerBackground: mode === 'dark' ? '#000' : '#7D7D7D',
 
     // upload image
-    uploadImageBackground: mode === 'dark' ? '#131313' : '#CACACA',
+    uploadImageBackground: mode === 'dark' ? '#1e1e1e' : '#CACACA',
 
     // input bg
     inputBg: mode === 'dark' ? '#131313' : '#CACACA',
@@ -133,9 +133,11 @@ export function colors(mode: string): Colors {
     nftDetailBackground: mode === 'dark' ? '#2a2a2a' : '#f4f4f4',
 
     // tab content current bid
-    tabContentBidBackground: mode === 'dark' ? '#131313' : '#fff',
+    tabContentBidBackground: mode === 'dark' ? '#2A2A2A' : '#fff',
     tabContentBidFooterBackground:
-      mode === 'dark' ? 'linear-gradient(90deg, rgba(25, 25, 25, 0.8) 0%, #131313 100%)' : 'rgba(64, 64, 64, 0.02)',
+      mode === 'dark'
+        ? 'radial-gradient(81.62% 135.01% at 15.32% 21.04%, rgba(255, 255, 255, 0.05) 0%, rgba(141, 141, 141, 0.05) 68.23%, rgba(255, 255, 255, 0.05) 77.08%, rgba(255, 255, 255, 0.0315) 100%)'
+        : 'rgba(64, 64, 64, 0.02)',
     borderColorTabBidFooter: mode === 'dark' ? '#131313' : '#EAEAEA',
 
     // trading history tab content
@@ -145,7 +147,7 @@ export function colors(mode: string): Colors {
     hoverTrTableBackground: mode === 'dark' ? '#262626' : 'rgba(64, 64, 64, 0.2)',
 
     // atrribute tab content
-    atrributeBg: mode === 'dark' ? '#2a2a2a' : '#B0B0B0',
+    atrributeBg: mode === 'dark' ? '#131313' : '#B0B0B0',
 
     // main tab
     tabNameColor: mode === 'dark' ? '#616161' : '#8F8F8F',

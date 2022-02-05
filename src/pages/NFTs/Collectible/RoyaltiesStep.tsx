@@ -297,9 +297,16 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
         title={null}
         visible={visible}
         onCancel={() => {
-          initializeComponent()
+          if (publicKey) {
+            initializeComponent()
+          }
           handleCancel()
         }}
+        closeIcon={
+          <div>
+            <img className="close-white-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+          </div>
+        }
         footer={null}
       >
         <h3 className="title">Set royalties and splits</h3>

@@ -8,11 +8,8 @@ import { notify } from '../../../utils'
 import { useDarkMode } from '../../../context'
 
 const UPLOAD_CONTENT = styled.div`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
   position: relative;
+  padding-top: 50px;
 
   .collectible-back-icon {
     position: absolute;
@@ -37,6 +34,7 @@ const DESCRIPTION = MainText(styled.div`
   color: ${({ theme }) => theme.text8} !important;
   text-align: center;
   font-weight: 600;
+  line-height: 18px;
   margin-top: ${({ theme }) => theme.margin(4)};
   margin-bottom: ${({ theme }) => theme.margin(4)};
 `)
@@ -122,7 +120,7 @@ export const Collectible = (): JSX.Element => {
       history.push('/NFTs/create-single')
     } else {
       notify({
-        message: 'A walelt must be connected to mint an NFT',
+        message: 'A wallt must be connected to mint an NFT',
         type: 'error'
       })
     }
@@ -139,11 +137,14 @@ export const Collectible = (): JSX.Element => {
         />
         <TITLE>Create a collectible</TITLE>
         <DESCRIPTION>
-          Choose “Single” if you want your collectible to be one of a kind
+          Choose “Single” if you want your collectible to be one of a kind or “Multiple”
           <br />
-          or “Multiple” if you want to sell one collectible multiple times
+          if you want to sell one collectible multiple times
         </DESCRIPTION>
-        <SMALL_DESCRIPTION>Live auctions option is avilable only for single items.</SMALL_DESCRIPTION>
+        {/* <SMALL_DESCRIPTION>Live auctions option is avilable only for single items.</SMALL_DESCRIPTION> */}
+        <br />
+        <br />
+        <br />
         <UPLOAD_SECTION>
           <UPLOAD_FILED_CONTAINER_LEFT>
             <UPLOAD_FILED onClick={handleSelectSingleCollectable}>

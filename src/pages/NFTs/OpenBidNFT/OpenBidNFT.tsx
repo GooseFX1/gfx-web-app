@@ -9,9 +9,19 @@ import { useNFTDetails } from '../../../context'
 // import { NFTDetailsGeneralData, detailTabData, tradingHistoryTabData, attributesTabContentData } from './mockData'
 import { BidModal } from './BidModal'
 
+const LOADING_CONTAINER = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+`
+
+const DETAILS_WRAPPER = styled.div`
+  height: 100%;
+`
+
 const WRAPPED_LOADER = styled.div`
   position: relative;
-  height: 48px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -37,15 +47,17 @@ export const OpenBidNFT: FC = () => {
   }, [])
 
   return loading ? (
-    <WRAPPED_LOADER>
-      <Loader />
-    </WRAPPED_LOADER>
+    <LOADING_CONTAINER>
+      <WRAPPED_LOADER>
+        <Loader />
+      </WRAPPED_LOADER>
+    </LOADING_CONTAINER>
   ) : err ? (
     <h2>Something went wrong fetching NFT details</h2>
   ) : (
-    <>
+    <DETAILS_WRAPPER>
       <NFTDetails mode="open-bid-NFT" handleClickPrimaryButton={() => setVisible(true)} />
       <BidModal details={details} visible={visible} setVisible={setVisible} />
-    </>
+    </DETAILS_WRAPPER>
   )
 }

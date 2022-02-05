@@ -28,8 +28,8 @@ const STYLED_UPLOAD_CUSTOM = styled.div`
     justify-content: center;
     align-items: center;
     height: 200px;
-    margin-top: ${({ theme }) => theme.margin(3)};
-    margin-bottom: ${({ theme }) => theme.margin(3)};
+    margin: ${theme.margin(1)} 0px;
+
     .image-group {
       display: flex;
       align-items: center;

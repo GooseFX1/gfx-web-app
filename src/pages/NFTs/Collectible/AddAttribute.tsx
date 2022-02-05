@@ -293,6 +293,11 @@ const AddAttribute = ({ visible, handleCancel, handleOk, attributeList, setAttri
       visible={visible}
       onCancel={handleCancel}
       footer={null}
+      closeIcon={
+        <div>
+          <img className="close-white-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+        </div>
+      }
       centered
     >
       <div className="body-wrap">
