@@ -55,7 +55,7 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
 
   > a {
     width: ${({ $width }) => $width}px;
-    padding: 29px 40px 19px;
+    padding: 0 40px;
     ${({ theme }) => theme.roundedBorders}
     z-index: 1;
 

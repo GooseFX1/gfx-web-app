@@ -7,7 +7,6 @@ const INPUT_TITLE = MainText(styled.span`
   font-weight: 600;
   color: ${({ theme }) => theme.text8} !important;
   text-align: left;
-  margin-top: ${({ theme }) => theme.margin(1.5)};
   margin-bottom: ${({ theme }) => theme.margin(1)};
 `)
 
@@ -20,6 +19,7 @@ const INPUT_LIMIT = MainText(styled.span`
 `)
 
 const INPUT_CONTAINER = styled.div`
+  margin-right: ${({ theme }) => `${theme.margin(2)}`};
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -28,10 +28,11 @@ const INPUT_CONTAINER = styled.div`
 const STYLED_INPUT = styled.input`
   height: 55px;
   width: 100%;
-  border-radius: 10px;
   background-color: ${({ theme }) => theme.inputBg};
   padding: ${({ theme }) => `${theme.margin(1.5)}`};
   border: none;
+  border-bottom: 3px solid ${({ theme }) => theme.text6};
+  border-radius: 4px 4px 0px 0px;
   ::placeholder {
     color: #636363;
     font-size: 12px;
@@ -41,12 +42,14 @@ const STYLED_INPUT = styled.input`
   }
 `
 const STYLED_TEXTAREA = styled.textarea`
-  height: 65px;
+  height: 55px;
   width: 100%;
-  border-radius: 10px;
   background-color: ${({ theme }) => theme.inputBg};
   padding: ${({ theme }) => `${theme.margin(1.5)}`};
+  margin-right: ${({ theme }) => `${theme.margin(1.5)}`};
   border: none;
+  border-radius: 4px 4px 0px 0px;
+  border-bottom: 3px solid ${({ theme }) => theme.text6};
   line-height: 22px;
   ::placeholder {
     color: #636363;

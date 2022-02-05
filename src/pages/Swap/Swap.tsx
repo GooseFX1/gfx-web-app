@@ -71,7 +71,12 @@ const WRAPPER = styled.div`
 `
 
 const W = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: ${({ theme }) => theme.text1};
+  height: calc(100vh - 160px);
+  width: 100vw;
 `
 
 const SwapContent: FC = () => {
@@ -136,7 +141,11 @@ const SwapContent: FC = () => {
 }
 
 export const Swap: FC = () => {
-  return <W>Coming Soon</W>
+  return (
+    <W>
+      <span>Coming Soon</span>
+    </W>
+  )
 
   /* const { endpoint, setEndpoint } = useConnectionConfig()
 

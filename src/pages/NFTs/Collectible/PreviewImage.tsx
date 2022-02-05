@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Upload } from 'antd'
 import styled from 'styled-components'
 import { MainText } from '../../../styles'
-import { useNFTDetails } from '../../../context'
+import { useDarkMode, useNFTDetails } from '../../../context'
 
 const PREVIEW_CONTAINER = styled.div`
   border-radius: 20px;
@@ -12,6 +12,7 @@ const PREVIEW_CONTAINER = styled.div`
   justify-content: space-evenly;
   align-items: center;
   width: 90%;
+  max-width: 532px;
   aspect-ratio: 1;
   align-self: flex-end;
   padding: ${({ theme }) => theme.margin(2.5)} ${({ theme }) => theme.margin(5)};
@@ -42,8 +43,8 @@ const PREVIEW_CONTAINER = styled.div`
   }
 `
 
-const IMAGE_CONTAINER = styled.image`
-  width: 70%;
+const IMAGE_CONTAINER = styled.div`
+  width: 100%;
   aspect-ratio: 1;
   border-radius: 20px;
   background-color: ${({ theme }) => theme.avatarInnerBackground};
@@ -75,6 +76,7 @@ const SUPPORT_TEXT = styled(NAME_TEXT)`
 `
 
 const BOTTOM_INFO = styled.div`
+  margin-top: ${({ theme }) => theme.margin(2)};
   display: flex;
   flex-direction: column;
 `
@@ -86,6 +88,7 @@ interface Props {
 
 const PreviewImage = ({ file, status }: Props) => {
   const { nftMintingData } = useNFTDetails()
+  const { mode } = useDarkMode()
 
   useEffect(() => {
     // console.log(file)
@@ -108,7 +111,11 @@ const PreviewImage = ({ file, status }: Props) => {
         />
       ) : (
         <IMAGE_CONTAINER>
-          <img className="image-broken" src={`/img/assets/nft-preview.svg`} alt="nft-preview" />
+          <img
+            className="image-broken"
+            src={`/img/assets/nft-preview${mode !== 'dark' ? '-light' : ''}.svg`}
+            alt="nft-preview"
+          />
         </IMAGE_CONTAINER>
       )}
       <BOTTOM_INFO>

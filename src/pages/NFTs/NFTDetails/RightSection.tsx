@@ -10,9 +10,10 @@ const RIGHT_SECTION = styled.div`
   ${({ theme }) => css`
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+
     color: ${theme.text1};
     text-align: left;
+    height: 100%;
 
     .rs-title {
       font-size: 18px;
@@ -62,11 +63,14 @@ const RIGHT_SECTION = styled.div`
     }
 
     .rs-intro {
-      font-size: 12px;
+      font-size: 15px;
       font-weight: 500;
-      max-width: 300px;
+      max-height: 70px;
       margin-bottom: ${theme.margin(1.5)};
       color: ${theme.text8};
+      overflow-y: scroll;
+      overflow-x: hidden;
+      ${({ theme }) => theme.customScrollBar('4px')};
     }
 
     .rs-charity-text {
@@ -82,12 +86,11 @@ const RIGHT_SECTION = styled.div`
 const GRID_INFO = styled(Row)`
   ${({ theme }) => css`
   width: 100%;
-  max-width: 384px;
   margin-bottom: ${theme.margin(3)};
 
   .gi-item {
     .gi-item-category-title {
-      font-size: 16px;
+      font-size: 19px;
       font-weight: 600;
       margin-bottom: ${theme.margin(1)};
       color: ${theme.text7};
@@ -129,7 +132,7 @@ const GRID_INFO = styled(Row)`
     }
 
     .gi-item-title {
-      font-size: 14px;
+      font-size: 18px;
       font-weight: 500;
       color: ${theme.text8};
       text-transform: capitalize;
@@ -187,7 +190,7 @@ export const RightSection: FC<{
         )}
       </Row>
       <Row justify="space-between" align="middle">
-        <Col>
+        <Col span={16}>
           {mode !== 'mint-item-view' && (
             <>
               <div className="rs-name">{general?.nft_name || nftMetadata?.name}</div>
@@ -195,12 +198,14 @@ export const RightSection: FC<{
             </>
           )}
         </Col>
-        {isForCharity && (
-          <Row align="middle">
-            <img src={`/img/assets/heart-charity.svg`} alt="" />
-            <div className="rs-charity-text">Auction for charity</div>
-          </Row>
-        )}
+        <Col span={6}>
+          {isForCharity && (
+            <Row align="middle">
+              <img src={`/img/assets/heart-charity.svg`} alt="" />
+              <div className="rs-charity-text">Auction for charity</div>
+            </Row>
+          )}
+        </Col>
       </Row>
       <GRID_INFO justify="space-between">
         {nftMetadata.collection && (

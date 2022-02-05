@@ -1,15 +1,9 @@
 import React, { FC } from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
-import styled from 'styled-components'
 import { AppLayout } from './layouts'
 import { Crypto, Farm, NFTs, Synths, Swap } from './pages'
-import { CenteredDiv } from './styles'
 import useBlacklisted from './utils/useBlacklisted'
-
-const WRAPPER = styled(CenteredDiv)`
-  flex: 1;
-  background-color: ${({ theme }) => theme.bg2};
-`
+import { NavCollapseProvider } from './context'
 
 export const Router: FC = () => {
   const blacklisted = useBlacklisted()
@@ -19,8 +13,8 @@ export const Router: FC = () => {
     <BrowserRouter>
       {window.location.pathname === '/' && <Redirect from="/" to="/crypto" />}
       <Switch>
-        <AppLayout>
-          <WRAPPER>
+        <NavCollapseProvider>
+          <AppLayout>
             <Route exact path="/swap" component={Swap} />
             <Route exact path="/crypto" component={Crypto} />
             <Route
@@ -37,8 +31,8 @@ export const Router: FC = () => {
             />
             <Route path="/NFTs" component={NFTs} />
             <Route exact path="/farm" component={Farm} />
-          </WRAPPER>
-        </AppLayout>
+          </AppLayout>
+        </NavCollapseProvider>
       </Switch>
     </BrowserRouter>
   )

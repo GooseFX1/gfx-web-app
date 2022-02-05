@@ -2,18 +2,20 @@ import styled from 'styled-components'
 
 export const StyledCard = styled.div<{ $border?: boolean }>`
   ${({ theme, $border }) => `
-  border: ${$border ? '1px solid white' : 'none'};
-max-width: 285px;
+border: ${$border ? '1px solid white' : 'none'};
+width: 100%;
 ${theme.largeBorderRadius}
 background-color: #171717;
 padding: ${theme.margin(2)} ${theme.margin(2.5)};
 cursor: pointer;
 z-index: 2;
 .card-image {
-  max-width: 245px;
   width: 100%;
-  height: auto;
+  height: 190px;
   ${theme.largeBorderRadius}
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position-y: 0;
 }
 .info {
   margin-top: ${theme.margin(1.5)};
@@ -47,7 +49,7 @@ z-index: 2;
   align-items: center;
   position: absolute;
   right: 0;
-  top: -5px;
+  top: 5px;
   &.favorited-group {
     top: 5px;
     .like-count {

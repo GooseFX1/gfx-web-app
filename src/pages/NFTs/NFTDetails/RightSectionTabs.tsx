@@ -61,6 +61,10 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
       font-size: 14px;
       font-weight: 500;
 
+      .ant-tabs-tab-btn {
+        font-size: 17px;
+      }
+
       &.ant-tabs-tab-active {
         .ant-tabs-tab-btn {
           color: #fff;
@@ -75,7 +79,7 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
     }
 
     .ant-tabs-content-holder {
-      height: 260px;
+      height: 275px;
       background-color: ${theme.tabContentBidBackground};
       transform: translateY(-32px);
       padding-top: ${({ theme }) => theme.margin(4)};
@@ -94,9 +98,9 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
       bottom: 0;
       padding: ${theme.margin(2)};
       border-radius: 0 0 25px 25px;
-      backdrop-filter: blur(20px);
       border-top: 1px solid ${theme.borderColorTabBidFooter};
       background: ${theme.tabContentBidFooterBackground};
+      backdrop-filter: blur(23.9091px);
 
       .rst-footer-bid-button {
         flex: 1;
@@ -139,7 +143,7 @@ const DETAILS_TAB_CONTENT = styled.div`
 
     .dtc-item {
       padding: ${theme.margin(0.5)} 0;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 500;
 
       .dtc-item-value {

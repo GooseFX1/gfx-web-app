@@ -20,10 +20,13 @@ import { ButtonWrapper } from '../NFTButton'
 
 //#region styles
 const UPLOAD_CONTENT = styled.div`
-  flex: 1;
+  height: 100%;
   display: flex;
   flex-direction: row;
-  padding: ${({ theme }) => theme.margin(4)} 0px;
+  padding-top: ${({ theme }) => theme.margin(5)};
+  padding-bottom: ${({ theme }) => theme.margin(3)};
+  padding-right: ${({ theme }) => theme.margin(6)};
+  padding-left: ${({ theme }) => theme.margin(8)};
 
   .upload-NFT-back-icon {
     transform: rotate(90deg);
@@ -41,6 +44,7 @@ const UPLOAD_FIELD_CONTAINER = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row;
+  height: 100%;
 `
 const CONTAINER = styled.div`
   position: absolute;
@@ -56,9 +60,9 @@ const CONTAINER = styled.div`
 `
 const UPLOAD_INFO_CONTAINER = styled.div`
   display: flex;
-  width: 52%;
+  width: 57%;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
   margin-right: ${({ theme }) => theme.margin(4)};
 `
 
@@ -69,25 +73,26 @@ const PREVIEW_UPLOAD_CONTAINER = styled.div`
   justify-content: space-between;
 `
 
-const SECTION_TITLE = MainText(styled.span`
+const SECTION_TITLE = MainText(styled.div`
   font-size: 20px;
   font-weight: 600;
   color: ${({ theme }) => theme.text7} !important;
   text-align: left;
+  margin-bottom: ${({ theme }) => theme.margin(1)};
 `)
 
-const SUB_TITLE = MainText(styled.span`
+const SUB_TITLE = MainText(styled.div`
   font-size: 17px;
   font-weight: 600;
   color: ${({ theme }) => theme.text8} !important;
   text-align: left;
-  margin-top: ${({ theme }) => theme.margin(2.5)};
-  margin-bottom: ${({ theme }) => theme.margin(1.5)};
+  margin-top: ${({ theme }) => theme.margin(0.5)};
+  margin-bottom: ${({ theme }) => theme.margin(1)};
 `)
 
 const INPUT_SECTION = styled.div`
   display: flex;
-  flex-direction: row;
+  align-items: center;
   justify-content: space-between;
 `
 
@@ -117,24 +122,22 @@ const FLAT_BUTTON = styled.button`
 const NEXT_BUTTON = styled.button`
   height: 60px;
   width: 245px;
-  padding: ${({ theme }) => `${theme.margin(2)} ${theme.margin(6)}`};
   text-align: center;
-  background-color: ${({ theme }) => theme.secondary5};
-  margin-top: ${({ theme }) => theme.margin(5)};
   border: none;
-  ${({ theme }) => theme.roundedBorders};
   cursor: pointer;
+  padding: ${({ theme }) => `${theme.margin(2)} ${theme.margin(6)}`};
+  background-color: ${({ theme }) => theme.secondary5};
+  ${({ theme }) => theme.roundedBorders};
 
   &:disabled {
     background-color: #7d7d7d;
   }
 `
 
-const BOTTOM_BUTTON_SECTION = styled.div`
+const INFO_SECTION = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: ${({ theme }) => `${theme.margin(2)}`};
 `
 
 const STYLED_PROPERTY_BLOCK = styled.div`
@@ -148,6 +151,7 @@ const STYLED_PROPERTY_BLOCK = styled.div`
   max-height: 162px;
   overflow-y: scroll;
   overflow-x: hidden;
+  min-height: 65px;
 
   .property-item {
     width: 100px;
@@ -399,36 +403,38 @@ export const UpLoadNFT = (): JSX.Element => {
         />
         <UPLOAD_FIELD_CONTAINER>
           <UPLOAD_INFO_CONTAINER>
-            <SECTION_TITLE>1. Upload your file</SECTION_TITLE>
+            <div>
+              <SECTION_TITLE>1. Upload your file</SECTION_TITLE>
 
-            <UploadCustom
-              setFilesForUpload={setFilesForUpload}
-              setPreviewImage={setLocalFiles}
-              nftMintingData={nftMintingData}
-              setNftMintingData={setNftMintingData}
-            />
-
-            <SECTION_TITLE>2. Item settings</SECTION_TITLE>
-            <INPUT_SECTION>
-              <InfoInput
-                value={nftMintingData.name}
-                title="Name"
-                type={'input'}
-                maxLength={20}
-                placeholder="Name your item"
-                onChange={(e) => handleInputChange({ e, id: 'name' })}
+              <UploadCustom
+                setFilesForUpload={setFilesForUpload}
+                setPreviewImage={setLocalFiles}
+                nftMintingData={nftMintingData}
+                setNftMintingData={setNftMintingData}
               />
-              <SPACE />
-              <InfoInput
-                value={nftMintingData.description}
-                title="Description"
-                type={'textarea'}
-                maxLength={120}
-                placeholder="Describe your item"
-                onChange={(e) => handleInputChange({ e, id: 'description' })}
-              />
-            </INPUT_SECTION>
-            <BOTTOM_BUTTON_SECTION>
+            </div>
+            <div>
+              <SECTION_TITLE>2. Item settings</SECTION_TITLE>
+              <INPUT_SECTION>
+                <InfoInput
+                  value={nftMintingData.name}
+                  title="Name"
+                  type={'input'}
+                  maxLength={20}
+                  placeholder="Name your item"
+                  onChange={(e) => handleInputChange({ e, id: 'name' })}
+                />
+                <InfoInput
+                  value={nftMintingData.description}
+                  title="Description"
+                  type={'textarea'}
+                  maxLength={120}
+                  placeholder="Describe your item"
+                  onChange={(e) => handleInputChange({ e, id: 'description' })}
+                />
+              </INPUT_SECTION>
+            </div>
+            <INFO_SECTION>
               <SELECTION_SECTION>
                 <SECTION_HEADING>Category</SECTION_HEADING>
                 <Categories
@@ -449,28 +455,30 @@ export const UpLoadNFT = (): JSX.Element => {
                   <img src={`/img/assets/plus.svg`} alt="Create" />
                 </BUTTON_PLUS_WRAPPER>
               </SELECTION_SECTION>
-            </BOTTOM_BUTTON_SECTION>
-            <SUB_TITLE>Attributes</SUB_TITLE>
-            <STYLED_PROPERTY_BLOCK>
-              {localAttributes.length > 0 &&
-                localAttributes.map((item) => (
-                  <div className="property-item" key={item.id}>
-                    <div className="type">{item.trait_type}</div>
-                    <div className="name">{item.value}</div>
-                    <div className={`close-btn ${mode}`} onClick={() => handleRemoveAttribute(item.id)}>
-                      <img
-                        className="close-white-icon"
-                        src={`/img/assets/${mode === 'dark' ? 'close-gray' : 'remove-property'}.svg`}
-                        alt=""
-                      />
+            </INFO_SECTION>
+            <div>
+              <SUB_TITLE>Attributes</SUB_TITLE>
+              <STYLED_PROPERTY_BLOCK>
+                {localAttributes.length > 0 &&
+                  localAttributes.map((item) => (
+                    <div className="property-item" key={item.id}>
+                      <div className="type">{item.trait_type}</div>
+                      <div className="name">{item.value}</div>
+                      <div className={`close-btn ${mode}`} onClick={() => handleRemoveAttribute(item.id)}>
+                        <img
+                          className="close-white-icon"
+                          src={`/img/assets/${mode === 'dark' ? 'close-gray' : 'remove-property'}.svg`}
+                          alt=""
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              <BUTTON_PLUS_WRAPPER onClick={() => setAttributesModal(true)} className="add-more">
-                <span>Add</span>
-                <img src={`/img/assets/plus.svg`} alt="add" />
-              </BUTTON_PLUS_WRAPPER>
-            </STYLED_PROPERTY_BLOCK>
+                  ))}
+                <BUTTON_PLUS_WRAPPER onClick={() => setAttributesModal(true)} className="add-more">
+                  <span>Add</span>
+                  <img src={`/img/assets/plus.svg`} alt="add" />
+                </BUTTON_PLUS_WRAPPER>
+              </STYLED_PROPERTY_BLOCK>
+            </div>
           </UPLOAD_INFO_CONTAINER>
           <PREVIEW_UPLOAD_CONTAINER>
             <PreviewImage file={localFiles} />

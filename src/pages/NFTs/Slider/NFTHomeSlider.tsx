@@ -7,12 +7,11 @@ import { mockSliderData } from './mockData'
 import { MainButton } from '../../../components/MainButton'
 
 const CAROUSEL_WRAPPER = styled.div`
-  background: #1e1e1e;
   padding: 0 ${({ theme }) => theme.margin(4)};
   .slick-prev,
   .slick-next {
-    width: 50px;
-    height: 50px;
+    width: 65px;
+    height: 65px;
     z-index: 2;
 
     &.slick-disabled {
@@ -21,11 +20,12 @@ const CAROUSEL_WRAPPER = styled.div`
   }
 
   .slick-prev {
-    top: calc(50% - 17px);
-    left: 50px;
+    top: calc(50% - 56px);
+    left: 25px;
+    transform: rotate(180deg);
   }
   .slick-next {
-    right: 60px;
+    right: 25px;
   }
 
   .slick-slider {
@@ -79,8 +79,8 @@ const settings = {
   initialSlide: 0,
   arrows: true,
   variableWidth: true,
-  nextArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.png`} alt="" />,
-  prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-prev.png`} alt="" />
+  nextArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="" />,
+  prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="" />
 }
 
 export const NFTHomeSlider = () => {

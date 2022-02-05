@@ -77,7 +77,7 @@ export const Card = ({ data, border, isExplore }: Props) => {
       )}
       <div className="card-item" onClick={() => openModal()}>
         <StyledCard $border={border}>
-          <img className="card-image" src={data.image} alt="" onClick={goMyCreatedNFT} />
+          <div className="card-image" style={{ backgroundImage: `url(${data.image})` }} onClick={goMyCreatedNFT} />
           <div className="info">
             <div className="name">{data.name}</div>
             <div className="number">
