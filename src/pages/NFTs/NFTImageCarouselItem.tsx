@@ -7,25 +7,26 @@ import { ButtonWrapper } from './NFTButton'
 import { useHistory } from 'react-router'
 import { COLLECTION_TYPES } from '../../types/nft_collections.d'
 
-const CAROUSEL_ITEM = styled.div`
+const CAROUSEL_ITEM = styled.div<{ $url: string }>`
   width: 450px;
   height: 220px;
   display: flex;
-  flex-direction: column;
   justify-content: center;
+  align-items: center;
   border-radius: 20px;
   overflow: hidden;
+  background: linear-gradient(rgb(0 0 0 / 2%), rgb(0 0 0 / 65%)), ${({ $url }) => `url(${$url})`}, center;
+  background-size: auto 120%;
   margin: 0 ${({ theme }) => theme.margin(4)};
-
-  .ant-image {
-  }
 `
 
-const CAROUSEL_IMAGE = styled(Image)`
-  height: auto;
-  width: auto;
-  cursor: pointer;
-  background-size: cover;
+const TITLE = styled.h3`
+  color: white;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 42px;
+  line-height: 51px;
+  text-align: center;
 `
 
 const CAROUSEL_LABEL = styled.span`
@@ -196,8 +197,9 @@ const NFTImageCarouselItem: FC<{ item: any; type: string }> = ({ item, type }) =
   }
 
   return (
-    <CAROUSEL_ITEM>
-      <CAROUSEL_IMAGE preview={false} src={renderImage()} onClick={goToCollection} />
+    <CAROUSEL_ITEM $url={renderImage()} onClick={goToCollection}>
+      <TITLE>{item.collection_name}</TITLE>
+      {/* <CAROUSEL_IMAGE preview={false} src={renderImage()} onClick={goToCollection} /> */}
       {/* {renderItemFooter()} */}
     </CAROUSEL_ITEM>
   )
