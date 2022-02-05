@@ -7,7 +7,6 @@ import { TabContent } from './TabContent'
 const { TabPane } = Tabs
 
 const ANALYTICS_TABS = styled.div`
-  background: #1e1e1e;
   padding: ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(4)} 6px;
   position: relative;
 
@@ -19,7 +18,6 @@ const ANALYTICS_TABS = styled.div`
     overflow: initial;
     > .ant-tabs-nav {
       margin-bottom: 0;
-      padding-left: 525px;
       border-bottom: 1px solid #575757;
       padding-bottom: 6px;
 
@@ -29,7 +27,17 @@ const ANALYTICS_TABS = styled.div`
 
       .ant-tabs-nav-wrap {
         overflow: initial;
-        justify-content: flex-start;
+        display: block;
+
+        .ant-tabs-nav-list {
+          position: relative;
+          display: flex;
+          justify-content: space-around;
+          transition: transform 0.3s;
+          width: 55%;
+          margin-left: auto;
+          padding-right: 21px;
+        }
       }
     }
   }
@@ -38,10 +46,6 @@ const ANALYTICS_TABS = styled.div`
     color: ${({ theme }) => theme.tabNameColor};
     font-size: 22px;
     font-family: Montserrat;
-
-    + .ant-tabs-tab {
-      margin: 0 0 0 230px;
-    }
 
     &.ant-tabs-tab-active {
       .ant-tabs-tab-btn {
@@ -66,6 +70,12 @@ const ANALYTICS_TABS = styled.div`
   }
 `
 
+// ${({ theme }) => theme.mediaWidth.upToLarge`
+//   justify-content: flex-end;
+// `};
+// ${({ theme }) => theme.mediaWidth.fromLarge`
+// justify-content: center;
+// `};
 const ANALYTICS_DROPDOWN = styled.div`
   position: absolute;
   left: 32px;
@@ -77,10 +87,9 @@ const ANALYTICS_DROPDOWN = styled.div`
   .title {
     font-size: 22px;
     font-weight: 600;
-    color: #fff;
+    color: ${({ theme }) => theme.text2};
     margin-bottom: 0;
     margin-right: ${({ theme }) => theme.margin(3)};
-    color: #fff;
   }
   .analytics-dropwdown {
     width: 136px;
