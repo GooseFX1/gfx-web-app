@@ -8,23 +8,6 @@ import CollectionCarousel from '../CollectionCarousel'
 import { useNFTCollections } from '../../../context'
 import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
 
-const BODY_NFT_HOME = styled.div`
-  width: 100%;
-  box-shadow: 0 7px 15px 9px rgba(13, 13, 13, 0.25);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: #333;
-`
-
-const SCROLLING_CONTENT = styled.div`
-  overflow-y: overlay;
-  width: 100%;
-  overflow-x: hidden;
-  position: relative;
-`
-
 const SCROLLING_CONTENT_100 = styled.div`
   overflow-y: overlay;
   width: 100%;
@@ -80,8 +63,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
         <CollectionCarousel
           collections={allCollections}
           collectionType={COLLECTION_TYPES.NFT_COLLECTION}
-          title="Populare Collections"
-          showTopArrow
+          title="Popular Collections"
           isLaunch
           isLoading={isAllLoading}
         />

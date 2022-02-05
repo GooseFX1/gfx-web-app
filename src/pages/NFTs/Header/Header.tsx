@@ -17,9 +17,8 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
   padding-bottom: ${({ theme }) => theme.margin(3)};
   padding-left: ${({ theme }) => theme.margin(4)};
   padding-right: ${({ theme }) => theme.margin(4)};
-  z-index: 5;
-  background: #1e1e1e;
   justify-content: space-between;
+  z-index: 5;
 
   .search-bar {
     width: 100%;
@@ -35,10 +34,10 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
     }
   }
   .categories {
-    height: 45px;
+    height: 40px;
     width: 150px;
     span {
-      font-weight: 500;
+      font-weight: 700;
       font-size: 15px;
     }
   }
