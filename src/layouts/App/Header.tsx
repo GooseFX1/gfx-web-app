@@ -1,10 +1,11 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import { Connect } from './Connect'
 import { More } from './More'
 import { Tabs } from './Tabs'
 import { useDarkMode } from '../../context'
 import { SVGToGrey2, CenteredDiv } from '../../styles'
+import { useNavCollapse } from '../../context'
 
 const BRAND = styled.a`
   position: absolute;
@@ -77,28 +78,33 @@ const WRAPPER = styled.nav`
 
 const CollapsibleWrapper = styled.div`
   position: absolute;
-  width: 48px;
-  height: 24px;
-  border-bottom-left-radius: 24px;
-  border-bottom-right-radius: 24px;
-  bottom: -24px;
+  width: 40px;
+  height: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  bottom: -20px;
   display: flex;
   justify-content: center;
-  align-items: center;
   background-color: ${({ theme }) => theme.bg3};
+  cursor: pointer;
+
+  img {
+    height: 10px;
+    width: 10px;
+  }
 `
 
 export const Header: FC = () => {
   const { mode } = useDarkMode()
-  const [collapse, setCollapse] = useState(true)
+  const { isCollapsed, toggleCollapse } = useNavCollapse()
 
   const handleCollapse = (val) => {
-    setCollapse(val)
+    toggleCollapse(val)
   }
 
   return (
     <WRAPPER id="menu">
-      {collapse && (
+      {!isCollapsed && (
         <>
           <BRAND href="/">
             <img
@@ -121,7 +127,7 @@ export const Header: FC = () => {
         </>
       )}
 
-      <Collapsible collapse={collapse} onCollapse={handleCollapse} />
+      <Collapsible collapse={isCollapsed} onCollapse={handleCollapse} />
     </WRAPPER>
   )
 }
@@ -142,9 +148,17 @@ const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => v
       }}
     >
       {mode === 'dark' ? (
-        <img style={{ transform: `rotate(${collapse ? 180 : 0}deg)` }} src={icon} alt="" />
+        <img
+          style={{ transform: `rotate(${collapse ? 180 : 0}deg)`, marginTop: `${collapse ? '2px' : '5px'}` }}
+          src={icon}
+          alt=""
+        />
       ) : (
-        <SVGToGrey2 style={{ transform: `rotate(${collapse ? 180 : 0}deg)` }} src={icon} alt="" />
+        <SVGToGrey2
+          style={{ transform: `rotate(${collapse ? 180 : 0}deg)`, marginTop: `${collapse ? '2px' : '5px'}` }}
+          src={icon}
+          alt=""
+        />
       )}
     </CollapsibleWrapper>
   )
