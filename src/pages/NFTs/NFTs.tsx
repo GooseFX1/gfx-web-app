@@ -1,5 +1,6 @@
 import React, { useEffect, FC } from 'react'
-import { useRouteMatch, Route, Switch } from 'react-router-dom'
+import { ILocationState } from '../../types/app_params.d'
+import { useRouteMatch, Route, Switch, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import NFTLandingPage from './Home/NFTHome'
 import { MyCreatedNFT } from './CreateNFT'
@@ -17,33 +18,23 @@ import {
   NFTProfileProvider,
   NFTCollectionProvider,
   NFTDetailsProvider,
+  useNavCollapse,
   ENDPOINTS,
   useConnectionConfig
 } from '../../context'
 import { notify } from '../../utils'
 
-const WRAPPER = styled.div`
-  color: ${({ theme }) => theme.text1};
-  display: flex;
-  flex: 1;
+const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
-  justify-content: center;
-  min-height: 0px;
-  min-width: 0px;
-  font-family: Montserrat;
-`
-
-const BODY_NFT = styled.div`
-  width: calc(100% - 8vw);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-`
-
-const SCROLLING_CONTENT = styled.div`
+  width: 100vw;
+  height: calc(100vh - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '160px')});
   overflow-y: scroll;
   overflow-x: hidden;
+
+  * {
+    font-family: Montserrat;
+  }
+  ${({ theme }) => theme.customScrollBar('6px')};
 `
 
 const SCROLLING_OVERLAY = styled.div`
@@ -52,76 +43,72 @@ const SCROLLING_OVERLAY = styled.div`
 `
 
 export const NFTs: FC = () => {
+  const { isCollapsed } = useNavCollapse()
+  const location = useLocation<ILocationState>()
   const { path } = useRouteMatch()
   const { endpoint, setEndpoint } = useConnectionConfig()
 
   useEffect(() => {
-    if (endpoint !== ENDPOINTS[1].endpoint) {
+    if (location.pathname === '/NFTs/create-single' && endpoint !== ENDPOINTS[1].endpoint) {
       notify({ message: `Switched to ${ENDPOINTS[1].network}` })
       setEndpoint(ENDPOINTS[1].endpoint)
+    } else if (endpoint !== ENDPOINTS[0].endpoint) {
+      setEndpoint(ENDPOINTS[0].endpoint)
     }
-  }, [endpoint, setEndpoint])
+  }, [location])
 
   return (
     <OverlayProvider>
-      <WRAPPER>
-        <NFTProfileProvider>
-          <NFTCollectionProvider>
-            <NFTDetailsProvider>
-              <BODY_NFT>
-                <Switch>
-                  <Route exact path={path}>
-                    <NFTLandingPage />
-                  </Route>
-                  <Route exact path={['/NFTs/profile', '/NFTs/profile/:userId']}>
-                    <SCROLLING_OVERLAY>
-                      <Profile />
-                    </SCROLLING_OVERLAY>
-                  </Route>
-                  <Route exact path="/NFTs/profile/explore">
-                    <SCROLLING_CONTENT>
-                      <Explore />
-                    </SCROLLING_CONTENT>
-                  </Route>
-                  <Route exact path="/NFTs/collection/:collectionId">
-                    <SCROLLING_OVERLAY>
-                      <Collection />
-                    </SCROLLING_OVERLAY>
-                  </Route>
-                  <Route exact path="/NFTs/live-auction/:nftId">
-                    <SCROLLING_OVERLAY>
-                      <LiveAuctionNFT />
-                    </SCROLLING_OVERLAY>
-                  </Route>
-                  <Route exact path="/NFTs/fixed-price/:nftId">
-                    <SCROLLING_OVERLAY>
-                      <FixedPriceNFT />
-                    </SCROLLING_OVERLAY>
-                  </Route>
-                  <Route exact path="/NFTs/open-bid/:nftId">
-                    <SCROLLING_CONTENT>
-                      <OpenBidNFT />
-                    </SCROLLING_CONTENT>
-                  </Route>
-                  <Route exact path="/NFTs/create">
-                    <Collectible />
-                  </Route>
-                  <Route exact path="/NFTs/create-single">
-                    <SCROLLING_OVERLAY>
-                      <UpLoadNFT />
-                    </SCROLLING_OVERLAY>
-                  </Route>
-                  <Route exact path="/NFTs/sell">
-                    <SCROLLING_OVERLAY>
-                      <LiveAuction />
-                    </SCROLLING_OVERLAY>
-                  </Route>
-                </Switch>
-              </BODY_NFT>
-            </NFTDetailsProvider>
-          </NFTCollectionProvider>
-        </NFTProfileProvider>
-      </WRAPPER>
+      <NFTProfileProvider>
+        <NFTCollectionProvider>
+          <NFTDetailsProvider>
+            <BODY_NFT $navCollapsed={isCollapsed}>
+              <Switch>
+                <Route exact path={path}>
+                  <NFTLandingPage />
+                </Route>
+                <Route exact path={['/NFTs/profile', '/NFTs/profile/:userId']}>
+                  <SCROLLING_OVERLAY>
+                    <Profile />
+                  </SCROLLING_OVERLAY>
+                </Route>
+                <Route exact path="/NFTs/profile/explore">
+                  <Explore />
+                </Route>
+                <Route exact path="/NFTs/collection/:collectionId">
+                  <SCROLLING_OVERLAY>
+                    <Collection />
+                  </SCROLLING_OVERLAY>
+                </Route>
+                <Route exact path="/NFTs/live-auction/:nftId">
+                  <SCROLLING_OVERLAY>
+                    <LiveAuctionNFT />
+                  </SCROLLING_OVERLAY>
+                </Route>
+                <Route exact path="/NFTs/fixed-price/:nftId">
+                  <SCROLLING_OVERLAY>
+                    <FixedPriceNFT />
+                  </SCROLLING_OVERLAY>
+                </Route>
+                <Route exact path="/NFTs/open-bid/:nftId">
+                  <OpenBidNFT />
+                </Route>
+                <Route exact path="/NFTs/create">
+                  <Collectible />
+                </Route>
+                <Route exact path="/NFTs/create-single">
+                  <UpLoadNFT />
+                </Route>
+                <Route exact path="/NFTs/sell">
+                  <SCROLLING_OVERLAY>
+                    <LiveAuction />
+                  </SCROLLING_OVERLAY>
+                </Route>
+              </Switch>
+            </BODY_NFT>
+          </NFTDetailsProvider>
+        </NFTCollectionProvider>
+      </NFTProfileProvider>
     </OverlayProvider>
   )
 }
