@@ -8,9 +8,13 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
   padding: ${theme.margin(3)};
   ${theme.largeBorderRadius}
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
-  background: rgb(30, 30, 30);
-  background: ${mode === 'dark' ? 'linear-gradient(0deg, rgba(0, 0, 0, 1) 3%, rgba(30, 30, 30, 1) 43%)' : theme.white};
-
+  padding-bottom: 45px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  background: ${
+    mode === 'dark' ? 'linear-gradient(0deg, rgba(19, 19, 19, 1) 17.43%, rgba(85, 50, 111, 1) 85.26%)' : theme.white
+  };
   .back-icon {
     position: absolute;
     top: 55px;
@@ -27,7 +31,7 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
   .avatar-profile-wrap {
     position: relative;
     width: 80px;
-    margin: 0 auto;
+    margin: 0 15px 0 15px;
     .avatar-profile {
       width: 80px;
       height: 80px;
@@ -63,11 +67,16 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
       display: inline-block;
       width: 35px;
       margin: 0 ${theme.margin(1)};
+      background: #2A2A2A;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     .social-item-yt {
       height: 35px;
       width: 35px;
-      background-color: #0d0d0d;
+      background-color: #2A2A2A;
       border-radius: 50%;
       display: flex;
       justify-content: center;
@@ -83,9 +92,13 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
     }
   }
   .action-wrap {
-    position: absolute;
-    top: 44px;
-    right: 21px;
+    width: 65%;
+    margin-left: 15%;
+    margin-bottom: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
     .btn-create {
       color: ${theme.white};
       background-color: #3735bb;
@@ -95,6 +108,10 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
       font-size: 13px;
       border: none;
       cursor: pointer;
+    }
+    .btn-create2 {
+      background-color: #bb3535;
+      margin-right: 10px;
     }
   }
 `}
