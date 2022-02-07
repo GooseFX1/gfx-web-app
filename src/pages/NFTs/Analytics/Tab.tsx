@@ -1,11 +1,13 @@
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Tabs } from 'antd'
 import { Categories } from '../../../components'
 import { mockAnalyticsDrodown } from './mockData'
-import { TabContent } from './TabContent'
-
+import TabContent from './TabContent'
+import { useNFTCollections } from '../../../context'
 const { TabPane } = Tabs
 
+//#region styles
 const ANALYTICS_TABS = styled.div`
   padding: ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(4)} 6px;
   position: relative;
@@ -70,12 +72,6 @@ const ANALYTICS_TABS = styled.div`
   }
 `
 
-// ${({ theme }) => theme.mediaWidth.upToLarge`
-//   justify-content: flex-end;
-// `};
-// ${({ theme }) => theme.mediaWidth.fromLarge`
-// justify-content: center;
-// `};
 const ANALYTICS_DROPDOWN = styled.div`
   position: absolute;
   left: 32px;
@@ -99,9 +95,16 @@ const ANALYTICS_DROPDOWN = styled.div`
     }
   }
 `
+//#endregion
 
-export const AnalyticsTabs = () => {
-  return (
+const AnalyticsTabs = () => {
+  const { allCollections } = useNFTCollections()
+
+  useEffect(() => {
+    console.log('recieved collections')
+  }, [allCollections])
+
+  return allCollections ? (
     <ANALYTICS_TABS>
       <ANALYTICS_DROPDOWN>
         <span className="title">Weekly Analytics</span>
@@ -109,15 +112,19 @@ export const AnalyticsTabs = () => {
       </ANALYTICS_DROPDOWN>
       <Tabs defaultActiveKey="1" centered>
         <TabPane tab="Floor" key="1">
-          <TabContent />
+          <TabContent collections={allCollections} collectionFilter={'floor'} />
         </TabPane>
         <TabPane tab="Volume" key="2">
-          <TabContent />
+          <TabContent collections={allCollections} collectionFilter={'volume'} />
         </TabPane>
         <TabPane tab="Listed NFT’S" key="3">
-          <TabContent />
+          <TabContent collections={allCollections} collectionFilter={'listed'} />
         </TabPane>
       </Tabs>
     </ANALYTICS_TABS>
+  ) : (
+    <div>loading...</div>
   )
 }
+
+export default AnalyticsTabs

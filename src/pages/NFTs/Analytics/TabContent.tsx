@@ -1,6 +1,10 @@
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Row, Col } from 'antd'
-import { useNFTCollections } from '../../../context'
+import { Skeleton } from 'antd'
+import { useHistory } from 'react-router-dom'
+import { NFTBaseCollection, NFTCollection } from '../../../types/nft_collections.d'
+import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
+import { nFormatter } from '../../../utils'
 
 const TAB_CONTENT = styled.div`
   padding: ${({ theme }) => `${theme.margin(4)}`} 32px 0;
@@ -23,6 +27,7 @@ const ANALYTIC_ITEM = styled.div`
     padding-left: ${({ theme }) => theme.margin(3.5)};
     text-align: left;
     overflow: hidden;
+    width: calc(100% - 100px);
   }
 
   .title {
@@ -44,6 +49,8 @@ const ANALYTIC_ITEM = styled.div`
   }
 
   .value {
+    display: flex;
+    align-items: center;
     font-size: 20px;
     margin-top: 11px;
     font-weight: 600;
@@ -74,41 +81,95 @@ const ANALYTIC_ITEM = styled.div`
   }
 `
 
-export const TabContent = () => {
-  const { allCollections } = useNFTCollections()
+interface ITabContent {
+  collections: NFTBaseCollection[]
+  collectionFilter: 'floor' | 'volume' | 'listed'
+}
+
+const TabContent = ({ collections, collectionFilter }: ITabContent) => {
   return (
     <TAB_CONTENT>
-      {allCollections.map((item, i) => (
-        <ANALYTIC_ITEM key={i}>
-          <img
-            className="analytic-image"
-            // @ts-ignore
-            src={item?.profile_pic_link}
-            alt=""
-          />
-          <div className="analytic-content">
-            <div style={{ position: 'relative' }}>
-              <h2 className="title">
-                {/* @ts-ignore */}
-                {item?.title}
-              </h2>
-              <img className="check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`} alt="" />
-            </div>
-            <div className="value">
-              1.96 SOL
-              <img className="sol-icon" src={`${process.env.PUBLIC_URL}/img/assets/SOL-icon.svg`} alt="" />
-            </div>
-            <div className="progress">
-              <img
-                className="progress-icon"
-                src={`${process.env.PUBLIC_URL}/img/assets/${i % 2 === 0 ? 'increase' : 'decrease'}-icon.svg`}
-                alt=""
-              />
-              <span className="percent">+ 1.15 %</span>
-            </div>
-          </div>
-        </ANALYTIC_ITEM>
-      ))}
+      {collections &&
+        collections.map((collection: NFTBaseCollection, i) => (
+          <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
+        ))}
     </TAB_CONTENT>
+  )
+}
+
+export default React.memo(TabContent)
+
+interface IAnalyticItem {
+  collection: NFTBaseCollection
+  collectionFilter: 'floor' | 'volume' | 'listed'
+}
+
+const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
+  const history = useHistory()
+  const [analyticData, setAnalyticData] = useState<NFTCollection>()
+
+  useEffect(() => {
+    fetchDetails()
+
+    return () => setAnalyticData(undefined)
+  }, [collection])
+
+  const fetchDetails = async () => {
+    try {
+      const res = await fetchSingleCollectionBySalesType(
+        NFT_API_ENDPOINTS.SINGLE_COLLECTION,
+        `${collection.collection_id}`
+      )
+      setAnalyticData(res.data)
+    } catch (error) {
+      console.error(`Error fetching collection details: ${collection.collection_name}`)
+    }
+  }
+
+  return (
+    <ANALYTIC_ITEM onClick={(e) => history.push(`/NFTs/collection/${collection.collection_id}`)}>
+      <img
+        className="analytic-image"
+        // @ts-ignore
+        src={collection.profile_pic_link}
+        alt="analytic-img"
+      />
+      <div className="analytic-content">
+        <div style={{ position: 'relative' }}>
+          <h2 className="title">
+            {/* @ts-ignore */}
+            {collection.title}
+          </h2>
+          <img className="check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`} alt="" />
+        </div>
+        <div className="value">
+          {analyticData ? (
+            <div>
+              {collectionFilter === 'floor' && (
+                <div>
+                  {analyticData.collection_floor ? nFormatter(analyticData.collection_floor) : '0'}
+                  <img className="sol-icon" src={`${process.env.PUBLIC_URL}/img/assets/SOL-icon.svg`} alt="" />
+                </div>
+              )}
+
+              {collectionFilter === 'volume' &&
+                (analyticData.collection_vol ? nFormatter(analyticData.collection_vol.weekly) : '0')}
+            </div>
+          ) : (
+            <Skeleton.Button active size="small" style={{ display: 'flex', height: '20px', width: '64px' }} />
+          )}
+        </div>
+        <div className="progress">
+          {analyticData ? (
+            <span>
+              <img className="progress-icon" src={`${process.env.PUBLIC_URL}/img/assets/increase-icon.svg`} alt="" />
+              <span className="percent">+ 1.15 %</span>
+            </span>
+          ) : (
+            <Skeleton.Button active size="small" style={{ display: 'flex', height: '20px' }} />
+          )}
+        </div>
+      </div>
+    </ANALYTIC_ITEM>
   )
 }
