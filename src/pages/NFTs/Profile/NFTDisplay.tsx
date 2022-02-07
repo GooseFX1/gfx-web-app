@@ -5,7 +5,7 @@ import { notify } from '../../../utils'
 
 import { Card } from './Card'
 import NoContent from './NoContent'
-import { SearchBar } from '../../../components'
+import { SearchBar, Loader } from '../../../components'
 import { StyledTabContent } from './TabContent.styled'
 import { useLocation } from 'react-router-dom'
 import { ILocationState } from '../../../types/app_params.d'
@@ -36,8 +36,6 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
       return undefined
     }
   }, [location])
-
-  console.log(newlyMintedNFT)
 
   useEffect(() => {
     if (props.data && props.data.length > 0) {
@@ -83,20 +81,28 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     <StyledTabContent>
       <div className="actions-group">
         <div className="search-group">
-          <SearchBar filter={search} setFilter={setSearch} />
-          <div className="total-result">
-            {filteredCollectedItems && filteredCollectedItems.length > 0 ? `${filteredCollectedItems.length}` : '0'}{' '}
-            Items
-          </div>
+          <SearchBar className={'profile-search-bar'} filter={search} setFilter={setSearch} />
         </div>
       </div>
       {!filteredCollectedItems ? (
-        <div>...Loading</div>
+        <div className="profile-content-loading">
+          <div>
+            <Loader />
+          </div>
+        </div>
       ) : filteredCollectedItems && filteredCollectedItems.length > 0 ? (
         <div className="cards-list">
-          {filteredCollectedItems.map((nftData: INFTMetadata, index: number) => (
-            <Card key={index} data={nftData} border={nftData.name === newlyMintedNFT?.name} />
-          ))}
+          {filteredCollectedItems.map((metaData: INFTMetadata, index: number) => {
+            const topLevelData = props.data.find((i: any) => i.data.name === metaData.name)
+            return (
+              <Card
+                key={index}
+                topLevelData={topLevelData}
+                metaData={metaData}
+                border={metaData.name === newlyMintedNFT?.name}
+              />
+            )
+          })}
         </div>
       ) : (
         <NoContent type={props.type} />
