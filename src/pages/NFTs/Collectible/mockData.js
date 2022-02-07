@@ -74,11 +74,6 @@ export const dataFormFixedRow2 = [
     type: 'input'
   }
 ]
-export const dataDonate = {
-  label: '5. Donate for charity',
-  desc: 'We will donate a percentage of the total price for people in need.',
-  percents: [0, 10, 20, 50, 100]
-}
 
 export const mockDataPicture = {
   text: 'Preview',
