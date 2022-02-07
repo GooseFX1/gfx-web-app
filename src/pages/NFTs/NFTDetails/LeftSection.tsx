@@ -1,7 +1,7 @@
 import { Col, Row } from 'antd'
-import { FC } from 'react'
+import { FC, useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
-import { useNFTDetails } from '../../../context'
+import { useNFTDetails, useNFTProfile } from '../../../context'
 import { TimePanel } from './RemainingPanel'
 import { ProgressPanel } from './ProgressPanel'
 import { NFTDetailsProviderMode } from '../../../types/nft_details'
@@ -58,14 +58,30 @@ const LEFT_SECTION = styled.div`
 `
 
 export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...rest }) => {
-  const { general, nftMetadata } = useNFTDetails()
+  const { general, nftMetadata, likeDislike, getLikesNFT } = useNFTDetails()
+  const [likes, setLikes] = useState(0)
+  const [liked, setLiked] = useState(false)
+  const { sessionUser } = useNFTProfile()
+  const { non_fungible_id, collection_id } = general
   const isFavorite = true
-  const hearts = 12
+  //const hearts = 12
   const remaining = {
     days: '10',
     hours: '2',
     minutes: '43'
   }
+
+  useEffect(() => {
+    getLikesNFT(sessionUser.user_id, non_fungible_id).then((res) => {
+      let nftLiked = res?.filter((k: any) => k.non_fungible_id == non_fungible_id && k.collection_id == collection_id)
+      setLikes(nftLiked?.length)
+      if (nftLiked.length > 0) {
+        setLiked(true)
+      } else {
+        setLiked(false)
+      }
+    })
+  }, [liked])
 
   const isShowReamingTime = mode === 'my-created-NFT' || mode === 'live-auction-NFT'
 
@@ -77,10 +93,28 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
           <Col>{isShowReamingTime && <div className="ls-end-text">Auction ends in:</div>}</Col>
           {mode !== 'mint-item-view' && (
             <Row align="middle">
-              {(isFavorite && <img className="ls-favorite-heart" src={`/img/assets/heart-red.svg`} alt="" />) || (
-                <img className="ls-favorite-heart" src={`/img/assets/heart-empty.svg`} alt="" />
+              {(liked && (
+                <img
+                  className="ls-favorite-heart"
+                  src={`/img/assets/heart-red.svg`}
+                  alt=""
+                  onClick={() => {
+                    likeDislike(sessionUser?.user_id, non_fungible_id)
+                    setLiked(false)
+                  }}
+                />
+              )) || (
+                <img
+                  className="ls-favorite-heart"
+                  src={`/img/assets/heart-empty.svg`}
+                  alt=""
+                  onClick={() => {
+                    likeDislike(sessionUser?.user_id, non_fungible_id)
+                    setLiked(true)
+                  }}
+                />
               )}
-              <span className={`ls-favorite-number ${isFavorite ? 'ls-favorite-number-highlight' : ''}`}>{hearts}</span>
+              <span className={`ls-favorite-number ${isFavorite ? 'ls-favorite-number-highlight' : ''}`}>{likes}</span>
             </Row>
           )}
         </Row>

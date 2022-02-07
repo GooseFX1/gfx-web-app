@@ -156,4 +156,7 @@ export interface INFTDetailsConfig {
   updateUserInput?: (params: any) => Promise<any>
   fetchUserInput?: () => Promise<any>
   sellNFT?: (params: any) => Promise<any>
+  getLikesNFT?: (user_id: any, nft_id: any) => Promise<any>
+  getLikesUser?: (user_id: number) => Promise<any>
+  likeDislike?: (user_id: number, nft_id: any) => Promise<any>
 }

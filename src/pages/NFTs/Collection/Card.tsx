@@ -1,7 +1,9 @@
 import { Row, Image } from 'antd'
+import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
 import { ISingleNFT } from '../../../types/nft_details.d'
+import { useNFTDetails } from '../../../context'
 
 const CARD = styled.div<{ status: string }>`
   padding-bottom: ${({ theme }) => theme.margin(1.5)};
@@ -147,9 +149,10 @@ type Props = {
   className?: string
   singleNFT: ISingleNFT
   tab?: string
+  userId?: number
 }
 
-export const Card = ({ singleNFT, tab, className, ...rest }: Props) => {
+export const Card = ({ singleNFT, tab, className, userId, ...rest }: Props) => {
   const localNFT = {
     ...singleNFT,
     price: 1499,
@@ -159,6 +162,22 @@ export const Card = ({ singleNFT, tab, className, ...rest }: Props) => {
     isFeatured: false,
     isFavorite: false
   }
+  const { likeDislike, getLikesNFT } = useNFTDetails()
+  const [likes, setLikes] = useState(0)
+  const [liked, setLiked] = useState(false)
+  const { non_fungible_id, collection_id } = singleNFT
+
+  useEffect(() => {
+    getLikesNFT(userId, non_fungible_id).then((res) => {
+      let nftLiked = res.filter((k: any) => k.non_fungible_id == non_fungible_id && k.collection_id == collection_id)
+      setLikes(nftLiked?.length)
+      if (nftLiked.length > 0) {
+        setLiked(true)
+      } else {
+        setLiked(false)
+      }
+    })
+  }, [liked])
 
   return (
     <CARD status={localNFT.status} {...rest}>
@@ -179,11 +198,29 @@ export const Card = ({ singleNFT, tab, className, ...rest }: Props) => {
           </Row>
           <Row align="middle">
             <Row align="middle" className="card-favorite">
-              {(localNFT.isFavorite && (
-                <img className="card-favorite-heart" src={`/img/assets/heart-red.svg`} alt="" />
-              )) || <img className="card-favorite-heart" src={`/img/assets/heart-empty.svg`} alt="" />}
+              {localNFT.isFavorite ? (
+                <img
+                  className="card-favorite-heart"
+                  src={`/img/assets/heart-red.svg`}
+                  alt=""
+                  onClick={() => {
+                    likeDislike(userId, non_fungible_id)
+                    setLiked(false)
+                  }}
+                />
+              ) : (
+                <img
+                  className="card-favorite-heart"
+                  src={`/img/assets/heart-empty.svg`}
+                  alt=""
+                  onClick={() => {
+                    likeDislike(userId, non_fungible_id)
+                    setLiked(true)
+                  }}
+                />
+              )}
               <span className={`card-favorite-number ${localNFT.isFavorite ? 'card-favorite-number-highlight' : ''}`}>
-                {localNFT.hearts}
+                {likes}
               </span>
             </Row>
           </Row>

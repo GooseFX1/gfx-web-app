@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
@@ -6,8 +6,7 @@ import { StyledCard } from './Card.styled'
 import { SellYourNFTView } from '../SellNFT/SellYourNFTView'
 import { INFTMetadata, ParsedNFTDetails } from '../../../types/nft_details.d'
 import { NFTDetails } from '../NFTDetails'
-import { useNFTDetails } from '../../../context'
-import { useConnectionConfig } from '../../../context'
+import { useNFTDetails, useNFTProfile } from '../../../context'
 
 const STYLED_MODAL = styled.div`
   ${({ theme }) => `
@@ -43,20 +42,36 @@ type ICard = {
 
 export const Card = ({ topLevelData, metaData, border, isExplore }: ICard) => {
   const history = useHistory()
+  const { sessionUser } = useNFTProfile()
   // const { connected, publicKey } = useWallet()
   // const { connection } = useConnectionConfig()
-  const { setGeneral, setNftMetadata } = useNFTDetails()
+  const { setGeneral, setNftMetadata, likeDislike, getLikesNFT } = useNFTDetails()
 
   const [visible, setVisible] = useState(false)
   const handleOk = () => setVisible(false)
   const handleCancel = () => setVisible(false)
   const [modalOpen, setModalOpen] = useState(false)
+  const [likes, setLikes] = useState(0)
+  const [liked, setLiked] = useState(false)
 
   const goMyCreatedNFT = () => {
     // if (['favorited', 'created'].includes('metaData.type')) history.push('/NFTs/profile/my-created-NFT')
     // if ('metaData.type' === 'collected') history.push('/NFTs/profile/my-own-NFT')
     return
   }
+
+  useEffect(() => {
+    getLikesNFT(sessionUser.user_id, null).then((res) => {
+      let nftLiked = res.filter((k: any) => k.non_fungible_id == null && k.collection_id == null)
+      setLikes(nftLiked?.length)
+      if (nftLiked.length > 0) {
+        setLiked(true)
+      } else {
+        setLiked(false)
+      }
+    })
+    //null is used to rep the non_fungible_id and collection_id at the moment for profile until a way to generate and get nft_id and collection_idis done
+  }, [liked])
 
   const handleLocateToDetails = () => {
     setGeneral({
@@ -88,18 +103,34 @@ export const Card = ({ topLevelData, metaData, border, isExplore }: ICard) => {
             {metaData.collection && <img className="check-icon" src={`/img/assets/check-icon.png`} alt="" />}
           </div>
 
-          {metaData.name === 'favorited' ? (
+          {metaData.name === 'favorited' || liked ? (
             <div className="like-group favorited-group">
-              <img className="heart-red" src={`/img/assets/heart-red.svg`} alt="" />
-              <span className="like-count">{metaData.name}</span>
+              <img
+                className="heart-red"
+                src={`/img/assets/heart-red.svg`}
+                alt=""
+                onClick={() => {
+                  likeDislike(sessionUser.user_id, null)
+                  setLiked(false)
+                }}
+              />
+              <span className="like-count">{likes}</span>
             </div>
           ) : (
             <div className="like-group">
               <>
                 {/* <img className="heart-purple" src={`/img/assets/heart-purple.svg`} alt="" /> */}
-                <img className="heart-empty" src={`/img/assets/heart-empty.svg`} alt="" />
+                <img
+                  className="heart-empty"
+                  src={`/img/assets/heart-empty.svg`}
+                  alt=""
+                  onClick={() => {
+                    likeDislike(sessionUser.user_id, null)
+                    setLiked(true)
+                  }}
+                />
               </>
-              <span className="like-count">0</span>
+              <span className="like-count">{likes}</span>
             </div>
           )}
           <div className="option">

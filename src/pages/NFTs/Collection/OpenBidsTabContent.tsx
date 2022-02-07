@@ -2,7 +2,7 @@ import { useState, useEffect, FC } from 'react'
 import { useHistory } from 'react-router'
 import styled, { css } from 'styled-components'
 import { Card } from './Card'
-import { useNFTCollections } from '../../../context'
+import { useNFTCollections, useNFTProfile } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { Loader } from '../../../components'
 
@@ -37,6 +37,8 @@ const WRAPPED_LOADER = styled.div`
 
 export const OpenBidsTabContent = ({ filter, ...rest }) => {
   const { openBidWithinCollection } = useNFTCollections()
+  const { sessionUser } = useNFTProfile()
+
   const history = useHistory()
   const [localOpenBid, setLocalOpenBid] = useState<Array<ISingleNFT>>()
   const [fileredLocalOpenBid, setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>()
@@ -75,7 +77,7 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
         <OPEN_BIDS_TAB {...rest}>
           {fileredLocalOpenBid.map((item: ISingleNFT) => (
             <div onClick={() => goToOpenBidDetails(item.non_fungible_id)}>
-              <Card key={item.non_fungible_id} singleNFT={item} tab="bid" />
+              <Card key={item.non_fungible_id} singleNFT={item} tab="bid" userId={sessionUser.user_id} />
             </div>
           ))}
         </OPEN_BIDS_TAB>
