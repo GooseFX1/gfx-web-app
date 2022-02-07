@@ -9,8 +9,8 @@ const NFTDetailsContext = createContext<INFTDetailsConfig | null>(null)
 
 export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [general, setGeneral] = useState<ISingleNFT>()
-  const [nftMintingData, setNftMintingData] = useState<IMetadataContext>()
   const [nftMetadata, setNftMetadata] = useState<INFTMetadata | null>()
+  const [nftMintingData, setNftMintingData] = useState<IMetadataContext>()
   const [asks, setAsks] = useState<Array<INFTAsk>>([])
   const [bids, setBids] = useState<Array<INFTBid>>([])
   const initialState = {
@@ -68,10 +68,11 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
           publicAddress: `${paramValue}`,
           connection: connection
         })
+        console.log(nfts, nftData)
 
-        var data = nfts.filter((i: any) => i.data.name == nftData?.name)[0]
+        var data = nfts.filter((i: any) => i.data.name === nftData?.name)[0]
         if (data) {
-          let singleNFT = {
+          setGeneral({
             non_fungible_id: data.key,
             nft_name: nftData?.name,
             nft_description: nftData?.description,
@@ -80,8 +81,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
             image_url: nftData?.image,
             animation_url: null,
             collection_id: null
-          }
-          setGeneral(singleNFT)
+          })
         }
         setNftMetadata(nftData)
       } catch (error) {
@@ -124,7 +124,9 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     <NFTDetailsContext.Provider
       value={{
         general,
+        setGeneral,
         nftMetadata,
+        setNftMetadata,
         bids,
         bidOnSingleNFT,
         asks,
@@ -150,7 +152,9 @@ export const useNFTDetails = (): INFTDetailsConfig => {
 
   return {
     general: context.general,
+    setGeneral: context.setGeneral,
     nftMetadata: context.nftMetadata,
+    setNftMetadata: context.setNftMetadata,
     bids: context.bids,
     bidOnSingleNFT: context.bidOnSingleNFT,
     asks: context.asks,
