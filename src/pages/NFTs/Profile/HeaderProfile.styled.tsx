@@ -76,7 +76,7 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
     .social-item-yt {
       height: 35px;
       width: 35px;
-      background-color: #2A2A2A;
+      background-color: #0D0D0D;
       border-radius: 50%;
       display: flex;
       justify-content: center;
