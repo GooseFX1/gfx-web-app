@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { StyledTableList } from './TableList.styled'
 
 import NoContent from './NoContent'
-import { SearchBar } from '../../../components'
+import { SearchBar, Loader } from '../../../components'
 import { StyledTabContent } from './TabContent.styled'
 // import { INFTMetadata } from '../../../types/nft_details.d'
 
@@ -84,12 +84,15 @@ const Activity = (props: IActivity) => {
     <StyledTabContent>
       <div className="actions-group">
         <div className="search-group">
-          <SearchBar />
-          <div className="total-result">{activity && activity.length > 0 ? `${activity.length}` : '0'} Items</div>
+          <SearchBar className={'profile-search-bar '} />
         </div>
       </div>
       {!activity ? (
-        <div>...Loading</div>
+        <div className="profile-content-loading">
+          <div>
+            <Loader />
+          </div>
+        </div>
       ) : activity.length > 0 ? (
         <StyledTableList columns={columns} dataSource={activity} pagination={false} bordered={false} />
       ) : (

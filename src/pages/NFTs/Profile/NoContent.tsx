@@ -3,8 +3,12 @@ import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 
 const NO_CONTENT = styled.div`
-  margin: 0 auto;
-  padding: 80px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100% - 44px);
+  text-align: center;
+
   .no-data-image {
     max-width: 160px;
     margin-bottom: 20px;
@@ -76,6 +80,9 @@ const NoContent = ({ type }: Props) => {
       case 'collected':
         history.push('/NFTs')
         break
+      case 'created':
+        history.push('/NFTs/create')
+        break
       default:
         console.error('Profile button issue')
     }
@@ -83,14 +90,16 @@ const NoContent = ({ type }: Props) => {
 
   return (
     <NO_CONTENT>
-      <img className="no-data-image" src={`/img/assets/${type}-no-data.png`} alt="" />
-      <div className="main-text">{obj.mainText}</div>
-      <div className="sub-text">{obj.subText}</div>
-      {obj.textButton && (
-        <button className="btn" style={{ background: obj.bgButton }} onClick={handleNoContentClick}>
-          {obj.textButton}
-        </button>
-      )}
+      <div>
+        <img className="no-data-image" src={`/img/assets/${type}-no-data.png`} alt="" />
+        <div className="main-text">{obj.mainText}</div>
+        <div className="sub-text">{obj.subText}</div>
+        {obj.textButton && (
+          <button className="btn" style={{ background: obj.bgButton }} onClick={handleNoContentClick}>
+            {obj.textButton}
+          </button>
+        )}
+      </div>
     </NO_CONTENT>
   )
 }

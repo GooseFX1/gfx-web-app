@@ -10,6 +10,8 @@ const CARD = styled.div<{ status: string }>`
 
   .card-image-wrapper {
     position: relative;
+    display: flex;
+    justify-content: center;
     width: fit-content;
     min-width: 190px;
     margin: 0 auto;

@@ -16,6 +16,11 @@ const WRAPPED_LOADER = styled.div`
   justify-content: center;
   align-items: center;
 `
+const PROFILE_CONTAINER = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`
 
 export const Profile: FC = (): JSX.Element => {
   // const params = useParams<IAppParams>()
@@ -59,9 +64,9 @@ export const Profile: FC = (): JSX.Element => {
   ) : err || !sessionUser ? (
     <h2>Something went wrong fetching user profile</h2>
   ) : (
-    <>
+    <PROFILE_CONTAINER>
       <HeaderProfile />
       <ContentProfile />
-    </>
+    </PROFILE_CONTAINER>
   )
 }

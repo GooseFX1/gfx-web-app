@@ -5,8 +5,16 @@ import { Tabs } from 'antd'
 const { TabPane } = Tabs
 
 const NFT_TAB = styled.div`
+  height: calc(68% + ${({ theme }) => theme.margin(6)});
   z-index: 3;
   margin-top: -${({ theme }) => theme.margin(6)};
+
+  .profile-tab-container,
+  .profile-tab-pane,
+  .ant-tabs-content {
+    height: 100%;
+  }
+
   .ant-tabs-ink-bar {
     display: none;
   }
@@ -53,9 +61,9 @@ type Props = {
 export const NFTTab = ({ tabPanes, isExplore, defaultActiveKey = '1' }: Props) => {
   return (
     <NFT_TAB>
-      <Tabs defaultActiveKey={defaultActiveKey} centered>
+      <Tabs defaultActiveKey={defaultActiveKey} centered className="profile-tab-container">
         {tabPanes.map((tab) => (
-          <TabPane tab={tab.name} key={tab.order}>
+          <TabPane tab={tab.name} key={tab.order} className="profile-tab-pane">
             {tab.component}
           </TabPane>
         ))}

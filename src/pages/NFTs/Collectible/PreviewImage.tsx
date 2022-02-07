@@ -55,6 +55,10 @@ const IMAGE_CONTAINER = styled.div`
     width: 140px;
     height: 140px;
   }
+  .url-preview {
+    width: 100%;
+    height: auto;
+  }
 `
 
 const PREVIEW_TEXT = MainText(styled.span`
@@ -82,12 +86,13 @@ const BOTTOM_INFO = styled.div`
 `
 
 interface Props {
-  file: any
+  file?: any
   status?: string
+  image_url?: string
 }
 
-const PreviewImage = ({ file, status }: Props) => {
-  const { nftMintingData } = useNFTDetails()
+const PreviewImage = ({ file, status, image_url }: Props) => {
+  const { nftMetadata, nftMintingData } = useNFTDetails()
   const { mode } = useDarkMode()
 
   useEffect(() => {
@@ -112,19 +117,25 @@ const PreviewImage = ({ file, status }: Props) => {
       ) : (
         <IMAGE_CONTAINER>
           <img
-            className="image-broken"
-            src={`/img/assets/nft-preview${mode !== 'dark' ? '-light' : ''}.svg`}
+            className={`${image_url ? 'url-preview' : 'image-broken'}`}
+            src={image_url ? image_url : `/img/assets/nft-preview${mode !== 'dark' ? '-light' : ''}.svg`}
             alt="nft-preview"
           />
         </IMAGE_CONTAINER>
       )}
       <BOTTOM_INFO>
-        <NAME_TEXT>{nftMintingData?.name || 'Name your item'}</NAME_TEXT>
-        <SUPPORT_TEXT>
-          {nftMintingData?.properties.maxSupply === 1
-            ? 'Single item 1/1'
-            : `Multiple items (${nftMintingData?.properties.maxSupply})`}
-        </SUPPORT_TEXT>
+        {image_url ? (
+          <NAME_TEXT>{nftMetadata?.name}</NAME_TEXT>
+        ) : (
+          <NAME_TEXT>{nftMintingData?.name || 'Name your item'}</NAME_TEXT>
+        )}
+        {!image_url && (
+          <SUPPORT_TEXT>
+            {nftMintingData?.properties.maxSupply === 1
+              ? 'Single item 1/1'
+              : `Multiple items (${nftMintingData?.properties.maxSupply})`}
+          </SUPPORT_TEXT>
+        )}
       </BOTTOM_INFO>
     </PREVIEW_CONTAINER>
   )

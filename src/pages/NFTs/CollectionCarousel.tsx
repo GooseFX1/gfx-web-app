@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { ArrowClicker, Loader } from '../../components'
 import { ButtonWrapper } from './NFTButton'
 import NFTImageCarouselItem from './NFTImageCarouselItem'
-import { NFTCollection, NFTFeaturedCollection, NFTUpcomingCollection } from '../../types/nft_collections.d'
+import { NFTBaseCollection, NFTFeaturedCollection, NFTUpcomingCollection } from '../../types/nft_collections.d'
 const CAROUSEL_WRAPPER = styled.div`
   display: flex;
   flex-direction: column;
@@ -85,7 +85,7 @@ const settings = {
 }
 
 export interface ICollectionCarousel {
-  collections: Array<NFTCollection | NFTFeaturedCollection | NFTUpcomingCollection>
+  collections: Array<NFTBaseCollection | NFTFeaturedCollection | NFTUpcomingCollection>
   collectionType: string
   isLoading: boolean
   isLaunch?: boolean
@@ -120,7 +120,7 @@ const CollectionCarousel: FC<ICollectionCarousel> = ({ isLaunch, title, collecti
       </HEADER_CAROUSEL>
       {collections.length > 0 ? (
         <Slider ref={slickRef} {...settings}>
-          {collections.map((item: NFTCollection | NFTFeaturedCollection | NFTUpcomingCollection, i: number) => (
+          {collections.map((item: NFTBaseCollection | NFTFeaturedCollection | NFTUpcomingCollection, i: number) => (
             <NFTImageCarouselItem key={i} item={item} type={collectionType} />
           ))}
         </Slider>

@@ -19,18 +19,19 @@ export const ContentProfile = ({ isExplore }: Props) => {
   const { connection } = useConnectionConfig()
 
   const [collectedItems, setCollectedItems] = useState<INFTMetadata[]>()
+  const [createdItems, setCreatedItems] = useState<INFTMetadata[]>()
 
   const tabPanes = useMemo(
     () => [
       {
         order: '1',
-        name: `Items (${collectedItems ? collectedItems.length : 0})`,
+        name: `My Collection (${collectedItems ? collectedItems.length : 0})`,
         component: <NFTDisplay data={collectedItems} type={'collected'} />
       },
       {
         order: '2',
-        name: 'Created',
-        component: <NFTDisplay data={[]} type={'created'} />
+        name: `Created (${createdItems ? createdItems.length : 0})`,
+        component: <NFTDisplay data={createdItems} type={'created'} />
       },
       {
         order: '3',
@@ -43,7 +44,7 @@ export const ContentProfile = ({ isExplore }: Props) => {
         component: <Activity data={userActivity ? userActivity : []} />
       }
     ],
-    [collectedItems, userActivity]
+    [collectedItems, createdItems, userActivity]
   )
 
   useEffect(() => {
@@ -54,11 +55,15 @@ export const ContentProfile = ({ isExplore }: Props) => {
   useEffect(() => {
     if (connected && publicKey) {
       fetchUserCollectedNFTs().then((topLevelUserNFTData: any) => {
-        console.log(topLevelUserNFTData)
         setCollectedItems(topLevelUserNFTData)
+        const userCreated = topLevelUserNFTData.filter((nft) =>
+          nft.data.creators.find((c) => c.address === publicKey.toBase58())
+        )
+        setCreatedItems(userCreated)
       })
     } else {
       setCollectedItems([])
+      setCreatedItems([])
     }
 
     return () => {}
