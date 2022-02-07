@@ -59,22 +59,6 @@ const STYLED_TEXTAREA = styled.textarea`
     outline-width: 0;
   }
 `
-const STYLED_TEXTAREA = styled.textarea`
-  height: 65px;
-  width: 100%;
-  border-radius: 10px;
-  background-color: ${({ theme }) => theme.inputBg};
-  padding: ${({ theme }) => `${theme.margin(1.5)}`};
-  border: none;
-  line-height: 22px;
-  ::placeholder {
-    color: #636363;
-    font-size: 12px;
-  }
-  &:focus {
-    outline-width: 0;
-  }
-`
 
 const InfoInput: FC<{
   placeholder: string
