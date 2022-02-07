@@ -4,16 +4,10 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import { StyledCard } from './Card.styled'
 import { SellYourNFTView } from '../SellNFT/SellYourNFTView'
-import { INFTMetadata } from '../../../types/nft_details.d'
+import { INFTMetadata, ParsedNFTDetails } from '../../../types/nft_details.d'
 import { NFTDetails } from '../NFTDetails'
 import { useNFTDetails } from '../../../context'
 import { useConnectionConfig } from '../../../context'
-
-type Props = {
-  data: INFTMetadata
-  border?: boolean
-  isExplore?: boolean
-}
 
 const STYLED_MODAL = styled.div`
   ${({ theme }) => `
@@ -40,85 +34,94 @@ z-index: 1000;
 `}
 `
 
-export const Card = ({ data, border, isExplore }: Props) => {
+type ICard = {
+  topLevelData: ParsedNFTDetails
+  metaData: INFTMetadata
+  border?: boolean
+  isExplore?: boolean
+}
+
+export const Card = ({ topLevelData, metaData, border, isExplore }: ICard) => {
   const history = useHistory()
+  // const { connected, publicKey } = useWallet()
+  // const { connection } = useConnectionConfig()
+  const { setGeneral, setNftMetadata } = useNFTDetails()
 
   const [visible, setVisible] = useState(false)
   const handleOk = () => setVisible(false)
   const handleCancel = () => setVisible(false)
   const [modalOpen, setModalOpen] = useState(false)
-  const { fetchExternalNFTs } = useNFTDetails()
-  const { connected, publicKey } = useWallet()
-  const { connection } = useConnectionConfig()
 
   const goMyCreatedNFT = () => {
-    // if (['favorited', 'created'].includes('data.type')) history.push('/NFTs/profile/my-created-NFT')
-    // if ('data.type' === 'collected') history.push('/NFTs/profile/my-own-NFT')
+    // if (['favorited', 'created'].includes('metaData.type')) history.push('/NFTs/profile/my-created-NFT')
+    // if ('metaData.type' === 'collected') history.push('/NFTs/profile/my-own-NFT')
     return
   }
 
-  const handleClickPrimaryButton = () => {
-    history.push('/NFTs/sell')
-  }
-
-  const openModal = async () => {
-    if (connected) {
-      await fetchExternalNFTs(publicKey, connection, data)
-      setModalOpen(true)
-    }
+  const handleLocateToDetails = () => {
+    setGeneral({
+      non_fungible_id: null,
+      nft_name: topLevelData.data.name,
+      nft_description: metaData.description,
+      mint_address: topLevelData.mint,
+      metadata_url: topLevelData.data.uri,
+      image_url: metaData.properties.files[0].uri,
+      animation_url: null,
+      collection_id: null
+    })
+    setNftMetadata(metaData)
+    setTimeout(() => history.push(`/NFTs/details/${topLevelData.mint}`), 100)
   }
 
   return (
     <>
       {modalOpen && (
         <STYLED_MODAL>
-          <NFTDetails mode="my-external-NFT" arbData={data} handleClickPrimaryButton={handleClickPrimaryButton} />
+          <NFTDetails mode="my-external-NFT" arbData={metaData} />
         </STYLED_MODAL>
       )}
-      <div className="card-item" onClick={() => openModal()}>
-        <StyledCard $border={border}>
-          <div className="card-image" style={{ backgroundImage: `url(${data.image})` }} onClick={goMyCreatedNFT} />
-          <div className="info">
-            <div className="name">{data.name}</div>
-            <div className="number">
-              {data.collection && <img className="check-icon" src={`/img/assets/check-icon.png`} alt="" />}
-            </div>
-
-            {data.name === 'favorited' ? (
-              <div className="like-group favorited-group">
-                <img className="heart-red" src={`/img/assets/heart-red.svg`} alt="" />
-                <span className="like-count">{data.name}</span>
-              </div>
-            ) : (
-              <div className="like-group">
-                <>
-                  {/* <img className="heart-purple" src={`/img/assets/heart-purple.svg`} alt="" /> */}
-                  <img className="heart-empty" src={`/img/assets/heart-empty.svg`} alt="" />
-                </>
-                <span className="like-count">0</span>
-              </div>
-            )}
-            <div className="option">
-              {isExplore ? (
-                <button className="buy-now-btn">Buy now</button>
-              ) : data.name === 'favorited' ? (
-                <div className="price-group">
-                  <span className="text">Last</span>
-                  <img className="price-image" src={`/img/assets/price.svg`} alt="" />
-                  <span className="price-number">35</span>
-                </div>
-              ) : [1, 2].includes(data.name.length) ? (
-                <button className="sell-now-btn" onClick={() => setVisible(true)}>
-                  Sell now
-                </button>
-              ) : (
-                <></>
-              )}
-            </div>
+      <StyledCard $border={border} onClick={handleLocateToDetails}>
+        <div className="card-image" style={{ backgroundImage: `url(${metaData.image})` }} onClick={goMyCreatedNFT} />
+        <div className="info">
+          <div className="name">{metaData.name}</div>
+          <div className="number">
+            {metaData.collection && <img className="check-icon" src={`/img/assets/check-icon.png`} alt="" />}
           </div>
-        </StyledCard>
-        <SellYourNFTView visible={visible} handleOk={handleOk} handleCancel={handleCancel} />
-      </div>
+
+          {metaData.name === 'favorited' ? (
+            <div className="like-group favorited-group">
+              <img className="heart-red" src={`/img/assets/heart-red.svg`} alt="" />
+              <span className="like-count">{metaData.name}</span>
+            </div>
+          ) : (
+            <div className="like-group">
+              <>
+                {/* <img className="heart-purple" src={`/img/assets/heart-purple.svg`} alt="" /> */}
+                <img className="heart-empty" src={`/img/assets/heart-empty.svg`} alt="" />
+              </>
+              <span className="like-count">0</span>
+            </div>
+          )}
+          <div className="option">
+            {isExplore ? (
+              <button className="buy-now-btn">Buy now</button>
+            ) : metaData.name === 'favorited' ? (
+              <div className="price-group">
+                <span className="text">Last</span>
+                <img className="price-image" src={`/img/assets/price.svg`} alt="" />
+                <span className="price-number">35</span>
+              </div>
+            ) : [1, 2].includes(metaData.name.length) ? (
+              <button className="sell-now-btn" onClick={() => setVisible(true)}>
+                Sell now
+              </button>
+            ) : (
+              <></>
+            )}
+          </div>
+        </div>
+      </StyledCard>
+      <SellYourNFTView visible={visible} handleOk={handleOk} handleCancel={handleCancel} />
     </>
   )
 }
