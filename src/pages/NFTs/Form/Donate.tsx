@@ -35,9 +35,10 @@ type Props = {
   label: string
   desc: string
   percents: Array<number>
+  selectPercentage: (num: number) => void
 }
 
-export const Donate = ({ label, desc, percents }: Props) => {
+export const Donate = ({ label, desc, percents, selectPercentage }: Props) => {
   return (
     <STYLED_DONATE align="middle">
       <Col span={12}>
@@ -47,7 +48,10 @@ export const Donate = ({ label, desc, percents }: Props) => {
       <Col span={12}>
         <div className="percents">
           {percents.map((per, index) => (
-            <div className={`item ${index === 0 ? 'active' : ''}`}>{`${per}%`}</div>
+            <div
+              className={`item ${index === 0 ? 'active' : ''}`}
+              onClick={(e) => selectPercentage(per)}
+            >{`${per}%`}</div>
           ))}
         </div>
       </Col>

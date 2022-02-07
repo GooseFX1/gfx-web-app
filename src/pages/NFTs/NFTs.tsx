@@ -4,9 +4,10 @@ import { useRouteMatch, Route, Switch, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import NFTLandingPage from './Home/NFTHome'
 import { MyCreatedNFT } from './CreateNFT'
+import { NFTDetails } from './NFTDetails'
 import { Collectible } from './Collectible'
 import { UpLoadNFT } from './Collectible/UpLoadNFT'
-import { LiveAuction } from './Collectible/LiveAuction'
+import { SellNFT } from './Collectible/SellNFT'
 import { Profile } from './Profile'
 import { Explore } from './Profile/Explore'
 import { Collection } from './Collection'
@@ -68,9 +69,7 @@ export const NFTs: FC = () => {
                   <NFTLandingPage />
                 </Route>
                 <Route exact path={['/NFTs/profile', '/NFTs/profile/:userId']}>
-                  <SCROLLING_OVERLAY>
-                    <Profile />
-                  </SCROLLING_OVERLAY>
+                  <Profile />
                 </Route>
                 <Route exact path="/NFTs/profile/explore">
                   <Explore />
@@ -79,6 +78,9 @@ export const NFTs: FC = () => {
                   <SCROLLING_OVERLAY>
                     <Collection />
                   </SCROLLING_OVERLAY>
+                </Route>
+                <Route exact path={['/NFTs/details', '/NFTs/details/:nftMintAddress']}>
+                  <NFTDetails />
                 </Route>
                 <Route exact path="/NFTs/live-auction/:nftId">
                   <SCROLLING_OVERLAY>
@@ -99,10 +101,8 @@ export const NFTs: FC = () => {
                 <Route exact path="/NFTs/create-single">
                   <UpLoadNFT />
                 </Route>
-                <Route exact path="/NFTs/sell">
-                  <SCROLLING_OVERLAY>
-                    <LiveAuction />
-                  </SCROLLING_OVERLAY>
+                <Route exact path="/NFTs/sell/:nftMintAddress">
+                  <SellNFT />
                 </Route>
               </Switch>
             </BODY_NFT>

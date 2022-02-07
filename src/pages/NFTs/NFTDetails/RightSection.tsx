@@ -98,6 +98,7 @@ const GRID_INFO = styled(Row)`
 
     .gi-item-thumbnail-wrapper {
       position: relative;
+      margin-right: ${theme.margin(1)};
 
       .gi-item-check-icon {
         position: absolute;
@@ -146,20 +147,21 @@ export const RightSection: FC<{
   handleClickPrimaryButton: () => void
 }> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
   const { general, nftMetadata } = useNFTDetails()
-  console.log({ nftMetadata, general })
   const creator = useMemo(() => {
-    if (nftMetadata?.properties?.creators?.length > 0) {
+    if (nftMetadata.collection) {
+      return nftMetadata.collection.name
+    } else if (nftMetadata?.properties?.creators?.length > 0) {
       const addr = nftMetadata?.properties?.creators?.[0]?.address
       return `${addr.substr(0, 4)}...${addr.substr(-4, 4)}`
     } else {
-      return nftMetadata.collection.name
+      return null
     }
   }, [nftMetadata])
 
   const price = 150
   const fiat = '21,900 USD aprox'
   const percent = '+ 1.15 %'
-  const isForCharity = true
+  const isForCharity = false
 
   const isMintItemView = mode === 'mint-item-view'
 
@@ -198,28 +200,26 @@ export const RightSection: FC<{
             </>
           )}
         </Col>
-        <Col span={6}>
+        <Col span={8}>
           {isForCharity && (
-            <Row align="middle">
-              <img src={`/img/assets/heart-charity.svg`} alt="" />
+            <Row align="middle" wrap={false}>
+              <img src={`/img/assets/heart-charity.svg`} alt="charity-icon" style={{ marginRight: '12px' }} />
               <div className="rs-charity-text">Auction for charity</div>
             </Row>
           )}
         </Col>
       </Row>
       <GRID_INFO justify="space-between">
-        {nftMetadata.collection && (
-          <Col className="gi-item">
-            <div className="gi-item-category-title">Creator</div>
-            <Row align="middle">
-              <div className="gi-item-thumbnail-wrapper">
-                <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-                <img className="gi-item-check-icon" src={`/img/assets/check-icon.png`} alt="" />
-              </div>
-              <div className="gi-item-title">{creator}</div>
-            </Row>
-          </Col>
-        )}
+        <Col className="gi-item">
+          <div className="gi-item-category-title">Creator</div>
+          <Row align="middle">
+            <div className="gi-item-thumbnail-wrapper">
+              <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
+              <img className="gi-item-check-icon" src={`/img/assets/check-icon.png`} alt="" />
+            </div>
+            <div className="gi-item-title">{creator}</div>
+          </Row>
+        </Col>
         {nftMetadata.collection && (
           <Col className="gi-item">
             <div className="gi-item-category-title">Collection</div>

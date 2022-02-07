@@ -4,12 +4,13 @@ import { Dropdown, Menu } from 'antd'
 export const StyledHeaderProfile = styled.div<{ mode?: string }>`
   ${({ theme, mode }) => `
   position: relative;
-  height: 260px;
+  height: 32%;
   padding: ${theme.margin(3)};
   ${theme.largeBorderRadius}
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
   background: rgb(30, 30, 30);
   background: ${mode === 'dark' ? 'linear-gradient(0deg, rgba(0, 0, 0, 1) 3%, rgba(30, 30, 30, 1) 43%)' : theme.white};
+
   .back-icon {
     position: absolute;
     top: 55px;

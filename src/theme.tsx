@@ -123,7 +123,7 @@ export function colors(mode: string): Colors {
     typePropertyColor: mode === 'dark' ? '#565656' : '#C7C7C7',
 
     // sell categories
-    sellTabBg: mode === 'dark' ? '#131313' : '#CACACA',
+    sellTabBg: mode === 'dark' ? 'rgba(42, 42, 42, 0.35)' : '#CACACA',
     sellTabActiveBg: mode === 'dark' ? '#131313' : '#404040',
 
     // time panel

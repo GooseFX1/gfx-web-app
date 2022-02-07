@@ -33,8 +33,6 @@ export interface IRemainingPanelData {
   minutes: string
 }
 
-export type NFTCreator = { address: string; share: number; verified?: boolean }
-
 export interface IMetadataContext {
   name: string
   symbol: string
@@ -48,9 +46,9 @@ export interface IMetadataContext {
   sellerFeeBasisPoints: number
 }
 
-export type NFTTopLevelNFTData = {
+export type ParsedNFTDetails = {
   data: {
-    creators: Array<NFTCreator>
+    creators: Array<Creator>
     name: string
     sellerFeeBasisPoints: number
     symbol: string
@@ -66,17 +64,6 @@ export type NFTTopLevelNFTData = {
   updateAuthority: string
 }
 
-export type ISingleNFT = {
-  non_fungible_id: number | null
-  nft_name: string
-  nft_description: string
-  mint_address: string
-  metadata_url: string
-  image_url: string | null
-  animation_url: string | null
-  collection_id: number | null
-}
-
 export type INFTMetadata = {
   name: string
   symbol: string
@@ -89,10 +76,21 @@ export type INFTMetadata = {
     files: Array<{ uri: string; type: string }>
     category: string
     maxSupply?: number
-    creators: Array<NFTCreator>
+    creators: Array<Creator>
   }
   collection?: { name: string; family: string }
   update_authority?: string
+}
+
+export type ISingleNFT = {
+  non_fungible_id: number | null
+  nft_name: string
+  nft_description: string
+  mint_address: string
+  metadata_url: string
+  image_url: string | null
+  animation_url: string | null
+  collection_id: number | null
 }
 
 export type INFTBid = {
@@ -145,7 +143,9 @@ export type MintItemViewStatus = '' | 'placed' | 'successful' | 'unsuccessful'
 
 export interface INFTDetailsConfig {
   general: ISingleNFT
+  setGeneral: Dispatch<SetStateAction<ISingleNFT>>
   nftMetadata: INFTMetadata
+  setNftMetadata: Dispatch<SetStateAction<INFTMetadata>>
   bids: Array<INFTBid>
   bidOnSingleNFT: any
   asks: Array<INFTAsk>
@@ -153,4 +153,7 @@ export interface INFTDetailsConfig {
   nftMintingData: IMetadataContext | undefined
   setNftMintingData: Dispatch<SetStateAction<IMetadataContext>>
   fetchExternalNFTs?: (param: any, connection: any, nft: INFTMetadata) => Promise<any>
+  updateUserInput?: (params: any) => Promise<any>
+  fetchUserInput?: () => Promise<any>
+  sellNFT?: (params: any) => Promise<any>
 }

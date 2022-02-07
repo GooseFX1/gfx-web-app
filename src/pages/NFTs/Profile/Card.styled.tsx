@@ -3,12 +3,14 @@ import styled from 'styled-components'
 export const StyledCard = styled.div<{ $border?: boolean }>`
   ${({ theme, $border }) => `
 border: ${$border ? '1px solid white' : 'none'};
-width: 100%;
-${theme.largeBorderRadius}
+width: 226px;
 background-color: #171717;
+margin: 0 24px 24px 0;
 padding: ${theme.margin(2)} ${theme.margin(2.5)};
+${theme.largeBorderRadius}
 cursor: pointer;
 z-index: 2;
+
 .card-image {
   width: 100%;
   height: 190px;
