@@ -5,14 +5,15 @@ import {
   IFixedPriceWithinCollection,
   NFTCollection,
   NFTFeaturedCollection,
-  NFTUpcomingCollection
+  NFTUpcomingCollection,
+  NFTBaseCollection
 } from '../types/nft_collections.d'
 import apiClient from '../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../api/NFTs'
 
 export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [singleCollection, setSingleCollection] = useState<NFTCollection>()
-  const [allCollections, setAllCollections] = useState<Array<NFTCollection>>([])
+  const [allCollections, setAllCollections] = useState<Array<NFTBaseCollection>>([])
   const [featuredCollections, setFeaturedCollections] = useState<Array<NFTFeaturedCollection>>([])
   const [upcomingCollections, setUpcomingCollections] = useState<Array<NFTUpcomingCollection>>([])
   const [fixedPriceWithinCollection, setFixedPriceWithinCollection] = useState<IFixedPriceWithinCollection>()
