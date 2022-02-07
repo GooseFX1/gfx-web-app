@@ -3,28 +3,30 @@ import { Row, Col } from 'antd'
 import styled from 'styled-components'
 
 export const STYLED_SELL_CATEGORY = styled(Row)`
-  margin-bottom: ${({ theme }) => theme.margin(3)};
+  margin-bottom: ${({ theme }) => theme.margin(5)};
 
   .item-wrap {
     display: flex;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
+
     .item-image {
       width: 114px;
       height: 114px;
       padding: ${({ theme }) => theme.margin(3.5)};
       background: ${({ theme }) => theme.sellTabBg};
       ${({ theme }) => theme.largeBorderRadius};
-      border: 1px solid rgba(255, 255, 255, 0.5);
+      border: 1px solid transparent;
       transition: all 0.3s ease;
+      opacity: 0.8;
+
       &.active {
         border-color: #fff;
-        background: ${({ theme }) => theme.sellTabActiveBg};
+        opacity: 1;
       }
       &:hover {
-        opacity: 0.8;
-        border-color: #fff;
+        opacity: 1;
       }
     }
     .item-text {
@@ -36,11 +38,11 @@ export const STYLED_SELL_CATEGORY = styled(Row)`
   }
 `
 
+// {
+//   icon: 'live-auction',
+//   name: 'Live auction'
+// },
 const dataCategories = [
-  {
-    icon: 'live-auction',
-    name: 'Live auction'
-  },
   {
     icon: 'open-bid',
     name: 'Open bid'
@@ -52,30 +54,25 @@ const dataCategories = [
 ]
 
 interface ICategory {
-  category?: number
-  setCategory?: (val: number) => void
+  category: string
+  setCategory: (val: string) => void
 }
 
 export const SellCategory = ({ category, setCategory }: ICategory) => {
   return (
-    <STYLED_SELL_CATEGORY justify="space-between">
-      {dataCategories
-        .map((i) => (i.name == 'Live auction' ? null : i))
-        .map(
-          (item, index) =>
-            item && (
-              <Col>
-                <div className="item-wrap" onClick={() => setCategory(index)}>
-                  <img
-                    className={`${index === category ? 'active' : ''} item-image`}
-                    src={`/img/assets/${item?.icon}.svg`}
-                    alt=""
-                  />
-                  <div className="item-text">{item?.name}</div>
-                </div>
-              </Col>
-            )
-        )}
+    <STYLED_SELL_CATEGORY gutter={[48, 0]}>
+      {dataCategories.map((item, index) => (
+        <Col>
+          <div className="item-wrap" onClick={() => setCategory(item.icon)}>
+            <img
+              className={`${item.icon === category ? 'active' : ''} item-image`}
+              src={`/img/assets/${item.icon}${item.icon === category ? '-active' : ''}.svg`}
+              alt={item.icon}
+            />
+            <div className="item-text">{item.name}</div>
+          </div>
+        </Col>
+      ))}
     </STYLED_SELL_CATEGORY>
   )
 }
