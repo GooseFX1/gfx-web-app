@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from 'react'
 import { UserFetchType } from '../context'
+import { INFTMetadata } from './nft_details.d'
 
 export interface INFTProfile {
   user_id: number
@@ -23,24 +24,6 @@ export interface INFTUserActivity {
   clock: string
   user_id: number
   non_fungible_id: number
-}
-
-export type INFTMetadata = {
-  name: string
-  symbol: string
-  description: string
-  seller_fee_basis_points: number
-  external_url: string
-  image: string
-  attributes: Array<IAttributesTabItemData>
-  properties: {
-    files: Array<{ uri: string; type: string }>
-    category: string
-    maxSupply?: number
-    creators: Array<NFTCreator>
-  }
-  collection?: { name: string; family: string }
-  update_authority?: string
 }
 
 export interface INFTProfileConfig {
