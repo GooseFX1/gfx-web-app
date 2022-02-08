@@ -44,14 +44,11 @@ const CARD = styled.div<{ status: string }>`
     text-align: left;
 
     .card-name {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 600;
+      color: ${({ theme }) => theme.text2};
       margin-right: ${({ theme }) => theme.margin(0.5)};
       font-family: Montserrat;
-    }
-
-    .card-price {
-      margin-bottom: 6px;
     }
 
     .card-featured-heart {
@@ -71,30 +68,19 @@ const CARD = styled.div<{ status: string }>`
     }
   }
 
+  .card-price {
+    margin-bottom: 6px;
+    color: ${({ theme }) => theme.text2} !important;
+  }
+
   ${({ status, theme }) => {
     return css`
       padding: ${theme.margin(2.5)};
       opacity: ${status === 'sold_out' ? 0.6 : 1};
-      background-color: #171717;
+      background-color: ${({ theme }) => theme.bg3};
 
       .card-remaining {
         display: none;
-      }
-
-      .card-name {
-        color: ${({ theme }) => theme.text7};
-      }
-
-      .card-price {
-        color: ${({ theme }) => theme.text8};
-      }
-
-      .card-name {
-        font-size: 16px;
-      }
-
-      .card-price {
-        font-size: 15px;
       }
 
       .card-info .card-favorite-number-highlight {
@@ -111,16 +97,6 @@ const CARD = styled.div<{ status: string }>`
 
       .card-favorite {
         display: ${status === 'sold_out' ? 'none' : 'inline-block'};
-      }
-
-      .card-name,
-      .card-price,
-      .card-remaining {
-        color: ${theme.white};
-      }
-
-      .card-info .card-favorite-number-highlight {
-        color: ${({ theme }) => theme.white};
       }
     `
   }}

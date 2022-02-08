@@ -89,7 +89,7 @@ const ANALYTICS_DROPDOWN = styled.div`
   }
   .analytics-dropwdown {
     width: 136px;
-    height: 40px;
+    height: 45px;
     span {
       font-size: 13px;
     }

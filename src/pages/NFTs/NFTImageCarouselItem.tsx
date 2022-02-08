@@ -18,6 +18,12 @@ const CAROUSEL_ITEM = styled.div<{ $url: string }>`
   background: linear-gradient(rgb(0 0 0 / 2%), rgb(0 0 0 / 65%)), ${({ $url }) => `url(${$url})`}, center;
   background-size: auto 120%;
   margin: 0 ${({ theme }) => theme.margin(4)};
+  cursor: pointer;
+
+  &:hover {
+    background: linear-gradient(rgb(0 0 0 / 2%), rgb(0 0 0 / 50%)), ${({ $url }) => `url(${$url})`}, center;
+    background-size: auto 120%;
+  }
 `
 
 const TITLE = styled.h3`
