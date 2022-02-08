@@ -9,7 +9,7 @@ const TRADING_HISTORY_TAB_CONTENT = styled.div`
     z-index: 2;
     width: 100%;
     height: 100%;
-    color: #fff;
+    color: ${theme.text2};
     font-size: 11px;
     font-weight: 500;
 
@@ -207,7 +207,7 @@ export const TradingHistoryTabContent: FC<{
       {mode == 'open-bid-NFT' ? (
         bids.length == 0 ? (
           <div className="thtc-not-found">
-            <h3>Open Bids</h3>
+            <p>Open Bids</p>
             <p>No bids so far, be the first to bid for this amazing piece.</p>
           </div>
         ) : (

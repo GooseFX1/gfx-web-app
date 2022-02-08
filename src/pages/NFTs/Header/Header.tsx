@@ -33,9 +33,11 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
       }
     }
   }
+
   .categories {
-    height: 40px;
-    width: 150px;
+    width: auto;
+    margin-left: ${({ theme }) => theme.margin(1.5)};
+
     span {
       font-weight: 700;
       font-size: 15px;
@@ -81,7 +83,7 @@ const CREATE = styled(ButtonWrapper)`
   height: 45px;
   width: 132px;
   background-color: ${({ theme }) => theme.secondary5};
-  margin-left: ${({ theme }) => theme.margin(2)};
+  margin-left: ${({ theme }) => theme.margin(1.5)};
   span {
     color: white;
   }
@@ -169,8 +171,7 @@ export const Header = ({ setFilter, filter }) => {
             onClick={goProfile}
           />
         )}
-        <SearchBar className="search-bar" setFilter={setFilter} filter={filter} />
-        <Categories categories={categories} className="categories" />
+        {/* <SearchBar className="search-bar" setFilter={setFilter} filter={filter} /> */}
       </AVATAR_WRAPPER>
       <BUTTON_SELECTION>
         {connected && publicKey ? (
@@ -193,6 +194,8 @@ export const Header = ({ setFilter, filter }) => {
             <span>Connect Wallet</span>
           </MainButton>
         )}
+        <Categories categories={categories} className="categories" />
+
         <Categories categories={coins} className="coins" />
       </BUTTON_SELECTION>
     </HEADER_WRAPPER>

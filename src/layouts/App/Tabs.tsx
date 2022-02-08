@@ -77,6 +77,12 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
           }
         `
       )}
+
+    &:first-child {
+      img {
+        height: 20px;
+      }
+    }
   }
 
   @media (max-width: 720px) {
@@ -116,9 +122,13 @@ export const Tabs: FC = () => {
               const icon = `/img/assets${path}_icon.svg`
 
               if (cleanedPathName === path || hovered === index) {
-                return mode === 'dark' ? <SVGToWhite src={icon} alt="" /> : <SVGToPrimary2 src={icon} alt="" />
+                return mode === 'dark' ? (
+                  <SVGToWhite src={icon} alt="gfx-tab-icon" />
+                ) : (
+                  <SVGToPrimary2 src={icon} alt="gfx-tab-icon" />
+                )
               } else {
-                return <SVGToGrey2 src={icon} alt="" />
+                return <SVGToGrey2 src={icon} alt="gfx-tab-icon" />
               }
             })()}
           </TAB_ICON>

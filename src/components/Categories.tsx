@@ -7,7 +7,7 @@ const WRAPPER = styled.button`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 50px;
+  height: 45px;
   width: 150px;
   border: none;
   ${({ theme }) => theme.roundedBorders}

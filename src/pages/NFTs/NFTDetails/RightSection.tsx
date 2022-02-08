@@ -192,7 +192,7 @@ export const RightSection: FC<{
         )}
       </Row>
       <Row justify="space-between" align="middle">
-        <Col span={16}>
+        <Col span={24}>
           {mode !== 'mint-item-view' && (
             <>
               <div className="rs-name">{general?.nft_name || nftMetadata?.name}</div>
@@ -200,7 +200,7 @@ export const RightSection: FC<{
             </>
           )}
         </Col>
-        <Col span={8}>
+        <Col span={24}>
           {isForCharity && (
             <Row align="middle" wrap={false}>
               <img src={`/img/assets/heart-charity.svg`} alt="charity-icon" style={{ marginRight: '12px' }} />
