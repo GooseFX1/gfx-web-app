@@ -1,25 +1,36 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react'
 import { INFTProfile, INFTUserActivity, INFTProfileConfig } from '../types/nft_profile.d'
-import { INFTMetadata } from '../types/nft_details.d'
 import apiClient from '../api'
-import axios from 'axios'
-import { useConnectionConfig } from '../context'
-import { getParsedNftAccountsByOwner } from '../web3'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
 
 export type UserFetchType = 'address' | 'user_id' | 'nickname'
 
+export const unnamedUser = {
+  user_id: null,
+  pubkey: '',
+  nickname: 'Unnamed',
+  email: '',
+  bio: '',
+  twitter_link: '',
+  instagram_link: '',
+  facebook_link: '',
+  youtube_link: '',
+  profile_pic_link: '',
+  is_verified: false,
+  user_likes: []
+}
+
 export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [sessionUser, setSessionUser] = useState<INFTProfile>()
   const [userActivity, setUserActivity] = useState<INFTUserActivity[]>([])
-  const [nftMetadata, setNftMetadata] = useState<INFTMetadata[]>([])
-  const { connection } = useConnectionConfig()
 
   const fetchSessionUser = useCallback(async (type: UserFetchType, parameter: string | number): Promise<any> => {
     try {
       const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SESSION_USER}?${type}=${parameter}`)
       if (res.data.length > 0) {
-        setSessionUser(res.data[0])
+        const tempUser = { ...res.data[0], user_likes: [] }
+        const userLikes = await fetchUserLikes(tempUser)
+        setSessionUser({ ...tempUser, user_likes: userLikes })
       } else {
         setUnamedUser(type, parameter)
       }
@@ -41,6 +52,40 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
+  const fetchUserLikes = useCallback(async (user: INFTProfile): Promise<any> => {
+    try {
+      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_USER_LIKES}?user_id=${user.user_id}`)
+      if (res.data.length > 0 && Array.isArray(res.data)) {
+        return res.data.map((nft) => nft.non_fungible_id)
+      } else {
+        return []
+      }
+    } catch (err) {
+      console.error(err)
+      return []
+    }
+  }, [])
+
+  const likeDislike = useCallback(async (user_id: number, nft_id: any): Promise<any> => {
+    try {
+      const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.LIKE}`, {
+        nft_id,
+        user_id
+      })
+
+      setSessionUser((prev) => ({
+        ...prev,
+        user_likes:
+          res.data.action === 'liked'
+            ? [...prev.user_likes, res.data.nft_id]
+            : prev.user_likes.filter((n) => n !== res.data.nft_id)
+      }))
+      return res
+    } catch (error) {
+      console.log(error)
+    }
+  }, [])
+
   const setUnamedUser = (type: UserFetchType, parameter: any) => {
     setSessionUser({
       user_id: type === 'user_id' ? parameter : null,
@@ -53,40 +98,10 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
       facebook_link: '',
       youtube_link: '',
       profile_pic_link: '',
-      is_verified: false
+      is_verified: false,
+      user_likes: []
     })
   }
-
-  const fetchNFTDetails = useCallback(async (nftData: any): Promise<INFTMetadata[]> => {
-    var data = Object.keys(nftData).map((key) => nftData[key])
-    let nfts = []
-    for (let i = 0; i < data.length; i++) {
-      try {
-        let val = await axios.get(data[i].data.uri)
-        nfts.push(val.data)
-      } catch (error) {
-        console.error(error)
-      }
-    }
-    return nfts
-  }, [])
-
-  const fetchExternalNFTs = useCallback(async (paramValue: string): Promise<any> => {
-    try {
-      const nfts = await getParsedNftAccountsByOwner({
-        publicAddress: `${paramValue}`,
-        connection: connection
-      })
-
-      let nftMetadata = await fetchNFTDetails(nfts)
-      setNftMetadata(nftMetadata)
-      return nfts
-    } catch (error) {
-      console.log(error)
-      setNftMetadata(null)
-      return null
-    }
-  }, [])
 
   return (
     <NFTProfileContext.Provider
@@ -97,8 +112,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         userActivity,
         setUserActivity,
         fetchUserActivity,
-        nftMetadata,
-        fetchExternalNFTs
+        likeDislike
       }}
     >
       {children}
@@ -121,7 +135,6 @@ export const useNFTProfile = (): INFTProfileConfig => {
     userActivity: context.userActivity,
     setUserActivity: context.setUserActivity,
     fetchUserActivity: context.fetchUserActivity,
-    nftMetadata: context.nftMetadata,
-    fetchExternalNFTs: context.fetchExternalNFTs
+    likeDislike: context.likeDislike
   }
 }
