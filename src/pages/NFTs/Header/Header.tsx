@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, MouseEventHandler } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useWalletModal } from '../../../context'
+import { useDarkMode, useWalletModal } from '../../../context'
 import { useHistory } from 'react-router-dom'
 import { Image } from 'antd'
 import { ButtonWrapper } from '../NFTButton'
@@ -113,6 +113,7 @@ export const Header = ({ setFilter, filter }) => {
   const [isFirstTimeUser, setIsFirstTimeUser] = useLocalStorageState(`sessionUserInit`, 'true')
   const [visibleCompletePopup, setVisibleCompletePopup] = useState<boolean>(false)
   const { setVisible: setModalVisible } = useWalletModal()
+  const { mode } = useDarkMode()
 
   useEffect(() => {
     if (connected && publicKey) {
@@ -165,7 +166,7 @@ export const Header = ({ setFilter, filter }) => {
       <AVATAR_WRAPPER>
         {connected && publicKey && (
           <AVATAR_NFT
-            fallback={`${window.origin}/img/assets/avatar.svg`}
+            fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
             src={sessionUser ? sessionUser.profile_pic_link : ''}
             preview={false}
             onClick={goProfile}
