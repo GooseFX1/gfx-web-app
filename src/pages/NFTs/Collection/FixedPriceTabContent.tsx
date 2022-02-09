@@ -54,7 +54,7 @@ export const FixedPriceTabContent: FC = ({ ...rest }) => {
         <FIXED_PRICE_TAB {...rest}>
           {fixedPriceWithinCollection.nft_data.map((item: ISingleNFT) => (
             <div onClick={() => goToFixedPriceDetails(item.non_fungible_id)}>
-              <Card key={item.non_fungible_id} singleNFT={item} tab="fixed" userId={sessionUser.user_id} />
+              <Card key={item.non_fungible_id} singleNFT={item} listingType="fixed" userId={sessionUser.user_id} />
             </div>
           ))}
         </FIXED_PRICE_TAB>
