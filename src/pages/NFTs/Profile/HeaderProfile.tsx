@@ -56,6 +56,14 @@ export const HeaderProfile = ({ isExplore }: Props) => {
     }
   }
 
+  const validExternalLink = (url: string): string => {
+    if (url.includes('https://') || url.includes('http://')) {
+      return url
+    } else {
+      return `https://${url}`
+    }
+  }
+
   return (
     <StyledHeaderProfile mode={mode}>
       <img
@@ -67,7 +75,7 @@ export const HeaderProfile = ({ isExplore }: Props) => {
       <div className="avatar-profile-wrap">
         <Image
           className="avatar-profile"
-          fallback={`/img/assets/avatar.svg`}
+          fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
           src={sessionUser.profile_pic_link}
           preview={false}
           alt={sessionUser.nickname}
@@ -79,7 +87,7 @@ export const HeaderProfile = ({ isExplore }: Props) => {
       <div>
         <div className="name-wrap">
           <span className="name">{sessionUser.nickname}</span>
-          {sessionUser.is_verified && (
+          {!sessionUser.is_verified && (
             <img
               className="check-icon"
               src={`/img/assets/check-icon.png`}
@@ -97,22 +105,42 @@ export const HeaderProfile = ({ isExplore }: Props) => {
             </CenteredDiv>
           )}
           {sessionUser.twitter_link && (
-            <a className="social-item" href={sessionUser.twitter_link} target={'_blank'} rel={'noreferrer'}>
+            <a
+              className="social-item"
+              href={validExternalLink(sessionUser.twitter_link)}
+              target={'_blank'}
+              rel={'noreferrer'}
+            >
               <img className="social-icon" src={`/img/assets/twitter.svg`} alt="" />
             </a>
           )}
           {sessionUser.instagram_link && (
-            <a className="social-item" href={sessionUser.instagram_link} target={'_blank'} rel={'noreferrer'}>
+            <a
+              className="social-item"
+              href={validExternalLink(sessionUser.instagram_link)}
+              target={'_blank'}
+              rel={'noreferrer'}
+            >
               <img className="social-icon" src={`/img/assets/instagram.svg`} alt="" />
             </a>
           )}
           {sessionUser.facebook_link && (
-            <a className="social-item" href={sessionUser.facebook_link} target={'_blank'} rel={'noreferrer'}>
+            <a
+              className="social-item"
+              href={validExternalLink(sessionUser.facebook_link)}
+              target={'_blank'}
+              rel={'noreferrer'}
+            >
               <img className="social-icon" src={`/img/assets/facebook.svg`} alt="" />
             </a>
           )}
           {sessionUser.youtube_link && (
-            <a className="social-item-yt" href={sessionUser.youtube_link} target={'_blank'} rel={'noreferrer'}>
+            <a
+              className="social-item-yt"
+              href={validExternalLink(sessionUser.youtube_link)}
+              target={'_blank'}
+              rel={'noreferrer'}
+            >
               <img className="social-icon" src={`/img/assets/youtube.png`} alt="" />
             </a>
           )}
