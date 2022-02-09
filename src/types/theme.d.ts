@@ -91,6 +91,7 @@ export interface Colors {
   // nft detail
   nftDetailBackground: Color
 
+  profileTabContainerBg: Color
   // tab content current bid
   tabContentBidBackground: Color
   tabContentBidFooterBackground: Color
