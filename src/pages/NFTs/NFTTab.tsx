@@ -5,14 +5,20 @@ import { Tabs } from 'antd'
 const { TabPane } = Tabs
 
 const NFT_TAB = styled.div`
-  height: calc(68% + ${({ theme }) => theme.margin(6)});
+  height: calc(50% + ${({ theme }) => theme.margin(6)});
   z-index: 3;
   margin-top: -${({ theme }) => theme.margin(6)};
 
   .profile-tab-container,
   .profile-tab-pane,
   .ant-tabs-content {
+    background: ${({ theme }) => theme.profileTabContainerBg};
     height: 100%;
+    border-radius: 20px 20px 0 0;
+
+    .ant-tabs-nav-wrap {
+      width: 50%;
+    }
   }
 
   .ant-tabs-ink-bar {
@@ -35,7 +41,7 @@ const NFT_TAB = styled.div`
       font-size: 17px;
     }
     + .ant-tabs-tab {
-      margin: 0 0 0 ${({ theme }) => theme.margin(7)};
+      margin: 0 ${({ theme }) => theme.margin(2)};
     }
     &.ant-tabs-tab-active {
       .ant-tabs-tab-btn {

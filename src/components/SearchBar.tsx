@@ -16,12 +16,12 @@ const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)`
     text-align: left;
     background-color: ${({ theme }) => theme.searchbarBackground};
     flex: 1;
-    color: white;
+    color: ${({ theme }) => theme.text1};
     font-family: 'Montserrat';
     border: none;
     outline: none;
     ::placeholder {
-      color: white;
+      color: ${({ theme }) => theme.text2};
     }
   }
 `

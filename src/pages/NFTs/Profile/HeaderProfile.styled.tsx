@@ -4,12 +4,18 @@ import { Dropdown, Menu } from 'antd'
 export const StyledHeaderProfile = styled.div<{ mode?: string }>`
   ${({ theme, mode }) => `
   position: relative;
-  height: 32%;
+  height: 50%;
   padding: ${theme.margin(3)};
-  ${theme.largeBorderRadius}
+  padding-bottom: ${theme.margin(8)};
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
-  background: rgb(30, 30, 30);
-  background: ${mode === 'dark' ? 'linear-gradient(0deg, rgba(0, 0, 0, 1) 3%, rgba(30, 30, 30, 1) 43%)' : theme.white};
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  background: ${
+    mode === 'dark'
+      ? 'linear-gradient(180deg, rgba(19, 19, 19, 1) 17.43%, rgba(85, 50, 111, 1) 85.26%)'
+      : 'linear-gradient(180deg, #eeeeee 17.43%, #C986FB 85.26%);'
+  };
 
   .back-icon {
     position: absolute;
@@ -24,10 +30,11 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
     };
     cursor: pointer;
   }
+
   .avatar-profile-wrap {
     position: relative;
     width: 80px;
-    margin: 0 auto;
+    margin: 0 15px 0 15px;
     .avatar-profile {
       width: 80px;
       height: 80px;
@@ -35,26 +42,28 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
     }
     .edit-icon {
       position: absolute;
-      width: 31px;
-      height: 31px;
+      width: 40px;
+      height: 40px;
       bottom: -5px;
       right: -1px;
       cursor: pointer;
     }
   }
   .name-wrap {
-    margin-top: ${theme.margin(1)};
-    ${theme.flexCenter}
+    display: flex;
+    align-items: start;
+    margin-left: ${theme.margin(1)};
   }
   .name {
     color: ${theme.text1};
-    font-size: 18px;
+    font-size: 35px;
+    font-weight: 600;
     display: inline-block;
     margin-right: ${theme.margin(1)};
   }
   .check-icon {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
   }
   .social-list {
     margin-top: ${theme.margin(2)};
@@ -63,11 +72,16 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
       display: inline-block;
       width: 35px;
       margin: 0 ${theme.margin(1)};
+      background: #2A2A2A;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     .social-item-yt {
       height: 35px;
       width: 35px;
-      background-color: #0d0d0d;
+      background-color: #0D0D0D;
       border-radius: 50%;
       display: flex;
       justify-content: center;
@@ -82,24 +96,31 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
       height: 35px;
     }
   }
-  .action-wrap {
-    position: absolute;
-    top: 44px;
-    right: 21px;
+  .action-wrap {    
+    margin-left: auto;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
     .btn-create {
       color: ${theme.white};
       background-color: #3735bb;
-      height: 41px;
+      height: 43px;
       min-width: 132px;
       ${theme.roundedBorders}
       font-size: 13px;
       border: none;
       cursor: pointer;
     }
+    .btn-create2 {
+      background-color: #bb3535;
+      margin-right: 10px;
+    }
   }
 `}
 `
 export const StyledDropdown = styled(Dropdown)`
+  height: auto;
   width: auto;
   padding: 0;
   border: none;

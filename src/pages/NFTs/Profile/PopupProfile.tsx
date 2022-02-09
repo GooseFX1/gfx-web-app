@@ -92,6 +92,11 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
         footer={null}
         maskClosable
         onCancel={onCancel}
+        closeIcon={
+          <div>
+            <img className="close-white-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+          </div>
+        }
       >
         {/* <div className="avatar-wrapper">
           <div className="image-group">
@@ -133,7 +138,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
             <div className="half-width">
               <Form.Item
                 name="nickname"
-                label="Creator Name"
+                label="Name"
                 rules={[{ required: true, message: 'Please input create name!' }]}
               >
                 <Input />
