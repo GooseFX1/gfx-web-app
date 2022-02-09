@@ -107,14 +107,7 @@ export const Header: FC = () => {
       {!isCollapsed && (
         <>
           <BRAND href="/">
-            <img
-              id="logo"
-              srcSet={`/img/assets/gfx_logo_gradient_${mode}@3x.webp 232w,
-               /img/assets/gfx_logo_gradient_${mode}@2x.webp 155w,
-               /img/assets/gfx_logo_gradient_${mode}.webp 78w`}
-              src={`/img/assets/gfx_logo_gradient_${mode}.webp`}
-              alt="GFX Logo"
-            />
+            <img id="logo" src={`/img/assets/gfx_logo_gradient.svg`} alt="GFX Logo" />
           </BRAND>
           <Tabs />
           <BUTTONS>
