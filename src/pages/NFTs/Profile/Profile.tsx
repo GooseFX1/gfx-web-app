@@ -6,8 +6,7 @@ import styled from 'styled-components'
 import { HeaderProfile } from './HeaderProfile'
 import { ContentProfile } from './ContentProfile'
 import { Loader } from '../../../components'
-import { useNFTProfile } from '../../../context'
-import { unnamedUser } from './unnamedUser'
+import { useNFTProfile, unnamedUser } from '../../../context'
 
 const WRAPPED_LOADER = styled.div`
   position: relative;
