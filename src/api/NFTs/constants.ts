@@ -14,5 +14,6 @@ export enum NFT_API_ENDPOINTS {
   SINGLE_NFT = '/nft',
   BID = '/bid',
   ASK = '/ask',
-  LIKE = '/like'
+  LIKE = '/like',
+  ALL_USER_LIKES = '/all-likes'
 }
