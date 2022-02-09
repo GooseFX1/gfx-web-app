@@ -1,12 +1,17 @@
+import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router'
 import { Row, Image } from 'antd'
 import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
 import { ISingleNFT } from '../../../types/nft_details.d'
+import { useNFTProfile, useNFTCollections, useNFTDetails } from '../../../context'
 
+//#region styles
 const CARD = styled.div<{ status: string }>`
   padding-bottom: ${({ theme }) => theme.margin(1.5)};
   border-radius: 15px;
   cursor: pointer;
+  width: 226px;
 
   .card-image-wrapper {
     position: relative;
@@ -38,6 +43,7 @@ const CARD = styled.div<{ status: string }>`
   }
 
   .card-info {
+    position: relative;
     height: 30px;
     margin-top: ${({ theme }) => theme.margin(2)};
     margin-bottom: ${({ theme }) => theme.margin(0.5)};
@@ -49,6 +55,14 @@ const CARD = styled.div<{ status: string }>`
       color: ${({ theme }) => theme.text2};
       margin-right: ${({ theme }) => theme.margin(0.5)};
       font-family: Montserrat;
+      width: 85%;
+      ${({ theme }) => theme.ellipse}
+    }
+
+    .card-favorite-heart-container {
+      position: absolute;
+      top: 0;
+      right: 0;
     }
 
     .card-featured-heart {
@@ -69,7 +83,6 @@ const CARD = styled.div<{ status: string }>`
   }
 
   .card-price {
-    margin-bottom: 6px;
     color: ${({ theme }) => theme.text2} !important;
   }
 
@@ -128,28 +141,17 @@ const CARD_BUTTON = styled.button<{ cardStatus: string }>`
     `
   }}
 `
-
-const getButtonText = (status: string, tabType: string): string => {
-  switch (tabType) {
-    case 'bid':
-    case 'auction':
-      if (status === 'sold_out') return 'Sold Out'
-      return 'Bid'
-    case 'fixed':
-      if (status === 'sold_out') return 'Sold Out'
-      return 'Buy Now'
-    default:
-      return 'Bid'
-  }
-}
+//#endregion
 
 type Props = {
   className?: string
   singleNFT: ISingleNFT
-  tab?: string
+  listingType?: string
+  userId?: number
 }
 
-export const Card = ({ singleNFT, tab, className, ...rest }: Props) => {
+export const Card = ({ singleNFT, listingType, className, userId, ...rest }: Props) => {
+  const history = useHistory()
   const localNFT = {
     ...singleNFT,
     price: 1499,
@@ -159,10 +161,53 @@ export const Card = ({ singleNFT, tab, className, ...rest }: Props) => {
     isFeatured: false,
     isFavorite: false
   }
+  const { sessionUser, likeDislike } = useNFTProfile()
+  const [isFavorite, setIsFavorited] = useState(false)
+  const { non_fungible_id } = singleNFT
+
+  useEffect(() => {
+    if (singleNFT && userId) {
+      setIsFavorited(sessionUser.user_likes.includes(non_fungible_id))
+    }
+  }, [sessionUser.user_likes])
+
+  const handleToggleLike = (e: any) => {
+    likeDislike(userId, non_fungible_id).then((res) => {
+      console.log(res)
+    })
+    setIsFavorited((prev) => !prev)
+  }
+
+  const goToDetails = (id: number): void => {
+    switch (listingType) {
+      case 'bid':
+        history.push(`/NFTs/open-bid/${id}`)
+        break
+      case 'fixed':
+        history.push(`/NFTs/fixed-price/${id}`)
+        break
+      default:
+        break
+    }
+  }
+
+  const getButtonText = (status: string, listingType: string): string => {
+    switch (listingType) {
+      case 'bid':
+      case 'auction':
+        if (status === 'sold_out') return 'Sold Out'
+        return 'Bid'
+      case 'fixed':
+        if (status === 'sold_out') return 'Sold Out'
+        return 'Buy Now'
+      default:
+        return 'Bid'
+    }
+  }
 
   return (
     <CARD status={localNFT.status} {...rest}>
-      <div className="card-image-wrapper">
+      <div className="card-image-wrapper" onClick={(e) => goToDetails(non_fungible_id)}>
         <Image
           fallback={`${window.origin}/img/assets/nft-preview.svg`}
           className="card-image"
@@ -175,23 +220,34 @@ export const Card = ({ singleNFT, tab, className, ...rest }: Props) => {
         <Row justify="space-between" align="middle">
           <Row align="middle">
             <div className="card-name">{localNFT.nft_name}</div>
-            {localNFT.isFeatured && <img className="card-featured-heart" src={`/img/assets/heart-purple.svg`} alt="" />}
-          </Row>
-          <Row align="middle">
-            <Row align="middle" className="card-favorite">
-              {(localNFT.isFavorite && (
-                <img className="card-favorite-heart" src={`/img/assets/heart-red.svg`} alt="" />
-              )) || <img className="card-favorite-heart" src={`/img/assets/heart-empty.svg`} alt="" />}
-              <span className={`card-favorite-number ${localNFT.isFavorite ? 'card-favorite-number-highlight' : ''}`}>
-                {localNFT.hearts}
-              </span>
-            </Row>
+            <span className="card-favorite-heart-container">
+              {isFavorite ? (
+                <img
+                  className="card-favorite-heart"
+                  src={`/img/assets/heart-red.svg`}
+                  alt="heart-selected"
+                  onClick={handleToggleLike}
+                />
+              ) : (
+                <img
+                  className="card-favorite-heart"
+                  src={`/img/assets/heart-empty.svg`}
+                  alt="heart-empty"
+                  onClick={handleToggleLike}
+                />
+              )}
+              {/* <span className={`card-favorite-number ${isFavorite ? 'card-favorite-number-highlight' : ''}`}>
+                {likes}
+              </span> */}
+            </span>
           </Row>
         </Row>
       </div>
       <Row justify="space-between" align="middle">
         <div className="card-price">{`${moneyFormatter(localNFT.price)} SOL`}</div>
-        <CARD_BUTTON cardStatus={localNFT.status}>{getButtonText(localNFT.status, tab)}</CARD_BUTTON>
+        <CARD_BUTTON cardStatus={localNFT.status} onClick={(e) => goToDetails(non_fungible_id)}>
+          {getButtonText(localNFT.status, listingType)}
+        </CARD_BUTTON>
       </Row>
     </CARD>
   )

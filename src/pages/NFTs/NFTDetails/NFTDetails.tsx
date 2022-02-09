@@ -58,7 +58,7 @@ export const NFTDetails: FC<{
   const setPrimaryButtonClick = useCallback(() => {
     return currentMode === 'my-external-NFT' && !handleClickPrimaryButton
       ? history.push(`/NFTs/sell/${general.mint_address}`)
-      : handleClickPrimaryButton
+      : handleClickPrimaryButton()
   }, [general])
 
   return (

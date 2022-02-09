@@ -148,16 +148,13 @@ export const HeaderProfile = ({ isExplore }: Props) => {
       </div>
 
       <div className="action-wrap">
-        {sessionUser.is_verified && (
-          <button onClick={() => history.push('/NFTs/sell')} className="btn-create btn-create2">
-            <span>Sell</span>
-          </button>
-        )}
-        {sessionUser.is_verified && (
-          <button className="btn-create" onClick={() => history.push('/NFTs/create')}>
-            <span>Create</span>
-          </button>
-        )}
+        <button onClick={() => history.push('/NFTs/sell')} className="btn-create btn-create2">
+          <span>Sell</span>
+        </button>
+
+        <button className="btn-create" onClick={() => history.push('/NFTs/create')}>
+          <span>Create</span>
+        </button>
 
         <StyledDropdown overlay={menu(setVisibleShareProfile)} trigger={['click']} placement="bottomRight" arrow>
           <Button>

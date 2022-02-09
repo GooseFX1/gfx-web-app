@@ -31,6 +31,10 @@ export const StyledCard = styled.div<{ $border?: boolean }>`
       color: ${theme.text1};
       font-size: 15px;
       font-family: Montserrat;
+      margin: 0 2px 0 0;
+      line-height: 1.3;
+      width: 87%;
+      ${theme.ellipse}
     }
     .name,
     .number {

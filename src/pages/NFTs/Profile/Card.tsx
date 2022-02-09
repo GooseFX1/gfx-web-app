@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
@@ -6,8 +6,7 @@ import { StyledCard } from './Card.styled'
 import { SellYourNFTView } from '../SellNFT/SellYourNFTView'
 import { INFTMetadata, ParsedNFTDetails } from '../../../types/nft_details.d'
 import { NFTDetails } from '../NFTDetails'
-import { useNFTDetails } from '../../../context'
-import { useConnectionConfig } from '../../../context'
+import { useNFTDetails, useNFTProfile } from '../../../context'
 
 const STYLED_MODAL = styled.div`
   ${({ theme }) => `
@@ -41,8 +40,10 @@ type ICard = {
   isExplore?: boolean
 }
 
+// TODO: associate `non_fungible_id`s for each nft from the api data with
 export const Card = ({ topLevelData, metaData, border, isExplore }: ICard) => {
   const history = useHistory()
+  const { sessionUser } = useNFTProfile()
   // const { connected, publicKey } = useWallet()
   // const { connection } = useConnectionConfig()
   const { setGeneral, setNftMetadata } = useNFTDetails()
@@ -50,15 +51,23 @@ export const Card = ({ topLevelData, metaData, border, isExplore }: ICard) => {
   const [visible, setVisible] = useState(false)
   const handleOk = () => setVisible(false)
   const handleCancel = () => setVisible(false)
-  const [modalOpen, setModalOpen] = useState(false)
+  // const [likes, setLikes] = useState(0)
+  // const [liked, setLiked] = useState(false)
 
-  const goMyCreatedNFT = () => {
-    // if (['favorited', 'created'].includes('metaData.type')) history.push('/NFTs/profile/my-created-NFT')
-    // if ('metaData.type' === 'collected') history.push('/NFTs/profile/my-own-NFT')
-    return
-  }
+  // useEffect(() => {
+  //   getLikesNFT(sessionUser.user_id, null).then((res) => {
+  //     let nftLiked = res.filter((k: any) => k.non_fungible_id == null && k.collection_id == null)
+  //     setLikes(nftLiked?.length)
+  //     if (nftLiked.length > 0) {
+  //       setLiked(true)
+  //     } else {
+  //       setLiked(false)
+  //     }
+  //   })
+  // }, [liked])
 
-  const handleLocateToDetails = () => {
+  const handleLocateToDetails = (e: any) => {
+    console.log(topLevelData)
     setGeneral({
       non_fungible_id: null,
       nft_name: topLevelData.data.name,
@@ -75,33 +84,53 @@ export const Card = ({ topLevelData, metaData, border, isExplore }: ICard) => {
 
   return (
     <>
-      {modalOpen && (
-        <STYLED_MODAL>
-          <NFTDetails mode="my-external-NFT" arbData={metaData} />
-        </STYLED_MODAL>
-      )}
-      <StyledCard $border={border} onClick={handleLocateToDetails}>
-        <div className="card-image" style={{ backgroundImage: `url(${metaData.image})` }} onClick={goMyCreatedNFT} />
+      <StyledCard $border={border}>
+        <div
+          className="card-image"
+          style={{ backgroundImage: `url(${metaData.image})` }}
+          onClick={handleLocateToDetails}
+        />
         <div className="info">
           <div className="name">{metaData.name}</div>
-          <div className="number">
-            {metaData.collection && <img className="check-icon" src={`/img/assets/check-icon.png`} alt="" />}
-          </div>
-
-          {metaData.name === 'favorited' ? (
+          {metaData.collection && (
+            <div className="name">
+              {Array.isArray(metaData.collection) ? metaData.collection[0].name : metaData.collection.name}{' '}
+              <span>
+                {metaData.collection && <img className="check-icon" src={`/img/assets/check-icon.png`} alt="" />}
+              </span>
+            </div>
+          )}
+          {/* <div className="number"></div> */}
+          {/* {liked ? (
             <div className="like-group favorited-group">
-              <img className="heart-red" src={`/img/assets/heart-red.svg`} alt="" />
-              <span className="like-count">{metaData.name}</span>
+              <img
+                className="heart-red"
+                src={`/img/assets/heart-red.svg`}
+                alt=""
+                onClick={() => {
+                  likeDislike(sessionUser.user_id, null)
+                  setLiked(false)
+                }}
+              />
+              <span className="like-count">{likes}</span>
             </div>
           ) : (
             <div className="like-group">
               <>
-                {/* <img className="heart-purple" src={`/img/assets/heart-purple.svg`} alt="" /> */}
-                <img className="heart-empty" src={`/img/assets/heart-empty.svg`} alt="" />
+                <img
+                  className="heart-empty"
+                  src={`/img/assets/heart-empty.svg`}
+                  alt=""
+                  onClick={() => {
+                    likeDislike(sessionUser.user_id, null)
+                    setLiked(true)
+                  }}
+                />
               </>
-              <span className="like-count">0</span>
+              <span className="like-count">{likes}</span>
             </div>
-          )}
+          )} */}
+
           <div className="option">
             {isExplore ? (
               <button className="buy-now-btn">Buy now</button>

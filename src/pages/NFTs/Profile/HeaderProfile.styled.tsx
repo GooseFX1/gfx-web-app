@@ -107,10 +107,11 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
       background-color: #3735bb;
       height: 43px;
       min-width: 132px;
-      ${theme.roundedBorders}
-      font-size: 13px;
+      font-size: 17px;
+      font-weight: 700;
       border: none;
       cursor: pointer;
+      ${theme.roundedBorders}
     }
     .btn-create2 {
       background-color: #bb3535;

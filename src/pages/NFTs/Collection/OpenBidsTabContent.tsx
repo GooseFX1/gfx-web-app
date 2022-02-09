@@ -1,8 +1,7 @@
 import { useState, useEffect, FC } from 'react'
-import { useHistory } from 'react-router'
 import styled, { css } from 'styled-components'
 import { Card } from './Card'
-import { useNFTCollections } from '../../../context'
+import { useNFTCollections, useNFTProfile } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { Loader } from '../../../components'
 
@@ -37,7 +36,8 @@ const WRAPPED_LOADER = styled.div`
 
 export const OpenBidsTabContent = ({ filter, ...rest }) => {
   const { openBidWithinCollection } = useNFTCollections()
-  const history = useHistory()
+  const { sessionUser } = useNFTProfile()
+
   const [localOpenBid, setLocalOpenBid] = useState<Array<ISingleNFT>>()
   const [fileredLocalOpenBid, setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>()
 
@@ -60,8 +60,6 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
     }
   }, [filter, localOpenBid])
 
-  const goToOpenBidDetails = (id: number): void => history.push(`/NFTs/open-bid/${id}`)
-
   // TODO: lazy loader for the thousands of nfts
   return (
     <WRAPPER>
@@ -74,9 +72,12 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
       ) : fileredLocalOpenBid.length > 0 ? (
         <OPEN_BIDS_TAB {...rest}>
           {fileredLocalOpenBid.map((item: ISingleNFT) => (
-            <div onClick={() => goToOpenBidDetails(item.non_fungible_id)}>
-              <Card key={item.non_fungible_id} singleNFT={item} tab="bid" />
-            </div>
+            <Card
+              key={item.non_fungible_id}
+              singleNFT={item}
+              listingType="bid"
+              userId={sessionUser ? sessionUser.user_id : undefined}
+            />
           ))}
         </OPEN_BIDS_TAB>
       ) : (

@@ -149,7 +149,7 @@ export const RightSection: FC<{
   const { general, nftMetadata } = useNFTDetails()
   const creator = useMemo(() => {
     if (nftMetadata.collection) {
-      return nftMetadata.collection.name
+      return Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection.name
     } else if (nftMetadata?.properties?.creators?.length > 0) {
       const addr = nftMetadata?.properties?.creators?.[0]?.address
       return `${addr.substr(0, 4)}...${addr.substr(-4, 4)}`
@@ -225,7 +225,9 @@ export const RightSection: FC<{
             <div className="gi-item-category-title">Collection</div>
             <Row align="middle">
               <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-              <div className="gi-item-title">{nftMetadata.collection.name}</div>
+              <div className="gi-item-title">
+                {Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection.name}
+              </div>
             </Row>
           </Col>
         )}

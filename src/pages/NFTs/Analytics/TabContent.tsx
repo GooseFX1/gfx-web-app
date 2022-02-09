@@ -46,7 +46,7 @@ const ANALYTIC_ITEM = styled.div`
     color: ${({ theme }) => theme.text2};
     font-size: 23px;
     font-weight: 500;
-    line-height: 1;
+    line-height: 1.3;
     width: 87%;
     ${({ theme }) => theme.ellipse};
   }
