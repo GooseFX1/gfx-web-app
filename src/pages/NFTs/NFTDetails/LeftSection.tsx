@@ -17,7 +17,7 @@ const LEFT_SECTION = styled.div`
 
     .ls-image {
       border-radius: 20px;
-      box-shadow: 4px 4px 12px 4px rgb(72 72 72 / 15%);
+      box-shadow: 3px 3px 14px 0px rgb(0 0 0 / 43%);
     }
 
     .ls-bottom-panel {
