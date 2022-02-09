@@ -58,12 +58,10 @@ const LEFT_SECTION = styled.div`
 `
 
 export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...rest }) => {
-  const { general, nftMetadata, likeDislike, getLikesNFT } = useNFTDetails()
-  const [likes, setLikes] = useState(0)
-  const [liked, setLiked] = useState(false)
-  const { sessionUser } = useNFTProfile()
-  const { non_fungible_id, collection_id } = general
-  const isFavorite = true
+  const { general, nftMetadata } = useNFTDetails()
+  const [isFavorite, setIsFavorited] = useState(false)
+  const { sessionUser, likeDislike } = useNFTProfile()
+  const { non_fungible_id } = general
   //const hearts = 12
   const remaining = {
     days: '10',
@@ -72,16 +70,17 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
   }
 
   useEffect(() => {
-    getLikesNFT(sessionUser.user_id, non_fungible_id).then((res) => {
-      let nftLiked = res?.filter((k: any) => k.non_fungible_id == non_fungible_id && k.collection_id == collection_id)
-      setLikes(nftLiked?.length)
-      if (nftLiked.length > 0) {
-        setLiked(true)
-      } else {
-        setLiked(false)
-      }
+    if (general && sessionUser) {
+      setIsFavorited(sessionUser.user_likes.includes(non_fungible_id))
+    }
+  }, [sessionUser.user_likes])
+
+  const handleToggleLike = (e: any) => {
+    likeDislike(sessionUser.user_id, non_fungible_id).then((res) => {
+      console.log(res)
     })
-  }, [liked])
+    setIsFavorited((prev) => !prev)
+  }
 
   const isShowReamingTime = mode === 'my-created-NFT' || mode === 'live-auction-NFT'
 
@@ -93,28 +92,22 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
           <Col>{isShowReamingTime && <div className="ls-end-text">Auction ends in:</div>}</Col>
           {mode !== 'mint-item-view' && (
             <Row align="middle">
-              {(liked && (
+              {isFavorite ? (
                 <img
                   className="ls-favorite-heart"
                   src={`/img/assets/heart-red.svg`}
-                  alt=""
-                  onClick={() => {
-                    likeDislike(sessionUser?.user_id, non_fungible_id)
-                    setLiked(false)
-                  }}
+                  alt="heart-red"
+                  onClick={handleToggleLike}
                 />
-              )) || (
+              ) : (
                 <img
                   className="ls-favorite-heart"
                   src={`/img/assets/heart-empty.svg`}
-                  alt=""
-                  onClick={() => {
-                    likeDislike(sessionUser?.user_id, non_fungible_id)
-                    setLiked(true)
-                  }}
+                  alt="heart-empty"
+                  onClick={handleToggleLike}
                 />
               )}
-              <span className={`ls-favorite-number ${isFavorite ? 'ls-favorite-number-highlight' : ''}`}>{likes}</span>
+              {/* <span className={`ls-favorite-number ${isFavorite ? 'ls-favorite-number-highlight' : ''}`}>{likes}</span> */}
             </Row>
           )}
         </Row>
