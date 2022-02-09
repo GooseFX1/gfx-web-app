@@ -78,7 +78,7 @@ export type INFTMetadata = {
     maxSupply?: number
     creators: Array<Creator>
   }
-  collection?: { name: string; family: string }
+  collection?: { name: string; family: string } | Array<{ name: string; family: string }>
   update_authority?: string
 }
 
