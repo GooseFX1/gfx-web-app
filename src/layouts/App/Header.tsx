@@ -131,7 +131,7 @@ const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => v
   const icon = `/img/assets/arrow-down.svg`
 
   const handleCollapse = () => {
-    onCollapse(!collapse)
+    // onCollapse(!collapse)
   }
 
   return (
