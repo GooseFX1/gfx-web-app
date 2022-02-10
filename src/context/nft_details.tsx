@@ -109,7 +109,6 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
   }, [])
 
   const sellNFT = useCallback(async (paramValue: any): Promise<any> => {
-    console.log(paramValue)
     try {
       const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.ASK}`, {
         ask: paramValue
@@ -117,6 +116,38 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
       return res
     } catch (error) {
       console.log(error)
+    }
+  }, [])
+
+  const likeDislike = useCallback(async (user_id: number, nft_id: any): Promise<any> => {
+    try {
+      const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.LIKE}`, {
+        nft_id,
+        user_id
+      })
+      return res
+    } catch (error) {
+      console.log(error)
+    }
+  }, [])
+
+  const getLikesUser = useCallback(async (user_id: number): Promise<any> => {
+    try {
+      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_LIKES}?user_id=${user_id}`)
+      return res?.data || []
+    } catch (error) {
+      console.log(error)
+      return []
+    }
+  }, [])
+
+  const getLikesNFT = useCallback(async (user_id: number, nft_id: any): Promise<any> => {
+    try {
+      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_LIKES}?user_id=${user_id}`)
+      return res?.data?.filter((i) => i.non_fungible_id == nft_id) || []
+    } catch (error) {
+      console.log(error)
+      return []
     }
   }, [])
 
@@ -136,7 +167,10 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         fetchExternalNFTs,
         updateUserInput,
         fetchUserInput,
-        sellNFT
+        sellNFT,
+        likeDislike,
+        getLikesUser,
+        getLikesNFT
       }}
     >
       {children}
@@ -164,6 +198,9 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     fetchExternalNFTs: context.fetchExternalNFTs,
     updateUserInput: context.updateUserInput,
     fetchUserInput: context.fetchUserInput,
-    sellNFT: context.sellNFT
+    sellNFT: context.sellNFT,
+    likeDislike: context.likeDislike,
+    getLikesUser: context.getLikesUser,
+    getLikesNFT: context.getLikesNFT
   }
 }

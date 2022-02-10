@@ -1,7 +1,7 @@
 import { Col, Row } from 'antd'
-import { FC } from 'react'
+import { FC, useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
-import { useNFTDetails } from '../../../context'
+import { useNFTDetails, useNFTProfile } from '../../../context'
 import { TimePanel } from './RemainingPanel'
 import { ProgressPanel } from './ProgressPanel'
 import { NFTDetailsProviderMode } from '../../../types/nft_details'
@@ -17,7 +17,7 @@ const LEFT_SECTION = styled.div`
 
     .ls-image {
       border-radius: 20px;
-      box-shadow: 4px 4px 12px 4px rgb(72 72 72 / 15%);
+      box-shadow: 3px 3px 14px 0px rgb(0 0 0 / 43%);
     }
 
     .ls-bottom-panel {
@@ -59,12 +59,27 @@ const LEFT_SECTION = styled.div`
 
 export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...rest }) => {
   const { general, nftMetadata } = useNFTDetails()
-  const isFavorite = true
-  const hearts = 12
+  const [isFavorite, setIsFavorited] = useState(false)
+  const { sessionUser, likeDislike } = useNFTProfile()
+  const { non_fungible_id } = general
+  //const hearts = 12
   const remaining = {
     days: '10',
     hours: '2',
     minutes: '43'
+  }
+
+  useEffect(() => {
+    if (general && sessionUser) {
+      setIsFavorited(sessionUser.user_likes.includes(non_fungible_id))
+    }
+  }, [sessionUser.user_likes])
+
+  const handleToggleLike = (e: any) => {
+    likeDislike(sessionUser.user_id, non_fungible_id).then((res) => {
+      console.log(res)
+    })
+    setIsFavorited((prev) => !prev)
   }
 
   const isShowReamingTime = mode === 'my-created-NFT' || mode === 'live-auction-NFT'
@@ -77,10 +92,22 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
           <Col>{isShowReamingTime && <div className="ls-end-text">Auction ends in:</div>}</Col>
           {mode !== 'mint-item-view' && (
             <Row align="middle">
-              {(isFavorite && <img className="ls-favorite-heart" src={`/img/assets/heart-red.svg`} alt="" />) || (
-                <img className="ls-favorite-heart" src={`/img/assets/heart-empty.svg`} alt="" />
+              {isFavorite ? (
+                <img
+                  className="ls-favorite-heart"
+                  src={`/img/assets/heart-red.svg`}
+                  alt="heart-red"
+                  onClick={handleToggleLike}
+                />
+              ) : (
+                <img
+                  className="ls-favorite-heart"
+                  src={`/img/assets/heart-empty.svg`}
+                  alt="heart-empty"
+                  onClick={handleToggleLike}
+                />
               )}
-              <span className={`ls-favorite-number ${isFavorite ? 'ls-favorite-number-highlight' : ''}`}>{hearts}</span>
+              {/* <span className={`ls-favorite-number ${isFavorite ? 'ls-favorite-number-highlight' : ''}`}>{likes}</span> */}
             </Row>
           )}
         </Row>

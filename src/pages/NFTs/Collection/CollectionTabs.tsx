@@ -30,14 +30,24 @@ const COLLECTION_TABS = styled.div`
     font-size: 18px;
     font-family: Montserrat;
 
-    + .ant-tabs-tab {
-      margin: 0 0 0 ${({ theme }) => `${theme.margin(7)}`};
-    }
-
     &.ant-tabs-tab-active {
       .ant-tabs-tab-btn {
         color: ${({ theme }) => theme.text7};
         font-weight: 600;
+        position: relative;
+        &:before {
+          position: absolute;
+          content: '';
+          height: 7px;
+          width: 130%;
+          bottom: -18px;
+          left: 50%;
+          background: rgba(88, 85, 255, 1);
+          z-index: 6;
+          display: inline-block;
+          border-radius: 8px 8px 0 0;
+          transform: translate(-50%, 0);
+        }
       }
     }
   }

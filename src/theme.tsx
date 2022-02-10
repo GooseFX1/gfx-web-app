@@ -92,7 +92,7 @@ export function colors(mode: string): Colors {
     tabsGradients: ['#3735bb', '#5232b9', '#672fb7', '#792cb4', '#8829b1', '#9625ae'],
     textBox: mode === 'dark' ? '#474747' : '#808080',
     walletModalWallet: mode === 'dark' ? '#1e1e1e' : '#e1e1e1',
-    searchbarBackground: mode === 'dark' ? '#1e1e1e' : '#ababab',
+    searchbarBackground: mode === 'dark' ? '#1e1e1e' : '#fff',
     searchbarSmallBackground: mode === 'dark' ? '#404040' : '#ababab',
     collectionHeader: mode === 'dark' ? 'linear-gradient(0, #131313 0%, transparent 100%)' : '#fff',
 
@@ -132,6 +132,7 @@ export function colors(mode: string): Colors {
     // nft detail
     nftDetailBackground: mode === 'dark' ? '#2a2a2a' : '#f4f4f4',
 
+    profileTabContainerBg: mode === 'dark' ? '#2A2A2A' : '#EEEEEE',
     // tab content current bid
     tabContentBidBackground: mode === 'dark' ? '#2A2A2A' : '#fff',
     tabContentBidFooterBackground:

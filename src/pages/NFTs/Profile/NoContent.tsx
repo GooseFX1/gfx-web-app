@@ -6,7 +6,7 @@ const NO_CONTENT = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: calc(100% - 44px);
+  height: calc(100% - 66px);
   text-align: center;
 
   .no-data-image {
@@ -82,6 +82,9 @@ const NoContent = ({ type }: Props) => {
         break
       case 'created':
         history.push('/NFTs/create')
+        break
+      case 'favorited':
+        history.push('/NFTs')
         break
       default:
         console.error('Profile button issue')

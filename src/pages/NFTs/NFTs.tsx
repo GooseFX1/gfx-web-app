@@ -93,7 +93,9 @@ export const NFTs: FC = () => {
                   </SCROLLING_OVERLAY>
                 </Route>
                 <Route exact path="/NFTs/open-bid/:nftId">
-                  <OpenBidNFT />
+                  <SCROLLING_OVERLAY>
+                    <OpenBidNFT />
+                  </SCROLLING_OVERLAY>
                 </Route>
                 <Route exact path="/NFTs/create">
                   <Collectible />

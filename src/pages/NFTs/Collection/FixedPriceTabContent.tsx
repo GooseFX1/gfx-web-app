@@ -2,7 +2,7 @@ import { useState, useEffect, FC } from 'react'
 import { useHistory } from 'react-router'
 import styled, { css } from 'styled-components'
 import { Card } from './Card'
-import { useNFTCollections } from '../../../context'
+import { useNFTCollections, useNFTProfile } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
 import { Loader } from '../../../components'
@@ -38,6 +38,7 @@ const WRAPPED_LOADER = styled.div`
 export const FixedPriceTabContent: FC = ({ ...rest }) => {
   const { fixedPriceWithinCollection } = useNFTCollections()
   const history = useHistory()
+  const { sessionUser } = useNFTProfile()
 
   const goToFixedPriceDetails = (id: number): void => history.push(`/NFTs/fixed-price/${id}`)
 
@@ -53,7 +54,7 @@ export const FixedPriceTabContent: FC = ({ ...rest }) => {
         <FIXED_PRICE_TAB {...rest}>
           {fixedPriceWithinCollection.nft_data.map((item: ISingleNFT) => (
             <div onClick={() => goToFixedPriceDetails(item.non_fungible_id)}>
-              <Card key={item.non_fungible_id} singleNFT={item} tab="fixed" />
+              <Card key={item.non_fungible_id} singleNFT={item} listingType="fixed" userId={sessionUser.user_id} />
             </div>
           ))}
         </FIXED_PRICE_TAB>

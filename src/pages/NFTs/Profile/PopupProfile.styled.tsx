@@ -2,6 +2,10 @@ import styled from 'styled-components'
 import { Modal, Form } from 'antd'
 
 export const StyledPopupProfile = styled(Modal)`
+  * {
+    font-family: 'Montserrat' !important;
+  }
+
   ${({ theme }) => `
   background: ${theme.bg3};
   ${theme.largeBorderRadius}

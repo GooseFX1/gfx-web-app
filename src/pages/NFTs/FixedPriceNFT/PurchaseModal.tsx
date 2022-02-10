@@ -143,8 +143,10 @@ export const PurchaseModal: FC<{ setVisible: (x: boolean) => void; visible: bool
     if (nftMetadata.properties.creators.length > 0) {
       const addr = nftMetadata.properties.creators[0].address
       return `${addr.substr(0, 4)}...${addr.substr(-4, 4)}`
+    } else if (nftMetadata.collection) {
+      return Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection.name
     } else {
-      return nftMetadata.collection.name
+      return null
     }
   }, [nftMetadata])
 

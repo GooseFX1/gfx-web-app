@@ -2,7 +2,7 @@ import { useState, useEffect, FC } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { Card } from './Card'
-import { useNFTCollections } from '../../../context'
+import { useNFTCollections, useNFTProfile } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
 import { Loader } from '../../../components'
@@ -41,6 +41,8 @@ const WRAPPED_LOADER = styled.div`
 export const LiveAuctionsTabContent: FC = ({ ...rest }) => {
   const { singleCollection } = useNFTCollections()
   const history = useHistory()
+  const { sessionUser } = useNFTProfile()
+
   const [localLiveAuction, setLocalLiveAuction] = useState<Array<ISingleNFT>>()
   const [err, setErr] = useState(false)
 
@@ -72,9 +74,7 @@ export const LiveAuctionsTabContent: FC = ({ ...rest }) => {
       ) : localLiveAuction.length > 0 ? (
         <LIVE_AUCTIONS_TAB {...rest}>
           {localLiveAuction.map((item: ISingleNFT) => (
-            <div onClick={() => goToLiveAuctionDetails(item.non_fungible_id)}>
-              <Card key={item.non_fungible_id} singleNFT={item} tab="auction" />
-            </div>
+            <Card key={item.non_fungible_id} singleNFT={item} listingType={'auction'} userId={sessionUser.user_id} />
           ))}
         </LIVE_AUCTIONS_TAB>
       ) : (

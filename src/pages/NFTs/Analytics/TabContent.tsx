@@ -12,10 +12,21 @@ const TAB_CONTENT = styled.div`
   flex-wrap: wrap;
 `
 const ANALYTIC_ITEM = styled.div`
-  width: 25%;
-  padding-right: ${({ theme }) => theme.margin(3)};
-  margin-bottom: ${({ theme }) => theme.margin(3)};
   display: flex;
+  width: 25%;
+  padding: ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(3)};
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.bg1};
+    border: 1px solid ${({ theme }) => theme.bg5};
+  }
+
+  * {
+    cursor: pointer;
+  }
 
   .analytic-image {
     width: 100px;
@@ -35,7 +46,7 @@ const ANALYTIC_ITEM = styled.div`
     color: ${({ theme }) => theme.text2};
     font-size: 23px;
     font-weight: 500;
-    line-height: 1;
+    line-height: 1.3;
     width: 87%;
     ${({ theme }) => theme.ellipse};
   }
@@ -159,7 +170,7 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
             <Skeleton.Button active size="small" style={{ display: 'flex', height: '20px', width: '64px' }} />
           )}
         </div>
-        <div className="progress">
+        {/* <div className="progress">
           {analyticData ? (
             <span>
               <img className="progress-icon" src={`${process.env.PUBLIC_URL}/img/assets/increase-icon.svg`} alt="" />
@@ -168,7 +179,7 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
           ) : (
             <Skeleton.Button active size="small" style={{ display: 'flex', height: '20px' }} />
           )}
-        </div>
+        </div> */}
       </div>
     </ANALYTIC_ITEM>
   )

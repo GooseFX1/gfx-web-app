@@ -14,20 +14,25 @@ export const StyledTabContent = styled.div`
   }
 
   ${({ theme }) => `
-    height: 100%;
-    padding: ${theme.margin(3)} ${theme.margin(5)} 0;
-    overflow-x: hidden;
-    overflow-y: scroll;
+    height: calc(100% + 66px);
+    margin-top: -66px;
+    padding: 0 ${theme.margin(5)};
     
     .actions-group {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-bottom:21px;
+      * {
+        z-index: 50;
+      }
     }
     
     .profile-search-bar {
       width: 430px;
+      padding: 12px 24px;
       margin-left: 0 !important;
+      z-index: 20;
       
       > div:nth-child(1) {
         height: 43px;
@@ -36,7 +41,9 @@ export const StyledTabContent = styled.div`
       }
       input {
         width: 277px;
-        font-size: 14px;
+        line-height: 21px;
+        height: 21px;
+        font-size: 17px;
       }
       .ant-image-img {
         width: 18px;
@@ -51,13 +58,14 @@ export const StyledTabContent = styled.div`
 
     .cards-list {
       position:relative;
+      height: calc(100% - 66px);
       display: flex;
       flex-wrap: wrap;
-      margin: ${theme.margin(4)} -${theme.margin(1.5)};
-      
+      padding: ${theme.margin(4)} 0;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      ${theme.customScrollBar('4px')};
     }
-    
-    ${theme.customScrollBar('4px')};
 
   `}
 `

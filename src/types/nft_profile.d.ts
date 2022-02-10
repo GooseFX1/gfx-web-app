@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction } from 'react'
 import { UserFetchType } from '../context'
-import { INFTMetadata } from './nft_details.d'
 
 export interface INFTProfile {
   user_id: number
@@ -14,6 +13,7 @@ export interface INFTProfile {
   youtube_link: null | string
   profile_pic_link: string
   is_verified: boolean
+  user_likes: number[]
 }
 
 export interface INFTUserActivity {
@@ -33,6 +33,5 @@ export interface INFTProfileConfig {
   userActivity: Array<INFTUserActivity>
   setUserActivity: Dispatch<SetStateAction<INFTUserActivity[]>>
   fetchUserActivity: (id: number) => Promise<any>
-  nftMetadata: Array<INFTMetadata>
-  fetchExternalNFTs: (address: string) => Promise<any>
+  likeDislike: Function
 }
