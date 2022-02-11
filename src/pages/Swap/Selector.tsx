@@ -14,6 +14,7 @@ const BODY = styled.div`
 const CLICKER = styled(SpaceBetweenDiv)`
   position: relative;
   width: 67%;
+  align-items: flex-start;
 
   > div > span {
     font-size: 16px;
@@ -29,11 +30,31 @@ const CLICKER = styled(SpaceBetweenDiv)`
     font-weight: 600;
   }
 `
+const MainTokenDisplay = styled.div`
+  height: 100%;
+  width: 85% !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`
+const Balance = styled.div`
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+`
 
 const CLICKER_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(2))}
+  ${({ theme }) => theme.measurements(theme.margin(4))}
   margin-left: ${({ theme }) => theme.margin(1)};
   ${({ theme }) => theme.roundedBorders}
+`
+
+const DropDownArrow = styled(ArrowClicker)<{ $token: string }>`
+  ${({ theme, $token }) => ($token ? `margin-top: ${theme.margin(1.5)};` : `align-self: center;`)}
+`
+
+const EmptyMessage = styled.span`
+  align-self: center;
 `
 
 const INPUT = styled.div`
@@ -119,7 +140,8 @@ export const Selector: FC<{
   otherToken: ISwapToken | null
   setToken: Dispatch<SetStateAction<ISwapToken | null>>
   token: ISwapToken | null
-}> = ({ height, otherToken, setToken, token }) => {
+  balance?: number
+}> = ({ height, otherToken, setToken, token, balance }) => {
   const { tokens } = useTokenRegistry()
   const [filterKeywords, setFilterKeywords] = useState('')
   const [filteredTokens, setFilteredTokens] = useState(tokens)
@@ -170,16 +192,19 @@ export const Selector: FC<{
       <SELECTOR $height={height} onClick={() => setVisible(true)}>
         <CLICKER>
           {token ? (
-            <SpaceBetweenDiv>
-              <span>{token.symbol}</span>
-              <CLICKER_ICON>
-                <img src={`/img/crypto/${token.symbol}.svg`} alt="" />
-              </CLICKER_ICON>
-            </SpaceBetweenDiv>
+            <MainTokenDisplay>
+              <SpaceBetweenDiv>
+                <span>{token.symbol}</span>
+                <CLICKER_ICON>
+                  <img src={`/img/crypto/${token.symbol}.svg`} alt="" />
+                </CLICKER_ICON>
+              </SpaceBetweenDiv>
+              <Balance>Balance: {balance}</Balance>
+            </MainTokenDisplay>
           ) : (
-            <span>Select a token</span>
+            <EmptyMessage>Select a token</EmptyMessage>
           )}
-          <ArrowClicker />
+          <DropDownArrow $token={token} />
         </CLICKER>
       </SELECTOR>
     </>

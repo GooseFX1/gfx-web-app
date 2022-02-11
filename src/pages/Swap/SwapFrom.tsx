@@ -69,7 +69,7 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
         )}
       </SpaceBetweenDiv>
       <AmountField $balance={balance} $height={height} $value={value || undefined}>
-        <Selector height={height} otherToken={tokenB} setToken={setTokenA} token={tokenA} />
+        <Selector balance={balance} height={height} otherToken={tokenB} setToken={setTokenA} token={tokenA} />
         <Input
           maxLength={15}
           onBlur={() => setFocused(undefined)}

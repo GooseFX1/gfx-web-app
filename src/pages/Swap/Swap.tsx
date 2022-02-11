@@ -6,7 +6,7 @@ import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
 import { Modal } from '../../components'
-import { useDarkMode, useSwap } from '../../context'
+import { useDarkMode, useSwap, SwapProvider } from '../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../styles'
 import { addAnalytics } from '../../utils'
 
@@ -142,9 +142,11 @@ const SwapContent: FC = () => {
 
 export const Swap: FC = () => {
   return (
-    <W>
-      <span>Coming Soon</span>
-    </W>
+    <SwapProvider>
+      <W>
+        <SwapContent />
+      </W>
+    </SwapProvider>
   )
 
   /* const { endpoint, setEndpoint } = useConnectionConfig()

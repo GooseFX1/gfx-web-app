@@ -21,6 +21,7 @@ export const SwapButton: FC = () => {
 
   const state = useMemo(() => {
     const { pools } = ADDRESSES[network]
+    console.log(pools, network)
 
     if (!wallet || !publicKey) {
       return State.Connect
