@@ -60,7 +60,7 @@ const COLLECTION_TABS = styled.div`
 
   .ant-tabs-tab {
     color: ${({ theme }) => theme.tabNameColor};
-    font-size: 22px;
+    font-size: 18px;
     font-family: Montserrat;
 
     &.ant-tabs-tab-active {
