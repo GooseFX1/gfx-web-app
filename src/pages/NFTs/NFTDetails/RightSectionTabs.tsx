@@ -8,6 +8,7 @@ import { AttributesTabContent } from './AttributesTabContent'
 import { getParsedAccountByMint, StringPublicKey } from '../../../web3'
 import { useConnectionConfig } from '../../../context'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const { TabPane } = Tabs
 
@@ -180,10 +181,14 @@ export const RightSectionTabs: FC<{
 }> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
   const [activeTab, setActiveTab] = useState('1')
   const { general, nftMetadata, bids } = useNFTDetails()
+
   const { mint_address } = general
   const { connection } = useConnectionConfig()
+  const { publicKey } = useWallet()
   const [nftOwner, setNFTOwner] = useState<string>()
   const [tokenAddres, setTokenAddress] = useState<string>()
+  const [own, setOwn] = useState(true)
+  //let owns = sessionUser.pubkey+"" == nftMetadata
 
   const nftData = useMemo(() => {
     return [
@@ -260,6 +265,11 @@ export const RightSectionTabs: FC<{
       }
     })
   }, [])
+
+  useEffect(() => {
+    setOwn(nftMetadata.properties.creators.map((i) => i.address).includes(publicKey + ''))
+    //TODO: make setMode so to change mode if the user owns the nft or not
+  }, [publicKey])
 
   const desc = {
     successful: [

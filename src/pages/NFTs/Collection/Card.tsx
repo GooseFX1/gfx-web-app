@@ -169,7 +169,7 @@ export const Card = ({ singleNFT, listingType, className, userId, ...rest }: Pro
     if (singleNFT && userId) {
       setIsFavorited(sessionUser.user_likes.includes(non_fungible_id))
     }
-  }, [sessionUser.user_likes])
+  }, [sessionUser?.user_likes])
 
   const handleToggleLike = (e: any) => {
     likeDislike(userId, non_fungible_id).then((res) => {

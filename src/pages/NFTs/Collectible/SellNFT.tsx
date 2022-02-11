@@ -10,6 +10,7 @@ import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../cont
 import { SellCategory } from '../SellCategory/SellCategory'
 import { FormDoubleItem } from '../Form/FormDoubleItem'
 import { notify } from '../../../utils'
+import { getParsedAccountByMint } from '../../../web3'
 import { dataFormRow2, dataFormFixedRow2, startingDays, expirationDays } from './mockData'
 import { Donate } from '../Form/Donate'
 import isEmpty from 'lodash/isEmpty'
@@ -103,6 +104,16 @@ const MESSAGE = styled.div`
   }
 `
 
+const LOADING = styled.div`
+  width: 100%;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  margin-top: 2rem;
+`
+
 const BUTTON = styled.button`
   display: block;
   min-width: 245px;
@@ -140,7 +151,7 @@ export const SellNFT = () => {
   const params = useParams<IAppParams>()
   const { general, nftMetadata, updateUserInput, sellNFT, fetchExternalNFTs } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
-  const { publicKey, connected } = useWallet()
+  const { publicKey } = useWallet()
   const { connection } = useConnectionConfig()
 
   const [form] = Form.useForm()
@@ -171,6 +182,17 @@ export const SellNFT = () => {
   }, [history.location, history.location.state])
 
   useEffect(() => {
+    async function getData() {
+      if (params.nftMintAddress && (!general || !nftMetadata)) {
+        let data = await getParsedAccountByMint({ mintAddress: params.nftMintAddress, connection })
+        await fetchExternalNFTs(data.account.data.parsed.info.owner, connection, null, params.nftMintAddress)
+      }
+    }
+
+    getData()
+  }, [])
+
+  useEffect(() => {
     if (category === 'fixed-price') {
       if (liveData?.minimumBid && liveData?.royalties) {
         setDisabled(false)
@@ -193,6 +215,24 @@ export const SellNFT = () => {
   }
 
   const confirmBid = async () => {
+    let owned = nftMetadata?.properties?.creators?.map((i) => i.address).includes(publicKey + '')
+    if (!owned) {
+      return notify({
+        type: 'error',
+        message: (
+          <MESSAGE>
+            <Row className="m-title" justify="space-between" align="middle">
+              <Col>NFT Listing error!</Col>
+              <Col>
+                <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+              </Col>
+            </Row>
+            <div>This NFT is not owned by this wallet.</div>
+          </MESSAGE>
+        )
+      })
+    }
+
     const sellObject = {
       clock: Date.now() + '', // string, not a number
       tx_sig: 'RANDOM_TX_SIG_HERE',
@@ -257,75 +297,79 @@ export const SellNFT = () => {
 
   return (
     <>
-      <UPLOAD_CONTENT>
-        <img
-          className="live-auction-back-icon"
-          src={`/img/assets/arrow.svg`}
-          alt="back"
-          onClick={() => history.goBack()}
-        />
-        <UPLOAD_FIELD_CONTAINER>
-          <UPLOAD_INFO_CONTAINER>
-            <SECTION_TITLE>1. Sale type</SECTION_TITLE>
-            <SellCategory setCategory={setCategory} category={category} />
+      {!general || !nftMetadata ? (
+        <LOADING>Loading...</LOADING>
+      ) : (
+        <UPLOAD_CONTENT>
+          <img
+            className="live-auction-back-icon"
+            src={`/img/assets/arrow.svg`}
+            alt="back"
+            onClick={() => history.goBack()}
+          />
+          <UPLOAD_FIELD_CONTAINER>
+            <UPLOAD_INFO_CONTAINER>
+              <SECTION_TITLE>1. Sale type</SECTION_TITLE>
+              <SellCategory setCategory={setCategory} category={category} />
 
-            <SECTION_TITLE>
-              {category === 'open-bid' && '2. Open Bid settings'}
-              {category === 'fixed-price' && '2. Fixed price settings'}
-            </SECTION_TITLE>
-            <STYLED_FORM form={form} layout="vertical" initialValues={{}}>
-              {category === '0' && (
-                <>
-                  <FormDoubleItem startingDays={startingDays} expirationDays={expirationDays} className="mb-3x" />
-                  <FormDoubleItem data={dataFormRow2} className="mb-3x" onChange={onChange} />
-                </>
-              )}
-              {category === 'open-bid' && (
-                <div>
-                  <FormDoubleItem
-                    data={[
-                      {
-                        label: 'Minimum bid',
-                        name: 'minimumBid',
-                        defaultValue: '',
-                        placeholder: 'Enter minimum bid',
-                        hint: (
-                          <div>
-                            Bids below the minimum wont <div>be accepted</div>
-                          </div>
-                        ),
-                        unit: 'SOL',
-                        type: 'input'
-                      }
-                    ]}
-                    className="mb-3x"
-                    onChange={onChange}
-                  />
+              <SECTION_TITLE>
+                {category === 'open-bid' && '2. Open Bid settings'}
+                {category === 'fixed-price' && '2. Fixed price settings'}
+              </SECTION_TITLE>
+              <STYLED_FORM form={form} layout="vertical" initialValues={{}}>
+                {category === '0' && (
+                  <>
+                    <FormDoubleItem startingDays={startingDays} expirationDays={expirationDays} className="mb-3x" />
+                    <FormDoubleItem data={dataFormRow2} className="mb-3x" onChange={onChange} />
+                  </>
+                )}
+                {category === 'open-bid' && (
+                  <div>
+                    <FormDoubleItem
+                      data={[
+                        {
+                          label: 'Minimum bid',
+                          name: 'minimumBid',
+                          defaultValue: '',
+                          placeholder: 'Enter minimum bid',
+                          hint: (
+                            <div>
+                              Bids below the minimum wont <div>be accepted</div>
+                            </div>
+                          ),
+                          unit: 'SOL',
+                          type: 'input'
+                        }
+                      ]}
+                      className="mb-3x"
+                      onChange={onChange}
+                    />
 
-                  <STYLED_DESCRIPTION>
-                    Open bids are open to any amount and they will be closed after a scuccessful bid agreement or if the
-                    creator decides to remove it.
-                  </STYLED_DESCRIPTION>
-                </div>
-              )}
-              {category === 'fixed-price' && (
-                <FormDoubleItem data={dataFormFixedRow2} className="mb-3x" onChange={onChange} />
-              )}
-              {/* <Donate
-                {...dataDonate}
-                label={`${category === 'open-bid' ? '3.' : '4.'} Donate for charity`}
-                selectPercentage={handleSelectPercentage}
-              /> */}
-            </STYLED_FORM>
-          </UPLOAD_INFO_CONTAINER>
-          <PREVIEW_UPLOAD_CONTAINER>
-            <PreviewImage image_url={nftMetadata.properties.files[0].uri} />
-            <div>
-              <BUTTON onClick={(e) => confirmBid()}>Sell item</BUTTON>
-            </div>
-          </PREVIEW_UPLOAD_CONTAINER>
-        </UPLOAD_FIELD_CONTAINER>
-      </UPLOAD_CONTENT>
+                    <STYLED_DESCRIPTION>
+                      Open bids are open to any amount and they will be closed after a scuccessful bid agreement or if
+                      the creator decides to remove it.
+                    </STYLED_DESCRIPTION>
+                  </div>
+                )}
+                {category === 'fixed-price' && (
+                  <FormDoubleItem data={dataFormFixedRow2} className="mb-3x" onChange={onChange} />
+                )}
+                {/* <Donate
+              {...dataDonate}
+              label={`${category === 'open-bid' ? '3.' : '4.'} Donate for charity`}
+              selectPercentage={handleSelectPercentage}
+            /> */}
+              </STYLED_FORM>
+            </UPLOAD_INFO_CONTAINER>
+            <PREVIEW_UPLOAD_CONTAINER>
+              <PreviewImage image_url={nftMetadata?.properties?.files?.[0]?.uri} />
+              <div>
+                <BUTTON onClick={(e) => confirmBid()}>Sell item</BUTTON>
+              </div>
+            </PREVIEW_UPLOAD_CONTAINER>
+          </UPLOAD_FIELD_CONTAINER>
+        </UPLOAD_CONTENT>
+      )}
     </>
   )
 }

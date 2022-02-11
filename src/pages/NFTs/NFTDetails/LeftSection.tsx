@@ -61,7 +61,8 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
   const { general, nftMetadata } = useNFTDetails()
   const [isFavorite, setIsFavorited] = useState(false)
   const { sessionUser, likeDislike } = useNFTProfile()
-  const { non_fungible_id } = general
+  // const { non_fungible_id } = general
+  let non_fungible_id = 1
   //const hearts = 12
   const remaining = {
     days: '10',
@@ -73,7 +74,7 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
     if (general && sessionUser) {
       setIsFavorited(sessionUser.user_likes.includes(non_fungible_id))
     }
-  }, [sessionUser.user_likes])
+  }, [sessionUser?.user_likes])
 
   const handleToggleLike = (e: any) => {
     likeDislike(sessionUser.user_id, non_fungible_id).then((res) => {
