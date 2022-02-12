@@ -43,7 +43,6 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const fetchUserActivity = useCallback(async (id: number): Promise<any> => {
     try {
       const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.USER_ACTIVITY}?user_id=${id}`)
-      console.log(res)
 
       setUserActivity(res.data)
       return res

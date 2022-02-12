@@ -1,4 +1,5 @@
 export * from './account'
+export * from './auction-house'
 export * from './crypto'
 export * from './ids'
 export * from './metaplex'

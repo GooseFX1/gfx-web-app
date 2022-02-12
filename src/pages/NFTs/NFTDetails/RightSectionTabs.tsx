@@ -1,12 +1,12 @@
 import { useEffect, useState, FC, useMemo } from 'react'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { Col, Row, Tabs, notification } from 'antd'
-import { useNFTDetails } from '../../../context'
+import { useNFTDetails, useNFTProfile } from '../../../context'
 import { MintItemViewStatus, NFTDetailsProviderMode } from '../../../types/nft_details'
 import { TradingHistoryTabContent } from './TradingHistoryTabContent'
 import { AttributesTabContent } from './AttributesTabContent'
-import { getParsedAccountByMint, StringPublicKey } from '../../../web3'
-import { useConnectionConfig } from '../../../context'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 
 const { TabPane } = Tabs
@@ -178,12 +178,14 @@ export const RightSectionTabs: FC<{
   status: MintItemViewStatus
   handleClickPrimaryButton: () => void
 }> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
+  const history = useHistory()
   const [activeTab, setActiveTab] = useState('1')
+  const { sessionUser } = useNFTProfile()
+  const { publicKey } = useWallet()
   const { general, nftMetadata, bids } = useNFTDetails()
-  const { mint_address } = general
-  const { connection } = useConnectionConfig()
-  const [nftOwner, setNFTOwner] = useState<string>()
-  const [tokenAddres, setTokenAddress] = useState<string>()
+  const { mint_address, owner, token_account } = general
+
+  useEffect(() => {}, [publicKey])
 
   const nftData = useMemo(() => {
     return [
@@ -193,11 +195,11 @@ export const RightSectionTabs: FC<{
       },
       {
         title: 'Token Address',
-        value: tokenAddres ? `${tokenAddres.substr(0, 4)}...${tokenAddres.substr(-4, 4)}` : ''
+        value: token_account ? `${token_account.substr(0, 4)}...${token_account.substr(-4, 4)}` : ''
       },
       {
         title: 'Owner',
-        value: nftOwner ? `${nftOwner.substr(0, 6)}...${nftOwner.substr(-4, 4)}` : ''
+        value: owner ? `${owner.substr(0, 6)}...${owner.substr(-4, 4)}` : ''
       },
       {
         title: 'Artist Royalties',
@@ -208,7 +210,7 @@ export const RightSectionTabs: FC<{
         value: `${NFT_MARKET_TRANSACTION_FEE}%`
       }
     ]
-  }, [mint_address, general, nftOwner, tokenAddres])
+  }, [general])
 
   const tradingHistoryTab = useMemo(
     () => [
@@ -247,19 +249,6 @@ export const RightSectionTabs: FC<{
     ],
     [nftMetadata]
   )
-
-  useEffect(() => {
-    getParsedAccountByMint({
-      mintAddress: mint_address as StringPublicKey,
-      connection: connection
-    }).then((res) => {
-      if (res) {
-        const owner = res !== undefined ? res.account?.data?.parsed?.info.owner : ''
-        setNFTOwner(owner)
-        setTokenAddress(res.pubkey)
-      }
-    })
-  }, [])
 
   const desc = {
     successful: [
@@ -344,14 +333,23 @@ export const RightSectionTabs: FC<{
           </>
         )}
       </Tabs>
-      <Row className="rst-footer">
-        <Col className="rst-footer-bid-button">
-          <button onClick={handleButton}>{getButtonText(mode)}</button>
-        </Col>
-        <Col className="rst-footer-share-button">
-          <img src={`/img/assets/share.svg`} alt="" />
-        </Col>
-      </Row>
+      {general.non_fungible_id && publicKey && (
+        <Row className="rst-footer">
+          {sessionUser && sessionUser.user_id ? (
+            <Col className="rst-footer-bid-button">
+              <button onClick={handleButton}>{getButtonText(mode)}</button>
+            </Col>
+          ) : (
+            <Col className="rst-footer-bid-button">
+              <button onClick={(e) => history.push('/NFTs/profile')}>Complete profile</button>
+            </Col>
+          )}
+
+          <Col className="rst-footer-share-button">
+            <img src={`/img/assets/share.svg`} alt="share-icon" />
+          </Col>
+        </Row>
+      )}
     </RIGHT_SECTION_TABS>
   )
 }

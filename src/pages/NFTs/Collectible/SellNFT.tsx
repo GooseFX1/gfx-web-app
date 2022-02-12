@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { Form, Col, Row } from 'antd'
+import { Form, Row, Col } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { IAppParams } from '../../../types/app_params.d'
 import PreviewImage from './PreviewImage'
@@ -13,6 +13,29 @@ import { notify } from '../../../utils'
 import { dataFormRow2, dataFormFixedRow2, startingDays, expirationDays } from './mockData'
 import { Donate } from '../Form/Donate'
 import isEmpty from 'lodash/isEmpty'
+import BN from 'bn.js'
+
+import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
+import {
+  AUCTION_HOUSE_PREFIX,
+  AUCTION_HOUSE,
+  AUCTION_HOUSE_AUTHORITY,
+  AUCTION_HOUSE_PROGRAM_ID,
+  TREASURY_MINT,
+  AH_FEE_ACCT,
+  toPublicKey,
+  createSellInstruction,
+  createCancelInstruction,
+  SellInstructionArgs,
+  SellInstructionAccounts,
+  CancelInstructionArgs,
+  CancelInstructionAccounts,
+  getMetadata,
+  StringPublicKey,
+  bnTo8
+} from '../../../web3'
+
+import { tradeStatePDA, freeSellerTradeStatePDA, getSellInstructionAccounts } from '../actions'
 
 //#region styles
 const UPLOAD_CONTENT = styled.div`
@@ -138,10 +161,11 @@ const dataDonate = {
 export const SellNFT = () => {
   const history = useHistory()
   const params = useParams<IAppParams>()
-  const { general, nftMetadata, updateUserInput, sellNFT, fetchExternalNFTs } = useNFTDetails()
+  const { general, nftMetadata, updateUserInput, sellNFT } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
-  const { publicKey, connected } = useWallet()
-  const { connection } = useConnectionConfig()
+  const wallet = useWallet()
+  const { publicKey, sendTransaction } = wallet
+  const { connection, network } = useConnectionConfig()
 
   const [form] = Form.useForm()
   const initSettingData = {
@@ -184,7 +208,7 @@ export const SellNFT = () => {
     const { value } = e.target
     const temp = { ...liveData }
     temp[id] = value
-    if (id == 'minimumBid') {
+    if (id === 'minimumBid') {
       updateUserInput({ price: value })
     } else {
       updateUserInput({ royalty: value })
@@ -192,46 +216,97 @@ export const SellNFT = () => {
     setLiveData(temp)
   }
 
-  const confirmBid = async () => {
+  const derivePDAsForInstruction = async () => {
+    const buyerPriceInLamports = parseFloat(liveData['minimumBid'] || 0) * LAMPORTS_PER_SOL
+    const tokenSize: BN = new BN(1)
+    const buyerPrice: BN = new BN(buyerPriceInLamports)
+
+    const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
+
+    const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice), bnTo8(tokenSize))
+    console.log(tradeState)
+
+    const freeTradeState: [PublicKey, number] = await freeSellerTradeStatePDA(publicKey, general, bnTo8(tokenSize))
+    console.log(freeTradeState)
+
+    const programAsSignerPDA: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [Buffer.from(AUCTION_HOUSE_PREFIX), Buffer.from('signer')],
+      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
+    )
+
+    if (!tradeState || !freeTradeState || !programAsSignerPDA || !metaDataAccount) {
+      throw Error(`Could not derive values for sell instructions`)
+    }
+
+    return {
+      metaDataAccount,
+      tradeState,
+      freeTradeState,
+      programAsSignerPDA,
+      tokenSize,
+      buyerPrice
+    }
+  }
+
+  const callSellInstruction = async (e: any) => {
+    e.preventDefault()
+    const { metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, tokenSize, buyerPrice } =
+      await derivePDAsForInstruction()
+
+    const sellInstructionArgs: SellInstructionArgs = {
+      tradeStateBump: tradeState[1],
+      freeTradeStateBump: freeTradeState[1],
+      programAsSignerBump: programAsSignerPDA[1],
+      buyerPrice: buyerPrice,
+      tokenSize: tokenSize
+    }
+
+    const sellInstructionAccounts: SellInstructionAccounts = await getSellInstructionAccounts(
+      publicKey,
+      general,
+      metaDataAccount,
+      tradeState[0],
+      freeTradeState[0],
+      programAsSignerPDA[0]
+    )
+
+    const sellIX: TransactionInstruction = await createSellInstruction(sellInstructionAccounts, sellInstructionArgs)
+    console.log(sellIX)
+
+    const transaction = new Transaction().add(sellIX)
+    const signature = await sendTransaction(transaction, connection)
+    console.log(signature)
+    const confirm = await connection.confirmTransaction(signature, 'processed')
+    console.log(confirm)
+
+    notify(successfulListingMessage(signature, nftMetadata, liveData['minimumBid']))
+
+    if (confirm.value.err === null) {
+      postTransationToAPI(signature, buyerPrice, tokenSize).then((res) => {
+        console.log(res)
+      })
+    }
+  }
+
+  const postTransationToAPI = async (txSig: any, buyerPrice: BN, tokenSize: BN) => {
     const sellObject = {
-      clock: Date.now() + '', // string, not a number
-      tx_sig: 'RANDOM_TX_SIG_HERE',
-      wallet_key: `${publicKey}`,
-      auction_house_key: 'AUCTION_HOUSE_KEY_HERE',
-      token_account_key: 'RANDOM_TOKEN_ACCOUNT_KEY_HERE',
-      auction_house_treasury_mint_key: 'AUCTION_HOUSE_TREASURY_KEY_HERE',
-      token_account_mint_key: general?.mint_address,
-      buyer_price: liveData['minimumBid'] || '0',
-      token_size: 'TOKEN_SIZE_HERE',
-      non_fungible_id: 11, //chnage this when you get the nft id
-      collection_id: nftMetadata?.collection || 11, // and this too
-      user_id: sessionUser?.user_id
+      clock: Date.now().toString(),
+      tx_sig: txSig,
+      wallet_key: publicKey.toBase58(),
+      auction_house_key: AUCTION_HOUSE,
+      token_account_key: general.token_account,
+      auction_house_treasury_mint_key: TREASURY_MINT,
+      token_account_mint_key: general.mint_address,
+      buyer_price: buyerPrice.toString(),
+      token_size: tokenSize.toString(),
+      non_fungible_id: general.non_fungible_id,
+      collection_id: nftMetadata.collection,
+      user_id: sessionUser.user_id
     }
 
     try {
       const res = await sellNFT(sellObject)
-
-      if (res) {
-        notify({
-          message: (
-            <MESSAGE>
-              <Row className="m-title" justify="space-between" align="middle">
-                <Col>NFT listing sucessfull!</Col>
-                <Col>
-                  <img className="m-icon" src={`/img/assets/bid-success-icon.svg`} alt="" />
-                </Col>
-              </Row>
-              <div>{nftMetadata?.name}</div>
-              <div>My price: {`${liveData['minimumBid']}`}</div>
-            </MESSAGE>
-          )
-        })
-      } else {
-        throw new Error()
-      }
-      // setBidPrice('')
-      // setMode('bid')
-      // setVisible(false)
+      return res
     } catch (error) {
       console.dir(error)
       notify({
@@ -249,11 +324,67 @@ export const SellNFT = () => {
         )
       })
     } finally {
-      //setIsLoading(false)
+      // setIsLoading(false)
     }
   }
 
-  const handleSelectPercentage = (number: number) => {}
+  const callCancelInstruction = async (e: any) => {
+    e.preventDefault()
+
+    const { tradeState, tokenSize, buyerPrice } = await derivePDAsForInstruction()
+
+    const cancelInstructionArgs: CancelInstructionArgs = {
+      buyerPrice: buyerPrice,
+      tokenSize: tokenSize
+    }
+
+    const cancelInstructionAccounts: CancelInstructionAccounts = {
+      wallet: publicKey,
+      tokenAccount: new PublicKey(general.token_account),
+      tokenMint: new PublicKey(general.mint_address),
+      authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+      auctionHouse: new PublicKey(AUCTION_HOUSE),
+      auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
+      tradeState: tradeState[0]
+    }
+
+    const cancelIX: TransactionInstruction = await createCancelInstruction(
+      cancelInstructionAccounts,
+      cancelInstructionArgs
+    )
+
+    const transaction = new Transaction().add(cancelIX)
+    const signature = await sendTransaction(transaction, connection)
+    console.log(signature)
+    const confirm = await connection.confirmTransaction(signature, 'processed')
+    console.log(confirm)
+  }
+
+  const successfulListingMessage = (signature: any, nftMetadata: any, price: string) => ({
+    message: (
+      <MESSAGE>
+        <Row className="m-title" justify="space-between" align="middle">
+          <Col>Successfully listed {nftMetadata?.name}!</Col>
+          <Col>
+            <img className="m-icon" src={`/img/assets/bid-success-icon.svg`} alt="" />
+          </Col>
+        </Row>
+        <div>{nftMetadata?.name}</div>
+        <div>My price: {`${price}`}</div>
+        <div>
+          <a
+            href={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Transaction ID
+          </a>
+        </div>
+      </MESSAGE>
+    )
+  })
+
+  // const handleSelectPercentage = (number: number) => {}
 
   return (
     <>
@@ -313,15 +444,17 @@ export const SellNFT = () => {
               )}
               {/* <Donate
                 {...dataDonate}
+
+                const 
                 label={`${category === 'open-bid' ? '3.' : '4.'} Donate for charity`}
-                selectPercentage={handleSelectPercentage}
+                // selectPercentage={handleSelectPercentage}
               /> */}
             </STYLED_FORM>
           </UPLOAD_INFO_CONTAINER>
           <PREVIEW_UPLOAD_CONTAINER>
             <PreviewImage image_url={nftMetadata.properties.files[0].uri} />
             <div>
-              <BUTTON onClick={(e) => confirmBid()}>Sell item</BUTTON>
+              <BUTTON onClick={callSellInstruction}>Sell item</BUTTON>
             </div>
           </PREVIEW_UPLOAD_CONTAINER>
         </UPLOAD_FIELD_CONTAINER>
