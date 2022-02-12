@@ -1,12 +1,28 @@
 import { FC, useState, useEffect, useMemo } from 'react'
+import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
 import { Col, Row } from 'antd'
 import { MainButton, Modal } from '../../../components'
 import { notify } from '../../../utils'
-import { useNFTProfile, useNFTDetails } from '../../../context'
+import { useNFTProfile, useCrypto, useNFTDetails, useConnectionConfig } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
+import BN from 'bn.js'
+import {
+  AUCTION_HOUSE,
+  AUCTION_HOUSE_PREFIX,
+  AUCTION_HOUSE_PROGRAM_ID,
+  TREASURY_MINT,
+  BuyInstructionArgs,
+  getMetadata,
+  BuyInstructionAccounts,
+  createBuyInstruction,
+  StringPublicKey,
+  toPublicKey,
+  bnTo8
+} from '../../../web3'
+import { tradeStatePDA, getBuyInstructionAccounts } from '../actions'
 
 // TODO: Set variables to demo here
 const notEnough = false
@@ -204,14 +220,18 @@ const MESSAGE = styled.div`
 `
 //#endregion
 
-export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean; details?: ISingleNFT }> = (props) => {
-  const { setVisible, visible, details } = props
-  const [mode, setMode] = useState('bid')
+export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }> = (props) => {
+  const { setVisible, visible } = props
   const { sessionUser, fetchSessionUser } = useNFTProfile()
-  const { connected, publicKey } = useWallet()
-  const { nftMetadata, bidOnSingleNFT } = useNFTDetails()
+  const { connected, publicKey, sendTransaction } = useWallet()
+  const { connection, network } = useConnectionConfig()
+  const { prices } = useCrypto()
+  const { general, nftMetadata, bidOnSingleNFT } = useNFTDetails()
+
+  const [mode, setMode] = useState('bid')
+  const [bidPriceInput, setBidPriceInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [bidPrice, setBidPrice] = useState('')
+
   const creator = useMemo(() => {
     if (nftMetadata.properties.creators.length > 0) {
       const addr = nftMetadata.properties.creators[0].address
@@ -223,8 +243,29 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean; 
     }
   }, [nftMetadata])
 
-  const onCancel = () => setMode('bid')
-  const reviewBid = () => setMode('review')
+  const bidPrice: number | null = useMemo(
+    () => (bidPriceInput.length > 0 ? parseFloat(bidPriceInput) : null),
+    [bidPriceInput]
+  )
+  const servicePriceCalc: number = useMemo(
+    () => (bidPrice ? parseFloat(((NFT_MARKET_TRANSACTION_FEE / 100) * Number(bidPrice)).toFixed(3)) : 0),
+    [bidPriceInput]
+  )
+
+  const bidTotal: number = useMemo(
+    () =>
+      bidPriceInput
+        ? parseFloat((Number(bidPrice) * (NFT_MARKET_TRANSACTION_FEE / 100) + Number(bidPrice)).toFixed(3))
+        : 0,
+    [bidPrice]
+  )
+
+  const marketData = useMemo(() => prices['SOL/USDC'], [prices])
+
+  const fiatCalc: string = useMemo(
+    () => `${marketData && bidTotal ? (marketData.current * bidTotal).toFixed(3) : ''}`,
+    [bidTotal]
+  )
 
   useEffect(() => {
     if (connected && publicKey) {
@@ -262,42 +303,125 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean; 
     })
   }
 
-  const confirmBid = async () => {
+  const derivePDAsForInstruction = async () => {
+    const buyerPriceInLamports = (bidTotal || 0) * LAMPORTS_PER_SOL
+    const buyerPrice: BN = new BN(buyerPriceInLamports)
+    const tokenSize: BN = new BN(1)
+
+    const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
+
+    const escrowPaymentAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [Buffer.from(AUCTION_HOUSE_PREFIX), toPublicKey(AUCTION_HOUSE).toBuffer(), publicKey.toBuffer()],
+      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
+    )
+
+    const buyerTradeState: [PublicKey, number] = await tradeStatePDA(
+      publicKey,
+      general,
+      bnTo8(buyerPrice),
+      bnTo8(tokenSize)
+    )
+
+    if (!metaDataAccount || !escrowPaymentAccount || !buyerTradeState) {
+      return {
+        metaDataAccount: undefined,
+        escrowPaymentAccount: undefined,
+        buyerTradeState: undefined,
+        buyerPrice: undefined,
+        tokenSize: undefined
+      }
+    }
+
+    return {
+      metaDataAccount,
+      escrowPaymentAccount,
+      buyerTradeState,
+      buyerPrice,
+      tokenSize
+    }
+  }
+
+  const callBuyInstruction = async (e: any) => {
+    e.preventDefault()
+
+    const { metaDataAccount, escrowPaymentAccount, buyerTradeState, buyerPrice, tokenSize } =
+      await derivePDAsForInstruction()
+
+    if (!metaDataAccount || !escrowPaymentAccount || !buyerTradeState) {
+      notify({
+        type: 'error',
+        message: (
+          <MESSAGE>
+            <Row className="m-title" justify="space-between" align="middle">
+              <Col>Open bid error!</Col>
+              <Col>
+                <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+              </Col>
+            </Row>
+            <div>Could not derive values for buy instructions</div>
+          </MESSAGE>
+        )
+      })
+
+      setTimeout(() => setVisible(false), 1000)
+      return
+    }
+
+    const buyInstructionArgs: BuyInstructionArgs = {
+      tradeStateBump: buyerTradeState[1],
+      escrowPaymentBump: escrowPaymentAccount[1],
+      buyerPrice: buyerPrice,
+      tokenSize: tokenSize
+    }
+
+    const buyInstructionAccounts: BuyInstructionAccounts = await getBuyInstructionAccounts(
+      publicKey,
+      general,
+      metaDataAccount,
+      escrowPaymentAccount[0],
+      buyerTradeState[0]
+    )
+
+    const buyIX: TransactionInstruction = await createBuyInstruction(buyInstructionAccounts, buyInstructionArgs)
+    console.log(buyIX)
+
+    const transaction = new Transaction().add(buyIX)
+    const signature = await sendTransaction(transaction, connection)
+    console.log(signature)
+    const confirm = await connection.confirmTransaction(signature, 'processed')
+    console.log(confirm)
+
+    notify(successfulListingMessage(signature, nftMetadata, bidTotal.toString()))
+
+    if (confirm.value.err === null) {
+      postBidToAPI(signature, buyerPrice, tokenSize).then((res) => {
+        console.log(res)
+      })
+    }
+  }
+
+  const postBidToAPI = async (txSig: any, buyerPrice: BN, tokenSize: BN) => {
     setIsLoading(true)
     const bidObject = {
-      clock: Date.now() + '', // string, not a number
-      tx_sig: 'RANDOM_TX_SIG_HERE',
-      wallet_key: 'WALLET_KEY_HERE',
-      auction_house_key: 'AUCTION_HOUSE_KEY_HERE',
-      token_account_key: 'RANDOM_TOKEN_ACCOUNT_KEY_HERE',
-      auction_house_treasury_mint_key: 'AUCTION_HOUSE_TREASURY_KEY_HERE',
-      token_account_mint_key: 'TOKEN_ACCOUNT_MINT_KEY_HERE',
-      buyer_price: 1.03 * Number(bidPrice) + '',
-      token_size: 'TOKEN_SIZE_HERE',
-      non_fungible_id: details.non_fungible_id,
-      collection_id: details.collection_id,
-      user_id: sessionUser?.user_id
+      clock: Date.now().toString(),
+      tx_sig: txSig,
+      wallet_key: publicKey.toBase58(),
+      auction_house_key: AUCTION_HOUSE,
+      token_account_key: general.token_account,
+      auction_house_treasury_mint_key: TREASURY_MINT,
+      token_account_mint_key: general.mint_address,
+      buyer_price: buyerPrice.toString(),
+      token_size: tokenSize.toString(),
+      non_fungible_id: general.non_fungible_id,
+      collection_id: general.collection_id,
+      user_id: sessionUser.user_id
     }
 
     try {
       const res = await bidOnSingleNFT(bidObject)
       console.dir(res)
 
-      notify({
-        message: (
-          <MESSAGE>
-            <Row className="m-title" justify="space-between" align="middle">
-              <Col>Live auction bid sucessfull!</Col>
-              <Col>
-                <img className="m-icon" src={`/img/assets/bid-success-icon.svg`} alt="" />
-              </Col>
-            </Row>
-            <div>{details?.nft_name}</div>
-            <div>My bid: {`${bidPrice} (up to ${1.03 * Number(bidPrice)})`}</div>
-          </MESSAGE>
-        )
-      })
-      setBidPrice('')
+      setBidPriceInput('')
       setMode('bid')
       setVisible(false)
     } catch (error) {
@@ -344,27 +468,54 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean; 
 
   const handleBidInput = (e) => {
     if (!isNaN(Number(e.target.value))) {
-      setBidPrice(e.target.value)
+      setBidPriceInput(e.target.value)
       if (e.target.value.length === 0) {
         setMode('bid')
       }
     }
   }
 
-  // TODO: change usd approx to real figure using conversion rate
+  const successfulListingMessage = (signature: any, nftMetadata: any, price: string) => ({
+    message: (
+      <MESSAGE>
+        <Row className="m-title" justify="space-between" align="middle">
+          <Col>Successfully placed a bid on {nftMetadata?.name}!</Col>
+          <Col>
+            <img className="m-icon" src={`/img/assets/bid-success-icon.svg`} alt="" />
+          </Col>
+        </Row>
+        <div>{nftMetadata?.name}</div>
+        <div>Bid of: {`${price}`}</div>
+        <div>
+          <a
+            href={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Transaction ID
+          </a>
+        </div>
+      </MESSAGE>
+    )
+  })
+
+  const onCancel = () => setMode('bid')
+
+  const reviewBid = () => setMode('review')
+
   return (
     <PURCHASE_MODAL setVisible={setVisible} title="" visible={visible} onCancel={onCancel}>
       <div className="bm-title">You are about to purchase a</div>
       <Row className="bm-title" align="middle" justify="center" gutter={4}>
-        <Col className="bm-title-bold">{details?.nft_name || '(Name of the NFT)'}</Col>
+        <Col className="bm-title-bold">{general?.nft_name || '(Name of the NFT)'}</Col>
         <Col>by</Col>
         <Col className="bm-title-bold">{creator}</Col>
       </Row>
       <div className="bm-confirm">
         <div className="bm-confirm-text-1">Place your bid:</div>
-        <input value={bidPrice} onChange={handleBidInput} className="bm-confirm-price" placeholder="000.000" />
+        <input value={bidPriceInput} onChange={handleBidInput} className="bm-confirm-price" placeholder="000.000" />
         <div className="bm-confirm-text-2">
-          {mode === 'bid' ? 'There is no minimum amount this is an open bid.' : '25,366.9 USD aprox'}
+          {mode === 'bid' ? 'There is no minimum amount this is an open bid.' : `${fiatCalc} USD`}
         </div>
       </div>
       <div className="bm-details">
@@ -374,7 +525,7 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean; 
               <Col>Bid up to</Col>
               <Col>
                 <Row className="bm-details-price" justify="space-between" align="middle">
-                  <Col>{bidPrice}</Col>
+                  <Col>{bidPriceInput}</Col>
                   <Col>SOL</Col>
                 </Row>
               </Col>
@@ -383,7 +534,7 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean; 
               <Col>Service fee ({`${NFT_MARKET_TRANSACTION_FEE}%`})</Col>
               <Col>
                 <Row className="bm-details-price" justify="space-between" align="middle">
-                  <Col>{((NFT_MARKET_TRANSACTION_FEE / 100) * Number(bidPrice)).toFixed(3)}</Col>
+                  <Col>{servicePriceCalc}</Col>
                   <Col>SOL</Col>
                 </Row>
               </Col>
@@ -392,13 +543,13 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean; 
               <Col>Total </Col>
               <Col>
                 <Row className="bm-details-price" justify="space-between" align="middle">
-                  <Col>{(Number(bidPrice) * (NFT_MARKET_TRANSACTION_FEE / 100) + Number(bidPrice)).toFixed(3)}</Col>
+                  <Col>{bidTotal}</Col>
                   <Col>SOL</Col>
                 </Row>
               </Col>
             </Row>
             <Row justify="end" align="middle" className="bm-details-total">
-              <div className="bm-details-price">25,419.04 USD</div>
+              <div className="bm-details-price">{fiatCalc} USD</div>
             </Row>
           </>
         )}
@@ -425,9 +576,9 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean; 
           status="initial"
           width="100%"
           height="53px"
-          className={`bm-bid-button ${notEnough || bidPrice.length === 0 ? 'bm-bid-button-disabled' : ''}`}
+          className={`bm-bid-button ${notEnough || bidPriceInput.length === 0 ? 'bm-bid-button-disabled' : ''}`}
           onClick={reviewBid}
-          disabled={notEnough || bidPrice.length === 0}
+          disabled={notEnough || bidPriceInput.length === 0}
         >
           Review bid
         </BUTTON>
@@ -438,7 +589,7 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean; 
           width="100%"
           height="53px"
           className="bm-confirm-button"
-          onClick={confirmBid}
+          onClick={callBuyInstruction}
           loading={isLoading}
         >
           Send bid
