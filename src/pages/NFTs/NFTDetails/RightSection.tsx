@@ -147,7 +147,7 @@ export const RightSection: FC<{
   mode: NFTDetailsProviderMode
   status: MintItemViewStatus
   handleClickPrimaryButton: () => void
-}> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {sd
+}> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
   const { general, nftMetadata, bids } = useNFTDetails()
   const { prices } = useCrypto()
 

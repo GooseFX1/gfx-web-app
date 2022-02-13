@@ -22,12 +22,12 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
 
   .search-bar {
     width: 100%;
-    background: #2a2a2a;
+    background: ${({ theme }) => theme.bg3};
     height: 45px;
     margin-left: ${({ theme }) => theme.margin(2.5)};
 
     > input {
-      background: #2a2a2a;
+      background: ${({ theme }) => theme.bg3};
       &::placeholder {
         color: rgba(114, 114, 114, 1);
       }
@@ -133,10 +133,6 @@ const AVATAR_NFT = styled(Image)`
   cursor: pointer;
 `
 
-const SEARCHBAR = styled(SearchBar)`
-  width: 500px !important;
-`
-
 export const Header = ({ setFilter, filter, filteredCollections }) => {
   const history = useHistory()
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
@@ -192,8 +188,8 @@ export const Header = ({ setFilter, filter, filteredCollections }) => {
   )
 
   const genMenu = () => {
-    return (
-      <Menu>
+    return filter.length > 0 ? (
+      <Menu className={`global-search-dropdown global-search-dropdown-${mode}`}>
         {filteredCollections.length > 0 ? (
           filteredCollections.map((i, k) => (
             <Menu.Item key={k}>
@@ -202,13 +198,17 @@ export const Header = ({ setFilter, filter, filteredCollections }) => {
                   <TINYIMG src={i.profile_pic_link} />
                   <p style={{ margin: '0px' }}>{i.collection_name}</p>
                 </DETAILS>
-                <RIGHTARROWICON src={'/img/assets/arrow.svg'} />
+                <RIGHTARROWICON src={'/img/assets/arrow.svg'} className="global-search-dropdown-icon" />
               </URL>
             </Menu.Item>
           ))
         ) : (
           <Menu.Item key="0">No Result Found!</Menu.Item>
         )}
+      </Menu>
+    ) : (
+      <Menu className={`global-search-dropdown global-search-dropdown-${mode}`}>
+        <p className="empty">Start typing to search</p>
       </Menu>
     )
   }
@@ -226,7 +226,7 @@ export const Header = ({ setFilter, filter, filteredCollections }) => {
           />
         )}
         <Dropdown overlay={genMenu()} trigger={['click']}>
-          <SEARCHBAR className="search-bar" setFilter={setFilter} filter={filter} />
+          <SearchBar className="search-bar" setFilter={setFilter} filter={filter} />
         </Dropdown>
       </AVATAR_WRAPPER>
       <BUTTON_SELECTION>
