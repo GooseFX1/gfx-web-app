@@ -3,9 +3,10 @@ import { Col, Row } from 'antd'
 import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
 import { RightSectionTabs } from './RightSectionTabs'
-import { useNFTDetails } from '../../../context'
+import { useNFTDetails, useCrypto } from '../../../context'
 import { MintItemViewStatus, NFTDetailsProviderMode } from '../../../types/nft_details'
 
+//#region styles
 const RIGHT_SECTION = styled.div`
   ${({ theme }) => css`
     display: flex;
@@ -140,13 +141,15 @@ const GRID_INFO = styled(Row)`
     }
   `}
 `
+//#endregion
 
 export const RightSection: FC<{
   mode: NFTDetailsProviderMode
   status: MintItemViewStatus
   handleClickPrimaryButton: () => void
-}> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
-  const { general, nftMetadata } = useNFTDetails()
+}> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {sd
+  const { general, nftMetadata, bids } = useNFTDetails()
+  const { prices } = useCrypto()
 
   const creator = useMemo(() => {
     if (nftMetadata?.collection) {
@@ -159,12 +162,15 @@ export const RightSection: FC<{
     }
   }, [nftMetadata])
 
-  const price = 150
-  const fiat = '21,900 USD aprox'
+  const price: number | null = useMemo(
+    () => (bids.length > 0 ? parseFloat(bids[bids.length - 1].buyer_price) : null),
+    [bids]
+  )
+
+  const marketData = useMemo(() => prices['SOL/USDC'], [prices])
+  const fiat = `${marketData && price ? marketData.current * price : ''} USD aprox`
   const percent = '+ 1.15 %'
   const isForCharity = false
-
-  const isMintItemView = mode === 'mint-item-view'
 
   if (nftMetadata === null) {
     return <div>Error loading metadata</div>
@@ -174,24 +180,31 @@ export const RightSection: FC<{
     <div>...loading metadata</div>
   ) : (
     <RIGHT_SECTION {...rest}>
-      <Row justify="space-between">
-        <Col className="rs-title">{isMintItemView ? 'Price' : 'Current Bid'}</Col>
-      </Row>
-      <Row align="middle" gutter={8} className="rs-prices">
-        <Col>
-          <img className="rs-solana-logo" src={`/img/assets/solana-logo.png`} alt="" />
-        </Col>
-        <Col className="rs-price">{`${moneyFormatter(price)} SOL`}</Col>
-        <Col className="rs-fiat">{`(${fiat})`}</Col>
-        {!isMintItemView && (
-          <Col>
-            <Row>
-              <img src={`/img/assets/increase-arrow.svg`} alt="" />
-              <div className="rs-percent">{percent}</div>
+      {general.non_fungible_id && (
+        <div>
+          <Row justify="space-between">
+            <Col className="rs-title">{price ? 'Current Bid' : 'No Current Bids'}</Col>
+          </Row>
+          {price && (
+            <Row align="middle" gutter={8} className="rs-prices">
+              <Col>
+                <img className="rs-solana-logo" src={`/img/assets/solana-logo.png`} alt="" />
+              </Col>
+              <Col className="rs-price">{`${moneyFormatter(price)} SOL`}</Col>
+
+              <Col className="rs-fiat">{`(${fiat})`}</Col>
+
+              <Col>
+                <Row>
+                  <img src={`/img/assets/increase-arrow.svg`} alt="" />
+                  <div className="rs-percent">{percent}</div>
+                </Row>
+              </Col>
             </Row>
-          </Col>
-        )}
-      </Row>
+          )}
+        </div>
+      )}
+
       <Row justify="space-between" align="middle">
         <Col span={24}>
           {mode !== 'mint-item-view' && (

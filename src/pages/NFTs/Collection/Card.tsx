@@ -166,13 +166,13 @@ export const Card = ({ singleNFT, listingType, className, userId, ...rest }: Pro
   const { non_fungible_id } = singleNFT
 
   useEffect(() => {
-    if (singleNFT && userId) {
+    if (singleNFT && sessionUser) {
       setIsFavorited(sessionUser.user_likes.includes(non_fungible_id))
     }
-  }, [sessionUser?.user_likes])
+  }, [sessionUser])
 
   const handleToggleLike = (e: any) => {
-    likeDislike(userId, non_fungible_id).then((res) => {
+    likeDislike(sessionUser.user_id, non_fungible_id).then((res) => {
       console.log(res)
     })
     setIsFavorited((prev) => !prev)
@@ -220,26 +220,28 @@ export const Card = ({ singleNFT, listingType, className, userId, ...rest }: Pro
         <Row justify="space-between" align="middle">
           <Row align="middle">
             <div className="card-name">{localNFT.nft_name}</div>
-            <span className="card-favorite-heart-container">
-              {isFavorite ? (
-                <img
-                  className="card-favorite-heart"
-                  src={`/img/assets/heart-red.svg`}
-                  alt="heart-selected"
-                  onClick={handleToggleLike}
-                />
-              ) : (
-                <img
-                  className="card-favorite-heart"
-                  src={`/img/assets/heart-empty.svg`}
-                  alt="heart-empty"
-                  onClick={handleToggleLike}
-                />
-              )}
-              {/* <span className={`card-favorite-number ${isFavorite ? 'card-favorite-number-highlight' : ''}`}>
-                {likes}
-              </span> */}
-            </span>
+            {sessionUser && sessionUser.user_id && (
+              <span className="card-favorite-heart-container">
+                {isFavorite ? (
+                  <img
+                    className="card-favorite-heart"
+                    src={`/img/assets/heart-red.svg`}
+                    alt="heart-selected"
+                    onClick={handleToggleLike}
+                  />
+                ) : (
+                  <img
+                    className="card-favorite-heart"
+                    src={`/img/assets/heart-empty.svg`}
+                    alt="heart-empty"
+                    onClick={handleToggleLike}
+                  />
+                )}
+                {/* <span className={`card-favorite-number ${isFavorite ? 'card-favorite-number-highlight' : ''}`}>
+                  {likes}
+                </span> */}
+              </span>
+            )}
           </Row>
         </Row>
       </div>

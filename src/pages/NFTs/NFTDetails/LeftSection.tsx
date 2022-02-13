@@ -74,7 +74,7 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
     if (general && sessionUser) {
       setIsFavorited(sessionUser.user_likes.includes(non_fungible_id))
     }
-  }, [sessionUser?.user_likes])
+  }, [sessionUser])
 
   const handleToggleLike = (e: any) => {
     likeDislike(sessionUser.user_id, non_fungible_id).then((res) => {
@@ -91,7 +91,7 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
       <div className="ls-bottom-panel">
         <Row justify={mode !== 'mint-item-view' ? 'space-between' : 'start'} align="middle" className="ls-favorite">
           <Col>{isShowReamingTime && <div className="ls-end-text">Auction ends in:</div>}</Col>
-          {mode !== 'mint-item-view' && (
+          {general.non_fungible_id && sessionUser && sessionUser.user_id && mode !== 'mint-item-view' && (
             <Row align="middle">
               {isFavorite ? (
                 <img

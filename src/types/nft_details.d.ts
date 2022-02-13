@@ -1,4 +1,3 @@
-import { INFTAsk } from './nft_details.d'
 import { Creator } from '../web3'
 
 export interface IInfoItemData {
@@ -91,6 +90,8 @@ export type ISingleNFT = {
   image_url: string | null
   animation_url: string | null
   collection_id: number | null
+  token_account: string | null
+  owner: string | null
 }
 
 export type INFTBid = {
@@ -152,11 +153,12 @@ export interface INFTDetailsConfig {
   fetchGeneral: (id: string) => Promise<any>
   nftMintingData: IMetadataContext | undefined
   setNftMintingData: Dispatch<SetStateAction<IMetadataContext>>
-  fetchExternalNFTs?: (param: any, connection: any, nft: INFTMetadata, mint: string) => Promise<any>
-  updateUserInput?: (params: any) => Promise<any>
-  fetchUserInput?: () => Promise<any>
-  sellNFT?: (params: any) => Promise<any>
-  getLikesNFT?: (user_id: any, nft_id: any) => Promise<any>
-  getLikesUser?: (user_id: number) => Promise<any>
-  likeDislike?: (user_id: number, nft_id: any) => Promise<any>
+  fetchExternalNFTs: (param: any, connection: any, nft: INFTMetadata) => Promise<any>
+  updateUserInput: (params: any) => Promise<any>
+  fetchUserInput: () => Promise<any>
+  sellNFT: (params: any) => Promise<any>
+  removeNFTListing: (id: number) => Promise<any>
+  getLikesNFT: (user_id: any, nft_id: any) => Promise<any>
+  getLikesUser: (user_id: number) => Promise<any>
+  likeDislike: (user_id: number, nft_id: any) => Promise<any>
 }

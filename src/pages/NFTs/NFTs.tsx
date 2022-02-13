@@ -16,6 +16,7 @@ import { FixedPriceNFT } from './FixedPriceNFT'
 import { OpenBidNFT } from './OpenBidNFT'
 import { OverlayProvider } from '../../context/overlay'
 import {
+  CryptoProvider,
   NFTProfileProvider,
   NFTCollectionProvider,
   NFTDetailsProvider,
@@ -50,67 +51,71 @@ export const NFTs: FC = () => {
   const { endpoint, setEndpoint } = useConnectionConfig()
 
   useEffect(() => {
-    if (location.pathname === '/NFTs/create-single' && endpoint !== ENDPOINTS[1].endpoint) {
-      notify({ message: `Switched to ${ENDPOINTS[1].network}` })
+    // if (location.pathname === '/NFTs/create-single' && endpoint !== ENDPOINTS[1].endpoint) {
+    //   notify({ message: `Switched to ${ENDPOINTS[1].network}` })
+    //   setEndpoint(ENDPOINTS[1].endpoint)
+    // } else
+    if (endpoint !== ENDPOINTS[1].endpoint) {
       setEndpoint(ENDPOINTS[1].endpoint)
-    } else if (endpoint !== ENDPOINTS[0].endpoint) {
-      setEndpoint(ENDPOINTS[0].endpoint)
+      notify({ message: `Switched to ${ENDPOINTS[1].network}` })
     }
   }, [location])
 
   return (
     <OverlayProvider>
-      <NFTProfileProvider>
-        <NFTCollectionProvider>
-          <NFTDetailsProvider>
-            <BODY_NFT $navCollapsed={isCollapsed}>
-              <Switch>
-                <Route exact path={path}>
-                  <NFTLandingPage />
-                </Route>
-                <Route exact path={['/NFTs/profile', '/NFTs/profile/:userId']}>
-                  <Profile />
-                </Route>
-                <Route exact path="/NFTs/profile/explore">
-                  <Explore />
-                </Route>
-                <Route exact path="/NFTs/collection/:collectionId">
-                  <SCROLLING_OVERLAY>
-                    <Collection />
-                  </SCROLLING_OVERLAY>
-                </Route>
-                <Route exact path={['/NFTs/details', '/NFTs/details/:nftMintAddress']}>
-                  <NFTDetails />
-                </Route>
-                <Route exact path="/NFTs/live-auction/:nftId">
-                  <SCROLLING_OVERLAY>
-                    <LiveAuctionNFT />
-                  </SCROLLING_OVERLAY>
-                </Route>
-                <Route exact path="/NFTs/fixed-price/:nftId">
-                  <SCROLLING_OVERLAY>
-                    <FixedPriceNFT />
-                  </SCROLLING_OVERLAY>
-                </Route>
-                <Route exact path="/NFTs/open-bid/:nftId">
-                  <SCROLLING_OVERLAY>
-                    <OpenBidNFT />
-                  </SCROLLING_OVERLAY>
-                </Route>
-                <Route exact path="/NFTs/create">
-                  <Collectible />
-                </Route>
-                <Route exact path="/NFTs/create-single">
-                  <UpLoadNFT />
-                </Route>
-                <Route exact path="/NFTs/sell/:nftMintAddress">
-                  <SellNFT />
-                </Route>
-              </Switch>
-            </BODY_NFT>
-          </NFTDetailsProvider>
-        </NFTCollectionProvider>
-      </NFTProfileProvider>
+      <CryptoProvider>
+        <NFTProfileProvider>
+          <NFTCollectionProvider>
+            <NFTDetailsProvider>
+              <BODY_NFT $navCollapsed={isCollapsed}>
+                <Switch>
+                  <Route exact path={path}>
+                    <NFTLandingPage />
+                  </Route>
+                  <Route exact path={['/NFTs/profile', '/NFTs/profile/:userId']}>
+                    <Profile />
+                  </Route>
+                  <Route exact path="/NFTs/profile/explore">
+                    <Explore />
+                  </Route>
+                  <Route exact path="/NFTs/collection/:collectionId">
+                    <SCROLLING_OVERLAY>
+                      <Collection />
+                    </SCROLLING_OVERLAY>
+                  </Route>
+                  <Route exact path={['/NFTs/details', '/NFTs/details/:nftMintAddress']}>
+                    <NFTDetails />
+                  </Route>
+                  <Route exact path="/NFTs/live-auction/:nftId">
+                    <SCROLLING_OVERLAY>
+                      <LiveAuctionNFT />
+                    </SCROLLING_OVERLAY>
+                  </Route>
+                  <Route exact path="/NFTs/fixed-price/:nftId">
+                    <SCROLLING_OVERLAY>
+                      <FixedPriceNFT />
+                    </SCROLLING_OVERLAY>
+                  </Route>
+                  <Route exact path="/NFTs/open-bid/:nftId">
+                    <SCROLLING_OVERLAY>
+                      <OpenBidNFT />
+                    </SCROLLING_OVERLAY>
+                  </Route>
+                  <Route exact path="/NFTs/create">
+                    <Collectible />
+                  </Route>
+                  <Route exact path="/NFTs/create-single">
+                    <UpLoadNFT />
+                  </Route>
+                  <Route exact path="/NFTs/sell/:nftMintAddress">
+                    <SellNFT />
+                  </Route>
+                </Switch>
+              </BODY_NFT>
+            </NFTDetailsProvider>
+          </NFTCollectionProvider>
+        </NFTProfileProvider>
+      </CryptoProvider>
     </OverlayProvider>
   )
 }
