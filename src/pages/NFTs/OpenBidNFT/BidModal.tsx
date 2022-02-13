@@ -22,7 +22,7 @@ import {
   toPublicKey,
   bnTo8
 } from '../../../web3'
-import { tradeStatePDA, getBuyInstructionAccounts } from '../actions'
+import { tradeStatePDA, getBuyInstructionAccounts, tokenSize } from '../actions'
 
 // TODO: Set variables to demo here
 const notEnough = false
@@ -306,7 +306,6 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
   const derivePDAsForInstruction = async () => {
     const buyerPriceInLamports = (bidTotal || 0) * LAMPORTS_PER_SOL
     const buyerPrice: BN = new BN(buyerPriceInLamports)
-    const tokenSize: BN = new BN(1)
 
     const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
 
@@ -315,20 +314,14 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
     )
 
-    const buyerTradeState: [PublicKey, number] = await tradeStatePDA(
-      publicKey,
-      general,
-      bnTo8(buyerPrice),
-      bnTo8(tokenSize)
-    )
+    const buyerTradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
 
     if (!metaDataAccount || !escrowPaymentAccount || !buyerTradeState) {
       return {
         metaDataAccount: undefined,
         escrowPaymentAccount: undefined,
         buyerTradeState: undefined,
-        buyerPrice: undefined,
-        tokenSize: undefined
+        buyerPrice: undefined
       }
     }
 
@@ -336,16 +329,14 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
       metaDataAccount,
       escrowPaymentAccount,
       buyerTradeState,
-      buyerPrice,
-      tokenSize
+      buyerPrice
     }
   }
 
   const callBuyInstruction = async (e: any) => {
     e.preventDefault()
 
-    const { metaDataAccount, escrowPaymentAccount, buyerTradeState, buyerPrice, tokenSize } =
-      await derivePDAsForInstruction()
+    const { metaDataAccount, escrowPaymentAccount, buyerTradeState, buyerPrice } = await derivePDAsForInstruction()
 
     if (!metaDataAccount || !escrowPaymentAccount || !buyerTradeState) {
       notify({
@@ -443,27 +434,6 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
     } finally {
       setIsLoading(false)
     }
-
-    // // TODO: Fake API
-    // setTimeout(() => {
-    //   setIsLoading(false)
-    //   setVisible(false)
-    //   setMode('bid')
-    //   notify({
-    //     message: (
-    //       <MESSAGE>
-    //         <Row className="m-title" justify="space-between" align="middle">
-    //           <Col>Live auction bid sucessfull!</Col>
-    //           <Col>
-    //             <img className="m-icon" src={`/img/assets/bid-success-icon.svg`} alt="" />
-    //           </Col>
-    //         </Row>
-    //         <div>Genesis #3886, Solcities</div>
-    //         <div>My bid: 150.5 SOL (up to 160.5 SOL)</div>
-    //       </MESSAGE>
-    //     )
-    //   })
-    // }, 1000)
   }
 
   const handleBidInput = (e) => {
