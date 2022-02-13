@@ -26,6 +26,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
   } = useNFTCollections()
   const prevScrollY = useRef(0)
   const [goingUp, setGoingUp] = useState<boolean>(false)
+  const [filteredCollections, setFilteredCollections] = useState([])
   const [isAllLoading, setIsAllLoading] = useState<boolean>(false)
   const [isFeaturedLoading, setIsFeaturedLoading] = useState<boolean>(false)
   const [isUpcomingLoading, setIsUpcomingLoading] = useState<boolean>(false)
@@ -43,6 +44,22 @@ const NFTLandingPage: FC = (): JSX.Element => {
     return () => {}
   }, [])
 
+  const find = (col: string | string[], search: string) => {
+    return col.includes(search)
+  }
+
+  useEffect(() => {
+    let filtered = allCollections.filter(
+      (i) =>
+        find(i.collection_name.toLowerCase(), search.toLowerCase()) ||
+        find(
+          i.category_tags.split(' ').map((i) => i.toLowerCase()),
+          search.toLowerCase()
+        )
+    )
+    setFilteredCollections(filtered.slice(0, 5))
+  }, [search])
+
   const onScroll = (e) => {
     const currentScrollY = e.target.scrollTop
     if (prevScrollY.current < currentScrollY && goingUp) {
@@ -56,7 +73,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
 
   return (
     <>
-      <Header setFilter={setSearch} filter={search} />
+      <Header setFilter={setSearch} filter={search} filteredCollections={filteredCollections} />
       <NFTHomeSlider />
       <AnalyticsTabs />
       <SCROLLING_CONTENT_100 onScroll={onScroll}>
