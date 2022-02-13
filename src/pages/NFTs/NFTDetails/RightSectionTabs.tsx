@@ -1,16 +1,31 @@
 import { useEffect, useState, FC, useMemo } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
+import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
+import { useWallet } from '@solana/wallet-adapter-react'
 import styled, { css } from 'styled-components'
 import { Col, Row, Tabs, notification } from 'antd'
-import { useNFTDetails, useNFTProfile } from '../../../context'
+import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { MintItemViewStatus, NFTDetailsProviderMode } from '../../../types/nft_details'
 import { TradingHistoryTabContent } from './TradingHistoryTabContent'
 import { AttributesTabContent } from './AttributesTabContent'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
+import { getExecuteSaleInstructionAccounts, tokenSize, tradeStatePDA, freeSellerTradeStatePDA } from '../actions'
+import {
+  AUCTION_HOUSE_PREFIX,
+  AUCTION_HOUSE_PROGRAM_ID,
+  AUCTION_HOUSE,
+  createExecuteSaleInstruction,
+  ExecuteSaleInstructionArgs,
+  ExecuteSaleInstructionAccounts,
+  StringPublicKey,
+  toPublicKey,
+  getMetadata,
+  bnTo8
+} from '../../../web3'
+import BN from 'bn.js'
 
 const { TabPane } = Tabs
-
+//#region styles
 const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
   ${({ theme, activeTab, mode }) => css`
     position: relative;
@@ -156,6 +171,7 @@ const DETAILS_TAB_CONTENT = styled.div`
     }
   `}
 `
+//#endregion
 
 const getButtonText = (mode: NFTDetailsProviderMode): string => {
   switch (mode) {
@@ -180,10 +196,19 @@ export const RightSectionTabs: FC<{
 }> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
   const history = useHistory()
   const [activeTab, setActiveTab] = useState('1')
+  const [acceptedBid, setAcceptedBid] = useState<string>()
+  const [buyerPublicKey, setBuyerPublicKey] = useState<PublicKey>()
+
   const { sessionUser } = useNFTProfile()
-  const { publicKey } = useWallet()
+  const { connection } = useConnectionConfig()
+  const { publicKey, sendTransaction } = useWallet()
   const { general, nftMetadata, bids } = useNFTDetails()
   const { mint_address, owner, token_account } = general
+
+  useEffect(() => {
+    setAcceptedBid(bids.length > 0 ? bids[bids.length - 1].buyer_price : undefined)
+    setBuyerPublicKey(bids.length > 0 ? new PublicKey(bids[bids.length - 1].wallet_key) : undefined)
+  }, [])
 
   useEffect(() => {}, [publicKey])
 
@@ -294,6 +319,102 @@ export const RightSectionTabs: FC<{
       })
       return
     }
+  }
+
+  const derivePDAsForInstruction = async () => {
+    // TODO: lamport type check acceptedBid
+    const buyerPriceInLamports = acceptedBid
+    const buyerPrice: BN = new BN(buyerPriceInLamports)
+
+    const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
+
+    const escrowPaymentAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [Buffer.from(AUCTION_HOUSE_PREFIX), toPublicKey(AUCTION_HOUSE).toBuffer(), publicKey.toBuffer()],
+      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
+    )
+
+    const buyerRecieptTokenAccount: PublicKey = new PublicKey('test')
+
+    const buyerTradeState: [PublicKey, number] = await tradeStatePDA(buyerPublicKey, general, bnTo8(buyerPrice))
+
+    const sellerTradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
+
+    const freeTradeState: [PublicKey, number] = await freeSellerTradeStatePDA(publicKey, general)
+
+    const programAsSignerPDA: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [Buffer.from(AUCTION_HOUSE_PREFIX), Buffer.from('signer')],
+      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
+    )
+
+    if (
+      !buyerTradeState ||
+      !sellerTradeState ||
+      !buyerRecieptTokenAccount ||
+      !freeTradeState ||
+      !programAsSignerPDA ||
+      !escrowPaymentAccount ||
+      !metaDataAccount
+    ) {
+      throw Error(`Could not derive values for sell instructions`)
+    }
+
+    return {
+      buyerTradeState,
+      sellerTradeState,
+      buyerRecieptTokenAccount,
+      freeTradeState,
+      programAsSignerPDA,
+      escrowPaymentAccount,
+      metaDataAccount,
+      buyerPrice
+    }
+  }
+
+  const callExecuteSaleInstruction = async (e: any) => {
+    e.preventDefault()
+
+    const {
+      buyerTradeState,
+      sellerTradeState,
+      buyerRecieptTokenAccount,
+      freeTradeState,
+      programAsSignerPDA,
+      escrowPaymentAccount,
+      metaDataAccount,
+      buyerPrice
+    } = await derivePDAsForInstruction()
+
+    const executeSaleInstructionArgs: ExecuteSaleInstructionArgs = {
+      escrowPaymentBump: escrowPaymentAccount[1],
+      freeTradeStateBump: freeTradeState[1],
+      programAsSignerBump: programAsSignerPDA[1],
+      buyerPrice: buyerPrice,
+      tokenSize: tokenSize
+    }
+
+    const executeSaleInstructionAccounts: ExecuteSaleInstructionAccounts = await getExecuteSaleInstructionAccounts(
+      buyerPublicKey,
+      publicKey,
+      general,
+      metaDataAccount,
+      escrowPaymentAccount[0],
+      buyerRecieptTokenAccount,
+      buyerTradeState[0],
+      sellerTradeState[0],
+      freeTradeState[0],
+      programAsSignerPDA[0]
+    )
+
+    const executeSaleIX: TransactionInstruction = await createExecuteSaleInstruction(
+      executeSaleInstructionAccounts,
+      executeSaleInstructionArgs
+    )
+
+    const transaction = new Transaction().add(executeSaleIX)
+    const signature = await sendTransaction(transaction, connection)
+    console.log(signature)
+    const confirm = await connection.confirmTransaction(signature, 'processed')
+    console.log(confirm)
   }
 
   const handleButton = () => (mode === 'mint-item-view' ? openNotification(status, desc) : handleClickPrimaryButton())
