@@ -5,8 +5,10 @@ import {
   AUCTION_HOUSE_AUTHORITY,
   AUCTION_HOUSE_PROGRAM_ID,
   TREASURY_MINT,
+  TREASURY_ACCT,
   AH_FEE_ACCT,
   toPublicKey,
+  ExecuteSaleInstructionAccounts,
   SellInstructionAccounts,
   BuyInstructionAccounts,
   StringPublicKey,
@@ -15,11 +17,12 @@ import {
 import { ISingleNFT } from '../../types/nft_details.d'
 import BN from 'bn.js'
 
+export const tokenSize: BN = new BN(1)
+
 export const tradeStatePDA = async (
   publicKey: PublicKey,
   general: ISingleNFT,
-  buyerPrice: Uint8Array,
-  tokenSize: Uint8Array
+  buyerPrice: Uint8Array
 ): Promise<undefined | [PublicKey, number]> => {
   try {
     const pda = await PublicKey.findProgramAddress(
@@ -31,7 +34,7 @@ export const tradeStatePDA = async (
         toPublicKey(TREASURY_MINT).toBuffer(),
         toPublicKey(general.mint_address).toBuffer(),
         buyerPrice,
-        tokenSize
+        bnTo8(tokenSize)
       ],
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
     )
@@ -43,8 +46,7 @@ export const tradeStatePDA = async (
 
 export const freeSellerTradeStatePDA = async (
   publicKey: PublicKey,
-  general: ISingleNFT,
-  tokenSize: Uint8Array
+  general: ISingleNFT
 ): Promise<undefined | [PublicKey, number]> => {
   try {
     const pda = await PublicKey.findProgramAddress(
@@ -56,7 +58,7 @@ export const freeSellerTradeStatePDA = async (
         toPublicKey(TREASURY_MINT).toBuffer(),
         toPublicKey(general.mint_address).toBuffer(),
         bnTo8(new BN(0)),
-        tokenSize
+        bnTo8(tokenSize)
       ],
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
     )
@@ -104,4 +106,35 @@ export const getBuyInstructionAccounts = (
   auctionHouse: new PublicKey(AUCTION_HOUSE),
   auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
   buyerTradeState: buyerTradeState
+})
+
+export const getExecuteSaleInstructionAccounts = (
+  buyerPublicKey: PublicKey,
+  sellerPublicKey: PublicKey,
+  general: ISingleNFT,
+  metaDataAccount: StringPublicKey,
+  escrowPaymentAccount: PublicKey,
+  buyerReceiptTokenAccount: PublicKey,
+  buyerTradeState: PublicKey,
+  sellerTradeState: PublicKey,
+  freeTradeState: PublicKey,
+  programAsSignerPDA: PublicKey
+): ExecuteSaleInstructionAccounts => ({
+  buyer: buyerPublicKey,
+  seller: sellerPublicKey,
+  tokenAccount: new PublicKey(general.token_account),
+  tokenMint: new PublicKey(general.mint_address),
+  metadata: new PublicKey(metaDataAccount),
+  treasuryMint: new PublicKey(TREASURY_MINT),
+  escrowPaymentAccount: escrowPaymentAccount,
+  sellerPaymentReceiptAccount: sellerPublicKey,
+  buyerReceiptTokenAccount: buyerReceiptTokenAccount,
+  authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+  auctionHouse: new PublicKey(AUCTION_HOUSE),
+  auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
+  auctionHouseTreasury: new PublicKey(TREASURY_ACCT),
+  buyerTradeState: buyerTradeState,
+  sellerTradeState: sellerTradeState,
+  freeTradeState: freeTradeState,
+  programAsSigner: programAsSignerPDA
 })
