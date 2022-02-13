@@ -10,7 +10,7 @@ import { customFetch } from '../utils'
 const NFTDetailsContext = createContext<INFTDetailsConfig | null>(null)
 
 export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { connection } = useConnectionConfig()
+  const { connection, endpoint } = useConnectionConfig()
   const [general, setGeneral] = useState<ISingleNFT>()
   const [nftMetadata, setNftMetadata] = useState<INFTMetadata | null>()
   const [nftMintingData, setNftMintingData] = useState<IMetadataContext>()
@@ -35,6 +35,8 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         mintAddress: nft.data[0].mint_address as StringPublicKey,
         connection: connection
       })
+
+      console.log(parsedAccounts)
 
       const accountInfo =
         parsedAccounts !== undefined

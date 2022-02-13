@@ -35,7 +35,7 @@ import {
   bnTo8
 } from '../../../web3'
 
-import { tradeStatePDA, freeSellerTradeStatePDA, getSellInstructionAccounts } from '../actions'
+import { tradeStatePDA, freeSellerTradeStatePDA, getSellInstructionAccounts, tokenSize } from '../actions'
 
 //#region styles
 const UPLOAD_CONTENT = styled.div`
@@ -218,15 +218,14 @@ export const SellNFT = () => {
 
   const derivePDAsForInstruction = async () => {
     const buyerPriceInLamports = parseFloat(liveData['minimumBid'] || 0) * LAMPORTS_PER_SOL
-    const tokenSize: BN = new BN(1)
     const buyerPrice: BN = new BN(buyerPriceInLamports)
 
     const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
 
-    const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice), bnTo8(tokenSize))
+    const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
     console.log(tradeState)
 
-    const freeTradeState: [PublicKey, number] = await freeSellerTradeStatePDA(publicKey, general, bnTo8(tokenSize))
+    const freeTradeState: [PublicKey, number] = await freeSellerTradeStatePDA(publicKey, general)
     console.log(freeTradeState)
 
     const programAsSignerPDA: [PublicKey, number] = await PublicKey.findProgramAddress(
@@ -243,14 +242,13 @@ export const SellNFT = () => {
       tradeState,
       freeTradeState,
       programAsSignerPDA,
-      tokenSize,
       buyerPrice
     }
   }
 
   const callSellInstruction = async (e: any) => {
     e.preventDefault()
-    const { metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, tokenSize, buyerPrice } =
+    const { metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, buyerPrice } =
       await derivePDAsForInstruction()
 
     const sellInstructionArgs: SellInstructionArgs = {
@@ -331,7 +329,7 @@ export const SellNFT = () => {
   const callCancelInstruction = async (e: any) => {
     e.preventDefault()
 
-    const { tradeState, tokenSize, buyerPrice } = await derivePDAsForInstruction()
+    const { tradeState, buyerPrice } = await derivePDAsForInstruction()
 
     const cancelInstructionArgs: CancelInstructionArgs = {
       buyerPrice: buyerPrice,
