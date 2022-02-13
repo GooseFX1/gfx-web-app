@@ -77,15 +77,14 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
   }, [])
 
   const fetchExternalNFTs = useCallback(
-    async (paramValue: any, connection: any, nftData: INFTMetadata | null): Promise<any> => {
+    async (paramValue: any, connection: any, nftData: INFTMetadata | null, mintAddress: string): Promise<any> => {
       try {
         const nfts = await getParsedNftAccountsByOwner({
           publicAddress: `${paramValue}`,
           connection: connection
         })
-        console.log(nfts, nftData)
 
-        var data = nfts.filter((i: any) => i.data.name === nftData?.name)[0]
+        var data = nfts.filter((i: any) => i.data.name === nftData?.name || i.mint == mintAddress)[0]
         if (data) {
           setGeneral({
             non_fungible_id: data.key,
@@ -99,8 +98,13 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
             token_account: null,
             owner: null
           })
+
+          if (nftData) {
+            setNftMetadata(nftData)
+          } else {
+            await fetchMetaData(data.data.uri)
+          }
         }
-        setNftMetadata(nftData)
       } catch (error) {
         console.log(error)
         setNftMetadata(null)

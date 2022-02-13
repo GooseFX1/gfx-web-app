@@ -24,6 +24,7 @@ import {
 } from '../../../web3'
 import BN from 'bn.js'
 
+
 const { TabPane } = Tabs
 //#region styles
 const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
@@ -198,6 +199,9 @@ export const RightSectionTabs: FC<{
   const [activeTab, setActiveTab] = useState('1')
   const [acceptedBid, setAcceptedBid] = useState<string>()
   const [buyerPublicKey, setBuyerPublicKey] = useState<PublicKey>()
+  const [nftOwner, setNFTOwner] = useState<string>()
+  const [tokenAddres, setTokenAddress] = useState<string>()
+  const [own, setOwn] = useState(true)
 
   const { sessionUser } = useNFTProfile()
   const { connection } = useConnectionConfig()
@@ -274,6 +278,24 @@ export const RightSectionTabs: FC<{
     ],
     [nftMetadata]
   )
+
+  useEffect(() => {
+    getParsedAccountByMint({
+      mintAddress: mint_address as StringPublicKey,
+      connection: connection
+    }).then((res) => {
+      if (res) {
+        const owner = res !== undefined ? res.account?.data?.parsed?.info.owner : ''
+        setNFTOwner(owner)
+        setTokenAddress(res.pubkey)
+      }
+    })
+  }, [])
+
+  useEffect(() => {
+    setOwn(nftMetadata.properties.creators.map((i) => i.address).includes(publicKey + ''))
+    //TODO: make setMode so to change mode if the user owns the nft or not
+  }, [publicKey])
 
   const desc = {
     successful: [

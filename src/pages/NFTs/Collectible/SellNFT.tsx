@@ -10,6 +10,7 @@ import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../cont
 import { SellCategory } from '../SellCategory/SellCategory'
 import { FormDoubleItem } from '../Form/FormDoubleItem'
 import { notify } from '../../../utils'
+import { getParsedAccountByMint } from '../../../web3'
 import { dataFormRow2, dataFormFixedRow2, startingDays, expirationDays } from './mockData'
 import { Donate } from '../Form/Donate'
 import isEmpty from 'lodash/isEmpty'
@@ -126,6 +127,16 @@ const MESSAGE = styled.div`
   }
 `
 
+const LOADING = styled.div`
+  width: 100%;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  margin-top: 2rem;
+`
+
 const BUTTON = styled.button`
   display: block;
   min-width: 245px;
@@ -167,6 +178,7 @@ export const SellNFT = () => {
   const { publicKey, sendTransaction } = wallet
   const { connection, network } = useConnectionConfig()
 
+
   const [form] = Form.useForm()
   const initSettingData = {
     info: {
@@ -193,6 +205,16 @@ export const SellNFT = () => {
       setSettingData(state)
     }
   }, [history.location, history.location.state])
+
+  useEffect(() => {
+    async function getData() {
+      let data = await getParsedAccountByMint({ mintAddress: params.nftMintAddress, connection })
+      await fetchExternalNFTs(data.account.data.parsed.info.owner, connection, null, params.nftMintAddress)
+    }
+    if (params.nftMintAddress && (!general || !nftMetadata)) {
+      getData()
+    }
+  }, [])
 
   useEffect(() => {
     if (category === 'fixed-price') {
@@ -248,6 +270,24 @@ export const SellNFT = () => {
 
   const callSellInstruction = async (e: any) => {
     e.preventDefault()
+    
+    if (general.owner !== publicKey.toBase58()) {
+      return notify({
+        type: 'error',
+        message: (
+          <MESSAGE>
+            <Row className="m-title" justify="space-between" align="middle">
+              <Col>NFT Listing error!</Col>
+              <Col>
+                <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+              </Col>
+            </Row>
+            <div>This NFT is not owned by this wallet.</div>
+          </MESSAGE>
+        )
+      })
+    }
+    
     const { metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, buyerPrice } =
       await derivePDAsForInstruction()
 
@@ -386,6 +426,9 @@ export const SellNFT = () => {
 
   return (
     <>
+      {!general || !nftMetadata ? (
+        <LOADING>Loading...</LOADING>
+      ) : (
       <UPLOAD_CONTENT>
         <img
           className="live-auction-back-icon"

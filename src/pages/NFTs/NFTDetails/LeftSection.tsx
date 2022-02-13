@@ -61,7 +61,8 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
   const { general, nftMetadata } = useNFTDetails()
   const [isFavorite, setIsFavorited] = useState(false)
   const { sessionUser, likeDislike } = useNFTProfile()
-  const { non_fungible_id } = general
+  // const { non_fungible_id } = general
+  let non_fungible_id = 1
   //const hearts = 12
   const remaining = {
     days: '10',
