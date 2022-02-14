@@ -13,16 +13,14 @@ const { TabPane } = Tabs
 
 //#region styles
 const COLLECTION_TABS = styled.div`
-  padding: ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(4)} 6px;
   position: relative;
-  background: rgba(42, 42, 42, 1);
-  border-radius: 20px 30px 0 0;
-  margin-top: -${({ theme }) => theme.margin(1)};
+  height: calc(48% + 27px);
+  margin-top: -${({ theme }) => theme.margin(3.5)};
 
   .card-list {
     grid-gap: ${({ theme }) => theme.margin(3)};
     .card {
-      background-color: rgba(19, 19, 19, 1);
+      background-color: ${({ theme }) => theme.bg1};
     }
   }
 
@@ -50,7 +48,7 @@ const COLLECTION_TABS = styled.div`
           display: flex;
           justify-content: space-around;
           transition: transform 0.3s;
-          width: 65%;
+          width: 52%;
           margin-left: auto;
           padding-right: 21px;
         }
@@ -58,22 +56,41 @@ const COLLECTION_TABS = styled.div`
     }
   }
 
+  .ant-tabs-nav {
+    padding: 0 !important;
+    background-color: ${({ theme }) => theme.bg3};
+    border-bottom: 1px solid ${({ theme }) => theme.tabDivider} !important;
+    border-radius: 20px 30px 0 0;
+  }
+
+  .ant-tabs-content {
+    background-color: ${({ theme }) => theme.bg3};
+    min-height: calc(50vh - 156px);
+  }
+
+  .ant-tabs-nav-list {
+    height: 85px;
+  }
+
   .ant-tabs-tab {
     color: ${({ theme }) => theme.tabNameColor};
     font-size: 18px;
     font-family: Montserrat;
+    padding: 0;
+    margin: 0;
 
     &.ant-tabs-tab-active {
       .ant-tabs-tab-btn {
         color: ${({ theme }) => theme.text7};
         font-weight: 600;
         position: relative;
+
         &:before {
           position: absolute;
           content: '';
           height: 7px;
           width: 92px;
-          bottom: -18px;
+          bottom: -28px;
           left: 50%;
           background: rgba(88, 85, 255, 1);
           z-index: 6;
@@ -94,6 +111,7 @@ const STYLED_SEARCH_BAR = styled.div`
   display: flex;
   align-items: center;
   z-index: 4;
+  color: ${({ theme }) => theme.text2};
 
   .collection-search-bar {
     height: 45px;
@@ -104,7 +122,7 @@ const STYLED_SEARCH_BAR = styled.div`
     input {
       background-color: ${({ theme }) => theme.searchbarSmallBackground};
       &::placeholder {
-        color: rgba(114, 114, 114, 1);
+        color: ${({ theme }) => theme.text8};
       }
     }
   }
@@ -115,13 +133,10 @@ const STYLED_SEARCH_BAR = styled.div`
 `
 //#endregion
 
-export const CollectionTabs = ({ filter }) => {
+export const CollectionTabs = ({ filter, setFilter }) => {
   const { allCollections } = useNFTCollections()
-  const [search, setSearch] = useState('')
 
-  useEffect(() => {
-    console.log('recieved collections')
-  }, [allCollections])
+  useEffect(() => {}, [allCollections])
 
   return allCollections ? (
     <COLLECTION_TABS>
@@ -129,15 +144,15 @@ export const CollectionTabs = ({ filter }) => {
         <SearchBar
           className="collection-search-bar"
           placeholder="Search by nft or owner"
-          setFilter={setSearch}
-          filter={search}
+          setFilter={setFilter}
+          filter={filter}
         />
         <Sort />
       </STYLED_SEARCH_BAR>
-      <Tabs defaultActiveKey="1" centered>
-        <TabPane tab="Live Auctions" key="1">
+      <Tabs className={'collection-tabs'} defaultActiveKey="1" centered>
+        {/* <TabPane tab="Live Auctions" key="1">
           <LiveAuctionsTabContent />
-        </TabPane>
+        </TabPane> */}
         <TabPane tab="Fixed Price" key="2">
           <FixedPriceTabContent />
         </TabPane>

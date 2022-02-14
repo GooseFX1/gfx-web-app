@@ -75,6 +75,10 @@ const CURRENT_NETWORK = styled.span`
 `
 
 const WRAPPER = styled(SpaceBetweenDiv)`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   height: ${APP_LAYOUT_FOOTER_HEIGHT};
   padding: ${({ theme }) => theme.margin(5)};
   border-top: 1px solid ${({ theme }) => theme.appLayoutFooterBorder};

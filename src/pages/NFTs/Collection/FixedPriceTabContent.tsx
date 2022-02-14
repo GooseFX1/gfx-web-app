@@ -8,11 +8,10 @@ import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../ap
 import { Loader } from '../../../components'
 
 const WRAPPER = styled.div`
-  min-height: 410px;
+  height: 100%;
 `
 
 const FIXED_PRICE_TAB = styled.div`
-  min-height: 410px;
   ${({ theme }) => css`
     overflow-y: auto;
     padding: ${theme.margin(5.5)} ${theme.margin(4)};
@@ -26,10 +25,23 @@ const FIXED_PRICE_TAB = styled.div`
     }
   `}
 `
+const NO_CONTENT = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+
+  .no-data-image {
+    max-width: 160px;
+    margin-bottom: 20px;
+  }
+`
+
 const EMPTY_MSG = styled.div`
   ${({ theme }) => theme.flexCenter}
   width: 100%;
-  height: 410px;
+  height: 100%;
 `
 const WRAPPED_LOADER = styled.div`
   position: relative;
@@ -59,7 +71,12 @@ export const FixedPriceTabContent: FC = ({ ...rest }) => {
           ))}
         </FIXED_PRICE_TAB>
       ) : (
-        <EMPTY_MSG>No NFTs</EMPTY_MSG>
+        <NO_CONTENT>
+          <div>
+            <img className="no-data-image" src={`/img/assets/collected-no-data.png`} alt="" />
+            <p>No Fixed Price NFTs Listed</p>
+          </div>
+        </NO_CONTENT>
       )}
     </WRAPPER>
   )

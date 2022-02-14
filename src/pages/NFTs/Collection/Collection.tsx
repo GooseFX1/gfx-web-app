@@ -19,7 +19,7 @@ export const Collection: FC = (): JSX.Element => {
   const params = useParams<IAppParams>()
   const { singleCollection, fixedPriceWithinCollection, fetchSingleCollection } = useNFTCollections()
   const [err, setErr] = useState(false)
-  const [search, setSearch] = useState('')
+  const [filter, setFilter] = useState('')
 
   useEffect(() => {
     if (!singleCollection || `${singleCollection.collection_id}` !== params.collectionId) {
@@ -41,8 +41,8 @@ export const Collection: FC = (): JSX.Element => {
     <h2>Something went wrong fetching the collection details</h2>
   ) : (
     <>
-      <CollectionHeader setFilter={setSearch} filter={search} />
-      <CollectionTabs filter={search} />
+      <CollectionHeader setFilter={setFilter} filter={filter} />
+      <CollectionTabs setFilter={setFilter} filter={filter} />
     </>
   )
 }

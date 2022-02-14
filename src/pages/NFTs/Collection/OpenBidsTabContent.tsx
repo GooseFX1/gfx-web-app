@@ -5,9 +5,7 @@ import { useNFTCollections, useNFTProfile } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { Loader } from '../../../components'
 
-const WRAPPER = styled.div`
-  min-height: 410px;
-`
+const WRAPPER = styled.div``
 
 const OPEN_BIDS_TAB = styled.div`
   ${({ theme }) => css`
@@ -27,7 +25,6 @@ const OPEN_BIDS_TAB = styled.div`
 const EMPTY_MSG = styled.div`
   ${({ theme }) => theme.flexCenter}
   width: 100%;
-  height: 410px;
 `
 const WRAPPED_LOADER = styled.div`
   position: relative;

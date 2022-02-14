@@ -7,9 +7,7 @@ import { ISingleNFT } from '../../../types/nft_details.d'
 import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
 import { Loader } from '../../../components'
 
-const WRAPPER = styled.div`
-  min-height: 410px;
-`
+const WRAPPER = styled.div``
 
 const LIVE_AUCTIONS_TAB = styled.div`
   ${({ theme }) => css`
@@ -31,7 +29,6 @@ const LIVE_AUCTIONS_TAB = styled.div`
 const EMPTY_MSG = styled.div`
   ${({ theme }) => theme.flexCenter}
   width: 100%;
-  height: 410px;
 `
 const WRAPPED_LOADER = styled.div`
   position: relative;

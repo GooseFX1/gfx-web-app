@@ -29,9 +29,10 @@ import { notify } from '../../utils'
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
   width: 100vw;
-  height: calc(100vh - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '160px')});
+  height: calc(100vh - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '80px')});
   overflow-y: scroll;
   overflow-x: hidden;
+  padding-top: calc(80px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
 
   * {
     font-family: Montserrat;
@@ -79,9 +80,7 @@ export const NFTs: FC = () => {
                     <Explore />
                   </Route>
                   <Route exact path="/NFTs/collection/:collectionId">
-                    <SCROLLING_OVERLAY>
-                      <Collection />
-                    </SCROLLING_OVERLAY>
+                    <Collection />
                   </Route>
                   <Route exact path={['/NFTs/details', '/NFTs/details/:nftMintAddress']}>
                     <NFTDetails />

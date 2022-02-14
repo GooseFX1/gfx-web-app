@@ -59,7 +59,8 @@ const BUTTONS = styled(CenteredDiv)`
 `
 
 const WRAPPER = styled.nav`
-  position: relative;
+  position: absolute;
+
   width: 100%;
   ${({ theme }) => theme.headerRoundedBorders}
   background-color: ${({ theme }) => theme.bg3};
@@ -131,7 +132,7 @@ const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => v
   const icon = `/img/assets/arrow-down.svg`
 
   const handleCollapse = () => {
-    // onCollapse(!collapse)
+    onCollapse(!collapse)
   }
 
   return (

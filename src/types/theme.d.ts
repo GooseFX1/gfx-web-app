@@ -1,3 +1,4 @@
+import { Color } from './theme.d'
 import { FlattenSimpleInterpolation, ThemedCssFunction } from 'styled-components'
 
 export type Color = string
@@ -87,6 +88,7 @@ export interface Colors {
 
   // time panel
   timePanelBackground: Color
+  tabDivider: Color
 
   // nft detail
   nftDetailBackground: Color
