@@ -4,12 +4,23 @@ import styled from 'styled-components'
 import { Stats } from './Stats'
 import { useHistory } from 'react-router-dom'
 import { useNFTCollections } from '../../../context'
+import { ShareProfile } from '../Profile/ShareProfile'
 
 const COLLECTION_HEADER = styled.div`
   position: relative;
   .collection-header-banner {
     width: 100%;
     height: auto;
+    max-height: 45vh;
+  }
+  .bg-cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000000;
+    opacity: 0.5;
   }
 
   .collection-back-icon {
@@ -53,7 +64,17 @@ const COLLECTION_HEADER = styled.div`
   .desc {
     font-size: 20px;
     font-weight: 600;
+    line-height: 24.38px;
     margin-right: 5.55%;
+    max-width: 498px;
+    max-height: 70px;
+    overflow-y: auto;
+    -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+    &::-webkit-scrollbar {
+      width: 0; /* Remove scrollbar space */
+      background: transparent; /* Optional: just make scrollbar invisible */
+    }
   }
 
   .categories {
@@ -127,16 +148,10 @@ const MENU_LIST = styled(Menu)`
   }
 `
 
-const menu = (
-  <MENU_LIST>
-    <Menu.Item>Share</Menu.Item>
-    <Menu.Item>Report</Menu.Item>
-  </MENU_LIST>
-)
-
 export const CollectionHeader = ({ setFilter, filter }) => {
   const history = useHistory()
   const { singleCollection, fixedPriceWithinCollection } = useNFTCollections()
+  const [visible, setVisible] = useState(false)
   const [localStats, setLocalStats] = useState<any[]>([])
 
   useEffect(() => {
@@ -154,10 +169,23 @@ export const CollectionHeader = ({ setFilter, filter }) => {
     }
   }, [fixedPriceWithinCollection, singleCollection])
 
+  const handleClick = (e) => {
+    console.log('handleClick e:', e)
+    setVisible(true)
+  }
+
+  const menu = (
+    <MENU_LIST onClick={handleClick}>
+      <Menu.Item key="share">Share</Menu.Item>
+      {/* <Menu.Item>Report</Menu.Item> */}
+    </MENU_LIST>
+  )
+
   return fixedPriceWithinCollection && singleCollection ? (
     <COLLECTION_HEADER>
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
       <img className="collection-header-banner" src={singleCollection.collection[0].banner_link} alt="banner" />
+      <div className="bg-cover" />
       <div className="collection-header-content">
         <div className="solcities">
           <span className="label">{singleCollection.collection[0].collection_name}</span>
@@ -166,7 +194,7 @@ export const CollectionHeader = ({ setFilter, filter }) => {
         <div className="desc">{singleCollection.collection[0].collection_description}</div>
         <div className="categories">
           <div className="item">
-            <div className="value">{singleCollection.collection_floor}SQL</div>
+            <div className="value">{singleCollection.collection_floor || '0.00'} SOL</div>
             <div className="text">Floor price</div>
           </div>
           <div className="item">
@@ -180,6 +208,7 @@ export const CollectionHeader = ({ setFilter, filter }) => {
           </DROPDOWN>
         </div>
       </div>
+      <ShareProfile visible={visible} handleCancel={() => setVisible(false)} />
     </COLLECTION_HEADER>
   ) : (
     <div>loading</div>
