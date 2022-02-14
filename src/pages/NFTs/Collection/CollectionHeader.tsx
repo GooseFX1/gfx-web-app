@@ -1,19 +1,16 @@
 import { useState, useEffect } from 'react'
-import { Button, Col, Dropdown, Menu, Row } from 'antd'
+import { Button, Dropdown, Menu, Row } from 'antd'
 import styled from 'styled-components'
-import { SearchBar } from '../../../components'
-import { Sort } from './Sort'
 import { Stats } from './Stats'
 import { useHistory } from 'react-router-dom'
 import { useNFTCollections } from '../../../context'
 
 const COLLECTION_HEADER = styled.div`
   position: relative;
-  height: auto;
-  padding: ${({ theme }) => theme.margin(3)} ${({ theme }) => theme.margin(3)} ${({ theme }) => theme.margin(4.5)};
-  border-radius: 20px;
-  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
-  background: ${({ theme }) => theme.collectionHeader};
+  .collection-header-banner {
+    width: 100%;
+    height: auto;
+  }
 
   .collection-back-icon {
     position: absolute;
@@ -25,59 +22,54 @@ const COLLECTION_HEADER = styled.div`
     cursor: pointer;
   }
 
-  .collection-avatar {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-  }
-
-  .collection-name-wrap {
-    margin-top: ${({ theme }) => theme.margin(1.5)};
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .collection-name {
-    color: ${({ theme }) => theme.text7};
-    font-size: 18px;
-    display: inline-block;
-    margin-right: ${({ theme }) => theme.margin(1)};
-  }
-
-  .collection-check-icon {
-    width: 20px;
-    height: 20px;
-  }
-
-  .collection-action-wrap {
+  .collection-header-content {
     position: absolute;
-    top: 44px;
-    right: 21px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    left: 0;
+    width: 100%;
+    bottom: 10px;
+    height: 80px;
+    padding: 0 2.22%;
+  }
 
-    .collection-search-bar {
-      width: unset;
-      background-color: ${({ theme }) => theme.searchbarSmallBackground};
+  .solcities {
+    display: flex;
+    margin-right: 4.64%;
 
-      > input {
-        height: unset;
-        background-color: unset;
-        margin-right: ${({ theme }) => theme.margin(4.5)};
-      }
+    .label {
+      font-size: 35px;
+      font-weight: 500;
+      margin-right: ${({ theme }) => theme.margin(2)};
+    }
+
+    img {
+      width: 40px;
+      height: 40px;
     }
   }
 
-  .collection-stats {
-    color: #fff;
-    margin-top: ${({ theme }) => theme.margin(2)};
+  .desc {
+    font-size: 20px;
+    font-weight: 600;
+    margin-right: 5.55%;
   }
 
-  .collection-cities {
-    color: #fff;
-    padding: ${({ theme }) => theme.margin(2)};
-    font-size: 12px;
-    font-weight: 500;
-    color: ${({ theme }) => theme.text8};
+  .categories {
+    display: flex;
+    .item {
+      margin-right: ${({ theme }) => theme.margin(8)};
+    }
+
+    .value {
+      font-size: 25px;
+      font-weight: 600;
+    }
+
+    .text {
+      font-size: 18px;
+    }
   }
 `
 const DROPDOWN = styled(Dropdown)`
@@ -165,37 +157,29 @@ export const CollectionHeader = ({ setFilter, filter }) => {
   return fixedPriceWithinCollection && singleCollection ? (
     <COLLECTION_HEADER>
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
-      <Row justify="center">
-        <Col>
-          <img className="collection-avatar" src={singleCollection.collection[0].profile_pic_link} alt="" />
-          <div className="collection-name-wrap">
-            <span className="collection-name">{singleCollection.collection[0].collection_name}</span>
-            {singleCollection.collection[0].is_verified && (
-              <img className="collection-check-icon" src={`/img/assets/check-icon.png`} alt="" />
-            )}
+      <img className="collection-header-banner" src={singleCollection.collection[0].banner_link} alt="banner" />
+      <div className="collection-header-content">
+        <div className="solcities">
+          <span className="label">{singleCollection.collection[0].collection_name}</span>
+          {singleCollection.collection[0].is_verified && <img src={`/img/assets/check-icon.png`} alt="" />}
+        </div>
+        <div className="desc">{singleCollection.collection[0].collection_description}</div>
+        <div className="categories">
+          <div className="item">
+            <div className="value">{singleCollection.collection_floor}SQL</div>
+            <div className="text">Floor price</div>
           </div>
-        </Col>
-      </Row>
-      <Row justify="center" className="collection-stats">
-        <Stats stats={localStats} />
-      </Row>
-      <Row justify="center" className="collection-cities">
-        {singleCollection.collection[0].collection_description}
-      </Row>
-      <Row className="collection-action-wrap">
-        <SearchBar
-          className="collection-search-bar"
-          placeholder="Search by nft or owner"
-          setFilter={setFilter}
-          filter={filter}
-        />
-        <Sort />
-        <DROPDOWN overlay={menu} trigger={['click']} placement="bottomRight" align={{ offset: [0, 26] }}>
-          <Button>
-            <img className="collection-more-icon" src={`/img/assets/more_icon.svg`} alt="more" />
-          </Button>
-        </DROPDOWN>
-      </Row>
+          <div className="item">
+            <div className="value">33.5 K SOL </div>
+            <div className="text">Volume Traded</div>
+          </div>
+          <DROPDOWN overlay={menu} trigger={['click']} placement="bottomRight" align={{ offset: [0, 26] }}>
+            <Button>
+              <img className="collection-more-icon" src={`/img/assets/more_icon.svg`} alt="more" />
+            </Button>
+          </DROPDOWN>
+        </div>
+      </div>
     </COLLECTION_HEADER>
   ) : (
     <div>loading</div>

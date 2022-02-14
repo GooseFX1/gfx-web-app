@@ -206,7 +206,7 @@ export const Card = ({ singleNFT, listingType, className, userId, ...rest }: Pro
   }
 
   return (
-    <CARD status={localNFT.status} {...rest}>
+    <CARD status={localNFT.status} {...rest} className="card">
       <div className="card-image-wrapper" onClick={(e) => goToDetails(non_fungible_id)}>
         <Image
           fallback={`${window.origin}/img/assets/nft-preview.svg`}

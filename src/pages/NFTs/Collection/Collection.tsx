@@ -1,11 +1,10 @@
 import { useEffect, useState, FC } from 'react'
-import styled from 'styled-components'
-
 import { CollectionHeader } from './CollectionHeader'
 import { CollectionTabs } from './CollectionTabs'
+import styled from 'styled-components'
 import { useNFTCollections } from '../../../context'
 import { useParams } from 'react-router-dom'
-import { IAppParams } from '../../../types/app_params.d'
+import { IAppParams } from '../../../types/app_params'
 import { Loader } from '../../../components'
 
 const WRAPPED_LOADER = styled.div`
@@ -32,7 +31,7 @@ export const Collection: FC = (): JSX.Element => {
     }
 
     return () => {}
-  }, [])
+  }, [fetchSingleCollection, params.collectionId, singleCollection])
 
   return !fixedPriceWithinCollection || !singleCollection ? (
     <WRAPPED_LOADER>

@@ -138,7 +138,7 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
   }
 
   return (
-    <ANALYTIC_ITEM onClick={() => history.push(`/NFTs/collection-v2/${collection.collection_id}`)}>
+    <ANALYTIC_ITEM onClick={() => history.push(`/NFTs/collection/${collection.collection_id}`)}>
       <img
         className="analytic-image"
         // @ts-ignore

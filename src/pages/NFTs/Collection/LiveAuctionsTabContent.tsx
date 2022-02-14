@@ -47,7 +47,7 @@ export const LiveAuctionsTabContent: FC = ({ ...rest }) => {
   const [err, setErr] = useState(false)
 
   useEffect(() => {
-    fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.LIVE_AUCTIONS, `${singleCollection.collection_id}`).then(
+    fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.LIVE_AUCTIONS, `${singleCollection?.collection_id}`).then(
       (res) => {
         if (res.response && res.response.status !== 200) {
           setErr(true)
@@ -72,7 +72,7 @@ export const LiveAuctionsTabContent: FC = ({ ...rest }) => {
       ) : err ? (
         <EMPTY_MSG>Error loading live auction NFTs</EMPTY_MSG>
       ) : localLiveAuction.length > 0 ? (
-        <LIVE_AUCTIONS_TAB {...rest}>
+        <LIVE_AUCTIONS_TAB {...rest} className="card-list">
           {localLiveAuction.map((item: ISingleNFT) => (
             <Card key={item.non_fungible_id} singleNFT={item} listingType={'auction'} userId={sessionUser.user_id} />
           ))}
