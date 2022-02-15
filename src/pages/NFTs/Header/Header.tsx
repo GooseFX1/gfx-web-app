@@ -22,12 +22,12 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
 
   .search-bar {
     width: 100%;
-    background: ${({ theme }) => theme.bg3};
+    background: ${({ theme }) => theme.bg1};
     height: 45px;
     margin-left: ${({ theme }) => theme.margin(2.5)};
+    border: 1px solid ${({ theme }) => theme.bg5};
 
     > input {
-      background: ${({ theme }) => theme.bg3};
       &::placeholder {
         color: rgba(114, 114, 114, 1);
       }
@@ -135,36 +135,25 @@ const AVATAR_NFT = styled(Image)`
 
 export const Header = ({ setFilter, filter, filteredCollections }) => {
   const history = useHistory()
-  const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
+  const { sessionUser } = useNFTProfile()
   const { connected, publicKey } = useWallet()
-  const [isFirstTimeUser, setIsFirstTimeUser] = useLocalStorageState(`sessionUserInit`, 'true')
   const [visibleCompletePopup, setVisibleCompletePopup] = useState<boolean>(false)
   const { setVisible: setModalVisible } = useWalletModal()
   const { mode } = useDarkMode()
 
   useEffect(() => {
     if (connected && publicKey) {
-      if (!sessionUser || sessionUser.pubkey !== `${publicKey}`) {
-        fetchSessionUser('address', `${publicKey}`).then((res) => {
-          if (res && res.status === 200) {
-            if (res.data.length === 0 && isFirstTimeUser === 'true') {
-              setTimeout(() => setVisibleCompletePopup(true), 750)
-            }
-          } else {
-            console.error(res)
-          }
-        })
+      const fetchUserProfileStatus = localStorage.getItem(publicKey.toBase58())
+      const firstTimeUser = fetchUserProfileStatus ? JSON.parse(localStorage.getItem(publicKey.toBase58())) : undefined
+
+      if (firstTimeUser && firstTimeUser.pubKey === publicKey.toBase58() && firstTimeUser.isNew === true) {
+        setTimeout(() => setVisibleCompletePopup(true), 750)
       }
-    } else {
-      setSessionUser(undefined)
     }
     return () => {}
-  }, [publicKey, connected])
+  }, [sessionUser])
 
-  const handleDismissModal = useCallback(() => {
-    setIsFirstTimeUser('false')
-    setVisibleCompletePopup(false)
-  }, [setIsFirstTimeUser, setVisibleCompletePopup])
+  const handleDismissModal = useCallback(() => setVisibleCompletePopup(false), [setVisibleCompletePopup])
 
   const onSkip = useCallback(() => handleDismissModal(), [handleDismissModal])
   const onContinue = useCallback(() => {
@@ -195,7 +184,7 @@ export const Header = ({ setFilter, filter, filteredCollections }) => {
             <Menu.Item key={k}>
               <URL href={'/NFTs/collection/' + i.collection_id}>
                 <DETAILS>
-                  <TINYIMG src={i.profile_pic_link} />
+                  <TINYIMG src={i.profile_pic_link.length > 0 ? i.profile_pic_link : `/img/assets/nft-preview.svg`} />
                   <p style={{ margin: '0px' }}>{i.collection_name}</p>
                 </DETAILS>
                 <RIGHTARROWICON src={'/img/assets/arrow.svg'} className="global-search-dropdown-icon" />

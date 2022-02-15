@@ -80,8 +80,8 @@ export const Profile: FC = (): JSX.Element => {
 
   useEffect(() => {
     if (connected && publicKey) {
-      if (!sessionUser || sessionUser.pubkey !== `${publicKey}`) {
-        fetchUser(`${publicKey}`)
+      if (!sessionUser || sessionUser.pubkey !== publicKey.toBase58()) {
+        fetchUser(publicKey.toBase58())
       }
       setLoading(false)
     } else {
@@ -90,10 +90,10 @@ export const Profile: FC = (): JSX.Element => {
     }
 
     return () => {}
-  }, [publicKey, connected])
+  }, [sessionUser, publicKey, connected])
 
   const fetchUser = (param: string) => {
-    fetchSessionUser('address', `${publicKey}`).then((res) => {
+    fetchSessionUser('address', publicKey.toBase58()).then((res) => {
       if (!res || (res.response && res.response.status !== 200) || res.isAxiosError) {
         console.error(res)
         setErr(true)
