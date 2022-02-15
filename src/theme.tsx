@@ -195,10 +195,7 @@ export function colors(mode: string): Colors {
         ? 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'
         : '#000',
 
-    filterHeartIcon:
-      mode === 'dark'
-        ? '#131313'
-        : 'invert(75%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'
+    filterHeartIcon: mode === 'dark' ? '#131313' : '#131313'
   }
 }
 
