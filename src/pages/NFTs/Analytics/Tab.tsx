@@ -112,13 +112,13 @@ const AnalyticsTabs = () => {
       </ANALYTICS_DROPDOWN>
       <Tabs defaultActiveKey="1" centered>
         <TabPane tab="Floor" key="1">
-          <TabContent collections={allCollections} collectionFilter={'floor'} />
+          <TabContent collections={allCollections.slice(2, 10)} collectionFilter={'floor'} />
         </TabPane>
         <TabPane tab="Volume" key="2">
-          <TabContent collections={allCollections} collectionFilter={'volume'} />
+          <TabContent collections={allCollections.slice(2, 10)} collectionFilter={'volume'} />
         </TabPane>
         <TabPane tab="Listed NFT’S" key="3">
-          <TabContent collections={allCollections} collectionFilter={'listed'} />
+          <TabContent collections={allCollections.slice(2, 10)} collectionFilter={'listed'} />
         </TabPane>
       </Tabs>
     </ANALYTICS_TABS>
