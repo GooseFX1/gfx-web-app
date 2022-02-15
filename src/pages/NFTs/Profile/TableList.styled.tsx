@@ -6,6 +6,8 @@ export const StyledTableList = styled(Table)`
   .item {
     display: flex;
     align-items: center;
+    justify-content: center;
+    width: 100%;
     .image {
       width: 30px;
       height: 30px;
@@ -22,13 +24,15 @@ export const StyledTableList = styled(Table)`
   .price-wrap {
     display: flex;
     align-items: center;
+    justify-content: center;
+    width: 100%;
     .image {
       width: 24px;
       height: 24px;
     }
     .price {
       color: ${theme.text1};
-      font-size: 10px;
+      font-size: 14px;
       font-weight: 600;
       padding-left: ${theme.margin(1)};
     }
@@ -55,6 +59,7 @@ export const StyledTableList = styled(Table)`
         font-weight: 700;
         color: ${theme.text1};
         background-color: ${theme.bg3};
+        text-align: center;
         &:before {
           content: none !important;
         }
@@ -67,6 +72,7 @@ export const StyledTableList = styled(Table)`
         background-color: ${theme.bg3};
         border: none;
         color: ${theme.text1};
+        text-align: center;
       }
       &.ant-table-row:hover {
         > td {
