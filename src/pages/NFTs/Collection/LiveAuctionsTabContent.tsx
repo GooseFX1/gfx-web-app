@@ -7,9 +7,7 @@ import { ISingleNFT } from '../../../types/nft_details.d'
 import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
 import { Loader } from '../../../components'
 
-const WRAPPER = styled.div`
-  min-height: 410px;
-`
+const WRAPPER = styled.div``
 
 const LIVE_AUCTIONS_TAB = styled.div`
   ${({ theme }) => css`
@@ -31,7 +29,6 @@ const LIVE_AUCTIONS_TAB = styled.div`
 const EMPTY_MSG = styled.div`
   ${({ theme }) => theme.flexCenter}
   width: 100%;
-  height: 410px;
 `
 const WRAPPED_LOADER = styled.div`
   position: relative;
@@ -47,7 +44,7 @@ export const LiveAuctionsTabContent: FC = ({ ...rest }) => {
   const [err, setErr] = useState(false)
 
   useEffect(() => {
-    fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.LIVE_AUCTIONS, `${singleCollection.collection_id}`).then(
+    fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.LIVE_AUCTIONS, `${singleCollection?.collection_id}`).then(
       (res) => {
         if (res.response && res.response.status !== 200) {
           setErr(true)
@@ -72,7 +69,7 @@ export const LiveAuctionsTabContent: FC = ({ ...rest }) => {
       ) : err ? (
         <EMPTY_MSG>Error loading live auction NFTs</EMPTY_MSG>
       ) : localLiveAuction.length > 0 ? (
-        <LIVE_AUCTIONS_TAB {...rest}>
+        <LIVE_AUCTIONS_TAB {...rest} className="card-list">
           {localLiveAuction.map((item: ISingleNFT) => (
             <Card key={item.non_fungible_id} singleNFT={item} listingType={'auction'} userId={sessionUser.user_id} />
           ))}

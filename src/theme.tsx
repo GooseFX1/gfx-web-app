@@ -71,7 +71,7 @@ export function colors(mode: string): Colors {
     bg0: mode === 'dark' ? '#000' : '#fff',
     bg1: mode === 'dark' ? '#1e1e1e' : white,
     bg2: mode === 'dark' ? '#131313' : '#eeeeee',
-    bg3: mode === 'dark' ? '#2a2a2a' : white,
+    bg3: mode === 'dark' ? '#2a2a2a' : '#eeeeee',
     bg4: mode === 'dark' ? '#171717' : '#f4f4f4',
     bg5: mode === 'dark' ? black : '#e0e0e0',
     bg6: mode === 'dark' ? 'black' : 'gray',
@@ -93,7 +93,7 @@ export function colors(mode: string): Colors {
     textBox: mode === 'dark' ? '#474747' : '#808080',
     walletModalWallet: mode === 'dark' ? '#1e1e1e' : '#e1e1e1',
     searchbarBackground: mode === 'dark' ? '#1e1e1e' : '#fff',
-    searchbarSmallBackground: mode === 'dark' ? '#404040' : '#ababab',
+    searchbarSmallBackground: mode === 'dark' ? '#404040' : 'white',
     collectionHeader: mode === 'dark' ? 'linear-gradient(0, #131313 0%, transparent 100%)' : '#fff',
 
     // modal
@@ -128,6 +128,8 @@ export function colors(mode: string): Colors {
 
     // time panel
     timePanelBackground: mode === 'dark' ? '#131313' : '#CACACA',
+
+    tabDivider: mode === 'dark' ? '#575757' : '#dadada',
 
     // nft detail
     nftDetailBackground: mode === 'dark' ? '#2a2a2a' : '#f4f4f4',
@@ -193,10 +195,7 @@ export function colors(mode: string): Colors {
         ? 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'
         : '#000',
 
-    filterHeartIcon:
-      mode === 'dark'
-        ? '#131313'
-        : 'invert(75%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'
+    filterHeartIcon: mode === 'dark' ? '#131313' : '#131313'
   }
 }
 
@@ -300,7 +299,7 @@ export function theme(mode: string): DefaultTheme {
     customScrollBar: (size) => css`
       scrollbar-width: thin;
       scrollbar-color: ${({ theme }) => theme.scrollBarColor} transparent;
-
+      
       &::-webkit-scrollbar {
         width: ${size};
       }

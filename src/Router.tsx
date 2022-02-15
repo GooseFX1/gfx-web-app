@@ -3,7 +3,7 @@ import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { AppLayout } from './layouts'
 import { Crypto, Farm, NFTs, Synths, Swap } from './pages'
 import useBlacklisted from './utils/useBlacklisted'
-import { NavCollapseProvider } from './context'
+import { NavCollapseProvider, NFTProfileProvider } from './context'
 
 export const Router: FC = () => {
   const blacklisted = useBlacklisted()
@@ -29,7 +29,11 @@ export const Router: FC = () => {
                 }
               }}
             />
-            <Route path="/NFTs" component={NFTs} />
+            <Route path="/NFTs">
+              <NFTProfileProvider>
+                <NFTs />
+              </NFTProfileProvider>
+            </Route>
             <Route exact path="/farm" component={Farm} />
           </AppLayout>
         </NavCollapseProvider>

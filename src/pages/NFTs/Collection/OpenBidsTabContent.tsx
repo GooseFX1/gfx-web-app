@@ -5,9 +5,7 @@ import { useNFTCollections, useNFTProfile } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { Loader } from '../../../components'
 
-const WRAPPER = styled.div`
-  min-height: 410px;
-`
+const WRAPPER = styled.div``
 
 const OPEN_BIDS_TAB = styled.div`
   ${({ theme }) => css`
@@ -24,10 +22,22 @@ const OPEN_BIDS_TAB = styled.div`
     }
   `}
 `
+const NO_CONTENT = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  color: ${({ theme }) => theme.text8};
+
+  .no-data-image {
+    max-width: 160px;
+    margin-bottom: 20px;
+  }
+`
 const EMPTY_MSG = styled.div`
   ${({ theme }) => theme.flexCenter}
   width: 100%;
-  height: 410px;
 `
 const WRAPPED_LOADER = styled.div`
   position: relative;
@@ -70,7 +80,7 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
           </WRAPPED_LOADER>
         </EMPTY_MSG>
       ) : fileredLocalOpenBid.length > 0 ? (
-        <OPEN_BIDS_TAB {...rest}>
+        <OPEN_BIDS_TAB {...rest} className="card-list">
           {fileredLocalOpenBid.map((item: ISingleNFT) => (
             <Card
               key={item.non_fungible_id}
@@ -81,7 +91,12 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
           ))}
         </OPEN_BIDS_TAB>
       ) : (
-        <EMPTY_MSG>No NFTs</EMPTY_MSG>
+        <NO_CONTENT>
+          <div>
+            <img className="no-data-image" src={`/img/assets/collected-no-data.png`} alt="" />
+            <p>No Open Bid NFTs Listed</p>
+          </div>
+        </NO_CONTENT>
       )}
     </WRAPPER>
   )

@@ -1,46 +1,96 @@
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Tabs } from 'antd'
-// import { LiveAuctionsTabContent } from './LiveAuctionsTabContent'
+import { useNFTCollections } from '../../../context'
+import { SearchBar } from '../../../components'
+import { Sort } from './Sort'
+import { LiveAuctionsTabContent } from './LiveAuctionsTabContent'
 import { FixedPriceTabContent } from './FixedPriceTabContent'
 import { OpenBidsTabContent } from './OpenBidsTabContent'
 import { OwnersTabContent } from './OwnersTabContent'
 
 const { TabPane } = Tabs
 
+//#region styles
 const COLLECTION_TABS = styled.div`
-  z-index: 3;
-  margin-top: ${({ theme }) => `-${theme.margin(6)}`};
+  position: relative;
+  height: calc(48% + 27px);
+  margin-top: -${({ theme }) => theme.margin(3.5)};
+
+  .card-list {
+    grid-gap: ${({ theme }) => theme.margin(3)};
+    .card {
+      background-color: ${({ theme }) => theme.bg1};
+    }
+  }
 
   .ant-tabs-ink-bar {
     display: none;
   }
 
   .ant-tabs-top {
+    overflow: initial;
     > .ant-tabs-nav {
       margin-bottom: 0;
+      border-bottom: 1px solid #575757;
+      padding-bottom: 6px;
 
       &::before {
         border: none;
       }
+
+      .ant-tabs-nav-wrap {
+        overflow: initial;
+        display: block;
+
+        .ant-tabs-nav-list {
+          position: relative;
+          display: flex;
+          justify-content: space-around;
+          transition: transform 0.3s;
+          width: 52%;
+          margin-left: auto;
+          padding-right: 21px;
+        }
+      }
     }
+  }
+
+  .ant-tabs-nav {
+    padding: 0 !important;
+    background-color: ${({ theme }) => theme.bg3};
+    border-bottom: 1px solid ${({ theme }) => theme.tabDivider} !important;
+    border-radius: 20px 30px 0 0;
+  }
+
+  .ant-tabs-content {
+    background-color: ${({ theme }) => theme.bg3};
+    min-height: calc(50vh - 156px);
+  }
+
+  .ant-tabs-nav-list {
+    height: 85px;
   }
 
   .ant-tabs-tab {
     color: ${({ theme }) => theme.tabNameColor};
     font-size: 18px;
     font-family: Montserrat;
+    padding: 0;
+    margin: 0;
 
     &.ant-tabs-tab-active {
       .ant-tabs-tab-btn {
         color: ${({ theme }) => theme.text7};
         font-weight: 600;
         position: relative;
+
         &:before {
           position: absolute;
           content: '';
           height: 7px;
-          width: 130%;
-          bottom: -18px;
+          width: 92px;
+          bottom: -28px;
           left: 50%;
           background: rgba(88, 85, 255, 1);
           z-index: 6;
@@ -53,10 +103,53 @@ const COLLECTION_TABS = styled.div`
   }
 `
 
-export const CollectionTabs = ({ filter }) => {
-  return (
+const STYLED_SEARCH_BAR = styled.div`
+  position: absolute;
+  left: 32px;
+  width: 515px;
+  top: 20px;
+  display: flex;
+  align-items: center;
+  z-index: 4;
+  color: ${({ theme }) => theme.text2};
+
+  .collection-search-bar {
+    height: 45px;
+    width: 350px;
+    margin-left: 0;
+    margin-right: 30px;
+    background-color: ${({ theme }) => theme.searchbarSmallBackground};
+    input {
+      background-color: ${({ theme }) => theme.searchbarSmallBackground};
+      &::placeholder {
+        color: ${({ theme }) => theme.text8};
+      }
+    }
+  }
+
+  button {
+    height: 45px;
+  }
+`
+//#endregion
+
+export const CollectionTabs = ({ filter, setFilter }) => {
+  const { allCollections } = useNFTCollections()
+
+  useEffect(() => {}, [allCollections])
+
+  return allCollections ? (
     <COLLECTION_TABS>
-      <Tabs defaultActiveKey="1" centered>
+      <STYLED_SEARCH_BAR>
+        <SearchBar
+          className="collection-search-bar"
+          placeholder="Search by nft or owner"
+          setFilter={setFilter}
+          filter={filter}
+        />
+        <Sort />
+      </STYLED_SEARCH_BAR>
+      <Tabs className={'collection-tabs'} defaultActiveKey="1" centered>
         {/* <TabPane tab="Live Auctions" key="1">
           <LiveAuctionsTabContent />
         </TabPane> */}
@@ -71,5 +164,7 @@ export const CollectionTabs = ({ filter }) => {
         </TabPane>
       </Tabs>
     </COLLECTION_TABS>
+  ) : (
+    <div>loading...</div>
   )
 }

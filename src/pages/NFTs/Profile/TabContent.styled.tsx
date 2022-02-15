@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const StyledTabContent = styled.div`
   .profile-content-loading {
     position: relative;
-    height: calc(100% - 44px);
+    height: calc(100% - 66px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -16,13 +16,14 @@ export const StyledTabContent = styled.div`
   ${({ theme }) => `
     height: calc(100% + 66px);
     margin-top: -66px;
-    padding: 0 ${theme.margin(5)};
     
     .actions-group {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom:21px;
+      margin-bottom: 21px;
+      margin-left: 40px;
+
       * {
         z-index: 50;
       }
@@ -61,7 +62,7 @@ export const StyledTabContent = styled.div`
       height: calc(100% - 66px);
       display: flex;
       flex-wrap: wrap;
-      padding: ${theme.margin(4)} 0;
+      padding: ${theme.margin(4)} ${theme.margin(5)};
       overflow-x: hidden;
       overflow-y: scroll;
       ${theme.customScrollBar('4px')};
