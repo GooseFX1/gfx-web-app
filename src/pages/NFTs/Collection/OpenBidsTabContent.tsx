@@ -22,6 +22,19 @@ const OPEN_BIDS_TAB = styled.div`
     }
   `}
 `
+const NO_CONTENT = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  color: ${({ theme }) => theme.text8};
+
+  .no-data-image {
+    max-width: 160px;
+    margin-bottom: 20px;
+  }
+`
 const EMPTY_MSG = styled.div`
   ${({ theme }) => theme.flexCenter}
   width: 100%;
@@ -78,7 +91,12 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
           ))}
         </OPEN_BIDS_TAB>
       ) : (
-        <EMPTY_MSG>No NFTs</EMPTY_MSG>
+        <NO_CONTENT>
+          <div>
+            <img className="no-data-image" src={`/img/assets/collected-no-data.png`} alt="" />
+            <p>No Open Bid NFTs Listed</p>
+          </div>
+        </NO_CONTENT>
       )}
     </WRAPPER>
   )

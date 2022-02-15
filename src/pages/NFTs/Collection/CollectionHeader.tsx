@@ -17,7 +17,7 @@ const COLLECTION_HEADER = styled.div`
 
   .collection-back-icon {
     position: absolute;
-    top: 55px;
+    top: 90px;
     left: 55px;
     transform: rotate(90deg);
     width: 36px;
@@ -158,7 +158,7 @@ const MENU_LIST = styled(Menu)`
 
 export const CollectionHeader = ({ setFilter, filter }) => {
   const history = useHistory()
-  const { singleCollection, fixedPriceWithinCollection } = useNFTCollections()
+  const { singleCollection, fixedPriceWithinCollection, openBidWithinCollection } = useNFTCollections()
   const [visible, setVisible] = useState(false)
 
   const handleClick = (e) => {
@@ -173,10 +173,16 @@ export const CollectionHeader = ({ setFilter, filter }) => {
     </MENU_LIST>
   )
 
-  return fixedPriceWithinCollection && singleCollection ? (
+  return fixedPriceWithinCollection && singleCollection && openBidWithinCollection ? (
     <COLLECTION_HEADER>
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
-      <BANNER $url={singleCollection.collection[0].banner_link}></BANNER>
+      <BANNER
+        $url={
+          singleCollection.collection[0].banner_link
+            ? singleCollection.collection[0].banner_link
+            : openBidWithinCollection.open_bid[0].image_url
+        }
+      ></BANNER>
       <div className="collection-header-content">
         <div style={{ width: '55%' }}>
           <div className="title">
