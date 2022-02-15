@@ -6,6 +6,7 @@ import apiClient from '../../../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
 import { SearchBar, Loader } from '../../../components'
 import { StyledTabContent } from './TabContent.styled'
+import { useConnectionConfig } from '../../../context'
 // import { INFTMetadata } from '../../../types/nft_details.d'
 
 export const columns = [
@@ -74,6 +75,7 @@ interface IActivity {
 const Activity = (props: IActivity) => {
   const [activity, setActivity] = useState<any>()
   const { publicKey } = useWallet()
+  const { connection } = useConnectionConfig()
 
   useEffect(() => {
     async function makeActivity() {
@@ -81,6 +83,11 @@ const Activity = (props: IActivity) => {
         props.data.map(async (datum) => {
           let extraData = await fetchGeneral(datum.non_fungible_id)
           let name = extraData.data[0].nft_name.split(' ')
+          let transactionData = {}
+          if (datum.tx_sig) {
+            transactionData = await connection.getParsedConfirmedTransaction(datum.tx_sig, 'confirmed')
+            // '8SWtsBv1BsqatXrsWpZX67bqyEFvyBRL6miazot3DZUsVznYW4rB2a5H2uVNe9ekSXuvy2qSKF7KLxTxQ4vtRw5' test signature
+          }
           return {
             ...datum,
             from: publicKey.toString().slice(0, 4) + '...' + publicKey.toString().slice(-4),
@@ -92,7 +99,8 @@ const Activity = (props: IActivity) => {
             item: {
               name: name[1],
               other: name[0]
-            }
+            },
+            ...transactionData
           }
         })
       )
