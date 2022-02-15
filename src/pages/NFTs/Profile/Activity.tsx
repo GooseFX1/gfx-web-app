@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { StyledTableList } from './TableList.styled'
-
+import { useWallet } from '@solana/wallet-adapter-react'
 import NoContent from './NoContent'
+import apiClient from '../../../api'
+import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
 import { SearchBar, Loader } from '../../../components'
 import { StyledTabContent } from './TabContent.styled'
 // import { INFTMetadata } from '../../../types/nft_details.d'
@@ -9,8 +11,8 @@ import { StyledTabContent } from './TabContent.styled'
 export const columns = [
   {
     title: 'Event',
-    dataIndex: 'event',
-    key: 'event',
+    dataIndex: 'kind',
+    key: 'kind',
     render: (text) => <span className="text-normal">{text}</span>
   },
   {
@@ -35,7 +37,7 @@ export const columns = [
     render: (price) => (
       <div className="price-wrap">
         <img className="image" src={`/img/assets/price.svg`} alt="" />
-        <span className="price">{price}</span>
+        <span className="price">{price} SOL</span>
       </div>
     )
   },
@@ -71,14 +73,49 @@ interface IActivity {
 
 const Activity = (props: IActivity) => {
   const [activity, setActivity] = useState<any>()
+  const { publicKey } = useWallet()
 
   useEffect(() => {
-    setActivity(props.data)
+    async function makeActivity() {
+      let data = await Promise.all(
+        props.data.map(async (datum) => {
+          let extraData = await fetchGeneral(datum.non_fungible_id)
+          let name = extraData.data[0].nft_name.split(' ')
+          return {
+            ...datum,
+            from: publicKey.toString().slice(0, 4) + '...' + publicKey.toString().slice(-4),
+            quantity: 1,
+            price: datum.price || 0,
+            ...extraData.data[0],
+            to: extraData.data[0].mint_address.slice(0, 4) + '...' + extraData.data[0].mint_address.slice(-4),
+            date: new Date(datum.clock * 1000).toLocaleDateString('en-US'),
+            item: {
+              name: name[1],
+              other: name[0]
+            }
+          }
+        })
+      )
 
-    return () => {
-      setActivity(undefined)
+      setActivity(data)
+
+      return () => {
+        setActivity(undefined)
+      }
     }
+
+    makeActivity()
   }, [props.data])
+
+  const fetchGeneral = async (id: string): Promise<any> => {
+    try {
+      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?nft_id=${id}`)
+      const nft = await res.data
+      return nft
+    } catch (err) {
+      return err
+    }
+  }
 
   return (
     <StyledTabContent>

@@ -212,33 +212,29 @@ export const Card = ({ singleNFT, listingType, className, userId, ...rest }: Pro
         <div className="card-remaining">{localNFT.remaining}</div>
       </div>
       <div className="card-info">
-        <Row justify="space-between" align="middle">
-          <Row align="middle">
-            <div className="card-name">{localNFT.nft_name}</div>
-            {sessionUser && sessionUser.user_id && (
-              <span className="card-favorite-heart-container">
-                {isFavorite ? (
-                  <img
-                    className="card-favorite-heart"
-                    src={`/img/assets/heart-red.svg`}
-                    alt="heart-selected"
-                    onClick={handleToggleLike}
-                  />
-                ) : (
-                  <img
-                    className="card-favorite-heart"
-                    src={`/img/assets/heart-empty.svg`}
-                    alt="heart-empty"
-                    onClick={handleToggleLike}
-                  />
-                )}
-                {/* <span className={`card-favorite-number ${isFavorite ? 'card-favorite-number-highlight' : ''}`}>
+        <div className="card-name">{localNFT.nft_name}</div>
+        {sessionUser && sessionUser.user_id && (
+          <span className="card-favorite-heart-container">
+            {isFavorite ? (
+              <img
+                className="card-favorite-heart"
+                src={`/img/assets/heart-red.svg`}
+                alt="heart-selected"
+                onClick={handleToggleLike}
+              />
+            ) : (
+              <img
+                className="card-favorite-heart"
+                src={`/img/assets/heart-empty.svg`}
+                alt="heart-empty"
+                onClick={handleToggleLike}
+              />
+            )}
+            {/* <span className={`card-favorite-number ${isFavorite ? 'card-favorite-number-highlight' : ''}`}>
                   {likes}
                 </span> */}
-              </span>
-            )}
-          </Row>
-        </Row>
+          </span>
+        )}
       </div>
       <Row justify="space-between" align="middle">
         <div className="card-price">{`${moneyFormatter(localNFT.price)} SOL`}</div>
