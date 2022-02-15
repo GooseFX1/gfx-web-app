@@ -53,9 +53,8 @@ const CARD = styled.div<{ status: string }>`
       font-size: 16px;
       font-weight: 600;
       color: ${({ theme }) => theme.text2};
-      margin-right: ${({ theme }) => theme.margin(0.5)};
       font-family: Montserrat;
-      width: 85%;
+      width: calc(100% - 20px);
       ${({ theme }) => theme.ellipse}
     }
 
@@ -69,10 +68,6 @@ const CARD = styled.div<{ status: string }>`
       width: 30px;
       height: 30px;
       transform: translateY(4px);
-    }
-
-    .card-favorite-heart {
-      margin-right: ${({ theme }) => theme.margin(0.5)};
     }
 
     .card-favorite-number {
