@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { INFTMetadata } from '../../../types/nft_details.d'
+import { ParsedNFTDetails } from '../../../types/nft_details.d'
 import { useNFTProfile } from '../../../context'
 import { getParsedNftAccountsByOwner } from '../../../web3'
 import { useConnectionConfig } from '../../../context'
@@ -18,8 +18,8 @@ export const ContentProfile = ({ isExplore }: Props) => {
   const { sessionUser, userActivity, setUserActivity, fetchUserActivity } = useNFTProfile()
   const { connection } = useConnectionConfig()
 
-  const [collectedItems, setCollectedItems] = useState<INFTMetadata[]>()
-  const [createdItems, setCreatedItems] = useState<INFTMetadata[]>()
+  const [collectedItems, setCollectedItems] = useState<ParsedNFTDetails[]>()
+  const [createdItems, setCreatedItems] = useState<ParsedNFTDetails[]>()
 
   const tabPanes = useMemo(
     () => [
@@ -55,6 +55,8 @@ export const ContentProfile = ({ isExplore }: Props) => {
   useEffect(() => {
     if (connected && publicKey) {
       fetchUserCollectedNFTs().then((topLevelUserNFTData: any) => {
+        console.log(topLevelUserNFTData)
+
         setCollectedItems(topLevelUserNFTData)
         const userCreated = topLevelUserNFTData.filter((nft) =>
           nft.data.creators.find((c) => c.address === publicKey.toBase58())
