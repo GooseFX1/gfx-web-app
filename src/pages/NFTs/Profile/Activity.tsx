@@ -85,7 +85,7 @@ const Activity = (props: IActivity) => {
             ...datum,
             from: publicKey.toString().slice(0, 4) + '...' + publicKey.toString().slice(-4),
             quantity: 1,
-            price: 0,
+            price: datum.price || 0,
             ...extraData.data[0],
             to: extraData.data[0].mint_address.slice(0, 4) + '...' + extraData.data[0].mint_address.slice(-4),
             date: new Date(datum.clock * 1000).toLocaleDateString('en-US'),
