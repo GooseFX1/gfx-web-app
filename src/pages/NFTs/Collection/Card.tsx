@@ -53,9 +53,8 @@ const CARD = styled.div<{ status: string }>`
       font-size: 16px;
       font-weight: 600;
       color: ${({ theme }) => theme.text2};
-      margin-right: ${({ theme }) => theme.margin(0.5)};
       font-family: Montserrat;
-      width: 85%;
+      width: calc(100% - 20px);
       ${({ theme }) => theme.ellipse}
     }
 
@@ -69,10 +68,6 @@ const CARD = styled.div<{ status: string }>`
       width: 30px;
       height: 30px;
       transform: translateY(4px);
-    }
-
-    .card-favorite-heart {
-      margin-right: ${({ theme }) => theme.margin(0.5)};
     }
 
     .card-favorite-number {
@@ -206,7 +201,7 @@ export const Card = ({ singleNFT, listingType, className, userId, ...rest }: Pro
   }
 
   return (
-    <CARD status={localNFT.status} {...rest}>
+    <CARD status={localNFT.status} {...rest} className="card">
       <div className="card-image-wrapper" onClick={(e) => goToDetails(non_fungible_id)}>
         <Image
           fallback={`${window.origin}/img/assets/nft-preview.svg`}
@@ -217,33 +212,29 @@ export const Card = ({ singleNFT, listingType, className, userId, ...rest }: Pro
         <div className="card-remaining">{localNFT.remaining}</div>
       </div>
       <div className="card-info">
-        <Row justify="space-between" align="middle">
-          <Row align="middle">
-            <div className="card-name">{localNFT.nft_name}</div>
-            {sessionUser && sessionUser.user_id && (
-              <span className="card-favorite-heart-container">
-                {isFavorite ? (
-                  <img
-                    className="card-favorite-heart"
-                    src={`/img/assets/heart-red.svg`}
-                    alt="heart-selected"
-                    onClick={handleToggleLike}
-                  />
-                ) : (
-                  <img
-                    className="card-favorite-heart"
-                    src={`/img/assets/heart-empty.svg`}
-                    alt="heart-empty"
-                    onClick={handleToggleLike}
-                  />
-                )}
-                {/* <span className={`card-favorite-number ${isFavorite ? 'card-favorite-number-highlight' : ''}`}>
+        <div className="card-name">{localNFT.nft_name}</div>
+        {sessionUser && sessionUser.user_id && (
+          <span className="card-favorite-heart-container">
+            {isFavorite ? (
+              <img
+                className="card-favorite-heart"
+                src={`/img/assets/heart-red.svg`}
+                alt="heart-selected"
+                onClick={handleToggleLike}
+              />
+            ) : (
+              <img
+                className="card-favorite-heart"
+                src={`/img/assets/heart-empty.svg`}
+                alt="heart-empty"
+                onClick={handleToggleLike}
+              />
+            )}
+            {/* <span className={`card-favorite-number ${isFavorite ? 'card-favorite-number-highlight' : ''}`}>
                   {likes}
                 </span> */}
-              </span>
-            )}
-          </Row>
-        </Row>
+          </span>
+        )}
       </div>
       <Row justify="space-between" align="middle">
         <div className="card-price">{`${moneyFormatter(localNFT.price)} SOL`}</div>

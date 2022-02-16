@@ -32,22 +32,21 @@ const WRAPPER = styled.button`
 `
 const MENU = styled(Menu)`
   position: relative;
-  background-color: ${({ theme }) => theme.bg6};
+  background-color: ${({ theme }) => theme.bg2};
   border-radius: 10px;
-  padding: ${({ theme }) => theme.margin(1)};
-  padding-top: ${({ theme }) => theme.margin(1.5)};
+  padding: ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(3)};
   min-width: 120px;
 
   &:before {
     border-right-color: transparent;
     border-bottom-color: transparent;
-    border-top-color: ${({ theme }) => theme.bg6};
-    border-left-color: ${({ theme }) => theme.bg6};
+    border-top-color: ${({ theme }) => theme.text2};
+    border-left-color: ${({ theme }) => theme.text2};
     top: -5px;
     right: 28px;
     position: absolute;
     z-index: 1;
-    display: block;
+    display: none;
     width: 10px;
     height: 10px;
     background: transparent;
