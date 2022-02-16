@@ -38,35 +38,43 @@ const COLLECTION_HEADER = styled.div`
     margin-bottom: ${({ theme }) => theme.margin(3.5)};
   }
 
-  .title {
+  .title-desc {
+    width: 55%;
     display: flex;
-    margin-right: ${({ theme }) => theme.margin(2)};
-
-    .label {
-      font-size: 35px;
-      font-weight: 500;
+    justify-content: space-between;
+    flex-flow: wrap;
+    .title {
+      display: flex;
+      max-width: 40%;
       margin-right: ${({ theme }) => theme.margin(2)};
+      ${({ theme }) => theme.mediaWidth.upToMedium({ width: '100%', maxWidth: 'unset' })}};
+
+      .label {
+        font-size: 35px;
+        font-weight: 500;
+        margin-right: ${({ theme }) => theme.margin(2)};
+      }
+
+      img {
+        width: 40px;
+        height: 40px;
+      }
     }
 
-    img {
-      width: 40px;
-      height: 40px;
-    }
-  }
-
-  .desc {
-    font-size: 20px;
-    font-weight: 600;
-    line-height: 24.38px;
-
-    max-height: 42px;
-    overflow-y: auto;
-    -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-    mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-
-    &::-webkit-scrollbar {
-      width: 0; /* Remove scrollbar space */
-      background: transparent; /* Optional: just make scrollbar invisible */
+    .desc {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 24.38px;
+      max-width: 60%;
+      max-height: 42px;
+      overflow-y: auto;
+      -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+      &::-webkit-scrollbar {
+        width: 0; /* Remove scrollbar space */
+        background: transparent; /* Optional: just make scrollbar invisible */
+      }
+      ${({ theme }) => theme.mediaWidth.upToMedium({ width: '100%', maxWidth: 'unset' })};
     }
   }
 
@@ -184,7 +192,7 @@ export const CollectionHeader = ({ setFilter, filter }) => {
         }
       ></BANNER>
       <div className="collection-header-content">
-        <div style={{ width: '55%' }}>
+        <div className="title-desc">
           <div className="title">
             <span className="label">{singleCollection.collection[0].collection_name}</span>
             {singleCollection.collection[0].is_verified && <img src={`/img/assets/check-icon.png`} alt="" />}
