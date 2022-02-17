@@ -1,3 +1,4 @@
+import { Connection } from '@solana/web3.js'
 import { Creator } from '../web3'
 
 export interface IInfoItemData {
@@ -45,24 +46,6 @@ export interface IMetadataContext {
   sellerFeeBasisPoints: number
 }
 
-export type ParsedNFTDetails = {
-  data: {
-    creators: Array<Creator>
-    name: string
-    sellerFeeBasisPoints: number
-    symbol: string
-    uri: string
-  }
-  edition: any
-  editionNonce: null | any
-  isMutable: number
-  key: number
-  masterEdition: any
-  mint: string
-  primarySaleHappened: number
-  updateAuthority: string
-}
-
 export type INFTMetadata = {
   name: string
   symbol: string
@@ -70,14 +53,14 @@ export type INFTMetadata = {
   seller_fee_basis_points: number
   external_url: string
   image: string
-  attributes: Array<IAttributesTabItemData>
+  attributes: IAttributesTabItemData[]
   properties: {
-    files: Array<{ uri: string; type: string }>
+    files: { uri: string; type: string }[]
     category: string
     maxSupply?: number
-    creators: Array<Creator>
+    creators: Creator[]
   }
-  collection?: { name: string; family: string } | Array<{ name: string; family: string }>
+  collection?: { name: string; family: string } | { name: string; family: string }[]
   update_authority?: string
 }
 
@@ -126,10 +109,12 @@ export type INFTAsk = {
   user_id: number
 }
 
-export interface INFTDetailsGeneralData {
-  data: Array<ISingleNFT>
-  bids: Array<INFTBid>
-  asks: Array<INFTAsk>
+export interface INFTGeneralData {
+  data: ISingleNFT[]
+  bids: INFTBid[]
+  asks: INFTAsk[]
+  bids_user_placed: INFTBid[]
+  total_likes: number
 }
 
 export type NFTDetailsProviderMode =
@@ -145,15 +130,16 @@ export type MintItemViewStatus = '' | 'placed' | 'successful' | 'unsuccessful'
 export interface INFTDetailsConfig {
   general: ISingleNFT
   setGeneral: Dispatch<SetStateAction<ISingleNFT>>
+  fetchGeneral: (id: string, connection: Connection) => Promise<any>
   nftMetadata: INFTMetadata
   setNftMetadata: Dispatch<SetStateAction<INFTMetadata>>
-  bids: Array<INFTBid>
+  bids: INFTBid[]
+  setBids: Function
   bidOnSingleNFT: any
-  asks: Array<INFTAsk>
-  fetchGeneral: (id: string) => Promise<any>
+  ask: INFTAsk
+  setAsk: Function
   nftMintingData: IMetadataContext | undefined
   setNftMintingData: Dispatch<SetStateAction<IMetadataContext>>
-  fetchExternalNFTs: Function
   updateUserInput: (params: any) => Promise<any>
   fetchUserInput: () => Promise<any>
   sellNFT: (params: any) => Promise<any>
@@ -161,4 +147,6 @@ export interface INFTDetailsConfig {
   getLikesNFT: (user_id: any, nft_id: any) => Promise<any>
   getLikesUser: (user_id: number) => Promise<any>
   likeDislike: (user_id: number, nft_id: any) => Promise<any>
+  totalLikes: number
+  setTotalLikes: Dispatch<SetStateAction<number>>
 }
