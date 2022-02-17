@@ -5,7 +5,6 @@ import { MainText } from '../../../styles'
 import { useDarkMode, useNFTDetails } from '../../../context'
 
 const PREVIEW_CONTAINER = styled.div`
-  border-radius: 20px;
   background-color: ${({ theme }) => theme.propertyBg};
   display: flex;
   flex-direction: column;
@@ -16,6 +15,7 @@ const PREVIEW_CONTAINER = styled.div`
   aspect-ratio: 1;
   align-self: flex-end;
   padding: ${({ theme }) => theme.margin(2.5)} ${({ theme }) => theme.margin(5)};
+  border-radius: 20px;
 
   .ant-upload-list-picture-card-container {
     width: 100%;
@@ -44,13 +44,15 @@ const PREVIEW_CONTAINER = styled.div`
 `
 
 const IMAGE_CONTAINER = styled.div`
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 20px;
-  background-color: ${({ theme }) => theme.avatarInnerBackground};
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  background-color: ${({ theme }) => theme.avatarInnerBackground};
+  border-radius: 20px;
+  overflow: hidden;
+  aspect-ratio: 1;
+
   .image-broken {
     width: 140px;
     height: 140px;

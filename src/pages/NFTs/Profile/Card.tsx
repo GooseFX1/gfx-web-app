@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { StyledCard } from './Card.styled'
 import { SellYourNFTView } from '../SellNFT/SellYourNFTView'
-import { INFTMetadata, ParsedNFTDetails } from '../../../types/nft_details.d'
+import { INFTMetadata } from '../../../types/nft_details.d'
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
-import { getParsedAccountByMint } from '../../../web3'
+import { getParsedAccountByMint, ParsedAccount } from '../../../web3'
 import { notify } from '../../../utils'
 
 type ICard = {
-  topLevelData: ParsedNFTDetails
+  topLevelData: ParsedAccount
   metaData: INFTMetadata
   border?: boolean
   isExplore?: boolean
