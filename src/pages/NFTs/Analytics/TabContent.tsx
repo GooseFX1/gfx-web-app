@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import styled from 'styled-components'
 import { Skeleton } from 'antd'
-import { useHistory } from 'react-router-dom'
 import { NFTBaseCollection, NFTCollection } from '../../../types/nft_collections.d'
 import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
 import { nFormatter } from '../../../utils'
@@ -32,10 +33,10 @@ const ANALYTIC_ITEM = styled.div`
     width: 100px;
     height: 100px;
     border-radius: 10px;
+    margin-right: ${({ theme }) => theme.margin(2)};
   }
 
   .analytic-content {
-    padding-left: ${({ theme }) => theme.margin(3.5)};
     text-align: left;
     overflow: hidden;
     width: calc(100% - 100px);
@@ -138,27 +139,29 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
   }
 
   return (
-    <ANALYTIC_ITEM onClick={(e) => history.push(`/NFTs/collection/${collection.collection_id}`)}>
+    <ANALYTIC_ITEM onClick={() => history.push(`/NFTs/collection/${collection.collection_id}`)}>
       <img
         className="analytic-image"
         // @ts-ignore
-        src={collection.profile_pic_link}
+        src={collection.profile_pic_link.length > 0 ? collection.profile_pic_link : `/img/assets/nft-preview.svg`}
         alt="analytic-img"
       />
       <div className="analytic-content">
         <div style={{ position: 'relative' }}>
           <h2 className="title">
             {/* @ts-ignore */}
-            {collection.title}
+            {collection.collection_name}
           </h2>
-          <img className="check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`} alt="" />
+          {collection.is_verified && (
+            <img className="check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`} alt="" />
+          )}
         </div>
         <div className="value">
           {analyticData ? (
             <div>
               {collectionFilter === 'floor' && (
                 <div>
-                  {analyticData.collection_floor ? nFormatter(analyticData.collection_floor) : '0'}
+                  {analyticData.collection_floor ? nFormatter(analyticData.collection_floor / LAMPORTS_PER_SOL) : '0'}
                   <img className="sol-icon" src={`${process.env.PUBLIC_URL}/img/assets/SOL-icon.svg`} alt="" />
                 </div>
               )}

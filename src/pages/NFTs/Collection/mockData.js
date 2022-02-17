@@ -77,3 +77,8 @@ export const NFTsData = [
     isFavorite: false
   }
 ]
+
+export const mockAnalyticsDrodown = [
+  { name: 'High to Low', icon: 'all' },
+  { name: 'Low to High', icon: 'art' }
+]

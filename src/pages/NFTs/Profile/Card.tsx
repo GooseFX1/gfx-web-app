@@ -1,40 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import { StyledCard } from './Card.styled'
 import { SellYourNFTView } from '../SellNFT/SellYourNFTView'
-import { INFTMetadata, ParsedNFTDetails } from '../../../types/nft_details.d'
-import { NFTDetails } from '../NFTDetails'
-import { useNFTDetails, useNFTProfile } from '../../../context'
-
-const STYLED_MODAL = styled.div`
-  ${({ theme }) => `
-background-color: ${theme.bg3};
-${theme.largeBorderRadius}
-height: 85%;
-width: 90%;
-top: 5rem;
-left: 5rem;
-position: fixed !important;
-z-index: 1000;
-
-.ant-modal-header {
-  ${theme.largeBorderRadius};
-  background-color: ${theme.bg3};
-  padding: ${theme.margin(3.5)} ${theme.margin(5.5)} 0 ${theme.margin(5.5)};
-  border: none;
-  .ant-modal-title {
-    font-size: 25px;
-    color: ${theme.text1};
-    font-weight: 600;
-  }
-}
-`}
-`
+import { INFTMetadata } from '../../../types/nft_details.d'
+import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
+import { getParsedAccountByMint, ParsedAccount } from '../../../web3'
+import { notify } from '../../../utils'
 
 type ICard = {
-  topLevelData: ParsedNFTDetails
+  topLevelData: ParsedAccount
   metaData: INFTMetadata
   border?: boolean
   isExplore?: boolean
@@ -45,7 +19,7 @@ export const Card = ({ topLevelData, metaData, border, isExplore }: ICard) => {
   const history = useHistory()
   const { sessionUser } = useNFTProfile()
   // const { connected, publicKey } = useWallet()
-  // const { connection } = useConnectionConfig()
+  const { connection } = useConnectionConfig()
   const { setGeneral, setNftMetadata } = useNFTDetails()
 
   const [visible, setVisible] = useState(false)
@@ -67,19 +41,34 @@ export const Card = ({ topLevelData, metaData, border, isExplore }: ICard) => {
   // }, [liked])
 
   const handleLocateToDetails = (e: any) => {
-    console.log(topLevelData)
-    setGeneral({
-      non_fungible_id: null,
-      nft_name: topLevelData.data.name,
-      nft_description: metaData.description,
-      mint_address: topLevelData.mint,
-      metadata_url: topLevelData.data.uri,
-      image_url: metaData.properties.files[0].uri,
-      animation_url: null,
-      collection_id: null
+    getParsedAccountByMint({
+      mintAddress: topLevelData.mint,
+      connection: connection
+    }).then((res) => {
+      if (res) {
+        const owner = res !== undefined ? res.account?.data?.parsed?.info.owner : ''
+
+        setGeneral({
+          non_fungible_id: null,
+          nft_name: topLevelData.data.name,
+          nft_description: metaData.description,
+          mint_address: topLevelData.mint,
+          metadata_url: topLevelData.data.uri,
+          image_url: metaData.properties.files[0].uri,
+          animation_url: null,
+          collection_id: null,
+          token_account: res.pubkey,
+          owner: owner
+        })
+        setNftMetadata(metaData)
+        setTimeout(() => history.push(`/NFTs/details/${topLevelData.mint}`), 100)
+      } else {
+        notify({
+          type: 'error',
+          message: 'Could not parse account using mint address'
+        })
+      }
     })
-    setNftMetadata(metaData)
-    setTimeout(() => history.push(`/NFTs/details/${topLevelData.mint}`), 100)
   }
 
   return (

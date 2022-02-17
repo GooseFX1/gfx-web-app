@@ -58,10 +58,11 @@ const LEFT_SECTION = styled.div`
 `
 
 export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...rest }) => {
-  const { general, nftMetadata } = useNFTDetails()
-  const [isFavorite, setIsFavorited] = useState(false)
+  const { general, nftMetadata, totalLikes } = useNFTDetails()
+  const [isFavorited, setIsFavorited] = useState(false)
   const { sessionUser, likeDislike } = useNFTProfile()
   const { non_fungible_id } = general
+
   //const hearts = 12
   const remaining = {
     days: '10',
@@ -73,7 +74,7 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
     if (general && sessionUser) {
       setIsFavorited(sessionUser.user_likes.includes(non_fungible_id))
     }
-  }, [sessionUser.user_likes])
+  }, [sessionUser])
 
   const handleToggleLike = (e: any) => {
     likeDislike(sessionUser.user_id, non_fungible_id).then((res) => {
@@ -92,7 +93,7 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
           <Col>{isShowReamingTime && <div className="ls-end-text">Auction ends in:</div>}</Col>
           {mode !== 'mint-item-view' && (
             <Row align="middle">
-              {isFavorite ? (
+              {sessionUser && sessionUser.user_id && isFavorited ? (
                 <img
                   className="ls-favorite-heart"
                   src={`/img/assets/heart-red.svg`}
@@ -107,7 +108,9 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
                   onClick={handleToggleLike}
                 />
               )}
-              {/* <span className={`ls-favorite-number ${isFavorite ? 'ls-favorite-number-highlight' : ''}`}>{likes}</span> */}
+              <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
+                {totalLikes}
+              </span>
             </Row>
           )}
         </Row>

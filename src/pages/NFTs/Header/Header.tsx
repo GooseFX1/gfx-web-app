@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useDarkMode, useWalletModal } from '../../../context'
 import { useHistory } from 'react-router-dom'
-import { Image } from 'antd'
+import { Image, Menu, Dropdown } from 'antd'
 import { ButtonWrapper } from '../NFTButton'
 import { SearchBar, Categories, MainButton } from '../../../components'
 import { SpaceBetweenDiv } from '../../../styles'
@@ -22,12 +22,12 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
 
   .search-bar {
     width: 100%;
-    background: #2a2a2a;
+    background: ${({ theme }) => theme.bg1};
     height: 45px;
     margin-left: ${({ theme }) => theme.margin(2.5)};
+    border: 1px solid ${({ theme }) => theme.bg5};
 
     > input {
-      background: #2a2a2a;
       &::placeholder {
         color: rgba(114, 114, 114, 1);
       }
@@ -59,6 +59,33 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
   .connect-wl-btn {
     margin-left: ${({ theme }) => theme.margin(2.5)};
   }
+`
+
+const TINYIMG = styled.img`
+  height: 24px;
+  width: 24px;
+  border-radius: 25%;
+  margin-left: 12px;
+  margin-right: 24px;
+`
+
+const DETAILS = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+const URL = styled.a`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`
+
+const RIGHTARROWICON = styled.img`
+  transform: rotate(-90deg);
+  width: 16px;
+  height: 16px;
+  color: white;
+  filter: ${({ theme }) => theme.filterBackIcon};
 `
 
 const AVATAR_WRAPPER = styled.div`
@@ -106,38 +133,27 @@ const AVATAR_NFT = styled(Image)`
   cursor: pointer;
 `
 
-export const Header = ({ setFilter, filter }) => {
+export const Header = ({ setFilter, filter, filteredCollections }) => {
   const history = useHistory()
-  const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
+  const { sessionUser } = useNFTProfile()
   const { connected, publicKey } = useWallet()
-  const [isFirstTimeUser, setIsFirstTimeUser] = useLocalStorageState(`sessionUserInit`, 'true')
   const [visibleCompletePopup, setVisibleCompletePopup] = useState<boolean>(false)
   const { setVisible: setModalVisible } = useWalletModal()
   const { mode } = useDarkMode()
 
   useEffect(() => {
     if (connected && publicKey) {
-      if (!sessionUser || sessionUser.pubkey !== `${publicKey}`) {
-        fetchSessionUser('address', `${publicKey}`).then((res) => {
-          if (res && res.status === 200) {
-            if (res.data.length === 0 && isFirstTimeUser === 'true') {
-              setTimeout(() => setVisibleCompletePopup(true), 750)
-            }
-          } else {
-            console.error(res)
-          }
-        })
+      const fetchUserProfileStatus = localStorage.getItem(publicKey.toBase58())
+      const firstTimeUser = fetchUserProfileStatus ? JSON.parse(localStorage.getItem(publicKey.toBase58())) : undefined
+
+      if (firstTimeUser && firstTimeUser.pubKey === publicKey.toBase58() && firstTimeUser.isNew === true) {
+        setTimeout(() => setVisibleCompletePopup(true), 750)
       }
-    } else {
-      setSessionUser(undefined)
     }
     return () => {}
-  }, [publicKey, connected])
+  }, [sessionUser])
 
-  const handleDismissModal = useCallback(() => {
-    setIsFirstTimeUser('false')
-    setVisibleCompletePopup(false)
-  }, [setIsFirstTimeUser, setVisibleCompletePopup])
+  const handleDismissModal = useCallback(() => setVisibleCompletePopup(false), [setVisibleCompletePopup])
 
   const onSkip = useCallback(() => handleDismissModal(), [handleDismissModal])
   const onContinue = useCallback(() => {
@@ -160,6 +176,32 @@ export const Header = ({ setFilter, filter }) => {
     [setModalVisible, publicKey, connected]
   )
 
+  const genMenu = () => {
+    return filter.length > 0 ? (
+      <Menu className={`global-search-dropdown global-search-dropdown-${mode}`}>
+        {filteredCollections.length > 0 ? (
+          filteredCollections.map((i, k) => (
+            <Menu.Item key={k}>
+              <URL href={'/NFTs/collection/' + i.collection_id}>
+                <DETAILS>
+                  <TINYIMG src={i.profile_pic_link.length > 0 ? i.profile_pic_link : `/img/assets/nft-preview.svg`} />
+                  <p style={{ margin: '0px' }}>{i.collection_name}</p>
+                </DETAILS>
+                <RIGHTARROWICON src={'/img/assets/arrow.svg'} className="global-search-dropdown-icon" />
+              </URL>
+            </Menu.Item>
+          ))
+        ) : (
+          <Menu.Item key="0">No Result Found!</Menu.Item>
+        )}
+      </Menu>
+    ) : (
+      <Menu className={`global-search-dropdown global-search-dropdown-${mode}`}>
+        <p className="empty">Start typing to search</p>
+      </Menu>
+    )
+  }
+
   return (
     <HEADER_WRAPPER>
       <PopupCompleteProfile visible={visibleCompletePopup} handleOk={onContinue} handleCancel={onSkip} />
@@ -172,7 +214,9 @@ export const Header = ({ setFilter, filter }) => {
             onClick={goProfile}
           />
         )}
-        {/* <SearchBar className="search-bar" setFilter={setFilter} filter={filter} /> */}
+        <Dropdown overlay={genMenu()} trigger={['click']}>
+          <SearchBar className="search-bar" setFilter={setFilter} filter={filter} />
+        </Dropdown>
       </AVATAR_WRAPPER>
       <BUTTON_SELECTION>
         {connected && publicKey ? (

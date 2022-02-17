@@ -1,11 +1,10 @@
 import { useEffect, useState, FC } from 'react'
-import styled from 'styled-components'
-
 import { CollectionHeader } from './CollectionHeader'
 import { CollectionTabs } from './CollectionTabs'
-import { useNFTCollections } from '../../../context'
+import styled from 'styled-components'
+import { useNFTCollections, useNFTProfile } from '../../../context'
 import { useParams } from 'react-router-dom'
-import { IAppParams } from '../../../types/app_params.d'
+import { IAppParams } from '../../../types/app_params'
 import { Loader } from '../../../components'
 
 const WRAPPED_LOADER = styled.div`
@@ -18,9 +17,16 @@ const WRAPPED_LOADER = styled.div`
 
 export const Collection: FC = (): JSX.Element => {
   const params = useParams<IAppParams>()
-  const { singleCollection, fixedPriceWithinCollection, fetchSingleCollection } = useNFTCollections()
+  const { singleCollection, fixedPriceWithinCollection, fetchSingleCollection, setSingleCollection } =
+    useNFTCollections()
   const [err, setErr] = useState(false)
-  const [search, setSearch] = useState('')
+  const [filter, setFilter] = useState('')
+
+  useEffect(() => {
+    return () => {
+      setSingleCollection(undefined)
+    }
+  }, [])
 
   useEffect(() => {
     if (!singleCollection || `${singleCollection.collection_id}` !== params.collectionId) {
@@ -32,7 +38,7 @@ export const Collection: FC = (): JSX.Element => {
     }
 
     return () => {}
-  }, [])
+  }, [fetchSingleCollection, params.collectionId, singleCollection])
 
   return !fixedPriceWithinCollection || !singleCollection ? (
     <WRAPPED_LOADER>
@@ -42,8 +48,8 @@ export const Collection: FC = (): JSX.Element => {
     <h2>Something went wrong fetching the collection details</h2>
   ) : (
     <>
-      <CollectionHeader setFilter={setSearch} filter={search} />
-      <CollectionTabs filter={search} />
+      <CollectionHeader setFilter={setFilter} filter={filter} />
+      <CollectionTabs setFilter={setFilter} filter={filter} />
     </>
   )
 }

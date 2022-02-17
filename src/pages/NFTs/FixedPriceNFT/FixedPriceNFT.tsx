@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { IAppParams } from '../../../types/app_params.d'
 import { Loader } from '../../../components'
 import { NFTDetails } from '../NFTDetails'
-import { useNFTDetails } from '../../../context'
+import { useNFTDetails, useConnectionConfig } from '../../../context'
 // import { NFTDetailsGeneralData, detailTabData, tradingHistoryTabData, attributesTabContentData } from './mockData'
 import { PurchaseModal } from './PurchaseModal'
 
@@ -23,9 +23,10 @@ export const FixedPriceNFT: FC = () => {
   const [err, setErr] = useState(false)
   const [loading, setLoading] = useState(true)
   const { fetchGeneral } = useNFTDetails()
+  const { connection } = useConnectionConfig()
 
   useEffect(() => {
-    fetchGeneral(params.nftId).then((res) => {
+    fetchGeneral(params.nftId, connection).then((res) => {
       if ((res.response && res.response.status !== 200) || res.isAxiosError) {
         setErr(true)
       }

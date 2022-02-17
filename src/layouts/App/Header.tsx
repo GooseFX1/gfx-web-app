@@ -59,7 +59,8 @@ const BUTTONS = styled(CenteredDiv)`
 `
 
 const WRAPPER = styled.nav`
-  position: relative;
+  position: absolute;
+
   width: 100%;
   ${({ theme }) => theme.headerRoundedBorders}
   background-color: ${({ theme }) => theme.bg3};

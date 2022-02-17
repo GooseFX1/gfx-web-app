@@ -1,16 +1,33 @@
 import { useEffect, useState, FC, useMemo } from 'react'
+import { useHistory } from 'react-router-dom'
+import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
+import { useWallet } from '@solana/wallet-adapter-react'
 import styled, { css } from 'styled-components'
 import { Col, Row, Tabs, notification } from 'antd'
-import { useNFTDetails } from '../../../context'
+import { SpaceBetweenDiv } from '../../../styles'
+import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { MintItemViewStatus, NFTDetailsProviderMode } from '../../../types/nft_details'
 import { TradingHistoryTabContent } from './TradingHistoryTabContent'
 import { AttributesTabContent } from './AttributesTabContent'
-import { getParsedAccountByMint, StringPublicKey } from '../../../web3'
-import { useConnectionConfig } from '../../../context'
+import RemoveAskModalContent from './RemoveAskModalContent'
+import { Modal, SuccessfulListingMsg } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
+import { notify } from '../../../utils'
+import { tradeStatePDA, callCancelInstruction } from '../actions'
+import { BidModal } from '../OpenBidNFT/BidModal'
+import {
+  AUCTION_HOUSE_PREFIX,
+  AUCTION_HOUSE_PROGRAM_ID,
+  AUCTION_HOUSE,
+  StringPublicKey,
+  toPublicKey,
+  getMetadata,
+  bnTo8
+} from '../../../web3'
+import BN from 'bn.js'
 
 const { TabPane } = Tabs
-
+//#region styles
 const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
   ${({ theme, activeTab, mode }) => css`
     position: relative;
@@ -94,6 +111,7 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
     .rst-footer {
       width: 100%;
       position: absolute;
+      display: flex;
       left: 0;
       bottom: 0;
       padding: ${theme.margin(2)};
@@ -102,26 +120,36 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
       background: ${theme.tabContentBidFooterBackground};
       backdrop-filter: blur(23.9091px);
 
-      .rst-footer-bid-button {
+      .rst-footer-button {
         flex: 1;
         margin-right: ${theme.margin(1.5)};
         color: #fff;
+        white-space: nowrap;
 
-        button {
-          cursor: pointer;
-          width: 100%;
-          height: 60px;
-          ${theme.flexCenter}
-          font-size: 17px;
-          font-weight: 600;
-          border: none;
-          border-radius: 29px;
-          padding: 0 ${theme.margin(2)};
+        cursor: pointer;
+        width: ;
+        height: 60px;
+        ${theme.flexCenter}
+        font-size: 17px;
+        font-weight: 600;
+        border: none;
+        border-radius: 29px;
+        padding: 0 ${theme.margin(2)};
+
+        &:hover {
+          opacity: 0.8;
+        }
+
+        &-buy {
+          background-color: ${theme.success};
+        }
+
+        &-bid {
           background-color: ${theme.primary2};
+        }
 
-          &:hover {
-            opacity: 0.8;
-          }
+        &-sell {
+          background-color: #bb3535;
         }
       }
 
@@ -157,33 +185,52 @@ const DETAILS_TAB_CONTENT = styled.div`
   `}
 `
 
-const getButtonText = (mode: NFTDetailsProviderMode): string => {
-  switch (mode) {
-    case 'live-auction-NFT':
-    case 'open-bid-NFT':
-      return 'Place a bid'
-    case 'my-created-NFT':
-      return 'Edit NFT'
-    case 'mint-item-view':
-      return 'Mint'
-    case 'fixed-price-NFT':
-      return 'Buy now'
-    case 'my-external-NFT':
-      return 'Sell NFT'
+const REMOVE_ASK_MODAL = styled(Modal)`
+  &.ant-modal {
+    width: 501px !important;
   }
-}
+
+  .ant-modal-body {
+    padding: ${({ theme }) => theme.margin(4.5)};
+  }
+
+  .modal-close-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .bm-title {
+    color: ${({ theme }) => theme.text1};
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .bm-title-bold {
+    font-weight: 600;
+  }
+`
+//#endregion
 
 export const RightSectionTabs: FC<{
   mode: NFTDetailsProviderMode
   status: MintItemViewStatus
-  handleClickPrimaryButton: () => void
-}> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
+}> = ({ mode, status, ...rest }) => {
+  const history = useHistory()
   const [activeTab, setActiveTab] = useState('1')
-  const { general, nftMetadata, bids } = useNFTDetails()
-  const { mint_address } = general
-  const { connection } = useConnectionConfig()
-  const [nftOwner, setNFTOwner] = useState<string>()
-  const [tokenAddres, setTokenAddress] = useState<string>()
+
+  const { general, nftMetadata, bids, ask, removeNFTListing } = useNFTDetails()
+  const { sessionUser } = useNFTProfile()
+  const { connection, network } = useConnectionConfig()
+  const wallet = useWallet()
+  const { publicKey } = wallet
+  const { mint_address, owner, token_account } = general
+  const [bidModal, setBidModal] = useState<boolean>(false)
+  const [removeAskModal, setRemoveAskModal] = useState<boolean>(false)
+
+  useEffect(() => {}, [])
+
+  useEffect(() => {}, [publicKey])
 
   const nftData = useMemo(() => {
     return [
@@ -193,11 +240,11 @@ export const RightSectionTabs: FC<{
       },
       {
         title: 'Token Address',
-        value: tokenAddres ? `${tokenAddres.substr(0, 4)}...${tokenAddres.substr(-4, 4)}` : ''
+        value: token_account ? `${token_account.substr(0, 4)}...${token_account.substr(-4, 4)}` : ''
       },
       {
         title: 'Owner',
-        value: nftOwner ? `${nftOwner.substr(0, 6)}...${nftOwner.substr(-4, 4)}` : ''
+        value: owner ? `${owner.substr(0, 6)}...${owner.substr(-4, 4)}` : ''
       },
       {
         title: 'Artist Royalties',
@@ -208,7 +255,7 @@ export const RightSectionTabs: FC<{
         value: `${NFT_MARKET_TRANSACTION_FEE}%`
       }
     ]
-  }, [mint_address, general, nftOwner, tokenAddres])
+  }, [general])
 
   const tradingHistoryTab = useMemo(
     () => [
@@ -227,90 +274,89 @@ export const RightSectionTabs: FC<{
         from: 'capital_1',
         to: '',
         date: '09/10/21'
-      },
-      {
-        id: '3',
-        event: 'offer',
-        price: 135.556,
-        from: 'MLBmodel',
-        to: 'Chirsstoo',
-        date: '02/10/21'
-      },
-      {
-        id: '4',
-        event: 'sale',
-        price: 121.134,
-        from: 'Chirsstoo',
-        to: '',
-        date: '25/09/21'
       }
     ],
     [nftMetadata]
   )
 
-  useEffect(() => {
-    getParsedAccountByMint({
-      mintAddress: mint_address as StringPublicKey,
-      connection: connection
-    }).then((res) => {
-      if (res) {
-        const owner = res !== undefined ? res.account?.data?.parsed?.info.owner : ''
-        setNFTOwner(owner)
-        setTokenAddress(res.pubkey)
-      }
-    })
-  }, [])
+  const derivePDAsForInstruction = async () => {
+    const buyerPrice: BN = new BN(ask.buyer_price)
 
-  const desc = {
-    successful: [
-      'Item successfully minted!',
-      'Thirsty Cactus Garden Party, Item #2567',
-      'Check your collection to check your new piece!'
-    ],
-    unsuccessful: ['Item unsucessfully minted!', 'Please try again, if the error persists please contact support.']
-  }
+    const sellerTradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
 
-  const openNotification = (status, desc) => {
-    if (!['successful', 'unsuccessful'].includes(status)) {
-      return
+    if (!sellerTradeState) {
+      throw Error(`Could not derive values for sell instructions`)
     }
 
-    const description = (
-      <>
-        {desc[status].map((item, index) => (
-          <div className={`text text-${index} ${status}`}>{item}</div>
-        ))}
-        <img src={`/img/assets/${status}.svg`} alt="" />
-      </>
+    return {
+      sellerTradeState,
+      buyerPrice
+    }
+  }
+
+  const handleUpdateAsk = (e) => {
+    e.preventDefault()
+    ask === undefined ? history.push(`/NFTs/sell/${general.non_fungible_id}`) : setRemoveAskModal(true)
+  }
+
+  const handleRemoveAsk = async (e) => {
+    e.preventDefault()
+
+    const { sellerTradeState, buyerPrice } = await derivePDAsForInstruction()
+    const { signature, confirm } = await callCancelInstruction(
+      wallet,
+      connection,
+      general,
+      sellerTradeState,
+      buyerPrice
     )
 
-    if (status === 'successful') {
-      notification.info({
-        message: null,
-        description,
-        placement: 'bottomLeft',
-        duration: 1,
-        className: 'mint'
-      })
-      return
-    }
-
-    if (status === 'unsuccessful') {
-      notification.error({
-        message: null,
-        description,
-        placement: 'bottomLeft',
-        duration: 1,
-        className: 'mint'
-      })
-      return
+    if (confirm.value.err === null) {
+      notify(successfulListingMsg(signature, nftMetadata, buyerPrice.toString()))
+      postCancelAskToAPI(general.non_fungible_id)
     }
   }
 
-  const handleButton = () => (mode === 'mint-item-view' ? openNotification(status, desc) : handleClickPrimaryButton())
+  const postCancelAskToAPI = async (id: any) => {
+    const res = await removeNFTListing(id)
+    console.log(res)
+  }
+
+  const successfulListingMsg = (signature: any, nftMetadata: any, price: string) => ({
+    message: (
+      <SuccessfulListingMsg
+        title={`Successfully removed ask for ${nftMetadata.name}!`}
+        itemName={nftMetadata.name}
+        supportText={`Removed asking price: ${price}`}
+        tx_url={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+      />
+    )
+  })
+
+  const handleSetBid = (type: string) => {
+    setBidModal(true)
+  }
+
+  const handleModal = () => {
+    if (removeAskModal) {
+      return (
+        <REMOVE_ASK_MODAL
+          visible={removeAskModal}
+          setVisible={setRemoveAskModal}
+          title=""
+          onCancel={() => console.log('cancel')}
+        >
+          <RemoveAskModalContent removeAsk={handleRemoveAsk} />
+        </REMOVE_ASK_MODAL>
+      )
+    } else if (bidModal) {
+      return <BidModal visible={bidModal} setVisible={setBidModal} />
+    }
+  }
 
   return (
     <RIGHT_SECTION_TABS activeTab={activeTab} mode={mode} {...rest}>
+      {handleModal()}
       <Tabs defaultActiveKey="1" centered onChange={(key) => setActiveTab(key)}>
         {mode === 'mint-item-view' ? (
           <TabPane tab="Details" key="1">
@@ -344,14 +390,36 @@ export const RightSectionTabs: FC<{
           </>
         )}
       </Tabs>
-      <Row className="rst-footer">
-        <Col className="rst-footer-bid-button">
-          <button onClick={handleButton}>{getButtonText(mode)}</button>
-        </Col>
-        <Col className="rst-footer-share-button">
-          <img src={`/img/assets/share.svg`} alt="" />
-        </Col>
-      </Row>
+      {general.non_fungible_id && publicKey && (
+        <SpaceBetweenDiv className="rst-footer">
+          {sessionUser && sessionUser.user_id ? (
+            publicKey.toBase58() === general.owner ? (
+              <button className="rst-footer-button rst-footer-button-sell" onClick={handleUpdateAsk}>
+                {ask === undefined ? 'List Item' : 'Remove Ask Price'}
+              </button>
+            ) : (
+              <SpaceBetweenDiv style={{ flexGrow: 1 }}>
+                <button onClick={(e) => handleSetBid('bid')} className="rst-footer-button rst-footer-button-bid">
+                  Place Bid
+                </button>
+                {ask && (
+                  <button onClick={(e) => handleSetBid('buy')} className="rst-footer-button rst-footer-button-buy">
+                    Buy Now
+                  </button>
+                )}
+              </SpaceBetweenDiv>
+            )
+          ) : (
+            <button className="rst-footer-button rst-footer-button-bid" onClick={(e) => history.push('/NFTs/profile')}>
+              Complete profile
+            </button>
+          )}
+
+          <div className="rst-footer-share-button">
+            <img src={`/img/assets/share.svg`} alt="share-icon" />
+          </div>
+        </SpaceBetweenDiv>
+      )}
     </RIGHT_SECTION_TABS>
   )
 }

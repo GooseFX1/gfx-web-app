@@ -96,6 +96,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
         fetchFeaturedCollections,
         fetchUpcomingCollections,
         singleCollection,
+        setSingleCollection,
         fetchSingleCollection,
         fixedPriceWithinCollection,
         openBidWithinCollection
@@ -122,6 +123,7 @@ export const useNFTCollections = (): INFTCollectionConfig => {
     fetchFeaturedCollections: context.fetchFeaturedCollections,
     fetchUpcomingCollections: context.fetchUpcomingCollections,
     singleCollection: context.singleCollection,
+    setSingleCollection: context.setSingleCollection,
     fetchSingleCollection: context.fetchSingleCollection,
     fixedPriceWithinCollection: context.fixedPriceWithinCollection,
     openBidWithinCollection: context.openBidWithinCollection

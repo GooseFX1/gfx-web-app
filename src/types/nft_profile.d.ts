@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from 'react'
+import { Connection } from '@solana/web3.js'
 import { UserFetchType } from '../context'
 
 export interface INFTProfile {
@@ -29,7 +30,8 @@ export interface INFTUserActivity {
 export interface INFTProfileConfig {
   sessionUser: INFTProfile
   setSessionUser: Dispatch<SetStateAction<INFTProfile>>
-  fetchSessionUser: (type: UserFetchType, parameter: string | number) => Promise<any>
+  fetchSessionUser: (type: UserFetchType, parameter: string | number, connection: Connection) => Promise<any>
+  parsedAccounts: ParsedAccount[]
   userActivity: Array<INFTUserActivity>
   setUserActivity: Dispatch<SetStateAction<INFTUserActivity[]>>
   fetchUserActivity: (id: number) => Promise<any>

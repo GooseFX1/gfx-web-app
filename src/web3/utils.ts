@@ -1,4 +1,5 @@
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
+import BN from 'bn.js'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
 import { Connection, PublicKey, Signer, Transaction } from '@solana/web3.js'
 import { getHashedName, getNameAccountKey, NameRegistryState } from '@solana/spl-name-service'
@@ -129,4 +130,13 @@ export const findProgramAddress = async (seeds: (Buffer | Uint8Array)[], program
   }
 
   return [result[0].toBase58(), result[1]] as [string, number]
+}
+
+export const int64to8 = (n: number): Uint8Array => {
+  const arr = BigUint64Array.of(BigInt(n))
+  return new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
+}
+
+export const bnTo8 = (bn: BN): Uint8Array => {
+  return Buffer.from([...bn.toArray('le', 8)])
 }

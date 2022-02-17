@@ -2,7 +2,7 @@ import React, { FC, useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { PrivacyPolicy } from './PrivacyPolicy'
 import { TermsOfService } from './TermsOfService'
-import { useDarkMode } from '../../context'
+import { useDarkMode, useConnectionConfig } from '../../context'
 import {
   APP_LAYOUT_FOOTER_HEIGHT,
   APP_LAYOUT_FOOTER_HEIGHT_MOBILE,
@@ -66,7 +66,19 @@ const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`
   }
 `
 
+const CURRENT_NETWORK = styled.span`
+  color: ${({ theme }) => theme.text1};
+  .network {
+    text-transform: capitolize;
+    color: ${({ theme }) => theme.secondary2};
+  }
+`
+
 const WRAPPER = styled(SpaceBetweenDiv)`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   height: ${APP_LAYOUT_FOOTER_HEIGHT};
   padding: ${({ theme }) => theme.margin(5)};
   border-top: 1px solid ${({ theme }) => theme.appLayoutFooterBorder};
@@ -86,6 +98,7 @@ const WRAPPER = styled(SpaceBetweenDiv)`
 
 export const Footer: FC = () => {
   const { mode, toggleMode } = useDarkMode()
+  const { network } = useConnectionConfig()
   const [privacyPolicyVisible, setPrivacyPolicyVisible] = useState(false)
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState(false)
 
@@ -111,6 +124,10 @@ export const Footer: FC = () => {
         Copyright © 2022 Goose Labs, Inc. All rights reserved. Please trade with your own discretion and according to
         your location’s laws and regulations.
       </TEXT>
+      <CURRENT_NETWORK>
+        SOL Network:
+        <span className={'network'}>{' ' + network}</span>
+      </CURRENT_NETWORK>
       <SpaceBetweenDiv>
         <MODE_ICON>
           {mode === 'dark' ? (

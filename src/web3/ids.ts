@@ -315,3 +315,40 @@ export const PACK_CREATE_ID = new PublicKey('packFeFNZzMfD9aVWL7QbGz1WcU7R9zpf6p
 export const ORACLE_ID = new PublicKey('rndshKFf48HhGaPbaCd3WQYtgCNKzRgVQ3U2we4Cvf9')
 
 export const SYSTEM = new PublicKey('11111111111111111111111111111111')
+
+// AUCTION HOUSE CONSTANTS
+export const AUCTION_HOUSE_PREFIX: string = 'auction_house'
+
+export const AUCTION_HOUSE_PROGRAM_ID: StringPublicKey = 'hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk'
+
+export const AUCTION_HOUSE: StringPublicKey = '5GtAPDZWwnWRDjaTgjHDnvpiGBi9TbLVqRrggLH5Ztuv'
+
+export const TREASURY_MINT: StringPublicKey = 'So11111111111111111111111111111111111111112'
+
+export const AUCTION_HOUSE_AUTHORITY: StringPublicKey = '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'
+
+export const AUCTION_HOUSE_CREATOR: StringPublicKey = '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'
+
+export const AH_FEE_ACCT: StringPublicKey = 'JD8Jfejdfxq7KkRisP465aCrWkXGZ8JYqqPHCn9hz7Kc'
+
+export const TREASURY_ACCT: StringPublicKey = '3wRqpyrETku2x2EZyfRKJeKVVb6F9J8HQLGcNf5VwuJ9'
+
+export const FEE_PAYER_WITHDRAWAL_ACCT: StringPublicKey = '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'
+
+export const TREASURY_WITHDRAWAL_ACCT: StringPublicKey = '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'
+
+export const FEE_PAYER_BAL_GENESIS: number = 0
+
+export const TREASURY_BAL_GENESIS: number = 0
+
+export const SELLER_FEE_BASIS_POINTS: number = 100
+
+export const REQUIRES_SIGN_OFF: boolean = false
+
+export const CAN_CHANGE_SALE_PRICE: boolean = false
+
+export const AH_BUMP: number = 253
+
+export const AH_FEE_BUMP: number = 254
+
+export const AH_TREASURY_BUMP: number = 254

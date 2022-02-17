@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { IAppParams } from '../../../types/app_params.d'
 import { Loader } from '../../../components'
 import { NFTDetails } from '../NFTDetails'
-import { useNFTDetails } from '../../../context'
+import { useNFTDetails, useConnectionConfig } from '../../../context'
 // import { NFTDetailsGeneralData, detailTabData, tradingHistoryTabData, attributesTabContentData } from './mockData'
 import { BidModal } from './BidModal'
 
@@ -29,20 +29,23 @@ const WRAPPED_LOADER = styled.div`
 
 export const OpenBidNFT: FC = () => {
   const params = useParams<IAppParams>()
-  const [visible, setVisible] = useState(false)
   const [err, setErr] = useState(false)
   const [loading, setLoading] = useState(true)
-  const { fetchGeneral } = useNFTDetails()
-  const [details, setDetails] = useState()
+  const { general, fetchGeneral } = useNFTDetails()
+  const { connection } = useConnectionConfig()
 
   useEffect(() => {
-    fetchGeneral(params.nftId).then((res) => {
-      if ((res.response && res.response.status !== 200) || res.isAxiosError) {
-        setErr(true)
-      }
-      setDetails(res.data.data[0])
+    if (general === undefined || `${general.non_fungible_id}` !== params.nftId) {
+      fetchGeneral(params.nftId, connection).then((res) => {
+        if ((res.response && res.response.status !== 200) || res.isAxiosError) {
+          setErr(true)
+        }
+
+        setLoading(false)
+      })
+    } else {
       setLoading(false)
-    })
+    }
     return () => {}
   }, [])
 
@@ -56,8 +59,7 @@ export const OpenBidNFT: FC = () => {
     <h2>Something went wrong fetching NFT details</h2>
   ) : (
     <DETAILS_WRAPPER>
-      <NFTDetails mode="open-bid-NFT" handleClickPrimaryButton={() => setVisible(true)} />
-      <BidModal details={details} visible={visible} setVisible={setVisible} />
+      <NFTDetails mode="open-bid-NFT" />
     </DETAILS_WRAPPER>
   )
 }
