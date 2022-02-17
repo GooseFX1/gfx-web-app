@@ -5,19 +5,24 @@ import styled from 'styled-components'
 import { Col, Row } from 'antd'
 import { MainButton, Modal } from '../../../components'
 import { notify } from '../../../utils'
-import { useNFTProfile, useCrypto, useNFTDetails, useConnectionConfig } from '../../../context'
+import { useNFTProfile, useCrypto, useNFTDetails, useConnectionConfig, useAccounts } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import BN from 'bn.js'
 import {
   AUCTION_HOUSE,
   AUCTION_HOUSE_PREFIX,
+  AUCTION_HOUSE_AUTHORITY,
+  AH_FEE_ACCT,
   AUCTION_HOUSE_PROGRAM_ID,
   TREASURY_MINT,
   BuyInstructionArgs,
   getMetadata,
   BuyInstructionAccounts,
   createBuyInstruction,
+  createCancelInstruction,
+  CancelInstructionArgs,
+  CancelInstructionAccounts,
   StringPublicKey,
   toPublicKey,
   bnTo8
@@ -135,7 +140,7 @@ const PURCHASE_MODAL = styled(Modal)`
     .bm-confirm-text-2 {
       font-size: 16px;
       font-weight: 500;
-      color: ${({ theme }) => theme.text5};
+      color: ${({ theme }) => theme.text2};
       max-width: 240px;
       text-align: center;
     }
@@ -146,7 +151,7 @@ const PURCHASE_MODAL = styled(Modal)`
     margin-bottom: ${({ theme }) => theme.margin(3)};
     font-size: 14px;
     font-weight: 600;
-    color: ${({ theme }) => theme.text5};
+    color: ${({ theme }) => theme.text2};
 
     .bm-alert {
       max-width: 200px;
@@ -219,13 +224,19 @@ const MESSAGE = styled.div`
   }
 `
 //#endregion
-
-export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }> = (props) => {
+interface IBidModal {
+  setVisible: (x: boolean) => void
+  visible: boolean
+  buyerPrice?: number
+}
+export const BidModal: FC<IBidModal> = (props: IBidModal) => {
   const { setVisible, visible } = props
+  const { prices } = useCrypto()
+  const { getUIAmount } = useAccounts()
+
   const { sessionUser, fetchSessionUser } = useNFTProfile()
   const { connected, publicKey, sendTransaction } = useWallet()
   const { connection, network } = useConnectionConfig()
-  const { prices } = useCrypto()
   const { general, nftMetadata, bidOnSingleNFT } = useNFTDetails()
 
   const [mode, setMode] = useState('bid')
@@ -233,6 +244,7 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
   const [isLoading, setIsLoading] = useState(false)
 
   const creator = useMemo(() => {
+    if (nftMetadata === undefined) return null
     if (nftMetadata.properties.creators.length > 0) {
       const addr = nftMetadata.properties.creators[0].address
       return `${addr.substr(0, 4)}...${addr.substr(-4, 4)}`
@@ -269,27 +281,29 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
 
   useEffect(() => {
     if (connected && publicKey) {
-      if (!sessionUser || sessionUser.pubkey !== `${publicKey}`) {
+      if (!sessionUser || sessionUser.pubkey !== publicKey.toBase58()) {
         fetchUser()
       }
       setIsLoading(false)
     } else {
       setIsLoading(false)
-      notify({
-        type: 'error',
-        message: (
-          <MESSAGE>
-            <div>Couldn't fetch user data, please connect your wallet and refresh this page.</div>
-          </MESSAGE>
-        )
-      })
+      if (visible) {
+        notify({
+          type: 'error',
+          message: (
+            <MESSAGE>
+              <div>Couldn't fetch user data, please connect your wallet and refresh this page.</div>
+            </MESSAGE>
+          )
+        })
+      }
     }
 
     return () => {}
   }, [publicKey, connected])
 
   const fetchUser = () => {
-    fetchSessionUser('address', `${publicKey}`).then((res) => {
+    fetchSessionUser('address', publicKey.toBase58(), connection).then((res) => {
       if (!res || (res.response && res.response.status !== 200) || res.isAxiosError) {
         notify({
           type: 'error',
@@ -387,6 +401,9 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
     if (confirm.value.err === null) {
       postBidToAPI(signature, buyerPrice, tokenSize).then((res) => {
         console.log(res)
+        if (!res) {
+          callCancelInstruction()
+        }
       })
     }
   }
@@ -411,26 +428,31 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
     try {
       const res = await bidOnSingleNFT(bidObject)
       console.dir(res)
-
-      setBidPriceInput('')
-      setMode('bid')
-      setVisible(false)
+      if (res.isAxiosError) {
+        notify({
+          type: 'error',
+          message: (
+            <MESSAGE>
+              <Row className="m-title" justify="space-between" align="middle">
+                <Col>NFT Listing error!</Col>
+                <Col>
+                  <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+                </Col>
+              </Row>
+              <div>Please try again, if the error persists please contact support.</div>
+            </MESSAGE>
+          )
+        })
+        return false
+      } else {
+        setBidPriceInput('')
+        setMode('bid')
+        setVisible(false)
+        return true
+      }
     } catch (error) {
       console.dir(error)
-      notify({
-        type: 'error',
-        message: (
-          <MESSAGE>
-            <Row className="m-title" justify="space-between" align="middle">
-              <Col>Live auction bid error!</Col>
-              <Col>
-                <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-              </Col>
-            </Row>
-            <div>Please try again, if the error persists please contact support.</div>
-          </MESSAGE>
-        )
-      })
+      return false
     } finally {
       setIsLoading(false)
     }
@@ -468,6 +490,36 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
       </MESSAGE>
     )
   })
+
+  const callCancelInstruction = async () => {
+    const { buyerTradeState, buyerPrice } = await derivePDAsForInstruction()
+
+    const cancelInstructionArgs: CancelInstructionArgs = {
+      buyerPrice: buyerPrice,
+      tokenSize: tokenSize
+    }
+
+    const cancelInstructionAccounts: CancelInstructionAccounts = {
+      wallet: publicKey,
+      tokenAccount: new PublicKey(general.token_account),
+      tokenMint: new PublicKey(general.mint_address),
+      authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+      auctionHouse: new PublicKey(AUCTION_HOUSE),
+      auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
+      tradeState: buyerTradeState[0]
+    }
+
+    const cancelIX: TransactionInstruction = await createCancelInstruction(
+      cancelInstructionAccounts,
+      cancelInstructionArgs
+    )
+
+    const transaction = new Transaction().add(cancelIX)
+    const signature = await sendTransaction(transaction, connection)
+    console.log(signature)
+    const confirm = await connection.confirmTransaction(signature, 'processed')
+    console.log(confirm)
+  }
 
   const onCancel = () => setMode('bid')
 

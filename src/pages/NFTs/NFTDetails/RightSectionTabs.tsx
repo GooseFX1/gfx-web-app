@@ -4,20 +4,21 @@ import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled, { css } from 'styled-components'
 import { Col, Row, Tabs, notification } from 'antd'
+import { SpaceBetweenDiv } from '../../../styles'
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { MintItemViewStatus, NFTDetailsProviderMode } from '../../../types/nft_details'
 import { TradingHistoryTabContent } from './TradingHistoryTabContent'
 import { AttributesTabContent } from './AttributesTabContent'
+import RemoveAskModalContent from './RemoveAskModalContent'
+import { Modal, SuccessfulListingMsg } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
-import { getExecuteSaleInstructionAccounts, tokenSize, tradeStatePDA, freeSellerTradeStatePDA } from '../actions'
+import { notify } from '../../../utils'
+import { tradeStatePDA, callCancelInstruction } from '../actions'
+import { BidModal } from '../OpenBidNFT/BidModal'
 import {
   AUCTION_HOUSE_PREFIX,
   AUCTION_HOUSE_PROGRAM_ID,
   AUCTION_HOUSE,
-  getParsedAccountByMint,
-  createExecuteSaleInstruction,
-  ExecuteSaleInstructionArgs,
-  ExecuteSaleInstructionAccounts,
   StringPublicKey,
   toPublicKey,
   getMetadata,
@@ -110,6 +111,7 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
     .rst-footer {
       width: 100%;
       position: absolute;
+      display: flex;
       left: 0;
       bottom: 0;
       padding: ${theme.margin(2)};
@@ -118,26 +120,36 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
       background: ${theme.tabContentBidFooterBackground};
       backdrop-filter: blur(23.9091px);
 
-      .rst-footer-bid-button {
+      .rst-footer-button {
         flex: 1;
         margin-right: ${theme.margin(1.5)};
         color: #fff;
+        white-space: nowrap;
 
-        button {
-          cursor: pointer;
-          width: 100%;
-          height: 60px;
-          ${theme.flexCenter}
-          font-size: 17px;
-          font-weight: 600;
-          border: none;
-          border-radius: 29px;
-          padding: 0 ${theme.margin(2)};
+        cursor: pointer;
+        width: ;
+        height: 60px;
+        ${theme.flexCenter}
+        font-size: 17px;
+        font-weight: 600;
+        border: none;
+        border-radius: 29px;
+        padding: 0 ${theme.margin(2)};
+
+        &:hover {
+          opacity: 0.8;
+        }
+
+        &-buy {
+          background-color: ${theme.success};
+        }
+
+        &-bid {
           background-color: ${theme.primary2};
+        }
 
-          &:hover {
-            opacity: 0.8;
-          }
+        &-sell {
+          background-color: #bb3535;
         }
       }
 
@@ -172,44 +184,51 @@ const DETAILS_TAB_CONTENT = styled.div`
     }
   `}
 `
-//#endregion
 
-const getButtonText = (mode: NFTDetailsProviderMode): string => {
-  switch (mode) {
-    case 'live-auction-NFT':
-    case 'open-bid-NFT':
-      return 'Place a bid'
-    case 'my-created-NFT':
-      return 'Edit NFT'
-    case 'mint-item-view':
-      return 'Mint'
-    case 'fixed-price-NFT':
-      return 'Buy now'
-    case 'my-external-NFT':
-      return 'Sell NFT'
+const REMOVE_ASK_MODAL = styled(Modal)`
+  &.ant-modal {
+    width: 501px !important;
   }
-}
+
+  .ant-modal-body {
+    padding: ${({ theme }) => theme.margin(4.5)};
+  }
+
+  .modal-close-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .bm-title {
+    color: ${({ theme }) => theme.text1};
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .bm-title-bold {
+    font-weight: 600;
+  }
+`
+//#endregion
 
 export const RightSectionTabs: FC<{
   mode: NFTDetailsProviderMode
   status: MintItemViewStatus
-  handleClickPrimaryButton: () => void
-}> = ({ mode, status, handleClickPrimaryButton, ...rest }) => {
+}> = ({ mode, status, ...rest }) => {
   const history = useHistory()
   const [activeTab, setActiveTab] = useState('1')
-  const [acceptedBid, setAcceptedBid] = useState<string>()
-  const [buyerPublicKey, setBuyerPublicKey] = useState<PublicKey>()
 
+  const { general, nftMetadata, bids, ask, removeNFTListing } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
-  const { connection } = useConnectionConfig()
-  const { publicKey, sendTransaction } = useWallet()
-  const { general, nftMetadata, bids } = useNFTDetails()
+  const { connection, network } = useConnectionConfig()
+  const wallet = useWallet()
+  const { publicKey } = wallet
   const { mint_address, owner, token_account } = general
+  const [bidModal, setBidModal] = useState<boolean>(false)
+  const [removeAskModal, setRemoveAskModal] = useState<boolean>(false)
 
-  useEffect(() => {
-    setAcceptedBid(bids.length > 0 ? bids[bids.length - 1].buyer_price : undefined)
-    setBuyerPublicKey(bids.length > 0 ? new PublicKey(bids[bids.length - 1].wallet_key) : undefined)
-  }, [])
+  useEffect(() => {}, [])
 
   useEffect(() => {}, [publicKey])
 
@@ -255,173 +274,89 @@ export const RightSectionTabs: FC<{
         from: 'capital_1',
         to: '',
         date: '09/10/21'
-      },
-      {
-        id: '3',
-        event: 'offer',
-        price: 135.556,
-        from: 'MLBmodel',
-        to: 'Chirsstoo',
-        date: '02/10/21'
-      },
-      {
-        id: '4',
-        event: 'sale',
-        price: 121.134,
-        from: 'Chirsstoo',
-        to: '',
-        date: '25/09/21'
       }
     ],
     [nftMetadata]
   )
 
-  const desc = {
-    successful: [
-      'Item successfully minted!',
-      'Thirsty Cactus Garden Party, Item #2567',
-      'Check your collection to check your new piece!'
-    ],
-    unsuccessful: ['Item unsucessfully minted!', 'Please try again, if the error persists please contact support.']
-  }
-
-  const openNotification = (status, desc) => {
-    if (!['successful', 'unsuccessful'].includes(status)) {
-      return
-    }
-
-    const description = (
-      <>
-        {desc[status].map((item, index) => (
-          <div className={`text text-${index} ${status}`}>{item}</div>
-        ))}
-        <img src={`/img/assets/${status}.svg`} alt="" />
-      </>
-    )
-
-    if (status === 'successful') {
-      notification.info({
-        message: null,
-        description,
-        placement: 'bottomLeft',
-        duration: 1,
-        className: 'mint'
-      })
-      return
-    }
-
-    if (status === 'unsuccessful') {
-      notification.error({
-        message: null,
-        description,
-        placement: 'bottomLeft',
-        duration: 1,
-        className: 'mint'
-      })
-      return
-    }
-  }
-
   const derivePDAsForInstruction = async () => {
-    // TODO: lamport type check acceptedBid
-    const buyerPriceInLamports = acceptedBid
-    const buyerPrice: BN = new BN(buyerPriceInLamports)
-
-    const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
-
-    const escrowPaymentAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
-      [Buffer.from(AUCTION_HOUSE_PREFIX), toPublicKey(AUCTION_HOUSE).toBuffer(), publicKey.toBuffer()],
-      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
-    )
-
-    const buyerRecieptTokenAccount: PublicKey = new PublicKey('test')
-
-    const buyerTradeState: [PublicKey, number] = await tradeStatePDA(buyerPublicKey, general, bnTo8(buyerPrice))
+    const buyerPrice: BN = new BN(ask.buyer_price)
 
     const sellerTradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
 
-    const freeTradeState: [PublicKey, number] = await freeSellerTradeStatePDA(publicKey, general)
-
-    const programAsSignerPDA: [PublicKey, number] = await PublicKey.findProgramAddress(
-      [Buffer.from(AUCTION_HOUSE_PREFIX), Buffer.from('signer')],
-      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
-    )
-
-    if (
-      !buyerTradeState ||
-      !sellerTradeState ||
-      !buyerRecieptTokenAccount ||
-      !freeTradeState ||
-      !programAsSignerPDA ||
-      !escrowPaymentAccount ||
-      !metaDataAccount
-    ) {
+    if (!sellerTradeState) {
       throw Error(`Could not derive values for sell instructions`)
     }
 
     return {
-      buyerTradeState,
       sellerTradeState,
-      buyerRecieptTokenAccount,
-      freeTradeState,
-      programAsSignerPDA,
-      escrowPaymentAccount,
-      metaDataAccount,
       buyerPrice
     }
   }
 
-  const callExecuteSaleInstruction = async (e: any) => {
+  const handleUpdateAsk = (e) => {
+    e.preventDefault()
+    ask === undefined ? history.push(`/NFTs/sell/${general.non_fungible_id}`) : setRemoveAskModal(true)
+  }
+
+  const handleRemoveAsk = async (e) => {
     e.preventDefault()
 
-    const {
-      buyerTradeState,
-      sellerTradeState,
-      buyerRecieptTokenAccount,
-      freeTradeState,
-      programAsSignerPDA,
-      escrowPaymentAccount,
-      metaDataAccount,
-      buyerPrice
-    } = await derivePDAsForInstruction()
-
-    const executeSaleInstructionArgs: ExecuteSaleInstructionArgs = {
-      escrowPaymentBump: escrowPaymentAccount[1],
-      freeTradeStateBump: freeTradeState[1],
-      programAsSignerBump: programAsSignerPDA[1],
-      buyerPrice: buyerPrice,
-      tokenSize: tokenSize
-    }
-
-    const executeSaleInstructionAccounts: ExecuteSaleInstructionAccounts = await getExecuteSaleInstructionAccounts(
-      buyerPublicKey,
-      publicKey,
+    const { sellerTradeState, buyerPrice } = await derivePDAsForInstruction()
+    const { signature, confirm } = await callCancelInstruction(
+      wallet,
+      connection,
       general,
-      metaDataAccount,
-      escrowPaymentAccount[0],
-      buyerRecieptTokenAccount,
-      buyerTradeState[0],
-      sellerTradeState[0],
-      freeTradeState[0],
-      programAsSignerPDA[0]
+      sellerTradeState,
+      buyerPrice
     )
 
-    const executeSaleIX: TransactionInstruction = await createExecuteSaleInstruction(
-      executeSaleInstructionAccounts,
-      executeSaleInstructionArgs
-    )
-
-    const transaction = new Transaction().add(executeSaleIX)
-    const signature = await sendTransaction(transaction, connection)
-    console.log(signature)
-    const confirm = await connection.confirmTransaction(signature, 'processed')
-    console.log(confirm)
+    if (confirm.value.err === null) {
+      notify(successfulListingMsg(signature, nftMetadata, buyerPrice.toString()))
+      postCancelAskToAPI(general.non_fungible_id)
+    }
   }
 
-  const handleButton = () => (mode === 'mint-item-view' ? openNotification(status, desc) : handleClickPrimaryButton())
+  const postCancelAskToAPI = async (id: any) => {
+    const res = await removeNFTListing(id)
+    console.log(res)
+  }
+
+  const successfulListingMsg = (signature: any, nftMetadata: any, price: string) => ({
+    message: (
+      <SuccessfulListingMsg
+        title={`Successfully removed ask for ${nftMetadata.name}!`}
+        itemName={nftMetadata.name}
+        supportText={`Removed asking price: ${price}`}
+        tx_url={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+      />
+    )
+  })
+
+  const handleSetBid = (type: string) => {
+    setBidModal(true)
+  }
+
+  const handleModal = () => {
+    if (removeAskModal) {
+      return (
+        <REMOVE_ASK_MODAL
+          visible={removeAskModal}
+          setVisible={setRemoveAskModal}
+          title=""
+          onCancel={() => console.log('cancel')}
+        >
+          <RemoveAskModalContent removeAsk={handleRemoveAsk} />
+        </REMOVE_ASK_MODAL>
+      )
+    } else if (bidModal) {
+      return <BidModal visible={bidModal} setVisible={setBidModal} />
+    }
+  }
 
   return (
     <RIGHT_SECTION_TABS activeTab={activeTab} mode={mode} {...rest}>
+      {handleModal()}
       <Tabs defaultActiveKey="1" centered onChange={(key) => setActiveTab(key)}>
         {mode === 'mint-item-view' ? (
           <TabPane tab="Details" key="1">
@@ -456,21 +391,34 @@ export const RightSectionTabs: FC<{
         )}
       </Tabs>
       {general.non_fungible_id && publicKey && (
-        <Row className="rst-footer">
+        <SpaceBetweenDiv className="rst-footer">
           {sessionUser && sessionUser.user_id ? (
-            <Col className="rst-footer-bid-button">
-              <button onClick={handleButton}>{getButtonText(mode)}</button>
-            </Col>
+            publicKey.toBase58() === general.owner ? (
+              <button className="rst-footer-button rst-footer-button-sell" onClick={handleUpdateAsk}>
+                {ask === undefined ? 'List Item' : 'Remove Ask Price'}
+              </button>
+            ) : (
+              <SpaceBetweenDiv style={{ flexGrow: 1 }}>
+                <button onClick={(e) => handleSetBid('bid')} className="rst-footer-button rst-footer-button-bid">
+                  Place Bid
+                </button>
+                {ask && (
+                  <button onClick={(e) => handleSetBid('buy')} className="rst-footer-button rst-footer-button-buy">
+                    Buy Now
+                  </button>
+                )}
+              </SpaceBetweenDiv>
+            )
           ) : (
-            <Col className="rst-footer-bid-button">
-              <button onClick={(e) => history.push('/NFTs/profile')}>Complete profile</button>
-            </Col>
+            <button className="rst-footer-button rst-footer-button-bid" onClick={(e) => history.push('/NFTs/profile')}>
+              Complete profile
+            </button>
           )}
 
-          <Col className="rst-footer-share-button">
+          <div className="rst-footer-share-button">
             <img src={`/img/assets/share.svg`} alt="share-icon" />
-          </Col>
-        </Row>
+          </div>
+        </SpaceBetweenDiv>
       )}
     </RIGHT_SECTION_TABS>
   )
