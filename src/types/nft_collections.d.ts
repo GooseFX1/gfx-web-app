@@ -62,13 +62,14 @@ export type NFTUpcomingCollection = {
 }
 
 export interface INFTCollectionConfig {
-  allCollections: Array<NFTBaseCollection>
-  featuredCollections: Array<NFTFeaturedCollection>
-  upcomingCollections: Array<NFTUpcomingCollection>
+  allCollections: NFTBaseCollection[]
+  featuredCollections: NFTFeaturedCollection[]
+  upcomingCollections: NFTUpcomingCollection[]
   fetchAllCollections: any
   fetchFeaturedCollections: any
   fetchUpcomingCollections: any
   singleCollection: NFTCollection
+  setSingleCollection: Dispatch<SetStateAction<NFTCollection>>
   fetchSingleCollection: (id: string) => Promise<any>
   fixedPriceWithinCollection: IFixedPriceWithinCollection
   openBidWithinCollection: IOpenBidWithinCollection
