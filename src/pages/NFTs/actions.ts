@@ -1,4 +1,5 @@
-import { PublicKey } from '@solana/web3.js'
+import { PublicKey, Transaction, TransactionInstruction, Connection } from '@solana/web3.js'
+import { WalletContextState } from '@solana/wallet-adapter-react'
 import {
   AUCTION_HOUSE_PREFIX,
   AUCTION_HOUSE,
@@ -8,7 +9,9 @@ import {
   TREASURY_ACCT,
   AH_FEE_ACCT,
   toPublicKey,
-  ExecuteSaleInstructionAccounts,
+  createCancelInstruction,
+  CancelInstructionArgs,
+  CancelInstructionAccounts,
   SellInstructionAccounts,
   BuyInstructionAccounts,
   StringPublicKey,
@@ -108,33 +111,37 @@ export const getBuyInstructionAccounts = (
   buyerTradeState: buyerTradeState
 })
 
-export const getExecuteSaleInstructionAccounts = (
-  buyerPublicKey: PublicKey,
-  sellerPublicKey: PublicKey,
+export const callCancelInstruction = async (
+  wallet: WalletContextState,
+  connection: Connection,
   general: ISingleNFT,
-  metaDataAccount: StringPublicKey,
-  escrowPaymentAccount: PublicKey,
-  buyerReceiptTokenAccount: PublicKey,
-  buyerTradeState: PublicKey,
-  sellerTradeState: PublicKey,
-  freeTradeState: PublicKey,
-  programAsSignerPDA: PublicKey
-): ExecuteSaleInstructionAccounts => ({
-  buyer: buyerPublicKey,
-  seller: sellerPublicKey,
-  tokenAccount: new PublicKey(general.token_account),
-  tokenMint: new PublicKey(general.mint_address),
-  metadata: new PublicKey(metaDataAccount),
-  treasuryMint: new PublicKey(TREASURY_MINT),
-  escrowPaymentAccount: escrowPaymentAccount,
-  sellerPaymentReceiptAccount: sellerPublicKey,
-  buyerReceiptTokenAccount: buyerReceiptTokenAccount,
-  authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
-  auctionHouse: new PublicKey(AUCTION_HOUSE),
-  auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
-  auctionHouseTreasury: new PublicKey(TREASURY_ACCT),
-  buyerTradeState: buyerTradeState,
-  sellerTradeState: sellerTradeState,
-  freeTradeState: freeTradeState,
-  programAsSigner: programAsSignerPDA
-})
+  tradeState: [PublicKey, number],
+  buyerPrice: BN
+) => {
+  const cancelInstructionArgs: CancelInstructionArgs = {
+    buyerPrice: buyerPrice,
+    tokenSize: tokenSize
+  }
+
+  const cancelInstructionAccounts: CancelInstructionAccounts = {
+    wallet: wallet.publicKey,
+    tokenAccount: new PublicKey(general.token_account),
+    tokenMint: new PublicKey(general.mint_address),
+    authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+    auctionHouse: new PublicKey(AUCTION_HOUSE),
+    auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
+    tradeState: tradeState[0]
+  }
+
+  const cancelIX: TransactionInstruction = await createCancelInstruction(
+    cancelInstructionAccounts,
+    cancelInstructionArgs
+  )
+
+  const transaction = new Transaction().add(cancelIX)
+  const signature = await wallet.sendTransaction(transaction, connection)
+  console.log(signature)
+  const confirm = await connection.confirmTransaction(signature, 'processed')
+  console.log(confirm)
+  return { signature, confirm }
+}
