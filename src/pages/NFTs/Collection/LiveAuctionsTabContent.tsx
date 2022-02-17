@@ -71,7 +71,7 @@ export const LiveAuctionsTabContent: FC = ({ ...rest }) => {
       ) : localLiveAuction.length > 0 ? (
         <LIVE_AUCTIONS_TAB {...rest} className="card-list">
           {localLiveAuction.map((item: ISingleNFT) => (
-            <Card key={item.non_fungible_id} singleNFT={item} listingType={'auction'} userId={sessionUser.user_id} />
+            <Card key={item.non_fungible_id} singleNFT={item} listingType={'auction'} />
           ))}
         </LIVE_AUCTIONS_TAB>
       ) : (
