@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useNFTProfile } from '../../../context'
+import { useNFTProfile, useConnectionConfig } from '../../../context'
 import { ParsedAccount } from '../../../web3'
 import { fetchNFTById } from '../../../api/NFTs/actions'
 import { NFTTab } from '../NFTTab'
@@ -16,6 +16,7 @@ export const ContentProfile = ({ isExplore }: Props) => {
   const { sessionUser, parsedAccounts, userActivity, setUserActivity, fetchUserActivity } = useNFTProfile()
   const [createdItems, setCreatedItems] = useState<ParsedAccount[]>()
   const [favoritedItems, setFavoritedItems] = useState<ParsedAccount[]>()
+  const { connection } = useConnectionConfig()
 
   const tabPanes = useMemo(
     () => [
