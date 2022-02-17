@@ -134,11 +134,11 @@ const STYLED_SEARCH_BAR = styled.div`
 //#endregion
 
 export const CollectionTabs = ({ filter, setFilter }) => {
-  const { allCollections } = useNFTCollections()
+  const { singleCollection } = useNFTCollections()
 
-  useEffect(() => {}, [allCollections])
+  useEffect(() => {}, [singleCollection])
 
-  return allCollections ? (
+  return singleCollection ? (
     <COLLECTION_TABS>
       <STYLED_SEARCH_BAR>
         <SearchBar
@@ -153,13 +153,13 @@ export const CollectionTabs = ({ filter, setFilter }) => {
         {/* <TabPane tab="Live Auctions" key="1">
           <LiveAuctionsTabContent />
         </TabPane> */}
+        <TabPane tab="Open Bids" key="1">
+          <OpenBidsTabContent filter={filter} />
+        </TabPane>
         <TabPane tab="Fixed Price" key="2">
           <FixedPriceTabContent />
         </TabPane>
-        <TabPane tab="Open Bids" key="3">
-          <OpenBidsTabContent filter={filter} />
-        </TabPane>
-        <TabPane tab="Owners" key="4">
+        <TabPane tab="Owners" key="3">
           <OwnersTabContent />
         </TabPane>
       </Tabs>
