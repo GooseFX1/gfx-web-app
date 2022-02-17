@@ -68,7 +68,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
     try {
       const res = await fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.FIXED_PRICE, `${id}`)
       const collectionData = await res.data
-      return { ...collectionData, nft_data: collectionData.nft_data.slice(0, 25) }
+      return { ...collectionData, nft_data: collectionData.nft_data }
     } catch (err) {
       console.error(err)
       return err
@@ -79,7 +79,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
     try {
       const res = await fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.OPEN_BID, `${id}`)
       const collectionData = await res.data
-      return { ...collectionData, open_bid: collectionData.open_bid.slice(0, 25) }
+      return { ...collectionData, open_bid: collectionData.open_bid }
     } catch (err) {
       console.error(err)
       return err
