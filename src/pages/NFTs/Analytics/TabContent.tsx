@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import styled from 'styled-components'
 import { Skeleton } from 'antd'
-import { useHistory } from 'react-router-dom'
 import { NFTBaseCollection, NFTCollection } from '../../../types/nft_collections.d'
 import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
 import { nFormatter } from '../../../utils'
@@ -160,7 +161,7 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
             <div>
               {collectionFilter === 'floor' && (
                 <div>
-                  {analyticData.collection_floor ? nFormatter(analyticData.collection_floor) : '0'}
+                  {analyticData.collection_floor ? nFormatter(analyticData.collection_floor / LAMPORTS_PER_SOL) : '0'}
                   <img className="sol-icon" src={`${process.env.PUBLIC_URL}/img/assets/SOL-icon.svg`} alt="" />
                 </div>
               )}

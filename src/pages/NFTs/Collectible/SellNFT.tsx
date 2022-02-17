@@ -1,42 +1,47 @@
-import React, { useState, useEffect } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { Form, Row, Col } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { IAppParams } from '../../../types/app_params.d'
 import PreviewImage from './PreviewImage'
+import { PopupCustom } from '../Popup/PopupCustom'
 import { MainText } from '../../../styles'
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { SellCategory } from '../SellCategory/SellCategory'
 import { FormDoubleItem } from '../Form/FormDoubleItem'
+import { SuccessfulListingMsg, TransactionErrorMsg, MainButton } from '../../../components'
+import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { notify } from '../../../utils'
-import { getParsedAccountByMint } from '../../../web3'
-import { dataFormRow2, dataFormFixedRow2, startingDays, expirationDays } from './mockData'
-import { Donate } from '../Form/Donate'
-import isEmpty from 'lodash/isEmpty'
-import BN from 'bn.js'
-
+import {
+  tradeStatePDA,
+  freeSellerTradeStatePDA,
+  getSellInstructionAccounts,
+  callCancelInstruction,
+  tokenSize
+} from '../actions'
 import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
+import BN from 'bn.js'
 import {
   AUCTION_HOUSE_PREFIX,
   AUCTION_HOUSE,
-  AUCTION_HOUSE_AUTHORITY,
   AUCTION_HOUSE_PROGRAM_ID,
   TREASURY_MINT,
-  AH_FEE_ACCT,
   toPublicKey,
   createSellInstruction,
-  createCancelInstruction,
   SellInstructionArgs,
   SellInstructionAccounts,
-  CancelInstructionArgs,
-  CancelInstructionAccounts,
   getMetadata,
   StringPublicKey,
   bnTo8
 } from '../../../web3'
 
-import { tradeStatePDA, freeSellerTradeStatePDA, getSellInstructionAccounts, tokenSize } from '../actions'
+import { dataFormRow2, dataFormFixedRow2 } from './mockData'
+// import { Donate } from '../Form/Donate'
+// const dataDonate = {
+//   desc: 'We will donate a percentage of the total price for people in need.',
+//   percents: [0, 10, 20, 50, 100]
+// }
 
 //#region styles
 const UPLOAD_CONTENT = styled.div`
@@ -56,6 +61,40 @@ const UPLOAD_CONTENT = styled.div`
     margin-right: ${({ theme }) => theme.margin(5)};
     margin-left: 0;
     margin-top: ${({ theme }) => theme.margin(1)};
+  }
+`
+
+const REVIEW_SELL_MODAL = styled(PopupCustom)`
+  * {
+    text-align: center;
+  }
+  .bm-title {
+    color: ${({ theme }) => theme.text1};
+    font-size: 58px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .bm-text {
+    color: ${({ theme }) => theme.text1};
+    font-size: 22px;
+    line-height: 26px;
+  }
+  .bm-support {
+    color: ${({ theme }) => theme.text1};
+    font-size: 18px;
+    line-height: 26px;
+  }
+  .bm-text-bold {
+    color: ${({ theme }) => theme.text1};
+    font-weight: 700;
+  }
+  .bm-details-price {
+    margin-bottom: 12px;
+    * {
+      color: ${({ theme }) => theme.text1};
+      font-size: 17px;
+      font-weight: 600;
+    }
   }
 `
 
@@ -109,8 +148,7 @@ const STYLED_DESCRIPTION = styled.div`
   font-size: 20px;
   font-weight: 600;
   text-align: left;
-  color: #fff;
-  padding-bottom: ${({ theme }) => theme.margin(5)} !important;
+  color: ${({ theme }) => theme.text1};
 `
 const MESSAGE = styled.div`
   margin: -12px 0;
@@ -161,94 +199,100 @@ const BUTTON = styled.button`
     background-color: #7d7d7d;
   }
 `
+const BUTTON_TEXT = styled.div`
+  font-weight: 700;
+  font-size: 21px;
+`
 
 //#endregion
-
-const dataDonate = {
-  desc: 'We will donate a percentage of the total price for people in need.',
-  percents: [0, 10, 20, 50, 100]
-}
 
 export const SellNFT = () => {
   const history = useHistory()
   const params = useParams<IAppParams>()
-  const { general, nftMetadata, fetchExternalNFTs, updateUserInput, sellNFT } = useNFTDetails()
+  const { general, fetchGeneral, nftMetadata, updateUserInput, sellNFT } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
   const wallet = useWallet()
-  const { publicKey, sendTransaction } = wallet
+  const { connected, publicKey, sendTransaction } = wallet
   const { connection, network } = useConnectionConfig()
+  const [reviewSellModal, setReviewSellModal] = useState<boolean>(false)
 
   const [form] = Form.useForm()
-  const initSettingData = {
-    info: {
-      title: '',
-      desc: ''
-    },
-    previewImage: ''
-  }
-  const initLiveData = {
+  const [userInput, setUserInput] = useState<any>({
     minimumBid: '',
     royalties: ''
-  }
-  const [settingData, setSettingData] = useState<any>({ ...initSettingData })
-  const [liveData, setLiveData] = useState<any>({ ...initLiveData })
+  })
   const [disabled, setDisabled] = useState<boolean>(true)
   const [category, setCategory] = useState<string>('open-bid')
 
-  // TODO: if param "nftMintAddress" is present, make a web3 call to get data and metadata
-  // getParsedAccountByMint(nftMintAddress) then setGeneral() and setNftMetadata()
+  const servicePriceCalc: number = useMemo(
+    () =>
+      userInput['minimumBid']
+        ? parseFloat(((NFT_MARKET_TRANSACTION_FEE / 100) * Number(userInput['minimumBid'])).toFixed(3))
+        : 0,
+    [userInput['minimumBid']]
+  )
+
+  const creator = useMemo(() => {
+    if (nftMetadata === undefined) return null
+    if (nftMetadata.properties.creators.length > 0) {
+      const addr = nftMetadata.properties.creators[0].address
+      return `${addr.substr(0, 4)}...${addr.substr(-4, 4)}`
+    } else if (nftMetadata.collection) {
+      return Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection.name
+    } else {
+      return null
+    }
+  }, [nftMetadata])
 
   useEffect(() => {
     const { state = {} } = history.location
-    if (!isEmpty(state)) {
-      setSettingData(state)
-    }
   }, [history.location, history.location.state])
 
   useEffect(() => {
-    async function getData() {
-      let data = await getParsedAccountByMint({ mintAddress: params.nftMintAddress, connection })
-      await fetchExternalNFTs(data.account.data.parsed.info.owner, connection, null, params.nftMintAddress)
-    }
-    if (params.nftMintAddress && (!general || !nftMetadata)) {
-      getData()
+    if (params.nftId && (!general || !nftMetadata)) {
+      fetchGeneral(params.nftId, connection).then((res) => {
+        console.log(res)
+      })
     }
   }, [])
 
   useEffect(() => {
-    if (category === 'fixed-price') {
-      if (liveData?.minimumBid && liveData?.royalties) {
-        setDisabled(false)
-      } else setDisabled(true)
-    } else {
-      setDisabled(false)
+    if (!sessionUser || !connected || !publicKey) {
+      history.push(`/NFTs/open-bid/${params.nftId}`)
     }
-  }, [liveData, category])
+  }, [connected, publicKey])
+
+  useEffect(() => {
+    if (userInput.minimumBid.length > 0) {
+      if (category === 'fixed-price' && userInput.royalties.length > 0) {
+        setDisabled(false)
+      } else {
+        setDisabled(false)
+      }
+    } else {
+      setDisabled(true)
+    }
+  }, [userInput, category])
 
   const onChange = ({ e, id }) => {
     const { value } = e.target
-    const temp = { ...liveData }
+    const temp = { ...userInput }
     temp[id] = value
     if (id === 'minimumBid') {
       updateUserInput({ price: value })
     } else {
       updateUserInput({ royalty: value })
     }
-    setLiveData(temp)
+    setUserInput(temp)
   }
 
   const derivePDAsForInstruction = async () => {
-    const buyerPriceInLamports = parseFloat(liveData['minimumBid'] || 0) * LAMPORTS_PER_SOL
+    const buyerPriceInLamports = parseFloat(userInput['minimumBid'] || 0) * LAMPORTS_PER_SOL
     const buyerPrice: BN = new BN(buyerPriceInLamports)
 
     const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
-
     const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
-    console.log(tradeState)
-
     const freeTradeState: [PublicKey, number] = await freeSellerTradeStatePDA(publicKey, general)
-    console.log(freeTradeState)
-
     const programAsSignerPDA: [PublicKey, number] = await PublicKey.findProgramAddress(
       [Buffer.from(AUCTION_HOUSE_PREFIX), Buffer.from('signer')],
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
@@ -269,26 +313,12 @@ export const SellNFT = () => {
 
   const callSellInstruction = async (e: any) => {
     e.preventDefault()
-
-    if (general.owner !== publicKey.toBase58()) {
-      return notify({
-        type: 'error',
-        message: (
-          <MESSAGE>
-            <Row className="m-title" justify="space-between" align="middle">
-              <Col>NFT Listing error!</Col>
-              <Col>
-                <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-              </Col>
-            </Row>
-            <div>This NFT is not owned by this wallet.</div>
-          </MESSAGE>
-        )
-      })
-    }
+    setReviewSellModal(false)
 
     const { metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, buyerPrice } =
       await derivePDAsForInstruction()
+
+    console.log(metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, buyerPrice.toString())
 
     const sellInstructionArgs: SellInstructionArgs = {
       tradeStateBump: tradeState[1],
@@ -316,17 +346,24 @@ export const SellNFT = () => {
     const confirm = await connection.confirmTransaction(signature, 'processed')
     console.log(confirm)
 
-    notify(successfulListingMessage(signature, nftMetadata, liveData['minimumBid']))
-
     if (confirm.value.err === null) {
+      notify(successfulListingMsg(signature, nftMetadata, userInput['minimumBid']))
       postTransationToAPI(signature, buyerPrice, tokenSize).then((res) => {
         console.log(res)
+        if (!res) {
+          callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
+        }
+
+        setTimeout(() => {
+          history.push('/NFTs/profile')
+        }, 1500)
       })
     }
   }
 
   const postTransationToAPI = async (txSig: any, buyerPrice: BN, tokenSize: BN) => {
     const sellObject = {
+      ask_id: null,
       clock: Date.now().toString(),
       tx_sig: txSig,
       wallet_key: publicKey.toBase58(),
@@ -337,91 +374,98 @@ export const SellNFT = () => {
       buyer_price: buyerPrice.toString(),
       token_size: tokenSize.toString(),
       non_fungible_id: general.non_fungible_id,
-      collection_id: nftMetadata.collection,
+      collection_id: general.collection_id,
       user_id: sessionUser.user_id
     }
 
     try {
       const res = await sellNFT(sellObject)
-      return res
+      console.dir(res)
+      if (res.isAxiosError) {
+        notify({
+          type: 'error',
+          message: (
+            <TransactionErrorMsg
+              title={`NFT Listing error!`}
+              itemName={nftMetadata.name}
+              supportText={`Please try again, if the error persists please contact support.`}
+            />
+          )
+        })
+        return false
+      } else {
+        return true
+      }
     } catch (error) {
-      console.dir(error)
-      notify({
-        type: 'error',
-        message: (
-          <MESSAGE>
-            <Row className="m-title" justify="space-between" align="middle">
-              <Col>NFT Listing error!</Col>
-              <Col>
-                <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-              </Col>
-            </Row>
-            <div>Please try again, if the error persists please contact support.</div>
-          </MESSAGE>
-        )
-      })
-    } finally {
-      // setIsLoading(false)
+      console.error(error)
+      return false
     }
   }
 
-  const callCancelInstruction = async (e: any) => {
-    e.preventDefault()
-
-    const { tradeState, buyerPrice } = await derivePDAsForInstruction()
-
-    const cancelInstructionArgs: CancelInstructionArgs = {
-      buyerPrice: buyerPrice,
-      tokenSize: tokenSize
-    }
-
-    const cancelInstructionAccounts: CancelInstructionAccounts = {
-      wallet: publicKey,
-      tokenAccount: new PublicKey(general.token_account),
-      tokenMint: new PublicKey(general.mint_address),
-      authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
-      auctionHouse: new PublicKey(AUCTION_HOUSE),
-      auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
-      tradeState: tradeState[0]
-    }
-
-    const cancelIX: TransactionInstruction = await createCancelInstruction(
-      cancelInstructionAccounts,
-      cancelInstructionArgs
-    )
-
-    const transaction = new Transaction().add(cancelIX)
-    const signature = await sendTransaction(transaction, connection)
-    console.log(signature)
-    const confirm = await connection.confirmTransaction(signature, 'processed')
-    console.log(confirm)
-  }
-
-  const successfulListingMessage = (signature: any, nftMetadata: any, price: string) => ({
+  const successfulListingMsg = (signature: any, nftMetadata: any, price: string) => ({
     message: (
-      <MESSAGE>
-        <Row className="m-title" justify="space-between" align="middle">
-          <Col>Successfully listed {nftMetadata?.name}!</Col>
-          <Col>
-            <img className="m-icon" src={`/img/assets/bid-success-icon.svg`} alt="" />
-          </Col>
-        </Row>
-        <div>{nftMetadata?.name}</div>
-        <div>My price: {`${price}`}</div>
-        <div>
-          <a
-            href={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Transaction ID
-          </a>
-        </div>
-      </MESSAGE>
+      <SuccessfulListingMsg
+        title={`Successfully listed ${nftMetadata.name}!`}
+        itemName={nftMetadata.name}
+        supportText={`My price: ${price}`}
+        tx_url={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+      />
     )
   })
 
-  // const handleSelectPercentage = (number: number) => {}
+  const modal = () => {
+    if (reviewSellModal) {
+      return (
+        <REVIEW_SELL_MODAL
+          title={null}
+          onOk={(e) => setReviewSellModal(false)}
+          onCancel={(e) => setReviewSellModal(false)}
+          footer={null}
+          visible={reviewSellModal}
+          width="570px"
+        >
+          <div className="bm-text" style={{ marginTop: '40px' }}>
+            You are about to list
+          </div>
+          <Row className="bm-text" align="middle" justify="center" gutter={4} style={{ marginBottom: '70px' }}>
+            <Col className="bm-text-bold">{general.nft_name}</Col>
+            <Col>by</Col>
+            <Col className="bm-text-bold">{creator}</Col>
+          </Row>
+
+          <div style={{ marginBottom: '70px' }}>
+            <div className="bm-title">Open Bid</div>
+            <div className="bm-support">Accept any amount that you feel comfortable selling your nft</div>
+          </div>
+
+          <div>
+            <Row className="bm-details-price" justify="space-between" align="middle">
+              <Col>Service fee ({`${NFT_MARKET_TRANSACTION_FEE}%`})</Col>
+              <Col>
+                <Row gutter={8} justify="space-between" align="middle">
+                  <Col>{servicePriceCalc}</Col>
+                  <Col>SOL</Col>
+                </Row>
+              </Col>
+            </Row>
+            <Row className="bm-details-price" justify="space-between" align="middle" style={{ marginBottom: '70px' }}>
+              <Col>You will recieve</Col>
+              <Col>
+                <Row gutter={8} justify="space-between" align="middle" style={{ fontWeight: 700 }}>
+                  <Col>{parseFloat(userInput['minimumBid'] || 0) - servicePriceCalc}</Col>
+                  <Col>SOL</Col>
+                </Row>
+              </Col>
+            </Row>
+
+            <MainButton height={'60px'} width="100%" status="action" onClick={callSellInstruction}>
+              <BUTTON_TEXT>List Now</BUTTON_TEXT>
+            </MainButton>
+          </div>
+        </REVIEW_SELL_MODAL>
+      )
+    }
+  }
 
   return (
     <div>
@@ -429,6 +473,7 @@ export const SellNFT = () => {
         <LOADING>Loading...</LOADING>
       ) : (
         <UPLOAD_CONTENT>
+          {modal()}
           <img
             className="live-auction-back-icon"
             src={`/img/assets/arrow.svg`}
@@ -445,12 +490,12 @@ export const SellNFT = () => {
                 {category === 'fixed-price' && '2. Fixed price settings'}
               </SECTION_TITLE>
               <STYLED_FORM form={form} layout="vertical" initialValues={{}}>
-                {category === '0' && (
+                {/* {category === '0' && (
                   <>
                     <FormDoubleItem startingDays={startingDays} expirationDays={expirationDays} className="mb-3x" />
                     <FormDoubleItem data={dataFormRow2} className="mb-3x" onChange={onChange} />
                   </>
-                )}
+                )} */}
                 {category === 'open-bid' && (
                   <div>
                     <FormDoubleItem
@@ -494,7 +539,9 @@ export const SellNFT = () => {
             <PREVIEW_UPLOAD_CONTAINER>
               <PreviewImage image_url={nftMetadata.properties.files[0].uri} />
               <div>
-                <BUTTON onClick={callSellInstruction}>Sell item</BUTTON>
+                <BUTTON onClick={() => setReviewSellModal(true)} disabled={disabled}>
+                  Review
+                </BUTTON>
               </div>
             </PREVIEW_UPLOAD_CONTAINER>
           </UPLOAD_FIELD_CONTAINER>

@@ -1,5 +1,6 @@
 import { Table, Row, Col } from 'antd'
 import { FC } from 'react'
+import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
 import styled, { css } from 'styled-components'
 import { ITradingHistoryTabItemData, INFTBid, NFTDetailsProviderMode } from '../../../types/nft_details'
 
@@ -115,7 +116,7 @@ const columns = [
         <Col>
           <img className="thtc-solana-logo" src={`/img/assets/solana-logo.png`} alt="" />
         </Col>
-        <Col className="price-value">{value}</Col>
+        <Col className="price-value">{parseFloat(value) / LAMPORTS_PER_SOL}</Col>
       </Row>
     ),
     width: '23%'
@@ -124,14 +125,18 @@ const columns = [
     key: 'from',
     dataIndex: 'from',
     title: 'From',
-    render: (value: string) => <div className="thtc-from-to">{value}</div>,
+    render: (value: string) => (
+      <div className="thtc-from-to">{`${value.slice(0, 4)}...${value.slice(value.length - 4, value.length - 1)}`}</div>
+    ),
     width: '19%'
   },
   {
     key: 'to',
     dataIndex: 'to',
     title: 'To',
-    render: (value: string) => <div className="thtc-from-to">{value}</div>,
+    render: (value: string) => (
+      <div className="thtc-from-to">{`${value.slice(0, 4)}...${value.slice(value.length - 4, value.length - 1)}`}</div>
+    ),
     width: '19%'
   },
   {
@@ -162,7 +167,7 @@ const bidColumns = [
         <Col>
           <img className="thtc-solana-logo" src={`/img/assets/solana-logo.png`} alt="" />
         </Col>
-        <Col className="price-value">{value}</Col>
+        <Col className="price-value">{parseFloat(value) / LAMPORTS_PER_SOL}</Col>
       </Row>
     ),
     width: '23%'
@@ -171,21 +176,27 @@ const bidColumns = [
     key: 'wallet_key',
     dataIndex: 'wallet_key',
     title: 'From',
-    render: (value: string) => <div className="thtc-from-to">{value}</div>,
+    render: (value: string) => (
+      <div className="thtc-from-to">{`${value.slice(0, 4)}...${value.slice(value.length - 4, value.length - 1)}`}</div>
+    ),
     width: '19%'
   },
   {
     key: 'token_account_mint_key',
     dataIndex: 'token_account_mint_key',
     title: 'To',
-    render: (value: string) => <div className="thtc-from-to">{value}</div>,
+    render: (value: string) => (
+      <div className="thtc-from-to">{`${value.slice(0, 4)}...${value.slice(value.length - 4, value.length - 1)}`}</div>
+    ),
     width: '19%'
   },
   {
     key: 'clock',
     dataIndex: 'clock',
     title: <div className="thtc-align-right">Date</div>,
-    render: (value: string) => <div className="thtc-align-right">{value}</div>,
+    render: (value: string) => (
+      <div className="thtc-align-right">{new Date(parseInt(value)).toLocaleDateString('en-US')}</div>
+    ),
     width: '20%'
   }
 ]

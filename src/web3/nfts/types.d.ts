@@ -1,7 +1,20 @@
 import { WalletAdapter } from '@solana/wallet-adapter-base'
 import { ENV as ChainId } from '@solana/spl-token-registry'
 import { clusterApiUrl } from '@solana/web3.js'
+import { MetadataKey } from '../metaplex'
 export type ENDPOINT_NAME = 'mainnet-beta' | 'testnet' | 'devnet' | 'localnet' | 'lending'
+
+export type ParsedAccount = {
+  mint: string
+  updateAuthority: string
+  data: { creators: Creator[]; name: string; symbol: string; uri: string; sellerFeeBasisPoints: number }
+  key: MetadataKey
+  primarySaleHappened: boolean
+  isMutable: boolean
+  editionNonce: number
+  masterEdition?: string
+  edition?: string
+}
 
 type Endpoint = {
   name: ENDPOINT_NAME

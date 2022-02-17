@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Row, Col } from 'antd'
+import { Row } from 'antd'
 import { MintLayout } from '@solana/spl-token'
 import { Connection } from '@solana/web3.js'
 import { LAMPORT_MULTIPLIER, MAX_METADATA_LEN, getAssetCostToStore } from '../../../web3'

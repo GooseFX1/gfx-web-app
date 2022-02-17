@@ -3,9 +3,17 @@ import { Connection } from '@solana/web3.js'
 import apiClient from '../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
 import { StringPublicKey, getParsedNftAccountsByOwner, getParsedAccountByMint } from '../web3'
-import { INFTDetailsConfig, ISingleNFT, INFTMetadata, INFTBid, INFTAsk, IMetadataContext } from '../types/nft_details.d'
 import { useConnectionConfig, ENDPOINTS } from './settings'
 import { customFetch } from '../utils'
+import {
+  INFTDetailsConfig,
+  ISingleNFT,
+  INFTMetadata,
+  INFTBid,
+  INFTAsk,
+  IMetadataContext,
+  INFTGeneralData
+} from '../types/nft_details.d'
 
 const NFTDetailsContext = createContext<INFTDetailsConfig | null>(null)
 
@@ -14,8 +22,9 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const [general, setGeneral] = useState<ISingleNFT>()
   const [nftMetadata, setNftMetadata] = useState<INFTMetadata | null>()
   const [nftMintingData, setNftMintingData] = useState<IMetadataContext>()
-  const [asks, setAsks] = useState<Array<INFTAsk>>([])
-  const [bids, setBids] = useState<Array<INFTBid>>([])
+  const [bids, setBids] = useState<INFTBid[]>([])
+  const [ask, setAsk] = useState<INFTAsk>()
+  const [totalLikes, setTotalLikes] = useState<number>()
   const initialState = {
     type: 'fixed-price',
     expiration: '1',
@@ -26,17 +35,16 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const reducer = (state, newState) => ({ ...state, ...newState })
   const [userInput, setUserInput] = useReducer(reducer, initialState)
 
-  const fetchGeneral = useCallback(async (id: string): Promise<any> => {
+  const fetchGeneral = useCallback(async (id: string, conncetion: Connection): Promise<any> => {
     try {
       const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?nft_id=${id}`)
-      const nft = await res.data
+      const nft: INFTGeneralData = await res.data
+      console.log(conncetion)
 
       const parsedAccounts = await getParsedAccountByMint({
         mintAddress: nft.data[0].mint_address as StringPublicKey,
-        connection: connection
+        connection: conncetion
       })
-
-      console.log(parsedAccounts)
 
       const accountInfo =
         parsedAccounts !== undefined
@@ -46,8 +54,9 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
       await fetchMetaData(nft.data[0].metadata_url)
 
       setGeneral({ ...nft.data[0], ...accountInfo })
-      setAsks(nft.bids)
-      setBids(nft.asks)
+      setBids(nft.bids)
+      setAsk(nft.asks.length > 0 ? nft.asks[0] : undefined)
+      setTotalLikes(nft.total_likes)
       return res
     } catch (err) {
       return err
@@ -76,43 +85,6 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
-  const fetchExternalNFTs = useCallback(
-    async (paramValue: any, connection: any, nftData: INFTMetadata | null, mintAddress: string): Promise<any> => {
-      try {
-        const nfts = await getParsedNftAccountsByOwner({
-          publicAddress: `${paramValue}`,
-          connection: connection
-        })
-
-        var data = nfts.filter((i: any) => i.data.name === nftData?.name || i.mint == mintAddress)[0]
-        if (data) {
-          setGeneral({
-            non_fungible_id: data.key,
-            nft_name: nftData?.name,
-            nft_description: nftData?.description,
-            mint_address: data.mint,
-            metadata_url: data.data.uri,
-            image_url: nftData?.image,
-            animation_url: null,
-            collection_id: null,
-            token_account: null,
-            owner: null
-          })
-
-          if (nftData) {
-            setNftMetadata(nftData)
-          } else {
-            await fetchMetaData(data.data.uri)
-          }
-        }
-      } catch (error) {
-        console.log(error)
-        setNftMetadata(null)
-      }
-    },
-    []
-  )
-
   const updateUserInput = useCallback(async (paramValue: any): Promise<void> => {
     try {
       setUserInput({ ...paramValue })
@@ -134,9 +106,9 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
       const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.ASK}`, {
         ask: paramValue
       })
-      return res
+      return await res
     } catch (error) {
-      console.log(error)
+      return error
     }
   }, [])
 
@@ -148,6 +120,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
       return res
     } catch (error) {
       console.log(error)
+      return error
     }
   }, [])
 
@@ -188,22 +161,25 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
       value={{
         general,
         setGeneral,
+        fetchGeneral,
         nftMetadata,
         setNftMetadata,
         bids,
+        setBids,
         bidOnSingleNFT,
-        asks,
-        fetchGeneral,
+        ask,
+        setAsk,
         nftMintingData,
         setNftMintingData,
-        fetchExternalNFTs,
         updateUserInput,
         fetchUserInput,
         sellNFT,
         removeNFTListing,
         likeDislike,
         getLikesUser,
-        getLikesNFT
+        getLikesNFT,
+        totalLikes,
+        setTotalLikes
       }}
     >
       {children}
@@ -223,18 +199,21 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     nftMetadata: context.nftMetadata,
     setNftMetadata: context.setNftMetadata,
     bids: context.bids,
+    setBids: context.setBids,
     bidOnSingleNFT: context.bidOnSingleNFT,
-    asks: context.asks,
+    ask: context.ask,
+    setAsk: context.setAsk,
     fetchGeneral: context.fetchGeneral,
     nftMintingData: context.nftMintingData,
     setNftMintingData: context.setNftMintingData,
-    fetchExternalNFTs: context.fetchExternalNFTs,
     updateUserInput: context.updateUserInput,
     fetchUserInput: context.fetchUserInput,
     sellNFT: context.sellNFT,
     removeNFTListing: context.removeNFTListing,
     likeDislike: context.likeDislike,
     getLikesUser: context.getLikesUser,
-    getLikesNFT: context.getLikesNFT
+    getLikesNFT: context.getLikesNFT,
+    totalLikes: context.totalLikes,
+    setTotalLikes: context.setTotalLikes
   }
 }

@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { ParsedNFTDetails } from '../../../types/nft_details.d'
 import { useNFTProfile } from '../../../context'
-import { getParsedNftAccountsByOwner } from '../../../web3'
-import { useConnectionConfig } from '../../../context'
+import { ParsedAccount } from '../../../web3'
 
 import { NFTTab } from '../NFTTab'
 import NFTDisplay from './NFTDisplay'
@@ -15,18 +13,16 @@ type Props = {
 
 export const ContentProfile = ({ isExplore }: Props) => {
   const { connected, publicKey } = useWallet()
-  const { sessionUser, userActivity, setUserActivity, fetchUserActivity } = useNFTProfile()
-  const { connection } = useConnectionConfig()
+  const { sessionUser, parsedAccounts, userActivity, setUserActivity, fetchUserActivity } = useNFTProfile()
 
-  const [collectedItems, setCollectedItems] = useState<ParsedNFTDetails[]>()
-  const [createdItems, setCreatedItems] = useState<ParsedNFTDetails[]>()
+  const [createdItems, setCreatedItems] = useState<ParsedAccount[]>()
 
   const tabPanes = useMemo(
     () => [
       {
         order: '1',
-        name: `My Collection (${collectedItems ? collectedItems.length : 0})`,
-        component: <NFTDisplay data={collectedItems} type={'collected'} />
+        name: `My Collection (${parsedAccounts ? parsedAccounts.length : 0})`,
+        component: <NFTDisplay data={parsedAccounts} type={'collected'} />
       },
       {
         order: '2',
@@ -44,7 +40,7 @@ export const ContentProfile = ({ isExplore }: Props) => {
         component: <Activity data={userActivity ? userActivity : []} />
       }
     ],
-    [collectedItems, createdItems, userActivity]
+    [parsedAccounts, createdItems, userActivity]
   )
 
   useEffect(() => {
@@ -53,18 +49,12 @@ export const ContentProfile = ({ isExplore }: Props) => {
   }, [tabPanes])
 
   useEffect(() => {
-    if (connected && publicKey) {
-      fetchUserCollectedNFTs().then((topLevelUserNFTData: any) => {
-        console.log(topLevelUserNFTData)
-
-        setCollectedItems(topLevelUserNFTData)
-        const userCreated = topLevelUserNFTData.filter((nft) =>
-          nft.data.creators.find((c) => c.address === publicKey.toBase58())
-        )
-        setCreatedItems(userCreated)
-      })
+    if (connected && publicKey && parsedAccounts) {
+      const userCreated = parsedAccounts.filter((nft: ParsedAccount) =>
+        nft.data.creators.find((c) => c.address === publicKey.toBase58())
+      )
+      setCreatedItems(userCreated)
     } else {
-      setCollectedItems([])
       setCreatedItems([])
     }
 
@@ -80,18 +70,6 @@ export const ContentProfile = ({ isExplore }: Props) => {
 
     return () => {}
   }, [sessionUser.user_id, fetchUserActivity, setUserActivity])
-
-  const fetchUserCollectedNFTs = async () => {
-    try {
-      const nfts = await getParsedNftAccountsByOwner({
-        publicAddress: `${publicKey}`,
-        connection: connection
-      })
-      return nfts
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
   return <NFTTab tabPanes={tabPanes} />
 }

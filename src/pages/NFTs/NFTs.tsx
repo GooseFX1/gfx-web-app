@@ -50,7 +50,7 @@ export const NFTs: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const location = useLocation<ILocationState>()
   const { path } = useRouteMatch()
-  const { endpoint, setEndpoint } = useConnectionConfig()
+  const { connection, endpoint, setEndpoint } = useConnectionConfig()
   const { connected, publicKey } = useWallet()
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
 
@@ -65,7 +65,7 @@ export const NFTs: FC = () => {
   useEffect(() => {
     if (connected && publicKey) {
       if (!sessionUser || sessionUser.pubkey !== publicKey.toBase58()) {
-        fetchSessionUser('address', publicKey.toBase58()).then((res) => {
+        fetchSessionUser('address', publicKey.toBase58(), connection).then((res) => {
           if (res && res.status === 200) {
             const userProfileStatus = localStorage.getItem(publicKey.toBase58())
             if (res.data.length === 0 && userProfileStatus === null) {
@@ -84,7 +84,7 @@ export const NFTs: FC = () => {
     return () => {}
   }, [publicKey, connected])
 
-  return (
+  return endpoint === ENDPOINTS[1].endpoint ? (
     <OverlayProvider>
       <CryptoProvider>
         <NFTCollectionProvider>
@@ -127,7 +127,7 @@ export const NFTs: FC = () => {
                 <Route exact path="/NFTs/create-single">
                   <UpLoadNFT />
                 </Route>
-                <Route exact path="/NFTs/sell/:nftMintAddress">
+                <Route exact path="/NFTs/sell/:nftId">
                   <SellNFT />
                 </Route>
               </Switch>
@@ -136,5 +136,7 @@ export const NFTs: FC = () => {
         </NFTCollectionProvider>
       </CryptoProvider>
     </OverlayProvider>
+  ) : (
+    <div>waiting on network</div>
   )
 }

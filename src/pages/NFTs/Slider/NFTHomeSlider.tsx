@@ -28,7 +28,8 @@ const CAROUSEL_WRAPPER = styled.div`
     right: 25px;
   }
 
-  .slick-slider {
+  .slick-slide {
+    min-width: 630px;
   }
 `
 const SLIDER_ITEM = styled.div`

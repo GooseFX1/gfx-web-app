@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Button, Dropdown, Menu, Row, Col } from 'antd'
 import styled from 'styled-components'
 import { Stats } from './Stats'
@@ -201,7 +202,7 @@ export const CollectionHeader = ({ setFilter, filter }) => {
         </div>
         <div className="categories">
           <div className="item">
-            <div className="value">{singleCollection.collection_floor || '0.00'} SOL</div>
+            <div className="value">{singleCollection.collection_floor / LAMPORTS_PER_SOL || '0.00'} SOL</div>
             <div className="text">Floor price</div>
           </div>
           <div className="item">
