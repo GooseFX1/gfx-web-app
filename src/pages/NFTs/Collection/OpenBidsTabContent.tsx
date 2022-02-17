@@ -82,12 +82,7 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
       ) : fileredLocalOpenBid.length > 0 ? (
         <OPEN_BIDS_TAB {...rest} className="card-list">
           {fileredLocalOpenBid.map((item: ISingleNFT) => (
-            <Card
-              key={item.non_fungible_id}
-              singleNFT={item}
-              listingType="bid"
-              userId={sessionUser ? sessionUser.user_id : undefined}
-            />
+            <Card key={item.mint_address} singleNFT={item} listingType="bid" />
           ))}
         </OPEN_BIDS_TAB>
       ) : (
