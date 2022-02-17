@@ -1,6 +1,6 @@
 import apiClient from '../../api'
 import { NFT_API_ENDPOINTS, NFT_API_BASE } from '../NFTs/constants'
-import { INFTProfile } from './../../types/nft_profile.d'
+import { INFTProfile } from '../../types/nft_profile.d'
 
 export const completeNFTUserProfile = async (address: string): Promise<any> => {
   try {
@@ -37,6 +37,15 @@ export const updateNFTUser = async (updatedUser: INFTProfile): Promise<any> => {
 export const fetchSingleCollectionBySalesType = async (endpoint: string, id: string): Promise<any> => {
   try {
     const res = await apiClient(NFT_API_BASE).get(`${endpoint}?collection_id=${id}`)
+    return await res
+  } catch (err) {
+    return err
+  }
+}
+
+export const fetchSingleNFT = async (id: number): Promise<any> => {
+  try {
+    const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?nft_id=${id}`)
     return await res
   } catch (err) {
     return err
