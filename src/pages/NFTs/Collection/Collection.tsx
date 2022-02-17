@@ -17,9 +17,16 @@ const WRAPPED_LOADER = styled.div`
 
 export const Collection: FC = (): JSX.Element => {
   const params = useParams<IAppParams>()
-  const { singleCollection, fixedPriceWithinCollection, fetchSingleCollection } = useNFTCollections()
+  const { singleCollection, fixedPriceWithinCollection, fetchSingleCollection, setSingleCollection } =
+    useNFTCollections()
   const [err, setErr] = useState(false)
   const [filter, setFilter] = useState('')
+
+  useEffect(() => {
+    return () => {
+      setSingleCollection(undefined)
+    }
+  }, [])
 
   useEffect(() => {
     if (!singleCollection || `${singleCollection.collection_id}` !== params.collectionId) {
