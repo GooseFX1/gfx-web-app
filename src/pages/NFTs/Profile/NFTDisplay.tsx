@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
-import { ParsedNFTDetails, INFTMetadata } from '../../../types/nft_details.d'
+import { INFTMetadata } from '../../../types/nft_details.d'
 import { notify } from '../../../utils'
-
+import { ParsedAccount } from '../../../web3'
 import { Card } from './Card'
 import NoContent from './NoContent'
 import { SearchBar, Loader } from '../../../components'
@@ -12,10 +12,10 @@ import { ILocationState } from '../../../types/app_params.d'
 
 interface INFTDisplay {
   type: 'collected' | 'created' | 'favorited'
-  data: ParsedNFTDetails[]
+  data: ParsedAccount[]
 }
 
-type AllNFTdata = { topLevelData: ParsedNFTDetails; metaData: INFTMetadata }
+type AllNFTdata = { topLevelData: ParsedAccount; metaData: INFTMetadata }
 
 const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const location = useLocation<ILocationState>()
@@ -65,7 +65,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     }
   }, [search, collectedItems])
 
-  const fetchNFTMetadata = async (nftDetails: ParsedNFTDetails[]): Promise<AllNFTdata[]> => {
+  const fetchNFTMetadata = async (nftDetails: ParsedAccount[]): Promise<AllNFTdata[]> => {
     var data = Object.keys(nftDetails).map((key) => nftDetails[key])
     let nfts = []
     for (let i = 0; i < data.length; i++) {
