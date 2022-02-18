@@ -10,7 +10,7 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   display: flex;
   flex-direction: column;
   width: 100vw;
-  height: calc(100vh - 81px);
+
   padding-top: calc(80px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
   padding-left: ${({ theme }) => theme.margin(3)};
   padding-right: ${({ theme }) => theme.margin(3)};

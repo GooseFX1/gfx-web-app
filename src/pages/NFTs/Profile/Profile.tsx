@@ -75,7 +75,7 @@ export const Profile: FC = (): JSX.Element => {
   // const params = useParams<IAppParams>()
   const [err, setErr] = useState(false)
   const [loading, setLoading] = useState(true)
-  const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
+  const { sessionUser, setSessionUser, fetchSessionUser, setParsedAccounts } = useNFTProfile()
   const { connection } = useConnectionConfig()
   const { connected, publicKey } = useWallet()
 
@@ -104,6 +104,7 @@ export const Profile: FC = (): JSX.Element => {
 
   const setUnnamedUser = () => {
     setSessionUser(unnamedUser)
+    setParsedAccounts([])
     setLoading(false)
   }
 

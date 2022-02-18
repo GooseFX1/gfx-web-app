@@ -22,7 +22,7 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
   display: flex;
   width: 100vw;
-  height: calc(100vh - 81px);
+
   padding-top: calc(112px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
   overflow-y: scroll;
   overflow-x: hidden;

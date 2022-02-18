@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Button, Dropdown, Menu, Row, Col } from 'antd'
 import styled from 'styled-components'
-import { Stats } from './Stats'
 import { useHistory } from 'react-router-dom'
 import { useNFTCollections } from '../../../context'
 import { ShareProfile } from '../Profile/ShareProfile'
+import get from 'lodash/get'
+import isEmpty from 'lodash/isEmpty'
+import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 const COLLECTION_HEADER = styled.div`
   position: relative;
@@ -42,20 +44,25 @@ const COLLECTION_HEADER = styled.div`
   .title-desc {
     width: 55%;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     flex-flow: wrap;
 
     .title {
       display: flex;
+      align-items: center;
+      max-width: 40%;
       margin-right: ${({ theme }) => theme.margin(2)};
       ${({ theme }) => theme.mediaWidth.upToMedium({ width: '100%', maxWidth: 'unset' })}};
       
 
       .label {
-      ${({ theme }) => theme.ellipse};
-        font-size: 35px;
+        ${({ theme }) => theme.ellipse};
         font-weight: 500;
         margin-right: ${({ theme }) => theme.margin(2)};
+        span {
+          font-size: 35px;
+        }
       }
 
       img {
@@ -65,7 +72,6 @@ const COLLECTION_HEADER = styled.div`
     }
 
     .desc {
-      font-size: 20px;
       font-weight: 600;
       line-height: 24.38px;
       max-width: 70%;
@@ -78,6 +84,9 @@ const COLLECTION_HEADER = styled.div`
         background: transparent; /* Optional: just make scrollbar invisible */
       }
       ${({ theme }) => theme.mediaWidth.upToMedium({ width: '100%', maxWidth: 'unset' })};
+      span {
+        font-size: 20px;
+      }
     }
   }
 
@@ -89,14 +98,20 @@ const COLLECTION_HEADER = styled.div`
     }
 
     .value {
-      font-size: 25px;
       font-weight: 600;
+      margin-bottom: 0 ${({ theme }) => theme.margin(1)};
       ${({ theme }) => theme.ellipse}
+      span {
+        font-size: 25px;
+        line-height: 30.48px;
+      }
     }
 
     .text {
-      font-size: 18px;
       ${({ theme }) => theme.ellipse}
+      span {
+        font-size: 18px;
+      }
     }
   }
 `
@@ -171,7 +186,8 @@ export const CollectionHeader = ({ setFilter, filter }) => {
   const history = useHistory()
   const { singleCollection, fixedPriceWithinCollection, openBidWithinCollection } = useNFTCollections()
   const [visible, setVisible] = useState(false)
-
+  const collectionItem = get(singleCollection, 'collection[0]')
+  const isCollectionItemEmpty = isEmpty(collectionItem)
   const handleClick = (e) => {
     console.log('handleClick e:', e)
     setVisible(true)
@@ -184,32 +200,68 @@ export const CollectionHeader = ({ setFilter, filter }) => {
     </MENU_LIST>
   )
 
-  return fixedPriceWithinCollection && singleCollection && openBidWithinCollection ? (
+  return (
     <COLLECTION_HEADER>
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
-      <BANNER
-        $url={
-          singleCollection.collection[0].banner_link
-            ? singleCollection.collection[0].banner_link
-            : openBidWithinCollection.open_bid[0].image_url
-        }
-      ></BANNER>
+      {isCollectionItemEmpty ? (
+        <SkeletonCommon height="438px" borderRadius="0" />
+      ) : (
+        <BANNER
+          $url={
+            singleCollection.collection[0].banner_link
+              ? singleCollection.collection[0].banner_link
+              : openBidWithinCollection.open_bid[0].image_url
+          }
+        ></BANNER>
+      )}
       <div className="collection-header-content">
         <div className="title-desc">
           <div className="title">
-            <span className="label">{singleCollection.collection[0].collection_name}</span>
-            {singleCollection.collection[0].is_verified && <img src={`/img/assets/check-icon.png`} alt="" />}
+            {
+              <span className="label">
+                {isCollectionItemEmpty ? (
+                  <SkeletonCommon width="147px" height="43px" />
+                ) : (
+                  <span>{singleCollection.collection[0].collection_name}</span>
+                )}
+              </span>
+            }
+            {isCollectionItemEmpty ? (
+              <SkeletonCommon width="40px" height="40px" borderRadius="50%" />
+            ) : (
+              singleCollection.collection[0].is_verified && <img src={`/img/assets/check-icon.png`} alt="" />
+            )}
           </div>
-          <div className="desc">{singleCollection.collection[0].collection_description}</div>
+          {isCollectionItemEmpty ? (
+            <SkeletonCommon width="548px" height="26px" />
+          ) : (
+            <div className="desc">{singleCollection.collection[0].collection_description}</div>
+          )}
         </div>
         <div className="categories">
           <div className="item">
-            <div className="value">{singleCollection.collection_floor / LAMPORTS_PER_SOL || '0.00'} SOL</div>
-            <div className="text">Floor price</div>
+            <div className="value">
+              {isCollectionItemEmpty ? (
+                <SkeletonCommon width="106px" height="25px" />
+              ) : (
+                <span>{singleCollection.collection_floor / LAMPORTS_PER_SOL || '0.00'} SOL</span>
+              )}
+            </div>
+            <div className="text">
+              {isCollectionItemEmpty ? <SkeletonCommon width="106px" height="18px" /> : <span>Floor price</span>}
+            </div>
           </div>
           <div className="item">
-            <div className="value">{singleCollection.collection_vol.yearly} Yr </div>
-            <div className="text">Volume Traded</div>
+            <div className="value">
+              {isCollectionItemEmpty ? (
+                <SkeletonCommon width="106px" height="25px" />
+              ) : (
+                <span>{singleCollection.collection_vol.yearly} Yr</span>
+              )}
+            </div>
+            <div className="text">
+              {isCollectionItemEmpty ? <SkeletonCommon width="106px" height="18px" /> : <span>Volume Traded</span>}
+            </div>
           </div>
           <DROPDOWN overlay={menu} trigger={['click']} placement="bottomRight" align={{ offset: [0, 26] }}>
             <Button>
@@ -220,7 +272,5 @@ export const CollectionHeader = ({ setFilter, filter }) => {
       </div>
       <ShareProfile visible={visible} handleCancel={() => setVisible(false)} />
     </COLLECTION_HEADER>
-  ) : (
-    <div>loading</div>
   )
 }

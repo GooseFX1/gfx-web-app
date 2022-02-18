@@ -7,6 +7,9 @@ import { ArrowClicker, Loader } from '../../components'
 import { ButtonWrapper } from './NFTButton'
 import NFTImageCarouselItem from './NFTImageCarouselItem'
 import { NFTBaseCollection, NFTFeaturedCollection, NFTUpcomingCollection } from '../../types/nft_collections.d'
+import { SkeletonCommon } from './Skeleton/SkeletonCommon'
+import isEmpty from 'lodash/isEmpty'
+
 const CAROUSEL_WRAPPER = styled.div`
   display: flex;
   flex-direction: column;
@@ -72,6 +75,12 @@ const WRAPPED_LOADER = styled.div`
   position: relative;
   height: 48px;
 `
+const SKELETON_SLIDER = styled.div`
+  display: flex;
+  .wrap {
+    margin: 0 ${({ theme }) => theme.margin(4)};
+  }
+`
 
 const settings = {
   infinite: false,
@@ -98,6 +107,8 @@ const CollectionCarousel: FC<ICollectionCarousel> = ({ isLaunch, title, collecti
   const slickNext = () => slickRef?.current?.slickNext()
   const slickPrev = () => slickRef?.current?.slickPrev()
 
+  const isCollectionsEmpty = isEmpty(collections)
+
   return (
     <CAROUSEL_WRAPPER>
       <HEADER_CAROUSEL>
@@ -109,16 +120,36 @@ const CollectionCarousel: FC<ICollectionCarousel> = ({ isLaunch, title, collecti
             </LAUNCH_BUTTON>
           ) : (
           )} */}
-          <SORT_BUTTON>
-            <span>Sort by</span>
-            <ArrowClicker />
-          </SORT_BUTTON>
-
-          <LEFT_ARROW onClick={slickPrev} />
-          <RIGHT_ARROW onClick={slickNext} />
+          {isCollectionsEmpty ? (
+            <SkeletonCommon width="88px" height="40px" borderRadius="40px" style={{ marginRight: '15px' }} />
+          ) : (
+            <SORT_BUTTON>
+              <span>Sort by</span>
+              <ArrowClicker />
+            </SORT_BUTTON>
+          )}
+          {isCollectionsEmpty ? (
+            <>
+              <SkeletonCommon width="12px" height="21px" style={{ marginRight: '30px' }} />
+              <SkeletonCommon width="12px" height="21px" />
+            </>
+          ) : (
+            <>
+              <LEFT_ARROW onClick={slickPrev} />
+              <RIGHT_ARROW onClick={slickNext} />
+            </>
+          )}
         </HEADER_END_CAROUSEL>
       </HEADER_CAROUSEL>
-      {collections.length > 0 ? (
+      {isCollectionsEmpty ? (
+        <SKELETON_SLIDER>
+          {[0, 1, 2].map((item, index) => (
+            <div key={index} className="wrap">
+              <SkeletonCommon width="450px" height="220px" borderRadius="20px" />
+            </div>
+          ))}
+        </SKELETON_SLIDER>
+      ) : collections.length > 0 ? (
         <Slider ref={slickRef} {...settings}>
           {collections.map((item: NFTBaseCollection | NFTFeaturedCollection | NFTUpcomingCollection, i: number) => (
             <NFTImageCarouselItem key={i} item={item} type={collectionType} />

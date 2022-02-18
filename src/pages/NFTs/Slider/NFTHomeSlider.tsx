@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import styled from 'styled-components'
 import { mockSliderData } from './mockData'
 import { MainButton } from '../../../components/MainButton'
+import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 const CAROUSEL_WRAPPER = styled.div`
   padding: 0 ${({ theme }) => theme.margin(4)};
@@ -85,25 +86,37 @@ const settings = {
 }
 
 export const NFTHomeSlider = () => {
+  const [isSlideData, setIsSlideData] = useState(false)
+  useEffect(() => {
+    setTimeout(() => {
+      setIsSlideData(true)
+    }, 3000)
+  }, [])
   return (
     <CAROUSEL_WRAPPER>
       <Slider {...settings}>
-        {mockSliderData.map((item, i) => (
-          <SLIDER_ITEM key={i}>
-            <img
-              className="home-slider-image"
-              src={`${process.env.PUBLIC_URL}/img/assets/home-slider-${i % 2 === 0 ? 1 : 2}.png`}
-              alt=""
-            />
-            <div className="home-slider-content">
-              <h1 className="home-slider-title">{item?.title}</h1>
-              {item?.desc && <div className="home-slider-desc">{item?.desc}</div>}
-              <MainButton className="home-slider-button" height={'40px'} status="action" width={'141px'}>
-                <span>{item?.type}</span>
-              </MainButton>
-            </div>
-          </SLIDER_ITEM>
-        ))}
+        {!isSlideData
+          ? [0, 1, 2].map((item, i) => (
+              <SLIDER_ITEM key={i}>
+                <SkeletonCommon key={i} width="639px" height="360px" borderRadius="10px" />
+              </SLIDER_ITEM>
+            ))
+          : mockSliderData.map((item, i) => (
+              <SLIDER_ITEM key={i}>
+                <img
+                  className="home-slider-image"
+                  src={`${process.env.PUBLIC_URL}/img/assets/home-slider-${i % 2 === 0 ? 1 : 2}.png`}
+                  alt=""
+                />
+                <div className="home-slider-content">
+                  <h1 className="home-slider-title">{item?.title}</h1>
+                  {item?.desc && <div className="home-slider-desc">{item?.desc}</div>}
+                  <MainButton className="home-slider-button" height={'40px'} status="action" width={'141px'}>
+                    <span>{item?.type}</span>
+                  </MainButton>
+                </div>
+              </SLIDER_ITEM>
+            ))}
       </Slider>
     </CAROUSEL_WRAPPER>
   )

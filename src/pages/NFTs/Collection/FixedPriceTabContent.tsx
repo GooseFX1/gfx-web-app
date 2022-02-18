@@ -58,11 +58,13 @@ export const FixedPriceTabContent: FC = ({ ...rest }) => {
   return (
     <WRAPPER>
       {fixedPriceWithinCollection === undefined ? (
-        <EMPTY_MSG>
-          <WRAPPED_LOADER>
-            <Loader />
-          </WRAPPED_LOADER>{' '}
-        </EMPTY_MSG>
+        <FIXED_PRICE_TAB {...rest} className="card-list">
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((item, index) => (
+            <div>
+              <Card key={index} singleNFT={null} listingType="fixed" />
+            </div>
+          ))}
+        </FIXED_PRICE_TAB>
       ) : fixedPriceWithinCollection.nft_data.length > 0 ? (
         <FIXED_PRICE_TAB {...rest} className="card-list">
           {fixedPriceWithinCollection.nft_data.map((item: ISingleNFT) => (

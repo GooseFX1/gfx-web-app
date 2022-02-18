@@ -1,4 +1,5 @@
 import { FC, useState, useEffect, useMemo } from 'react'
+import { useHistory } from 'react-router-dom'
 import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
@@ -233,7 +234,7 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
   const { setVisible, visible } = props
   const { prices } = useCrypto()
   const { getUIAmount } = useAccounts()
-
+  const history = useHistory()
   const { sessionUser, fetchSessionUser } = useNFTProfile()
   const { connected, publicKey, sendTransaction } = useWallet()
   const { connection, network } = useConnectionConfig()
@@ -349,6 +350,7 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
 
   const callBuyInstruction = async (e: any) => {
     e.preventDefault()
+    setIsLoading(true)
 
     const { metaDataAccount, escrowPaymentAccount, buyerTradeState, buyerPrice } = await derivePDAsForInstruction()
 
@@ -396,20 +398,27 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
     const confirm = await connection.confirmTransaction(signature, 'processed')
     console.log(confirm)
 
-    notify(successfulListingMessage(signature, nftMetadata, bidTotal.toString()))
-
     if (confirm.value.err === null) {
       postBidToAPI(signature, buyerPrice, tokenSize).then((res) => {
         console.log(res)
-        if (!res) {
+
+        notify(successfulListingMessage(signature, nftMetadata, bidTotal.toString()))
+
+        if (res === 'Error') {
           callCancelInstruction()
+          setVisible(false)
+        } else if (res.data.bid_matched && res.data.tx_sig) {
+          fetchUser()
+          notify(successBidMatchedMessage(res.data.tx_sig, nftMetadata, bidTotal.toString()))
+          setTimeout(() => history.push('/NFTs/profile'), 2000)
+        } else {
+          setVisible(false)
         }
       })
     }
   }
 
   const postBidToAPI = async (txSig: any, buyerPrice: BN, tokenSize: BN) => {
-    setIsLoading(true)
     const bidObject = {
       clock: Date.now().toString(),
       tx_sig: txSig,
@@ -443,18 +452,16 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
             </MESSAGE>
           )
         })
-        return false
+        return 'Error'
       } else {
         setBidPriceInput('')
         setMode('bid')
-        setVisible(false)
-        return true
+        return res
       }
     } catch (error) {
       console.dir(error)
-      return false
-    } finally {
       setIsLoading(false)
+      return 'Error'
     }
   }
 
@@ -478,6 +485,32 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
         </Row>
         <div>{nftMetadata?.name}</div>
         <div>Bid of: {`${price}`}</div>
+        <div>
+          <a
+            href={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Transaction ID
+          </a>
+        </div>
+      </MESSAGE>
+    )
+  })
+
+  const successBidMatchedMessage = (signature: any, nftMetadata: any, price: string) => ({
+    message: (
+      <MESSAGE>
+        <Row className="m-title" justify="space-between" align="middle">
+          <Col>Your bid matched!</Col>
+          <Col>
+            <img className="m-icon" src={`/img/assets/bid-success-icon.svg`} alt="" />
+          </Col>
+        </Row>
+        <div>{nftMetadata?.name}</div>
+        <div>
+          You have just acquired {nftMetadata?.name} for {`${price}`}
+        </div>
         <div>
           <a
             href={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}

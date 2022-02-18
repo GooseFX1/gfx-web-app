@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { Tabs } from 'antd'
 import { useNFTCollections } from '../../../context'
@@ -8,6 +8,9 @@ import { LiveAuctionsTabContent } from './LiveAuctionsTabContent'
 import { FixedPriceTabContent } from './FixedPriceTabContent'
 import { OpenBidsTabContent } from './OpenBidsTabContent'
 import { OwnersTabContent } from './OwnersTabContent'
+import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import get from 'lodash/get'
+import isEmpty from 'lodash/isEmpty'
 
 const { TabPane } = Tabs
 
@@ -20,7 +23,7 @@ const COLLECTION_TABS = styled.div`
   .card-list {
     grid-gap: ${({ theme }) => theme.margin(3)};
     .card {
-      background-color: ${({ theme }) => theme.bg1};
+      background-color: ${({ theme }) => theme.cardBg};
     }
   }
 
@@ -135,31 +138,46 @@ const STYLED_SEARCH_BAR = styled.div`
 
 export const CollectionTabs = ({ filter, setFilter }) => {
   const { singleCollection } = useNFTCollections()
+  const collectionItem = get(singleCollection, 'collection[0]')
+  const isCollectionItemEmpty = isEmpty(collectionItem)
 
   useEffect(() => {}, [singleCollection])
 
   return singleCollection ? (
     <COLLECTION_TABS>
       <STYLED_SEARCH_BAR>
-        <SearchBar
-          className="collection-search-bar"
-          placeholder="Search by nft or owner"
-          setFilter={setFilter}
-          filter={filter}
-        />
-        <Sort />
+        {isCollectionItemEmpty ? (
+          <SkeletonCommon width="350px" height="45px" borderRadius="45px" style={{ marginRight: '30px' }} isReverse />
+        ) : (
+          <SearchBar
+            className="collection-search-bar"
+            placeholder="Search by nft or owner"
+            setFilter={setFilter}
+            filter={filter}
+          />
+        )}
+        {!isCollectionItemEmpty && <Sort />}
       </STYLED_SEARCH_BAR>
       <Tabs className={'collection-tabs'} defaultActiveKey="1" centered>
         {/* <TabPane tab="Live Auctions" key="1">
           <LiveAuctionsTabContent />
         </TabPane> */}
-        <TabPane tab="Open Bids" key="1">
-          <OpenBidsTabContent filter={filter} />
-        </TabPane>
-        <TabPane tab="Fixed Price" key="2">
+        <TabPane
+          tab={isCollectionItemEmpty ? <SkeletonCommon width="169px" height="22px" isReverse /> : 'Open Bids'}
+          key="2"
+        >
           <FixedPriceTabContent />
         </TabPane>
-        <TabPane tab="Owners" key="3">
+        <TabPane
+          tab={isCollectionItemEmpty ? <SkeletonCommon width="169px" height="22px" isReverse /> : 'Fixed Price'}
+          key="3"
+        >
+          <OpenBidsTabContent filter={filter} />
+        </TabPane>
+        <TabPane
+          tab={isCollectionItemEmpty ? <SkeletonCommon width="169px" height="22px" isReverse /> : 'Owners'}
+          key="4"
+        >
           <OwnersTabContent />
         </TabPane>
       </Tabs>

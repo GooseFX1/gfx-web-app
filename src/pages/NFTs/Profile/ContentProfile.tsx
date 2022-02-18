@@ -59,20 +59,6 @@ export const ContentProfile = ({ isExplore }: Props) => {
       setCreatedItems([])
     }
 
-    return () => {}
-  }, [publicKey, connected])
-
-  useEffect(() => {
-    if (sessionUser.user_id) {
-      fetchUserActivity(sessionUser.user_id)
-    } else {
-      setUserActivity([])
-    }
-
-    return () => {}
-  }, [sessionUser.user_id, fetchUserActivity, setUserActivity])
-
-  useEffect(() => {
     if (connected && publicKey && sessionUser?.user_likes?.length > 0) {
       fetchFavs()
     } else {
@@ -81,6 +67,16 @@ export const ContentProfile = ({ isExplore }: Props) => {
 
     return () => {}
   }, [publicKey, connected, sessionUser])
+
+  useEffect(() => {
+    if (sessionUser && sessionUser.user_id) {
+      fetchUserActivity(sessionUser.user_id)
+    } else {
+      setUserActivity([])
+    }
+
+    return () => {}
+  }, [sessionUser, fetchUserActivity, setUserActivity])
 
   async function fetchFavs() {
     let favorites: any = await Promise.all(
