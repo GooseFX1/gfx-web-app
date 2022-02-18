@@ -1,62 +1,48 @@
 import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { Row, Col } from 'antd'
 import { Pools } from './Pools'
 import { Portfolio } from './Portfolio'
 import { Positions } from './Positions'
-import { ENDPOINTS, SynthsProvider, useConnectionConfig } from '../../context'
+import { ENDPOINTS, SynthsProvider, useConnectionConfig, useNavCollapse } from '../../context'
 import { notify } from '../../utils'
 
-const WRAPPER = styled.div`
+const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   display: flex;
-  padding: ${({ theme }) => theme.margin(5)} 0;
+  flex: 1;
+  position: relative;
+  width: 100vw;
+  height: calc(100vh - 81px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding-top: calc(80px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
 
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    flex-direction: column;
-    width: 60vw;
-  `};
-
-  ${({ theme }) => theme.mediaWidth.fromLarge`
-    width: 98vw;
-    
-  `};
-
-  > div:first-child {
-    ${({ theme }) => theme.flexColumnNoWrap}
-
-    ${({ theme }) => theme.mediaWidth.upToLarge`
-      width: 100%;
-    `};
-
-    ${({ theme }) => theme.mediaWidth.fromLarge`
-      width: 60%;
-      margin-right: ${({ theme }) => theme.margin(3)};
-    `};
+  .synth-container {
+    margin: 0 auto;
   }
 
-  > div:last-child {
-    ${({ theme }) => theme.mediaWidth.upToLarge`
-      width: 100%;
-      margin-top: ${({ theme }) => theme.margin(5)};
-    `};
-
-    ${({ theme }) => theme.mediaWidth.fromLarge`
-      width: 40%;
-    `};
+  .section-container {
+    padding: ${({ theme }) => theme.margin(4)};
   }
+
+  ${({ theme }) => theme.customScrollBar('6px')};
 `
 
 export const SynthsContent: FC = () => {
   const [poolsVisible, setPoolsVisible] = useState(true)
+  const { isCollapsed } = useNavCollapse()
 
   return (
-    <WRAPPER>
-      <div>
-        <Pools poolsVisible={poolsVisible} />
-        <Positions poolsVisible={poolsVisible} setPoolsVisible={setPoolsVisible} />
-      </div>
-      <div>
-        <Portfolio />
-      </div>
+    <WRAPPER $navCollapsed={isCollapsed}>
+      <Row className={'synth-container'}>
+        <Col lg={24} xl={12} className={'section-container'}>
+          <Pools poolsVisible={poolsVisible} />
+          <Positions poolsVisible={poolsVisible} setPoolsVisible={setPoolsVisible} />
+        </Col>
+        <Col lg={24} xl={12} className={'section-container'}>
+          <Portfolio />
+        </Col>
+      </Row>
     </WRAPPER>
   )
 }

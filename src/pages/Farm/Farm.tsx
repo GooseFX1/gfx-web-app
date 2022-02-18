@@ -3,41 +3,36 @@ import styled from 'styled-components'
 import { TableList } from './TableList'
 import { FarmHeader } from './FarmHeader'
 import { mockDataSource } from './mockData'
+import { useNavCollapse } from '../../context'
 
-const WRAPPER = styled.div`
-  color: ${({ theme }) => theme.text1};
-  display: flex;
-  flex: 1;
-  position: relative;
-  justify-content: center;
-  min-height: 0px;
-  min-width: 0px;
-  font-family: Montserrat;
-`
-
-const BODY_NFT = styled.div`
-  height: 100vh;
-  width: 100vw;
-  background-color: ${({ theme }) => theme.bg3};
+const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
+  width: 100vw;
+  height: calc(100vh - 81px);
+  padding-top: calc(80px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+  padding-left: ${({ theme }) => theme.margin(3)};
+  padding-right: ${({ theme }) => theme.margin(3)};
+  color: ${({ theme }) => theme.text1};
   overflow-y: scroll;
   overflow-x: hidden;
-  background: ${({ theme }) => theme.farmContainerBg};
-  padding: 0 ${({ theme }) => theme.margin(8)} ${({ theme }) => theme.margin(8)};
+
+  * {
+    font-family: Montserrat;
+  }
+
+  ${({ theme }) => theme.customScrollBar('6px')};
 `
 
-const SCROLLING_OVERLAY = styled.div`
-  overflow-y: overlay;
-  overflow-x: overlay;
-  width: 101%;
-  position: relative;
-  overflow: overlay;
+const BODY = styled.div`
+  padding: ${({ theme }) => theme.margin(8)};
 `
 
 export const Farm: FC = () => {
   const [dataSource, setDataSource] = useState(mockDataSource)
+  const { isCollapsed } = useNavCollapse()
+
   const onFilter = (val) => {
     if (val === 'All pools') {
       setDataSource(mockDataSource)
@@ -47,18 +42,13 @@ export const Farm: FC = () => {
     const filteredData = tmp.filter((item) => item.type === val)
     setDataSource(filteredData)
   }
+
   return (
-    <WRAPPER>
-      <div>
-        <BODY_NFT>
-          <SCROLLING_OVERLAY />
-          <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0" />
-          <meta name="apple-mobile-web-app-capable" content="yes" />
-          <FarmHeader onFilter={onFilter} />
-          <TableList dataSource={dataSource} />
-          <SCROLLING_OVERLAY />
-        </BODY_NFT>
-      </div>
+    <WRAPPER $navCollapsed={isCollapsed}>
+      <BODY>
+        <FarmHeader onFilter={onFilter} />
+        <TableList dataSource={dataSource} />
+      </BODY>
     </WRAPPER>
   )
 }

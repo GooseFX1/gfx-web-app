@@ -38,6 +38,7 @@ const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   * {
     font-family: Montserrat;
   }
+
   ${({ theme }) => theme.customScrollBar('6px')};
 `
 
