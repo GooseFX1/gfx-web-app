@@ -30,7 +30,7 @@ import { notify } from '../../utils'
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
   width: 100vw;
-  height: calc(100vh - 81px);
+
   overflow-y: scroll;
   overflow-x: hidden;
   padding-top: calc(80px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});

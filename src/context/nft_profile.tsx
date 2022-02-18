@@ -37,6 +37,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
           setSessionUser({ ...tempUser, user_likes: userLikes })
         } else {
           setUnamedUser(type, parameter)
+          setParsedAccounts([])
         }
         await getParsedAccounts(parameter as StringPublicKey, connection)
         return res
@@ -130,6 +131,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         setSessionUser,
         fetchSessionUser,
         parsedAccounts,
+        setParsedAccounts,
         userActivity,
         setUserActivity,
         fetchUserActivity,
@@ -154,6 +156,7 @@ export const useNFTProfile = (): INFTProfileConfig => {
     setSessionUser: context.setSessionUser,
     fetchSessionUser: context.fetchSessionUser,
     parsedAccounts: context.parsedAccounts,
+    setParsedAccounts: context.setParsedAccounts,
     userActivity: context.userActivity,
     setUserActivity: context.setUserActivity,
     fetchUserActivity: context.fetchUserActivity,
