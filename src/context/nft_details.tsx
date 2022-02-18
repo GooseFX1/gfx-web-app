@@ -24,6 +24,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const [nftMintingData, setNftMintingData] = useState<IMetadataContext>()
   const [bids, setBids] = useState<INFTBid[]>([])
   const [ask, setAsk] = useState<INFTAsk>()
+  const [asks, setAsks] = useState<INFTAsk[]>()
   const [totalLikes, setTotalLikes] = useState<number>()
   const initialState = {
     type: 'fixed-price',
@@ -39,7 +40,6 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?nft_id=${id}`)
       const nft: INFTGeneralData = await res.data
-      console.log(conncetion)
 
       const parsedAccounts = await getParsedAccountByMint({
         mintAddress: nft.data[0].mint_address as StringPublicKey,
@@ -56,6 +56,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
       setGeneral({ ...nft.data[0], ...accountInfo })
       setBids(nft.bids)
       setAsk(nft.asks.length > 0 ? nft.asks[0] : undefined)
+      setAsks(nft.asks)
       setTotalLikes(nft.total_likes)
       return res
     } catch (err) {
@@ -169,6 +170,8 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         bidOnSingleNFT,
         ask,
         setAsk,
+        asks,
+        setAsks,
         nftMintingData,
         setNftMintingData,
         updateUserInput,
@@ -203,6 +206,8 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     bidOnSingleNFT: context.bidOnSingleNFT,
     ask: context.ask,
     setAsk: context.setAsk,
+    asks: context.asks,
+    setAsks: context.setAsks,
     fetchGeneral: context.fetchGeneral,
     nftMintingData: context.nftMintingData,
     setNftMintingData: context.setNftMintingData,
