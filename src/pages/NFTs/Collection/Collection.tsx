@@ -40,11 +40,7 @@ export const Collection: FC = (): JSX.Element => {
     return () => {}
   }, [fetchSingleCollection, params.collectionId, singleCollection])
 
-  return !fixedPriceWithinCollection || !singleCollection ? (
-    <WRAPPED_LOADER>
-      <Loader />
-    </WRAPPED_LOADER>
-  ) : err ? (
+  return err ? (
     <h2>Something went wrong fetching the collection details</h2>
   ) : (
     <>

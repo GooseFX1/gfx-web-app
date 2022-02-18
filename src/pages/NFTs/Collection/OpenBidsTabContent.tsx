@@ -74,11 +74,13 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
   return (
     <WRAPPER>
       {fileredLocalOpenBid === undefined ? (
-        <EMPTY_MSG>
-          <WRAPPED_LOADER>
-            <Loader />
-          </WRAPPED_LOADER>
-        </EMPTY_MSG>
+        <OPEN_BIDS_TAB {...rest} className="card-list">
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((item, index) => (
+            <div>
+              <Card key={index} singleNFT={null} listingType="bid" />
+            </div>
+          ))}
+        </OPEN_BIDS_TAB>
       ) : fileredLocalOpenBid.length > 0 ? (
         <OPEN_BIDS_TAB {...rest} className="card-list">
           {fileredLocalOpenBid.map((item: ISingleNFT) => (
