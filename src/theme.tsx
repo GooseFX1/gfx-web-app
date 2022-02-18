@@ -96,6 +96,9 @@ export function colors(mode: string): Colors {
     searchbarSmallBackground: mode === 'dark' ? '#404040' : 'white',
     collectionHeader: mode === 'dark' ? 'linear-gradient(0, #131313 0%, transparent 100%)' : '#fff',
 
+    // card
+    cardBg: mode === 'dark' ? '#171717' : 'rgba(114, 114, 114, 1)',
+
     // modal
     closeIconColor: mode === 'dark' ? '#fff' : '#000',
 

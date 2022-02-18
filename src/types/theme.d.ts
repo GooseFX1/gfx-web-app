@@ -56,6 +56,9 @@ export interface Colors {
   searchbarSmallBackground: Color
   collectionHeader: Color
 
+  // card
+  cardBg: Color
+
   // modal
   closeIconColor: Color
 

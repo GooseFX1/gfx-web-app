@@ -9,6 +9,9 @@ import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nf
 import { useNFTProfile, useNFTDetails, useConnectionConfig } from '../../../context'
 import { fetchSingleNFT } from '../../../api/NFTs'
 import { getParsedAccountByMint, StringPublicKey } from '../../../web3'
+import isEmpty from 'lodash/isEmpty'
+import get from 'lodash/get'
+import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 //#region styles
 const CARD = styled.div<{ status: string }>`
@@ -56,15 +59,17 @@ const CARD = styled.div<{ status: string }>`
     .card-name {
       font-size: 16px;
       font-weight: 600;
-      color: ${({ theme }) => theme.text2};
+      color: #fff;
       font-family: Montserrat;
       width: calc(100% - 48px);
       ${({ theme }) => theme.ellipse}
     }
 
     .card-favorite-heart-container {
+      display: flex;
+      align-items: center;
       position: absolute;
-      top: 0;
+      top: 5px;
       right: 0;
     }
 
@@ -82,7 +87,7 @@ const CARD = styled.div<{ status: string }>`
   }
 
   .card-price {
-    color: ${({ theme }) => theme.text2} !important;
+    color: #fff;
   }
 
   ${({ status, theme }) => {
@@ -164,7 +169,8 @@ export const Card = ({ singleNFT, listingType, className, ...rest }: Props) => {
     status: 'auctioning',
     remaining: '02d:20h:10min'
   }
-  const { non_fungible_id } = singleNFT
+  const non_fungible_id = get(singleNFT, 'non_fungible_id')
+  const isSingleNFTEmpty = isEmpty(singleNFT)
   const [isFavorited, setIsFavorited] = useState(false)
 
   const displayPrice: string = useMemo(
@@ -208,6 +214,7 @@ export const Card = ({ singleNFT, listingType, className, ...rest }: Props) => {
   }
 
   const goToDetails = async (id: number): Promise<void> => {
+    if (!id) return
     await setNFTDetailsBeforeLocate()
     history.push(`/NFTs/open-bid/${id}`)
   }
@@ -244,40 +251,50 @@ export const Card = ({ singleNFT, listingType, className, ...rest }: Props) => {
   return (
     <CARD status={localNFT.status} {...rest} className="card">
       <div className="card-image-wrapper" onClick={(e) => goToDetails(non_fungible_id)}>
-        <img
-          className="card-image"
-          src={localNFT.image_url ? localNFT.image_url : `${window.origin}/img/assets/nft-preview.svg`}
-          alt="nft"
-        />
+        {isSingleNFTEmpty ? (
+          <SkeletonCommon width="188px" height="190px" />
+        ) : (
+          <img
+            className="card-image"
+            src={localNFT.image_url ? localNFT.image_url : `${window.origin}/img/assets/nft-preview.svg`}
+            alt="nft"
+          />
+        )}
         <div className="card-remaining">{localNFT.remaining}</div>
       </div>
       <div className="card-info">
-        <div className="card-name">{localNFT.nft_name}</div>
-
-        <span className="card-favorite-heart-container">
-          {sessionUser && sessionUser.user_id && isFavorited ? (
-            <img
-              className="card-favorite-heart"
-              src={`/img/assets/heart-red.svg`}
-              alt="heart-selected"
-              onClick={handleToggleLike}
-            />
-          ) : (
-            <img
-              className="card-favorite-heart"
-              src={`/img/assets/heart-empty.svg`}
-              alt="heart-empty"
-              onClick={handleToggleLike}
-            />
-          )}
-          <span className={`card-favorite-number ${isFavorited ? 'card-favorite-number-highlight' : ''}`}>
-            {localTotalLikes}
+        <div className="card-name">
+          {isSingleNFTEmpty ? <SkeletonCommon width="114px" height="22px" /> : localNFT.nft_name}
+        </div>
+        {isSingleNFTEmpty ? (
+          <span className="card-favorite-heart-container">
+            <SkeletonCommon width="19px" height="19px" borderRadius="50%" style={{ marginRight: '5px' }} />
+            <SkeletonCommon width="13px" height="16px" borderRadius="50%" />
           </span>
+        ) : sessionUser && sessionUser.user_id && isFavorited ? (
+          <img
+            className="card-favorite-heart"
+            src={`/img/assets/heart-red.svg`}
+            alt="heart-selected"
+            onClick={handleToggleLike}
+          />
+        ) : (
+          <img
+            className="card-favorite-heart"
+            src={`/img/assets/heart-empty.svg`}
+            alt="heart-empty"
+            onClick={handleToggleLike}
+          />
+        )}
+        <span className={`card-favorite-number ${isFavorited ? 'card-favorite-number-highlight' : ''}`}>
+          {localTotalLikes}
         </span>
       </div>
       <Row justify="space-between" align="middle">
         <div className="card-price">
-          {displayPrice === '0' ? (
+          {isSingleNFTEmpty ? (
+            <SkeletonCommon width="87px" height="22px" />
+          ) : displayPrice === '0' ? (
             <LIGHT_TEXT>No Bids</LIGHT_TEXT>
           ) : (
             `${moneyFormatter(parseFloat(displayPrice) / LAMPORTS_PER_SOL)} SOL`
