@@ -219,7 +219,7 @@ export const RightSectionTabs: FC<{
   const history = useHistory()
   const [activeTab, setActiveTab] = useState('1')
 
-  const { general, nftMetadata, bids, ask, removeNFTListing } = useNFTDetails()
+  const { general, nftMetadata, bids, ask, asks, removeNFTListing } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
   const { connection, network } = useConnectionConfig()
   const wallet = useWallet()
@@ -227,8 +227,15 @@ export const RightSectionTabs: FC<{
   const { mint_address, owner, token_account } = general
   const [bidModal, setBidModal] = useState<boolean>(false)
   const [removeAskModal, setRemoveAskModal] = useState<boolean>(false)
+  const [eventBid, setEventBid] = useState(bids || [])
+  const [eventAsk, setEventAsk] = useState(asks || [])
 
-  useEffect(() => {}, [])
+  useEffect(() => {
+    let bids = eventBid.map((bid) => ({ ...bid, event: 'bid' }))
+    let asks = eventAsk.map((ask) => ({ ...ask, event: 'ask' }))
+    setEventBid(bids)
+    setEventAsk(asks)
+  }, [])
 
   useEffect(() => {}, [publicKey])
 
@@ -382,7 +389,7 @@ export const RightSectionTabs: FC<{
               </DETAILS_TAB_CONTENT>
             </TabPane>
             <TabPane tab="Trading History" key="2">
-              <TradingHistoryTabContent mode={mode} bids={bids} data={tradingHistoryTab} />
+              <TradingHistoryTabContent mode={mode} bids={[...eventBid, ...eventAsk]} data={tradingHistoryTab} />
             </TabPane>
             <TabPane tab="Attributes" key="3">
               <AttributesTabContent data={nftMetadata.attributes} />

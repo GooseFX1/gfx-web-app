@@ -2,7 +2,7 @@ import { Table, Row, Col } from 'antd'
 import { FC } from 'react'
 import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
 import styled, { css } from 'styled-components'
-import { ITradingHistoryTabItemData, INFTBid, NFTDetailsProviderMode } from '../../../types/nft_details'
+import { ITradingHistoryTabItemData, INFTBid, INFTAsk, NFTDetailsProviderMode } from '../../../types/nft_details'
 
 const TRADING_HISTORY_TAB_CONTENT = styled.div`
   ${({ theme }) => css`
@@ -16,9 +16,10 @@ const TRADING_HISTORY_TAB_CONTENT = styled.div`
 
     .thtc-header {
       position: absolute;
-      top: 0;
+      top: 30px;
       left: 0;
       right: 0;
+      font-weight: bold;
       transform: translateY(-24px);
       padding: 0 ${theme.margin(1.5)};
 
@@ -153,8 +154,8 @@ const bidColumns = [
     key: 'event',
     dataIndex: 'event',
     title: 'Event',
-    render: () => {
-      return <div className="thtc-event">Bid</div>
+    render: (val: string) => {
+      return <div className="thtc-event">{val == 'ask' ? 'ASK' : 'BID'}</div>
     },
     width: '19%'
   },
@@ -204,17 +205,20 @@ const bidColumns = [
 export const TradingHistoryTabContent: FC<{
   data: ITradingHistoryTabItemData[]
   mode: NFTDetailsProviderMode
-  bids: INFTBid[]
+  bids: (INFTBid | INFTAsk)[]
 }> = ({ data, mode, bids, ...rest }) => {
   return (
     <TRADING_HISTORY_TAB_CONTENT {...rest}>
-      <Row className="thtc-header" justify="space-between" align="middle">
-        {columns.map((column) => (
-          <Col className="thtc-header-item" style={{ width: column.width }} key={column.key}>
-            {column.title}
-          </Col>
+      {(mode == 'open-bid-NFT' && bids.length > 0) ||
+        (mode != 'open-bid-NFT' && data.length > 0 && (
+          <Row className="thtc-header" justify="space-between" align="middle">
+            {columns.map((column) => (
+              <Col className="thtc-header-item" style={{ width: column.width }} key={column.key}>
+                {column.title}
+              </Col>
+            ))}
+          </Row>
         ))}
-      </Row>
       {mode == 'open-bid-NFT' ? (
         bids.length == 0 ? (
           <div className="thtc-not-found">
