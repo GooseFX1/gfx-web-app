@@ -75,7 +75,7 @@ const W = styled.div`
   justify-content: center;
   align-items: center;
   color: ${({ theme }) => theme.text1};
-  height: calc(100vh - 162px);
+  height: calc(100vh - 81px);
   width: 100vw;
 `
 
