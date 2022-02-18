@@ -223,6 +223,7 @@ export const SellNFT = () => {
   })
   const [disabled, setDisabled] = useState<boolean>(true)
   const [category, setCategory] = useState<string>('open-bid')
+  const [isLoading, setIsLoading] = useState(false)
 
   const servicePriceCalc: number = useMemo(
     () =>
@@ -313,7 +314,7 @@ export const SellNFT = () => {
 
   const callSellInstruction = async (e: any) => {
     e.preventDefault()
-    setReviewSellModal(false)
+    setIsLoading(true)
 
     const { metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, buyerPrice } =
       await derivePDAsForInstruction()
@@ -347,7 +348,6 @@ export const SellNFT = () => {
     console.log(confirm)
 
     if (confirm.value.err === null) {
-      notify(successfulListingMsg(signature, nftMetadata, userInput['minimumBid']))
       postTransationToAPI(signature, buyerPrice, tokenSize).then((res) => {
         console.log(res)
         if (!res) {
@@ -355,8 +355,9 @@ export const SellNFT = () => {
         }
 
         setTimeout(() => {
+          notify(successfulListingMsg(signature, nftMetadata, userInput['minimumBid']))
           history.push('/NFTs/profile')
-        }, 1500)
+        }, 2000)
       })
     }
   }
@@ -458,7 +459,7 @@ export const SellNFT = () => {
               </Col>
             </Row>
 
-            <MainButton height={'60px'} width="100%" status="action" onClick={callSellInstruction}>
+            <MainButton height={'60px'} width="100%" status="action" onClick={callSellInstruction} loading={isLoading}>
               <BUTTON_TEXT>List Now</BUTTON_TEXT>
             </MainButton>
           </div>
