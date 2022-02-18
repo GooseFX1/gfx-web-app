@@ -11,6 +11,7 @@ import { categories, coins } from './mockData'
 import { useLocalStorageState } from '../../../utils'
 import PopupCompleteProfile from '../Profile/PopupCompleteProfile'
 import { useNFTProfile } from '../../../context'
+import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
   padding-top: ${({ theme }) => theme.margin(5.5)};
@@ -140,6 +141,13 @@ export const Header = ({ setFilter, filter, filteredCollections }) => {
   const [visibleCompletePopup, setVisibleCompletePopup] = useState<boolean>(false)
   const { setVisible: setModalVisible } = useWalletModal()
   const { mode } = useDarkMode()
+  const [isHeaderData, setIsHeaderData] = useState<boolean>(false)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsHeaderData(true)
+    }, 3000)
+  }, [])
 
   useEffect(() => {
     if (connected && publicKey) {
@@ -206,20 +214,34 @@ export const Header = ({ setFilter, filter, filteredCollections }) => {
     <HEADER_WRAPPER>
       <PopupCompleteProfile visible={visibleCompletePopup} handleOk={onContinue} handleCancel={onSkip} />
       <AVATAR_WRAPPER>
-        {connected && publicKey && (
-          <AVATAR_NFT
-            fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-            src={sessionUser ? sessionUser.profile_pic_link : ''}
-            preview={false}
-            onClick={goProfile}
-          />
+        {!isHeaderData ? (
+          <SkeletonCommon width="50px" height="50px" borderRadius="50%" />
+        ) : (
+          connected &&
+          publicKey && (
+            <AVATAR_NFT
+              fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+              src={sessionUser ? sessionUser.profile_pic_link : ''}
+              preview={false}
+              onClick={goProfile}
+            />
+          )
         )}
-        <Dropdown overlay={genMenu()} trigger={['click']}>
-          <SearchBar className="search-bar" setFilter={setFilter} filter={filter} />
-        </Dropdown>
+        {!isHeaderData ? (
+          <SkeletonCommon style={{ minWidth: '600px', marginLeft: '20px' }} height="46px" borderRadius="46px" />
+        ) : (
+          <Dropdown overlay={genMenu()} trigger={['click']}>
+            <SearchBar className="search-bar" setFilter={setFilter} filter={filter} />
+          </Dropdown>
+        )}
       </AVATAR_WRAPPER>
       <BUTTON_SELECTION>
-        {connected && publicKey ? (
+        {!isHeaderData ? (
+          <div style={{ display: 'flex' }}>
+            <SkeletonCommon width="149px" height="45px" borderRadius="45px" />
+            <SkeletonCommon width="132px" height="45px" borderRadius="45px" style={{ marginLeft: '20px' }} />
+          </div>
+        ) : connected && publicKey ? (
           <div style={{ display: 'flex' }}>
             <SELL onClick={() => console.log('got to selling')}>
               <span>Sell</span>
@@ -239,9 +261,16 @@ export const Header = ({ setFilter, filter, filteredCollections }) => {
             <span>Connect Wallet</span>
           </MainButton>
         )}
-        <Categories categories={categories} className="categories" />
-
-        <Categories categories={coins} className="coins" />
+        {!isHeaderData ? (
+          <SkeletonCommon width="132px" height="45px" borderRadius="45px" style={{ marginLeft: '20px' }} />
+        ) : (
+          <Categories categories={categories} className="categories" />
+        )}
+        {!isHeaderData ? (
+          <SkeletonCommon width="68px" height="45px" borderRadius="12px" style={{ marginLeft: '20px' }} />
+        ) : (
+          <Categories categories={coins} className="coins" />
+        )}
       </BUTTON_SELECTION>
     </HEADER_WRAPPER>
   )
