@@ -138,6 +138,7 @@ export interface INFTDetailsConfig {
   bids: INFTBid[]
   setBids: Function
   bidOnSingleNFT: any
+  removeBidOnSingleNFT: any
   ask: INFTAsk
   setAsk: Function
   nftMintingData: IMetadataContext | undefined

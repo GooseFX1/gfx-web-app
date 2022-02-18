@@ -84,6 +84,17 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
+  const removeBidOnSingleNFT = useCallback(async (bidId: any): Promise<any> => {
+    try {
+      const res = await apiClient(NFT_API_BASE).put(`${NFT_API_ENDPOINTS.BID}`, {
+        bid_id: bidId
+      })
+      return res
+    } catch (err) {
+      return err
+    }
+  }, [])
+
   const updateUserInput = useCallback(async (paramValue: any): Promise<void> => {
     try {
       setUserInput({ ...paramValue })
@@ -166,6 +177,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         bids,
         setBids,
         bidOnSingleNFT,
+        removeBidOnSingleNFT,
         ask,
         setAsk,
         nftMintingData,
@@ -200,6 +212,7 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     bids: context.bids,
     setBids: context.setBids,
     bidOnSingleNFT: context.bidOnSingleNFT,
+    removeBidOnSingleNFT: context.removeBidOnSingleNFT,
     ask: context.ask,
     setAsk: context.setAsk,
     fetchGeneral: context.fetchGeneral,

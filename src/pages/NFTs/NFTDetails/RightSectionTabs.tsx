@@ -103,6 +103,10 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
       }
     }
 
+    .cancel-button {
+      background-color: red !important;
+    }
+
     .rst-footer {
       width: 100%;
       position: absolute;
@@ -220,6 +224,7 @@ export const RightSectionTabs: FC<{
   const { publicKey } = wallet
   const { mint_address, owner, token_account } = general
   const [bidModal, setBidModal] = useState<boolean>(false)
+  const [removeBid, setRemoveBid] = useState<boolean>(false)
   const [removeAskModal, setRemoveAskModal] = useState<boolean>(false)
 
   useEffect(() => {}, [publicKey])
@@ -320,7 +325,7 @@ export const RightSectionTabs: FC<{
         </REMOVE_ASK_MODAL>
       )
     } else if (bidModal) {
-      return <BidModal visible={bidModal} setVisible={setBidModal} />
+      return <BidModal canCancelBid={setRemoveBid} cancel={removeBid} visible={bidModal} setVisible={setBidModal} />
     }
   }
 
@@ -356,8 +361,15 @@ export const RightSectionTabs: FC<{
               </button>
             ) : (
               <SpaceBetweenDiv style={{ flexGrow: 1 }}>
-                <button onClick={(e) => handleSetBid('bid')} className="rst-footer-button rst-footer-button-bid">
-                  Place Bid
+                <button
+                  onClick={(e) => handleSetBid('bid')}
+                  className={
+                    removeBid
+                      ? 'cancel-button rst-footer-button rst-footer-button-bid'
+                      : 'rst-footer-button rst-footer-button-bid'
+                  }
+                >
+                  {removeBid ? 'Cancel Bid' : 'Place Bid'}
                 </button>
                 {ask && (
                   <button onClick={(e) => handleSetBid('buy')} className="rst-footer-button rst-footer-button-buy">

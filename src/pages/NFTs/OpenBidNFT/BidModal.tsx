@@ -230,16 +230,18 @@ interface IBidModal {
   setVisible: (x: boolean) => void
   visible: boolean
   buyerPrice?: number
+  canCancelBid?: (x: boolean) => void
+  cancel?: boolean
 }
 export const BidModal: FC<IBidModal> = (props: IBidModal) => {
-  const { setVisible, visible } = props
+  const { setVisible, visible, cancel, canCancelBid } = props
   const { prices } = useCrypto()
   const { getUIAmount } = useAccounts()
   const history = useHistory()
   const { sessionUser, fetchSessionUser } = useNFTProfile()
   const { connected, publicKey, sendTransaction } = useWallet()
   const { connection, network } = useConnectionConfig()
-  const { general, nftMetadata, bidOnSingleNFT } = useNFTDetails()
+  const { general, nftMetadata, bidOnSingleNFT, bids, removeBidOnSingleNFT } = useNFTDetails()
 
   const [mode, setMode] = useState('bid')
   const [bidPriceInput, setBidPriceInput] = useState('')
@@ -419,6 +421,39 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
     }
   }
 
+  const deleteBid = async () => {
+    try {
+      let bid = bids[-1]
+      console.log(bids, bid)
+      const res = await removeBidOnSingleNFT(bid?.bid_id)
+      console.dir(res)
+      if (res.isAxiosError) {
+        notify({
+          type: 'error',
+          message: (
+            <MESSAGE>
+              <Row className="m-title" justify="space-between" align="middle">
+                <Col>Bid Cancel error!</Col>
+                <Col>
+                  <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+                </Col>
+              </Row>
+              <div>Please try again, if the error persists please contact support.</div>
+            </MESSAGE>
+          )
+        })
+        return 'Error'
+      } else {
+        canCancelBid(false)
+        return res
+      }
+    } catch (error) {
+      console.dir(error)
+      setIsLoading(false)
+      return 'Error'
+    }
+  }
+
   const postBidToAPI = async (txSig: any, buyerPrice: BN, tokenSize: BN) => {
     const bidObject = {
       clock: Date.now().toString(),
@@ -457,6 +492,7 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
       } else {
         setBidPriceInput('')
         setMode('bid')
+        canCancelBid(true)
         return res
       }
     } catch (error) {
@@ -561,19 +597,21 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
 
   return (
     <PURCHASE_MODAL setVisible={setVisible} title="" visible={visible} onCancel={onCancel}>
-      <div className="bm-title">You are about to purchase a</div>
+      <div className="bm-title">{cancel ? 'You are about to cancel your bid on a' : 'You are about to purchase a'}</div>
       <Row className="bm-title" align="middle" justify="center" gutter={4}>
         <Col className="bm-title-bold">{general?.nft_name || '(Name of the NFT)'}</Col>
         <Col>by</Col>
         <Col className="bm-title-bold">{creator}</Col>
       </Row>
-      <div className="bm-confirm">
-        <div className="bm-confirm-text-1">Place your bid:</div>
-        <input value={bidPriceInput} onChange={handleBidInput} className="bm-confirm-price" placeholder="000.000" />
-        <div className="bm-confirm-text-2">
-          {mode === 'bid' ? 'There is no minimum amount this is an open bid.' : `${fiatCalc} USD`}
+      {!cancel && (
+        <div className="bm-confirm">
+          <div className="bm-confirm-text-1">Place your bid:</div>
+          <input value={bidPriceInput} onChange={handleBidInput} className="bm-confirm-price" placeholder="000.000" />
+          <div className="bm-confirm-text-2">
+            {mode === 'bid' ? 'There is no minimum amount this is an open bid.' : `${fiatCalc} USD`}
+          </div>
         </div>
-      </div>
+      )}
       <div className="bm-details">
         {mode === 'review' && (
           <>
@@ -627,7 +665,7 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
           When you comfirm your bid, it means you’re committing to buy this NFT if you’re the winning bidder.
         </div>
       )}
-      {mode === 'bid' && (
+      {mode === 'bid' && !cancel && (
         <BUTTON
           status="initial"
           width="100%"
@@ -637,6 +675,19 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
           disabled={notEnough || bidPriceInput.length === 0}
         >
           Review bid
+        </BUTTON>
+      )}
+
+      {mode === 'bid' && cancel && (
+        <BUTTON
+          status="initial"
+          width="100%"
+          height="53px"
+          className={`bm-bid-button ${!cancel ? 'bm-bid-button-disabled' : ''}`}
+          onClick={deleteBid}
+          disabled={!cancel}
+        >
+          Cancel bid
         </BUTTON>
       )}
       {mode === 'review' && (
