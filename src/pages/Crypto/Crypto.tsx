@@ -8,6 +8,7 @@ import { TVChartContainer } from './TradingView'
 import {
   ENDPOINTS,
   CryptoProvider,
+  useNavCollapse,
   OrderProvider,
   OrderBookProvider,
   TradeHistoryProvider,
@@ -17,11 +18,18 @@ import {
 import { TRADE_ORDER_WIDTH } from '../../styles'
 import { notify } from '../../utils'
 
-const WRAPPER = styled.div`
+const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
+  position: relative;
   display: flex;
-  height: 100%;
   width: 100vw;
-  margin: ${({ theme }) => theme.margin(3)} 0;
+  height: calc(100vh - 81px);
+  padding-top: calc(112px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  * {
+    font-family: Montserrat;
+  }
 
   > div:first-child {
     margin-left: ${({ theme }) => theme.margin(3)};
@@ -49,19 +57,25 @@ const WRAPPER = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     ${({ theme }) => theme.flexColumnReverse};
   `}
+
+  ${({ theme }) => theme.customScrollBar('6px')};
 `
 
 const CryptoContent: FC = () => {
+  const { isCollapsed } = useNavCollapse()
   const { selectedCrypto } = useCrypto()
   const [chartsVisible, setChartsVisible] = useState(true)
 
   return (
-    <WRAPPER>
+    <WRAPPER $navCollapsed={isCollapsed}>
       <TradeHistoryProvider>
         <div>
           <Pairs />
           <TVChartContainer symbol={selectedCrypto.pair} visible={chartsVisible} />
           <History chartsVisible={chartsVisible} setChartsVisible={setChartsVisible} />
+          <br />
+          <br />
+          <br />
         </div>
         <div>
           <OrderProvider>

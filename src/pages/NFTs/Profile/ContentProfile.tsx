@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useNFTProfile } from '../../../context'
+import { useNFTProfile, useConnectionConfig } from '../../../context'
 import { ParsedAccount } from '../../../web3'
-
+import { fetchNFTById } from '../../../api/NFTs/actions'
 import { NFTTab } from '../NFTTab'
 import NFTDisplay from './NFTDisplay'
 import Activity from './Activity'
@@ -14,8 +14,9 @@ type Props = {
 export const ContentProfile = ({ isExplore }: Props) => {
   const { connected, publicKey } = useWallet()
   const { sessionUser, parsedAccounts, userActivity, setUserActivity, fetchUserActivity } = useNFTProfile()
-
   const [createdItems, setCreatedItems] = useState<ParsedAccount[]>()
+  const [favoritedItems, setFavoritedItems] = useState<ParsedAccount[]>()
+  const { connection } = useConnectionConfig()
 
   const tabPanes = useMemo(
     () => [
@@ -31,8 +32,8 @@ export const ContentProfile = ({ isExplore }: Props) => {
       },
       {
         order: '3',
-        name: 'Favorited',
-        component: <NFTDisplay data={[]} type={'favorited'} />
+        name: `Favorited (${favoritedItems ? favoritedItems.length : 0})`,
+        component: <NFTDisplay data={favoritedItems} type={'favorited'} />
       },
       {
         order: '4',
@@ -40,7 +41,7 @@ export const ContentProfile = ({ isExplore }: Props) => {
         component: <Activity data={userActivity ? userActivity : []} />
       }
     ],
-    [parsedAccounts, createdItems, userActivity]
+    [parsedAccounts, createdItems, userActivity, favoritedItems]
   )
 
   useEffect(() => {
@@ -70,6 +71,48 @@ export const ContentProfile = ({ isExplore }: Props) => {
 
     return () => {}
   }, [sessionUser.user_id, fetchUserActivity, setUserActivity])
+
+  useEffect(() => {
+    if (connected && publicKey && sessionUser?.user_likes?.length > 0) {
+      fetchFavs()
+    } else {
+      setFavoritedItems([])
+    }
+
+    return () => {}
+  }, [publicKey, connected, sessionUser])
+
+  async function fetchFavs() {
+    let favorites: any = await Promise.all(
+      sessionUser.user_likes.map(async (i: number) => {
+        return fetchNFTById(i, connection)
+      })
+    )
+
+    if (favorites[0].data && favorites[0].data.uri && favorites[0].key) {
+      setFavoritedItems(favorites)
+    } else {
+      let favs: ParsedAccount[] = favorites.map((favorite: any) => ({
+        data: {
+          creators: [],
+          name: favorite.nft_name as string,
+          symbol: '',
+          uri: favorite.metadata_url as string,
+          sellerFeeBasisPoints: 0
+        },
+        key: 4,
+        mint: favorite.mint_address as string,
+        primarySaleHappened: 0,
+        edition: undefined,
+        editionNonce: null,
+        isMutable: 1,
+        masterEdition: undefined,
+        updateAuthority: ''
+      }))
+
+      setFavoritedItems(favs)
+    }
+  }
 
   return <NFTTab tabPanes={tabPanes} />
 }
