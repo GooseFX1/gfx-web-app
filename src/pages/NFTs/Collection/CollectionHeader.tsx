@@ -36,7 +36,7 @@ const COLLECTION_HEADER = styled.div`
     bottom: 10px;
     height: 80px;
     padding: 0 2.22%;
-    margin-bottom: ${({ theme }) => theme.margin(3.5)};
+    margin-bottom: ${({ theme }) => theme.margin(4)};
   }
 
   .title-desc {
@@ -44,13 +44,15 @@ const COLLECTION_HEADER = styled.div`
     display: flex;
     justify-content: space-between;
     flex-flow: wrap;
+
     .title {
       display: flex;
-      max-width: 40%;
       margin-right: ${({ theme }) => theme.margin(2)};
       ${({ theme }) => theme.mediaWidth.upToMedium({ width: '100%', maxWidth: 'unset' })}};
+      
 
       .label {
+      ${({ theme }) => theme.ellipse};
         font-size: 35px;
         font-weight: 500;
         margin-right: ${({ theme }) => theme.margin(2)};
@@ -66,7 +68,7 @@ const COLLECTION_HEADER = styled.div`
       font-size: 20px;
       font-weight: 600;
       line-height: 24.38px;
-      max-width: 60%;
+      max-width: 70%;
       max-height: 42px;
       overflow-y: auto;
       -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
