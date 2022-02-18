@@ -5,6 +5,8 @@ import { Categories } from '../../../components'
 import { mockAnalyticsDrodown } from './mockData'
 import TabContent from './TabContent'
 import { useNFTCollections } from '../../../context'
+import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+
 const { TabPane } = Tabs
 
 //#region styles
@@ -99,6 +101,12 @@ const ANALYTICS_DROPDOWN = styled.div`
 
 const AnalyticsTabs = () => {
   const { allCollections } = useNFTCollections()
+  const [isAnalytics, setIsAnalytics] = useState(false)
+  useEffect(() => {
+    setTimeout(() => {
+      setIsAnalytics(true)
+    }, 3000)
+  }, [])
 
   useEffect(() => {
     console.log('recieved collections')
@@ -108,7 +116,11 @@ const AnalyticsTabs = () => {
     <ANALYTICS_TABS>
       <ANALYTICS_DROPDOWN>
         <span className="title">Weekly Analytics</span>
-        <Categories categories={mockAnalyticsDrodown} className="analytics-dropwdown" />
+        {!isAnalytics ? (
+          <SkeletonCommon width="136px" height="45px" borderRadius="45px" />
+        ) : (
+          <Categories categories={mockAnalyticsDrodown} className="analytics-dropwdown" />
+        )}
       </ANALYTICS_DROPDOWN>
       <Tabs defaultActiveKey="1" centered>
         <TabPane tab="Floor" key="1">

@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { ISingleNFT } from '../../types/nft_details.d'
 import { Image } from 'antd'
 import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../api/NFTs'
+import { SkeletonCommon } from './Skeleton/SkeletonCommon'
 
 const FOOTER_LIST_CARD = styled.div`
   width: 100%;
@@ -39,8 +40,9 @@ const FooterCarousel = () => {
     <FOOTER_LIST_CARD>
       {nfts === undefined ? (
         Array.apply('null', Array(10)).map((i) => (
-          <div key={i}>
-            <FOOTER_IMAGE preview={false} src={`${window.origin}/img/assets/nft-preview.svg`} />
+          <div key={i} style={{ margin: '0 24px' }}>
+            {/* <FOOTER_IMAGE preview={false} src={`${window.origin}/img/assets/nft-preview.svg`} /> */}
+            <SkeletonCommon width="110px" height="110px" borderRadius="10px" />
           </div>
         ))
       ) : err ? (

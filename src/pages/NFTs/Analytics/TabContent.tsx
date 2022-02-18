@@ -6,6 +6,7 @@ import { Skeleton } from 'antd'
 import { NFTBaseCollection, NFTCollection } from '../../../types/nft_collections.d'
 import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
 import { nFormatter } from '../../../utils'
+import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 const TAB_CONTENT = styled.div`
   padding: ${({ theme }) => `${theme.margin(4)}`} 32px 0;
@@ -33,7 +34,7 @@ const ANALYTIC_ITEM = styled.div`
     width: 100px;
     height: 100px;
     border-radius: 10px;
-    margin-right: ${({ theme }) => theme.margin(2)};
+    margin-right: ${({ theme }) => theme.margin(3)};
   }
 
   .analytic-content {
@@ -120,6 +121,13 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
   const history = useHistory()
   const [analyticData, setAnalyticData] = useState<NFTCollection>()
 
+  const [isCollection, setIsCollection] = useState(false)
+  useEffect(() => {
+    setTimeout(() => {
+      setIsCollection(true)
+    }, 3000)
+  }, [])
+
   useEffect(() => {
     fetchDetails()
 
@@ -140,38 +148,43 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
 
   return (
     <ANALYTIC_ITEM onClick={() => history.push(`/NFTs/collection/${collection.collection_id}`)}>
-      <img
-        className="analytic-image"
-        // @ts-ignore
-        src={collection.profile_pic_link.length > 0 ? collection.profile_pic_link : `/img/assets/nft-preview.svg`}
-        alt="analytic-img"
-      />
+      {!analyticData ? (
+        <SkeletonCommon width="100px" height="100px" style={{ marginRight: '30px' }} />
+      ) : (
+        <img
+          className="analytic-image"
+          // @ts-ignorese
+          src={collection.profile_pic_link.length > 0 ? collection.profile_pic_link : `/img/assets/nft-preview.svg`}
+          alt="analytic-img"
+        />
+      )}
       <div className="analytic-content">
         <div style={{ position: 'relative' }}>
           <h2 className="title">
             {/* @ts-ignore */}
-            {collection.collection_name}
+            {!analyticData ? <SkeletonCommon width="149px" height="28px" /> : collection.collection_name}
           </h2>
-          {collection.is_verified && (
+          {analyticData && collection.is_verified && (
             <img className="check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`} alt="" />
           )}
         </div>
         <div className="value">
-          {analyticData ? (
-            <div>
-              {collectionFilter === 'floor' && (
-                <div>
-                  {analyticData.collection_floor ? nFormatter(analyticData.collection_floor / LAMPORTS_PER_SOL) : '0'}
-                  <img className="sol-icon" src={`${process.env.PUBLIC_URL}/img/assets/SOL-icon.svg`} alt="" />
-                </div>
-              )}
-
-              {collectionFilter === 'volume' &&
-                (analyticData.collection_vol ? nFormatter(analyticData.collection_vol.weekly) : '0')}
-            </div>
-          ) : (
-            <Skeleton.Button active size="small" style={{ display: 'flex', height: '20px', width: '64px' }} />
-          )}
+          <div>
+            {!analyticData ? (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <SkeletonCommon width="89px" height="24px" style={{ marginRight: '10px' }} />
+                <SkeletonCommon width="33px" height="33px" borderRadius="50%" />
+              </div>
+            ) : collectionFilter === 'floor' ? (
+              <div>
+                {analyticData.collection_floor ? nFormatter(analyticData.collection_floor / LAMPORTS_PER_SOL) : '0'}
+                <img className="sol-icon" src={`${process.env.PUBLIC_URL}/img/assets/SOL-icon.svg`} alt="" />
+              </div>
+            ) : (
+              collectionFilter === 'volume' &&
+              (analyticData.collection_vol ? nFormatter(analyticData.collection_vol.weekly) : '0')
+            )}
+          </div>
         </div>
         {/* <div className="progress">
           {analyticData ? (
