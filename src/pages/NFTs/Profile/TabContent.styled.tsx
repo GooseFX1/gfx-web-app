@@ -62,6 +62,7 @@ export const StyledTabContent = styled.div`
       height: calc(100% - 66px);
       display: flex;
       flex-wrap: wrap;
+      justify-content: space-between;
       padding: ${theme.margin(4)} ${theme.margin(5)};
       overflow-x: hidden;
       overflow-y: scroll;

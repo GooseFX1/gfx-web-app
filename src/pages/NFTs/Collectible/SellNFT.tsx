@@ -45,7 +45,6 @@ import { dataFormRow2, dataFormFixedRow2 } from './mockData'
 
 //#region styles
 const UPLOAD_CONTENT = styled.div`
-  flex: 1;
   display: flex;
   flex-direction: row;
   padding: ${({ theme }) => theme.margin(6)} 0;

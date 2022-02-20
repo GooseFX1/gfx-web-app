@@ -30,7 +30,7 @@ import { notify } from '../../utils'
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
   width: 100vw;
-
+  min-height: calc(100vh - 80px);
   overflow-y: scroll;
   overflow-x: hidden;
   padding-top: calc(80px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
@@ -40,11 +40,6 @@ const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   }
 
   ${({ theme }) => theme.customScrollBar('6px')};
-`
-
-const SCROLLING_OVERLAY = styled.div`
-  overflow-y: overlay;
-  overflow-x: hidden;
 `
 
 export const NFTs: FC = () => {
@@ -108,19 +103,13 @@ export const NFTs: FC = () => {
                   <NFTDetails />
                 </Route>
                 <Route exact path="/NFTs/live-auction/:nftId">
-                  <SCROLLING_OVERLAY>
-                    <LiveAuctionNFT />
-                  </SCROLLING_OVERLAY>
+                  <LiveAuctionNFT />
                 </Route>
                 <Route exact path="/NFTs/fixed-price/:nftId">
-                  <SCROLLING_OVERLAY>
-                    <FixedPriceNFT />
-                  </SCROLLING_OVERLAY>
+                  <FixedPriceNFT />
                 </Route>
                 <Route exact path="/NFTs/open-bid/:nftId">
-                  <SCROLLING_OVERLAY>
-                    <OpenBidNFT />
-                  </SCROLLING_OVERLAY>
+                  <OpenBidNFT />
                 </Route>
                 <Route exact path="/NFTs/create">
                   <Collectible />

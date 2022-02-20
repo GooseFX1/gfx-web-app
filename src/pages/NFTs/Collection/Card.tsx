@@ -8,10 +8,7 @@ import { moneyFormatter } from '../../../utils'
 import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nft_details.d'
 import { useNFTProfile, useNFTDetails, useConnectionConfig } from '../../../context'
 import { fetchSingleNFT } from '../../../api/NFTs'
-import { getParsedAccountByMint, StringPublicKey } from '../../../web3'
-import isEmpty from 'lodash/isEmpty'
-import get from 'lodash/get'
-import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import { getParsedAccountByMint, StringPublicKey, ParsedAccount } from '../../../web3'
 
 //#region styles
 const CARD = styled.div<{ status: string }>`
@@ -19,7 +16,6 @@ const CARD = styled.div<{ status: string }>`
   border-radius: 15px;
   cursor: pointer;
   width: 226px;
-
   .card-image-wrapper {
     position: relative;
     display: flex;
@@ -27,7 +23,6 @@ const CARD = styled.div<{ status: string }>`
     width: fit-content;
     min-width: 190px;
     margin: 0 auto;
-
     .ant-image-mask {
       display: none;
     }
@@ -37,7 +32,6 @@ const CARD = styled.div<{ status: string }>`
       width: 100%;
       height: 190px;
     }
-
     .card-remaining {
       position: absolute;
       right: 10px;
@@ -48,71 +42,57 @@ const CARD = styled.div<{ status: string }>`
       font-size: 9px;
     }
   }
-
   .card-info {
     position: relative;
     height: 30px;
     margin-top: ${({ theme }) => theme.margin(2)};
     margin-bottom: ${({ theme }) => theme.margin(0.5)};
     text-align: left;
-
     .card-name {
       font-size: 16px;
       font-weight: 600;
-      color: #fff;
+      color: ${({ theme }) => theme.text2};
       font-family: Montserrat;
       width: calc(100% - 48px);
       ${({ theme }) => theme.ellipse}
     }
-
     .card-favorite-heart-container {
-      display: flex;
-      align-items: center;
       position: absolute;
-      top: 5px;
+      top: 0;
       right: 0;
     }
-
     .card-featured-heart {
       width: 30px;
       height: 30px;
       transform: translateY(4px);
     }
-
     .card-favorite-number {
       color: #4b4b4b;
       font-size: 13px;
       font-weight: 600;
     }
   }
-
   .card-price {
-    color: #fff;
+    color: ${({ theme }) => theme.text2} !important;
   }
-
   ${({ status, theme }) => {
     return css`
       padding: ${theme.margin(2.5)};
       opacity: ${status === 'unlisted' ? 0.6 : 1};
       background-color: ${({ theme }) => theme.bg3};
-
       .card-remaining {
         display: none;
       }
-
       .card-info .card-favorite-number-highlight {
         color: ${({ theme }) => theme.text1};
       }
-
       .card-info .card-favorite-number {
         color: ${({ theme }) => theme.text10};
         margin-left: ${({ theme }) => theme.margin(0.3)};
       }
-
       .card-info .card-favorite-heart {
         filter: ${({ theme }) => theme.filterHeartIcon};
       }
-
       .card-favorite {
         display: ${status === 'unlisted' ? 'none' : 'inline-block'};
       }
@@ -129,7 +109,6 @@ const BID_BUTTON = styled.button<{ cardStatus: string }>`
   border-radius: 50px;
   color: ${({ theme }) => theme.white};
   font-family: Montserrat;
-
   ${({ cardStatus, theme }) => {
     return css`
       height: 34px;
@@ -169,8 +148,6 @@ export const Card = ({ singleNFT, listingType, className, ...rest }: Props) => {
     status: 'auctioning',
     remaining: '02d:20h:10min'
   }
-  const non_fungible_id = get(singleNFT, 'non_fungible_id')
-  const isSingleNFTEmpty = isEmpty(singleNFT)
   const [isFavorited, setIsFavorited] = useState(false)
 
   const displayPrice: string = useMemo(
@@ -184,37 +161,41 @@ export const Card = ({ singleNFT, listingType, className, ...rest }: Props) => {
   )
 
   const isOwner: boolean = useMemo(() => {
-    const findAccount = parsedAccounts.find((acct) => acct.mint === singleNFT.mint_address)
+    const findAccount: undefined | ParsedAccount =
+      singleNFT && parsedAccounts !== undefined
+        ? parsedAccounts.find((acct) => acct.mint === singleNFT.mint_address)
+        : undefined
     return findAccount === undefined ? false : true
   }, [parsedAccounts])
 
   useEffect(() => {
-    fetchSingleNFT(non_fungible_id).then((res) => {
-      if (res && res.status === 200) {
-        const nft: INFTGeneralData = res.data
-        setLocalBids(nft.bids)
-        setLocalAsk(nft.asks[0])
-        setLocalTotalLikes(nft.total_likes)
-      }
-    })
+    if (singleNFT) {
+      fetchSingleNFT(singleNFT.non_fungible_id).then((res) => {
+        if (res && res.status === 200) {
+          const nft: INFTGeneralData = res.data
+          setLocalBids(nft.bids)
+          setLocalAsk(nft.asks[0])
+          setLocalTotalLikes(nft.total_likes)
+        }
+      })
+    }
 
     return () => {}
   }, [])
 
   useEffect(() => {
     if (singleNFT && sessionUser) {
-      setIsFavorited(sessionUser.user_likes.includes(non_fungible_id))
+      setIsFavorited(sessionUser.user_likes.includes(singleNFT.non_fungible_id))
     }
   }, [sessionUser])
 
   const handleToggleLike = (e: any) => {
-    likeDislike(sessionUser.user_id, non_fungible_id)
+    likeDislike(sessionUser.user_id, singleNFT.non_fungible_id)
     setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
     setIsFavorited((prev) => !prev)
   }
 
   const goToDetails = async (id: number): Promise<void> => {
-    if (!id) return
     await setNFTDetailsBeforeLocate()
     history.push(`/NFTs/open-bid/${id}`)
   }
@@ -250,51 +231,41 @@ export const Card = ({ singleNFT, listingType, className, ...rest }: Props) => {
 
   return (
     <CARD status={localNFT.status} {...rest} className="card">
-      <div className="card-image-wrapper" onClick={(e) => goToDetails(non_fungible_id)}>
-        {isSingleNFTEmpty ? (
-          <SkeletonCommon width="188px" height="190px" />
-        ) : (
-          <img
-            className="card-image"
-            src={localNFT.image_url ? localNFT.image_url : `${window.origin}/img/assets/nft-preview.svg`}
-            alt="nft"
-          />
-        )}
+      <div className="card-image-wrapper" onClick={(e) => goToDetails(singleNFT.non_fungible_id)}>
+        <img
+          className="card-image"
+          src={localNFT.image_url ? localNFT.image_url : `${window.origin}/img/assets/nft-preview.svg`}
+          alt="nft"
+        />
         <div className="card-remaining">{localNFT.remaining}</div>
       </div>
       <div className="card-info">
-        <div className="card-name">
-          {isSingleNFTEmpty ? <SkeletonCommon width="114px" height="22px" /> : localNFT.nft_name}
-        </div>
-        {isSingleNFTEmpty ? (
-          <span className="card-favorite-heart-container">
-            <SkeletonCommon width="19px" height="19px" borderRadius="50%" style={{ marginRight: '5px' }} />
-            <SkeletonCommon width="13px" height="16px" borderRadius="50%" />
+        <div className="card-name">{localNFT.nft_name}</div>
+
+        <span className="card-favorite-heart-container">
+          {sessionUser && sessionUser.user_id && isFavorited ? (
+            <img
+              className="card-favorite-heart"
+              src={`/img/assets/heart-red.svg`}
+              alt="heart-selected"
+              onClick={handleToggleLike}
+            />
+          ) : (
+            <img
+              className="card-favorite-heart"
+              src={`/img/assets/heart-empty.svg`}
+              alt="heart-empty"
+              onClick={handleToggleLike}
+            />
+          )}
+          <span className={`card-favorite-number ${isFavorited ? 'card-favorite-number-highlight' : ''}`}>
+            {localTotalLikes}
           </span>
-        ) : sessionUser && sessionUser.user_id && isFavorited ? (
-          <img
-            className="card-favorite-heart"
-            src={`/img/assets/heart-red.svg`}
-            alt="heart-selected"
-            onClick={handleToggleLike}
-          />
-        ) : (
-          <img
-            className="card-favorite-heart"
-            src={`/img/assets/heart-empty.svg`}
-            alt="heart-empty"
-            onClick={handleToggleLike}
-          />
-        )}
-        <span className={`card-favorite-number ${isFavorited ? 'card-favorite-number-highlight' : ''}`}>
-          {localTotalLikes}
         </span>
       </div>
       <Row justify="space-between" align="middle">
         <div className="card-price">
-          {isSingleNFTEmpty ? (
-            <SkeletonCommon width="87px" height="22px" />
-          ) : displayPrice === '0' ? (
+          {displayPrice === '0' ? (
             <LIGHT_TEXT>No Bids</LIGHT_TEXT>
           ) : (
             `${moneyFormatter(parseFloat(displayPrice) / LAMPORTS_PER_SOL)} SOL`
@@ -302,11 +273,14 @@ export const Card = ({ singleNFT, listingType, className, ...rest }: Props) => {
         </div>
         {sessionUser &&
           (isOwner ? (
-            <BID_BUTTON cardStatus={localAsk ? 'listed' : 'unlisted'} onClick={(e) => goToDetails(non_fungible_id)}>
+            <BID_BUTTON
+              cardStatus={localAsk ? 'listed' : 'unlisted'}
+              onClick={(e) => goToDetails(singleNFT.non_fungible_id)}
+            >
               {getButtonText(isOwner, localAsk)}
             </BID_BUTTON>
           ) : (
-            <BID_BUTTON cardStatus={'bid'} onClick={(e) => goToDetails(non_fungible_id)}>
+            <BID_BUTTON cardStatus={'bid'} onClick={(e) => goToDetails(singleNFT.non_fungible_id)}>
               {getButtonText(isOwner, localAsk)}
             </BID_BUTTON>
           ))}
