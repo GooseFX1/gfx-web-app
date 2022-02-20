@@ -16,7 +16,6 @@ const WRAPPED_LOADER = styled.div`
   align-items: center;
 `
 const PROFILE_CONTAINER = styled.div`
-  height: 100%;
   display: flex;
   flex-direction: column;
 

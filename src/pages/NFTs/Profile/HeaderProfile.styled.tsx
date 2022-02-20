@@ -4,7 +4,7 @@ import { Dropdown, Menu } from 'antd'
 export const StyledHeaderProfile = styled.div<{ mode?: string }>`
   ${({ theme, mode }) => `
   position: relative;
-  height: 50%;
+  height: 45vh;
   padding: ${theme.margin(3)};
   padding-bottom: ${theme.margin(8)};
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);

@@ -4,20 +4,18 @@ import { Tabs } from 'antd'
 import { useNFTCollections } from '../../../context'
 import { SearchBar } from '../../../components'
 import { Sort } from './Sort'
-import { LiveAuctionsTabContent } from './LiveAuctionsTabContent'
+// import { LiveAuctionsTabContent } from './LiveAuctionsTabContent'
 import { FixedPriceTabContent } from './FixedPriceTabContent'
 import { OpenBidsTabContent } from './OpenBidsTabContent'
 import { OwnersTabContent } from './OwnersTabContent'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
-import get from 'lodash/get'
-import isEmpty from 'lodash/isEmpty'
 
 const { TabPane } = Tabs
 
 //#region styles
 const COLLECTION_TABS = styled.div`
   position: relative;
-  height: calc(48% + 27px);
+  height: calc(48% + 28px);
   margin-top: -${({ theme }) => theme.margin(3.5)};
 
   .card-list {
@@ -68,7 +66,7 @@ const COLLECTION_TABS = styled.div`
 
   .ant-tabs-content {
     background-color: ${({ theme }) => theme.bg3};
-    min-height: calc(50vh - 156px);
+    min-height: calc(53vh - 156px);
   }
 
   .ant-tabs-nav-list {
@@ -138,46 +136,31 @@ const STYLED_SEARCH_BAR = styled.div`
 
 export const CollectionTabs = ({ filter, setFilter }) => {
   const { singleCollection } = useNFTCollections()
-  const collectionItem = get(singleCollection, 'collection[0]')
-  const isCollectionItemEmpty = isEmpty(collectionItem)
 
   useEffect(() => {}, [singleCollection])
 
   return singleCollection ? (
     <COLLECTION_TABS>
       <STYLED_SEARCH_BAR>
-        {isCollectionItemEmpty ? (
-          <SkeletonCommon width="350px" height="45px" borderRadius="45px" style={{ marginRight: '30px' }} isReverse />
-        ) : (
-          <SearchBar
-            className="collection-search-bar"
-            placeholder="Search by nft or owner"
-            setFilter={setFilter}
-            filter={filter}
-          />
-        )}
-        {!isCollectionItemEmpty && <Sort />}
+        <SearchBar
+          className="collection-search-bar"
+          placeholder="Search by nft or owner"
+          setFilter={setFilter}
+          filter={filter}
+        />
+        <Sort />
       </STYLED_SEARCH_BAR>
       <Tabs className={'collection-tabs'} defaultActiveKey="1" centered>
         {/* <TabPane tab="Live Auctions" key="1">
           <LiveAuctionsTabContent />
         </TabPane> */}
-        <TabPane
-          tab={isCollectionItemEmpty ? <SkeletonCommon width="169px" height="22px" isReverse /> : 'Open Bids'}
-          key="2"
-        >
-          <FixedPriceTabContent />
-        </TabPane>
-        <TabPane
-          tab={isCollectionItemEmpty ? <SkeletonCommon width="169px" height="22px" isReverse /> : 'Fixed Price'}
-          key="3"
-        >
+        <TabPane tab="Open Bids" key="1">
           <OpenBidsTabContent filter={filter} />
         </TabPane>
-        <TabPane
-          tab={isCollectionItemEmpty ? <SkeletonCommon width="169px" height="22px" isReverse /> : 'Owners'}
-          key="4"
-        >
+        <TabPane tab="Fixed Price" key="2">
+          <FixedPriceTabContent />
+        </TabPane>
+        <TabPane tab="Owners" key="3">
           <OwnersTabContent />
         </TabPane>
       </Tabs>
