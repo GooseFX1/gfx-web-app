@@ -8,6 +8,7 @@ const NO_CONTENT = styled.div`
   align-items: center;
   height: calc(100% - 66px);
   text-align: center;
+  padding: 16px 0;
 
   .no-data-image {
     max-width: 160px;

@@ -11,7 +11,7 @@ import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 const COLLECTION_HEADER = styled.div`
   position: relative;
-  height: calc(52% + 50px);
+  height: 45vh;
   margin-top: -50px;
 
   * {
@@ -186,8 +186,9 @@ export const CollectionHeader = ({ setFilter, filter }) => {
   const history = useHistory()
   const { singleCollection, fixedPriceWithinCollection, openBidWithinCollection } = useNFTCollections()
   const [visible, setVisible] = useState(false)
-  const collectionItem = get(singleCollection, 'collection[0]')
-  const isCollectionItemEmpty = isEmpty(collectionItem)
+
+  const isCollectionItemEmpty: boolean = !singleCollection || !fixedPriceWithinCollection || !openBidWithinCollection
+
   const handleClick = (e) => {
     console.log('handleClick e:', e)
     setVisible(true)

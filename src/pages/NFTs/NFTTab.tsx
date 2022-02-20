@@ -5,7 +5,7 @@ import { Tabs } from 'antd'
 const { TabPane } = Tabs
 
 const NFT_TAB = styled.div`
-  height: calc(50% + ${({ theme }) => theme.margin(6)});
+  min-height: calc(100vh - 54vh);
   z-index: 3;
   margin-top: -${({ theme }) => theme.margin(6)};
 
