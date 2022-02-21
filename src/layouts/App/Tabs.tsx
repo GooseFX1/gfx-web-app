@@ -132,7 +132,6 @@ export const Tabs: FC = () => {
               }
             })()}
           </TAB_ICON>
-
           <LABEL>{path.slice(1)}</LABEL>
         </TAB>
       ))}
