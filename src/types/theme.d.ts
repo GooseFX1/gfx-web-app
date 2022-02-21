@@ -59,6 +59,9 @@ export interface Colors {
   // card
   cardBg: Color
 
+  // share modal
+  textShareModal: Color
+
   // modal
   closeIconColor: Color
 
@@ -145,6 +148,7 @@ export interface Colors {
   // Filter
   filterBackIcon: Color
   filterHeartIcon: Color
+  filterCloseModalIcon: Color
 }
 
 export type Font = string

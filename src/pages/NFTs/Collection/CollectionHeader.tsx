@@ -145,7 +145,7 @@ const DROPDOWN = styled(Dropdown)`
 `
 const MENU_LIST = styled(Menu)`
   color: #fff;
-  background-color: ${({ theme }) => theme.bg6};
+  background-color: ${({ theme }) => theme.bg3};
   min-width: 120px;
   border-radius: 10px;
   position: relative;
