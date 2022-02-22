@@ -2,7 +2,7 @@ export const mockSliderData = [
   {
     id: '1',
     type: 'Apply',
-    title: 'Become a  verfied creator',
+    title: 'Become a  verified creator',
     desc: ''
   },
   {

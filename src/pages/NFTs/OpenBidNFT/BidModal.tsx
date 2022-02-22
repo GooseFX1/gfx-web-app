@@ -618,7 +618,7 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
           />
         </Col>
         <Col className="bm-alert">{`${
-          isVerified ? 'This is a verfied creator' : 'This creator is not verfied (purchase at your own risk)'
+          isVerified ? 'This is a verified creator' : 'This creator is not verified (purchase at your own risk)'
         }`}</Col>
       </Row>
       {mode === 'review' && (

@@ -15,15 +15,8 @@ import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { notify } from '../../../utils'
 import { tradeStatePDA, callCancelInstruction } from '../actions'
 import { BidModal } from '../OpenBidNFT/BidModal'
-import {
-  AUCTION_HOUSE_PREFIX,
-  AUCTION_HOUSE_PROGRAM_ID,
-  AUCTION_HOUSE,
-  StringPublicKey,
-  toPublicKey,
-  getMetadata,
-  bnTo8
-} from '../../../web3'
+import { useParams } from 'react-router-dom'
+import { bnTo8 } from '../../../web3'
 import BN from 'bn.js'
 
 const { TabPane } = Tabs
@@ -222,14 +215,22 @@ export const RightSectionTabs: FC<{
   const history = useHistory()
   const [activeTab, setActiveTab] = useState('1')
 
-  const { general, nftMetadata, ask, removeNFTListing } = useNFTDetails()
+  const { general, nftMetadata, bids, ask, removeNFTListing, fetchGeneral } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
   const { connection, network } = useConnectionConfig()
   const wallet = useWallet()
   const { publicKey } = wallet
+  const params = useParams<any>()
   const { mint_address, owner, token_account } = general
   const [bidModal, setBidModal] = useState<boolean>(false)
   const [removeAskModal, setRemoveAskModal] = useState<boolean>(false)
+  const [bid, setBids] = useState(bids)
+
+  useEffect(() => {
+    fetchGeneral(params.nftId, connection).then((res) => {
+      setBids(res.data.bids)
+    })
+  }, [bidModal])
 
   useEffect(() => {}, [publicKey])
 
