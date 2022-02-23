@@ -108,7 +108,7 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
       'scroll',
       debounce(() => {
         handleScroll()
-      }, 200),
+      }, 100),
       true
     )
   }, [])
@@ -154,13 +154,7 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
           ))}
         </OPEN_BIDS_TAB>
       ) : fileredLocalOpenBid.length > 0 ? (
-        <OPEN_BIDS_TAB
-          {...rest}
-          className="card-list"
-          onScroll={() => {
-            console.log('hey')
-          }}
-        >
+        <OPEN_BIDS_TAB {...rest} className="card-list">
           {shortfileredLocalOpenBid.map((item: ISingleNFT) => (
             <Card key={item.non_fungible_id} singleNFT={item} listingType="bid" />
           ))}
