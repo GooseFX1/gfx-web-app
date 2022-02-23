@@ -1,9 +1,10 @@
-import { useState, useEffect, FC } from 'react'
+import { useState, useEffect, FC, useRef } from 'react'
 import styled, { css } from 'styled-components'
 import { Card } from './Card'
 import { useNFTCollections, useNFTProfile } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { Loader } from '../../../components'
+import debounce from 'lodash.debounce'
 
 const WRAPPER = styled.div``
 
@@ -49,7 +50,37 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
   const { sessionUser } = useNFTProfile()
 
   const [localOpenBid, setLocalOpenBid] = useState<Array<ISingleNFT>>()
-  const [fileredLocalOpenBid, setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>()
+  const [fileredLocalOpenBid, _setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>()
+  const [shortfileredLocalOpenBid, _setShortFilteredLocalOpenBid] = useState<Array<ISingleNFT>>()
+  const [level, _setLevel] = useState<number>(0)
+  const [loading, _setLoading] = useState<boolean>(false)
+
+  // define a ref
+  const activePointRef = useRef(fileredLocalOpenBid)
+  const activePointLevel = useRef(level)
+  const activePointshortFilter = useRef(shortfileredLocalOpenBid)
+  const activePointLoader = useRef(loading)
+
+  // in place of original `setActivePoint`
+  const setFilteredLocalOpenBid = (x) => {
+    activePointRef.current = x // keep updated
+    _setFilteredLocalOpenBid(x)
+  }
+
+  const setLevel = (x) => {
+    activePointLevel.current = x // keep updated
+    _setLevel(x)
+  }
+
+  const setShortFilteredLocalOpenBid = (x) => {
+    activePointshortFilter.current = x // keep updated
+    _setShortFilteredLocalOpenBid(x)
+  }
+
+  const setLoading = (x) => {
+    activePointLoader.current = x // keep updated
+    _setLoading(x)
+  }
 
   useEffect(() => {
     if (openBidWithinCollection) {
@@ -66,9 +97,50 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
           `${i.non_fungible_id}`.includes(filter.trim())
       )
 
-      setFilteredLocalOpenBid(filteredData.slice(0, 25))
+      setFilteredLocalOpenBid(filteredData)
+      setShortFilteredLocalOpenBid(filteredData.slice(0, 25))
+      setLevel(0)
     }
   }, [filter, localOpenBid])
+
+  useEffect(() => {
+    window.addEventListener(
+      'scroll',
+      debounce(() => {
+        handleScroll()
+      }, 100),
+      true
+    )
+  }, [])
+
+  const handleScroll = () => {
+    let border = document.getElementById('border')
+    let mainHeight = window.innerHeight
+    let totalscroll = mainHeight + border.scrollTop + 100
+
+    if (Math.ceil(totalscroll) < border.scrollHeight || activePointLoader.current) {
+      setLoading(false)
+    } else {
+      addToList()
+    }
+  }
+
+  const addToList = () => {
+    let total = activePointRef.current
+    let newLevel = activePointLevel.current + 1
+
+    if (total?.length > newLevel * 25) {
+      setLoading(true)
+      let nextData = total.slice(newLevel * 25, (newLevel + 1) * 25)
+      setShortFilteredLocalOpenBid([...activePointshortFilter.current, ...nextData])
+      setLevel(newLevel)
+      setLoading(false)
+
+      // force scroll up to avoid over push
+      // let border = document.getElementById('border')
+      // border.scrollTop = border.scrollTop
+    }
+  }
 
   // TODO: lazy loader for the thousands of nfts
   return (
@@ -83,9 +155,14 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
         </OPEN_BIDS_TAB>
       ) : fileredLocalOpenBid.length > 0 ? (
         <OPEN_BIDS_TAB {...rest} className="card-list">
-          {fileredLocalOpenBid.map((item: ISingleNFT) => (
-            <Card key={item.mint_address} singleNFT={item} listingType="bid" />
+          {shortfileredLocalOpenBid.map((item: ISingleNFT) => (
+            <Card key={item.non_fungible_id} singleNFT={item} listingType="bid" />
           ))}
+          {loading && (
+            <WRAPPED_LOADER>
+              <Loader />
+            </WRAPPED_LOADER>
+          )}
         </OPEN_BIDS_TAB>
       ) : (
         <NO_CONTENT>

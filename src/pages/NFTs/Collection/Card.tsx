@@ -132,6 +132,7 @@ type Props = {
   singleNFT: ISingleNFT
   className?: string
   listingType?: string
+  userId?: number
 }
 
 export const Card = ({ singleNFT, listingType, className, ...rest }: Props) => {

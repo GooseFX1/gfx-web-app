@@ -1,4 +1,4 @@
-import { ISingleNFT } from './nft_details.d'
+import { ISingleNFT, IFixedPriceWithinCollection, IOpenBidWithinCollection } from './nft_details.d'
 
 export enum COLLECTION_TYPES {
   NFT_COLLECTION = 'NFTCollection',
@@ -70,6 +70,8 @@ export interface INFTCollectionConfig {
   fetchUpcomingCollections: any
   singleCollection: NFTCollection
   setSingleCollection: Dispatch<SetStateAction<NFTCollection>>
+  setFixedPriceWithinCollection: Dispatch<SetStateAction<IFixedPriceWithinCollection>>
+  setOpenBidWithinCollection: Dispatch<SetStateAction<IOpenBidWithinCollection>>
   fetchSingleCollection: (id: string) => Promise<any>
   fixedPriceWithinCollection: IFixedPriceWithinCollection
   openBidWithinCollection: IOpenBidWithinCollection
