@@ -60,11 +60,9 @@ export const swap = async (
 ): Promise<TransactionSignature | undefined> => {
   if (!wallet.publicKey || !wallet.signTransaction) return
 
-  const program = getSwapProgram(wallet, connection, network)
-  let inst: any = program.instruction
+  const { instruction } = getSwapProgram(wallet, connection, network)
+  let inst: any = instruction
   const tx = new Transaction()
-
-  console.log(program)
 
   const amountIn = new BN(inTokenAmount * 10 ** tokenA.decimals)
   const minimumAmountOut = new BN(outTokenAmount * 10 ** tokenB.decimals * (1 - slippage))
@@ -96,16 +94,16 @@ export const swap = async (
     userWallet: wallet.publicKey,
     userInAta: inTokenAtaUser,
     userOutAta: outTokenAtaUser,
-    instructions: inst,
+    instructions: wallet.publicKey,
     feeCollectorAta: await findAssociatedTokenAddress(wallet.publicKey, lpTokenMint),
     feeCollector: wallet.publicKey, //new PublicKey(FEE_PAYER_WITHDRAWAL_ACCT),
     //splProgram: TOKEN_PROGRAM_ID,
     tokenProgram: TOKEN_PROGRAM_ID,
     associatedTokenProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
     systemProgram: SYSTEM,
-    rent: SYSVAR_RENT_PUBKEY,
-    amountIn: amountIn,
-    minimumAmountOut
+    rent: SYSVAR_RENT_PUBKEY
+    // amountIn: amountIn,
+    // minimumAmountOut
   }
 
   console.log(accounts)
