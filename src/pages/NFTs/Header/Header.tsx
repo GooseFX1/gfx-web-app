@@ -204,7 +204,7 @@ export const Header = ({ setFilter, filter, filteredCollections }) => {
             </Menu.Item>
           ))
         ) : (
-          <MENU_ITEM key="0">No Result Found!</MENU_ITEM>
+          <p className="empty">No Result Found!</p>
         )}
       </Menu>
     ) : (
