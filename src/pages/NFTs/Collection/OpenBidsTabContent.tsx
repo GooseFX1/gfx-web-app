@@ -114,15 +114,14 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
   }, [])
 
   const handleScroll = () => {
-    let border = document.getElementById('root')
+    let border = document.getElementById('border')
     let mainHeight = window.innerHeight
     let totalscroll = mainHeight + border.scrollTop + 100
-    console.log(border.scrollHeight, border.scrollTop)
+    // console.log(border.scrollHeight, border.scrollTop)
 
     if (Math.ceil(totalscroll) < border.scrollHeight || activePointLoader.current) {
       setLoading(false)
     } else {
-      console.log('dub')
       addToList()
     }
   }
