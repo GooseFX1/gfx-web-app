@@ -299,7 +299,7 @@ export function theme(mode: string): DefaultTheme {
     customScrollBar: (size) => css`
       scrollbar-width: thin;
       scrollbar-color: ${({ theme }) => theme.scrollBarColor} transparent;
-      
+
       &::-webkit-scrollbar {
         width: ${size};
       }
@@ -311,6 +311,7 @@ export function theme(mode: string): DefaultTheme {
       &::-webkit-scrollbar-thumb {
         background-color: ${({ theme }) => theme.scrollBarColor};
         border-radius: 20px;
+      }
     `
   }
 }
