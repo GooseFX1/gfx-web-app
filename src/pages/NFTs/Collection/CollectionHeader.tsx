@@ -144,19 +144,22 @@ const DROPDOWN = styled(Dropdown)`
   }
 `
 const MENU_LIST = styled(Menu)`
-  color: #fff;
-  background-color: ${({ theme }) => theme.bg6};
+  background-color: ${({ theme }) => theme.bg3};
   min-width: 120px;
   border-radius: 10px;
   position: relative;
   padding: ${({ theme }) => theme.margin(1.5)};
 
   li {
-    padding: ${({ theme }) => `${theme.margin(0.5)} ${theme.margin(1.5)}`};
     font-size: 11px;
     text-align: center;
     color: ${({ theme }) => theme.text1};
 
+    .ant-dropdown-menu-title-content {
+      &:hover {
+        color: ${({ theme }) => theme.secondary4};
+      }
+    }
     &:hover {
       color: ${({ theme }) => theme.secondary4};
     }

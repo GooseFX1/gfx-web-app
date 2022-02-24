@@ -99,6 +99,9 @@ export function colors(mode: string): Colors {
     // card
     cardBg: mode === 'dark' ? '#171717' : 'rgba(114, 114, 114, 1)',
 
+    // share modal
+    textShareModal: mode === 'dark' ? '#fff' : 'rgba(60, 60, 60, 1)',
+
     // modal
     closeIconColor: mode === 'dark' ? '#fff' : '#000',
 
@@ -198,7 +201,11 @@ export function colors(mode: string): Colors {
         ? 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'
         : '#000',
 
-    filterHeartIcon: mode === 'dark' ? '#131313' : '#131313'
+    filterHeartIcon: mode === 'dark' ? '#131313' : '#131313',
+    filterCloseModalIcon:
+      mode === 'dark'
+        ? '#000'
+        : 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'
   }
 }
 

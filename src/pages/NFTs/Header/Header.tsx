@@ -134,6 +134,10 @@ const AVATAR_NFT = styled(Image)`
   cursor: pointer;
 `
 
+const MENU_ITEM = styled(Menu.Item)`
+  color: ${({ theme }) => theme.text1};
+`
+
 export const Header = ({ setFilter, filter, filteredCollections }) => {
   const history = useHistory()
   const { sessionUser } = useNFTProfile()
@@ -200,7 +204,7 @@ export const Header = ({ setFilter, filter, filteredCollections }) => {
             </Menu.Item>
           ))
         ) : (
-          <Menu.Item key="0">No Result Found!</Menu.Item>
+          <p className="empty">No Result Found!</p>
         )}
       </Menu>
     ) : (
