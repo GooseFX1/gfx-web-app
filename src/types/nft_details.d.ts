@@ -91,6 +91,7 @@ export type INFTBid = {
   non_fungible_id: number
   collection_id: number
   user_id: number
+  event?: string
 }
 
 export type INFTAsk = {
@@ -107,6 +108,7 @@ export type INFTAsk = {
   non_fungible_id: number
   collection_id: number
   user_id: number
+  event?: string
 }
 
 export interface INFTGeneralData {

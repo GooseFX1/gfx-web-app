@@ -39,7 +39,6 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?nft_id=${id}`)
       const nft: INFTGeneralData = await res.data
-      console.log(conncetion)
 
       const parsedAccounts = await getParsedAccountByMint({
         mintAddress: nft.data[0].mint_address as StringPublicKey,
