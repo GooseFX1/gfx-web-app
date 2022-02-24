@@ -140,8 +140,6 @@ export interface INFTDetailsConfig {
   bidOnSingleNFT: any
   ask: INFTAsk
   setAsk: Function
-  asks: INFTAsk[]
-  setAsks: Function
   nftMintingData: IMetadataContext | undefined
   setNftMintingData: Dispatch<SetStateAction<IMetadataContext>>
   updateUserInput: (params: any) => Promise<any>
