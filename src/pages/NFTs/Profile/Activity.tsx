@@ -105,7 +105,7 @@ const Activity = (props: IActivity) => {
         })
       )
 
-      setActivity(data)
+      setActivity(data.sort((a: any, b: any) => b.clock - a.clock))
 
       return () => {
         setActivity(undefined)
