@@ -79,6 +79,7 @@ const PURCHASE_MODAL = styled(Modal)`
   .ant-modal-body {
     padding: ${({ theme }) => theme.margin(4.5)};
     padding-bottom: ${({ theme }) => theme.margin(1)};
+    overflow: auto !important;
   }
 
   .modal-close-icon {

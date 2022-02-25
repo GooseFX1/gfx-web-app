@@ -117,6 +117,7 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
     let border = document.getElementById('border')
     let mainHeight = window.innerHeight
     let totalscroll = mainHeight + border.scrollTop + 100
+    // console.log(border.scrollHeight, border.scrollTop)
 
     if (Math.ceil(totalscroll) < border.scrollHeight || activePointLoader.current) {
       setLoading(false)
