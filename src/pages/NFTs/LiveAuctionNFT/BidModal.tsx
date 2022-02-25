@@ -317,7 +317,7 @@ export const BidModal: FC<{ setVisible: (x: boolean) => void; visible: boolean }
         <Col>
           <img className="bm-check-icon" src={`/img/assets/check-icon.png`} alt="" />
         </Col>
-        <Col>This is a verfied creator</Col>
+        <Col>This is a verified creator</Col>
       </Row>
       {mode === 'review' && (
         <div className="bm-review-alert">

@@ -37,6 +37,7 @@ const LEFT_SECTION = styled.div`
         width: 21px;
         height: 21px;
         margin-right: ${theme.margin(0.5)};
+        cursor: pointer;
       }
 
       .ls-favorite-number {
@@ -61,6 +62,7 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
   const { general, nftMetadata, totalLikes } = useNFTDetails()
   const [isFavorited, setIsFavorited] = useState(false)
   const { sessionUser, likeDislike } = useNFTProfile()
+  const [likes, setLikes] = useState(totalLikes)
 
   //const hearts = 12
   const remaining = {
@@ -77,7 +79,7 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
 
   const handleToggleLike = (e: any) => {
     likeDislike(sessionUser.user_id, general.non_fungible_id).then((res) => {
-      console.log(res)
+      setLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
     })
     setIsFavorited((prev) => !prev)
   }
@@ -107,9 +109,7 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
                   onClick={handleToggleLike}
                 />
               )}
-              <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
-                {totalLikes}
-              </span>
+              <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>{likes}</span>
             </Row>
           )}
         </Row>

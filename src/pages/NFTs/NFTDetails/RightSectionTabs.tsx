@@ -1,9 +1,9 @@
 import { useEffect, useState, FC, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
-import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
+import { PublicKey } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled, { css } from 'styled-components'
-import { Col, Row, Tabs, notification } from 'antd'
+import { Col, Row, Tabs } from 'antd'
 import { SpaceBetweenDiv } from '../../../styles'
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { MintItemViewStatus, NFTDetailsProviderMode } from '../../../types/nft_details'
@@ -15,15 +15,7 @@ import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { notify } from '../../../utils'
 import { tradeStatePDA, callCancelInstruction } from '../actions'
 import { BidModal } from '../OpenBidNFT/BidModal'
-import {
-  AUCTION_HOUSE_PREFIX,
-  AUCTION_HOUSE_PROGRAM_ID,
-  AUCTION_HOUSE,
-  StringPublicKey,
-  toPublicKey,
-  getMetadata,
-  bnTo8
-} from '../../../web3'
+import { bnTo8 } from '../../../web3'
 import BN from 'bn.js'
 
 const { TabPane } = Tabs
@@ -221,7 +213,6 @@ export const RightSectionTabs: FC<{
 }> = ({ mode, status, ...rest }) => {
   const history = useHistory()
   const [activeTab, setActiveTab] = useState('1')
-
   const { general, nftMetadata, ask, removeNFTListing } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
   const { connection, network } = useConnectionConfig()
