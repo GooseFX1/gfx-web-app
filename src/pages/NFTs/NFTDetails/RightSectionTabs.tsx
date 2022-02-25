@@ -1,9 +1,9 @@
 import { useEffect, useState, FC, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
-import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
+import { PublicKey } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled, { css } from 'styled-components'
-import { Col, Row, Tabs, notification } from 'antd'
+import { Col, Row, Tabs } from 'antd'
 import { SpaceBetweenDiv } from '../../../styles'
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { MintItemViewStatus, NFTDetailsProviderMode } from '../../../types/nft_details'
@@ -15,7 +15,6 @@ import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { notify } from '../../../utils'
 import { tradeStatePDA, callCancelInstruction } from '../actions'
 import { BidModal } from '../OpenBidNFT/BidModal'
-import { useParams } from 'react-router-dom'
 import { bnTo8 } from '../../../web3'
 import BN from 'bn.js'
 
@@ -214,23 +213,14 @@ export const RightSectionTabs: FC<{
 }> = ({ mode, status, ...rest }) => {
   const history = useHistory()
   const [activeTab, setActiveTab] = useState('1')
-
-  const { general, nftMetadata, bids, ask, removeNFTListing, fetchGeneral } = useNFTDetails()
+  const { general, nftMetadata, ask, removeNFTListing } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
   const { connection, network } = useConnectionConfig()
   const wallet = useWallet()
   const { publicKey } = wallet
-  const params = useParams<any>()
   const { mint_address, owner, token_account } = general
   const [bidModal, setBidModal] = useState<boolean>(false)
   const [removeAskModal, setRemoveAskModal] = useState<boolean>(false)
-  const [bid, setBids] = useState(bids)
-
-  useEffect(() => {
-    fetchGeneral(params.nftId, connection).then((res) => {
-      setBids(res.data.bids)
-    })
-  }, [bidModal])
 
   useEffect(() => {}, [publicKey])
 

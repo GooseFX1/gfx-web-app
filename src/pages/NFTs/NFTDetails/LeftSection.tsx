@@ -37,6 +37,7 @@ const LEFT_SECTION = styled.div`
         width: 21px;
         height: 21px;
         margin-right: ${theme.margin(0.5)};
+        cursor: pointer;
       }
 
       .ls-favorite-number {
