@@ -277,9 +277,11 @@ export const SellNFT = () => {
   const onChange = ({ e, id }) => {
     const { value } = e.target
     const temp = { ...userInput }
-    temp[id] = value
+    const fmtNum = parseFloat(value).toFixed(3)
+
+    temp[id] = fmtNum.toString()
     if (id === 'minimumBid') {
-      updateUserInput({ price: value })
+      updateUserInput({ price: fmtNum.toString() })
     } else {
       updateUserInput({ royalty: value })
     }
@@ -435,7 +437,7 @@ export const SellNFT = () => {
 
           <div style={{ marginBottom: '70px' }}>
             <div className="bm-title">Open Bid</div>
-            <div className="bm-support">Accept any amount that you feel comfortable selling your nft</div>
+            <div className="bm-support">Accept any amount that you feel comfortable selling your NFT</div>
           </div>
 
           <div>

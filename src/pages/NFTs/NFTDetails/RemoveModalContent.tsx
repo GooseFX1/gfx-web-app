@@ -21,21 +21,23 @@ const TEXT = styled.p`
   margin-bottom: ${({ theme }) => theme.margin(5)};
 `
 
-interface IRemoveAskModalContent {
-  removeAsk: Function
+type IRemoveModalContent = {
+  title: string
+  caption: string
+  removeFunction: Function
 }
 
-const RemoveAskModalContent = ({ removeAsk }: IRemoveAskModalContent) => {
+const RemoveModalContent = ({ title, caption, removeFunction }: IRemoveModalContent) => {
   return (
     <CONTAINER>
-      <TITLE>Remove Ask</TITLE>
-      <TEXT>Removing the asking price will move the state of the NFT into Open Bid.</TEXT>
+      <TITLE>{title}</TITLE>
+      <TEXT>{caption}</TEXT>
 
-      <MainButton height={'60px'} width="100%" status="action" onClick={removeAsk}>
+      <MainButton height={'60px'} width="100%" status="action" onClick={removeFunction}>
         <BUTTON_TEXT>Remove</BUTTON_TEXT>
       </MainButton>
     </CONTAINER>
   )
 }
 
-export default RemoveAskModalContent
+export default RemoveModalContent

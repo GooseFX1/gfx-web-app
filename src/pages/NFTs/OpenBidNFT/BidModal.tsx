@@ -4,10 +4,9 @@ import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
 import { Col, Row } from 'antd'
-import { MainButton, Modal } from '../../../components'
+import { MainButton, Modal, SuccessfulListingMsg } from '../../../components'
 import { notify } from '../../../utils'
 import { useNFTProfile, useCrypto, useNFTDetails, useConnectionConfig, useAccounts } from '../../../context'
-import { ISingleNFT } from '../../../types/nft_details'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import BN from 'bn.js'
 import {
@@ -231,8 +230,7 @@ interface IBidModal {
   visible: boolean
   buyerPrice?: number
 }
-export const BidModal: FC<IBidModal> = (props: IBidModal) => {
-  const { setVisible, visible } = props
+export const BidModal: FC<IBidModal> = ({ setVisible, visible, buyerPrice }: IBidModal) => {
   const { prices } = useCrypto()
   const { getUIAmount } = useAccounts()
   const history = useHistory()
@@ -437,14 +435,13 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
 
     try {
       const res = await bidOnSingleNFT(bidObject)
-      console.dir(res)
       if (res.isAxiosError) {
         notify({
           type: 'error',
           message: (
             <MESSAGE>
               <Row className="m-title" justify="space-between" align="middle">
-                <Col>NFT Listing error!</Col>
+                <Col>NFT Biding error!</Col>
                 <Col>
                   <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
                 </Col>
@@ -477,51 +474,23 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
 
   const successfulListingMessage = (signature: any, nftMetadata: any, price: string) => ({
     message: (
-      <MESSAGE>
-        <Row className="m-title" justify="space-between" align="middle">
-          <Col>Successfully placed a bid on {nftMetadata?.name}!</Col>
-          <Col>
-            <img className="m-icon" src={`/img/assets/bid-success-icon.svg`} alt="" />
-          </Col>
-        </Row>
-        <div>{nftMetadata?.name}</div>
-        <div>Bid of: {`${price}`}</div>
-        <div>
-          <a
-            href={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Transaction ID
-          </a>
-        </div>
-      </MESSAGE>
+      <SuccessfulListingMsg
+        title={`Successfully placed a bid on {nftMetadata?.name}!`}
+        itemName={nftMetadata.name}
+        supportText={`Bid of: ${price}`}
+        tx_url={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+      />
     )
   })
 
   const successBidMatchedMessage = (signature: any, nftMetadata: any, price: string) => ({
     message: (
-      <MESSAGE>
-        <Row className="m-title" justify="space-between" align="middle">
-          <Col>Your bid matched!</Col>
-          <Col>
-            <img className="m-icon" src={`/img/assets/bid-success-icon.svg`} alt="" />
-          </Col>
-        </Row>
-        <div>{nftMetadata?.name}</div>
-        <div>
-          You have just acquired {nftMetadata?.name} for {`${price}`}
-        </div>
-        <div>
-          <a
-            href={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Transaction ID
-          </a>
-        </div>
-      </MESSAGE>
+      <SuccessfulListingMsg
+        title={`Your bid matched!`}
+        itemName={nftMetadata.name}
+        supportText={`You have just acquired ${nftMetadata.name} for ${price} SOL!`}
+        tx_url={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+      />
     )
   })
 
@@ -567,6 +536,7 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
         <Col>by</Col>
         <Col className="bm-title-bold">{creator}</Col>
       </Row>
+
       <div className="bm-confirm">
         <div className="bm-confirm-text-1">Place your bid:</div>
         <input value={bidPriceInput} onChange={handleBidInput} className="bm-confirm-price" placeholder="000.000" />
@@ -574,6 +544,7 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
           {mode === 'bid' ? 'There is no minimum amount this is an open bid.' : `${fiatCalc} USD`}
         </div>
       </div>
+
       <div className="bm-details">
         {mode === 'review' && (
           <>
@@ -639,6 +610,7 @@ export const BidModal: FC<IBidModal> = (props: IBidModal) => {
           Review bid
         </BUTTON>
       )}
+
       {mode === 'review' && (
         <BUTTON
           status="initial"

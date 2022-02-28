@@ -138,7 +138,7 @@ export const TradingHistoryTabContent: FC<{
           <p>No bids so far, be the first to bid for this amazing piece.</p>
         </div>
       ) : (
-        <Table columns={bidColumns} dataSource={bids} pagination={false} />
+        <Table columns={bidColumns} dataSource={bids.map((bid) => ({ ...bid, key: bid.bid_id }))} pagination={false} />
       )}
     </TRADING_HISTORY_TAB_CONTENT>
   )
