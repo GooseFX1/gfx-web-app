@@ -9,9 +9,9 @@ import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
-const COLLECTION_HEADER = styled.div`
+const COLLECTION_HEADER = styled.div<{ $height: string }>`
   position: relative;
-  height: 45vh;
+  height: ${({ $height }) => `${$height}vh`};
   margin-top: -50px;
 
   * {
@@ -143,6 +143,16 @@ const DROPDOWN = styled(Dropdown)`
     content: none;
   }
 `
+
+const COVER = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  position: absolute;
+  margin-top: -28px;
+`
 const MENU_LIST = styled(Menu)`
   background-color: ${({ theme }) => theme.bg3};
   min-width: 120px;
@@ -185,7 +195,7 @@ const MENU_LIST = styled(Menu)`
   }
 `
 
-export const CollectionHeader = ({ setFilter, filter }) => {
+export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) => {
   const history = useHistory()
   const { singleCollection, fixedPriceWithinCollection, openBidWithinCollection } = useNFTCollections()
   const [visible, setVisible] = useState(false)
@@ -205,7 +215,7 @@ export const CollectionHeader = ({ setFilter, filter }) => {
   )
 
   return (
-    <COLLECTION_HEADER>
+    <COLLECTION_HEADER $height={collapse ? '25' : '45'}>
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
       {isCollectionItemEmpty ? (
         <SkeletonCommon height="438px" borderRadius="0" />
@@ -275,6 +285,19 @@ export const CollectionHeader = ({ setFilter, filter }) => {
         </div>
       </div>
       <ShareProfile visible={visible} handleCancel={() => setVisible(false)} />
+
+      <COVER>
+        <Button
+          onClick={() => setCollapse(!collapse)}
+          style={{ borderRadius: '0px 0px 50% 50%', backgroundColor: '#131313' }}
+        >
+          <img
+            className="collection-more-icon"
+            src={`/img/assets/arrow-down.svg`}
+            style={collapse ? { transform: 'rotate(180deg)', marginTop: '2px', zIndex: 200 } : null}
+          />
+        </Button>
+      </COVER>
     </COLLECTION_HEADER>
   )
 }

@@ -85,7 +85,7 @@ export const NFTs: FC = () => {
       <CryptoProvider>
         <NFTCollectionProvider>
           <NFTDetailsProvider>
-            <BODY_NFT id="border" $navCollapsed={isCollapsed}>
+            <BODY_NFT $navCollapsed={isCollapsed}>
               <Switch>
                 <Route exact path={path}>
                   <NFTLandingPage />

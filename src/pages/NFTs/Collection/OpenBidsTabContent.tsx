@@ -45,7 +45,7 @@ const WRAPPED_LOADER = styled.div`
   height: 48px;
 `
 
-export const OpenBidsTabContent = ({ filter, ...rest }) => {
+export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
   const { openBidWithinCollection } = useNFTCollections()
   const { sessionUser } = useNFTProfile()
 
@@ -117,7 +117,13 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
     let border = document.getElementById('border')
     let mainHeight = window.innerHeight
     let totalscroll = mainHeight + border.scrollTop + 100
-    // console.log(border.scrollHeight, border.scrollTop)
+    //let former = 0
+    //console.log(border.scrollHeight, border.scrollTop)
+    if (border.scrollTop < 50) {
+      setCollapse(false)
+    } else {
+      setCollapse(true)
+    }
 
     if (Math.ceil(totalscroll) < border.scrollHeight || activePointLoader.current) {
       setLoading(false)

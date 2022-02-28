@@ -26,6 +26,7 @@ export const Collection: FC = (): JSX.Element => {
   } = useNFTCollections()
   const [err, setErr] = useState(false)
   const [filter, setFilter] = useState('')
+  const [collapse, setCollapse] = useState(false)
 
   useEffect(() => {
     return () => {
@@ -50,9 +51,9 @@ export const Collection: FC = (): JSX.Element => {
   return err ? (
     <h2>Something went wrong fetching the collection details</h2>
   ) : (
-    <>
-      <CollectionHeader setFilter={setFilter} filter={filter} />
-      <CollectionTabs setFilter={setFilter} filter={filter} />
-    </>
+    <div style={{ height: '100vh' }}>
+      <CollectionHeader collapse={collapse} setCollapse={setCollapse} setFilter={setFilter} filter={filter} />
+      <CollectionTabs collapse={collapse} setCollapse={setCollapse} setFilter={setFilter} filter={filter} />
+    </div>
   )
 }
