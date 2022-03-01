@@ -191,9 +191,11 @@ export const Card = ({ singleNFT, listingType, className, ...rest }: Props) => {
   }, [sessionUser])
 
   const handleToggleLike = (e: any) => {
-    likeDislike(sessionUser.user_id, singleNFT.non_fungible_id)
-    setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
-    setIsFavorited((prev) => !prev)
+    if (sessionUser) {
+      likeDislike(sessionUser.user_id, singleNFT.non_fungible_id)
+      setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
+      setIsFavorited((prev) => !prev)
+    }
   }
 
   const goToDetails = async (id: number): Promise<void> => {
