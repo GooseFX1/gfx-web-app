@@ -52,7 +52,7 @@ const SIDE = styled(SpaceBetweenDiv)<{ $display: boolean; $side: OrderSide }>`
     left: ${({ $side }) => ($side === 'buy' ? '-17' : '95')}px;
     width: 43%;
     height: 2px;
-    background-color: ${({ theme, $display, $side }) => theme[$side === 'buy' ? 'bids' : 'asks']};
+    background-color: ${({ theme, $display, $side }) => theme[$side === 'buy' ? 'buys' : 'asks']};
     transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;
   }
 

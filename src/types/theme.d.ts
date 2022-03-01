@@ -141,6 +141,7 @@ export interface Colors {
   secondary5: Color
 
   // other
+  buys: Color
   asks: Color
   bids: Color
   error: Color

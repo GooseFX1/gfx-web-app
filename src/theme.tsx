@@ -192,6 +192,7 @@ export function colors(mode: string): Colors {
     secondary5: '#3735bb',
 
     // other
+    buys: '#ac69ff',
     asks: '#9b2c2c',
     bids: '#459631',
     error: '#D60000',
