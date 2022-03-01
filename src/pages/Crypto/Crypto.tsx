@@ -99,7 +99,7 @@ export const Crypto: FC = () => {
       notify({ message: 'Switched to mainnet' })
       setEndpoint(ENDPOINTS[0].endpoint)
     }
-  }, [endpoint, setEndpoint])
+  }, [])
 
   return (
     <CryptoProvider>
