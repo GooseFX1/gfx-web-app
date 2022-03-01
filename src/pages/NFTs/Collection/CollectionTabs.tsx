@@ -13,9 +13,11 @@ import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 const { TabPane } = Tabs
 
 //#region styles
-const COLLECTION_TABS = styled.div`
+const COLLECTION_TABS = styled.div<{ $height: string }>`
   position: relative;
-  height: calc(48% + 28px);
+  overflow: scroll;
+  scroll-behavior: smooth;
+  height: ${({ $height }) => `calc(${$height}`}% + 28px);
   margin-top: -${({ theme }) => theme.margin(3.5)};
 
   .card-list {
@@ -134,13 +136,13 @@ const STYLED_SEARCH_BAR = styled.div`
 `
 //#endregion
 
-export const CollectionTabs = ({ filter, setFilter }) => {
+export const CollectionTabs = ({ filter, setFilter, collapse, setCollapse }) => {
   const { singleCollection } = useNFTCollections()
 
   useEffect(() => {}, [singleCollection])
 
   return singleCollection ? (
-    <COLLECTION_TABS>
+    <COLLECTION_TABS id="border" $height={collapse ? '81' : '55'}>
       <STYLED_SEARCH_BAR>
         <SearchBar
           className="collection-search-bar"
@@ -155,7 +157,7 @@ export const CollectionTabs = ({ filter, setFilter }) => {
           <LiveAuctionsTabContent />
         </TabPane> */}
         <TabPane tab="Open Bids" key="1">
-          <OpenBidsTabContent filter={filter} />
+          <OpenBidsTabContent filter={filter} setCollapse={setCollapse} />
         </TabPane>
         <TabPane tab="Fixed Price" key="2">
           <FixedPriceTabContent />

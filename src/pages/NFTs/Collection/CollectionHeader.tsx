@@ -9,9 +9,9 @@ import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
-const COLLECTION_HEADER = styled.div`
+const COLLECTION_HEADER = styled.div<{ $height: string }>`
   position: relative;
-  height: 45vh;
+  height: ${({ $height }) => `${$height}vh`};
   margin-top: -50px;
 
   * {
@@ -20,7 +20,7 @@ const COLLECTION_HEADER = styled.div`
 
   .collection-back-icon {
     position: absolute;
-    top: 90px;
+    top: 72px;
     left: 55px;
     transform: rotate(90deg);
     width: 36px;
@@ -185,7 +185,37 @@ const MENU_LIST = styled(Menu)`
   }
 `
 
-export const CollectionHeader = ({ setFilter, filter }) => {
+const COVER = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  position: absolute;
+  margin-top: -38px;
+`
+
+const BANNER_TOGGLE = styled.button`
+  position: absolute;
+  width: 40px;
+  height: 20px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  display: flex;
+  justify-content: center;
+  background-color: #2a2a2a;
+  border: 1px solid #2a2a2a;
+  cursor: pointer;
+
+  .collection-banner-toggle-icon {
+    margin-top: 5px;
+    height: 10px;
+    width: 10px;
+    transform: rotate(0deg);
+  }
+`
+
+export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) => {
   const history = useHistory()
   const { singleCollection, fixedPriceWithinCollection, openBidWithinCollection } = useNFTCollections()
   const [visible, setVisible] = useState(false)
@@ -205,7 +235,7 @@ export const CollectionHeader = ({ setFilter, filter }) => {
   )
 
   return (
-    <COLLECTION_HEADER>
+    <COLLECTION_HEADER $height={collapse ? '25' : '45'}>
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
       {isCollectionItemEmpty ? (
         <SkeletonCommon height="438px" borderRadius="0" />
@@ -275,6 +305,17 @@ export const CollectionHeader = ({ setFilter, filter }) => {
         </div>
       </div>
       <ShareProfile visible={visible} handleCancel={() => setVisible(false)} />
+
+      <COVER>
+        <BANNER_TOGGLE onClick={() => setCollapse(!collapse)}>
+          <img
+            className="collection-banner-toggle-icon"
+            src={`/img/assets/arrow-down.svg`}
+            style={collapse ? { transform: 'rotate(180deg)', marginTop: '5px', zIndex: 200 } : null}
+            alt="collection-banner"
+          />
+        </BANNER_TOGGLE>
+      </COVER>
     </COLLECTION_HEADER>
   )
 }

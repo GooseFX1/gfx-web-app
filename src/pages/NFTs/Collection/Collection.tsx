@@ -2,21 +2,17 @@ import { useEffect, useState, FC } from 'react'
 import { CollectionHeader } from './CollectionHeader'
 import { CollectionTabs } from './CollectionTabs'
 import styled from 'styled-components'
-import { useNFTCollections, useNFTProfile } from '../../../context'
+import { useNFTCollections, useNavCollapse } from '../../../context'
 import { useParams } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params'
-import { Loader } from '../../../components'
 
-const WRAPPED_LOADER = styled.div`
-  position: relative;
-  height: 48px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const COLLECTION_CONTAINER = styled.div<{ collapsed: boolean }>`
+  height: calc(100vh - ${({ collapsed }) => (collapsed ? '0px' : '80px')} - 121px);
 `
 
 export const Collection: FC = (): JSX.Element => {
   const params = useParams<IAppParams>()
+  const { isCollapsed } = useNavCollapse()
   const {
     singleCollection,
     fetchSingleCollection,
@@ -26,6 +22,7 @@ export const Collection: FC = (): JSX.Element => {
   } = useNFTCollections()
   const [err, setErr] = useState(false)
   const [filter, setFilter] = useState('')
+  const [collapse, setCollapse] = useState(false)
 
   useEffect(() => {
     return () => {
@@ -50,9 +47,9 @@ export const Collection: FC = (): JSX.Element => {
   return err ? (
     <h2>Something went wrong fetching the collection details</h2>
   ) : (
-    <>
-      <CollectionHeader setFilter={setFilter} filter={filter} />
-      <CollectionTabs setFilter={setFilter} filter={filter} />
-    </>
+    <COLLECTION_CONTAINER collapsed={isCollapsed}>
+      <CollectionHeader collapse={collapse} setCollapse={setCollapse} setFilter={setFilter} filter={filter} />
+      <CollectionTabs collapse={collapse} setCollapse={setCollapse} setFilter={setFilter} filter={filter} />
+    </COLLECTION_CONTAINER>
   )
 }

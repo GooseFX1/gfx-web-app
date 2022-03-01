@@ -45,7 +45,7 @@ const WRAPPED_LOADER = styled.div`
   height: 48px;
 `
 
-export const OpenBidsTabContent = ({ filter, ...rest }) => {
+export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
   const { openBidWithinCollection } = useNFTCollections()
   const { sessionUser } = useNFTProfile()
 
@@ -111,28 +111,46 @@ export const OpenBidsTabContent = ({ filter, ...rest }) => {
       }, 100),
       true
     )
+
+    return () =>
+      window.removeEventListener(
+        'scroll',
+        debounce(() => {
+          handleScroll()
+        }, 100),
+        true
+      )
   }, [])
 
   const handleScroll = () => {
-    let border = document.getElementById('border')
-    let mainHeight = window.innerHeight
-    let totalscroll = mainHeight + border.scrollTop + 100
-    // console.log(border.scrollHeight, border.scrollTop)
+    const border = document.getElementById('border')
+    if (border !== null) {
+      const mainHeight = window.innerHeight
+      const totalscroll = mainHeight + border.scrollTop + 100
+      //let former = 0
+      //console.log(border.scrollHeight, border.scrollTop)
 
-    if (Math.ceil(totalscroll) < border.scrollHeight || activePointLoader.current) {
-      setLoading(false)
-    } else {
-      addToList()
+      if (border.scrollTop < 50) {
+        setCollapse(false)
+      } else {
+        setCollapse(true)
+      }
+
+      if (Math.ceil(totalscroll) < border.scrollHeight || activePointLoader.current) {
+        setLoading(false)
+      } else {
+        addToList()
+      }
     }
   }
 
   const addToList = () => {
-    let total = activePointRef.current
-    let newLevel = activePointLevel.current + 1
+    const total = activePointRef.current
+    const newLevel = activePointLevel.current + 1
 
     if (total?.length > newLevel * 25) {
       setLoading(true)
-      let nextData = total.slice(newLevel * 25, (newLevel + 1) * 25)
+      const nextData = total.slice(newLevel * 25, (newLevel + 1) * 25)
       setShortFilteredLocalOpenBid([...activePointshortFilter.current, ...nextData])
       setLevel(newLevel)
       setLoading(false)
