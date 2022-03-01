@@ -142,7 +142,7 @@ export const CollectionTabs = ({ filter, setFilter, collapse, setCollapse }) => 
   useEffect(() => {}, [singleCollection])
 
   return singleCollection ? (
-    <COLLECTION_TABS id="border" $height={collapse ? '75' : '55'}>
+    <COLLECTION_TABS id="border" $height={collapse ? '81' : '55'}>
       <STYLED_SEARCH_BAR>
         <SearchBar
           className="collection-search-bar"

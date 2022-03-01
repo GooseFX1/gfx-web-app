@@ -20,7 +20,7 @@ const COLLECTION_HEADER = styled.div<{ $height: string }>`
 
   .collection-back-icon {
     position: absolute;
-    top: 90px;
+    top: 72px;
     left: 55px;
     transform: rotate(90deg);
     width: 36px;
@@ -143,16 +143,6 @@ const DROPDOWN = styled(Dropdown)`
     content: none;
   }
 `
-
-const COVER = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  position: absolute;
-  margin-top: -28px;
-`
 const MENU_LIST = styled(Menu)`
   background-color: ${({ theme }) => theme.bg3};
   min-width: 120px;
@@ -192,6 +182,36 @@ const MENU_LIST = styled(Menu)`
     border-width: 5px;
     transform: rotate(45deg);
     content: '';
+  }
+`
+
+const COVER = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  position: absolute;
+  margin-top: -38px;
+`
+
+const BANNER_TOGGLE = styled.button`
+  position: absolute;
+  width: 40px;
+  height: 20px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  display: flex;
+  justify-content: center;
+  background-color: #2a2a2a;
+  border: 1px solid #2a2a2a;
+  cursor: pointer;
+
+  .collection-banner-toggle-icon {
+    margin-top: 5px;
+    height: 10px;
+    width: 10px;
+    transform: rotate(0deg);
   }
 `
 
@@ -287,16 +307,14 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
       <ShareProfile visible={visible} handleCancel={() => setVisible(false)} />
 
       <COVER>
-        <Button
-          onClick={() => setCollapse(!collapse)}
-          style={{ borderRadius: '0px 0px 50% 50%', backgroundColor: '#131313' }}
-        >
+        <BANNER_TOGGLE onClick={() => setCollapse(!collapse)}>
           <img
-            className="collection-more-icon"
+            className="collection-banner-toggle-icon"
             src={`/img/assets/arrow-down.svg`}
-            style={collapse ? { transform: 'rotate(180deg)', marginTop: '2px', zIndex: 200 } : null}
+            style={collapse ? { transform: 'rotate(180deg)', marginTop: '5px', zIndex: 200 } : null}
+            alt="collection-banner"
           />
-        </Button>
+        </BANNER_TOGGLE>
       </COVER>
     </COLLECTION_HEADER>
   )
