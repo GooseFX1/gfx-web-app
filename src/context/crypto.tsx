@@ -9,25 +9,16 @@ import React, {
   useMemo,
   useState
 } from 'react'
-import { Market, Orderbook } from '@project-serum/serum'
+import { Market } from '@project-serum/serum'
 import { ENDPOINTS } from './settings'
-import { notify } from '../utils'
-import { pyth, serum } from '../web3'
+import { serum } from '../web3'
 import { Connection } from '@solana/web3.js'
-import { parsePriceData } from '@pythnetwork/client'
 
 interface ICrypto {
   decimals: number
   market?: Market
   pair: string
   type: MarketType
-}
-
-interface IPrices {
-  [x: string]: {
-    change24H?: number
-    current: number
-  }
 }
 
 export type MarketSide = 'asks' | 'bids'
@@ -37,7 +28,6 @@ interface ICryptoConfig {
   getAskSymbolFromPair: (x: string) => string
   getBidSymbolFromPair: (x: string) => string
   getSymbolFromPair: (x: string, y: 'buy' | 'sell') => string
-  prices: IPrices
   selectedCrypto: ICrypto
   setSelectedCrypto: Dispatch<SetStateAction<ICrypto>>
 }
@@ -58,16 +48,7 @@ export const FEATURED_PAIRS_LIST = [
 const CryptoContext = createContext<ICryptoConfig | null>(null)
 
 export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [prices, setPrices] = useState<IPrices>({})
   const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(FEATURED_PAIRS_LIST[0])
-
-  const formatPair = (symbol: string) => symbol.replace('/', ' / ')
-  const getAskSymbolFromPair = (pair: string): string => pair.slice(0, pair.indexOf('/'))
-  const getBidSymbolFromPair = (pair: string): string => pair.slice(pair.indexOf('/') + 1)
-  const getSymbolFromPair = (pair: string, side: 'buy' | 'sell'): string => {
-    return side === 'buy' ? getBidSymbolFromPair(pair) : getAskSymbolFromPair(pair)
-  }
-
   const connection = useMemo(() => new Connection(ENDPOINTS[2].endpoint, 'recent'), [])
 
   useEffect(() => {
@@ -79,62 +60,15 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [connection, selectedCrypto.pair])
 
-  useEffect(() => {
-    let cancelled = false
-    const subscriptions: number[] = []
+  const formatPair = (symbol: string) => symbol.replace('/', ' / ')
 
-    !cancelled &&
-      (async () => {
-        const cryptoMarkets = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'crypto')
-        for (const { pair } of cryptoMarkets) {
-          if (!cancelled) {
-            try {
-              const market = await serum.getMarket(connection, pair)
-              const current = await serum.getLatestBid(connection, pair)
-              setPrices((prevState) => ({ ...prevState, [pair]: { current } }))
-              subscriptions.push(
-                await serum.subscribeToOrderBook(connection, market, 'bids', (account, market) => {
-                  const [[current]] = Orderbook.decode(market, account.data).getL2(20)
-                  setPrices((prevState) => ({ ...prevState, [pair]: { current } }))
-                })
-              )
-            } catch (e: any) {
-              await notify({ type: 'error', message: 'Error fetching serum markets', icon: 'rate_error' }, e)
-            }
-          }
-        }
+  const getAskSymbolFromPair = (pair: string): string => pair.slice(0, pair.indexOf('/'))
 
-        try {
-          const synths = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'synth').map(({ pair }) => pair)
-          const products = await pyth.fetchProducts(connection, synths)
-          try {
-            const accounts = await pyth.fetchPriceAccounts(connection, products)
-            for (const { price, priceAccountKey, symbol } of accounts) {
-              if (price) {
-                setPrices((prevState) => ({ ...prevState, [symbol]: { current: parseFloat(price.toFixed(2)) } }))
-              }
-              subscriptions.push(
-                connection.onAccountChange(priceAccountKey, ({ data }) => {
-                  const { price } = parsePriceData(data)
-                  if (price) {
-                    setPrices((prevState) => ({ ...prevState, [symbol]: { current: parseFloat(price.toFixed(2)) } }))
-                  }
-                })
-              )
-            }
-          } catch (e: any) {
-            await notify({ type: 'error', message: 'Error fetching pyth price accounts', icon: 'rate_error' }, e)
-          }
-        } catch (e: any) {
-          await notify({ type: 'error', message: 'Error fetching pyth products', icon: 'rate_error' }, e)
-        }
-      })()
+  const getBidSymbolFromPair = (pair: string): string => pair.slice(pair.indexOf('/') + 1)
 
-    return () => {
-      cancelled = true
-      subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
-    }
-  }, [connection])
+  const getSymbolFromPair = (pair: string, side: 'buy' | 'sell'): string => {
+    return side === 'buy' ? getBidSymbolFromPair(pair) : getAskSymbolFromPair(pair)
+  }
 
   return (
     <CryptoContext.Provider
@@ -143,7 +77,6 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         getAskSymbolFromPair,
         getBidSymbolFromPair,
         getSymbolFromPair,
-        prices,
         selectedCrypto,
         setSelectedCrypto
       }}
@@ -164,7 +97,6 @@ export const useCrypto = (): ICryptoConfig => {
     getAskSymbolFromPair: context.getAskSymbolFromPair,
     getBidSymbolFromPair: context.getBidSymbolFromPair,
     getSymbolFromPair: context.getSymbolFromPair,
-    prices: context.prices,
     selectedCrypto: context.selectedCrypto,
     setSelectedCrypto: context.setSelectedCrypto
   }

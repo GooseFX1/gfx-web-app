@@ -10,6 +10,7 @@ import {
   CryptoProvider,
   useNavCollapse,
   OrderProvider,
+  PriceFeedProvider,
   OrderBookProvider,
   TradeHistoryProvider,
   useConnectionConfig,
@@ -102,7 +103,9 @@ export const Crypto: FC = () => {
 
   return (
     <CryptoProvider>
-      <CryptoContent />
+      <PriceFeedProvider>
+        <CryptoContent />
+      </PriceFeedProvider>
     </CryptoProvider>
   )
 }

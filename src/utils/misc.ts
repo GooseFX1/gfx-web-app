@@ -1,5 +1,9 @@
 import { useCallback, useState } from 'react'
 
+export const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
+
+export const getUnixTs = () => new Date().getTime() / 1000
+
 export function abbreviateNumber(num: number, fixed: number): String {
   if (!num) {
     return '0'

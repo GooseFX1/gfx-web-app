@@ -1,3 +1,4 @@
+import { sleep, getUnixTs } from '../utils/misc'
 import {
   Blockhash,
   Commitment,
@@ -20,14 +21,6 @@ interface BlockhashAndFeeCalculator {
 }
 
 export const DEFAULT_TIMEOUT = 15000
-
-export const getUnixTs = () => {
-  return new Date().getTime() / 1000
-}
-
-export function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
 
 export const envFor = (connection: Connection): string => {
   const endpoint = (connection as any)._rpcEndpoint
