@@ -34,7 +34,9 @@ export function saveChart(chartData) {
         content['content']['charts'][0]['panes'][0]['sources'].splice(i, 1)
       }
     }
-  } catch (err) {}
+  } catch (err) {
+    console.error(err)
+  }
   content['content'] = JSON.stringify(content['content'])
   content = JSON.stringify(content)
   // @ts-ignore

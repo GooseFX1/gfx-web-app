@@ -63,15 +63,17 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
 
 const CryptoContent: FC = () => {
   const { isCollapsed } = useNavCollapse()
+  // market subscription function is causing useCrypto to re-render this component too many times
   const { selectedCrypto } = useCrypto()
   const [chartsVisible, setChartsVisible] = useState(true)
+  console.log('CryptoContent Render')
 
   return (
     <WRAPPER $navCollapsed={isCollapsed}>
       <TradeHistoryProvider>
         <div>
           <Pairs />
-          <TVChartContainer symbol={selectedCrypto.pair} visible={chartsVisible} />
+          {/* <TVChartContainer symbol={selectedCrypto.pair} visible={chartsVisible} /> */}
           <History chartsVisible={chartsVisible} setChartsVisible={setChartsVisible} />
           <br />
           <br />

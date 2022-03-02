@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import * as saveLoadAdapter from './save-load-adapter'
+import { useTvDataFeed, convertResolutionToApi } from './Datafeed'
 import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget } from '../../../charting_library'
 import { useDarkMode } from '../../../context'
 import { flatten } from '../../../utils'
@@ -13,21 +14,70 @@ const CONTAINER = styled.div<{ $visible: boolean }>`
   transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;
 `
 
+export interface ChartContainerProps {
+  symbol: ChartingLibraryWidgetOptions['symbol']
+  interval: ChartingLibraryWidgetOptions['interval']
+  auto_save_delay: ChartingLibraryWidgetOptions['auto_save_delay']
+  datafeedUrl: string
+  libraryPath: ChartingLibraryWidgetOptions['library_path']
+  chartsStorageUrl: ChartingLibraryWidgetOptions['charts_storage_url']
+  chartsStorageApiVersion: ChartingLibraryWidgetOptions['charts_storage_api_version']
+  clientId: ChartingLibraryWidgetOptions['client_id']
+  userId: ChartingLibraryWidgetOptions['user_id']
+  fullscreen: ChartingLibraryWidgetOptions['fullscreen']
+  autosize: ChartingLibraryWidgetOptions['autosize']
+  studiesOverrides: ChartingLibraryWidgetOptions['studies_overrides']
+  containerId: ChartingLibraryWidgetOptions['container_id']
+  theme: string
+  timeframe: ChartingLibraryWidgetOptions['timeframe']
+}
+
 export const TVChartContainer: FC<{ symbol: string; visible: boolean }> = ({ symbol, visible }) => {
   const { mode } = useDarkMode()
-  const tvWidget = useRef<IChartingLibraryWidget | null>()
+  let datafeed = useTvDataFeed()
+  let resolution = window.localStorage.getItem('resolution') ?? '60'
+
+  try {
+    convertResolutionToApi(resolution)
+  } catch (e) {
+    resolution = '60'
+  }
+
+  const defaultProps: ChartContainerProps = {
+    symbol: symbol,
+    // @ts-ignore
+    interval: resolution ? resolution : '60',
+    auto_save_delay: 5,
+    containerId: 'tv_chart_container',
+    libraryPath: '/charting_library/',
+    chartsStorageUrl: 'https://saveload.tradingview.com',
+    chartsStorageApiVersion: '1.1',
+    clientId: 'tradingview.com',
+    userId: 'public_user_id',
+    fullscreen: false,
+    autosize: true,
+    studiesOverrides: {},
+    timeframe: '1D'
+  }
+
+  const tvWidgetRef = useRef<IChartingLibraryWidget | null>(null)
+  const chartProperties = JSON.parse(localStorage.getItem('chartproperties') || '{}')
 
   useEffect(() => {
-    const chartProperties = JSON.parse(localStorage.getItem('chartproperties') || '{}')
     const savedProperties = flatten(chartProperties, {
       restrictTo: ['scalesProperties', 'tradingProperties']
     })
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      autosize: true,
-      client_id: 'tradingview.com',
-      container: 'tv_chart_container',
-      datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed('https://serum-api.bonfida.com/tv'),
+      symbol,
+      interval: defaultProps.interval as ChartingLibraryWidgetOptions['interval'],
+      autosize: defaultProps.autosize,
+      auto_save_delay: 5,
+      container_id: defaultProps.containerId as ChartingLibraryWidgetOptions['container_id'],
+      client_id: defaultProps.clientId,
+      user_id: defaultProps.userId,
+      load_last_chart: true,
+      datafeed: datafeed,
       disabled_features: [
         'use_localstorage_for_settings',
         'volume_force_overlay',
@@ -45,9 +95,8 @@ export const TVChartContainer: FC<{ symbol: string; visible: boolean }> = ({ sym
         'header_symbol_search'
       ],
       enabled_features: ['study_templates'],
-      fullscreen: false,
-      interval: '60' as ChartingLibraryWidgetOptions['interval'],
-      library_path: '/charting_library/',
+      fullscreen: defaultProps.fullscreen,
+      library_path: defaultProps.libraryPath as string,
       locale: 'en',
       overrides: {
         ...savedProperties,
@@ -85,37 +134,33 @@ export const TVChartContainer: FC<{ symbol: string; visible: boolean }> = ({ sym
           localStorage.removeItem(key)
         }
       },
-      studies_overrides: {},
-      symbol,
-      theme: mode === 'dark' ? 'Dark' : 'Light',
-      user_id: 'public_user_id'
+      studies_overrides: defaultProps.studiesOverrides,
+      theme: mode === 'dark' ? 'Dark' : 'Light'
     }
 
-    tvWidget.current = new widget(widgetOptions)
+    const tvWidget = new widget(widgetOptions)
 
-    tvWidget.current.onChartReady(() => {
-      tvWidget.current!.headerReady().then(() => {
-        const button = tvWidget.current!.createButton()
-        button.setAttribute('title', 'Click to show a notification popup')
-        button.classList.add('apply-common-tooltip')
-        button.addEventListener('click', () =>
-          tvWidget.current!.showNoticeDialog({
-            title: 'Notification',
-            body: 'TradingView Charting Library API works correctly',
-            callback: () => {}
-          })
-        )
-        button.innerHTML = 'Check API'
-      })
+    tvWidget.onChartReady(() => {
+      tvWidgetRef.current = tvWidget
+      tvWidget
+        // @ts-ignore
+        .subscribe('onAutoSaveNeeded', () => tvWidget.saveChartToServer())
     })
+  }, [
+    mode,
+    symbol,
+    chartProperties,
+    datafeed,
+    defaultProps.autosize,
+    defaultProps.clientId,
+    defaultProps.containerId,
+    defaultProps.fullscreen,
+    defaultProps.interval,
+    defaultProps.libraryPath,
+    defaultProps.studiesOverrides,
+    defaultProps.theme,
+    defaultProps.userId
+  ])
 
-    return () => {
-      if (tvWidget.current) {
-        tvWidget.current.remove()
-        tvWidget.current = null
-      }
-    }
-  }, [mode, symbol])
-
-  return <CONTAINER id="tv_chart_container" $visible={visible} />
+  return <CONTAINER id={defaultProps.containerId} $visible={visible} />
 }
