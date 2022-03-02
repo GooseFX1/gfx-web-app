@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react'
 import { Skeleton } from 'antd'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { MarketType, useCrypto } from '../../context'
+import { MarketType, useCrypto, usePriceFeed } from '../../context'
 import { CenteredImg } from '../../styles'
 import { removeFloatingPointError } from '../../utils'
 
@@ -54,7 +54,8 @@ const Loader: FC = () => {
 }
 
 export const PairStats: FC<{ decimals: number; pair: string; type: MarketType }> = ({ decimals, pair, type }) => {
-  const { formatPair, getAskSymbolFromPair, prices, selectedCrypto, setSelectedCrypto } = useCrypto()
+  const { prices } = usePriceFeed()
+  const { formatPair, getAskSymbolFromPair, selectedCrypto, setSelectedCrypto } = useCrypto()
   const history = useHistory()
 
   const formattedPair = useMemo(() => formatPair(pair), [formatPair, pair])

@@ -4,7 +4,6 @@ import { useRouteMatch, Route, Switch, useLocation } from 'react-router-dom'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
 import NFTLandingPage from './Home/NFTHome'
-import { MyCreatedNFT } from './CreateNFT'
 import { NFTDetails } from './NFTDetails'
 import { Collectible } from './Collectible'
 import { UpLoadNFT } from './Collectible/UpLoadNFT'
@@ -18,7 +17,7 @@ import { OpenBidNFT } from './OpenBidNFT'
 import { OverlayProvider } from '../../context/overlay'
 import {
   useNFTProfile,
-  CryptoProvider,
+  PriceFeedProvider,
   NFTCollectionProvider,
   NFTDetailsProvider,
   useNavCollapse,
@@ -82,7 +81,7 @@ export const NFTs: FC = () => {
 
   return endpoint === ENDPOINTS[1].endpoint ? (
     <OverlayProvider>
-      <CryptoProvider>
+      <PriceFeedProvider>
         <NFTCollectionProvider>
           <NFTDetailsProvider>
             <BODY_NFT $navCollapsed={isCollapsed}>
@@ -124,7 +123,7 @@ export const NFTs: FC = () => {
             </BODY_NFT>
           </NFTDetailsProvider>
         </NFTCollectionProvider>
-      </CryptoProvider>
+      </PriceFeedProvider>
     </OverlayProvider>
   ) : (
     <div>waiting on network</div>

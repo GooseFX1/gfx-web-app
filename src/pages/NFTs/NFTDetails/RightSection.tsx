@@ -5,7 +5,7 @@ import { Col, Row } from 'antd'
 import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
 import { RightSectionTabs } from './RightSectionTabs'
-import { useNFTDetails, useCrypto } from '../../../context'
+import { useNFTDetails, usePriceFeed } from '../../../context'
 import { MintItemViewStatus, NFTDetailsProviderMode } from '../../../types/nft_details'
 
 //#region styles
@@ -155,7 +155,7 @@ export const RightSection: FC<{
 }> = ({ mode, status, ...rest }) => {
   const { publicKey } = useWallet()
   const { general, nftMetadata, bids, curHighestBid, ask } = useNFTDetails()
-  const { prices } = useCrypto()
+  const { prices } = usePriceFeed()
 
   const creator = useMemo(() => {
     if (nftMetadata?.collection) {

@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { Col, Row } from 'antd'
 import { MainButton, Modal, SuccessfulListingMsg } from '../../../components'
 import { notify } from '../../../utils'
-import { useNFTProfile, useCrypto, useNFTDetails, useConnectionConfig, useAccounts } from '../../../context'
+import { useNFTProfile, usePriceFeed, useNFTDetails, useConnectionConfig, useAccounts } from '../../../context'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import BN from 'bn.js'
 import {
@@ -231,7 +231,7 @@ interface IBidModal {
   buyerPrice?: number
 }
 export const BidModal: FC<IBidModal> = ({ setVisible, visible, buyerPrice }: IBidModal) => {
-  const { prices } = useCrypto()
+  const { prices } = usePriceFeed()
   const { getUIAmount } = useAccounts()
   const history = useHistory()
   const { sessionUser, fetchSessionUser } = useNFTProfile()
