@@ -3,6 +3,10 @@ import styled from 'styled-components'
 import { Modal } from 'antd'
 
 export const StyledPopupCompletedProfile = styled(Modal)`
+  * {
+    font-family: 'Montserrat';
+  }
+
   ${({ theme }) => `
   background: ${theme.bg3};
   ${theme.largeBorderRadius}
@@ -53,10 +57,11 @@ export const StyledPopupCompletedProfile = styled(Modal)`
     .continue-btn {
       width: 169px;
       height: 52px;
-      margin-left: ${theme.margin(3.5)};
-      padding: ${theme.margin(1.5)} ${theme.margin(3)} ${theme.margin(1.5)};
-      border-radius: 45px;
       color: #fff;
+      margin-left: ${theme.margin(3.5)};
+      font-size: 20px;
+      font-weight: 600;
+      border-radius: 45px;
       background-color: #9625ae;
       border: none;
       cursor: pointer;
