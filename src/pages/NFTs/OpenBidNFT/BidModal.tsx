@@ -318,7 +318,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, buyerPrice }: IBi
   }
 
   const derivePDAsForInstruction = async () => {
-    const buyerPriceInLamports = (bidTotal || 0) * LAMPORTS_PER_SOL
+    const buyerPriceInLamports = bidPrice * LAMPORTS_PER_SOL
     const buyerPrice: BN = new BN(buyerPriceInLamports)
 
     const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
@@ -475,7 +475,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, buyerPrice }: IBi
   const successfulListingMessage = (signature: any, nftMetadata: any, price: string) => ({
     message: (
       <SuccessfulListingMsg
-        title={`Successfully placed a bid on {nftMetadata?.name}!`}
+        title={`Successfully placed a bid on ${nftMetadata?.name}!`}
         itemName={nftMetadata.name}
         supportText={`Bid of: ${price}`}
         tx_url={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
