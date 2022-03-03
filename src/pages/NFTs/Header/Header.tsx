@@ -23,6 +23,7 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
 
   .search-bar {
     width: 100%;
+    max-width: 600px;
     background: ${({ theme }) => theme.bg1};
     height: 45px;
     margin-left: ${({ theme }) => theme.margin(2.5)};
@@ -238,7 +239,11 @@ export const Header = ({ setFilter, filter, filteredCollections }) => {
           )
         )}
         {!isHeaderData ? (
-          <SkeletonCommon style={{ minWidth: '600px', marginLeft: '20px' }} height="46px" borderRadius="46px" />
+          <SkeletonCommon
+            style={{ minWidth: '550px', maxWidth: '600px', marginLeft: '20px' }}
+            height="46px"
+            borderRadius="46px"
+          />
         ) : (
           <Dropdown overlay={genMenu()} trigger={['click']}>
             <SearchBar className="search-bar" setFilter={setFilter} filter={filter} />
