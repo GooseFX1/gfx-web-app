@@ -125,7 +125,7 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
   useEffect(() => {
     setTimeout(() => {
       setIsCollection(true)
-    }, 3000)
+    }, 1000)
   }, [])
 
   useEffect(() => {
