@@ -17,7 +17,7 @@ const dummyData = [
     id: 1,
     text: (
       <span>
-        Become <br /> a verfied creator
+        Become <br /> a verified creator
       </span>
     )
   },
@@ -25,7 +25,7 @@ const dummyData = [
     id: 2,
     text: (
       <span>
-        Become <br /> a verfied creator
+        Become <br /> a verified creator
       </span>
     )
   },
@@ -33,7 +33,7 @@ const dummyData = [
     id: 3,
     text: (
       <span>
-        Become <br /> a verfied creator
+        Become <br /> a verified creator
       </span>
     )
   }

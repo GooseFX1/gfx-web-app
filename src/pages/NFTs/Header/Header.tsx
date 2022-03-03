@@ -134,6 +134,10 @@ const AVATAR_NFT = styled(Image)`
   cursor: pointer;
 `
 
+const MENU_ITEM = styled(Menu.Item)`
+  color: ${({ theme }) => theme.text1};
+`
+
 export const Header = ({ setFilter, filter, filteredCollections }) => {
   const history = useHistory()
   const { sessionUser } = useNFTProfile()
@@ -146,22 +150,28 @@ export const Header = ({ setFilter, filter, filteredCollections }) => {
   useEffect(() => {
     setTimeout(() => {
       setIsHeaderData(true)
-    }, 3000)
+    }, 1000)
   }, [])
 
   useEffect(() => {
-    if (connected && publicKey) {
-      const fetchUserProfileStatus = localStorage.getItem(publicKey.toBase58())
+    setTimeout(() => {
+      const fetchUserProfileStatus = publicKey ? localStorage.getItem(publicKey.toBase58()) : undefined
       const firstTimeUser = fetchUserProfileStatus ? JSON.parse(localStorage.getItem(publicKey.toBase58())) : undefined
 
-      if (firstTimeUser && firstTimeUser.pubKey === publicKey.toBase58() && firstTimeUser.isNew === true) {
-        setTimeout(() => setVisibleCompletePopup(true), 750)
+      if (firstTimeUser && publicKey) {
+        if (firstTimeUser.pubKey === publicKey.toBase58() && firstTimeUser.isNew) {
+          setVisibleCompletePopup(true)
+        }
       }
-    }
+    }, 750)
+
     return () => {}
   }, [sessionUser])
 
-  const handleDismissModal = useCallback(() => setVisibleCompletePopup(false), [setVisibleCompletePopup])
+  const handleDismissModal = useCallback(() => {
+    setVisibleCompletePopup(false)
+    localStorage.setItem(publicKey.toBase58(), JSON.stringify({ pubKey: publicKey.toBase58(), isNew: false }))
+  }, [publicKey])
 
   const onSkip = useCallback(() => handleDismissModal(), [handleDismissModal])
   const onContinue = useCallback(() => {
@@ -200,7 +210,7 @@ export const Header = ({ setFilter, filter, filteredCollections }) => {
             </Menu.Item>
           ))
         ) : (
-          <Menu.Item key="0">No Result Found!</Menu.Item>
+          <p className="empty">No Result Found!</p>
         )}
       </Menu>
     ) : (

@@ -1,11 +1,11 @@
-import React, { useMemo, FC } from 'react'
+import React, { useEffect, useMemo, FC } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Col, Row } from 'antd'
 import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
 import { RightSectionTabs } from './RightSectionTabs'
-import { useNFTDetails, useCrypto } from '../../../context'
+import { useNFTDetails, usePriceFeed } from '../../../context'
 import { MintItemViewStatus, NFTDetailsProviderMode } from '../../../types/nft_details'
 
 //#region styles
@@ -154,8 +154,8 @@ export const RightSection: FC<{
   status: MintItemViewStatus
 }> = ({ mode, status, ...rest }) => {
   const { publicKey } = useWallet()
-  const { general, nftMetadata, bids, ask } = useNFTDetails()
-  const { prices } = useCrypto()
+  const { general, nftMetadata, bids, curHighestBid, ask } = useNFTDetails()
+  const { prices } = usePriceFeed()
 
   const creator = useMemo(() => {
     if (nftMetadata?.collection) {
@@ -172,15 +172,17 @@ export const RightSection: FC<{
     if (ask) {
       return parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL
     } else {
-      return bids.length > 0 ? parseFloat(bids[bids.length - 1].buyer_price) / LAMPORTS_PER_SOL : null
+      return curHighestBid ? parseFloat(curHighestBid.buyer_price) / LAMPORTS_PER_SOL : null
     }
-  }, [bids, ask])
+  }, [curHighestBid, ask])
 
   const marketData = useMemo(() => prices['SOL/USDC'], [prices])
 
   const fiat = `${marketData && price ? (marketData.current * price).toFixed(3) : ''} USD aprox`
   const percent = '+ 1.15 %'
   const isForCharity = false
+
+  useEffect(() => {}, [bids])
 
   if (nftMetadata === null) {
     return <div>Error loading metadata</div>
@@ -196,7 +198,7 @@ export const RightSection: FC<{
             <Col className="rs-title">
               {price ? `Current ${ask ? 'Asking Price' : 'Bid'}` : 'No Current Bids'}{' '}
               <HIGHEST_BIDDER>
-                {publicKey && bids.length > 0 && bids[bids.length - 1].wallet_key === publicKey.toBase58()
+                {publicKey && curHighestBid && curHighestBid.wallet_key === publicKey.toBase58()
                   ? '(You are the highest bidder)'
                   : ''}
               </HIGHEST_BIDDER>

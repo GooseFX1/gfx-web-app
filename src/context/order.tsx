@@ -15,6 +15,7 @@ import React, {
 import { Market, MARKETS } from '@project-serum/serum'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useCrypto } from './crypto'
+import { usePriceFeed } from './price_feed'
 import { useConnectionConfig } from './settings'
 import { useTradeHistory } from './trade_history'
 import { SUPPORTED_TOKEN_LIST } from '../constants'
@@ -101,7 +102,8 @@ const OrderContext = createContext<IOrderConfig | null>(null)
 export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { fetchAccounts } = useAccounts()
   const { connection } = useConnectionConfig()
-  const { getAskSymbolFromPair, prices, selectedCrypto } = useCrypto()
+  const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
+  const { prices } = usePriceFeed()
   const { fetchOpenOrders } = useTradeHistory()
   const wallet = useWallet()
   const [focused, setFocused] = useState<OrderInput>(undefined)

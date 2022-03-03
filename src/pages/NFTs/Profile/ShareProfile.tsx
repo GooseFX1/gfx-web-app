@@ -16,12 +16,15 @@ const STYLED_SHARE_PROFILE = styled(PopupCustom)`
       right: 35px;
       top: 35px;
       left: auto;
+      img {
+        filter: ${theme.filterCloseModalIcon};
+      }
     }
     .title {
       font-family: Montserrat;
       font-size: 25px;
       font-weight: 600;
-      color: #fff;
+      color: ${theme.textShareModal};
       margin-bottom: ${theme.margin(4)};
     }
     .social-list {
@@ -42,6 +45,7 @@ const STYLED_SHARE_PROFILE = styled(PopupCustom)`
       font-weight: 500;
       text-align: center;
       margin-top: 20px;
+      color: ${theme.textShareModal};
     }
   `}
 `

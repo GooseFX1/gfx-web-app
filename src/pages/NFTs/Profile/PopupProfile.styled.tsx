@@ -10,7 +10,7 @@ export const StyledPopupProfile = styled(Modal)`
   background: ${theme.bg3};
   ${theme.largeBorderRadius}
   width: 500px !important;
-  height: 757px;
+  
   .ant-modal-header {
     ${theme.largeBorderRadius}
     background: ${theme.bg3};
@@ -27,7 +27,7 @@ export const StyledPopupProfile = styled(Modal)`
     box-shadow: none;
   }
   .ant-modal-body {
-    padding: ${theme.margin(4)} ${theme.margin(5.5)};
+    padding: ${theme.margin(1)} ${theme.margin(5.5)} ${theme.margin(4)};
   }
   .ant-modal-close {
     top: 23px;
@@ -122,6 +122,9 @@ export const StyledPopupProfile = styled(Modal)`
 `}
 `
 export const StyledFormProfile = styled(Form)`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   ${({ theme }) => `
   margin-top: ${theme.margin(3)};
   .half-width {
@@ -138,6 +141,7 @@ export const StyledFormProfile = styled(Form)`
   }
   .hint {
     font-size: 9px;
+    margin: 8px 0 12px;
   }
   .ant-form-item-label {
     padding-bottom: 0;
@@ -185,14 +189,17 @@ export const StyledFormProfile = styled(Form)`
   .btn-save {
     margin-top: ${theme.margin(3.5)};
     width: 100%;
-    font-size: 17px;
-    font-weight: 600;
-    line-height: 50px;
     height: 53px;
     ${theme.roundedBorders}
     border: none;
     background: #9625ae;
     cursor: pointer;
+    
+    span {
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 50px;
+    }
   }
 `}
 `

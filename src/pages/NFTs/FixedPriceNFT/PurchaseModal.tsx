@@ -210,7 +210,7 @@ export const PurchaseModal: FC<{ setVisible: (x: boolean) => void; visible: bool
           />
         </Col>
         <Col className="pm-alert">{`${
-          isVerified ? 'This is a verfied creator' : 'This creator is not verfied (purchase at your own risk)'
+          isVerified ? 'This is a verified creator' : 'This creator is not verified (purchase at your own risk)'
         }`}</Col>
       </Row>
       <BUTTON

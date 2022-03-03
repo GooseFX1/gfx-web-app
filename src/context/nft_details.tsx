@@ -1,9 +1,9 @@
-import { createContext, FC, ReactNode, useCallback, useContext, useState, useReducer } from 'react'
+import { createContext, FC, ReactNode, useCallback, useContext, useState, useReducer, useMemo } from 'react'
 import { Connection } from '@solana/web3.js'
 import apiClient from '../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
-import { StringPublicKey, getParsedNftAccountsByOwner, getParsedAccountByMint } from '../web3'
-import { useConnectionConfig, ENDPOINTS } from './settings'
+import { StringPublicKey, getParsedAccountByMint } from '../web3'
+import { useConnectionConfig } from './settings'
 import { customFetch } from '../utils'
 import {
   INFTDetailsConfig,
@@ -35,11 +35,24 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const reducer = (state, newState) => ({ ...state, ...newState })
   const [userInput, setUserInput] = useReducer(reducer, initialState)
 
+  const curHighestBid: INFTBid | undefined = useMemo(() => {
+    if (bids.length === 0) return undefined
+    let hi = 0
+    let res: INFTBid | undefined
+    bids.forEach((bid: INFTBid) => {
+      const price = parseInt(bid.buyer_price)
+      if (price > hi) {
+        hi = price
+        res = bid
+      }
+    })
+    return res
+  }, [bids])
+
   const fetchGeneral = useCallback(async (id: string, conncetion: Connection): Promise<any> => {
     try {
       const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?nft_id=${id}`)
       const nft: INFTGeneralData = await res.data
-      console.log(conncetion)
 
       const parsedAccounts = await getParsedAccountByMint({
         mintAddress: nft.data[0].mint_address as StringPublicKey,
@@ -79,6 +92,24 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
       const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.BID}`, {
         bid: bidObject
       })
+
+      if (res.data.bid_id) {
+        setBids((prevBids) => [...prevBids, { ...bidObject, bid_id: res.data.bid_id }])
+      }
+
+      return res
+    } catch (err) {
+      return err
+    }
+  }, [])
+
+  const removeBidOnSingleNFT = useCallback(async (bidId: any): Promise<any> => {
+    try {
+      const res = await apiClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.BID}`, {
+        bid_id: bidId
+      })
+
+      setBids((prev) => prev.filter((bid) => bid.bid_id !== bidId))
       return res
     } catch (err) {
       return err
@@ -167,6 +198,8 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         bids,
         setBids,
         bidOnSingleNFT,
+        curHighestBid,
+        removeBidOnSingleNFT,
         ask,
         setAsk,
         nftMintingData,
@@ -201,6 +234,8 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     bids: context.bids,
     setBids: context.setBids,
     bidOnSingleNFT: context.bidOnSingleNFT,
+    curHighestBid: context.curHighestBid,
+    removeBidOnSingleNFT: context.removeBidOnSingleNFT,
     ask: context.ask,
     setAsk: context.setAsk,
     fetchGeneral: context.fetchGeneral,
