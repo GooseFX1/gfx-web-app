@@ -30,7 +30,7 @@ export const SearchBar = ({ placeholder, setFilter, filter, ...rest }: any) => {
   return (
     <SEARCH_BAR_WRAPPER {...rest}>
       <input
-        placeholder={placeholder || 'Search by nft or creator'}
+        placeholder={placeholder || 'Search by nft name'}
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
       />

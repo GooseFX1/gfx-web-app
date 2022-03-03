@@ -146,7 +146,7 @@ export const CollectionTabs = ({ filter, setFilter, collapse, setCollapse }) => 
       <STYLED_SEARCH_BAR>
         <SearchBar
           className="collection-search-bar"
-          placeholder="Search by nft or owner"
+          placeholder="Search by nft name"
           setFilter={setFilter}
           filter={filter}
         />
