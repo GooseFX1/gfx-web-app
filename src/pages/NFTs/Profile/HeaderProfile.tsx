@@ -87,7 +87,7 @@ export const HeaderProfile = ({ isExplore }: Props) => {
       <div>
         <div className="name-wrap">
           <span className="name">{sessionUser.nickname}</span>
-          {!sessionUser.is_verified && (
+          {sessionUser.is_verified && (
             <img
               className="check-icon"
               src={`/img/assets/check-icon.png`}

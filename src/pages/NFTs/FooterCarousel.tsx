@@ -39,7 +39,7 @@ const FooterCarousel = () => {
   return (
     <FOOTER_LIST_CARD>
       {nfts === undefined ? (
-        Array.apply('null', Array(10)).map((i) => (
+        Array.apply('null', Array(10)).map((num, i) => (
           <div key={i} style={{ margin: '0 24px' }}>
             {/* <FOOTER_IMAGE preview={false} src={`${window.origin}/img/assets/nft-preview.svg`} /> */}
             <SkeletonCommon width="110px" height="110px" borderRadius="10px" />

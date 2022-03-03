@@ -32,16 +32,18 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
 
   const onFinish = (profileFormData: any) => {
     setIsLoading(true)
+    const formattedProfile = { ...profileFormData, email: '' }
     if (sessionUser.user_id === null) {
-      completeProfile(profileFormData)
+      completeProfile(formattedProfile)
     } else {
-      const updatedProfile = { ...profileFormData, user_id: sessionUser.user_id }
+      const updatedProfile = { ...formattedProfile, user_id: sessionUser.user_id }
       updateProfile(updatedProfile)
     }
   }
 
   const onCancel = () => {
     form.setFieldsValue(sessionUser)
+    setIsLoading(false)
     handleCancel()
   }
 
@@ -134,64 +136,61 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
           initialValues={sessionUser}
           onFinish={onFinish}
         >
-          <div className="full-width">
-            <div className="half-width">
-              <Form.Item
-                name="nickname"
-                label="Name"
-                rules={[{ required: true, message: 'Please input create name!' }]}
-              >
-                <Input />
-              </Form.Item>
+          <section>
+            <div className="full-width">
+              <div className="half-width">
+                <Form.Item
+                  name="nickname"
+                  label="Name"
+                  rules={[{ required: true, message: 'Please input create name!' }]}
+                >
+                  <Input />
+                </Form.Item>
+              </div>
             </div>
-            <div className="half-width">
-              <Form.Item label="Email" name="email" rules={[{ required: true, message: 'Please input email!' }]}>
-                <Input />
-              </Form.Item>
-              <div className="hint">Will be used as public URL</div>
+            <Form.Item name="profile_pic_link" label="Profile Image">
+              <Input />
+              <div className="hint">Use a link from https://imgur.com etc.</div>
+            </Form.Item>
+            <Form.Item name="bio" label="Bio">
+              <Input />
+            </Form.Item>
+          </section>
+          <br />
+          <section>
+            <div className="section-label">Social media links</div>
+            <div className="full-width">
+              <div className="half-width">
+                <Form.Item label="Instagram" name="instagram_link">
+                  <Input />
+                </Form.Item>
+                <div className="hint">Will be used as public URL</div>
+              </div>
+              <div className="half-width">
+                <Form.Item label="Twitter" name="twitter_link">
+                  <Input />
+                </Form.Item>
+                <div className="hint">Will be used as public URL</div>
+              </div>
             </div>
-          </div>
-          <Form.Item name="profile_pic_link" label="Profile Image">
-            <Input />
-          </Form.Item>
-          <div className="hint" style={{ marginBottom: '12px' }}>
-            Use a link from https://imgur.com etc.
-          </div>
-          <Form.Item name="bio" label="Bio">
-            <Input />
-          </Form.Item>
-          <div className="section-label">Social media links</div>
-          <div className="full-width">
-            <div className="half-width">
-              <Form.Item label="Instagram" name="instagram_link">
-                <Input />
-              </Form.Item>
-              <div className="hint">Will be used as public URL</div>
+            <div className="full-width">
+              <div className="half-width">
+                <Form.Item label="Facebook" name="facebook_link">
+                  <Input />
+                </Form.Item>
+                <div className="hint">Will be used as public URL</div>
+              </div>
+              <div className="half-width">
+                <Form.Item label="Youtube" name="youtube_link">
+                  <Input />
+                </Form.Item>
+                <div className="hint">Will be used as public URL</div>
+              </div>
             </div>
-            <div className="half-width">
-              <Form.Item label="Twitter" name="twitter_link">
-                <Input />
-              </Form.Item>
-              <div className="hint">Will be used as public URL</div>
-            </div>
-          </div>
-          <div className="full-width">
-            <div className="half-width">
-              <Form.Item label="Facebook" name="facebook_link">
-                <Input />
-              </Form.Item>
-              <div className="hint">Will be used as public URL</div>
-            </div>
-            <div className="half-width">
-              <Form.Item label="Youtube" name="youtube_link">
-                <Input />
-              </Form.Item>
-              <div className="hint">Will be used as public URL</div>
-            </div>
-          </div>
-          <Button className="btn-save" type="primary" htmlType="submit">
-            {isLoading ? '...Saving' : 'Save changes'}
-          </Button>
+            <Button className="btn-save" type="primary" htmlType="submit">
+              {isLoading ? '...Saving' : 'Save changes'}
+            </Button>
+          </section>
         </StyledFormProfile>
       </StyledPopupProfile>
     </>

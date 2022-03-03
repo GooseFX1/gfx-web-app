@@ -90,7 +90,7 @@ export const NFTHomeSlider = () => {
   useEffect(() => {
     setTimeout(() => {
       setIsSlideData(true)
-    }, 3000)
+    }, 1000)
   }, [])
   return (
     <CAROUSEL_WRAPPER>
