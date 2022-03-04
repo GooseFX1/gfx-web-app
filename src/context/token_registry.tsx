@@ -30,6 +30,22 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
           name: 'GooseFX',
           symbol: 'GOFX'
         })
+
+        filteredList.push({
+          address: ADDRESSES.devnet.mints.gUSD.address.toString(),
+          chainId,
+          decimals: 9,
+          name: 'GFXUSDC',
+          symbol: 'GUSDC'
+        })
+
+        filteredList.push({
+          address: ADDRESSES.devnet.mints.gSOL.address.toString(),
+          chainId,
+          decimals: 9,
+          name: 'GFXSOL',
+          symbol: 'GSOL'
+        })
       }
 
       filteredList.sort(({ symbol: a }, { symbol: b }) => a.localeCompare(b))

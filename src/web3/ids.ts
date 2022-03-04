@@ -124,7 +124,7 @@ export const ADDRESSES: {
         decimals: 9
       },
       gUSD: {
-        address: new PublicKey('DCLDuMH8B97Vri5x6yHjrFjEWAZeeZarhCzV2KKbEcvw'),
+        address: new PublicKey('USDhTjkUXFfigLELiFpbBnpLmEm4aXHvdY2kDSadJDH'),
         decimals: 2
       },
       gBTC: {
@@ -168,7 +168,7 @@ export const ADDRESSES: {
         decimals: 8
       },
       gSOL: {
-        address: new PublicKey('BeRxNUMoa3Q66hhsacUu6nJcApJt3dzCAFFpYvFWeVPk'),
+        address: new PublicKey('SoLrqFDDRzCazB7n6EeL7VbKjhvmNKRpnjQxea9HRTg'),
         decimals: 8
       },
       gSRM: {
