@@ -18,6 +18,7 @@ const getSwapProgram = (wallet: WalletContextState, connection: Connection, netw
   )
 
 const LAYOUT = struct([
+  blob(8),
   publicKeyLayout('controller'),
   publicKeyLayout('mint1'),
   publicKeyLayout('mint2'),
@@ -77,13 +78,7 @@ export const swap = async (
   if (!wallet.publicKey || !wallet.signTransaction) return
 
   const program = getSwapProgram(wallet, connection, network)
-  const { owner, data } = await connection.getAccountInfo(wallet.publicKey)
-  console.log(owner + '', data)
-  const decoded = LAYOUT.decode(data)
-
-  console.log(decoded)
-
-  let inst: any = program.instruction
+  const inst: any = program.instruction
   const tx = new Transaction()
 
   const amountIn = new BN(inTokenAmount * 10 ** tokenA.decimals)
@@ -99,7 +94,11 @@ export const swap = async (
   ])
 
   //let pair_acc = program.account(pair)
-  console.log(program)
+  const { data } = await connection.getAccountInfo(pair)
+  const decoded = LAYOUT.decode(data)
+
+  const { oracle1, oracle2, oracle3, oracle4, n } = decoded
+  console.log(decoded, oracle1 + '', oracle2 + '', oracle3 + '', oracle4 + '', n)
 
   let sslIn = await PublicKey.findProgramAddress(
     [
@@ -138,6 +137,7 @@ export const swap = async (
 
   const accounts = {
     controller: new PublicKey(ADDRESSES.devnet.programs.swap.controller),
+    remainingAccounts: [oracle1, oracle2, oracle3, oracle4],
     pair,
     sslIn: sslIn[0],
     sslOut: sslOut[0],
