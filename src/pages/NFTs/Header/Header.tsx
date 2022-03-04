@@ -139,7 +139,7 @@ const MENU_ITEM = styled(Menu.Item)`
   color: ${({ theme }) => theme.text1};
 `
 
-export const Header = ({ setFilter, filter, filteredCollections }) => {
+export const Header = ({ setFilter, filter, filteredCollections, totalCollections, setTotalCollections }) => {
   const history = useHistory()
   const { sessionUser } = useNFTProfile()
   const { connected, publicKey } = useWallet()
@@ -194,6 +194,25 @@ export const Header = ({ setFilter, filter, filteredCollections }) => {
     },
     [setModalVisible, publicKey, connected]
   )
+  const handleFilterChange = (filter) => {
+    let newFilteredCol
+    if (filter.toLowerCase() == 'verified') {
+      newFilteredCol = totalCollections.filter((i) => i.is_verified)
+    } else if (filter.toLowerCase() == 'unverified') {
+      newFilteredCol = totalCollections.filter((i) => !i.is_verified)
+    } else if (filter.toLowerCase() == 'all') {
+      newFilteredCol = totalCollections
+    } else {
+      newFilteredCol = totalCollections.filter((i) =>
+        i.category_tags
+          .split(' ')
+          .map((i) => i.toLowerCase())
+          .includes(filter.toLowerCase())
+      )
+    }
+    //setFilteredCollections(newFilteredCol)
+    setTotalCollections(newFilteredCol)
+  }
 
   const genMenu = () => {
     return filter.length > 0 ? (
@@ -279,7 +298,7 @@ export const Header = ({ setFilter, filter, filteredCollections }) => {
         {!isHeaderData ? (
           <SkeletonCommon width="132px" height="45px" borderRadius="45px" style={{ marginLeft: '20px' }} />
         ) : (
-          <Categories categories={categories} className="categories" />
+          <Categories categories={categories} className="categories" onChange={(e) => handleFilterChange(e)} />
         )}
         {!isHeaderData ? (
           <SkeletonCommon width="68px" height="45px" borderRadius="12px" style={{ marginLeft: '20px' }} />
