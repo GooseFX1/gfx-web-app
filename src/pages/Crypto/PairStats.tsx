@@ -45,7 +45,8 @@ const STATS = styled.div`
   min-width: 160px;
   padding: ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(2)};
   ${({ theme }) => theme.smallBorderRadius}
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg9};
+  box-shadow: ${({ theme }) => theme.boxShadow };
   cursor: pointer;
 `
 
