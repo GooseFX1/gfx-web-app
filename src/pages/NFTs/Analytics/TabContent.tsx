@@ -115,7 +115,7 @@ const TabContent = ({ collections, collectionFilter, sort }: ITabContent) => {
   }
 
   useEffect(() => {
-    async function dyor() {
+    async function setCollectionSort() {
       let col = await Promise.all(collections.map(async (i: any) => ({ ...i, ...(await fetchDetails(i)) })))
       let cols = collections
 
@@ -152,15 +152,17 @@ const TabContent = ({ collections, collectionFilter, sort }: ITabContent) => {
       setCollectionExtras(cols)
     }
 
-    dyor()
+    setCollectionSort()
   }, [collections, sort, collectionFilter])
 
   return (
     <TAB_CONTENT>
       {collectionExtras &&
-        collectionExtras.map((collection: NFTBaseCollection, i) => (
-          <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
-        ))}
+        collectionExtras
+          .slice(0, 8)
+          .map((collection: NFTBaseCollection, i) => (
+            <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
+          ))}
     </TAB_CONTENT>
   )
 }
