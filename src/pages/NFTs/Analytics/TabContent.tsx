@@ -119,32 +119,32 @@ const TabContent = ({ collections, collectionFilter, sort }: ITabContent) => {
       let col = await Promise.all(collections.map(async (i: any) => ({ ...i, ...(await fetchDetails(i)) })))
       let cols = collections
 
-      if (collectionFilter == 'floor') {
-        if (sort == 'high') {
+      if (collectionFilter === 'floor') {
+        if (sort === 'high') {
           cols = collections.sort(
             (a, b) =>
-              col.find((d) => a.collection_id == d.collection_id).collection_floor -
-              col.find((d) => b.collection_id == d.collection_id).collection_floor
+              col.find((d) => a.collection_id === d.collection_id).collection_floor -
+              col.find((d) => b.collection_id === d.collection_id).collection_floor
           )
-        } else if (sort == 'low') {
+        } else if (sort === 'low') {
           cols = collections.sort(
             (a, b) =>
-              col.find((d) => b.collection_id == d.collection_id).collection_floor -
-              col.find((d) => a.collection_id == d.collection_id).collection_floor
+              col.find((d) => b.collection_id === d.collection_id).collection_floor -
+              col.find((d) => a.collection_id === d.collection_id).collection_floor
           )
         }
-      } else if (collectionFilter == 'volume') {
-        if (sort == 'high') {
+      } else if (collectionFilter === 'volume') {
+        if (sort === 'high') {
           cols = collections.sort(
             (a, b) =>
-              col.find((d) => a.collection_id == d.collection_id).collection_vol.weekly -
-              col.find((d) => b.collection_id == d.collection_id).collection_vol.weekly
+              col.find((d) => a.collection_id === d.collection_id).collection_vol.weekly -
+              col.find((d) => b.collection_id === d.collection_id).collection_vol.weekly
           )
-        } else if (sort == 'low') {
+        } else if (sort === 'low') {
           cols = collections.sort(
             (a, b) =>
-              col.find((d) => b.collection_id == d.collection_id).collection_vol.weekly -
-              col.find((d) => a.collection_id == d.collection_id).collection_vol.weekly
+              col.find((d) => b.collection_id === d.collection_id).collection_vol.weekly -
+              col.find((d) => a.collection_id === d.collection_id).collection_vol.weekly
           )
         }
       }
