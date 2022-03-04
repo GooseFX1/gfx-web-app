@@ -7,6 +7,7 @@ import NFTFooter from '../NFTFooter'
 import CollectionCarousel from '../CollectionCarousel'
 import { useNFTCollections } from '../../../context'
 import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
+//import { allCollections } from './mockData'
 
 const SCROLLING_CONTENT_100 = styled.div`
   overflow-y: overlay;
@@ -28,6 +29,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
   const [goingUp, setGoingUp] = useState<boolean>(false)
   const [filteredCollections, setFilteredCollections] = useState([])
   const [isAllLoading, setIsAllLoading] = useState<boolean>(false)
+  const [totalCollections, setTotalCollections] = useState(allCollections)
   const [isFeaturedLoading, setIsFeaturedLoading] = useState<boolean>(false)
   const [isUpcomingLoading, setIsUpcomingLoading] = useState<boolean>(false)
   const [search, setSearch] = useState<string>('')
@@ -44,12 +46,17 @@ const NFTLandingPage: FC = (): JSX.Element => {
     return () => {}
   }, [])
 
+  useEffect(() => {
+    setTotalCollections(allCollections)
+    return () => {}
+  }, [allCollections])
+
   const find = (col: string | string[], search: string) => {
     return col.includes(search)
   }
 
   useEffect(() => {
-    let filtered = allCollections.filter(
+    let filtered = totalCollections.filter(
       (i) =>
         find(i.collection_name.toLowerCase(), search.toLowerCase()) ||
         find(
@@ -73,12 +80,18 @@ const NFTLandingPage: FC = (): JSX.Element => {
 
   return (
     <>
-      <Header setFilter={setSearch} filter={search} filteredCollections={filteredCollections} />
+      <Header
+        setFilter={setSearch}
+        totalCollections={allCollections}
+        filter={search}
+        filteredCollections={filteredCollections}
+        setTotalCollections={setTotalCollections}
+      />
       <NFTHomeSlider />
-      <AnalyticsTabs />
+      <AnalyticsTabs allCollections={totalCollections} />
       <SCROLLING_CONTENT_100 onScroll={onScroll}>
         <CollectionCarousel
-          collections={allCollections}
+          collections={totalCollections}
           collectionType={COLLECTION_TYPES.NFT_COLLECTION}
           title="Popular Collections"
           isLaunch
