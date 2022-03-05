@@ -8,25 +8,29 @@ import { ADDRESSES, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, SYSTEM, FEE_PAYER_W
 import { createAssociatedTokenAccountIx, findAssociatedTokenAddress, signAndSendRawTransaction } from './utils'
 import { ISwapToken } from '../context'
 const SwapIDL = require('./idl/swap2.json')
-const { blob, seq, struct, u8 } = require('buffer-layout')
+const { blob, struct, u8 } = require('buffer-layout')
 
 const getSwapProgram = (wallet: WalletContextState, connection: Connection, network: WalletAdapterNetwork): Program =>
   new Program(
     SwapIDL,
-    ADDRESSES.devnet.programs.swap.address,
+    ADDRESSES[network].programs.swap.address,
     new Provider(connection, wallet as any, { commitment: 'processed' })
   )
 
 const LAYOUT = struct([
-  blob(8),
+  blob(8, 'sighash'),
   publicKeyLayout('controller'),
   publicKeyLayout('mint1'),
   publicKeyLayout('mint2'),
-  blob(1),
+  blob(1, 'bump'),
   publicKeyLayout('oracle1'),
+  u8(),
   publicKeyLayout('oracle2'),
+  u8(),
   publicKeyLayout('oracle3'),
+  u8(),
   publicKeyLayout('oracle4'),
+  u8(),
   u8('n'),
   blob(1)
 ])
@@ -40,13 +44,13 @@ export const computePoolsPDAs = async (
     programs: {
       swap: { address }
     }
-  } = ADDRESSES.devnet //ADDRESSES[network]
+  } = ADDRESSES[network] //ADDRESSES[network]
   let addresses = [new PublicKey(tokenA.address), new PublicKey(tokenB.address)].sort()
 
   const pair = await PublicKey.findProgramAddress(
     [
       new Buffer('GFX-SSL-Pair', 'utf-8'),
-      new PublicKey(ADDRESSES.devnet.programs.swap.controller).toBuffer(),
+      new PublicKey(ADDRESSES[network].programs.swap.controller).toBuffer(),
       addresses[0].toBuffer(),
       addresses[1].toBuffer()
     ],
@@ -93,51 +97,54 @@ export const swap = async (
     await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenB.address))
   ])
 
-  //let pair_acc = program.account(pair)
   const { data } = await connection.getAccountInfo(pair)
   const decoded = LAYOUT.decode(data)
 
   const { oracle1, oracle2, oracle3, oracle4, n } = decoded
-  console.log(decoded, oracle1 + '', oracle2 + '', oracle3 + '', oracle4 + '', n)
 
-  let sslIn = await PublicKey.findProgramAddress(
+  const sslIn = await PublicKey.findProgramAddress(
     [
       new Buffer('GFX-SSL', 'utf-8'),
-      new PublicKey(ADDRESSES.devnet.programs.swap.controller).toBuffer(),
+      new PublicKey(ADDRESSES[network].programs.swap.controller).toBuffer(),
       new PublicKey(tokenA.address).toBuffer()
     ],
-    ADDRESSES.devnet.programs.swap.address
+    ADDRESSES[network].programs.swap.address
   )
-  let sslOut = await PublicKey.findProgramAddress(
+  const sslOut = await PublicKey.findProgramAddress(
     [
       new Buffer('GFX-SSL', 'utf-8'),
-      new PublicKey(ADDRESSES.devnet.programs.swap.controller).toBuffer(),
+      new PublicKey(ADDRESSES[network].programs.swap.controller).toBuffer(),
       new PublicKey(tokenB.address).toBuffer()
     ],
-    ADDRESSES.devnet.programs.swap.address
+    ADDRESSES[network].programs.swap.address
   )
-  let vaultIn = await findAssociatedTokenAddress(sslIn[0], new PublicKey(tokenA.address))
-  let vaultOut = await findAssociatedTokenAddress(sslOut[0], new PublicKey(tokenB.address))
+  const vaultIn = await findAssociatedTokenAddress(sslIn[0], new PublicKey(tokenA.address))
+  const vaultOut = await findAssociatedTokenAddress(sslOut[0], new PublicKey(tokenB.address))
 
   if (!(await connection.getAccountInfo(outTokenAtaUser))) {
     tx.add(createAssociatedTokenAccountIx(new PublicKey(tokenB.address), outTokenAtaUser, wallet.publicKey))
   }
 
-  let collector = 'Cir93Do3LGMYtYnbxpQAb5Gr5R5mS2c7gTS1AZkvYA3w'
+  const collector = 'Cir93Do3LGMYtYnbxpQAb5Gr5R5mS2c7gTS1AZkvYA3w'
 
   // let walletBuffer = wallet.publicKey + ''
   // let assTokProg = await PublicKey.findProgramAddress(
   //   [new PublicKey(walletBuffer).toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), new PublicKey(tokenA.address).toBuffer()],
-  //   ADDRESSES.devnet.programs.swap.address
+  //   ADDRESSES[network].programs.swap.address
   // )
 
   // console.log(SYSVAR_RENT_PUBKEY + '', SYSVAR_RENT_PUBKEY + '' == 'SysvarRent111111111111111111111111111111111')
   // console.log(inTokenAtaUser + '', inTokenAtaUser + '' == 'Bp7pJh1UrpWeuvRHCbx788KLAhm3p2KYHJofm8PCf9K')
   // console.log(outTokenAtaUser + '', outTokenAtaUser + '' == '6Lc8K5ECpv2Rs7uWXCvsHhzKJPPqgciqtWCVA4XvKahA')
+  const remainingAccounts = [
+    { isSigner: false, isWritable: true, pubkey: oracle1 },
+    { isSigner: false, isWritable: true, pubkey: oracle2 },
+    { isSigner: false, isWritable: true, pubkey: oracle3 },
+    { isSigner: false, isWritable: true, pubkey: oracle4 }
+  ].slice(0, n)
 
   const accounts = {
-    controller: new PublicKey(ADDRESSES.devnet.programs.swap.controller),
-    remainingAccounts: [oracle1, oracle2, oracle3, oracle4],
+    controller: new PublicKey(ADDRESSES[network].programs.swap.controller),
     pair,
     sslIn: sslIn[0],
     sslOut: sslOut[0],
@@ -157,8 +164,13 @@ export const swap = async (
     rent: SYSVAR_RENT_PUBKEY
   }
 
-  tx.add(await inst.rebalanceSwap(amountIn, minimumAmountOut, { accounts }))
-  // tx.add(await inst.preSwap({ accounts }))
-  // tx.add(await inst.swap({ accounts })) //amountIn, minimumAmountOut, { accounts }
+  tx.add(
+    await inst.rebalanceSwap(amountIn, minimumAmountOut, {
+      accounts,
+      remainingAccounts
+    })
+  )
+  tx.add(await inst.preSwap({ accounts, remainingAccounts }))
+  tx.add(await inst.swap({ accounts, remainingAccounts })) //amountIn, minimumAmountOut, { accounts }
   return signAndSendRawTransaction(connection, tx, wallet)
 }

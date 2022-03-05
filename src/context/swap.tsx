@@ -170,7 +170,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         message: 'Swap successful!',
         description: `You traded ${inTokens} for at least ${outTokens}`,
         icon: 'success',
-        txid: signature
+        txid: signature,
+        network: network
       })
       setTimeout(() => wallet.publicKey && fetchAccounts(), 1000)
     } catch (e: any) {

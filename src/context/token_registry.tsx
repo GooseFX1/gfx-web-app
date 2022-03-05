@@ -35,7 +35,7 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
           address: ADDRESSES.devnet.mints.gUSD.address.toString(),
           chainId,
           decimals: 9,
-          name: 'GFXUSDC',
+          name: 'GFX USD Coin',
           symbol: 'GUSDC'
         })
 
@@ -43,7 +43,7 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
           address: ADDRESSES.devnet.mints.gSOL.address.toString(),
           chainId,
           decimals: 9,
-          name: 'GFXSOL',
+          name: 'GFX SOLANA',
           symbol: 'GSOL'
         })
       }
