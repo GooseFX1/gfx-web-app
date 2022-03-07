@@ -35,7 +35,7 @@ const WRAPPER = styled.button<{ $connected: boolean }>`
   padding: 0 ${({ theme }) => theme.margin(2)};
   ${({ theme, $connected }) => $connected && `padding-left: ${theme.margin(1.5)};`}
   ${({ theme }) => theme.flexCenter}
-  height: ${({ theme }) => theme.margin(5)};
+  height: 36px;
   border: none;
   ${({ theme }) => theme.roundedBorders}
   ${({ theme }) => theme.smallShadow}

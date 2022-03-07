@@ -77,7 +77,7 @@ export function colors(mode: string): Colors {
     bg6: mode === 'dark' ? 'black' : 'gray',
     bg7: mode === 'dark' ? '#131313' : 'gray',
     bg8: mode === 'dark' ? 'rgba(64, 64, 64, 0.22)' : 'gray',
-    bg9: mode === 'dark' ? '#2a2a2a' : white, 
+    bg9: mode === 'dark' ? '#2a2a2a' : white,
     grey1: '#434343',
     grey2: '#4e4e4e',
     grey3: '#2a2a2a',
