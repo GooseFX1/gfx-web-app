@@ -6,8 +6,9 @@ import { FEATURED_PAIRS_LIST } from '../../context'
 const WRAPPER = styled.div`
   display: -webkit-box;
   width: calc(100% + 2 * ${({ theme }) => theme.margin(3)});
-  margin: 0 -${({ theme }) => theme.margin(3)} ${({ theme }) => theme.margin(3)};
+  margin: 0 -${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(2)};
   overflow: scroll;
+  padding-bottom: 15px;
   -ms-overflow-style: none;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;

@@ -97,15 +97,72 @@ const ANALYTIC_ITEM = styled.div`
 interface ITabContent {
   collections: NFTBaseCollection[]
   collectionFilter: 'floor' | 'volume' | 'listed'
+  sort?: string | undefined
 }
 
-const TabContent = ({ collections, collectionFilter }: ITabContent) => {
+const TabContent = ({ collections, collectionFilter, sort }: ITabContent) => {
+  const [collectionExtras, setCollectionExtras] = useState([])
+  const fetchDetails = async (collection) => {
+    try {
+      const res = await fetchSingleCollectionBySalesType(
+        NFT_API_ENDPOINTS.SINGLE_COLLECTION,
+        `${collection.collection_id}`
+      )
+      return res.data
+    } catch (error) {
+      return null
+    }
+  }
+
+  useEffect(() => {
+    async function setCollectionSort() {
+      let col = await Promise.all(collections.map(async (i: any) => ({ ...i, ...(await fetchDetails(i)) })))
+      let cols = collections
+
+      if (collectionFilter === 'floor') {
+        if (sort === 'high') {
+          cols = collections.sort(
+            (a, b) =>
+              col.find((d) => a.collection_id === d.collection_id).collection_floor -
+              col.find((d) => b.collection_id === d.collection_id).collection_floor
+          )
+        } else if (sort === 'low') {
+          cols = collections.sort(
+            (a, b) =>
+              col.find((d) => b.collection_id === d.collection_id).collection_floor -
+              col.find((d) => a.collection_id === d.collection_id).collection_floor
+          )
+        }
+      } else if (collectionFilter === 'volume') {
+        if (sort === 'high') {
+          cols = collections.sort(
+            (a, b) =>
+              col.find((d) => a.collection_id === d.collection_id).collection_vol.weekly -
+              col.find((d) => b.collection_id === d.collection_id).collection_vol.weekly
+          )
+        } else if (sort === 'low') {
+          cols = collections.sort(
+            (a, b) =>
+              col.find((d) => b.collection_id === d.collection_id).collection_vol.weekly -
+              col.find((d) => a.collection_id === d.collection_id).collection_vol.weekly
+          )
+        }
+      }
+
+      setCollectionExtras(cols)
+    }
+
+    setCollectionSort()
+  }, [collections, sort, collectionFilter])
+
   return (
     <TAB_CONTENT>
-      {collections &&
-        collections.map((collection: NFTBaseCollection, i) => (
-          <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
-        ))}
+      {collectionExtras &&
+        collectionExtras
+          .slice(0, 8)
+          .map((collection: NFTBaseCollection, i) => (
+            <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
+          ))}
     </TAB_CONTENT>
   )
 }

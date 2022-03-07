@@ -37,6 +37,7 @@ export interface Colors {
   bg6: Color
   bg7: Color
   bg8: Color
+  bg9: Color
   grey1: Color
   grey2: Color
   grey3: Color
@@ -58,7 +59,7 @@ export interface Colors {
 
   // card
   cardBg: Color
-
+  boxShadow: Color
   // share modal
   textShareModal: Color
 
@@ -140,6 +141,7 @@ export interface Colors {
   secondary5: Color
 
   // other
+  buys: Color
   asks: Color
   bids: Color
   error: Color
