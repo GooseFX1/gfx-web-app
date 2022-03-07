@@ -36,7 +36,7 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
           chainId,
           decimals: 9,
           name: 'GFX USD Coin',
-          symbol: 'GUSDC'
+          symbol: 'gUSDC'
         })
 
         filteredList.push({
@@ -44,7 +44,7 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
           chainId,
           decimals: 9,
           name: 'GFX SOLANA',
-          symbol: 'GSOL'
+          symbol: 'gSOL'
         })
       }
 

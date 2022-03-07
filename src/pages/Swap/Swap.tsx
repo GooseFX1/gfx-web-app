@@ -13,6 +13,7 @@ import { addAnalytics } from '../../utils'
 const BODY = styled.div`
   position: relative;
   ${({ theme }) => theme.flexColumnNoWrap}
+  ${({ theme }) => theme.customScrollBar('6px')};
   justify-content: space-between;
   ${({ theme }) => theme.measurements('100%')}
   margin: ${({ theme }) => theme.margin(4)} 0;

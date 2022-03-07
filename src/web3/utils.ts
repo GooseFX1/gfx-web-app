@@ -48,10 +48,10 @@ export const signAndSendRawTransaction = async (
   transaction.recentBlockhash = (await connection.getRecentBlockhash('max')).blockhash
 
   signers.forEach((signer) => transaction.partialSign(signer))
-  console.log({ transaction, wallet, connection })
+
   transaction = await wallet.signTransaction(transaction)
   let tx = await connection.sendRawTransaction(transaction!.serialize())
-  console.log(tx)
+
   return tx
 }
 
