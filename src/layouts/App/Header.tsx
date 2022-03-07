@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Connect } from './Connect'
 import { More } from './More'
 import { Tabs } from './Tabs'
-import { SelectRPC } from '../../components/SelectRPC'
+import { SelectRPC } from '../../components'
 import { useDarkMode } from '../../context'
 import { SVGToGrey2, CenteredDiv } from '../../styles'
 import { useNavCollapse } from '../../context'
@@ -113,9 +113,6 @@ export const Header: FC = () => {
           </BRAND>
           <Tabs />
           <BUTTONS>
-            <RefreshWrapper href="/">
-              <img src={`/img/assets/refresh.svg`} alt="" />
-            </RefreshWrapper>
             <Connect />
             <SelectRPC />
             <More />

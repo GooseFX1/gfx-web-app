@@ -7,28 +7,19 @@ import { ArrowDropdown } from './ArrowDropdown'
 import { SpaceBetweenDiv } from '../styles'
 
 const WRAPPER = styled(SpaceBetweenDiv)`
-  padding: ${({ theme }) => theme.margin(1.5)};
-  cursor: pointer;
+  padding: 0px ${({ theme }) => theme.margin(1.5)};
+  height: 36px;
   ${({ theme }) => theme.smallBorderRadius}
   background-color: ${({ theme }) => theme.grey5};
-  > span {
+  cursor: pointer;
+
+  span {
     font-size: 12px;
-    font-weight: bold;
+    font-weight: 600;
   }
 `
 
-const ITEM = styled(MenuItem)`
-  width: 140px;
-  > a {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-
-    > span {
-      color: ${({ theme }) => theme.text1};
-    }
-  }
-`
+const ITEM = styled(MenuItem)``
 
 const Overlay = ({
   handleClick
@@ -40,7 +31,9 @@ const Overlay = ({
       {ENDPOINTS.map((point, index) => {
         return (
           <ITEM key={index} onClick={(e) => handleClick(e, point.endpoint, point.name, point.network)}>
-            <span>{`${point.name}  (${point.network})`}</span>
+            <span>
+              {point.name} {point.network.includes('devnet') && `(${point.network})`}
+            </span>
           </ITEM>
         )
       })}

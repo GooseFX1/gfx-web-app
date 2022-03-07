@@ -8,7 +8,6 @@ import { useDarkMode } from '../../context/dark_mode'
 
 const ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margin(4.5))}
-  margin-left: ${({ theme }) => theme.margin(2)};
   cursor: pointer;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
