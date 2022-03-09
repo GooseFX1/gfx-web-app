@@ -4,11 +4,16 @@ import { useSwap } from '../../context'
 
 const RATE = styled.span`
   width: 100%;
-  margin-top: ${({ theme }) => theme.margin(2)};
   font-size: 10px;
   font-weight: bold;
   text-align: left;
   color: ${({ theme }) => theme.text1};
+`
+
+const TIMESTAMP = styled.span`
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
 `
 
 export const Rate: FC = () => {
@@ -21,7 +26,7 @@ export const Rate: FC = () => {
 
   return (
     <RATE>
-      {pool.time}{' '}
+      <TIMESTAMP>{pool.time}</TIMESTAMP>
       {tokenA && tokenB && pool.outValuePerIn > 0 && (
         <span>
           (1 {tokenA.symbol} = {rate} {tokenB.symbol})

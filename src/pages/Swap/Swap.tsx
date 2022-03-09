@@ -10,18 +10,29 @@ import { useDarkMode, useSwap, SwapProvider } from '../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../styles'
 import { addAnalytics } from '../../utils'
 
+const WRAPPER = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${({ theme }) => theme.text1};
+  height: calc(100vh - 81px);
+  width: 100vw;
+`
+
 const BODY = styled.div`
   position: relative;
   ${({ theme }) => theme.flexColumnNoWrap}
-  ${({ theme }) => theme.customScrollBar('6px')};
   justify-content: space-between;
+  width: 100%;
+  margin: ${({ theme }) => theme.margin(5)} 0 ${({ theme }) => theme.margin(4)};
+  ${({ theme }) => theme.customScrollBar('6px')};
   ${({ theme }) => theme.measurements('100%')}
-  margin: ${({ theme }) => theme.margin(4)} 0;
 `
 
 const HEADER_TITLE = styled.span`
-  font-size: 20px;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 37px;
   color: ${({ theme }) => theme.text1};
 `
 
@@ -30,25 +41,13 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)<{ $iconSize: string }>`
 
   > div {
     display: flex;
-
-    > div {
-      ${({ $iconSize, theme }) => theme.measurements($iconSize)}
-      cursor: pointer;
-
-      &:first-child {
-        margin-right: ${({ theme }) => theme.margin(3)};
-      }
-
-      &:last-child {
-        padding-top: 6px;
-      }
-    }
+    align-items: center;
   }
-`
 
-const REFRESH_RATE = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(4))};
-  cursor: pointer;
+  .header-icon {
+    height: ${({ $iconSize }) => $iconSize};
+    cursor: pointer;
+  }
 `
 
 const SWITCH = styled(CenteredImg)<{ measurements: number }>`
@@ -60,24 +59,15 @@ const SWITCH = styled(CenteredImg)<{ measurements: number }>`
   cursor: pointer;
 `
 
-const WRAPPER = styled.div`
+const SWAP_CONTENT = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   align-items: center;
   min-height: 430px;
   width: 450px;
   padding: ${({ theme }) => theme.margin(4)};
   ${({ theme }) => theme.largeBorderRadius}
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg9};
   ${({ theme }) => theme.largeShadow}
-`
-
-const W = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: ${({ theme }) => theme.text1};
-  height: calc(100vh - 81px);
-  width: 100vw;
 `
 
 const SwapContent: FC = () => {
@@ -94,7 +84,7 @@ const SwapContent: FC = () => {
     setSettingsModalVisible(true)
   }
 
-  const height = '65px'
+  const height = '80px'
   const localCSS = css`
     .ant-input {
       height: ${height};
@@ -106,18 +96,18 @@ const SwapContent: FC = () => {
   `
 
   return (
-    <WRAPPER>
+    <SWAP_CONTENT>
       <Modal setVisible={setSettingsModalVisible} title="Settings" visible={settingsModalVisible}>
         <Settings />
       </Modal>
-      <HEADER_WRAPPER $iconSize="24px">
+      <HEADER_WRAPPER $iconSize="30px">
         <HEADER_TITLE>Swap</HEADER_TITLE>
         <div>
-          <REFRESH_RATE onClick={refreshRates}>
-            <img src={`/img/assets/refresh_rate.svg`} alt="" />
-          </REFRESH_RATE>
-          <CenteredImg onClick={onClick}>
-            <img src={`/img/assets/settings_${mode}_mode.svg`} alt="settings" />
+          <div onClick={refreshRates}>
+            <img src={`/img/assets/refresh_rate.svg`} alt="refresh-icon" className={'header-icon'} />
+          </div>
+          <CenteredImg onClick={onClick} style={{ margin: '8px 0 0 8px' }}>
+            <img src={`/img/assets/settings_${mode}_mode.svg`} alt="settings" className={'header-icon'} />
           </CenteredImg>
         </div>
       </HEADER_WRAPPER>
@@ -126,7 +116,7 @@ const SwapContent: FC = () => {
         <style>{localCSS}</style>
         <SwapFrom height={height} />
         <SWITCH
-          measurements={80}
+          measurements={100}
           onClick={() => {
             setFocused('from')
             switchTokens()
@@ -137,31 +127,16 @@ const SwapContent: FC = () => {
         <SwapTo height={height} />
       </BODY>
       <SwapButton />
-    </WRAPPER>
+    </SWAP_CONTENT>
   )
 }
 
 export const Swap: FC = () => {
   return (
     <SwapProvider>
-      <W>
+      <WRAPPER>
         <SwapContent />
-      </W>
+      </WRAPPER>
     </SwapProvider>
   )
-
-  /* const { endpoint, setEndpoint } = useConnectionConfig()
-
-  useEffect(() => {
-    if (endpoint !== ENDPOINTS[1].endpoint) {
-      notify({ message: 'Swap is in alpha. Switched to devnet' })
-      setEndpoint(ENDPOINTS[1].endpoint)
-    }
-  }, [endpoint, setEndpoint])
-
-  return (
-    <SwapProvider>
-      <SwapContent />
-    </SwapProvider>
-  ) */
 }

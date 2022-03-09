@@ -1,4 +1,5 @@
 import React, { FC, MouseEventHandler, useCallback, useMemo } from 'react'
+import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { MainButton } from '../../components'
 import { useAccounts, useConnectionConfig, useSwap, useWalletModal } from '../../context'
@@ -11,6 +12,12 @@ enum State {
   BalanceExceeded = 3,
   PoolNotFound = 4
 }
+
+const TEXT = styled.span`
+  font-weight: 600 !important;
+  font-size: 17px !important;
+  line-height: 21px !important;
+`
 
 export const SwapButton: FC = () => {
   const { getAmount } = useAccounts()
@@ -67,7 +74,7 @@ export const SwapButton: FC = () => {
 
   return (
     <MainButton height="50px" loading={loading} status={buttonStatus} width="170px" onClick={handleClick}>
-      <span>{content}</span>
+      <TEXT>{content}</TEXT>
     </MainButton>
   )
 }
