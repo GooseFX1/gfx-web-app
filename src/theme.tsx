@@ -79,6 +79,7 @@ export function colors(mode: string): Colors {
     bg7: mode === 'dark' ? '#131313' : 'gray',
     bg8: mode === 'dark' ? 'rgba(64, 64, 64, 0.22)' : 'gray',
     bg9: mode === 'dark' ? '#2a2a2a' : white, 
+    modalBackground: mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(96, 96, 96, 0.5)',
     bgReward: mode === 'dark' ? 'linear-gradient(115deg, #9625ae 6%, rgba(62, 53, 187, 0) 97%)' :'linear-gradient(145deg, #9625ae 6%, rgba(16, 6, 156, 0.56) 99%)',
     grey1: '#434343',
     grey2: '#4e4e4e',
@@ -115,6 +116,7 @@ export function colors(mode: string): Colors {
 
     // upload image
     uploadImageBackground: mode === 'dark' ? '#1e1e1e' : '#CACACA',
+    substractImg: mode === 'dark' ? 'invert(0%)' : 'invert(45%)',
 
     // input bg
     inputBg: mode === 'dark' ? '#131313' : '#CACACA',
