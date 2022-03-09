@@ -34,6 +34,7 @@ export const ADDRESSES: {
       }
       swap: {
         address: PublicKey
+        controller?: PublicKey
       }
     }
   }
@@ -123,7 +124,7 @@ export const ADDRESSES: {
         decimals: 9
       },
       gUSD: {
-        address: new PublicKey('DCLDuMH8B97Vri5x6yHjrFjEWAZeeZarhCzV2KKbEcvw'),
+        address: new PublicKey('USDhTjkUXFfigLELiFpbBnpLmEm4aXHvdY2kDSadJDH'),
         decimals: 2
       },
       gBTC: {
@@ -167,7 +168,7 @@ export const ADDRESSES: {
         decimals: 8
       },
       gSOL: {
-        address: new PublicKey('BeRxNUMoa3Q66hhsacUu6nJcApJt3dzCAFFpYvFWeVPk'),
+        address: new PublicKey('SoLrqFDDRzCazB7n6EeL7VbKjhvmNKRpnjQxea9HRTg'),
         decimals: 8
       },
       gSRM: {
@@ -241,7 +242,8 @@ export const ADDRESSES: {
         address: new PublicKey('BmA9Z6FjioHJPpjT39QazZyhDRUdZy2ezwx4GiDdE2u2')
       },
       swap: {
-        address: new PublicKey('A4HxR7CUzKiudjCRWajsazoSNQ4YHGU5QvE3NgB6fRLd')
+        address: new PublicKey('7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'),
+        controller: new PublicKey('DFLudW9uuQ63SAErXEQ6XjJzd2p6dpitNehdS1uJdvnq')
       }
     }
   }
