@@ -7,13 +7,12 @@ const RewardToggleContext = createContext<IRewardToggleConfig | null>(null)
 export const RewardToggleProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [mode, setMode] = useState<boolean>(false)
   const closeModalBox = (val) => {
-    if(val){
+    if (val) {
       setMode(val)
-      document.body.style.overflow = "hidden";
-    }
-    else {
+      // document.body.style.overflow = "hidden";
+    } else {
       setMode(false)
-      document.body.style.overflow = "auto";
+      // document.body.style.overflow = "auto";
     }
   }
   return (
@@ -29,11 +28,10 @@ export const RewardToggleProvider: FC<{ children: ReactNode }> = ({ children }) 
 }
 export const useRewardToggle = (): IRewardToggleConfig => {
   const context = useContext(RewardToggleContext)
-  
+
   if (!context) {
     throw new Error('Missing nav collapse context')
   }
-  const { rewardModal , rewardToggle } = context
+  const { rewardModal, rewardToggle } = context
   return { rewardModal, rewardToggle }
 }
-
