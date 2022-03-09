@@ -77,6 +77,7 @@ export function colors(mode: string): Colors {
     bg6: mode === 'dark' ? 'black' : 'gray',
     bg7: mode === 'dark' ? '#131313' : 'gray',
     bg8: mode === 'dark' ? 'rgba(64, 64, 64, 0.22)' : 'gray',
+    bg9: mode === 'dark' ? '#2a2a2a' : white,
     grey1: '#434343',
     grey2: '#4e4e4e',
     grey3: '#2a2a2a',
@@ -84,13 +85,14 @@ export function colors(mode: string): Colors {
     grey5: '#1a1a1a',
     darkButton: '#000000',
     scrollBarColor: mode === 'dark' ? '#434343' : '#e0e0e0',
+    boxShadow: mode === 'dark' ? '0 4px 4px 0 rgba(0, 0, 0, 0.25)' : '0 7px 10px 0 rgba(189, 189, 189, 0.25)',
 
     // specialty colors
     appLayoutFooterBorder: mode === 'dark' ? '#c4c4c4' : '#dedede',
     appLayoutFooterToggle: mode === 'dark' ? '#0c0c0c' : '#e1e1e1',
     cryptoOrderHeaderBorder: mode === 'dark' ? '#9f9f9f' : white,
     tabsGradients: ['#3735bb', '#5232b9', '#672fb7', '#792cb4', '#8829b1', '#9625ae'],
-    textBox: mode === 'dark' ? '#474747' : '#808080',
+    textBox: mode === 'dark' ? '#484747' : '#ABABAB',
     walletModalWallet: mode === 'dark' ? '#1e1e1e' : '#e1e1e1',
     searchbarBackground: mode === 'dark' ? '#1e1e1e' : '#fff',
     searchbarSmallBackground: mode === 'dark' ? '#404040' : 'white',
@@ -190,6 +192,7 @@ export function colors(mode: string): Colors {
     secondary5: '#3735bb',
 
     // other
+    buys: '#ac69ff',
     asks: '#9b2c2c',
     bids: '#459631',
     error: '#D60000',

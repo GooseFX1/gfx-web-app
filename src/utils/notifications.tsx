@@ -66,9 +66,13 @@ interface INotifyParams {
   txid?: string
   type?: string
   styles?: IStyles
+  network?: string
 }
 
-export const notify = async ({ description, icon, message, txid, type = 'info', styles }: INotifyParams, e?: any) => {
+export const notify = async (
+  { description, icon, message, txid, type = 'info', styles, network }: INotifyParams,
+  e?: any
+) => {
   if (e) {
     description = e.message
     if (description !== null && description !== undefined) {
@@ -84,7 +88,11 @@ export const notify = async ({ description, icon, message, txid, type = 'info', 
     description = (
       <>
         <span>{description}</span>
-        <TX_LINK href={'https://solscan.io/tx/' + txid} target="_blank" rel="noopener noreferrer">
+        <TX_LINK
+          href={'https://solscan.io/tx/' + txid + (network == 'devnet' ? '?cluster=devnet' : '')}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <span>View on Solscan</span>
         </TX_LINK>
       </>

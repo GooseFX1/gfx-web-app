@@ -67,7 +67,7 @@ const HeaderTooltip = (text: string) => {
   return (
     <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
       <Tooltip dark placement="bottomLeft" color="#000000">
-        <p>{text}</p>
+        <span>{text}</span>
       </Tooltip>
     )
   )

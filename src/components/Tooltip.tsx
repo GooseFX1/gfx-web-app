@@ -13,6 +13,7 @@ const ICON = styled(CenteredImg)`
 const TEXT = styled.span`
   font-size: 10px;
   color: white;
+  padding-bottom: 10px;
 `
 
 export const Tooltip: FC<{

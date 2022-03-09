@@ -1,7 +1,7 @@
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import BN from 'bn.js'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
-import { Connection, PublicKey, Signer, Transaction } from '@solana/web3.js'
+import { Connection, PublicKey, Signer, Transaction, sendAndConfirmTransaction } from '@solana/web3.js'
 import { getHashedName, getNameAccountKey, NameRegistryState } from '@solana/spl-name-service'
 import { useLocalStorage } from '../utils'
 
@@ -46,11 +46,13 @@ export const signAndSendRawTransaction = async (
 ) => {
   transaction.feePayer = wallet.publicKey
   transaction.recentBlockhash = (await connection.getRecentBlockhash('max')).blockhash
+
   signers.forEach((signer) => transaction.partialSign(signer))
 
   transaction = await wallet.signTransaction(transaction)
+  let tx = await connection.sendRawTransaction(transaction!.serialize())
 
-  return await connection.sendRawTransaction(transaction!.serialize())
+  return tx
 }
 
 export const getInputKey = async (input: any) => {

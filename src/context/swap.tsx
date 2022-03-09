@@ -127,7 +127,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
         try {
           const { decimals } = tokenA
-          const { pool } = await computePoolsPDAs(tokenA.symbol, tokenB.symbol, network)
+          const { pool } = await computePoolsPDAs(tokenA, tokenB, network)
           const [aAccount, bAccount] = await Promise.all([
             connection.getParsedTokenAccountsByOwner(pool, { mint: new PublicKey(tokenA.address) }),
             connection.getParsedTokenAccountsByOwner(pool, { mint: new PublicKey(tokenB.address) })
@@ -164,15 +164,18 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     try {
       const signature = await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
+
       notify({
         type: 'success',
         message: 'Swap successful!',
         description: `You traded ${inTokens} for at least ${outTokens}`,
         icon: 'success',
-        txid: signature
+        txid: signature,
+        network: network
       })
       setTimeout(() => wallet.publicKey && fetchAccounts(), 1000)
     } catch (e: any) {
+      console.log(e)
       notify({ type: 'error', message: 'Swap failed', icon: 'error' }, e)
     }
 

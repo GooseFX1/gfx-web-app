@@ -4,8 +4,10 @@ import { Tabs } from 'antd'
 import { Categories } from '../../../components'
 import { mockAnalyticsDrodown } from './mockData'
 import TabContent from './TabContent'
+import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
 import { useNFTCollections } from '../../../context'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+// import { allCollections } from '../Home/mockData'
 
 const { TabPane } = Tabs
 
@@ -99,9 +101,11 @@ const ANALYTICS_DROPDOWN = styled.div`
 `
 //#endregion
 
-const AnalyticsTabs = () => {
-  const { allCollections } = useNFTCollections()
+const AnalyticsTabs = ({ allCollections }) => {
+  //const { allCollections } = useNFTCollections()
   const [isAnalytics, setIsAnalytics] = useState(false)
+  const [mainCollections, setMainCollections] = useState(allCollections)
+  const [sort, setSort] = useState()
   useEffect(() => {
     setTimeout(() => {
       setIsAnalytics(true)
@@ -109,8 +113,15 @@ const AnalyticsTabs = () => {
   }, [])
 
   useEffect(() => {
-    console.log('recieved collections')
+    setMainCollections(allCollections)
+    setSort(undefined)
   }, [allCollections])
+
+  const handleSort = (choice) => {
+    let first = choice.split(' ')
+
+    setSort(first[0].toLowerCase())
+  }
 
   return allCollections ? (
     <ANALYTICS_TABS>
@@ -119,18 +130,22 @@ const AnalyticsTabs = () => {
         {!isAnalytics ? (
           <SkeletonCommon width="136px" height="45px" borderRadius="45px" />
         ) : (
-          <Categories categories={mockAnalyticsDrodown} className="analytics-dropwdown" />
+          <Categories
+            categories={mockAnalyticsDrodown}
+            className="analytics-dropwdown"
+            onChange={(e) => handleSort(e)}
+          />
         )}
       </ANALYTICS_DROPDOWN>
       <Tabs defaultActiveKey="1" centered>
         <TabPane tab="Floor" key="1">
-          <TabContent collections={allCollections.slice(2, 10)} collectionFilter={'floor'} />
+          <TabContent collections={mainCollections} sort={sort} collectionFilter={'floor'} />
         </TabPane>
         <TabPane tab="Volume" key="2">
-          <TabContent collections={allCollections.slice(2, 10)} collectionFilter={'volume'} />
+          <TabContent collections={mainCollections} collectionFilter={'volume'} />
         </TabPane>
         <TabPane tab="Listed NFT’S" key="3">
-          <TabContent collections={allCollections.slice(2, 10)} collectionFilter={'listed'} />
+          <TabContent collections={mainCollections} collectionFilter={'listed'} />
         </TabPane>
       </Tabs>
     </ANALYTICS_TABS>
