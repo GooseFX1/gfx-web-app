@@ -14,3 +14,4 @@ export * from './synths'
 export * from './token_registry'
 export * from './trade_history'
 export * from './wallet'
+export * from "./reward_toggle"

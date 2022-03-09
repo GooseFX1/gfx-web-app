@@ -1,13 +1,16 @@
 
 import React, {FC} from "react";
 import styled from "styled-components";
+// import Close from "/img/assets/close-white-icon.svg";
+import { useHistory } from 'react-router-dom'
+import { useRewardToggle } from "../context/reward_toggle";
 
 const REWARD_INFO_TEXT = styled.div`
     color: ${({ theme }) => theme.text1} !important;
     margin-left: 3%;
 `;
 
-const TEXT_20 = styled.span`
+const TEXT_20 = styled.div`
     font-size: 20px;
     font-weight: bold;
     color: ${({ theme }) => theme.text1} !important;
@@ -53,7 +56,7 @@ const TEXT_15 = styled.div`
 `;
 
 const REWARDS_TITLE = styled.div`
-   margin-top: 3%;
+   margin-top: 2%;
 `;
 const EARNED_GOFX = styled.div`  
   background-image: linear-gradient(264deg, #9cc034 56%, #49821c 99%);
@@ -61,12 +64,7 @@ const EARNED_GOFX = styled.div`
   background-clip: text;
   -webkit-text-fill-color: transparent;
 `;
-const UNCLAIMED_GOFX = styled.div`
-  background-image: linear-gradient(340deg,#f1c52a 56% ,#ea7e00 99%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-`;
+
 const EARNED_GOFX_CONTAINER = styled.div`
     margin-top: -6%;
     margin-left: 55%;
@@ -77,28 +75,65 @@ const UNCLAIMED_GOFX_CONTAINER = styled.div`
 `;
 const REWARD_CONTAINER = styled.span`
     position: relative;
-    top: 7vh;
+    top: 6vh;
 `;
 
 const REWARD_DETAILS_CONTAINER = styled.div`
-    margin-top: 2%;
+    margin-top: 1%;
 `;
 const ACTIVE_REWARDS = styled.span`
 
 `;
+const TEXT_40_UNCLAIMED = styled.div`
+ background-image: linear-gradient(340deg,#f1c52a 56% ,#ea7e00 99%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 50px;
+    font-weight: bold;
+    margin-top: -15px;
+`;
+
 const LINE = styled.div`
   width: 65vw;
   height: 2px;
   margin: 21px 0px 0px 2px;
   transform: rotate(0deg);
-  background-color: white;
+  background-color: ${({theme}) => theme.text1};
+`;
+
+const CLAIM_BTN = styled.div`
+    width: 111px;
+    height: 41px;
+    background-color: #3735bb;
+    border-radius: 52.5px;
+    margin-top: -3.5%;
+    margin-left: 11%;
+    position: absolute;
+    font-size: 18px;
+    cursor: pointer;
+    padding-top: 10px;
+    text-align: center;
+    font-weight: 600;
+    font-style: normal;
+    line-height: 1.1;
+    color: white !important;
+`;
+const SubstractImg = styled.div`
+    height: 38px;
+    width: 38px;
+    margin-left: 1%;
+    margin-top: -5px;
+    display: inline-block;
+    position: absolute;
+    filter: ${({theme}) => theme.substractImg};
+    background-image: url(${'/img/assets/Substract.svg'});
 `;
 
 export const RewardInfoComponent : FC = () => {
     return (
         <REWARD_INFO_TEXT>  
-        
-        <REWARDS_TITLE> <TEXT_25> Rewards </TEXT_25> <img src={'/public/img/assets/Substract.svg'} alt=""/> <img src={"../../public/img/assets/Subtract.svg"} /> </REWARDS_TITLE>
+        <REWARDS_TITLE> <TEXT_25> Rewards <SubstractImg/> </TEXT_25></REWARDS_TITLE>
         <REWARD_CONTAINER>
         <TEXT_60> 42.69 M <TEXT_50> GOFX</TEXT_50> </TEXT_60> <br/>
         <TEXT_20> Rewards over the next 6 -12 months</TEXT_20>
@@ -110,7 +145,7 @@ export const RewardInfoComponent : FC = () => {
         </EARNED_GOFX_CONTAINER>
 
         <UNCLAIMED_GOFX_CONTAINER>
-        <UNCLAIMED_GOFX> <TEXT_40>10.55</TEXT_40> <br/> </UNCLAIMED_GOFX>
+        <TEXT_40_UNCLAIMED> 10.55 </TEXT_40_UNCLAIMED> <CLAIM_BTN>CLAIM</CLAIM_BTN>
         <TEXT_20>Unclaimed GOFX</TEXT_20> 
         </UNCLAIMED_GOFX_CONTAINER>
 
@@ -138,11 +173,11 @@ export const RewardInfoComponent : FC = () => {
     );
 }
 
-const REACTANGLE = styled.a`
+const RECTANGLE = styled.a`
   width: 263px;
   height: 60px;
   flex-grow: 0;
-  margin: 5% 0 5px;
+  margin: 3% 0 5px;
   border-radius: 45px;
   background-color: #fff;
   border: none;
@@ -161,7 +196,7 @@ const STAKE_TEXT = styled.div`
     font-size: 28px;
     font-weight: 600;
     text-align: center;
-    padding-top: 35%;
+    padding-top: 25%;
 
 `;
 const APR_TEXT = styled.div`
@@ -172,27 +207,50 @@ const APR_TEXT = styled.div`
 
 const BUY_GOFX = styled.div`
   height: 17px;
-  margin-top: 45%;
+  margin-top: 40%;
   margin-left: 8%;
   font-size: 17px;
   text-align: center;
   font-weight: bold;
 
 `;
-
+const CLOSE_ICON = styled.div`  
+    margin-left: 90%;
+    padding-top: 3%;
+    width: 25px;
+  height: 25px;
+  object-fit: contain;
+    cursor: pointer;
+`;
 
 export const RewardRedirectComponent : FC = () => {
+    const history = useHistory();
+    const { rewardToggle } = useRewardToggle(); 
+
+    const handleStakeClick = () => {
+        rewardToggle(false)
+        history.push("/farm")
+    }
+
+    const closeRewardModal = () => {
+        rewardToggle(false)
+    }
+
     return (
         <> 
+        <CLOSE_ICON onClick={closeRewardModal} >
+            <img src={`${window.origin}/img/assets/close-white-icon.svg`} alt="copy_address" />
+        </CLOSE_ICON>
+
         <STAKE_TEXT>
         Stake now your <strong> GOFX </strong> <br/> and earn up to:
         </STAKE_TEXT>
         <APR_TEXT>
             200% APR  
         </APR_TEXT>
-        <REACTANGLE href="/farm">
+        <RECTANGLE onClick={handleStakeClick}>
         Stake
-        </REACTANGLE>
+        </RECTANGLE>
         <BUY_GOFX>
             Buy GOFX
         </BUY_GOFX>
