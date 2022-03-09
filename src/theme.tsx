@@ -324,6 +324,7 @@ export function theme(mode: string): DefaultTheme {
       &::-webkit-scrollbar-thumb {
         background-color: ${({ theme }) => theme.scrollBarColor};
         border-radius: 20px;
+      }
     `
   }
 }
