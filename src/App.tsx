@@ -5,6 +5,7 @@ import ThemeProvider from './theme'
 import './App.less'
 
 export default function App(): JSX.Element {
+  console.log("test", process.env)
   return (
     <DarkModeProvider>
       <ThemeProvider>
