@@ -1,4 +1,5 @@
 import { BN, Program, Provider, workspace } from '@project-serum/anchor'
+import { Buffer } from 'buffer'
 import { accountFlagsLayout, publicKeyLayout, u128, u64 } from './layout'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
@@ -40,33 +41,22 @@ export const computePoolsPDAs = async (
   tokenB: ISwapToken,
   network: WalletAdapterNetwork
 ): Promise<{ lpTokenMint: PublicKey; pool: PublicKey; pair: PublicKey }> => {
-  const {
-    programs: {
-      swap: { address }
-    }
-  } = ADDRESSES[network] //ADDRESSES[network]
-  let addresses = [new PublicKey(tokenA.address), new PublicKey(tokenB.address)].sort()
-
-  const pair = await PublicKey.findProgramAddress(
-    [
-      new Buffer('GFX-SSL-Pair', 'utf-8'),
-      new PublicKey(ADDRESSES[network].programs.swap.controller).toBuffer(),
-      addresses[0].toBuffer(),
-      addresses[1].toBuffer()
-    ],
-    address
-  )
+  // const {
+  //   programs: {
+  //     swap: { address }
+  //   }
+  // } = ADDRESSES[network] //ADDRESSES[network]
 
   //pools[[tokenA.symbol, tokenB.symbol].sort((a, b) => a.localeCompare(b)).join('/')]
   //console.log(paired)
-  const poolSeed = [new Buffer('GFXPool', 'utf-8'), new PublicKey(pair[0] + '').toBuffer()]
-  const mintSeed = [new Buffer('GFXLPMint', 'utf-8'), new PublicKey(pair[0] + '').toBuffer()]
-  const PDAs = await Promise.all([
-    PublicKey.findProgramAddress(mintSeed, address),
-    PublicKey.findProgramAddress(poolSeed, address)
-  ])
-  const [[lpTokenMint], [pool]] = PDAs
-  return { lpTokenMint, pair: new PublicKey(pair[0] + ''), pool }
+  // const poolSeed = [new Buffer('GFXPool', 'utf-8'), new PublicKey(pair[0] + '').toBuffer()]
+  // const mintSeed = [new Buffer('GFXLPMint', 'utf-8'), new PublicKey(pair[0] + '').toBuffer()]
+  // const PDAs = await Promise.all([
+  //   PublicKey.findProgramAddress(mintSeed, address),
+  //   PublicKey.findProgramAddress(poolSeed, address)
+  // ])
+  // const [[lpTokenMint], [pool]] = PDAs
+  return { lpTokenMint: null, pair: null, pool: null }
 }
 
 export const swap = async (
@@ -88,11 +78,32 @@ export const swap = async (
   const amountIn = new BN(inTokenAmount * 10 ** tokenA.decimals)
   const minimumAmountOut = new BN(outTokenAmount * 10 ** tokenB.decimals * (1 - slippage))
 
-  const { lpTokenMint, pool, pair } = await computePoolsPDAs(tokenA, tokenB, network)
-  const [inTokenAtaPool, outTokenAtaPool, lpTokenAtaFee, inTokenAtaUser, outTokenAtaUser] = await Promise.all([
-    await findAssociatedTokenAddress(pool, new PublicKey(tokenA.address)),
-    await findAssociatedTokenAddress(pool, new PublicKey(tokenB.address)),
-    await findAssociatedTokenAddress(pool, lpTokenMint),
+  const addresses = [new PublicKey(tokenA.address).toBuffer(), new PublicKey(tokenB.address).toBuffer()].sort(
+    Buffer.compare
+  )
+
+  const pairArr = await PublicKey.findProgramAddress(
+    [
+      new Buffer('GFX-SSL-Pair', 'utf-8'),
+      new PublicKey(ADDRESSES[network].programs.swap.controller).toBuffer(),
+      addresses[0],
+      addresses[1]
+    ],
+    ADDRESSES[network].programs.swap.address
+  )
+
+  const pair = pairArr[0]
+
+  //const { lpTokenMint, pool } = await computePoolsPDAs(tokenA, tokenB, network)
+  // const [inTokenAtaPool, outTokenAtaPool, lpTokenAtaFee, inTokenAtaUser, outTokenAtaUser] = await Promise.all([
+  //   await findAssociatedTokenAddress(pool, new PublicKey(tokenA.address)),
+  //   await findAssociatedTokenAddress(pool, new PublicKey(tokenB.address)),
+  //   await findAssociatedTokenAddress(pool, lpTokenMint),
+  //   await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenA.address)),
+  //   await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenB.address))
+  // ])
+
+  const [inTokenAtaUser, outTokenAtaUser] = await Promise.all([
     await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenA.address)),
     await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenB.address))
   ])
