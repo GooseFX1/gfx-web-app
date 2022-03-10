@@ -1,4 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
+import { logEvent } from 'firebase/analytics'
+import analytics from '../../analytics'
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
 import { Pools } from './Pools'
@@ -49,6 +51,13 @@ export const SynthsContent: FC = () => {
 
 export const Synths: FC = () => {
   const { endpoint, setEndpoint } = useConnectionConfig()
+
+  useEffect(() => {
+    logEvent(analytics, 'screen_view', {
+      firebase_screen: 'Synth',
+      firebase_screen_class: 'load'
+    })
+  }, [])
 
   useEffect(() => {
     if (endpoint !== ENDPOINTS[1].endpoint) {
