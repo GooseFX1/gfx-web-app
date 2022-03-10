@@ -1,4 +1,6 @@
 import React, { FC, useCallback, useState } from 'react'
+import { logEvent } from 'firebase/analytics'
+import analytics from '../analytics'
 import styled from 'styled-components'
 import { Menu, MenuItem } from '../layouts/App/shared'
 import { ENDPOINTS, useConnectionConfig } from '../context/settings'
@@ -19,8 +21,6 @@ const WRAPPER = styled(SpaceBetweenDiv)`
   }
 `
 
-const ITEM = styled(MenuItem)``
-
 const Overlay = ({
   handleClick
 }: {
@@ -30,11 +30,11 @@ const Overlay = ({
     <Menu>
       {ENDPOINTS.map((point, index) => {
         return (
-          <ITEM key={index} onClick={(e) => handleClick(e, point.endpoint, point.name, point.network)}>
+          <MenuItem key={index} onClick={(e) => handleClick(e, point.endpoint, point.name, point.network)}>
             <span>
               {point.name} {point.network.includes('devnet') && `(${point.network})`}
             </span>
-          </ITEM>
+          </MenuItem>
         )
       })}
     </Menu>
@@ -52,11 +52,17 @@ export const SelectRPC: FC = () => {
   }
   const handleClickForRPC = useCallback(
     (e, endpoint, endpointName, network) => {
+      e.preventDefault()
+      // analytics logger
+      logEvent(analytics, 'rpc-selector', {
+        endpoint: endpoint,
+        endpointName: endpointName,
+        network: network
+      })
       setEndpoint(endpoint)
       setDropdownVisible(false)
       setArrowRotation(false)
       notify({ message: `Switched to  ${endpointName} (${network}) ` })
-      e.preventDefault()
     },
     [endpoint]
   )
