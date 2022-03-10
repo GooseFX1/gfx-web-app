@@ -23,9 +23,32 @@ const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.bg9};
   border-radius: 20px 20px 0 0;
 `
-const REWARDS_BTN = styled.a`
-    padding: 14px;
+const REWARDS_BTN = styled.button`
+  background-image: linear-gradient(90deg,#9cc034 0%,#49821c 90%);
+  width: 111px;
+  height: 36px;
+  font-size: 12px;
+  font-weight: 600 !important;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px 2px rgb(0 0 0 / 25%);
+  cursor: pointer;
 `
+const REWARDS_WITH_IMG = styled.span`
+    height: 38px;
+    width: 38px;
+    margin-top: -10px;
+    display: inline-block;
+    transform:scale(0.5);
+    position: absolute;
+    background-image: url('/img/assets/Substract.svg');
+`;
+
+const REWARD_BTN_TITLE = styled.span`
+    font-weight: bold;
+    margin-left: -20%;
+`;
 
 export const RewardsButton: FC = () => {
     const { rewardToggle } = useRewardToggle(); 
@@ -34,7 +57,7 @@ export const RewardsButton: FC = () => {
     }
     return (
       <REWARDS_BTN onClick={handleModalClick}> 
-        <img src={`/img/assets/rewards.svg`} alt="" id="rewardsButton"/>
+            <REWARD_BTN_TITLE>Rewards</REWARD_BTN_TITLE><REWARDS_WITH_IMG/>  
       </REWARDS_BTN>
     );
 }
