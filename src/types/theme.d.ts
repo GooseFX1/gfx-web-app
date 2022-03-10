@@ -152,6 +152,7 @@ export interface Colors {
 
   // Filter
   filterBackIcon: Color
+  filterWhiteIcon: Color
   filterHeartIcon: Color
   filterCloseModalIcon: Color
 }

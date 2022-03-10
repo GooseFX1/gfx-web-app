@@ -63,13 +63,16 @@ const WRAPPER = styled.button<{ $connected: boolean }>`
     color: white;
   }
 `
+const SVGModeAdjust = styled.img`
+  filter: ${({theme}) => theme.filterWhiteIcon};
+`;
 
 const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ setArrowRotation }) => {
   const { disconnect, publicKey, wallet } = useWallet()
   const { setVisible: setWalletModalVisible } = useWalletModal()
 
   const base58 = useMemo(() => publicKey?.toBase58(), [publicKey])
-
+  
   return (
     <Menu>
       {base58 && (
@@ -79,7 +82,7 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
           }}
         >
           <span>Copy Address</span>
-          <img src={`${window.origin}/img/assets/copy_address.svg`} alt="copy_address" />
+          <SVGModeAdjust src={`${window.origin}/img/assets/copy_address.svg`} alt="copy_address" />
         </MenuItem>
       )}
       {wallet && (
@@ -89,7 +92,7 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
           }}
         >
           <span>Change Wallet</span>
-          <img src={`${window.origin}/img/assets/wallet.svg`} alt="change_wallet" />
+          <SVGModeAdjust src={`${window.origin}/img/assets/wallet.svg`} alt="change_wallet" />
         </MenuItem>
       )}
       {wallet && (
@@ -100,7 +103,7 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
           }}
         >
           <span>Disconnect</span>
-          <img src={`${window.origin}/img/assets/disconnect.svg`} alt="disconnect" />
+          <SVGModeAdjust src={`${window.origin}/img/assets/disconnect.svg`} alt="disconnect" />
         </MenuItem>
       )}
     </Menu>
