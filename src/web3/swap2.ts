@@ -6,7 +6,12 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { Connection, PublicKey, Transaction, TransactionSignature, SYSVAR_RENT_PUBKEY } from '@solana/web3.js'
 import { ADDRESSES, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, SYSTEM, FEE_PAYER_WITHDRAWAL_ACCT } from './ids'
-import { createAssociatedTokenAccountIx, findAssociatedTokenAddress, signAndSendRawTransaction } from './utils'
+import {
+  createAssociatedTokenAccountIx,
+  findAssociatedTokenAddress,
+  signAndSendRawTransaction,
+  simulateTransaction
+} from './utils'
 import { ISwapToken } from '../context'
 const SwapIDL = require('./idl/swap2.json')
 const { blob, struct, u8 } = require('buffer-layout')
@@ -58,8 +63,7 @@ export const computePoolsPDAs = async (
   // const [[lpTokenMint], [pool]] = PDAs
   return { lpTokenMint: null, pair: null, pool: null }
 }
-
-export const swap = async (
+export const swapCreatTX = async (
   tokenA: ISwapToken,
   tokenB: ISwapToken,
   inTokenAmount: number,
@@ -68,7 +72,7 @@ export const swap = async (
   wallet: any,
   connection: Connection,
   network: WalletAdapterNetwork
-): Promise<TransactionSignature | undefined> => {
+): Promise<Transaction> => {
   if (!wallet.publicKey || !wallet.signTransaction) return
 
   const program = getSwapProgram(wallet, connection, network)
@@ -182,6 +186,36 @@ export const swap = async (
     })
   )
   tx.add(await inst.preSwap({ accounts, remainingAccounts }))
-  tx.add(await inst.swap({ accounts, remainingAccounts })) //amountIn, minimumAmountOut, { accounts }
+  tx.add(await inst.swap({ accounts, remainingAccounts }))
+  return tx
+}
+
+export const swap = async (
+  tokenA: ISwapToken,
+  tokenB: ISwapToken,
+  inTokenAmount: number,
+  outTokenAmount: number,
+  slippage: number,
+  wallet: any,
+  connection: Connection,
+  network: WalletAdapterNetwork
+): Promise<TransactionSignature | undefined> => {
+  const tx = await swapCreatTX(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
   return signAndSendRawTransaction(connection, tx, wallet)
+}
+
+export const preSwapAmount = async (
+  tokenA: ISwapToken,
+  tokenB: ISwapToken,
+  inTokenAmount: number,
+  wallet: any,
+  connection: Connection,
+  network: WalletAdapterNetwork
+): Promise<TransactionSignature | undefined> => {
+  const tx = await swapCreatTX(tokenA, tokenB, inTokenAmount, 0, 0, wallet, connection, network)
+  const sim = await simulateTransaction(connection, tx, wallet)
+  const amountArr = sim.value.logs[17].split('+')
+  const amountOut = amountArr[amountArr.length - 1]
+
+  return amountOut
 }
