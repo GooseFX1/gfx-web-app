@@ -1,8 +1,10 @@
 import React, { useEffect, FC } from 'react'
-import { ILocationState } from '../../types/app_params.d'
 import { useRouteMatch, Route, Switch, useLocation } from 'react-router-dom'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { logEvent } from 'firebase/analytics'
+import analytics from '../../analytics'
 import styled from 'styled-components'
+import { ILocationState } from '../../types/app_params.d'
 import NFTLandingPage from './Home/NFTHome'
 import { NFTDetails } from './NFTDetails'
 import { Collectible } from './Collectible'
@@ -50,7 +52,11 @@ export const NFTs: FC = () => {
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
 
   useEffect(() => {
-    // if (location.pathname === '/NFTs/create-single' && endpoint !== ENDPOINTS[1].endpoint) {
+    logEvent(analytics, 'screen_view', {
+      firebase_screen: 'NFT Exchange',
+      firebase_screen_class: 'load'
+    })
+
     if (endpoint !== ENDPOINTS[1].endpoint) {
       setEndpoint(ENDPOINTS[1].endpoint)
       notify({ message: `Switched to ${ENDPOINTS[1].network}` })
