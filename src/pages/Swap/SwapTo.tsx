@@ -63,7 +63,7 @@ export const SwapTo: FC<{ height: string }> = ({ height }) => {
       <AmountField $balance={balance} $height={height} $value={value || undefined}>
         <Selector height={height} otherToken={tokenA} setToken={setTokenB} token={tokenB} />
         <AMOUNT>
-          <span>{outTokenAmount}</span>
+          <span>{outTokenAmount || 0}</span>
         </AMOUNT>
       </AmountField>
     </WRAPPER>
