@@ -40,6 +40,7 @@
     "echarts": "^5.1.2",
     "emailjs-com": "^3.2.0",
     "eventemitter3": "^4.0.7",
+    "firebase": "^9.6.8",
     "gfx_stocks_pool": "file:./wasm",
     "lodash.chunk": "^4.2.0",
     "lodash.orderby": "^4.6.0",
