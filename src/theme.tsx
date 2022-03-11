@@ -199,6 +199,10 @@ export function colors(mode: string): Colors {
     success: '#27AE60',
 
     // filter
+    filterWhiteIcon:
+      mode === 'lite'
+        ? 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'
+        : '#000',
     filterBackIcon:
       mode === 'dark'
         ? 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'

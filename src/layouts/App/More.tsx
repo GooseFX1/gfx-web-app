@@ -28,6 +28,9 @@ const ITEM = styled(MenuItem)`
     }
   }
 `
+const SVGModeAdjust = styled.img`
+  filter: ${({theme}) => theme.filterWhiteIcon};
+`;
 
 const Overlay = ({ theme }: { theme: string }) => {
   const target = {
@@ -44,11 +47,7 @@ const Overlay = ({ theme }: { theme: string }) => {
         <ITEM key={index}>
           <a href={target[item]} target="_blank" rel="noopener noreferrer">
             <span>{item}</span>
-            {theme === 'lite' ? (
-              <SVGToBlack src={`/img/assets/${item}_small.svg`} />
-            ) : (
-              <img src={`/img/assets/${item}_small.svg`} alt={item} />
-            )}
+            <SVGModeAdjust src={`/img/assets/${item}_small.svg`}/> 
           </a>
         </ITEM>
       ))}
