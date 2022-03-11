@@ -13,20 +13,28 @@ const AMOUNT = styled.div`
   span {
     display: block;
     padding: 0 20px 0 120px;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 100%;
+    color: white;
   }
 `
 
 const WRAPPER = styled.div`
   margin-top: ${({ theme }) => theme.margin(2)};
-
   > span {
     display: flex;
     color: ${({ theme }) => theme.text1};
   }
+`
+
+const LABEL = styled.span`
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 24px;
 `
 
 export const SwapTo: FC<{ height: string }> = ({ height }) => {
@@ -51,7 +59,7 @@ export const SwapTo: FC<{ height: string }> = ({ height }) => {
 
   return (
     <WRAPPER>
-      <span>To:</span>
+      <LABEL>To:</LABEL>
       <AmountField $balance={balance} $height={height} $value={value || undefined}>
         <Selector height={height} otherToken={tokenA} setToken={setTokenB} token={tokenB} />
         <AMOUNT>

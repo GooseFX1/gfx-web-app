@@ -4,10 +4,14 @@ export const Menu = styled.ul`
   width: fit-content;
   min-width: 140px;
   padding: ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(2)};
-  ${({ theme }) => theme.smallBorderRadius}
   list-style-type: none;
-  ${({ theme }) => theme.smallShadow}
   background-color: ${({ theme }) => theme.bg3};
+  ${({ theme }) => theme.smallBorderRadius}
+  ${({ theme }) => theme.smallShadow}
+
+  * {
+    font-family: 'Montserrat' !important;
+  }
 `
 
 export const MenuItem = styled.li`
@@ -15,13 +19,10 @@ export const MenuItem = styled.li`
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
+  padding: ${({ theme }) => theme.margin(0.7)} 0;
 
   &:hover span {
     color: ${({ theme }) => theme.secondary4};
-  }
-
-  &:not(:last-child) {
-    padding-bottom: ${({ theme }) => theme.margin(1.5)};
   }
 
   img {

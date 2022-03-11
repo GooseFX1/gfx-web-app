@@ -78,9 +78,12 @@ export function colors(mode: string): Colors {
     bg6: mode === 'dark' ? 'black' : 'gray',
     bg7: mode === 'dark' ? '#131313' : 'gray',
     bg8: mode === 'dark' ? 'rgba(64, 64, 64, 0.22)' : 'gray',
-    bg9: mode === 'dark' ? '#2a2a2a' : white, 
+    bg9: mode === 'dark' ? '#2a2a2a' : white,
     modalBackground: mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(96, 96, 96, 0.5)',
-    bgReward: mode === 'dark' ? 'linear-gradient(115deg, #9625ae 6%, rgba(62, 53, 187, 0) 97%)' :'linear-gradient(145deg, #9625ae 6%, rgba(16, 6, 156, 0.56) 99%)',
+    bgReward:
+      mode === 'dark'
+        ? 'linear-gradient(115deg, #9625ae 6%, rgba(62, 53, 187, 0) 97%)'
+        : 'linear-gradient(145deg, #9625ae 6%, rgba(16, 6, 156, 0.56) 99%)',
     grey1: '#434343',
     grey2: '#4e4e4e',
     grey3: '#2a2a2a',
@@ -95,7 +98,7 @@ export function colors(mode: string): Colors {
     appLayoutFooterToggle: mode === 'dark' ? '#0c0c0c' : '#e1e1e1',
     cryptoOrderHeaderBorder: mode === 'dark' ? '#9f9f9f' : white,
     tabsGradients: ['#3735bb', '#5232b9', '#672fb7', '#792cb4', '#8829b1', '#9625ae'],
-    textBox: mode === 'dark' ? '#474747' : '#808080',
+    textBox: mode === 'dark' ? '#484747' : '#ABABAB',
     walletModalWallet: mode === 'dark' ? '#1e1e1e' : '#e1e1e1',
     searchbarBackground: mode === 'dark' ? '#1e1e1e' : '#fff',
     searchbarSmallBackground: mode === 'dark' ? '#404040' : 'white',
@@ -328,6 +331,7 @@ export function theme(mode: string): DefaultTheme {
       &::-webkit-scrollbar-thumb {
         background-color: ${({ theme }) => theme.scrollBarColor};
         border-radius: 20px;
+      }
     `
   }
 }

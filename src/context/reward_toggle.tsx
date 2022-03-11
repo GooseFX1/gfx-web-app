@@ -6,13 +6,13 @@ interface IRewardToggleConfig {
 const RewardToggleContext = createContext<IRewardToggleConfig | null>(null)
 export const RewardToggleProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [mode, setMode] = useState<boolean>(false)
-  const closeModalBox = (val) => {
+  const closeModalBox = (val: boolean) => {
     if (val) {
       setMode(val)
-      // document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden'
     } else {
       setMode(false)
-      // document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto'
     }
   }
   return (

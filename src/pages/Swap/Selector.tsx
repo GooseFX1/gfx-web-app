@@ -2,8 +2,8 @@ import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { Input } from 'antd'
 import styled from 'styled-components'
 import { ArrowClicker, Modal } from '../../components'
-import { ISwapToken, useTokenRegistry } from '../../context'
-import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
+import { ISwapToken, useTokenRegistry, useDarkMode } from '../../context'
+import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite, SpaceEvenlyDiv } from '../../styles'
 
 const BODY = styled.div`
   height: 33vh;
@@ -14,31 +14,44 @@ const BODY = styled.div`
 const CLICKER = styled(SpaceBetweenDiv)`
   position: relative;
   width: 67%;
-
-  > div > span {
-    font-size: 16px;
-    font-weight: 600;
-  }
+  align-items: flex-center;
+  color: ${({ theme }) => theme.white};
 
   > div:not(:last-child) {
     width: 100%;
   }
+`
+const MainTokenDisplay = styled.div`
+  height: 100%;
+  width: 85% !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
-  > span {
-    font-size: 10px;
+  .text-primary {
     font-weight: 600;
+    font-size: 18px;
+    line-height: 22px;
   }
 `
 
 const CLICKER_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(2))}
-  margin-left: ${({ theme }) => theme.margin(1)};
+  ${({ theme }) => theme.measurements(theme.margin(3))}
+  margin-right: ${({ theme }) => theme.margin(1)};
   ${({ theme }) => theme.roundedBorders}
+`
+
+const EmptyMessage = styled.span`
+  align-self: center;
+  font-weight: 600;
+  font-size: 12.5px;
+  line-height: 15px;
 `
 
 const INPUT = styled.div`
   position: relative;
   margin-top: ${({ theme }) => theme.margin(2)};
+  color: ${({ theme }) => theme.text1};
 
   &:after {
     content: '';
@@ -55,6 +68,10 @@ const INPUT = styled.div`
     background-color: ${({ theme }) => theme.bg4};
     font-size: 12px;
     text-align: left;
+    color: ${({ theme }) => theme.text1};
+    &::placeholder {
+      color: ${({ theme }) => theme.text9};
+    }
   }
 `
 
@@ -68,10 +85,11 @@ const MAGNIFYING_GLASS = styled(CenteredImg)`
 const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
   position: absolute;
   height: ${({ $height }) => $height};
-  width: 40%;
+  width: 45%;
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.grey5};
   cursor: pointer;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   z-index: 1;
 `
 
@@ -83,11 +101,7 @@ const TOKEN = styled.div`
   cursor: pointer;
 
   &:hover {
-    background-color: ${({ theme }) => theme.grey5};
-
-    span {
-      color: white;
-    }
+    background-color: ${({ theme }) => theme.bg4};
   }
 
   > div:last-child {
@@ -101,10 +115,6 @@ const TOKEN = styled.div`
       font-size: 12px;
     }
   }
-
-  span {
-    color: ${({ theme }) => theme.text1};
-  }
 `
 
 const TOKEN_ICON = styled(CenteredImg)`
@@ -114,12 +124,18 @@ const TOKEN_ICON = styled(CenteredImg)`
   box-shadow: 0 4px 10px 1px rgb(0 0 0 / 20%);
 `
 
+const TOKEN_INFO = styled.div`
+  color: ${({ theme }) => theme.text1};
+`
+
 export const Selector: FC<{
   height: string
   otherToken: ISwapToken | null
   setToken: Dispatch<SetStateAction<ISwapToken | null>>
   token: ISwapToken | null
-}> = ({ height, otherToken, setToken, token }) => {
+  balance?: number
+}> = ({ height, otherToken, setToken, token, balance }) => {
+  const { mode } = useDarkMode()
   const { tokens } = useTokenRegistry()
   const [filterKeywords, setFilterKeywords] = useState('')
   const [filteredTokens, setFilteredTokens] = useState(tokens)
@@ -144,7 +160,11 @@ export const Selector: FC<{
             value={filterKeywords}
           />
           <MAGNIFYING_GLASS>
-            <SVGToWhite src={`/img/assets/magnifying_glass.svg`} alt="" />
+            {mode === 'dark' ? (
+              <SVGToWhite src={`/img/assets/magnifying_glass.svg`} alt="token-search-icon" />
+            ) : (
+              <img src={`/img/assets/magnifying_glass.svg`} alt="token-search-icon" />
+            )}
           </MAGNIFYING_GLASS>
         </INPUT>
         <BODY>
@@ -159,10 +179,10 @@ export const Selector: FC<{
               <TOKEN_ICON>
                 <img src={`/img/crypto/${symbol}.svg`} alt="" />
               </TOKEN_ICON>
-              <div>
+              <TOKEN_INFO>
                 <span>{symbol}</span>
                 <span>{name}</span>
-              </div>
+              </TOKEN_INFO>
             </TOKEN>
           ))}
         </BODY>
@@ -170,14 +190,16 @@ export const Selector: FC<{
       <SELECTOR $height={height} onClick={() => setVisible(true)}>
         <CLICKER>
           {token ? (
-            <SpaceBetweenDiv>
-              <span>{token.symbol}</span>
-              <CLICKER_ICON>
-                <img src={`/img/crypto/${token.symbol}.svg`} alt="" />
-              </CLICKER_ICON>
-            </SpaceBetweenDiv>
+            <MainTokenDisplay>
+              <SpaceEvenlyDiv>
+                <CLICKER_ICON>
+                  <img src={`/img/crypto/${token.symbol}.svg`} alt="" />
+                </CLICKER_ICON>
+                <span className={'text-primary'}>{token.symbol}</span>
+              </SpaceEvenlyDiv>
+            </MainTokenDisplay>
           ) : (
-            <span>Select a token</span>
+            <EmptyMessage>Select a token</EmptyMessage>
           )}
           <ArrowClicker />
         </CLICKER>

@@ -67,6 +67,9 @@ export interface Colors {
   // share modal
   textShareModal: Color
 
+  // share modal
+  textShareModal: Color
+
   // modal
   closeIconColor: Color
 

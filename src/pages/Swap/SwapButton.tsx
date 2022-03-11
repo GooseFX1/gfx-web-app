@@ -1,4 +1,5 @@
 import React, { FC, MouseEventHandler, useCallback, useMemo } from 'react'
+import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { MainButton } from '../../components'
 import { useAccounts, useConnectionConfig, useSwap, useWalletModal } from '../../context'
@@ -12,6 +13,12 @@ enum State {
   PoolNotFound = 4
 }
 
+const TEXT = styled.span`
+  font-weight: 600 !important;
+  font-size: 17px !important;
+  line-height: 21px !important;
+`
+
 export const SwapButton: FC = () => {
   const { getAmount } = useAccounts()
   const { network } = useConnectionConfig()
@@ -21,13 +28,14 @@ export const SwapButton: FC = () => {
 
   const state = useMemo(() => {
     const { pools } = ADDRESSES[network]
+    console.log(pools, network)
 
     if (!wallet || !publicKey) {
       return State.Connect
     } else if (!tokenA || !tokenB) {
       return State.Enter
-    } else if (!pools[[tokenA.symbol, tokenB.symbol].sort((a, b) => a.localeCompare(b)).join('/')]?.address) {
-      return State.PoolNotFound
+      // } else if (!pools[[tokenA.symbol, tokenB.symbol].sort((a, b) => a.localeCompare(b)).join('/')]?.address) {
+      //   return State.PoolNotFound
     } else if (inTokenAmount === 0) {
       return State.Enter
     } else if (inTokenAmount > parseFloat(getAmount(tokenA.address))) {
@@ -43,8 +51,8 @@ export const SwapButton: FC = () => {
       case State.Connect:
         return 'action'
       case State.BalanceExceeded:
-      case State.PoolNotFound:
-        return 'not-allowed'
+      // case State.PoolNotFound:
+      //   return 'not-allowed'
       default:
         return 'initial'
     }
@@ -66,7 +74,7 @@ export const SwapButton: FC = () => {
 
   return (
     <MainButton height="50px" loading={loading} status={buttonStatus} width="170px" onClick={handleClick}>
-      <span>{content}</span>
+      <TEXT>{content}</TEXT>
     </MainButton>
   )
 }

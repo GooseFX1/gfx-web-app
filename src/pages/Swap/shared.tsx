@@ -3,15 +3,15 @@ import styled from 'styled-components'
 export const AmountField = styled.div<{ $balance: number; $height: string; $value?: string }>`
   position: relative;
   height: ${({ $height }) => $height};
-  margin-top: ${({ theme }) => theme.margin(2)};
+  margin-top: ${({ theme }) => theme.margin(1)};
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => theme.textBox};
 
   &:before {
     content: 'Balance: ${({ $balance }) => $balance}';
     position: absolute;
-    right: ${({ theme }) => theme.margin(2)};
-    top: -${({ theme }) => theme.margin(2.5)};
+    right: 0;
+    top: -${({ theme }) => theme.margin(3)};
     ${({ theme }) => theme.mainText}
     color: ${({ theme }) => theme.text1};
     font-size: 11px;
@@ -43,5 +43,11 @@ export const AmountField = styled.div<{ $balance: number; $height: string; $valu
     border: none;
     font-size: 16px;
     text-align: right;
+  }
+
+  .swap-input {
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
   }
 `
