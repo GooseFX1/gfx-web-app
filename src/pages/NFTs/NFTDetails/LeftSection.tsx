@@ -58,6 +58,31 @@ const LEFT_SECTION = styled.div`
   `}
 `
 
+const NFT_CONTAINER = styled.div`
+  position: relative;
+`
+
+const SHARE_BUTTON = styled.button`
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background: black;
+  border: transparent;
+  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+
+  &:hover {
+    background-color: black;
+  }
+
+  img {
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+`
+
 export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...rest }) => {
   const { general, nftMetadata, totalLikes } = useNFTDetails()
   const [isFavorited, setIsFavorited] = useState(false)
@@ -88,7 +113,12 @@ export const LeftSection: FC<{ mode: NFTDetailsProviderMode }> = ({ mode, ...res
 
   return (
     <LEFT_SECTION {...rest}>
-      <img className="ls-image" src={general?.image_url || nftMetadata?.image} alt="" />
+      <img className="ls-image" src={general?.image_url || nftMetadata?.image} alt="the-nft" />
+      <NFT_CONTAINER>
+        <SHARE_BUTTON>
+          <img src={`/img/assets/share.svg`} alt="share-icon" />
+        </SHARE_BUTTON>
+      </NFT_CONTAINER>
       <div className="ls-bottom-panel">
         <Row justify={mode !== 'mint-item-view' ? 'space-between' : 'start'} align="middle" className="ls-favorite">
           <Col>{isShowReamingTime && <div className="ls-end-text">Auction ends in:</div>}</Col>
