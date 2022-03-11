@@ -125,19 +125,20 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
 
       .rst-footer-button {
         flex: 1;
-        margin-right: ${theme.margin(1.5)};
         color: #fff;
         white-space: nowrap;
-
-        cursor: pointer;
-        width: ;
-        height: 60px;
+        height: 55px;
         ${theme.flexCenter}
         font-size: 17px;
         font-weight: 600;
         border: none;
         border-radius: 29px;
         padding: 0 ${theme.margin(2)};
+        cursor: pointer;
+
+        &:not(:last-child) {
+          margin-right: ${theme.margin(1.5)};
+        }
 
         &:hover {
           opacity: 0.8;
@@ -155,8 +156,8 @@ const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
           background-color: #bb3535;
         }
 
-        &-cancel {
-          background-color: ${theme.secondary2};
+        &-flat {
+          background-color: transparent;
         }
       }
 
@@ -232,8 +233,15 @@ export const RightSectionTabs: FC<{
   const { publicKey, sendTransaction } = wallet
   const { mint_address, owner, token_account } = general
   const [bidModal, setBidModal] = useState<boolean>(false)
+  const [isBuying, setIsBuying] = useState<string>()
   const [removeAskModal, setRemoveAskModal] = useState<boolean>(false)
   const [removeBidModal, setRemoveBidModal] = useState<boolean>(false)
+
+  const enum NFT_ACTIONS {
+    BID = 'bid',
+    BUY = 'buy',
+    CANCEL_BID = 'cancel-bid'
+  }
 
   const userRecentBid: INFTBid | undefined = useMemo(() => {
     if (bids.length === 0 || !wallet.publicKey) return undefined
@@ -329,10 +337,20 @@ export const RightSectionTabs: FC<{
   }
 
   const handleSetBid = (type: string) => {
-    if (type === 'cancel-bid') {
-      setRemoveBidModal(true)
-    } else {
-      setBidModal(true)
+    switch (type) {
+      case NFT_ACTIONS.BID:
+        setIsBuying(undefined)
+        setBidModal(true)
+        break
+      case NFT_ACTIONS.BUY:
+        setBidModal(true)
+        setIsBuying(ask.buyer_price)
+        break
+      case NFT_ACTIONS.CANCEL_BID:
+        setRemoveBidModal(true)
+        break
+      default:
+        return null
     }
   }
 
@@ -429,7 +447,7 @@ export const RightSectionTabs: FC<{
         </REMOVE_MODAL>
       )
     } else if (bidModal) {
-      return <BidModal visible={bidModal} setVisible={setBidModal} />
+      return <BidModal visible={bidModal} setVisible={setBidModal} purchasePrice={isBuying} />
     }
   }
 
@@ -465,21 +483,26 @@ export const RightSectionTabs: FC<{
               </button>
             ) : (
               <SpaceBetweenDiv style={{ flexGrow: 1 }}>
-                <button onClick={(e) => handleSetBid('bid')} className={'rst-footer-button rst-footer-button-bid'}>
-                  Place Bid
-                </button>
-                {ask && (
-                  <button onClick={(e) => handleSetBid('buy')} className="rst-footer-button rst-footer-button-buy">
-                    Buy Now
-                  </button>
-                )}
-
                 {bids.find((bid) => bid.wallet_key === publicKey.toBase58()) && (
                   <button
-                    onClick={(e) => handleSetBid('cancel-bid')}
-                    className="rst-footer-button rst-footer-button-cancel"
+                    onClick={(e) => handleSetBid(NFT_ACTIONS.CANCEL_BID)}
+                    className="rst-footer-button rst-footer-button-flat"
                   >
                     Cancel Last Bid
+                  </button>
+                )}
+                <button
+                  onClick={(e) => handleSetBid(NFT_ACTIONS.BID)}
+                  className={'rst-footer-button rst-footer-button-bid'}
+                >
+                  Bid
+                </button>
+                {ask && (
+                  <button
+                    onClick={(e) => handleSetBid(NFT_ACTIONS.BUY)}
+                    className="rst-footer-button rst-footer-button-buy"
+                  >
+                    Buy Now
                   </button>
                 )}
               </SpaceBetweenDiv>
@@ -489,10 +512,6 @@ export const RightSectionTabs: FC<{
               Complete profile
             </button>
           )}
-
-          <div className="rst-footer-share-button">
-            <img src={`/img/assets/share.svg`} alt="share-icon" />
-          </div>
         </SpaceBetweenDiv>
       )}
     </RIGHT_SECTION_TABS>
