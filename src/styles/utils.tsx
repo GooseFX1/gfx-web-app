@@ -21,6 +21,11 @@ export const SpaceBetweenDiv = styled.div`
   align-items: center;
 `
 
+export const AlignCenterDiv = styled.div`
+  display: flex;
+  align-items: center;
+`
+
 export const SpaceEvenlyDiv = styled.div`
   display: flex;
   justify-content: space-evenly;
