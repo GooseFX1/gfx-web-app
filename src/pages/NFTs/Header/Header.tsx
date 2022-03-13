@@ -139,7 +139,6 @@ const MENU_ITEM = styled(Menu.Item)`
   color: ${({ theme }) => theme.text1};
 `
 
-
 export const Header = ({ setFilter, filter, filteredCollections, totalCollections, setTotalCollections }) => {
   const history = useHistory()
   const { sessionUser } = useNFTProfile()
