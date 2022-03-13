@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import { Connect } from './Connect'
 import { More } from './More'
@@ -35,10 +35,6 @@ const BRAND = styled.a`
     ${({ theme }) => theme.measurements('inherit')}
     object-fit: contain;
   }
-`
-
-const RewardsModalBox = styled.a`
-  padding: 14px;
 `
 
 const BUTTONS = styled(CenteredDiv)`
