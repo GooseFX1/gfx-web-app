@@ -15,11 +15,12 @@ const PREVIEW_CONTAINER = styled.div`
   aspect-ratio: 1;
   align-self: flex-end;
   padding: ${({ theme }) => theme.margin(2.5)} ${({ theme }) => theme.margin(5)};
-  border-radius: 20px;
+  ${({ theme }) => theme.largeBorderRadius};
 
   .ant-upload-list-picture-card-container {
     width: 100%;
     height: auto;
+    margin: 0px;
   }
   .ant-upload-list-picture-card .ant-upload-list-item-info {
     &:before {
@@ -30,12 +31,15 @@ const PREVIEW_CONTAINER = styled.div`
     display: none !important;
   }
   .ant-upload-list {
-    border: none;
-    border-radius: 10px;
     position: relative;
     width: 100%;
     height: auto;
-    margin: ${({ theme }) => theme.margin(1)} auto;
+    max-height: 375px;
+    max-width: 375px;
+    margin: 0 auto;
+    border: none;
+    ${({ theme }) => theme.largeBorderRadius};
+    overflow: hidden;
   }
   .ant-upload-list-item {
     padding: 0 !important;
@@ -57,6 +61,7 @@ const IMAGE_CONTAINER = styled.div`
     width: 140px;
     height: 140px;
   }
+
   .url-preview {
     width: 100%;
     height: auto;
