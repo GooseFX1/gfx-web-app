@@ -107,25 +107,24 @@ const BUTTON_SELECTION = styled.div`
   }
 `
 
-const CREATE = styled(ButtonWrapper)`
+const CTA_BTN = styled(ButtonWrapper)`
   justify-content: center;
   height: 45px;
   width: 132px;
-  background-color: ${({ theme }) => theme.secondary5};
   margin-left: ${({ theme }) => theme.margin(1.5)};
   span {
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 21px;
     color: white;
   }
 `
-const SELL = styled(ButtonWrapper)`
-  justify-content: center;
-  height: 45px;
-  width: 132px;
+
+const CREATE = styled(CTA_BTN)`
+  background-color: ${({ theme }) => theme.secondary5};
+`
+const SELL = styled(CTA_BTN)`
   background-color: #bb3535;
-  margin-left: ${({ theme }) => theme.margin(2)};
-  span {
-    color: white;
-  }
 `
 
 const AVATAR_NFT = styled(Image)`
@@ -277,7 +276,7 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
           </div>
         ) : connected && publicKey ? (
           <div style={{ display: 'flex' }}>
-            <SELL onClick={() => console.log('got to selling')}>
+            <SELL onClick={goProfile}>
               <span>Sell</span>
             </SELL>
             <CREATE onClick={onCreateCollectible}>
