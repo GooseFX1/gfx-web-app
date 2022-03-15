@@ -148,7 +148,20 @@ export const swapCreatTX = async (
   // console.log(outTokenAtaUser + '', outTokenAtaUser + '' == '6Lc8K5ECpv2Rs7uWXCvsHhzKJPPqgciqtWCVA4XvKahA')
 
   try {
-    const { data } = await connection.getAccountInfo(pair)
+    const pairData = await connection.getAccountInfo(pair)
+    if (!pairData || !pairData.data) throw new Error('Token Pair do not exist yet.')
+
+    const tokenAccountA = await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenA.address))
+    if (!(await connection.getParsedAccountInfo(tokenAccountA)).value) {
+      tx.add(createAssociatedTokenAccountIx(new PublicKey(tokenA.address), tokenAccountA, wallet.publicKey))
+    }
+
+    const tokenAccountB = await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenB.address))
+    if (!(await connection.getParsedAccountInfo(tokenAccountB)).value) {
+      tx.add(createAssociatedTokenAccountIx(new PublicKey(tokenB.address), tokenAccountB, wallet.publicKey))
+    }
+
+    const data = pairData.data
     const decoded = LAYOUT.decode(data)
     const { oracle1, oracle2, oracle3, oracle4, n } = decoded
 
