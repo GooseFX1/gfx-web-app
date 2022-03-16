@@ -9,6 +9,7 @@ import { nFormatter } from '../../../utils'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 const TAB_CONTENT = styled.div`
+  min-height: 300px;
   padding: ${({ theme }) => `${theme.margin(4)}`} 32px 0;
   display: flex;
   flex-wrap: wrap;

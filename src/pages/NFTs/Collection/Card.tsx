@@ -67,6 +67,9 @@ const CARD = styled.div`
       height: 30px;
       transform: translateY(4px);
     }
+    .card-favorite-heart--disabled {
+      cursor: not-allowed;
+    }
     .card-favorite-number {
       color: #4b4b4b;
       font-size: 13px;
@@ -189,7 +192,7 @@ export const Card = ({ singleNFT, listingType, className, ...rest }: Props) => {
   }, [sessionUser])
 
   const handleToggleLike = (e: any) => {
-    if (sessionUser) {
+    if (sessionUser && sessionUser.user_id) {
       likeDislike(sessionUser.user_id, singleNFT.non_fungible_id)
       setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
       setIsFavorited((prev) => !prev)
@@ -259,13 +262,19 @@ export const Card = ({ singleNFT, listingType, className, ...rest }: Props) => {
             />
           ) : (
             <img
-              className="card-favorite-heart"
+              className={`card-favorite-heart ${
+                sessionUser && !sessionUser.user_id ? 'card-favorite-heart--disabled' : ''
+              }`}
               src={`/img/assets/heart-empty.svg`}
               alt="heart-empty"
               onClick={handleToggleLike}
             />
           )}
-          <span className={`card-favorite-number ${isFavorited ? 'card-favorite-number-highlight' : ''}`}>
+          <span
+            className={`card-favorite-number ${isFavorited ? 'card-favorite-number-highlight' : ''} ${
+              sessionUser && !sessionUser.user_id ? 'card-favorite-heart--disabled' : ''
+            }`}
+          >
             {localTotalLikes}
           </span>
         </span>

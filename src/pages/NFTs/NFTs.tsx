@@ -57,9 +57,9 @@ export const NFTs: FC = () => {
       firebase_screen_class: 'load'
     })
 
-    if (endpoint !== ENDPOINTS[1].endpoint) {
-      setEndpoint(ENDPOINTS[1].endpoint)
-      notify({ message: `Switched to ${ENDPOINTS[1].network}` })
+    if (endpoint === ENDPOINTS[1].endpoint) {
+      setEndpoint(ENDPOINTS[0].endpoint)
+      notify({ message: `Switched to ${ENDPOINTS[0].network}` })
     }
   }, [location])
 
@@ -85,7 +85,7 @@ export const NFTs: FC = () => {
     return () => {}
   }, [publicKey, connected])
 
-  return endpoint === ENDPOINTS[1].endpoint ? (
+  return endpoint !== ENDPOINTS[1].endpoint ? (
     <OverlayProvider>
       <PriceFeedProvider>
         <NFTCollectionProvider>

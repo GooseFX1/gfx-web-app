@@ -415,27 +415,47 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
     console.log(buyIX)
 
     const transaction = new Transaction().add(buyIX)
-    const signature = await sendTransaction(transaction, connection)
-    console.log(signature)
-    const confirm = await connection.confirmTransaction(signature, 'processed')
-    console.log(confirm)
+    try {
+      const signature = await sendTransaction(transaction, connection)
+      console.log(signature)
 
-    if (confirm.value.err === null) {
-      postBidToAPI(signature, buyerPrice, tokenSize).then((res) => {
-        console.log(res)
+      const confirm = await connection.confirmTransaction(signature, 'processed')
+      console.log(confirm)
 
-        notify(successfulListingMessage(signature, nftMetadata, bidTotal.toString()))
+      if (confirm.value.err === null) {
+        postBidToAPI(signature, buyerPrice, tokenSize).then((res) => {
+          console.log(res)
 
-        if (res === 'Error') {
-          callCancelInstruction()
-          setVisible(false)
-        } else if (res.data.bid_matched && res.data.tx_sig) {
-          fetchUser()
-          notify(successBidMatchedMessage(res.data.tx_sig, nftMetadata, bidTotal.toString()))
-          setTimeout(() => history.push('/NFTs/profile'), 2000)
-        } else {
-          setVisible(false)
-        }
+          notify(successfulListingMessage(signature, nftMetadata, bidTotal.toString()))
+
+          if (res === 'Error') {
+            callCancelInstruction()
+            setVisible(false)
+          } else if (res.data.bid_matched && res.data.tx_sig) {
+            fetchUser()
+            notify(successBidMatchedMessage(res.data.tx_sig, nftMetadata, bidTotal.toString()))
+            setTimeout(() => history.push('/NFTs/profile'), 2000)
+          } else {
+            setVisible(false)
+          }
+        })
+      }
+    } catch (error) {
+      setIsLoading(false)
+      notify({
+        type: 'error',
+        message: (
+          <MESSAGE>
+            <Row className="m-title" justify="space-between" align="middle">
+              <Col>NFT Biding error!</Col>
+              <Col>
+                <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+              </Col>
+            </Row>
+            <div>{error.message}</div>
+            <div>Please try again, if the error persists please contact support.</div>
+          </MESSAGE>
+        )
       })
     }
   }

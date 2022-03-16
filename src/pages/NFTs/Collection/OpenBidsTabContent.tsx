@@ -163,8 +163,8 @@ export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
       {fileredLocalOpenBid === undefined ? (
         <OPEN_BIDS_TAB {...rest} className="card-list">
           {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((item, index) => (
-            <div>
-              <Card key={index} singleNFT={null} listingType="bid" />
+            <div key={index}>
+              <Card singleNFT={null} listingType="bid" />
             </div>
           ))}
         </OPEN_BIDS_TAB>

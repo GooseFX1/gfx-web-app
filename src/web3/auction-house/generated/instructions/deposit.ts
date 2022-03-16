@@ -1,6 +1,7 @@
 import * as splToken from '@solana/spl-token'
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
+import { AUCTION_HOUSE_PROGRAM_ID } from '../../../ids'
 
 export type DepositInstructionArgs = {
   escrowPaymentBump: number
@@ -112,7 +113,7 @@ export function createDepositInstruction(accounts: DepositInstructionAccounts, a
   ]
 
   const ix = new web3.TransactionInstruction({
-    programId: new web3.PublicKey('hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk'),
+    programId: new web3.PublicKey(AUCTION_HOUSE_PROGRAM_ID),
     keys,
     data
   })

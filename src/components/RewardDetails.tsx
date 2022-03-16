@@ -140,6 +140,7 @@ const FLEX_COL_CONTAINER = styled(SpaceEvenlyDiv)`
 `
 
 const STAKE_BTN = styled.button`
+  display: block;
   width: 263px;
   height: 60px;
   border-radius: 45px;
@@ -148,6 +149,18 @@ const STAKE_BTN = styled.button`
   color: #7d289d;
   font-size: 18px;
   font-weight: bold;
+  cursor: pointer;
+`
+
+const BUY_GOFX = styled.button`
+  display: block;
+  height: 60px;
+  width: 263px;
+  font-size: 17px;
+  font-weight: bold;
+  text-align: center;
+  background: transparent;
+  border: none;
   cursor: pointer;
 `
 
@@ -168,16 +181,6 @@ const APR_TEXT = styled.div`
   `}
 `
 
-const BUY_GOFX = styled.button`
-  height: 60px;
-  width: 263px;
-  font-size: 17px;
-  font-weight: bold;
-  text-align: center;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-`
 const CLOSE_ICON = styled.button`
   position: absolute;
   top: 32px;
@@ -268,6 +271,11 @@ export const RewardRedirectComponent: FC = () => {
     history.push('/farm')
   }
 
+  const handleBuyGOFXClick = () => {
+    rewardToggle(false)
+    history.push('/crypto')
+  }
+
   const closeRewardModal = () => {
     rewardToggle(false)
   }
@@ -283,7 +291,8 @@ export const RewardRedirectComponent: FC = () => {
       <APR_TEXT>200% APR</APR_TEXT>
       <div style={{ textAlign: 'center' }}>
         <STAKE_BTN onClick={handleStakeClick}>Stake</STAKE_BTN>
-        <BUY_GOFX>Buy GOFX</BUY_GOFX>
+        <br />
+        <BUY_GOFX onClick={handleBuyGOFXClick}>Buy GOFX</BUY_GOFX>
       </div>
     </FLEX_COL_CONTAINER>
   )
