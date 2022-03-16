@@ -95,72 +95,53 @@ const ANALYTIC_ITEM = styled.div`
 `
 
 interface ITabContent {
-  collections: NFTBaseCollection[]
+  baseCollections: NFTBaseCollection[]
   collectionFilter: 'floor' | 'volume' | 'listed'
   sort?: string | undefined
 }
 
-const TabContent = ({ collections, collectionFilter, sort }: ITabContent) => {
-  const [collectionExtras, setCollectionExtras] = useState([])
-  const fetchDetails = async (collection) => {
+const TabContent = ({ baseCollections, collectionFilter, sort }: ITabContent) => {
+  const [collectionExtras, setCollectionExtras] = useState<NFTCollection[]>()
+
+  useEffect(() => {
+    setCollectionSort(baseCollections)
+  }, [baseCollections, sort, collectionFilter])
+
+  const setCollectionSort = async (cols: NFTBaseCollection[]) => {
+    const fullCollections = await Promise.all(
+      cols.map(async (col: NFTBaseCollection) => await fetchDetails(col.collection_id))
+    )
+
+    if (collectionFilter === 'floor') {
+      if (sort === 'high') {
+        setCollectionExtras(fullCollections.sort((a, b) => b.collection_floor - a.collection_floor))
+      } else if (sort === 'low') {
+        setCollectionExtras(fullCollections.sort((a, b) => a.collection_floor - b.collection_floor))
+      }
+    } else if (collectionFilter === 'volume') {
+      if (sort === 'high') {
+        setCollectionExtras(fullCollections.sort((a, b) => b.collection_vol.weekly - a.collection_vol.weekly))
+      } else if (sort === 'low') {
+        setCollectionExtras(fullCollections.sort((a, b) => a.collection_vol.weekly - b.collection_vol.weekly))
+      }
+    }
+  }
+
+  const fetchDetails = async (id: number) => {
     try {
-      const res = await fetchSingleCollectionBySalesType(
-        NFT_API_ENDPOINTS.SINGLE_COLLECTION,
-        `${collection.collection_id}`
-      )
+      const res = await fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.SINGLE_COLLECTION, `${id}`)
       return res.data
     } catch (error) {
       return null
     }
   }
 
-  useEffect(() => {
-    async function setCollectionSort() {
-      let col = await Promise.all(collections.map(async (i: any) => ({ ...i, ...(await fetchDetails(i)) })))
-      let cols = collections
-
-      if (collectionFilter === 'floor') {
-        if (sort === 'high') {
-          cols = collections.sort(
-            (a, b) =>
-              col.find((d) => a.collection_id === d.collection_id).collection_floor -
-              col.find((d) => b.collection_id === d.collection_id).collection_floor
-          )
-        } else if (sort === 'low') {
-          cols = collections.sort(
-            (a, b) =>
-              col.find((d) => b.collection_id === d.collection_id).collection_floor -
-              col.find((d) => a.collection_id === d.collection_id).collection_floor
-          )
-        }
-      } else if (collectionFilter === 'volume') {
-        if (sort === 'high') {
-          cols = collections.sort(
-            (a, b) =>
-              col.find((d) => a.collection_id === d.collection_id).collection_vol.weekly -
-              col.find((d) => b.collection_id === d.collection_id).collection_vol.weekly
-          )
-        } else if (sort === 'low') {
-          cols = collections.sort(
-            (a, b) =>
-              col.find((d) => b.collection_id === d.collection_id).collection_vol.weekly -
-              col.find((d) => a.collection_id === d.collection_id).collection_vol.weekly
-          )
-        }
-      }
-
-      setCollectionExtras(cols)
-    }
-
-    setCollectionSort()
-  }, [collections, sort, collectionFilter])
-
   return (
     <TAB_CONTENT>
       {collectionExtras &&
         collectionExtras
           .slice(0, 8)
-          .map((collection: NFTBaseCollection, i) => (
+          .map((collection: NFTCollection, i) => (
             <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
           ))}
     </TAB_CONTENT>
@@ -170,48 +151,33 @@ const TabContent = ({ collections, collectionFilter, sort }: ITabContent) => {
 export default React.memo(TabContent)
 
 interface IAnalyticItem {
-  collection: NFTBaseCollection
+  collection: NFTCollection
   collectionFilter: 'floor' | 'volume' | 'listed'
 }
 
 const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
   const history = useHistory()
-  const [analyticData, setAnalyticData] = useState<NFTCollection>()
-
   const [isCollection, setIsCollection] = useState(false)
+
   useEffect(() => {
     setTimeout(() => {
       setIsCollection(true)
-    }, 1000)
+    }, 500)
   }, [])
-
-  useEffect(() => {
-    fetchDetails()
-
-    return () => setAnalyticData(undefined)
-  }, [collection])
-
-  const fetchDetails = async () => {
-    try {
-      const res = await fetchSingleCollectionBySalesType(
-        NFT_API_ENDPOINTS.SINGLE_COLLECTION,
-        `${collection.collection_id}`
-      )
-      setAnalyticData(res.data)
-    } catch (error) {
-      console.error(`Error fetching collection details: ${collection.collection_name}`)
-    }
-  }
 
   return (
     <ANALYTIC_ITEM onClick={() => history.push(`/NFTs/collection/${collection.collection_id}`)}>
-      {!analyticData ? (
+      {!isCollection ? (
         <SkeletonCommon width="100px" height="100px" style={{ marginRight: '30px' }} />
       ) : (
         <img
           className="analytic-image"
           // @ts-ignorese
-          src={collection.profile_pic_link.length > 0 ? collection.profile_pic_link : `/img/assets/nft-preview.svg`}
+          src={
+            collection.collection[0].profile_pic_link.length > 0
+              ? collection.collection[0].profile_pic_link
+              : `/img/assets/nft-preview.svg`
+          }
           alt="analytic-img"
         />
       )}
@@ -219,27 +185,27 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
         <div style={{ position: 'relative' }}>
           <h2 className="title">
             {/* @ts-ignore */}
-            {!analyticData ? <SkeletonCommon width="149px" height="28px" /> : collection.collection_name}
+            {!isCollection ? <SkeletonCommon width="149px" height="28px" /> : collection.collection[0].collection_name}
           </h2>
-          {analyticData && collection.is_verified && (
+          {isCollection && collection && collection.collection[0].is_verified && (
             <img className="check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`} alt="" />
           )}
         </div>
         <div className="value">
           <div>
-            {!analyticData ? (
+            {!isCollection ? (
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <SkeletonCommon width="89px" height="24px" style={{ marginRight: '10px' }} />
                 <SkeletonCommon width="33px" height="33px" borderRadius="50%" />
               </div>
             ) : collectionFilter === 'floor' ? (
               <div>
-                {analyticData.collection_floor ? nFormatter(analyticData.collection_floor / LAMPORTS_PER_SOL) : '0'}
+                {collection.collection_floor ? nFormatter(collection.collection_floor / LAMPORTS_PER_SOL) : '0'}
                 <img className="sol-icon" src={`${process.env.PUBLIC_URL}/img/assets/SOL-icon.svg`} alt="" />
               </div>
             ) : (
               collectionFilter === 'volume' &&
-              (analyticData.collection_vol ? nFormatter(analyticData.collection_vol.weekly) : '0')
+              (collection.collection_vol ? nFormatter(collection.collection_vol.weekly) : '0')
             )}
           </div>
         </div>

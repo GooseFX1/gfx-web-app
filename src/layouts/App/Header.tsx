@@ -63,7 +63,7 @@ const WRAPPER = styled.nav`
 
   width: 100%;
   ${({ theme }) => theme.headerRoundedBorders}
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg9};
   ${({ theme }) => theme.smallShadow}
   z-index: 300;
 
@@ -86,7 +86,7 @@ const CollapsibleWrapper = styled.div`
   bottom: -20px;
   display: flex;
   justify-content: center;
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg9};
   cursor: pointer;
 
   img {

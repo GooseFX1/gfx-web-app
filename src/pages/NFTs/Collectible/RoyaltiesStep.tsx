@@ -357,7 +357,7 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
             <InfoInput
               type="input"
               onChange={(e) => setInputVal(e.target.value)}
-              placeholder={'Creator Public Key'}
+              placeholder={'Paste Creator Public Key Here'}
               value={inputVal}
             />
           </Row>

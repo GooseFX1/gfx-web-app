@@ -28,7 +28,7 @@ const TAB_ICON = styled(CenteredImg)`
 const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: number }>`
   position: relative;
   ${({ theme }) => theme.roundedBorders}
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg9};
   height: 80px;
 
   .arrow-down {

@@ -189,6 +189,10 @@ const CLOSE_ICON = styled.button`
   cursor: pointer;
 `
 
+const BOLD_TEXT = styled.span`
+  font-weight: 800;
+`
+
 export const RewardInfoComponent: FC = () => {
   return (
     <REWARD_INFO_TEXT>
@@ -215,7 +219,7 @@ export const RewardInfoComponent: FC = () => {
           <div>
             <AlignCenterDiv>
               <TEXT_40_UNCLAIMED> 10.55 </TEXT_40_UNCLAIMED>
-              <CLAIM_BTN>CLAIM</CLAIM_BTN>
+              <CLAIM_BTN>Claim</CLAIM_BTN>
             </AlignCenterDiv>
             <TEXT_20>Unclaimed GOFX</TEXT_20>
           </div>
@@ -274,7 +278,7 @@ export const RewardRedirectComponent: FC = () => {
         <img src={`${window.origin}/img/assets/close-white-icon.svg`} alt="copy_address" />
       </CLOSE_ICON>
       <STAKE_TEXT>
-        Stake your <strong> GOFX </strong> now <br /> and earn up to:
+        Stake your <BOLD_TEXT>GOFX</BOLD_TEXT> now <br /> and earn up to:
       </STAKE_TEXT>
       <APR_TEXT>200% APR</APR_TEXT>
       <div style={{ textAlign: 'center' }}>

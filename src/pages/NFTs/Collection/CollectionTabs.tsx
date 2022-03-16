@@ -150,12 +150,9 @@ export const CollectionTabs = ({ filter, setFilter, collapse, setCollapse }) => 
           setFilter={setFilter}
           filter={filter}
         />
-        <Sort />
+        {/* <Sort /> */}
       </STYLED_SEARCH_BAR>
       <Tabs className={'collection-tabs'} defaultActiveKey="1" centered>
-        {/* <TabPane tab="Live Auctions" key="1">
-          <LiveAuctionsTabContent />
-        </TabPane> */}
         <TabPane tab="Open Bids" key="1">
           <OpenBidsTabContent filter={filter} setCollapse={setCollapse} />
         </TabPane>
