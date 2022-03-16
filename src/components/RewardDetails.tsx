@@ -35,7 +35,6 @@ const TEXT_50 = styled.span`
 `
 
 const TEXT_60 = styled.span`
-  background-image: linear-gradient(56deg, #716fff 20%, #e95aff 55%);
   font-family: Montserrat;
   font-size: 60px;
   font-stretch: normal;
@@ -49,6 +48,10 @@ const TEXT_60 = styled.span`
   ${({ theme }) => theme.mediaWidth.upToLarge`
     font-size: 40px;
   `}
+`
+
+const PURPLE60 = styled(TEXT_60)`
+  background-image: linear-gradient(56deg, #716fff 20%, #e95aff 55%);
 `
 
 const TEXT_25 = styled.span`
@@ -76,28 +79,12 @@ const TEXT_15 = styled.div`
   `}
 `
 
-const EARNED_GOFX = styled.div`
+const GREEN60 = styled(TEXT_60)`
   background-image: linear-gradient(264deg, #9cc034 56%, #49821c 99%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
 `
 
 const REWARD_DETAILS_CONTAINER = styled.div`
   margin-top: 1%;
-`
-
-const TEXT_40_UNCLAIMED = styled.div`
-  font-size: 40px;
-  font-weight: bold;
-  background-image: linear-gradient(340deg, #f1c52a 56%, #ea7e00 99%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-right: ${({ theme }) => theme.margin(2)};
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    font-size: 30px;
-  `}
 `
 
 const LINE = styled.div`
@@ -108,25 +95,6 @@ const LINE = styled.div`
   background-color: ${({ theme }) => theme.text1};
 `
 
-const CLAIM_BTN = styled.button`
-  display: inline;
-  width: 111px;
-  height: 40px;
-  background-color: #3735bb;
-  border-radius: 52.5px;
-  font-size: 18px;
-  cursor: pointer;
-  text-align: center;
-  font-weight: 600;
-  font-style: normal;
-  line-height: 1.1;
-  color: white !important;
-  border: none;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    height: 30px;
-    font-size: 16px;
-  `}
-`
 const REWARD_ICON = styled.img`
   height: 38px;
   width: 38px;
@@ -204,27 +172,17 @@ export const RewardInfoComponent: FC = () => {
           Rewards <REWARD_ICON src={'/img/assets/rewards.svg'} alt="rewards" />
         </TEXT_25>
       </div>
-      <Row align="middle">
-        <Col span="14">
-          <TEXT_60>
+      <Row justify="space-between" align="middle" style={{ margin: '24px 0 64px' }}>
+        <Col span="">
+          <PURPLE60>
             42.69 M <TEXT_50> GOFX</TEXT_50>
-          </TEXT_60>
-          <TEXT_20> Rewards over the next 6 -12 months</TEXT_20>
+          </PURPLE60>
+          <TEXT_20> Rewards over the next 12 months</TEXT_20>
         </Col>
-        <Col span="10">
-          <div>
-            <EARNED_GOFX>
-              <TEXT_40> 200.457</TEXT_40> <br />
-            </EARNED_GOFX>
-            <TEXT_20>Earned GOFX</TEXT_20>
-          </div>
-          <br />
-          <div>
-            <AlignCenterDiv>
-              <TEXT_40_UNCLAIMED> 10.55 </TEXT_40_UNCLAIMED>
-              <CLAIM_BTN>Claim</CLAIM_BTN>
-            </AlignCenterDiv>
-            <TEXT_20>Unclaimed GOFX</TEXT_20>
+        <Col span="">
+          <GREEN60>200.457</GREEN60>
+          <div style={{ textAlign: 'right' }}>
+            <TEXT_20>GOFX Earned</TEXT_20>
           </div>
         </Col>
       </Row>
@@ -241,7 +199,7 @@ export const RewardInfoComponent: FC = () => {
             <TEXT_22>
               <strong> 0.69% </strong> listing fee in the first 60 days on our store.
             </TEXT_22>
-            <TEXT_15>1.5% after the 60 days period ends. </TEXT_15>
+            <TEXT_15>1% listing fee for the first 60 days on our exchange. </TEXT_15>
           </li>
           <li>
             <TEXT_22>
@@ -252,7 +210,7 @@ export const RewardInfoComponent: FC = () => {
           </li>
           <li>
             <TEXT_22>
-              For each NFT sale you will recive <strong>2%</strong> of the sale volume in <strong>GOFX</strong>.
+              For each NFT sale you will receive <strong>0.5%</strong> of the sale volume in <strong>GOFX</strong>.
             </TEXT_22>
             <TEXT_15>If you sell an NFT for $100 we will give $2 worth of GOFX at current market price. </TEXT_15>
           </li>
@@ -273,7 +231,7 @@ export const RewardRedirectComponent: FC = () => {
 
   const handleBuyGOFXClick = () => {
     rewardToggle(false)
-    history.push('/crypto')
+    history.push('/swap')
   }
 
   const closeRewardModal = () => {
