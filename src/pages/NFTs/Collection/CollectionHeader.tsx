@@ -73,7 +73,8 @@ const COLLECTION_HEADER = styled.div<{ $height: string }>`
 
     .desc {
       font-weight: 600;
-      line-height: 24.38px;
+      line-height: 22px;
+      font-size: 20px;
       max-width: 70%;
       max-height: 42px;
       overflow-y: auto;
