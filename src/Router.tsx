@@ -11,7 +11,7 @@ export const Router: FC = () => {
 
   return (
     <BrowserRouter>
-      {window.location.pathname === '/' && <Redirect from="/" to="/crypto" />}
+      {window.location.pathname === '/' && <Redirect from="/" to="/NFTs" />}
       <Switch>
         <NavCollapseProvider>
           <AppLayout>
