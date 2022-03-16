@@ -15,6 +15,7 @@ import { ArrowDropdown } from '../../components'
 import { useWalletModal } from '../../context'
 import { CenteredImg } from '../../styles'
 import { Loader } from '../../components'
+import { WalletName } from '@solana/wallet-adapter-wallets'
 
 const WALLET_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margin(3))}
@@ -64,15 +65,15 @@ const WRAPPER = styled.button<{ $connected: boolean }>`
   }
 `
 const SVGModeAdjust = styled.img`
-  filter: ${({theme}) => theme.filterWhiteIcon};
-`;
+  filter: ${({ theme }) => theme.filterWhiteIcon};
+`
 
 const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ setArrowRotation }) => {
   const { disconnect, publicKey, wallet } = useWallet()
   const { setVisible: setWalletModalVisible } = useWalletModal()
 
   const base58 = useMemo(() => publicKey?.toBase58(), [publicKey])
-  
+
   return (
     <Menu>
       {base58 && (
@@ -99,6 +100,7 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
         <MenuItem
           onClick={() => {
             disconnect().then()
+            localStorage.removeItem('connectedWallet')
             setArrowRotation(false)
           }}
         >
@@ -111,7 +113,7 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
 }
 
 export const Connect: FC = () => {
-  const { connect, publicKey, wallet, ready, connected } = useWallet()
+  let { connect, select, wallet, publicKey, ready, connected } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
   const [arrowRotation, setArrowRotation] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -152,8 +154,51 @@ export const Connect: FC = () => {
     }
   }, [ready])
 
+  useEffect(() => {
+    const walletName = localStorage.getItem('connectedWallet')
+    if (!base58 && !connected && walletName) {
+      switch (walletName) {
+        case 'Phantom': {
+          select(WalletName.Phantom)
+          break
+        }
+        case 'Solflare': {
+          select(WalletName.Solflare)
+          break
+        }
+        case 'Ledger': {
+          select(WalletName.Ledger)
+          break
+        }
+        case 'MathWallet': {
+          select(WalletName.MathWallet)
+          break
+        }
+        case 'Slope': {
+          select(WalletName.Slope)
+          break
+        }
+        case 'Solang': {
+          select(WalletName.Solong)
+          break
+        }
+        case 'Torus': {
+          select(WalletName.Torus)
+          break
+        }
+        case 'Sollet': {
+          select(WalletName.Sollet)
+          break
+        }
+      }
+    }
+  }, [])
+
   // watches for disconnection of wallet
   useEffect(() => {
+    if (connected) {
+      localStorage.setItem('connectedWallet', wallet.name)
+    }
     if (ready && !base58 && !connected) {
       // timeout used for smooth loading that matches the rate of tab slider
       setTimeout(() => connect().catch(() => {}), 400)
