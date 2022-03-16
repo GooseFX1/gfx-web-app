@@ -52,10 +52,12 @@ export const NFTs: FC = () => {
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
 
   useEffect(() => {
-    logEvent(analytics, 'screen_view', {
-      firebase_screen: 'NFT Exchange',
-      firebase_screen_class: 'load'
-    })
+    const an = analytics()
+    an !== null &&
+      logEvent(an, 'screen_view', {
+        firebase_screen: 'NFT Exchange',
+        firebase_screen_class: 'load'
+      })
 
     if (endpoint === ENDPOINTS[1].endpoint) {
       setEndpoint(ENDPOINTS[0].endpoint)

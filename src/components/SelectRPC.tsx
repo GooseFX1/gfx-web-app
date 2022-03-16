@@ -54,11 +54,13 @@ export const SelectRPC: FC = () => {
     (e, endpoint, endpointName, network) => {
       e.preventDefault()
       // analytics logger
-      logEvent(analytics, 'rpc-selector', {
-        endpoint: endpoint,
-        endpointName: endpointName,
-        network: network
-      })
+      const an = analytics()
+      an !== null &&
+        logEvent(an, 'rpc-selector', {
+          endpoint: endpoint,
+          endpointName: endpointName,
+          network: network
+        })
       setEndpoint(endpoint)
       setDropdownVisible(false)
       setArrowRotation(false)

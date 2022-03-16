@@ -36,10 +36,12 @@ export const Farm: FC = () => {
   const { isCollapsed } = useNavCollapse()
 
   useEffect(() => {
-    logEvent(analytics, 'screen_view', {
-      firebase_screen: 'Yield Farm',
-      firebase_screen_class: 'load'
-    })
+    const an = analytics()
+    an !== null &&
+      logEvent(an, 'screen_view', {
+        firebase_screen: 'Yield Farm',
+        firebase_screen_class: 'load'
+      })
   }, [])
 
   const onFilter = (val) => {
