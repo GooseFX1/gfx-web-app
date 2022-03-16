@@ -127,15 +127,11 @@ export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
     if (border !== null) {
       const mainHeight = window.innerHeight
       const totalscroll = mainHeight + border.scrollTop + 100
-      //let former = 0
-      //console.log(border.scrollHeight, border.scrollTop)
-
-      if (border.scrollTop < 50) {
-        setCollapse(false)
-      } else {
-        setCollapse(true)
-      }
-
+      // if (border.scrollTop < 50) {
+      //   setCollapse(false)
+      // } else {
+      //   setCollapse(true)
+      // }
       if (Math.ceil(totalscroll) < border.scrollHeight || activePointLoader.current) {
         setLoading(false)
       } else {
