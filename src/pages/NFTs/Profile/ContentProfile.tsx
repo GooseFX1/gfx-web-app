@@ -80,8 +80,8 @@ export const ContentProfile = ({ isExplore }: Props) => {
     return () => {}
   }, [sessionUser, fetchUserActivity, setUserActivity])
 
-  async function fetchFavs() {
-    let favorites: any = await Promise.all(
+  const fetchFavs = async () => {
+    const favorites: any = await Promise.all(
       sessionUser.user_likes.map((i: number) => {
         return fetchNFTById(i, connection)
       })
