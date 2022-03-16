@@ -65,6 +65,7 @@ export function colors(mode: string): Colors {
     text13: mode === 'dark' ? 'rgba(255, 255, 255, 0.55)' : '#636363',
     text14: mode === 'dark' ? '#b1b1b1' : '#fff',
     text15: mode === 'dark' ? '#b1b1b1' : '#7C7C7C',
+    text16: mode === 'dark' ? '#b2b2b2' : '#838383',
     text1h: '#7d7d7d',
 
     // backgrounds / greys
@@ -78,6 +79,11 @@ export function colors(mode: string): Colors {
     bg7: mode === 'dark' ? '#131313' : 'gray',
     bg8: mode === 'dark' ? 'rgba(64, 64, 64, 0.22)' : 'gray',
     bg9: mode === 'dark' ? '#2a2a2a' : white,
+    modalBackground: mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(96, 96, 96, 0.5)',
+    bgReward:
+      mode === 'dark'
+        ? 'linear-gradient(115deg, #9625ae 6%, rgba(62, 53, 187, 0) 97%)'
+        : 'linear-gradient(145deg, #9625ae 6%, rgba(16, 6, 156, 0.56) 99%)',
     grey1: '#434343',
     grey2: '#4e4e4e',
     grey3: '#2a2a2a',
@@ -113,6 +119,7 @@ export function colors(mode: string): Colors {
 
     // upload image
     uploadImageBackground: mode === 'dark' ? '#1e1e1e' : '#CACACA',
+    substractImg: mode === 'dark' ? 'invert(0%)' : 'invert(45%)',
 
     // input bg
     inputBg: mode === 'dark' ? '#131313' : '#CACACA',
@@ -199,6 +206,10 @@ export function colors(mode: string): Colors {
     success: '#27AE60',
 
     // filter
+    filterWhiteIcon:
+      mode === 'lite'
+        ? 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'
+        : '#000',
     filterBackIcon:
       mode === 'dark'
         ? 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'

@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params'
 
 const COLLECTION_CONTAINER = styled.div<{ collapsed: boolean }>`
-  height: calc(100vh - ${({ collapsed }) => (collapsed ? '0px' : '80px')} - 121px);
+  height: calc(100vh - ${({ collapsed }) => (collapsed ? '0px' : '80px')} - 130px);
 `
 
 export const Collection: FC = (): JSX.Element => {
@@ -22,7 +22,7 @@ export const Collection: FC = (): JSX.Element => {
   } = useNFTCollections()
   const [err, setErr] = useState(false)
   const [filter, setFilter] = useState('')
-  const [collapse, setCollapse] = useState(false)
+  const [collapse, setCollapse] = useState(true)
 
   useEffect(() => {
     return () => {

@@ -26,6 +26,7 @@ export interface Colors {
   text13: Color
   text14: Color
   text15: Color
+  text16: Color
 
   // backgrounds / greys
   bg0: Color
@@ -38,6 +39,9 @@ export interface Colors {
   bg7: Color
   bg8: Color
   bg9: Color
+  modalBackground: Color
+  bgReward: Color
+  substractImg: Color
   grey1: Color
   grey2: Color
   grey3: Color
@@ -152,6 +156,7 @@ export interface Colors {
 
   // Filter
   filterBackIcon: Color
+  filterWhiteIcon: Color
   filterHeartIcon: Color
   filterCloseModalIcon: Color
 }

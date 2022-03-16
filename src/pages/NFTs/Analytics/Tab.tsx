@@ -103,54 +103,38 @@ const ANALYTICS_DROPDOWN = styled.div`
 
 const AnalyticsTabs = ({ allCollections }) => {
   //const { allCollections } = useNFTCollections()
-  const [isAnalytics, setIsAnalytics] = useState(false)
   const [mainCollections, setMainCollections] = useState(allCollections)
-  const [sort, setSort] = useState()
-  useEffect(() => {
-    setTimeout(() => {
-      setIsAnalytics(true)
-    }, 1000)
-  }, [])
+  const [sort, setSort] = useState('high')
 
   useEffect(() => {
     setMainCollections(allCollections)
-    setSort(undefined)
   }, [allCollections])
 
   const handleSort = (choice) => {
-    let first = choice.split(' ')
-
+    const first = choice.split(' ')
     setSort(first[0].toLowerCase())
   }
 
-  return allCollections ? (
+  return mainCollections ? (
     <ANALYTICS_TABS>
       <ANALYTICS_DROPDOWN>
         <span className="title">Weekly Analytics</span>
-        {!isAnalytics ? (
-          <SkeletonCommon width="136px" height="45px" borderRadius="45px" />
-        ) : (
-          <Categories
-            categories={mockAnalyticsDrodown}
-            className="analytics-dropwdown"
-            onChange={(e) => handleSort(e)}
-          />
-        )}
+        <Categories categories={mockAnalyticsDrodown} className="analytics-dropwdown" onChange={(e) => handleSort(e)} />
       </ANALYTICS_DROPDOWN>
       <Tabs defaultActiveKey="1" centered>
         <TabPane tab="Floor" key="1">
-          <TabContent collections={mainCollections} sort={sort} collectionFilter={'floor'} />
+          <TabContent baseCollections={mainCollections} sort={sort} collectionFilter={'floor'} />
         </TabPane>
         <TabPane tab="Volume" key="2">
-          <TabContent collections={mainCollections} collectionFilter={'volume'} />
+          <TabContent baseCollections={mainCollections} sort={sort} collectionFilter={'volume'} />
         </TabPane>
         <TabPane tab="Listed NFT’S" key="3">
-          <TabContent collections={mainCollections} collectionFilter={'listed'} />
+          <TabContent baseCollections={mainCollections} collectionFilter={'listed'} />
         </TabPane>
       </Tabs>
     </ANALYTICS_TABS>
   ) : (
-    <div>loading...</div>
+    <div>loading</div>
   )
 }
 

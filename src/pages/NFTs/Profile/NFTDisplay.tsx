@@ -52,7 +52,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
 
   useEffect(() => {
     if (collectedItems) {
-      let filteredData = collectedItems.filter(
+      const filteredData = collectedItems.filter(
         ({ metaData }) =>
           metaData.name.toLowerCase().includes(search.trim().toLowerCase()) ||
           metaData.symbol.toLowerCase().includes(search.trim().toLowerCase())

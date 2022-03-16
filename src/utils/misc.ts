@@ -70,6 +70,9 @@ export function shortenAddress(address: string, chars = 4): string {
 export function useLocalStorageState(key: string, defaultState?: string) {
   const [state, setState] = useState(() => {
     const storedState = localStorage.getItem(key)
+    if (storedState === 'undefined') {
+      return defaultState
+    }
     return storedState ? JSON.parse(storedState) : defaultState
   })
 

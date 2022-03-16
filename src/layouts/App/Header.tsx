@@ -4,9 +4,12 @@ import { Connect } from './Connect'
 import { More } from './More'
 import { Tabs } from './Tabs'
 import { SelectRPC } from '../../components'
+import { RewardsButton } from '../../components/RewardsPopup'
 import { useDarkMode } from '../../context'
 import { SVGToGrey2, CenteredDiv } from '../../styles'
 import { useNavCollapse } from '../../context'
+import { ModalSlide } from '../../components/ModalSlide'
+import { useRewardToggle } from '../../context/reward_toggle'
 
 const BRAND = styled.a`
   position: absolute;
@@ -32,10 +35,6 @@ const BRAND = styled.a`
     ${({ theme }) => theme.measurements('inherit')}
     object-fit: contain;
   }
-`
-
-const RefreshWrapper = styled.a`
-  padding: 14px;
 `
 
 const BUTTONS = styled(CenteredDiv)`
@@ -64,7 +63,7 @@ const WRAPPER = styled.nav`
 
   width: 100%;
   ${({ theme }) => theme.headerRoundedBorders}
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg9};
   ${({ theme }) => theme.smallShadow}
   z-index: 300;
 
@@ -87,7 +86,7 @@ const CollapsibleWrapper = styled.div`
   bottom: -20px;
   display: flex;
   justify-content: center;
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg9};
   cursor: pointer;
 
   img {
@@ -97,22 +96,30 @@ const CollapsibleWrapper = styled.div`
 `
 
 export const Header: FC = () => {
-  const { mode } = useDarkMode()
   const { isCollapsed, toggleCollapse } = useNavCollapse()
+  const { rewardModal, rewardToggle } = useRewardToggle()
 
   const handleCollapse = (val) => {
     toggleCollapse(val)
+  }
+
+  const slideModal = () => {
+    if (rewardModal) {
+      return <ModalSlide rewardModal={rewardModal} rewardToggle={rewardToggle} />
+    }
   }
 
   return (
     <WRAPPER id="menu">
       {!isCollapsed && (
         <>
+          {slideModal()}
           <BRAND href="/">
             <img id="logo" src={`/img/assets/gfx_logo_gradient.svg`} alt="GFX Logo" />
           </BRAND>
           <Tabs />
           <BUTTONS>
+            <RewardsButton />
             <Connect />
             <SelectRPC />
             <More />

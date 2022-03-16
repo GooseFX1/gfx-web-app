@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { HeaderProfile } from './HeaderProfile'
 import { ContentProfile } from './ContentProfile'
 import { Loader } from '../../../components'
-import { useNFTProfile, unnamedUser, useConnectionConfig } from '../../../context'
+import { useNFTProfile, unnamedUser } from '../../../context'
 
 const WRAPPED_LOADER = styled.div`
   position: relative;
@@ -72,17 +72,12 @@ const PROFILE_CONTAINER = styled.div`
 
 export const Profile: FC = (): JSX.Element => {
   // const params = useParams<IAppParams>()
-  const [err, setErr] = useState(false)
   const [loading, setLoading] = useState(true)
-  const { sessionUser, setSessionUser, fetchSessionUser, setParsedAccounts } = useNFTProfile()
-  const { connection } = useConnectionConfig()
+  const { sessionUser, setSessionUser, setParsedAccounts } = useNFTProfile()
   const { connected, publicKey } = useWallet()
 
   useEffect(() => {
-    if (connected && publicKey) {
-      if (!sessionUser || sessionUser.pubkey !== publicKey.toBase58()) {
-        fetchUser(publicKey.toBase58())
-      }
+    if (sessionUser && connected && publicKey) {
       setLoading(false)
     } else {
       setUnnamedUser()
@@ -91,15 +86,6 @@ export const Profile: FC = (): JSX.Element => {
 
     return () => {}
   }, [sessionUser, publicKey, connected])
-
-  const fetchUser = (param: string) => {
-    fetchSessionUser('address', publicKey.toBase58(), connection).then((res) => {
-      if (!res || (res.response && res.response.status !== 200) || res.isAxiosError) {
-        console.error(res)
-        setErr(true)
-      }
-    })
-  }
 
   const setUnnamedUser = () => {
     setSessionUser(unnamedUser)
@@ -111,7 +97,7 @@ export const Profile: FC = (): JSX.Element => {
     <WRAPPED_LOADER>
       <Loader />
     </WRAPPED_LOADER>
-  ) : err || !sessionUser ? (
+  ) : !sessionUser ? (
     <h2>Something went wrong fetching user profile</h2>
   ) : (
     <PROFILE_CONTAINER>

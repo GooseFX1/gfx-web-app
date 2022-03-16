@@ -148,7 +148,7 @@ const MintPaymentConfirmation = (props: {
     >
       <div className="body-wrap">
         <Row className="content-action" justify="center">
-          <TITLE className="title">Calculate Mint Cost</TITLE>
+          <TITLE className="title">Review Details</TITLE>
         </Row>
         <Row className="content-action" justify="center">
           <HEADER>Royalty Percentage</HEADER>

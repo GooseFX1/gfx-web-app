@@ -127,15 +127,11 @@ export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
     if (border !== null) {
       const mainHeight = window.innerHeight
       const totalscroll = mainHeight + border.scrollTop + 100
-      //let former = 0
-      //console.log(border.scrollHeight, border.scrollTop)
-
-      if (border.scrollTop < 50) {
-        setCollapse(false)
-      } else {
-        setCollapse(true)
-      }
-
+      // if (border.scrollTop < 50) {
+      //   setCollapse(false)
+      // } else {
+      //   setCollapse(true)
+      // }
       if (Math.ceil(totalscroll) < border.scrollHeight || activePointLoader.current) {
         setLoading(false)
       } else {
@@ -167,8 +163,8 @@ export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
       {fileredLocalOpenBid === undefined ? (
         <OPEN_BIDS_TAB {...rest} className="card-list">
           {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((item, index) => (
-            <div>
-              <Card key={index} singleNFT={null} listingType="bid" />
+            <div key={index}>
+              <Card singleNFT={null} listingType="bid" />
             </div>
           ))}
         </OPEN_BIDS_TAB>

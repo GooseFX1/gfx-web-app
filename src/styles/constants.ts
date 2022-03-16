@@ -1,4 +1,4 @@
-export const APP_LAYOUT_FOOTER_HEIGHT = '71px'
+export const APP_LAYOUT_FOOTER_HEIGHT = '58px'
 
 export const APP_LAYOUT_FOOTER_HEIGHT_MOBILE = '100px'
 

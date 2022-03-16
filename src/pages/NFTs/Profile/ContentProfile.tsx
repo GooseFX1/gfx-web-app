@@ -12,7 +12,7 @@ type Props = {
 }
 
 export const ContentProfile = ({ isExplore }: Props) => {
-  const { connected, publicKey } = useWallet()
+  const { publicKey } = useWallet()
   const { sessionUser, parsedAccounts, userActivity, setUserActivity, fetchUserActivity } = useNFTProfile()
   const [createdItems, setCreatedItems] = useState<ParsedAccount[]>()
   const [favoritedItems, setFavoritedItems] = useState<ParsedAccount[]>()
@@ -50,7 +50,7 @@ export const ContentProfile = ({ isExplore }: Props) => {
   }, [tabPanes])
 
   useEffect(() => {
-    if (connected && publicKey && parsedAccounts) {
+    if (sessionUser && parsedAccounts) {
       const userCreated = parsedAccounts.filter((nft: ParsedAccount) =>
         nft.data.creators.find((c) => c.address === publicKey.toBase58())
       )
@@ -58,15 +58,17 @@ export const ContentProfile = ({ isExplore }: Props) => {
     } else {
       setCreatedItems([])
     }
+  }, [parsedAccounts])
 
-    if (connected && publicKey && sessionUser?.user_likes?.length > 0) {
+  useEffect(() => {
+    if (sessionUser?.user_likes?.length > 0) {
       fetchFavs()
     } else {
       setFavoritedItems([])
     }
 
     return () => {}
-  }, [publicKey, connected, sessionUser])
+  }, [sessionUser])
 
   useEffect(() => {
     if (sessionUser && sessionUser.user_id) {
@@ -78,9 +80,9 @@ export const ContentProfile = ({ isExplore }: Props) => {
     return () => {}
   }, [sessionUser, fetchUserActivity, setUserActivity])
 
-  async function fetchFavs() {
-    let favorites: any = await Promise.all(
-      sessionUser.user_likes.map(async (i: number) => {
+  const fetchFavs = async () => {
+    const favorites: any = await Promise.all(
+      sessionUser.user_likes.map((i: number) => {
         return fetchNFTById(i, connection)
       })
     )
@@ -88,7 +90,7 @@ export const ContentProfile = ({ isExplore }: Props) => {
     if (favorites[0].data && favorites[0].data.uri && favorites[0].key) {
       setFavoritedItems(favorites)
     } else {
-      let favs: ParsedAccount[] = favorites.map((favorite: any) => ({
+      const favs: ParsedAccount[] = favorites.map((favorite: any) => ({
         data: {
           creators: [],
           name: favorite.nft_name as string,

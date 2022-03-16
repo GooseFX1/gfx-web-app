@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback, MouseEventHandler } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useDarkMode, useWalletModal } from '../../../context'
+import { useDarkMode, useWalletModal, useNavCollapse } from '../../../context'
 import { useHistory } from 'react-router-dom'
 import { Image, Menu, Dropdown } from 'antd'
 import { ButtonWrapper } from '../NFTButton'
-import { SearchBar, Categories, MainButton } from '../../../components'
+import { SearchBar, Categories } from '../../../components'
 import { SpaceBetweenDiv } from '../../../styles'
 import { categories, coins } from './mockData'
 import { useLocalStorageState } from '../../../utils'
@@ -58,9 +58,6 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
       text-transform: uppercase;
     }
   }
-  .connect-wl-btn {
-    margin-left: ${({ theme }) => theme.margin(2.5)};
-  }
 `
 
 const TINYIMG = styled.img`
@@ -107,25 +104,31 @@ const BUTTON_SELECTION = styled.div`
   }
 `
 
-const CREATE = styled(ButtonWrapper)`
+const CTA_BTN = styled(ButtonWrapper)`
   justify-content: center;
   height: 45px;
-  width: 132px;
-  background-color: ${({ theme }) => theme.secondary5};
+  min-width: 132px;
   margin-left: ${({ theme }) => theme.margin(1.5)};
+  padding: 0 16px;
+
   span {
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 21px;
     color: white;
   }
 `
-const SELL = styled(ButtonWrapper)`
-  justify-content: center;
-  height: 45px;
-  width: 132px;
+
+const CONNECT = styled(CTA_BTN)`
+  margin-left: ${({ theme }) => theme.margin(2.5)};
+  background-color: ${({ theme }) => theme.secondary3};
+`
+
+const CREATE = styled(CTA_BTN)`
+  background-color: ${({ theme }) => theme.secondary5};
+`
+const SELL = styled(CTA_BTN)`
   background-color: #bb3535;
-  margin-left: ${({ theme }) => theme.margin(2)};
-  span {
-    color: white;
-  }
 `
 
 const AVATAR_NFT = styled(Image)`
@@ -139,10 +142,10 @@ const MENU_ITEM = styled(Menu.Item)`
   color: ${({ theme }) => theme.text1};
 `
 
-
 export const Header = ({ setFilter, filter, filteredCollections, totalCollections, setTotalCollections }) => {
   const history = useHistory()
   const { sessionUser } = useNFTProfile()
+  const { isCollapsed } = useNavCollapse()
   const { connected, publicKey } = useWallet()
   const [visibleCompletePopup, setVisibleCompletePopup] = useState<boolean>(false)
   const { setVisible: setModalVisible } = useWalletModal()
@@ -278,23 +281,19 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
           </div>
         ) : connected && publicKey ? (
           <div style={{ display: 'flex' }}>
-            <SELL onClick={() => console.log('got to selling')}>
+            <SELL onClick={goProfile}>
               <span>Sell</span>
             </SELL>
             <CREATE onClick={onCreateCollectible}>
               <span>Create</span>
             </CREATE>
           </div>
-        ) : (
-          <MainButton
-            className="connect-wl-btn"
-            height={'45px'}
-            status="action"
-            width={'168px'}
-            onClick={handleWalletModal}
-          >
+        ) : isCollapsed ? (
+          <CONNECT onClick={handleWalletModal}>
             <span>Connect Wallet</span>
-          </MainButton>
+          </CONNECT>
+        ) : (
+          <span></span>
         )}
         {!isHeaderData ? (
           <SkeletonCommon width="132px" height="45px" borderRadius="45px" style={{ marginLeft: '20px' }} />

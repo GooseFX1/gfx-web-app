@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { MainButton } from '../../../components'
 
@@ -28,12 +28,25 @@ type IRemoveModalContent = {
 }
 
 const RemoveModalContent = ({ title, caption, removeFunction }: IRemoveModalContent) => {
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    return () => {
+      setIsLoading(false)
+    }
+  }, [])
+
+  const handleButtonClick = (e: any) => {
+    setIsLoading(true)
+    removeFunction(e)
+  }
+
   return (
     <CONTAINER>
       <TITLE>{title}</TITLE>
       <TEXT>{caption}</TEXT>
 
-      <MainButton height={'60px'} width="100%" status="action" onClick={removeFunction}>
+      <MainButton height={'60px'} width="100%" status="action" onClick={handleButtonClick} loading={isLoading}>
         <BUTTON_TEXT>Remove</BUTTON_TEXT>
       </MainButton>
     </CONTAINER>

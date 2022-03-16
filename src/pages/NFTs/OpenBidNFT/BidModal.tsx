@@ -16,6 +16,7 @@ import {
   AH_FEE_ACCT,
   AUCTION_HOUSE_PROGRAM_ID,
   TREASURY_MINT,
+  WRAPPED_SOL_MINT,
   BuyInstructionArgs,
   getMetadata,
   BuyInstructionAccounts,
@@ -30,7 +31,6 @@ import {
 import { tradeStatePDA, getBuyInstructionAccounts, tokenSize } from '../actions'
 
 // TODO: Set variables to demo here
-const notEnough = false
 const isVerified = true
 
 //#region styles
@@ -224,23 +224,33 @@ const MESSAGE = styled.div`
     height: 20px;
   }
 `
+
+const GRADIENT_BG = styled.span`
+  font-weight: 600;
+  background-image: linear-gradient(to right, #716fff 7%, #e959ff 88%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`
 //#endregion
+
 interface IBidModal {
   setVisible: (x: boolean) => void
   visible: boolean
-  buyerPrice?: number
+  purchasePrice?: string
 }
-export const BidModal: FC<IBidModal> = ({ setVisible, visible, buyerPrice }: IBidModal) => {
+export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: IBidModal) => {
   const { prices } = usePriceFeed()
   const { getUIAmount } = useAccounts()
   const history = useHistory()
   const { sessionUser, fetchSessionUser } = useNFTProfile()
   const { connected, publicKey, sendTransaction } = useWallet()
   const { connection, network } = useConnectionConfig()
-  const { general, nftMetadata, bidOnSingleNFT } = useNFTDetails()
+  const { general, nftMetadata, bidOnSingleNFT, ask } = useNFTDetails()
 
-  const [mode, setMode] = useState('bid')
-  const [bidPriceInput, setBidPriceInput] = useState('')
+  const [mode, setMode] = useState(purchasePrice ? 'review' : 'bid')
+  const [bidPriceInput, setBidPriceInput] = useState(
+    purchasePrice ? `${parseFloat(purchasePrice) / LAMPORTS_PER_SOL}` : ''
+  )
   const [isLoading, setIsLoading] = useState(false)
 
   const creator = useMemo(() => {
@@ -278,6 +288,19 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, buyerPrice }: IBi
     () => `${marketData && bidTotal ? (marketData.current * bidTotal).toFixed(3) : ''}`,
     [bidTotal]
   )
+
+  const notEnough: boolean = useMemo(
+    () => (bidTotal >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false),
+    [bidTotal]
+  )
+
+  useEffect(() => {
+    return () => {
+      setMode('bid')
+      setBidPriceInput('')
+      setIsLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
     if (connected && publicKey) {
@@ -392,27 +415,47 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, buyerPrice }: IBi
     console.log(buyIX)
 
     const transaction = new Transaction().add(buyIX)
-    const signature = await sendTransaction(transaction, connection)
-    console.log(signature)
-    const confirm = await connection.confirmTransaction(signature, 'processed')
-    console.log(confirm)
+    try {
+      const signature = await sendTransaction(transaction, connection)
+      console.log(signature)
 
-    if (confirm.value.err === null) {
-      postBidToAPI(signature, buyerPrice, tokenSize).then((res) => {
-        console.log(res)
+      const confirm = await connection.confirmTransaction(signature, 'processed')
+      console.log(confirm)
 
-        notify(successfulListingMessage(signature, nftMetadata, bidTotal.toString()))
+      if (confirm.value.err === null) {
+        postBidToAPI(signature, buyerPrice, tokenSize).then((res) => {
+          console.log(res)
 
-        if (res === 'Error') {
-          callCancelInstruction()
-          setVisible(false)
-        } else if (res.data.bid_matched && res.data.tx_sig) {
-          fetchUser()
-          notify(successBidMatchedMessage(res.data.tx_sig, nftMetadata, bidTotal.toString()))
-          setTimeout(() => history.push('/NFTs/profile'), 2000)
-        } else {
-          setVisible(false)
-        }
+          notify(successfulListingMessage(signature, nftMetadata, bidTotal.toString()))
+
+          if (res === 'Error') {
+            callCancelInstruction()
+            setVisible(false)
+          } else if (res.data.bid_matched && res.data.tx_sig) {
+            fetchUser()
+            notify(successBidMatchedMessage(res.data.tx_sig, nftMetadata, bidTotal.toString()))
+            setTimeout(() => history.push('/NFTs/profile'), 2000)
+          } else {
+            setVisible(false)
+          }
+        })
+      }
+    } catch (error) {
+      setIsLoading(false)
+      notify({
+        type: 'error',
+        message: (
+          <MESSAGE>
+            <Row className="m-title" justify="space-between" align="middle">
+              <Col>NFT Biding error!</Col>
+              <Col>
+                <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+              </Col>
+            </Row>
+            <div>{error.message}</div>
+            <div>Please try again, if the error persists please contact support.</div>
+          </MESSAGE>
+        )
       })
     }
   }
@@ -530,15 +573,20 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, buyerPrice }: IBi
 
   return (
     <PURCHASE_MODAL setVisible={setVisible} title="" visible={visible} onCancel={onCancel}>
-      <div className="bm-title">You are about to purchase a</div>
+      <div className="bm-title">
+        You are about to{' '}
+        {purchasePrice && `${parseFloat(bidPriceInput) * LAMPORTS_PER_SOL}` === ask.buyer_price ? 'purchase' : 'bid on'}{' '}
+      </div>
       <Row className="bm-title" align="middle" justify="center" gutter={4}>
-        <Col className="bm-title-bold">{general?.nft_name || '(Name of the NFT)'}</Col>
+        <Col className="bm-title-bold">
+          <GRADIENT_BG>{general?.nft_name}</GRADIENT_BG>
+        </Col>
         <Col>by</Col>
         <Col className="bm-title-bold">{creator}</Col>
       </Row>
 
       <div className="bm-confirm">
-        <div className="bm-confirm-text-1">Place your bid:</div>
+        {!notEnough && purchasePrice === undefined && <div className="bm-confirm-text-1">Place your bid:</div>}
         <input value={bidPriceInput} onChange={handleBidInput} className="bm-confirm-price" placeholder="000.000" />
         <div className="bm-confirm-text-2">
           {mode === 'bid' ? 'There is no minimum amount this is an open bid.' : `${fiatCalc} USD`}
@@ -611,14 +659,15 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, buyerPrice }: IBi
         </BUTTON>
       )}
 
-      {mode === 'review' && (
+      {!notEnough && mode === 'review' && (
         <BUTTON
           status="initial"
           width="100%"
           height="53px"
-          className="bm-confirm-button"
+          className={`bm-confirm-button ${notEnough || bidPriceInput.length === 0 ? 'bm-bid-button-disabled' : ''}`}
           onClick={callBuyInstruction}
           loading={isLoading}
+          disabled={notEnough || bidPriceInput.length === 0}
         >
           Send bid
         </BUTTON>
