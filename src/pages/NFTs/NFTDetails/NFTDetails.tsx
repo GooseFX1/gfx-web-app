@@ -22,7 +22,7 @@ const NFT_DETAILS = styled.div`
   ${({ theme }) => css`
     .nd-back-icon {
       position: absolute;
-      top: 40px;
+      top: 132px;
       left: 30px;
       transform: rotate(90deg);
       width: 25px;
@@ -30,7 +30,6 @@ const NFT_DETAILS = styled.div`
       cursor: pointer;
     }
     .nd-details {
-      height: 100%;
     }
   `};
 `
@@ -84,8 +83,8 @@ export const NFTDetails: FC<{
         }}
       />
 
-      <Row gutter={[12, 16]} className="nd-content" justify="space-around">
-        <Col sm={9} xl={9} xxl={6} className="nd-preview">
+      <Row gutter={[12, 16]} className="nd-content" justify="space-around" align="middle">
+        <Col sm={9} xl={9} xxl={8} className="nd-preview">
           <LeftSection mode={mode} />
         </Col>
         <Col sm={12} xl={9} xxl={7} className="nd-details">
