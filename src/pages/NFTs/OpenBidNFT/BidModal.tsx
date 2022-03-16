@@ -667,7 +667,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
           className={`bm-confirm-button ${notEnough || bidPriceInput.length === 0 ? 'bm-bid-button-disabled' : ''}`}
           onClick={callBuyInstruction}
           loading={isLoading}
-          disabled={notEnough || bidPriceInput.length === 0}
+          disabled={isLoading || notEnough || bidPriceInput.length === 0}
         >
           Send bid
         </BUTTON>
