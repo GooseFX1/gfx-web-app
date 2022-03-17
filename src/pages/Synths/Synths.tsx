@@ -53,10 +53,12 @@ export const Synths: FC = () => {
   const { endpoint, setEndpoint } = useConnectionConfig()
 
   useEffect(() => {
-    logEvent(analytics, 'screen_view', {
-      firebase_screen: 'Synth',
-      firebase_screen_class: 'load'
-    })
+    const an = analytics()
+    an !== null &&
+      logEvent(an, 'screen_view', {
+        firebase_screen: 'Synth',
+        firebase_screen_class: 'load'
+      })
   }, [])
 
   useEffect(() => {

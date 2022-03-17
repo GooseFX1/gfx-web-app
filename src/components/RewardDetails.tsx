@@ -4,10 +4,10 @@ import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { Row, Col } from 'antd'
 import { useRewardToggle } from '../context/reward_toggle'
-import { SpaceEvenlyDiv, AlignCenterDiv } from '../styles'
+import { SpaceEvenlyDiv } from '../styles'
 
 const REWARD_INFO_TEXT = styled.div`
-  padding: ${({ theme }) => theme.margin(5)};
+  padding: ${({ theme }) => theme.margin(4)} ${({ theme }) => theme.margin(5)};
   color: ${({ theme }) => theme.text1} !important;
 `
 
@@ -64,7 +64,7 @@ const TEXT_25 = styled.span`
 
 const TEXT_22 = styled.div`
   font-size: 22px;
-  margin-top: 38px;
+  margin-top: 3vh;
   font-weight: 500;
   ${({ theme }) => theme.mediaWidth.upToLarge`
     font-size: 18px;
@@ -172,7 +172,7 @@ export const RewardInfoComponent: FC = () => {
           Rewards <REWARD_ICON src={'/img/assets/rewards.svg'} alt="rewards" />
         </TEXT_25>
       </div>
-      <Row justify="space-between" align="middle" style={{ margin: '24px 0 64px' }}>
+      <Row justify="space-between" align="middle" style={{ margin: '3vh 0 6vh' }}>
         <Col span="">
           <PURPLE60>
             42.69 M <TEXT_50> GOFX</TEXT_50>
@@ -244,7 +244,10 @@ export const RewardRedirectComponent: FC = () => {
         <img src={`${window.origin}/img/assets/close-white-icon.svg`} alt="copy_address" />
       </CLOSE_ICON>
       <STAKE_TEXT>
-        Stake your <BOLD_TEXT>GOFX</BOLD_TEXT> now <br /> and earn up to:
+        Stake your <BOLD_TEXT>GOFX</BOLD_TEXT>
+        <br /> and earn up to
+        <br />
+        <small style={{ opacity: '.6' }}>(coming soon)</small>
       </STAKE_TEXT>
       <APR_TEXT>200% APR</APR_TEXT>
       <div style={{ textAlign: 'center' }}>

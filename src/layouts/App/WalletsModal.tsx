@@ -86,9 +86,11 @@ export const WalletsModal: FC = () => {
   const handleWalletClick = useCallback(
     (event: React.MouseEvent<HTMLElement>, walletName: WalletName) => {
       // analytics logger
-      logEvent(analytics, 'wallet-selection', {
-        walletName: walletName
-      })
+      const an = analytics()
+      an !== null &&
+        logEvent(an, 'wallet-selection', {
+          walletName: walletName
+        })
       select(walletName)
       handleCancel(event)
     },

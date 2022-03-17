@@ -97,10 +97,12 @@ export const Crypto: FC = () => {
   const { endpoint, setEndpoint } = useConnectionConfig()
 
   useEffect(() => {
-    logEvent(analytics, 'screen_view', {
-      firebase_screen: 'Crypto',
-      firebase_screen_class: 'load'
-    })
+    const an = analytics()
+    an !== null &&
+      logEvent(an, 'screen_view', {
+        firebase_screen: 'Crypto',
+        firebase_screen_class: 'load'
+      })
 
     if (endpoint !== ENDPOINTS[0].endpoint) {
       notify({ message: 'Switched to mainnet' })
