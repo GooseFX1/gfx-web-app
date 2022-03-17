@@ -236,7 +236,7 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
   )
 
   return (
-    <COLLECTION_HEADER $height={collapse ? '25' : '45'}>
+    <COLLECTION_HEADER $height={collapse ? '30' : '45'}>
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
       {isCollectionItemEmpty ? (
         <SkeletonCommon height="438px" borderRadius="0" />
