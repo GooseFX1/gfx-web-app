@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import styled from 'styled-components'
 import { TableList } from './TableList'
 import { FarmHeader } from './FarmHeader'
-import { mockDataSource } from './mockData'
+import { mockDataSource, supportedData } from './mockData'
 import { useNavCollapse } from '../../context'
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
@@ -30,15 +30,15 @@ const BODY = styled.div`
 `
 
 export const Farm: FC = () => {
-  const [dataSource, setDataSource] = useState(mockDataSource)
+  const [dataSource, setDataSource] = useState(supportedData)
   const { isCollapsed } = useNavCollapse()
 
   const onFilter = (val) => {
     if (val === 'All pools') {
-      setDataSource(mockDataSource)
+      setDataSource(supportedData)
       return
     }
-    const tmp = JSON.parse(JSON.stringify(mockDataSource))
+    const tmp = JSON.parse(JSON.stringify(supportedData))
     const filteredData = tmp.filter((item) => item.type === val)
     setDataSource(filteredData)
   }

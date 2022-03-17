@@ -32,6 +32,10 @@ export const ADDRESSES: {
       pythOracle: {
         address: PublicKey
       }
+      stake: {
+        address: PublicKey
+        controller?: PublicKey
+      }
       swap: {
         address: PublicKey
         controller?: PublicKey
@@ -95,6 +99,10 @@ export const ADDRESSES: {
       pythOracle: {
         address: new PublicKey('AHtgzX45WTKfkPG53L6WYhGEXwQkN1BVknET3sVsLL8J')
       },
+      stake: {
+        address: new PublicKey('8KJx48PYGHVC9fxzRRtYp4x4CM2HyYCm2EjVuAP4vvrx'),
+        controller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
+      },
       swap: {
         address: PublicKey.default
       }
@@ -110,6 +118,9 @@ export const ADDRESSES: {
         priceAggregator: PublicKey.default
       },
       pythOracle: {
+        address: PublicKey.default
+      },
+      stake: {
         address: PublicKey.default
       },
       swap: {
@@ -241,6 +252,10 @@ export const ADDRESSES: {
       pythOracle: {
         address: new PublicKey('BmA9Z6FjioHJPpjT39QazZyhDRUdZy2ezwx4GiDdE2u2')
       },
+      stake: {
+        address: new PublicKey('8KJx48PYGHVC9fxzRRtYp4x4CM2HyYCm2EjVuAP4vvrx'),
+        controller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
+      },
       swap: {
         address: new PublicKey('7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'),
         controller: new PublicKey('DFLudW9uuQ63SAErXEQ6XjJzd2p6dpitNehdS1uJdvnq')
@@ -317,6 +332,12 @@ export const PACK_CREATE_ID = new PublicKey('packFeFNZzMfD9aVWL7QbGz1WcU7R9zpf6p
 export const ORACLE_ID = new PublicKey('rndshKFf48HhGaPbaCd3WQYtgCNKzRgVQ3U2we4Cvf9')
 
 export const SYSTEM = new PublicKey('11111111111111111111111111111111')
+
+// STAKE CONSTANTS
+
+export const STAKE_PREFIX: string = 'GFX-STAKINGACCOUNT'
+
+export const STAKE_PROGRAM_ID: StringPublicKey = '8KJx48PYGHVC9fxzRRtYp4x4CM2HyYCm2EjVuAP4vvrx'
 
 // AUCTION HOUSE CONSTANTS
 export const AUCTION_HOUSE_PREFIX: string = 'auction_house'

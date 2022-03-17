@@ -158,13 +158,13 @@ export const Connect: FC = () => {
   }, [connected])
 
   return (
-    <WRAPPER $connected={!!base58}>
+    <WRAPPER $connected={!!base58} onClick={onSpanClick}>
       {wallet && base58 && (
         <WALLET_ICON>
           <img src={wallet.icon} alt={`${wallet.name}_icon`} />
         </WALLET_ICON>
       )}
-      <span onClick={onSpanClick}>{content}</span>
+      <span>{content}</span>
       {wallet && (
         <ArrowDropdown
           arrowRotation={arrowRotation}
