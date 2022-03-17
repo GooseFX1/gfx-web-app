@@ -121,9 +121,17 @@ const TabContent = ({ baseCollections, collectionFilter, sort }: ITabContent) =>
       }
     } else if (collectionFilter === 'volume') {
       if (sort === 'high') {
-        setCollectionExtras(fullCollections.sort((a, b) => b.collection_vol.weekly - a.collection_vol.weekly))
+        setCollectionExtras(
+          fullCollections.sort((a, b) =>
+            b.collection_vol && a.collection_vol ? b.collection_vol.weekly - a.collection_vol.weekly : null
+          )
+        )
       } else if (sort === 'low') {
-        setCollectionExtras(fullCollections.sort((a, b) => a.collection_vol.weekly - b.collection_vol.weekly))
+        setCollectionExtras(
+          fullCollections.sort((a, b) =>
+            a.collection_vol && b.collection_vol ? a.collection_vol.weekly - b.collection_vol.weekly : null
+          )
+        )
       }
     }
   }
