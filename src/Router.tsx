@@ -16,7 +16,7 @@ export const Router: FC = () => {
         <NavCollapseProvider>
           <AppLayout>
             <Route exact path="/swap" component={Swap} />
-            <Route exact path="/crypto" component={Crypto} />
+            <Route exact path="/trade" component={Crypto} />
             <Route
               exact
               path="/synths"
