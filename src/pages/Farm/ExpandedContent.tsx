@@ -1,9 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { stakedEarnedMockData, messageMockData, stakeOrClaimInfoMockData } from './mockData'
 import styled from 'styled-components'
 import { Button, Row, Col } from 'antd'
 import { MainButton } from '../../components'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { notify } from '../../utils'
+import { useTokenRegistry, useAccounts, useCrypto, useConnectionConfig } from '../../context'
+import { createStakingAccount, executeStake } from '../../web3'
+import { Wallet } from '@project-serum/anchor'
 
 const STYLED_EXPANDED_ROW = styled.div`
   padding-top: ${({ theme }) => theme.margin(4)};
@@ -68,13 +72,12 @@ const STYLED_RIGHT_CONTENT = styled.div`
 const STYLED_SOL = styled.div`
   width: 300px;
   height: 60px;
-  background-color: ${({ theme }) => theme.solPillBg};
   border-radius: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 ${({ theme }) => theme.margin(4)};
-  margin: 0 ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(1)};
+  /* padding: 0 ${({ theme }) => theme.margin(4)};
+  margin: 0 ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(1)}; */
   .value {
     font-family: Montserrat;
     font-size: 22px;
@@ -99,6 +102,9 @@ const STYLED_SOL = styled.div`
     text-align: center;
     color: ${({ theme }) => theme.text14};
     display: flex;
+    z-index: 2;
+    margin-bottom: 6px;
+    margin-left: -150px;
   }
   .text-2 {
     margin-left: ${({ theme }) => theme.margin(1.5)};
@@ -152,6 +158,9 @@ const STYLED_STAKED_EARNED_CONTENT = styled.div`
     }
   }
 `
+const STYLED_IMG = styled.img`
+  transform: scale(1.3);
+`
 
 const STYLED_DESC = styled.div`
   display: flex;
@@ -190,9 +199,64 @@ const MESSAGE = styled.div`
     max-width: 200px;
   }
 `
+const MAX_BUTTON = styled.div`
+  cursor: pointer;
+`
+const STYLED_INPUT = styled.input`
+  width: 300px;
+  height: 60px;
+  background-color: ${({ theme }) => theme.solPillBg};
+  border-radius: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 ${({ theme }) => theme.margin(4)};
+  margin: 0 ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(1)};
+  .value {
+    font-family: Montserrat;
+    font-size: 22px;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: ${({ theme }) => theme.text15};
+  }
+  &.active {
+    .value {
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+  .text {
+    font-family: Montserrat;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    color: ${({ theme }) => theme.text14};
+    display: flex;
+  }
+  .text-2 {
+    margin-left: ${({ theme }) => theme.margin(1.5)};
+  }
+`
 
 export const ExpandedContent = ({ record }: any) => {
-  const { connected } = record
+  const { name, image, liquidity, rewards, connected } = record
+  const { getUIAmount } = useAccounts()
+  const { publicKey } = useWallet()
+  const { getTokenInfoFromSymbol } = useTokenRegistry()
+  const tokenInfo = useMemo(() => getTokenInfoFromSymbol(name), [name, publicKey])
+  const userBalance = useMemo(
+    () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
+    [tokenInfo, getUIAmount, publicKey]
+  )
+  const [displayUserBalance, setDisplayUserBalance] = useState(userBalance)
+  const { network } = useConnectionConfig()
+  const wallet = useWallet()
+  const { connection } = useConnectionConfig()
+
   const initState = [
     {
       id: 0,
@@ -207,56 +271,28 @@ export const ExpandedContent = ({ record }: any) => {
   ]
   const [status, setStatus] = useState(initState)
   const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    setDisplayUserBalance(publicKey ? displayUserBalance : 0)
+  }, [displayUserBalance, publicKey])
   const onClickStake = (index) => {
-    const tmp = JSON.parse(JSON.stringify(status))
-    if (!tmp[index].selected) {
-      tmp[index].selected = true
-      setStatus(tmp)
-      return
-    }
-    const _count = count + 1
-    setCount(_count)
-    tmp[index].isLoading = true
-    setStatus(tmp)
-    const type = _count % 2 === 0 ? 'info' : 'error'
-    setTimeout(() => {
-      const temp = JSON.parse(JSON.stringify(status))
-      temp[index].isLoading = false
-      setStatus(temp)
-      notify({
-        message: (
-          <MESSAGE>
-            <Row className="m-title" justify="space-between" align="middle">
-              <Col>{messageMockData[index][type].title}</Col>
-              <Col>
-                <img className="m-icon" src={`/img/assets/${messageMockData[index][type].icon}.svg`} alt="" />
-              </Col>
-            </Row>
-            {type === 'info' ? (
-              <>
-                <div>{messageMockData[index][type]?.text1}</div>
-                <div>{messageMockData[index][type]?.text2}</div>
-                <div>{messageMockData[index][type]?.text3}</div>
-              </>
-            ) : (
-              <p>{messageMockData[index][type]?.text1}</p>
-            )}
-          </MESSAGE>
-        ),
-        styles: {
-          maxWidth: '270px',
-          minWidth: '220px'
-        },
-        type
-      })
-    }, 1000)
+    executeStake(wallet, connection, network, displayUserBalance).then((res) => console.log(res))
+  }
+
+  const onClickHalf = () => {
+    console.log('half clicked')
+    setDisplayUserBalance(publicKey ? userBalance / 2 : 0)
+  }
+  const onClickMax = () => {
+    setDisplayUserBalance(publicKey ? userBalance : 0)
+    console.log('max clicked')
   }
   return (
     <STYLED_EXPANDED_ROW>
       <STYLED_EXPANDED_CONTENT>
         <STYLED_LEFT_CONTENT className={`${connected ? 'connected' : 'disconnected'}`}>
           <div className="left-inner">
-            <img src={`/img/assets/farm-logo.svg`} alt="" />
+            <STYLED_IMG src={`/img/crypto/${image}.svg`} alt="" />
             {connected ? (
               <STYLED_STAKED_EARNED_CONTENT>
                 {stakedEarnedMockData.map((item: any) => (
@@ -279,10 +315,15 @@ export const ExpandedContent = ({ record }: any) => {
             {stakeOrClaimInfoMockData.map((item) => (
               <div className="SOL-item">
                 <STYLED_SOL className={status[item.id].selected ? 'active' : ''}>
-                  <div className="value">{item.value}</div>
+                  <STYLED_INPUT className="value" />
+                  {/* <div className="value" >{displayUserBalance}</div> */}
                   <div className="text">
-                    <div className="text-1">Half</div>
-                    <div className="text-2">Max</div>
+                    <MAX_BUTTON onClick={onClickHalf} className="text-1">
+                      Half
+                    </MAX_BUTTON>
+                    <MAX_BUTTON onClick={onClickMax} className="text-2">
+                      Max
+                    </MAX_BUTTON>
                   </div>
                 </STYLED_SOL>
                 <STYLED_STAKE_PILL
@@ -300,8 +341,10 @@ export const ExpandedContent = ({ record }: any) => {
       </STYLED_EXPANDED_CONTENT>
       {connected && (
         <STYLED_DESC>
-          <div className="text">SOL Wallet Balance:</div>
-          <div className="value">124.4589 SOL</div>
+          <div className="text">{name} Wallet Balance:</div>
+          <div className="value">
+            {userBalance} {name}
+          </div>
         </STYLED_DESC>
       )}
     </STYLED_EXPANDED_ROW>

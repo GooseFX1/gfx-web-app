@@ -1,6 +1,14 @@
 import React from 'react'
 import { Router } from './Router'
-import { AccountsProvider, DarkModeProvider, SettingsProvider, TokenRegistryProvider, WalletProvider , RewardToggleProvider} from './context'
+import {
+  AccountsProvider,
+  DarkModeProvider,
+  SettingsProvider,
+  TokenRegistryProvider,
+  WalletProvider,
+  RewardToggleProvider,
+  CryptoProvider
+} from './context'
 import ThemeProvider from './theme'
 import './App.less'
 
@@ -13,7 +21,9 @@ export default function App(): JSX.Element {
             <TokenRegistryProvider>
               <AccountsProvider>
                 <RewardToggleProvider>
-                  <Router />
+                  <CryptoProvider>
+                    <Router />
+                  </CryptoProvider>
                 </RewardToggleProvider>
               </AccountsProvider>
             </TokenRegistryProvider>

@@ -1,3 +1,17 @@
+export const supportedData = [
+  {
+    id: '1',
+    image: 'GOFX',
+    name: 'GOFX',
+    earned: '0',
+    apr: '56%',
+    rewards: '100% GOFX',
+    liquidity: '$ 350,114,029',
+    volume: '$ 47,856',
+    connected: true,
+    type: 'Single Sided'
+  }
+]
 export const mockDataSource = [
   {
     id: '1',
@@ -173,9 +187,9 @@ export const mockDataSource = [
 
 export const categories = [
   { name: 'All pools', icon: 'All pools' },
-  { name: 'Single Sided', icon: 'Single Sided' },
-  { name: 'Double Sided', icon: 'Double Sided' },
-  { name: 'Insurance', icon: 'Insurance' }
+  { name: 'Single Sided', icon: 'Single Sided' }
+  // { name: 'Double Sided', icon: 'Double Sided' },
+  // { name: 'Insurance', icon: 'Insurance' }
 ]
 
 export const stakedEarnedMockData = [
