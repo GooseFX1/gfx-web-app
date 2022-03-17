@@ -20,10 +20,12 @@ export const DarkModeProvider: FC<{ children: ReactNode }> = ({ children }) => {
         toggleMode: () =>
           setMode((prevMode) => {
             // analytics logger
-            logEvent(analytics, 'color-mode', {
-              from: prevMode,
-              to: mode === 'dark' ? 'lite' : 'dark'
-            })
+            const an = analytics()
+            an !== null &&
+              logEvent(an, 'color-mode', {
+                from: prevMode,
+                to: mode === 'dark' ? 'lite' : 'dark'
+              })
             return mode === 'dark' ? 'lite' : 'dark'
           })
       }}

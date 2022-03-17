@@ -77,10 +77,12 @@ const SwapContent: FC = () => {
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
 
   useEffect(() => {
-    logEvent(analytics, 'screen_view', {
-      firebase_screen: 'Swap',
-      firebase_screen_class: 'load'
-    })
+    const an = analytics()
+    an !== null &&
+      logEvent(an, 'screen_view', {
+        firebase_screen: 'Swap',
+        firebase_screen_class: 'load'
+      })
   }, [])
 
   const onClick = (e: React.MouseEvent<HTMLElement>) => {

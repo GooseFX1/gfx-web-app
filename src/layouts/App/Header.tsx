@@ -149,13 +149,13 @@ const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => v
     >
       {mode === 'dark' ? (
         <img
-          style={{ transform: `rotate(${collapse ? 180 : 0}deg)`, marginTop: `${collapse ? '2px' : '5px'}` }}
+          style={{ transform: `rotate(${collapse ? 0 : 180}deg)`, marginTop: `${collapse ? '5px' : '2px'}` }}
           src={icon}
           alt=""
         />
       ) : (
         <SVGToGrey2
-          style={{ transform: `rotate(${collapse ? 180 : 0}deg)`, marginTop: `${collapse ? '2px' : '5px'}` }}
+          style={{ transform: `rotate(${collapse ? 0 : 180}deg)`, marginTop: `${collapse ? '5px' : '2px'}` }}
           src={icon}
           alt=""
         />
