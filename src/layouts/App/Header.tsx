@@ -41,7 +41,7 @@ const BUTTONS = styled(CenteredDiv)`
   position: absolute;
 
   > *:not(:last-child) {
-    margin-right: ${({ theme }) => theme.margin(2)};
+    margin-right: ${({ theme }) => theme.margin(4)};
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -121,7 +121,6 @@ export const Header: FC = () => {
           <BUTTONS>
             <RewardsButton />
             <Connect />
-            <SelectRPC />
             <More />
           </BUTTONS>
         </>

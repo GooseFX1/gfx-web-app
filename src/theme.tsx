@@ -79,6 +79,7 @@ export function colors(mode: string): Colors {
     bg7: mode === 'dark' ? '#131313' : 'gray',
     bg8: mode === 'dark' ? 'rgba(64, 64, 64, 0.22)' : 'gray',
     bg9: mode === 'dark' ? '#2a2a2a' : white,
+    bg10: mode === 'dark' ? '#191919' : '#eee',
     modalBackground: mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(96, 96, 96, 0.5)',
     bgReward:
       mode === 'dark'

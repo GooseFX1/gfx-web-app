@@ -1,23 +1,27 @@
-import React, { FC, useCallback, useState } from 'react'
-import { logEvent } from 'firebase/analytics'
-import analytics from '../analytics'
+import { useState } from 'react'
 import styled from 'styled-components'
 import { Menu, MenuItem } from '../layouts/App/shared'
 import { ENDPOINTS, useConnectionConfig } from '../context/settings'
-import { notify } from '../utils'
 import { ArrowDropdown } from './ArrowDropdown'
 import { SpaceBetweenDiv } from '../styles'
 
 const WRAPPER = styled(SpaceBetweenDiv)`
-  padding: 0px ${({ theme }) => theme.margin(1.5)};
-  height: 36px;
-  ${({ theme }) => theme.smallBorderRadius}
-  background-color: ${({ theme }) => theme.grey5};
+  padding: 0px ${({ theme }) => theme.margin(2)};
+  height: 40px;
+  margin: 6px 0 4px;
+  background-color: ${({ theme }) => theme.bg10};
+  border-color: ${({ theme }) => theme.bg10};
   cursor: pointer;
+  ${({ theme }) => theme.largeBorderRadius};
 
   span {
     font-size: 12px;
     font-weight: 600;
+    color: ${({ theme }) => theme.text4} !important;
+  }
+
+  &:hover span {
+    color: ${({ theme }) => theme.text4} !important;
   }
 `
 
@@ -41,8 +45,13 @@ const Overlay = ({
   )
 }
 
-export const SelectRPC: FC = () => {
-  const { endpoint, endpointName, setEndpoint } = useConnectionConfig()
+export const SelectRPC = ({
+  handleClickForRPC
+}: {
+  handleClickForRPC: (endpoint: string, endpointName: string, network: string) => void
+}) => {
+  const { endpointName } = useConnectionConfig()
+  const [RPCEndpoint, setRPCEndpoint] = useState(endpointName)
   const [arrowRotation, setArrowRotation] = useState(false)
   const [dropdownVisible, setDropdownVisible] = useState(false)
 
@@ -50,24 +59,14 @@ export const SelectRPC: FC = () => {
     setArrowRotation(!arrowRotation)
     setDropdownVisible(!dropdownVisible)
   }
-  const handleClickForRPC = useCallback(
-    (e, endpoint, endpointName, network) => {
-      e.preventDefault()
-      // analytics logger
-      const an = analytics()
-      an !== null &&
-        logEvent(an, 'rpc-selector', {
-          endpoint: endpoint,
-          endpointName: endpointName,
-          network: network
-        })
-      setEndpoint(endpoint)
-      setDropdownVisible(false)
-      setArrowRotation(false)
-      notify({ message: `Switched to  ${endpointName} (${network}) ` })
-    },
-    [endpoint]
-  )
+
+  const clickForRPC = (e, endpoint, endpointName, network) => {
+    e.preventDefault()
+    setRPCEndpoint(endpointName)
+    setDropdownVisible(false)
+    setArrowRotation(false)
+    handleClickForRPC(endpoint, endpointName, network)
+  }
 
   return (
     <WRAPPER>
@@ -75,10 +74,10 @@ export const SelectRPC: FC = () => {
         arrowRotation={arrowRotation}
         offset={[20, 24]}
         onVisibleChange={handleClick}
-        overlay={<Overlay handleClick={handleClickForRPC} />}
+        overlay={<Overlay handleClick={clickForRPC} />}
         visible={dropdownVisible}
       >
-        <span>{endpointName}</span>
+        <span>{RPCEndpoint}</span>
       </ArrowDropdown>
     </WRAPPER>
   )
