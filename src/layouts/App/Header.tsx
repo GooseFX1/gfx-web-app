@@ -59,7 +59,7 @@ const BUTTONS = styled(CenteredDiv)`
 `
 
 const WRAPPER = styled.nav`
-  position: absolute;
+  position: fixed;
 
   width: 100%;
   ${({ theme }) => theme.headerRoundedBorders}
