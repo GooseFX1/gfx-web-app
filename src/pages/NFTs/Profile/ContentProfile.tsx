@@ -50,9 +50,10 @@ export const ContentProfile = ({ isExplore }: Props) => {
   }, [tabPanes])
 
   useEffect(() => {
-    if (sessionUser && parsedAccounts) {
-      const userCreated = parsedAccounts.filter((nft: ParsedAccount) =>
-        nft.data.creators.find((c) => c.address === publicKey.toBase58())
+    if (sessionUser && parsedAccounts && parsedAccounts.length > 0) {
+      const userCreated = parsedAccounts.filter(
+        (nft: ParsedAccount) =>
+          nft.data.creators !== undefined && nft.data.creators.find((c) => c.address === publicKey.toBase58())
       )
       setCreatedItems(userCreated)
     } else {
