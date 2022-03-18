@@ -52,3 +52,10 @@ export const SVGToWhite = styled.img`
 export const SVGToBlack = styled.img`
   filter: invert(100%);
 `
+export const SVGDynamicMode = styled.img`
+  filter: ${({ theme }) => theme.filterBackIcon};
+`
+
+export const SVGDynamicReverseMode = styled.img`
+  filter: ${({ theme }) => theme.filterWhiteIcon};
+`
