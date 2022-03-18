@@ -83,7 +83,7 @@ const CollapsibleWrapper = styled.div`
   height: 20px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
-  bottom: -20px;
+  bottom: -15px;
   display: flex;
   justify-content: center;
   background-color: ${({ theme }) => theme.bg9};
