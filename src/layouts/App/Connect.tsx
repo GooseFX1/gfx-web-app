@@ -113,7 +113,7 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
 }
 
 export const Connect: FC = () => {
-  let { connect, select, wallet, publicKey, ready, connected } = useWallet()
+  const { connect, select, wallet, publicKey, ready, connected } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
   const [arrowRotation, setArrowRotation] = useState(false)
   const [visible, setVisible] = useState(false)
