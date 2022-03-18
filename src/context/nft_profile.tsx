@@ -4,6 +4,7 @@ import apiClient from '../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
 import { Connection } from '@solana/web3.js'
 import { StringPublicKey, getParsedNftAccountsByOwner, ParsedAccount } from '../web3'
+import { completeNFTUserProfile } from '../api/NFTs'
 
 export type UserFetchType = 'address' | 'user_id' | 'nickname'
 
@@ -28,7 +29,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const [parsedAccounts, setParsedAccounts] = useState<ParsedAccount[]>([])
 
   const fetchSessionUser = useCallback(
-    async (type: UserFetchType, parameter: string | number, connection: Connection): Promise<any> => {
+    async (type: UserFetchType, parameter: string, connection: Connection): Promise<any> => {
       try {
         const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SESSION_USER}?${type}=${parameter}`)
         if (res.data.length > 0) {
@@ -36,9 +37,17 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
           const userLikes = await fetchUserLikes(tempUser)
           setSessionUser({ ...tempUser, user_likes: userLikes })
         } else {
-          setUnamedUser(type, parameter)
-          setParsedAccounts([])
+          // auto-creates a basic user in db to establish a user id for session user
+          try {
+            const registerUser = await completeNFTUserProfile(parameter)
+            setSessionUser({ ...registerUser.data[0], user_likes: [] })
+          } catch (error) {
+            // TODO: create analytics logging event
+            console.error(error)
+            setUnamedUser(type, parameter)
+          }
         }
+        // fetches user nfts in wallet and sets them to state
         await getParsedAccounts(parameter as StringPublicKey, connection)
         return res
       } catch (err) {
