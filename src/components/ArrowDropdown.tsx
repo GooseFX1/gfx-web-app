@@ -4,10 +4,6 @@ import styled from 'styled-components'
 import { CenteredDiv, SVGToWhite } from '../styles'
 import { useDarkMode } from '../context'
 
-const CHILDREN = styled.div`
-  width: 190px;
-`
-
 const ARROW_CLICKER = styled(CenteredDiv)<{ $arrowRotation?: boolean; $measurements?: string }>`
   ${({ theme, $measurements }) => theme.measurements($measurements ? $measurements : theme.margin(1.5))}
   margin-left: ${({ theme }) => theme.margin(1)};
@@ -55,7 +51,7 @@ export const ArrowDropdown: FC<{
       {...props}
     >
       <Row align="middle" wrap={false}>
-        <CHILDREN>{children}</CHILDREN>
+        {children}
         <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements}>
           {mode === 'dark' ? (
             <SVGToWhite src={`/img/assets/arrow.svg`} alt="arrow" />

@@ -4,8 +4,6 @@ import { PrivacyPolicy } from './PrivacyPolicy'
 import { TermsOfService } from './TermsOfService'
 import { useConnectionConfig } from '../../context'
 import { APP_LAYOUT_FOOTER_HEIGHT, APP_LAYOUT_FOOTER_HEIGHT_MOBILE, SpaceBetweenDiv } from '../../styles'
-import { ThemeToggle } from '../../components/ThemeToggle'
-import { SocialMediaIcons } from './SocialMediaIcons'
 
 const REFRESH_ICON = styled.div`
   margin-right: ${({ theme }) => theme.margin(6)};
@@ -83,7 +81,6 @@ export const Footer: FC = () => {
         SOL Network:
         <span className={'network'}>{' ' + network}</span>
       </CURRENT_NETWORK>
-      <ThemeToggle />
     </WRAPPER>
   )
 }

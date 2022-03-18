@@ -25,13 +25,21 @@ const WRAPPER = styled(SpaceBetweenDiv)`
   }
 `
 
+const CHILDREN = styled.div`
+  width: ${({ theme }) => theme.margin(23.75)};
+`
+
+const RPCMenu = styled(Menu) `
+  width: ${({ theme }) => theme.margin(30.75)};
+`
+
 const Overlay = ({
   handleClick
 }: {
   handleClick: (e: any, endpoint: string, endpointName: string, network: string) => void
 }) => {
   return (
-    <Menu>
+    <RPCMenu>
       {ENDPOINTS.map((point, index) => {
         return (
           <MenuItem key={index} onClick={(e) => handleClick(e, point.endpoint, point.name, point.network)}>
@@ -41,14 +49,15 @@ const Overlay = ({
           </MenuItem>
         )
       })}
-    </Menu>
+    </RPCMenu>
   )
 }
 
 export const SelectRPC = ({
-  handleClickForRPC
+  handleClickForRPC, isCustomNode
 }: {
-  handleClickForRPC: (endpoint: string, endpointName: string, network: string) => void
+  handleClickForRPC: (endpoint: string, endpointName: string, network: string) => void,
+  isCustomNode: boolean
 }) => {
   const { endpointName } = useConnectionConfig()
   const [RPCEndpoint, setRPCEndpoint] = useState(endpointName)
@@ -77,7 +86,7 @@ export const SelectRPC = ({
         overlay={<Overlay handleClick={clickForRPC} />}
         visible={dropdownVisible}
       >
-        <span>{RPCEndpoint}</span>
+        <CHILDREN><span>{isCustomNode? 'Custom': RPCEndpoint}</span></CHILDREN>
       </ArrowDropdown>
     </WRAPPER>
   )
