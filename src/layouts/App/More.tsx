@@ -9,7 +9,7 @@ import { ThemeToggle } from '../../components/ThemeToggle'
 import { SelectRPC } from '../../components'
 import analytics from '../../analytics'
 import { notify } from '../../utils'
-import { useConnectionConfig } from '../../context'
+import { ENDPOINTS, useConnectionConfig } from '../../context'
 
 const ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margin(4.5))}
@@ -21,12 +21,14 @@ const ICON = styled(CenteredImg)`
 `
 
 const NewMenu = styled(Menu)`
-  width: 278px;
+  width: ${({ theme }) => theme.margin(34.75)};
   background-color: ${({ theme }) => theme.bg9};
+  margin-top: ${({ theme }) => theme.margin(2)};
 `
 
 const ITEM = styled(MenuItem)`
   justify-content: center;
+  cursor: auto;
 
   & span {
     font-weight: 600;
@@ -41,6 +43,7 @@ const ItemRow = styled.div`
   width: 100%;
   margin-top: ${({ theme }) => theme.margin(0.5)};
   padding: 0 0 2px 0;
+  cursor: text;
 `
 
 const INPUT = styled(Input)`
@@ -53,7 +56,6 @@ const INPUT = styled(Input)`
   background-color: ${({ theme }) => theme.bg10};
   border-color: ${({ theme }) => theme.bg10};
   color: ${({ theme }) => theme.text4};
-  cursor: pointer;
   margin-top: ${({ theme }) => theme.margin(0.5)};
 
   ::placeholder {
@@ -61,19 +63,17 @@ const INPUT = styled(Input)`
     opacity: 1; /* Firefox */
   }
   :-ms-input-placeholder {
-    /* Internet Explorer 10-11 */
-    color: #636363;
+    color: #636363; /* Internet Explorer 10-11 */
   }
   ::-ms-input-placeholder {
-    /* Microsoft Edge */
-    color: #636363;
+    color: #636363; /* Microsoft Edge */
   }
 `
 
 const Button = styled.button`
   width: 126px;
   height: 40px;
-  margin: 13px 55px 0;
+  margin: 13px 0 0;
   font-weight: 500;
   font-size: 14px;
   padding: 0 ${({ theme }) => theme.margin(2)};
@@ -87,25 +87,34 @@ const Button = styled.button`
 `
 
 const Overlay = () => {
-  const [nodeURL, setNodeURL] = useState('')
-  const { setEndpoint } = useConnectionConfig()
-
-  const [rpcState, setRpcState] = useState({
-    endpoint: null,
-    endpointName: null,
-    network: null
-  })
+  const { endpoint, network, endpointName, setEndpoint } = useConnectionConfig()
+  const [nodeURL, setNodeURL] = useState(endpoint.split('/')[0]+'//'+endpoint.split('/')[2])
+  const [isCustomNode, setIsCustomNode] = useState(false)
+  const [rpcState, setRpcState] = useState({ endpoint, endpointName, network })
 
   const handleClickForRPC = (endpoint, endpointName, network) => {
+    setIsCustomNode(false);
+    setNodeURL(endpoint.split('/')[0]+'//'+endpoint.split('/')[2])
     setRpcState({ endpoint, endpointName, network })
   }
 
+
   const saveHandler = () => {
-    setEndpoint(rpcState.endpoint)
     // analytics logger
     const an = analytics()
-    an !== null && logEvent(an, 'rpc-selector', { ...rpcState })
+    if (isCustomNode) {
+      setEndpoint(nodeURL)
+      an !== null && logEvent(an, 'rpc-selector', { ...rpcState, endpoint: nodeURL })
+    } else {
+      setEndpoint(rpcState.endpoint)
+      an !== null && logEvent(an, 'rpc-selector', { ...rpcState })
+    }
     notify({ message: `Switched to  ${rpcState.endpointName} (${rpcState.network}) ` })
+  }
+
+  const nodeURLHandler = ({ target }) => {
+    setNodeURL(target.value)    
+    setIsCustomNode(rpcState.endpoint !== nodeURL)
   }
 
   return (
@@ -115,8 +124,8 @@ const Overlay = () => {
       </ITEM>
       <ITEM>
         <ItemRow>
-          <span>Rpc EndPoint</span>
-          <SelectRPC handleClickForRPC={handleClickForRPC} />
+          <span>RPC EndPoint</span>
+          <SelectRPC handleClickForRPC={handleClickForRPC} isCustomNode={isCustomNode} />
         </ItemRow>
       </ITEM>
       <ITEM>
@@ -124,9 +133,7 @@ const Overlay = () => {
           <span>Node URL</span>
           <INPUT
             id="nodeURL"
-            onChange={(x: BaseSyntheticEvent) => {
-              !isNaN(x.target.value) && setNodeURL(x.target.value)
-            }}
+            onChange={(x: BaseSyntheticEvent) => nodeURLHandler(x)}
             placeholder={'Enter Node URL'}
             value={nodeURL || undefined}
           />
