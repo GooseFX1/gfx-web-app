@@ -136,7 +136,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
           inAmount = parseFloat(aAccount.value[0].account.data.parsed.info.tokenAmount.amount)
           outAmount = parseFloat(bAccount.value[0].account.data.parsed.info.tokenAmount.amount)
           outValuePerIn = (outAmount - (inAmount * outAmount) / (inAmount + 10 ** decimals)) / 10 ** decimals
-          AmountPool()
+          amountPool()
         } catch (e) {
           //setOutTokenAmount(0)
           console.log(e)
@@ -156,6 +156,42 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }, timeoutDelay)
   }, [connection, network, setPool, tokenA, tokenB])
 
+  const amountPool = useCallback(async () => {
+    if (tokenA && tokenB) {
+      let outTokenAmount = 0
+      if (inTokenAmount) {
+        const preSwapResult = await preSwapAmount(tokenA, tokenB, inTokenAmount, wallet, connection, network)
+        if (preSwapResult) {
+          outTokenAmount = Number(preSwapResult)
+        } else {
+          notify({ type: 'error', message: 'Fetch Pre-swap Amount Failed', icon: 'error' })
+        }
+        //outAmount - (inAmount * outAmount) / (inAmount + inTokenAmount * 10 ** tokenA.decimals)
+      }
+      setOutTokenAmount(outTokenAmount)
+    } else {
+      setOutTokenAmount(0)
+    }
+  }, [tokenA, tokenB, inTokenAmount])
+
+  useEffect(() => {
+    setTokenA(null)
+    setTokenB(null)
+  }, [connection])
+
+  useEffect(() => {
+    amountPool()
+  }, [inTokenAmount, pool, slippage, tokenA, tokenB])
+
+  // useEffect(() => {
+  //   refreshRates().then()
+  // }, [inTokenAmount, refreshRates, tokenA, tokenB])
+
+  useEffect(() => {
+    const interval = setInterval(() => amountPool(), 20000)
+    return () => clearInterval(interval)
+  }, [amountPool])
+
   const swapTokens = async () => {
     if (!tokenA || !tokenB) return
 
@@ -166,7 +202,6 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     try {
       const signature = await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
-
       notify({
         type: 'success',
         message: 'Swap successful!',
@@ -189,37 +224,6 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     setTokenA(tokenB)
     setTokenB(tokenA)
-  }
-
-  useEffect(() => {
-    setTokenA(null)
-    setTokenB(null)
-  }, [connection])
-
-  useEffect(() => {
-    AmountPool()
-  }, [inTokenAmount, pool, slippage, tokenA, tokenB])
-
-  // useEffect(() => {
-  //   refreshRates().then()
-  // }, [inTokenAmount, refreshRates, tokenA, tokenB])
-
-  useEffect(() => {
-    const interval = setInterval(() => AmountPool(), 20000)
-    return () => clearInterval(interval)
-  }, [AmountPool])
-
-  async function AmountPool() {
-    if (tokenA && tokenB) {
-      let outTokenAmount = 0
-      if (inTokenAmount) {
-        outTokenAmount = Number(await preSwapAmount(tokenA, tokenB, inTokenAmount, wallet, connection, network))
-        //outAmount - (inAmount * outAmount) / (inAmount + inTokenAmount * 10 ** tokenA.decimals)
-      }
-      setOutTokenAmount(outTokenAmount)
-    } else {
-      setOutTokenAmount(0)
-    }
   }
 
   return (
