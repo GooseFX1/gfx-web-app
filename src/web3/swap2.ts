@@ -112,11 +112,6 @@ export const swapCreatTX = async (
     await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenB.address))
   ])
 
-  const { data } = await connection.getAccountInfo(pair)
-  const decoded = LAYOUT.decode(data)
-
-  const { oracle1, oracle2, oracle3, oracle4, n } = decoded
-
   const sslIn = await PublicKey.findProgramAddress(
     [
       new Buffer('GFX-SSL', 'utf-8'),
@@ -151,42 +146,52 @@ export const swapCreatTX = async (
   // console.log(SYSVAR_RENT_PUBKEY + '', SYSVAR_RENT_PUBKEY + '' == 'SysvarRent111111111111111111111111111111111')
   // console.log(inTokenAtaUser + '', inTokenAtaUser + '' == 'Bp7pJh1UrpWeuvRHCbx788KLAhm3p2KYHJofm8PCf9K')
   // console.log(outTokenAtaUser + '', outTokenAtaUser + '' == '6Lc8K5ECpv2Rs7uWXCvsHhzKJPPqgciqtWCVA4XvKahA')
-  const remainingAccounts = [
-    { isSigner: false, isWritable: true, pubkey: oracle1 },
-    { isSigner: false, isWritable: true, pubkey: oracle2 },
-    { isSigner: false, isWritable: true, pubkey: oracle3 },
-    { isSigner: false, isWritable: true, pubkey: oracle4 }
-  ].slice(0, n)
 
-  const accounts = {
-    controller: new PublicKey(ADDRESSES[network].programs.swap.controller),
-    pair,
-    sslIn: sslIn[0],
-    sslOut: sslOut[0],
-    mintIn: new PublicKey(tokenA.address),
-    mintOut: new PublicKey(tokenB.address),
-    vaultIn,
-    vaultOut,
-    userWallet: wallet.publicKey,
-    userInAta: inTokenAtaUser,
-    userOutAta: outTokenAtaUser,
-    instructions: new PublicKey('Sysvar1nstructions1111111111111111111111111'),
-    feeCollectorAta: await findAssociatedTokenAddress(new PublicKey(collector), new PublicKey(tokenA.address)),
-    feeCollector: new PublicKey(collector),
-    tokenProgram: TOKEN_PROGRAM_ID,
-    associatedTokenProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
-    systemProgram: SYSTEM,
-    rent: SYSVAR_RENT_PUBKEY
+  try {
+    const { data } = await connection.getAccountInfo(pair)
+    const decoded = LAYOUT.decode(data)
+    const { oracle1, oracle2, oracle3, oracle4, n } = decoded
+
+    const remainingAccounts = [
+      { isSigner: false, isWritable: true, pubkey: oracle1 },
+      { isSigner: false, isWritable: true, pubkey: oracle2 },
+      { isSigner: false, isWritable: true, pubkey: oracle3 },
+      { isSigner: false, isWritable: true, pubkey: oracle4 }
+    ].slice(0, n)
+
+    const accounts = {
+      controller: new PublicKey(ADDRESSES[network].programs.swap.controller),
+      pair,
+      sslIn: sslIn[0],
+      sslOut: sslOut[0],
+      mintIn: new PublicKey(tokenA.address),
+      mintOut: new PublicKey(tokenB.address),
+      vaultIn,
+      vaultOut,
+      userWallet: wallet.publicKey,
+      userInAta: inTokenAtaUser,
+      userOutAta: outTokenAtaUser,
+      instructions: new PublicKey('Sysvar1nstructions1111111111111111111111111'),
+      feeCollectorAta: await findAssociatedTokenAddress(new PublicKey(collector), new PublicKey(tokenA.address)),
+      feeCollector: new PublicKey(collector),
+      tokenProgram: TOKEN_PROGRAM_ID,
+      associatedTokenProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
+      systemProgram: SYSTEM,
+      rent: SYSVAR_RENT_PUBKEY
+    }
+
+    tx.add(
+      await inst.rebalanceSwap(amountIn, minimumAmountOut, {
+        accounts,
+        remainingAccounts
+      })
+    )
+    tx.add(await inst.preSwap({ accounts, remainingAccounts }))
+    tx.add(await inst.swap({ accounts, remainingAccounts }))
+  } catch (error) {
+    console.dir(error)
   }
 
-  tx.add(
-    await inst.rebalanceSwap(amountIn, minimumAmountOut, {
-      accounts,
-      remainingAccounts
-    })
-  )
-  tx.add(await inst.preSwap({ accounts, remainingAccounts }))
-  tx.add(await inst.swap({ accounts, remainingAccounts }))
   return tx
 }
 
@@ -214,8 +219,11 @@ export const preSwapAmount = async (
 ): Promise<TransactionSignature | undefined> => {
   const tx = await swapCreatTX(tokenA, tokenB, inTokenAmount, 0, 0, wallet, connection, network)
   const sim = await simulateTransaction(connection, tx, wallet)
-  const amountArr = sim.value.logs[17].split('+')
-  const amountOut = amountArr[amountArr.length - 1]
-
-  return amountOut
+  if (sim.value.logs.length > 0 && sim.value.logs[17]) {
+    const amountArr = sim.value.logs[17].split('+')
+    const amountOut = amountArr[amountArr.length - 1]
+    return amountOut
+  } else {
+    return undefined
+  }
 }
