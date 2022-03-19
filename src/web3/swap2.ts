@@ -1,11 +1,25 @@
-import { BN, Program, Provider, workspace } from '@project-serum/anchor'
+import { BN, Program, Provider } from '@project-serum/anchor'
 import { Buffer } from 'buffer'
-import { accountFlagsLayout, publicKeyLayout, u128, u64 } from './layout'
+import { publicKeyLayout } from './layout'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
-import { Connection, PublicKey, Transaction, TransactionSignature, SYSVAR_RENT_PUBKEY } from '@solana/web3.js'
-import { ADDRESSES, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, SYSTEM, FEE_PAYER_WITHDRAWAL_ACCT } from './ids'
+import {
+  NATIVE_MINT,
+  createAssociatedTokenAccountInstruction,
+  getAssociatedTokenAddress,
+  createSyncNativeInstruction
+} from '@solana/spl-token-new'
+
+import {
+  Connection,
+  SystemProgram,
+  PublicKey,
+  Transaction,
+  TransactionSignature,
+  SYSVAR_RENT_PUBKEY
+} from '@solana/web3.js'
+import { ADDRESSES, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, SYSTEM } from './ids'
 import {
   createAssociatedTokenAccountIx,
   findAssociatedTokenAddress,
@@ -63,6 +77,30 @@ export const computePoolsPDAs = async (
   // const [[lpTokenMint], [pool]] = PDAs
   return { lpTokenMint: null, pair: null, pool: null }
 }
+
+const wrapSolToken = async (wallet: any, connection: Connection, amount: number) => {
+  let tx = new Transaction()
+  const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
+
+  // Create token account to hold your wrapped SOL
+  if (!associatedTokenAccount)
+    tx.add(
+      createAssociatedTokenAccountInstruction(wallet.publicKey, associatedTokenAccount, wallet.publicKey, NATIVE_MINT)
+    )
+
+  // Transfer SOL to associated token account and use SyncNative to update wrapped SOL balance
+  tx.add(
+    SystemProgram.transfer({
+      fromPubkey: wallet.publicKey,
+      toPubkey: associatedTokenAccount,
+      lamports: amount
+    }),
+    createSyncNativeInstruction(associatedTokenAccount)
+  )
+
+  return signAndSendRawTransaction(connection, tx, wallet)
+}
+
 export const swapCreatTX = async (
   tokenA: ISwapToken,
   tokenB: ISwapToken,
@@ -82,32 +120,15 @@ export const swapCreatTX = async (
   const amountIn = new BN(inTokenAmount * 10 ** tokenA.decimals)
   const minimumAmountOut = new BN(outTokenAmount * 10 ** tokenB.decimals * (1 - slippage))
 
-  const addresses = [new PublicKey(tokenA.address).toBuffer(), new PublicKey(tokenB.address).toBuffer()].sort(
-    Buffer.compare
-  )
+  if (tokenA.address === NATIVE_MINT.toBase58()) {
+    await wrapSolToken(wallet, connection, Number(amountIn + ''))
+  }
 
-  const pairArr = await PublicKey.findProgramAddress(
-    [
-      new Buffer('GFX-SSL-Pair', 'utf-8'),
-      new PublicKey(ADDRESSES[network].programs.swap.controller).toBuffer(),
-      addresses[0],
-      addresses[1]
-    ],
-    ADDRESSES[network].programs.swap.address
-  )
-
-  const pair = pairArr[0]
-
-  //const { lpTokenMint, pool } = await computePoolsPDAs(tokenA, tokenB, network)
-  // const [inTokenAtaPool, outTokenAtaPool, lpTokenAtaFee, inTokenAtaUser, outTokenAtaUser] = await Promise.all([
-  //   await findAssociatedTokenAddress(pool, new PublicKey(tokenA.address)),
-  //   await findAssociatedTokenAddress(pool, new PublicKey(tokenB.address)),
-  //   await findAssociatedTokenAddress(pool, lpTokenMint),
-  //   await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenA.address)),
-  //   await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenB.address))
-  // ])
-
-  const [inTokenAtaUser, outTokenAtaUser] = await Promise.all([
+  const { lpTokenMint, pool, pair } = await computePoolsPDAs(tokenA, tokenB, network)
+  const [inTokenAtaPool, outTokenAtaPool, lpTokenAtaFee, inTokenAtaUser, outTokenAtaUser] = await Promise.all([
+    await findAssociatedTokenAddress(pool, new PublicKey(tokenA.address)),
+    await findAssociatedTokenAddress(pool, new PublicKey(tokenB.address)),
+    await findAssociatedTokenAddress(pool, lpTokenMint),
     await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenA.address)),
     await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenB.address))
   ])
@@ -143,9 +164,9 @@ export const swapCreatTX = async (
   //   ADDRESSES[network].programs.swap.address
   // )
 
-  // console.log(SYSVAR_RENT_PUBKEY + '', SYSVAR_RENT_PUBKEY + '' == 'SysvarRent111111111111111111111111111111111')
-  // console.log(inTokenAtaUser + '', inTokenAtaUser + '' == 'Bp7pJh1UrpWeuvRHCbx788KLAhm3p2KYHJofm8PCf9K')
-  // console.log(outTokenAtaUser + '', outTokenAtaUser + '' == '6Lc8K5ECpv2Rs7uWXCvsHhzKJPPqgciqtWCVA4XvKahA')
+  // console.log(SYSVAR_RENT_PUBKEY + '', SYSVAR_RENT_PUBKEY + '' === 'SysvarRent111111111111111111111111111111111')
+  // console.log(inTokenAtaUser + '', inTokenAtaUser + '' === 'Bp7pJh1UrpWeuvRHCbx788KLAhm3p2KYHJofm8PCf9K')
+  // console.log(outTokenAtaUser + '', outTokenAtaUser + '' === '6Lc8K5ECpv2Rs7uWXCvsHhzKJPPqgciqtWCVA4XvKahA')
 
   try {
     const pairData = await connection.getAccountInfo(pair)
@@ -219,7 +240,20 @@ export const swap = async (
   network: WalletAdapterNetwork
 ): Promise<TransactionSignature | undefined> => {
   const tx = await swapCreatTX(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
-  return signAndSendRawTransaction(connection, tx, wallet)
+
+  const finalResult = signAndSendRawTransaction(connection, tx, wallet)
+
+  //unwrapping sol if tokenB is sol
+  if (tokenB.address === NATIVE_MINT.toBase58()) {
+    const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
+    if (!associatedTokenAccount) return null
+    const tr = createCloseAccountInstruction(associatedTokenAccount, wallet.publicKey, wallet.publicKey)
+    const txn = new Transaction()
+    txn.add(tr)
+    await signAndSendRawTransaction(connection, txn, wallet)
+  }
+
+  return finalResult
 }
 
 export const preSwapAmount = async (
