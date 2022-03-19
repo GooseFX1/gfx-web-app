@@ -125,11 +125,23 @@ export const swapCreatTX = async (
     await wrapSolToken(wallet, connection, Number(amountIn + ''))
   }
 
-  const { lpTokenMint, pool, pair } = await computePoolsPDAs(tokenA, tokenB, network)
-  const [inTokenAtaPool, outTokenAtaPool, lpTokenAtaFee, inTokenAtaUser, outTokenAtaUser] = await Promise.all([
-    await findAssociatedTokenAddress(pool, new PublicKey(tokenA.address)),
-    await findAssociatedTokenAddress(pool, new PublicKey(tokenB.address)),
-    await findAssociatedTokenAddress(pool, lpTokenMint),
+  const addresses = [new PublicKey(tokenA.address).toBuffer(), new PublicKey(tokenB.address).toBuffer()].sort(
+    Buffer.compare
+  )
+
+  const pairArr = await PublicKey.findProgramAddress(
+    [
+      new Buffer('GFX-SSL-Pair', 'utf-8'),
+      new PublicKey(ADDRESSES[network].programs.swap.controller).toBuffer(),
+      addresses[0],
+      addresses[1]
+    ],
+    ADDRESSES[network].programs.swap.address
+  )
+
+  const pair = pairArr[0]
+
+  const [inTokenAtaUser, outTokenAtaUser] = await Promise.all([
     await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenA.address)),
     await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenB.address))
   ])
@@ -244,7 +256,7 @@ export const swap = async (
 
   const finalResult = signAndSendRawTransaction(connection, tx, wallet)
 
-  //unwrapping sol if tokenB is sol
+  // unwrapping sol if tokenB is sol
   if (tokenB.address === NATIVE_MINT.toBase58()) {
     const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
     if (!associatedTokenAccount) return null
