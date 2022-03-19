@@ -8,8 +8,10 @@ import {
   NATIVE_MINT,
   createAssociatedTokenAccountInstruction,
   getAssociatedTokenAddress,
-  createSyncNativeInstruction
+  createSyncNativeInstruction,
+  createCloseAccountInstruction
 } from '@solana/spl-token-new'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
 
 import {
   Connection,
