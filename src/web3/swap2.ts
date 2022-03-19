@@ -11,7 +11,6 @@ import {
   createSyncNativeInstruction,
   createCloseAccountInstruction
 } from '@solana/spl-token-new'
-import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
 
 import {
   Connection,
@@ -81,7 +80,7 @@ export const computePoolsPDAs = async (
 }
 
 const wrapSolToken = async (wallet: any, connection: Connection, amount: number) => {
-  let tx = new Transaction()
+  const tx = new Transaction()
   const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
 
   // Create token account to hold your wrapped SOL
