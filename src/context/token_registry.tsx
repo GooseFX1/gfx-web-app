@@ -19,8 +19,11 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
 
   useEffect(() => {
     ;(async () => {
-      const list = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
-      const filteredList = list.filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
+      //const list = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
+      //const splList = list.filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
+      //TODO: Add filteredList from solana-spl-registry back
+
+      const filteredList = []
 
       if (chainId === ENV.Devnet) {
         filteredList.push({
@@ -45,6 +48,22 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
           decimals: 9,
           name: 'GFX SOLANA',
           symbol: 'gSOL'
+        })
+
+        filteredList.push({
+          address: ADDRESSES.devnet.mints.gETH.address.toString(),
+          chainId,
+          decimals: 9,
+          name: 'GFX ETH',
+          symbol: 'gETH'
+        })
+
+        filteredList.push({
+          address: ADDRESSES.devnet.mints.gAVAX.address.toString(),
+          chainId,
+          decimals: 9,
+          name: 'GFX AVAX',
+          symbol: 'gAVAX'
         })
       }
 
