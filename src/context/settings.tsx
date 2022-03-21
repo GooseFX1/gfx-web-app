@@ -78,9 +78,11 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useLocalStorageState('slippage', DEFAULT_SLIPPAGE.toString())
 
   const connection = useMemo(() => new Connection(endpoint, 'recent'), [endpoint])
-  const chainId = useMemo(() => ENDPOINTS.find((e) => e.endpoint === endpoint)!.chainId, [endpoint])
-  const network = useMemo(() => ENDPOINTS.find((e) => e.endpoint === endpoint)!.network, [endpoint])
-  const endpointName = useMemo(() => ENDPOINTS.find((e) => e.endpoint === endpoint)!.name, [endpoint])
+
+  let endpointObj = ENDPOINTS.find((e) => e.endpoint === endpoint)
+  const chainId = useMemo(() => endpointObj?.chainId ?? ENV.MainnetBeta, [endpoint])
+  const network = useMemo(() => endpointObj?.network ?? WalletAdapterNetwork.Mainnet, [endpoint])
+  const endpointName = useMemo(() => endpointObj?.name ?? 'Custom', [endpoint])
 
   return (
     <SettingsContext.Provider
