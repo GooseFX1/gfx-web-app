@@ -44,7 +44,7 @@ export const NFTs: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const location = useLocation<ILocationState>()
   const { path } = useRouteMatch()
-  const { connection, endpoint, setEndpoint } = useConnectionConfig()
+  const { connection, endpoint, setEndpoint, network } = useConnectionConfig()
   const { connected, publicKey } = useWallet()
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
 
@@ -56,7 +56,7 @@ export const NFTs: FC = () => {
         firebase_screen_class: 'load'
       })
 
-    if (endpoint === ENDPOINTS[1].endpoint) {
+    if (network === 'devnet') {
       setEndpoint(ENDPOINTS[0].endpoint)
       notify({ message: `Switched to ${ENDPOINTS[0].network}` })
     }
