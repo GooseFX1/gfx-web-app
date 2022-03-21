@@ -1,15 +1,15 @@
-import { FC, BaseSyntheticEvent, useCallback, useState } from 'react'
+import { BaseSyntheticEvent, FC, useState } from 'react'
 import { Dropdown, Input } from 'antd'
 import { logEvent } from 'firebase/analytics'
 import styled from 'styled-components'
 
-import { Menu, MenuItem } from './shared'
-import { CenteredImg } from '../../styles'
-import { ThemeToggle } from '../../components/ThemeToggle'
-import { SelectRPC } from '../../components'
 import analytics from '../../analytics'
+import { CenteredImg } from '../../styles'
+import { Menu, MenuItem } from './shared'
 import { notify } from '../../utils'
-import { ENDPOINTS, useConnectionConfig } from '../../context'
+import { SelectRPC } from '../../components'
+import { ThemeToggle } from '../../components/ThemeToggle'
+import { useConnectionConfig } from '../../context'
 
 const ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margin(4.5))}
@@ -88,16 +88,15 @@ const Button = styled.button`
 
 const Overlay = () => {
   const { endpoint, network, endpointName, setEndpoint } = useConnectionConfig()
-  const [nodeURL, setNodeURL] = useState(endpoint.split('/')[0]+'//'+endpoint.split('/')[2])
+  const [nodeURL, setNodeURL] = useState(endpoint.split('/')[0] + '//' + endpoint.split('/')[2])
   const [isCustomNode, setIsCustomNode] = useState(false)
   const [rpcState, setRpcState] = useState({ endpoint, endpointName, network })
 
   const handleClickForRPC = (endpoint, endpointName, network) => {
-    setIsCustomNode(false);
-    setNodeURL(endpoint.split('/')[0]+'//'+endpoint.split('/')[2])
+    setIsCustomNode(false)
+    setNodeURL(endpoint.split('/')[0] + '//' + endpoint.split('/')[2])
     setRpcState({ endpoint, endpointName, network })
   }
-
 
   const saveHandler = () => {
     // analytics logger
@@ -105,15 +104,16 @@ const Overlay = () => {
     if (isCustomNode) {
       setEndpoint(nodeURL)
       an !== null && logEvent(an, 'rpc-selector', { ...rpcState, endpoint: nodeURL })
+      notify({ message: 'Switched to Custom' })
     } else {
       setEndpoint(rpcState.endpoint)
       an !== null && logEvent(an, 'rpc-selector', { ...rpcState })
+      notify({ message: `Switched to  ${rpcState.endpointName} (${rpcState.network})` })
     }
-    notify({ message: `Switched to  ${rpcState.endpointName} (${rpcState.network}) ` })
   }
 
   const nodeURLHandler = ({ target }) => {
-    setNodeURL(target.value)    
+    setNodeURL(target.value)
     setIsCustomNode(rpcState.endpoint !== nodeURL)
   }
 

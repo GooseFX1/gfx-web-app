@@ -55,6 +55,22 @@ export const signAndSendRawTransaction = async (
   return tx
 }
 
+export const simulateTransaction = async (
+  connection: Connection,
+  transaction: Transaction,
+  wallet: any,
+  ...signers: Array<Signer>
+) => {
+  transaction.feePayer = wallet.publicKey
+  transaction.recentBlockhash = (await connection.getRecentBlockhash('max')).blockhash
+
+  signers.forEach((signer) => transaction.partialSign(signer))
+
+  let sim = await connection.simulateTransaction(transaction)
+
+  return sim
+}
+
 export const getInputKey = async (input: any) => {
   const hashedInputName = await getHashedName(input)
   const inputDomainKey = await getNameAccountKey(hashedInputName, undefined, SOL_TLD_AUTHORITY)

@@ -53,6 +53,14 @@ export const SVGToBlack = styled.img`
   filter: invert(100%);
 `
 
+export const SVGDynamicMode = styled.img`
+  filter: ${({ theme }) => theme.filterBackIcon};
+`
+
+export const SVGDynamicReverseMode = styled.img`
+  filter: ${({ theme }) => theme.filterWhiteIcon};
+`
+
 export const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`
   height: 30px;
   width: 60px;

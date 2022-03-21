@@ -33,7 +33,7 @@ export const ENDPOINTS: IEndpoint[] = [
   {
     chainId: ENV.MainnetBeta,
     name: 'QuickNode Pro',
-    endpoint: 'https://green-little-wind.solana-mainnet.quiknode.pro/0e3bb9a62cf850ee8a4cf68dbb92aef6d4c97d0b/',
+    endpoint: 'https://green-little-wind.solana-mainnet.quiknode.pro/6083a98b56311aacfd4c28bb8d4aa9462699c45d',
     network: WalletAdapterNetwork.Mainnet
   }
 ]
@@ -78,9 +78,11 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useLocalStorageState('slippage', DEFAULT_SLIPPAGE.toString())
 
   const connection = useMemo(() => new Connection(endpoint, 'recent'), [endpoint])
-  const chainId = useMemo(() => ENDPOINTS.find((e) => e.endpoint === endpoint)!.chainId, [endpoint])
-  const network = useMemo(() => ENDPOINTS.find((e) => e.endpoint === endpoint)!.network, [endpoint])
-  const endpointName = useMemo(() => ENDPOINTS.find((e) => e.endpoint === endpoint)!.name, [endpoint])
+
+  let endpointObj = ENDPOINTS.find((e) => e.endpoint === endpoint)
+  const chainId = useMemo(() => endpointObj?.chainId ?? ENV.MainnetBeta, [endpoint])
+  const network = useMemo(() => endpointObj?.network ?? WalletAdapterNetwork.Mainnet, [endpoint])
+  const endpointName = useMemo(() => endpointObj?.name ?? 'Custom', [endpoint])
 
   return (
     <SettingsContext.Provider

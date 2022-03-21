@@ -119,14 +119,6 @@ export interface INFTGeneralData {
   total_likes: number
 }
 
-export type NFTDetailsProviderMode =
-  | 'live-auction-NFT'
-  | 'my-created-NFT'
-  | 'fixed-price-NFT'
-  | 'open-bid-NFT'
-  | 'mint-item-view'
-  | 'my-external-NFT'
-
 export type MintItemViewStatus = '' | 'placed' | 'successful' | 'unsuccessful'
 
 export interface INFTDetailsConfig {

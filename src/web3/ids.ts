@@ -132,7 +132,7 @@ export const ADDRESSES: {
         decimals: 8
       },
       gETH: {
-        address: new PublicKey('89wbRM3MCCoTuTzFK4UNWG1vsd4iqadxHTjGiHZ7kc5Q'),
+        address: new PublicKey('ETHEUsA7cMt4z3GPeAJbK9B6NpTckrvzGBLUigsjQpFN'),
         decimals: 8
       },
       gMNGO: {
@@ -199,8 +199,8 @@ export const ADDRESSES: {
         address: new PublicKey('DeStTq4cj3h2WC35CPwwcbn9VhAgdpey9xD9gbTt5FiU'),
         decimals: 8
       },
-      gAMZN: {
-        address: new PublicKey('2sV7HYKFvu3G8SWRsQMS4yuHCgU7pT8omJD6W6vFp5hY'),
+      gAVAX: {
+        address: new PublicKey('AVAXrcSeoZKHuiTH7MQPLz7xSuGa33DEkMmB3pUaBoct'),
         decimals: 8
       },
       gNFLX: {

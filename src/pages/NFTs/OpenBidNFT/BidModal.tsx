@@ -29,6 +29,7 @@ import {
   bnTo8
 } from '../../../web3'
 import { tradeStatePDA, getBuyInstructionAccounts, tokenSize } from '../actions'
+import { TXT_PRIMARY_GRADIENT } from '../../../styles'
 
 // TODO: Set variables to demo here
 const isVerified = true
@@ -223,13 +224,6 @@ const MESSAGE = styled.div`
     width: 20.5px;
     height: 20px;
   }
-`
-
-const GRADIENT_BG = styled.span`
-  font-weight: 600;
-  background-image: linear-gradient(to right, #716fff 7%, #e959ff 88%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 `
 //#endregion
 
@@ -579,7 +573,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
       </div>
       <Row className="bm-title" align="middle" justify="center" gutter={4}>
         <Col className="bm-title-bold">
-          <GRADIENT_BG>{general?.nft_name}</GRADIENT_BG>
+          <TXT_PRIMARY_GRADIENT>{general?.nft_name}</TXT_PRIMARY_GRADIENT>
         </Col>
         <Col>by</Col>
         <Col className="bm-title-bold">{creator}</Col>

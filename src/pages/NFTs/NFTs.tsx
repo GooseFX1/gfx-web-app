@@ -13,9 +13,6 @@ import { SellNFT } from './Collectible/SellNFT'
 import { Profile } from './Profile'
 import { Explore } from './Profile/Explore'
 import { Collection } from './Collection/Collection'
-import { LiveAuctionNFT } from './LiveAuctionNFT'
-import { FixedPriceNFT } from './FixedPriceNFT'
-import { OpenBidNFT } from './OpenBidNFT'
 import { OverlayProvider } from '../../context/overlay'
 import {
   useNFTProfile,
@@ -106,17 +103,8 @@ export const NFTs: FC = () => {
                 <Route exact path="/NFTs/collection/:collectionId">
                   <Collection />
                 </Route>
-                <Route exact path={['/NFTs/details', '/NFTs/details/:nftMintAddress']}>
+                <Route exact path={'/NFTs/details/:nftId'}>
                   <NFTDetails />
-                </Route>
-                <Route exact path="/NFTs/live-auction/:nftId">
-                  <LiveAuctionNFT />
-                </Route>
-                <Route exact path="/NFTs/fixed-price/:nftId">
-                  <FixedPriceNFT />
-                </Route>
-                <Route exact path="/NFTs/open-bid/:nftId">
-                  <OpenBidNFT />
                 </Route>
                 <Route exact path="/NFTs/create">
                   <Collectible />
