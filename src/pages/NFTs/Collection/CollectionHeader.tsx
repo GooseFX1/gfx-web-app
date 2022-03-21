@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { Button, Dropdown, Menu, Row, Col } from 'antd'
+import { Button, Dropdown, Menu } from 'antd'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
-import { useNFTCollections } from '../../../context'
+import { useNFTCollections, useDarkMode } from '../../../context'
 import { ShareProfile } from '../Profile/ShareProfile'
-import get from 'lodash/get'
-import isEmpty from 'lodash/isEmpty'
+import { SVGToGrey2 } from '../../../styles'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 const COLLECTION_HEADER = styled.div<{ $height: string }>`
@@ -191,21 +190,21 @@ const COVER = styled.div`
   width: 100%;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
   position: absolute;
   margin-top: -38px;
 `
 
 const BANNER_TOGGLE = styled.button`
   position: absolute;
+  top: -5px;
   width: 40px;
   height: 20px;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   display: flex;
   justify-content: center;
-  background-color: #2a2a2a;
-  border: 1px solid #2a2a2a;
+  background-color: ${({ theme }) => theme.bg3};
+  border: 1px solid ${({ theme }) => theme.bg3};
   cursor: pointer;
 
   .collection-banner-toggle-icon {
@@ -217,6 +216,7 @@ const BANNER_TOGGLE = styled.button`
 `
 
 export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) => {
+  const { mode } = useDarkMode()
   const history = useHistory()
   const { singleCollection, fixedPriceWithinCollection, openBidWithinCollection } = useNFTCollections()
   const [visible, setVisible] = useState(false)
@@ -235,6 +235,7 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
     </MENU_LIST>
   )
 
+  const iconStyle = { transform: `rotate(${collapse ? 0 : 180}deg)`, marginTop: `${collapse ? '5px' : '2px'}` }
   return (
     <COLLECTION_HEADER $height={collapse ? '30' : '45'}>
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
@@ -309,12 +310,21 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
 
       <COVER>
         <BANNER_TOGGLE onClick={() => setCollapse(!collapse)}>
-          <img
-            className="collection-banner-toggle-icon"
-            src={`/img/assets/arrow-down.svg`}
-            style={collapse ? { transform: 'rotate(180deg)', marginTop: '5px', zIndex: 200 } : null}
-            alt="collection-banner"
-          />
+          {mode === 'dark' ? (
+            <img
+              className="collection-banner-toggle-icon"
+              style={iconStyle}
+              src={`/img/assets/arrow-down.svg`}
+              alt="collection-banner"
+            />
+          ) : (
+            <SVGToGrey2
+              className="collection-banner-toggle-icon"
+              style={iconStyle}
+              src={`/img/assets/arrow-down.svg`}
+              alt="collection-banner"
+            />
+          )}
         </BANNER_TOGGLE>
       </COVER>
     </COLLECTION_HEADER>

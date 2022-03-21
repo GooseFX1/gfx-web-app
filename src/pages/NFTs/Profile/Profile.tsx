@@ -81,7 +81,6 @@ export const Profile: FC = (): JSX.Element => {
       setLoading(false)
     } else {
       setUnnamedUser()
-      setLoading(false)
     }
 
     return () => {}

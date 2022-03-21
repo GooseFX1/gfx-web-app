@@ -6,7 +6,8 @@ import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
 import { RightSectionTabs } from './RightSectionTabs'
 import { useNFTDetails, usePriceFeed } from '../../../context'
-import { MintItemViewStatus, NFTDetailsProviderMode } from '../../../types/nft_details'
+import { MintItemViewStatus } from '../../../types/nft_details'
+import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 //#region styles
 const RIGHT_SECTION = styled.div`
@@ -150,9 +151,8 @@ const HIGHEST_BIDDER = styled.span`
 //#endregion
 
 export const RightSection: FC<{
-  mode: NFTDetailsProviderMode
   status: MintItemViewStatus
-}> = ({ mode, status, ...rest }) => {
+}> = ({ status, ...rest }) => {
   const { publicKey } = useWallet()
   const { general, nftMetadata, bids, curHighestBid, ask } = useNFTDetails()
   const { prices } = usePriceFeed()
@@ -188,11 +188,16 @@ export const RightSection: FC<{
     return <div>Error loading metadata</div>
   }
 
-  return nftMetadata === undefined ? (
-    <div>...loading metadata</div>
-  ) : (
+  const isLoading = nftMetadata === undefined || general === undefined
+
+  return (
     <RIGHT_SECTION {...rest}>
-      {general.non_fungible_id && (
+      {isLoading ? (
+        <>
+          <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
+          <br />
+        </>
+      ) : (
         <div>
           <Row justify="space-between">
             <Col className="rs-title">
@@ -224,62 +229,71 @@ export const RightSection: FC<{
         </div>
       )}
 
-      <Row justify="space-between" align="middle">
-        <Col span={24}>
-          {mode !== 'mint-item-view' && (
-            <>
-              <div className="rs-name">{general?.nft_name || nftMetadata?.name}</div>
-              <div className="rs-intro">{nftMetadata.description}</div>
-            </>
-          )}
-        </Col>
-        <Col span={24}>
-          {isForCharity && (
-            <Row align="middle" wrap={false}>
-              <img src={`/img/assets/heart-charity.svg`} alt="charity-icon" style={{ marginRight: '12px' }} />
-              <div className="rs-charity-text">Auction for charity</div>
-            </Row>
-          )}
-        </Col>
-      </Row>
-      <GRID_INFO justify="space-between">
-        <Col className="gi-item">
-          <div className="gi-item-category-title">Creator</div>
-          <Row align="middle">
-            <div className="gi-item-thumbnail-wrapper">
-              <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-              <img className="gi-item-check-icon" src={`/img/assets/check-icon.png`} alt="" />
-            </div>
-            <div className="gi-item-title">{creator}</div>
-          </Row>
-        </Col>
-        {nftMetadata.collection && (
+      {isLoading ? (
+        <>
+          <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
+          <br />
+        </>
+      ) : (
+        <Row justify="space-between" align="middle">
+          <Col span={24}>
+            <div className="rs-name">{general?.nft_name || nftMetadata?.name}</div>
+            <div className="rs-intro">{nftMetadata.description}</div>
+          </Col>
+          <Col span={24}>
+            {isForCharity && (
+              <Row align="middle" wrap={false}>
+                <img src={`/img/assets/heart-charity.svg`} alt="charity-icon" style={{ marginRight: '12px' }} />
+                <div className="rs-charity-text">Auction for charity</div>
+              </Row>
+            )}
+          </Col>
+        </Row>
+      )}
+
+      {isLoading ? (
+        <SkeletonCommon width="100%" height="300px" borderRadius="10px" />
+      ) : (
+        <GRID_INFO justify="space-between">
           <Col className="gi-item">
-            <div className="gi-item-category-title">Collection</div>
+            <div className="gi-item-category-title">Creator</div>
             <Row align="middle">
-              <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-              <div className="gi-item-title">
-                {Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection.name}
+              <div className="gi-item-thumbnail-wrapper">
+                <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
+                <img className="gi-item-check-icon" src={`/img/assets/check-icon.png`} alt="" />
               </div>
+              <div className="gi-item-title">{creator}</div>
             </Row>
           </Col>
-        )}
-        <Col className="gi-item">
-          <div className="gi-item-category-title">Category</div>
-          <Row align="middle">
-            <div className="gi-item-icon">
-              <img
-                src={`/img/assets/${
-                  nftMetadata.properties.category === 'image' ? 'art' : nftMetadata.properties.category
-                }.svg`}
-                alt=""
-              />
-            </div>
-            <div className="gi-item-title">{nftMetadata.properties.category}</div>
-          </Row>
-        </Col>
-      </GRID_INFO>
-      <RightSectionTabs mode={mode} status={status} />
+          {nftMetadata.collection && (
+            <Col className="gi-item">
+              <div className="gi-item-category-title">Collection</div>
+              <Row align="middle">
+                <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
+                <div className="gi-item-title">
+                  {Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection.name}
+                </div>
+              </Row>
+            </Col>
+          )}
+          <Col className="gi-item">
+            <div className="gi-item-category-title">Category</div>
+            <Row align="middle">
+              <div className="gi-item-icon">
+                <img
+                  src={`/img/assets/${
+                    nftMetadata.properties.category === 'image' ? 'art' : nftMetadata.properties.category
+                  }.svg`}
+                  alt=""
+                />
+              </div>
+              <div className="gi-item-title">{nftMetadata.properties.category}</div>
+            </Row>
+          </Col>
+        </GRID_INFO>
+      )}
+
+      <RightSectionTabs status={status} />
     </RIGHT_SECTION>
   )
 }

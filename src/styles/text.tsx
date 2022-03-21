@@ -231,3 +231,10 @@ export const TextXLargeBold = (t: AnyStyledComponent, color?: Color) => styled(t
     font-size: 28px;
   `}
 `
+
+export const TXT_PRIMARY_GRADIENT = styled.span`
+  font-weight: 600;
+  background-image: linear-gradient(to right, #716fff 7%, #e959ff 88%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`

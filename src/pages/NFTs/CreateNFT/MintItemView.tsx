@@ -12,12 +12,7 @@ interface Props {
 export const MintItemView = ({ visible, setVisible, handleCancel, handleOk, backUrl }: Props) => {
   return (
     <>
-      <NFTDetails
-        mode="mint-item-view"
-        status="successful"
-        backUrl={backUrl}
-        handleClickPrimaryButton={() => setVisible(true)}
-      />
+      <NFTDetails status="successful" backUrl={backUrl} handleClickPrimaryButton={() => setVisible(true)} />
       <EditMyNFT type={null} visible={visible} handleOk={handleOk} handleCancel={handleCancel} />
     </>
   )

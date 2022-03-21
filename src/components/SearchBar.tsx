@@ -10,6 +10,10 @@ const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)`
   border-radius: 45px;
   background-color: ${({ theme }) => theme.searchbarBackground};
 
+  .ant-image {
+    filter: ${({ theme }) => theme.filterWhiteIcon};
+  }
+
   > input {
     height: ${({ theme }) => theme.margin(5)};
     font-size: 16px;

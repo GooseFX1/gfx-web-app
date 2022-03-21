@@ -2,6 +2,7 @@ import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'reac
 import styled from 'styled-components'
 import { Menu, MenuItem } from '../layouts/App/shared'
 import { ArrowDropdown } from '../components'
+import { SVGDynamicReverseMode } from '../styles'
 
 const WRAPPER = styled.button`
   display: flex;
@@ -85,7 +86,7 @@ const Overlay: FC<{
         <MenuItem onClick={() => handleClick(item.name)} className={`${currentTitle === item.name ? 'active' : ''}`}>
           <span>{item.name}</span>
           {type !== 'dot' ? (
-            <img src={`/img/assets/${item.icon}.svg`} alt="disconnect" />
+            <SVGDynamicReverseMode src={`/img/assets/${item.icon}.svg`} alt="disconnect" />
           ) : (
             <span className="black-dot">{currentTitle === item.name && <span className="green-dot"></span>}</span>
           )}

@@ -98,7 +98,7 @@ export const NFTHomeSlider = () => {
         {!isSlideData
           ? [0, 1, 2].map((item, i) => (
               <SLIDER_ITEM key={i}>
-                <SkeletonCommon key={i} width="639px" height="360px" borderRadius="10px" />
+                <SkeletonCommon width="639px" height="360px" borderRadius="10px" />
               </SLIDER_ITEM>
             ))
           : mockSliderData.map((item, i) => (

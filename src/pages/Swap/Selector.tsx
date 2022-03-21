@@ -1,7 +1,7 @@
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { Input } from 'antd'
 import styled from 'styled-components'
-import { ArrowClicker, Modal } from '../../components'
+import { ArrowClickerWhite, Modal } from '../../components'
 import { ISwapToken, useTokenRegistry, useDarkMode } from '../../context'
 import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite, SpaceEvenlyDiv } from '../../styles'
 
@@ -201,7 +201,7 @@ export const Selector: FC<{
           ) : (
             <EmptyMessage>Select a token</EmptyMessage>
           )}
-          <ArrowClicker />
+          <ArrowClickerWhite />
         </CLICKER>
       </SELECTOR>
     </>
