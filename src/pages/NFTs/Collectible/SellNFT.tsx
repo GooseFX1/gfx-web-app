@@ -6,7 +6,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { IAppParams } from '../../../types/app_params.d'
 import PreviewImage from './PreviewImage'
 import { PopupCustom } from '../Popup/PopupCustom'
-import { MainText } from '../../../styles'
+import { MainText, TXT_PRIMARY_GRADIENT } from '../../../styles'
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { SellCategory } from '../SellCategory/SellCategory'
 import { FormDoubleItem } from '../Form/FormDoubleItem'
@@ -35,7 +35,6 @@ import {
   StringPublicKey,
   bnTo8
 } from '../../../web3'
-
 import { dataFormRow2, dataFormFixedRow2 } from './mockData'
 // import { Donate } from '../Form/Donate'
 // const dataDonate = {
@@ -430,7 +429,9 @@ export const SellNFT = () => {
             You are about to list
           </div>
           <Row className="bm-text" align="middle" justify="center" gutter={4} style={{ marginBottom: '70px' }}>
-            <Col className="bm-text-bold">{general.nft_name}</Col>
+            <Col className="bm-text-bold">
+              <TXT_PRIMARY_GRADIENT>{general.nft_name}</TXT_PRIMARY_GRADIENT>
+            </Col>
             <Col>by</Col>
             <Col className="bm-text-bold">{creator}</Col>
           </Row>
@@ -484,13 +485,10 @@ export const SellNFT = () => {
           />
           <UPLOAD_FIELD_CONTAINER>
             <UPLOAD_INFO_CONTAINER>
-              <SECTION_TITLE>1. Sale type</SECTION_TITLE>
+              <SECTION_TITLE>Sale Type</SECTION_TITLE>
               <SellCategory setCategory={setCategory} category={category} />
 
-              <SECTION_TITLE>
-                {category === 'open-bid' && '2. Open Bid settings'}
-                {category === 'fixed-price' && '2. Fixed price settings'}
-              </SECTION_TITLE>
+              <SECTION_TITLE>Set Asking Price</SECTION_TITLE>
               <STYLED_FORM form={form} layout="vertical" initialValues={{}}>
                 {/* {category === '0' && (
                   <>
@@ -503,7 +501,6 @@ export const SellNFT = () => {
                     <FormDoubleItem
                       data={[
                         {
-                          label: 'Minimum bid',
                           name: 'minimumBid',
                           defaultValue: '',
                           placeholder: 'Enter minimum bid',
@@ -521,8 +518,8 @@ export const SellNFT = () => {
                     />
 
                     <STYLED_DESCRIPTION>
-                      Open bids are open to any amount and they will be closed after a scuccessful bid agreement or if
-                      the creator decides to remove it.
+                      Open bids are open to any amount and they will be closed after a bid matches the asking price or
+                      if the creator decides to remove it.
                     </STYLED_DESCRIPTION>
                   </div>
                 )}
@@ -539,7 +536,7 @@ export const SellNFT = () => {
               </STYLED_FORM>
             </UPLOAD_INFO_CONTAINER>
             <PREVIEW_UPLOAD_CONTAINER>
-              <PreviewImage image_url={nftMetadata.properties.files[0].uri} />
+              <PreviewImage image_url={nftMetadata.image} />
               <div>
                 <BUTTON onClick={() => setReviewSellModal(true)} disabled={disabled}>
                   Review
