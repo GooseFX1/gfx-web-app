@@ -59,7 +59,7 @@ export const OpenBidNFT: FC = () => {
     <h2>Something went wrong fetching NFT details</h2>
   ) : (
     <DETAILS_WRAPPER>
-      <NFTDetails mode="open-bid-NFT" />
+      <NFTDetails />
     </DETAILS_WRAPPER>
   )
 }

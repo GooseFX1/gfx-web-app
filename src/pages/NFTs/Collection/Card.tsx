@@ -137,7 +137,7 @@ type Props = {
   userId?: number
 }
 
-export const Card = ({ singleNFT, listingType, className, ...rest }: Props) => {
+export const Card = ({ singleNFT, className, ...rest }: Props) => {
   const history = useHistory()
   const { mode } = useDarkMode()
   const { connection } = useConnectionConfig()
@@ -202,7 +202,7 @@ export const Card = ({ singleNFT, listingType, className, ...rest }: Props) => {
   const goToDetails = async (id: number): Promise<void> => {
     setIsLoadingBeforeRelocate(true)
     await setNFTDetailsBeforeLocate()
-    history.push(`/NFTs/open-bid/${id}`)
+    history.push(`/NFTs/details/${id}`)
   }
 
   const getButtonText = (isOwner: boolean, ask: INFTAsk | undefined): string => {

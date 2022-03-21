@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components'
 import { Col, Row, Tabs } from 'antd'
 import { SpaceBetweenDiv } from '../../../styles'
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
-import { MintItemViewStatus, NFTDetailsProviderMode, INFTBid } from '../../../types/nft_details'
+import { MintItemViewStatus, INFTBid } from '../../../types/nft_details'
 import { TradingHistoryTabContent } from './TradingHistoryTabContent'
 import { AttributesTabContent } from './AttributesTabContent'
 import RemoveModalContent from './RemoveModalContent'
@@ -27,9 +27,10 @@ import {
 import BN from 'bn.js'
 
 const { TabPane } = Tabs
+
 //#region styles
-const RIGHT_SECTION_TABS = styled.div<{ mode: string; activeTab: string }>`
-  ${({ theme, activeTab, mode }) => css`
+const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
+  ${({ theme, activeTab }) => css`
     position: relative;
 
     .ant-tabs-nav {
@@ -221,21 +222,20 @@ const REMOVE_MODAL = styled(Modal)`
 //#endregion
 
 export const RightSectionTabs: FC<{
-  mode: NFTDetailsProviderMode
   status: MintItemViewStatus
-}> = ({ mode, status, ...rest }) => {
+}> = ({ status, ...rest }) => {
   const history = useHistory()
   const [activeTab, setActiveTab] = useState('1')
   const { general, nftMetadata, ask, bids, removeNFTListing, removeBidOnSingleNFT } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
   const { connection, network } = useConnectionConfig()
   const wallet = useWallet()
-  const { publicKey, sendTransaction } = wallet
-  const { mint_address, owner, token_account } = general
   const [bidModal, setBidModal] = useState<boolean>(false)
   const [isBuying, setIsBuying] = useState<string>()
   const [removeAskModal, setRemoveAskModal] = useState<boolean>(false)
   const [removeBidModal, setRemoveBidModal] = useState<boolean>(false)
+
+  const isLoading = general === undefined || nftMetadata === undefined
 
   const enum NFT_ACTIONS {
     BID = 'bid',
@@ -262,36 +262,40 @@ export const RightSectionTabs: FC<{
   }, [bids, wallet.publicKey])
 
   const nftData = useMemo(() => {
-    return [
-      {
-        title: 'Mint address',
-        value: `${mint_address.substr(0, 4)}...${mint_address.substr(-4, 4)}`
-      },
-      {
-        title: 'Token Address',
-        value: token_account ? `${token_account.substr(0, 4)}...${token_account.substr(-4, 4)}` : ''
-      },
-      {
-        title: 'Owner',
-        value: owner ? `${owner.substr(0, 6)}...${owner.substr(-4, 4)}` : ''
-      },
-      {
-        title: 'Artist Royalties',
-        value: `${(nftMetadata.seller_fee_basis_points / 100).toFixed(2)}%`
-      },
-      {
-        title: 'Transaction Fee',
-        value: `${NFT_MARKET_TRANSACTION_FEE}%`
-      }
-    ]
+    return isLoading
+      ? []
+      : [
+          {
+            title: 'Mint address',
+            value: `${general.mint_address.substr(0, 4)}...${general.mint_address.substr(-4, 4)}`
+          },
+          {
+            title: 'Token Address',
+            value: general.token_account
+              ? `${general.token_account.substr(0, 4)}...${general.token_account.substr(-4, 4)}`
+              : ''
+          },
+          {
+            title: 'Owner',
+            value: general.owner ? `${general.owner.substr(0, 6)}...${general.owner.substr(-4, 4)}` : ''
+          },
+          {
+            title: 'Artist Royalties',
+            value: `${(nftMetadata.seller_fee_basis_points / 100).toFixed(2)}%`
+          },
+          {
+            title: 'Transaction Fee',
+            value: `${NFT_MARKET_TRANSACTION_FEE}%`
+          }
+        ]
   }, [general])
 
-  useEffect(() => {}, [publicKey])
+  useEffect(() => {}, [wallet.publicKey])
 
   const derivePDAsForInstruction = async () => {
     const buyerPrice: BN = new BN(ask.buyer_price)
 
-    const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
+    const tradeState: [PublicKey, number] = await tradeStatePDA(wallet.publicKey, general, bnTo8(buyerPrice))
 
     if (!tradeState) {
       throw Error(`Could not derive values for instructions`)
@@ -359,7 +363,7 @@ export const RightSectionTabs: FC<{
     console.log(userRecentBid)
 
     const buyerPrice: BN = new BN(userRecentBid.buyer_price)
-    const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
+    const tradeState: [PublicKey, number] = await tradeStatePDA(wallet.publicKey, general, bnTo8(buyerPrice))
 
     const cancelInstructionArgs: CancelInstructionArgs = {
       buyerPrice: buyerPrice,
@@ -367,7 +371,7 @@ export const RightSectionTabs: FC<{
     }
 
     const cancelInstructionAccounts: CancelInstructionAccounts = {
-      wallet: publicKey,
+      wallet: wallet.publicKey,
       tokenAccount: new PublicKey(general.token_account),
       tokenMint: new PublicKey(general.mint_address),
       authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
@@ -382,7 +386,7 @@ export const RightSectionTabs: FC<{
     )
 
     const transaction = new Transaction().add(cancelIX)
-    const signature = await sendTransaction(transaction, connection)
+    const signature = await wallet.sendTransaction(transaction, connection)
     console.log(signature)
     const confirm = await connection.confirmTransaction(signature, 'processed')
     console.log(confirm)
@@ -451,8 +455,10 @@ export const RightSectionTabs: FC<{
     }
   }
 
-  return (
-    <RIGHT_SECTION_TABS activeTab={activeTab} mode={mode} {...rest}>
+  return isLoading ? (
+    <div></div>
+  ) : (
+    <RIGHT_SECTION_TABS activeTab={activeTab} {...rest}>
       {handleModal()}
       <Tabs defaultActiveKey="1" centered onChange={(key) => setActiveTab(key)}>
         <>
@@ -467,23 +473,23 @@ export const RightSectionTabs: FC<{
             </DETAILS_TAB_CONTENT>
           </TabPane>
           <TabPane tab="Trading History" key="2">
-            <TradingHistoryTabContent mode={mode} />
+            <TradingHistoryTabContent />
           </TabPane>
           <TabPane tab="Attributes" key="3">
             <AttributesTabContent data={nftMetadata.attributes} />
           </TabPane>
         </>
       </Tabs>
-      {general.non_fungible_id && publicKey && (
+      {general.non_fungible_id && wallet.publicKey && (
         <SpaceBetweenDiv className="rst-footer">
           {sessionUser && sessionUser.user_id ? (
-            publicKey.toBase58() === general.owner ? (
+            wallet.publicKey.toBase58() === general.owner ? (
               <button className="rst-footer-button rst-footer-button-sell" onClick={handleUpdateAsk}>
                 {ask === undefined ? 'List Item' : 'Remove Ask Price'}
               </button>
             ) : (
               <SpaceBetweenDiv style={{ flexGrow: 1 }}>
-                {bids.find((bid) => bid.wallet_key === publicKey.toBase58()) && (
+                {bids.find((bid) => bid.wallet_key === wallet.publicKey.toBase58()) && (
                   <button
                     onClick={(e) => handleSetBid(NFT_ACTIONS.CANCEL_BID)}
                     className="rst-footer-button rst-footer-button-flat"

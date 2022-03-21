@@ -50,26 +50,22 @@ const WRAPPED_LOADER = styled.div`
 `
 export const FixedPriceTabContent: FC = ({ ...rest }) => {
   const { fixedPriceWithinCollection } = useNFTCollections()
-  const history = useHistory()
-  const { sessionUser } = useNFTProfile()
-
-  const goToFixedPriceDetails = (id: number): void => history.push(`/NFTs/fixed-price/${id}`)
 
   return (
     <WRAPPER>
       {fixedPriceWithinCollection === undefined ? (
         <FIXED_PRICE_TAB {...rest} className="card-list">
           {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((item, index) => (
-            <div>
-              <Card key={index} singleNFT={null} listingType="fixed" />
+            <div key={index}>
+              <Card singleNFT={null} />
             </div>
           ))}
         </FIXED_PRICE_TAB>
       ) : fixedPriceWithinCollection.nft_data.length > 0 ? (
         <FIXED_PRICE_TAB {...rest} className="card-list">
           {fixedPriceWithinCollection.nft_data.map((item: ISingleNFT) => (
-            <div onClick={() => goToFixedPriceDetails(item.non_fungible_id)}>
-              <Card key={item.non_fungible_id} singleNFT={item} listingType="fixed" />
+            <div key={item.mint_address}>
+              <Card singleNFT={item} />
             </div>
           ))}
         </FIXED_PRICE_TAB>

@@ -133,7 +133,7 @@ export const Collectible = (): JSX.Element => {
           className="collectible-back-icon"
           src={`/img/assets/arrow.svg`}
           alt="back"
-          onClick={() => history.push('/NFTs')}
+          onClick={() => history.goBack()}
         />
         <TITLE>Create a collectible</TITLE>
         <DESCRIPTION>

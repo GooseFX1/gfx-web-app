@@ -2,7 +2,6 @@ import { useState, useEffect, FC } from 'react'
 import { Table, Row, Col } from 'antd'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import styled, { css } from 'styled-components'
-import { NFTDetailsProviderMode } from '../../../types/nft_details'
 import { useNFTDetails } from '../../../context'
 
 const TRADING_HISTORY_TAB_CONTENT = styled.div`
@@ -120,9 +119,7 @@ const bidColumns = [
   }
 ]
 
-export const TradingHistoryTabContent: FC<{
-  mode: NFTDetailsProviderMode
-}> = ({ mode, ...rest }) => {
+export const TradingHistoryTabContent: FC = ({ ...rest }) => {
   const { bids } = useNFTDetails()
   const [tradingHistory, setTradingHistory] = useState([])
 
