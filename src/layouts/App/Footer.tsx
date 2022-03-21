@@ -2,28 +2,9 @@ import React, { FC, useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { PrivacyPolicy } from './PrivacyPolicy'
 import { TermsOfService } from './TermsOfService'
-import { useDarkMode, useConnectionConfig } from '../../context'
-import {
-  APP_LAYOUT_FOOTER_HEIGHT,
-  APP_LAYOUT_FOOTER_HEIGHT_MOBILE,
-  CenteredDiv,
-  CenteredImg,
-  SpaceBetweenDiv,
-  SVGToWhite
-} from '../../styles'
+import { useConnectionConfig } from '../../context'
+import { APP_LAYOUT_FOOTER_HEIGHT, APP_LAYOUT_FOOTER_HEIGHT_MOBILE, SpaceBetweenDiv } from '../../styles'
 
-const MODE_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(2))};
-  .moon-image {
-    width: 18px;
-    height: 18px;
-    margin-right: ${({ theme }) => theme.margin(1)};
-  }
-  .brightness-image {
-    width: 22px;
-    height: 22px;
-  }
-`
 const REFRESH_ICON = styled.div`
   margin-right: ${({ theme }) => theme.margin(6)};
 
@@ -49,23 +30,6 @@ const TEXT = styled.span`
   }
 `
 
-const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`
-  height: 30px;
-  width: 60px;
-  border-radius: 30px;
-  margin-right: ${({ theme }) => theme.margin(5)};
-  background-color: ${({ theme }) => theme.appLayoutFooterToggle};
-  &:hover {
-    cursor: pointer;
-  }
-  > div {
-    ${({ theme }) => theme.measurements(theme.margin(2.5))}
-    ${({ theme }) => theme.roundedBorders}
-    background-color: ${({ theme }) => theme.secondary2};
-    transform: translateX(${({ $mode }) => ($mode === 'dark' ? '-' : '')}${({ theme }) => theme.margin(1.5)});
-  }
-`
-
 const CURRENT_NETWORK = styled.span`
   color: ${({ theme }) => theme.text1};
   .network {
@@ -80,12 +44,6 @@ const WRAPPER = styled(SpaceBetweenDiv)`
   border-top: 1px solid ${({ theme }) => theme.appLayoutFooterBorder};
   background-color: ${({ theme }) => theme.bg2};
 
-  div > div {
-    &:nth-child(2) {
-      margin-right: ${({ theme }) => theme.margin(1)};
-    }
-  }
-
   ${({ theme }) => theme.mediaWidth.upToSmall`
     height: ${APP_LAYOUT_FOOTER_HEIGHT_MOBILE};
     padding: ${({ theme }) => theme.margin(1)};
@@ -93,7 +51,6 @@ const WRAPPER = styled(SpaceBetweenDiv)`
 `
 
 export const Footer: FC = () => {
-  const { mode, toggleMode } = useDarkMode()
   const { network } = useConnectionConfig()
   const [privacyPolicyVisible, setPrivacyPolicyVisible] = useState(false)
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState(false)
@@ -124,25 +81,6 @@ export const Footer: FC = () => {
         SOL Network:
         <span className={'network'}>{' ' + network}</span>
       </CURRENT_NETWORK>
-      <SpaceBetweenDiv>
-        <MODE_ICON>
-          {mode === 'dark' ? (
-            <SVGToWhite className="moon-image" src={`/img/assets/lite_mode.svg`} alt="" />
-          ) : (
-            <img className="moon-image" src={`/img/assets/lite_mode.svg`} alt="" />
-          )}
-        </MODE_ICON>
-        <TOGGLE $mode={mode} onClick={toggleMode}>
-          <div />
-        </TOGGLE>
-        <MODE_ICON>
-          {mode === 'dark' ? (
-            <SVGToWhite className="brightness-image" src={`/img/assets/dark_mode.svg`} alt="" />
-          ) : (
-            <img className="brightness-image" src={`/img/assets/dark_mode.svg`} alt="" />
-          )}
-        </MODE_ICON>
-      </SpaceBetweenDiv>
     </WRAPPER>
   )
 }

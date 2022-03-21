@@ -92,7 +92,7 @@ const SwapContent: FC = () => {
 
   const height = '80px'
   const localCSS = css`
-    .ant-input {
+    .swap-input {
       height: ${height};
       border-radius: 45px;
       border: none;

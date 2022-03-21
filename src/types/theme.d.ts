@@ -39,6 +39,7 @@ export interface Colors {
   bg7: Color
   bg8: Color
   bg9: Color
+  bg10: Color
   modalBackground: Color
   bgReward: Color
   substractImg: Color
