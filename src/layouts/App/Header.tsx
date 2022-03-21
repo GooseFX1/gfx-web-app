@@ -41,7 +41,7 @@ const BUTTONS = styled(CenteredDiv)`
   position: absolute;
 
   > *:not(:last-child) {
-    margin-right: ${({ theme }) => theme.margin(4)};
+    margin-right: ${({ theme }) => theme.margin(3)};
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
