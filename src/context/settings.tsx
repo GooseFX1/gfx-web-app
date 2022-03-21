@@ -14,8 +14,8 @@ interface IEndpoint {
 export const ENDPOINTS: IEndpoint[] = [
   {
     chainId: ENV.MainnetBeta,
-    name: 'GenesysGo',
-    endpoint: 'https://ssc-dao.genesysgo.net',
+    name: 'QuickNode Pro',
+    endpoint: 'https://green-little-wind.solana-mainnet.quiknode.pro/6083a98b56311aacfd4c28bb8d4aa9462699c45d',
     network: WalletAdapterNetwork.Mainnet
   },
   {
@@ -32,8 +32,8 @@ export const ENDPOINTS: IEndpoint[] = [
   },
   {
     chainId: ENV.MainnetBeta,
-    name: 'QuickNode Pro',
-    endpoint: 'https://green-little-wind.solana-mainnet.quiknode.pro/6083a98b56311aacfd4c28bb8d4aa9462699c45d',
+    name: 'GenesysGo',
+    endpoint: 'https://ssc-dao.genesysgo.net',
     network: WalletAdapterNetwork.Mainnet
   }
 ]
@@ -79,7 +79,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const connection = useMemo(() => new Connection(endpoint, 'recent'), [endpoint])
 
-  let endpointObj = ENDPOINTS.find((e) => e.endpoint === endpoint)
+  const endpointObj = ENDPOINTS.find((e) => e.endpoint === endpoint)
   const chainId = useMemo(() => endpointObj?.chainId ?? ENV.MainnetBeta, [endpoint])
   const network = useMemo(() => endpointObj?.network ?? WalletAdapterNetwork.Mainnet, [endpoint])
   const endpointName = useMemo(() => endpointObj?.name ?? 'Custom', [endpoint])
