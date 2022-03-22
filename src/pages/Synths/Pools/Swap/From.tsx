@@ -47,6 +47,7 @@ export const From: FC<{ height: string }> = ({ height }) => {
             pattern="\d+(\.\d+)?"
             placeholder={inTokenAmount.toString()}
             value={ellipseNumber(inTokenAmount, 10)}
+            className={'swap-input'}
           />
           {value > 0 && <VALUE>{monetaryFormatValue(value)} gUSD</VALUE>}
         </div>

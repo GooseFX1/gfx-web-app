@@ -3,12 +3,20 @@ import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import styled from 'styled-components'
-import { mockSliderData } from './mockData'
 import { MainButton } from '../../../components/MainButton'
-import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 const CAROUSEL_WRAPPER = styled.div`
-  padding: 0 ${({ theme }) => theme.margin(4)};
+  position: relative;
+  padding-left: ${({ theme }) => theme.margin(4)};
+
+  .fade {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 180px;
+    background: linear-gradient(90deg, #fff0 0%, #131313 90%);
+  }
   .slick-prev,
   .slick-next {
     width: 65px;
@@ -37,11 +45,13 @@ const SLIDER_ITEM = styled.div`
   margin-right: ${({ theme }) => theme.margin(4)};
   position: relative;
   width: 40%;
+
   .home-slider-image {
     border-radius: 10px;
-    height: 360px;
-    width: auto;
+    height: auto;
+    width: 41vw;
   }
+
   .home-slider-content {
     width: 58%;
     text-align: center;
@@ -59,6 +69,7 @@ const SLIDER_ITEM = styled.div`
         margin-top: ${({ theme }) => theme.margin(5)};
       }
     }
+
     .home-slider-desc {
       font-size: 14px;
       font-weight: 600;
@@ -66,10 +77,19 @@ const SLIDER_ITEM = styled.div`
       color: #fff;
       margin-top: ${({ theme }) => theme.margin(2)};
     }
+
     .home-slider-button {
       margin: ${({ theme }) => theme.margin(2)} auto 0;
     }
   }
+`
+
+const ORANGE_BTN = styled(MainButton)`
+  background: linear-gradient(270deg, #dc1fff 0%, #f7931a 106.38%);
+`
+
+const TERTIERY_BTN = styled(MainButton)`
+  background: ${({ theme }) => theme.primary3} !important;
 `
 
 const settings = {
@@ -81,43 +101,61 @@ const settings = {
   initialSlide: 0,
   arrows: true,
   variableWidth: true,
-  nextArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="" />,
-  prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="" />
+  nextArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-next" />,
+  prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-previous" />
 }
 
 export const NFTHomeSlider = () => {
   const [isSlideData, setIsSlideData] = useState(false)
+
   useEffect(() => {
     setTimeout(() => {
       setIsSlideData(true)
     }, 1000)
   }, [])
+
+  const handleCreatorApply = (e: any) => {
+    window.open('https://docs.google.com/forms/d/15yypvXd49oTMv0AbtfZ8CU_y2Z7WGJI0KmilA8oR6OA/edit')
+  }
+
   return (
     <CAROUSEL_WRAPPER>
       <Slider {...settings}>
-        {!isSlideData
-          ? [0, 1, 2].map((item, i) => (
-              <SLIDER_ITEM key={i}>
-                <SkeletonCommon width="639px" height="360px" borderRadius="10px" />
-              </SLIDER_ITEM>
-            ))
-          : mockSliderData.map((item, i) => (
-              <SLIDER_ITEM key={i}>
-                <img
-                  className="home-slider-image"
-                  src={`${process.env.PUBLIC_URL}/img/assets/home-slider-${i % 2 === 0 ? 1 : 2}.png`}
-                  alt=""
-                />
-                <div className="home-slider-content">
-                  <h1 className="home-slider-title">{item?.title}</h1>
-                  {item?.desc && <div className="home-slider-desc">{item?.desc}</div>}
-                  <MainButton className="home-slider-button" height={'40px'} status="action" width={'141px'}>
-                    <span>{item?.type}</span>
-                  </MainButton>
-                </div>
-              </SLIDER_ITEM>
-            ))}
+        <SLIDER_ITEM>
+          <img className="home-slider-image" src={`${process.env.PUBLIC_URL}/img/assets/becoma-a-creator.png`} alt="" />
+          <div className="home-slider-content">
+            <h1 className="home-slider-title">Become </h1>
+            <h1 className="home-slider-title">a verified creator</h1>
+            <TERTIERY_BTN
+              className="home-slider-button"
+              height={'40px'}
+              status="action"
+              width={'141px'}
+              onClick={handleCreatorApply}
+            >
+              <span>Apply</span>
+            </TERTIERY_BTN>
+          </div>
+        </SLIDER_ITEM>
+        <SLIDER_ITEM>
+          <img className="home-slider-image" src={`${process.env.PUBLIC_URL}/img/assets/nesetquest-egg.png`} alt="" />
+          <div className="home-slider-content">
+            <h1 className="home-slider-title">NestQuest</h1>
+            <h1 className="home-slider-title">Tier #1</h1>
+            <ORANGE_BTN className="home-slider-button" height={'40px'} status="action" width={'141px'}>
+              <span>Mint</span>
+            </ORANGE_BTN>
+          </div>
+        </SLIDER_ITEM>
+        <SLIDER_ITEM>
+          <img
+            className="home-slider-image"
+            src={`${process.env.PUBLIC_URL}/img/assets/upcoming_features.webp`}
+            alt=""
+          />
+        </SLIDER_ITEM>
       </Slider>
+      <div className="fade"></div>
     </CAROUSEL_WRAPPER>
   )
 }

@@ -94,7 +94,7 @@ const CryptoContent: FC = () => {
 }
 
 export const Crypto: FC = () => {
-  const { endpoint, setEndpoint } = useConnectionConfig()
+  const { network, setEndpoint } = useConnectionConfig()
 
   useEffect(() => {
     const an = analytics()
@@ -104,7 +104,7 @@ export const Crypto: FC = () => {
         firebase_screen_class: 'load'
       })
 
-    if (endpoint !== ENDPOINTS[0].endpoint) {
+    if (network === 'devnet') {
       notify({ message: 'Switched to mainnet' })
       setEndpoint(ENDPOINTS[0].endpoint)
     }

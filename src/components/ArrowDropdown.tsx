@@ -2,6 +2,7 @@ import React, { FC, ReactElement } from 'react'
 import { Dropdown, Row } from 'antd'
 import styled from 'styled-components'
 import { CenteredDiv, SVGToWhite, SVGDynamicMode } from '../styles'
+import { useDarkMode } from '../context'
 
 const ARROW_CLICKER = styled(CenteredDiv)<{ $arrowRotation?: boolean; $measurements?: string }>`
   ${({ theme, $measurements }) => theme.measurements($measurements ? $measurements : theme.margin(1.5))}
@@ -49,6 +50,8 @@ export const ArrowDropdown: FC<{
   children?: ReactElement | (() => ReactElement)
   [x: string]: any
 }> = ({ arrowRotation, measurements, offset, onVisibleChange, overlay, placement, children, ...props }) => {
+  const { mode } = useDarkMode()
+
   return (
     <Dropdown
       align={{ offset }}

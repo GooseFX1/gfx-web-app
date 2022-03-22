@@ -52,10 +52,41 @@ export const SVGToWhite = styled.img`
 export const SVGToBlack = styled.img`
   filter: invert(100%);
 `
+
 export const SVGDynamicMode = styled.img`
   filter: ${({ theme }) => theme.filterBackIcon};
 `
 
 export const SVGDynamicReverseMode = styled.img`
   filter: ${({ theme }) => theme.filterWhiteIcon};
+`
+
+export const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`
+  height: 30px;
+  width: 60px;
+  border-radius: 30px;
+  margin-right: ${({ theme }) => theme.margin(5)};
+  background-color: ${({ theme }) => theme.appLayoutFooterToggle};
+  &:hover {
+    cursor: pointer;
+  }
+  > div {
+    ${({ theme }) => theme.measurements(theme.margin(2.5))}
+    ${({ theme }) => theme.roundedBorders}
+    background-color: ${({ theme }) => theme.secondary2};
+    transform: translateX(${({ $mode }) => ($mode === 'dark' ? '-' : '')}${({ theme }) => theme.margin(1.5)});
+  }
+`
+
+export const MODE_ICON = styled(CenteredImg)`
+  ${({ theme }) => theme.measurements(theme.margin(2))};
+  .moon-image {
+    width: 15px;
+    height: 15px;
+    margin-right: ${({ theme }) => theme.margin(1)};
+  }
+  .brightness-image {
+    width: 19px;
+    height: 19px;
+  }
 `
