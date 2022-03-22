@@ -4,17 +4,23 @@ import { Tabs } from 'antd'
 import { Categories } from '../../../components'
 import { mockAnalyticsDrodown } from './mockData'
 import TabContent from './TabContent'
-import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
-import { useNFTCollections } from '../../../context'
-import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 // import { allCollections } from '../Home/mockData'
 
 const { TabPane } = Tabs
 
 //#region styles
 const ANALYTICS_TABS = styled.div`
-  padding: ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(4)} 6px;
+  padding: ${({ theme }) => theme.margin(1.5)} 0 6px;
   position: relative;
+
+  .fade {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: calc(100% - 76px);
+    width: 180px;
+    background: linear-gradient(90deg, #fff0 0%, #131313 90%);
+  }
 
   .ant-tabs-ink-bar {
     display: none;
@@ -132,6 +138,8 @@ const AnalyticsTabs = ({ allCollections }) => {
           <TabContent baseCollections={mainCollections} collectionFilter={'listed'} />
         </TabPane>
       </Tabs>
+
+      {/* TODO: fade to be used when carousel is implemented <div className="fade"></div> */}
     </ANALYTICS_TABS>
   ) : (
     <div>loading</div>
