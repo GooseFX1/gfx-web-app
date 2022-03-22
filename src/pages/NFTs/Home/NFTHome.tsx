@@ -39,7 +39,9 @@ const NFTLandingPage: FC = (): JSX.Element => {
         setTotalCollections={setFilteredCollections}
       />
       <NFTHomeSlider />
+      <br />
       <AnalyticsTabs allCollections={allCollections} />
+      <br />
       <div>
         <CollectionCarousel
           collections={allCollections}
@@ -48,18 +50,6 @@ const NFTLandingPage: FC = (): JSX.Element => {
           isLaunch
           isLoading={isAllLoading}
         />
-        {/* <CollectionCarousel
-          collections={upcomingCollections}
-          collectionType={COLLECTION_TYPES.NFT_UPCOMING_COLLECTION}
-          title="Upcoming Collections"
-          isLoading={isUpcomingLoading}
-        />
-        <CollectionCarousel
-          collections={featuredCollections}
-          collectionType={COLLECTION_TYPES.NFT_FEATURED_COLLECTION}
-          title="Popular Collections"
-          isLoading={isFeaturedLoading}
-        /> */}
         <NFTFooter />
       </div>
     </>
