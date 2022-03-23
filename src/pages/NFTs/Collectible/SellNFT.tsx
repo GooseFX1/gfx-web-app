@@ -409,7 +409,7 @@ export const SellNFT = () => {
         title={`Successfully listed ${nftMetadata.name}!`}
         itemName={nftMetadata.name}
         supportText={`My price: ${price}`}
-        tx_url={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+        tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
       />
     )
   })

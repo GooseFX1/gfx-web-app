@@ -330,7 +330,7 @@ export const RightSectionTabs: FC<{
         title={`Successfully removed ask for ${nftMetadata.name}!`}
         itemName={nftMetadata.name}
         supportText={`Removed asking price: ${price}`}
-        tx_url={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+        tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
       />
     )
   })
@@ -412,7 +412,7 @@ export const RightSectionTabs: FC<{
         title={`Successfully removed bid for ${nftMetadata.name}!`}
         itemName={nftMetadata.name}
         supportText={`Removed bid price: ${price} SOL`}
-        tx_url={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+        tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
       />
     )
   })
