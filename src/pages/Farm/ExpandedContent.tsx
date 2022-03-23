@@ -1,12 +1,14 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 import { stakedEarnedMockData, messageMockData, stakeOrClaimInfoMockData } from './mockData'
 import styled from 'styled-components'
 import { Button, Row, Col } from 'antd'
 import { MainButton } from '../../components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { notify } from '../../utils'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { WalletContextState } from '@solana/wallet-adapter-react'
 import { useTokenRegistry, useAccounts, useCrypto, useConnectionConfig } from '../../context'
-import { createStakingAccount, executeStake } from '../../web3'
+import { createStakingAccount, executeStake, executeUnstakeAndClaim } from '../../web3'
 import { Wallet } from '@project-serum/anchor'
 
 const STYLED_EXPANDED_ROW = styled.div`
@@ -271,21 +273,28 @@ export const ExpandedContent = ({ record }: any) => {
   ]
   const [status, setStatus] = useState(initState)
   const [count, setCount] = useState(0)
+  const stakeRef = useRef(null)
+  const unstakeRef = useRef(null)
 
   useEffect(() => {
     setDisplayUserBalance(publicKey ? displayUserBalance : 0)
+    stakeRef.current.value = publicKey ? displayUserBalance : 0
+    unstakeRef.current.value = publicKey ? displayUserBalance : 0
   }, [displayUserBalance, publicKey])
-  const onClickStake = (index) => {
-    executeStake(wallet, connection, network, displayUserBalance).then((res) => console.log(res))
+
+  const onClickStake = () => {
+    executeStake(wallet, connection, network, stakeRef.current.value).then((res) => console.log(res))
   }
 
+  const onClickUnstake = () => {
+    //executeUnstakeAndClaim(wallet, connection, network, unstakeRef.current.value)
+  }
   const onClickHalf = () => {
-    console.log('half clicked')
     setDisplayUserBalance(publicKey ? userBalance / 2 : 0)
   }
   const onClickMax = () => {
     setDisplayUserBalance(publicKey ? userBalance : 0)
-    console.log('max clicked')
+    console.log('max clicked', userBalance)
   }
   return (
     <STYLED_EXPANDED_ROW>
@@ -312,30 +321,48 @@ export const ExpandedContent = ({ record }: any) => {
         </STYLED_LEFT_CONTENT>
         <STYLED_RIGHT_CONTENT className={`${connected ? 'connected' : 'disconnected'}`}>
           <div className="right-inner">
-            {stakeOrClaimInfoMockData.map((item) => (
-              <div className="SOL-item">
-                <STYLED_SOL className={status[item.id].selected ? 'active' : ''}>
-                  <STYLED_INPUT className="value" />
-                  {/* <div className="value" >{displayUserBalance}</div> */}
-                  <div className="text">
-                    <MAX_BUTTON onClick={onClickHalf} className="text-1">
-                      Half
-                    </MAX_BUTTON>
-                    <MAX_BUTTON onClick={onClickMax} className="text-2">
-                      Max
-                    </MAX_BUTTON>
-                  </div>
-                </STYLED_SOL>
-                <STYLED_STAKE_PILL
-                  className={status[item.id].selected ? 'active' : ''}
-                  loading={status[item.id].isLoading}
-                  disabled={status[item.id].isLoading}
-                  onClick={() => onClickStake(item.id)}
-                >
-                  {item.action}
-                </STYLED_STAKE_PILL>
-              </div>
-            ))}
+            <div className="SOL-item">
+              <STYLED_SOL className={status[0].selected ? 'active' : ''}>
+                <STYLED_INPUT className="value" ref={stakeRef} type="number" />
+                <div className="text">
+                  <MAX_BUTTON onClick={onClickHalf} className="text-1">
+                    Half
+                  </MAX_BUTTON>
+                  <MAX_BUTTON onClick={onClickMax} className="text-2">
+                    Max
+                  </MAX_BUTTON>
+                </div>
+              </STYLED_SOL>
+              <STYLED_STAKE_PILL
+                className={status[0].selected ? 'active' : ''}
+                loading={status[0].isLoading}
+                disabled={status[0].isLoading}
+                onClick={() => onClickStake()}
+              >
+                Stake
+              </STYLED_STAKE_PILL>
+            </div>
+            <div className="SOL-item">
+              <STYLED_SOL className={status[1].selected ? 'active' : ''}>
+                <STYLED_INPUT className="value" ref={unstakeRef} type="number" />
+                <div className="text">
+                  <MAX_BUTTON onClick={onClickHalf} className="text-1">
+                    Half
+                  </MAX_BUTTON>
+                  <MAX_BUTTON onClick={onClickMax} className="text-2">
+                    Max
+                  </MAX_BUTTON>
+                </div>
+              </STYLED_SOL>
+              <STYLED_STAKE_PILL
+                className={status[1].selected ? 'active' : ''}
+                loading={status[1].isLoading}
+                disabled={status[1].isLoading}
+                onClick={() => onClickUnstake()}
+              >
+                Unstake and Claim
+              </STYLED_STAKE_PILL>
+            </div>
           </div>
         </STYLED_RIGHT_CONTENT>
       </STYLED_EXPANDED_CONTENT>
