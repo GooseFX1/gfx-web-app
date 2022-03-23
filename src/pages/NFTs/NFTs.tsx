@@ -44,7 +44,7 @@ export const NFTs: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const location = useLocation<ILocationState>()
   const { path } = useRouteMatch()
-  const { connection, endpoint, setEndpoint, network } = useConnectionConfig()
+  const { connection, setEndpoint, network } = useConnectionConfig()
   const { connected, publicKey } = useWallet()
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
 
@@ -84,7 +84,7 @@ export const NFTs: FC = () => {
     return () => {}
   }, [publicKey, connected])
 
-  return endpoint !== ENDPOINTS[1].endpoint ? (
+  return network !== 'devnet' ? (
     <OverlayProvider>
       <PriceFeedProvider>
         <NFTCollectionProvider>

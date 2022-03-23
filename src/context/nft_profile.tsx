@@ -75,7 +75,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.USER_ACTIVITY}?user_id=${id}`)
 
-      setUserActivity(res.data)
+      setUserActivity(res.data.slice(res.data.length - 11, res.data.length - 1))
       return res
     } catch (err) {
       return err
