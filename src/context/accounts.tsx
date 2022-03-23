@@ -52,8 +52,13 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const associatedTokenAddress = await findAssociatedTokenAddress(owner, mint)
     sub.push(
       connection.onAccountChange(associatedTokenAddress, async () => {
-        const [{ account }] = (await connection.getParsedTokenAccountsByOwner(owner, { mint })).value
-        setBalances((prevState) => ({ ...prevState, [mint.toString()]: account.data.parsed.info.tokenAmount }))
+        try {
+          const accountArr = (await connection.getParsedTokenAccountsByOwner(owner, { mint })).value
+          const account = accountArr?.[0]?.account
+          setBalances((prevState) => ({ ...prevState, [mint.toString()]: account?.data?.parsed?.info?.tokenAmount }))
+        } catch (e) {
+          console.log(e)
+        }
       })
     )
   }

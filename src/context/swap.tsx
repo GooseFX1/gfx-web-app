@@ -159,7 +159,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const amountPool = useCallback(async () => {
     if (tokenA && tokenB) {
       let outTokenAmount = 0
-      if (inTokenAmount) {
+      if (inTokenAmount && inTokenAmount != 0) {
+        // needed weak comaprison because of '0.00'=='0'
         const preSwapResult = await preSwapAmount(tokenA, tokenB, inTokenAmount, wallet, connection, network)
         if (preSwapResult) {
           outTokenAmount = Number(preSwapResult)
@@ -202,6 +203,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     try {
       const signature = await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
+      if (!signature) throw new Error('Swap unsuccessful')
       notify({
         type: 'success',
         message: 'Swap successful!',

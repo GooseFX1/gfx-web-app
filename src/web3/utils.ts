@@ -44,15 +44,19 @@ export const signAndSendRawTransaction = async (
   wallet: any,
   ...signers: Array<Signer>
 ) => {
-  transaction.feePayer = wallet.publicKey
-  transaction.recentBlockhash = (await connection.getRecentBlockhash('max')).blockhash
+  try {
+    transaction.feePayer = wallet.publicKey
+    transaction.recentBlockhash = (await connection.getRecentBlockhash('max')).blockhash
 
-  signers.forEach((signer) => transaction.partialSign(signer))
+    signers.forEach((signer) => transaction.partialSign(signer))
 
-  transaction = await wallet.signTransaction(transaction)
-  let tx = await connection.sendRawTransaction(transaction!.serialize())
-
-  return tx
+    transaction = await wallet.signTransaction(transaction)
+    let tx = await connection.sendRawTransaction(transaction!.serialize(), { skipPreflight: true })
+    return tx
+  } catch (e) {
+    console.log(e)
+    return null
+  }
 }
 
 export const simulateTransaction = async (
