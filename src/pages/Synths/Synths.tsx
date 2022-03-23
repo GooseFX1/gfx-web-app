@@ -50,7 +50,7 @@ export const SynthsContent: FC = () => {
 }
 
 export const Synths: FC = () => {
-  const { endpoint, setEndpoint } = useConnectionConfig()
+  const { network, setEndpoint } = useConnectionConfig()
 
   useEffect(() => {
     const an = analytics()
@@ -62,11 +62,11 @@ export const Synths: FC = () => {
   }, [])
 
   useEffect(() => {
-    if (endpoint !== ENDPOINTS[1].endpoint) {
+    if (network !== 'devnet') {
       notify({ message: 'Synths is in alpha. Switched to devnet' })
       setEndpoint(ENDPOINTS[1].endpoint)
     }
-  }, [endpoint, setEndpoint])
+  }, [network, setEndpoint])
 
   return (
     <SynthsProvider>
