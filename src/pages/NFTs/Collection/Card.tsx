@@ -52,7 +52,7 @@ const CARD = styled.div`
     .card-name {
       font-size: 16px;
       font-weight: 600;
-      color: ${({ theme }) => theme.text2};
+      color: ${({ theme }) => theme.white};
       font-family: Montserrat;
       width: calc(100% - 48px);
       ${({ theme }) => theme.ellipse}
@@ -61,6 +61,9 @@ const CARD = styled.div`
       position: absolute;
       top: 0;
       right: 0;
+    }
+    .card-favorite-heart {
+      margin-right: ${({ theme }) => theme.margin(0.5)};
     }
     .card-featured-heart {
       width: 30px;
@@ -71,13 +74,12 @@ const CARD = styled.div`
       cursor: not-allowed;
     }
     .card-favorite-number {
-      color: #4b4b4b;
+      color: ${({ theme }) => theme.hintInputColor};
       font-size: 13px;
       font-weight: 600;
     }
   }
   .card-price {
-    color: ${({ theme }) => theme.text2} !important;
   }
 `
 
@@ -104,7 +106,7 @@ const BID_BUTTON = styled.button<{ cardStatus: string }>`
 `
 
 const LIGHT_TEXT = styled.span`
-  color: ${({ theme }) => theme.text9};
+  color: ${({ theme }) => theme.hintInputColor};
 `
 
 const COVER = styled.div<{ $mode: boolean }>`

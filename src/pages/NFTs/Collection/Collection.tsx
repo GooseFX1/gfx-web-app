@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params'
 
 const COLLECTION_CONTAINER = styled.div<{ collapsed: boolean }>`
-  height: calc(100vh - ${({ collapsed }) => (collapsed ? '0px' : '80px')} - 130px);
+  height: calc(100vh - ${({ collapsed }) => (collapsed ? '0px' : '88px')});
 `
 
 export const Collection: FC = (): JSX.Element => {
