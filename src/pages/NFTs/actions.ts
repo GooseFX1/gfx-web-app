@@ -6,7 +6,6 @@ import {
   AUCTION_HOUSE_AUTHORITY,
   AUCTION_HOUSE_PROGRAM_ID,
   TREASURY_MINT,
-  TREASURY_ACCT,
   AH_FEE_ACCT,
   toPublicKey,
   createCancelInstruction,

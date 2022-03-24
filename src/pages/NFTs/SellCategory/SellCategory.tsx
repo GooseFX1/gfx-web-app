@@ -46,12 +46,13 @@ const dataCategories = [
   {
     icon: 'open-bid',
     name: 'Open bid'
-  },
-  {
-    icon: 'fixed-price',
-    name: 'Fixed price'
   }
 ]
+
+// {
+//   icon: 'fixed-price',
+//   name: 'Fixed price'
+// }
 
 interface ICategory {
   category: string

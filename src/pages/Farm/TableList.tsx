@@ -1,29 +1,24 @@
-import React, { useState, useMemo, useRef } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { Table } from 'antd'
 import { columns } from './Columns'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ExpandedContent } from './ExpandedContent'
-import { Program, Provider, workspace } from '@project-serum/anchor'
-import { useConnectionConfig } from '../../context'
-import { WalletContextState } from '@solana/wallet-adapter-react'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { STAKE_PREFIX, toPublicKey } from '../../web3'
-import { ADDRESSES, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID } from '../../web3/ids'
 import { getStakingAccountKey } from '../../web3/stake'
+import { Program, Provider } from '@project-serum/anchor'
+import { useConnectionConfig } from '../../context'
+import { WalletContextState } from '@solana/wallet-adapter-react'
+import { ADDRESSES } from '../../web3/ids'
 
-import {
-  Connection,
-  PublicKey,
-  Transaction,
-  TransactionInstruction,
-  TransactionSignature,
-  SYSVAR_RENT_PUBKEY,
-  LAMPORTS_PER_SOL
-} from '@solana/web3.js'
-const StakeIDL = require('../../web3/idl/stake.json')
+import { Connection, PublicKey, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js'
+
 const CONTROLLER_KEY = new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
 
+const StakeIDL = require('../../web3/idl/stake.json')
+
+//#region styles
 const STYLED_TABLE_LIST = styled(Table)`
   ${({ theme }) => `
   max-width: 100%;
@@ -165,28 +160,19 @@ const ExpandIcon = (props) => {
     />
   )
 }
+//#endregion
 const getStakeProgram = (wallet: WalletContextState, connection: Connection, network: WalletAdapterNetwork): Program =>
   new Program(
     StakeIDL,
     ADDRESSES[network].programs.stake.address,
     new Provider(connection, wallet as any, { commitment: 'processed' })
   )
-// const getStakingAccountKey = async (wallet: WalletContextState) => {
-//   // option to connect a wallet
-//   if(wallet.publicKey === null)
-//     return undefined
-//   const stakingAccountKey: [PublicKey, number] = await PublicKey.findProgramAddress(
-//     [Buffer.from(STAKE_PREFIX), CONTROLLER_KEY.toBuffer(), wallet.publicKey.toBuffer()],
-//     toPublicKey(StakeIDL.metadata.address)
-//   )
-//   return stakingAccountKey[0]
-// }
-
 export const TableList = ({ dataSource }: any) => {
+  const wallet = useWallet()
+  const [accountKey, setAccountKey] = useState<PublicKey>()
+  const [eKeys, setEKeys] = useState([])
   const PAGE_SIZE = 10
   const { network, connection } = useConnectionConfig()
-  const accountKey = useRef(null)
-  const wallet = useWallet()
   const program = useMemo(
     () => (wallet.publicKey ? getStakeProgram(wallet, connection, network) : undefined),
     [connection, wallet.publicKey]
@@ -203,14 +189,29 @@ export const TableList = ({ dataSource }: any) => {
     return AccountKey[0]
   }, [wallet.publicKey])
 
-  const accKey = useMemo(async () => await getStakingAccountKey(wallet), [])
-  accKey.then((res) => {
-    accountKey.current = res
-    console.log(accountKey.current, res, 'then')
-  })
-  console.log(accountKey.current, 'useRef')
+  const stakeProgram: Program = useMemo(() => {
+    console.log('stakeProgram recomputed')
+    return wallet.publicKey
+      ? new Program(
+          StakeIDL,
+          ADDRESSES[network].programs.stake.address,
+          new Provider(connection, wallet as WalletContextState, { commitment: 'processed' })
+        )
+      : undefined
+  }, [connection, wallet.publicKey])
 
-  const [eKeys, setEKeys] = useState([])
+  useEffect(() => {
+    if (wallet.publicKey) {
+      if (accountKey === undefined) {
+        console.log('getStakingAccountKey set')
+        getStakingAccountKey(wallet).then((accountKey) => setAccountKey(accountKey))
+      }
+    } else {
+      setAccountKey(undefined)
+    }
+
+    return () => {}
+  }, [wallet.publicKey, connection])
 
   const onExpandIcon = (id) => {
     const temp = [...eKeys]
@@ -220,8 +221,11 @@ export const TableList = ({ dataSource }: any) => {
     setEKeys(temp)
   }
 
+  console.log('PROGRAM: ', stakeProgram)
+  console.log('ACCOUNT KEY: ', accountKey ? accountKey.toBase58() : accountKey)
   return (
     <div>
+      {console.log(eKeys)}
       <STYLED_TABLE_LIST
         rowKey="id"
         columns={columns}
@@ -229,7 +233,9 @@ export const TableList = ({ dataSource }: any) => {
         pagination={{ pageSize: PAGE_SIZE, position: ['bottomLeft'] }}
         bordered={false}
         expandedRowKeys={eKeys}
-        expandedRowRender={(r) => <ExpandedContent record={r} myData={'Shrihari'} />}
+        expandedRowRender={(r) => (
+          <ExpandedContent record={r} stakeProgam={stakeProgram} stakeAccountKey={accountKey} />
+        )}
         expandIcon={(ps) => <ExpandIcon {...ps} onClick={onExpandIcon} />}
         expandIconColumnIndex={6}
       />

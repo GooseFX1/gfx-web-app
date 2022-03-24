@@ -78,9 +78,13 @@ export function colors(mode: string): Colors {
     bg6: mode === 'dark' ? 'black' : 'gray',
     bg7: mode === 'dark' ? '#131313' : 'gray',
     bg8: mode === 'dark' ? 'rgba(64, 64, 64, 0.22)' : 'gray',
-    bg9: mode === 'dark' ? '#2a2a2a' : white, 
+    bg9: mode === 'dark' ? '#2a2a2a' : white,
+    bg10: mode === 'dark' ? '#191919' : '#eee',
     modalBackground: mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(96, 96, 96, 0.5)',
-    bgReward: mode === 'dark' ? 'linear-gradient(115deg, #9625ae 6%, rgba(62, 53, 187, 0) 97%)' :'linear-gradient(145deg, #9625ae 6%, rgba(16, 6, 156, 0.56) 99%)',
+    bgReward:
+      mode === 'dark'
+        ? 'linear-gradient(115deg, #9625ae 6%, rgba(62, 53, 187, 0) 97%)'
+        : 'linear-gradient(145deg, #9625ae 6%, rgba(16, 6, 156, 0.56) 99%)',
     grey1: '#434343',
     grey2: '#4e4e4e',
     grey3: '#2a2a2a',
@@ -89,6 +93,10 @@ export function colors(mode: string): Colors {
     darkButton: '#000000',
     scrollBarColor: mode === 'dark' ? '#434343' : '#e0e0e0',
     boxShadow: mode === 'dark' ? '0 4px 4px 0 rgba(0, 0, 0, 0.25)' : '0 7px 10px 0 rgba(189, 189, 189, 0.25)',
+    fade:
+      mode === 'dark'
+        ? 'linear-gradient(90deg, #fff0 0%, #131313 90%)'
+        : 'linear-gradient(90deg, #fff0 0%, #e9e9e9 90%)',
 
     // specialty colors
     appLayoutFooterBorder: mode === 'dark' ? '#c4c4c4' : '#dedede',
@@ -120,7 +128,7 @@ export function colors(mode: string): Colors {
 
     // input bg
     inputBg: mode === 'dark' ? '#131313' : '#CACACA',
-    hintInputColor: mode === 'dark' ? '#b9b9b9' : '#636363',
+    hintInputColor: mode === 'dark' ? '#4b4b4b' : '#4b4b4b',
 
     // btn Icon (Plus, add more), btn Next Step Background
     btnIconBg: mode === 'dark' ? '#9625ae' : '#7D7D7D',
@@ -187,6 +195,7 @@ export function colors(mode: string): Colors {
     // primary colors
     primary1: '#302eb8',
     primary2: '#3735bb',
+    primary3: '#5855FF',
 
     // secondary colors
     secondary1: '#9e35b1',
@@ -203,6 +212,10 @@ export function colors(mode: string): Colors {
     success: '#27AE60',
 
     // filter
+    filterWhiteIcon:
+      mode === 'lite'
+        ? 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'
+        : '#000',
     filterBackIcon:
       mode === 'dark'
         ? 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'

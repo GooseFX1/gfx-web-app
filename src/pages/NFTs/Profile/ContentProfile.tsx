@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useNFTProfile, useConnectionConfig } from '../../../context'
+// import { ISingleNFT } from '../../../types/nft_details.d'
 import { ParsedAccount } from '../../../web3'
 import { fetchNFTById } from '../../../api/NFTs/actions'
 import { NFTTab } from '../NFTTab'
@@ -12,10 +13,12 @@ type Props = {
 }
 
 export const ContentProfile = ({ isExplore }: Props) => {
-  const { connected, publicKey } = useWallet()
+  const { publicKey } = useWallet()
   const { sessionUser, parsedAccounts, userActivity, setUserActivity, fetchUserActivity } = useNFTProfile()
   const [createdItems, setCreatedItems] = useState<ParsedAccount[]>()
   const [favoritedItems, setFavoritedItems] = useState<ParsedAccount[]>()
+  // use ISingleNFT when get nft by address is available
+  // const [favoritedItems, setFavoritedItems] = useState<ISingleNFT[]>()
   const { connection } = useConnectionConfig()
 
   const tabPanes = useMemo(
@@ -50,23 +53,26 @@ export const ContentProfile = ({ isExplore }: Props) => {
   }, [tabPanes])
 
   useEffect(() => {
-    if (connected && publicKey && parsedAccounts) {
-      const userCreated = parsedAccounts.filter((nft: ParsedAccount) =>
-        nft.data.creators.find((c) => c.address === publicKey.toBase58())
+    if (sessionUser && parsedAccounts && parsedAccounts.length > 0) {
+      const userCreated = parsedAccounts.filter(
+        (nft: ParsedAccount) =>
+          nft.data.creators !== undefined && nft.data.creators.find((c) => c.address === publicKey.toBase58())
       )
       setCreatedItems(userCreated)
     } else {
       setCreatedItems([])
     }
+  }, [parsedAccounts])
 
-    if (connected && publicKey && sessionUser?.user_likes?.length > 0) {
+  useEffect(() => {
+    if (sessionUser?.user_likes?.length > 0) {
       fetchFavs()
     } else {
       setFavoritedItems([])
     }
 
     return () => {}
-  }, [publicKey, connected, sessionUser])
+  }, [sessionUser])
 
   useEffect(() => {
     if (sessionUser && sessionUser.user_id) {
@@ -78,36 +84,32 @@ export const ContentProfile = ({ isExplore }: Props) => {
     return () => {}
   }, [sessionUser, fetchUserActivity, setUserActivity])
 
-  async function fetchFavs() {
-    let favorites: any = await Promise.all(
-      sessionUser.user_likes.map(async (i: number) => {
+  const fetchFavs = async () => {
+    const favorites: any = await Promise.all(
+      sessionUser.user_likes.map((i: number) => {
         return fetchNFTById(i, connection)
       })
     )
 
-    if (favorites[0].data && favorites[0].data.uri && favorites[0].key) {
-      setFavoritedItems(favorites)
-    } else {
-      let favs: ParsedAccount[] = favorites.map((favorite: any) => ({
-        data: {
-          creators: [],
-          name: favorite.nft_name as string,
-          symbol: '',
-          uri: favorite.metadata_url as string,
-          sellerFeeBasisPoints: 0
-        },
-        key: 4,
-        mint: favorite.mint_address as string,
-        primarySaleHappened: 0,
-        edition: undefined,
-        editionNonce: null,
-        isMutable: 1,
-        masterEdition: undefined,
-        updateAuthority: ''
-      }))
+    const favs: ParsedAccount[] = favorites.map((favorite: any) => ({
+      data: {
+        creators: [],
+        name: favorite.nft_name as string,
+        symbol: '',
+        uri: favorite.metadata_url as string,
+        sellerFeeBasisPoints: 0
+      },
+      key: 4,
+      mint: favorite.mint_address as string,
+      primarySaleHappened: 0,
+      edition: undefined,
+      editionNonce: null,
+      isMutable: 1,
+      masterEdition: undefined,
+      updateAuthority: ''
+    }))
 
-      setFavoritedItems(favs)
-    }
+    setFavoritedItems(favs)
   }
 
   return <NFTTab tabPanes={tabPanes} />

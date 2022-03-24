@@ -17,7 +17,7 @@ import { PublicKey } from '@solana/web3.js'
 import { useAccounts } from './accounts'
 import { useConnectionConfig, useSlippageConfig } from './settings'
 import { notify } from '../utils'
-import { computePoolsPDAs, serum, swap } from '../web3'
+import { computePoolsPDAs, serum, swap, preSwapAmount } from '../web3'
 
 export type SwapInput = undefined | 'from' | 'to'
 
@@ -66,7 +66,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [inTokenAmount, setInTokenAmount] = useState(0)
   const [loading, setLoading] = useState(false)
   const [outTokenAmount, setOutTokenAmount] = useState(0)
-  const [focused, setFocused] = useState<SwapInput>(undefined)
+  const [_, setFocused] = useState<SwapInput>(undefined)
   const [pool, setPool] = useState<IPool>({
     inAmount: 0,
     inValue: 0,
@@ -136,8 +136,10 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
           inAmount = parseFloat(aAccount.value[0].account.data.parsed.info.tokenAmount.amount)
           outAmount = parseFloat(bAccount.value[0].account.data.parsed.info.tokenAmount.amount)
           outValuePerIn = (outAmount - (inAmount * outAmount) / (inAmount + 10 ** decimals)) / 10 ** decimals
+          amountPool()
         } catch (e) {
-          setOutTokenAmount(0)
+          //setOutTokenAmount(0)
+          console.log(e)
         }
 
         setPool(({ inValue, outValue }) => ({
@@ -154,6 +156,43 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }, timeoutDelay)
   }, [connection, network, setPool, tokenA, tokenB])
 
+  const amountPool = useCallback(async () => {
+    if (tokenA && tokenB) {
+      let outTokenAmount = 0
+      if (inTokenAmount && inTokenAmount != 0) {
+        // needed weak comaprison because of '0.00'=='0'
+        const preSwapResult = await preSwapAmount(tokenA, tokenB, inTokenAmount, wallet, connection, network)
+        if (preSwapResult) {
+          outTokenAmount = Number(preSwapResult)
+        } else {
+          notify({ type: 'error', message: 'Fetch Pre-swap Amount Failed', icon: 'error' })
+        }
+        //outAmount - (inAmount * outAmount) / (inAmount + inTokenAmount * 10 ** tokenA.decimals)
+      }
+      setOutTokenAmount(outTokenAmount)
+    } else {
+      setOutTokenAmount(0)
+    }
+  }, [tokenA, tokenB, inTokenAmount])
+
+  useEffect(() => {
+    setTokenA(null)
+    setTokenB(null)
+  }, [connection])
+
+  useEffect(() => {
+    amountPool()
+  }, [inTokenAmount, pool, slippage, tokenA, tokenB])
+
+  // useEffect(() => {
+  //   refreshRates().then()
+  // }, [inTokenAmount, refreshRates, tokenA, tokenB])
+
+  useEffect(() => {
+    const interval = setInterval(() => amountPool(), 20000)
+    return () => clearInterval(interval)
+  }, [amountPool])
+
   const swapTokens = async () => {
     if (!tokenA || !tokenB) return
 
@@ -164,7 +203,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     try {
       const signature = await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
-
+      if (!signature) throw new Error('Swap unsuccessful')
       notify({
         type: 'success',
         message: 'Swap successful!',
@@ -173,7 +212,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         txid: signature,
         network: network
       })
-      setTimeout(() => wallet.publicKey && fetchAccounts(), 1000)
+      setTimeout(() => wallet.publicKey && fetchAccounts(), 3000)
     } catch (e: any) {
       console.log(e)
       notify({ type: 'error', message: 'Swap failed', icon: 'error' }, e)
@@ -188,33 +227,6 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setTokenA(tokenB)
     setTokenB(tokenA)
   }
-
-  useEffect(() => {
-    setTokenA(null)
-    setTokenB(null)
-  }, [connection])
-
-  useEffect(() => {
-    if (tokenA && tokenB && focused === 'from') {
-      let outTokenAmount = 0
-      if (inTokenAmount) {
-        const { inAmount, outAmount } = pool
-        outTokenAmount = outAmount - (inAmount * outAmount) / (inAmount + inTokenAmount * 10 ** tokenA.decimals)
-      }
-
-      setOutTokenAmount(outTokenAmount / 10 ** tokenA.decimals)
-    }
-  }, [focused, inTokenAmount, pool, slippage, tokenA, tokenB])
-
-  useEffect(() => {
-    refreshRates().then()
-  }, [inTokenAmount, refreshRates, tokenA, tokenB])
-
-  useEffect(() => {
-    const interval = setInterval(() => refreshRates(), 10000)
-
-    return () => clearInterval(interval)
-  }, [refreshRates])
 
   return (
     <SwapContext.Provider

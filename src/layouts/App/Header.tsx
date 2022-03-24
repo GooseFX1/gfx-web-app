@@ -4,12 +4,12 @@ import { Connect } from './Connect'
 import { More } from './More'
 import { Tabs } from './Tabs'
 import { SelectRPC } from '../../components'
-import { RewardsButton } from "../../components/RewardsPopup";
+import { RewardsButton } from '../../components/RewardsPopup'
 import { useDarkMode } from '../../context'
 import { SVGToGrey2, CenteredDiv } from '../../styles'
 import { useNavCollapse } from '../../context'
-import { ModalSlide } from "../../components/ModalSlide"
-import { useRewardToggle } from "../../context/reward_toggle";
+import { ModalSlide } from '../../components/ModalSlide'
+import { useRewardToggle } from '../../context/reward_toggle'
 
 const BRAND = styled.a`
   position: absolute;
@@ -37,15 +37,11 @@ const BRAND = styled.a`
   }
 `
 
-const RewardsModalBox = styled.a`
-  padding: 14px;
-`
-
 const BUTTONS = styled(CenteredDiv)`
   position: absolute;
 
   > *:not(:last-child) {
-    margin-right: ${({ theme }) => theme.margin(2)};
+    margin-right: ${({ theme }) => theme.margin(3)};
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -63,11 +59,11 @@ const BUTTONS = styled(CenteredDiv)`
 `
 
 const WRAPPER = styled.nav`
-  position: absolute;
+  position: fixed;
 
   width: 100%;
   ${({ theme }) => theme.headerRoundedBorders}
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg9};
   ${({ theme }) => theme.smallShadow}
   z-index: 300;
 
@@ -87,10 +83,10 @@ const CollapsibleWrapper = styled.div`
   height: 20px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
-  bottom: -20px;
+  bottom: -15px;
   display: flex;
   justify-content: center;
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg9};
   cursor: pointer;
 
   img {
@@ -101,31 +97,30 @@ const CollapsibleWrapper = styled.div`
 
 export const Header: FC = () => {
   const { isCollapsed, toggleCollapse } = useNavCollapse()
-  const {rewardModal, rewardToggle} = useRewardToggle(); 
+  const { rewardModal, rewardToggle } = useRewardToggle()
 
   const handleCollapse = (val) => {
     toggleCollapse(val)
   }
-  
+
   const slideModal = () => {
     if (rewardModal) {
       return <ModalSlide rewardModal={rewardModal} rewardToggle={rewardToggle} />
     }
-  }      
+  }
 
   return (
     <WRAPPER id="menu">
       {!isCollapsed && (
         <>
-        {slideModal()}
+          {slideModal()}
           <BRAND href="/">
             <img id="logo" src={`/img/assets/gfx_logo_gradient.svg`} alt="GFX Logo" />
           </BRAND>
           <Tabs />
           <BUTTONS>
-            <RewardsButton/>
+            <RewardsButton />
             <Connect />
-            <SelectRPC />
             <More />
           </BUTTONS>
         </>
@@ -153,13 +148,13 @@ const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => v
     >
       {mode === 'dark' ? (
         <img
-          style={{ transform: `rotate(${collapse ? 180 : 0}deg)`, marginTop: `${collapse ? '2px' : '5px'}` }}
+          style={{ transform: `rotate(${collapse ? 0 : 180}deg)`, marginTop: `${collapse ? '5px' : '2px'}` }}
           src={icon}
           alt=""
         />
       ) : (
         <SVGToGrey2
-          style={{ transform: `rotate(${collapse ? 180 : 0}deg)`, marginTop: `${collapse ? '2px' : '5px'}` }}
+          style={{ transform: `rotate(${collapse ? 0 : 180}deg)`, marginTop: `${collapse ? '5px' : '2px'}` }}
           src={icon}
           alt=""
         />

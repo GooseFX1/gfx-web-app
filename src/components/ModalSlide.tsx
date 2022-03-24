@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
-import { RewardsPopup } from "./RewardsPopup";
-import { useRewardToggle } from "../context/reward_toggle";
+import { RewardsPopup } from './RewardsPopup'
+import { useRewardToggle } from '../context/reward_toggle'
 
 const WRAPPER = styled.div`
   position: absolute;
@@ -21,10 +21,9 @@ const MODAL = styled.div`
   right: 0;
   bottom: -35px;
   width: 100vw;
-  height: 70vh;
-  animation: fadeIn 1s, slideIn .8s linear;
+  height: calc(72vh + 35px);
+  animation: slideIn .625s linear;
   border-radius: 20px 20px 0 0;
-  box-shadow: 0px -3px 30px 7px rgb(104 104 104 / 58%);
   z-index: 1000;
 }
 @keyframes slideIn {
@@ -45,13 +44,6 @@ const MODAL = styled.div`
     animation-timing-function: ease-in;
   }
 }
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
 `
 interface IModalSlide {
   rewardModal: boolean
@@ -59,13 +51,13 @@ interface IModalSlide {
 }
 
 const closeRewardModal = (e, rewardToggle) => {
-  if(e.target.id === "wrapper-background"){
+  if (e.target.id === 'wrapper-background') {
     rewardToggle(false)
   }
 }
 
 export const ModalSlide = (props: IModalSlide) => {
-  const { rewardToggle } = useRewardToggle() 
+  const { rewardToggle } = useRewardToggle()
   return (
     <WRAPPER id="wrapper-background" onClick={(e) => closeRewardModal(e, rewardToggle)}>
       <MODAL id="modal">

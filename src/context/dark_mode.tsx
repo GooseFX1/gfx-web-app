@@ -1,4 +1,6 @@
 import React, { FC, ReactNode, createContext, useContext } from 'react'
+import { logEvent } from 'firebase/analytics'
+import analytics from '../analytics'
 import { useLocalStorageState } from '../utils'
 
 interface IDarkModeConfig {
@@ -15,7 +17,17 @@ export const DarkModeProvider: FC<{ children: ReactNode }> = ({ children }) => {
     <DarkModeContext.Provider
       value={{
         mode,
-        toggleMode: () => setMode(mode === 'dark' ? 'lite' : 'dark')
+        toggleMode: () =>
+          setMode((prevMode) => {
+            // analytics logger
+            const an = analytics()
+            an !== null &&
+              logEvent(an, 'color-mode', {
+                from: prevMode,
+                to: mode === 'dark' ? 'lite' : 'dark'
+              })
+            return mode === 'dark' ? 'lite' : 'dark'
+          })
       }}
     >
       {children}

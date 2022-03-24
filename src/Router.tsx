@@ -11,12 +11,12 @@ export const Router: FC = () => {
 
   return (
     <BrowserRouter>
-      {window.location.pathname === '/' && <Redirect from="/" to="/crypto" />}
+      {window.location.pathname === '/' && <Redirect from="/" to="/NFTs" />}
       <Switch>
         <NavCollapseProvider>
           <AppLayout>
             <Route exact path="/swap" component={Swap} />
-            <Route exact path="/crypto" component={Crypto} />
+            <Route exact path="/trade" component={Crypto} />
             <Route
               exact
               path="/synths"

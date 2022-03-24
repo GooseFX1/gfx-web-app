@@ -1,7 +1,7 @@
 import React, { FC, ReactElement } from 'react'
 import { Dropdown, Row } from 'antd'
 import styled from 'styled-components'
-import { CenteredDiv, SVGToWhite } from '../styles'
+import { CenteredDiv, SVGToWhite, SVGDynamicMode } from '../styles'
 
 const ARROW_CLICKER = styled(CenteredDiv)<{ $arrowRotation?: boolean; $measurements?: string }>`
   ${({ theme, $measurements }) => theme.measurements($measurements ? $measurements : theme.margin(1.5))}
@@ -17,6 +17,18 @@ const ARROW_CLICKER = styled(CenteredDiv)<{ $arrowRotation?: boolean; $measureme
 `
 
 export const ArrowClicker: FC<{
+  arrowRotation?: boolean
+  measurements?: string
+  [x: string]: any
+}> = ({ arrowRotation, measurements, ...props }) => {
+  return (
+    <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements} {...props}>
+      <SVGDynamicMode src={`/img/assets/arrow.svg`} alt="arrow" />
+    </ARROW_CLICKER>
+  )
+}
+
+export const ArrowClickerWhite: FC<{
   arrowRotation?: boolean
   measurements?: string
   [x: string]: any
@@ -50,7 +62,7 @@ export const ArrowDropdown: FC<{
       <Row align="middle" wrap={false}>
         {children}
         <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements}>
-          <SVGToWhite src={`/img/assets/arrow.svg`} alt="arrow" />
+          <SVGToWhite src={`/img/assets/arrow.svg`} alt="arrow" className={'arrow-icon'} />
         </ARROW_CLICKER>
       </Row>
     </Dropdown>

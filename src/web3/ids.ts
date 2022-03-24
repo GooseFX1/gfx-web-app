@@ -104,7 +104,8 @@ export const ADDRESSES: {
         controller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
       },
       swap: {
-        address: PublicKey.default
+        address: new PublicKey('7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'),
+        controller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
       }
     }
   },
@@ -143,7 +144,7 @@ export const ADDRESSES: {
         decimals: 8
       },
       gETH: {
-        address: new PublicKey('89wbRM3MCCoTuTzFK4UNWG1vsd4iqadxHTjGiHZ7kc5Q'),
+        address: new PublicKey('ETHEUsA7cMt4z3GPeAJbK9B6NpTckrvzGBLUigsjQpFN'),
         decimals: 8
       },
       gMNGO: {
@@ -210,8 +211,8 @@ export const ADDRESSES: {
         address: new PublicKey('DeStTq4cj3h2WC35CPwwcbn9VhAgdpey9xD9gbTt5FiU'),
         decimals: 8
       },
-      gAMZN: {
-        address: new PublicKey('2sV7HYKFvu3G8SWRsQMS4yuHCgU7pT8omJD6W6vFp5hY'),
+      gAVAX: {
+        address: new PublicKey('AVAXrcSeoZKHuiTH7MQPLz7xSuGa33DEkMmB3pUaBoct'),
         decimals: 8
       },
       gNFLX: {
@@ -342,9 +343,9 @@ export const STAKE_PROGRAM_ID: StringPublicKey = '8KJx48PYGHVC9fxzRRtYp4x4CM2HyY
 // AUCTION HOUSE CONSTANTS
 export const AUCTION_HOUSE_PREFIX: string = 'auction_house'
 
-export const AUCTION_HOUSE_PROGRAM_ID: StringPublicKey = 'hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk'
+export const AUCTION_HOUSE_PROGRAM_ID: StringPublicKey = '7KeftXqig3b8iRoCDuB9cuVM4FSeNh7KedfKVHe3jqd4'
 
-export const AUCTION_HOUSE: StringPublicKey = '5GtAPDZWwnWRDjaTgjHDnvpiGBi9TbLVqRrggLH5Ztuv'
+export const AUCTION_HOUSE: StringPublicKey = 'HhHtmk34umV4SKpxDDNkuo35gbJJpnWvrqmKcU6PGibh'
 
 export const TREASURY_MINT: StringPublicKey = 'So11111111111111111111111111111111111111112'
 
@@ -352,13 +353,13 @@ export const AUCTION_HOUSE_AUTHORITY: StringPublicKey = '4puafxtL1437aibBy4pCteA
 
 export const AUCTION_HOUSE_CREATOR: StringPublicKey = '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'
 
-export const AH_FEE_ACCT: StringPublicKey = 'JD8Jfejdfxq7KkRisP465aCrWkXGZ8JYqqPHCn9hz7Kc'
+export const AH_FEE_ACCT: StringPublicKey = 'HB4Jwnh2WrcWqg9h1MeP1gryU9rYxuLLdKiqiVTEpP8s'
 
-export const TREASURY_ACCT: StringPublicKey = '3wRqpyrETku2x2EZyfRKJeKVVb6F9J8HQLGcNf5VwuJ9'
+export const TREASURY_ACCT: StringPublicKey = 'DyXuJKfZ96QKHuKHRFgzs64eHVZhzS5NhpdbAGFei26R'
 
-export const FEE_PAYER_WITHDRAWAL_ACCT: StringPublicKey = '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'
+export const FEE_PAYER_WITHDRAWAL_ACCT: StringPublicKey = '2N4t2ZYB4iPHs2oDz6z49nQuPx3CrDURCyqCazFtZmar'
 
-export const TREASURY_WITHDRAWAL_ACCT: StringPublicKey = '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'
+export const TREASURY_WITHDRAWAL_ACCT: StringPublicKey = '2N4t2ZYB4iPHs2oDz6z49nQuPx3CrDURCyqCazFtZmar'
 
 export const FEE_PAYER_BAL_GENESIS: number = 0
 
@@ -372,6 +373,6 @@ export const CAN_CHANGE_SALE_PRICE: boolean = false
 
 export const AH_BUMP: number = 253
 
-export const AH_FEE_BUMP: number = 254
+export const AH_FEE_BUMP: number = 251
 
-export const AH_TREASURY_BUMP: number = 254
+export const AH_TREASURY_BUMP: number = 255

@@ -1,4 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
+import { logEvent } from 'firebase/analytics'
+import analytics from '../../analytics'
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
 import { Pools } from './Pools'
@@ -48,14 +50,23 @@ export const SynthsContent: FC = () => {
 }
 
 export const Synths: FC = () => {
-  const { endpoint, setEndpoint } = useConnectionConfig()
+  const { network, setEndpoint } = useConnectionConfig()
 
   useEffect(() => {
-    if (endpoint !== ENDPOINTS[1].endpoint) {
+    const an = analytics()
+    an !== null &&
+      logEvent(an, 'screen_view', {
+        firebase_screen: 'Synth',
+        firebase_screen_class: 'load'
+      })
+  }, [])
+
+  useEffect(() => {
+    if (network !== 'devnet') {
       notify({ message: 'Synths is in alpha. Switched to devnet' })
       setEndpoint(ENDPOINTS[1].endpoint)
     }
-  }, [endpoint, setEndpoint])
+  }, [network, setEndpoint])
 
   return (
     <SynthsProvider>

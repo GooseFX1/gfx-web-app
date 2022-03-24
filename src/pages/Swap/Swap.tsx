@@ -1,4 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
+import { logEvent } from 'firebase/analytics'
+import analytics from '../../analytics'
 import styled, { css } from 'styled-components'
 import { Rate } from './Rate'
 import { Settings } from './Settings'
@@ -8,7 +10,6 @@ import { SwapTo } from './SwapTo'
 import { Modal } from '../../components'
 import { useDarkMode, useSwap, SwapProvider } from '../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../styles'
-import { addAnalytics } from '../../utils'
 
 const WRAPPER = styled.div`
   display: flex;
@@ -76,7 +77,12 @@ const SwapContent: FC = () => {
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
 
   useEffect(() => {
-    addAnalytics()
+    const an = analytics()
+    an !== null &&
+      logEvent(an, 'screen_view', {
+        firebase_screen: 'Swap',
+        firebase_screen_class: 'load'
+      })
   }, [])
 
   const onClick = (e: React.MouseEvent<HTMLElement>) => {
@@ -86,7 +92,7 @@ const SwapContent: FC = () => {
 
   const height = '80px'
   const localCSS = css`
-    .ant-input {
+    .swap-input {
       height: ${height};
       border-radius: 45px;
       border: none;

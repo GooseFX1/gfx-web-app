@@ -1,11 +1,10 @@
-import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
-import { Connection } from '@solana/web3.js'
+import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
 import { parsePriceData } from '@pythnetwork/client'
 import { Orderbook } from '@project-serum/serum'
 import { FEATURED_PAIRS_LIST } from './crypto'
-import { ENDPOINTS } from './settings'
 import { notify } from '../utils'
 import { pyth, serum } from '../web3'
+import { useConnectionConfig } from '../context'
 
 interface IPrices {
   [x: string]: {
@@ -22,7 +21,7 @@ const PriceFeedContext = createContext<IPriceFeedConfig | null>(null)
 
 export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [prices, setPrices] = useState<IPrices>({})
-  const connection = useMemo(() => new Connection(ENDPOINTS[2].endpoint, 'recent'), [])
+  const { connection } = useConnectionConfig()
 
   useEffect(() => {
     let cancelled = false

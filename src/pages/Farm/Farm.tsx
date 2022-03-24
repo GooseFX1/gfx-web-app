@@ -1,5 +1,7 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import styled from 'styled-components'
+import { logEvent } from 'firebase/analytics'
+import analytics from '../../analytics'
 import { TableList } from './TableList'
 import { FarmHeader } from './FarmHeader'
 import { mockDataSource, supportedData } from './mockData'
@@ -32,6 +34,15 @@ const BODY = styled.div`
 export const Farm: FC = () => {
   const [dataSource, setDataSource] = useState(supportedData)
   const { isCollapsed } = useNavCollapse()
+
+  useEffect(() => {
+    const an = analytics()
+    an !== null &&
+      logEvent(an, 'screen_view', {
+        firebase_screen: 'Yield Farm',
+        firebase_screen_class: 'load'
+      })
+  }, [])
 
   const onFilter = (val) => {
     if (val === 'All pools') {

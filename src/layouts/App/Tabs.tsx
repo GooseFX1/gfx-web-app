@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { useDarkMode } from '../../context'
 import { CenteredDiv, CenteredImg, SVGToGrey2, SVGToPrimary2, SVGToWhite } from '../../styles'
 
-const TABS = ['/swap', '/crypto', '/synths', '/NFTs', '/farm']
+const TABS = ['/swap', '/trade', '/NFTs', '/farm', '/synths']
 
 const LABEL = styled.span`
   height: 14px;
@@ -28,7 +28,7 @@ const TAB_ICON = styled(CenteredImg)`
 const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: number }>`
   position: relative;
   ${({ theme }) => theme.roundedBorders}
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg9};
   height: 80px;
 
   .arrow-down {

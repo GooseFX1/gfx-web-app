@@ -125,8 +125,10 @@ const NEXT_BUTTON = styled.button`
   text-align: center;
   border: none;
   cursor: pointer;
+  color: white;
   padding: ${({ theme }) => `${theme.margin(2)} ${theme.margin(6)}`};
   background-color: ${({ theme }) => theme.secondary5};
+  margin-top: ${({ theme }) => theme.margin(1)};
   ${({ theme }) => theme.roundedBorders};
 
   &:disabled {
@@ -217,6 +219,11 @@ const BUTTON_PLUS_WRAPPER = styled(ButtonWrapper)`
   background-color: #9625ae;
   margin-bottom: ${({ theme }) => theme.margin(1.5)};
 
+  img {
+    height: 22px;
+    width: 22px;
+  }
+
   &.add-more {
     width: 100px;
   }
@@ -246,6 +253,12 @@ export const UpLoadNFT = (): JSX.Element => {
   const [congrats, setCongrats] = useState<boolean>(false)
 
   useEffect(() => {
+    if (!wallet.publicKey) {
+      notify({ message: 'Warning: wallet must be connected to mint an NFT', type: 'error' })
+    }
+  }, [wallet.publicKey])
+
+  useEffect(() => {
     if (nftMintingData === undefined) {
       setNftInitState()
     }
@@ -260,6 +273,14 @@ export const UpLoadNFT = (): JSX.Element => {
   }, [])
 
   useEffect(() => {
+    // sets nft category automatically on new file set
+    if (filesForUpload && filesForUpload[0]) {
+      const file = filesForUpload[0].type.split('/')[0]
+      const fileType = categoryOptions.find((opt) => opt.value.includes(file))
+      if (fileType && nftMintingData.properties && nftMintingData.properties.category.length === 0)
+        handleSelectCategory(fileType)
+    }
+    // toggle disabled state
     if (
       nftMintingData?.name &&
       nftMintingData?.description &&
@@ -348,7 +369,10 @@ export const UpLoadNFT = (): JSX.Element => {
     setLocalAttributes((prevAttr) => prevAttr.filter((attr) => attr.id !== id))
 
   const handleSelectCategory = useCallback((selectedCategory) => {
-    setNftMintingData((prevNFTData) => ({ ...prevNFTData, category: selectedCategory }))
+    setNftMintingData((prevNFTData) => ({
+      ...prevNFTData,
+      properties: { ...prevNFTData.properties, category: selectedCategory.toLowerCase() }
+    }))
   }, [])
 
   const handleSubmitCollection = useCallback(() => {
@@ -452,7 +476,7 @@ export const UpLoadNFT = (): JSX.Element => {
                 <SECTION_HEADING>Creator Info</SECTION_HEADING>
                 <BUTTON_PLUS_WRAPPER onClick={() => setCreatorModal(true)}>
                   <span>Creator Info</span>
-                  <img src={`/img/assets/plus.svg`} alt="Create" />
+                  <img src={`/img/assets/${nftMintingData.creators.length > 0 ? 'check' : 'plus'}.svg`} alt="Create" />
                 </BUTTON_PLUS_WRAPPER>
               </SELECTION_SECTION>
             </INFO_SECTION>

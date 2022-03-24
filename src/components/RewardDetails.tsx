@@ -1,30 +1,40 @@
-
-import React, {FC} from "react";
-import styled from "styled-components";
+import React, { FC } from 'react'
+import styled from 'styled-components'
+// import Close from "/img/assets/close-white-icon.svg";
 import { useHistory } from 'react-router-dom'
-import { useRewardToggle } from "../context/reward_toggle";
+import { Row, Col } from 'antd'
+import { useRewardToggle } from '../context/reward_toggle'
+import { SpaceEvenlyDiv } from '../styles'
 
 const REWARD_INFO_TEXT = styled.div`
-    color: ${({ theme }) => theme.text1} !important;
-    margin-left: 3%;
-`;
+  padding: ${({ theme }) => theme.margin(4)} ${({ theme }) => theme.margin(5)};
+  color: ${({ theme }) => theme.text1} !important;
+`
 
 const TEXT_20 = styled.div`
-    font-size: 20px;
-    font-weight: bold;
-    color: ${({ theme }) => theme.text1} !important;
-`;
+  font-size: 20px;
+  font-weight: bold;
+  color: ${({ theme }) => theme.text1} !important;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    font-size: 15px;
+  `}
+`
 const TEXT_40 = styled.span`
-    font-size: 50px;
-    font-weight: bold;
-`;
+  font-size: 40px;
+  font-weight: bold;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    font-size: 30px;
+  `}
+`
 const TEXT_50 = styled.span`
-    font-size: 50px;
-    font-weight: bold;
-`;
+  font-size: 50px;
+  font-weight: bold;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    font-size: 40px;
+  `}
+`
 
 const TEXT_60 = styled.span`
-  background-image: linear-gradient(56deg, #716fff 20%, #e95aff 55%);
   font-family: Montserrat;
   font-size: 60px;
   font-stretch: normal;
@@ -34,223 +44,217 @@ const TEXT_60 = styled.span`
   letter-spacing: normal;
   -webkit-background-clip: text;
   background-clip: text;
-  padding-top: 8%;
   -webkit-text-fill-color: transparent;
-`;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    font-size: 40px;
+  `}
+`
+
+const PURPLE60 = styled(TEXT_60)`
+  background-image: linear-gradient(56deg, #716fff 20%, #e95aff 55%);
+`
 
 const TEXT_25 = styled.span`
-    font-size: 25px;
-    font-weight: 600;
-`;
+  font-size: 25px;
+  font-weight: 600;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    font-size: 20px;
+  `}
+`
 
 const TEXT_22 = styled.div`
-    font-size: 22px;
-    margin-top: 38px;
-    font-weight: 500;
-`;
+  font-size: 22px;
+  margin-top: 3vh;
+  font-weight: 500;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    font-size: 18px;
+  `}
+`
 
 const TEXT_15 = styled.div`
-    font-size: 15px;
-    color: ${({ theme }) => theme.text16};
-`;
+  font-size: 15px;
+  color: ${({ theme }) => theme.text16};
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    font-size: 12px;
+  `}
+`
 
-const REWARDS_TITLE = styled.div`
-   margin-top: 2%;
-`;
-const EARNED_GOFX = styled.div`  
+const GREEN60 = styled(TEXT_60)`
   background-image: linear-gradient(264deg, #9cc034 56%, #49821c 99%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-`;
-
-const EARNED_GOFX_CONTAINER = styled.div`
-    margin-top: -6%;
-    margin-left: 55%;
-`;
-const UNCLAIMED_GOFX_CONTAINER = styled.div`
-    margin-top: 2%;
-    margin-left: 55%;
-`;
-const REWARD_CONTAINER = styled.span`
-    position: relative;
-    top: 6vh;
-`;
+`
 
 const REWARD_DETAILS_CONTAINER = styled.div`
-    margin-top: 1%;
-`;
-
-const TEXT_40_UNCLAIMED = styled.div`
- background-image: linear-gradient(340deg,#f1c52a 56% ,#ea7e00 99%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-size: 50px;
-    font-weight: bold;
-    margin-top: -15px;
-`;
+  margin-top: 1%;
+`
 
 const LINE = styled.div`
-  width: 65vw;
+  width: 100%;
   height: 2px;
-  margin: 21px 0px 0px 2px;
+  margin-top: ${({ theme }) => theme.margin(2)};
   transform: rotate(0deg);
-  background-color: ${({theme}) => theme.text1};
-`;
+  background-color: ${({ theme }) => theme.text1};
+`
 
-const CLAIM_BTN = styled.div`
-    width: 111px;
-    height: 41px;
-    background-color: #3735bb;
-    border-radius: 52.5px;
-    margin-top: -3.5%;
-    margin-left: 11%;
-    position: absolute;
-    font-size: 18px;
-    cursor: pointer;
-    padding-top: 10px;
-    text-align: center;
-    font-weight: 600;
-    font-style: normal;
-    line-height: 1.1;
-    color: white !important;
-`;
-const SubstractImg = styled.div`
-    height: 38px;
-    width: 38px;
-    margin-left: 1%;
-    margin-top: -5px;
-    display: inline-block;
-    position: absolute;
-    filter: ${({theme}) => theme.substractImg};
-    background-image: url(${'/img/assets/Substract.svg'});
-`;
+const REWARD_ICON = styled.img`
+  height: 38px;
+  width: 38px;
+  margin-left: 12px;
+  filter: ${({ theme }) => theme.substractImg};
+`
 
-export const RewardInfoComponent : FC = () => {
-    return (
-        <REWARD_INFO_TEXT>  
-        <REWARDS_TITLE> <TEXT_25> Rewards <SubstractImg/> </TEXT_25></REWARDS_TITLE>
-        <REWARD_CONTAINER>
-        <TEXT_60> 42.69 M <TEXT_50> GOFX</TEXT_50> </TEXT_60> <br/>
-        <TEXT_20> Rewards over the next 6 -12 months</TEXT_20>
-        </REWARD_CONTAINER>
+const FLEX_COL_CONTAINER = styled(SpaceEvenlyDiv)`
+  flex-direction: column;
+  height: 75%;
+`
 
-        <EARNED_GOFX_CONTAINER>   
-        <EARNED_GOFX><TEXT_40> 200.457</TEXT_40> <br/> </EARNED_GOFX>
-        <TEXT_20>Earned GOFX</TEXT_20>
-        </EARNED_GOFX_CONTAINER>
-
-        <UNCLAIMED_GOFX_CONTAINER>
-        <TEXT_40_UNCLAIMED> 10.55 </TEXT_40_UNCLAIMED> <CLAIM_BTN>CLAIM</CLAIM_BTN>
-        <TEXT_20>Unclaimed GOFX</TEXT_20> 
-        </UNCLAIMED_GOFX_CONTAINER>
-
-        <REWARD_DETAILS_CONTAINER>
-            <span> <TEXT_25>Active Rewards</TEXT_25> </span> 
-            <LINE/>
-
-            <ul>
-                <li>
-                    <TEXT_22> <strong> 0.69% </strong>  listing fee in the first 60 days on our store. </TEXT_22>
-                    <TEXT_15>1.5% after the 60 days period ends. </TEXT_15>
-                </li>
-                <li>
-                    <TEXT_22> For each listing you will recive <strong>25 GOFX</strong>, up to the first <strong>100,000</strong> listings. </TEXT_22>
-                    <TEXT_15>Up to 100,000 lisitings (We will re-asses after reaching the target).</TEXT_15>
-                </li>
-                <li>
-                    <TEXT_22> For each NFT sale you will recive <strong>2%</strong> of the sale volume in <strong>GOFX</strong>. </TEXT_22>
-                    <TEXT_15>If you sell an NFT for $100 we will give $2 worth of GOFX at current market price. </TEXT_15>
-                </li>
-            </ul>
-
-        </REWARD_DETAILS_CONTAINER>
-        </REWARD_INFO_TEXT>
-    );
-}
-
-const RECTANGLE = styled.a`
+const STAKE_BTN = styled.button`
+  display: block;
   width: 263px;
   height: 60px;
-  flex-grow: 0;
-  margin: 3% 0 5px;
   border-radius: 45px;
   background-color: #fff;
   border: none;
   color: #7d289d;
   font-size: 18px;
   font-weight: bold;
-  position: absolute;
-  left: 81%;
   cursor: pointer;
-  line-height: 55px;
+`
+
+const BUY_GOFX = styled.button`
+  display: block;
+  height: 60px;
+  width: 263px;
+  font-size: 17px;
+  font-weight: bold;
   text-align: center;
-`;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+`
 
 const STAKE_TEXT = styled.div`
-    margin: 0 24px 61px 52px;
-    font-size: 28px;
-    font-weight: 600;
-    text-align: center;
-    padding-top: 25%;
-
-`;
+  font-size: 28px;
+  font-weight: 600;
+  text-align: center;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    font-size: 22px;
+  `}
+`
 const APR_TEXT = styled.div`
-    font-size: 58px; 
-    text-align:center;
-    font-weight: bold;
-`;
-
-const BUY_GOFX = styled.div`
-  height: 17px;
-  margin-top: 40%;
-  margin-left: 8%;
-  font-size: 17px;
+  font-size: 58px;
   text-align: center;
   font-weight: bold;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    font-size: 50px;
+  `}
+`
 
-`;
-const CLOSE_ICON = styled.div`  
-    margin-left: 90%;
-    padding-top: 3%;
-    width: 25px;
+const CLOSE_ICON = styled.button`
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  width: 25px;
   height: 25px;
-  object-fit: contain;
-    cursor: pointer;
-`;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+`
 
-export const RewardRedirectComponent : FC = () => {
-    const history = useHistory();
-    const { rewardToggle } = useRewardToggle(); 
+const BOLD_TEXT = styled.span`
+  font-weight: 800;
+`
 
-    const handleStakeClick = () => {
-        rewardToggle(false)
-        history.push("/farm")
-    }
+export const RewardInfoComponent: FC = () => {
+  return (
+    <REWARD_INFO_TEXT>
+      <div>
+        <TEXT_25>
+          Rewards <REWARD_ICON src={'/img/assets/rewards.svg'} alt="rewards" />
+        </TEXT_25>
+      </div>
+      <Row justify="space-between" align="middle" style={{ margin: '3vh 0 6vh' }}>
+        <Col span="">
+          <PURPLE60>
+            42.69 M <TEXT_50> GOFX</TEXT_50>
+          </PURPLE60>
+          <TEXT_20> Rewards over the next 12 months</TEXT_20>
+        </Col>
+        <Col span="">
+          <GREEN60>200.457</GREEN60>
+          <div style={{ textAlign: 'right' }}>
+            <TEXT_20>GOFX Earned</TEXT_20>
+          </div>
+        </Col>
+      </Row>
 
-    const closeRewardModal = () => {
-        rewardToggle(false)
-    }
+      <REWARD_DETAILS_CONTAINER>
+        <div>
+          <TEXT_25>Active Rewards</TEXT_25>
+        </div>
 
-    return (
-        <> 
-        <CLOSE_ICON onClick={closeRewardModal} >
-            <img src={`${window.origin}/img/assets/close-white-icon.svg`} alt="copy_address" />
-        </CLOSE_ICON>
+        <LINE />
 
-        <STAKE_TEXT>
-        Stake now your <strong> GOFX </strong> <br/> and earn up to:
-        </STAKE_TEXT>
-        <APR_TEXT>
-            200% APR  
-        </APR_TEXT>
-        <RECTANGLE onClick={handleStakeClick}>
-        Stake
-        </RECTANGLE>
-        <BUY_GOFX>
-            Buy GOFX
-        </BUY_GOFX>
-        </>
-    );
+        <ul style={{ padding: '0 12px' }}>
+          <li>
+            <TEXT_22>
+              <strong> 0.69% </strong> listing fee in the first 60 days on our store.
+            </TEXT_22>
+            <TEXT_15>1% listing fee for the first 60 days on our exchange. </TEXT_15>
+          </li>
+          <li>
+            <TEXT_22>
+              For each listing you will recive <strong>25 GOFX</strong>, up to the first <strong>100,000</strong>{' '}
+              listings.
+            </TEXT_22>
+            <TEXT_15>Up to 100,000 lisitings (We will re-asses after reaching the target).</TEXT_15>
+          </li>
+          <li>
+            <TEXT_22>
+              For each NFT sale you will receive <strong>0.5%</strong> of the sale volume in <strong>GOFX</strong>.
+            </TEXT_22>
+            <TEXT_15>If you sell an NFT for $100 we will give $2 worth of GOFX at current market price. </TEXT_15>
+          </li>
+        </ul>
+      </REWARD_DETAILS_CONTAINER>
+    </REWARD_INFO_TEXT>
+  )
+}
+
+export const RewardRedirectComponent: FC = () => {
+  const history = useHistory()
+  const { rewardToggle } = useRewardToggle()
+
+  const handleStakeClick = () => {
+    rewardToggle(false)
+    history.push('/farm')
+  }
+
+  const handleBuyGOFXClick = () => {
+    rewardToggle(false)
+    history.push('/swap')
+  }
+
+  const closeRewardModal = () => {
+    rewardToggle(false)
+  }
+
+  return (
+    <FLEX_COL_CONTAINER>
+      <CLOSE_ICON onClick={closeRewardModal}>
+        <img src={`${window.origin}/img/assets/close-white-icon.svg`} alt="copy_address" />
+      </CLOSE_ICON>
+      <STAKE_TEXT>
+        Stake your <BOLD_TEXT>GOFX</BOLD_TEXT>
+        <br /> and earn up to
+        <br />
+        <small style={{ opacity: '.6' }}>(coming soon)</small>
+      </STAKE_TEXT>
+      <APR_TEXT>200% APR</APR_TEXT>
+      <div style={{ textAlign: 'center' }}>
+        <STAKE_BTN onClick={handleStakeClick}>Stake</STAKE_BTN>
+        <br />
+        <BUY_GOFX onClick={handleBuyGOFXClick}>Buy GOFX</BUY_GOFX>
+      </div>
+    </FLEX_COL_CONTAINER>
+  )
 }

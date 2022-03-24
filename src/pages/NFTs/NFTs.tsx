@@ -1,8 +1,10 @@
 import React, { useEffect, FC } from 'react'
-import { ILocationState } from '../../types/app_params.d'
 import { useRouteMatch, Route, Switch, useLocation } from 'react-router-dom'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { logEvent } from 'firebase/analytics'
+import analytics from '../../analytics'
 import styled from 'styled-components'
+import { ILocationState } from '../../types/app_params.d'
 import NFTLandingPage from './Home/NFTHome'
 import { NFTDetails } from './NFTDetails'
 import { Collectible } from './Collectible'
@@ -11,9 +13,6 @@ import { SellNFT } from './Collectible/SellNFT'
 import { Profile } from './Profile'
 import { Explore } from './Profile/Explore'
 import { Collection } from './Collection/Collection'
-import { LiveAuctionNFT } from './LiveAuctionNFT'
-import { FixedPriceNFT } from './FixedPriceNFT'
-import { OpenBidNFT } from './OpenBidNFT'
 import { OverlayProvider } from '../../context/overlay'
 import {
   useNFTProfile,
@@ -45,15 +44,21 @@ export const NFTs: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const location = useLocation<ILocationState>()
   const { path } = useRouteMatch()
-  const { connection, endpoint, setEndpoint } = useConnectionConfig()
+  const { connection, setEndpoint, network } = useConnectionConfig()
   const { connected, publicKey } = useWallet()
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
 
   useEffect(() => {
-    // if (location.pathname === '/NFTs/create-single' && endpoint !== ENDPOINTS[1].endpoint) {
-    if (endpoint !== ENDPOINTS[1].endpoint) {
-      setEndpoint(ENDPOINTS[1].endpoint)
-      notify({ message: `Switched to ${ENDPOINTS[1].network}` })
+    const an = analytics()
+    an !== null &&
+      logEvent(an, 'screen_view', {
+        firebase_screen: 'NFT Exchange',
+        firebase_screen_class: 'load'
+      })
+
+    if (network === 'devnet') {
+      setEndpoint(ENDPOINTS[0].endpoint)
+      notify({ message: `Switched to ${ENDPOINTS[0].network}` })
     }
   }, [location])
 
@@ -79,7 +84,7 @@ export const NFTs: FC = () => {
     return () => {}
   }, [publicKey, connected])
 
-  return endpoint === ENDPOINTS[1].endpoint ? (
+  return network !== 'devnet' ? (
     <OverlayProvider>
       <PriceFeedProvider>
         <NFTCollectionProvider>
@@ -98,17 +103,8 @@ export const NFTs: FC = () => {
                 <Route exact path="/NFTs/collection/:collectionId">
                   <Collection />
                 </Route>
-                <Route exact path={['/NFTs/details', '/NFTs/details/:nftMintAddress']}>
+                <Route exact path={'/NFTs/details/:nftId'}>
                   <NFTDetails />
-                </Route>
-                <Route exact path="/NFTs/live-auction/:nftId">
-                  <LiveAuctionNFT />
-                </Route>
-                <Route exact path="/NFTs/fixed-price/:nftId">
-                  <FixedPriceNFT />
-                </Route>
-                <Route exact path="/NFTs/open-bid/:nftId">
-                  <OpenBidNFT />
                 </Route>
                 <Route exact path="/NFTs/create">
                   <Collectible />

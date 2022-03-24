@@ -114,26 +114,7 @@ const CollectionCarousel: FC<ICollectionCarousel> = ({ isLaunch, title, collecti
       <HEADER_CAROUSEL>
         <TITLE_CAROUSEL>{title}</TITLE_CAROUSEL>
         <HEADER_END_CAROUSEL>
-          {/* {isLaunch ? (
-            <LAUNCH_BUTTON>
-              <span>Launch your collection</span>
-            </LAUNCH_BUTTON>
-          ) : (
-          )} */}
-          {isCollectionsEmpty ? (
-            <SkeletonCommon width="88px" height="40px" borderRadius="40px" style={{ marginRight: '15px' }} />
-          ) : (
-            <SORT_BUTTON>
-              <span>Sort by</span>
-              <ArrowClicker />
-            </SORT_BUTTON>
-          )}
-          {isCollectionsEmpty ? (
-            <>
-              <SkeletonCommon width="12px" height="21px" style={{ marginRight: '30px' }} />
-              <SkeletonCommon width="12px" height="21px" />
-            </>
-          ) : (
+          {!isCollectionsEmpty && (
             <>
               <LEFT_ARROW onClick={slickPrev} />
               <RIGHT_ARROW onClick={slickNext} />

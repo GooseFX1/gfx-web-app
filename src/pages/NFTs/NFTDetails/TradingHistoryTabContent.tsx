@@ -2,7 +2,6 @@ import { useState, useEffect, FC } from 'react'
 import { Table, Row, Col } from 'antd'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import styled, { css } from 'styled-components'
-import { NFTDetailsProviderMode } from '../../../types/nft_details'
 import { useNFTDetails } from '../../../context'
 
 const TRADING_HISTORY_TAB_CONTENT = styled.div`
@@ -53,10 +52,18 @@ const TRADING_HISTORY_TAB_CONTENT = styled.div`
       font-weight: 500;
       background-color: transparent;
 
+      .ant-table-tbody > tr.ant-table-row > * {
+        &:hover {
+          background: transparent !important;
+        }
+      }
+
       .ant-table-thead > tr > th {
         font-weight: 700;
+        color: ${theme.text1};
         padding: ${theme.margin(1)};
         background-color: transparent;
+        border-bottom: 1px solid ${theme.bg2};
       }
 
       .ant-table-tbody > tr > td {
@@ -120,9 +127,7 @@ const bidColumns = [
   }
 ]
 
-export const TradingHistoryTabContent: FC<{
-  mode: NFTDetailsProviderMode
-}> = ({ mode, ...rest }) => {
+export const TradingHistoryTabContent: FC = ({ ...rest }) => {
   const { bids } = useNFTDetails()
   const [tradingHistory, setTradingHistory] = useState([])
 

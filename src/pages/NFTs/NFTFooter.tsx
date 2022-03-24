@@ -14,6 +14,7 @@ const SUBSCRIBE_NEW_LETTER = styled.div`
 const FOOTER_WRAPPER = styled.div`
   display: flex;
   flex-direction: column;
+  margin-top: ${({ theme }) => theme.margin(10)};
 `
 
 const SUBSCRIBE_TEXT = styled.span`
@@ -58,7 +59,6 @@ const FOLLOW_US_BUTTON = styled.a`
   font-weight: 600;
   height: 60px;
   padding: 0 55px;
-  margin-left: 30px;
   color: white;
   background-color: ${({ theme }) => theme.secondary2};
   transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;
@@ -74,14 +74,10 @@ const NFTFooter = () => {
   const { mode } = useDarkMode()
   return (
     <FOOTER_WRAPPER>
-      <SUBSCRIBE_NEW_LETTER>
-        <SUBSCRIBE_TEXT>Subscribe to our newsletter.</SUBSCRIBE_TEXT>
-      </SUBSCRIBE_NEW_LETTER>
       <BOTTOM_FOOTER mode={mode}>
         <FooterCarousel />
         <FOOTER_TEXT size={18}>Never miss any drop again!</FOOTER_TEXT>
         <FOLLOW_US_WRAPPER>
-          <FOOTER_TEXT size={20}>Follow us in twitter! @goosefx1</FOOTER_TEXT>
           <FOLLOW_US_BUTTON href={'https://twitter.com/GooseFX1'} target={'_blank'}>
             <span>Follow Us</span>
           </FOLLOW_US_BUTTON>

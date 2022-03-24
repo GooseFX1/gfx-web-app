@@ -67,7 +67,7 @@ const SwapContent: FC = () => {
   const height = '60px'
 
   const localCSS = css`
-    .ant-input {
+    .swap-input {
       position: absolute;
       top: 0;
       left: 0;
@@ -77,7 +77,7 @@ const SwapContent: FC = () => {
       font-weight: bold;
     }
 
-    .ant-input-affix-wrapper > input.ant-input {
+    .ant-input-affix-wrapper > input.swap-input {
       height: ${height};
       text-align: left;
     }

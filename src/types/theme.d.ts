@@ -39,6 +39,7 @@ export interface Colors {
   bg7: Color
   bg8: Color
   bg9: Color
+  bg10: Color
   modalBackground: Color
   bgReward: Color
   substractImg: Color
@@ -64,6 +65,7 @@ export interface Colors {
   // card
   cardBg: Color
   boxShadow: Color
+  fade: Color
   // share modal
   textShareModal: Color
 
@@ -128,6 +130,7 @@ export interface Colors {
   // primary
   primary1: Color
   primary2: Color
+  primary3: Color
 
   // farm
   farmContainerBg: Color
@@ -156,6 +159,7 @@ export interface Colors {
 
   // Filter
   filterBackIcon: Color
+  filterWhiteIcon: Color
   filterHeartIcon: Color
   filterCloseModalIcon: Color
 }
