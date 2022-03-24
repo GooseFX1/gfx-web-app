@@ -30,7 +30,7 @@ import {
 } from './utils'
 import { ISwapToken } from '../context'
 const SwapIDL = require('./idl/swap2.json')
-const { blob, struct, u8 } = require('buffer-layout')
+const { blob, struct, u8, u32 } = require('buffer-layout')
 
 const getSwapProgram = (wallet: WalletContextState, connection: Connection, network: WalletAdapterNetwork): Program =>
   new Program(
@@ -44,7 +44,7 @@ const LAYOUT = struct([
   publicKeyLayout('controller'),
   publicKeyLayout('mint1'),
   publicKeyLayout('mint2'),
-  blob(1, 'bump'),
+  blob(8),
   publicKeyLayout('oracle1'),
   u8(),
   publicKeyLayout('oracle2'),
@@ -53,8 +53,9 @@ const LAYOUT = struct([
   u8(),
   publicKeyLayout('oracle4'),
   u8(),
-  u8('n'),
-  blob(1)
+  u32('n'),
+  blob(970),
+  publicKeyLayout('fee_collector')
 ])
 
 export const computePoolsPDAs = async (
@@ -79,6 +80,7 @@ export const computePoolsPDAs = async (
   // const [[lpTokenMint], [pool]] = PDAs
   return { lpTokenMint: null, pair: null, pool: null }
 }
+
 
 const wrapSolToken = async (wallet: any, connection: Connection, amount: number) => {
   try {
@@ -114,20 +116,17 @@ export const swapCreatTX = async (
   slippage: number,
   wallet: any,
   connection: Connection,
-  network: WalletAdapterNetwork
+  network: WalletAdapterNetwork,
+  txn?: Transaction
 ): Promise<Transaction> => {
   if (!wallet.publicKey || !wallet.signTransaction) return
 
   const program = getSwapProgram(wallet, connection, network)
   const inst: any = program.instruction
-  const tx = new Transaction()
+  const tx = txn || new Transaction()
 
   const amountIn = new BN(inTokenAmount * 10 ** tokenA.decimals)
   const minimumAmountOut = new BN(outTokenAmount * 10 ** tokenB.decimals * (1 - slippage))
-
-  if (tokenA.address === NATIVE_MINT.toBase58()) {
-    await wrapSolToken(wallet, connection, Number(amountIn + ''))
-  }
 
   const addresses = [new PublicKey(tokenA.address).toBuffer(), new PublicKey(tokenB.address).toBuffer()].sort(
     Buffer.compare
@@ -173,8 +172,6 @@ export const swapCreatTX = async (
     tx.add(createAssociatedTokenAccountIx(new PublicKey(tokenB.address), outTokenAtaUser, wallet.publicKey))
   }
 
-  const collector = 'Cir93Do3LGMYtYnbxpQAb5Gr5R5mS2c7gTS1AZkvYA3w'
-
   // let walletBuffer = wallet.publicKey + ''
   // let assTokProg = await PublicKey.findProgramAddress(
   //   [new PublicKey(walletBuffer).toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), new PublicKey(tokenA.address).toBuffer()],
@@ -190,24 +187,25 @@ export const swapCreatTX = async (
     if (!pairData || !pairData.data) throw new Error('Token Pair do not exist yet.')
 
     const tokenAccountA = await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenA.address))
-    if (!(await connection.getParsedAccountInfo(tokenAccountA)).value) {
+    if (tokenA.address !== NATIVE_MINT.toBase58() && !(await connection.getParsedAccountInfo(tokenAccountA)).value) {
       tx.add(createAssociatedTokenAccountIx(new PublicKey(tokenA.address), tokenAccountA, wallet.publicKey))
     }
 
     const tokenAccountB = await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenB.address))
-    if (!(await connection.getParsedAccountInfo(tokenAccountB)).value) {
+    if (tokenB.address !== NATIVE_MINT.toBase58() && !(await connection.getParsedAccountInfo(tokenAccountB)).value) {
       tx.add(createAssociatedTokenAccountIx(new PublicKey(tokenB.address), tokenAccountB, wallet.publicKey))
     }
 
     const data = pairData.data
     const decoded = LAYOUT.decode(data)
-    const { oracle1, oracle2, oracle3, oracle4, n } = decoded
+    const { oracle1, oracle2, oracle3, oracle4, n, fee_collector } = decoded
+    const collector = fee_collector //'Cir93Do3LGMYtYnbxpQAb5Gr5R5mS2c7gTS1AZkvYA3w'
 
     const remainingAccounts = [
-      { isSigner: false, isWritable: true, pubkey: oracle1 },
-      { isSigner: false, isWritable: true, pubkey: oracle2 },
-      { isSigner: false, isWritable: true, pubkey: oracle3 },
-      { isSigner: false, isWritable: true, pubkey: oracle4 }
+      { isSigner: false, isWritable: false, pubkey: oracle1 },
+      { isSigner: false, isWritable: false, pubkey: oracle2 },
+      { isSigner: false, isWritable: false, pubkey: oracle3 },
+      { isSigner: false, isWritable: false, pubkey: oracle4 }
     ].slice(0, n)
 
     const accounts = {
@@ -240,7 +238,7 @@ export const swapCreatTX = async (
     tx.add(await inst.preSwap({ accounts, remainingAccounts }))
     tx.add(await inst.swap({ accounts, remainingAccounts }))
   } catch (error) {
-    console.dir(error)
+    console.log(error)
   }
 
   return tx
@@ -256,6 +254,7 @@ export const swap = async (
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<TransactionSignature | undefined> => {
+
   try {
     // TEST; TODO: remove on testing phase done using GOFX as trigger for wrapping and unwrapping
 
@@ -311,12 +310,19 @@ export const preSwapAmount = async (
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<TransactionSignature | undefined> => {
-  if (!wallet.publicKey || !wallet.signTransaction) return
 
-  const tx = await swapCreatTX(tokenA, tokenB, inTokenAmount, 0, 0, wallet, connection, network)
+  let txn = new Transaction()
+  if (tokenA.address === NATIVE_MINT.toBase58()) {
+    txn = await wrapSolToken(wallet, connection, inTokenAmount * LAMPORTS_PER_SOL, true)
+  }
+
+  const tx = await swapCreatTX(tokenA, tokenB, inTokenAmount, 0, 0, wallet, connection, network, txn)
+
   const sim = await simulateTransaction(connection, tx, wallet)
-  if (sim.value.logs.length > 0 && sim.value.logs[17]) {
-    const amountArr = sim.value.logs[17].split('+')
+  const index = sim.value.logs.findIndex((i) => i.includes('[Final]'))
+
+  if (sim.value.logs.length > 0 && sim.value.logs[index]) {
+    const amountArr = sim.value.logs[index].split('+')
     const amountOut = amountArr[amountArr.length - 1]
     return amountOut
   } else {

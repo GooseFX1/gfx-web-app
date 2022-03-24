@@ -49,6 +49,7 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [fetching, setFetching] = useState(false)
 
   const handleAccountChange = async (sub: number[], connection: Connection, owner: PublicKey, mint: PublicKey) => {
+
     try {
       const associatedTokenAddress = await findAssociatedTokenAddress(owner, mint)
       sub.push(
