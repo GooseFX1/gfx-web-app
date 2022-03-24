@@ -1,18 +1,7 @@
-import React, {
-  createContext,
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from 'react'
+import React, { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react'
 import { Market } from '@project-serum/serum'
-import { ENDPOINTS } from './settings'
+import { useConnectionConfig } from './settings'
 import { serum } from '../web3'
-import { Connection } from '@solana/web3.js'
 
 interface ICrypto {
   decimals: number
@@ -49,7 +38,7 @@ const CryptoContext = createContext<ICryptoConfig | null>(null)
 
 export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(FEATURED_PAIRS_LIST[0])
-  const connection = useMemo(() => new Connection(ENDPOINTS[2].endpoint, 'recent'), [])
+  const { connection } = useConnectionConfig()
 
   useEffect(() => {
     ;(async () => {

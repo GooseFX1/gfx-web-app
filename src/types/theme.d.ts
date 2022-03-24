@@ -65,6 +65,7 @@ export interface Colors {
   // card
   cardBg: Color
   boxShadow: Color
+  fade: Color
   // share modal
   textShareModal: Color
 

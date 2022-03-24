@@ -1,3 +1,6 @@
+HTTPS=true
+HOST=''
+
 # HOST Public Key used for additional swap fees
 SWAP_HOST_FEE_ADDRESS=''
 

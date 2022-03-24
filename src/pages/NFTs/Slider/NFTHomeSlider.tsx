@@ -15,7 +15,7 @@ const CAROUSEL_WRAPPER = styled.div`
     right: 0;
     height: 100%;
     width: 180px;
-    background: linear-gradient(90deg, #fff0 0%, #131313 90%);
+    background: ${({ theme }) => theme.fade};
   }
   .slick-prev,
   .slick-next {
@@ -50,6 +50,7 @@ const SLIDER_ITEM = styled.div`
     border-radius: 10px;
     height: auto;
     width: 41vw;
+    margin: 0 auto;
   }
 
   .home-slider-content {
@@ -138,10 +139,14 @@ export const NFTHomeSlider = () => {
           </div>
         </SLIDER_ITEM>
         <SLIDER_ITEM>
-          <img className="home-slider-image" src={`${process.env.PUBLIC_URL}/img/assets/nesetquest-egg.png`} alt="" />
+          <img className="home-slider-image" src={`${process.env.PUBLIC_URL}/img/assets/NestQuest.png`} alt="" />
           <div className="home-slider-content">
-            <h1 className="home-slider-title">NestQuest</h1>
-            <h1 className="home-slider-title">Tier #1</h1>
+            <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>
+              NestQuest
+            </h1>
+            <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>
+              Tier #1
+            </h1>
             <ORANGE_BTN className="home-slider-button" height={'40px'} status="action" width={'141px'}>
               <span>Mint</span>
             </ORANGE_BTN>

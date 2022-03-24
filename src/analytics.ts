@@ -9,6 +9,7 @@ console.log(process.env)
 const analytics = () => {
   // creates control statement to asset environment variables are present
   const activeAnalytics: boolean =
+    process.env.NODE_ENV !== 'production' ||
     process.env.REACT_APP_ANALYTICS_API_KEY === undefined ||
     process.env.REACT_APP_AUTH_DOMAIN === undefined ||
     process.env.REACT_APP_PROJECT_ID === undefined ||

@@ -81,27 +81,31 @@ export const computePoolsPDAs = async (
   return { lpTokenMint: null, pair: null, pool: null }
 }
 
-const wrapSolToken = async (wallet: any, connection: Connection, amount: number, sim?: boolean) => {
-  const tx = new Transaction()
-  const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
 
-  // Create token account to hold your wrapped SOL
-  //if (!associatedTokenAccount)
-  tx.add(
-    createAssociatedTokenAccountInstruction(wallet.publicKey, associatedTokenAccount, wallet.publicKey, NATIVE_MINT)
-  )
+const wrapSolToken = async (wallet: any, connection: Connection, amount: number) => {
+  try {
+    const tx = new Transaction()
+    const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
+    // Create token account to hold your wrapped SOL
+    if (associatedTokenAccount)
+      tx.add(
+        createAssociatedTokenAccountInstruction(wallet.publicKey, associatedTokenAccount, wallet.publicKey, NATIVE_MINT)
+      )
 
-  // Transfer SOL to associated token account and use SyncNative to update wrapped SOL balance
-  tx.add(
-    SystemProgram.transfer({
-      fromPubkey: wallet.publicKey,
-      toPubkey: associatedTokenAccount,
-      lamports: amount
-    }),
-    createSyncNativeInstruction(associatedTokenAccount)
-  )
+    // Transfer SOL to associated token account and use SyncNative to update wrapped SOL balance
+    tx.add(
+      SystemProgram.transfer({
+        fromPubkey: wallet.publicKey,
+        toPubkey: associatedTokenAccount,
+        lamports: amount
+      }),
+      createSyncNativeInstruction(associatedTokenAccount)
+    )
 
-  return tx //sim ? tx : signAndSendRawTransaction(connection, tx, wallet)
+    return signAndSendRawTransaction(connection, tx, wallet)
+  } catch {
+    return null
+  }
 }
 
 export const swapCreatTX = async (
@@ -250,37 +254,52 @@ export const swap = async (
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<TransactionSignature | undefined> => {
-  //wrapping of sol
-  let txn = new Transaction()
-  if (tokenA.address === NATIVE_MINT.toBase58()) {
-    txn = await wrapSolToken(wallet, connection, inTokenAmount * LAMPORTS_PER_SOL)
+
+  try {
+    // TEST; TODO: remove on testing phase done using GOFX as trigger for wrapping and unwrapping
+
+    // if token is gSol
+    if (tokenA.address === '2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6') {
+      return await wrapSolToken(wallet, connection, inTokenAmount * LAMPORTS_PER_SOL)
+    }
+
+    // unwrapping sol if tokenB is sol
+    if (tokenB.address === '2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6') {
+      try {
+        const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
+        if (!associatedTokenAccount) return null
+        const tr = createCloseAccountInstruction(associatedTokenAccount, wallet.publicKey, wallet.publicKey)
+        const txn = new Transaction()
+        txn.add(tr)
+        return await signAndSendRawTransaction(connection, txn, wallet)
+      } catch {
+        return null
+      }
+    }
+
+    //TODO: remove the above soon
+
+    const tx = await swapCreatTX(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
+    const finalResult = signAndSendRawTransaction(connection, tx, wallet)
+
+    // unwrapping sol if tokenB is sol
+    if (finalResult && tokenB.address === NATIVE_MINT.toBase58()) {
+      try {
+        const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
+        if (!associatedTokenAccount) return null
+        const tr = createCloseAccountInstruction(associatedTokenAccount, wallet.publicKey, wallet.publicKey)
+        const txn = new Transaction()
+        txn.add(tr)
+        await signAndSendRawTransaction(connection, txn, wallet)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
+    return finalResult
+  } catch {
+    return null
   }
-
-  const tx = await swapCreatTX(
-    tokenA,
-    tokenB,
-    inTokenAmount,
-    outTokenAmount,
-    slippage,
-    wallet,
-    connection,
-    network,
-    txn
-  )
-
-  // unwrapping sol if tokenB is sol
-  if (tokenB.address === NATIVE_MINT.toBase58()) {
-    const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
-    if (!associatedTokenAccount) return null
-    const tr = createCloseAccountInstruction(associatedTokenAccount, wallet.publicKey, wallet.publicKey)
-    //const txn = new Transaction()
-    tx.add(tr)
-    //await signAndSendRawTransaction(connection, txn, wallet)
-  }
-
-  const finalResult = await signAndSendRawTransaction(connection, tx, wallet)
-
-  return finalResult
 }
 
 export const preSwapAmount = async (
@@ -291,14 +310,16 @@ export const preSwapAmount = async (
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<TransactionSignature | undefined> => {
+
   let txn = new Transaction()
   if (tokenA.address === NATIVE_MINT.toBase58()) {
     txn = await wrapSolToken(wallet, connection, inTokenAmount * LAMPORTS_PER_SOL, true)
   }
 
   const tx = await swapCreatTX(tokenA, tokenB, inTokenAmount, 0, 0, wallet, connection, network, txn)
+
   const sim = await simulateTransaction(connection, tx, wallet)
-  let index = sim.value.logs.findIndex((i) => i.includes('[Final]'))
+  const index = sim.value.logs.findIndex((i) => i.includes('[Final]'))
 
   if (sim.value.logs.length > 0 && sim.value.logs[index]) {
     const amountArr = sim.value.logs[index].split('+')

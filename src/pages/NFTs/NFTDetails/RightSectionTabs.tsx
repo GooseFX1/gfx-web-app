@@ -159,6 +159,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
 
         &-flat {
           background-color: transparent;
+          color: ${theme.text1};
         }
       }
 
@@ -311,11 +312,18 @@ export const RightSectionTabs: FC<{
     e.preventDefault()
 
     const { tradeState, buyerPrice } = await derivePDAsForInstruction()
-    const { signature, confirm } = await callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
-
-    if (confirm.value.err === null) {
-      notify(successfulRemoveAskMsg(signature, nftMetadata, ask.buyer_price))
-      postCancelAskToAPI(general.non_fungible_id)
+    try {
+      const { signature, confirm } = await callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
+      if (confirm.value.err === null) {
+        notify(successfulRemoveAskMsg(signature, nftMetadata, ask.buyer_price))
+        postCancelAskToAPI(general.non_fungible_id)
+      }
+    } catch (error) {
+      notify({
+        type: 'error',
+        message: error.message
+      })
+      setRemoveAskModal(false)
     }
   }
 
@@ -330,7 +338,7 @@ export const RightSectionTabs: FC<{
         title={`Successfully removed ask for ${nftMetadata.name}!`}
         itemName={nftMetadata.name}
         supportText={`Removed asking price: ${price}`}
-        tx_url={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+        tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
       />
     )
   })
@@ -412,7 +420,7 @@ export const RightSectionTabs: FC<{
         title={`Successfully removed bid for ${nftMetadata.name}!`}
         itemName={nftMetadata.name}
         supportText={`Removed bid price: ${price} SOL`}
-        tx_url={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+        tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
       />
     )
   })

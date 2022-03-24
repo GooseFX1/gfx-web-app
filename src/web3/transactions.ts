@@ -33,7 +33,7 @@ export const envFor = (connection: Connection): string => {
 }
 
 export const explorerLinkFor = (txid: TransactionSignature, connection: Connection): string => {
-  return `https://explorer.solana.com/tx/${txid}?cluster=${envFor(connection)}`
+  return `https://solscan.io/tx/${txid}?cluster=${envFor(connection)}`
 }
 
 export const sendTransactionWithRetry = async (

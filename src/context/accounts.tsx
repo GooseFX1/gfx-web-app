@@ -49,18 +49,23 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [fetching, setFetching] = useState(false)
 
   const handleAccountChange = async (sub: number[], connection: Connection, owner: PublicKey, mint: PublicKey) => {
-    const associatedTokenAddress = await findAssociatedTokenAddress(owner, mint)
-    sub.push(
-      connection.onAccountChange(associatedTokenAddress, async () => {
-        try {
-          const accountArr = (await connection.getParsedTokenAccountsByOwner(owner, { mint })).value
-          const account = accountArr?.[0]?.account
-          setBalances((prevState) => ({ ...prevState, [mint.toString()]: account?.data?.parsed?.info?.tokenAmount }))
-        } catch (e) {
-          console.log(e)
-        }
-      })
-    )
+
+    try {
+      const associatedTokenAddress = await findAssociatedTokenAddress(owner, mint)
+      sub.push(
+        connection.onAccountChange(associatedTokenAddress, async () => {
+          try {
+            const accountArr = (await connection.getParsedTokenAccountsByOwner(owner, { mint })).value
+            const account = accountArr?.[0]?.account
+            setBalances((prevState) => ({ ...prevState, [mint.toString()]: account.data.parsed.info.tokenAmount }))
+          } catch (err) {
+            console.log(err)
+          }
+        })
+      )
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   const fetchAccounts = useCallback(() => {

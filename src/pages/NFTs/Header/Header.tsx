@@ -27,7 +27,7 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
     background: ${({ theme }) => theme.bg1};
     height: 45px;
     margin-left: ${({ theme }) => theme.margin(2.5)};
-    border: 1px solid ${({ theme }) => theme.bg5};
+    border: 1px solid ${({ theme }) => theme.bg1};
 
     > input {
       &::placeholder {
