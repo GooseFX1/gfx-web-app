@@ -1,149 +1,7 @@
 {
   "version": "0.1.0",
-  "name": "pool",
+  "name": "contract",
   "instructions": [
-    {
-      "name": "deposit",
-      "accounts": [
-        {
-          "name": "controller",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "ssl",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "rtMint",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "ptMint",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "rtVault",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "userRtAta",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "userPtAta",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "userWallet",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "amount",
-          "type": "u64"
-        }
-      ]
-    },
-    {
-      "name": "withdraw",
-      "accounts": [
-        {
-          "name": "controller",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "ssl",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "rtMint",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "ptMint",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "rtVault",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "userRtAta",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "userPtAta",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "userWallet",
-          "isMut": false,
-          "isSigner": true
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "withdrawPercent",
-          "type": "u64"
-        }
-      ]
-    },
     {
       "name": "rebalanceSwap",
       "accounts": [
@@ -165,16 +23,6 @@
         {
           "name": "sslOut",
           "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "mintIn",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "mintOut",
-          "isMut": false,
           "isSigner": false
         },
         {
@@ -216,21 +64,6 @@
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
         }
       ],
       "args": [
@@ -264,16 +97,6 @@
         },
         {
           "name": "sslOut",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "mintIn",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "mintOut",
           "isMut": false,
           "isSigner": false
         },
@@ -314,16 +137,6 @@
           "isSigner": false
         },
         {
-          "name": "mintIn",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "mintOut",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
           "name": "vaultIn",
           "isMut": true,
           "isSigner": false
@@ -367,26 +180,12 @@
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
         }
       ],
       "args": []
     }
   ],
+  "accounts": [],
   "types": [],
   "errors": [
     {

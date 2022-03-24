@@ -78,7 +78,7 @@ const PURCHASE_MODAL = styled(Modal)`
 
   .ant-modal-body {
     padding: ${({ theme }) => theme.margin(4.5)};
-    padding-bottom: ${({ theme }) => theme.margin(1)};
+    padding-bottom: ${({ theme }) => theme.margin(5)};
     overflow: auto !important;
   }
 
@@ -165,18 +165,16 @@ const PURCHASE_MODAL = styled(Modal)`
     }
   }
 
-  .bm-not-enough-funds {
-    visibility: hidden;
+  .bm-not-enough {
     margin-top: ${({ theme }) => theme.margin(1)};
+    padding-bottom: ${({ theme }) => theme.margin(1)};
     text-align: center;
     font-size: 13px;
     font-weight: 600;
     color: #ff6b6b;
-  }
-
-  .bm-not-enough-visible {
-    visibility: visible;
-    padding-bottom: ${({ theme }) => theme.margin(1)};
+    position: absolute;
+    width: 100%;
+    left: 0;
   }
 
   .bm-review-alert {
@@ -515,7 +513,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
         title={`Successfully placed a bid on ${nftMetadata?.name}!`}
         itemName={nftMetadata.name}
         supportText={`Bid of: ${price}`}
-        tx_url={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+        tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
       />
     )
   })
@@ -526,7 +524,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
         title={`Your bid matched!`}
         itemName={nftMetadata.name}
         supportText={`You have just acquired ${nftMetadata.name} for ${price} SOL!`}
-        tx_url={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+        tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
       />
     )
   })
@@ -645,9 +643,11 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
           status="initial"
           width="100%"
           height="53px"
-          className={`bm-bid-button ${notEnough || bidPriceInput.length === 0 ? 'bm-bid-button-disabled' : ''}`}
+          className={`bm-bid-button ${
+            notEnough || bidPriceInput.length === 0 || bidPrice < 0.021 ? 'bm-bid-button-disabled' : ''
+          }`}
           onClick={reviewBid}
-          disabled={notEnough || bidPriceInput.length === 0}
+          disabled={notEnough || bidPriceInput.length === 0 || bidPrice < 0.021}
         >
           Review bid
         </BUTTON>
@@ -658,15 +658,18 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
           status="initial"
           width="100%"
           height="53px"
-          className={`bm-confirm-button ${notEnough || bidPriceInput.length === 0 ? 'bm-bid-button-disabled' : ''}`}
+          className={`bm-confirm-button ${
+            notEnough || bidPriceInput.length === 0 || bidPrice < 0.021 ? 'bm-bid-button-disabled' : ''
+          }`}
           onClick={callBuyInstruction}
           loading={isLoading}
-          disabled={isLoading || notEnough || bidPriceInput.length === 0}
+          disabled={isLoading || notEnough || bidPriceInput.length === 0 || bidPrice < 0.021}
         >
           Send bid
         </BUTTON>
       )}
-      <div className={`bm-not-enough-funds ${notEnough ? 'bm-not-enough-visible' : ''}`}>Not enough funds </div>
+      {notEnough && <div className={`bm-not-enough`}>Not enough funds </div>}
+      {bidPriceInput.length > 0 && bidPrice < 0.021 && <div className={`bm-not-enough`}>Bid too small </div>}
     </PURCHASE_MODAL>
   )
 }

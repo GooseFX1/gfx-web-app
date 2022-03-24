@@ -13,6 +13,8 @@ import {
   CancelInstructionAccounts,
   SellInstructionAccounts,
   BuyInstructionAccounts,
+  WithdrawInstructionArgs,
+  WithdrawInstructionAccounts,
   StringPublicKey,
   bnTo8
 } from '../../web3'
@@ -143,4 +145,23 @@ export const callCancelInstruction = async (
   const confirm = await connection.confirmTransaction(signature, 'processed')
   console.log(confirm)
   return { signature, confirm }
+}
+
+export const callWithdrawInstruction = async (wallet: PublicKey, escrow: [PublicKey, number], bidAmount: BN) => {
+  const withdrawInstructionArgs: WithdrawInstructionArgs = {
+    escrowPaymentBump: escrow[1],
+    amount: bidAmount
+  }
+
+  const withdrawInstructionAccounts: WithdrawInstructionAccounts = {
+    wallet: wallet,
+    receiptAccount: wallet,
+    escrowPaymentAccount: escrow[0],
+    treasuryMint: new PublicKey(TREASURY_MINT),
+    authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+    auctionHouse: new PublicKey(AUCTION_HOUSE),
+    auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT)
+  }
+
+  return { withdrawInstructionAccounts, withdrawInstructionArgs }
 }

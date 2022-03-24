@@ -1,7 +1,7 @@
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
 import { ENV, TokenInfo, TokenListProvider } from '@solana/spl-token-registry'
 import { useConnectionConfig } from './settings'
-import { SUPPORTED_TOKEN_LIST } from '../constants'
+import { CURRENT_SUPPORTED_TOKEN_LIST } from '../constants'
 import { ADDRESSES } from '../web3'
 
 interface ITokenRegistryConfig {
@@ -19,11 +19,11 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
 
   useEffect(() => {
     ;(async () => {
-      //const list = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
-      //const splList = list.filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
+      const list = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
+      const splList = list.filter(({ symbol }) => CURRENT_SUPPORTED_TOKEN_LIST.includes(symbol))
       //TODO: Add filteredList from solana-spl-registry back
 
-      const filteredList = []
+      const filteredList = [...splList]
 
       if (chainId === ENV.Devnet) {
         filteredList.push({

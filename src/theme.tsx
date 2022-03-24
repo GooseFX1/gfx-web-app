@@ -93,6 +93,10 @@ export function colors(mode: string): Colors {
     darkButton: '#000000',
     scrollBarColor: mode === 'dark' ? '#434343' : '#e0e0e0',
     boxShadow: mode === 'dark' ? '0 4px 4px 0 rgba(0, 0, 0, 0.25)' : '0 7px 10px 0 rgba(189, 189, 189, 0.25)',
+    fade:
+      mode === 'dark'
+        ? 'linear-gradient(90deg, #fff0 0%, #131313 90%)'
+        : 'linear-gradient(90deg, #fff0 0%, #e9e9e9 90%)',
 
     // specialty colors
     appLayoutFooterBorder: mode === 'dark' ? '#c4c4c4' : '#dedede',
@@ -124,7 +128,7 @@ export function colors(mode: string): Colors {
 
     // input bg
     inputBg: mode === 'dark' ? '#131313' : '#CACACA',
-    hintInputColor: mode === 'dark' ? '#b9b9b9' : '#636363',
+    hintInputColor: mode === 'dark' ? '#4b4b4b' : '#4b4b4b',
 
     // btn Icon (Plus, add more), btn Next Step Background
     btnIconBg: mode === 'dark' ? '#9625ae' : '#7D7D7D',

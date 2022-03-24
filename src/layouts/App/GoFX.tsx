@@ -1,10 +1,9 @@
 import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Connection } from '@solana/web3.js'
 import { CenteredDiv, CenteredImg } from '../../styles'
 import { serum } from '../../web3'
 import { Orderbook } from '@project-serum/serum'
-import { ENDPOINTS } from '../../context'
+import { useConnectionConfig } from '../../context'
 
 const WRAPPER = styled(CenteredDiv)`
   padding: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(1)}
@@ -26,11 +25,11 @@ const WRAPPER = styled(CenteredDiv)`
 
 export const GoFX: FC = () => {
   const [price, setPrice] = useState(0)
+  const { connection } = useConnectionConfig()
 
   useEffect(() => {
     let cancelled = false
     const subscriptions: number[] = []
-    const connection = new Connection(ENDPOINTS[2].endpoint, 'recent')
 
     !cancelled &&
       (async () => {

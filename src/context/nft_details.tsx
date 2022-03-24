@@ -18,7 +18,7 @@ import {
 const NFTDetailsContext = createContext<INFTDetailsConfig | null>(null)
 
 export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { connection, endpoint } = useConnectionConfig()
+  const { network } = useConnectionConfig()
   const [general, setGeneral] = useState<ISingleNFT>()
   const [nftMetadata, setNftMetadata] = useState<INFTMetadata | null>()
   const [nftMintingData, setNftMintingData] = useState<IMetadataContext>()
@@ -90,7 +90,8 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const bidOnSingleNFT = useCallback(async (bidObject: any): Promise<any> => {
     try {
       const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.BID}`, {
-        bid: bidObject
+        bid: bidObject,
+        network: network === 'devnet' ? network : 'mainnet'
       })
 
       if (res.data.bid_id) {
@@ -135,7 +136,8 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const sellNFT = useCallback(async (paramValue: any): Promise<any> => {
     try {
       const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.ASK}`, {
-        ask: paramValue
+        ask: paramValue,
+        network: network === 'devnet' ? network : 'mainnet'
       })
       return await res
     } catch (error) {
