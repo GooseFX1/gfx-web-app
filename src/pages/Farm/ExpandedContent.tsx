@@ -1,16 +1,18 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react'
-import { stakedEarnedMockData, messageMockData, stakeOrClaimInfoMockData } from './mockData'
 import styled from 'styled-components'
-import { Button, Row, Col } from 'antd'
-import { MainButton } from '../../components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { notify } from '../../utils'
+import { PublicKey } from '@solana/web3.js'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
+import { Program } from '@project-serum/anchor'
+import { Button, Row, Col } from 'antd'
+import { MainButton } from '../../components'
+import { notify } from '../../utils'
 import { useTokenRegistry, useAccounts, useCrypto, useConnectionConfig } from '../../context'
 import { createStakingAccount, executeStake, executeUnstakeAndClaim } from '../../web3'
-import { Wallet } from '@project-serum/anchor'
+import { stakedEarnedMockData, messageMockData, stakeOrClaimInfoMockData } from './mockData'
 
+//#region styles
 const STYLED_EXPANDED_ROW = styled.div`
   padding-top: ${({ theme }) => theme.margin(4)};
   padding-right: ${({ theme }) => theme.margin(10)};
@@ -243,8 +245,15 @@ const STYLED_INPUT = styled.input`
     margin-left: ${({ theme }) => theme.margin(1.5)};
   }
 `
+//#endregion
 
-export const ExpandedContent = ({ record }: any) => {
+interface IExpandedContent {
+  record: any
+  stakeProgam: Program | undefined
+  stakeAccountKey: PublicKey | undefined
+}
+
+export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey }: IExpandedContent) => {
   const { name, image, liquidity, rewards, connected } = record
   const { getUIAmount } = useAccounts()
   const { publicKey } = useWallet()
@@ -296,6 +305,7 @@ export const ExpandedContent = ({ record }: any) => {
     setDisplayUserBalance(publicKey ? userBalance : 0)
     console.log('max clicked', userBalance)
   }
+
   return (
     <STYLED_EXPANDED_ROW>
       <STYLED_EXPANDED_CONTENT>

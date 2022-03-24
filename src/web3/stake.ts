@@ -1,8 +1,5 @@
-import { debounce } from 'lodash.debounce'
-import { Amount } from './../pages/Synths/Pools/Swap/shared'
-import { Metadata } from './nfts/metadata'
 import BN from 'bn.js'
-import { Program, Provider, workspace } from '@project-serum/anchor'
+import { Program, Provider } from '@project-serum/anchor'
 import { accountFlagsLayout, publicKeyLayout, u128, u64 } from './layout'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
@@ -16,28 +13,9 @@ import {
   SYSVAR_RENT_PUBKEY,
   LAMPORTS_PER_SOL
 } from '@solana/web3.js'
-import { ADDRESSES, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, SYSTEM, FEE_PAYER_WITHDRAWAL_ACCT } from './ids'
+import { ADDRESSES, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, SYSTEM } from './ids'
 import { createAssociatedTokenAccountIx, findAssociatedTokenAddress, signAndSendRawTransaction } from './utils'
-import {
-  AUCTION_HOUSE,
-  AUCTION_HOUSE_PREFIX,
-  AUCTION_HOUSE_AUTHORITY,
-  AH_FEE_ACCT,
-  AUCTION_HOUSE_PROGRAM_ID,
-  TREASURY_MINT,
-  BuyInstructionArgs,
-  getMetadata,
-  BuyInstructionAccounts,
-  createBuyInstruction,
-  createCancelInstruction,
-  CancelInstructionArgs,
-  CancelInstructionAccounts,
-  StringPublicKey,
-  STAKE_PREFIX,
-  toPublicKey,
-  bnTo8
-} from '../web3'
-import { connect } from 'http2'
+import { STAKE_PREFIX, toPublicKey } from '../web3'
 const StakeIDL = require('./idl/stake.json')
 const { blob, struct, u8, u32 } = require('buffer-layout')
 
@@ -61,13 +39,13 @@ const getStakeProgram = (wallet: WalletContextState, connection: Connection, net
     new Provider(connection, wallet as any, { commitment: 'processed' })
   )
 
-export const getStakingAccountKey = async (wallet: WalletContextState): Promise<undefined | [PublicKey, number]> => {
+export const getStakingAccountKey = async (wallet: WalletContextState): Promise<undefined | PublicKey> => {
   try {
     const stakingAccountKey: [PublicKey, number] = await PublicKey.findProgramAddress(
       [Buffer.from(STAKE_PREFIX), CONTROLLER_KEY.toBuffer(), wallet.publicKey.toBuffer()],
       toPublicKey(StakeIDL.metadata.address)
     )
-    return stakingAccountKey
+    return stakingAccountKey[0]
   } catch (err) {
     return undefined
   }
@@ -131,24 +109,24 @@ const stakeAmount = async (
   //   [Buffer.from(STAKE_PREFIX), CONTROLLER_KEY.toBuffer(), wallet.publicKey.toBuffer()],
   //   toPublicKey(StakeIDL.metadata.address)
   // )
-  // const { data } = await connection.getAccountInfo(stakingAccountKey2[0]);
-  // const { amountStaked, share } = LAYOUT.decode(data);
-  // console.log(amountStaked/LAMPORTS_PER_SOL, share.toNumber()/LAMPORTS_PER_SOL , 'staked amount');
+  // const { data } = await connection.getAccountInfo(stakingAccountKey2[0])
+  // const { amountStaked, share } = LAYOUT.decode(data)
+  // console.log(amountStaked / LAMPORTS_PER_SOL, share.toNumber() / LAMPORTS_PER_SOL, 'staked amount')
 
-  // const {data : controllerData} = await connection.getAccountInfo(CONTROLLER_KEY);
-  // const controllerDataDecoded = CONTROLLER_LAYOUT.decode(controllerData);
+  // const { data: controllerData } = await connection.getAccountInfo(CONTROLLER_KEY)
+  // const controllerDataDecoded = CONTROLLER_LAYOUT.decode(controllerData)
   // console.log(controllerDataDecoded)
-  // console.log(controllerDataDecoded.staking_balance.toNumber()/LAMPORTS_PER_SOL)
-  //const controllerDecoded = CONTROLLER_LAYOUT.decode()
+  // console.log(controllerDataDecoded.staking_balance.toNumber() / LAMPORTS_PER_SOL)
+  // const controllerDecoded = CONTROLLER_LAYOUT.decode()
   // let controllerAcc = await program.account.controller.fetch(CONTROLLER_KEY)
   // let stakingAccountAcc = await program.account.stakingAccount.fetch(stakingAccountKey)
   // let userStakePlusEarn = (controllerAcc.stakingBalance * stakingAccountAcc.share) / controllerAcc.totalStakingShare
 
-  // const decoded = LAYOUT.decode(stakingAccountAcc.data);
+  // const decoded = LAYOUT.decode(stakingAccountAcc.data)
 
-  //  const { amountStaked } = decoded
-  //  console.log(amountStaked)
-  //  console.log({sighash: decoded.sighash, amountStaked: decoded.amountStaked + ""})
+  // const { amountStaked } = decoded
+  // console.log(amountStaked)
+  // console.log({ sighash: decoded.sighash, amountStaked: decoded.amountStaked + '' })
 }
 
 export const executeUnstakeAndClaim = async (
