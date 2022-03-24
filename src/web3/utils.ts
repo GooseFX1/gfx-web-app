@@ -51,7 +51,7 @@ export const signAndSendRawTransaction = async (
     signers.forEach((signer) => transaction.partialSign(signer))
 
     transaction = await wallet.signTransaction(transaction)
-    let tx = await connection.sendRawTransaction(transaction!.serialize(), { skipPreflight: true })
+    const tx = await connection.sendRawTransaction(transaction!.serialize(), { skipPreflight: true })
     return tx
   } catch (e) {
     console.log(e)
