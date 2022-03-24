@@ -202,6 +202,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     try {
       const signature = await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
+      if (!signature) throw new Error('Swap unsuccessful')
       notify({
         type: 'success',
         message: 'Swap successful!',
