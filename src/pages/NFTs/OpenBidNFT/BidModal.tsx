@@ -515,7 +515,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
         title={`Successfully placed a bid on ${nftMetadata?.name}!`}
         itemName={nftMetadata.name}
         supportText={`Bid of: ${price}`}
-        tx_url={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+        tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
       />
     )
   })
@@ -526,7 +526,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
         title={`Your bid matched!`}
         itemName={nftMetadata.name}
         supportText={`You have just acquired ${nftMetadata.name} for ${price} SOL!`}
-        tx_url={`https://explorer.solana.com/tx/${signature}?cluster=${network}`}
+        tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
       />
     )
   })
