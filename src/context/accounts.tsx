@@ -49,7 +49,6 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [fetching, setFetching] = useState(false)
 
   const handleAccountChange = async (sub: number[], connection: Connection, owner: PublicKey, mint: PublicKey) => {
-
     try {
       const associatedTokenAddress = await findAssociatedTokenAddress(owner, mint)
       sub.push(
@@ -57,7 +56,7 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           try {
             const accountArr = (await connection.getParsedTokenAccountsByOwner(owner, { mint })).value
             const account = accountArr?.[0]?.account
-            setBalances((prevState) => ({ ...prevState, [mint.toString()]: account.data.parsed.info.tokenAmount }))
+            setBalances((prevState) => ({ ...prevState, [mint.toString()]: account?.data?.parsed?.info?.tokenAmount }))
           } catch (err) {
             console.log(err)
           }
