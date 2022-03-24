@@ -5,6 +5,7 @@ import 'slick-carousel/slick/slick-theme.css'
 import styled from 'styled-components'
 import { MainButton } from '../../../components/MainButton'
 
+//#region styles
 const CAROUSEL_WRAPPER = styled.div`
   position: relative;
   padding-left: ${({ theme }) => theme.margin(4)};
@@ -13,7 +14,7 @@ const CAROUSEL_WRAPPER = styled.div`
     position: absolute;
     top: 0;
     right: 0;
-    height: 100%;
+    height: 99%;
     width: 180px;
     background: ${({ theme }) => theme.fade};
   }
@@ -44,17 +45,15 @@ const CAROUSEL_WRAPPER = styled.div`
 const SLIDER_ITEM = styled.div`
   margin-right: ${({ theme }) => theme.margin(4)};
   position: relative;
-  width: 40%;
 
   .home-slider-image {
     border-radius: 10px;
-    height: auto;
-    width: 41vw;
-    margin: 0 auto;
+    height: 34vh;
+    width: auto;
   }
 
   .home-slider-content {
-    width: 58%;
+    width: 100%;
     text-align: center;
     position: absolute;
     top: 50%;
@@ -92,6 +91,7 @@ const ORANGE_BTN = styled(MainButton)`
 const TERTIERY_BTN = styled(MainButton)`
   background: ${({ theme }) => theme.primary3} !important;
 `
+//#endregion
 
 const settings = {
   infinite: false,
@@ -107,14 +107,6 @@ const settings = {
 }
 
 export const NFTHomeSlider = () => {
-  const [isSlideData, setIsSlideData] = useState(false)
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsSlideData(true)
-    }, 1000)
-  }, [])
-
   const handleCreatorApply = (e: any) => {
     window.open('https://docs.google.com/forms/d/15yypvXd49oTMv0AbtfZ8CU_y2Z7WGJI0KmilA8oR6OA/edit')
   }

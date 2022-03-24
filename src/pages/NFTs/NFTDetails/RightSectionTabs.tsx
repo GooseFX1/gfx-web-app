@@ -13,15 +13,19 @@ import RemoveModalContent from './RemoveModalContent'
 import { Modal, SuccessfulListingMsg } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { notify } from '../../../utils'
-import { tradeStatePDA, callCancelInstruction, tokenSize } from '../actions'
+import { tradeStatePDA, callCancelInstruction, callWithdrawInstruction, tokenSize } from '../actions'
 import { BidModal } from '../OpenBidNFT/BidModal'
 import {
   AUCTION_HOUSE,
+  AUCTION_HOUSE_PREFIX,
   AUCTION_HOUSE_AUTHORITY,
+  AUCTION_HOUSE_PROGRAM_ID,
   AH_FEE_ACCT,
   CancelInstructionArgs,
   CancelInstructionAccounts,
   createCancelInstruction,
+  createWithdrawInstruction,
+  toPublicKey,
   bnTo8
 } from '../../../web3'
 import BN from 'bn.js'
@@ -371,6 +375,7 @@ export const RightSectionTabs: FC<{
     console.log(userRecentBid)
 
     const buyerPrice: BN = new BN(userRecentBid.buyer_price)
+    console.log(buyerPrice)
     const tradeState: [PublicKey, number] = await tradeStatePDA(wallet.publicKey, general, bnTo8(buyerPrice))
 
     const cancelInstructionArgs: CancelInstructionArgs = {
@@ -402,14 +407,46 @@ export const RightSectionTabs: FC<{
     if (confirm.value.err === null) {
       removeBidOnSingleNFT(userRecentBid.bid_id).then((res) => {
         console.log(res)
-        notify(
-          successfulRemoveBidMsg(
-            signature,
-            nftMetadata,
-            (parseInt(userRecentBid.buyer_price) / LAMPORTS_PER_SOL).toString()
-          )
-        )
+        if (res.data) {
+          callAuctionHouseWithdraw(buyerPrice)
+        }
+      })
+    }
+  }
+
+  const callAuctionHouseWithdraw = async (amount: BN) => {
+    const escrowPaymentAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [Buffer.from(AUCTION_HOUSE_PREFIX), toPublicKey(AUCTION_HOUSE).toBuffer(), wallet.publicKey.toBuffer()],
+      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
+    )
+
+    const { withdrawInstructionAccounts, withdrawInstructionArgs } = await callWithdrawInstruction(
+      wallet.publicKey,
+      escrowPaymentAccount,
+      amount
+    )
+
+    const withdrawIX: TransactionInstruction = await createWithdrawInstruction(
+      withdrawInstructionAccounts,
+      withdrawInstructionArgs
+    )
+
+    const transaction = new Transaction().add(withdrawIX)
+    try {
+      const signature = await wallet.sendTransaction(transaction, connection)
+      console.log(signature)
+
+      const confirm = await connection.confirmTransaction(signature, 'processed')
+      console.log(confirm)
+
+      if (confirm.value.err === null) {
+        notify(successfulRemoveBidMsg(signature, nftMetadata, amount.toString()))
         setRemoveBidModal(false)
+      }
+    } catch (error) {
+      notify({
+        type: 'error',
+        message: error.message
       })
     }
   }
