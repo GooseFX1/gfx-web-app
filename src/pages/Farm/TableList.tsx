@@ -5,7 +5,7 @@ import { columns } from './Columns'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ExpandedContent } from './ExpandedContent'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { STAKE_PREFIX, toPublicKey } from '../../web3'
+import { STAKE_PREFIX, toPublicKey, fetchCurrentAmountStaked } from '../../web3'
 import { getStakingAccountKey } from '../../web3/stake'
 import { Program, Provider } from '@project-serum/anchor'
 import { useConnectionConfig } from '../../context'
@@ -171,6 +171,7 @@ export const TableList = ({ dataSource }: any) => {
   const wallet = useWallet()
   const [accountKey, setAccountKey] = useState<PublicKey>()
   const [eKeys, setEKeys] = useState([])
+  const [tokenStakedInfo, setTokenStakedInfo] = useState({})
   const PAGE_SIZE = 10
   const { network, connection } = useConnectionConfig()
   const program = useMemo(
@@ -205,6 +206,9 @@ export const TableList = ({ dataSource }: any) => {
       if (accountKey === undefined) {
         console.log('getStakingAccountKey set')
         getStakingAccountKey(wallet).then((accountKey) => setAccountKey(accountKey))
+        fetchCurrentAmountStaked(connection, accountKey, wallet).then((result) => {
+          setTokenStakedInfo(result)
+        })
       }
     } else {
       setAccountKey(undefined)
@@ -223,9 +227,9 @@ export const TableList = ({ dataSource }: any) => {
 
   console.log('PROGRAM: ', stakeProgram)
   console.log('ACCOUNT KEY: ', accountKey ? accountKey.toBase58() : accountKey)
+
   return (
     <div>
-      {console.log(eKeys)}
       <STYLED_TABLE_LIST
         rowKey="id"
         columns={columns}
@@ -234,7 +238,12 @@ export const TableList = ({ dataSource }: any) => {
         bordered={false}
         expandedRowKeys={eKeys}
         expandedRowRender={(r) => (
-          <ExpandedContent record={r} stakeProgam={stakeProgram} stakeAccountKey={accountKey} />
+          <ExpandedContent
+            record={r}
+            stakeProgam={stakeProgram}
+            stakeAccountKey={accountKey}
+            stakedInfoParam={tokenStakedInfo}
+          />
         )}
         expandIcon={(ps) => <ExpandIcon {...ps} onClick={onExpandIcon} />}
         expandIconColumnIndex={6}

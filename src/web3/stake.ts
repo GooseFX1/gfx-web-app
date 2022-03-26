@@ -1,5 +1,5 @@
 import BN from 'bn.js'
-import { Program, Provider } from '@project-serum/anchor'
+import { Idl, Program, Provider } from '@project-serum/anchor'
 import { accountFlagsLayout, publicKeyLayout, u128, u64 } from './layout'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
@@ -14,7 +14,7 @@ import {
   LAMPORTS_PER_SOL
 } from '@solana/web3.js'
 import { ADDRESSES, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, SYSTEM } from './ids'
-import { createAssociatedTokenAccountIx, findAssociatedTokenAddress, signAndSendRawTransaction } from './utils'
+import { findAssociatedTokenAddress } from './utils'
 import { STAKE_PREFIX, toPublicKey } from '../web3'
 const StakeIDL = require('./idl/stake.json')
 const { blob, struct, u8, u32 } = require('buffer-layout')
@@ -52,27 +52,30 @@ export const getStakingAccountKey = async (wallet: WalletContextState): Promise<
 }
 
 export const executeStake = async (
+  program: Program<Idl>,
+  stakingAccountKey: PublicKey | undefined,
   wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork,
   amount: number
 ) => {
-  //these 2 will be same irrespective of coins
-  const program = getStakeProgram(wallet, connection, network)
-  const stakingAccountKey: [PublicKey, number] = await PublicKey.findProgramAddress(
-    [Buffer.from(STAKE_PREFIX), CONTROLLER_KEY.toBuffer(), wallet.publicKey.toBuffer()],
-    toPublicKey(StakeIDL.metadata.address)
-  )
+  //these 2 will be same irrespective of coins program and stakingAccountKey
   const amountInLamport = amount * LAMPORTS_PER_SOL
   const amountInBN: BN = new BN(amountInLamport)
   try {
     // getting user staking account if already exists format user staking account to publicKey
-    const userStakingAccount = await program.account.stakingAccount.fetch(stakingAccountKey[0])
-    stakeAmount(amountInBN, program, stakingAccountKey[0], wallet, connection)
+    const userStakingAccount = await program.account.stakingAccount.fetch(stakingAccountKey)
+    return stakeAmount(amountInBN, program, stakingAccountKey, wallet, connection)
   } catch (err) {
+    console.log(err)
+  }
+  try {
     // user account does not exists , create a new user account
-    const newUserStakingAccount = await createStakingAccount(wallet, connection, network)
-    stakeAmount(amountInBN, program, stakingAccountKey[0], wallet, connection)
+    const newUserStakingAccount = await createStakingAccount(program, stakingAccountKey, wallet, connection, network)
+    console.log('created a new GOFX staking account')
+    return stakeAmount(amountInBN, program, stakingAccountKey, wallet, connection)
+  } catch (err) {
+    return err
   }
 }
 
@@ -99,43 +102,25 @@ const stakeAmount = async (
   const stakeAmountIX: TransactionInstruction = await program.instruction.stake(amountInBN, {
     accounts: stakingAmountInstruction
   })
-  const stakeAmountTX: Transaction = new Transaction().add(stakeAmountIX)
-  const signature = await wallet.sendTransaction(stakeAmountTX, connection)
-  console.log(signature)
-  const confirm = await connection.confirmTransaction(signature, 'processed')
-  console.log(confirm, 'stake amount')
-
-  // const stakingAccountKey2: [PublicKey, number] = await PublicKey.findProgramAddress(
-  //   [Buffer.from(STAKE_PREFIX), CONTROLLER_KEY.toBuffer(), wallet.publicKey.toBuffer()],
-  //   toPublicKey(StakeIDL.metadata.address)
-  // )
-  // const { data } = await connection.getAccountInfo(stakingAccountKey2[0])
-  // const { amountStaked, share } = LAYOUT.decode(data)
-  // console.log(amountStaked / LAMPORTS_PER_SOL, share.toNumber() / LAMPORTS_PER_SOL, 'staked amount')
-
-  // const { data: controllerData } = await connection.getAccountInfo(CONTROLLER_KEY)
-  // const controllerDataDecoded = CONTROLLER_LAYOUT.decode(controllerData)
-  // console.log(controllerDataDecoded)
-  // console.log(controllerDataDecoded.staking_balance.toNumber() / LAMPORTS_PER_SOL)
-  // const controllerDecoded = CONTROLLER_LAYOUT.decode()
-  // let controllerAcc = await program.account.controller.fetch(CONTROLLER_KEY)
-  // let stakingAccountAcc = await program.account.stakingAccount.fetch(stakingAccountKey)
-  // let userStakePlusEarn = (controllerAcc.stakingBalance * stakingAccountAcc.share) / controllerAcc.totalStakingShare
-
-  // const decoded = LAYOUT.decode(stakingAccountAcc.data)
-
-  // const { amountStaked } = decoded
-  // console.log(amountStaked)
-  // console.log({ sighash: decoded.sighash, amountStaked: decoded.amountStaked + '' })
+  try {
+    const stakeAmountTX: Transaction = new Transaction().add(stakeAmountIX)
+    const signature = await wallet.sendTransaction(stakeAmountTX, connection)
+    console.log(signature)
+    const confirm = await connection.confirmTransaction(signature, 'processed')
+    console.log(confirm, 'stake amount')
+    return confirm
+  } catch (error) {
+    return error
+  }
 }
 
 export const executeUnstakeAndClaim = async (
+  program: Program<Idl>,
+  stakingAccountKey: PublicKey,
   wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork,
-  percent: BN,
-  program: any,
-  stakingAccountKey: PublicKey
+  percent: BN
 ) => {
   //TODO : mint Address need to be passed into the function when more tokens are supported
   const tokenVault: PublicKey = await findAssociatedTokenAddress(CONTROLLER_KEY, toPublicKey(GOFX_MINT))
@@ -150,39 +135,59 @@ export const executeUnstakeAndClaim = async (
     userWallet: wallet.publicKey,
     tokenProgram: TOKEN_PROGRAM_ID
   }
-  //@ts-ignore
-  const unstakeAmountIX: TransactionInstruction = await program.instruction.unstake(new BN(percent * 100), {
-    accounts: unstakeAmountInstruction
-  })
-  const unstakeAmountTX: Transaction = new Transaction().add(unstakeAmountIX)
-  console.log(percent)
-  // const signature = await wallet.sendTransaction(unstakeAmountTX, connection)
-  // console.log(signature)
-  // const confirm = await connection.confirmTransaction(signature, 'processed')
-  // console.log(confirm, 'unstake amount ')
+  try {
+    //@ts-ignore
+    const unstakeAmountIX: TransactionInstruction = await program.instruction.unstake(new BN(percent * 100), {
+      accounts: unstakeAmountInstruction
+    })
+    const unstakeAmountTX: Transaction = new Transaction().add(unstakeAmountIX)
+    const signature = await wallet.sendTransaction(unstakeAmountTX, connection)
+    const confirm = await connection.confirmTransaction(signature, 'processed')
+    console.log(confirm, 'unstake amount ')
+    return confirm
+  } catch (err) {
+    return err
+  }
 }
 
-const fetchCurrentAmountStaked = () => {
-  // let controllerAcc = await program.account.controller.fetch(controllerKey);
-  // let stakingAccountAcc = await program.account.stakingAccount.fetch(stakingAccountKey);
+export const fetchCurrentAmountStaked = async (
+  connection: Connection,
+  stakingAccountKey: PublicKey,
+  wallet: WalletContextState
+) => {
+  try {
+    const stakedAmountKey: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [Buffer.from(STAKE_PREFIX), CONTROLLER_KEY.toBuffer(), wallet.publicKey.toBuffer()],
+      toPublicKey(StakeIDL.metadata.address)
+    )
+    const { data } = await connection.getAccountInfo(stakedAmountKey[0])
+    const { amountStaked, share } = LAYOUT.decode(data)
+    const { data: controllerData } = await connection.getAccountInfo(CONTROLLER_KEY)
+    const { staking_balance, total_staking_share } = CONTROLLER_LAYOUT.decode(controllerData)
+    const amountStakedHR = amountStaked / LAMPORTS_PER_SOL
+    const totalShare = share.toNumber() / LAMPORTS_PER_SOL
+    const stakingBalance = staking_balance.toNumber() / LAMPORTS_PER_SOL
+    const totalStakingShare = total_staking_share.toNumber() / LAMPORTS_PER_SOL
+    const amountStakedPlusEarned = (stakingBalance * totalShare) / totalStakingShare
+    const amountEarned = amountStakedPlusEarned - amountStakedHR
+    return { tokenStakedPlusEarned: amountStakedPlusEarned, tokenStaked: amountStakedHR, tokenEarned: amountEarned }
+  } catch (err) {
+    console.log(err)
+    return err
+  }
 }
-
-const fetchCurrentAmountEarned = () => {}
 
 export const createStakingAccount = async (
+  program: Program<Idl>,
+  stakingAccountKey: PublicKey,
   wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork
 ) => {
-  const program = getStakeProgram(wallet, connection, network)
-  const stakingAccountKey: [PublicKey, number] = await PublicKey.findProgramAddress(
-    [Buffer.from(STAKE_PREFIX), CONTROLLER_KEY.toBuffer(), wallet.publicKey.toBuffer()],
-    toPublicKey(StakeIDL.metadata.address)
-  )
-
+  // check for sol in wallet
   const createStakingInstructionAccounts = {
     controller: CONTROLLER_KEY,
-    stakingAccount: stakingAccountKey[0],
+    stakingAccount: stakingAccountKey,
     userWallet: wallet.publicKey,
     systemProgram: SYSTEM,
     rent: SYSVAR_RENT_PUBKEY
@@ -192,8 +197,14 @@ export const createStakingAccount = async (
     accounts: createStakingInstructionAccounts
   })
   const transaction = new Transaction().add(createStakingIX)
-  const signature = await wallet.sendTransaction(transaction, connection)
-  console.log(signature)
-  const confirm = await connection.confirmTransaction(signature, 'processed')
-  console.log(confirm)
+  try {
+    const signature = await wallet.sendTransaction(transaction, connection)
+    console.log(signature)
+    const confirm = await connection.confirmTransaction(signature, 'processed')
+    console.log(confirm)
+    return signature
+  } catch (err) {
+    //add notification
+    console.log(err)
+  }
 }
