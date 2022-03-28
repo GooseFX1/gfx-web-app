@@ -91,11 +91,10 @@ export const columns = [
       <STYLED_NAME>
         <img
           className={`coin-image ${record.type === 'Double Sided' ? 'double-sided' : ''}`}
-          src={`/img/assets/${text.replace(' ', '-')}-icon.svg`}
+          src={`/img/crypto/${text.replace(' ', '-')}.svg`}
           alt=""
         />
         <div className="text">{text}</div>
-        <img className="percent-100" src={`/img/assets/percent-100.svg`} alt="" />
       </STYLED_NAME>
     )
   },

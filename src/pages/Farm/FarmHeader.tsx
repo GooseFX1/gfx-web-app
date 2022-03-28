@@ -46,7 +46,7 @@ const STYLED_RIGHT = styled.div`
 `
 export const FarmHeader = ({ onFilter }: any) => (
   <STYLED_FARM_HEADER>
-    <Toggle className="toggle" text="Staked Only" defaultUnchecked />
+    <Toggle className="toggle" text="Show Deposited" defaultUnchecked />
     <STYLED_RIGHT>
       <SearchBar className="search-bar" placeholder="Search by token symbol" />
       <Categories className="pools" categories={categories} />
