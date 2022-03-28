@@ -4,7 +4,7 @@ import { logEvent } from 'firebase/analytics'
 import analytics from '../../analytics'
 import { TableList } from './TableList'
 import { FarmHeader } from './FarmHeader'
-import { mockDataSource, supportedData } from './mockData'
+import { supportedData } from './mockData'
 import { useNavCollapse, PriceFeedProvider } from '../../context'
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
@@ -27,7 +27,8 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   ${({ theme }) => theme.customScrollBar('6px')};
 `
 
-const BODY = styled.div`
+const BODY = styled.div<{ $navCollapsed: boolean }>`
+  min-height: calc(85vh + ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
   padding: ${({ theme }) => theme.margin(8)};
 `
 
@@ -57,7 +58,7 @@ export const Farm: FC = () => {
   return (
     <WRAPPER $navCollapsed={isCollapsed}>
       <PriceFeedProvider>
-        <BODY>
+        <BODY $navCollapsed={isCollapsed}>
           <FarmHeader onFilter={onFilter} />
           <TableList dataSource={dataSource} />
         </BODY>
