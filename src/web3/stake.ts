@@ -16,7 +16,7 @@ import { SYSTEM } from './ids'
 import { findAssociatedTokenAddress } from './utils'
 import { STAKE_PREFIX, toPublicKey } from '../web3'
 const StakeIDL = require('./idl/stake.json')
-const { blob, struct, u8, u32 } = require('buffer-layout')
+const { blob, struct } = require('buffer-layout')
 
 const CONTROLLER_KEY = new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
 const GOFX_MINT = 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'
