@@ -8,7 +8,7 @@ import { Program } from '@project-serum/anchor'
 import { Button, Row, Col } from 'antd'
 import { MainButton } from '../../components'
 import { notify } from '../../utils'
-import { useTokenRegistry, useAccounts, useCrypto, useConnectionConfig } from '../../context'
+import { useTokenRegistry, useAccounts, useCrypto, useConnectionConfig, usePriceFeed } from '../../context'
 import { createStakingAccount, executeStake, executeUnstakeAndClaim, fetchCurrentAmountStaked } from '../../web3'
 
 //#region styles
@@ -276,6 +276,7 @@ export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey, stakedIn
   const [stakedInfo, setStakedInfo] = useState(stakedInfoParam)
   const { network } = useConnectionConfig()
   const wallet = useWallet()
+  const { prices } = usePriceFeed()
   const { connection } = useConnectionConfig()
 
   const initState = [
@@ -291,19 +292,32 @@ export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey, stakedIn
     }
   ]
   const [status, setStatus] = useState(initState)
+  const [tokenValueInDollars, setTokenValueInDollars] = useState(0)
+  const [earnedValueIn$, setEarnedValueIn$] = useState(0)
   const [isStakeLoading, setIsStakeLoading] = useState(false)
   const [isUnstakeLoading, setIsUnstakeLoading] = useState(false)
+  const [tokenStaked, setTokenStaked] = useState(0)
+  const [tokenEarned, setTokenEarned] = useState(0)
   const stakeRef = useRef(null)
   const unstakeRef = useRef(null)
   const stakeProgram = stakeProgam
+
+  //const tokenStaked = stakedInfo.tokenStaked ? stakedInfo.tokenStaked : 0
+  //const tokenEarned = stakedInfo.tokenEarned && stakedInfo.tokenEarned > 0 ? stakedInfo.tokenEarned : 0
+
   useEffect(() => {
+    setTokenStaked(stakedInfo.tokenStaked ? stakedInfo.tokenStaked : 0)
+    setTokenEarned(stakedInfo.tokenEarned && stakedInfo.tokenEarned > 0 ? stakedInfo.tokenEarned : 0)
     fetchCurrentAmountStaked(connection, stakeAccountKey, wallet).then((result) => {
       setStakedInfo(result)
     })
   }, [userTokenBalance])
 
-  const tokenStaked = stakedInfo.tokenStaked ? stakedInfo.tokenStaked : 0
-  const tokenEarned = stakedInfo.tokenEarned && stakedInfo.tokenEarned > 0 ? stakedInfo.tokenEarned : 0
+  useEffect(() => {
+    const price = prices[name + '/USDC']
+    setTokenValueInDollars(price?.current * tokenStaked)
+    setEarnedValueIn$(price?.current * tokenEarned)
+  }, [userTokenBalance])
 
   const enoughSOLInWallet = (): Boolean => {
     if (userSOLBalance < 0.000001) {
@@ -412,12 +426,12 @@ export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey, stakedIn
                 <div className="info-item" key={'item?.id'}>
                   <div className="title">Staked</div>
                   <div className="value">{`${tokenStaked} ${name}`}</div>
-                  <div className="price">{`$ 22`}</div>
+                  <div className="price">{`$1`}</div>
                 </div>
                 <div className="info-item" key={'item?.id'}>
                   <div className="title">Earned</div>
                   <div className="value">{`${tokenEarned} ${name}`}</div>
-                  <div className="price">{'$ 22'}</div>
+                  <div className="price">{`$1`}</div>
                 </div>
               </STYLED_STAKED_EARNED_CONTENT>
             ) : (
