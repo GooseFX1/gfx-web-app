@@ -12,22 +12,13 @@ import { CenteredDiv } from '../../../styles'
 
 const menu = (setVisibleShareProfile: (b: boolean) => void) => (
   <StyledMenu>
-    <Menu.Item>
-      <div onClick={() => setVisibleShareProfile(true)}>Share</div>
+    <Menu.Item onClick={() => setVisibleShareProfile(true)}>
+      <div>Share</div>
     </Menu.Item>
-    <Menu.Item>
-      <a target="_blank" rel="noopener noreferrer" href="/report">
-        Report
-      </a>
+    <Menu.Item onClick={() => console.log('report')}>
+      <div>Report</div>
     </Menu.Item>
-    <Menu.Item>
-      <div onClick={() => setVisibleShareProfile(true)}>Share Profile</div>
-    </Menu.Item>
-    <Menu.Item>
-      <a target="_blank" rel="noopener noreferrer" href="/help">
-        Help
-      </a>
-    </Menu.Item>
+    <Menu.Item>Help</Menu.Item>
   </StyledMenu>
 )
 
@@ -151,15 +142,9 @@ export const HeaderProfile = ({ isExplore }: Props) => {
 
       <div className="action-wrap">
         {connected && publicKey && (
-          <>
-            <button onClick={() => history.push('/NFTs/sell')} className="btn-create btn-create2">
-              <span>Sell</span>
-            </button>
-
-            <button className="btn-create" onClick={() => history.push('/NFTs/create')}>
-              <span>Create</span>
-            </button>
-          </>
+          <button className="btn-create" onClick={() => history.push('/NFTs/create')}>
+            <span>Create</span>
+          </button>
         )}
 
         <StyledDropdown overlay={menu(setVisibleShareProfile)} trigger={['click']} placement="bottomRight" arrow>

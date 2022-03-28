@@ -5,7 +5,7 @@ import { Tabs } from 'antd'
 const { TabPane } = Tabs
 
 const NFT_TAB = styled.div`
-  min-height: calc(100vh - 54vh);
+  min-height: 60vh;
   z-index: 3;
   margin-top: -${({ theme }) => theme.margin(6)};
 
@@ -15,6 +15,8 @@ const NFT_TAB = styled.div`
     background: ${({ theme }) => theme.profileTabContainerBg};
     height: 100%;
     border-radius: 20px 20px 0 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
 
     .ant-tabs-nav-wrap {
       width: 50%;

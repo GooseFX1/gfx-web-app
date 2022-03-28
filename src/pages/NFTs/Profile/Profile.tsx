@@ -53,7 +53,7 @@ const PROFILE_CONTAINER = styled.div`
                 position: absolute;
                 content: '';
                 height: 7px;
-                width: 130%;
+                width: 100%;
                 bottom: -28px;
                 left: 50%;
                 background: rgba(88, 85, 255, 1);
