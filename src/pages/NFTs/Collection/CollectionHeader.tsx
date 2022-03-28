@@ -8,6 +8,7 @@ import { ShareProfile } from '../Profile/ShareProfile'
 import { SVGToGrey2 } from '../../../styles'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
+//#region styled
 const COLLECTION_HEADER = styled.div<{ $height: string }>`
   position: relative;
   height: ${({ $height }) => `${$height}vh`};
@@ -214,6 +215,7 @@ const BANNER_TOGGLE = styled.button`
     transform: rotate(0deg);
   }
 `
+//#endregion
 
 export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) => {
   const { mode } = useDarkMode()
@@ -222,6 +224,7 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
   const [visible, setVisible] = useState(false)
 
   const isCollectionItemEmpty: boolean = !singleCollection || !fixedPriceWithinCollection || !openBidWithinCollection
+  // const isCollectionItemEmpty: boolean = true
 
   const handleClick = (e) => {
     console.log('handleClick e:', e)
@@ -240,7 +243,7 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
     <COLLECTION_HEADER $height={collapse ? '30' : '45'}>
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
       {isCollectionItemEmpty ? (
-        <SkeletonCommon height="438px" borderRadius="0" />
+        <SkeletonCommon height="30vh" borderRadius="0" />
       ) : (
         <BANNER
           $url={
