@@ -5,7 +5,7 @@ import analytics from '../../analytics'
 import { TableList } from './TableList'
 import { FarmHeader } from './FarmHeader'
 import { mockDataSource, supportedData } from './mockData'
-import { useNavCollapse } from '../../context'
+import { useNavCollapse, PriceFeedProvider } from '../../context'
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
@@ -56,10 +56,12 @@ export const Farm: FC = () => {
 
   return (
     <WRAPPER $navCollapsed={isCollapsed}>
-      <BODY>
-        <FarmHeader onFilter={onFilter} />
-        <TableList dataSource={dataSource} />
-      </BODY>
+      <PriceFeedProvider>
+        <BODY>
+          <FarmHeader onFilter={onFilter} />
+          <TableList dataSource={dataSource} />
+        </BODY>
+      </PriceFeedProvider>
     </WRAPPER>
   )
 }

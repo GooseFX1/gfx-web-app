@@ -8,9 +8,8 @@ import { Program } from '@project-serum/anchor'
 import { Button, Row, Col } from 'antd'
 import { MainButton } from '../../components'
 import { notify } from '../../utils'
-import { useTokenRegistry, useAccounts, useCrypto, useConnectionConfig } from '../../context'
-import { createStakingAccount, executeStake, executeUnstakeAndClaim } from '../../web3'
-import { stakedEarnedMockData, messageMockData, stakeOrClaimInfoMockData } from './mockData'
+import { useTokenRegistry, useAccounts, useCrypto, useConnectionConfig, usePriceFeed } from '../../context'
+import { createStakingAccount, executeStake, executeUnstakeAndClaim, fetchCurrentAmountStaked } from '../../web3'
 
 //#region styles
 const STYLED_EXPANDED_ROW = styled.div`
@@ -247,25 +246,37 @@ const STYLED_INPUT = styled.input`
 `
 //#endregion
 
+interface ITokenStakedInfo {
+  tokenStakedPlusEarned: Number
+  tokenStaked: Number
+  tokenEarned: Number
+}
+
 interface IExpandedContent {
   record: any
   stakeProgam: Program | undefined
   stakeAccountKey: PublicKey | undefined
+  stakedInfoParam: any
 }
 
-export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey }: IExpandedContent) => {
+export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey, stakedInfoParam }: IExpandedContent) => {
   const { name, image, liquidity, rewards, connected } = record
   const { getUIAmount } = useAccounts()
   const { publicKey } = useWallet()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const tokenInfo = useMemo(() => getTokenInfoFromSymbol(name), [name, publicKey])
-  const userBalance = useMemo(
+  const userSOLBalance = useMemo(
+    () => (publicKey && tokenInfo ? getUIAmount(getTokenInfoFromSymbol('SOL').address) : 0),
+    [getUIAmount, publicKey]
+  )
+  const userTokenBalance = useMemo(
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
     [tokenInfo, getUIAmount, publicKey]
   )
-  const [displayUserBalance, setDisplayUserBalance] = useState(userBalance)
+  const [stakedInfo, setStakedInfo] = useState(stakedInfoParam)
   const { network } = useConnectionConfig()
   const wallet = useWallet()
+  const { prices } = usePriceFeed()
   const { connection } = useConnectionConfig()
 
   const initState = [
@@ -281,29 +292,127 @@ export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey }: IExpan
     }
   ]
   const [status, setStatus] = useState(initState)
-  const [count, setCount] = useState(0)
+  const [tokenValueInDollars, setTokenValueInDollars] = useState(0)
+  const [earnedValueIn$, setEarnedValueIn$] = useState(0)
+  const [isStakeLoading, setIsStakeLoading] = useState(false)
+  const [isUnstakeLoading, setIsUnstakeLoading] = useState(false)
+  const [tokenStaked, setTokenStaked] = useState(0)
+  const [tokenEarned, setTokenEarned] = useState(0)
   const stakeRef = useRef(null)
   const unstakeRef = useRef(null)
+  const stakeProgram = stakeProgam
+
+  //const tokenStaked = stakedInfo.tokenStaked ? stakedInfo.tokenStaked : 0
+  //const tokenEarned = stakedInfo.tokenEarned && stakedInfo.tokenEarned > 0 ? stakedInfo.tokenEarned : 0
 
   useEffect(() => {
-    setDisplayUserBalance(publicKey ? displayUserBalance : 0)
-    stakeRef.current.value = publicKey ? displayUserBalance : 0
-    unstakeRef.current.value = publicKey ? displayUserBalance : 0
-  }, [displayUserBalance, publicKey])
+    setTokenStaked(stakedInfo.tokenStaked ? stakedInfo.tokenStaked : 0)
+    setTokenEarned(stakedInfo.tokenEarned && stakedInfo.tokenEarned > 0 ? stakedInfo.tokenEarned : 0)
+    fetchCurrentAmountStaked(connection, stakeAccountKey, wallet).then((result) => {
+      setStakedInfo(result)
+    })
+  }, [userTokenBalance])
 
+  useEffect(() => {
+    const price = prices[name + '/USDC']
+    setTokenValueInDollars(price?.current * tokenStaked)
+    setEarnedValueIn$(price?.current * tokenEarned)
+  }, [userTokenBalance])
+
+  const enoughSOLInWallet = (): Boolean => {
+    if (userSOLBalance < 0.000001) {
+      notify({
+        type: 'error',
+        message: 'You need minimum of 0.000001 SOL in your wallet to perform this transaction'
+      })
+      return false
+    }
+    return true
+  }
   const onClickStake = () => {
-    executeStake(wallet, connection, network, stakeRef.current.value).then((res) => console.log(res))
+    if (stakeRef.current.value < 0.000001 || stakeRef.current.value > userTokenBalance) {
+      unstakeRef.current.value = 0
+      notify({
+        type: 'error',
+        message: `Please give valid input from 0.00001 to ${userTokenBalance} ${name}`
+      })
+      return
+    }
+    if (!enoughSOLInWallet()) return
+    try {
+      setIsStakeLoading(true)
+      const confirm = executeStake(stakeProgram, stakeAccountKey, wallet, connection, network, stakeRef.current.value)
+      confirm.then((con) => {
+        setIsStakeLoading(false)
+        if (con && con?.value && con.value.err === null) {
+          notify({
+            message: `Deposited amount ${stakeRef.current.value} ${name} Successful`
+          })
+        } else {
+          notify({
+            type: 'error',
+            message: con?.message
+          })
+          return
+        }
+      })
+    } catch (error) {
+      setIsStakeLoading(false)
+      notify({
+        type: 'error',
+        message: error
+      })
+    }
   }
 
   const onClickUnstake = () => {
-    //executeUnstakeAndClaim(wallet, connection, network, unstakeRef.current.value)
+    if (unstakeRef.current.value < 0.1 || unstakeRef.current.value > 100) {
+      unstakeRef.current.value = 0
+      notify({
+        type: 'error',
+        message: 'Please give valid input in percentage (1-100%)'
+      })
+      return
+    }
+    if (!enoughSOLInWallet()) return
+    try {
+      setIsUnstakeLoading(true)
+      const confirm = executeUnstakeAndClaim(
+        stakeProgam,
+        stakeAccountKey,
+        wallet,
+        connection,
+        network,
+        unstakeRef.current.value
+      )
+      confirm.then((con) => {
+        setIsUnstakeLoading(false)
+        if (con && con.value && con.value.err === null) {
+          notify({
+            message: `Unstake of amount ${unstakeRef.current.value}% Successful`
+          })
+        } else {
+          notify({
+            type: 'error',
+            message: con.message
+          })
+        }
+      })
+    } catch (error) {
+      setIsUnstakeLoading(false)
+      notify({
+        type: 'error',
+        message: error
+      })
+    }
   }
-  const onClickHalf = () => {
-    setDisplayUserBalance(publicKey ? userBalance / 2 : 0)
+  const onClickHalf = (buttonId: string) => {
+    if (buttonId === 'stake') stakeRef.current.value = userTokenBalance / 2
+    else unstakeRef.current.value = 50
   }
-  const onClickMax = () => {
-    setDisplayUserBalance(publicKey ? userBalance : 0)
-    console.log('max clicked', userBalance)
+  const onClickMax = (buttonId: string) => {
+    if (buttonId === 'stake') stakeRef.current.value = userTokenBalance
+    else unstakeRef.current.value = 100
   }
 
   return (
@@ -314,13 +423,16 @@ export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey }: IExpan
             <STYLED_IMG src={`/img/crypto/${image}.svg`} alt="" />
             {connected ? (
               <STYLED_STAKED_EARNED_CONTENT>
-                {stakedEarnedMockData.map((item: any) => (
-                  <div className="info-item" key={item?.id}>
-                    <div className="title">{item?.title}</div>
-                    <div className="value">{item?.value}</div>
-                    <div className="price">{item?.price}</div>
-                  </div>
-                ))}
+                <div className="info-item" key={'item?.id'}>
+                  <div className="title">Staked</div>
+                  <div className="value">{`${tokenStaked} ${name}`}</div>
+                  <div className="price">{`$1`}</div>
+                </div>
+                <div className="info-item" key={'item?.id'}>
+                  <div className="title">Earned</div>
+                  <div className="value">{`${tokenEarned} ${name}`}</div>
+                  <div className="price">{`$1`}</div>
+                </div>
               </STYLED_STAKED_EARNED_CONTENT>
             ) : (
               <Button type="primary">
@@ -335,18 +447,18 @@ export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey }: IExpan
               <STYLED_SOL className={status[0].selected ? 'active' : ''}>
                 <STYLED_INPUT className="value" ref={stakeRef} type="number" />
                 <div className="text">
-                  <MAX_BUTTON onClick={onClickHalf} className="text-1">
+                  <MAX_BUTTON onClick={() => onClickHalf('stake')} className="text-1">
                     Half
                   </MAX_BUTTON>
-                  <MAX_BUTTON onClick={onClickMax} className="text-2">
+                  <MAX_BUTTON onClick={() => onClickMax('stake')} className="text-2">
                     Max
                   </MAX_BUTTON>
                 </div>
               </STYLED_SOL>
               <STYLED_STAKE_PILL
                 className={status[0].selected ? 'active' : ''}
-                loading={status[0].isLoading}
-                disabled={status[0].isLoading}
+                loading={isStakeLoading}
+                disabled={isStakeLoading}
                 onClick={() => onClickStake()}
               >
                 Stake
@@ -354,20 +466,20 @@ export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey }: IExpan
             </div>
             <div className="SOL-item">
               <STYLED_SOL className={status[1].selected ? 'active' : ''}>
-                <STYLED_INPUT className="value" ref={unstakeRef} type="number" />
+                <STYLED_INPUT className="value" ref={unstakeRef} type="number" min="0" max="100" />
                 <div className="text">
-                  <MAX_BUTTON onClick={onClickHalf} className="text-1">
+                  <MAX_BUTTON onClick={() => onClickHalf('unstake')} className="text-1">
                     Half
                   </MAX_BUTTON>
-                  <MAX_BUTTON onClick={onClickMax} className="text-2">
+                  <MAX_BUTTON onClick={() => onClickMax('unstake')} className="text-2">
                     Max
                   </MAX_BUTTON>
                 </div>
               </STYLED_SOL>
               <STYLED_STAKE_PILL
                 className={status[1].selected ? 'active' : ''}
-                loading={status[1].isLoading}
-                disabled={status[1].isLoading}
+                loading={isUnstakeLoading}
+                disabled={isUnstakeLoading}
                 onClick={() => onClickUnstake()}
               >
                 Unstake and Claim
@@ -380,7 +492,7 @@ export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey }: IExpan
         <STYLED_DESC>
           <div className="text">{name} Wallet Balance:</div>
           <div className="value">
-            {userBalance} {name}
+            {userTokenBalance} {name}
           </div>
         </STYLED_DESC>
       )}
