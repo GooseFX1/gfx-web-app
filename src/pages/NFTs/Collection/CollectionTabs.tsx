@@ -65,7 +65,7 @@ const COLLECTION_TABS = styled.div<{ $height: string }>`
 
   .ant-tabs-content {
     background-color: ${({ theme }) => theme.bg3};
-    min-height: calc(53vh - 156px);
+    min-height: calc(70vh - 156px);
   }
 
   .ant-tabs-nav-list {
