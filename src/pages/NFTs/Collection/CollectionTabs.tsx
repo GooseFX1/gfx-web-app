@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Tabs } from 'antd'
 import { useNFTCollections } from '../../../context'
 import { SearchBar } from '../../../components'
-import { Sort } from './Sort'
+// import { Sort } from './Sort'
 import { FixedPriceTabContent } from './FixedPriceTabContent'
 import { OpenBidsTabContent } from './OpenBidsTabContent'
 import { OwnersTabContent } from './OwnersTabContent'
@@ -18,12 +18,10 @@ const COLLECTION_TABS = styled.div<{ $height: string }>`
   scroll-behavior: smooth;
   height: ${({ $height }) => `calc(${$height}`}% + 28px);
   margin-top: -${({ theme }) => theme.margin(3.5)};
+  z-index: 10;
 
   .card-list {
     grid-gap: ${({ theme }) => theme.margin(3)};
-    .card {
-      background-color: ${({ theme }) => theme.cardBg};
-    }
   }
 
   .ant-tabs-ink-bar {
@@ -164,6 +162,6 @@ export const CollectionTabs = ({ filter, setFilter, collapse, setCollapse }) => 
       </Tabs>
     </COLLECTION_TABS>
   ) : (
-    <div>loading...</div>
+    <SkeletonCommon height="61vh" width="100%" />
   )
 }

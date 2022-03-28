@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
 import { useHistory } from 'react-router'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
@@ -10,12 +10,14 @@ import { useNFTProfile, useNFTDetails, useConnectionConfig, useDarkMode } from '
 import { fetchSingleNFT } from '../../../api/NFTs'
 import { getParsedAccountByMint, StringPublicKey, ParsedAccount } from '../../../web3'
 import { Loader } from '../../../components'
+import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 //#region styles
 const CARD = styled.div`
   padding: ${({ theme }) => theme.margin(2.5)};
   width: 226px;
   cursor: pointer;
+  background-color: ${({ theme }) => theme.cardBg};
   ${({ theme }) => theme.largeBorderRadius}
 
   .card-image-wrapper {
@@ -95,7 +97,7 @@ const BID_BUTTON = styled.button<{ cardStatus: string }>`
   ${({ cardStatus, theme }) => {
     return css`
       height: 34px;
-      background-color: ${cardStatus === 'unlisted' ? '#50BB35' : cardStatus === 'listed' ? `#bb3535` : '#3735bb'};
+      background-color: ${cardStatus === 'unlisted' ? '#bb3535' : cardStatus === 'listed' ? `#bb3535` : '#3735bb'};
       cursor: pointer;
       font-size: 11px;
       font-weight: 600;
@@ -132,18 +134,19 @@ const COVER = styled.div<{ $mode: boolean }>`
 `
 //#endregion
 
-type Props = {
+type ICard = {
   singleNFT: ISingleNFT
   className?: string
   listingType?: string
   userId?: number
 }
 
-export const Card = ({ singleNFT, className, ...rest }: Props) => {
+export const Card = (props: ICard) => {
   const history = useHistory()
   const { mode } = useDarkMode()
   const { connection } = useConnectionConfig()
   const { sessionUser, parsedAccounts, likeDislike } = useNFTProfile()
+  const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   /** setters are only for populating context before location change to details page */
   const { setGeneral, setNftMetadata, setBids, setAsk, setTotalLikes } = useNFTDetails()
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
@@ -163,17 +166,20 @@ export const Card = ({ singleNFT, className, ...rest }: Props) => {
   )
 
   const isOwner: boolean = useMemo(() => {
+    if (props.userId) return true
     const findAccount: undefined | ParsedAccount =
-      singleNFT && parsedAccounts !== undefined
-        ? parsedAccounts.find((acct) => acct.mint === singleNFT.mint_address)
+      props.singleNFT && parsedAccounts !== undefined
+        ? parsedAccounts.find((acct) => acct.mint === props.singleNFT.mint_address)
         : undefined
     return findAccount === undefined ? false : true
   }, [parsedAccounts])
 
   useEffect(() => {
-    if (singleNFT) {
-      fetchSingleNFT(singleNFT.non_fungible_id).then((res) => {
+    if (props.singleNFT) {
+      fetchSingleNFT(props.singleNFT.mint_address).then((res) => {
         if (res && res.status === 200) {
+          res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(props.singleNFT)
+
           const nft: INFTGeneralData = res.data
           setLocalBids(nft.bids)
           setLocalAsk(nft.asks[0])
@@ -188,28 +194,28 @@ export const Card = ({ singleNFT, className, ...rest }: Props) => {
   }, [])
 
   useEffect(() => {
-    if (singleNFT && sessionUser) {
-      setIsFavorited(sessionUser.user_likes.includes(singleNFT.non_fungible_id))
+    if (props.singleNFT && sessionUser) {
+      setIsFavorited(sessionUser.user_likes.includes(props.singleNFT.non_fungible_id))
     }
   }, [sessionUser])
 
   const handleToggleLike = (e: any) => {
     if (sessionUser && sessionUser.user_id) {
-      likeDislike(sessionUser.user_id, singleNFT.non_fungible_id)
+      likeDislike(sessionUser.user_id, localSingleNFT.non_fungible_id)
       setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
       setIsFavorited((prev) => !prev)
     }
   }
 
-  const goToDetails = async (id: number): Promise<void> => {
+  const goToDetails = async (address: string): Promise<void> => {
     setIsLoadingBeforeRelocate(true)
     await setNFTDetailsBeforeLocate()
-    history.push(`/NFTs/details/${id}`)
+    history.push(`/NFTs/details/${address}`)
   }
 
   const getButtonText = (isOwner: boolean, ask: INFTAsk | undefined): string => {
     if (isOwner) {
-      return ask === undefined ? 'Set Ask' : 'Remove Ask'
+      return ask === undefined ? 'Sell' : 'Remove Ask'
     } else {
       return ask === undefined ? 'Bid' : 'Buy Now'
     }
@@ -219,11 +225,11 @@ export const Card = ({ singleNFT, className, ...rest }: Props) => {
     await setBids(localBids)
     await setAsk(localAsk)
     await setTotalLikes(localTotalLikes)
-    const res = await axios.get(singleNFT.metadata_url)
+    const res = await axios.get(localSingleNFT.metadata_url)
     const metaData = await res.data
     await setNftMetadata(metaData)
     const parsedAccounts = await getParsedAccountByMint({
-      mintAddress: singleNFT.mint_address as StringPublicKey,
+      mintAddress: localSingleNFT.mint_address as StringPublicKey,
       connection: connection
     })
 
@@ -232,13 +238,14 @@ export const Card = ({ singleNFT, className, ...rest }: Props) => {
         ? { token_account: parsedAccounts.pubkey, owner: parsedAccounts.account?.data?.parsed?.info.owner }
         : { token_account: null, owner: null }
 
-    await setGeneral({ ...singleNFT, ...accountInfo })
+    await setGeneral({ ...localSingleNFT, ...accountInfo })
+    setIsLoadingBeforeRelocate(false)
     return true
   }
 
-  return singleNFT ? (
-    <CARD {...rest} className="card">
-      <div className="card-image-wrapper" onClick={(e) => goToDetails(singleNFT.non_fungible_id)}>
+  return (
+    <CARD {...props} className="card">
+      <div className="card-image-wrapper" onClick={(e) => goToDetails(localSingleNFT.mint_address)}>
         {isLoadingBeforeRelocate && (
           <COVER $mode={mode === 'dark'}>
             <Loader />
@@ -247,64 +254,74 @@ export const Card = ({ singleNFT, className, ...rest }: Props) => {
 
         <img
           className="card-image"
-          src={singleNFT.image_url ? singleNFT.image_url : `${window.origin}/img/assets/nft-preview.svg`}
+          src={localSingleNFT ? localSingleNFT.image_url : `${window.origin}/img/assets/nft-preview.svg`}
           alt="nft"
         />
       </div>
       <div className="card-info">
-        <div className="card-name">{singleNFT.nft_name}</div>
+        {localSingleNFT ? (
+          <div className="card-name">{localSingleNFT.nft_name}</div>
+        ) : (
+          <SkeletonCommon width="130px" height="25px" />
+        )}
 
-        <span className="card-favorite-heart-container">
-          {sessionUser && sessionUser.user_id && isFavorited ? (
-            <img
-              className="card-favorite-heart"
-              src={`/img/assets/heart-red.svg`}
-              alt="heart-selected"
-              onClick={handleToggleLike}
-            />
-          ) : (
-            <img
-              className={`card-favorite-heart ${
-                sessionUser && !sessionUser.user_id ? 'card-favorite-heart--disabled' : ''
+        {localSingleNFT && localSingleNFT.non_fungible_id !== null && (
+          <span className="card-favorite-heart-container">
+            {sessionUser && isFavorited ? (
+              <img
+                className="card-favorite-heart"
+                src={`/img/assets/heart-red.svg`}
+                alt="heart-selected"
+                onClick={handleToggleLike}
+              />
+            ) : (
+              <img
+                className={`card-favorite-heart ${!sessionUser ? 'card-favorite-heart--disabled' : ''}`}
+                src={`/img/assets/heart-empty.svg`}
+                alt="heart-empty"
+                onClick={handleToggleLike}
+              />
+            )}
+            <span
+              className={`card-favorite-number ${isFavorited ? 'card-favorite-number-highlight' : ''} ${
+                !sessionUser ? 'card-favorite-heart--disabled' : ''
               }`}
-              src={`/img/assets/heart-empty.svg`}
-              alt="heart-empty"
-              onClick={handleToggleLike}
-            />
-          )}
-          <span
-            className={`card-favorite-number ${isFavorited ? 'card-favorite-number-highlight' : ''} ${
-              sessionUser && !sessionUser.user_id ? 'card-favorite-heart--disabled' : ''
-            }`}
-          >
-            {localTotalLikes}
+            >
+              {localTotalLikes}
+            </span>
           </span>
-        </span>
+        )}
       </div>
       <Row justify="space-between" align="middle">
-        <div className="card-price">
-          {displayPrice === '0' ? (
-            <LIGHT_TEXT>No Bids</LIGHT_TEXT>
-          ) : (
-            `${moneyFormatter(parseFloat(displayPrice) / LAMPORTS_PER_SOL)} SOL`
-          )}
-        </div>
-        {sessionUser &&
-          (isOwner ? (
+        {localSingleNFT ? (
+          <div className="card-price">
+            {displayPrice === '0' ? (
+              <LIGHT_TEXT>No Bids</LIGHT_TEXT>
+            ) : (
+              `${moneyFormatter(parseFloat(displayPrice) / LAMPORTS_PER_SOL)} SOL`
+            )}
+          </div>
+        ) : (
+          <SkeletonCommon width="64px" height="24px" />
+        )}
+
+        {localSingleNFT && sessionUser ? (
+          isOwner ? (
             <BID_BUTTON
               cardStatus={localAsk ? 'listed' : 'unlisted'}
-              onClick={(e) => goToDetails(singleNFT.non_fungible_id)}
+              onClick={(e) => goToDetails(localSingleNFT.mint_address)}
             >
               {getButtonText(isOwner, localAsk)}
             </BID_BUTTON>
           ) : (
-            <BID_BUTTON cardStatus={'bid'} onClick={(e) => goToDetails(singleNFT.non_fungible_id)}>
+            <BID_BUTTON cardStatus={'bid'} onClick={(e) => goToDetails(localSingleNFT.mint_address)}>
               {getButtonText(isOwner, localAsk)}
             </BID_BUTTON>
-          ))}
+          )
+        ) : (
+          <SkeletonCommon width="76px" height="32px" borderRadius="50px" />
+        )}
       </Row>
     </CARD>
-  ) : (
-    <div>blank</div>
   )
 }
