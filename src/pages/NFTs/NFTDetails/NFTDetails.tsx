@@ -46,7 +46,7 @@ export const NFTDetails: FC<{
 
   useEffect(() => {
     if (general === undefined && nftMetadata === undefined) {
-      fetchGeneral(params.nftId, connection)
+      fetchGeneral(params.nftMintAddress, connection)
     }
 
     return () => {}

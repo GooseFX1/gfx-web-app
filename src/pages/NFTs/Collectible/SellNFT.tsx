@@ -248,8 +248,8 @@ export const SellNFT = () => {
   }, [history.location, history.location.state])
 
   useEffect(() => {
-    if (params.nftId && (!general || !nftMetadata)) {
-      fetchGeneral(params.nftId, connection).then((res) => {
+    if (params.nftMintAddress && (!general || !nftMetadata)) {
+      fetchGeneral(params.nftMintAddress, connection).then((res) => {
         console.log(res)
       })
     }
@@ -257,7 +257,7 @@ export const SellNFT = () => {
 
   useEffect(() => {
     if (!sessionUser || !connected || !publicKey) {
-      history.push(`/NFTs/open-bid/${params.nftId}`)
+      history.push(`/NFTs/details/${params.nftMintAddress}`)
     }
   }, [connected, publicKey])
 
