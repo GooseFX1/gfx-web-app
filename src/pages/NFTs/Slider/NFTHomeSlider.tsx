@@ -39,16 +39,24 @@ const CAROUSEL_WRAPPER = styled.div`
   }
 
   .slick-slide {
+    margin-right: ${({ theme }) => theme.margin(2)};
     min-width: 630px;
   }
 `
-const SLIDER_ITEM = styled.div`
-  margin-right: ${({ theme }) => theme.margin(4)};
+
+const SLIDER_ITEM = styled.div<{ $url: string }>`
   position: relative;
+  height: 37vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: ${({ $url }) => `url(${$url})`}, center;
+  background-size: auto 100%;
+  border-radius: 20px;
 
   .home-slider-image {
     border-radius: 10px;
-    height: 34vh;
+    height: 100%;
     width: auto;
   }
 
@@ -59,6 +67,7 @@ const SLIDER_ITEM = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+
     .home-slider-title {
       font-size: 40px;
       font-weight: 600;
@@ -114,8 +123,7 @@ export const NFTHomeSlider = () => {
   return (
     <CAROUSEL_WRAPPER>
       <Slider {...settings}>
-        <SLIDER_ITEM>
-          <img className="home-slider-image" src={`${process.env.PUBLIC_URL}/img/assets/becoma-a-creator.png`} alt="" />
+        <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/becoma-a-creator.png`}>
           <div className="home-slider-content">
             <h1 className="home-slider-title">Become </h1>
             <h1 className="home-slider-title">a verified creator</h1>
@@ -130,8 +138,7 @@ export const NFTHomeSlider = () => {
             </TERTIERY_BTN>
           </div>
         </SLIDER_ITEM>
-        <SLIDER_ITEM>
-          <img className="home-slider-image" src={`${process.env.PUBLIC_URL}/img/assets/NestQuest.png`} alt="" />
+        <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/NestQuest.png`}>
           <div className="home-slider-content">
             <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>
               NestQuest
@@ -144,13 +151,7 @@ export const NFTHomeSlider = () => {
             </ORANGE_BTN>
           </div>
         </SLIDER_ITEM>
-        <SLIDER_ITEM>
-          <img
-            className="home-slider-image"
-            src={`${process.env.PUBLIC_URL}/img/assets/upcoming_features.webp`}
-            alt=""
-          />
-        </SLIDER_ITEM>
+        <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/upcoming_features.webp`}></SLIDER_ITEM>
       </Slider>
       <div className="fade"></div>
     </CAROUSEL_WRAPPER>

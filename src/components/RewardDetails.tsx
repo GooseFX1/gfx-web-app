@@ -1,9 +1,11 @@
-import React, { FC } from 'react'
+import React, { FC, useState, useEffect } from 'react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
 // import Close from "/img/assets/close-white-icon.svg";
 import { useHistory } from 'react-router-dom'
 import { Row, Col } from 'antd'
 import { useRewardToggle } from '../context/reward_toggle'
+import { fetchRewardsByAddress } from '../api/NFTs'
 import { SpaceEvenlyDiv } from '../styles'
 
 const REWARD_INFO_TEXT = styled.div`
@@ -17,13 +19,6 @@ const TEXT_20 = styled.div`
   color: ${({ theme }) => theme.text1} !important;
   ${({ theme }) => theme.mediaWidth.upToLarge`
     font-size: 15px;
-  `}
-`
-const TEXT_40 = styled.span`
-  font-size: 40px;
-  font-weight: bold;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    font-size: 30px;
   `}
 `
 const TEXT_50 = styled.span`
@@ -165,6 +160,24 @@ const BOLD_TEXT = styled.span`
 `
 
 export const RewardInfoComponent: FC = () => {
+  const { publicKey } = useWallet()
+  const [rewardsPerAddress, setrewardsPerAddress] = useState<number>()
+
+  useEffect(() => {
+    if (publicKey) {
+      fetchRewards(publicKey.toBase58())
+    }
+  }, [publicKey])
+
+  const fetchRewards = async (address: string): Promise<void> => {
+    try {
+      const res = await fetchRewardsByAddress(address)
+      setrewardsPerAddress(res.data === 0 ? 0.0 : res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <REWARD_INFO_TEXT>
       <div>
@@ -180,7 +193,8 @@ export const RewardInfoComponent: FC = () => {
           <TEXT_20> Rewards over the next 12 months</TEXT_20>
         </Col>
         <Col span="">
-          <GREEN60>200.457</GREEN60>
+          <GREEN60>{rewardsPerAddress !== undefined ? rewardsPerAddress.toFixed(3) : '0.000'}</GREEN60>
+
           <div style={{ textAlign: 'right' }}>
             <TEXT_20>GOFX Earned</TEXT_20>
           </div>

@@ -1,7 +1,6 @@
 import apiClient from '../../api'
 import { NFT_API_ENDPOINTS, NFT_API_BASE } from '../NFTs/constants'
 import { INFTProfile } from '../../types/nft_profile.d'
-import { StringPublicKey, getParsedAccountByMint } from '../../web3'
 
 export const completeNFTUserProfile = async (address: string): Promise<any> => {
   try {
@@ -57,6 +56,15 @@ export const fetchNFTById = async (id: number, connection: any): Promise<any> =>
   try {
     const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?nft_id=${id}`)
     return res.data
+  } catch (err) {
+    return err
+  }
+}
+
+export const fetchRewardsByAddress = async (address: string): Promise<any> => {
+  try {
+    const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.REWARDS}?address=${address}&network=mainnet`)
+    return await res
   } catch (err) {
     return err
   }
