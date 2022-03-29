@@ -1,10 +1,17 @@
-import React, { useState } from 'react'
-import { stakedEarnedMockData, messageMockData, stakeOrClaimInfoMockData } from './mockData'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 import styled from 'styled-components'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { PublicKey } from '@solana/web3.js'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { WalletContextState } from '@solana/wallet-adapter-react'
+import { Program } from '@project-serum/anchor'
 import { Button, Row, Col } from 'antd'
 import { MainButton } from '../../components'
 import { notify } from '../../utils'
+import { useTokenRegistry, useAccounts, useCrypto, useConnectionConfig, usePriceFeed } from '../../context'
+import { createStakingAccount, executeStake, executeUnstakeAndClaim, fetchCurrentAmountStaked } from '../../web3'
 
+//#region styles
 const STYLED_EXPANDED_ROW = styled.div`
   padding-top: ${({ theme }) => theme.margin(4)};
   padding-right: ${({ theme }) => theme.margin(10)};
@@ -68,13 +75,12 @@ const STYLED_RIGHT_CONTENT = styled.div`
 const STYLED_SOL = styled.div`
   width: 300px;
   height: 60px;
-  background-color: ${({ theme }) => theme.solPillBg};
   border-radius: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 ${({ theme }) => theme.margin(4)};
-  margin: 0 ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(1)};
+  /* padding: 0 ${({ theme }) => theme.margin(4)};
+  margin: 0 ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(1)}; */
   .value {
     font-family: Montserrat;
     font-size: 22px;
@@ -99,6 +105,9 @@ const STYLED_SOL = styled.div`
     text-align: center;
     color: ${({ theme }) => theme.text14};
     display: flex;
+    z-index: 2;
+    margin-bottom: 6px;
+    margin-left: -150px;
   }
   .text-2 {
     margin-left: ${({ theme }) => theme.margin(1.5)};
@@ -152,6 +161,9 @@ const STYLED_STAKED_EARNED_CONTENT = styled.div`
     }
   }
 `
+const STYLED_IMG = styled.img`
+  transform: scale(1.3);
+`
 
 const STYLED_DESC = styled.div`
   display: flex;
@@ -190,9 +202,83 @@ const MESSAGE = styled.div`
     max-width: 200px;
   }
 `
+const MAX_BUTTON = styled.div`
+  cursor: pointer;
+`
+const STYLED_INPUT = styled.input`
+  width: 300px;
+  height: 60px;
+  background-color: ${({ theme }) => theme.solPillBg};
+  border-radius: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 ${({ theme }) => theme.margin(4)};
+  margin: 0 ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(1)};
+  .value {
+    font-family: Montserrat;
+    font-size: 22px;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: ${({ theme }) => theme.text15};
+  }
+  &.active {
+    .value {
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+  .text {
+    font-family: Montserrat;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    color: ${({ theme }) => theme.text14};
+    display: flex;
+  }
+  .text-2 {
+    margin-left: ${({ theme }) => theme.margin(1.5)};
+  }
+`
+//#endregion
 
-export const ExpandedContent = ({ record }: any) => {
-  const { connected } = record
+interface ITokenStakedInfo {
+  tokenStakedPlusEarned: Number
+  tokenStaked: Number
+  tokenEarned: Number
+}
+
+interface IExpandedContent {
+  record: any
+  stakeProgam: Program | undefined
+  stakeAccountKey: PublicKey | undefined
+  stakedInfoParam: any
+}
+
+export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey, stakedInfoParam }: IExpandedContent) => {
+  const { name, image, liquidity, rewards, connected } = record
+  const { getUIAmount } = useAccounts()
+  const { publicKey } = useWallet()
+  const { getTokenInfoFromSymbol } = useTokenRegistry()
+  const tokenInfo = useMemo(() => getTokenInfoFromSymbol(name), [name, publicKey])
+  const userSOLBalance = useMemo(
+    () => (publicKey && tokenInfo ? getUIAmount(getTokenInfoFromSymbol('SOL').address) : 0),
+    [getUIAmount, publicKey]
+  )
+  const userTokenBalance = useMemo(
+    () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
+    [tokenInfo, getUIAmount, publicKey]
+  )
+  const [stakedInfo, setStakedInfo] = useState(stakedInfoParam)
+  const { network } = useConnectionConfig()
+  const wallet = useWallet()
+  const { prices } = usePriceFeed()
+  const { connection } = useConnectionConfig()
+
   const initState = [
     {
       id: 0,
@@ -206,66 +292,147 @@ export const ExpandedContent = ({ record }: any) => {
     }
   ]
   const [status, setStatus] = useState(initState)
-  const [count, setCount] = useState(0)
-  const onClickStake = (index) => {
-    const tmp = JSON.parse(JSON.stringify(status))
-    if (!tmp[index].selected) {
-      tmp[index].selected = true
-      setStatus(tmp)
+  const [tokenValueInDollars, setTokenValueInDollars] = useState(0)
+  const [earnedValueIn$, setEarnedValueIn$] = useState(0)
+  const [isStakeLoading, setIsStakeLoading] = useState(false)
+  const [isUnstakeLoading, setIsUnstakeLoading] = useState(false)
+  const [tokenStaked, setTokenStaked] = useState(0)
+  const [tokenEarned, setTokenEarned] = useState(0)
+  const stakeRef = useRef(null)
+  const unstakeRef = useRef(null)
+  const stakeProgram = stakeProgam
+
+  //const tokenStaked = stakedInfo.tokenStaked ? stakedInfo.tokenStaked : 0
+  //const tokenEarned = stakedInfo.tokenEarned && stakedInfo.tokenEarned > 0 ? stakedInfo.tokenEarned : 0
+
+  useEffect(() => {
+    setTokenStaked(stakedInfo.tokenStaked ? stakedInfo.tokenStaked : 0)
+    setTokenEarned(stakedInfo.tokenEarned && stakedInfo.tokenEarned > 0 ? stakedInfo.tokenEarned : 0)
+    fetchCurrentAmountStaked(connection, stakeAccountKey, wallet).then((result) => {
+      setStakedInfo(result)
+    })
+  }, [userTokenBalance])
+
+  useEffect(() => {
+    const price = prices[name + '/USDC']
+    setTokenValueInDollars(price?.current * tokenStaked)
+    setEarnedValueIn$(price?.current * tokenEarned)
+  }, [userTokenBalance])
+
+  const enoughSOLInWallet = (): Boolean => {
+    if (userSOLBalance < 0.000001) {
+      notify({
+        type: 'error',
+        message: 'You need minimum of 0.000001 SOL in your wallet to perform this transaction'
+      })
+      return false
+    }
+    return true
+  }
+  const onClickStake = () => {
+    if (stakeRef.current.value < 0.000001 || stakeRef.current.value > userTokenBalance) {
+      unstakeRef.current.value = 0
+      notify({
+        type: 'error',
+        message: `Please give valid input from 0.00001 to ${userTokenBalance} ${name}`
+      })
       return
     }
-    const _count = count + 1
-    setCount(_count)
-    tmp[index].isLoading = true
-    setStatus(tmp)
-    const type = _count % 2 === 0 ? 'info' : 'error'
-    setTimeout(() => {
-      const temp = JSON.parse(JSON.stringify(status))
-      temp[index].isLoading = false
-      setStatus(temp)
-      notify({
-        message: (
-          <MESSAGE>
-            <Row className="m-title" justify="space-between" align="middle">
-              <Col>{messageMockData[index][type].title}</Col>
-              <Col>
-                <img className="m-icon" src={`/img/assets/${messageMockData[index][type].icon}.svg`} alt="" />
-              </Col>
-            </Row>
-            {type === 'info' ? (
-              <>
-                <div>{messageMockData[index][type]?.text1}</div>
-                <div>{messageMockData[index][type]?.text2}</div>
-                <div>{messageMockData[index][type]?.text3}</div>
-              </>
-            ) : (
-              <p>{messageMockData[index][type]?.text1}</p>
-            )}
-          </MESSAGE>
-        ),
-        styles: {
-          maxWidth: '270px',
-          minWidth: '220px'
-        },
-        type
+    if (!enoughSOLInWallet()) return
+    try {
+      setIsStakeLoading(true)
+      const confirm = executeStake(stakeProgram, stakeAccountKey, wallet, connection, network, stakeRef.current.value)
+      confirm.then((con) => {
+        setIsStakeLoading(false)
+        if (con && con?.value && con.value.err === null) {
+          notify({
+            message: `Deposited amount ${stakeRef.current.value} ${name} Successful`
+          })
+        } else {
+          notify({
+            type: 'error',
+            message: con?.message
+          })
+          return
+        }
       })
-    }, 1000)
+    } catch (error) {
+      setIsStakeLoading(false)
+      notify({
+        type: 'error',
+        message: error
+      })
+    }
   }
+
+  const onClickUnstake = () => {
+    if (unstakeRef.current.value < 0.1 || unstakeRef.current.value > 100) {
+      unstakeRef.current.value = 0
+      notify({
+        type: 'error',
+        message: 'Please give valid input in percentage (1-100%)'
+      })
+      return
+    }
+    if (!enoughSOLInWallet()) return
+    try {
+      setIsUnstakeLoading(true)
+      const confirm = executeUnstakeAndClaim(
+        stakeProgam,
+        stakeAccountKey,
+        wallet,
+        connection,
+        network,
+        unstakeRef.current.value
+      )
+      confirm.then((con) => {
+        setIsUnstakeLoading(false)
+        if (con && con.value && con.value.err === null) {
+          notify({
+            message: `Unstake of amount ${unstakeRef.current.value}% Successful`
+          })
+        } else {
+          notify({
+            type: 'error',
+            message: con.message
+          })
+        }
+      })
+    } catch (error) {
+      setIsUnstakeLoading(false)
+      notify({
+        type: 'error',
+        message: error
+      })
+    }
+  }
+  const onClickHalf = (buttonId: string) => {
+    if (buttonId === 'stake') stakeRef.current.value = userTokenBalance / 2
+    else unstakeRef.current.value = 50
+  }
+  const onClickMax = (buttonId: string) => {
+    if (buttonId === 'stake') stakeRef.current.value = userTokenBalance
+    else unstakeRef.current.value = 100
+  }
+
   return (
     <STYLED_EXPANDED_ROW>
       <STYLED_EXPANDED_CONTENT>
         <STYLED_LEFT_CONTENT className={`${connected ? 'connected' : 'disconnected'}`}>
           <div className="left-inner">
-            <img src={`/img/assets/farm-logo.svg`} alt="" />
+            <STYLED_IMG src={`/img/crypto/${image}.svg`} alt="" />
             {connected ? (
               <STYLED_STAKED_EARNED_CONTENT>
-                {stakedEarnedMockData.map((item: any) => (
-                  <div className="info-item" key={item?.id}>
-                    <div className="title">{item?.title}</div>
-                    <div className="value">{item?.value}</div>
-                    <div className="price">{item?.price}</div>
-                  </div>
-                ))}
+                <div className="info-item">
+                  <div className="title">Staked</div>
+                  <div className="value">{`${tokenStaked} ${name}`}</div>
+                  <div className="price">{`$1`}</div>
+                </div>
+                <div className="info-item">
+                  <div className="title">Earned</div>
+                  <div className="value">{`${tokenEarned} ${name}`}</div>
+                  <div className="price">{`$1`}</div>
+                </div>
               </STYLED_STAKED_EARNED_CONTENT>
             ) : (
               <Button type="primary">
@@ -276,32 +443,57 @@ export const ExpandedContent = ({ record }: any) => {
         </STYLED_LEFT_CONTENT>
         <STYLED_RIGHT_CONTENT className={`${connected ? 'connected' : 'disconnected'}`}>
           <div className="right-inner">
-            {stakeOrClaimInfoMockData.map((item) => (
-              <div className="SOL-item">
-                <STYLED_SOL className={status[item.id].selected ? 'active' : ''}>
-                  <div className="value">{item.value}</div>
-                  <div className="text">
-                    <div className="text-1">Half</div>
-                    <div className="text-2">Max</div>
-                  </div>
-                </STYLED_SOL>
-                <STYLED_STAKE_PILL
-                  className={status[item.id].selected ? 'active' : ''}
-                  loading={status[item.id].isLoading}
-                  disabled={status[item.id].isLoading}
-                  onClick={() => onClickStake(item.id)}
-                >
-                  {item.action}
-                </STYLED_STAKE_PILL>
-              </div>
-            ))}
+            <div className="SOL-item">
+              <STYLED_SOL className={status[0].selected ? 'active' : ''}>
+                <STYLED_INPUT className="value" ref={stakeRef} type="number" />
+                <div className="text">
+                  <MAX_BUTTON onClick={() => onClickHalf('stake')} className="text-1">
+                    Half
+                  </MAX_BUTTON>
+                  <MAX_BUTTON onClick={() => onClickMax('stake')} className="text-2">
+                    Max
+                  </MAX_BUTTON>
+                </div>
+              </STYLED_SOL>
+              <STYLED_STAKE_PILL
+                className={status[0].selected ? 'active' : ''}
+                loading={isStakeLoading}
+                disabled={isStakeLoading}
+                onClick={() => onClickStake()}
+              >
+                Stake
+              </STYLED_STAKE_PILL>
+            </div>
+            <div className="SOL-item">
+              <STYLED_SOL className={status[1].selected ? 'active' : ''}>
+                <STYLED_INPUT className="value" ref={unstakeRef} type="number" min="0" max="100" />
+                <div className="text">
+                  <MAX_BUTTON onClick={() => onClickHalf('unstake')} className="text-1">
+                    Half
+                  </MAX_BUTTON>
+                  <MAX_BUTTON onClick={() => onClickMax('unstake')} className="text-2">
+                    Max
+                  </MAX_BUTTON>
+                </div>
+              </STYLED_SOL>
+              <STYLED_STAKE_PILL
+                className={status[1].selected ? 'active' : ''}
+                loading={isUnstakeLoading}
+                disabled={isUnstakeLoading}
+                onClick={() => onClickUnstake()}
+              >
+                Unstake and Claim
+              </STYLED_STAKE_PILL>
+            </div>
           </div>
         </STYLED_RIGHT_CONTENT>
       </STYLED_EXPANDED_CONTENT>
       {connected && (
         <STYLED_DESC>
-          <div className="text">SOL Wallet Balance:</div>
-          <div className="value">124.4589 SOL</div>
+          <div className="text">{name} Wallet Balance:</div>
+          <div className="value">
+            {userTokenBalance} {name}
+          </div>
         </STYLED_DESC>
       )}
     </STYLED_EXPANDED_ROW>

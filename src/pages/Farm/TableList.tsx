@@ -1,9 +1,24 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { Table } from 'antd'
 import { columns } from './Columns'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { ExpandedContent } from './ExpandedContent'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { STAKE_PREFIX, toPublicKey, fetchCurrentAmountStaked } from '../../web3'
+import { getStakingAccountKey } from '../../web3/stake'
+import { Program, Provider } from '@project-serum/anchor'
+import { useConnectionConfig } from '../../context'
+import { WalletContextState } from '@solana/wallet-adapter-react'
+import { ADDRESSES } from '../../web3/ids'
 
+import { Connection, PublicKey, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js'
+
+const CONTROLLER_KEY = new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
+
+const StakeIDL = require('../../web3/idl/stake.json')
+
+//#region styles
 const STYLED_TABLE_LIST = styled(Table)`
   ${({ theme }) => `
   max-width: 100%;
@@ -145,11 +160,62 @@ const ExpandIcon = (props) => {
     />
   )
 }
-
+//#endregion
+const getStakeProgram = (wallet: WalletContextState, connection: Connection, network: WalletAdapterNetwork): Program =>
+  new Program(
+    StakeIDL,
+    ADDRESSES[network].programs.stake.address,
+    new Provider(connection, wallet as any, { commitment: 'processed' })
+  )
 export const TableList = ({ dataSource }: any) => {
-  const PAGE_SIZE = 10
-
+  const wallet = useWallet()
+  const [accountKey, setAccountKey] = useState<PublicKey>()
   const [eKeys, setEKeys] = useState([])
+  const [tokenStakedInfo, setTokenStakedInfo] = useState({})
+  const PAGE_SIZE = 10
+  const { network, connection } = useConnectionConfig()
+  const program = useMemo(
+    () => (wallet.publicKey ? getStakeProgram(wallet, connection, network) : undefined),
+    [connection, wallet.publicKey]
+  )
+
+  const stakingAccountKey = useMemo(async () => {
+    if (wallet.publicKey === null) {
+      return undefined
+    }
+    const AccountKey: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [Buffer.from(STAKE_PREFIX), CONTROLLER_KEY.toBuffer(), wallet.publicKey.toBuffer()],
+      toPublicKey(StakeIDL.metadata.address)
+    )
+    return AccountKey[0]
+  }, [wallet.publicKey])
+
+  const stakeProgram: Program = useMemo(() => {
+    console.log('stakeProgram recomputed')
+    return wallet.publicKey
+      ? new Program(
+          StakeIDL,
+          ADDRESSES[network].programs.stake.address,
+          new Provider(connection, wallet as WalletContextState, { commitment: 'processed' })
+        )
+      : undefined
+  }, [connection, wallet.publicKey])
+
+  useEffect(() => {
+    if (wallet.publicKey) {
+      if (accountKey === undefined) {
+        console.log('getStakingAccountKey set')
+        getStakingAccountKey(wallet).then((accountKey) => setAccountKey(accountKey))
+        fetchCurrentAmountStaked(connection, accountKey, wallet).then((result) => {
+          setTokenStakedInfo(result)
+        })
+      }
+    } else {
+      setAccountKey(undefined)
+    }
+
+    return () => {}
+  }, [wallet.publicKey, connection])
 
   const onExpandIcon = (id) => {
     const temp = [...eKeys]
@@ -159,8 +225,11 @@ export const TableList = ({ dataSource }: any) => {
     setEKeys(temp)
   }
 
+  console.log('PROGRAM: ', stakeProgram)
+  console.log('ACCOUNT KEY: ', accountKey ? accountKey.toBase58() : accountKey)
   return (
     <div>
+      {console.log(eKeys)}
       <STYLED_TABLE_LIST
         rowKey="id"
         columns={columns}
@@ -168,7 +237,14 @@ export const TableList = ({ dataSource }: any) => {
         pagination={{ pageSize: PAGE_SIZE, position: ['bottomLeft'] }}
         bordered={false}
         expandedRowKeys={eKeys}
-        expandedRowRender={(r) => <ExpandedContent record={r} />}
+        expandedRowRender={(r) => (
+          <ExpandedContent
+            record={r}
+            stakeProgam={stakeProgram}
+            stakeAccountKey={accountKey}
+            stakedInfoParam={tokenStakedInfo}
+          />
+        )}
         expandIcon={(ps) => <ExpandIcon {...ps} onClick={onExpandIcon} />}
         expandIconColumnIndex={6}
       />

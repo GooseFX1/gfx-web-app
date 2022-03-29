@@ -6,7 +6,7 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
   twitter: 'https://www.twitter.com/GooseFX1'
 }
 
-export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC']
+export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'GOFX']
 
 export const SUPPORTED_TOKEN_LIST = [
   'AKRO',
