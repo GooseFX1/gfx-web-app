@@ -316,6 +316,7 @@ export const RightSectionTabs: FC<{
     e.preventDefault()
 
     const { tradeState, buyerPrice } = await derivePDAsForInstruction()
+
     try {
       const { signature, confirm } = await callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
       if (confirm.value.err === null) {
