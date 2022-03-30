@@ -132,9 +132,9 @@ const AnalyticsTabs = ({ allCollections }) => {
         <TabPane tab="Volume" key="2">
           <TabContent baseCollections={mainCollections} sort={sort} collectionFilter={'volume'} />
         </TabPane>
-        <TabPane tab="Listed NFT’S" key="3">
+        {/* <TabPane tab="Listed NFT’S" key="3">
           <TabContent baseCollections={mainCollections} collectionFilter={'listed'} />
-        </TabPane>
+        </TabPane> */}
       </Tabs>
 
       {/* TODO: fade to be used when carousel is implemented <div className="fade"></div> */}
