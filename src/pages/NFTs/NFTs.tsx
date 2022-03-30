@@ -56,10 +56,10 @@ export const NFTs: FC = () => {
         firebase_screen_class: 'load'
       })
 
-    if (network === 'devnet') {
-      setEndpoint(ENDPOINTS[0].endpoint)
-      notify({ message: `Switched to ${ENDPOINTS[0].network}` })
-    }
+    // if (network === 'devnet') {
+    //   setEndpoint(ENDPOINTS[0].endpoint)
+    //   notify({ message: `Switched to ${ENDPOINTS[0].network}` })
+    // }
   }, [location])
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export const NFTs: FC = () => {
     return () => {}
   }, [publicKey, connected])
 
-  return network !== 'devnet' ? (
+  return (
     <OverlayProvider>
       <PriceFeedProvider>
         <NFTCollectionProvider>
@@ -121,7 +121,5 @@ export const NFTs: FC = () => {
         </NFTCollectionProvider>
       </PriceFeedProvider>
     </OverlayProvider>
-  ) : (
-    <div>waiting on network</div>
   )
 }
