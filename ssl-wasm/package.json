@@ -1,0 +1,13 @@
+{
+  "name": "gfx-ssl-wasm",
+  "version": "0.1.0",
+  "files": [
+    "gfx_ssl_wasm_bg.wasm",
+    "gfx_ssl_wasm.js",
+    "gfx_ssl_wasm_bg.js",
+    "gfx_ssl_wasm.d.ts"
+  ],
+  "module": "gfx_ssl_wasm.js",
+  "types": "gfx_ssl_wasm.d.ts",
+  "sideEffects": false
+}

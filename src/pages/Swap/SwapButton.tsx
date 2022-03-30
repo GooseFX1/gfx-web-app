@@ -38,7 +38,7 @@ export const SwapButton: FC = () => {
       //   return State.PoolNotFound
     } else if (inTokenAmount === 0) {
       return State.Enter
-    } else if (inTokenAmount > parseFloat(getAmount(tokenA.address))) {
+    } else if (inTokenAmount > parseFloat(getAmount(tokenA.address)) / 10 ** tokenA.decimals) {
       return State.BalanceExceeded
     } else {
       return State.CanSwap
