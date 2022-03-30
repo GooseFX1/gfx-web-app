@@ -57,19 +57,28 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
     []
   )
 
-  const getParsedAccounts = useCallback(async (publicKey: StringPublicKey, connection: Connection): Promise<any> => {
-    try {
-      const res = await getParsedNftAccountsByOwner({
-        publicAddress: publicKey,
-        connection: connection
-      })
-      const accounts = await res
-      setParsedAccounts(accounts)
-      return accounts
-    } catch (error) {
-      console.log(error)
-    }
-  }, [])
+  const getParsedAccounts = useCallback(
+    async (publicKey: StringPublicKey, connection: Connection): Promise<boolean> => {
+      const start = new Date().getTime()
+      try {
+        const res = await getParsedNftAccountsByOwner({
+          publicAddress: publicKey,
+          connection: connection,
+          sanitize: true,
+          stringifyPubKeys: true,
+          sort: false
+        })
+        const accounts = await res
+        setParsedAccounts(accounts)
+        const elapsed = new Date().getTime() - start
+        console.log(`GET PARSED ACCOUNTS: ${elapsed}ms elapsed`)
+        return true
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    []
+  )
 
   const fetchUserActivity = useCallback(async (id: number): Promise<any> => {
     try {

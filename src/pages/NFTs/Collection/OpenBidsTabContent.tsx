@@ -1,5 +1,6 @@
 import { useState, useEffect, FC, useRef } from 'react'
 import styled, { css } from 'styled-components'
+import { Row, Col } from 'antd'
 import { Card } from './Card'
 import { useNFTCollections, useNFTProfile } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
@@ -10,13 +11,8 @@ const WRAPPER = styled.div``
 
 const OPEN_BIDS_TAB = styled.div`
   ${({ theme }) => css`
-    overflow-y: auto;
+    overflow-y: hidden;
     padding: ${theme.margin(5.5)} ${theme.margin(4)};
-
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    grid-gap: ${theme.margin(6)};
 
     &::-webkit-scrollbar {
       display: none;
@@ -49,9 +45,10 @@ export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
   const { openBidWithinCollection } = useNFTCollections()
   const { sessionUser } = useNFTProfile()
 
-  const [localOpenBid, setLocalOpenBid] = useState<Array<ISingleNFT>>()
-  const [fileredLocalOpenBid, _setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>()
-  const [shortfileredLocalOpenBid, _setShortFilteredLocalOpenBid] = useState<Array<ISingleNFT>>()
+  const [fileredLocalOpenBid, _setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>(Array.apply(null, Array(21)))
+  const [shortfileredLocalOpenBid, _setShortFilteredLocalOpenBid] = useState<Array<ISingleNFT>>(
+    Array.apply(null, Array(21))
+  )
   const [level, _setLevel] = useState<number>(0)
   const [loading, _setLoading] = useState<boolean>(false)
 
@@ -84,24 +81,21 @@ export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
 
   useEffect(() => {
     if (openBidWithinCollection) {
-      setLocalOpenBid(openBidWithinCollection.open_bid)
-    }
-    return () => {}
-  }, [openBidWithinCollection])
+      if (filter.length > 0) {
+        const filteredData = openBidWithinCollection.open_bid.filter((i) =>
+          i.nft_name.toLowerCase().includes(filter.trim().toLowerCase())
+        )
 
-  useEffect(() => {
-    if (localOpenBid) {
-      const filteredData = localOpenBid.filter(
-        (i) =>
-          i.nft_name.toLowerCase().includes(filter.trim().toLowerCase()) ||
-          `${i.non_fungible_id}`.includes(filter.trim())
-      )
+        setFilteredLocalOpenBid(filteredData)
+        setShortFilteredLocalOpenBid(filteredData.slice(0, 25))
+      } else {
+        setFilteredLocalOpenBid(openBidWithinCollection.open_bid)
+        setShortFilteredLocalOpenBid(openBidWithinCollection.open_bid.slice(0, 25))
+      }
 
-      setFilteredLocalOpenBid(filteredData)
-      setShortFilteredLocalOpenBid(filteredData.slice(0, 25))
       setLevel(0)
     }
-  }, [filter, localOpenBid])
+  }, [filter, openBidWithinCollection])
 
   useEffect(() => {
     window.addEventListener(
@@ -160,19 +154,15 @@ export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
   // TODO: lazy loader for the thousands of nfts
   return (
     <WRAPPER>
-      {fileredLocalOpenBid === undefined ? (
+      {fileredLocalOpenBid.length > 0 ? (
         <OPEN_BIDS_TAB {...rest} className="card-list">
-          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((item, index) => (
-            <div key={index}>
-              <Card singleNFT={null} listingType="bid" />
-            </div>
-          ))}
-        </OPEN_BIDS_TAB>
-      ) : fileredLocalOpenBid.length > 0 ? (
-        <OPEN_BIDS_TAB {...rest} className="card-list">
-          {shortfileredLocalOpenBid.map((item: ISingleNFT) => (
-            <Card key={item.non_fungible_id} singleNFT={item} listingType="bid" />
-          ))}
+          <Row gutter={[24, 24]}>
+            {shortfileredLocalOpenBid.map((item: ISingleNFT | null, index: number) => (
+              <Col sm={10} md={8} lg={6} xl={4} xxl={3} key={item ? item.non_fungible_id : index}>
+                <Card singleNFT={item} />
+              </Col>
+            ))}
+          </Row>
           {loading && (
             <WRAPPED_LOADER>
               <Loader />

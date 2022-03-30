@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Header } from '../Header'
 import { NFTHomeSlider } from '../Slider/NFTHomeSlider'
 import AnalyticsTabs from '../Analytics/Tab'
+import Loading from '../Analytics/Loading'
 import NFTFooter from '../NFTFooter'
 import CollectionCarousel from '../CollectionCarousel'
 import { useNFTCollections } from '../../../context'
@@ -11,12 +12,11 @@ import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
 const NFTLandingPage: FC = (): JSX.Element => {
   const { allCollections, fetchAllCollections } = useNFTCollections()
   const [filteredCollections, setFilteredCollections] = useState([])
-  const [isAllLoading, setIsAllLoading] = useState<boolean>(false)
+  const [isAllLoading, setIsAllLoading] = useState<boolean>(true)
   const [search, setSearch] = useState<string>('')
 
   useEffect(() => {
-    setIsAllLoading(true)
-    fetchAllCollections().then((res) => setIsAllLoading(false))
+    fetchAllCollections().then((res) => setTimeout(() => setIsAllLoading(false), 900))
     return () => {}
   }, [])
 
@@ -40,7 +40,10 @@ const NFTLandingPage: FC = (): JSX.Element => {
       />
       <NFTHomeSlider />
       <br />
-      <AnalyticsTabs allCollections={allCollections} />
+      <div>
+        {isAllLoading && <Loading />}
+        <AnalyticsTabs allCollections={allCollections} />
+      </div>
       <br />
       <div>
         <CollectionCarousel
