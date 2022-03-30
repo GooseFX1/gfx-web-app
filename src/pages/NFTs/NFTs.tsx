@@ -24,6 +24,7 @@ import {
   useConnectionConfig
 } from '../../context'
 import { notify } from '../../utils'
+import { NestQuestSingleListing } from './NFTDetails/NestQuestSingleListing'
 
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
@@ -105,6 +106,9 @@ export const NFTs: FC = () => {
                 </Route>
                 <Route exact path={'/NFTs/details/:nftMintAddress'}>
                   <NFTDetails />
+                </Route>
+                <Route exact path={'/NFTs/NestQuest'}>
+                  <NestQuestSingleListing />
                 </Route>
                 <Route exact path="/NFTs/create">
                   <Collectible />
