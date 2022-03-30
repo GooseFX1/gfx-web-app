@@ -283,10 +283,14 @@ export const swap = async (
         console.log(e)
       }
     }
+    const finalResult = await signAndSendRawTransaction(connection, tx, wallet)
+    let result = await connection.confirmTransaction(finalResult)
 
-    const finalResult = signAndSendRawTransaction(connection, tx, wallet)
-
-    return finalResult
+    if (!result.value.err) {
+      return finalResult
+    } else {
+      return null
+    }
   } catch {
     return null
   }
@@ -302,19 +306,21 @@ export const preSwapAmount = async (
 ): Promise<TransactionSignature | undefined> => {
   try {
     let txn = new Transaction()
+    let pseudoInput = 0.0001
+    let scale = inTokenAmount / pseudoInput
+
     if (tokenA.address === NATIVE_MINT.toBase58()) {
-      txn = await wrapSolToken(wallet, connection, inTokenAmount * LAMPORTS_PER_SOL)
+      txn = await wrapSolToken(wallet, connection, pseudoInput * LAMPORTS_PER_SOL)
     }
 
-    const tx = await swapCreatTX(tokenA, tokenB, inTokenAmount, 0, 0, wallet, connection, network, txn)
-
+    const tx = await swapCreatTX(tokenA, tokenB, pseudoInput, 0, 0, wallet, connection, network, txn)
     const sim = await simulateTransaction(connection, tx, wallet)
     const index = sim.value.logs.findIndex((i) => i.includes('[Final]'))
 
     if (sim.value.logs.length > 0 && sim.value.logs[index]) {
       const amountArr = sim.value.logs[index].split('+')
       const amountOut = amountArr[amountArr.length - 1]
-      return amountOut
+      return (Number(amountOut) * scale).toFixed(7) + ''
     } else {
       return null
     }
