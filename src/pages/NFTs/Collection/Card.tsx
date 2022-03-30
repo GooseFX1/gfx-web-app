@@ -14,8 +14,7 @@ import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 //#region styles
 const CARD = styled.div`
-  padding: ${({ theme }) => theme.margin(2.5)};
-  width: 226px;
+  width: 100%;
   cursor: pointer;
   background-color: ${({ theme }) => theme.cardBg};
   ${({ theme }) => theme.largeBorderRadius}
@@ -24,16 +23,17 @@ const CARD = styled.div`
     position: relative;
     display: flex;
     justify-content: center;
-    width: fit-content;
-    min-width: 190px;
+    width: 100%;
     margin: 0 auto;
+    padding: ${({ theme }) => theme.margin(2)};
+
     .ant-image-mask {
       display: none;
     }
     .card-image {
       object-fit: contain;
       width: 100%;
-      height: 190px;
+      max-height: 300px;
       ${({ theme }) => theme.largeBorderRadius}
     }
     .card-remaining {
@@ -46,6 +46,9 @@ const CARD = styled.div`
     }
   }
   .card-info {
+    padding: 0 ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(2)};
+  }
+  .card-details {
     position: relative;
     height: 30px;
     margin-top: ${({ theme }) => theme.margin(2)};
@@ -179,7 +182,6 @@ export const Card = (props: ICard) => {
       fetchSingleNFT(props.singleNFT.mint_address).then((res) => {
         if (res && res.status === 200) {
           res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(props.singleNFT)
-
           const nft: INFTGeneralData = res.data
           setLocalBids(nft.bids)
           setLocalAsk(nft.asks[0])
@@ -191,7 +193,7 @@ export const Card = (props: ICard) => {
     return () => {
       setIsLoadingBeforeRelocate(false)
     }
-  }, [])
+  }, [props.singleNFT])
 
   useEffect(() => {
     if (props.singleNFT && sessionUser) {
@@ -245,7 +247,10 @@ export const Card = (props: ICard) => {
 
   return (
     <CARD {...props} className="card">
-      <div className="card-image-wrapper" onClick={(e) => goToDetails(localSingleNFT.mint_address)}>
+      <div
+        className="card-image-wrapper"
+        onClick={(e) => (localSingleNFT !== undefined ? goToDetails(localSingleNFT.mint_address) : null)}
+      >
         {isLoadingBeforeRelocate && (
           <COVER $mode={mode === 'dark'}>
             <Loader />
@@ -258,70 +263,73 @@ export const Card = (props: ICard) => {
           alt="nft"
         />
       </div>
-      <div className="card-info">
-        {localSingleNFT ? (
-          <div className="card-name">{localSingleNFT.nft_name}</div>
-        ) : (
-          <SkeletonCommon width="130px" height="25px" />
-        )}
-
-        {localSingleNFT && localSingleNFT.non_fungible_id !== null && (
-          <span className="card-favorite-heart-container">
-            {sessionUser && isFavorited ? (
-              <img
-                className="card-favorite-heart"
-                src={`/img/assets/heart-red.svg`}
-                alt="heart-selected"
-                onClick={handleToggleLike}
-              />
-            ) : (
-              <img
-                className={`card-favorite-heart ${!sessionUser ? 'card-favorite-heart--disabled' : ''}`}
-                src={`/img/assets/heart-empty.svg`}
-                alt="heart-empty"
-                onClick={handleToggleLike}
-              />
-            )}
-            <span
-              className={`card-favorite-number ${isFavorited ? 'card-favorite-number-highlight' : ''} ${
-                !sessionUser ? 'card-favorite-heart--disabled' : ''
-              }`}
-            >
-              {localTotalLikes}
-            </span>
-          </span>
-        )}
-      </div>
-      <Row justify="space-between" align="middle">
-        {localSingleNFT ? (
-          <div className="card-price">
-            {displayPrice === '0' ? (
-              <LIGHT_TEXT>No Bids</LIGHT_TEXT>
-            ) : (
-              `${moneyFormatter(parseFloat(displayPrice) / LAMPORTS_PER_SOL)} SOL`
-            )}
-          </div>
-        ) : (
-          <SkeletonCommon width="64px" height="24px" />
-        )}
-
-        {localSingleNFT && sessionUser ? (
-          isOwner ? (
-            <BID_BUTTON
-              cardStatus={localAsk ? 'listed' : 'unlisted'}
-              onClick={(e) => goToDetails(localSingleNFT.mint_address)}
-            >
-              {getButtonText(isOwner, localAsk)}
-            </BID_BUTTON>
+      <div className={'card-info'}>
+        <div className="card-details">
+          {localSingleNFT ? (
+            <div className="card-name">{localSingleNFT.nft_name}</div>
           ) : (
-            <BID_BUTTON cardStatus={'bid'} onClick={(e) => goToDetails(localSingleNFT.mint_address)}>
-              {getButtonText(isOwner, localAsk)}
-            </BID_BUTTON>
-          )
-        ) : (
-          <SkeletonCommon width="76px" height="32px" borderRadius="50px" />
-        )}
-      </Row>
+            <SkeletonCommon width="130px" height="25px" />
+          )}
+
+          {localSingleNFT && localSingleNFT.non_fungible_id !== null && (
+            <span className="card-favorite-heart-container">
+              {sessionUser && isFavorited ? (
+                <img
+                  className="card-favorite-heart"
+                  src={`/img/assets/heart-red.svg`}
+                  alt="heart-selected"
+                  onClick={handleToggleLike}
+                />
+              ) : (
+                <img
+                  className={`card-favorite-heart ${!sessionUser ? 'card-favorite-heart--disabled' : ''}`}
+                  src={`/img/assets/heart-empty.svg`}
+                  alt="heart-empty"
+                  onClick={handleToggleLike}
+                />
+              )}
+              <span
+                className={`card-favorite-number ${isFavorited ? 'card-favorite-number-highlight' : ''} ${
+                  !sessionUser ? 'card-favorite-heart--disabled' : ''
+                }`}
+              >
+                {localTotalLikes}
+              </span>
+            </span>
+          )}
+        </div>
+        <Row justify="space-between" align="middle">
+          {localSingleNFT ? (
+            <div className="card-price">
+              {displayPrice === '0' ? (
+                <LIGHT_TEXT>No Bids</LIGHT_TEXT>
+              ) : (
+                `${moneyFormatter(parseFloat(displayPrice) / LAMPORTS_PER_SOL)} SOL`
+              )}
+            </div>
+          ) : (
+            <SkeletonCommon width="64px" height="24px" />
+          )}
+
+          {sessionUser &&
+            (localSingleNFT ? (
+              isOwner ? (
+                <BID_BUTTON
+                  cardStatus={localAsk ? 'listed' : 'unlisted'}
+                  onClick={(e) => goToDetails(localSingleNFT.mint_address)}
+                >
+                  {getButtonText(isOwner, localAsk)}
+                </BID_BUTTON>
+              ) : (
+                <BID_BUTTON cardStatus={'bid'} onClick={(e) => goToDetails(localSingleNFT.mint_address)}>
+                  {getButtonText(isOwner, localAsk)}
+                </BID_BUTTON>
+              )
+            ) : (
+              <SkeletonCommon width="76px" height="32px" borderRadius="50px" />
+            ))}
+        </Row>
+      </div>
     </CARD>
   )
 }

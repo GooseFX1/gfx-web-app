@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 import axios from 'axios'
+import { Row, Col } from 'antd'
 import { notify } from '../../../utils'
 import { ParsedAccount } from '../../../web3'
 import { Card } from '../Collection/Card'
@@ -46,7 +47,12 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     } else if (!props.parsedAccounts || props.parsedAccounts.length === 0) {
       setCollectedItems([])
     } else {
-      fetchNFTData(props.parsedAccounts).then((singleNFTs) => setCollectedItems(singleNFTs))
+      const start = new Date().getTime()
+      fetchNFTData(props.parsedAccounts).then((singleNFTs) => {
+        const elapsed = new Date().getTime() - start
+        console.log(`FETCH COLLECTION METADATA: ${elapsed}ms elapsed`)
+        setCollectedItems(singleNFTs)
+      })
     }
 
     return () => setCollectedItems(undefined)
@@ -54,10 +60,14 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
 
   useEffect(() => {
     if (collectedItems) {
-      const filteredData = collectedItems.filter(({ nft_name }) =>
-        nft_name.toLowerCase().includes(search.trim().toLowerCase())
-      )
-      setFilteredCollectedItems(filteredData)
+      if (search.length > 0) {
+        const filteredData = collectedItems.filter(({ nft_name }) =>
+          nft_name.toLowerCase().includes(search.trim().toLowerCase())
+        )
+        setFilteredCollectedItems(filteredData)
+      } else {
+        setFilteredCollectedItems(collectedItems)
+      }
     }
 
     return () => setFilteredCollectedItems(undefined)
@@ -100,9 +110,13 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
         </div>
       ) : filteredCollectedItems && filteredCollectedItems.length > 0 ? (
         <div className="cards-list">
-          {filteredCollectedItems.map((nft: ISingleNFT) => {
-            return <Card key={nft.mint_address} singleNFT={nft} />
-          })}
+          <Row gutter={[24, 24]}>
+            {filteredCollectedItems.map((nft: ISingleNFT) => (
+              <Col sm={10} md={7} lg={6} xl={4} xxl={4} key={nft.mint_address}>
+                <Card singleNFT={nft} />
+              </Col>
+            ))}
+          </Row>
         </div>
       ) : (
         <NoContent type={props.type} />
