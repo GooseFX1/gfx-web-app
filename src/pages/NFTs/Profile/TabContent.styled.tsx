@@ -48,10 +48,9 @@ export const StyledTabContent = styled.div`
     }
 
     .cards-list {
-      grid-gap: ${theme.margin(3)};
+      
       position:relative;
-      display: flex;
-      flex-wrap: wrap;
+      
       padding: ${theme.margin(12)} ${theme.margin(5)}  ${theme.margin(4)};
       overflow-x: hidden;
       overflow-y: scroll;
