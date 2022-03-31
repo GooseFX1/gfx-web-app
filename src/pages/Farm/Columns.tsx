@@ -102,21 +102,14 @@ export const columns = [
     title: Title('Earned', '', true),
     dataIndex: 'earned',
     key: 'earned',
-    width: '10%',
+    width: '15%',
     render: (text) => <STYLED_EARNED>{text}</STYLED_EARNED>
   },
   {
     title: Title('APR', 'Yearly deposit earned on your deposit.', true),
     dataIndex: 'apr',
     key: 'apr',
-    width: '12%',
     render: (text) => <div className="apr normal-text">{text}</div>
-  },
-  {
-    title: Title('Rewards', '', true),
-    dataIndex: 'rewards',
-    key: 'rewards',
-    render: (text) => <div className="rewards normal-text">{text}</div>
   },
   {
     title: Title('Liquidity', "Total value of funds in this farm's liquidity pool.", true),
