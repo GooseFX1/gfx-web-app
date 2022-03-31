@@ -269,10 +269,10 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
   const { name, image, liquidity, rewards, connected } = record
   const { getUIAmount } = useAccounts()
   const { publicKey } = useWallet()
-  const { getTokenInfoFromSymbol } = useTokenRegistry()
-  const tokenInfo = useMemo(() => getTokenInfoFromSymbol(name), [name, publicKey])
+  const { getTokenInfoForFarming } = useTokenRegistry()
+  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
   const userSOLBalance = useMemo(
-    () => (publicKey && tokenInfo ? getUIAmount(getTokenInfoFromSymbol('SOL').address) : 0),
+    () => (publicKey && tokenInfo ? getUIAmount(getTokenInfoForFarming('SOL').address) : 0),
     [getUIAmount, publicKey]
   )
   const userTokenBalance = useMemo(
@@ -336,7 +336,6 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
   }, [publicKey])
 
   const enoughSOLInWallet = (): Boolean => {
-    console.log(userSOLBalance)
     if (userSOLBalance < 0.000001) {
       notify({
         type: 'error',
@@ -366,7 +365,6 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
             message: `Deposited amount ${stakeRef.current.value} ${name} Successful`
           })
           updateStakedValue()
-          console.log(typeof tokenStaked, typeof stakeRef.current.value)
         } else {
           notify({
             type: 'error',
@@ -403,7 +401,6 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
       const tokenInPercent = tokenStakedPlusEarned
         ? (parseFloat(unstakeRef.current.value) / tokenStakedPlusEarned) * 100
         : 0
-      console.log(tokenInPercent)
       const confirm = executeUnstakeAndClaim(stakeProgram, stakeAccountKey, wallet, connection, network, tokenInPercent)
       confirm.then((con) => {
         setIsUnstakeLoading(false)
