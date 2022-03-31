@@ -240,7 +240,7 @@ export const TableList = ({ dataSource }: any) => {
         expandedRowRender={(r) => (
           <ExpandedContent
             record={r}
-            stakeProgam={stakeProgram}
+            stakeProgram={stakeProgram}
             stakeAccountKey={accountKey}
             stakedInfoParam={tokenStakedInfo}
           />

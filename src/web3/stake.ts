@@ -120,7 +120,7 @@ export const executeUnstakeAndClaim = async (
   wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork,
-  percent: BN
+  percent: number
 ) => {
   //TODO : mint Address need to be passed into the function when more tokens are supported
   const tokenVault: PublicKey = await findAssociatedTokenAddress(CONTROLLER_KEY, toPublicKey(GOFX_MINT))
