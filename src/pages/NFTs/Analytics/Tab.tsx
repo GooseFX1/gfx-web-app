@@ -4,8 +4,6 @@ import { Tabs } from 'antd'
 import { Categories } from '../../../components'
 import { mockAnalyticsDrodown } from './mockData'
 import TabContent from './TabContent'
-// import { allCollections } from '../Home/mockData'
-
 const { TabPane } = Tabs
 
 //#region styles
@@ -121,7 +119,7 @@ const AnalyticsTabs = ({ allCollections }) => {
     setSort(first[0].toLowerCase())
   }
 
-  return mainCollections ? (
+  return (
     <ANALYTICS_TABS>
       <ANALYTICS_DROPDOWN>
         <span className="title">Weekly Analytics</span>
@@ -134,15 +132,13 @@ const AnalyticsTabs = ({ allCollections }) => {
         <TabPane tab="Volume" key="2">
           <TabContent baseCollections={mainCollections} sort={sort} collectionFilter={'volume'} />
         </TabPane>
-        <TabPane tab="Listed NFT’S" key="3">
+        {/* <TabPane tab="Listed NFT’S" key="3">
           <TabContent baseCollections={mainCollections} collectionFilter={'listed'} />
-        </TabPane>
+        </TabPane> */}
       </Tabs>
 
       {/* TODO: fade to be used when carousel is implemented <div className="fade"></div> */}
     </ANALYTICS_TABS>
-  ) : (
-    <div>loading</div>
   )
 }
 

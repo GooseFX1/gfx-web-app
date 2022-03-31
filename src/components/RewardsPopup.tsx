@@ -50,9 +50,11 @@ const REWARD_BTN_TITLE = styled.span`
 
 export const RewardsButton: FC = () => {
   const { rewardToggle } = useRewardToggle()
+
   const handleModalClick = () => {
     rewardToggle(true)
   }
+
   return (
     <REWARDS_BTN onClick={handleModalClick}>
       <REWARD_BTN_TITLE>Rewards</REWARD_BTN_TITLE>

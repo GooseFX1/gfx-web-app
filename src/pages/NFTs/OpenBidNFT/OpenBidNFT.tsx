@@ -35,8 +35,8 @@ export const OpenBidNFT: FC = () => {
   const { connection } = useConnectionConfig()
 
   useEffect(() => {
-    if (general === undefined || `${general.non_fungible_id}` !== params.nftId) {
-      fetchGeneral(params.nftId, connection).then((res) => {
+    if (general === undefined || `${general.non_fungible_id}` !== params.nftMintAddress) {
+      fetchGeneral(params.nftMintAddress, connection).then((res) => {
         if ((res.response && res.response.status !== 200) || res.isAxiosError) {
           setErr(true)
         }

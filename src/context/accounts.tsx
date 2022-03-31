@@ -56,7 +56,7 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           try {
             const accountArr = (await connection.getParsedTokenAccountsByOwner(owner, { mint })).value
             const account = accountArr?.[0]?.account
-            setBalances((prevState) => ({ ...prevState, [mint.toString()]: account.data.parsed.info.tokenAmount }))
+            setBalances((prevState) => ({ ...prevState, [mint.toString()]: account?.data?.parsed?.info?.tokenAmount }))
           } catch (err) {
             console.log(err)
           }

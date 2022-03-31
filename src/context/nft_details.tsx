@@ -49,9 +49,9 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     return res
   }, [bids])
 
-  const fetchGeneral = useCallback(async (id: string, conncetion: Connection): Promise<any> => {
+  const fetchGeneral = useCallback(async (address: string, conncetion: Connection): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?nft_id=${id}`)
+      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?mint_address=${address}`)
       const nft: INFTGeneralData = await res.data
 
       const parsedAccounts = await getParsedAccountByMint({

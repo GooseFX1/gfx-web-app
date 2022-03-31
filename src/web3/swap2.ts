@@ -1,6 +1,6 @@
 import { BN, Program, Provider } from '@project-serum/anchor'
 import { Buffer } from 'buffer'
-import { publicKeyLayout } from './layout'
+import { publicKeyLayout, u64, Oracle } from './layout'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
@@ -25,12 +25,14 @@ import { ADDRESSES, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, SYSTEM } from './id
 import {
   createAssociatedTokenAccountIx,
   findAssociatedTokenAddress,
-  signAndSendRawTransaction,
-  simulateTransaction
+  signAndSendRawTransaction
+  //simulateTransaction
 } from './utils'
 import { ISwapToken } from '../context'
 const SwapIDL = require('./idl/swap2.json')
-const { blob, struct, u8, u32 } = require('buffer-layout')
+const { blob, seq, struct, u8, u32 } = require('buffer-layout')
+
+const wasm = import('gfx_ssl_wasm')
 
 const getSwapProgram = (wallet: WalletContextState, connection: Connection, network: WalletAdapterNetwork): Program =>
   new Program(
@@ -38,6 +40,18 @@ const getSwapProgram = (wallet: WalletContextState, connection: Connection, netw
     ADDRESSES[network].programs.swap.address,
     new Provider(connection, wallet as any, { commitment: 'processed' })
   )
+
+const PAIR_LAYOUT = struct([
+  blob(8, 'sighash'),
+  publicKeyLayout('controller'),
+  publicKeyLayout('mint1'),
+  publicKeyLayout('mint2'),
+  blob(8), // padding for alignment
+  seq(Oracle, 5, 'oracles'),
+  u64('nOracle'),
+  blob(58), // Other fields
+  publicKeyLayout('fee_collector')
+])
 
 const LAYOUT = struct([
   blob(8, 'sighash'),
@@ -101,32 +115,13 @@ const wrapSolToken = async (wallet: any, connection: Connection, amount: number)
       createSyncNativeInstruction(associatedTokenAccount)
     )
 
-    return signAndSendRawTransaction(connection, tx, wallet)
+    return tx //signAndSendRawTransaction(connection, tx, wallet)
   } catch {
     return null
   }
 }
 
-export const swapCreatTX = async (
-  tokenA: ISwapToken,
-  tokenB: ISwapToken,
-  inTokenAmount: number,
-  outTokenAmount: number,
-  slippage: number,
-  wallet: any,
-  connection: Connection,
-  network: WalletAdapterNetwork,
-  txn?: Transaction
-): Promise<Transaction> => {
-  if (!wallet.publicKey || !wallet.signTransaction) return
-
-  const program = getSwapProgram(wallet, connection, network)
-  const inst: any = program.instruction
-  const tx = txn || new Transaction()
-
-  const amountIn = new BN(inTokenAmount * 10 ** tokenA.decimals)
-  const minimumAmountOut = new BN(outTokenAmount * 10 ** tokenB.decimals * (1 - slippage))
-
+export const getPairDetails = async (tokenA: ISwapToken, tokenB: ISwapToken, network: WalletAdapterNetwork) => {
   const addresses = [new PublicKey(tokenA.address).toBuffer(), new PublicKey(tokenB.address).toBuffer()].sort(
     Buffer.compare
   )
@@ -142,6 +137,30 @@ export const swapCreatTX = async (
   )
 
   const pair = pairArr[0]
+
+  return pair
+}
+
+export const swapCreatTX = async (
+  tokenA: ISwapToken,
+  tokenB: ISwapToken,
+  inTokenAmount: number,
+  outTokenAmount: number,
+  slippage: number,
+  wallet: any,
+  connection: Connection,
+  network: WalletAdapterNetwork,
+  txn?: Transaction
+): Promise<Transaction> => {
+  if (!wallet.publicKey || !wallet.signTransaction) return txn
+
+  const program = getSwapProgram(wallet, connection, network)
+  const inst: any = program.instruction
+  const tx = txn || new Transaction()
+
+  const amountIn = new BN(inTokenAmount * 10 ** tokenA.decimals)
+  const minimumAmountOut = new BN(outTokenAmount * 10 ** tokenB.decimals * (1 - slippage))
+  const pair = await getPairDetails(tokenA, tokenB, network)
 
   const [inTokenAtaUser, outTokenAtaUser] = await Promise.all([
     await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(tokenA.address)),
@@ -254,47 +273,44 @@ export const swap = async (
   network: WalletAdapterNetwork
 ): Promise<TransactionSignature | undefined> => {
   try {
-    // TEST; TODO: remove on testing phase done using GOFX as trigger for wrapping and unwrapping
-
-    // if token is gSol
-    if (tokenA.address === '2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6') {
-      return await wrapSolToken(wallet, connection, inTokenAmount * LAMPORTS_PER_SOL)
+    let txn = new Transaction()
+    if (tokenA.address === NATIVE_MINT.toBase58()) {
+      txn = await wrapSolToken(wallet, connection, inTokenAmount * LAMPORTS_PER_SOL)
     }
 
-    // unwrapping sol if tokenB is sol
-    if (tokenB.address === '2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6') {
-      try {
-        const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
-        if (!associatedTokenAccount) return null
-        const tr = createCloseAccountInstruction(associatedTokenAccount, wallet.publicKey, wallet.publicKey)
-        const txn = new Transaction()
-        txn.add(tr)
-        return await signAndSendRawTransaction(connection, txn, wallet)
-      } catch {
-        return null
-      }
-    }
-
-    //TODO: remove the above soon
-
-    const tx = await swapCreatTX(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
-    const finalResult = signAndSendRawTransaction(connection, tx, wallet)
+    const tx = await swapCreatTX(
+      tokenA,
+      tokenB,
+      inTokenAmount,
+      outTokenAmount,
+      slippage,
+      wallet,
+      connection,
+      network,
+      txn
+    )
 
     // unwrapping sol if tokenB is sol
-    if (finalResult && tokenB.address === NATIVE_MINT.toBase58()) {
+    if (tokenB.address === NATIVE_MINT.toBase58()) {
       try {
         const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
-        if (!associatedTokenAccount) return null
-        const tr = createCloseAccountInstruction(associatedTokenAccount, wallet.publicKey, wallet.publicKey)
-        const txn = new Transaction()
-        txn.add(tr)
-        await signAndSendRawTransaction(connection, txn, wallet)
+        if (associatedTokenAccount) {
+          const tr = createCloseAccountInstruction(associatedTokenAccount, wallet.publicKey, wallet.publicKey)
+          tx.add(tr)
+        }
       } catch (e) {
         console.log(e)
       }
     }
 
-    return finalResult
+    const finalResult = await signAndSendRawTransaction(connection, tx, wallet)
+    let result = await connection.confirmTransaction(finalResult)
+
+    if (!result.value.err) {
+      return finalResult
+    } else {
+      return null
+    }
   } catch {
     return null
   }
@@ -308,21 +324,57 @@ export const preSwapAmount = async (
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<TransactionSignature | undefined> => {
-  let txn = new Transaction()
-  if (tokenA.address === NATIVE_MINT.toBase58()) {
-    txn = await wrapSolToken(wallet, connection, inTokenAmount * LAMPORTS_PER_SOL, true)
-  }
+  try {
+    if (!inTokenAmount || inTokenAmount === 0) return '0'
 
-  const tx = await swapCreatTX(tokenA, tokenB, inTokenAmount, 0, 0, wallet, connection, network, txn)
+    const swapWASM = (await wasm).swap
+    const OracleRegistry = (await wasm).OracleRegistry
+    const pair = await getPairDetails(tokenA, tokenB, network)
+    const pairData = await connection.getAccountInfo(pair)
+    const sslIn = await PublicKey.findProgramAddress(
+      [
+        new Buffer('GFX-SSL', 'utf-8'),
+        new PublicKey(ADDRESSES[network].programs.swap.controller).toBuffer(),
+        new PublicKey(tokenA.address).toBuffer()
+      ],
+      ADDRESSES[network].programs.swap.address
+    )
+    const sslOut = await PublicKey.findProgramAddress(
+      [
+        new Buffer('GFX-SSL', 'utf-8'),
+        new PublicKey(ADDRESSES[network].programs.swap.controller).toBuffer(),
+        new PublicKey(tokenB.address).toBuffer()
+      ],
+      ADDRESSES[network].programs.swap.address
+    )
+    const tokenASSLData = await connection.getAccountInfo(new PublicKey(sslIn[0]))
+    const tokenBSSLData = await connection.getAccountInfo(new PublicKey(sslOut[0]))
 
-  const sim = await simulateTransaction(connection, tx, wallet)
-  const index = sim.value.logs.findIndex((i) => i.includes('[Final]'))
+    const decoded = PAIR_LAYOUT.decode(pairData.data)
+    const { oracles, nOracle } = decoded
+    //const oracles = [oracle1, oracle2, oracle3, oracle4]
+    const registry = new OracleRegistry()
+    for (const oracle of oracles.slice(0, nOracle)) {
+      for (const elem of oracle.elements.slice(0, oracle.n)) {
+        registry.add_oracle(elem.address.toBuffer(), (await connection.getAccountInfo(elem.address)).data)
+      }
+    }
+    const pseudoAmount = 10000000
+    const scale = pseudoAmount / inTokenAmount
+    const out = swapWASM(
+      tokenASSLData.data,
+      tokenBSSLData.data,
+      pairData.data,
+      registry,
+      BigInt(pseudoAmount),
+      BigInt(0)
+    )
+    const differenceInDecimals = tokenA.decimals - tokenB.decimals
+    const trueValue = Number(out.toString()) / scale
 
-  if (sim.value.logs.length > 0 && sim.value.logs[index]) {
-    const amountArr = sim.value.logs[index].split('+')
-    const amountOut = amountArr[amountArr.length - 1]
-    return amountOut
-  } else {
-    return undefined
+    return +(trueValue * 10 ** differenceInDecimals).toFixed(7) + ''
+  } catch (e) {
+    console.log(e)
+    return null
   }
 }

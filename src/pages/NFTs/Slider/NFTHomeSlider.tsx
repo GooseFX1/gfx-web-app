@@ -5,6 +5,7 @@ import 'slick-carousel/slick/slick-theme.css'
 import styled from 'styled-components'
 import { MainButton } from '../../../components/MainButton'
 
+//#region styles
 const CAROUSEL_WRAPPER = styled.div`
   position: relative;
   padding-left: ${({ theme }) => theme.margin(4)};
@@ -13,7 +14,7 @@ const CAROUSEL_WRAPPER = styled.div`
     position: absolute;
     top: 0;
     right: 0;
-    height: 100%;
+    height: 99%;
     width: 180px;
     background: ${({ theme }) => theme.fade};
   }
@@ -38,28 +39,35 @@ const CAROUSEL_WRAPPER = styled.div`
   }
 
   .slick-slide {
+    margin-right: ${({ theme }) => theme.margin(2)};
     min-width: 630px;
   }
 `
-const SLIDER_ITEM = styled.div`
-  margin-right: ${({ theme }) => theme.margin(4)};
+
+const SLIDER_ITEM = styled.div<{ $url: string }>`
   position: relative;
-  width: 40%;
+  height: 37vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: ${({ $url }) => `url(${$url})`}, center;
+  background-size: auto 100%;
+  border-radius: 20px;
 
   .home-slider-image {
     border-radius: 10px;
-    height: auto;
-    width: 41vw;
-    margin: 0 auto;
+    height: 100%;
+    width: auto;
   }
 
   .home-slider-content {
-    width: 58%;
+    width: 100%;
     text-align: center;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+
     .home-slider-title {
       font-size: 40px;
       font-weight: 600;
@@ -92,6 +100,7 @@ const ORANGE_BTN = styled(MainButton)`
 const TERTIERY_BTN = styled(MainButton)`
   background: ${({ theme }) => theme.primary3} !important;
 `
+//#endregion
 
 const settings = {
   infinite: false,
@@ -107,14 +116,6 @@ const settings = {
 }
 
 export const NFTHomeSlider = () => {
-  const [isSlideData, setIsSlideData] = useState(false)
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsSlideData(true)
-    }, 1000)
-  }, [])
-
   const handleCreatorApply = (e: any) => {
     window.open('https://docs.google.com/forms/d/15yypvXd49oTMv0AbtfZ8CU_y2Z7WGJI0KmilA8oR6OA/edit')
   }
@@ -122,8 +123,7 @@ export const NFTHomeSlider = () => {
   return (
     <CAROUSEL_WRAPPER>
       <Slider {...settings}>
-        <SLIDER_ITEM>
-          <img className="home-slider-image" src={`${process.env.PUBLIC_URL}/img/assets/becoma-a-creator.png`} alt="" />
+        <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/becoma-a-creator.png`}>
           <div className="home-slider-content">
             <h1 className="home-slider-title">Become </h1>
             <h1 className="home-slider-title">a verified creator</h1>
@@ -138,8 +138,7 @@ export const NFTHomeSlider = () => {
             </TERTIERY_BTN>
           </div>
         </SLIDER_ITEM>
-        <SLIDER_ITEM>
-          <img className="home-slider-image" src={`${process.env.PUBLIC_URL}/img/assets/NestQuest.png`} alt="" />
+        <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/NestQuest.png`}>
           <div className="home-slider-content">
             <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>
               NestQuest
@@ -152,13 +151,7 @@ export const NFTHomeSlider = () => {
             </ORANGE_BTN>
           </div>
         </SLIDER_ITEM>
-        <SLIDER_ITEM>
-          <img
-            className="home-slider-image"
-            src={`${process.env.PUBLIC_URL}/img/assets/upcoming_features.webp`}
-            alt=""
-          />
-        </SLIDER_ITEM>
+        <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/upcoming_features.webp`}></SLIDER_ITEM>
       </Slider>
       <div className="fade"></div>
     </CAROUSEL_WRAPPER>

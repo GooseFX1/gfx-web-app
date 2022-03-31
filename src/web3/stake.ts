@@ -1,6 +1,6 @@
 import BN from 'bn.js'
-import { Idl, Program, Provider } from '@project-serum/anchor'
-import { accountFlagsLayout, publicKeyLayout, u128, u64 } from './layout'
+import { Idl, Program } from '@project-serum/anchor'
+import { u64 } from './layout'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
@@ -9,15 +9,14 @@ import {
   PublicKey,
   Transaction,
   TransactionInstruction,
-  TransactionSignature,
   SYSVAR_RENT_PUBKEY,
   LAMPORTS_PER_SOL
 } from '@solana/web3.js'
-import { ADDRESSES, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, SYSTEM } from './ids'
+import { SYSTEM } from './ids'
 import { findAssociatedTokenAddress } from './utils'
 import { STAKE_PREFIX, toPublicKey } from '../web3'
 const StakeIDL = require('./idl/stake.json')
-const { blob, struct, u8, u32 } = require('buffer-layout')
+const { blob, struct } = require('buffer-layout')
 
 const CONTROLLER_KEY = new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
 const GOFX_MINT = 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'
@@ -31,13 +30,6 @@ const CONTROLLER_LAYOUT = struct([
   u64('staking_balance'),
   u64('last_distribution_time')
 ])
-
-const getStakeProgram = (wallet: WalletContextState, connection: Connection, network: WalletAdapterNetwork): Program =>
-  new Program(
-    StakeIDL,
-    ADDRESSES[network].programs.stake.address,
-    new Provider(connection, wallet as any, { commitment: 'processed' })
-  )
 
 export const getStakingAccountKey = async (wallet: WalletContextState): Promise<undefined | PublicKey> => {
   try {

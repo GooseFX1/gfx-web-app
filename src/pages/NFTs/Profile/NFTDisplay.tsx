@@ -1,26 +1,28 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 import axios from 'axios'
-import { INFTMetadata } from '../../../types/nft_details.d'
+import { Row, Col } from 'antd'
 import { notify } from '../../../utils'
 import { ParsedAccount } from '../../../web3'
-import { Card } from './Card'
+import { Card } from '../Collection/Card'
 import NoContent from './NoContent'
 import { SearchBar, Loader } from '../../../components'
+import { useNFTProfile } from '../../../context'
 import { StyledTabContent } from './TabContent.styled'
-import { useLocation } from 'react-router-dom'
+import { ISingleNFT } from '../../../types/nft_details.d'
 import { ILocationState } from '../../../types/app_params.d'
 
 interface INFTDisplay {
   type: 'collected' | 'created' | 'favorited'
-  data: ParsedAccount[]
+  parsedAccounts?: ParsedAccount[]
+  singleNFT?: ISingleNFT[]
 }
-
-type AllNFTdata = { topLevelData: ParsedAccount; metaData: INFTMetadata }
 
 const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const location = useLocation<ILocationState>()
-  const [collectedItems, setCollectedItems] = useState<AllNFTdata[]>()
-  const [filteredCollectedItems, setFilteredCollectedItems] = useState<AllNFTdata[]>()
+  const { sessionUser } = useNFTProfile()
+  const [collectedItems, setCollectedItems] = useState<ISingleNFT[]>()
+  const [filteredCollectedItems, setFilteredCollectedItems] = useState<ISingleNFT[]>()
   const [search, setSearch] = useState('')
 
   const newlyMintedNFT = useMemo(() => {
@@ -40,40 +42,53 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   }, [location])
 
   useEffect(() => {
-    if (props.data && props.data.length > 0) {
-      fetchNFTMetadata(props.data).then((nfts) => setCollectedItems(nfts))
-    } else {
+    if (props.singleNFT) {
+      setCollectedItems(props.singleNFT)
+    } else if (!props.parsedAccounts || props.parsedAccounts.length === 0) {
       setCollectedItems([])
+    } else {
+      const start = new Date().getTime()
+      fetchNFTData(props.parsedAccounts).then((singleNFTs) => {
+        const elapsed = new Date().getTime() - start
+        console.log(`FETCH COLLECTION METADATA: ${elapsed}ms elapsed`)
+        setCollectedItems(singleNFTs)
+      })
     }
-    return () => {
-      setCollectedItems(undefined)
-    }
-  }, [props.data])
+
+    return () => setCollectedItems(undefined)
+  }, [props.singleNFT, props.parsedAccounts])
 
   useEffect(() => {
     if (collectedItems) {
-      const filteredData = collectedItems.filter(
-        ({ metaData }) =>
-          metaData.name.toLowerCase().includes(search.trim().toLowerCase()) ||
-          metaData.symbol.toLowerCase().includes(search.trim().toLowerCase())
-      )
-      setFilteredCollectedItems(filteredData)
+      if (search.length > 0) {
+        const filteredData = collectedItems.filter(({ nft_name }) =>
+          nft_name.toLowerCase().includes(search.trim().toLowerCase())
+        )
+        setFilteredCollectedItems(filteredData)
+      } else {
+        setFilteredCollectedItems(collectedItems)
+      }
     }
 
-    return () => {
-      setFilteredCollectedItems(undefined)
-    }
+    return () => setFilteredCollectedItems(undefined)
   }, [search, collectedItems])
 
-  const fetchNFTMetadata = async (nftDetails: ParsedAccount[]): Promise<AllNFTdata[]> => {
-    var data = Object.keys(nftDetails).map((key) => nftDetails[key])
+  const fetchNFTData = async (parsedAccounts: ParsedAccount[]) => {
     let nfts = []
-    for (let i = 0; i < data.length; i++) {
+    for (let i = 0; i < parsedAccounts.length; i++) {
       try {
-        let val = await axios.get(data[i].data.uri)
+        const val = await axios.get(parsedAccounts[i].data.uri)
         nfts.push({
-          topLevelData: data[i],
-          metaData: val.data
+          non_fungible_id: null,
+          nft_name: val.data.name,
+          nft_description: val.data.description,
+          mint_address: parsedAccounts[i].mint,
+          metadata_url: parsedAccounts[i].data.uri,
+          image_url: val.data.image,
+          animation_url: '',
+          collection_id: null,
+          token_account: null,
+          owner: sessionUser.pubkey
         })
       } catch (error) {
         console.error(error)
@@ -85,11 +100,9 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   return (
     <StyledTabContent>
       <div className="actions-group">
-        <div className="search-group">
-          <SearchBar className={'profile-search-bar'} filter={search} setFilter={setSearch} />
-        </div>
+        <SearchBar className={'profile-search-bar'} filter={search} setFilter={setSearch} />
       </div>
-      {!filteredCollectedItems ? (
+      {filteredCollectedItems === undefined ? (
         <div className="profile-content-loading">
           <div>
             <Loader />
@@ -97,16 +110,13 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
         </div>
       ) : filteredCollectedItems && filteredCollectedItems.length > 0 ? (
         <div className="cards-list">
-          {filteredCollectedItems.map((allData: any, index: number) => {
-            return (
-              <Card
-                key={allData.topLevelData.mint}
-                topLevelData={allData.topLevelData}
-                metaData={allData.metaData}
-                border={allData.metaData.name === newlyMintedNFT?.name}
-              />
-            )
-          })}
+          <Row gutter={[24, 24]}>
+            {filteredCollectedItems.map((nft: ISingleNFT) => (
+              <Col sm={10} md={7} lg={6} xl={4} xxl={4} key={nft.mint_address}>
+                <Card singleNFT={nft} />
+              </Col>
+            ))}
+          </Row>
         </div>
       ) : (
         <NoContent type={props.type} />

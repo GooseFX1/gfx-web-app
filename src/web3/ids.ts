@@ -343,9 +343,9 @@ export const STAKE_PROGRAM_ID: StringPublicKey = '8KJx48PYGHVC9fxzRRtYp4x4CM2HyY
 // AUCTION HOUSE CONSTANTS
 export const AUCTION_HOUSE_PREFIX: string = 'auction_house'
 
-export const AUCTION_HOUSE_PROGRAM_ID: StringPublicKey = '7KeftXqig3b8iRoCDuB9cuVM4FSeNh7KedfKVHe3jqd4'
+export const AUCTION_HOUSE_PROGRAM_ID: StringPublicKey = 'hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk'
 
-export const AUCTION_HOUSE: StringPublicKey = 'HhHtmk34umV4SKpxDDNkuo35gbJJpnWvrqmKcU6PGibh'
+export const AUCTION_HOUSE: StringPublicKey = '5GtAPDZWwnWRDjaTgjHDnvpiGBi9TbLVqRrggLH5Ztuv'
 
 export const TREASURY_MINT: StringPublicKey = 'So11111111111111111111111111111111111111112'
 
@@ -353,13 +353,13 @@ export const AUCTION_HOUSE_AUTHORITY: StringPublicKey = '4puafxtL1437aibBy4pCteA
 
 export const AUCTION_HOUSE_CREATOR: StringPublicKey = '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'
 
-export const AH_FEE_ACCT: StringPublicKey = 'HB4Jwnh2WrcWqg9h1MeP1gryU9rYxuLLdKiqiVTEpP8s'
+export const AH_FEE_ACCT: StringPublicKey = 'JD8Jfejdfxq7KkRisP465aCrWkXGZ8JYqqPHCn9hz7Kc'
 
-export const TREASURY_ACCT: StringPublicKey = 'DyXuJKfZ96QKHuKHRFgzs64eHVZhzS5NhpdbAGFei26R'
+export const TREASURY_ACCT: StringPublicKey = '3wRqpyrETku2x2EZyfRKJeKVVb6F9J8HQLGcNf5VwuJ9'
 
-export const FEE_PAYER_WITHDRAWAL_ACCT: StringPublicKey = '2N4t2ZYB4iPHs2oDz6z49nQuPx3CrDURCyqCazFtZmar'
+export const FEE_PAYER_WITHDRAWAL_ACCT: StringPublicKey = '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'
 
-export const TREASURY_WITHDRAWAL_ACCT: StringPublicKey = '2N4t2ZYB4iPHs2oDz6z49nQuPx3CrDURCyqCazFtZmar'
+export const TREASURY_WITHDRAWAL_ACCT: StringPublicKey = '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'
 
 export const FEE_PAYER_BAL_GENESIS: number = 0
 

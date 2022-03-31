@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { bits, Blob, Layout, u32, UInt } from 'buffer-layout'
+import { bits, Blob, Layout, u32, UInt, struct, seq, u8, blob } from 'buffer-layout'
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
 
@@ -53,6 +53,20 @@ export function u64(property) {
 export function u128(property) {
   return new BNLayout(16, property)
 }
+
+export const Oracle = struct([
+  seq(
+    struct([
+      publicKeyLayout('address'),
+      u8('inverse'),
+      u8() // padding
+    ]),
+    4,
+    'elements'
+  ),
+  u64('n'),
+  blob(8 * 8) // padding
+])
 
 export class WideBits extends Layout {
   constructor(property) {

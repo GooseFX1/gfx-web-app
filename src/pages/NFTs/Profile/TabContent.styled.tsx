@@ -14,22 +14,12 @@ export const StyledTabContent = styled.div`
   }
 
   ${({ theme }) => `
-    height: calc(100% + 66px);
+    height: 58vh;
     margin-top: -66px;
-    
-    .actions-group {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 21px;
-      margin-left: 40px;
-
-      * {
-        z-index: 50;
-      }
-    }
-    
+        
     .profile-search-bar {
+      position: absolute;
+      left: 40px;
       width: 430px;
       padding: 12px 24px;
       margin-left: 0 !important;
@@ -58,12 +48,10 @@ export const StyledTabContent = styled.div`
     }
 
     .cards-list {
+      
       position:relative;
-      height: calc(100% - 66px);
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      padding: ${theme.margin(4)} ${theme.margin(5)};
+      
+      padding: ${theme.margin(12)} ${theme.margin(5)}  ${theme.margin(4)};
       overflow-x: hidden;
       overflow-y: scroll;
       ${theme.customScrollBar('4px')};

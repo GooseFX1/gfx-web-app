@@ -449,7 +449,7 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
             <STYLED_IMG src={`/img/crypto/${image}.svg`} alt="" />
             {connected ? (
               <STYLED_STAKED_EARNED_CONTENT>
-                <div className="info-item" key={'item?.id'}>
+                <div className="info-item">
                   <div className="title">Staked</div>
                   <div className="value">{`${tokenStaked.toFixed(3)} ${name}`}</div>
                   <div className="price">{`$${fiatStakedAmount.toFixed(3)}`}</div>
