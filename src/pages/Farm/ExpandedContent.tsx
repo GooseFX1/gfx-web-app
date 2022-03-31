@@ -9,7 +9,7 @@ import { Button, Row, Col } from 'antd'
 import { MainButton } from '../../components'
 import { notify } from '../../utils'
 import { useTokenRegistry, useAccounts, useCrypto, useConnectionConfig, usePriceFeed } from '../../context'
-import { createStakingAccount, executeStake, executeUnstakeAndClaim, fetchCurrentAmountStaked } from '../../web3'
+import { executeStake, executeUnstakeAndClaim, fetchCurrentAmountStaked } from '../../web3'
 
 //#region styles
 const STYLED_EXPANDED_ROW = styled.div`
@@ -298,8 +298,6 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
     }
   ]
   const [status, setStatus] = useState(initState)
-  const [tokenValueInDollars, setTokenValueInDollars] = useState(0)
-  const [earnedValueIn$, setEarnedValueIn$] = useState(0)
   const [isStakeLoading, setIsStakeLoading] = useState(false)
   const [isUnstakeLoading, setIsUnstakeLoading] = useState(false)
   const [tokenStaked, setTokenStaked] = useState(0)
@@ -330,8 +328,6 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
       setTokenStaked(result.tokenStaked ? result.tokenStaked : 0)
       setTokenEarned(result.tokenEarned && result.tokenEarned > 0 ? result.tokenEarned : 0)
       setTokenStakedPlusEarned(result.tokenStakedPlusEarned ? result.tokenStakedPlusEarned : 0)
-      setTokenValueInDollars(result.tokenStaked ? price?.current * result.tokenStaked : 0)
-      setEarnedValueIn$(result.tokenEarned ? price?.current * result.tokenEarned : 0)
     })
   }, [publicKey])
 
@@ -346,7 +342,10 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
     return true
   }
   const onClickStake = () => {
-    if (parseFloat(stakeRef.current.value) < 0.000001 || parseFloat(stakeRef.current.value) > userTokenBalance) {
+    if (
+      parseFloat(stakeRef.current.value) < 0.000001 ||
+      parseFloat(stakeRef.current.value) - 0.001 > userTokenBalance
+    ) {
       unstakeRef.current.value = 0
       notify({
         type: 'error',
@@ -357,7 +356,14 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
     if (!enoughSOLInWallet()) return
     try {
       setIsStakeLoading(true)
-      const confirm = executeStake(stakeProgram, stakeAccountKey, wallet, connection, network, stakeRef.current.value)
+      const confirm = executeStake(
+        stakeProgram,
+        stakeAccountKey,
+        wallet,
+        connection,
+        network,
+        parseFloat(stakeRef.current.value) - 0.001
+      )
       confirm.then((con) => {
         setIsStakeLoading(false)
         if (con && con?.value && con.value.err === null) {

@@ -1,5 +1,5 @@
 import BN from 'bn.js'
-import { Idl, Program } from '@project-serum/anchor'
+import { Idl, Instruction, Program } from '@project-serum/anchor'
 import { u64 } from './layout'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
@@ -57,15 +57,15 @@ export const executeStake = async (
   try {
     // getting user staking account if already exists format user staking account to publicKey
     const userStakingAccount = await program.account.stakingAccount.fetch(stakingAccountKey)
-    return stakeAmount(amountInBN, program, stakingAccountKey, wallet, connection)
+    return stakeAmount(amountInBN, program, stakingAccountKey, wallet, connection, undefined)
   } catch (err) {
     console.log(err)
   }
   try {
     // user account does not exists , create a new user account
-    const newUserStakingAccount = await createStakingAccount(program, stakingAccountKey, wallet, connection, network)
+    const createStakingIX = await createStakingAccountIX(program, stakingAccountKey, wallet)
     console.log('created a new GOFX staking account')
-    return stakeAmount(amountInBN, program, stakingAccountKey, wallet, connection)
+    return stakeAmount(amountInBN, program, stakingAccountKey, wallet, connection, createStakingIX)
   } catch (err) {
     return err
   }
@@ -76,7 +76,8 @@ const stakeAmount = async (
   program: any,
   stakingAccountKey: PublicKey,
   wallet: WalletContextState,
-  connection: Connection
+  connection: Connection,
+  createStakingIX: TransactionInstruction | undefined
 ) => {
   //TODO : mint Address need to be passed into the function when more tokens are supported
   const tokenVault: PublicKey = await findAssociatedTokenAddress(CONTROLLER_KEY, toPublicKey(GOFX_MINT))
@@ -95,7 +96,9 @@ const stakeAmount = async (
     accounts: stakingAmountInstruction
   })
   try {
-    const stakeAmountTX: Transaction = new Transaction().add(stakeAmountIX)
+    const stakeAmountTX: Transaction = new Transaction()
+    if (createStakingIX !== undefined) stakeAmountTX.add(createStakingIX)
+    stakeAmountTX.add(stakeAmountIX)
     const signature = await wallet.sendTransaction(stakeAmountTX, connection)
     console.log(signature)
     const confirm = await connection.confirmTransaction(signature, 'processed')
@@ -162,19 +165,22 @@ export const fetchCurrentAmountStaked = async (
     const totalStakingShare = total_staking_share.toNumber() / LAMPORTS_PER_SOL
     const amountStakedPlusEarned = (stakingBalance * totalShare) / totalStakingShare
     const amountEarned = amountStakedPlusEarned - amountStakedHR
-    return { tokenStakedPlusEarned: amountStakedPlusEarned, tokenStaked: amountStakedHR, tokenEarned: amountEarned }
+    return {
+      tokenStakedPlusEarned: amountStakedPlusEarned,
+      tokenStaked: amountStakedHR,
+      tokenEarned: amountEarned,
+      stakingBalance: stakingBalance
+    }
   } catch (err) {
     console.log(err)
     return err
   }
 }
 
-export const createStakingAccount = async (
+export const createStakingAccountIX = async (
   program: Program<Idl>,
   stakingAccountKey: PublicKey,
-  wallet: WalletContextState,
-  connection: Connection,
-  network: WalletAdapterNetwork
+  wallet: WalletContextState
 ) => {
   // check for sol in wallet
   const createStakingInstructionAccounts = {
@@ -188,15 +194,5 @@ export const createStakingAccount = async (
   const createStakingIX: TransactionInstruction = await program.instruction.createStakingAccount({
     accounts: createStakingInstructionAccounts
   })
-  const transaction = new Transaction().add(createStakingIX)
-  try {
-    const signature = await wallet.sendTransaction(transaction, connection)
-    console.log(signature)
-    const confirm = await connection.confirmTransaction(signature, 'processed')
-    console.log(confirm)
-    return signature
-  } catch (err) {
-    //add notification
-    console.log(err)
-  }
+  return createStakingIX
 }
