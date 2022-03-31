@@ -129,7 +129,7 @@ const STYLED_STAKE_PILL = styled(MainButton)`
   cursor: pointer;
   &.active,
   &:hover {
-    background: #050505;
+    background: #3735bb;
     color: #fff;
   }
 `
@@ -211,8 +211,14 @@ const STYLED_INPUT = styled.input`
   background-color: ${({ theme }) => theme.solPillBg};
   border-radius: 60px;
   display: flex;
+  border: none;
   align-items: center;
   justify-content: space-between;
+  ::-webkit-outer-spin-button,
+  ::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
   padding: 0 ${({ theme }) => theme.margin(4)};
   margin: 0 ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(1)};
   .value {
@@ -254,12 +260,12 @@ interface ITokenStakedInfo {
 
 interface IExpandedContent {
   record: any
-  stakeProgam: Program | undefined
+  stakeProgram: Program | undefined
   stakeAccountKey: PublicKey | undefined
   stakedInfoParam: any
 }
 
-export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey, stakedInfoParam }: IExpandedContent) => {
+export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedInfoParam }: IExpandedContent) => {
   const { name, image, liquidity, rewards, connected } = record
   const { getUIAmount } = useAccounts()
   const { publicKey } = useWallet()
@@ -298,28 +304,39 @@ export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey, stakedIn
   const [isUnstakeLoading, setIsUnstakeLoading] = useState(false)
   const [tokenStaked, setTokenStaked] = useState(0)
   const [tokenEarned, setTokenEarned] = useState(0)
+  const [tokenStakedPlusEarned, setTokenStakedPlusEarned] = useState(0)
   const stakeRef = useRef(null)
   const unstakeRef = useRef(null)
-  const stakeProgram = stakeProgam
+  const price = useMemo(() => {
+    return prices[name + '/USDC']
+  }, [name])
+  const fiatStakedAmount = useMemo(() => {
+    const price = prices[name + '/USDC']
+    return tokenStaked ? tokenStaked * price?.current : 0
+  }, [tokenStaked])
+  const fiatEarnedAmount = useMemo(() => {
+    const price = prices[name + '/USDC']
+    return tokenEarned ? tokenEarned * price?.current : 0
+  }, [tokenEarned])
 
-  //const tokenStaked = stakedInfo.tokenStaked ? stakedInfo.tokenStaked : 0
-  //const tokenEarned = stakedInfo.tokenEarned && stakedInfo.tokenEarned > 0 ? stakedInfo.tokenEarned : 0
-
-  useEffect(() => {
-    setTokenStaked(stakedInfo.tokenStaked ? stakedInfo.tokenStaked : 0)
-    setTokenEarned(stakedInfo.tokenEarned && stakedInfo.tokenEarned > 0 ? stakedInfo.tokenEarned : 0)
-    fetchCurrentAmountStaked(connection, stakeAccountKey, wallet).then((result) => {
-      setStakedInfo(result)
-    })
-  }, [userTokenBalance])
+  const updateStakedValue = () => {
+    setTokenStaked((prev) => prev + parseFloat(stakeRef.current.value))
+  }
 
   useEffect(() => {
     const price = prices[name + '/USDC']
-    setTokenValueInDollars(price?.current * tokenStaked)
-    setEarnedValueIn$(price?.current * tokenEarned)
-  }, [userTokenBalance])
+    fetchCurrentAmountStaked(connection, stakeAccountKey, wallet).then((result) => {
+      setStakedInfo(result)
+      setTokenStaked(result.tokenStaked ? result.tokenStaked : 0)
+      setTokenEarned(result.tokenEarned && result.tokenEarned > 0 ? result.tokenEarned : 0)
+      setTokenStakedPlusEarned(result.tokenStakedPlusEarned ? result.tokenStakedPlusEarned : 0)
+      setTokenValueInDollars(result.tokenStaked ? price?.current * result.tokenStaked : 0)
+      setEarnedValueIn$(result.tokenEarned ? price?.current * result.tokenEarned : 0)
+    })
+  }, [publicKey])
 
   const enoughSOLInWallet = (): Boolean => {
+    console.log(userSOLBalance)
     if (userSOLBalance < 0.000001) {
       notify({
         type: 'error',
@@ -330,7 +347,7 @@ export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey, stakedIn
     return true
   }
   const onClickStake = () => {
-    if (stakeRef.current.value < 0.000001 || stakeRef.current.value > userTokenBalance) {
+    if (parseFloat(stakeRef.current.value) < 0.000001 || parseFloat(stakeRef.current.value) > userTokenBalance) {
       unstakeRef.current.value = 0
       notify({
         type: 'error',
@@ -348,6 +365,8 @@ export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey, stakedIn
           notify({
             message: `Deposited amount ${stakeRef.current.value} ${name} Successful`
           })
+          updateStakedValue()
+          console.log(typeof tokenStaked, typeof stakeRef.current.value)
         } else {
           notify({
             type: 'error',
@@ -366,31 +385,38 @@ export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey, stakedIn
   }
 
   const onClickUnstake = () => {
-    if (unstakeRef.current.value < 0.1 || unstakeRef.current.value > 100) {
+    const tokenStakedPlusEarned = tokenEarned + tokenStaked
+    if (
+      parseFloat(unstakeRef.current.value) < 0.01 ||
+      parseFloat(unstakeRef.current.value).toFixed(3) > tokenStakedPlusEarned.toFixed(3)
+    ) {
       unstakeRef.current.value = 0
       notify({
         type: 'error',
-        message: 'Please give valid input in percentage (1-100%)'
+        message: `Please give valid input from 0 - ${tokenStaked + tokenEarned}`
       })
       return
     }
     if (!enoughSOLInWallet()) return
     try {
       setIsUnstakeLoading(true)
-      const confirm = executeUnstakeAndClaim(
-        stakeProgam,
-        stakeAccountKey,
-        wallet,
-        connection,
-        network,
-        unstakeRef.current.value
-      )
+      const tokenInPercent = tokenStakedPlusEarned
+        ? (parseFloat(unstakeRef.current.value) / tokenStakedPlusEarned) * 100
+        : 0
+      console.log(tokenInPercent)
+      const confirm = executeUnstakeAndClaim(stakeProgram, stakeAccountKey, wallet, connection, network, tokenInPercent)
       confirm.then((con) => {
         setIsUnstakeLoading(false)
         if (con && con.value && con.value.err === null) {
+          updateStakedValue()
           notify({
-            message: `Unstake of amount ${unstakeRef.current.value}% Successful`
+            message: `Unstake of amount ${unstakeRef.current.value} ${name} Successful`
           })
+          if (parseFloat(unstakeRef.current.value) > tokenStaked) {
+            setTokenEarned(tokenEarned - (parseFloat(unstakeRef.current.value) - tokenStaked))
+          }
+          const remainingToken = tokenStaked - parseFloat(unstakeRef.current.value)
+          setTokenStaked(remainingToken > 0 ? remainingToken : 0)
         } else {
           notify({
             type: 'error',
@@ -407,12 +433,12 @@ export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey, stakedIn
     }
   }
   const onClickHalf = (buttonId: string) => {
-    if (buttonId === 'stake') stakeRef.current.value = userTokenBalance / 2
-    else unstakeRef.current.value = 50
+    if (buttonId === 'stake') stakeRef.current.value = (userTokenBalance / 2).toFixed(3)
+    else unstakeRef.current.value = ((tokenStaked + tokenEarned) / 2).toFixed(3)
   }
   const onClickMax = (buttonId: string) => {
-    if (buttonId === 'stake') stakeRef.current.value = userTokenBalance
-    else unstakeRef.current.value = 100
+    if (buttonId === 'stake') stakeRef.current.value = userTokenBalance.toFixed(3)
+    else unstakeRef.current.value = (tokenStaked + tokenEarned).toFixed(3)
   }
 
   return (
@@ -425,13 +451,13 @@ export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey, stakedIn
               <STYLED_STAKED_EARNED_CONTENT>
                 <div className="info-item">
                   <div className="title">Staked</div>
-                  <div className="value">{`${tokenStaked} ${name}`}</div>
-                  <div className="price">{`$1`}</div>
+                  <div className="value">{`${tokenStaked.toFixed(3)} ${name}`}</div>
+                  <div className="price">{`$${fiatStakedAmount.toFixed(3)}`}</div>
                 </div>
-                <div className="info-item">
+                <div className="info-item" key={'item?'}>
                   <div className="title">Earned</div>
-                  <div className="value">{`${tokenEarned} ${name}`}</div>
-                  <div className="price">{`$1`}</div>
+                  <div className="value">{`${tokenEarned.toFixed(3)} ${name}`}</div>
+                  <div className="price">{`$${fiatEarnedAmount.toFixed(3)}`}</div>
                 </div>
               </STYLED_STAKED_EARNED_CONTENT>
             ) : (
@@ -492,7 +518,7 @@ export const ExpandedContent = ({ record, stakeProgam, stakeAccountKey, stakedIn
         <STYLED_DESC>
           <div className="text">{name} Wallet Balance:</div>
           <div className="value">
-            {userTokenBalance} {name}
+            {userTokenBalance.toFixed(3)} {name}
           </div>
         </STYLED_DESC>
       )}
