@@ -8,6 +8,7 @@ import { ILocationState } from '../../types/app_params.d'
 import NFTLandingPage from './Home/NFTHome'
 import { NFTDetails } from './NFTDetails'
 import { Collectible } from './Collectible'
+import { NestQuestSingleListing } from './NestQuestSingleListing'
 import { UpLoadNFT } from './Collectible/UpLoadNFT'
 import { SellNFT } from './Collectible/SellNFT'
 import { Profile } from './Profile'
@@ -24,12 +25,11 @@ import {
   useConnectionConfig
 } from '../../context'
 import { notify } from '../../utils'
-import { NestQuestSingleListing } from './NFTDetails/NestQuestSingleListing'
 
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
   width: 100vw;
-  min-height: calc(100vh - 80px);
+  min-height: calc(100vh - 58px);
   overflow-y: scroll;
   overflow-x: hidden;
   padding-top: calc(80px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
