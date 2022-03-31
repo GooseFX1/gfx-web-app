@@ -4,6 +4,7 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import styled from 'styled-components'
 import { MainButton } from '../../../components/MainButton'
+import { useHistory } from 'react-router-dom'
 
 //#region styles
 const CAROUSEL_WRAPPER = styled.div`
@@ -119,6 +120,8 @@ export const NFTHomeSlider = () => {
   const handleCreatorApply = (e: any) => {
     window.open('https://docs.google.com/forms/d/15yypvXd49oTMv0AbtfZ8CU_y2Z7WGJI0KmilA8oR6OA/edit')
   }
+  const history = useHistory()
+  const goNestQuestSingleListing = (e: any) => history.push(`/NFTs/NestQuest`)
 
   return (
     <CAROUSEL_WRAPPER>
@@ -146,7 +149,13 @@ export const NFTHomeSlider = () => {
             <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>
               Tier #1
             </h1>
-            <ORANGE_BTN className="home-slider-button" height={'40px'} status="action" width={'141px'}>
+            <ORANGE_BTN
+              className="home-slider-button"
+              height={'40px'}
+              status="action"
+              width={'141px'}
+              onClick={goNestQuestSingleListing}
+            >
               <span>Mint</span>
             </ORANGE_BTN>
           </div>
