@@ -196,6 +196,7 @@ export function colors(mode: string): Colors {
     primary1: '#302eb8',
     primary2: '#3735bb',
     primary3: '#5855FF',
+    primary4: '#9625AE',
 
     // secondary colors
     secondary1: '#9e35b1',
