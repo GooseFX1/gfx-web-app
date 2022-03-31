@@ -7,6 +7,7 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
 }
 
 export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC']
+export const FARM_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'GOFX']
 
 export const SUPPORTED_TOKEN_LIST = [
   'AKRO',
