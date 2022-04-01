@@ -2,14 +2,12 @@ import React, { useState, useMemo, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { WalletContextState } from '@solana/wallet-adapter-react'
 import { Program } from '@project-serum/anchor'
-import { Button, Row, Col } from 'antd'
+import { Button } from 'antd'
 import { MainButton } from '../../components'
 import { notify } from '../../utils'
-import { useTokenRegistry, useAccounts, useCrypto, useConnectionConfig, usePriceFeed } from '../../context'
-import { executeStake, executeUnstakeAndClaim, fetchCurrentAmountStaked } from '../../web3'
+import { useTokenRegistry, useAccounts, useConnectionConfig, usePriceFeed } from '../../context'
+import { executeStake, executeUnstakeAndClaim } from '../../web3'
 
 //#region styles
 const STYLED_EXPANDED_ROW = styled.div`
@@ -252,43 +250,26 @@ const STYLED_INPUT = styled.input`
 `
 //#endregion
 
-interface ITokenStakedInfo {
-  tokenStakedPlusEarned: Number
-  tokenStaked: Number
-  tokenEarned: Number
-}
-
 interface IExpandedContent {
-  record: any
+  rowData: any
   stakeProgram: Program | undefined
   stakeAccountKey: PublicKey | undefined
-  stakedInfoParam: any
 }
 
-export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedInfoParam }: IExpandedContent) => {
-  const { name, image, liquidity, rewards, connected } = record
+export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExpandedContent) => {
+  const { name, image, earned, currentlyStaked } = rowData
   const { getUIAmount } = useAccounts()
   const { publicKey } = useWallet()
   const { getTokenInfoForFarming } = useTokenRegistry()
-  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
-  const userSOLBalance = useMemo(
-    () => (publicKey && tokenInfo ? getUIAmount(getTokenInfoForFarming('SOL').address) : 0),
-    [getUIAmount, publicKey]
-  )
-  const userTokenBalance = useMemo(
-    () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
-    [tokenInfo, getUIAmount, publicKey]
-  )
-  const [stakedInfo, setStakedInfo] = useState(stakedInfoParam)
   const { network } = useConnectionConfig()
   const wallet = useWallet()
   const { prices } = usePriceFeed()
   const { connection } = useConnectionConfig()
 
-  const initState = [
+  const [status, setStatus] = useState([
     {
       id: 0,
-      selected: false,
+      selected: true,
       isLoading: false
     },
     {
@@ -296,40 +277,45 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
       selected: false,
       isLoading: false
     }
-  ]
-  const [status, setStatus] = useState(initState)
-  const [isStakeLoading, setIsStakeLoading] = useState(false)
-  const [isUnstakeLoading, setIsUnstakeLoading] = useState(false)
-  const [tokenStaked, setTokenStaked] = useState(0)
-  const [tokenEarned, setTokenEarned] = useState(0)
-  const [tokenStakedPlusEarned, setTokenStakedPlusEarned] = useState(0)
+  ])
+  const [isStakeLoading, setIsStakeLoading] = useState<boolean>(false)
+  const [isUnstakeLoading, setIsUnstakeLoading] = useState<boolean>(false)
+  const [tokenStaked, setTokenStaked] = useState<number>(parseFloat(currentlyStaked))
+  const [tokenEarned, setTokenEarned] = useState<number>(parseFloat(earned))
+
   const stakeRef = useRef(null)
   const unstakeRef = useRef(null)
-  const price = useMemo(() => {
-    return prices[name + '/USDC']
-  }, [name])
+
+  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
+
+  const userSOLBalance = useMemo(
+    () => (publicKey && tokenInfo ? getUIAmount(getTokenInfoForFarming('SOL').address) : 0),
+    [getUIAmount, publicKey]
+  )
+
+  const userTokenBalance = useMemo(
+    () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
+    [tokenInfo, getUIAmount, publicKey]
+  )
+
   const fiatStakedAmount = useMemo(() => {
     const price = prices[name + '/USDC']
     return tokenStaked ? tokenStaked * price?.current : 0
   }, [tokenStaked])
+
   const fiatEarnedAmount = useMemo(() => {
     const price = prices[name + '/USDC']
     return tokenEarned ? tokenEarned * price?.current : 0
   }, [tokenEarned])
 
+  useEffect(() => {
+    setTokenStaked(parseFloat(currentlyStaked))
+    setTokenEarned(parseFloat(earned))
+  }, [earned, currentlyStaked])
+
   const updateStakedValue = () => {
     setTokenStaked((prev) => prev + parseFloat(stakeRef.current.value))
   }
-
-  useEffect(() => {
-    const price = prices[name + '/USDC']
-    fetchCurrentAmountStaked(connection, stakeAccountKey, wallet).then((result) => {
-      setStakedInfo(result)
-      setTokenStaked(result.tokenStaked ? result.tokenStaked : 0)
-      setTokenEarned(result.tokenEarned && result.tokenEarned > 0 ? result.tokenEarned : 0)
-      setTokenStakedPlusEarned(result.tokenStakedPlusEarned ? result.tokenStakedPlusEarned : 0)
-    })
-  }, [publicKey])
 
   const enoughSOLInWallet = (): Boolean => {
     if (userSOLBalance < 0.000001) {
@@ -341,8 +327,10 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
     }
     return true
   }
+
   const onClickStake = () => {
     if (
+      isNaN(parseFloat(stakeRef.current.value)) ||
       parseFloat(stakeRef.current.value) < 0.000001 ||
       parseFloat(stakeRef.current.value) - 0.001 > userTokenBalance
     ) {
@@ -371,6 +359,7 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
             message: `Deposited amount ${stakeRef.current.value} ${name} Successful`
           })
           updateStakedValue()
+          setTimeout(() => (stakeRef.current.value = 0), 500)
         } else {
           notify({
             type: 'error',
@@ -389,10 +378,11 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
   }
 
   const onClickUnstake = () => {
-    const tokenStakedPlusEarned = tokenEarned + tokenStaked
+    const tokenStakedPlusEarned = tokenStaked + tokenEarned
     if (
+      isNaN(parseFloat(unstakeRef.current.value)) ||
       parseFloat(unstakeRef.current.value) < 0.01 ||
-      parseFloat(unstakeRef.current.value).toFixed(3) > tokenStakedPlusEarned.toFixed(3)
+      parseFloat(unstakeRef.current.value) > tokenStakedPlusEarned
     ) {
       unstakeRef.current.value = 0
       notify({
@@ -416,10 +406,12 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
             message: `Unstake of amount ${unstakeRef.current.value} ${name} Successful`
           })
           if (parseFloat(unstakeRef.current.value) > tokenStaked) {
-            setTokenEarned(tokenEarned - (parseFloat(unstakeRef.current.value) - tokenStaked))
+            const val = tokenEarned - (parseFloat(unstakeRef.current.value) - tokenStaked)
+            setTokenEarned(val === 0 ? 0 : val)
           }
           const remainingToken = tokenStaked - parseFloat(unstakeRef.current.value)
           setTokenStaked(remainingToken > 0 ? remainingToken : 0)
+          setTimeout(() => (unstakeRef.current.value = 0), 1000)
         } else {
           notify({
             type: 'error',
@@ -447,10 +439,10 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
   return (
     <STYLED_EXPANDED_ROW>
       <STYLED_EXPANDED_CONTENT>
-        <STYLED_LEFT_CONTENT className={`${connected ? 'connected' : 'disconnected'}`}>
+        <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
           <div className="left-inner">
             <STYLED_IMG src={`/img/crypto/${image}.svg`} alt="" />
-            {connected ? (
+            {wallet.publicKey ? (
               <STYLED_STAKED_EARNED_CONTENT>
                 <div className="info-item">
                   <div className="title">Staked</div>
@@ -470,7 +462,7 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
             )}
           </div>
         </STYLED_LEFT_CONTENT>
-        <STYLED_RIGHT_CONTENT className={`${connected ? 'connected' : 'disconnected'}`}>
+        <STYLED_RIGHT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
           <div className="right-inner">
             <div className="SOL-item">
               <STYLED_SOL className={status[0].selected ? 'active' : ''}>
@@ -517,7 +509,7 @@ export const ExpandedContent = ({ record, stakeProgram, stakeAccountKey, stakedI
           </div>
         </STYLED_RIGHT_CONTENT>
       </STYLED_EXPANDED_CONTENT>
-      {connected && (
+      {wallet.publicKey && (
         <STYLED_DESC>
           <div className="text">{name} Wallet Balance:</div>
           <div className="value">
