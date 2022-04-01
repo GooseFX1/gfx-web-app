@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Tooltip } from '../../components/Tooltip'
+import { moneyFormatter } from '../../utils/math'
 
 const STYLED_TITLE = styled.div`
   display: flex;
@@ -103,25 +104,18 @@ export const columns = [
     dataIndex: 'earned',
     key: 'earned',
     width: '15%',
-    render: (text) => <STYLED_EARNED>{text}</STYLED_EARNED>
+    render: (text) => <STYLED_EARNED>{text ? parseFloat(text).toFixed(3) : 0.0}</STYLED_EARNED>
   },
   {
     title: Title('APR', 'Yearly deposit earned on your deposit.', true),
     dataIndex: 'apr',
     key: 'apr',
-    render: (text) => <div className="apr normal-text">{text}</div>
+    render: (text) => <div className="apr normal-text">{`${(text * 100).toFixed(2)}%`}</div>
   },
   {
     title: Title('Liquidity', "Total value of funds in this farm's liquidity pool.", true),
     dataIndex: 'liquidity',
     key: 'liquidity',
-    render: (text) => <div className="liquidity normal-text">{text}</div>
-  },
-  {
-    title: Title('Volume (24h)', '', true),
-    dataIndex: 'volume',
-    key: 'volume',
-    width: '12%',
-    render: (text) => <div className="volume normal-text">{text}</div>
+    render: (text) => <div className="liquidity normal-text">{text ? `$ ${moneyFormatter(text.toFixed(3))}` : 0.0}</div>
   }
 ]
