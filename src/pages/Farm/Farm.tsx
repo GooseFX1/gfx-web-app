@@ -4,7 +4,6 @@ import { logEvent } from 'firebase/analytics'
 import analytics from '../../analytics'
 import { TableList } from './TableList'
 import { FarmHeader } from './FarmHeader'
-import { supportedData } from './mockData'
 import { useNavCollapse, PriceFeedProvider } from '../../context'
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
@@ -33,7 +32,7 @@ const BODY = styled.div<{ $navCollapsed: boolean }>`
 `
 
 export const Farm: FC = () => {
-  const [dataSource, setDataSource] = useState(supportedData)
+  const [filter, setFilter] = useState<string>('')
   const { isCollapsed } = useNavCollapse()
 
   useEffect(() => {
@@ -46,13 +45,13 @@ export const Farm: FC = () => {
   }, [])
 
   const onFilter = (val) => {
-    if (val === 'All pools') {
-      setDataSource(supportedData)
-      return
-    }
-    const tmp = JSON.parse(JSON.stringify(supportedData))
-    const filteredData = tmp.filter((item) => item.type === val)
-    setDataSource(filteredData)
+    // if (val === 'All pools') {
+    //   setFilter('')
+    //   return
+    // }
+    // const tmp = JSON.parse(JSON.stringify(supportedData))
+    // const filteredData = tmp.filter((item) => item.type === val)
+    // setFilter('')
   }
 
   return (
@@ -60,7 +59,7 @@ export const Farm: FC = () => {
       <PriceFeedProvider>
         <BODY $navCollapsed={isCollapsed}>
           <FarmHeader onFilter={onFilter} />
-          <TableList dataSource={dataSource} />
+          <TableList filter={filter} />
         </BODY>
       </PriceFeedProvider>
     </WRAPPER>
