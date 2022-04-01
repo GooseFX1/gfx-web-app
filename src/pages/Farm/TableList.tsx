@@ -7,7 +7,7 @@ import { Table } from 'antd'
 import { columns } from './Columns'
 import { ExpandedContent } from './ExpandedContent'
 import { getStakingAccountKey, fetchCurrentAmountStaked, CONTROLLER_KEY, CONTROLLER_LAYOUT } from '../../web3'
-import { useConnectionConfig } from '../../context'
+import { useConnectionConfig, usePriceFeed } from '../../context'
 import { ADDRESSES } from '../../web3/ids'
 const StakeIDL = require('../../web3/idl/stake.json')
 
@@ -156,6 +156,7 @@ interface IFarmData {
 //#endregion
 
 export const TableList = ({ dataSource }: any) => {
+  const { prices } = usePriceFeed()
   const { network, connection } = useConnectionConfig()
   const wallet = useWallet()
   const [accountKey, setAccountKey] = useState<PublicKey>()
@@ -174,6 +175,8 @@ export const TableList = ({ dataSource }: any) => {
   ])
   const [eKeys, setEKeys] = useState([])
   const PAGE_SIZE = 10
+
+  const gofxPrice = useMemo(() => prices['GOFX/USDC'], [prices])
 
   const stakeProgram: Program = useMemo(() => {
     return wallet.publicKey
@@ -198,12 +201,14 @@ export const TableList = ({ dataSource }: any) => {
   }, [wallet.publicKey, connection])
 
   useEffect(() => {
-    fetchTableData(accountKey).then((farmData) => {
-      if (farmData.length > 0) {
-        setFarmData(farmData)
-      }
-    })
-  }, [accountKey])
+    if (gofxPrice !== undefined) {
+      fetchTableData(accountKey).then((farmData) => {
+        if (farmData.length > 0) {
+          setFarmData(farmData)
+        }
+      })
+    }
+  }, [accountKey, gofxPrice])
 
   const fetchTableData = async (accountKey: PublicKey) => {
     // pool data
@@ -223,7 +228,7 @@ export const TableList = ({ dataSource }: any) => {
         earned: accountData.tokenEarned ? accountData.tokenEarned : 0,
         apr: APR,
         rewards: '100% GOFX',
-        liquidity: liqidity,
+        liquidity: gofxPrice.current * liqidity,
         type: 'Single Sided',
         currentlyStaked: accountData.tokenStaked ? accountData.tokenStaked : 0
       }
