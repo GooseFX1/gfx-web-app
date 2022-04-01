@@ -1,6 +1,6 @@
 import BN from 'bn.js'
-import { Idl, Instruction, Program } from '@project-serum/anchor'
-import { u64 } from './layout'
+import { Idl, Instruction, Program, Provider } from '@project-serum/anchor'
+import { u64, publicKeyLayout } from './layout'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
@@ -14,22 +14,49 @@ import {
 } from '@solana/web3.js'
 import { SYSTEM } from './ids'
 import { findAssociatedTokenAddress } from './utils'
-import { STAKE_PREFIX, toPublicKey } from '../web3'
+import { STAKE_PREFIX, toPublicKey, ADDRESSES } from '../web3'
 const StakeIDL = require('./idl/stake.json')
-const { blob, struct } = require('buffer-layout')
+const { blob, struct, u8 } = require('buffer-layout')
 
-const CONTROLLER_KEY = new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
+export const CONTROLLER_KEY = new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
 const GOFX_MINT = 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'
 
-const LAYOUT = struct([blob(8, 'sighash'), blob(40), u64('share'), u64('amountStaked')])
-
-const CONTROLLER_LAYOUT = struct([
+const LAYOUT = struct([
   blob(8, 'sighash'),
-  blob(112),
+  publicKeyLayout('controller'),
+  u8('bump'),
+  blob(7),
+  u64('share'),
+  u64('amountStaked'),
+  blob(256, 'padding')
+])
+
+export const CONTROLLER_LAYOUT = struct([
+  blob(8, 'sighash'),
+  blob(32, 'seed'),
+  u8('bump'),
+  publicKeyLayout('admin'),
+  u8('suspended'),
+  u8('decimals'),
+  publicKeyLayout('mint'),
+  blob(5, 'padding'),
+  u64('daily_reward'),
   u64('total_staking_share'),
   u64('staking_balance'),
-  u64('last_distribution_time')
+  u64('lastDistributionTime'),
+  blob(256, 'padding')
 ])
+
+export const getStakeProgram = (
+  wallet: WalletContextState,
+  connection: Connection,
+  network: WalletAdapterNetwork
+): Program =>
+  new Program(
+    StakeIDL,
+    ADDRESSES[network].programs.stake.address,
+    new Provider(connection, wallet as any, { commitment: 'processed' })
+  )
 
 export const getStakingAccountKey = async (wallet: WalletContextState): Promise<undefined | PublicKey> => {
   try {
@@ -98,9 +125,12 @@ const stakeAmount = async (
   try {
     const stakeAmountTX: Transaction = new Transaction()
     if (createStakingIX !== undefined) stakeAmountTX.add(createStakingIX)
+
     stakeAmountTX.add(stakeAmountIX)
+
     const signature = await wallet.sendTransaction(stakeAmountTX, connection)
     console.log(signature)
+
     const confirm = await connection.confirmTransaction(signature, 'processed')
     console.log(confirm, 'stake amount')
     return confirm
