@@ -13,6 +13,11 @@ enum State {
   PoolNotFound = 4
 }
 
+const SWAP_BUTTON = styled(MainButton)`
+  min-width: 170px;
+  padding: 0 32px;
+`
+
 const TEXT = styled.span`
   font-weight: 600 !important;
   font-size: 17px !important;
@@ -73,8 +78,8 @@ export const SwapButton: FC = () => {
   )
 
   return (
-    <MainButton height="50px" loading={loading} status={buttonStatus} width="170px" onClick={handleClick}>
+    <SWAP_BUTTON height="50px" loading={loading} status={buttonStatus} onClick={handleClick}>
       <TEXT>{content}</TEXT>
-    </MainButton>
+    </SWAP_BUTTON>
   )
 }

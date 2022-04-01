@@ -25,8 +25,8 @@ export const AmountField = styled.div<{ $balance: number; $height: string; $valu
     &:after {
       content: '${$value}';
       position: absolute;
-      right: ${theme.margin(2.5)};
-      bottom: ${theme.margin(1)};
+      right: ${theme.margin(2.7)};
+      bottom: ${theme.margin(2)};
       ${theme.mainText}
       font-size: 8px;
       font-weight: 500;
