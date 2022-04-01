@@ -189,17 +189,16 @@ export const fetchCurrentAmountStaked = async (
     const { amountStaked, share } = LAYOUT.decode(data)
     const { data: controllerData } = await connection.getAccountInfo(CONTROLLER_KEY)
     const { staking_balance, total_staking_share } = CONTROLLER_LAYOUT.decode(controllerData)
-    const amountStakedHR = amountStaked / LAMPORTS_PER_SOL
-    const totalShare = share.toNumber() / LAMPORTS_PER_SOL
-    const stakingBalance = staking_balance.toNumber() / LAMPORTS_PER_SOL
-    const totalStakingShare = total_staking_share.toNumber() / LAMPORTS_PER_SOL
-    const amountStakedPlusEarned = (stakingBalance * totalShare) / totalStakingShare
-    const amountEarned = amountStakedPlusEarned - amountStakedHR
+
+    // calculations
+    const amountStakedPlusEarned = (staking_balance * share) / total_staking_share
+    const amountEarned = amountStakedPlusEarned - amountStaked
+
     return {
-      tokenStakedPlusEarned: amountStakedPlusEarned,
-      tokenStaked: amountStakedHR,
-      tokenEarned: amountEarned,
-      stakingBalance: stakingBalance
+      tokenStakedPlusEarned: amountStakedPlusEarned / LAMPORTS_PER_SOL,
+      tokenStaked: amountStaked / LAMPORTS_PER_SOL,
+      tokenEarned: amountEarned / LAMPORTS_PER_SOL,
+      stakingBalance: staking_balance / LAMPORTS_PER_SOL
     }
   } catch (err) {
     console.log(err)

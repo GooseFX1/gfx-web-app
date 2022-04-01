@@ -198,13 +198,11 @@ export const TableList = ({ dataSource }: any) => {
   }, [wallet.publicKey, connection])
 
   useEffect(() => {
-    if (accountKey !== undefined) {
-      fetchTableData(accountKey).then((farmData) => {
-        if (farmData.length > 0) {
-          setFarmData(farmData)
-        }
-      })
-    }
+    fetchTableData(accountKey).then((farmData) => {
+      if (farmData.length > 0) {
+        setFarmData(farmData)
+      }
+    })
   }, [accountKey])
 
   const fetchTableData = async (accountKey: PublicKey) => {
@@ -216,8 +214,6 @@ export const TableList = ({ dataSource }: any) => {
 
     // user account data
     const accountData = await fetchCurrentAmountStaked(connection, accountKey, wallet)
-    // {accountData.tokenStakedPlusEarned, accountData.stakingBalance}
-    console.log(accountData)
 
     return [
       {
