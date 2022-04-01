@@ -99,7 +99,6 @@ export const Toggle = ({ text, defaultChecked, checkedChildren, unCheckedChildre
       defaultChecked={defaultChecked}
       checkedChildren={checkedChildren}
       unCheckedChildren={unCheckedChildren}
-      {...rest}
     />
     {text && <div className="text">{text}</div>}
   </STYLED_TOGGLE>

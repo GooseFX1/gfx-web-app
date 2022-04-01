@@ -131,6 +131,7 @@ export interface Colors {
   primary1: Color
   primary2: Color
   primary3: Color
+  primary4: Color
 
   // farm
   farmContainerBg: Color
