@@ -116,6 +116,6 @@ export const columns = [
     title: Title('Liquidity', "Total value of funds in this farm's liquidity pool.", true),
     dataIndex: 'liquidity',
     key: 'liquidity',
-    render: (text) => <div className="liquidity normal-text">{text ? `$ ${moneyFormatter(text.toFixed(3))}` : 0.0}</div>
+    render: (text) => <div className="liquidity normal-text">{text ? `$ ${moneyFormatter(text)}` : 0.0}</div>
   }
 ]
