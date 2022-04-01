@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 import { Toggle } from './Toggle'
 import { SearchBar, Categories } from '../../components'
-import { categories } from './mockData'
 
 const STYLED_FARM_HEADER = styled.div`
   display: flex;
@@ -44,13 +43,22 @@ const STYLED_RIGHT = styled.div`
   justify-content: flex-start;
   padding-left: ${({ theme }) => theme.margin(11)};
 `
-export const FarmHeader = ({ onFilter }: any) => (
-  <STYLED_FARM_HEADER>
-    <Toggle className="toggle" text="Show Deposited" defaultUnchecked />
-    <STYLED_RIGHT>
-      <SearchBar className="search-bar" placeholder="Search by token symbol" />
-      <Categories className="pools" categories={categories} />
-      <Toggle className="live" checkedChildren="Ended" unCheckedChildren="Live" defaultUnchecked />
-    </STYLED_RIGHT>
-  </STYLED_FARM_HEADER>
-)
+export const FarmHeader = ({ onFilter }: any) => {
+  const poolTypes = [
+    { name: 'All pools', icon: 'All pools' },
+    { name: 'Single Sided', icon: 'Single Sided' }
+    // { name: 'Double Sided', icon: 'Double Sided' },
+    // { name: 'Insurance', icon: 'Insurance' }
+  ]
+
+  return (
+    <STYLED_FARM_HEADER>
+      <Toggle className="toggle" text="Show Deposited" defaultUnchecked />
+      <STYLED_RIGHT>
+        <SearchBar className="search-bar" placeholder="Search by token symbol" setFilter={onFilter} />
+        {/* <Categories className="pools" categories={poolTypes} /> */}
+        <Toggle className="live" checkedChildren="Ended" unCheckedChildren="Live" defaultChecked={false} />
+      </STYLED_RIGHT>
+    </STYLED_FARM_HEADER>
+  )
+}
