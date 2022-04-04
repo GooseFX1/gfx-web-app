@@ -142,7 +142,7 @@ export const callCancelInstruction = async (
   const transaction = new Transaction().add(cancelIX)
   const signature = await wallet.sendTransaction(transaction, connection)
   console.log(signature)
-  const confirm = await connection.confirmTransaction(signature, 'processed')
+  const confirm = await connection.confirmTransaction(signature, 'finalized')
   console.log(confirm)
   return { signature, confirm }
 }

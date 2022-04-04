@@ -77,7 +77,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [endpoint, setEndpoint] = useState(ENDPOINTS[process.env.NODE_ENV === 'production' ? 0 : 3].endpoint)
   const [slippage, setSlippage] = useLocalStorageState('slippage', DEFAULT_SLIPPAGE.toString())
 
-  const connection = useMemo(() => new Connection(endpoint, 'recent'), [endpoint])
+  const connection = useMemo(() => new Connection(endpoint, 'confirmed'), [endpoint])
 
   const endpointObj = ENDPOINTS.find((e) => e.endpoint === endpoint)
   const chainId = useMemo(() => endpointObj?.chainId ?? ENV.MainnetBeta, [endpoint])
