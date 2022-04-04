@@ -29,7 +29,7 @@ import {
   bnTo8
 } from '../../../web3'
 import { tradeStatePDA, getBuyInstructionAccounts, tokenSize } from '../actions'
-import { TXT_PRIMARY_GRADIENT } from '../../../styles'
+import { TXT_PRIMARY_GRADIENT, GFX_LINK } from '../../../styles'
 
 // TODO: Set variables to demo here
 const isVerified = true
@@ -73,7 +73,7 @@ const BUTTON = styled(MainButton)`
 
 const PURCHASE_MODAL = styled(Modal)`
   &.ant-modal {
-    width: 501px !important;
+    width: 570px !important;
   }
 
   .ant-modal-body {
@@ -239,11 +239,12 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
   const { connection, network } = useConnectionConfig()
   const { general, nftMetadata, bidOnSingleNFT, ask } = useNFTDetails()
 
-  const [mode, setMode] = useState(purchasePrice ? 'review' : 'bid')
-  const [bidPriceInput, setBidPriceInput] = useState(
+  const [mode, setMode] = useState<string>(purchasePrice ? 'review' : 'bid')
+  const [bidPriceInput, setBidPriceInput] = useState<string>(
     purchasePrice ? `${parseFloat(purchasePrice) / LAMPORTS_PER_SOL}` : ''
   )
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [pendingTxSig, setPendingTxSig] = useState<string>()
 
   const creator = useMemo(() => {
     if (nftMetadata === undefined) return null
@@ -410,6 +411,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
     try {
       const signature = await sendTransaction(transaction, connection)
       console.log(signature)
+      setPendingTxSig(signature)
 
       const confirm = await connection.confirmTransaction(signature, 'finalized')
       console.log(confirm)
@@ -576,7 +578,6 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
         <Col>by</Col>
         <Col className="bm-title-bold">{creator}</Col>
       </Row>
-
       <div className="bm-confirm">
         {!notEnough && purchasePrice === undefined && <div className="bm-confirm-text-1">Place your bid:</div>}
         <input value={bidPriceInput} onChange={handleBidInput} className="bm-confirm-price" placeholder="000.000" />
@@ -584,18 +585,21 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
           {mode === 'bid' ? 'There is no minimum amount this is an open bid.' : `${fiatCalc} USD`}
         </div>
       </div>
-
       <div className="bm-details">
         {mode === 'review' && (
           <>
             <Row justify="space-between" align="middle">
-              <Col>Bid up to</Col>
-              <Col>
-                <Row className="bm-details-price" justify="space-between" align="middle">
-                  <Col>{bidPriceInput}</Col>
-                  <Col>SOL</Col>
-                </Row>
-              </Col>
+              {purchasePrice === undefined && (
+                <>
+                  <Col>Bid up to</Col>
+                  <Col>
+                    <Row className="bm-details-price" justify="space-between" align="middle">
+                      <Col>{bidPriceInput}</Col>
+                      <Col>SOL</Col>
+                    </Row>
+                  </Col>
+                </>
+              )}
             </Row>
             <Row justify="space-between" align="middle">
               <Col>Service fee ({`${NFT_MARKET_TRANSACTION_FEE}%`})</Col>
@@ -633,6 +637,16 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
           isVerified ? 'This is a verified creator' : 'This creator is not verified (purchase at your own risk)'
         }`}</Col>
       </Row>
+
+      {pendingTxSig && (
+        <div style={{ marginBottom: '56px' }} className="bm-title">
+          ⚠️ Sometimes there are delays on the network. You can track the{' '}
+          <GFX_LINK href={`http://solscan.io/tx/${pendingTxSig}?cluster=${network}`} target={'_blank'} rel="noreferrer">
+            status of the transaction on solscan
+          </GFX_LINK>
+        </div>
+      )}
+
       {mode === 'review' && (
         <div className="bm-review-alert">
           When you comfirm your bid, it means you’re committing to buy this NFT if you’re the winning bidder.
@@ -652,7 +666,6 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
           Review bid
         </BUTTON>
       )}
-
       {!notEnough && mode === 'review' && (
         <BUTTON
           status="initial"
@@ -665,7 +678,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
           loading={isLoading}
           disabled={isLoading || notEnough || bidPriceInput.length === 0 || bidPrice < 0.021}
         >
-          Send bid
+          {purchasePrice ? 'Buy Now' : 'Send bid'}
         </BUTTON>
       )}
       {notEnough && <div className={`bm-not-enough`}>Not enough funds </div>}
