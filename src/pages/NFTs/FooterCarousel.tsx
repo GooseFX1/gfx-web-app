@@ -21,16 +21,18 @@ const FOOTER_IMAGE = styled(Image)`
 `
 
 const FooterCarousel = () => {
-  const [nfts, setNfts] = useState<Array<ISingleNFT>>()
+  const [nfts, setNfts] = useState<Array<ISingleNFT>>([])
   const [err, setErr] = useState(false)
 
   useEffect(() => {
-    fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.OPEN_BID, '2').then((res) => {
-      if ((res.response && res.response.status !== 200) || res.isAxiosError) {
-        setErr(true)
-      } else {
-        setNfts(res.data.open_bid.slice(0, 10))
-      }
+    // the numbers are collection ids for the nfts rendered in the footer
+    const nfts = Promise.all(
+      ['1', '4', '2'].map((id) => fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.OPEN_BID, id))
+    )
+
+    nfts.then((res) => {
+      const nfts = res.map((collection) => collection.data.open_bid.slice(0, 4))
+      setNfts(nfts.flat())
     })
 
     return () => {}
@@ -38,15 +40,14 @@ const FooterCarousel = () => {
 
   return (
     <FOOTER_LIST_CARD>
-      {nfts === undefined ? (
-        Array.apply('null', Array(10)).map((num, i) => (
+      {nfts.length === 0 ? (
+        Array.apply('null', Array(12)).map((num, i) => (
           <div key={i} style={{ margin: '0 24px' }}>
-            {/* <FOOTER_IMAGE preview={false} src={`${window.origin}/img/assets/nft-preview.svg`} /> */}
             <SkeletonCommon width="110px" height="110px" borderRadius="10px" />
           </div>
         ))
       ) : err ? (
-        <div>error loading random nfts</div>
+        <div>error loading nfts</div>
       ) : (
         nfts.map((item: ISingleNFT) => (
           <div key={item.non_fungible_id}>
