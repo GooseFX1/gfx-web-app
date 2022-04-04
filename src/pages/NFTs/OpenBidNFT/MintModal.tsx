@@ -411,7 +411,7 @@ export const MintModal: FC<IMintModal> = ({ setVisible, visible, purchasePrice }
       const signature = await sendTransaction(transaction, connection)
       console.log(signature)
 
-      const confirm = await connection.confirmTransaction(signature, 'processed')
+      const confirm = await connection.confirmTransaction(signature, 'finalized')
       console.log(confirm)
 
       if (confirm.value.err === null) {
@@ -555,7 +555,7 @@ export const MintModal: FC<IMintModal> = ({ setVisible, visible, purchasePrice }
     const transaction = new Transaction().add(cancelIX)
     const signature = await sendTransaction(transaction, connection)
     console.log(signature)
-    const confirm = await connection.confirmTransaction(signature, 'processed')
+    const confirm = await connection.confirmTransaction(signature, 'finalized')
     console.log(confirm)
   }
 

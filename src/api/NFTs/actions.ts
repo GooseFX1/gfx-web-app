@@ -54,7 +54,7 @@ export const fetchSingleNFT = async (address: string): Promise<any> => {
 
 export const fetchNFTById = async (id: number, connection: any): Promise<any> => {
   try {
-    const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?nft_id=${id}`)
+    const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?nft_id=${id}&network=mainnet`)
     return res.data
   } catch (err) {
     return err

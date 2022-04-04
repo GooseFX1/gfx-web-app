@@ -3,7 +3,7 @@ import { StyledTableList } from './TableList.styled'
 import { useWallet } from '@solana/wallet-adapter-react'
 import NoContent from './NoContent'
 import apiClient from '../../../api'
-import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
+import { fetchNFTById } from '../../../api/NFTs'
 import { SearchBar, Loader } from '../../../components'
 import { StyledTabContent } from './TabContent.styled'
 import { useConnectionConfig } from '../../../context'
@@ -14,7 +14,7 @@ export const columns = [
     title: 'Event',
     dataIndex: 'kind',
     key: 'kind',
-    render: (text) => <span className="text-normal">{text}</span>
+    render: (text) => <span className="text-normal">{text === 'bid_matched' ? 'sold' : text}</span>
   },
   {
     title: 'Item',
@@ -22,10 +22,9 @@ export const columns = [
     key: 'item',
     render: (record) => (
       <div className="item">
-        <img className="image" src={`/img/assets/card-1.png`} alt="" />
+        <img className="image" src={record.image_url} alt="" />
         <div className="text">
-          <div className="text-name">{record?.name}</div>
-          <div className="text-other">{record?.other}</div>
+          <div className="text-name">{record.name}</div>
         </div>
       </div>
     )
@@ -79,33 +78,34 @@ const Activity = (props: IActivity) => {
 
   useEffect(() => {
     async function makeActivity() {
-      let data = await Promise.all(
-        props.data.map(async (datum) => {
-          let extraData = await fetchGeneral(datum.non_fungible_id)
-          let name = extraData.data[0].nft_name.split(' ')
+      const userActivities = await Promise.all(
+        props.data.map(async (activity) => {
+          const extraData = await fetchNFTById(activity.non_fungible_id, 'mainnet')
+          console.log(activity)
           let transactionData = {}
-          if (datum.tx_sig) {
-            transactionData = await connection.getParsedConfirmedTransaction(datum.tx_sig, 'confirmed')
-            // '8SWtsBv1BsqatXrsWpZX67bqyEFvyBRL6miazot3DZUsVznYW4rB2a5H2uVNe9ekSXuvy2qSKF7KLxTxQ4vtRw5' test signature
+          if (activity.tx_sig) {
+            transactionData = await connection.getParsedConfirmedTransaction(activity.tx_sig, 'confirmed')
+            console.log(transactionData)
           }
+
           return {
-            ...datum,
+            ...activity,
             from: publicKey.toString().slice(0, 4) + '...' + publicKey.toString().slice(-4),
             quantity: 1,
-            price: datum.price || 0,
+            price: activity.price || 0,
             ...extraData.data[0],
             to: extraData.data[0].mint_address.slice(0, 4) + '...' + extraData.data[0].mint_address.slice(-4),
-            date: new Date(datum.clock * 1000).toLocaleDateString('en-US'),
+            date: new Date(activity.clock * 1000).toLocaleDateString('en-US'),
             item: {
-              name: name[1],
-              other: name[0]
+              name: extraData.data[0].nft_name,
+              image_url: extraData.data[0].image_url
             },
             ...transactionData
           }
         })
       )
 
-      setActivity(data.sort((a: any, b: any) => b.clock - a.clock))
+      setActivity(userActivities.sort((a: any, b: any) => b.clock - a.clock))
 
       return () => {
         setActivity(undefined)
@@ -114,16 +114,6 @@ const Activity = (props: IActivity) => {
 
     makeActivity()
   }, [props.data])
-
-  const fetchGeneral = async (id: string): Promise<any> => {
-    try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?nft_id=${id}`)
-      const nft = await res.data
-      return nft
-    } catch (err) {
-      return err
-    }
-  }
 
   return (
     <StyledTabContent>

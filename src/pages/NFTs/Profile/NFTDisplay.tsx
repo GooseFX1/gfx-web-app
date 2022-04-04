@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import axios from 'axios'
 import { Row, Col } from 'antd'
@@ -11,6 +11,7 @@ import { useNFTProfile } from '../../../context'
 import { StyledTabContent } from './TabContent.styled'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { ILocationState } from '../../../types/app_params.d'
+import debounce from 'lodash.debounce'
 
 interface INFTDisplay {
   type: 'collected' | 'created' | 'favorited'
@@ -23,39 +24,58 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const { sessionUser } = useNFTProfile()
   const [collectedItems, setCollectedItems] = useState<ISingleNFT[]>()
   const [filteredCollectedItems, setFilteredCollectedItems] = useState<ISingleNFT[]>()
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState<string>('')
+  const [level, _setLevel] = useState<number>(0)
+  const [loading, _setLoading] = useState<boolean>(false)
 
-  const newlyMintedNFT = useMemo(() => {
-    if (location.state && location.state.newlyMintedNFT) {
-      if (props.type === 'collected')
-        notify({
-          type: 'success',
-          message: 'NFT Successfully created',
-          description: `${location.state.newlyMintedNFT.name}`,
-          icon: 'success'
-        })
+  const activePointRef = useRef(collectedItems)
+  const activePointLevel = useRef(level)
+  const activePointLoader = useRef(loading)
 
-      return location.state.newlyMintedNFT
-    } else {
-      return undefined
-    }
-  }, [location])
+  // in place of original `setActivePoint`
+  const setCollectedItemsPag = (x) => {
+    activePointRef.current = x // keep updated
+    setCollectedItems(x)
+  }
+
+  const setLevel = (x) => {
+    activePointLevel.current = x // keep updated
+    _setLevel(x)
+  }
+
+  const setLoading = (x) => {
+    activePointLoader.current = x // keep updated
+    _setLoading(x)
+  }
+
+  // const newlyMintedNFT = useMemo(() => {
+  //   if (location.state && location.state.newlyMintedNFT) {
+  //     if (props.type === 'collected')
+  //       notify({
+  //         type: 'success',
+  //         message: 'NFT Successfully created',
+  //         description: `${location.state.newlyMintedNFT.name}`,
+  //         icon: 'success'
+  //       })
+
+  //     return location.state.newlyMintedNFT
+  //   } else {
+  //     return undefined
+  //   }
+  // }, [location])
 
   useEffect(() => {
     if (props.singleNFT) {
-      setCollectedItems(props.singleNFT)
+      setCollectedItemsPag(props.singleNFT)
     } else if (!props.parsedAccounts || props.parsedAccounts.length === 0) {
-      setCollectedItems([])
+      setCollectedItemsPag([])
     } else {
-      const start = new Date().getTime()
       fetchNFTData(props.parsedAccounts).then((singleNFTs) => {
-        const elapsed = new Date().getTime() - start
-        console.log(`FETCH COLLECTION METADATA: ${elapsed}ms elapsed`)
-        setCollectedItems(singleNFTs)
+        setCollectedItemsPag(singleNFTs)
       })
     }
 
-    return () => setCollectedItems(undefined)
+    return () => setCollectedItemsPag(undefined)
   }, [props.singleNFT, props.parsedAccounts])
 
   useEffect(() => {
@@ -97,6 +117,43 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     return nfts
   }
 
+  useEffect(() => {
+    window.addEventListener('scroll', scrolling, true)
+
+    return () => window.removeEventListener('scroll', scrolling, true)
+  }, [])
+
+  const scrolling = debounce(() => {
+    handleScroll()
+  }, 100)
+
+  const handleScroll = () => {
+    const border = document.getElementById('border')
+    if (border !== null) {
+      const mainHeight = window.innerHeight
+      const totalscroll = mainHeight + border.scrollTop + 100
+
+      if (Math.ceil(totalscroll) < border.scrollHeight || activePointLoader.current) {
+        setLoading(false)
+      } else {
+        // addToList()
+      }
+    }
+  }
+
+  const addToList = () => {
+    const total = activePointRef.current
+    const newLevel = activePointLevel.current + 1
+
+    if (total?.length > newLevel * 25) {
+      setLoading(true)
+      const nextData = total.slice(newLevel * 25, (newLevel + 1) * 25)
+      setCollectedItemsPag([...activePointRef.current, ...nextData])
+      setLevel(newLevel)
+      setLoading(false)
+    }
+  }
+
   return (
     <StyledTabContent>
       <div className="actions-group">
@@ -109,7 +166,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
           </div>
         </div>
       ) : filteredCollectedItems && filteredCollectedItems.length > 0 ? (
-        <div className="cards-list">
+        <div className="cards-list" id="border">
           <Row gutter={[24, 24]}>
             {filteredCollectedItems.map((nft: ISingleNFT) => (
               <Col sm={10} md={7} lg={6} xl={4} xxl={4} key={nft.mint_address}>

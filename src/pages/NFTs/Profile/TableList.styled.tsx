@@ -6,7 +6,7 @@ export const StyledTableList = styled(Table)`
   .item {
     display: flex;
     align-items: center;
-    justify-content: center;
+    
     width: 100%;
     .image {
       width: 30px;

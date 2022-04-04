@@ -44,14 +44,14 @@ export const STYLED_SELL_CATEGORY = styled(Row)`
 // },
 const dataCategories = [
   {
-    icon: 'open-bid',
-    name: 'Open bid'
+    icon: 'fixed-price',
+    name: 'Fixed price'
   }
 ]
 
 // {
-//   icon: 'fixed-price',
-//   name: 'Fixed price'
+//   icon: 'open-bid',
+//   name: 'Open bid'
 // }
 
 interface ICategory {

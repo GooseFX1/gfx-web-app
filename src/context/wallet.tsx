@@ -38,11 +38,11 @@ export const WalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallets = useMemo(
     () => [
       getPhantomWallet(),
+      getSlopeWallet(),
       getSolflareWallet(),
       getLedgerWallet(),
       getMathWallet(),
       getSolongWallet(),
-      getSlopeWallet(),
       getTorusWallet({
         options: { clientId: 'Get a client ID @ https://developer.tor.us' }
       }),

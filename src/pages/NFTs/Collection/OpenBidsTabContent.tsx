@@ -46,7 +46,7 @@ export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
   const { sessionUser } = useNFTProfile()
 
   const [fileredLocalOpenBid, _setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>(Array.apply(null, Array(21)))
-  const [shortfileredLocalOpenBid, _setShortFilteredLocalOpenBid] = useState<Array<ISingleNFT>>(
+  const [shortfilteredLocalOpenBid, _setShortFilteredLocalOpenBid] = useState<Array<ISingleNFT>>(
     Array.apply(null, Array(21))
   )
   const [level, _setLevel] = useState<number>(0)
@@ -55,7 +55,7 @@ export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
   // define a ref
   const activePointRef = useRef(fileredLocalOpenBid)
   const activePointLevel = useRef(level)
-  const activePointshortFilter = useRef(shortfileredLocalOpenBid)
+  const activePointshortFilter = useRef(shortfilteredLocalOpenBid)
   const activePointLoader = useRef(loading)
 
   // in place of original `setActivePoint`
@@ -98,23 +98,14 @@ export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
   }, [filter, openBidWithinCollection])
 
   useEffect(() => {
-    window.addEventListener(
-      'scroll',
-      debounce(() => {
-        handleScroll()
-      }, 100),
-      true
-    )
+    window.addEventListener('scroll', scrolling, true)
 
-    return () =>
-      window.removeEventListener(
-        'scroll',
-        debounce(() => {
-          handleScroll()
-        }, 100),
-        true
-      )
+    return () => window.removeEventListener('scroll', scrolling, true)
   }, [])
+
+  const scrolling = debounce(() => {
+    handleScroll()
+  }, 100)
 
   const handleScroll = () => {
     const border = document.getElementById('border')
@@ -144,10 +135,6 @@ export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
       setShortFilteredLocalOpenBid([...activePointshortFilter.current, ...nextData])
       setLevel(newLevel)
       setLoading(false)
-
-      // force scroll up to avoid over push
-      // let border = document.getElementById('border')
-      // border.scrollTop = border.scrollTop
     }
   }
 
@@ -156,9 +143,9 @@ export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
     <WRAPPER>
       {fileredLocalOpenBid.length > 0 ? (
         <OPEN_BIDS_TAB {...rest} className="card-list">
-          <Row gutter={[24, 24]}>
-            {shortfileredLocalOpenBid.map((item: ISingleNFT | null, index: number) => (
-              <Col sm={10} md={8} lg={6} xl={4} xxl={3} key={item ? item.non_fungible_id : index}>
+          <Row gutter={[32, 24]}>
+            {shortfilteredLocalOpenBid.map((item: ISingleNFT | null, index: number) => (
+              <Col sm={10} md={7} lg={6} xl={4} xxl={4} key={item ? item.non_fungible_id : index}>
                 <Card singleNFT={item} />
               </Col>
             ))}

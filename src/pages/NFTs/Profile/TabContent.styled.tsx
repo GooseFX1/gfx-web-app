@@ -48,13 +48,11 @@ export const StyledTabContent = styled.div`
     }
 
     .cards-list {
-      
-      position:relative;
-      
+      position:relative;  
       padding: ${theme.margin(12)} ${theme.margin(5)}  ${theme.margin(4)};
       overflow-x: hidden;
       overflow-y: scroll;
-      ${theme.customScrollBar('4px')};
+      ${theme.customScrollBar('4px')}
     }
 
   `}

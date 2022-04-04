@@ -320,8 +320,9 @@ export const RightSectionTabs: FC<{
     try {
       const { signature, confirm } = await callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
       if (confirm.value.err === null) {
+        setRemoveAskModal(false)
         notify(successfulRemoveAskMsg(signature, nftMetadata, ask.buyer_price))
-        postCancelAskToAPI(general.non_fungible_id)
+        postCancelAskToAPI(ask.ask_id)
       }
     } catch (error) {
       notify({
@@ -437,7 +438,7 @@ export const RightSectionTabs: FC<{
       const signature = await wallet.sendTransaction(transaction, connection)
       console.log(signature)
 
-      const confirm = await connection.confirmTransaction(signature, 'processed')
+      const confirm = await connection.confirmTransaction(signature, 'confirmed')
       console.log(confirm)
 
       if (confirm.value.err === null) {

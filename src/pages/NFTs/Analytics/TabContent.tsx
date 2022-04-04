@@ -20,6 +20,7 @@ const ANALYTIC_ITEM = styled.div`
   border: 1px solid transparent;
   border-radius: 10px;
   cursor: pointer;
+  height: 134px;
 
   &:hover {
     background-color: ${({ theme }) => theme.bg1};

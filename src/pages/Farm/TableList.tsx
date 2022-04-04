@@ -183,7 +183,7 @@ export const TableList = ({ dataSource }: any) => {
       ? new Program(
           StakeIDL,
           ADDRESSES[network].programs.stake.address,
-          new Provider(connection, wallet as WalletContextState, { commitment: 'processed' })
+          new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
         )
       : undefined
   }, [connection, wallet.publicKey])

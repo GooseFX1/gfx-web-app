@@ -55,7 +55,7 @@ export const getStakeProgram = (
   new Program(
     StakeIDL,
     ADDRESSES[network].programs.stake.address,
-    new Provider(connection, wallet as any, { commitment: 'processed' })
+    new Provider(connection, wallet as any, { commitment: 'confirmed' })
   )
 
 export const getStakingAccountKey = async (wallet: WalletContextState): Promise<undefined | PublicKey> => {
@@ -131,7 +131,7 @@ const stakeAmount = async (
     const signature = await wallet.sendTransaction(stakeAmountTX, connection)
     console.log(signature)
 
-    const confirm = await connection.confirmTransaction(signature, 'processed')
+    const confirm = await connection.confirmTransaction(signature, 'confirmed')
     console.log(confirm, 'stake amount')
     return confirm
   } catch (error) {
@@ -167,7 +167,7 @@ export const executeUnstakeAndClaim = async (
     })
     const unstakeAmountTX: Transaction = new Transaction().add(unstakeAmountIX)
     const signature = await wallet.sendTransaction(unstakeAmountTX, connection)
-    const confirm = await connection.confirmTransaction(signature, 'processed')
+    const confirm = await connection.confirmTransaction(signature, 'confirmed')
     console.log(confirm, 'unstake amount ')
     return confirm
   } catch (err) {

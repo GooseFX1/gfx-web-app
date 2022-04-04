@@ -154,7 +154,7 @@ export const CollectionTabs = ({ filter, setFilter, collapse, setCollapse }) => 
           <OpenBidsTabContent filter={filter} setCollapse={setCollapse} />
         </TabPane>
         <TabPane tab="Fixed Price" key="2">
-          <FixedPriceTabContent />
+          <FixedPriceTabContent filter={filter} setCollapse={setCollapse} />
         </TabPane>
         <TabPane tab="Owners" key="3">
           <OwnersTabContent />
