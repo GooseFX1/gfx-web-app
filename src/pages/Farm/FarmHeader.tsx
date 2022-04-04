@@ -57,7 +57,7 @@ export const FarmHeader = ({ onFilter }: any) => {
       <STYLED_RIGHT>
         <SearchBar className="search-bar" placeholder="Search by token symbol" setFilter={onFilter} />
         {/* <Categories className="pools" categories={poolTypes} /> */}
-        <Toggle className="live" checkedChildren="Ended" unCheckedChildren="Live" defaultChecked={false} />
+        {/* <Toggle className="live" checkedChildren="Ended" unCheckedChildren="Live" defaultChecked={false} /> */}
       </STYLED_RIGHT>
     </STYLED_FARM_HEADER>
   )

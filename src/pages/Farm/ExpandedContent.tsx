@@ -5,6 +5,8 @@ import { PublicKey } from '@solana/web3.js'
 import { Program } from '@project-serum/anchor'
 import { Button } from 'antd'
 import { MainButton } from '../../components'
+import { Connect } from '../../layouts/App/Connect'
+
 import { notify } from '../../utils'
 import { useTokenRegistry, useAccounts, useConnectionConfig, usePriceFeed } from '../../context'
 import { executeStake, executeUnstakeAndClaim } from '../../web3'
@@ -269,7 +271,7 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
   const [status, setStatus] = useState([
     {
       id: 0,
-      selected: true,
+      selected: false,
       isLoading: false
     },
     {
@@ -282,7 +284,7 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
   const [isUnstakeLoading, setIsUnstakeLoading] = useState<boolean>(false)
   const [tokenStaked, setTokenStaked] = useState<number>(parseFloat(currentlyStaked))
   const [tokenEarned, setTokenEarned] = useState<number>(parseFloat(earned))
-
+  console.log(earned, 'earned')
   const stakeRef = useRef(null)
   const unstakeRef = useRef(null)
 
@@ -310,7 +312,7 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
 
   useEffect(() => {
     setTokenStaked(parseFloat(currentlyStaked))
-    setTokenEarned(parseFloat(earned))
+    setTokenEarned(Math.abs(parseFloat(earned)))
   }, [earned, currentlyStaked])
 
   const updateStakedValue = () => {
@@ -382,7 +384,7 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
     if (
       isNaN(parseFloat(unstakeRef.current.value)) ||
       parseFloat(unstakeRef.current.value) < 0.01 ||
-      parseFloat(unstakeRef.current.value) > tokenStakedPlusEarned
+      parseFloat(unstakeRef.current.value) > parseFloat(tokenStakedPlusEarned.toFixed(3))
     ) {
       unstakeRef.current.value = 0
       notify({
@@ -395,7 +397,7 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
     try {
       setIsUnstakeLoading(true)
       const tokenInPercent = tokenStakedPlusEarned
-        ? (parseFloat(unstakeRef.current.value) / tokenStakedPlusEarned) * 100
+        ? (parseFloat(unstakeRef.current.value) / parseFloat(tokenStakedPlusEarned.toFixed(3))) * 100
         : 0
       const confirm = executeUnstakeAndClaim(stakeProgram, stakeAccountKey, wallet, connection, network, tokenInPercent)
       confirm.then((con) => {
@@ -407,7 +409,7 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
           })
           if (parseFloat(unstakeRef.current.value) > tokenStaked) {
             const val = tokenEarned - (parseFloat(unstakeRef.current.value) - tokenStaked)
-            setTokenEarned(val === 0 ? 0 : val)
+            setTokenEarned(val <= 0 ? 0 : val)
           }
           const remainingToken = tokenStaked - parseFloat(unstakeRef.current.value)
           setTokenStaked(remainingToken > 0 ? remainingToken : 0)
@@ -456,9 +458,7 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
                 </div>
               </STYLED_STAKED_EARNED_CONTENT>
             ) : (
-              <Button type="primary">
-                <span>Connect Wallet</span>
-              </Button>
+              <Connect />
             )}
           </div>
         </STYLED_LEFT_CONTENT>

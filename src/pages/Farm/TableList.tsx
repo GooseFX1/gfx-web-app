@@ -7,7 +7,7 @@ import { Table } from 'antd'
 import { columns } from './Columns'
 import { ExpandedContent } from './ExpandedContent'
 import { getStakingAccountKey, fetchCurrentAmountStaked, CONTROLLER_KEY, CONTROLLER_LAYOUT } from '../../web3'
-import { useConnectionConfig, usePriceFeed } from '../../context'
+import { useConnectionConfig, usePriceFeed, useFarmContext } from '../../context'
 import { ADDRESSES } from '../../web3/ids'
 const StakeIDL = require('../../web3/idl/stake.json')
 
@@ -20,6 +20,7 @@ const STYLED_TABLE_LIST = styled(Table)`
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
     box-shadow: ${theme.tableListBoxShadow};
+    padding-bottom: ${theme.margin(4)};
   }
   .normal-text {
     font-family: Montserrat;
@@ -159,6 +160,7 @@ export const TableList = ({ dataSource }: any) => {
   const { prices } = usePriceFeed()
   const { network, connection } = useConnectionConfig()
   const wallet = useWallet()
+  const { showDeposited } = useFarmContext()
   const [accountKey, setAccountKey] = useState<PublicKey>()
   const [farmData, setFarmData] = useState<IFarmData[]>([
     {
@@ -204,11 +206,13 @@ export const TableList = ({ dataSource }: any) => {
     if (gofxPrice !== undefined) {
       fetchTableData(accountKey).then((farmData) => {
         if (farmData.length > 0) {
-          setFarmData(farmData)
+          const farmDataStaked =
+            showDeposited && wallet.publicKey ? farmData.filter((fData) => fData.currentlyStaked > 0.0) : farmData
+          setFarmData(farmDataStaked)
         }
       })
     }
-  }, [accountKey, gofxPrice])
+  }, [accountKey, gofxPrice, showDeposited])
 
   const fetchTableData = async (accountKey: PublicKey) => {
     // pool data

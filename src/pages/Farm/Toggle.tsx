@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Switch } from 'antd'
+import { useFarmContext } from '../../context/farm'
 
 const STYLED_TOGGLE = styled.div`
   display: flex;
@@ -92,14 +93,18 @@ interface IToggle {
   [x: string]: any
 }
 
-export const Toggle = ({ text, defaultChecked, checkedChildren, unCheckedChildren, className, ...rest }: IToggle) => (
-  <STYLED_TOGGLE>
-    <Switch
-      className={`${className} ${text ? 'gray' : 'purple'}`}
-      defaultChecked={defaultChecked}
-      checkedChildren={checkedChildren}
-      unCheckedChildren={unCheckedChildren}
-    />
-    {text && <div className="text">{text}</div>}
-  </STYLED_TOGGLE>
-)
+export const Toggle = ({ text, defaultChecked, checkedChildren, unCheckedChildren, className, ...rest }: IToggle) => {
+  const { toggleDeposited } = useFarmContext()
+  return (
+    <STYLED_TOGGLE>
+      <Switch
+        className={`${className} ${text ? 'gray' : 'purple'}`}
+        defaultChecked={defaultChecked}
+        checkedChildren={checkedChildren}
+        unCheckedChildren={unCheckedChildren}
+        onChange={(e) => toggleDeposited(e)}
+      />
+      {text && <div className="text">{text}</div>}
+    </STYLED_TOGGLE>
+  )
+}
