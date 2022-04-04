@@ -20,6 +20,7 @@ const STYLED_TABLE_LIST = styled(Table)`
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
     box-shadow: ${theme.tableListBoxShadow};
+    padding-bottom: ${theme.margin(4)};
   }
   .normal-text {
     font-family: Montserrat;
