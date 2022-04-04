@@ -10,9 +10,9 @@ import { StyledHeaderProfile, StyledDropdown, StyledMenu } from './HeaderProfile
 import { MainButton } from '../../../components'
 import { CenteredDiv } from '../../../styles'
 
-const menu = (setVisibleShareProfile: (b: boolean) => void) => (
+const menu = (setShareModal: (b: boolean) => void) => (
   <StyledMenu>
-    <Menu.Item onClick={() => setVisibleShareProfile(true)}>
+    <Menu.Item onClick={() => setShareModal(true)}>
       <div>Share</div>
     </Menu.Item>
     <Menu.Item onClick={() => console.log('report')}>
@@ -32,9 +32,9 @@ export const HeaderProfile = ({ isExplore }: Props) => {
   const { connected, publicKey } = useWallet()
   const { sessionUser } = useNFTProfile()
   const { mode } = useDarkMode()
-  const [visible, setVisible] = useState(false)
-  const [visibleShareProfile, setVisibleShareProfile] = useState(false)
-  const handleCancel = () => setVisible(false)
+  const [profileModal, setProfileModal] = useState(false)
+  const [shareModal, setShareModal] = useState(false)
+  const handleCancel = () => setProfileModal(false)
 
   useEffect(() => {
     isCreatingProfile()
@@ -43,7 +43,7 @@ export const HeaderProfile = ({ isExplore }: Props) => {
 
   const isCreatingProfile = (): void => {
     if (location.state && location.state.isCreatingProfile) {
-      setVisible(true)
+      setProfileModal(true)
     }
   }
 
@@ -55,8 +55,19 @@ export const HeaderProfile = ({ isExplore }: Props) => {
     }
   }
 
+  const handleModal = () => {
+    if (profileModal) {
+      return <PopupProfile visible={profileModal} setVisible={setProfileModal} handleCancel={handleCancel} />
+    } else if (shareModal) {
+      return <ShareProfile visible={shareModal} handleCancel={() => setShareModal(false)} />
+    } else {
+      return false
+    }
+  }
+
   return (
     <StyledHeaderProfile mode={mode}>
+      {handleModal()}
       <img
         className="back-icon"
         src={`/img/assets/arrow.svg`}
@@ -72,7 +83,7 @@ export const HeaderProfile = ({ isExplore }: Props) => {
           alt={sessionUser.nickname}
         />
         {sessionUser.user_id && (
-          <img className="edit-icon" src={`/img/assets/edit.svg`} alt="" onClick={() => setVisible(true)} />
+          <img className="edit-icon" src={`/img/assets/edit.svg`} alt="" onClick={() => setProfileModal(true)} />
         )}
       </div>
       <div>
@@ -92,7 +103,7 @@ export const HeaderProfile = ({ isExplore }: Props) => {
         <div className="social-list">
           {!sessionUser.user_id && connected && publicKey && (
             <CenteredDiv>
-              <MainButton height="30px" onClick={() => setVisible(true)} status="action" width="150px">
+              <MainButton height="30px" onClick={() => setProfileModal(true)} status="action" width="150px">
                 <span>Complete Profile</span>
               </MainButton>
             </CenteredDiv>
@@ -147,14 +158,12 @@ export const HeaderProfile = ({ isExplore }: Props) => {
           </button>
         )}
 
-        <StyledDropdown overlay={menu(setVisibleShareProfile)} trigger={['click']} placement="bottomRight" arrow>
+        <StyledDropdown overlay={menu(setShareModal)} trigger={['click']} placement="bottomRight" arrow>
           <Button>
             <img className="more-icon" src={`/img/assets/more_icon.svg`} alt="more" />
           </Button>
         </StyledDropdown>
       </div>
-      <PopupProfile visible={visible} setVisible={setVisible} handleCancel={handleCancel} />
-      <ShareProfile visible={visibleShareProfile} handleCancel={() => setVisibleShareProfile(false)} />
     </StyledHeaderProfile>
   )
 }

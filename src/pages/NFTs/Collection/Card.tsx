@@ -51,7 +51,7 @@ const CARD = styled.div`
   .card-details {
     position: relative;
     height: 30px;
-    margin-top: ${({ theme }) => theme.margin(2)};
+
     margin-bottom: ${({ theme }) => theme.margin(0.5)};
     text-align: left;
     .card-name {
@@ -120,12 +120,10 @@ const COVER = styled.div<{ $mode: boolean }>`
   align-items: center;
   justify-content: center;
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  width: 100%;
+  top: 16px;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
   background-color: ${({ $mode }) => ($mode ? 'rgb(0 0 0 / 66%)' : 'rgb(202 202 202 / 71%)')};
   z-index: 10;
   cursor: default;

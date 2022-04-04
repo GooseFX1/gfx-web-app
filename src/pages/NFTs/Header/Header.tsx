@@ -26,7 +26,7 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
     max-width: 600px;
     background: ${({ theme }) => theme.bg1};
     height: 45px;
-    margin-left: ${({ theme }) => theme.margin(2.5)};
+    margin-left: 0;
     border: 1px solid ${({ theme }) => theme.bg1};
 
     > input {
@@ -136,6 +136,7 @@ const AVATAR_NFT = styled(Image)`
   width: 56px;
   height: 56px;
   cursor: pointer;
+  margin-right: ${({ theme }) => theme.margin(1.5)};
 `
 
 const MENU_ITEM = styled(Menu.Item)`

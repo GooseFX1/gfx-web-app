@@ -295,7 +295,9 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
               {isCollectionItemEmpty ? (
                 <SkeletonCommon width="106px" height="25px" />
               ) : (
-                <span>{singleCollection.collection_vol ? singleCollection.collection_vol.yearly : '0.00'} Yr</span>
+                <span>
+                  {singleCollection.collection_vol ? singleCollection.collection_vol.yearly.toFixed(3) : '0.00'} Yr
+                </span>
               )}
             </div>
             <div className="text">
