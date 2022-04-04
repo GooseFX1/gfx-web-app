@@ -47,11 +47,11 @@ const TX_LINK = styled.a`
   justify-content: flex-end;
   width: 100%;
   margin-top: 16px;
-  color: white;
+  color: white !important;
 
   &:hover > span {
     text-decoration-line: underline;
-    color: white;
+    color: white !important;
   }
 `
 
@@ -89,7 +89,7 @@ export const notify = async (
       <>
         <span>{description}</span>
         <TX_LINK
-          href={'https://solscan.io/tx/' + txid + (network == 'devnet' ? '?cluster=devnet' : '')}
+          href={'https://solscan.io/tx/' + txid + (network === 'devnet' ? '?cluster=devnet' : '')}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -108,6 +108,7 @@ export const notify = async (
     ),
     icon: <div style={{ display: 'none' }} />,
     key,
+    duration: 10,
     message:
       typeof message === 'string' ? (
         <MESSAGE>
