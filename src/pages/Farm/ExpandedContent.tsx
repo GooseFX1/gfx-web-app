@@ -14,9 +14,9 @@ import { executeStake, executeUnstakeAndClaim } from '../../web3'
 //#region styles
 const STYLED_EXPANDED_ROW = styled.div`
   padding-top: ${({ theme }) => theme.margin(4)};
-  padding-right: ${({ theme }) => theme.margin(10)};
   padding-bottom: ${({ theme }) => theme.margin(7)};
   padding-left: ${({ theme }) => theme.margin(4)};
+  padding-right: ${({ theme }) => theme.margin(4)};
   background-image: ${({ theme }) => theme.expendedRowBg};
 `
 
