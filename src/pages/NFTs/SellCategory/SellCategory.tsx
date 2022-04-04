@@ -63,7 +63,7 @@ export const SellCategory = ({ category, setCategory }: ICategory) => {
   return (
     <STYLED_SELL_CATEGORY gutter={[48, 0]}>
       {dataCategories.map((item, index) => (
-        <Col>
+        <Col key={index}>
           <div className="item-wrap" onClick={() => setCategory(item.icon)}>
             <img
               className={`${item.icon === category ? 'active' : ''} item-image`}
