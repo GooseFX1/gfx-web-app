@@ -215,7 +215,7 @@ export const Card = (props: ICard) => {
 
   const getButtonText = (isOwner: boolean, ask: INFTAsk | undefined): string => {
     if (isOwner) {
-      return ask === undefined ? 'Sell' : 'Remove Ask'
+      return ask === undefined ? 'Sell' : 'Edit Ask'
     } else {
       return ask === undefined ? 'Bid' : 'Buy Now'
     }
