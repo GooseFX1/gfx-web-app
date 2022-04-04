@@ -213,6 +213,7 @@ export const SellNFT = () => {
   const { connected, publicKey, sendTransaction } = wallet
   const { connection, network } = useConnectionConfig()
   const [reviewSellModal, setReviewSellModal] = useState<boolean>(false)
+  const [pendingTxSig, setPendingTxSig] = useState<string>()
 
   const [form] = Form.useForm()
   const [userInput, setUserInput] = useState<any>({
@@ -220,7 +221,7 @@ export const SellNFT = () => {
     royalties: ''
   })
   const [disabled, setDisabled] = useState<boolean>(true)
-  const [category, setCategory] = useState<string>('open-bid')
+  const [category, setCategory] = useState<string>('fixed-price')
   const [isLoading, setIsLoading] = useState(false)
 
   const servicePriceCalc: number = useMemo(
@@ -344,20 +345,34 @@ export const SellNFT = () => {
     const transaction = new Transaction().add(sellIX)
     const signature = await sendTransaction(transaction, connection)
     console.log(signature)
-    const confirm = await connection.confirmTransaction(signature, 'processed')
-    console.log(confirm)
+    setPendingTxSig(signature)
 
-    if (confirm.value.err === null) {
-      postTransationToAPI(signature, buyerPrice, tokenSize).then((res) => {
-        console.log(res)
-        if (!res) {
-          callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
-        }
+    try {
+      const confirm = await connection.confirmTransaction(signature, 'finalized')
+      console.log(confirm)
 
-        setTimeout(() => {
-          notify(successfulListingMsg(signature, nftMetadata, userInput['minimumBid']))
-          history.push('/NFTs/profile')
-        }, 2000)
+      if (confirm.value.err === null) {
+        postTransationToAPI(signature, buyerPrice, tokenSize).then((res) => {
+          console.log(res)
+          if (!res) {
+            callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
+          }
+
+          setTimeout(() => {
+            notify(successfulListingMsg(signature, nftMetadata, userInput['minimumBid']))
+            history.push('/NFTs/profile')
+          }, 2000)
+        })
+      }
+    } catch (error) {
+      setReviewSellModal(false)
+      setPendingTxSig(undefined)
+      setIsLoading(false)
+      notify({
+        type: 'error',
+        message: (
+          <TransactionErrorMsg title={`NFT Listing error!`} itemName={nftMetadata.name} supportText={error.message} />
+        )
       })
     }
   }
@@ -420,7 +435,11 @@ export const SellNFT = () => {
         <REVIEW_SELL_MODAL
           title={null}
           onOk={(e) => setReviewSellModal(false)}
-          onCancel={(e) => setReviewSellModal(false)}
+          onCancel={(e) => {
+            setIsLoading(false)
+            setPendingTxSig(undefined)
+            setReviewSellModal(false)
+          }}
           footer={null}
           visible={reviewSellModal}
           width="570px"
@@ -437,9 +456,24 @@ export const SellNFT = () => {
           </Row>
 
           <div style={{ marginBottom: '70px' }}>
-            <div className="bm-title">Open Bid</div>
-            <div className="bm-support">Accept any amount that you feel comfortable selling your NFT</div>
+            <div className="bm-title">Fixed Price</div>
+            <div className="bm-support">
+              Users can still bid below the asking price. If a bid is placed that is equal to your asking price, your
+              item will be sold and transfered from your wallet.
+            </div>
           </div>
+
+          {pendingTxSig && (
+            <div>
+              <div>
+                Sometimes there are delays on the network. You can check the{' '}
+                <a href={`http://solscan.io/tx/${pendingTxSig}?cluster=${network}`} target={'_blank'} rel="noreferrer">
+                  status of the transaction on solscan
+                </a>
+              </div>
+              <small>TX Signature: {pendingTxSig}</small>
+            </div>
+          )}
 
           <div>
             <Row className="bm-details-price" justify="space-between" align="middle">
@@ -524,7 +558,31 @@ export const SellNFT = () => {
                   </div>
                 )}
                 {category === 'fixed-price' && (
-                  <FormDoubleItem data={dataFormFixedRow2} className="mb-3x" onChange={onChange} />
+                  <div>
+                    <FormDoubleItem
+                      data={[
+                        {
+                          name: 'minimumBid',
+                          defaultValue: '',
+                          placeholder: 'Enter asking price',
+                          hint: (
+                            <div>
+                              Bids below the minimum wont <div>be accepted</div>
+                            </div>
+                          ),
+                          unit: 'SOL',
+                          type: 'input'
+                        }
+                      ]}
+                      className="mb-3x"
+                      onChange={onChange}
+                    />
+
+                    <STYLED_DESCRIPTION>
+                      Open bids are open to any amount and they will be closed after a bid matches the asking price or
+                      if the creator decides to remove it.
+                    </STYLED_DESCRIPTION>
+                  </div>
                 )}
                 {/* <Donate
                 {...dataDonate}
