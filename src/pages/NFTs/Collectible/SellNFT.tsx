@@ -22,14 +22,19 @@ import {
 import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
 import BN from 'bn.js'
 import {
+  AH_FEE_ACCT,
   AUCTION_HOUSE_PREFIX,
   AUCTION_HOUSE,
   AUCTION_HOUSE_PROGRAM_ID,
+  AUCTION_HOUSE_AUTHORITY,
   TREASURY_MINT,
   toPublicKey,
   createSellInstruction,
   SellInstructionArgs,
   SellInstructionAccounts,
+  createCancelInstruction,
+  CancelInstructionArgs,
+  CancelInstructionAccounts,
   getMetadata,
   StringPublicKey,
   bnTo8
@@ -206,7 +211,7 @@ const BUTTON_TEXT = styled.div`
 export const SellNFT = () => {
   const history = useHistory()
   const params = useParams<IAppParams>()
-  const { general, ask, fetchGeneral, nftMetadata, updateUserInput, sellNFT } = useNFTDetails()
+  const { general, ask, fetchGeneral, nftMetadata, updateUserInput, sellNFT, removeNFTListing } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
   const wallet = useWallet()
   const { connected, publicKey, sendTransaction } = wallet
@@ -288,7 +293,7 @@ export const SellNFT = () => {
   }
 
   const derivePDAsForInstruction = async () => {
-    const buyerPriceInLamports = parseFloat(userInput['minimumBid'] || 0) * LAMPORTS_PER_SOL
+    const buyerPriceInLamports = parseFloat(userInput['minimumBid']) * LAMPORTS_PER_SOL
     const buyerPrice: BN = new BN(buyerPriceInLamports)
 
     const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
@@ -341,7 +346,19 @@ export const SellNFT = () => {
     const sellIX: TransactionInstruction = await createSellInstruction(sellInstructionAccounts, sellInstructionArgs)
     console.log(sellIX)
 
-    const transaction = new Transaction().add(sellIX)
+    const transaction = new Transaction()
+
+    let removeAskIX: TransactionInstruction | undefined = undefined
+    // if ask exists
+    if (ask !== undefined) {
+      // make web3 cancel
+      removeAskIX = await createRemoveAskIX()
+    }
+    console.log(removeAskIX)
+    if (ask && removeAskIX) transaction.add(removeAskIX)
+
+    transaction.add(sellIX)
+
     const signature = await sendTransaction(transaction, connection)
     console.log(signature)
     setPendingTxSig(signature)
@@ -351,8 +368,14 @@ export const SellNFT = () => {
       console.log(confirm)
 
       if (confirm.value.err === null) {
+        // asserts existing ask and removes it from nest-api
+        if (ask !== undefined) {
+          const askRemoved = await postCancelAskToAPI(ask.ask_id)
+          console.log(`askRemoved: ${askRemoved}`)
+        }
+        // create asking price
         postTransationToAPI(signature, buyerPrice, tokenSize).then((res) => {
-          console.log(res)
+          console.log('postTransationToAPI: ', res)
           if (!res) {
             callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
           }
@@ -413,6 +436,42 @@ export const SellNFT = () => {
       }
     } catch (error) {
       console.error(error)
+      return false
+    }
+  }
+
+  const createRemoveAskIX = async () => {
+    const curAskingPrice: BN = new BN(parseFloat(ask.buyer_price))
+    const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(curAskingPrice))
+    const cancelInstructionArgs: CancelInstructionArgs = {
+      buyerPrice: new BN(ask.buyer_price),
+      tokenSize: tokenSize
+    }
+
+    const cancelInstructionAccounts: CancelInstructionAccounts = {
+      wallet: wallet.publicKey,
+      tokenAccount: new PublicKey(general.token_account),
+      tokenMint: new PublicKey(general.mint_address),
+      authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+      auctionHouse: new PublicKey(AUCTION_HOUSE),
+      auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
+      tradeState: tradeState[0]
+    }
+
+    const cancelIX: TransactionInstruction = await createCancelInstruction(
+      cancelInstructionAccounts,
+      cancelInstructionArgs
+    )
+    return cancelIX
+  }
+
+  const postCancelAskToAPI = async (id: number) => {
+    try {
+      const res = await removeNFTListing(id)
+      console.log('Asking Price Removed', res)
+      return true
+    } catch (error) {
+      console.error(`Error Removing Ask: ${error}`)
       return false
     }
   }
