@@ -26,7 +26,7 @@ const MainTokenDisplay = styled.div`
   width: 85% !important;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
 
   .text-primary {
     font-weight: 600;
@@ -36,8 +36,8 @@ const MainTokenDisplay = styled.div`
 `
 
 const CLICKER_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(3))}
-  margin-right: ${({ theme }) => theme.margin(1)};
+  ${({ theme }) => theme.measurements(theme.margin(5))}
+  margin-right: ${({ theme }) => theme.margin(0.5)};
   ${({ theme }) => theme.roundedBorders}
 `
 
@@ -85,9 +85,11 @@ const MAGNIFYING_GLASS = styled(CenteredImg)`
 const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
   position: absolute;
   height: ${({ $height }) => $height};
-  width: 45%;
+  height: 90%;
+  width: 35%;
+  margin: 0.25rem;
   ${({ theme }) => theme.roundedBorders}
-  background-color: ${({ theme }) => theme.grey5};
+  background-color: ${({ theme }) => theme.bg9};
   cursor: pointer;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   z-index: 1;
