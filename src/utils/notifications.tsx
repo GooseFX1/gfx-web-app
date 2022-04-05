@@ -108,7 +108,7 @@ export const notify = async (
     ),
     icon: <div style={{ display: 'none' }} />,
     key,
-    duration: 10,
+    duration: type === 'error' ? 10 : 0,
     message:
       typeof message === 'string' ? (
         <MESSAGE>
