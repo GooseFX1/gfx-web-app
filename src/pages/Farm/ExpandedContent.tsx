@@ -4,7 +4,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
 import { Program } from '@project-serum/anchor'
 import { Button } from 'antd'
-import { MainButton } from '../../components'
+import { MainButton, SuccessfulListingMsg, TransactionErrorMsg } from '../../components'
 import { Connect } from '../../layouts/App/Connect'
 
 import { notify } from '../../utils'
@@ -14,9 +14,9 @@ import { executeStake, executeUnstakeAndClaim } from '../../web3'
 //#region styles
 const STYLED_EXPANDED_ROW = styled.div`
   padding-top: ${({ theme }) => theme.margin(4)};
-  padding-right: ${({ theme }) => theme.margin(10)};
   padding-bottom: ${({ theme }) => theme.margin(7)};
   padding-left: ${({ theme }) => theme.margin(4)};
+  padding-right: ${({ theme }) => theme.margin(4)};
   background-image: ${({ theme }) => theme.expendedRowBg};
 `
 
@@ -300,6 +300,16 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
     [tokenInfo, getUIAmount, publicKey]
   )
 
+  const successfulListingMessage = (msg: string, signature: any, price: string) => ({
+    message: (
+      <SuccessfulListingMsg
+        title={msg}
+        itemName={`${name}`}
+        supportText={`Stake of: ${price}`}
+        tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
+      />
+    )
+  })
   const fiatStakedAmount = useMemo(() => {
     const price = prices[name + '/USDC']
     return tokenStaked ? tokenStaked * price?.current : 0
@@ -330,6 +340,16 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
     return true
   }
 
+  const successfuStakeMessage = (signature: any, nftMetadata: any, price: string) => ({
+    message: (
+      <SuccessfulListingMsg
+        title={`Successfully staked ${nftMetadata?.name}!`}
+        itemName={nftMetadata.name}
+        supportText={`Bid of: ${price}`}
+        tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
+      />
+    )
+  })
   const onClickStake = () => {
     if (
       isNaN(parseFloat(stakeRef.current.value)) ||
@@ -356,16 +376,29 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
       )
       confirm.then((con) => {
         setIsStakeLoading(false)
-        if (con && con?.value && con.value.err === null) {
-          notify({
-            message: `Deposited amount ${stakeRef.current.value} ${name} Successful`
-          })
+        const { confirm, signature } = con
+        if (confirm && confirm?.value && confirm.value.err === null) {
+          notify(
+            successfulListingMessage(
+              `Successfully staked amount of ${stakeRef.current.value} ${name}!`,
+              signature,
+              stakeRef.current.value
+            )
+          )
           updateStakedValue()
           setTimeout(() => (stakeRef.current.value = 0), 500)
         } else {
+          const { signature, error } = con
           notify({
             type: 'error',
-            message: con?.message
+            message: (
+              <TransactionErrorMsg
+                title={`Staking ${name} error!`}
+                itemName={`Stake ${name}`}
+                supportText={error.message}
+                tx_url={signature ? `https://solscan.io/tx/${signature}?cluster=${network}` : null}
+              />
+            )
           })
           return
         }
@@ -401,12 +434,18 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
         : 0
       const confirm = executeUnstakeAndClaim(stakeProgram, stakeAccountKey, wallet, connection, network, tokenInPercent)
       confirm.then((con) => {
+        const { confirm, signature } = con
         setIsUnstakeLoading(false)
-        if (con && con.value && con.value.err === null) {
+        if (confirm && confirm?.value && confirm.value.err === null) {
           updateStakedValue()
-          notify({
-            message: `Unstake of amount ${unstakeRef.current.value} ${name} Successful`
-          })
+          notify(
+            successfulListingMessage(
+              `Successfully Untaked amount of ${unstakeRef.current.value} ${name}!`,
+              signature,
+              unstakeRef.current.value
+            )
+          )
+
           if (parseFloat(unstakeRef.current.value) > tokenStaked) {
             const val = tokenEarned - (parseFloat(unstakeRef.current.value) - tokenStaked)
             setTokenEarned(val <= 0 ? 0 : val)
@@ -415,10 +454,19 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
           setTokenStaked(remainingToken > 0 ? remainingToken : 0)
           setTimeout(() => (unstakeRef.current.value = 0), 1000)
         } else {
+          const { signature, error } = con
           notify({
             type: 'error',
-            message: con.message
+            message: (
+              <TransactionErrorMsg
+                title={`Unstaking ${name} error!`}
+                itemName={`Unstake ${name}`}
+                supportText={error.message}
+                tx_url={signature ? `https://solscan.io/tx/${signature}?cluster=${network}` : null}
+              />
+            )
           })
+          return
         }
       })
     } catch (error) {

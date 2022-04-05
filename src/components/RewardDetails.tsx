@@ -260,10 +260,8 @@ export const RewardRedirectComponent: FC = () => {
       <STAKE_TEXT>
         Stake your <BOLD_TEXT>GOFX</BOLD_TEXT>
         <br /> and earn up to
-        <br />
-        <small style={{ opacity: '.6' }}>(coming soon)</small>
+        <APR_TEXT>200% APR</APR_TEXT>
       </STAKE_TEXT>
-      <APR_TEXT>200% APR</APR_TEXT>
       <div style={{ textAlign: 'center' }}>
         <STAKE_BTN onClick={handleStakeClick}>Stake</STAKE_BTN>
         <br />

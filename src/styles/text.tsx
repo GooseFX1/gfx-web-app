@@ -2,7 +2,7 @@ import styled, { AnyStyledComponent } from 'styled-components'
 import { Color } from '../types/theme'
 import { text } from '../theme'
 
-const { fontFamily } = text('')
+const { fontFamily } = text('Montserrat')
 
 export const H1 = (color?: Color) => styled.h1`
   font-family: ${fontFamily};
@@ -237,4 +237,32 @@ export const TXT_PRIMARY_GRADIENT = styled.span`
   background-image: linear-gradient(to right, #716fff 7%, #e959ff 88%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+`
+
+export const GFX_LINK = styled.a`
+  font-family: '${fontFamily}';
+  font-stretch: normal;
+  font-style: normal;
+  letter-spacing: normal;
+  font-weight: bold;
+  color: ${({ theme }) => theme.secondary4};
+  text-decoration: underline;
+
+  &:hover {
+    text-decoration: underline;
+    color: ${({ theme }) => theme.secondary1};
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    font-size: 14px;
+      line-height: 16px;
+  `}
+  ${({ theme }) => theme.mediaWidth.fromSmall`
+    font-size: 18px;
+      line-height: 20px;
+  `}
+  ${({ theme }) => theme.mediaWidth.fromMedium`
+    font-size: 20px;
+      line-height: 22px;
+  `}
 `

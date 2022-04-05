@@ -5,12 +5,11 @@ import { Form, Row, Col } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { IAppParams } from '../../../types/app_params.d'
 import PreviewImage from './PreviewImage'
-import { PopupCustom } from '../Popup/PopupCustom'
-import { MainText, TXT_PRIMARY_GRADIENT } from '../../../styles'
+import { MainText, TXT_PRIMARY_GRADIENT, GFX_LINK } from '../../../styles'
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { SellCategory } from '../SellCategory/SellCategory'
 import { FormDoubleItem } from '../Form/FormDoubleItem'
-import { SuccessfulListingMsg, TransactionErrorMsg, MainButton } from '../../../components'
+import { SuccessfulListingMsg, TransactionErrorMsg, MainButton, Modal } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { notify } from '../../../utils'
 import {
@@ -23,14 +22,19 @@ import {
 import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
 import BN from 'bn.js'
 import {
+  AH_FEE_ACCT,
   AUCTION_HOUSE_PREFIX,
   AUCTION_HOUSE,
   AUCTION_HOUSE_PROGRAM_ID,
+  AUCTION_HOUSE_AUTHORITY,
   TREASURY_MINT,
   toPublicKey,
   createSellInstruction,
   SellInstructionArgs,
   SellInstructionAccounts,
+  createCancelInstruction,
+  CancelInstructionArgs,
+  CancelInstructionAccounts,
   getMetadata,
   StringPublicKey,
   bnTo8
@@ -62,7 +66,7 @@ const UPLOAD_CONTENT = styled.div`
   }
 `
 
-const REVIEW_SELL_MODAL = styled(PopupCustom)`
+const REVIEW_SELL_MODAL = styled(Modal)`
   * {
     text-align: center;
   }
@@ -207,7 +211,7 @@ const BUTTON_TEXT = styled.div`
 export const SellNFT = () => {
   const history = useHistory()
   const params = useParams<IAppParams>()
-  const { general, fetchGeneral, nftMetadata, updateUserInput, sellNFT } = useNFTDetails()
+  const { general, ask, fetchGeneral, nftMetadata, updateUserInput, sellNFT, removeNFTListing } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
   const wallet = useWallet()
   const { connected, publicKey, sendTransaction } = wallet
@@ -289,7 +293,7 @@ export const SellNFT = () => {
   }
 
   const derivePDAsForInstruction = async () => {
-    const buyerPriceInLamports = parseFloat(userInput['minimumBid'] || 0) * LAMPORTS_PER_SOL
+    const buyerPriceInLamports = parseFloat(userInput['minimumBid']) * LAMPORTS_PER_SOL
     const buyerPrice: BN = new BN(buyerPriceInLamports)
 
     const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
@@ -342,7 +346,19 @@ export const SellNFT = () => {
     const sellIX: TransactionInstruction = await createSellInstruction(sellInstructionAccounts, sellInstructionArgs)
     console.log(sellIX)
 
-    const transaction = new Transaction().add(sellIX)
+    const transaction = new Transaction()
+
+    let removeAskIX: TransactionInstruction | undefined = undefined
+    // if ask exists
+    if (ask !== undefined) {
+      // make web3 cancel
+      removeAskIX = await createRemoveAskIX()
+    }
+    console.log(removeAskIX)
+    if (ask && removeAskIX) transaction.add(removeAskIX)
+
+    transaction.add(sellIX)
+
     const signature = await sendTransaction(transaction, connection)
     console.log(signature)
     setPendingTxSig(signature)
@@ -352,8 +368,14 @@ export const SellNFT = () => {
       console.log(confirm)
 
       if (confirm.value.err === null) {
+        // asserts existing ask and removes it from nest-api
+        if (ask !== undefined) {
+          const askRemoved = await postCancelAskToAPI(ask.ask_id)
+          console.log(`askRemoved: ${askRemoved}`)
+        }
+        // create asking price
         postTransationToAPI(signature, buyerPrice, tokenSize).then((res) => {
-          console.log(res)
+          console.log('postTransationToAPI: ', res)
           if (!res) {
             callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
           }
@@ -418,6 +440,42 @@ export const SellNFT = () => {
     }
   }
 
+  const createRemoveAskIX = async () => {
+    const curAskingPrice: BN = new BN(parseFloat(ask.buyer_price))
+    const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(curAskingPrice))
+    const cancelInstructionArgs: CancelInstructionArgs = {
+      buyerPrice: new BN(ask.buyer_price),
+      tokenSize: tokenSize
+    }
+
+    const cancelInstructionAccounts: CancelInstructionAccounts = {
+      wallet: wallet.publicKey,
+      tokenAccount: new PublicKey(general.token_account),
+      tokenMint: new PublicKey(general.mint_address),
+      authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+      auctionHouse: new PublicKey(AUCTION_HOUSE),
+      auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
+      tradeState: tradeState[0]
+    }
+
+    const cancelIX: TransactionInstruction = await createCancelInstruction(
+      cancelInstructionAccounts,
+      cancelInstructionArgs
+    )
+    return cancelIX
+  }
+
+  const postCancelAskToAPI = async (id: number) => {
+    try {
+      const res = await removeNFTListing(id)
+      console.log('Asking Price Removed', res)
+      return true
+    } catch (error) {
+      console.error(`Error Removing Ask: ${error}`)
+      return false
+    }
+  }
+
   const successfulListingMsg = (signature: any, nftMetadata: any, price: string) => ({
     message: (
       <SuccessfulListingMsg
@@ -435,11 +493,11 @@ export const SellNFT = () => {
         <REVIEW_SELL_MODAL
           title={null}
           onOk={(e) => setReviewSellModal(false)}
-          onCancel={(e) => {
-            setIsLoading(false)
+          onCancel={(bool: boolean) => {
+            setIsLoading(bool)
             setPendingTxSig(undefined)
-            setReviewSellModal(false)
           }}
+          setVisible={setReviewSellModal}
           footer={null}
           visible={reviewSellModal}
           width="570px"
@@ -455,23 +513,24 @@ export const SellNFT = () => {
             <Col className="bm-text-bold">{creator}</Col>
           </Row>
 
-          <div style={{ marginBottom: '70px' }}>
+          <div style={{ marginBottom: '32px' }}>
             <div className="bm-title">Fixed Price</div>
             <div className="bm-support">
               Users can still bid below the asking price. If a bid is placed that is equal to your asking price, your
-              item will be sold and transfered from your wallet.
+              item will be sold and transferred from your wallet.
             </div>
           </div>
 
           {pendingTxSig && (
-            <div>
-              <div>
-                Sometimes there are delays on the network. You can check the{' '}
-                <a href={`http://solscan.io/tx/${pendingTxSig}?cluster=${network}`} target={'_blank'} rel="noreferrer">
-                  status of the transaction on solscan
-                </a>
-              </div>
-              <small>TX Signature: {pendingTxSig}</small>
+            <div style={{ marginBottom: '56px' }} className="bm-support">
+              ⚠️ Sometimes there are delays on the network. You can track the{' '}
+              <GFX_LINK
+                href={`http://solscan.io/tx/${pendingTxSig}?cluster=${network}`}
+                target={'_blank'}
+                rel="noreferrer"
+              >
+                status of the transaction on solscan
+              </GFX_LINK>
             </div>
           )}
 
@@ -522,7 +581,10 @@ export const SellNFT = () => {
               <SECTION_TITLE>Sale Type</SECTION_TITLE>
               <SellCategory setCategory={setCategory} category={category} />
 
-              <SECTION_TITLE>Set Asking Price</SECTION_TITLE>
+              <SECTION_TITLE>
+                {ask === undefined ? 'Set' : 'Edit'} Asking Price{' '}
+                {ask !== undefined && <span>: ({parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL})</span>}
+              </SECTION_TITLE>
               <STYLED_FORM form={form} layout="vertical" initialValues={{}}>
                 {/* {category === '0' && (
                   <>
@@ -563,7 +625,7 @@ export const SellNFT = () => {
                       data={[
                         {
                           name: 'minimumBid',
-                          defaultValue: '',
+                          defaultValue: ask === undefined ? '' : `${parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL}`,
                           placeholder: 'Enter asking price',
                           hint: (
                             <div>

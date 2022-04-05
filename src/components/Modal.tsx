@@ -27,17 +27,17 @@ const BIG_TITLE = styled.span`
 
 export const Modal: FC<{
   children: ReactNode
-  large?: boolean
   setVisible: (x: boolean) => void
-  onCancel?: () => void
   title: string
   visible: boolean
   bigTitle?: boolean
   style?: any
+  large?: boolean
+  onCancel?: Function
   [x: string]: any
 }> = ({ children, onCancel, large = false, setVisible, title, visible, style, bigTitle, ...props }) => {
   const { mode } = useDarkMode()
-  const handleCancel = () => {
+  const handleCancel = (e: any) => {
     onCancel && onCancel()
     setVisible(false)
   }

@@ -349,9 +349,8 @@ export const RightSectionTabs: FC<{
     )
   })
 
-  const handleUpdateAsk = (e) => {
-    e.preventDefault()
-    ask === undefined ? history.push(`/NFTs/sell/${general.non_fungible_id}`) : setRemoveAskModal(true)
+  const handleUpdateAsk = (action: string) => {
+    action === 'remove' ? setRemoveAskModal(true) : history.push(`/NFTs/sell/${general.non_fungible_id}`)
   }
 
   const handleSetBid = (type: string) => {
@@ -531,9 +530,22 @@ export const RightSectionTabs: FC<{
         <SpaceBetweenDiv className="rst-footer">
           {sessionUser && sessionUser.user_id ? (
             wallet.publicKey.toBase58() === general.owner ? (
-              <button className="rst-footer-button rst-footer-button-sell" onClick={handleUpdateAsk}>
-                {ask === undefined ? 'List Item' : 'Remove Ask Price'}
-              </button>
+              <>
+                <button
+                  className={`rst-footer-button rst-footer-button-${ask === undefined ? 'sell' : 'flat'}`}
+                  onClick={(e) => handleUpdateAsk('list')}
+                >
+                  {ask === undefined ? 'List Item' : 'Edit Ask Price'}
+                </button>
+                {ask && (
+                  <button
+                    className="rst-footer-button rst-footer-button-sell"
+                    onClick={(e) => handleUpdateAsk('remove')}
+                  >
+                    Remove Ask Price
+                  </button>
+                )}
+              </>
             ) : (
               <SpaceBetweenDiv style={{ flexGrow: 1 }}>
                 {bids.find((bid) => bid.wallet_key === wallet.publicKey.toBase58()) && (
