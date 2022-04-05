@@ -19,6 +19,12 @@ const TITLE = styled.span`
   color: ${({ theme }) => theme.text1};
 `
 
+const BIG_TITLE = styled.span`
+  font-size: 30px;
+  font-weight: bold;
+  color: ${({ theme }) => theme.text1};
+`
+
 export const Modal: FC<{
   children: ReactNode
   large?: boolean
@@ -26,8 +32,10 @@ export const Modal: FC<{
   onCancel?: () => void
   title: string
   visible: boolean
+  bigTitle?: boolean
+  style?: any
   [x: string]: any
-}> = ({ children, onCancel, large = false, setVisible, title, visible, ...props }) => {
+}> = ({ children, onCancel, large = false, setVisible, title, visible, style, bigTitle, ...props }) => {
   const { mode } = useDarkMode()
   const handleCancel = () => {
     onCancel && onCancel()
@@ -41,7 +49,8 @@ export const Modal: FC<{
         borderRadius: '20px',
         maxHeight: '80vh',
         overflowY: 'scroll',
-        fontFamily: 'Montserrat'
+        fontFamily: 'Montserrat',
+        ...style
       }}
       centered
       closable={false}
@@ -53,7 +62,7 @@ export const Modal: FC<{
       {...props}
     >
       <HEADER>
-        <TITLE>{title}</TITLE>
+        {bigTitle ? <BIG_TITLE>{title}</BIG_TITLE> : <TITLE>{title}</TITLE>}
         <CLOSE_ICON className="modal-close-icon" onClick={handleCancel}>
           {mode === 'dark' ? (
             <SVGToWhite src={`/img/assets/cross.svg`} alt="close" />
