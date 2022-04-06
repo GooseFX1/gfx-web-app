@@ -19,7 +19,8 @@ const WRAPPER = styled.div`
 
 const INNERWRAPPER = styled.div`
   display: flex;
-  height: 75vh;
+  max-height: 80%;
+  margin-top: 10%;
   justify-content: space-between;
   align-items: center;
   color: ${({ theme }) => theme.text1};
@@ -52,7 +53,7 @@ const HEADER_TITLE = styled.span`
 const TOKEN_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   align-items: center;
-  min-height: 500px;
+  height: 100%;
   width: 400px;
   padding: ${({ theme }) => theme.margin(4)};
   border-radius: 0px 20px 20px 0px;
@@ -148,7 +149,7 @@ const SMALL_CLICKER_ICON = styled(CenteredImg)`
 const PRICE_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   align-items: center;
-  min-height: 500px;
+  height: 100%;
   width: 400px;
   border-radius: 20px 0px 0px 20px;
   padding: ${({ theme }) => theme.margin(4)};
@@ -160,10 +161,10 @@ const PRICE_WRAPPER = styled.div`
 const ALTERNATIVE_WRAPPER = styled.div`
   display: flex;
   justify-content: space-around;
+  align-items: flex-end;
   width: 100%;
-  padding: ${({ theme }) => theme.margin(4)};
 
-  height: calc(20vh - 81px);
+  height: 20%;
 `
 
 const BestPrice = styled.div`
@@ -179,7 +180,7 @@ const BestPrice = styled.div`
 const ShowLess = styled.span`
   position: absolute;
   font-size: 18px;
-  margin-top: -24px;
+  top: 90%;
   right: 60px;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -188,8 +189,8 @@ const ShowLess = styled.span`
 const ShowMore = styled.span`
   position: absolute;
   font-size: 18px;
-  margin-top: 24px;
-  right: 100px;
+  top: 97.5%;
+  right: 25px;
   border-radius: 0.5rem;
   cursor: pointer;
 `
@@ -250,7 +251,8 @@ const SWITCH = styled(CenteredImg)<{ measurements: number }>`
 const SWAP_CONTENT = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   align-items: center;
-  min-height: 425px;
+  min-height: 400px;
+  max-height: 90%;
   width: 628px;
   padding: ${({ theme }) => theme.margin(4)};
   ${({ theme }) => theme.largeBorderRadius}
