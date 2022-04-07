@@ -4,8 +4,10 @@ import styled, { css } from 'styled-components'
 import { useNFTDetails, useNFTProfile } from '../../../context'
 import { ReactComponent as FixedPriceIcon } from '../../../assets/fixed-price.svg'
 import { ReactComponent as OpenBidIcon } from '../../../assets/open-bid.svg'
+import { Share } from '../Share'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
+//#region styles
 const LEFT_SECTION = styled.div`
   ${({ theme }) => css`
     display: flex;
@@ -79,11 +81,13 @@ const SHARE_BUTTON = styled.button`
     }
   }
 `
+//#endregion
 
 export const LeftSection: FC = ({ ...rest }) => {
   const { general, nftMetadata, totalLikes, ask } = useNFTDetails()
   const [isFavorited, setIsFavorited] = useState(false)
   const { sessionUser, likeDislike } = useNFTProfile()
+  const [shareModal, setShareModal] = useState(false)
   const [likes, setLikes] = useState(totalLikes)
 
   //const hearts = 12
@@ -108,11 +112,55 @@ export const LeftSection: FC = ({ ...rest }) => {
     }
   }
 
+  const onShare = (social: string): void => {
+    console.log(social)
+    switch (social) {
+      case 'twitter':
+        window.open(
+          `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20GooseFX&url=https%3A%2F%2Fapp.goosefx.io%2FNFTs%2Fdetails%2F${general.mint_address}&via=gooseFX1&original_referer=https://app.goosefx.io/NFTs/details/${general.mint_address}`
+        )
+        break
+      case 'telegram':
+        window.open(
+          `https://t.me/share/url?url=https%3A%2F%2Fapp.goosefx.io%2FNFTs%2Fdetails%2F${general.mint_address}&text=Check%20out%20this%20item%20on%20GooseFX`
+        )
+        break
+      case 'facebook':
+        window.open(`https://facebook.com`)
+        break
+      case 'copy link':
+        copyToClipboard()
+        break
+      default:
+        break
+    }
+  }
+
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(window.location.href)
+  }
+
+  const handleModal = () => {
+    if (shareModal) {
+      return (
+        <Share
+          visible={shareModal}
+          handleCancel={() => setShareModal(false)}
+          socials={['twitter', 'telegram', 'facebook', 'copy link']}
+          handleShare={onShare}
+        />
+      )
+    } else {
+      return false
+    }
+  }
+
   return general && nftMetadata ? (
     <LEFT_SECTION {...rest}>
+      {handleModal()}
       <img className="ls-image" src={general?.image_url || nftMetadata?.image} alt="the-nft" />
       <NFT_CONTAINER>
-        <SHARE_BUTTON>
+        <SHARE_BUTTON onClick={(e) => setShareModal(true)}>
           <img src={`/img/assets/share.svg`} alt="share-icon" />
         </SHARE_BUTTON>
       </NFT_CONTAINER>

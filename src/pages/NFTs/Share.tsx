@@ -1,11 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
-import { PopupCustom } from '../Popup/PopupCustom'
-
-interface Props {
-  visible: boolean
-  handleCancel: () => void
-}
+import { PopupCustom } from './Popup/PopupCustom'
+import { CheckOutlined } from '@ant-design/icons'
 
 const STYLED_SHARE_PROFILE = styled(PopupCustom)`
   ${({ theme }) => `
@@ -47,10 +43,40 @@ const STYLED_SHARE_PROFILE = styled(PopupCustom)`
       margin-top: 20px;
       color: ${theme.textShareModal};
     }
+    .social-icon--img {
+      height: 90px;
+      width: 90px;
+      background: ${theme.success};
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
+      svg {
+        display: block;
+        height:32px !important;
+        width:32px !important;
+      }
+    }
   `}
 `
 
-export const ShareProfile = ({ visible, handleCancel }: Props) => {
+interface IShare {
+  visible: boolean
+  handleCancel: Function
+  socials: string[]
+  handleShare: (social: string) => void
+}
+
+export const Share = ({ visible, handleCancel, socials, handleShare }: IShare) => {
+  const [selectedItem, setSelectedItem] = useState<string>()
+
+  const handleClick = (item: string) => {
+    setSelectedItem(item)
+    handleShare(item)
+    setTimeout(() => setSelectedItem(undefined), 3000)
+  }
+
   return (
     <STYLED_SHARE_PROFILE
       width="587px"
@@ -61,12 +87,16 @@ export const ShareProfile = ({ visible, handleCancel }: Props) => {
       footer={null}
       centered
     >
-      <h1 className="title">Share this porfile</h1>
+      <h1 className="title">Share</h1>
       <div className="social-list">
-        {['twitter', 'telegram', 'facebook', 'copy link'].map((item) => (
-          <div className="social-item" key={item}>
+        {socials.map((item) => (
+          <div className="social-item" key={item} onClick={(e) => handleClick(item)}>
             <div className="social-icon">
-              <img src={`/img/assets/${item.replace(' ', '-')}-circle.svg`} alt="" />
+              {item === selectedItem ? (
+                <CheckOutlined className={'social-icon--img'} />
+              ) : (
+                <img src={`/img/assets/${item.replace(' ', '-')}-circle.svg`} alt="" />
+              )}
             </div>
             <div className="social-text">{item}</div>
           </div>

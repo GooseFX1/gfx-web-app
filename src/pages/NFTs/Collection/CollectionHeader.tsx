@@ -4,11 +4,11 @@ import { Button, Dropdown, Menu } from 'antd'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useNFTCollections, useDarkMode } from '../../../context'
-import { ShareProfile } from '../Profile/ShareProfile'
+import { Share } from '../Share'
 import { SVGToGrey2 } from '../../../styles'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
-//#region styled
+//#region styles
 const COLLECTION_HEADER = styled.div<{ $height: string }>`
   position: relative;
   height: ${({ $height }) => `${$height}vh`};
@@ -221,14 +221,18 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
   const { mode } = useDarkMode()
   const history = useHistory()
   const { singleCollection, fixedPriceWithinCollection, openBidWithinCollection } = useNFTCollections()
-  const [visible, setVisible] = useState(false)
+  const [shareModal, setShareModal] = useState(false)
 
   const isCollectionItemEmpty: boolean = !singleCollection || !fixedPriceWithinCollection || !openBidWithinCollection
   // const isCollectionItemEmpty: boolean = true
 
+  const onShare = (social: string) => {
+    console.log(social)
+  }
+
   const handleClick = (e) => {
     console.log('handleClick e:', e)
-    setVisible(true)
+    setShareModal(true)
   }
 
   const menu = (
@@ -239,8 +243,25 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
   )
 
   const iconStyle = { transform: `rotate(${collapse ? 0 : 180}deg)`, marginTop: `${collapse ? '5px' : '2px'}` }
+
+  const handleModal = () => {
+    if (shareModal) {
+      return (
+        <Share
+          visible={shareModal}
+          handleCancel={() => setShareModal(false)}
+          socials={['twitter', 'telegram', 'facebook', 'copy link']}
+          handleShare={onShare}
+        />
+      )
+    } else {
+      return false
+    }
+  }
+
   return (
     <COLLECTION_HEADER $height={collapse ? '30' : '45'}>
+      {handleModal()}
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
       {isCollectionItemEmpty ? (
         <SkeletonCommon height="30vh" borderRadius="0" />
@@ -311,7 +332,6 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
           </DROPDOWN>
         </div>
       </div>
-      <ShareProfile visible={visible} handleCancel={() => setVisible(false)} />
 
       <COVER>
         <BANNER_TOGGLE onClick={() => setCollapse(!collapse)}>
