@@ -7,7 +7,23 @@ export const completeNFTUserProfile = async (address: string): Promise<any> => {
     const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.SESSION_USER}`, {
       address: address
     })
-    return await res
+    const user = await res.data[0]
+
+    const formattedUser = {
+      user_id: user.user_id,
+      pubkey: user.pubkey,
+      nickname: 'Unnamed',
+      email: '',
+      bio: '',
+      twitter_link: '',
+      instagram_link: '',
+      facebook_link: '',
+      youtube_link: '',
+      profile_pic_link: user.profile_pic_link,
+      is_verified: user.is_verified
+    }
+
+    return await formattedUser
   } catch (err) {
     return err
   }
