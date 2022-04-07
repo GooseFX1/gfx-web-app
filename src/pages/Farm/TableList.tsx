@@ -8,6 +8,7 @@ import { columns } from './Columns'
 import { ExpandedContent } from './ExpandedContent'
 import { getStakingAccountKey, fetchCurrentAmountStaked, CONTROLLER_KEY, CONTROLLER_LAYOUT } from '../../web3'
 import { useConnectionConfig, usePriceFeed, useFarmContext } from '../../context'
+import { FarmData } from '../../constants'
 import { ADDRESSES } from '../../web3/ids'
 const StakeIDL = require('../../web3/idl/stake.json')
 
@@ -15,6 +16,7 @@ const StakeIDL = require('../../web3/idl/stake.json')
 const STYLED_TABLE_LIST = styled(Table)`
   ${({ theme }) => `
   max-width: 100%;
+  cursor: pointer;
   .ant-table {
     background: ${theme.bg3};
     border-bottom-left-radius: 20px;
@@ -149,7 +151,7 @@ interface IFarmData {
   name: string
   earned: number
   apr: number
-  rewards: string
+  rewards?: string
   liquidity: number
   type: string
   currentlyStaked: number
@@ -162,19 +164,7 @@ export const TableList = ({ dataSource }: any) => {
   const wallet = useWallet()
   const { showDeposited } = useFarmContext()
   const [accountKey, setAccountKey] = useState<PublicKey>()
-  const [farmData, setFarmData] = useState<IFarmData[]>([
-    {
-      id: '1',
-      image: 'GOFX',
-      name: 'GOFX',
-      earned: 0,
-      apr: 0,
-      rewards: '100% GOFX',
-      liquidity: 0,
-      type: 'Single Sided',
-      currentlyStaked: 0
-    }
-  ])
+  const [farmData, setFarmData] = useState<IFarmData[]>(FarmData)
   const [eKeys, setEKeys] = useState([])
   const PAGE_SIZE = 10
 
@@ -256,6 +246,9 @@ export const TableList = ({ dataSource }: any) => {
         pagination={{ pageSize: PAGE_SIZE, position: ['bottomLeft'] }}
         bordered={false}
         expandedRowKeys={eKeys}
+        onRow={(record: IFarmData) => ({
+          onClick: () => onExpandIcon(record.id)
+        })}
         expandedRowRender={(rowData) => (
           <ExpandedContent rowData={rowData} stakeProgram={stakeProgram} stakeAccountKey={accountKey} />
         )}
