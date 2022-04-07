@@ -7,9 +7,11 @@ import { Settings } from './Settings'
 import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
-import { Modal } from '../../components'
+import { Loader, Modal } from '../../components'
 import { useDarkMode, useSwap, SwapProvider } from '../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../styles'
+const CoinGecko = require('coingecko-api')
+const CoinGeckoClient = new CoinGecko()
 
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -17,11 +19,11 @@ const WRAPPER = styled.div`
   width: 100vw;
 `
 
-const INNERWRAPPER = styled.div`
+const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
   display: flex;
   max-height: 80%;
   margin-top: 10%;
-  justify-content: space-between;
+  justify-content: ${({ $desktop }) => ($desktop ? 'space-between' : 'space-around')};
   align-items: center;
   color: ${({ theme }) => theme.text1};
   width: 100vw;
@@ -74,6 +76,11 @@ const SmallTitle = styled.div`
   color: ${({ theme }) => theme.text12};
 `
 
+const AltSmallTitle = styled.div`
+  font-size: 12px;
+  color: ${({ theme }) => theme.text12};
+`
+
 const SmallTitleFlex = styled.div`
   font-size: 15px;
   display: flex;
@@ -99,12 +106,13 @@ const Alternative_Header = styled.div<{ $clicked?: boolean }>`
   display: flex;
   border-radius: 20px;
   background: ${({ theme, $clicked }) =>
-    $clicked ? 'linear-gradient(180deg, rgba(247, 147, 26, 0.1) 0%, rgba(220, 31, 255, 0.1) 100%)' : theme.bg9};
-  width: 330px;
+    $clicked ? 'linear-gradient(90deg, rgba(247, 147, 26, 0.1) 0%, rgba(220, 31, 255, 0.1) 100%)' : theme.bg9};
+  min-width: 350px !important;
   height: 100px;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
+  padding: 0.75rem;
+  margin: 0.75rem;
 `
 
 const Token_Detail = styled.div`
@@ -158,12 +166,15 @@ const PRICE_WRAPPER = styled.div`
   ${({ theme }) => theme.largeShadow}
 `
 
-const ALTERNATIVE_WRAPPER = styled.div`
+const ALTERNATIVE_WRAPPER = styled.div<{ $less: boolean }>`
   display: flex;
-  justify-content: space-around;
+  position: relative;
   align-items: flex-end;
-  width: 100%;
-
+  width: 95%;
+  justify-content: ${({ $less }) => ($less ? 'center' : 'flex-start')};
+  margin-left: 2.5%;
+  margin-top: 2.5%;
+  overflow-x: auto;
   height: 20%;
 `
 
@@ -171,26 +182,26 @@ const BestPrice = styled.div`
   position: absolute;
   font-size: 12px;
   margin-top: -90px;
-  margin-left: 285px;
+  margin-left: 315px;
   padding: 0.25rem;
   border-radius: 0.5rem;
   background-color: ${({ theme }) => theme.text3};
 `
 
-const ShowLess = styled.span`
+const ShowLess = styled.div`
   position: absolute;
   font-size: 18px;
-  top: 90%;
+  top: 0px;
   right: 60px;
   border-radius: 0.5rem;
   cursor: pointer;
 `
 
-const ShowMore = styled.span`
+const ShowMore = styled.div`
   position: absolute;
   font-size: 18px;
-  top: 97.5%;
-  right: 25px;
+  top: 50%;
+  right: 15%;
   border-radius: 0.5rem;
   cursor: pointer;
 `
@@ -200,6 +211,11 @@ const Price_Header = styled.div`
   width: 100%;
   padding: 1rem;
   align-items: center;
+`
+
+const WRAPPED_LOADER = styled.div`
+  position: relative;
+  height: 14px;
 `
 
 const Price_Title = styled.div`
@@ -306,7 +322,10 @@ const SwapContent: FC = () => {
         <Settings setVisible={setSettingsModalVisible} />
       </SETTING_MODAL>
       <HEADER_WRAPPER $iconSize="40px">
-        <HEADER_TITLE>Swap</HEADER_TITLE>
+        <HEADER_TITLE>
+          Swap <img src={`/img/crypto/Jupiter.svg`} alt="jupiter-icon" className={'header-icon'} />
+        </HEADER_TITLE>
+
         <div>
           <div onClick={refreshRates}>
             <img src={`/img/assets/refresh_rate.svg`} alt="refresh-icon" className={'header-icon'} />
@@ -337,47 +356,63 @@ const SwapContent: FC = () => {
 }
 
 const TokenContent: FC = () => {
-  // const { mode } = useDarkMode()
-  // const { refreshRates, setFocused, switchTokens } = useSwap()
-  // const [settingsModalVisible, setSettingsModalVisible] = useState(false)
+  //CoinGeckoClient
+  const { tokenA } = useSwap()
+  const [tokenDetails, setDetails] = useState([
+    { name: 'Price', value: '0', currency: '$' },
+    { name: 'FDV', value: '0', currency: '$' },
+    { name: 'Max Total Supply', value: '0' },
+    { name: 'Holders', value: '0' }
+  ])
 
-  // useEffect(() => {
-  //   const an = analytics()
-  //   an !== null &&
-  //     logEvent(an, 'screen_view', {
-  //       firebase_screen: 'Swap',
-  //       firebase_screen_class: 'load'
-  //     })
-  // }, [])
+  const [socials, setSocials] = useState([])
 
-  // const onClick = (e: React.MouseEvent<HTMLElement>) => {
-  //   e.stopPropagation()
-  //   setSettingsModalVisible(true)
-  // }
+  const coinsIds = {
+    SOL: 'solana',
+    USDC: 'usd-coin'
+  }
+  const truncate = (address: string) => {
+    return address.slice(0, 7) + '...' + address.slice(-6)
+  }
 
-  // const height = '80px'
-  // const localCSS = css`
-  //   .swap-input {
-  //     height: ${height};
-  //     border-radius: 45px;
-  //     border: none;
-  //     padding-right: 20px;
-  //     font-size: 16px;
-  //   }
+  useEffect(() => {
+    if (tokenA) {
+      CoinGeckoClient.coins.fetch(coinsIds[tokenA.symbol], {}).then((data) => {
+        data = data.data
+        setDetails([
+          { name: 'Price', value: data.market_data.current_price.usd, currency: '$' },
+          {
+            name: 'FDV',
+            value:
+              Math.floor(
+                data.market_data.fully_diluted_valuation.usd ||
+                  data.market_data.total_supply * data.market_data.current_price.usd
+              ) + '' || '0',
+            currency: '$'
+          },
+          {
+            name: 'Max Total Supply',
+            value: Math.floor(data.market_data.max_supply || data.market_data.total_supply) + '' || '0'
+          },
+          { name: 'Holders', value: '0' }
+        ])
+        setSocials([
+          { name: 'Twitter', link: 'https://twitter.com/' + data.links.twitter_screen_name },
+          { name: 'Coingecko', link: 'https://coingecko.com' },
+          { name: 'Website', link: data.links.homepage[0] }
+        ])
+      })
+    }
+  }, [tokenA])
 
-  //   .ant-modal-centered {
-  //     top: -75px;
-  //   }
-  // `
+  // const tokenDetailss = [
+  //   { name: 'Price', value: '0.0932', currency: '$' },
+  //   { name: 'FDV', value: '64786923', currency: '$' },
+  //   { name: 'Max Total Supply', value: '1000000' },
+  //   { name: 'Holders', value: '400000' }
+  // ]
 
-  const tokenDetails = [
-    { name: 'Price', value: '0.0932', currency: '$' },
-    { name: 'FDV', value: '64786923', currency: '$' },
-    { name: 'Max Total Supply', value: '1000000' },
-    { name: 'Holders', value: '400000' }
-  ]
-
-  const socials = ['Twitter', 'Coingecko', 'Website']
+  //const socials = ['Twitter', 'Coingecko', 'Website']
 
   return (
     <TOKEN_WRAPPER>
@@ -388,8 +423,13 @@ const TokenContent: FC = () => {
         <SubHeader>
           <Token_Title>GooseFX (GOFX)</Token_Title>
           <div style={{ display: 'flex' }}>
-            <Smaller_Title>AHtgzX...VsLL8J</Smaller_Title>
-            <span style={{ marginLeft: '1rem', color: '#999', cursor: 'pointer' }}>copy</span>
+            <Smaller_Title>{truncate(tokenA.address)}</Smaller_Title>
+            <span
+              style={{ marginLeft: '1rem', color: '#999', cursor: 'pointer' }}
+              onClick={() => navigator.clipboard.writeText(tokenA.address)}
+            >
+              copy
+            </span>
           </div>
         </SubHeader>
       </Token_Header>
@@ -404,7 +444,7 @@ const TokenContent: FC = () => {
 
       <Socials>
         {socials.map((social) => (
-          <SocialsButton>{social}</SocialsButton>
+          <SocialsButton onClick={() => window.open(social.link, '_blank')}>{social.name}</SocialsButton>
         ))}
       </Socials>
     </TOKEN_WRAPPER>
@@ -416,16 +456,19 @@ const PriceContent: FC = () => {
     { name: 'Price Impact', value: '< 0.1%' },
     { name: 'Minimum Received', value: '0.025167 UDSC' },
     { name: 'Fees paid to Serum LP', value: '1.2e-9 GOFX (0.04 %)', extraValue: '0 USDC (0.04 %)' },
-    { name: 'Transaction fee', value: '0.00005 SOL' }
+    { name: 'Transaction fee', value: '0.00005 SOL', icon: 'info' }
   ]
 
   return (
     <PRICE_WRAPPER>
       <Price_Header>
         <Price_Title>Price Info</Price_Title>
-        <SMALL_CLICKER_ICON>
+        {/* <WRAPPED_LOADER>
+          <Loader />
+        </WRAPPED_LOADER> */}
+        {/* <SMALL_CLICKER_ICON>
           <img src={`/img/crypto/GOFX.svg`} alt="" />
-        </SMALL_CLICKER_ICON>
+        </SMALL_CLICKER_ICON> */}
       </Price_Header>
       <Token_Detail>
         <Token_Title>Rate</Token_Title>
@@ -447,7 +490,17 @@ const PriceContent: FC = () => {
       </Token_Detail>
       {priceDetails.map((detail) => (
         <Token_Detail>
-          <Token_Title>{detail.name}</Token_Title>
+          <Token_Title>
+            {detail.name}{' '}
+            {detail.icon && (
+              <img
+                style={{ height: '12px', width: '12px' }}
+                src={`/img/crypto/${detail.icon}.svg`}
+                alt="jupiter-icon"
+                className={'header-icon'}
+              />
+            )}
+          </Token_Title>
           <SmallTitle>{detail.value}</SmallTitle>
           <SmallTitle>{detail.extraValue || null}</SmallTitle>
         </Token_Detail>
@@ -467,12 +520,12 @@ const AlternativesContent: FC = () => {
   const [less, setLess] = useState(false)
 
   return (
-    <ALTERNATIVE_WRAPPER>
+    <ALTERNATIVE_WRAPPER $less={less}>
       {(!less ? alternativeDetails : alternativeDetails.slice(0, 2)).map((detail, k) => (
         <Alternative_Header $clicked={k == clickNo} onClick={() => setClickNo(k)}>
           <Token_Detail>
             <Token_Title>{detail.name}</Token_Title>
-            <SmallTitle>{detail.value}</SmallTitle>
+            <AltSmallTitle>{detail.value}</AltSmallTitle>
           </Token_Detail>
           <Token_Title>{detail.price || null}</Token_Title>
           {detail.bestPrice && <BestPrice>Best Price</BestPrice>}
@@ -487,17 +540,31 @@ const AlternativesContent: FC = () => {
   )
 }
 
-export const Swap: FC = () => {
+export const SwapMain: FC = () => {
+  const desktop = window.innerWidth > 1050
+  const { tokenA } = useSwap()
+  const [allowed, setallowed] = useState(false)
+
+  useEffect(() => {
+    if (tokenA) {
+      setallowed(true)
+    }
+  }, [tokenA])
+
   return (
-    <SwapProvider>
-      <WRAPPER>
-        <INNERWRAPPER>
-          <TokenContent />
-          <SwapContent />
-          <PriceContent />
-        </INNERWRAPPER>
-        <AlternativesContent />
-      </WRAPPER>
-    </SwapProvider>
+    <WRAPPER>
+      <INNERWRAPPER $desktop={desktop && allowed}>
+        {desktop && allowed && <TokenContent />}
+        <SwapContent />
+        {desktop && allowed && <PriceContent />}
+      </INNERWRAPPER>
+      <AlternativesContent />
+    </WRAPPER>
   )
 }
+
+export const Swap: FC = () => (
+  <SwapProvider>
+    <SwapMain />
+  </SwapProvider>
+)
