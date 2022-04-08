@@ -4,6 +4,7 @@ import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
 import styled, { css } from 'styled-components'
 import { Table } from 'antd'
+import BN from 'bn.js'
 import { columns } from './Columns'
 import { ExpandedContent } from './ExpandedContent'
 import { getStakingAccountKey, fetchCurrentAmountStaked, CONTROLLER_KEY, CONTROLLER_LAYOUT } from '../../web3'
@@ -204,13 +205,17 @@ export const TableList = ({ dataSource }: any) => {
 
   useEffect(() => {
     if (gofxPrice !== undefined) {
-      fetchTableData(accountKey).then((farmData) => {
-        if (farmData.length > 0) {
-          const farmDataStaked =
-            showDeposited && wallet.publicKey ? farmData.filter((fData) => fData.currentlyStaked > 0.0) : farmData
-          setFarmData(farmDataStaked)
-        }
-      })
+      fetchTableData(accountKey)
+        .then((farmData) => {
+          if (farmData.length > 0) {
+            const farmDataStaked =
+              showDeposited && wallet.publicKey ? farmData.filter((fData) => fData.currentlyStaked > 0.0) : farmData
+            setFarmData(farmDataStaked)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }
   }, [accountKey, gofxPrice, showDeposited])
 
@@ -218,7 +223,8 @@ export const TableList = ({ dataSource }: any) => {
     // pool data
     const { data: controllerData } = await connection.getAccountInfo(CONTROLLER_KEY)
     const { staking_balance, daily_reward } = await CONTROLLER_LAYOUT.decode(controllerData)
-    const liqidity: number = staking_balance.toNumber() / LAMPORTS_PER_SOL
+    const LAMPORT = new BN(LAMPORTS_PER_SOL)
+    const liqidity: number = new BN(staking_balance).div(LAMPORT).toNumber()
     const APR: number = (1 / liqidity) * (daily_reward.toNumber() / LAMPORTS_PER_SOL) * 365
 
     // user account data
