@@ -39,7 +39,7 @@ export const Modal: FC<{
       bodyStyle={{
         backgroundColor: mode === 'dark' ? '#2a2a2a' : 'white',
         borderRadius: '20px',
-        maxHeight: '80vh',
+        maxHeight: '95vh',
         overflowY: 'scroll',
         fontFamily: 'Montserrat'
       }}
