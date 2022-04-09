@@ -7,6 +7,7 @@ import { useNFTCollections, useDarkMode } from '../../../context'
 import { Share } from '../Share'
 import { SVGToGrey2 } from '../../../styles'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import { SweepModal } from './SweepModal'
 
 //#region styles
 const COLLECTION_HEADER = styled.div<{ $height: string }>`
@@ -25,6 +26,18 @@ const COLLECTION_HEADER = styled.div<{ $height: string }>`
     transform: rotate(90deg);
     width: 36px;
     filter: ${({ theme }) => theme.filterBackIcon};
+    cursor: pointer;
+  }
+  .collection-sweeper-button {
+    position: absolute;
+    top: 72px;
+    right: 55px;
+    width: 180px;
+    height: 45px;
+    background-image: linear-gradient(to right, #f7931a 0%, #411612 100%);
+    border-radius: 59px;
+    border: none;
+    font-size: 14px;
     cursor: pointer;
   }
 
@@ -222,6 +235,7 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
   const history = useHistory()
   const { singleCollection, fixedPriceWithinCollection, openBidWithinCollection } = useNFTCollections()
   const [shareModal, setShareModal] = useState(false)
+  const [sweeperModal, setSweeperModal] = useState<boolean>(false)
 
   const isCollectionItemEmpty: boolean = !singleCollection || !fixedPriceWithinCollection || !openBidWithinCollection
   // const isCollectionItemEmpty: boolean = true
@@ -233,6 +247,10 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
   const handleClick = (e) => {
     console.log('handleClick e:', e)
     setShareModal(true)
+  }
+
+  const handleSweepClick = () => {
+    setSweeperModal(true)
   }
 
   const menu = (
@@ -263,6 +281,10 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
     <COLLECTION_HEADER $height={collapse ? '30' : '45'}>
       {handleModal()}
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
+      <button className="collection-sweeper-button" onClick={handleSweepClick}>
+        Collection Sweeper
+      </button>
+      {sweeperModal && <SweepModal visible={sweeperModal} setVisible={setSweeperModal}></SweepModal>}
       {isCollectionItemEmpty ? (
         <SkeletonCommon height="30vh" borderRadius="0" />
       ) : (

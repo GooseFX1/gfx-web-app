@@ -1,13 +1,13 @@
 import React, { FC } from 'react'
 import styled, { css } from 'styled-components'
 
-const LOADER = styled.div`
+const LOADER = styled.div<{ $color }>`
   position: absolute;
   top: 0;
   ${({ theme }) => theme.measurements(theme.margin(1))}
   border-radius: 50%;
   font-size: 12px;
-  color: white;
+  color: ${({ $color }) => `${$color}`};
   text-indent: -9999em;
   -webkit-animation-fill-mode: both;
   animation-fill-mode: both;
@@ -43,7 +43,7 @@ const LOADER = styled.div`
   }
 `
 
-export const Loader: FC = () => {
+export const Loader: FC<{ color?: string }> = ({ color }) => {
   const localCSS = css`
     @-webkit-keyframes loader {
       0%,
@@ -71,7 +71,7 @@ export const Loader: FC = () => {
   return (
     <>
       <style>{localCSS}</style>
-      <LOADER />
+      <LOADER $color={color ? color : 'white'} />
     </>
   )
 }

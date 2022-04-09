@@ -153,6 +153,9 @@ export function colors(mode: string): Colors {
 
     // nft detail
     nftDetailBackground: mode === 'dark' ? '#2a2a2a' : '#f4f4f4',
+    sweepModalCard: mode === 'dark' ? '#1F1F1F' : '#d9d9d9',
+    sweepPriceCard: mode === 'dark' ? '#131313' : '#727272',
+    sweepProgressCard: mode === 'dark' ? '#222222' : '#d9d9d9',
 
     profileTabContainerBg: mode === 'dark' ? '#2A2A2A' : '#EEEEEE',
     // tab content current bid
