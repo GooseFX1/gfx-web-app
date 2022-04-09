@@ -185,8 +185,8 @@ export function colors(mode: string): Colors {
     tableListBoxShadow: mode === 'dark' ? 'none' : '-2px 27px 30px -10px rgb(189 189 189 / 25%)',
     expendedRowBg:
       mode === 'dark'
-        ? 'linear-gradient(to bottom, #39253e, rgba(42, 42, 42, 0))'
-        : 'linear-gradient(to bottom, rgba(134, 7, 160, 0.6), rgba(255, 255, 255, 0))',
+        ? 'linear-gradient(90deg, rgba(247, 147, 26, 0.2) 0%, rgba(220, 31, 255, 0.2) 100%)'
+        : 'linear-gradient(90deg, rgba(247, 147, 26, 0.2) 0%, rgba(220, 31, 255, 0.2) 100%)',
     filterDownIcon:
       mode === 'dark'
         ? '#000'
