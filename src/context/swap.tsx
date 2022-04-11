@@ -13,11 +13,11 @@ import React, {
 } from 'react'
 import moment from 'moment'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { PublicKey } from '@solana/web3.js'
+//import { PublicKey } from '@solana/web3.js'
 import { useAccounts } from './accounts'
 import { useConnectionConfig, useSlippageConfig } from './settings'
 import { notify } from '../utils'
-import { computePoolsPDAs, serum, swap, preSwapAmount } from '../web3'
+import { serum, swap, preSwapAmount } from '../web3'
 
 export type SwapInput = undefined | 'from' | 'to'
 
@@ -126,16 +126,16 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         let outValuePerIn = 0
 
         try {
-          const { decimals } = tokenA
-          const { pool } = await computePoolsPDAs(tokenA, tokenB, network)
-          const [aAccount, bAccount] = await Promise.all([
-            connection.getParsedTokenAccountsByOwner(pool, { mint: new PublicKey(tokenA.address) }),
-            connection.getParsedTokenAccountsByOwner(pool, { mint: new PublicKey(tokenB.address) })
-          ])
+          //const { decimals } = tokenA
+          // const { pool } = await computePoolsPDAs(tokenA, tokenB, network)
+          // const [aAccount, bAccount] = await Promise.all([
+          //   connection.getParsedTokenAccountsByOwner(pool, { mint: new PublicKey(tokenA.address) }),
+          //   connection.getParsedTokenAccountsByOwner(pool, { mint: new PublicKey(tokenB.address) })
+          // ])
 
-          inAmount = parseFloat(aAccount.value[0].account.data.parsed.info.tokenAmount.amount)
-          outAmount = parseFloat(bAccount.value[0].account.data.parsed.info.tokenAmount.amount)
-          outValuePerIn = (outAmount - (inAmount * outAmount) / (inAmount + 10 ** decimals)) / 10 ** decimals
+          // inAmount = parseFloat(aAccount.value[0].account.data.parsed.info.tokenAmount.amount)
+          // outAmount = parseFloat(bAccount.value[0].account.data.parsed.info.tokenAmount.amount)
+          // outValuePerIn = (outAmount - (inAmount * outAmount) / (inAmount + 10 ** decimals)) / 10 ** decimals
           amountPool()
         } catch (e) {
           //setOutTokenAmount(0)

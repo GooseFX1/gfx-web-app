@@ -6,17 +6,17 @@ import { AmountField } from './shared'
 import { useAccounts, useSwap } from '../../context'
 
 const QUICK_SELECT = styled.div`
-  position: absolute;
-  top: -24px;
-  right: 0;
-
+  margin-left: 23.5%;
   span {
-    margin-left: ${({ theme }) => theme.margin(2)};
+    margin-left: ${({ theme }) => theme.margin(2.5)};
     font-weight: 600;
-    font-size: 20px;
+    font-size: 15px;
     line-height: 24px;
-    color: ${({ theme }) => theme.text6};
+    color: ${({ theme }) => theme.text9};
     cursor: pointer;
+    background-color: ${({ theme }) => theme.bg2};
+    padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+    border-radius: 1rem;
   }
 `
 
@@ -26,6 +26,12 @@ const WRAPPER = styled.div`
   > div:first-child > span {
     color: ${({ theme }) => theme.text1};
   }
+`
+
+const INNER_WRAPPER = styled.div`
+  display: flex;
+  width: 80%;
+  margin-bottom: 1rem;
 `
 
 const LABEL = styled.span`
@@ -67,18 +73,20 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
 
   return (
     <WRAPPER>
-      {showQuickSelect && (
-        <QUICK_SELECT>
-          <span onClick={setHalf}>Half</span>
-          <span onClick={setMax}>Max</span>
-        </QUICK_SELECT>
-      )}
+      <INNER_WRAPPER>
+        <div>
+          <LABEL>You Pay</LABEL>
+        </div>
 
-      <div>
-        <LABEL>From:</LABEL>
-      </div>
+        {showQuickSelect && (
+          <QUICK_SELECT>
+            <span onClick={setHalf}>HALF</span>
+            <span onClick={setMax}>MAX</span>
+          </QUICK_SELECT>
+        )}
+      </INNER_WRAPPER>
 
-      <AmountField $balance={balance} $height={height} $value={value || undefined}>
+      <AmountField $balance={balance + ' ' + (tokenA?.symbol || '')} $height={height} $value={value || undefined}>
         <Selector balance={balance} height={height} otherToken={tokenB} setToken={setTokenA} token={tokenA} />
         <Input
           maxLength={15}
