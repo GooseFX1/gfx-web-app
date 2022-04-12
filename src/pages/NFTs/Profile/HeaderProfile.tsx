@@ -169,11 +169,11 @@ export const HeaderProfile = ({ isExplore }: Props) => {
           </button>
         )}
 
-        <StyledDropdown overlay={menu(setShareModal)} trigger={['click']} placement="bottomRight" arrow>
+        {/* <StyledDropdown overlay={menu(setShareModal)} trigger={['click']} placement="bottomRight" arrow>
           <Button>
             <img className="more-icon" src={`/img/assets/more_icon.svg`} alt="more" />
           </Button>
-        </StyledDropdown>
+        </StyledDropdown> */}
       </div>
     </StyledHeaderProfile>
   )
