@@ -128,6 +128,8 @@ const MINT_PROGRESS = styled(Progress)<{ num: number }>`
     padding-right: 0;
     .ant-progress-inner {
       height: 100%;
+      background-color: ${({ theme }) => theme.bg1};
+
       .ant-progress-bg {
         height: 100% !important;
         background-color: ${({ theme }) => theme.primary4};
