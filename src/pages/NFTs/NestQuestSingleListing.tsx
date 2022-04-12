@@ -100,7 +100,6 @@ const PILL_SECONDARY = styled.div`
   font-size: 15px;
   line-height: 18px;
   background: linear-gradient(180deg, rgba(247, 147, 26, 0.1) 0%, rgba(220, 31, 255, 0.1) 100%);
-  border: 1px solid;
   border-image-source: linear-gradient(180deg, rgba(247, 147, 26, 0.5) 0%, rgba(220, 31, 255, 0.5) 100%);
   border-radius: 50px;
   filter: drop-shadow(0px 6px 9px rgba(36, 36, 36, 0.15));
@@ -176,12 +175,10 @@ export const NestQuestSingleListing: FC<{
   const { connected, publicKey } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
   const { getUIAmount } = useAccounts()
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-
-  const userSolAmount: number = useMemo(() => getUIAmount(WRAPPED_SOL_MINT.toBase58()), [publicKey])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const [notEnough, setNotEnough] = useState<boolean>(false)
-  const mintPrice: number = useMemo(() => 2.5, [])
+  const mintPrice: number = useMemo(() => 1.5, [])
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 800)
@@ -191,7 +188,7 @@ export const NestQuestSingleListing: FC<{
     if (publicKey && connected) {
       setNotEnough(mintPrice >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false)
     }
-  }, [publicKey])
+  }, [connected, publicKey, getUIAmount])
 
   const handleWalletModal: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
@@ -235,10 +232,10 @@ export const NestQuestSingleListing: FC<{
                     <PILL_SECONDARY>Items 10,018</PILL_SECONDARY>
                   </Col>
                   <Col span={7}>
-                    <PILL_SECONDARY>Price 2.5 SOL</PILL_SECONDARY>
+                    <PILL_SECONDARY>Price {mintPrice} SOL</PILL_SECONDARY>
                   </Col>
                   <Col span={2}>
-                    <SOCIAL_ICON onClick={(e) => window.open('https://goosefx.io/')}>
+                    <SOCIAL_ICON onClick={(e) => window.open('https://nestquest.io/')}>
                       <SVGDynamicReverseMode src="/img/assets/domains.svg" alt="domain-icon" />
                     </SOCIAL_ICON>
                   </Col>
@@ -290,7 +287,7 @@ export const NestQuestSingleListing: FC<{
                     height={'40px'}
                     status="action"
                     width={'141px'}
-                    onClick={(e) => console.log('ran')}
+                    onClick={(e) => console.log('mint nestquest egg')}
                     disabled={notEnough}
                   >
                     <span>{notEnough ? 'Not enough funds' : 'Mint'}</span>
