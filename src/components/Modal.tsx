@@ -40,7 +40,6 @@ export const Modal: FC<{
         backgroundColor: mode === 'dark' ? '#2a2a2a' : 'white',
         borderRadius: '20px',
         maxHeight: '80vh',
-        overflowY: 'scroll',
         fontFamily: 'Montserrat'
       }}
       centered

@@ -113,16 +113,15 @@ export const LeftSection: FC = ({ ...rest }) => {
   }
 
   const onShare = (social: string): void => {
-    console.log(social)
     switch (social) {
       case 'twitter':
         window.open(
-          `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20GooseFX&url=https%3A%2F%2Fapp.goosefx.io%2FNFTs%2Fdetails%2F${general.mint_address}&via=gooseFX1&original_referer=https://app.goosefx.io/NFTs/details/${general.mint_address}`
+          `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange&url=${window.location.host}${window.location.pathname}&via=gooseFX1&original_referer=${window.location.host}${window.location.pathname}`
         )
         break
       case 'telegram':
         window.open(
-          `https://t.me/share/url?url=https%3A%2F%2Fapp.goosefx.io%2FNFTs%2Fdetails%2F${general.mint_address}&text=Check%20out%20this%20item%20on%20GooseFX`
+          `https://t.me/share/url?url=${window.location.host}${window.location.pathname}&text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange`
         )
         break
       case 'facebook':

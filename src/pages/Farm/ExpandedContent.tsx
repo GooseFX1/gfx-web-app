@@ -3,10 +3,15 @@ import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
 import { Program } from '@project-serum/anchor'
-import { Button } from 'antd'
-import { MainButton, SuccessfulListingMsg, TransactionErrorMsg } from '../../components'
+import { MainButton } from '../../components'
 import { Connect } from '../../layouts/App/Connect'
-
+import {
+  successfulMessage,
+  errorHandlingMessage,
+  genericErrMsg,
+  insufficientSOLMsg,
+  invalidInputErrMsg
+} from './FarmClickHandler'
 import { notify } from '../../utils'
 import { useTokenRegistry, useAccounts, useConnectionConfig, usePriceFeed } from '../../context'
 import { executeStake, executeUnstakeAndClaim } from '../../web3'
@@ -267,27 +272,12 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
   const wallet = useWallet()
   const { prices } = usePriceFeed()
   const { connection } = useConnectionConfig()
-
-  const [status, setStatus] = useState([
-    {
-      id: 0,
-      selected: false,
-      isLoading: false
-    },
-    {
-      id: 1,
-      selected: false,
-      isLoading: false
-    }
-  ])
   const [isStakeLoading, setIsStakeLoading] = useState<boolean>(false)
   const [isUnstakeLoading, setIsUnstakeLoading] = useState<boolean>(false)
   const [tokenStaked, setTokenStaked] = useState<number>(parseFloat(currentlyStaked))
   const [tokenEarned, setTokenEarned] = useState<number>(parseFloat(earned))
-  console.log(earned, 'earned')
   const stakeRef = useRef(null)
   const unstakeRef = useRef(null)
-
   const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
 
   const userSOLBalance = useMemo(
@@ -300,16 +290,11 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
     [tokenInfo, getUIAmount, publicKey]
   )
 
-  const successfulListingMessage = (msg: string, signature: any, price: string) => ({
-    message: (
-      <SuccessfulListingMsg
-        title={msg}
-        itemName={`${name}`}
-        supportText={`Stake of: ${price}`}
-        tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
-      />
-    )
-  })
+  const getSuccessUnstakeMsg = (): string => `Successfully Unstaked amount of ${unstakeRef.current.value} ${name}!`
+  const getSuccessStakeMsg = (): string => `Successfully staked amount of ${stakeRef.current.value} ${name}!`
+  const getErrStakeMsg = (): string => `Staking ${name} error!`
+  const getErrUntakeMsg = (): string => `Unstaking ${name} error!`
+
   const fiatStakedAmount = useMemo(() => {
     const price = prices[name + '/USDC']
     return tokenStaked ? tokenStaked * price?.current : 0
@@ -331,25 +316,12 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
 
   const enoughSOLInWallet = (): Boolean => {
     if (userSOLBalance < 0.000001) {
-      notify({
-        type: 'error',
-        message: 'You need minimum of 0.000001 SOL in your wallet to perform this transaction'
-      })
+      notify(insufficientSOLMsg())
       return false
     }
     return true
   }
 
-  const successfuStakeMessage = (signature: any, nftMetadata: any, price: string) => ({
-    message: (
-      <SuccessfulListingMsg
-        title={`Successfully staked ${nftMetadata?.name}!`}
-        itemName={nftMetadata.name}
-        supportText={`Bid of: ${price}`}
-        tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
-      />
-    )
-  })
   const onClickStake = () => {
     if (
       isNaN(parseFloat(stakeRef.current.value)) ||
@@ -357,13 +329,11 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
       parseFloat(stakeRef.current.value) - 0.001 > userTokenBalance
     ) {
       unstakeRef.current.value = 0
-      notify({
-        type: 'error',
-        message: `Please give valid input from 0.00001 to ${userTokenBalance} ${name}`
-      })
+      notify(invalidInputErrMsg(userTokenBalance, name))
       return
     }
     if (!enoughSOLInWallet()) return
+
     try {
       setIsStakeLoading(true)
       const confirm = executeStake(
@@ -378,37 +348,18 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
         setIsStakeLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(
-            successfulListingMessage(
-              `Successfully staked amount of ${stakeRef.current.value} ${name}!`,
-              signature,
-              stakeRef.current.value
-            )
-          )
+          notify(successfulMessage(getSuccessStakeMsg(), signature, stakeRef.current.value, name, network))
           updateStakedValue()
           setTimeout(() => (stakeRef.current.value = 0), 500)
         } else {
           const { signature, error } = con
-          notify({
-            type: 'error',
-            message: (
-              <TransactionErrorMsg
-                title={`Staking ${name} error!`}
-                itemName={`Stake ${name}`}
-                supportText={error.message}
-                tx_url={signature ? `https://solscan.io/tx/${signature}?cluster=${network}` : null}
-              />
-            )
-          })
+          notify(errorHandlingMessage(getErrStakeMsg(), name, error.message, signature, network))
           return
         }
       })
     } catch (error) {
       setIsStakeLoading(false)
-      notify({
-        type: 'error',
-        message: error
-      })
+      notify(genericErrMsg(error))
     }
   }
 
@@ -420,10 +371,7 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
       parseFloat(unstakeRef.current.value) > parseFloat(tokenStakedPlusEarned.toFixed(3))
     ) {
       unstakeRef.current.value = 0
-      notify({
-        type: 'error',
-        message: `Please give valid input from 0 - ${tokenStaked + tokenEarned}`
-      })
+      notify(invalidInputErrMsg(tokenStaked + tokenEarned, name))
       return
     }
     if (!enoughSOLInWallet()) return
@@ -438,13 +386,7 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
         setIsUnstakeLoading(false)
         if (confirm && confirm?.value && confirm.value.err === null) {
           updateStakedValue()
-          notify(
-            successfulListingMessage(
-              `Successfully Untaked amount of ${unstakeRef.current.value} ${name}!`,
-              signature,
-              unstakeRef.current.value
-            )
-          )
+          notify(successfulMessage(getSuccessUnstakeMsg(), signature, unstakeRef.current.value, name, network))
 
           if (parseFloat(unstakeRef.current.value) > tokenStaked) {
             const val = tokenEarned - (parseFloat(unstakeRef.current.value) - tokenStaked)
@@ -455,26 +397,13 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
           setTimeout(() => (unstakeRef.current.value = 0), 1000)
         } else {
           const { signature, error } = con
-          notify({
-            type: 'error',
-            message: (
-              <TransactionErrorMsg
-                title={`Unstaking ${name} error!`}
-                itemName={`Unstake ${name}`}
-                supportText={error.message}
-                tx_url={signature ? `https://solscan.io/tx/${signature}?cluster=${network}` : null}
-              />
-            )
-          })
+          notify(errorHandlingMessage(getErrUntakeMsg(), name, error.message, signature, network))
           return
         }
       })
     } catch (error) {
       setIsUnstakeLoading(false)
-      notify({
-        type: 'error',
-        message: error
-      })
+      notify(genericErrMsg(error))
     }
   }
   const onClickHalf = (buttonId: string) => {
@@ -513,7 +442,7 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
         <STYLED_RIGHT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
           <div className="right-inner">
             <div className="SOL-item">
-              <STYLED_SOL className={status[0].selected ? 'active' : ''}>
+              <STYLED_SOL>
                 <STYLED_INPUT className="value" ref={stakeRef} type="number" />
                 <div className="text">
                   <MAX_BUTTON onClick={() => onClickHalf('stake')} className="text-1">
@@ -524,17 +453,12 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
                   </MAX_BUTTON>
                 </div>
               </STYLED_SOL>
-              <STYLED_STAKE_PILL
-                className={status[0].selected ? 'active' : ''}
-                loading={isStakeLoading}
-                disabled={isStakeLoading}
-                onClick={() => onClickStake()}
-              >
+              <STYLED_STAKE_PILL loading={isStakeLoading} disabled={isStakeLoading} onClick={() => onClickStake()}>
                 Stake
               </STYLED_STAKE_PILL>
             </div>
             <div className="SOL-item">
-              <STYLED_SOL className={status[1].selected ? 'active' : ''}>
+              <STYLED_SOL>
                 <STYLED_INPUT className="value" ref={unstakeRef} type="number" min="0" max="100" />
                 <div className="text">
                   <MAX_BUTTON onClick={() => onClickHalf('unstake')} className="text-1">
@@ -546,7 +470,6 @@ export const ExpandedContent = ({ rowData, stakeProgram, stakeAccountKey }: IExp
                 </div>
               </STYLED_SOL>
               <STYLED_STAKE_PILL
-                className={status[1].selected ? 'active' : ''}
                 loading={isUnstakeLoading}
                 disabled={isUnstakeLoading}
                 onClick={() => onClickUnstake()}
