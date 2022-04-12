@@ -16,7 +16,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
   const [search, setSearch] = useState<string>('')
 
   useEffect(() => {
-    fetchAllCollections().then((res) => setTimeout(() => setIsAllLoading(false), 900))
+    fetchAllCollections().then((res) => setIsAllLoading(false))
     return () => {}
   }, [])
 
