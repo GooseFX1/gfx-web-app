@@ -52,7 +52,8 @@ const SLIDER_ITEM = styled.div<{ $url: string }>`
   justify-content: center;
   align-items: center;
   background: ${({ $url }) => `url(${$url})`}, center;
-  background-size: auto 100%;
+  background-size: auto 101%;
+  background-repeat: no-repeat;
   border-radius: 20px;
 
   .home-slider-image {
