@@ -14,10 +14,12 @@ const { TabPane } = Tabs
 //#region styles
 const COLLECTION_TABS = styled.div<{ $height: string }>`
   position: relative;
-  overflow: scroll;
-  scroll-behavior: smooth;
   height: ${({ $height }) => `calc(${$height}`}% + 28px);
   margin-top: -${({ theme }) => theme.margin(3.5)};
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  ${({ theme }) => theme.customScrollBar('4px')}
   z-index: 10;
 
   .card-list {

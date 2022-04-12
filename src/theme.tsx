@@ -207,6 +207,7 @@ export function colors(mode: string): Colors {
     secondary3: '#6b33b0',
     secondary4: '#d655fe',
     secondary5: '#3735bb',
+    secondary6: '#DC1FFF',
 
     // other
     buys: '#ac69ff',

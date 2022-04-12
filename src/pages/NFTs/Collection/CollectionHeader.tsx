@@ -240,14 +240,7 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
   const isCollectionItemEmpty: boolean = !singleCollection || !fixedPriceWithinCollection || !openBidWithinCollection
   // const isCollectionItemEmpty: boolean = true
 
-  const onShare = (social: string) => {
-    console.log(social)
-  }
-
-  const handleClick = (e) => {
-    console.log('handleClick e:', e)
-    setShareModal(true)
-  }
+  const handleClick = (e) => setShareModal(true)
 
   const handleSweepClick = () => {
     setSweeperModal(true)
@@ -259,6 +252,33 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
       {/* <Menu.Item>Report</Menu.Item> */}
     </MENU_LIST>
   )
+
+  const onShare = (social: string) => {
+    switch (social) {
+      case 'twitter':
+        window.open(
+          `https://twitter.com/intent/tweet?text=Check%20out%20the%20${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%20Exchange%20&url=${window.location.host}${window.location.pathname}&via=gooseFX1&original_referer=${window.location.host}${window.location.pathname}`
+        )
+        break
+      case 'telegram':
+        window.open(
+          `https://t.me/share/url?url=${window.location.host}${window.location.pathname}&text=Check%20out%20the%20${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%20Exchange%20`
+        )
+        break
+      case 'facebook':
+        window.open(`https://facebook.com`)
+        break
+      case 'copy link':
+        copyToClipboard()
+        break
+      default:
+        break
+    }
+  }
+
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(window.location.href)
+  }
 
   const iconStyle = { transform: `rotate(${collapse ? 0 : 180}deg)`, marginTop: `${collapse ? '5px' : '2px'}` }
 
