@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { useNFTDetails, useConnectionConfig } from '../../../context'
 import { RightSection } from './RightSection'
-import { LeftSection } from './LeftSection'
+import { ImageShowcase } from './ImageShowcase'
 import { MintItemViewStatus, INFTMetadata } from '../../../types/nft_details'
 import { useParams } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params.d'
@@ -65,7 +65,7 @@ export const NFTDetails: FC<{
 
       <Row gutter={[12, 16]} className="nd-content" justify="space-around" align="middle">
         <Col sm={9} xl={9} xxl={8}>
-          <LeftSection />
+          <ImageShowcase />
         </Col>
         <Col sm={12} xl={9} xxl={7} className="nd-details">
           <RightSection status={status} />
