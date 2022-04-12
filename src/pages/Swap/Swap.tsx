@@ -2,12 +2,11 @@ import React, { FC, useEffect, useState } from 'react'
 import { logEvent } from 'firebase/analytics'
 import analytics from '../../analytics'
 import styled, { css } from 'styled-components'
-import { Rate } from './Rate'
 import { Settings } from './Settings'
 import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
-import { Loader, Modal } from '../../components'
+import { Modal } from '../../components'
 import { useDarkMode, useSwap, SwapProvider } from '../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../styles'
 const CoinGecko = require('coingecko-api')
@@ -113,6 +112,7 @@ const Alternative_Header = styled.div<{ $clicked?: boolean }>`
   align-items: center;
   padding: 0.75rem;
   margin: 0.75rem;
+  cursor: pointer;
 `
 
 const Token_Detail = styled.div`
@@ -213,10 +213,10 @@ const Price_Header = styled.div`
   align-items: center;
 `
 
-const WRAPPED_LOADER = styled.div`
-  position: relative;
-  height: 14px;
-`
+// const WRAPPED_LOADER = styled.div`
+//   position: relative;
+//   height: 14px;
+// `
 
 const Price_Title = styled.div`
   font-weight: 600;
@@ -377,8 +377,27 @@ const TokenContent: FC = () => {
 
   useEffect(() => {
     if (tokenA) {
-      CoinGeckoClient.coins.fetch(coinsIds[tokenA.symbol], {}).then((data) => {
+      CoinGeckoClient.coins.fetch(coinsIds[tokenA.symbol], {}).then(async (data: any) => {
         data = data.data
+        const fetchData = await fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
+        const res = await fetchData.json()
+        // await connection.getProgramAccounts(TOKEN_PROGRAM_ID, {
+        //   // dataSlice: {
+        //   //   offset: 0, // number of bytes
+        //   //   length: 0 // number of bytes
+        //   // },
+        //   filters: [
+        //     {
+        //       dataSize: 165 // number of bytes
+        //     },
+        //     {
+        //       memcmp: {
+        //         offset: 0, // number of bytes
+        //         bytes: tokenA.address // base58 encoded string
+        //       }
+        //     }
+        //   ]
+        // })
         setDetails([
           { name: 'Price', value: data.market_data.current_price.usd, currency: '$' },
           {
@@ -394,7 +413,7 @@ const TokenContent: FC = () => {
             name: 'Max Total Supply',
             value: Math.floor(data.market_data.max_supply || data.market_data.total_supply) + '' || '0'
           },
-          { name: 'Holders', value: '0' }
+          { name: 'Holders', value: res.total }
         ])
         setSocials([
           { name: 'Twitter', link: 'https://twitter.com/' + data.links.twitter_screen_name },
@@ -418,10 +437,12 @@ const TokenContent: FC = () => {
     <TOKEN_WRAPPER>
       <Token_Header>
         <CLICKER_ICON>
-          <img src={`/img/crypto/GOFX.svg`} alt="" />
+          <img src={`/img/crypto/${tokenA.symbol}.svg`} alt="" />
         </CLICKER_ICON>
         <SubHeader>
-          <Token_Title>GooseFX (GOFX)</Token_Title>
+          <Token_Title>
+            {tokenA.name} ({tokenA.symbol})
+          </Token_Title>
           <div style={{ display: 'flex' }}>
             <Smaller_Title>{truncate(tokenA.address)}</Smaller_Title>
             <span
@@ -522,7 +543,7 @@ const AlternativesContent: FC = () => {
   return (
     <ALTERNATIVE_WRAPPER $less={less}>
       {(!less ? alternativeDetails : alternativeDetails.slice(0, 2)).map((detail, k) => (
-        <Alternative_Header $clicked={k == clickNo} onClick={() => setClickNo(k)}>
+        <Alternative_Header $clicked={k === clickNo} onClick={() => setClickNo(k)}>
           <Token_Detail>
             <Token_Title>{detail.name}</Token_Title>
             <AltSmallTitle>{detail.value}</AltSmallTitle>
@@ -541,7 +562,7 @@ const AlternativesContent: FC = () => {
 }
 
 export const SwapMain: FC = () => {
-  const desktop = window.innerWidth > 1050
+  const desktop = window.innerWidth > 1200
   const { tokenA } = useSwap()
   const [allowed, setallowed] = useState(false)
 

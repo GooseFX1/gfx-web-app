@@ -34,6 +34,7 @@ export interface ISwapToken {
   address: string
   decimals: number
   symbol: string
+  name?: string
 }
 
 interface ISwapConfig {
