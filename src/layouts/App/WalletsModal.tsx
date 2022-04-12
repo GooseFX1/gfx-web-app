@@ -8,14 +8,17 @@ import { TermsOfService } from './TermsOfService'
 import { Modal } from '../../components'
 import { LITEPAPER_ADDRESS } from '../../constants'
 import { useWalletModal } from '../../context'
-import { CenteredDiv, CenteredImg, SpaceBetweenDiv } from '../../styles'
+import { CenteredImg, SpaceBetweenDiv } from '../../styles'
 
-const BODY = styled(CenteredDiv)`
-  flex-direction: column;
+const BODY = styled.div`
+  max-height: 64vh;
+  padding: 0 8px 16px 12px;
+  overflow-y: scroll;
+  margin-top: 16px;
+  ${({ theme }) => theme.customScrollBar('4px')}
 `
 
-const DISCLAIMER = styled.span`
-  margin-top: ${({ theme }) => theme.margin(2)};
+const DISCLAIMER = styled.div`
   padding: ${({ theme }) => theme.margin(1)};
   border: solid 1px ${({ theme }) => theme.grey2};
   ${({ theme }) => theme.smallBorderRadius}
