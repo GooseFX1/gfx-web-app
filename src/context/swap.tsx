@@ -34,6 +34,7 @@ export interface ISwapToken {
   address: string
   decimals: number
   symbol: string
+  name?: string
 }
 
 interface ISwapConfig {
@@ -53,6 +54,7 @@ interface ISwapConfig {
   switchTokens: () => void
   tokenA: ISwapToken | null
   tokenB: ISwapToken | null
+  connection?: any
 }
 
 const SwapContext = createContext<ISwapConfig | null>(null)
@@ -246,7 +248,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         swapTokens,
         switchTokens,
         tokenA,
-        tokenB
+        tokenB,
+        connection
       }}
     >
       {children}
@@ -276,6 +279,7 @@ export const useSwap = (): ISwapConfig => {
     swapTokens: context.swapTokens,
     switchTokens: context.switchTokens,
     tokenA: context.tokenA,
-    tokenB: context.tokenB
+    tokenB: context.tokenB,
+    connection: context.connection
   }
 }

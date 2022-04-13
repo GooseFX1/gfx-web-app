@@ -5,10 +5,11 @@ import { useDarkMode, useWalletModal, useNavCollapse } from '../../../context'
 import { useHistory } from 'react-router-dom'
 import { Image, Menu, Dropdown } from 'antd'
 import { ButtonWrapper } from '../NFTButton'
-import { SearchBar, Categories } from '../../../components'
+// import { SearchBar, Categories } from '../../../components'
+import { SearchBar } from '../../../components'
 import { SpaceBetweenDiv } from '../../../styles'
-import { categories, coins } from './mockData'
-import { useLocalStorageState } from '../../../utils'
+// import { categories, coins } from './mockData'
+// import { useLocalStorageState } from '../../../utils'
 import PopupCompleteProfile from '../Profile/PopupCompleteProfile'
 import { useNFTProfile } from '../../../context'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
@@ -302,16 +303,16 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
         ) : (
           <span></span>
         )}
-        {!isHeaderData ? (
+        {/* {!isHeaderData ? (
           <SkeletonCommon width="132px" height="45px" borderRadius="45px" style={{ marginLeft: '20px' }} />
         ) : (
           <Categories categories={categories} className="categories" onChange={(e) => handleFilterChange(e)} />
-        )}
-        {!isHeaderData ? (
+        )} */}
+        {/* {!isHeaderData ? (
           <SkeletonCommon width="68px" height="45px" borderRadius="12px" style={{ marginLeft: '20px' }} />
         ) : (
           <Categories categories={coins} className="coins" />
-        )}
+        )} */}
       </BUTTON_SELECTION>
     </HEADER_WRAPPER>
   )

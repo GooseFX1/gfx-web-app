@@ -1,13 +1,14 @@
 import React, { FC, useEffect, useState, useCallback, useMemo, MouseEventHandler } from 'react'
 import { Row, Col, Progress } from 'antd'
-import { useWallet } from '@solana/wallet-adapter-react'
+// import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { useWalletModal, useAccounts } from '../../context'
-import { WRAPPED_SOL_MINT } from '../../web3'
+// import { WRAPPED_SOL_MINT } from '../../web3'
 import { MintItemViewStatus, INFTMetadata } from '../../types/nft_details'
 import { SkeletonCommon } from './Skeleton/SkeletonCommon'
 import { MainButton } from '../../components/MainButton'
+import { SOCIAL_MEDIAS } from '../../constants'
 import { SVGDynamicReverseMode } from '../../styles/utils'
 
 //#region styles
@@ -100,7 +101,6 @@ const PILL_SECONDARY = styled.div`
   font-size: 15px;
   line-height: 18px;
   background: linear-gradient(180deg, rgba(247, 147, 26, 0.1) 0%, rgba(220, 31, 255, 0.1) 100%);
-  border: 1px solid;
   border-image-source: linear-gradient(180deg, rgba(247, 147, 26, 0.5) 0%, rgba(220, 31, 255, 0.5) 100%);
   border-radius: 50px;
   filter: drop-shadow(0px 6px 9px rgba(36, 36, 36, 0.15));
@@ -129,6 +129,8 @@ const MINT_PROGRESS = styled(Progress)<{ num: number }>`
     padding-right: 0;
     .ant-progress-inner {
       height: 100%;
+      background-color: ${({ theme }) => theme.bg1};
+
       .ant-progress-bg {
         height: 100% !important;
         background-color: ${({ theme }) => theme.primary4};
@@ -173,34 +175,32 @@ export const NestQuestSingleListing: FC<{
   arbData?: INFTMetadata
 }> = ({ status = '', backUrl, handleClickPrimaryButton, ...rest }) => {
   const history = useHistory()
-  const { connected, publicKey } = useWallet()
+  // const { connected, publicKey } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
-  const { getUIAmount } = useAccounts()
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  // const { getUIAmount } = useAccounts()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const userSolAmount: number = useMemo(() => getUIAmount(WRAPPED_SOL_MINT.toBase58()), [publicKey])
-
-  const [notEnough, setNotEnough] = useState<boolean>(false)
-  const mintPrice: number = useMemo(() => 2.5, [])
+  // const [notEnough, setNotEnough] = useState<boolean>(false)
+  const mintPrice: number = useMemo(() => 1.5, [])
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 800)
   }, [])
 
-  useEffect(() => {
-    if (publicKey && connected) {
-      setNotEnough(mintPrice >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false)
-    }
-  }, [publicKey])
+  // useEffect(() => {
+  //   if (publicKey && connected) {
+  //     setNotEnough(mintPrice >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false)
+  //   }
+  // }, [connected, publicKey, getUIAmount])
 
-  const handleWalletModal: MouseEventHandler<HTMLButtonElement> = useCallback(
-    (event) => {
-      if (!event.defaultPrevented && !connected && !publicKey) {
-        setModalVisible(true)
-      }
-    },
-    [setModalVisible, publicKey, connected]
-  )
+  // const handleWalletModal: MouseEventHandler<HTMLButtonElement> = useCallback(
+  //   (event) => {
+  //     if (!event.defaultPrevented && !connected && !publicKey) {
+  //       setModalVisible(true)
+  //     }
+  //   },
+  //   [setModalVisible, publicKey, connected]
+  // )
 
   return (
     <NFT_DETAILS {...rest}>
@@ -225,32 +225,30 @@ export const NestQuestSingleListing: FC<{
               </>
             ) : (
               <div>
-                <YELLOW>Featured Launch</YELLOW>
+                <YELLOW>Featured Launch </YELLOW>
+                <DESCRIPTION>coming soon</DESCRIPTION>
                 <TITLE className="rs-name">NestQuest</TITLE>
                 <SUBTITLE>Tier #1 "The Egg"</SUBTITLE>
                 <br />
-
                 <Row justify="space-between" align="middle">
                   <Col span={7}>
                     <PILL_SECONDARY>Items 10,018</PILL_SECONDARY>
                   </Col>
                   <Col span={7}>
-                    <PILL_SECONDARY>Price 2.5 SOL</PILL_SECONDARY>
+                    <PILL_SECONDARY>Price {mintPrice} SOL</PILL_SECONDARY>
                   </Col>
                   <Col span={2}>
-                    <SOCIAL_ICON onClick={(e) => window.open('https://goosefx.io/')}>
+                    <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.nestquest)}>
                       <SVGDynamicReverseMode src="/img/assets/domains.svg" alt="domain-icon" />
                     </SOCIAL_ICON>
                   </Col>
                   <Col span={2}>
-                    <SOCIAL_ICON
-                      onClick={(e) => window.open('https://discord.com/channels/833693973687173121/833742620371058688')}
-                    >
+                    <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.discord)}>
                       <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
                     </SOCIAL_ICON>
                   </Col>
                   <Col span={2}>
-                    <SOCIAL_ICON onClick={(e) => window.open('https://twitter.com/GooseFX1')}>
+                    <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.twitter)}>
                       <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
                     </SOCIAL_ICON>
                   </Col>
@@ -282,7 +280,8 @@ export const NestQuestSingleListing: FC<{
             <SkeletonCommon width="100%" height="550px" borderRadius="10px" />
           )}
           <br />
-          {!isLoading && notEnough !== undefined ? (
+
+          {/* {!isLoading && notEnough !== undefined ? (
             <Row gutter={8}>
               <Col span={7}>
                 {publicKey ? (
@@ -290,7 +289,7 @@ export const NestQuestSingleListing: FC<{
                     height={'40px'}
                     status="action"
                     width={'141px'}
-                    onClick={(e) => console.log('ran')}
+                    onClick={(e) => console.log('mint nestquest egg')}
                     disabled={notEnough}
                   >
                     <span>{notEnough ? 'Not enough funds' : 'Mint'}</span>
@@ -307,7 +306,7 @@ export const NestQuestSingleListing: FC<{
             </Row>
           ) : (
             <SkeletonCommon width="100%" height="50px" borderRadius="50px" />
-          )}
+          )} */}
         </Col>
       </Row>
     </NFT_DETAILS>

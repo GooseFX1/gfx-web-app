@@ -44,6 +44,7 @@ const WRAPPED_LOADER = styled.div`
 export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
   const { openBidWithinCollection } = useNFTCollections()
   const { sessionUser } = useNFTProfile()
+  const paginationNum = 12
 
   const [fileredLocalOpenBid, _setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>(Array.apply(null, Array(21)))
   const [shortfilteredLocalOpenBid, _setShortFilteredLocalOpenBid] = useState<Array<ISingleNFT>>(
@@ -87,10 +88,10 @@ export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
         )
 
         setFilteredLocalOpenBid(filteredData)
-        setShortFilteredLocalOpenBid(filteredData.slice(0, 25))
+        setShortFilteredLocalOpenBid(filteredData.slice(0, paginationNum))
       } else {
         setFilteredLocalOpenBid(openBidWithinCollection.open_bid)
-        setShortFilteredLocalOpenBid(openBidWithinCollection.open_bid.slice(0, 25))
+        setShortFilteredLocalOpenBid(openBidWithinCollection.open_bid.slice(0, paginationNum))
       }
 
       setLevel(0)
@@ -129,9 +130,9 @@ export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
     const total = activePointRef.current
     const newLevel = activePointLevel.current + 1
 
-    if (total?.length > newLevel * 25) {
+    if (total?.length > newLevel * paginationNum) {
       setLoading(true)
-      const nextData = total.slice(newLevel * 25, (newLevel + 1) * 25)
+      const nextData = total.slice(newLevel * paginationNum, (newLevel + 1) * paginationNum)
       setShortFilteredLocalOpenBid([...activePointshortFilter.current, ...nextData])
       setLevel(newLevel)
       setLoading(false)

@@ -154,6 +154,7 @@ export interface Colors {
   secondary3: Color
   secondary4: Color
   secondary5: Color
+  secondary6: Color
 
   // other
   buys: Color

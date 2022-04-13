@@ -36,6 +36,7 @@ const ANALYTIC_ITEM = styled.div`
     height: 100px;
     border-radius: 10px;
     margin-right: ${({ theme }) => theme.margin(3)};
+    background-color: ${({ theme }) => theme.black};
   }
 
   .analytic-content {

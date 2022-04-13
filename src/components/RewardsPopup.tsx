@@ -27,7 +27,7 @@ const Wrapper = styled.div`
   border-radius: 20px 20px 0 0;
 `
 const REWARDS_BTN = styled.button`
-  background-image: linear-gradient(90deg, #9cc034 0%, #49821c 90%);
+  background-image: linear-gradient(90deg, #8ade75 0%, #4b831d 100%);
   width: 111px;
   height: 36px;
   font-size: 12px;

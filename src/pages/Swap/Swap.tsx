@@ -2,14 +2,16 @@ import React, { FC, useEffect, useState } from 'react'
 import { logEvent } from 'firebase/analytics'
 import analytics from '../../analytics'
 import styled, { css } from 'styled-components'
-import { Rate } from './Rate'
 import { Settings } from './Settings'
 import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
-import { Loader, Modal } from '../../components'
-import { useDarkMode, useSwap, SwapProvider } from '../../context'
+import { Modal } from '../../components'
+import { useDarkMode, useSwap, SwapProvider, useSlippageConfig } from '../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../styles'
+import { JupiterProvider, useJupiter } from '@jup-ag/react-hook'
+import { PublicKey } from '@solana/web3.js'
+import { TOKEN_LIST_URL } from '@jup-ag/core'
 const CoinGecko = require('coingecko-api')
 const CoinGeckoClient = new CoinGecko()
 
@@ -65,7 +67,7 @@ const TOKEN_WRAPPER = styled.div`
   ${({ theme }) => theme.largeShadow}
 `
 
-const Token_Title = styled.div`
+const TokenTitle = styled.div`
   font-weight: 600;
   font-size: 18px;
   color: ${({ theme }) => theme.text1};
@@ -88,7 +90,7 @@ const SmallTitleFlex = styled.div`
   color: ${({ theme }) => theme.text12};
 `
 
-const Smaller_Title = styled.div`
+const SmallerTitle = styled.div`
   font-size: 15px;
   background: linear-gradient(90.25deg, #f7931a 2.31%, #dc1fff 99.9%);
   -webkit-background-clip: text;
@@ -96,16 +98,18 @@ const Smaller_Title = styled.div`
   background-clip: text;
   text-fill-color: transparent;
 `
-const Token_Header = styled.div`
+const TokenHeader = styled.div`
   display: flex;
   width: 100%;
   padding: 1rem;
 `
 
-const Alternative_Header = styled.div<{ $clicked?: boolean }>`
+const AlternativeHeader = styled.div<{ $clicked?: boolean }>`
   display: flex;
   border-radius: 20px;
   background: ${({ theme, $clicked }) =>
+    $clicked ? 'linear-gradient(90deg, rgba(247, 147, 26, 0.1) 0%, rgba(220, 31, 255, 0.1) 100%)' : theme.bg9};
+  border-color: ${({ theme, $clicked }) =>
     $clicked ? 'linear-gradient(90deg, rgba(247, 147, 26, 0.1) 0%, rgba(220, 31, 255, 0.1) 100%)' : theme.bg9};
   min-width: 350px !important;
   height: 100px;
@@ -113,9 +117,10 @@ const Alternative_Header = styled.div<{ $clicked?: boolean }>`
   align-items: center;
   padding: 0.75rem;
   margin: 0.75rem;
+  cursor: pointer;
 `
 
-const Token_Detail = styled.div`
+const TokenDetail = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -181,8 +186,9 @@ const ALTERNATIVE_WRAPPER = styled.div<{ $less: boolean }>`
 const BestPrice = styled.div`
   position: absolute;
   font-size: 12px;
-  margin-top: -90px;
-  margin-left: 315px;
+  margin-top: -85px;
+  margin-left: 300px;
+  width: 75px;
   padding: 0.25rem;
   border-radius: 0.5rem;
   background-color: ${({ theme }) => theme.text3};
@@ -206,19 +212,19 @@ const ShowMore = styled.div`
   cursor: pointer;
 `
 
-const Price_Header = styled.div`
+const PriceHeader = styled.div`
   display: flex;
   width: 100%;
   padding: 1rem;
   align-items: center;
 `
 
-const WRAPPED_LOADER = styled.div`
-  position: relative;
-  height: 14px;
-`
+// const WRAPPED_LOADER = styled.div`
+//   position: relative;
+//   height: 14px;
+// `
 
-const Price_Title = styled.div`
+const PriceTitle = styled.div`
   font-weight: 600;
   font-size: 22px;
   margin-right: 1rem;
@@ -377,8 +383,27 @@ const TokenContent: FC = () => {
 
   useEffect(() => {
     if (tokenA) {
-      CoinGeckoClient.coins.fetch(coinsIds[tokenA.symbol], {}).then((data) => {
+      CoinGeckoClient.coins.fetch(coinsIds[tokenA.symbol], {}).then(async (data: any) => {
         data = data.data
+        const fetchData = await fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
+        const res = await fetchData.json()
+        // await connection.getProgramAccounts(TOKEN_PROGRAM_ID, {
+        //   // dataSlice: {
+        //   //   offset: 0, // number of bytes
+        //   //   length: 0 // number of bytes
+        //   // },
+        //   filters: [
+        //     {
+        //       dataSize: 165 // number of bytes
+        //     },
+        //     {
+        //       memcmp: {
+        //         offset: 0, // number of bytes
+        //         bytes: tokenA.address // base58 encoded string
+        //       }
+        //     }
+        //   ]
+        // })
         setDetails([
           { name: 'Price', value: data.market_data.current_price.usd, currency: '$' },
           {
@@ -394,7 +419,7 @@ const TokenContent: FC = () => {
             name: 'Max Total Supply',
             value: Math.floor(data.market_data.max_supply || data.market_data.total_supply) + '' || '0'
           },
-          { name: 'Holders', value: '0' }
+          { name: 'Holders', value: res.total }
         ])
         setSocials([
           { name: 'Twitter', link: 'https://twitter.com/' + data.links.twitter_screen_name },
@@ -405,25 +430,18 @@ const TokenContent: FC = () => {
     }
   }, [tokenA])
 
-  // const tokenDetailss = [
-  //   { name: 'Price', value: '0.0932', currency: '$' },
-  //   { name: 'FDV', value: '64786923', currency: '$' },
-  //   { name: 'Max Total Supply', value: '1000000' },
-  //   { name: 'Holders', value: '400000' }
-  // ]
-
-  //const socials = ['Twitter', 'Coingecko', 'Website']
-
   return (
     <TOKEN_WRAPPER>
-      <Token_Header>
+      <TokenHeader>
         <CLICKER_ICON>
-          <img src={`/img/crypto/GOFX.svg`} alt="" />
+          <img src={`/img/crypto/${tokenA.symbol}.svg`} alt="" />
         </CLICKER_ICON>
         <SubHeader>
-          <Token_Title>GooseFX (GOFX)</Token_Title>
+          <TokenTitle>
+            {tokenA.name} ({tokenA.symbol})
+          </TokenTitle>
           <div style={{ display: 'flex' }}>
-            <Smaller_Title>{truncate(tokenA.address)}</Smaller_Title>
+            <SmallerTitle>{truncate(tokenA.address)}</SmallerTitle>
             <span
               style={{ marginLeft: '1rem', color: '#999', cursor: 'pointer' }}
               onClick={() => navigator.clipboard.writeText(tokenA.address)}
@@ -432,14 +450,14 @@ const TokenContent: FC = () => {
             </span>
           </div>
         </SubHeader>
-      </Token_Header>
+      </TokenHeader>
       {tokenDetails.map((detail) => (
-        <Token_Detail>
-          <Token_Title>{detail.name}</Token_Title>
+        <TokenDetail>
+          <TokenTitle>{detail.name}</TokenTitle>
           <SmallTitle>
             {detail.currency || null} {detail.value}
           </SmallTitle>
-        </Token_Detail>
+        </TokenDetail>
       ))}
 
       <Socials>
@@ -451,46 +469,92 @@ const TokenContent: FC = () => {
   )
 }
 
-const PriceContent: FC = () => {
-  const priceDetails = [
-    { name: 'Price Impact', value: '< 0.1%' },
-    { name: 'Minimum Received', value: '0.025167 UDSC' },
-    { name: 'Fees paid to Serum LP', value: '1.2e-9 GOFX (0.04 %)', extraValue: '0 USDC (0.04 %)' },
+const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes }) => {
+  const { tokenA, tokenB, inTokenAmount, outTokenAmount } = useSwap()
+
+  const [details, setDetails] = useState([
+    { name: 'Price Impact', value: '0%' },
+    {
+      name: 'Minimum Received',
+      value: 0 + ' ' + tokenB.symbol
+    },
+    {
+      name: 'Fees paid to Serum LP',
+      value: `${0} ${tokenA.symbol} (${0} %)`,
+      extraValue: `0 ${tokenB.symbol} (0%)`
+    },
     { name: 'Transaction fee', value: '0.00005 SOL', icon: 'info' }
-  ]
+  ])
+  const [outAmount, setOutAmount] = useState(0)
+  const [outTokenPercentage, setOutTokenPercentage] = useState(0)
+  const [cheap, setCheap] = useState(true)
+
+  useEffect(() => {
+    const route = routes?.[clickNo]
+    if (!route) return
+    const totalLp = route.marketInfos[0].lpFee.amount / 10 ** tokenA.decimals
+    const percent = +((totalLp / inTokenAmount) * 100)?.toFixed(4)
+    const totalLpB = route.marketInfos.slice(-1)[0].lpFee.amount / 10 ** tokenB.decimals
+    const percentB = +((totalLpB / outTokenAmount) * 100)?.toFixed(4)
+    const out = route.outAmount / 10 ** tokenB.decimals
+    setOutAmount(out)
+
+    const priceDetails = [
+      { name: 'Price Impact', value: '<' + +route.priceImpactPct.toFixed(6) + '%' },
+      {
+        name: 'Minimum Received',
+        value: route.outAmountWithSlippage / 10 ** tokenB.decimals + ' ' + tokenB.symbol
+      },
+      {
+        name: 'Fees paid to Serum LP',
+        value: `${totalLp} ${tokenA.symbol} (${percent} %)`,
+        extraValue:
+          route?.marketInfos?.length > 1 ? `${totalLpB} ${tokenB.symbol} (${percentB}%)` : `0 ${tokenB.symbol} (0%)`
+      },
+      { name: 'Transaction fee', value: '0.00005 SOL', icon: 'info' }
+    ]
+
+    setDetails(priceDetails)
+
+    const percentageCheap = +(((out - outTokenAmount) / out) * 100).toFixed(3)
+    setOutTokenPercentage(Math.abs(percentageCheap))
+    setCheap(percentageCheap < 0 ? false : true)
+  }, [clickNo, inTokenAmount, tokenA.symbol, tokenB.symbol, routes])
 
   return (
     <PRICE_WRAPPER>
-      <Price_Header>
-        <Price_Title>Price Info</Price_Title>
+      <PriceHeader>
+        <PriceTitle>Price Info</PriceTitle>
         {/* <WRAPPED_LOADER>
           <Loader />
         </WRAPPED_LOADER> */}
         {/* <SMALL_CLICKER_ICON>
           <img src={`/img/crypto/GOFX.svg`} alt="" />
         </SMALL_CLICKER_ICON> */}
-      </Price_Header>
-      <Token_Detail>
-        <Token_Title>Rate</Token_Title>
+      </PriceHeader>
+      <TokenDetail>
+        <TokenTitle>Rate</TokenTitle>
         <SmallTitleFlex>
           {' '}
           <SMALL_CLICKER_ICON>
-            <img src={`/img/crypto/GOFX.svg`} alt="" />
+            <img src={`/img/crypto/${tokenA.symbol}.svg`} alt="" />
           </SMALL_CLICKER_ICON>{' '}
-          1 GOFX ={'  '}
+          {inTokenAmount} {tokenA.symbol} ≈{'  '}
           <SMALL_CLICKER_ICON style={{ marginLeft: '0.5rem' }}>
-            <img src={`/img/crypto/USDC.svg`} alt="" />
+            <img src={`/img/crypto/${tokenB.symbol}.svg`} alt="" />
           </SMALL_CLICKER_ICON>
-          2.345 USDC
+          {+outAmount.toFixed(3)} {tokenB.symbol}
         </SmallTitleFlex>
         <SmallTitleFlex>
-          <span style={{ color: 'green', marginRight: '0.25rem' }}>24% cheaper</span>
+          <span style={{ color: cheap ? 'green' : 'red', marginRight: '0.25rem' }}>
+            {outTokenPercentage}% {cheap ? 'cheaper' : 'higher'}
+          </span>
           <span>than coingecko</span>
         </SmallTitleFlex>
-      </Token_Detail>
-      {priceDetails.map((detail) => (
-        <Token_Detail>
-          <Token_Title>
+      </TokenDetail>
+      {details.map((detail) => (
+        <TokenDetail>
+          <TokenTitle>
             {detail.name}{' '}
             {detail.icon && (
               <img
@@ -500,36 +564,71 @@ const PriceContent: FC = () => {
                 className={'header-icon'}
               />
             )}
-          </Token_Title>
+          </TokenTitle>
           <SmallTitle>{detail.value}</SmallTitle>
           <SmallTitle>{detail.extraValue || null}</SmallTitle>
-        </Token_Detail>
+        </TokenDetail>
       ))}
     </PRICE_WRAPPER>
   )
 }
 
-const AlternativesContent: FC = () => {
-  const alternativeDetails = [
-    { name: 'Raydium x Raydium', value: 'GOFX to wDingcoin to USDC', price: '2.5569' },
-    { name: 'Aldrin x Raydium', value: 'GOFX to BIXBIT to USDC', price: '2.4589', bestPrice: true },
-    { name: 'Raydium x Raydium', value: 'GOFX to wDingcoin to USDC', price: '2.5569' },
-    { name: 'Aldrin x Raydium', value: 'GOFX to BIXBIT to USDC', price: '2.4589' }
-  ]
-  const [clickNo, setClickNo] = useState(null)
+const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void; routes: any[] }> = ({
+  setClickNo,
+  clickNo,
+  routes
+}) => {
+  const { tokenA, tokenB } = useSwap()
+  const [tokens, setTokens] = useState([])
+  const [details, setDetails] = useState([])
+
+  useEffect(() => {
+    fetch(TOKEN_LIST_URL['mainnet-beta'])
+      .then((response) => response.json())
+      .then((result) => setTokens(result))
+  }, [])
+
+  useEffect(() => {
+    function getObjectDetails(no: number) {
+      const route = routes[no]
+      const market = route.marketInfos
+      const name =
+        market.length === 1
+          ? market[0].amm.label
+          : market[0].amm.label + ' x ' + route.marketInfos.slice(-1)[0].amm.label
+      const value =
+        route.marketInfos.length < 2
+          ? tokenA.symbol + ' to ' + tokenB.symbol
+          : tokenA.symbol +
+            ' to ' +
+            (tokens.find((i) => i.address === route.marketInfos[0].outputMint.toBase58())?.symbol || 'unknown') +
+            ' to ' +
+            tokenB.symbol
+      const out = +(route.outAmount / 10 ** tokenB.decimals).toFixed(3)
+
+      if (no === 0) {
+        return { name, value, price: out, bestPrice: true }
+      }
+      return { name, value, price: out }
+    }
+
+    const details = routes.map((_, k) => getObjectDetails(k))
+    setDetails(details)
+  }, [routes, tokenA.symbol, tokenB.symbol, tokens])
+
   const [less, setLess] = useState(false)
 
   return (
     <ALTERNATIVE_WRAPPER $less={less}>
-      {(!less ? alternativeDetails : alternativeDetails.slice(0, 2)).map((detail, k) => (
-        <Alternative_Header $clicked={k == clickNo} onClick={() => setClickNo(k)}>
-          <Token_Detail>
-            <Token_Title>{detail.name}</Token_Title>
+      {(!less ? details : details.slice(0, 2)).map((detail, k) => (
+        <AlternativeHeader $clicked={k === clickNo} onClick={() => setClickNo(k)}>
+          <TokenDetail>
+            <TokenTitle>{detail.name}</TokenTitle>
             <AltSmallTitle>{detail.value}</AltSmallTitle>
-          </Token_Detail>
-          <Token_Title>{detail.price || null}</Token_Title>
+          </TokenDetail>
+          <TokenTitle>{detail.price || null}</TokenTitle>
           {detail.bestPrice && <BestPrice>Best Price</BestPrice>}
-        </Alternative_Header>
+        </AlternativeHeader>
       ))}
       {!less ? (
         <ShowLess onClick={() => setLess(true)}>Show Less</ShowLess>
@@ -541,30 +640,63 @@ const AlternativesContent: FC = () => {
 }
 
 export const SwapMain: FC = () => {
-  const desktop = window.innerWidth > 1050
-  const { tokenA } = useSwap()
+  const desktop = window.innerWidth > 1200
+  const { tokenA, tokenB, inTokenAmount } = useSwap()
+  const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
+  const [clickNo, setClickNo] = useState(0)
+  const [chosenRoutes, setChosenRoutes] = useState([])
+  const [inAmountTotal, setInAmountTotal] = useState(0)
+
+  const { routes } = useJupiter({
+    amount: inAmountTotal, // raw input amount of tokens
+    inputMint: new PublicKey(tokenA?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
+    outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
+    slippage: slippage, // 1% slippage
+    debounceTime: 250 // debounce ms time before refresh
+  })
 
   useEffect(() => {
+    const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
+    setInAmountTotal(inAmountTotal)
+
     if (tokenA) {
       setallowed(true)
     }
-  }, [tokenA])
+
+    const shortRoutes = routes?.filter((i) => i.inAmount === inAmountTotal)?.slice(0, 10)
+    if (!routes) return
+    setChosenRoutes(shortRoutes)
+  }, [tokenA, tokenB, routes, slippage, inTokenAmount])
 
   return (
     <WRAPPER>
-      <INNERWRAPPER $desktop={desktop && allowed}>
-        {desktop && allowed && <TokenContent />}
+      <INNERWRAPPER $desktop={desktop && allowed && !!tokenB}>
+        {desktop && allowed && tokenB && <TokenContent />}
         <SwapContent />
-        {desktop && allowed && <PriceContent />}
+        {desktop && allowed && tokenB && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
       </INNERWRAPPER>
-      <AlternativesContent />
+      {desktop && allowed && tokenB && inTokenAmount && (
+        <AlternativesContent routes={chosenRoutes.slice(0, 4)} clickNo={clickNo} setClickNo={setClickNo} />
+      )}
     </WRAPPER>
   )
 }
 
-export const Swap: FC = () => (
-  <SwapProvider>
-    <SwapMain />
-  </SwapProvider>
-)
+const SwapMainProvider: FC = () => {
+  const { connection } = useSwap()
+
+  return (
+    <JupiterProvider connection={connection} cluster="mainnet-beta">
+      <SwapMain />
+    </JupiterProvider>
+  )
+}
+
+export const Swap: FC = () => {
+  return (
+    <SwapProvider>
+      <SwapMainProvider />
+    </SwapProvider>
+  )
+}

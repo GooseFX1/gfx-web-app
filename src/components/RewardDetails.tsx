@@ -227,7 +227,7 @@ export const RewardInfoComponent: FC = () => {
               For each NFT sale you will receive <strong>50%</strong> of the sale fee in <strong>$GOFX</strong>.
             </TEXT_22>
             <TEXT_15>
-              If you sell an nFT for $100, we will split 1% or $1 worth of $GOFX to the buyer and seller respectively.
+              If you sell an NFT for $100, we will split 1% or $1 worth of $GOFX to the buyer and seller respectively.
             </TEXT_15>
           </li>
         </ul>

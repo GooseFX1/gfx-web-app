@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { Connect } from './Connect'
 import { More } from './More'
 import { Tabs } from './Tabs'
-import { SelectRPC } from '../../components'
 import { RewardsButton } from '../../components/RewardsPopup'
 import { useDarkMode } from '../../context'
 import { SVGToGrey2, CenteredDiv } from '../../styles'
@@ -98,6 +97,7 @@ const CollapsibleWrapper = styled.div`
 export const Header: FC = () => {
   const { isCollapsed, toggleCollapse } = useNavCollapse()
   const { rewardModal, rewardToggle } = useRewardToggle()
+  const { mode } = useDarkMode()
 
   const handleCollapse = (val) => {
     toggleCollapse(val)
@@ -115,7 +115,7 @@ export const Header: FC = () => {
         <>
           {slideModal()}
           <BRAND href="/">
-            <img id="logo" src={`/img/assets/gfx_logo_gradient.svg`} alt="GFX Logo" />
+            <img id="logo" src={`/img/assets/gfx_logo_gradient_${mode}.svg`} alt="GFX Logo" />
           </BRAND>
           <Tabs />
           <BUTTONS>
@@ -133,12 +133,8 @@ export const Header: FC = () => {
 
 const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => void }> = ({ collapse, onCollapse }) => {
   const { mode } = useDarkMode()
-
   const icon = `/img/assets/arrow-down.svg`
-
-  const handleCollapse = () => {
-    onCollapse(!collapse)
-  }
+  const handleCollapse = () => onCollapse(!collapse)
 
   return (
     <CollapsibleWrapper

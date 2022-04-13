@@ -174,7 +174,7 @@ export const Selector: FC<{
             <TOKEN
               key={index}
               onClick={async () => {
-                setToken({ address, decimals, symbol })
+                setToken({ address, decimals, symbol, name })
                 setVisible(false)
               }}
             >

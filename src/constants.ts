@@ -3,7 +3,8 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
   discord: 'https://discord.gg/cDEPXpY26q',
   medium: 'https://medium.com/goosefx',
   telegram: 'https://www.t.me/goosefx',
-  twitter: 'https://www.twitter.com/GooseFX1'
+  twitter: 'https://www.twitter.com/GooseFX1',
+  nestquest: 'https://nestquest.io'
 }
 
 export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC']
