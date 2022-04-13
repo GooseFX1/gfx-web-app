@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { Form, Input, Upload, Button } from 'antd'
+import { Form, Input, Button } from 'antd'
 // import { PlusOutlined } from '@ant-design/icons'
 // import { UploadChangeParam } from 'antd/lib/upload'
 // import { UploadFile } from 'antd/lib/upload/interface'
 import { StyledPopupProfile, StyledFormProfile } from './PopupProfile.styled'
 import { useNFTProfile } from '../../../context'
-import { completeNFTUserProfile, updateNFTUser } from '../../../api/NFTs'
+import { SVGDynamicReverseMode } from '../../../styles'
 import { INFTProfile } from '../../../types/nft_profile.d'
+import { completeNFTUserProfile, updateNFTUser } from '../../../api/NFTs'
+import { Loader } from '../../../components'
 
 interface Props {
   visible: boolean
@@ -32,7 +34,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
 
   const onFinish = (profileFormData: any) => {
     setIsLoading(true)
-    const formattedProfile = { ...profileFormData, email: '' }
+    const formattedProfile = profileFormData
     if (sessionUser.user_id === null) {
       completeProfile(formattedProfile)
     } else {
@@ -96,7 +98,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
         onCancel={onCancel}
         closeIcon={
           <div>
-            <img className="close-white-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+            <SVGDynamicReverseMode src={`/img/assets/close-white-icon.svg`} alt="close" />
           </div>
         }
       >
@@ -147,6 +149,12 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
                   <Input />
                 </Form.Item>
               </div>
+              <div className="half-width">
+                <Form.Item label="Email" name="email">
+                  <Input />
+                </Form.Item>
+                <div className="hint">Will be used for notifications</div>
+              </div>
             </div>
             <Form.Item name="profile_pic_link" label="Profile Image">
               <Input />
@@ -188,7 +196,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
               </div>
             </div>
             <Button className="btn-save" type="primary" htmlType="submit">
-              {isLoading ? '...Saving' : 'Save changes'}
+              {isLoading ? <Loader /> : 'Save changes'}
             </Button>
           </section>
         </StyledFormProfile>
