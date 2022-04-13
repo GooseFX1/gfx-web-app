@@ -1,21 +1,20 @@
 import React, { FC, useCallback, useState } from 'react'
 import styled from 'styled-components'
+import { Row, Col } from 'antd'
 import { PrivacyPolicy } from './PrivacyPolicy'
 import { TermsOfService } from './TermsOfService'
 import { useConnectionConfig } from '../../context'
 import { APP_LAYOUT_FOOTER_HEIGHT, APP_LAYOUT_FOOTER_HEIGHT_MOBILE, SpaceBetweenDiv } from '../../styles'
+import { SOCIAL_MEDIAS } from '../../constants'
+import { SVGDynamicReverseMode } from '../../styles/utils'
 
-const REFRESH_ICON = styled.div`
-  margin-right: ${({ theme }) => theme.margin(6)};
+const SOCIAL_ICON = styled.button`
+  background: transparent;
+  border: none;
 
-  span {
-    font-size: 11px;
-    margin-right: ${({ theme }) => theme.margin(1)};
-    color: ${({ theme }) => theme.text2};
-  }
   img {
-    width: 37px;
-    height: 37px;
+    width: 18px;
+    height: auto;
   }
 `
 
@@ -27,14 +26,6 @@ const TEXT = styled.span`
   span {
     color: ${({ theme }) => theme.text3};
     cursor: pointer;
-  }
-`
-
-const CURRENT_NETWORK = styled.span`
-  color: ${({ theme }) => theme.text1};
-  .network {
-    text-transform: capitolize;
-    color: ${({ theme }) => theme.secondary2};
   }
 `
 
@@ -77,10 +68,29 @@ export const Footer: FC = () => {
         Copyright © 2022 Goose Labs, Inc. All rights reserved. Please trade with your own discretion and according to
         your location’s laws and regulations.
       </TEXT>
-      <CURRENT_NETWORK>
-        SOL Network:
-        <span className={'network'}>{' ' + network}</span>
-      </CURRENT_NETWORK>
+
+      <Row justify="space-between" align="middle">
+        <Col span={2}>
+          <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.medium)}>
+            <SVGDynamicReverseMode src="/img/assets/medium_small.svg" alt="domain-icon" />
+          </SOCIAL_ICON>
+        </Col>
+        <Col span={2}>
+          <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.discord)}>
+            <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
+          </SOCIAL_ICON>
+        </Col>
+        <Col span={2}>
+          <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.telegram)}>
+            <SVGDynamicReverseMode src="/img/assets/telegram_small.svg" alt="domain-icon" />
+          </SOCIAL_ICON>
+        </Col>
+        <Col span={2}>
+          <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.twitter)}>
+            <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
+          </SOCIAL_ICON>
+        </Col>
+      </Row>
     </WRAPPER>
   )
 }
