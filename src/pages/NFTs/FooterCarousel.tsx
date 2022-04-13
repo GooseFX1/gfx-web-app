@@ -31,8 +31,12 @@ const FooterCarousel = () => {
     )
 
     nfts.then((res) => {
-      const nfts = res.map((collection) => collection.data.open_bid.slice(0, 4))
-      setNfts(nfts.flat())
+      try {
+        const nfts = res.map((collection) => collection.data.open_bid.slice(0, 4))
+        setNfts(nfts.flat())
+      } catch (error) {
+        console.error(error)
+      }
     })
 
     return () => {}
