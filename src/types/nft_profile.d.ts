@@ -6,12 +6,12 @@ export interface INFTProfile {
   user_id: number
   pubkey: string
   nickname: string
-  email: null | string
-  bio: null | string
-  twitter_link: null | string
-  instagram_link: null | string
-  facebook_link: null | string
-  youtube_link: null | string
+  email: string
+  bio: string
+  twitter_link: string
+  instagram_link: string
+  facebook_link: string
+  youtube_link: string
   profile_pic_link: string
   is_verified: boolean
   user_likes: number[]
