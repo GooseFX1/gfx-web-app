@@ -113,6 +113,22 @@ const SWEEP_MODAL = styled(Modal)`
       right: 0px;
       z-index: 2;
     }
+    .topbar-no-nft {
+      font-size: 35px;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 50px;
+    }
+    .no-nft-text {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 500;
+      margin-top: 50px;
+      color: ${({ theme }) => theme.text15};
+      width: 100%;
+      padding: 50px;
+      padding-bottom: 0px;
+    }
     .topbar {
       text-align: center;
       height: 55px;
@@ -703,6 +719,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
   const [settleProgress, setSettleProgress] = useState(null) //1 in progress, 2 success, -1 error
   const [escrowBalance, setEscrowBalance] = useState(0)
   const [escrowAccounts, setEscrowAccounts] = useState(null)
+  const [emptyFixedPrice, setEmptyFixedPrice] = useState(false)
   const sliderRef = useRef<any>()
   const { getUIAmount } = useAccounts()
   const { getTokenInfoForFarming } = useTokenRegistry()
@@ -1091,7 +1108,8 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
   }
 
   useEffect(() => {
-    sortNft()
+    if (fixedPriceWithinCollection.nft_prices.length) sortNft()
+    else setEmptyFixedPrice(true)
   }, [fixedPriceWithinCollection])
 
   const nfts = (
@@ -1110,7 +1128,16 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
   return (
     <SWEEP_MODAL visible={visible} setVisible={setVisible}>
       <div className="sweep-details">
-        {
+        {emptyFixedPrice ? (
+          <>
+            <div className="topbar">
+              <img src={`/img/assets/collectionSweeper.svg`} alt="collection-sweeper" />
+            </div>
+            <div className="topbar-no-nft">Oh snap! There is no floor to sweep.</div>
+            <img src={`/img/assets/no-nft-sweep.svg`} alt="collection-sweeper" />
+            <div className="no-nft-text">There are no listed NFT’s from this collection available to sweep!</div>
+          </>
+        ) : (
           <>
             {!sweepComplete ? (
               <>
@@ -1417,7 +1444,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
               </>
             ) : null}
           </>
-        }
+        )}
       </div>
     </SWEEP_MODAL>
   )

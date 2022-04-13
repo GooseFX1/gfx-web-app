@@ -322,11 +322,11 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
     <COLLECTION_HEADER $height={collapse ? '30' : '45'}>
       {handleModal()}
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
-      {fixedPriceWithinCollection && fixedPriceWithinCollection.nft_prices.length > 0 && (
-        <button className="collection-sweeper-button" onClick={handleSweepClick}>
-          Collection Sweeper
-        </button>
-      )}
+
+      <button className="collection-sweeper-button" onClick={handleSweepClick}>
+        Collection Sweeper
+      </button>
+
       {sweeperModal && <SweepModal visible={sweeperModal} setVisible={setSweeperModal}></SweepModal>}
       {isCollectionItemEmpty ? (
         <SkeletonCommon height="30vh" borderRadius="0" />
