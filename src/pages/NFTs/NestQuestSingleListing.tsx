@@ -92,18 +92,25 @@ const SUBTITLE = styled.h2`
 `
 
 const PILL_SECONDARY = styled.div`
+  background: linear-gradient(90deg, rgba(247, 147, 26, 0.5) 0%, rgba(220, 31, 255, 0.5) 100%);
+  border-radius: 50px;
   width: 150px;
   height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 15px;
-  line-height: 18px;
-  background: linear-gradient(180deg, rgba(247, 147, 26, 0.1) 0%, rgba(220, 31, 255, 0.1) 100%);
-  border-image-source: linear-gradient(180deg, rgba(247, 147, 26, 0.5) 0%, rgba(220, 31, 255, 0.5) 100%);
-  border-radius: 50px;
-  filter: drop-shadow(0px 6px 9px rgba(36, 36, 36, 0.15));
+  padding: 2px;
+
+  div {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 18px;
+    background: #4848488f;
+    border-radius: 50px;
+    filter: drop-shadow(0px 6px 9px rgba(36, 36, 36, 0.15));
+  }
 `
 
 const SOCIAL_ICON = styled.button`
@@ -232,10 +239,14 @@ export const NestQuestSingleListing: FC<{
                 <br />
                 <Row justify="space-between" align="middle">
                   <Col span={7}>
-                    <PILL_SECONDARY>Items 10,018</PILL_SECONDARY>
+                    <PILL_SECONDARY>
+                      <div>Items 10,018</div>
+                    </PILL_SECONDARY>
                   </Col>
                   <Col span={7}>
-                    <PILL_SECONDARY>Price {mintPrice} SOL</PILL_SECONDARY>
+                    <PILL_SECONDARY>
+                      <div>Price {mintPrice} SOL</div>
+                    </PILL_SECONDARY>
                   </Col>
                   <Col span={2}>
                     <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.nestquest)}>

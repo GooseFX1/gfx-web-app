@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
+import { useHistory } from 'react-router-dom'
+import styled from 'styled-components'
+import { MainButton } from '../../../components/MainButton'
+import { SOCIAL_MEDIAS } from '../../../constants'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-import styled from 'styled-components'
-import { MainButton } from '../../../components/MainButton'
-import { useHistory } from 'react-router-dom'
 
 //#region styles
 const CAROUSEL_WRAPPER = styled.div`
@@ -119,7 +120,7 @@ const settings = {
 
 export const NFTHomeSlider = () => {
   const handleCreatorApply = (e: any) => {
-    window.open('https://docs.google.com/forms/d/15yypvXd49oTMv0AbtfZ8CU_y2Z7WGJI0KmilA8oR6OA/edit')
+    window.open(SOCIAL_MEDIAS.nftCreatorForm)
   }
   const history = useHistory()
   const goNestQuestSingleListing = (e: any) => history.push(`/NFTs/NestQuest`)

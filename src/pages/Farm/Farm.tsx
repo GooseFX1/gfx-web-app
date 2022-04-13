@@ -4,7 +4,8 @@ import { logEvent } from 'firebase/analytics'
 import analytics from '../../analytics'
 import { TableList } from './TableList'
 import { FarmHeader } from './FarmHeader'
-import { useNavCollapse, PriceFeedProvider, FarmProvider } from '../../context'
+import { useNavCollapse, PriceFeedProvider, FarmProvider, useConnectionConfig, ENDPOINTS } from '../../context'
+import { notify } from '../../utils'
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
@@ -34,6 +35,7 @@ const BODY = styled.div<{ $navCollapsed: boolean }>`
 export const Farm: FC = () => {
   const [filter, setFilter] = useState<string>('')
   const { isCollapsed } = useNavCollapse()
+  const { setEndpoint, network } = useConnectionConfig()
 
   useEffect(() => {
     const an = analytics()
@@ -42,6 +44,11 @@ export const Farm: FC = () => {
         firebase_screen: 'Yield Farm',
         firebase_screen_class: 'load'
       })
+
+    if (network === 'devnet') {
+      notify({ message: 'Switched to mainnet' })
+      setEndpoint(ENDPOINTS[0].endpoint)
+    }
   }, [])
 
   const onFilter = (val) => {
