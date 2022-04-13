@@ -35,6 +35,8 @@ import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import Meta from 'antd/lib/card/Meta'
+import Lottie from 'lottie-react'
+import confettiAnimation from './confettiAnimation.json'
 
 const ARROW_CLICKER = styled(CenteredDiv)`
   margin-left: ${({ theme }) => theme.margin(1)};
@@ -112,6 +114,11 @@ const SWEEP_MODAL = styled(Modal)`
       position: relative;
       right: 0px;
       z-index: 2;
+    }
+    .confettiAnimation {
+      position: absolute;
+      top: 60px;
+      z-index: 3;
     }
     .topbar-no-nft {
       font-size: 35px;
@@ -781,7 +788,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
     try {
       const res = await bidOnSingleNFT(bidObject)
       // useful for testing without transaction hence not removing
-      //let res
+      // let res
       //  return {
       //    data: { bid_matched: true, tx_sig: true }
       //  }
@@ -1154,6 +1161,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
               </>
             ) : (
               <>
+                <Lottie animationData={confettiAnimation} className="confettiAnimation" />
                 <div className="topbar">{sweepSuccessFlag ? 'Mission accomplished!' : 'Almost all!'}</div>
                 <div className="successful-sweeps">
                   You are now the owner of<span className="count primary3color">{getSuccessfulSweeps()}</span>NFT's
