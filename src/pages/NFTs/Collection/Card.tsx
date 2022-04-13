@@ -194,7 +194,7 @@ export const Card = (props: ICard) => {
   }, [props.singleNFT])
 
   useEffect(() => {
-    if (props.singleNFT && sessionUser) {
+    if (props.singleNFT && sessionUser && sessionUser.user_likes) {
       setIsFavorited(sessionUser.user_likes.includes(props.singleNFT.non_fungible_id))
     }
   }, [sessionUser])

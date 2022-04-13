@@ -26,14 +26,17 @@ import {
   StringPublicKey,
   toPublicKey,
   bnTo8,
-  getParsedAccountByMint
+  getParsedAccountByMint,
+  createWithdrawInstruction
 } from '../../../web3'
 import { notify } from '../../../utils'
-import { getBuyInstructionAccounts } from '../actions'
+import { getBuyInstructionAccounts, callWithdrawInstruction } from '../actions'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import Meta from 'antd/lib/card/Meta'
+import Lottie from 'lottie-react'
+import confettiAnimation from './confettiAnimation.json'
 
 const ARROW_CLICKER = styled(CenteredDiv)`
   margin-left: ${({ theme }) => theme.margin(1)};
@@ -112,6 +115,27 @@ const SWEEP_MODAL = styled(Modal)`
       right: 0px;
       z-index: 2;
     }
+    .confettiAnimation {
+      position: absolute;
+      top: 60px;
+      z-index: 3;
+    }
+    .topbar-no-nft {
+      font-size: 35px;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 50px;
+    }
+    .no-nft-text {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 500;
+      margin-top: 50px;
+      color: ${({ theme }) => theme.text15};
+      width: 100%;
+      padding: 50px;
+      padding-bottom: 0px;
+    }
     .topbar {
       text-align: center;
       height: 55px;
@@ -148,6 +172,30 @@ const SWEEP_MODAL = styled(Modal)`
         width: 60px;
         height: 60px;
         margin-right: 40px;
+        cursor: pointer;
+      }
+      .settling-container {
+        width: 80%;
+        height: 80px;
+        border: 1px solid;
+        border-color: ${({ theme }) => theme.text4};
+        border-radius: 20px;
+        padding-left: 20px;
+        padding-top: 15px;
+        .info-icon {
+          height: 20px;
+          width: 20px;
+          margin-right: 10px;
+        }
+        .line1 {
+          font-size: 16px;
+          margin-bottom: 8px;
+          color: ${({ theme }) => theme.text4};
+        }
+        .line2 {
+          font-size: 14px;
+          color: ${({ theme }) => theme.text15};
+        }
       }
     }
     .sweepNumber {
@@ -278,7 +326,7 @@ const SWEEP_MODAL = styled(Modal)`
       margin-top: 25px;
     }
     .imageRow2 {
-      height: 380px;
+      height: 400px;
       margin-top: 25px;
       background-color: ${({ theme }) => theme.sweepModalCard};
       border-radius: 30px;
@@ -293,7 +341,6 @@ const SWEEP_MODAL = styled(Modal)`
       }
       .sol-balance {
         font-size: 30px;
-        margin-top: -50px;
       }
       .sol-logo {
         height: 32px;
@@ -406,7 +453,7 @@ const CAROUSEL_WRAPPER2 = styled.div`
   position: relative;
   //padding-left: ${({ theme }) => theme.margin(4)};
   width: 100% !important;
-  height: 60%;
+  height: 80%;
 
   border-radius: 20px;
   .fade {
@@ -465,6 +512,9 @@ const SLIDER_ITEM = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 20px;
+  .sweep-card.failed {
+    opacity: 0.5;
+  }
   .sweep-card {
     border-radius: 20px;
     border: none;
@@ -496,6 +546,21 @@ const SLIDER_ITEM = styled.div`
     font-weight: 600;
     margin-top: 15px;
     color: ${({ theme }) => theme.text7};
+  }
+  .nft-sweep-success {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    .successIcon {
+      width: 35px;
+      height: 35px;
+    }
+  }
+  .nft-sweep-fail {
+    color: red;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 10px;
   }
 `
 
@@ -600,6 +665,28 @@ const SWEEP_CARD = styled.div`
         right: 15px;
       }
     }
+
+    @keyframes loadingAnimation {
+      from {
+        width: 20%;
+      }
+
+      to {
+        width: 100%;
+      }
+    }
+    .pink-loading-overlay {
+      position: absolute;
+      background: linear-gradient(272.26deg, #dd3dff 2%, rgba(220, 31, 255, 0) 108.73%);
+      opacity: 0.55;
+      top: 1px;
+      height: 100%;
+      border-radius: 20px;
+      animation-duration: 3s;
+      animation-name: loadingAnimation;
+      animation-iteration-count: infinite;
+      animation-direction: normal;
+    }
   }
   .slick-active {
     width: 110px !important;
@@ -635,6 +722,11 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
   //0 signifies loading, -1 signifies error and 1 signfies success
   const [activeSweepIndex, setActiveSweepIndex] = useState(-1)
   const [agreeConditions, setAgreeConditions] = useState<boolean>(false)
+  const [sweepSuccessFlag, setSweepSuccess] = useState<boolean>(false)
+  const [settleProgress, setSettleProgress] = useState(null) //1 in progress, 2 success, -1 error
+  const [escrowBalance, setEscrowBalance] = useState(0)
+  const [escrowAccounts, setEscrowAccounts] = useState(null)
+  const [emptyFixedPrice, setEmptyFixedPrice] = useState(false)
   const sliderRef = useRef<any>()
   const { getUIAmount } = useAccounts()
   const { getTokenInfoForFarming } = useTokenRegistry()
@@ -642,6 +734,40 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
     () => (publicKey ? getUIAmount(getTokenInfoForFarming('SOL').address) : 0),
     [getUIAmount, publicKey]
   )
+
+  const callAuctionHouseWithdraw = async (escrowPaymentAccount, amount: BN) => {
+    const { withdrawInstructionAccounts, withdrawInstructionArgs } = await callWithdrawInstruction(
+      publicKey,
+      escrowPaymentAccount,
+      amount
+    )
+
+    const withdrawIX: TransactionInstruction = await createWithdrawInstruction(
+      withdrawInstructionAccounts,
+      withdrawInstructionArgs
+    )
+
+    const transaction = new Transaction().add(withdrawIX)
+    try {
+      const signature = await sendTransaction(transaction, connection)
+      console.log(signature)
+
+      const confirm = await connection.confirmTransaction(signature, 'confirmed')
+
+      if (confirm.value.err === null) {
+        console.log('successfuly settled')
+        setSettleProgress(2)
+        return 'Success'
+      }
+    } catch (error) {
+      notify({
+        type: 'error',
+        message: error.message
+      })
+      setSettleProgress(-1)
+      return 'Error'
+    }
+  }
 
   const postBidToAPI = async (txSig: any, buyerPrice: BN, nft_data) => {
     const bidObject = {
@@ -662,7 +788,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
     try {
       const res = await bidOnSingleNFT(bidObject)
       // useful for testing without transaction hence not removing
-      //let res
+      // let res
       //  return {
       //    data: { bid_matched: true, tx_sig: true }
       //  }
@@ -716,7 +842,6 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
   }
 
   const derivePDAsForInstruction = async (nft_data) => {
-    console.log(nft_data)
     const buyerPriceInLamports = nft_data.price
     const buyerPrice: BN = new BN(buyerPriceInLamports)
     const metaDataAccount: StringPublicKey = await getMetadata(nft_data.mint_address)
@@ -765,6 +890,9 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
     tempNftState.fill(0)
     setNftState(tempNftState)
     let sum = 0
+    let escrowAccountUser = null
+    let sweepSuccess = true
+
     for (let i = 0; i < tempNftBatch.length; i++) sum += tempNftBatch[i].price
 
     for (let i = 0; i < tempNftBatch.length; i++) {
@@ -775,12 +903,25 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
         ...tempNftBatch[i],
         token_account: token_account.pubkey
       })
-      let initialix = SystemProgram.transfer({
-        fromPubkey: publicKey,
-        toPubkey: escrowPaymentAccount[0],
-        lamports: sum
-      })
-      if (i === 0) transaction.add(initialix)
+
+      if (i === 0) {
+        let res = 0
+        try {
+          res = await connection.getBalance(escrowPaymentAccount[0])
+        } catch (e) {
+          res = 0
+        }
+        if (sum - res > 0) {
+          let initialix = SystemProgram.transfer({
+            fromPubkey: publicKey,
+            toPubkey: escrowPaymentAccount[0],
+            lamports: sum - res
+          })
+          transaction.add(initialix)
+        }
+        escrowAccountUser = escrowPaymentAccount
+        setEscrowAccounts(escrowPaymentAccount)
+      }
 
       if (!metaDataAccount || !escrowPaymentAccount || !buyerTradeState) {
         notify({
@@ -801,7 +942,6 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
         setTimeout(() => setVisible(false), 10000)
         return
       }
-      console.log(buyerPrice)
       const buyInstructionArgs: BuyInstructionArgs = {
         tradeStateBump: buyerTradeState[1],
         escrowPaymentBump: escrowPaymentAccount[1],
@@ -816,7 +956,6 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
         buyerTradeState[0]
       )
 
-      console.log(buyerTradeState[0].toBase58())
       let buyIX: TransactionInstruction = await createBuyInstruction(buyInstructionAccounts, buyInstructionArgs)
       transaction.add(buyIX)
     }
@@ -825,7 +964,6 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
       //    useful for testing
       //  let signature = 'abc'
       //  let confirm = { value: { err: null } }
-      console.log(transaction)
 
       setActiveSweepIndex(0)
       setIsSweeping(true)
@@ -839,18 +977,34 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
           state_array[index] = 0
           setNftState(state_array)
           setActiveSweepIndex(index)
-          postBidToAPI(signature, item.price, { ...item, token_account: tempTokenAccount[index] }).then((res) => {
-            if (res === 'Error') {
-              state_array[index] = -1
-              setNftState(state_array)
-            } else if (res.data.bid_matched && res.data.tx_sig) {
-              state_array[index] = 1
-              setNftState(state_array)
-            }
-          })
+          let res = await postBidToAPI(signature, item.price, { ...item, token_account: tempTokenAccount[index] })
+          if (res.data && res.data.bid_matched && res.data.tx_sig) {
+            state_array[index] = 1
+            setNftState(state_array)
+          } else {
+            state_array[index] = -1
+            sweepSuccess = false
+            setNftState(state_array)
+          }
 
           await timeout(1000)
           if (index < tempNftBatch.length - 1) sliderRef && sliderRef.current && sliderRef.current.slickNext()
+        }
+        setSweepSuccess(sweepSuccess)
+        if (!sweepSuccess) {
+          let escrowSolBalance = 0
+          try {
+            escrowSolBalance = await connection.getBalance(escrowAccountUser[0])
+          } catch (e) {
+            escrowSolBalance = 0
+          }
+          setEscrowBalance(escrowSolBalance)
+          if (escrowSolBalance > 0) {
+            setSettleProgress(1)
+            callAuctionHouseWithdraw(escrowAccountUser, new BN(escrowSolBalance))
+          }
+        } else {
+          setSettleProgress(2)
         }
         setIsSweeping(false)
         setSweepComplete(true)
@@ -931,8 +1085,38 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
     return (sum / LAMPORTS_PER_SOL).toFixed(2)
   }
 
+  const onShare = (social) => {
+    switch (social) {
+      case 'twitter':
+        window
+          .open
+          //`https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20GooseFX&url=https%3A%2F%2Fapp.goosefx.io%2FNFTs%2Fdetails%2F${general.mint_address}&via=gooseFX1&original_referer=https://app.goosefx.io/NFTs/details/${general.mint_address}`
+          ()
+        break
+      case 'telegram':
+        window
+          .open
+          //`https://t.me/share/url?url=https%3A%2F%2Fapp.goosefx.io%2FNFTs%2Fdetails%2F${general.mint_address}&text=Check%20out%20this%20item%20on%20GooseFX`
+          ()
+        break
+      case 'facebook':
+        window.open(`https://facebook.com`)
+        break
+      case 'copy':
+        copyToClipboard()
+        break
+      default:
+        break
+    }
+  }
+
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(window.location.href)
+  }
+
   useEffect(() => {
-    sortNft()
+    if (fixedPriceWithinCollection.nft_prices.length) sortNft()
+    else setEmptyFixedPrice(true)
   }, [fixedPriceWithinCollection])
 
   const nfts = (
@@ -951,7 +1135,16 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
   return (
     <SWEEP_MODAL visible={visible} setVisible={setVisible}>
       <div className="sweep-details">
-        {
+        {emptyFixedPrice ? (
+          <>
+            <div className="topbar">
+              <img src={`/img/assets/collectionSweeper.svg`} alt="collection-sweeper" />
+            </div>
+            <div className="topbar-no-nft">Oh snap! There is no floor to sweep.</div>
+            <img src={`/img/assets/no-nft-sweep.svg`} alt="collection-sweeper" />
+            <div className="no-nft-text">There are no listed NFT’s from this collection available to sweep!</div>
+          </>
+        ) : (
           <>
             {!sweepComplete ? (
               <>
@@ -968,7 +1161,8 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
               </>
             ) : (
               <>
-                <div className="topbar">Mission accomplished!</div>
+                <Lottie animationData={confettiAnimation} className="confettiAnimation" />
+                <div className="topbar">{sweepSuccessFlag ? 'Mission accomplished!' : 'Almost all!'}</div>
                 <div className="successful-sweeps">
                   You are now the owner of<span className="count primary3color">{getSuccessfulSweeps()}</span>NFT's
                   from:
@@ -984,11 +1178,11 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
                   <CAROUSEL_WRAPPER2>
                     <Slider {...settings}>
                       {nftBatch.map((item, index) => {
-                        return index < dropdownSelection && nftState[index] === 1 ? (
+                        return index < dropdownSelection ? (
                           <SLIDER_ITEM>
                             <Card
                               cover={<img className="nft-img" src={item.image_url} alt="NFT" />}
-                              className="sweep-card"
+                              className={'sweep-card ' + (nftState[index] === -1 ? 'failed' : '')}
                             >
                               <Meta
                                 title={
@@ -1000,6 +1194,17 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
                               />
                             </Card>
                             <div className="sweep-nft-name">{item.nft_name}</div>
+                            <div className={'nft-sweep-' + (nftState[index] === -1 ? 'fail' : 'success')}>
+                              {nftState[index] === -1 ? (
+                                'Transaction Failed'
+                              ) : (
+                                <img
+                                  src={`/img/assets/sweepCompleted.svg`}
+                                  alt="sweep-completed"
+                                  className="successIcon"
+                                />
+                              )}
+                            </div>
                           </SLIDER_ITEM>
                         ) : null
                       })}
@@ -1011,23 +1216,70 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
                     <img className="sol-logo" src={`/img/assets/solana-logo.png`} alt="" />
                   </div>
                 </Row>
-                <Row justify="center" align="middle" className="rowShare">
-                  Share it with your friends!
-                </Row>
+                {
+                  <Row justify="center" align="middle" className="rowShare">
+                    {settleProgress === -1
+                      ? 'Please settle your balance and try again'
+                      : settleProgress === 2
+                      ? 'Share it with your friends!'
+                      : null}
+                  </Row>
+                }
                 <Row justify="center" align="middle" className="socials">
-                  <div>
-                    <img className="social-icon" src={`/img/assets/twitter-violet.svg`} alt="" />
-                  </div>
-                  <div>
-                    <img className="social-icon" src={`/img/assets/telegram-violet.svg`} alt="" />
-                  </div>
-                  <div>
-                    <img className="social-icon" src={`/img/assets/facebook-violet.svg`} alt="" />
-                  </div>
-                  <div>
-                    <img className="social-icon" src={`/img/assets/copy-violet.svg`} alt="" />
-                  </div>
+                  {settleProgress === 1 ? (
+                    <div className="settling-container">
+                      <div className="line1">
+                        <img className="info-icon" src={`/img/assets/info.svg`} alt="" />
+                        We are settling your balances
+                      </div>
+                      <div className="line2">Please be patient and confirm the transaction.</div>
+                    </div>
+                  ) : settleProgress === 2 ? (
+                    <>
+                      <div>
+                        <img
+                          className="social-icon"
+                          src={`/img/assets/twitter-violet.svg`}
+                          alt=""
+                          onClick={() => onShare('twitter')}
+                        />
+                      </div>
+                      <div>
+                        <img
+                          className="social-icon"
+                          src={`/img/assets/telegram-violet.svg`}
+                          alt=""
+                          onClick={() => onShare('telegram')}
+                        />
+                      </div>
+                      <div>
+                        <img
+                          className="social-icon"
+                          src={`/img/assets/facebook-violet.svg`}
+                          alt=""
+                          onClick={() => onShare('facebook')}
+                        />
+                      </div>
+                      <div>
+                        <img
+                          className="social-icon"
+                          src={`/img/assets/copy-violet.svg`}
+                          alt=""
+                          onClick={() => onShare('copy')}
+                        />
+                      </div>
+                    </>
+                  ) : settleProgress === -1 ? (
+                    <Button
+                      className="sweep-button"
+                      onClick={() => callAuctionHouseWithdraw(escrowAccounts, new BN(escrowBalance))}
+                      disabled={!connected || escrowBalance < 1}
+                    >
+                      Settle {(escrowBalance / LAMPORTS_PER_SOL).toFixed(2)} SOL
+                    </Button>
+                  ) : null}
                 </Row>
+                <Row justify="center" align="middle" className="socials"></Row>
               </>
             )}
 
@@ -1145,7 +1397,14 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
                           <div className={index === activeSweepIndex ? 'activeNftZoom' : 'nonactiveNftZoom'}>
                             <Card
                               cover={
-                                <img className="nft-img" src={nftBatch[index] && nftBatch[index].image_url} alt="NFT" />
+                                <>
+                                  <img
+                                    className="nft-img"
+                                    src={nftBatch[index] && nftBatch[index].image_url}
+                                    alt="NFT"
+                                  />
+                                  <div className="pink-loading-overlay"></div>
+                                </>
                               }
                               className={'sweeping-card '}
                             >
@@ -1193,7 +1452,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
               </>
             ) : null}
           </>
-        }
+        )}
       </div>
     </SWEEP_MODAL>
   )
