@@ -157,7 +157,7 @@ export const NFTHomeSlider = () => {
               width={'141px'}
               onClick={goNestQuestSingleListing}
             >
-              <span>Mint</span>
+              <span>Coming Soon</span>
             </ORANGE_BTN>
           </div>
         </SLIDER_ITEM>
