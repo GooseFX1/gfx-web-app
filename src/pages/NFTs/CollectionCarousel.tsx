@@ -13,7 +13,7 @@ import isEmpty from 'lodash/isEmpty'
 const CAROUSEL_WRAPPER = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(6)};
+  padding: 16px 0 16px 32px;
 `
 
 const HEADER_CAROUSEL = styled.div`

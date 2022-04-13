@@ -51,7 +51,7 @@ const WRAPPER = styled.button<{ $connected: boolean }>`
   ${({ theme, $connected }) =>
     $connected &&
     `
-    background-image: linear-gradient(to left, ${theme.secondary2}, ${theme.primary2});
+    background-image: linear-gradient(to left, ${theme.primary3}, ${theme.secondary6});
 
     > span {
       cursor: initial !important;

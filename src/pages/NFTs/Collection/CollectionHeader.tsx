@@ -8,6 +8,8 @@ import { Share } from '../Share'
 import { SVGToGrey2 } from '../../../styles'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { SweepModal } from './SweepModal'
+import { generateTinyURL } from '../../../api/tinyUrl'
+import { notify } from '../../../utils'
 
 //#region styles
 const COLLECTION_HEADER = styled.div<{ $height: string }>`
@@ -37,7 +39,10 @@ const COLLECTION_HEADER = styled.div<{ $height: string }>`
     background-image: linear-gradient(to right, #f7931a 0%, #411612 100%);
     border-radius: 59px;
     border: none;
-    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 18px;
     cursor: pointer;
   }
 
@@ -240,14 +245,7 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
   const isCollectionItemEmpty: boolean = !singleCollection || !fixedPriceWithinCollection || !openBidWithinCollection
   // const isCollectionItemEmpty: boolean = true
 
-  const onShare = (social: string) => {
-    console.log(social)
-  }
-
-  const handleClick = (e) => {
-    console.log('handleClick e:', e)
-    setShareModal(true)
-  }
+  const handleClick = (e) => setShareModal(true)
 
   const handleSweepClick = () => {
     setSweeperModal(true)
@@ -259,6 +257,49 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
       {/* <Menu.Item>Report</Menu.Item> */}
     </MENU_LIST>
   )
+
+  const onShare = async (social: string) => {
+    if (social === 'copy link') {
+      copyToClipboard()
+      return
+    }
+
+    const res = await generateTinyURL(
+      `https://${process.env.NODE_ENV !== 'production' ? 'app.staging.goosefx.io' : window.location.host}${
+        window.location.pathname
+      }`,
+      ['gfx', 'nest-exchange', social]
+    )
+
+    if (res.status !== 200) {
+      notify({ type: 'error', message: 'Error creating sharing url' })
+      return
+    }
+
+    const tinyURL = res.data.data.tiny_url
+
+    switch (social) {
+      case 'twitter':
+        window.open(
+          `https://twitter.com/intent/tweet?text=Check%20out%20the%20${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%20Exchange%20&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
+        )
+        break
+      case 'telegram':
+        window.open(
+          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20the%20${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%20Exchange%20`
+        )
+        break
+      case 'facebook':
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${tinyURL}`)
+        break
+      default:
+        break
+    }
+  }
+
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(window.location.href)
+  }
 
   const iconStyle = { transform: `rotate(${collapse ? 0 : 180}deg)`, marginTop: `${collapse ? '5px' : '2px'}` }
 
@@ -281,9 +322,11 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
     <COLLECTION_HEADER $height={collapse ? '30' : '45'}>
       {handleModal()}
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
-      <button className="collection-sweeper-button" onClick={handleSweepClick}>
-        Collection Sweeper
-      </button>
+      {fixedPriceWithinCollection && fixedPriceWithinCollection.length > 0 && (
+        <button className="collection-sweeper-button" onClick={handleSweepClick}>
+          Collection Sweeper
+        </button>
+      )}
       {sweeperModal && <SweepModal visible={sweeperModal} setVisible={setSweeperModal}></SweepModal>}
       {isCollectionItemEmpty ? (
         <SkeletonCommon height="30vh" borderRadius="0" />
@@ -292,7 +335,7 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
           $url={
             singleCollection.collection[0].banner_link
               ? singleCollection.collection[0].banner_link
-              : openBidWithinCollection.open_bid[0].image_url
+              : singleCollection.collection[0].profile_pic_link
           }
         ></BANNER>
       )}
