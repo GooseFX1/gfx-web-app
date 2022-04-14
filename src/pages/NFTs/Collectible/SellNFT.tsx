@@ -348,13 +348,13 @@ export const SellNFT = () => {
     try {
       const confirm = await connection.confirmTransaction(signature, 'finalized')
       console.log(confirm)
-
+      // successfully list nft
       if (confirm.value.err === null) {
         // asserts existing ask and removes it from nest-api
         if (ask !== undefined) {
           const askRemoved = await postCancelAskToAPI(ask.ask_id)
           console.log(`askRemoved: ${askRemoved}`)
-          if (askRemoved === false) return
+          if (askRemoved === false) handleTxError(nftMetadata.name, 'Failed to remove prior asking price')
         }
 
         // create asking price
@@ -362,19 +362,8 @@ export const SellNFT = () => {
           console.log('postTransationToAPI: ', res)
 
           if (!res) {
-            callCancelInstruction(wallet, connection, general, tradeState, buyerPrice).then((tx) => {
-              notify({
-                type: 'error',
-                message: (
-                  <TransactionErrorMsg
-                    title={`Sync Error`}
-                    itemName={nftMetadata.name}
-                    supportText={'Listing has been canceled. Please try againg'}
-                    tx_url={`https://solscan.io/tx/${tx.signature}?cluster=${network}`}
-                  />
-                )
-              })
-            })
+            handleTxError(nftMetadata.name, 'Listing has been canceled. Please try againg')
+            callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
           } else {
             setTimeout(() => {
               notify(successfulListingMsg(signature, nftMetadata, userInput['minimumBid']))
@@ -382,17 +371,12 @@ export const SellNFT = () => {
             }, 2000)
           }
         })
+        // unsuccessfully list nft
+      } else {
+        handleTxError(nftMetadata.name, '')
       }
     } catch (error) {
-      setReviewSellModal(false)
-      setPendingTxSig(undefined)
-      setIsLoading(false)
-      notify({
-        type: 'error',
-        message: (
-          <TransactionErrorMsg title={`NFT Listing error!`} itemName={nftMetadata.name} supportText={error.message} />
-        )
-      })
+      handleTxError(nftMetadata.name, error.message)
     }
   }
 
@@ -483,6 +467,15 @@ export const SellNFT = () => {
       />
     )
   })
+
+  const handleTxError = (itemName: string, error: string) => {
+    setPendingTxSig(undefined)
+    setIsLoading(false)
+    notify({
+      type: 'error',
+      message: <TransactionErrorMsg title={`NFT Listing error!`} itemName={itemName} supportText={error} />
+    })
+  }
 
   const modal = () => {
     if (reviewSellModal) {

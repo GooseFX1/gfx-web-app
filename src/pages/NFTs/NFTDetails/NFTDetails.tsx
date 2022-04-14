@@ -12,7 +12,6 @@ import { IAppParams } from '../../../types/app_params.d'
 const NFT_DETAILS = styled.div`
   height: 100%;
   margin: 0 auto;
-  padding-top: ${({ theme }) => theme.margin(6)};
 
   .nd-content {
     height: 100%;
