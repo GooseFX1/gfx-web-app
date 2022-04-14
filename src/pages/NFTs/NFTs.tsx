@@ -12,7 +12,6 @@ import { NestQuestSingleListing } from './NestQuestSingleListing'
 import { UpLoadNFT } from './Collectible/UpLoadNFT'
 import { SellNFT } from './Collectible/SellNFT'
 import { Profile } from './Profile'
-import { Explore } from './Profile/Explore'
 import { Collection } from './Collection/Collection'
 import { OverlayProvider } from '../../context/overlay'
 import {
