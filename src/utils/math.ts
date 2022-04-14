@@ -35,7 +35,7 @@ export function removeFloatingPointError(n: number): number {
 
 // Format 35.200 --> 35.2k
 export const nFormatter = (n: number, digits = 1, withPlus = false): string => {
-  if (n < 1e3) return n + `${withPlus ? '+' : ''}`
+  if (n < 1e3) return n.toFixed(digits) + `${withPlus ? '+' : ''}`
   if (n >= 1e3 && n < 1e6) return `${+(n / 1e3).toFixed(digits)}K ${withPlus ? '+' : ''}`
   if (n >= 1e6 && n < 1e9) return `${+(n / 1e6).toFixed(digits)}M ${withPlus ? '+' : ''}`
   if (n >= 1e9 && n < 1e12) return `${+(n / 1e9).toFixed(digits)}B ${withPlus ? '+' : ''}`
