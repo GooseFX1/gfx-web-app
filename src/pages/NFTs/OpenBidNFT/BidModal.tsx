@@ -230,6 +230,7 @@ interface IBidModal {
   visible: boolean
   purchasePrice?: string
 }
+
 export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: IBidModal) => {
   const { prices } = usePriceFeed()
   const { getUIAmount } = useAccounts()
@@ -264,27 +265,19 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
   )
   const servicePriceCalc: number = useMemo(
     () => (bidPrice ? parseFloat(((NFT_MARKET_TRANSACTION_FEE / 100) * Number(bidPrice)).toFixed(3)) : 0),
-    [bidPriceInput]
-  )
-
-  const bidTotal: number = useMemo(
-    () =>
-      bidPriceInput
-        ? parseFloat((Number(bidPrice) * (NFT_MARKET_TRANSACTION_FEE / 100) + Number(bidPrice)).toFixed(3))
-        : 0,
     [bidPrice]
   )
 
   const marketData = useMemo(() => prices['SOL/USDC'], [prices])
 
   const fiatCalc: string = useMemo(
-    () => `${marketData && bidTotal ? (marketData.current * bidTotal).toFixed(3) : ''}`,
-    [bidTotal]
+    () => `${marketData && bidPrice ? (marketData.current * bidPrice).toFixed(3) : ''}`,
+    [bidPrice]
   )
 
   const notEnough: boolean = useMemo(
-    () => (bidTotal >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false),
-    [bidTotal]
+    () => (bidPrice >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false),
+    [bidPrice]
   )
 
   useEffect(() => {
@@ -420,14 +413,14 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
         postBidToAPI(signature, buyerPrice, tokenSize).then((res) => {
           console.log(res)
 
-          notify(successfulListingMessage(signature, nftMetadata, bidTotal.toString()))
+          notify(successfulListingMessage(signature, nftMetadata, bidPrice.toString()))
 
           if (res === 'Error') {
             callCancelInstruction()
             setVisible(false)
           } else if (res.data.bid_matched && res.data.tx_sig) {
             fetchUser()
-            notify(successBidMatchedMessage(res.data.tx_sig, nftMetadata, bidTotal.toString()))
+            notify(successBidMatchedMessage(res.data.tx_sig, nftMetadata, bidPrice.toString()))
             setTimeout(() => history.push('/NFTs/profile'), 2000)
           } else {
             setVisible(false)
@@ -614,7 +607,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
               <Col>Total </Col>
               <Col>
                 <Row className="bm-details-price" justify="space-between" align="middle">
-                  <Col>{bidTotal}</Col>
+                  <Col>{bidPrice}</Col>
                   <Col>SOL</Col>
                 </Row>
               </Col>
