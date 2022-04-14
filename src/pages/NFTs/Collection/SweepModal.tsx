@@ -140,9 +140,12 @@ const SWEEP_MODAL = styled(Modal)`
     }
     .topbar {
       text-align: center;
-      height: 55px;
       vertical-align: middle;
       font-size: 35px;
+
+      .topbar-image {
+        height: 42px;
+      }
     }
     .collection-name-sweeper {
       font-size: 22px;
@@ -158,10 +161,10 @@ const SWEEP_MODAL = styled(Modal)`
       }
     }
     .rowTwo {
-      margin-top: 25px;
+      margin-top: 12px;
     }
     .rowThree {
-      margin-top: 25px;
+      margin-top: 8px;
       font-size: 16px;
     }
     .rowShare {
@@ -207,7 +210,7 @@ const SWEEP_MODAL = styled(Modal)`
       color: ${({ theme }) => theme.primary3};
     }
     .rowFour {
-      margin-top: 25px;
+      margin-top: 16px;
       font-size: 20px;
       padding-left: ${({ theme }) => theme.margin(2)};
       padding-right: ${({ theme }) => theme.margin(2)};
@@ -222,9 +225,9 @@ const SWEEP_MODAL = styled(Modal)`
       background-color: #9625ae;
       color: white;
       border: none;
-      border-radius: 50px;
+      border-radius: 20px;
       width: 140px;
-      height: 50px;
+      height: 40px;
     }
     .rowFive {
       margin-top: 30px;
@@ -233,7 +236,7 @@ const SWEEP_MODAL = styled(Modal)`
     }
     .sweepStatus {
       position: relative;
-      height: 100px;
+      height: 80px;
       width: 300px;
       border-radius: 17px;
       border: none;
@@ -325,7 +328,7 @@ const SWEEP_MODAL = styled(Modal)`
     }
     .imageRow {
       height: 280px;
-      margin-top: 25px;
+      margin-top: 16px;
     }
     .imageRow2 {
       height: 400px;
@@ -1156,7 +1159,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
         {emptyFixedPrice ? (
           <>
             <div className="topbar">
-              <img src={`/img/assets/collectionSweeper.svg`} alt="collection-sweeper" />
+              <img className={'topbar-image'} src={`/img/assets/collectionSweeper.svg`} alt="collection-sweeper" />
             </div>
             <div className="topbar-no-nft">Oh snap! There is no floor to sweep.</div>
             <img src={`/img/assets/no-nft-sweep.svg`} alt="collection-sweeper" />
@@ -1167,7 +1170,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
             {!sweepComplete ? (
               <>
                 <div className="topbar">
-                  <img src={`/img/assets/collectionSweeper.svg`} alt="collection-sweeper" />
+                  <img className={'topbar-image'} src={`/img/assets/collectionSweeper.svg`} alt="collection-sweeper" />
                 </div>
                 <Row justify="center" align="middle" className="rowTwo">
                   <img className="small-image" src={singleCollection.collection[0].profile_pic_link} alt="the-nft" />
