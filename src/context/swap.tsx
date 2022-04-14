@@ -50,7 +50,7 @@ interface ISwapConfig {
   setPool: Dispatch<SetStateAction<IPool>>
   setTokenA: Dispatch<SetStateAction<ISwapToken | null>>
   setTokenB: Dispatch<SetStateAction<ISwapToken | null>>
-  swapTokens: () => void
+  swapTokens: (a: any, b: any) => void
   switchTokens: () => void
   tokenA: ISwapToken | null
   tokenB: ISwapToken | null
@@ -195,7 +195,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return () => clearInterval(interval)
   }, [amountPool])
 
-  const swapTokens = async () => {
+  const swapTokens = async (route: any, exchange: any) => {
     if (!tokenA || !tokenB) return
 
     setLoading(true)
@@ -204,7 +204,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     notify({ message: `Trying to swap ${inTokens} for at least ${outTokens}...` })
 
     try {
-      const signature = await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
+      const signature = await callPathExchange(route, exchange)
       if (!signature) throw new Error('Swap unsuccessful')
       notify({
         type: 'success',
@@ -228,6 +228,34 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     setTokenA(tokenB)
     setTokenB(tokenA)
+  }
+
+  async function callPathExchange(route: any, exchange: any) {
+    if (route.marketInfos[0].amm.label === 'GooseFX') {
+      return await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
+    } else {
+      const swapResult = await exchange({
+        wallet: {
+          sendTransaction: wallet.sendTransaction,
+          publicKey: wallet.publicKey,
+          signAllTransactions: wallet.signAllTransactions,
+          signTransaction: wallet.signTransaction
+        },
+        routeInfo: route,
+        onTransaction: async (txid: any) => {
+          //console.log('sending transaction')
+          let result = await connection.confirmTransaction(txid)
+          //console.log('confirmed transaction')
+          if (!result.value.err) {
+            return await connection.getTransaction(txid, {
+              commitment: 'confirmed'
+            })
+          }
+          return null
+        }
+      })
+      return swapResult.txid
+    }
   }
 
   return (

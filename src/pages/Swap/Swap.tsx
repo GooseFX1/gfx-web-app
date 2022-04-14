@@ -12,6 +12,7 @@ import { CenteredImg, SpaceBetweenDiv } from '../../styles'
 import { JupiterProvider, useJupiter } from '@jup-ag/react-hook'
 import { PublicKey } from '@solana/web3.js'
 import { TOKEN_LIST_URL } from '@jup-ag/core'
+import { useWallet } from '@solana/wallet-adapter-react'
 const CoinGecko = require('coingecko-api')
 const CoinGeckoClient = new CoinGecko()
 
@@ -282,7 +283,7 @@ const SWAP_CONTENT = styled.div`
   ${({ theme }) => theme.largeShadow}
 `
 
-const SwapContent: FC = () => {
+const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> = ({ exchange, routes, clickNo }) => {
   const { mode } = useDarkMode()
   const { refreshRates, setFocused, switchTokens } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
@@ -356,7 +357,7 @@ const SwapContent: FC = () => {
         </SWITCH>
         <SwapTo height={height} />
       </BODY>
-      <SwapButton />
+      <SwapButton exchange={exchange} route={routes[clickNo]} />
     </SWAP_CONTENT>
   )
 }
@@ -419,7 +420,7 @@ const TokenContent: FC = () => {
             name: 'Max Total Supply',
             value: Math.floor(data.market_data.max_supply || data.market_data.total_supply) + '' || '0'
           },
-          { name: 'Holders', value: res.total }
+          { name: 'Holders', value: res?.total || 0 }
         ])
         setSocials([
           { name: 'Twitter', link: 'https://twitter.com/' + data.links.twitter_screen_name },
@@ -641,14 +642,14 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
 
 export const SwapMain: FC = () => {
   const desktop = window.innerWidth > 1200
-  const { tokenA, tokenB, inTokenAmount } = useSwap()
+  const { tokenA, tokenB, inTokenAmount, outTokenAmount } = useSwap()
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
-  const [clickNo, setClickNo] = useState(0)
+  const [clickNo, setClickNo] = useState(null)
   const [chosenRoutes, setChosenRoutes] = useState([])
   const [inAmountTotal, setInAmountTotal] = useState(0)
 
-  const { routes } = useJupiter({
+  const { routes, exchange } = useJupiter({
     amount: inAmountTotal, // raw input amount of tokens
     inputMint: new PublicKey(tokenA?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
@@ -660,24 +661,49 @@ export const SwapMain: FC = () => {
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
     setInAmountTotal(inAmountTotal)
 
-    if (tokenA) {
+    if (tokenA && tokenB) {
       setallowed(true)
     }
 
-    const shortRoutes = routes?.filter((i) => i.inAmount === inAmountTotal)?.slice(0, 10)
+    let shortRoutes: any[] = routes?.filter((i) => i.inAmount === inAmountTotal)?.slice(0, 3)
     if (!routes) return
+    if (tokenB && outTokenAmount) {
+      const GoFxRoute = {
+        marketInfos: [
+          {
+            outputMint: new PublicKey(tokenB.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
+            lpFee: { amount: 0.001 * inAmountTotal },
+
+            amm: {
+              label: 'GooseFX'
+            }
+          }
+        ],
+        outAmount: +(outTokenAmount * 10 ** tokenB.decimals).toFixed(7),
+        outAmountWithSlippage: +(outTokenAmount * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
+        priceImpactPct: 1
+      }
+
+      shortRoutes.push(GoFxRoute)
+    }
+
+    shortRoutes = shortRoutes.sort((a, b) => b.outAmount - a.outAmount)
     setChosenRoutes(shortRoutes)
-  }, [tokenA, tokenB, routes, slippage, inTokenAmount])
+    if (clickNo === null) {
+      const defaultIndex = shortRoutes.findIndex((route) => route.marketInfos[0].amm.label === 'GooseFX')
+      setClickNo(defaultIndex >= 0 ? defaultIndex : 3)
+    }
+  }, [tokenA, tokenB, routes, slippage, inTokenAmount, outTokenAmount])
 
   return (
     <WRAPPER>
-      <INNERWRAPPER $desktop={desktop && allowed && !!tokenB}>
-        {desktop && allowed && tokenB && <TokenContent />}
-        <SwapContent />
-        {desktop && allowed && tokenB && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
+      <INNERWRAPPER $desktop={desktop && allowed}>
+        {desktop && allowed && <TokenContent />}
+        <SwapContent exchange={exchange} routes={chosenRoutes} clickNo={clickNo} />
+        {desktop && allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
       </INNERWRAPPER>
-      {desktop && allowed && tokenB && inTokenAmount && (
-        <AlternativesContent routes={chosenRoutes.slice(0, 4)} clickNo={clickNo} setClickNo={setClickNo} />
+      {desktop && allowed && inTokenAmount > 0 && (
+        <AlternativesContent routes={chosenRoutes} clickNo={clickNo} setClickNo={setClickNo} />
       )}
     </WRAPPER>
   )
@@ -685,9 +711,10 @@ export const SwapMain: FC = () => {
 
 const SwapMainProvider: FC = () => {
   const { connection } = useSwap()
+  const wallet = useWallet()
 
   return (
-    <JupiterProvider connection={connection} cluster="mainnet-beta">
+    <JupiterProvider connection={connection} cluster="mainnet-beta" userPublicKey={wallet?.publicKey}>
       <SwapMain />
     </JupiterProvider>
   )

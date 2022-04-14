@@ -24,7 +24,7 @@ const TEXT = styled.span`
   line-height: 21px !important;
 `
 
-export const SwapButton: FC = () => {
+export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ exchange, route }) => {
   const { getAmount } = useAccounts()
   const { network } = useConnectionConfig()
   const { inTokenAmount, loading, swapTokens, tokenA, tokenB } = useSwap()
@@ -71,7 +71,7 @@ export const SwapButton: FC = () => {
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
       if (!event.defaultPrevented) {
-        state === State.CanSwap ? swapTokens() : !wallet ? setVisible(true) : connect().catch(() => {})
+        state === State.CanSwap ? swapTokens(route, exchange) : !wallet ? setVisible(true) : connect().catch(() => {})
       }
     },
     [connect, setVisible, state, swapTokens, wallet]
