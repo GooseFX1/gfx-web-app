@@ -31,6 +31,7 @@ import {
 } from '../../../web3'
 import { notify } from '../../../utils'
 import { getBuyInstructionAccounts, callWithdrawInstruction } from '../actions'
+import { generateTinyURL } from '../../../api/tinyUrl'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
@@ -117,8 +118,9 @@ const SWEEP_MODAL = styled(Modal)`
     }
     .confettiAnimation {
       position: absolute;
-      top: 60px;
+      top: 0px;
       z-index: 3;
+      pointer-events: none;
     }
     .topbar-no-nft {
       font-size: 35px;
@@ -138,9 +140,12 @@ const SWEEP_MODAL = styled(Modal)`
     }
     .topbar {
       text-align: center;
-      height: 55px;
       vertical-align: middle;
       font-size: 35px;
+
+      .topbar-image {
+        height: 42px;
+      }
     }
     .collection-name-sweeper {
       font-size: 22px;
@@ -156,10 +161,10 @@ const SWEEP_MODAL = styled(Modal)`
       }
     }
     .rowTwo {
-      margin-top: 25px;
+      margin-top: 12px;
     }
     .rowThree {
-      margin-top: 25px;
+      margin-top: 8px;
       font-size: 16px;
     }
     .rowShare {
@@ -205,7 +210,7 @@ const SWEEP_MODAL = styled(Modal)`
       color: ${({ theme }) => theme.primary3};
     }
     .rowFour {
-      margin-top: 25px;
+      margin-top: 16px;
       font-size: 20px;
       padding-left: ${({ theme }) => theme.margin(2)};
       padding-right: ${({ theme }) => theme.margin(2)};
@@ -220,9 +225,9 @@ const SWEEP_MODAL = styled(Modal)`
       background-color: #9625ae;
       color: white;
       border: none;
-      border-radius: 50px;
+      border-radius: 20px;
       width: 140px;
-      height: 50px;
+      height: 40px;
     }
     .rowFive {
       margin-top: 30px;
@@ -231,7 +236,7 @@ const SWEEP_MODAL = styled(Modal)`
     }
     .sweepStatus {
       position: relative;
-      height: 100px;
+      height: 80px;
       width: 300px;
       border-radius: 17px;
       border: none;
@@ -323,7 +328,7 @@ const SWEEP_MODAL = styled(Modal)`
     }
     .imageRow {
       height: 280px;
-      margin-top: 25px;
+      margin-top: 16px;
     }
     .imageRow2 {
       height: 400px;
@@ -1085,25 +1090,41 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
     return (sum / LAMPORTS_PER_SOL).toFixed(2)
   }
 
-  const onShare = (social) => {
+  const onShare = async (social) => {
+    if (social === 'copy link') {
+      copyToClipboard()
+      return
+    }
+
+    const collectionName = singleCollection.collection[0].collection_name
+
+    const res = await generateTinyURL(
+      `https://${process.env.NODE_ENV !== 'production' ? 'app.staging.goosefx.io' : window.location.host}${
+        window.location.pathname
+      }`,
+      ['gfx', 'nest-exchange', 'sweeper', social]
+    )
+
+    if (res.status !== 200) {
+      notify({ type: 'error', message: 'Error creating sharing url' })
+      return
+    }
+
+    const tinyURL = res.data.data.tiny_url
+
     switch (social) {
       case 'twitter':
-        window
-          .open
-          //`https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20GooseFX&url=https%3A%2F%2Fapp.goosefx.io%2FNFTs%2Fdetails%2F${general.mint_address}&via=gooseFX1&original_referer=https://app.goosefx.io/NFTs/details/${general.mint_address}`
-          ()
+        window.open(
+          `https://twitter.com/intent/tweet?text=Just%20Sweeping%20Up%20%F0%9F%A7%B9%F0%9F%A7%B9${collectionName}%20%F0%9F%A7%B9%F0%9F%A7%B9%0AProbably%20Nothing.%20%F0%9F%A4%AB%0ADeFi%20Simplified%20-%20%20%40GooseFX1%0A%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80&via=gooseFX1&original_referer=${window.location.host}${window.location.pathname}`
+        )
         break
       case 'telegram':
-        window
-          .open
-          //`https://t.me/share/url?url=https%3A%2F%2Fapp.goosefx.io%2FNFTs%2Fdetails%2F${general.mint_address}&text=Check%20out%20this%20item%20on%20GooseFX`
-          ()
+        window.open(
+          `https://t.me/share/url?url=${tinyURL}&text=Just%20Sweeping%20Up%20%F0%9F%A7%B9%F0%9F%A7%B9${collectionName}%20%F0%9F%A7%B9%F0%9F%A7%B9%0AProbably%20Nothing.%20%F0%9F%A4%AB%0ADeFi%20Simplified%20-%20%20%40GooseFX1%0A%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80`
+        )
         break
       case 'facebook':
-        window.open(`https://facebook.com`)
-        break
-      case 'copy':
-        copyToClipboard()
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${tinyURL}`)
         break
       default:
         break
@@ -1138,7 +1159,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
         {emptyFixedPrice ? (
           <>
             <div className="topbar">
-              <img src={`/img/assets/collectionSweeper.svg`} alt="collection-sweeper" />
+              <img className={'topbar-image'} src={`/img/assets/collectionSweeper.svg`} alt="collection-sweeper" />
             </div>
             <div className="topbar-no-nft">Oh snap! There is no floor to sweep.</div>
             <img src={`/img/assets/no-nft-sweep.svg`} alt="collection-sweeper" />
@@ -1149,7 +1170,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
             {!sweepComplete ? (
               <>
                 <div className="topbar">
-                  <img src={`/img/assets/collectionSweeper.svg`} alt="collection-sweeper" />
+                  <img className={'topbar-image'} src={`/img/assets/collectionSweeper.svg`} alt="collection-sweeper" />
                 </div>
                 <Row justify="center" align="middle" className="rowTwo">
                   <img className="small-image" src={singleCollection.collection[0].profile_pic_link} alt="the-nft" />

@@ -210,12 +210,12 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
               </div>
             ) : collectionFilter === 'floor' ? (
               <div>
-                {collection.collection_floor ? nFormatter(collection.collection_floor / LAMPORTS_PER_SOL) : '0'}
+                {collection.collection_floor ? nFormatter(collection.collection_floor / LAMPORTS_PER_SOL, 2) : '0'}
                 <img className="sol-icon" src={`${process.env.PUBLIC_URL}/img/assets/SOL-icon.svg`} alt="" />
               </div>
             ) : (
               collectionFilter === 'volume' &&
-              (collection.collection_vol ? nFormatter(collection.collection_vol.weekly) : '0')
+              (collection.collection_vol ? nFormatter(collection.collection_vol.weekly, 2) : '0')
             )}
           </div>
         </div>
