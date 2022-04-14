@@ -31,6 +31,7 @@ import {
 } from '../../../web3'
 import { notify } from '../../../utils'
 import { getBuyInstructionAccounts, callWithdrawInstruction } from '../actions'
+import { generateTinyURL } from '../../../api/tinyUrl'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
@@ -1086,25 +1087,41 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
     return (sum / LAMPORTS_PER_SOL).toFixed(2)
   }
 
-  const onShare = (social) => {
-    let collectionName = singleCollection.collection[0].collection_name,
-      collectionId = singleCollection.collection[0].collection_id
+  const onShare = async (social) => {
+    if (social === 'copy link') {
+      copyToClipboard()
+      return
+    }
+
+    const collectionName = singleCollection.collection[0].collection_name
+
+    const res = await generateTinyURL(
+      `https://${process.env.NODE_ENV !== 'production' ? 'app.staging.goosefx.io' : window.location.host}${
+        window.location.pathname
+      }`,
+      ['gfx', 'nest-exchange', 'sweeper', social]
+    )
+
+    if (res.status !== 200) {
+      notify({ type: 'error', message: 'Error creating sharing url' })
+      return
+    }
+
+    const tinyURL = res.data.data.tiny_url
+
     switch (social) {
       case 'twitter':
         window.open(
-          `https://twitter.com/intent/tweet?text=Just%20Sweeping%20Up%20%F0%9F%A7%B9%F0%9F%A7%B9${collectionName}%20%F0%9F%A7%B9%F0%9F%A7%B9%0AProbably%20Nothing.%20%F0%9F%A4%AB%0ADeFi%20Simplified%20-%20%20%40GooseFX1%0A%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80&via=gooseFX1&original_referer=https://app.goosefx.io/NFTs/collection/${collectionId}`
+          `https://twitter.com/intent/tweet?text=Just%20Sweeping%20Up%20%F0%9F%A7%B9%F0%9F%A7%B9${collectionName}%20%F0%9F%A7%B9%F0%9F%A7%B9%0AProbably%20Nothing.%20%F0%9F%A4%AB%0ADeFi%20Simplified%20-%20%20%40GooseFX1%0A%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80&via=gooseFX1&original_referer=${window.location.host}${window.location.pathname}`
         )
         break
       case 'telegram':
         window.open(
-          `https://t.me/share/url?url=https%3A%2F%2Fapp.goosefx.io%2FNFTs%2collections%2${collectionId}&text=Just%20Sweeping%20Up%20%F0%9F%A7%B9%F0%9F%A7%B9${collectionName}%20%F0%9F%A7%B9%F0%9F%A7%B9%0AProbably%20Nothing.%20%F0%9F%A4%AB%0ADeFi%20Simplified%20-%20%20%40GooseFX1%0A%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80`
+          `https://t.me/share/url?url=${tinyURL}&text=Just%20Sweeping%20Up%20%F0%9F%A7%B9%F0%9F%A7%B9${collectionName}%20%F0%9F%A7%B9%F0%9F%A7%B9%0AProbably%20Nothing.%20%F0%9F%A4%AB%0ADeFi%20Simplified%20-%20%20%40GooseFX1%0A%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80`
         )
         break
       case 'facebook':
-        window.open(`https://facebook.com`)
-        break
-      case 'copy':
-        copyToClipboard()
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${tinyURL}`)
         break
       default:
         break
