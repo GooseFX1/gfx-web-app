@@ -117,8 +117,9 @@ const SWEEP_MODAL = styled(Modal)`
     }
     .confettiAnimation {
       position: absolute;
-      top: 60px;
+      top: 0px;
       z-index: 3;
+      pointer-events: none;
     }
     .topbar-no-nft {
       font-size: 35px;
@@ -1086,18 +1087,18 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
   }
 
   const onShare = (social) => {
+    let collectionName = singleCollection.collection[0].collection_name,
+      collectionId = singleCollection.collection[0].collection_id
     switch (social) {
       case 'twitter':
-        window
-          .open
-          //`https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20GooseFX&url=https%3A%2F%2Fapp.goosefx.io%2FNFTs%2Fdetails%2F${general.mint_address}&via=gooseFX1&original_referer=https://app.goosefx.io/NFTs/details/${general.mint_address}`
-          ()
+        window.open(
+          `https://twitter.com/intent/tweet?text=Just%20Sweeping%20Up%20%F0%9F%A7%B9%F0%9F%A7%B9${collectionName}%20%F0%9F%A7%B9%F0%9F%A7%B9%0AProbably%20Nothing.%20%F0%9F%A4%AB%0ADeFi%20Simplified%20-%20%20%40GooseFX1%0A%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80&via=gooseFX1&original_referer=https://app.goosefx.io/NFTs/collection/${collectionId}`
+        )
         break
       case 'telegram':
-        window
-          .open
-          //`https://t.me/share/url?url=https%3A%2F%2Fapp.goosefx.io%2FNFTs%2Fdetails%2F${general.mint_address}&text=Check%20out%20this%20item%20on%20GooseFX`
-          ()
+        window.open(
+          `https://t.me/share/url?url=https%3A%2F%2Fapp.goosefx.io%2FNFTs%2collections%2${collectionId}&text=Just%20Sweeping%20Up%20%F0%9F%A7%B9%F0%9F%A7%B9${collectionName}%20%F0%9F%A7%B9%F0%9F%A7%B9%0AProbably%20Nothing.%20%F0%9F%A4%AB%0ADeFi%20Simplified%20-%20%20%40GooseFX1%0A%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80`
+        )
         break
       case 'facebook':
         window.open(`https://facebook.com`)
