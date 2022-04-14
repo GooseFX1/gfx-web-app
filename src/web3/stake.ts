@@ -87,6 +87,7 @@ export const executeStake = async (
     return stakeAmount(amountInBN, program, stakingAccountKey, wallet, connection, undefined)
   } catch (err) {
     console.log(err)
+    return err
   }
   try {
     // user account does not exists , create a new user account
@@ -122,20 +123,22 @@ const stakeAmount = async (
   const stakeAmountIX: TransactionInstruction = await program.instruction.stake(amountInBN, {
     accounts: stakingAmountInstruction
   })
+  let signature
   try {
     const stakeAmountTX: Transaction = new Transaction()
     if (createStakingIX !== undefined) stakeAmountTX.add(createStakingIX)
 
     stakeAmountTX.add(stakeAmountIX)
 
-    const signature = await wallet.sendTransaction(stakeAmountTX, connection)
+    signature = await wallet.sendTransaction(stakeAmountTX, connection)
     console.log(signature)
 
     const confirm = await connection.confirmTransaction(signature, 'confirmed')
     console.log(confirm, 'stake amount')
-    return confirm
+    return { confirm, signature }
   } catch (error) {
-    return error
+    console.log(error, 'stake error')
+    return { error, signature }
   }
 }
 
@@ -160,18 +163,20 @@ export const executeUnstakeAndClaim = async (
     userWallet: wallet.publicKey,
     tokenProgram: TOKEN_PROGRAM_ID
   }
+  let signature
   try {
     //@ts-ignore
     const unstakeAmountIX: TransactionInstruction = await program.instruction.unstake(new BN(percent * 100), {
       accounts: unstakeAmountInstruction
     })
     const unstakeAmountTX: Transaction = new Transaction().add(unstakeAmountIX)
-    const signature = await wallet.sendTransaction(unstakeAmountTX, connection)
-    const confirm = await connection.confirmTransaction(signature, 'confirmed')
-    console.log(confirm, 'unstake amount ')
-    return confirm
-  } catch (err) {
-    return err
+    signature = await wallet.sendTransaction(unstakeAmountTX, connection)
+    const confirm = await connection.confirmTransaction(signature, 'processed')
+    console.log(confirm)
+
+    return { confirm, signature }
+  } catch (error) {
+    return { error, signature }
   }
 }
 

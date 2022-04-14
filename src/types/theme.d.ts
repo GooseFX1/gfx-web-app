@@ -108,6 +108,9 @@ export interface Colors {
 
   // nft detail
   nftDetailBackground: Color
+  sweepModalCard: Color
+  sweepPriceCard: Color
+  sweepProgressCard: Color
 
   profileTabContainerBg: Color
   // tab content current bid
@@ -150,6 +153,7 @@ export interface Colors {
   secondary3: Color
   secondary4: Color
   secondary5: Color
+  secondary6: Color
 
   // other
   buys: Color

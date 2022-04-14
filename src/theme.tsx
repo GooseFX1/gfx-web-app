@@ -153,6 +153,9 @@ export function colors(mode: string): Colors {
 
     // nft detail
     nftDetailBackground: mode === 'dark' ? '#2a2a2a' : '#f4f4f4',
+    sweepModalCard: mode === 'dark' ? '#1F1F1F' : '#d9d9d9',
+    sweepPriceCard: mode === 'dark' ? '#131313' : '#727272',
+    sweepProgressCard: mode === 'dark' ? '#222222' : '#d9d9d9',
 
     profileTabContainerBg: mode === 'dark' ? '#2A2A2A' : '#EEEEEE',
     // tab content current bid
@@ -185,8 +188,8 @@ export function colors(mode: string): Colors {
     tableListBoxShadow: mode === 'dark' ? 'none' : '-2px 27px 30px -10px rgb(189 189 189 / 25%)',
     expendedRowBg:
       mode === 'dark'
-        ? 'linear-gradient(to bottom, #39253e, rgba(42, 42, 42, 0))'
-        : 'linear-gradient(to bottom, rgba(134, 7, 160, 0.6), rgba(255, 255, 255, 0))',
+        ? 'linear-gradient(90deg, rgba(247, 147, 26, 0.2) 0%, rgba(220, 31, 255, 0.2) 100%)'
+        : 'linear-gradient(90deg, rgba(247, 147, 26, 0.2) 0%, rgba(220, 31, 255, 0.2) 100%)',
     filterDownIcon:
       mode === 'dark'
         ? '#000'
@@ -204,6 +207,7 @@ export function colors(mode: string): Colors {
     secondary3: '#6b33b0',
     secondary4: '#d655fe',
     secondary5: '#3735bb',
+    secondary6: '#DC1FFF',
 
     // other
     buys: '#ac69ff',

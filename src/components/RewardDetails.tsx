@@ -188,7 +188,7 @@ export const RewardInfoComponent: FC = () => {
       <Row justify="space-between" align="middle" style={{ margin: '3vh 0 6vh' }}>
         <Col span="">
           <PURPLE60>
-            42.69 M <TEXT_50> GOFX</TEXT_50>
+            42.69 M <TEXT_50> $GOFX</TEXT_50>
           </PURPLE60>
           <TEXT_20> Rewards over the next 12 months</TEXT_20>
         </Col>
@@ -196,7 +196,7 @@ export const RewardInfoComponent: FC = () => {
           <GREEN60>{rewardsPerAddress !== undefined ? rewardsPerAddress.toFixed(3) : '0.000'}</GREEN60>
 
           <div style={{ textAlign: 'right' }}>
-            <TEXT_20>GOFX Earned</TEXT_20>
+            <TEXT_20>$GOFX Earned</TEXT_20>
           </div>
         </Col>
       </Row>
@@ -211,22 +211,24 @@ export const RewardInfoComponent: FC = () => {
         <ul style={{ padding: '0 12px' }}>
           <li>
             <TEXT_22>
-              <strong> 0.69% </strong> listing fee in the first 60 days on our store.
+              A simple <strong>1%</strong> exchange fee
             </TEXT_22>
-            <TEXT_15>1% listing fee for the first 60 days on our exchange. </TEXT_15>
+            <TEXT_15>1% listing fee for the first 60 days on our NFT exchange.</TEXT_15>
           </li>
           <li>
             <TEXT_22>
-              For each listing you will recive <strong>25 GOFX</strong>, up to the first <strong>100,000</strong>{' '}
+              For each listing you will recive <strong>25 $GOFX</strong>, up to the first <strong>100,000</strong>{' '}
               listings.
             </TEXT_22>
             <TEXT_15>Up to 100,000 lisitings (We will re-asses after reaching the target).</TEXT_15>
           </li>
           <li>
             <TEXT_22>
-              For each NFT sale you will receive <strong>0.5%</strong> of the sale volume in <strong>GOFX</strong>.
+              For each NFT sale you will receive <strong>50%</strong> of the sale fee in <strong>$GOFX</strong>.
             </TEXT_22>
-            <TEXT_15>If you sell an NFT for $100 we will give $2 worth of GOFX at current market price. </TEXT_15>
+            <TEXT_15>
+              If you sell an NFT for $100, we will split 1% or $1 worth of $GOFX to the buyer and seller respectively.
+            </TEXT_15>
           </li>
         </ul>
       </REWARD_DETAILS_CONTAINER>
@@ -258,14 +260,14 @@ export const RewardRedirectComponent: FC = () => {
         <img src={`${window.origin}/img/assets/close-white-icon.svg`} alt="copy_address" />
       </CLOSE_ICON>
       <STAKE_TEXT>
-        Stake your <BOLD_TEXT>GOFX</BOLD_TEXT>
+        Stake your <BOLD_TEXT>$GOFX</BOLD_TEXT>
         <br /> and earn up to
         <APR_TEXT>200% APR</APR_TEXT>
       </STAKE_TEXT>
       <div style={{ textAlign: 'center' }}>
         <STAKE_BTN onClick={handleStakeClick}>Stake</STAKE_BTN>
         <br />
-        <BUY_GOFX onClick={handleBuyGOFXClick}>Buy GOFX</BUY_GOFX>
+        <BUY_GOFX onClick={handleBuyGOFXClick}>Buy $GOFX</BUY_GOFX>
       </div>
     </FLEX_COL_CONTAINER>
   )

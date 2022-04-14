@@ -12,7 +12,6 @@ import { NestQuestSingleListing } from './NestQuestSingleListing'
 import { UpLoadNFT } from './Collectible/UpLoadNFT'
 import { SellNFT } from './Collectible/SellNFT'
 import { Profile } from './Profile'
-import { Explore } from './Profile/Explore'
 import { Collection } from './Collection/Collection'
 import { OverlayProvider } from '../../context/overlay'
 import {
@@ -97,9 +96,6 @@ export const NFTs: FC = () => {
                 </Route>
                 <Route exact path={['/NFTs/profile', '/NFTs/profile/:userId']}>
                   <Profile />
-                </Route>
-                <Route exact path="/NFTs/profile/explore">
-                  <Explore />
                 </Route>
                 <Route exact path="/NFTs/collection/:collectionId">
                   <Collection />

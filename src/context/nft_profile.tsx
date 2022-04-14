@@ -33,18 +33,18 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
       try {
         const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SESSION_USER}?${type}=${parameter}`)
         if (res.data.length > 0) {
-          const tempUser = { ...res.data[0], user_likes: [] }
-          const userLikes = await fetchUserLikes(tempUser)
-          setSessionUser({ ...tempUser, user_likes: userLikes })
+          const user = { ...res.data[0], user_likes: [] }
+          const userLikes = await fetchUserLikes(user)
+          _setUser({ ...user, user_likes: userLikes })
         } else {
           // auto-creates a basic user in db to establish a user id for session user
           try {
             const registerUser = await completeNFTUserProfile(parameter)
-            setSessionUser({ ...registerUser.data[0], user_likes: [] })
+            _setUser({ ...registerUser, user_likes: [] })
           } catch (error) {
             // TODO: create analytics logging event
             console.error(error)
-            setUnamedUser(type, parameter)
+            _setUser(undefined)
           }
         }
         // fetches user nfts in wallet and sets them to state
@@ -125,21 +125,38 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
-  const setUnamedUser = (type: UserFetchType, parameter: any) => {
-    setSessionUser({
-      user_id: type === 'user_id' ? parameter : null,
-      pubkey: type === 'address' ? parameter : '',
-      nickname: type === 'nickname' ? parameter : 'Unnamed',
-      email: '',
-      bio: '',
-      twitter_link: '',
-      instagram_link: '',
-      facebook_link: '',
-      youtube_link: '',
-      profile_pic_link: '',
-      is_verified: false,
-      user_likes: []
-    })
+  const _setUser = (userObj: any) => {
+    if (userObj === undefined) {
+      setSessionUser({
+        user_id: null,
+        pubkey: '',
+        nickname: 'Unnamed',
+        email: '',
+        bio: '',
+        twitter_link: '',
+        instagram_link: '',
+        facebook_link: '',
+        youtube_link: '',
+        profile_pic_link: '',
+        is_verified: false,
+        user_likes: []
+      })
+    } else {
+      setSessionUser({
+        ...userObj,
+        user_id: userObj.user_id ? userObj.user_id : null,
+        pubkey: userObj.pubkey ? userObj.pubkey : '',
+        nickname: userObj.nickname ? userObj.nickname : 'Unnamed',
+        email: userObj.email ? userObj.email : '',
+        bio: userObj.bio ? userObj.bio : '',
+        twitter_link: userObj.twitter_link ? userObj.twitter_link : '',
+        instagram_link: userObj.instagram_link ? userObj.instagram_link : '',
+        facebook_link: userObj.facebook_link ? userObj.facebook_link : '',
+        youtube_link: userObj.youtube_link ? userObj.youtube_link : '',
+        profile_pic_link: userObj.profile_pic_link ? userObj.profile_pic_link : '',
+        is_verified: false
+      })
+    }
   }
 
   return (

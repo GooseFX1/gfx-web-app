@@ -5,7 +5,7 @@ import { Menu, Button, Image } from 'antd'
 import { useNFTProfile, useDarkMode } from '../../../context'
 import { ILocationState } from '../../../types/app_params.d'
 import { PopupProfile } from './PopupProfile'
-import { ShareProfile } from './ShareProfile'
+import { Share } from '../Share'
 import { StyledHeaderProfile, StyledDropdown, StyledMenu } from './HeaderProfile.styled'
 import { MainButton } from '../../../components'
 import { CenteredDiv } from '../../../styles'
@@ -55,11 +55,22 @@ export const HeaderProfile = ({ isExplore }: Props) => {
     }
   }
 
+  const onShare = (social: string) => {
+    console.log(social)
+  }
+
   const handleModal = () => {
     if (profileModal) {
       return <PopupProfile visible={profileModal} setVisible={setProfileModal} handleCancel={handleCancel} />
     } else if (shareModal) {
-      return <ShareProfile visible={shareModal} handleCancel={() => setShareModal(false)} />
+      return (
+        <Share
+          visible={shareModal}
+          handleCancel={() => setShareModal(false)}
+          socials={['twitter', 'telegram', 'facebook', 'copy link']}
+          handleShare={onShare}
+        />
+      )
     } else {
       return false
     }
@@ -158,11 +169,11 @@ export const HeaderProfile = ({ isExplore }: Props) => {
           </button>
         )}
 
-        <StyledDropdown overlay={menu(setShareModal)} trigger={['click']} placement="bottomRight" arrow>
+        {/* <StyledDropdown overlay={menu(setShareModal)} trigger={['click']} placement="bottomRight" arrow>
           <Button>
             <img className="more-icon" src={`/img/assets/more_icon.svg`} alt="more" />
           </Button>
-        </StyledDropdown>
+        </StyledDropdown> */}
       </div>
     </StyledHeaderProfile>
   )

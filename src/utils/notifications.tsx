@@ -68,6 +68,7 @@ interface INotifyParams {
   styles?: IStyles
   network?: string
 }
+const NOTIFICATION_TIMER = 5 * 1000
 
 export const notify = async (
   { description, icon, message, txid, type = 'info', styles, network }: INotifyParams,
@@ -101,6 +102,9 @@ export const notify = async (
 
   const key = String(Math.random())
 
+  setTimeout(() => {
+    notification.close(key)
+  }, NOTIFICATION_TIMER)
   ;(notification as any)[type]({
     closeIcon: <CLOSE />,
     description: description && (

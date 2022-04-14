@@ -4,11 +4,14 @@ import { Button, Dropdown, Menu } from 'antd'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useNFTCollections, useDarkMode } from '../../../context'
-import { ShareProfile } from '../Profile/ShareProfile'
+import { Share } from '../Share'
 import { SVGToGrey2 } from '../../../styles'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import { SweepModal } from './SweepModal'
+import { generateTinyURL } from '../../../api/tinyUrl'
+import { notify } from '../../../utils'
 
-//#region styled
+//#region styles
 const COLLECTION_HEADER = styled.div<{ $height: string }>`
   position: relative;
   height: ${({ $height }) => `${$height}vh`};
@@ -25,6 +28,21 @@ const COLLECTION_HEADER = styled.div<{ $height: string }>`
     transform: rotate(90deg);
     width: 36px;
     filter: ${({ theme }) => theme.filterBackIcon};
+    cursor: pointer;
+  }
+  .collection-sweeper-button {
+    position: absolute;
+    top: 72px;
+    right: 55px;
+    width: 180px;
+    height: 45px;
+    background-image: linear-gradient(to right, #f7931a 0%, #411612 100%);
+    border-radius: 59px;
+    border: none;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 18px;
     cursor: pointer;
   }
 
@@ -221,14 +239,16 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
   const { mode } = useDarkMode()
   const history = useHistory()
   const { singleCollection, fixedPriceWithinCollection, openBidWithinCollection } = useNFTCollections()
-  const [visible, setVisible] = useState(false)
+  const [shareModal, setShareModal] = useState(false)
+  const [sweeperModal, setSweeperModal] = useState<boolean>(false)
 
   const isCollectionItemEmpty: boolean = !singleCollection || !fixedPriceWithinCollection || !openBidWithinCollection
   // const isCollectionItemEmpty: boolean = true
 
-  const handleClick = (e) => {
-    console.log('handleClick e:', e)
-    setVisible(true)
+  const handleClick = (e) => setShareModal(true)
+
+  const handleSweepClick = () => {
+    setSweeperModal(true)
   }
 
   const menu = (
@@ -238,10 +258,76 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
     </MENU_LIST>
   )
 
+  const onShare = async (social: string) => {
+    if (social === 'copy link') {
+      copyToClipboard()
+      return
+    }
+
+    const res = await generateTinyURL(
+      `https://${process.env.NODE_ENV !== 'production' ? 'app.staging.goosefx.io' : window.location.host}${
+        window.location.pathname
+      }`,
+      ['gfx', 'nest-exchange', social]
+    )
+
+    if (res.status !== 200) {
+      notify({ type: 'error', message: 'Error creating sharing url' })
+      return
+    }
+
+    const tinyURL = res.data.data.tiny_url
+
+    switch (social) {
+      case 'twitter':
+        window.open(
+          `https://twitter.com/intent/tweet?text=Check%20out%20the%20${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%20Exchange%20&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
+        )
+        break
+      case 'telegram':
+        window.open(
+          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20the%20${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%20Exchange%20`
+        )
+        break
+      case 'facebook':
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${tinyURL}`)
+        break
+      default:
+        break
+    }
+  }
+
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(window.location.href)
+  }
+
   const iconStyle = { transform: `rotate(${collapse ? 0 : 180}deg)`, marginTop: `${collapse ? '5px' : '2px'}` }
+
+  const handleModal = () => {
+    if (shareModal) {
+      return (
+        <Share
+          visible={shareModal}
+          handleCancel={() => setShareModal(false)}
+          socials={['twitter', 'telegram', 'facebook', 'copy link']}
+          handleShare={onShare}
+        />
+      )
+    } else {
+      return false
+    }
+  }
+
   return (
     <COLLECTION_HEADER $height={collapse ? '30' : '45'}>
+      {handleModal()}
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
+
+      <button className="collection-sweeper-button" onClick={handleSweepClick}>
+        Collection Sweeper
+      </button>
+
+      {sweeperModal && <SweepModal visible={sweeperModal} setVisible={setSweeperModal}></SweepModal>}
       {isCollectionItemEmpty ? (
         <SkeletonCommon height="30vh" borderRadius="0" />
       ) : (
@@ -249,7 +335,7 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
           $url={
             singleCollection.collection[0].banner_link
               ? singleCollection.collection[0].banner_link
-              : openBidWithinCollection.open_bid[0].image_url
+              : singleCollection.collection[0].profile_pic_link
           }
         ></BANNER>
       )}
@@ -311,7 +397,6 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
           </DROPDOWN>
         </div>
       </div>
-      <ShareProfile visible={visible} handleCancel={() => setVisible(false)} />
 
       <COVER>
         <BANNER_TOGGLE onClick={() => setCollapse(!collapse)}>

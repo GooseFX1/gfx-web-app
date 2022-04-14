@@ -6,7 +6,7 @@ import { SearchBar } from '../../../components'
 // import { Sort } from './Sort'
 import { FixedPriceTabContent } from './FixedPriceTabContent'
 import { OpenBidsTabContent } from './OpenBidsTabContent'
-import { OwnersTabContent } from './OwnersTabContent'
+// import { OwnersTabContent } from './OwnersTabContent'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 const { TabPane } = Tabs
@@ -14,10 +14,12 @@ const { TabPane } = Tabs
 //#region styles
 const COLLECTION_TABS = styled.div<{ $height: string }>`
   position: relative;
-  overflow: scroll;
-  scroll-behavior: smooth;
   height: ${({ $height }) => `calc(${$height}`}% + 28px);
   margin-top: -${({ theme }) => theme.margin(3.5)};
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  ${({ theme }) => theme.customScrollBar('4px')}
   z-index: 10;
 
   .card-list {
@@ -138,7 +140,11 @@ export const CollectionTabs = ({ filter, setFilter, collapse, setCollapse }) => 
 
   useEffect(() => {}, [singleCollection])
 
-  return singleCollection ? (
+  /*<TabPane tab="Owners" key="3">
+      <OwnersTabContent />
+      </TabPane>*/
+
+  return (
     <COLLECTION_TABS id="border" $height={collapse ? '67' : '50'}>
       <STYLED_SEARCH_BAR>
         <SearchBar
@@ -149,19 +155,18 @@ export const CollectionTabs = ({ filter, setFilter, collapse, setCollapse }) => 
         />
         {/* <Sort /> */}
       </STYLED_SEARCH_BAR>
-      <Tabs className={'collection-tabs'} defaultActiveKey="1" centered>
-        <TabPane tab="Open Bids" key="1">
-          <OpenBidsTabContent filter={filter} setCollapse={setCollapse} />
-        </TabPane>
-        <TabPane tab="Fixed Price" key="2">
-          <FixedPriceTabContent filter={filter} setCollapse={setCollapse} />
-        </TabPane>
-        <TabPane tab="Owners" key="3">
-          <OwnersTabContent />
-        </TabPane>
-      </Tabs>
+      {singleCollection ? (
+        <Tabs className={'collection-tabs'} defaultActiveKey="1" centered>
+          <TabPane tab="Open Bids" key="1">
+            <OpenBidsTabContent filter={filter} setCollapse={setCollapse} />
+          </TabPane>
+          <TabPane tab="Fixed Price" key="2">
+            <FixedPriceTabContent filter={filter} setCollapse={setCollapse} />
+          </TabPane>
+        </Tabs>
+      ) : (
+        <SkeletonCommon height="61vh" width="100%" />
+      )}
     </COLLECTION_TABS>
-  ) : (
-    <SkeletonCommon height="61vh" width="100%" />
   )
 }

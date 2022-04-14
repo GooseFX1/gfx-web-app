@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { logEvent } from 'firebase/analytics'
 import analytics from '../../analytics'
 import styled, { css } from 'styled-components'
@@ -8,8 +9,10 @@ import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
 import { Modal } from '../../components'
-import { useDarkMode, useSwap, SwapProvider } from '../../context'
+import { useDarkMode, useSwap, SwapProvider, ENDPOINTS, useConnectionConfig } from '../../context'
+import { ILocationState } from '../../types/app_params.d'
 import { CenteredImg, SpaceBetweenDiv } from '../../styles'
+import { notify } from '../../utils'
 
 const WRAPPER = styled.div`
   display: flex;
@@ -72,6 +75,8 @@ const SWAP_CONTENT = styled.div`
 `
 
 const SwapContent: FC = () => {
+  const location = useLocation<ILocationState>()
+  const { setEndpoint, network } = useConnectionConfig()
   const { mode } = useDarkMode()
   const { refreshRates, setFocused, switchTokens } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
@@ -83,7 +88,12 @@ const SwapContent: FC = () => {
         firebase_screen: 'Swap',
         firebase_screen_class: 'load'
       })
-  }, [])
+
+    if (network === 'devnet') {
+      setEndpoint(ENDPOINTS[0].endpoint)
+      notify({ message: `Switched to mainnet` })
+    }
+  }, [location])
 
   const onClick = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation()

@@ -2,10 +2,14 @@ import { Col, Row } from 'antd'
 import { FC, useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { useNFTDetails, useNFTProfile } from '../../../context'
+import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import { Share } from '../Share'
 import { ReactComponent as FixedPriceIcon } from '../../../assets/fixed-price.svg'
 import { ReactComponent as OpenBidIcon } from '../../../assets/open-bid.svg'
-import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import { generateTinyURL } from '../../../api/tinyUrl'
+import { notify } from '../../../utils'
 
+//#region styles
 const LEFT_SECTION = styled.div`
   ${({ theme }) => css`
     display: flex;
@@ -79,11 +83,13 @@ const SHARE_BUTTON = styled.button`
     }
   }
 `
+//#endregion
 
-export const LeftSection: FC = ({ ...rest }) => {
+export const ImageShowcase: FC = ({ ...rest }) => {
   const { general, nftMetadata, totalLikes, ask } = useNFTDetails()
   const [isFavorited, setIsFavorited] = useState(false)
   const { sessionUser, likeDislike } = useNFTProfile()
+  const [shareModal, setShareModal] = useState(false)
   const [likes, setLikes] = useState(totalLikes)
 
   //const hearts = 12
@@ -108,11 +114,68 @@ export const LeftSection: FC = ({ ...rest }) => {
     }
   }
 
+  const onShare = async (social: string): Promise<void> => {
+    if (social === 'copy link') {
+      copyToClipboard()
+      return
+    }
+
+    const res = await generateTinyURL(
+      `https://${process.env.NODE_ENV !== 'production' ? 'app.staging.goosefx.io' : window.location.host}${
+        window.location.pathname
+      }`,
+      ['gfx', 'nest-exchange', social]
+    )
+
+    if (res.status !== 200) {
+      notify({ type: 'error', message: 'Error creating sharing url' })
+      return
+    }
+
+    const tinyURL = res.data.data.tiny_url
+
+    switch (social) {
+      case 'twitter':
+        window.open(
+          `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
+        )
+        break
+      case 'telegram':
+        window.open(`https://t.me/share/url?url=${tinyURL}&text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange`)
+        break
+      case 'facebook':
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${tinyURL}`)
+        break
+      default:
+        break
+    }
+  }
+
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(window.location.href)
+  }
+
+  const handleModal = () => {
+    if (shareModal) {
+      return (
+        <Share
+          visible={shareModal}
+          handleCancel={() => setShareModal(false)}
+          socials={['twitter', 'telegram', 'facebook', 'copy link']}
+          handleShare={onShare}
+        />
+      )
+    } else {
+      return false
+    }
+  }
+
   return general && nftMetadata ? (
     <LEFT_SECTION {...rest}>
+      {handleModal()}
       <img className="ls-image" src={general?.image_url || nftMetadata?.image} alt="the-nft" />
       <NFT_CONTAINER>
-        <SHARE_BUTTON>
+        <SHARE_BUTTON onClick={(e) => setShareModal(true)}>
           <img src={`/img/assets/share.svg`} alt="share-icon" />
         </SHARE_BUTTON>
       </NFT_CONTAINER>
