@@ -666,7 +666,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
 
 export const SwapMain: FC = () => {
   const desktop = window.innerWidth > 1200
-  const { tokenA, tokenB, inTokenAmount, outTokenAmount } = useSwap()
+  const { tokenA, tokenB, inTokenAmount, outTokenAmount, priceImpact } = useSwap()
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
   const [clickNo, setClickNo] = useState(1)
@@ -705,7 +705,7 @@ export const SwapMain: FC = () => {
         ],
         outAmount: +(outTokenAmount * 10 ** tokenB.decimals).toFixed(7),
         outAmountWithSlippage: +(outTokenAmount * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
-        priceImpactPct: 1
+        priceImpactPct: priceImpact
       }
 
       shortRoutes.splice(1, 0, GoFxRoute)

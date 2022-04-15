@@ -323,9 +323,9 @@ export const preSwapAmount = async (
   wallet: any,
   connection: Connection,
   network: WalletAdapterNetwork
-): Promise<TransactionSignature | undefined> => {
+): Promise<{ preSwapResult: TransactionSignature | undefined; impact: number }> => {
   try {
-    if (!inTokenAmount || inTokenAmount === 0) return '0'
+    if (!inTokenAmount || inTokenAmount === 0) return { impact: 0, preSwapResult: '0' }
 
     const swapWASM = (await wasm).swap
     const OracleRegistry = (await wasm).OracleRegistry
@@ -369,10 +369,11 @@ export const preSwapAmount = async (
       BigInt(pseudoAmount),
       BigInt(0)
     )
-    const differenceInDecimals = tokenA.decimals - tokenB.decimals
-    const trueValue = Number(out.toString()) / scale
 
-    return +(trueValue * 10 ** differenceInDecimals).toFixed(7) + ''
+    const differenceInDecimals = tokenA.decimals - tokenB.decimals
+    const trueValue = Number(out.out.toString()) / scale
+
+    return { preSwapResult: +(trueValue * 10 ** differenceInDecimals).toFixed(7) + '', impact: out.price_impact }
   } catch (e) {
     console.log(e)
     return null

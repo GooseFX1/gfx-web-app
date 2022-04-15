@@ -47,6 +47,7 @@ interface ISwapConfig {
   setFocused: Dispatch<SetStateAction<SwapInput>>
   setInTokenAmount: Dispatch<SetStateAction<number>>
   setOutTokenAmount: Dispatch<SetStateAction<number>>
+  setPriceImpact: Dispatch<SetStateAction<number>>
   setPool: Dispatch<SetStateAction<IPool>>
   setTokenA: Dispatch<SetStateAction<ISwapToken | null>>
   setTokenB: Dispatch<SetStateAction<ISwapToken | null>>
@@ -55,6 +56,7 @@ interface ISwapConfig {
   tokenA: ISwapToken | null
   tokenB: ISwapToken | null
   connection?: any
+  priceImpact?: number
 }
 
 const SwapContext = createContext<ISwapConfig | null>(null)
@@ -68,6 +70,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [inTokenAmount, setInTokenAmount] = useState(0)
   const [loading, setLoading] = useState(false)
   const [outTokenAmount, setOutTokenAmount] = useState(0)
+  const [priceImpact, setPriceImpact] = useState(0)
   const [_, setFocused] = useState<SwapInput>(undefined)
   const [pool, setPool] = useState<IPool>({
     inAmount: 0,
@@ -163,9 +166,17 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       let outTokenAmount = 0
       if (inTokenAmount && inTokenAmount != 0) {
         // needed weak comaprison because of '0.00'=='0'
-        const preSwapResult = await preSwapAmount(tokenA, tokenB, inTokenAmount, wallet, connection, network)
+        const { preSwapResult, impact } = await preSwapAmount(
+          tokenA,
+          tokenB,
+          inTokenAmount,
+          wallet,
+          connection,
+          network
+        )
         if (preSwapResult) {
           outTokenAmount = Number(preSwapResult)
+          setPriceImpact(impact)
         } else {
           notify({ type: 'error', message: 'Fetch Pre-swap Amount Failed', icon: 'error' })
         }
@@ -277,7 +288,9 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         switchTokens,
         tokenA,
         tokenB,
-        connection
+        connection,
+        priceImpact,
+        setPriceImpact
       }}
     >
       {children}
@@ -308,6 +321,8 @@ export const useSwap = (): ISwapConfig => {
     switchTokens: context.switchTokens,
     tokenA: context.tokenA,
     tokenB: context.tokenB,
-    connection: context.connection
+    connection: context.connection,
+    setPriceImpact: context.setPriceImpact,
+    priceImpact: context.priceImpact
   }
 }
