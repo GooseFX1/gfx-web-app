@@ -2,7 +2,7 @@ import React, { BaseSyntheticEvent, FC, useEffect, useState } from 'react'
 import { Input } from 'antd'
 import styled, { css } from 'styled-components'
 import { Tooltip } from '../../components'
-import { DEFAULT_SLIPPAGE, useDarkMode, useSlippageConfig } from '../../context'
+import { useDarkMode, useSlippageConfig } from '../../context'
 import { CenteredDiv } from '../../styles'
 
 const BODY = styled(CenteredDiv)`
@@ -11,7 +11,8 @@ const BODY = styled(CenteredDiv)`
   width: 100%;
   height: 100%;
   overflow: hidden;
-  margin: ${({ theme }) => theme.margin(4)} 0;
+  margin-top: ${({ theme }) => theme.margin(4)};
+  padding-bottom: ${({ theme }) => theme.margin(4)};
 
   > div {
     display: flex;
@@ -25,18 +26,12 @@ const BODY = styled(CenteredDiv)`
 `
 
 const BUTTON = styled.button`
-  flex: 2;
   padding: ${({ theme }) => theme.margin(1.5)};
   border: none;
   ${({ theme }) => theme.roundedBorders}
   ${({ theme }) => theme.smallShadow}
   background-color: ${({ theme }) => theme.bg10};
-  cursor: pointer;
   transition: background-color 200ms ease-in-out;
-
-  &:not(:first-child) {
-    margin-left: ${({ theme }) => theme.margin(3)};
-  }
 
   &:hover {
     background-color: ${({ theme }) => theme.secondary2};
@@ -48,9 +43,24 @@ const BUTTON = styled.button`
   }
 `
 
+const SETTING_BUTTON = styled(BUTTON)`
+  width: 30%;
+`
+
+const SAVE_BUTTON = styled(BUTTON)`
+  height: 50px;
+  width: 222px;
+`
+
 const TITLE = styled.span`
   font-size: 18px;
   color: ${({ theme }) => theme.text1};
+`
+
+const BUTTON_CONTAINER = styled(CenteredDiv)`
+  justify-content: space-between;
+  margin: 0 !important;
+  padding: 24px 12px;
 `
 
 export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible }) => {
@@ -89,18 +99,18 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
           The minimum amount on how many tokens you will accept, in the event that the price increases or decreases.
         </Tooltip>
       </div>
-      <div>
+      <BUTTON_CONTAINER>
         {[0.1, 0.5, 1].map((item, index) => (
-          <BUTTON
+          <SETTING_BUTTON
             key={index}
             onClick={() => {
               setValue(item)
             }}
           >
             <span>{item}%</span>
-          </BUTTON>
+          </SETTING_BUTTON>
         ))}
-      </div>
+      </BUTTON_CONTAINER>
       <div>
         <TITLE>Or input manually</TITLE>
       </div>
@@ -117,14 +127,14 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
           value={value}
         />
       </div>
-      <BUTTON
+      <SAVE_BUTTON
         onClick={() => {
           setSlippage(value)
           setVisible(false)
         }}
       >
-        <span style={{ padding: '2rem' }}>Save Settings</span>
-      </BUTTON>
+        <span>Save Settings</span>
+      </SAVE_BUTTON>
     </BODY>
   )
 }

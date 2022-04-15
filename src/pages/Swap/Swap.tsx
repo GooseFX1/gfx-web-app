@@ -15,7 +15,8 @@ import { PublicKey } from '@solana/web3.js'
 import { TOKEN_LIST_URL } from '@jup-ag/core'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ILocationState } from '../../types/app_params.d'
-import { notify } from '../../utils'
+import { notify, moneyFormatter } from '../../utils'
+
 const CoinGecko = require('coingecko-api')
 const CoinGeckoClient = new CoinGecko()
 
@@ -251,14 +252,22 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)<{ $iconSize: string }>`
     cursor: pointer;
   }
 
-  .smaller-header-icon {
+  .jup-icon {
     height: 25px;
+  }
+
+  .smaller-header-icon {
+    height: 24px;
+    width: 24px;
+    margin-top: 5px;
     cursor: pointer;
   }
 `
 
 const SETTING_WRAPPER = styled(CenteredImg)`
   margin-left: 8px;
+  height: 40px;
+  width: 40px;
   border-radius: 50%;
   padding: 0.5rem;
   background-color: ${({ theme }) => theme.bg10};
@@ -344,7 +353,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
       </SETTING_MODAL>
       <HEADER_WRAPPER $iconSize="40px">
         <HEADER_TITLE>
-          Swap <img src={`/img/crypto/Jupiter.svg`} alt="jupiter-icon" className={'header-icon'} />
+          Swap <img src={`/img/crypto/Jupiter.svg`} alt="jupiter-icon" className={'jup-icon'} />
         </HEADER_TITLE>
 
         <div>
@@ -424,17 +433,19 @@ const TokenContent: FC = () => {
           {
             name: 'FDV',
             value:
-              Math.floor(
-                data.market_data.fully_diluted_valuation.usd ||
-                  data.market_data.total_supply * data.market_data.current_price.usd
-              ) + '' || '0',
+              moneyFormatter(
+                Math.floor(
+                  data.market_data.fully_diluted_valuation.usd ||
+                    data.market_data.total_supply * data.market_data.current_price.usd
+                )
+              ) || '0',
             currency: '$'
           },
           {
             name: 'Max Total Supply',
-            value: Math.floor(data.market_data.max_supply || data.market_data.total_supply) + '' || '0'
+            value: Math.floor(data.market_data.max_supply || data.market_data.total_supply).toLocaleString() || '0'
           },
-          { name: 'Holders', value: res?.total || 0 }
+          { name: 'Holders', value: res?.total.toLocaleString() || 0 }
         ])
         setSocials([
           { name: 'Twitter', link: 'https://twitter.com/' + data.links.twitter_screen_name },
