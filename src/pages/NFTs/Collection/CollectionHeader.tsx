@@ -322,15 +322,13 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
     <COLLECTION_HEADER $height={collapse ? '30' : '45'}>
       {handleModal()}
       <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
-      {fixedPriceWithinCollection && fixedPriceWithinCollection.length > 0 && (
-        <button className="collection-sweeper-button" onClick={handleSweepClick}>
-          Collection Sweeper
-        </button>
-      )}
+
+      <button className="collection-sweeper-button" onClick={handleSweepClick}>
+        Collection Sweeper
+      </button>
+
       {sweeperModal && <SweepModal visible={sweeperModal} setVisible={setSweeperModal}></SweepModal>}
-      {isCollectionItemEmpty ? (
-        <SkeletonCommon height="30vh" borderRadius="0" />
-      ) : (
+      {!isCollectionItemEmpty && (
         <BANNER
           $url={
             singleCollection.collection[0].banner_link
@@ -373,7 +371,7 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
               )}
             </div>
             <div className="text">
-              {isCollectionItemEmpty ? <SkeletonCommon width="106px" height="18px" /> : <span>Floor price</span>}
+              {isCollectionItemEmpty ? <SkeletonCommon width="106px" height="18px" /> : <span>Floor Price</span>}
             </div>
           </div>
           <div className="item">
@@ -382,12 +380,12 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
                 <SkeletonCommon width="106px" height="25px" />
               ) : (
                 <span>
-                  {singleCollection.collection_vol ? singleCollection.collection_vol.yearly.toFixed(3) : '0.00'} Yr
+                  {singleCollection.collection_vol ? singleCollection.collection_vol.weekly.toFixed(3) : '0.00'}
                 </span>
               )}
             </div>
             <div className="text">
-              {isCollectionItemEmpty ? <SkeletonCommon width="106px" height="18px" /> : <span>Volume Traded</span>}
+              {isCollectionItemEmpty ? <SkeletonCommon width="106px" height="18px" /> : <span>Weekly Volume</span>}
             </div>
           </div>
           <DROPDOWN overlay={menu} trigger={['click']} placement="bottomRight" align={{ offset: [0, 26] }}>

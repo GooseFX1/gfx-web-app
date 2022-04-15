@@ -4,14 +4,14 @@ import styled from 'styled-components'
 import { Form, Row, Col } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { IAppParams } from '../../../types/app_params.d'
-import PreviewImage from './PreviewImage'
-import { MainText, TXT_PRIMARY_GRADIENT, GFX_LINK } from '../../../styles'
+import { CenteredDiv, MainText, TXT_PRIMARY_GRADIENT, GFX_LINK } from '../../../styles'
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { SellCategory } from '../SellCategory/SellCategory'
 import { FormDoubleItem } from '../Form/FormDoubleItem'
 import { SuccessfulListingMsg, TransactionErrorMsg, MainButton, Modal } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { notify } from '../../../utils'
+
 import {
   tradeStatePDA,
   freeSellerTradeStatePDA,
@@ -100,12 +100,6 @@ const REVIEW_SELL_MODAL = styled(Modal)`
   }
 `
 
-const UPLOAD_FIELD_CONTAINER = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-`
-
 const UPLOAD_INFO_CONTAINER = styled.div`
   display: flex;
   flex: 1;
@@ -114,12 +108,11 @@ const UPLOAD_INFO_CONTAINER = styled.div`
 `
 
 const PREVIEW_UPLOAD_CONTAINER = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  margin-left: ${({ theme }) => theme.margin(6)};
-  margin-right: ${({ theme }) => theme.margin(3)};
+  .image-preview {
+    height: auto;
+    width: 100%;
+    border-radius: 20px;
+  }
 `
 
 const SECTION_TITLE = MainText(styled.span`
@@ -152,20 +145,6 @@ const STYLED_DESCRIPTION = styled.div`
   text-align: left;
   color: ${({ theme }) => theme.text1};
 `
-const MESSAGE = styled.div`
-  margin: -12px 0;
-  font-size: 12px;
-  font-weight: 700;
-
-  .m-title {
-    margin-bottom: 16px;
-  }
-
-  .m-icon {
-    width: 20.5px;
-    height: 20px;
-  }
-`
 
 const LOADING = styled.div`
   width: 100%;
@@ -189,7 +168,7 @@ const BUTTON = styled.button`
   border: none;
   cursor: pointer;
   width: 50%;
-  margin-top: ${({ theme }) => theme.margin(5)};
+  margin-top: ${({ theme }) => theme.margin(3)};
   margin-right: 0;
   margin-left: auto;
 
@@ -206,6 +185,9 @@ const BUTTON_TEXT = styled.div`
   font-size: 21px;
 `
 
+const IMAGE_LABEL = styled(CenteredDiv)`
+  margin-bottom: 12px;
+`
 //#endregion
 
 export const SellNFT = () => {
@@ -366,36 +348,35 @@ export const SellNFT = () => {
     try {
       const confirm = await connection.confirmTransaction(signature, 'finalized')
       console.log(confirm)
-
+      // successfully list nft
       if (confirm.value.err === null) {
         // asserts existing ask and removes it from nest-api
         if (ask !== undefined) {
           const askRemoved = await postCancelAskToAPI(ask.ask_id)
           console.log(`askRemoved: ${askRemoved}`)
+          if (askRemoved === false) handleTxError(nftMetadata.name, 'Failed to remove prior asking price')
         }
+
         // create asking price
         postTransationToAPI(signature, buyerPrice, tokenSize).then((res) => {
           console.log('postTransationToAPI: ', res)
-          if (!res) {
-            callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
-          }
 
-          setTimeout(() => {
-            notify(successfulListingMsg(signature, nftMetadata, userInput['minimumBid']))
-            history.push('/NFTs/profile')
-          }, 2000)
+          if (!res) {
+            handleTxError(nftMetadata.name, 'Listing has been canceled. Please try againg')
+            callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
+          } else {
+            setTimeout(() => {
+              notify(successfulListingMsg(signature, nftMetadata, userInput['minimumBid']))
+              history.push('/NFTs/profile')
+            }, 2000)
+          }
         })
+        // unsuccessfully list nft
+      } else {
+        handleTxError(nftMetadata.name, '')
       }
     } catch (error) {
-      setReviewSellModal(false)
-      setPendingTxSig(undefined)
-      setIsLoading(false)
-      notify({
-        type: 'error',
-        message: (
-          <TransactionErrorMsg title={`NFT Listing error!`} itemName={nftMetadata.name} supportText={error.message} />
-        )
-      })
+      handleTxError(nftMetadata.name, error.message)
     }
   }
 
@@ -487,6 +468,15 @@ export const SellNFT = () => {
     )
   })
 
+  const handleTxError = (itemName: string, error: string) => {
+    setPendingTxSig(undefined)
+    setIsLoading(false)
+    notify({
+      type: 'error',
+      message: <TransactionErrorMsg title={`NFT Listing error!`} itemName={itemName} supportText={error} />
+    })
+  }
+
   const modal = () => {
     if (reviewSellModal) {
       return (
@@ -576,94 +566,102 @@ export const SellNFT = () => {
             alt="back"
             onClick={() => history.goBack()}
           />
-          <UPLOAD_FIELD_CONTAINER>
-            <UPLOAD_INFO_CONTAINER>
-              <SECTION_TITLE>Sale Type</SECTION_TITLE>
-              <SellCategory setCategory={setCategory} category={category} />
+          <Row className="" justify="space-around">
+            <Col sm={12} xl={12} xxl={10} className="nd-details">
+              <UPLOAD_INFO_CONTAINER>
+                <SECTION_TITLE>Sale Type</SECTION_TITLE>
+                <SellCategory setCategory={setCategory} category={category} />
 
-              <SECTION_TITLE>
-                {ask === undefined ? 'Set' : 'Edit'} Asking Price{' '}
-                {ask !== undefined && <span>: ({parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL})</span>}
-              </SECTION_TITLE>
-              <STYLED_FORM form={form} layout="vertical" initialValues={{}}>
-                {/* {category === '0' && (
+                <SECTION_TITLE>
+                  {ask === undefined ? 'Set' : 'Edit'} Asking Price{' '}
+                  {ask !== undefined && <span>: ({parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL})</span>}
+                </SECTION_TITLE>
+                <STYLED_FORM form={form} layout="vertical" initialValues={{}}>
+                  {/* {category === '0' && (
                   <>
                     <FormDoubleItem startingDays={startingDays} expirationDays={expirationDays} className="mb-3x" />
                     <FormDoubleItem data={dataFormRow2} className="mb-3x" onChange={onChange} />
                   </>
                 )} */}
-                {category === 'open-bid' && (
-                  <div>
-                    <FormDoubleItem
-                      data={[
-                        {
-                          name: 'minimumBid',
-                          defaultValue: '',
-                          placeholder: 'Enter minimum bid',
-                          hint: (
-                            <div>
-                              Bids below the minimum wont <div>be accepted</div>
-                            </div>
-                          ),
-                          unit: 'SOL',
-                          type: 'input'
-                        }
-                      ]}
-                      className="mb-3x"
-                      onChange={onChange}
-                    />
+                  {category === 'open-bid' && (
+                    <div>
+                      <FormDoubleItem
+                        data={[
+                          {
+                            name: 'minimumBid',
+                            defaultValue: '',
+                            placeholder: 'Enter minimum bid',
+                            hint: (
+                              <div>
+                                Bids below the minimum wont <div>be accepted</div>
+                              </div>
+                            ),
+                            unit: 'SOL',
+                            type: 'input'
+                          }
+                        ]}
+                        className="mb-3x"
+                        onChange={onChange}
+                      />
 
-                    <STYLED_DESCRIPTION>
-                      Open bids are open to any amount and they will be closed after a bid matches the asking price or
-                      if the creator decides to remove it.
-                    </STYLED_DESCRIPTION>
-                  </div>
-                )}
-                {category === 'fixed-price' && (
-                  <div>
-                    <FormDoubleItem
-                      data={[
-                        {
-                          name: 'minimumBid',
-                          defaultValue: ask === undefined ? '' : `${parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL}`,
-                          placeholder: 'Enter asking price',
-                          hint: (
-                            <div>
-                              Bids below the minimum wont <div>be accepted</div>
-                            </div>
-                          ),
-                          unit: 'SOL',
-                          type: 'input'
-                        }
-                      ]}
-                      className="mb-3x"
-                      onChange={onChange}
-                    />
+                      <STYLED_DESCRIPTION>
+                        Open bids are open to any amount and they will be closed after a bid matches the asking price or
+                        if the creator decides to remove it.
+                      </STYLED_DESCRIPTION>
+                    </div>
+                  )}
+                  {category === 'fixed-price' && (
+                    <div>
+                      <FormDoubleItem
+                        data={[
+                          {
+                            name: 'minimumBid',
+                            defaultValue: ask === undefined ? '' : `${parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL}`,
+                            placeholder: 'Enter asking price',
+                            hint: (
+                              <div>
+                                Bids below the minimum wont <div>be accepted</div>
+                              </div>
+                            ),
+                            unit: 'SOL',
+                            type: 'input'
+                          }
+                        ]}
+                        className="mb-3x"
+                        onChange={onChange}
+                      />
 
-                    <STYLED_DESCRIPTION>
-                      Open bids are open to any amount and they will be closed after a bid matches the asking price or
-                      if the creator decides to remove it.
-                    </STYLED_DESCRIPTION>
-                  </div>
-                )}
-                {/* <Donate
+                      <STYLED_DESCRIPTION>
+                        Open bids are open to any amount and they will be closed after a bid matches the asking price or
+                        if the creator decides to remove it.
+                      </STYLED_DESCRIPTION>
+                    </div>
+                  )}
+                  {/* <Donate
                 {...dataDonate}
 
                 const 
                 label={`${category === 'open-bid' ? '3.' : '4.'} Donate for charity`}
                 // selectPercentage={handleSelectPercentage}
               /> */}
-              </STYLED_FORM>
-            </UPLOAD_INFO_CONTAINER>
-            <PREVIEW_UPLOAD_CONTAINER>
-              <PreviewImage image_url={nftMetadata.image} />
-              <div>
-                <BUTTON onClick={() => setReviewSellModal(true)} disabled={disabled}>
-                  Review
-                </BUTTON>
-              </div>
-            </PREVIEW_UPLOAD_CONTAINER>
-          </UPLOAD_FIELD_CONTAINER>
+                </STYLED_FORM>
+              </UPLOAD_INFO_CONTAINER>
+            </Col>
+            <Col sm={10} xl={10} xxl={10}>
+              <PREVIEW_UPLOAD_CONTAINER>
+                <IMAGE_LABEL>
+                  <STYLED_DESCRIPTION>{nftMetadata.name}</STYLED_DESCRIPTION>
+                </IMAGE_LABEL>
+                <img className={`image-preview`} src={nftMetadata.image} alt="nft-preview" />
+
+                <div>
+                  <BUTTON onClick={() => setReviewSellModal(true)} disabled={disabled}>
+                    Review
+                  </BUTTON>
+                </div>
+              </PREVIEW_UPLOAD_CONTAINER>
+            </Col>
+          </Row>
         </UPLOAD_CONTENT>
       )}
     </div>

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Modal, Form } from 'antd'
+import { Form, Modal } from 'antd'
 
 export const StyledPopupProfile = styled(Modal)`
   * {
@@ -140,32 +140,39 @@ export const StyledFormProfile = styled(Form)`
     margin-bottom: ${theme.margin(1)};
   }
   .hint {
-    font-size: 9px;
     margin: 8px 0 12px;
+    font-size: 9px;
+    font-weight: 700;
+    color: #8a8a8a;
   }
   .ant-form-item-label {
     padding-bottom: 0;
+    color: #8a8a8a;
+
     label {
       font-size: 17px;
       font-weight: 600;
-      color: ${theme.text7};
+      color: #8a8a8a;
       line-height: 1;
     }
     .ant-form-item-optional {
       color: #8a8a8a;
       font-size: 12px;
+      font-weight: 600;
     }
 
     .ant-form-item-required {
       &::after {
         content: '(required)';
         font-size: 12px;
+        font-weight: 600;
         color: #8a8a8a;
         display: inline-block;
         padding-left: ${theme.margin(0.5)}
       }
     }
   }
+  
   .ant-form-item-control-input {
     input {
       border: none;
@@ -173,7 +180,7 @@ export const StyledFormProfile = styled(Form)`
       border-bottom: 2px solid #a8a8a8;
       text-align: left;
       padding-left: 0;
-      color: ${theme.text8};
+      color: ${theme.text1} !important;
       &:focus {
         box-shadow: none;
       }
@@ -187,6 +194,9 @@ export const StyledFormProfile = styled(Form)`
     margin: ${theme.margin(3)} 0 ${theme.margin(2)};
   }
   .btn-save {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-top: ${theme.margin(3.5)};
     width: 100%;
     height: 53px;

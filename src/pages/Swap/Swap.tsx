@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { logEvent } from 'firebase/analytics'
 import analytics from '../../analytics'
 import styled, { css } from 'styled-components'
@@ -7,12 +8,14 @@ import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
 import { Modal } from '../../components'
-import { useDarkMode, useSwap, SwapProvider, useSlippageConfig } from '../../context'
+import { useDarkMode, useSwap, SwapProvider, useSlippageConfig, ENDPOINTS, useConnectionConfig } from '../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../styles'
 import { JupiterProvider, useJupiter } from '@jup-ag/react-hook'
 import { PublicKey } from '@solana/web3.js'
 import { TOKEN_LIST_URL } from '@jup-ag/core'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { ILocationState } from '../../types/app_params.d'
+import { notify } from '../../utils'
 const CoinGecko = require('coingecko-api')
 const CoinGeckoClient = new CoinGecko()
 
@@ -283,6 +286,8 @@ const SWAP_CONTENT = styled.div`
 `
 
 const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> = ({ exchange, routes, clickNo }) => {
+  const location = useLocation<ILocationState>()
+  const { setEndpoint, network } = useConnectionConfig()
   const { mode } = useDarkMode()
   const { refreshRates, setFocused, switchTokens } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
@@ -295,7 +300,12 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
         firebase_screen: 'Swap',
         firebase_screen_class: 'load'
       })
-  }, [])
+
+    if (network === 'devnet') {
+      setEndpoint(ENDPOINTS[0].endpoint)
+      notify({ message: `Switched to mainnet` })
+    }
+  }, [location])
 
   useEffect(() => {
     setRoute(routes[clickNo])
