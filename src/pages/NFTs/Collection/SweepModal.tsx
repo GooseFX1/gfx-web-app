@@ -1040,7 +1040,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
       size = fixedPriceWithinCollection.nft_data.length < 10 ? fixedPriceWithinCollection.nft_data.length : 10
     for (let i = 0; i < nft_prices.length; i++) {
       for (let j = 0; j < nft_prices.length - i - 1; j++) {
-        if (nft_prices[j] > nft_prices[j + 1]) {
+        if (+nft_prices[j] > +nft_prices[j + 1]) {
           let temp = nft_prices[j + 1]
           nft_prices[j + 1] = nft_prices[j]
           nft_prices[j] = temp
