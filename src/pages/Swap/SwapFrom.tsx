@@ -14,7 +14,7 @@ const QUICK_SELECT = styled.div`
     line-height: 24px;
     color: ${({ theme }) => theme.text9};
     cursor: pointer;
-    background-color: ${({ theme }) => theme.bg2};
+    background-color: ${({ theme }) => theme.bg10};
     padding: 0.25rem 0.5rem 0.25rem 0.5rem;
     border-radius: 1rem;
   }

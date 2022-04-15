@@ -64,8 +64,11 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
   }, [state])
 
   const content = useMemo(
-    () => ['Connect wallet', 'Swap', 'Enter amount', 'Balance exceeded', 'Pool not found'][state],
-    [state]
+    () =>
+      ['Connect wallet', 'Swap', 'Enter amount', `Insufficient ${tokenA?.symbol || 'Balance'}`, 'Pool not found'][
+        state
+      ],
+    [state, tokenA?.symbol]
   )
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
@@ -74,7 +77,7 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
         state === State.CanSwap ? swapTokens(route, exchange) : !wallet ? setVisible(true) : connect().catch(() => {})
       }
     },
-    [connect, setVisible, state, swapTokens, wallet]
+    [connect, setVisible, state, swapTokens, wallet, route]
   )
 
   return (

@@ -19,7 +19,7 @@ const AMOUNT = styled.div`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: white;
+    color: ${({ theme }) => theme.text1};
   }
 `
 

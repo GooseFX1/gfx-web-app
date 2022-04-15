@@ -79,8 +79,17 @@ export function colors(mode: string): Colors {
     bg7: mode === 'dark' ? '#131313' : 'gray',
     bg8: mode === 'dark' ? 'rgba(64, 64, 64, 0.22)' : 'gray',
     bg9: mode === 'dark' ? '#2a2a2a' : white,
-    bg10: mode === 'dark' ? '#191919' : '#eee',
+    bg10: mode === 'dark' ? '#191919' : '#ababab',
     bg11: mode === 'dark' ? '#202020' : '#f4f4f4',
+    bg12: mode === 'dark' ? '#1e1e1e' : '#ababab',
+    swapSides1:
+      mode === 'dark'
+        ? 'linear-gradient(256deg, #2a2a2a 1.49%, #181818 93.4%)'
+        : 'background: linear-gradient(256deg, #FDFDFD 1.49%, #EEEEEE 93.4%)',
+    swapSides2:
+      mode === 'dark'
+        ? 'linear-gradient(88.61deg, #2a2a2a 1.49%, #181818 93.4%)'
+        : 'background: linear-gradient(88.61deg, #FDFDFD 1.49%, #EEEEEE 93.4%)',
     modalBackground: mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(96, 96, 96, 0.5)',
     bgReward:
       mode === 'dark'

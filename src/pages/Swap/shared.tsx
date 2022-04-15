@@ -30,7 +30,7 @@ export const AmountField = styled.div<{ $balance: string; $height: string; $valu
       ${theme.mainText}
       font-size: 8px;
       font-weight: 500;
-      color: white;
+      color: ${({ theme }) => theme.text1};
     }`}
 
   > span {
@@ -49,5 +49,6 @@ export const AmountField = styled.div<{ $balance: string; $height: string; $valu
     font-weight: 500;
     font-size: 18px;
     line-height: 22px;
+    color: ${({ theme }) => theme.text1};
   }
 `

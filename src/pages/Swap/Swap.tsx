@@ -62,8 +62,7 @@ const TOKEN_WRAPPER = styled.div`
   width: 400px;
   padding: ${({ theme }) => theme.margin(4)};
   border-radius: 0px 20px 20px 0px;
-  background-color: ${({ theme }) => theme.bg9};
-  background: linear-gradient(256deg, #2a2a2a 1.49%, #181818 93.4%);
+  background: ${({ theme }) => theme.swapSides1};
 
   ${({ theme }) => theme.largeShadow}
 `
@@ -141,8 +140,8 @@ const Socials = styled.div`
 `
 
 const SocialsButton = styled.div`
-  background-color: ${({ theme }) => theme.bg2};
-  color: ${({ theme }) => theme.text15};
+  background-color: ${({ theme }) => theme.bg12};
+  color: ${({ theme }) => theme.text14};
   padding: 0.5rem 1rem 0.5rem 1rem;
   border-radius: 1rem;
   font-size: 12px;
@@ -167,8 +166,7 @@ const PRICE_WRAPPER = styled.div`
   width: 400px;
   border-radius: 20px 0px 0px 20px;
   padding: ${({ theme }) => theme.margin(4)};
-  background-color: ${({ theme }) => theme.bg9};
-  background: linear-gradient(88.61deg, #2a2a2a 1.49%, #181818 93.4%);
+  background: ${({ theme }) => theme.swapSides2};
   ${({ theme }) => theme.largeShadow}
 `
 
@@ -190,6 +188,7 @@ const BestPrice = styled.div`
   margin-top: -85px;
   margin-left: 300px;
   width: 75px;
+  text-align: center;
   padding: 0.25rem;
   border-radius: 0.5rem;
   background-color: ${({ theme }) => theme.text3};
@@ -287,6 +286,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
   const { mode } = useDarkMode()
   const { refreshRates, setFocused, switchTokens } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
+  const [route, setRoute] = useState(routes[clickNo])
 
   useEffect(() => {
     const an = analytics()
@@ -296,6 +296,10 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
         firebase_screen_class: 'load'
       })
   }, [])
+
+  useEffect(() => {
+    setRoute(routes[clickNo])
+  }, [routes, clickNo])
 
   const onClick = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation()
@@ -357,7 +361,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
         </SWITCH>
         <SwapTo height={height} />
       </BODY>
-      <SwapButton exchange={exchange} route={routes[clickNo]} />
+      <SwapButton exchange={exchange} route={route} />
     </SWAP_CONTENT>
   )
 }
@@ -609,6 +613,8 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
 
       if (no === 0) {
         return { name, value, price: out, bestPrice: true }
+      } else if (no === 1) {
+        return { name, value, price: out, fastest: true }
       }
       return { name, value, price: out }
     }
@@ -629,10 +635,18 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
           </TokenDetail>
           <TokenTitle>{detail.price || null}</TokenTitle>
           {detail.bestPrice && <BestPrice>Best Price</BestPrice>}
+          {detail.fastest && <BestPrice>Fastest</BestPrice>}
         </AlternativeHeader>
       ))}
       {!less ? (
-        <ShowLess onClick={() => setLess(true)}>Show Less</ShowLess>
+        <ShowLess
+          onClick={() => {
+            setLess(true)
+            setClickNo(1)
+          }}
+        >
+          Show Less
+        </ShowLess>
       ) : (
         <ShowMore onClick={() => setLess(false)}>Show More</ShowMore>
       )}
@@ -645,7 +659,7 @@ export const SwapMain: FC = () => {
   const { tokenA, tokenB, inTokenAmount, outTokenAmount } = useSwap()
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
-  const [clickNo, setClickNo] = useState(null)
+  const [clickNo, setClickNo] = useState(1)
   const [chosenRoutes, setChosenRoutes] = useState([])
   const [inAmountTotal, setInAmountTotal] = useState(0)
 
@@ -684,15 +698,15 @@ export const SwapMain: FC = () => {
         priceImpactPct: 1
       }
 
-      shortRoutes.push(GoFxRoute)
+      shortRoutes.splice(1, 0, GoFxRoute)
     }
-
-    shortRoutes = shortRoutes.sort((a, b) => b.outAmount - a.outAmount)
     setChosenRoutes(shortRoutes)
-    if (clickNo === null) {
-      const defaultIndex = shortRoutes.findIndex((route) => route.marketInfos[0].amm.label === 'GooseFX')
-      setClickNo(defaultIndex >= 0 ? defaultIndex : 3)
-    }
+    ///shortRoutes = shortRoutes.sort((a, b) => b.outAmount - a.outAmount)
+
+    // if (clickNo === null) {
+    //   const defaultIndex = shortRoutes.findIndex((route) => route.marketInfos[0].amm.label === 'GooseFX')
+    //   setClickNo(defaultIndex >= 0 ? defaultIndex : 3)
+    // }
   }, [tokenA, tokenB, routes, slippage, inTokenAmount, outTokenAmount])
 
   return (
