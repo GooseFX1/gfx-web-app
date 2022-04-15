@@ -13,11 +13,11 @@ import React, {
 } from 'react'
 import moment from 'moment'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { PublicKey } from '@solana/web3.js'
+//import { PublicKey } from '@solana/web3.js'
 import { useAccounts } from './accounts'
 import { useConnectionConfig, useSlippageConfig } from './settings'
 import { notify } from '../utils'
-import { computePoolsPDAs, serum, swap, preSwapAmount } from '../web3'
+import { serum, swap, preSwapAmount } from '../web3'
 
 export type SwapInput = undefined | 'from' | 'to'
 
@@ -34,6 +34,7 @@ export interface ISwapToken {
   address: string
   decimals: number
   symbol: string
+  name?: string
 }
 
 interface ISwapConfig {
@@ -46,13 +47,16 @@ interface ISwapConfig {
   setFocused: Dispatch<SetStateAction<SwapInput>>
   setInTokenAmount: Dispatch<SetStateAction<number>>
   setOutTokenAmount: Dispatch<SetStateAction<number>>
+  setPriceImpact: Dispatch<SetStateAction<number>>
   setPool: Dispatch<SetStateAction<IPool>>
   setTokenA: Dispatch<SetStateAction<ISwapToken | null>>
   setTokenB: Dispatch<SetStateAction<ISwapToken | null>>
-  swapTokens: () => void
+  swapTokens: (a: any, b: any) => void
   switchTokens: () => void
   tokenA: ISwapToken | null
   tokenB: ISwapToken | null
+  connection?: any
+  priceImpact?: number
 }
 
 const SwapContext = createContext<ISwapConfig | null>(null)
@@ -66,6 +70,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [inTokenAmount, setInTokenAmount] = useState(0)
   const [loading, setLoading] = useState(false)
   const [outTokenAmount, setOutTokenAmount] = useState(0)
+  const [priceImpact, setPriceImpact] = useState(0)
   const [_, setFocused] = useState<SwapInput>(undefined)
   const [pool, setPool] = useState<IPool>({
     inAmount: 0,
@@ -126,16 +131,16 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         let outValuePerIn = 0
 
         try {
-          const { decimals } = tokenA
-          const { pool } = await computePoolsPDAs(tokenA, tokenB, network)
-          const [aAccount, bAccount] = await Promise.all([
-            connection.getParsedTokenAccountsByOwner(pool, { mint: new PublicKey(tokenA.address) }),
-            connection.getParsedTokenAccountsByOwner(pool, { mint: new PublicKey(tokenB.address) })
-          ])
+          //const { decimals } = tokenA
+          // const { pool } = await computePoolsPDAs(tokenA, tokenB, network)
+          // const [aAccount, bAccount] = await Promise.all([
+          //   connection.getParsedTokenAccountsByOwner(pool, { mint: new PublicKey(tokenA.address) }),
+          //   connection.getParsedTokenAccountsByOwner(pool, { mint: new PublicKey(tokenB.address) })
+          // ])
 
-          inAmount = parseFloat(aAccount.value[0].account.data.parsed.info.tokenAmount.amount)
-          outAmount = parseFloat(bAccount.value[0].account.data.parsed.info.tokenAmount.amount)
-          outValuePerIn = (outAmount - (inAmount * outAmount) / (inAmount + 10 ** decimals)) / 10 ** decimals
+          // inAmount = parseFloat(aAccount.value[0].account.data.parsed.info.tokenAmount.amount)
+          // outAmount = parseFloat(bAccount.value[0].account.data.parsed.info.tokenAmount.amount)
+          // outValuePerIn = (outAmount - (inAmount * outAmount) / (inAmount + 10 ** decimals)) / 10 ** decimals
           amountPool()
         } catch (e) {
           //setOutTokenAmount(0)
@@ -161,9 +166,17 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       let outTokenAmount = 0
       if (inTokenAmount && inTokenAmount != 0) {
         // needed weak comaprison because of '0.00'=='0'
-        const preSwapResult = await preSwapAmount(tokenA, tokenB, inTokenAmount, wallet, connection, network)
+        const { preSwapResult, impact } = await preSwapAmount(
+          tokenA,
+          tokenB,
+          inTokenAmount,
+          wallet,
+          connection,
+          network
+        )
         if (preSwapResult) {
           outTokenAmount = Number(preSwapResult)
+          setPriceImpact(impact)
         } else {
           notify({ type: 'error', message: 'Fetch Pre-swap Amount Failed', icon: 'error' })
         }
@@ -193,7 +206,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return () => clearInterval(interval)
   }, [amountPool])
 
-  const swapTokens = async () => {
+  const swapTokens = async (route: any, exchange: any) => {
     if (!tokenA || !tokenB) return
 
     setLoading(true)
@@ -202,7 +215,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     notify({ message: `Trying to swap ${inTokens} for at least ${outTokens}...` })
 
     try {
-      const signature = await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
+      const signature = await callPathExchange(route, exchange)
       if (!signature) throw new Error('Swap unsuccessful')
       notify({
         type: 'success',
@@ -228,6 +241,34 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setTokenB(tokenA)
   }
 
+  async function callPathExchange(route: any, exchange: any) {
+    if (route.marketInfos[0].amm.label === 'GooseFX') {
+      return await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
+    } else {
+      const swapResult = await exchange({
+        wallet: {
+          sendTransaction: wallet.sendTransaction,
+          publicKey: wallet.publicKey,
+          signAllTransactions: wallet.signAllTransactions,
+          signTransaction: wallet.signTransaction
+        },
+        routeInfo: route,
+        onTransaction: async (txid: any) => {
+          //console.log('sending transaction')
+          let result = await connection.confirmTransaction(txid)
+          //console.log('confirmed transaction')
+          if (!result.value.err) {
+            return await connection.getTransaction(txid, {
+              commitment: 'confirmed'
+            })
+          }
+          return null
+        }
+      })
+      return swapResult.txid
+    }
+  }
+
   return (
     <SwapContext.Provider
       value={{
@@ -246,7 +287,10 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         swapTokens,
         switchTokens,
         tokenA,
-        tokenB
+        tokenB,
+        connection,
+        priceImpact,
+        setPriceImpact
       }}
     >
       {children}
@@ -276,6 +320,9 @@ export const useSwap = (): ISwapConfig => {
     swapTokens: context.swapTokens,
     switchTokens: context.switchTokens,
     tokenA: context.tokenA,
-    tokenB: context.tokenB
+    tokenB: context.tokenB,
+    connection: context.connection,
+    setPriceImpact: context.setPriceImpact,
+    priceImpact: context.priceImpact
   }
 }

@@ -24,6 +24,7 @@ import {
   useConnectionConfig
 } from '../../context'
 import { notify } from '../../utils'
+import { GenericNotFound } from '../InvalidUrl'
 
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
@@ -114,6 +115,9 @@ export const NFTs: FC = () => {
                 </Route>
                 <Route exact path="/NFTs/sell/:nftId">
                   <SellNFT />
+                </Route>
+                <Route>
+                  <GenericNotFound />
                 </Route>
               </Switch>
             </BODY_NFT>

@@ -49,7 +49,7 @@ interface ISettingsConfig {
   slippage: number
 }
 
-export const DEFAULT_SLIPPAGE = 0.0025
+export const DEFAULT_SLIPPAGE = 0.0015
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
 
@@ -75,7 +75,9 @@ export function useConnectionConfig() {
 
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [endpoint, setEndpoint] = useState(ENDPOINTS[process.env.NODE_ENV === 'production' ? 0 : 3].endpoint)
-  const [slippage, setSlippage] = useLocalStorageState('slippage', DEFAULT_SLIPPAGE.toString())
+  const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE.toString())
+
+  // useLocalStorageState('slippage', DEFAULT_SLIPPAGE.toString())
 
   const connection = useMemo(() => new Connection(endpoint, 'confirmed'), [endpoint])
 

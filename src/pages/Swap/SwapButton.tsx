@@ -24,7 +24,7 @@ const TEXT = styled.span`
   line-height: 21px !important;
 `
 
-export const SwapButton: FC = () => {
+export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ exchange, route }) => {
   const { getAmount } = useAccounts()
   const { network } = useConnectionConfig()
   const { inTokenAmount, loading, swapTokens, tokenA, tokenB } = useSwap()
@@ -64,17 +64,20 @@ export const SwapButton: FC = () => {
   }, [state])
 
   const content = useMemo(
-    () => ['Connect wallet', 'Swap', 'Enter amount', 'Balance exceeded', 'Pool not found'][state],
-    [state]
+    () =>
+      ['Connect wallet', 'Swap', 'Enter amount', `Insufficient ${tokenA?.symbol || 'Balance'}`, 'Pool not found'][
+        state
+      ],
+    [state, tokenA?.symbol]
   )
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
       if (!event.defaultPrevented) {
-        state === State.CanSwap ? swapTokens() : !wallet ? setVisible(true) : connect().catch(() => {})
+        state === State.CanSwap ? swapTokens(route, exchange) : !wallet ? setVisible(true) : connect().catch(() => {})
       }
     },
-    [connect, setVisible, state, swapTokens, wallet]
+    [connect, setVisible, state, swapTokens, wallet, route]
   )
 
   return (
