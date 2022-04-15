@@ -40,6 +40,10 @@ export interface Colors {
   bg8: Color
   bg9: Color
   bg10: Color
+  bg11: Color
+  bg12: Color
+  swapSides1: Color
+  swapSides2: Color
   modalBackground: Color
   bgReward: Color
   substractImg: Color

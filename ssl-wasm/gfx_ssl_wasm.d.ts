@@ -7,7 +7,7 @@
  * @param {OracleRegistry} oracles
  * @param {BigInt} amount_in
  * @param {BigInt} min_out
- * @returns {BigInt}
+ * @returns {SwapResult}
  */
 export function swap(
   ssl_in: Uint8Array,
@@ -16,7 +16,7 @@ export function swap(
   oracles: OracleRegistry,
   amount_in: BigInt,
   min_out: BigInt
-): BigInt
+): SwapResult
 /**
  */
 export class OracleRegistry {
@@ -29,4 +29,15 @@ export class OracleRegistry {
    * @param {Uint8Array} data
    */
   add_oracle(key: Uint8Array, data: Uint8Array): void
+}
+/**
+ */
+export class SwapResult {
+  free(): void
+  /**
+   */
+  out: BigInt
+  /**
+   */
+  price_impact: number
 }
