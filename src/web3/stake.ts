@@ -87,7 +87,6 @@ export const executeStake = async (
     return stakeAmount(amountInBN, program, stakingAccountKey, wallet, connection, undefined)
   } catch (err) {
     console.log(err)
-    return err
   }
   try {
     // user account does not exists , create a new user account
