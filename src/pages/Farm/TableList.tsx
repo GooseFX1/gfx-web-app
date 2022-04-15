@@ -7,23 +7,23 @@ import { Table } from 'antd'
 import BN from 'bn.js'
 import { columns } from './Columns'
 import { ExpandedContent } from './ExpandedContent'
+import { ExpandedDynamicContent } from './ExpandedDynamicContent'
 import { getStakingAccountKey, fetchCurrentAmountStaked, CONTROLLER_KEY, CONTROLLER_LAYOUT } from '../../web3'
 import { useConnectionConfig, usePriceFeed, useFarmContext } from '../../context'
 import { FarmData } from '../../constants'
 import { ADDRESSES } from '../../web3/ids'
+import { MorePoolsSoon } from './MorePoolsSoon'
+
 const StakeIDL = require('../../web3/idl/stake.json')
 
 //#region styles
-const STYLED_TABLE_LIST = styled(Table)`
+export const STYLED_TABLE_LIST = styled(Table)`
   ${({ theme }) => `
   max-width: 100%;
-  cursor: pointer;
   .ant-table {
     background: ${theme.bg3};
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+    border-radius: 20px 20px 0px 0px;
     box-shadow: ${theme.tableListBoxShadow};
-    padding-bottom: ${theme.margin(4)};
   }
   .normal-text {
     font-family: Montserrat;
@@ -33,28 +33,24 @@ const STYLED_TABLE_LIST = styled(Table)`
     color: ${theme.text8};
   }
   .ant-table-container table > thead > tr:first-child th:first-child {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 30px;
+    background: none;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 25px;
   }
   .ant-table-container table > thead > tr:first-child th:last-child {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 30px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 25px;
   }
   .ant-table-thead {
-    background-color: #181818;
-    background: ${theme.farmHeaderBg};
-    border-bottom-left-radius: 30px;
-    border-bottom-right-radius: 30px;
-    box-shadow: ${theme.tableHeaderBoxShadow};
+     background: ${theme.farmHeaderBg};
     > tr {
       > th {
         border: none;
+        height: 74px;
         font-size: 16px;
         font-weight: 700;
         color: ${theme.text1};
         background-color: transparent;
-        padding-top: 0;
-        padding-bottom: ${theme.margin(2)};
         &:before {
           content: none !important;
         }
@@ -65,24 +61,18 @@ const STYLED_TABLE_LIST = styled(Table)`
     > tr {
       &.ant-table-expanded-row {
         > td {
-          padding: 0;
+          padding: 0px;
           border-bottom: 0;
         }
       }
       > td {
         background-color: ${theme.bg3};
-        border-color: #8c8c8c;
+        border-bottom: 1px solid #BABABA !important;
         padding-bottom: ${theme.margin(4)};
       }
-      &:last-child {
-        td {
-          border: none;
-          &:first-child {
-            border-bottom-left-radius: 20px;
-          }
-          &:last-child {
-            border-bottom-right-radius: 20px;
-          }
+      &.ant-table-row {
+        > td {
+          background-color: ${theme.expendedRowBg} !important;
         }
       }
       &.ant-table-row:hover {
@@ -93,6 +83,9 @@ const STYLED_TABLE_LIST = styled(Table)`
     }
   }
 
+  .hide-row {
+    display: none;
+  }
   .ant-pagination-item {
     a {
       display: inline;
@@ -109,7 +102,7 @@ const STYLED_TABLE_LIST = styled(Table)`
       border-color: ${theme.text6};
     }
   }
-
+  
   .ant-pagination-item-active {
     border-color: transparent;
     a {
@@ -138,7 +131,7 @@ const STYLED_TABLE_LIST = styled(Table)`
 `}
 `
 
-const STYLED_EXPAND_ICON = styled.img<{ expanded: boolean }>`
+export const STYLED_EXPAND_ICON = styled.img<{ expanded: boolean }>`
   ${({ expanded }) => css`
     cursor: pointer;
     transform: ${expanded ? 'rotate(180deg)' : 'rotate(0)'};
@@ -163,7 +156,7 @@ export const TableList = ({ dataSource }: any) => {
   const { prices } = usePriceFeed()
   const { network, connection } = useConnectionConfig()
   const wallet = useWallet()
-  const { showDeposited } = useFarmContext()
+  const { showDeposited, poolFilter, searchFilter, setSearchFilter } = useFarmContext()
   const [accountKey, setAccountKey] = useState<PublicKey>()
   const [farmData, setFarmData] = useState<IFarmData[]>(FarmData)
   const [eKeys, setEKeys] = useState([])
@@ -200,7 +193,7 @@ export const TableList = ({ dataSource }: any) => {
           if (farmData.length > 0) {
             const farmDataStaked =
               showDeposited && wallet.publicKey ? farmData.filter((fData) => fData.currentlyStaked > 0.0) : farmData
-            setFarmData(farmDataStaked)
+            //setFarmData(farmData)
           }
         })
         .catch((err) => {
@@ -208,6 +201,19 @@ export const TableList = ({ dataSource }: any) => {
         })
     }
   }, [accountKey, gofxPrice, showDeposited])
+
+  useEffect(() => {
+    let farmDataStaked =
+      showDeposited && wallet.publicKey ? FarmData.filter((fData) => fData.currentlyStaked > 0.0) : farmData
+    if (poolFilter !== 'All pools') farmDataStaked = FarmData.filter((fData) => fData.type === poolFilter)
+    else farmDataStaked = FarmData
+    if (searchFilter)
+      farmDataStaked = farmDataStaked.filter((fData) => {
+        const tokenName = fData.name.toLowerCase()
+        if (tokenName.includes(searchFilter.toLowerCase())) return true
+      })
+    setFarmData(farmDataStaked)
+  }, [poolFilter, searchFilter])
 
   const fetchTableData = async (accountKey: PublicKey) => {
     // pool data
@@ -229,7 +235,7 @@ export const TableList = ({ dataSource }: any) => {
         apr: APR,
         rewards: '100% GOFX',
         liquidity: gofxPrice.current * liqidity,
-        type: 'Single Sided',
+        type: 'Staking',
         currentlyStaked: accountData.tokenStaked ? accountData.tokenStaked : 0
       }
     ]
@@ -238,6 +244,7 @@ export const TableList = ({ dataSource }: any) => {
   const onExpandIcon = (id) => {
     const temp = [...eKeys]
     const j = temp.indexOf(id)
+    console.log(j)
     if (j > -1) temp.splice(j, 1)
     else temp.push(id)
     setEKeys(temp)
@@ -249,18 +256,28 @@ export const TableList = ({ dataSource }: any) => {
         rowKey="id"
         columns={columns}
         dataSource={farmData}
-        pagination={{ pageSize: PAGE_SIZE, position: ['bottomLeft'] }}
+        pagination={false}
         bordered={false}
+        rowClassName={(record: IFarmData) => (eKeys.indexOf(record.id) >= 0 ? 'hide-row' : '')}
         expandedRowKeys={eKeys}
         onRow={(record: IFarmData) => ({
           onClick: () => onExpandIcon(record.id)
         })}
-        expandedRowRender={(rowData) => (
-          <ExpandedContent rowData={rowData} stakeProgram={stakeProgram} stakeAccountKey={accountKey} />
-        )}
+        expandRowByClick={true}
+        expandedRowRender={(rowData: IFarmData) => {
+          return (
+            <ExpandedDynamicContent
+              rowData={rowData}
+              onExpandIcon={onExpandIcon}
+              stakeProgram={stakeProgram}
+              stakeAccountKey={accountKey}
+            />
+          )
+        }}
         expandIcon={(ps) => <ExpandIcon {...ps} onClick={onExpandIcon} />}
         expandIconColumnIndex={6}
       />
+      <MorePoolsSoon />
     </div>
   )
 }

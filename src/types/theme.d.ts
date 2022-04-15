@@ -27,6 +27,9 @@ export interface Colors {
   text14: Color
   text15: Color
   text16: Color
+  text17: Color
+  text18: Color
+  text19: Color
 
   // backgrounds / greys
   bg0: Color
@@ -50,6 +53,7 @@ export interface Colors {
   grey5: Color
   darkButton: Color
   scrollBarColor: Color
+  opacity: Color
 
   // speciality colors
   appLayoutFooterBorder: Color

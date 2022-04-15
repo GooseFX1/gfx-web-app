@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Tooltip } from '../../components/Tooltip'
 import { moneyFormatter } from '../../utils/math'
 
-const STYLED_TITLE = styled.div`
+export const STYLED_TITLE = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,7 +29,7 @@ const STYLED_TITLE = styled.div`
   }
 `
 
-const STYLED_NAME = styled.div`
+export const STYLED_NAME = styled.div`
   display: flex;
   align-items: center;
   .text {
@@ -56,7 +56,7 @@ const STYLED_NAME = styled.div`
   }
 `
 
-const STYLED_EARNED = styled.div`
+export const STYLED_EARNED = styled.div`
   font-family: Montserrat;
   font-size: 17px;
   font-weight: 600;
@@ -100,21 +100,30 @@ export const columns = [
     )
   },
   {
-    title: Title('Earned', '', true),
+    title: Title('Balance', '', true),
+    dataIndex: 'Balance',
+    key: 'Balance',
+    width: '20%',
+    render: (text) => <div className="liquidity normal-text">{text ? `$ ${moneyFormatter(text)}` : 0.0}</div>
+  },
+  {
+    title: Title('Total Earned', '', true),
     dataIndex: 'earned',
     key: 'earned',
-    width: '15%',
-    render: (text) => <STYLED_EARNED>{text ? parseFloat(text).toFixed(3) : 0.0}</STYLED_EARNED>
+    width: '20%',
+    render: (text) => <div className="liquidity normal-text">{text ? `${moneyFormatter(text)}` : 0.0}</div>
   },
   {
     title: Title('APR', 'Yearly deposit earned on your deposit.', true),
     dataIndex: 'apr',
     key: 'apr',
+    width: '20%',
     render: (text) => <div className="apr normal-text">{`${(text * 100).toFixed(2)}%`}</div>
   },
   {
     title: Title('Liquidity', "Total value of funds in this farm's liquidity pool.", true),
     dataIndex: 'liquidity',
+    width: '20%',
     key: 'liquidity',
     render: (text) => <div className="liquidity normal-text">{text ? `$ ${moneyFormatter(text)}` : 0.0}</div>
   }

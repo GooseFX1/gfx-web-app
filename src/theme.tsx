@@ -66,13 +66,16 @@ export function colors(mode: string): Colors {
     text14: mode === 'dark' ? '#b1b1b1' : '#fff',
     text15: mode === 'dark' ? '#b1b1b1' : '#7C7C7C',
     text16: mode === 'dark' ? '#b2b2b2' : '#838383',
+    text17: mode === 'dark' ? '#636363' : '#B9B9B9',
+    text18: mode === 'dark' ? '#727272' : '#BABABA',
+    text19: mode === 'dark' ? '#919191' : '#B6B6B6',
     text1h: '#7d7d7d',
 
     // backgrounds / greys
     bg0: mode === 'dark' ? '#000' : '#fff',
     bg1: mode === 'dark' ? '#1e1e1e' : white,
     bg2: mode === 'dark' ? '#131313' : '#eeeeee',
-    bg3: mode === 'dark' ? '#2a2a2a' : '#eeeeee',
+    bg3: mode === 'dark' ? '#343434' : '#eeeeee',
     bg4: mode === 'dark' ? '#171717' : '#f4f4f4',
     bg5: mode === 'dark' ? black : '#e0e0e0',
     bg6: mode === 'dark' ? 'black' : 'gray',
@@ -91,6 +94,7 @@ export function colors(mode: string): Colors {
     grey4: '#121212',
     grey5: '#1a1a1a',
     darkButton: '#000000',
+    opacity: mode === 'dark' ? '0.7' : '1',
     scrollBarColor: mode === 'dark' ? '#434343' : '#e0e0e0',
     boxShadow: mode === 'dark' ? '0 4px 4px 0 rgba(0, 0, 0, 0.25)' : '0 7px 10px 0 rgba(189, 189, 189, 0.25)',
     fade:
@@ -180,7 +184,7 @@ export function colors(mode: string): Colors {
 
     // farm
     farmContainerBg: mode === 'dark' ? '#1e1e1e' : '#eee',
-    farmHeaderBg: mode === 'dark' ? '#181818' : '#313131',
+    farmHeaderBg: '#2a2a2a',
     solPillBg: mode === 'dark' ? '#111' : '#313131',
     stakePillBg: mode === 'dark' ? '#1e1e1e' : 'rgba(49, 49, 49, 0.5)',
     hoverTrFarmBg: mode === 'dark' ? 'rgba(64, 64, 64, 0.7)' : 'rgba(64, 64, 64, 0.05)',
