@@ -1,8 +1,6 @@
 <div align="center">
   <img height="170" src="https://github.com/GooseFX1/gfx-web-app/blob/dev/public/img/assets/gfx_logo_gradient_lite.svg" />
 
-  <h1>GooseFX Web App</h1>
-
   <h4>
     <a href="https://goosefx.io">Website</a>
     <span> | </span>
