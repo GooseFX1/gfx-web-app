@@ -12,6 +12,8 @@
     <span> | </span>
     <a href="https://medium.com/goosefx">Medium</a>
   </h4>
+  <br />
+  <br />
 </div>
 
 GooseFX is a full suite DeFi platform built on the Solana blockchain and Serum DEX, offering a variety of unique decentralized peer-to-peer financial products. We aim to be a complete DeFi experience where you can trade cryptocurrencies, tokenized stocks, futures, NFTs all through one interface while utilizing your capital across all features seamlessly.
