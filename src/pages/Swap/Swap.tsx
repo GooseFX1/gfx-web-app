@@ -692,8 +692,6 @@ export const SwapMain: FC = () => {
     debounceTime: 250 // debounce ms time before refresh
   })
 
-  console.log(routes)
-
   useEffect(() => {
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
     setInAmountTotal(inAmountTotal)
@@ -724,12 +722,6 @@ export const SwapMain: FC = () => {
       shortRoutes.splice(1, 0, GoFxRoute)
     }
     setChosenRoutes(shortRoutes)
-    ///shortRoutes = shortRoutes.sort((a, b) => b.outAmount - a.outAmount)
-
-    // if (clickNo === null) {
-    //   const defaultIndex = shortRoutes.findIndex((route) => route.marketInfos[0].amm.label === 'GooseFX')
-    //   setClickNo(defaultIndex >= 0 ? defaultIndex : 3)
-    // }
   }, [tokenA, tokenB, routes, slippage, inTokenAmount, outTokenAmount])
 
   return (
