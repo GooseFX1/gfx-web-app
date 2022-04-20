@@ -179,7 +179,7 @@ const ALTERNATIVE_WRAPPER = styled.div<{ $less: boolean }>`
   position: relative;
   align-items: flex-end;
   width: 95%;
-  justify-content: ${({ $less }) => ($less ? 'center' : 'flex-start')};
+  justify-content: ${({ $less }) => ($less ? 'center' : 'space-around')};
   margin-left: 2.5%;
   margin-top: 2.5%;
   overflow-x: auto;
@@ -191,7 +191,7 @@ const BestPrice = styled.div`
   font-size: 12px;
   margin-top: -85px;
   margin-left: 300px;
-  width: 75px;
+  width: 85px;
   text-align: center;
   padding: 0.25rem;
   border-radius: 0.5rem;
@@ -202,7 +202,7 @@ const ShowLess = styled.div`
   position: absolute;
   font-size: 18px;
   top: 0px;
-  right: 60px;
+  right: 0px;
   border-radius: 0.5rem;
   cursor: pointer;
 `
@@ -211,7 +211,7 @@ const ShowMore = styled.div`
   position: absolute;
   font-size: 18px;
   top: 50%;
-  right: 15%;
+  right: 17.5%;
   border-radius: 0.5rem;
   cursor: pointer;
 `
@@ -532,7 +532,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
         value: route.outAmountWithSlippage / 10 ** tokenB.decimals + ' ' + tokenB.symbol
       },
       {
-        name: 'Fees paid to Serum LP',
+        name: 'Fees paid to ' + (route.marketInfos[0].amm.label || 'GooseFX') + ' LP',
         value: `${totalLp} ${tokenA.symbol} (${percent} %)`,
         extraValue:
           route?.marketInfos?.length > 1 ? `${totalLpB} ${tokenB.symbol} (${percentB}%)` : `0 ${tokenB.symbol} (0%)`
@@ -656,7 +656,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
           </TokenDetail>
           <TokenTitle>{detail.price || null}</TokenTitle>
           {detail.bestPrice && <BestPrice>Best Price</BestPrice>}
-          {detail.fastest && <BestPrice>Fastest</BestPrice>}
+          {detail.fastest && <BestPrice>Best Choice</BestPrice>}
         </AlternativeHeader>
       ))}
       {!less ? (
@@ -691,6 +691,8 @@ export const SwapMain: FC = () => {
     slippage: slippage, // 1% slippage
     debounceTime: 250 // debounce ms time before refresh
   })
+
+  console.log(routes)
 
   useEffect(() => {
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
