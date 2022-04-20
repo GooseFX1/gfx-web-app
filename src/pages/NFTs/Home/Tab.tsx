@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Tabs } from 'antd'
 import { Categories } from '../../../components'
-import { mockAnalyticsDrodown } from './mockData'
 import TabContent from './TabContent'
 const { TabPane } = Tabs
 
@@ -123,7 +122,14 @@ const AnalyticsTabs = ({ allCollections }) => {
     <ANALYTICS_TABS>
       <ANALYTICS_DROPDOWN>
         <span className="title">Weekly Analytics</span>
-        <Categories categories={mockAnalyticsDrodown} className="analytics-dropwdown" onChange={(e) => handleSort(e)} />
+        <Categories
+          categories={[
+            { name: 'High to Low', icon: 'all' },
+            { name: 'Low to High', icon: 'art' }
+          ]}
+          className="analytics-dropwdown"
+          onChange={(e) => handleSort(e)}
+        />
       </ANALYTICS_DROPDOWN>
       <Tabs defaultActiveKey="1" centered>
         <TabPane tab="Floor" key="1">

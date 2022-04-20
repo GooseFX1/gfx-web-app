@@ -24,7 +24,7 @@ export type IAccount = {
   uiAmountString: string
 }
 
-interface IAccounts {
+export interface IAccounts {
   [mint: string]: IAccount
 }
 

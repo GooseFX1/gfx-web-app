@@ -84,7 +84,6 @@
     "not dead",
     "not op_mini all"
   ],
-  "homepage": ".",
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
     "@types/bs58": "^4.0.1",

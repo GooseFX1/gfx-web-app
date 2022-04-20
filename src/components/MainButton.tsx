@@ -29,6 +29,11 @@ const BUTTON = styled.button<{ $height: string; $status: Status; $width: string;
     font-weight: bold;
     color: white;
   }
+
+  &:disabled {
+    background: grey;
+    cursor: not-allowed;
+  }
 `
 
 export const MainButton: FC<{
