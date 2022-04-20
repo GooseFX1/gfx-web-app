@@ -110,7 +110,7 @@ const CTA_BTN = styled(ButtonWrapper)`
   height: 45px;
   min-width: 132px;
   margin-left: ${({ theme }) => theme.margin(1.5)};
-  padding: 0 16px;
+  padding: 0 24px;
 
   span {
     font-weight: 600;
@@ -287,8 +287,13 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
             <SkeletonCommon width="149px" height="45px" borderRadius="45px" />
             <SkeletonCommon width="132px" height="45px" borderRadius="45px" style={{ marginLeft: '20px' }} />
           </div>
-        ) : connected && publicKey ? (
+        ) : (
           <div style={{ display: 'flex' }}>
+            {isCollapsed && (
+              <CONNECT onClick={handleWalletModal}>
+                <span>Connect Wallet</span>
+              </CONNECT>
+            )}
             <SELL onClick={goProfile}>
               <span>Sell</span>
             </SELL>
@@ -296,12 +301,6 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
               <span>Create</span>
             </CREATE>
           </div>
-        ) : isCollapsed ? (
-          <CONNECT onClick={handleWalletModal}>
-            <span>Connect Wallet</span>
-          </CONNECT>
-        ) : (
-          <span></span>
         )}
         {/* {!isHeaderData ? (
           <SkeletonCommon width="132px" height="45px" borderRadius="45px" style={{ marginLeft: '20px' }} />

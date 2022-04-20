@@ -120,7 +120,7 @@ export const Collectible = (): JSX.Element => {
       history.push('/NFTs/create-single')
     } else {
       notify({
-        message: 'A wallt must be connected to mint an NFT',
+        message: 'A wallet must be connected to mint an NFT',
         type: 'error'
       })
     }
