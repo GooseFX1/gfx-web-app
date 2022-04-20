@@ -1,46 +1,46 @@
-# gfx-web-app
+<div align="center">
+  <img height="142" src="https://github.com/GooseFX1/gfx-web-app/blob/dev/public/img/assets/gfx_logo_gradient_lite.svg" />
 
-GooseFX
+  <h4>
+    <a href="https://goosefx.io">Website</a>
+    <span> | </span>
+    <a href="https://docs.goosefx.io">Docs</a>
+    <span> | </span>
+    <a href="https://discord.com/channels/833693973687173121/833742620371058688">Discord</a>
+    <span> | </span>
+    <a href="https://www.t.me/goosefx">Telegram</a>
+    <span> | </span>
+    <a href="https://medium.com/goosefx">Medium</a>
+  </h4>
+  <br />
+  <br />
+</div>
 
-Welcome to GooseFX, an AMM (automated market maker) platform with peer shared yield farming and perpetual swaps and tokenized stocks built on the Solana blockchain and Serum DEX (decentralized exchange).
+GooseFX is a full suite DeFi platform built on the Solana blockchain and Serum DEX, offering a variety of unique decentralized peer-to-peer financial products. We aim to be a complete DeFi experience where you can trade cryptocurrencies, tokenized stocks, futures, NFTs all through one interface while utilizing your capital across all features seamlessly.
 
 Key Features of GooseFX:
 
-- Peer Shared Yield Farming
-- Perpetual Swaps with Margin
-- Tokenized Stocks
-- Options (Exotic + Vanilla) - (TBD)
+- Crypto Trading through the Jupiter Aggregator
+- Decentralized trading of synthetic assets - stocks & crypto
+- NFT Marketplace - Buy, Sell and take loans out against your NFT portfolio
+- First ever single sided liquidity pools on Solana - _Audit in-progress_
+- Decentralized trading of defi derivatives (stocks, crypto, etc.)
+- Variety of decentralized options contracts (exotic + vanilla)
 
-Peer Shared Yield Farming:
-This solves the need for a 1:1 ratio of collateral put up by a single user. Imagine the following scenario:
+For in-depth details, visit the [technical documentation](https://docs.goosefx.io) that elaborates on our tokenomics, features, and roadmap.
 
-User A has 100 ABC token
-User B has 100 XYZ token
+## Details
 
-Instead of having User A buy 100 ABC and 100 XYZ, it matches with another person in the swap pool with 100 ABC and splits the APR 50/50 (or whichever the ratio of said pool is). This way, both upside and downside are shared in a peer to peer decentralized manner.
+This web application is built using React and Typescript. Yarn handles the package management.
 
-# Running Locally:
+Note: Environment variables are needed to develop locally and need to be obtained via a team member. See [CONTRIBUTING.md](https://github.com/GooseFX1/gfx-web-app/blob/dev/CONTRIBUTING.md) for more details.
+
+## Running Locally
 
 ```
-nvm use
-yarn install
-yarn start
+$nvm use
+$yarn install
+$yarn start
 ```
 
-Right now it takes time for the cra dev server to start
-
-# Deploying to staging:
-
-Staging is on test.goosefx.io .
-Merge your branch with the dev branch.
-Ssh into the staging instance `ssh ubuntu@3.23.85.70` and run `./update_frontend.sh`.
-
-# Deploying to production
-
-Ssh into the instance and run `./update_frontend.sh`.
-
-# Adding images and other assets to the website.
-
-We use Cloudfront and S3 as our asset pipeline. Optimize and compress the image and then upload it to the goosefx/assets bucket on s3. Once uploaded the image will be available through the link media.goosefx.io/<image-name>
-
-All Rights Reserved 2021 Copyright.
+All Rights Reserved 2022 Copyright.
