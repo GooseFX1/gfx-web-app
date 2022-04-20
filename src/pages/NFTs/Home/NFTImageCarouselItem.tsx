@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
 import { useHistory } from 'react-router'
-import { COLLECTION_TYPES } from '../../types/nft_collections.d'
+import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
 
 const CAROUSEL_ITEM = styled.div<{ $url: string }>`
   width: 450px;

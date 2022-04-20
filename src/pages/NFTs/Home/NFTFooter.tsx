@@ -1,27 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
-import { useDarkMode } from '../../context'
+import { useDarkMode } from '../../../context'
 import FooterCarousel from './FooterCarousel'
-
-const SUBSCRIBE_NEW_LETTER = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 60px 0 30px 0;
-`
-
+import { SOCIAL_MEDIAS } from '../../../constants'
 const FOOTER_WRAPPER = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: ${({ theme }) => theme.margin(10)};
-`
-
-const SUBSCRIBE_TEXT = styled.span`
-  font-size: 20px;
-  font-weight: 600;
-  text-align: center;
-  color: ${({ theme }) => theme.text1};
 `
 
 const BOTTOM_FOOTER = styled.div<{ mode?: string }>`
@@ -78,7 +63,7 @@ const NFTFooter = () => {
         <FooterCarousel />
         <FOOTER_TEXT size={18}>Never miss any drop again!</FOOTER_TEXT>
         <FOLLOW_US_WRAPPER>
-          <FOLLOW_US_BUTTON href={'https://twitter.com/GooseFX1'} target={'_blank'}>
+          <FOLLOW_US_BUTTON href={SOCIAL_MEDIAS.twitter} target={'_blank'}>
             <span>Follow Us</span>
           </FOLLOW_US_BUTTON>
         </FOLLOW_US_WRAPPER>

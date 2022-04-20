@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 
+// TODO: Refactor to use single button
 export const ButtonWrapper = styled.button`
   border: none;
   padding: 0 12px;

@@ -14,7 +14,7 @@ import { Modal, SuccessfulListingMsg } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { notify } from '../../../utils'
 import { tradeStatePDA, callCancelInstruction, callWithdrawInstruction, tokenSize } from '../actions'
-import { BidModal } from '../OpenBidNFT/BidModal'
+import { BidModal } from './BidModal'
 import {
   AUCTION_HOUSE,
   AUCTION_HOUSE_PREFIX,

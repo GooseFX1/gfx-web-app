@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { ISingleNFT } from '../../types/nft_details.d'
+import { ISingleNFT } from '../../../types/nft_details.d'
 import { Image } from 'antd'
-import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../api/NFTs'
-import { SkeletonCommon } from './Skeleton/SkeletonCommon'
+import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
+import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 const FOOTER_LIST_CARD = styled.div`
   width: 100%;
