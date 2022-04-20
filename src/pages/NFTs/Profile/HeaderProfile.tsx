@@ -185,6 +185,7 @@ export const HeaderProfile = ({ isExplore }: Props) => {
             status="action"
             onClick={handleWithdrawEscrowBalance}
             loading={isLoading}
+            disabled={userEscrowBalance === 0}
           >
             <span className={'btn-text'}>Settle Balance</span>
           </MainButton>
@@ -282,10 +283,10 @@ export const HeaderProfile = ({ isExplore }: Props) => {
       </div>
 
       <div className="action-wrap">
-        {connected && publicKey && userEscrowBalance && userEscrowBalance > 0 ? (
+        {connected && publicKey ? (
           <button className="btn-purple" onClick={() => setSettleBalanceModal(true)}>
             <span>
-              Settle Balance: <strong>{userEscrowBalance.toFixed(2)}</strong>
+              Settle Balance: <strong>{userEscrowBalance ? userEscrowBalance.toFixed(2) : 0}</strong>
             </span>
           </button>
         ) : (
