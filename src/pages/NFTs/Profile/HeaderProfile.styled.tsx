@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { Dropdown, Menu } from 'antd'
+import { Modal } from '../../../components'
 
 export const StyledHeaderProfile = styled.div<{ mode?: string }>`
   ${({ theme, mode }) => `
@@ -100,7 +101,7 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
     margin-left: auto;
     display: flex;
     justify-content: flex-end;
-    align-items: center;
+    align-items: end;
 
     .btn-create {
       color: ${theme.white};
@@ -116,6 +117,19 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
     .btn-create2 {
       background-color: #bb3535;
       margin-right: 10px;
+    }
+    .btn-purple {
+      height: 43px;
+      min-width: 132px;
+      font-size: 17px;
+      font-weight: 700;
+      padding: 0 16px;
+      margin-right: 12px;
+      color: ${theme.white};
+      background-color: ${theme.secondary3};
+      border: none;
+      cursor: pointer;
+      ${theme.roundedBorders}
     }
   }
 `}
@@ -164,4 +178,45 @@ export const StyledMenu = styled(Menu)`
     content: '';
   }
 `}
+`
+
+export const SETTLE_BALANCE_MODAL = styled(Modal)`
+  &.ant-modal {
+    width: 501px !important;
+  }
+
+  .ant-modal-body {
+    padding: ${({ theme }) => theme.margin(4.5)};
+  }
+
+  .modal-close-icon {
+    width: 22px;
+    height: 22px;
+    position: absolute;
+    right: 32px;
+  }
+
+  .bm-title {
+    color: ${({ theme }) => theme.text1};
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .bm-title-bold {
+    font-weight: 600;
+  }
+
+  div,
+  h3 {
+    color: ${({ theme }) => theme.text1};
+  }
+
+  .btn-text {
+    font-weight: 700;
+    font-size: 17px;
+  }
+`
+
+export const MARGIN_VERTICAL = styled.div`
+  margin: 24px 0;
 `

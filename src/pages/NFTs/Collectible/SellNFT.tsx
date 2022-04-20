@@ -39,7 +39,7 @@ import {
   StringPublicKey,
   bnTo8
 } from '../../../web3'
-import { dataFormRow2, dataFormFixedRow2 } from './mockData'
+// import { dataFormRow2 } from './data'
 // import { Donate } from '../Form/Donate'
 // const dataDonate = {
 //   desc: 'We will donate a percentage of the total price for people in need.',
