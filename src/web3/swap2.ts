@@ -352,7 +352,6 @@ export const preSwapAmount = async (
 
     const decoded = PAIR_LAYOUT.decode(pairData.data)
     const { oracles, nOracle } = decoded
-    //const oracles = [oracle1, oracle2, oracle3, oracle4]
     const registry = new OracleRegistry()
     for (const oracle of oracles.slice(0, nOracle)) {
       for (const elem of oracle.elements.slice(0, oracle.n)) {
