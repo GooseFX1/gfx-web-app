@@ -22,8 +22,11 @@ const CoinGeckoClient = new CoinGecko()
 
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
-  height: calc(100vh - 81px);
+  min-height: calc(100vh - 81px);
   width: 100vw;
+  font-family: Montserrat;
+  font-stretch: normal;
+  font-style: normal;
 `
 
 const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
@@ -54,8 +57,11 @@ const BODY = styled.div`
 
 const HEADER_TITLE = styled.span`
   font-weight: 600;
-  font-size: 30px;
-  line-height: 37px;
+  font-size: 20px;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  font-family: Montserrat;
   color: ${({ theme }) => theme.text1};
 `
 
@@ -64,6 +70,7 @@ const TOKEN_WRAPPER = styled.div`
   align-items: center;
   height: 100%;
   width: 400px;
+  font-family: 'Montserrat';
   padding: ${({ theme }) => theme.margin(4)};
   border-radius: 0px 20px 20px 0px;
   background: ${({ theme }) => theme.swapSides1};
@@ -115,7 +122,7 @@ const AlternativeHeader = styled.div<{ $clicked?: boolean }>`
     $clicked ? 'linear-gradient(90deg, rgba(247, 147, 26, 0.1) 0%, rgba(220, 31, 255, 0.1) 100%)' : theme.bg9};
   border-color: ${({ theme, $clicked }) =>
     $clicked ? 'linear-gradient(90deg, rgba(247, 147, 26, 0.1) 0%, rgba(220, 31, 255, 0.1) 100%)' : theme.bg9};
-  min-width: 350px !important;
+  min-width: 300px !important;
   height: 100px;
   justify-content: center;
   align-items: center;
@@ -168,6 +175,7 @@ const PRICE_WRAPPER = styled.div`
   align-items: center;
   height: 100%;
   width: 400px;
+  font-family: Montserrat;
   border-radius: 20px 0px 0px 20px;
   padding: ${({ theme }) => theme.margin(4)};
   background: ${({ theme }) => theme.swapSides2};
@@ -179,9 +187,11 @@ const ALTERNATIVE_WRAPPER = styled.div<{ $less: boolean }>`
   position: relative;
   align-items: flex-end;
   width: 95%;
-  justify-content: ${({ $less }) => ($less ? 'center' : 'space-around')};
+
+  justify-content: ${({ $less }) => ($less ? 'center' : 'space-between')};
   margin-left: 2.5%;
   margin-top: 2.5%;
+  padding: 2.5%;
   overflow-x: auto;
   height: 20%;
 `
@@ -189,12 +199,12 @@ const ALTERNATIVE_WRAPPER = styled.div<{ $less: boolean }>`
 const BestPrice = styled.div`
   position: absolute;
   font-size: 12px;
-  margin-top: -85px;
-  margin-left: 300px;
+  margin-top: -90px;
+  margin-left: 230px;
   width: 85px;
   text-align: center;
   padding: 0.25rem;
-  border-radius: 0.5rem;
+  border-radius: 0.35rem;
   background-color: ${({ theme }) => theme.text3};
 `
 
@@ -202,7 +212,7 @@ const ShowLess = styled.div`
   position: absolute;
   font-size: 18px;
   top: 0px;
-  right: 0px;
+  right: 2.5%;
   border-radius: 0.5rem;
   cursor: pointer;
 `
@@ -210,7 +220,7 @@ const ShowLess = styled.div`
 const ShowMore = styled.div`
   position: absolute;
   font-size: 18px;
-  top: 50%;
+  top: 47.5%;
   right: 17.5%;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -325,7 +335,15 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
     setSettingsModalVisible(true)
   }
 
-  const height = '80px'
+  const dateString = (date: Date) => {
+    let datestring = date.toString().split(' ')
+    let month = datestring[1]
+    let day = datestring[2]
+    let time = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    return `${month} ${day}, ${time}`
+  }
+
+  const height = '65px'
   const localCSS = css`
     .swap-input {
       height: ${height};
@@ -353,7 +371,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
       </SETTING_MODAL>
       <HEADER_WRAPPER $iconSize="40px">
         <HEADER_TITLE>
-          Swap <img src={`/img/crypto/Jupiter.svg`} alt="jupiter-icon" className={'jup-icon'} />
+          {dateString(new Date())} <img src={`/img/crypto/Jupiter.svg`} alt="jupiter-icon" className={'jup-icon'} />
         </HEADER_TITLE>
 
         <div>
@@ -604,7 +622,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   clickNo,
   routes
 }) => {
-  const { tokenA, tokenB } = useSwap()
+  const { tokenA, tokenB, setOutTokenAmount } = useSwap()
   const [tokens, setTokens] = useState([])
   const [details, setDetails] = useState([])
 
@@ -631,13 +649,14 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
             ' to ' +
             tokenB.symbol
       const out = +(route.outAmount / 10 ** tokenB.decimals).toFixed(3)
+      const outAmount = +(route.outAmount / 10 ** tokenB.decimals).toFixed(7)
 
       if (no === 0) {
-        return { name, value, price: out, bestPrice: true }
+        return { name, value, price: out, outAmount, bestPrice: true }
       } else if (no === 1) {
-        return { name, value, price: out, fastest: true }
+        return { name, value, price: out, outAmount, fastest: true }
       }
-      return { name, value, price: out }
+      return { name, value, price: out, outAmount }
     }
 
     const details = routes.map((_, k) => getObjectDetails(k))
@@ -649,7 +668,13 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   return (
     <ALTERNATIVE_WRAPPER $less={less}>
       {(!less ? details : details.slice(0, 2)).map((detail, k) => (
-        <AlternativeHeader $clicked={k === clickNo} onClick={() => setClickNo(k)}>
+        <AlternativeHeader
+          $clicked={k === clickNo}
+          onClick={() => {
+            setClickNo(k)
+            setOutTokenAmount(detail.outAmount || null)
+          }}
+        >
           <TokenDetail>
             <TokenTitle>{detail.name}</TokenTitle>
             <AltSmallTitle>{detail.value}</AltSmallTitle>

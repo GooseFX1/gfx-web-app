@@ -85,9 +85,9 @@ const MAGNIFYING_GLASS = styled(CenteredImg)`
 const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
   position: absolute;
   height: ${({ $height }) => $height};
-  height: 90%;
+  height: 85%;
   width: 35%;
-  margin: 0.25rem;
+  margin: 0.9% 0.25rem 0.9% 0.25rem;
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => '#2a2a2a'};
   cursor: pointer;
