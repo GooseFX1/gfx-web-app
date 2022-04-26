@@ -16,6 +16,7 @@ enum State {
 const SWAP_BUTTON = styled(MainButton)`
   width: 220px;
   padding: 0 32px;
+  background-color: #5855ff;
 `
 
 const TEXT = styled.span`
