@@ -423,7 +423,7 @@ export const UpLoadNFT = (): JSX.Element => {
           className="upload-NFT-back-icon"
           src={`/img/assets/arrow.svg`}
           alt="back"
-          onClick={() => history.push('/NFTs/create')}
+          onClick={(e) => history.goBack()}
         />
         <UPLOAD_FIELD_CONTAINER>
           <UPLOAD_INFO_CONTAINER>
