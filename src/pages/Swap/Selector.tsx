@@ -3,7 +3,7 @@ import { Input } from 'antd'
 import styled from 'styled-components'
 import { ArrowClickerWhite, Modal } from '../../components'
 import { ISwapToken, useTokenRegistry, useDarkMode } from '../../context'
-import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite, SpaceEvenlyDiv } from '../../styles'
+import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
 
 const BODY = styled.div`
   height: 33vh;
@@ -13,7 +13,8 @@ const BODY = styled.div`
 
 const CLICKER = styled(SpaceBetweenDiv)`
   position: relative;
-  width: 67%;
+  width: 100%;
+  padding: ${({ theme }) => theme.margin(1.5)};
   align-items: flex-center;
   color: ${({ theme }) => theme.white};
 
@@ -23,20 +24,20 @@ const CLICKER = styled(SpaceBetweenDiv)`
 `
 const MainTokenDisplay = styled.div`
   height: 100%;
-  width: 85% !important;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-between;
 
   .text-primary {
     font-weight: 600;
     font-size: 18px;
     line-height: 22px;
+    padding-left: ${({ theme }) => theme.margin(1)};
   }
 `
 
 const CLICKER_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(5))}
+  ${({ theme }) => theme.measurements(theme.margin(4))}
   margin-right: ${({ theme }) => theme.margin(0.5)};
   ${({ theme }) => theme.roundedBorders}
 `
@@ -84,9 +85,10 @@ const MAGNIFYING_GLASS = styled(CenteredImg)`
 
 const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
   position: absolute;
-  height: ${({ $height }) => $height};
-  height: 85%;
-  width: 35%;
+  top: 2px;
+  left: 4px;
+  height: 50px;
+  width: 164px;
   margin: 0.9% 0.25rem 0.9% 0.25rem;
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => '#2a2a2a'};
@@ -189,16 +191,16 @@ export const Selector: FC<{
           ))}
         </BODY>
       </Modal>
-      <SELECTOR $height={height} onClick={() => setVisible(true)}>
+      <SELECTOR $height={height} onClick={(e) => setVisible(true)}>
         <CLICKER>
           {token ? (
             <MainTokenDisplay>
-              <SpaceEvenlyDiv>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
                 <CLICKER_ICON>
                   <img src={`/img/crypto/${token.symbol}.svg`} alt="" />
                 </CLICKER_ICON>
                 <span className={'text-primary'}>{token.symbol}</span>
-              </SpaceEvenlyDiv>
+              </div>
             </MainTokenDisplay>
           ) : (
             <EmptyMessage>Select a token</EmptyMessage>
