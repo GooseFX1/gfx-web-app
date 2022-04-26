@@ -107,7 +107,7 @@ const PILL_SECONDARY = styled.div`
     font-weight: 600;
     font-size: 15px;
     line-height: 18px;
-    background: #4848488f;
+    background: #3c3b3ba6;
     border-radius: 50px;
     filter: drop-shadow(0px 6px 9px rgba(36, 36, 36, 0.15));
   }
