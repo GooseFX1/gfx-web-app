@@ -14,8 +14,9 @@ enum State {
 }
 
 const SWAP_BUTTON = styled(MainButton)`
-  min-width: 170px;
+  width: 220px;
   padding: 0 32px;
+  background-color: #5855ff;
 `
 
 const TEXT = styled.span`
@@ -81,7 +82,7 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
   )
 
   return (
-    <SWAP_BUTTON height="50px" loading={loading} status={buttonStatus} onClick={handleClick}>
+    <SWAP_BUTTON height="56px" loading={loading} status={buttonStatus} onClick={handleClick}>
       <TEXT>{content}</TEXT>
     </SWAP_BUTTON>
   )
