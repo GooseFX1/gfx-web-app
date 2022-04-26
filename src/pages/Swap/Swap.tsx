@@ -9,13 +9,13 @@ import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
 import { Modal } from '../../components'
 import { useDarkMode, useSwap, SwapProvider, useSlippageConfig, ENDPOINTS, useConnectionConfig } from '../../context'
-import { CenteredImg, SpaceBetweenDiv } from '../../styles'
+import { CenteredImg, SpaceBetweenDiv, CenteredDiv, SVGDynamicReverseMode } from '../../styles'
 import { JupiterProvider, useJupiter } from '@jup-ag/react-hook'
 import { PublicKey } from '@solana/web3.js'
 import { TOKEN_LIST_URL } from '@jup-ag/core'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ILocationState } from '../../types/app_params.d'
-import { notify, moneyFormatter } from '../../utils'
+import { notify, moneyFormatter, nFormatter } from '../../utils'
 
 const CoinGecko = require('coingecko-api')
 const CoinGeckoClient = new CoinGecko()
@@ -32,7 +32,7 @@ const WRAPPER = styled.div`
 const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
   display: flex;
   max-height: 80%;
-  margin-top: 10%;
+  padding-top: 10%;
   justify-content: ${({ $desktop }) => ($desktop ? 'space-between' : 'space-around')};
   align-items: center;
   color: ${({ theme }) => theme.text1};
@@ -55,26 +55,25 @@ const BODY = styled.div`
   ${({ theme }) => theme.measurements('100%')}
 `
 
-const HEADER_TITLE = styled.span`
-  font-weight: 600;
-  font-size: 20px;
-  line-height: normal;
-  letter-spacing: normal;
-  text-align: center;
-  font-family: Montserrat;
-  color: ${({ theme }) => theme.text1};
+const HEADER_TITLE = styled(CenteredDiv)`
+  span {
+    font-weight: 600;
+    font-size: 20px;
+    font-family: Montserrat;
+    color: ${({ theme }) => theme.text1};
+  }
 `
 
 const TOKEN_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   align-items: center;
-  height: 100%;
-  width: 400px;
+  min-height: 527px;
+  width: 326px;
   font-family: 'Montserrat';
-  padding: ${({ theme }) => theme.margin(4)};
+  padding: ${({ theme }) => theme.margin(3)};
+  padding-left: ${({ theme }) => theme.margin(4)};
   border-radius: 0px 20px 20px 0px;
   background: ${({ theme }) => theme.swapSides1};
-
   ${({ theme }) => theme.largeShadow}
 `
 
@@ -112,30 +111,48 @@ const SmallerTitle = styled.div`
 const TokenHeader = styled.div`
   display: flex;
   width: 100%;
-  padding: 1rem;
 `
 
-const AlternativeHeader = styled.div<{ $clicked?: boolean }>`
-  display: flex;
-  border-radius: 20px;
-  background: ${({ theme, $clicked }) =>
-    $clicked ? 'linear-gradient(90deg, rgba(247, 147, 26, 0.1) 0%, rgba(220, 31, 255, 0.1) 100%)' : theme.bg9};
-  border-color: ${({ theme, $clicked }) =>
-    $clicked ? 'linear-gradient(90deg, rgba(247, 147, 26, 0.1) 0%, rgba(220, 31, 255, 0.1) 100%)' : theme.bg9};
+const AlternativeHeader = styled.div<{ $clicked?: boolean; $cover: string }>`
   min-width: 300px !important;
   height: 100px;
-  justify-content: center;
-  align-items: center;
-  padding: 0.75rem;
-  margin: 0.75rem;
+  border-radius: 15px;
+  padding: 1px;
+  margin-right: ${({ theme }) => theme.margin(3.5)};
+  background: ${({ theme, $clicked }) =>
+    $clicked ? 'linear-gradient(90deg,rgba(247,147,26,0.5) 0%,rgba(220,31,255,0.5) 100%)' : theme.bg1};
+  box-shadow: 0 6px 9px 0 rgba(36, 36, 36, 0.1);
   cursor: pointer;
+
+  .inner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    background: ${({ theme, $clicked, $cover }) => ($clicked ? $cover : 'transparent')};
+    border-radius: 15px;
+    padding: ${({ theme }) => theme.margin(2)};
+
+    .content {
+      width: 67%;
+
+      div {
+        ${({ theme }) => theme.ellipse}
+      }
+    }
+    .price {
+      margin-left: 4px;
+      width: 30%;
+    }
+  }
 `
 
 const TokenDetail = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 1rem;
+  padding: ${({ theme }) => theme.margin(1.5)} 0;
 `
 
 const SubHeader = styled.div`
@@ -147,20 +164,20 @@ const Socials = styled.div`
   display: flex;
   justify-content: space-around;
   width 90%;
-  margin-top: 3rem;
+  margin-top: auto;
 `
 
 const SocialsButton = styled.div`
   background-color: ${({ theme }) => theme.bg12};
   color: ${({ theme }) => theme.text14};
-  padding: 0.5rem 1rem 0.5rem 1rem;
+  padding: ${({ theme }) => theme.margin(0.5)} ${({ theme }) => theme.margin(1.5)};
   border-radius: 1rem;
   font-size: 12px;
   cursor: pointer;
 `
 
 const CLICKER_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(6))}
+  ${({ theme }) => theme.measurements(theme.margin(5))}
   margin-right: ${({ theme }) => theme.margin(0.5)};
   ${({ theme }) => theme.roundedBorders}
 `
@@ -174,10 +191,10 @@ const PRICE_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   align-items: center;
   height: 100%;
-  width: 400px;
+  width: 326px;
   font-family: Montserrat;
   border-radius: 20px 0px 0px 20px;
-  padding: ${({ theme }) => theme.margin(4)};
+  padding: ${({ theme }) => theme.margin(3)};
   background: ${({ theme }) => theme.swapSides2};
   ${({ theme }) => theme.largeShadow}
 `
@@ -229,7 +246,6 @@ const ShowMore = styled.div`
 const PriceHeader = styled.div`
   display: flex;
   width: 100%;
-  padding: 1rem;
   align-items: center;
 `
 
@@ -241,7 +257,6 @@ const PriceHeader = styled.div`
 const PriceTitle = styled.div`
   font-weight: 600;
   font-size: 22px;
-  margin-right: 1rem;
   background: linear-gradient(90.25deg, #f7931a 2.31%, #dc1fff 99.9%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -263,13 +278,13 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)<{ $iconSize: string }>`
   }
 
   .jup-icon {
-    height: 25px;
+    height: 22px;
+    margin-left: ${({ theme }) => theme.margin(1)};
   }
 
   .smaller-header-icon {
-    height: 24px;
-    width: 24px;
-    margin-top: 5px;
+    height: 40px;
+    width: 40px;
     cursor: pointer;
   }
 `
@@ -279,17 +294,20 @@ const SETTING_WRAPPER = styled(CenteredImg)`
   height: 40px;
   width: 40px;
   border-radius: 50%;
-  padding: 0.5rem;
-  background-color: ${({ theme }) => theme.bg10};
 `
 
 const SWITCH = styled(CenteredImg)<{ measurements: number }>`
   position: absolute;
-  top: calc(50% - ${({ measurements }) => measurements}px / 2 + ${({ theme }) => theme.margin(2)});
+  top: calc(50% - ${({ measurements }) => measurements}px / 2 + ${({ theme }) => theme.margin(3)});
   left: calc(50% - ${({ measurements }) => measurements}px / 2);
   ${({ measurements, theme }) => theme.measurements(measurements + 'px')}
-  z-index: 1;
   cursor: pointer;
+  z-index: 1;
+
+  .swap-switch {
+    height: auto;
+    width: auto;
+  }
 `
 
 const SWAP_CONTENT = styled.div`
@@ -344,6 +362,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
   }
 
   const height = '65px'
+
   const localCSS = css`
     .swap-input {
       height: ${height};
@@ -371,7 +390,8 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
       </SETTING_MODAL>
       <HEADER_WRAPPER $iconSize="40px">
         <HEADER_TITLE>
-          {dateString(new Date())} <img src={`/img/crypto/Jupiter.svg`} alt="jupiter-icon" className={'jup-icon'} />
+          <span>{dateString(new Date())}</span>
+          <img src={`/img/crypto/jup_${mode}.svg`} alt="jupiter-icon" className={'jup-icon'} />
         </HEADER_TITLE>
 
         <div>
@@ -394,7 +414,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
             switchTokens()
           }}
         >
-          <img src={`/img/assets/swap_switch_${mode}_mode.svg`} alt="switch" />
+          <img className={`swap-switch`} src={`/img/assets/swap_switch.svg`} alt="switch" />
         </SWITCH>
         <SwapTo height={height} />
       </BODY>
@@ -544,16 +564,18 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
     setOutAmount(out)
 
     const priceDetails = [
-      { name: 'Price Impact', value: '<' + +route.priceImpactPct.toFixed(6) + '%' },
+      { name: 'Price Impact', value: `< ${route.priceImpactPct.toFixed(6)}%` },
       {
         name: 'Minimum Received',
-        value: route.outAmountWithSlippage / 10 ** tokenB.decimals + ' ' + tokenB.symbol
+        value: `${nFormatter(route.outAmountWithSlippage / 10 ** tokenB.decimals, tokenB.decimals)} ${tokenB.symbol}`
       },
       {
-        name: 'Fees paid to ' + (route.marketInfos[0].amm.label || 'GooseFX') + ' LP',
-        value: `${totalLp} ${tokenA.symbol} (${percent} %)`,
+        name: `Fees paid to ${route.marketInfos[0].amm.label || 'GooseFX'} LP`,
+        value: `${nFormatter(totalLp, tokenA.decimals)} ${tokenA.symbol} (${percent} %)`,
         extraValue:
-          route?.marketInfos?.length > 1 ? `${totalLpB} ${tokenB.symbol} (${percentB}%)` : `0 ${tokenB.symbol} (0%)`
+          route?.marketInfos?.length > 1
+            ? `${nFormatter(totalLpB, tokenB.decimals)} ${tokenB.symbol} (${percentB}%)`
+            : `0 ${tokenB.symbol} (0%)`
       },
       { name: 'Transaction fee', value: '0.00005 SOL', icon: 'info' }
     ]
@@ -579,10 +601,9 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
       <TokenDetail>
         <TokenTitle>Rate</TokenTitle>
         <SmallTitleFlex>
-          {' '}
           <SMALL_CLICKER_ICON>
             <img src={`/img/crypto/${tokenA.symbol}.svg`} alt="" />
-          </SMALL_CLICKER_ICON>{' '}
+          </SMALL_CLICKER_ICON>
           {inTokenAmount} {tokenA.symbol} ≈{'  '}
           <SMALL_CLICKER_ICON style={{ marginLeft: '0.5rem' }}>
             <img src={`/img/crypto/${tokenB.symbol}.svg`} alt="" />
@@ -601,7 +622,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
           <TokenTitle>
             {detail.name}{' '}
             {detail.icon && (
-              <img
+              <SVGDynamicReverseMode
                 style={{ height: '12px', width: '12px' }}
                 src={`/img/crypto/${detail.icon}.svg`}
                 alt="jupiter-icon"
@@ -622,6 +643,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   clickNo,
   routes
 }) => {
+  const { mode } = useDarkMode()
   const { tokenA, tokenB, setOutTokenAmount } = useSwap()
   const [tokens, setTokens] = useState([])
   const [details, setDetails] = useState([])
@@ -670,18 +692,21 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
       {(!less ? details : details.slice(0, 2)).map((detail, k) => (
         <AlternativeHeader
           $clicked={k === clickNo}
+          $cover={mode === 'dark' ? '#3c3b3ba6' : '#ffffffa6'}
           onClick={() => {
             setClickNo(k)
             setOutTokenAmount(detail.outAmount || null)
           }}
         >
-          <TokenDetail>
-            <TokenTitle>{detail.name}</TokenTitle>
-            <AltSmallTitle>{detail.value}</AltSmallTitle>
-          </TokenDetail>
-          <TokenTitle>{detail.price || null}</TokenTitle>
-          {detail.bestPrice && <BestPrice>Best Price</BestPrice>}
-          {detail.fastest && <BestPrice>Best Choice</BestPrice>}
+          <div className={'inner-container'}>
+            <TokenDetail className={'content'}>
+              <TokenTitle>{detail.name}</TokenTitle>
+              <AltSmallTitle>{detail.value}</AltSmallTitle>
+            </TokenDetail>
+            <TokenTitle className={'price'}>{detail.price || null}</TokenTitle>
+            {detail.bestPrice && <BestPrice>Best Price</BestPrice>}
+            {detail.fastest && <BestPrice>Best Choice</BestPrice>}
+          </div>
         </AlternativeHeader>
       ))}
       {!less ? (
