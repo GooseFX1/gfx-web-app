@@ -5,7 +5,8 @@ export const FieldHeader = styled.span`
   width: 100%;
   margin-bottom: ${({ theme }) => theme.margin(0.5)};
   padding: 0 ${({ theme }) => theme.margin(0.5)};
-  font-size: 11px;
+  font-size: 15px;
+  font-weight: 600;
   text-align: left;
   color: ${({ theme }) => theme.text2};
 `
