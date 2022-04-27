@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Tooltip } from '../../components/Tooltip'
-import { moneyFormatter } from '../../utils/math'
+import { moneyFormatter, nFormatter } from '../../utils/math'
 
 export const STYLED_TITLE = styled.div`
   display: flex;
@@ -101,10 +101,12 @@ export const columns = [
   },
   {
     title: Title('Balance', '', true),
-    dataIndex: 'Balance',
+    dataIndex: 'currentlyStaked',
     key: 'Balance',
     width: '20%',
-    render: (text) => <div className="liquidity normal-text">{text ? `$ ${moneyFormatter(text)}` : 0.0}</div>
+    render: (text) => {
+      return <div className="liquidity normal-text"> {text ? `${moneyFormatter(text)}` : 0.0}</div>
+    }
   },
   {
     title: Title('Total Earned', '', true),
@@ -118,7 +120,7 @@ export const columns = [
     dataIndex: 'apr',
     key: 'apr',
     width: '20%',
-    render: (text) => <div className="apr normal-text">{`${(text * 100).toFixed(2)}%`}</div>
+    render: (text) => <div className="apr normal-text">{`${text.toFixed(2)}%`}</div>
   },
   {
     title: Title('Liquidity', "Total value of funds in this farm's liquidity pool.", true),

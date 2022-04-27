@@ -9,12 +9,21 @@ import {
   successfulMessage,
   errorHandlingMessage,
   genericErrMsg,
+  sslSuccessfulMessage,
+  sslErrorMessage,
   insufficientSOLMsg,
   invalidInputErrMsg
 } from './FarmClickHandler'
 import { notify } from '../../utils'
-import { useTokenRegistry, useAccounts, useConnectionConfig, usePriceFeed } from '../../context'
-import { executeStake, executeUnstakeAndClaim } from '../../web3'
+import { useTokenRegistry, useAccounts, useConnectionConfig, usePriceFeed, useFarmContext } from '../../context'
+import {
+  executeStake,
+  executeUnstakeAndClaim,
+  executeDeposit,
+  executeWithdraw,
+  executeMint,
+  executeBurn
+} from '../../web3'
 import { Collapse } from 'antd'
 import { SSLButtons, StakeButtons } from './ExpandedButtons'
 import DisplayRowData from './DisplayRowData'
@@ -258,13 +267,20 @@ const STYLED_INPUT = styled.input`
 interface IExpandedContent {
   rowData: any
   stakeProgram: Program | undefined
+  SSLProgram: Program | undefined
   stakeAccountKey: PublicKey | undefined
   onExpandIcon: any
 }
 
 const DISPLAY_DECIMAL = 3
 
-export const ExpandedDynamicContent = ({ rowData, stakeProgram, onExpandIcon, stakeAccountKey }: IExpandedContent) => {
+export const ExpandedDynamicContent = ({
+  rowData,
+  stakeProgram,
+  SSLProgram,
+  onExpandIcon,
+  stakeAccountKey
+}: IExpandedContent) => {
   const { name, image, earned, currentlyStaked, type } = rowData
   const { getUIAmount } = useAccounts()
   const { publicKey } = useWallet()
@@ -273,7 +289,7 @@ export const ExpandedDynamicContent = ({ rowData, stakeProgram, onExpandIcon, st
   const wallet = useWallet()
   const { prices } = usePriceFeed()
   const { connection } = useConnectionConfig()
-
+  const { showDeposited, toggleDeposited } = useFarmContext()
   const [isStakeLoading, setIsStakeLoading] = useState<boolean>(false)
   const [isUnstakeLoading, setIsUnstakeLoading] = useState<boolean>(false)
   const [tokenStaked, setTokenStaked] = useState<number>(parseFloat(currentlyStaked))
@@ -291,11 +307,15 @@ export const ExpandedDynamicContent = ({ rowData, stakeProgram, onExpandIcon, st
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
     [tokenInfo, getUIAmount, publicKey]
   )
-
   const getSuccessUnstakeMsg = (): string => `Successfully Unstaked amount of ${unstakeRef.current.value} ${name}!`
   const getSuccessStakeMsg = (): string => `Successfully staked amount of ${stakeRef.current.value} ${name}!`
   const getErrStakeMsg = (): string => `Staking ${name} error!`
   const getErrUntakeMsg = (): string => `Unstaking ${name} error!`
+  const Mint = `Mint`
+  const Burn = `Burn`
+  const Deposit = `Deposit`
+  const Withdraw = `Withdraw`
+  //const youDeposit
 
   const fiatStakedAmount = useMemo(() => {
     const price = prices[name + '/USDC']
@@ -324,18 +344,119 @@ export const ExpandedDynamicContent = ({ rowData, stakeProgram, onExpandIcon, st
     return true
   }
 
-  const onClickStake = (): void => {
+  const checkBasicConditions = (amt?: number | undefined): boolean => {
+    if (!enoughSOLInWallet()) return true
     if (
       isNaN(parseFloat(stakeRef.current.value)) ||
       parseFloat(stakeRef.current.value) < 0.000001 ||
-      parseFloat(stakeRef.current.value) - 0.001 > userTokenBalance
+      parseFloat(stakeRef.current.value) - 0.0001 > userTokenBalance
     ) {
       stakeRef.current.value = 0
-      notify(invalidInputErrMsg(userTokenBalance, name))
-      return
+      notify(invalidInputErrMsg(amt ? amt : userTokenBalance, name))
+      return true
     }
-    if (!enoughSOLInWallet()) return
+    return false
+  }
 
+  const onClickMint = (): void => {
+    setIsUnstakeLoading(true)
+    const amount = parseFloat(unstakeRef.current.value)
+    try {
+      const confirm = executeMint(SSLProgram, wallet, connection, network, name, amount).then((con) => {
+        setIsUnstakeLoading(false)
+        const { confirm, signature } = con
+        if (confirm && confirm?.value && confirm.value.err === null) {
+          notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Mint))
+          toggleDeposited((prev) => !prev)
+        } else {
+          const { signature, error } = con
+          notify(sslErrorMessage(name, error.message, signature, network, Mint))
+          return
+        }
+      })
+    } catch (err) {
+      setIsUnstakeLoading(false)
+      notify(genericErrMsg(err))
+    }
+  }
+  const onClickBurn = (): void => {
+    const amount = parseFloat(unstakeRef.current.value)
+    setIsUnstakeLoading(true)
+    try {
+      const confirm = executeBurn(SSLProgram, wallet, connection, network, name, amount).then((con) => {
+        setIsUnstakeLoading(false)
+        const { confirm, signature } = con
+        if (confirm && confirm?.value && confirm.value.err === null) {
+          notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Burn))
+          toggleDeposited((prev) => !prev)
+        } else {
+          const { signature, error } = con
+          notify(sslErrorMessage(name, error.message, signature, network, Burn))
+          return
+        }
+      })
+    } catch (err) {
+      setIsUnstakeLoading(false)
+      notify(genericErrMsg(err))
+    }
+  }
+  const onClickWithdraw = (amount: number): void => {
+    setIsUnstakeLoading(true)
+
+    try {
+      const confirm = executeWithdraw(SSLProgram, wallet, connection, network, name, amount).then((con) => {
+        setIsUnstakeLoading(false)
+        const { confirm, signature } = con
+        if (confirm && confirm?.value && confirm.value.err === null) {
+          notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Withdraw))
+          toggleDeposited((prev) => !prev)
+        } else {
+          const { signature, error } = con
+          notify(sslErrorMessage(name, error.message, signature, network, Withdraw))
+          return
+        }
+      })
+    } catch (err) {
+      setIsUnstakeLoading(false)
+      notify(genericErrMsg(err))
+    }
+  }
+  const onClickDeposit = (): void => {
+    if (checkBasicConditions()) return
+    const amount = parseFloat(stakeRef.current.value)
+    try {
+      setIsStakeLoading(true)
+      const confirm = executeDeposit(
+        SSLProgram,
+        wallet,
+        connection,
+        network,
+        parseFloat(stakeRef.current.value) - 0.0,
+        name
+      )
+      confirm.then((con) => {
+        setIsStakeLoading(false)
+        //@ts-ignore
+        const { confirm, signature } = con
+        if (confirm && confirm?.value && confirm.value.err === null) {
+          notify(sslSuccessfulMessage(signature, amount, name, network, Deposit))
+          updateStakedValue()
+          toggleDeposited((prev) => !prev)
+          setTimeout(() => (stakeRef.current.value = 0), 500)
+        } else {
+          //@ts-ignore
+          const { signature, error } = con
+          notify(sslErrorMessage(name, error?.message, signature, network, Deposit))
+          return
+        }
+      })
+    } catch (error) {
+      setIsStakeLoading(false)
+      notify(genericErrMsg(error))
+    }
+  }
+  const onClickStake = (): void => {
+    if (checkBasicConditions()) return
     try {
       setIsStakeLoading(true)
       const confirm = executeStake(
@@ -352,6 +473,7 @@ export const ExpandedDynamicContent = ({ rowData, stakeProgram, onExpandIcon, st
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(successfulMessage(getSuccessStakeMsg(), signature, stakeRef.current.value, name, network))
           updateStakedValue()
+          toggleDeposited((prev) => !prev)
           setTimeout(() => (stakeRef.current.value = 0), 500)
         } else {
           const { signature, error } = con
@@ -389,7 +511,7 @@ export const ExpandedDynamicContent = ({ rowData, stakeProgram, onExpandIcon, st
         if (confirm && confirm?.value && confirm.value.err === null) {
           updateStakedValue()
           notify(successfulMessage(getSuccessUnstakeMsg(), signature, unstakeRef.current.value, name, network))
-
+          toggleDeposited((prev) => !prev)
           if (parseFloat(unstakeRef.current.value) > tokenStaked) {
             const val = tokenEarned - (parseFloat(unstakeRef.current.value) - tokenStaked)
             setTokenEarned(val <= 0 ? 0 : val)
@@ -409,7 +531,6 @@ export const ExpandedDynamicContent = ({ rowData, stakeProgram, onExpandIcon, st
     }
   }
   const onClickHalf = (buttonId: string): void => {
-    // console.log(stakeRef.current.value);
     if (buttonId === 'stake') stakeRef.current.value = (userTokenBalance / 2).toFixed(DISPLAY_DECIMAL)
     else unstakeRef.current.value = ((tokenStaked + tokenEarned) / 2).toFixed(DISPLAY_DECIMAL)
   }
@@ -417,7 +538,6 @@ export const ExpandedDynamicContent = ({ rowData, stakeProgram, onExpandIcon, st
     if (buttonId === 'stake') stakeRef.current.value = userTokenBalance.toFixed(DISPLAY_DECIMAL)
     else unstakeRef.current.value = (tokenStaked + tokenEarned).toFixed(DISPLAY_DECIMAL)
   }
-
   return (
     <STYLED_EXPANDED_ROW>
       <div>
@@ -432,8 +552,12 @@ export const ExpandedDynamicContent = ({ rowData, stakeProgram, onExpandIcon, st
               unstakeRef={unstakeRef}
               onClickHalf={onClickHalf}
               onClickMax={onClickMax}
-              onClickStake={onClickStake}
-              onClickUnstake={onClickUnstake}
+              onClickDeposit={onClickDeposit}
+              onClickWithdraw={onClickWithdraw}
+              onClickMint={onClickMint}
+              onClickBurn={onClickBurn}
+              isStakeLoading={isStakeLoading}
+              isUnstakeLoading={isUnstakeLoading}
             />
           ) : (
             <StakeButtons
@@ -443,6 +567,7 @@ export const ExpandedDynamicContent = ({ rowData, stakeProgram, onExpandIcon, st
               unstakeRef={unstakeRef}
               onClickHalf={onClickHalf}
               onClickMax={onClickMax}
+              isUnstakeLoading={isUnstakeLoading}
               onClickStake={onClickStake}
               onClickUnstake={onClickUnstake}
             />

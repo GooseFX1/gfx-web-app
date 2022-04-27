@@ -51,3 +51,7 @@ export const moneyFormatter = (number: number, currency = '') => {
   if (!isNotEmpty(number)) return ''
   return number.toLocaleString() + currency
 }
+export const percentFormatter = (number: number) => {
+  if (!isNotEmpty(number)) return 0
+  return number.toFixed(0) + '%'
+}

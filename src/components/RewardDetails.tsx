@@ -217,7 +217,7 @@ export const RewardInfoComponent: FC = () => {
           </li>
           <li>
             <TEXT_22>
-              For each listing you will recive <strong>25 $GOFX</strong>, up to the first <strong>100,000</strong>{' '}
+              For each listing you will recieve <strong>25 $GOFX</strong>, up to the first <strong>100,000</strong>{' '}
               listings.
             </TEXT_22>
             <TEXT_15>Up to 100,000 lisitings (We will re-asses after reaching the target).</TEXT_15>

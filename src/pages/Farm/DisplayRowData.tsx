@@ -3,7 +3,9 @@ import styled, { css } from 'styled-components'
 import { columns, STYLED_NAME } from './Columns'
 import { Table } from 'antd'
 import { STYLED_TABLE_LIST } from './TableList'
-import { moneyFormatter } from '../../utils/math'
+import { moneyFormatter, nFormatter, percentFormatter } from '../../utils/math'
+import { LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { useFarmContext } from '../../context/farm'
 
 const ROW_CONTAINER = styled.div`
   display: flex;
@@ -47,27 +49,31 @@ interface IFarmData {
 }
 
 const DisplayRowData = ({ rowData, onExpandIcon }) => {
+  const { farmDataContext } = useFarmContext()
+  const tokenData = farmDataContext.find((farmData) => farmData.name === rowData.name)
   return (
     <ROW_CONTAINER>
       <STYLED_NAME className="set-width">
         <img
-          className={`coin-image ${rowData.type === 'Double Sided' ? 'double-sided' : ''}`}
-          src={`/img/crypto/${rowData.image}.svg`}
+          className={`coin-image ${rowData?.type === 'Double Sided' ? 'double-sided' : ''}`}
+          src={`/img/crypto/${rowData?.image}.svg`}
           alt=""
         />
-        <div className="text">{rowData.name}</div>
+        <div className="text">{tokenData?.name}</div>
       </STYLED_NAME>
       <div className="liquidity normal-text set-width-balance">
-        {rowData ? ` ${moneyFormatter(rowData.currentlyStaked)}` : 0.0}
+        {rowData?.currentlyStaked ? ` ${moneyFormatter(tokenData.currentlyStaked)}` : 0.0}
       </div>
       <div className="liquidity normal-text set-width-earned">
-        {rowData ? `${moneyFormatter(rowData.earned)}` : 0.0}
+        {rowData?.earned ? `${moneyFormatter(tokenData?.earned)}` : 0.0}
       </div>
-      <div className="liquidity normal-text set-width-apr">{rowData ? `${0.0}%` : 0.0}</div>
+      <div className="liquidity normal-text set-width-apr">
+        {tokenData?.apr ? `${percentFormatter(tokenData?.apr)}` : 0.0}
+      </div>
       <div className="liquidity normal-text set-width-liquidity">
-        {rowData ? `$ ${moneyFormatter(rowData.liquidity)}` : 0.0}
+        {tokenData?.liquidity ? `$ ${moneyFormatter(tokenData?.liquidity)}` : 0.0}
       </div>
-      <STYLED_EXPAND_ICON onClick={() => onExpandIcon(rowData.id)}>
+      <STYLED_EXPAND_ICON onClick={() => onExpandIcon(tokenData.id)}>
         <img src={'/img/assets/arrow-down-large.svg'} />
       </STYLED_EXPAND_ICON>
     </ROW_CONTAINER>
