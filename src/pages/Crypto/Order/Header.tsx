@@ -21,12 +21,17 @@ import { CenteredImg, SpaceBetweenDiv } from '../../../styles'
 
 const ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margin(4))}
+  margin-top:15px;
+  margin-left: 20px;
+  img {
+    height: 45px;
+    width: 45px;
+  }
 `
 
 const INFO = styled.div`
   width: 100%;
-  margin: 0 ${({ theme }) => theme.margin(1.5)};
-
+  margin: 10px 40px;
   > div {
     display: flex;
     align-items: center;
@@ -36,20 +41,22 @@ const INFO = styled.div`
 const PRICE = styled.span`
   display: block;
   margin: ${({ theme }) => theme.margin(0.5)} 0 ${({ theme }) => theme.margin(1.5)};
-  font-size: 10px;
+  font-size: 13px;
   font-weight: bold;
   text-align: left;
+  color: #e7e7e7;
 `
 
 const SIDE = styled(SpaceBetweenDiv)<{ $display: boolean; $side: OrderSide }>`
   position: relative;
+  margin-top: 30px;
 
   &:after {
     content: '';
     display: block;
     position: absolute;
     bottom: -14.5px;
-    left: ${({ $side }) => ($side === 'buy' ? '-17' : '95')}px;
+    left: ${({ $side }) => ($side === 'buy' ? '-10' : '70')}%;
     width: 43%;
     height: 2px;
     background-color: ${({ theme, $display, $side }) => theme[$side === 'buy' ? 'bids' : 'asks']};
@@ -58,8 +65,8 @@ const SIDE = styled(SpaceBetweenDiv)<{ $display: boolean; $side: OrderSide }>`
 
   span {
     cursor: pointer;
-    color: ${({ theme }) => theme.text1h};
-    font-size: 12px;
+    color: #e7e7e7;
+    font-size: 16px;
     font-weight: bold;
     transition: color ${({ theme }) => theme.hapticTransitionTime} ease-in-out;
 
@@ -72,9 +79,10 @@ const SIDE = styled(SpaceBetweenDiv)<{ $display: boolean; $side: OrderSide }>`
 
 const TICKER = styled.span`
   margin-right: ${({ theme }) => theme.margin(1.5)};
-  font-size: 12px;
+  font-size: 15px;
   font-weight: bold;
   white-space: nowrap;
+  color: #e7e7e7;
 `
 
 const WRAPPER = styled.div`
@@ -88,7 +96,7 @@ const WRAPPER = styled.div`
   border-top-right-radius: 10px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
-  background-color: ${({ theme }) => theme.grey4};
+  background-color: ${({ theme }) => theme.bg11};
   ${({ theme }) => theme.largeShadow}
 `
 

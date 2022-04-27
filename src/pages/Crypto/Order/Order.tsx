@@ -7,6 +7,7 @@ import { Size } from './Size'
 import { Total } from './Total'
 import { TypeSelector } from './TypeSelector'
 import { useOrder } from '../../../context'
+import { PostIocBanner } from '../../TradeV2/PostIocBanner'
 
 const CONTENT = styled.div<{ $display: boolean }>`
   position: relative;
@@ -17,11 +18,6 @@ const CONTENT = styled.div<{ $display: boolean }>`
     &:first-child {
       margin: ${({ theme }) => theme.margin(3.5)} 0 ${({ theme }) => theme.margin(1.5)};
     }
-
-    &:nth-child(2),
-    &:nth-child(4) {
-      margin-bottom: ${({ theme }) => theme.margin(1.5)};
-    }
   }
 `
 
@@ -30,6 +26,7 @@ const WRAPPER = styled.div`
   padding: ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(2)};
   border-radius: 10px;
   background-color: ${({ theme }) => theme.bg3};
+  height: 100%;
 `
 
 export const Order: FC = () => {
@@ -37,7 +34,7 @@ export const Order: FC = () => {
 
   const localCSS = css`
     .ant-input-affix-wrapper {
-      height: 39px;
+      height: 50px;
       border: none;
       border-radius: 8px;
     }
@@ -52,9 +49,10 @@ export const Order: FC = () => {
       <Header />
       <CONTENT $display={!order.isHidden}>
         <TypeSelector />
-        <Size />
         <LimitPrice />
+        <Size />
         <Total />
+        <PostIocBanner />
         <PlaceOrder />
         <style>{localCSS}</style>
       </CONTENT>
