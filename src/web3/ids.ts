@@ -2,7 +2,7 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { AccountInfo, PublicKey } from '@solana/web3.js'
 import { StringPublicKey } from './metaplex'
 
-export const SYNTH_DEFAULT_MINT = new PublicKey('11111111111111111111111111111111')
+export const SYNTH_DEFAULT_MINT = new PublicKey('So11111111111111111111111111111111111111112')
 
 export type Mint = {
   address: PublicKey
@@ -40,6 +40,10 @@ export const ADDRESSES: {
         address: PublicKey
         controller?: PublicKey
       }
+      ssl: {
+        address: PublicKey
+        contoller?: PublicKey
+      }
     }
   }
 } = {
@@ -49,9 +53,26 @@ export const ADDRESSES: {
         address: new PublicKey('GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
         decimals: 9
       },
+
+      USDC: {
+        address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        decimals: 6
+      },
+      mSOL: {
+        address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
+        decimals: 9
+      },
+      MSOL: {
+        address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
+        decimals: 9
+      },
+      SOL: {
+        address: SYNTH_DEFAULT_MINT,
+        decimals: 9
+      },
       gUSD: {
         address: PublicKey.default,
-        decimals: 2
+        decimals: 6
       },
       gAAPL: {
         address: PublicKey.default,
@@ -106,6 +127,10 @@ export const ADDRESSES: {
       swap: {
         address: new PublicKey('7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'),
         controller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
+      },
+      ssl: {
+        address: new PublicKey('7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'),
+        contoller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
       }
     }
   },
@@ -125,6 +150,9 @@ export const ADDRESSES: {
         address: PublicKey.default
       },
       swap: {
+        address: PublicKey.default
+      },
+      ssl: {
         address: PublicKey.default
       }
     }
@@ -260,6 +288,10 @@ export const ADDRESSES: {
       swap: {
         address: new PublicKey('7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'),
         controller: new PublicKey('DFLudW9uuQ63SAErXEQ6XjJzd2p6dpitNehdS1uJdvnq')
+      },
+      ssl: {
+        address: new PublicKey('7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'),
+        contoller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
       }
     }
   }
@@ -337,6 +369,12 @@ export const SYSTEM = new PublicKey('11111111111111111111111111111111')
 // STAKE CONSTANTS
 
 export const STAKE_PREFIX: string = 'GFX-STAKINGACCOUNT'
+
+export const SSL_PREFIX: string = 'GFX-SSL'
+
+export const LIQUIDITY_ACCOUNT_PREFIX: string = 'GFX-LIQUIDITYACCOUNT'
+
+export const PT_MINT_PREFIX: string = 'GFX-SSL-PTMINT'
 
 export const STAKE_PROGRAM_ID: StringPublicKey = '8KJx48PYGHVC9fxzRRtYp4x4CM2HyYCm2EjVuAP4vvrx'
 

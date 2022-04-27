@@ -8,13 +8,24 @@ import BN from 'bn.js'
 import { columns } from './Columns'
 import { ExpandedContent } from './ExpandedContent'
 import { ExpandedDynamicContent } from './ExpandedDynamicContent'
-import { getStakingAccountKey, fetchCurrentAmountStaked, CONTROLLER_KEY, CONTROLLER_LAYOUT } from '../../web3'
+import {
+  getStakingAccountKey,
+  fetchCurrentAmountStaked,
+  CONTROLLER_KEY,
+  CONTROLLER_LAYOUT,
+  SSL_LAYOUT,
+  getTokenDecimal,
+  fetchSSLAmountStaked,
+  getTokenAddresses,
+  getSslAccountKey
+} from '../../web3'
 import { useConnectionConfig, usePriceFeed, useFarmContext } from '../../context'
 import { FarmData } from '../../constants'
 import { ADDRESSES } from '../../web3/ids'
 import { MorePoolsSoon } from './MorePoolsSoon'
 
 const StakeIDL = require('../../web3/idl/stake.json')
+const SSLIDL = require('../../web3/idl/ssl.json')
 
 //#region styles
 export const STYLED_TABLE_LIST = styled(Table)`
@@ -145,8 +156,8 @@ interface IFarmData {
   name: string
   earned: number
   apr: number
-  rewards?: string
-  liquidity: number
+  rewards?: number
+  liquidity: number | string
   type: string
   currentlyStaked: number
 }
@@ -156,11 +167,14 @@ export const TableList = ({ dataSource }: any) => {
   const { prices } = usePriceFeed()
   const { network, connection } = useConnectionConfig()
   const wallet = useWallet()
-  const { showDeposited, poolFilter, searchFilter, setSearchFilter } = useFarmContext()
+  const { showDeposited, poolFilter, searchFilter, setSearchFilter, farmDataContext, setFarmDataContext } =
+    useFarmContext()
   const [accountKey, setAccountKey] = useState<PublicKey>()
-  const [farmData, setFarmData] = useState<IFarmData[]>(FarmData)
+  const [columnData, setColumnData] = useState(columns)
+  const [farmData, setFarmData] = useState<IFarmData[]>(farmDataContext)
   const [eKeys, setEKeys] = useState([])
   const PAGE_SIZE = 10
+  const [counter, setCounter] = useState(0)
 
   const gofxPrice = useMemo(() => prices['GOFX/USDC'], [prices])
 
@@ -169,6 +183,16 @@ export const TableList = ({ dataSource }: any) => {
       ? new Program(
           StakeIDL,
           ADDRESSES[network].programs.stake.address,
+          new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
+        )
+      : undefined
+  }, [connection, wallet.publicKey])
+
+  const SSLProgram: Program = useMemo(() => {
+    return wallet.publicKey
+      ? new Program(
+          SSLIDL,
+          ADDRESSES[network].programs.ssl.address,
           new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
         )
       : undefined
@@ -188,12 +212,12 @@ export const TableList = ({ dataSource }: any) => {
 
   useEffect(() => {
     if (gofxPrice !== undefined) {
-      fetchTableData(accountKey)
+      fetchGOFXData(accountKey)
         .then((farmData) => {
           if (farmData.length > 0) {
             const farmDataStaked =
-              showDeposited && wallet.publicKey ? farmData.filter((fData) => fData.currentlyStaked > 0.0) : farmData
-            //setFarmData(farmData)
+              showDeposited && wallet.publicKey ? farmData.filter((fData) => fData?.currentlyStaked > 0.0) : farmData
+            setFarmDataContext(farmDataStaked)
           }
         })
         .catch((err) => {
@@ -203,20 +227,83 @@ export const TableList = ({ dataSource }: any) => {
   }, [accountKey, gofxPrice, showDeposited])
 
   useEffect(() => {
-    let farmDataStaked =
-      showDeposited && wallet.publicKey ? FarmData.filter((fData) => fData.currentlyStaked > 0.0) : farmData
-    if (poolFilter !== 'All pools') farmDataStaked = FarmData.filter((fData) => fData.type === poolFilter)
-    else farmDataStaked = FarmData
+    setFarmData(farmDataContext)
+  }, [farmDataContext])
+
+  useEffect(() => {
+    if (farmDataContext[0]?.apr) {
+      fetchSSLData().then((farmData) => {
+        if (farmData) setFarmDataContext(farmData)
+      })
+    }
+  }, [farmDataContext[0]])
+
+  useEffect(() => {
+    // this useEffect is to monitor staking and SSL pools button
+    let farmDataStaked // =
+    //showDeposited && wallet.publicKey ? farmDataContext.filter((fData) => fData.currentlyStaked > 0) : []
+    if (poolFilter !== 'All pools') farmDataStaked = farmDataContext.filter((fData) => fData.type === poolFilter)
+    else farmDataStaked = farmDataContext
     if (searchFilter)
       farmDataStaked = farmDataStaked.filter((fData) => {
         const tokenName = fData.name.toLowerCase()
         if (tokenName.includes(searchFilter.toLowerCase())) return true
       })
-    setFarmData(farmDataStaked)
-  }, [poolFilter, searchFilter])
 
-  const fetchTableData = async (accountKey: PublicKey) => {
-    // pool data
+    setFarmData(farmDataStaked)
+  }, [poolFilter, searchFilter, showDeposited])
+
+  const fetchSSLData = async () => {
+    let SSLTokenNames = []
+    farmDataContext.map((data) => SSLTokenNames.push(data.name))
+    SSLTokenNames = SSLTokenNames.splice(1)
+    let tokenAddresses = getTokenAddresses(SSLTokenNames, network)
+    let newFarmDataContext = farmDataContext
+    for (let i = 0; i < SSLTokenNames.length; i++) {
+      const sslAccountKey = await getSslAccountKey(tokenAddresses[i])
+      let { sslData, liquidityAccount } = await fetchSSLAmountStaked(
+        connection,
+        sslAccountKey,
+        wallet,
+        tokenAddresses[i]
+      )
+      const APR = 0.12
+      //@ts-ignore
+      const liqidity: Number = Number(
+        (BigInt(sslData.liability) + BigInt(sslData.swappedLiability)) / BigInt(LAMPORTS_PER_SOL)
+      )
+      //const liability = liquidityAccount ? ((sslData.liability * liquidityAccount.share) / sslData.totalShare);
+      const ptMinted = liquidityAccount ? Number(liquidityAccount.ptMinted) / LAMPORTS_PER_SOL : 0
+      //@ts-ignore
+      const userLiablity = liquidityAccount
+        ? ((Number(sslData.liability + sslData.swappedLiability) /
+            Math.pow(10, getTokenDecimal(network, SSLTokenNames[i]))) *
+            Number(liquidityAccount.share)) /
+          Number(sslData.totalShare)
+        : 0
+      const amountDeposited = liquidityAccount
+        ? Number(liquidityAccount.amountDeposited) / Math.pow(10, getTokenDecimal(network, SSLTokenNames[i]))
+        : 0
+      const earned = liquidityAccount ? userLiablity - amountDeposited : 0
+
+      newFarmDataContext = newFarmDataContext.map((data) => {
+        if (data.name === SSLTokenNames[i]) {
+          return {
+            ...data,
+            earned: earned,
+            apr: APR * 100,
+            liquidity: Number(liqidity),
+            currentlyStaked: amountDeposited,
+            userLiablity: userLiablity,
+            ptMinted: liquidityAccount ? amountDeposited - ptMinted : 0
+          }
+        } else return data
+      })
+    }
+    return newFarmDataContext
+  }
+  const fetchGOFXData = async (accountKey: PublicKey) => {
+    // pool data take this function to context
     const { data: controllerData } = await connection.getAccountInfo(CONTROLLER_KEY)
     const { staking_balance, daily_reward } = await CONTROLLER_LAYOUT.decode(controllerData)
     const LAMPORT = new BN(LAMPORTS_PER_SOL)
@@ -225,36 +312,33 @@ export const TableList = ({ dataSource }: any) => {
 
     // user account data
     const accountData = await fetchCurrentAmountStaked(connection, accountKey, wallet)
-
-    return [
-      {
-        id: '1',
-        image: 'GOFX',
-        name: 'GOFX',
-        earned: accountData.tokenEarned ? accountData.tokenEarned : 0,
-        apr: APR,
-        rewards: '100% GOFX',
-        liquidity: gofxPrice.current * liqidity,
-        type: 'Staking',
-        currentlyStaked: accountData.tokenStaked ? accountData.tokenStaked : 0
-      }
-    ]
+    const newFarmDataContext = farmDataContext.map((data) => {
+      if (data.name === 'GOFX') {
+        return {
+          ...data,
+          earned: accountData.tokenEarned ? accountData.tokenEarned : 0,
+          apr: APR * 100,
+          rewards: daily_reward / LAMPORTS_PER_SOL,
+          liquidity: gofxPrice.current * liqidity,
+          currentlyStaked: accountData.tokenStaked ? accountData.tokenStaked : 0
+        }
+      } else return data
+    })
+    return newFarmDataContext
   }
 
   const onExpandIcon = (id) => {
     const temp = [...eKeys]
     const j = temp.indexOf(id)
-    console.log(j)
     if (j > -1) temp.splice(j, 1)
     else temp.push(id)
     setEKeys(temp)
   }
-
-  return (
+  const TableData = (
     <div>
       <STYLED_TABLE_LIST
         rowKey="id"
-        columns={columns}
+        columns={columnData}
         dataSource={farmData}
         pagination={false}
         bordered={false}
@@ -270,6 +354,7 @@ export const TableList = ({ dataSource }: any) => {
               rowData={rowData}
               onExpandIcon={onExpandIcon}
               stakeProgram={stakeProgram}
+              SSLProgram={SSLProgram}
               stakeAccountKey={accountKey}
             />
           )
@@ -280,6 +365,8 @@ export const TableList = ({ dataSource }: any) => {
       <MorePoolsSoon />
     </div>
   )
+
+  return TableData
 }
 
 const ExpandIcon = (props) => {

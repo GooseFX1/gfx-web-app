@@ -473,5 +473,8 @@
       "name": "FeeCollectorIncorrect",
       "msg": "[G112] Fee collector account incorrect"
     }
-  ]
+  ],
+  "metadata": {
+    "address": "7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5"
+  }
 }

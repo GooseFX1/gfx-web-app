@@ -64,6 +64,7 @@ const RefreshIcon = styled.a`
   cursor: pointer;
   height: 40px;
   width: 40px;
+  padding-top: 4px;
   margin-right: 25px;
   margin-left: 40px;
 `

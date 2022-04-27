@@ -73,7 +73,7 @@ export const FarmData = [
     name: 'GOFX',
     earned: 0,
     apr: 0,
-    rewards: '100% GOFX',
+    rewards: 100,
     liquidity: 0,
     type: 'Staking',
     currentlyStaked: 0
@@ -82,11 +82,11 @@ export const FarmData = [
     id: '2',
     image: 'SOL',
     name: 'SOL',
-    earned: 10.78612,
+    earned: 0,
     apr: 0,
     liquidity: 0,
     type: 'SSL',
-    currentlyStaked: 10.12988
+    currentlyStaked: 0
   },
   {
     id: '3',
@@ -97,16 +97,18 @@ export const FarmData = [
     liquidity: 0,
     type: 'SSL',
     currentlyStaked: 0
-  },
-  {
-    id: '4',
-    image: 'MSOL',
-    name: 'MSOL',
-    earned: 0,
-    apr: 0,
-    rewards: '100% GOFX',
-    liquidity: 0,
-    type: 'SSL',
-    currentlyStaked: 0
   }
 ]
+
+// ,
+//   {
+//     id: '4',
+//     image: 'MSOL',
+//     name: 'MSOL',
+//     earned: 0,
+//     apr: 0,
+//     rewards: 0,
+//     liquidity: 0,
+//     type: 'SSL',
+//     currentlyStaked: 0
+//   }

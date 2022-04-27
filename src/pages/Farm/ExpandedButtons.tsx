@@ -1,8 +1,11 @@
-import React, { FC, ReactElement } from 'react'
+import React, { FC, ReactElement, useMemo } from 'react'
 import { MainButton } from '../../components'
 import { Connect } from '../../layouts/App/Connect'
 import styled from 'styled-components'
 import { WalletContextState } from '@solana/wallet-adapter-react'
+import { useFarmContext, usePriceFeed } from '../../context'
+import { invalidInputErrMsg } from './FarmClickHandler'
+import { notify } from '../../utils'
 
 const STYLED_RIGHT_CONTENT = styled.div`
   display: flex;
@@ -18,6 +21,12 @@ const STYLED_RIGHT_CONTENT = styled.div`
 const FLEX = styled.div`
   display: flex;
   width: 392px;
+`
+const ConnectContainer = styled.div`
+  margin-top: 25px;
+  margin-left: 25px;
+  display: flex;
+  height: 50px;
 `
 
 const STYLED_SOL = styled.div`
@@ -208,7 +217,7 @@ export const StakeButtons: FC<{
   onClickStake: any
   onClickUnstake: any
   isStakeLoading?: any
-  isUnstakeLoading?: any
+  isUnstakeLoading?: boolean
 }> = ({
   wallet,
   name,
@@ -221,6 +230,11 @@ export const StakeButtons: FC<{
   isStakeLoading,
   isUnstakeLoading
 }) => {
+  const { farmDataContext } = useFarmContext()
+  const { prices } = usePriceFeed()
+
+  const { current } = useMemo(() => prices[`${name}/USDC`], [prices])
+  const tokenData = farmDataContext.find((token) => token.name === 'GOFX')
   return (
     <>
       <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
@@ -228,8 +242,8 @@ export const StakeButtons: FC<{
           <STYLED_STAKED_EARNED_CONTENT>
             <div className="info-item">
               <div className="title">Daily Rewards</div>
-              <div className="value">{`${1} ${name}`}</div>
-              <div className="price">{`$${1} USDC`}</div>
+              <div className="value">{`${tokenData.rewards.toFixed(0)} ${name}`}</div>
+              <div className="price">{`$${(current * tokenData.rewards).toFixed(0)} USDC`}</div>
             </div>
           </STYLED_STAKED_EARNED_CONTENT>
         </div>
@@ -282,10 +296,12 @@ export const SSLButtons: FC<{
   onClickMax: (x: string) => void
   stakeRef: any
   unstakeRef: any
-  onClickStake: any
-  onClickUnstake: any
-  isStakeLoading?: any
-  isUnstakeLoading?: any
+  onClickDeposit: any
+  onClickWithdraw: any
+  onClickMint: any
+  onClickBurn: any
+  isStakeLoading: boolean
+  isUnstakeLoading?: boolean
 }> = ({
   wallet,
   name,
@@ -293,69 +309,142 @@ export const SSLButtons: FC<{
   onClickMax,
   stakeRef,
   unstakeRef,
-  onClickStake,
-  onClickUnstake,
+  onClickDeposit,
+  onClickWithdraw,
+  onClickMint,
+  onClickBurn,
   isStakeLoading,
   isUnstakeLoading
 }) => {
   const miniButtonsClass = document.activeElement === unstakeRef.current ? 'miniButtons active' : 'miniButtons'
+  const depositButtonClass = document.activeElement === stakeRef.current ? ' active' : ''
+  const { prices } = usePriceFeed()
+  const { farmDataContext } = useFarmContext()
+  const tokenData = farmDataContext.find((farmData) => farmData.name === name)
+
+  let tokenPrice = useMemo(() => {
+    if (name === 'USDC') {
+      return { current: 1 }
+    }
+    return prices[`${name}/USDC`]
+  }, [prices])
+
+  const availableToMint = tokenData?.ptMinted ? tokenData.ptMinted : 0
+  const availableToMintFiat = tokenPrice && availableToMint * tokenPrice.current
+
+  const checkbasicConditions = (amt: number) => {
+    if (
+      isNaN(parseFloat(unstakeRef.current.value)) ||
+      parseFloat(unstakeRef.current.value) < 0.000001 ||
+      parseFloat(unstakeRef.current.value) - 0.0001 > amt
+    ) {
+      unstakeRef.current.value = 0
+      notify(invalidInputErrMsg(amt ? amt : undefined, name))
+      return true
+    }
+    return false
+  }
+
+  const mintClicked = () => {
+    if (checkbasicConditions(availableToMint)) return
+    onClickMint()
+  }
+  const burnClicked = () => {
+    if (checkbasicConditions(availableToMint)) return
+  }
+  const withdrawClicked = () => {
+    // (amt / userLiablity) * 10000
+    if (checkbasicConditions(availableToMint)) return
+    const amountInNative = (unstakeRef.current.value / tokenData?.userLiablity) * 10000
+    onClickWithdraw(amountInNative)
+  }
   return (
     <>
-      <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
-        <div className="left-inner">
-          <STYLED_STAKED_EARNED_CONTENT>
-            <div className="info-item">
-              <div className="title">Available to mint</div>
-              <div className="value">{`${1} ${name}`}</div>
-              <div className="price">{`$${1} USDC`}</div>
+      {wallet.publicKey ? (
+        <>
+          <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
+            <div className="left-inner">
+              <STYLED_STAKED_EARNED_CONTENT>
+                {tokenPrice && (
+                  <div className="info-item">
+                    <div className="title">Available to mint</div>
+                    <div className="value">{`${availableToMint.toFixed(3)} g${name}`}</div>
+                    <div className="price">{`$${availableToMintFiat.toFixed(3)} USDC`}</div>
+                  </div>
+                )}
+              </STYLED_STAKED_EARNED_CONTENT>
             </div>
-          </STYLED_STAKED_EARNED_CONTENT>
-        </div>
-      </STYLED_LEFT_CONTENT>
-      <STYLED_RIGHT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
-        <div className="right-inner">
-          <div className="SOL-item">
-            <STYLED_SOL>
-              <STYLED_INPUT className="value" type="number" ref={stakeRef} />
-              <div className="text">
-                <MAX_BUTTON onClick={() => onClickHalf('stake')} className="text-1">
-                  Half
-                </MAX_BUTTON>
-                <MAX_BUTTON onClick={() => onClickMax('stake')} className="text-2">
-                  Max
-                </MAX_BUTTON>
+          </STYLED_LEFT_CONTENT>
+          <STYLED_RIGHT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
+            <div className="right-inner">
+              <div className="SOL-item">
+                <STYLED_SOL>
+                  <STYLED_INPUT className="value" type="number" ref={stakeRef} />
+                  <div className="text">
+                    <MAX_BUTTON onClick={() => onClickHalf('stake')} className="text-1">
+                      Half
+                    </MAX_BUTTON>
+                    <MAX_BUTTON onClick={() => onClickMax('stake')} className="text-2">
+                      Max
+                    </MAX_BUTTON>
+                  </div>
+                </STYLED_SOL>
+                <STYLED_STAKE_PILL
+                  loading={isStakeLoading}
+                  className={depositButtonClass}
+                  disabled={isStakeLoading}
+                  onClick={() => onClickDeposit()}
+                >
+                  Deposit
+                </STYLED_STAKE_PILL>
               </div>
-            </STYLED_SOL>
-            <STYLED_STAKE_PILL loading={isStakeLoading} disabled={isStakeLoading} onClick={() => onClickStake()}>
-              Deposit
-            </STYLED_STAKE_PILL>
-          </div>
-          <div className="SOL-item">
-            <STYLED_SOL>
-              <STYLED_INPUT className="value" type="number" min="0" max="100" ref={unstakeRef} />
-              <div className="text">
-                <MAX_BUTTON onClick={() => onClickHalf('unstake')} className="text-1">
-                  Half
-                </MAX_BUTTON>
-                <MAX_BUTTON onClick={() => onClickMax('unstake')} className="text-2">
-                  Max
-                </MAX_BUTTON>
+              <div className="SOL-item">
+                <STYLED_SOL>
+                  <STYLED_INPUT className="value" type="number" ref={unstakeRef} />
+                  {/* <div className="text">
+                    <MAX_BUTTON onClick={() => onClickHalf('unstake')} className="text-1">
+                      Half
+                    </MAX_BUTTON>
+                    <MAX_BUTTON onClick={() => onClickMax('unstake')} className="text-2">
+                      Max
+                    </MAX_BUTTON>
+                  </div> */}
+                </STYLED_SOL>
+                <FLEX>
+                  <STYLED_STAKE_PILL
+                    loading={isUnstakeLoading}
+                    disabled={isUnstakeLoading}
+                    className={miniButtonsClass}
+                    onClick={() => mintClicked()}
+                  >
+                    Mint
+                  </STYLED_STAKE_PILL>
+                  <STYLED_STAKE_PILL
+                    loading={isUnstakeLoading}
+                    disabled={isUnstakeLoading}
+                    className={miniButtonsClass}
+                    onClick={() => onClickBurn()}
+                  >
+                    Burn
+                  </STYLED_STAKE_PILL>
+                  <STYLED_STAKE_PILL
+                    loading={isUnstakeLoading}
+                    disabled={isUnstakeLoading}
+                    className={miniButtonsClass}
+                    onClick={() => withdrawClicked()}
+                  >
+                    Withdraw
+                  </STYLED_STAKE_PILL>
+                </FLEX>
               </div>
-            </STYLED_SOL>
-            <FLEX>
-              <STYLED_STAKE_PILL className={miniButtonsClass} onClick={() => onClickUnstake()}>
-                Mint
-              </STYLED_STAKE_PILL>
-              <STYLED_STAKE_PILL className={miniButtonsClass} onClick={() => onClickUnstake()}>
-                Burn
-              </STYLED_STAKE_PILL>
-              <STYLED_STAKE_PILL className={miniButtonsClass} onClick={() => onClickUnstake()}>
-                Withdraw
-              </STYLED_STAKE_PILL>
-            </FLEX>
-          </div>
-        </div>
-      </STYLED_RIGHT_CONTENT>
+            </div>
+          </STYLED_RIGHT_CONTENT>
+        </>
+      ) : (
+        <ConnectContainer>
+          <Connect />
+        </ConnectContainer>
+      )}
     </>
   )
 }
