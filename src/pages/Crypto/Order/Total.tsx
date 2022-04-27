@@ -13,6 +13,10 @@ export const Total: FC = () => {
   const { getTokenInfoFromSymbol } = useTokenRegistry()
 
   const bid = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
+  const assetIcon = useMemo(
+    () => `/img/${selectedCrypto.type}/${selectedCrypto.type === 'synth' ? `g${bid}` : bid}.svg`,
+    [bid, selectedCrypto.type]
+  )
   const tokenInfo = useMemo(
     () => getTokenInfoFromSymbol(getSymbolFromPair(selectedCrypto.pair, order.side)),
     [getSymbolFromPair, getTokenInfoFromSymbol, order.side, selectedCrypto.pair]
@@ -31,6 +35,14 @@ export const Total: FC = () => {
       flex: 1;
       margin: 8px;
     }
+
+    .order-total .symbol-name {
+      font-size: 15px;
+      line-height: 50px;
+    }
+    .symbol-name .asset-icon {
+      margin-bottom: 3px;
+    }
   `
 
   const handleSliderChange = (total: number) =>
@@ -43,7 +55,7 @@ export const Total: FC = () => {
   return (
     <div className="order-total">
       <style>{localCSS}</style>
-      <FieldHeader>Total</FieldHeader>
+      <FieldHeader>Amount</FieldHeader>
       <Input
         id="total-input"
         maxLength={15}
@@ -56,7 +68,12 @@ export const Total: FC = () => {
         onFocus={() => setFocused('total')}
         pattern="\d+(\.\d+)?"
         placeholder={`Amount to ${order.side}`}
-        suffix={<span>{bid}</span>}
+        suffix={
+          <span className="symbol-name">
+            <img className="asset-icon" src={assetIcon} alt="" />
+            {bid}
+          </span>
+        }
         value={order.total}
       />
       {order.side === 'buy' && (
