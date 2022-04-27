@@ -3,8 +3,9 @@ import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { AppLayout } from './layouts'
 import { Crypto, Farm, NFTs, Synths, Swap } from './pages'
 import useBlacklisted from './utils/useBlacklisted'
-import { NavCollapseProvider, NFTProfileProvider } from './context'
+import { CryptoProvider, NavCollapseProvider, NFTProfileProvider, PriceFeedProvider } from './context'
 import { GenericNotFound } from './pages/InvalidUrl'
+import { CryptoContent } from './pages/TradeV2/MovableContainer'
 
 export const Router: FC = () => {
   const blacklisted = useBlacklisted()
@@ -18,7 +19,13 @@ export const Router: FC = () => {
         <AppLayout>
           <Switch>
             <Route exact path="/swap" component={Swap} />
-            <Route exact path="/trade" component={Crypto} />
+            <Route exact path="/trade">
+              <CryptoProvider>
+                <PriceFeedProvider>
+                  <CryptoContent />
+                </PriceFeedProvider>
+              </CryptoProvider>
+            </Route>
             <Route
               exact
               path="/synths"
