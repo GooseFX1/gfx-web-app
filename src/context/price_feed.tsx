@@ -42,7 +42,8 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
               })
             )
           } catch (e: any) {
-            await notify({ type: 'error', message: 'Error fetching serum markets', icon: 'rate_error' }, e)
+            console.error('Error fetching serum markets')
+            // await notify({ type: 'error', message: 'Error fetching serum markets', icon: 'rate_error' }, e)
           }
         }
 
