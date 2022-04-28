@@ -213,6 +213,7 @@ const MAX_BUTTON = styled.div`
   cursor: pointer;
 `
 const STYLED_MINT = styled(MainButton)``
+const DISPLAY_DECIMAL = 3
 
 export const StakeButtons: FC<{
   wallet: any
@@ -387,8 +388,8 @@ export const SSLButtons: FC<{
                 {tokenPrice && (
                   <div className="info-item">
                     <div className="title">Available to mint</div>
-                    <div className="value">{`${availableToMint.toFixed(3)} g${name}`}</div>
-                    <div className="price">{`$${availableToMintFiat.toFixed(3)} USDC`}</div>
+                    <div className="value">{`${availableToMint.toFixed(DISPLAY_DECIMAL)} g${name}`}</div>
+                    <div className="price">{`$${availableToMintFiat.toFixed(DISPLAY_DECIMAL)} USDC`}</div>
                   </div>
                 )}
               </STYLED_STAKED_EARNED_CONTENT>
@@ -430,10 +431,9 @@ export const SSLButtons: FC<{
                   </div> */}
                 </STYLED_SOL>
                 <FLEX>
-                  {parseFloat(availableToMint.toFixed(3)) > 0}
                   <STYLED_STAKE_PILL
                     loading={isUnstakeLoading}
-                    disabled={isUnstakeLoading || parseFloat(availableToMint.toFixed(3)) <= 0}
+                    disabled={isUnstakeLoading || parseFloat(availableToMint.toFixed(DISPLAY_DECIMAL)) <= 0}
                     className={miniButtonsClass}
                     onClick={() => mintClicked()}
                   >
@@ -441,7 +441,7 @@ export const SSLButtons: FC<{
                   </STYLED_STAKE_PILL>
                   <STYLED_STAKE_PILL
                     loading={isUnstakeLoading}
-                    disabled={isUnstakeLoading}
+                    disabled={isUnstakeLoading || parseFloat(userPoolTokenBalance.toFixed(DISPLAY_DECIMAL)) <= 0}
                     className={miniButtonsClass}
                     onClick={() => burnClicked()}
                   >
@@ -449,7 +449,7 @@ export const SSLButtons: FC<{
                   </STYLED_STAKE_PILL>
                   <STYLED_STAKE_PILL
                     loading={isUnstakeLoading}
-                    disabled={isUnstakeLoading}
+                    disabled={isUnstakeLoading || parseFloat(availableToMint.toFixed(DISPLAY_DECIMAL)) <= 0}
                     className={miniButtonsClass}
                     onClick={() => withdrawClicked()}
                   >
