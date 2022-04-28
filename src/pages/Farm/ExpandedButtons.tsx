@@ -2,10 +2,12 @@ import React, { FC, ReactElement, useMemo } from 'react'
 import { MainButton } from '../../components'
 import { Connect } from '../../layouts/App/Connect'
 import styled from 'styled-components'
-import { WalletContextState } from '@solana/wallet-adapter-react'
-import { useFarmContext, usePriceFeed } from '../../context'
+import { WalletContextState, useWallet } from '@solana/wallet-adapter-react'
+import { useFarmContext, usePriceFeed, useAccounts } from '../../context'
 import { invalidInputErrMsg } from './FarmClickHandler'
 import { notify } from '../../utils'
+import { getPTMintKey } from '../../web3'
+import { gunzip } from 'zlib'
 
 const STYLED_RIGHT_CONTENT = styled.div`
   display: flex;
@@ -197,7 +199,12 @@ const STYLED_STAKE_PILL = styled(MainButton)`
     background: #3735bb;
     color: #fff;
     opacity: 1;
+    &:disabled {
+      background-color: ${({ theme }) => theme.stakePillBg} !important;
+      opacity: 0.5;
+    }
   }
+
   &.miniButtons {
     width: 125px;
   }
@@ -289,6 +296,11 @@ export const StakeButtons: FC<{
   )
 }
 
+const poolTokenAddress = {
+  gUSDC: '7Hvq1zbYWmBpJ7qb4AZSpC1gLC95eBdQgdT3aLQyq6pG',
+  gSOL: 'CiBddaPynSdAG2SkbrusBfyrUKdCSXVPHs6rTgSEkfsV'
+}
+
 export const SSLButtons: FC<{
   wallet: any
   name: string
@@ -321,13 +333,19 @@ export const SSLButtons: FC<{
   const { prices } = usePriceFeed()
   const { farmDataContext } = useFarmContext()
   const tokenData = farmDataContext.find((farmData) => farmData.name === name)
-
+  const { getUIAmount } = useAccounts()
+  const { publicKey } = useWallet()
   let tokenPrice = useMemo(() => {
     if (name === 'USDC') {
       return { current: 1 }
     }
     return prices[`${name}/USDC`]
   }, [prices])
+  const userPoolTokenBalance = useMemo(
+    () => (publicKey ? getUIAmount(poolTokenAddress['g' + name]) : 0),
+    [getUIAmount, publicKey]
+  )
+  console.log(userPoolTokenBalance)
 
   const availableToMint = tokenData?.ptMinted ? tokenData.ptMinted : 0
   const availableToMintFiat = tokenPrice && availableToMint * tokenPrice.current
@@ -350,7 +368,8 @@ export const SSLButtons: FC<{
     onClickMint()
   }
   const burnClicked = () => {
-    if (checkbasicConditions(availableToMint)) return
+    if (checkbasicConditions(userPoolTokenBalance)) return
+    onClickBurn()
   }
   const withdrawClicked = () => {
     // (amt / userLiablity) * 10000
@@ -411,9 +430,10 @@ export const SSLButtons: FC<{
                   </div> */}
                 </STYLED_SOL>
                 <FLEX>
+                  {parseFloat(availableToMint.toFixed(3)) > 0}
                   <STYLED_STAKE_PILL
                     loading={isUnstakeLoading}
-                    disabled={isUnstakeLoading}
+                    disabled={isUnstakeLoading || parseFloat(availableToMint.toFixed(3)) <= 0}
                     className={miniButtonsClass}
                     onClick={() => mintClicked()}
                   >
@@ -423,7 +443,7 @@ export const SSLButtons: FC<{
                     loading={isUnstakeLoading}
                     disabled={isUnstakeLoading}
                     className={miniButtonsClass}
-                    onClick={() => onClickBurn()}
+                    onClick={() => burnClicked()}
                   >
                     Burn
                   </STYLED_STAKE_PILL>
