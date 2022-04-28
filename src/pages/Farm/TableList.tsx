@@ -268,15 +268,15 @@ export const TableList = ({ dataSource }: any) => {
         tokenAddresses[i]
       )
       const APR = 0.12
-      //@ts-ignore
       const liqidity: Number = Number(
+        //@ts-ignore
         (BigInt(sslData.liability) + BigInt(sslData.swappedLiability)) / BigInt(LAMPORTS_PER_SOL)
       )
       //const liability = liquidityAccount ? ((sslData.liability * liquidityAccount.share) / sslData.totalShare);
       const ptMinted = liquidityAccount ? Number(liquidityAccount.ptMinted) / LAMPORTS_PER_SOL : 0
-      //@ts-ignore
       const userLiablity = liquidityAccount
-        ? ((Number(sslData.liability + sslData.swappedLiability) /
+        ? //@ts-ignore
+          ((Number(sslData.liability + sslData.swappedLiability) /
             Math.pow(10, getTokenDecimal(network, SSLTokenNames[i]))) *
             Number(liquidityAccount.share)) /
           Number(sslData.totalShare)
