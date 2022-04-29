@@ -1,15 +1,19 @@
 import { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction } from 'react'
-import { FarmData } from '../constants'
+import { stakeTokens, sslTokens } from '../constants'
 
 interface IShowDeposited {
   showDeposited: boolean
   toggleDeposited: Dispatch<SetStateAction<boolean>>
   poolFilter: string
+  counter: number
+  setCounter: Dispatch<SetStateAction<number>>
   setPoolFilter: Dispatch<SetStateAction<string>>
   searchFilter: string | null
   setSearchFilter: Dispatch<SetStateAction<string>>
   farmDataContext: IFarmData[]
+  farmDataSSLContext: IFarmData[]
   setFarmDataContext: Dispatch<SetStateAction<IFarmData[]>>
+  setFarmDataSSLContext: Dispatch<SetStateAction<IFarmData[]>>
 }
 
 interface IFarmData {
@@ -32,19 +36,25 @@ export const FarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [mode, setMode] = useState<boolean>(false)
   const [filter, setFilter] = useState('All pools')
   const [searchFilter, setSearchFilter] = useState(null)
-  const [farmDataContext, setFarmDataContext] = useState<IFarmData[]>(FarmData)
+  const [farmDataContext, setFarmDataContext] = useState<IFarmData[]>(stakeTokens)
+  const [farmDataSSLContext, setFarmDataSSLContext] = useState<IFarmData[]>(sslTokens)
+  const [counter, setCounter] = useState<number>(0)
 
   return (
     <FarmContext.Provider
       value={{
         showDeposited: mode,
+        counter: counter,
+        setCounter: setCounter,
         toggleDeposited: setMode,
         poolFilter: filter,
         setPoolFilter: setFilter,
         searchFilter: searchFilter,
         setSearchFilter: setSearchFilter,
         farmDataContext: farmDataContext,
-        setFarmDataContext: setFarmDataContext
+        farmDataSSLContext: farmDataSSLContext,
+        setFarmDataContext: setFarmDataContext,
+        setFarmDataSSLContext: setFarmDataSSLContext
       }}
     >
       {children}
@@ -61,21 +71,29 @@ export const useFarmContext = (): IShowDeposited => {
   const {
     showDeposited,
     toggleDeposited,
+    counter,
+    setCounter,
     poolFilter,
     setPoolFilter,
     searchFilter,
     setSearchFilter,
     farmDataContext,
-    setFarmDataContext
+    farmDataSSLContext,
+    setFarmDataContext,
+    setFarmDataSSLContext
   } = context
   return {
     showDeposited,
     toggleDeposited,
     poolFilter,
+    counter,
+    setCounter,
     setPoolFilter,
     searchFilter,
     setSearchFilter,
     farmDataContext,
-    setFarmDataContext
+    farmDataSSLContext,
+    setFarmDataContext,
+    setFarmDataSSLContext
   }
 }

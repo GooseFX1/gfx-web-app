@@ -50,7 +50,7 @@ interface IFarmData {
 
 const DisplayRowData = ({ rowData, onExpandIcon }) => {
   const { farmDataContext } = useFarmContext()
-  const tokenData = farmDataContext.find((farmData) => farmData.name === rowData.name)
+  // const tokenData = farmDataContext.find((farmData) => farmData.name === rowData.name)
   return (
     <ROW_CONTAINER>
       <STYLED_NAME className="set-width">
@@ -59,21 +59,21 @@ const DisplayRowData = ({ rowData, onExpandIcon }) => {
           src={`/img/crypto/${rowData?.image}.svg`}
           alt=""
         />
-        <div className="text">{tokenData?.name}</div>
+        <div className="text">{rowData?.name}</div>
       </STYLED_NAME>
       <div className="liquidity normal-text set-width-balance">
-        {rowData?.currentlyStaked ? ` ${moneyFormatter(tokenData.currentlyStaked)}` : 0.0}
+        {rowData?.currentlyStaked ? ` ${moneyFormatter(rowData.currentlyStaked)}` : 0.0}
       </div>
       <div className="liquidity normal-text set-width-earned">
-        {rowData?.earned ? `${moneyFormatter(tokenData?.earned)}` : 0.0}
+        {rowData?.earned ? `${moneyFormatter(rowData?.earned)}` : 0.0}
       </div>
       <div className="liquidity normal-text set-width-apr">
-        {tokenData?.apr ? `${percentFormatter(tokenData?.apr)}` : 0.0}
+        {rowData?.apr ? `${percentFormatter(rowData?.apr)}` : 0.0}
       </div>
       <div className="liquidity normal-text set-width-liquidity">
-        {tokenData?.liquidity ? `$ ${moneyFormatter(tokenData?.liquidity)}` : 0.0}
+        {rowData?.liquidity ? `$ ${moneyFormatter(rowData?.liquidity)}` : 0.0}
       </div>
-      <STYLED_EXPAND_ICON onClick={() => onExpandIcon(tokenData.id)}>
+      <STYLED_EXPAND_ICON onClick={() => onExpandIcon(rowData.id)}>
         <img src={'/img/assets/arrow-down-large.svg'} />
       </STYLED_EXPAND_ICON>
     </ROW_CONTAINER>

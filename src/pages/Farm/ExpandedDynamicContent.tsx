@@ -289,7 +289,7 @@ export const ExpandedDynamicContent = ({
   const wallet = useWallet()
   const { prices } = usePriceFeed()
   const { connection } = useConnectionConfig()
-  const { showDeposited, toggleDeposited } = useFarmContext()
+  const { setCounter } = useFarmContext()
   const [isStakeLoading, setIsStakeLoading] = useState<boolean>(false)
   const [isUnstakeLoading, setIsUnstakeLoading] = useState<boolean>(false)
   const [tokenStaked, setTokenStaked] = useState<number>(parseFloat(currentlyStaked))
@@ -367,7 +367,7 @@ export const ExpandedDynamicContent = ({
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Mint))
-          toggleDeposited((prev) => !prev)
+          setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
           notify(sslErrorMessage(name, error.message, signature, network, Mint))
@@ -388,7 +388,7 @@ export const ExpandedDynamicContent = ({
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Burn))
-          toggleDeposited((prev) => !prev)
+          setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
           notify(sslErrorMessage(name, error.message, signature, network, Burn))
@@ -409,7 +409,7 @@ export const ExpandedDynamicContent = ({
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Withdraw))
-          toggleDeposited((prev) => !prev)
+          setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
           notify(sslErrorMessage(name, error.message, signature, network, Withdraw))
@@ -441,8 +441,7 @@ export const ExpandedDynamicContent = ({
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage(signature, amount, name, network, Deposit))
           updateStakedValue()
-          toggleDeposited((prev) => !prev)
-          setTimeout(() => (stakeRef.current.value = 0), 500)
+          setCounter((prev) => prev + 1)
         } else {
           //@ts-ignore
           const { signature, error } = con
@@ -473,7 +472,7 @@ export const ExpandedDynamicContent = ({
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(successfulMessage(getSuccessStakeMsg(), signature, stakeRef.current.value, name, network))
           updateStakedValue()
-          toggleDeposited((prev) => !prev)
+          setCounter((prev) => prev + 1)
           setTimeout(() => (stakeRef.current.value = 0), 500)
         } else {
           const { signature, error } = con
@@ -511,7 +510,7 @@ export const ExpandedDynamicContent = ({
         if (confirm && confirm?.value && confirm.value.err === null) {
           updateStakedValue()
           notify(successfulMessage(getSuccessUnstakeMsg(), signature, unstakeRef.current.value, name, network))
-          toggleDeposited((prev) => !prev)
+          setCounter((prev) => prev + 1)
           if (parseFloat(unstakeRef.current.value) > tokenStaked) {
             const val = tokenEarned - (parseFloat(unstakeRef.current.value) - tokenStaked)
             setTokenEarned(val <= 0 ? 0 : val)
@@ -567,6 +566,7 @@ export const ExpandedDynamicContent = ({
               unstakeRef={unstakeRef}
               onClickHalf={onClickHalf}
               onClickMax={onClickMax}
+              isStakeLoading={isStakeLoading}
               isUnstakeLoading={isUnstakeLoading}
               onClickStake={onClickStake}
               onClickUnstake={onClickUnstake}

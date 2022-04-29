@@ -64,7 +64,7 @@ export const SUPPORTED_TOKEN_LIST = [
 
 export const NFT_MARKET_TRANSACTION_FEE: number = 1
 
-export const FarmData = [
+export const stakeTokens = [
   {
     id: '1',
     image: 'GOFX',
@@ -75,7 +75,9 @@ export const FarmData = [
     liquidity: 0,
     type: 'Staking',
     currentlyStaked: 0
-  },
+  }
+]
+export const sslTokens = [
   {
     id: '2',
     image: 'SOL',

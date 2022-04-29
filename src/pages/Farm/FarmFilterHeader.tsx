@@ -76,7 +76,7 @@ const IconContainer = styled.div`
 const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
 
 export const FarmFilter = () => {
-  const { poolFilter, setPoolFilter, searchFilter, setSearchFilter } = useFarmContext()
+  const { poolFilter, setPoolFilter, setSearchFilter, setCounter } = useFarmContext()
 
   return (
     <>
@@ -95,7 +95,7 @@ export const FarmFilter = () => {
 
         <SearchBar className="search-bar" placeholder="Search by token symbol" setSearchFilter={setSearchFilter} />
         <IconContainer>
-          <RefreshIcon href={'/farm'}>
+          <RefreshIcon onClick={() => setCounter((prev) => prev + 1)}>
             <img src={'/img/assets/refresh.svg'} />
           </RefreshIcon>
           <Toggle className="toggle" text="Show Deposited" defaultUnchecked />

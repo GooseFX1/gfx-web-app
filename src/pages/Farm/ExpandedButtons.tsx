@@ -224,7 +224,7 @@ export const StakeButtons: FC<{
   onClickMax: (x: string) => void
   onClickStake: any
   onClickUnstake: any
-  isStakeLoading?: any
+  isStakeLoading?: boolean
   isUnstakeLoading?: boolean
 }> = ({
   wallet,
@@ -332,8 +332,8 @@ export const SSLButtons: FC<{
   const miniButtonsClass = document.activeElement === unstakeRef.current ? 'miniButtons active' : 'miniButtons'
   const depositButtonClass = document.activeElement === stakeRef.current ? ' active' : ''
   const { prices } = usePriceFeed()
-  const { farmDataContext } = useFarmContext()
-  const tokenData = farmDataContext.find((farmData) => farmData.name === name)
+  const { farmDataSSLContext } = useFarmContext()
+  const tokenData = farmDataSSLContext.find((farmData) => farmData.name === name)
   const { getUIAmount } = useAccounts()
   const { publicKey } = useWallet()
   let tokenPrice = useMemo(() => {
@@ -346,8 +346,6 @@ export const SSLButtons: FC<{
     () => (publicKey ? getUIAmount(poolTokenAddress['g' + name]) : 0),
     [getUIAmount, publicKey]
   )
-  console.log(userPoolTokenBalance)
-
   const availableToMint = tokenData?.ptMinted ? tokenData.ptMinted : 0
   const availableToMintFiat = tokenPrice && availableToMint * tokenPrice.current
 

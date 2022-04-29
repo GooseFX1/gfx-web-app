@@ -20,7 +20,6 @@ import {
   getSslAccountKey
 } from '../../web3'
 import { useConnectionConfig, usePriceFeed, useFarmContext } from '../../context'
-import { FarmData } from '../../constants'
 import { ADDRESSES } from '../../web3/ids'
 import { MorePoolsSoon } from './MorePoolsSoon'
 
@@ -167,14 +166,21 @@ export const TableList = ({ dataSource }: any) => {
   const { prices } = usePriceFeed()
   const { network, connection } = useConnectionConfig()
   const wallet = useWallet()
-  const { showDeposited, poolFilter, searchFilter, setSearchFilter, farmDataContext, setFarmDataContext } =
-    useFarmContext()
+  const {
+    counter,
+    showDeposited,
+    poolFilter,
+    searchFilter,
+    farmDataContext,
+    setFarmDataContext,
+    farmDataSSLContext,
+    setFarmDataSSLContext
+  } = useFarmContext()
   const [accountKey, setAccountKey] = useState<PublicKey>()
   const [columnData, setColumnData] = useState(columns)
-  const [farmData, setFarmData] = useState<IFarmData[]>(farmDataContext)
+  const [farmData, setFarmData] = useState<IFarmData[]>([...farmDataContext, ...farmDataSSLContext])
   const [eKeys, setEKeys] = useState([])
   const PAGE_SIZE = 10
-  const [counter, setCounter] = useState(0)
 
   const gofxPrice = useMemo(() => prices['GOFX/USDC'], [prices])
 
@@ -212,53 +218,52 @@ export const TableList = ({ dataSource }: any) => {
 
   useEffect(() => {
     if (gofxPrice !== undefined) {
+      fetchSSLData()
+        .then((farmSSLData) => {
+          if (farmSSLData) setFarmDataSSLContext(farmSSLData)
+        })
+        .catch((err) => console.log(err))
       fetchGOFXData(accountKey)
         .then((farmData) => {
           if (farmData.length > 0) {
-            const farmDataStaked =
-              showDeposited && wallet.publicKey ? farmData.filter((fData) => fData?.currentlyStaked > 0.0) : farmData
-            setFarmDataContext(farmDataStaked)
+            setFarmDataContext(farmData)
           }
         })
-        .catch((err) => {
-          console.log(err)
-        })
+        .catch((err) => console.log(err))
     }
-  }, [accountKey, gofxPrice, showDeposited])
+  }, [accountKey, gofxPrice, counter])
 
   useEffect(() => {
-    setFarmData(farmDataContext)
-  }, [farmDataContext])
-
-  useEffect(() => {
-    if (farmDataContext[0]?.apr) {
-      fetchSSLData().then((farmData) => {
-        if (farmData) setFarmDataContext(farmData)
-      })
-    }
-  }, [farmDataContext[0]])
+    let allFarmData = [...farmDataContext, ...farmDataSSLContext]
+    // if (showDeposited && wallet.publicKey)
+    //   allFarmData = allFarmData.filter((fData) => fData.currentlyStaked > 0)
+    setFarmData(allFarmData)
+  }, [farmDataContext, farmDataSSLContext])
 
   useEffect(() => {
     // this useEffect is to monitor staking and SSL pools button
-    let farmDataStaked // =
-    //showDeposited && wallet.publicKey ? farmDataContext.filter((fData) => fData.currentlyStaked > 0) : []
-    if (poolFilter !== 'All pools') farmDataStaked = farmDataContext.filter((fData) => fData.type === poolFilter)
-    else farmDataStaked = farmDataContext
+    const allFarmData = [...farmDataContext, ...farmDataSSLContext]
+    let farmDataStaked = []
+
+    if (poolFilter !== 'All pools') farmDataStaked = allFarmData.filter((fData) => fData.type === poolFilter)
+    else farmDataStaked = allFarmData
+
     if (searchFilter)
       farmDataStaked = farmDataStaked.filter((fData) => {
         const tokenName = fData.name.toLowerCase()
         if (tokenName.includes(searchFilter.toLowerCase())) return true
       })
 
+    if (showDeposited && wallet.publicKey) farmDataStaked = farmDataStaked.filter((fData) => fData.currentlyStaked > 0)
+
     setFarmData(farmDataStaked)
   }, [poolFilter, searchFilter, showDeposited])
 
   const fetchSSLData = async () => {
     let SSLTokenNames = []
-    farmDataContext.map((data) => SSLTokenNames.push(data.name))
-    SSLTokenNames = SSLTokenNames.splice(1)
+    farmDataSSLContext.map((data) => SSLTokenNames.push(data.name))
     let tokenAddresses = getTokenAddresses(SSLTokenNames, network)
-    let newFarmDataContext = farmDataContext
+    let newFarmDataContext = farmDataSSLContext
     for (let i = 0; i < SSLTokenNames.length; i++) {
       const sslAccountKey = await getSslAccountKey(tokenAddresses[i])
       let { sslData, liquidityAccount } = await fetchSSLAmountStaked(
@@ -285,7 +290,6 @@ export const TableList = ({ dataSource }: any) => {
         ? Number(liquidityAccount.amountDeposited) / Math.pow(10, getTokenDecimal(network, SSLTokenNames[i]))
         : 0
       const earned = liquidityAccount ? userLiablity - amountDeposited : 0
-
       newFarmDataContext = newFarmDataContext.map((data) => {
         if (data.name === SSLTokenNames[i]) {
           return {
