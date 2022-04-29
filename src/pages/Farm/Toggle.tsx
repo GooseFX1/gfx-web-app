@@ -13,20 +13,21 @@ const STYLED_TOGGLE = styled.div`
     }
   }
   .ant-switch {
-    height: 45px;
-    background: #000;
+    height: 30px;
+    background: ${({ theme }) => theme.walletModalWallet};
     border: none;
     &.ant-switch-checked {
-      background: linear-gradient(to bottom, #9625ae, #411c48);
+      background: linear-gradient(267.85deg, #dc1fff 18.13%, #f7931a 98.67%);
+      opacity: ${({ theme }) => theme.opacity};
     }
   }
   .gray {
-    width: 97px;
+    width: 62px;
     .ant-switch-handle {
       top: 0;
       left: 0;
-      width: 45px;
-      height: 45px;
+      width: 30px;
+      height: 30px;
       transition: all 0.3s ease;
       &:before {
         background: linear-gradient(to bottom, #606060, #636363, #1c1b1b);
@@ -35,7 +36,7 @@ const STYLED_TOGGLE = styled.div`
     }
     &.ant-switch-checked {
       .ant-switch-handle {
-        left: calc(100% - 45px);
+        left: calc(100% - 30px);
         transition: all 0.3s ease;
       }
     }
@@ -79,7 +80,7 @@ const STYLED_TOGGLE = styled.div`
     font-size: 14px;
     font-weight: 600;
     text-align: left;
-    color: #fff;
+    color: ${({ theme }) => theme.text4};
     margin-left: ${({ theme }) => theme.margin(2)};
     max-width: 77px;
   }

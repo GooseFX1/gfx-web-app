@@ -11,12 +11,40 @@ export const successfulMessage = (msg: string, signature: any, price: string, na
     />
   )
 })
+export const sslSuccessfulMessage = (
+  signature: any,
+  price: string | number,
+  name: string,
+  network: any,
+  operation: string
+) => ({
+  message: (
+    <SuccessfulListingMsg
+      title={`${operation} sucessfull!`}
+      itemName={`You ${operation} ${price} ${name}`}
+      supportText={`Farm ${name}`}
+      tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
+    />
+  )
+})
 export const errorHandlingMessage = (msg: string, name: string, supportTxt: string, signature: any, network: any) => ({
   type: 'error',
   message: (
     <TransactionErrorMsg
       title={msg}
       itemName={`Stake ${name} Error`}
+      supportText={supportTxt}
+      tx_url={signature ? `https://solscan.io/tx/${signature}?cluster=${network}` : null}
+    />
+  )
+})
+
+export const sslErrorMessage = (name: string, supportTxt: string, signature: any, network: any, operation: string) => ({
+  type: 'error',
+  message: (
+    <TransactionErrorMsg
+      title={`${operation} error!`}
+      itemName={`${operation} ${name} Error`}
       supportText={supportTxt}
       tx_url={signature ? `https://solscan.io/tx/${signature}?cluster=${network}` : null}
     />
