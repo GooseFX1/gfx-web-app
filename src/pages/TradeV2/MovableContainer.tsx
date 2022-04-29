@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { logEvent } from 'firebase/analytics'
 import analytics from '../../analytics'
@@ -16,7 +16,8 @@ import {
   OrderBookProvider,
   TradeHistoryProvider,
   useConnectionConfig,
-  useCrypto
+  useCrypto,
+  useDarkMode
 } from '../../context'
 import { TRADE_ORDER_WIDTH } from '../../styles'
 import { notify } from '../../utils'
@@ -24,9 +25,10 @@ import { Responsive, WidthProvider, RGL } from 'react-grid-layout'
 import _ from 'lodash'
 import { Row } from 'antd'
 import { InfoBanner } from './InfoBanner'
+import { OrderHistory } from './OrderHistory'
 const ReactGridLayout = WidthProvider(Responsive)
 
-const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean }>`
+const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean }>`
   position: relative;
   display: flex;
   width: 100vw;
@@ -46,6 +48,36 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean }>`
     .react-grid-item.react-draggable:nth-child(4) {
       //max-width: 350px;
     }
+    .react-grid-item {
+      div:first-child {
+        filter: blur(${({ $isLocked }) => ($isLocked ? 0 : 1)}px);
+      }
+    }
+  }
+`
+
+const UNLOCKED_OVERLAY = styled.div`
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(101.33deg, rgba(247, 147, 26, 0.5) 7.41%, rgba(220, 31, 255, 0.3) 87.43%);
+  position: absolute;
+  top: 0;
+  cursor: pointer;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  img {
+    position: relative;
+    height: 45px;
+    width: 45px;
+    margin-bottom: 10px;
+  }
+  span {
+    position: relative;
+    font-size: 16px;
+    color: ${({ theme }) => theme.text1};
   }
 `
 
@@ -98,28 +130,91 @@ export const CryptoContent: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const { selectedCrypto } = useCrypto()
   const [isLocked, setIsLocked] = useState(true)
+  const [layout, setLayout] = useState({ lg: componentDimensions })
+  const mode = useDarkMode()
+  let chartContainer = useMemo(
+    () => <TVChartContainer symbol={selectedCrypto.pair} visible={true} />,
+    [selectedCrypto.pair]
+  )
 
   let defaultProps = {
     className: 'layout',
     items: 3,
     rowHeight: 20,
-    onLayoutChange: function () {},
     cols: { lg: 4, md: 4, sm: 2, xs: 2, xxs: 2 },
     isResizable: false,
     isBounded: true,
     isDraggable: !isLocked
   }
   const generateDOM = () => {
-    return _.map(_.range(componentDimensions.length), function (i) {
-      if (i === 0) return <div key={i}>{<TVChartContainer symbol={selectedCrypto.pair} visible={true} />}</div>
-      if (i === 3)
+    console.log('in generate dom')
+    return _.map(_.range(layout.lg.length), function (i) {
+      if (i === 0)
         return (
           <div key={i}>
-            <TradeHistoryProvider>
-              <OrderProvider>
-                <Order />
-              </OrderProvider>
-            </TradeHistoryProvider>
+            {chartContainer}
+            {!isLocked ? (
+              <UNLOCKED_OVERLAY>
+                <img
+                  src={mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
+                  alt="reposition"
+                />
+                <span>Drag to Reposition</span>
+              </UNLOCKED_OVERLAY>
+            ) : null}
+          </div>
+        )
+      if (i === 3) {
+        return (
+          <div key={i}>
+            <OrderProvider>
+              <Order />
+              {!isLocked ? (
+                <UNLOCKED_OVERLAY>
+                  <img
+                    src={mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
+                    alt="reposition"
+                  />
+                  <span>Drag to Reposition</span>
+                </UNLOCKED_OVERLAY>
+              ) : null}
+            </OrderProvider>
+          </div>
+        )
+      }
+      if (i === 2) {
+        return (
+          <div key={i}>
+            <OrderHistory />
+            {!isLocked ? (
+              <UNLOCKED_OVERLAY>
+                <img
+                  src={mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
+                  alt="reposition"
+                />
+                <span>Drag to Reposition</span>
+              </UNLOCKED_OVERLAY>
+            ) : null}
+          </div>
+        )
+      }
+      if (i === 1)
+        return (
+          <div key={i}>
+            <OrderProvider>
+              <OrderBookProvider>
+                <OrderBook />
+                {!isLocked ? (
+                  <UNLOCKED_OVERLAY>
+                    <img
+                      src={mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
+                      alt="reposition"
+                    />
+                    <span>Drag to Reposition</span>
+                  </UNLOCKED_OVERLAY>
+                ) : null}
+              </OrderBookProvider>
+            </OrderProvider>
           </div>
         )
       return (
@@ -130,25 +225,31 @@ export const CryptoContent: FC = () => {
     })
   }
 
-  const [layout, setLayout] = useState({ lg: componentDimensions })
-
   const onLayoutChange = (layout) => {
     console.log(layout)
+    setLayout({ lg: layout })
   }
-  //
+
+  const resetLayout = () => {
+    console.log('in reset')
+    setLayout({ lg: componentDimensions })
+  }
 
   return (
-    <DEX_CONTAINER $navCollapsed={isCollapsed}>
-      <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} />
-      <ReactGridLayout
-        compactType="vertical"
-        measureBeforeMount={false}
-        layouts={layout}
-        onLayoutChange={onLayoutChange}
-        {...defaultProps}
-      >
-        {generateDOM()}
-      </ReactGridLayout>
+    <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked}>
+      <TradeHistoryProvider>
+        <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} />
+        <ReactGridLayout
+          compactType="vertical"
+          measureBeforeMount={false}
+          layouts={layout}
+          onLayoutChange={onLayoutChange}
+          useCSSTransforms={true}
+          {...defaultProps}
+        >
+          {generateDOM()}
+        </ReactGridLayout>
+      </TradeHistoryProvider>
     </DEX_CONTAINER>
   )
 }
