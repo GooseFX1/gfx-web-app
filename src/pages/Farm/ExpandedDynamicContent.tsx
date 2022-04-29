@@ -290,8 +290,13 @@ export const ExpandedDynamicContent = ({
   const { prices } = usePriceFeed()
   const { connection } = useConnectionConfig()
   const { setCounter } = useFarmContext()
+  //loading indicators
   const [isStakeLoading, setIsStakeLoading] = useState<boolean>(false)
   const [isUnstakeLoading, setIsUnstakeLoading] = useState<boolean>(false)
+  const [isWithdrawLoading, setWithdrawLoading] = useState<boolean>(false)
+  const [isMintLoading, setMintLoading] = useState<boolean>(false)
+  const [isBurnLoading, setBurnLoading] = useState<boolean>(false)
+
   const [tokenStaked, setTokenStaked] = useState<number>(parseFloat(currentlyStaked))
   const [tokenEarned, setTokenEarned] = useState<number>(parseFloat(earned))
 
@@ -359,11 +364,11 @@ export const ExpandedDynamicContent = ({
   }
 
   const onClickMint = (): void => {
-    setIsUnstakeLoading(true)
+    setMintLoading(true)
     const amount = parseFloat(unstakeRef.current.value)
     try {
       const confirm = executeMint(SSLProgram, wallet, connection, network, name, amount).then((con) => {
-        setIsUnstakeLoading(false)
+        setMintLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Mint))
@@ -381,10 +386,10 @@ export const ExpandedDynamicContent = ({
   }
   const onClickBurn = (): void => {
     const amount = parseFloat(unstakeRef.current.value)
-    setIsUnstakeLoading(true)
+    setBurnLoading(true)
     try {
       const confirm = executeBurn(SSLProgram, wallet, connection, network, name, amount).then((con) => {
-        setIsUnstakeLoading(false)
+        setBurnLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Burn))
@@ -401,11 +406,11 @@ export const ExpandedDynamicContent = ({
     }
   }
   const onClickWithdraw = (amount: number): void => {
-    setIsUnstakeLoading(true)
+    setWithdrawLoading(true)
 
     try {
       const confirm = executeWithdraw(SSLProgram, wallet, connection, network, name, amount).then((con) => {
-        setIsUnstakeLoading(false)
+        setWithdrawLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Withdraw))
@@ -556,6 +561,9 @@ export const ExpandedDynamicContent = ({
               onClickMint={onClickMint}
               onClickBurn={onClickBurn}
               isStakeLoading={isStakeLoading}
+              isWithdrawLoading={isWithdrawLoading}
+              isMintLoading={isMintLoading}
+              isBurnLoading={isBurnLoading}
               isUnstakeLoading={isUnstakeLoading}
             />
           ) : (

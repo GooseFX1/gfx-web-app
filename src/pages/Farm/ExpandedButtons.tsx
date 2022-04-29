@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, useMemo } from 'react'
+import React, { FC, ReactElement, useMemo, useState, useEffect } from 'react'
 import { MainButton } from '../../components'
 import { Connect } from '../../layouts/App/Connect'
 import styled from 'styled-components'
@@ -22,7 +22,7 @@ const STYLED_RIGHT_CONTENT = styled.div`
 `
 const FLEX = styled.div`
   display: flex;
-  width: 392px;
+  width: 375px;
 `
 const ConnectContainer = styled.div`
   margin-top: 25px;
@@ -314,6 +314,9 @@ export const SSLButtons: FC<{
   onClickMint: any
   onClickBurn: any
   isStakeLoading: boolean
+  isWithdrawLoading: boolean
+  isMintLoading: boolean
+  isBurnLoading: boolean
   isUnstakeLoading?: boolean
 }> = ({
   wallet,
@@ -327,6 +330,9 @@ export const SSLButtons: FC<{
   onClickMint,
   onClickBurn,
   isStakeLoading,
+  isWithdrawLoading,
+  isBurnLoading,
+  isMintLoading,
   isUnstakeLoading
 }) => {
   const miniButtonsClass = document.activeElement === unstakeRef.current ? 'miniButtons active' : 'miniButtons'
@@ -336,6 +342,7 @@ export const SSLButtons: FC<{
   const tokenData = farmDataSSLContext.find((farmData) => farmData.name === name)
   const { getUIAmount } = useAccounts()
   const { publicKey } = useWallet()
+
   let tokenPrice = useMemo(() => {
     if (name === 'USDC') {
       return { current: 1 }
@@ -397,7 +404,7 @@ export const SSLButtons: FC<{
             <div className="right-inner">
               <div className="SOL-item">
                 <STYLED_SOL>
-                  <STYLED_INPUT className="value" type="number" ref={stakeRef} />
+                  <STYLED_INPUT className="value" type="number" min={10} max={100} ref={stakeRef} />
                   <div className="text">
                     <MAX_BUTTON onClick={() => onClickHalf('stake')} className="text-1">
                       Half
@@ -430,7 +437,7 @@ export const SSLButtons: FC<{
                 </STYLED_SOL>
                 <FLEX>
                   <STYLED_STAKE_PILL
-                    loading={isUnstakeLoading}
+                    loading={isMintLoading}
                     disabled={isUnstakeLoading || parseFloat(availableToMint.toFixed(DISPLAY_DECIMAL)) <= 0}
                     className={miniButtonsClass}
                     onClick={() => mintClicked()}
@@ -438,7 +445,7 @@ export const SSLButtons: FC<{
                     Mint
                   </STYLED_STAKE_PILL>
                   <STYLED_STAKE_PILL
-                    loading={isUnstakeLoading}
+                    loading={isBurnLoading}
                     disabled={isUnstakeLoading || parseFloat(userPoolTokenBalance.toFixed(DISPLAY_DECIMAL)) <= 0}
                     className={miniButtonsClass}
                     onClick={() => burnClicked()}
@@ -446,7 +453,7 @@ export const SSLButtons: FC<{
                     Burn
                   </STYLED_STAKE_PILL>
                   <STYLED_STAKE_PILL
-                    loading={isUnstakeLoading}
+                    loading={isWithdrawLoading}
                     disabled={isUnstakeLoading || parseFloat(availableToMint.toFixed(DISPLAY_DECIMAL)) <= 0}
                     className={miniButtonsClass}
                     onClick={() => withdrawClicked()}
