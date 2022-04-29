@@ -66,19 +66,20 @@ export const SUPPORTED_TOKEN_LIST = [
 
 export const NFT_MARKET_TRANSACTION_FEE: number = 1
 
-export const FarmData = [
+export const stakeTokens = [
   {
     id: '1',
     image: 'GOFX',
     name: 'GOFX',
     earned: 0,
     apr: 0,
-
-    rewards: '100% GOFX',
+    rewards: 100,
     liquidity: 0,
-    type: 'Single Sided',
+    type: 'Staking',
     currentlyStaked: 0
-  },
+  }
+]
+export const sslTokens = [
   {
     id: '2',
     image: 'SOL',
@@ -86,7 +87,7 @@ export const FarmData = [
     earned: 0,
     apr: 0,
     liquidity: 0,
-    type: 'Single Sided',
+    type: 'SSL',
     currentlyStaked: 0
   },
   {
@@ -96,18 +97,20 @@ export const FarmData = [
     earned: 0,
     apr: 0,
     liquidity: 0,
-    type: 'Single Sided',
-    currentlyStaked: 0
-  },
-  {
-    id: '4',
-    image: 'MSOL',
-    name: 'MSOL',
-    earned: 0,
-    apr: 0,
-    rewards: '100% GOFX',
-    liquidity: 0,
-    type: 'Single Sided',
+    type: 'SSL',
     currentlyStaked: 0
   }
 ]
+
+// ,
+//   {
+//     id: '4',
+//     image: 'MSOL',
+//     name: 'MSOL',
+//     earned: 0,
+//     apr: 0,
+//     rewards: 0,
+//     liquidity: 0,
+//     type: 'SSL',
+//     currentlyStaked: 0
+//   }

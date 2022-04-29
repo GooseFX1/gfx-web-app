@@ -2,18 +2,17 @@ import React from 'react'
 import styled from 'styled-components'
 import { Toggle } from './Toggle'
 import { SearchBar, Categories } from '../../components'
+import { Button } from 'antd'
+import { FarmFilter } from './FarmFilterHeader'
 
 const STYLED_FARM_HEADER = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: ${({ theme }) => theme.margin(4)} ${({ theme }) => theme.margin(5)};
-  background: ${({ theme }) => theme.farmHeaderBg};
-  box-shadow: 0 7px 15px 9px rgba(13, 13, 13, 0.25);
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
+  padding: 10px 10px;
+  border-radius: 20px 20px 25px 25px;
   .search-bar {
-    height: 60px;
+    height: 44px;
     margin: 0;
     background: #000;
     input {
@@ -21,7 +20,7 @@ const STYLED_FARM_HEADER = styled.div`
     }
   }
   .pools {
-    height: 60px;
+    height: 44px;
     max-width: 132px;
     margin-left: ${({ theme }) => theme.margin(4.5)};
     > span {
@@ -41,24 +40,17 @@ const STYLED_RIGHT = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  border: 20px !important;
   padding-left: ${({ theme }) => theme.margin(11)};
 `
 export const FarmHeader = ({ onFilter }: any) => {
-  const poolTypes = [
-    { name: 'All pools', icon: 'All pools' },
-    { name: 'Single Sided', icon: 'Single Sided' }
-    // { name: 'Double Sided', icon: 'Double Sided' },
-    // { name: 'Insurance', icon: 'Insurance' }
-  ]
-
   return (
-    <STYLED_FARM_HEADER>
-      <Toggle className="toggle" text="Show Deposited" defaultUnchecked />
+    <>
+      <FarmFilter />
       <STYLED_RIGHT>
-        <SearchBar className="search-bar" placeholder="Search by token symbol" setFilter={onFilter} />
         {/* <Categories className="pools" categories={poolTypes} /> */}
         {/* <Toggle className="live" checkedChildren="Ended" unCheckedChildren="Live" defaultChecked={false} /> */}
       </STYLED_RIGHT>
-    </STYLED_FARM_HEADER>
+    </>
   )
 }
