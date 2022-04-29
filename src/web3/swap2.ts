@@ -1,38 +1,40 @@
 import { BN, Program, Provider } from '@project-serum/anchor'
 import { Buffer } from 'buffer'
-import { publicKeyLayout, u64, Oracle } from './layout'
+import { publicKeyLayout } from './layout'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
+import { Swap } from 'goosefx-ssl-sdk'
 import {
-  NATIVE_MINT,
-  createAssociatedTokenAccountInstruction,
-  getAssociatedTokenAddress,
-  createSyncNativeInstruction,
-  createCloseAccountInstruction
+  NATIVE_MINT
+  // createAssociatedTokenAccountInstruction,
+  // getAssociatedTokenAddress,
+  // createSyncNativeInstruction
+  //createCloseAccountInstruction
 } from '@solana/spl-token-new'
 
 import {
   Connection,
-  SystemProgram,
+  //SystemProgram,
   PublicKey,
   Transaction,
   TransactionSignature,
-  SYSVAR_RENT_PUBKEY,
-  LAMPORTS_PER_SOL
+  SYSVAR_RENT_PUBKEY
+  //LAMPORTS_PER_SOL
 } from '@solana/web3.js'
 import { ADDRESSES, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, SYSTEM } from './ids'
 import {
   createAssociatedTokenAccountIx,
-  findAssociatedTokenAddress,
-  signAndSendRawTransaction
+  findAssociatedTokenAddress
+  //signAndSendRawTransaction
   //simulateTransaction
 } from './utils'
 import { ISwapToken } from '../context'
 const SwapIDL = require('./idl/swap2.json')
-const { blob, seq, struct, u8, u32 } = require('buffer-layout')
+const { blob, struct, u8, u32 } = require('buffer-layout')
 
-const wasm = import('gfx_ssl_wasm')
+const connection = new Connection('https://solana-api.projectserum.com', 'confirmed')
+const SWAP = new Swap(connection) //
 
 const getSwapProgram = (wallet: WalletContextState, connection: Connection, network: WalletAdapterNetwork): Program =>
   new Program(
@@ -41,17 +43,17 @@ const getSwapProgram = (wallet: WalletContextState, connection: Connection, netw
     new Provider(connection, wallet as any, { commitment: 'processed' })
   )
 
-const PAIR_LAYOUT = struct([
-  blob(8, 'sighash'),
-  publicKeyLayout('controller'),
-  publicKeyLayout('mint1'),
-  publicKeyLayout('mint2'),
-  blob(8), // padding for alignment
-  seq(Oracle, 5, 'oracles'),
-  u64('nOracle'),
-  blob(58), // Other fields
-  publicKeyLayout('fee_collector')
-])
+// const PAIR_LAYOUT = struct([
+//   blob(8, 'sighash'),
+//   publicKeyLayout('controller'),
+//   publicKeyLayout('mint1'),
+//   publicKeyLayout('mint2'),
+//   blob(8), // padding for alignment
+//   seq(Oracle, 5, 'oracles'),
+//   u64('nOracle'),
+//   blob(58), // Other fields
+//   publicKeyLayout('fee_collector')
+// ])
 
 const LAYOUT = struct([
   blob(8, 'sighash'),
@@ -95,31 +97,31 @@ export const computePoolsPDAs = async (
   return { lpTokenMint: null, pair: null, pool: null }
 }
 
-const wrapSolToken = async (wallet: any, connection: Connection, amount: number) => {
-  try {
-    const tx = new Transaction()
-    const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
-    // Create token account to hold your wrapped SOL
-    if (associatedTokenAccount)
-      tx.add(
-        createAssociatedTokenAccountInstruction(wallet.publicKey, associatedTokenAccount, wallet.publicKey, NATIVE_MINT)
-      )
+// const wrapSolToken = async (wallet: any, connection: Connection, amount: number) => {
+//   try {
+//     const tx = new Transaction()
+//     const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
+//     // Create token account to hold your wrapped SOL
+//     if (associatedTokenAccount)
+//       tx.add(
+//         createAssociatedTokenAccountInstruction(wallet.publicKey, associatedTokenAccount, wallet.publicKey, NATIVE_MINT)
+//       )
 
-    // Transfer SOL to associated token account and use SyncNative to update wrapped SOL balance
-    tx.add(
-      SystemProgram.transfer({
-        fromPubkey: wallet.publicKey,
-        toPubkey: associatedTokenAccount,
-        lamports: amount
-      }),
-      createSyncNativeInstruction(associatedTokenAccount)
-    )
+//     // Transfer SOL to associated token account and use SyncNative to update wrapped SOL balance
+//     tx.add(
+//       SystemProgram.transfer({
+//         fromPubkey: wallet.publicKey,
+//         toPubkey: associatedTokenAccount,
+//         lamports: amount
+//       }),
+//       createSyncNativeInstruction(associatedTokenAccount)
+//     )
 
-    return tx //signAndSendRawTransaction(connection, tx, wallet)
-  } catch {
-    return null
-  }
-}
+//     return tx //signAndSendRawTransaction(connection, tx, wallet)
+//   } catch {
+//     return null
+//   }
+// }
 
 export const getPairDetails = async (tokenA: ISwapToken, tokenB: ISwapToken, network: WalletAdapterNetwork) => {
   const addresses = [new PublicKey(tokenA.address).toBuffer(), new PublicKey(tokenB.address).toBuffer()].sort(
@@ -273,41 +275,51 @@ export const swap = async (
   network: WalletAdapterNetwork
 ): Promise<TransactionSignature | undefined> => {
   try {
-    let txn = new Transaction()
-    if (tokenA.address === NATIVE_MINT.toBase58()) {
-      txn = await wrapSolToken(wallet, connection, inTokenAmount * LAMPORTS_PER_SOL)
-    }
+    //   let txn = new Transaction()
+    //   if (tokenA.address === NATIVE_MINT.toBase58()) {
+    //     txn = await wrapSolToken(wallet, connection, inTokenAmount * LAMPORTS_PER_SOL)
+    //   }
 
-    const tx = await swapCreatTX(
-      tokenA,
-      tokenB,
-      inTokenAmount,
-      outTokenAmount,
-      slippage,
-      wallet,
-      connection,
-      network,
-      txn
-    )
+    //   const tx = await swapCreatTX(
+    //     tokenA,
+    //     tokenB,
+    //     inTokenAmount,
+    //     outTokenAmount,
+    //     slippage,
+    //     wallet,
+    //     connection,
+    //     network,
+    //     txn
+    //   )
 
-    // unwrapping sol if tokenB is sol
-    if (tokenB.address === NATIVE_MINT.toBase58()) {
-      try {
-        const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
-        if (associatedTokenAccount) {
-          const tr = createCloseAccountInstruction(associatedTokenAccount, wallet.publicKey, wallet.publicKey)
-          tx.add(tr)
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    }
+    //   // unwrapping sol if tokenB is sol
+    //   if (tokenB.address === NATIVE_MINT.toBase58()) {
+    //     try {
+    //       const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
+    //       if (associatedTokenAccount) {
+    //         const tr = createCloseAccountInstruction(associatedTokenAccount, wallet.publicKey, wallet.publicKey)
+    //         tx.add(tr)
+    //       }
+    //     } catch (e) {
+    //       console.log(e)
+    //     }
+    //   }
 
-    const finalResult = await signAndSendRawTransaction(connection, tx, wallet)
-    let result = await connection.confirmTransaction(finalResult)
+    //   const finalResult = await signAndSendRawTransaction(connection, tx, wallet)
+    //   let result = await connection.confirmTransaction(finalResult)
 
-    if (!result.value.err) {
-      return finalResult
+    //   if (!result.value.err) {
+    //     return finalResult
+    //   } else {
+    //     return null
+    //   }
+    const { swapToken } = SWAP
+    const swapResult = await swapToken(tokenA.address, tokenB.address, inTokenAmount, slippage, wallet)
+
+    console.log(swapResult)
+
+    if (swapResult) {
+      return swapResult
     } else {
       return null
     }
@@ -327,52 +339,15 @@ export const preSwapAmount = async (
   try {
     if (!inTokenAmount || inTokenAmount === 0) return { impact: 0, preSwapResult: '0' }
 
-    const swapWASM = (await wasm).swap
-    const OracleRegistry = (await wasm).OracleRegistry
-    const pair = await getPairDetails(tokenA, tokenB, network)
-    const pairData = await connection.getAccountInfo(pair)
-    const sslIn = await PublicKey.findProgramAddress(
-      [
-        new Buffer('GFX-SSL', 'utf-8'),
-        new PublicKey(ADDRESSES[network].programs.swap.controller).toBuffer(),
-        new PublicKey(tokenA.address).toBuffer()
-      ],
-      ADDRESSES[network].programs.swap.address
-    )
-    const sslOut = await PublicKey.findProgramAddress(
-      [
-        new Buffer('GFX-SSL', 'utf-8'),
-        new PublicKey(ADDRESSES[network].programs.swap.controller).toBuffer(),
-        new PublicKey(tokenB.address).toBuffer()
-      ],
-      ADDRESSES[network].programs.swap.address
-    )
-    const tokenASSLData = await connection.getAccountInfo(new PublicKey(sslIn[0]))
-    const tokenBSSLData = await connection.getAccountInfo(new PublicKey(sslOut[0]))
+    let time1: any = new Date()
+    const { getQuote, getPriceImpact } = SWAP
+    const outAmount = await getQuote(tokenA.address, tokenB.address, inTokenAmount)
 
-    const decoded = PAIR_LAYOUT.decode(pairData.data)
-    const { oracles, nOracle } = decoded
-    const registry = new OracleRegistry()
-    for (const oracle of oracles.slice(0, nOracle)) {
-      for (const elem of oracle.elements.slice(0, oracle.n)) {
-        registry.add_oracle(elem.address.toBuffer(), (await connection.getAccountInfo(elem.address)).data)
-      }
-    }
-    const pseudoAmount = 10000000
-    const scale = pseudoAmount / inTokenAmount
-    const out = swapWASM(
-      tokenASSLData.data,
-      tokenBSSLData.data,
-      pairData.data,
-      registry,
-      BigInt(pseudoAmount),
-      BigInt(0)
-    )
+    const priceImpact = await getPriceImpact(tokenA.address, tokenB.address, inTokenAmount)
+    let time2: any = new Date()
 
-    const differenceInDecimals = tokenA.decimals - tokenB.decimals
-    const trueValue = Number(out.out.toString()) / scale
-
-    return { preSwapResult: +(trueValue * 10 ** differenceInDecimals).toFixed(7) + '', impact: out.price_impact }
+    console.log(time2 - time1)
+    return { preSwapResult: outAmount + '', impact: priceImpact }
   } catch (e) {
     console.log(e)
     return null

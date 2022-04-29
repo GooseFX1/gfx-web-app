@@ -727,7 +727,7 @@ export const SwapMain: FC = () => {
 
     let shortRoutes: any[] = routes?.filter((i) => i.inAmount === inAmountTotal)?.slice(0, 3)
     if (!routes) return
-    if (tokenB && outTokenAmount) {
+    if (tokenB) {
       const GoFxRoute = {
         marketInfos: [
           {
@@ -739,8 +739,8 @@ export const SwapMain: FC = () => {
             }
           }
         ],
-        outAmount: +(outTokenAmount * 10 ** tokenB.decimals).toFixed(7),
-        outAmountWithSlippage: +(outTokenAmount * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
+        outAmount: +((outTokenAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
+        outAmountWithSlippage: +((outTokenAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
         priceImpactPct: priceImpact
       }
 

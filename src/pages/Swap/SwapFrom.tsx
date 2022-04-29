@@ -47,14 +47,14 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
   const setHalf = () => {
     if (tokenA) {
       setFocused('from')
-      setInTokenAmount(getUIAmount(tokenA.address) / 2)
+      setInTokenAmount(parseFloat((getUIAmount(tokenA.address) / 2 + '').slice(0, Math.min(tokenA.decimals, 8))))
     }
   }
 
   const setMax = () => {
     if (tokenA) {
       setFocused('from')
-      setInTokenAmount(getUIAmount(tokenA.address))
+      setInTokenAmount(parseFloat(getUIAmountString(tokenA.address).slice(0, Math.min(tokenA.decimals, 8))))
     }
   }
 
