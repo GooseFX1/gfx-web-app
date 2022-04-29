@@ -79,7 +79,11 @@ const Loader: FC = () => {
   return <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
 }
 
-export const InfoBanner: FC<{ isLocked: boolean; setIsLocked: Function }> = ({ isLocked, setIsLocked }) => {
+export const InfoBanner: FC<{ isLocked: boolean; setIsLocked: Function; resetLayout: Function }> = ({
+  isLocked,
+  setIsLocked,
+  resetLayout
+}) => {
   const [isSpot, setIsSpot] = useState(true)
   const { selectedCrypto } = useCrypto()
   const { prices } = usePriceFeed()
@@ -111,7 +115,7 @@ export const InfoBanner: FC<{ isLocked: boolean; setIsLocked: Function }> = ({ i
           </>
         )}
       </INFO_STATS>
-      <REFRESH_LAYOUT>
+      <REFRESH_LAYOUT onClick={() => resetLayout()}>
         <img src={`/img/assets/whiteRefresh.svg`} alt="refresh" />
       </REFRESH_LAYOUT>
       <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>

@@ -30,6 +30,7 @@ export interface Colors {
   text17: Color
   text18: Color
   text19: Color
+  text20: Color
 
   // backgrounds / greys
   bg0: Color
