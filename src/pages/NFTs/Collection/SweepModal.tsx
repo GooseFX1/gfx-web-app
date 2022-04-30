@@ -8,9 +8,10 @@ import {
   useNFTCollections,
   useNFTDetails,
   useNFTProfile,
-  useTokenRegistry
+  useTokenRegistry,
+  useDarkMode
 } from '../../../context'
-import { CenteredDiv, SVGToWhite } from '../../../styles'
+import { CenteredDiv, SVGToWhite, SVGDynamicReverseMode } from '../../../styles'
 import { LAMPORTS_PER_SOL, PublicKey, Transaction, TransactionInstruction, SystemProgram } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import BN from 'bn.js'
@@ -714,14 +715,15 @@ interface ISweepModal {
 }
 
 export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice }: ISweepModal) => {
-  const { fixedPriceWithinCollection, singleCollection, openBidWithinCollection } = useNFTCollections()
+  const { mode } = useDarkMode()
+  const { fixedPriceWithinCollection, singleCollection } = useNFTCollections()
   const [dropdownSelection, setDropdownSelection] = useState(null)
   const [nftBatch, setNftBatch] = useState([])
   const [sweeping, setIsSweeping] = useState<boolean>(false)
   const [sweepComplete, setSweepComplete] = useState<boolean>(false)
   const { connected, publicKey, sendTransaction } = useWallet()
   const { connection } = useConnectionConfig()
-  const { sessionUser, fetchSessionUser } = useNFTProfile()
+  const { sessionUser } = useNFTProfile()
   const { bidOnSingleNFT } = useNFTDetails()
   const [nftState, setNftState] = useState([])
   //0 signifies loading, -1 signifies error and 1 signfies success
@@ -1159,10 +1161,14 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
         {emptyFixedPrice ? (
           <>
             <div className="topbar">
-              <img className={'topbar-image'} src={`/img/assets/collectionSweeper.svg`} alt="collection-sweeper" />
+              <SVGDynamicReverseMode
+                className={'topbar-image'}
+                src={`/img/assets/collectionSweeper.svg`}
+                alt="collection-sweeper"
+              />
             </div>
             <div className="topbar-no-nft">Oh snap! There is no floor to sweep.</div>
-            <img src={`/img/assets/no-nft-sweep.svg`} alt="collection-sweeper" />
+            <img src={`/img/assets/no-nft-sweep-${mode}.svg`} alt="collection-sweeper" />
             <div className="no-nft-text">There are no listed NFT’s from this collection available to sweep!</div>
           </>
         ) : (
@@ -1170,7 +1176,11 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
             {!sweepComplete ? (
               <>
                 <div className="topbar">
-                  <img className={'topbar-image'} src={`/img/assets/collectionSweeper.svg`} alt="collection-sweeper" />
+                  <SVGDynamicReverseMode
+                    className={'topbar-image'}
+                    src={`/img/assets/collectionSweeper.svg`}
+                    alt="collection-sweeper"
+                  />
                 </div>
                 <Row justify="center" align="middle" className="rowTwo">
                   <img className="small-image" src={singleCollection.collection[0].profile_pic_link} alt="the-nft" />
