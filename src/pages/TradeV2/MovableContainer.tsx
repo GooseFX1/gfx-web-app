@@ -26,6 +26,7 @@ import _ from 'lodash'
 import { Row } from 'antd'
 import { InfoBanner } from './InfoBanner'
 import { OrderHistory } from './OrderHistory'
+import { HistoryPanel } from './HistoryPanel'
 const ReactGridLayout = WidthProvider(Responsive)
 
 const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean }>`
@@ -93,14 +94,14 @@ const componentDimensions = [
     x: 2,
     y: 0,
     i: '1',
-    h: 10,
+    h: 11,
     w: 1
   },
   {
     x: 2,
-    y: 10,
+    y: 11,
     i: '2',
-    h: 10,
+    h: 9,
     w: 1
   },
   {
@@ -114,15 +115,8 @@ const componentDimensions = [
     x: 0,
     y: 20,
     i: '4',
-    h: 15,
+    h: 10,
     w: 3
-  },
-  {
-    x: 3,
-    y: 20,
-    i: '5',
-    h: 15,
-    w: 1
   }
 ]
 
@@ -147,7 +141,6 @@ export const CryptoContent: FC = () => {
     isDraggable: !isLocked
   }
   const generateDOM = () => {
-    console.log('in generate dom')
     return _.map(_.range(layout.lg.length), function (i) {
       if (i === 0)
         return (
@@ -217,6 +210,22 @@ export const CryptoContent: FC = () => {
             </OrderProvider>
           </div>
         )
+      if (i === 4)
+        return (
+          <div key={i}>
+            {/*<History chartsVisible={true} setChartsVisible={null} />*/}
+            <HistoryPanel />
+            {!isLocked ? (
+              <UNLOCKED_OVERLAY>
+                <img
+                  src={mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
+                  alt="reposition"
+                />
+                <span>Drag to Reposition</span>
+              </UNLOCKED_OVERLAY>
+            ) : null}
+          </div>
+        )
       return (
         <div key={i}>
           <span className="text">{i}</span>
@@ -226,7 +235,6 @@ export const CryptoContent: FC = () => {
   }
 
   const onLayoutChange = (layout) => {
-    console.log(layout)
     setLayout({ lg: layout })
   }
 

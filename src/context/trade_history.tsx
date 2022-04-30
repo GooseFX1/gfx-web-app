@@ -169,9 +169,9 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
     getMarketTrades()
   }, [selectedCrypto.market])
   useEffect(() => {
-    panel === HistoryPanel.Balances && fetchBalances()
-    panel === HistoryPanel.Orders && fetchOpenOrders()
-  }, [fetchBalances, fetchOpenOrders, panel])
+    fetchBalances()
+    fetchOpenOrders()
+  }, [fetchBalances, fetchOpenOrders, selectedCrypto.pair])
 
   return (
     <TradeHistoryContext.Provider

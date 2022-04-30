@@ -39,7 +39,7 @@ const WRAPPER = styled.div`
   height: 100%;
   width: 100%;
   border-radius: 10px;
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg9};
 `
 
 const LOADER = styled(Skeleton.Input)`
@@ -121,7 +121,7 @@ export const OrderHistory: FC = () => {
           {tradeHistory.map((item) => {
             return (
               <TRADE_ROW $side={item.side === 'buy'}>
-                <span>{item.price}</span>
+                <span>{item.price.toFixed(2)}</span>
                 <span>{item.size}</span>
                 <span>{moment(item.time).format('LTS')}</span>
               </TRADE_ROW>
