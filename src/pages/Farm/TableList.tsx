@@ -181,7 +181,6 @@ export const TableList = ({ dataSource }: any) => {
   const [farmData, setFarmData] = useState<IFarmData[]>([...farmDataContext, ...farmDataSSLContext])
   const [eKeys, setEKeys] = useState([])
   const PAGE_SIZE = 10
-  const [counter, setCounter] = useState(0)
 
   const gofxPrice = useMemo(() => prices['GOFX/USDC'], [prices])
 
