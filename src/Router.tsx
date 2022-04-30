@@ -20,11 +20,9 @@ export const Router: FC = () => {
           <Switch>
             <Route exact path="/swap" component={Swap} />
             <Route exact path="/trade">
-              <CryptoProvider>
-                <PriceFeedProvider>
-                  <CryptoContent />
-                </PriceFeedProvider>
-              </CryptoProvider>
+              <PriceFeedProvider>
+                <CryptoContent />
+              </PriceFeedProvider>
             </Route>
             <Route
               exact

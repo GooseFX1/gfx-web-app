@@ -31,6 +31,7 @@ export interface Colors {
   text18: Color
   text19: Color
   text20: Color
+  text21: Color
 
   // backgrounds / greys
   bg0: Color
@@ -172,6 +173,9 @@ export interface Colors {
   bids: Color
   error: Color
   success: Color
+
+  //dexv2
+  rowSeparator: Color
 
   // Filter
   filterBackIcon: Color
