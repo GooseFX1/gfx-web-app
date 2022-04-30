@@ -3,7 +3,7 @@ import React, { FC, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { MarketType, useCrypto, usePriceFeed } from '../../context'
 import styled from 'styled-components'
-import { FEATURED_PAIRS_LIST } from '../../context'
+import { FEATURED_PAIRS_LIST, AVAILABLE_MARKETS } from '../../context'
 import { DownOutlined, UserOutlined } from '@ant-design/icons'
 
 const SELECTED_PAIR = styled.div`
@@ -46,7 +46,7 @@ const DROPDOWN_PAIR_DIV = styled.div`
   }
 `
 
-const PairComponents: FC<{ decimals: number; pair: string; type: MarketType }> = ({ decimals, pair, type }) => {
+const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) => {
   //const { prices } = usePriceFeed()
   const { formatPair, getAskSymbolFromPair, selectedCrypto, setSelectedCrypto } = useCrypto()
   const history = useHistory()
@@ -73,16 +73,16 @@ export const DropdownPairs: FC = () => {
     if (item.type === 'synth') {
       history.push('/synths')
     } else if (selectedCrypto.pair !== symbol) {
-      setSelectedCrypto({ decimals: item.decimals, pair: item.pair, type: item.type })
+      setSelectedCrypto({ decimals: 3, pair: item.name, type: 'crypto' })
     }
   }
 
   const menus = (
     <Menu>
-      {FEATURED_PAIRS_LIST.map((item, index) => {
+      {AVAILABLE_MARKETS.map((item, index) => {
         return (
           <Menu.Item onClick={() => handleSelection(item)} key={index}>
-            <PairComponents {...item} />
+            <PairComponents pair={item.name} type={'crypto'} />
           </Menu.Item>
         )
       })}
