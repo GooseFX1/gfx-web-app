@@ -1,9 +1,12 @@
-import React, { FC, ReactNode, useMemo, useState, MouseEvent } from 'react'
-import { Skeleton } from 'antd'
+import React, { FC, ReactNode, useMemo, useState, MouseEvent, useEffect } from 'react'
+import { Dropdown, Menu, Skeleton } from 'antd'
+import { DownOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { Expand } from '../../components'
-import { MarketSide, useCrypto, useOrder, useOrderBook } from '../../context'
+import { MarketSide, useCrypto, useOrder, useOrderBook, useTradeHistory } from '../../context'
 import { removeFloatingPointError } from '../../utils'
+
+const SPREADS = [1 / 100, 5 / 100, 1 / 10, 5 / 10, 1]
 
 const HEADER = styled.div`
   height: 70px;
@@ -25,8 +28,17 @@ const HEADER = styled.div`
     span:nth-child(2) {
       text-align: center;
     }
-    span:nth-child(3) {
+    div:nth-child(3) {
       text-align: right;
+      width: 33%;
+      font-size: 13px;
+      justify-content: end;
+      .spreadDropdown {
+        justify-content: end;
+        cursor: pointer;
+        width: 50px;
+        background: linear-gradient(90.62deg, #f48537 2.36%, #a72ebd 99.71%);
+      }
     }
   }
   div:nth-child(2) {
@@ -35,6 +47,17 @@ const HEADER = styled.div`
     span {
       font-size: 11px;
     }
+    span:nth-child(3) {
+      text-align: right;
+    }
+  }
+  .buy {
+    color: #50bb35;
+    font-weight: 700 bold;
+  }
+  .sell {
+    color: #f06565;
+    font-weight: 700 bold;
   }
 `
 
@@ -178,11 +201,28 @@ const WRAPPER = styled.div`
 const ORDERBOOK_CONTAINER = styled.div`
   width: 100%;
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: center;
   padding: 0px 10px;
   span {
     width: 50%;
+  }
+`
+
+const SPREAD_FOOTER = styled.div`
+  display: flex;
+  justify-content: center;
+  position: relative;
+  top: 8px;
+  div {
+    color: #e7e7e7;
+
+    span {
+      background-color: ${({ theme }) => theme.bg12};
+      padding: 5px;
+      border-radius: 5px;
+      margin-left: 10px;
+    }
   }
 `
 
@@ -202,24 +242,106 @@ export const OrderBook: FC = () => {
   const [asks, setAsks] = useState<MarketSide>('asks')
   const bid = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
   const ask = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
+  const { tradeHistory } = useTradeHistory()
+  const [spreadIndex, setSpreadIndex] = useState<number>(0)
+  let lastTradedPrice = {
+    price: tradeHistory[0] && tradeHistory[0].price,
+    side: tradeHistory[0] && tradeHistory[0].side
+  }
+
+  const [bidOrderBookDisplay, setBidOrderBookDisplay] = useState([])
+  const [askOrderBookDisplay, setAskOrderBookDisplay] = useState([])
+
+  const isModulo = (num1, num2) => {
+    let result = (num1 + 0.00001) % num2
+    if (result < 0.0001) return true
+    return false
+  }
+
+  const editOrderBookBid = () => {
+    function getBucketValue(bidAmount, spread) {
+      let value = +(bidAmount / spread).toFixed(2)
+      if (isModulo(bidAmount, spread)) return { decimal: false, value: bidAmount }
+      else return { decimal: true, value: Math.floor(value) * spread }
+    }
+    let completeOrderBookBids = orderBook[bids],
+      selectedSpread = SPREADS[spreadIndex],
+      buckets = [],
+      firstBucket = getBucketValue(completeOrderBookBids[0][0], selectedSpread).value,
+      lastBucket = firstBucket,
+      currentBucketSum = 0
+    for (let i = 0; i < 100 && i < completeOrderBookBids.length; i++) {
+      if (completeOrderBookBids[i][0] >= lastBucket) {
+        currentBucketSum += completeOrderBookBids[i][1]
+      } else {
+        buckets.push([lastBucket, currentBucketSum])
+        currentBucketSum = 0
+        lastBucket = getBucketValue(completeOrderBookBids[i][0], selectedSpread).value
+        currentBucketSum += completeOrderBookBids[i][1]
+      }
+    }
+    setBidOrderBookDisplay(buckets)
+  }
+  const editOrderBookAsk = () => {
+    function getBucketValue(askAmount, spread) {
+      let value = +(askAmount / spread).toFixed(2)
+      if (isModulo(askAmount, spread)) return { decimal: false, value: askAmount }
+      else return { decimal: true, value: (Math.floor(value) + 1) * spread }
+    }
+    let completeOrderBookBids = orderBook[asks],
+      selectedSpread = SPREADS[spreadIndex],
+      buckets = [],
+      firstBucket = getBucketValue(completeOrderBookBids[0][0], selectedSpread).value,
+      lastBucket = firstBucket,
+      currentBucketSum = 0
+    for (let i = 0; i < 100 && i < completeOrderBookBids.length; i++) {
+      if (completeOrderBookBids[i][0] <= lastBucket) {
+        currentBucketSum += completeOrderBookBids[i][1]
+      } else {
+        buckets.push([lastBucket, currentBucketSum])
+        currentBucketSum = 0
+        lastBucket = getBucketValue(completeOrderBookBids[i][0], selectedSpread).value
+        currentBucketSum += completeOrderBookBids[i][1]
+      }
+    }
+    setAskOrderBookDisplay(buckets)
+  }
+
+  useEffect(() => {
+    if (orderBook[bids].length > 0) {
+      editOrderBookBid()
+      editOrderBookAsk()
+    } else {
+      setBidOrderBookDisplay([])
+      setAskOrderBookDisplay([])
+    }
+  }, [orderBook, spreadIndex, selectedCrypto.pair])
 
   const slicedOrderBookBids = useMemo(
-    () => (order.isHidden ? orderBook[bids] : orderBook[bids].slice(0, 8)),
-    [order.isHidden, orderBook, bids]
+    () => (bidOrderBookDisplay.length > 8 ? bidOrderBookDisplay.slice(0, 8) : bidOrderBookDisplay),
+    [bidOrderBookDisplay]
   )
+
   const totalOrderBookValueBids = useMemo(
     () => slicedOrderBookBids.reduce((acc, [size, price]) => acc + size * price, 0),
     [slicedOrderBookBids]
   )
 
   const slicedOrderBookAsks = useMemo(
-    () => (order.isHidden ? orderBook[asks] : orderBook[asks].slice(0, 8)),
-    [order.isHidden, orderBook, asks]
+    () => (askOrderBookDisplay.length > 8 ? askOrderBookDisplay.slice(0, 8) : askOrderBookDisplay),
+    [askOrderBookDisplay]
   )
   const totalOrderBookValueAsks = useMemo(
     () => slicedOrderBookAsks.reduce((acc, [size, price]) => acc + size * price, 0),
     [slicedOrderBookAsks]
   )
+
+  const spreadAbsolute = useMemo(() => {
+    if (!slicedOrderBookAsks.length || !slicedOrderBookBids.length) return [0, 0]
+    let midValue = +((slicedOrderBookAsks[0][0] + slicedOrderBookBids[0][0]) / 2).toFixed(2),
+      absolute = +(slicedOrderBookAsks[0][0] - slicedOrderBookBids[0][0]).toFixed(2)
+    return [absolute, ((absolute / midValue) * 100).toFixed(2)]
+  }, [slicedOrderBookBids, slicedOrderBookAsks])
 
   const symbol = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
 
@@ -235,14 +357,31 @@ export const OrderBook: FC = () => {
     setFocused('size')
   }
 
+  const SPREAD_DROPDOWN = (
+    <Menu>
+      {SPREADS.map((item, index) => (
+        <Menu.Item onClick={() => setSpreadIndex(index)}>{item}</Menu.Item>
+      ))}
+    </Menu>
+  )
+
   return (
     <WRAPPER>
       <Expand onClick={handleExpandToggle} />
       <HEADER>
         <div>
           <span>Orderbook</span>
-          <span> 38,867.6</span>
-          <span>0.5</span>
+          <span className={lastTradedPrice.side ? lastTradedPrice.side : ''}>
+            {lastTradedPrice.price ? lastTradedPrice.price : ''}
+          </span>
+          <div>
+            <Dropdown overlay={SPREAD_DROPDOWN} trigger={['click']}>
+              <div className="spreadDropdown">
+                {SPREADS[spreadIndex]}
+                <DownOutlined />
+              </div>
+            </Dropdown>
+          </div>
         </div>
         <div>
           <span>Size({ask})</span>
@@ -311,6 +450,14 @@ export const OrderBook: FC = () => {
           </ORDERBOOK_CONTAINER>
         )}
       </ORDERS>
+      <SPREAD_FOOTER>
+        <div>
+          Spread
+          <span>
+            {spreadAbsolute[0]}, {spreadAbsolute[1]}%
+          </span>
+        </div>
+      </SPREAD_FOOTER>
     </WRAPPER>
   )
 }

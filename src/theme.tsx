@@ -72,6 +72,8 @@ export function colors(mode: string): Colors {
     text20: mode === 'dark' ? '#636363' : '#b5b5b5',
     text21: mode === 'dark' ? '#e7e7e7' : '#636363',
     text22: mode === 'dark' ? '#9C9C9C' : '#3C3C3C',
+    text23: mode === 'dark' ? '#9A9A9A' : '#BABABA',
+    text24: mode === 'dark' ? '#EFEDED' : '#636363',
     text1h: '#7d7d7d',
 
     // backgrounds / greys
@@ -235,6 +237,9 @@ export function colors(mode: string): Colors {
     bids: '#459631',
     error: '#D60000',
     success: '#27AE60',
+
+    //dexv2
+    rowSeparator: mode === 'dark' ? '#545454' : '#BFBFBF',
 
     // filter
     filterWhiteIcon:
