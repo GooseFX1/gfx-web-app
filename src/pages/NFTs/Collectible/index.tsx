@@ -39,14 +39,6 @@ const DESCRIPTION = MainText(styled.div`
   margin-bottom: ${({ theme }) => theme.margin(4)};
 `)
 
-const SMALL_DESCRIPTION = MainText(styled.div`
-  font-size: 13px;
-  color: ${({ theme }) => theme.text8} !important;
-  text-align: center;
-  font-weight: 600;
-  margin-bottom: ${({ theme }) => theme.margin(6)};
-`)
-
 const UPLOAD_FILED = styled.div`
   position: relative;
   width: 250px;

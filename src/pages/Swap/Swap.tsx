@@ -20,9 +20,10 @@ import { notify, moneyFormatter, nFormatter } from '../../utils'
 const CoinGecko = require('coingecko-api')
 const CoinGeckoClient = new CoinGecko()
 
+//#region styles
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
-  min-height: calc(100vh - 81px);
+  min-height: calc(100vh - 58px);
   width: 100vw;
   font-family: Montserrat;
   font-stretch: normal;
@@ -37,6 +38,7 @@ const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
   align-items: center;
   color: ${({ theme }) => theme.text1};
   width: 100vw;
+  margin-bottom: 28px;
 `
 
 const SETTING_MODAL = styled(Modal)`
@@ -90,6 +92,7 @@ const SmallTitle = styled.div`
 
 const AltSmallTitle = styled.div`
   font-size: 12px;
+  font-weight: 600;
   color: ${({ theme }) => theme.text12};
 `
 
@@ -113,8 +116,8 @@ const TokenHeader = styled.div`
   width: 100%;
 `
 
-const AlternativeHeader = styled.div<{ $clicked?: boolean; $cover: string }>`
-  min-width: 300px !important;
+const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
+  min-width: 330px !important;
   height: 100px;
   border-radius: 15px;
   padding: 1px;
@@ -125,6 +128,7 @@ const AlternativeHeader = styled.div<{ $clicked?: boolean; $cover: string }>`
   cursor: pointer;
 
   .inner-container {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -199,46 +203,49 @@ const PRICE_WRAPPER = styled.div`
   ${({ theme }) => theme.largeShadow}
 `
 
-const ALTERNATIVE_WRAPPER = styled.div<{ $less: boolean }>`
-  display: flex;
+const SWAP_ROUTES = styled.div<{ $less: boolean }>`
   position: relative;
-  align-items: flex-end;
-  width: 95%;
 
-  justify-content: ${({ $less }) => ($less ? 'center' : 'space-between')};
-  margin-left: 2.5%;
-  margin-top: 2.5%;
-  padding: 2.5%;
-  overflow-x: auto;
-  height: 20%;
+  .swap-content {
+    display: flex;
+    justify-content: ${({ $less }) => ($less ? 'center' : 'flex-start')};
+    align-items: flex-end;
+    margin: 0 32px 12px;
+    padding: 32px 0;
+    overflow-x: auto;
+    height: 20%;
+  }
+
+  .action {
+    position: absolute;
+    top: 0;
+    right: 32px;
+  }
 `
 
 const BestPrice = styled.div`
   position: absolute;
   font-size: 12px;
+  line-height: 12px;
+  font-weight: 600;
   margin-top: -90px;
   margin-left: 230px;
-  width: 85px;
   text-align: center;
-  padding: 0.25rem;
+  padding: 8px;
   border-radius: 0.35rem;
-  background-color: ${({ theme }) => theme.text3};
+  background-color: #be2cff;
 `
 
 const ShowLess = styled.div`
-  position: absolute;
   font-size: 18px;
-  top: 0px;
-  right: 2.5%;
+  font-weight: 600;
   border-radius: 0.5rem;
   cursor: pointer;
 `
 
 const ShowMore = styled.div`
-  position: absolute;
   font-size: 18px;
-  top: 47.5%;
-  right: 17.5%;
+  font-weight: 600;
   border-radius: 0.5rem;
   cursor: pointer;
 `
@@ -321,6 +328,7 @@ const SWAP_CONTENT = styled.div`
   background-color: ${({ theme }) => theme.bg9};
   ${({ theme }) => theme.largeShadow}
 `
+//#endregion
 
 const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> = ({ exchange, routes, clickNo }) => {
   const location = useLocation<ILocationState>()
@@ -396,7 +404,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
 
         <div>
           <div onClick={refreshRates}>
-            <img src={`/img/assets/refresh_rate.svg`} alt="refresh-icon" className={'header-icon'} />
+            <img src={`/img/assets/refresh.svg`} alt="refresh-icon" className={'header-icon'} />
           </div>
           <SETTING_WRAPPER onClick={onClick}>
             <img src={`/img/assets/settings_${mode}_mode.svg`} alt="settings" className={'smaller-header-icon'} />
@@ -526,7 +534,9 @@ const TokenContent: FC = () => {
 
       <Socials>
         {socials.map((social) => (
-          <SocialsButton onClick={() => window.open(social.link, '_blank')}>{social.name}</SocialsButton>
+          <SocialsButton key={social.id} onClick={() => window.open(social.link, '_blank')}>
+            {social.name}
+          </SocialsButton>
         ))}
       </Socials>
     </TOKEN_WRAPPER>
@@ -688,40 +698,45 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   const [less, setLess] = useState(false)
 
   return (
-    <ALTERNATIVE_WRAPPER $less={less}>
-      {(!less ? details : details.slice(0, 2)).map((detail, k) => (
-        <AlternativeHeader
-          $clicked={k === clickNo}
-          $cover={mode === 'dark' ? '#3c3b3ba6' : '#ffffffa6'}
-          onClick={() => {
-            setClickNo(k)
-            setOutTokenAmount(detail.outAmount || null)
-          }}
-        >
-          <div className={'inner-container'}>
-            <TokenDetail className={'content'}>
-              <TokenTitle>{detail.name}</TokenTitle>
-              <AltSmallTitle>{detail.value}</AltSmallTitle>
-            </TokenDetail>
-            <TokenTitle className={'price'}>{detail.price || null}</TokenTitle>
-            {detail.bestPrice && <BestPrice>Best Price</BestPrice>}
-            {detail.fastest && <BestPrice>Best Choice</BestPrice>}
-          </div>
-        </AlternativeHeader>
-      ))}
-      {!less ? (
-        <ShowLess
-          onClick={() => {
-            setLess(true)
-            setClickNo(1)
-          }}
-        >
-          Show Less
-        </ShowLess>
-      ) : (
-        <ShowMore onClick={() => setLess(false)}>Show More</ShowMore>
-      )}
-    </ALTERNATIVE_WRAPPER>
+    <SWAP_ROUTES $less={less}>
+      <div className="swap-content">
+        {(!less ? details : details.slice(0, 2)).map((detail, k) => (
+          <SWAP_ROUTE_ITEM
+            $clicked={k === clickNo}
+            $cover={mode === 'dark' ? '#3c3b3ba6' : '#ffffffa6'}
+            onClick={() => {
+              setClickNo(k)
+              setOutTokenAmount(detail.outAmount || null)
+            }}
+          >
+            <div className={'inner-container'}>
+              <TokenDetail className={'content'}>
+                <TokenTitle>{detail.name}</TokenTitle>
+                <AltSmallTitle>{detail.value}</AltSmallTitle>
+              </TokenDetail>
+              <TokenTitle className={'price'}>{detail.price || null}</TokenTitle>
+              {detail.bestPrice && <BestPrice>Best Price</BestPrice>}
+              {detail.fastest && <BestPrice>Best Choice</BestPrice>}
+            </div>
+          </SWAP_ROUTE_ITEM>
+        ))}
+      </div>
+
+      <div className="action">
+        {!less ? (
+          <ShowLess
+            onClick={() => {
+              setLess(true)
+              setClickNo(1)
+            }}
+          >
+            Show Less
+          </ShowLess>
+        ) : (
+          <ShowMore onClick={() => setLess(false)}>Show More</ShowMore>
+        )}
+      </div>
+    </SWAP_ROUTES>
   )
 }
 
