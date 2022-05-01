@@ -2,6 +2,7 @@ import { Button } from 'antd'
 import React, { useState, FC, useMemo, useCallback } from 'react'
 import styled from 'styled-components'
 import { useAccounts, useCrypto, usePriceFeed, useTokenRegistry, useTradeHistory } from '../../context'
+import { SettlePanel } from './SettlePanel'
 
 const tabs = ['Balances', 'Open Orders', 'Trade History']
 const columns = [
@@ -225,51 +226,54 @@ export const HistoryPanel: FC = () => {
   }
 
   return (
-    <WRAPPER>
-      <HEADER>
-        <div>
-          {tabs.map((item, index) => (
-            <span className={index === activeTab ? 'active' : ''} onClick={() => setActiveTab(index)}>
-              {item}
-            </span>
-          ))}
-        </div>
-        <div className={tabs[activeTab]}>
-          {columns[activeTab][tabs[activeTab]].map((item) => (
-            <span>{item}</span>
-          ))}
-        </div>
-      </HEADER>
-      {activeTab === 0 ? (
-        <>
-          <BALANCES>
-            <div>
-              <span>
-                <img className="asset-icon" src={assetIconAsk} alt="" />
-                {symbolAsk}
+    <>
+      <SettlePanel />
+      <WRAPPER>
+        <HEADER>
+          <div>
+            {tabs.map((item, index) => (
+              <span className={index === activeTab ? 'active' : ''} onClick={() => setActiveTab(index)}>
+                {item}
               </span>
-              <span>{addNumbers(baseBalance, baseAvailable, userAskBalance)}</span>
-              <span>{baseBalance ? baseBalance : 0}</span>
-              <span>{baseAvailable ? baseAvailable : 0}</span>
-              <span>{userAskBalance > 0 ? userAskBalance.toFixed(2) : userAskBalance}</span>
-              <span>0</span>
-            </div>
-            <div>
-              <span>
-                <img className="asset-icon" src={assetIconBid} alt="" />
-                {symbolBid}
-              </span>
-              <span>{addNumbers(quoteBalance, quoteAvailable, userBidBalance)}</span>
-              <span>{quoteBalance ? quoteBalance : 0}</span>
-              <span>{quoteAvailable ? quoteAvailable : 0}</span>
-              <span>{userBidBalance > 0 ? userBidBalance.toFixed(2) : userBidBalance}</span>
-              <span>0</span>
-            </div>
-          </BALANCES>
-        </>
-      ) : activeTab === 1 ? (
-        <OpenOrdersComponent />
-      ) : null}
-    </WRAPPER>
+            ))}
+          </div>
+          <div className={tabs[activeTab]}>
+            {columns[activeTab][tabs[activeTab]].map((item) => (
+              <span>{item}</span>
+            ))}
+          </div>
+        </HEADER>
+        {activeTab === 0 ? (
+          <>
+            <BALANCES>
+              <div>
+                <span>
+                  <img className="asset-icon" src={assetIconAsk} alt="" />
+                  {symbolAsk}
+                </span>
+                <span>{addNumbers(baseBalance, baseAvailable, userAskBalance)}</span>
+                <span>{baseBalance ? baseBalance : 0}</span>
+                <span>{baseAvailable ? baseAvailable : 0}</span>
+                <span>{userAskBalance > 0 ? userAskBalance.toFixed(2) : userAskBalance}</span>
+                <span>0</span>
+              </div>
+              <div>
+                <span>
+                  <img className="asset-icon" src={assetIconBid} alt="" />
+                  {symbolBid}
+                </span>
+                <span>{addNumbers(quoteBalance, quoteAvailable, userBidBalance)}</span>
+                <span>{quoteBalance ? quoteBalance : 0}</span>
+                <span>{quoteAvailable ? quoteAvailable : 0}</span>
+                <span>{userBidBalance > 0 ? userBidBalance.toFixed(2) : userBidBalance}</span>
+                <span>0</span>
+              </div>
+            </BALANCES>
+          </>
+        ) : activeTab === 1 ? (
+          <OpenOrdersComponent />
+        ) : null}
+      </WRAPPER>
+    </>
   )
 }
