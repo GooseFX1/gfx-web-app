@@ -22,3 +22,9 @@ button {
     max-height:500px;
     overflow-y:auto;
 }
+.up24h{
+    color: #50BB35;
+}
+.down24h{
+    color: #F06565;
+}

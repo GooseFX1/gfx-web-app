@@ -63,24 +63,24 @@ export const AVAILABLE_MARKETS = (() => {
 })()
 
 export const AVAILABLE_ORDERS: IOrderDisplay[] = [
-  /* {
+  {
     display: 'market',
     side: 'buy',
     text: 'Market',
     tooltip: 'Market order is executed immediately at the best price available in the market.'
-  }, */
+  },
   {
     display: 'limit',
     side: 'buy',
     text: 'Limit',
     tooltip: 'Limit order is executed only when the market reaches the price you specify.'
   },
-  /* {
+  {
     display: 'market',
     side: 'sell',
     text: 'Market',
     tooltip: 'Market order is executed immediately at the best price available in the market.'
-  }, */
+  },
   {
     display: 'limit',
     side: 'sell',
@@ -187,6 +187,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         fetchOpenOrders()
       }, 3000)
     } catch (e: any) {
+      console.log(e)
       await notify(
         {
           type: 'error',
