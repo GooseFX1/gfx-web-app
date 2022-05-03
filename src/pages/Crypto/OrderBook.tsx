@@ -12,7 +12,7 @@ const HEADER = styled.div`
   height: 70px;
   width: 100%;
   border-radius: 10px;
-  background-color: ${({ theme }) => theme.bg12};
+  background-color: ${({ theme }) => theme.bg15};
   padding: 10px 15px;
   div {
     display: flex;
@@ -214,11 +214,12 @@ const SPREAD_FOOTER = styled.div`
   justify-content: center;
   position: relative;
   top: 8px;
+  //background-color: ${({ theme }) => theme.bg13};
   div {
-    color: #e7e7e7;
+    color: ${({ theme }) => theme.text1};
 
     span {
-      background-color: ${({ theme }) => theme.bg12};
+      background-color: ${({ theme }) => theme.bg15};
       padding: 5px;
       border-radius: 5px;
       margin-left: 10px;

@@ -9,7 +9,7 @@ const SELECTOR = styled(CenteredDiv)`
   width: ${({ theme }) => `calc(${TRADE_ORDER_WIDTH} - 2 * ${theme.margin(1)})`};
   padding: ${({ theme }) => theme.margin(1.5)} 0;
   ${({ theme }) => theme.smallBorderRadius};
-  background-color: ${({ theme }) => theme.bg12};
+  background-color: ${({ theme }) => theme.bg15};
   > span {
     ${({ theme }) => theme.flexCenter}
     width: 100%;
@@ -29,7 +29,7 @@ const SELECTOR = styled(CenteredDiv)`
 const WRAPPER = styled(SpaceBetweenDiv)`
   padding: ${({ theme }) => theme.margin(1.5)};
   ${({ theme }) => theme.smallBorderRadius}
-  background-color: ${({ theme }) => theme.bg12};
+  background-color: ${({ theme }) => theme.bg15};
   height: 50px;
   > span {
     font-size: 12px;

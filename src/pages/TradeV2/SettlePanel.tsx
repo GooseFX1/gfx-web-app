@@ -21,7 +21,7 @@ const SETTLE_CONTAINER = styled.div`
 `
 
 const SETTLE_CARD = styled.div`
-  background-color: ${({ theme }) => theme.bg13};
+  background-color: ${({ theme }) => theme.bg16};
   margin-left: 25px;
   height: 80%;
   width: 200px;
