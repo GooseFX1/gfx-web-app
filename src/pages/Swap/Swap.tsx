@@ -705,7 +705,7 @@ export const SwapMain: FC = () => {
   const { tokenA, tokenB, inTokenAmount, outTokenAmount, priceImpact } = useSwap()
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
-  const [clickNo, setClickNo] = useState(1)
+  const [clickNo, setClickNo] = useState(0)
   const [chosenRoutes, setChosenRoutes] = useState([])
   const [inAmountTotal, setInAmountTotal] = useState(0)
 
@@ -723,6 +723,23 @@ export const SwapMain: FC = () => {
 
     if (tokenA && tokenB) {
       setallowed(true)
+      setChosenRoutes([
+        {
+          marketInfos: [
+            {
+              outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
+              lpFee: { amount: 0.001 * inTokenAmount * 10 ** (tokenA?.decimals || 0) },
+
+              amm: {
+                label: 'GooseFX'
+              }
+            }
+          ],
+          outAmount: +((outTokenAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
+          outAmountWithSlippage: +((outTokenAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
+          priceImpactPct: priceImpact
+        }
+      ])
     }
 
     let shortRoutes: any[] = routes?.filter((i) => i.inAmount === inAmountTotal)?.slice(0, 3)
@@ -747,6 +764,7 @@ export const SwapMain: FC = () => {
       shortRoutes.splice(1, 0, GoFxRoute)
     }
     setChosenRoutes(shortRoutes)
+    setClickNo(1)
   }, [tokenA, tokenB, routes, slippage, inTokenAmount, outTokenAmount])
 
   return (
