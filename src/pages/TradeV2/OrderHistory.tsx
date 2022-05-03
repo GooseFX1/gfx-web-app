@@ -7,7 +7,7 @@ const HEADER = styled.div`
   width: 100%;
   height: 70px;
   border-radius: 10px;
-  background-color: ${({ theme }) => theme.bg12};
+  background-color: ${({ theme }) => theme.bg15};
   padding-top: 10px;
   div {
     padding-left: 10px;

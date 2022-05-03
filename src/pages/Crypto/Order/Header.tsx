@@ -96,7 +96,7 @@ const WRAPPER = styled.div`
   border-top-right-radius: 10px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
-  background-color: ${({ theme }) => theme.bg11};
+  background-color: ${({ theme }) => theme.bg14};
   ${({ theme }) => theme.largeShadow}
 `
 
