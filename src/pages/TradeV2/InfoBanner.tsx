@@ -27,7 +27,7 @@ const INFO_WRAPPER = styled.div`
   }
 `
 const INFO_STATS = styled.div`
-  margin-left: 20px;
+  margin-left: 30px;
   line-height: 20px;
   div:first-child {
     font-size: 15px;
@@ -38,6 +38,25 @@ const INFO_STATS = styled.div`
     color: ${({ theme }) => theme.text18};
     font-size: 15px;
     font-weight: 600;
+    text-align: center;
+    display: flex;
+    span:nth-child(2) {
+      display: flex;
+      align-items: center;
+      margin-left: 10px;
+      margin-right: 10px;
+      .verticalLines {
+        height: 12px;
+        width: 3px;
+        margin-left: 3px;
+      }
+      .coloured {
+        background: linear-gradient(88.42deg, #f7931a 4.59%, #e649ae 98.77%);
+      }
+      .grey {
+        background-color: #2a2a2a;
+      }
+    }
   }
 `
 
@@ -86,8 +105,52 @@ export const InfoBanner: FC<{ isLocked: boolean; setIsLocked: Function; resetLay
 }) => {
   const [isSpot, setIsSpot] = useState(true)
   const { selectedCrypto } = useCrypto()
-  const { prices } = usePriceFeed()
+  const { prices, tokenInfo } = usePriceFeed()
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
+  const tokenInfos = useMemo(() => tokenInfo[selectedCrypto.pair], [tokenInfo[selectedCrypto.pair]])
+  const formatDisplayVolume = (volume) => {
+    if (!volume) return null
+    let stringLength = volume.length
+    if (stringLength < 6) return volume
+    else {
+      let [numberBeforeDecimal, numberAfterDecimal] = volume.split('.'),
+        reverseNumber = numberBeforeDecimal.split('').reverse().join(''),
+        answer = ''
+      for (let i = 0; i < reverseNumber.length; i++) {
+        answer += reverseNumber.substring(i, i + 1)
+        if (i % 3 === 2 && i !== reverseNumber.length - 1) answer = answer + ','
+      }
+      let reversedResult = answer.split('').reverse().join('')
+      return reversedResult + '.' + numberAfterDecimal
+    }
+  }
+
+  const calculateRangeValue = (range, marketData) => {
+    if (!range || !range.min || !range.max || !marketData || !marketData.current) return { bars: 0 }
+    let difference = +range.max - +range.min,
+      size = difference / 6,
+      price = marketData.current,
+      bars = 0
+
+    for (let i = 0; i < 6; i++) {
+      if (price < +range.min + size * (i + 1)) {
+        bars = i
+        break
+      }
+    }
+    return bars
+  }
+
+  let volume = tokenInfos && tokenInfos.volume
+  let displayVolume = useMemo(() => formatDisplayVolume(volume), [selectedCrypto.pair, volume])
+
+  let range = tokenInfos && tokenInfos.range,
+    bars = useMemo(() => calculateRangeValue(range, marketData), [selectedCrypto.pair, range])
+
+  let changeValue = tokenInfos ? tokenInfos.change : ' ',
+    classNameChange = ''
+  if (changeValue.substring(0, 1) === '-') classNameChange = 'down24h'
+  else if (changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
 
   const handleToggle = (e) => {
     if (e === 'spot') setIsSpot(true)
@@ -106,13 +169,38 @@ export const InfoBanner: FC<{ isLocked: boolean; setIsLocked: Function; resetLay
       </div>
       <DropdownPairs />
       <INFO_STATS>
-        {!marketData || !marketData.current ? (
+        <>
+          <div>Price</div>
+          {!marketData || !marketData.current ? <Loader /> : <div>$ {marketData.current}</div>}
+        </>
+      </INFO_STATS>
+      <INFO_STATS>
+        <>
+          <div>24hr Volume</div>
+          {!displayVolume ? <Loader /> : <div>$ {displayVolume}</div>}
+        </>
+      </INFO_STATS>
+      <INFO_STATS>
+        <>
+          <div>24hr Change</div>
+          {!changeValue ? <Loader /> : <div className={classNameChange}>{changeValue} %</div>}
+        </>
+      </INFO_STATS>
+      <INFO_STATS>
+        <div>Daily Range</div>
+        {!range ? (
           <Loader />
         ) : (
-          <>
-            <div>Price</div>
-            <div>$ {marketData.current}</div>
-          </>
+          <div>
+            <span>$ {range.min}</span>
+            <span>
+              {[0, 1, 2, 3, 4, 5].map((item) => {
+                if (item < bars) return <div className="verticalLines coloured"></div>
+                else return <div className="verticalLines grey"></div>
+              })}
+            </span>
+            <span>$ {range.max}</span>
+          </div>
         )}
       </INFO_STATS>
       <REFRESH_LAYOUT onClick={() => resetLayout()}>

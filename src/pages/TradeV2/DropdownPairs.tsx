@@ -47,20 +47,24 @@ const DROPDOWN_PAIR_DIV = styled.div`
 `
 
 const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) => {
-  //const { prices } = usePriceFeed()
+  const { tokenInfo } = usePriceFeed()
   const { formatPair, getAskSymbolFromPair, selectedCrypto, setSelectedCrypto } = useCrypto()
-  const history = useHistory()
 
   const formattedPair = useMemo(() => formatPair(pair), [formatPair, pair])
   //const price = useMemo(() => prices[pair], [prices, pair])
   const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
   const assetIcon = useMemo(() => `/img/${type}/${type === 'synth' ? `g${symbol}` : symbol}.svg`, [symbol, type])
 
+  let changeValue = tokenInfo[pair] ? tokenInfo[pair].change : ' ',
+    classNameChange = ''
+  if (changeValue.substring(0, 1) === '-') classNameChange = 'down24h'
+  else if (changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
+
   return (
     <DROPDOWN_PAIR_DIV>
       <img className="asset-icon" src={assetIcon} alt="" />
       <div>{formattedPair}</div>
-      <div>{'3.4%'}</div>
+      {changeValue !== ' ' ? <div className={classNameChange}>{changeValue}%</div> : <div />}
     </DROPDOWN_PAIR_DIV>
   )
 }
@@ -73,16 +77,16 @@ export const DropdownPairs: FC = () => {
     if (item.type === 'synth') {
       history.push('/synths')
     } else if (selectedCrypto.pair !== symbol) {
-      setSelectedCrypto({ decimals: 3, pair: item.name, type: 'crypto' })
+      setSelectedCrypto(item)
     }
   }
 
   const menus = (
     <Menu>
-      {AVAILABLE_MARKETS.map((item, index) => {
+      {FEATURED_PAIRS_LIST.map((item, index) => {
         return (
           <Menu.Item onClick={() => handleSelection(item)} key={index}>
-            <PairComponents pair={item.name} type={'crypto'} />
+            <PairComponents {...item} />
           </Menu.Item>
         )
       })}
