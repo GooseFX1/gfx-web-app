@@ -8,8 +8,8 @@ const SELECTOR = styled(CenteredDiv)`
   flex-direction: column;
   width: ${({ theme }) => `calc(${TRADE_ORDER_WIDTH} - 2 * ${theme.margin(1)})`};
   padding: ${({ theme }) => theme.margin(1.5)} 0;
-  ${({ theme }) => theme.smallBorderRadius}
-  background-color: #131313;
+  ${({ theme }) => theme.smallBorderRadius};
+  background-color: ${({ theme }) => theme.bg15};
   > span {
     ${({ theme }) => theme.flexCenter}
     width: 100%;
@@ -29,10 +29,12 @@ const SELECTOR = styled(CenteredDiv)`
 const WRAPPER = styled(SpaceBetweenDiv)`
   padding: ${({ theme }) => theme.margin(1.5)};
   ${({ theme }) => theme.smallBorderRadius}
-  background-color: ${({ theme }) => theme.grey5};
+  background-color: ${({ theme }) => theme.bg15};
+  height: 50px;
   > span {
     font-size: 12px;
     font-weight: bold;
+    color: #e7e7e7;
   }
 `
 

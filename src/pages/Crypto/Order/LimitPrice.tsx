@@ -5,30 +5,19 @@ import { FieldHeader } from './shared'
 import { useDarkMode, useCrypto, useOrder } from '../../../context'
 import { ellipseNumber } from '../../../utils'
 
-const TYPES = styled.div`
-  display: flex;
-  align-items: center;
-  margin-top: ${({ theme }) => theme.margin(0.5)};
-  padding: 0 ${({ theme }) => theme.margin(0.5)};
-
-  > div {
-    &:first-child {
-      margin-right: ${({ theme }) => theme.margin(2)};
-    }
-
-    span {
-      margin-right: ${({ theme }) => theme.margin(1)};
-      font-size: 10px;
-      font-weight: bold;
-      color: ${({ theme }) => theme.text2};
-    }
-  }
-`
-
 const WRAPPER = styled.div<{ $display: boolean }>`
   max-height: ${({ $display }) => ($display ? '500px' : '0')};
   ${({ theme, $display }) => $display && `margin-bottom: ${theme.margin(1.5)};`}
   overflow: hidden;
+  .symbol-name {
+    font-size: 15px;
+    line-height: 50px;
+    .asset-icon {
+      height: 25px;
+      width: 25px;
+      margin-right: 5px;
+    }
+  }
 `
 
 export const LimitPrice: FC = () => {
@@ -38,9 +27,10 @@ export const LimitPrice: FC = () => {
 
   const symbol = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
 
-  const onChangeIOC = (checked: boolean) => setOrder((prevState) => ({ ...prevState, type: checked ? 'ioc' : 'limit' }))
-  const onChangePost = (checked: boolean) =>
-    setOrder((prevState) => ({ ...prevState, type: checked ? 'postOnly' : 'limit' }))
+  const assetIcon = useMemo(
+    () => `/img/${selectedCrypto.type}/${selectedCrypto.type === 'synth' ? `g${symbol}` : symbol}.svg`,
+    [symbol, selectedCrypto.type]
+  )
 
   const localCSS = css`
     .order-price {
@@ -54,7 +44,7 @@ export const LimitPrice: FC = () => {
   return (
     <WRAPPER className="order-price" $display={order.display === 'limit'}>
       <style>{localCSS}</style>
-      <FieldHeader>Limit price</FieldHeader>
+      <FieldHeader>Price</FieldHeader>
       <Input
         id="price-input"
         maxLength={15}
@@ -65,19 +55,14 @@ export const LimitPrice: FC = () => {
         onFocus={() => setFocused('price')}
         pattern="\d+(\.\d+)?"
         placeholder={order.price.toString()}
-        suffix={<span>{symbol}</span>}
+        suffix={
+          <span className="symbol-name">
+            <img className="asset-icon" src={assetIcon} alt="" />
+            {symbol}
+          </span>
+        }
         value={ellipseNumber(order.price)}
       />
-      <TYPES>
-        <div>
-          <span>PostOnly</span>
-          <Switch checked={order.type === 'postOnly'} onChange={onChangePost} size="small" />
-        </div>
-        <div>
-          <span>IOC</span>
-          <Switch checked={order.type === 'ioc'} onChange={onChangeIOC} size="small" />
-        </div>
-      </TYPES>
     </WRAPPER>
   )
 }

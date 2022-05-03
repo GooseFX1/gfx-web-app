@@ -69,6 +69,11 @@ export function colors(mode: string): Colors {
     text17: mode === 'dark' ? '#636363' : '#B9B9B9',
     text18: mode === 'dark' ? '#727272' : '#BABABA',
     text19: mode === 'dark' ? '#919191' : '#B6B6B6',
+    text20: mode === 'dark' ? '#636363' : '#b5b5b5',
+    text21: mode === 'dark' ? '#e7e7e7' : '#636363',
+    text22: mode === 'dark' ? '#9C9C9C' : '#3C3C3C',
+    text23: mode === 'dark' ? '#9A9A9A' : '#BABABA',
+    text24: mode === 'dark' ? '#EFEDED' : '#636363',
     text1h: '#7d7d7d',
 
     // backgrounds / greys
@@ -92,7 +97,11 @@ export function colors(mode: string): Colors {
     swapSides2:
       mode === 'dark'
         ? 'linear-gradient(88.61deg, #2a2a2a 1.49%, #181818 93.4%)'
-        : 'linear-gradient(105deg, #fff 11%, #eee 60%)',
+        : 'background: linear-gradient(88.61deg, #FDFDFD 1.49%, #EEEEEE 93.4%)',
+    bg13: mode === 'dark' ? '#191919' : '#eee',
+    bg14: mode === 'dark' ? '#1b1b1b' : '#555555',
+    bg15: mode === 'dark' ? '#191919' : '#555555',
+    bg16: mode === 'dark' ? '#1E1E1E' : '#EEEEEE',
     modalBackground: mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(96, 96, 96, 0.5)',
     bgReward:
       mode === 'dark'
@@ -229,6 +238,9 @@ export function colors(mode: string): Colors {
     bids: '#459631',
     error: '#D60000',
     success: '#27AE60',
+
+    //dexv2
+    rowSeparator: mode === 'dark' ? '#545454' : '#BFBFBF',
 
     // filter
     filterWhiteIcon:
