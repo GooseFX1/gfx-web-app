@@ -32,10 +32,10 @@ const INFO_STATS = styled.div`
   div:first-child {
     font-size: 15px;
     font-weight: 500;
-    color: ${({ theme }) => theme.text19};
+    color: ${({ theme }) => theme.text22};
   }
   div:nth-child(2) {
-    color: ${({ theme }) => theme.text18};
+    color: ${({ theme }) => theme.text21};
     font-size: 15px;
     font-weight: 600;
     text-align: center;

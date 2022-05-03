@@ -34,7 +34,7 @@ const HEADER = styled.div`
     justify-content: space-between;
     font-size: 16px;
     font-weight: 500;
-    color: ${({ theme }) => theme.text20};
+    color: ${({ theme }) => theme.text23};
     span {
       cursor: pointer;
     }
@@ -47,7 +47,7 @@ const HEADER = styled.div`
     justify-content: space-between;
     font-size: 14px;
     font-weight: 500;
-    color: ${({ theme }) => theme.text20};
+    color: ${({ theme }) => theme.text23};
     margin-top: 20px;
   }
   div:nth-child(2).Balances span {
@@ -70,7 +70,7 @@ const BALANCES = styled.div`
     align-items: center;
     font-size: 14px;
     font-weight: 500;
-    color: ${({ theme }) => theme.text21};
+    color: ${({ theme }) => theme.text24};
     img {
       height: 25px;
       width: 25px;
@@ -98,7 +98,7 @@ const OPEN_ORDER = styled.div`
     align-items: center;
     font-size: 14px;
     font-weight: 500;
-    color: ${({ theme }) => theme.text21};
+    color: ${({ theme }) => theme.text24};
     img {
       height: 25px;
       width: 25px;

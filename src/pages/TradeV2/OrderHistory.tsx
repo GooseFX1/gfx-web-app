@@ -20,7 +20,7 @@ const HEADER = styled.div`
     justify-content: space-between;
     align-items: center;
     margin-top: 15px;
-    color: ${({ theme }) => theme.text20};
+    color: ${({ theme }) => theme.text23};
 
     span {
       display: inline-block;
@@ -78,7 +78,7 @@ const TRADE_ROW = styled.div<{ $side: boolean }>`
     display: inline-block;
     width: 33%;
     font-size: 13px;
-    color: ${({ theme }) => theme.text18};
+    color: ${({ theme }) => theme.text21};
   }
   span:first-child {
     color: ${({ $side }) => ($side ? '#50BB35' : '#F06565')};
