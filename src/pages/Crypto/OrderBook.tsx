@@ -43,7 +43,7 @@ const HEADER = styled.div`
   }
   div:nth-child(2) {
     margin-top: 15px;
-    color: ${({ theme }) => theme.text20};
+    color: ${({ theme }) => theme.text23};
     span {
       font-size: 11px;
     }
@@ -100,7 +100,7 @@ const ORDER_BUY = styled.div`
     flex: 1;
     font-size: 13px;
     font-weight: 500;
-    color: ${({ theme }) => theme.text18};
+    color: ${({ theme }) => theme.text21};
 
     &:not(:last-child) {
       z-index: 2;
@@ -145,7 +145,7 @@ const ORDER_SELL = styled.div`
     font-size: 13px;
     font-weight: 500;
 
-    color: ${({ theme }) => theme.text18};
+    color: ${({ theme }) => theme.text21};
 
     &:not(:last-child) {
       z-index: 2;

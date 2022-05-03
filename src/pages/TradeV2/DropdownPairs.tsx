@@ -20,7 +20,7 @@ const SELECTED_PAIR = styled.div`
   font-weight: 500;
   align-items: center;
   padding-left: 10px;
-  color: ${({ theme }) => theme.text18};
+  color: ${({ theme }) => theme.text21};
   .anticon-down {
     margin-right: 10px;
     width: 14px;
