@@ -15,7 +15,6 @@ export const Router: FC = () => {
         <AppLayout>
           <Switch>
             <Route exact path="/swap" component={Swap} />
-            <Route exact path="/trade" component={Crypto} />
             <Route exact path="/trade">
               <PriceFeedProvider>
                 <CryptoContent />
