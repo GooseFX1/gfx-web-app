@@ -8,7 +8,7 @@ import { flatten } from '../../../utils'
 
 const CONTAINER = styled.div<{ $visible: boolean }>`
   width: 100%;
-  height: 600px;
+  height: 100%;
   max-height: ${({ $visible }) => ($visible ? '600px' : '0')};
   opacity: ${({ $visible }) => ($visible ? '1' : '0')};
   transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;

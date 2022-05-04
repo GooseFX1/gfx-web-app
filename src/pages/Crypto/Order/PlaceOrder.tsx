@@ -66,7 +66,14 @@ export const PlaceOrder: FC = () => {
   )
 
   return (
-    <MainButton height="50px" loading={loading} onClick={handleClick} status={buttonStatus} width="100%">
+    <MainButton
+      height="50px"
+      loading={loading}
+      onClick={handleClick}
+      status={buttonStatus}
+      width="100%"
+      className={buttonStatus === 'action' ? order.side + ' button' : ''}
+    >
       <span>{content}</span>
     </MainButton>
   )
