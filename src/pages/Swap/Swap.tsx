@@ -8,7 +8,15 @@ import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
 import { Modal } from '../../components'
-import { useDarkMode, useSwap, SwapProvider, useSlippageConfig, ENDPOINTS, useConnectionConfig } from '../../context'
+import {
+  useDarkMode,
+  useSwap,
+  SwapProvider,
+  useSlippageConfig,
+  ENDPOINTS,
+  useConnectionConfig,
+  useTokenRegistry
+} from '../../context'
 import { CenteredImg, SpaceBetweenDiv, CenteredDiv, SVGDynamicReverseMode } from '../../styles'
 import { JupiterProvider, useJupiter } from '@jup-ag/react-hook'
 import { PublicKey } from '@solana/web3.js'
@@ -16,6 +24,8 @@ import { TOKEN_LIST_URL } from '@jup-ag/core'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ILocationState } from '../../types/app_params.d'
 import { notify, moneyFormatter, nFormatter } from '../../utils'
+import { CURRENT_SUPPORTED_TOKEN_LIST } from '../../constants'
+import { useParams } from 'react-router-dom'
 
 const CoinGecko = require('coingecko-api')
 const CoinGeckoClient = new CoinGecko()
@@ -452,54 +462,64 @@ const TokenContent: FC = () => {
   }
 
   useEffect(() => {
-    if (tokenA) {
-      CoinGeckoClient.coins.fetch(coinsIds[tokenA.symbol], {}).then(async (data: any) => {
-        data = data.data
-        const fetchData = await fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
-        const res = await fetchData.json()
-        // await connection.getProgramAccounts(TOKEN_PROGRAM_ID, {
-        //   // dataSlice: {
-        //   //   offset: 0, // number of bytes
-        //   //   length: 0 // number of bytes
-        //   // },
-        //   filters: [
-        //     {
-        //       dataSize: 165 // number of bytes
-        //     },
-        //     {
-        //       memcmp: {
-        //         offset: 0, // number of bytes
-        //         bytes: tokenA.address // base58 encoded string
-        //       }
-        //     }
-        //   ]
-        // })
-        setDetails([
-          { name: 'Price', value: data.market_data.current_price.usd, currency: '$' },
-          {
-            name: 'FDV',
-            value:
-              moneyFormatter(
-                Math.floor(
-                  data.market_data.fully_diluted_valuation.usd ||
-                    data.market_data.total_supply * data.market_data.current_price.usd
-                )
-              ) || '0',
-            currency: '$'
-          },
-          {
-            name: 'Max Total Supply',
-            value: Math.floor(data.market_data.max_supply || data.market_data.total_supply).toLocaleString() || '0'
-          },
-          { name: 'Holders', value: res?.total.toLocaleString() || 0 }
-        ])
-        setSocials([
-          { name: 'Twitter', link: 'https://twitter.com/' + data.links.twitter_screen_name },
-          { name: 'Coingecko', link: 'https://coingecko.com' },
-          { name: 'Website', link: data.links.homepage[0] }
-        ])
-      })
+    async function rugger() {
+      const tokens = await CoinGeckoClient.coins.list()
+      if (tokenA) {
+        const token = tokens.data.find(
+          (i) =>
+            i.symbol.toLowerCase().includes(tokenA.symbol.toLowerCase()) ||
+            tokenA.symbol.toLowerCase().includes(i.symbol.toLowerCase())
+        )
+        CoinGeckoClient.coins.fetch(token?.id || null, {}).then(async (data: any) => {
+          data = data.data
+          const fetchData = await fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
+          const res = await fetchData.json()
+          // await connection.getProgramAccounts(TOKEN_PROGRAM_ID, {
+          //   // dataSlice: {
+          //   //   offset: 0, // number of bytes
+          //   //   length: 0 // number of bytes
+          //   // },
+          //   filters: [
+          //     {
+          //       dataSize: 165 // number of bytes
+          //     },
+          //     {
+          //       memcmp: {
+          //         offset: 0, // number of bytes
+          //         bytes: tokenA.address // base58 encoded string
+          //       }
+          //     }
+          //   ]
+          // })
+          setDetails([
+            { name: 'Price', value: data.market_data.current_price.usd, currency: '$' },
+            {
+              name: 'FDV',
+              value:
+                moneyFormatter(
+                  Math.floor(
+                    data.market_data.fully_diluted_valuation.usd ||
+                      data.market_data.total_supply * data.market_data.current_price.usd
+                  )
+                ) || '0',
+              currency: '$'
+            },
+            {
+              name: 'Max Total Supply',
+              value: Math.floor(data.market_data.max_supply || data.market_data.total_supply).toLocaleString() || '0'
+            },
+            { name: 'Holders', value: res?.total.toLocaleString() || 0 }
+          ])
+          setSocials([
+            { name: 'Twitter', link: 'https://twitter.com/' + data.links.twitter_screen_name },
+            { name: 'Coingecko', link: 'https://coingecko.com' },
+            { name: 'Website', link: data.links.homepage[0] }
+          ])
+        })
+      }
     }
+
+    rugger()
   }, [tokenA])
 
   return (
@@ -706,7 +726,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
             $cover={mode === 'dark' ? '#3c3b3ba6' : '#ffffffa6'}
             onClick={() => {
               setClickNo(k)
-              setOutTokenAmount(detail.outAmount || null)
+              //setOutTokenAmount(detail.outAmount || null)
             }}
           >
             <div className={'inner-container'}>
@@ -742,11 +762,10 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
 
 export const SwapMain: FC = () => {
   const desktop = window.innerWidth > 1200
-  const { tokenA, tokenB, inTokenAmount, outTokenAmount, priceImpact } = useSwap()
+  const { tokenA, tokenB, inTokenAmount, outTokenAmount, priceImpact, chosenRoutes, setRoutes, setClickNo, clickNo } =
+    useSwap()
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
-  const [clickNo, setClickNo] = useState(1)
-  const [chosenRoutes, setChosenRoutes] = useState([])
   const [inAmountTotal, setInAmountTotal] = useState(0)
 
   const { routes, exchange } = useJupiter({
@@ -760,13 +779,17 @@ export const SwapMain: FC = () => {
   useEffect(() => {
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
     setInAmountTotal(inAmountTotal)
+    const supported =
+      CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA?.symbol) && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenB?.symbol)
 
     if (tokenA && tokenB) {
       setallowed(true)
     }
-
-    let shortRoutes: any[] = routes?.filter((i) => i.inAmount === inAmountTotal)?.slice(0, 3)
     if (!routes) return
+
+    const filteredRoutes = routes?.filter((i) => i.inAmount === inAmountTotal)
+    let shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
+
     if (tokenB && outTokenAmount) {
       const GoFxRoute = {
         marketInfos: [
@@ -784,9 +807,10 @@ export const SwapMain: FC = () => {
         priceImpactPct: priceImpact
       }
 
-      shortRoutes.splice(1, 0, GoFxRoute)
+      if (supported) shortRoutes.splice(1, 0, GoFxRoute)
     }
-    setChosenRoutes(shortRoutes)
+    setRoutes(shortRoutes)
+    //setClickNo(1)
   }, [tokenA, tokenB, routes, slippage, inTokenAmount, outTokenAmount])
 
   return (
@@ -803,9 +827,38 @@ export const SwapMain: FC = () => {
   )
 }
 
+interface RouteParams {
+  tradePair: string
+}
+
 const SwapMainProvider: FC = () => {
-  const { connection } = useSwap()
+  const { connection, setTokenA, setTokenB } = useSwap()
   const wallet = useWallet()
+  const { tokens } = useTokenRegistry()
+  const { tradePair } = useParams<RouteParams>()
+
+  useEffect(() => {
+    const token1 = tradePair
+      ? tokens?.find((i) => i.symbol.toLowerCase() === tradePair?.split('-')[0].toLowerCase())
+      : null
+    const token2 = tradePair
+      ? tokens?.find((i) => i.symbol.toLowerCase() === tradePair?.split('-')[1].toLowerCase())
+      : null
+    const usd = tokens?.find((i) => i.symbol === 'USDC')
+    const sol = tokens?.find((i) => i.symbol === 'SOL')
+
+    if (token1) {
+      setTokenA({ address: token1.address, decimals: token1.decimals, symbol: token1.symbol, name: token1.name })
+    } else if (usd) {
+      setTokenA({ address: usd.address, decimals: usd.decimals, symbol: usd.symbol, name: usd.name })
+    }
+
+    if (token2) {
+      setTokenB({ address: token2.address, decimals: token2.decimals, symbol: token2.symbol, name: token2.name })
+    } else if (sol) {
+      setTokenB({ address: sol.address, decimals: sol.decimals, symbol: sol.symbol, name: sol.name })
+    }
+  }, [setTokenA, setTokenB, tokens, tradePair, connection])
 
   return (
     <JupiterProvider connection={connection} cluster="mainnet-beta" userPublicKey={wallet?.publicKey}>
