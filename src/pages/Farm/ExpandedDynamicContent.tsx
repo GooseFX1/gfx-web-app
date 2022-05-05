@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { PublicKey } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { Program } from '@project-serum/anchor'
 import { MainButton } from '../../components'
 import { Connect } from '../../layouts/App/Connect'
@@ -135,7 +135,7 @@ const STYLED_STAKE_PILL = styled(MainButton)`
   cursor: pointer;
   &.active,
   &:hover {
-    background: #3735bb;
+    background: ${({ theme }) => theme.primary3};
     color: #fff;
     opacity: 1;
   }
@@ -289,14 +289,14 @@ export const ExpandedDynamicContent = ({
   const wallet = useWallet()
   const { prices } = usePriceFeed()
   const { connection } = useConnectionConfig()
-  const { setCounter } = useFarmContext()
+  const { counter, setCounter, setOperationPending } = useFarmContext()
   //loading indicators
   const [isStakeLoading, setIsStakeLoading] = useState<boolean>(false)
   const [isUnstakeLoading, setIsUnstakeLoading] = useState<boolean>(false)
   const [isWithdrawLoading, setWithdrawLoading] = useState<boolean>(false)
   const [isMintLoading, setMintLoading] = useState<boolean>(false)
   const [isBurnLoading, setBurnLoading] = useState<boolean>(false)
-
+  const [userSOLBalance, setSOLBalance] = useState<number>()
   const [tokenStaked, setTokenStaked] = useState<number>(parseFloat(currentlyStaked))
   const [tokenEarned, setTokenEarned] = useState<number>(parseFloat(earned))
 
@@ -304,14 +304,19 @@ export const ExpandedDynamicContent = ({
   const unstakeRef = useRef(null)
 
   const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
-  const userSOLBalance = useMemo(
-    () => (publicKey && tokenInfo ? getUIAmount(getTokenInfoForFarming('SOL').address) : 0),
-    [getUIAmount, publicKey]
-  )
-  const userTokenBalance = useMemo(
+
+  useEffect(() => {
+    if (wallet.publicKey) {
+      const SOL = connection.getAccountInfo(wallet.publicKey)
+      SOL.then((res) => setSOLBalance(res.lamports / LAMPORTS_PER_SOL))
+    }
+  }, [counter, getUIAmount, publicKey])
+
+  let userTokenBalance = useMemo(
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
     [tokenInfo, getUIAmount, publicKey]
   )
+
   const getSuccessUnstakeMsg = (): string => `Successfully Unstaked amount of ${unstakeRef.current.value} ${name}!`
   const getSuccessStakeMsg = (): string => `Successfully staked amount of ${stakeRef.current.value} ${name}!`
   const getErrStakeMsg = (): string => `Staking ${name} error!`
@@ -337,6 +342,10 @@ export const ExpandedDynamicContent = ({
     setTokenEarned(Math.abs(parseFloat(earned)))
   }, [earned, currentlyStaked])
 
+  useEffect(() => {
+    setOperationPending(isMintLoading || isBurnLoading || isStakeLoading || isUnstakeLoading || isWithdrawLoading)
+  }, [isMintLoading, isBurnLoading, isStakeLoading, isUnstakeLoading, isWithdrawLoading])
+
   const updateStakedValue = () => {
     setTokenStaked((prev) => prev + parseFloat(stakeRef.current.value))
   }
@@ -351,10 +360,11 @@ export const ExpandedDynamicContent = ({
 
   const checkBasicConditions = (amt?: number | undefined): boolean => {
     if (!enoughSOLInWallet()) return true
+    if (name === 'SOL') userTokenBalance = userSOLBalance
     if (
       isNaN(parseFloat(stakeRef.current.value)) ||
       parseFloat(stakeRef.current.value) < 0.000001 ||
-      parseFloat(stakeRef.current.value) - 0.0001 > userTokenBalance
+      parseFloat(stakeRef.current.value) > parseFloat(userTokenBalance.toFixed(3))
     ) {
       stakeRef.current.value = 0
       notify(invalidInputErrMsg(amt ? amt : userTokenBalance, name))
@@ -363,9 +373,10 @@ export const ExpandedDynamicContent = ({
     return false
   }
 
-  const onClickMint = (): void => {
+  const onClickMint = (availableToMint: number): void => {
     setMintLoading(true)
-    const amount = parseFloat(unstakeRef.current.value)
+    let amount = parseFloat(unstakeRef.current.value)
+    if (parseFloat(availableToMint.toFixed(3)) == parseFloat(unstakeRef.current.value)) amount = availableToMint
     try {
       const confirm = executeMint(SSLProgram, wallet, connection, network, name, amount).then((con) => {
         setMintLoading(false)
@@ -388,15 +399,16 @@ export const ExpandedDynamicContent = ({
     const amount = parseFloat(unstakeRef.current.value)
     setBurnLoading(true)
     try {
+      // burn and withdraw are interchanged so message is changed
       const confirm = executeBurn(SSLProgram, wallet, connection, network, name, amount).then((con) => {
         setBurnLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Burn))
+          notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Withdraw))
           setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
-          notify(sslErrorMessage(name, error.message, signature, network, Burn))
+          notify(sslErrorMessage(name, error.message, signature, network, Withdraw))
           return
         }
       })
@@ -413,11 +425,11 @@ export const ExpandedDynamicContent = ({
         setWithdrawLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Withdraw))
+          notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Burn))
           setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
-          notify(sslErrorMessage(name, error.message, signature, network, Withdraw))
+          notify(sslErrorMessage(name, error.message, signature, network, Burn))
           return
         }
       })
@@ -428,17 +440,11 @@ export const ExpandedDynamicContent = ({
   }
   const onClickDeposit = (): void => {
     if (checkBasicConditions()) return
-    const amount = parseFloat(stakeRef.current.value)
+    let amount = parseFloat(stakeRef.current.value)
+    if (amount === parseFloat(userTokenBalance.toFixed(3))) amount = userTokenBalance
     try {
       setIsStakeLoading(true)
-      const confirm = executeDeposit(
-        SSLProgram,
-        wallet,
-        connection,
-        network,
-        parseFloat(stakeRef.current.value) - 0.0,
-        name
-      )
+      const confirm = executeDeposit(SSLProgram, wallet, connection, network, amount, name)
       confirm.then((con) => {
         setIsStakeLoading(false)
         //@ts-ignore
@@ -446,6 +452,7 @@ export const ExpandedDynamicContent = ({
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage(signature, amount, name, network, Deposit))
           updateStakedValue()
+          setTimeout(() => (stakeRef.current.value = 0), 500)
           setCounter((prev) => prev + 1)
         } else {
           //@ts-ignore
@@ -463,14 +470,9 @@ export const ExpandedDynamicContent = ({
     if (checkBasicConditions()) return
     try {
       setIsStakeLoading(true)
-      const confirm = executeStake(
-        stakeProgram,
-        stakeAccountKey,
-        wallet,
-        connection,
-        network,
-        parseFloat(stakeRef.current.value) - 0.001
-      )
+      let amount = parseFloat(stakeRef.current.value)
+      if (amount === parseFloat(userTokenBalance.toFixed(3))) amount = userTokenBalance
+      const confirm = executeStake(stakeProgram, stakeAccountKey, wallet, connection, network, amount)
       confirm.then((con) => {
         setIsStakeLoading(false)
         const { confirm, signature } = con
@@ -554,8 +556,6 @@ export const ExpandedDynamicContent = ({
               wallet={wallet}
               stakeRef={stakeRef}
               unstakeRef={unstakeRef}
-              onClickHalf={onClickHalf}
-              onClickMax={onClickMax}
               onClickDeposit={onClickDeposit}
               onClickWithdraw={onClickWithdraw}
               onClickMint={onClickMint}
@@ -563,6 +563,7 @@ export const ExpandedDynamicContent = ({
               isStakeLoading={isStakeLoading}
               isWithdrawLoading={isWithdrawLoading}
               isMintLoading={isMintLoading}
+              userSOLBalance={userSOLBalance}
               isBurnLoading={isBurnLoading}
               isUnstakeLoading={isUnstakeLoading}
             />
