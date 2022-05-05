@@ -388,6 +388,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
       border: none;
       padding-right: 20px;
       font-size: 16px;
+      font-weight: 600;
     }
 
     .ant-modal-centered {
@@ -641,7 +642,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
           {+outAmount.toFixed(3)} {tokenB.symbol}
         </SmallTitleFlex>
         <SmallTitleFlex>
-          <span style={{ color: cheap ? 'green' : 'red', marginRight: '0.25rem' }}>
+          <span style={{ color: cheap ? '#5fc8a7' : '#bb3535', marginRight: '0.25rem' }}>
             {outTokenPercentage}% {cheap ? 'cheaper' : 'higher'}
           </span>
           <span>than coingecko</span>
@@ -844,18 +845,21 @@ const SwapMainProvider: FC = () => {
     const token2 = tradePair
       ? tokens?.find((i) => i.symbol.toLowerCase() === tradePair?.split('-')[1].toLowerCase())
       : null
+
     const usd = tokens?.find((i) => i.symbol === 'USDC')
     const sol = tokens?.find((i) => i.symbol === 'SOL')
 
     if (token1) {
       setTokenA({ address: token1.address, decimals: token1.decimals, symbol: token1.symbol, name: token1.name })
     } else if (usd) {
+      console.log('swap main', usd)
       setTokenA({ address: usd.address, decimals: usd.decimals, symbol: usd.symbol, name: usd.name })
     }
 
     if (token2) {
       setTokenB({ address: token2.address, decimals: token2.decimals, symbol: token2.symbol, name: token2.name })
     } else if (sol) {
+      console.log('swap main', sol)
       setTokenB({ address: sol.address, decimals: sol.decimals, symbol: sol.symbol, name: sol.name })
     }
   }, [setTokenA, setTokenB, tokens, tradePair, connection])
