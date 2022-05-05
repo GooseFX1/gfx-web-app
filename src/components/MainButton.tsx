@@ -31,7 +31,6 @@ const BUTTON = styled.button<{ $height: string; $status: Status; $width: string;
   }
 
   &:disabled {
-    background: grey;
     cursor: not-allowed;
   }
 `

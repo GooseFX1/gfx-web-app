@@ -234,13 +234,6 @@ export const TableList = ({ dataSource }: any) => {
   }, [accountKey, gofxPrice, counter])
 
   useEffect(() => {
-    let allFarmData = [...farmDataContext, ...farmDataSSLContext]
-    // if (showDeposited && wallet.publicKey)
-    //   allFarmData = allFarmData.filter((fData) => fData.currentlyStaked > 0)
-    setFarmData(allFarmData)
-  }, [farmDataContext, farmDataSSLContext])
-
-  useEffect(() => {
     // this useEffect is to monitor staking and SSL pools button
     const allFarmData = [...farmDataContext, ...farmDataSSLContext]
     let farmDataStaked = []
@@ -257,7 +250,7 @@ export const TableList = ({ dataSource }: any) => {
     if (showDeposited && wallet.publicKey) farmDataStaked = farmDataStaked.filter((fData) => fData.currentlyStaked > 0)
 
     setFarmData(farmDataStaked)
-  }, [poolFilter, searchFilter, showDeposited])
+  }, [poolFilter, searchFilter, showDeposited, farmDataContext, farmDataSSLContext])
 
   const fetchSSLData = async () => {
     let SSLTokenNames = []
@@ -273,12 +266,11 @@ export const TableList = ({ dataSource }: any) => {
         tokenAddresses[i]
       )
       const APR = 0.12
-      const liqidity: Number = Number(
-        //@ts-ignore
-        (BigInt(sslData.liability) + BigInt(sslData.swappedLiability)) / BigInt(LAMPORTS_PER_SOL)
-      )
+      //@ts-ignore
+      let liqidity = (sslData.liability + sslData.swappedLiability) / BigInt(Math.pow(10, 6))
       //const liability = liquidityAccount ? ((sslData.liability * liquidityAccount.share) / sslData.totalShare);
       const ptMinted = liquidityAccount ? Number(liquidityAccount.ptMinted) / LAMPORTS_PER_SOL : 0
+      const liquidityForCalc = liqidity / BigInt(Math.pow(10, getTokenDecimal(network, SSLTokenNames[i]) - 6))
       const userLiablity = liquidityAccount
         ? //@ts-ignore
           ((Number(sslData.liability + sslData.swappedLiability) /
@@ -290,6 +282,7 @@ export const TableList = ({ dataSource }: any) => {
         ? Number(liquidityAccount.amountDeposited) / Math.pow(10, getTokenDecimal(network, SSLTokenNames[i]))
         : 0
       const earned = liquidityAccount ? userLiablity - amountDeposited : 0
+
       newFarmDataContext = newFarmDataContext.map((data) => {
         if (data.name === SSLTokenNames[i]) {
           return {
@@ -316,15 +309,17 @@ export const TableList = ({ dataSource }: any) => {
 
     // user account data
     const accountData = await fetchCurrentAmountStaked(connection, accountKey, wallet)
+    const currentlyStaked = accountData.tokenStaked ? accountData.tokenStaked : 0
+    const dailyRewards = (APR * currentlyStaked) / 365
     const newFarmDataContext = farmDataContext.map((data) => {
       if (data.name === 'GOFX') {
         return {
           ...data,
           earned: accountData.tokenEarned ? accountData.tokenEarned : 0,
           apr: APR * 100,
-          rewards: daily_reward / LAMPORTS_PER_SOL,
+          rewards: dailyRewards,
           liquidity: gofxPrice.current * liqidity,
-          currentlyStaked: accountData.tokenStaked ? accountData.tokenStaked : 0
+          currentlyStaked: currentlyStaked
         }
       } else return data
     })

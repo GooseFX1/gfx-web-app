@@ -29,7 +29,7 @@ export const MorePoolsSoon = () => {
       <MorePoolImg>
         <img src={`/img/assets/moreSoonDark.svg`} alt="" />
       </MorePoolImg>
-      <MoreText>More pools comming soon</MoreText>
+      <MoreText>More pools coming soon</MoreText>
     </CONTAINER>
   )
 }
