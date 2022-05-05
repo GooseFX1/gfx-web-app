@@ -29,6 +29,12 @@ const BUTTON = styled.button<{ $height: string; $status: Status; $width: string;
     font-weight: bold;
     color: white;
   }
+  &.buy.button {
+    background: linear-gradient(90deg, #1b8101 1.75%, #f7c71b 100%);
+  }
+  &.sell.button {
+    background: linear-gradient(90deg, #bc3635 1.75%, #f7931b 100%);
+  }
 
   &:disabled {
     background: grey;

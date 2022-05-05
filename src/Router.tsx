@@ -2,8 +2,9 @@ import React, { FC } from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { AppLayout } from './layouts'
 import { Crypto, Farm, NFTs, Swap } from './pages'
-import { NavCollapseProvider, NFTProfileProvider } from './context'
+import { CryptoProvider, NavCollapseProvider, NFTProfileProvider, PriceFeedProvider } from './context'
 import { GenericNotFound } from './pages/InvalidUrl'
+import { CryptoContent } from './pages/TradeV2/MovableContainer'
 
 export const Router: FC = () => {
   return (
@@ -14,7 +15,11 @@ export const Router: FC = () => {
         <AppLayout>
           <Switch>
             <Route exact path="/swap/:tradePair?" component={Swap} />
-            <Route exact path="/trade" component={Crypto} />
+            <Route exact path="/trade">
+              <PriceFeedProvider>
+                <CryptoContent />
+              </PriceFeedProvider>
+            </Route>
             <Route path="/NFTs">
               <NFTProfileProvider>
                 <NFTs />

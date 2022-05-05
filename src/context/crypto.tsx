@@ -10,6 +10,12 @@ interface ICrypto {
   type: MarketType
 }
 
+interface CryptoChange {
+  pair: string
+  change?: string
+  coinGeckoId: string
+}
+
 export type MarketSide = 'asks' | 'bids'
 
 interface ICryptoConfig {
@@ -19,19 +25,20 @@ interface ICryptoConfig {
   getSymbolFromPair: (x: string, y: 'buy' | 'sell') => string
   selectedCrypto: ICrypto
   setSelectedCrypto: Dispatch<SetStateAction<ICrypto>>
+  change24h: [CryptoChange]
 }
 
 export type MarketType = 'crypto' | 'synth'
 
 export const FEATURED_PAIRS_LIST = [
-  { decimals: 3, pair: 'GOFX/USDC', type: 'crypto' as MarketType },
-  { decimals: 1, pair: 'BTC/USDC', type: 'crypto' as MarketType },
-  { decimals: 2, pair: 'ETH/USDC', type: 'crypto' as MarketType },
-  { decimals: 3, pair: 'SOL/USDC', type: 'crypto' as MarketType },
-  { decimals: 3, pair: 'LINK/USDC', type: 'crypto' as MarketType },
-  { decimals: 2, pair: 'AAPL/USD', type: 'synth' as MarketType },
-  { decimals: 2, pair: 'AMZN/USD', type: 'synth' as MarketType },
-  { decimals: 2, pair: 'TSLA/USD', type: 'synth' as MarketType }
+  { decimals: 3, pair: 'GOFX/USDC', type: 'crypto' as MarketType, coinGecko: 'goosefx' },
+  { decimals: 1, pair: 'BTC/USDC', type: 'crypto' as MarketType, coinGecko: 'bitcoin' },
+  { decimals: 2, pair: 'ETH/USDC', type: 'crypto' as MarketType, coinGecko: 'ethereum' },
+  { decimals: 3, pair: 'SOL/USDC', type: 'crypto' as MarketType, coinGecko: 'solana' },
+  { decimals: 3, pair: 'LINK/USDC', type: 'crypto' as MarketType, coinGecko: 'chainlink' },
+  { decimals: 2, pair: 'AAPL/USD', type: 'synth' as MarketType, coinGecko: '' },
+  { decimals: 2, pair: 'AMZN/USD', type: 'synth' as MarketType, coinGecko: '' },
+  { decimals: 2, pair: 'TSLA/USD', type: 'synth' as MarketType, coinGecko: '' }
 ]
 
 const CryptoContext = createContext<ICryptoConfig | null>(null)
@@ -39,6 +46,7 @@ const CryptoContext = createContext<ICryptoConfig | null>(null)
 export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(FEATURED_PAIRS_LIST[0])
   const { connection } = useConnectionConfig()
+  const [change24h, setChange24h] = useState<[CryptoChange]>(null)
 
   useEffect(() => {
     ;(async () => {
@@ -48,6 +56,15 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
       } catch (e) {}
     })()
   }, [connection, selectedCrypto.pair])
+
+  useEffect(() => {
+    setChange24h([
+      {
+        pair: 'as',
+        coinGeckoId: 'as'
+      }
+    ])
+  }, [])
 
   const formatPair = (symbol: string) => symbol.replace('/', ' / ')
 
@@ -67,7 +84,8 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         getBidSymbolFromPair,
         getSymbolFromPair,
         selectedCrypto,
-        setSelectedCrypto
+        setSelectedCrypto,
+        change24h
       }}
     >
       {children}
@@ -87,6 +105,7 @@ export const useCrypto = (): ICryptoConfig => {
     getBidSymbolFromPair: context.getBidSymbolFromPair,
     getSymbolFromPair: context.getSymbolFromPair,
     selectedCrypto: context.selectedCrypto,
-    setSelectedCrypto: context.setSelectedCrypto
+    setSelectedCrypto: context.setSelectedCrypto,
+    change24h: context.change24h
   }
 }

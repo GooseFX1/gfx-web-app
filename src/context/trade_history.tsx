@@ -17,6 +17,7 @@ import { useCrypto } from './crypto'
 import { useConnectionConfig } from './settings'
 import { notify, useLocalStorageState } from '../utils'
 import { crypto, serum } from '../web3'
+import axios from 'axios'
 
 export enum HistoryPanel {
   Orders = 'Open Orders',
@@ -49,6 +50,7 @@ interface ITradeHistoryConfig {
 }
 
 const TradeHistoryContext = createContext<ITradeHistoryConfig | null>(null)
+const historyUrl = 'https://api.raydium.io/v1/dex/trade/address?market='
 
 export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
@@ -59,6 +61,25 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   const [orders, setOrders] = useState<IOrder[]>([])
   const [tradeHistory, setTradeHistory] = useState([])
   const [panel, setPanel] = useLocalStorageState('historyPanel', HistoryPanel.Orders)
+
+  const getMarketTrades = useCallback(async () => {
+    try {
+      if (selectedCrypto.market && selectedCrypto.market.address) {
+        let marketAddress = selectedCrypto.market.address.toBase58(),
+          url = historyUrl + marketAddress
+        const response = await axios.get(url)
+        if (response.data.data) {
+          let dataToSort = response.data.data
+          dataToSort.sort((a, b) => b.time - a.time)
+          setTradeHistory(dataToSort)
+        }
+      } else {
+        setTradeHistory([])
+      }
+    } catch (e) {
+      await notify({ type: 'error', message: `Error fetching market trades`, icon: 'error' }, e)
+    }
+  }, [connection, selectedCrypto.market])
 
   const fetchBalances = useCallback(async () => {
     if (wallet.publicKey && selectedCrypto.market) {
@@ -145,9 +166,12 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   }, [selectedCrypto])
 
   useEffect(() => {
-    panel === HistoryPanel.Balances && fetchBalances()
-    panel === HistoryPanel.Orders && fetchOpenOrders()
-  }, [fetchBalances, fetchOpenOrders, panel])
+    getMarketTrades()
+  }, [selectedCrypto.market])
+  useEffect(() => {
+    fetchBalances()
+    fetchOpenOrders()
+  }, [fetchBalances, fetchOpenOrders, selectedCrypto.pair])
 
   return (
     <TradeHistoryContext.Provider
