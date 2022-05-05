@@ -57,6 +57,10 @@ interface ISwapConfig {
   tokenB: ISwapToken | null
   connection?: any
   priceImpact?: number
+  chosenRoutes: any[]
+  setRoutes: (r: any) => void
+  clickNo: number
+  setClickNo: (r: number) => void
 }
 
 const SwapContext = createContext<ISwapConfig | null>(null)
@@ -72,6 +76,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [outTokenAmount, setOutTokenAmount] = useState(0)
   const [priceImpact, setPriceImpact] = useState(0)
   const [_, setFocused] = useState<SwapInput>(undefined)
+  const [chosenRoutes, setRoutes] = useState([])
+  const [clickNo, setClickNo] = useState(1)
   const [pool, setPool] = useState<IPool>({
     inAmount: 0,
     inValue: 0,
@@ -172,7 +178,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
           inTokenAmount,
           wallet,
           connection,
-          network
+          network,
+          chosenRoutes[clickNo]
         )
         if (preSwapResult) {
           outTokenAmount = Number(preSwapResult)
@@ -186,7 +193,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } else {
       setOutTokenAmount(0)
     }
-  }, [tokenA, tokenB, inTokenAmount])
+  }, [tokenA, tokenB, inTokenAmount, chosenRoutes, clickNo])
 
   useEffect(() => {
     setTokenA(null)
@@ -195,7 +202,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     amountPool()
-  }, [inTokenAmount, pool, slippage, tokenA, tokenB])
+  }, [inTokenAmount, pool, slippage, tokenA, tokenB, chosenRoutes, clickNo])
 
   // useEffect(() => {
   //   refreshRates().then()
@@ -290,7 +297,11 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         tokenB,
         connection,
         priceImpact,
-        setPriceImpact
+        setPriceImpact,
+        chosenRoutes,
+        setRoutes,
+        setClickNo,
+        clickNo
       }}
     >
       {children}
@@ -323,6 +334,10 @@ export const useSwap = (): ISwapConfig => {
     tokenB: context.tokenB,
     connection: context.connection,
     setPriceImpact: context.setPriceImpact,
-    priceImpact: context.priceImpact
+    priceImpact: context.priceImpact,
+    chosenRoutes: context.chosenRoutes,
+    setRoutes: context.setRoutes,
+    setClickNo: context.setClickNo,
+    clickNo: context.clickNo
   }
 }
