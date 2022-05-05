@@ -134,7 +134,7 @@ const STYLED_STAKE_PILL = styled(MainButton)`
   cursor: pointer;
   &.active,
   &:hover {
-    background: #3735bb;
+    background: ${({ theme }) => theme.primary3};
     color: #fff;
   }
 `

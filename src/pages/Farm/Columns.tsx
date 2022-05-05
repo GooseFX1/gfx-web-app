@@ -109,7 +109,11 @@ export const columns = [
     }
   },
   {
-    title: Title('Total Earned', '', true),
+    title: Title(
+      'Total Earned',
+      'The total profit and loss from SSL and is measured by comparing the total value of a pool’s assets (excluding trading fees) to their value if they had not been traded and instead were just held',
+      true
+    ),
     dataIndex: 'earned',
     key: 'earned',
     width: '20%',
@@ -120,7 +124,7 @@ export const columns = [
     dataIndex: 'apr',
     key: 'apr',
     width: '20%',
-    render: (text) => <div className="apr normal-text">{`${text.toFixed(2)}%`}</div>
+    render: (text) => <div className="apr normal-text">{`${text.toFixed(0)}%`}</div>
   },
   {
     title: Title('Liquidity', "Total value of funds in this farm's liquidity pool.", true),

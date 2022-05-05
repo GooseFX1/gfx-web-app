@@ -53,6 +53,9 @@ const STYLED_BUTTON = styled.button`
   background: none;
   color: ${({ theme }) => theme.text17};
   margin-right: 10px;
+  :disabled {
+    cursor: wait;
+  }
 `
 
 const ButtonContainer = styled.div`
@@ -76,7 +79,7 @@ const IconContainer = styled.div`
 const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
 
 export const FarmFilter = () => {
-  const { poolFilter, setPoolFilter, setSearchFilter, setCounter } = useFarmContext()
+  const { poolFilter, setPoolFilter, setSearchFilter, setCounter, operationPending } = useFarmContext()
 
   return (
     <>
@@ -84,7 +87,9 @@ export const FarmFilter = () => {
         <ButtonContainer>
           {poolTypes.map((pool) => (
             <STYLED_BUTTON
+              disabled={operationPending}
               key={pool.name}
+              title={pool.name === 'SSL' ? 'Single Sided Liquidity' : ''}
               onClick={() => setPoolFilter(pool.name)}
               className={pool.name === poolFilter ? 'selectedBackground' : ''}
             >
@@ -95,7 +100,7 @@ export const FarmFilter = () => {
 
         <SearchBar className="search-bar" placeholder="Search by token symbol" setSearchFilter={setSearchFilter} />
         <IconContainer>
-          <RefreshIcon onClick={() => setCounter((prev) => prev + 1)}>
+          <RefreshIcon href={'/farm'}>
             <img src={'/img/assets/refresh.svg'} />
           </RefreshIcon>
           <Toggle className="toggle" text="Show Deposited" defaultUnchecked />
