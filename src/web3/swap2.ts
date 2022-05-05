@@ -4,6 +4,7 @@ import { publicKeyLayout, u64, Oracle } from './layout'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
+import { CURRENT_SUPPORTED_TOKEN_LIST } from '../constants'
 import {
   NATIVE_MINT,
   createAssociatedTokenAccountInstruction,
@@ -322,10 +323,22 @@ export const preSwapAmount = async (
   inTokenAmount: number,
   wallet: any,
   connection: Connection,
-  network: WalletAdapterNetwork
+  network: WalletAdapterNetwork,
+  route: any
 ): Promise<{ preSwapResult: TransactionSignature | undefined; impact: number }> => {
   try {
     if (!inTokenAmount || inTokenAmount === 0) return { impact: 0, preSwapResult: '0' }
+    if (
+      !CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA.symbol) ||
+      !CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenB.symbol)
+    ) {
+      if (route) {
+        const outAmount = +(route.outAmount / 10 ** tokenB.decimals).toFixed(7)
+        return { impact: route.priceImpactPct.toFixed(6), preSwapResult: outAmount + '' }
+      } else {
+        return { impact: 0, preSwapResult: '0' }
+      }
+    }
 
     const swapWASM = (await wasm).swap
     const OracleRegistry = (await wasm).OracleRegistry
@@ -375,6 +388,6 @@ export const preSwapAmount = async (
     return { preSwapResult: +(trueValue * 10 ** differenceInDecimals).toFixed(7) + '', impact: out.price_impact }
   } catch (e) {
     console.log(e)
-    return null
+    return { impact: 0, preSwapResult: '0' }
   }
 }
