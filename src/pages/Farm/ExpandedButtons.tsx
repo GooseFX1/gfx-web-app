@@ -6,6 +6,7 @@ import { WalletContextState, useWallet } from '@solana/wallet-adapter-react'
 import { useFarmContext, usePriceFeed, useAccounts, useTokenRegistry, useConnectionConfig } from '../../context'
 import { invalidInputErrMsg } from './FarmClickHandler'
 import { notify } from '../../utils'
+import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 
 const STYLED_RIGHT_CONTENT = styled.div`
   display: flex;
@@ -407,22 +408,23 @@ export const SSLButtons: FC<{
   )
 
   const onClickMax = (buttonId: string) => {
-    if (buttonId === 'deposit') stakeRef.current.value = (userTokenBalance - 0.001).toFixed(DISPLAY_DECIMAL)
+    if (buttonId === 'deposit') stakeRef.current.value = userTokenBalance.toFixed(DISPLAY_DECIMAL)
     else unstakeRef.current.value = availableToMint.toFixed(DISPLAY_DECIMAL)
   }
   const onClickHalf = (buttonId: string) => {
     if (buttonId === 'deposit') stakeRef.current.value = (userTokenBalance / 2).toFixed(DISPLAY_DECIMAL)
     else unstakeRef.current.value = (availableToMint / 2).toFixed(DISPLAY_DECIMAL)
   }
-
-  const availableToMint = tokenData?.ptMinted ? tokenData.ptMinted : 0
+  const availableToMint =
+    tokenData?.ptMinted >= 0 ? tokenData.currentlyStaked + tokenData.earned - tokenData.ptMinted : 0
   const availableToMintFiat = tokenPrice && availableToMint * tokenPrice.current
 
   const checkbasicConditions = (amt: number) => {
+    const userAmount = parseFloat(unstakeRef.current.value)
     if (
       isNaN(parseFloat(unstakeRef.current.value)) ||
-      parseFloat(unstakeRef.current.value) < 0.000001 ||
-      parseFloat(unstakeRef.current.value) - 0.0001 > amt
+      userAmount < 0.000001 ||
+      parseFloat(userAmount.toFixed(3)) > parseFloat(amt.toFixed(3))
     ) {
       unstakeRef.current.value = 0
       notify(invalidInputErrMsg(amt >= 0 ? amt : undefined, name))
@@ -433,7 +435,7 @@ export const SSLButtons: FC<{
 
   const mintClicked = () => {
     if (checkbasicConditions(availableToMint)) return
-    onClickMint()
+    onClickMint(availableToMint)
   }
   const burnClicked = () => {
     console.log(userPoolTokenBalance)
@@ -443,7 +445,9 @@ export const SSLButtons: FC<{
   const withdrawClicked = () => {
     // (amt / userLiablity) * 10000
     if (checkbasicConditions(availableToMint)) return
-    const amountInNative = (unstakeRef.current.value / tokenData?.userLiablity) * 10000
+    const multiplier = name === 'SOL' ? 10000 : 10
+    let amountInNative = (unstakeRef.current.value / tokenData?.userLiablity) * LAMPORTS_PER_SOL * multiplier
+    if (availableToMint.toFixed(3) === unstakeRef.current.value) amountInNative = 100 * 100
     onClickWithdraw(amountInNative)
   }
   const notEnough = parseFloat(stakeRef.current?.value) > (name === 'SOL' ? userSOLBalance : userTokenBalance)

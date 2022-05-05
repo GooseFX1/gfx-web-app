@@ -373,9 +373,10 @@ export const ExpandedDynamicContent = ({
     return false
   }
 
-  const onClickMint = (): void => {
+  const onClickMint = (availableToMint: number): void => {
     setMintLoading(true)
-    const amount = parseFloat(unstakeRef.current.value)
+    let amount = parseFloat(unstakeRef.current.value)
+    if (parseFloat(availableToMint.toFixed(3)) == parseFloat(unstakeRef.current.value)) amount = availableToMint
     try {
       const confirm = executeMint(SSLProgram, wallet, connection, network, name, amount).then((con) => {
         setMintLoading(false)
@@ -451,6 +452,7 @@ export const ExpandedDynamicContent = ({
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage(signature, amount, name, network, Deposit))
           updateStakedValue()
+          setTimeout(() => (stakeRef.current.value = 0), 500)
           setCounter((prev) => prev + 1)
         } else {
           //@ts-ignore

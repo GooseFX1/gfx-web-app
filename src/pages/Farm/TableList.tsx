@@ -265,34 +265,34 @@ export const TableList = ({ dataSource }: any) => {
         wallet,
         tokenAddresses[i]
       )
-      const APR = 0.12
-      //@ts-ignore
-      let liqidity = (sslData.liability + sslData.swappedLiability) / BigInt(Math.pow(10, 6))
+      // const userLiablity = liquidityAccount
+      //   ? //@ts-ignore
+      //   ((Number(sslData.liability + sslData.swappedLiability) /
+      //     Math.pow(10, getTokenDecimal(network, SSLTokenNames[i]))) *
+      //     Number(liquidityAccount.share)) /
+      //   Number(sslData.totalShare)
+      //   : 0
       //const liability = liquidityAccount ? ((sslData.liability * liquidityAccount.share) / sslData.totalShare);
-      const ptMinted = liquidityAccount ? Number(liquidityAccount.ptMinted) / LAMPORTS_PER_SOL : 0
-      const liquidityForCalc = liqidity / BigInt(Math.pow(10, getTokenDecimal(network, SSLTokenNames[i]) - 6))
-      const userLiablity = liquidityAccount
-        ? //@ts-ignore
-          ((Number(sslData.liability + sslData.swappedLiability) /
-            Math.pow(10, getTokenDecimal(network, SSLTokenNames[i]))) *
-            Number(liquidityAccount.share)) /
-          Number(sslData.totalShare)
-        : 0
-      const amountDeposited = liquidityAccount
-        ? Number(liquidityAccount.amountDeposited) / Math.pow(10, getTokenDecimal(network, SSLTokenNames[i]))
-        : 0
+      const APR = 0.09
+      //@ts-ignore
+      let liquidity = sslData.liability + sslData.swappedLiability
+      console.log(liquidityAccount)
+      const ptMinted = liquidityAccount ? liquidityAccount.ptMinted : 0
+      //@ts-ignore
+      const userLiablity = liquidityAccount ? (liquidity * liquidityAccount.share) / sslData.totalShare : 0n
+      const amountDeposited = liquidityAccount ? liquidityAccount.amountDeposited : 0
+      //@ts-ignore
       const earned = liquidityAccount ? userLiablity - amountDeposited : 0
-
       newFarmDataContext = newFarmDataContext.map((data) => {
         if (data.name === SSLTokenNames[i]) {
           return {
             ...data,
-            earned: earned,
+            earned: Number(earned) / Math.pow(10, sslData.decimals),
             apr: APR * 100,
-            liquidity: Number(liqidity),
-            currentlyStaked: amountDeposited,
-            userLiablity: userLiablity,
-            ptMinted: liquidityAccount ? amountDeposited - ptMinted : 0
+            liquidity: Number(liquidity) / Math.pow(10, 6),
+            currentlyStaked: Number(amountDeposited) / Math.pow(10, sslData.decimals),
+            userLiablity: Number(userLiablity),
+            ptMinted: Number(ptMinted) / Math.pow(10, 9)
           }
         } else return data
       })
