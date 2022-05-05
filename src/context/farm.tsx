@@ -1,3 +1,4 @@
+import { bool } from '@metaplex-foundation/beet'
 import { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction } from 'react'
 import { stakeTokens, sslTokens } from '../constants'
 
@@ -14,6 +15,8 @@ interface IShowDeposited {
   farmDataSSLContext: IFarmData[]
   setFarmDataContext: Dispatch<SetStateAction<IFarmData[]>>
   setFarmDataSSLContext: Dispatch<SetStateAction<IFarmData[]>>
+  operationPending: boolean
+  setOperationPending: Dispatch<SetStateAction<boolean>>
 }
 
 interface IFarmData {
@@ -39,12 +42,15 @@ export const FarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [farmDataContext, setFarmDataContext] = useState<IFarmData[]>(stakeTokens)
   const [farmDataSSLContext, setFarmDataSSLContext] = useState<IFarmData[]>(sslTokens)
   const [counter, setCounter] = useState<number>(0)
+  const [operationPending, setOperationPending] = useState<boolean>(false)
 
   return (
     <FarmContext.Provider
       value={{
         showDeposited: mode,
         counter: counter,
+        operationPending: operationPending,
+        setOperationPending: setOperationPending,
         setCounter: setCounter,
         toggleDeposited: setMode,
         poolFilter: filter,
@@ -75,6 +81,8 @@ export const useFarmContext = (): IShowDeposited => {
     setCounter,
     poolFilter,
     setPoolFilter,
+    operationPending,
+    setOperationPending,
     searchFilter,
     setSearchFilter,
     farmDataContext,
@@ -85,6 +93,8 @@ export const useFarmContext = (): IShowDeposited => {
   return {
     showDeposited,
     toggleDeposited,
+    operationPending,
+    setOperationPending,
     poolFilter,
     counter,
     setCounter,

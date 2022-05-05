@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from 'react'
+import React, { FC, useState } from 'react'
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
 import { PrivacyPolicy } from './PrivacyPolicy'
@@ -41,32 +41,33 @@ const WRAPPER = styled(SpaceBetweenDiv)`
   `}
 `
 
+const LINK = styled.a`
+  color: ${({ theme }) => theme.secondary4};
+  text-decoration: underline;
+  transition: color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
+
+  &:hover {
+    color: #e180ff;
+    text-decoration: underline;
+  }
+`
+
 export const Footer: FC = () => {
   const { network } = useConnectionConfig()
   const [privacyPolicyVisible, setPrivacyPolicyVisible] = useState(false)
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState(false)
-
-  const handlePrivacyPolicy = useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      if (!event.defaultPrevented) setPrivacyPolicyVisible(true)
-    },
-    [setPrivacyPolicyVisible]
-  )
-
-  const handleTOS = useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      if (!event.defaultPrevented) setTermsOfServiceVisible(true)
-    },
-    [setTermsOfServiceVisible]
-  )
 
   return (
     <WRAPPER>
       <PrivacyPolicy setVisible={setPrivacyPolicyVisible} visible={privacyPolicyVisible} />
       <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
       <TEXT>
-        Copyright © 2022 Goose Labs, Inc. All rights reserved. Please trade with your own discretion and according to
-        your location’s laws and regulations.
+        Copyright © {new Date().getFullYear()} Goose Labs, Inc. All rights reserved. Please trade with your own
+        discretion and according to your location’s laws and regulations. Security audits by{' '}
+        <LINK href="https://halborn.com" target="_blank" rel="noopener noreferrer">
+          Halborn
+        </LINK>
+        , please use at your own risk
       </TEXT>
 
       <Row justify="space-between" align="middle">

@@ -13,7 +13,7 @@ const ROW_CONTAINER = styled.div`
   padding-top: ${({ theme }) => theme.margin(3)};
   padding-bottom: ${({ theme }) => theme.margin(2)};
   .set-width {
-    width: 14%;
+    width: 13.6%;
   }
   .set-width-balance {
     width: 21%;
@@ -31,9 +31,10 @@ const ROW_CONTAINER = styled.div`
 
 export const STYLED_EXPAND_ICON = styled.div`
   cursor: pointer;
-  padding-top: -10px;
-  margin-left: 3%;
+  padding-top: 20px;
+  margin-left: 2.7%;
   filter: ${({ theme }) => theme.filterDownIcon};
+  transform: rotate(180deg);
 `
 
 interface IFarmData {

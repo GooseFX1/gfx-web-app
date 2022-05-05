@@ -58,7 +58,7 @@ export const insufficientSOLMsg = () => ({
 
 export const invalidInputErrMsg = (userTokenBalance: number, name: string) => ({
   type: 'error',
-  message: `Please give valid input from 0.00001 to ${userTokenBalance.toFixed(3)} ${name}`
+  message: `Please give valid input from 0.00001 to ${userTokenBalance?.toFixed(3)} ${name}`
 })
 
 export const genericErrMsg = (error: string) => ({

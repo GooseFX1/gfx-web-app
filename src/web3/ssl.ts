@@ -110,7 +110,6 @@ export const fetchSSLAmountStaked = async (
     try {
       const liquidityData = (await connection.getAccountInfo(liquidityAccountKey)).data
       const liquidityAccount = LIQUIDITY_ACCOUNT_LAYOUT.decode(liquidityData)
-      console.log(liquidityAccount)
       return { sslData, liquidityAccount }
     } catch (err) {
       return { sslData: sslData, liquidityAccount: undefined }
