@@ -845,7 +845,6 @@ const SwapMainProvider: FC = () => {
     const token2 = tradePair
       ? tokens?.find((i) => i.symbol.toLowerCase() === tradePair?.split('-')[1].toLowerCase())
       : null
-
     const usd = tokens?.find((i) => i.symbol === 'USDC')
     const sol = tokens?.find((i) => i.symbol === 'SOL')
 
