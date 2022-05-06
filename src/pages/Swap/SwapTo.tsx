@@ -13,7 +13,7 @@ const AMOUNT = styled.div`
   span {
     display: block;
     padding: 0 20px 0 120px;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 18px;
     line-height: 22px;
     white-space: nowrap;

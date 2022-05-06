@@ -46,7 +46,7 @@ export const AmountField = styled.div<{ $balance: string; $height: string; $valu
   }
 
   .swap-input {
-    font-weight: 500;
+    font-weight: 600;
     font-size: 18px;
     line-height: 22px;
     color: ${({ theme }) => theme.text1};
