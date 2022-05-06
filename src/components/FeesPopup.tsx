@@ -1,5 +1,7 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
+import { Table, Tag, Space } from 'antd'
+import { dataSource, feesColumns } from '../pages/TradeV2/constants/feesConstants'
 
 const Wrapper = styled.div`
   height: 100%;
@@ -11,7 +13,11 @@ const Wrapper = styled.div`
 `
 
 export const FeesPopup: FC = () => {
-  return <Wrapper></Wrapper>
+  return (
+    <Wrapper>
+      <Table dataSource={dataSource} columns={feesColumns} />;
+    </Wrapper>
+  )
 }
 
 export default FeesPopup
