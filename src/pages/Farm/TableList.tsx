@@ -183,6 +183,7 @@ export const TableList = ({ dataSource }: any) => {
   const PAGE_SIZE = 10
 
   const gofxPrice = useMemo(() => prices['GOFX/USDC'], [prices])
+  const solPrice = useMemo(() => prices['SOL/USDC'], [prices])
 
   const stakeProgram: Program = useMemo(() => {
     return wallet.publicKey
@@ -265,18 +266,10 @@ export const TableList = ({ dataSource }: any) => {
         wallet,
         tokenAddresses[i]
       )
-      // const userLiablity = liquidityAccount
-      //   ? //@ts-ignore
-      //   ((Number(sslData.liability + sslData.swappedLiability) /
-      //     Math.pow(10, getTokenDecimal(network, SSLTokenNames[i]))) *
-      //     Number(liquidityAccount.share)) /
-      //   Number(sslData.totalShare)
-      //   : 0
-      //const liability = liquidityAccount ? ((sslData.liability * liquidityAccount.share) / sslData.totalShare);
+      const tokenPrice = SSLTokenNames[i] === 'USDC' ? 1 : solPrice?.current
       const APR = 0.09
       //@ts-ignore
       let liquidity = sslData.liability + sslData.swappedLiability
-      console.log(liquidityAccount)
       const ptMinted = liquidityAccount ? liquidityAccount.ptMinted : 0
       //@ts-ignore
       const userLiablity = liquidityAccount ? (liquidity * liquidityAccount.share) / sslData.totalShare : 0n
@@ -289,7 +282,7 @@ export const TableList = ({ dataSource }: any) => {
             ...data,
             earned: Number(earned) / Math.pow(10, sslData.decimals),
             apr: APR * 100,
-            liquidity: Number(liquidity) / Math.pow(10, 6),
+            liquidity: tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)),
             currentlyStaked: Number(amountDeposited) / Math.pow(10, sslData.decimals),
             userLiablity: Number(userLiablity),
             ptMinted: Number(ptMinted) / Math.pow(10, 9)
