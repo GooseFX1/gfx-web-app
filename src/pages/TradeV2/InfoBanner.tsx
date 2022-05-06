@@ -60,7 +60,7 @@ const INFO_STATS = styled.div`
   }
 `
 
-const REFRESH_LAYOUT = styled.div`
+const REFRESH_DATA = styled.div`
   height: 40px;
   width: 40px;
   border-radius: 50%;
@@ -102,6 +102,16 @@ const FEES_BTN = styled.div`
 `
 
 const FIX_LAYOUT = styled.div``
+const RESET_LAYOUT_BUTTON = styled.div`
+  cursor: pointer;
+  background-color: ${({ theme }) => theme.bg9};
+  height: 40px;
+  padding: 10px 20px;
+  margin-left: 20px;
+  border-radius: 36px;
+  margin-left: auto;
+  color: ${({ theme }) => theme.text4};
+`
 
 const Loader: FC = () => {
   return <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
@@ -115,7 +125,7 @@ export const InfoBanner: FC<{
 }> = ({ isLocked, setIsLocked, resetLayout, setFeesPopup }) => {
   const [isSpot, setIsSpot] = useState(true)
   const { selectedCrypto } = useCrypto()
-  const { prices, tokenInfo } = usePriceFeed()
+  const { prices, tokenInfo, refreshTokenData } = usePriceFeed()
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
   const tokenInfos = useMemo(() => tokenInfo[selectedCrypto.pair], [tokenInfo[selectedCrypto.pair]])
   const formatDisplayVolume = (volume) => {
@@ -214,9 +224,13 @@ export const InfoBanner: FC<{
         )}
       </INFO_STATS>
       <FEES_BTN onClick={() => setFeesPopup((prev) => !prev)}>Fees </FEES_BTN>
-      <REFRESH_LAYOUT onClick={() => resetLayout()}>
-        <img src={`/img/assets/whiteRefresh.svg`} alt="refresh" />
-      </REFRESH_LAYOUT>
+      {isLocked ? (
+        <REFRESH_DATA onClick={() => refreshTokenData()}>
+          <img src={`/img/assets/whiteRefresh.svg`} alt="refresh" />
+        </REFRESH_DATA>
+      ) : (
+        <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>
+      )}
       <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
         <img src={isLocked ? `/img/assets/whiteLock.svg` : `/img/assets/whiteUnlock.svg`} alt="lock" />
       </LOCK_LAYOUT>
