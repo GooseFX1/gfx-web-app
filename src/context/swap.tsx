@@ -195,10 +195,10 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [tokenA, tokenB, inTokenAmount, chosenRoutes, clickNo])
 
-  useEffect(() => {
-    setTokenA(null)
-    setTokenB(null)
-  }, [connection])
+  // useEffect(() => {
+  //   setTokenA(null)
+  //   setTokenB(null)
+  // }, [connection])
 
   useEffect(() => {
     amountPool()
