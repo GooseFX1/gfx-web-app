@@ -6,9 +6,12 @@ import { TVChartContainer } from '../Crypto/TradingView'
 import { useNavCollapse, OrderBookProvider, useCrypto, useDarkMode } from '../../context'
 import { Responsive, WidthProvider } from 'react-grid-layout'
 import _ from 'lodash'
+import { ModalSlide } from '../../components/ModalSlide'
 import { InfoBanner } from './InfoBanner'
 import { OrderHistory } from './OrderHistory'
 import { HistoryPanel } from './HistoryPanel'
+import { MODAL_TYPES } from '../../constants'
+
 const ReactGridLayout = WidthProvider(Responsive)
 
 const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean }>`
@@ -104,6 +107,7 @@ const componentDimensions = [
 
 export const CryptoContent: FC = () => {
   const { isCollapsed } = useNavCollapse()
+  const [feesPopup, setFeesPopup] = useState<boolean>(false)
   const { selectedCrypto } = useCrypto()
   const [isLocked, setIsLocked] = useState(true)
   const [layout, setLayout] = useState({ lg: componentDimensions })
@@ -227,7 +231,8 @@ export const CryptoContent: FC = () => {
 
   return (
     <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked}>
-      <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} />
+      <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} setFeesPopup={setFeesPopup} />
+      {feesPopup && <ModalSlide rewardModal={feesPopup} rewardToggle={setFeesPopup} modalType={MODAL_TYPES.FEES} />}
       <ReactGridLayout
         compactType="vertical"
         measureBeforeMount={false}

@@ -92,17 +92,27 @@ const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
   }
 `
 
+const FEES_BTN = styled.div`
+  margin-left: auto;
+  width: 88px;
+  height: 40px;
+  border: 1px solid pink;
+  background: #2a2a2a;
+  border-radius: 36px;
+`
+
 const FIX_LAYOUT = styled.div``
 
 const Loader: FC = () => {
   return <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
 }
 
-export const InfoBanner: FC<{ isLocked: boolean; setIsLocked: Function; resetLayout: Function }> = ({
-  isLocked,
-  setIsLocked,
-  resetLayout
-}) => {
+export const InfoBanner: FC<{
+  isLocked: boolean
+  setIsLocked: Function
+  resetLayout: Function
+  setFeesPopup: Function
+}> = ({ isLocked, setIsLocked, resetLayout, setFeesPopup }) => {
   const [isSpot, setIsSpot] = useState(true)
   const { selectedCrypto } = useCrypto()
   const { prices, tokenInfo } = usePriceFeed()
@@ -203,6 +213,7 @@ export const InfoBanner: FC<{ isLocked: boolean; setIsLocked: Function; resetLay
           </div>
         )}
       </INFO_STATS>
+      <FEES_BTN onClick={() => setFeesPopup((prev) => !prev)}>Fees </FEES_BTN>
       <REFRESH_LAYOUT onClick={() => resetLayout()}>
         <img src={`/img/assets/whiteRefresh.svg`} alt="refresh" />
       </REFRESH_LAYOUT>
