@@ -23,17 +23,11 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   const { selectedCrypto } = useCrypto()
   const { connection } = useConnectionConfig()
   const [orderBook, setOrderBook] = useState<OrderBook>(DEFAULT_ORDER_BOOK)
-  const [isCanceled, setIsCanceled] = useState(false)
 
   useEffect(() => {
     const subscriptions: number[] = []
-
-    if (!isCanceled) {
-      fetchOrderBook(subscriptions)
-    }
-
+    fetchOrderBook(subscriptions)
     return () => {
-      setIsCanceled(true)
       setOrderBook(DEFAULT_ORDER_BOOK)
       subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
     }
