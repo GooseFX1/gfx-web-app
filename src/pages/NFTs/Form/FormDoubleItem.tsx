@@ -6,7 +6,7 @@ import { Dropdown } from '../Form/Dropdown'
 import isEmpty from 'lodash/isEmpty'
 
 interface DataFormItem {
-  name: string
+  id: string
   label?: string
   defaultValue?: any
   placeholder?: string
@@ -26,15 +26,16 @@ export const FormDoubleItem = ({ className, data, startingDays, expirationDays, 
   return (
     <StyledFormDoubleItem className={className}>
       {!isEmpty(data) ? (
-        data.map((item) => (
-          <Col span={12}>
-            <Form.Item label={item.label} name={item.name}>
+        data.map((item, index) => (
+          <Col span={12} key={index}>
+            <Form.Item label={item.label}>
               {item.type === 'input' ? (
                 <>
                   <Input
+                    id={item.id}
                     placeholder={item?.placeholder}
                     defaultValue={item?.defaultValue}
-                    onChange={(e) => onChange({ e, id: item?.name })}
+                    onChange={onChange}
                   />
                   {item?.unit && <div className="unit">{item?.unit}</div>}
                 </>
