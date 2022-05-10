@@ -260,13 +260,13 @@ export const SellNFT = () => {
     }
   }, [userInput, category])
 
-  const onChange = ({ e, id }) => {
+  const onChange = (e) => {
     const { value } = e.target
     const temp = { ...userInput }
     const fmtNum = parseFloat(value).toFixed(3)
 
-    temp[id] = fmtNum.toString()
-    if (id === 'minimumBid') {
+    temp[e.target.id] = fmtNum.toString()
+    if (e.target.id === 'minimumBid') {
       updateUserInput({ price: fmtNum.toString() })
     } else {
       updateUserInput({ royalty: value })
@@ -336,15 +336,24 @@ export const SellNFT = () => {
       // make web3 cancel
       removeAskIX = await createRemoveAskIX()
     }
-    console.log(removeAskIX)
-    if (ask && removeAskIX) transaction.add(removeAskIX)
 
+    // adds ixs to tx
+    console.log(`Updating ask: ${removeAskIX !== undefined}`)
+    if (ask && removeAskIX) transaction.add(removeAskIX)
     transaction.add(sellIX)
 
-    const signature = await sendTransaction(transaction, connection)
-    console.log(signature)
-    setPendingTxSig(signature)
+    try {
+      const signature = await sendTransaction(transaction, connection)
+      console.log(signature)
+      setPendingTxSig(signature)
+      attemptConfirmTransaction(buyerPrice, tradeState, signature)
+    } catch (error) {
+      setIsLoading(false)
+      console.log('User exited signing transaction to list fixed price')
+    }
+  }
 
+  const attemptConfirmTransaction = async (buyerPrice: BN, tradeState: [PublicKey, number], signature: any) => {
     try {
       const confirm = await connection.confirmTransaction(signature, 'finalized')
       console.log(confirm)
@@ -425,7 +434,7 @@ export const SellNFT = () => {
     const curAskingPrice: BN = new BN(parseFloat(ask.buyer_price))
     const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(curAskingPrice))
     const cancelInstructionArgs: CancelInstructionArgs = {
-      buyerPrice: new BN(ask.buyer_price),
+      buyerPrice: curAskingPrice,
       tokenSize: tokenSize
     }
 
@@ -588,7 +597,7 @@ export const SellNFT = () => {
                       <FormDoubleItem
                         data={[
                           {
-                            name: 'minimumBid',
+                            id: 'minimumBid',
                             defaultValue: '',
                             placeholder: 'Enter minimum bid',
                             hint: (
@@ -615,7 +624,7 @@ export const SellNFT = () => {
                       <FormDoubleItem
                         data={[
                           {
-                            name: 'minimumBid',
+                            id: 'minimumBid',
                             defaultValue: ask === undefined ? '' : `${parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL}`,
                             placeholder: 'Enter asking price',
                             hint: (
