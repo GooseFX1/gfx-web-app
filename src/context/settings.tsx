@@ -35,6 +35,13 @@ export const ENDPOINTS: IEndpoint[] = [
     name: 'GenesysGo',
     endpoint: 'https://ssc-dao.genesysgo.net',
     network: WalletAdapterNetwork.Mainnet
+  },
+  {
+    chainId: ENV.MainnetBeta,
+    name: 'Syndica',
+    endpoint:
+      'https://solana-api.syndica.io/access-token/IOYLJaEtvN43W024NvifG71Bw1rfvPGHi8JgmOzdMc7SKSb4ruSafhRUtFG9jMbS/rpc',
+    network: WalletAdapterNetwork.Mainnet
   }
 ]
 
