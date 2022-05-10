@@ -13,7 +13,6 @@ import React, {
 } from 'react'
 import moment from 'moment'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Swap } from 'goosefx-ssl-sdk'
 import { useAccounts } from './accounts'
 import { useConnectionConfig, useSlippageConfig } from './settings'
 import { notify } from '../utils'
