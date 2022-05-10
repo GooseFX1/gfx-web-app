@@ -7663,10 +7663,10 @@ globby@^6.1.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
-goosefx-ssl-sdk@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.0.5.tgz#488b7728cd41b5c9092b9a07b2f8fd779d2b6c3b"
-  integrity sha512-U1Fx2hdFpC0G5AeEikzl3MFHfKEwg3VoWfPiEUuorAe3qaHZHqorckIQiCZ/kMFcKLere7fJKzDDfs+WQgSDpw==
+goosefx-ssl-sdk@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.0.2.tgz#ca2bf00d5a29dfd11be663d03c02f8ffab00044c"
+  integrity sha512-0/Twf11nqrHdDSYt6X2awZ5qpRWPMzvB7ZPqaUrqhq0YTmGeCDkGNLPfwPDY5GSkSa3Oci+cIlMvV5sWr9vyPQ==
   dependencies:
     "@project-serum/anchor" "^0.17.1-beta.1"
     "@solana/buffer-layout" "^4.0.0"
