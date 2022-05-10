@@ -65,7 +65,6 @@ const REFRESH_DATA = styled.div`
   width: 40px;
   border-radius: 50%;
   background-color: #5855ff;
-  margin-left: auto;
   text-align: center;
   cursor: pointer;
   img {
@@ -99,6 +98,11 @@ const FEES_BTN = styled.div`
   border: 1px solid pink;
   background: #2a2a2a;
   border-radius: 36px;
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 `
 
 const FIX_LAYOUT = styled.div``
@@ -109,7 +113,6 @@ const RESET_LAYOUT_BUTTON = styled.div`
   padding: 10px 20px;
   margin-left: 20px;
   border-radius: 36px;
-  margin-left: auto;
   color: ${({ theme }) => theme.text4};
 `
 

@@ -23,32 +23,58 @@ export const feesColumns = [
 export const dataSource = [
   {
     key: '1',
-    name: 'Mike',
-    age: 32,
-    address: '10 Downing Street'
+    feeTier: '0',
+    holding: '< 100',
+    taker: '0.04%',
+    maker: '0%',
+    amount: 100
   },
   {
     key: '2',
-    name: 'John',
-    age: 42,
-    address: '10 Downing Street'
-  }
-]
-
-export const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name'
+    feeTier: '1',
+    holding: '100',
+    taker: '0.039%',
+    maker: '0%',
+    amount: 1000
   },
   {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age'
+    key: '3',
+    feeTier: '2',
+    holding: '1000',
+    taker: '0.038%',
+    maker: '0%',
+    amount: 10000
   },
   {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address'
+    key: '4',
+    feeTier: '3',
+    holding: '10,000',
+    taker: '0.036%',
+    maker: '0%',
+    amount: 100000
+  },
+  {
+    key: '5',
+    feeTier: '4',
+    holding: '100,000',
+    taker: '0.034%',
+    maker: '0%',
+    amount: 1000000
+  },
+  {
+    key: '6',
+    feeTier: '5',
+    holding: '1,000,000',
+    taker: '0.032%',
+    maker: '0%',
+    amount: 1000001
+  },
+  {
+    key: '7',
+    feeTier: '6',
+    holding: '+1,000,000',
+    taker: '0.03%',
+    maker: '0%',
+    amount: -1
   }
 ]

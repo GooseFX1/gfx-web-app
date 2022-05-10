@@ -225,7 +225,6 @@ export const CryptoContent: FC = () => {
   }
 
   const resetLayout = () => {
-    console.log('in reset')
     setLayout({ lg: componentDimensions })
   }
 
