@@ -49,7 +49,7 @@ const PRICE = styled.span`
 
 const SIDE = styled(SpaceBetweenDiv)<{ $display: boolean; $side: OrderSide }>`
   position: relative;
-  margin-top: 30px;
+  margin-top: 10px;
 
   &:after {
     content: '';
@@ -89,9 +89,9 @@ const WRAPPER = styled.div`
   position: relative;
   display: flex;
   margin: -${({ theme }) => theme.margin(2)};
-  padding: ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(3)} ${({ theme }) => theme.margin(1.5)}
+  padding: ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(3)} ${({ theme }) => theme.margin(0)}
     ${({ theme }) => theme.margin(1.5)};
-  border: solid 2.5px ${({ theme }) => theme.cryptoOrderHeaderBorder};
+  //border: solid 2.5px ${({ theme }) => theme.cryptoOrderHeaderBorder};
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 20px;

@@ -1,7 +1,8 @@
 import React, { Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { RewardsPopup } from './RewardsPopup'
-import { useRewardToggle } from '../context/reward_toggle'
+import { FeesPopup } from './FeesPopup'
+import { MODAL_TYPES } from '../constants'
 
 const WRAPPER = styled.div`
   position: absolute;
@@ -46,8 +47,9 @@ const MODAL = styled.div`
 }
 `
 interface IModalSlide {
-  rewardModal: boolean
-  rewardToggle: Dispatch<SetStateAction<boolean>>
+  rewardModal?: boolean
+  rewardToggle?: Dispatch<SetStateAction<boolean>>
+  modalType: string
 }
 
 const closeRewardModal = (e, rewardToggle) => {
@@ -57,11 +59,11 @@ const closeRewardModal = (e, rewardToggle) => {
 }
 
 export const ModalSlide = (props: IModalSlide) => {
-  const { rewardToggle } = useRewardToggle()
   return (
-    <WRAPPER id="wrapper-background" onClick={(e) => closeRewardModal(e, rewardToggle)}>
+    <WRAPPER id="wrapper-background" onClick={(e) => closeRewardModal(e, props.rewardToggle)}>
       <MODAL id="modal">
-        <RewardsPopup />
+        {props.modalType === MODAL_TYPES.REWARDS && <RewardsPopup />}
+        {props.modalType === MODAL_TYPES.FEES && <FeesPopup {...props} />}
       </MODAL>
     </WRAPPER>
   )

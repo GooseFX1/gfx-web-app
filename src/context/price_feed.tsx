@@ -30,6 +30,7 @@ interface IChange {
 interface IPriceFeedConfig {
   prices: IPrices
   tokenInfo: IChange
+  refreshTokenData: Function
 }
 
 const PriceFeedContext = createContext<IPriceFeedConfig | null>(null)
@@ -108,6 +109,21 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
     }
   }
 
+  const refreshTokenData = async (coinGeckoId) => {
+    if (!coinGeckoId) {
+      const cryptoMarkets = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'crypto')
+      for (const { pair, coinGecko } of cryptoMarkets) {
+        let tokenInfo = await getTokenInfo(coinGecko)
+        let range = await getRange(coinGecko)
+        setTokenInfo((prevState) => ({ ...prevState, [pair]: { ...tokenInfo, range } }))
+      }
+    } else {
+      let tokenInfo = await getTokenInfo(coinGeckoId.coinGecko)
+      let range = await getRange(coinGeckoId.coinGecko)
+      setTokenInfo((prevState) => ({ ...prevState, [coinGeckoId.pair]: { ...tokenInfo, range } }))
+    }
+  }
+
   useEffect(() => {
     let cancelled = false
     const subscriptions: number[] = []
@@ -117,9 +133,7 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
         const cryptoMarkets = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'crypto')
         for (const { pair, coinGecko } of cryptoMarkets) {
           try {
-            let tokenInfo = await getTokenInfo(coinGecko)
-            let range = await getRange(coinGecko)
-            setTokenInfo((prevState) => ({ ...prevState, [pair]: { ...tokenInfo, range } }))
+            refreshTokenData({ pair, coinGecko })
             const market = await serum.getMarket(connection, pair)
             const current = await serum.getLatestBid(connection, pair)
             setPrices((prevState) => ({ ...prevState, [pair]: { current } }))
@@ -172,7 +186,8 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
     <PriceFeedContext.Provider
       value={{
         prices,
-        tokenInfo
+        tokenInfo,
+        refreshTokenData
       }}
     >
       {children}
@@ -188,6 +203,7 @@ export const usePriceFeed = (): IPriceFeedConfig => {
 
   return {
     prices: context.prices,
-    tokenInfo: context.tokenInfo
+    tokenInfo: context.tokenInfo,
+    refreshTokenData: context.refreshTokenData
   }
 }

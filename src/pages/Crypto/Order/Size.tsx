@@ -47,6 +47,20 @@ export const Size: FC = () => {
       flex: 1;
       margin: 8px;
     }
+
+    .order-size .ant-slider .ant-slider-rail {
+      height: 10px;
+    }
+
+    .order-size .ant-slider:hover .ant-slider-track {
+      background-color: #9625ae !important;
+    }
+    .order-size .ant-slider:hover .ant-slider-handle:not(.ant-tooltip-open) {
+      background-color: #9625ae;
+    }
+    .order-size .ant-slider-track {
+      background-color: #9625ae;
+    }
   `
 
   return (
@@ -80,6 +94,15 @@ export const Size: FC = () => {
             onChange={(size) => setOrder((prevState) => ({ ...prevState, size }))}
             step={selectedCrypto.market?.minOrderSize}
             value={order.size}
+            trackStyle={{
+              height: '10px'
+            }}
+            handleStyle={{
+              height: '20px',
+              width: '20px',
+              background: 'linear-gradient(55.89deg, #8D26AE 21.49%, #D4D3FF 88.89%)',
+              border: '2px solid #FFFFFF'
+            }}
           />
           <span
             onClick={() => {

@@ -13,7 +13,7 @@ export const FieldHeader = styled.span`
 
 export const Picker = styled.div`
   display: flex;
-  align-items: center;
+  align-items: baseline;
 
   span {
     margin-left: ${({ theme }) => theme.margin(1.5)};
