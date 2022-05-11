@@ -767,6 +767,7 @@ export const SwapMain: FC = () => {
     useSwap()
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
+  const [chosenRoutes, setChosenRoutes] = useState([])
   const [inAmountTotal, setInAmountTotal] = useState(0)
 
   const { routes, exchange } = useJupiter({
@@ -788,6 +789,23 @@ export const SwapMain: FC = () => {
 
     if (tokenA && tokenB) {
       setallowed(true)
+      setChosenRoutes([
+        {
+          marketInfos: [
+            {
+              outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
+              lpFee: { amount: 0.001 * inTokenAmount * 10 ** (tokenA?.decimals || 0) },
+
+              amm: {
+                label: 'GooseFX'
+              }
+            }
+          ],
+          outAmount: +((outTokenAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
+          outAmountWithSlippage: +((outTokenAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
+          priceImpactPct: priceImpact
+        }
+      ])
     }
 
     const filteredRoutes = routes?.filter((i) => i.inAmount === inAmountTotal)
@@ -812,8 +830,8 @@ export const SwapMain: FC = () => {
 
       if (supported) shortRoutes.splice(1, 0, GoFxRoute)
     }
-    setRoutes(shortRoutes)
-    //setClickNo(1)
+    setChosenRoutes(shortRoutes)
+    setClickNo(1)
   }, [tokenA, tokenB, routes, slippage, inTokenAmount, outTokenAmount])
 
   return (
