@@ -13,7 +13,7 @@ import React, {
 } from 'react'
 import moment from 'moment'
 import { useWallet } from '@solana/wallet-adapter-react'
-//import { PublicKey } from '@solana/web3.js'
+import { Swap } from 'goosefx-ssl-sdk'
 import { useAccounts } from './accounts'
 import { useConnectionConfig, useSlippageConfig } from './settings'
 import { notify } from '../utils'
@@ -88,6 +88,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   })
   const [tokenA, setTokenA] = useState<ISwapToken | null>(null)
   const [tokenB, setTokenB] = useState<ISwapToken | null>(null)
+  //const swap = new Swap(connection)
 
   let refreshTimeout: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
   const timeoutDelay = 200
@@ -249,6 +250,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   async function callPathExchange(route: any, exchange: any) {
+    console.log(route)
     if (route.marketInfos[0].amm.label === 'GooseFX') {
       return await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
     } else {

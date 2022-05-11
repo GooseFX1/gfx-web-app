@@ -778,20 +778,22 @@ export const SwapMain: FC = () => {
   })
 
   useEffect(() => {
+    if (!routes) return
+
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
     setInAmountTotal(inAmountTotal)
+
     const supported =
       CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA?.symbol) && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenB?.symbol)
 
     if (tokenA && tokenB) {
       setallowed(true)
     }
-    if (!routes) return
 
     const filteredRoutes = routes?.filter((i) => i.inAmount === inAmountTotal)
-    let shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
+    const shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
 
-    if (tokenB && outTokenAmount) {
+    if (tokenB) {
       const GoFxRoute = {
         marketInfos: [
           {
@@ -803,8 +805,8 @@ export const SwapMain: FC = () => {
             }
           }
         ],
-        outAmount: +(outTokenAmount * 10 ** tokenB.decimals).toFixed(7),
-        outAmountWithSlippage: +(outTokenAmount * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
+        outAmount: +((outTokenAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
+        outAmountWithSlippage: +((outTokenAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
         priceImpactPct: priceImpact
       }
 
