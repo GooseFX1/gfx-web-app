@@ -93,11 +93,11 @@ export function colors(mode: string): Colors {
     swapSides1:
       mode === 'dark'
         ? 'linear-gradient(256deg, #2a2a2a 1.49%, #181818 93.4%)'
-        : 'linear-gradient(263deg, #fdfdfd 94%, #eee 14%)',
+        : 'linear-gradient(256deg, #FDFDFD 1.49%, #EEEEEE 93.4%)',
     swapSides2:
       mode === 'dark'
         ? 'linear-gradient(88.61deg, #2a2a2a 1.49%, #181818 93.4%)'
-        : 'background: linear-gradient(88.61deg, #FDFDFD 1.49%, #EEEEEE 93.4%)',
+        : 'linear-gradient(88.61deg, #FDFDFD 1.49%, #EEEEEE 93.4%)',
     bg13: mode === 'dark' ? '#191919' : '#eee',
     bg14: mode === 'dark' ? '#1b1b1b' : '#555555',
     bg15: mode === 'dark' ? '#191919' : '#555555',
