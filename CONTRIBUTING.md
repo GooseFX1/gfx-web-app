@@ -33,15 +33,12 @@ These features will likely accumulate a lot of changes before merging into `dev`
 
 Rebasing daily or frequently should allow your feature branch to always be safely merged when the time comes to add it to `dev`.
 
-Good daily habits on feature branches:
+Good daily habits on feature branches (assumes on working branch):
 
 1. `git fetch --all`
-2. `git checkout dev`
-3. `git pull origin dev`
-4. `git checkout feature/<my-feature>`
-5. `git rebase dev`
-6. `git checkout current-working-branch`
-7. `git rebase feature/<my-feature>`
+2. `git rebase origin/feature/<my-feature>`
+
+Periodic rebasing of the feature branch with latest dev when features complete.
 
 #### Branch Dynamic URLs
 
