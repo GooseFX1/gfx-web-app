@@ -3,7 +3,7 @@ import { Input, Slider } from 'antd'
 import { css } from 'styled-components'
 import { FieldHeader, Picker } from './shared'
 import { useDarkMode, useCrypto, useOrder, useTokenRegistry, useAccounts } from '../../../context'
-import { removeFloatingPointError, debounce } from '../../../utils'
+import { removeFloatingPointError } from '../../../utils'
 
 export const Total: FC = () => {
   const { getUIAmount } = useAccounts()
@@ -35,7 +35,19 @@ export const Total: FC = () => {
       flex: 1;
       margin: 8px;
     }
+    .order-total .ant-slider .ant-slider-rail {
+      height: 10px;
+    }
 
+    .order-total .ant-slider:hover .ant-slider-track {
+      background-color: #9625ae !important;
+    }
+    .order-total .ant-slider:hover .ant-slider-handle:not(.ant-tooltip-open) {
+      background-color: #9625ae;
+    }
+    .order-total .ant-slider-track {
+      background-color: #9625ae;
+    }
     .order-total .symbol-name {
       font-size: 15px;
       line-height: 50px;
@@ -84,6 +96,15 @@ export const Total: FC = () => {
             onChange={handleSliderChange}
             step={selectedCrypto.market?.tickSize}
             value={order.total}
+            trackStyle={{
+              height: '10px'
+            }}
+            handleStyle={{
+              height: '20px',
+              width: '20px',
+              background: 'linear-gradient(55.89deg, #8D26AE 21.49%, #D4D3FF 88.89%)',
+              border: '2px solid #FFFFFF'
+            }}
           />
           <span
             onClick={() => {
