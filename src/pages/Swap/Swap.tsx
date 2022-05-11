@@ -454,10 +454,6 @@ const TokenContent: FC = () => {
 
   const [socials, setSocials] = useState([])
 
-  const coinsIds = {
-    SOL: 'solana',
-    USDC: 'usd-coin'
-  }
   const truncate = (address: string) => {
     return address.slice(0, 7) + '...' + address.slice(-6)
   }
@@ -675,7 +671,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   routes
 }) => {
   const { mode } = useDarkMode()
-  const { tokenA, tokenB, setOutTokenAmount } = useSwap()
+  const { tokenA, tokenB } = useSwap()
   const [tokens, setTokens] = useState([])
   const [details, setDetails] = useState([])
 
@@ -725,10 +721,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
           <SWAP_ROUTE_ITEM
             $clicked={k === clickNo}
             $cover={mode === 'dark' ? '#3c3b3ba6' : '#ffffffa6'}
-            onClick={() => {
-              setClickNo(k)
-              //setOutTokenAmount(detail.outAmount || null)
-            }}
+            onClick={() => setClickNo(k)}
           >
             <div className={'inner-container'}>
               <TokenDetail className={'content'}>
@@ -762,12 +755,11 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
 }
 
 export const SwapMain: FC = () => {
-  const desktop = window.innerWidth > 1200
+  const desktop = window.innerWidth > 1300
   const { tokenA, tokenB, inTokenAmount, outTokenAmount, priceImpact, chosenRoutes, setRoutes, setClickNo, clickNo } =
     useSwap()
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
-  const [chosenRoutes, setChosenRoutes] = useState([])
   const [inAmountTotal, setInAmountTotal] = useState(0)
 
   const { routes, exchange } = useJupiter({
@@ -779,8 +771,6 @@ export const SwapMain: FC = () => {
   })
 
   useEffect(() => {
-    if (!routes) return
-
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
     setInAmountTotal(inAmountTotal)
 
@@ -789,7 +779,7 @@ export const SwapMain: FC = () => {
 
     if (tokenA && tokenB) {
       setallowed(true)
-      setChosenRoutes([
+      setRoutes([
         {
           marketInfos: [
             {
@@ -808,6 +798,7 @@ export const SwapMain: FC = () => {
       ])
     }
 
+    if (!routes) return
     const filteredRoutes = routes?.filter((i) => i.inAmount === inAmountTotal)
     const shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
 
@@ -830,7 +821,8 @@ export const SwapMain: FC = () => {
 
       if (supported) shortRoutes.splice(1, 0, GoFxRoute)
     }
-    setChosenRoutes(shortRoutes)
+
+    setRoutes(shortRoutes)
     setClickNo(1)
   }, [tokenA, tokenB, routes, slippage, inTokenAmount, outTokenAmount])
 
@@ -841,7 +833,7 @@ export const SwapMain: FC = () => {
         <SwapContent exchange={exchange} routes={chosenRoutes} clickNo={clickNo} />
         {desktop && allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
       </INNERWRAPPER>
-      {desktop && allowed && inTokenAmount > 0 && (
+      {allowed && inTokenAmount > 0 && (
         <AlternativesContent routes={chosenRoutes} clickNo={clickNo} setClickNo={setClickNo} />
       )}
     </WRAPPER>
