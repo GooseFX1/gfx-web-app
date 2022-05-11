@@ -7,6 +7,12 @@ import { DropdownPairs } from './DropdownPairs'
 const INFO_WRAPPER = styled.div`
   padding: 0px 30px;
   display: flex;
+  .spot-toggle .perps {
+    cursor: not-allowed;
+  }
+  .spot-toggle .spot {
+    cursor: pointer;
+  }
   .spot-toggle .selected {
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     color: white !important;
@@ -23,7 +29,6 @@ const INFO_WRAPPER = styled.div`
     font-size: 16px;
     color: ${({ theme }) => theme.text16};
     border: none;
-    cursor: pointer;
   }
 `
 const INFO_STATS = styled.div`
@@ -177,16 +182,21 @@ export const InfoBanner: FC<{
 
   const handleToggle = (e) => {
     if (e === 'spot') setIsSpot(true)
-    else setIsSpot(false)
+    //else setIsSpot(false)
+    //Disabling perps for now
   }
 
   return (
     <INFO_WRAPPER>
       <div className="spot-toggle">
-        <span className={'toggle ' + (isSpot ? 'selected' : '')} key="spot" onClick={() => handleToggle('spot')}>
+        <span className={'spot toggle ' + (isSpot ? 'selected' : '')} key="spot" onClick={() => handleToggle('spot')}>
           Spot
         </span>
-        <span className={'toggle ' + (!isSpot ? 'selected' : '')} key="perps" onClick={() => handleToggle('perps')}>
+        <span
+          className={'perps toggle ' + (!isSpot ? 'selected' : '')}
+          key="perps"
+          onClick={() => handleToggle('perps')}
+        >
           Perps
         </span>
       </div>
