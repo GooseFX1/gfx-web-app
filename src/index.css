@@ -6,8 +6,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+* {
+  -ms-overflow-style: none !important;
+}
+
 #root {
   height: 100%;
+  -ms-overflow-style: none !important;
 }
 
 code {
