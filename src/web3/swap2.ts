@@ -1,6 +1,7 @@
 import { Buffer } from 'buffer'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Swap } from 'goosefx-ssl-sdk'
+import { CURRENT_SUPPORTED_TOKEN_LIST } from '../constants'
 
 import {
   NATIVE_MINT,
@@ -145,20 +146,50 @@ export const preSwapAmount = async (
   wallet: any,
   connection: Connection,
   network: WalletAdapterNetwork,
-  route: any
-): Promise<{ preSwapResult: TransactionSignature | undefined; impact: number }> => {
+  route: any,
+  clickNo?: number
+): Promise<{
+  preSwapResult: TransactionSignature | undefined
+  impact: number
+  gofxAmount?: TransactionSignature | undefined
+}> => {
   try {
     if (!inTokenAmount || inTokenAmount === 0) return { impact: 0, preSwapResult: '0' }
     const inAmount = BigInt(inTokenAmount * 10 ** tokenA.decimals)
-    SWAP.connection = connection
-    const { getQuote } = SWAP
-    const quote = await getQuote(new PublicKey(tokenA.address), new PublicKey(tokenB.address), BigInt(inAmount))
-    const { out, impact: priceImpact } = quote
-    const outAmount = Number(out.toString()) / 10 ** tokenB.decimals
+    let outAmount: number, priceImpact: number
+    try {
+      SWAP.connection = connection
+      const { getQuote } = SWAP
+      const quote = await getQuote(new PublicKey(tokenA.address), new PublicKey(tokenB.address), BigInt(inAmount))
+      const { out, impact } = quote
+      priceImpact = Number(impact)
+      outAmount = Number(out.toString()) / 10 ** tokenB.decimals
+    } catch (e) {
+      console.log(e)
+    }
+    const available =
+      CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA.symbol) && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenB.symbol)
 
-    return { preSwapResult: outAmount.toString(), impact: priceImpact }
+    if ((available && clickNo !== 1) || !available) {
+      if (route) {
+        const outedAmount = +(route.outAmount / 10 ** tokenB.decimals).toFixed(7)
+        return {
+          impact: Number(route.priceImpactPct.toFixed(6)),
+          preSwapResult: outedAmount.toString(),
+          gofxAmount: outAmount?.toString() || '0'
+        }
+      } else {
+        return { impact: 0, preSwapResult: '0', gofxAmount: '0' }
+      }
+    }
+
+    return {
+      preSwapResult: outAmount?.toString() || '0',
+      impact: Number(priceImpact),
+      gofxAmount: outAmount?.toString() || '0'
+    }
   } catch (e) {
     console.log(e)
-    return { preSwapResult: '0', impact: 0 }
+    return { preSwapResult: '0', impact: 0, gofxAmount: '0' }
   }
 }

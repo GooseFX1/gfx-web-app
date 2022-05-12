@@ -60,6 +60,7 @@ interface ISwapConfig {
   setRoutes: (r: any) => void
   clickNo: number
   setClickNo: (r: number) => void
+  gofxOutAmount: number
 }
 
 const SwapContext = createContext<ISwapConfig | null>(null)
@@ -73,6 +74,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [inTokenAmount, setInTokenAmount] = useState(0)
   const [loading, setLoading] = useState(false)
   const [outTokenAmount, setOutTokenAmount] = useState(0)
+  const [gofxOutAmount, setGofxOutAmount] = useState(0)
   const [priceImpact, setPriceImpact] = useState(0)
   const [_, setFocused] = useState<SwapInput>(undefined)
   const [chosenRoutes, setRoutes] = useState([])
@@ -172,18 +174,20 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       let outTokenAmount = 0
       if (inTokenAmount && inTokenAmount != 0) {
         // needed weak comaprison because of '0.00'=='0'
-        const { preSwapResult, impact } = await preSwapAmount(
+        const { preSwapResult, impact, gofxAmount } = await preSwapAmount(
           tokenA,
           tokenB,
           inTokenAmount,
           wallet,
           connection,
           network,
-          chosenRoutes[clickNo]
+          chosenRoutes[clickNo],
+          clickNo
         )
         if (preSwapResult) {
           outTokenAmount = Number(preSwapResult)
           setPriceImpact(impact)
+          setGofxOutAmount(Number(gofxAmount))
         } else {
           notify({ type: 'error', message: 'Fetch Pre-swap Amount Failed', icon: 'error' })
         }
@@ -302,7 +306,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         chosenRoutes,
         setRoutes,
         setClickNo,
-        clickNo
+        clickNo,
+        gofxOutAmount
       }}
     >
       {children}
@@ -339,6 +344,7 @@ export const useSwap = (): ISwapConfig => {
     chosenRoutes: context.chosenRoutes,
     setRoutes: context.setRoutes,
     setClickNo: context.setClickNo,
-    clickNo: context.clickNo
+    clickNo: context.clickNo,
+    gofxOutAmount: context.gofxOutAmount
   }
 }
