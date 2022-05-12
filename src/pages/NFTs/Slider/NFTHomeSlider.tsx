@@ -49,11 +49,13 @@ const CAROUSEL_WRAPPER = styled.div`
 const SLIDER_ITEM = styled.div<{ $url: string }>`
   position: relative;
   height: 37vh;
+  min-height: 350px;
   display: flex;
   justify-content: center;
   align-items: center;
   background: ${({ $url }) => `url(${$url})`}, center;
   background-size: auto 101%;
+  background-position: center;
   background-repeat: no-repeat;
   border-radius: 20px;
 
