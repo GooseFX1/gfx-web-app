@@ -218,12 +218,17 @@ export const TableList = ({ dataSource }: any) => {
   }, [wallet.publicKey, connection])
 
   useEffect(() => {
-    if (gofxPrice !== undefined) {
+    if (solPrice !== undefined) {
       fetchSSLData()
         .then((farmSSLData) => {
           if (farmSSLData) setFarmDataSSLContext(farmSSLData)
         })
         .catch((err) => console.log(err))
+    }
+  }, [solPrice?.current, counter])
+
+  useEffect(() => {
+    if (gofxPrice !== undefined) {
       fetchGOFXData(accountKey)
         .then((farmData) => {
           if (farmData.length > 0) {
@@ -282,7 +287,7 @@ export const TableList = ({ dataSource }: any) => {
             ...data,
             earned: Number(earned) / Math.pow(10, sslData.decimals),
             apr: APR * 100,
-            liquidity: tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)),
+            liquidity: tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0,
             currentlyStaked: Number(amountDeposited) / Math.pow(10, sslData.decimals),
             userLiablity: Number(userLiablity),
             ptMinted: Number(ptMinted) / Math.pow(10, 9)
