@@ -2716,28 +2716,6 @@
     superstruct "^0.14.2"
     tweetnacl "^1.0.0"
 
-"@solana/web3.js@^1.25.0", "@solana/web3.js@^1.41.1":
-  version "1.41.3"
-  resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.41.3.tgz#77ef4927d533cf67d7adfeee799d5061d75a06ee"
-  integrity sha512-H+zRDh7zpzma8fvA6S16DJY2sDemw4HHU/3WR9kXQG+3jsRtIJxhOD2NAwu1M2JrXoblyE2QYHWneLKDV2Bu6g==
-  dependencies:
-    "@babel/runtime" "^7.12.5"
-    "@ethersproject/sha2" "^5.5.0"
-    "@solana/buffer-layout" "^4.0.0"
-    bn.js "^5.0.0"
-    borsh "^0.7.0"
-    bs58 "^4.0.1"
-    buffer "6.0.1"
-    cross-fetch "^3.1.4"
-    fast-stable-stringify "^1.0.0"
-    jayson "^3.4.4"
-    js-sha3 "^0.8.0"
-    rpc-websockets "^7.4.2"
-    secp256k1 "^4.0.2"
-    sinon-chai "^3.7.0"
-    superstruct "^0.14.2"
-    tweetnacl "^1.0.0"
-
 "@solana/web3.js@^1.36.0":
   version "1.37.1"
   resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.37.1.tgz#5a4d30a4cf79c4598e0a437e841c7942e31be74c"
@@ -7708,10 +7686,10 @@ globby@^6.1.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
-goosefx-ssl-sdk@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.0.2.tgz#ca2bf00d5a29dfd11be663d03c02f8ffab00044c"
-  integrity sha512-0/Twf11nqrHdDSYt6X2awZ5qpRWPMzvB7ZPqaUrqhq0YTmGeCDkGNLPfwPDY5GSkSa3Oci+cIlMvV5sWr9vyPQ==
+goosefx-ssl-sdk@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.0.3.tgz#7f7daa73efa2cfc90d92d7678ad569753f2c9218"
+  integrity sha512-bcrNIM1D/8a8RzxbP1gf+36ZSUc2G6LBlO3Bk3DrkkvrJvx4qcX7RPYmV2BtsP6fupQy5qB1Ij3piPgyZJWGKg==
   dependencies:
     "@project-serum/anchor" "^0.17.1-beta.1"
     "@solana/buffer-layout" "^4.0.0"

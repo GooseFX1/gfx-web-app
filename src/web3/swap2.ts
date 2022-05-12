@@ -92,8 +92,9 @@ export const swap = async (
   network: WalletAdapterNetwork
 ): Promise<TransactionSignature | undefined> => {
   try {
-    // TODO: set connection the same as line 153
-    const { createSwapIx } = new Swap(connection)
+    SWAP.connection = connection
+    const { createSwapIx } = SWAP
+
     let txn = new Transaction()
     if (tokenA.address === NATIVE_MINT.toBase58()) {
       txn = await wrapSolToken(wallet, connection, inTokenAmount * LAMPORTS_PER_SOL)
@@ -149,8 +150,7 @@ export const preSwapAmount = async (
   try {
     if (!inTokenAmount || inTokenAmount === 0) return { impact: 0, preSwapResult: '0' }
     const inAmount = BigInt(inTokenAmount * 10 ** tokenA.decimals)
-    console.log(SWAP)
-    // SWAP.connection = connection
+    SWAP.connection = connection
     const { getQuote } = SWAP
     const quote = await getQuote(new PublicKey(tokenA.address), new PublicKey(tokenB.address), BigInt(inAmount))
     const { out, impact: priceImpact } = quote
