@@ -5,7 +5,7 @@ import { Footer } from './Footer'
 import { Header } from './Header'
 
 const Wrapper = styled.div<{ $rewardModal: boolean }>`
-  overflow: ${({ $rewardModal }) => ($rewardModal ? 'hidden' : 'auto')}
+  overflow: ${({ $rewardModal }) => ($rewardModal ? 'hidden' : 'auto')};
   min-width: 100vw;
   min-height: 100vh;
   overflow-x: hidden;
