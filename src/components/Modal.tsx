@@ -4,6 +4,10 @@ import styled from 'styled-components'
 import { useDarkMode } from '../context'
 import { CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../styles'
 
+const ANTMODAL = styled(AntModal)`
+  ${({ theme }) => theme.customScrollBar('4px')};
+`
+
 const CLOSE_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements('14px')}
   cursor: pointer;
@@ -43,12 +47,11 @@ export const Modal: FC<{
   }
 
   return (
-    <AntModal
+    <ANTMODAL
       bodyStyle={{
         backgroundColor: mode === 'dark' ? '#2a2a2a' : 'white',
         borderRadius: '20px',
         maxHeight: '95vh',
-        overflowY: 'scroll',
         fontFamily: 'Montserrat',
         ...style
       }}
@@ -72,6 +75,6 @@ export const Modal: FC<{
         </CLOSE_ICON>
       </HEADER>
       {children}
-    </AntModal>
+    </ANTMODAL>
   )
 }
