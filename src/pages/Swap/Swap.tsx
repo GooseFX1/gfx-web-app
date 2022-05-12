@@ -454,10 +454,6 @@ const TokenContent: FC = () => {
 
   const [socials, setSocials] = useState([])
 
-  const coinsIds = {
-    SOL: 'solana',
-    USDC: 'usd-coin'
-  }
   const truncate = (address: string) => {
     return address.slice(0, 7) + '...' + address.slice(-6)
   }
@@ -595,7 +591,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
     setOutAmount(out)
 
     const priceDetails = [
-      { name: 'Price Impact', value: `< ${route.priceImpactPct.toFixed(6)}%` },
+      { name: 'Price Impact', value: `< ${Number(route.priceImpactPct).toFixed(6)}%` },
       {
         name: 'Minimum Received',
         value: `${nFormatter(route.outAmountWithSlippage / 10 ** tokenB.decimals, tokenB.decimals)} ${tokenB.symbol}`
@@ -675,7 +671,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   routes
 }) => {
   const { mode } = useDarkMode()
-  const { tokenA, tokenB, setOutTokenAmount } = useSwap()
+  const { tokenA, tokenB } = useSwap()
   const [tokens, setTokens] = useState([])
   const [details, setDetails] = useState([])
 
@@ -725,10 +721,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
           <SWAP_ROUTE_ITEM
             $clicked={k === clickNo}
             $cover={mode === 'dark' ? '#3c3b3ba6' : '#ffffffa6'}
-            onClick={() => {
-              setClickNo(k)
-              //setOutTokenAmount(detail.outAmount || null)
-            }}
+            onClick={() => setClickNo(k)}
           >
             <div className={'inner-container'}>
               <TokenDetail className={'content'}>
@@ -762,9 +755,19 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
 }
 
 export const SwapMain: FC = () => {
-  const desktop = window.innerWidth > 1200
-  const { tokenA, tokenB, inTokenAmount, outTokenAmount, priceImpact, chosenRoutes, setRoutes, setClickNo, clickNo } =
-    useSwap()
+  const desktop = window.innerWidth > 1300
+  const {
+    tokenA,
+    tokenB,
+    inTokenAmount,
+    outTokenAmount,
+    gofxOutAmount,
+    priceImpact,
+    chosenRoutes,
+    setRoutes,
+    setClickNo,
+    clickNo
+  } = useSwap()
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
   const [inAmountTotal, setInAmountTotal] = useState(0)
@@ -780,18 +783,36 @@ export const SwapMain: FC = () => {
   useEffect(() => {
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
     setInAmountTotal(inAmountTotal)
+
     const supported =
       CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA?.symbol) && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenB?.symbol)
 
     if (tokenA && tokenB) {
       setallowed(true)
+      setRoutes([
+        {
+          marketInfos: [
+            {
+              outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
+              lpFee: { amount: 0.001 * inTokenAmount * 10 ** (tokenA?.decimals || 0) },
+
+              amm: {
+                label: 'GooseFX'
+              }
+            }
+          ],
+          outAmount: +((gofxOutAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
+          outAmountWithSlippage: +((gofxOutAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
+          priceImpactPct: priceImpact || 0
+        }
+      ])
     }
+
     if (!routes) return
-
     const filteredRoutes = routes?.filter((i) => i.inAmount === inAmountTotal)
-    let shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
+    const shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
 
-    if (tokenB && outTokenAmount) {
+    if (tokenB) {
       const GoFxRoute = {
         marketInfos: [
           {
@@ -803,13 +824,14 @@ export const SwapMain: FC = () => {
             }
           }
         ],
-        outAmount: +(outTokenAmount * 10 ** tokenB.decimals).toFixed(7),
-        outAmountWithSlippage: +(outTokenAmount * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
-        priceImpactPct: priceImpact
+        outAmount: +((gofxOutAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
+        outAmountWithSlippage: +((gofxOutAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
+        priceImpactPct: priceImpact || 0
       }
 
       if (supported) shortRoutes.splice(1, 0, GoFxRoute)
     }
+
     setRoutes(shortRoutes)
     //setClickNo(1)
   }, [tokenA, tokenB, routes, slippage, inTokenAmount, outTokenAmount])
@@ -821,7 +843,7 @@ export const SwapMain: FC = () => {
         <SwapContent exchange={exchange} routes={chosenRoutes} clickNo={clickNo} />
         {desktop && allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
       </INNERWRAPPER>
-      {desktop && allowed && inTokenAmount > 0 && (
+      {allowed && inTokenAmount > 0 && (
         <AlternativesContent routes={chosenRoutes} clickNo={clickNo} setClickNo={setClickNo} />
       )}
     </WRAPPER>
