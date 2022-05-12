@@ -97,6 +97,7 @@ const TokenTitle = styled.div`
 
 const SmallTitle = styled.div`
   font-size: 15px;
+  font-family: Semibold;
   color: ${({ theme }) => theme.text12};
 `
 
@@ -124,6 +125,8 @@ const SmallerTitle = styled.div`
 const TokenHeader = styled.div`
   display: flex;
   width: 100%;
+  margin-bottom: 30px;
+  align-items: center;
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
@@ -170,14 +173,14 @@ const TokenDetail = styled.div`
 `
 
 const SubHeader = styled.div`
-  margin-left: 1rem;
-  height: 40px;
+  margin-left: 1.25rem;
+  height: 48px;
 `
 
 const Socials = styled.div`
   display: flex;
-  justify-content: space-around;
-  width 90%;
+  justify-content: space-between;
+  width 100%;
   margin-top: auto;
 `
 
@@ -191,12 +194,13 @@ const SocialsButton = styled.div`
 `
 
 const CLICKER_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(5))}
+  ${({ theme }) => theme.measurements(theme.margin(6))}
   margin-right: ${({ theme }) => theme.margin(0.5)};
   ${({ theme }) => theme.roundedBorders}
 `
 const SMALL_CLICKER_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(2))}
+  height: 20px;
+  width: 20px;
   margin-right: ${({ theme }) => theme.margin(1)};
   ${({ theme }) => theme.roundedBorders}
 `
@@ -244,6 +248,7 @@ const BestPrice = styled.div`
   padding: 8px;
   border-radius: 0.35rem;
   background-color: #be2cff;
+  color: white;
 `
 
 const ShowLess = styled.div`
@@ -529,7 +534,7 @@ const TokenContent: FC = () => {
           <TokenTitle>
             {tokenA.name} ({tokenA.symbol})
           </TokenTitle>
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <SmallerTitle>{truncate(tokenA.address)}</SmallerTitle>
             <span
               style={{ marginLeft: '1rem', color: '#999', cursor: 'pointer' }}
@@ -638,10 +643,10 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
           {+outAmount.toFixed(3)} {tokenB.symbol}
         </SmallTitleFlex>
         <SmallTitleFlex>
-          <span style={{ color: cheap ? '#5fc8a7' : '#bb3535', marginRight: '0.25rem' }}>
-            {outTokenPercentage}% {cheap ? 'cheaper' : 'higher'}
+          <span style={{ color: cheap ? '#5fc8a7' : '#bb3535', marginRight: '0.25rem', fontFamily: 'Semibold' }}>
+            {outTokenPercentage || 0}% {cheap ? 'cheaper' : 'higher'}
           </span>
-          <span>than coingecko</span>
+          <span style={{ fontFamily: 'Semibold' }}>than coingecko</span>
         </SmallTitleFlex>
       </TokenDetail>
       {details.map((detail) => (
@@ -715,7 +720,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   const [less, setLess] = useState(false)
 
   return (
-    <SWAP_ROUTES $less={less}>
+    <SWAP_ROUTES $less={less || details.length < 4}>
       <div className="swap-content">
         {(!less ? details : details.slice(0, 2)).map((detail, k) => (
           <SWAP_ROUTE_ITEM
@@ -789,23 +794,6 @@ export const SwapMain: FC = () => {
 
     if (tokenA && tokenB) {
       setallowed(true)
-      setRoutes([
-        {
-          marketInfos: [
-            {
-              outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
-              lpFee: { amount: 0.001 * inTokenAmount * 10 ** (tokenA?.decimals || 0) },
-
-              amm: {
-                label: 'GooseFX'
-              }
-            }
-          ],
-          outAmount: +((gofxOutAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
-          outAmountWithSlippage: +((gofxOutAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
-          priceImpactPct: priceImpact || 0
-        }
-      ])
     }
 
     if (!routes) return

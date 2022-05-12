@@ -72,7 +72,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useWallet()
   const [fetching, setFetching] = useState(false)
   const [inTokenAmount, setInTokenAmount] = useState(0)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [outTokenAmount, setOutTokenAmount] = useState(0)
   const [gofxOutAmount, setGofxOutAmount] = useState(0)
   const [priceImpact, setPriceImpact] = useState(0)
@@ -203,6 +203,14 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   //   setTokenA(null)
   //   setTokenB(null)
   // }, [connection])
+
+  useEffect(() => {
+    if (chosenRoutes.length < 1 && inTokenAmount > 0 && tokenA && tokenB) {
+      setLoading(true)
+    } else {
+      setLoading(false)
+    }
+  }, [chosenRoutes, inTokenAmount, tokenA, tokenB])
 
   useEffect(() => {
     amountPool()
