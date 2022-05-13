@@ -86,7 +86,6 @@ const TOKEN_WRAPPER = styled.div`
   padding-left: ${({ theme }) => theme.margin(4)};
   border-radius: 0px 20px 20px 0px;
   background: ${({ theme }) => theme.swapSides1};
-  ${({ theme }) => theme.largeShadow}
 `
 
 const TokenTitle = styled.div`
@@ -97,6 +96,7 @@ const TokenTitle = styled.div`
 
 const SmallTitle = styled.div`
   font-size: 15px;
+  font-weight: 600;
   color: ${({ theme }) => theme.text12};
 `
 
@@ -107,14 +107,20 @@ const AltSmallTitle = styled.div`
 `
 
 const SmallTitleFlex = styled.div`
+  margin: 4px 0;
   font-size: 15px;
   display: flex;
   align-items: center;
   color: ${({ theme }) => theme.text12};
+
+  .token-name {
+    font-weight: 600;
+  }
 `
 
 const SmallerTitle = styled.div`
   font-size: 15px;
+  font-weight: 600;
   background: linear-gradient(90.25deg, #f7931a 2.31%, #dc1fff 99.9%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -124,6 +130,8 @@ const SmallerTitle = styled.div`
 const TokenHeader = styled.div`
   display: flex;
   width: 100%;
+  margin-bottom: 18px;
+  align-items: center;
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
@@ -170,14 +178,14 @@ const TokenDetail = styled.div`
 `
 
 const SubHeader = styled.div`
-  margin-left: 1rem;
-  height: 40px;
+  margin-left: 1.25rem;
+  height: 48px;
 `
 
 const Socials = styled.div`
   display: flex;
-  justify-content: space-around;
-  width 90%;
+  justify-content: space-between;
+  width 100%;
   margin-top: auto;
 `
 
@@ -191,12 +199,13 @@ const SocialsButton = styled.div`
 `
 
 const CLICKER_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(5))}
+  ${({ theme }) => theme.measurements(theme.margin(6))}
   margin-right: ${({ theme }) => theme.margin(0.5)};
   ${({ theme }) => theme.roundedBorders}
 `
 const SMALL_CLICKER_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(2))}
+  height: 20px;
+  width: 20px;
   margin-right: ${({ theme }) => theme.margin(1)};
   ${({ theme }) => theme.roundedBorders}
 `
@@ -210,7 +219,6 @@ const PRICE_WRAPPER = styled.div`
   border-radius: 20px 0px 0px 20px;
   padding: ${({ theme }) => theme.margin(3)};
   background: ${({ theme }) => theme.swapSides2};
-  ${({ theme }) => theme.largeShadow}
 `
 
 const SWAP_ROUTES = styled.div<{ $less: boolean }>`
@@ -244,6 +252,7 @@ const BestPrice = styled.div`
   padding: 8px;
   border-radius: 0.35rem;
   background-color: #be2cff;
+  color: white;
 `
 
 const ShowLess = styled.div`
@@ -442,7 +451,45 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
   )
 }
 
+const COPY = styled.div`
+  .copy-button {
+    position: relative;
+    margin-left: 8px;
+    color: #8a8a8a;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 18px;
+    cursor: pointer;
+  }
+
+  .copied:after {
+    content: 'Copied!';
+    position: absolute;
+    display: inline;
+    left: 0;
+    bottom: 0;
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 18px;
+    animation: 1s ease-in-out 0s 1 normal forwards running copyit;
+  }
+
+  @keyframes copyit {
+    0% {
+      bottom: 1px;
+      opacity: 1;
+    }
+    100% {
+      bottom: 1.7em;
+      opacity: 0;
+    }
+  }
+`
+
 const TokenContent: FC = () => {
+  const [socials, setSocials] = useState([])
+  const [copiedAction, setCopiedAction] = useState(false)
   //CoinGeckoClient
   const { tokenA } = useSwap()
   const [tokenDetails, setDetails] = useState([
@@ -452,76 +499,80 @@ const TokenContent: FC = () => {
     { name: 'Holders', value: '0' }
   ])
 
-  const [socials, setSocials] = useState([])
-
-  const coinsIds = {
-    SOL: 'solana',
-    USDC: 'usd-coin'
-  }
   const truncate = (address: string) => {
     return address.slice(0, 7) + '...' + address.slice(-6)
   }
 
   useEffect(() => {
-    async function rugger() {
-      const tokens = await CoinGeckoClient.coins.list()
-      if (tokenA) {
-        const token = tokens.data.find(
-          (i) =>
-            i.symbol.toLowerCase().includes(tokenA.symbol.toLowerCase()) ||
-            tokenA.symbol.toLowerCase().includes(i.symbol.toLowerCase())
-        )
-        CoinGeckoClient.coins.fetch(token?.id || null, {}).then(async (data: any) => {
-          data = data.data
-          const fetchData = await fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
-          const res = await fetchData.json()
-          // await connection.getProgramAccounts(TOKEN_PROGRAM_ID, {
-          //   // dataSlice: {
-          //   //   offset: 0, // number of bytes
-          //   //   length: 0 // number of bytes
-          //   // },
-          //   filters: [
-          //     {
-          //       dataSize: 165 // number of bytes
-          //     },
-          //     {
-          //       memcmp: {
-          //         offset: 0, // number of bytes
-          //         bytes: tokenA.address // base58 encoded string
-          //       }
-          //     }
-          //   ]
-          // })
-          setDetails([
-            { name: 'Price', value: data.market_data.current_price.usd, currency: '$' },
-            {
-              name: 'FDV',
-              value:
-                moneyFormatter(
-                  Math.floor(
-                    data.market_data.fully_diluted_valuation.usd ||
-                      data.market_data.total_supply * data.market_data.current_price.usd
-                  )
-                ) || '0',
-              currency: '$'
-            },
-            {
-              name: 'Max Total Supply',
-              value: Math.floor(data.market_data.max_supply || data.market_data.total_supply).toLocaleString() || '0'
-            },
-            { name: 'Holders', value: res?.total.toLocaleString() || 0 }
-          ])
-          setSocials([
-            { name: 'Twitter', link: 'https://twitter.com/' + data.links.twitter_screen_name },
-            { name: 'Coingecko', link: 'https://coingecko.com' },
-            { name: 'Website', link: data.links.homepage[0] }
-          ])
-        })
-      }
+    try {
+      fetchCoinGecko()
+    } catch (error) {
+      console.log(error)
     }
-
-    rugger()
   }, [tokenA])
+
+  const handleCopyTokenMint = (e) => {
+    setCopiedAction(true)
+    navigator.clipboard.writeText(tokenA.address)
+    setTimeout(() => setCopiedAction(false), 800)
+  }
+
+  const fetchCoinGecko = async () => {
+    const tokens = await CoinGeckoClient.coins.list()
+    if (tokenA) {
+      const token = tokens.data.find(
+        (i) =>
+          i.symbol.toLowerCase().includes(tokenA.symbol.toLowerCase()) ||
+          tokenA.symbol.toLowerCase().includes(i.symbol.toLowerCase())
+      )
+      CoinGeckoClient.coins.fetch(token?.id || null, {}).then(async (data: any) => {
+        data = data.data
+        const fetchData = await fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
+        const res = await fetchData.json()
+        // await connection.getProgramAccounts(TOKEN_PROGRAM_ID, {
+        //   // dataSlice: {
+        //   //   offset: 0, // number of bytes
+        //   //   length: 0 // number of bytes
+        //   // },
+        //   filters: [
+        //     {
+        //       dataSize: 165 // number of bytes
+        //     },
+        //     {
+        //       memcmp: {
+        //         offset: 0, // number of bytes
+        //         bytes: tokenA.address // base58 encoded string
+        //       }
+        //     }
+        //   ]
+        // })
+        setDetails([
+          { name: 'Price', value: data.market_data.current_price.usd, currency: '$' },
+          {
+            name: 'FDV',
+            value:
+              moneyFormatter(
+                Math.floor(
+                  data.market_data.fully_diluted_valuation.usd ||
+                    data.market_data.total_supply * data.market_data.current_price.usd
+                )
+              ) || '0',
+            currency: '$'
+          },
+          {
+            name: 'Max Total Supply',
+            value: Math.floor(data.market_data.max_supply || data.market_data.total_supply).toLocaleString() || '0'
+          },
+          { name: 'Holders', value: res?.total.toLocaleString() || 0 }
+        ])
+        setSocials([
+          { name: 'Twitter', link: 'https://twitter.com/' + data.links.twitter_screen_name },
+          { name: 'Coingecko', link: 'https://coingecko.com' },
+          { name: 'Website', link: data.links.homepage[0] }
+        ])
+      })
+    }
+  }
 
   return (
     <TOKEN_WRAPPER>
@@ -533,15 +584,12 @@ const TokenContent: FC = () => {
           <TokenTitle>
             {tokenA.name} ({tokenA.symbol})
           </TokenTitle>
-          <div style={{ display: 'flex' }}>
+          <COPY style={{ display: 'flex', alignItems: 'center' }}>
             <SmallerTitle>{truncate(tokenA.address)}</SmallerTitle>
-            <span
-              style={{ marginLeft: '1rem', color: '#999', cursor: 'pointer' }}
-              onClick={() => navigator.clipboard.writeText(tokenA.address)}
-            >
-              copy
+            <span className={`copy-button ${copiedAction ? 'copied' : ''}`} onClick={handleCopyTokenMint}>
+              {copiedAction ? 'Copied!' : 'Copy'}
             </span>
-          </div>
+          </COPY>
         </SubHeader>
       </TokenHeader>
       {tokenDetails.map((detail) => (
@@ -595,7 +643,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
     setOutAmount(out)
 
     const priceDetails = [
-      { name: 'Price Impact', value: `< ${route.priceImpactPct.toFixed(6)}%` },
+      { name: 'Price Impact', value: `< ${Number(route.priceImpactPct).toFixed(6)}%` },
       {
         name: 'Minimum Received',
         value: `${nFormatter(route.outAmountWithSlippage / 10 ** tokenB.decimals, tokenB.decimals)} ${tokenB.symbol}`
@@ -635,17 +683,21 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
           <SMALL_CLICKER_ICON>
             <img src={`/img/crypto/${tokenA.symbol}.svg`} alt="" />
           </SMALL_CLICKER_ICON>
-          {inTokenAmount} {tokenA.symbol} ≈{'  '}
+          <span className={'token-name'}>
+            {inTokenAmount} {tokenA.symbol} ≈{'  '}
+          </span>
           <SMALL_CLICKER_ICON style={{ marginLeft: '0.5rem' }}>
             <img src={`/img/crypto/${tokenB.symbol}.svg`} alt="" />
           </SMALL_CLICKER_ICON>
-          {+outAmount.toFixed(3)} {tokenB.symbol}
+          <span className={'token-name'}>
+            {+outAmount.toFixed(3)} {tokenB.symbol}
+          </span>
         </SmallTitleFlex>
         <SmallTitleFlex>
-          <span style={{ color: cheap ? '#5fc8a7' : '#bb3535', marginRight: '0.25rem' }}>
-            {outTokenPercentage}% {cheap ? 'cheaper' : 'higher'}
+          <span style={{ color: cheap ? '#5fc8a7' : '#bb3535', marginRight: '0.25rem', fontWeight: '600' }}>
+            {outTokenPercentage || 0}% {cheap ? 'cheaper' : 'higher'}
           </span>
-          <span>than coingecko</span>
+          <span style={{ fontWeight: '600' }}>than coingecko</span>
         </SmallTitleFlex>
       </TokenDetail>
       {details.map((detail) => (
@@ -675,7 +727,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   routes
 }) => {
   const { mode } = useDarkMode()
-  const { tokenA, tokenB, setOutTokenAmount } = useSwap()
+  const { tokenA, tokenB } = useSwap()
   const [tokens, setTokens] = useState([])
   const [details, setDetails] = useState([])
 
@@ -719,16 +771,13 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   const [less, setLess] = useState(false)
 
   return (
-    <SWAP_ROUTES $less={less}>
+    <SWAP_ROUTES $less={less || details.length < 4}>
       <div className="swap-content">
         {(!less ? details : details.slice(0, 2)).map((detail, k) => (
           <SWAP_ROUTE_ITEM
             $clicked={k === clickNo}
             $cover={mode === 'dark' ? '#3c3b3ba6' : '#ffffffa6'}
-            onClick={() => {
-              setClickNo(k)
-              //setOutTokenAmount(detail.outAmount || null)
-            }}
+            onClick={() => setClickNo(k)}
           >
             <div className={'inner-container'}>
               <TokenDetail className={'content'}>
@@ -762,9 +811,19 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
 }
 
 export const SwapMain: FC = () => {
-  const desktop = window.innerWidth > 1200
-  const { tokenA, tokenB, inTokenAmount, outTokenAmount, priceImpact, chosenRoutes, setRoutes, setClickNo, clickNo } =
-    useSwap()
+  const desktop = window.innerWidth > 1300
+  const {
+    tokenA,
+    tokenB,
+    inTokenAmount,
+    outTokenAmount,
+    gofxOutAmount,
+    priceImpact,
+    chosenRoutes,
+    setRoutes,
+    setClickNo,
+    clickNo
+  } = useSwap()
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
   const [inAmountTotal, setInAmountTotal] = useState(0)
@@ -780,18 +839,19 @@ export const SwapMain: FC = () => {
   useEffect(() => {
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
     setInAmountTotal(inAmountTotal)
+
     const supported =
       CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA?.symbol) && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenB?.symbol)
 
     if (tokenA && tokenB) {
       setallowed(true)
     }
+
     if (!routes) return
-
     const filteredRoutes = routes?.filter((i) => i.inAmount === inAmountTotal)
-    let shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
+    const shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
 
-    if (tokenB && outTokenAmount) {
+    if (tokenB) {
       const GoFxRoute = {
         marketInfos: [
           {
@@ -803,13 +863,14 @@ export const SwapMain: FC = () => {
             }
           }
         ],
-        outAmount: +(outTokenAmount * 10 ** tokenB.decimals).toFixed(7),
-        outAmountWithSlippage: +(outTokenAmount * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
-        priceImpactPct: priceImpact
+        outAmount: +((gofxOutAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
+        outAmountWithSlippage: +((gofxOutAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
+        priceImpactPct: priceImpact || 0
       }
 
       if (supported) shortRoutes.splice(1, 0, GoFxRoute)
     }
+
     setRoutes(shortRoutes)
     //setClickNo(1)
   }, [tokenA, tokenB, routes, slippage, inTokenAmount, outTokenAmount])
@@ -821,7 +882,7 @@ export const SwapMain: FC = () => {
         <SwapContent exchange={exchange} routes={chosenRoutes} clickNo={clickNo} />
         {desktop && allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
       </INNERWRAPPER>
-      {desktop && allowed && inTokenAmount > 0 && (
+      {allowed && inTokenAmount > 0 && (
         <AlternativesContent routes={chosenRoutes} clickNo={clickNo} setClickNo={setClickNo} />
       )}
     </WRAPPER>

@@ -17,7 +17,7 @@ const BODY = styled(CenteredDiv)`
   line-height: normal;
   letter-spacing: normal;
   margin-top: ${({ theme }) => theme.margin(4)};
-  padding-bottom: ${({ theme }) => theme.margin(4)};
+  padding-bottom: ${({ theme }) => theme.margin(2.5)};
 
   > div {
     display: flex;
@@ -34,7 +34,6 @@ const BUTTON = styled.button`
   padding: ${({ theme }) => theme.margin(1.5)};
   border: none;
   ${({ theme }) => theme.roundedBorders}
-  ${({ theme }) => theme.smallShadow}
   background-color: ${({ theme }) => theme.bg10};
   transition: background-color 200ms ease-in-out;
 
@@ -58,6 +57,7 @@ const SETTING_BUTTON = styled(BUTTON)<{ clicked: boolean }>`
 const SAVE_BUTTON = styled(BUTTON)`
   height: 50px;
   width: 222px;
+  margin-top: 30px;
 
   &:hover {
     background-color: #5855ff;
@@ -95,6 +95,11 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
       background-color: ${mode === 'dark' ? '#474747' : '#808080'};
       box-shadow: 0 4px 15px 2px rgb(0, 0, 0, ${mode === 'dark' ? '0.25' : '0.1'});
     }
+
+    .modal-close-icon > img {
+      height: 24px;
+      width: 24px;
+    }
   `
 
   const SETTING_INPUT = styled(Input)`
@@ -102,13 +107,14 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
     height: 50px;
     margin: 1rem 0rem 1.5rem 0rem;
     background-color: ${({ theme }) => theme.bg10 + ' !important'};
+    box-shadow: 0 0 0 0 !important;
   `
 
   return (
     <BODY>
       <div>
         <TITLE>Slippage tolerance</TITLE>
-        <Tooltip>
+        <Tooltip notInherit={true}>
           The minimum amount on how many tokens you will accept, in the event that the price increases or decreases.
         </Tooltip>
       </div>
