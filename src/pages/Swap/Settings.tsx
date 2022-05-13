@@ -34,7 +34,6 @@ const BUTTON = styled.button`
   padding: ${({ theme }) => theme.margin(1.5)};
   border: none;
   ${({ theme }) => theme.roundedBorders}
-  ${({ theme }) => theme.smallShadow}
   background-color: ${({ theme }) => theme.bg10};
   transition: background-color 200ms ease-in-out;
 
@@ -108,6 +107,7 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
     height: 50px;
     margin: 1rem 0rem 1.5rem 0rem;
     background-color: ${({ theme }) => theme.bg10 + ' !important'};
+    box-shadow: 0 0 0 0 !important;
   `
 
   return (
