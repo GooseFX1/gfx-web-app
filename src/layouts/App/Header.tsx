@@ -9,6 +9,7 @@ import { SVGToGrey2, CenteredDiv } from '../../styles'
 import { useNavCollapse } from '../../context'
 import { ModalSlide } from '../../components/ModalSlide'
 import { useRewardToggle } from '../../context/reward_toggle'
+import { MODAL_TYPES } from '../../constants'
 
 const BRAND = styled.a`
   position: absolute;
@@ -105,7 +106,7 @@ export const Header: FC = () => {
 
   const slideModal = () => {
     if (rewardModal) {
-      return <ModalSlide rewardModal={rewardModal} rewardToggle={rewardToggle} />
+      return <ModalSlide rewardModal={rewardModal} modalType={MODAL_TYPES.REWARDS} rewardToggle={rewardToggle} />
     }
   }
 

@@ -150,7 +150,9 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
       const res = await apiClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.ASK}`, {
         ask_id: id
       })
-      setAsk(undefined)
+
+      if (res.data) setAsk(undefined)
+
       return res
     } catch (error) {
       console.log(error)

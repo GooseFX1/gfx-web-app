@@ -1,32 +1,17 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { logEvent } from 'firebase/analytics'
-import analytics from '../../analytics'
-import { History } from '../Crypto/History'
 import { Order } from '../Crypto/Order'
 import { OrderBook } from '../Crypto/OrderBook'
-import { Pairs } from '../Crypto/Pairs'
 import { TVChartContainer } from '../Crypto/TradingView'
-import {
-  ENDPOINTS,
-  CryptoProvider,
-  useNavCollapse,
-  OrderProvider,
-  PriceFeedProvider,
-  OrderBookProvider,
-  TradeHistoryProvider,
-  useConnectionConfig,
-  useCrypto,
-  useDarkMode
-} from '../../context'
-import { TRADE_ORDER_WIDTH } from '../../styles'
-import { notify } from '../../utils'
-import { Responsive, WidthProvider, RGL } from 'react-grid-layout'
+import { useNavCollapse, OrderBookProvider, useCrypto, useDarkMode } from '../../context'
+import { Responsive, WidthProvider } from 'react-grid-layout'
 import _ from 'lodash'
-import { Row } from 'antd'
+import { ModalSlide } from '../../components/ModalSlide'
 import { InfoBanner } from './InfoBanner'
 import { OrderHistory } from './OrderHistory'
 import { HistoryPanel } from './HistoryPanel'
+import { MODAL_TYPES } from '../../constants'
+
 const ReactGridLayout = WidthProvider(Responsive)
 
 const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean }>`
@@ -122,6 +107,7 @@ const componentDimensions = [
 
 export const CryptoContent: FC = () => {
   const { isCollapsed } = useNavCollapse()
+  const [feesPopup, setFeesPopup] = useState<boolean>(false)
   const { selectedCrypto } = useCrypto()
   const [isLocked, setIsLocked] = useState(true)
   const [layout, setLayout] = useState({ lg: componentDimensions })
@@ -160,7 +146,7 @@ export const CryptoContent: FC = () => {
       if (i === 3) {
         return (
           <div key={i}>
-            <OrderProvider>
+            <>
               <Order />
               {!isLocked ? (
                 <UNLOCKED_OVERLAY>
@@ -171,7 +157,7 @@ export const CryptoContent: FC = () => {
                   <span>Drag to Reposition</span>
                 </UNLOCKED_OVERLAY>
               ) : null}
-            </OrderProvider>
+            </>
           </div>
         )
       }
@@ -194,7 +180,7 @@ export const CryptoContent: FC = () => {
       if (i === 1)
         return (
           <div key={i}>
-            <OrderProvider>
+            <>
               <OrderBookProvider>
                 <OrderBook />
                 {!isLocked ? (
@@ -207,7 +193,7 @@ export const CryptoContent: FC = () => {
                   </UNLOCKED_OVERLAY>
                 ) : null}
               </OrderBookProvider>
-            </OrderProvider>
+            </>
           </div>
         )
       if (i === 4)
@@ -239,25 +225,23 @@ export const CryptoContent: FC = () => {
   }
 
   const resetLayout = () => {
-    console.log('in reset')
     setLayout({ lg: componentDimensions })
   }
 
   return (
     <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked}>
-      <TradeHistoryProvider>
-        <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} />
-        <ReactGridLayout
-          compactType="vertical"
-          measureBeforeMount={false}
-          layouts={layout}
-          onLayoutChange={onLayoutChange}
-          useCSSTransforms={true}
-          {...defaultProps}
-        >
-          {generateDOM()}
-        </ReactGridLayout>
-      </TradeHistoryProvider>
+      <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} setFeesPopup={setFeesPopup} />
+      {feesPopup && <ModalSlide rewardModal={feesPopup} rewardToggle={setFeesPopup} modalType={MODAL_TYPES.FEES} />}
+      <ReactGridLayout
+        compactType="vertical"
+        measureBeforeMount={false}
+        layouts={layout}
+        onLayoutChange={onLayoutChange}
+        useCSSTransforms={true}
+        {...defaultProps}
+      >
+        {generateDOM()}
+      </ReactGridLayout>
     </DEX_CONTAINER>
   )
 }

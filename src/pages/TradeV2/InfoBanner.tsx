@@ -7,6 +7,12 @@ import { DropdownPairs } from './DropdownPairs'
 const INFO_WRAPPER = styled.div`
   padding: 0px 30px;
   display: flex;
+  .spot-toggle .perps {
+    cursor: not-allowed;
+  }
+  .spot-toggle .spot {
+    cursor: pointer;
+  }
   .spot-toggle .selected {
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     color: white !important;
@@ -23,7 +29,6 @@ const INFO_WRAPPER = styled.div`
     font-size: 16px;
     color: ${({ theme }) => theme.text16};
     border: none;
-    cursor: pointer;
   }
 `
 const INFO_STATS = styled.div`
@@ -60,12 +65,11 @@ const INFO_STATS = styled.div`
   }
 `
 
-const REFRESH_LAYOUT = styled.div`
+const REFRESH_DATA = styled.div`
   height: 40px;
   width: 40px;
   border-radius: 50%;
   background-color: #5855ff;
-  margin-left: auto;
   text-align: center;
   cursor: pointer;
   img {
@@ -92,20 +96,44 @@ const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
   }
 `
 
+const FEES_BTN = styled.div`
+  margin-left: auto;
+  width: 88px;
+  height: 40px;
+  border: 1px solid pink;
+  background: #2a2a2a;
+  border-radius: 36px;
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+`
+
 const FIX_LAYOUT = styled.div``
+const RESET_LAYOUT_BUTTON = styled.div`
+  cursor: pointer;
+  background-color: ${({ theme }) => theme.bg9};
+  height: 40px;
+  padding: 10px 20px;
+  margin-left: 20px;
+  border-radius: 36px;
+  color: ${({ theme }) => theme.text4};
+`
 
 const Loader: FC = () => {
   return <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
 }
 
-export const InfoBanner: FC<{ isLocked: boolean; setIsLocked: Function; resetLayout: Function }> = ({
-  isLocked,
-  setIsLocked,
-  resetLayout
-}) => {
+export const InfoBanner: FC<{
+  isLocked: boolean
+  setIsLocked: Function
+  resetLayout: Function
+  setFeesPopup: Function
+}> = ({ isLocked, setIsLocked, resetLayout, setFeesPopup }) => {
   const [isSpot, setIsSpot] = useState(true)
   const { selectedCrypto } = useCrypto()
-  const { prices, tokenInfo } = usePriceFeed()
+  const { prices, tokenInfo, refreshTokenData } = usePriceFeed()
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
   const tokenInfos = useMemo(() => tokenInfo[selectedCrypto.pair], [tokenInfo[selectedCrypto.pair]])
   const formatDisplayVolume = (volume) => {
@@ -154,16 +182,21 @@ export const InfoBanner: FC<{ isLocked: boolean; setIsLocked: Function; resetLay
 
   const handleToggle = (e) => {
     if (e === 'spot') setIsSpot(true)
-    else setIsSpot(false)
+    //else setIsSpot(false)
+    //Disabling perps for now
   }
 
   return (
     <INFO_WRAPPER>
       <div className="spot-toggle">
-        <span className={'toggle ' + (isSpot ? 'selected' : '')} key="spot" onClick={() => handleToggle('spot')}>
+        <span className={'spot toggle ' + (isSpot ? 'selected' : '')} key="spot" onClick={() => handleToggle('spot')}>
           Spot
         </span>
-        <span className={'toggle ' + (!isSpot ? 'selected' : '')} key="perps" onClick={() => handleToggle('perps')}>
+        <span
+          className={'perps toggle ' + (!isSpot ? 'selected' : '')}
+          key="perps"
+          onClick={() => handleToggle('perps')}
+        >
           Perps
         </span>
       </div>
@@ -203,9 +236,14 @@ export const InfoBanner: FC<{ isLocked: boolean; setIsLocked: Function; resetLay
           </div>
         )}
       </INFO_STATS>
-      <REFRESH_LAYOUT onClick={() => resetLayout()}>
-        <img src={`/img/assets/whiteRefresh.svg`} alt="refresh" />
-      </REFRESH_LAYOUT>
+      <FEES_BTN onClick={() => setFeesPopup((prev) => !prev)}>Fees </FEES_BTN>
+      {isLocked ? (
+        <REFRESH_DATA onClick={() => refreshTokenData()}>
+          <img src={`/img/assets/whiteRefresh.svg`} alt="refresh" />
+        </REFRESH_DATA>
+      ) : (
+        <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>
+      )}
       <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
         <img src={isLocked ? `/img/assets/whiteLock.svg` : `/img/assets/whiteUnlock.svg`} alt="lock" />
       </LOCK_LAYOUT>
