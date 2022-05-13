@@ -363,7 +363,10 @@ export const SellNFT = () => {
         if (ask !== undefined) {
           const askRemoved = await postCancelAskToAPI(ask.ask_id)
           console.log(`askRemoved: ${askRemoved}`)
-          if (askRemoved === false) handleTxError(nftMetadata.name, 'Failed to remove prior asking price')
+          if (askRemoved === false) {
+            // TODO: needs to abort operation or retry removing
+            handleTxError(nftMetadata.name, 'Failed to remove prior asking price')
+          }
         }
 
         // create asking price
@@ -458,8 +461,8 @@ export const SellNFT = () => {
   const postCancelAskToAPI = async (id: number) => {
     try {
       const res = await removeNFTListing(id)
-      console.log('Asking Price Removed', res)
-      return true
+      console.log('Asking Price Attempt Remove', res)
+      return res.data
     } catch (error) {
       console.error(`Error Removing Ask: ${error}`)
       return false
@@ -522,13 +525,19 @@ export const SellNFT = () => {
 
           {pendingTxSig && (
             <div style={{ marginBottom: '56px' }} className="bm-support">
-              ⚠️ Sometimes there are delays on the network. You can track the{' '}
+              <span>
+                <img
+                  style={{ height: '26px', marginRight: '6px' }}
+                  src="https://www.gitbook.com/cdn-cgi/image/height=40,fit=contain,dpr=2,format=auto/https%3A%2F%2F2775063016-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252F-M2WGem6IdHOZpBD3zJX%252Flogo%252Fw9pblAvM5UayZbYEg4Cj%252FBlack.png%3Falt%3Dmedia%26token%3D9a925146-c226-4f09-b39b-f61642681016"
+                  alt="solscan-icon"
+                />
+              </span>
               <GFX_LINK
                 href={`http://solscan.io/tx/${pendingTxSig}?cluster=${network}`}
                 target={'_blank'}
                 rel="noreferrer"
               >
-                status of the transaction on solscan
+                View Transaction
               </GFX_LINK>
             </div>
           )}
