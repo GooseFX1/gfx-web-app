@@ -373,6 +373,8 @@ export function theme(mode: string): DefaultTheme {
         background-color: ${({ theme }) => theme.scrollBarColor};
         border-radius: 20px;
       }
+
+      -ms-overflow-style: none !important;
     `
   }
 }

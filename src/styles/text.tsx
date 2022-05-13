@@ -246,10 +246,9 @@ export const GFX_LINK = styled.a`
   letter-spacing: normal;
   font-weight: bold;
   color: ${({ theme }) => theme.secondary4};
-  text-decoration: underline;
+  border-bottom: 2px solid ${({ theme }) => theme.secondary4};
 
   &:hover {
-    text-decoration: underline;
     color: ${({ theme }) => theme.secondary1};
   }
 

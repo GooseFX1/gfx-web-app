@@ -35,8 +35,8 @@ const RIGHT_SECTION = styled.div`
       margin-bottom: ${theme.margin(1)};
 
       .rs-solana-logo {
-        width: 43px;
-        height: 43px;
+        width: 36px;
+        height: 36px;
       }
 
       .rs-price {
@@ -178,8 +178,8 @@ export const RightSection: FC<{
 
   const marketData = useMemo(() => prices['SOL/USDC'], [prices])
 
-  const fiat = `${marketData && price ? (marketData.current * price).toFixed(3) : ''} USD aprox`
-  const percent = '+ 1.15 %'
+  const fiat = `${marketData && price ? (marketData.current * price).toFixed(3) : ''} USD`
+  // const percent = '+ 1.15 %'
   const isForCharity = false
 
   useEffect(() => {}, [bids])
@@ -200,14 +200,7 @@ export const RightSection: FC<{
       ) : (
         <div>
           <Row justify="space-between">
-            <Col className="rs-title">
-              {price ? `Current ${ask ? 'Asking Price' : 'Bid'}` : 'No Current Bids'}{' '}
-              <HIGHEST_BIDDER>
-                {publicKey && curHighestBid && curHighestBid.wallet_key === publicKey.toBase58()
-                  ? '(You are the highest bidder)'
-                  : ''}
-              </HIGHEST_BIDDER>
-            </Col>
+            <Col className="rs-title">{price ? `Current ${ask ? 'Asking Price' : 'Bid'}` : 'No Current Bids'} </Col>
           </Row>
           {price && (
             <Row align="middle" gutter={8} className="rs-prices">
@@ -215,15 +208,16 @@ export const RightSection: FC<{
                 <img className="rs-solana-logo" src={`/img/assets/solana-logo.png`} alt="" />
               </Col>
               <Col className="rs-price">{`${moneyFormatter(price)} SOL`}</Col>
-
-              <Col className="rs-fiat">{`(${fiat})`}</Col>
-
               <Col>
+                <span className="rs-fiat">{`${fiat}`}</span>
+              </Col>
+              {/* TODO: calc price movement
+               <Col>
                 <Row>
                   <img src={`/img/assets/increase-arrow.svg`} alt="" />
                   <div className="rs-percent">{percent}</div>
                 </Row>
-              </Col>
+              </Col> */}
             </Row>
           )}
         </div>
