@@ -5,8 +5,8 @@ import styled from 'styled-components'
 import { useDarkMode } from '../context'
 import { CenteredImg } from '../styles'
 
-const ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(1.5))}
+const ICON = styled(CenteredImg)<{ notDoxxed?: boolean }>`
+  ${({ theme, notDoxxed }) => !notDoxxed && theme.measurements(theme.margin(1.5))}
   margin-left: ${({ theme }) => theme.margin(1)};
 `
 
@@ -22,7 +22,8 @@ export const Tooltip: FC<{
   placement?: TooltipPlacement
   color?: string
   children: ReactNode
-}> = ({ dark, lite, placement = 'topLeft', color = '#4b4b4b', children }) => {
+  notInherit?: boolean
+}> = ({ dark, lite, placement = 'topLeft', color = '#4b4b4b', children, notInherit }) => {
   const { mode } = useDarkMode()
 
   const icon = `/img/assets/tooltip_${dark ? 'dark' : lite ? 'lite' : mode}_mode_icon.svg`
@@ -41,7 +42,7 @@ export const Tooltip: FC<{
       placement={placement}
       title={<TEXT>{children}</TEXT>}
     >
-      <ICON>
+      <ICON notDoxxed={!!notInherit}>
         <img src={icon} alt="tooltip" />
       </ICON>
     </ANTDTooltip>
