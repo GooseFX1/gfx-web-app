@@ -223,7 +223,7 @@ export const TableList = ({ dataSource }: any) => {
         })
         .catch((err) => console.log(err))
     }
-  }, [solPrice?.current, counter])
+  }, [accountKey, solPrice?.current, counter])
 
   useEffect(() => {
     if (gofxPrice !== undefined) {
