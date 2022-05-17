@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import { Tooltip } from '../../components/Tooltip'
 import { moneyFormatter, nFormatter } from '../../utils/math'
+import { Skeleton } from 'antd'
 
 export const STYLED_TITLE = styled.div`
   display: flex;
@@ -64,6 +65,9 @@ export const STYLED_EARNED = styled.div`
   text-align: center;
 `
 
+export const Loader: FC = () => {
+  return <Skeleton.Button active size="small" style={{ display: 'flex', height: '15px' }} />
+}
 const HeaderTooltip = (text: string) => {
   return (
     <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
@@ -105,7 +109,7 @@ export const columns = [
     key: 'Balance',
     width: '16.6%',
     render: (text) => {
-      return <div className="liquidity normal-text"> {text ? `${moneyFormatter(text)}` : 0.0}</div>
+      return <div className="liquidity normal-text"> {text >= 0 ? `${moneyFormatter(text)}` : <Loader />}</div>
     }
   },
   {
@@ -117,27 +121,33 @@ export const columns = [
     dataIndex: 'earned',
     key: 'earned',
     width: '16.6%',
-    render: (text) => <div className="liquidity normal-text">{text ? `${moneyFormatter(text)}` : 0.0}</div>
+    render: (text) => <div className="liquidity normal-text">{text >= 0 ? `${moneyFormatter(text)}` : <Loader />}</div>
   },
   {
     title: Title('APR', 'Yearly deposit earned on your deposit.', true),
     dataIndex: 'apr',
     key: 'apr',
     width: '16.6%',
-    render: (text) => <div className="apr normal-text">{`${text.toFixed(0)}%`}</div>
+    render: (text) => <div className="apr normal-text">{text >= 0 ? `${text.toFixed(0)}%` : <Loader />}</div>
   },
   {
     title: Title('Liquidity', "Total value of funds in this farm's liquidity pool.", true),
     dataIndex: 'liquidity',
     width: '16.6%',
     key: 'liquidity',
-    render: (text) => <div className="liquidity normal-text">{text ? `$ ${moneyFormatter(text)}` : 0.0}</div>
+    render: (text) => (
+      <div className="liquidity normal-text">{text >= 0 ? `$ ${moneyFormatter(text)}` : <Loader />}</div>
+    )
   },
   {
     title: Title('Volume', '', true),
     dataIndex: 'volume',
     width: '16.6%',
     key: 'volume',
-    render: (text) => <div className="liquidity normal-text">{text === '-' ? `-` : `$ ${moneyFormatter(text)}`}</div>
+    render: (text) => (
+      <div className="liquidity normal-text">
+        {text === '-' ? `-` : text >= 0 ? `$ ${moneyFormatter(text)}` : <Loader />}
+      </div>
+    )
   }
 ]
