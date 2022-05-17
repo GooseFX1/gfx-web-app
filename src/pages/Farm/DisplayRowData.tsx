@@ -13,19 +13,22 @@ const ROW_CONTAINER = styled.div`
   padding-top: ${({ theme }) => theme.margin(3)};
   padding-bottom: ${({ theme }) => theme.margin(2)};
   .set-width {
-    width: 13.6%;
+    width: 17%;
   }
   .set-width-balance {
-    width: 21%;
+    width: 18%;
   }
   .set-width-earned {
-    width: 20%;
+    width: 22%;
   }
   .set-width-apr {
-    width: 20%;
+    width: 22%;
   }
   .set-width-liquidity {
-    width: 20%;
+    width: 22%;
+  }
+  .set-width-volume {
+    width: 18%;
   }
 `
 
@@ -50,8 +53,6 @@ interface IFarmData {
 }
 
 const DisplayRowData = ({ rowData, onExpandIcon }) => {
-  const { farmDataContext } = useFarmContext()
-  // const tokenData = farmDataContext.find((farmData) => farmData.name === rowData.name)
   return (
     <ROW_CONTAINER>
       <STYLED_NAME className="set-width">
@@ -73,6 +74,9 @@ const DisplayRowData = ({ rowData, onExpandIcon }) => {
       </div>
       <div className="liquidity normal-text set-width-liquidity">
         {rowData?.liquidity ? `$ ${moneyFormatter(rowData?.liquidity)}` : 0.0}
+      </div>
+      <div className="liquidity normal-text set-width-volume">
+        {rowData?.volume && rowData?.volume === '-' ? '-' : `$ ${moneyFormatter(rowData?.volume)}`}
       </div>
       <STYLED_EXPAND_ICON onClick={() => onExpandIcon(rowData.id)}>
         <img src={'/img/assets/arrow-down-large.svg'} />

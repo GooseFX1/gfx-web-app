@@ -76,7 +76,8 @@ export const stakeTokens = [
     rewards: 100,
     liquidity: 0,
     type: 'Staking',
-    currentlyStaked: 0
+    currentlyStaked: 0,
+    volume: '-'
   }
 ]
 export const sslTokens = [

@@ -87,7 +87,7 @@ export const columns = [
     title: Title('Name', '', true),
     dataIndex: 'name',
     key: 'name',
-    width: '15%',
+    width: '15',
     render: (text, record) => (
       <STYLED_NAME>
         <img
@@ -103,7 +103,7 @@ export const columns = [
     title: Title('Balance', '', true),
     dataIndex: 'currentlyStaked',
     key: 'Balance',
-    width: '20%',
+    width: '16.6%',
     render: (text) => {
       return <div className="liquidity normal-text"> {text ? `${moneyFormatter(text)}` : 0.0}</div>
     }
@@ -116,21 +116,28 @@ export const columns = [
     ),
     dataIndex: 'earned',
     key: 'earned',
-    width: '20%',
+    width: '16.6%',
     render: (text) => <div className="liquidity normal-text">{text ? `${moneyFormatter(text)}` : 0.0}</div>
   },
   {
     title: Title('APR', 'Yearly deposit earned on your deposit.', true),
     dataIndex: 'apr',
     key: 'apr',
-    width: '20%',
+    width: '16.6%',
     render: (text) => <div className="apr normal-text">{`${text.toFixed(0)}%`}</div>
   },
   {
     title: Title('Liquidity', "Total value of funds in this farm's liquidity pool.", true),
     dataIndex: 'liquidity',
-    width: '20%',
+    width: '16.6%',
     key: 'liquidity',
     render: (text) => <div className="liquidity normal-text">{text ? `$ ${moneyFormatter(text)}` : 0.0}</div>
+  },
+  {
+    title: Title('Volume', '', true),
+    dataIndex: 'volume',
+    width: '16.6%',
+    key: 'volume',
+    render: (text) => <div className="liquidity normal-text">{text === '-' ? `-` : `$ ${moneyFormatter(text)}`}</div>
   }
 ]
