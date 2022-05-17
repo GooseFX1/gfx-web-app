@@ -1,11 +1,7 @@
-import React from 'react'
-import styled, { css } from 'styled-components'
-import { columns, STYLED_NAME } from './Columns'
-import { Table } from 'antd'
-import { STYLED_TABLE_LIST } from './TableList'
-import { moneyFormatter, nFormatter, percentFormatter } from '../../utils/math'
-import { LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { useFarmContext } from '../../context/farm'
+import styled from 'styled-components'
+import { STYLED_NAME } from './Columns'
+import { moneyFormatter, percentFormatter } from '../../utils/math'
+import { Loader } from '../Farm/Columns'
 
 const ROW_CONTAINER = styled.div`
   display: flex;
@@ -13,19 +9,22 @@ const ROW_CONTAINER = styled.div`
   padding-top: ${({ theme }) => theme.margin(3)};
   padding-bottom: ${({ theme }) => theme.margin(2)};
   .set-width {
-    width: 13.6%;
+    width: 17%;
   }
   .set-width-balance {
-    width: 21%;
+    width: 18%;
   }
   .set-width-earned {
-    width: 20%;
+    width: 22%;
   }
   .set-width-apr {
-    width: 20%;
+    width: 22%;
   }
   .set-width-liquidity {
-    width: 20%;
+    width: 22%;
+  }
+  .set-width-volume {
+    width: 18%;
   }
 `
 
@@ -50,8 +49,6 @@ interface IFarmData {
 }
 
 const DisplayRowData = ({ rowData, onExpandIcon }) => {
-  const { farmDataContext } = useFarmContext()
-  // const tokenData = farmDataContext.find((farmData) => farmData.name === rowData.name)
   return (
     <ROW_CONTAINER>
       <STYLED_NAME className="set-width">
@@ -63,16 +60,19 @@ const DisplayRowData = ({ rowData, onExpandIcon }) => {
         <div className="text">{rowData?.name}</div>
       </STYLED_NAME>
       <div className="liquidity normal-text set-width-balance">
-        {rowData?.currentlyStaked ? ` ${moneyFormatter(rowData.currentlyStaked)}` : 0.0}
+        {rowData?.currentlyStaked >= 0 ? ` ${moneyFormatter(rowData.currentlyStaked)}` : <Loader />}
       </div>
       <div className="liquidity normal-text set-width-earned">
-        {rowData?.earned ? `${moneyFormatter(rowData?.earned)}` : 0.0}
+        {rowData?.earned >= 0 ? `${moneyFormatter(rowData?.earned)}` : <Loader />}
       </div>
       <div className="liquidity normal-text set-width-apr">
-        {rowData?.apr ? `${percentFormatter(rowData?.apr)}` : 0.0}
+        {rowData?.apr >= 0 ? `${percentFormatter(rowData?.apr)}` : <Loader />}
       </div>
       <div className="liquidity normal-text set-width-liquidity">
-        {rowData?.liquidity ? `$ ${moneyFormatter(rowData?.liquidity)}` : 0.0}
+        {rowData?.liquidity >= 0 ? `$ ${moneyFormatter(rowData?.liquidity)}` : <Loader />}
+      </div>
+      <div className="liquidity normal-text set-width-volume">
+        {rowData?.volume === '-' ? '-' : rowData.volume >= 0 ? `$ ${moneyFormatter(rowData?.volume)}` : <Loader />}
       </div>
       <STYLED_EXPAND_ICON onClick={() => onExpandIcon(rowData.id)}>
         <img src={'/img/assets/arrow-down-large.svg'} />
