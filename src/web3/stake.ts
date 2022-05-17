@@ -19,7 +19,7 @@ const StakeIDL = require('./idl/stake.json')
 const { blob, struct, u8 } = require('buffer-layout')
 
 export const CONTROLLER_KEY = new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
-const GOFX_MINT = 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'
+export const GOFX_MINT = 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'
 const ADMIN = new PublicKey('9zmM8D5iwnzqc25n9zXZ4HfGcvM32xF99w3awCRPiUtN')
 
 const LAYOUT = struct([
