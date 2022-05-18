@@ -8,6 +8,7 @@ import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
 import { Modal } from '../../components'
+import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 import {
   useDarkMode,
   useSwap,
@@ -520,11 +521,7 @@ const TokenContent: FC = () => {
   const fetchCoinGecko = async () => {
     const tokens = await CoinGeckoClient.coins.list()
     if (tokenA) {
-      const token = tokens.data.find(
-        (i) =>
-          i.symbol.toLowerCase().includes(tokenA.symbol.toLowerCase()) ||
-          tokenA.symbol.toLowerCase().includes(i.symbol.toLowerCase())
-      )
+      const token = tokens.data.find((i) => i.symbol.toLowerCase() === tokenA.symbol.toLowerCase())
       CoinGeckoClient.coins.fetch(token?.id || null, {}).then(async (data: any) => {
         data = data.data
         const fetchData = await fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
@@ -547,28 +544,28 @@ const TokenContent: FC = () => {
         //   ]
         // })
         setDetails([
-          { name: 'Price', value: data.market_data.current_price.usd, currency: '$' },
+          { name: 'Price', value: data?.market_data?.current_price?.usd || '0.0', currency: '$' },
           {
             name: 'FDV',
             value:
               moneyFormatter(
                 Math.floor(
-                  data.market_data.fully_diluted_valuation.usd ||
-                    data.market_data.total_supply * data.market_data.current_price.usd
+                  data?.market_data?.fully_diluted_valuation?.usd ||
+                    data?.market_data?.total_supply * data?.market_data?.current_price?.usd
                 )
               ) || '0',
             currency: '$'
           },
           {
             name: 'Max Total Supply',
-            value: Math.floor(data.market_data.max_supply || data.market_data.total_supply).toLocaleString() || '0'
+            value: Math.floor(data?.market_data?.max_supply || data?.market_data?.total_supply)?.toLocaleString() || '0'
           },
-          { name: 'Holders', value: res?.total.toLocaleString() || 0 }
+          { name: 'Holders', value: res?.total?.toLocaleString() || 0 }
         ])
         setSocials([
-          { name: 'Twitter', link: 'https://twitter.com/' + data.links.twitter_screen_name },
+          { name: 'Twitter', link: 'https://twitter.com/' + data?.links?.twitter_screen_name },
           { name: 'Coingecko', link: 'https://coingecko.com' },
-          { name: 'Website', link: data.links.homepage[0] }
+          { name: 'Website', link: data?.links?.homepage?.[0] }
         ])
       })
     }
@@ -773,23 +770,34 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   return (
     <SWAP_ROUTES $less={less || details.length < 4}>
       <div className="swap-content">
-        {(!less ? details : details.slice(0, 2)).map((detail, k) => (
-          <SWAP_ROUTE_ITEM
-            $clicked={k === clickNo}
-            $cover={mode === 'dark' ? '#3c3b3ba6' : '#ffffffa6'}
-            onClick={() => setClickNo(k)}
-          >
-            <div className={'inner-container'}>
-              <TokenDetail className={'content'}>
-                <TokenTitle>{detail.name}</TokenTitle>
-                <AltSmallTitle>{detail.value}</AltSmallTitle>
-              </TokenDetail>
-              <TokenTitle className={'price'}>{detail.price || null}</TokenTitle>
-              {detail.bestPrice && <BestPrice>Best Price</BestPrice>}
-              {detail.fastest && <BestPrice>Best Choice</BestPrice>}
-            </div>
-          </SWAP_ROUTE_ITEM>
-        ))}
+        {routes?.length < 1
+          ? Array(3)
+              .fill(1)
+              .map(() => (
+                <SkeletonCommon
+                  width="330px"
+                  height="100px"
+                  borderRadius="10px"
+                  style={{ marginRight: '16px', boxShadow: '0 6px 9px 0 rgba(36, 36, 36, 0.1)' }}
+                />
+              ))
+          : (!less ? details : details.slice(0, 2)).map((detail, k) => (
+              <SWAP_ROUTE_ITEM
+                $clicked={k === clickNo}
+                $cover={mode === 'dark' ? '#3c3b3ba6' : '#ffffffa6'}
+                onClick={() => setClickNo(k)}
+              >
+                <div className={'inner-container'}>
+                  <TokenDetail className={'content'}>
+                    <TokenTitle>{detail.name}</TokenTitle>
+                    <AltSmallTitle>{detail.value}</AltSmallTitle>
+                  </TokenDetail>
+                  <TokenTitle className={'price'}>{detail.price || null}</TokenTitle>
+                  {detail.bestPrice && <BestPrice>Best Price</BestPrice>}
+                  {detail.fastest && <BestPrice>Best Choice</BestPrice>}
+                </div>
+              </SWAP_ROUTE_ITEM>
+            ))}
       </div>
 
       <div className="action">
@@ -837,6 +845,7 @@ export const SwapMain: FC = () => {
   })
 
   useEffect(() => {
+    setRoutes([])
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
     setInAmountTotal(inAmountTotal)
 
@@ -873,7 +882,7 @@ export const SwapMain: FC = () => {
 
     setRoutes(shortRoutes)
     //setClickNo(1)
-  }, [tokenA, tokenB, routes, slippage, inTokenAmount, outTokenAmount])
+  }, [tokenA?.symbol, tokenB?.symbol, routes, slippage, inTokenAmount, outTokenAmount])
 
   return (
     <WRAPPER>

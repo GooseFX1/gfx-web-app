@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 const CONTAINER = styled.div`
-  background: ${({ theme }) => theme.bg3};
+  background: ${({ theme }) => theme.bg17};
   display: flex;
   flex-direction: column;
   justify-content: center;

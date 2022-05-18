@@ -102,6 +102,8 @@ export function colors(mode: string): Colors {
     bg14: mode === 'dark' ? '#1b1b1b' : '#555555',
     bg15: mode === 'dark' ? '#191919' : '#555555',
     bg16: mode === 'dark' ? '#1E1E1E' : '#EEEEEE',
+    bg17: mode === 'dark' ? '#343434' : '#FFFFFF',
+
     modalBackground: mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(96, 96, 96, 0.5)',
     bgReward:
       mode === 'dark'

@@ -367,7 +367,7 @@ export const ExpandedDynamicContent = ({
       parseFloat(stakeRef.current.value) > parseFloat(userTokenBalance.toFixed(3))
     ) {
       stakeRef.current.value = 0
-      notify(invalidInputErrMsg(amt ? amt : userTokenBalance, name))
+      notify(invalidInputErrMsg(amt >= 0 ? amt : userTokenBalance, name))
       return true
     }
     return false

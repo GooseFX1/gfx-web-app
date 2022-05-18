@@ -224,7 +224,6 @@ const STYLED_STAKE_PILL = styled(MainButton)`
   }
 
   &.miniButtons {
-    width: 125px;
   }
 `
 const MAX_BUTTON = styled.div`
@@ -419,19 +418,20 @@ export const SSLButtons: FC<{
     tokenData?.ptMinted >= 0 ? tokenData.currentlyStaked + tokenData.earned - tokenData.ptMinted : 0
   const availableToMintFiat = tokenPrice && availableToMint * tokenPrice.current
 
-  const checkbasicConditions = (amt: number) => {
-    const userAmount = parseFloat(unstakeRef.current.value)
-    if (
-      isNaN(parseFloat(unstakeRef.current.value)) ||
-      userAmount < 0.000001 ||
-      parseFloat(userAmount.toFixed(3)) > parseFloat(amt.toFixed(3))
-    ) {
-      unstakeRef.current.value = 0
+  const checkbasicConditions = (amt: number, stakeRefBool?: boolean) => {
+    const userAmount = stakeRefBool ? parseFloat(stakeRef.current.value) : parseFloat(unstakeRef.current.value)
+    if (isNaN(userAmount) || userAmount < 0.000001 || parseFloat(userAmount.toFixed(3)) > parseFloat(amt.toFixed(3))) {
+      stakeRefBool ? (stakeRef.current.value = 0) : (unstakeRef.current.value = 0)
       notify(invalidInputErrMsg(amt >= 0 ? amt : undefined, name))
       return true
     }
     return false
   }
+  let notEnough = parseFloat(stakeRef.current?.value) > (name === 'SOL' ? userSOLBalance : userTokenBalance)
+
+  useEffect(() => {
+    notEnough = parseFloat(stakeRef.current?.value) > (name === 'SOL' ? userSOLBalance : userTokenBalance)
+  }, [stakeRef.current?.value])
 
   const mintClicked = () => {
     if (checkbasicConditions(availableToMint)) return
@@ -444,13 +444,12 @@ export const SSLButtons: FC<{
   }
   const withdrawClicked = () => {
     // (amt / userLiablity) * 10000
-    if (checkbasicConditions(availableToMint)) return
+    if (checkbasicConditions(availableToMint, true)) return
     const multiplier = name === 'SOL' ? 10000 : 10
-    let amountInNative = (unstakeRef.current.value / tokenData?.userLiablity) * LAMPORTS_PER_SOL * multiplier
-    if (availableToMint.toFixed(3) === unstakeRef.current.value) amountInNative = 100 * 100
+    let amountInNative = (stakeRef.current.value / tokenData?.userLiablity) * LAMPORTS_PER_SOL * multiplier
+    if (availableToMint.toFixed(3) === stakeRef.current.value) amountInNative = 100 * 100
     onClickWithdraw(amountInNative)
   }
-  const notEnough = parseFloat(stakeRef.current?.value) > (name === 'SOL' ? userSOLBalance : userTokenBalance)
   return (
     <>
       {wallet.publicKey ? (
@@ -488,14 +487,27 @@ export const SSLButtons: FC<{
                     </MAX_BUTTON>
                   </div>
                 </STYLED_SOL>
-                <STYLED_STAKE_PILL
-                  loading={isStakeLoading}
-                  className={depositButtonClass}
-                  disabled={isStakeLoading || notEnough}
-                  onClick={() => onClickDeposit()}
-                >
-                  {notEnough ? 'Not enough funds' : 'Deposit'}
-                </STYLED_STAKE_PILL>
+                <FLEX>
+                  <STYLED_STAKE_PILL
+                    loading={isStakeLoading}
+                    className={depositButtonClass}
+                    disabled={isStakeLoading || notEnough}
+                    onClick={() => onClickDeposit()}
+                  >
+                    {notEnough ? 'Not enough funds' : 'Deposit'}
+                  </STYLED_STAKE_PILL>
+                  <STYLED_STAKE_PILL
+                    loading={isWithdrawLoading}
+                    disabled={
+                      isUnstakeLoading || parseFloat(availableToMint.toFixed(DISPLAY_DECIMAL)) <= 0 || operationPending
+                    }
+                    className={depositButtonClass}
+                    title={'Burn gTokens in order to redeem your deposited token'}
+                    onClick={() => withdrawClicked()}
+                  >
+                    Withdraw
+                  </STYLED_STAKE_PILL>
+                </FLEX>
               </div>
               <div className="SOL-item">
                 <STYLED_SOL>
@@ -528,20 +540,7 @@ export const SSLButtons: FC<{
                     title={'Withdraw gTokens to your wallet'}
                     onClick={() => burnClicked()}
                   >
-                    Withdraw
-                    {/* withdraw is doing the work of burn */}
-                  </STYLED_STAKE_PILL>
-                  <STYLED_STAKE_PILL
-                    loading={isWithdrawLoading}
-                    disabled={
-                      isUnstakeLoading || parseFloat(availableToMint.toFixed(DISPLAY_DECIMAL)) <= 0 || operationPending
-                    }
-                    className={miniButtonsClass}
-                    title={'Burn gTokens in order to redeem your deposited token'}
-                    onClick={() => withdrawClicked()}
-                  >
                     Burn
-                    {/* change the function name */}
                   </STYLED_STAKE_PILL>
                 </FLEX>
               </div>
