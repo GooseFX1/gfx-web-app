@@ -15,7 +15,7 @@ export const ENDPOINTS: IEndpoint[] = [
   {
     chainId: ENV.MainnetBeta,
     name: 'QuickNode Pro',
-    endpoint: 'https://green-little-wind.solana-mainnet.quiknode.pro/6083a98b56311aacfd4c28bb8d4aa9462699c45d',
+    endpoint: 'https://green-little-wind.solana-mainnet.quiknode.pro/53b2e51e34bea3a733f2cd44147689af2c7006ef',
     network: WalletAdapterNetwork.Mainnet
   },
   {
