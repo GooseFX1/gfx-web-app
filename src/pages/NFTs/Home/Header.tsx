@@ -140,10 +140,6 @@ const AVATAR_NFT = styled(Image)`
   margin-right: ${({ theme }) => theme.margin(1.5)};
 `
 
-const MENU_ITEM = styled(Menu.Item)`
-  color: ${({ theme }) => theme.text1};
-`
-
 export const Header = ({ setFilter, filter, filteredCollections, totalCollections, setTotalCollections }) => {
   const history = useHistory()
   const { sessionUser } = useNFTProfile()
@@ -277,7 +273,7 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
           />
         ) : (
           <Dropdown overlay={genMenu()} trigger={['click']}>
-            <SearchBar className="search-bar" setFilter={setFilter} filter={filter} />
+            <SearchBar className="search-bar" setSearchFilter={setFilter} filter={filter} />
           </Dropdown>
         )}
       </AVATAR_WRAPPER>

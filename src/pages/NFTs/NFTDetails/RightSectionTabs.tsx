@@ -350,7 +350,7 @@ export const RightSectionTabs: FC<{
   })
 
   const handleUpdateAsk = (action: string) => {
-    action === 'remove' ? setRemoveAskModal(true) : history.push(`/NFTs/sell/${general.non_fungible_id}`)
+    action === 'remove' ? setRemoveAskModal(true) : history.push(`/NFTs/sell/${general.mint_address}`)
   }
 
   const handleSetBid = (type: string) => {
@@ -526,7 +526,7 @@ export const RightSectionTabs: FC<{
           </TabPane>
         </>
       </Tabs>
-      {general.non_fungible_id && wallet.publicKey && (
+      {wallet.publicKey && (
         <SpaceBetweenDiv className="rst-footer">
           {sessionUser && sessionUser.user_id ? (
             wallet.publicKey.toBase58() === general.owner ? (

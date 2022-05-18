@@ -193,7 +193,8 @@ const IMAGE_LABEL = styled(CenteredDiv)`
 export const SellNFT = () => {
   const history = useHistory()
   const params = useParams<IAppParams>()
-  const { general, ask, fetchGeneral, nftMetadata, updateUserInput, sellNFT, removeNFTListing } = useNFTDetails()
+  const { general, ask, fetchGeneral, nftMetadata, updateUserInput, registerSingleNFT, sellNFT, removeNFTListing } =
+    useNFTDetails()
   const { sessionUser } = useNFTProfile()
   const wallet = useWallet()
   const { connected, publicKey, sendTransaction } = wallet
@@ -236,9 +237,13 @@ export const SellNFT = () => {
 
   useEffect(() => {
     if (params.nftMintAddress && (!general || !nftMetadata)) {
-      fetchGeneral(params.nftMintAddress, connection).then((res) => {
-        console.log(res)
-      })
+      if (general.non_fungible_id === null) {
+        // registerSingleNFT()
+      } else {
+        fetchGeneral(params.nftMintAddress, connection).then((res) => {
+          console.log(res)
+        })
+      }
     }
   }, [])
 
