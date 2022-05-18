@@ -77,6 +77,15 @@ export type ISingleNFT = {
   owner: string | null
 }
 
+export type IRegisterNFT = {
+  nft_name: string
+  nft_description: string
+  mint_address: string
+  metadata_url: string
+  image_url: string
+  animation_url: string | null
+}
+
 export type INFTBid = {
   bid_id: number
   clock: string
@@ -139,6 +148,8 @@ export interface INFTDetailsConfig {
   updateUserInput: (params: any) => Promise<any>
   fetchUserInput: () => Promise<any>
   sellNFT: (params: any) => Promise<any>
+  registerSingleNFT: (nft: IRegisterNFT) => Promise<any>
+  removeNonCollectionListing: (address: string) => Promise<any>
   removeNFTListing: (id: number) => Promise<any>
   getLikesNFT: (user_id: any, nft_id: any) => Promise<any>
   getLikesUser: (user_id: number) => Promise<any>

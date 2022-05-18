@@ -8,6 +8,7 @@ import { customFetch } from '../utils'
 import {
   INFTDetailsConfig,
   ISingleNFT,
+  IRegisterNFT,
   INFTMetadata,
   INFTBid,
   INFTAsk,
@@ -160,6 +161,30 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
+  const registerSingleNFT = useCallback(async (nft: IRegisterNFT): Promise<any> => {
+    try {
+      const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.SINGLE_ITEM}`, {
+        nft_data: nft
+      })
+      return res
+    } catch (error) {
+      return error
+    }
+  }, [])
+
+  const removeNonCollectionListing = useCallback(async (address: string): Promise<any> => {
+    try {
+      const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.SINGLE_ITEM}`, {
+        data: {
+          mint_address: address
+        }
+      })
+      return res
+    } catch (error) {
+      return error
+    }
+  }, [])
+
   const likeDislike = useCallback(async (user_id: number, nft_id: any): Promise<any> => {
     try {
       const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.LIKE}`, {
@@ -211,6 +236,8 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         setNftMintingData,
         updateUserInput,
         fetchUserInput,
+        registerSingleNFT,
+        removeNonCollectionListing,
         sellNFT,
         removeNFTListing,
         likeDislike,
@@ -249,6 +276,8 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     updateUserInput: context.updateUserInput,
     fetchUserInput: context.fetchUserInput,
     sellNFT: context.sellNFT,
+    registerSingleNFT: context.registerSingleNFT,
+    removeNonCollectionListing: context.removeNonCollectionListing,
     removeNFTListing: context.removeNFTListing,
     likeDislike: context.likeDislike,
     getLikesUser: context.getLikesUser,
