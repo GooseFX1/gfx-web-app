@@ -19,5 +19,14 @@ const apiClient = (base: string) => {
     }
   })
 }
+export const httpClient = (base: string) => {
+  return axios.create({
+    baseURL: `https://${base}.goosefx.io`,
+    responseType: 'json',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
 
 export default apiClient

@@ -1,7 +1,7 @@
 import { bool } from '@metaplex-foundation/beet'
 import { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction } from 'react'
 import { stakeTokens, sslTokens } from '../constants'
-
+import { IFarmData } from '../pages/Farm/TableList'
 interface IShowDeposited {
   showDeposited: boolean
   toggleDeposited: Dispatch<SetStateAction<boolean>>
@@ -17,20 +17,6 @@ interface IShowDeposited {
   setFarmDataSSLContext: Dispatch<SetStateAction<IFarmData[]>>
   operationPending: boolean
   setOperationPending: Dispatch<SetStateAction<boolean>>
-}
-
-interface IFarmData {
-  id: string
-  image: string
-  name: string
-  earned: number
-  apr: number
-  rewards?: number
-  liquidity: number
-  type: string
-  ptMinted?: number
-  userLiablity?: number
-  currentlyStaked: number
 }
 
 const FarmContext = createContext<IShowDeposited | null>(null)

@@ -427,10 +427,24 @@ export const SSLButtons: FC<{
     }
     return false
   }
-  let notEnough = parseFloat(stakeRef.current?.value) > (name === 'SOL' ? userSOLBalance : userTokenBalance)
+  let notEnough
+  try {
+    let amt = parseFloat(stakeRef.current?.value).toFixed(3)
+    notEnough =
+      parseFloat(amt) >
+      (name === 'SOL' ? parseFloat(userSOLBalance.toFixed(3)) : parseFloat(userTokenBalance.toFixed(3)))
+  } catch (e) {
+    console.log(e)
+  }
 
   useEffect(() => {
-    notEnough = parseFloat(stakeRef.current?.value) > (name === 'SOL' ? userSOLBalance : userTokenBalance)
+    try {
+      let amt = parseFloat(stakeRef.current?.value).toFixed(3)
+      notEnough =
+        parseFloat(amt) >
+        (name === 'SOL' ? parseFloat(userSOLBalance.toFixed(3)) : parseFloat(userTokenBalance.toFixed(3)))
+    } catch (e) {}
+    console.log(notEnough)
   }, [stakeRef.current?.value])
 
   const mintClicked = () => {

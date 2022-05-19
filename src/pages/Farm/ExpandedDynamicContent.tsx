@@ -399,16 +399,15 @@ export const ExpandedDynamicContent = ({
     const amount = parseFloat(unstakeRef.current.value)
     setBurnLoading(true)
     try {
-      // burn and withdraw are interchanged so message is changed
       const confirm = executeBurn(SSLProgram, wallet, connection, network, name, amount).then((con) => {
         setBurnLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Withdraw))
+          notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Burn))
           setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
-          notify(sslErrorMessage(name, error.message, signature, network, Withdraw))
+          notify(sslErrorMessage(name, error.message, signature, network, Burn))
           return
         }
       })
@@ -425,11 +424,11 @@ export const ExpandedDynamicContent = ({
         setWithdrawLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Burn))
+          notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Withdraw))
           setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
-          notify(sslErrorMessage(name, error.message, signature, network, Burn))
+          notify(sslErrorMessage(name, error.message, signature, network, Withdraw))
           return
         }
       })
