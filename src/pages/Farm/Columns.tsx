@@ -140,7 +140,7 @@ export const columns = [
     )
   },
   {
-    title: Title('Volume', '', true),
+    title: Title('7d Volume', '', true),
     dataIndex: 'volume',
     width: '16.6%',
     key: 'volume',
