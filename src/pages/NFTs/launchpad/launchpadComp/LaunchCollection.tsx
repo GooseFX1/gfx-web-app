@@ -1,32 +1,22 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
 import LaunchImg from '../../../../assets/launch.svg'
-import { SOCIAL_MEDIAS } from '../../../../constants'
 
 const Container = styled.div`
+  width: 90%;
+  height: 295px;
+  margin: auto;
   display: flex;
-  justify-content: flex-start;
-  margin-top: 150px !important ;
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   border-radius: 15px;
-  margin-right: 40px !important ;
-  margin-bottom: 70px;
-
-  .startContainer {
-    height: 295px;
-    padding-right: 10px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: start;
-  }
+  align-items: center;
 `
 const TEXT = styled.div`
   font-weight: 600;
   font-size: 50px;
 `
 
-const IMG = styled.div`
+const IMG = styled.image`
   width: 149.82px;
   height: 166.62px;
   margin-left: 68px;
@@ -51,22 +41,18 @@ const TEXT_CONTAINER = styled.div`
 `
 
 const LaunchCollection: FC = () => {
-  const handleApplyClick = () => {
-    window.open(SOCIAL_MEDIAS.nftCreatorForm)
-  }
-
   return (
-    <Container>
-      <div className="startContainer">
+    <>
+      <Container>
         <IMG>
           <img src={LaunchImg} />
         </IMG>
         <TEXT_CONTAINER>
           <TEXT>Launch your collection today!</TEXT>
-          <APPLY_BTN onClick={handleApplyClick}>Apply</APPLY_BTN>
+          <APPLY_BTN>Apply</APPLY_BTN>
         </TEXT_CONTAINER>
-      </div>
-    </Container>
+      </Container>
+    </>
   )
 }
 export default LaunchCollection

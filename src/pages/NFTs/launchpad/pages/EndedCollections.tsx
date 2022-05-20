@@ -4,20 +4,14 @@ import Slider from 'react-slick'
 import styled, { css } from 'styled-components'
 import { Col, Dropdown, Row, Menu, Checkbox, Button, Card } from 'antd'
 import Meta from 'antd/lib/card/Meta'
-import { useHistory } from 'react-router-dom'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
-import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 
 import { theme } from '../../../../theme'
-import { GetNftPrice } from './FeaturedLaunch'
-import { useUSDCToggle } from '../../../../context/nft_launchpad'
 
 const CAROUSEL_WRAPPER = styled.div`
   position: relative;
   width: 100% !important;
   height: 100%;
-  margin-left: -40px;
-  margin-bottom: 40px;
   .fade {
     position: absolute;
     top: 0;
@@ -34,8 +28,6 @@ const CAROUSEL_WRAPPER = styled.div`
 
     &.slick-disabled {
       opacity: 0;
-    }
-    .sold-out {
     }
   }
 
@@ -77,10 +69,8 @@ const NFT_CONTAINER = styled.div`
 `
 
 const ENDED_TEXT = styled.div`
-  margin-top: 150px;
   font-weight: 700;
   font-size: 30px;
-  margin-bottom: 40px;
 `
 
 const NFT_TITLE = styled.div`
@@ -89,14 +79,11 @@ const NFT_TITLE = styled.div`
 `
 const NFT_INFO = styled.div`
   font-weight: 600;
-  line-height: 22px;
   font-size: 18px !important;
-  margin-bottom: 10px;
 `
 const SLIDER_ITEM = styled.div`
   position: relative;
   display: flex;
-  cursor: pointer;
   justify-content: center;
   align-items: center;
   border-radius: 20px;
@@ -151,27 +138,18 @@ const SLIDER_ITEM = styled.div`
   }
 `
 
-export const NFT_SOLD = styled.div`
+const NFT_SOLD = styled.div`
   position: absolute;
   width: 300px;
-  height: 100%;
-  padding-top: 45%;
-  align-items: center;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  height: 200px;
+  padding: ${({ theme }) => theme.margin(3)};
   bottom: 0px;
-
-  .collection-name {
-    font-weight: 600;
-    font-size: 25px;
-    line-height: 30px;
-  }
-  .sold-text {
-    font-weight: 700;
-    margin-top: 10px;
-    font-size: 20px;
-    line-height: 24px;
-    text-align: center;
+  .flex {
+    display: flex;
+    justify-content: space-between;
   }
 `
 const NFT_META = styled.div`
@@ -181,15 +159,14 @@ const NFT_META = styled.div`
   flex-direction: column;
   justify-content: space-between;
   height: 87px;
+  padding: ${({ theme }) => theme.margin(3)};
   background: linear-gradient(68.66deg, rgba(255, 255, 255, 0.1) 21.47%, rgba(255, 255, 255, 0.015) 102.44%);
-  backdrop-filter: blur(60px);
+  backdrop-filter: blur(50px);
   border-radius: 15px 10px 10px 15px;
   bottom: 0px;
-  .column {
+  .flex {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 12px;
+    justify-content: space-between;
   }
 `
 
@@ -208,17 +185,21 @@ const EndedCollections: FC = () => {
     prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-previous" />
   }
   const loading = [1, 2, 3, 4, 5]
-  const [endedList, setEndedList] = useState([])
-  const { endedNFTProjects, dataFetched } = useNFTLaunchpad()
-  const history = useHistory()
-  const { isUSDC } = useUSDCToggle()
+  const [upcomingList, setUpcomingList] = useState([])
   useEffect(() => {
-    setEndedList(
-      isUSDC
-        ? endedNFTProjects.filter((data) => data.currency === 'USDC')
-        : endedNFTProjects.filter((data) => data.currency === 'SOL')
-    )
-  }, [endedNFTProjects, isUSDC])
+    async function getMockCollections() {
+      const mockData = await axios.get('https://nest-api.goosefx.io/open-bid?collection_id=4')
+      setUpcomingList(mockData.data.open_bid.slice(10, 20))
+    }
+    getMockCollections()
+  }, [])
+
+  const getNftPrice = () => {
+    return '02 SOL'
+  }
+  const getRemaningTime = (): string => {
+    return '02h 30m 45s'
+  }
   const FLEX = styled.div`
     display: flex;
     margin: 24px;
@@ -228,73 +209,47 @@ const EndedCollections: FC = () => {
   `
   return (
     <>
-      {!dataFetched ? (
+      <ENDED_TEXT>Ended</ENDED_TEXT>
+      {upcomingList.length > 0 ? (
         <>
-          <FLEX>
-            {loading.map(() => {
-              return (
-                <div className="space">
-                  <SkeletonCommon width="460px" height="460px" borderRadius="15px" />
-                </div>
-              )
-            })}
-          </FLEX>
+          <Row justify="center" align="middle" className="imageRow">
+            <CAROUSEL_WRAPPER>
+              <Slider {...settings}>
+                {upcomingList.map((item, index) => {
+                  return (
+                    <SLIDER_ITEM>
+                      <Card
+                        cover={
+                          <>
+                            <img className="nft-img" src={item.image_url} alt="NFT" />
+                            <NFT_SOLD>SOLD OUT</NFT_SOLD>
+                            <NFT_META>
+                              <span className="flex">
+                                <NFT_INFO> {getRemaningTime()}</NFT_INFO>
+                                <NFT_INFO> {getNftPrice()}</NFT_INFO>
+                              </span>
+                            </NFT_META>
+                          </>
+                        }
+                        className="sweep-card"
+                      ></Card>
+                    </SLIDER_ITEM>
+                  )
+                })}
+              </Slider>
+            </CAROUSEL_WRAPPER>
+          </Row>
         </>
       ) : (
-        <></>
-      )}
-      {endedList && endedList.length > 0 ? (
-        <>
-          <ENDED_TEXT>Ended</ENDED_TEXT>
-          {endedList.length > 0 ? (
-            <>
-              <Row justify="center" align="middle" className="imageRow">
-                <CAROUSEL_WRAPPER>
-                  <Slider {...settings}>
-                    {endedList.map((item, index) => {
-                      return (
-                        <SLIDER_ITEM key={index} onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
-                          <Card
-                            cover={
-                              <>
-                                <img className="nft-img" src={item.coverUrl} alt="NFT" />
-                                <NFT_SOLD>
-                                  <div className="collection-name">{item?.collectionName}</div>
-                                  <div className="sold-text">SOLD OUT</div>
-                                </NFT_SOLD>
-                                <NFT_META>
-                                  <span className="column">
-                                    <NFT_INFO> Items {item?.items} </NFT_INFO>
-                                    <NFT_INFO>
-                                      <GetNftPrice item={item} />
-                                    </NFT_INFO>
-                                  </span>
-                                </NFT_META>
-                              </>
-                            }
-                            className="sweep-card"
-                          ></Card>
-                        </SLIDER_ITEM>
-                      )
-                    })}
-                  </Slider>
-                </CAROUSEL_WRAPPER>
-              </Row>
-            </>
-          ) : (
-            <FLEX>
-              {loading.map(() => {
-                return (
-                  <div className="space">
-                    <SkeletonCommon width="300px" height="300px" borderRadius="15px" />
-                  </div>
-                )
-              })}
-            </FLEX>
-          )}
-        </>
-      ) : (
-        <></>
+        <FLEX>
+          {loading.map(() => {
+            return (
+              <div className="space">
+                <SkeletonCommon width="300px" height="300px" borderRadius="15px" />
+              </div>
+            )
+          })}
+        </FLEX>
       )}
     </>
   )
