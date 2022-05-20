@@ -36,18 +36,6 @@ export const STYLED_EXPAND_ICON = styled.div`
   transform: rotate(180deg);
 `
 
-interface IFarmData {
-  id: string
-  image: string
-  name: string
-  earned: number
-  apr: number
-  rewards?: string
-  liquidity: number
-  type: string
-  currentlyStaked: number
-}
-
 const DisplayRowData = ({ rowData, onExpandIcon }) => {
   return (
     <ROW_CONTAINER>
@@ -66,7 +54,7 @@ const DisplayRowData = ({ rowData, onExpandIcon }) => {
         {rowData?.earned >= 0 ? `${moneyFormatter(rowData?.earned)}` : <Loader />}
       </div>
       <div className="liquidity normal-text set-width-apr">
-        {rowData?.apr >= 0 ? `${percentFormatter(rowData?.apr)}` : <Loader />}
+        {rowData?.apr ? `${percentFormatter(rowData?.apr)}` : <Loader />}
       </div>
       <div className="liquidity normal-text set-width-liquidity">
         {rowData?.liquidity >= 0 ? `$ ${moneyFormatter(rowData?.liquidity)}` : <Loader />}

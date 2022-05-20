@@ -147,15 +147,17 @@ export const STYLED_EXPAND_ICON = styled.img<{ expanded: boolean }>`
   `}
 `
 
-interface IFarmData {
+export interface IFarmData {
   id: string
   image: string
   name: string
   earned: number
-  apr: number
+  apr?: number
   rewards?: number
-  liquidity: number | string
+  liquidity: number
   type: string
+  ptMinted?: number
+  userLiablity?: number
   currentlyStaked: number
 }
 //#endregion
