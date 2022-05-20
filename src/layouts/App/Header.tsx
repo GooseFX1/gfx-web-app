@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Connect } from './Connect'
 import { More } from './More'
@@ -77,6 +77,14 @@ const WRAPPER = styled.nav`
   `}
 `
 
+const MobileWrapper = styled(WRAPPER)`
+  display: flex;
+  flex-direction: row !important;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 0px;
+`
+
 const CollapsibleWrapper = styled.div`
   position: absolute;
   width: 40px;
@@ -99,6 +107,7 @@ export const Header: FC = () => {
   const { isCollapsed, toggleCollapse } = useNavCollapse()
   const { rewardModal, rewardToggle } = useRewardToggle()
   const { mode } = useDarkMode()
+  const [mobile, setMobile] = useState(true) //initial mobile
 
   const handleCollapse = (val) => {
     toggleCollapse(val)
@@ -110,26 +119,44 @@ export const Header: FC = () => {
     }
   }
 
-  return (
-    <WRAPPER id="menu">
-      {!isCollapsed && (
-        <>
-          {slideModal()}
-          <BRAND href="/">
-            <img id="logo" src={`/img/assets/gfx_logo_gradient_${mode}.svg`} alt="GFX Logo" />
-          </BRAND>
-          <Tabs />
-          <BUTTONS>
-            <RewardsButton />
-            <Connect />
-            <More />
-          </BUTTONS>
-        </>
-      )}
+  useEffect(() => {
+    const mobile = window?.innerWidth < 500
+    setMobile(mobile)
+  }, [])
 
-      <Collapsible collapse={isCollapsed} onCollapse={handleCollapse} />
-    </WRAPPER>
-  )
+  if (mobile) {
+    return (
+      <MobileWrapper id="menu">
+        <BRAND href="/">
+          <img id="logo" src={`/img/assets/gfx_logo_gradient_${mode}.svg`} alt="GFX Logo" />
+        </BRAND>
+        <Connect />
+        <More />
+      </MobileWrapper>
+    )
+  } else {
+    return (
+      <WRAPPER id="menu">
+        {!isCollapsed && (
+          <>
+            {slideModal()}
+            <BRAND href="/">
+              <img id="logo" src={`/img/assets/gfx_logo_gradient_${mode}.svg`} alt="GFX Logo" />
+            </BRAND>
+            {!mobile && <Tabs />}
+            <BUTTONS>
+              {!mobile && <RewardsButton />}
+              <Connect />
+
+              <More />
+            </BUTTONS>
+          </>
+        )}
+
+        <Collapsible collapse={isCollapsed} onCollapse={handleCollapse} />
+      </WRAPPER>
+    )
+  }
 }
 
 const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => void }> = ({ collapse, onCollapse }) => {

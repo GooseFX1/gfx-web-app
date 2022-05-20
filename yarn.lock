@@ -2559,14 +2559,6 @@
   dependencies:
     eventemitter3 "^4.0.7"
 
-"@solana/wallet-adapter-base@^0.9.4":
-  version "0.9.5"
-  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-base/-/wallet-adapter-base-0.9.5.tgz#6780dd096d30f0e1ffc9c7869029ec37b2a2fc9e"
-  integrity sha512-KCrSB2s8lA38Bd+aPvHlwPEHZU1owD6LSCikjumUaR3HCcpv+V1lxgQX+tdNaDyEVTKlAYNd0uJU+yQfQlkiOA==
-  dependencies:
-    "@solana/web3.js" "^1.36.0"
-    eventemitter3 "^4.0.0"
-
 "@solana/wallet-adapter-bitpie@^0.2.0":
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-bitpie/-/wallet-adapter-bitpie-0.2.1.tgz#4784002467c01bdf1d3c4ab4bf4d8f6cf10d8008"
@@ -2610,14 +2602,6 @@
   version "0.12.5"
   resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-react/-/wallet-adapter-react-0.12.5.tgz#277c1b839b6ee66cc84f2f094a11716460ddb5da"
   integrity sha512-boXNsxi9d3x53ZFpnFtU9fqSfDYGXA7Lzn86gjskH4Q+a28Qy4N4/7x5h72jZIUEiJoauGb1ReqYiBJP5gN5UQ==
-
-"@solana/wallet-adapter-react@^0.15.4":
-  version "0.15.4"
-  resolved "https://registry.yarnpkg.com/@solana/wallet-adapter-react/-/wallet-adapter-react-0.15.4.tgz#413c3fa6893e9d809e5a6dd4730695fba942967b"
-  integrity sha512-QB8tE1IqYxvHrdDZP3DGICuCq6xydvjUYhW+usIahORmHniFF62Mp/LPfdAGZRDFF7U2/rZPktGFiOxWUJA7Qw==
-  dependencies:
-    "@solana/wallet-adapter-base" "^0.9.4"
-    "@solana/web3.js" "^1.36.0"
 
 "@solana/wallet-adapter-safepal@^0.2.0":
   version "0.2.1"
@@ -7686,17 +7670,15 @@ globby@^6.1.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
-goosefx-ssl-sdk@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.0.3.tgz#7f7daa73efa2cfc90d92d7678ad569753f2c9218"
-  integrity sha512-bcrNIM1D/8a8RzxbP1gf+36ZSUc2G6LBlO3Bk3DrkkvrJvx4qcX7RPYmV2BtsP6fupQy5qB1Ij3piPgyZJWGKg==
+goosefx-ssl-sdk@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.1.2.tgz#36ad8388bd06541ecf42e6f29b16b3a46411cb87"
+  integrity sha512-uwTwggjFBHOXpHDbb591JegslZ6n4Ysk9SuRRqNGixpRAm4L1BIOk4K9bUhqKO7tR+QlRDrwZCEszJbPfOy8rg==
   dependencies:
     "@project-serum/anchor" "^0.17.1-beta.1"
     "@solana/buffer-layout" "^4.0.0"
     "@solana/spl-token-sdk" "npm:@solana/spl-token@^0.2.0"
-    "@solana/wallet-adapter-react" "^0.15.4"
     "@solana/web3.js" "^1.41.1"
-    gfx-ssl-wasm "^0.3.0"
 
 graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.4:
   version "4.2.9"
