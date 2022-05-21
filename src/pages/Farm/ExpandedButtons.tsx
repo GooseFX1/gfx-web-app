@@ -397,7 +397,7 @@ export const SSLButtons: FC<{
   }, [prices])
 
   const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
-  const userTokenBalance = useMemo(
+  let userTokenBalance = useMemo(
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
     [tokenInfo.address, getUIAmount, publicKey]
   )
@@ -407,10 +407,12 @@ export const SSLButtons: FC<{
   )
 
   const onClickMax = (buttonId: string) => {
+    if (name === 'SOL') userTokenBalance = userSOLBalance
     if (buttonId === 'deposit') stakeRef.current.value = userTokenBalance.toFixed(DISPLAY_DECIMAL)
     else unstakeRef.current.value = availableToMint.toFixed(DISPLAY_DECIMAL)
   }
   const onClickHalf = (buttonId: string) => {
+    if (name === 'SOL') userTokenBalance = userSOLBalance
     if (buttonId === 'deposit') stakeRef.current.value = (userTokenBalance / 2).toFixed(DISPLAY_DECIMAL)
     else unstakeRef.current.value = (availableToMint / 2).toFixed(DISPLAY_DECIMAL)
   }
@@ -433,9 +435,7 @@ export const SSLButtons: FC<{
     notEnough =
       parseFloat(amt) >
       (name === 'SOL' ? parseFloat(userSOLBalance.toFixed(3)) : parseFloat(userTokenBalance.toFixed(3)))
-  } catch (e) {
-    console.log(e)
-  }
+  } catch (e) {}
 
   useEffect(() => {
     try {
@@ -444,7 +444,6 @@ export const SSLButtons: FC<{
         parseFloat(amt) >
         (name === 'SOL' ? parseFloat(userSOLBalance.toFixed(3)) : parseFloat(userTokenBalance.toFixed(3)))
     } catch (e) {}
-    console.log(notEnough)
   }, [stakeRef.current?.value])
 
   const mintClicked = () => {

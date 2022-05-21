@@ -310,7 +310,7 @@ export const ExpandedDynamicContent = ({
       const SOL = connection.getAccountInfo(wallet.publicKey)
       SOL.then((res) => setSOLBalance(res.lamports / LAMPORTS_PER_SOL))
     }
-  }, [counter, getUIAmount, publicKey])
+  }, [counter, getUIAmount, wallet.publicKey, userSOLBalance])
 
   let userTokenBalance = useMemo(
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
@@ -536,12 +536,18 @@ export const ExpandedDynamicContent = ({
     }
   }
   const onClickHalf = (buttonId: string): void => {
+    if (name === 'SOL') userTokenBalance = userSOLBalance
     if (buttonId === 'stake') stakeRef.current.value = (userTokenBalance / 2).toFixed(DISPLAY_DECIMAL)
     else unstakeRef.current.value = ((tokenStaked + tokenEarned) / 2).toFixed(DISPLAY_DECIMAL)
   }
   const onClickMax = (buttonId: string): void => {
-    if (buttonId === 'stake') stakeRef.current.value = userTokenBalance.toFixed(DISPLAY_DECIMAL)
-    else unstakeRef.current.value = (tokenStaked + tokenEarned).toFixed(DISPLAY_DECIMAL)
+    //add focus element
+    if (name === 'SOL') userTokenBalance = userSOLBalance
+    if (buttonId === 'stake') {
+      stakeRef.current.value = userTokenBalance.toFixed(DISPLAY_DECIMAL)
+    } else {
+      unstakeRef.current.value = (tokenStaked + tokenEarned).toFixed(DISPLAY_DECIMAL)
+    }
   }
   return (
     <STYLED_EXPANDED_ROW>
