@@ -279,12 +279,13 @@ export const executeWithdraw = async (
   })
   const withdrawTX: Transaction = new Transaction()
   if (tokenName === 'SOL') {
-    const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
+    const associatedTokenAccountAddress = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
+    const associatedTokenAccount = await connection.getAccountInfo(associatedTokenAccountAddress)
     try {
       if (!associatedTokenAccount) {
         const tr = createAssociatedTokenAccountInstruction(
           wallet.publicKey,
-          associatedTokenAccount,
+          associatedTokenAccountAddress,
           wallet.publicKey,
           NATIVE_MINT
         )
@@ -293,9 +294,11 @@ export const executeWithdraw = async (
     } catch (e) {
       console.log(e)
     }
+
     withdrawTX.add(withdrawIX)
-    // const tr = createCloseAccountInstruction(associatedTokenAccount, wallet.publicKey, wallet.publicKey)
-    // withdrawTX.add(tr)
+    const tr = createCloseAccountInstruction(associatedTokenAccountAddress, wallet.publicKey, wallet.publicKey)
+    withdrawTX.add(tr)
+
     let signature
     try {
       signature = await wallet.sendTransaction(withdrawTX, connection)
