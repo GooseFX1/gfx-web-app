@@ -6,23 +6,48 @@ import { CenteredDiv, CenteredImg, SVGToGrey2, SVGToPrimary2, SVGToWhite } from 
 
 const TABS = ['/swap', '/trade', '/NFTs', '/farm']
 
-const LABEL = styled.span`
+const LABEL = styled.span<{ $hover: boolean }>`
   height: 14px;
   width: 7vw;
   ${({ theme }) => theme.flexCenter}
   font-size: 10px;
   color: ${({ theme }) => theme.text2};
   text-transform: capitalize;
+
+  @media (max-width: 500px) {
+    color: #4e4e4e;
+    font-size: 18px;
+    color: ${({ $hover }) => ($hover ? 'white' : '#4e4e4e')};
+
+    &:hover {
+      background-color: #3735bb;
+      color: white;
+    }
+  }
 `
 
 const TAB = styled(Link)`
   ${({ theme }) => theme.flexCenter}
   flex-direction: column;
+
+  @media (max-width: 500px) {
+    position: relative;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+  }
+    
+  }
 `
 
 const TAB_ICON = styled(CenteredImg)`
   margin-bottom: 10px;
   ${({ theme }) => theme.measurements(theme.margin(3))}
+
+  @media (max-width: 500px) {
+    position: absolute;
+    left: 2.5rem;
+  }
 `
 
 const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: number }>`
@@ -83,6 +108,17 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
         height: 20px;
       }
     }
+
+    @media (max-width: 500px) {
+      ${({ $width }) =>
+        [...Array(TABS.length).keys()].map(
+          (x) => `
+          &:nth-child(${x + 1}) {
+            left: 0px;
+          }
+        `
+        )}
+    }
   }
 
   @media (max-width: 720px) {
@@ -100,6 +136,36 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
       left: calc(${({ $index, $width }) => $index} * (100% / ${TABS.length}) - ${({ theme }) => theme.margin(1)});
     }
   }
+
+  @media (max-width: 500px) {
+    background-color: ${({ theme }) => theme.bg1};
+    width: 100%;
+    margin-bottom: 0px;
+    border-radius: 0px;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-around;
+
+    > a {
+      width: 100%;
+      padding-left: 0px;
+      padding-right: 0px;
+      font-size: 18px;
+      height: 64px;
+      border-radius: 0px;
+      padding: 1rem;
+      &:hover {
+        background-color: #3735bb;
+      }
+    }
+
+    &:after {
+      width: 100%;
+      left: 0;
+      background: ${({ theme }) => theme.bg1};
+      height: 0px;
+    }
+  }
 `
 
 export const Tabs: FC = () => {
@@ -112,6 +178,7 @@ export const Tabs: FC = () => {
     return match !== -1 ? pathname.slice(0, pathname.slice(1).indexOf('/') + 1) : pathname
   }, [pathname])
   const index = useMemo(() => TABS.indexOf(cleanedPathName), [cleanedPathName])
+  console.log(hovered)
 
   return (
     <WRAPPER $height={3.5} $index={index} $width={50}>
@@ -132,7 +199,7 @@ export const Tabs: FC = () => {
               }
             })()}
           </TAB_ICON>
-          <LABEL>{path.slice(1)}</LABEL>
+          <LABEL $hover={cleanedPathName === path || hovered === index}>{path.slice(1)}</LABEL>
         </TAB>
       ))}
     </WRAPPER>

@@ -1,15 +1,16 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { Connect } from './Connect'
 import { More } from './More'
 import { Tabs } from './Tabs'
 import { RewardsButton } from '../../components/RewardsPopup'
 import { useDarkMode } from '../../context'
-import { SVGToGrey2, CenteredDiv } from '../../styles'
+import { SVGToGrey2, CenteredDiv, SVGToWhite, CenteredImg } from '../../styles'
 import { useNavCollapse } from '../../context'
 import { ModalSlide } from '../../components/ModalSlide'
 import { useRewardToggle } from '../../context/reward_toggle'
 import { MODAL_TYPES } from '../../constants'
+import { checkMobile } from '../../utils'
 
 const BRAND = styled.a`
   position: absolute;
@@ -102,6 +103,73 @@ const CollapsibleWrapper = styled.div`
     width: 10px;
   }
 `
+const RESPONSIVE_MENU = styled.ul`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 90vh;
+  width: 100vw;
+  padding: 10vh 0 0;
+  background-color: ${({ theme }) => theme.bg1};
+`
+
+const CLOSE = styled.img`
+  position: absolute;
+  ${({ theme }) => theme.measurements('24px')}
+  object-fit: contain;
+  top: 30px;
+  right: 30px;
+`
+
+const RESPONSIVE_DROPDOWN_WRAPPER = styled.div`
+  @media (min-width: 500px) {
+    display: none;
+  }
+`
+
+const DROPDOWN_ICON_WRAPPER = styled(CenteredImg)`
+  ${({ theme }) => theme.measurements('22px')}
+`
+
+const ResponsiveDropdown: FC<{ logoAnimationTime: number }> = ({ logoAnimationTime }) => {
+  const { mode } = useDarkMode()
+  const [opacity, setOpacity] = useState(0)
+
+  const toggleOpacity = useCallback(() => setOpacity(1 - opacity), [opacity])
+
+  const computeDropdownIcon = useCallback(
+    () =>
+      mode === 'dark' || window.location.hash ? (
+        <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/dropdown_icon.svg`} onClick={toggleOpacity} />
+      ) : (
+        <img src={`${process.env.PUBLIC_URL}/img/assets/dropdown_icon.svg`} onClick={toggleOpacity} alt="" />
+      ),
+    [mode, toggleOpacity]
+  )
+  const [dropdownIcon, setDropdownIcon] = useState(computeDropdownIcon())
+
+  useEffect(() => {
+    setDropdownIcon(computeDropdownIcon())
+  }, [computeDropdownIcon, mode])
+
+  return (
+    <RESPONSIVE_DROPDOWN_WRAPPER>
+      <DROPDOWN_ICON_WRAPPER>{dropdownIcon}</DROPDOWN_ICON_WRAPPER>
+      <RESPONSIVE_MENU style={{ display: opacity ? 'flex' : 'none', opacity }}>
+        <CLOSE
+          as={mode === 'dark' ? SVGToWhite : 'img'}
+          src={`${process.env.PUBLIC_URL}/img/assets/cross.svg`}
+          onClick={toggleOpacity}
+        />
+        <Tabs />
+        <RewardsButton />
+      </RESPONSIVE_MENU>
+    </RESPONSIVE_DROPDOWN_WRAPPER>
+  )
+}
 
 export const Header: FC = () => {
   const { isCollapsed, toggleCollapse } = useNavCollapse()
@@ -119,19 +187,28 @@ export const Header: FC = () => {
     }
   }
 
+  // const mobileNavItems = ['/swap', '/trade', '/NFTs', '/farm'].map((link: string) => {
+  //   return (
+  //     <LINK onClick={() => updatePath(link, link === 'docs')} href={'javascript:void(0);'}>
+  //       <LINK_TEXT>{link}</LINK_TEXT>
+  //     </LINK>
+  //   )
+  // })
+
   useEffect(() => {
     const mobile = window?.innerWidth < 500
     setMobile(mobile)
   }, [])
 
-  if (mobile) {
+  if (checkMobile()) {
     return (
       <MobileWrapper id="menu">
         <BRAND href="/">
           <img id="logo" src={`/img/assets/gfx_logo_gradient_${mode}.svg`} alt="GFX Logo" />
         </BRAND>
         <Connect />
-        <More />
+        <ResponsiveDropdown logoAnimationTime={2} />
+        {/* <More /> */}
       </MobileWrapper>
     )
   } else {
