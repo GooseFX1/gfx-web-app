@@ -11,7 +11,7 @@ import { FormDoubleItem } from '../Form/FormDoubleItem'
 import { SuccessfulListingMsg, TransactionErrorMsg, MainButton, Modal } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { notify } from '../../../utils'
-
+import { registerSingleNFT } from '../../../api/NFTs'
 import {
   tradeStatePDA,
   freeSellerTradeStatePDA,
@@ -193,7 +193,7 @@ const IMAGE_LABEL = styled(CenteredDiv)`
 export const SellNFT = () => {
   const history = useHistory()
   const params = useParams<IAppParams>()
-  const { general, ask, fetchGeneral, nftMetadata, updateUserInput, registerSingleNFT, sellNFT, removeNFTListing } =
+  const { general, setGeneral, ask, fetchGeneral, nftMetadata, updateUserInput, sellNFT, removeNFTListing } =
     useNFTDetails()
   const { sessionUser } = useNFTProfile()
   const wallet = useWallet()
@@ -231,19 +231,13 @@ export const SellNFT = () => {
     }
   }, [nftMetadata])
 
-  useEffect(() => {
-    const { state = {} } = history.location
-  }, [history.location, history.location.state])
+  useEffect(() => {}, [history.location, history.location.state])
 
   useEffect(() => {
     if (params.nftMintAddress && (!general || !nftMetadata)) {
-      if (general.non_fungible_id === null) {
-        // registerSingleNFT()
-      } else {
-        fetchGeneral(params.nftMintAddress, connection).then((res) => {
-          console.log(res)
-        })
-      }
+      fetchGeneral(params.nftMintAddress, connection).then((res) => {
+        console.log(res)
+      })
     }
   }, [])
 
@@ -306,6 +300,36 @@ export const SellNFT = () => {
 
   const callSellInstruction = async (e: any) => {
     e.preventDefault()
+
+    // asserts current NFT does not belong to collection, is one-off
+    if (general.non_fungible_id === null) {
+      try {
+        const registeredNFT = await registerSingleNFT({
+          nft_name: general.nft_name,
+          nft_description: general.nft_description,
+          mint_address: general.mint_address,
+          metadata_url: general.metadata_url,
+          image_url: general.image_url,
+          animation_url: general.animation_url
+        })
+
+        setGeneral({ non_fungible_id: registeredNFT.data.non_fungible_id, ...general })
+      } catch (error) {
+        notify({
+          type: 'error',
+          message: (
+            <TransactionErrorMsg
+              title={`Error Registering NFT!`}
+              itemName={nftMetadata.name}
+              supportText={`Please try again, if the error persists please contact support.`}
+            />
+          )
+        })
+
+        return
+      }
+    }
+
     setIsLoading(true)
 
     const { metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, buyerPrice } =
