@@ -8,6 +8,7 @@ import { FixedPriceTabContent } from './FixedPriceTabContent'
 import { OpenBidsTabContent } from './OpenBidsTabContent'
 // import { OwnersTabContent } from './OwnersTabContent'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import { OwnersTabContent } from './OwnersTabContent'
 
 const { TabPane } = Tabs
 
@@ -162,6 +163,9 @@ export const CollectionTabs = ({ filter, setFilter, collapse, setCollapse }) => 
           </TabPane>
           <TabPane tab="Fixed Price" key="2">
             <FixedPriceTabContent filter={filter} setCollapse={setCollapse} />
+          </TabPane>
+          <TabPane tab="Owners" key="3">
+            <OwnersTabContent filter={filter} setCollapse={setCollapse} />
           </TabPane>
         </Tabs>
       ) : (
