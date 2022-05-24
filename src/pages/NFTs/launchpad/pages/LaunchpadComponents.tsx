@@ -2,43 +2,7 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Progress, Switch } from 'antd'
 import { ModalSlide } from '../../../../components/ModalSlide'
-import { useUSDCToggle } from '../../../../context/nft_launchpad'
 
-const ROADMAP_WRAPPER = styled.div`
-  .elipse {
-    height: 60px;
-    width: 60px;
-    margin-left: 25px;
-    margin-top: -100px;
-  }
-  .verticalLine {
-    width: 40%;
-    height: 5px;
-    margin-top: -100px;
-    margin-left: 20px;
-  }
-  .verticalContainer {
-    margin-top: 30px;
-  }
-  .headingText {
-    font-weight: 600;
-    font-size: 20px;
-    margin-left: 75%;
-    line-height: 20px;
-    right: 15px;
-  }
-  .subHeadingText {
-    font-weight: 500;
-    font-size: 15px;
-    right: 10px;
-    line-height: 18px;
-    color: #b5b5b5;
-    text-align: right;
-    width: 340px;
-    padding-top: 5px;
-    margin-left: 55%;
-  }
-`
 const GOLDEN_POPUP = styled.div`
   background: ${({ theme }) => theme.bg2};
   margin: auto;
@@ -86,6 +50,8 @@ const GOLDEN_POPUP = styled.div`
 const ToggleBG = styled.span`
   background: #2a2a2a;
   border-radius: 13px;
+  position: absolute;
+  margin-top: 20px;
   padding: 10px;
   .toggle-text {
     padding: 10px;
@@ -101,31 +67,9 @@ const ToggleBG = styled.span`
     background: linear-gradient(96.79deg, #5855ff 4.25%, #dc1fff 97.61%) !important;
   }
 `
-const TEAM_MEMBER_WRAPPER = styled.div`
-  display: grid;
-  grid-template-columns: auto auto auto;
-  .avatar {
-    cursor: pointer;
-    margin-bottom: 20px;
-    margin-left: 37%;
-    margin-top: 15px;
-  }
-  .userNameText {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 16px;
-    margin-top: 15px;
-    margin-bottom: 38px;
-  }
-`
-
 const INFO_DIV_LIGHT = styled.div`
+  position: absolute;
   display: flex;
-  margin-right: 20px;
-  width: 170px;
-  height: 45px;
   justify-content: center;
   align-items: center;
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
@@ -133,28 +77,18 @@ const INFO_DIV_LIGHT = styled.div`
   padding: 1px;
 
   .inner {
-    width: 100%;
-    height: 100%;
     border-radius: 47px;
     background: ${({ theme }) => theme.bg9};
   }
 
   .inner-2 {
-    position: relative;
-    width: 100%;
-    height: 100%;
+    padding: 12px 24px;
     border-radius: 47px !important;
     background: ${({ theme }) => theme.infoDivBackground};
     color: ${({ theme }) => theme.text1};
     font-weight: 600;
     font-size: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-  }
-  .priceImg {
-    height: 25px;
-    width: 25px;
+    line-height: 18px;
   }
 `
 const USDC_INFO = styled.div`
@@ -200,7 +134,6 @@ const INFO_DIV_BRIGHT = styled.div`
 const ProgressBarBG = styled.div`
   width: 610px;
   height: 70px;
-  margin-bottom: 100px;
   display: flex;
   align-items: center;
   background: #2a2a2a;
@@ -250,49 +183,14 @@ const ProgressBarBG = styled.div`
   }
 `
 
-const VESTING_WRAPPER = styled.div`
-  .wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 18%;
-  }
-  display: flex;
-  flex-direction: column;
-  .vestingStr {
-    margin: auto;
-    margin-left: 40px;
-    margin-right: 40px;
-    text-align: center;
-    font-weight: 600;
-    font-size: 22px;
-    .percentText {
-      font-weight: 600;
-      font-size: 22px;
-      color: #50bb35;
-    }
-  }
-  .currencyImg {
-    width: 35px;
-    height: 35px;
-    margin-right: 15px;
-  }
-  .raisedText {
-    font-weight: 600;
-    font-size: 25px;
-  }
-`
-
 const DARK_DIV = styled.div`
-  width: 45vw;
-
   .dark-1 {
     //biggest
     position: absolute;
-    margin-left: 100px;
+    margin-left: 200px;
     width: 501px;
     height: 501px;
-    margin-top: 25px;
+    margin-top: 50px;
     background: #2a2a2a;
     opacity: 0.6;
     border-radius: 20px;
@@ -300,8 +198,8 @@ const DARK_DIV = styled.div`
   .dark-2 {
     //smaller
     position: absolute;
-    margin-left: 40px;
-    margin-top: 50px;
+    margin-left: 140px;
+    margin-top: 75px;
     width: 451px;
     height: 451px;
     background: #2a2a2a;
@@ -310,8 +208,8 @@ const DARK_DIV = styled.div`
   }
   .dark-3 {
     //smallest
-    margin-left: 0px;
-    margin-top: 75px;
+    margin-left: 100px;
+    margin-top: 100px;
     position: absolute;
     width: 401px;
     height: 401px;
@@ -320,13 +218,13 @@ const DARK_DIV = styled.div`
     border-radius: 20px;
   }
   .image-border {
-    margin-left: 180px;
+    margin-left: 280px;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     position: absolute;
     width: 567px;
     height: 567px;
     border-radius: 20px;
-    margin-top: -7px;
+    margin-top: 18px;
     padding: 5px;
   }
   .inner-image-bg {
@@ -345,32 +243,10 @@ const DARK_DIV = styled.div`
     border-radius: 20px;
   }
 `
-const LIVE_BTN = styled.div`
-  width: 135px;
-  height: 40px;
-  border: 1.5px solid #ffffff;
-  backdrop-filter: blur(23.9091px);
-  position: absolute;
-  margin-left: 575px;
-  margin-top: 30px;
-  z-index: 9999;
-  border-radius: 10px;
-  .liveText {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    margin-top: 2px;
-    font-size: 18px;
-    background: linear-gradient(96.79deg, #f7931a 4.25%, #d832f7 97.61%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-`
 
-export const MintProgressBar = ({ minted, totalNFTs }) => {
-  // const minted = 2000
-  // const totalNFTs = 10000
+export const MintProgressBar = () => {
+  const minted = 2000
+  const totalNFTs = 10000
   let mintPercent = (minted / totalNFTs) * 100
   mintPercent = parseFloat(mintPercent.toFixed(0))
   return (
@@ -383,69 +259,28 @@ export const MintProgressBar = ({ minted, totalNFTs }) => {
           strokeColor={'linear-gradient(96.79deg, #5855FF 4.25%, #DC1FFF 97.61%)'}
         />
         <>
-          <span className="mintedNFT"> {minted ? minted : 0} </span>
-          <span className="totalNFT">/{totalNFTs ? totalNFTs : 0}</span>
+          <span className="mintedNFT"> {minted}</span>
+          <span className="totalNFT">/{totalNFTs}</span>
         </>
       </ProgressBarBG>
     </>
   )
 }
-export const SWITCH_HOLDER = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding-right: 70px;
-  margin-top: 24px;
-`
 
-export const InfoDivLightTheme = ({ items, price, currency }) => {
+export const InfoDivLightTheme = () => {
   return (
     <>
       <INFO_DIV_LIGHT>
         <div className={'inner'}>
-          {price ? (
-            <>
-              <div className="inner-2">
-                <>
-                  {'Price ' + price + ' '}
-                  <img className="priceImg" src={`/img/crypto/${currency}.svg`} />
-                  {currency}
-                </>
-              </div>
-            </>
-          ) : (
-            <div className="inner-2">{'Items ' + items}</div>
-          )}
+          <div className="inner-2">Items 5,555</div>
         </div>
       </INFO_DIV_LIGHT>
-    </>
-  )
-}
-export const Vesting = ({ currency, str }) => {
-  return (
-    <>
-      <VESTING_WRAPPER>
-        <div className="wrapper">
-          <img className="currencyImg" src={`/img/crypto/${currency}.svg`} />
-          <div className="raisedText">{`${currency} raised:`}</div>
-        </div>
-
-        <div className="vestingStr">
-          <span className="percentText">{`50% `}</span>
-          unlocked upfront,
-          <span className="percentText">{`25% `}</span>
-          after 3 months,
-          <span className="percentText">{`25% `}</span>
-          after 6 months.
-        </div>
-      </VESTING_WRAPPER>
-    </>
-  )
-}
-export const InfoDivBrightTheme = ({ items }) => {
-  return (
-    <>
+      <br />
+      <br />
+      <br />
+      <br />
       <INFO_DIV_BRIGHT>
-        <div className="inner-2">{items}</div>
+        <div className="inner-2">Items 5,555</div>
       </INFO_DIV_BRIGHT>
     </>
   )
@@ -465,31 +300,15 @@ export const InfoDivUSDCTheme = () => {
   )
 }
 
-export const MintStarts = ({ time }) => {
-  const getRemaningTime = (time) => {
-    //item?.startsOn;
-    const startsOn = parseFloat(time)
-    const timeDiffrence = startsOn - Date.now()
-    let seconds = Number(timeDiffrence / 1000)
-    var d = Math.floor(seconds / (3600 * 24))
-    var h = Math.floor((seconds % (3600 * 24)) / 3600)
-    var m = Math.floor((seconds % 3600) / 60)
-    var s = Math.floor(seconds % 60)
-
-    return { dDisplay: d, hDisplay: h, mDisplay: m, sDisplay: s }
-  }
-  const rTime = getRemaningTime(time)
+export const MintStarts = () => {
   return (
     <>
       <ProgressBarBG>
         <div className="mintStarts">
           Mint starts:
-          <TimerCircle data={rTime?.dDisplay} />{' '}
-          <div className="timeText"> {rTime?.dDisplay > 1 ? 'Days' : 'Day'} </div>
-          <TimerCircle data={rTime?.hDisplay} />{' '}
-          <div className="timeText"> {rTime?.hDisplay > 1 ? 'hours' : 'hour'} </div>
-          <TimerCircle data={rTime?.mDisplay} />{' '}
-          <div className="timeText"> {rTime?.mDisplay > 1 ? 'minutes' : 'minute'} </div>
+          <TimerCircle data={23} /> <div className="timeText"> Days </div>
+          <TimerCircle data={23} /> <div className="timeText"> Hours </div>
+          <TimerCircle data={23} /> <div className="timeText"> Minutes </div>
         </div>
       </ProgressBarBG>
     </>
@@ -499,52 +318,37 @@ const TimerCircle = ({ data }) => {
   return <div className="timer-circle">{data}</div>
 }
 
-export const TokenSwitch = ({ disabled, currency }) => {
-  const { isUSDC, setIsUSDC } = useUSDCToggle()
-
-  useEffect(() => {
-    if (currency === 'SOL') setIsUSDC(false)
-    else setIsUSDC(true)
-  }, [currency])
-
-  const onChange = () => {
-    setIsUSDC((prev) => !prev)
+export const TokenSwitch = () => {
+  const onChange = (change) => {
+    console.log(change)
   }
   return (
     <>
-      <SWITCH_HOLDER>
-        <ToggleBG>
-          <span className="toggle-text">SOL</span>
-          <Switch disabled={disabled} className="switch" checked={isUSDC} onChange={onChange} />
-          <span className="toggle-text">USDC</span>
-        </ToggleBG>
-      </SWITCH_HOLDER>
+      <ToggleBG>
+        <span className="toggle-text">SOL</span>
+
+        <Switch className="switch" defaultChecked onChange={onChange} />
+        <span className="toggle-text">USDC</span>
+      </ToggleBG>
     </>
   )
 }
 
-export const LiveButton = () => {
+export const DarkDiv = () => {
   return (
-    <LIVE_BTN>
-      <div className="liveText">Live</div>
-    </LIVE_BTN>
-  )
-}
+    <div>
+      <DARK_DIV>
+        <div className="dark-3" />
+        <div className="dark-2" />
+        <div className="dark-1" />
 
-export const DarkDiv = ({ coverUrl }) => {
-  return (
-    <DARK_DIV>
-      <div className="dark-3" />
-      <div className="dark-2" />
-      <div className="dark-1" />
-      <LiveButton />
-
-      <div className="image-border">
-        <div className="inner-image-bg">
-          <img className="inner-image" src={coverUrl} />
+        <div className="image-border">
+          <div className="inner-image-bg">
+            <img className="inner-image" src="/img/assets/NestQuest.png" />
+          </div>
         </div>
-      </div>
-    </DARK_DIV>
+      </DARK_DIV>
+    </div>
   )
 }
 
@@ -565,49 +369,5 @@ export const GoldenTicketPopup = ({}) => {
         to get on the Okay Bears Whitelist.
       </div>
     </GOLDEN_POPUP>
-  )
-}
-
-export const TeamMembers = ({ teamMembers }) => {
-  return (
-    <TEAM_MEMBER_WRAPPER>
-      {teamMembers?.map((team) => {
-        return (
-          <div>
-            {team?.dp_url ? (
-              <div className="avatar">
-                <img src={team?.dp_url} alt="" />
-              </div>
-            ) : (
-              <div className="avatar">
-                <img src={`/img/assets/avatarDark.png`} alt="" />
-              </div>
-            )}
-            <div className="userNameText">{team?.name}</div>
-          </div>
-        )
-      })}
-    </TEAM_MEMBER_WRAPPER>
-  )
-}
-
-export const RoadMap = ({ roadmap }) => {
-  console.log(roadmap)
-  return (
-    <ROADMAP_WRAPPER>
-      {roadmap?.map((road) => {
-        return (
-          <div className="verticalContainer">
-            <div className="headingText">{road?.heading}</div>
-            <div className="subHeadingText">
-              {road?.subheading}
-              {road?.subheading}
-            </div>
-            <img className="elipse" src="/img/assets/elipse.png" alt="" />
-            <img className="verticalLine" src="/img/assets/vectorLine.svg" alt="" />
-          </div>
-        )
-      })}
-    </ROADMAP_WRAPPER>
   )
 }
