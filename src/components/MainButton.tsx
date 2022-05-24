@@ -35,10 +35,6 @@ const BUTTON = styled.button<{ $height: string; $status: Status; $width: string;
   &.sell.button {
     background: linear-gradient(90deg, #bc3635 1.75%, #f7931b 100%);
   }
-
-  &:disabled {
-    cursor: not-allowed;
-  }
 `
 
 export const MainButton: FC<{
