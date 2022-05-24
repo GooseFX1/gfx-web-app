@@ -1,4 +1,4 @@
-import { useEffect, useState, FC, useMemo } from 'react'
+import { useEffect, useState, FC, useMemo, useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -14,6 +14,7 @@ import { Modal, SuccessfulListingMsg } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { notify } from '../../../utils'
 import { tradeStatePDA, callCancelInstruction, callWithdrawInstruction, tokenSize } from '../actions'
+import { removeNonCollectionListing } from '../../../api/NFTs'
 import { BidModal } from './BidModal'
 import {
   AUCTION_HOUSE,
@@ -231,7 +232,7 @@ export const RightSectionTabs: FC<{
 }> = ({ status, ...rest }) => {
   const history = useHistory()
   const [activeTab, setActiveTab] = useState('1')
-  const { general, nftMetadata, ask, bids, removeNFTListing, removeBidOnSingleNFT } = useNFTDetails()
+  const { general, nftMetadata, ask, bids, removeNFTListing, removeBidOnSingleNFT, setAsk } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
   const { connection, network } = useConnectionConfig()
   const wallet = useWallet()
@@ -239,6 +240,7 @@ export const RightSectionTabs: FC<{
   const [isBuying, setIsBuying] = useState<string>()
   const [removeAskModal, setRemoveAskModal] = useState<boolean>(false)
   const [removeBidModal, setRemoveBidModal] = useState<boolean>(false)
+  const [pendingTxSig, setPendingTxSig] = useState<string>()
 
   const isLoading = general === undefined || nftMetadata === undefined
 
@@ -319,10 +321,14 @@ export const RightSectionTabs: FC<{
 
     try {
       const { signature, confirm } = await callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
+      setPendingTxSig(signature)
       if (confirm.value.err === null) {
         setRemoveAskModal(false)
         notify(successfulRemoveAskMsg(signature, nftMetadata, ask.buyer_price))
-        postCancelAskToAPI(ask.ask_id)
+        postCancelAskToAPI(ask.ask_id).then((res) => {
+          console.log(res)
+          setPendingTxSig(undefined)
+        })
       }
     } catch (error) {
       notify({
@@ -333,9 +339,19 @@ export const RightSectionTabs: FC<{
     }
   }
 
-  const postCancelAskToAPI = async (id: any) => {
-    const res = await removeNFTListing(id)
-    console.log(res)
+  const postCancelAskToAPI = async (id: any): Promise<any> => {
+    console.log(general.collection_id)
+    // asserts the nft does not belong to a collection; is a single listing item
+    if (general.collection_id === null) {
+      const removedSingleListingAsk = await removeNonCollectionListing(general.mint_address)
+      console.log('single item removed')
+      if (removedSingleListingAsk === true) setAsk(undefined)
+      return removedSingleListingAsk
+    } else {
+      const removedCollectionItemAsk = await removeNFTListing(id)
+      console.log('collection item removed')
+      return removedCollectionItemAsk
+    }
   }
 
   const successfulRemoveAskMsg = (signature: any, nftMetadata: any, price: string) => ({
@@ -402,6 +418,7 @@ export const RightSectionTabs: FC<{
     const transaction = new Transaction().add(cancelIX)
     const signature = await wallet.sendTransaction(transaction, connection)
     console.log(signature)
+    setPendingTxSig(signature)
     const confirm = await connection.confirmTransaction(signature, 'processed')
     console.log(confirm)
 
@@ -410,6 +427,7 @@ export const RightSectionTabs: FC<{
         console.log(res)
         if (res.data) {
           callAuctionHouseWithdraw(buyerPrice)
+          setPendingTxSig(undefined)
         }
       })
     }
@@ -463,7 +481,7 @@ export const RightSectionTabs: FC<{
     )
   })
 
-  const handleModal = () => {
+  const handleModal = useCallback(() => {
     if (removeAskModal) {
       return (
         <REMOVE_MODAL
@@ -476,6 +494,8 @@ export const RightSectionTabs: FC<{
             title={'Remove Ask'}
             caption={'Removing the asking price will move the state of the NFT into Open Bid.'}
             removeFunction={handleRemoveAsk}
+            pendingTxSig={pendingTxSig}
+            network={network}
           />
         </REMOVE_MODAL>
       )
@@ -493,13 +513,15 @@ export const RightSectionTabs: FC<{
               parseInt(userRecentBid.buyer_price) / LAMPORTS_PER_SOL
             } SOL on ${general.nft_name}`}
             removeFunction={handleRemoveBid}
+            pendingTxSig={pendingTxSig}
+            network={network}
           />
         </REMOVE_MODAL>
       )
     } else if (bidModal) {
       return <BidModal visible={bidModal} setVisible={setBidModal} purchasePrice={isBuying} />
     }
-  }
+  }, [pendingTxSig, removeAskModal, userRecentBid, removeBidModal])
 
   return isLoading ? (
     <div></div>
