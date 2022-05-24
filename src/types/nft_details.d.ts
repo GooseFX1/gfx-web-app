@@ -77,6 +77,15 @@ export type ISingleNFT = {
   owner: string | null
 }
 
+export type IRegisterNFT = {
+  nft_name: string
+  nft_description: string
+  mint_address: string
+  metadata_url: string
+  image_url: string
+  animation_url: string | null
+}
+
 export type INFTBid = {
   bid_id: number
   clock: string

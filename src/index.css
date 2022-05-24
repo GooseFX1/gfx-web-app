@@ -23,6 +23,10 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  cursor: not-allowed;
+}
+
 .ant-dropdown-menu.ant-dropdown-menu-root {
   max-height: 500px;
   overflow-y: auto;

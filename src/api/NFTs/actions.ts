@@ -1,6 +1,7 @@
 import apiClient from '../../api'
 import { NFT_API_ENDPOINTS, NFT_API_BASE } from '../NFTs/constants'
 import { INFTProfile } from '../../types/nft_profile.d'
+import { IRegisterNFT } from '../../types/nft_details.d'
 
 export const completeNFTUserProfile = async (address: string): Promise<any> => {
   try {
@@ -83,5 +84,38 @@ export const fetchRewardsByAddress = async (address: string): Promise<any> => {
     return await res
   } catch (err) {
     return err
+  }
+}
+
+export const registerSingleNFT = async (nft: IRegisterNFT): Promise<any> => {
+  try {
+    const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.SINGLE_ITEM}`, {
+      nft_data: nft
+    })
+    return res
+  } catch (error) {
+    return error
+  }
+}
+
+export const removeNonCollectionListing = async (address: string): Promise<any> => {
+  try {
+    const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.SINGLE_ITEM}`, {
+      data: {
+        mint_address: address
+      }
+    })
+    return res.data
+  } catch (error) {
+    return false
+  }
+}
+
+export const fetchAllSingleNFTs = async (): Promise<any> => {
+  try {
+    const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_SINGLE_ITEM}`)
+    return res.data.single_items
+  } catch (error) {
+    return error
   }
 }

@@ -184,24 +184,26 @@ export const ImageShowcase: FC = ({ ...rest }) => {
           <Col>
             {ask ? <FixedPriceIcon className="ls-action-button" /> : <OpenBidIcon className="ls-action-button" />}
           </Col>
-          <Col>
-            {sessionUser && isFavorited ? (
-              <img
-                className="ls-favorite-heart"
-                src={`/img/assets/heart-red.svg`}
-                alt="heart-red"
-                onClick={handleToggleLike}
-              />
-            ) : (
-              <img
-                className="ls-favorite-heart"
-                src={`/img/assets/heart-empty.svg`}
-                alt="heart-empty"
-                onClick={handleToggleLike}
-              />
-            )}
-            <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>{likes}</span>
-          </Col>
+          {general.non_fungible_id && (
+            <Col>
+              {sessionUser && isFavorited ? (
+                <img
+                  className="ls-favorite-heart"
+                  src={`/img/assets/heart-red.svg`}
+                  alt="heart-red"
+                  onClick={handleToggleLike}
+                />
+              ) : (
+                <img
+                  className="ls-favorite-heart"
+                  src={`/img/assets/heart-empty.svg`}
+                  alt="heart-empty"
+                  onClick={handleToggleLike}
+                />
+              )}
+              <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>{likes}</span>
+            </Col>
+          )}
         </Row>
       </div>
     </LEFT_SECTION>
