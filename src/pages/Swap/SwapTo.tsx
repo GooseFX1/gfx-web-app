@@ -35,6 +35,11 @@ const LABEL = styled.span`
   font-weight: 500;
   font-size: 20px;
   line-height: 24px;
+
+  @media (max-width: 500px) {
+    font-size: 15px;
+    line-height: 20px;
+  }
 `
 
 export const SwapTo: FC<{ height: string }> = ({ height }) => {
@@ -60,7 +65,7 @@ export const SwapTo: FC<{ height: string }> = ({ height }) => {
   return (
     <WRAPPER>
       <LABEL>You Receive</LABEL>
-      <AmountField $balance={balance + ' ' + (tokenB?.symbol || '')} $height={height} $value={undefined}>
+      <AmountField $balance={balance + ' ' + (tokenB?.symbol || '')} $height={height} $value={undefined} $down={true}>
         <Selector height={height} otherToken={tokenA} setToken={setTokenB} token={tokenB} />
         <AMOUNT>
           <span>{outTokenAmount || 0}</span>

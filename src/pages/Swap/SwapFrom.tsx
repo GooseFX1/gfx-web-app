@@ -4,6 +4,7 @@ import { Input } from 'antd'
 import { Selector } from './Selector'
 import { AmountField } from './shared'
 import { useAccounts, useSwap } from '../../context'
+import { checkMobile } from '../../utils'
 
 const QUICK_SELECT = styled.div`
   margin-left: 23.5%;
@@ -18,6 +19,13 @@ const QUICK_SELECT = styled.div`
     padding: 4px ${({ theme }) => theme.margin(1.5)};
     border-radius: 1rem;
   }
+
+  @media (max-width: 500px) {
+    margin-left: 20%;
+    width: 60%;
+    position: absolute;
+    top: -20px;
+  }
 `
 
 const WRAPPER = styled.div`
@@ -25,6 +33,10 @@ const WRAPPER = styled.div`
 
   > div:first-child > span {
     color: ${({ theme }) => theme.text1};
+  }
+
+  @media (max-width: 500px) {
+    margin-top: 40px;
   }
 `
 
@@ -38,6 +50,11 @@ const LABEL = styled.span`
   font-weight: 500;
   font-size: 20px;
   line-height: 24px;
+
+  @media (max-width: 500px) {
+    font-size: 15px;
+    line-height: 20px;
+  }
 `
 
 export const SwapFrom: FC<{ height: string }> = ({ height }) => {
@@ -86,7 +103,12 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
         )}
       </INNER_WRAPPER>
 
-      <AmountField $balance={balance + ' ' + (tokenA?.symbol || '')} $height={height} $value={value || undefined}>
+      <AmountField
+        $balance={balance + ' ' + (tokenA?.symbol || '')}
+        $height={height}
+        $value={value || undefined}
+        $down={false}
+      >
         <Selector balance={balance} height={height} otherToken={tokenB} setToken={setTokenA} token={tokenA} />
         <Input
           maxLength={15}

@@ -24,13 +24,14 @@ import { PublicKey } from '@solana/web3.js'
 import { TOKEN_LIST_URL } from '@jup-ag/core'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ILocationState } from '../../types/app_params.d'
-import { notify, moneyFormatter, nFormatter } from '../../utils'
+import { notify, moneyFormatter, nFormatter, checkMobile } from '../../utils'
 import { CURRENT_SUPPORTED_TOKEN_LIST } from '../../constants'
 import { useParams } from 'react-router-dom'
 
 const CoinGecko = require('coingecko-api')
 const CoinGeckoClient = new CoinGecko()
 
+//@media (max-width: 500px) {
 //#region styles
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -50,6 +51,14 @@ const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
   color: ${({ theme }) => theme.text1};
   width: 100vw;
   margin-bottom: 28px;
+
+  @media (max-width: 500px) {
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    padding: 15vh 15px 1rem 15px;
+  }
 `
 
 const SETTING_MODAL = styled(Modal)`
@@ -66,6 +75,10 @@ const BODY = styled.div`
   margin: ${({ theme }) => theme.margin(5)} 0 ${({ theme }) => theme.margin(4)};
   ${({ theme }) => theme.customScrollBar('6px')};
   ${({ theme }) => theme.measurements('100%')}
+
+  @media (max-width: 500px) {
+    margin: ${({ theme }) => theme.margin(5)} 0 ${({ theme }) => theme.margin(6)};
+  }
 `
 
 const HEADER_TITLE = styled(CenteredDiv)`
@@ -74,6 +87,10 @@ const HEADER_TITLE = styled(CenteredDiv)`
     font-size: 20px;
     font-family: Montserrat;
     color: ${({ theme }) => theme.text1};
+
+    @media (max-width: 500px) {
+      font-size: ;
+    }
   }
 `
 
@@ -157,17 +174,31 @@ const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
     border-radius: 15px;
     padding: ${({ theme }) => theme.margin(2)};
 
+    @media (max-width: 500px) {
+      position: static;
+    }
+
     .content {
       width: 67%;
 
       div {
         ${({ theme }) => theme.ellipse}
       }
+
+      @media (max-width: 500px) {
+        width: 85%;
+      }
     }
     .price {
       margin-left: 4px;
       width: 30%;
     }
+  }
+
+  @media (max-width: 500px) {
+    height: 65px;
+    margin: 0px;
+    margin-bottom: 16px;
   }
 `
 
@@ -233,12 +264,27 @@ const SWAP_ROUTES = styled.div<{ $less: boolean }>`
     padding: 32px 0;
     overflow-x: auto;
     height: 20%;
+
+    @media (max-width: 500px) {
+      flex-direction: column;
+      width: 100%;
+      align-items: center;
+      justify-content: space-around;
+      margin: 2rem 0px 3rem 0px;
+      padding: 0px;
+      height: auto;
+    }
   }
 
   .action {
     position: absolute;
     top: 0;
     right: 32px;
+
+    @media (max-width: 500px) {
+      top: ${({ $less }) => ($less ? '80%' : '85%')};
+      font-size: 16px !important;
+    }
   }
 `
 
@@ -254,6 +300,10 @@ const BestPrice = styled.div`
   border-radius: 0.35rem;
   background-color: #be2cff;
   color: white;
+
+  @media (max-width: 500px) {
+    margin-top: -60px;
+  }
 `
 
 const ShowLess = styled.div`
@@ -334,6 +384,12 @@ const SWITCH = styled(CenteredImg)<{ measurements: number }>`
   .swap-switch {
     height: auto;
     width: auto;
+
+    @media (max-width: 500px) {
+      height: 8rem;
+      width: 8rem;
+      margin-top: 2.5rem;
+    }
   }
 `
 
@@ -347,14 +403,25 @@ const SWAP_CONTENT = styled.div`
   ${({ theme }) => theme.largeBorderRadius}
   background-color: ${({ theme }) => theme.bg9};
   ${({ theme }) => theme.largeShadow}
+
+  @media (max-width: 500px) {
+    width: 100%;
+    font-size: 14px !important;
+    padding: ${({ theme }) => theme.margin(2.5)};
+    margin-bottom: 3rem;
+  }
 `
 //#endregion
 
-const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> = ({ exchange, routes, clickNo }) => {
+const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: number }> = ({
+  exchange,
+  routes,
+  clickNo
+}) => {
   const location = useLocation<ILocationState>()
   const { setEndpoint, network } = useConnectionConfig()
   const { mode } = useDarkMode()
-  const { refreshRates, setFocused, switchTokens } = useSwap()
+  const { refreshRates, setFocused, switchTokens, setClickNo, tokenA, tokenB, inTokenAmount } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
   const [route, setRoute] = useState(routes[clickNo])
 
@@ -419,7 +486,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
       </SETTING_MODAL>
       <HEADER_WRAPPER $iconSize="40px">
         <HEADER_TITLE>
-          <span>{dateString(new Date())}</span>
+          <span>{checkMobile() ? 'Swap' : dateString(new Date())}</span>
           <img src={`/img/crypto/jup_${mode}.svg`} alt="jupiter-icon" className={'jup-icon'} />
         </HEADER_TITLE>
 
@@ -447,6 +514,9 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
         </SWITCH>
         <SwapTo height={height} />
       </BODY>
+      {checkMobile() && tokenA && tokenB && inTokenAmount > 0 && (
+        <AlternativesContent routes={routes} clickNo={clickNo} setClickNo={setClickNo} />
+      )}
       <SwapButton exchange={exchange} route={route} />
     </SWAP_CONTENT>
   )
@@ -575,14 +645,14 @@ const TokenContent: FC = () => {
     <TOKEN_WRAPPER>
       <TokenHeader>
         <CLICKER_ICON>
-          <img src={`/img/crypto/${tokenA.symbol}.svg`} alt="" />
+          <img src={`/img/crypto/${tokenA?.symbol}.svg`} alt="" />
         </CLICKER_ICON>
         <SubHeader>
           <TokenTitle>
-            {tokenA.name} ({tokenA.symbol})
+            {tokenA?.name} ({tokenA?.symbol})
           </TokenTitle>
           <COPY style={{ display: 'flex', alignItems: 'center' }}>
-            <SmallerTitle>{truncate(tokenA.address)}</SmallerTitle>
+            <SmallerTitle>{truncate(tokenA?.address)}</SmallerTitle>
             <span className={`copy-button ${copiedAction ? 'copied' : ''}`} onClick={handleCopyTokenMint}>
               {copiedAction ? 'Copied!' : 'Copy'}
             </span>
@@ -775,10 +845,13 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
               .fill(1)
               .map(() => (
                 <SkeletonCommon
-                  width="330px"
+                  width={'330px'}
                   height="100px"
                   borderRadius="10px"
-                  style={{ marginRight: '16px', boxShadow: '0 6px 9px 0 rgba(36, 36, 36, 0.1)' }}
+                  style={{
+                    marginRight: checkMobile() ? '0px' : '16px',
+                    boxShadow: '0 6px 9px 0 rgba(36, 36, 36, 0.1)'
+                  }}
                 />
               ))
           : (!less ? details : details.slice(0, 2)).map((detail, k) => (
@@ -884,18 +957,31 @@ export const SwapMain: FC = () => {
     //setClickNo(1)
   }, [tokenA?.symbol, tokenB?.symbol, routes, slippage, inTokenAmount, outTokenAmount])
 
-  return (
-    <WRAPPER>
-      <INNERWRAPPER $desktop={desktop && allowed}>
-        {desktop && allowed && <TokenContent />}
-        <SwapContent exchange={exchange} routes={chosenRoutes} clickNo={clickNo} />
-        {desktop && allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
-      </INNERWRAPPER>
-      {allowed && inTokenAmount > 0 && (
-        <AlternativesContent routes={chosenRoutes} clickNo={clickNo} setClickNo={setClickNo} />
-      )}
-    </WRAPPER>
-  )
+  if (checkMobile()) {
+    return (
+      <WRAPPER>
+        <INNERWRAPPER $desktop={!checkMobile()}>
+          <SwapContent exchange={exchange} routes={chosenRoutes} clickNo={clickNo} />
+          {allowed && <TokenContent />}
+
+          {allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
+        </INNERWRAPPER>
+      </WRAPPER>
+    )
+  } else {
+    return (
+      <WRAPPER>
+        <INNERWRAPPER $desktop={desktop && allowed}>
+          {desktop && allowed && <TokenContent />}
+          <SwapContent exchange={exchange} routes={chosenRoutes} clickNo={clickNo} />
+          {desktop && allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
+        </INNERWRAPPER>
+        {allowed && inTokenAmount > 0 && (
+          <AlternativesContent routes={chosenRoutes} clickNo={clickNo} setClickNo={setClickNo} />
+        )}
+      </WRAPPER>
+    )
+  }
 }
 
 interface RouteParams {
