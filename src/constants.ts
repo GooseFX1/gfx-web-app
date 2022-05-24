@@ -13,7 +13,8 @@ export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'SRM', 'ETH', 'GMT',
 export const FARM_SUPPORTED_TOKEN_LIST = ['GOFX']
 export const MODAL_TYPES = {
   FEES: 'FEES',
-  REWARDS: 'REWARDS'
+  REWARDS: 'REWARDS',
+  GOLDEN_TICKET: 'GOLDEN_TICKET'
 }
 
 export const TOKEN_BLACKLIST = [
