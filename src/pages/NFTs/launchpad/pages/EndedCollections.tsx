@@ -29,6 +29,8 @@ const CAROUSEL_WRAPPER = styled.div`
     &.slick-disabled {
       opacity: 0;
     }
+    .sold-out {
+    }
   }
 
   .slick-prev {
@@ -79,7 +81,9 @@ const NFT_TITLE = styled.div`
 `
 const NFT_INFO = styled.div`
   font-weight: 600;
+  line-height: 22px;
   font-size: 18px !important;
+  margin-bottom: 10px;
 `
 const SLIDER_ITEM = styled.div`
   position: relative;
@@ -141,15 +145,24 @@ const SLIDER_ITEM = styled.div`
 const NFT_SOLD = styled.div`
   position: absolute;
   width: 300px;
+  height: 100%;
+  padding-top: 45%;
+  align-items: center;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 200px;
-  padding: ${({ theme }) => theme.margin(3)};
   bottom: 0px;
-  .flex {
-    display: flex;
-    justify-content: space-between;
+
+  .collection-name {
+    font-weight: 600;
+    font-size: 25px;
+    line-height: 30px;
+  }
+  .sold-text {
+    font-weight: 700;
+    margin-top: 10px;
+    font-size: 20px;
+    line-height: 24px;
+    text-align: center;
   }
 `
 const NFT_META = styled.div`
@@ -159,14 +172,15 @@ const NFT_META = styled.div`
   flex-direction: column;
   justify-content: space-between;
   height: 87px;
-  padding: ${({ theme }) => theme.margin(3)};
   background: linear-gradient(68.66deg, rgba(255, 255, 255, 0.1) 21.47%, rgba(255, 255, 255, 0.015) 102.44%);
-  backdrop-filter: blur(50px);
+  backdrop-filter: blur(60px);
   border-radius: 15px 10px 10px 15px;
   bottom: 0px;
-  .flex {
+  .column {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 12px;
   }
 `
 
@@ -222,11 +236,14 @@ const EndedCollections: FC = () => {
                         cover={
                           <>
                             <img className="nft-img" src={item.image_url} alt="NFT" />
-                            <NFT_SOLD>SOLD OUT</NFT_SOLD>
+                            <NFT_SOLD>
+                              <div className="collection-name">{item.nft_name}</div>
+                              <div className="sold-text">SOLD OUT</div>
+                            </NFT_SOLD>
                             <NFT_META>
-                              <span className="flex">
-                                <NFT_INFO> {getRemaningTime()}</NFT_INFO>
-                                <NFT_INFO> {getNftPrice()}</NFT_INFO>
+                              <span className="column">
+                                <NFT_INFO> Items 7,000 </NFT_INFO>
+                                <NFT_INFO>Price 25 SOL </NFT_INFO>
                               </span>
                             </NFT_META>
                           </>
