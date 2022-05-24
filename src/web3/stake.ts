@@ -1,5 +1,5 @@
 import BN from 'bn.js'
-import { Idl, Instruction, Program, Provider } from '@project-serum/anchor'
+import { Idl, Program, Provider } from '@project-serum/anchor'
 import { u64, publicKeyLayout } from './layout'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
@@ -19,7 +19,8 @@ const StakeIDL = require('./idl/stake.json')
 const { blob, struct, u8 } = require('buffer-layout')
 
 export const CONTROLLER_KEY = new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
-const GOFX_MINT = 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'
+export const GOFX_MINT = 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'
+const ADMIN = new PublicKey('9zmM8D5iwnzqc25n9zXZ4HfGcvM32xF99w3awCRPiUtN')
 
 const LAYOUT = struct([
   blob(8, 'sighash'),
@@ -152,13 +153,14 @@ export const executeUnstakeAndClaim = async (
   //TODO : mint Address need to be passed into the function when more tokens are supported
   const tokenVault: PublicKey = await findAssociatedTokenAddress(CONTROLLER_KEY, toPublicKey(GOFX_MINT))
   const userTokenAta: PublicKey = await findAssociatedTokenAddress(wallet.publicKey, toPublicKey(GOFX_MINT))
-
+  const feeCollectorAta: PublicKey = await findAssociatedTokenAddress(ADMIN, toPublicKey(GOFX_MINT))
   const unstakeAmountInstruction = {
     controller: CONTROLLER_KEY,
     stakingAccount: stakingAccountKey,
     mint: GOFX_MINT,
     vault: tokenVault,
     userAta: userTokenAta,
+    feeCollectorAta: feeCollectorAta,
     userWallet: wallet.publicKey,
     tokenProgram: TOKEN_PROGRAM_ID
   }
@@ -205,7 +207,6 @@ export const fetchCurrentAmountStaked = async (
       stakingBalance: staking_balance / LAMPORTS_PER_SOL
     }
   } catch (err) {
-    console.log(err)
     return err
   }
 }

@@ -224,7 +224,6 @@ const STYLED_STAKE_PILL = styled(MainButton)`
   }
 
   &.miniButtons {
-    width: 125px;
   }
 `
 const MAX_BUTTON = styled.div`
@@ -381,7 +380,7 @@ export const SSLButtons: FC<{
   isMintLoading,
   isUnstakeLoading
 }) => {
-  const miniButtonsClass = document.activeElement === unstakeRef.current ? 'miniButtons active' : 'miniButtons'
+  const miniButtonsClass = document.activeElement === unstakeRef.current ? ' active' : ''
   const depositButtonClass = document.activeElement === stakeRef.current ? ' active' : ''
   const { prices } = usePriceFeed()
   const { farmDataSSLContext, operationPending } = useFarmContext()
@@ -398,7 +397,7 @@ export const SSLButtons: FC<{
   }, [prices])
 
   const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
-  const userTokenBalance = useMemo(
+  let userTokenBalance = useMemo(
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
     [tokenInfo.address, getUIAmount, publicKey]
   )
@@ -408,10 +407,12 @@ export const SSLButtons: FC<{
   )
 
   const onClickMax = (buttonId: string) => {
+    if (name === 'SOL') userTokenBalance = userSOLBalance
     if (buttonId === 'deposit') stakeRef.current.value = userTokenBalance.toFixed(DISPLAY_DECIMAL)
     else unstakeRef.current.value = availableToMint.toFixed(DISPLAY_DECIMAL)
   }
   const onClickHalf = (buttonId: string) => {
+    if (name === 'SOL') userTokenBalance = userSOLBalance
     if (buttonId === 'deposit') stakeRef.current.value = (userTokenBalance / 2).toFixed(DISPLAY_DECIMAL)
     else unstakeRef.current.value = (availableToMint / 2).toFixed(DISPLAY_DECIMAL)
   }
@@ -419,26 +420,37 @@ export const SSLButtons: FC<{
     tokenData?.ptMinted >= 0 ? tokenData.currentlyStaked + tokenData.earned - tokenData.ptMinted : 0
   const availableToMintFiat = tokenPrice && availableToMint * tokenPrice.current
 
-  const checkbasicConditions = (amt: number) => {
-    const userAmount = parseFloat(unstakeRef.current.value)
-    if (
-      isNaN(parseFloat(unstakeRef.current.value)) ||
-      userAmount < 0.000001 ||
-      parseFloat(userAmount.toFixed(3)) > parseFloat(amt.toFixed(3))
-    ) {
-      unstakeRef.current.value = 0
+  const checkbasicConditions = (amt: number, stakeRefBool?: boolean) => {
+    const userAmount = stakeRefBool ? parseFloat(stakeRef.current.value) : parseFloat(unstakeRef.current.value)
+    if (isNaN(userAmount) || userAmount < 0.000001 || parseFloat(userAmount.toFixed(3)) > parseFloat(amt.toFixed(3))) {
+      stakeRefBool ? (stakeRef.current.value = 0) : (unstakeRef.current.value = 0)
       notify(invalidInputErrMsg(amt >= 0 ? amt : undefined, name))
       return true
     }
     return false
   }
+  let notEnough
+  try {
+    let amt = parseFloat(stakeRef.current?.value).toFixed(3)
+    notEnough =
+      parseFloat(amt) >
+      (name === 'SOL' ? parseFloat(userSOLBalance.toFixed(3)) : parseFloat(userTokenBalance.toFixed(3)))
+  } catch (e) {}
+
+  useEffect(() => {
+    try {
+      let amt = parseFloat(stakeRef.current?.value).toFixed(3)
+      notEnough =
+        parseFloat(amt) >
+        (name === 'SOL' ? parseFloat(userSOLBalance.toFixed(3)) : parseFloat(userTokenBalance.toFixed(3)))
+    } catch (e) {}
+  }, [stakeRef.current?.value])
 
   const mintClicked = () => {
     if (checkbasicConditions(availableToMint)) return
     onClickMint(availableToMint)
   }
   const burnClicked = () => {
-    console.log(userPoolTokenBalance)
     if (checkbasicConditions(userPoolTokenBalance)) return
     onClickBurn()
   }
@@ -447,10 +459,11 @@ export const SSLButtons: FC<{
     if (checkbasicConditions(availableToMint)) return
     const multiplier = name === 'SOL' ? 10000 : 10
     let amountInNative = (unstakeRef.current.value / tokenData?.userLiablity) * LAMPORTS_PER_SOL * multiplier
-    if (availableToMint.toFixed(3) === unstakeRef.current.value) amountInNative = 100 * 100
+    if (parseFloat(availableToMint.toFixed(3)) === parseFloat(unstakeRef.current.value)) {
+      amountInNative = 100 * 100
+    }
     onClickWithdraw(amountInNative)
   }
-  const notEnough = parseFloat(stakeRef.current?.value) > (name === 'SOL' ? userSOLBalance : userTokenBalance)
   return (
     <>
       {wallet.publicKey ? (
@@ -488,14 +501,16 @@ export const SSLButtons: FC<{
                     </MAX_BUTTON>
                   </div>
                 </STYLED_SOL>
-                <STYLED_STAKE_PILL
-                  loading={isStakeLoading}
-                  className={depositButtonClass}
-                  disabled={isStakeLoading || notEnough}
-                  onClick={() => onClickDeposit()}
-                >
-                  {notEnough ? 'Not enough funds' : 'Deposit'}
-                </STYLED_STAKE_PILL>
+                <FLEX>
+                  <STYLED_STAKE_PILL
+                    loading={isStakeLoading}
+                    className={depositButtonClass}
+                    disabled={isStakeLoading || notEnough}
+                    onClick={() => onClickDeposit()}
+                  >
+                    {notEnough ? 'Not enough funds' : 'Deposit'}
+                  </STYLED_STAKE_PILL>
+                </FLEX>
               </div>
               <div className="SOL-item">
                 <STYLED_SOL>
@@ -511,37 +526,15 @@ export const SSLButtons: FC<{
                 </STYLED_SOL>
                 <FLEX>
                   <STYLED_STAKE_PILL
-                    loading={isMintLoading}
-                    disabled={
-                      isUnstakeLoading || parseFloat(availableToMint.toFixed(DISPLAY_DECIMAL)) <= 0 || operationPending
-                    }
-                    className={miniButtonsClass}
-                    onClick={() => mintClicked()}
-                    title={'Mint gTokens from your token balance'}
-                  >
-                    Mint
-                  </STYLED_STAKE_PILL>
-                  <STYLED_STAKE_PILL
-                    loading={isBurnLoading}
-                    disabled={isUnstakeLoading || operationPending || userPoolTokenBalance <= 0}
-                    className={miniButtonsClass}
-                    title={'Withdraw gTokens to your wallet'}
-                    onClick={() => burnClicked()}
-                  >
-                    Withdraw
-                    {/* withdraw is doing the work of burn */}
-                  </STYLED_STAKE_PILL>
-                  <STYLED_STAKE_PILL
                     loading={isWithdrawLoading}
                     disabled={
                       isUnstakeLoading || parseFloat(availableToMint.toFixed(DISPLAY_DECIMAL)) <= 0 || operationPending
                     }
                     className={miniButtonsClass}
-                    title={'Burn gTokens in order to redeem your deposited token'}
+                    title={'Withdraw tokens to your wallet'}
                     onClick={() => withdrawClicked()}
                   >
-                    Burn
-                    {/* change the function name */}
+                    Withdraw
                   </STYLED_STAKE_PILL>
                 </FLEX>
               </div>

@@ -54,6 +54,7 @@ export interface Colors {
   bg14: Color
   bg15: Color
   bg16: Color
+  bg17: Color
   swapSides1: Color
   swapSides2: Color
   modalBackground: Color

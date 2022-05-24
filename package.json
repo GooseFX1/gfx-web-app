@@ -45,7 +45,6 @@
     "emailjs-com": "^3.2.0",
     "eventemitter3": "^4.0.7",
     "firebase": "^9.6.8",
-    "gfx-ssl-wasm": "^0.3.0",
     "gfx_stocks_pool": "file:./wasm",
     "goosefx-ssl-sdk": "^1.1.2",
     "lodash.chunk": "^4.2.0",

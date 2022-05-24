@@ -1,26 +1,24 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { Program, Provider } from '@project-serum/anchor'
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { fetchSSLVolumeData, fetchSSLAPR } from '../../api/SSL'
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
 import styled, { css } from 'styled-components'
 import { Table } from 'antd'
 import BN from 'bn.js'
 import { columns } from './Columns'
-import { ExpandedContent } from './ExpandedContent'
 import { ExpandedDynamicContent } from './ExpandedDynamicContent'
 import {
   getStakingAccountKey,
   fetchCurrentAmountStaked,
   CONTROLLER_KEY,
   CONTROLLER_LAYOUT,
-  SSL_LAYOUT,
-  getTokenDecimal,
   fetchSSLAmountStaked,
   getTokenAddresses,
   getSslAccountKey
 } from '../../web3'
 import { useConnectionConfig, usePriceFeed, useFarmContext } from '../../context'
-import { ADDRESSES } from '../../web3/ids'
+import { ADDRESSES } from '../../web3'
 import { MorePoolsSoon } from './MorePoolsSoon'
 
 const StakeIDL = require('../../web3/idl/stake.json')
@@ -31,7 +29,7 @@ export const STYLED_TABLE_LIST = styled(Table)`
   ${({ theme }) => `
   max-width: 100%;
   .ant-table {
-    background: ${theme.bg3};
+    background: ${theme.bg17};
     border-radius: 20px 20px 0px 0px;
     box-shadow: ${theme.tableListBoxShadow};
   }
@@ -76,7 +74,7 @@ export const STYLED_TABLE_LIST = styled(Table)`
         }
       }
       > td {
-        background-color: ${theme.bg3};
+        background-color: ${theme.bg17};
         border-bottom: 1px solid #BABABA !important;
         padding-bottom: ${theme.margin(4)};
       }
@@ -149,15 +147,17 @@ export const STYLED_EXPAND_ICON = styled.img<{ expanded: boolean }>`
   `}
 `
 
-interface IFarmData {
+export interface IFarmData {
   id: string
   image: string
   name: string
   earned: number
-  apr: number
+  apr?: number
   rewards?: number
-  liquidity: number | string
+  liquidity: number
   type: string
+  ptMinted?: number
+  userLiablity?: number
   currentlyStaked: number
 }
 //#endregion
@@ -218,12 +218,17 @@ export const TableList = ({ dataSource }: any) => {
   }, [wallet.publicKey, connection])
 
   useEffect(() => {
-    if (gofxPrice !== undefined) {
+    if (solPrice !== undefined) {
       fetchSSLData()
         .then((farmSSLData) => {
           if (farmSSLData) setFarmDataSSLContext(farmSSLData)
         })
         .catch((err) => console.log(err))
+    }
+  }, [accountKey, solPrice?.current, counter])
+
+  useEffect(() => {
+    if (gofxPrice !== undefined) {
       fetchGOFXData(accountKey)
         .then((farmData) => {
           if (farmData.length > 0) {
@@ -259,6 +264,8 @@ export const TableList = ({ dataSource }: any) => {
     let tokenAddresses = getTokenAddresses(SSLTokenNames, network)
     let newFarmDataContext = farmDataSSLContext
     for (let i = 0; i < SSLTokenNames.length; i++) {
+      let APR = await fetchSSLAPR(tokenAddresses[i].toString())
+      let volumeDays = await fetchSSLVolumeData(tokenAddresses[i].toString())
       const sslAccountKey = await getSslAccountKey(tokenAddresses[i])
       let { sslData, liquidityAccount } = await fetchSSLAmountStaked(
         connection,
@@ -267,7 +274,6 @@ export const TableList = ({ dataSource }: any) => {
         tokenAddresses[i]
       )
       const tokenPrice = SSLTokenNames[i] === 'USDC' ? 1 : solPrice?.current
-      const APR = 0.09
       //@ts-ignore
       let liquidity = sslData.liability + sslData.swappedLiability
       const ptMinted = liquidityAccount ? liquidityAccount.ptMinted : 0
@@ -280,12 +286,13 @@ export const TableList = ({ dataSource }: any) => {
         if (data.name === SSLTokenNames[i]) {
           return {
             ...data,
-            earned: Number(earned) / Math.pow(10, sslData.decimals),
+            earned: Math.max(Number(earned) / Math.pow(10, sslData.decimals), 0),
             apr: APR * 100,
-            liquidity: tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)),
+            liquidity: tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0,
             currentlyStaked: Number(amountDeposited) / Math.pow(10, sslData.decimals),
             userLiablity: Number(userLiablity),
-            ptMinted: Number(ptMinted) / Math.pow(10, 9)
+            ptMinted: Number(ptMinted) / Math.pow(10, 9),
+            volume: tokenPrice ? tokenPrice * volumeDays.volume : 0
           }
         } else return data
       })
@@ -312,7 +319,8 @@ export const TableList = ({ dataSource }: any) => {
           apr: APR * 100,
           rewards: dailyRewards,
           liquidity: gofxPrice.current * liqidity,
-          currentlyStaked: currentlyStaked
+          currentlyStaked: currentlyStaked,
+          volume: '-'
         }
       } else return data
     })

@@ -75,12 +75,12 @@ export const stakeTokens = [
     id: '1',
     image: 'GOFX',
     name: 'GOFX',
-    earned: 0,
-    apr: 0,
+    earned: -1,
     rewards: 100,
-    liquidity: 0,
+    liquidity: -1,
     type: 'Staking',
-    currentlyStaked: 0
+    currentlyStaked: -1,
+    volume: '-'
   }
 ]
 export const sslTokens = [
@@ -88,21 +88,19 @@ export const sslTokens = [
     id: '2',
     image: 'SOL',
     name: 'SOL',
-    earned: 0,
-    apr: 0,
-    liquidity: 0,
+    earned: -1,
+    liquidity: -1,
     type: 'SSL',
-    currentlyStaked: 0
+    currentlyStaked: -1
   },
   {
     id: '3',
     image: 'USDC',
     name: 'USDC',
-    earned: 0,
-    apr: 0,
-    liquidity: 0,
+    earned: -1,
+    liquidity: -1,
     type: 'SSL',
-    currentlyStaked: 0
+    currentlyStaked: -1
   }
 ]
 

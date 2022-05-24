@@ -310,7 +310,7 @@ export const ExpandedDynamicContent = ({
       const SOL = connection.getAccountInfo(wallet.publicKey)
       SOL.then((res) => setSOLBalance(res.lamports / LAMPORTS_PER_SOL))
     }
-  }, [counter, getUIAmount, publicKey])
+  }, [counter, getUIAmount, wallet.publicKey, userSOLBalance])
 
   let userTokenBalance = useMemo(
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
@@ -367,7 +367,7 @@ export const ExpandedDynamicContent = ({
       parseFloat(stakeRef.current.value) > parseFloat(userTokenBalance.toFixed(3))
     ) {
       stakeRef.current.value = 0
-      notify(invalidInputErrMsg(amt ? amt : userTokenBalance, name))
+      notify(invalidInputErrMsg(amt >= 0 ? amt : userTokenBalance, name))
       return true
     }
     return false
@@ -399,16 +399,15 @@ export const ExpandedDynamicContent = ({
     const amount = parseFloat(unstakeRef.current.value)
     setBurnLoading(true)
     try {
-      // burn and withdraw are interchanged so message is changed
       const confirm = executeBurn(SSLProgram, wallet, connection, network, name, amount).then((con) => {
         setBurnLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Withdraw))
+          notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Burn))
           setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
-          notify(sslErrorMessage(name, error.message, signature, network, Withdraw))
+          notify(sslErrorMessage(name, error.message, signature, network, Burn))
           return
         }
       })
@@ -425,11 +424,11 @@ export const ExpandedDynamicContent = ({
         setWithdrawLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Burn))
+          notify(sslSuccessfulMessage(signature, unstakeRef.current.value, name, network, Withdraw))
           setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
-          notify(sslErrorMessage(name, error.message, signature, network, Burn))
+          notify(sslErrorMessage(name, error.message, signature, network, Withdraw))
           return
         }
       })
@@ -537,12 +536,18 @@ export const ExpandedDynamicContent = ({
     }
   }
   const onClickHalf = (buttonId: string): void => {
+    if (name === 'SOL') userTokenBalance = userSOLBalance
     if (buttonId === 'stake') stakeRef.current.value = (userTokenBalance / 2).toFixed(DISPLAY_DECIMAL)
     else unstakeRef.current.value = ((tokenStaked + tokenEarned) / 2).toFixed(DISPLAY_DECIMAL)
   }
   const onClickMax = (buttonId: string): void => {
-    if (buttonId === 'stake') stakeRef.current.value = userTokenBalance.toFixed(DISPLAY_DECIMAL)
-    else unstakeRef.current.value = (tokenStaked + tokenEarned).toFixed(DISPLAY_DECIMAL)
+    //add focus element
+    if (name === 'SOL') userTokenBalance = userSOLBalance
+    if (buttonId === 'stake') {
+      stakeRef.current.value = userTokenBalance.toFixed(DISPLAY_DECIMAL)
+    } else {
+      unstakeRef.current.value = (tokenStaked + tokenEarned).toFixed(DISPLAY_DECIMAL)
+    }
   }
   return (
     <STYLED_EXPANDED_ROW>
