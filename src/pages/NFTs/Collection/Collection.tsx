@@ -18,7 +18,9 @@ export const Collection: FC = (): JSX.Element => {
     fetchSingleCollection,
     setSingleCollection,
     setFixedPriceWithinCollection,
-    setOpenBidWithinCollection
+    setOpenBidWithinCollection,
+    collectionOwners,
+    setCollectionOwners
   } = useNFTCollections()
   const [err, setErr] = useState(false)
   const [filter, setFilter] = useState('')
@@ -29,6 +31,7 @@ export const Collection: FC = (): JSX.Element => {
       setSingleCollection(undefined)
       setFixedPriceWithinCollection(undefined)
       setOpenBidWithinCollection(undefined)
+      setCollectionOwners(undefined)
     }
   }, [])
 
