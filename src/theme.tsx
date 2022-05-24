@@ -104,6 +104,9 @@ export function colors(mode: string): Colors {
     bg16: mode === 'dark' ? '#1E1E1E' : '#EEEEEE',
     bg17: mode === 'dark' ? '#343434' : '#FFFFFF',
 
+    infoDivBackground:
+      'linear-gradient(0deg, rgba(116, 116, 116, 0.2), rgba(116, 116, 116, 0.2)), linear-gradient(94.33deg, rgba(247, 147, 26, 0.3) 5.26%, rgba(224, 60, 255, 0.3) 96.87%);',
+
     modalBackground: mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(96, 96, 96, 0.5)',
     bgReward:
       mode === 'dark'

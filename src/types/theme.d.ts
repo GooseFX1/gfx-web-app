@@ -58,6 +58,7 @@ export interface Colors {
   swapSides1: Color
   swapSides2: Color
   modalBackground: Color
+  infoDivBackground: Color
   bgReward: Color
   substractImg: Color
   grey1: Color

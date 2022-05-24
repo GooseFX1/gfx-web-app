@@ -102,36 +102,7 @@ const SLIDER_ITEM = styled.div`
       .sweep-price {
         margin-right: 15px;
       }
-      .sweeper-solana-logo {
-        height: 10px;
-        width: 10px;
-        display: inline-block;
-        position: absolute;
-        right: 15px;
-      }
     }
-  }
-  .sweep-nft-name {
-    text-align: center;
-    font-size: 15px;
-    font-weight: 600;
-    margin-top: 15px;
-    color: ${({ theme }) => theme.text7};
-  }
-  .nft-sweep-success {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-    .successIcon {
-      width: 35px;
-      height: 35px;
-    }
-  }
-  .nft-sweep-fail {
-    color: red;
-    font-size: 14px;
-    text-align: center;
-    margin-top: 10px;
   }
 `
 const FLEX = styled.div`
