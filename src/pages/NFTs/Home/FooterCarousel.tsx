@@ -27,7 +27,7 @@ const FooterCarousel = () => {
   useEffect(() => {
     // the numbers are collection ids for the nfts rendered in the footer
     const nfts = Promise.all(
-      ['1', '4', '2'].map((id) => fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.OPEN_BID, id))
+      ['1', '4', '7'].map((id) => fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.OPEN_BID, id))
     )
 
     nfts.then((res) => {
