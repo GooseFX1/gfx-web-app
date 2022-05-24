@@ -13,6 +13,7 @@ export enum NFT_API_ENDPOINTS {
   FIXED_PRICE = '/fixed-price',
   SINGLE_NFT = '/nft',
   SINGLE_ITEM = '/single-item',
+  ALL_SINGLE_ITEM = '/all-single-items',
   BID = '/bid',
   ASK = '/ask',
   LIKE = '/like',
