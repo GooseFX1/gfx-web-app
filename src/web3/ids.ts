@@ -62,10 +62,6 @@ export const ADDRESSES: {
         address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
         decimals: 9
       },
-      MSOL: {
-        address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
-        decimals: 9
-      },
       SOL: {
         address: SYNTH_DEFAULT_MINT,
         decimals: 9
@@ -73,6 +69,14 @@ export const ADDRESSES: {
       gUSD: {
         address: PublicKey.default,
         decimals: 6
+      },
+      SRM: {
+        address: new PublicKey('SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt'),
+        decimals: 6
+      },
+      ETH: {
+        address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
+        decimals: 8
       },
       gAAPL: {
         address: PublicKey.default,

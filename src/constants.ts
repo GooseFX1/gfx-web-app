@@ -9,7 +9,7 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
 }
 
 export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC']
-export const FARM_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'GOFX']
+export const FARM_SUPPORTED_TOKEN_LIST = ['GOFX', 'SOL', 'USDC', 'ETH', 'mSOL', 'SRM']
 export const MODAL_TYPES = {
   FEES: 'FEES',
   REWARDS: 'REWARDS'
@@ -72,7 +72,7 @@ export const NFT_MARKET_TRANSACTION_FEE: number = 1
 
 export const stakeTokens = [
   {
-    id: '1',
+    id: '0',
     image: 'GOFX',
     name: 'GOFX',
     earned: -1,
@@ -83,26 +83,22 @@ export const stakeTokens = [
     volume: '-'
   }
 ]
-export const sslTokens = [
-  {
-    id: '2',
-    image: 'SOL',
-    name: 'SOL',
-    earned: -1,
-    liquidity: -1,
-    type: 'SSL',
-    currentlyStaked: -1
-  },
-  {
-    id: '3',
-    image: 'USDC',
-    name: 'USDC',
-    earned: -1,
-    liquidity: -1,
-    type: 'SSL',
-    currentlyStaked: -1
+
+export const generateListOfSSLTokens = (): any => {
+  const sslTokens = []
+  for (let i = 1; i < FARM_SUPPORTED_TOKEN_LIST.length; i++) {
+    sslTokens.push({
+      id: i,
+      image: FARM_SUPPORTED_TOKEN_LIST[i],
+      name: FARM_SUPPORTED_TOKEN_LIST[i],
+      earned: -1,
+      liquidity: -1,
+      type: 'SSL',
+      currentlyStaked: -1
+    })
   }
-]
+  return sslTokens
+}
 
 // ,
 //   {
@@ -111,7 +107,6 @@ export const sslTokens = [
 //     name: 'MSOL',
 //     earned: 0,
 //     apr: 0,
-//     rewards: 0,
 //     liquidity: 0,
 //     type: 'SSL',
 //     currentlyStaked: 0
