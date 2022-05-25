@@ -1,6 +1,6 @@
 import { bool } from '@metaplex-foundation/beet'
 import { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction } from 'react'
-import { stakeTokens, sslTokens } from '../constants'
+import { stakeTokens, generateListOfSSLTokens } from '../constants'
 import { IFarmData } from '../pages/Farm/TableList'
 interface IShowDeposited {
   showDeposited: boolean
@@ -26,7 +26,7 @@ export const FarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [filter, setFilter] = useState('All pools')
   const [searchFilter, setSearchFilter] = useState(null)
   const [farmDataContext, setFarmDataContext] = useState<IFarmData[]>(stakeTokens)
-  const [farmDataSSLContext, setFarmDataSSLContext] = useState<IFarmData[]>(sslTokens)
+  const [farmDataSSLContext, setFarmDataSSLContext] = useState<IFarmData[]>(generateListOfSSLTokens())
   const [counter, setCounter] = useState<number>(0)
   const [operationPending, setOperationPending] = useState<boolean>(false)
 
