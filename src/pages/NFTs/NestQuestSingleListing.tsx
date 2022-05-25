@@ -164,7 +164,6 @@ const ORANGE_BTN = styled(MainButton)`
 
   &:disabled {
     background: grey;
-    cursor: not-allowed;
   }
 `
 
@@ -303,7 +302,6 @@ export const NestQuestSingleListing: FC<{
                     onClick={(e) => console.log('mint nestquest egg')}
                     disabled={notEnough}
                   >
-                    <span>{notEnough ? 'Not enough funds' : 'Mint'}</span>
                   </ORANGE_BTN>
                 ) : (
                   <CONNECT onClick={handleWalletModal}>
@@ -311,7 +309,6 @@ export const NestQuestSingleListing: FC<{
                   </CONNECT>
                 )}
               </Col>
-              <Col span={17}>
                 <MINT_PROGRESS percent={30} status="active" num={30} />
               </Col>
             </Row>

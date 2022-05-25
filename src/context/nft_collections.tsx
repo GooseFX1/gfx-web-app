@@ -4,6 +4,7 @@ import {
   IOpenBidWithinCollection,
   IFixedPriceWithinCollection,
   NFTCollection,
+  CollectionOwner,
   NFTFeaturedCollection,
   NFTUpcomingCollection,
   NFTBaseCollection
@@ -13,6 +14,7 @@ import { NFT_API_BASE, NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } fro
 
 export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [singleCollection, setSingleCollection] = useState<NFTCollection>()
+  const [collectionOwners, setCollectionOwners] = useState<Array<CollectionOwner>>([])
   const [fixedPriceWithinCollection, setFixedPriceWithinCollection] = useState<IFixedPriceWithinCollection>()
   const [openBidWithinCollection, setOpenBidWithinCollection] = useState<IOpenBidWithinCollection>()
   const [allCollections, setAllCollections] = useState<Array<NFTBaseCollection>>([])
@@ -58,7 +60,19 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
       setFixedPriceWithinCollection(fpData)
       const obData = await fetchOpenBidsWithinCollection(collectionData.collection_id)
       setOpenBidWithinCollection(obData)
+      const ownersData = await fetchCollectionOwners(collectionData.collection_id)
+      setCollectionOwners(ownersData)
       return res
+    } catch (err) {
+      return err
+    }
+  }, [])
+
+  const fetchCollectionOwners = useCallback(async (collectionId: number): Promise<any> => {
+    try {
+      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.OWNERS}?collection_id=${collectionId}`)
+      const owners = await res.data
+      return owners
     } catch (err) {
       return err
     }
@@ -96,6 +110,9 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
         fetchFeaturedCollections,
         fetchUpcomingCollections,
         singleCollection,
+        collectionOwners,
+        fetchCollectionOwners,
+        setCollectionOwners,
         setSingleCollection,
         setFixedPriceWithinCollection,
         setOpenBidWithinCollection,
@@ -119,6 +136,8 @@ export const useNFTCollections = (): INFTCollectionConfig => {
 
   return {
     allCollections: context.allCollections,
+    collectionOwners: context.collectionOwners,
+    fetchCollectionOwners: context.fetchAllCollections,
     featuredCollections: context.featuredCollections,
     upcomingCollections: context.upcomingCollections,
     fetchAllCollections: context.fetchAllCollections,
@@ -126,6 +145,7 @@ export const useNFTCollections = (): INFTCollectionConfig => {
     fetchUpcomingCollections: context.fetchUpcomingCollections,
     singleCollection: context.singleCollection,
     setSingleCollection: context.setSingleCollection,
+    setCollectionOwners: context.setCollectionOwners,
     setFixedPriceWithinCollection: context.setFixedPriceWithinCollection,
     setOpenBidWithinCollection: context.setOpenBidWithinCollection,
     fetchSingleCollection: context.fetchSingleCollection,

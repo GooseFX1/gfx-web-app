@@ -33,6 +33,15 @@ export type NFTCollection = {
   collection: NFTBaseCollection
 }
 
+export type CollectionOwner = {
+  id: number
+  collection_id: number
+  nickname: string
+  user_id: number
+  profile_pic_link: string
+  non_fungible_id: number
+}
+
 export interface IFixedPriceWithinCollection {
   collection_floor: null | number
   collection_id: number
@@ -63,6 +72,8 @@ export type NFTUpcomingCollection = {
 
 export interface INFTCollectionConfig {
   allCollections: NFTBaseCollection[]
+  collectionOwners: CollectionOwner[]
+  fetchCollectionOwners: (collectionId: number) => Promise<any>
   featuredCollections: NFTFeaturedCollection[]
   upcomingCollections: NFTUpcomingCollection[]
   fetchAllCollections: any
@@ -70,6 +81,7 @@ export interface INFTCollectionConfig {
   fetchUpcomingCollections: any
   singleCollection: NFTCollection
   setSingleCollection: Dispatch<SetStateAction<NFTCollection>>
+  setCollectionOwners: Dispatch<SetStateAction<CollectionOwner>>
   setFixedPriceWithinCollection: Dispatch<SetStateAction<IFixedPriceWithinCollection>>
   setOpenBidWithinCollection: Dispatch<SetStateAction<IOpenBidWithinCollection>>
   fetchSingleCollection: (id: string) => Promise<any>

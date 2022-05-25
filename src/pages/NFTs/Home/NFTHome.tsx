@@ -1,13 +1,15 @@
-import React, { useRef, useState, useEffect, FC } from 'react'
+import React, { useCallback, useState, useEffect, FC } from 'react'
 import styled from 'styled-components'
+import { useNFTCollections } from '../../../context'
+import { fetchAllSingleNFTs } from '../../../api/NFTs'
 import { Header } from './Header'
 import { NFTHomeSlider } from '../Slider/NFTHomeSlider'
 import AnalyticsTabs from './Tab'
-import Loading from './Loading'
 import NFTFooter from './NFTFooter'
 import CollectionCarousel from './CollectionCarousel'
-import { useNFTCollections } from '../../../context'
+import SingleItemListings from './SingleItemListings'
 import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
+import Loading from './Loading'
 import { SVGDynamicReverseMode } from '../../../styles'
 
 const BETA_BANNER = styled.div`
@@ -61,18 +63,18 @@ const BETA_BANNER = styled.div`
 const NFTLandingPage: FC = (): JSX.Element => {
   const { allCollections, fetchAllCollections } = useNFTCollections()
   const [filteredCollections, setFilteredCollections] = useState([])
+  const [singleItems, setAllSingleItems] = useState([])
   const [isAllLoading, setIsAllLoading] = useState<boolean>(true)
   const [betaBanner, setBetaBanner] = useState<boolean>(true)
   const [search, setSearch] = useState<string>('')
 
   useEffect(() => {
     fetchAllCollections().then((res) => setIsAllLoading(false))
+    fetchAllSingleNFTs().then((res) => setAllSingleItems(res))
     return () => {}
   }, [])
 
-  const find = (col: string | string[], search: string) => {
-    return col.includes(search)
-  }
+  const find = useCallback((col: string | string[], search: string) => col.includes(search), [])
 
   useEffect(() => {
     const filtered = allCollections.filter((i) => find(i.collection_name.toLowerCase(), search.toLowerCase()))
@@ -103,6 +105,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
           isLaunch
           isLoading={isAllLoading}
         />
+        <SingleItemListings items={singleItems} title={'Single Item Listings'} />
         <NFTFooter />
       </div>
 

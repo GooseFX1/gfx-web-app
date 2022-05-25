@@ -66,6 +66,7 @@ const CARD = styled.div`
       position: absolute;
       top: 0;
       right: 0;
+      display: flex;
     }
     .card-favorite-heart {
       margin-right: ${({ theme }) => theme.margin(0.5)};

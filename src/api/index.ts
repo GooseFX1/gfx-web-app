@@ -1,11 +1,12 @@
 import axios from 'axios'
 
 const DOMAIN = () => {
-  const sub = window.location.hostname.includes('staging')
-    ? 'staging.'
-    : window.location.hostname.includes('testing')
-    ? 'testing.'
-    : ''
+  const sub =
+    window.location.hostname.includes('staging') || process.env.NODE_ENV !== 'production'
+      ? 'staging.'
+      : window.location.hostname.includes('testing')
+      ? 'testing.'
+      : ''
 
   return `${sub}goosefx.io`
 }
