@@ -7,6 +7,7 @@ export const SYNTH_DEFAULT_MINT = new PublicKey('So11111111111111111111111111111
 export type Mint = {
   address: PublicKey
   decimals: number
+  sslPool?: boolean
 }
 
 export type Pool = {
@@ -53,30 +54,34 @@ export const ADDRESSES: {
         address: new PublicKey('GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
         decimals: 9
       },
-
+      SOL: {
+        address: SYNTH_DEFAULT_MINT,
+        decimals: 9,
+        sslPool: true
+      },
       USDC: {
         address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-        decimals: 6
+        decimals: 6,
+        sslPool: true
+      },
+      ETH: {
+        address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
+        decimals: 8,
+        sslPool: true
       },
       mSOL: {
         address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
-        decimals: 9
+        decimals: 9,
+        sslPool: true
       },
-      SOL: {
-        address: SYNTH_DEFAULT_MINT,
-        decimals: 9
+      SRM: {
+        address: new PublicKey('SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt'),
+        decimals: 6,
+        sslPool: true
       },
       gUSD: {
         address: PublicKey.default,
         decimals: 6
-      },
-      SRM: {
-        address: new PublicKey('SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt'),
-        decimals: 6
-      },
-      ETH: {
-        address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
-        decimals: 8
       },
       gAAPL: {
         address: PublicKey.default,

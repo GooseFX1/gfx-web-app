@@ -1,3 +1,4 @@
+import { ADDRESSES } from './web3'
 export const LITEPAPER_ADDRESS: string = 'https://docs.goosefx.io'
 export const SOCIAL_MEDIAS: { [key: string]: string } = {
   discord: 'https://discord.gg/cDEPXpY26q',
@@ -9,7 +10,7 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
 }
 
 export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC']
-export const FARM_SUPPORTED_TOKEN_LIST = ['GOFX', 'SOL', 'USDC', 'ETH', 'mSOL', 'SRM']
+export const FARM_SUPPORTED_TOKEN_LIST = []
 export const MODAL_TYPES = {
   FEES: 'FEES',
   REWARDS: 'REWARDS'
@@ -86,9 +87,13 @@ export const stakeTokens = [
 
 export const generateListOfSSLTokens = (): any => {
   const sslTokens = []
-  for (let i = 1; i < FARM_SUPPORTED_TOKEN_LIST.length; i++) {
+  const obj = ADDRESSES['mainnet-beta'].mints
+  for (let key in obj) {
+    if (obj[key].sslPool) FARM_SUPPORTED_TOKEN_LIST.push(key)
+  }
+  for (let i = 0; i < FARM_SUPPORTED_TOKEN_LIST.length; i++) {
     sslTokens.push({
-      id: i,
+      id: i + 1,
       image: FARM_SUPPORTED_TOKEN_LIST[i],
       name: FARM_SUPPORTED_TOKEN_LIST[i],
       earned: -1,
