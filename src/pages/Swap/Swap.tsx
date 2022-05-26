@@ -889,7 +889,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
               >
                 <div className={'inner-container'}>
                   <TokenDetail className={'content'}>
-                    <TokenTitle>{detail.name}</TokenTitle>
+                    <TokenTitle>{detail.name.slice(0, 20)}</TokenTitle>
                     <AltSmallTitle>{detail.value}</AltSmallTitle>
                   </TokenDetail>
                   <TokenTitle className={'price'}>{detail.price || null}</TokenTitle>
@@ -960,7 +960,7 @@ export const SwapMain: FC = () => {
     const filteredRoutes = routes?.filter((i) => i.inAmount === inAmountTotal)
     const shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
 
-    if (tokenB) {
+    if (tokenB && shortRoutes.length > 0) {
       const GoFxRoute = {
         marketInfos: [
           {
