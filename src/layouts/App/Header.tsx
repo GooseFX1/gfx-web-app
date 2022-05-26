@@ -110,7 +110,7 @@ const RESPONSIVE_MENU = styled.ul`
   position: absolute;
   left: 0;
   top: 0;
-  height: 90vh;
+  height: 80vh;
   width: 100vw;
   padding: 10vh 0 0;
   background-color: ${({ theme }) => theme.bg1};
@@ -220,9 +220,9 @@ export const Header: FC = () => {
             <BRAND href="/">
               <img id="logo" src={`/img/assets/gfx_logo_gradient_${mode}.svg`} alt="GFX Logo" />
             </BRAND>
-            {!mobile && <Tabs />}
+            <Tabs />
             <BUTTONS>
-              {!mobile && <RewardsButton />}
+              <RewardsButton />
               <Connect />
 
               <More />

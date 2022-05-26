@@ -54,6 +54,10 @@ const REWARDS_WITH_IMG = styled.img`
 const REWARD_BTN_TITLE = styled.span`
   font-size: 11px;
   font-weight: 600;
+
+  @media (max-width: 500px) {
+    font-size: 18px;
+  }
 `
 
 export const RewardsButton: FC = () => {

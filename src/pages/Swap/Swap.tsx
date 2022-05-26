@@ -87,10 +87,6 @@ const HEADER_TITLE = styled(CenteredDiv)`
     font-size: 20px;
     font-family: Montserrat;
     color: ${({ theme }) => theme.text1};
-
-    @media (max-width: 500px) {
-      font-size: ;
-    }
   }
 `
 
@@ -104,6 +100,12 @@ const TOKEN_WRAPPER = styled.div`
   padding-left: ${({ theme }) => theme.margin(4)};
   border-radius: 0px 20px 20px 0px;
   background: ${({ theme }) => theme.swapSides1};
+
+  @media (max-width: 500px) {
+    width: 100%;
+    border-radius: 20px;
+    min-height: 0px;
+  }
 `
 
 const TokenTitle = styled.div`
@@ -209,6 +211,21 @@ const TokenDetail = styled.div`
   padding: ${({ theme }) => theme.margin(1.5)} 0;
 `
 
+const AltTokenDetail = styled(TokenDetail)`
+  @media (max-width: 500px) {
+    width: 50%;
+  }
+`
+
+const ListWrapper = styled.div`
+  width: 100%;
+  @media (max-width: 500px) {
+    display: flex;
+    padding: ${({ theme }) => theme.margin(1.5)} 0;
+    flex-wrap: wrap;
+  }
+`
+
 const SubHeader = styled.div`
   margin-left: 1.25rem;
   height: 48px;
@@ -251,6 +268,12 @@ const PRICE_WRAPPER = styled.div`
   border-radius: 20px 0px 0px 20px;
   padding: ${({ theme }) => theme.margin(3)};
   background: ${({ theme }) => theme.swapSides2};
+
+  @media (max-width: 500px) {
+    width: 100%;
+    border-radius: 20px;
+    margin-bottom: 3rem;
+  }
 `
 
 const SWAP_ROUTES = styled.div<{ $less: boolean }>`
@@ -627,7 +650,7 @@ const TokenContent: FC = () => {
             currency: '$'
           },
           {
-            name: 'Max Total Supply',
+            name: 'Total Max Supply',
             value: Math.floor(data?.market_data?.max_supply || data?.market_data?.total_supply)?.toLocaleString() || '0'
           },
           { name: 'Holders', value: res?.total?.toLocaleString() || 0 }
@@ -659,15 +682,16 @@ const TokenContent: FC = () => {
           </COPY>
         </SubHeader>
       </TokenHeader>
-      {tokenDetails.map((detail) => (
-        <TokenDetail>
-          <TokenTitle>{detail.name}</TokenTitle>
-          <SmallTitle>
-            {detail.currency || null} {detail.value}
-          </SmallTitle>
-        </TokenDetail>
-      ))}
-
+      <ListWrapper>
+        {tokenDetails.map((detail) => (
+          <AltTokenDetail>
+            <TokenTitle>{detail.name}</TokenTitle>
+            <SmallTitle>
+              {detail.currency || null} {detail.value}
+            </SmallTitle>
+          </AltTokenDetail>
+        ))}
+      </ListWrapper>
       <Socials>
         {socials.map((social) => (
           <SocialsButton key={social.id} onClick={() => window.open(social.link, '_blank')}>
@@ -685,7 +709,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
   const [details, setDetails] = useState([
     { name: 'Price Impact', value: '0%' },
     {
-      name: 'Minimum Received',
+      name: checkMobile() ? 'Min. Received' : 'Minimum Received',
       value: 0 + ' ' + tokenB.symbol
     },
     {
@@ -693,7 +717,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
       value: `${0} ${tokenA.symbol} (${0} %)`,
       extraValue: `0 ${tokenB.symbol} (0%)`
     },
-    { name: 'Transaction fee', value: '0.00005 SOL', icon: 'info' }
+    { name: checkMobile() ? 'Trans. Fee' : 'Transaction Fee', value: '0.00005 SOL', icon: 'info' }
   ])
   const [outAmount, setOutAmount] = useState(0)
   const [outTokenPercentage, setOutTokenPercentage] = useState(0)
@@ -705,14 +729,15 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
     const totalLp = route.marketInfos[0].lpFee.amount / 10 ** tokenA.decimals
     const percent = +((totalLp / inTokenAmount) * 100)?.toFixed(4)
     const totalLpB = route.marketInfos.slice(-1)[0].lpFee.amount / 10 ** tokenB.decimals
-    const percentB = +((totalLpB / outTokenAmount) * 100)?.toFixed(4)
     const out = route.outAmount / 10 ** tokenB.decimals
+    const percentB = +((totalLpB / out) * 100)?.toFixed(4)
+
     setOutAmount(out)
 
     const priceDetails = [
       { name: 'Price Impact', value: `< ${Number(route.priceImpactPct).toFixed(6)}%` },
       {
-        name: 'Minimum Received',
+        name: checkMobile() ? 'Min. Received' : 'Minimum Received',
         value: `${nFormatter(route.outAmountWithSlippage / 10 ** tokenB.decimals, tokenB.decimals)} ${tokenB.symbol}`
       },
       {
@@ -723,12 +748,12 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
             ? `${nFormatter(totalLpB, tokenB.decimals)} ${tokenB.symbol} (${percentB}%)`
             : `0 ${tokenB.symbol} (0%)`
       },
-      { name: 'Transaction fee', value: '0.00005 SOL', icon: 'info' }
+      { name: checkMobile() ? 'Trans. Fee' : 'Transaction Fee', value: '0.00005 SOL', icon: 'info' }
     ]
 
     setDetails(priceDetails)
 
-    const percentageCheap = +(((out - outTokenAmount) / out) * 100).toFixed(3)
+    const percentageCheap = +(((route.outAmount - routes[1]?.outAmount) / route.outAmount) * 100).toFixed(3)
     setOutTokenPercentage(Math.abs(percentageCheap))
     setCheap(percentageCheap < 0 ? false : true)
   }, [clickNo, inTokenAmount, tokenA.symbol, tokenB.symbol, routes])
@@ -767,23 +792,25 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
           <span style={{ fontWeight: '600' }}>than coingecko</span>
         </SmallTitleFlex>
       </TokenDetail>
-      {details.map((detail) => (
-        <TokenDetail>
-          <TokenTitle>
-            {detail.name}{' '}
-            {detail.icon && (
-              <SVGDynamicReverseMode
-                style={{ height: '12px', width: '12px' }}
-                src={`/img/crypto/${detail.icon}.svg`}
-                alt="jupiter-icon"
-                className={'header-icon'}
-              />
-            )}
-          </TokenTitle>
-          <SmallTitle>{detail.value}</SmallTitle>
-          <SmallTitle>{detail.extraValue || null}</SmallTitle>
-        </TokenDetail>
-      ))}
+      <ListWrapper>
+        {details.map((detail) => (
+          <AltTokenDetail>
+            <TokenTitle>
+              {detail.name}{' '}
+              {detail.icon && (
+                <SVGDynamicReverseMode
+                  style={{ height: '12px', width: '12px' }}
+                  src={`/img/crypto/${detail.icon}.svg`}
+                  alt="jupiter-icon"
+                  className={'header-icon'}
+                />
+              )}
+            </TokenTitle>
+            <SmallTitle>{detail.value}</SmallTitle>
+            <SmallTitle>{detail.extraValue || null}</SmallTitle>
+          </AltTokenDetail>
+        ))}
+      </ListWrapper>
     </PRICE_WRAPPER>
   )
 }
@@ -962,9 +989,8 @@ export const SwapMain: FC = () => {
       <WRAPPER>
         <INNERWRAPPER $desktop={!checkMobile()}>
           <SwapContent exchange={exchange} routes={chosenRoutes} clickNo={clickNo} />
-          {allowed && <TokenContent />}
-
           {allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
+          {allowed && <TokenContent />}
         </INNERWRAPPER>
       </WRAPPER>
     )
