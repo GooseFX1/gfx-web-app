@@ -12,7 +12,8 @@ export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC']
 export const FARM_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'GOFX']
 export const MODAL_TYPES = {
   FEES: 'FEES',
-  REWARDS: 'REWARDS'
+  REWARDS: 'REWARDS',
+  GOLDEN_TICKET: 'GOLDEN_TICKET'
 }
 
 export const SUPPORTED_TOKEN_LIST = [
@@ -76,7 +77,6 @@ export const stakeTokens = [
     image: 'GOFX',
     name: 'GOFX',
     earned: -1,
-    apr: -1,
     rewards: 100,
     liquidity: -1,
     type: 'Staking',
@@ -90,7 +90,6 @@ export const sslTokens = [
     image: 'SOL',
     name: 'SOL',
     earned: -1,
-    apr: -1,
     liquidity: -1,
     type: 'SSL',
     currentlyStaked: -1
@@ -100,7 +99,6 @@ export const sslTokens = [
     image: 'USDC',
     name: 'USDC',
     earned: -1,
-    apr: -1,
     liquidity: -1,
     type: 'SSL',
     currentlyStaked: -1

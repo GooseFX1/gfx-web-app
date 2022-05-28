@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { RewardsPopup } from './RewardsPopup'
 import { FeesPopup } from './FeesPopup'
 import { MODAL_TYPES } from '../constants'
+import { GoldenTicketPopup } from '../pages/NFTs/launchpad/pages/LaunchpadComponents'
 
 const WRAPPER = styled.div`
   position: absolute;
@@ -64,6 +65,7 @@ export const ModalSlide = (props: IModalSlide) => {
       <MODAL id="modal">
         {props.modalType === MODAL_TYPES.REWARDS && <RewardsPopup />}
         {props.modalType === MODAL_TYPES.FEES && <FeesPopup {...props} />}
+        {props.modalType === MODAL_TYPES.GOLDEN_TICKET && <GoldenTicketPopup />}
       </MODAL>
     </WRAPPER>
   )
