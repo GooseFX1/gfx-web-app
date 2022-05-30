@@ -25,8 +25,10 @@ export const unnamedUser = {
 
 export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [sessionUser, setSessionUser] = useState<INFTProfile>()
+  const [nonSessionProfile, setNonSessionProfile] = useState<INFTProfile>()
   const [userActivity, setUserActivity] = useState<INFTUserActivity[]>([])
-  const [parsedAccounts, setParsedAccounts] = useState<ParsedAccount[]>([])
+  const [sessionUserParsedAccounts, setParsedAccounts] = useState<ParsedAccount[]>([])
+  const [nonSessionUserParsedAccounts, setNonSessionUserParsedAccounts] = useState<ParsedAccount[]>([])
 
   const fetchSessionUser = useCallback(
     async (type: UserFetchType, parameter: string, connection: Connection): Promise<any> => {
@@ -35,20 +37,21 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         if (res.data.length > 0) {
           const user = { ...res.data[0], user_likes: [] }
           const userLikes = await fetchUserLikes(user)
-          _setUser({ ...user, user_likes: userLikes })
+          _setUser({ ...user, user_likes: userLikes }, setSessionUser)
         } else {
           // auto-creates a basic user in db to establish a user id for session user
           try {
             const registerUser = await completeNFTUserProfile(parameter)
-            _setUser({ ...registerUser, user_likes: [] })
+            _setUser({ ...registerUser, user_likes: [] }, setSessionUser)
           } catch (error) {
             // TODO: create analytics logging event
             console.error(error)
-            _setUser(undefined)
+            _setUser(undefined, setSessionUser)
           }
         }
         // fetches user nfts in wallet and sets them to state
-        await getParsedAccounts(parameter as StringPublicKey, connection)
+        const parsedAccounts = await getParsedAccounts(parameter as StringPublicKey, connection)
+        setParsedAccounts(parsedAccounts)
         return res
       } catch (err) {
         return err
@@ -58,7 +61,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
   )
 
   const getParsedAccounts = useCallback(
-    async (publicKey: StringPublicKey, connection: Connection): Promise<boolean> => {
+    async (publicKey: StringPublicKey, connection: Connection): Promise<ParsedAccount[]> => {
       const start = new Date().getTime()
       try {
         const res = await getParsedNftAccountsByOwner({
@@ -69,10 +72,9 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
           sort: false
         })
         const accounts = await res
-        setParsedAccounts(accounts)
         const elapsed = new Date().getTime() - start
         console.log(`GET PARSED ACCOUNTS: ${elapsed}ms elapsed`)
-        return true
+        return accounts
       } catch (error) {
         console.log(error)
       }
@@ -125,24 +127,32 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
-  const _setUser = (userObj: any) => {
+  const fetchNonSessionProfile = useCallback(
+    async (type: UserFetchType, parameter: string, connection: Connection): Promise<any> => {
+      try {
+        const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.NON_SESSION_USER}?${type}=${parameter}`)
+        if (res.data.length > 0) {
+          const user = { ...res.data[0], user_likes: [] }
+          _setUser(user, setNonSessionProfile)
+        } else {
+          _setUser(undefined, setNonSessionProfile)
+        }
+        // fetches user nfts in wallet and sets them to state
+        const parsedAccounts = await getParsedAccounts(parameter as StringPublicKey, connection)
+        setNonSessionUserParsedAccounts(parsedAccounts)
+        return res
+      } catch (err) {
+        return err
+      }
+    },
+    []
+  )
+
+  const _setUser = (userObj: any, setter: any) => {
     if (userObj === undefined) {
-      setSessionUser({
-        user_id: null,
-        pubkey: '',
-        nickname: 'Unnamed',
-        email: '',
-        bio: '',
-        twitter_link: '',
-        instagram_link: '',
-        facebook_link: '',
-        youtube_link: '',
-        profile_pic_link: '',
-        is_verified: false,
-        user_likes: []
-      })
+      setter(unnamedUser)
     } else {
-      setSessionUser({
+      setter({
         ...userObj,
         user_id: userObj.user_id ? userObj.user_id : null,
         pubkey: userObj.pubkey ? userObj.pubkey : '',
@@ -165,12 +175,17 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         sessionUser,
         setSessionUser,
         fetchSessionUser,
-        parsedAccounts,
+        sessionUserParsedAccounts,
         setParsedAccounts,
         userActivity,
         setUserActivity,
         fetchUserActivity,
-        likeDislike
+        likeDislike,
+        nonSessionProfile,
+        fetchNonSessionProfile,
+        nonSessionUserParsedAccounts,
+        setNonSessionProfile,
+        setNonSessionUserParsedAccounts
       }}
     >
       {children}
@@ -190,11 +205,16 @@ export const useNFTProfile = (): INFTProfileConfig => {
     sessionUser: context.sessionUser,
     setSessionUser: context.setSessionUser,
     fetchSessionUser: context.fetchSessionUser,
-    parsedAccounts: context.parsedAccounts,
+    sessionUserParsedAccounts: context.sessionUserParsedAccounts,
     setParsedAccounts: context.setParsedAccounts,
     userActivity: context.userActivity,
     setUserActivity: context.setUserActivity,
     fetchUserActivity: context.fetchUserActivity,
-    likeDislike: context.likeDislike
+    likeDislike: context.likeDislike,
+    nonSessionProfile: context.nonSessionProfile,
+    fetchNonSessionProfile: context.fetchNonSessionProfile,
+    nonSessionUserParsedAccounts: context.nonSessionUserParsedAccounts,
+    setNonSessionProfile: context.setNonSessionProfile,
+    setNonSessionUserParsedAccounts: context.setNonSessionUserParsedAccounts
   }
 }

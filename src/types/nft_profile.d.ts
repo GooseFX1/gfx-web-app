@@ -31,10 +31,15 @@ export interface INFTProfileConfig {
   sessionUser: INFTProfile
   setSessionUser: Dispatch<SetStateAction<INFTProfile>>
   fetchSessionUser: (type: UserFetchType, parameter: string | number, connection: Connection) => Promise<any>
-  parsedAccounts: ParsedAccount[]
+  sessionUserParsedAccounts: ParsedAccount[]
   setParsedAccounts: Dispatch<SetStateAction<ParsedAccount[]>>
   userActivity: Array<INFTUserActivity>
   setUserActivity: Dispatch<SetStateAction<INFTUserActivity[]>>
   fetchUserActivity: (id: number) => Promise<any>
   likeDislike: Function
+  nonSessionProfile: INFTProfile
+  fetchNonSessionProfile: (type: UserFetchType, parameter: string | number, connection: Connection) => Promise<any>
+  nonSessionUserParsedAccounts: ParsedAccount[]
+  setNonSessionProfile: Dispatch<SetStateAction<INFTProfile>>
+  setNonSessionUserParsedAccounts: Dispatch<SetStateAction<ParsedAccount[]>>
 }
