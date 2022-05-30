@@ -66,7 +66,7 @@ export const STYLED_EARNED = styled.div`
 `
 
 export const Loader: FC = () => {
-  return <Skeleton.Button active size="small" style={{ display: 'flex', height: '15px' }} />
+  return <Skeleton.Button active size="small" style={{ display: 'flex', height: '15px', borderRadius: '5px' }} />
 }
 const HeaderTooltip = (text: string) => {
   return (
