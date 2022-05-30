@@ -100,11 +100,10 @@ Each PR **MUST**:
 ```
 
 #### Adding Tokens To Farm Page
+
 1. `git checkout dev`
 2. `git checkout -b add-tokens`
-3. ./src/constants.ts add token name in `FARM_SUPPORTED_TOKEN_LIST`
-4. ./src/context/crypto.tsx add token usdc pair to fetch current price of token from coingeko or something
-5. ./src/web3/ids.ts add mint address in the file
-6. ./public/img/assets/ add image with the token short name
-7. Submit PR to dev branch
-
+3. ./src/context/crypto.tsx add token usdc pair to fetch current price of token from coingeko or something
+4. ./src/web3/ids.ts add in sslPool object mint address in the file
+5. ./public/img/assets/ add image with the token short name
+6. Submit PR to dev branch
