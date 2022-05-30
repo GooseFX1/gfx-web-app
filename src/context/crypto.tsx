@@ -32,8 +32,6 @@ export type MarketType = 'crypto' | 'synth'
 
 export const FEATURED_PAIRS_LIST = [
   { decimals: 3, pair: 'GOFX/USDC', type: 'crypto' as MarketType, coinGecko: 'goosefx' },
-  { decimals: 3, pair: 'SRM/USDC', type: 'crypto' as MarketType, coinGecko: 'serum' },
-  { decimals: 3, pair: 'MSOL/USDC', type: 'crypto' as MarketType, coinGecko: 'Marinade staked SOL (mSOL)' },
   { decimals: 1, pair: 'BTC/USDC', type: 'crypto' as MarketType, coinGecko: 'bitcoin' },
   { decimals: 2, pair: 'ETH/USDC', type: 'crypto' as MarketType, coinGecko: 'ethereum' },
   { decimals: 3, pair: 'SOL/USDC', type: 'crypto' as MarketType, coinGecko: 'solana' },
@@ -41,6 +39,10 @@ export const FEATURED_PAIRS_LIST = [
   { decimals: 2, pair: 'AAPL/USD', type: 'synth' as MarketType, coinGecko: '' },
   { decimals: 2, pair: 'AMZN/USD', type: 'synth' as MarketType, coinGecko: '' },
   { decimals: 2, pair: 'TSLA/USD', type: 'synth' as MarketType, coinGecko: '' }
+]
+export const FARM_TOKEN_LIST = [
+  { decimals: 3, pair: 'SRM/USDC', type: 'crypto' as MarketType, coinGecko: 'serum' },
+  { decimals: 3, pair: 'MSOL/USDC', type: 'crypto' as MarketType, coinGecko: 'Marinade staked SOL (mSOL)' }
 ]
 
 const CryptoContext = createContext<ICryptoConfig | null>(null)

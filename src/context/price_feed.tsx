@@ -1,7 +1,7 @@
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
 import { parsePriceData } from '@pythnetwork/client'
 import { Orderbook } from '@project-serum/serum'
-import { FEATURED_PAIRS_LIST } from './crypto'
+import { FARM_TOKEN_LIST, FEATURED_PAIRS_LIST } from './crypto'
 import { notify } from '../utils'
 import { pyth, serum } from '../web3'
 import { useConnectionConfig } from '../context'
@@ -130,7 +130,8 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
 
     if (!cancelled) {
       ;(async () => {
-        const cryptoMarkets = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'crypto')
+        const PAIR_LIST = [...FEATURED_PAIRS_LIST, ...FARM_TOKEN_LIST]
+        const cryptoMarkets = PAIR_LIST.filter(({ type }) => type === 'crypto')
         for (const { pair, coinGecko } of cryptoMarkets) {
           try {
             refreshTokenData({ pair, coinGecko })
