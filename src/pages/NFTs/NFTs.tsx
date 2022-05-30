@@ -93,7 +93,7 @@ export const NFTs: FC = () => {
                 <Route exact path={path}>
                   <NFTLandingPage />
                 </Route>
-                <Route exact path={['/NFTs/profile', '/NFTs/profile/:userId']}>
+                <Route exact path={['/NFTs/profile', '/NFTs/profile/:userAddress']}>
                   <Profile />
                 </Route>
                 <Route exact path="/NFTs/collection/:collectionId">

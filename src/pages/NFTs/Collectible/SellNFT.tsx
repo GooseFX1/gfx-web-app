@@ -408,7 +408,7 @@ export const SellNFT = () => {
           } else {
             setTimeout(() => {
               notify(successfulListingMsg(signature, nftMetadata, userInput['minimumBid']))
-              history.push('/NFTs/profile')
+              history.push(`/NFTs/profile/${publicKey.toBase58()}`)
             }, 2000)
           }
         })

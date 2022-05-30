@@ -595,7 +595,10 @@ export const RightSectionTabs: FC<{
               </SpaceBetweenDiv>
             )
           ) : (
-            <button className="rst-footer-button rst-footer-button-bid" onClick={(e) => history.push('/NFTs/profile')}>
+            <button
+              className="rst-footer-button rst-footer-button-bid"
+              onClick={(e) => history.push(`/NFTs/profile/${wallet.publicKey.toBase58()}`)}
+            >
               Complete profile
             </button>
           )}

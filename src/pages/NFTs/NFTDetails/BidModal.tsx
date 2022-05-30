@@ -421,7 +421,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
           } else if (res.data.bid_matched && res.data.tx_sig) {
             fetchUser()
             notify(successBidMatchedMessage(res.data.tx_sig, nftMetadata, bidPrice.toString()))
-            setTimeout(() => history.push('/NFTs/profile'), 2000)
+            setTimeout(() => history.push(`/NFTs/profile/${publicKey.toBase58()}`), 2000)
           } else {
             setVisible(false)
           }
