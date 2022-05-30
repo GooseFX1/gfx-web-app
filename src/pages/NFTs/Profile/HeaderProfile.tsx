@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo, FC } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { TransactionInstruction, PublicKey, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
 import { Menu, Image } from 'antd'
 import { useNFTProfile, useDarkMode, useConnectionConfig } from '../../../context'
@@ -18,8 +18,8 @@ import { callWithdrawInstruction } from '../actions'
 import { MainButton, SuccessfulListingMsg } from '../../../components'
 import { notify } from '../../../utils'
 import { StyledHeaderProfile, StyledMenu, SETTLE_BALANCE_MODAL, MARGIN_VERTICAL } from './HeaderProfile.styled'
-import { CenteredDiv } from '../../../styles'
 import BN from 'bn.js'
+import { IAppParams } from '../../../types/app_params.d'
 
 const menu = (setShareModal: (b: boolean) => void) => (
   <StyledMenu>
@@ -34,15 +34,16 @@ const menu = (setShareModal: (b: boolean) => void) => (
 )
 
 type Props = {
-  isExplore?: boolean
+  isSessionUser: boolean
 }
 
-export const HeaderProfile = ({ isExplore }: Props) => {
+export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
   const location = useLocation<ILocationState>()
   const history = useHistory()
+  const params = useParams<IAppParams>()
   const { connection, network } = useConnectionConfig()
   const { connected, publicKey, sendTransaction } = useWallet()
-  const { sessionUser } = useNFTProfile()
+  const { sessionUser, nonSessionProfile, fetchNonSessionProfile } = useNFTProfile()
   const { mode } = useDarkMode()
   const [userEscrowBalance, setUserEscrowBalance] = useState<number>()
   const [escrowPaymentAccount, setEscrowPaymentAccount] = useState<[PublicKey, number]>()
@@ -52,10 +53,36 @@ export const HeaderProfile = ({ isExplore }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
   const handleCancel = () => setProfileModal(false)
 
+  const currentUserProfile = useMemo(() => {
+    console.log(sessionUser, nonSessionProfile)
+
+    if (nonSessionProfile !== undefined && !isSessionUser) {
+      return nonSessionProfile
+    } else if (sessionUser !== undefined && isSessionUser) {
+      return sessionUser
+    } else {
+      return undefined
+    }
+  }, [isSessionUser, sessionUser, nonSessionProfile])
+
   useEffect(() => {
     isCreatingProfile()
     return () => {}
   }, [])
+
+  useEffect(() => {
+    if (
+      !isSessionUser &&
+      params.userAddress &&
+      (nonSessionProfile === undefined || nonSessionProfile.pubkey !== params.userAddress)
+    ) {
+      fetchNonSessionProfile('address', params.userAddress, connection).then((res) =>
+        console.log('Non Session User', res)
+      )
+    }
+
+    return () => {}
+  }, [isSessionUser, nonSessionProfile, params.userAddress])
 
   useEffect(() => {
     fetchEscrowPayment().then((escrowBalance: number | undefined) => setUserEscrowBalance(escrowBalance))
@@ -199,91 +226,90 @@ export const HeaderProfile = ({ isExplore }: Props) => {
   return (
     <StyledHeaderProfile mode={mode}>
       {handleModal()}
-      <img
-        className="back-icon"
-        src={`/img/assets/arrow.svg`}
-        alt="arrow-icon"
-        onClick={() => history.push(isExplore ? '/NFTs/profile' : '/NFTs')}
-      />
+      <img className="back-icon" src={`/img/assets/arrow.svg`} alt="arrow-icon" onClick={() => history.goBack()} />
       <div className="avatar-profile-wrap">
         <Image
           className="avatar-profile"
           fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-          src={sessionUser.profile_pic_link}
+          src={
+            currentUserProfile
+              ? currentUserProfile.profile_pic_link
+              : `/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`
+          }
           preview={false}
-          alt={sessionUser.nickname}
+          alt={currentUserProfile ? currentUserProfile.nickname : 'loading'}
         />
-        {sessionUser.user_id && (
+        {connected && currentUserProfile && (
           <img className="edit-icon" src={`/img/assets/edit.svg`} alt="" onClick={() => setProfileModal(true)} />
         )}
       </div>
       <div>
         <div className="name-wrap">
-          <span className="name">
-            {sessionUser.nickname !== null && sessionUser.nickname.length > 0 ? sessionUser.nickname : 'Unnamed'}
-          </span>
-          {sessionUser.is_verified && (
-            <img
-              className="check-icon"
-              src={`/img/assets/check-icon.png`}
-              alt=""
-              onClick={() => history.push('/NFTs/profile/explore')}
-            />
+          {currentUserProfile === undefined ? (
+            <span className="name">...loading</span>
+          ) : (
+            <span className="name">
+              {currentUserProfile.nickname !== null && currentUserProfile.nickname.length > 0
+                ? currentUserProfile.nickname
+                : 'Unnamed'}
+            </span>
+          )}
+          {currentUserProfile && currentUserProfile.is_verified && (
+            <img className="check-icon" src={`/img/assets/check-icon.png`} alt="is-verified-user" />
           )}
         </div>
-        <div className="social-list">
-          {!sessionUser.user_id && connected && publicKey && (
-            <CenteredDiv>
-              <MainButton height="30px" onClick={() => setProfileModal(true)} status="action" width="150px">
-                <span>Complete Profile</span>
-              </MainButton>
-            </CenteredDiv>
-          )}
-          {sessionUser.twitter_link && (
-            <a
-              className="social-item"
-              href={validExternalLink(sessionUser.twitter_link)}
-              target={'_blank'}
-              rel={'noreferrer'}
-            >
-              <img className="social-icon" src={`/img/assets/twitter.svg`} alt="" />
-            </a>
-          )}
-          {sessionUser.instagram_link && (
-            <a
-              className="social-item"
-              href={validExternalLink(sessionUser.instagram_link)}
-              target={'_blank'}
-              rel={'noreferrer'}
-            >
-              <img className="social-icon" src={`/img/assets/instagram.svg`} alt="" />
-            </a>
-          )}
-          {sessionUser.facebook_link && (
-            <a
-              className="social-item"
-              href={validExternalLink(sessionUser.facebook_link)}
-              target={'_blank'}
-              rel={'noreferrer'}
-            >
-              <img className="social-icon" src={`/img/assets/facebook.svg`} alt="" />
-            </a>
-          )}
-          {sessionUser.youtube_link && (
-            <a
-              className="social-item-yt"
-              href={validExternalLink(sessionUser.youtube_link)}
-              target={'_blank'}
-              rel={'noreferrer'}
-            >
-              <img className="social-icon" src={`/img/assets/youtube.png`} alt="" />
-            </a>
+        <div>
+          {currentUserProfile === undefined ? (
+            <div>...Loading</div>
+          ) : (
+            <div className="social-list">
+              {currentUserProfile.twitter_link && (
+                <a
+                  className="social-item"
+                  href={validExternalLink(currentUserProfile.twitter_link)}
+                  target={'_blank'}
+                  rel={'noreferrer'}
+                >
+                  <img className="social-icon" src={`/img/assets/twitter.svg`} alt="" />
+                </a>
+              )}
+              {currentUserProfile.instagram_link && (
+                <a
+                  className="social-item"
+                  href={validExternalLink(currentUserProfile.instagram_link)}
+                  target={'_blank'}
+                  rel={'noreferrer'}
+                >
+                  <img className="social-icon" src={`/img/assets/instagram.svg`} alt="" />
+                </a>
+              )}
+              {currentUserProfile.facebook_link && (
+                <a
+                  className="social-item"
+                  href={validExternalLink(currentUserProfile.facebook_link)}
+                  target={'_blank'}
+                  rel={'noreferrer'}
+                >
+                  <img className="social-icon" src={`/img/assets/facebook.svg`} alt="" />
+                </a>
+              )}
+              {currentUserProfile.youtube_link && (
+                <a
+                  className="social-item-yt"
+                  href={validExternalLink(currentUserProfile.youtube_link)}
+                  target={'_blank'}
+                  rel={'noreferrer'}
+                >
+                  <img className="social-icon" src={`/img/assets/youtube.png`} alt="" />
+                </a>
+              )}
+            </div>
           )}
         </div>
       </div>
 
       <div className="action-wrap">
-        {connected && publicKey ? (
+        {isSessionUser && connected && publicKey ? (
           <button className="btn-purple" onClick={() => setSettleBalanceModal(true)}>
             <span>
               Settle Balance: <strong>{userEscrowBalance ? userEscrowBalance.toFixed(2) : 0}</strong>
@@ -292,7 +318,7 @@ export const HeaderProfile = ({ isExplore }: Props) => {
         ) : (
           <span></span>
         )}
-        {connected && publicKey && (
+        {isSessionUser && connected && publicKey && (
           <button className="btn-create" onClick={() => history.push('/NFTs/create')}>
             <span>Create</span>
           </button>

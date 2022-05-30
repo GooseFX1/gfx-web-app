@@ -147,7 +147,7 @@ export const Card = (props: ICard) => {
   const history = useHistory()
   const { mode } = useDarkMode()
   const { connection } = useConnectionConfig()
-  const { sessionUser, parsedAccounts, likeDislike } = useNFTProfile()
+  const { sessionUser, sessionUserParsedAccounts, likeDislike } = useNFTProfile()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   /** setters are only for populating context before location change to details page */
   const { setGeneral, setNftMetadata, setBids, setAsk, setTotalLikes } = useNFTDetails()
@@ -170,11 +170,11 @@ export const Card = (props: ICard) => {
   const isOwner: boolean = useMemo(() => {
     if (props.userId) return true
     const findAccount: undefined | ParsedAccount =
-      props.singleNFT && parsedAccounts !== undefined
-        ? parsedAccounts.find((acct) => acct.mint === props.singleNFT.mint_address)
+      props.singleNFT && sessionUserParsedAccounts !== undefined
+        ? sessionUserParsedAccounts.find((acct) => acct.mint === props.singleNFT.mint_address)
         : undefined
     return findAccount === undefined ? false : true
-  }, [parsedAccounts])
+  }, [sessionUserParsedAccounts])
 
   useEffect(() => {
     if (props.singleNFT) {
