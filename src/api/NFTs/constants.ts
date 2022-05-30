@@ -2,6 +2,7 @@ export const NFT_API_BASE = 'nest-api'
 
 export enum NFT_API_ENDPOINTS {
   SESSION_USER = '/user',
+  NON_SESSION_USER = '/user',
   USER_ACTIVITY = '/user-activity',
   ALL_COLLECTIONS = '/all-collections',
   ALL_LIKES = '/all-likes',
