@@ -28,7 +28,7 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
 `
 
 const BODY = styled.div<{ $navCollapsed: boolean }>`
-  min-height: calc(85vh + ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+  height: calc(85vh + ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
   padding: ${({ theme }) => theme.margin(8)};
   padding-top: 43px !important;
   padding-bottom: 0px !important;

@@ -50,6 +50,7 @@ export const STYLED_TABLE_LIST = styled(Table)`
     border-bottom-right-radius: 25px;
   }
   .ant-table-thead {
+     top: 200px;
      background: ${theme.farmHeaderBg};
     > tr {
       > th {
@@ -76,7 +77,7 @@ export const STYLED_TABLE_LIST = styled(Table)`
       > td {
         background-color: ${theme.bg17};
         border-bottom: 1px solid #BABABA !important;
-        padding-bottom: ${theme.margin(4)};
+        padding: ${theme.margin(3)};
       }
       &.ant-table-row {
         > td {

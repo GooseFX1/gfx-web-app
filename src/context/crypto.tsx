@@ -41,8 +41,9 @@ export const FEATURED_PAIRS_LIST = [
   { decimals: 2, pair: 'TSLA/USD', type: 'synth' as MarketType, coinGecko: '' }
 ]
 export const FARM_TOKEN_LIST = [
-  { decimals: 3, pair: 'SRM/USDC', type: 'crypto' as MarketType, coinGecko: 'serum' },
-  { decimals: 3, pair: 'MSOL/USDC', type: 'crypto' as MarketType, coinGecko: 'Marinade staked SOL (mSOL)' }
+  // this is added to fetch current price from coin geko
+  { decimals: 3, pair: 'MSOL/USDC', type: 'crypto' as MarketType, coinGecko: 'Marinade staked SOL (mSOL)' },
+  { decimals: 3, pair: 'SRM/USDC', type: 'crypto' as MarketType, coinGecko: 'serum' }
 ]
 
 const CryptoContext = createContext<ICryptoConfig | null>(null)
