@@ -103,7 +103,8 @@ Each PR **MUST**:
 
 1. `git checkout dev`
 2. `git checkout -b add-tokens`
-3. ./src/context/crypto.tsx add token usdc pair to fetch current price of token from coingeko or something
-4. ./src/web3/ids.ts add in sslPool object mint address in the file
-5. ./public/img/assets/ add image with the token short name
-6. Submit PR to dev branch
+3. ./src/context/crypto.tsx add token usdc pair to fetch current price of token from coingeko or other provider
+4. ./src/web3/ids.ts in sslPool object, add mint address in the file and the decimal supported (How to find the decimals supported for token ?)
+5. Go to solscan and search the mint address of the token, you will find the decimals supported
+6. ./public/img/assets/ add image with the token short name
+7. Submit PR to dev branch
