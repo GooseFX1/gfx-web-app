@@ -52,6 +52,12 @@ const SETTING_BUTTON = styled(BUTTON)<{ clicked: boolean }>`
   width: 166px;
   height: 50px;
   background-color: ${({ clicked, theme }) => (clicked ? theme.secondary2 : theme.bg10)};
+
+  @media (max-width: 500px) {
+    width: 83px;
+    height: 45px;
+    font-size: 18px;
+  }
 `
 
 const SAVE_BUTTON = styled(BUTTON)`
@@ -73,6 +79,10 @@ const BUTTON_CONTAINER = styled(CenteredDiv)`
   justify-content: space-between;
   margin: 0 !important;
   padding: 24px 12px;
+
+  @media (max-width: 500px) {
+    width: 100%;
+  }
 `
 
 export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible }) => {

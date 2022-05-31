@@ -66,7 +66,7 @@ export const STYLED_EARNED = styled.div`
 `
 
 export const Loader: FC = () => {
-  return <Skeleton.Button active size="small" style={{ display: 'flex', height: '15px' }} />
+  return <Skeleton.Button active size="small" style={{ display: 'flex', height: '15px', borderRadius: '5px' }} />
 }
 const HeaderTooltip = (text: string) => {
   return (
@@ -96,7 +96,7 @@ export const columns = [
       <STYLED_NAME>
         <img
           className={`coin-image ${record.type === 'Double Sided' ? 'double-sided' : ''}`}
-          src={`/img/crypto/${text.replace(' ', '-')}.svg`}
+          src={`/img/crypto/${text.toUpperCase().replace(' ', '-')}.svg`}
           alt=""
         />
         <div className="text">{text}</div>
@@ -128,7 +128,7 @@ export const columns = [
     dataIndex: 'apr',
     key: 'apr',
     width: '16.6%',
-    render: (text) => <div className="apr normal-text">{text ? `${text.toFixed(0)}%` : <Loader />}</div>
+    render: (text) => <div className="apr normal-text">{text !== undefined ? `${text.toFixed(0)}%` : <Loader />}</div>
   },
   {
     title: Title('Liquidity', "Total value of funds in this farm's liquidity pool.", true),

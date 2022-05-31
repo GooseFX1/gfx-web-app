@@ -126,6 +126,11 @@ export const useLocalStorage = (): UseStorageReturnValue => {
   }
 }
 
+export const checkMobile = () => {
+  const isBrowser: boolean = ((): boolean => typeof window !== 'undefined')()
+  return isBrowser ? window?.innerWidth < 500 : false
+}
+
 export function debounce(callback: any, wait: number) {
   let timeout
   return (...args) => {

@@ -36,6 +36,15 @@ const REWARDS_BTN = styled.button`
   border: none;
   border-radius: 50px;
   cursor: pointer;
+
+  @media (max-width: 500px) {
+    height: 70px;
+    width: 100%;
+    padding: 1rem;
+    font-size: 18px;
+    border-radius: 20px 20px 0 0;
+    margin-bottom: 2rem;
+  }
 `
 const REWARDS_WITH_IMG = styled.img`
   height: 16px;
@@ -46,6 +55,10 @@ const REWARDS_WITH_IMG = styled.img`
 const REWARD_BTN_TITLE = styled.span`
   font-size: 11px;
   font-weight: 600;
+
+  @media (max-width: 500px) {
+    font-size: 20px;
+  }
 `
 
 export const RewardsButton: FC = () => {

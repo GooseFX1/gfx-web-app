@@ -7,6 +7,7 @@ export const SYNTH_DEFAULT_MINT = new PublicKey('So11111111111111111111111111111
 export type Mint = {
   address: PublicKey
   decimals: number
+  sslPool?: boolean
 }
 
 export type Pool = {
@@ -18,6 +19,9 @@ export type Pool = {
 export const ADDRESSES: {
   [network in WalletAdapterNetwork]: {
     mints: {
+      [token: string]: Mint
+    }
+    sslPool: {
       [token: string]: Mint
     }
     pools: {
@@ -48,27 +52,54 @@ export const ADDRESSES: {
   }
 } = {
   'mainnet-beta': {
-    mints: {
-      GOFX: {
-        address: new PublicKey('GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
+    sslPool: {
+      SOL: {
+        address: SYNTH_DEFAULT_MINT,
         decimals: 9
       },
-
       USDC: {
         address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
         decimals: 6
+      },
+      ETH: {
+        address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
+        decimals: 8
       },
       mSOL: {
         address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
         decimals: 9
       },
-      MSOL: {
-        address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
+      SRM: {
+        address: new PublicKey('SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt'),
+        decimals: 6
+      }
+    },
+    mints: {
+      GOFX: {
+        address: new PublicKey('GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
         decimals: 9
       },
       SOL: {
         address: SYNTH_DEFAULT_MINT,
+        decimals: 9,
+        sslPool: true
+      },
+      USDC: {
+        address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        decimals: 6,
+        sslPool: true
+      },
+      ETH: {
+        address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
+        decimals: 8
+      },
+      mSOL: {
+        address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
         decimals: 9
+      },
+      SRM: {
+        address: new PublicKey('SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt'),
+        decimals: 6
       },
       gUSD: {
         address: PublicKey.default,
@@ -137,6 +168,7 @@ export const ADDRESSES: {
   testnet: {
     mints: {},
     pools: {},
+    sslPool: {},
     programs: {
       pool: {
         address: PublicKey.default,
@@ -158,6 +190,7 @@ export const ADDRESSES: {
     }
   },
   devnet: {
+    sslPool: {},
     mints: {
       GOFX: {
         address: new PublicKey('2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'),

@@ -95,6 +95,12 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
   cursor: pointer;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   z-index: 1;
+
+  @media (max-width: 500px) {
+    top: 4px;
+    left: 4px;
+    width: 140px;
+  }
 `
 
 const TOKEN = styled.div`

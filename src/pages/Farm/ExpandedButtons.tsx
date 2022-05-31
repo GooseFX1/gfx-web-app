@@ -263,7 +263,7 @@ export const StakeButtons: FC<{
   const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
   const userTokenBalance = useMemo(
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
-    [tokenInfo.address, getUIAmount, publicKey]
+    [tokenInfo?.address, getUIAmount, publicKey]
   )
 
   const { current } = useMemo(() => prices[`${name}/USDC`], [prices])
@@ -393,13 +393,14 @@ export const SSLButtons: FC<{
     if (name === 'USDC') {
       return { current: 1 }
     }
-    return prices[`${name}/USDC`]
-  }, [prices])
+    // to get price of the token MSOL must be in upper case while to get tokenInfo address mSOL
+    return prices[`${name.toUpperCase()}/USDC`]
+  }, [prices[`${name.toUpperCase()}/USDC`]])
 
   const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
   let userTokenBalance = useMemo(
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
-    [tokenInfo.address, getUIAmount, publicKey]
+    [tokenInfo?.address, getUIAmount, publicKey]
   )
   const userPoolTokenBalance = useMemo(
     () => (publicKey ? getUIAmount(poolTokenAddress['g' + name]) : 0),

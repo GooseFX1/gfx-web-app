@@ -9,29 +9,38 @@ const ROW_CONTAINER = styled.div`
   padding-top: ${({ theme }) => theme.margin(3)};
   padding-bottom: ${({ theme }) => theme.margin(2)};
   .set-width {
-    width: 17%;
+    width: 14%;
   }
   .set-width-balance {
-    width: 18%;
+    width: 17%;
+    margin: auto;
+    padding-right: 12px;
   }
   .set-width-earned {
-    width: 22%;
+    width: 20%;
+    margin: auto;
+    padding-left: 10px;
   }
   .set-width-apr {
-    width: 22%;
+    width: 20%;
+    margin: auto;
   }
   .set-width-liquidity {
-    width: 22%;
+    width: 20%;
+    margin: auto;
   }
   .set-width-volume {
-    width: 18%;
+    width: 21%;
+    padding-right: 20px;
+    margin: auto;
   }
 `
 
 export const STYLED_EXPAND_ICON = styled.div`
   cursor: pointer;
-  padding-top: 20px;
-  margin-left: 2.7%;
+  margin-left: 3% !important;
+  margin-right: 10px;
+  margin-top: 10px;
   filter: ${({ theme }) => theme.filterDownIcon};
   transform: rotate(180deg);
 `
@@ -42,7 +51,7 @@ const DisplayRowData = ({ rowData, onExpandIcon }) => {
       <STYLED_NAME className="set-width">
         <img
           className={`coin-image ${rowData?.type === 'Double Sided' ? 'double-sided' : ''}`}
-          src={`/img/crypto/${rowData?.image}.svg`}
+          src={`/img/crypto/${rowData?.name.toUpperCase()}.svg`}
           alt=""
         />
         <div className="text">{rowData?.name}</div>
@@ -54,7 +63,7 @@ const DisplayRowData = ({ rowData, onExpandIcon }) => {
         {rowData?.earned >= 0 ? `${moneyFormatter(rowData?.earned)}` : <Loader />}
       </div>
       <div className="liquidity normal-text set-width-apr">
-        {rowData?.apr ? `${percentFormatter(rowData?.apr)}` : <Loader />}
+        {rowData?.apr !== undefined ? `${percentFormatter(rowData?.apr)}` : <Loader />}
       </div>
       <div className="liquidity normal-text set-width-liquidity">
         {rowData?.liquidity >= 0 ? `$ ${moneyFormatter(rowData?.liquidity)}` : <Loader />}
@@ -62,9 +71,11 @@ const DisplayRowData = ({ rowData, onExpandIcon }) => {
       <div className="liquidity normal-text set-width-volume">
         {rowData?.volume === '-' ? '-' : rowData.volume >= 0 ? `$ ${moneyFormatter(rowData?.volume)}` : <Loader />}
       </div>
-      <STYLED_EXPAND_ICON onClick={() => onExpandIcon(rowData.id)}>
-        <img src={'/img/assets/arrow-down-large.svg'} />
-      </STYLED_EXPAND_ICON>
+      <div>
+        <STYLED_EXPAND_ICON onClick={() => onExpandIcon(rowData.id)}>
+          <img src={'/img/assets/arrow-down-large.svg'} />
+        </STYLED_EXPAND_ICON>
+      </div>
     </ROW_CONTAINER>
   )
 }

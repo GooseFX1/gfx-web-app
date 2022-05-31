@@ -30,6 +30,11 @@ const WALLET_ICON = styled(CenteredImg)`
 const WRAPPED_LOADER = styled.div`
   width: 40px;
   margin: 0 -12px 0 12px;
+  position: relative;
+
+  div {
+    top: -26px;
+  }
 `
 
 const WRAPPER = styled.button<{ $connected: boolean }>`
