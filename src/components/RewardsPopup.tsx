@@ -38,10 +38,10 @@ const REWARDS_BTN = styled.button`
   cursor: pointer;
 
   @media (max-width: 500px) {
+    height: 70px;
     width: 100%;
     padding: 1rem;
     font-size: 18px;
-    height: 50px;
     border-radius: 20px 20px 0 0;
     margin-bottom: 2rem;
   }
