@@ -5,7 +5,7 @@ import { More } from './More'
 import { Tabs } from './Tabs'
 import { RewardsButton } from '../../components/RewardsPopup'
 import { useDarkMode } from '../../context'
-import { SVGToGrey2, CenteredDiv, SVGToWhite, CenteredImg } from '../../styles'
+import { SVGToGrey2, CenteredDiv, SVGToWhite, CenteredImg, AlignCenterDiv } from '../../styles'
 import { useNavCollapse } from '../../context'
 import { ModalSlide } from '../../components/ModalSlide'
 import { useRewardToggle } from '../../context/reward_toggle'
@@ -24,7 +24,8 @@ const BRAND = styled.a`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     position: relative;
     top: ${({ theme }) => theme.margin(1)};
-    height: 40px;
+    left: 8px;
+    height: 47px;
     margin-bottom: ${({ theme }) => theme.margin(3)};
   `}
 
@@ -82,8 +83,10 @@ const WRAPPER = styled.nav`
 const MobileWrapper = styled(WRAPPER)`
   display: flex;
   flex-direction: row !important;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
+  background-color: ${({ theme }) => theme.bg2};
+  box-shadow: none;
   border-radius: 0px;
 `
 
@@ -111,7 +114,7 @@ const RESPONSIVE_MENU = styled.ul`
   position: absolute;
   left: 0;
   top: 0;
-  height: 82vh;
+  height: 100vh;
   width: 100vw;
   padding: 10vh 0px 1rem 0px;
   background-color: ${({ theme }) => theme.bg1};
@@ -122,17 +125,19 @@ const CLOSE = styled.img`
   ${({ theme }) => theme.measurements('24px')}
   object-fit: contain;
   top: 30px;
-  right: 30px;
+  right: 18px;
 `
 
 const RESPONSIVE_DROPDOWN_WRAPPER = styled.div`
+  margin: 0 8px 0 22px;
   @media (min-width: 500px) {
     display: none;
   }
 `
 
 const DROPDOWN_ICON_WRAPPER = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements('22px')}
+  height: 21px;
+  width: 28px;
 `
 
 const ResponsiveDropdown: FC<{ logoAnimationTime: number }> = ({ logoAnimationTime }) => {
@@ -165,7 +170,7 @@ const ResponsiveDropdown: FC<{ logoAnimationTime: number }> = ({ logoAnimationTi
           src={`${process.env.PUBLIC_URL}/img/assets/cross.svg`}
           onClick={toggleOpacity}
         />
-        <Tabs />
+        <Tabs mobileToggle={toggleOpacity} />
         <RewardsButton />
         <ThemeToggle />
       </RESPONSIVE_MENU>
@@ -208,8 +213,10 @@ export const Header: FC = () => {
         <BRAND href="/">
           <img id="logo" src={`/img/assets/gfx_logo_gradient_${mode}.svg`} alt="GFX Logo" />
         </BRAND>
-        <Connect />
-        <ResponsiveDropdown logoAnimationTime={2} />
+        <AlignCenterDiv>
+          <Connect />
+          <ResponsiveDropdown logoAnimationTime={2} />
+        </AlignCenterDiv>
         {/* <More /> */}
       </MobileWrapper>
     )
