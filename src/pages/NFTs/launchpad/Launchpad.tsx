@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import { useRouteMatch, Route, Switch, useLocation, useParams } from 'react-router-dom'
 import { LandingPage } from './pages/LandingPage'
 import { SingleCollection } from './pages/SingleCollection'
+import { NFTLaunchpadProvider, NFTLPSelectedProvider } from '../../../context/nft_launchpad'
 
 export const Launchpad: FC = () => {
   const { path } = useRouteMatch()
@@ -9,10 +10,14 @@ export const Launchpad: FC = () => {
   return (
     <Switch>
       <Route exact path={path}>
-        <LandingPage />
+        <NFTLaunchpadProvider>
+          <LandingPage />
+        </NFTLaunchpadProvider>
       </Route>
       <Route exact path="/NFTs/launchpad/:collectionId">
-        <SingleCollection />
+        <NFTLPSelectedProvider>
+          <SingleCollection />
+        </NFTLPSelectedProvider>
       </Route>
     </Switch>
   )
