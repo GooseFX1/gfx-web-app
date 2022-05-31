@@ -29,5 +29,14 @@ export const httpClient = (base: string) => {
     }
   })
 }
+export const customClient = (customURL: string) => {
+  return axios.create({
+    baseURL: customURL,
+    responseType: 'json',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
 
 export default apiClient

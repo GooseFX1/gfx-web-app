@@ -50,8 +50,6 @@ const GOLDEN_POPUP = styled.div`
 const ToggleBG = styled.span`
   background: #2a2a2a;
   border-radius: 13px;
-  position: absolute;
-  margin-top: 20px;
   padding: 10px;
   .toggle-text {
     padding: 10px;
@@ -184,13 +182,15 @@ const ProgressBarBG = styled.div`
 `
 
 const DARK_DIV = styled.div`
+  width: 747px;
+
   .dark-1 {
     //biggest
     position: absolute;
-    margin-left: 200px;
+    margin-left: 100px;
     width: 501px;
     height: 501px;
-    margin-top: 50px;
+    margin-top: 25px;
     background: #2a2a2a;
     opacity: 0.6;
     border-radius: 20px;
@@ -198,8 +198,8 @@ const DARK_DIV = styled.div`
   .dark-2 {
     //smaller
     position: absolute;
-    margin-left: 140px;
-    margin-top: 75px;
+    margin-left: 40px;
+    margin-top: 50px;
     width: 451px;
     height: 451px;
     background: #2a2a2a;
@@ -208,8 +208,8 @@ const DARK_DIV = styled.div`
   }
   .dark-3 {
     //smallest
-    margin-left: 100px;
-    margin-top: 100px;
+    margin-left: 0px;
+    margin-top: 75px;
     position: absolute;
     width: 401px;
     height: 401px;
@@ -218,13 +218,13 @@ const DARK_DIV = styled.div`
     border-radius: 20px;
   }
   .image-border {
-    margin-left: 280px;
+    margin-left: 180px;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     position: absolute;
     width: 567px;
     height: 567px;
     border-radius: 20px;
-    margin-top: 18px;
+    margin-top: -7px;
     padding: 5px;
   }
   .inner-image-bg {
@@ -336,19 +336,17 @@ export const TokenSwitch = () => {
 
 export const DarkDiv = () => {
   return (
-    <div>
-      <DARK_DIV>
-        <div className="dark-3" />
-        <div className="dark-2" />
-        <div className="dark-1" />
+    <DARK_DIV>
+      <div className="dark-3" />
+      <div className="dark-2" />
+      <div className="dark-1" />
 
-        <div className="image-border">
-          <div className="inner-image-bg">
-            <img className="inner-image" src="/img/assets/NestQuest.png" />
-          </div>
+      <div className="image-border">
+        <div className="inner-image-bg">
+          <img className="inner-image" src="/img/assets/NestQuest.png" />
         </div>
-      </DARK_DIV>
-    </div>
+      </div>
+    </DARK_DIV>
   )
 }
 

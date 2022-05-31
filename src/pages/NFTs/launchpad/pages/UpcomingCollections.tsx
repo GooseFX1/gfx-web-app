@@ -5,9 +5,11 @@ import styled, { css } from 'styled-components'
 import { Row, Card } from 'antd'
 import { theme } from '../../../../theme'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
+import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 
 const CAROUSEL_WRAPPER = styled.div`
   position: relative;
+  margin-left: -25px;
   width: 100% !important;
   height: 100%;
   .fade {
@@ -69,6 +71,8 @@ const NFT_CONTAINER = styled.div`
 const UPCOMING_TEXT = styled.div`
   font-weight: 700;
   font-size: 30px;
+  margin-top: 100px;
+  margin-bottom: 40px;
 `
 
 const NFT_TITLE = styled.div`
@@ -147,14 +151,11 @@ const UpcomingCollectins: FC = () => {
     nextArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-next" />,
     prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-previous" />
   }
+  const { upcomoingNFTProjects } = useNFTLaunchpad()
   const [upcomingList, setUpcomingList] = useState([])
   useEffect(() => {
-    async function getMockCollections() {
-      const mockData = await axios.get('https://nest-api.goosefx.io/open-bid?collection_id=4')
-      setUpcomingList(mockData.data.open_bid.slice(0, 10))
-    }
-    getMockCollections()
-  }, [])
+    setUpcomingList(upcomoingNFTProjects)
+  }, [upcomoingNFTProjects])
 
   const getNftPrice = () => {
     return '02 SOL'
@@ -176,7 +177,7 @@ const UpcomingCollectins: FC = () => {
                       <Card
                         cover={
                           <>
-                            <img className="nft-img" src={item.image_url} alt="NFT" />
+                            <img className="nft-img" src={item.coverUrl} alt="NFT" />
                             <NFT_META>
                               <span className="flex">
                                 <NFT_TITLE> {item.nft_name}</NFT_TITLE>
