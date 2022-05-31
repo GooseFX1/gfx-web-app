@@ -15,7 +15,7 @@ import {
   invalidInputErrMsg
 } from './FarmClickHandler'
 import { notify } from '../../utils'
-import { useTokenRegistry, useAccounts, useConnectionConfig, usePriceFeed, useFarmContext } from '../../context'
+import { useTokenRegistry, useAccounts, useConnectionConfig, useFarmContext } from '../../context'
 import {
   executeStake,
   executeUnstakeAndClaim,
@@ -287,7 +287,6 @@ export const ExpandedDynamicContent = ({
   const { getTokenInfoForFarming } = useTokenRegistry()
   const { network } = useConnectionConfig()
   const wallet = useWallet()
-  const { prices } = usePriceFeed()
   const { connection } = useConnectionConfig()
   const { counter, setCounter, setOperationPending } = useFarmContext()
   //loading indicators
@@ -326,16 +325,6 @@ export const ExpandedDynamicContent = ({
   const Deposit = `Deposit`
   const Withdraw = `Withdraw`
   //const youDeposit
-
-  const fiatStakedAmount = useMemo(() => {
-    const price = prices[name + '/USDC']
-    return tokenStaked ? tokenStaked * price?.current : 0
-  }, [tokenStaked])
-
-  const fiatEarnedAmount = useMemo(() => {
-    const price = prices[name + '/USDC']
-    return tokenEarned ? tokenEarned * price?.current : 0
-  }, [tokenEarned])
 
   useEffect(() => {
     setTokenStaked(parseFloat(currentlyStaked))

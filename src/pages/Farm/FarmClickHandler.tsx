@@ -20,7 +20,7 @@ export const sslSuccessfulMessage = (
 ) => ({
   message: (
     <SuccessfulListingMsg
-      title={`${operation} sucessfull!`}
+      title={`${name} ${operation} sucessfull!`}
       itemName={`You ${operation} ${price} ${name}`}
       supportText={`Farm ${name}`}
       tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
