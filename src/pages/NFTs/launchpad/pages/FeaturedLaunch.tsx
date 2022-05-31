@@ -9,9 +9,7 @@ import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { MainButton } from '../../../../components/MainButton'
 import { SOCIAL_MEDIAS } from '../../../../constants'
 import { SVGDynamicReverseMode } from '../../../../styles/utils'
-import { InfoDivUSDCTheme, DarkDiv, TokenSwitch } from './LaunchpadComponents'
-import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
-import { useUSDCToggle } from '../../../../context/nft_launchpad'
+import { InfoDivUSDCTheme, DarkDiv } from './LaunchpadComponents'
 
 //#region styles
 const IMAGE = styled.div`
@@ -58,6 +56,7 @@ const NFT_DETAILS = styled.div`
     margin: 20px 70px 0px 0px;
   }
   .nd-details {
+    width: 450px;
   }
   ${({ theme }) => css`
     .nd-back-icon {
@@ -77,17 +76,12 @@ const YELLOW = styled.h3`
   font-size: 30px;
   line-height: 36.57px;
   margin-bottom: 50px;
-  display: flex;
   background: linear-gradient(92.45deg, #ea7e00 6.46%, #f1c52a 107.94%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-fill-color: transparent;
   margin: 0;
-  align-items: center;
-  .text {
-    margin-left: 20px;
-  }
 `
 
 const TITLE = styled.h1`
@@ -106,16 +100,6 @@ const SUBTITLE = styled.h2`
   color: ${({ theme }) => theme.text1};
 `
 
-const LEFT_WRAPPER = styled.div`
-  width: 35vw;
-  .mintContainer {
-    display: flex;
-    margin-top: 40px;
-    .navigationImg {
-      cursor: pointer;
-    }
-  }
-`
 const PILL_SECONDARY = styled.div`
   background: linear-gradient(90deg, rgba(247, 147, 26, 0.5) 0%, rgba(220, 31, 255, 0.5) 100%);
   border-radius: 50px;
@@ -153,21 +137,6 @@ const DESCRIPTION = styled.p`
   line-height: 24px;
   color: ${({ theme }) => theme.text4};
 `
-const FEATURED_IMG = styled.div`
-  width: 85px;
-  height: 90px;
-  margin-right: 25px;
-`
-
-const BACK_IMG = styled.div`
-  width: 40px;
-  height: 40px;
-  margin-left: -30px;
-  transform: rotate(90deg) scale(1.6);
-  margin-right: 30px;
-  margin-top: 35px;
-  cursor: pointer;
-`
 
 const MINT_PROGRESS = styled(Progress)<{ num: number }>`
   .ant-progress-outer {
@@ -190,7 +159,23 @@ const MINT_PROGRESS = styled(Progress)<{ num: number }>`
     left: calc(${({ num }) => num}% - 64px);
   }
 `
-const GRAPHIC_IMG = styled.div``
+
+const CONNECT = styled(MainButton)`
+  height: 50px;
+  width: 100%;
+  background-color: ${({ theme }) => theme.secondary3};
+`
+
+const ORANGE_BTN = styled(MainButton)`
+  height: 50px;
+  width: 100%;
+  background: linear-gradient(270deg, #dc1fff 0%, #f7931a 106.38%);
+
+  &:disabled {
+    background: grey;
+    cursor: not-allowed;
+  }
+`
 
 export const SpaceBetweenDiv = styled.div`
   display: flex;
@@ -198,40 +183,7 @@ export const SpaceBetweenDiv = styled.div`
   align-items: center;
 `
 //#endregion
-const MINT_BTN = styled.div`
-  background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-  border-radius: 47px;
-  width: 219px;
-  height: 60px;
-  margin-left: -5px;
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  font-size: 15px;
-  justify-content: center;
-  margin-right: 60px;
-  cursor: pointer;
-`
 
-const ITEMS = styled.div`
-  font-weight: 600;
-  font-size: 22px;
-`
-const PRICE_DISPLAY = styled.div`
-  display: flex;
-`
-export const GetNftPrice = ({ item }) => {
-  return (
-    <PRICE_DISPLAY>
-      <span>{`Price: ${item?.price}`}</span>
-      <img
-        style={{ margin: '0px 10px 5px 10px', width: '25px', height: '25px' }}
-        src={`/img/crypto/${item?.currency}.svg`}
-      />
-      <span>{`  ${item?.currency}`}</span>
-    </PRICE_DISPLAY>
-  )
-}
 export const FeaturedLaunch: FC<{
   handleClickPrimaryButton?: (type: string) => void
   status?: MintItemViewStatus
@@ -242,121 +194,76 @@ export const FeaturedLaunch: FC<{
   // const { connected, publicKey } = useWallet()
   // const { setVisible: setModalVisible } = useWalletModal()
   // const { getUIAmount } = useAccounts()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   // const [notEnough, setNotEnough] = useState<boolean>(false)
-  const { isUSDC } = useUSDCToggle()
-  const [featuredIndex, setFeaturedIndex] = useState(0)
-  const [featuredDisplay, setFeaturedDisplay] = useState([])
-  const [featuredList, setFeaturedList] = useState([])
-  const { liveNFTProjects } = useNFTLaunchpad()
+  const mintPrice: number = useMemo(() => 1.5, [])
 
   useEffect(() => {
-    setFeaturedList(
-      isUSDC
-        ? liveNFTProjects.filter((data) => data.currency === 'USDC')
-        : liveNFTProjects.filter((data) => data.currency === 'SOL')
-    )
-  }, [isUSDC, liveNFTProjects])
-
-  const handleScroller = (direction: string) => {
-    const length = featuredList?.length
-    if (direction === '+') {
-      setFeaturedIndex((prev) => (prev + 1) % length)
-    }
-    if (direction === '-') {
-      if (featuredIndex === 0) setFeaturedIndex(length - 1)
-      else setFeaturedIndex((prev) => (prev - 1) % length)
-    }
-  }
-
-  useEffect(() => {
-    if (featuredList) {
-      setFeaturedDisplay([featuredList[featuredIndex]])
-    }
-  }, [featuredIndex, liveNFTProjects, featuredList])
+    setTimeout(() => setIsLoading(false), 800)
+  }, [])
 
   return (
-    <>
-      {featuredDisplay[0]?.currency ? <TokenSwitch disabled={false} currency={featuredDisplay[0]?.currency} /> : <></>}
-
-      <NFT_DETAILS {...rest}>
-        {!featuredDisplay[0] ? (
-          <>
-            <img
-              className="nd-back-icon"
-              src={`/img/assets/arrow.svg`}
-              alt="back"
-              onClick={() => {
-                backUrl ? history.push(backUrl) : history.goBack()
-              }}
-            />
-            <SkeletonCommon width="100%" height="400px" borderRadius="10px" />
-            <br />
-          </>
-        ) : (
-          <div className="detailsContainer">
-            <div className="nd-details">
+    <NFT_DETAILS {...rest}>
+      <img
+        className="nd-back-icon"
+        src={`/img/assets/arrow.svg`}
+        alt="back"
+        onClick={() => {
+          backUrl ? history.push(backUrl) : history.goBack()
+        }}
+      />
+      <div className="detailsContainer">
+        <div className="nd-details">
+          <div>
+            {isLoading ? (
+              <>
+                <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
+                <br />
+                <SkeletonCommon width="100%" height="350px" borderRadius="10px" />
+                <br />
+              </>
+            ) : (
               <div>
-                {!featuredDisplay[0].collectionName ? (
-                  <>
-                    <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
-                    <br />
-                    <SkeletonCommon width="100%" height="350px" borderRadius="10px" />
-                    <br />
-                  </>
-                ) : (
-                  <LEFT_WRAPPER>
-                    <YELLOW>
-                      <BACK_IMG onClick={() => history.goBack()}>
-                        <img src="/img/assets/arrow-down-large.svg" />{' '}
-                      </BACK_IMG>
-                      <FEATURED_IMG>
-                        <img src="/img/assets/Launchpad.png" />{' '}
-                      </FEATURED_IMG>
-                      Featured Launch
-                    </YELLOW>
-                    <TITLE className="rs-name">{featuredDisplay[0]?.collectionName}</TITLE>
-                    <SUBTITLE>{featuredDisplay[0]?.tagLine}</SUBTITLE>
-                    <br />
-                    <Row justify="space-between" align="middle" style={{ marginRight: '50px' }}>
-                      <ITEMS>{`Items ${featuredDisplay[0]?.items}`}</ITEMS>
-                      <ITEMS>
-                        <GetNftPrice item={featuredDisplay[0]} />
-                      </ITEMS>
-                    </Row>
-                    <br />
-                    <DESCRIPTION>{featuredDisplay[0]?.summary}</DESCRIPTION>
-                    <div className="mintContainer">
-                      <MINT_BTN onClick={() => history.push(`/NFTs/launchpad/${featuredDisplay[0].urlName}`)}>
-                        Mint
-                      </MINT_BTN>
-                      <img
-                        className="navigationImg"
-                        alt="navigateImg"
-                        onClick={() => handleScroller('-')}
-                        src="/img/assets/navigateLeft.svg"
-                      />
-                      <img
-                        className="navigationImg"
-                        alt="navigateImg"
-                        onClick={() => handleScroller('+')}
-                        src="/img/assets/navigateRight.svg"
-                      />
-                    </div>
-                  </LEFT_WRAPPER>
-                )}
+                <YELLOW>Featured Launch </YELLOW>
+                <TITLE className="rs-name">NestQuest</TITLE>
+                <SUBTITLE>Tier #1 "The Egg"</SUBTITLE>
+                <br />
+                <Row justify="space-between" align="middle">
+                  <div>Items 10,018</div>
+                  <Col span={7}>
+                    <div>Price {mintPrice} SOL</div>
+                  </Col>
+                  <Col span={2}>
+                    <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.nestquest)}>
+                      <SVGDynamicReverseMode src="/img/assets/domains.svg" alt="domain-icon" />
+                    </SOCIAL_ICON>
+                  </Col>
+                  <Col span={2}>
+                    <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.discord)}>
+                      <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
+                    </SOCIAL_ICON>
+                  </Col>
+                  <Col span={2}>
+                    <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.twitter)}>
+                      <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
+                    </SOCIAL_ICON>
+                  </Col>
+                </Row>
+                <br />
+                <DESCRIPTION>
+                  A mysterious egg abandoned in a peculiar tree stump nest. The egg emits a faint glow, as your hand
+                  gets close to the surface you feel radiant heat. Something is alive inside. You must incubate this egg
+                  for it to hatch.
+                </DESCRIPTION>
               </div>
-            </div>
-            <GRAPHIC_IMG>
-              {featuredDisplay[0] ? (
-                <DarkDiv coverUrl={featuredDisplay[0]?.coverUrl} />
-              ) : (
-                <SkeletonCommon width="100%" height="550px" borderRadius="10px" />
-              )}
-            </GRAPHIC_IMG>
+            )}
           </div>
-        )}
-      </NFT_DETAILS>
-    </>
+        </div>
+        <div className="grapic-image">
+          {!isLoading ? <DarkDiv /> : <SkeletonCommon width="100%" height="550px" borderRadius="10px" />}
+        </div>
+      </div>
+    </NFT_DETAILS>
   )
 }
