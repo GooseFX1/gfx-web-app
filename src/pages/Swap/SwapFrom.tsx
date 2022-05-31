@@ -24,7 +24,7 @@ const QUICK_SELECT = styled.div`
     margin-left: 20%;
     width: 60%;
     position: absolute;
-    top: -20px;
+    top: -5px;
   }
 `
 
