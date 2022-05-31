@@ -14,18 +14,11 @@ import {
   createMint,
   programIds
 } from '../index'
-
 import { IMetadataContext } from '../../types/nft_details.d'
-
-import { ENDPOINT_NAME } from './types.d'
 import { updateMetadata } from './metadata'
-
 import { sendTransactionWithRetry } from '../transactions'
-
 import crypto from 'crypto'
-
 import BN from 'bn.js'
-
 import { calculate } from '@metaplex/arweave-cost'
 
 export const LAMPORT_MULTIPLIER = LAMPORTS_PER_SOL
@@ -36,7 +29,8 @@ export async function getAssetCostToStore(files: { size: number }[]) {
   const sizes = files.map((f) => f.size)
   const result = await calculate(sizes)
 
-  return LAMPORTS_PER_SOL * result.solana
+  const lamps = LAMPORTS_PER_SOL * result.solana
+  return parseFloat(lamps.toFixed(0))
 }
 
 const RESERVED_TXN_MANIFEST = 'manifest.json'
@@ -75,7 +69,7 @@ const uploadToArweave = async (data: FormData): Promise<IArweaveResult> => {
 export const mintNFT = async (
   connection: Connection,
   wallet: WalletContextState | undefined,
-  endpoint: ENDPOINT_NAME,
+  endpoint: string,
   files: File[],
   metadata: IMetadataContext,
   progressCallback: Dispatch<SetStateAction<number>>,
@@ -317,14 +311,17 @@ export const prepPayForFilesTxn = async (
   const instructions: TransactionInstruction[] = []
   const signers: Keypair[] = []
 
-  if (wallet.publicKey)
+  if (wallet.publicKey) {
+    const lamps = await getAssetCostToStore(files)
+
     instructions.push(
       SystemProgram.transfer({
         fromPubkey: wallet.publicKey,
         toPubkey: AR_SOL_HOLDER_ID,
-        lamports: await getAssetCostToStore(files)
+        lamports: lamps
       })
     )
+  }
 
   for (let i = 0; i < files.length; i++) {
     const hashSum = crypto.createHash('sha256')
