@@ -77,7 +77,7 @@ const BODY = styled.div`
   ${({ theme }) => theme.measurements('100%')}
 
   @media (max-width: 500px) {
-    margin: ${({ theme }) => theme.margin(5)} 0 ${({ theme }) => theme.margin(6)};
+    margin: ${({ theme }) => theme.margin(4)} 0 ${({ theme }) => theme.margin(6)};
   }
 `
 
@@ -305,7 +305,7 @@ const SWAP_ROUTES = styled.div<{ $less: boolean }>`
     right: 32px;
 
     @media (max-width: 500px) {
-      top: ${({ $less }) => ($less ? '80%' : '85%')};
+      top: ${({ $less }) => ($less ? '80%' : '88%')};
       font-size: 16px !important;
     }
   }
@@ -873,10 +873,11 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
               .map(() => (
                 <SkeletonCommon
                   width={'330px'}
-                  height="100px"
+                  height={checkMobile() ? '64px' : '100px'}
                   borderRadius="10px"
                   style={{
                     marginRight: checkMobile() ? '0px' : '16px',
+                    marginBottom: checkMobile() ? '16px' : '0px',
                     boxShadow: '0 6px 9px 0 rgba(36, 36, 36, 0.1)'
                   }}
                 />
