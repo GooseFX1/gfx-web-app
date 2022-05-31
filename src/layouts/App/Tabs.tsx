@@ -47,6 +47,7 @@ const TAB_ICON = styled(CenteredImg)`
   @media (max-width: 500px) {
     position: absolute;
     left: 2.5rem;
+    margin-bottom: 0px !important;
   }
 `
 
@@ -143,17 +144,16 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     margin-bottom: 0px;
     border-radius: 0px;
     flex-direction: column;
+    justify-content: start;
     height: 100%;
-    justify-content: space-around;
 
     > a {
       width: 100%;
-      padding-left: 0px;
-      padding-right: 0px;
       font-size: 18px;
       height: 64px;
       border-radius: 0px;
-      padding: 1rem;
+      margin: 1rem 0;
+
       &:hover {
         background-color: #3735bb;
       }
@@ -168,7 +168,11 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
   }
 `
 
-export const Tabs: FC = () => {
+interface IProps {
+  mobileToggle?: Function
+}
+
+export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
   const { mode } = useDarkMode()
   const { pathname } = useLocation()
   const [hovered, setHovered] = useState(-1)
@@ -178,12 +182,19 @@ export const Tabs: FC = () => {
     return match !== -1 ? pathname.slice(0, pathname.slice(1).indexOf('/') + 1) : pathname
   }, [pathname])
   const index = useMemo(() => TABS.indexOf(cleanedPathName), [cleanedPathName])
-  console.log(hovered)
 
   return (
     <WRAPPER $height={3.5} $index={index} $width={50}>
       {TABS.map((path, index) => (
-        <TAB key={index} onMouseEnter={() => setHovered(index)} onMouseLeave={() => setHovered(-1)} to={path}>
+        <TAB
+          key={index}
+          onMouseEnter={() => setHovered(index)}
+          onMouseLeave={() => setHovered(-1)}
+          to={path}
+          onClick={(e) => {
+            if (props.mobileToggle) props.mobileToggle()
+          }}
+        >
           <TAB_ICON>
             {(() => {
               const icon = `/img/assets${path}_icon.svg`
