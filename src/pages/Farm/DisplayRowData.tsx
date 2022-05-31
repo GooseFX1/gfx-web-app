@@ -51,7 +51,7 @@ const DisplayRowData = ({ rowData, onExpandIcon }) => {
       <STYLED_NAME className="set-width">
         <img
           className={`coin-image ${rowData?.type === 'Double Sided' ? 'double-sided' : ''}`}
-          src={`/img/crypto/${rowData?.image}.svg`}
+          src={`/img/crypto/${rowData?.name.toUpperCase()}.svg`}
           alt=""
         />
         <div className="text">{rowData?.name}</div>
@@ -63,7 +63,7 @@ const DisplayRowData = ({ rowData, onExpandIcon }) => {
         {rowData?.earned >= 0 ? `${moneyFormatter(rowData?.earned)}` : <Loader />}
       </div>
       <div className="liquidity normal-text set-width-apr">
-        {rowData?.apr ? `${percentFormatter(rowData?.apr)}` : <Loader />}
+        {rowData?.apr !== undefined ? `${percentFormatter(rowData?.apr)}` : <Loader />}
       </div>
       <div className="liquidity normal-text set-width-liquidity">
         {rowData?.liquidity >= 0 ? `$ ${moneyFormatter(rowData?.liquidity)}` : <Loader />}
