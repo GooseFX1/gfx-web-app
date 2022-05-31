@@ -113,6 +113,10 @@ const STYLED_UPLOAD_CUSTOM = styled.div`
   `}
 `
 const STYLED_UPLOAD_ERROR = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   .image-broken {
     width: 83px;
     height: 83px;
