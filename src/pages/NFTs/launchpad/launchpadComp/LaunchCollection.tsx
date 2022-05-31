@@ -3,13 +3,22 @@ import styled from 'styled-components'
 import LaunchImg from '../../../../assets/launch.svg'
 
 const Container = styled.div`
-  width: 90%;
-  height: 295px;
-  margin: auto;
   display: flex;
+  justify-content: flex-start;
+  margin-top: 150px !important ;
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   border-radius: 15px;
-  align-items: center;
+  margin-right: 40px !important ;
+  margin-bottom: 70px;
+
+  .startContainer {
+    height: 295px;
+    padding-right: 10px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+  }
 `
 const TEXT = styled.div`
   font-weight: 600;
@@ -42,8 +51,8 @@ const TEXT_CONTAINER = styled.div`
 
 const LaunchCollection: FC = () => {
   return (
-    <>
-      <Container>
+    <Container>
+      <div className="startContainer">
         <IMG>
           <img src={LaunchImg} />
         </IMG>
@@ -51,8 +60,8 @@ const LaunchCollection: FC = () => {
           <TEXT>Launch your collection today!</TEXT>
           <APPLY_BTN>Apply</APPLY_BTN>
         </TEXT_CONTAINER>
-      </Container>
-    </>
+      </div>
+    </Container>
   )
 }
 export default LaunchCollection
