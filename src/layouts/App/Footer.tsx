@@ -37,6 +37,7 @@ const TEXT = styled.span`
   @media (max-width: 500px) {
     padding: 0.25rem;
     padding-bottom: 1rem;
+    text-align: center;
   }
 `
 
@@ -83,7 +84,7 @@ export const Footer: FC = () => {
   if (checkMobile()) {
     return (
       <WRAPPER>
-        <ThemeToggle />
+        {/* <ThemeToggle /> */}
         <AltRow justify="space-between" align="middle">
           <Col span={2}>
             <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.medium)}>

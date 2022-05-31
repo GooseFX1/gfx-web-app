@@ -11,6 +11,7 @@ import { ModalSlide } from '../../components/ModalSlide'
 import { useRewardToggle } from '../../context/reward_toggle'
 import { MODAL_TYPES } from '../../constants'
 import { checkMobile } from '../../utils'
+import { ThemeToggle } from '../../components/ThemeToggle'
 
 const BRAND = styled.a`
   position: absolute;
@@ -110,9 +111,9 @@ const RESPONSIVE_MENU = styled.ul`
   position: absolute;
   left: 0;
   top: 0;
-  height: 80vh;
+  height: 82vh;
   width: 100vw;
-  padding: 10vh 0 0;
+  padding: 10vh 0px 1rem 0px;
   background-color: ${({ theme }) => theme.bg1};
 `
 
@@ -166,6 +167,7 @@ const ResponsiveDropdown: FC<{ logoAnimationTime: number }> = ({ logoAnimationTi
         />
         <Tabs />
         <RewardsButton />
+        <ThemeToggle />
       </RESPONSIVE_MENU>
     </RESPONSIVE_DROPDOWN_WRAPPER>
   )

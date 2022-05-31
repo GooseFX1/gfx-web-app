@@ -43,6 +43,7 @@ const REWARDS_BTN = styled.button`
     font-size: 18px;
     height: 50px;
     border-radius: 20px 20px 0 0;
+    margin-bottom: 2rem;
   }
 `
 const REWARDS_WITH_IMG = styled.img`
@@ -56,7 +57,7 @@ const REWARD_BTN_TITLE = styled.span`
   font-weight: 600;
 
   @media (max-width: 500px) {
-    font-size: 18px;
+    font-size: 20px;
   }
 `
 
