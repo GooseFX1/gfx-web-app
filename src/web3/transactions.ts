@@ -275,7 +275,7 @@ export async function awaitTransactionSignatureConfirmation(
         try {
           const signatureStatuses = await connection.getSignatureStatuses([txid])
           status = signatureStatuses && signatureStatuses.value[0]
-          console.log(explorerLinkFor(txid, connection))
+
           if (!done) {
             if (!status) {
               console.log('REST null result for', txid, status)
