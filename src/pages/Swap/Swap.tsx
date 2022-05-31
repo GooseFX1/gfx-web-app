@@ -24,13 +24,14 @@ import { PublicKey } from '@solana/web3.js'
 import { TOKEN_LIST_URL } from '@jup-ag/core'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ILocationState } from '../../types/app_params.d'
-import { notify, moneyFormatter, nFormatter } from '../../utils'
+import { notify, moneyFormatter, nFormatter, checkMobile } from '../../utils'
 import { CURRENT_SUPPORTED_TOKEN_LIST } from '../../constants'
 import { useParams } from 'react-router-dom'
 
 const CoinGecko = require('coingecko-api')
 const CoinGeckoClient = new CoinGecko()
 
+//@media (max-width: 500px) {
 //#region styles
 const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -50,6 +51,14 @@ const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
   color: ${({ theme }) => theme.text1};
   width: 100vw;
   margin-bottom: 28px;
+
+  @media (max-width: 500px) {
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    padding: 15vh 15px 1rem 15px;
+  }
 `
 
 const SETTING_MODAL = styled(Modal)`
@@ -66,6 +75,10 @@ const BODY = styled.div`
   margin: ${({ theme }) => theme.margin(5)} 0 ${({ theme }) => theme.margin(4)};
   ${({ theme }) => theme.customScrollBar('6px')};
   ${({ theme }) => theme.measurements('100%')}
+
+  @media (max-width: 500px) {
+    margin: ${({ theme }) => theme.margin(4)} 0 ${({ theme }) => theme.margin(6)};
+  }
 `
 
 const HEADER_TITLE = styled(CenteredDiv)`
@@ -87,6 +100,12 @@ const TOKEN_WRAPPER = styled.div`
   padding-left: ${({ theme }) => theme.margin(4)};
   border-radius: 0px 20px 20px 0px;
   background: ${({ theme }) => theme.swapSides1};
+
+  @media (max-width: 500px) {
+    width: 100%;
+    border-radius: 20px;
+    min-height: 0px;
+  }
 `
 
 const TokenTitle = styled.div`
@@ -157,17 +176,31 @@ const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
     border-radius: 15px;
     padding: ${({ theme }) => theme.margin(2)};
 
+    @media (max-width: 500px) {
+      position: static;
+    }
+
     .content {
       width: 67%;
 
       div {
         ${({ theme }) => theme.ellipse}
       }
+
+      @media (max-width: 500px) {
+        width: 85%;
+      }
     }
     .price {
       margin-left: 4px;
       width: 30%;
     }
+  }
+
+  @media (max-width: 500px) {
+    height: 65px;
+    margin: 0px;
+    margin-bottom: 16px;
   }
 `
 
@@ -176,6 +209,21 @@ const TokenDetail = styled.div`
   flex-direction: column;
   width: 100%;
   padding: ${({ theme }) => theme.margin(1.5)} 0;
+`
+
+const AltTokenDetail = styled(TokenDetail)`
+  @media (max-width: 500px) {
+    width: 50%;
+  }
+`
+
+const ListWrapper = styled.div`
+  width: 100%;
+  @media (max-width: 500px) {
+    display: flex;
+    padding: ${({ theme }) => theme.margin(1.5)} 0;
+    flex-wrap: wrap;
+  }
 `
 
 const SubHeader = styled.div`
@@ -220,6 +268,12 @@ const PRICE_WRAPPER = styled.div`
   border-radius: 20px 0px 0px 20px;
   padding: ${({ theme }) => theme.margin(3)};
   background: ${({ theme }) => theme.swapSides2};
+
+  @media (max-width: 500px) {
+    width: 100%;
+    border-radius: 20px;
+    margin-bottom: 3rem;
+  }
 `
 
 const SWAP_ROUTES = styled.div<{ $less: boolean }>`
@@ -233,12 +287,27 @@ const SWAP_ROUTES = styled.div<{ $less: boolean }>`
     padding: 32px 0;
     overflow-x: auto;
     height: 20%;
+
+    @media (max-width: 500px) {
+      flex-direction: column;
+      width: 100%;
+      align-items: center;
+      justify-content: space-around;
+      margin: 2rem 0px 3rem 0px;
+      padding: 0px;
+      height: auto;
+    }
   }
 
   .action {
     position: absolute;
     top: 0;
     right: 32px;
+
+    @media (max-width: 500px) {
+      top: ${({ $less }) => ($less ? '80%' : '88%')};
+      font-size: 16px !important;
+    }
   }
 `
 
@@ -254,6 +323,10 @@ const BestPrice = styled.div`
   border-radius: 0.35rem;
   background-color: #be2cff;
   color: white;
+
+  @media (max-width: 500px) {
+    margin-top: -60px;
+  }
 `
 
 const ShowLess = styled.div`
@@ -334,6 +407,12 @@ const SWITCH = styled(CenteredImg)<{ measurements: number }>`
   .swap-switch {
     height: auto;
     width: auto;
+
+    @media (max-width: 500px) {
+      height: 8rem;
+      width: 8rem;
+      margin-top: 2.5rem;
+    }
   }
 `
 
@@ -347,14 +426,25 @@ const SWAP_CONTENT = styled.div`
   ${({ theme }) => theme.largeBorderRadius}
   background-color: ${({ theme }) => theme.bg9};
   ${({ theme }) => theme.largeShadow}
+
+  @media (max-width: 500px) {
+    width: 100%;
+    font-size: 14px !important;
+    padding: ${({ theme }) => theme.margin(2.5)};
+    margin-bottom: 3rem;
+  }
 `
 //#endregion
 
-const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> = ({ exchange, routes, clickNo }) => {
+const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: number }> = ({
+  exchange,
+  routes,
+  clickNo
+}) => {
   const location = useLocation<ILocationState>()
   const { setEndpoint, network } = useConnectionConfig()
   const { mode } = useDarkMode()
-  const { refreshRates, setFocused, switchTokens } = useSwap()
+  const { refreshRates, setFocused, switchTokens, setClickNo, tokenA, tokenB, inTokenAmount } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
   const [route, setRoute] = useState(routes[clickNo])
 
@@ -419,7 +509,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
       </SETTING_MODAL>
       <HEADER_WRAPPER $iconSize="40px">
         <HEADER_TITLE>
-          <span>{dateString(new Date())}</span>
+          <span>{checkMobile() ? 'Swap' : dateString(new Date())}</span>
           <img src={`/img/crypto/jup_${mode}.svg`} alt="jupiter-icon" className={'jup-icon'} />
         </HEADER_TITLE>
 
@@ -447,6 +537,9 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo }> =
         </SWITCH>
         <SwapTo height={height} />
       </BODY>
+      {checkMobile() && tokenA && tokenB && inTokenAmount > 0 && (
+        <AlternativesContent routes={routes} clickNo={clickNo} setClickNo={setClickNo} />
+      )}
       <SwapButton exchange={exchange} route={route} />
     </SWAP_CONTENT>
   )
@@ -557,7 +650,7 @@ const TokenContent: FC = () => {
             currency: '$'
           },
           {
-            name: 'Max Total Supply',
+            name: 'Total Max Supply',
             value: Math.floor(data?.market_data?.max_supply || data?.market_data?.total_supply)?.toLocaleString() || '0'
           },
           { name: 'Holders', value: res?.total?.toLocaleString() || 0 }
@@ -575,29 +668,30 @@ const TokenContent: FC = () => {
     <TOKEN_WRAPPER>
       <TokenHeader>
         <CLICKER_ICON>
-          <img src={`/img/crypto/${tokenA.symbol}.svg`} alt="" />
+          <img src={`/img/crypto/${tokenA?.symbol}.svg`} alt="" />
         </CLICKER_ICON>
         <SubHeader>
           <TokenTitle>
-            {tokenA.name} ({tokenA.symbol})
+            {tokenA?.name} ({tokenA?.symbol})
           </TokenTitle>
           <COPY style={{ display: 'flex', alignItems: 'center' }}>
-            <SmallerTitle>{truncate(tokenA.address)}</SmallerTitle>
+            <SmallerTitle>{truncate(tokenA?.address)}</SmallerTitle>
             <span className={`copy-button ${copiedAction ? 'copied' : ''}`} onClick={handleCopyTokenMint}>
               {copiedAction ? 'Copied!' : 'Copy'}
             </span>
           </COPY>
         </SubHeader>
       </TokenHeader>
-      {tokenDetails.map((detail) => (
-        <TokenDetail>
-          <TokenTitle>{detail.name}</TokenTitle>
-          <SmallTitle>
-            {detail.currency || null} {detail.value}
-          </SmallTitle>
-        </TokenDetail>
-      ))}
-
+      <ListWrapper>
+        {tokenDetails.map((detail) => (
+          <AltTokenDetail>
+            <TokenTitle>{detail.name}</TokenTitle>
+            <SmallTitle>
+              {detail.currency || null} {detail.value}
+            </SmallTitle>
+          </AltTokenDetail>
+        ))}
+      </ListWrapper>
       <Socials>
         {socials.map((social) => (
           <SocialsButton key={social.id} onClick={() => window.open(social.link, '_blank')}>
@@ -615,7 +709,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
   const [details, setDetails] = useState([
     { name: 'Price Impact', value: '0%' },
     {
-      name: 'Minimum Received',
+      name: checkMobile() ? 'Min. Received' : 'Minimum Received',
       value: 0 + ' ' + tokenB.symbol
     },
     {
@@ -623,7 +717,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
       value: `${0} ${tokenA.symbol} (${0} %)`,
       extraValue: `0 ${tokenB.symbol} (0%)`
     },
-    { name: 'Transaction fee', value: '0.00005 SOL', icon: 'info' }
+    { name: checkMobile() ? 'Trans. Fee' : 'Transaction Fee', value: '0.00005 SOL', icon: 'info' }
   ])
   const [outAmount, setOutAmount] = useState(0)
   const [outTokenPercentage, setOutTokenPercentage] = useState(0)
@@ -635,14 +729,15 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
     const totalLp = route.marketInfos[0].lpFee.amount / 10 ** tokenA.decimals
     const percent = +((totalLp / inTokenAmount) * 100)?.toFixed(4)
     const totalLpB = route.marketInfos.slice(-1)[0].lpFee.amount / 10 ** tokenB.decimals
-    const percentB = +((totalLpB / outTokenAmount) * 100)?.toFixed(4)
     const out = route.outAmount / 10 ** tokenB.decimals
+    const percentB = +((totalLpB / out) * 100)?.toFixed(4)
+
     setOutAmount(out)
 
     const priceDetails = [
       { name: 'Price Impact', value: `< ${Number(route.priceImpactPct).toFixed(6)}%` },
       {
-        name: 'Minimum Received',
+        name: checkMobile() ? 'Min. Received' : 'Minimum Received',
         value: `${nFormatter(route.outAmountWithSlippage / 10 ** tokenB.decimals, tokenB.decimals)} ${tokenB.symbol}`
       },
       {
@@ -653,12 +748,12 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
             ? `${nFormatter(totalLpB, tokenB.decimals)} ${tokenB.symbol} (${percentB}%)`
             : `0 ${tokenB.symbol} (0%)`
       },
-      { name: 'Transaction fee', value: '0.00005 SOL', icon: 'info' }
+      { name: checkMobile() ? 'Trans. Fee' : 'Transaction Fee', value: '0.00005 SOL', icon: 'info' }
     ]
 
     setDetails(priceDetails)
 
-    const percentageCheap = +(((out - outTokenAmount) / out) * 100).toFixed(3)
+    const percentageCheap = +(((route.outAmount - routes[1]?.outAmount) / route.outAmount) * 100).toFixed(3)
     setOutTokenPercentage(Math.abs(percentageCheap))
     setCheap(percentageCheap < 0 ? false : true)
   }, [clickNo, inTokenAmount, tokenA.symbol, tokenB.symbol, routes])
@@ -697,23 +792,25 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
           <span style={{ fontWeight: '600' }}>than coingecko</span>
         </SmallTitleFlex>
       </TokenDetail>
-      {details.map((detail) => (
-        <TokenDetail>
-          <TokenTitle>
-            {detail.name}{' '}
-            {detail.icon && (
-              <SVGDynamicReverseMode
-                style={{ height: '12px', width: '12px' }}
-                src={`/img/crypto/${detail.icon}.svg`}
-                alt="jupiter-icon"
-                className={'header-icon'}
-              />
-            )}
-          </TokenTitle>
-          <SmallTitle>{detail.value}</SmallTitle>
-          <SmallTitle>{detail.extraValue || null}</SmallTitle>
-        </TokenDetail>
-      ))}
+      <ListWrapper>
+        {details.map((detail) => (
+          <AltTokenDetail>
+            <TokenTitle>
+              {detail.name}{' '}
+              {detail.icon && (
+                <SVGDynamicReverseMode
+                  style={{ height: '12px', width: '12px' }}
+                  src={`/img/crypto/${detail.icon}.svg`}
+                  alt="jupiter-icon"
+                  className={'header-icon'}
+                />
+              )}
+            </TokenTitle>
+            <SmallTitle>{detail.value}</SmallTitle>
+            <SmallTitle>{detail.extraValue || null}</SmallTitle>
+          </AltTokenDetail>
+        ))}
+      </ListWrapper>
     </PRICE_WRAPPER>
   )
 }
@@ -775,10 +872,14 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
               .fill(1)
               .map(() => (
                 <SkeletonCommon
-                  width="330px"
-                  height="100px"
+                  width={'330px'}
+                  height={checkMobile() ? '64px' : '100px'}
                   borderRadius="10px"
-                  style={{ marginRight: '16px', boxShadow: '0 6px 9px 0 rgba(36, 36, 36, 0.1)' }}
+                  style={{
+                    marginRight: checkMobile() ? '0px' : '16px',
+                    marginBottom: checkMobile() ? '16px' : '0px',
+                    boxShadow: '0 6px 9px 0 rgba(36, 36, 36, 0.1)'
+                  }}
                 />
               ))
           : (!less ? details : details.slice(0, 2)).map((detail, k) => (
@@ -789,7 +890,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
               >
                 <div className={'inner-container'}>
                   <TokenDetail className={'content'}>
-                    <TokenTitle>{detail.name}</TokenTitle>
+                    <TokenTitle>{detail.name.slice(0, 20)}</TokenTitle>
                     <AltSmallTitle>{detail.value}</AltSmallTitle>
                   </TokenDetail>
                   <TokenTitle className={'price'}>{detail.price || null}</TokenTitle>
@@ -860,7 +961,7 @@ export const SwapMain: FC = () => {
     const filteredRoutes = routes?.filter((i) => i.inAmount === inAmountTotal)
     const shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
 
-    if (tokenB) {
+    if (tokenB && shortRoutes.length > 0) {
       const GoFxRoute = {
         marketInfos: [
           {
@@ -884,18 +985,30 @@ export const SwapMain: FC = () => {
     //setClickNo(1)
   }, [tokenA?.symbol, tokenB?.symbol, routes, slippage, inTokenAmount, outTokenAmount])
 
-  return (
-    <WRAPPER>
-      <INNERWRAPPER $desktop={desktop && allowed}>
-        {desktop && allowed && <TokenContent />}
-        <SwapContent exchange={exchange} routes={chosenRoutes} clickNo={clickNo} />
-        {desktop && allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
-      </INNERWRAPPER>
-      {allowed && inTokenAmount > 0 && (
-        <AlternativesContent routes={chosenRoutes} clickNo={clickNo} setClickNo={setClickNo} />
-      )}
-    </WRAPPER>
-  )
+  if (checkMobile()) {
+    return (
+      <WRAPPER>
+        <INNERWRAPPER $desktop={!checkMobile()}>
+          <SwapContent exchange={exchange} routes={chosenRoutes} clickNo={clickNo} />
+          {allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
+          {allowed && <TokenContent />}
+        </INNERWRAPPER>
+      </WRAPPER>
+    )
+  } else {
+    return (
+      <WRAPPER>
+        <INNERWRAPPER $desktop={desktop && allowed}>
+          {desktop && allowed && <TokenContent />}
+          <SwapContent exchange={exchange} routes={chosenRoutes} clickNo={clickNo} />
+          {desktop && allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
+        </INNERWRAPPER>
+        {allowed && inTokenAmount > 0 && (
+          <AlternativesContent routes={chosenRoutes} clickNo={clickNo} setClickNo={setClickNo} />
+        )}
+      </WRAPPER>
+    )
+  }
 }
 
 interface RouteParams {

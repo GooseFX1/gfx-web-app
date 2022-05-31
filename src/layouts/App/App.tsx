@@ -10,6 +10,10 @@ const Wrapper = styled.div<{ $rewardModal: boolean }>`
   min-height: 100vh;
   overflow-x: hidden;
   background: ${({ theme }) => theme.bg2};
+
+  @media (max-width: 500px) {
+    max-height: 100vh;
+  }
 `
 
 export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {

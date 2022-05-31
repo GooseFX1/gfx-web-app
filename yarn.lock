@@ -7665,7 +7665,7 @@ globby@^6.1.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
-goosefx-ssl-sdk@^1.1.1:
+goosefx-ssl-sdk@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.1.2.tgz#36ad8388bd06541ecf42e6f29b16b3a46411cb87"
   integrity sha512-uwTwggjFBHOXpHDbb591JegslZ6n4Ysk9SuRRqNGixpRAm4L1BIOk4K9bUhqKO7tR+QlRDrwZCEszJbPfOy8rg==

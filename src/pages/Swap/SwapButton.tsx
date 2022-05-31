@@ -57,9 +57,10 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
       case State.Connect:
       case State.Enter:
         return 'action'
-      case State.BalanceExceeded:
+      // case State.BalanceExceeded:
       // case State.PoolNotFound:
       //   return 'not-allowed'
+      case State.BalanceExceeded:
       default:
         return 'initial'
     }
