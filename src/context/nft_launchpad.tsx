@@ -5,7 +5,7 @@ interface INFTProjectConfig {
   collectionId: number
   collectionName: string
   coverUrl: string
-  items: 4444
+  items: number
   price: 100
   startsOn: string
   status: string
@@ -62,22 +62,34 @@ export const useNFTLaunchpad = (): INFTLaunchpadConfig => {
   return { upcomoingNFTProjects, liveNFTProjects, endedNFTProjects }
 }
 
+// Selected Context
+interface ISelectedProject {
+  candyMachine: string
+  collectionId: number
+  collectionName: string
+  coverUrl: string
+  currency: string
+  items: number
+  itemsMinted: any
+  price: number
+  roadmap: any
+  startsOn: string
+  status: string
+  team: any
+  urlName: any
+  _id: string
+}
+interface ISelectedNFTLPProjectConfig {}
+
 const NFTLPSelectedContext = createContext(null)
 export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [selectedProject, setSelectedProject] = useState()
-
-  useEffect(() => {
-    ;(async () => {
-      const launchpadData = (await fetchAllNFTLaunchpadData()).data.data
-      setSelectedProject(launchpadData)
-      console.log(launchpadData)
-    })()
-  }, [])
+  const [selectedProject, setSelectedProject] = useState<ISelectedProject>()
 
   return (
     <NFTLPSelectedContext.Provider
       value={{
-        selectedProject: selectedProject
+        selectedProject: selectedProject,
+        setSelectedProject: setSelectedProject
       }}
     >
       {children}
@@ -90,6 +102,6 @@ export const useNFTLPSelected = () => {
   if (!context) {
     throw new Error('Missing NFT Launchpad context')
   }
-  const { selectedProject } = context
-  return { selectedProject }
+  const { selectedProject, setSelectedProject } = context
+  return { selectedProject, setSelectedProject }
 }
