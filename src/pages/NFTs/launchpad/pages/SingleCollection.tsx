@@ -27,15 +27,8 @@ const WRAPPER = styled.div`
 
 export const SingleCollection: FC = () => {
   const params = useParams<IProjectParams>()
-  const collectionId = params.collectionId
   const wallet = useWallet()
   const { selectedProject, setSelectedProject } = useNFTLPSelected()
-  useEffect(() => {
-    ;(async () => {
-      const data = await fetchSelectedNFTLPData(parseInt(collectionId))
-      setSelectedProject(data.data)
-    })()
-  }, [])
 
   return (
     <div>

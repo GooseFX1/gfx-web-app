@@ -1,5 +1,8 @@
 import React, { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction, useEffect } from 'react'
 import { fetchAllNFTLaunchpadData } from '../api/NFTLaunchpad'
+import { useParams } from 'react-router-dom'
+import { IProjectParams } from '../types/nft_launchpad'
+import { fetchSelectedNFTLPData } from '../api/NFTLaunchpad/actions'
 
 interface INFTProjectConfig {
   collectionId: number
@@ -84,6 +87,14 @@ interface ISelectedNFTLPProjectConfig {}
 const NFTLPSelectedContext = createContext(null)
 export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [selectedProject, setSelectedProject] = useState<ISelectedProject>()
+  const params = useParams<IProjectParams>()
+  console.log(params.collectionId)
+  useEffect(() => {
+    ;(async () => {
+      const data = await fetchSelectedNFTLPData(parseInt(params.collectionId))
+      setSelectedProject(data.data)
+    })()
+  }, [])
 
   return (
     <NFTLPSelectedContext.Provider
