@@ -260,7 +260,7 @@ export const FeaturedLaunch: FC<{
             )}
           </div>
         </div>
-        <div className="grapic-image">
+        <div className="grapic-image" onClick={() => history.push('launchpad/1012')}>
           {!isLoading ? <DarkDiv /> : <SkeletonCommon width="100%" height="550px" borderRadius="10px" />}
         </div>
       </div>
