@@ -12,6 +12,8 @@ const CAROUSEL_WRAPPER = styled.div`
   position: relative;
   width: 100% !important;
   height: 100%;
+  margin-left: -40px;
+  margin-bottom: 40px;
   .fade {
     position: absolute;
     top: 0;
@@ -71,8 +73,10 @@ const NFT_CONTAINER = styled.div`
 `
 
 const ENDED_TEXT = styled.div`
+  margin-top: 150px;
   font-weight: 700;
   font-size: 30px;
+  margin-bottom: 40px;
 `
 
 const NFT_TITLE = styled.div`
