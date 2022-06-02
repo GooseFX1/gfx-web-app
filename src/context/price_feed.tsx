@@ -31,6 +31,7 @@ interface IPriceFeedConfig {
   prices: IPrices
   tokenInfo: IChange
   refreshTokenData: Function
+  priceFetched: boolean
 }
 
 const PriceFeedContext = createContext<IPriceFeedConfig | null>(null)
@@ -39,6 +40,7 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
   const [prices, setPrices] = useState<IPrices>({})
   const [tokenInfo, setTokenInfo] = useState<IChange>({})
   const { connection } = useConnectionConfig()
+  const [priceFetched, setPriceFetched] = useState<boolean>(false)
 
   const getTokenInfo = async (coinGeckoId) => {
     let url = coinGeckoUrl + coinGeckoId + coinGeckoSuffix,
@@ -149,6 +151,7 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
             // await notify({ type: 'error', message: 'Error fetching serum markets', icon: 'rate_error' }, e)
           }
         }
+        setPriceFetched(true)
 
         try {
           const synths = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'synth').map(({ pair }) => pair)
@@ -188,7 +191,8 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
       value={{
         prices,
         tokenInfo,
-        refreshTokenData
+        refreshTokenData,
+        priceFetched
       }}
     >
       {children}
@@ -205,6 +209,7 @@ export const usePriceFeed = (): IPriceFeedConfig => {
   return {
     prices: context.prices,
     tokenInfo: context.tokenInfo,
-    refreshTokenData: context.refreshTokenData
+    refreshTokenData: context.refreshTokenData,
+    priceFetched: context.priceFetched
   }
 }
