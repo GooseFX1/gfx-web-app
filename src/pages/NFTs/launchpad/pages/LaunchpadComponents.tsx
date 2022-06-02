@@ -66,8 +66,8 @@ const ToggleBG = styled.span`
   }
 `
 const INFO_DIV_LIGHT = styled.div`
-  position: absolute;
   display: flex;
+  margin-right: 20px;
   justify-content: center;
   align-items: center;
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
@@ -132,6 +132,7 @@ const INFO_DIV_BRIGHT = styled.div`
 const ProgressBarBG = styled.div`
   width: 610px;
   height: 70px;
+  margin-bottom: 100px;
   display: flex;
   align-items: center;
   background: #2a2a2a;
@@ -244,9 +245,9 @@ const DARK_DIV = styled.div`
   }
 `
 
-export const MintProgressBar = () => {
-  const minted = 2000
-  const totalNFTs = 10000
+export const MintProgressBar = ({ minted, totalNFTs }) => {
+  // const minted = 2000
+  // const totalNFTs = 10000
   let mintPercent = (minted / totalNFTs) * 100
   mintPercent = parseFloat(mintPercent.toFixed(0))
   return (
@@ -259,28 +260,39 @@ export const MintProgressBar = () => {
           strokeColor={'linear-gradient(96.79deg, #5855FF 4.25%, #DC1FFF 97.61%)'}
         />
         <>
-          <span className="mintedNFT"> {minted}</span>
-          <span className="totalNFT">/{totalNFTs}</span>
+          <span className="mintedNFT"> {minted ? minted : 0} </span>
+          <span className="totalNFT">/{totalNFTs ? totalNFTs : 0}</span>
         </>
       </ProgressBarBG>
     </>
   )
 }
-
-export const InfoDivLightTheme = () => {
+export const SWITCH_HOLDER = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 70px;
+  margin-top: 24px;
+`
+export const InfoDivLightTheme = ({ items, price }) => {
   return (
     <>
       <INFO_DIV_LIGHT>
         <div className={'inner'}>
-          <div className="inner-2">Items 5,555</div>
+          {price ? (
+            <div className="inner-2">{'Price ' + price}</div>
+          ) : (
+            <div className="inner-2">{'Items ' + items}</div>
+          )}
         </div>
       </INFO_DIV_LIGHT>
-      <br />
-      <br />
-      <br />
-      <br />
+    </>
+  )
+}
+export const InfoDivBrightTheme = ({ items }) => {
+  return (
+    <>
       <INFO_DIV_BRIGHT>
-        <div className="inner-2">Items 5,555</div>
+        <div className="inner-2">{items}</div>
       </INFO_DIV_BRIGHT>
     </>
   )
@@ -324,12 +336,14 @@ export const TokenSwitch = () => {
   }
   return (
     <>
-      <ToggleBG>
-        <span className="toggle-text">SOL</span>
+      <SWITCH_HOLDER>
+        <ToggleBG>
+          <span className="toggle-text">SOL</span>
 
-        <Switch className="switch" defaultChecked onChange={onChange} />
-        <span className="toggle-text">USDC</span>
-      </ToggleBG>
+          <Switch className="switch" defaultChecked onChange={onChange} />
+          <span className="toggle-text">USDC</span>
+        </ToggleBG>
+      </SWITCH_HOLDER>
     </>
   )
 }
