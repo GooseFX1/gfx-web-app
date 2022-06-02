@@ -16,6 +16,7 @@ import { useWalletModal } from '../../context'
 import { CenteredImg } from '../../styles'
 import { Loader } from '../../components'
 import { WalletName } from '@solana/wallet-adapter-wallets'
+import { truncateAddress } from '../../utils'
 
 const WALLET_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margin(3))}
@@ -134,7 +135,7 @@ export const Connect: FC = () => {
         </WRAPPED_LOADER>
       )
     } else {
-      return base58.substr(0, 4) + '..' + base58.substr(-4, 4)
+      return truncateAddress(base58)
     }
   }, [wallet, base58])
 

@@ -5,7 +5,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
 import { Col, Row } from 'antd'
 import { MainButton, Modal, SuccessfulListingMsg } from '../../../components'
-import { notify } from '../../../utils'
+import { notify, truncateAddress } from '../../../utils'
 import { useNFTProfile, usePriceFeed, useNFTDetails, useConnectionConfig, useAccounts } from '../../../context'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import BN from 'bn.js'
@@ -251,7 +251,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
     if (nftMetadata === undefined) return null
     if (nftMetadata.properties.creators.length > 0) {
       const addr = nftMetadata.properties.creators[0].address
-      return `${addr.substr(0, 4)}...${addr.substr(-4, 4)}`
+      return truncateAddress(addr)
     } else if (nftMetadata.collection) {
       return Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection.name
     } else {

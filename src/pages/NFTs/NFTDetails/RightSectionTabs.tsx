@@ -12,7 +12,7 @@ import { AttributesTabContent } from './AttributesTabContent'
 import RemoveModalContent from './RemoveModalContent'
 import { Modal, SuccessfulListingMsg } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
-import { notify } from '../../../utils'
+import { notify, truncateAddress } from '../../../utils'
 import { tradeStatePDA, callCancelInstruction, callWithdrawInstruction, tokenSize } from '../actions'
 import { removeNonCollectionListing } from '../../../api/NFTs'
 import { BidModal } from './BidModal'
@@ -274,17 +274,15 @@ export const RightSectionTabs: FC<{
       : [
           {
             title: 'Mint address',
-            value: `${general.mint_address.substr(0, 4)}...${general.mint_address.substr(-4, 4)}`
+            value: truncateAddress(general.mint_address)
           },
           {
             title: 'Token Address',
-            value: general.token_account
-              ? `${general.token_account.substr(0, 4)}...${general.token_account.substr(-4, 4)}`
-              : ''
+            value: general.token_account ? truncateAddress(general.token_account) : ''
           },
           {
             title: 'Owner',
-            value: general.owner ? `${general.owner.substr(0, 6)}...${general.owner.substr(-4, 4)}` : ''
+            value: general.owner ? truncateAddress(general.owner) : ''
           },
           {
             title: 'Artist Royalties',

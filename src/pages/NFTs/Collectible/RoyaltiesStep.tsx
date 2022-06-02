@@ -5,6 +5,7 @@ import { Row, Col, Slider, InputNumber, Typography, Button } from 'antd'
 import InfoInput from './InfoInput'
 import { PopupCustom } from '../Popup/PopupCustom'
 import { Creator, StringPublicKey } from '../../../web3'
+import { truncateAddress } from '../../../utils'
 const { Text } = Typography
 
 //#region styles
@@ -430,7 +431,7 @@ const RoyaltiesSplitter = ({ creators, royalties, setRoyalties, isShowErrors, re
                 <img className="close-white-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
               </div>
 
-              <div className={'label'}>{`${creator.label.substr(0, 4)}...${creator.label.substr(-4, 4)}`}</div>
+              <div className={'label'}>{truncateAddress(creator.label)}</div>
 
               <div className={'slider'}>
                 <Slider value={amt} onChange={handleChangeShare} />

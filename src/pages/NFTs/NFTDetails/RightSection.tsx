@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, FC } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Col, Row } from 'antd'
 import styled, { css } from 'styled-components'
-import { moneyFormatter } from '../../../utils'
+import { moneyFormatter, truncateAddress } from '../../../utils'
 import { RightSectionTabs } from './RightSectionTabs'
 import { useNFTDetails, usePriceFeed } from '../../../context'
 import { MintItemViewStatus } from '../../../types/nft_details'
@@ -153,7 +152,6 @@ const HIGHEST_BIDDER = styled.span`
 export const RightSection: FC<{
   status: MintItemViewStatus
 }> = ({ status, ...rest }) => {
-  const { publicKey } = useWallet()
   const { general, nftMetadata, bids, curHighestBid, ask } = useNFTDetails()
   const { prices } = usePriceFeed()
 
@@ -162,7 +160,7 @@ export const RightSection: FC<{
       return Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection?.name
     } else if (nftMetadata?.properties?.creators?.length > 0) {
       const addr = nftMetadata?.properties?.creators?.[0]?.address
-      return `${addr.substr(0, 4)}...${addr.substr(-4, 4)}`
+      return truncateAddress(addr)
     } else {
       return null
     }

@@ -155,3 +155,5 @@ export const getLast = <T>(arr: T[]) => {
 
   return arr[arr.length - 1]
 }
+
+export const truncateAddress = (address: string): string => `${address.substr(0, 4)}..${address.substr(-4, 4)}`
