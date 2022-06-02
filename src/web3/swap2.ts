@@ -168,7 +168,8 @@ export const preSwapAmount = async (
       console.log(e)
     }
     const available =
-      CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA.symbol) && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenB.symbol)
+      (tokenB.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA.symbol)) ||
+      (tokenA.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenB.symbol))
 
     if ((available && clickNo !== 1) || !available) {
       if (route) {

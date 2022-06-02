@@ -9,7 +9,7 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
   nftCreatorForm: 'https://docs.google.com/forms/d/e/1FAIpQLSeg1OzYlHdNqWiAEPl2QUZj7XwLvEpXAkGtWd4-H9SyyQe1DQ/viewform'
 }
 
-export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC']
+export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'SRM', 'ETH', 'GMT', 'mSOL']
 export const FARM_SUPPORTED_TOKEN_LIST = ['GOFX']
 export const MODAL_TYPES = {
   FEES: 'FEES',
@@ -44,6 +44,7 @@ export const SUPPORTED_TOKEN_LIST = [
   'MER',
   'MNGO',
   'MSRM',
+  'mSOL',
   'OXY',
   'PAI',
   'PORT',

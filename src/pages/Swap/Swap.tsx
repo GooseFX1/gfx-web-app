@@ -951,7 +951,8 @@ export const SwapMain: FC = () => {
     setInAmountTotal(inAmountTotal)
 
     const supported =
-      CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA?.symbol) && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenB?.symbol)
+      (tokenB?.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA?.symbol)) ||
+      (tokenA?.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenB?.symbol))
 
     if (tokenA && tokenB) {
       setallowed(true)
