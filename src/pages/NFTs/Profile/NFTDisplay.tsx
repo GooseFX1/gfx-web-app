@@ -16,12 +16,12 @@ import debounce from 'lodash.debounce'
 interface INFTDisplay {
   type: 'collected' | 'created' | 'favorited'
   parsedAccounts?: ParsedAccount[]
-  singleNFT?: ISingleNFT[]
+  singleNFTs?: ISingleNFT[]
 }
 
 const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const location = useLocation<ILocationState>()
-  const { sessionUser } = useNFTProfile()
+  const { sessionUser, nonSessionProfile } = useNFTProfile()
   const [collectedItems, setCollectedItems] = useState<ISingleNFT[]>()
   const [filteredCollectedItems, setFilteredCollectedItems] = useState<ISingleNFT[]>()
   const [search, setSearch] = useState<string>('')
@@ -65,8 +65,8 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   // }, [location])
 
   useEffect(() => {
-    if (props.singleNFT) {
-      setCollectedItemsPag(props.singleNFT)
+    if (props.singleNFTs) {
+      setCollectedItemsPag(props.singleNFTs)
     } else if (!props.parsedAccounts || props.parsedAccounts.length === 0) {
       setCollectedItemsPag([])
     } else {
@@ -76,7 +76,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     }
 
     return () => setCollectedItemsPag(undefined)
-  }, [props.singleNFT, props.parsedAccounts])
+  }, [props.singleNFTs, props.parsedAccounts])
 
   useEffect(() => {
     if (collectedItems) {
@@ -108,7 +108,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
           animation_url: '',
           collection_id: null,
           token_account: null,
-          owner: sessionUser.pubkey
+          owner: nonSessionProfile === undefined ? sessionUser.pubkey : nonSessionProfile.pubkey
         })
       } catch (error) {
         console.error(error)
