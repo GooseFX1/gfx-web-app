@@ -5,17 +5,9 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
 import { HeaderProfile } from './HeaderProfile'
 import { ContentProfile } from './ContentProfile'
-import { Loader } from '../../../components'
-import { useNFTProfile, unnamedUser } from '../../../context'
+import { useNFTProfile } from '../../../context'
 
 //#region styles
-const WRAPPED_LOADER = styled.div`
-  position: relative;
-  height: 48px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
 const PROFILE_CONTAINER = styled.div`
   display: flex;
   flex-direction: column;
@@ -75,7 +67,7 @@ const PROFILE_CONTAINER = styled.div`
 export const Profile: FC = (): JSX.Element => {
   const history = useHistory()
   const params = useParams<IAppParams>()
-  const { sessionUser, setSessionUser, setParsedAccounts, setNonSessionProfile, setNonSessionUserParsedAccounts } =
+  const { sessionUser, setUserActivity, setParsedAccounts, setNonSessionProfile, setNonSessionUserParsedAccounts } =
     useNFTProfile()
   const { connected, publicKey } = useWallet()
   const [isSessionUser, setIsSessionUser] = useState<boolean>()
@@ -86,7 +78,6 @@ export const Profile: FC = (): JSX.Element => {
     // asserts there is no wallet connection and no session user
     if (sessionUser === undefined || !connected || publicKey === null) {
       setIsSessionUser(false)
-      setSessionUser(unnamedUser)
       setParsedAccounts([])
     }
 
@@ -98,6 +89,7 @@ export const Profile: FC = (): JSX.Element => {
     return () => {
       setNonSessionProfile(undefined)
       setNonSessionUserParsedAccounts([])
+      setUserActivity([])
     }
   }, [sessionUser, publicKey, connected, params.userAddress])
 
