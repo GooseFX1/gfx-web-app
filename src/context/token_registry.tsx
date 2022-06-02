@@ -1,7 +1,7 @@
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
 import { ENV, TokenInfo, TokenListProvider } from '@solana/spl-token-registry'
 import { useConnectionConfig } from './settings'
-import { SUPPORTED_TOKEN_LIST, FARM_SUPPORTED_TOKEN_LIST } from '../constants'
+import { SUPPORTED_TOKEN_LIST, FARM_SUPPORTED_TOKEN_LIST, TOKEN_BLACKLIST } from '../constants'
 import { ADDRESSES } from '../web3'
 
 interface ITokenRegistryConfig {
@@ -23,7 +23,9 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
   useEffect(() => {
     ;(async () => {
       const list = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
-      const splList = list.filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
+      const splList = list
+        .filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
+        .filter(({ address }) => !TOKEN_BLACKLIST.includes(address))
       const farmSupportedList = list.filter(({ symbol }) => FARM_SUPPORTED_TOKEN_LIST.includes(symbol))
 
       //TODO: Add filteredList from solana-spl-registry back

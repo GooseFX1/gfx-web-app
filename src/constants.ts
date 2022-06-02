@@ -16,6 +16,12 @@ export const MODAL_TYPES = {
   REWARDS: 'REWARDS'
 }
 
+export const TOKEN_BLACKLIST = [
+  'totCSh2TfEPTRovc4rMGz1ezukAdPxYWzh9jnXppeqY',
+  '6hQpbdmmX6gXGUkmjJ82UtfFBzyTP3Hiqv1KZMtHWXpv',
+  'ES4isqfcWbeBZwtH2eLRjk5oUzaMyZZrW2uhDM6yde6h'
+]
+
 export const SUPPORTED_TOKEN_LIST = [
   'AKRO',
   'ALEPH',
@@ -29,6 +35,7 @@ export const SUPPORTED_TOKEN_LIST = [
   'FRONT',
   'FTT',
   'GOFX',
+  'GMT',
   'HGET',
   'HNT',
   'HXRO',
