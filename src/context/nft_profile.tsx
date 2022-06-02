@@ -8,36 +8,21 @@ import { completeNFTUserProfile } from '../api/NFTs'
 
 export type UserFetchType = 'address' | 'user_id' | 'nickname'
 
-export const unnamedUser = {
-  user_id: null,
-  pubkey: '',
-  nickname: 'Unnamed',
-  email: '',
-  bio: '',
-  twitter_link: '',
-  instagram_link: '',
-  facebook_link: '',
-  youtube_link: '',
-  profile_pic_link: '',
-  is_verified: false,
-  user_likes: []
-}
-
 export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [sessionUser, setSessionUser] = useState<INFTProfile>()
   const [nonSessionProfile, setNonSessionProfile] = useState<INFTProfile>()
   const [userActivity, setUserActivity] = useState<INFTUserActivity[]>([])
   const [sessionUserParsedAccounts, setParsedAccounts] = useState<ParsedAccount[]>([])
-  const [nonSessionUserParsedAccounts, setNonSessionUserParsedAccounts] = useState<ParsedAccount[]>([])
+  const [nonSessionUserParsedAccounts, setNonSessionUserParsedAccounts] = useState<ParsedAccount[]>()
 
   const fetchSessionUser = useCallback(
     async (type: UserFetchType, parameter: string, connection: Connection): Promise<any> => {
       try {
         const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SESSION_USER}?${type}=${parameter}`)
         if (res.data.length > 0) {
-          const user = { ...res.data[0], user_likes: [] }
-          const userLikes = await fetchUserLikes(user)
-          _setUser({ ...user, user_likes: userLikes }, setSessionUser)
+          const userLikes = await fetchUserLikes(res.data[0].user_id)
+          const user = { ...res.data[0], user_likes: userLikes }
+          _setUser(user, setSessionUser)
         } else {
           // auto-creates a basic user in db to establish a user id for session user
           try {
@@ -93,9 +78,9 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
-  const fetchUserLikes = useCallback(async (user: INFTProfile): Promise<any> => {
+  const fetchUserLikes = useCallback(async (id: number): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_USER_LIKES}?user_id=${user.user_id}`)
+      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_USER_LIKES}?user_id=${id}`)
       if (res.data.length > 0 && Array.isArray(res.data)) {
         return res.data.map((nft) => nft.non_fungible_id)
       } else {
@@ -132,7 +117,8 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
       try {
         const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.NON_SESSION_USER}?${type}=${parameter}`)
         if (res.data.length > 0) {
-          const user = { ...res.data[0], user_likes: [] }
+          const userLikes = await fetchUserLikes(res.data[0].user_id)
+          const user = { ...res.data[0], user_likes: userLikes }
           _setUser(user, setNonSessionProfile)
         } else {
           _setUser(undefined, setNonSessionProfile)
@@ -150,7 +136,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const _setUser = (userObj: any, setter: any) => {
     if (userObj === undefined) {
-      setter(unnamedUser)
+      setter(undefined)
     } else {
       setter({
         ...userObj,
