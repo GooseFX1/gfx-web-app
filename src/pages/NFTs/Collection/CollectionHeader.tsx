@@ -245,14 +245,12 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
   const isCollectionItemEmpty: boolean = !singleCollection || !fixedPriceWithinCollection || !openBidWithinCollection
   // const isCollectionItemEmpty: boolean = true
 
-  const handleClick = (e) => setShareModal(true)
-
   const handleSweepClick = () => {
     setSweeperModal(true)
   }
 
   const menu = (
-    <MENU_LIST onClick={handleClick}>
+    <MENU_LIST onClick={(e) => setShareModal(true)}>
       <Menu.Item key="share">Share</Menu.Item>
       {/* <Menu.Item>Report</Menu.Item> */}
     </MENU_LIST>
