@@ -10,7 +10,7 @@ import { SellCategory } from '../SellCategory/SellCategory'
 import { FormDoubleItem } from '../Form/FormDoubleItem'
 import { SuccessfulListingMsg, TransactionErrorMsg, MainButton, Modal } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
-import { notify } from '../../../utils'
+import { notify, truncateAddress } from '../../../utils'
 import { registerSingleNFT } from '../../../api/NFTs'
 import {
   tradeStatePDA,
@@ -223,7 +223,7 @@ export const SellNFT = () => {
     if (nftMetadata === undefined) return null
     if (nftMetadata.properties.creators.length > 0) {
       const addr = nftMetadata.properties.creators[0].address
-      return `${addr.substr(0, 4)}...${addr.substr(-4, 4)}`
+      return truncateAddress(addr)
     } else if (nftMetadata.collection) {
       return Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection.name
     } else {
@@ -408,7 +408,7 @@ export const SellNFT = () => {
           } else {
             setTimeout(() => {
               notify(successfulListingMsg(signature, nftMetadata, userInput['minimumBid']))
-              history.push('/NFTs/profile')
+              history.push(`/NFTs/profile/${publicKey.toBase58()}`)
             }, 2000)
           }
         })

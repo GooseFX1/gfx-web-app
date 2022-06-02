@@ -14,6 +14,7 @@ import PopupCompleteProfile from '../Profile/PopupCompleteProfile'
 import { useNFTProfile } from '../../../context'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
+//#region styles
 const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
   padding-top: ${({ theme }) => theme.margin(5.5)};
   padding-bottom: ${({ theme }) => theme.margin(3)};
@@ -139,6 +140,7 @@ const AVATAR_NFT = styled(Image)`
   cursor: pointer;
   margin-right: ${({ theme }) => theme.margin(1.5)};
 `
+//#endregion
 
 export const Header = ({ setFilter, filter, filteredCollections, totalCollections, setTotalCollections }) => {
   const history = useHistory()
@@ -151,9 +153,7 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
   const [isHeaderData, setIsHeaderData] = useState<boolean>(false)
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsHeaderData(true)
-    }, 1000)
+    setTimeout(() => setIsHeaderData(true), 1000)
   }, [])
 
   useEffect(() => {
@@ -185,14 +185,14 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
   const onSkip = useCallback(() => handleDismissModal(), [handleDismissModal])
   const onContinue = useCallback(() => {
     handleDismissModal()
-    history.push({ pathname: '/NFTs/profile', state: { isCreatingProfile: true } })
+    history.push({ pathname: `/NFTs/profile/${publicKey.toBase58()}`, state: { isCreatingProfile: true } })
   }, [handleDismissModal])
 
   const onCreateCollectible = () => {
     history.push('/NFTs/create')
   }
 
-  const goProfile = () => history.push(`/NFTs/profile`)
+  const goProfile = () => history.push(`/NFTs/profile/${publicKey.toBase58()}`)
 
   const handleWalletModal: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
@@ -285,7 +285,7 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
           </div>
         ) : (
           <div style={{ display: 'flex' }}>
-            {isCollapsed && (
+            {isCollapsed && !connected && (
               <CONNECT onClick={handleWalletModal}>
                 <span>Connect Wallet</span>
               </CONNECT>
