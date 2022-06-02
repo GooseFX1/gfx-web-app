@@ -1,20 +1,13 @@
 import React, { useState, useEffect, FC } from 'react'
-// import { useParams } from 'react-router-dom'
-// import { IAppParams } from '../../../types/app_params.d'
+import { useParams, useHistory } from 'react-router-dom'
+import { IAppParams } from '../../../types/app_params.d'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
 import { HeaderProfile } from './HeaderProfile'
 import { ContentProfile } from './ContentProfile'
-import { Loader } from '../../../components'
-import { useNFTProfile, unnamedUser } from '../../../context'
+import { useNFTProfile } from '../../../context'
 
-const WRAPPED_LOADER = styled.div`
-  position: relative;
-  height: 48px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
+//#region styles
 const PROFILE_CONTAINER = styled.div`
   display: flex;
   flex-direction: column;
@@ -69,39 +62,43 @@ const PROFILE_CONTAINER = styled.div`
     }
   }
 `
+//#endregion
 
 export const Profile: FC = (): JSX.Element => {
-  // const params = useParams<IAppParams>()
-  const [loading, setLoading] = useState(true)
-  const { sessionUser, setSessionUser, setParsedAccounts } = useNFTProfile()
+  const history = useHistory()
+  const params = useParams<IAppParams>()
+  const { sessionUser, setUserActivity, setParsedAccounts, setNonSessionProfile, setNonSessionUserParsedAccounts } =
+    useNFTProfile()
   const { connected, publicKey } = useWallet()
+  const [isSessionUser, setIsSessionUser] = useState<boolean>()
 
   useEffect(() => {
-    if (sessionUser && connected && publicKey) {
-      setLoading(false)
-    } else {
-      setUnnamedUser()
+    if (params.userAddress === undefined) history.push(`/NFTs`)
+
+    // asserts there is no wallet connection and no session user
+    if (sessionUser === undefined || !connected || publicKey === null) {
+      setIsSessionUser(false)
+      setParsedAccounts([])
     }
 
-    return () => {}
-  }, [sessionUser, publicKey, connected])
+    if (publicKey !== null) {
+      console.log('!!!PROFILE LOAD!!!', params.userAddress, publicKey.toBase58())
+      setIsSessionUser(params.userAddress === publicKey.toBase58())
+    }
 
-  const setUnnamedUser = () => {
-    setSessionUser(unnamedUser)
-    setParsedAccounts([])
-    setLoading(false)
-  }
+    return () => {
+      setNonSessionProfile(undefined)
+      setNonSessionUserParsedAccounts([])
+      setUserActivity([])
+    }
+  }, [sessionUser, publicKey, connected, params.userAddress])
 
-  return loading ? (
-    <WRAPPED_LOADER>
-      <Loader />
-    </WRAPPED_LOADER>
-  ) : !sessionUser ? (
-    <h2>Something went wrong fetching user profile</h2>
-  ) : (
-    <PROFILE_CONTAINER>
-      <HeaderProfile />
-      <ContentProfile />
-    </PROFILE_CONTAINER>
+  return (
+    isSessionUser !== undefined && (
+      <PROFILE_CONTAINER>
+        <HeaderProfile isSessionUser={isSessionUser} />
+        <ContentProfile isSessionUser={isSessionUser} />
+      </PROFILE_CONTAINER>
+    )
   )
 }

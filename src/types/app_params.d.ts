@@ -1,7 +1,7 @@
 export interface IAppParams {
   collectionId: string
   nftId: string
-  userId: string
+  userAddress: string
   nftMintAddress: string
 }
 

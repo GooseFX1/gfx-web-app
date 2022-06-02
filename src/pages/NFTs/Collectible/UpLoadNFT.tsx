@@ -344,7 +344,7 @@ export const UpLoadNFT = (): JSX.Element => {
 
     setTimeout(() => {
       history.push({
-        pathname: '/NFTs/profile',
+        pathname: `/NFTs/profile/${wallet.publicKey.toBase58()}`,
         state: { newlyMintedNFT: { name: name, metadataAccount: metadataAccount } }
       })
     }, 1500)

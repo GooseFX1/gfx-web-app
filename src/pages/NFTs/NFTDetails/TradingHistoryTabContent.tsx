@@ -3,6 +3,7 @@ import { Table, Row, Col } from 'antd'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import styled, { css } from 'styled-components'
 import { useNFTDetails } from '../../../context'
+import { truncateAddress } from '../../../utils'
 
 const TRADING_HISTORY_TAB_CONTENT = styled.div`
   ${({ theme }) => css`
@@ -102,18 +103,14 @@ const bidColumns = [
     key: 'wallet_key',
     dataIndex: 'wallet_key',
     title: 'From',
-    render: (value: string) => (
-      <div className="thtc-from-to">{`${value.slice(0, 4)}...${value.slice(value.length - 4, value.length - 1)}`}</div>
-    ),
+    render: (value: string) => <div className="thtc-from-to">{truncateAddress(value)}</div>,
     width: '19%'
   },
   {
     key: 'token_account_mint_key',
     dataIndex: 'token_account_mint_key',
     title: 'To',
-    render: (value: string) => (
-      <div className="thtc-from-to">{`${value.slice(0, 4)}...${value.slice(value.length - 4, value.length - 1)}`}</div>
-    ),
+    render: (value: string) => <div className="thtc-from-to">{truncateAddress(value)}</div>,
     width: '19%'
   },
   {
