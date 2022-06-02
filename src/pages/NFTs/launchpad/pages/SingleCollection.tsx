@@ -4,7 +4,7 @@ import { IProjectParams } from '../../../../types/nft_launchpad'
 import { fetchSelectedNFTLPData } from '../../../../api/NFTLaunchpad'
 import { useNFTLPSelected } from '../../../../context/nft_launchpad'
 import { useWallet } from '@solana/wallet-adapter-react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { Col, Row, Tabs } from 'antd'
 import { SOCIAL_MEDIAS } from '../../../../constants'
 import { MintProgressBar, TokenSwitch } from './LaunchpadComponents'
@@ -12,151 +12,6 @@ import { InfoDivLightTheme, InfoDivBrightTheme } from './LaunchpadComponents'
 import { SVGDynamicReverseMode } from '../../../../styles'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { DETAILS_TAB_CONTENT } from '../../NFTDetails/RightSectionTabs'
-
-export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
-  ${({ theme, activeTab }) => css`
-    position: relative;
-
-    .ant-tabs-nav {
-      position: relative;
-      z-index: 1;
-
-      .ant-tabs-nav-wrap {
-        background-color: #000;
-        border-radius: 15px 15px 25px 25px;
-        padding-top: ${theme.margin(1.5)};
-        padding-bottom: ${theme.margin(1.5)};
-        .ant-tabs-nav-list {
-          justify-content: space-around;
-          width: 100%;
-        }
-      }
-
-      &:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: ${theme.tabContentBidBackground};
-        border-radius: 15px 15px 0 0;
-      }
-    }
-
-    .ant-tabs-ink-bar {
-      display: none;
-    }
-
-    .ant-tabs-top {
-      > .ant-tabs-nav {
-        margin-bottom: 0;
-
-        &::before {
-          border: none;
-        }
-      }
-    }
-
-    .ant-tabs-tab {
-      color: #616161;
-      font-size: 14px;
-      font-weight: 500;
-
-      .ant-tabs-tab-btn {
-        font-size: 17px;
-      }
-
-      &.ant-tabs-tab-active {
-        .ant-tabs-tab-btn {
-          color: #fff;
-        }
-      }
-    }
-
-    .desc {
-      font-size: 11px;
-      padding: ${({ theme }) => theme.margin(3)};
-      font-family: Montserrat;
-    }
-
-    .ant-tabs-content-holder {
-      height: 450px;
-      background-color: ${theme.tabContentBidBackground};
-      transform: translateY(-32px);
-      padding-top: ${({ theme }) => theme.margin(4)};
-      padding-bottom: ${({ theme }) => theme.margin(8)};
-      border-radius: 0 0 25px 25px;
-
-      .ant-tabs-content {
-        height: 100%;
-        overflow-x: none;
-        overflow-y: scroll;
-        ${({ theme }) => theme.customScrollBar('6px')};
-      }
-    }
-
-    .rst-footer {
-      width: 100%;
-      position: absolute;
-      display: flex;
-      left: 0;
-      bottom: 0;
-      padding: ${theme.margin(2)};
-      border-radius: 0 0 25px 25px;
-      border-top: 1px solid ${theme.borderColorTabBidFooter};
-      background: ${theme.tabContentBidFooterBackground};
-      backdrop-filter: blur(23.9091px);
-
-      .rst-footer-button {
-        flex: 1;
-        color: #fff;
-        white-space: nowrap;
-        height: 55px;
-        ${theme.flexCenter}
-        font-size: 17px;
-        font-weight: 600;
-        border: none;
-        border-radius: 29px;
-        padding: 0 ${theme.margin(2)};
-        cursor: pointer;
-
-        &:not(:last-child) {
-          margin-right: ${theme.margin(1.5)};
-        }
-
-        &:hover {
-          opacity: 0.8;
-        }
-
-        &-buy {
-          background-color: ${theme.success};
-        }
-
-        &-bid {
-          background-color: ${theme.primary2};
-        }
-
-        &-sell {
-          background-color: #bb3535;
-        }
-
-        &-flat {
-          background-color: transparent;
-          color: ${theme.text1};
-        }
-      }
-
-      .rst-footer-share-button {
-        cursor: pointer;
-
-        &:hover {
-          opacity: 0.8;
-        }
-      }
-    }
-  `}
-`
 
 const SOCIAL_ICON = styled.button`
   background: transparent;
@@ -176,8 +31,8 @@ const WRAPPER = styled.div`
   justify-content: space-between;
   .leftPart {
     width: 50%;
-    padding-left: 70px;
     height: 80vh;
+    padding-left: 70px;
   }
   .button {
     border: none;
@@ -186,6 +41,7 @@ const WRAPPER = styled.div`
   }
   .rightPart {
     width: 50%;
+    height: 80vh;
     padding-right: 70px;
     margin-left: 50px;
   }
@@ -236,7 +92,7 @@ const NFT_COVER = styled.div`
     height: 608px;
     border-radius: 20px;
     padding: 5px;
-    margin-top: 18px;
+    margin-top: 32px;
     margin-bottom: 30px;
   }
   .inner-image {
@@ -297,32 +153,20 @@ export const SingleCollection: FC = () => {
             </Row>
           </PRICE_SOCIAL>
           <>
-            <RIGHT_SECTION_TABS activeTab={'4'}>
-              <Tabs>
-                <TabPane tab="Summary" key="1">
-                  <DETAILS_TAB_CONTENT>" Lorem ipsum dolor sit. "</DETAILS_TAB_CONTENT>
-                </TabPane>
-                <TabPane tab="Roadmap" key="2">
-                  <h1>
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatum consectetur inventore iste.
-                    Commodi libero repellendus laudantium nemo provident er Lorem, ipsum dolor sit amet consectetur
-                    adipisicing elit. Voluptatum consectetur inventore iste. Commodi libero repellendus laudantium nemo
-                    provident er Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatum consectetur
-                    inventore iste. Commodi libero repellendus laudantium nemo provident er
-                  </h1>
-                </TabPane>
-                <TabPane tab="Team" key="3">
-                  Lorem ipsum dolor sit amet.
-                </TabPane>
-                <TabPane tab="Vesting" key="4">
-                  Lorem ipsum dolor sit amet.
-                </TabPane>
-              </Tabs>
-            </RIGHT_SECTION_TABS>
-            <MINT_BUTTON_BAR>
-              <MINT_BTN>Mint</MINT_BTN>
-            </MINT_BUTTON_BAR>
+            <Tabs>
+              <TabPane tab="Details" key="1">
+                <DETAILS_TAB_CONTENT>" Lorem ipsum dolor sit. "</DETAILS_TAB_CONTENT>
+              </TabPane>
+              <TabPane tab="Trading History" key="2">
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatum consectetur inventore iste. Commodi
+                libero repellendus laudantium nemo provident er
+              </TabPane>
+              <TabPane tab="Attributes" key="3">
+                Lorem ipsum dolor sit amet.
+              </TabPane>
+            </Tabs>
           </>
+          <button> Mint</button>
         </div>
         <div className="rightPart">
           <NFT_COVER>
