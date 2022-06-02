@@ -9,12 +9,18 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
   nftCreatorForm: 'https://docs.google.com/forms/d/e/1FAIpQLSeg1OzYlHdNqWiAEPl2QUZj7XwLvEpXAkGtWd4-H9SyyQe1DQ/viewform'
 }
 
-export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC']
+export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'SRM', 'ETH', 'GMT', 'mSOL']
 export const FARM_SUPPORTED_TOKEN_LIST = ['GOFX']
 export const MODAL_TYPES = {
   FEES: 'FEES',
   REWARDS: 'REWARDS'
 }
+
+export const TOKEN_BLACKLIST = [
+  'totCSh2TfEPTRovc4rMGz1ezukAdPxYWzh9jnXppeqY',
+  '6hQpbdmmX6gXGUkmjJ82UtfFBzyTP3Hiqv1KZMtHWXpv',
+  'ES4isqfcWbeBZwtH2eLRjk5oUzaMyZZrW2uhDM6yde6h'
+]
 
 export const SUPPORTED_TOKEN_LIST = [
   'AKRO',
@@ -29,6 +35,7 @@ export const SUPPORTED_TOKEN_LIST = [
   'FRONT',
   'FTT',
   'GOFX',
+  'GMT',
   'HGET',
   'HNT',
   'HXRO',
@@ -44,6 +51,7 @@ export const SUPPORTED_TOKEN_LIST = [
   'MER',
   'MNGO',
   'MSRM',
+  'mSOL',
   'OXY',
   'PAI',
   'PORT',
