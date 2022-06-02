@@ -164,7 +164,7 @@ export interface IFarmData {
 //#endregion
 
 export const TableList = ({ dataSource }: any) => {
-  const { prices } = usePriceFeed()
+  const { prices, priceFetched } = usePriceFeed()
   const { network, connection } = useConnectionConfig()
   const wallet = useWallet()
   const {
@@ -181,11 +181,14 @@ export const TableList = ({ dataSource }: any) => {
   const [columnData, setColumnData] = useState(columns)
   const [farmData, setFarmData] = useState<IFarmData[]>([...farmDataContext, ...farmDataSSLContext])
   const [eKeys, setEKeys] = useState([])
+  const [allTokenPrices, setAllTokenPrices] = useState({})
   const PAGE_SIZE = 10
 
   const gofxPrice = useMemo(() => prices['GOFX/USDC'], [prices])
   const solPrice = useMemo(() => prices['SOL/USDC'], [prices])
-
+  useEffect(() => {
+    setAllTokenPrices(() => setAllTokenPrices(prices))
+  }, [priceFetched])
   const stakeProgram: Program = useMemo(() => {
     return wallet.publicKey
       ? new Program(
@@ -242,63 +245,69 @@ export const TableList = ({ dataSource }: any) => {
 
   useEffect(() => {
     // this useEffect is to monitor staking and SSL pools button
-    const allFarmData = [...farmDataContext, ...farmDataSSLContext]
-    let farmDataStaked = []
+    if (priceFetched) {
+      const allFarmData = [...farmDataContext, ...farmDataSSLContext]
+      let farmDataStaked = []
 
-    if (poolFilter !== 'All pools') farmDataStaked = allFarmData.filter((fData) => fData.type === poolFilter)
-    else farmDataStaked = allFarmData
+      if (poolFilter !== 'All pools') farmDataStaked = allFarmData.filter((fData) => fData.type === poolFilter)
+      else farmDataStaked = allFarmData
 
-    if (searchFilter)
-      farmDataStaked = farmDataStaked.filter((fData) => {
-        const tokenName = fData.name.toLowerCase()
-        if (tokenName.includes(searchFilter.toLowerCase())) return true
-      })
+      if (searchFilter)
+        farmDataStaked = farmDataStaked.filter((fData) => {
+          const tokenName = fData.name.toLowerCase()
+          if (tokenName.includes(searchFilter.toLowerCase())) return true
+        })
 
-    if (showDeposited && wallet.publicKey) farmDataStaked = farmDataStaked.filter((fData) => fData.currentlyStaked > 0)
+      if (showDeposited && wallet.publicKey)
+        farmDataStaked = farmDataStaked.filter((fData) => fData.currentlyStaked > 0)
 
-    setFarmData(farmDataStaked)
-  }, [poolFilter, searchFilter, showDeposited, farmDataContext, farmDataSSLContext])
+      setFarmData(farmDataStaked)
+    }
+  }, [poolFilter, searchFilter, showDeposited, farmDataContext, farmDataSSLContext, priceFetched])
 
   const fetchSSLData = async () => {
     let SSLTokenNames = []
     farmDataSSLContext.map((data) => SSLTokenNames.push(data.name))
     let tokenAddresses = getTokenAddresses(SSLTokenNames, network)
     let newFarmDataContext = farmDataSSLContext
-    for (let i = 0; i < SSLTokenNames.length; i++) {
-      let APR = await fetchSSLAPR(tokenAddresses[i].toString())
-      let volumeDays = await fetchSSLVolumeData(tokenAddresses[i].toString())
-      const sslAccountKey = await getSslAccountKey(tokenAddresses[i])
-      let { sslData, liquidityAccount } = await fetchSSLAmountStaked(
-        connection,
-        sslAccountKey,
-        wallet,
-        tokenAddresses[i]
-      )
-      const tokenPrice = SSLTokenNames[i] === 'USDC' ? 1 : solPrice?.current
-      //@ts-ignore
-      let liquidity = sslData.liability + sslData.swappedLiability
-      const ptMinted = liquidityAccount ? liquidityAccount.ptMinted : 0
-      //@ts-ignore
-      const userLiablity = liquidityAccount ? (liquidity * liquidityAccount.share) / sslData.totalShare : 0n
-      const amountDeposited = liquidityAccount ? liquidityAccount.amountDeposited : 0
-      //@ts-ignore
-      const earned = liquidityAccount ? userLiablity - amountDeposited : 0
-      newFarmDataContext = newFarmDataContext.map((data) => {
-        if (data.name === SSLTokenNames[i]) {
-          return {
-            ...data,
-            earned: Math.max(Number(earned) / Math.pow(10, sslData.decimals), 0),
-            apr: APR * 100,
-            liquidity: tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0,
-            currentlyStaked: Number(amountDeposited) / Math.pow(10, sslData.decimals),
-            userLiablity: Number(userLiablity),
-            ptMinted: Number(ptMinted) / Math.pow(10, 9),
-            volume: tokenPrice ? tokenPrice * volumeDays.volume : 0
-          }
-        } else return data
-      })
+    if (priceFetched) {
+      for (let i = 0; i < SSLTokenNames.length; i++) {
+        let APR = await fetchSSLAPR(tokenAddresses[i].toString())
+        let volumeDays = await fetchSSLVolumeData(tokenAddresses[i].toString())
+        const sslAccountKey = await getSslAccountKey(tokenAddresses[i])
+        let { sslData, liquidityAccount } = await fetchSSLAmountStaked(
+          connection,
+          sslAccountKey,
+          wallet,
+          tokenAddresses[i]
+        )
+        const tokenPrice =
+          SSLTokenNames[i] === 'USDC' ? 1 : allTokenPrices[`${SSLTokenNames[i].toUpperCase()}/USDC`]?.current
+        //@ts-ignore
+        let liquidity = sslData.liability + sslData.swappedLiability
+        const ptMinted = liquidityAccount ? liquidityAccount.ptMinted : 0
+        //@ts-ignore
+        const userLiablity = liquidityAccount ? (liquidity * liquidityAccount.share) / sslData.totalShare : 0n
+        const amountDeposited = liquidityAccount ? liquidityAccount.amountDeposited : 0
+        //@ts-ignore
+        const earned = liquidityAccount ? userLiablity - amountDeposited : 0
+        newFarmDataContext = newFarmDataContext.map((data) => {
+          if (data.name === SSLTokenNames[i]) {
+            return {
+              ...data,
+              earned: Math.max(Number(earned) / Math.pow(10, sslData.decimals), 0),
+              apr: APR * 100,
+              liquidity: tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0,
+              currentlyStaked: Number(amountDeposited) / Math.pow(10, sslData.decimals),
+              userLiablity: Number(userLiablity),
+              ptMinted: Number(ptMinted) / Math.pow(10, 9),
+              volume: tokenPrice ? tokenPrice * volumeDays.volume : 0
+            }
+          } else return data
+        })
+      }
+      return newFarmDataContext
     }
-    return newFarmDataContext
   }
   const fetchGOFXData = async (accountKey: PublicKey) => {
     // pool data take this function to context
