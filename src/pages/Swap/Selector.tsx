@@ -220,7 +220,11 @@ export const Selector: FC<{
               }}
             >
               <TOKEN_ICON>
-                <img src={`/img/crypto/${symbol}.svg`} alt="" />
+                <img
+                  src={`/img/crypto/${symbol}.svg`}
+                  alt=""
+                  onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+                />
               </TOKEN_ICON>
               <TOKEN_INFO>
                 <span>{symbol}</span>
@@ -236,7 +240,11 @@ export const Selector: FC<{
             <MainTokenDisplay>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <CLICKER_ICON>
-                  <img src={`/img/crypto/${token.symbol}.svg`} alt="" />
+                  <img
+                    src={`/img/crypto/${token.symbol}.svg`}
+                    alt=""
+                    onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+                  />
                 </CLICKER_ICON>
                 <span className={'text-primary'}>{token.symbol}</span>
               </div>

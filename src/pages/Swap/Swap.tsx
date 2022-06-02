@@ -668,7 +668,11 @@ const TokenContent: FC = () => {
     <TOKEN_WRAPPER>
       <TokenHeader>
         <CLICKER_ICON>
-          <img src={`/img/crypto/${tokenA?.symbol}.svg`} alt="" />
+          <img
+            src={`/img/crypto/${tokenA?.symbol}.svg`}
+            alt=""
+            onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+          />
         </CLICKER_ICON>
         <SubHeader>
           <TokenTitle>
@@ -773,13 +777,21 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
         <TokenTitle>Rate</TokenTitle>
         <SmallTitleFlex>
           <SMALL_CLICKER_ICON>
-            <img src={`/img/crypto/${tokenA.symbol}.svg`} alt="" />
+            <img
+              src={`/img/crypto/${tokenA.symbol}.svg`}
+              alt=""
+              onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+            />
           </SMALL_CLICKER_ICON>
           <span className={'token-name'}>
             {inTokenAmount} {tokenA.symbol} ≈{'  '}
           </span>
           <SMALL_CLICKER_ICON style={{ marginLeft: '0.5rem' }}>
-            <img src={`/img/crypto/${tokenB.symbol}.svg`} alt="" />
+            <img
+              src={`/img/crypto/${tokenB.symbol}.svg`}
+              alt=""
+              onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+            />
           </SMALL_CLICKER_ICON>
           <span className={'token-name'}>
             {+outAmount.toFixed(3)} {tokenB.symbol}
