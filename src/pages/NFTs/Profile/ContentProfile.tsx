@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo, FC } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { useNFTProfile, useConnectionConfig } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { ParsedAccount } from '../../../web3'
@@ -14,7 +13,6 @@ type Props = {
 
 export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
   const { connection } = useConnectionConfig()
-  const { publicKey } = useWallet()
   const {
     sessionUser,
     sessionUserParsedAccounts,
@@ -28,8 +26,6 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
   const [favoritedItems, setFavoritedItems] = useState<ISingleNFT[]>()
 
   const currentUserProfile = useMemo(() => {
-    console.log(sessionUser, nonSessionProfile)
-
     if (nonSessionProfile !== undefined && !isSessionUser) {
       return nonSessionProfile
     } else if (sessionUser !== undefined && isSessionUser) {
@@ -55,7 +51,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
     () => [
       {
         order: '1',
-        name: `My Collection (${currentUserParsedAccounts ? currentUserParsedAccounts.length : 0})`,
+        name: `Collection (${currentUserParsedAccounts ? currentUserParsedAccounts.length : 0})`,
         component: <NFTDisplay parsedAccounts={currentUserParsedAccounts} type={'collected'} />
       },
       {
@@ -65,13 +61,13 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
       },
       {
         order: '3',
-        name: `Favorited (${isSessionUser && favoritedItems ? favoritedItems.length : 0})`,
-        component: <NFTDisplay singleNFT={isSessionUser ? favoritedItems : []} type={'favorited'} />
+        name: `Favorited (${favoritedItems ? favoritedItems.length : 0})`,
+        component: <NFTDisplay singleNFTs={favoritedItems ? favoritedItems : []} type={'favorited'} />
       },
       {
         order: '4',
         name: 'Activity',
-        component: <Activity data={isSessionUser && userActivity ? userActivity : []} />
+        component: <Activity data={userActivity ? userActivity : []} />
       }
     ],
     [currentUserParsedAccounts, createdItems, userActivity, favoritedItems]
@@ -94,29 +90,27 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
   }, [currentUserParsedAccounts])
 
   useEffect(() => {
-    if (sessionUser?.user_likes?.length > 0) {
-      fetchFavorites()
+    if (currentUserProfile?.user_likes?.length > 0) {
+      fetchFavorites(currentUserProfile.user_likes)
     } else {
       setFavoritedItems([])
     }
 
     return () => {}
-  }, [sessionUser])
+  }, [currentUserProfile])
 
   useEffect(() => {
-    if (sessionUser && sessionUser.user_id) {
-      fetchUserActivity(sessionUser.user_id)
+    if (currentUserProfile && currentUserProfile.user_id) {
+      fetchUserActivity(currentUserProfile.user_id)
     } else {
       setUserActivity([])
     }
 
     return () => {}
-  }, [sessionUser, fetchUserActivity, setUserActivity])
+  }, [currentUserProfile, fetchUserActivity, setUserActivity])
 
-  const fetchFavorites = async () => {
-    const favorites: ISingleNFT[] = await Promise.all(
-      sessionUser.user_likes.map((i: number) => fetchNFTById(i, connection))
-    )
+  const fetchFavorites = async (userLikes: number[]) => {
+    const favorites: ISingleNFT[] = await Promise.all(userLikes.map((i: number) => fetchNFTById(i, connection)))
 
     setFavoritedItems(favorites.map((f: any) => f.data[0]))
   }
