@@ -285,12 +285,11 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
           </div>
         ) : (
           <div style={{ display: 'flex' }}>
-            {isCollapsed &&
-              !connected(
-                <CONNECT onClick={handleWalletModal}>
-                  <span>Connect Wallet</span>
-                </CONNECT>
-              )}
+            {isCollapsed && !connected && (
+              <CONNECT onClick={handleWalletModal}>
+                <span>Connect Wallet</span>
+              </CONNECT>
+            )}
             <SELL onClick={goProfile}>
               <span>Sell</span>
             </SELL>
