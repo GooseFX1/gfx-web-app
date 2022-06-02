@@ -132,8 +132,7 @@ const INFO_DIV_BRIGHT = styled.div`
 const ProgressBarBG = styled.div`
   width: 610px;
   height: 70px;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  margin-bottom: 100px;
   display: flex;
   align-items: center;
   background: #2a2a2a;
