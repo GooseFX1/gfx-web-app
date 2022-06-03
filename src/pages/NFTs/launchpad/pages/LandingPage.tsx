@@ -17,10 +17,6 @@ const WRAPPER = styled.div`
   max-width: 99%;
   padding-left: 70px;
   .switchHolder {
-    display: flex;
-    justify-content: flex-end;
-    padding-right: 70px;
-    margin-top: 24px;
   }
 `
 
@@ -28,9 +24,7 @@ export const LandingPage: FC = () => {
   return (
     <>
       <WRAPPER>
-        <span className="switchHolder">
-          <TokenSwitch />
-        </span>
+        <TokenSwitch />
         <FeaturedLaunch />
         <UpcomingCollections />
         <LaunchCollection />
