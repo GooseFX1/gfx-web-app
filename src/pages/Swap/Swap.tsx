@@ -307,6 +307,7 @@ const SWAP_ROUTES = styled.div<{ $less: boolean }>`
     @media (max-width: 500px) {
       top: ${({ $less }) => ($less ? '80%' : '88%')};
       font-size: 16px !important;
+      right: 0 !important;
     }
   }
 `
