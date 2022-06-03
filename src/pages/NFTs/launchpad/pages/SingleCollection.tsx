@@ -186,6 +186,7 @@ const WRAPPER = styled.div`
   }
   .rightPart {
     width: 50%;
+    height: 80vh;
     padding-right: 70px;
     margin-left: 50px;
   }
@@ -236,7 +237,7 @@ const NFT_COVER = styled.div`
     height: 608px;
     border-radius: 20px;
     padding: 5px;
-    margin-top: 18px;
+    margin-top: 32px;
     margin-bottom: 30px;
   }
   .inner-image {
