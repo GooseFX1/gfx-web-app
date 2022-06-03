@@ -177,7 +177,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
     }
   `}
 `
-const DETAILS_TAB_CONTENT = styled.div`
+export const DETAILS_TAB_CONTENT = styled.div`
   ${({ theme }) => css`
     height: 100%;
     padding: ${theme.margin(0.5)} ${theme.margin(3)};
