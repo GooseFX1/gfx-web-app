@@ -2,7 +2,7 @@ import React, { FC, MouseEventHandler, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { MainButton } from '../../components'
-import { useAccounts, useConnectionConfig, useSwap, useWalletModal } from '../../context'
+import { useAccounts, useConnectionConfig, useSwap, useWalletModal, useDarkMode } from '../../context'
 import { ADDRESSES } from '../../web3'
 
 enum State {
@@ -13,10 +13,11 @@ enum State {
   PoolNotFound = 4
 }
 
-const SWAP_BUTTON = styled(MainButton)<{ status: any }>`
+const SWAP_BUTTON = styled(MainButton)<{ status: any; mode: any }>`
   width: 220px;
   padding: 0 32px;
-  background-color: ${({ status }) => (status === 'action' ? '#6b33b0' : '#202020')};
+  background-color: ${({ status, mode }) =>
+    status === 'action' ? '#5855FF' : mode === 'dark' ? '#202020' : '#ABABAB'};
 `
 
 const TEXT = styled.span`
@@ -27,6 +28,7 @@ const TEXT = styled.span`
 
 export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ exchange, route }) => {
   const { getAmount } = useAccounts()
+  const { mode } = useDarkMode()
   const { network } = useConnectionConfig()
   const { inTokenAmount, loading, swapTokens, tokenA, tokenB } = useSwap()
   const { connect, publicKey, wallet } = useWallet()
@@ -55,11 +57,11 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
     switch (state) {
       case State.CanSwap:
       case State.Connect:
-      case State.Enter:
         return 'action'
       // case State.BalanceExceeded:
       // case State.PoolNotFound:
       //   return 'not-allowed'
+      case State.Enter:
       case State.BalanceExceeded:
       default:
         return 'initial'
@@ -84,7 +86,7 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
   )
 
   return (
-    <SWAP_BUTTON height="56px" loading={loading} status={buttonStatus} onClick={handleClick}>
+    <SWAP_BUTTON height="56px" loading={loading} status={buttonStatus} mode={mode} onClick={handleClick}>
       <TEXT>{content}</TEXT>
     </SWAP_BUTTON>
   )

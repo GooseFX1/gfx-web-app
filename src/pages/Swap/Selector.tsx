@@ -94,7 +94,6 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => '#2a2a2a'};
   cursor: pointer;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   z-index: 1;
 
   @media (max-width: 500px) {
@@ -103,6 +102,7 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
     width: 140px;
   }
 `
+//box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 
 const TOKEN = styled.div`
   display: flex;
