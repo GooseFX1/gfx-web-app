@@ -1,8 +1,9 @@
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { Input } from 'antd'
 import styled from 'styled-components'
+import { TokenListProvider } from '@solana/spl-token-registry'
 import { ArrowClickerWhite, Modal } from '../../components'
-import { ISwapToken, useTokenRegistry, useDarkMode } from '../../context'
+import { ISwapToken, useTokenRegistry, useDarkMode, useConnectionConfig, useSwap } from '../../context'
 import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
 
 const BODY = styled.div`
@@ -93,7 +94,6 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => '#2a2a2a'};
   cursor: pointer;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   z-index: 1;
 
   @media (max-width: 500px) {
@@ -102,6 +102,7 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
     width: 140px;
   }
 `
+//box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 
 const TOKEN = styled.div`
   display: flex;
@@ -147,17 +148,49 @@ export const Selector: FC<{
 }> = ({ height, otherToken, setToken, token, balance }) => {
   const { mode } = useDarkMode()
   const { tokens } = useTokenRegistry()
+  const { tokenA, tokenB } = useSwap()
+  const { chainId } = useConnectionConfig()
   const [filterKeywords, setFilterKeywords] = useState('')
   const [filteredTokens, setFilteredTokens] = useState(tokens)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     const r = new RegExp(filterKeywords, 'i')
-    const filteredTokens = tokens.filter(
+    const altTokens = JSON.parse(window.localStorage.getItem('myAddedTokenList')) || []
+    const filteredTokensList = tokens.filter(
       ({ address, name, symbol }) =>
         (r.test(name) || r.test(symbol) || r.test(address)) && (!otherToken || otherToken.address !== address)
     )
-    setFilteredTokens(filteredTokens)
+    filteredTokensList.push(...altTokens)
+
+    async function addExternalTokens() {
+      if (filteredTokensList.length < 1 && tokenA && tokenB) {
+        const list = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
+        const filteredTokensListAlt = list.filter(({ address }) => filterKeywords === address)
+
+        if (filteredTokensListAlt.length > 0) {
+          filteredTokensList.push(filteredTokensListAlt?.[0])
+          window.localStorage.setItem('myAddedTokenList', JSON.stringify([...altTokens, filteredTokensListAlt?.[0]]))
+        }
+      }
+
+      setFilteredTokens(
+        filteredTokensList.sort((a, b) => {
+          let fa = a.symbol.toLowerCase(),
+            fb = b.symbol.toLowerCase()
+
+          if (fa < fb) {
+            return -1
+          }
+          if (fa > fb) {
+            return 1
+          }
+          return 0
+        })
+      )
+    }
+
+    addExternalTokens()
   }, [filterKeywords, otherToken, tokens])
 
   return (
@@ -187,7 +220,11 @@ export const Selector: FC<{
               }}
             >
               <TOKEN_ICON>
-                <img src={`/img/crypto/${symbol}.svg`} alt="" />
+                <img
+                  src={`/img/crypto/${symbol}.svg`}
+                  alt=""
+                  onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+                />
               </TOKEN_ICON>
               <TOKEN_INFO>
                 <span>{symbol}</span>
@@ -203,7 +240,11 @@ export const Selector: FC<{
             <MainTokenDisplay>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <CLICKER_ICON>
-                  <img src={`/img/crypto/${token.symbol}.svg`} alt="" />
+                  <img
+                    src={`/img/crypto/${token.symbol}.svg`}
+                    alt=""
+                    onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+                  />
                 </CLICKER_ICON>
                 <span className={'text-primary'}>{token.symbol}</span>
               </div>
