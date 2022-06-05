@@ -153,7 +153,7 @@ export interface IFarmData {
   image: string
   name: string
   earned: number
-  apr?: number
+  apr?: number | string
   rewards?: number
   liquidity: number
   type: string
@@ -185,7 +185,6 @@ export const TableList = ({ dataSource }: any) => {
   const PAGE_SIZE = 10
 
   const gofxPrice = useMemo(() => prices['GOFX/USDC'], [prices])
-  const solPrice = useMemo(() => prices['SOL/USDC'], [prices])
   useEffect(() => {
     setAllTokenPrices(() => setAllTokenPrices(prices))
   }, [priceFetched])
@@ -288,12 +287,12 @@ export const TableList = ({ dataSource }: any) => {
             return {
               ...data,
               earned: Math.max(Number(earned) / Math.pow(10, sslData.decimals), 0),
-              apr: APR * 100,
+              apr: isNaN(APR) ? '-' : Math.max(APR * 100, 0),
               liquidity: tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0,
               currentlyStaked: Number(amountDeposited) / Math.pow(10, sslData.decimals),
               userLiablity: Number(userLiablity),
               ptMinted: Number(ptMinted) / Math.pow(10, 9),
-              volume: tokenPrice ? tokenPrice * volumeDays.volume : 0
+              volume: isNaN(volumeDays?.volume) ? '-' : volumeDays.volume
             }
           } else return data
         })

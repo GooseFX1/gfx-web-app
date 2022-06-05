@@ -121,9 +121,6 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
       subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
     }
   }, [connection])
-  useEffect(() => {
-    console.log(prices)
-  }, [priceFetched])
 
   return (
     <PriceFeedFarmContext.Provider

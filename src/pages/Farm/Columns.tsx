@@ -128,7 +128,11 @@ export const columns = [
     dataIndex: 'apr',
     key: 'apr',
     width: '16.6%',
-    render: (text) => <div className="apr normal-text">{text !== undefined ? `${text.toFixed(0)}%` : <Loader />}</div>
+    render: (text) => (
+      <div className="apr normal-text">
+        {text === '-' ? '-' : text !== undefined ? `${text.toFixed(0)}%` : <Loader />}
+      </div>
+    )
   },
   {
     title: Title('Liquidity', "Total value of funds in this farm's liquidity pool.", true),
