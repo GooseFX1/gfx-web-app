@@ -4,7 +4,7 @@ import { logEvent } from 'firebase/analytics'
 import analytics from '../../analytics'
 import { TableList } from './TableList'
 import { FarmHeader } from './FarmHeader'
-import { useNavCollapse, PriceFeedProvider, FarmProvider, useConnectionConfig, ENDPOINTS } from '../../context'
+import { useNavCollapse, FarmProvider, useConnectionConfig, ENDPOINTS, PriceFeedFarmProvider } from '../../context'
 import { notify } from '../../utils'
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
@@ -66,12 +66,12 @@ export const Farm: FC = () => {
   return (
     <WRAPPER $navCollapsed={isCollapsed}>
       <FarmProvider>
-        <PriceFeedProvider>
+        <PriceFeedFarmProvider>
           <BODY $navCollapsed={isCollapsed}>
             <FarmHeader onFilter={onFilter} />
             <TableList filter={filter} />
           </BODY>
-        </PriceFeedProvider>
+        </PriceFeedFarmProvider>
       </FarmProvider>
     </WRAPPER>
   )
