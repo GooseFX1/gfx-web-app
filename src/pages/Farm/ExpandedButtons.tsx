@@ -3,7 +3,7 @@ import { MainButton } from '../../components'
 import { Connect } from '../../layouts/App/Connect'
 import styled from 'styled-components'
 import { WalletContextState, useWallet } from '@solana/wallet-adapter-react'
-import { useFarmContext, usePriceFeed, useAccounts, useTokenRegistry, useConnectionConfig } from '../../context'
+import { useFarmContext, usePriceFeedFarm, useAccounts, useTokenRegistry, useConnectionConfig } from '../../context'
 import { invalidInputErrMsg } from './FarmClickHandler'
 import { notify } from '../../utils'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
@@ -256,7 +256,7 @@ export const StakeButtons: FC<{
   isUnstakeLoading
 }) => {
   const { farmDataContext } = useFarmContext()
-  const { prices } = usePriceFeed()
+  const { prices } = usePriceFeedFarm()
   const { getUIAmount } = useAccounts()
   const { publicKey } = useWallet()
   const { getTokenInfoForFarming } = useTokenRegistry()
@@ -382,7 +382,7 @@ export const SSLButtons: FC<{
 }) => {
   const miniButtonsClass = document.activeElement === unstakeRef.current ? ' active' : ''
   const depositButtonClass = document.activeElement === stakeRef.current ? ' active' : ''
-  const { prices } = usePriceFeed()
+  const { prices } = usePriceFeedFarm()
   const { farmDataSSLContext, operationPending } = useFarmContext()
   const tokenData = farmDataSSLContext.find((farmData) => farmData.name === name)
   const { getUIAmount } = useAccounts()

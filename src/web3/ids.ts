@@ -72,6 +72,10 @@ export const ADDRESSES: {
       SRM: {
         address: new PublicKey('SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt'),
         decimals: 6
+      },
+      GMT: {
+        address: new PublicKey('7i5KKsX2weiTkry7jA4ZwSuXGhs5eJBEjY8vVxR4pfRx'),
+        decimals: 9
       }
     },
     mints: {

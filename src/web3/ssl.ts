@@ -355,11 +355,11 @@ const wrapSolToken = async (wallet: any, connection: Connection, amount: number)
 }
 
 const getTokenMintAddress = (network: WalletAdapterNetwork, tokenName: string): PublicKey => {
-  const tokenMintAddress = ADDRESSES[network].mints[tokenName]?.address
+  const tokenMintAddress = ADDRESSES[network].sslPool[tokenName]?.address
   return tokenMintAddress ? tokenMintAddress : null
 }
 export const getTokenDecimal = (network: WalletAdapterNetwork, tokenName: string): number => {
-  const decimal = ADDRESSES[network].mints[tokenName].decimals
+  const decimal = ADDRESSES[network].sslPool[tokenName].decimals
   return decimal ? decimal : null
 }
 
