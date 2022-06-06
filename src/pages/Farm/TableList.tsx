@@ -17,7 +17,7 @@ import {
   getTokenAddresses,
   getSslAccountKey
 } from '../../web3'
-import { useConnectionConfig, usePriceFeed, useFarmContext } from '../../context'
+import { useConnectionConfig, usePriceFeedFarm, useFarmContext } from '../../context'
 import { ADDRESSES } from '../../web3'
 import { MorePoolsSoon } from './MorePoolsSoon'
 
@@ -153,7 +153,7 @@ export interface IFarmData {
   image: string
   name: string
   earned: number
-  apr?: number
+  apr?: number | string
   rewards?: number
   liquidity: number
   type: string
@@ -164,7 +164,7 @@ export interface IFarmData {
 //#endregion
 
 export const TableList = ({ dataSource }: any) => {
-  const { prices, priceFetched } = usePriceFeed()
+  const { prices, priceFetched } = usePriceFeedFarm()
   const { network, connection } = useConnectionConfig()
   const wallet = useWallet()
   const {
@@ -185,7 +185,6 @@ export const TableList = ({ dataSource }: any) => {
   const PAGE_SIZE = 10
 
   const gofxPrice = useMemo(() => prices['GOFX/USDC'], [prices])
-  const solPrice = useMemo(() => prices['SOL/USDC'], [prices])
   useEffect(() => {
     setAllTokenPrices(() => setAllTokenPrices(prices))
   }, [priceFetched])
@@ -222,14 +221,14 @@ export const TableList = ({ dataSource }: any) => {
   }, [wallet.publicKey, connection])
 
   useEffect(() => {
-    if (solPrice !== undefined) {
+    if (priceFetched) {
       fetchSSLData()
         .then((farmSSLData) => {
           if (farmSSLData) setFarmDataSSLContext(farmSSLData)
         })
         .catch((err) => console.log(err))
     }
-  }, [accountKey, solPrice?.current, counter])
+  }, [accountKey, counter, priceFetched])
 
   useEffect(() => {
     if (gofxPrice !== undefined) {
@@ -245,42 +244,34 @@ export const TableList = ({ dataSource }: any) => {
 
   useEffect(() => {
     // this useEffect is to monitor staking and SSL pools button
-    if (priceFetched) {
-      const allFarmData = [...farmDataContext, ...farmDataSSLContext]
-      let farmDataStaked = []
+    const allFarmData = [...farmDataContext, ...farmDataSSLContext]
+    let farmDataStaked = []
 
-      if (poolFilter !== 'All pools') farmDataStaked = allFarmData.filter((fData) => fData.type === poolFilter)
-      else farmDataStaked = allFarmData
+    if (poolFilter !== 'All pools') farmDataStaked = allFarmData.filter((fData) => fData.type === poolFilter)
+    else farmDataStaked = allFarmData
 
-      if (searchFilter)
-        farmDataStaked = farmDataStaked.filter((fData) => {
-          const tokenName = fData.name.toLowerCase()
-          if (tokenName.includes(searchFilter.toLowerCase())) return true
-        })
+    if (searchFilter)
+      farmDataStaked = farmDataStaked.filter((fData) => {
+        const tokenName = fData.name.toLowerCase()
+        if (tokenName.includes(searchFilter.toLowerCase())) return true
+      })
 
-      if (showDeposited && wallet.publicKey)
-        farmDataStaked = farmDataStaked.filter((fData) => fData.currentlyStaked > 0)
+    if (showDeposited && wallet.publicKey) farmDataStaked = farmDataStaked.filter((fData) => fData.currentlyStaked > 0)
 
-      setFarmData(farmDataStaked)
-    }
+    setFarmData(farmDataStaked)
   }, [poolFilter, searchFilter, showDeposited, farmDataContext, farmDataSSLContext, priceFetched])
 
   const fetchSSLData = async () => {
     let SSLTokenNames = []
     farmDataSSLContext.map((data) => SSLTokenNames.push(data.name))
-    let tokenAddresses = getTokenAddresses(SSLTokenNames, network)
     let newFarmDataContext = farmDataSSLContext
-    if (priceFetched) {
+    try {
       for (let i = 0; i < SSLTokenNames.length; i++) {
-        let APR = await fetchSSLAPR(tokenAddresses[i].toString())
-        let volumeDays = await fetchSSLVolumeData(tokenAddresses[i].toString())
-        const sslAccountKey = await getSslAccountKey(tokenAddresses[i])
-        let { sslData, liquidityAccount } = await fetchSSLAmountStaked(
-          connection,
-          sslAccountKey,
-          wallet,
-          tokenAddresses[i]
-        )
+        const tokenAddress = ADDRESSES[network].sslPool[SSLTokenNames[i]].address
+        let APR = await fetchSSLAPR(tokenAddress.toString())
+        let volumeDays = await fetchSSLVolumeData(tokenAddress.toString())
+        const sslAccountKey = await getSslAccountKey(tokenAddress)
+        let { sslData, liquidityAccount } = await fetchSSLAmountStaked(connection, sslAccountKey, wallet, tokenAddress)
         const tokenPrice =
           SSLTokenNames[i] === 'USDC' ? 1 : allTokenPrices[`${SSLTokenNames[i].toUpperCase()}/USDC`]?.current
         //@ts-ignore
@@ -296,18 +287,21 @@ export const TableList = ({ dataSource }: any) => {
             return {
               ...data,
               earned: Math.max(Number(earned) / Math.pow(10, sslData.decimals), 0),
-              apr: APR * 100,
+              apr: isNaN(APR) ? '-' : Math.max(APR * 100, 0),
               liquidity: tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0,
               currentlyStaked: Number(amountDeposited) / Math.pow(10, sslData.decimals),
               userLiablity: Number(userLiablity),
               ptMinted: Number(ptMinted) / Math.pow(10, 9),
-              volume: tokenPrice ? tokenPrice * volumeDays.volume : 0
+              volume: isNaN(volumeDays?.volume) ? '-' : volumeDays.volume
             }
           } else return data
         })
       }
-      return newFarmDataContext
+    } catch (err) {
+      console.error(err)
     }
+
+    return newFarmDataContext
   }
   const fetchGOFXData = async (accountKey: PublicKey) => {
     // pool data take this function to context
