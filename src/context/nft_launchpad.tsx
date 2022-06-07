@@ -1,8 +1,14 @@
-import React, { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction, useEffect } from 'react'
+import React, { FC, useState, ReactNode, createContext, useContext, Dispatch, useMemo, useEffect } from 'react'
 import { fetchAllNFTLaunchpadData } from '../api/NFTLaunchpad'
 import { useParams } from 'react-router-dom'
 import { IProjectParams } from '../types/nft_launchpad'
 import { fetchSelectedNFTLPData } from '../api/NFTLaunchpad/actions'
+import { useWallet } from '@solana/wallet-adapter-react'
+import * as anchor from '@project-serum/anchor'
+import { useConnectionConfig } from './settings'
+import { PublicKey } from '@solana/web3.js'
+import { getAtaForMint, toDate } from '../pages/NFTs/launchpad/candyMachine/utils'
+import { getCollectionPDA } from '../pages/NFTs/launchpad/candyMachine/candyMachine'
 
 interface INFTProjectConfig {
   collectionId: number
@@ -80,27 +86,303 @@ interface ISelectedProject {
   status: string
   team: any
   urlName: any
-  _id: string
 }
-interface ISelectedNFTLPProjectConfig {}
+
+const CANDY_MACHINE_PROGRAM = new anchor.web3.PublicKey('cndy3Z4yapfJBmL3ShUp5exZKqR3z33thTzeNMm2gRZ')
+interface CandyMachineState {
+  authority: anchor.web3.PublicKey
+  itemsAvailable: number
+  itemsRedeemed: number
+  itemsRemaining: number
+  treasury: anchor.web3.PublicKey
+  tokenMint: null | anchor.web3.PublicKey
+  isSoldOut: boolean
+  isActive: boolean
+  isPresale: boolean
+  isWhitelistOnly: boolean
+  goLiveDate: anchor.BN
+  price: anchor.BN
+  gatekeeper: null | {
+    expireOnUse: boolean
+    gatekeeperNetwork: anchor.web3.PublicKey
+  }
+  endSettings: null | {
+    number: anchor.BN
+    endSettingType: any
+  }
+  whitelistMintSettings: null | {
+    mode: any
+    mint: anchor.web3.PublicKey
+    presale: boolean
+    discountPrice: null | anchor.BN
+  }
+  hiddenSettings: null | {
+    name: string
+    uri: string
+    hash: Uint8Array
+  }
+  retainAuthority: boolean
+}
+
+interface CandyMachineAccount {
+  id: anchor.web3.PublicKey
+  program: anchor.Program
+  state: CandyMachineState
+}
+const getCandyMachineState = async (
+  anchorWallet: anchor.Wallet,
+  candyMachineId: anchor.web3.PublicKey,
+  connection: anchor.web3.Connection
+): Promise<CandyMachineAccount> => {
+  const provider = new anchor.Provider(connection, anchorWallet, {
+    preflightCommitment: 'processed'
+  })
+
+  const idl = await anchor.Program.fetchIdl(CANDY_MACHINE_PROGRAM, provider)
+
+  const program = new anchor.Program(idl!, CANDY_MACHINE_PROGRAM, provider)
+
+  const state: any = await program.account.candyMachine.fetch(candyMachineId)
+  const itemsAvailable = state.data.itemsAvailable.toNumber()
+  const itemsRedeemed = state.itemsRedeemed.toNumber()
+  const itemsRemaining = itemsAvailable - itemsRedeemed
+
+  return {
+    id: candyMachineId,
+    program,
+    state: {
+      authority: state.authority,
+      itemsAvailable,
+      itemsRedeemed,
+      itemsRemaining,
+      isSoldOut: itemsRemaining === 0,
+      isActive: false,
+      isPresale: false,
+      isWhitelistOnly: false,
+      goLiveDate: state.data.goLiveDate,
+      treasury: state.wallet,
+      tokenMint: state.tokenMint,
+      gatekeeper: state.data.gatekeeper,
+      endSettings: state.data.endSettings,
+      whitelistMintSettings: state.data.whitelistMintSettings,
+      hiddenSettings: state.data.hiddenSettings,
+      price: state.data.price,
+      retainAuthority: state.data.retainAuthority
+    }
+  }
+}
 
 const NFTLPSelectedContext = createContext(null)
 export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [selectedProject, setSelectedProject] = useState<ISelectedProject>()
+  const [selectedProject, setSelectedProject] = useState<ISelectedProject>(null)
+  const [candyMachineState, setCandyMachineState] = useState<CandyMachineState>(null)
+  const [candyMachine, setCandyMachine] = useState<CandyMachineAccount>(null)
+  const [cmValues, setCmValues] = useState(null)
   const params = useParams<IProjectParams>()
-  console.log(params.collectionId)
+  const wallet = useWallet()
+  const { connection } = useConnectionConfig()
+  const anchorWallet = useMemo(() => {
+    if (!wallet || !wallet.publicKey || !wallet.signAllTransactions || !wallet.signTransaction) {
+      return
+    }
+
+    return {
+      publicKey: wallet.publicKey,
+      signAllTransactions: wallet.signAllTransactions,
+      signTransaction: wallet.signTransaction
+    } as anchor.Wallet
+  }, [wallet])
+
+  const refreshCandyMachineState = async (candyMachine) => {
+    if (!anchorWallet || (!candyMachine && (!selectedProject || !selectedProject.candyMachine))) {
+      setCandyMachine(null)
+      setCandyMachineState(null)
+      return
+    }
+    try {
+      const id = candyMachine ? candyMachine : selectedProject.candyMachine
+      const candyM = await getCandyMachineState(anchorWallet, new PublicKey(id), connection)
+      setCandyMachine(candyM)
+      setCandyMachineState(candyM?.state)
+      let cndyState = {}
+      if (candyM) {
+        try {
+          const cndy = candyM
+          let active = cndy?.state.goLiveDate?.toNumber() < new Date().getTime() / 1000
+          let presale = false
+
+          let isWLUser = false
+          let userPrice = cndy.state.price
+
+          // whitelist mint?
+          if (cndy?.state.whitelistMintSettings) {
+            // is it a presale mint?
+            if (
+              cndy.state.whitelistMintSettings.presale &&
+              (!cndy.state.goLiveDate || cndy.state.goLiveDate.toNumber() > new Date().getTime() / 1000)
+            ) {
+              presale = true
+            }
+            // is there a discount?
+            if (cndy.state.whitelistMintSettings.discountPrice) {
+              cndyState['discountPrice'] = cndy.state.whitelistMintSettings.discountPrice
+              userPrice = cndy.state.whitelistMintSettings.discountPrice
+            } else {
+              cndyState['discountPrice'] = null
+              if (!cndy.state.whitelistMintSettings.presale) {
+                cndy.state.isWhitelistOnly = true
+              }
+            }
+            // retrieves the whitelist token
+            const mint = new anchor.web3.PublicKey(cndy.state.whitelistMintSettings.mint)
+            const token = (await getAtaForMint(mint, anchorWallet.publicKey))[0]
+            try {
+              const balance = await connection.getTokenAccountBalance(token)
+              isWLUser = parseInt(balance.value.amount) > 0
+              // only whitelist the user if the balance > 0
+              cndyState['isWhiteListUser'] = isWLUser
+
+              if (cndy.state.isWhitelistOnly) {
+                active = isWLUser && (presale || active)
+              }
+            } catch (e) {
+              cndyState['isWhiteListUser'] = false
+              // no whitelist user, no mint
+              if (cndy.state.isWhitelistOnly) {
+                active = false
+              }
+              //console.log('There was a problem fetching whitelist token balance')
+            }
+          }
+          userPrice = isWLUser ? userPrice : cndy.state.price
+
+          if (cndy?.state.tokenMint) {
+            // retrieves the SPL token
+            const mint = new anchor.web3.PublicKey(cndy.state.tokenMint)
+            const token = (await getAtaForMint(mint, anchorWallet.publicKey))[0]
+            try {
+              const balance = await connection.getTokenAccountBalance(token)
+
+              const valid = new anchor.BN(balance.value.amount).gte(userPrice)
+
+              // only allow user to mint if token balance >  the user if the balance > 0
+              cndyState['validBalance'] = valid
+              active = active && valid
+            } catch (e) {
+              cndyState['validBalance'] = false
+              active = false
+              // no whitelist user, no mint
+              console.log(e)
+            }
+          } else {
+            const balance = new anchor.BN(await connection.getBalance(anchorWallet.publicKey))
+            const valid = balance.gte(userPrice)
+            cndyState['validBalance'] = valid
+            active = active && valid
+          }
+          // datetime to stop the mint?
+          if (cndy?.state.endSettings?.endSettingType.date) {
+            cndyState['endDate'] = toDate(cndy.state.endSettings.number)
+
+            if (cndy.state.endSettings.number.toNumber() < new Date().getTime() / 1000) {
+              active = false
+            }
+          }
+          // amount to stop the mint?
+          if (cndy?.state.endSettings?.endSettingType.amount) {
+            let limit = Math.min(cndy.state.endSettings.number.toNumber(), cndy.state.itemsAvailable)
+            if (cndy.state.itemsRedeemed < limit) {
+              cndyState['itemsRemaining'] = limit - cndy.state.itemsRedeemed
+            } else {
+              cndyState['itemsRemaining'] = 0
+              cndy.state.isSoldOut = true
+            }
+          } else {
+            cndyState['itemsRemaining'] = cndy.state.itemsRemaining
+          }
+
+          if (cndy.state.isSoldOut) {
+            active = false
+          }
+
+          const [collectionPDA] = await getCollectionPDA(new PublicKey(id))
+          const collectionPDAAccount = await connection.getAccountInfo(collectionPDA)
+
+          cndyState['isActive'] = cndy.state.isActive = active
+          cndyState['isPreSale'] = cndy.state.isPresale = presale
+
+          const txnEstimate =
+            892 +
+            (!!collectionPDAAccount && cndy.state.retainAuthority ? 182 : 0) +
+            (cndy.state.tokenMint ? 66 : 0) +
+            (cndy.state.whitelistMintSettings ? 34 : 0) +
+            (cndy.state.whitelistMintSettings?.mode?.burnEveryTime ? 34 : 0) +
+            (cndy.state.gatekeeper ? 33 : 0) +
+            (cndy.state.gatekeeper?.expireOnUse ? 66 : 0)
+
+          cndyState['needTxnSplit'] = txnEstimate > 1230
+          setCmValues(cndyState)
+        } catch (e) {
+          //  if (e instanceof Error) {
+          //    if (e.message === `Account does not exist ${selectedProject.candyMachine}`) {
+          //      setAlertState({
+          //        open: true,
+          //        message: `Couldn't fetch candy machine state from candy machine with address: ${selectedProject.candyMachine}, using rpc:! You probably typed the REACT_APP_CANDY_MACHINE_ID value in wrong in your .env file, or you are using the wrong RPC!`,
+          //        severity: 'error',
+          //        hideDuration: null
+          //      })
+          //    } else if (e.message.startsWith('failed to get info about account')) {
+          //      setAlertState({
+          //        open: true,
+          //        message: `Couldn't fetch candy machine state with rpc:! This probably means you have an issue with the REACT_APP_SOLANA_RPC_HOST value in your .env file, or you are not using a custom RPC!`,
+          //        severity: 'error',
+          //        hideDuration: null
+          //      })
+          //    }
+          //  } else {
+          //    setAlertState({
+          //      open: true,
+          //      message: `${e}`,
+          //      severity: 'error',
+          //      hideDuration: null
+          //    })
+          //  }
+          console.log(e)
+        }
+      }
+    } catch (e) {
+      console.log(e)
+      setCandyMachine(null)
+      setCandyMachineState(null)
+    }
+  }
+
   useEffect(() => {
     ;(async () => {
-      const data = await fetchSelectedNFTLPData(parseInt(params.collectionId))
+      const data = await fetchSelectedNFTLPData(parseInt(params.urlName))
+      refreshCandyMachineState(data.data.candyMachine)
       setSelectedProject(data.data)
     })()
-  }, [])
+  }, [wallet.connected])
+
+  useEffect(() => {
+    ;(function loop() {
+      setTimeout(() => {
+        if (selectedProject && selectedProject.candyMachine) {
+          refreshCandyMachineState(null)
+        }
+        loop()
+      }, 20000)
+    })()
+  }, [selectedProject])
 
   return (
     <NFTLPSelectedContext.Provider
       value={{
         selectedProject: selectedProject,
-        setSelectedProject: setSelectedProject
+        candyMachineState: candyMachineState,
+        candyMachine: candyMachine,
+        cndyValues: cmValues
       }}
     >
       {children}
@@ -113,6 +395,6 @@ export const useNFTLPSelected = () => {
   if (!context) {
     throw new Error('Missing NFT Launchpad context')
   }
-  const { selectedProject, setSelectedProject } = context
-  return { selectedProject, setSelectedProject }
+  const { selectedProject, candyMachineState, candyMachine, cndyValues } = context
+  return { selectedProject, candyMachineState, candyMachine, cndyValues }
 }
