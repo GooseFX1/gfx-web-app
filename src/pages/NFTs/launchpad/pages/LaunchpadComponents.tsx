@@ -312,15 +312,31 @@ export const InfoDivUSDCTheme = () => {
   )
 }
 
-export const MintStarts = () => {
+export const MintStarts = ({ time }) => {
+  const getRemaningTime = (time) => {
+    //item?.startsOn;
+    const startsOn = time
+    const timeDiffrence = startsOn - Date.now()
+    let seconds = Number(timeDiffrence / 1000)
+    var d = Math.floor(seconds / (3600 * 24))
+    var h = Math.floor((seconds % (3600 * 24)) / 3600)
+    var m = Math.floor((seconds % 3600) / 60)
+    var s = Math.floor(seconds % 60)
+
+    return { dDisplay: d, hDisplay: h, mDisplay: m, sDisplay: s }
+  }
+  const rTime = getRemaningTime(time)
   return (
     <>
       <ProgressBarBG>
         <div className="mintStarts">
           Mint starts:
-          <TimerCircle data={23} /> <div className="timeText"> Days </div>
-          <TimerCircle data={23} /> <div className="timeText"> Hours </div>
-          <TimerCircle data={23} /> <div className="timeText"> Minutes </div>
+          <TimerCircle data={rTime?.dDisplay} />{' '}
+          <div className="timeText"> {rTime?.dDisplay > 1 ? 'Days' : 'Day'} </div>
+          <TimerCircle data={rTime?.hDisplay} />{' '}
+          <div className="timeText"> {rTime?.hDisplay > 1 ? 'hours' : 'hour'} </div>
+          <TimerCircle data={rTime?.mDisplay} />{' '}
+          <div className="timeText"> {rTime?.mDisplay > 1 ? 'minutes' : 'minute'} </div>
         </div>
       </ProgressBarBG>
     </>
@@ -348,7 +364,7 @@ export const TokenSwitch = () => {
   )
 }
 
-export const DarkDiv = () => {
+export const DarkDiv = ({ coverUrl }) => {
   return (
     <DARK_DIV>
       <div className="dark-3" />
@@ -357,7 +373,7 @@ export const DarkDiv = () => {
 
       <div className="image-border">
         <div className="inner-image-bg">
-          <img className="inner-image" src="/img/assets/NestQuest.png" />
+          <img className="inner-image" src={coverUrl} />
         </div>
       </div>
     </DARK_DIV>

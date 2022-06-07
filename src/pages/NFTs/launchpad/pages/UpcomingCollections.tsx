@@ -1,6 +1,7 @@
 import React, { useState, useEffect, FC } from 'react'
 import axios from 'axios'
 import Slider from 'react-slick'
+import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { Row, Card } from 'antd'
 import { theme } from '../../../../theme'
@@ -9,6 +10,7 @@ import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 
 const CAROUSEL_WRAPPER = styled.div`
   position: relative;
+  cursor: pointer;
   margin-left: -25px;
   width: 100% !important;
   height: 100%;
@@ -85,8 +87,9 @@ const NFT_INFO = styled.div`
 `
 const SLIDER_ITEM = styled.div`
   position: relative;
+  cursor: pointer;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   border-radius: 20px;
   .sweep-card.failed {
@@ -130,13 +133,28 @@ const NFT_META = styled.div`
   border-radius: 15px 10px 10px 15px;
   bottom: 0px;
   .flex {
+    margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
   }
 `
+const PRICE_DISPLAY = styled.div`
+  display: flex;
+`
+
+export const getNftPrice = (item) => {
+  return (
+    <PRICE_DISPLAY>
+      {`${item?.price} `}
+      <img style={{ margin: '0px 10px', width: '25px', height: '25px' }} src={`/img/crypto/${item?.currency}.svg`} />
+      {` ${item?.currency}`}
+    </PRICE_DISPLAY>
+  )
+}
 
 const UpcomingCollectins: FC = () => {
   const loading = [1, 2, 3, 4]
+  const history = useHistory()
 
   const settings = {
     infinite: false,
@@ -157,35 +175,46 @@ const UpcomingCollectins: FC = () => {
     setUpcomingList(upcomoingNFTProjects)
   }, [upcomoingNFTProjects])
 
-  const getNftPrice = () => {
-    return '02 SOL'
-  }
-  const getRemaningTime = (): string => {
-    return '02h 30m 45s'
+  const getRemaningTime = (item): string => {
+    //item?.startsOn;
+    const startsOn = 1654646076 * 1000
+    const timeDiffrence = startsOn - Date.now()
+    console.log(timeDiffrence, new Date(timeDiffrence), Date.now())
+    let seconds = Number(timeDiffrence / 1000)
+    var d = Math.floor(seconds / (3600 * 24))
+    var h = Math.floor((seconds % (3600 * 24)) / 3600)
+    var m = Math.floor((seconds % 3600) / 60)
+    var s = Math.floor(seconds % 60)
+
+    var dDisplay = d > 0 ? d + (d == 1 ? ' d ' : ' d ') : ''
+    var hDisplay = h > 0 ? h + (h == 1 ? ' h ' : ' h ') : ''
+    var mDisplay = m > 0 ? m + (m == 1 ? ' m ' : ' m ') : ''
+    var sDisplay = s > 0 ? s + (s == 1 ? ' s ' : ' s') : ''
+    return dDisplay + hDisplay + mDisplay + sDisplay
   }
   return (
     <>
       <UPCOMING_TEXT>Upcoming</UPCOMING_TEXT>
       {upcomingList.length > 0 ? (
         <>
-          <Row justify="center" align="middle" className="imageRow">
+          <Row justify="start" align="middle" className="imageRow">
             <CAROUSEL_WRAPPER>
               <Slider {...settings}>
                 {upcomingList.map((item, index) => {
                   return (
-                    <SLIDER_ITEM>
+                    <SLIDER_ITEM onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
                       <Card
                         cover={
                           <>
                             <img className="nft-img" src={item.coverUrl} alt="NFT" />
                             <NFT_META>
                               <span className="flex">
-                                <NFT_TITLE> {item.nft_name}</NFT_TITLE>
-                                <NFT_TITLE> Items 10,000</NFT_TITLE>
+                                <NFT_TITLE> {item?.collectionName}</NFT_TITLE>
+                                <NFT_TITLE> {`Items ${item?.items}`}</NFT_TITLE>
                               </span>
                               <span className="flex">
-                                <NFT_INFO> {getRemaningTime()}</NFT_INFO>
-                                <NFT_INFO> {getNftPrice()}</NFT_INFO>
+                                <NFT_INFO> {getRemaningTime(item)}</NFT_INFO>
+                                <NFT_INFO> {getNftPrice(item)}</NFT_INFO>
                               </span>
                             </NFT_META>
                           </>
