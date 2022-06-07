@@ -16,16 +16,14 @@
   <br />
 </div>
 
-GooseFX is a full suite DeFi platform built on the Solana blockchain and Serum DEX, offering a variety of unique decentralized peer-to-peer financial products. We aim to be a complete DeFi experience where you can trade cryptocurrencies, tokenized stocks, futures, NFTs all through one interface while utilizing your capital across all features seamlessly.
+GooseFX is a full suite DeFi platform built on the Solana blockchain and Serum DEX, offering a variety of unique decentralized peer-to-peer financial products. We aim to be a complete DeFi experience where you can trade cryptocurrencies, futures, NFTs all through one interface while utilizing your capital across all features seamlessly.
 
 Key Features of GooseFX:
 
 - Crypto Trading through the Jupiter Aggregator
-- Decentralized trading of synthetic assets - stocks & crypto
 - NFT Marketplace - Buy, Sell and take loans out against your NFT portfolio
-- First ever single sided liquidity pools on Solana - _Audit in-progress_
+- First ever single sided liquidity pools on Solana
 - Decentralized trading of defi derivatives (stocks, crypto, etc.)
-- Variety of decentralized options contracts (exotic + vanilla)
 
 For in-depth details, visit the [technical documentation](https://docs.goosefx.io) that elaborates on our tokenomics, features, and roadmap.
 
