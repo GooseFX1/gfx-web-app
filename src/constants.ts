@@ -36,6 +36,7 @@ export const SUPPORTED_TOKEN_LIST = [
   'FTT',
   'GOFX',
   'GMT',
+  'GST',
   'HGET',
   'HNT',
   'HXRO',
