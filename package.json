@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@civic/solana-gateway-react": "^0.7.4",
     "@craco/craco": "^6.2.0",
     "@fullpage/react-fullpage": "^0.1.19",
     "@jup-ag/react-hook": "^1.0.0-beta.21",

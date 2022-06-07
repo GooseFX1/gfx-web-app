@@ -12,6 +12,7 @@ import { InfoDivLightTheme, InfoDivBrightTheme } from './LaunchpadComponents'
 import { SVGDynamicReverseMode } from '../../../../styles'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { DETAILS_TAB_CONTENT } from '../../NFTDetails/RightSectionTabs'
+import { MintButton } from '../launchpadComp/MintButton'
 
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme, activeTab }) => css`
@@ -267,10 +268,9 @@ export const SingleCollection: FC = () => {
   const params = useParams<IProjectParams>()
   const wallet = useWallet()
   const [noOfNFTToMint, setNumberOfNftToMint] = useState(1)
-  const { selectedProject, setSelectedProject } = useNFTLPSelected()
+  const { selectedProject } = useNFTLPSelected()
 
   const isLive = parseInt(selectedProject?.startsOn) < Date.now()
-
   return (
     <div>
       <TokenSwitch />
