@@ -1,3 +1,4 @@
 export interface IProjectParams {
-  urlName: string
+  collectionId: string
+  url_name: string
 }
