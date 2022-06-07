@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
 import LaunchImg from '../../../../assets/launch.svg'
+import { SOCIAL_MEDIAS } from '../../../../constants'
 
 const Container = styled.div`
   display: flex;
@@ -50,6 +51,10 @@ const TEXT_CONTAINER = styled.div`
 `
 
 const LaunchCollection: FC = () => {
+  const handleApplyClick = () => {
+    window.open(SOCIAL_MEDIAS.nftCreatorForm)
+  }
+
   return (
     <Container>
       <div className="startContainer">
@@ -58,7 +63,7 @@ const LaunchCollection: FC = () => {
         </IMG>
         <TEXT_CONTAINER>
           <TEXT>Launch your collection today!</TEXT>
-          <APPLY_BTN>Apply</APPLY_BTN>
+          <APPLY_BTN onClick={handleApplyClick}>Apply</APPLY_BTN>
         </TEXT_CONTAINER>
       </div>
     </Container>
