@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { IProjectParams } from '../../../../types/nft_launchpad'
 import { fetchSelectedNFTLPData } from '../../../../api/NFTLaunchpad'
@@ -7,7 +7,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import styled, { css } from 'styled-components'
 import { Col, Row, Tabs } from 'antd'
 import { SOCIAL_MEDIAS } from '../../../../constants'
-import { MintProgressBar, TokenSwitch } from './LaunchpadComponents'
+import { MintProgressBar, TokenSwitch, MintStarts } from './LaunchpadComponents'
 import { InfoDivLightTheme, InfoDivBrightTheme } from './LaunchpadComponents'
 import { SVGDynamicReverseMode } from '../../../../styles'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
@@ -186,7 +186,6 @@ const WRAPPER = styled.div`
   }
   .rightPart {
     width: 50%;
-    height: 80vh;
     padding-right: 70px;
     margin-left: 50px;
   }
@@ -223,6 +222,7 @@ const MINT_BTN = styled.div`
   width: 260px;
   height: 50px;
   margin: auto;
+  margin-top: 12px !important ;
   display: flex;
   align-items: center;
   font-weight: 600;
@@ -266,8 +266,10 @@ const PRICE_SOCIAL = styled.div`
 export const SingleCollection: FC = () => {
   const params = useParams<IProjectParams>()
   const wallet = useWallet()
+  const [noOfNFTToMint, setNumberOfNftToMint] = useState(1)
   const { selectedProject, setSelectedProject } = useNFTLPSelected()
-  useEffect(() => console.log(selectedProject), [selectedProject])
+
+  const isLive = parseInt(selectedProject?.startsOn) < Date.now()
 
   return (
     <div>
@@ -278,7 +280,7 @@ export const SingleCollection: FC = () => {
           <TAG_LINE>{selectedProject?.tagLine}</TAG_LINE>
           <PRICE_SOCIAL>
             <InfoDivLightTheme items={selectedProject?.items} price={undefined}></InfoDivLightTheme>
-            <InfoDivLightTheme items={selectedProject?.items} price={12}></InfoDivLightTheme>
+            <InfoDivLightTheme items={selectedProject} price={selectedProject?.price}></InfoDivLightTheme>
             <Row justify="space-between" align="middle" style={{ marginLeft: '10px' }}>
               <Col span={2}>
                 <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.nestquest)}>
@@ -301,7 +303,7 @@ export const SingleCollection: FC = () => {
             <RIGHT_SECTION_TABS activeTab={'4'}>
               <Tabs>
                 <TabPane tab="Summary" key="1">
-                  <DETAILS_TAB_CONTENT>" Lorem ipsum dolor sit. "</DETAILS_TAB_CONTENT>
+                  <DETAILS_TAB_CONTENT>" Lorem ipsum dolor sit. Lorem ipsum dolor sit. "</DETAILS_TAB_CONTENT>
                 </TabPane>
                 <TabPane tab="Roadmap" key="2">
                   <h1>
@@ -321,7 +323,7 @@ export const SingleCollection: FC = () => {
               </Tabs>
             </RIGHT_SECTION_TABS>
             <MINT_BUTTON_BAR>
-              <MINT_BTN>Mint</MINT_BTN>
+              {isLive ? <MINT_BTN>Mint</MINT_BTN> : <MINT_BTN> Join Waitlist </MINT_BTN>}
             </MINT_BUTTON_BAR>
           </>
         </div>
@@ -335,7 +337,11 @@ export const SingleCollection: FC = () => {
               <SkeletonCommon width="600px" height="600px" borderRadius="10px" />
             )}
           </NFT_COVER>
-          <MintProgressBar minted={selectedProject?.itemsMinted} totalNFTs={selectedProject?.items} />
+          {isLive ? (
+            <MintProgressBar minted={selectedProject?.itemsMinted} totalNFTs={selectedProject?.items} />
+          ) : (
+            <MintStarts time={selectedProject?.startsOn} />
+          )}
         </div>
       </WRAPPER>
     </div>
