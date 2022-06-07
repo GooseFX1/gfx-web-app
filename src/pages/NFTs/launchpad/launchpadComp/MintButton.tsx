@@ -1,64 +1,86 @@
-import React, { FC, useEffect, useState, useMemo } from 'react'
+import React, { FC, useEffect, useState, useMemo, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { IProjectParams } from '../../../../types/nft_launchpad'
+import { fetchSelectedNFTLPData } from '../../../../api/NFTLaunchpad'
 import { useNFTLPSelected } from '../../../../context/nft_launchpad'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
 import { useConnectionConfig } from '../../../../context'
 import * as anchor from '@project-serum/anchor'
 import {
   awaitTransactionSignatureConfirmation,
   createAccountsForMint,
+  getCandyMachineState,
+  getCollectionPDA,
   mintOneToken,
   SetupState,
+  CandyMachineAccount,
   CANDY_MACHINE_PROGRAM
 } from '../candyMachine/candyMachine'
-import { AlertState } from '../candyMachine/utils'
-import { Transaction, PublicKey, sendAndConfirmRawTransaction } from '@solana/web3.js'
-import { GatewayProvider } from '@civic/solana-gateway-react'
-//import { sendTransaction } from '../candyMachine/connection'
+import { getAtaForMint, toDate, AlertState } from '../candyMachine/utils'
+import { Transaction, Commitment, PublicKey } from '@solana/web3.js'
+import { GatewayProvider, GatewayStatus, useGateway } from '@civic/solana-gateway-react'
+import { sendTransaction } from '../candyMachine/connection'
+import {
+  findGatewayToken,
+  getGatewayTokenAddressForOwnerAndGatekeeperNetwork,
+  onGatewayTokenChange,
+  removeAccountChangeListener
+} from '@identity.com/solana-gateway-ts'
 import { MintButtonFunc } from './MintButtonFunc'
-import { notify } from '../../../../utils'
-import { Col, Row } from 'antd'
 
-const MESSAGE = styled.div`
-  margin: -12px 0;
-  font-size: 12px;
-  font-weight: 700;
-
-  .m-title {
-    margin-bottom: 16px;
-  }
-
-  .m-icon {
-    width: 20.5px;
-    height: 20px;
-  }
+const MINT_BUTTON_BAR = styled.div`
+  margin-top: -100px;
+  height: 70px;
+  z-index: 99;
+  position: absolute;
+  border-radius: 0 0 25px 25px;
+  width: 44%;
+  backdrop-filter: blur(23.9091px);
+  background: radial-gradient(
+    81.62% 135.01% at 15.32% 21.04%,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(141, 141, 141, 0.05) 68.23%,
+    rgba(255, 255, 255, 0.05) 77.08%,
+    rgba(255, 255, 255, 0.0315) 100%
+  );
+`
+const MINT_BTN = styled.div<{ active: boolean }>`
+  background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+  border-radius: 47px;
+  width: 260px;
+  height: 50px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 15px;
+  justify-content: center;
+  cursor: ${({ active }) => (!active ? 'not-allowed' : 'pointer')};
 `
 
-export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
+export const MintButton: FC = () => {
   const params = useParams<IProjectParams>()
   const wallet = useWallet()
   const { connection } = useConnectionConfig()
   const { selectedProject, candyMachineState, candyMachine, cndyValues } = useNFTLPSelected()
+  const [mintButtonActive, setMintButtonActive] = useState(false)
   const [isUserMinting, setIsUserMinting] = useState(false)
   const [alertState, setAlertState] = useState<AlertState>({
     open: false,
     message: '',
     severity: undefined
   })
-  const [setupTxn, setSetupTxn] = useState<SetupState>()
 
-  //hooks in context
-  const [isWhitelistUser, setIsWhitelistUser] = useState(false)
-  const [isValidBalance, setIsValidBalance] = useState(false)
+  const [isActive, setIsActive] = useState(false)
   const [endDate, setEndDate] = useState<Date>()
   const [itemsRemaining, setItemsRemaining] = useState<number>()
-  const [isActive, setIsActive] = useState(false)
+  const [isWhitelistUser, setIsWhitelistUser] = useState(false)
   const [isPresale, setIsPresale] = useState(false)
-  const [needTxnSplit, setNeedTxnSplit] = useState(true)
+  const [isValidBalance, setIsValidBalance] = useState(false)
   const [discountPrice, setDiscountPrice] = useState<anchor.BN>()
-  //
+  const [needTxnSplit, setNeedTxnSplit] = useState(true)
+  const [setupTxn, setSetupTxn] = useState<SetupState>()
 
   const anchorWallet = useMemo(() => {
     if (!wallet || !wallet.publicKey || !wallet.signAllTransactions || !wallet.signTransaction) {
@@ -79,90 +101,39 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
       if (wallet.connected && candyMachine?.program && wallet.publicKey) {
         let setupMint: SetupState | undefined
         if (needTxnSplit && setupTxn === undefined) {
-          //  setAlertState({
-          //    open: true,
-          //    message: 'Please sign account setup transaction',
-          //    severity: 'info'
-          //  })
-          notify({
-            message: (
-              <MESSAGE>
-                <Row className="m-title" justify="space-between" align="middle">
-                  <Col>Account Setup</Col>
-                  <Col>
-                    <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-                  </Col>
-                </Row>
-                <div>Please sign account setup transaction</div>
-              </MESSAGE>
-            )
+          setAlertState({
+            open: true,
+            message: 'Please sign account setup transaction',
+            severity: 'info'
           })
           setupMint = await createAccountsForMint(candyMachine, wallet.publicKey)
+          console.log('setup mint is: ', setupMint)
           let status: any = { err: false }
           if (setupMint.transaction) {
             status = await awaitTransactionSignatureConfirmation(setupMint.transaction, 60000, connection, true)
           }
+          console.log('status is: ', status)
           if (status && !status.err) {
             setSetupTxn(setupMint)
-            //setAlertState({
-            //  open: true,
-            //  message: 'Setup transaction succeeded! Please sign minting transaction',
-            //  severity: 'info'
-            //})
-            notify({
-              message: (
-                <MESSAGE>
-                  <Row className="m-title" justify="space-between" align="middle">
-                    <Col>Success</Col>
-                    <Col>
-                      <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-                    </Col>
-                  </Row>
-                  <div>Setup transaction succeeded! Please sign minting transaction</div>
-                </MESSAGE>
-              )
+            setAlertState({
+              open: true,
+              message: 'Setup transaction succeeded! Please sign minting transaction',
+              severity: 'info'
             })
           } else {
-            //setAlertState({
-            //  open: true,
-            //  message: 'Mint failed! Please try again!',
-            //  severity: 'error'
-            //})
-            notify({
-              type: 'error',
-              message: (
-                <MESSAGE>
-                  <Row className="m-title" justify="space-between" align="middle">
-                    <Col>Error</Col>
-                    <Col>
-                      <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-                    </Col>
-                  </Row>
-                  <div>Mint failed! Please try again!</div>
-                </MESSAGE>
-              )
+            setAlertState({
+              open: true,
+              message: 'Mint failed! Please try again!',
+              severity: 'error'
             })
             setIsUserMinting(false)
             return
           }
         } else {
-          //  setAlertState({
-          //    open: true,
-          //    message: 'Please sign minting transaction',
-          //    severity: 'info'
-          //  })
-          notify({
-            message: (
-              <MESSAGE>
-                <Row className="m-title" justify="space-between" align="middle">
-                  {/*<Col>Error</Col>*/}
-                  <Col>
-                    <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-                  </Col>
-                </Row>
-                <div>Please sign minting transaction</div>
-              </MESSAGE>
-            )
+          setAlertState({
+            open: true,
+            message: 'Please sign minting transaction',
+            severity: 'info'
           })
         }
 
@@ -173,7 +144,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
           afterTransactions,
           setupMint ?? setupTxn
         )
-
+        console.log('mint result is ', mintResult)
         let status: any = { err: true }
         let metadataStatus = null
         if (mintResult) {
@@ -183,6 +154,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
             mintResult.metadataKey,
             'processed'
           )
+          console.log('Metadata status: ', !!metadataStatus)
         }
 
         if (status && !status.err && metadataStatus) {
@@ -193,67 +165,25 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
           setIsActive((candyMachine.state.isActive = remaining > 0))
           candyMachine.state.isSoldOut = remaining === 0
           setSetupTxn(undefined)
-          //  setAlertState({
-          //    open: true,
-          //    message: 'Congratulations! Mint succeeded!',
-          //    severity: 'success',
-          //    hideDuration: 7000
-          //  })
-          notify({
-            message: (
-              <MESSAGE>
-                <Row className="m-title" justify="space-between" align="middle">
-                  <Col>Success!</Col>
-                  <Col>
-                    <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-                  </Col>
-                </Row>
-                <div>Congratulations! Mint succeeded!</div>
-              </MESSAGE>
-            )
+          setAlertState({
+            open: true,
+            message: 'Congratulations! Mint succeeded!',
+            severity: 'success',
+            hideDuration: 7000
           })
         } else if (status && !status.err) {
-          //  setAlertState({
-          //    open: true,
-          //    message:
-          //      'Mint likely failed! Anti-bot SOL 0.01 fee potentially charged! Check the explorer to confirm the mint failed and if so, make sure you are eligible to mint before trying again.',
-          //    severity: 'error',
-          //    hideDuration: 8000
-          //  })
-          notify({
-            message: (
-              <MESSAGE>
-                <Row className="m-title" justify="space-between" align="middle">
-                  <Col>Error</Col>
-                  <Col>
-                    <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-                  </Col>
-                </Row>
-                <div>
-                  Mint likely failed! Anti-bot SOL 0.01 fee potentially charged! Check the explorer to confirm the mint
-                  failed and if so, make sure you are eligible to mint before trying again.
-                </div>
-              </MESSAGE>
-            )
+          setAlertState({
+            open: true,
+            message:
+              'Mint likely failed! Anti-bot SOL 0.01 fee potentially charged! Check the explorer to confirm the mint failed and if so, make sure you are eligible to mint before trying again.',
+            severity: 'error',
+            hideDuration: 8000
           })
         } else {
-          //  setAlertState({
-          //    open: true,
-          //    message: 'Mint failed! Please try again!',
-          //    severity: 'error'
-          //  })
-          notify({
-            message: (
-              <MESSAGE>
-                <Row className="m-title" justify="space-between" align="middle">
-                  <Col>Error</Col>
-                  <Col>
-                    <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-                  </Col>
-                </Row>
-                <div>Mint failed! Please try again!</div>
-              </MESSAGE>
-            )
+          setAlertState({
+            open: true,
+            message: 'Mint failed! Please try again!',
+            severity: 'error'
           })
         }
       }
@@ -278,26 +208,11 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
         }
       }
 
-      //  setAlertState({
-      //    open: true,
-      //    message,
-      //    severity: 'error'
-      //  })
-      notify({
-        type: 'error',
-        message: (
-          <MESSAGE>
-            <Row className="m-title" justify="space-between" align="middle">
-              <Col>Error</Col>
-              <Col>
-                <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-              </Col>
-            </Row>
-            <div>{message}</div>
-          </MESSAGE>
-        )
+      setAlertState({
+        open: true,
+        message,
+        severity: 'error'
       })
-
       // updates the candy machine state to reflect the latest
       // information on chain
     } finally {
@@ -305,155 +220,113 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
     }
   }
 
+  const toggleMintButton = () => {
+    let active = !isActive || isPresale
+
+    if (active) {
+      if (candyMachine!.state.isWhitelistOnly && !isWhitelistUser) {
+        active = false
+      }
+      if (endDate && Date.now() >= endDate.getTime()) {
+        active = false
+      }
+    }
+
+    if (
+      isPresale &&
+      candyMachine!.state.goLiveDate &&
+      candyMachine!.state.goLiveDate.toNumber() <= new Date().getTime() / 1000
+    ) {
+      setIsPresale((candyMachine!.state.isPresale = false))
+    }
+
+    setIsActive((candyMachine!.state.isActive = active))
+  }
+
   //
 
   useEffect(() => {
-    if (cndyValues) {
-      setIsWhitelistUser(cndyValues.isWhiteListUser)
-      setIsValidBalance(cndyValues.validBalance)
-      //setDiscountPrice()
-      setEndDate(cndyValues.endDate)
-      setIsActive(cndyValues.isActive)
-      setItemsRemaining(cndyValues.itemsRemaining)
-      setNeedTxnSplit(cndyValues.needTxnSplit)
-      setIsPresale(cndyValues.isPreSale)
+    if (wallet.connected) {
+      console.log('wallet connected')
     }
-  }, [cndyValues, wallet.connected, wallet.publicKey])
+  }, [wallet.connected, wallet.publicKey])
 
-  return isActive && candyMachine?.state.gatekeeper && wallet.publicKey && wallet.signTransaction ? (
-    <GatewayProvider
-      wallet={{
-        publicKey: wallet.publicKey || new PublicKey(CANDY_MACHINE_PROGRAM),
-        //@ts-ignore
-        signTransaction: wallet.signTransaction
-      }}
-      gatekeeperNetwork={candyMachine?.state?.gatekeeper?.gatekeeperNetwork}
-      clusterUrl={'https://api.devnet.solana.com'}
-      cluster={'devnet'}
-      handleTransaction={async (transaction: Transaction) => {
-        setIsUserMinting(true)
-        const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(wallet.publicKey!))
-        if (userMustSign) {
-          notify({
-            message: 'Please sign one-time Civic Pass issuance'
-          })
-          try {
-            transaction = await wallet.signTransaction!(transaction)
-          } catch (e) {
-            //setAlertState({
-            //  open: true,
-            //  message: 'User cancelled signing',
-            //  severity: 'error'
-            //})
-            notify({
-              type: 'error',
-              message: (
-                <MESSAGE>
-                  <Row className="m-title" justify="space-between" align="middle">
-                    <Col>Error</Col>
-                    <Col>
-                      <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-                    </Col>
-                  </Row>
-                  <div>User cancelled signing</div>
-                </MESSAGE>
-              )
+  return (
+    <MINT_BUTTON_BAR>
+      {/*<GatewayProvider
+        wallet={{
+          publicKey: wallet.publicKey || new PublicKey(CANDY_MACHINE_PROGRAM),
+          //@ts-ignore
+          signTransaction: wallet.signTransaction
+        }}
+        gatekeeperNetwork={candyMachine?.state?.gatekeeper?.gatekeeperNetwork}
+        clusterUrl={'https://api.devnet.solana.com'}
+        handleTransaction={async (transaction: Transaction) => {
+          setIsUserMinting(true)
+          const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(wallet.publicKey!))
+          if (userMustSign) {
+            setAlertState({
+              open: true,
+              message: 'Please sign one-time Civic Pass issuance',
+              severity: 'info'
             })
+            try {
+              transaction = await wallet.signTransaction!(transaction)
+            } catch (e) {
+              setAlertState({
+                open: true,
+                message: 'User cancelled signing',
+                severity: 'error'
+              })
+              // setTimeout(() => window.location.reload(), 2000);
+              setIsUserMinting(false)
+              throw e
+            }
+          } else {
+            setAlertState({
+              open: true,
+              message: 'Refreshing Civic Pass',
+              severity: 'info'
+            })
+          }
+          try {
+            await sendTransaction(connection, wallet, transaction, [], true, 'confirmed')
+            setAlertState({
+              open: true,
+              message: 'Please sign minting',
+              severity: 'info'
+            })
+          } catch (e) {
+            setAlertState({
+              open: true,
+              message: 'Solana dropped the transaction, please try again',
+              severity: 'warning'
+            })
+            console.error(e)
             // setTimeout(() => window.location.reload(), 2000);
             setIsUserMinting(false)
             throw e
           }
-        } else {
-          //  setAlertState({
-          //    open: true,
-          //    message: 'Refreshing Civic Pass',
-          //    severity: 'info'
-          //  })
-          notify({
-            message: (
-              <MESSAGE>
-                <Row className="m-title" justify="space-between" align="middle">
-                  <Col>Civic Pass</Col>
-                  <Col>
-                    <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-                  </Col>
-                </Row>
-                <div>Refreshing Civic Pass, Please reload page if unresponsive</div>
-              </MESSAGE>
-            )
-          })
-        }
-        try {
-          // await sendTransaction(connection, wallet, transaction, [], true, 'confirmed')
-          let res = await sendAndConfirmRawTransaction(connection, transaction.serialize())
-          console.log(res)
-          //  //let res2 = await connection.confirmTransaction(res1)
-          //  console.log(res)
-          //  setAlertState({
-          //    open: true,
-          //    message: 'Please sign minting',
-          //    severity: 'info'
-          //  })
-          notify({
-            message: (
-              <MESSAGE>
-                <Row className="m-title" justify="space-between" align="middle">
-                  {/*<Col>Civic</Col>*/}
-                  <Col>
-                    <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-                  </Col>
-                </Row>
-                <div>Please sign minting</div>
-              </MESSAGE>
-            )
-          })
-        } catch (e) {
-          //  setAlertState({
-          //    open: true,
-          //    message: 'Solana dropped the transaction, please try again',
-          //    severity: 'warning'
-          //  })
-          notify({
-            type: 'error',
-            message: (
-              <MESSAGE>
-                <Row className="m-title" justify="space-between" align="middle">
-                  <Col>Error</Col>
-                  <Col>
-                    <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-                  </Col>
-                </Row>
-                <div>Solana dropped the transaction, please try again</div>
-              </MESSAGE>
-            )
-          })
-          console.error(e)
-          // setTimeout(() => window.location.reload(), 2000);
-          setIsUserMinting(false)
-          throw e
-        }
-        await onMint()
-      }}
-      broadcastTransaction={false}
-      options={{ autoShowModal: false }}
-    >
-      <MintButtonFunc
-        onMint={onMint}
-        candyMachine={candyMachine}
-        isMinting={isUserMinting}
-        setIsMinting={(val) => setIsUserMinting(val)}
-        isActive={isActive || (isPresale && isWhitelistUser && isValidBalance)}
-        isLive={isLive}
-      ></MintButtonFunc>
-    </GatewayProvider>
-  ) : (
-    <MintButtonFunc
-      onMint={onMint}
-      candyMachine={candyMachine}
-      isMinting={isUserMinting}
-      setIsMinting={(val) => setIsUserMinting(val)}
-      isActive={isActive || (isPresale && isWhitelistUser && isValidBalance)}
-      isLive={isLive}
-    ></MintButtonFunc>
+          //await onMint()
+        }}
+        broadcastTransaction={false}
+        options={{ autoShowModal: false }}
+      >*/}
+      {/*<MintButtonFunc
+          onMint={() => onMint()}
+          candyMachine={candyMachine}
+          isMinting={isUserMinting}
+          setIsMinting={setIsUserMinting}
+          isActive={true}
+        ></MintButtonFunc>*/}
+      <MINT_BTN
+        active={true}
+        //  active={isActive || (isPresale && isWhitelistUser && isValidBalance)}
+        onClick={() => onMint()}
+      >
+        Mint
+      </MINT_BTN>
+      {/*</GatewayProvider>*/}
+    </MINT_BUTTON_BAR>
   )
 }

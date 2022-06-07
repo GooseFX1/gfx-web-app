@@ -342,49 +342,49 @@ export const mintOneToken = async (
     )
   }
 
-  if (candyMachine.state.gatekeeper) {
-    remainingAccounts.push({
-      pubkey: (await getNetworkToken(payer, candyMachine.state.gatekeeper.gatekeeperNetwork))[0],
-      isWritable: true,
-      isSigner: false
-    })
+  //  if (candyMachine.state.gatekeeper) {
+  //    remainingAccounts.push({
+  //      pubkey: (await getNetworkToken(payer, candyMachine.state.gatekeeper.gatekeeperNetwork))[0],
+  //      isWritable: true,
+  //      isSigner: false
+  //    })
 
-    if (candyMachine.state.gatekeeper.expireOnUse) {
-      remainingAccounts.push({
-        pubkey: CIVIC,
-        isWritable: false,
-        isSigner: false
-      })
-      remainingAccounts.push({
-        pubkey: (await getNetworkExpire(candyMachine.state.gatekeeper.gatekeeperNetwork))[0],
-        isWritable: false,
-        isSigner: false
-      })
-    }
-  }
-  if (candyMachine.state.whitelistMintSettings) {
-    const mint = new anchor.web3.PublicKey(candyMachine.state.whitelistMintSettings.mint)
+  //    if (candyMachine.state.gatekeeper.expireOnUse) {
+  //      remainingAccounts.push({
+  //        pubkey: CIVIC,
+  //        isWritable: false,
+  //        isSigner: false
+  //      })
+  //      remainingAccounts.push({
+  //        pubkey: (await getNetworkExpire(candyMachine.state.gatekeeper.gatekeeperNetwork))[0],
+  //        isWritable: false,
+  //        isSigner: false
+  //      })
+  //    }
+  //  }
+  //  if (candyMachine.state.whitelistMintSettings) {
+  //    const mint = new anchor.web3.PublicKey(candyMachine.state.whitelistMintSettings.mint)
 
-    const whitelistToken = (await getAtaForMint(mint, payer))[0]
-    remainingAccounts.push({
-      pubkey: whitelistToken,
-      isWritable: true,
-      isSigner: false
-    })
+  //    const whitelistToken = (await getAtaForMint(mint, payer))[0]
+  //    remainingAccounts.push({
+  //      pubkey: whitelistToken,
+  //      isWritable: true,
+  //      isSigner: false
+  //    })
 
-    if (candyMachine.state.whitelistMintSettings.mode.burnEveryTime) {
-      remainingAccounts.push({
-        pubkey: mint,
-        isWritable: true,
-        isSigner: false
-      })
-      remainingAccounts.push({
-        pubkey: payer,
-        isWritable: false,
-        isSigner: true
-      })
-    }
-  }
+  //    if (candyMachine.state.whitelistMintSettings.mode.burnEveryTime) {
+  //      remainingAccounts.push({
+  //        pubkey: mint,
+  //        isWritable: true,
+  //        isSigner: false
+  //      })
+  //      remainingAccounts.push({
+  //        pubkey: payer,
+  //        isWritable: false,
+  //        isSigner: true
+  //      })
+  //    }
+  //  }
 
   if (candyMachine.state.tokenMint) {
     remainingAccounts.push({
@@ -441,6 +441,8 @@ export const mintOneToken = async (
       if (collectionMint) {
         const collectionMetadata = await getMetadata(collectionMint)
         const collectionMasterEdition = await getMasterEdition(collectionMint)
+        console.log('Collection PDA: ', collectionPDA.toBase58())
+        console.log('Authority: ', candyMachine.state.authority.toBase58())
         instructions.push(
           await candyMachine.program.instruction.setCollectionDuringMint({
             accounts: {
