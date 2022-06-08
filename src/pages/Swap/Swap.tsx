@@ -616,52 +616,56 @@ const TokenContent: FC = () => {
     const tokens = await CoinGeckoClient.coins.list()
     if (tokenA) {
       const token = tokens.data.find((i) => i.symbol.toLowerCase() === tokenA.symbol.toLowerCase())
-      CoinGeckoClient.coins.fetch(token?.id || null, {}).then(async (data: any) => {
-        data = data.data
-        const fetchData = await fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
-        const res = await fetchData.json()
-        // await connection.getProgramAccounts(TOKEN_PROGRAM_ID, {
-        //   // dataSlice: {
-        //   //   offset: 0, // number of bytes
-        //   //   length: 0 // number of bytes
-        //   // },
-        //   filters: [
-        //     {
-        //       dataSize: 165 // number of bytes
-        //     },
-        //     {
-        //       memcmp: {
-        //         offset: 0, // number of bytes
-        //         bytes: tokenA.address // base58 encoded string
-        //       }
-        //     }
-        //   ]
-        // })
-        setDetails([
-          { name: 'Price', value: data?.market_data?.current_price?.usd || '0.0', currency: '$' },
-          {
-            name: 'FDV',
-            value:
-              moneyFormatter(
-                Math.floor(
-                  data?.market_data?.fully_diluted_valuation?.usd ||
-                    data?.market_data?.total_supply * data?.market_data?.current_price?.usd
-                )
-              ) || '0',
-            currency: '$'
-          },
-          {
-            name: 'Total Max Supply',
-            value: Math.floor(data?.market_data?.max_supply || data?.market_data?.total_supply)?.toLocaleString() || '0'
-          },
-          { name: 'Holders', value: res?.total?.toLocaleString() || 0 }
-        ])
-        setSocials([
-          { name: 'Twitter', link: 'https://twitter.com/' + data?.links?.twitter_screen_name },
-          { name: 'Coingecko', link: 'https://coingecko.com' },
-          { name: 'Website', link: data?.links?.homepage?.[0] }
-        ])
-      })
+      CoinGeckoClient.coins
+        .fetch(token?.id || null, {})
+        .then(async (data: any) => {
+          data = data.data
+          const fetchData = await fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
+          const res = await fetchData.json()
+          // await connection.getProgramAccounts(TOKEN_PROGRAM_ID, {
+          //   // dataSlice: {
+          //   //   offset: 0, // number of bytes
+          //   //   length: 0 // number of bytes
+          //   // },
+          //   filters: [
+          //     {
+          //       dataSize: 165 // number of bytes
+          //     },
+          //     {
+          //       memcmp: {
+          //         offset: 0, // number of bytes
+          //         bytes: tokenA.address // base58 encoded string
+          //       }
+          //     }
+          //   ]
+          // })
+          setDetails([
+            { name: 'Price', value: data?.market_data?.current_price?.usd || '0.0', currency: '$' },
+            {
+              name: 'FDV',
+              value:
+                moneyFormatter(
+                  Math.floor(
+                    data?.market_data?.fully_diluted_valuation?.usd ||
+                      data?.market_data?.total_supply * data?.market_data?.current_price?.usd
+                  )
+                ) || '0',
+              currency: '$'
+            },
+            {
+              name: 'Total Max Supply',
+              value:
+                Math.floor(data?.market_data?.max_supply || data?.market_data?.total_supply)?.toLocaleString() || '0'
+            },
+            { name: 'Holders', value: res?.total?.toLocaleString() || 0 }
+          ])
+          setSocials([
+            { name: 'Twitter', link: 'https://twitter.com/' + data?.links?.twitter_screen_name },
+            { name: 'Coingecko', link: 'https://coingecko.com' },
+            { name: 'Website', link: data?.links?.homepage?.[0] }
+          ])
+        })
+        .catch((err) => console.error('ERROR: CoinGecko fetch'))
     }
   }
 

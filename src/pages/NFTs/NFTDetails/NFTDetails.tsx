@@ -1,8 +1,9 @@
 import React, { FC, useEffect } from 'react'
 import { Row, Col } from 'antd'
 import { useHistory } from 'react-router-dom'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { useNFTDetails, useConnectionConfig } from '../../../context'
+import { FloatingActionButton } from '../../../components'
 import { RightSection } from './RightSection'
 import { ImageShowcase } from './ImageShowcase'
 import { MintItemViewStatus, INFTMetadata } from '../../../types/nft_details'
@@ -10,26 +11,19 @@ import { useParams } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params.d'
 
 const NFT_DETAILS = styled.div`
+  position: relative;
   height: 100%;
   margin: 0 auto;
 
   .nd-content {
     height: 100%;
   }
+`
 
-  ${({ theme }) => css`
-    .nd-back-icon {
-      position: absolute;
-      top: 132px;
-      left: 30px;
-      transform: rotate(90deg);
-      width: 25px;
-      filter: ${theme.filterBackIcon};
-      cursor: pointer;
-    }
-    .nd-details {
-    }
-  `};
+const FLOATING_ACTION_ICON = styled.img`
+  transform: rotate(90deg);
+  width: 16px;
+  filter: ${({ theme }) => theme.filterBackIcon};
 `
 
 export const NFTDetails: FC<{
@@ -53,20 +47,16 @@ export const NFTDetails: FC<{
 
   return (
     <NFT_DETAILS {...rest}>
-      <img
-        className="nd-back-icon"
-        src={`/img/assets/arrow.svg`}
-        alt="back"
-        onClick={() => {
-          backUrl ? history.push(backUrl) : history.goBack()
-        }}
-      />
-
+      <div style={{ position: 'absolute', top: '24px', left: '24px' }}>
+        <FloatingActionButton height={50} onClick={() => history.goBack()}>
+          <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
+        </FloatingActionButton>
+      </div>
       <Row gutter={[12, 16]} className="nd-content" justify="space-around" align="middle">
-        <Col sm={9} xl={9} xxl={8}>
+        <Col sm={10} xl={9} xxl={8}>
           <ImageShowcase />
         </Col>
-        <Col sm={12} xl={9} xxl={7} className="nd-details">
+        <Col sm={10} xl={9} xxl={7} className="nd-details">
           <RightSection status={status} />
         </Col>
       </Row>

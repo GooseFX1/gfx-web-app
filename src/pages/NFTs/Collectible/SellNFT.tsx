@@ -8,7 +8,7 @@ import { CenteredDiv, MainText, TXT_PRIMARY_GRADIENT, GFX_LINK } from '../../../
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { SellCategory } from '../SellCategory/SellCategory'
 import { FormDoubleItem } from '../Form/FormDoubleItem'
-import { SuccessfulListingMsg, TransactionErrorMsg, MainButton, Modal } from '../../../components'
+import { SuccessfulListingMsg, TransactionErrorMsg, MainButton, Modal, FloatingActionButton } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { notify, truncateAddress } from '../../../utils'
 import { registerSingleNFT } from '../../../api/NFTs'
@@ -53,17 +53,6 @@ const UPLOAD_CONTENT = styled.div`
   padding: ${({ theme }) => theme.margin(6)} 0;
   width: 90%;
   margin: 0 auto;
-
-  .live-auction-back-icon {
-    transform: rotate(90deg);
-    width: 30px;
-    height: 30px;
-    filter: ${({ theme }) => theme.filterBackIcon};
-    cursor: pointer;
-    margin-right: ${({ theme }) => theme.margin(5)};
-    margin-left: 0;
-    margin-top: ${({ theme }) => theme.margin(1)};
-  }
 `
 
 const REVIEW_SELL_MODAL = styled(Modal)`
@@ -187,6 +176,11 @@ const BUTTON_TEXT = styled.div`
 
 const IMAGE_LABEL = styled(CenteredDiv)`
   margin-bottom: 12px;
+`
+const FLOATING_ACTION_ICON = styled.img`
+  transform: rotate(90deg);
+  width: 16px;
+  filter: ${({ theme }) => theme.filterBackIcon};
 `
 //#endregion
 
@@ -607,12 +601,12 @@ export const SellNFT = () => {
       ) : (
         <UPLOAD_CONTENT>
           {modal()}
-          <img
-            className="live-auction-back-icon"
-            src={`/img/assets/arrow.svg`}
-            alt="back"
-            onClick={() => history.goBack()}
-          />
+          <div style={{ position: 'absolute', top: '24px', left: '24px' }}>
+            <FloatingActionButton height={50} onClick={() => history.goBack()}>
+              <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
+            </FloatingActionButton>
+          </div>
+
           <Row className="" justify="space-around">
             <Col sm={12} xl={12} xxl={10} className="nd-details">
               <UPLOAD_INFO_CONTAINER>

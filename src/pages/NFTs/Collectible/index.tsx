@@ -2,6 +2,7 @@ import React from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import { FloatingActionButton } from '../../../components'
 import { Image } from 'antd'
 import { MainText } from '../../../styles'
 import { notify } from '../../../utils'
@@ -10,16 +11,6 @@ import { useDarkMode } from '../../../context'
 const UPLOAD_CONTENT = styled.div`
   position: relative;
   padding-top: 50px;
-
-  .collectible-back-icon {
-    position: absolute;
-    top: 55px;
-    left: 55px;
-    transform: rotate(90deg);
-    width: 36px;
-    filter: ${({ theme }) => theme.filterBackIcon};
-    cursor: pointer;
-  }
 `
 
 const TITLE = MainText(styled.div`
@@ -94,6 +85,12 @@ const IMAGE_COUNT_DESC = styled(DESCRIPTION)`
   color: #fff !important;
 `
 
+const FLOATING_ACTION_ICON = styled.img`
+  transform: rotate(90deg);
+  width: 16px;
+  filter: ${({ theme }) => theme.filterBackIcon};
+`
+
 const UPLOAD_TEXT = MainText(styled.div`
   font-size: 20px;
   color: ${({ theme }) => theme.text8} !important;
@@ -121,12 +118,12 @@ export const Collectible = (): JSX.Element => {
   return (
     <>
       <UPLOAD_CONTENT>
-        <img
-          className="collectible-back-icon"
-          src={`/img/assets/arrow.svg`}
-          alt="back"
-          onClick={() => history.goBack()}
-        />
+        <div style={{ position: 'absolute', top: '32px', left: '32px' }}>
+          <FloatingActionButton height={50} onClick={() => history.goBack()}>
+            <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
+          </FloatingActionButton>
+        </div>
+
         <TITLE>Create a collectible</TITLE>
         <DESCRIPTION>
           Choose “Single” if you want your collectible to be one of a kind or “Multiple”

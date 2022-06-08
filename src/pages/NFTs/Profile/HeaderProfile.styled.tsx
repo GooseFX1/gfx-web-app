@@ -35,7 +35,7 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
   .avatar-profile-wrap {
     position: relative;
     width: 80px;
-    margin: 0 15px 0 15px;
+    margin: 0 15px 0 0;
     .avatar-profile {
       width: 80px;
       height: 80px;

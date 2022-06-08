@@ -6,7 +6,7 @@ import styled from 'styled-components'
 
 import { MainText } from '../../../styles'
 import InfoInput from './InfoInput'
-import { Categories } from '../../../components'
+import { Categories, FloatingActionButton } from '../../../components'
 import PreviewImage from './PreviewImage'
 import { UploadCustom } from './UploadCustom'
 import MintPaymentConfirmation from './MintPaymentConfirmation'
@@ -20,24 +20,14 @@ import { ButtonWrapper } from '../NFTButton'
 
 //#region styles
 const UPLOAD_CONTENT = styled.div`
+  position: relative;
   height: 100%;
   display: flex;
   flex-direction: row;
   padding-top: ${({ theme }) => theme.margin(5)};
   padding-bottom: ${({ theme }) => theme.margin(3)};
   padding-right: ${({ theme }) => theme.margin(6)};
-  padding-left: ${({ theme }) => theme.margin(8)};
-
-  .upload-NFT-back-icon {
-    transform: rotate(90deg);
-    width: 30px;
-    height: 30px;
-    filter: ${({ theme }) => theme.filterBackIcon};
-    cursor: pointer;
-    margin-right: ${({ theme }) => theme.margin(5)};
-    margin-left: 0;
-    margin-top: ${({ theme }) => theme.margin(1)};
-  }
+  padding-left: ${({ theme }) => theme.margin(11)};
 `
 
 const UPLOAD_FIELD_CONTAINER = styled.div`
@@ -232,6 +222,12 @@ const BUTTON_PLUS_WRAPPER = styled(ButtonWrapper)`
     background-color: #7d7d7d;
   }
 `
+
+const FLOATING_ACTION_ICON = styled.img`
+  transform: rotate(90deg);
+  width: 16px;
+  filter: ${({ theme }) => theme.filterBackIcon};
+`
 //#endregion
 
 export const UpLoadNFT = (): JSX.Element => {
@@ -419,12 +415,12 @@ export const UpLoadNFT = (): JSX.Element => {
   ) : (
     <>
       <UPLOAD_CONTENT>
-        <img
-          className="upload-NFT-back-icon"
-          src={`/img/assets/arrow.svg`}
-          alt="back"
-          onClick={(e) => history.goBack()}
-        />
+        <div style={{ position: 'absolute', top: '32px', left: '16px' }}>
+          <FloatingActionButton height={50} onClick={() => history.goBack()}>
+            <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
+          </FloatingActionButton>
+        </div>
+
         <UPLOAD_FIELD_CONTAINER>
           <UPLOAD_INFO_CONTAINER>
             <div>
