@@ -29,58 +29,29 @@ import {
 } from '@identity.com/solana-gateway-ts'
 import { MintButtonFunc } from './MintButtonFunc'
 
-const MINT_BUTTON_BAR = styled.div`
-  margin-top: -100px;
-  height: 70px;
-  z-index: 99;
-  position: absolute;
-  border-radius: 0 0 25px 25px;
-  width: 44%;
-  backdrop-filter: blur(23.9091px);
-  background: radial-gradient(
-    81.62% 135.01% at 15.32% 21.04%,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(141, 141, 141, 0.05) 68.23%,
-    rgba(255, 255, 255, 0.05) 77.08%,
-    rgba(255, 255, 255, 0.0315) 100%
-  );
-`
-const MINT_BTN = styled.div<{ active: boolean }>`
-  background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-  border-radius: 47px;
-  width: 260px;
-  height: 50px;
-  margin: auto;
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  font-size: 15px;
-  justify-content: center;
-  cursor: ${({ active }) => (!active ? 'not-allowed' : 'pointer')};
-`
-
 export const MintButton: FC = () => {
   const params = useParams<IProjectParams>()
   const wallet = useWallet()
   const { connection } = useConnectionConfig()
   const { selectedProject, candyMachineState, candyMachine, cndyValues } = useNFTLPSelected()
-  const [mintButtonActive, setMintButtonActive] = useState(false)
   const [isUserMinting, setIsUserMinting] = useState(false)
   const [alertState, setAlertState] = useState<AlertState>({
     open: false,
     message: '',
     severity: undefined
   })
+  const [setupTxn, setSetupTxn] = useState<SetupState>()
 
-  const [isActive, setIsActive] = useState(false)
+  //hooks in context
+  const [isWhitelistUser, setIsWhitelistUser] = useState(false)
+  const [isValidBalance, setIsValidBalance] = useState(false)
   const [endDate, setEndDate] = useState<Date>()
   const [itemsRemaining, setItemsRemaining] = useState<number>()
-  const [isWhitelistUser, setIsWhitelistUser] = useState(false)
+  const [isActive, setIsActive] = useState(false)
   const [isPresale, setIsPresale] = useState(false)
-  const [isValidBalance, setIsValidBalance] = useState(false)
-  const [discountPrice, setDiscountPrice] = useState<anchor.BN>()
   const [needTxnSplit, setNeedTxnSplit] = useState(true)
-  const [setupTxn, setSetupTxn] = useState<SetupState>()
+  const [discountPrice, setDiscountPrice] = useState<anchor.BN>()
+  //
 
   const anchorWallet = useMemo(() => {
     if (!wallet || !wallet.publicKey || !wallet.signAllTransactions || !wallet.signTransaction) {
@@ -107,12 +78,10 @@ export const MintButton: FC = () => {
             severity: 'info'
           })
           setupMint = await createAccountsForMint(candyMachine, wallet.publicKey)
-          console.log('setup mint is: ', setupMint)
           let status: any = { err: false }
           if (setupMint.transaction) {
             status = await awaitTransactionSignatureConfirmation(setupMint.transaction, 60000, connection, true)
           }
-          console.log('status is: ', status)
           if (status && !status.err) {
             setSetupTxn(setupMint)
             setAlertState({
@@ -144,7 +113,7 @@ export const MintButton: FC = () => {
           afterTransactions,
           setupMint ?? setupTxn
         )
-        console.log('mint result is ', mintResult)
+
         let status: any = { err: true }
         let metadataStatus = null
         if (mintResult) {
@@ -220,113 +189,98 @@ export const MintButton: FC = () => {
     }
   }
 
-  const toggleMintButton = () => {
-    let active = !isActive || isPresale
-
-    if (active) {
-      if (candyMachine!.state.isWhitelistOnly && !isWhitelistUser) {
-        active = false
-      }
-      if (endDate && Date.now() >= endDate.getTime()) {
-        active = false
-      }
-    }
-
-    if (
-      isPresale &&
-      candyMachine!.state.goLiveDate &&
-      candyMachine!.state.goLiveDate.toNumber() <= new Date().getTime() / 1000
-    ) {
-      setIsPresale((candyMachine!.state.isPresale = false))
-    }
-
-    setIsActive((candyMachine!.state.isActive = active))
-  }
-
   //
 
   useEffect(() => {
-    if (wallet.connected) {
-      console.log('wallet connected')
+    if (cndyValues) {
+      console.log('active values is: ', cndyValues)
+      setIsWhitelistUser(cndyValues.isWhiteListUser)
+      setIsValidBalance(cndyValues.validBalance)
+      //setDiscountPrice()
+      setEndDate(cndyValues.endDate)
+      setIsActive(cndyValues.isActive)
+      setItemsRemaining(cndyValues.itemsRemaining)
+      setNeedTxnSplit(cndyValues.needTxnSplit)
+      setIsPresale(cndyValues.isPreSale)
     }
-  }, [wallet.connected, wallet.publicKey])
+  }, [cndyValues, wallet.connected, wallet.publicKey])
 
-  return (
-    <MINT_BUTTON_BAR>
-      {/*<GatewayProvider
-        wallet={{
-          publicKey: wallet.publicKey || new PublicKey(CANDY_MACHINE_PROGRAM),
-          //@ts-ignore
-          signTransaction: wallet.signTransaction
-        }}
-        gatekeeperNetwork={candyMachine?.state?.gatekeeper?.gatekeeperNetwork}
-        clusterUrl={'https://api.devnet.solana.com'}
-        handleTransaction={async (transaction: Transaction) => {
-          setIsUserMinting(true)
-          const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(wallet.publicKey!))
-          if (userMustSign) {
-            setAlertState({
-              open: true,
-              message: 'Please sign one-time Civic Pass issuance',
-              severity: 'info'
-            })
-            try {
-              transaction = await wallet.signTransaction!(transaction)
-            } catch (e) {
-              setAlertState({
-                open: true,
-                message: 'User cancelled signing',
-                severity: 'error'
-              })
-              // setTimeout(() => window.location.reload(), 2000);
-              setIsUserMinting(false)
-              throw e
-            }
-          } else {
-            setAlertState({
-              open: true,
-              message: 'Refreshing Civic Pass',
-              severity: 'info'
-            })
-          }
+  //console.log('states are: ', isActive)
+  return isActive && candyMachine?.state.gatekeeper && wallet.publicKey && wallet.signTransaction ? (
+    <GatewayProvider
+      wallet={{
+        publicKey: wallet.publicKey || new PublicKey(CANDY_MACHINE_PROGRAM),
+        //@ts-ignore
+        signTransaction: wallet.signTransaction
+      }}
+      gatekeeperNetwork={candyMachine?.state?.gatekeeper?.gatekeeperNetwork}
+      clusterUrl={'https://api.devnet.solana.com'}
+      handleTransaction={async (transaction: Transaction) => {
+        setIsUserMinting(true)
+        const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(wallet.publicKey!))
+        if (userMustSign) {
+          setAlertState({
+            open: true,
+            message: 'Please sign one-time Civic Pass issuance',
+            severity: 'info'
+          })
           try {
-            await sendTransaction(connection, wallet, transaction, [], true, 'confirmed')
-            setAlertState({
-              open: true,
-              message: 'Please sign minting',
-              severity: 'info'
-            })
+            transaction = await wallet.signTransaction!(transaction)
           } catch (e) {
             setAlertState({
               open: true,
-              message: 'Solana dropped the transaction, please try again',
-              severity: 'warning'
+              message: 'User cancelled signing',
+              severity: 'error'
             })
-            console.error(e)
             // setTimeout(() => window.location.reload(), 2000);
             setIsUserMinting(false)
             throw e
           }
-          //await onMint()
-        }}
-        broadcastTransaction={false}
-        options={{ autoShowModal: false }}
-      >*/}
-      {/*<MintButtonFunc
-          onMint={() => onMint()}
-          candyMachine={candyMachine}
-          isMinting={isUserMinting}
-          setIsMinting={setIsUserMinting}
-          isActive={true}
-        ></MintButtonFunc>*/}
-      <MINT_BTN
-        active={true}
-        //  active={isActive || (isPresale && isWhitelistUser && isValidBalance)}
-        onClick={() => onMint()}
-      >
-        Mint
-      </MINT_BTN>
-      {/*</GatewayProvider>*/}
-    </MINT_BUTTON_BAR>
+        } else {
+          setAlertState({
+            open: true,
+            message: 'Refreshing Civic Pass',
+            severity: 'info'
+          })
+        }
+        try {
+          await sendTransaction(connection, wallet, transaction, [], true, 'confirmed')
+          setAlertState({
+            open: true,
+            message: 'Please sign minting',
+            severity: 'info'
+          })
+        } catch (e) {
+          setAlertState({
+            open: true,
+            message: 'Solana dropped the transaction, please try again',
+            severity: 'warning'
+          })
+          console.error(e)
+          // setTimeout(() => window.location.reload(), 2000);
+          setIsUserMinting(false)
+          throw e
+        }
+        await onMint()
+      }}
+      broadcastTransaction={false}
+      options={{ autoShowModal: false }}
+    >
+      <MintButtonFunc
+        onMint={onMint}
+        candyMachine={candyMachine}
+        isMinting={isUserMinting}
+        setIsMinting={(val) => setIsUserMinting(val)}
+        isActive={isActive || (isPresale && isWhitelistUser && isValidBalance)}
+      ></MintButtonFunc>
+    </GatewayProvider>
+  ) : (
+    <MintButtonFunc
+      onMint={onMint}
+      candyMachine={candyMachine}
+      isMinting={isUserMinting}
+      setIsMinting={(val) => setIsUserMinting(val)}
+      isActive={isActive || (isPresale && isWhitelistUser && isValidBalance)}
+    ></MintButtonFunc>
   )
 }

@@ -202,6 +202,7 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
     try {
       const id = candyMachine ? candyMachine : selectedProject.candyMachine
       const candyM = await getCandyMachineState(anchorWallet, new PublicKey(id), connection)
+      console.log('candy Machine is: ', candyM)
       setCandyMachine(candyM)
       setCandyMachineState(candyM?.state)
       let cndyState = {}
@@ -287,6 +288,8 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
             if (cndy.state.endSettings.number.toNumber() < new Date().getTime() / 1000) {
               active = false
             }
+          } else {
+            cndyState['endDate'] = null
           }
           // amount to stop the mint?
           if (cndy?.state.endSettings?.endSettingType.amount) {
@@ -359,22 +362,27 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
 
   useEffect(() => {
     ;(async () => {
-      const data = await fetchSelectedNFTLPData(params.url_name)
-      refreshCandyMachineState(data.data.candyMachine)
+      const data = await fetchSelectedNFTLPData(params.urlName)
       setSelectedProject(data.data)
     })()
-  }, [wallet.connected])
+  }, [])
+
+  useEffect(() => {
+    if (selectedProject && selectedProject.candyMachine) {
+      refreshCandyMachineState(null)
+    }
+  }, [wallet.connected, selectedProject])
 
   useEffect(() => {
     ;(function loop() {
       setTimeout(() => {
-        if (selectedProject && selectedProject.candyMachine) {
+        if (selectedProject && selectedProject.candyMachine && wallet.connected) {
           refreshCandyMachineState(null)
         }
         loop()
       }, 20000)
     })()
-  }, [selectedProject])
+  }, [selectedProject, wallet.connected, wallet.publicKey])
 
   return (
     <NFTLPSelectedContext.Provider
