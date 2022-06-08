@@ -18,7 +18,7 @@ import {
   createWithdrawInstruction
 } from '../../../web3'
 import { callWithdrawInstruction } from '../actions'
-import { MainButton, SuccessfulListingMsg } from '../../../components'
+import { MainButton, SuccessfulListingMsg, FloatingActionButton } from '../../../components'
 import { notify } from '../../../utils'
 import { StyledHeaderProfile, StyledMenu, SETTLE_BALANCE_MODAL, MARGIN_VERTICAL } from './HeaderProfile.styled'
 import BN from 'bn.js'
@@ -39,6 +39,12 @@ const DROPDOWN = styled(Dropdown)`
   &:after {
     content: none;
   }
+`
+
+const FLOATING_ACTION_ICON = styled.img`
+  transform: rotate(90deg);
+  width: 16px;
+  filter: ${({ theme }) => theme.filterBackIcon};
 `
 
 type Props = {
@@ -283,7 +289,13 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   return (
     <StyledHeaderProfile mode={mode}>
       {handleModal()}
-      <img className="back-icon" src={`/img/assets/arrow.svg`} alt="arrow-icon" onClick={() => history.goBack()} />
+
+      <div style={{ position: 'absolute', top: '24px', left: '24px' }}>
+        <FloatingActionButton height={50} onClick={() => history.goBack()}>
+          <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
+        </FloatingActionButton>
+      </div>
+
       <div className="avatar-profile-wrap">
         <Image
           className="avatar-profile"
@@ -370,7 +382,6 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
           )}
         </div>
       </div>
-
       <div className="action-wrap">
         {isSessionUser && connected && publicKey ? (
           <button className="btn-purple" onClick={() => setSettleBalanceModal(true)}>

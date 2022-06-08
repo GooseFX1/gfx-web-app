@@ -7,11 +7,18 @@ import { useNFTCollections, useDarkMode } from '../../../context'
 import { Share } from '../Share'
 import { SVGToGrey2 } from '../../../styles'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import { FloatingActionButton } from '../../../components'
 import { SweepModal } from './SweepModal'
 import { generateTinyURL } from '../../../api/tinyUrl'
 import { notify } from '../../../utils'
 
 //#region styles
+const FLOATING_ACTION_ICON = styled.img`
+  transform: rotate(90deg);
+  width: 16px;
+  filter: ${({ theme }) => theme.filterBackIcon};
+`
+
 const COLLECTION_HEADER = styled.div<{ $height: string }>`
   position: relative;
   height: ${({ $height }) => `${$height}vh`};
@@ -21,15 +28,6 @@ const COLLECTION_HEADER = styled.div<{ $height: string }>`
     color: white;
   }
 
-  .collection-back-icon {
-    position: absolute;
-    top: 72px;
-    left: 55px;
-    transform: rotate(90deg);
-    width: 36px;
-    filter: ${({ theme }) => theme.filterBackIcon};
-    cursor: pointer;
-  }
   .collection-sweeper-button {
     position: absolute;
     top: 72px;
@@ -319,12 +317,14 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
   return (
     <COLLECTION_HEADER $height={collapse ? '30' : '45'}>
       {handleModal()}
-      <img className="collection-back-icon" src={`/img/assets/arrow.svg`} alt="back" onClick={() => history.goBack()} />
-
+      <div style={{ position: 'absolute', top: '72px', left: '55px' }}>
+        <FloatingActionButton height={50} onClick={() => history.goBack()}>
+          <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
+        </FloatingActionButton>
+      </div>
       <button className="collection-sweeper-button" onClick={handleSweepClick}>
         Collection Sweeper
       </button>
-
       {sweeperModal && <SweepModal visible={sweeperModal} setVisible={setSweeperModal}></SweepModal>}
       {!isCollectionItemEmpty && (
         <BANNER
@@ -393,7 +393,6 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
           </DROPDOWN>
         </div>
       </div>
-
       <COVER>
         <BANNER_TOGGLE onClick={() => setCollapse(!collapse)}>
           {mode === 'dark' ? (
