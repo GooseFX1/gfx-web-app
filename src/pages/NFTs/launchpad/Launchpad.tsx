@@ -14,7 +14,7 @@ export const Launchpad: FC = () => {
           <LandingPage />
         </NFTLaunchpadProvider>
       </Route>
-      <Route exact path="/NFTs/launchpad/:url_name">
+      <Route exact path="/NFTs/launchpad/:urlName">
         <NFTLPSelectedProvider>
           <SingleCollection />
         </NFTLPSelectedProvider>
