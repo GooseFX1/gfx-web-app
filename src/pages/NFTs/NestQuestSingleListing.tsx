@@ -10,6 +10,7 @@ import { SkeletonCommon } from './Skeleton/SkeletonCommon'
 import { MainButton } from '../../components/MainButton'
 import { SOCIAL_MEDIAS } from '../../constants'
 import { SVGDynamicReverseMode } from '../../styles/utils'
+import { FloatingActionButton } from '../../components'
 
 //#region styles
 const IMAGE = styled.div`
@@ -42,6 +43,7 @@ const IMAGE = styled.div`
   `}
 `
 const NFT_DETAILS = styled.div`
+  position: relative;
   height: 100%;
   margin: 0 auto;
   padding-top: ${({ theme }) => theme.margin(6)};
@@ -49,18 +51,6 @@ const NFT_DETAILS = styled.div`
   .nd-content {
     height: 100%;
   }
-
-  ${({ theme }) => css`
-    .nd-back-icon {
-      position: absolute;
-      top: 132px;
-      left: 30px;
-      transform: rotate(90deg);
-      width: 25px;
-      filter: ${theme.filterBackIcon};
-      cursor: pointer;
-    }
-  `};
 `
 
 const YELLOW = styled.h3`
@@ -172,6 +162,11 @@ export const SpaceBetweenDiv = styled.div`
   justify-content: space-between;
   align-items: center;
 `
+const FLOATING_ACTION_ICON = styled.img`
+  transform: rotate(90deg);
+  width: 16px;
+  filter: ${({ theme }) => theme.filterBackIcon};
+`
 //#endregion
 
 export const NestQuestSingleListing: FC<{
@@ -210,14 +205,11 @@ export const NestQuestSingleListing: FC<{
 
   return (
     <NFT_DETAILS {...rest}>
-      <img
-        className="nd-back-icon"
-        src={`/img/assets/arrow.svg`}
-        alt="back"
-        onClick={() => {
-          backUrl ? history.push(backUrl) : history.goBack()
-        }}
-      />
+      <div style={{ position: 'absolute', top: '48px', left: '24px' }}>
+        <FloatingActionButton height={50} onClick={() => history.goBack()}>
+          <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
+        </FloatingActionButton>
+      </div>
 
       <Row gutter={[24, 16]} className="nd-content" justify="center" align="top">
         <Col sm={10} xl={10} xxl={8} className="nd-details">
