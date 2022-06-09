@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { useRouteMatch, Route, Switch, useLocation, useParams } from 'react-router-dom'
+import { useRouteMatch, Route, Switch } from 'react-router-dom'
 import { LandingPage } from './pages/LandingPage'
 import { SingleCollection } from './pages/SingleCollection'
 import { NFTLaunchpadProvider, NFTLPSelectedProvider } from '../../../context/nft_launchpad'

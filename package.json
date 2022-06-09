@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@civic/solana-gateway-react": "^0.7.4",
+    "@civic/solana-gateway-react": "^0.6.0",
+    "@identity.com/solana-gateway-ts": "^0.8.1",
     "@craco/craco": "^6.2.0",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
