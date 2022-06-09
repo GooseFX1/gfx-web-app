@@ -1,18 +1,18 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { IProjectParams } from '../../../../types/nft_launchpad'
-import { fetchSelectedNFTLPData } from '../../../../api/NFTLaunchpad'
 import { useNFTLPSelected } from '../../../../context/nft_launchpad'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled, { css } from 'styled-components'
 import { Col, Row, Tabs } from 'antd'
 import { SOCIAL_MEDIAS } from '../../../../constants'
 import { MintProgressBar, TokenSwitch, MintStarts } from './LaunchpadComponents'
-import { InfoDivLightTheme, InfoDivBrightTheme } from './LaunchpadComponents'
+import { InfoDivLightTheme, InfoDivBrightTheme, Vesting } from './LaunchpadComponents'
 import { SVGDynamicReverseMode } from '../../../../styles'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { DETAILS_TAB_CONTENT } from '../../NFTDetails/RightSectionTabs'
 import { MintButton } from '../launchpadComp/MintButton'
+import { TeamMembers } from './LaunchpadComponents'
 
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme, activeTab }) => css`
@@ -264,13 +264,14 @@ const PRICE_SOCIAL = styled.div`
   margin-top: 25px;
   margin-bottom: 35px;
 `
+const SUMMARY_TAB_CONTENT = styled.div``
 export const SingleCollection: FC = () => {
   const params = useParams<IProjectParams>()
   const wallet = useWallet()
   const [noOfNFTToMint, setNumberOfNftToMint] = useState(1)
   const { selectedProject } = useNFTLPSelected()
 
-  const isLive = parseInt(selectedProject?.startsOn) < Date.now()
+  const isLive = parseInt(selectedProject?.startsOn) < Date.now() && 0
   return (
     <div>
       <TokenSwitch />
@@ -279,8 +280,16 @@ export const SingleCollection: FC = () => {
           <COLLECTION_NAME>{selectedProject?.collectionName}</COLLECTION_NAME>
           <TAG_LINE>{selectedProject?.tagLine}</TAG_LINE>
           <PRICE_SOCIAL>
-            <InfoDivLightTheme items={selectedProject?.items} price={undefined}></InfoDivLightTheme>
-            <InfoDivLightTheme items={selectedProject} price={selectedProject?.price}></InfoDivLightTheme>
+            <InfoDivLightTheme
+              items={selectedProject?.items}
+              currency={undefined}
+              price={undefined}
+            ></InfoDivLightTheme>
+            <InfoDivLightTheme
+              items={selectedProject}
+              price={selectedProject?.price}
+              currency={selectedProject?.currency}
+            ></InfoDivLightTheme>
             <Row justify="space-between" align="middle" style={{ marginLeft: '10px' }}>
               <Col span={2}>
                 <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.nestquest)}>
@@ -303,7 +312,11 @@ export const SingleCollection: FC = () => {
             <RIGHT_SECTION_TABS activeTab={'4'}>
               <Tabs>
                 <TabPane tab="Summary" key="1">
-                  <DETAILS_TAB_CONTENT>" Lorem ipsum dolor sit. Lorem ipsum dolor sit. "</DETAILS_TAB_CONTENT>
+                  <SUMMARY_TAB_CONTENT>
+                    A mysterious egg abandoned in a peculiar tree stump nest. The egg emits a faint glow, as your hand
+                    gets close to the surface you feel radiant heat. Something is alive inside. You must incubate this
+                    egg for it to hatch.
+                  </SUMMARY_TAB_CONTENT>
                 </TabPane>
                 <TabPane tab="Roadmap" key="2">
                   <h1>
@@ -315,10 +328,10 @@ export const SingleCollection: FC = () => {
                   </h1>
                 </TabPane>
                 <TabPane tab="Team" key="3">
-                  Lorem ipsum dolor sit amet.
+                  <TeamMembers />
                 </TabPane>
                 <TabPane tab="Vesting" key="4">
-                  Lorem ipsum dolor sit amet.
+                  <Vesting currency={selectedProject?.currency} str={'hllo'} />
                 </TabPane>
               </Tabs>
             </RIGHT_SECTION_TABS>
