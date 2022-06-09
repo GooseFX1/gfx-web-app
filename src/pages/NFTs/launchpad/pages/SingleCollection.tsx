@@ -160,7 +160,7 @@ export const SingleCollection: FC = () => {
                 </TabPane>
               </Tabs>
             </RIGHT_SECTION_TABS>
-            <MintButton />
+            <MintButton isLive={isLive} />
           </>
           <button> Mint</button>
         </div>
