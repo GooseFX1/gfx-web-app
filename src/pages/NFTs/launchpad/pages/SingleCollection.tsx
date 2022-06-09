@@ -201,35 +201,6 @@ const WRAPPER = styled.div`
     line-height: 37px;
   }
 `
-const MINT_BUTTON_BAR = styled.div`
-  margin-top: -100px;
-  height: 70px;
-  z-index: 99;
-  position: absolute;
-  border-radius: 0 0 25px 25px;
-  width: 44%;
-  backdrop-filter: blur(23.9091px);
-  background: radial-gradient(
-    81.62% 135.01% at 15.32% 21.04%,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(141, 141, 141, 0.05) 68.23%,
-    rgba(255, 255, 255, 0.05) 77.08%,
-    rgba(255, 255, 255, 0.0315) 100%
-  );
-`
-const MINT_BTN = styled.div`
-  background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-  border-radius: 47px;
-  width: 260px;
-  height: 50px;
-  margin: auto;
-  margin-top: 12px !important ;
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  font-size: 15px;
-  justify-content: center;
-`
 
 const NFT_COVER = styled.div`
   .image-border {
@@ -335,9 +306,7 @@ export const SingleCollection: FC = () => {
                 </TabPane>
               </Tabs>
             </RIGHT_SECTION_TABS>
-            <MINT_BUTTON_BAR>
-              {isLive ? <MINT_BTN>Mint</MINT_BTN> : <MINT_BTN> Join Waitlist </MINT_BTN>}
-            </MINT_BUTTON_BAR>
+            <MintButton isLive={isLive} />
           </>
         </div>
         <div className="rightPart">
