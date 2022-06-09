@@ -177,7 +177,7 @@ const UpcomingCollectins: FC = () => {
 
   const getRemaningTime = (item): string => {
     //item?.startsOn;
-    const startsOn = 1654646076 * 1000
+    const startsOn = 1659946076 * 1000
     const timeDiffrence = startsOn - Date.now()
     console.log(timeDiffrence, new Date(timeDiffrence), Date.now())
     let seconds = Number(timeDiffrence / 1000)
@@ -190,7 +190,7 @@ const UpcomingCollectins: FC = () => {
     var hDisplay = h > 0 ? h + (h == 1 ? ' h ' : ' h ') : ''
     var mDisplay = m > 0 ? m + (m == 1 ? ' m ' : ' m ') : ''
     var sDisplay = s > 0 ? s + (s == 1 ? ' s ' : ' s') : ''
-    return dDisplay + hDisplay + mDisplay + sDisplay
+    return d > 1 ? dDisplay + hDisplay + mDisplay : hDisplay + mDisplay + sDisplay
   }
   return (
     <>

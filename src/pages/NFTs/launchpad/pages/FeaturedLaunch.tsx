@@ -213,12 +213,16 @@ export const FeaturedLaunch: FC<{
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const getNftPrice = (item) => {
-    console.log(item)
     return (
       <PRICE_DISPLAY>
-        {`Price: ${item?.price} `}
-        <img style={{ margin: '5px 5px', width: '25px', height: '25px' }} src={`/img/crypto/${item?.currency}.svg`} />
-        {` ${item?.currency}`}
+        <span>{`Price: ${item?.price}`}</span>
+        <span>
+          <img
+            style={{ margin: '0px 5px 5px 10px', width: '25px', height: '25px' }}
+            src={`/img/crypto/${item?.currency}.svg`}
+          />
+        </span>
+        <span>{` ${item?.currency}`}</span>
       </PRICE_DISPLAY>
     )
   }
@@ -251,7 +255,6 @@ export const FeaturedLaunch: FC<{
 
   return (
     <NFT_DETAILS {...rest}>
-      {console.log(featuredDisplay[0])}
       {!featuredDisplay[0] ? (
         <>
           <img
@@ -284,7 +287,7 @@ export const FeaturedLaunch: FC<{
                   <br />
                   <Row justify="space-between" align="middle">
                     <ITEMS>{`Items ${featuredDisplay[0]?.items}`}</ITEMS>
-                    <Col span={7}>
+                    <Col span={10}>
                       <ITEMS>{getNftPrice(featuredDisplay[0])}</ITEMS>
                     </Col>
                     <Col span={2}>
@@ -311,11 +314,13 @@ export const FeaturedLaunch: FC<{
                     </MINT_BTN>
                     <img
                       className="navigationImg"
+                      alt="navigateImg"
                       onClick={() => handleScroller('-')}
                       src="/img/assets/navigateLeft.svg"
                     />
                     <img
                       className="navigationImg"
+                      alt="navigateImg"
                       onClick={() => handleScroller('+')}
                       src="/img/assets/navigateRight.svg"
                     />
