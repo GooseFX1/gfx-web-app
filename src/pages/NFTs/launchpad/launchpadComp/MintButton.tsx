@@ -40,7 +40,7 @@ const MESSAGE = styled.div`
   }
 `
 
-export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
+export const MintButton: FC<{ isLive: number }> = ({ isLive }) => {
   const params = useParams<IProjectParams>()
   const wallet = useWallet()
   const { connection } = useConnectionConfig()
