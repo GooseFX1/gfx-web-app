@@ -34,18 +34,22 @@ export const NFTLaunchpadProvider: FC<{ children: ReactNode }> = ({ children }) 
 
   useEffect(() => {
     ;(async () => {
-      const launchpadData: INFTProjectConfig[] = (await fetchAllNFTLaunchpadData()).data.data
-      const upcomingProject = [],
-        endedProject = [],
-        liveProject = []
-      for (let i = 0; i < launchpadData.length; i++) {
-        if (launchpadData[i].status === 'live') liveProject.push(launchpadData[i])
-        if (launchpadData[i].status === 'upcoming') upcomingProject.push(launchpadData[i])
-        if (launchpadData[i].status === 'ended') endedProject.push(launchpadData[i])
+      try {
+        const launchpadData: INFTProjectConfig[] = (await fetchAllNFTLaunchpadData()).data.data
+        const upcomingProject = [],
+          endedProject = [],
+          liveProject = []
+        for (let i = 0; i < launchpadData.length; i++) {
+          if (launchpadData[i].status === 'live') liveProject.push(launchpadData[i])
+          if (launchpadData[i].status === 'upcoming') upcomingProject.push(launchpadData[i])
+          if (launchpadData[i].status === 'ended') endedProject.push(launchpadData[i])
+        }
+        setEndedNFTProjects(endedNFTProjects)
+        setUpcomingNFTProjects(upcomingProject)
+        setLiveNFTProjects(liveProject)
+      } catch (err) {
+        console.log(err)
       }
-      setEndedNFTProjects(endedNFTProjects)
-      setUpcomingNFTProjects(upcomingProject)
-      setLiveNFTProjects(liveProject)
     })()
   }, [])
 
@@ -363,6 +367,7 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
   useEffect(() => {
     ;(async () => {
       const data = await fetchSelectedNFTLPData(params.urlName)
+      refreshCandyMachineState(data.data.candyMachine)
       setSelectedProject(data.data)
     })()
   }, [])
