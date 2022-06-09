@@ -65,6 +65,26 @@ const ToggleBG = styled.span`
     background: linear-gradient(96.79deg, #5855ff 4.25%, #dc1fff 97.61%) !important;
   }
 `
+const TEAM_MEMBER_WRAPPER = styled.div`
+  display: grid;
+  grid-template-columns: auto auto auto;
+  margin: 40px 40px 0px 40px;
+  .avatar {
+    cursor: pointer;
+    margin-bottom: 20px;
+    margin-left: 60px;
+  }
+  .userNameText {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+    margin-top: 15px;
+    margin-bottom: 38px;
+  }
+`
+
 const INFO_DIV_LIGHT = styled.div`
   display: flex;
   margin-right: 20px;
@@ -182,6 +202,38 @@ const ProgressBarBG = styled.div`
   }
 `
 
+const VESTING_WRAPPER = styled.div`
+  .wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 18%;
+  }
+  display: flex;
+  flex-direction: column;
+  .vestingStr {
+    margin: auto;
+    margin-left: 40px;
+    margin-right: 40px;
+    font-weight: 600;
+    font-size: 22px;
+    .percentText {
+      font-weight: 600;
+      font-size: 22px;
+      color: #50bb35;
+    }
+  }
+  .currencyImg {
+    width: 35px;
+    height: 35px;
+    margin-right: 15px;
+  }
+  .raisedText {
+    font-weight: 600;
+    font-size: 25px;
+  }
+`
+
 const DARK_DIV = styled.div`
   width: 747px;
 
@@ -244,6 +296,28 @@ const DARK_DIV = styled.div`
     border-radius: 20px;
   }
 `
+const LIVE_BTN = styled.div`
+  width: 135px;
+  height: 40px;
+  border: 1.5px solid #ffffff;
+  backdrop-filter: blur(23.9091px);
+  position: absolute;
+  margin-left: 575px;
+  margin-top: 30px;
+  z-index: 9999;
+  border-radius: 10px;
+  .liveText {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    margin-top: 2px;
+    font-size: 18px;
+    background: linear-gradient(96.79deg, #f7931a 4.25%, #d832f7 97.61%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+`
 
 export const MintProgressBar = ({ minted, totalNFTs }) => {
   // const minted = 2000
@@ -273,18 +347,42 @@ export const SWITCH_HOLDER = styled.div`
   padding-right: 70px;
   margin-top: 24px;
 `
-export const InfoDivLightTheme = ({ items, price }) => {
+
+export const InfoDivLightTheme = ({ items, price, currency }) => {
   return (
     <>
       <INFO_DIV_LIGHT>
         <div className={'inner'}>
           {price ? (
-            <div className="inner-2">{'Price ' + price}</div>
+            <>
+              <span className="inner-2">{'Price: ' + price + ' ' + currency}</span>
+            </>
           ) : (
             <div className="inner-2">{'Items ' + items}</div>
           )}
         </div>
       </INFO_DIV_LIGHT>
+    </>
+  )
+}
+export const Vesting = ({ currency, str }) => {
+  return (
+    <>
+      <VESTING_WRAPPER>
+        <div className="wrapper">
+          <img className="currencyImg" src={`/img/crypto/${currency}.svg`} />
+          <div className="raisedText">{`${currency} raised:`}</div>
+        </div>
+
+        <div className="vestingStr">
+          <span className="percentText">{`50% `}</span>
+          unlocked upfront,
+          <span className="percentText">{`25% `}</span>
+          after 3 months,
+          <span className="percentText">{`25% `}</span>
+          after 6 months.
+        </div>
+      </VESTING_WRAPPER>
     </>
   )
 }
@@ -315,7 +413,7 @@ export const InfoDivUSDCTheme = () => {
 export const MintStarts = ({ time }) => {
   const getRemaningTime = (time) => {
     //item?.startsOn;
-    const startsOn = time
+    const startsOn = 1654888451000
     const timeDiffrence = startsOn - Date.now()
     let seconds = Number(timeDiffrence / 1000)
     var d = Math.floor(seconds / (3600 * 24))
@@ -364,12 +462,21 @@ export const TokenSwitch = () => {
   )
 }
 
+export const LiveButton = () => {
+  return (
+    <LIVE_BTN>
+      <div className="liveText">Live</div>
+    </LIVE_BTN>
+  )
+}
+
 export const DarkDiv = ({ coverUrl }) => {
   return (
     <DARK_DIV>
       <div className="dark-3" />
       <div className="dark-2" />
       <div className="dark-1" />
+      <LiveButton />
 
       <div className="image-border">
         <div className="inner-image-bg">
@@ -397,5 +504,32 @@ export const GoldenTicketPopup = ({}) => {
         to get on the Okay Bears Whitelist.
       </div>
     </GOLDEN_POPUP>
+  )
+}
+
+export const TeamMembers = () => {
+  const twitterLinks = [
+    'https://twitter.com/elonmusk',
+    'https://twitter.com/elonmusk',
+    'https://twitter.com/elonmusk',
+    'https://twitter.com/elonmusk',
+    'https://twitter.com/elonmusk',
+    'https://twitter.com/elonmusk',
+    'https://twitter.com/elonmusk',
+    'https://twitter.com/elonmusk'
+  ]
+  return (
+    <TEAM_MEMBER_WRAPPER>
+      {twitterLinks.map((twitter) => {
+        return (
+          <div>
+            <a className="avatar" href={twitter} target="_blank">
+              <img src={`/img/assets/avatarDark.png`} alt="" />
+            </a>
+            <div className="userNameText">{twitter.substring(20)}</div>
+          </div>
+        )
+      })}
+    </TEAM_MEMBER_WRAPPER>
   )
 }
