@@ -56,7 +56,7 @@ export const MintButtonFunc = ({
   isMinting: boolean
   setIsMinting: (val: boolean) => void
   isActive: boolean
-  isLive: boolean
+  isLive: number
 }) => {
   const wallet = useWallet()
   const [verified, setVerified] = useState(false)
