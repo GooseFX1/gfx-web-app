@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import { Col, Row, Tabs } from 'antd'
 import { SOCIAL_MEDIAS } from '../../../../constants'
 import { MintProgressBar, TokenSwitch, MintStarts } from './LaunchpadComponents'
-import { InfoDivLightTheme, InfoDivBrightTheme, Vesting } from './LaunchpadComponents'
+import { InfoDivLightTheme, InfoDivBrightTheme, Vesting, RoadMap } from './LaunchpadComponents'
 import { SVGDynamicReverseMode } from '../../../../styles'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { DETAILS_TAB_CONTENT } from '../../NFTDetails/RightSectionTabs'
@@ -32,7 +32,6 @@ const WRAPPER = styled.div`
   justify-content: space-between;
   .leftPart {
     width: 50%;
-    height: 80vh;
     padding-left: 70px;
   }
   .button {
@@ -90,7 +89,15 @@ const PRICE_SOCIAL = styled.div`
   margin-top: 25px;
   margin-bottom: 35px;
 `
-const SUMMARY_TAB_CONTENT = styled.div``
+const SUMMARY_TAB_CONTENT = styled.div`
+  display: flex;
+  margin: auto;
+  padding-left: 30px;
+  padding-right: 30px;
+  margin-top: 10%;
+  font-weight: 600;
+  font-size: 20px;
+`
 export const SingleCollection: FC = () => {
   const params = useParams<IProjectParams>()
   const wallet = useWallet()
@@ -117,17 +124,17 @@ export const SingleCollection: FC = () => {
             ></InfoDivLightTheme>
             <Row justify="space-between" align="middle" style={{ marginLeft: '10px' }}>
               <Col span={2}>
-                <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.nestquest)}>
+                <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.website)}>
                   <SVGDynamicReverseMode src="/img/assets/domains.svg" alt="domain-icon" />
                 </SOCIAL_ICON>
               </Col>
               <Col span={2}>
-                <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.discord)}>
+                <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.discord)}>
                   <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
                 </SOCIAL_ICON>
               </Col>
               <Col span={2}>
-                <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.twitter)}>
+                <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.twitter)}>
                   <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
                 </SOCIAL_ICON>
               </Col>
@@ -138,22 +145,14 @@ export const SingleCollection: FC = () => {
               <Tabs>
                 <TabPane tab="Summary" key="1">
                   <SUMMARY_TAB_CONTENT>
-                    A mysterious egg abandoned in a peculiar tree stump nest. The egg emits a faint glow, as your hand
-                    gets close to the surface you feel radiant heat. Something is alive inside. You must incubate this
-                    egg for it to hatch.
+                    <div>{selectedProject?.summary}</div>
                   </SUMMARY_TAB_CONTENT>
                 </TabPane>
                 <TabPane tab="Roadmap" key="2">
-                  <h1>
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatum consectetur inventore iste.
-                    Commodi libero repellendus laudantium nemo provident er Lorem, ipsum dolor sit amet consectetur
-                    adipisicing elit. Voluptatum consectetur inventore iste. Commodi libero repellendus laudantium nemo
-                    provident er Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatum consectetur
-                    inventore iste. Commodi libero repellendus laudantium nemo provident er
-                  </h1>
+                  <RoadMap roadmap={selectedProject?.roadmap} />
                 </TabPane>
                 <TabPane tab="Team" key="3">
-                  <TeamMembers />
+                  <TeamMembers teamMembers={selectedProject?.team} />
                 </TabPane>
                 <TabPane tab="Vesting" key="4">
                   <Vesting currency={selectedProject?.currency} str={'hllo'} />
