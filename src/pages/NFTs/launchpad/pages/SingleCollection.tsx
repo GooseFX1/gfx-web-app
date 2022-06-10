@@ -242,7 +242,7 @@ export const SingleCollection: FC = () => {
   const [noOfNFTToMint, setNumberOfNftToMint] = useState(1)
   const { selectedProject } = useNFTLPSelected()
 
-  const isLive = parseInt(selectedProject?.startsOn) < Date.now() && 0
+  const isLive = parseInt(selectedProject?.startsOn) < Date.now()
   return (
     <div>
       <TokenSwitch />
