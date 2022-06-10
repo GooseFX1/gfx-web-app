@@ -18,6 +18,7 @@ interface INFTProjectConfig {
   price: 100
   startsOn: string
   status: string
+  ended?: boolean | string
   currency: string
 }
 interface INFTLaunchpadConfig {
@@ -40,9 +41,10 @@ export const NFTLaunchpadProvider: FC<{ children: ReactNode }> = ({ children }) 
           endedProject = [],
           liveProject = []
         for (let i = 0; i < launchpadData.length; i++) {
-          if (launchpadData[i].status === 'live') liveProject.push(launchpadData[i])
-          if (launchpadData[i].status === 'upcoming') upcomingProject.push(launchpadData[i])
-          if (launchpadData[i].status === 'ended') endedProject.push(launchpadData[i])
+          if (parseFloat(launchpadData[i].startsOn) > Date.now()) upcomingProject.push(launchpadData[i])
+          if (parseFloat(launchpadData[i].startsOn) < Date.now() && launchpadData[i].ended)
+            endedProject.push(launchpadData[i])
+          else liveProject.push(launchpadData[i])
         }
         setEndedNFTProjects(endedNFTProjects)
         setUpcomingNFTProjects(upcomingProject)
@@ -366,9 +368,11 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
 
   useEffect(() => {
     ;(async () => {
-      const data = await fetchSelectedNFTLPData(params.urlName)
-      refreshCandyMachineState(data.data.candyMachine)
-      setSelectedProject(data.data)
+      setInterval(async () => {
+        const data = await fetchSelectedNFTLPData(params.urlName)
+        refreshCandyMachineState(data.data.candyMachine)
+        setSelectedProject(data.data)
+      }, 10000)
     })()
   }, [])
 
