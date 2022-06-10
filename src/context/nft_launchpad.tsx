@@ -372,7 +372,7 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
         const data = await fetchSelectedNFTLPData(params.urlName)
         refreshCandyMachineState(data.data.candyMachine)
         setSelectedProject(data.data)
-      }, 10000)
+      }, 100000)
     })()
   }, [])
 

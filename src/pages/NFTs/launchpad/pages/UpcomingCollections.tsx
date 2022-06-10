@@ -177,10 +177,9 @@ const UpcomingCollectins: FC = () => {
 
   const getRemaningTime = (item): string => {
     //item?.startsOn;
-    const startsOn = 1659946076 * 1000
+    const startsOn = parseFloat(item.startsOn)
     const timeDiffrence = startsOn - Date.now()
-    console.log(timeDiffrence, new Date(timeDiffrence), Date.now())
-    let seconds = Number(timeDiffrence / 1000)
+    let seconds = Number(timeDiffrence)
     var d = Math.floor(seconds / (3600 * 24))
     var h = Math.floor((seconds % (3600 * 24)) / 3600)
     var m = Math.floor((seconds % 3600) / 60)
