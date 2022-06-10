@@ -3,6 +3,41 @@ import styled from 'styled-components'
 import { Progress, Switch } from 'antd'
 import { ModalSlide } from '../../../../components/ModalSlide'
 
+const ROADMAP_WRAPPER = styled.div`
+  .elipse {
+    height: 60px;
+    width: 60px;
+    margin-left: 25px;
+    margin-top: -100px;
+  }
+  .verticalLine {
+    width: 40%;
+    height: 5px;
+    margin-top: -100px;
+    margin-left: 20px;
+  }
+  .verticalContainer {
+    margin-top: 30px;
+  }
+  .headingText {
+    font-weight: 600;
+    font-size: 20px;
+    margin-left: 75%;
+    line-height: 20px;
+    right: 15px;
+  }
+  .subHeadingText {
+    font-weight: 500;
+    font-size: 15px;
+    right: 10px;
+    line-height: 18px;
+    color: #b5b5b5;
+    text-align: right;
+    width: 340px;
+    padding-top: 5px;
+    margin-left: 55%;
+  }
+`
 const GOLDEN_POPUP = styled.div`
   background: ${({ theme }) => theme.bg2};
   margin: auto;
@@ -68,11 +103,11 @@ const ToggleBG = styled.span`
 const TEAM_MEMBER_WRAPPER = styled.div`
   display: grid;
   grid-template-columns: auto auto auto;
-  margin: 40px 40px 0px 40px;
   .avatar {
     cursor: pointer;
     margin-bottom: 20px;
-    margin-left: 60px;
+    margin-left: 37%;
+    margin-top: 15px;
   }
   .userNameText {
     display: flex;
@@ -215,6 +250,7 @@ const VESTING_WRAPPER = styled.div`
     margin: auto;
     margin-left: 40px;
     margin-right: 40px;
+    text-align: center;
     font-weight: 600;
     font-size: 22px;
     .percentText {
@@ -413,7 +449,7 @@ export const InfoDivUSDCTheme = () => {
 export const MintStarts = ({ time }) => {
   const getRemaningTime = (time) => {
     //item?.startsOn;
-    const startsOn = 1654888451000
+    const startsOn = parseFloat(time)
     const timeDiffrence = startsOn - Date.now()
     let seconds = Number(timeDiffrence / 1000)
     var d = Math.floor(seconds / (3600 * 24))
@@ -507,29 +543,46 @@ export const GoldenTicketPopup = ({}) => {
   )
 }
 
-export const TeamMembers = () => {
-  const twitterLinks = [
-    'https://twitter.com/elonmusk',
-    'https://twitter.com/elonmusk',
-    'https://twitter.com/elonmusk',
-    'https://twitter.com/elonmusk',
-    'https://twitter.com/elonmusk',
-    'https://twitter.com/elonmusk',
-    'https://twitter.com/elonmusk',
-    'https://twitter.com/elonmusk'
-  ]
+export const TeamMembers = ({ teamMembers }) => {
   return (
     <TEAM_MEMBER_WRAPPER>
-      {twitterLinks.map((twitter) => {
+      {teamMembers?.map((team) => {
         return (
           <div>
-            <a className="avatar" href={twitter} target="_blank">
-              <img src={`/img/assets/avatarDark.png`} alt="" />
-            </a>
-            <div className="userNameText">{twitter.substring(20)}</div>
+            {team?.dp_url ? (
+              <div className="avatar">
+                <img src={team?.dp_url} alt="" />
+              </div>
+            ) : (
+              <div className="avatar">
+                <img src={`/img/assets/avatarDark.png`} alt="" />
+              </div>
+            )}
+            <div className="userNameText">{team?.name}</div>
           </div>
         )
       })}
     </TEAM_MEMBER_WRAPPER>
+  )
+}
+
+export const RoadMap = ({ roadmap }) => {
+  console.log(roadmap)
+  return (
+    <ROADMAP_WRAPPER>
+      {roadmap?.map((road) => {
+        return (
+          <div className="verticalContainer">
+            <div className="headingText">{road?.heading}</div>
+            <div className="subHeadingText">
+              {road?.subheading}
+              {road?.subheading}
+            </div>
+            <img className="elipse" src="/img/assets/elipse.png" alt="" />
+            <img className="verticalLine" src="/img/assets/vectorLine.svg" alt="" />
+          </div>
+        )
+      })}
+    </ROADMAP_WRAPPER>
   )
 }
