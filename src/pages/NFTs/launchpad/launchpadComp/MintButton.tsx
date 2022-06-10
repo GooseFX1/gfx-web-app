@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState, useMemo, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { IProjectParams } from '../../../../types/nft_launchpad'
-import { fetchSelectedNFTLPData } from '../../../../api/NFTLaunchpad'
 import { useNFTLPSelected } from '../../../../context/nft_launchpad'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
@@ -10,16 +9,13 @@ import * as anchor from '@project-serum/anchor'
 import {
   awaitTransactionSignatureConfirmation,
   createAccountsForMint,
-  getCandyMachineState,
-  getCollectionPDA,
   mintOneToken,
   SetupState,
-  CandyMachineAccount,
   CANDY_MACHINE_PROGRAM
 } from '../candyMachine/candyMachine'
-import { getAtaForMint, toDate, AlertState } from '../candyMachine/utils'
-import { Transaction, Commitment, PublicKey } from '@solana/web3.js'
-import { GatewayProvider, GatewayStatus, useGateway } from '@civic/solana-gateway-react'
+import { AlertState } from '../candyMachine/utils'
+import { Transaction, PublicKey } from '@solana/web3.js'
+import { GatewayProvider } from '@civic/solana-gateway-react'
 import { sendTransaction } from '../candyMachine/connection'
 import { MintButtonFunc } from './MintButtonFunc'
 import { notify } from '../../../../utils'
@@ -40,7 +36,7 @@ const MESSAGE = styled.div`
   }
 `
 
-export const MintButton: FC<{ isLive: number }> = ({ isLive }) => {
+export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
   const params = useParams<IProjectParams>()
   const wallet = useWallet()
   const { connection } = useConnectionConfig()
