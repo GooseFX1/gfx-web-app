@@ -17,9 +17,9 @@ const MINT_BUTTON_BAR = styled.div`
   margin-top: -100px;
   height: 70px;
   z-index: 99;
-  position: absolute;
+  position: relative;
   border-radius: 0 0 25px 25px;
-  width: 44%;
+  width: 100%;
   backdrop-filter: blur(23.9091px);
   background: radial-gradient(
     81.62% 135.01% at 15.32% 21.04%,
