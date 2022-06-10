@@ -103,7 +103,7 @@ export const SingleCollection: FC = () => {
   const wallet = useWallet()
   const { selectedProject } = useNFTLPSelected()
 
-  const isLive = parseInt(selectedProject?.startsOn) < Date.now() && 0
+  const isLive = parseInt(selectedProject?.startsOn) < Date.now()
   return (
     <div>
       <TokenSwitch />
