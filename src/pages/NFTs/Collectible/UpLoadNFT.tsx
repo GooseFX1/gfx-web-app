@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import isEmpty from 'lodash/isEmpty'
 import styled from 'styled-components'
 
@@ -13,10 +13,12 @@ import MintPaymentConfirmation from './MintPaymentConfirmation'
 import UploadProgress from './UploadProgress'
 import AddAttribute from './AddAttribute'
 import RoyaltiesStep from './RoyaltiesStep'
-import { useDarkMode, useNFTDetails, useConnectionConfig } from '../../../context'
+import { useDarkMode, useNFTDetails, useConnectionConfig, useNFTProfile } from '../../../context'
 import { mintNFT, MetadataCategory, ENDPOINTS } from '../../../web3'
 import { notify } from '../../../utils'
 import { ButtonWrapper } from '../NFTButton'
+import apiClient from '../../../api'
+import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
 
 //#region styles
 const UPLOAD_CONTENT = styled.div`
@@ -230,12 +232,18 @@ const FLOATING_ACTION_ICON = styled.img`
 `
 //#endregion
 
+interface RouteParams {
+  draftId?: string
+}
+
 export const UpLoadNFT = (): JSX.Element => {
   const { mode } = useDarkMode()
   const history = useHistory()
+  const { draftId } = useParams<RouteParams>()
   const { nftMintingData, setNftMintingData } = useNFTDetails()
   const wallet = useWallet()
   const { connection } = useConnectionConfig()
+  const { sessionUser } = useNFTProfile() //sessionUser.user_id
   const [localFiles, setLocalFiles] = useState<any>()
   const [filesForUpload, setFilesForUpload] = useState<File[]>([])
   const [creatorModal, setCreatorModal] = useState(false)
@@ -247,6 +255,9 @@ export const UpLoadNFT = (): JSX.Element => {
   const [isMinting, setIsMinting] = useState(false)
   const [nftCreateProgress, setNFTcreateProgress] = useState<number>(0)
   const [congrats, setCongrats] = useState<boolean>(false)
+  const [s3Link, setS3Link] = useState<string>('')
+  const [loaded, setLoaded] = useState<boolean>(false)
+  const [draft_id, setDraftId] = useState(null)
 
   useEffect(() => {
     if (!wallet.publicKey) {
@@ -296,9 +307,112 @@ export const UpLoadNFT = (): JSX.Element => {
     }))
   }, [setNftMintingData, localAttributes])
 
+  useEffect(() => {
+    async function pullDraft() {
+      try {
+        const res = await apiClient(NFT_API_BASE).get(
+          draftId
+            ? `${NFT_API_ENDPOINTS.DRAFTS}?&draft_id=${draftId}`
+            : `${NFT_API_ENDPOINTS.DRAFTS}?user_id=${sessionUser?.user_id}`
+        )
+        const data = await res.data
+        const result = data[data.length - 1]
+        if (result) {
+          setLoaded(true)
+          const url = await fetch(nftMintingData.image)
+          const blob = await url.blob()
+          const name = nftMintingData.image.split('/')[nftMintingData.image.split('/').length - 1]
+          const file = new File([blob], name, { type: blob.type })
+
+          setNftMintingData({
+            name: result.name || '',
+            symbol: result.symbol || '',
+            description: result.description || '',
+            external_url: result.external_url || '',
+            image: result.image || '',
+            animation_url: result.animation_url || undefined,
+            attributes: result.attributes || undefined,
+            sellerFeeBasisPoints: result.seller_fee_basis_points || 0,
+            creators: result.creators || [],
+            properties: result.properties || { files: [], category: MetadataCategory.Image, maxSupply: 1 },
+            draftLoaded: true
+          })
+          setFilesForUpload([file])
+          ///setLocalFiles(mainFile)
+          setS3Link(result.image)
+          setDraftId(result.draft_id)
+          setLocalAttributes(result?.attributes)
+        } else {
+          setNftMintingData({
+            name: '',
+            symbol: '',
+            description: '',
+            external_url: '',
+            image: '',
+            animation_url: undefined,
+            attributes: undefined,
+            sellerFeeBasisPoints: 0,
+            creators: [],
+            properties: {
+              files: [],
+              category: MetadataCategory.Image,
+              maxSupply: 1
+            }
+          })
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    if (sessionUser?.user_id) {
+      pullDraft()
+    }
+  }, [draftId, sessionUser, sessionUser?.user_id])
+
+  console.log({ s3Link })
   const handleUploadNFT = () => {
     console.log('Confirm Price')
     setIsConfirmingMintPrice(true)
+
+    async function saveDraft() {
+      try {
+        const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.DRAFTS}`, {
+          ...nftMintingData,
+          seller_fee_basis_points: nftMintingData.sellerFeeBasisPoints,
+          user_id: sessionUser.user_id,
+          image: s3Link
+        })
+
+        await res.data
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    async function updateDraft() {
+      try {
+        const res = await apiClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.DRAFTS}`, {
+          draft_id: draft_id,
+          new_draft_data: {
+            ...nftMintingData,
+            seller_fee_basis_points: nftMintingData.sellerFeeBasisPoints,
+            user_id: sessionUser.user_id,
+            image: s3Link || nftMintingData.image,
+            draft_id: draft_id
+          }
+        })
+        await res.data
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    if (loaded) {
+      updateDraft()
+    } else {
+      saveDraft()
+    }
   }
 
   const handleConfirmMint = async () => {
@@ -431,6 +545,7 @@ export const UpLoadNFT = (): JSX.Element => {
                 setPreviewImage={setLocalFiles}
                 nftMintingData={nftMintingData}
                 setNftMintingData={setNftMintingData}
+                setS3Link={setS3Link}
               />
             </div>
             <div>
@@ -461,6 +576,10 @@ export const UpLoadNFT = (): JSX.Element => {
                   categories={categoryOptions}
                   className="category"
                   onChange={handleSelectCategory}
+                  chosenCategory={
+                    nftMintingData?.properties?.category?.[0]?.toUpperCase() +
+                    nftMintingData?.properties?.category?.slice(1)
+                  }
                   style={{
                     width: 132,
                     height: 41,
@@ -501,7 +620,7 @@ export const UpLoadNFT = (): JSX.Element => {
             </div>
           </UPLOAD_INFO_CONTAINER>
           <PREVIEW_UPLOAD_CONTAINER>
-            <PreviewImage file={localFiles} />
+            <PreviewImage file={localFiles} image_url={nftMintingData.image} />
             <BUTTON_SECTION>
               <NEXT_BUTTON onClick={handleUploadNFT} disabled={disabled}>
                 <span>Next Steps</span>
