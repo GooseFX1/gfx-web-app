@@ -7,6 +7,19 @@ import { ButtonWrapper } from '../NFTButton'
 import { MetadataCategory, MetadataFile } from '../../../web3'
 import { getLast } from '../../../utils'
 import { IMetadataContext } from '../../../types/nft_details.d'
+import { uploadFile } from 'react-s3'
+
+const S3_BUCKET = 'gfx-nest-image-resources'
+const REGION = 'ap-south-1'
+const ACCESS_KEY = process.env.REACT_APP_S3_ACCESS_KEY
+const SECRET_ACCESS_KEY = process.env.REACT_APP_S3_SECRET_ACCESS_KEY
+
+const config = {
+  bucketName: S3_BUCKET,
+  region: REGION,
+  accessKeyId: ACCESS_KEY,
+  secretAccessKey: SECRET_ACCESS_KEY
+}
 
 const { Text } = Typography
 
@@ -142,14 +155,44 @@ interface Props {
   setFilesForUpload: (value: File[]) => void
   nftMintingData: IMetadataContext
   setNftMintingData: (data: IMetadataContext) => void
+  setS3Link: (value: string) => void
 }
 
-export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingData, setNftMintingData }: Props) => {
+export const UploadCustom = ({
+  setPreviewImage,
+  setFilesForUpload,
+  nftMintingData,
+  setNftMintingData,
+  setS3Link
+}: Props) => {
   const [coverArtError, setCoverArtError] = useState<string>()
   // const [coverFile, setCoverFile] = useState<File | undefined>()
   const [mainFile, setMainFile] = useState<File | undefined>()
   const [customURL, setCustomURL] = useState<string>('')
-  const [localFile, setLocalFile] = useState<any>()
+  const [localFile, setLocalFile] = useState<any>(null)
+
+  useEffect(() => {
+    async function getData() {
+      const url = await fetch(nftMintingData.image)
+      const blob = await url.blob()
+      const name = nftMintingData.image.split('/')[nftMintingData.image.split('/').length - 1]
+      const file = new File([blob], name, { type: blob.type })
+      const mainFile = {
+        error: null,
+        name: name,
+        originFileObj: file,
+        percent: 0,
+        size: file.size,
+        thumbUrl: nftMintingData.image,
+        type: blob.type
+      }
+      setLocalFile(mainFile)
+    }
+
+    if (nftMintingData?.image && nftMintingData?.draftLoaded) {
+      getData()
+    }
+  }, [nftMintingData?.image, nftMintingData?.draftLoaded])
 
   const handleFileChange = async (info: UploadChangeParam<UploadFile<any>>) => {
     let mainFile = info.fileList[0]
@@ -158,11 +201,17 @@ export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingDat
       mainFile.error = null
       delete mainFile.status
     }
+
+    console.log(mainFile)
     setLocalFile(mainFile)
     setPreviewImage(mainFile)
   }
 
   const handleBeforeUpload = (file: File) => {
+    uploadFile(file, config)
+      .then((data: any) => setS3Link(data.location)) //save image link with setS3Link(dataLink)
+      .catch((err) => console.error(err))
+
     setFile(file)
     return false
   }
@@ -247,6 +296,7 @@ export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingDat
         return ''
     }
   }
+  console.log({ localFile })
 
   return (
     <STYLED_UPLOAD_CUSTOM>
@@ -272,6 +322,7 @@ export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingDat
             onPreview={() => {}}
             beforeUpload={handleBeforeUpload}
             onRemove={onRemove}
+            fileList={localFile ? [localFile] : []}
           >
             <div className="image-wrap"></div>
             {!localFile && (
