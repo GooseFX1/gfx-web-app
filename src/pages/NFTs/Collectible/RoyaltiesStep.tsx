@@ -174,6 +174,28 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
   }, [])
 
   useEffect(() => {
+    if (nftMintingData.creators.length > 0) {
+      const initCreator = nftMintingData.creators.map((creator: any) => {
+        const key = creator.address
+        return {
+          key,
+          label: key,
+          value: key,
+          share: creator.share
+        }
+      })
+
+      setFixedCreators(initCreator)
+      setRoyalties(
+        initCreator.map((creator: any) => ({
+          creatorKey: creator.key,
+          amount: creator.share
+        }))
+      )
+    }
+  }, [nftMintingData.creators])
+
+  useEffect(() => {
     if (visible) {
       setRoyalties(
         [...fixedCreators, ...creators].map((creator) => ({
@@ -333,6 +355,7 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
                   })
                 }}
                 className="royalties-input"
+                value={nftMintingData.sellerFeeBasisPoints / 100 || ''}
               />
             </Col>
           </Row>
