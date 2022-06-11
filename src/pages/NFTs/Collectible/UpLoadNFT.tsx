@@ -370,6 +370,8 @@ export const UpLoadNFT = (): JSX.Element => {
     }
   }, [draftId, sessionUser, sessionUser?.user_id])
 
+  console.log({ s3Link })
+
   const handleUploadNFT = () => {
     console.log('Confirm Price')
     setIsConfirmingMintPrice(true)
