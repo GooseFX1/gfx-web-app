@@ -44,6 +44,7 @@ export interface IMetadataContext {
   properties: any
   creators: Creator[] | null
   sellerFeeBasisPoints: number
+  draftLoaded: boolean
 }
 
 export type INFTMetadata = {
