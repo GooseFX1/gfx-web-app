@@ -156,6 +156,7 @@ interface Props {
   nftMintingData: IMetadataContext
   setNftMintingData: (data: IMetadataContext) => void
   setS3Link: (value: string) => void
+  setDisabled: (value: boolean) => void
 }
 
 export const UploadCustom = ({
@@ -163,13 +164,15 @@ export const UploadCustom = ({
   setFilesForUpload,
   nftMintingData,
   setNftMintingData,
-  setS3Link
+  setS3Link,
+  setDisabled
 }: Props) => {
   const [coverArtError, setCoverArtError] = useState<string>()
   // const [coverFile, setCoverFile] = useState<File | undefined>()
   const [mainFile, setMainFile] = useState<File | undefined>()
   const [customURL, setCustomURL] = useState<string>('')
   const [localFile, setLocalFile] = useState<any>(null)
+  const [upload, setUpload] = useState<any>(false)
 
   useEffect(() => {
     async function getData() {
@@ -189,10 +192,10 @@ export const UploadCustom = ({
       setLocalFile(mainFile)
     }
 
-    if (nftMintingData?.image && nftMintingData?.draftLoaded) {
+    if (nftMintingData?.image && !upload) {
       getData()
     }
-  }, [nftMintingData?.image, nftMintingData?.draftLoaded])
+  }, [nftMintingData?.image, upload])
 
   const handleFileChange = async (info: UploadChangeParam<UploadFile<any>>) => {
     let mainFile = info.fileList[0]
@@ -202,14 +205,18 @@ export const UploadCustom = ({
       delete mainFile.status
     }
 
-    console.log(mainFile)
+    setUpload(true)
     setLocalFile(mainFile)
     setPreviewImage(mainFile)
   }
 
   const handleBeforeUpload = (file: File) => {
+    setDisabled(true)
     uploadFile(file, config)
-      .then((data: any) => setS3Link(data.location)) //save image link with setS3Link(dataLink)
+      .then((data: any) => {
+        setS3Link(data.location)
+        setDisabled(false)
+      }) //save image link with setS3Link(dataLink)
       .catch((err) => console.error(err))
 
     setFile(file)
@@ -296,14 +303,13 @@ export const UploadCustom = ({
         return ''
     }
   }
-  console.log({ localFile })
 
   return (
     <STYLED_UPLOAD_CUSTOM>
       {coverArtError ? (
         <STYLED_UPLOAD_ERROR>
           <img className="image-broken" src={`/img/assets/image-broken.svg`} alt="" />
-          <div className="desc-failed">Your file is broken or corrupted, pelase try again.</div>
+          <div className="desc-failed">Your file is broken or corrupted, please try again.</div>
           <img className="remove-icon" src={`/img/assets/remove-icon.svg`} alt="" onClick={onRemove} />
           {localFile && coverArtError && (
             <div>
