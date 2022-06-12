@@ -303,7 +303,6 @@ export const UploadCustom = ({
         return ''
     }
   }
-  console.log({ localFile })
 
   return (
     <STYLED_UPLOAD_CUSTOM>
