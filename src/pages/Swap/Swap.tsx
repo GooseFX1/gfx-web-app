@@ -618,8 +618,15 @@ const TokenContent: FC = () => {
       const token = tokens.data.find((i) => i.symbol.toLowerCase() === tokenA.symbol.toLowerCase())
       CoinGeckoClient.coins.fetch(token?.id || null, {}).then(async (data: any) => {
         data = data.data
-        const fetchData = await fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
-        const res = await fetchData.json()
+        let res = null
+
+        try {
+          const fetchData = await fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
+          res = await fetchData.json()
+        } catch (e) {
+          console.log(e)
+        }
+
         // await connection.getProgramAccounts(TOKEN_PROGRAM_ID, {
         //   // dataSlice: {
         //   //   offset: 0, // number of bytes
