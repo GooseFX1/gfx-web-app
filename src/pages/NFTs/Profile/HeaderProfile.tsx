@@ -358,10 +358,10 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   <img className="social-icon" src={`/img/assets/instagram.svg`} alt="" />
                 </a>
               )}
-              {currentUserProfile.facebook_link && (
+              {currentUserProfile.telegram_link && (
                 <a
                   className="social-item"
-                  href={validExternalLink(currentUserProfile.facebook_link)}
+                  href={validExternalLink(currentUserProfile.telegram_link)}
                   target={'_blank'}
                   rel={'noreferrer'}
                 >
