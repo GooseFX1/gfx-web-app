@@ -123,6 +123,8 @@ const TEAM_MEMBER_WRAPPER = styled.div`
 const INFO_DIV_LIGHT = styled.div`
   display: flex;
   margin-right: 20px;
+  width: 170px;
+  height: 45px;
   justify-content: center;
   align-items: center;
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
@@ -130,18 +132,28 @@ const INFO_DIV_LIGHT = styled.div`
   padding: 1px;
 
   .inner {
+    width: 100%;
+    height: 100%;
     border-radius: 47px;
     background: ${({ theme }) => theme.bg9};
   }
 
   .inner-2 {
-    padding: 12px 24px;
+    position: relative;
+    width: 100%;
+    height: 100%;
     border-radius: 47px !important;
     background: ${({ theme }) => theme.infoDivBackground};
     color: ${({ theme }) => theme.text1};
     font-weight: 600;
     font-size: 15px;
-    line-height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+  .priceImg {
+    height: 25px;
+    width: 25px;
   }
 `
 const USDC_INFO = styled.div`
@@ -392,7 +404,13 @@ export const InfoDivLightTheme = ({ items, price, currency }) => {
         <div className={'inner'}>
           {price ? (
             <>
-              <span className="inner-2">{'Price: ' + price + ' ' + currency}</span>
+              <div className="inner-2">
+                <>
+                  {'Price ' + price + ' '}
+                  <img className="priceImg" src={`/img/crypto/${currency}.svg`} />
+                  {currency}
+                </>
+              </div>
             </>
           ) : (
             <div className="inner-2">{'Items ' + items}</div>
