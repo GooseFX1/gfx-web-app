@@ -36,8 +36,8 @@ export const Collection: FC = (): JSX.Element => {
   }, [])
 
   useEffect(() => {
-    if (!singleCollection || `${singleCollection.collection_id}` !== params.collectionId) {
-      fetchSingleCollection(params.collectionId).then((res) => {
+    if (!singleCollection || `${singleCollection.collection_id}` !== params.collectionName) {
+      fetchSingleCollection(params.collectionName).then((res) => {
         if (res.response && res.response.status !== 200) {
           setErr(true)
         }
@@ -45,7 +45,7 @@ export const Collection: FC = (): JSX.Element => {
     }
 
     return () => {}
-  }, [fetchSingleCollection, params.collectionId, singleCollection])
+  }, [fetchSingleCollection, params.collectionName, singleCollection])
 
   return err ? (
     <h2>Something went wrong fetching the collection details</h2>
