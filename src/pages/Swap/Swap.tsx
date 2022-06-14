@@ -616,29 +616,20 @@ const TokenContent: FC = () => {
     const tokens = await CoinGeckoClient.coins.list()
     if (tokenA) {
       const token = tokens.data.find((i) => i.symbol.toLowerCase() === tokenA.symbol.toLowerCase())
+
       CoinGeckoClient.coins
         .fetch(token?.id || null, {})
-        .then(async (data: any) => {
-          data = data.data
-          const fetchData = await fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
-          const res = await fetchData.json()
-          // await connection.getProgramAccounts(TOKEN_PROGRAM_ID, {
-          //   // dataSlice: {
-          //   //   offset: 0, // number of bytes
-          //   //   length: 0 // number of bytes
-          //   // },
-          //   filters: [
-          //     {
-          //       dataSize: 165 // number of bytes
-          //     },
-          //     {
-          //       memcmp: {
-          //         offset: 0, // number of bytes
-          //         bytes: tokenA.address // base58 encoded string
-          //       }
-          //     }
-          //   ]
-          // })
+        .then(async (cgData: any) => {
+          const data = cgData.data
+          let res = null
+
+          try {
+            const fetchData = await fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
+            res = await fetchData.json()
+          } catch (e) {
+            console.error(e)
+          }
+
           setDetails([
             { name: 'Price', value: data?.market_data?.current_price?.usd || '0.0', currency: '$' },
             {
@@ -713,7 +704,7 @@ const TokenContent: FC = () => {
 }
 
 const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes }) => {
-  const { tokenA, tokenB, inTokenAmount, outTokenAmount } = useSwap()
+  const { tokenA, tokenB, inTokenAmount } = useSwap()
 
   const [details, setDetails] = useState([
     { name: 'Price Impact', value: '0%' },
