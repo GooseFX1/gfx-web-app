@@ -1,0 +1,36 @@
+import { TransactionInstruction, PublicKey } from '@solana/web3.js' // eslint-disable-line @typescript-eslint/no-unused-vars
+import BN from 'bn.js' // eslint-disable-line @typescript-eslint/no-unused-vars
+import * as borsh from '@project-serum/borsh' // eslint-disable-line @typescript-eslint/no-unused-vars
+import { PROGRAM_ID } from '../programId'
+
+export interface PurchaseWithGofxAccounts {
+  payer: PublicKey
+  nftVault: PublicKey
+  nftUserAccount: PublicKey
+  gofxUserAccount: PublicKey
+  gofxVault: PublicKey
+  nftAuth: PublicKey
+  gofxMint: PublicKey
+  nftMint: PublicKey
+  tokenProgram: PublicKey
+  systemProgram: PublicKey
+}
+
+export function purchaseWithGofx(accounts: PurchaseWithGofxAccounts) {
+  const keys = [
+    { pubkey: accounts.payer, isSigner: true, isWritable: true },
+    { pubkey: accounts.nftVault, isSigner: false, isWritable: true },
+    { pubkey: accounts.nftUserAccount, isSigner: false, isWritable: true },
+    { pubkey: accounts.gofxUserAccount, isSigner: false, isWritable: true },
+    { pubkey: accounts.gofxVault, isSigner: false, isWritable: true },
+    { pubkey: accounts.nftAuth, isSigner: false, isWritable: true },
+    { pubkey: accounts.gofxMint, isSigner: false, isWritable: false },
+    { pubkey: accounts.nftMint, isSigner: false, isWritable: false },
+    { pubkey: accounts.tokenProgram, isSigner: false, isWritable: false },
+    { pubkey: accounts.systemProgram, isSigner: false, isWritable: false }
+  ]
+  const identifier = Buffer.from([118, 31, 242, 9, 254, 162, 200, 84])
+  const data = identifier
+  const ix = new TransactionInstruction({ keys, programId: PROGRAM_ID, data })
+  return ix
+}
