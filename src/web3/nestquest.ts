@@ -3,8 +3,8 @@ import { BaseSignerWalletAdapter } from '@solana/wallet-adapter-base'
 import { purchaseWithSol } from './nestquest-codegen/instructions/purchaseWithSol'
 import { purchaseWithGofx } from './nestquest-codegen/instructions/purchaseWithGofx'
 import { PROGRAM_ID } from './nestquest-codegen/programId'
-import { createAssociatedTokenAccountInstruction } from './web3/account'
-import { TOKEN_PROGRAM_ID, ADDRESSES } from './web3/ids'
+import { createAssociatedTokenAccountInstruction } from './account'
+import { TOKEN_PROGRAM_ID, ADDRESSES } from './ids'
 
 const GOFX_MINT = ADDRESSES['mainnet-beta'].mints.GOFX.address
 
