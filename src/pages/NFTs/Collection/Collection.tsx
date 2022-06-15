@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { useNFTCollections, useNavCollapse } from '../../../context'
 import { useParams } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params'
+import { GenericNotFound } from '../../InvalidUrl'
 
 const COLLECTION_CONTAINER = styled.div<{ collapsed: boolean }>`
   height: calc(100vh - ${({ collapsed }) => (collapsed ? '0px' : '88px')});
@@ -38,17 +39,19 @@ export const Collection: FC = (): JSX.Element => {
   useEffect(() => {
     if (!singleCollection || `${singleCollection.collection_id}` !== params.collectionName) {
       fetchSingleCollection(params.collectionName).then((res) => {
-        if (res.response && res.response.status !== 200) {
+        if (res?.status === 200) {
+          setErr(false)
+        } else {
           setErr(true)
         }
       })
     }
 
     return () => {}
-  }, [fetchSingleCollection, params.collectionName, singleCollection])
+  }, [fetchSingleCollection, params.collectionName]) //had to remove singleCollection useState trigger as it leads to infinite loop as setSingleCollection is called in fecthSingleCollection
 
   return err ? (
-    <h2>Something went wrong fetching the collection details</h2>
+    <GenericNotFound />
   ) : (
     <COLLECTION_CONTAINER collapsed={isCollapsed}>
       <CollectionHeader collapse={collapse} setCollapse={setCollapse} setFilter={setFilter} filter={filter} />

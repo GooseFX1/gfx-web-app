@@ -55,6 +55,9 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
         `${NFT_API_ENDPOINTS.SINGLE_COLLECTION}?${isName ? 'collection_name' : 'collection_id'}=${paramValue}`
       )
       const collectionData = await res.data
+      if (!collectionData.collection_id) {
+        return null
+      }
       setSingleCollection(collectionData)
       const fpData = await fetchFixedPriceWithinCollection(collectionData.collection_id)
       setFixedPriceWithinCollection(fpData)
