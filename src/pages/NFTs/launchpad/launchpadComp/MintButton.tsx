@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, useMemo, useCallback } from 'react'
+import React, { FC, useEffect, useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { IProjectParams } from '../../../../types/nft_launchpad'
 import { useNFTLPSelected } from '../../../../context/nft_launchpad'
@@ -14,9 +14,9 @@ import {
   CANDY_MACHINE_PROGRAM
 } from '../candyMachine/candyMachine'
 import { AlertState } from '../candyMachine/utils'
-import { Transaction, PublicKey } from '@solana/web3.js'
+import { Transaction, PublicKey, sendAndConfirmRawTransaction } from '@solana/web3.js'
 import { GatewayProvider } from '@civic/solana-gateway-react'
-import { sendTransaction } from '../candyMachine/connection'
+//import { sendTransaction } from '../candyMachine/connection'
 import { MintButtonFunc } from './MintButtonFunc'
 import { notify } from '../../../../utils'
 import { Col, Row } from 'antd'
@@ -329,6 +329,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
       }}
       gatekeeperNetwork={candyMachine?.state?.gatekeeper?.gatekeeperNetwork}
       clusterUrl={'https://api.devnet.solana.com'}
+      cluster={'devnet'}
       handleTransaction={async (transaction: Transaction) => {
         setIsUserMinting(true)
         const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(wallet.publicKey!))
@@ -383,7 +384,11 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
           })
         }
         try {
-          await sendTransaction(connection, wallet, transaction, [], true, 'confirmed')
+          // await sendTransaction(connection, wallet, transaction, [], true, 'confirmed')
+          let res = await sendAndConfirmRawTransaction(connection, transaction.serialize())
+          console.log(res)
+          //  //let res2 = await connection.confirmTransaction(res1)
+          //  console.log(res)
           //  setAlertState({
           //    open: true,
           //    message: 'Please sign minting',
