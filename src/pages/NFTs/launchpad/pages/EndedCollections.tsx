@@ -4,9 +4,12 @@ import Slider from 'react-slick'
 import styled, { css } from 'styled-components'
 import { Col, Dropdown, Row, Menu, Checkbox, Button, Card } from 'antd'
 import Meta from 'antd/lib/card/Meta'
+import { useHistory } from 'react-router-dom'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
+import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 
 import { theme } from '../../../../theme'
+import { GetNftPrice } from './FeaturedLaunch'
 
 const CAROUSEL_WRAPPER = styled.div`
   position: relative;
@@ -146,7 +149,7 @@ const SLIDER_ITEM = styled.div`
   }
 `
 
-const NFT_SOLD = styled.div`
+export const NFT_SOLD = styled.div`
   position: absolute;
   width: 300px;
   height: 100%;
@@ -203,21 +206,14 @@ const EndedCollections: FC = () => {
     prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-previous" />
   }
   const loading = [1, 2, 3, 4, 5]
-  const [upcomingList, setUpcomingList] = useState([])
-  useEffect(() => {
-    async function getMockCollections() {
-      const mockData = await axios.get('https://nest-api.goosefx.io/open-bid?collection_id=4')
-      setUpcomingList(mockData.data.open_bid.slice(10, 20))
-    }
-    getMockCollections()
-  }, [])
+  const [endedList, setEndedList] = useState([])
+  const { endedNFTProjects } = useNFTLaunchpad()
+  const history = useHistory()
 
-  const getNftPrice = () => {
-    return '02 SOL'
-  }
-  const getRemaningTime = (): string => {
-    return '02h 30m 45s'
-  }
+  useEffect(() => {
+    console.log(endedNFTProjects)
+    setEndedList(endedNFTProjects)
+  }, [endedNFTProjects])
   const FLEX = styled.div`
     display: flex;
     margin: 24px;
@@ -227,50 +223,58 @@ const EndedCollections: FC = () => {
   `
   return (
     <>
-      <ENDED_TEXT>Ended</ENDED_TEXT>
-      {upcomingList.length > 0 ? (
+      {endedList && endedList.length > 0 ? (
         <>
-          <Row justify="center" align="middle" className="imageRow">
-            <CAROUSEL_WRAPPER>
-              <Slider {...settings}>
-                {upcomingList.map((item, index) => {
-                  return (
-                    <SLIDER_ITEM>
-                      <Card
-                        cover={
-                          <>
-                            <img className="nft-img" src={item.image_url} alt="NFT" />
-                            <NFT_SOLD>
-                              <div className="collection-name">{item.nft_name}</div>
-                              <div className="sold-text">SOLD OUT</div>
-                            </NFT_SOLD>
-                            <NFT_META>
-                              <span className="column">
-                                <NFT_INFO> Items 7,000 </NFT_INFO>
-                                <NFT_INFO>Price 25 SOL </NFT_INFO>
-                              </span>
-                            </NFT_META>
-                          </>
-                        }
-                        className="sweep-card"
-                      ></Card>
-                    </SLIDER_ITEM>
-                  )
-                })}
-              </Slider>
-            </CAROUSEL_WRAPPER>
-          </Row>
+          <ENDED_TEXT>Ended</ENDED_TEXT>
+          {endedList.length > 0 ? (
+            <>
+              <Row justify="center" align="middle" className="imageRow">
+                <CAROUSEL_WRAPPER>
+                  <Slider {...settings}>
+                    {endedList.map((item, index) => {
+                      return (
+                        <SLIDER_ITEM key={index} onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
+                          <Card
+                            cover={
+                              <>
+                                <img className="nft-img" src={item.coverUrl} alt="NFT" />
+                                <NFT_SOLD>
+                                  <div className="collection-name">{item?.collectionName}</div>
+                                  <div className="sold-text">SOLD OUT</div>
+                                </NFT_SOLD>
+                                <NFT_META>
+                                  <span className="column">
+                                    <NFT_INFO> {item?.items} </NFT_INFO>
+                                    <NFT_INFO>
+                                      <GetNftPrice item={item} />
+                                    </NFT_INFO>
+                                  </span>
+                                </NFT_META>
+                              </>
+                            }
+                            className="sweep-card"
+                          ></Card>
+                        </SLIDER_ITEM>
+                      )
+                    })}
+                  </Slider>
+                </CAROUSEL_WRAPPER>
+              </Row>
+            </>
+          ) : (
+            <FLEX>
+              {loading.map(() => {
+                return (
+                  <div className="space">
+                    <SkeletonCommon width="300px" height="300px" borderRadius="15px" />
+                  </div>
+                )
+              })}
+            </FLEX>
+          )}
         </>
       ) : (
-        <FLEX>
-          {loading.map(() => {
-            return (
-              <div className="space">
-                <SkeletonCommon width="300px" height="300px" borderRadius="15px" />
-              </div>
-            )
-          })}
-        </FLEX>
+        <></>
       )}
     </>
   )
