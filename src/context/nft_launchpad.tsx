@@ -1,4 +1,4 @@
-import React, { FC, useState, ReactNode, createContext, useContext, Dispatch, useMemo, useEffect } from 'react'
+import React, { FC, useState, ReactNode, createContext, useContext, useMemo, useEffect } from 'react'
 import { fetchAllNFTLaunchpadData } from '../api/NFTLaunchpad'
 import { useParams } from 'react-router-dom'
 import { IProjectParams } from '../types/nft_launchpad'
@@ -309,7 +309,8 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
           } else {
             cndyState['itemsRemaining'] = cndy.state.itemsRemaining
           }
-
+          cndyState['itemsRedeemed'] = cndy.state.itemsRedeemed
+          cndyState['itemsAvailable'] = cndy.state.itemsAvailable
           if (cndy.state.isSoldOut) {
             active = false
           }
@@ -368,11 +369,11 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
 
   useEffect(() => {
     ;(async () => {
-      setInterval(async () => {
-        const data = await fetchSelectedNFTLPData(params.urlName)
-        refreshCandyMachineState(data.data.candyMachine)
-        setSelectedProject(data.data)
-      }, 100000)
+      //setInterval(async () => {
+      const data = await fetchSelectedNFTLPData(params.urlName)
+      refreshCandyMachineState(data.data.candyMachine)
+      setSelectedProject(data.data)
+      //}, 100000)
     })()
   }, [])
 
