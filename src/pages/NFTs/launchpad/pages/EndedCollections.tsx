@@ -1,0 +1,279 @@
+import React, { useState, useEffect, FC } from 'react'
+import axios from 'axios'
+import Slider from 'react-slick'
+import styled, { css } from 'styled-components'
+import { Col, Dropdown, Row, Menu, Checkbox, Button, Card } from 'antd'
+import Meta from 'antd/lib/card/Meta'
+import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
+
+import { theme } from '../../../../theme'
+
+const CAROUSEL_WRAPPER = styled.div`
+  position: relative;
+  width: 100% !important;
+  height: 100%;
+  margin-left: -40px;
+  margin-bottom: 40px;
+  .fade {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 99%;
+    width: 180px;
+    background: ${({ theme }) => theme.fade};
+  }
+  .slick-prev,
+  .slick-next {
+    width: 45px;
+    height: 45px;
+    z-index: 2;
+
+    &.slick-disabled {
+      opacity: 0;
+    }
+    .sold-out {
+    }
+  }
+
+  .slick-prev {
+    top: calc(50% - 38px);
+    left: 25px;
+    transform: rotate(180deg);
+  }
+  .slick-next {
+    right: 0px;
+  }
+  .slick-list {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+    justify-content: center;
+    padding-left: ${({ theme }) => theme.margin(2)};
+    padding-right: ${({ theme }) => theme.margin(2)};
+  }
+  .slick-slider {
+    height: 100%;
+  }
+
+  .slick-slide {
+    margin-right: ${({ theme }) => theme.margin(3)};
+  }
+`
+const NFT_CONTAINER = styled.div`
+  opacity: 0.8;
+  .slick-slide slick-active {
+    border: 12px solid green;
+    height: 200px;
+  }
+
+  .slick-slide img {
+    height: 200px;
+  }
+`
+
+const ENDED_TEXT = styled.div`
+  margin-top: 150px;
+  font-weight: 700;
+  font-size: 30px;
+  margin-bottom: 40px;
+`
+
+const NFT_TITLE = styled.div`
+  font-weight: 600;
+  font-size: 22px !important;
+`
+const NFT_INFO = styled.div`
+  font-weight: 600;
+  line-height: 22px;
+  font-size: 18px !important;
+  margin-bottom: 10px;
+`
+const SLIDER_ITEM = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  .sweep-card.failed {
+    opacity: 0.5;
+  }
+  .sweep-card {
+    border: none;
+    .nft-img {
+      border-radius: 15px;
+      padding-bottom: 0px;
+      opacity: 0.4;
+      width: 300px !important;
+      height: 300px;
+    }
+    .ant-card-body {
+      text-align: center;
+      height: 50px;
+      .sweep-price {
+        margin-right: 15px;
+      }
+      .sweeper-solana-logo {
+        height: 10px;
+        width: 10px;
+        display: inline-block;
+        position: absolute;
+        right: 15px;
+      }
+    }
+  }
+  .sweep-nft-name {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 15px;
+    color: ${({ theme }) => theme.text7};
+  }
+  .nft-sweep-success {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    .successIcon {
+      width: 35px;
+      height: 35px;
+    }
+  }
+  .nft-sweep-fail {
+    color: red;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 10px;
+  }
+`
+
+const NFT_SOLD = styled.div`
+  position: absolute;
+  width: 300px;
+  height: 100%;
+  padding-top: 45%;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  bottom: 0px;
+
+  .collection-name {
+    font-weight: 600;
+    font-size: 25px;
+    line-height: 30px;
+  }
+  .sold-text {
+    font-weight: 700;
+    margin-top: 10px;
+    font-size: 20px;
+    line-height: 24px;
+    text-align: center;
+  }
+`
+const NFT_META = styled.div`
+  position: absolute;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 87px;
+  background: linear-gradient(68.66deg, rgba(255, 255, 255, 0.1) 21.47%, rgba(255, 255, 255, 0.015) 102.44%);
+  backdrop-filter: blur(60px);
+  border-radius: 15px 10px 10px 15px;
+  bottom: 0px;
+  .column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 12px;
+  }
+`
+
+const EndedCollections: FC = () => {
+  const settings = {
+    infinite: false,
+    speed: 500,
+    swipeToSlide: true,
+    slidesToScroll: 2,
+    snapCenter: true,
+    initialSlide: 0,
+    slidesToShow: 3,
+    arrows: false,
+    variableWidth: true,
+    nextArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-next" />,
+    prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-previous" />
+  }
+  const loading = [1, 2, 3, 4, 5]
+  const [upcomingList, setUpcomingList] = useState([])
+  useEffect(() => {
+    async function getMockCollections() {
+      const mockData = await axios.get('https://nest-api.goosefx.io/open-bid?collection_id=4')
+      setUpcomingList(mockData.data.open_bid.slice(10, 20))
+    }
+    getMockCollections()
+  }, [])
+
+  const getNftPrice = () => {
+    return '02 SOL'
+  }
+  const getRemaningTime = (): string => {
+    return '02h 30m 45s'
+  }
+  const FLEX = styled.div`
+    display: flex;
+    margin: 24px;
+    .space {
+      margin-right: 24px;
+    }
+  `
+  return (
+    <>
+      <ENDED_TEXT>Ended</ENDED_TEXT>
+      {upcomingList.length > 0 ? (
+        <>
+          <Row justify="center" align="middle" className="imageRow">
+            <CAROUSEL_WRAPPER>
+              <Slider {...settings}>
+                {upcomingList.map((item, index) => {
+                  return (
+                    <SLIDER_ITEM>
+                      <Card
+                        cover={
+                          <>
+                            <img className="nft-img" src={item.image_url} alt="NFT" />
+                            <NFT_SOLD>
+                              <div className="collection-name">{item.nft_name}</div>
+                              <div className="sold-text">SOLD OUT</div>
+                            </NFT_SOLD>
+                            <NFT_META>
+                              <span className="column">
+                                <NFT_INFO> Items 7,000 </NFT_INFO>
+                                <NFT_INFO>Price 25 SOL </NFT_INFO>
+                              </span>
+                            </NFT_META>
+                          </>
+                        }
+                        className="sweep-card"
+                      ></Card>
+                    </SLIDER_ITEM>
+                  )
+                })}
+              </Slider>
+            </CAROUSEL_WRAPPER>
+          </Row>
+        </>
+      ) : (
+        <FLEX>
+          {loading.map(() => {
+            return (
+              <div className="space">
+                <SkeletonCommon width="300px" height="300px" borderRadius="15px" />
+              </div>
+            )
+          })}
+        </FLEX>
+      )}
+    </>
+  )
+}
+
+export default EndedCollections
