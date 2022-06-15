@@ -1,16 +1,11 @@
-import React, { FC, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { IProjectParams } from '../../../../types/nft_launchpad'
+import React, { FC } from 'react'
 import { useNFTLPSelected } from '../../../../context/nft_launchpad'
-import { useWallet } from '@solana/wallet-adapter-react'
 import styled, { css } from 'styled-components'
 import { Col, Row, Tabs } from 'antd'
-import { SOCIAL_MEDIAS } from '../../../../constants'
 import { MintProgressBar, TokenSwitch, MintStarts } from './LaunchpadComponents'
-import { InfoDivLightTheme, InfoDivBrightTheme, Vesting, RoadMap } from './LaunchpadComponents'
+import { InfoDivLightTheme, Vesting, RoadMap } from './LaunchpadComponents'
 import { SVGDynamicReverseMode } from '../../../../styles'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
-import { DETAILS_TAB_CONTENT } from '../../NFTDetails/RightSectionTabs'
 import { MintButton } from '../launchpadComp/MintButton'
 import { TeamMembers } from './LaunchpadComponents'
 
@@ -244,17 +239,17 @@ const SUMMARY_TAB_CONTENT = styled.div`
   font-size: 20px;
 `
 export const SingleCollection: FC = () => {
-  const params = useParams<IProjectParams>()
-  const wallet = useWallet()
-  const [noOfNFTToMint, setNumberOfNftToMint] = useState(1)
-  const { selectedProject } = useNFTLPSelected()
+  const { selectedProject, cndyValues } = useNFTLPSelected()
 
   const isLive = parseInt(selectedProject?.startsOn) < Date.now()
-  const displayProgressBar = isLive ? (
-    <MintProgressBar minted={selectedProject?.itemsMinted} totalNFTs={selectedProject?.items} />
-  ) : (
-    <MintStarts time={selectedProject?.startsOn} />
-  )
+  const displayProgressBar =
+    isLive && cndyValues ? (
+      <MintProgressBar minted={cndyValues?.itemsRedeemed} totalNFTs={cndyValues?.itemsAvailable} />
+    ) : isLive && !cndyValues ? (
+      <SkeletonCommon style={{ marginTop: '20px' }} width="600px" height={'70px'} borderRadius="10px" />
+    ) : (
+      <MintStarts time={selectedProject?.startsOn} />
+    )
   const ProgressBar = selectedProject?.items ? (
     displayProgressBar
   ) : (
