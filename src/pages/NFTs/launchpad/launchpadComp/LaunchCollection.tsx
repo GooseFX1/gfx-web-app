@@ -26,7 +26,7 @@ const TEXT = styled.div`
   font-size: 50px;
 `
 
-const IMG = styled.image`
+const IMG = styled.div`
   width: 149.82px;
   height: 166.62px;
   margin-left: 68px;
