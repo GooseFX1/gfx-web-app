@@ -9,6 +9,129 @@ import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { MintButton } from '../launchpadComp/MintButton'
 import { TeamMembers } from './LaunchpadComponents'
 
+export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
+  ${({ theme, activeTab }) => css`
+    position: relative;
+    .ant-tabs-nav {
+      position: relative;
+      z-index: 1;
+      .ant-tabs-nav-wrap {
+        background-color: #000;
+        border-radius: 15px 15px 25px 25px;
+        padding-top: ${theme.margin(1.5)};
+        padding-bottom: ${theme.margin(1.5)};
+        .ant-tabs-nav-list {
+          justify-content: space-around;
+          width: 100%;
+        }
+      }
+      &:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: ${theme.tabContentBidBackground};
+        border-radius: 15px 15px 0 0;
+      }
+    }
+    .ant-tabs-ink-bar {
+      display: none;
+    }
+    .ant-tabs-top {
+      > .ant-tabs-nav {
+        margin-bottom: 0;
+        &::before {
+          border: none;
+        }
+      }
+    }
+    .ant-tabs-tab {
+      color: #616161;
+      font-size: 14px;
+      font-weight: 500;
+      .ant-tabs-tab-btn {
+        font-size: 17px;
+      }
+      &.ant-tabs-tab-active {
+        .ant-tabs-tab-btn {
+          color: #fff;
+        }
+      }
+    }
+    .desc {
+      font-size: 11px;
+      padding: ${({ theme }) => theme.margin(3)};
+      font-family: Montserrat;
+    }
+    .ant-tabs-content-holder {
+      height: 450px;
+      background-color: ${theme.tabContentBidBackground};
+      transform: translateY(-32px);
+      padding-top: ${({ theme }) => theme.margin(4)};
+      padding-bottom: ${({ theme }) => theme.margin(8)};
+      border-radius: 0 0 25px 25px;
+      .ant-tabs-content {
+        height: 100%;
+        overflow-x: none;
+        overflow-y: scroll;
+        ${({ theme }) => theme.customScrollBar('6px')};
+      }
+    }
+    .rst-footer {
+      width: 100%;
+      position: absolute;
+      display: flex;
+      left: 0;
+      bottom: 0;
+      padding: ${theme.margin(2)};
+      border-radius: 0 0 25px 25px;
+      border-top: 1px solid ${theme.borderColorTabBidFooter};
+      background: ${theme.tabContentBidFooterBackground};
+      backdrop-filter: blur(23.9091px);
+      .rst-footer-button {
+        flex: 1;
+        color: #fff;
+        white-space: nowrap;
+        height: 55px;
+        ${theme.flexCenter}
+        font-size: 17px;
+        font-weight: 600;
+        border: none;
+        border-radius: 29px;
+        padding: 0 ${theme.margin(2)};
+        cursor: pointer;
+        &:not(:last-child) {
+          margin-right: ${theme.margin(1.5)};
+        }
+        &:hover {
+          opacity: 0.8;
+        }
+        &-buy {
+          background-color: ${theme.success};
+        }
+        &-bid {
+          background-color: ${theme.primary2};
+        }
+        &-sell {
+          background-color: #bb3535;
+        }
+        &-flat {
+          background-color: transparent;
+          color: ${theme.text1};
+        }
+      }
+      .rst-footer-share-button {
+        cursor: pointer;
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+  `}
+`
+
 const SOCIAL_ICON = styled.button`
   background: transparent;
   border: none;
