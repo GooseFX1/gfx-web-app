@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Progress, Switch } from 'antd'
 import { ModalSlide } from '../../../../components/ModalSlide'
+import { useSolToggle } from '../../../../context/nftlp_price'
 
 const ROADMAP_WRAPPER = styled.div`
   .elipse {
@@ -283,7 +284,7 @@ const VESTING_WRAPPER = styled.div`
 `
 
 const DARK_DIV = styled.div`
-  width: 747px;
+  width: 45vw;
 
   .dark-1 {
     //biggest
@@ -498,17 +499,23 @@ const TimerCircle = ({ data }) => {
   return <div className="timer-circle">{data}</div>
 }
 
-export const TokenSwitch = () => {
-  const onChange = (change) => {
-    console.log(change)
+export const TokenSwitch = ({ disabled, currency }) => {
+  const { isUSDC, setIsUSDC } = useSolToggle()
+
+  useEffect(() => {
+    if (currency === 'SOL') setIsUSDC(false)
+    else setIsUSDC(true)
+  }, [currency])
+
+  const onChange = () => {
+    setIsUSDC((prev) => !prev)
   }
   return (
     <>
       <SWITCH_HOLDER>
         <ToggleBG>
           <span className="toggle-text">SOL</span>
-
-          <Switch className="switch" defaultChecked onChange={onChange} />
+          <Switch disabled={disabled} className="switch" checked={isUSDC} onChange={onChange} />
           <span className="toggle-text">USDC</span>
         </ToggleBG>
       </SWITCH_HOLDER>
