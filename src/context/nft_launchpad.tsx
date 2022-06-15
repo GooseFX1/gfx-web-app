@@ -46,7 +46,8 @@ export const NFTLaunchpadProvider: FC<{ children: ReactNode }> = ({ children }) 
             endedProject.push(launchpadData[i])
           else liveProject.push(launchpadData[i])
         }
-        setEndedNFTProjects(endedNFTProjects)
+
+        setEndedNFTProjects(endedProject)
         setUpcomingNFTProjects(upcomingProject)
         setLiveNFTProjects(liveProject)
       } catch (err) {

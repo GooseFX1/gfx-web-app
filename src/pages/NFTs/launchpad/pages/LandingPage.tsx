@@ -24,11 +24,10 @@ export const LandingPage: FC = () => {
   return (
     <>
       <WRAPPER>
-        <TokenSwitch />
         <FeaturedLaunch />
         <UpcomingCollections />
         <LaunchCollection />
-        {/* <EndedCollections /> */}
+        <EndedCollections />
       </WRAPPER>
     </>
   )

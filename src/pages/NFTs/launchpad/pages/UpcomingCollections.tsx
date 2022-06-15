@@ -7,6 +7,7 @@ import { Row, Card } from 'antd'
 import { theme } from '../../../../theme'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
+import { GetNftPrice } from './FeaturedLaunch'
 
 const CAROUSEL_WRAPPER = styled.div`
   position: relative;
@@ -201,7 +202,7 @@ const UpcomingCollectins: FC = () => {
               <Slider {...settings}>
                 {upcomingList.map((item, index) => {
                   return (
-                    <SLIDER_ITEM onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
+                    <SLIDER_ITEM key={index} onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
                       <Card
                         cover={
                           <>
@@ -213,7 +214,10 @@ const UpcomingCollectins: FC = () => {
                               </span>
                               <span className="flex">
                                 <NFT_INFO> {getRemaningTime(item)}</NFT_INFO>
-                                <NFT_INFO> {getNftPrice(item)}</NFT_INFO>
+                                <NFT_INFO>
+                                  {' '}
+                                  <GetNftPrice item={item} />
+                                </NFT_INFO>
                               </span>
                             </NFT_META>
                           </>

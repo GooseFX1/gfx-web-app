@@ -9,8 +9,9 @@ import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { MainButton } from '../../../../components/MainButton'
 import { SOCIAL_MEDIAS } from '../../../../constants'
 import { SVGDynamicReverseMode } from '../../../../styles/utils'
-import { InfoDivUSDCTheme, DarkDiv } from './LaunchpadComponents'
+import { InfoDivUSDCTheme, DarkDiv, TokenSwitch } from './LaunchpadComponents'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
+import { useSolToggle } from '../../../../context/nftlp_price'
 
 //#region styles
 const IMAGE = styled.div`
@@ -57,7 +58,6 @@ const NFT_DETAILS = styled.div`
     margin: 20px 70px 0px 0px;
   }
   .nd-details {
-    width: 450px;
   }
   ${({ theme }) => css`
     .nd-back-icon {
@@ -102,7 +102,7 @@ const SUBTITLE = styled.h2`
 `
 
 const LEFT_WRAPPER = styled.div`
-  width: 40vw;
+  width: 35vw;
   .mintContainer {
     display: flex;
     margin-top: 40px;
@@ -170,6 +170,7 @@ const MINT_PROGRESS = styled(Progress)<{ num: number }>`
     left: calc(${({ num }) => num}% - 64px);
   }
 `
+const GRAPHIC_IMG = styled.div``
 
 export const SpaceBetweenDiv = styled.div`
   display: flex;
@@ -199,7 +200,39 @@ const ITEMS = styled.div`
 const PRICE_DISPLAY = styled.div`
   display: flex;
 `
+export const GetNftPrice = ({ item }) => {
+  const { isUSDC, solPrice } = useSolToggle()
+  const [displayCurrencyPrice, setDisplayCurrencyPrice] = useState(item?.price)
+  const [displayCurrency, setDisplayCurrency] = useState('SOL')
+  useEffect(() => {
+    if (item?.currency === 'SOL') {
+      if (isUSDC) setDisplayCurrencyPrice((item?.price * solPrice).toFixed(2))
+      else setDisplayCurrencyPrice(item?.price)
+    } else if (item?.currency === 'USDC') {
+      if (isUSDC) setDisplayCurrencyPrice(item?.price.toFixed(2))
+      else setDisplayCurrencyPrice((item?.price / solPrice).toFixed(2))
+    }
+    setDisplayCurrency(isUSDC ? 'USDC' : 'SOL')
+  }, [isUSDC, item])
 
+  return (
+    <PRICE_DISPLAY>
+      {isUSDC ? (
+        <>
+          <span>{`Price: ${displayCurrencyPrice}`}</span>
+          <img style={{ margin: '0px 10px 5px 10px', width: '25px', height: '25px' }} src={`/img/crypto/USDC.svg`} />
+          <span>{`  ${displayCurrency}`}</span>
+        </>
+      ) : (
+        <>
+          <span>{`Price: ${displayCurrencyPrice}`}</span>
+          <img style={{ margin: '0px 10px 5px 10px', width: '25px', height: '25px' }} src={`/img/crypto/SOL.svg`} />
+          <span>{`  ${displayCurrency}`}</span>
+        </>
+      )}
+    </PRICE_DISPLAY>
+  )
+}
 export const FeaturedLaunch: FC<{
   handleClickPrimaryButton?: (type: string) => void
   status?: MintItemViewStatus
@@ -210,29 +243,9 @@ export const FeaturedLaunch: FC<{
   // const { connected, publicKey } = useWallet()
   // const { setVisible: setModalVisible } = useWalletModal()
   // const { getUIAmount } = useAccounts()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-
-  const getNftPrice = (item) => {
-    return (
-      <PRICE_DISPLAY>
-        <span>{`Price: ${item?.price}`}</span>
-        <span>
-          <img
-            style={{ margin: '0px 5px 5px 10px', width: '25px', height: '25px' }}
-            src={`/img/crypto/${item?.currency}.svg`}
-          />
-        </span>
-        <span>{` ${item?.currency}`}</span>
-      </PRICE_DISPLAY>
-    )
-  }
 
   // const [notEnough, setNotEnough] = useState<boolean>(false)
   const mintPrice: number = useMemo(() => 1.5, [])
-
-  useEffect(() => {
-    setTimeout(() => setIsLoading(false), 800)
-  }, [])
 
   const handleScroller = (direction: string) => {
     const length = liveNFTProjects?.length
@@ -250,94 +263,85 @@ export const FeaturedLaunch: FC<{
   const [featuredDisplay, setFeaturedDisplay] = useState([])
 
   useEffect(() => {
-    if (liveNFTProjects) setFeaturedDisplay([liveNFTProjects[featuredIndex]])
+    if (liveNFTProjects) {
+      setFeaturedDisplay([liveNFTProjects[featuredIndex]])
+    }
   }, [featuredIndex, liveNFTProjects])
 
   return (
-    <NFT_DETAILS {...rest}>
-      {!featuredDisplay[0] ? (
-        <>
-          <img
-            className="nd-back-icon"
-            src={`/img/assets/arrow.svg`}
-            alt="back"
-            onClick={() => {
-              backUrl ? history.push(backUrl) : history.goBack()
-            }}
-          />
-          <SkeletonCommon width="100%" height="400px" borderRadius="10px" />
-          <br />
-        </>
-      ) : (
-        <div className="detailsContainer">
-          <div className="nd-details">
-            <div>
-              {isLoading ? (
-                <>
-                  <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
-                  <br />
-                  <SkeletonCommon width="100%" height="350px" borderRadius="10px" />
-                  <br />
-                </>
-              ) : (
-                <LEFT_WRAPPER>
-                  <YELLOW>Featured Launch </YELLOW>
-                  <TITLE className="rs-name">{featuredDisplay[0]?.collectionName}</TITLE>
-                  <SUBTITLE>{featuredDisplay[0]?.collectionName}</SUBTITLE>
-                  <br />
-                  <Row justify="space-between" align="middle">
-                    <ITEMS>{`Items ${featuredDisplay[0]?.items}`}</ITEMS>
-                    <Col span={10}>
-                      <ITEMS>{getNftPrice(featuredDisplay[0])}</ITEMS>
-                    </Col>
-                    <Col span={2}>
-                      <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.nestquest)}>
-                        <SVGDynamicReverseMode src="/img/assets/domains.svg" alt="domain-icon" />
-                      </SOCIAL_ICON>
-                    </Col>
-                    <Col span={2}>
-                      <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.discord)}>
-                        <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
-                      </SOCIAL_ICON>
-                    </Col>
-                    <Col span={2}>
-                      <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.twitter)}>
-                        <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
-                      </SOCIAL_ICON>
-                    </Col>
-                  </Row>
-                  <br />
-                  <DESCRIPTION>{featuredDisplay[0]?.collectionName}</DESCRIPTION>
-                  <div className="mintContainer">
-                    <MINT_BTN onClick={() => history.push(`/NFTs/launchpad/${featuredDisplay[0].urlName}`)}>
-                      Mint
-                    </MINT_BTN>
-                    <img
-                      className="navigationImg"
-                      alt="navigateImg"
-                      onClick={() => handleScroller('-')}
-                      src="/img/assets/navigateLeft.svg"
-                    />
-                    <img
-                      className="navigationImg"
-                      alt="navigateImg"
-                      onClick={() => handleScroller('+')}
-                      src="/img/assets/navigateRight.svg"
-                    />
-                  </div>
-                </LEFT_WRAPPER>
-              )}
+    <>
+      {featuredDisplay[0]?.currency ? <TokenSwitch disabled={false} currency={featuredDisplay[0]?.currency} /> : <></>}
+
+      <NFT_DETAILS {...rest}>
+        {!featuredDisplay[0] ? (
+          <>
+            <img
+              className="nd-back-icon"
+              src={`/img/assets/arrow.svg`}
+              alt="back"
+              onClick={() => {
+                backUrl ? history.push(backUrl) : history.goBack()
+              }}
+            />
+            <SkeletonCommon width="100%" height="400px" borderRadius="10px" />
+            <br />
+          </>
+        ) : (
+          <div className="detailsContainer">
+            <div className="nd-details">
+              <div>
+                {!featuredDisplay[0].collectionName ? (
+                  <>
+                    <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
+                    <br />
+                    <SkeletonCommon width="100%" height="350px" borderRadius="10px" />
+                    <br />
+                  </>
+                ) : (
+                  <LEFT_WRAPPER>
+                    <YELLOW>Featured Launch </YELLOW>
+                    <TITLE className="rs-name">{featuredDisplay[0]?.collectionName}</TITLE>
+                    <SUBTITLE>{featuredDisplay[0]?.tagLine}</SUBTITLE>
+                    <br />
+                    <Row justify="space-between" align="middle" style={{ marginRight: '50px' }}>
+                      <ITEMS>{`Items ${featuredDisplay[0]?.items}`}</ITEMS>
+                      <ITEMS>
+                        <GetNftPrice item={featuredDisplay[0]} />
+                      </ITEMS>
+                    </Row>
+                    <br />
+                    <DESCRIPTION>{featuredDisplay[0]?.summary}</DESCRIPTION>
+                    <div className="mintContainer">
+                      <MINT_BTN onClick={() => history.push(`/NFTs/launchpad/${featuredDisplay[0].urlName}`)}>
+                        Mint
+                      </MINT_BTN>
+                      <img
+                        className="navigationImg"
+                        alt="navigateImg"
+                        onClick={() => handleScroller('-')}
+                        src="/img/assets/navigateLeft.svg"
+                      />
+                      <img
+                        className="navigationImg"
+                        alt="navigateImg"
+                        onClick={() => handleScroller('+')}
+                        src="/img/assets/navigateRight.svg"
+                      />
+                    </div>
+                  </LEFT_WRAPPER>
+                )}
+              </div>
             </div>
+            <GRAPHIC_IMG>
+              {featuredDisplay[0] ? (
+                <DarkDiv coverUrl={featuredDisplay[0]?.coverUrl} />
+              ) : (
+                <SkeletonCommon width="100%" height="550px" borderRadius="10px" />
+              )}
+            </GRAPHIC_IMG>
           </div>
-          <div className="grapic-image" onClick={() => history.push('launchpad/1012')}>
-            {!isLoading ? (
-              <DarkDiv coverUrl={featuredDisplay[0]?.coverUrl} />
-            ) : (
-              <SkeletonCommon width="100%" height="550px" borderRadius="10px" />
-            )}
-          </div>
-        </div>
-      )}
-    </NFT_DETAILS>
+        )}
+      </NFT_DETAILS>
+    </>
   )
 }
