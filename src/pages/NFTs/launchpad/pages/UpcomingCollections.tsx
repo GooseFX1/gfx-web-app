@@ -8,6 +8,7 @@ import { theme } from '../../../../theme'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 import { GetNftPrice } from './FeaturedLaunch'
+import { useSolToggle } from '../../../../context/nftlp_price'
 
 const CAROUSEL_WRAPPER = styled.div`
   position: relative;
@@ -172,9 +173,17 @@ const UpcomingCollectins: FC = () => {
   }
   const { upcomoingNFTProjects } = useNFTLaunchpad()
   const [upcomingList, setUpcomingList] = useState([])
+  const { isUSDC } = useSolToggle()
+  const [isLoading, setIsLoading] = useState(true)
+
   useEffect(() => {
-    setUpcomingList(upcomoingNFTProjects)
-  }, [upcomoingNFTProjects])
+    setUpcomingList(
+      isUSDC
+        ? upcomoingNFTProjects.filter((data) => data.currency === 'USDC')
+        : upcomoingNFTProjects.filter((data) => data.currency === 'SOL')
+    )
+    setIsLoading(false)
+  }, [upcomoingNFTProjects, isUSDC])
 
   const getRemaningTime = (item): string => {
     //item?.startsOn;
@@ -192,11 +201,23 @@ const UpcomingCollectins: FC = () => {
     var sDisplay = s > 0 ? s + (s == 1 ? ' s ' : ' s') : ''
     return d > 1 ? dDisplay + hDisplay + mDisplay : hDisplay + mDisplay + sDisplay
   }
+  const getUpcomingList = () => {
+    const skeletonLoading = []
+    if (isLoading) {
+      return <>ASD</>
+    }
+    return <>NOO</>
+  }
+  //   <FLEX>
+  //   <div className="space">
+  //     <SkeletonCommon width="460px" height="460px" borderRadius="15px" />
+  //   </div>
+  // </FLEX>
   return (
     <>
-      <UPCOMING_TEXT>Upcoming</UPCOMING_TEXT>
       {upcomingList.length > 0 ? (
         <>
+          <UPCOMING_TEXT>Upcoming</UPCOMING_TEXT>
           <Row justify="start" align="middle" className="imageRow">
             <CAROUSEL_WRAPPER>
               <Slider {...settings}>
@@ -232,17 +253,7 @@ const UpcomingCollectins: FC = () => {
           </Row>{' '}
         </>
       ) : (
-        <>
-          <FLEX>
-            {loading.map(() => {
-              return (
-                <div className="space">
-                  <SkeletonCommon width="460px" height="460px" borderRadius="15px" />
-                </div>
-              )
-            })}
-          </FLEX>
-        </>
+        <></>
       )}
     </>
   )

@@ -201,35 +201,14 @@ const PRICE_DISPLAY = styled.div`
   display: flex;
 `
 export const GetNftPrice = ({ item }) => {
-  const { isUSDC, solPrice } = useSolToggle()
-  const [displayCurrencyPrice, setDisplayCurrencyPrice] = useState(item?.price)
-  const [displayCurrency, setDisplayCurrency] = useState('SOL')
-  useEffect(() => {
-    if (item?.currency === 'SOL') {
-      if (isUSDC) setDisplayCurrencyPrice((item?.price * solPrice).toFixed(2))
-      else setDisplayCurrencyPrice(item?.price)
-    } else if (item?.currency === 'USDC') {
-      if (isUSDC) setDisplayCurrencyPrice(item?.price.toFixed(2))
-      else setDisplayCurrencyPrice((item?.price / solPrice).toFixed(2))
-    }
-    setDisplayCurrency(isUSDC ? 'USDC' : 'SOL')
-  }, [isUSDC, item])
-
   return (
     <PRICE_DISPLAY>
-      {isUSDC ? (
-        <>
-          <span>{`Price: ${displayCurrencyPrice}`}</span>
-          <img style={{ margin: '0px 10px 5px 10px', width: '25px', height: '25px' }} src={`/img/crypto/USDC.svg`} />
-          <span>{`  ${displayCurrency}`}</span>
-        </>
-      ) : (
-        <>
-          <span>{`Price: ${displayCurrencyPrice}`}</span>
-          <img style={{ margin: '0px 10px 5px 10px', width: '25px', height: '25px' }} src={`/img/crypto/SOL.svg`} />
-          <span>{`  ${displayCurrency}`}</span>
-        </>
-      )}
+      <span>{`Price: ${item?.price}`}</span>
+      <img
+        style={{ margin: '0px 10px 5px 10px', width: '25px', height: '25px' }}
+        src={`/img/crypto/${item?.currency}.svg`}
+      />
+      <span>{`  ${item?.currency}`}</span>
     </PRICE_DISPLAY>
   )
 }
@@ -245,10 +224,22 @@ export const FeaturedLaunch: FC<{
   // const { getUIAmount } = useAccounts()
 
   // const [notEnough, setNotEnough] = useState<boolean>(false)
-  const mintPrice: number = useMemo(() => 1.5, [])
+  const { isUSDC } = useSolToggle()
+  const [featuredIndex, setFeaturedIndex] = useState(0)
+  const [featuredDisplay, setFeaturedDisplay] = useState([])
+  const [featuredList, setFeaturedList] = useState([])
+  const { liveNFTProjects } = useNFTLaunchpad()
+
+  useEffect(() => {
+    setFeaturedList(
+      isUSDC
+        ? liveNFTProjects.filter((data) => data.currency === 'USDC')
+        : liveNFTProjects.filter((data) => data.currency === 'SOL')
+    )
+  }, [isUSDC, liveNFTProjects])
 
   const handleScroller = (direction: string) => {
-    const length = liveNFTProjects?.length
+    const length = featuredList?.length
     if (direction === '+') {
       setFeaturedIndex((prev) => (prev + 1) % length)
     }
@@ -258,15 +249,11 @@ export const FeaturedLaunch: FC<{
     }
   }
 
-  const { liveNFTProjects } = useNFTLaunchpad()
-  const [featuredIndex, setFeaturedIndex] = useState(0)
-  const [featuredDisplay, setFeaturedDisplay] = useState([])
-
   useEffect(() => {
-    if (liveNFTProjects) {
-      setFeaturedDisplay([liveNFTProjects[featuredIndex]])
+    if (featuredList) {
+      setFeaturedDisplay([featuredList[featuredIndex]])
     }
-  }, [featuredIndex, liveNFTProjects])
+  }, [featuredIndex, liveNFTProjects, featuredList])
 
   return (
     <>
