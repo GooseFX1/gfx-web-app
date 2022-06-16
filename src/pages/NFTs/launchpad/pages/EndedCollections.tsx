@@ -209,7 +209,7 @@ const EndedCollections: FC = () => {
   }
   const loading = [1, 2, 3, 4, 5]
   const [endedList, setEndedList] = useState([])
-  const { endedNFTProjects } = useNFTLaunchpad()
+  const { endedNFTProjects, dataFetched } = useNFTLaunchpad()
   const history = useHistory()
   const { isUSDC } = useUSDCToggle()
   useEffect(() => {
@@ -228,6 +228,21 @@ const EndedCollections: FC = () => {
   `
   return (
     <>
+      {!dataFetched ? (
+        <>
+          <FLEX>
+            {loading.map(() => {
+              return (
+                <div className="space">
+                  <SkeletonCommon width="460px" height="460px" borderRadius="15px" />
+                </div>
+              )
+            })}
+          </FLEX>
+        </>
+      ) : (
+        <></>
+      )}
       {endedList && endedList.length > 0 ? (
         <>
           <ENDED_TEXT>Ended</ENDED_TEXT>
