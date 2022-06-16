@@ -171,7 +171,7 @@ const UpcomingCollectins: FC = () => {
     nextArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-next" />,
     prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-previous" />
   }
-  const { upcomoingNFTProjects } = useNFTLaunchpad()
+  const { upcomoingNFTProjects, dataFetched } = useNFTLaunchpad()
   const [upcomingList, setUpcomingList] = useState([])
   const { isUSDC } = useUSDCToggle()
   const [isLoading, setIsLoading] = useState(true)
@@ -201,13 +201,7 @@ const UpcomingCollectins: FC = () => {
     var sDisplay = s > 0 ? s + (s == 1 ? ' s ' : ' s') : ''
     return d > 1 ? dDisplay + hDisplay + mDisplay : hDisplay + mDisplay + sDisplay
   }
-  const getUpcomingList = () => {
-    const skeletonLoading = []
-    if (isLoading) {
-      return <>ASD</>
-    }
-    return <>NOO</>
-  }
+
   //   <FLEX>
   //   <div className="space">
   //     <SkeletonCommon width="460px" height="460px" borderRadius="15px" />
@@ -215,6 +209,21 @@ const UpcomingCollectins: FC = () => {
   // </FLEX>
   return (
     <>
+      {!dataFetched ? (
+        <>
+          <FLEX>
+            {loading.map(() => {
+              return (
+                <div className="space">
+                  <SkeletonCommon width="460px" height="460px" borderRadius="15px" />
+                </div>
+              )
+            })}
+          </FLEX>
+        </>
+      ) : (
+        <></>
+      )}
       {upcomingList.length > 0 ? (
         <>
           <UPCOMING_TEXT>Upcoming</UPCOMING_TEXT>
