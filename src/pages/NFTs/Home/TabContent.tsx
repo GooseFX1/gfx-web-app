@@ -170,13 +170,18 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
   const [isCollection, setIsCollection] = useState(false)
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsCollection(true)
-    }, 500)
+    setIsCollection(collection !== undefined)
+    return () => setIsCollection(false)
   }, [])
 
   return (
-    <ANALYTIC_ITEM onClick={() => history.push(`/NFTs/collection/${collection.collection_id}`)}>
+    <ANALYTIC_ITEM
+      onClick={() =>
+        isCollection
+          ? history.push(`/NFTs/collection/${collection.collection[0].collection_name}`)
+          : console.log('Error: Analytics No collection')
+      }
+    >
       {!isCollection ? (
         <SkeletonCommon width="100px" height="100px" style={{ marginRight: '30px' }} />
       ) : (
