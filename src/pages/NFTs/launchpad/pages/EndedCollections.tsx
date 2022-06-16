@@ -10,6 +10,7 @@ import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 
 import { theme } from '../../../../theme'
 import { GetNftPrice } from './FeaturedLaunch'
+import { useSolToggle } from '../../../../context/nftlp_price'
 
 const CAROUSEL_WRAPPER = styled.div`
   position: relative;
@@ -209,11 +210,14 @@ const EndedCollections: FC = () => {
   const [endedList, setEndedList] = useState([])
   const { endedNFTProjects } = useNFTLaunchpad()
   const history = useHistory()
-
+  const { isUSDC } = useSolToggle()
   useEffect(() => {
-    console.log(endedNFTProjects)
-    setEndedList(endedNFTProjects)
-  }, [endedNFTProjects])
+    setEndedList(
+      isUSDC
+        ? endedNFTProjects.filter((data) => data.currency === 'USDC')
+        : endedNFTProjects.filter((data) => data.currency === 'SOL')
+    )
+  }, [endedNFTProjects, isUSDC])
   const FLEX = styled.div`
     display: flex;
     margin: 24px;
