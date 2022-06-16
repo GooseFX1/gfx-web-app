@@ -7,19 +7,6 @@ import { ButtonWrapper } from '../NFTButton'
 import { MetadataCategory, MetadataFile } from '../../../web3'
 import { getLast } from '../../../utils'
 import { IMetadataContext } from '../../../types/nft_details.d'
-import { uploadFile } from 'react-s3'
-
-const S3_BUCKET = 'gfx-nest-image-resources'
-const REGION = 'ap-south-1'
-const ACCESS_KEY = process.env.REACT_APP_S3_ACCESS_KEY
-const SECRET_ACCESS_KEY = process.env.REACT_APP_S3_SECRET_ACCESS_KEY
-
-const config = {
-  bucketName: S3_BUCKET,
-  region: REGION,
-  accessKeyId: ACCESS_KEY,
-  secretAccessKey: SECRET_ACCESS_KEY
-}
 
 const { Text } = Typography
 
@@ -211,14 +198,6 @@ export const UploadCustom = ({
   }
 
   const handleBeforeUpload = (file: File) => {
-    setDisabled(true)
-    uploadFile(file, config)
-      .then((data: any) => {
-        setS3Link(data.location)
-        setDisabled(false)
-      }) //save image link with setS3Link(dataLink)
-      .catch((err) => console.error(err))
-
     setFile(file)
     return false
   }
