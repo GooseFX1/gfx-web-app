@@ -96,6 +96,7 @@ const NFT_INFO = styled.div`
 const SLIDER_ITEM = styled.div`
   position: relative;
   display: flex;
+  cursor: pointer;
   justify-content: center;
   align-items: center;
   border-radius: 20px;
@@ -248,7 +249,7 @@ const EndedCollections: FC = () => {
                                 </NFT_SOLD>
                                 <NFT_META>
                                   <span className="column">
-                                    <NFT_INFO> {item?.items} </NFT_INFO>
+                                    <NFT_INFO> Items {item?.items} </NFT_INFO>
                                     <NFT_INFO>
                                       <GetNftPrice item={item} />
                                     </NFT_INFO>
