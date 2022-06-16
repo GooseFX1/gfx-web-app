@@ -8,7 +8,7 @@ import { theme } from '../../../../theme'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 import { GetNftPrice } from './FeaturedLaunch'
-import { useSolToggle } from '../../../../context/nftlp_price'
+import { useUSDCToggle } from '../../../../context/nft_launchpad'
 
 const CAROUSEL_WRAPPER = styled.div`
   position: relative;
@@ -173,7 +173,7 @@ const UpcomingCollectins: FC = () => {
   }
   const { upcomoingNFTProjects } = useNFTLaunchpad()
   const [upcomingList, setUpcomingList] = useState([])
-  const { isUSDC } = useSolToggle()
+  const { isUSDC } = useUSDCToggle()
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
