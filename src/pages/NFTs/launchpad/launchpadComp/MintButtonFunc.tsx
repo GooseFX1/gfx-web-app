@@ -12,6 +12,8 @@ import {
   removeAccountChangeListener
 } from '@identity.com/solana-gateway-ts'
 import { useConnectionConfig } from '../../../../context'
+import { Share } from '../../Share'
+import { copyToClipboard } from '../../Collection/CollectionHeader'
 
 const MINT_BUTTON_BAR = styled.div`
   margin-top: -100px;
@@ -20,6 +22,8 @@ const MINT_BUTTON_BAR = styled.div`
   position: relative;
   border-radius: 0 0 25px 25px;
   width: 100%;
+  display: flex;
+  flex-direction: row-reverse;
   backdrop-filter: blur(23.9091px);
   background: radial-gradient(
     81.62% 135.01% at 15.32% 21.04%,
@@ -28,6 +32,11 @@ const MINT_BUTTON_BAR = styled.div`
     rgba(255, 255, 255, 0.05) 77.08%,
     rgba(255, 255, 255, 0.0315) 100%
   );
+`
+const SHARE_BTN = styled.div`
+  margin-top: 10px;
+  margin-right: 10px;
+  position: absolute;
 `
 const MINT_BTN = styled.div<{ active: boolean }>`
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
@@ -63,6 +72,26 @@ export const MintButtonFunc = ({
   const { requestGatewayToken, gatewayStatus } = useGateway()
   const [webSocketSubscriptionId, setWebSocketSubscriptionId] = useState(-1)
   const [clicked, setClicked] = useState(false)
+  const [visible, setVisible] = useState(false)
+  const handleShare = () => {}
+  const onShare = async (social: string) => {
+    if (social === 'copy link') {
+      copyToClipboard()
+      return
+    }
+  }
+  const handleShareClick = () => {
+    if (visible) {
+      return (
+        <Share
+          visible={visible}
+          handleCancel={() => setVisible(false)}
+          socials={['twitter', 'telegram', 'facebook', 'copy link']}
+          handleShare={onShare}
+        />
+      )
+    }
+  }
 
   const { connection } = useConnectionConfig()
 
@@ -105,6 +134,10 @@ export const MintButtonFunc = ({
 
   return (
     <MINT_BUTTON_BAR>
+      <SHARE_BTN onClick={() => setVisible(true)}>
+        <img src="/img/assets/shareBlue.svg" />
+      </SHARE_BTN>
+      {handleShareClick()}
       {isLive ? (
         <MINT_BTN
           active={!isMinting && isActive}

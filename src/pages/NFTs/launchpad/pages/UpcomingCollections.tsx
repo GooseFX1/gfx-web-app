@@ -7,6 +7,8 @@ import { Row, Card } from 'antd'
 import { theme } from '../../../../theme'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
+import { GetNftPrice } from './FeaturedLaunch'
+import { useUSDCToggle } from '../../../../context/nft_launchpad'
 
 const CAROUSEL_WRAPPER = styled.div`
   position: relative;
@@ -169,11 +171,19 @@ const UpcomingCollectins: FC = () => {
     nextArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-next" />,
     prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-previous" />
   }
-  const { upcomoingNFTProjects } = useNFTLaunchpad()
+  const { upcomoingNFTProjects, dataFetched } = useNFTLaunchpad()
   const [upcomingList, setUpcomingList] = useState([])
+  const { isUSDC } = useUSDCToggle()
+  const [isLoading, setIsLoading] = useState(true)
+
   useEffect(() => {
-    setUpcomingList(upcomoingNFTProjects)
-  }, [upcomoingNFTProjects])
+    setUpcomingList(
+      isUSDC
+        ? upcomoingNFTProjects.filter((data) => data.currency === 'USDC')
+        : upcomoingNFTProjects.filter((data) => data.currency === 'SOL')
+    )
+    setIsLoading(false)
+  }, [upcomoingNFTProjects, isUSDC])
 
   const getRemaningTime = (item): string => {
     //item?.startsOn;
@@ -191,17 +201,38 @@ const UpcomingCollectins: FC = () => {
     var sDisplay = s > 0 ? s + (s == 1 ? ' s ' : ' s') : ''
     return d > 1 ? dDisplay + hDisplay + mDisplay : hDisplay + mDisplay + sDisplay
   }
+
+  //   <FLEX>
+  //   <div className="space">
+  //     <SkeletonCommon width="460px" height="460px" borderRadius="15px" />
+  //   </div>
+  // </FLEX>
   return (
     <>
-      <UPCOMING_TEXT>Upcoming</UPCOMING_TEXT>
+      {!dataFetched ? (
+        <>
+          <FLEX>
+            {loading.map(() => {
+              return (
+                <div className="space">
+                  <SkeletonCommon width="460px" height="460px" borderRadius="15px" />
+                </div>
+              )
+            })}
+          </FLEX>
+        </>
+      ) : (
+        <></>
+      )}
       {upcomingList.length > 0 ? (
         <>
+          <UPCOMING_TEXT>Upcoming</UPCOMING_TEXT>
           <Row justify="start" align="middle" className="imageRow">
             <CAROUSEL_WRAPPER>
               <Slider {...settings}>
                 {upcomingList.map((item, index) => {
                   return (
-                    <SLIDER_ITEM onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
+                    <SLIDER_ITEM key={index} onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
                       <Card
                         cover={
                           <>
@@ -213,7 +244,10 @@ const UpcomingCollectins: FC = () => {
                               </span>
                               <span className="flex">
                                 <NFT_INFO> {getRemaningTime(item)}</NFT_INFO>
-                                <NFT_INFO> {getNftPrice(item)}</NFT_INFO>
+                                <NFT_INFO>
+                                  {' '}
+                                  <GetNftPrice item={item} />
+                                </NFT_INFO>
                               </span>
                             </NFT_META>
                           </>
@@ -228,17 +262,7 @@ const UpcomingCollectins: FC = () => {
           </Row>{' '}
         </>
       ) : (
-        <>
-          <FLEX>
-            {loading.map(() => {
-              return (
-                <div className="space">
-                  <SkeletonCommon width="460px" height="460px" borderRadius="15px" />
-                </div>
-              )
-            })}
-          </FLEX>
-        </>
+        <></>
       )}
     </>
   )

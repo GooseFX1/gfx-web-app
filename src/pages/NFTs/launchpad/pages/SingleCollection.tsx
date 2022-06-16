@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useNFTLPSelected } from '../../../../context/nft_launchpad'
 import styled, { css } from 'styled-components'
 import { Col, Row, Tabs } from 'antd'
@@ -8,6 +8,8 @@ import { SVGDynamicReverseMode } from '../../../../styles'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { MintButton } from '../launchpadComp/MintButton'
 import { TeamMembers } from './LaunchpadComponents'
+import { Share } from '../../Share'
+import { copyToClipboard } from '../../Collection/CollectionHeader'
 
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme, activeTab }) => css`
@@ -158,7 +160,7 @@ const WRAPPER = styled.div`
     width: 80px;
   }
   .rightPart {
-    width: 50%;
+    width: 40%;
     padding-right: 70px;
     margin-left: 50px;
   }
@@ -183,6 +185,29 @@ const NFT_COVER = styled.div`
     padding: 5px;
     margin-top: 32px;
     margin-bottom: 30px;
+  }
+  .ended-img {
+    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+    width: 608px;
+    height: 608px;
+    border-radius: 20px;
+    padding: 5px;
+    margin-top: 32px;
+    margin-bottom: 30px;
+    opacity: 0.4;
+  }
+  .sold-text {
+    position: absolute;
+    width: 600px;
+    margin-top: -35%;
+    height: 600px;
+    font-weight: 700;
+    font-size: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 24px;
+    text-align: center;
   }
   .inner-image {
     width: 600px;
@@ -235,7 +260,7 @@ export const SingleCollection: FC = () => {
   )
   return (
     <div>
-      <TokenSwitch />
+      {selectedProject?.currency ? <TokenSwitch disabled={true} currency={selectedProject?.currency} /> : <></>}
       <WRAPPER>
         <div className="leftPart">
           {selectedProject?.collectionName ? (
@@ -289,7 +314,7 @@ export const SingleCollection: FC = () => {
           )}
           <>
             {selectedProject?.summary ? (
-              <>
+              <div>
                 <RIGHT_SECTION_TABS activeTab={'4'}>
                   <Tabs>
                     <TabPane tab="Summary" key="1">
@@ -304,26 +329,28 @@ export const SingleCollection: FC = () => {
                       <TeamMembers teamMembers={selectedProject?.team} />
                     </TabPane>
                     <TabPane tab="Vesting" key="4">
-                      <Vesting currency={selectedProject?.currency} str={'hllo'} />
+                      <Vesting currency={selectedProject?.currency} str={''} />
                     </TabPane>
                   </Tabs>
                 </RIGHT_SECTION_TABS>
-                <MintButton isLive={isLive} />
-              </>
+                {!selectedProject?.ended ? <MintButton isLive={isLive} /> : <></>}
+              </div>
             ) : (
               <>
                 <SkeletonCommon width="700px" height={'450px'} borderRadius="10px" />
               </>
             )}
           </>
-          <button> Mint</button>
         </div>
         <div className="rightPart">
           <NFT_COVER>
             {selectedProject?.coverUrl ? (
-              <div className="image-border">
-                <img className="inner-image" alt="cover" src={selectedProject?.coverUrl} />
-              </div>
+              <>
+                <div className={selectedProject?.ended ? 'ended-img' : 'image-border'}>
+                  <img className="inner-image" alt="cover" src={selectedProject?.coverUrl} />
+                </div>
+                {selectedProject?.ended ? <div className="sold-text">SOLD OUT</div> : <></>}
+              </>
             ) : (
               <SkeletonCommon width="600px" height="600px" borderRadius="10px" />
             )}

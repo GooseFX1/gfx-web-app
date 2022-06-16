@@ -25,6 +25,7 @@ interface INFTLaunchpadConfig {
   upcomoingNFTProjects: INFTProjectConfig[]
   endedNFTProjects: INFTProjectConfig[]
   liveNFTProjects: INFTProjectConfig[]
+  dataFetched: boolean
 }
 
 const NFTLaunchpadContext = createContext<INFTLaunchpadConfig | null>(null)
@@ -32,6 +33,7 @@ export const NFTLaunchpadProvider: FC<{ children: ReactNode }> = ({ children }) 
   const [upcomoingNFTProjects, setUpcomingNFTProjects] = useState([])
   const [endedNFTProjects, setEndedNFTProjects] = useState([])
   const [liveNFTProjects, setLiveNFTProjects] = useState([])
+  const [dataFetched, setDataFetched] = useState(false)
 
   useEffect(() => {
     ;(async () => {
@@ -46,9 +48,11 @@ export const NFTLaunchpadProvider: FC<{ children: ReactNode }> = ({ children }) 
             endedProject.push(launchpadData[i])
           else liveProject.push(launchpadData[i])
         }
-        setEndedNFTProjects(endedNFTProjects)
+
+        setEndedNFTProjects(endedProject)
         setUpcomingNFTProjects(upcomingProject)
         setLiveNFTProjects(liveProject)
+        setDataFetched(true)
       } catch (err) {
         console.log(err)
       }
@@ -60,7 +64,8 @@ export const NFTLaunchpadProvider: FC<{ children: ReactNode }> = ({ children }) 
       value={{
         upcomoingNFTProjects: upcomoingNFTProjects,
         endedNFTProjects: endedNFTProjects,
-        liveNFTProjects: liveNFTProjects
+        liveNFTProjects: liveNFTProjects,
+        dataFetched: dataFetched
       }}
     >
       {children}
@@ -73,8 +78,8 @@ export const useNFTLaunchpad = (): INFTLaunchpadConfig => {
   if (!context) {
     throw new Error('Missing NFT Launchpad  Selected context')
   }
-  const { upcomoingNFTProjects, liveNFTProjects, endedNFTProjects } = context
-  return { upcomoingNFTProjects, liveNFTProjects, endedNFTProjects }
+  const { upcomoingNFTProjects, liveNFTProjects, endedNFTProjects, dataFetched } = context
+  return { upcomoingNFTProjects, liveNFTProjects, endedNFTProjects, dataFetched }
 }
 
 // Selected Context
@@ -415,4 +420,40 @@ export const useNFTLPSelected = () => {
   }
   const { selectedProject, candyMachineState, candyMachine, cndyValues } = context
   return { selectedProject, candyMachineState, candyMachine, cndyValues }
+}
+
+interface IUSDCToggle {
+  isUSDC: boolean
+  setIsUSDC: any
+}
+
+const USDCToggleContext = createContext<IUSDCToggle | null>(null)
+
+export const USDCToggleProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [isUSDC, setIsUSDCToggle] = useState<boolean>(false)
+
+  const setIsUSDC = (value) => {
+    setIsUSDCToggle(value)
+  }
+
+  return (
+    <USDCToggleContext.Provider
+      value={{
+        isUSDC,
+        setIsUSDC
+      }}
+    >
+      {children}
+    </USDCToggleContext.Provider>
+  )
+}
+
+export const useUSDCToggle = (): IUSDCToggle => {
+  const context = useContext(USDCToggleContext)
+  if (!context) {
+    throw new Error('Missing NFTLP context')
+  }
+
+  const { isUSDC, setIsUSDC } = context
+  return { isUSDC, setIsUSDC }
 }
