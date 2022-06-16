@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Progress, Switch } from 'antd'
 import { ModalSlide } from '../../../../components/ModalSlide'
-import { useSolToggle } from '../../../../context/nftlp_price'
+import { useUSDCToggle } from '../../../../context/nft_launchpad'
 
 const ROADMAP_WRAPPER = styled.div`
   .elipse {
@@ -500,7 +500,7 @@ const TimerCircle = ({ data }) => {
 }
 
 export const TokenSwitch = ({ disabled, currency }) => {
-  const { isUSDC, setIsUSDC } = useSolToggle()
+  const { isUSDC, setIsUSDC } = useUSDCToggle()
 
   useEffect(() => {
     if (currency === 'SOL') setIsUSDC(false)

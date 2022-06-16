@@ -417,3 +417,39 @@ export const useNFTLPSelected = () => {
   const { selectedProject, candyMachineState, candyMachine, cndyValues } = context
   return { selectedProject, candyMachineState, candyMachine, cndyValues }
 }
+
+interface IUSDCToggle {
+  isUSDC: boolean
+  setIsUSDC: any
+}
+
+const USDCToggleContext = createContext<IUSDCToggle | null>(null)
+
+export const USDCToggleProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [isUSDC, setIsUSDCToggle] = useState<boolean>(false)
+
+  const setIsUSDC = (value) => {
+    setIsUSDCToggle(value)
+  }
+
+  return (
+    <USDCToggleContext.Provider
+      value={{
+        isUSDC,
+        setIsUSDC
+      }}
+    >
+      {children}
+    </USDCToggleContext.Provider>
+  )
+}
+
+export const useUSDCToggle = (): IUSDCToggle => {
+  const context = useContext(USDCToggleContext)
+  if (!context) {
+    throw new Error('Missing NFTLP context')
+  }
+
+  const { isUSDC, setIsUSDC } = context
+  return { isUSDC, setIsUSDC }
+}

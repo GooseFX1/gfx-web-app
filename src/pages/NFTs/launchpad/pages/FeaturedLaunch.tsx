@@ -11,7 +11,7 @@ import { SOCIAL_MEDIAS } from '../../../../constants'
 import { SVGDynamicReverseMode } from '../../../../styles/utils'
 import { InfoDivUSDCTheme, DarkDiv, TokenSwitch } from './LaunchpadComponents'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
-import { useSolToggle } from '../../../../context/nftlp_price'
+import { useUSDCToggle } from '../../../../context/nft_launchpad'
 
 //#region styles
 const IMAGE = styled.div`
@@ -244,7 +244,7 @@ export const FeaturedLaunch: FC<{
   // const { getUIAmount } = useAccounts()
 
   // const [notEnough, setNotEnough] = useState<boolean>(false)
-  const { isUSDC } = useSolToggle()
+  const { isUSDC } = useUSDCToggle()
   const [featuredIndex, setFeaturedIndex] = useState(0)
   const [featuredDisplay, setFeaturedDisplay] = useState([])
   const [featuredList, setFeaturedList] = useState([])
