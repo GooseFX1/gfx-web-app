@@ -77,12 +77,17 @@ const YELLOW = styled.h3`
   font-size: 30px;
   line-height: 36.57px;
   margin-bottom: 50px;
+  display: flex;
   background: linear-gradient(92.45deg, #ea7e00 6.46%, #f1c52a 107.94%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-fill-color: transparent;
   margin: 0;
+  align-items: center;
+  .text {
+    margin-left: 20px;
+  }
 `
 
 const TITLE = styled.h1`
@@ -147,6 +152,21 @@ const DESCRIPTION = styled.p`
   font-size: 20px;
   line-height: 24px;
   color: ${({ theme }) => theme.text4};
+`
+const FEATURED_IMG = styled.div`
+  width: 85px;
+  height: 90px;
+  margin-right: 25px;
+`
+
+const BACK_IMG = styled.div`
+  width: 40px;
+  height: 40px;
+  margin-left: -30px;
+  transform: rotate(90deg) scale(1.6);
+  margin-right: 30px;
+  margin-top: 35px;
+  cursor: pointer;
 `
 
 const MINT_PROGRESS = styled(Progress)<{ num: number }>`
@@ -286,7 +306,15 @@ export const FeaturedLaunch: FC<{
                   </>
                 ) : (
                   <LEFT_WRAPPER>
-                    <YELLOW>Featured Launch </YELLOW>
+                    <YELLOW>
+                      <BACK_IMG onClick={() => history.goBack()}>
+                        <img src="/img/assets/arrow-down-large.svg" />{' '}
+                      </BACK_IMG>
+                      <FEATURED_IMG>
+                        <img src="/img/assets/Launchpad.png" />{' '}
+                      </FEATURED_IMG>
+                      Featured Launch
+                    </YELLOW>
                     <TITLE className="rs-name">{featuredDisplay[0]?.collectionName}</TITLE>
                     <SUBTITLE>{featuredDisplay[0]?.tagLine}</SUBTITLE>
                     <br />
