@@ -3,17 +3,12 @@ import { useRewardToggle } from '../../context'
 import styled from 'styled-components'
 import { Footer } from './Footer'
 import { Header } from './Header'
+import tw from "twin.macro"
 
 const Wrapper = styled.div<{ $rewardModal: boolean }>`
+  ${tw`overflow-x-hidden min-w-vw min-h-vh sm:max-h-vh`}
   overflow: ${({ $rewardModal }) => ($rewardModal ? 'hidden' : 'auto')};
-  min-width: 100vw;
-  min-height: 100vh;
-  overflow-x: hidden;
   background: ${({ theme }) => theme.bg2};
-
-  @media (max-width: 500px) {
-    max-height: 100vh;
-  }
 `
 
 export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {

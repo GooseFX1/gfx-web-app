@@ -27,36 +27,26 @@ import { ILocationState } from '../../types/app_params.d'
 import { notify, moneyFormatter, nFormatter, checkMobile } from '../../utils'
 import { CURRENT_SUPPORTED_TOKEN_LIST } from '../../constants'
 import { useParams } from 'react-router-dom'
+import tw from 'twin.macro'
 
 const CoinGecko = require('coingecko-api')
 const CoinGeckoClient = new CoinGecko()
 
-//@media (max-width: 500px) {
-//#region styles
 const WRAPPER = styled.div`
+  ${tw`w-screen not-italic`}
+  min-height: calc(100vh - 58px)
   color: ${({ theme }) => theme.text1};
-  min-height: calc(100vh - 58px);
-  width: 100vw;
   font-family: Montserrat;
-  font-stretch: normal;
-  font-style: normal;
 `
 
 const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
-  display: flex;
-  max-height: 80%;
-  padding-top: 10%;
-  justify-content: ${({ $desktop }) => ($desktop ? 'space-between' : 'space-around')};
-  align-items: center;
+ ${tw`flex pt-10p items-center w-screen mb-7 max-h-80p sm:justify-start sm:flex sm:flex-col sm:items-center sm:h-full`}
+
+
   color: ${({ theme }) => theme.text1};
-  width: 100vw;
-  margin-bottom: 28px;
+  justify-content: ${({ $desktop }) => ($desktop ? 'space-between' : 'space-around')};
 
   @media (max-width: 500px) {
-    justify-content: flex-start;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
     padding: 15vh 15px 1rem 15px;
   }
 `
@@ -68,79 +58,52 @@ const SETTING_MODAL = styled(Modal)`
 `
 
 const BODY = styled.div`
-  position: relative;
+  ${tw`relative justify-between w-full mt-10 mb-8 h-full w-full sm:mt-8 sm:mb-12`}
   ${({ theme }) => theme.flexColumnNoWrap}
-  justify-content: space-between;
-  width: 100%;
-  margin: ${({ theme }) => theme.margin(5)} 0 ${({ theme }) => theme.margin(4)};
   ${({ theme }) => theme.customScrollBar('6px')};
-  ${({ theme }) => theme.measurements('100%')}
-
-  @media (max-width: 500px) {
-    margin: ${({ theme }) => theme.margin(4)} 0 ${({ theme }) => theme.margin(6)};
-  }
 `
 
 const HEADER_TITLE = styled(CenteredDiv)`
   span {
-    font-weight: 600;
-    font-size: 20px;
-    font-family: Montserrat;
+    ${tw`text-xl font-semibold mt-[1px]`}
     color: ${({ theme }) => theme.text1};
+    font-family: Montserrat;
   }
 `
 
 const TOKEN_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
-  align-items: center;
-  min-height: 527px;
-  width: 326px;
-  font-family: 'Montserrat';
-  padding: ${({ theme }) => theme.margin(3)};
-  padding-left: ${({ theme }) => theme.margin(4)};
-  border-radius: 0px 20px 20px 0px;
+  ${tw`items-center w-81.5 rounded-r-bigger py-6 pr-6 pl-8 min-h-[527px] sm:w-full sm:rounded-bigger sm:min-h-0`}
+  font-family: Montserrat;
   background: ${({ theme }) => theme.swapSides1};
-
-  @media (max-width: 500px) {
-    width: 100%;
-    border-radius: 20px;
-    min-height: 0px;
-  }
 `
 
-const TokenTitle = styled.div`
-  font-weight: 600;
-  font-size: 18px;
+const TokenTitle = styled.div`${tw`font-semibold text-lg`} 
   color: ${({ theme }) => theme.text1};
+  line-height: inherit;
 `
 
 const SmallTitle = styled.div`
-  font-size: 15px;
-  font-weight: 600;
+  ${tw`font-semibold text-tiny`}
   color: ${({ theme }) => theme.text12};
 `
 
 const AltSmallTitle = styled.div`
-  font-size: 12px;
-  font-weight: 600;
+  ${tw`font-semibold text-xs`}
   color: ${({ theme }) => theme.text12};
 `
 
 const SmallTitleFlex = styled.div`
-  margin: 4px 0;
-  font-size: 15px;
-  display: flex;
-  align-items: center;
+  ${tw`flex items-center text-tiny my-1`}
   color: ${({ theme }) => theme.text12};
 
   .token-name {
-    font-weight: 600;
+    ${tw`font-semibold`}
   }
 `
 
 const SmallerTitle = styled.div`
-  font-size: 15px;
-  font-weight: 600;
+  ${tw`text-tiny font-semibold`}
   background: linear-gradient(90.25deg, #f7931a 2.31%, #dc1fff 99.9%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -148,182 +111,90 @@ const SmallerTitle = styled.div`
   text-fill-color: transparent;
 `
 const TokenHeader = styled.div`
-  display: flex;
-  width: 100%;
-  margin-bottom: 18px;
-  align-items: center;
+  ${tw`flex items-center w-full mb-4.5`}
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
-  min-width: 330px !important;
-  height: 100px;
-  border-radius: 15px;
-  padding: 1px;
-  margin-right: ${({ theme }) => theme.margin(3.5)};
+${tw`h-24.25 rounded-average p-px cursor-pointer min-h-330 mr-7 !min-w-330 sm:h-16.25 mb-4`}
   background: ${({ theme, $clicked }) =>
     $clicked ? 'linear-gradient(90deg,rgba(247,147,26,0.5) 0%,rgba(220,31,255,0.5) 100%)' : theme.bg1};
   box-shadow: 0 6px 9px 0 rgba(36, 36, 36, 0.1);
-  cursor: pointer;
 
   .inner-container {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
+    ${tw`relative flex justify-center items-center h-full w-full rounded-average p-1.5 sm:static`}
     background: ${({ theme, $clicked, $cover }) => ($clicked ? $cover : 'transparent')};
-    border-radius: 15px;
-    padding: ${({ theme }) => theme.margin(2)};
-
-    @media (max-width: 500px) {
-      position: static;
-    }
 
     .content {
-      width: 67%;
+      ${tw`w-2/3 w-85p`}
 
       div {
         ${({ theme }) => theme.ellipse}
       }
-
-      @media (max-width: 500px) {
-        width: 85%;
-      }
     }
     .price {
-      margin-left: 4px;
-      width: 30%;
+      ${tw`w-30p ml-1`}
     }
-  }
-
-  @media (max-width: 500px) {
-    height: 65px;
-    margin: 0px;
-    margin-bottom: 16px;
   }
 `
 
 const TokenDetail = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: ${({ theme }) => theme.margin(1.5)} 0;
+  ${tw`flex flex-col w-full py-3`}
 `
 
-const AltTokenDetail = styled(TokenDetail)`
-  @media (max-width: 500px) {
-    width: 50%;
-  }
-`
+const AltTokenDetail = styled(TokenDetail)`${tw`sm:w-1/2`}`
+
 
 const ListWrapper = styled.div`
-  width: 100%;
-  @media (max-width: 500px) {
-    display: flex;
-    padding: ${({ theme }) => theme.margin(1.5)} 0;
-    flex-wrap: wrap;
-  }
+  ${tw`w-full sm:flex sm:py-3 flex-wrap`}
 `
 
 const SubHeader = styled.div`
-  margin-left: 1.25rem;
-  height: 48px;
+  ${tw`ml-5 h-12`}
 `
 
 const Socials = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width 100%;
-  margin-top: auto;
+  ${tw`flex justify-between	w-full mt-auto`}
 `
 
 const SocialsButton = styled.div`
+  ${tw`cursor-pointer text-xs rounded-2xl py-1 px-3 leading-normal`}
   background-color: ${({ theme }) => theme.bg12};
   color: ${({ theme }) => theme.text14};
-  padding: ${({ theme }) => theme.margin(0.5)} ${({ theme }) => theme.margin(1.5)};
-  border-radius: 1rem;
-  font-size: 12px;
-  cursor: pointer;
+  line-height: inherit;
 `
 
 const CLICKER_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(6))}
-  margin-right: ${({ theme }) => theme.margin(0.5)};
-  ${({ theme }) => theme.roundedBorders}
+  ${tw`h-12 w-12 mr-1 rounded-circle`}
 `
 const SMALL_CLICKER_ICON = styled(CenteredImg)`
-  height: 20px;
-  width: 20px;
-  margin-right: ${({ theme }) => theme.margin(1)};
-  ${({ theme }) => theme.roundedBorders}
+  ${tw`h-5 w-5 mr-2 rounded-circle`}
 `
 
 const PRICE_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
-  align-items: center;
-  height: 100%;
-  width: 326px;
+  ${tw`items-center h-full w-81.5 p-6 rounded-tl-bigger rounded-bl-bigger sm:w-full sm:rounded-bigger sm:mb-12`}
   font-family: Montserrat;
-  border-radius: 20px 0px 0px 20px;
-  padding: ${({ theme }) => theme.margin(3)};
-  background: ${({ theme }) => theme.swapSides2};
-
-  @media (max-width: 500px) {
-    width: 100%;
-    border-radius: 20px;
-    margin-bottom: 3rem;
-  }
+  background: ${({ theme }) => theme.swapSides2}
 `
 
 const SWAP_ROUTES = styled.div<{ $less: boolean }>`
-  position: relative;
+  ${tw`relative`}
 
   .swap-content {
-    display: flex;
+    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 mb-3 mx-8 sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around sm:mt-8 sm:mb-12`}
     justify-content: ${({ $less }) => ($less ? 'center' : 'flex-start')};
-    align-items: flex-end;
-    margin: 0 32px 12px;
-    padding: 32px 0;
-    overflow-x: auto;
-    height: 20%;
-
-    @media (max-width: 500px) {
-      flex-direction: column;
-      width: 100%;
-      align-items: center;
-      justify-content: space-around;
-      margin: 2rem 0px 3rem 0px;
-      padding: 0px;
-      height: auto;
-    }
   }
 
   .action {
-    position: absolute;
-    top: 0;
-    right: 32px;
-
-    @media (max-width: 500px) {
-      top: ${({ $less }) => ($less ? '80%' : '88%')};
-      font-size: 16px !important;
-      right: 0 !important;
-    }
+    ${tw`absolute top-0 right-8 sm:!text-base sm:!top-0 sm:!right-0`}
   }
 `
 
 const BestPrice = styled.div`
-  position: absolute;
-  font-size: 12px;
-  line-height: 12px;
-  font-weight: 600;
+  ${tw`absolute font-semibold items-center text-xs p-2 rounded-md text-white leading-3`}
   margin-top: -90px;
   margin-left: 230px;
-  text-align: center;
-  padding: 8px;
-  border-radius: 0.35rem;
   background-color: #be2cff;
-  color: white;
 
   @media (max-width: 500px) {
     margin-top: -60px;
@@ -331,23 +202,15 @@ const BestPrice = styled.div`
 `
 
 const ShowLess = styled.div`
-  font-size: 18px;
-  font-weight: 600;
-  border-radius: 0.5rem;
-  cursor: pointer;
+  ${tw`font-semibold cursor-pointer rounded-lg text-lg`}
 `
 
 const ShowMore = styled.div`
-  font-size: 18px;
-  font-weight: 600;
-  border-radius: 0.5rem;
-  cursor: pointer;
+  ${tw`font-semibold cursor-pointer rounded-lg text-lg`}
 `
 
 const PriceHeader = styled.div`
-  display: flex;
-  width: 100%;
-  align-items: center;
+  ${tw`flex w-full items-center`}
 `
 
 // const WRAPPED_LOADER = styled.div`
@@ -356,8 +219,7 @@ const PriceHeader = styled.div`
 // `
 
 const PriceTitle = styled.div`
-  font-weight: 600;
-  font-size: 22px;
+  ${tw`font-semibold text-average`}
   background: linear-gradient(90.25deg, #f7931a 2.31%, #dc1fff 99.9%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -366,76 +228,50 @@ const PriceTitle = styled.div`
 `
 
 const HEADER_WRAPPER = styled(SpaceBetweenDiv)<{ $iconSize: string }>`
-  width: 100%;
+  ${tw`w-full`}
 
   > div {
-    display: flex;
-    align-items: center;
+    ${tw`flex items-center`}
   }
 
   .header-icon {
-    height: ${({ $iconSize }) => $iconSize};
-    cursor: pointer;
+    ${tw`h-10 items-center`}
   }
 
   .jup-icon {
-    height: 22px;
-    margin-left: ${({ theme }) => theme.margin(1)};
+    ${tw`ml-2 h-5.5`}
   }
 
   .smaller-header-icon {
-    height: 40px;
-    width: 40px;
-    cursor: pointer;
+    ${tw`cursor-pointer h-10 w-10`}
   }
 `
 
 const SETTING_WRAPPER = styled(CenteredImg)`
-  margin-left: 8px;
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
+${tw`h-10 w-10 rounded-circle ml-2`}
 `
 
 const SWITCH = styled(CenteredImg)<{ measurements: number }>`
-  position: absolute;
+  ${tw`absolute cursor-pointer`}
   top: calc(50% - ${({ measurements }) => measurements}px / 2 + ${({ theme }) => theme.margin(3)});
   left: calc(50% - ${({ measurements }) => measurements}px / 2);
   ${({ measurements, theme }) => theme.measurements(measurements + 'px')}
-  cursor: pointer;
   z-index: 1;
 
   .swap-switch {
-    height: auto;
-    width: auto;
-
-    @media (max-width: 500px) {
-      height: 8rem;
-      width: 8rem;
-      margin-top: 2.5rem;
-    }
+    ${tw`h-auto w-auto sm:h-32 sm:w-32 sm:mt-10`}
   }
 `
 
 const SWAP_CONTENT = styled.div`
+  ${tw`items-center p-8 w-628 max-h-90p min-h-400 rounded-bigger sm:w-full sm:mb-12 sm:p-5 sm:text-sm`}
   ${({ theme }) => theme.flexColumnNoWrap}
-  align-items: center;
-  min-height: 400px;
-  max-height: 90%;
-  width: 628px;
-  padding: ${({ theme }) => theme.margin(4)};
-  ${({ theme }) => theme.largeBorderRadius}
   background-color: ${({ theme }) => theme.bg9};
   ${({ theme }) => theme.largeShadow}
-
-  @media (max-width: 500px) {
-    width: 100%;
-    font-size: 14px !important;
-    padding: ${({ theme }) => theme.margin(2.5)};
-    margin-bottom: 3rem;
+  @media (max-width:500px){
+    line-height: inherit
   }
 `
-//#endregion
 
 const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: number }> = ({
   exchange,
@@ -548,13 +384,8 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
 
 const COPY = styled.div`
   .copy-button {
-    position: relative;
-    margin-left: 8px;
+    ${tw`relative ml-2 font-semibold cursor-pointer text-tiny leading-[18px]`}
     color: #8a8a8a;
-    font-weight: 600;
-    font-size: 15px;
-    line-height: 18px;
-    cursor: pointer;
   }
 
   .copied:after {
