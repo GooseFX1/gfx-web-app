@@ -91,6 +91,7 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
   height: 50px;
   width: 164px;
   margin: 0.9% 0.25rem 0.9% 0.25rem;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   ${({ theme }) => theme.roundedBorders}
   background-color: ${({ theme }) => '#2a2a2a'};
   cursor: pointer;
