@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import tw from "twin.macro"
 
 export const CenteredDiv = styled.div`
   ${({ theme }) => theme.flexCenter}
@@ -22,8 +23,7 @@ export const SpaceBetweenDiv = styled.div`
 `
 
 export const AlignCenterDiv = styled.div`
-  display: flex;
-  align-items: center;
+  ${tw`flex items-center`}
 `
 
 export const SpaceEvenlyDiv = styled.div`
@@ -43,11 +43,11 @@ export const SVGToGrey2 = styled.img`
 `
 
 export const SVGToPrimary2 = styled.img`
-  filter: invert(16%) sepia(44%) saturate(7248%) hue-rotate(243deg) brightness(84%) contrast(89%);
+  filter: invert(45%) sepia(93%) saturate(6113%) hue-rotate(235deg) brightness(107%) contrast(102%);
 `
 
 export const SVGToWhite = styled.img`
-  filter: invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(80%);
+  filter: invert(96%) sepia(73%) saturate(2%) hue-rotate(192deg) brightness(109%) contrast(101%);;
 `
 export const SVGToBlack = styled.img`
   filter: invert(100%);
