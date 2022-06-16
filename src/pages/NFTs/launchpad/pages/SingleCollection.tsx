@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useNFTLPSelected } from '../../../../context/nft_launchpad'
 import styled, { css } from 'styled-components'
 import { Col, Row, Tabs } from 'antd'
@@ -8,6 +8,8 @@ import { SVGDynamicReverseMode } from '../../../../styles'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { MintButton } from '../launchpadComp/MintButton'
 import { TeamMembers } from './LaunchpadComponents'
+import { Share } from '../../Share'
+import { copyToClipboard } from '../../Collection/CollectionHeader'
 
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme, activeTab }) => css`
