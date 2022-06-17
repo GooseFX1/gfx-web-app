@@ -20,6 +20,7 @@ import { ButtonWrapper } from '../NFTButton'
 import apiClient from '../../../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
 import { uploadFile } from 'react-s3'
+import { MainButton } from '../../../../src/components'
 
 const S3_BUCKET = 'gfx-nest-image-resources'
 const REGION = 'ap-south-1'
@@ -141,7 +142,7 @@ const NEXT_BUTTON = styled.button`
   }
 `
 
-const SAVE_BUTTON = styled.button`
+const SAVE_BUTTON = styled(MainButton)`
   height: 60px;
   width: 245px;
   text-align: center;
@@ -288,6 +289,7 @@ export const UpLoadNFT = (): JSX.Element => {
   const [s3Link, setS3Link] = useState<string>('')
   const [draftIsLoaded, setDraftIsLoaded] = useState<boolean>(false)
   const [draft_id, setDraftId] = useState(null)
+  const [draftUploadInProgress, setDraftUploadInProgress] = useState(false)
 
   useEffect(() => {
     if (!wallet.publicKey) {
@@ -346,7 +348,7 @@ export const UpLoadNFT = (): JSX.Element => {
             : `${NFT_API_ENDPOINTS.DRAFTS}?user_id=${sessionUser?.user_id}`
         )
         const data = await res.data
-        const result = data[data.length - 1]
+        const result = draftId ? data.find((i) => i.draft_id + '' === draftId + '') : data[0]
         if (result) {
           setDraftIsLoaded(true)
           const url = await fetch(nftMintingData.image)
@@ -400,26 +402,37 @@ export const UpLoadNFT = (): JSX.Element => {
     }
   }, [draftId, sessionUser, sessionUser?.user_id])
 
-  console.log({ s3Link })
-
   const handleUploadNFT = () => {
     setIsConfirmingMintPrice(true)
   }
 
-  console.log(filesForUpload)
   async function saveAsDraft() {
-    console.log(filesForUpload)
-    uploadFile(filesForUpload[0], config)
-      .then((data: any) => {
-        setS3Link(data.location)
+    setDraftUploadInProgress(true)
+    notify({ message: `Saving your draft for you` })
 
-        if (draftIsLoaded) {
-          updateDraft(data.location)
-        } else {
-          saveDraft(data.location)
-        }
-      }) //save image link with setS3Link(dataLink)
-      .catch((err) => console.error(err))
+    if (filesForUpload[0]) {
+      uploadFile(filesForUpload[0], config)
+        .then((data: any) => {
+          setS3Link(data.location)
+
+          if (draftIsLoaded) {
+            updateDraft(data.location)
+          } else {
+            saveDraft(data.location)
+          }
+        }) //save image link with setS3Link(dataLink)
+        .catch((err) => {
+          console.error(err)
+          notify({ type: 'error', message: 'Draft failed to save', icon: 'error' }, err)
+          setDraftUploadInProgress(false)
+        })
+    } else {
+      if (draftIsLoaded) {
+        updateDraft(s3Link || nftMintingData.image)
+      } else {
+        saveDraft(s3Link || nftMintingData.image)
+      }
+    }
   }
 
   async function saveDraft(s3Link: string) {
@@ -431,11 +444,22 @@ export const UpLoadNFT = (): JSX.Element => {
         image: s3Link
       })
 
-      await res.data
+      const result = await res.data
+      console.log(result)
       setDraftIsLoaded(true)
+      setDraftId(result.draft_id)
+      notify({
+        type: 'success',
+        message: 'Draft saved successfully!',
+        description: `Your draft have been saved successfuly at draft_id ${result?.draft_id}`,
+        icon: 'success'
+      })
     } catch (err) {
       console.log(err)
+      notify({ type: 'error', message: 'Draft failed to save', icon: 'error' }, err)
     }
+
+    setDraftUploadInProgress(false)
   }
 
   async function updateDraft(fileLink?: string) {
@@ -453,9 +477,21 @@ export const UpLoadNFT = (): JSX.Element => {
       })
       await res.data
       setDraftIsLoaded(true)
+
+      notify({
+        type: 'success',
+        message: 'Draft updated successfully!',
+        description: `Your draft have been updated successfuly at draft_id ${draft_id}`,
+        icon: 'success'
+      })
     } catch (err) {
       console.log(err)
+      notify({ type: 'error', message: 'Draft failed to save', icon: 'error' }, err)
+      setTimeout(() => {
+        window.location.reload()
+      }, 3000)
     }
+    setDraftUploadInProgress(false)
   }
 
   const handleConfirmMint = async () => {
@@ -666,7 +702,7 @@ export const UpLoadNFT = (): JSX.Element => {
           <PREVIEW_UPLOAD_CONTAINER>
             <PreviewImage file={localFiles} image_url={nftMintingData.image} />
             <BUTTON_SECTION>
-              <SAVE_BUTTON onClick={saveAsDraft}>
+              <SAVE_BUTTON onClick={saveAsDraft} loading={draftUploadInProgress}>
                 <span>Save As Draft</span>
               </SAVE_BUTTON>
               <NEXT_BUTTON onClick={handleUploadNFT} disabled={disabled}>
