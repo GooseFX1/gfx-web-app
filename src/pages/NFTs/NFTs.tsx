@@ -27,6 +27,7 @@ import {
 import { notify } from '../../utils'
 import { GenericNotFound } from '../InvalidUrl'
 import { Launchpad } from './launchpad/Launchpad'
+import { Creator } from './CreatorPage/Creator'
 
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
@@ -97,6 +98,9 @@ export const NFTs: FC = () => {
                 </Route>
                 <Route path="/NFTs/launchpad">
                   <Launchpad />
+                </Route>
+                <Route path="/NFTs/Creator">
+                  <Creator />
                 </Route>
                 <Route exact path={['/NFTs/profile', '/NFTs/profile/:userId']}>
                   <Profile />
