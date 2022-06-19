@@ -105,10 +105,10 @@ export const generateListOfSSLTokens = (): any => {
       id: i + 1,
       image: FARM_SUPPORTED_TOKEN_LIST[i],
       name: FARM_SUPPORTED_TOKEN_LIST[i],
-      earned: -1,
-      liquidity: -1,
+      earned: undefined,
+      liquidity: undefined,
       type: 'SSL',
-      currentlyStaked: -1
+      currentlyStaked: undefined
     })
   }
   return sslTokens

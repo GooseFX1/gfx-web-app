@@ -45,7 +45,6 @@ export const FARM_TOKEN_LIST = [
   { decimals: 3, pair: 'GOFX/USDC', type: 'crypto' as MarketType, coinGecko: 'goosefx' },
   { decimals: 2, pair: 'ETH/USDC', type: 'crypto' as MarketType, coinGecko: 'ethereum' },
   { decimals: 3, pair: 'SOL/USDC', type: 'crypto' as MarketType, coinGecko: 'solana' },
-  { decimals: 3, pair: 'USDC/USD', type: 'crypto' as MarketType, coinGecko: 'USD Coin' },
   { decimals: 3, pair: 'MSOL/USDC', type: 'crypto' as MarketType, coinGecko: 'Marinade staked SOL' },
   { decimals: 3, pair: 'SRM/USDC', type: 'crypto' as MarketType, coinGecko: 'serum' },
   { decimals: 3, pair: 'GMT/USDC', type: 'crypto' as MarketType, coinGecko: 'stepn' }
