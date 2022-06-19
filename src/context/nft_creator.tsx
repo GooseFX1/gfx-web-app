@@ -1,5 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { createContext, ReactNode, useContext, useState, FC, useEffect } from 'react'
+import { ICreatorData } from '../types/nft_launchpad'
 
 interface ICreatorConfig {
   isAllowed: boolean
@@ -10,49 +11,11 @@ interface ICreatorConfig {
   creatorData: ICreatorData
 }
 
-type legality = 'author' | 'permission' | 'no'
-type currency = 'SOL' | 'USDC'
-type vesting = false | [50, 25, 25] | [40, 40, 40]
-
-interface ICreatorData {
-  1: {
-    legality: legality
-    projectName: string
-    collectionName: string
-    collectionDescription: string
-  }
-  2: {
-    numberOfItems: number
-    currency: currency
-    mintPrice: number
-  }
-  3: {
-    vesting: vesting
-    pickDate: Date
-  }
-  4: {
-    preReveal: boolean
-  }
-  5: {
-    discord: string
-    website?: string
-    twitter: string
-    roadmap: [
-      heading: {
-        title: string
-        year: string
-      },
-      subHeading: string
-    ]
-    team: [name: string, twitterUsername: string]
-  }
-}
-
 const NFTCreatorContext = createContext<ICreatorConfig>(null)
 export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isAllowed, setIsAllowed] = useState<boolean>(false)
   const [currentStep, setCurrentStep] = useState<number>(1)
-  const [creatorData, setCreatorData] = useState<ICreatorData>(null)
+  const [creatorData, setCreatorData] = useState<ICreatorData>([null, null, null, null, null, null])
 
   const wallet = useWallet()
 
@@ -63,7 +26,13 @@ export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) =>
     } else setIsAllowed(false)
   }, [wallet.publicKey, wallet.connected])
 
-  const saveDataForStep = () => {}
+  const saveDataForStep = (data) => {
+    let obj = {
+      ...creatorData
+    }
+    obj[currentStep] = data
+    setCreatorData(obj)
+  }
 
   const previousStep = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1)
