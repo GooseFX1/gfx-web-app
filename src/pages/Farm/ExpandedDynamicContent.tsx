@@ -563,7 +563,7 @@ export const ExpandedDynamicContent = ({
             />
           ) : (
             <StakeButtons
-              name={name.toString()}
+              name={name?.toString()}
               wallet={wallet}
               stakeRef={stakeRef}
               unstakeRef={unstakeRef}

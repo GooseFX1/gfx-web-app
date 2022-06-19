@@ -97,6 +97,22 @@ export const getSslAccountKey = async (tokenMintAddress: PublicKey): Promise<und
   }
 }
 
+export const fetchAllSSLAmountStaked = async (
+  connection: Connection,
+  sslAccountKeys: PublicKey[],
+  wallet: WalletContextState,
+  liquidityAccountKeys: PublicKey[]
+) => {
+  try {
+    //const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintArray)
+    const sslData = await connection.getMultipleAccountsInfo(sslAccountKeys)
+    const liquidityData = await connection.getMultipleAccountsInfo(liquidityAccountKeys)
+    console.log(liquidityAccountKeys.length, sslAccountKeys.length, sslData.length, liquidityData.length)
+    return { sslData: sslData, liquidityData: liquidityData }
+  } catch (err) {
+    console.log(err)
+  }
+}
 export const fetchSSLAmountStaked = async (
   connection: Connection,
   sslAccountKey: PublicKey,

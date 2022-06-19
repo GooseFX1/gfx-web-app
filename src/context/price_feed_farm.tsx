@@ -92,15 +92,24 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
         const cryptoMarkets = PAIR_LIST.filter(({ type }) => type === 'crypto')
         for (const { pair, coinGecko } of cryptoMarkets) {
           try {
-            const market = await serum.getMarket(connection, pair)
-            const current = await serum.getLatestBid(connection, pair)
-            setPrices((prevState) => ({ ...prevState, [pair]: { current } }))
-            subscriptions.push(
-              await serum.subscribeToOrderBook(connection, market, 'bids', (account, market) => {
-                const [[current]] = Orderbook.decode(market, account.data).getL2(20)
-                setPrices((prevState) => ({ ...prevState, [pair]: { current } }))
-              })
-            )
+            console.log(pair)
+            if (pair === 'GMT/USDC') {
+              const currentPrice = await refreshTokenData({ pair, coinGecko })
+              setPrices((prevState) => ({ ...prevState, [pair]: { current: currentPrice } }))
+            }
+            if (pair === 'USDC/USD') {
+              setPrices((prevState) => ({ ...prevState, [pair]: { current: 1 } }))
+            } else if (pair !== 'GMT/USDC') {
+              const market = await serum.getMarket(connection, pair)
+              const current = await serum.getLatestBid(connection, pair)
+              setPrices((prevState) => ({ ...prevState, [pair]: { current } }))
+              subscriptions.push(
+                await serum.subscribeToOrderBook(connection, market, 'bids', (account, market) => {
+                  const [[current]] = Orderbook.decode(market, account.data).getL2(20)
+                  setPrices((prevState) => ({ ...prevState, [pair]: { current } }))
+                })
+              )
+            }
           } catch (e: any) {
             try {
               const currentPrice = await refreshTokenData({ pair, coinGecko })
