@@ -105,31 +105,13 @@ export const fetchAllSSLAmountStaked = async (
 ) => {
   try {
     //const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintArray)
-    const sslData = await connection.getMultipleAccountsInfo(sslAccountKeys)
-    const liquidityData = await connection.getMultipleAccountsInfo(liquidityAccountKeys)
-    console.log(liquidityAccountKeys.length, sslAccountKeys.length, sslData.length, liquidityData.length)
-    return { sslData: sslData, liquidityData: liquidityData }
-  } catch (err) {
-    console.log(err)
-  }
-}
-export const fetchSSLAmountStaked = async (
-  connection: Connection,
-  sslAccountKey: PublicKey,
-  wallet: WalletContextState,
-  tokenMintAddress: PublicKey
-) => {
-  try {
-    const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress)
-    const { data } = await connection.getAccountInfo(sslAccountKey)
-    const sslData = SSL_LAYOUT.decode(data)
-    try {
-      const liquidityData = (await connection.getAccountInfo(liquidityAccountKey)).data
-      const liquidityAccount = LIQUIDITY_ACCOUNT_LAYOUT.decode(liquidityData)
-      return { sslData, liquidityAccount }
-    } catch (err) {
-      return { sslData: sslData, liquidityAccount: undefined }
-    }
+    const promiseData = []
+    promiseData.push(connection.getMultipleAccountsInfo(sslAccountKeys))
+    if (wallet.publicKey) promiseData.push(connection.getMultipleAccountsInfo(liquidityAccountKeys))
+    const ans = Promise.all(promiseData)
+    return ans.then((res) => {
+      return { sslData: res[0], liquidityData: res[1] }
+    })
   } catch (err) {
     console.log(err)
   }
