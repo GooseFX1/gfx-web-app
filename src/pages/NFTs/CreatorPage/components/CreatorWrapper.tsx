@@ -39,7 +39,6 @@ export const CreatorWrapper: FC = () => {
   const walletAddress = routeParam.walletAddress
   const wallet = useWallet()
   const { isAllowed } = useNFTCreator()
-  console.log(isAllowed)
 
   return !wallet.connected ? (
     <WRAPPER>
