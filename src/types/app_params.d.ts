@@ -3,6 +3,7 @@ export interface IAppParams {
   nftId: string
   userAddress: string
   nftMintAddress: string
+  draftId: string
 }
 
 export interface ILocationState {
