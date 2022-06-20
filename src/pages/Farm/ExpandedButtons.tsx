@@ -457,7 +457,7 @@ export const SSLButtons: FC<{
   const withdrawClicked = () => {
     // (amt / userLiablity) * 10000
     if (checkbasicConditions(availableToMint)) return
-    const multiplier = name === 'SOL' ? 10000 : 10
+    const multiplier = name === 'SOL' || name === 'GMT' ? 10000 : 10
     let amountInNative = (unstakeRef.current.value / tokenData?.userLiablity) * LAMPORTS_PER_SOL * multiplier
     if (parseFloat(availableToMint.toFixed(3)) === parseFloat(unstakeRef.current.value)) {
       amountInNative = 100 * 100

@@ -307,7 +307,7 @@ export const ExpandedDynamicContent = ({
   useEffect(() => {
     if (wallet.publicKey) {
       const SOL = connection.getAccountInfo(wallet.publicKey)
-      SOL.then((res) => setSOLBalance(res.lamports / LAMPORTS_PER_SOL))
+      SOL.then((res) => setSOLBalance(res.lamports / LAMPORTS_PER_SOL)).catch((err) => console.log(err))
     }
   }, [counter, getUIAmount, wallet.publicKey, userSOLBalance])
 
