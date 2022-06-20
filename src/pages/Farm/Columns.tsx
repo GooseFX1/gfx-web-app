@@ -96,7 +96,7 @@ export const columns = [
       <STYLED_NAME>
         <img
           className={`coin-image ${record.type === 'Double Sided' ? 'double-sided' : ''}`}
-          src={`/img/crypto/${text.toUpperCase().replace(' ', '-')}.svg`}
+          src={`/img/crypto/${text?.toUpperCase().replace(' ', '-')}.svg`}
           alt=""
         />
         <div className="text">{text}</div>
