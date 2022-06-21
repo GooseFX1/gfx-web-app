@@ -189,7 +189,7 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
   }, [handleDismissModal])
 
   const onCreateCollectible = () => {
-    history.push('/NFTs/create')
+    history.push('/NFTs/nft-drafts')
   }
 
   const goProfile = () => history.push(`/NFTs/profile/${publicKey.toBase58()}`)
