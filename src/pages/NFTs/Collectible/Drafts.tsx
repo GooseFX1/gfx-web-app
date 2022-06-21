@@ -135,7 +135,15 @@ export const NftDrafts = (): JSX.Element => {
       setDraftIsLoading(true)
       const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.DRAFTS}?user_id=${sessionUser?.user_id}`)
       const result = await res.data
-      setDrafts(result)
+      if (result.length > 0) {
+        setDrafts(result)
+      } else {
+        notify({
+          message: 'No previous draft found, redirecting to create page'
+        })
+        history.push('/NFTs/create')
+      }
+
       setDraftIsLoading(false)
     } catch (err) {
       console.log(err)
