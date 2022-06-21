@@ -426,18 +426,20 @@ export const UpLoadNFT = (): JSX.Element => {
 
   const pullDraft = async (id: string) => {
     try {
+      setDraftUploadInProgress(true)
       const res = await apiClient(NFT_API_BASE).get(
         `${NFT_API_ENDPOINTS.DRAFTS}?user_id=${sessionUser?.user_id}&draft_id=${id}`
       )
       const data = await res.data
       const result = data.find((i) => `${i.draft_id}` === id)
+      console.log(result, result.image)
 
       if (result) {
-        const url = await fetch(nftMintingData.image)
-        const blob = await url.blob()
-        const name = nftMintingData.image.split('/')[nftMintingData.image.split('/').length - 1]
-        const file = new File([blob], name, { type: blob.type })
+        setS3Link(result.image)
+        setCurrentDraftId(result.draft_id)
+        setLocalAttributes(result?.attributes)
 
+        // update nft data object
         setNftMintingData({
           name: result.name || '',
           symbol: result.symbol || '',
@@ -451,11 +453,13 @@ export const UpLoadNFT = (): JSX.Element => {
           properties: result.properties || { files: [], category: MetadataCategory.Image, maxSupply: 1 },
           draftLoaded: true
         })
+
+        // pull file binary from url
+        const url = await fetch(result.image)
+        const blob = await url.blob()
+        const name = result.image.split('/')[result.image.split('/').length - 1]
+        const file = new File([blob], name, { type: blob.type })
         setFilesForUpload([file])
-        ///setLocalFiles(mainFile)
-        setS3Link(result.image)
-        setCurrentDraftId(result.draft_id)
-        setLocalAttributes(result?.attributes)
       } else {
         setNftMintingData({
           name: '',
@@ -474,8 +478,11 @@ export const UpLoadNFT = (): JSX.Element => {
           }
         })
       }
+      setDraftUploadInProgress(false)
     } catch (err) {
       console.log(err)
+      notify({ type: 'error', message: 'Could not pull draft', icon: 'error' }, err)
+      setDraftUploadInProgress(false)
     }
   }
 

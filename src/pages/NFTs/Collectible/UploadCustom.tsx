@@ -163,20 +163,24 @@ export const UploadCustom = ({
 
   useEffect(() => {
     async function getData() {
-      const url = await fetch(nftMintingData.image)
-      const blob = await url.blob()
-      const name = nftMintingData.image.split('/')[nftMintingData.image.split('/').length - 1]
-      const file = new File([blob], name, { type: blob.type })
-      const mainFile = {
-        error: null,
-        name: name,
-        originFileObj: file,
-        percent: 0,
-        size: file.size,
-        thumbUrl: nftMintingData.image,
-        type: blob.type
+      try {
+        const url = await fetch(nftMintingData.image)
+        const blob = await url.blob()
+        const name = nftMintingData.image.split('/')[nftMintingData.image.split('/').length - 1]
+        const file = new File([blob], name, { type: blob.type })
+        const mainFile = {
+          error: null,
+          name: name,
+          originFileObj: file,
+          percent: 0,
+          size: file.size,
+          thumbUrl: nftMintingData.image,
+          type: blob.type
+        }
+        setLocalFile(mainFile)
+      } catch (e) {
+        console.log(e)
       }
-      setLocalFile(mainFile)
     }
 
     if (nftMintingData?.image && !upload) {
