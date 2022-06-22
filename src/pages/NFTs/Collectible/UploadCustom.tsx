@@ -142,14 +142,51 @@ interface Props {
   setFilesForUpload: (value: File[]) => void
   nftMintingData: IMetadataContext
   setNftMintingData: (data: IMetadataContext) => void
+  setS3Link: (value: string) => void
+  setDisabled: (value: boolean) => void
 }
 
-export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingData, setNftMintingData }: Props) => {
+export const UploadCustom = ({
+  setPreviewImage,
+  setFilesForUpload,
+  nftMintingData,
+  setNftMintingData,
+  setS3Link,
+  setDisabled
+}: Props) => {
   const [coverArtError, setCoverArtError] = useState<string>()
   // const [coverFile, setCoverFile] = useState<File | undefined>()
   const [mainFile, setMainFile] = useState<File | undefined>()
   const [customURL, setCustomURL] = useState<string>('')
-  const [localFile, setLocalFile] = useState<any>()
+  const [localFile, setLocalFile] = useState<any>(null)
+  const [upload, setUpload] = useState<any>(false)
+
+  useEffect(() => {
+    async function getData() {
+      try {
+        const url = await fetch(nftMintingData.image)
+        const blob = await url.blob()
+        const name = nftMintingData.image.split('/')[nftMintingData.image.split('/').length - 1]
+        const file = new File([blob], name, { type: blob.type })
+        const mainFile = {
+          error: null,
+          name: name,
+          originFileObj: file,
+          percent: 0,
+          size: file.size,
+          thumbUrl: nftMintingData.image,
+          type: blob.type
+        }
+        setLocalFile(mainFile)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
+    if (nftMintingData?.image && !upload) {
+      getData()
+    }
+  }, [nftMintingData?.image, upload])
 
   const handleFileChange = async (info: UploadChangeParam<UploadFile<any>>) => {
     let mainFile = info.fileList[0]
@@ -158,6 +195,8 @@ export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingDat
       mainFile.error = null
       delete mainFile.status
     }
+
+    setUpload(true)
     setLocalFile(mainFile)
     setPreviewImage(mainFile)
   }
@@ -253,7 +292,7 @@ export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingDat
       {coverArtError ? (
         <STYLED_UPLOAD_ERROR>
           <img className="image-broken" src={`/img/assets/image-broken.svg`} alt="" />
-          <div className="desc-failed">Your file is broken or corrupted, pelase try again.</div>
+          <div className="desc-failed">Your file is broken or corrupted, please try again.</div>
           <img className="remove-icon" src={`/img/assets/remove-icon.svg`} alt="" onClick={onRemove} />
           {localFile && coverArtError && (
             <div>
@@ -272,6 +311,7 @@ export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingDat
             onPreview={() => {}}
             beforeUpload={handleBeforeUpload}
             onRemove={onRemove}
+            fileList={localFile ? [localFile] : []}
           >
             <div className="image-wrap"></div>
             {!localFile && (
