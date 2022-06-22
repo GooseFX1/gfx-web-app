@@ -109,7 +109,7 @@ export const NFTs: FC = () => {
                 <Route exact path="/NFTs/create">
                   <Collectible />
                 </Route>
-                <Route exact path="/NFTs/nft-drafts">
+                <Route exact path="/NFTs/drafts">
                   <NftDrafts />
                 </Route>
                 <Route exact path="/NFTs/create-single/:draftId?">
