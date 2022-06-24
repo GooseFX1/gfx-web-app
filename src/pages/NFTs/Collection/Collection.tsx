@@ -8,6 +8,7 @@ import { IAppParams } from '../../../types/app_params'
 import { NFT_MENU } from '../Home/NFTHome'
 import { ModalSlide } from '../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../constants'
+import { GenericNotFound } from '../../InvalidUrl'
 
 const COLLECTION_CONTAINER = styled.div<{ collapsed: boolean }>`
   height: calc(100vh - ${({ collapsed }) => (collapsed ? '0px' : '88px')});
