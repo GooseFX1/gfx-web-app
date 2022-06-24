@@ -87,4 +87,6 @@ export interface INFTCollectionConfig {
   fetchSingleCollection: (id: string) => Promise<any>
   fixedPriceWithinCollection: IFixedPriceWithinCollection
   openBidWithinCollection: IOpenBidWithinCollection
+  setNFTMenuPopup: Dispatch<SetStateAction<Boolean>>
+  nftMenuPopup: boolean
 }

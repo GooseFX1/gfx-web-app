@@ -20,6 +20,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
   const [allCollections, setAllCollections] = useState<Array<NFTBaseCollection>>([])
   const [featuredCollections, setFeaturedCollections] = useState<Array<NFTFeaturedCollection>>([])
   const [upcomingCollections, setUpcomingCollections] = useState<Array<NFTUpcomingCollection>>([])
+  const [nftMenuPopup, setNFTMenuPopup] = useState<boolean>(false)
 
   const fetchAllCollections = useCallback(async (loadingCallback: (isLoading: boolean) => void) => {
     try {
@@ -121,7 +122,9 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
         setOpenBidWithinCollection,
         fetchSingleCollection,
         fixedPriceWithinCollection,
-        openBidWithinCollection
+        openBidWithinCollection,
+        nftMenuPopup,
+        setNFTMenuPopup
       }}
     >
       {children}
@@ -153,6 +156,8 @@ export const useNFTCollections = (): INFTCollectionConfig => {
     setOpenBidWithinCollection: context.setOpenBidWithinCollection,
     fetchSingleCollection: context.fetchSingleCollection,
     fixedPriceWithinCollection: context.fixedPriceWithinCollection,
-    openBidWithinCollection: context.openBidWithinCollection
+    openBidWithinCollection: context.openBidWithinCollection,
+    nftMenuPopup: context.nftMenuPopup,
+    setNFTMenuPopup: context.setNFTMenuPopup
   }
 }
