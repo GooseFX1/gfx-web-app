@@ -6,9 +6,16 @@ import tw from 'twin.macro'
 import { FileDrop } from 'react-file-drop'
 import { useNFTCreator } from '../../../../context/nft_creator'
 import { ICreatorData } from '../../../../types/nft_launchpad'
+var axios = require('axios')
 
 const WRAPPER = styled.div`
   ${tw`mb-12`}
+  .relative-row {
+    ${tw`relative`}
+    .back-button {
+      ${tw`absolute -left-8 bottom-6 cursor-pointer`}
+    }
+  }
   .ant-col-12:first-child {
     padding-left: 55px;
     padding-right: 100px;
@@ -161,7 +168,7 @@ export const Step2: FC = () => {
   const [nextButtonActive, setNextButtonActive] = useState<boolean>(false)
 
   const { creatorData, previousStep } = useNFTCreator()
-  const fileConstraints = (file) => {
+  const fileConstraints = async (file) => {
     let extension = file.name.split('.')[1]
     if (
       (extension === 'png' ||
@@ -170,8 +177,33 @@ export const Step2: FC = () => {
         extension === 'gif' ||
         extension === 'mp4') &&
       file.size < 20 * 1024 * 1024
-    )
+    ) {
+      const url = 'http://localhost:4000/upload'
+      let data = JSON.stringify({
+        files: {
+          sampleFile: file
+        }
+      })
+      let config = {
+        method: 'post',
+        url: url,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        data: data
+      }
+      console.log(file)
+      let formData = new FormData()
+      formData.append('file', file)
+      const response2 = axios
+        .post(url, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        .then((response) => console.log(response))
       setUploadedImage(file)
+    }
   }
 
   useEffect(() => {
@@ -199,7 +231,8 @@ export const Step2: FC = () => {
     <WRAPPER>
       <Row>
         <Col span={12}>
-          <Row>
+          <Row className="relative-row">
+            <img onClick={() => previousStep()} className="back-button" src="/img/assets/backArrow.svg" alt="back" />
             <div className="big-label">2. Cover image and number of items</div>
           </Row>
           <div>
@@ -274,7 +307,6 @@ export const Step2: FC = () => {
               </div>
             </Col>
             <Col span={6}>
-              <button onClick={() => previousStep()}>BACK</button>
               <NextStepsButton data={creatorStepData} active={nextButtonActive} />
             </Col>
           </Row>
