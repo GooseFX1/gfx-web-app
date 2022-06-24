@@ -14,6 +14,7 @@ import {
 import { useConnectionConfig } from '../../../../context'
 import { Share } from '../../Share'
 import { copyToClipboard } from '../../Collection/CollectionHeader'
+import * as anchor from '@project-serum/anchor'
 
 const MINT_BUTTON_BAR = styled.div`
   margin-top: -100px;
@@ -93,7 +94,8 @@ export const MintButtonFunc = ({
     }
   }
 
-  const { connection } = useConnectionConfig()
+  //const { connection } = useConnectionConfig()
+  const connection = new anchor.web3.Connection('https://api.devnet.solana.com', 'confirmed')
 
   const getMintButtonContent = () => {
     if (candyMachine?.state.isSoldOut) {
