@@ -8,7 +8,7 @@ export interface ICreatorParams {
 }
 type legality = 'author' | 'permission' | 'no'
 type currency = 'SOL' | 'USDC'
-type vesting = false | [50, 25, 25] | [40, 40, 40]
+type vesting = false | [50, 25, 25] | [40, 30, 30]
 
 export interface ICreatorData {
   0: null
@@ -26,22 +26,18 @@ export interface ICreatorData {
   } | null
   3: {
     vesting: vesting
-    pickDate: Date
+    date: string
+    time: string
   } | null
   4: {
-    preReveal: boolean
+    delayedReveal: boolean
+    uploadedFiles: File
   } | null
   5: {
     discord: string
     website?: string
     twitter: string
-    roadmap: [
-      heading: {
-        title: string
-        year: string
-      },
-      subHeading: string
-    ]
-    team: [name: string, twitterUsername: string]
+    roadmap: { heading: string; subHeading: string }[] | null
+    team: { name: string; twitterUsername: string }[] | [] | null
   } | null
 }
