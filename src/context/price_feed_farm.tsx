@@ -1,9 +1,7 @@
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
-import { parsePriceData } from '@pythnetwork/client'
-import { Orderbook } from '@project-serum/serum'
 import { FARM_TOKEN_LIST, FEATURED_PAIRS_LIST } from './crypto'
+import { serum } from '../web3'
 import { notify } from '../utils'
-import { pyth, serum } from '../web3'
 import { useConnectionConfig } from '../context'
 import axios from 'axios'
 
@@ -90,29 +88,36 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
       ;(async () => {
         const PAIR_LIST = [...FARM_TOKEN_LIST]
         const cryptoMarkets = PAIR_LIST.filter(({ type }) => type === 'crypto')
+        const promiseArr = []
         for (const { pair, coinGecko } of cryptoMarkets) {
           try {
-            const market = await serum.getMarket(connection, pair)
-            const current = await serum.getLatestBid(connection, pair)
-            setPrices((prevState) => ({ ...prevState, [pair]: { current } }))
-            subscriptions.push(
-              await serum.subscribeToOrderBook(connection, market, 'bids', (account, market) => {
-                const [[current]] = Orderbook.decode(market, account.data).getL2(20)
-                setPrices((prevState) => ({ ...prevState, [pair]: { current } }))
-              })
-            )
-          } catch (e: any) {
-            try {
-              const currentPrice = await refreshTokenData({ pair, coinGecko })
-              setPrices((prevState) => ({ ...prevState, [pair]: { current: currentPrice } }))
-            } catch (e: any) {
-              console.log('Error fetching CoinGeko market', pair)
+            if (pair !== 'MSOL/USDC' && pair !== 'USDC/USD') {
+              promiseArr.push(refreshTokenData({ pair, coinGecko }))
+            } else if (pair === 'USDC/USD') {
+              setPrices((prevState) => ({ ...prevState, [pair]: { current: 1 } }))
+            } else {
+              promiseArr.push(serum.getLatestBid(connection, pair))
             }
-            console.error('Error fetching serum markets', pair)
-            // await notify({ type: 'error', message: 'Error fetching serum markets', icon: 'rate_error' }, e)
+          } catch (e: any) {
+            console.error(e, 'Error fetching serum markets', pair)
+            await notify({ type: 'error', message: `Error fetching pair ${pair}`, icon: 'rate_error' }, e)
           }
         }
-        setPriceFetched(true)
+
+        try {
+          await Promise.all(promiseArr)
+            .then((res) => {
+              for (let i = 0; i < cryptoMarkets.length; i++) {
+                setPrices((prevState) => ({ ...prevState, [cryptoMarkets[i].pair]: { current: res[i] } }))
+              }
+              setPriceFetched(true)
+            })
+            .catch((err) => {
+              notify({ type: 'error', message: `Error fetching pair, Please Reload`, icon: 'rate_error' }, err)
+            })
+        } catch (err) {
+          console.log(err)
+        }
       })()
     }
 

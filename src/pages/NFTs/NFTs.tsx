@@ -10,6 +10,7 @@ import { NFTDetails } from './NFTDetails'
 import { Collectible } from './Collectible'
 import { NestQuestSingleListing } from './NestQuestSingleListing'
 import { UpLoadNFT } from './Collectible/UpLoadNFT'
+import { NftDrafts } from './Collectible/Drafts'
 import { SellNFT } from './Collectible/SellNFT'
 import { Profile } from './Profile'
 import { Collection } from './Collection/Collection'
@@ -98,7 +99,7 @@ export const NFTs: FC = () => {
                 <Route exact path={['/NFTs/profile', '/NFTs/profile/:userId']}>
                   <Profile />
                 </Route>
-                <Route exact path="/NFTs/collection/:collectionId">
+                <Route exact path="/NFTs/collection/:collectionName">
                   <Collection />
                 </Route>
                 <Route exact path={'/NFTs/details/:nftMintAddress'}>
@@ -110,7 +111,10 @@ export const NFTs: FC = () => {
                 <Route exact path="/NFTs/create">
                   <Collectible />
                 </Route>
-                <Route exact path="/NFTs/create-single">
+                <Route exact path="/NFTs/drafts">
+                  <NftDrafts />
+                </Route>
+                <Route exact path="/NFTs/create-single/:draftId?">
                   <UpLoadNFT />
                 </Route>
                 <Route exact path="/NFTs/sell/:nftId">

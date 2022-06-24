@@ -41,19 +41,21 @@ export const Collection: FC = (): JSX.Element => {
   }, [])
 
   useEffect(() => {
-    if (!singleCollection || `${singleCollection.collection_id}` !== params.collectionId) {
-      fetchSingleCollection(params.collectionId).then((res) => {
-        if (res.response && res.response.status !== 200) {
+    if (!singleCollection || `${singleCollection.collection_id}` !== params.collectionName) {
+      fetchSingleCollection(params.collectionName).then((res) => {
+        if (res?.status === 200) {
+          setErr(false)
+        } else {
           setErr(true)
         }
       })
     }
 
     return () => {}
-  }, [fetchSingleCollection, params.collectionId, singleCollection])
+  }, [fetchSingleCollection, params.collectionName]) //had to remove singleCollection useState trigger as it leads to infinite loop as setSingleCollection is called in fecthSingleCollection
 
   return err ? (
-    <h2>Something went wrong fetching the collection details</h2>
+    <GenericNotFound />
   ) : (
     <COLLECTION_CONTAINER collapsed={isCollapsed}>
       {nftMenuPopup && <ModalSlide modalType={MODAL_TYPES.NFT_MENU} rewardToggle={setNFTMenuPopup} />}

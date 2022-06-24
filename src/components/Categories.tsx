@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Menu, MenuItem } from '../layouts/App/shared'
 import { ArrowDropdown } from '../components'
@@ -99,17 +99,22 @@ const Overlay: FC<{
 export const Categories: FC<{
   categories: CategoryItem[]
   type?: string
+  chosenCategory?: string
   [x: string]: any
   onChange?: (title: string) => void
-}> = ({ categories, type, onChange, ...rest }) => {
+}> = ({ categories, type, onChange, chosenCategory, ...rest }) => {
   const [arrowRotation, setArrowRotation] = useState(false)
-  const [currentTitle, setCurrentTitle] = useState(categories[0]?.name)
+  const [currentTitle, setCurrentTitle] = useState(chosenCategory || categories[0]?.name)
   const [dropdownVisible, setDropdownVisible] = useState(false)
 
   const handleClick = () => {
     setArrowRotation(!arrowRotation)
     setDropdownVisible(!dropdownVisible)
   }
+
+  useEffect(() => {
+    setCurrentTitle(chosenCategory || categories[0]?.name)
+  }, [chosenCategory])
 
   return (
     <WRAPPER onClick={handleClick} {...rest}>

@@ -183,7 +183,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
             </div>
             <div className="full-width">
               <div className="half-width">
-                <Form.Item label="Facebook" name="facebook_link">
+                <Form.Item label="Telegram" name="telegram_link">
                   <Input />
                 </Form.Item>
                 <div className="hint">Will be used as public URL</div>

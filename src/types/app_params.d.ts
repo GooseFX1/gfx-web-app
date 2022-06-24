@@ -1,8 +1,9 @@
 export interface IAppParams {
-  collectionId: string
+  collectionName: string
   nftId: string
   userAddress: string
   nftMintAddress: string
+  draftId: string
 }
 
 export interface ILocationState {

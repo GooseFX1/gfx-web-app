@@ -265,8 +265,7 @@ export const StakeButtons: FC<{
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
     [tokenInfo?.address, getUIAmount, publicKey]
   )
-
-  const { current } = useMemo(() => prices[`${name}/USDC`], [prices])
+  const { current } = useMemo(() => prices[`${name.toUpperCase()}/USDC`], [prices])
   const tokenData = farmDataContext.find((token) => token.name === 'GOFX')
   return (
     <>
@@ -458,7 +457,7 @@ export const SSLButtons: FC<{
   const withdrawClicked = () => {
     // (amt / userLiablity) * 10000
     if (checkbasicConditions(availableToMint)) return
-    const multiplier = name === 'SOL' ? 10000 : 10
+    const multiplier = name === 'SOL' || name === 'GMT' ? 10000 : 10
     let amountInNative = (unstakeRef.current.value / tokenData?.userLiablity) * LAMPORTS_PER_SOL * multiplier
     if (parseFloat(availableToMint.toFixed(3)) === parseFloat(unstakeRef.current.value)) {
       amountInNative = 100 * 100
