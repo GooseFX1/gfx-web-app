@@ -39,7 +39,8 @@ const MESSAGE = styled.div`
 export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
   const params = useParams<IProjectParams>()
   const wallet = useWallet()
-  const { connection } = useConnectionConfig()
+  //const { connection } = useConnectionConfig()
+  const connection = new anchor.web3.Connection('https://api.devnet.solana.com', 'confirmed')
   const { selectedProject, candyMachineState, candyMachine, cndyValues } = useNFTLPSelected()
   const [isUserMinting, setIsUserMinting] = useState(false)
   const [alertState, setAlertState] = useState<AlertState>({

@@ -12,6 +12,8 @@ import {
 import Restricted from './pages/Restricted'
 import { CryptoContent } from './pages/TradeV2/MovableContainer'
 import useBlacklisted from './utils/useBlacklisted'
+import { Launchpad } from './pages/NFTs/launchpad/Launchpad'
+import { Creator } from './pages/NFTs/CreatorPage/Creator'
 
 export const Router: FC = () => {
   const blacklisted = useBlacklisted()
@@ -39,6 +41,12 @@ export const Router: FC = () => {
                   </TradeHistoryProvider>
                 </PriceFeedProvider>
               )}
+            </Route>
+            <Route path="/NFTs/launchpad">
+              <Launchpad />
+            </Route>
+            <Route path="/NFTs/Creator">
+              <Creator />
             </Route>
             <Route path="/NFTs">
               <NFTProfileProvider>

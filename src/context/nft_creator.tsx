@@ -1,5 +1,7 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { createContext, ReactNode, useContext, useState, FC, useEffect } from 'react'
+import { ICreatorData } from '../types/nft_launchpad'
+import { isCreatorAllowed, saveData, uploadFiles } from '../api/NFTLaunchpad/actions'
 
 interface ICreatorConfig {
   isAllowed: boolean
@@ -8,69 +10,61 @@ interface ICreatorConfig {
   nextStep: Function
   saveDataForStep: Function
   creatorData: ICreatorData
-}
-
-type legality = 'author' | 'permission' | 'no'
-type currency = 'SOL' | 'USDC'
-type vesting = false | [50, 25, 25] | [40, 40, 40]
-
-interface ICreatorData {
-  1: {
-    legality: legality
-    projectName: string
-    collectionName: string
-    collectionDescription: string
-  }
-  2: {
-    numberOfItems: number
-    currency: currency
-    mintPrice: number
-  }
-  3: {
-    vesting: vesting
-    pickDate: Date
-  }
-  4: {
-    preReveal: boolean
-  }
-  5: {
-    discord: string
-    website?: string
-    twitter: string
-    roadmap: [
-      heading: {
-        title: string
-        year: string
-      },
-      subHeading: string
-    ]
-    team: [name: string, twitterUsername: string]
-  }
+  submit: Function
 }
 
 const NFTCreatorContext = createContext<ICreatorConfig>(null)
 export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isAllowed, setIsAllowed] = useState<boolean>(false)
   const [currentStep, setCurrentStep] = useState<number>(1)
-  const [creatorData, setCreatorData] = useState<ICreatorData>(null)
+  const [creatorData, setCreatorData] = useState<ICreatorData>([null, null, null, null, null, null])
 
   const wallet = useWallet()
 
   useEffect(() => {
     if (wallet.connected) {
-      //make api call here
-      setIsAllowed(true)
+      ; (async () => {
+        const response = await isCreatorAllowed(wallet.publicKey.toBase58())
+        console.log(response)
+        setIsAllowed(response)
+      })()
     } else setIsAllowed(false)
   }, [wallet.publicKey, wallet.connected])
 
-  const saveDataForStep = () => {}
+
+
+  const saveDataForStep = (data) => {
+    let obj = {
+      ...creatorData
+    }
+    obj[currentStep] = data
+    setCreatorData(obj)
+  }
+
+  const submit = async () => {
+    let data = creatorData
+    let walletAddress = wallet.publicKey.toBase58()
+    data = { ...data, ...{ walletAddress: walletAddress } }
+    try {
+      const response = await saveData(data)
+      return response.data.status !== 'failed'
+    } catch (e) {
+      console.log(e)
+      return false
+    }
+  }
+  useEffect(() => {
+    if (currentStep === 6) {
+      submit()
+    }
+  }, [currentStep])
 
   const previousStep = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1)
   }
 
   const nextStep = () => {
-    if (currentStep < 5) setCurrentStep(currentStep + 1)
+    if (currentStep < 6) setCurrentStep(currentStep + 1)
   }
 
   return (
@@ -81,7 +75,8 @@ export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) =>
         saveDataForStep: saveDataForStep,
         creatorData: creatorData,
         previousStep: previousStep,
-        nextStep: nextStep
+        nextStep: nextStep,
+        submit: submit
       }}
     >
       {children}
@@ -95,6 +90,6 @@ export const useNFTCreator = () => {
   if (!context) {
     throw new Error('Missing NFT Creator context')
   }
-  const { isAllowed, currentStep, saveDataForStep, creatorData, previousStep, nextStep } = context
-  return { isAllowed, currentStep, saveDataForStep, creatorData, previousStep, nextStep }
+  const { isAllowed, currentStep, saveDataForStep, creatorData, previousStep, nextStep, submit } = context
+  return { isAllowed, currentStep, saveDataForStep, creatorData, previousStep, nextStep, submit }
 }

@@ -191,7 +191,9 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
   const [cmValues, setCmValues] = useState(null)
   const params = useParams<IProjectParams>()
   const wallet = useWallet()
-  const { connection } = useConnectionConfig()
+  //const { connection } = useConnectionConfig()
+  const connection = new anchor.web3.Connection('https://api.devnet.solana.com', 'confirmed')
+
   const anchorWallet = useMemo(() => {
     if (!wallet || !wallet.publicKey || !wallet.signAllTransactions || !wallet.signTransaction) {
       return
