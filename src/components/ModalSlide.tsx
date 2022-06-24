@@ -2,6 +2,8 @@ import React, { Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { RewardsPopup } from './RewardsPopup'
 import { FeesPopup } from './FeesPopup'
+//import { GoldenTicketPopup } from '../pages/NFTs/launchpad/pages/LaunchpadComponents'
+import MenuPopup from './popups/MenuPopup'
 import { MODAL_TYPES } from '../constants'
 import { GoldenTicketPopup } from '../pages/NFTs/launchpad/pages/LaunchpadComponents'
 
@@ -49,7 +51,7 @@ const MODAL = styled.div`
 `
 interface IModalSlide {
   rewardModal?: boolean
-  rewardToggle?: Dispatch<SetStateAction<boolean>>
+  rewardToggle?: any
   modalType: string
 }
 
@@ -65,7 +67,8 @@ export const ModalSlide = (props: IModalSlide) => {
       <MODAL id="modal">
         {props.modalType === MODAL_TYPES.REWARDS && <RewardsPopup />}
         {props.modalType === MODAL_TYPES.FEES && <FeesPopup {...props} />}
-        {props.modalType === MODAL_TYPES.GOLDEN_TICKET && <GoldenTicketPopup />}
+        {props.modalType === MODAL_TYPES.NFT_MENU && <MenuPopup rewardToggle={props.rewardToggle} />}
+        {/* {props.modalType === MODAL_TYPES.GOLDEN_TICKET && <GoldenTicketPopup />} */}
       </MODAL>
     </WRAPPER>
   )

@@ -11,7 +11,14 @@ const LABEL = styled.span<{ $mode: string; $hover: boolean }>`
   width: 7vw;
   ${({ theme }) => theme.flexCenter}
   font-size: 14px;
-  color: ${({ $hover, $mode, theme }) => (($hover && $mode==='dark') ? '#FFFFFF' : (($hover && $mode!=='dark') ? '#5855FF' : ($mode==='dark' ? '#4E4E4E' : '#636363')))};
+  color: ${({ $hover, $mode, theme }) =>
+    $hover && $mode === 'dark'
+      ? '#FFFFFF'
+      : $hover && $mode !== 'dark'
+      ? '#5855FF'
+      : $mode === 'dark'
+      ? '#4E4E4E'
+      : '#636363'};
   font-weight: ${({ $hover }) => ($hover ? '600' : 'normal')};
   text-transform: capitalize;
 
@@ -195,7 +202,7 @@ export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
         >
           <TAB_ICON>
             {(() => {
-              const icon = mode === 'dark' ? `/img/assets${path}_icon_dark.svg` : `/img/assets${path}_icon_lite.svg`;
+              const icon = mode === 'dark' ? `/img/assets${path}_icon_dark.svg` : `/img/assets${path}_icon_lite.svg`
 
               if (cleanedPathName === path) {
                 return mode === 'dark' ? (
@@ -208,7 +215,9 @@ export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
               }
             })()}
           </TAB_ICON>
-          <LABEL $mode={mode} $hover={cleanedPathName === path}>{path.slice(1)}</LABEL>
+          <LABEL $mode={mode} $hover={cleanedPathName === path}>
+            {path.slice(1)}
+          </LABEL>
         </TAB>
       ))}
     </WRAPPER>

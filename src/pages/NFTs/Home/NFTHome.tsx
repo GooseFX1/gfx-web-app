@@ -11,11 +11,13 @@ import SingleItemListings from './SingleItemListings'
 import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
 import Loading from './Loading'
 import { SVGDynamicReverseMode } from '../../../styles'
+import { ModalSlide } from '../../../components/ModalSlide'
+import { MODAL_TYPES } from '../../../constants'
 
 const BETA_BANNER = styled.div`
   position: fixed;
   right: 24px;
-  bottom: 72px;
+  bottom: 150px;
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   border-radius: 10px;
   padding: 1px;
@@ -60,13 +62,24 @@ const BETA_BANNER = styled.div`
   }
 `
 
+export const NFT_MENU = styled.div`
+  position: fixed;
+  z-index: 11;
+  height: 150px;
+  width: 180px;
+  right: -10px;
+  bottom: -12px;
+  cursor: pointer;
+  background: url('/img/assets/nftFeatures.png');
+`
 const NFTLandingPage: FC = (): JSX.Element => {
-  const { allCollections, fetchAllCollections } = useNFTCollections()
+  const { allCollections, fetchAllCollections, setNFTMenuPopup, nftMenuPopup } = useNFTCollections()
   const [filteredCollections, setFilteredCollections] = useState([])
   const [singleItems, setAllSingleItems] = useState([])
   const [isAllLoading, setIsAllLoading] = useState<boolean>(true)
   const [betaBanner, setBetaBanner] = useState<boolean>(true)
   const [search, setSearch] = useState<string>('')
+  const [nftMenu, setNFTMenu] = useState<boolean>(true)
 
   useEffect(() => {
     fetchAllCollections().then((res) => setIsAllLoading(false))
@@ -81,8 +94,13 @@ const NFTLandingPage: FC = (): JSX.Element => {
     setFilteredCollections(filtered.slice(0, 5))
   }, [search])
 
+  const displayMenu = () => {
+    if (nftMenuPopup) return <ModalSlide modalType={MODAL_TYPES.NFT_MENU} rewardToggle={setNFTMenuPopup} />
+  }
+
   return (
     <>
+      {displayMenu()}
       <Header
         setFilter={setSearch}
         totalCollections={allCollections}
@@ -108,6 +126,8 @@ const NFTLandingPage: FC = (): JSX.Element => {
         <SingleItemListings items={singleItems} title={'Single Item Listings'} />
         <NFTFooter />
       </div>
+
+      <NFT_MENU onClick={() => setNFTMenuPopup((prev) => !prev)} />
 
       {betaBanner && (
         <BETA_BANNER>
