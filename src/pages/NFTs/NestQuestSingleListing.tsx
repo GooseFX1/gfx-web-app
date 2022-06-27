@@ -1,21 +1,25 @@
 import React, { FC, useEffect, useState, useCallback, useMemo, MouseEventHandler } from 'react'
 import { Row, Col, Progress } from 'antd'
-// import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { useWalletModal, useAccounts } from '../../context'
-// import { WRAPPED_SOL_MINT } from '../../web3'
+import { WRAPPED_SOL_MINT } from '../../web3'
 import { MintItemViewStatus, INFTMetadata } from '../../types/nft_details'
 import { SkeletonCommon } from './Skeleton/SkeletonCommon'
 import { MainButton } from '../../components/MainButton'
 import { SOCIAL_MEDIAS } from '../../constants'
 import { SVGDynamicReverseMode } from '../../styles/utils'
 import { FloatingActionButton } from '../../components'
+import { Tabs } from 'antd'
+const { TabPane } = Tabs
 
 //#region styles
 const IMAGE = styled.div`
   width: 100%;
-  min-height: 550px;
+  padding: 3px;
+  border-radius: 20px;
+  background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
 
   ${({ theme }) => css`
     position: relative;
@@ -50,6 +54,92 @@ const NFT_DETAILS = styled.div`
 
   .nd-content {
     height: 100%;
+  }
+
+  .ant-tabs-top {
+    overflow: initial;
+    > .ant-tabs-nav {
+      margin-bottom: 0;
+      border-bottom: 0px solid #575757;
+      padding-bottom: 0px;
+
+      &::before {
+        border: none;
+      }
+
+      .ant-tabs-nav-wrap {
+        overflow: initial;
+        display: block;
+
+        .ant-tabs-nav-list {
+          position: relative;
+          display: flex;
+          justify-content: space-around;
+          transition: transform 0.3s;
+          width: 100%;
+          margin-left: auto;
+          padding-right: 0px;
+        }
+      }
+    }
+  }
+
+  .ant-tabs-nav {
+    padding: 0px !important;
+    border: 0px;
+    background-color: ${({ theme }) => theme.bg1};
+    border-radius: 20px 20px 0px 0px;
+  }
+
+  .ant-tabs-content {
+    background-color: ${({ theme }) => theme.bg1};
+    height: 473px;
+    text-align: center;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    margin-bottom: 2px;
+    border-radius: 0px 0px 0px 0px;
+    padding: 1rem;
+  }
+
+  .ant-tabs-nav-list {
+    height: 75px;
+    background-color: ${({ theme }) => theme.bg5};
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    border-radius: 20px;
+  }
+
+  .ant-tabs-tab {
+    color: ${({ theme }) => theme.tabNameColor};
+    font-size: 20px;
+    font-family: Montserrat;
+    padding: 0;
+    margin: 0;
+
+    &.ant-tabs-tab-active {
+      .ant-tabs-tab-btn {
+        color: ${({ theme }) => theme.text7};
+        font-weight: 600;
+        position: relative;
+
+        &:before {
+          position: absolute;
+          content: '';
+          height: 0px;
+          width: 0px;
+          bottom: -28px;
+          left: 0%;
+          background: rgba(0, 0, 0);
+          z-index: 0;
+          display: inline-block;
+          border-radius: 8px 8px 0 0;
+          transform: translate(-50%, 0);
+        }
+      }
+    }
   }
 `
 
@@ -119,7 +209,19 @@ const DESCRIPTION = styled.p`
   color: ${({ theme }) => theme.text4};
 `
 
+const REMNANT = styled.p`
+  font-size: 18px;
+  line-height: 22px;
+  color: ${({ theme }) => theme.text1};
+  margin: 0px;
+
+  span {
+    color: #7d7d7d;
+  }
+`
+
 const MINT_PROGRESS = styled(Progress)<{ num: number }>`
+  width: 75%;
   .ant-progress-outer {
     height: 50px;
     margin-right: 0;
@@ -130,7 +232,7 @@ const MINT_PROGRESS = styled(Progress)<{ num: number }>`
 
       .ant-progress-bg {
         height: 100% !important;
-        background-color: ${({ theme }) => theme.primary4};
+        background: linear-gradient(96.79deg, #5855ff 4.25%, #dc1fff 97.61%);
       }
     }
   }
@@ -141,16 +243,54 @@ const MINT_PROGRESS = styled(Progress)<{ num: number }>`
   }
 `
 
+const MINT_PROGRESS_WRAPPER = styled.div`
+  width: 100%;
+  background-color: ${({ theme }) => theme.bg18};
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border-radius: 15px;
+`
+
 const CONNECT = styled(MainButton)`
   height: 50px;
+  width: 70%;
+  background: linear-gradient(96.79deg, #5855ff 4.25%, #dc1fff 97.61%);
+`
+
+const Live = styled(MainButton)`
+  height: 40px;
+  width: 120px;
+  border: 1.5px solid #fff;
+  border-radius: 10px;
+  position: absolute;
+  top: 16px;
+  left: 75%;
+  z-index: 10;
+`
+
+const ACTION_BELOW = styled.div`
   width: 100%;
-  background-color: ${({ theme }) => theme.secondary3};
+  height: 80px;
+  padidng: 1rem;
+  background-color: ${({ theme }) => theme.bg1};
+  border-radius: 0px 0px 20px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const LiveText = styled.span`
+  background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
 `
 
 const ORANGE_BTN = styled(MainButton)`
   height: 50px;
-  width: 100%;
-  background: linear-gradient(270deg, #dc1fff 0%, #f7931a 106.38%);
+  width: 70%;
+  background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
 
   &:disabled {
     background: grey;
@@ -176,32 +316,32 @@ export const NestQuestSingleListing: FC<{
   arbData?: INFTMetadata
 }> = ({ status = '', backUrl, handleClickPrimaryButton, ...rest }) => {
   const history = useHistory()
-  // const { connected, publicKey } = useWallet()
+  const { connected, publicKey } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
-  // const { getUIAmount } = useAccounts()
+  const { getUIAmount } = useAccounts()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  // const [notEnough, setNotEnough] = useState<boolean>(false)
+  const [notEnough, setNotEnough] = useState<boolean>(false)
   const mintPrice: number = useMemo(() => 1.5, [])
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 800)
   }, [])
 
-  // useEffect(() => {
-  //   if (publicKey && connected) {
-  //     setNotEnough(mintPrice >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false)
-  //   }
-  // }, [connected, publicKey, getUIAmount])
+  useEffect(() => {
+    if (publicKey && connected) {
+      setNotEnough(mintPrice >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false)
+    }
+  }, [connected, publicKey, getUIAmount])
 
-  // const handleWalletModal: MouseEventHandler<HTMLButtonElement> = useCallback(
-  //   (event) => {
-  //     if (!event.defaultPrevented && !connected && !publicKey) {
-  //       setModalVisible(true)
-  //     }
-  //   },
-  //   [setModalVisible, publicKey, connected]
-  // )
+  const handleWalletModal: MouseEventHandler<HTMLButtonElement> = useCallback(
+    (event) => {
+      if (!event.defaultPrevented && !connected && !publicKey) {
+        setModalVisible(true)
+      }
+    },
+    [setModalVisible, publicKey, connected]
+  )
 
   return (
     <NFT_DETAILS {...rest}>
@@ -257,11 +397,41 @@ export const NestQuestSingleListing: FC<{
                 </Row>
                 <br />
                 <div>
-                  <DESCRIPTION>
-                    A mysterious egg abandoned in a peculiar tree stump nest. The egg emits a faint glow, as your hand
-                    gets close to the surface you feel radiant heat. Something is alive inside. You must incubate this
-                    egg for it to hatch.
-                  </DESCRIPTION>
+                  <Tabs className={'collection-tabs'} defaultActiveKey="1" centered>
+                    <TabPane tab="Summary" key="1">
+                      <DESCRIPTION>
+                        A mysterious egg abandoned in a peculiar tree stump nest. The egg emits a faint glow, as your
+                        hand gets close to the surface you feel radiant heat. Something is alive inside. You must
+                        incubate this egg for it to hatch.
+                      </DESCRIPTION>
+                    </TabPane>
+                    <TabPane tab="Roadmap" key="2">
+                      <DESCRIPTION>Roadmap</DESCRIPTION>
+                    </TabPane>
+                    <TabPane tab="Team" key="3">
+                      <DESCRIPTION>John Luke Weiyuan Usman Shrihari Others...</DESCRIPTION>
+                    </TabPane>
+                    <TabPane tab="Vesting" key="4">
+                      <DESCRIPTION>
+                        Month1 Setup data Month2 Setup staking Month3 Setup Gaming Month4-12 Setup Show
+                      </DESCRIPTION>
+                    </TabPane>
+                  </Tabs>
+                  <ACTION_BELOW>
+                    {publicKey ? (
+                      <ORANGE_BTN
+                        status="action"
+                        onClick={(e) => console.log('mint nestquest egg')}
+                        disabled={notEnough}
+                      >
+                        Mint
+                      </ORANGE_BTN>
+                    ) : (
+                      <CONNECT onClick={handleWalletModal}>
+                        <span>Connect Wallet</span>
+                      </CONNECT>
+                    )}
+                  </ACTION_BELOW>
                 </div>
               </div>
             )}
@@ -283,9 +453,13 @@ export const NestQuestSingleListing: FC<{
           )}
           <br />
 
-          {/* {!isLoading && notEnough !== undefined ? (
+          <Live>
+            <LiveText>Live</LiveText>
+          </Live>
+
+          {!isLoading && notEnough !== undefined ? (
             <Row gutter={8}>
-              <Col span={7}>
+              {/* <Col span={7}>
                 {publicKey ? (
                   <ORANGE_BTN
                     height={'40px'}
@@ -293,20 +467,23 @@ export const NestQuestSingleListing: FC<{
                     width={'141px'}
                     onClick={(e) => console.log('mint nestquest egg')}
                     disabled={notEnough}
-                  >
-                  </ORANGE_BTN>
+                  ></ORANGE_BTN>
                 ) : (
                   <CONNECT onClick={handleWalletModal}>
                     <span>Connect Wallet</span>
                   </CONNECT>
                 )}
-              </Col>
-                <MINT_PROGRESS percent={30} status="active" num={30} />
-              </Col>
+              </Col> */}
+              <MINT_PROGRESS_WRAPPER>
+                <MINT_PROGRESS percent={50} status="active" num={50} />
+                <REMNANT>
+                  <span>5000</span>/10000
+                </REMNANT>
+              </MINT_PROGRESS_WRAPPER>
             </Row>
           ) : (
             <SkeletonCommon width="100%" height="50px" borderRadius="50px" />
-          )} */}
+          )}
         </Col>
       </Row>
     </NFT_DETAILS>
