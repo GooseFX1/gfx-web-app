@@ -10,7 +10,7 @@ const LABEL = styled.span<{ $mode: string; $hover: boolean }>`
   height: 14px;
   width: 7vw;
   ${({ theme }) => theme.flexCenter}
-  font-size: 14px;
+  font-size: 11px;
   color: ${({ $hover, $mode, theme }) => (($hover && $mode==='dark') ? '#FFFFFF' : (($hover && $mode!=='dark') ? '#5855FF' : ($mode==='dark' ? '#4E4E4E' : '#636363')))};
   font-weight: ${({ $hover }) => ($hover ? '600' : 'normal')};
   text-transform: capitalize;

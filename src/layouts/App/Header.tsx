@@ -48,9 +48,9 @@ const MobileWrapper = styled(WRAPPER)`
   background-color: ${({ theme }) => theme.bg2};
 `
 
-const CollapsibleWrapper = styled.div`
-  ${tw`absolute rounded-bl-bigger rounded-br-bigger justify-center cursor-pointer flex w-10 h-5 bottom-[-15px]`}
-  background-color: ${({ theme }) => theme.bg9};
+const CollapsibleWrapper = styled.div<{ $collapse: boolean }>`
+  ${tw`absolute rounded-bl-bigger rounded-br-bigger justify-center cursor-pointer flex w-10 h-5 bottom-[-20px]`}
+  background: ${({ $collapse, theme }) => $collapse ? 'linear-gradient(158.4deg, #5855FF 14.18%, #DC1FFF 82.14%);' : theme.bg9};
 
   img {
     ${tw`h-2.5 w-2.5`}
@@ -185,7 +185,7 @@ const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => v
   const handleCollapse = () => onCollapse(!collapse)
 
   return (
-    <CollapsibleWrapper
+    <CollapsibleWrapper $collapse={collapse}
       onClick={() => {
         handleCollapse()
       }}
