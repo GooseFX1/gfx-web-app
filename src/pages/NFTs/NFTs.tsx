@@ -21,10 +21,8 @@ import {
   NFTCollectionProvider,
   NFTDetailsProvider,
   useNavCollapse,
-  ENDPOINTS,
   useConnectionConfig
 } from '../../context'
-import { notify } from '../../utils'
 import { GenericNotFound } from '../InvalidUrl'
 
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
@@ -44,7 +42,7 @@ export const NFTs: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const location = useLocation<ILocationState>()
   const { path } = useRouteMatch()
-  const { connection, setEndpoint, network } = useConnectionConfig()
+  const { connection } = useConnectionConfig()
   const { connected, publicKey } = useWallet()
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
 
@@ -55,11 +53,6 @@ export const NFTs: FC = () => {
         firebase_screen: 'NFT Exchange',
         firebase_screen_class: 'load'
       })
-
-    // if (network === 'devnet') {
-    //   setEndpoint(ENDPOINTS[0].endpoint)
-    //   notify({ message: `Switched to ${ENDPOINTS[0].network}` })
-    // }
   }, [location])
 
   useEffect(() => {
