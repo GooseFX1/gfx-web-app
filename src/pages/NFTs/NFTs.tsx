@@ -10,6 +10,7 @@ import { NFTDetails } from './NFTDetails'
 import { Collectible } from './Collectible'
 import { NestQuestSingleListing } from './NestQuestSingleListing'
 import { UpLoadNFT } from './Collectible/UpLoadNFT'
+import { NftDrafts } from './Collectible/Drafts'
 import { SellNFT } from './Collectible/SellNFT'
 import { Profile } from './Profile'
 import { Collection } from './Collection/Collection'
@@ -20,10 +21,8 @@ import {
   NFTCollectionProvider,
   NFTDetailsProvider,
   useNavCollapse,
-  ENDPOINTS,
   useConnectionConfig
 } from '../../context'
-import { notify } from '../../utils'
 import { GenericNotFound } from '../InvalidUrl'
 
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
@@ -43,7 +42,7 @@ export const NFTs: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const location = useLocation<ILocationState>()
   const { path } = useRouteMatch()
-  const { connection, setEndpoint, network } = useConnectionConfig()
+  const { connection } = useConnectionConfig()
   const { connected, publicKey } = useWallet()
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
 
@@ -54,11 +53,6 @@ export const NFTs: FC = () => {
         firebase_screen: 'NFT Exchange',
         firebase_screen_class: 'load'
       })
-
-    // if (network === 'devnet') {
-    //   setEndpoint(ENDPOINTS[0].endpoint)
-    //   notify({ message: `Switched to ${ENDPOINTS[0].network}` })
-    // }
   }, [location])
 
   useEffect(() => {
@@ -96,7 +90,7 @@ export const NFTs: FC = () => {
                 <Route exact path={['/NFTs/profile', '/NFTs/profile/:userAddress']}>
                   <Profile />
                 </Route>
-                <Route exact path="/NFTs/collection/:collectionId">
+                <Route exact path="/NFTs/collection/:collectionName">
                   <Collection />
                 </Route>
                 <Route exact path={'/NFTs/details/:nftMintAddress'}>
@@ -108,7 +102,10 @@ export const NFTs: FC = () => {
                 <Route exact path="/NFTs/create">
                   <Collectible />
                 </Route>
-                <Route exact path="/NFTs/create-single">
+                <Route exact path="/NFTs/drafts">
+                  <NftDrafts />
+                </Route>
+                <Route exact path="/NFTs/create-single/:draftId?">
                   <UpLoadNFT />
                 </Route>
                 <Route exact path="/NFTs/sell/:nftId">

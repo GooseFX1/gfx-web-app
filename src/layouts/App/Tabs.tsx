@@ -6,12 +6,13 @@ import { CenteredDiv, CenteredImg, SVGToGrey2, SVGToPrimary2, SVGToWhite } from 
 
 const TABS = ['/swap', '/trade', '/NFTs', '/farm']
 
-const LABEL = styled.span<{ $hover: boolean }>`
+const LABEL = styled.span<{ $mode: string; $hover: boolean }>`
   height: 14px;
   width: 7vw;
   ${({ theme }) => theme.flexCenter}
-  font-size: 10px;
-  color: ${({ theme }) => theme.text2};
+  font-size: 11px;
+  color: ${({ $hover, $mode, theme }) => (($hover && $mode==='dark') ? '#FFFFFF' : (($hover && $mode!=='dark') ? '#5855FF' : ($mode==='dark' ? '#4E4E4E' : '#636363')))};
+  font-weight: ${({ $hover }) => ($hover ? '600' : 'normal')};
   text-transform: capitalize;
 
   @media (max-width: 500px) {
@@ -72,10 +73,7 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     height: 8px;
     width: 44px;
     ${({ theme }) => theme.headerRoundedBorders}
-    background: linear-gradient(to right, ${({ theme, $index }) => theme.tabsGradients[$index]}, ${({
-      theme,
-      $index
-    }) => theme.tabsGradients[$index + 1]});
+    background: #5855FF;
     transition: left ${({ theme }) => theme.mainTransitionTime} ease-in-out;
   }
 
@@ -197,20 +195,20 @@ export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
         >
           <TAB_ICON>
             {(() => {
-              const icon = `/img/assets${path}_icon.svg`
+              const icon = mode === 'dark' ? `/img/assets${path}_icon_dark.svg` : `/img/assets${path}_icon_lite.svg`;
 
-              if (cleanedPathName === path || hovered === index) {
+              if (cleanedPathName === path) {
                 return mode === 'dark' ? (
                   <SVGToWhite src={icon} alt="gfx-tab-icon" />
                 ) : (
                   <SVGToPrimary2 src={icon} alt="gfx-tab-icon" />
                 )
               } else {
-                return <SVGToGrey2 src={icon} alt="gfx-tab-icon" />
+                return <img src={icon} alt="gfx-tab-icon" />
               }
             })()}
           </TAB_ICON>
-          <LABEL $hover={cleanedPathName === path || hovered === index}>{path.slice(1)}</LABEL>
+          <LABEL $mode={mode} $hover={cleanedPathName === path}>{path.slice(1)}</LABEL>
         </TAB>
       ))}
     </WRAPPER>

@@ -97,18 +97,20 @@ export const stakeTokens = [
 export const generateListOfSSLTokens = (): any => {
   const sslTokens = []
   const obj = ADDRESSES['mainnet-beta'].sslPool
-  for (let key in obj) {
-    FARM_SUPPORTED_TOKEN_LIST.push(key)
+  if (FARM_SUPPORTED_TOKEN_LIST.length < 2) {
+    for (let key in obj) {
+      FARM_SUPPORTED_TOKEN_LIST.push(key)
+    }
   }
   for (let i = 1; i < FARM_SUPPORTED_TOKEN_LIST.length; i++) {
     sslTokens.push({
       id: i + 1,
       image: FARM_SUPPORTED_TOKEN_LIST[i],
       name: FARM_SUPPORTED_TOKEN_LIST[i],
-      earned: -1,
-      liquidity: -1,
+      earned: undefined,
+      liquidity: undefined,
       type: 'SSL',
-      currentlyStaked: -1
+      currentlyStaked: undefined
     })
   }
   return sslTokens

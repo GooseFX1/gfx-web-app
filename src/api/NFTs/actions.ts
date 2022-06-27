@@ -18,7 +18,7 @@ export const completeNFTUserProfile = async (address: string): Promise<any> => {
       bio: '',
       twitter_link: '',
       instagram_link: '',
-      facebook_link: '',
+      telegram_link: '',
       youtube_link: '',
       profile_pic_link: user.profile_pic_link,
       is_verified: user.is_verified
@@ -41,7 +41,7 @@ export const updateNFTUser = async (updatedUser: INFTProfile): Promise<any> => {
         instagram_link: updatedUser.instagram_link,
         twitter_link: updatedUser.twitter_link,
         youtube_link: updatedUser.youtube_link,
-        facebook_link: updatedUser.facebook_link,
+        telegram_link: updatedUser.telegram_link,
         profile_pic_link: updatedUser.profile_pic_link
       }
     })

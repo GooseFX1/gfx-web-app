@@ -20,8 +20,8 @@ export const ENDPOINTS: IEndpoint[] = [
   },
   {
     chainId: ENV.Devnet,
-    name: 'QuickNode',
-    endpoint: 'https://muddy-rough-leaf.solana-devnet.quiknode.pro/91e35cc4d4906726624ed977e65ab9a3a73d4083/',
+    name: 'Solana',
+    endpoint: 'https://api.devnet.solana.com',
     network: WalletAdapterNetwork.Devnet
   },
   {

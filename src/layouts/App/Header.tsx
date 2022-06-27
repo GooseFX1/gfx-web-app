@@ -12,132 +12,66 @@ import { useRewardToggle } from '../../context/reward_toggle'
 import { MODAL_TYPES } from '../../constants'
 import { checkMobile } from '../../utils'
 import { ThemeToggle } from '../../components/ThemeToggle'
+import tw from "twin.macro"
 
 const BRAND = styled.a`
-  position: absolute;
-  ${({ theme }) => theme.flexCenter}
-  width: 84px;
-  font-size: 40px;
-  font-weight: bold;
-  line-height: 20px;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    position: relative;
-    top: ${({ theme }) => theme.margin(1)};
-    left: 8px;
-    height: 47px;
-    margin-bottom: ${({ theme }) => theme.margin(3)};
-  `}
-
-  ${({ theme }) => theme.mediaWidth.fromSmall`
-    left: 58px;
-    height: 50px;
-  `}
+  ${tw`absolute flex justify-center items-center text-big leading-5 font-bold w-21 md:relative md:top-2 md:left-2 md:mb-6 md:h-11.75 min-md:h-12.5 min-md:left-[58px]`}
 
   img {
-    ${({ theme }) => theme.measurements('inherit')}
-    object-fit: contain;
+    ${tw`h-inherit w-inherit object-contain`}
   }
 `
 
 const BUTTONS = styled(CenteredDiv)`
-  position: absolute;
+  ${tw`absolute md:relative min-md:right-[58px] min-md:h-12.5`}
 
   > *:not(:last-child) {
-    margin-right: ${({ theme }) => theme.margin(3)};
+    ${tw`mr-6`}
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    position: relative;
-
     > *:not(:last-child) {
-      margin-right: ${({ theme }) => theme.margin(1)};
+      ${tw`mr-4`}
     }
-  `}
-
-  ${({ theme }) => theme.mediaWidth.fromSmall`
-    right: 58px;
-    height: 50px;
   `}
 `
 
 const WRAPPER = styled.nav`
-  position: fixed;
-
-  width: 100%;
-  ${({ theme }) => theme.headerRoundedBorders}
+  ${tw`fixed w-full rounded-br-circle rounded-bl-circle md:flex-nowrap md:flex h-auto md:p-2 min-md:flex min-md:items-center min-md:justify-center`}
   background-color: ${({ theme }) => theme.bg9};
   ${({ theme }) => theme.smallShadow}
   z-index: 300;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    ${({ theme }) => theme.flexColumnNoWrap};
-    height: auto;
-    padding: ${({ theme }) => theme.margin(1)};
-  `}
-  ${({ theme }) => theme.mediaWidth.fromSmall`
-    ${({ theme }) => theme.flexCenter}
-  `}
 `
 
 const MobileWrapper = styled(WRAPPER)`
-  display: flex;
-  flex-direction: row !important;
-  justify-content: space-between;
-  align-items: center;
+  ${tw`flex !flex-row justify-between items-center rounded-none`}
   background-color: ${({ theme }) => theme.bg2};
-  box-shadow: none;
-  border-radius: 0px;
 `
 
-const CollapsibleWrapper = styled.div`
-  position: absolute;
-  width: 40px;
-  height: 20px;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-  bottom: -15px;
-  display: flex;
-  justify-content: center;
-  background-color: ${({ theme }) => theme.bg9};
-  cursor: pointer;
+const CollapsibleWrapper = styled.div<{ $collapse: boolean }>`
+  ${tw`absolute rounded-bl-bigger rounded-br-bigger justify-center cursor-pointer flex w-10 h-5 bottom-[-20px]`}
+  background: ${({ $collapse, theme }) => $collapse ? 'linear-gradient(158.4deg, #5855FF 14.18%, #DC1FFF 82.14%);' : theme.bg9};
 
   img {
-    height: 10px;
-    width: 10px;
+    ${tw`h-2.5 w-2.5`}
   }
 `
 const RESPONSIVE_MENU = styled.ul`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100vh;
-  width: 100vw;
-  padding: 10vh 0px 1rem 0px;
+${tw`absolute items-center flex flex-col left-0 top-0 h-screen w-screen pb-4`}
+  padding-top: 10vh;
   background-color: ${({ theme }) => theme.bg1};
 `
 
 const CLOSE = styled.img`
-  position: absolute;
-  ${({ theme }) => theme.measurements('24px')}
-  object-fit: contain;
-  top: 30px;
-  right: 18px;
+  ${tw`absolute object-contain h-6 w-6 top-[30px] right-[18px]`}
 `
 
 const RESPONSIVE_DROPDOWN_WRAPPER = styled.div`
-  margin: 0 8px 0 22px;
-  @media (min-width: 500px) {
-    display: none;
-  }
+  ${tw`mr-2 ml-[22px] min-sm:hidden`}
 `
 
 const DROPDOWN_ICON_WRAPPER = styled(CenteredImg)`
-  height: 21px;
-  width: 28px;
+  ${tw`w-7 h-[21px]`}
 `
 
 const ResponsiveDropdown: FC<{ logoAnimationTime: number }> = ({ logoAnimationTime }) => {
@@ -251,7 +185,7 @@ const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => v
   const handleCollapse = () => onCollapse(!collapse)
 
   return (
-    <CollapsibleWrapper
+    <CollapsibleWrapper $collapse={collapse}
       onClick={() => {
         handleCollapse()
       }}

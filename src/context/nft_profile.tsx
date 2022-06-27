@@ -147,7 +147,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         bio: userObj.bio ? userObj.bio : '',
         twitter_link: userObj.twitter_link ? userObj.twitter_link : '',
         instagram_link: userObj.instagram_link ? userObj.instagram_link : '',
-        facebook_link: userObj.facebook_link ? userObj.facebook_link : '',
+        telegram_link: userObj.telegram_link ? userObj.telegram_link : '',
         youtube_link: userObj.youtube_link ? userObj.youtube_link : '',
         profile_pic_link: userObj.profile_pic_link ? userObj.profile_pic_link : '',
         is_verified: false
