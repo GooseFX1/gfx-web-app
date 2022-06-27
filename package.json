@@ -4,8 +4,6 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.2.0",
-    "@emotion/react": "^11.9.0",
-    "@emotion/styled": "^11.8.1",
     "@fullpage/react-fullpage": "^0.1.19",
     "@jup-ag/react-hook": "^1.0.0-beta.21",
     "@metaplex-foundation/beet": "0.0.7",
@@ -72,6 +70,12 @@
     "type": "^2.6.0",
     "typescript": "^4.3.5",
     "workbox-webpack-plugin": "^6.2.4"
+  },
+  "babelMacros": {
+    "twin": {
+      "preset": "styled-components",
+      "includeClassNames" : true
+    }
   },
   "scripts": {
     "start": "PORT=3000 craco start",
