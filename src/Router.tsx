@@ -10,6 +10,7 @@ import {
   TradeHistoryProvider
 } from './context'
 import Restricted from './pages/Restricted'
+import { GenericNotFound } from './pages/InvalidUrl'
 import { CryptoContent } from './pages/TradeV2/MovableContainer'
 import useBlacklisted from './utils/useBlacklisted'
 
@@ -47,6 +48,9 @@ export const Router: FC = () => {
             </Route>
             <Route exact path="/farm">
               {blacklisted ? <Restricted /> : <Farm />}
+            </Route>
+            <Route>
+              <GenericNotFound />
             </Route>
           </Switch>
         </AppLayout>

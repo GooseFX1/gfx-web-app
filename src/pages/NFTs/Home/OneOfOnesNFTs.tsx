@@ -85,12 +85,12 @@ const settings = {
   variableWidth: true
 }
 
-export interface ISingleItemListings {
+export interface IOneOfOnesNFTs {
   items: Array<any>
   title?: string
 }
 
-const SingleItemListings: FC<ISingleItemListings> = ({ items, title }) => {
+const OneOfOnesNFTs: FC<IOneOfOnesNFTs> = ({ items, title }) => {
   const slickRef = React.useRef<any>()
 
   const slickNext = () => slickRef?.current?.slickNext()
@@ -123,4 +123,4 @@ const SingleItemListings: FC<ISingleItemListings> = ({ items, title }) => {
   }
 }
 
-export default SingleItemListings
+export default OneOfOnesNFTs
