@@ -16,13 +16,15 @@ import {
   getTokenAddresses,
   getSslAccountKey,
   fetchAllSSLAmountStaked,
-  SSL_LAYOUT,
   getLiquidityAccountKey,
-  LIQUIDITY_ACCOUNT_LAYOUT
+  getMainVaultKey,
+  AccountLayout
 } from '../../web3'
+import { SSL_LAYOUT, LIQUIDITY_ACCOUNT_LAYOUT } from 'goosefx-ssl-sdk'
 import { useConnectionConfig, usePriceFeedFarm, useFarmContext } from '../../context'
 import { ADDRESSES } from '../../web3'
 import { MorePoolsSoon } from './MorePoolsSoon'
+import { NATIVE_MINT } from '@solana/spl-token'
 
 const StakeIDL = require('../../web3/idl/stake.json')
 const SSLIDL = require('../../web3/idl/ssl.json')
@@ -224,20 +226,27 @@ export const TableList = ({ dataSource }: any) => {
     return () => {}
   }, [wallet.publicKey, connection])
 
-  const calculateBalances = (sslAccountData, liquidityAccountData, SSLTokenNames: string[], aprVolumePromise) => {
+  const calculateBalances = (
+    sslAccountData,
+    mainVault,
+    liquidityAccountData,
+    SSLTokenNames: string[],
+    aprVolumePromise
+  ) => {
     const farmCalculationsArr = []
     Promise.all(aprVolumePromise)
       .then((aprVolume) => {
         for (let i = 0; i < sslAccountData.length; i++) {
           const { data } = sslAccountData[i]
           const sslData = SSL_LAYOUT.decode(data)
+          const mainVaultData = AccountLayout.decode(mainVault[i].data)
           const tokenName = SSLTokenNames[i]
           const liquidityData =
             liquidityAccountData && liquidityAccountData[i] !== null ? liquidityAccountData[i].data : undefined
           const liquidityAccount = liquidityData ? LIQUIDITY_ACCOUNT_LAYOUT.decode(liquidityData) : undefined
           const tokenPrice = tokenName === 'USDC' ? 1 : prices[`${tokenName.toUpperCase()}/USDC`]?.current
           //@ts-ignore
-          let liquidity = sslData.liability + sslData.swappedLiability
+          let liquidity = mainVaultData.amount + sslData.swappedLiabilityNative
           const APR = aprVolume[i * 2]
           const volumeDays = aprVolume[i * 2 + 1]
           const ptMinted = liquidityAccount ? liquidityAccount.ptMinted : 0
@@ -269,6 +278,7 @@ export const TableList = ({ dataSource }: any) => {
       .catch((err) => console.log(err))
     return
   }
+
   useEffect(() => {
     ;(async () => {
       if (priceFetched) {
@@ -278,20 +288,22 @@ export const TableList = ({ dataSource }: any) => {
         const liquidityAccountKeys = []
         const aprVolumePromise = []
         const tokenMintAddresses = []
+        const mainVaultKeys = []
         for (let i = 0; i < SSLTokenNames.length; i++) {
           try {
             const tokenMint = ADDRESSES[network].sslPool[SSLTokenNames[i]].address
             tokenMintAddresses.push(tokenMint)
             SSLAccountKeys.push(await getSslAccountKey(tokenMint))
             liquidityAccountKeys.push(await getLiquidityAccountKey(wallet, tokenMint))
+            mainVaultKeys.push(await getMainVaultKey(tokenMint))
             aprVolumePromise.push(fetchSSLAPR(tokenMint.toString()))
             aprVolumePromise.push(fetchSSLVolumeData(tokenMint.toString()))
           } catch (err) {
             console.log(err)
           }
         }
-        fetchAllSSLAmountStaked(connection, SSLAccountKeys, wallet, liquidityAccountKeys).then((res) =>
-          calculateBalances(res.sslData, res.liquidityData, SSLTokenNames, aprVolumePromise)
+        fetchAllSSLAmountStaked(connection, SSLAccountKeys, wallet, liquidityAccountKeys, mainVaultKeys).then((res) =>
+          calculateBalances(res.sslData, res.mainVault, res.liquidityData, SSLTokenNames, aprVolumePromise)
         )
       }
     })()

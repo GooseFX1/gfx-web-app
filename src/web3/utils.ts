@@ -29,7 +29,7 @@ export const createAssociatedTokenAccountIx = (mint: PublicKey, associatedAccoun
 export const findAssociatedTokenAddress = async (
   walletAddress: PublicKey,
   tokenMintAddress: PublicKey
-): Promise<PublicKey> => {
+): Promise<PublicKey | null> => {
   return (
     await PublicKey.findProgramAddress(
       [walletAddress.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), tokenMintAddress.toBuffer()],

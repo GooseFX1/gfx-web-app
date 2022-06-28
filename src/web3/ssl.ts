@@ -2,7 +2,7 @@ import BN from 'bn.js'
 import * as lo from '@solana/buffer-layout'
 import { publicKey, u64, bool } from '@solana/buffer-layout-utils'
 import { Idl, Instruction, Program, Provider, Wallet } from '@project-serum/anchor'
-import { publicKeyLayout } from './layout'
+import { struct, u32, u8 } from '@solana/buffer-layout'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import {
@@ -28,60 +28,69 @@ import { STAKE_PREFIX, SSL_PREFIX, LIQUIDITY_ACCOUNT_PREFIX, toPublicKey, ADDRES
 const StakeIDL = require('./idl/stake.json')
 const SSLIDL = require('./idl/ssl.json')
 
-const { blob, struct, u8 } = require('buffer-layout')
-
 const CONTROLLER_KEY = new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
 
-export interface ILiquidityAccount {
-  sighash: Uint8Array
+export interface Account {
+  /** Address of the account */
+  address: PublicKey
+  /** Mint associated with the account */
   mint: PublicKey
-  bump: number
-  share: BigInt
-  ptMinted: BigInt
-  amountDeposited: BigInt
+  /** Owner of the account */
+  owner: PublicKey
+  /** Number of tokens the account holds */
+  amount: bigint
+  /** Authority that can transfer tokens from the account */
+  delegate: PublicKey | null
+  /** Number of tokens the delegate is authorized to transfer */
+  delegatedAmount: bigint
+  /** True if the account is initialized */
+  isInitialized: boolean
+  /** True if the account is frozen */
+  isFrozen: boolean
+  /** True if the account is a native token account */
+  isNative: boolean
+  /**
+   * If the account is a native token account, it must be rent-exempt. The rent-exempt reserve is the amount that must
+   * remain in the balance until the account is closed.
+   */
+  rentExemptReserve: bigint | null
+  closeAuthority: PublicKey | null
 }
-export interface SSL {
-  sighash: Uint8Array
-  controller: PublicKey
+
+/** Token account state as stored by the program */
+export enum AccountState {
+  Uninitialized = 0,
+  Initialized = 1,
+  Frozen = 2
+}
+
+export interface RawAccount {
   mint: PublicKey
-  decimals: number
-  bump: number
-  ptBump: number
-  suspended: boolean
-  cranker: PublicKey
-  weight: BigInt
-  liability: BigInt
-  swappedLiability: BigInt
-  totalShare: BigInt
+  owner: PublicKey
+  amount: bigint
+  delegateOption: 1 | 0
+  delegate: PublicKey
+  state: AccountState
+  isNativeOption: 1 | 0
+  isNative: bigint
+  delegatedAmount: bigint
+  closeAuthorityOption: 1 | 0
+  closeAuthority: PublicKey
 }
 
-export const LIQUIDITY_ACCOUNT_LAYOUT = lo.struct<ILiquidityAccount>([
-  lo.blob(8, 'sighash'),
+/** Buffer layout for de/serializing a token account */
+export const AccountLayout = struct<RawAccount>([
   publicKey('mint'),
-  lo.u8('bump'),
-  lo.blob(7),
-  u64('share'),
-  u64('ptMinted'),
-  u64('amountDeposited'),
-  lo.blob(248, 'padding')
-])
-
-export const SSL_LAYOUT = lo.struct<SSL>([
-  lo.blob(8, 'sighash'),
-  publicKey('controller'),
-  publicKey('mint'),
-  lo.u8('decimals'),
-  lo.u8('bump'),
-  lo.u8('ptBump'),
-  bool('suspended'),
-  publicKey('cranker'),
-  lo.blob(4), // padding
-  u64('weight'),
-  u64('liability'),
-  u64('swappedLiability'),
-  u64('totalShare'),
-
-  lo.blob(256, 'padding')
+  publicKey('owner'),
+  u64('amount'),
+  u32('delegateOption'),
+  publicKey('delegate'),
+  u8('state'),
+  u32('isNativeOption'),
+  u64('isNative'),
+  u64('delegatedAmount'),
+  u32('closeAuthorityOption'),
+  publicKey('closeAuthority')
 ])
 
 export const getSslAccountKey = async (tokenMintAddress: PublicKey): Promise<undefined | PublicKey> => {
@@ -101,16 +110,18 @@ export const fetchAllSSLAmountStaked = async (
   connection: Connection,
   sslAccountKeys: PublicKey[],
   wallet: WalletContextState,
-  liquidityAccountKeys: PublicKey[]
+  liquidityAccountKeys: PublicKey[],
+  mainVaultKeys: PublicKey[]
 ) => {
   try {
     //const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintArray)
     const promiseData = []
     promiseData.push(connection.getMultipleAccountsInfo(sslAccountKeys))
+    promiseData.push(connection.getMultipleAccountsInfo(mainVaultKeys))
     if (wallet.publicKey) promiseData.push(connection.getMultipleAccountsInfo(liquidityAccountKeys))
     const ans = Promise.all(promiseData)
     return ans.then((res) => {
-      return { sslData: res[0], liquidityData: res[1] }
+      return { sslData: res[0], mainVault: res[1], liquidityData: res[2] }
     })
   } catch (err) {
     console.log(err)
@@ -124,6 +135,20 @@ export const getPTMintKey = async (tokenMintAddress: PublicKey): Promise<undefin
       //get metadata address
     )
     return ptMintAddress[0]
+  } catch (err) {
+    return undefined
+  }
+}
+export const getMainVaultKey = async (tokenMintAddress: PublicKey): Promise<undefined | PublicKey> => {
+  try {
+    const liabilityKey: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [Buffer.from(SSL_PREFIX), CONTROLLER_KEY.toBuffer(), tokenMintAddress.toBuffer()],
+      toPublicKey(SSLIDL.metadata.address)
+      //get metadata address
+    )
+    let mainVaultKey = liabilityKey[0]
+    mainVaultKey = await findAssociatedTokenAddress(mainVaultKey, tokenMintAddress)
+    return mainVaultKey
   } catch (err) {
     return undefined
   }
@@ -427,7 +452,6 @@ export const executeDeposit = async (
 
   try {
     let liquidityAccData = (await connection.getAccountInfo(liquidityAccountKey)).data
-    const decoded = LIQUIDITY_ACCOUNT_LAYOUT.decode(liquidityAccData)
     return depositAmount(
       amountInNative,
       program,
