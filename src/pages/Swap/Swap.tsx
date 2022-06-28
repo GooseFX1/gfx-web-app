@@ -115,7 +115,7 @@ const TokenHeader = styled.div`
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
-  ${tw`h-24.25 rounded-average p-px cursor-pointer min-h-330 mr-7 !min-w-330 sm:h-16.25 mb-4`}
+  ${tw`h-24.25 rounded-average p-px cursor-pointer mr-7 !min-w-330 sm:h-16.25 mb-4 sm:mr-0`}
   background: ${({ theme, $clicked }) =>
     $clicked ? 'linear-gradient(90deg,rgba(247,147,26,0.5) 0%,rgba(220,31,255,0.5) 100%)' : theme.bg1};
   box-shadow: 0 6px 9px 0 rgba(36, 36, 36, 0.1);
@@ -182,7 +182,7 @@ const SWAP_ROUTES = styled.div<{ $less: boolean }>`
   ${tw`relative`}
 
   .swap-content {
-    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 mb-3 mx-8 sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around sm:mt-8 sm:mb-12`}
+    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 pt-8 mb-3 mx-8 sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:mx-0 sm:justify-around sm:mt-8 sm:mb-12`}
     justify-content: ${({ $less }) => ($less ? 'center' : 'flex-start')};
   }
 
@@ -192,10 +192,11 @@ const SWAP_ROUTES = styled.div<{ $less: boolean }>`
 `
 
 const BestPrice = styled.div`
-  ${tw`absolute font-semibold items-center text-xs p-2 rounded-md text-white leading-3`}
+  ${tw`absolute font-semibold items-center text-xs p-2 rounded-md text-white leading-5`}
   margin-top: -90px;
   margin-left: 230px;
   background-color: #be2cff;
+  z-index: 100;
 
   @media (max-width: 500px) {
     margin-top: -60px;
@@ -692,7 +693,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
 
       if (no === 0) {
         return { name, value, price: out, outAmount, bestPrice: true }
-      } else if (no === 1) {
+      } else if (no === 1 && name.toLowerCase().includes('goosefx')) {
         return { name, value, price: out, outAmount, fastest: true }
       }
       return { name, value, price: out, outAmount }
@@ -776,6 +777,7 @@ export const SwapMain: FC = () => {
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
   const [inAmountTotal, setInAmountTotal] = useState(0)
+  console.log(tokenA, tokenB)
 
   const { routes, exchange } = useJupiter({
     amount: inAmountTotal, // raw input amount of tokens
