@@ -176,12 +176,16 @@ export const TableList = ({ dataSource }: any) => {
     poolFilter,
     searchFilter,
     farmDataContext,
+    setCounter,
     setFarmDataContext,
     farmDataSSLContext,
     setFarmDataSSLContext
   } = useFarmContext()
   const [accountKey, setAccountKey] = useState<PublicKey>()
   const [columnData, setColumnData] = useState(columns)
+  const [fetchAllRequiredData, setFetchedAllRequiredData] = useState<number>(0)
+  const [promiseArr, setPromiseArr] = useState<any[]>([])
+  const [SSLTokenNamesArr, setSSLTokenNamesArr] = useState<string[]>([])
   const [farmData, setFarmData] = useState<IFarmData[]>([...farmDataContext, ...farmDataSSLContext])
   const [eKeys, setEKeys] = useState([])
   const [allTokenPrices, setAllTokenPrices] = useState({})
@@ -224,10 +228,12 @@ export const TableList = ({ dataSource }: any) => {
     return () => {}
   }, [wallet.publicKey, connection])
 
-  const calculateBalances = (sslAccountData, liquidityAccountData, SSLTokenNames: string[], aprVolumePromise) => {
+  const calculateBalances = (SSLTokenNames: string[], aprVolumePromise) => {
     const farmCalculationsArr = []
     Promise.all(aprVolumePromise)
       .then((aprVolume) => {
+        const sslAccountData = aprVolume[SSLTokenNames.length * 2].sslData
+        const liquidityAccountData = aprVolume[SSLTokenNames.length * 2].liquidityData
         for (let i = 0; i < sslAccountData.length; i++) {
           const { data } = sslAccountData[i]
           const sslData = SSL_LAYOUT.decode(data)
@@ -269,33 +275,43 @@ export const TableList = ({ dataSource }: any) => {
       .catch((err) => console.log(err))
     return
   }
+
   useEffect(() => {
     ;(async () => {
-      if (priceFetched) {
-        let SSLTokenNames = []
-        farmDataSSLContext.map((data) => SSLTokenNames.push(data.name))
-        const SSLAccountKeys = []
-        const liquidityAccountKeys = []
-        const aprVolumePromise = []
-        const tokenMintAddresses = []
-        for (let i = 0; i < SSLTokenNames.length; i++) {
-          try {
-            const tokenMint = ADDRESSES[network].sslPool[SSLTokenNames[i]].address
-            tokenMintAddresses.push(tokenMint)
-            SSLAccountKeys.push(await getSslAccountKey(tokenMint))
-            liquidityAccountKeys.push(await getLiquidityAccountKey(wallet, tokenMint))
-            aprVolumePromise.push(fetchSSLAPR(tokenMint.toString()))
-            aprVolumePromise.push(fetchSSLVolumeData(tokenMint.toString()))
-          } catch (err) {
-            console.log(err)
-          }
+      console.log('started fetching', priceFetched)
+      let SSLTokenNames = []
+      farmDataSSLContext.map((data) => SSLTokenNames.push(data.name))
+      const SSLAccountKeys = []
+      const liquidityAccountKeys = []
+      const aprVolumePromise = []
+      const tokenMintAddresses = []
+
+      for (let i = 0; i < SSLTokenNames.length; i++) {
+        try {
+          const tokenMint = ADDRESSES[network].sslPool[SSLTokenNames[i]].address
+          tokenMintAddresses.push(tokenMint)
+          SSLAccountKeys.push(await getSslAccountKey(tokenMint))
+          liquidityAccountKeys.push(await getLiquidityAccountKey(wallet, tokenMint))
+          aprVolumePromise.push(fetchSSLAPR(tokenMint.toString()))
+          aprVolumePromise.push(fetchSSLVolumeData(tokenMint.toString()))
+        } catch (err) {
+          console.log(err)
         }
-        fetchAllSSLAmountStaked(connection, SSLAccountKeys, wallet, liquidityAccountKeys).then((res) =>
-          calculateBalances(res.sslData, res.liquidityData, SSLTokenNames, aprVolumePromise)
-        )
       }
+      aprVolumePromise.push(fetchAllSSLAmountStaked(connection, SSLAccountKeys, wallet, liquidityAccountKeys))
+      setPromiseArr(aprVolumePromise)
+      Promise.all(aprVolumePromise).then(() => setFetchedAllRequiredData(1))
+      setSSLTokenNamesArr(SSLTokenNames)
     })()
-  }, [accountKey, counter, priceFetched])
+  }, [accountKey, counter])
+
+  useEffect(() => {
+    if (fetchAllRequiredData !== 0 && priceFetched) {
+      calculateBalances(SSLTokenNamesArr, promiseArr)
+    }
+  }, [accountKey, counter, priceFetched, fetchAllRequiredData])
+
+  useEffect(() => {}, [accountKey, counter, priceFetched])
 
   useEffect(() => {
     if (gofxPrice !== undefined) {

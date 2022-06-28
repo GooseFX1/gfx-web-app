@@ -90,6 +90,7 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
         const cryptoMarkets = PAIR_LIST.filter(({ type }) => type === 'crypto')
         const promiseArr = []
         for (const { pair, coinGecko } of cryptoMarkets) {
+          console.log(pair)
           try {
             if (pair !== 'MSOL/USDC' && pair !== 'USDC/USD') {
               promiseArr.push(refreshTokenData({ pair, coinGecko }))
