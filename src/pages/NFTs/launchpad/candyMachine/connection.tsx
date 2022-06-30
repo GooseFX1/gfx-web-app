@@ -9,10 +9,13 @@ import {
   TransactionInstruction,
   TransactionSignature,
   Blockhash,
-  FeeCalculator
+  FeeCalculator,
+  SystemProgram,
+  NONCE_ACCOUNT_LENGTH
 } from '@solana/web3.js'
 
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base'
+import { web3 } from '@project-serum/anchor'
 
 interface BlockhashAndFeeCalculator {
   blockhash: Blockhash
@@ -504,4 +507,33 @@ async function awaitTransactionSignatureConfirmation(
 }
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+export async function nonceInstructions(connection, feePayer) {
+  let nonceAccount = web3.Keypair.generate()
+  let instrctions = []
+
+  instrctions.push(
+    SystemProgram.createAccount({
+      fromPubkey: feePayer.publicKey,
+      newAccountPubkey: nonceAccount.publicKey,
+      lamports: await connection.getMinimumBalanceForRentExemption(NONCE_ACCOUNT_LENGTH),
+      space: NONCE_ACCOUNT_LENGTH,
+      programId: SystemProgram.programId
+    })
+  )
+
+  instrctions.push(
+    SystemProgram.nonceInitialize({
+      noncePubkey: nonceAccount.publicKey, // nonce account pubkey
+      authorizedPubkey: feePayer.publicKey // nonce account authority (for advance and close)
+    })
+  )
+
+  instrctions.push(
+    SystemProgram.nonceAdvance({
+      noncePubkey: nonceAccount.publicKey,
+      authorizedPubkey: feePayer.publicKey
+    })
+  )
 }
