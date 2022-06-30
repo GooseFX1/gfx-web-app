@@ -6,6 +6,14 @@ For responsiveness, we should use prefixes like 'sm, md, lg, xl' with our tailwi
 we should use prefixes like 'min-sm, min-md, min-lg, min-xl' for min-width mediaquery rules.
 */
 
+/*NOTE: To use tailwind's native className prop, we need to have the following two import statements in the same order:
+import tw from "twin.macro"
+import 'styled-components/macro'
+Same goes for using twin.macro's tw and css prop (instead of tailwind's className, tw prop can be used inside JSX and css 
+prop is for writing conditional css inside JSX) -- We need to import the above 2 statements
+For more details: https://github.com/ben-rogerson/twin.examples/blob/master/cra-styled-components/README.md
+*/
+
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx,less}", "./index.html"],
   theme: {

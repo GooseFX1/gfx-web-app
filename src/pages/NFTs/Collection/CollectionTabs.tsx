@@ -158,11 +158,11 @@ export const CollectionTabs = ({ filter, setFilter, collapse, setCollapse }) => 
       </STYLED_SEARCH_BAR>
       {singleCollection ? (
         <Tabs className={'collection-tabs'} defaultActiveKey="1" centered>
-          <TabPane tab="Open Bids" key="1">
-            <OpenBidsTabContent filter={filter} setCollapse={setCollapse} />
-          </TabPane>
-          <TabPane tab="Fixed Price" key="2">
+          <TabPane tab="Fixed Price" key="1">
             <FixedPriceTabContent filter={filter} setCollapse={setCollapse} />
+          </TabPane>
+          <TabPane tab="Open Bids" key="2">
+            <OpenBidsTabContent filter={filter} setCollapse={setCollapse} />
           </TabPane>
           <TabPane tab="Owners" key="3">
             <OwnersTabContent filter={filter} setCollapse={setCollapse} />

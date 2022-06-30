@@ -80,11 +80,6 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
       if (wallet.connected && candyMachine?.program && wallet.publicKey) {
         let setupMint: SetupState | undefined
         if (needTxnSplit && setupTxn === undefined) {
-          //  setAlertState({
-          //    open: true,
-          //    message: 'Please sign account setup transaction',
-          //    severity: 'info'
-          //  })
           notify({
             message: (
               <MESSAGE>
@@ -105,11 +100,6 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
           }
           if (status && !status.err) {
             setSetupTxn(setupMint)
-            //setAlertState({
-            //  open: true,
-            //  message: 'Setup transaction succeeded! Please sign minting transaction',
-            //  severity: 'info'
-            //})
             notify({
               message: (
                 <MESSAGE>
@@ -124,11 +114,6 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
               )
             })
           } else {
-            //setAlertState({
-            //  open: true,
-            //  message: 'Mint failed! Please try again!',
-            //  severity: 'error'
-            //})
             notify({
               type: 'error',
               message: (
@@ -147,11 +132,6 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
             return
           }
         } else {
-          //  setAlertState({
-          //    open: true,
-          //    message: 'Please sign minting transaction',
-          //    severity: 'info'
-          //  })
           notify({
             message: (
               <MESSAGE>
@@ -238,11 +218,6 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
             )
           })
         } else {
-          //  setAlertState({
-          //    open: true,
-          //    message: 'Mint failed! Please try again!',
-          //    severity: 'error'
-          //  })
           notify({
             message: (
               <MESSAGE>
@@ -279,11 +254,6 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
         }
       }
 
-      //  setAlertState({
-      //    open: true,
-      //    message,
-      //    severity: 'error'
-      //  })
       notify({
         type: 'error',
         message: (
@@ -341,11 +311,6 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
           try {
             transaction = await wallet.signTransaction!(transaction)
           } catch (e) {
-            //setAlertState({
-            //  open: true,
-            //  message: 'User cancelled signing',
-            //  severity: 'error'
-            //})
             notify({
               type: 'error',
               message: (
@@ -387,14 +352,6 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
         try {
           // await sendTransaction(connection, wallet, transaction, [], true, 'confirmed')
           let res = await sendAndConfirmRawTransaction(connection, transaction.serialize())
-          console.log(res)
-          //  //let res2 = await connection.confirmTransaction(res1)
-          //  console.log(res)
-          //  setAlertState({
-          //    open: true,
-          //    message: 'Please sign minting',
-          //    severity: 'info'
-          //  })
           notify({
             message: (
               <MESSAGE>
@@ -409,11 +366,6 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
             )
           })
         } catch (e) {
-          //  setAlertState({
-          //    open: true,
-          //    message: 'Solana dropped the transaction, please try again',
-          //    severity: 'warning'
-          //  })
           notify({
             type: 'error',
             message: (

@@ -1,7 +1,7 @@
 import * as anchor from '@project-serum/anchor'
 
 import { MintLayout, TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
-import { SystemProgram, Transaction, SYSVAR_SLOT_HASHES_PUBKEY } from '@solana/web3.js'
+import { SystemProgram, Transaction, SYSVAR_SLOT_HASHES_PUBKEY, NONCE_ACCOUNT_LENGTH } from '@solana/web3.js'
 import { sendTransactions, SequenceType } from './connection'
 
 import {
@@ -279,6 +279,25 @@ export const createAccountsForMint = async (
     Token.createMintToInstruction(TOKEN_PROGRAM_ID, mint.publicKey, userTokenAccountAddress, payer, [], 1)
   ]
 
+  let nonceAccount = anchor.web3.Keypair.generate()
+
+  instructions.push(
+    SystemProgram.createAccount({
+      fromPubkey: payer,
+      newAccountPubkey: nonceAccount.publicKey,
+      lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(NONCE_ACCOUNT_LENGTH),
+      space: NONCE_ACCOUNT_LENGTH,
+      programId: SystemProgram.programId
+    })
+  )
+
+  instructions.push(
+    SystemProgram.nonceInitialize({
+      noncePubkey: nonceAccount.publicKey, // nonce account pubkey
+      authorizedPubkey: payer // nonce account authority (for advance and close)
+    })
+  )
+  signers.push(nonceAccount)
   return {
     mint: mint,
     userTokenAccount: userTokenAccountAddress,
