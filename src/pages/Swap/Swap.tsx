@@ -34,14 +34,13 @@ const CoinGeckoClient = new CoinGecko()
 
 const WRAPPER = styled.div`
   ${tw`w-screen not-italic`}
-  min-height: calc(100vh - 58px)
+  min-height: calc(100vh - 58px);
   color: ${({ theme }) => theme.text1};
   font-family: Montserrat;
 `
 
 const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
- ${tw`flex pt-10p items-center w-screen mb-7 max-h-80p sm:justify-start sm:flex sm:flex-col sm:items-center sm:h-full`}
-
+  ${tw`flex pt-10p items-center w-screen mb-7 max-h-80p sm:justify-start sm:flex sm:flex-col sm:items-center sm:h-full`}
 
   color: ${({ theme }) => theme.text1};
   justify-content: ${({ $desktop }) => ($desktop ? 'space-between' : 'space-around')};
@@ -78,7 +77,8 @@ const TOKEN_WRAPPER = styled.div`
   background: ${({ theme }) => theme.swapSides1};
 `
 
-const TokenTitle = styled.div`${tw`font-semibold text-lg`} 
+const TokenTitle = styled.div`
+  ${tw`font-semibold text-lg`}
   color: ${({ theme }) => theme.text1};
   line-height: inherit;
 `
@@ -115,7 +115,7 @@ const TokenHeader = styled.div`
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
-${tw`h-24.25 rounded-average p-px cursor-pointer min-h-330 mr-7 !min-w-330 sm:h-16.25 mb-4`}
+  ${tw`h-24.25 rounded-average p-px cursor-pointer mr-7 !min-w-330 sm:h-16.25 mb-4 sm:mr-0`}
   background: ${({ theme, $clicked }) =>
     $clicked ? 'linear-gradient(90deg,rgba(247,147,26,0.5) 0%,rgba(220,31,255,0.5) 100%)' : theme.bg1};
   box-shadow: 0 6px 9px 0 rgba(36, 36, 36, 0.1);
@@ -141,8 +141,9 @@ const TokenDetail = styled.div`
   ${tw`flex flex-col w-full py-3`}
 `
 
-const AltTokenDetail = styled(TokenDetail)`${tw`sm:w-1/2`}`
-
+const AltTokenDetail = styled(TokenDetail)`
+  ${tw`sm:w-1/2`}
+`
 
 const ListWrapper = styled.div`
   ${tw`w-full sm:flex sm:py-3 flex-wrap`}
@@ -174,14 +175,14 @@ const PRICE_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   ${tw`items-center h-full w-81.5 p-6 rounded-tl-bigger rounded-bl-bigger sm:w-full sm:rounded-bigger sm:mb-12`}
   font-family: Montserrat;
-  background: ${({ theme }) => theme.swapSides2}
+  background: ${({ theme }) => theme.swapSides2};
 `
 
 const SWAP_ROUTES = styled.div<{ $less: boolean }>`
   ${tw`relative`}
 
   .swap-content {
-    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 mb-3 mx-8 sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around sm:mt-8 sm:mb-12`}
+    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 pt-8 mb-3 mx-8 sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:mx-0 sm:justify-around sm:mt-8 sm:mb-12`}
     justify-content: ${({ $less }) => ($less ? 'center' : 'flex-start')};
   }
 
@@ -191,10 +192,11 @@ const SWAP_ROUTES = styled.div<{ $less: boolean }>`
 `
 
 const BestPrice = styled.div`
-  ${tw`absolute font-semibold items-center text-xs p-2 rounded-md text-white leading-3`}
+  ${tw`absolute font-semibold items-center text-xs p-2 rounded-md text-white leading-5`}
   margin-top: -90px;
   margin-left: 230px;
   background-color: #be2cff;
+  z-index: 100;
 
   @media (max-width: 500px) {
     margin-top: -60px;
@@ -248,7 +250,7 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)<{ $iconSize: string }>`
 `
 
 const SETTING_WRAPPER = styled(CenteredImg)`
-${tw`h-10 w-10 rounded-circle ml-2`}
+  ${tw`h-10 w-10 rounded-circle ml-2`}
 `
 
 const SWITCH = styled(CenteredImg)<{ measurements: number }>`
@@ -268,8 +270,8 @@ const SWAP_CONTENT = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   background-color: ${({ theme }) => theme.bg9};
   ${({ theme }) => theme.largeShadow}
-  @media (max-width:500px){
-    line-height: inherit
+  @media (max-width:500px) {
+    line-height: inherit;
   }
 `
 
@@ -691,7 +693,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
 
       if (no === 0) {
         return { name, value, price: out, outAmount, bestPrice: true }
-      } else if (no === 1) {
+      } else if (no === 1 && name.toLowerCase().includes('goosefx')) {
         return { name, value, price: out, outAmount, fastest: true }
       }
       return { name, value, price: out, outAmount }
@@ -775,6 +777,7 @@ export const SwapMain: FC = () => {
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
   const [inAmountTotal, setInAmountTotal] = useState(0)
+  console.log(tokenA, tokenB)
 
   const { routes, exchange } = useJupiter({
     amount: inAmountTotal, // raw input amount of tokens

@@ -7,7 +7,7 @@ import { NFTHomeSlider } from '../Slider/NFTHomeSlider'
 import AnalyticsTabs from './Tab'
 import NFTFooter from './NFTFooter'
 import CollectionCarousel from './CollectionCarousel'
-import SingleItemListings from './SingleItemListings'
+import OneOfOnesNFTs from './OneOfOnesNFTs'
 import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
 import Loading from './Loading'
 import { SVGDynamicReverseMode } from '../../../styles'
@@ -75,7 +75,7 @@ export const NFT_MENU = styled.div`
 const NFTLandingPage: FC = (): JSX.Element => {
   const { allCollections, fetchAllCollections, setNFTMenuPopup, nftMenuPopup } = useNFTCollections()
   const [filteredCollections, setFilteredCollections] = useState([])
-  const [singleItems, setAllSingleItems] = useState([])
+  const [oneOfOnes, setAllOneOfOnes] = useState([])
   const [isAllLoading, setIsAllLoading] = useState<boolean>(true)
   const [betaBanner, setBetaBanner] = useState<boolean>(true)
   const [search, setSearch] = useState<string>('')
@@ -83,7 +83,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
 
   useEffect(() => {
     fetchAllCollections().then((res) => setIsAllLoading(false))
-    fetchAllSingleNFTs().then((res) => setAllSingleItems(res))
+    fetchAllSingleNFTs().then((res) => setAllOneOfOnes(res.slice(0, 20)))
     return () => {}
   }, [])
 
@@ -123,7 +123,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
           isLaunch
           isLoading={isAllLoading}
         />
-        <SingleItemListings items={singleItems} title={'Single Item Listings'} />
+        <OneOfOnesNFTs items={oneOfOnes} title={'1 of 1 Listings'} />
         <NFTFooter />
       </div>
 
