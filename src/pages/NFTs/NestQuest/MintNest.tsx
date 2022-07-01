@@ -228,13 +228,13 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
         <PriceStyle>
           <span className="price">Price</span>
           <Col span={18}>
-            <span className="Big-Price">3.00</span>
+            <span className="Big-Price">2.00</span>
             <span className="currency">SOL</span>
           </Col>
         </PriceStyle>
         <ListStyle className="">
           <span>Price per item</span>
-          <span>2.25 SOL</span>
+          <span>2.00 SOL</span>
         </ListStyle>
         <ListStyle className="">
           <span>Quantity</span>
@@ -246,7 +246,7 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
         </ListStyle>
         <ListStyle className="">
           <span>Total Price</span>
-          <span>9 SOL</span>
+          <span>2.001 SOL</span>
         </ListStyle>
 
         <STYLED_CREATE_BTN
@@ -274,21 +274,24 @@ const LoadBuy = ({ nestQuestData, setPhase }: MintProps) => {
     if (wallet.publicKey && connection) {
       fetchAvailableNft(connection)
         .then((res) => {
-          console.log(res)
-          buyWithSOL(wallet, connection, new PublicKey('2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'))
-            .then((result) => {
-              console.log(result)
-              if (result) {
-                setPhase(3)
-              } else {
-                throw new Error('an error occured')
-              }
-            })
-            .catch((err) => {
-              console.log(err)
-              notify({ type: 'error', message: err?.message })
-              setPhase(1)
-            })
+          if (res) {
+            buyWithSOL(wallet, connection, new PublicKey('2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'))
+              .then((result) => {
+                console.log(result)
+                if (result) {
+                  setPhase(3)
+                } else {
+                  throw new Error('an error occured')
+                }
+              })
+              .catch((err) => {
+                console.log(err)
+                notify({ type: 'error', message: err?.message })
+                setPhase(1)
+              })
+          } else {
+            throw new Error('NFT sold out')
+          }
         })
         .catch((err) => {
           console.log(err)

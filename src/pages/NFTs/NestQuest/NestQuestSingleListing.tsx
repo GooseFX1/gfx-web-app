@@ -4,8 +4,8 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import ModalMint from './MintNest'
-import { useAccounts } from '../../../context'
-import { WRAPPED_SOL_MINT } from '../../../web3'
+import { useAccounts, useConnectionConfig } from '../../../context'
+import { WRAPPED_SOL_MINT, fetchAvailableNft } from '../../../web3'
 import { MintItemViewStatus, INFTMetadata } from '../../../types/nft_details'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { MainButton } from '../../../components/MainButton'
@@ -18,6 +18,7 @@ import { Share } from '../Share'
 import { generateTinyURL } from '../../../api/tinyUrl'
 import { notify } from '../../../utils'
 import { RoadMap, TeamMembers, Vesting } from './NestQuestComponent'
+import { publicKeyLayout } from '../../../web3/layout'
 const { TabPane } = Tabs
 
 //#region styles
@@ -351,6 +352,7 @@ export const NestQuestSingleListing: FC<{
 }> = ({ status = '', backUrl, handleClickPrimaryButton, ...rest }) => {
   const history = useHistory()
   const { connected, publicKey } = useWallet()
+  const { connection } = useConnectionConfig()
   //const { setVisible: setModalVisible, visible } = useWalletModal()
   const { getUIAmount } = useAccounts()
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -359,11 +361,30 @@ export const NestQuestSingleListing: FC<{
   const [shareModal, setShareModal] = useState(false)
   const [nestData, setNestData] = useState<any>({})
   const [mintDisabled, setMintDisabled] = useState<boolean>(false)
-  const mintPrice: number = useMemo(() => 0.1, [])
+  const mintPrice: number = useMemo(() => 2, [])
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 800)
   }, [])
+
+  useEffect(() => {
+    if (connection) {
+      fetchAvailableNft(connection)
+        .then((res) => {
+          console.log({ res })
+          if (!res) {
+            throw new Error('NFT sold out')
+          } else {
+            setMintDisabled(false)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          //notify({ type: 'error', message: err?.message })
+          setMintDisabled(true)
+        })
+    }
+  }, [connection])
 
   useEffect(() => {
     if (publicKey && connected) {
@@ -509,10 +530,16 @@ export const NestQuestSingleListing: FC<{
                     </TabPane>
                   </Tabs>
                   <ACTION_BELOW>
-                    {publicKey ? (
-                      <ORANGE_BTN status="action" onClick={() => setModalVisible(true)} disabled={mintDisabled}>
-                        Mint
-                      </ORANGE_BTN>
+                    {publicKeyLayout ? (
+                      !mintDisabled ? (
+                        <ORANGE_BTN status="action" onClick={() => setModalVisible(true)} disabled={mintDisabled}>
+                          Mint
+                        </ORANGE_BTN>
+                      ) : (
+                        <CONNECT onClick={handleWalletModal}>
+                          <span>Sold Out</span>
+                        </CONNECT>
+                      )
                     ) : (
                       <CONNECT onClick={handleWalletModal}>
                         <span>Connect Wallet</span>
