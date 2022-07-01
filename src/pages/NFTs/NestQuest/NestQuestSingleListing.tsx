@@ -3,15 +3,21 @@ import { Row, Col, Progress } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { useWalletModal, useAccounts } from '../../context'
-import { WRAPPED_SOL_MINT } from '../../web3'
-import { MintItemViewStatus, INFTMetadata } from '../../types/nft_details'
-import { SkeletonCommon } from './Skeleton/SkeletonCommon'
-import { MainButton } from '../../components/MainButton'
-import { SOCIAL_MEDIAS } from '../../constants'
-import { SVGDynamicReverseMode } from '../../styles/utils'
-import { FloatingActionButton } from '../../components'
+import ModalMint from './MintNest'
+import { useAccounts } from '../../../context'
+import { WRAPPED_SOL_MINT } from '../../../web3'
+import { MintItemViewStatus, INFTMetadata } from '../../../types/nft_details'
+import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import { MainButton } from '../../../components/MainButton'
+import { SOCIAL_MEDIAS } from '../../../constants'
+import { SVGDynamicReverseMode } from '../../../styles/utils'
+import { FloatingActionButton } from '../../../components'
 import { Tabs } from 'antd'
+import { TokenToggle } from '../../../components/TokenToggle'
+import { Share } from '../Share'
+import { generateTinyURL } from '../../../api/tinyUrl'
+import { notify } from '../../../utils'
+import { RoadMap, TeamMembers, Vesting } from './NestQuestComponent'
 const { TabPane } = Tabs
 
 //#region styles
@@ -54,6 +60,13 @@ const NFT_DETAILS = styled.div`
 
   .nd-content {
     height: 100%;
+  }
+
+  .icon-image {
+    height: 24px;
+    width: auto;
+    margin-left: 5px;
+    margin-right: 5px;
   }
 
   .ant-tabs-top {
@@ -174,7 +187,7 @@ const SUBTITLE = styled.h2`
 const PILL_SECONDARY = styled.div`
   background: linear-gradient(90deg, rgba(247, 147, 26, 0.5) 0%, rgba(220, 31, 255, 0.5) 100%);
   border-radius: 50px;
-  width: 150px;
+  width: auto;
   height: 45px;
   padding: 2px;
 
@@ -255,7 +268,7 @@ const MINT_PROGRESS_WRAPPER = styled.div`
 
 const CONNECT = styled(MainButton)`
   height: 50px;
-  width: 70%;
+  width: 50%;
   background: linear-gradient(96.79deg, #5855ff 4.25%, #dc1fff 97.61%);
 `
 
@@ -265,8 +278,8 @@ const Live = styled(MainButton)`
   border: 1.5px solid #fff;
   border-radius: 10px;
   position: absolute;
-  top: 16px;
-  left: 75%;
+  top: 6rem;
+  right: 1.5rem;
   z-index: 10;
 `
 
@@ -281,6 +294,27 @@ const ACTION_BELOW = styled.div`
   justify-content: center;
 `
 
+const SHARE_BUTTON = styled.button`
+  position: absolute;
+  bottom: 4px;
+  right: 25px;
+  background: black;
+  border: transparent;
+  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+
+  &:hover {
+    background-color: black;
+  }
+
+  img {
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+`
+
 const LiveText = styled.span`
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   -webkit-text-fill-color: transparent;
@@ -289,11 +323,11 @@ const LiveText = styled.span`
 
 const ORANGE_BTN = styled(MainButton)`
   height: 50px;
-  width: 70%;
+  width: 50%;
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
 
   &:disabled {
-    background: grey;
+    background: linear-gradient(96.79deg, #5855ff 4.25%, #dc1fff 97.61%);
   }
 `
 
@@ -317,12 +351,15 @@ export const NestQuestSingleListing: FC<{
 }> = ({ status = '', backUrl, handleClickPrimaryButton, ...rest }) => {
   const history = useHistory()
   const { connected, publicKey } = useWallet()
-  const { setVisible: setModalVisible } = useWalletModal()
+  //const { setVisible: setModalVisible, visible } = useWalletModal()
   const { getUIAmount } = useAccounts()
   const [isLoading, setIsLoading] = useState<boolean>(false)
-
-  const [notEnough, setNotEnough] = useState<boolean>(false)
-  const mintPrice: number = useMemo(() => 1.5, [])
+  const [token, setToken] = useState<string>('SOL')
+  const [modalVisible, setModalVisible] = useState(false)
+  const [shareModal, setShareModal] = useState(false)
+  const [nestData, setNestData] = useState<any>({})
+  const [mintDisabled, setMintDisabled] = useState<boolean>(false)
+  const mintPrice: number = useMemo(() => 0.1, [])
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 800)
@@ -330,9 +367,67 @@ export const NestQuestSingleListing: FC<{
 
   useEffect(() => {
     if (publicKey && connected) {
-      setNotEnough(mintPrice >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false)
+      setMintDisabled(mintPrice >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false)
     }
+    getData()
   }, [connected, publicKey, getUIAmount])
+
+  const getData = async () => {
+    const response = await fetch('https://nft-launchpad.goosefx.io/nft-launchpad/getOneLaunch', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ urlName: 'nest_quest' })
+    })
+
+    const result = await response.json()
+
+    setNestData({
+      ...result.data
+    })
+  }
+
+  const onShare = async (social: string): Promise<void> => {
+    if (social === 'copy link') {
+      await navigator.clipboard.writeText(window.location.href)
+      return
+    }
+
+    const res = await generateTinyURL(
+      `https://${process.env.NODE_ENV !== 'production' ? 'app.staging.goosefx.io' : window.location.host}${
+        window.location.pathname
+      }`,
+      ['gfx', 'nest-exchange', social]
+    )
+
+    if (res.status !== 200) {
+      notify({ type: 'error', message: 'Error creating sharing url' })
+      return
+    }
+
+    const tinyURL = res.data.data.tiny_url
+
+    switch (social) {
+      case 'twitter':
+        window.open(
+          `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`,
+          '_blank'
+        )
+        break
+      case 'telegram':
+        window.open(
+          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange`,
+          '_blank'
+        )
+        break
+      case 'facebook':
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${tinyURL}`, '_blank')
+        break
+      default:
+        break
+    }
+  }
 
   const handleWalletModal: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
@@ -352,7 +447,7 @@ export const NestQuestSingleListing: FC<{
       </div>
 
       <Row gutter={[24, 16]} className="nd-content" justify="center" align="top">
-        <Col sm={10} xl={10} xxl={8} className="nd-details">
+        <Col sm={10} xl={10} xxl={10} className="nd-details">
           <div>
             {isLoading ? (
               <>
@@ -376,7 +471,9 @@ export const NestQuestSingleListing: FC<{
                   </Col>
                   <Col span={7}>
                     <PILL_SECONDARY>
-                      <div>Price {mintPrice} SOL</div>
+                      <div>
+                        Price {mintPrice} <img className="icon-image" src={`/img/crypto/${token}.svg`} alt="" /> {token}
+                      </div>
                     </PILL_SECONDARY>
                   </Col>
                   <Col span={2}>
@@ -399,31 +496,21 @@ export const NestQuestSingleListing: FC<{
                 <div>
                   <Tabs className={'collection-tabs'} defaultActiveKey="1" centered>
                     <TabPane tab="Summary" key="1">
-                      <DESCRIPTION>
-                        A mysterious egg abandoned in a peculiar tree stump nest. The egg emits a faint glow, as your
-                        hand gets close to the surface you feel radiant heat. Something is alive inside. You must
-                        incubate this egg for it to hatch.
-                      </DESCRIPTION>
+                      <DESCRIPTION>{nestData?.summary}</DESCRIPTION>
                     </TabPane>
                     <TabPane tab="Roadmap" key="2">
-                      <DESCRIPTION>Roadmap</DESCRIPTION>
+                      <RoadMap roadmap={nestData?.roadmap} />
                     </TabPane>
                     <TabPane tab="Team" key="3">
-                      <DESCRIPTION>John Luke Weiyuan Usman Shrihari Others...</DESCRIPTION>
+                      <TeamMembers teamMembers={nestData?.team} />
                     </TabPane>
                     <TabPane tab="Vesting" key="4">
-                      <DESCRIPTION>
-                        Month1 Setup data Month2 Setup staking Month3 Setup Gaming Month4-12 Setup Show
-                      </DESCRIPTION>
+                      <Vesting currency={token} str={''} />
                     </TabPane>
                   </Tabs>
                   <ACTION_BELOW>
                     {publicKey ? (
-                      <ORANGE_BTN
-                        status="action"
-                        onClick={(e) => console.log('mint nestquest egg')}
-                        disabled={notEnough}
-                      >
+                      <ORANGE_BTN status="action" onClick={() => setModalVisible(true)} disabled={mintDisabled}>
                         Mint
                       </ORANGE_BTN>
                     ) : (
@@ -431,6 +518,10 @@ export const NestQuestSingleListing: FC<{
                         <span>Connect Wallet</span>
                       </CONNECT>
                     )}
+
+                    <SHARE_BUTTON onClick={(e) => setShareModal(true)}>
+                      <img src={`/img/assets/share.svg`} alt="share-icon" />
+                    </SHARE_BUTTON>
                   </ACTION_BELOW>
                 </div>
               </div>
@@ -438,7 +529,13 @@ export const NestQuestSingleListing: FC<{
           </div>
         </Col>
         <Col span={1}></Col>
-        <Col sm={10} xl={10} xxl={8}>
+        <Col sm={10} xl={10} xxl={10}>
+          <TokenToggle
+            token={token}
+            toggleToken={() => {
+              token === 'SOL' ? setToken('USDC') : setToken('SOL')
+            }}
+          />
           {!isLoading ? (
             <IMAGE>
               <video
@@ -457,23 +554,23 @@ export const NestQuestSingleListing: FC<{
             <LiveText>Live</LiveText>
           </Live>
 
-          {!isLoading && notEnough !== undefined ? (
+          {!isLoading && mintDisabled !== undefined ? (
             <Row gutter={8}>
-              {/* <Col span={7}>
-                {publicKey ? (
+              <Col span={7}>
+                {/* {publicKey ? (
                   <ORANGE_BTN
                     height={'40px'}
                     status="action"
                     width={'141px'}
-                    onClick={(e) => console.log('mint nestquest egg')}
-                    disabled={notEnough}
+                    
+                    //disabled={notEnough}
                   ></ORANGE_BTN>
                 ) : (
                   <CONNECT onClick={handleWalletModal}>
                     <span>Connect Wallet</span>
                   </CONNECT>
-                )}
-              </Col> */}
+                )} */}
+              </Col>
               <MINT_PROGRESS_WRAPPER>
                 <MINT_PROGRESS percent={50} status="active" num={50} />
                 <REMNANT>
@@ -486,6 +583,34 @@ export const NestQuestSingleListing: FC<{
           )}
         </Col>
       </Row>
+
+      {shareModal && (
+        <Share
+          visible={shareModal}
+          handleCancel={() => setShareModal(false)}
+          socials={['twitter', 'telegram', 'facebook', 'copy link']}
+          handleShare={onShare}
+        />
+      )}
+      {modalVisible && (
+        <ModalMint
+          modalVisible={modalVisible}
+          setModalOpen={setModalVisible}
+          nestQuestData={{ name: 'Tier #1 “The Egg”', project: 'NestQuest' }}
+        />
+      )}
     </NFT_DETAILS>
   )
 }
+
+/**
+ * add button svg icon with position absolute -
+ * convert sol to usdc
+ * finish sol-udsc switch -
+ * make text shown allow tabs and newlines
+ * change price based on sol-usdc switch
+ * trigger mint change
+ * add modal for minting
+ * add captcha phase
+ * successful or failed minting
+ */
