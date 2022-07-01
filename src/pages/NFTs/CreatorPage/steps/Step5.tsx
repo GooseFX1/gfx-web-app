@@ -1,4 +1,4 @@
-import { Col, Row, Switch, Button, Input } from 'antd'
+import { Col, Row, Button, Input } from 'antd'
 import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
@@ -8,6 +8,7 @@ import { ImageContainer, NextStepsButton } from '../components/SharedComponents'
 import { ICreatorData } from '../../../../types/nft_launchpad'
 import { MileStoneModal } from '../components/MileStoneModal'
 import { MileStoneBox } from '../components/MileStoneBox'
+import TeamMembersContainer from '../components/TeamMembersContainer'
 
 const DISCORD_PREFIX = 'https://discord.gg/'
 
@@ -110,6 +111,7 @@ export const Step5: FC = () => {
   const [twitter, setTwitter] = useState<string>('')
   const [mileStones, setMileStones] = useState([])
   const [mileStonePopup, setMileStonePopup] = useState<boolean>(false)
+  const [teamMembers, setTeamMembers] = useState([])
 
   let creatorStepData: ICreatorData[5] = {
     discord: discordValue,
@@ -122,9 +124,8 @@ export const Step5: FC = () => {
       }
       return obj
     }),
-    team: null
+    team: teamMembers
   }
-
   useEffect(() => {
     if (discordValue.length > 22 && twitter !== '' && mileStones.length !== 0) setNextButtonActive(true)
     else setNextButtonActive(false)
@@ -213,7 +214,7 @@ export const Step5: FC = () => {
         </Col>
         <Col span={12}>
           <Row>
-            <ImageContainer fileName={creatorData[2] && creatorData[2].image} imageName="no-image" />
+            <TeamMembersContainer data={creatorStepData} setTeamMembers={setTeamMembers} />
           </Row>
           <NextStepsButton data={creatorStepData} active={nextButtonActive} />
         </Col>

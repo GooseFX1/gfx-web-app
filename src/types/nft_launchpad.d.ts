@@ -38,6 +38,6 @@ export interface ICreatorData {
     website?: string
     twitter: string
     roadmap: { heading: string; subHeading: string }[] | null
-    team: { name: string; twitterUsername: string }[] | [] | null
+    team: { name: string; twitterUsername: string; dp_url?: null | string }[] | [] | null
   } | null
 }
