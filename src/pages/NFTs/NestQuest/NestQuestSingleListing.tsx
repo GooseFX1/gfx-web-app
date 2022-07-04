@@ -629,16 +629,3 @@ export const NestQuestSingleListing: FC<{
     </NFT_DETAILS>
   )
 }
-
-/**
- * add button svg icon with position absolute -
- * convert sol to usdc
- * finish sol-udsc switch -
- * make text shown allow tabs and newlines
- * change price based on sol-usdc switch
- * trigger mint change
- * add modal for minting
- * add captcha phase
- * successful or failed minting
- * https://www.loom.com/share/3d81d39204c0484ba13e07ce3858a0cc
- */
