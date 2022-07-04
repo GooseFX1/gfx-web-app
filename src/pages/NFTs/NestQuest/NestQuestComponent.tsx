@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
+import { CheckOutlined } from '@ant-design/icons'
 
 const ROADMAP_WRAPPER = styled.div`
   .elipse {
@@ -42,48 +43,75 @@ const ROADMAP_WRAPPER = styled.div`
     margin: 0px;
   }
 `
-// const GOLDEN_POPUP = styled.div`
-//   background: ${({ theme }) => theme.bg2};
-//   margin: auto;
-//   margin-top: -5%;
-//   width: 570px;
-//   height: 625px;
-//   border-radius: 25px;
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: space-between;
-//   align-items: center;
-//   .circle {
-//     display: flex;
-//     justify-content: center;
-//     align-items: center;
-//     padding-top: 70px;
-//   }
-//   .available {
-//     font-weight: 600;
-//     font-size: 18px;
-//     color: #b5b5b5;
-//     line-height: 22px;
-//   }
-//   .available-text {
-//     font-weight: 600;
-//     font-size: 28px;
-//     line-height: 34px;
-//     color: #eeeeee;
-//   }
-//   .available-text {
-//     font-weight: 600;
-//     font-size: 28px;
-//     line-height: 34px;
-//     color: #eeeeee;
-//   }
-//   .need-more-text {
-//     font-weight: 500;
-//     font-size: 22px;
-//     line-height: 27px;
-//     text-align: center;
-//   }
-// `
+const STYLED_SHARE_PROFILE = styled.div`
+  ${({ theme }) => `
+    .ant-modal-body {
+      padding: ${theme.margin(5)} ${theme.margin(7)};
+    }
+    .ant-modal-close {
+      right: 35px;
+      top: 35px;
+      left: auto;
+      img {
+        filter: ${theme.filterCloseModalIcon};
+      }
+    }
+    .title {
+      font-family: Montserrat;
+      font-size: 20px;
+      font-weight: 600;
+      color: ${theme.textShareModal};
+      margin-bottom: ${theme.margin(4)};
+    }
+    .social-list {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      margin: 0 -${theme.margin(2)};
+      margin-bottom: ${theme.margin(3)}
+    }
+    .social-item {
+      padding: 0 ${theme.margin(2)};
+      img {
+        height: 40px;
+        width: 40px;
+        cursor: pointer;
+      }
+    }
+    .social-text {
+      text-transform: capitalize;
+      font-family: Montserrat;
+      font-size: 17px;
+      font-weight: 500;
+      text-align: center;
+      margin-top: 20px;
+      color: ${theme.textShareModal};
+    }
+
+    .social-icon{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .social-icon--img {
+      height: 40px;
+      width: 40px;
+      background: ${theme.success};
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      align-self: center;
+      
+      svg {
+        display: block;
+        height:24px !important;
+        width:24px !important;
+      }
+    }
+  `}
+`
 
 const TEAM_MEMBER_WRAPPER = styled.div`
   display: grid;
@@ -160,25 +188,35 @@ export const Vesting = ({ currency, str }) => {
   )
 }
 
-// export const GoldenTicketPopup = ({}) => {
-//   const closeGoldenPopup = (e) => {
-//     if (e.target.id !== 'golden-ticket-popup') console.log('close popup')
-//   }
-//   return (
-//     <GOLDEN_POPUP id="golden-ticket-popup" onClick={(e) => closeGoldenPopup(e)}>
-//       <div className="circle">
-//         <img className="ticket" src="/img/assets/GoldenTicket.png" />
-//       </div>
-//       <div className="available-text">Available:</div>
-//       <div className="available-text">3 Golden Tickets</div>
-//       <div className="need-more-text">
-//         {'You need 1 '}
-//         <span className="golden-text">{' Golden Ticket '}</span>
-//         to get on the Okay Bears Whitelist.
-//       </div>
-//     </GOLDEN_POPUP>
-//   )
-// }
+export const ShareInternal = ({ socials, handleShare }: any) => {
+  const [selectedItem, setSelectedItem] = useState<string>()
+
+  const handleClick = (item: string) => {
+    setSelectedItem(item)
+    handleShare(item)
+    setTimeout(() => setSelectedItem(undefined), 3000)
+  }
+
+  return (
+    <STYLED_SHARE_PROFILE>
+      <h1 className="title">Share it with your friends!</h1>
+      <div className="social-list">
+        {socials.map((item: string) => (
+          <div className="social-item" key={item} onClick={(e) => handleClick(item)}>
+            <div className="social-icon">
+              {item === selectedItem ? (
+                <CheckOutlined className={'social-icon--img'} />
+              ) : (
+                <img src={`/img/assets/${item.replace(' ', '-')}-circle.svg`} alt="" />
+              )}
+            </div>
+            <div className="social-text">{item}</div>
+          </div>
+        ))}
+      </div>
+    </STYLED_SHARE_PROFILE>
+  )
+}
 
 export const TeamMembers = ({ teamMembers }) => {
   return (

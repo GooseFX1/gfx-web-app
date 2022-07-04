@@ -5,6 +5,8 @@ import { Row, Col } from 'antd'
 import { PopupCustom } from '../Popup/PopupCustom'
 import { MainButton } from '../../../components'
 import { useConnectionConfig } from '../../../context'
+import { ShareInternal } from './NestQuestComponent'
+import { onShare } from './NestQuestSingleListing'
 import { Creator, StringPublicKey, buyWithSOL, fetchAvailableNft } from '../../../web3'
 import { notify } from '../../../utils'
 import { PublicKey } from '@solana/web3.js'
@@ -194,9 +196,9 @@ const RoyaltiesStep = ({ modalVisible, setModalOpen, nestQuestData }: Props) => 
         }
         footer={null}
       >
-        {phase == 1 ? (
+        {phase === 1 ? (
           <ConfirmMint nestQuestData={nestQuestData} setPhase={setPhase} />
-        ) : phase == 2 ? (
+        ) : phase === 2 ? (
           <LoadBuy nestQuestData={nestQuestData} setPhase={setPhase} />
         ) : (
           <SuccessBuy />
@@ -275,11 +277,18 @@ const LoadBuy = ({ nestQuestData, setPhase }: MintProps) => {
       fetchAvailableNft(connection)
         .then((res) => {
           if (res) {
-            buyWithSOL(wallet, connection, new PublicKey('2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'))
+            buyWithSOL(wallet, connection, res)
               .then((result) => {
-                console.log(result)
                 if (result) {
                   setPhase(3)
+                  notify({
+                    type: 'success',
+                    message: 'Purchase successful!',
+                    description: `You bought 1 "Tier 1 Egg" for at least 2 SOL`,
+                    icon: 'success',
+                    txid: result as string,
+                    network: 'devnet'
+                  })
                 } else {
                   throw new Error('an error occured')
                 }
@@ -316,6 +325,7 @@ const LoadBuy = ({ nestQuestData, setPhase }: MintProps) => {
 }
 
 const SuccessBuy = () => {
+  const wallet = useWallet()
   return (
     <LoadStyle>
       <p className="big-text">Mission Accomplished!</p>
@@ -328,10 +338,12 @@ const SuccessBuy = () => {
         src={'https://gfxnestquest.s3.ap-south-1.amazonaws.com/Egg.mov'}
       ></video>
 
+      <ShareInternal socials={['twitter', 'telegram', 'facebook', 'copy link']} handleShare={onShare} />
+
       <STYLED_CREATE_BTN
         className="collection-button"
         onClick={() => {
-          window.location.href = '/NFT/profile'
+          window.location.href = `/NFTs/profile/${wallet.publicKey}`
         }}
       >
         Go to collection

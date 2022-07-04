@@ -344,6 +344,47 @@ const FLOATING_ACTION_ICON = styled.img`
 `
 //#endregion
 
+export const onShare = async (social: string): Promise<void> => {
+  if (social === 'copy link') {
+    await navigator.clipboard.writeText(window.location.href)
+    return
+  }
+
+  const res = await generateTinyURL(
+    `https://${process.env.NODE_ENV !== 'production' ? 'app.staging.goosefx.io' : window.location.host}${
+      window.location.pathname
+    }`,
+    ['gfx', 'nest-exchange', social]
+  )
+
+  if (res.status !== 200) {
+    notify({ type: 'error', message: 'Error creating sharing url' })
+    return
+  }
+
+  const tinyURL = res.data.data.tiny_url
+
+  switch (social) {
+    case 'twitter':
+      window.open(
+        `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`,
+        '_blank'
+      )
+      break
+    case 'telegram':
+      window.open(
+        `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange`,
+        '_blank'
+      )
+      break
+    case 'facebook':
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${tinyURL}`, '_blank')
+      break
+    default:
+      break
+  }
+}
+
 export const NestQuestSingleListing: FC<{
   handleClickPrimaryButton?: (type: string) => void
   status?: MintItemViewStatus
@@ -371,7 +412,6 @@ export const NestQuestSingleListing: FC<{
     if (connection) {
       fetchAvailableNft(connection)
         .then((res) => {
-          console.log({ res })
           if (!res) {
             throw new Error('NFT sold out')
           } else {
@@ -409,47 +449,6 @@ export const NestQuestSingleListing: FC<{
     })
   }
 
-  const onShare = async (social: string): Promise<void> => {
-    if (social === 'copy link') {
-      await navigator.clipboard.writeText(window.location.href)
-      return
-    }
-
-    const res = await generateTinyURL(
-      `https://${process.env.NODE_ENV !== 'production' ? 'app.staging.goosefx.io' : window.location.host}${
-        window.location.pathname
-      }`,
-      ['gfx', 'nest-exchange', social]
-    )
-
-    if (res.status !== 200) {
-      notify({ type: 'error', message: 'Error creating sharing url' })
-      return
-    }
-
-    const tinyURL = res.data.data.tiny_url
-
-    switch (social) {
-      case 'twitter':
-        window.open(
-          `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`,
-          '_blank'
-        )
-        break
-      case 'telegram':
-        window.open(
-          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange`,
-          '_blank'
-        )
-        break
-      case 'facebook':
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${tinyURL}`, '_blank')
-        break
-      default:
-        break
-    }
-  }
-
   const handleWalletModal: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
       if (!event.defaultPrevented && !connected && !publicKey) {
@@ -480,7 +479,7 @@ export const NestQuestSingleListing: FC<{
             ) : (
               <div>
                 <YELLOW>Featured Launch </YELLOW>
-                <DESCRIPTION>coming soon</DESCRIPTION>
+                {/* <DESCRIPTION>coming soon</DESCRIPTION> */}
                 <TITLE className="rs-name">NestQuest</TITLE>
                 <SUBTITLE>Tier #1 "The Egg"</SUBTITLE>
                 <br />

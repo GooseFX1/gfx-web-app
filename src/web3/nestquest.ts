@@ -1,5 +1,6 @@
 import { web3, utils } from '@project-serum/anchor'
 import { BaseSignerWalletAdapter } from '@solana/wallet-adapter-base'
+import { WalletContextState } from '@solana/wallet-adapter-react'
 import { purchaseWithSol } from './nestquest-codegen/instructions/purchaseWithSol'
 import { purchaseWithGofx } from './nestquest-codegen/instructions/purchaseWithGofx'
 import { PROGRAM_ID } from './nestquest-codegen/programId'
@@ -32,7 +33,7 @@ const fetchAvailableNft = async (connection: web3.Connection): Promise<web3.Publ
 }
 
 const buyWithSOL = async (
-  wallet: any,
+  wallet: WalletContextState,
   connection: web3.Connection,
   nftMint: web3.PublicKey
 ): Promise<web3.Transaction | string | null> => {
@@ -59,7 +60,6 @@ const buyWithSOL = async (
   }
 
   const transaction = new web3.Transaction()
-
   const ix = purchaseWithSol(accounts)
 
   const userAssocAccountData = await connection.getAccountInfo(nftUserAccount)
@@ -72,7 +72,7 @@ const buyWithSOL = async (
   transaction.add(ix)
 
   const finalResult = await signAndSendRawTransaction(connection, transaction, wallet)
-  let result = await connection.confirmTransaction(finalResult)
+  const result = await connection.confirmTransaction(finalResult)
 
   if (!result?.value?.err) {
     return finalResult
@@ -82,7 +82,7 @@ const buyWithSOL = async (
 }
 
 const buyWithGOFX = async (
-  wallet: BaseSignerWalletAdapter,
+  wallet: any,
   connection: web3.Connection,
   nftMint: web3.PublicKey
 ): Promise<web3.Transaction> => {
