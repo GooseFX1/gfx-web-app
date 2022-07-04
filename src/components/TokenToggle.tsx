@@ -24,7 +24,6 @@ const Toggle = styled(TOKENTOGGLE)`
 `
 
 export const TokenToggle: FC<{ token: string; toggleToken: () => void }> = ({ token, toggleToken }) => {
-  console.log(token)
   return (
     <WRAPPER>
       <MODE_ICON>SOL</MODE_ICON>
@@ -33,7 +32,7 @@ export const TokenToggle: FC<{ token: string; toggleToken: () => void }> = ({ to
         <div />
       </Toggle>
 
-      <MODE_ICON>USDC</MODE_ICON>
+      <MODE_ICON>GOFX</MODE_ICON>
     </WRAPPER>
   )
 }

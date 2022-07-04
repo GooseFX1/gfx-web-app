@@ -7,9 +7,9 @@ import { MainButton } from '../../../components'
 import { useConnectionConfig } from '../../../context'
 import { ShareInternal } from './NestQuestComponent'
 import { onShare } from './NestQuestSingleListing'
-import { Creator, StringPublicKey, buyWithSOL, fetchAvailableNft } from '../../../web3'
+import { Creator, StringPublicKey, buyWithSOL, fetchAvailableNft, buyWithGOFX } from '../../../web3'
 import { notify } from '../../../utils'
-import { PublicKey } from '@solana/web3.js'
+//import { PublicKey } from '@solana/web3.js'
 
 //#region styles
 const STYLED_POPUP = styled(PopupCustom)`
@@ -230,13 +230,13 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
         <PriceStyle>
           <span className="price">Price</span>
           <Col span={18}>
-            <span className="Big-Price">2.00</span>
-            <span className="currency">SOL</span>
+            <span className="Big-Price">{nestQuestData.token === 'SOL' ? '2.00' : '750'}</span>
+            <span className="currency">{nestQuestData.token}</span>
           </Col>
         </PriceStyle>
         <ListStyle className="">
           <span>Price per item</span>
-          <span>2.00 SOL</span>
+          <span>{nestQuestData.token === 'SOL' ? '2.00 SOL' : '750 GOFX'}</span>
         </ListStyle>
         <ListStyle className="">
           <span>Quantity</span>
@@ -244,11 +244,11 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
         </ListStyle>
         <ListStyle className="">
           <span>Service fee</span>
-          <span>0.001 SOL</span>
+          <span>0.01 SOL</span>
         </ListStyle>
         <ListStyle className="">
           <span>Total Price</span>
-          <span>2.001 SOL</span>
+          <span>{nestQuestData.token === 'SOL' ? '2.01 SOL' : '750 GOFX + 0.01 SOL'}</span>
         </ListStyle>
 
         <STYLED_CREATE_BTN
@@ -277,14 +277,23 @@ const LoadBuy = ({ nestQuestData, setPhase }: MintProps) => {
       fetchAvailableNft(connection)
         .then((res) => {
           if (res) {
-            buyWithSOL(wallet, connection, res)
+            var buyFunction = null
+            if (nestQuestData.token === 'SOL') {
+              buyFunction = buyWithSOL(wallet, connection, res)
+            } else {
+              buyFunction = buyWithGOFX(wallet, connection, res)
+            }
+
+            buyFunction
               .then((result) => {
                 if (result) {
                   setPhase(3)
                   notify({
                     type: 'success',
                     message: 'Purchase successful!',
-                    description: `You bought 1 "Tier 1 Egg" for at least 2 SOL`,
+                    description: `You bought 1 "Tier 1 Egg" for at least ${
+                      nestQuestData.token === 'SOL' ? '2 SOL' : '750 GOFX'
+                    }`,
                     icon: 'success',
                     txid: result as string,
                     network: 'devnet'

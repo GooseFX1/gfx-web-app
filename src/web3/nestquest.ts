@@ -85,7 +85,7 @@ const buyWithGOFX = async (
   wallet: any,
   connection: web3.Connection,
   nftMint: web3.PublicKey
-): Promise<web3.Transaction> => {
+): Promise<web3.Transaction | string | null> => {
   const [nftAuth] = await web3.PublicKey.findProgramAddress([Buffer.from('auth')], PROGRAM_ID)
 
   const nftVault = await utils.token.associatedAddress({
@@ -133,7 +133,14 @@ const buyWithGOFX = async (
   }
   transaction.add(purchaseIx)
 
-  return transaction
+  const finalResult = await signAndSendRawTransaction(connection, transaction, wallet)
+  const result = await connection.confirmTransaction(finalResult)
+
+  if (!result?.value?.err) {
+    return finalResult
+  } else {
+    return null
+  }
 }
 
 export { buyWithSOL, buyWithGOFX, fetchAvailableNft }

@@ -402,7 +402,7 @@ export const NestQuestSingleListing: FC<{
   const [shareModal, setShareModal] = useState(false)
   const [nestData, setNestData] = useState<any>({})
   const [mintDisabled, setMintDisabled] = useState<boolean>(false)
-  const mintPrice: number = useMemo(() => 2, [])
+  const [mintPrice, setMintPrice] = useState<number>(2)
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 800)
@@ -424,7 +424,7 @@ export const NestQuestSingleListing: FC<{
           setMintDisabled(true)
         })
     }
-  }, [connection])
+  }, [connection, mintPrice])
 
   useEffect(() => {
     if (publicKey && connected) {
@@ -559,7 +559,8 @@ export const NestQuestSingleListing: FC<{
           <TokenToggle
             token={token}
             toggleToken={() => {
-              token === 'SOL' ? setToken('USDC') : setToken('SOL')
+              token === 'SOL' ? setToken('GOFX') : setToken('SOL')
+              token === 'SOL' ? setMintPrice(750) : setMintPrice(2)
             }}
           />
           {!isLoading ? (
@@ -622,7 +623,7 @@ export const NestQuestSingleListing: FC<{
         <ModalMint
           modalVisible={modalVisible}
           setModalOpen={setModalVisible}
-          nestQuestData={{ name: 'Tier #1 “The Egg”', project: 'NestQuest' }}
+          nestQuestData={{ name: 'Tier #1 “The Egg”', project: 'NestQuest', token }}
         />
       )}
     </NFT_DETAILS>
@@ -639,4 +640,5 @@ export const NestQuestSingleListing: FC<{
  * add modal for minting
  * add captcha phase
  * successful or failed minting
+ * https://www.loom.com/share/3d81d39204c0484ba13e07ce3858a0cc
  */
