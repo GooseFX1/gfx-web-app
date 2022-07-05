@@ -25,12 +25,6 @@ export const ENDPOINTS: IEndpoint[] = [
     network: WalletAdapterNetwork.Devnet
   },
   {
-    chainId: ENV.Devnet,
-    name: 'Solana',
-    endpoint: 'https://api.devnet.solana.com',
-    network: WalletAdapterNetwork.Devnet
-  },
-  {
     chainId: ENV.MainnetBeta,
     name: 'Project Serum',
     endpoint: 'https://solana-api.projectserum.com',
