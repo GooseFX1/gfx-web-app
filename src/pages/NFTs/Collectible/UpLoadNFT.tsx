@@ -447,7 +447,7 @@ export const UpLoadNFT = (): JSX.Element => {
       )
       const data = await res.data
       const result = data.find((i) => `${i.draft_id}` === id)
-      console.log(result, result.image)
+      //console.log(result, result.image)
 
       if (result) {
         setS3Link(result.image)
@@ -470,7 +470,7 @@ export const UpLoadNFT = (): JSX.Element => {
         })
 
         // pull file binary from url
-        const url = await fetch(result.image)
+        const url = await fetch(result.image + '?do-not-cache')
         const blob = await url.blob()
         const name = result.image.split('/')[result.image.split('/').length - 1]
         const file = new File([blob], name, { type: blob.type })
@@ -578,7 +578,7 @@ export const UpLoadNFT = (): JSX.Element => {
 
   const handleCancelCreatorData = () => {
     setNftMintingData((prev) => {
-      console.log(prev)
+      //console.log(prev)
       return prev
     })
     setCreatorModal(false)
