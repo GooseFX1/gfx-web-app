@@ -45,6 +45,14 @@ const UPLOAD_FILED = styled.div`
   flex-direction: column;
   margin: ${({ theme }) => theme.margin(2)};
   padding: ${({ theme }) => theme.margin(2)};
+
+  &:hover {
+    opacity: 0.75;
+    .close-drafts {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
 `
 
 const DRAFT_IMAGE = styled(Image)`
@@ -57,10 +65,26 @@ const DRAFT_IMAGE = styled(Image)`
 const UPLOAD_SECTION = styled.div`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
   align-items: center;
   justify-content: flex-start;
   margin-top: 2rem;
   padding: 0px 3.5rem 0px 3.5rem;
+
+  .full-drafts {
+    position: relative;
+    .close-drafts {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      visibility: hidden;
+    }
+
+    &:hover .close-drafts {
+      visibility: visible;
+    }
+  }
 `
 
 const IMAGE_COUNT_DESC = styled(DESCRIPTION)`
@@ -87,7 +111,6 @@ const IMAGE_COUNT_DESC_CONTAINER = styled.div`
 `
 
 const FLOATING_ACTION_ICON = styled.img`
-  transform: rotate(90deg);
   width: 16px;
   filter: ${({ theme }) => theme.filterBackIcon};
 `
@@ -114,6 +137,7 @@ export const NftDrafts = (): JSX.Element => {
   const { sessionUser } = useNFTProfile()
   const [drafts, setDrafts] = useState([])
   const [draftIsLoading, setDraftIsLoading] = useState<boolean>(false)
+  const [trigger, setTrigger] = useState<boolean>(false)
 
   const handleClick = async (id) => {
     if (connected && publicKey) {
@@ -163,7 +187,22 @@ export const NftDrafts = (): JSX.Element => {
     if (sessionUser) {
       pullDrafts()
     }
-  }, [sessionUser])
+  }, [sessionUser, trigger])
+
+  const deleteDraft = async (draft_id: string) => {
+    try {
+      const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.DRAFTS}`, {
+        data: { draft_id }
+      })
+
+      const result = await res.data
+      notify({ type: 'success', message: 'Draft deleted', icon: 'success' })
+      setTrigger(!trigger)
+    } catch (err) {
+      console.log(err)
+      notify({ type: 'error', message: 'Draft failed to delete', icon: 'error' }, err)
+    }
+  }
 
   return (
     <>
@@ -178,14 +217,21 @@ export const NftDrafts = (): JSX.Element => {
 
         <UPLOAD_SECTION>
           {drafts.map((draft) => (
-            <UPLOAD_FILED onClick={() => handleClick(draft.draft_id)}>
-              <DRAFT_IMAGE draggable={false} preview={false} src={draft.image} />
-              <IMAGE_COUNT_DESC_CONTAINER>
-                <IMAGE_COUNT_DESC>#{draft.draft_id}</IMAGE_COUNT_DESC>
-                <IMAGE_COUNT_DESC>{draft.name}</IMAGE_COUNT_DESC>
-                <IMAGE_COUNT_DESC>Royalty: {draft.seller_fee_basis_points}</IMAGE_COUNT_DESC>
-              </IMAGE_COUNT_DESC_CONTAINER>
-            </UPLOAD_FILED>
+            <div className="full-drafts">
+              <div className="close-drafts">
+                <FloatingActionButton height={10} onClick={() => deleteDraft(draft.draft_id)}>
+                  <FLOATING_ACTION_ICON src={`/img/assets/close-icon.svg`} alt="delete" />
+                </FloatingActionButton>
+              </div>
+              <UPLOAD_FILED onClick={() => handleClick(draft.draft_id)}>
+                <DRAFT_IMAGE draggable={false} preview={false} src={draft.image} />
+                <IMAGE_COUNT_DESC_CONTAINER>
+                  <IMAGE_COUNT_DESC>#{draft.draft_id}</IMAGE_COUNT_DESC>
+                  <IMAGE_COUNT_DESC>{draft.name}</IMAGE_COUNT_DESC>
+                  <IMAGE_COUNT_DESC>Royalty: {draft.seller_fee_basis_points}</IMAGE_COUNT_DESC>
+                </IMAGE_COUNT_DESC_CONTAINER>
+              </UPLOAD_FILED>
+            </div>
           ))}
           <UPLOAD_FILED onClick={() => handleClick(null)}>
             <Image
