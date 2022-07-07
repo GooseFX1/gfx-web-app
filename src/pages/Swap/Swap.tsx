@@ -80,7 +80,6 @@ const TOKEN_WRAPPER = styled.div`
 const TokenTitle = styled.div`
   ${tw`font-semibold text-lg`}
   color: ${({ theme }) => theme.text1};
-  line-height: inherit;
 `
 
 const SmallTitle = styled.div`
@@ -116,17 +115,17 @@ const TokenHeader = styled.div`
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
-${tw`h-24.25 rounded-average p-px cursor-pointer mr-7 !min-w-330 sm:h-16.25 sm:mt-0 sm:mx-0 sm:mb-4`}
+${tw`h-24.25 rounded-average p-px cursor-pointer mr-7 !min-w-330 sm:h-16.25 mb-4 sm:mr-0`}
   background: ${({ theme, $clicked }) =>
     $clicked ? 'linear-gradient(90deg,rgba(247,147,26,0.5) 0%,rgba(220,31,255,0.5) 100%)' : theme.bg1};
   box-shadow: 0 6px 9px 0 rgba(36, 36, 36, 0.1);
 
   .inner-container {
-    ${tw`relative flex justify-center items-center h-full w-full rounded-average p-4 sm:static`}
+    ${tw`relative flex justify-center items-center h-full w-full rounded-average p-1.5 sm:static`}
     background: ${({ theme, $clicked, $cover }) => ($clicked ? $cover : 'transparent')};
 
     .content {
-      ${tw`w-2/3 sm:w-85p`}
+      ${tw`w-2/3 w-85p`}
 
       div {
         ${({ theme }) => theme.ellipse}
@@ -183,17 +182,17 @@ const SWAP_ROUTES = styled.div<{ $less: boolean }>`
   ${tw`relative`}
 
   .swap-content {
-    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 mb-3 py-8 px-0 mx-8 sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0`}
+    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 pt-8 mb-3 mx-8 sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto mx-0 sm:justify-around sm:mt-8 sm:mb-12`}
     justify-content: ${({ $less }) => ($less ? 'center' : 'flex-start')};
   }
 
   .action {
-    ${tw`absolute top-0 right-8 sm:!text-base sm:!top-[88%] sm:!right-0`}
+    ${tw`absolute top-0 right-8 sm:!text-base sm:!top-0 sm:!right-0`}
   }
 `
 
 const BestPrice = styled.div`
-  ${tw`absolute font-semibold items-center text-xs p-2 rounded-md text-white leading-3`}
+  ${tw`absolute font-semibold items-center text-xs p-2 rounded-md text-white leading-5`}
   margin-top: -90px;
   margin-left: 230px;
   background-color: #be2cff;
