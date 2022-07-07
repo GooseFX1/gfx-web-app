@@ -370,6 +370,21 @@ export const UpLoadNFT = (): JSX.Element => {
     }
   }
 
+  const deleteDraft = async () => {
+    try {
+      const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.DRAFTS}`, {
+        data: { draft_id: currentDraftId }
+      })
+
+      const result = await res.data
+      notify({ type: 'success', message: 'Draft deleted', icon: 'success' })
+      return result
+    } catch (err) {
+      console.log(err)
+      notify({ type: 'error', message: 'Draft failed to delete', icon: 'error' }, err)
+    }
+  }
+
   const saveDraft = async (s3Link: string) => {
     try {
       const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.DRAFTS}`, {
@@ -489,6 +504,7 @@ export const UpLoadNFT = (): JSX.Element => {
   const handleConfirmMint = async () => {
     setIsMinting(true)
     setIsConfirmingMintPrice(false)
+    deleteDraft()
   }
 
   const mint = async () => {
