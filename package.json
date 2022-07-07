@@ -83,8 +83,7 @@
     "eject": "react-scripts eject",
     "format:fix": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|css|md)\"",
     "prepare": "husky install",
-    "upgrade": "yarn-upgrade-all",
-    "tailwind": "npx tailwindcss -i ./src/App.less -o ./dist/tailwind.css --watch"
+    "upgrade": "yarn-upgrade-all"
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -7,42 +7,29 @@ import { Row, Col } from 'antd'
 import { useRewardToggle } from '../context/reward_toggle'
 import { fetchRewardsByAddress } from '../api/NFTs'
 import { SpaceEvenlyDiv } from '../styles'
+import tw from "twin.macro"
 
 const REWARD_INFO_TEXT = styled.div`
-  padding: ${({ theme }) => theme.margin(4)} ${({ theme }) => theme.margin(5)};
+  ${tw`py-8 px-10`}
   color: ${({ theme }) => theme.text1} !important;
 `
 
 const TEXT_20 = styled.div`
-  font-size: 20px;
-  font-weight: bold;
+  ${tw`text-xl font-bold xl:text-tiny`}
+  line-height: inherit;
   color: ${({ theme }) => theme.text1} !important;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    font-size: 15px;
-  `}
 `
 const TEXT_50 = styled.span`
-  font-size: 50px;
-  font-weight: bold;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    font-size: 40px;
-  `}
+  ${tw`text-[50px] font-bold xl:text-[40px]`}
 `
 
 const TEXT_60 = styled.span`
+  ${tw`text-6xl font-bold xl:text-[40px]`}
   font-family: Montserrat;
-  font-size: 60px;
-  font-stretch: normal;
-  font-style: normal;
-  font-weight: bold;
   line-height: normal;
-  letter-spacing: normal;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    font-size: 40px;
-  `}
 `
 
 const PURPLE60 = styled(TEXT_60)`
@@ -50,28 +37,16 @@ const PURPLE60 = styled(TEXT_60)`
 `
 
 const TEXT_25 = styled.span`
-  font-size: 25px;
-  font-weight: 600;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    font-size: 20px;
-  `}
+  ${tw`text-[25px] font-semibold xl:text-[20px]`}
 `
 
 const TEXT_22 = styled.div`
-  font-size: 22px;
-  margin-top: 3vh;
-  font-weight: 500;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    font-size: 18px;
-  `}
+  ${tw`text-average mt-[3vh] font-medium xl:text-regular`}
 `
 
 const TEXT_15 = styled.div`
-  font-size: 15px;
+  ${tw`text-tiny xl:text-[12px]`}
   color: ${({ theme }) => theme.text16};
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    font-size: 12px;
-  `}
 `
 
 const GREEN60 = styled(TEXT_60)`
@@ -79,84 +54,44 @@ const GREEN60 = styled(TEXT_60)`
 `
 
 const REWARD_DETAILS_CONTAINER = styled.div`
-  margin-top: 1%;
+  ${tw`mt-[1%]`}
 `
 
 const LINE = styled.div`
-  width: 100%;
-  height: 2px;
-  margin-top: ${({ theme }) => theme.margin(2)};
-  transform: rotate(0deg);
+ ${tw`w-full h-[2px] mt-4 rotate-0`}
   background-color: ${({ theme }) => theme.text1};
 `
 
 const REWARD_ICON = styled.img`
-  height: 38px;
-  width: 38px;
-  margin-left: 12px;
+  ${tw`h-[38px] w-[38px] ml-3`}
   filter: ${({ theme }) => theme.substractImg};
 `
 
 const FLEX_COL_CONTAINER = styled(SpaceEvenlyDiv)`
-  flex-direction: column;
-  height: 75%;
+  ${tw`flex-col h-3/4`}
 `
 
 const STAKE_BTN = styled.button`
-  display: block;
-  width: 263px;
-  height: 60px;
-  border-radius: 45px;
-  background-color: #fff;
-  border: none;
-  color: #7d289d;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
+  ${tw`block w-[263px] h-[60px] rounded-[45px] bg-white border-none border-0 text-regular font-bold cursor-pointer text-[#7d289d]`}
 `
 
 const BUY_GOFX = styled.button`
-  display: block;
-  height: 60px;
-  width: 263px;
-  font-size: 17px;
-  font-weight: bold;
-  text-align: center;
-  background: transparent;
-  border: none;
-  cursor: pointer;
+  ${tw`block w-[263px] h-[60px] rounded-[45px] text-center border-none border-0 text-[17px] font-bold cursor-pointer bg-transparent`}
 `
 
 const STAKE_TEXT = styled.div`
-  font-size: 28px;
-  font-weight: 600;
-  text-align: center;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    font-size: 22px;
-  `}
+  ${tw`text-[28px] font-semibold text-center xl:text-[22px]`}
 `
 const APR_TEXT = styled.div`
-  font-size: 58px;
-  text-align: center;
-  font-weight: bold;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    font-size: 50px;
-  `}
+  ${tw`text-[58px] text-center font-bold xl:text-[50px]`}
 `
 
 const CLOSE_ICON = styled.button`
-  position: absolute;
-  top: 32px;
-  right: 32px;
-  width: 25px;
-  height: 25px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
+  ${tw`absolute top-8 right-8 w-[25px] h-[25px] bg-transparent border-0 border-none cursor-pointer`}
 `
 
 const BOLD_TEXT = styled.span`
-  font-weight: 800;
+  ${tw`font-extrabold`}
 `
 
 export const RewardInfoComponent: FC = () => {
