@@ -228,7 +228,7 @@ export const NftDrafts = (): JSX.Element => {
                 <IMAGE_COUNT_DESC_CONTAINER>
                   <IMAGE_COUNT_DESC>#{draft.draft_id}</IMAGE_COUNT_DESC>
                   <IMAGE_COUNT_DESC>{draft.name}</IMAGE_COUNT_DESC>
-                  <IMAGE_COUNT_DESC>Royalty: {draft.seller_fee_basis_points}</IMAGE_COUNT_DESC>
+                  <IMAGE_COUNT_DESC>Royalty: {draft.seller_fee_basis_points / 100}%</IMAGE_COUNT_DESC>
                 </IMAGE_COUNT_DESC_CONTAINER>
               </UPLOAD_FILED>
             </div>
