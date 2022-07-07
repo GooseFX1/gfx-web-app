@@ -16,7 +16,7 @@ import UploadProgress from './UploadProgress'
 import AddAttribute from './AddAttribute'
 import RoyaltiesStep from './RoyaltiesStep'
 import { useDarkMode, useNFTDetails, useConnectionConfig, useNFTProfile } from '../../../context'
-import { mintNFT, MetadataCategory, ENDPOINTS } from '../../../web3'
+import { Creator, mintNFT, MetadataCategory, ENDPOINTS } from '../../../web3'
 import { notify } from '../../../utils'
 import { ButtonWrapper } from '../NFTButton'
 import apiClient from '../../../api'
@@ -372,6 +372,7 @@ export const UpLoadNFT = (): JSX.Element => {
 
   const deleteDraft = async () => {
     try {
+      console.log(currentDraftId)
       const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.DRAFTS}`, {
         data: { draft_id: currentDraftId }
       })
@@ -464,7 +465,7 @@ export const UpLoadNFT = (): JSX.Element => {
           animation_url: result.animation_url || undefined,
           attributes: result.attributes || undefined,
           sellerFeeBasisPoints: result.seller_fee_basis_points || 0,
-          creators: result.creators || [],
+          creators: result.creators.map((creator) => new Creator(creator)) || [],
           properties: result.properties || { files: [], category: MetadataCategory.Image, maxSupply: 1 },
           draftLoaded: true
         })
@@ -504,7 +505,6 @@ export const UpLoadNFT = (): JSX.Element => {
   const handleConfirmMint = async () => {
     setIsMinting(true)
     setIsConfirmingMintPrice(false)
-    deleteDraft()
   }
 
   const mint = async () => {
@@ -522,6 +522,9 @@ export const UpLoadNFT = (): JSX.Element => {
 
       const _nft = await res
       if (_nft) {
+        if (currentDraftId) {
+          deleteDraft()
+        }
         setCongrats(true)
         handleCompletedMint(_nft.metadataAccount, nftMintingData.name)
       }
