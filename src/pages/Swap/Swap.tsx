@@ -80,6 +80,7 @@ const TOKEN_WRAPPER = styled.div`
 const TokenTitle = styled.div`
   ${tw`font-semibold text-lg`}
   color: ${({ theme }) => theme.text1};
+  line-height: inherit;
 `
 
 const SmallTitle = styled.div`
@@ -114,7 +115,7 @@ const TokenHeader = styled.div`
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
- ${tw`h-24.25 rounded-average p-px cursor-pointer mr-7 !min-w-330 sm:h-16.25 mb-4 sm:mr-0`}
+  ${tw`h-24.25 rounded-average p-px cursor-pointer mr-7 !min-w-330 sm:h-16.25 mb-4 sm:mr-0`}
   background: ${({ theme, $clicked }) =>
     $clicked ? 'linear-gradient(90deg,rgba(247,147,26,0.5) 0%,rgba(220,31,255,0.5) 100%)' : theme.bg1};
   box-shadow: 0 6px 9px 0 rgba(36, 36, 36, 0.1);
