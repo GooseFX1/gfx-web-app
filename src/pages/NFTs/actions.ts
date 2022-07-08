@@ -1,5 +1,8 @@
 import { PublicKey, Transaction, TransactionInstruction, Connection } from '@solana/web3.js'
 import { WalletContextState } from '@solana/wallet-adapter-react'
+import { notify } from '../../utils'
+import apiClient from '../../api'
+import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../api/NFTs'
 import {
   AUCTION_HOUSE_PREFIX,
   AUCTION_HOUSE,
@@ -164,4 +167,19 @@ export const callWithdrawInstruction = async (wallet: PublicKey, escrow: [Public
   }
 
   return { withdrawInstructionAccounts, withdrawInstructionArgs }
+}
+
+export const deleteDraft = async (currentDraftId: string) => {
+  try {
+    const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.DRAFTS}`, {
+      data: { draft_id: currentDraftId }
+    })
+
+    const result = await res.data
+    notify({ type: 'success', message: 'Draft deleted', icon: 'success' })
+    return result
+  } catch (err) {
+    console.log(err)
+    notify({ type: 'error', message: 'Draft failed to delete', icon: 'error' }, err)
+  }
 }
