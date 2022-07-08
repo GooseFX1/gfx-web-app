@@ -9,6 +9,7 @@ import { notify } from '../../../utils'
 import { useDarkMode, useNFTProfile } from '../../../context'
 import apiClient from '../../../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
+import { deleteDraft } from '../actions'
 
 const UPLOAD_CONTENT = styled.div`
   position: relative;
@@ -189,19 +190,9 @@ export const NftDrafts = (): JSX.Element => {
     }
   }, [sessionUser, trigger])
 
-  const deleteDraft = async (draft_id: string) => {
-    try {
-      const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.DRAFTS}`, {
-        data: { draft_id }
-      })
-
-      const result = await res.data
-      notify({ type: 'success', message: 'Draft deleted', icon: 'success' })
-      setTrigger(!trigger)
-    } catch (err) {
-      console.log(err)
-      notify({ type: 'error', message: 'Draft failed to delete', icon: 'error' }, err)
-    }
+  async function deleteAndRemoveDraft(draftId: string) {
+    await deleteDraft(draftId)
+    setTrigger(!trigger)
   }
 
   return (
@@ -219,7 +210,7 @@ export const NftDrafts = (): JSX.Element => {
           {drafts.map((draft) => (
             <div className="full-drafts">
               <div className="close-drafts">
-                <FloatingActionButton height={10} onClick={() => deleteDraft(draft.draft_id)}>
+                <FloatingActionButton height={10} onClick={() => deleteAndRemoveDraft(draft.draft_id)}>
                   <FLOATING_ACTION_ICON src={`/img/assets/close-icon.svg`} alt="delete" />
                 </FloatingActionButton>
               </div>

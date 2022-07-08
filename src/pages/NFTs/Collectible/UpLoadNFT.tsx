@@ -4,7 +4,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import isEmpty from 'lodash/isEmpty'
 import styled from 'styled-components'
 import { uploadFile } from 'react-s3'
-
+import { deleteDraft } from '../actions'
 import { IAppParams } from '../../../types/app_params.d'
 import { MainText } from '../../../styles'
 import InfoInput from './InfoInput'
@@ -370,22 +370,6 @@ export const UpLoadNFT = (): JSX.Element => {
     }
   }
 
-  const deleteDraft = async () => {
-    try {
-      console.log(currentDraftId)
-      const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.DRAFTS}`, {
-        data: { draft_id: currentDraftId }
-      })
-
-      const result = await res.data
-      notify({ type: 'success', message: 'Draft deleted', icon: 'success' })
-      return result
-    } catch (err) {
-      console.log(err)
-      notify({ type: 'error', message: 'Draft failed to delete', icon: 'error' }, err)
-    }
-  }
-
   const saveDraft = async (s3Link: string) => {
     try {
       const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.DRAFTS}`, {
@@ -523,7 +507,7 @@ export const UpLoadNFT = (): JSX.Element => {
       const _nft = await res
       if (_nft) {
         if (currentDraftId) {
-          deleteDraft()
+          deleteDraft(currentDraftId)
         }
         setCongrats(true)
         handleCompletedMint(_nft.metadataAccount, nftMintingData.name)
