@@ -1,10 +1,12 @@
 import { web3, utils } from '@project-serum/anchor'
 import { BaseSignerWalletAdapter } from '@solana/wallet-adapter-base'
+import { WalletContextState } from '@solana/wallet-adapter-react'
 import { purchaseWithSol } from './nestquest-codegen/instructions/purchaseWithSol'
 import { purchaseWithGofx } from './nestquest-codegen/instructions/purchaseWithGofx'
 import { PROGRAM_ID } from './nestquest-codegen/programId'
 import { createAssociatedTokenAccountInstruction } from './account'
 import { TOKEN_PROGRAM_ID, ADDRESSES } from './ids'
+import { signAndSendRawTransaction } from './utils'
 
 const GOFX_MINT = ADDRESSES['mainnet-beta'].mints.GOFX.address
 
@@ -15,11 +17,26 @@ const buildAssocIx = (nftUserAccount: web3.PublicKey, walletPubkey: web3.PublicK
   return tokenIx
 }
 
+const fetchAvailableNft = async (connection: web3.Connection): Promise<web3.PublicKey | null> => {
+  const walletAddress = new web3.PublicKey('3QvkzDXSgrLmsCK5ZDoddPFL7tYjzC5oHiiA5TJ9NsoA')
+  const tokensRaw = await connection.getParsedTokenAccountsByOwner(walletAddress, {
+    programId: TOKEN_PROGRAM_ID
+  })
+
+  const nfts = tokensRaw.value.flatMap((tk) =>
+    tk.account.data.parsed.info.tokenAmount.uiAmount === 1 && tk.account.data.parsed.info.tokenAmount.decimals === 0
+      ? [new web3.PublicKey(tk.account.data.parsed.info.mint)]
+      : []
+  )
+
+  return nfts[0] || null
+}
+
 const buyWithSOL = async (
-  wallet: BaseSignerWalletAdapter,
+  wallet: WalletContextState,
   connection: web3.Connection,
   nftMint: web3.PublicKey
-): Promise<web3.Transaction> => {
+): Promise<web3.Transaction | string | null> => {
   const [nftAuth] = await web3.PublicKey.findProgramAddress([Buffer.from('auth')], PROGRAM_ID)
 
   const nftVault = await utils.token.associatedAddress({
@@ -43,7 +60,6 @@ const buyWithSOL = async (
   }
 
   const transaction = new web3.Transaction()
-
   const ix = purchaseWithSol(accounts)
 
   const userAssocAccountData = await connection.getAccountInfo(nftUserAccount)
@@ -55,14 +71,21 @@ const buyWithSOL = async (
 
   transaction.add(ix)
 
-  return transaction
+  const finalResult = await signAndSendRawTransaction(connection, transaction, wallet)
+  const result = await connection.confirmTransaction(finalResult)
+
+  if (!result?.value?.err) {
+    return finalResult
+  } else {
+    return null
+  }
 }
 
 const buyWithGOFX = async (
-  wallet: BaseSignerWalletAdapter,
+  wallet: any,
   connection: web3.Connection,
   nftMint: web3.PublicKey
-): Promise<web3.Transaction> => {
+): Promise<web3.Transaction | string | null> => {
   const [nftAuth] = await web3.PublicKey.findProgramAddress([Buffer.from('auth')], PROGRAM_ID)
 
   const nftVault = await utils.token.associatedAddress({
@@ -110,7 +133,14 @@ const buyWithGOFX = async (
   }
   transaction.add(purchaseIx)
 
-  return transaction
+  const finalResult = await signAndSendRawTransaction(connection, transaction, wallet)
+  const result = await connection.confirmTransaction(finalResult)
+
+  if (!result?.value?.err) {
+    return finalResult
+  } else {
+    return null
+  }
 }
 
-export { buyWithSOL, buyWithGOFX }
+export { buyWithSOL, buyWithGOFX, fetchAvailableNft }

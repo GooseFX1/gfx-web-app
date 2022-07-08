@@ -104,6 +104,7 @@ export function colors(mode: string): Colors {
     bg15: mode === 'dark' ? '#191919' : '#555555',
     bg16: mode === 'dark' ? '#1E1E1E' : '#EEEEEE',
     bg17: mode === 'dark' ? '#343434' : '#FFFFFF',
+    bg18: mode === 'dark' ? '#2a2a2a' : '#dadada',
 
     infoDivBackground:
       'linear-gradient(0deg, rgba(116, 116, 116, 0.2), rgba(116, 116, 116, 0.2)), linear-gradient(94.33deg, rgba(247, 147, 26, 0.3) 5.26%, rgba(224, 60, 255, 0.3) 96.87%);',

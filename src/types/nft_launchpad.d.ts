@@ -41,3 +41,5 @@ export interface ICreatorData {
     team: { name: string; twitterUsername: string }[] | [] | null
   } | null
 }
+
+export type nonceStatus = 'completed' | 'inProgress' | null
