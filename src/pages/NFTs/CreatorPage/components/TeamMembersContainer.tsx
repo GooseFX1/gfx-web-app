@@ -44,19 +44,19 @@ const MEMBER_CONTAINER = styled.div`
     }
   }
   .prevUserImg {
-    position: absolute;
     opacity: 0.5;
     transform: scale(0.8);
-    left: 160px;
-    top: 140px;
+    margin-right: 600px;
+    margin-top: -100px;
+    margin-bottom: 20px;
   }
   .hidePrevImg {
-    position: absolute;
     width: 100px;
+    z-index: 10;
     height: 100px;
     background-color: ${({ theme }) => theme.bg2};
-    left: 90px;
-    top: 140px;
+    margin-top: -100px;
+    margin-right: 700px;
   }
   .hideImg {
     position: absolute;
@@ -271,9 +271,9 @@ const UserImgSlides = ({ index }) => {
       <span className="hideImg"></span>
       {index !== 0 ? (
         <>
-          <span className="prevUserImg">
+          <div className="prevUserImg">
             <img src="/img/assets/avatarPlaceHolder.png" alt="avatar" />
-          </span>
+          </div>
           <span className="hidePrevImg"></span>
         </>
       ) : (
