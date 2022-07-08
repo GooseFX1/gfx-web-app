@@ -9,6 +9,7 @@ import { useConnectionConfig } from './settings'
 import { PublicKey } from '@solana/web3.js'
 import { getAtaForMint, toDate } from '../pages/NFTs/launchpad/candyMachine/utils'
 import { getCollectionPDA } from '../pages/NFTs/launchpad/candyMachine/candyMachine'
+import { nonceStatus } from '../types/nft_launchpad'
 
 interface INFTProjectConfig {
   collectionId: number
@@ -97,6 +98,7 @@ interface ISelectedProject {
   status: string
   team: any
   urlName: any
+  nonceStatus: nonceStatus
 }
 
 const CANDY_MACHINE_PROGRAM = new anchor.web3.PublicKey('cndy3Z4yapfJBmL3ShUp5exZKqR3z33thTzeNMm2gRZ')
@@ -340,30 +342,6 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
           cndyState['needTxnSplit'] = txnEstimate > 1230
           setCmValues(cndyState)
         } catch (e) {
-          //  if (e instanceof Error) {
-          //    if (e.message === `Account does not exist ${selectedProject.candyMachine}`) {
-          //      setAlertState({
-          //        open: true,
-          //        message: `Couldn't fetch candy machine state from candy machine with address: ${selectedProject.candyMachine}, using rpc:! You probably typed the REACT_APP_CANDY_MACHINE_ID value in wrong in your .env file, or you are using the wrong RPC!`,
-          //        severity: 'error',
-          //        hideDuration: null
-          //      })
-          //    } else if (e.message.startsWith('failed to get info about account')) {
-          //      setAlertState({
-          //        open: true,
-          //        message: `Couldn't fetch candy machine state with rpc:! This probably means you have an issue with the REACT_APP_SOLANA_RPC_HOST value in your .env file, or you are not using a custom RPC!`,
-          //        severity: 'error',
-          //        hideDuration: null
-          //      })
-          //    }
-          //  } else {
-          //    setAlertState({
-          //      open: true,
-          //      message: `${e}`,
-          //      severity: 'error',
-          //      hideDuration: null
-          //    })
-          //  }
           console.log(e)
         }
       }

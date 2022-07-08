@@ -11,11 +11,13 @@ import {
   Blockhash,
   FeeCalculator,
   SystemProgram,
-  NONCE_ACCOUNT_LENGTH
+  NONCE_ACCOUNT_LENGTH,
+  NonceAccount
 } from '@solana/web3.js'
 
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base'
 import { web3 } from '@project-serum/anchor'
+import { sendNonceTransaction } from '../../../../api/NFTLaunchpad'
 
 interface BlockhashAndFeeCalculator {
   blockhash: Blockhash
@@ -536,4 +538,67 @@ export async function nonceInstructions(connection, feePayer) {
       authorizedPubkey: feePayer.publicKey
     })
   )
+}
+
+export const sendTransactionsNonce = async (
+  connection: Connection,
+  wallet: any,
+  instructionSet: TransactionInstruction[][],
+  signersSet: Keypair[][],
+  beforeTransactions: Transaction[] = [],
+  afterTransactions: Transaction[] = [],
+  nonce: any,
+  collectionId: String,
+  walletAddress: String
+): Promise<{ number: number; txs: { txid: string; slot: number }[] }> => {
+  if (!wallet.publicKey) throw new WalletNotConnectedError()
+
+  const unsignedTxns: Transaction[] = beforeTransactions
+
+  for (let i = 0; i < instructionSet.length; i++) {
+    const instructions = instructionSet[i]
+    const signers = signersSet[i]
+
+    if (instructions.length === 0) {
+      continue
+    }
+
+    let transaction = new Transaction()
+    instructions.forEach((instruction) => transaction.add(instruction))
+    let accountInfo = await connection.getAccountInfo(nonce)
+    let nonceAccount = NonceAccount.fromAccountData(accountInfo.data)
+
+    transaction.recentBlockhash = nonceAccount.nonce
+
+    transaction.setSigners(
+      // fee payed by the wallet owner
+      wallet.publicKey,
+      ...signers.map((s) => s.publicKey)
+    )
+
+    if (signers.length > 0) {
+      transaction.partialSign(...signers)
+    }
+
+    unsignedTxns.push(transaction)
+  }
+  unsignedTxns.push(...afterTransactions)
+
+  const partiallySignedTransactions = unsignedTxns.filter((t) =>
+    t.signatures.find((sig) => sig.publicKey.equals(wallet.publicKey))
+  )
+  const fullySignedTransactions = unsignedTxns.filter(
+    (t) => !t.signatures.find((sig) => sig.publicKey.equals(wallet.publicKey))
+  )
+  let signedTxns = await wallet.signAllTransactions(partiallySignedTransactions)
+  signedTxns = fullySignedTransactions.concat(signedTxns)
+
+  console.log('Signed txns length', signedTxns.length, 'vs handed in length', instructionSet.length)
+  try {
+    const response = await sendNonceTransaction(signedTxns[0].serialize(), collectionId, walletAddress)
+    return response.data
+  } catch (e) {
+    console.log(e)
+    return null
+  }
 }

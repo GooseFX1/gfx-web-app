@@ -11,7 +11,9 @@ import {
   createAccountsForMint,
   mintOneToken,
   SetupState,
-  CANDY_MACHINE_PROGRAM
+  CANDY_MACHINE_PROGRAM,
+  createAccountsForMintNonce,
+  mintOneTokenNonce
 } from '../candyMachine/candyMachine'
 import { AlertState } from '../candyMachine/utils'
 import { Transaction, PublicKey, sendAndConfirmRawTransaction } from '@solana/web3.js'
@@ -60,25 +62,14 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
   const [needTxnSplit, setNeedTxnSplit] = useState(true)
   const [discountPrice, setDiscountPrice] = useState<anchor.BN>()
   //
-
-  const anchorWallet = useMemo(() => {
-    if (!wallet || !wallet.publicKey || !wallet.signAllTransactions || !wallet.signTransaction) {
-      return
-    }
-
-    return {
-      publicKey: wallet.publicKey,
-      signAllTransactions: wallet.signAllTransactions,
-      signTransaction: wallet.signTransaction
-    } as anchor.Wallet
-  }, [wallet])
-
+  const [isNonce, setIsNonce] = useState<boolean>(true)
   const onMint = async (beforeTransactions: Transaction[] = [], afterTransactions: Transaction[] = []) => {
     try {
       setIsUserMinting(true)
       document.getElementById('#identity')?.click()
       if (wallet.connected && candyMachine?.program && wallet.publicKey) {
         let setupMint: SetupState | undefined
+        let nonceAccount = anchor.web3.Keypair.generate()
         if (needTxnSplit && setupTxn === undefined) {
           notify({
             message: (
@@ -93,7 +84,11 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
               </MESSAGE>
             )
           })
-          setupMint = await createAccountsForMint(candyMachine, wallet.publicKey)
+          if (!isNonce) {
+            setupMint = await createAccountsForMint(candyMachine, wallet.publicKey)
+          } else {
+            setupMint = await createAccountsForMintNonce(candyMachine, wallet.publicKey, nonceAccount)
+          }
           let status: any = { err: false }
           if (setupMint.transaction) {
             status = await awaitTransactionSignatureConfirmation(setupMint.transaction, 60000, connection, true)
@@ -147,90 +142,133 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
           })
         }
 
-        let mintResult = await mintOneToken(
-          candyMachine,
-          wallet.publicKey,
-          beforeTransactions,
-          afterTransactions,
-          setupMint ?? setupTxn
-        )
-
-        let status: any = { err: true }
-        let metadataStatus = null
-        if (mintResult) {
-          status = await awaitTransactionSignatureConfirmation(mintResult.mintTxId, 60000, connection, true)
-
-          metadataStatus = await candyMachine.program.provider.connection.getAccountInfo(
-            mintResult.metadataKey,
-            'processed'
+        if (isNonce) {
+          const response = await mintOneTokenNonce(
+            candyMachine,
+            wallet.publicKey,
+            beforeTransactions,
+            afterTransactions,
+            setupMint ?? setupTxn,
+            nonceAccount,
+            selectedProject.collectionId,
+            wallet.publicKey.toBase58()
           )
-        }
 
-        if (status && !status.err && metadataStatus) {
-          // manual update since the refresh might not detect
-          // the change immediately
-          let remaining = itemsRemaining! - 1
-          setItemsRemaining(remaining)
-          setIsActive((candyMachine.state.isActive = remaining > 0))
-          candyMachine.state.isSoldOut = remaining === 0
-          setSetupTxn(undefined)
-          //  setAlertState({
-          //    open: true,
-          //    message: 'Congratulations! Mint succeeded!',
-          //    severity: 'success',
-          //    hideDuration: 7000
-          //  })
-          notify({
-            message: (
-              <MESSAGE>
-                <Row className="m-title" justify="space-between" align="middle">
-                  <Col>Success!</Col>
-                  <Col>
-                    <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-                  </Col>
-                </Row>
-                <div>Congratulations! Mint succeeded!</div>
-              </MESSAGE>
-            )
-          })
-        } else if (status && !status.err) {
-          //  setAlertState({
-          //    open: true,
-          //    message:
-          //      'Mint likely failed! Anti-bot SOL 0.01 fee potentially charged! Check the explorer to confirm the mint failed and if so, make sure you are eligible to mint before trying again.',
-          //    severity: 'error',
-          //    hideDuration: 8000
-          //  })
-          notify({
-            message: (
-              <MESSAGE>
-                <Row className="m-title" justify="space-between" align="middle">
-                  <Col>Error</Col>
-                  <Col>
-                    <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-                  </Col>
-                </Row>
-                <div>
-                  Mint likely failed! Anti-bot SOL 0.01 fee potentially charged! Check the explorer to confirm the mint
-                  failed and if so, make sure you are eligible to mint before trying again.
-                </div>
-              </MESSAGE>
-            )
-          })
+          if (response) {
+            // manual update since the refresh might not detect
+            // the change immediately
+            let remaining = itemsRemaining! - 1
+            setItemsRemaining(remaining)
+            setIsActive((candyMachine.state.isActive = remaining > 0))
+            candyMachine.state.isSoldOut = remaining === 0
+            setSetupTxn(undefined)
+            //  setAlertState({
+            //    open: true,
+            //    message: 'Congratulations! Mint succeeded!',
+            //    severity: 'success',
+            //    hideDuration: 7000
+            //  })
+            notify({
+              message: (
+                <MESSAGE>
+                  <Row className="m-title" justify="space-between" align="middle">
+                    <Col>Success!</Col>
+                    <Col>
+                      <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+                    </Col>
+                  </Row>
+                  <div>Congratulations! Mint succeeded!</div>
+                </MESSAGE>
+              )
+            })
+          } else {
+            notify({
+              message: (
+                <MESSAGE>
+                  <Row className="m-title" justify="space-between" align="middle">
+                    <Col>Error</Col>
+                    <Col>
+                      <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+                    </Col>
+                  </Row>
+                  <div>Mint failed! Please try again!</div>
+                </MESSAGE>
+              )
+            })
+          }
         } else {
-          notify({
-            message: (
-              <MESSAGE>
-                <Row className="m-title" justify="space-between" align="middle">
-                  <Col>Error</Col>
-                  <Col>
-                    <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-                  </Col>
-                </Row>
-                <div>Mint failed! Please try again!</div>
-              </MESSAGE>
+          let mintResult = await mintOneToken(
+            candyMachine,
+            wallet.publicKey,
+            beforeTransactions,
+            afterTransactions,
+            setupMint ?? setupTxn
+          )
+
+          let status: any = { err: true }
+          let metadataStatus = null
+          if (mintResult) {
+            status = await awaitTransactionSignatureConfirmation(mintResult.mintTxId, 60000, connection, true)
+
+            metadataStatus = await candyMachine.program.provider.connection.getAccountInfo(
+              mintResult.metadataKey,
+              'processed'
             )
-          })
+          }
+
+          if (status && !status.err && metadataStatus) {
+            // manual update since the refresh might not detect
+            // the change immediately
+            let remaining = itemsRemaining! - 1
+            setItemsRemaining(remaining)
+            setIsActive((candyMachine.state.isActive = remaining > 0))
+            candyMachine.state.isSoldOut = remaining === 0
+            setSetupTxn(undefined)
+            notify({
+              message: (
+                <MESSAGE>
+                  <Row className="m-title" justify="space-between" align="middle">
+                    <Col>Success!</Col>
+                    <Col>
+                      <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+                    </Col>
+                  </Row>
+                  <div>Congratulations! Mint succeeded!</div>
+                </MESSAGE>
+              )
+            })
+          } else if (status && !status.err) {
+            notify({
+              message: (
+                <MESSAGE>
+                  <Row className="m-title" justify="space-between" align="middle">
+                    <Col>Error</Col>
+                    <Col>
+                      <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+                    </Col>
+                  </Row>
+                  <div>
+                    Mint likely failed! Anti-bot SOL 0.01 fee potentially charged! Check the explorer to confirm the
+                    mint failed and if so, make sure you are eligible to mint before trying again.
+                  </div>
+                </MESSAGE>
+              )
+            })
+          } else {
+            notify({
+              message: (
+                <MESSAGE>
+                  <Row className="m-title" justify="space-between" align="middle">
+                    <Col>Error</Col>
+                    <Col>
+                      <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+                    </Col>
+                  </Row>
+                  <div>Mint failed! Please try again!</div>
+                </MESSAGE>
+              )
+            })
+          }
         }
       }
     } catch (error: any) {

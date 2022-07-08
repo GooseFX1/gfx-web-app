@@ -43,10 +43,10 @@ const WRAPPER = styled.div`
       background-color: ${({ theme }) => theme.primary2};
       ${tw`h-14 px-6 text-lg`}
     }
-    .text-label {
+    .textLabel {
       color: ${({ theme }) => theme.text24};
     }
-    .text-input {
+    .textInput {
       ${tw`w-10/12 mt-3 mb-5`}
       .ant-input-affix-wrapper {
         border-radius: 50px;
@@ -88,12 +88,12 @@ const WRAPPER = styled.div`
   .edit-milestone {
     ${tw`absolute bottom-0 text-center h-20 flex justify-end items-center w-full px-6`}
   }
-  .bottom-layer {
+  .bottomLayer {
     z-index: 1;
     background-color: ${({ theme }) => theme.bg9};
     filter: blur(10px);
   }
-  .top-layer {
+  .topLayer {
     z-index: 2;
     .ant-btn {
       ${tw`rounded-[29px] font-semibold text-lg h-12 px-5`}
@@ -141,10 +141,10 @@ export const Step5: FC = () => {
           <Row>
             <div className="background-card" tw="h-[240px] justify-center items-center">
               <div tw="w-7/12 pl-4">
-                <div tw="text-xl font-semibold" className="text-label">
+                <div tw="text-xl font-semibold" className="textLabel">
                   Discord invite code
                 </div>
-                <div className="text-input">
+                <div className="textInput">
                   <Input
                     value={discordValue}
                     onChange={(e) => {
@@ -154,18 +154,18 @@ export const Step5: FC = () => {
                     }}
                   />
                 </div>
-                <div tw="text-xl font-semibold" className="text-label">
+                <div tw="text-xl font-semibold" className="textLabel">
                   Website URL (optional)
                 </div>
-                <div className="text-input">
+                <div className="textInput">
                   <Input value={websiteValue} onChange={(e) => setWebsiteValue(e.target.value)} />
                 </div>
               </div>
               <div tw="w-5/12 flex justify-center items-center flex-col">
-                <div tw="text-xl font-semibold" className="text-label">
+                <div tw="text-xl font-semibold" className="textLabel">
                   Twitter
                 </div>
-                <div className="text-input">
+                <div className="textInput">
                   <Input value={twitter} onChange={(e) => setTwitter(e.target.value)} />
                 </div>
                 <div className="small-grey" tw="text-xs">
@@ -203,8 +203,8 @@ export const Step5: FC = () => {
                 tw={'flex-col flex justify-center items-center h-[250px]'}
               >
                 <MileStoneBox roadmap={mileStones} />
-                <div className="edit-milestone bottom-layer"></div>
-                <div className="edit-milestone top-layer" onClick={() => setMileStonePopup(true)}>
+                <div className="edit-milestone bottomLayer"></div>
+                <div className="edit-milestone topLayer" onClick={() => setMileStonePopup(true)}>
                   <Button>Edit milestones</Button>
                 </div>
               </div>

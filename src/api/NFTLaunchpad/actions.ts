@@ -98,3 +98,29 @@ export const saveData = async (data: ICreatorData) => {
     }
   }
 }
+
+export const sendNonceTransaction = async (transaction, collectionId, walletAddress) => {
+  try {
+    const url = 'http://localhost:4000' + NFT_LAUNCHPAD_API_ENDPOINTS.SAVE_TRANSACTION
+    //const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.SAVE_TRANSACTION
+    let dataToSend = JSON.stringify({
+      transaction: transaction,
+      collectionId: collectionId,
+      walletAddress: walletAddress
+    })
+    const response = await axios({
+      method: 'POST',
+      url: url,
+      data: dataToSend,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    return response.data
+  } catch (e) {
+    console.log(e)
+    return {
+      status: 'failed'
+    }
+  }
+}

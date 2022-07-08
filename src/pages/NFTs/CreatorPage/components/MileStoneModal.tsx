@@ -148,7 +148,7 @@ export const MileStoneModal: FC<IMileStoneModal> = ({ visible, setVisible, mileS
 
 const WRAPPER_COMPONENT = styled.div`
   ${tw`w-full mt-5`}
-  .right-character-limit {
+  .rightCharacterLimit {
     ${tw`flex items-end justify-end mt-2 text-base`}
     color: ${({ theme }) => theme.text20}
   }
@@ -216,7 +216,7 @@ const MileStoneComponent: FC<{
               placeholder="Year"
             />
           </Row>
-          <Row className="right-character-limit">{data.input1.length} of 20 characters limit</Row>
+          <Row className="rightCharacterLimit">{data.input1.length} of 20 characters limit</Row>
           <Row className="second-input-row">
             <textarea
               value={data.input3}
@@ -224,7 +224,7 @@ const MileStoneComponent: FC<{
               placeholder="Enter Description"
             />
           </Row>
-          <Row className="right-character-limit">{data.input3.length} of 60 characters limit</Row>
+          <Row className="rightCharacterLimit">{data.input3.length} of 60 characters limit</Row>
         </Col>
       </Row>
     </WRAPPER_COMPONENT>

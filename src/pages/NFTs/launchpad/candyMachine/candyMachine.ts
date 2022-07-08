@@ -2,7 +2,7 @@ import * as anchor from '@project-serum/anchor'
 
 import { MintLayout, TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
 import { SystemProgram, Transaction, SYSVAR_SLOT_HASHES_PUBKEY, NONCE_ACCOUNT_LENGTH } from '@solana/web3.js'
-import { sendTransactions, SequenceType } from './connection'
+import { sendTransactions, sendTransactionsNonce, SequenceType } from './connection'
 
 import {
   CIVIC,
@@ -279,25 +279,6 @@ export const createAccountsForMint = async (
     Token.createMintToInstruction(TOKEN_PROGRAM_ID, mint.publicKey, userTokenAccountAddress, payer, [], 1)
   ]
 
-  let nonceAccount = anchor.web3.Keypair.generate()
-
-  instructions.push(
-    SystemProgram.createAccount({
-      fromPubkey: payer,
-      newAccountPubkey: nonceAccount.publicKey,
-      lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(NONCE_ACCOUNT_LENGTH),
-      space: NONCE_ACCOUNT_LENGTH,
-      programId: SystemProgram.programId
-    })
-  )
-
-  instructions.push(
-    SystemProgram.nonceInitialize({
-      noncePubkey: nonceAccount.publicKey, // nonce account pubkey
-      authorizedPubkey: payer // nonce account authority (for advance and close)
-    })
-  )
-  signers.push(nonceAccount)
   return {
     mint: mint,
     userTokenAccount: userTokenAccountAddress,
@@ -342,7 +323,6 @@ export const mintOneToken = async (
   const remainingAccounts = []
   const instructions = []
   const signers: anchor.web3.Keypair[] = []
-  console.log('SetupState: ', setupState)
   if (!setupState) {
     signers.push(mint)
     instructions.push(
@@ -485,7 +465,6 @@ export const mintOneToken = async (
 
   const instructionsMatrix = [instructions]
   const signersMatrix = [signers]
-
   try {
     const txns = (
       await sendTransactions(
@@ -513,10 +492,241 @@ export const mintOneToken = async (
   return null
 }
 
+export const mintOneTokenNonce = async (
+  candyMachine: CandyMachineAccount,
+  payer: anchor.web3.PublicKey,
+  beforeTransactions: Transaction[] = [],
+  afterTransactions: Transaction[] = [],
+  setupState: SetupState,
+  nonceAccount: anchor.web3.Keypair,
+  collectionId: String,
+  walletAddress: String
+) => {
+  const mint = setupState?.mint
+
+  const userPayingAccountAddress = candyMachine.state.tokenMint
+    ? (await getAtaForMint(candyMachine.state.tokenMint, payer))[0]
+    : payer
+
+  const candyMachineAddress = candyMachine.id
+  const remainingAccounts = []
+  const instructions = []
+  const signers: anchor.web3.Keypair[] = []
+
+  if (candyMachine.state.gatekeeper) {
+    remainingAccounts.push({
+      pubkey: (await getNetworkToken(payer, candyMachine.state.gatekeeper.gatekeeperNetwork))[0],
+      isWritable: true,
+      isSigner: false
+    })
+
+    if (candyMachine.state.gatekeeper.expireOnUse) {
+      remainingAccounts.push({
+        pubkey: CIVIC,
+        isWritable: false,
+        isSigner: false
+      })
+      remainingAccounts.push({
+        pubkey: (await getNetworkExpire(candyMachine.state.gatekeeper.gatekeeperNetwork))[0],
+        isWritable: false,
+        isSigner: false
+      })
+    }
+  }
+  if (candyMachine.state.whitelistMintSettings) {
+    const mint = new anchor.web3.PublicKey(candyMachine.state.whitelistMintSettings.mint)
+
+    const whitelistToken = (await getAtaForMint(mint, payer))[0]
+    remainingAccounts.push({
+      pubkey: whitelistToken,
+      isWritable: true,
+      isSigner: false
+    })
+
+    if (candyMachine.state.whitelistMintSettings.mode.burnEveryTime) {
+      remainingAccounts.push({
+        pubkey: mint,
+        isWritable: true,
+        isSigner: false
+      })
+      remainingAccounts.push({
+        pubkey: payer,
+        isWritable: false,
+        isSigner: true
+      })
+    }
+  }
+
+  if (candyMachine.state.tokenMint) {
+    remainingAccounts.push({
+      pubkey: userPayingAccountAddress,
+      isWritable: true,
+      isSigner: false
+    })
+    remainingAccounts.push({
+      pubkey: payer,
+      isWritable: false,
+      isSigner: true
+    })
+  }
+  const metadataAddress = await getMetadata(mint.publicKey)
+  const masterEdition = await getMasterEdition(mint.publicKey)
+
+  const [candyMachineCreator, creatorBump] = await getCandyMachineCreator(candyMachineAddress)
+
+  console.log(remainingAccounts.map((rm) => rm.pubkey.toBase58()))
+  instructions.push(
+    SystemProgram.nonceAdvance({
+      noncePubkey: nonceAccount.publicKey,
+      authorizedPubkey: payer
+    })
+  )
+
+  instructions.push(
+    await candyMachine.program.instruction.mintNft(creatorBump, {
+      accounts: {
+        candyMachine: candyMachineAddress,
+        candyMachineCreator,
+        payer: payer,
+        wallet: candyMachine.state.treasury,
+        mint: mint.publicKey,
+        metadata: metadataAddress,
+        masterEdition,
+        mintAuthority: payer,
+        updateAuthority: payer,
+        tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+        clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
+        recentBlockhashes: SYSVAR_SLOT_HASHES_PUBKEY,
+        instructionSysvarAccount: anchor.web3.SYSVAR_INSTRUCTIONS_PUBKEY
+      },
+      remainingAccounts: remainingAccounts.length > 0 ? remainingAccounts : undefined
+    })
+  )
+
+  const [collectionPDA] = await getCollectionPDA(candyMachineAddress)
+  const collectionPDAAccount = await candyMachine.program.provider.connection.getAccountInfo(collectionPDA)
+
+  if (collectionPDAAccount && candyMachine.state.retainAuthority) {
+    try {
+      const collectionData = (await candyMachine.program.account.collectionPda.fetch(collectionPDA)) as CollectionData
+      console.log(collectionData)
+      const collectionMint = collectionData.mint
+      const collectionAuthorityRecord = await getCollectionAuthorityRecordPDA(collectionMint, collectionPDA)
+      console.log(collectionMint)
+      if (collectionMint) {
+        const collectionMetadata = await getMetadata(collectionMint)
+        const collectionMasterEdition = await getMasterEdition(collectionMint)
+        instructions.push(
+          await candyMachine.program.instruction.setCollectionDuringMint({
+            accounts: {
+              candyMachine: candyMachineAddress,
+              metadata: metadataAddress,
+              payer: payer,
+              collectionPda: collectionPDA,
+              tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
+              instructions: anchor.web3.SYSVAR_INSTRUCTIONS_PUBKEY,
+              collectionMint,
+              collectionMetadata,
+              collectionMasterEdition,
+              authority: candyMachine.state.authority,
+              collectionAuthorityRecord
+            }
+          })
+        )
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const instructionsMatrix = [instructions]
+  const signersMatrix = [signers]
+  try {
+    const response = await sendTransactionsNonce(
+      candyMachine.program.provider.connection,
+      candyMachine.program.provider.wallet,
+      instructionsMatrix,
+      signersMatrix,
+      beforeTransactions,
+      afterTransactions,
+      nonceAccount.publicKey,
+      collectionId,
+      walletAddress
+    )
+    return response
+  } catch (e) {
+    console.log(e)
+    return null
+  }
+}
+
 export const shortenAddress = (address: string, chars = 4): string => {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`
 }
 
 const sleep = (ms: number): Promise<void> => {
   return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+export const createAccountsForMintNonce = async (
+  candyMachine: CandyMachineAccount,
+  payer: anchor.web3.PublicKey,
+  nonceAcc?: anchor.web3.Keypair
+): Promise<SetupState> => {
+  const mint = anchor.web3.Keypair.generate()
+  const userTokenAccountAddress = (await getAtaForMint(mint.publicKey, payer))[0]
+
+  const signers: anchor.web3.Keypair[] = [mint]
+  const instructions = [
+    anchor.web3.SystemProgram.createAccount({
+      fromPubkey: payer,
+      newAccountPubkey: mint.publicKey,
+      space: MintLayout.span,
+      lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(MintLayout.span),
+      programId: TOKEN_PROGRAM_ID
+    }),
+    Token.createInitMintInstruction(TOKEN_PROGRAM_ID, mint.publicKey, 0, payer, payer),
+    createAssociatedTokenAccountInstruction(userTokenAccountAddress, payer, payer, mint.publicKey),
+    Token.createMintToInstruction(TOKEN_PROGRAM_ID, mint.publicKey, userTokenAccountAddress, payer, [], 1)
+  ]
+
+  instructions.push(
+    SystemProgram.createAccount({
+      fromPubkey: payer,
+      newAccountPubkey: nonceAcc.publicKey,
+      lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(NONCE_ACCOUNT_LENGTH),
+      space: NONCE_ACCOUNT_LENGTH,
+      programId: SystemProgram.programId
+    })
+  )
+
+  instructions.push(
+    SystemProgram.nonceInitialize({
+      noncePubkey: nonceAcc.publicKey, // nonce account pubkey
+      authorizedPubkey: payer // nonce account authority (for advance and close)
+    })
+  )
+  signers.push(nonceAcc)
+  return {
+    mint: mint,
+    userTokenAccount: userTokenAccountAddress,
+    transaction: (
+      await sendTransactions(
+        candyMachine.program.provider.connection,
+        candyMachine.program.provider.wallet,
+        [instructions],
+        [signers],
+        SequenceType.StopOnFailure,
+        'singleGossip',
+        () => {},
+        () => false,
+        undefined,
+        [],
+        []
+      )
+    ).txs[0].txid
+  }
 }
