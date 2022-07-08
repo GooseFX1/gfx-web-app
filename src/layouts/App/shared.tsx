@@ -1,12 +1,10 @@
 import styled from 'styled-components'
+import tw from "twin.macro"
 
 export const Menu = styled.ul`
+  ${tw`min-w-[140px] list-none py-3 px-4 rounded-[8px]`}
   width: fit-content;
-  min-width: 140px;
-  padding: ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(2)};
-  list-style-type: none;
   background-color: ${({ theme }) => theme.bg3};
-  ${({ theme }) => theme.smallBorderRadius}
   ${({ theme }) => theme.smallShadow}
 
   * {
@@ -15,25 +13,19 @@ export const Menu = styled.ul`
 `
 
 export const MenuItem = styled.li`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  padding: ${({ theme }) => theme.margin(0.7)} 0;
+  ${tw`flex items-center justify-between cursor-pointer py-[5.6px] px-0`}
 
   &:hover span {
     color: ${({ theme }) => theme.secondary4};
   }
 
   img {
-    ${({ theme }) => theme.measurements(theme.margin(1.5))}
-    margin-left: ${({ theme }) => theme.margin(1)};
-    object-fit: contain;
+    ${tw`w-3 h-3 ml-2 object-contain`}
   }
 
   span {
-    font-size: 12px;
-    text-transform: capitalize;
+    ${tw`text-xs capitalize`}
+    line-height: normal;
     color: ${({ theme }) => theme.text1};
   }
 `

@@ -94,6 +94,7 @@ module.exports = {
         'smallest': '11px',
         'smaller': '13px',
         'tiny': '15px',
+        'regular': '18px',
         'average': '22px',
         'big': '40px',
       }

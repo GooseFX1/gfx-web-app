@@ -3,29 +3,16 @@ import styled from 'styled-components'
 import { RewardsPopup } from './RewardsPopup'
 import { FeesPopup } from './FeesPopup'
 import { MODAL_TYPES } from '../constants'
+import tw from "twin.macro"
 
 const WRAPPER = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 100vh;
-  width: 100vw;
+  ${tw`absolute top-0 left-0 right-0 bottom-0 h-screen w-screen overflow-hidden z-[999]`}
   background: ${({ theme }) => theme.modalBackground};
-  overflow: hidden;
-  z-index: 999;
 `
 const MODAL = styled.div`
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: -35px;
-  width: 100vw;
+  ${tw`fixed left-0 right-0 bottom-[-35px] w-screen rounded-t-bigger z-[1000]`}
   height: calc(72vh + 35px);
   animation: slideIn .625s linear;
-  border-radius: 20px 20px 0 0;
-  z-index: 1000;
 }
 @keyframes slideIn {
   0% {
