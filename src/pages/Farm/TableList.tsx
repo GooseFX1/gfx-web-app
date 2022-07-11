@@ -11,23 +11,22 @@ import { ExpandedDynamicContent } from './ExpandedDynamicContent'
 import {
   getStakingAccountKey,
   fetchCurrentAmountStaked,
-  CONTROLLER_KEY,
-  CONTROLLER_LAYOUT,
-  getTokenAddresses,
   getSslAccountKey,
   fetchAllSSLAmountStaked,
   getLiquidityAccountKey,
   getMainVaultKey,
-  AccountLayout
+  AccountLayout,
+  getNetworkConnection,
+  getNetworkConnectionText
 } from '../../web3'
-import { SSL_LAYOUT, LIQUIDITY_ACCOUNT_LAYOUT } from 'goosefx-ssl-sdk'
+import { SSL_LAYOUT, LIQUIDITY_ACCOUNT_LAYOUT, CONTROLLER_LAYOUT, ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
 import { useConnectionConfig, usePriceFeedFarm, useFarmContext } from '../../context'
 import { ADDRESSES } from '../../web3'
 import { MorePoolsSoon } from './MorePoolsSoon'
 import { NATIVE_MINT } from '@solana/spl-token'
+import { CONTROLLER_IDL, SSL_IDL } from 'goosefx-ssl-sdk'
 
 const StakeIDL = require('../../web3/idl/stake.json')
-const SSLIDL = require('../../web3/idl/ssl.json')
 
 //#region styles
 export const STYLED_TABLE_LIST = styled(Table)`
@@ -188,7 +187,7 @@ export const TableList = ({ dataSource }: any) => {
   const [eKeys, setEKeys] = useState([])
   const [allTokenPrices, setAllTokenPrices] = useState({})
   const PAGE_SIZE = 10
-
+  const controllerStr = SDK_ADDRESS[getNetworkConnection(network)].GFX_CONTROLLER.toString()
   const gofxPrice = useMemo(() => prices['GOFX/USDC'], [prices])
   useEffect(() => {
     setAllTokenPrices(() => setAllTokenPrices(prices))
@@ -198,17 +197,17 @@ export const TableList = ({ dataSource }: any) => {
     return wallet.publicKey
       ? new Program(
           StakeIDL,
-          ADDRESSES[network].programs.stake.address,
+          SDK_ADDRESS[getNetworkConnection(network)].CONTROLLER_PROGRAM_ID,
           new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
         )
       : undefined
-  }, [connection, wallet.publicKey])
+  }, [connection, wallet.publicKey, network])
 
   const SSLProgram: Program = useMemo(() => {
     return wallet.publicKey
       ? new Program(
-          SSLIDL,
-          ADDRESSES[network].programs.ssl.address,
+          SSL_IDL as any,
+          SDK_ADDRESS[getNetworkConnection(network)].SSL_PROGRAM_ID,
           new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
         )
       : undefined
@@ -217,7 +216,7 @@ export const TableList = ({ dataSource }: any) => {
   useEffect(() => {
     if (wallet.publicKey) {
       if (accountKey === undefined) {
-        getStakingAccountKey(wallet).then((accountKey) => setAccountKey(accountKey))
+        getStakingAccountKey(wallet, network).then((accountKey) => setAccountKey(accountKey))
       }
     } else {
       setAccountKey(undefined)
@@ -293,11 +292,13 @@ export const TableList = ({ dataSource }: any) => {
           try {
             const tokenMint = ADDRESSES[network].sslPool[SSLTokenNames[i]].address
             tokenMintAddresses.push(tokenMint)
-            SSLAccountKeys.push(await getSslAccountKey(tokenMint))
-            liquidityAccountKeys.push(await getLiquidityAccountKey(wallet, tokenMint))
-            mainVaultKeys.push(await getMainVaultKey(tokenMint))
-            aprVolumePromise.push(fetchSSLAPR(tokenMint.toString()))
-            aprVolumePromise.push(fetchSSLVolumeData(tokenMint.toString()))
+            SSLAccountKeys.push(await getSslAccountKey(tokenMint, network))
+            liquidityAccountKeys.push(await getLiquidityAccountKey(wallet, tokenMint, network))
+            mainVaultKeys.push(await getMainVaultKey(tokenMint, network))
+            if (network !== 'devnet') {
+              aprVolumePromise.push(fetchSSLAPR(tokenMint.toString(), controllerStr))
+              aprVolumePromise.push(fetchSSLVolumeData(tokenMint.toString(), controllerStr))
+            }
           } catch (err) {
             console.log(err)
           }
@@ -307,7 +308,7 @@ export const TableList = ({ dataSource }: any) => {
         )
       }
     })()
-  }, [accountKey, counter, priceFetched])
+  }, [accountKey, counter, priceFetched, connection])
 
   useEffect(() => {
     if (gofxPrice !== undefined) {
@@ -341,31 +342,37 @@ export const TableList = ({ dataSource }: any) => {
   }, [poolFilter, searchFilter, showDeposited, farmDataContext, farmDataSSLContext, priceFetched])
 
   const fetchGOFXData = async (accountKey: PublicKey) => {
-    // pool data take this function to context
-    const { data: controllerData } = await connection.getAccountInfo(CONTROLLER_KEY)
-    const { staking_balance, daily_reward } = await CONTROLLER_LAYOUT.decode(controllerData)
-    const LAMPORT = new BN(LAMPORTS_PER_SOL)
-    const liqidity: number = new BN(staking_balance).div(LAMPORT).toNumber()
-    const APR: number = (1 / liqidity) * (daily_reward.toNumber() / LAMPORTS_PER_SOL) * 365
-
-    // user account data
-    const accountData = await fetchCurrentAmountStaked(connection, accountKey, wallet)
-    const currentlyStaked = accountData.tokenStaked ? accountData.tokenStaked : 0
-    const dailyRewards = (APR * currentlyStaked) / 365
-    const newFarmDataContext = farmDataContext.map((data) => {
-      if (data.name === 'GOFX') {
-        return {
-          ...data,
-          earned: accountData.tokenEarned ? accountData.tokenEarned : 0,
-          apr: APR * 100,
-          rewards: dailyRewards,
-          liquidity: gofxPrice.current * liqidity,
-          currentlyStaked: currentlyStaked,
-          volume: '-'
-        }
-      } else return data
-    })
-    return newFarmDataContext
+    try {
+      // pool data take this function to context
+      const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
+      const { data: controllerData } = await connection.getAccountInfo(CONTROLLER_KEY)
+      const { stakingBalance, dailyReward } = await CONTROLLER_LAYOUT.decode(controllerData)
+      //@ts-ignore
+      const liqidity = Number(stakingBalance / BigInt(LAMPORTS_PER_SOL))
+      //@ts-ignore
+      const DR = Number(dailyReward / BigInt(LAMPORTS_PER_SOL))
+      const APR: number = (1 / liqidity) * DR * 365
+      // user account data
+      const accountData = await fetchCurrentAmountStaked(connection, network, wallet)
+      const currentlyStaked = accountData.tokenStaked ? accountData.tokenStaked : 0
+      const dailyRewards = (APR * currentlyStaked) / 365
+      const newFarmDataContext = farmDataContext.map((data) => {
+        if (data.name === 'GOFX') {
+          return {
+            ...data,
+            earned: accountData.tokenEarned ? accountData.tokenEarned : 0,
+            apr: APR * 100,
+            rewards: dailyRewards,
+            liquidity: gofxPrice.current * liqidity,
+            currentlyStaked: currentlyStaked,
+            volume: '-'
+          }
+        } else return data
+      })
+      return newFarmDataContext
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const onExpandIcon = (id) => {

@@ -25,6 +25,12 @@ export const ENDPOINTS: IEndpoint[] = [
     network: WalletAdapterNetwork.Devnet
   },
   {
+    chainId: ENV.Devnet,
+    name: 'Quick node',
+    endpoint: 'https://solitary-delicate-thunder.solana-devnet.quiknode.pro/21ebf90f00b8864cccb303c76e0e7601a2d31676/',
+    network: WalletAdapterNetwork.Devnet
+  },
+  {
     chainId: ENV.MainnetBeta,
     name: 'Project Serum',
     endpoint: 'https://solana-api.projectserum.com',

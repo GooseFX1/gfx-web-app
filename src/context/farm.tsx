@@ -1,7 +1,8 @@
 import { bool } from '@metaplex-foundation/beet'
-import { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction } from 'react'
+import { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction, useEffect } from 'react'
 import { stakeTokens, generateListOfSSLTokens } from '../constants'
 import { IFarmData } from '../pages/Farm/TableList'
+import { useConnectionConfig } from './settings'
 interface IShowDeposited {
   showDeposited: boolean
   toggleDeposited: Dispatch<SetStateAction<boolean>>
@@ -25,10 +26,14 @@ export const FarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [mode, setMode] = useState<boolean>(false)
   const [filter, setFilter] = useState('All pools')
   const [searchFilter, setSearchFilter] = useState(null)
+  const { endpointName, network } = useConnectionConfig()
   const [farmDataContext, setFarmDataContext] = useState<IFarmData[]>(stakeTokens)
-  const [farmDataSSLContext, setFarmDataSSLContext] = useState<IFarmData[]>(generateListOfSSLTokens())
+  const [farmDataSSLContext, setFarmDataSSLContext] = useState<IFarmData[]>(generateListOfSSLTokens(network))
   const [counter, setCounter] = useState<number>(0)
   const [operationPending, setOperationPending] = useState<boolean>(false)
+  useEffect(() => {
+    setFarmDataSSLContext(generateListOfSSLTokens(network))
+  }, [network])
 
   return (
     <FarmContext.Provider

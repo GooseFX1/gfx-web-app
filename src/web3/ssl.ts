@@ -23,12 +23,9 @@ import {
   LAMPORTS_PER_SOL
 } from '@solana/web3.js'
 import { SYSTEM } from './ids'
-import { findAssociatedTokenAddress, createAssociatedTokenAccountIx } from './utils'
+import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
+import { findAssociatedTokenAddress, createAssociatedTokenAccountIx, getNetworkConnectionText } from './utils'
 import { STAKE_PREFIX, SSL_PREFIX, LIQUIDITY_ACCOUNT_PREFIX, toPublicKey, ADDRESSES, PT_MINT_PREFIX } from '../web3'
-const StakeIDL = require('./idl/stake.json')
-const SSLIDL = require('./idl/ssl.json')
-
-const CONTROLLER_KEY = new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
 
 export interface Account {
   /** Address of the account */
@@ -93,11 +90,16 @@ export const AccountLayout = struct<RawAccount>([
   publicKey('closeAuthority')
 ])
 
-export const getSslAccountKey = async (tokenMintAddress: PublicKey): Promise<undefined | PublicKey> => {
+export const getSslAccountKey = async (
+  tokenMintAddress: PublicKey,
+  network: WalletAdapterNetwork
+): Promise<undefined | PublicKey> => {
+  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
+  const PROGRAM_ID = SDK_ADDRESS[getNetworkConnectionText(network)].SSL_PROGRAM_ID
   try {
     const sslAccountKey: [PublicKey, number] = await PublicKey.findProgramAddress(
       [Buffer.from(SSL_PREFIX), CONTROLLER_KEY.toBuffer(), tokenMintAddress.toBuffer()],
-      toPublicKey(SSLIDL.metadata.address)
+      toPublicKey(PROGRAM_ID)
       //get metadata address
     )
     return sslAccountKey[0]
@@ -105,7 +107,6 @@ export const getSslAccountKey = async (tokenMintAddress: PublicKey): Promise<und
     return undefined
   }
 }
-
 export const fetchAllSSLAmountStaked = async (
   connection: Connection,
   sslAccountKeys: PublicKey[],
@@ -114,7 +115,6 @@ export const fetchAllSSLAmountStaked = async (
   mainVaultKeys: PublicKey[]
 ) => {
   try {
-    //const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintArray)
     const promiseData = []
     promiseData.push(connection.getMultipleAccountsInfo(sslAccountKeys))
     promiseData.push(connection.getMultipleAccountsInfo(mainVaultKeys))
@@ -127,11 +127,16 @@ export const fetchAllSSLAmountStaked = async (
     console.log(err)
   }
 }
-export const getPTMintKey = async (tokenMintAddress: PublicKey): Promise<undefined | PublicKey> => {
+export const getPTMintKey = async (
+  tokenMintAddress: PublicKey,
+  network: WalletAdapterNetwork
+): Promise<undefined | PublicKey> => {
+  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
+  const PROGRAM_ID = SDK_ADDRESS[getNetworkConnectionText(network)].SSL_PROGRAM_ID
   try {
     const ptMintAddress: [PublicKey, number] = await PublicKey.findProgramAddress(
       [Buffer.from(PT_MINT_PREFIX), CONTROLLER_KEY.toBuffer(), tokenMintAddress.toBuffer()],
-      toPublicKey(SSLIDL.metadata.address)
+      toPublicKey(PROGRAM_ID)
       //get metadata address
     )
     return ptMintAddress[0]
@@ -139,11 +144,16 @@ export const getPTMintKey = async (tokenMintAddress: PublicKey): Promise<undefin
     return undefined
   }
 }
-export const getMainVaultKey = async (tokenMintAddress: PublicKey): Promise<undefined | PublicKey> => {
+export const getMainVaultKey = async (
+  tokenMintAddress: PublicKey,
+  network: WalletAdapterNetwork
+): Promise<undefined | PublicKey> => {
+  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
+  const PROGRAM_ID = SDK_ADDRESS[getNetworkConnectionText(network)].SSL_PROGRAM_ID
   try {
     const liabilityKey: [PublicKey, number] = await PublicKey.findProgramAddress(
       [Buffer.from(SSL_PREFIX), CONTROLLER_KEY.toBuffer(), tokenMintAddress.toBuffer()],
-      toPublicKey(SSLIDL.metadata.address)
+      toPublicKey(PROGRAM_ID)
       //get metadata address
     )
     let mainVaultKey = liabilityKey[0]
@@ -155,8 +165,12 @@ export const getMainVaultKey = async (tokenMintAddress: PublicKey): Promise<unde
 }
 export const getLiquidityAccountKey = async (
   wallet: WalletContextState,
-  tokenMintAddress: PublicKey
+  tokenMintAddress: PublicKey,
+  network: WalletAdapterNetwork
 ): Promise<undefined | PublicKey> => {
+  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
+  const PROGRAM_ID = SDK_ADDRESS[getNetworkConnectionText(network)].SSL_PROGRAM_ID
+
   try {
     const liquidityAccountKey: [PublicKey, number] = await PublicKey.findProgramAddress(
       [
@@ -165,7 +179,7 @@ export const getLiquidityAccountKey = async (
         tokenMintAddress.toBuffer(),
         wallet.publicKey.toBuffer()
       ],
-      toPublicKey(SSLIDL.metadata.address)
+      toPublicKey(PROGRAM_ID)
       //get metadata address
     )
     return liquidityAccountKey[0]
@@ -187,11 +201,12 @@ export const executeBurn = async (
   amount: number
 ) => {
   const tokenMintAddress = getTokenMintAddress(network, tokenName)
-  const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress)
-  const sslAccountKey = await getSslAccountKey(tokenMintAddress)
-  const PTMint = await getPTMintKey(tokenMintAddress)
+  const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress, network)
+  const sslAccountKey = await getSslAccountKey(tokenMintAddress, network)
+  const PTMint = await getPTMintKey(tokenMintAddress, network)
   const amountInNative = amount * Math.pow(10, getTokenDecimal(network, tokenName))
   const userPTAta = await findAssociatedTokenAddress(wallet.publicKey, PTMint)
+  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
 
   const burnPtInstructionAccount = {
     controller: CONTROLLER_KEY,
@@ -232,11 +247,12 @@ export const executeMint = async (
   amount: number
 ) => {
   const tokenMintAddress = getTokenMintAddress(network, tokenName)
-  const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress)
-  const sslAccountKey = await getSslAccountKey(tokenMintAddress)
-  const PTMint = await getPTMintKey(tokenMintAddress)
+  const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress, network)
+  const sslAccountKey = await getSslAccountKey(tokenMintAddress, network)
+  const PTMint = await getPTMintKey(tokenMintAddress, network)
   const amountInNative = amount * Math.pow(10, getTokenDecimal(network, tokenName))
   const userPTAta = await findAssociatedTokenAddress(wallet.publicKey, PTMint)
+  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
 
   const mintPtInstructionAccount = {
     controller: CONTROLLER_KEY,
@@ -281,10 +297,11 @@ export const executeWithdraw = async (
   amount: number
 ) => {
   const tokenMintAddress = getTokenMintAddress(network, tokenName)
-  const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress)
-  const sslAccountKey = await getSslAccountKey(tokenMintAddress)
+  const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress, network)
+  const sslAccountKey = await getSslAccountKey(tokenMintAddress, network)
   const RTVault = await findAssociatedTokenAddress(sslAccountKey, tokenMintAddress)
   const userRtAta = await findAssociatedTokenAddress(wallet.publicKey, tokenMintAddress)
+  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
 
   const withdrawInstructionAccount = {
     controller: CONTROLLER_KEY,
@@ -388,6 +405,7 @@ export const getTokenDecimal = (network: WalletAdapterNetwork, tokenName: string
 
 const depositAmount = async (
   amountInNative: number,
+  network: WalletAdapterNetwork,
   program: any,
   sslAccountKey: PublicKey,
   liquidityAccountKey: PublicKey,
@@ -399,6 +417,8 @@ const depositAmount = async (
 ) => {
   const RTVault = await findAssociatedTokenAddress(sslAccountKey, tokenMintAddress)
   const userRtAta = await findAssociatedTokenAddress(wallet.publicKey, tokenMintAddress)
+  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
+
   const depositInstructionAccount = {
     controller: CONTROLLER_KEY,
     ssl: sslAccountKey,
@@ -446,14 +466,15 @@ export const executeDeposit = async (
   tokenName: string
 ) => {
   const tokenMintAddress = getTokenMintAddress(network, tokenName)
-  const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress)
-  const sslAccountKey = await getSslAccountKey(tokenMintAddress)
+  const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress, network)
+  const sslAccountKey = await getSslAccountKey(tokenMintAddress, network)
   const amountInNative = amount * Math.pow(10, getTokenDecimal(network, tokenName))
 
   try {
     let liquidityAccData = (await connection.getAccountInfo(liquidityAccountKey)).data
     return depositAmount(
       amountInNative,
+      network,
       program,
       sslAccountKey,
       liquidityAccountKey,
@@ -465,9 +486,16 @@ export const executeDeposit = async (
     )
   } catch (err) {
     try {
-      const createLiquidtyIX = await createLiquidityAccountIX(program, wallet, liquidityAccountKey, sslAccountKey)
+      const createLiquidtyIX = await createLiquidityAccountIX(
+        program,
+        network,
+        wallet,
+        liquidityAccountKey,
+        sslAccountKey
+      )
       return depositAmount(
         amountInNative,
+        network,
         program,
         sslAccountKey,
         liquidityAccountKey,
@@ -486,10 +514,12 @@ export const executeDeposit = async (
 
 export const createLiquidityAccountIX = async (
   program: Program<Idl>,
+  network: WalletAdapterNetwork,
   wallet: WalletContextState,
   liquidityAccount: any,
   sslKey: PublicKey
 ) => {
+  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
   const createLiquidityInstructionAccount = {
     controller: CONTROLLER_KEY,
     ssl: sslKey,
