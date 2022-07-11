@@ -57,7 +57,7 @@ const NFT_DETAILS = styled.div`
   position: relative;
   height: 100%;
   margin: 0 auto;
-  padding-top: ${({ theme }) => theme.margin(6)};
+  padding: ${({ theme }) => theme.margin(6)} 0;
 
   .nd-content {
     height: 100%;
@@ -107,7 +107,7 @@ const NFT_DETAILS = styled.div`
 
   .ant-tabs-content {
     background-color: ${({ theme }) => theme.bg1};
-    height: 473px;
+    height: 380px;
     text-align: center;
     display: grid;
     place-items: center;
@@ -488,7 +488,7 @@ export const NestQuestSingleListing: FC<{
               </>
             ) : (
               <div>
-                <YELLOW>Featured Launch </YELLOW>
+                <YELLOW>Featured Launch {network !== 'devnet' && '(Coming Soon)'}</YELLOW>
                 {/* <DESCRIPTION>coming soon</DESCRIPTION> */}
                 <TITLE className="rs-name">NestQuest</TITLE>
                 <SUBTITLE>Tier #1 "The Egg"</SUBTITLE>
