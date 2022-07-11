@@ -53,7 +53,7 @@ export const FARM_TOKEN_LIST = [
 const CryptoContext = createContext<ICryptoConfig | null>(null)
 
 export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(FEATURED_PAIRS_LIST[0])
+  const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(FEATURED_PAIRS_LIST[3])
   const { connection } = useConnectionConfig()
   const [change24h, setChange24h] = useState<[CryptoChange]>(null)
 
