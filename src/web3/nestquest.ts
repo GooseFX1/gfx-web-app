@@ -5,7 +5,7 @@ import { purchaseWithSol } from './nestquest-codegen/instructions/purchaseWithSo
 import { purchaseWithGofx } from './nestquest-codegen/instructions/purchaseWithGofx'
 import { PROGRAM_ID } from './nestquest-codegen/programId'
 import { createAssociatedTokenAccountInstruction } from './account'
-import { TOKEN_PROGRAM_ID, ADDRESSES, NESTQUEST_EGG } from './ids'
+import { TOKEN_PROGRAM_ID, ADDRESSES } from './ids'
 import { signAndSendRawTransaction } from './utils'
 
 const GOFX_MINT = ADDRESSES['devnet'].mints.GOFX.address
@@ -20,7 +20,7 @@ const buildAssocIx = (nftUserAccount: web3.PublicKey, walletPubkey: web3.PublicK
 const fetchAvailableNft = async (
   connection: web3.Connection
 ): Promise<{ nft: web3.PublicKey | null; length: number }> => {
-  const walletAddress = new web3.PublicKey(NESTQUEST_EGG)
+  const walletAddress = ADDRESSES['devnet'].programs.nestquestSale.address
   const tokensRaw = await connection.getParsedTokenAccountsByOwner(walletAddress, {
     programId: TOKEN_PROGRAM_ID
   })
