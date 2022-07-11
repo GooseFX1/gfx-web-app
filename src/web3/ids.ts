@@ -171,7 +171,7 @@ export const ADDRESSES: {
         contoller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
       },
       nestquestSale: {
-        address: new PublicKey('')
+        address: PublicKey.default
       }
     }
   },
@@ -195,6 +195,9 @@ export const ADDRESSES: {
         address: PublicKey.default
       },
       ssl: {
+        address: PublicKey.default
+      },
+      nestquestSale: {
         address: PublicKey.default
       }
     }
