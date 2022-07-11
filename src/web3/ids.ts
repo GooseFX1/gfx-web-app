@@ -48,6 +48,9 @@ export const ADDRESSES: {
         address: PublicKey
         contoller?: PublicKey
       }
+      nestquestSale: {
+        address: PublicKey
+      }
     }
   }
 } = {
@@ -166,6 +169,9 @@ export const ADDRESSES: {
       ssl: {
         address: new PublicKey('7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'),
         contoller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
+      },
+      nestquestSale: {
+        address: new PublicKey('')
       }
     }
   },
@@ -329,6 +335,9 @@ export const ADDRESSES: {
       ssl: {
         address: new PublicKey('7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'),
         contoller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
+      },
+      nestquestSale: {
+        address: new PublicKey('3QvkzDXSgrLmsCK5ZDoddPFL7tYjzC5oHiiA5TJ9NsoA')
       }
     }
   }
@@ -451,6 +460,3 @@ export const AH_BUMP: number = 253
 export const AH_FEE_BUMP: number = 251
 
 export const AH_TREASURY_BUMP: number = 255
-
-//NESTQUEST
-export const NESTQUEST_EGG = '3QvkzDXSgrLmsCK5ZDoddPFL7tYjzC5oHiiA5TJ9NsoA'
