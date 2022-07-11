@@ -451,3 +451,6 @@ export const AH_BUMP: number = 253
 export const AH_FEE_BUMP: number = 251
 
 export const AH_TREASURY_BUMP: number = 255
+
+//NESTQUEST
+export const NESTQUEST_EGG = '3QvkzDXSgrLmsCK5ZDoddPFL7tYjzC5oHiiA5TJ9NsoA'
