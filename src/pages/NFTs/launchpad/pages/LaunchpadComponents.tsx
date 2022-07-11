@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Progress, Switch } from 'antd'
 import { ModalSlide } from '../../../../components/ModalSlide'
 import { useUSDCToggle } from '../../../../context/nft_launchpad'
+import { useNavCollapse } from '../../../../context'
 
 const ROADMAP_WRAPPER = styled.div`
   .elipse {
@@ -390,11 +391,11 @@ export const MintProgressBar = ({ minted, totalNFTs }) => {
     </>
   )
 }
-export const SWITCH_HOLDER = styled.div`
+export const SWITCH_HOLDER = styled.div<{ $navCollapsed: boolean }>`
   display: flex;
   justify-content: flex-end;
   padding-right: 70px;
-  margin-top: 24px;
+  margin-top: calc(100px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
 `
 
 export const InfoDivLightTheme = ({ items, price, currency }) => {
@@ -501,6 +502,7 @@ const TimerCircle = ({ data }) => {
 
 export const TokenSwitch = ({ disabled, currency }) => {
   const { isUSDC, setIsUSDC } = useUSDCToggle()
+  const { isCollapsed } = useNavCollapse()
 
   useEffect(() => {
     if (currency === 'SOL') setIsUSDC(false)
@@ -512,7 +514,7 @@ export const TokenSwitch = ({ disabled, currency }) => {
   }
   return (
     <>
-      <SWITCH_HOLDER>
+      <SWITCH_HOLDER $navCollapsed={isCollapsed}>
         <ToggleBG>
           <span className="toggle-text">SOL</span>
           <Switch disabled={disabled} className="switch" checked={isUSDC} onChange={onChange} />
