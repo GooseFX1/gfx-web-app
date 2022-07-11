@@ -279,9 +279,9 @@ const LoadBuy = ({ nestQuestData, setPhase }: MintProps) => {
           if (res) {
             var buyFunction = null
             if (nestQuestData.token === 'SOL') {
-              buyFunction = buyWithSOL(wallet, connection, res)
+              buyFunction = buyWithSOL(wallet, connection, res.nft)
             } else {
-              buyFunction = buyWithGOFX(wallet, connection, res)
+              buyFunction = buyWithGOFX(wallet, connection, res.nft)
             }
 
             buyFunction
