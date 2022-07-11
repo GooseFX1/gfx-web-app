@@ -17,38 +17,29 @@ import { CenteredImg } from '../../styles'
 import { Loader } from '../../components'
 import { WalletName } from '@solana/wallet-adapter-wallets'
 import { truncateAddress } from '../../utils'
+import tw from "twin.macro"
 
 const WALLET_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(3))}
-  margin-right: ${({ theme }) => theme.margin(2)};
-  ${({ theme }) => theme.roundedBorders}
-  background-color: black;
+  ${tw`bg-black h-6 w-6 mr-4 rounded-circle`}
 
   img {
-    ${({ theme }) => theme.measurements(theme.margin(1.5))}
+    ${tw`h-3 w-3`}
   }
 `
 const WRAPPED_LOADER = styled.div`
-  width: 40px;
-  margin: 0 -12px 0 12px;
-  position: relative;
+  ${tw`w-10 relative my-0 mr-[-12px] ml-3`}
 
   div {
-    top: -26px;
+    ${tw`top-[-26px]`}
   }
 `
 
 const WRAPPER = styled.button<{ $connected: boolean }>`
-  padding: 0 ${({ theme }) => theme.margin(2)};
+  ${tw`py-0 px-4 flex items-center justify-center border-none border-0 h-9 rounded-circle cursor-pointer`}
   ${({ theme, $connected }) => $connected && `padding-left: ${theme.margin(1.5)};`}
-  ${({ theme }) => theme.flexCenter}
-  height: 36px;
-  border: none;
-  ${({ theme }) => theme.roundedBorders}
   ${({ theme }) => theme.smallShadow}
   background-color: ${({ theme }) => theme.secondary3};
   transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
-  cursor: pointer;
 
   &:hover {
     background-color: ${({ theme }) => theme.secondary2};
@@ -65,9 +56,8 @@ const WRAPPER = styled.button<{ $connected: boolean }>`
   `}
 
   span {
-    font-size: 12px;
-    font-weight: bold;
-    color: white;
+    ${tw`text-xs font-bold text-white`}
+    line-height: normal;
   }
 `
 const SVGModeAdjust = styled.img`

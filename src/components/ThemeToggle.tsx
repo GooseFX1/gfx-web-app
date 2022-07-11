@@ -2,9 +2,10 @@ import { FC } from 'react'
 import styled from 'styled-components'
 import { useDarkMode } from '../context/dark_mode'
 import { MODE_ICON, SpaceBetweenDiv, SVGToWhite, TOGGLE } from '../styles'
+import tw from "twin.macro"
 
 const WRAPPER = styled(SpaceBetweenDiv)`
-  padding: 0 0 2px 0;
+  ${tw`pb-0.5`}
 
   div {
     &:nth-child(2) {
@@ -14,9 +15,7 @@ const WRAPPER = styled(SpaceBetweenDiv)`
 `
 
 const Toggle = styled(TOGGLE)`
-  height: 25px;
-  width: 50px;
-  border-radius: 40px;
+  ${tw`h-[25px] w-[50px] rounded-[40px]`}
 `
 
 export const ThemeToggle: FC = () => {
@@ -38,9 +37,9 @@ export const ThemeToggle: FC = () => {
 
       <MODE_ICON>
         {mode === 'dark' ? (
-          <SVGToWhite className="brightness-image" src={`/img/assets/dark_mode.svg`} alt="" />
+          <SVGToWhite className="brightnessImage" src={`/img/assets/dark_mode.svg`} alt="" />
         ) : (
-          <img className="brightness-image" src={`/img/assets/dark_mode.svg`} alt="" />
+          <img className="brightnessImage" src={`/img/assets/dark_mode.svg`} alt="" />
         )}
       </MODE_ICON>
     </WRAPPER>
