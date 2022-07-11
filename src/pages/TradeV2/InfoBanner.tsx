@@ -1,7 +1,7 @@
-import { Dropdown, Menu, Skeleton, Switch } from 'antd'
-import React, { FC, useEffect, useState, useMemo } from 'react'
+import { Skeleton } from 'antd'
+import React, { FC, useState, useMemo } from 'react'
 import styled from 'styled-components'
-import { FEATURED_PAIRS_LIST, useCrypto, usePriceFeed } from '../../context'
+import { useCrypto, usePriceFeed } from '../../context'
 import { DropdownPairs } from './DropdownPairs'
 
 const INFO_WRAPPER = styled.div`
@@ -110,7 +110,6 @@ const FEES_BTN = styled.div`
   cursor: pointer;
 `
 
-const FIX_LAYOUT = styled.div``
 const RESET_LAYOUT_BUTTON = styled.div`
   cursor: pointer;
   background-color: ${({ theme }) => theme.bg9};
