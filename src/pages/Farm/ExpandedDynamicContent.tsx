@@ -302,10 +302,9 @@ export const ExpandedDynamicContent = ({
   const stakeRef = useRef(null)
   const unstakeRef = useRef(null)
 
-  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
-
+  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey, network, counter])
   useEffect(() => {
-    if (wallet.publicKey) {
+    if (wallet.publicKey && name === 'SOL') {
       const SOL = connection.getAccountInfo(wallet.publicKey)
       SOL.then((res) => setSOLBalance(res.lamports / LAMPORTS_PER_SOL)).catch((err) => console.log(err))
     }
@@ -329,6 +328,7 @@ export const ExpandedDynamicContent = ({
   useEffect(() => {
     setTokenStaked(parseFloat(currentlyStaked))
     setTokenEarned(Math.abs(parseFloat(earned)))
+    return () => {}
   }, [earned, currentlyStaked])
 
   useEffect(() => {
@@ -375,7 +375,7 @@ export const ExpandedDynamicContent = ({
           setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
-          notify(sslErrorMessage(name, error.message, signature, network, Mint))
+          notify(sslErrorMessage(name, error?.message, signature, network, Mint))
           return
         }
       })
@@ -396,7 +396,7 @@ export const ExpandedDynamicContent = ({
           setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
-          notify(sslErrorMessage(name, error.message, signature, network, Burn))
+          notify(sslErrorMessage(name, error?.message, signature, network, Burn))
           return
         }
       })
@@ -417,7 +417,7 @@ export const ExpandedDynamicContent = ({
           setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
-          notify(sslErrorMessage(name, error.message, signature, network, Withdraw))
+          notify(sslErrorMessage(name, error?.message, signature, network, Withdraw))
           return
         }
       })
@@ -471,7 +471,7 @@ export const ExpandedDynamicContent = ({
           setTimeout(() => (stakeRef.current.value = 0), 500)
         } else {
           const { signature, error } = con
-          notify(errorHandlingMessage(getErrStakeMsg(), name, error.message, signature, network))
+          notify(errorHandlingMessage(getErrStakeMsg(), name, error?.message, signature, network))
           return
         }
       })
@@ -515,7 +515,7 @@ export const ExpandedDynamicContent = ({
           setTimeout(() => (unstakeRef.current.value = 0), 1000)
         } else {
           const { signature, error } = con
-          notify(errorHandlingMessage(getErrUntakeMsg(), name, error.message, signature, network))
+          notify(errorHandlingMessage(getErrUntakeMsg(), name, error?.message, signature, network))
           return
         }
       })

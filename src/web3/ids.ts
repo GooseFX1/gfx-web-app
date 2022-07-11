@@ -1,3 +1,4 @@
+import { NATIVE_MINT } from '@solana/spl-token'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { AccountInfo, PublicKey } from '@solana/web3.js'
 import { StringPublicKey } from './metaplex'
@@ -39,6 +40,7 @@ export const ADDRESSES: {
       stake: {
         address: PublicKey
         controller?: PublicKey
+        admin?: PublicKey
       }
       swap: {
         address: PublicKey
@@ -46,7 +48,7 @@ export const ADDRESSES: {
       }
       ssl: {
         address: PublicKey
-        contoller?: PublicKey
+        controller?: PublicKey
       }
       nestquestSale: {
         address: PublicKey
@@ -160,11 +162,12 @@ export const ADDRESSES: {
       },
       stake: {
         address: new PublicKey('8KJx48PYGHVC9fxzRRtYp4x4CM2HyYCm2EjVuAP4vvrx'),
-        controller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
+        controller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ'),
+        admin: new PublicKey('9zmM8D5iwnzqc25n9zXZ4HfGcvM32xF99w3awCRPiUtN')
       },
       swap: {
-        address: new PublicKey('7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'),
-        controller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
+        address: new PublicKey('JYe7AcuQ7CqhkGvchJGvSKF8ei41FuDKb1h47qkbFNf'),
+        controller: new PublicKey('483AtY5eistVBBcXr9Tq2XH6MTrxCWfFRingputiZC2B')
       },
       ssl: {
         address: new PublicKey('7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'),
@@ -203,7 +206,20 @@ export const ADDRESSES: {
     }
   },
   devnet: {
-    sslPool: {},
+    sslPool: {
+      USDC: {
+        address: new PublicKey('USDhTjkUXFfigLELiFpbBnpLmEm4aXHvdY2kDSadJDH'),
+        decimals: 9
+      },
+      ETH: {
+        address: new PublicKey('ETHEUsA7cMt4z3GPeAJbK9B6NpTckrvzGBLUigsjQpFN'),
+        decimals: 9
+      },
+      SOL: {
+        address: new PublicKey(NATIVE_MINT),
+        decimals: 9
+      }
+    },
     mints: {
       GOFX: {
         address: new PublicKey('2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6'),
@@ -328,12 +344,14 @@ export const ADDRESSES: {
         address: new PublicKey('BmA9Z6FjioHJPpjT39QazZyhDRUdZy2ezwx4GiDdE2u2')
       },
       stake: {
-        address: new PublicKey('8KJx48PYGHVC9fxzRRtYp4x4CM2HyYCm2EjVuAP4vvrx'),
-        controller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
+        //devnet
+        address: new PublicKey('3Gwyhoudx8XgYry8dzKQ2GGsofkUdm7VZUvddHxchL3x'),
+        controller: new PublicKey('ApkmzBaTPUAeVj3QuqDcz6iLE6xZSLd29nke4McqrKw5'),
+        admin: new PublicKey('Cir93Do3LGMYtYnbxpQAb5Gr5R5mS2c7gTS1AZkvYA3w')
       },
       swap: {
-        address: new PublicKey('7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'),
-        controller: new PublicKey('DFLudW9uuQ63SAErXEQ6XjJzd2p6dpitNehdS1uJdvnq')
+        address: new PublicKey('JYe7AcuQ7CqhkGvchJGvSKF8ei41FuDKb1h47qkbFNf'),
+        controller: new PublicKey('ApkmzBaTPUAeVj3QuqDcz6iLE6xZSLd29nke4McqrKw5')
       },
       ssl: {
         address: new PublicKey('7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5'),
