@@ -277,7 +277,7 @@ const LoadBuy = ({ nestQuestData, setPhase }: MintProps) => {
       fetchAvailableNft(connection)
         .then((res) => {
           if (res) {
-            purchase(nestQuestData.token)
+            purchase(nestQuestData.token, res.nft)
           } else {
             throw new Error('NFT sold out')
           }
@@ -290,9 +290,8 @@ const LoadBuy = ({ nestQuestData, setPhase }: MintProps) => {
     }
   }, [wallet.publicKey, connection])
 
-  const purchase = (token: string) => {
-    const buyFunction =
-      token === 'SOL' ? buyWithSOL(wallet, connection, res.nft) : buyWithGOFX(wallet, connection, res.nft)
+  const purchase = (token: string, nft: any) => {
+    const buyFunction = token === 'SOL' ? buyWithSOL(wallet, connection, nft) : buyWithGOFX(wallet, connection, nft)
 
     buyFunction
       .then((result) => {
