@@ -3303,6 +3303,7 @@
     webpack-dev-server "^3.11.2"
 
 "@solana/spl-token-new@npm:@solana/spl-token@^0.2.0", "@solana/spl-token@^0.2.0":
+  name "@solana/spl-token-new"
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@solana/spl-token/-/spl-token-0.2.0.tgz#329bb6babb5de0f9c40035ddb1657f01a8347acd"
   integrity sha512-RWcn31OXtdqIxmkzQfB2R+WpsJOVS6rKuvpxJFjvik2LyODd+WN58ZP3Rpjpro03fscGAkzlFuP3r42doRJgyQ==
@@ -8737,10 +8738,10 @@ globby@^6.1.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
-goosefx-ssl-sdk@^1.2.3:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.2.3.tgz#732c3dc1ff7953395bcc73f2db86edb9c31e2097"
-  integrity sha512-I5PPUcToag/ebea2BA3ViH3ecGeH8l/og5hP8Lo3ygwtN3HxCX0SVHNAAycyh9/HjGw9EYmEUnierpOB728qxw==
+goosefx-ssl-sdk@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.2.4.tgz#9dada337c6fd4ed270e4231734899e45229e436c"
+  integrity sha512-SQVT4S/pOv0pBbgSAiimFj+xjR331+wAFRY8j0WrprpoBh0YTqhFpgt+Qnon6Y0v1A5oKBieb+Tzlz70wo6jhg==
   dependencies:
     "@project-serum/anchor" "^0.17.1-beta.1"
     "@solana/buffer-layout" "^4.0.0"
