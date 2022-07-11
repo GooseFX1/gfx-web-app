@@ -84,7 +84,7 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
     let cancelled = false
     const subscriptions: number[] = []
 
-    if (!cancelled) {
+    if (!cancelled && !priceFetched) {
       ;(async () => {
         const PAIR_LIST = [...FARM_TOKEN_LIST]
         const cryptoMarkets = PAIR_LIST.filter(({ type }) => type === 'crypto')

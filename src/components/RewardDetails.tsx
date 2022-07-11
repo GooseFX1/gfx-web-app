@@ -7,7 +7,7 @@ import { Row, Col } from 'antd'
 import { useRewardToggle } from '../context/reward_toggle'
 import { fetchRewardsByAddress } from '../api/NFTs'
 import { SpaceEvenlyDiv } from '../styles'
-import tw from "twin.macro"
+import tw from 'twin.macro'
 
 const REWARD_INFO_TEXT = styled.div`
   ${tw`py-8 px-10`}
@@ -58,7 +58,7 @@ const REWARD_DETAILS_CONTAINER = styled.div`
 `
 
 const LINE = styled.div`
- ${tw`w-full h-[2px] mt-4 rotate-0`}
+  ${tw`w-full h-[2px] mt-4 rotate-0`}
   background-color: ${({ theme }) => theme.text1};
 `
 
@@ -152,7 +152,7 @@ export const RewardInfoComponent: FC = () => {
           </li>
           <li>
             <TEXT_22>
-              For each listing you will recieve <strong>25 $GOFX</strong>, up to the first <strong>100,000</strong>{' '}
+              For each listing you will receive <strong>25 $GOFX</strong>, up to the first <strong>100,000</strong>{' '}
               listings.
             </TEXT_22>
             <TEXT_15>Up to 100,000 lisitings (We will re-asses after reaching the target).</TEXT_15>

@@ -7,6 +7,7 @@ import { useFarmContext, usePriceFeedFarm, useAccounts, useTokenRegistry, useCon
 import { invalidInputErrMsg } from './FarmClickHandler'
 import { notify } from '../../utils'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { ADDRESSES } from '../../web3'
 
 const STYLED_RIGHT_CONTENT = styled.div`
   display: flex;
@@ -387,6 +388,7 @@ export const SSLButtons: FC<{
   const { getUIAmount } = useAccounts()
   const { publicKey } = useWallet()
   const { getTokenInfoForFarming } = useTokenRegistry()
+  const { network } = useConnectionConfig()
 
   let tokenPrice = useMemo(() => {
     if (name === 'USDC') {
@@ -457,7 +459,8 @@ export const SSLButtons: FC<{
   const withdrawClicked = () => {
     // (amt / userLiablity) * 10000
     if (checkbasicConditions(availableToMint)) return
-    const multiplier = name === 'SOL' || name === 'GMT' ? 10000 : 10
+    const decimals = ADDRESSES[network]?.sslPool[name]?.decimals
+    const multiplier = name === 'SOL' || name === 'GMT' || decimals === 9 ? 10000 : 10
     let amountInNative = (unstakeRef.current.value / tokenData?.userLiablity) * LAMPORTS_PER_SOL * multiplier
     if (parseFloat(availableToMint.toFixed(3)) === parseFloat(unstakeRef.current.value)) {
       amountInNative = 100 * 100

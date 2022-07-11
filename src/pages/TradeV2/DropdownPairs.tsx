@@ -1,10 +1,10 @@
-import { Dropdown, Menu, Switch } from 'antd'
-import React, { FC, useMemo, useState } from 'react'
+import { Dropdown, Menu } from 'antd'
+import React, { FC, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { MarketType, useCrypto, usePriceFeed } from '../../context'
 import styled from 'styled-components'
-import { FEATURED_PAIRS_LIST, AVAILABLE_MARKETS } from '../../context'
-import { DownOutlined, UserOutlined } from '@ant-design/icons'
+import { FEATURED_PAIRS_LIST } from '../../context'
+import { DownOutlined } from '@ant-design/icons'
 
 const SELECTED_PAIR = styled.div`
   line-height: 40px;
@@ -30,7 +30,6 @@ const SELECTED_PAIR = styled.div`
     height: 28px;
   }
 `
-const DROPDOWN_CONTAINER = styled.div``
 
 const DROPDOWN_PAIR_DIV = styled.div`
   height: 40px;
@@ -48,7 +47,7 @@ const DROPDOWN_PAIR_DIV = styled.div`
 
 const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) => {
   const { tokenInfo } = usePriceFeed()
-  const { formatPair, getAskSymbolFromPair, selectedCrypto, setSelectedCrypto } = useCrypto()
+  const { formatPair, getAskSymbolFromPair } = useCrypto()
 
   const formattedPair = useMemo(() => formatPair(pair), [formatPair, pair])
   //const price = useMemo(() => prices[pair], [prices, pair])

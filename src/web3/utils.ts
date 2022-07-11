@@ -29,7 +29,7 @@ export const createAssociatedTokenAccountIx = (mint: PublicKey, associatedAccoun
 export const findAssociatedTokenAddress = async (
   walletAddress: PublicKey,
   tokenMintAddress: PublicKey
-): Promise<PublicKey> => {
+): Promise<PublicKey | null> => {
   return (
     await PublicKey.findProgramAddress(
       [walletAddress.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), tokenMintAddress.toBuffer()],
@@ -161,4 +161,8 @@ export const int64to8 = (n: number): Uint8Array => {
 
 export const bnTo8 = (bn: BN): Uint8Array => {
   return Buffer.from([...bn.toArray('le', 8)])
+}
+
+export const getNetworkConnectionText = (network) => {
+  return network === 'devnet' ? 'DEVNET' : 'MAINNET'
 }
