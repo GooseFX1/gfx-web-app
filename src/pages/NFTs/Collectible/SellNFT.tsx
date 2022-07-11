@@ -576,7 +576,7 @@ export const SellNFT = () => {
               </Col>
             </Row>
             <Row className="bm-details-price" justify="space-between" align="middle" style={{ marginBottom: '70px' }}>
-              <Col>You will recieve</Col>
+              <Col>You will receive</Col>
               <Col>
                 <Row gutter={8} justify="space-between" align="middle" style={{ fontWeight: 700 }}>
                   <Col>{parseFloat(userInput['minimumBid'] || 0) - servicePriceCalc}</Col>
