@@ -25,6 +25,7 @@ import { ADDRESSES } from '../../web3'
 import { MorePoolsSoon } from './MorePoolsSoon'
 import { NATIVE_MINT } from '@solana/spl-token'
 import { CONTROLLER_IDL, SSL_IDL } from 'goosefx-ssl-sdk'
+import { NETWORK_CONSTANTS, TOKEN_NAMES } from '../../constants'
 
 const StakeIDL = require('../../web3/idl/stake.json')
 
@@ -295,7 +296,7 @@ export const TableList = ({ dataSource }: any) => {
             SSLAccountKeys.push(await getSslAccountKey(tokenMint, network))
             liquidityAccountKeys.push(await getLiquidityAccountKey(wallet, tokenMint, network))
             mainVaultKeys.push(await getMainVaultKey(tokenMint, network))
-            if (network !== 'devnet') {
+            if (network !== NETWORK_CONSTANTS.DEVNET) {
               aprVolumePromise.push(fetchSSLAPR(tokenMint.toString(), controllerStr))
               aprVolumePromise.push(fetchSSLVolumeData(tokenMint.toString(), controllerStr))
             }
@@ -357,7 +358,7 @@ export const TableList = ({ dataSource }: any) => {
       const currentlyStaked = accountData.tokenStaked ? accountData.tokenStaked : 0
       const dailyRewards = (APR * currentlyStaked) / 365
       const newFarmDataContext = farmDataContext.map((data) => {
-        if (data.name === 'GOFX') {
+        if (data.name === TOKEN_NAMES.GOFX) {
           return {
             ...data,
             earned: accountData.tokenEarned ? accountData.tokenEarned : 0,

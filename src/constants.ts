@@ -15,6 +15,17 @@ export const MODAL_TYPES = {
   FEES: 'FEES',
   REWARDS: 'REWARDS'
 }
+export const NETWORK_CONSTANTS = {
+  DEVNET: 'devnet',
+  MAINNET: 'mainnet-beta',
+  DEVNET_SDK: 'DEVNET',
+  MAINNET_SDK: 'MAINNET'
+}
+export const TOKEN_NAMES = {
+  SOL: 'SOL',
+  GOFX: 'GOFX',
+  GMT: 'GMT'
+}
 
 export const TOKEN_BLACKLIST = [
   'totCSh2TfEPTRovc4rMGz1ezukAdPxYWzh9jnXppeqY',
