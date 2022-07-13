@@ -96,7 +96,7 @@ export const stakeTokens = [
     id: '0',
     image: 'GOFX',
     name: 'GOFX',
-    earned: -1,
+    earned: undefined,
     rewards: 100,
     liquidity: -1,
     type: 'Staking',
@@ -125,15 +125,3 @@ export const generateListOfSSLTokens = (network): any => {
   }
   return sslTokens
 }
-
-// ,
-//   {
-//     id: '4',
-//     image: 'MSOL',
-//     name: 'MSOL',
-//     earned: 0,
-//     apr: 0,
-//     liquidity: 0,
-//     type: 'SSL',
-//     currentlyStaked: 0
-//   }

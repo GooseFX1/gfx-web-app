@@ -27,8 +27,6 @@ import { NATIVE_MINT } from '@solana/spl-token'
 import { CONTROLLER_IDL, SSL_IDL } from 'goosefx-ssl-sdk'
 import { NETWORK_CONSTANTS, TOKEN_NAMES } from '../../constants'
 
-const StakeIDL = require('../../web3/idl/stake.json')
-
 //#region styles
 export const STYLED_TABLE_LIST = styled(Table)`
   ${({ theme }) => `
@@ -197,7 +195,7 @@ export const TableList = ({ dataSource }: any) => {
   const stakeProgram: Program = useMemo(() => {
     return wallet.publicKey
       ? new Program(
-          StakeIDL,
+          CONTROLLER_IDL as any,
           SDK_ADDRESS[getNetworkConnection(network)].CONTROLLER_PROGRAM_ID,
           new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
         )
@@ -361,7 +359,7 @@ export const TableList = ({ dataSource }: any) => {
         if (data.name === TOKEN_NAMES.GOFX) {
           return {
             ...data,
-            earned: accountData.tokenEarned ? accountData.tokenEarned : 0,
+            earned: accountData.tokenEarned ? Math.max(accountData.tokenEarned, 0) : 0,
             apr: APR * 100,
             rewards: dailyRewards,
             liquidity: gofxPrice.current * liqidity,
