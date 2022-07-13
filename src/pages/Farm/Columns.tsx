@@ -121,7 +121,9 @@ export const columns = [
     dataIndex: 'earned',
     key: 'earned',
     width: '16.6%',
-    render: (text) => <div className="liquidity normal-text">{text >= 0 ? `${moneyFormatter(text)}` : <Loader />}</div>
+    render: (text) => (
+      <div className="liquidity normal-text">{text !== undefined ? `${moneyFormatter(text)}` : <Loader />}</div>
+    )
   },
   {
     title: Title('APR', 'Yearly deposit earned on your deposit.', true),
