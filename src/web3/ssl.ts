@@ -26,6 +26,7 @@ import { SYSTEM } from './ids'
 import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
 import { findAssociatedTokenAddress, createAssociatedTokenAccountIx, getNetworkConnectionText } from './utils'
 import { STAKE_PREFIX, SSL_PREFIX, LIQUIDITY_ACCOUNT_PREFIX, toPublicKey, ADDRESSES, PT_MINT_PREFIX } from '../web3'
+import { TOKEN_NAMES } from '../constants'
 
 export interface Account {
   /** Address of the account */
@@ -318,7 +319,7 @@ export const executeWithdraw = async (
     accounts: withdrawInstructionAccount
   })
   const withdrawTX: Transaction = new Transaction()
-  if (tokenName === 'SOL') {
+  if (tokenName === TOKEN_NAMES.SOL) {
     const associatedTokenAccountAddress = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
     const associatedTokenAccount = await connection.getAccountInfo(associatedTokenAccountAddress)
     try {
@@ -437,7 +438,7 @@ const depositAmount = async (
   let signature
   try {
     let depositAmountTX: Transaction
-    if (tokenName === 'SOL') depositAmountTX = await wrapSolToken(wallet, connection, amountInNative)
+    if (tokenName === TOKEN_NAMES.SOL) depositAmountTX = await wrapSolToken(wallet, connection, amountInNative)
     else depositAmountTX = new Transaction()
     if (createLiquidityIX !== undefined) {
       depositAmountTX.add(createLiquidityIX)

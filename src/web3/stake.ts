@@ -20,13 +20,6 @@ import { CONTROLLER_LAYOUT, STAKING_ACCOUNT_LAYOUT } from 'goosefx-ssl-sdk'
 
 const { blob, struct, u8 } = require('buffer-layout')
 
-const getStakeProgram = (wallet: WalletContextState, connection: Connection, network: WalletAdapterNetwork): Program =>
-  new Program(
-    CONTROLLER_IDL as any,
-    SDK_ADDRESS[getNetworkConnection(network)].CONTROLLER_PROGRAM_ID,
-    new Provider(connection, wallet as any, { commitment: 'confirmed' })
-  )
-
 export const getStakingAccountKey = async (
   wallet: WalletContextState,
   network: any
@@ -56,16 +49,16 @@ export const executeStake = async (
   const amountInBN: BN = new BN(amountInLamport)
   try {
     // getting user staking account if already exists format user staking account to publicKey
-    const userStakingAccount = await program.account.stakingAccount.fetch(stakingAccountKey)
-    return stakeAmount(network, amountInBN, program, stakingAccountKey, wallet, connection, undefined)
+    const userStakingAccount = await connection.getAccountInfo(stakingAccountKey)
+    if (userStakingAccount !== null)
+      return stakeAmount(network, amountInBN, program, stakingAccountKey, wallet, connection, undefined)
+    else {
+      // user account does not exists , create a new user account
+      const createStakingIX = await createStakingAccountIX(network, program, stakingAccountKey, wallet)
+      return stakeAmount(network, amountInBN, program, stakingAccountKey, wallet, connection, createStakingIX)
+    }
   } catch (err) {
     console.log(err)
-  }
-  try {
-    // user account does not exists , create a new user account
-    const createStakingIX = await createStakingAccountIX(network, program, stakingAccountKey, wallet)
-    return stakeAmount(network, amountInBN, program, stakingAccountKey, wallet, connection, createStakingIX)
-  } catch (err) {
     return err
   }
 }
@@ -129,8 +122,6 @@ export const executeUnstakeAndClaim = async (
 ) => {
   const GOFX_MINT = getGOFXMintAddress(network)
   const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnection(network)].GFX_CONTROLLER
-  if (network === 'devnet') program = getStakeProgram(wallet, connection, network)
-
   // get admin from controller
   //TODO : mint Address need to be passed into the function when more tokens are supported
   const tokenVault: PublicKey = await findAssociatedTokenAddress(CONTROLLER_KEY, toPublicKey(GOFX_MINT))

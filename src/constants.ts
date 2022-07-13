@@ -15,6 +15,17 @@ export const MODAL_TYPES = {
   FEES: 'FEES',
   REWARDS: 'REWARDS'
 }
+export const NETWORK_CONSTANTS = {
+  DEVNET: 'devnet',
+  MAINNET: 'mainnet-beta',
+  DEVNET_SDK: 'DEVNET',
+  MAINNET_SDK: 'MAINNET'
+}
+export const TOKEN_NAMES = {
+  SOL: 'SOL',
+  GOFX: 'GOFX',
+  GMT: 'GMT'
+}
 
 export const TOKEN_BLACKLIST = [
   'totCSh2TfEPTRovc4rMGz1ezukAdPxYWzh9jnXppeqY',
@@ -145,7 +156,7 @@ export const stakeTokens = [
     id: '0',
     image: 'GOFX',
     name: 'GOFX',
-    earned: -1,
+    earned: undefined,
     rewards: 100,
     liquidity: -1,
     type: 'Staking',
@@ -174,15 +185,3 @@ export const generateListOfSSLTokens = (network): any => {
   }
   return sslTokens
 }
-
-// ,
-//   {
-//     id: '4',
-//     image: 'MSOL',
-//     name: 'MSOL',
-//     earned: 0,
-//     apr: 0,
-//     liquidity: 0,
-//     type: 'SSL',
-//     currentlyStaked: 0
-//   }

@@ -8,6 +8,7 @@ import { invalidInputErrMsg } from './FarmClickHandler'
 import { notify } from '../../utils'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { ADDRESSES } from '../../web3'
+import { TOKEN_NAMES } from '../../constants'
 
 const STYLED_RIGHT_CONTENT = styled.div`
   display: flex;
@@ -409,12 +410,12 @@ export const SSLButtons: FC<{
   )
 
   const onClickMax = (buttonId: string) => {
-    if (name === 'SOL') userTokenBalance = userSOLBalance
+    if (name === TOKEN_NAMES.SOL) userTokenBalance = userSOLBalance
     if (buttonId === 'deposit') stakeRef.current.value = userTokenBalance.toFixed(DISPLAY_DECIMAL)
     else unstakeRef.current.value = availableToMint.toFixed(DISPLAY_DECIMAL)
   }
   const onClickHalf = (buttonId: string) => {
-    if (name === 'SOL') userTokenBalance = userSOLBalance
+    if (name === TOKEN_NAMES.SOL) userTokenBalance = userSOLBalance
     if (buttonId === 'deposit') stakeRef.current.value = (userTokenBalance / 2).toFixed(DISPLAY_DECIMAL)
     else unstakeRef.current.value = (availableToMint / 2).toFixed(DISPLAY_DECIMAL)
   }
@@ -436,7 +437,7 @@ export const SSLButtons: FC<{
     let amt = parseFloat(stakeRef.current?.value).toFixed(3)
     notEnough =
       parseFloat(amt) >
-      (name === 'SOL' ? parseFloat(userSOLBalance.toFixed(3)) : parseFloat(userTokenBalance.toFixed(3)))
+      (name === TOKEN_NAMES.SOL ? parseFloat(userSOLBalance.toFixed(3)) : parseFloat(userTokenBalance.toFixed(3)))
   } catch (e) {}
 
   useEffect(() => {
@@ -444,7 +445,7 @@ export const SSLButtons: FC<{
       let amt = parseFloat(stakeRef.current?.value).toFixed(3)
       notEnough =
         parseFloat(amt) >
-        (name === 'SOL' ? parseFloat(userSOLBalance.toFixed(3)) : parseFloat(userTokenBalance.toFixed(3)))
+        (name === TOKEN_NAMES.SOL ? parseFloat(userSOLBalance.toFixed(3)) : parseFloat(userTokenBalance.toFixed(3)))
     } catch (e) {}
   }, [stakeRef.current?.value])
 
@@ -484,7 +485,8 @@ export const SSLButtons: FC<{
                 <STYLED_DESC>
                   <div className="text">{name} Wallet Balance:</div>
                   <div className="value">
-                    {name === 'SOL' ? userSOLBalance?.toFixed(DISPLAY_DECIMAL) : userTokenBalance.toFixed(3)} {name}
+                    {name === TOKEN_NAMES.SOL ? userSOLBalance?.toFixed(DISPLAY_DECIMAL) : userTokenBalance.toFixed(3)}{' '}
+                    {name}
                   </div>
                 </STYLED_DESC>
               </STYLED_STAKED_EARNED_CONTENT>
