@@ -28,6 +28,7 @@ import { notify, moneyFormatter, nFormatter, checkMobile } from '../../utils'
 import { CURRENT_SUPPORTED_TOKEN_LIST } from '../../constants'
 import { useParams } from 'react-router-dom'
 import tw from 'twin.macro'
+import JSBI from 'jsbi'
 
 const CoinGecko = require('coingecko-api')
 const CoinGeckoClient = new CoinGecko()
@@ -778,15 +779,30 @@ export const SwapMain: FC = () => {
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
   const [inAmountTotal, setInAmountTotal] = useState(0)
-  //console.log(tokenA, tokenB)
 
   const { routes, exchange } = useJupiter({
-    amount: inAmountTotal, // raw input amount of tokens
+    amount: JSBI.BigInt(inAmountTotal), // raw input amount of tokens
     inputMint: new PublicKey(tokenA?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     slippage: slippage, // 1% slippage
     debounceTime: 250 // debounce ms time before refresh
   })
+
+  function marketInfoFormat(mkt: any) {
+    return {
+      ...mkt,
+      inAmount: JSBI.toNumber(mkt.inAmount),
+      outAmount: JSBI.toNumber(mkt.outAmount),
+      lpFee: {
+        ...mkt.lpFee,
+        amount: JSBI.toNumber(mkt.lpFee.amount)
+      },
+      platformFee: {
+        ...mkt.platformFee,
+        amount: JSBI.toNumber(mkt.platformFee.amount)
+      }
+    }
+  }
 
   useEffect(() => {
     setRoutes([])
@@ -802,7 +818,17 @@ export const SwapMain: FC = () => {
     }
 
     if (!routes) return
-    const filteredRoutes = routes?.filter((i) => i.inAmount === inAmountTotal)
+    const filteredRoutes = routes
+      ?.map((route) => ({
+        ...route,
+        inAmount: JSBI.toNumber(route.inAmount),
+        outAmount: JSBI.toNumber(route.outAmount),
+        amount: JSBI.toNumber(route.amount),
+        outAmountWithSlippage: JSBI.toNumber(route.otherAmountThreshold),
+        marketInfos: route.marketInfos.map((mkt) => marketInfoFormat(mkt))
+      }))
+      ?.filter((i) => i.inAmount === inAmountTotal)
+
     const shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
 
     if (tokenB && shortRoutes.length > 0) {
