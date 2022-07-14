@@ -448,50 +448,56 @@ const TokenContent: FC = () => {
   }
 
   const fetchCoinGecko = async () => {
-    const tokens = await CoinGeckoClient.coins.list()
-    if (tokenA) {
-      const token = tokens.data.find((i) => i.symbol.toLowerCase() === tokenA.symbol.toLowerCase())
+    try {
+      const tokens = await CoinGeckoClient.coins.list()
+      if (tokenA) {
+        const token = tokens.data.find((i) => i.symbol.toLowerCase() === tokenA.symbol.toLowerCase())
 
-      CoinGeckoClient.coins
-        .fetch(token?.id || null, {})
-        .then(async (cgData: any) => {
-          const data = cgData.data
-          let res = null
+        CoinGeckoClient.coins
+          .fetch(token?.id || null, {})
+          .then(async (cgData: any) => {
+            const data = cgData.data
+            let res = null
 
-          try {
-            const fetchData = await fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
-            res = await fetchData.json()
-          } catch (e) {
-            console.error(e)
-          }
+            try {
+              const fetchData = await fetch(
+                'https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address
+              )
+              res = await fetchData.json()
+            } catch (e) {
+              console.error(e)
+            }
 
-          setDetails([
-            { name: 'Price', value: data?.market_data?.current_price?.usd || '0.0', currency: '$' },
-            {
-              name: 'FDV',
-              value:
-                moneyFormatter(
-                  Math.floor(
-                    data?.market_data?.fully_diluted_valuation?.usd ||
-                      data?.market_data?.total_supply * data?.market_data?.current_price?.usd
-                  )
-                ) || '0',
-              currency: '$'
-            },
-            {
-              name: 'Total Max Supply',
-              value:
-                Math.floor(data?.market_data?.max_supply || data?.market_data?.total_supply)?.toLocaleString() || '0'
-            },
-            { name: 'Holders', value: res?.total?.toLocaleString() || 0 }
-          ])
-          setSocials([
-            { name: 'Twitter', link: 'https://twitter.com/' + data?.links?.twitter_screen_name },
-            { name: 'Coingecko', link: 'https://coingecko.com' },
-            { name: 'Website', link: data?.links?.homepage?.[0] }
-          ])
-        })
-        .catch((err) => console.error('ERROR: CoinGecko fetch'))
+            setDetails([
+              { name: 'Price', value: data?.market_data?.current_price?.usd || '0.0', currency: '$' },
+              {
+                name: 'FDV',
+                value:
+                  moneyFormatter(
+                    Math.floor(
+                      data?.market_data?.fully_diluted_valuation?.usd ||
+                        data?.market_data?.total_supply * data?.market_data?.current_price?.usd
+                    )
+                  ) || '0',
+                currency: '$'
+              },
+              {
+                name: 'Total Max Supply',
+                value:
+                  Math.floor(data?.market_data?.max_supply || data?.market_data?.total_supply)?.toLocaleString() || '0'
+              },
+              { name: 'Holders', value: res?.total?.toLocaleString() || 0 }
+            ])
+            setSocials([
+              { name: 'Twitter', link: 'https://twitter.com/' + data?.links?.twitter_screen_name },
+              { name: 'Coingecko', link: 'https://coingecko.com' },
+              { name: 'Website', link: data?.links?.homepage?.[0] }
+            ])
+          })
+          .catch((err) => console.error('ERROR: CoinGecko fetch'))
+      }
+    } catch (e) {
+      console.log(e)
     }
   }
 
@@ -774,7 +780,8 @@ export const SwapMain: FC = () => {
     chosenRoutes,
     setRoutes,
     setClickNo,
-    clickNo
+    clickNo,
+    network
   } = useSwap()
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
@@ -805,6 +812,38 @@ export const SwapMain: FC = () => {
   }
 
   useEffect(() => {
+    if (network === 'devnet') {
+      devnetRoutes()
+    } else {
+      mainnetRoutes()
+    }
+  }, [tokenA?.symbol, tokenB?.symbol, routes, slippage, inTokenAmount, outTokenAmount, network])
+
+  function devnetRoutes() {
+    setRoutes([])
+    const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
+    setInAmountTotal(inAmountTotal)
+
+    if (!tokenA || !tokenB || inAmountTotal <= 0) return
+    const GoFxRoute = {
+      marketInfos: [
+        {
+          outputMint: new PublicKey(tokenB.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
+          lpFee: { amount: 0.001 * inAmountTotal },
+
+          amm: {
+            label: 'GooseFX'
+          }
+        }
+      ],
+      outAmount: +((gofxOutAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
+      outAmountWithSlippage: +((gofxOutAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
+      priceImpactPct: priceImpact || 0
+    }
+    setRoutes([GoFxRoute])
+  }
+
+  function mainnetRoutes() {
     setRoutes([])
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
     setInAmountTotal(inAmountTotal)
@@ -817,17 +856,18 @@ export const SwapMain: FC = () => {
       setallowed(true)
     }
 
-    if (!routes) return
-    const filteredRoutes = routes
-      ?.map((route) => ({
-        ...route,
-        inAmount: JSBI.toNumber(route.inAmount),
-        outAmount: JSBI.toNumber(route.outAmount),
-        amount: JSBI.toNumber(route.amount),
-        outAmountWithSlippage: JSBI.toNumber(route.otherAmountThreshold),
-        marketInfos: route.marketInfos.map((mkt) => marketInfoFormat(mkt))
-      }))
-      ?.filter((i) => i.inAmount === inAmountTotal)
+    if (!routes && (!tokenA || !tokenB)) return
+    const filteredRoutes =
+      routes
+        ?.map((route) => ({
+          ...route,
+          inAmount: JSBI.toNumber(route.inAmount),
+          outAmount: JSBI.toNumber(route.outAmount),
+          amount: JSBI.toNumber(route.amount),
+          outAmountWithSlippage: JSBI.toNumber(route.otherAmountThreshold),
+          marketInfos: route.marketInfos.map((mkt) => marketInfoFormat(mkt))
+        }))
+        ?.filter((i) => i.inAmount === inAmountTotal) || []
 
     const shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
 
@@ -853,7 +893,7 @@ export const SwapMain: FC = () => {
 
     setRoutes(shortRoutes)
     //setClickNo(1)
-  }, [tokenA?.symbol, tokenB?.symbol, routes, slippage, inTokenAmount, outTokenAmount])
+  }
 
   if (checkMobile()) {
     return (
@@ -886,7 +926,7 @@ interface RouteParams {
 }
 
 const SwapMainProvider: FC = () => {
-  const { connection, setTokenA, setTokenB } = useSwap()
+  const { connection, setTokenA, setTokenB, network } = useSwap()
   const wallet = useWallet()
   const { tokens } = useTokenRegistry()
   const { tradePair } = useParams<RouteParams>()
@@ -915,7 +955,7 @@ const SwapMainProvider: FC = () => {
   }, [setTokenA, setTokenB, tokens, tradePair])
 
   return (
-    <JupiterProvider connection={connection} cluster="mainnet-beta" userPublicKey={wallet?.publicKey}>
+    <JupiterProvider connection={connection} cluster={network} userPublicKey={wallet?.publicKey}>
       <SwapMain />
     </JupiterProvider>
   )

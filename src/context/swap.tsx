@@ -55,6 +55,7 @@ interface ISwapConfig {
   tokenA: ISwapToken | null
   tokenB: ISwapToken | null
   connection?: any
+  network?: any
   priceImpact?: number
   chosenRoutes: any[]
   setRoutes: (r: any) => void
@@ -341,6 +342,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setRoutes,
         setClickNo,
         clickNo,
+        network,
         gofxOutAmount
       }}
     >
@@ -379,6 +381,7 @@ export const useSwap = (): ISwapConfig => {
     setRoutes: context.setRoutes,
     setClickNo: context.setClickNo,
     clickNo: context.clickNo,
+    network: context.network,
     gofxOutAmount: context.gofxOutAmount
   }
 }

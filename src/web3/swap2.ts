@@ -94,8 +94,12 @@ export const swap = async (
 ): Promise<TransactionSignature | undefined> => {
   try {
     SWAP.connection = connection
-    const { createSwapIx } = SWAP
+    if (network === 'devnet') {
+      SWAP.controller = ADDRESSES[network].programs.swap.controller
+      SWAP.programId = ADDRESSES[network].programs.swap.address
+    }
 
+    const { createSwapIx } = SWAP
     let txn = new Transaction()
     if (tokenA.address === NATIVE_MINT.toBase58()) {
       txn = await wrapSolToken(wallet, connection, inTokenAmount * LAMPORTS_PER_SOL)
@@ -159,6 +163,10 @@ export const preSwapAmount = async (
     let outAmount: number, priceImpact: number
     try {
       SWAP.connection = connection
+      if (network === 'devnet') {
+        SWAP.controller = ADDRESSES[network].programs.swap.controller
+        SWAP.programId = ADDRESSES[network].programs.swap.address
+      }
       const { getQuote } = SWAP
       const quote = await getQuote(new PublicKey(tokenA.address), new PublicKey(tokenB.address), BigInt(inAmount))
       const { out, impact } = quote
@@ -166,6 +174,14 @@ export const preSwapAmount = async (
       outAmount = Number(out.toString()) / 10 ** tokenB.decimals
     } catch (e) {
       console.log(e)
+    }
+
+    if (network === 'devnet') {
+      return {
+        preSwapResult: outAmount?.toString() || '0',
+        impact: Number(priceImpact),
+        gofxAmount: outAmount?.toString() || '0'
+      }
     }
     const available =
       (tokenB.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA.symbol)) ||

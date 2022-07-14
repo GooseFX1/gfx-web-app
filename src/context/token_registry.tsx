@@ -65,9 +65,10 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
         console.log(farmSupportedList)
         setFarmingTokens(farmSupportedList)
       } else setFarmingTokens(farmSupportedList)
-      const filteredList = [...splList]
 
+      let filteredList = [...splList]
       if (chainId === ENV.Devnet) {
+        filteredList = []
         filteredList.push({
           address: ADDRESSES.devnet.mints.GOFX.address.toString(),
           chainId,
