@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from 'react'
-import { MintLayout, Token } from '@solana/spl-token'
+import { MintLayout, createMintToInstruction } from '@solana/spl-token-v2'
 import { Keypair, Connection, SystemProgram, TransactionInstruction, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import {
@@ -231,14 +231,7 @@ export const mintNFT = async (
     )
 
     updateInstructions.push(
-      Token.createMintToInstruction(
-        TOKEN_PROGRAM_ID,
-        toPublicKey(mintKey),
-        toPublicKey(recipientKey),
-        toPublicKey(payerPublicKey),
-        [],
-        1
-      )
+      createMintToInstruction(toPublicKey(mintKey), toPublicKey(recipientKey), toPublicKey(payerPublicKey), 1, [])
     )
 
     progressCallback(7)
