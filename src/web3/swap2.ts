@@ -102,7 +102,6 @@ export const swap = async (
     }
     const inAmount = BigInt(inTokenAmount * 10 ** tokenA.decimals)
     const minimumAmountOut = BigInt(Math.floor(outTokenAmount * 10 ** tokenB.decimals * (1 - slippage)))
-    console.log({ inAmount, minimumAmountOut })
 
     const ixs = await createSwapIx(
       new PublicKey(tokenA.address),
