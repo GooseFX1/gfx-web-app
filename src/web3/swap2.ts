@@ -2,6 +2,7 @@ import { Buffer } from 'buffer'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Swap } from 'goosefx-ssl-sdk'
 import { CURRENT_SUPPORTED_TOKEN_LIST } from '../constants'
+import { WalletContextState } from '@solana/wallet-adapter-react'
 
 import {
   NATIVE_MINT,
@@ -9,7 +10,7 @@ import {
   getAssociatedTokenAddress,
   createSyncNativeInstruction,
   createCloseAccountInstruction
-} from '@solana/spl-token-new'
+} from '@solana/spl-token-v2'
 
 import {
   Connection,
@@ -34,11 +35,10 @@ export const computePoolsPDAs = async (
   return { lpTokenMint: null, pair: null, pool: null }
 }
 
-const wrapSolToken = async (wallet: any, connection: Connection, amount: number) => {
+const wrapSolToken = async (wallet: WalletContextState, connection: Connection, amount: number) => {
   try {
     const tx = new Transaction()
     const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
-    console.log(associatedTokenAccount + '')
     // Create token account to hold your wrapped SOL
     if (associatedTokenAccount) {
       tx.add(
@@ -88,7 +88,7 @@ export const swap = async (
   inTokenAmount: number,
   outTokenAmount: number,
   slippage: number,
-  wallet: any,
+  wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<TransactionSignature | undefined> => {
@@ -102,6 +102,7 @@ export const swap = async (
     }
     const inAmount = BigInt(inTokenAmount * 10 ** tokenA.decimals)
     const minimumAmountOut = BigInt(Math.floor(outTokenAmount * 10 ** tokenB.decimals * (1 - slippage)))
+    console.log({ inAmount, minimumAmountOut })
 
     const ixs = await createSwapIx(
       new PublicKey(tokenA.address),
@@ -126,7 +127,7 @@ export const swap = async (
     }
 
     const finalResult = await signAndSendRawTransaction(connection, txn, wallet)
-    let result = await connection.confirmTransaction(finalResult)
+    let result = finalResult ? await connection.confirmTransaction(finalResult) : null
 
     if (!result.value.err) {
       return finalResult
@@ -143,7 +144,7 @@ export const preSwapAmount = async (
   tokenA: ISwapToken,
   tokenB: ISwapToken,
   inTokenAmount: number,
-  wallet: any,
+  wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork,
   route: any,
