@@ -10,7 +10,7 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
 }
 
 export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'SRM', 'ETH', 'GMT', 'mSOL']
-export const FARM_SUPPORTED_TOKEN_LIST = ['GOFX']
+export let FARM_SUPPORTED_TOKEN_LIST = ['GOFX']
 export const MODAL_TYPES = {
   FEES: 'FEES',
   REWARDS: 'REWARDS',
@@ -29,6 +29,17 @@ export const CAROUSEL = [
   { name: 'Borrow', id: 5, position: 6 }
   // { name: 'Borrow', id: 25, position: 7 },
 ]
+export const NETWORK_CONSTANTS = {
+  DEVNET: 'devnet',
+  MAINNET: 'mainnet-beta',
+  DEVNET_SDK: 'DEVNET',
+  MAINNET_SDK: 'MAINNET'
+}
+export const TOKEN_NAMES = {
+  SOL: 'SOL',
+  GOFX: 'GOFX',
+  GMT: 'GMT'
+}
 
 export const TOKEN_BLACKLIST = [
   'totCSh2TfEPTRovc4rMGz1ezukAdPxYWzh9jnXppeqY',
@@ -159,7 +170,7 @@ export const stakeTokens = [
     id: '0',
     image: 'GOFX',
     name: 'GOFX',
-    earned: -1,
+    earned: undefined,
     rewards: 100,
     liquidity: -1,
     type: 'Staking',
@@ -168,13 +179,12 @@ export const stakeTokens = [
   }
 ]
 
-export const generateListOfSSLTokens = (): any => {
+export const generateListOfSSLTokens = (network): any => {
   const sslTokens = []
-  const obj = ADDRESSES['mainnet-beta'].sslPool
-  if (FARM_SUPPORTED_TOKEN_LIST.length < 2) {
-    for (let key in obj) {
-      FARM_SUPPORTED_TOKEN_LIST.push(key)
-    }
+  const obj = ADDRESSES[network].sslPool
+  FARM_SUPPORTED_TOKEN_LIST = ['GOFX']
+  for (let key in obj) {
+    FARM_SUPPORTED_TOKEN_LIST.push(key)
   }
   for (let i = 1; i < FARM_SUPPORTED_TOKEN_LIST.length; i++) {
     sslTokens.push({
@@ -189,15 +199,3 @@ export const generateListOfSSLTokens = (): any => {
   }
   return sslTokens
 }
-
-// ,
-//   {
-//     id: '4',
-//     image: 'MSOL',
-//     name: 'MSOL',
-//     earned: 0,
-//     apr: 0,
-//     liquidity: 0,
-//     type: 'SSL',
-//     currentlyStaked: 0
-//   }

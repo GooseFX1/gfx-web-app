@@ -277,36 +277,7 @@ const LoadBuy = ({ nestQuestData, setPhase }: MintProps) => {
       fetchAvailableNft(connection)
         .then((res) => {
           if (res) {
-            var buyFunction = null
-            if (nestQuestData.token === 'SOL') {
-              buyFunction = buyWithSOL(wallet, connection, res)
-            } else {
-              buyFunction = buyWithGOFX(wallet, connection, res)
-            }
-
-            buyFunction
-              .then((result) => {
-                if (result) {
-                  setPhase(3)
-                  notify({
-                    type: 'success',
-                    message: 'Purchase successful!',
-                    description: `You bought 1 "Tier 1 Egg" for at least ${
-                      nestQuestData.token === 'SOL' ? '2 SOL' : '750 GOFX'
-                    }`,
-                    icon: 'success',
-                    txid: result as string,
-                    network: 'devnet'
-                  })
-                } else {
-                  throw new Error('an error occured')
-                }
-              })
-              .catch((err) => {
-                console.log(err)
-                notify({ type: 'error', message: err?.message })
-                setPhase(1)
-              })
+            purchase(nestQuestData.token, res.nft)
           } else {
             throw new Error('NFT sold out')
           }
@@ -318,6 +289,33 @@ const LoadBuy = ({ nestQuestData, setPhase }: MintProps) => {
         })
     }
   }, [wallet.publicKey, connection])
+
+  const purchase = (token: string, nft: any) => {
+    const buyFunction = token === 'SOL' ? buyWithSOL(wallet, connection, nft) : buyWithGOFX(wallet, connection, nft)
+
+    buyFunction
+      .then((result) => {
+        if (result) {
+          setPhase(3)
+          notify({
+            type: 'success',
+            message: 'Purchase successful!',
+            description: `You bought 1 "Tier 1 Egg" for at least ${token === 'SOL' ? '2 SOL' : '750 GOFX'}`,
+            icon: 'success',
+            txid: result as string,
+            network: 'devnet'
+          })
+        } else {
+          throw new Error('an error occured')
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        notify({ type: 'error', message: err?.message })
+        setPhase(1)
+      })
+  }
+
   return (
     <LoadStyle>
       <p className="big-text">Hold Tight!</p>

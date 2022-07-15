@@ -178,7 +178,7 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
     <ANALYTIC_ITEM
       onClick={() =>
         isCollection
-          ? history.push(`/NFTs/collection/${collection.collection[0].collection_name}`)
+          ? history.push(`/NFTs/collection/${collection.collection[0].collection_name.replaceAll(' ', '_')}`)
           : console.log('Error: Analytics No collection')
       }
     >

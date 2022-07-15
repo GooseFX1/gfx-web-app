@@ -43,7 +43,7 @@ export const Collection: FC = (): JSX.Element => {
 
   useEffect(() => {
     if (!singleCollection || `${singleCollection.collection_id}` !== params.collectionName) {
-      fetchSingleCollection(params.collectionName).then((res) => {
+      fetchSingleCollection(params.collectionName.replaceAll('_', ' ')).then((res) => {
         if (res?.status === 200) {
           setErr(false)
         } else {

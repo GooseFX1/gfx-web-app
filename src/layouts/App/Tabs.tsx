@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { useDarkMode } from '../../context'
 import { CenteredDiv, CenteredImg, SVGToGrey2, SVGToPrimary2, SVGToWhite } from '../../styles'
+import tw from 'twin.macro'
 
 const TABS = ['/swap', '/trade', '/NFTs', '/farm']
 
@@ -19,85 +20,57 @@ const LABEL = styled.span<{ $mode: string; $hover: boolean }>`
       : $mode === 'dark'
       ? '#4E4E4E'
       : '#636363'};
+  ${tw`h-3.5 w-[7vw] flex justify-center items-center text-smallest capitalize sm:text-regular`}
+  color: ${({ $hover, $mode, theme }) =>
+    $hover && $mode === 'dark'
+      ? '#FFFFFF'
+      : $hover && $mode !== 'dark'
+      ? '#5855FF'
+      : $mode === 'dark'
+      ? '#4E4E4E'
+      : '#636363'};
   font-weight: ${({ $hover }) => ($hover ? '600' : 'normal')};
-  text-transform: capitalize;
 
   @media (max-width: 500px) {
     color: #4e4e4e;
-    font-size: 18px;
     color: ${({ $hover }) => ($hover ? 'white' : '#4e4e4e')};
-
-    &:hover {
-      background-color: #3735bb;
-      color: white;
-    }
   }
 `
 
 const TAB = styled(Link)`
-  ${({ theme }) => theme.flexCenter}
-  flex-direction: column;
-
-  @media (max-width: 500px) {
-    position: relative;
-    flex-direction: row;
-    justify-content: center;
-    width: 100%;
-  }
-    
-  }
+  ${tw`flex flex-col items-center justify-center sm:relative sm:flex-row sm:justify-center sm:w-full`}
 `
 
 const TAB_ICON = styled(CenteredImg)`
-  margin-bottom: 10px;
-  ${({ theme }) => theme.measurements(theme.margin(3))}
-
-  @media (max-width: 500px) {
-    position: absolute;
-    left: 2.5rem;
-    margin-bottom: 0px !important;
-  }
+  ${tw`mb-2.5 h-6 w-6 sm:absolute sm:left-10 sm:!mb-0`}
 `
 
 const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: number }>`
-  position: relative;
-  ${({ theme }) => theme.roundedBorders}
+  ${tw`relative h-20 rounded-circle`}
   background-color: ${({ theme }) => theme.bg9};
-  height: 80px;
 
   .arrow-down {
-    width: 14px;
-    height: auto;
-    display: block;
+    ${tw`w-3.5 h-auto block`}
   }
 
   &:after {
+    ${tw`absolute top-0 block h-2 w-11 rounded-b-circle`}
     content: '';
-    position: absolute;
-    left: ${({ $index, $width }) => 2 * $index * 40 + 18}px;
-    top: 0;
-    display: block;
-    height: 8px;
-    width: 44px;
-    ${({ theme }) => theme.headerRoundedBorders}
-    background: #5855FF;
+    left: ${({ $index }) => 2 * $index * 40 + 18}px;
+    background: #5855ff;
     transition: left ${({ theme }) => theme.mainTransitionTime} ease-in-out;
   }
 
   > a {
+    ${tw`py-0 px-10 z-[1] rounded-circle`}
     width: ${({ $width }) => $width}px;
-    padding: 0 40px;
-    ${({ theme }) => theme.roundedBorders}
-    z-index: 1;
 
     > div {
-      height: 27px;
-      width: auto;
+      ${tw`h-[27px] w-auto`}
     }
 
     img {
-      height: 27px;
-      width: auto;
+      ${tw`h-[27px] w-auto`}
     }
 
     ${({ $width }) =>
@@ -111,7 +84,7 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
 
     &:first-child {
       img {
-        height: 20px;
+        ${tw`h-5`}
       }
     }
 
@@ -128,13 +101,11 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
   }
 
   @media (max-width: 720px) {
-    width: 100%;
-    margin-bottom: 50px;
+    ${tw`w-full mb-[50px]`}
 
     > a {
       width: calc(100% / ${TABS.length});
-      padding-left: 0px;
-      padding-right: 0px;
+      ${tw`px-0`}
     }
 
     &:after {
@@ -144,20 +115,11 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
   }
 
   @media (max-width: 500px) {
+    ${tw`w-full mb-0 rounded-none flex flex-col justify-start h-full`}
     background-color: ${({ theme }) => theme.bg1};
-    width: 100%;
-    margin-bottom: 0px;
-    border-radius: 0px;
-    flex-direction: column;
-    justify-content: start;
-    height: 100%;
 
     > a {
-      width: 100%;
-      font-size: 18px;
-      height: 64px;
-      border-radius: 0px;
-      margin: 1rem 0;
+      ${tw`w-full text-regular h-16 rounded-none mx-0 my-4`}
 
       &:hover {
         background-color: #3735bb;
@@ -165,10 +127,8 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     }
 
     &:after {
-      width: 100%;
-      left: 0;
+      ${tw`w-full left-0 h-0`}
       background: ${({ theme }) => theme.bg1};
-      height: 0px;
     }
   }
 `

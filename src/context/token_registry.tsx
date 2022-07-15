@@ -26,14 +26,49 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
       const splList = list
         .filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
         .filter(({ address }) => !TOKEN_BLACKLIST.includes(address))
-      const farmSupportedList = list.filter(({ symbol }) => FARM_SUPPORTED_TOKEN_LIST.includes(symbol))
-
+      let farmSupportedList = list.filter(({ symbol }) => FARM_SUPPORTED_TOKEN_LIST.includes(symbol))
       //TODO: Add filteredList from solana-spl-registry back
       //setFarmingTokens()
-      setFarmingTokens(farmSupportedList)
-      const filteredList = [...splList]
-
       if (chainId === ENV.Devnet) {
+        farmSupportedList = []
+        farmSupportedList.push({
+          address: '2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6',
+          chainId,
+          decimals: 9,
+          name: 'GooseFX',
+          symbol: 'GOFX'
+        })
+
+        farmSupportedList.push({
+          address: ADDRESSES.devnet.sslPool.USDC.address.toString(),
+          chainId,
+          decimals: 9,
+          name: 'USD Coin',
+          symbol: 'USDC'
+        })
+
+        farmSupportedList.push({
+          address: ADDRESSES.devnet.sslPool.SOL.address.toString(),
+          chainId,
+          decimals: 9,
+          name: 'SOLANA',
+          symbol: 'SOL'
+        })
+
+        farmSupportedList.push({
+          address: ADDRESSES.devnet.sslPool.ETH.address.toString(),
+          chainId,
+          decimals: 9,
+          name: 'ETH',
+          symbol: 'ETH'
+        })
+        console.log(farmSupportedList)
+        setFarmingTokens(farmSupportedList)
+      } else setFarmingTokens(farmSupportedList)
+
+      let filteredList = [...splList]
+      if (chainId === ENV.Devnet) {
+        filteredList = []
         filteredList.push({
           address: ADDRESSES.devnet.mints.GOFX.address.toString(),
           chainId,

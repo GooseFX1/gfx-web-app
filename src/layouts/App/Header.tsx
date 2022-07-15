@@ -37,10 +37,9 @@ const BUTTONS = styled(CenteredDiv)`
 `
 
 const WRAPPER = styled.nav`
-  ${tw`fixed w-full rounded-br-circle rounded-bl-circle md:flex-nowrap md:flex h-auto md:p-2 min-md:flex min-md:items-center min-md:justify-center`}
+  ${tw`fixed w-full rounded-br-circle rounded-bl-circle z-[300] md:flex-nowrap md:flex md:h-auto md:p-2 min-md:flex min-md:items-center min-md:justify-center`}
   background-color: ${({ theme }) => theme.bg9};
   ${({ theme }) => theme.smallShadow}
-  z-index: 300;
 `
 
 const MobileWrapper = styled(WRAPPER)`
@@ -57,8 +56,7 @@ const CollapsibleWrapper = styled.div<{ $collapse: boolean }>`
   }
 `
 const RESPONSIVE_MENU = styled.ul`
-${tw`absolute items-center flex flex-col left-0 top-0 h-screen w-screen pb-4`}
-  padding-top: 10vh;
+${tw`absolute items-center flex flex-col left-0 top-0 h-screen w-screen pb-4 pt-[10vh] px-0`}
   background-color: ${({ theme }) => theme.bg1};
 `
 
