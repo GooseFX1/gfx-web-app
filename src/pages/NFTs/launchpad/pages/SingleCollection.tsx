@@ -244,14 +244,14 @@ const SUMMARY_TAB_CONTENT = styled.div`
 export const SingleCollection: FC = () => {
   const { selectedProject, cndyValues } = useNFTLPSelected()
 
-  const isLive = parseInt(selectedProject?.startsOn) < Date.now()
+  const isLive = parseInt(selectedProject?.whitelist) < Date.now()
   const displayProgressBar =
     isLive && cndyValues ? (
       <MintProgressBar minted={cndyValues?.itemsRedeemed} totalNFTs={cndyValues?.itemsAvailable} />
     ) : isLive && !cndyValues ? (
       <SkeletonCommon style={{ marginTop: '20px' }} width="600px" height={'70px'} borderRadius="10px" />
     ) : (
-      <MintStarts time={selectedProject?.startsOn} />
+      <MintStarts time={selectedProject?.whitelist} />
     )
   const ProgressBar = selectedProject?.items ? (
     displayProgressBar
