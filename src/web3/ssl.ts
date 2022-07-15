@@ -11,7 +11,7 @@ import {
   getAssociatedTokenAddress,
   createSyncNativeInstruction,
   createCloseAccountInstruction
-} from '@solana/spl-token-new'
+} from '@solana/spl-token-v2'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import {
   Connection,
