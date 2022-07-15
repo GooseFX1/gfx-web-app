@@ -5,7 +5,7 @@ import analytics from '../../analytics'
 import { TableList } from './TableList'
 import { FarmHeader } from './FarmHeader'
 import { useNavCollapse, FarmProvider, useConnectionConfig, ENDPOINTS, PriceFeedFarmProvider } from '../../context'
-import { notify } from '../../utils'
+import { notify, checkMobile } from '../../utils'
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
@@ -25,6 +25,11 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   }
 
   ${({ theme }) => theme.customScrollBar('6px')};
+
+  @media (max-width: 500px){
+    padding-left: 0px;
+    padding-right: 0px;
+  }
 `
 
 const BODY = styled.div<{ $navCollapsed: boolean }>`
@@ -32,6 +37,12 @@ const BODY = styled.div<{ $navCollapsed: boolean }>`
   padding: ${({ theme }) => theme.margin(8)};
   padding-top: 43px !important;
   padding-bottom: 0px !important;
+
+  @media (max-width: 500px){
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 17px !important;
+  }
 `
 
 export const Farm: FC = () => {
