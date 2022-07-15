@@ -1,9 +1,10 @@
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import BN from 'bn.js'
-import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
 import { Connection, PublicKey, Signer, Transaction, sendAndConfirmTransaction } from '@solana/web3.js'
 import { getHashedName, getNameAccountKey, NameRegistryState } from '@solana/spl-name-service'
 import { useLocalStorage } from '../utils'
+import { NETWORK_CONSTANTS } from '../constants'
 
 export const SOL_TLD_AUTHORITY = new PublicKey('58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx')
 
@@ -17,14 +18,7 @@ export const isValidSolanaAddress = (address: string) => {
 }
 
 export const createAssociatedTokenAccountIx = (mint: PublicKey, associatedAccount: PublicKey, owner: PublicKey) =>
-  Token.createAssociatedTokenAccountInstruction(
-    ASSOCIATED_TOKEN_PROGRAM_ID,
-    TOKEN_PROGRAM_ID,
-    mint,
-    associatedAccount,
-    owner,
-    owner
-  )
+  createAssociatedTokenAccountInstruction(owner, associatedAccount, owner, mint)
 
 export const findAssociatedTokenAddress = async (
   walletAddress: PublicKey,
@@ -164,5 +158,5 @@ export const bnTo8 = (bn: BN): Uint8Array => {
 }
 
 export const getNetworkConnectionText = (network) => {
-  return network === 'devnet' ? 'DEVNET' : 'MAINNET'
+  return network === NETWORK_CONSTANTS.DEVNET ? NETWORK_CONSTANTS.DEVNET_SDK : NETWORK_CONSTANTS.MAINNET_SDK
 }

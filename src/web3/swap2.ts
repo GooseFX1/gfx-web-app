@@ -2,6 +2,7 @@ import { Buffer } from 'buffer'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Swap } from 'goosefx-ssl-sdk'
 import { CURRENT_SUPPORTED_TOKEN_LIST } from '../constants'
+import { WalletContextState } from '@solana/wallet-adapter-react'
 
 import {
   NATIVE_MINT,
@@ -9,7 +10,7 @@ import {
   getAssociatedTokenAddress,
   createSyncNativeInstruction,
   createCloseAccountInstruction
-} from '@solana/spl-token-new'
+} from '@solana/spl-token-v2'
 
 import {
   Connection,
@@ -34,11 +35,10 @@ export const computePoolsPDAs = async (
   return { lpTokenMint: null, pair: null, pool: null }
 }
 
-const wrapSolToken = async (wallet: any, connection: Connection, amount: number) => {
+const wrapSolToken = async (wallet: WalletContextState, connection: Connection, amount: number) => {
   try {
     const tx = new Transaction()
     const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
-    console.log(associatedTokenAccount + '')
     // Create token account to hold your wrapped SOL
     if (associatedTokenAccount) {
       tx.add(
@@ -88,14 +88,18 @@ export const swap = async (
   inTokenAmount: number,
   outTokenAmount: number,
   slippage: number,
-  wallet: any,
+  wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<TransactionSignature | undefined> => {
   try {
     SWAP.connection = connection
-    const { createSwapIx } = SWAP
+    if (network === 'devnet') {
+      SWAP.controller = ADDRESSES[network].programs.swap.controller
+      SWAP.programId = ADDRESSES[network].programs.swap.address
+    }
 
+    const { createSwapIx } = SWAP
     let txn = new Transaction()
     if (tokenA.address === NATIVE_MINT.toBase58()) {
       txn = await wrapSolToken(wallet, connection, inTokenAmount * LAMPORTS_PER_SOL)
@@ -126,7 +130,7 @@ export const swap = async (
     }
 
     const finalResult = await signAndSendRawTransaction(connection, txn, wallet)
-    let result = await connection.confirmTransaction(finalResult)
+    let result = finalResult ? await connection.confirmTransaction(finalResult) : null
 
     if (!result.value.err) {
       return finalResult
@@ -143,7 +147,7 @@ export const preSwapAmount = async (
   tokenA: ISwapToken,
   tokenB: ISwapToken,
   inTokenAmount: number,
-  wallet: any,
+  wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork,
   route: any,
@@ -159,6 +163,10 @@ export const preSwapAmount = async (
     let outAmount: number, priceImpact: number
     try {
       SWAP.connection = connection
+      if (network === 'devnet') {
+        SWAP.controller = ADDRESSES[network].programs.swap.controller
+        SWAP.programId = ADDRESSES[network].programs.swap.address
+      }
       const { getQuote } = SWAP
       const quote = await getQuote(new PublicKey(tokenA.address), new PublicKey(tokenB.address), BigInt(inAmount))
       const { out, impact } = quote
@@ -166,6 +174,14 @@ export const preSwapAmount = async (
       outAmount = Number(out.toString()) / 10 ** tokenB.decimals
     } catch (e) {
       console.log(e)
+    }
+
+    if (network === 'devnet') {
+      return {
+        preSwapResult: outAmount?.toString() || '0',
+        impact: Number(priceImpact),
+        gofxAmount: outAmount?.toString() || '0'
+      }
     }
     const available =
       (tokenB.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA.symbol)) ||

@@ -17,7 +17,7 @@ import { useAccounts } from './accounts'
 import { useConnectionConfig, useSlippageConfig } from './settings'
 import { notify } from '../utils'
 import { serum, swap, preSwapAmount } from '../web3'
-
+import JSBI from 'jsbi'
 export type SwapInput = undefined | 'from' | 'to'
 
 interface IPool {
@@ -55,6 +55,7 @@ interface ISwapConfig {
   tokenA: ISwapToken | null
   tokenB: ISwapToken | null
   connection?: any
+  network?: any
   priceImpact?: number
   chosenRoutes: any[]
   setRoutes: (r: any) => void
@@ -78,7 +79,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [priceImpact, setPriceImpact] = useState(0)
   const [_, setFocused] = useState<SwapInput>(undefined)
   const [chosenRoutes, setRoutes] = useState([])
-  const [clickNo, setClickNo] = useState(1)
+  const [clickNo, setClickNo] = useState(network === 'devnet' ? 0 : 1)
   const [pool, setPool] = useState<IPool>({
     inAmount: 0,
     inValue: 0,
@@ -260,8 +261,34 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setTokenB(tokenA)
   }
 
+  function marketInfoFormat(mkt: any) {
+    return {
+      ...mkt,
+      inAmount: JSBI.BigInt(mkt.inAmount),
+      outAmount: JSBI.BigInt(mkt.outAmount),
+      lpFee: {
+        ...mkt.lpFee,
+        amount: JSBI.BigInt(mkt.lpFee.amount)
+      },
+      platformFee: {
+        ...mkt.platformFee,
+        amount: JSBI.BigInt(mkt.platformFee.amount)
+      }
+    }
+  }
+
+  function revertRoute(route: any) {
+    return {
+      ...route,
+      inAmount: JSBI.BigInt(route.inAmount),
+      outAmount: JSBI.BigInt(route.outAmount),
+      amount: JSBI.BigInt(route.amount),
+      outAmountWithSlippage: JSBI.BigInt(route.otherAmountThreshold),
+      marketInfos: route.marketInfos.map((mkt) => marketInfoFormat(mkt))
+    }
+  }
+
   async function callPathExchange(route: any, exchange: any) {
-    console.log(route)
     if (route.marketInfos[0].amm.label === 'GooseFX') {
       return await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
     } else {
@@ -272,7 +299,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
           signAllTransactions: wallet.signAllTransactions,
           signTransaction: wallet.signTransaction
         },
-        routeInfo: route,
+        routeInfo: revertRoute(route),
         onTransaction: async (txid: any) => {
           //console.log('sending transaction')
           let result = await connection.confirmTransaction(txid)
@@ -315,6 +342,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setRoutes,
         setClickNo,
         clickNo,
+        network,
         gofxOutAmount
       }}
     >
@@ -353,6 +381,7 @@ export const useSwap = (): ISwapConfig => {
     setRoutes: context.setRoutes,
     setClickNo: context.setClickNo,
     clickNo: context.clickNo,
+    network: context.network,
     gofxOutAmount: context.gofxOutAmount
   }
 }

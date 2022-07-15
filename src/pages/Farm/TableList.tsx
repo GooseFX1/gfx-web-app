@@ -25,8 +25,7 @@ import { ADDRESSES } from '../../web3'
 import { MorePoolsSoon } from './MorePoolsSoon'
 import { NATIVE_MINT } from '@solana/spl-token'
 import { CONTROLLER_IDL, SSL_IDL } from 'goosefx-ssl-sdk'
-
-const StakeIDL = require('../../web3/idl/stake.json')
+import { NETWORK_CONSTANTS, TOKEN_NAMES } from '../../constants'
 
 //#region styles
 export const STYLED_TABLE_LIST = styled(Table)`
@@ -196,7 +195,7 @@ export const TableList = ({ dataSource }: any) => {
   const stakeProgram: Program = useMemo(() => {
     return wallet.publicKey
       ? new Program(
-          StakeIDL,
+          CONTROLLER_IDL as any,
           SDK_ADDRESS[getNetworkConnection(network)].CONTROLLER_PROGRAM_ID,
           new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
         )
@@ -295,7 +294,7 @@ export const TableList = ({ dataSource }: any) => {
             SSLAccountKeys.push(await getSslAccountKey(tokenMint, network))
             liquidityAccountKeys.push(await getLiquidityAccountKey(wallet, tokenMint, network))
             mainVaultKeys.push(await getMainVaultKey(tokenMint, network))
-            if (network !== 'devnet') {
+            if (network !== NETWORK_CONSTANTS.DEVNET) {
               aprVolumePromise.push(fetchSSLAPR(tokenMint.toString(), controllerStr))
               aprVolumePromise.push(fetchSSLVolumeData(tokenMint.toString(), controllerStr))
             }
@@ -357,10 +356,10 @@ export const TableList = ({ dataSource }: any) => {
       const currentlyStaked = accountData.tokenStaked ? accountData.tokenStaked : 0
       const dailyRewards = (APR * currentlyStaked) / 365
       const newFarmDataContext = farmDataContext.map((data) => {
-        if (data.name === 'GOFX') {
+        if (data.name === TOKEN_NAMES.GOFX) {
           return {
             ...data,
-            earned: accountData.tokenEarned ? accountData.tokenEarned : 0,
+            earned: accountData.tokenEarned ? Math.max(accountData.tokenEarned, 0) : 0,
             apr: APR * 100,
             rewards: dailyRewards,
             liquidity: gofxPrice.current * liqidity,
