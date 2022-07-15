@@ -13,7 +13,10 @@ import {
   SetupState,
   CANDY_MACHINE_PROGRAM,
   createAccountsForMintNonce,
-  mintOneTokenNonce
+  mintOneTokenNonce,
+  mintOneTokenWhitelist,
+  getWalletWhitelistPda,
+  mintOneTokenCustom
 } from '../candyMachine/candyMachine'
 import { AlertState } from '../candyMachine/utils'
 import { Transaction, PublicKey, sendAndConfirmRawTransaction } from '@solana/web3.js'
@@ -58,11 +61,21 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
   const [endDate, setEndDate] = useState<Date>()
   const [itemsRemaining, setItemsRemaining] = useState<number>()
   const [isActive, setIsActive] = useState(false)
-  const [isPresale, setIsPresale] = useState(false)
   const [needTxnSplit, setNeedTxnSplit] = useState(true)
   const [discountPrice, setDiscountPrice] = useState<anchor.BN>()
   //
-  const [isNonce, setIsNonce] = useState<boolean>(true)
+  const [isNonce, setIsNonce] = useState<boolean>(false)
+
+  const isWhitelist = () => {
+    if (
+      parseFloat(selectedProject.whitelist) &&
+      parseFloat(selectedProject.whitelist) < Date.now() &&
+      parseFloat(selectedProject.startsOn) > Date.now()
+    )
+      return true
+    return false
+  }
+
   const onMint = async (beforeTransactions: Transaction[] = [], afterTransactions: Transaction[] = []) => {
     try {
       setIsUserMinting(true)
@@ -197,13 +210,26 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
             })
           }
         } else {
-          let mintResult = await mintOneToken(
-            candyMachine,
-            wallet.publicKey,
-            beforeTransactions,
-            afterTransactions,
-            setupMint ?? setupTxn
-          )
+          let mintResult = null
+          if (isWhitelist()) {
+            let wallet_pda = await getWalletWhitelistPda(wallet.publicKey)
+            mintResult = await mintOneTokenWhitelist(
+              candyMachine,
+              wallet.publicKey,
+              beforeTransactions,
+              afterTransactions,
+              setupMint ?? setupTxn,
+              wallet_pda[0]
+            )
+          } else {
+            mintResult = await mintOneTokenCustom(
+              candyMachine,
+              wallet.publicKey,
+              beforeTransactions,
+              afterTransactions,
+              setupMint ?? setupTxn
+            )
+          }
 
           let status: any = { err: true }
           let metadataStatus = null
@@ -325,11 +351,13 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
       setIsActive(cndyValues.isActive)
       setItemsRemaining(cndyValues.itemsRemaining)
       setNeedTxnSplit(cndyValues.needTxnSplit)
-      setIsPresale(cndyValues.isPreSale)
     }
   }, [cndyValues, wallet.connected, wallet.publicKey])
 
-  return isActive && candyMachine?.state.gatekeeper && wallet.publicKey && wallet.signTransaction ? (
+  return (isActive || isWhitelistUser) &&
+    candyMachine?.state.gatekeeper &&
+    wallet.publicKey &&
+    wallet.signTransaction ? (
     <GatewayProvider
       wallet={{
         publicKey: wallet.publicKey || new PublicKey(CANDY_MACHINE_PROGRAM),
@@ -433,8 +461,10 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
         candyMachine={candyMachine}
         isMinting={isUserMinting}
         setIsMinting={(val) => setIsUserMinting(val)}
-        isActive={isActive || (isPresale && isWhitelistUser && isValidBalance)}
+        isActive={isActive || (isWhitelistUser && isValidBalance)}
         isLive={isLive}
+        isWhitelist={isWhitelist()}
+        cndyValues={cndyValues}
       ></MintButtonFunc>
     </GatewayProvider>
   ) : (
@@ -443,8 +473,10 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
       candyMachine={candyMachine}
       isMinting={isUserMinting}
       setIsMinting={(val) => setIsUserMinting(val)}
-      isActive={isActive || (isPresale && isWhitelistUser && isValidBalance)}
+      isActive={isActive || (isWhitelistUser && isValidBalance)}
       isLive={isLive}
+      isWhitelist={isWhitelist()}
+      cndyValues={cndyValues}
     ></MintButtonFunc>
   )
 }

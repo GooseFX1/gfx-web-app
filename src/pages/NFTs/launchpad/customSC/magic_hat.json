@@ -1,0 +1,1355 @@
+{
+  "version": "1.0.0",
+  "name": "magic_hat",
+  "instructions": [
+    {
+      "name": "initializeMagicHat",
+      "accounts": [
+        {
+          "name": "magicHat",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "wallet",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "data",
+          "type": {
+            "defined": "MagicHatData"
+          }
+        }
+      ]
+    },
+    {
+      "name": "updateMagicHat",
+      "accounts": [
+        {
+          "name": "magicHat",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "wallet",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "data",
+          "type": {
+            "defined": "MagicHatData"
+          }
+        }
+      ]
+    },
+    {
+      "name": "updateAuthority",
+      "accounts": [
+        {
+          "name": "magicHat",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "wallet",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "newAuthority",
+          "type": {
+            "option": "publicKey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "addConfigLines",
+      "accounts": [
+        {
+          "name": "magicHat",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "index",
+          "type": "u32"
+        },
+        {
+          "name": "configLines",
+          "type": {
+            "vec": {
+              "defined": "ConfigLine"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "setCollection",
+      "accounts": [
+        {
+          "name": "magicHat",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "collectionPda",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "metadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "edition",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "collectionAuthorityRecord",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "removeCollection",
+      "accounts": [
+        {
+          "name": "magicHat",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "collectionPda",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "metadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "collectionAuthorityRecord",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "mintNft",
+      "accounts": [
+        {
+          "name": "magicHat",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "magicHatCreator",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "wallet",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "metadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mintAuthority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "masterEdition",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "clock",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "recentBlockhashes",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "instructionSysvarAccount",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "creatorBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "wlMintNft",
+      "accounts": [
+        {
+          "name": "magicHat",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "walletWhitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "magicHatCreator",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelistedAddress",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "wallet",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "metadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mintAuthority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "updateAuthority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "masterEdition",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "clock",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "recentBlockhashes",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "instructionSysvarAccount",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "creatorBump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "setCollectionDuringMint",
+      "accounts": [
+        {
+          "name": "magicHat",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "metadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "collectionPda",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "instructions",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "collectionMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "collectionMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "collectionMasterEdition",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "collectionAuthorityRecord",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "withdrawFunds",
+      "accounts": [
+        {
+          "name": "magicHat",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "createWhitelistAccount",
+      "accounts": [
+        {
+          "name": "walletWhitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelistConfig",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelistedAddress",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "magicHatCreator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "whitelistType",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "deleteWhitelistAccount",
+      "accounts": [
+        {
+          "name": "walletWhitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "magicHatCreator",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "createWhitelistConfig",
+      "accounts": [
+        {
+          "name": "whitelistConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "magicHatCreator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "wlStartTime4WlSpots",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime4WlMp",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime4WlSt",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime3WlSpots",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime3WlMp",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime3WlSt",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime2WlSpots",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime2WlMp",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime2WlSt",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime1WlSpots",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime1WlMp",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime1WlSt",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "deleteWhitelistConfig",
+      "accounts": [
+        {
+          "name": "whitelistConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "magicHatCreator",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "updateWhitelistConfig",
+      "accounts": [
+        {
+          "name": "whitelistConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "magicHatCreator",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "wlStartTime4WlSpots",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime4WlMp",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime4WlSt",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime3WlSpots",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime3WlMp",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime3WlSt",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime2WlSpots",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime2WlMp",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime2WlSt",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime1WlSpots",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime1WlMp",
+          "type": "u64"
+        },
+        {
+          "name": "wlStartTime1WlSt",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "MagicHat",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "wallet",
+            "type": "publicKey"
+          },
+          {
+            "name": "tokenMint",
+            "type": {
+              "option": "publicKey"
+            }
+          },
+          {
+            "name": "itemsRedeemed",
+            "type": "u64"
+          },
+          {
+            "name": "data",
+            "type": {
+              "defined": "MagicHatData"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "CollectionPDA",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "publicKey"
+          },
+          {
+            "name": "magicHat",
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WalletWhitelist",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "magicHatCreator",
+            "type": "publicKey"
+          },
+          {
+            "name": "whitelistedAddress",
+            "type": "publicKey"
+          },
+          {
+            "name": "whitelistType",
+            "type": {
+              "defined": "WLType"
+            }
+          },
+          {
+            "name": "numberOfWhitelistSpotsPerUser",
+            "type": "u64"
+          },
+          {
+            "name": "discountedMintPrice",
+            "type": "u64"
+          },
+          {
+            "name": "whitelistMintStartTime",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WhitelistConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "whitelistSchedule",
+            "type": {
+              "defined": "WhitelistSchedule"
+            }
+          },
+          {
+            "name": "magicHatCreator",
+            "type": "publicKey"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "MagicHatData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "uuid",
+            "type": "string"
+          },
+          {
+            "name": "price",
+            "type": "u64"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "sellerFeeBasisPoints",
+            "type": "u16"
+          },
+          {
+            "name": "maxSupply",
+            "type": "u64"
+          },
+          {
+            "name": "isMutable",
+            "type": "bool"
+          },
+          {
+            "name": "retainAuthority",
+            "type": "bool"
+          },
+          {
+            "name": "goLiveDate",
+            "type": {
+              "option": "i64"
+            }
+          },
+          {
+            "name": "endSettings",
+            "type": {
+              "option": {
+                "defined": "EndSettings"
+              }
+            }
+          },
+          {
+            "name": "creators",
+            "type": {
+              "vec": {
+                "defined": "Creator"
+              }
+            }
+          },
+          {
+            "name": "hiddenSettings",
+            "type": {
+              "option": {
+                "defined": "HiddenSettings"
+              }
+            }
+          },
+          {
+            "name": "whitelistMintSettings",
+            "type": {
+              "option": {
+                "defined": "WhitelistMintSettings"
+              }
+            }
+          },
+          {
+            "name": "itemsAvailable",
+            "type": "u64"
+          },
+          {
+            "name": "gatekeeper",
+            "type": {
+              "option": {
+                "defined": "GatekeeperConfig"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ConfigLine",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EndSettings",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "endSettingType",
+            "type": {
+              "defined": "EndSettingType"
+            }
+          },
+          {
+            "name": "number",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Creator",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "address",
+            "type": "publicKey"
+          },
+          {
+            "name": "verified",
+            "type": "bool"
+          },
+          {
+            "name": "share",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "HiddenSettings",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "type": "string"
+          },
+          {
+            "name": "hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "WhitelistMintSettings",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mode",
+            "type": {
+              "defined": "WhitelistMintMode"
+            }
+          },
+          {
+            "name": "mint",
+            "type": "publicKey"
+          },
+          {
+            "name": "presale",
+            "type": "bool"
+          },
+          {
+            "name": "discountPrice",
+            "type": {
+              "option": "u64"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "GatekeeperConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "gatekeeperNetwork",
+            "type": "publicKey"
+          },
+          {
+            "name": "expireOnUse",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WhitelistTierConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "whitelistType",
+            "type": {
+              "defined": "WLType"
+            }
+          },
+          {
+            "name": "numberOfWhitelistSpotsTotal",
+            "type": "u64"
+          },
+          {
+            "name": "discountedMintPrice",
+            "type": "u64"
+          },
+          {
+            "name": "whitelistMintStartTime",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WhitelistSchedule",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wlStartTime4",
+            "type": {
+              "defined": "WhitelistTierConfig"
+            }
+          },
+          {
+            "name": "wlStartTime3",
+            "type": {
+              "defined": "WhitelistTierConfig"
+            }
+          },
+          {
+            "name": "wlStartTime2",
+            "type": {
+              "defined": "WhitelistTierConfig"
+            }
+          },
+          {
+            "name": "wlStartTime1",
+            "type": {
+              "defined": "WhitelistTierConfig"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "EndSettingType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Date"
+          },
+          {
+            "name": "Amount"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WhitelistMintMode",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "BurnEveryTime"
+          },
+          {
+            "name": "NeverBurn"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WLType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Null"
+          },
+          {
+            "name": "One"
+          },
+          {
+            "name": "Two"
+          },
+          {
+            "name": "Three"
+          },
+          {
+            "name": "Four"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "IncorrectOwner",
+      "msg": "Account does not have correct owner!"
+    },
+    {
+      "code": 6001,
+      "name": "Uninitialized",
+      "msg": "Account is not initialized!"
+    },
+    {
+      "code": 6002,
+      "name": "MintMismatch",
+      "msg": "Mint Mismatch!"
+    },
+    {
+      "code": 6003,
+      "name": "IndexGreaterThanLength",
+      "msg": "Index greater than length!"
+    },
+    {
+      "code": 6004,
+      "name": "NumericalOverflowError",
+      "msg": "Numerical overflow error!"
+    },
+    {
+      "code": 6005,
+      "name": "TooManyCreators",
+      "msg": "Can only provide up to 4 creators to magic hat (because magic hat is one)!"
+    },
+    {
+      "code": 6006,
+      "name": "UuidMustBeExactly6Length",
+      "msg": "Uuid must be exactly of 6 length"
+    },
+    {
+      "code": 6007,
+      "name": "NotEnoughTokens",
+      "msg": "Not enough tokens to pay for this minting"
+    },
+    {
+      "code": 6008,
+      "name": "NotEnoughSOL",
+      "msg": "Not enough SOL to pay for this minting"
+    },
+    {
+      "code": 6009,
+      "name": "TokenTransferFailed",
+      "msg": "Token transfer failed"
+    },
+    {
+      "code": 6010,
+      "name": "MagicHatEmpty",
+      "msg": "Magic hat is empty!"
+    },
+    {
+      "code": 6011,
+      "name": "MagicHatNotLive",
+      "msg": "Magic hat is not live!"
+    },
+    {
+      "code": 6012,
+      "name": "MagicHatNotLiveForWL",
+      "msg": "Magic hat is not live for WL!"
+    },
+    {
+      "code": 6013,
+      "name": "HiddenSettingsConfigsDoNotHaveConfigLines",
+      "msg": "Configs that are using hidden uris do not have config lines, they have a single hash representing hashed order"
+    },
+    {
+      "code": 6014,
+      "name": "CannotChangeNumberOfLines",
+      "msg": "Cannot change number of lines unless is a hidden config"
+    },
+    {
+      "code": 6015,
+      "name": "DerivedKeyInvalid",
+      "msg": "Derived key invalid"
+    },
+    {
+      "code": 6016,
+      "name": "PublicKeyMismatch",
+      "msg": "Public key mismatch"
+    },
+    {
+      "code": 6017,
+      "name": "NoWhitelistToken",
+      "msg": "No whitelist token present"
+    },
+    {
+      "code": 6018,
+      "name": "TokenBurnFailed",
+      "msg": "Token burn failed"
+    },
+    {
+      "code": 6019,
+      "name": "GatewayAppMissing",
+      "msg": "Missing gateway app when required"
+    },
+    {
+      "code": 6020,
+      "name": "GatewayTokenMissing",
+      "msg": "Missing gateway token when required"
+    },
+    {
+      "code": 6021,
+      "name": "GatewayTokenExpireTimeInvalid",
+      "msg": "Invalid gateway token expire time"
+    },
+    {
+      "code": 6022,
+      "name": "NetworkExpireFeatureMissing",
+      "msg": "Missing gateway network expire feature when required"
+    },
+    {
+      "code": 6023,
+      "name": "CannotFindUsableConfigLine",
+      "msg": "Unable to find an unused config line near your random number index"
+    },
+    {
+      "code": 6024,
+      "name": "InvalidString",
+      "msg": "Invalid string"
+    },
+    {
+      "code": 6025,
+      "name": "SuspiciousTransaction",
+      "msg": "Suspicious transaction detected"
+    },
+    {
+      "code": 6026,
+      "name": "CannotSwitchToHiddenSettings",
+      "msg": "Cannot Switch to Hidden Settings after items available is greater than 0"
+    },
+    {
+      "code": 6027,
+      "name": "IncorrectSlotHashesPubkey",
+      "msg": "Incorrect SlotHashes PubKey"
+    },
+    {
+      "code": 6028,
+      "name": "IncorrectCollectionAuthority",
+      "msg": "Incorrect collection NFT authority"
+    },
+    {
+      "code": 6029,
+      "name": "MismatchedCollectionPDA",
+      "msg": "Collection PDA address is invalid"
+    },
+    {
+      "code": 6030,
+      "name": "MismatchedCollectionMint",
+      "msg": "Provided mint account doesn't match collection PDA mint"
+    },
+    {
+      "code": 6031,
+      "name": "SlotHashesEmpty",
+      "msg": "Slot hashes Sysvar is empty"
+    },
+    {
+      "code": 6032,
+      "name": "MetadataAccountMustBeEmpty",
+      "msg": "The metadata account has data in it, and this must be empty to mint a new NFT"
+    },
+    {
+      "code": 6033,
+      "name": "MissingSetCollectionDuringMint",
+      "msg": "Missing set collection during mint IX for Magic hat with collection set"
+    },
+    {
+      "code": 6034,
+      "name": "NoChangingCollectionDuringMint",
+      "msg": "Can't change collection settings after items have begun to be minted"
+    },
+    {
+      "code": 6035,
+      "name": "MagicHatCollectionRequiresRetainAuthority",
+      "msg": "Retain authority must be true for Magic hats with a collection set"
+    },
+    {
+      "code": 6036,
+      "name": "NotEnoughBalance",
+      "msg": "Src Balance < LP Deposit Amount."
+    },
+    {
+      "code": 6037,
+      "name": "InvalidNumberofWL",
+      "msg": "Can't decerease as the count is more than number of available spots."
+    },
+    {
+      "code": 6038,
+      "name": "InvalidWLType",
+      "msg": "WLType is invalid."
+    },
+    {
+      "code": 6039,
+      "name": "WL1NotScheduled",
+      "msg": "WL1 not scheduled."
+    },
+    {
+      "code": 6040,
+      "name": "WL2NotScheduled",
+      "msg": "WL2 not scheduled."
+    },
+    {
+      "code": 6041,
+      "name": "WL3NotScheduled",
+      "msg": "WL3 not scheduled."
+    },
+    {
+      "code": 6042,
+      "name": "WL4NotScheduled",
+      "msg": "WL4 not scheduled."
+    },
+    {
+      "code": 6043,
+      "name": "WLMintNotStarted",
+      "msg": "WL mint not started yet."
+    },
+    {
+      "code": 6044,
+      "name": "NoWhitelistSpots",
+      "msg": "No whitelist spots left"
+    }
+  ],
+  "metadata": {
+    "address": "G317XThznKMemjmSBEekMSsPedT9krKcAeRmE39drhNA"
+  }
+}

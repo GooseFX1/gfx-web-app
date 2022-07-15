@@ -59,7 +59,9 @@ export const MintButtonFunc = ({
   isMinting,
   setIsMinting,
   isActive,
-  isLive
+  isLive,
+  isWhitelist,
+  cndyValues
 }: {
   onMint: () => Promise<void>
   candyMachine?: CandyMachineAccount
@@ -67,6 +69,8 @@ export const MintButtonFunc = ({
   setIsMinting: (val: boolean) => void
   isActive: boolean
   isLive: boolean
+  isWhitelist: boolean
+  cndyValues: any
 }) => {
   const wallet = useWallet()
   const [verified, setVerified] = useState(false)
@@ -102,8 +106,19 @@ export const MintButtonFunc = ({
       return 'SOLD OUT'
     } else if (isMinting) {
       return 'MINTING'
-    } else if (candyMachine?.state.isPresale || candyMachine?.state.isWhitelistOnly) {
+    } else if (candyMachine?.state.isWhitelistOnly) {
       return 'WHITELIST MINT'
+    }
+    if (isWhitelist) {
+      if (
+        cndyValues &&
+        cndyValues.whitelistInfo &&
+        cndyValues.whitelistInfo.numberOfWhitelistSpotsPerUser.toString() > 0
+      ) {
+        return cndyValues.whitelistInfo.numberOfWhitelistSpotsPerUser.toString() + ' WHITELIST MINT LEFT'
+      } else {
+        return 'NO WHITELIST MINT LEFT'
+      }
     }
 
     return 'MINT'

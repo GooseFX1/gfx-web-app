@@ -8,8 +8,10 @@ import * as anchor from '@project-serum/anchor'
 import { useConnectionConfig } from './settings'
 import { PublicKey } from '@solana/web3.js'
 import { getAtaForMint, toDate } from '../pages/NFTs/launchpad/candyMachine/utils'
-import { getCollectionPDA } from '../pages/NFTs/launchpad/candyMachine/candyMachine'
+import { getCollectionPDA, getWhitelistInfo } from '../pages/NFTs/launchpad/candyMachine/candyMachine'
 import { nonceStatus } from '../types/nft_launchpad'
+import { MAGIC_HAT_PROGRAM_V2_ID } from '../pages/NFTs/launchpad/customSC/config'
+import idl_m from '../pages/NFTs/launchpad/customSC/magic_hat.json'
 
 interface INFTProjectConfig {
   collectionId: number
@@ -21,6 +23,7 @@ interface INFTProjectConfig {
   status: string
   ended?: boolean | string
   currency: string
+  whitelist: string
 }
 interface INFTLaunchpadConfig {
   upcomoingNFTProjects: INFTProjectConfig[]
@@ -44,7 +47,11 @@ export const NFTLaunchpadProvider: FC<{ children: ReactNode }> = ({ children }) 
           endedProject = [],
           liveProject = []
         for (let i = 0; i < launchpadData.length; i++) {
-          if (parseFloat(launchpadData[i].startsOn) > Date.now()) upcomingProject.push(launchpadData[i])
+          if (
+            (parseFloat(launchpadData[i].whitelist) && parseFloat(launchpadData[i].whitelist) > Date.now()) ||
+            (!parseFloat(launchpadData[i].whitelist) && parseFloat(launchpadData[i].startsOn) > Date.now())
+          )
+            upcomingProject.push(launchpadData[i])
           if (parseFloat(launchpadData[i].startsOn) < Date.now() && launchpadData[i].ended)
             endedProject.push(launchpadData[i])
           else liveProject.push(launchpadData[i])
@@ -99,6 +106,7 @@ interface ISelectedProject {
   team: any
   urlName: any
   nonceStatus: nonceStatus
+  whitelist: string
 }
 
 const CANDY_MACHINE_PROGRAM = new anchor.web3.PublicKey('cndy3Z4yapfJBmL3ShUp5exZKqR3z33thTzeNMm2gRZ')
@@ -151,11 +159,10 @@ const getCandyMachineState = async (
     preflightCommitment: 'processed'
   })
 
-  const idl = await anchor.Program.fetchIdl(CANDY_MACHINE_PROGRAM, provider)
+  const idl: any = idl_m
+  const program = new anchor.Program(idl, MAGIC_HAT_PROGRAM_V2_ID, provider)
 
-  const program = new anchor.Program(idl!, CANDY_MACHINE_PROGRAM, provider)
-
-  const state: any = await program.account.candyMachine.fetch(candyMachineId)
+  const state: any = await program.account.magicHat.fetch(candyMachineId)
   const itemsAvailable = state.data.itemsAvailable.toNumber()
   const itemsRedeemed = state.itemsRedeemed.toNumber()
   const itemsRemaining = itemsAvailable - itemsRedeemed
@@ -226,7 +233,6 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
           const cndy = candyM
           let active = cndy?.state.goLiveDate?.toNumber() < new Date().getTime() / 1000
           let presale = false
-
           let isWLUser = false
           let userPrice = cndy.state.price
 
@@ -338,8 +344,16 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
             (cndy.state.whitelistMintSettings?.mode?.burnEveryTime ? 34 : 0) +
             (cndy.state.gatekeeper ? 33 : 0) +
             (cndy.state.gatekeeper?.expireOnUse ? 66 : 0)
-
           cndyState['needTxnSplit'] = txnEstimate > 1230
+
+          //
+          let whitelistInfo = await getWhitelistInfo(candyM.program, wallet.publicKey)
+          cndyState['whitelistInfo'] = whitelistInfo
+          cndyState['isWhiteListUser'] = false
+          if (whitelistInfo && whitelistInfo.numberOfWhitelistSpotsPerUser.toString() > 0) {
+            cndyState['isWhiteListUser'] = true
+          }
+          //
           setCmValues(cndyState)
         } catch (e) {
           console.log(e)
