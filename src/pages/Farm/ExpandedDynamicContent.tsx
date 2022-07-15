@@ -27,6 +27,7 @@ import {
 import { Collapse } from 'antd'
 import { SSLButtons, StakeButtons } from './ExpandedButtons'
 import DisplayRowData from './DisplayRowData'
+import { TOKEN_NAMES } from '../../constants'
 
 //#region styles
 const STYLED_EXPANDED_ROW = styled.div`
@@ -302,10 +303,9 @@ export const ExpandedDynamicContent = ({
   const stakeRef = useRef(null)
   const unstakeRef = useRef(null)
 
-  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
-
+  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey, network, counter])
   useEffect(() => {
-    if (wallet.publicKey) {
+    if (wallet.publicKey && name === TOKEN_NAMES.SOL) {
       const SOL = connection.getAccountInfo(wallet.publicKey)
       SOL.then((res) => setSOLBalance(res.lamports / LAMPORTS_PER_SOL)).catch((err) => console.log(err))
     }
@@ -329,6 +329,7 @@ export const ExpandedDynamicContent = ({
   useEffect(() => {
     setTokenStaked(parseFloat(currentlyStaked))
     setTokenEarned(Math.abs(parseFloat(earned)))
+    return () => {}
   }, [earned, currentlyStaked])
 
   useEffect(() => {
@@ -349,7 +350,7 @@ export const ExpandedDynamicContent = ({
 
   const checkBasicConditions = (amt?: number | undefined): boolean => {
     if (!enoughSOLInWallet()) return true
-    if (name === 'SOL') userTokenBalance = userSOLBalance
+    if (name === TOKEN_NAMES.SOL) userTokenBalance = userSOLBalance
     if (
       isNaN(parseFloat(stakeRef.current.value)) ||
       parseFloat(stakeRef.current.value) < 0.000001 ||
@@ -375,7 +376,7 @@ export const ExpandedDynamicContent = ({
           setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
-          notify(sslErrorMessage(name, error.message, signature, network, Mint))
+          notify(sslErrorMessage(name, error?.message, signature, network, Mint))
           return
         }
       })
@@ -396,7 +397,7 @@ export const ExpandedDynamicContent = ({
           setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
-          notify(sslErrorMessage(name, error.message, signature, network, Burn))
+          notify(sslErrorMessage(name, error?.message, signature, network, Burn))
           return
         }
       })
@@ -417,7 +418,7 @@ export const ExpandedDynamicContent = ({
           setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
-          notify(sslErrorMessage(name, error.message, signature, network, Withdraw))
+          notify(sslErrorMessage(name, error?.message, signature, network, Withdraw))
           return
         }
       })
@@ -471,7 +472,7 @@ export const ExpandedDynamicContent = ({
           setTimeout(() => (stakeRef.current.value = 0), 500)
         } else {
           const { signature, error } = con
-          notify(errorHandlingMessage(getErrStakeMsg(), name, error.message, signature, network))
+          notify(errorHandlingMessage(getErrStakeMsg(), name, error?.message, signature, network))
           return
         }
       })
@@ -515,7 +516,7 @@ export const ExpandedDynamicContent = ({
           setTimeout(() => (unstakeRef.current.value = 0), 1000)
         } else {
           const { signature, error } = con
-          notify(errorHandlingMessage(getErrUntakeMsg(), name, error.message, signature, network))
+          notify(errorHandlingMessage(getErrUntakeMsg(), name, error?.message, signature, network))
           return
         }
       })
@@ -525,13 +526,13 @@ export const ExpandedDynamicContent = ({
     }
   }
   const onClickHalf = (buttonId: string): void => {
-    if (name === 'SOL') userTokenBalance = userSOLBalance
+    if (name === TOKEN_NAMES.SOL) userTokenBalance = userSOLBalance
     if (buttonId === 'stake') stakeRef.current.value = (userTokenBalance / 2).toFixed(DISPLAY_DECIMAL)
     else unstakeRef.current.value = ((tokenStaked + tokenEarned) / 2).toFixed(DISPLAY_DECIMAL)
   }
   const onClickMax = (buttonId: string): void => {
     //add focus element
-    if (name === 'SOL') userTokenBalance = userSOLBalance
+    if (name === TOKEN_NAMES.SOL) userTokenBalance = userSOLBalance
     if (buttonId === 'stake') {
       stakeRef.current.value = userTokenBalance.toFixed(DISPLAY_DECIMAL)
     } else {

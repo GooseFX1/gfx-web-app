@@ -2,62 +2,36 @@ import React, { FC } from 'react'
 import styled from 'styled-components'
 import { useRewardToggle } from '../context/reward_toggle'
 import { RewardInfoComponent, RewardRedirectComponent } from './RewardDetails'
+import tw from "twin.macro"
 
 const REWARD_INFO = styled.div`
-  width: 68%;
-  height: 75vh;
-  border-radius: 20px;
+  ${tw`w-[68%] h-[75vh] rounded-bigger`}
 `
 
 const REWARD_REDIRECT = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 32%;
+  ${tw`flex flex-col justify-center w-[32%] rounded-tr-bigger`}
   background-image: ${({ theme }) => theme.bgReward};
-  border-radius: 0 20px 0 0;
 `
 
 const Wrapper = styled.div`
-  height: 100%;
-  width: 100%;
+  ${tw`h-full w-full flex rounded-t-bigger`}
   font-family: Montserrat !important;
-  display: flex;
   background-color: ${({ theme }) => theme.bg9};
-  border-radius: 20px 20px 0 0;
 `
 const REWARDS_BTN = styled.button`
+  ${tw`w-[111px] h-9 text-xs !font-semibold rounded-circle cursor-pointer text-white border-none border-0 sm:h-[70px] sm:w-full sm:text-regular sm:rounded-t-bigger sm:p-4 sm:mb-8`}
   background-image: linear-gradient(90deg, #8ade75 0%, #4b831d 100%);
-  width: 111px;
-  height: 36px;
-  font-size: 12px;
-  font-weight: 600 !important;
-  color: white;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-
-  @media (max-width: 500px) {
-    height: 70px;
-    width: 100%;
-    padding: 1rem;
-    font-size: 18px;
-    border-radius: 20px 20px 0 0;
-    margin-bottom: 2rem;
-  }
+  line-height: inherit
 `
 const REWARDS_WITH_IMG = styled.img`
-  height: 16px;
-  width: 16px;
-  margin-left: 8px;
+  ${tw`h-4 w-4 ml-2`}
 `
 
 const REWARD_BTN_TITLE = styled.span`
-  font-size: 11px;
-  font-weight: 600;
+  ${tw`text-smallest font-semibold sm:text-sm`}
 
   @media (max-width: 500px) {
-    font-size: 20px;
+    line-height: inherit;
   }
 `
 

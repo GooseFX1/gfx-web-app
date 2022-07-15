@@ -20,10 +20,10 @@ GooseFX is a full suite DeFi platform built on the Solana blockchain and Serum D
 
 Key Features of GooseFX:
 
-- Crypto Trading through the Jupiter Aggregator
-- NFT Marketplace - Buy, Sell and take loans out against your NFT portfolio
+- Our concentrated liquidity market maker (CLMM) swap
+- Goose Nest NFT Exchange - An NFT exchange built on the Auction House contract with a launchpad
 - First ever single sided liquidity pools on Solana
-- Decentralized trading of defi derivatives (stocks, crypto, etc.)
+- Decentralized trading of defi derivatives and perps
 
 For in-depth details, visit the [technical documentation](https://docs.goosefx.io) that elaborates on our tokenomics, features, and roadmap.
 

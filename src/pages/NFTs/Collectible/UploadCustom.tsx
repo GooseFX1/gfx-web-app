@@ -164,7 +164,7 @@ export const UploadCustom = ({
   useEffect(() => {
     async function getData() {
       try {
-        const url = await fetch(nftMintingData.image)
+        const url = await fetch(nftMintingData.image + '?do-not-cache')
         const blob = await url.blob()
         const name = nftMintingData.image.split('/')[nftMintingData.image.split('/').length - 1]
         const file = new File([blob], name, { type: blob.type })

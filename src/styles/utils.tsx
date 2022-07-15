@@ -17,9 +17,7 @@ export const FlexColumnDiv = styled.div`
 `
 
 export const SpaceBetweenDiv = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+${tw`flex items-center justify-between`}
 `
 
 export const AlignCenterDiv = styled.div`
@@ -27,9 +25,7 @@ export const AlignCenterDiv = styled.div`
 `
 
 export const SpaceEvenlyDiv = styled.div`
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
+  ${tw`flex items-center justify-evenly`}
 `
 
 export const MediaFromMediumDiv = styled.div`
@@ -106,7 +102,7 @@ export const MODE_ICON = styled(CenteredImg)`
     height: 15px;
     margin-right: ${({ theme }) => theme.margin(1)};
   }
-  .brightness-image {
+  .brightnessImage {
     width: 19px;
     height: 19px;
   }

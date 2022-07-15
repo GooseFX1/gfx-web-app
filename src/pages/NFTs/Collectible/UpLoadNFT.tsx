@@ -4,7 +4,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import isEmpty from 'lodash/isEmpty'
 import styled from 'styled-components'
 import { uploadFile } from 'react-s3'
-
+import { deleteDraft } from '../actions'
 import { IAppParams } from '../../../types/app_params.d'
 import { MainText } from '../../../styles'
 import InfoInput from './InfoInput'
@@ -16,7 +16,7 @@ import UploadProgress from './UploadProgress'
 import AddAttribute from './AddAttribute'
 import RoyaltiesStep from './RoyaltiesStep'
 import { useDarkMode, useNFTDetails, useConnectionConfig, useNFTProfile } from '../../../context'
-import { mintNFT, MetadataCategory, ENDPOINTS } from '../../../web3'
+import { Creator, mintNFT, MetadataCategory, ENDPOINTS } from '../../../web3'
 import { notify } from '../../../utils'
 import { ButtonWrapper } from '../NFTButton'
 import apiClient from '../../../api'
@@ -432,7 +432,7 @@ export const UpLoadNFT = (): JSX.Element => {
       )
       const data = await res.data
       const result = data.find((i) => `${i.draft_id}` === id)
-      console.log(result, result.image)
+      //console.log(result, result.image)
 
       if (result) {
         setS3Link(result.image)
@@ -449,13 +449,13 @@ export const UpLoadNFT = (): JSX.Element => {
           animation_url: result.animation_url || undefined,
           attributes: result.attributes || undefined,
           sellerFeeBasisPoints: result.seller_fee_basis_points || 0,
-          creators: result.creators || [],
+          creators: result.creators.map((creator) => new Creator(creator)) || [],
           properties: result.properties || { files: [], category: MetadataCategory.Image, maxSupply: 1 },
           draftLoaded: true
         })
 
         // pull file binary from url
-        const url = await fetch(result.image)
+        const url = await fetch(result.image + '?do-not-cache')
         const blob = await url.blob()
         const name = result.image.split('/')[result.image.split('/').length - 1]
         const file = new File([blob], name, { type: blob.type })
@@ -506,6 +506,9 @@ export const UpLoadNFT = (): JSX.Element => {
 
       const _nft = await res
       if (_nft) {
+        if (currentDraftId) {
+          deleteDraft(currentDraftId)
+        }
         setCongrats(true)
         handleCompletedMint(_nft.metadataAccount, nftMintingData.name)
       }
@@ -562,7 +565,7 @@ export const UpLoadNFT = (): JSX.Element => {
 
   const handleCancelCreatorData = () => {
     setNftMintingData((prev) => {
-      console.log(prev)
+      //console.log(prev)
       return prev
     })
     setCreatorModal(false)

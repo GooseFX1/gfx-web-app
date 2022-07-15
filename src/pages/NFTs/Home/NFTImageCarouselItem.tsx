@@ -38,10 +38,10 @@ const NFTImageCarouselItem: FC<{ item: any; type: string }> = ({ item, type }) =
     switch (type) {
       case COLLECTION_TYPES.NFT_COLLECTION:
       case COLLECTION_TYPES.NFT_FEATURED_COLLECTION:
-        history.push(`/NFTs/collection/${item.collection_name}`)
+        history.push(`/NFTs/collection/${item.collection_name.replaceAll(' ', '_')}`)
         break
       case COLLECTION_TYPES.NFT_UPCOMING_COLLECTION:
-        history.push(`/NFTs/collection/${item.collection_name}`)
+        history.push(`/NFTs/collection/${item.collection_name.replaceAll(' ', '_')}`)
         break
       default:
         console.error('Error: NFT Collection type not correct')

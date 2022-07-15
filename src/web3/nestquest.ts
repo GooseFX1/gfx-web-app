@@ -1,5 +1,5 @@
 import { web3, utils } from '@project-serum/anchor'
-import { BaseSignerWalletAdapter } from '@solana/wallet-adapter-base'
+//import { BaseSignerWalletAdapter } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { purchaseWithSol } from './nestquest-codegen/instructions/purchaseWithSol'
 import { purchaseWithGofx } from './nestquest-codegen/instructions/purchaseWithGofx'
@@ -8,7 +8,7 @@ import { createAssociatedTokenAccountInstruction } from './account'
 import { TOKEN_PROGRAM_ID, ADDRESSES } from './ids'
 import { signAndSendRawTransaction } from './utils'
 
-const GOFX_MINT = ADDRESSES['mainnet-beta'].mints.GOFX.address
+const GOFX_MINT = ADDRESSES['devnet'].mints.GOFX.address
 
 const buildAssocIx = (nftUserAccount: web3.PublicKey, walletPubkey: web3.PublicKey, nftMint: web3.PublicKey) => {
   const temp = []
@@ -17,8 +17,10 @@ const buildAssocIx = (nftUserAccount: web3.PublicKey, walletPubkey: web3.PublicK
   return tokenIx
 }
 
-const fetchAvailableNft = async (connection: web3.Connection): Promise<web3.PublicKey | null> => {
-  const walletAddress = new web3.PublicKey('3QvkzDXSgrLmsCK5ZDoddPFL7tYjzC5oHiiA5TJ9NsoA')
+const fetchAvailableNft = async (
+  connection: web3.Connection
+): Promise<{ nft: web3.PublicKey | null; length: number }> => {
+  const walletAddress = ADDRESSES['devnet'].programs.nestquestSale.address
   const tokensRaw = await connection.getParsedTokenAccountsByOwner(walletAddress, {
     programId: TOKEN_PROGRAM_ID
   })
@@ -29,7 +31,7 @@ const fetchAvailableNft = async (connection: web3.Connection): Promise<web3.Publ
       : []
   )
 
-  return nfts[0] || null
+  return { nft: nfts[0] || null, length: nfts.length || 0 }
 }
 
 const buyWithSOL = async (
