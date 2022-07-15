@@ -1,9 +1,14 @@
-import React from 'react'
+import React, { useState, FC } from 'react'
 import styled from 'styled-components'
 import { Toggle } from './Toggle'
 import { SearchBar, Categories } from '../../components'
-import { Button } from 'antd'
+import { Button, Radio } from 'antd'
 import { useFarmContext } from '../../context'
+import { checkMobile } from '../../utils'
+import tw from "twin.macro"
+import 'styled-components/macro'
+import { ArrowDropdown } from '../../components'
+import { MenuItem } from '../../layouts/App/shared'
 
 const STYLED_FARM_HEADER = styled.div`
   display: flex;
@@ -36,6 +41,19 @@ const STYLED_FARM_HEADER = styled.div`
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%) !important;
     color: white;
   }
+
+  @media (max-width: 500px){
+    display: block;
+    padding: 20px 15px 8px;
+    border-radius: 15px 15px 0 0;
+
+    .search-bar {
+      background: #2a2a2a !important;
+      input {
+        background: #2a2a2a !important;
+      }
+    }
+  }
 `
 const STYLED_BUTTON = styled.button`
   width: 112px;
@@ -55,6 +73,10 @@ const STYLED_BUTTON = styled.button`
   margin-right: 10px;
   :disabled {
     cursor: wait;
+  }
+
+  @media(max-width: 500px){
+    margin: auto;
   }
 `
 
@@ -76,10 +98,110 @@ const IconContainer = styled.div`
   display: flex;
 `
 
+const DropdownContainer = styled.div`
+  width: 102px;
+  height: 45px;
+  background: #9625ae;
+  border-radius: 23px;
+  display: flex;
+  justify-content: center;
+`
+const Wrapper = styled.div`
+display: flex;
+margin-top: 24px;
+`
+
+const PoolSelector = styled.div`
+  width: 250px;
+  background: #1e1e1e;
+  padding: 20px 21px 20px;
+
+  li:last-child{
+    margin: 0;
+  }
+
+ li{
+  margin-bottom: 26px;
+  span{
+    font-family: Avenir;
+    font-size: 15px;
+    font-weight: 900;
+    text-align: center;
+    color: #fff;
+  }
+  &:hover span {
+    color: #fff;
+  }
+ }
+
+input[type='radio'] {
+  width: 15px;
+  height: 15px;
+}
+
+input[type='radio']:checked:after {
+  width: 15px;
+  height: 15px;
+  border-radius: 10px;
+  background-color: #50bb35;
+  content: '';
+  display: inline-block;
+  visibility: visible;
+  border: 1px solid #0f0f0f;
+  position: relative;
+  top: -1px;
+}
+`
+
 const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
+
+const Overlay: any = ({ setPoolFilter, poolFilter }) => {
+  return(
+      <PoolSelector>
+        {poolTypes.map((pool, index) => {
+          return(
+            <MenuItem key={index}> 
+              <span>{pool.name}</span>
+              <input type="radio" name="pool" value={pool.name} checked={poolFilter==pool.name ? true: false} onChange={(e)=>setPoolFilter(pool.name)}/>
+            </MenuItem> 
+          )
+        })}
+      </PoolSelector>
+  )
+}
 
 export const FarmFilter = () => {
   const { poolFilter, setPoolFilter, setSearchFilter, setCounter, operationPending } = useFarmContext()
+  const [arrowRotation, setArrowRotation] = useState(false)
+  const [dropdownVisible, setDropdownVisible] = useState(false)
+
+  const handleClick = () => {
+    setArrowRotation(!arrowRotation)
+    setDropdownVisible(!dropdownVisible)
+  }
+
+  if(checkMobile()){
+    return(
+      <STYLED_FARM_HEADER>
+          <ButtonContainer>
+            {poolTypes.map((pool) => (
+              <STYLED_BUTTON
+                disabled={operationPending}
+                key={pool.name}
+                onClick={() => setPoolFilter(pool.name)}
+                className={pool.name === poolFilter ? 'selectedBackground' : ''}
+              >
+                {pool.name}
+              </STYLED_BUTTON>
+            ))}
+        </ButtonContainer>
+        <Wrapper>
+          <SearchBar className="search-bar" placeholder="Search by token" setSearchFilter={setSearchFilter} />
+          <Toggle className="toggle" text="Deposited" defaultUnchecked />
+        </Wrapper>
+        </STYLED_FARM_HEADER>
+    )
+  }
 
   return (
     <>

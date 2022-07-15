@@ -44,8 +44,8 @@ const WRAPPER = styled.nav`
 `
 
 const MobileWrapper = styled(WRAPPER)`
-  ${tw`flex !flex-row justify-between items-center rounded-none`}
-  background-color: ${({ theme }) => theme.bg2};
+  ${tw`flex !flex-row justify-between items-center rounded-none shadow-none`}
+  background-color: ${({ theme }) => theme.bg18};  
 `
 
 const CollapsibleWrapper = styled.div<{ $collapse: boolean }>`

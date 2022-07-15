@@ -6,7 +6,7 @@ import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
 import styled, { css } from 'styled-components'
 import { Table } from 'antd'
 import BN from 'bn.js'
-import { columns } from './Columns'
+import { columns, mobileColumns } from './Columns'
 import { ExpandedDynamicContent } from './ExpandedDynamicContent'
 import {
   getStakingAccountKey,
@@ -23,6 +23,7 @@ import {
 import { useConnectionConfig, usePriceFeedFarm, useFarmContext } from '../../context'
 import { ADDRESSES } from '../../web3'
 import { MorePoolsSoon } from './MorePoolsSoon'
+import { checkMobile } from '../../utils'
 
 const StakeIDL = require('../../web3/idl/stake.json')
 const SSLIDL = require('../../web3/idl/ssl.json')
@@ -35,6 +36,9 @@ export const STYLED_TABLE_LIST = styled(Table)`
     background: ${theme.bg17};
     border-radius: 20px 20px 0px 0px;
     box-shadow: ${theme.tableListBoxShadow};
+
+    @media (max-width: 500px){
+    }
   }
   .normal-text {
     font-family: Montserrat;
@@ -47,10 +51,21 @@ export const STYLED_TABLE_LIST = styled(Table)`
     background: none;
     border-top-left-radius: 20px;
     border-bottom-left-radius: 25px;
+
+    @media(max-width: 500px){
+      border-top-left-radius: 20px;
+      border-bottom-left-radius: 0;
+    }
   }
   .ant-table-container table > thead > tr:first-child th:last-child {
     border-top-right-radius: 20px;
     border-bottom-right-radius: 25px;
+
+      @media(max-width: 500px){
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 0px;
+
+    }
   }
   .ant-table-thead {
      top: 200px;
@@ -68,6 +83,15 @@ export const STYLED_TABLE_LIST = styled(Table)`
         }
       }
     }
+    @media (max-width: 500px){
+      height: 68px;
+      > tr{
+        > th{
+          height: 100%;
+          padding: 0 5px 0 15px;
+        }
+      }
+    }
   }
   .ant-table-tbody {
     > tr {
@@ -81,6 +105,10 @@ export const STYLED_TABLE_LIST = styled(Table)`
         background-color: ${theme.bg17};
         border-bottom: 1px solid #BABABA !important;
         padding: ${theme.margin(3)};
+
+        @media (max-width: 500px){
+          padding: 24px 0px 24px 22px;
+        }
       }
       &.ant-table-row {
         > td {
@@ -182,6 +210,7 @@ export const TableList = ({ dataSource }: any) => {
   } = useFarmContext()
   const [accountKey, setAccountKey] = useState<PublicKey>()
   const [columnData, setColumnData] = useState(columns)
+  const [mobileColumnData, setMobileColumnData] = useState(mobileColumns)
   const [farmData, setFarmData] = useState<IFarmData[]>([...farmDataContext, ...farmDataSSLContext])
   const [eKeys, setEKeys] = useState([])
   const [allTokenPrices, setAllTokenPrices] = useState({})
@@ -367,7 +396,7 @@ export const TableList = ({ dataSource }: any) => {
     <div>
       <STYLED_TABLE_LIST
         rowKey="id"
-        columns={columnData}
+        columns={checkMobile() ? mobileColumnData : columnData}
         dataSource={farmData}
         pagination={false}
         bordered={false}
@@ -389,7 +418,7 @@ export const TableList = ({ dataSource }: any) => {
           )
         }}
         expandIcon={(ps) => <ExpandIcon {...ps} onClick={onExpandIcon} />}
-        expandIconColumnIndex={6}
+        expandIconColumnIndex={checkMobile() ? -1 : 6}
       />
       <MorePoolsSoon />
     </div>

@@ -5,8 +5,9 @@ import styled from 'styled-components'
 import { WalletContextState, useWallet } from '@solana/wallet-adapter-react'
 import { useFarmContext, usePriceFeedFarm, useAccounts, useTokenRegistry, useConnectionConfig } from '../../context'
 import { invalidInputErrMsg } from './FarmClickHandler'
-import { notify } from '../../utils'
+import { checkMobile, notify } from '../../utils'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { ExpandedContent } from './ExpandedContent';
 
 const STYLED_RIGHT_CONTENT = styled.div`
   display: flex;
@@ -243,6 +244,7 @@ export const StakeButtons: FC<{
   onClickUnstake: any
   isStakeLoading?: boolean
   isUnstakeLoading?: boolean
+  rowData: any
 }> = ({
   wallet,
   name,
@@ -253,7 +255,8 @@ export const StakeButtons: FC<{
   onClickStake,
   onClickUnstake,
   isStakeLoading,
-  isUnstakeLoading
+  isUnstakeLoading,
+  rowData
 }) => {
   const { farmDataContext } = useFarmContext()
   const { prices } = usePriceFeedFarm()
@@ -265,11 +268,12 @@ export const StakeButtons: FC<{
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
     [tokenInfo?.address, getUIAmount, publicKey]
   )
-  const { current } = useMemo(() => prices[`${name.toUpperCase()}/USDC`], [prices])
+  const current = 123;
+  //const { current } = useMemo(() => prices[`${name.toUpperCase()}/USDC`], [prices])
   const tokenData = farmDataContext.find((token) => token.name === 'GOFX')
   return (
     <>
-      {wallet.publicKey ? (
+      {(wallet.publicKey && !checkMobile()) ? (
         <>
           <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
             <div className="left-inner">
@@ -332,6 +336,20 @@ export const StakeButtons: FC<{
             </div>
           </STYLED_RIGHT_CONTENT>
         </>
+      ) : (checkMobile() && wallet.publicKey) ? (
+        <ExpandedContent
+            name={name}
+            wallet={wallet}
+            stakeRef={stakeRef}
+            unstakeRef={unstakeRef}
+            onClickHalf={onClickHalf}
+            onClickMax={onClickMax}
+            isStakeLoading={isStakeLoading}
+            isUnstakeLoading={isUnstakeLoading}
+            onClickStake={onClickStake}
+            onClickUnstake={onClickUnstake}
+            rowData={rowData}
+        />
       ) : (
         <>
           <ConnectContainer>
@@ -363,6 +381,7 @@ export const SSLButtons: FC<{
   userSOLBalance: number
   isBurnLoading: boolean
   isUnstakeLoading?: boolean
+  rowData: any
 }> = ({
   wallet,
   name,
@@ -377,7 +396,8 @@ export const SSLButtons: FC<{
   isWithdrawLoading,
   isBurnLoading,
   isMintLoading,
-  isUnstakeLoading
+  isUnstakeLoading,
+  rowData
 }) => {
   const miniButtonsClass = document.activeElement === unstakeRef.current ? ' active' : ''
   const depositButtonClass = document.activeElement === stakeRef.current ? ' active' : ''
@@ -466,7 +486,7 @@ export const SSLButtons: FC<{
   }
   return (
     <>
-      {wallet.publicKey ? (
+      {(wallet.publicKey && !checkMobile()) ? (
         <>
           <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
             <div className="left-inner">
@@ -541,10 +561,27 @@ export const SSLButtons: FC<{
             </div>
           </STYLED_RIGHT_CONTENT>
         </>
+      ) : (checkMobile() && wallet.publicKey) ? (
+          <ExpandedContent 
+              isSsl = {true}
+              name={name.toString()}
+              wallet={wallet}
+              stakeRef={stakeRef}
+              unstakeRef={unstakeRef}
+              onClickDeposit={onClickDeposit}
+              onClickMint={onClickMint}
+              onClickBurn={onClickBurn}
+              isStakeLoading={isStakeLoading}
+              isWithdrawLoading={isWithdrawLoading}
+              userSOLBalance={userSOLBalance}
+              isUnstakeLoading={isUnstakeLoading}
+              withdrawClicked={withdrawClicked}
+             rowData={rowData}
+          />
       ) : (
-        <ConnectContainer>
-          <Connect />
-        </ConnectContainer>
+      <ConnectContainer>
+        <Connect />
+      </ConnectContainer>
       )}
     </>
   )

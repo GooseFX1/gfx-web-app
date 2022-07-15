@@ -15,6 +15,11 @@ const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)`
 
   .ant-image {
     filter: ${({ theme }) => theme.filterWhiteIcon};
+
+    @media(max-width: 500px){
+      position: relative;
+      left: 10px;
+    }
   }
 
   > input {
@@ -29,6 +34,22 @@ const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)`
     outline: none;
     ::placeholder {
       color: ${({ theme }) => theme.text18};
+    }
+  }
+
+  @media (max-width: 500px){
+    width: 70%;
+    height: 45px;
+
+    > input{
+      width: 100%;
+      font-size: 16px;
+      color: #636363;
+    }
+
+    .ant-image-img {
+      filter: ${({ theme }) => theme.filterWhiteIcon};
+      width: 16px;
     }
   }
 `
