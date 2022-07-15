@@ -11,7 +11,7 @@ const STEP_BAR = styled.div`
   display: flex;
   //justify-content: center;
   align-items: center;
-  margin-top: 40px;
+  margin-top: 80px;
   padding-right: 60px;
   font-size: 22px;
   .step-label {
