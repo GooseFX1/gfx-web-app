@@ -8,6 +8,12 @@ import { CenteredImg } from '../styles'
 const ICON = styled(CenteredImg)<{ notDoxxed?: boolean }>`
   ${({ theme, notDoxxed }) => !notDoxxed && theme.measurements(theme.margin(1.5))}
   margin-left: ${({ theme }) => theme.margin(1)};
+
+  @media(max-width: 500px){
+    height: 18px;
+    width: 18px;
+    margin-left: 6px;
+  }
 `
 
 const TEXT = styled.span`
