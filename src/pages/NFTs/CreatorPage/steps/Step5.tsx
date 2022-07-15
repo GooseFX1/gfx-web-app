@@ -4,11 +4,13 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useNFTCreator } from '../../../../context/nft_creator'
-import { ImageContainer, NextStepsButton } from '../components/SharedComponents'
+import { ImageContainer, ReviewButton } from '../components/SharedComponents'
 import { ICreatorData } from '../../../../types/nft_launchpad'
 import { MileStoneModal } from '../components/MileStoneModal'
 import { MileStoneBox } from '../components/MileStoneBox'
 import TeamMembersContainer from '../components/TeamMembersContainer'
+import { ModalSlide } from '../../../../components/ModalSlide'
+import { MODAL_TYPES } from '../../../../constants'
 
 const DISCORD_PREFIX = 'https://discord.gg/'
 
@@ -112,6 +114,7 @@ export const Step5: FC = () => {
   const [mileStones, setMileStones] = useState([])
   const [mileStonePopup, setMileStonePopup] = useState<boolean>(false)
   const [teamMembers, setTeamMembers] = useState([])
+  const [submitPopup, setSubmitPopup] = useState<boolean>(false)
 
   let creatorStepData: ICreatorData[5] = {
     discord: discordValue,
@@ -133,6 +136,7 @@ export const Step5: FC = () => {
 
   return (
     <WRAPPER>
+      {submitPopup && <ModalSlide rewardToggle={setSubmitPopup} modalType={MODAL_TYPES.SUBMIT} />}
       <Row>
         <Col span={12}>
           <Row className="relative-row">
@@ -216,7 +220,7 @@ export const Step5: FC = () => {
           <Row>
             <TeamMembersContainer data={creatorStepData} setTeamMembers={setTeamMembers} />
           </Row>
-          <NextStepsButton data={creatorStepData} active={nextButtonActive} />
+          <ReviewButton data={creatorStepData} setSubmitPopup={setSubmitPopup} active={nextButtonActive} />
         </Col>
       </Row>
     </WRAPPER>

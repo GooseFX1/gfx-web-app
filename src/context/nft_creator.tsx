@@ -62,7 +62,7 @@ export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) =>
   }
 
   const nextStep = () => {
-    if (currentStep < 6) setCurrentStep(currentStep + 1)
+    if (currentStep < 5) setCurrentStep(currentStep + 1)
   }
 
   return (

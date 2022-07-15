@@ -15,7 +15,10 @@ export const MODAL_TYPES = {
   FEES: 'FEES',
   REWARDS: 'REWARDS',
   GOLDEN_TICKET: 'GOLDEN_TICKET',
-  NFT_MENU: 'NFT_MENU'
+  NFT_MENU: 'NFT_MENU',
+  CREATOR_DISCLAIMER: 'CREATOR_DISCLAIMER',
+  SUBMIT: 'SUBMIT',
+  RELAX: 'RELAX'
 }
 export const CAROUSEL = [
   { name: 'Create', id: 0, position: 1, redirect: 'NFTs/create' },

@@ -157,12 +157,10 @@ const WRAPPER_COMPONENT = styled.div`
     .ant-input:first-child {
       ${tw`text-left pl-4 w-8/12 h-[53px] rounded-bl-[40px] border-0 rounded-tl-[40px] border-none border-r border-gray-1 border-solid text-[17px]`}
       background-color: ${({ theme }) => theme.sweepModalCard};
-      color: ${({ theme }) => theme.text25};
     }
     .ant-input:nth-child(2) {
       ${tw`text-center w-4/12 h-[53px] rounded-br-[40px] rounded-tr-[40px] border-none text-[17px]`}
       background-color: ${({ theme }) => theme.sweepModalCard};
-      color: ${({ theme }) => theme.text25};
     }
   }
   .second-input-row {
@@ -170,7 +168,6 @@ const WRAPPER_COMPONENT = styled.div`
     textarea {
       ${tw`w-full rounded-[15px] border-none pl-4 pt-2 h-20 outline-none text-base`}
       background-color: ${({ theme }) => theme.sweepModalCard};
-      color: ${({ theme }) => theme.text25};
     }
   }
 `

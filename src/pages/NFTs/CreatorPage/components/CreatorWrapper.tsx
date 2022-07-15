@@ -7,10 +7,11 @@ import { ICreatorParams } from '../../../../types/nft_launchpad'
 import { StepsWrapper } from './StepsWrapper'
 
 const WRAPPER = styled.div`
+  margin-top: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: 80vh;
   flex-direction: column;
   .first-line {
     font-size: 30px;

@@ -6,6 +6,9 @@ import { FeesPopup } from './FeesPopup'
 import MenuPopup from './popups/MenuPopup'
 import { MODAL_TYPES } from '../constants'
 import { GoldenTicketPopup } from '../pages/NFTs/launchpad/pages/LaunchpadComponents'
+import SubmitPopup from '../pages/NFTs/CreatorPage/Popup/SubmitPopup'
+import RelaxPopup from '../pages/NFTs/CreatorPage/Popup/Relax'
+import DisclaimerPopup from '../pages/NFTs/CreatorPage/Popup/Disclaimer'
 
 const WRAPPER = styled.div`
   position: absolute;
@@ -66,6 +69,9 @@ export const ModalSlide = (props: IModalSlide) => {
     <WRAPPER id="wrapper-background" onClick={(e) => closeRewardModal(e, props.rewardToggle)}>
       <MODAL id="modal">
         {props.modalType === MODAL_TYPES.REWARDS && <RewardsPopup />}
+        {props.modalType === MODAL_TYPES.SUBMIT && <SubmitPopup rewardToggle={props.rewardToggle} />}
+        {props.modalType === MODAL_TYPES.RELAX && <RelaxPopup rewardToggle={props.rewardToggle} />}
+        {props.modalType === MODAL_TYPES.CREATOR_DISCLAIMER && <DisclaimerPopup rewardToggle={props.rewardToggle} />}
         {props.modalType === MODAL_TYPES.FEES && <FeesPopup {...props} />}
         {props.modalType === MODAL_TYPES.NFT_MENU && <MenuPopup rewardToggle={props.rewardToggle} />}
         {/* {props.modalType === MODAL_TYPES.GOLDEN_TICKET && <GoldenTicketPopup />} */}

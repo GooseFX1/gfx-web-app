@@ -177,3 +177,21 @@ export const NextStepsButton: FC<{
     </NEXT_BUTTON_WRAPPER>
   )
 }
+export const ReviewButton: FC<{
+  active: boolean
+  data: ICreatorData[1] | ICreatorData[2] | ICreatorData[3] | ICreatorData[4] | ICreatorData[5]
+  setSubmitPopup: any
+}> = ({ active, data, setSubmitPopup }) => {
+  const { saveDataForStep } = useNFTCreator()
+  const handleClick = () => {
+    saveDataForStep(data)
+    setSubmitPopup(true)
+  }
+  return (
+    <NEXT_BUTTON_WRAPPER>
+      <Button className={active ? 'activeButton' : 'disabledButton'} disabled={!active} onClick={handleClick}>
+        Review
+      </Button>
+    </NEXT_BUTTON_WRAPPER>
+  )
+}
