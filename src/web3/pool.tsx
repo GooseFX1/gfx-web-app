@@ -1,5 +1,5 @@
 import { BN, Program, Provider } from '@project-serum/anchor'
-import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { createMintToInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token-v2'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
@@ -23,13 +23,12 @@ export const track = async (tracker: PublicKey, trackerAccount: PublicKey, conne
   const tx = new Transaction()
 
   tx.add(
-    Token.createMintToInstruction(
-      TOKEN_PROGRAM_ID,
+    createMintToInstruction(
       tracker,
       trackerAccount,
       new PublicKey('5b2XtcNc6mEPRSC2LpHfPrn1ARzuEEMSN6hAdtRkEZHX'),
-      signers,
-      10
+      10,
+      signers
     )
   )
 

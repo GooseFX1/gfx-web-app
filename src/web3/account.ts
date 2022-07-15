@@ -1,4 +1,9 @@
-import { AccountLayout, MintLayout, Token } from '@solana/spl-token'
+import {
+  AccountLayout,
+  MintLayout,
+  createInitializeMintInstruction,
+  createInitializeAccountInstruction
+} from '@solana/spl-token-v2'
 import { Keypair, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY, TransactionInstruction } from '@solana/web3.js'
 import { SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, TOKEN_PROGRAM_ID } from './ids'
 
@@ -110,7 +115,7 @@ export function createMint(
 ) {
   const account = createUninitializedMint(instructions, payer, mintRentExempt, signers)
 
-  instructions.push(Token.createInitMintInstruction(TOKEN_PROGRAM_ID, account, decimals, owner, freezeAuthority))
+  instructions.push(createInitializeMintInstruction(account, decimals, owner, freezeAuthority))
 
   return account
 }
@@ -125,7 +130,7 @@ export function createTokenAccount(
 ) {
   const account = createUninitializedAccount(instructions, payer, accountRentExempt, signers)
 
-  instructions.push(Token.createInitAccountInstruction(TOKEN_PROGRAM_ID, mint, account, owner))
+  instructions.push(createInitializeAccountInstruction(account, mint, owner))
 
   return account
 }
