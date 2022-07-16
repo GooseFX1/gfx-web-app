@@ -253,11 +253,12 @@ export const SingleCollection: FC = () => {
     ) : (
       <MintStarts time={selectedProject?.whitelist} />
     )
-  const ProgressBar = selectedProject?.items ? (
+  let ProgressBar = selectedProject?.items ? (
     displayProgressBar
   ) : (
     <SkeletonCommon style={{ marginTop: '20px' }} width="600px" height={'70px'} borderRadius="10px" />
   )
+  if (selectedProject?.ended) ProgressBar = <></>
   return (
     <div>
       {selectedProject?.currency ? <TokenSwitch disabled={true} currency={selectedProject?.currency} /> : <></>}
