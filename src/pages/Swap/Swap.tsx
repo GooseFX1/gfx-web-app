@@ -822,7 +822,7 @@ export const SwapMain: FC = () => {
   function devnetRoutes() {
     setRoutes([])
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
-    setInAmountTotal(inAmountTotal)
+    setInAmountTotal(Math.round(inAmountTotal))
 
     if (!tokenA || !tokenB || inAmountTotal <= 0) return
     const GoFxRoute = {
@@ -846,7 +846,7 @@ export const SwapMain: FC = () => {
   function mainnetRoutes() {
     setRoutes([])
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
-    setInAmountTotal(inAmountTotal)
+    setInAmountTotal(Math.round(inAmountTotal))
 
     const supported =
       (tokenB?.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA?.symbol)) ||
@@ -867,7 +867,7 @@ export const SwapMain: FC = () => {
           outAmountWithSlippage: JSBI.toNumber(route.otherAmountThreshold),
           marketInfos: route.marketInfos.map((mkt) => marketInfoFormat(mkt))
         }))
-        ?.filter((i) => i.inAmount === inAmountTotal) || []
+        ?.filter((i) => i.inAmount === Math.round(inAmountTotal)) || []
 
     const shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
 

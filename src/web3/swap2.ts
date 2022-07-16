@@ -159,7 +159,7 @@ export const preSwapAmount = async (
 }> => {
   try {
     if (!inTokenAmount || inTokenAmount === 0) return { impact: 0, preSwapResult: '0' }
-    const inAmount = BigInt(inTokenAmount * 10 ** tokenA.decimals)
+    const inAmount = BigInt(Math.round(inTokenAmount * 10 ** tokenA.decimals))
     let outAmount: number, priceImpact: number
     try {
       SWAP.connection = connection
