@@ -20,6 +20,7 @@ const MINT_BUTTON_BAR = styled.div`
   margin-top: -100px;
   height: 70px;
   z-index: 99;
+  max-width: 800px;
   position: relative;
   border-radius: 0 0 25px 25px;
   width: 100%;
