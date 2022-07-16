@@ -102,7 +102,7 @@ interface ISelectedProject {
   price: number
   roadmap: any
   startsOn: string
-  status: string
+  ended: boolean
   team: any
   urlName: any
   nonceStatus: nonceStatus
