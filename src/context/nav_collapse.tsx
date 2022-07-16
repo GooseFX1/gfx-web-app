@@ -3,18 +3,23 @@ import React, { FC, useState, ReactNode, createContext, useContext, Dispatch, Se
 interface INavCollapseConfig {
   isCollapsed: boolean
   toggleCollapse: Dispatch<SetStateAction<boolean>>
+  relaxPopup: boolean
+  setRelaxPopup: Dispatch<SetStateAction<boolean>>
 }
 
 const NavCollapseContext = createContext<INavCollapseConfig | null>(null)
 
 export const NavCollapseProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [mode, setMode] = useState<boolean>(false)
+  const [relaxPopup, setRelaxPopup] = useState<boolean>(false)
 
   return (
     <NavCollapseContext.Provider
       value={{
         isCollapsed: mode,
-        toggleCollapse: setMode
+        toggleCollapse: setMode,
+        relaxPopup: relaxPopup,
+        setRelaxPopup: setRelaxPopup
       }}
     >
       {children}
@@ -28,6 +33,6 @@ export const useNavCollapse = (): INavCollapseConfig => {
     throw new Error('Missing nav collapse context')
   }
 
-  const { isCollapsed, toggleCollapse } = context
-  return { isCollapsed, toggleCollapse }
+  const { isCollapsed, toggleCollapse, relaxPopup, setRelaxPopup } = context
+  return { isCollapsed, toggleCollapse, relaxPopup, setRelaxPopup }
 }

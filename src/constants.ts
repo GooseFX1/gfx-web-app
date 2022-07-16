@@ -13,8 +13,22 @@ export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'SRM', 'ETH', 'GMT',
 export let FARM_SUPPORTED_TOKEN_LIST = ['GOFX']
 export const MODAL_TYPES = {
   FEES: 'FEES',
-  REWARDS: 'REWARDS'
+  REWARDS: 'REWARDS',
+  GOLDEN_TICKET: 'GOLDEN_TICKET',
+  NFT_MENU: 'NFT_MENU',
+  CREATOR_DISCLAIMER: 'CREATOR_DISCLAIMER',
+  SUBMIT: 'SUBMIT',
+  RELAX: 'RELAX'
 }
+export const CAROUSEL = [
+  { name: 'Create', id: 0, position: 1, redirect: 'NFTs/create' },
+  { name: 'Sell', id: 1, position: 2 },
+  { name: 'Launchpad', id: 2, position: 3, redirect: 'NFTs/launchpad' },
+  { name: 'Fractionalization', id: 3, position: 4 },
+  { name: 'Lend', id: 4, position: 5 },
+  { name: 'Borrow', id: 5, position: 6 }
+  // { name: 'Borrow', id: 25, position: 7 },
+]
 export const NETWORK_CONSTANTS = {
   DEVNET: 'devnet',
   MAINNET: 'mainnet-beta',
