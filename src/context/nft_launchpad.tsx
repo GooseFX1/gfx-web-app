@@ -102,7 +102,7 @@ interface ISelectedProject {
   price: number
   roadmap: any
   startsOn: string
-  status: string
+  ended: boolean
   team: any
   urlName: any
   nonceStatus: nonceStatus
@@ -200,8 +200,7 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
   const [cmValues, setCmValues] = useState(null)
   const params = useParams<IProjectParams>()
   const wallet = useWallet()
-  //const { connection } = useConnectionConfig()
-  const connection = new anchor.web3.Connection('https://api.devnet.solana.com', 'confirmed')
+  const { connection } = useConnectionConfig()
 
   const anchorWallet = useMemo(() => {
     if (!wallet || !wallet.publicKey || !wallet.signAllTransactions || !wallet.signTransaction) {

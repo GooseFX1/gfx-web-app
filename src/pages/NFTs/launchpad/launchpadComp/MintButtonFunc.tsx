@@ -20,6 +20,7 @@ const MINT_BUTTON_BAR = styled.div`
   margin-top: -100px;
   height: 70px;
   z-index: 99;
+  max-width: 800px;
   position: relative;
   border-radius: 0 0 25px 25px;
   width: 100%;
@@ -51,6 +52,14 @@ const MINT_BTN = styled.div<{ active: boolean }>`
   font-size: 15px;
   justify-content: center;
   cursor: ${({ active }) => (!active ? 'not-allowed' : 'pointer')};
+`
+const WHITELIST_SPOTS = styled.div`
+  position: absolute;
+  left: 50px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 export const MintButtonFunc = ({
@@ -98,8 +107,13 @@ export const MintButtonFunc = ({
     }
   }
 
-  //const { connection } = useConnectionConfig()
-  const connection = new anchor.web3.Connection('https://api.devnet.solana.com', 'confirmed')
+  const { connection } = useConnectionConfig()
+
+  const getWhitelistSpots = () => {
+    if (cndyValues && cndyValues.whitelistInfo && cndyValues.whitelistInfo.numberOfWhitelistSpotsPerUser.toString() > 0)
+      return cndyValues.whitelistInfo.numberOfWhitelistSpotsPerUser.toString()
+    return null
+  }
 
   const getMintButtonContent = () => {
     if (candyMachine?.state.isSoldOut) {
@@ -115,9 +129,9 @@ export const MintButtonFunc = ({
         cndyValues.whitelistInfo &&
         cndyValues.whitelistInfo.numberOfWhitelistSpotsPerUser.toString() > 0
       ) {
-        return cndyValues.whitelistInfo.numberOfWhitelistSpotsPerUser.toString() + ' WHITELIST MINT LEFT'
+        return 'WHITELIST MINT'
       } else {
-        return 'NO WHITELIST MINT LEFT'
+        return 'WHITELIST MINT'
       }
     }
 
@@ -156,55 +170,60 @@ export const MintButtonFunc = ({
       </SHARE_BTN>
       {handleShareClick()}
       {isLive ? (
-        <MINT_BTN
-          active={!isMinting && isActive}
-          onClick={async () => {
-            if (candyMachine?.state.isActive && candyMachine?.state.gatekeeper) {
-              const network = candyMachine.state.gatekeeper.gatekeeperNetwork.toBase58()
-              if (network === 'ignREusXmGrscGNUesoU9mxfds9AiYTezUKex2PsZV6') {
-                if (gatewayStatus === GatewayStatus.ACTIVE) {
-                  await onMint()
-                } else {
-                  //setIsMinting(true)
-                  await requestGatewayToken()
-                }
-              } else if (
-                network === 'ttib7tuX8PTWPqFsmUFQTj78MbRhUmqxidJRDv4hRRE' ||
-                network === 'tibePmPaoTgrs929rWpu755EXaxC7M3SthVCf6GzjZt'
-              ) {
-                setClicked(true)
-                const gatewayToken = await findGatewayToken(
-                  connection,
-                  wallet.publicKey!,
-                  candyMachine.state.gatekeeper.gatekeeperNetwork
-                )
-
-                if (gatewayToken?.isValid()) {
-                  await onMint()
-                } else {
-                  window.open(`https://verify.encore.fans/?gkNetwork=${network}`, '_blank')
-
-                  const gatewayTokenAddress = await getGatewayTokenAddressForOwnerAndGatekeeperNetwork(
+        <>
+          <MINT_BTN
+            active={!isMinting && isActive}
+            onClick={async () => {
+              if (candyMachine?.state.isActive && candyMachine?.state.gatekeeper) {
+                const network = candyMachine.state.gatekeeper.gatekeeperNetwork.toBase58()
+                if (network === 'ignREusXmGrscGNUesoU9mxfds9AiYTezUKex2PsZV6') {
+                  if (gatewayStatus === GatewayStatus.ACTIVE) {
+                    await onMint()
+                  } else {
+                    //setIsMinting(true)
+                    await requestGatewayToken()
+                  }
+                } else if (
+                  network === 'ttib7tuX8PTWPqFsmUFQTj78MbRhUmqxidJRDv4hRRE' ||
+                  network === 'tibePmPaoTgrs929rWpu755EXaxC7M3SthVCf6GzjZt'
+                ) {
+                  setClicked(true)
+                  const gatewayToken = await findGatewayToken(
+                    connection,
                     wallet.publicKey!,
                     candyMachine.state.gatekeeper.gatekeeperNetwork
                   )
 
-                  setWebSocketSubscriptionId(
-                    onGatewayTokenChange(connection, gatewayTokenAddress, () => setVerified(true), 'confirmed')
-                  )
+                  if (gatewayToken?.isValid()) {
+                    await onMint()
+                  } else {
+                    window.open(`https://verify.encore.fans/?gkNetwork=${network}`, '_blank')
+
+                    const gatewayTokenAddress = await getGatewayTokenAddressForOwnerAndGatekeeperNetwork(
+                      wallet.publicKey!,
+                      candyMachine.state.gatekeeper.gatekeeperNetwork
+                    )
+
+                    setWebSocketSubscriptionId(
+                      onGatewayTokenChange(connection, gatewayTokenAddress, () => setVerified(true), 'confirmed')
+                    )
+                  }
+                } else {
+                  setClicked(false)
+                  throw new Error(`Unknown Gatekeeper Network: ${network}`)
                 }
-              } else {
+              } else if (isActive) {
+                await onMint()
                 setClicked(false)
-                throw new Error(`Unknown Gatekeeper Network: ${network}`)
               }
-            } else if (isActive) {
-              await onMint()
-              setClicked(false)
-            }
-          }}
-        >
-          {getMintButtonContent()}
-        </MINT_BTN>
+            }}
+          >
+            {getMintButtonContent()}
+          </MINT_BTN>
+          {isWhitelist && getWhitelistSpots() && (
+            <WHITELIST_SPOTS>{'You have ' + getWhitelistSpots() + ' spots left!'}</WHITELIST_SPOTS>
+          )}
+        </>
       ) : (
         <MINT_BTN active={false}>JOIN WAITLIST</MINT_BTN>
       )}
