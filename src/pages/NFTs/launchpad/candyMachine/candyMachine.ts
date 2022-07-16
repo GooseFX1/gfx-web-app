@@ -1,6 +1,11 @@
 import * as anchor from '@project-serum/anchor'
 
-import { MintLayout, TOKEN_PROGRAM_ID, Token } from '@solana/spl-token'
+import {
+  MintLayout,
+  TOKEN_PROGRAM_ID,
+  createMintToInstruction,
+  createInitializeMintInstruction
+} from '@solana/spl-token-v2'
 import { SystemProgram, Transaction, SYSVAR_SLOT_HASHES_PUBKEY, NONCE_ACCOUNT_LENGTH } from '@solana/web3.js'
 import { sendTransactions, sendTransactionsNonce, SequenceType } from './connection'
 
@@ -278,9 +283,9 @@ export const createAccountsForMint = async (
       lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(MintLayout.span),
       programId: TOKEN_PROGRAM_ID
     }),
-    Token.createInitMintInstruction(TOKEN_PROGRAM_ID, mint.publicKey, 0, payer, payer),
+    createInitializeMintInstruction(mint.publicKey, 0, payer, payer, TOKEN_PROGRAM_ID),
     createAssociatedTokenAccountInstruction(userTokenAccountAddress, payer, payer, mint.publicKey),
-    Token.createMintToInstruction(TOKEN_PROGRAM_ID, mint.publicKey, userTokenAccountAddress, payer, [], 1)
+    createMintToInstruction(mint.publicKey, userTokenAccountAddress, payer, 1)
   ]
 
   return {
@@ -338,9 +343,9 @@ export const mintOneToken = async (
           lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(MintLayout.span),
           programId: TOKEN_PROGRAM_ID
         }),
-        Token.createInitMintInstruction(TOKEN_PROGRAM_ID, mint.publicKey, 0, payer, payer),
+        createInitializeMintInstruction(mint.publicKey, 0, payer, payer),
         createAssociatedTokenAccountInstruction(userTokenAccountAddress, payer, payer, mint.publicKey),
-        Token.createMintToInstruction(TOKEN_PROGRAM_ID, mint.publicKey, userTokenAccountAddress, payer, [], 1)
+        createMintToInstruction(mint.publicKey, userTokenAccountAddress, payer, 1)
       ]
     )
   }
@@ -696,9 +701,9 @@ export const mintOneTokenCustom = async (
           lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(MintLayout.span),
           programId: TOKEN_PROGRAM_ID
         }),
-        Token.createInitMintInstruction(TOKEN_PROGRAM_ID, mint.publicKey, 0, payer, payer),
+        createInitializeMintInstruction(mint.publicKey, 0, payer, payer),
         createAssociatedTokenAccountInstruction(userTokenAccountAddress, payer, payer, mint.publicKey),
-        Token.createMintToInstruction(TOKEN_PROGRAM_ID, mint.publicKey, userTokenAccountAddress, payer, [], 1)
+        createMintToInstruction(mint.publicKey, userTokenAccountAddress, payer, 1)
       ]
     )
   }
@@ -880,9 +885,9 @@ export const mintOneTokenWhitelist = async (
           lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(MintLayout.span),
           programId: TOKEN_PROGRAM_ID
         }),
-        Token.createInitMintInstruction(TOKEN_PROGRAM_ID, mint.publicKey, 0, payer, payer),
+        createInitializeMintInstruction(mint.publicKey, 0, payer, payer),
         createAssociatedTokenAccountInstruction(userTokenAccountAddress, payer, payer, mint.publicKey),
-        Token.createMintToInstruction(TOKEN_PROGRAM_ID, mint.publicKey, userTokenAccountAddress, payer, [], 1)
+        createMintToInstruction(mint.publicKey, userTokenAccountAddress, payer, 1)
       ]
     )
   }
@@ -1062,9 +1067,9 @@ export const createAccountsForMintNonce = async (
       lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(MintLayout.span),
       programId: TOKEN_PROGRAM_ID
     }),
-    Token.createInitMintInstruction(TOKEN_PROGRAM_ID, mint.publicKey, 0, payer, payer),
+    createInitializeMintInstruction(mint.publicKey, 0, payer, payer),
     createAssociatedTokenAccountInstruction(userTokenAccountAddress, payer, payer, mint.publicKey),
-    Token.createMintToInstruction(TOKEN_PROGRAM_ID, mint.publicKey, userTokenAccountAddress, payer, [], 1)
+    createMintToInstruction(mint.publicKey, userTokenAccountAddress, payer, 1)
   ]
 
   instructions.push(
