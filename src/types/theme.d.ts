@@ -36,6 +36,7 @@ export interface Colors {
   text22: Color
   text23: Color
   text24: Color
+  text25: Color
 
   // backgrounds / greys
   bg0: Color
@@ -60,6 +61,7 @@ export interface Colors {
   swapSides1: Color
   swapSides2: Color
   modalBackground: Color
+  infoDivBackground: Color
   bgReward: Color
   substractImg: Color
   grey1: Color
@@ -115,6 +117,7 @@ export interface Colors {
   inputPropertyBg: Color
   inputFence: Color
   propertyBg: Color
+  propertyBg2: Color
   propertyItemBg: Color
   typePropertyColor: Color
 

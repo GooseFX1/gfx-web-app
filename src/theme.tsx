@@ -74,6 +74,7 @@ export function colors(mode: string): Colors {
     text22: mode === 'dark' ? '#9C9C9C' : '#3C3C3C',
     text23: mode === 'dark' ? '#9A9A9A' : '#BABABA',
     text24: mode === 'dark' ? '#EFEDED' : '#636363',
+    text25: mode === 'dark' ? '#7D7D7D' : '#636363',
     text1h: '#7d7d7d',
 
     // backgrounds / greys
@@ -104,6 +105,9 @@ export function colors(mode: string): Colors {
     bg16: mode === 'dark' ? '#1E1E1E' : '#EEEEEE',
     bg17: mode === 'dark' ? '#343434' : '#FFFFFF',
     bg18: mode === 'dark' ? '#2a2a2a' : '#dadada',
+
+    infoDivBackground:
+      'linear-gradient(0deg, rgba(116, 116, 116, 0.2), rgba(116, 116, 116, 0.2)), linear-gradient(94.33deg, rgba(247, 147, 26, 0.3) 5.26%, rgba(224, 60, 255, 0.3) 96.87%);',
 
     modalBackground: mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(96, 96, 96, 0.5)',
     bgReward:
@@ -165,6 +169,7 @@ export function colors(mode: string): Colors {
     inputPropertyBg: mode === 'dark' ? '#131313' : '#A7A7A7',
     inputFence: mode === 'dark' ? '#2a2a2a' : '#C7C7C7',
     propertyBg: mode === 'dark' ? '#2F2F2F' : '#C7C7C7',
+    propertyBg2: mode === 'dark' ? '#2F2F2F' : '#FFFFFF',
     propertyItemBg: mode === 'dark' ? '#000' : '#7D7D7D',
     typePropertyColor: mode === 'dark' ? '#565656' : '#C7C7C7',
 
