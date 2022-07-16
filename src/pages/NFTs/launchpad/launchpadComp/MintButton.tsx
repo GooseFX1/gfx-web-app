@@ -44,8 +44,7 @@ const MESSAGE = styled.div`
 export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
   const params = useParams<IProjectParams>()
   const wallet = useWallet()
-  //const { connection } = useConnectionConfig()
-  const connection = new anchor.web3.Connection('https://api.devnet.solana.com', 'confirmed')
+  const { connection, endpoint, network } = useConnectionConfig()
   const { selectedProject, candyMachineState, candyMachine, cndyValues } = useNFTLPSelected()
   const [isUserMinting, setIsUserMinting] = useState(false)
   const [alertState, setAlertState] = useState<AlertState>({
@@ -365,8 +364,8 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
         signTransaction: wallet.signTransaction
       }}
       gatekeeperNetwork={candyMachine?.state?.gatekeeper?.gatekeeperNetwork}
-      clusterUrl={'https://api.devnet.solana.com'}
-      cluster={'devnet'}
+      clusterUrl={endpoint}
+      cluster={network}
       handleTransaction={async (transaction: Transaction) => {
         setIsUserMinting(true)
         const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(wallet.publicKey!))
