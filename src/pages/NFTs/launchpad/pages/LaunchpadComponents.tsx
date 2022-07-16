@@ -201,7 +201,7 @@ const INFO_DIV_BRIGHT = styled.div`
 const ProgressBarBG = styled.div`
   width: 610px;
   height: 70px;
-  margin-bottom: 100px;
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
   background: #2a2a2a;
@@ -354,7 +354,7 @@ const LIVE_BTN = styled.div`
   position: absolute;
   margin-left: 575px;
   margin-top: 30px;
-  z-index: 9999;
+  z-index: 299;
   border-radius: 10px;
   .liveText {
     display: flex;
@@ -395,6 +395,7 @@ export const SWITCH_HOLDER = styled.div<{ $navCollapsed: boolean }>`
   display: flex;
   justify-content: flex-end;
   padding-right: 70px;
+  width: 100%;
   margin-top: calc(100px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
 `
 

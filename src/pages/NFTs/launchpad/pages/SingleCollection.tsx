@@ -10,10 +10,12 @@ import { MintButton } from '../launchpadComp/MintButton'
 import { TeamMembers } from './LaunchpadComponents'
 import { Share } from '../../Share'
 import { copyToClipboard } from '../../Collection/CollectionHeader'
+import { useNavCollapse } from '../../../../context'
 
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme, activeTab }) => css`
     position: relative;
+    max-width: 800px;
     .ant-tabs-nav {
       position: relative;
       z-index: 1;
@@ -144,15 +146,18 @@ const SOCIAL_ICON = styled.button`
 `
 const { TabPane } = Tabs
 
-const WRAPPER = styled.div`
+const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   display: flex;
   height: 100%;
   width: 100%;
   align-items: center;
+  margin-top: calc(140px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
   justify-content: space-between;
   .leftPart {
-    width: 50%;
-    padding-left: 70px;
+    width: 45%;
+    margin-left: 5%;
+    display: flex;
+    justify-content: end;
   }
   .button {
     border: none;
@@ -160,9 +165,9 @@ const WRAPPER = styled.div`
     width: 80px;
   }
   .rightPart {
-    width: 40%;
+    width: 50%;
     padding-right: 70px;
-    margin-left: 50px;
+    margin-left: 100px;
   }
   .collectionName {
     font-weight: 700;
@@ -232,6 +237,13 @@ const PRICE_SOCIAL = styled.div`
   margin-top: 25px;
   margin-bottom: 35px;
 `
+const TOGGLE_SPACE = styled.div`
+  width: 260px;
+  position: absolute;
+  z-index: 299;
+  top: 0;
+  margin-left: 420px;
+`
 const SUMMARY_TAB_CONTENT = styled.div`
   display: flex;
   margin: auto;
@@ -243,7 +255,7 @@ const SUMMARY_TAB_CONTENT = styled.div`
 `
 export const SingleCollection: FC = () => {
   const { selectedProject, cndyValues } = useNFTLPSelected()
-
+  const { isCollapsed } = useNavCollapse()
   const isLive =
     (selectedProject?.whitelist && parseInt(selectedProject?.whitelist) < Date.now()) ||
     (!selectedProject?.whitelist && parseInt(selectedProject?.startsOn) < Date.now())
@@ -263,89 +275,93 @@ export const SingleCollection: FC = () => {
   if (selectedProject?.ended) ProgressBar = <></>
   return (
     <div>
-      {selectedProject?.currency ? <TokenSwitch disabled={true} currency={selectedProject?.currency} /> : <></>}
-      <WRAPPER>
+      <WRAPPER $navCollapsed={isCollapsed}>
         <div className="leftPart">
-          {selectedProject?.collectionName ? (
-            <COLLECTION_NAME>{selectedProject?.collectionName}</COLLECTION_NAME>
-          ) : (
-            <COLLECTION_NAME>
-              <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
-            </COLLECTION_NAME>
-          )}
-          {selectedProject?.tagLine ? (
-            <TAG_LINE>{selectedProject?.tagLine}</TAG_LINE>
-          ) : (
-            <TAG_LINE>
-              <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
-            </TAG_LINE>
-          )}
-          {selectedProject?.items ? (
-            <PRICE_SOCIAL>
-              <InfoDivLightTheme
-                items={selectedProject?.items}
-                currency={undefined}
-                price={undefined}
-              ></InfoDivLightTheme>
-              <InfoDivLightTheme
-                items={selectedProject}
-                price={selectedProject?.price}
-                currency={selectedProject?.currency}
-              ></InfoDivLightTheme>
-              <Row justify="space-between" align="middle" style={{ marginLeft: '10px' }}>
-                <Col span={2}>
-                  <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.website)}>
-                    <SVGDynamicReverseMode src="/img/assets/domains.svg" alt="domain-icon" />
-                  </SOCIAL_ICON>
-                </Col>
-                <Col span={2}>
-                  <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.discord)}>
-                    <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
-                  </SOCIAL_ICON>
-                </Col>
-                <Col span={2}>
-                  <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.twitter)}>
-                    <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
-                  </SOCIAL_ICON>
-                </Col>
-              </Row>
-            </PRICE_SOCIAL>
-          ) : (
-            <PRICE_SOCIAL>
-              <SkeletonCommon width="500px" height="35px" borderRadius="10px" />
-            </PRICE_SOCIAL>
-          )}
-          <>
-            {selectedProject?.summary ? (
-              <div>
-                <RIGHT_SECTION_TABS activeTab={'4'}>
-                  <Tabs>
-                    <TabPane tab="Summary" key="1">
-                      <SUMMARY_TAB_CONTENT>
-                        <div>{selectedProject?.summary}</div>
-                      </SUMMARY_TAB_CONTENT>
-                    </TabPane>
-                    <TabPane tab="Roadmap" key="2">
-                      <RoadMap roadmap={selectedProject?.roadmap} />
-                    </TabPane>
-                    <TabPane tab="Team" key="3">
-                      <TeamMembers teamMembers={selectedProject?.team} />
-                    </TabPane>
-                    <TabPane tab="Vesting" key="4">
-                      <Vesting currency={selectedProject?.currency} str={''} />
-                    </TabPane>
-                  </Tabs>
-                </RIGHT_SECTION_TABS>
-                {!selectedProject?.ended ? <MintButton isLive={isLive} /> : <></>}
-              </div>
+          <div>
+            {selectedProject?.collectionName ? (
+              <COLLECTION_NAME>{selectedProject?.collectionName}</COLLECTION_NAME>
             ) : (
-              <>
-                <SkeletonCommon width="700px" height={'450px'} borderRadius="10px" />
-              </>
+              <COLLECTION_NAME>
+                <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
+              </COLLECTION_NAME>
             )}
-          </>
+            {selectedProject?.tagLine ? (
+              <TAG_LINE>{selectedProject?.tagLine}</TAG_LINE>
+            ) : (
+              <TAG_LINE>
+                <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
+              </TAG_LINE>
+            )}
+            {selectedProject?.items ? (
+              <PRICE_SOCIAL>
+                <InfoDivLightTheme
+                  items={selectedProject?.items}
+                  currency={undefined}
+                  price={undefined}
+                ></InfoDivLightTheme>
+                <InfoDivLightTheme
+                  items={selectedProject}
+                  price={selectedProject?.price}
+                  currency={selectedProject?.currency}
+                ></InfoDivLightTheme>
+                <Row justify="space-between" align="middle" style={{ marginLeft: '10px' }}>
+                  <Col span={2}>
+                    <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.website)}>
+                      <SVGDynamicReverseMode src="/img/assets/domains.svg" alt="domain-icon" />
+                    </SOCIAL_ICON>
+                  </Col>
+                  <Col span={2}>
+                    <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.discord)}>
+                      <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
+                    </SOCIAL_ICON>
+                  </Col>
+                  <Col span={2}>
+                    <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.twitter)}>
+                      <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
+                    </SOCIAL_ICON>
+                  </Col>
+                </Row>
+              </PRICE_SOCIAL>
+            ) : (
+              <PRICE_SOCIAL>
+                <SkeletonCommon width="500px" height="35px" borderRadius="10px" />
+              </PRICE_SOCIAL>
+            )}
+            <>
+              {selectedProject?.summary ? (
+                <div>
+                  <RIGHT_SECTION_TABS activeTab={'4'}>
+                    <Tabs>
+                      <TabPane tab="Summary" key="1">
+                        <SUMMARY_TAB_CONTENT>
+                          <div>{selectedProject?.summary}</div>
+                        </SUMMARY_TAB_CONTENT>
+                      </TabPane>
+                      <TabPane tab="Roadmap" key="2">
+                        <RoadMap roadmap={selectedProject?.roadmap} />
+                      </TabPane>
+                      <TabPane tab="Team" key="3">
+                        <TeamMembers teamMembers={selectedProject?.team} />
+                      </TabPane>
+                      <TabPane tab="Vesting" key="4">
+                        <Vesting currency={selectedProject?.currency} str={''} />
+                      </TabPane>
+                    </Tabs>
+                  </RIGHT_SECTION_TABS>
+                  {!selectedProject?.ended ? <MintButton isLive={isLive} /> : <></>}
+                </div>
+              ) : (
+                <>
+                  <SkeletonCommon width="700px" height={'450px'} borderRadius="10px" />
+                </>
+              )}
+            </>
+          </div>
         </div>
         <div className="rightPart">
+          <TOGGLE_SPACE>
+            {selectedProject?.currency ? <TokenSwitch disabled={true} currency={selectedProject?.currency} /> : <></>}
+          </TOGGLE_SPACE>
           <NFT_COVER>
             {selectedProject?.coverUrl ? (
               <>
