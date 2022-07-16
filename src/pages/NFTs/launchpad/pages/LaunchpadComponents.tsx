@@ -9,11 +9,11 @@ const ROADMAP_WRAPPER = styled.div`
   .elipse {
     height: 60px;
     width: 60px;
-    margin-left: 25px;
+    margin-left: 2%;
     margin-top: -100px;
   }
   .verticalLine {
-    width: 40%;
+    width: 35%;
     height: 5px;
     margin-top: -100px;
     margin-left: 20px;
@@ -24,7 +24,7 @@ const ROADMAP_WRAPPER = styled.div`
   .headingText {
     font-weight: 600;
     font-size: 20px;
-    margin-left: 75%;
+    margin-left: 72%;
     line-height: 20px;
     right: 15px;
   }
@@ -37,7 +37,7 @@ const ROADMAP_WRAPPER = styled.div`
     text-align: right;
     width: 340px;
     padding-top: 5px;
-    margin-left: 55%;
+    margin-left: 45%;
   }
 `
 const GOLDEN_POPUP = styled.div`

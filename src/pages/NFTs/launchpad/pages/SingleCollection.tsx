@@ -15,7 +15,9 @@ import { useNavCollapse } from '../../../../context'
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme, activeTab }) => css`
     position: relative;
+    width: 35vw;
     max-width: 800px;
+    min-width: 650px;
     .ant-tabs-nav {
       position: relative;
       z-index: 1;
