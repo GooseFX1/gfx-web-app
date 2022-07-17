@@ -10,17 +10,20 @@ const WRAPPER = styled.div`
   width: 100%;
   bottom: 0;
   font-family: Montserrat !important;
-  display: flex;
   background-color: ${({ theme }) => theme.bg9};
   border-radius: 20px 20px 0 0;
-  position: fixed;
-  display: flex;
-  justify-content: center;
+  position: absolute;
 `
 
 const CircularDiv = styled.div`
   position: absolute;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   bottom: -32%;
+  margin-left: -130px;
+
   .outer-bg {
     display: flex;
     align-items: center;
@@ -29,7 +32,6 @@ const CircularDiv = styled.div`
     height: 400px;
     border-radius: 50%;
     border: 6px solid #262626;
-
     background: #2a2a2a;
   }
   .inner-bg {
@@ -64,15 +66,16 @@ const CircularDiv = styled.div`
   .leftArrow {
     position: absolute;
     transform: rotate(90deg) scale(1.3);
-    margin-left: 160px;
-    margin-top: 75px;
+    margin-left: 180px;
+    margin-top: -220px;
     cursor: pointer;
   }
 
   .rightArrow {
     cursor: pointer;
     position: absolute;
-    margin-top: 75px;
+    margin-right: -125px;
+    margin-top: -220px;
     transform: rotate(270deg) scale(1.3);
     margin-left: 220px;
   }
@@ -129,10 +132,10 @@ const MenuPopup = ({ rewardToggle }) => {
         <div className="semiCircle">
           <img src="/img/assets/semiCircle.png" alt="semi circle" />
         </div>
-        <span className="leftArrow" onClick={prev}>
+        <span className="leftArrow" onClick={next}>
           <img src="/img/assets/arrow-down-large.svg" alt="arrow" />
         </span>
-        <span className="rightArrow" onClick={next}>
+        <span className="rightArrow" onClick={prev}>
           <img src="/img/assets/arrow-down-large.svg" alt="arrow" />
         </span>
 

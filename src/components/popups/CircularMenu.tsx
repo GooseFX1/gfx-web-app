@@ -6,10 +6,17 @@ import { CAROUSEL } from '../../constants'
 const WRAPPER = styled.div`
   width: 100%;
   height: 100%;
+  .carouselContainer {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
   .carousel {
     position: absolute;
-    margin-left: 25%;
-    margin-top: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 200px;
     width: 850px;
     height: 850px;
     border-radius: 50%;
@@ -147,7 +154,6 @@ const WRAPPER = styled.div`
     }
   }
 `
-const LINK = styled(Link)``
 
 export const CircularMenu = ({ carousel, rotateClicked, clickCounter, rewardToggle }) => {
   const [rotationClass, setRotationClass] = useState('carousel')
@@ -179,20 +185,21 @@ export const CircularMenu = ({ carousel, rotateClicked, clickCounter, rewardTogg
         <div className="exploreFeaturesText">
           Explore our <br /> amazing features!
         </div>
+        <div className="carouselContainer">
+          <div className={rotationClass}>
+            {carousel.map((item, index) => (
+              <div className={`item-carousel ${index}`} key={item.id} id={item.id.toString()}>
+                <img
+                  className={index === 0 ? indexClass : 'inactive'}
+                  alt={item.name}
+                  onClick={index === 0 ? redirectToPage : null}
+                  src={`/img/assets/nft-menu/${item.name}DarkActive.png`}
+                />
 
-        <div className={rotationClass}>
-          {carousel.map((item, index) => (
-            <div className={`item-carousel ${index}`} key={item.id} id={item.id.toString()}>
-              <img
-                className={index === 0 ? indexClass : 'inactive'}
-                alt={item.name}
-                onClick={index === 0 ? redirectToPage : null}
-                src={`/img/assets/nft-menu/${item.name}DarkActive.png`}
-              />
-
-              <div className="menuText">{index === 0 && indexClass === 'active' ? carousel[0].name : ''}</div>
-            </div>
-          ))}
+                <div className="menuText">{index === 0 && indexClass === 'active' ? carousel[0].name : ''}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </WRAPPER>
     </>
