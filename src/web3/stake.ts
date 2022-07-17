@@ -130,7 +130,6 @@ export const executeUnstakeAndClaim = async (
   const unstakeAmountInstruction = {
     controller: CONTROLLER_KEY,
     stakingAccount: stakingAccountKey,
-    mint: GOFX_MINT,
     vault: tokenVault,
     userAta: userTokenAta,
     feeCollectorAta: feeCollectorAta,
