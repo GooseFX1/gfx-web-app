@@ -150,8 +150,6 @@ const { TabPane } = Tabs
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   display: flex;
-  height: 100%;
-  width: 100%;
   align-items: center;
   margin-top: calc(140px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
   justify-content: space-between;
