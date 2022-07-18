@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Progress, Switch } from 'antd'
 import { ModalSlide } from '../../../../components/ModalSlide'
 import { useUSDCToggle } from '../../../../context/nft_launchpad'
-import { useNavCollapse } from '../../../../context'
+import { useDarkMode, useNavCollapse } from '../../../../context'
 
 const ROADMAP_WRAPPER = styled.div`
   color: ${({ theme }) => theme.text4};
@@ -13,6 +13,7 @@ const ROADMAP_WRAPPER = styled.div`
     width: 60px;
     margin-left: 2%;
     margin-top: -60px;
+    border: none;
   }
   .verticalLine {
     width: 35%;
@@ -42,7 +43,7 @@ const ROADMAP_WRAPPER = styled.div`
     line-height: 18px;
     color: #b5b5b5;
     text-align: right;
-    width: 340px;
+    width: 300px;
     padding-top: 5px;
   }
 `
@@ -114,6 +115,7 @@ const TEAM_MEMBER_WRAPPER = styled.div`
   color: ${({ theme }) => theme.text4};
 
   .teamContainer {
+    width: 80%;
     display: flex;
     flex-direction: column;
     height: 160px;
@@ -616,7 +618,7 @@ export const RoadMap = ({ roadmap }) => {
       {roadmap?.map((road) => {
         return (
           <div className="verticalContainer">
-            <img className="elipse" src="/img/assets/elipse.png" alt="" />
+            <img className="elipse" src={`/img/assets/elipse.png`} alt="" />
             <img className="verticalLine" src="/img/assets/vectorLine.svg" alt="" />
             <div style={{ marginTop: '-50px' }}>
               <div className="headingText">{road?.heading}</div>
