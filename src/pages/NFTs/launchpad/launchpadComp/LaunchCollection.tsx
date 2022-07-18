@@ -6,7 +6,7 @@ import { SOCIAL_MEDIAS } from '../../../../constants'
 const Container = styled.div`
   display: flex;
   justify-content: flex-start;
-  margin-top: 150px !important ;
+  margin-top: 200px !important ;
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   border-radius: 15px;
   margin-right: 40px !important ;

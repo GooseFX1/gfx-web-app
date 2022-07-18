@@ -76,6 +76,7 @@ export function colors(mode: string): Colors {
     text24: mode === 'dark' ? '#EFEDED' : '#636363',
     text25: mode === 'dark' ? '#7D7D7D' : '#636363',
     text1h: '#7d7d7d',
+    comingSoon: mode === 'dark' ? '#000' : '#b5b5b5',
 
     // backgrounds / greys
     bg0: mode === 'dark' ? '#000' : '#fff',
@@ -105,7 +106,12 @@ export function colors(mode: string): Colors {
     bg16: mode === 'dark' ? '#1E1E1E' : '#EEEEEE',
     bg17: mode === 'dark' ? '#343434' : '#FFFFFF',
     bg18: mode === 'dark' ? '#2a2a2a' : '#dadada',
-
+    lpbg: mode === 'dark' ? '#2a2a2a' : '#d2d2d2',
+    pbbg: mode === 'dark' ? '#1a1a1a' : '#868686',
+    goBtn:
+      mode === 'dark'
+        ? 'linear-gradient(142.39deg, #c922f7 21.76%, rgba(71, 51, 194, 0) 67.58%);'
+        : 'linear-gradient(141.56deg, #C922F7 22.12%, rgba(71, 51, 194, 0.78) 77.26%);',
     infoDivBackground:
       'linear-gradient(0deg, rgba(116, 116, 116, 0.2), rgba(116, 116, 116, 0.2)), linear-gradient(94.33deg, rgba(247, 147, 26, 0.3) 5.26%, rgba(224, 60, 255, 0.3) 96.87%);',
 
@@ -120,6 +126,8 @@ export function colors(mode: string): Colors {
     grey4: '#121212',
     grey5: '#1a1a1a',
     darkButton: '#000000',
+    circleBoxShadow: mode === 'dark' ? '#262626' : '#E6E6E6',
+    innerCircle: mode === 'dark' ? '#373636' : white,
     opacity: mode === 'dark' ? '0.7' : '1',
     scrollBarColor: mode === 'dark' ? '#434343' : '#e0e0e0',
     boxShadow: mode === 'dark' ? '0 4px 4px 0 rgba(0, 0, 0, 0.25)' : '0 7px 10px 0 rgba(189, 189, 189, 0.25)',
@@ -141,6 +149,9 @@ export function colors(mode: string): Colors {
 
     // card
     cardBg: mode === 'dark' ? '#171717' : 'rgba(114, 114, 114, 1)',
+
+    //color changing options
+    blackToGrey: mode === 'dark' ? 'invert(1)' : 'invert(20%)',
 
     // share modal
     textShareModal: mode === 'dark' ? '#fff' : 'rgba(60, 60, 60, 1)',

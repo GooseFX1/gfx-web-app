@@ -6,27 +6,34 @@ import { useUSDCToggle } from '../../../../context/nft_launchpad'
 import { useNavCollapse } from '../../../../context'
 
 const ROADMAP_WRAPPER = styled.div`
+  color: ${({ theme }) => theme.text4};
+
   .elipse {
     height: 60px;
     width: 60px;
     margin-left: 2%;
-    margin-top: -100px;
+    margin-top: -60px;
   }
   .verticalLine {
     width: 35%;
     height: 5px;
-    margin-top: -100px;
+    margin-top: -60px;
     margin-left: 20px;
   }
   .verticalContainer {
-    margin-top: 30px;
+    margin-top: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
   }
   .headingText {
     font-weight: 600;
-    font-size: 20px;
-    margin-left: 72%;
+    font-size: 18px;
+    margin-left: 10%;
     line-height: 20px;
     right: 15px;
+    text-align: right;
   }
   .subHeadingText {
     font-weight: 500;
@@ -37,7 +44,6 @@ const ROADMAP_WRAPPER = styled.div`
     text-align: right;
     width: 340px;
     padding-top: 5px;
-    margin-left: 45%;
   }
 `
 const GOLDEN_POPUP = styled.div`
@@ -105,11 +111,27 @@ const ToggleBG = styled.span`
 const TEAM_MEMBER_WRAPPER = styled.div`
   display: grid;
   grid-template-columns: auto auto auto;
+  color: ${({ theme }) => theme.text4};
+
+  .teamContainer {
+    display: flex;
+    flex-direction: column;
+    height: 160px;
+    align-items: center;
+  }
   .avatar {
     cursor: pointer;
     margin-bottom: 20px;
-    margin-left: 37%;
     margin-top: 15px;
+    width: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img {
+      border-radius: 50%;
+      height: 75px;
+      width: 75px;
+    }
   }
   .userNameText {
     display: flex;
@@ -117,8 +139,6 @@ const TEAM_MEMBER_WRAPPER = styled.div`
     justify-content: center;
     font-weight: 600;
     font-size: 16px;
-    margin-top: 15px;
-    margin-bottom: 38px;
   }
 `
 
@@ -137,7 +157,7 @@ const INFO_DIV_LIGHT = styled.div`
     width: 100%;
     height: 100%;
     border-radius: 47px;
-    background: ${({ theme }) => theme.bg9};
+    background: '#2a2a2a';
   }
 
   .inner-2 {
@@ -146,7 +166,7 @@ const INFO_DIV_LIGHT = styled.div`
     height: 100%;
     border-radius: 47px !important;
     background: ${({ theme }) => theme.infoDivBackground};
-    color: ${({ theme }) => theme.text1};
+    color: white;
     font-weight: 600;
     font-size: 15px;
     display: flex;
@@ -204,7 +224,7 @@ const ProgressBarBG = styled.div`
   margin-bottom: 20px;
   display: flex;
   align-items: center;
-  background: #2a2a2a;
+  background: ${({ theme }) => theme.bg18};
   border-radius: 15px;
   font-weight: 600;
   font-size: 17px;
@@ -221,6 +241,10 @@ const ProgressBarBG = styled.div`
     font-weight: 600;
     font-size: 18px;
   }
+  .ant-progress-inner {
+    background: ${({ theme }) => theme.pbbg};
+  }
+
   .mintedNFT {
     font-weight: 600;
     color: #7d7d7d;
@@ -228,6 +252,7 @@ const ProgressBarBG = styled.div`
   }
   .totalNFT {
     font-size: 18px;
+    color: ${({ theme }) => theme.text2};
   }
   .timer-circle {
     border-radius: 50%;
@@ -252,6 +277,7 @@ const ProgressBarBG = styled.div`
 `
 
 const VESTING_WRAPPER = styled.div`
+  color: ${({ theme }) => theme.text4};
   .wrapper {
     display: flex;
     align-items: center;
@@ -294,7 +320,7 @@ const DARK_DIV = styled.div`
     width: 501px;
     height: 501px;
     margin-top: 25px;
-    background: #2a2a2a;
+    background: ${({ theme }) => theme.lpbg} !important;
     opacity: 0.6;
     border-radius: 20px;
   }
@@ -305,7 +331,7 @@ const DARK_DIV = styled.div`
     margin-top: 50px;
     width: 451px;
     height: 451px;
-    background: #2a2a2a;
+    background: ${({ theme }) => theme.lpbg} !important;
     opacity: 0.5;
     border-radius: 20px;
   }
@@ -316,7 +342,7 @@ const DARK_DIV = styled.div`
     position: absolute;
     width: 401px;
     height: 401px;
-    background: #2a2a2a;
+    background: ${({ theme }) => theme.lpbg} !important;
     opacity: 0.3;
     border-radius: 20px;
   }
@@ -392,10 +418,10 @@ export const MintProgressBar = ({ minted, totalNFTs }) => {
   )
 }
 export const SWITCH_HOLDER = styled.div<{ $navCollapsed: boolean }>`
-  display: flex;
-  justify-content: flex-end;
-  padding-right: 70px;
-  width: 100%;
+  width: 250px;
+  position: absolute;
+  top: 0px;
+  margin-left: 570px;
   margin-top: calc(100px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
 `
 
@@ -426,19 +452,9 @@ export const Vesting = ({ currency, str }) => {
   return (
     <>
       <VESTING_WRAPPER>
-        <div className="wrapper">
-          <img className="currencyImg" src={`/img/crypto/${currency}.svg`} />
-          <div className="raisedText">{`${currency} raised:`}</div>
-        </div>
+        <div className="wrapper"></div>
 
-        <div className="vestingStr">
-          <span className="percentText">{`50% `}</span>
-          unlocked upfront,
-          <span className="percentText">{`25% `}</span>
-          after 3 months,
-          <span className="percentText">{`25% `}</span>
-          after 6 months.
-        </div>
+        <div className="vestingStr">This project will receive all funds upfront and are not vested.</div>
       </VESTING_WRAPPER>
     </>
   )
@@ -576,7 +592,7 @@ export const TeamMembers = ({ teamMembers }) => {
     <TEAM_MEMBER_WRAPPER>
       {teamMembers?.map((team) => {
         return (
-          <div>
+          <div className="teamContainer">
             {team?.dp_url ? (
               <div className="avatar">
                 <img src={team?.dp_url} alt="" />
@@ -595,19 +611,17 @@ export const TeamMembers = ({ teamMembers }) => {
 }
 
 export const RoadMap = ({ roadmap }) => {
-  console.log(roadmap)
   return (
     <ROADMAP_WRAPPER>
       {roadmap?.map((road) => {
         return (
           <div className="verticalContainer">
-            <div className="headingText">{road?.heading}</div>
-            <div className="subHeadingText">
-              {road?.subheading}
-              {road?.subheading}
-            </div>
             <img className="elipse" src="/img/assets/elipse.png" alt="" />
             <img className="verticalLine" src="/img/assets/vectorLine.svg" alt="" />
+            <div style={{ marginTop: '-50px' }}>
+              <div className="headingText">{road?.heading}</div>
+              <div className="subHeadingText">{road?.subheading}</div>
+            </div>
           </div>
         )
       })}
