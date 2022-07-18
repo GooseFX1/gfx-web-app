@@ -487,7 +487,6 @@ export const InfoDivUSDCTheme = () => {
 
 export const MintStarts = ({ time }) => {
   const getRemaningTime = (time) => {
-    //item?.startsOn;
     const startsOn = parseFloat(time)
     const timeDiffrence = startsOn - Date.now()
     let seconds = Number(timeDiffrence / 1000)

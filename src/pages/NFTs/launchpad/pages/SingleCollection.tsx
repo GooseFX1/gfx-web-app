@@ -249,6 +249,9 @@ const PRICE_SOCIAL = styled.div`
   margin-top: 25px;
   margin-bottom: 35px;
 `
+const HEIGHT = styled.div`
+  min-height: 800px !important ;
+`
 
 const TOGGLE_SPACE = styled.div`
   width: 260px;
@@ -296,7 +299,7 @@ export const SingleCollection: FC = () => {
   )
   if (selectedProject?.ended) ProgressBar = <></>
   return (
-    <div style={{ height: isCollapsed ? '90vh' : '82vh' }}>
+    <HEIGHT style={{ height: isCollapsed ? '90vh' : '82vh' }}>
       <WRAPPER $navCollapsed={isCollapsed}>
         <div className="leftPart">
           <BACK_IMG onClick={() => history.goBack()}>
@@ -403,6 +406,6 @@ export const SingleCollection: FC = () => {
           {ProgressBar}
         </div>
       </WRAPPER>
-    </div>
+    </HEIGHT>
   )
 }
