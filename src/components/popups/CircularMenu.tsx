@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import { CAROUSEL } from '../../constants'
+import { useDarkMode } from '../../context'
 
 const WRAPPER = styled.div`
   width: 100%;
@@ -16,7 +17,7 @@ const WRAPPER = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 200px;
+    margin-top: 180px;
     width: 850px;
     height: 850px;
     border-radius: 50%;
@@ -174,7 +175,7 @@ export const CircularMenu = ({ carousel, rotateClicked, clickCounter, rewardTogg
       history.push(carousel[0].redirect)
     }
   }
-
+  const { mode } = useDarkMode()
   return (
     <>
       <WRAPPER>
@@ -193,7 +194,7 @@ export const CircularMenu = ({ carousel, rotateClicked, clickCounter, rewardTogg
                   className={index === 0 ? indexClass : 'inactive'}
                   alt={item.name}
                   onClick={index === 0 ? redirectToPage : null}
-                  src={`/img/assets/nft-menu/${item.name}DarkActive.png`}
+                  src={`/img/assets/nft-menu/${item.name.toLowerCase() + mode}.svg`}
                 />
 
                 <div className="menuText">{index === 0 && indexClass === 'active' ? carousel[0].name : ''}</div>

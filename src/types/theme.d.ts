@@ -37,6 +37,8 @@ export interface Colors {
   text23: Color
   text24: Color
   text25: Color
+  comingSoon: Color
+  blackToGrey: Color
 
   // backgrounds / greys
   bg0: Color
@@ -58,6 +60,11 @@ export interface Colors {
   bg16: Color
   bg17: Color
   bg18: Color
+  lpbg: Color
+  pbbg: Color
+  goBtn: Color
+  innerCircle: Color
+  circleBoxShadow: Color
   swapSides1: Color
   swapSides2: Color
   modalBackground: Color
@@ -197,7 +204,7 @@ export interface Colors {
 
 export type Font = string
 
- declare module 'twin.macro' {
+declare module 'twin.macro' {
   // The styled and css imports
   const styled: typeof styledImport
   const css: typeof cssImport

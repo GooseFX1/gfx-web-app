@@ -17,7 +17,7 @@ export const FlexColumnDiv = styled.div`
 `
 
 export const SpaceBetweenDiv = styled.div`
-${tw`flex items-center justify-between`}
+  ${tw`flex items-center justify-between`}
 `
 
 export const AlignCenterDiv = styled.div`
@@ -55,6 +55,9 @@ export const SVGDynamicMode = styled.img`
 
 export const SVGDynamicReverseMode = styled.img`
   filter: ${({ theme }) => theme.filterWhiteIcon};
+`
+export const SVGBlackToGrey = styled.img`
+  filter: ${({ theme }) => theme.blackToGrey};
 `
 
 export const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`

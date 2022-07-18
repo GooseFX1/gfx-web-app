@@ -67,10 +67,10 @@ export const NFT_MENU = styled.div`
   z-index: 11;
   height: 150px;
   width: 180px;
-  right: -10px;
+  right: -20px;
   bottom: -12px;
   cursor: pointer;
-  background: url('/img/assets/nftFeatures.png');
+  background: url('/img/assets/featuresButton.svg');
 `
 const NFTLandingPage: FC = (): JSX.Element => {
   const { allCollections, fetchAllCollections, setNFTMenuPopup, nftMenuPopup } = useNFTCollections()
