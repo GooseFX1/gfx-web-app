@@ -4,7 +4,7 @@ export const pdaWhitelistSeed = 'whitelist-config'
 
 export const MAGIC_HAT_PROGRAM_V2_ID = new PublicKey('G317XThznKMemjmSBEekMSsPedT9krKcAeRmE39drhNA')
 export const MAGIC_HAT_CREATOR = new PublicKey('4bDer2d1P357AhB8YN13b1XXBAh89d2xHex9qrM3xEtt')
-export const MAGIC_HAT_ID = new PublicKey('Hd4z1BbmqNhmC7WSN8gxMvAVK5moC7omE3WtQxo2Fo2h')
+export const MAGIC_HAT_ID = new PublicKey('DK5eeZee3iCBcZPGzZu2K77R2MJWKxQnjqG4abWGkeTt')
 //export const GOG_TIME = 1656435600;
 //export const WL_TIME = 1656437400;
 export const COMMUNITY_TIME = 1657901400
