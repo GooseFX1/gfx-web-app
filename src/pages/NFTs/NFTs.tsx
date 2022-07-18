@@ -24,8 +24,6 @@ import {
   useConnectionConfig
 } from '../../context'
 import { GenericNotFound } from '../InvalidUrl'
-import { Launchpad } from './launchpad/Launchpad'
-import { Creator } from './CreatorPage/Creator'
 
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
@@ -34,7 +32,6 @@ const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   overflow-y: hidden;
   overflow-x: hidden;
   padding-top: calc(80px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
-
   * {
     font-family: Montserrat;
   }
@@ -89,7 +86,7 @@ export const NFTs: FC = () => {
                 <Route exact path={path}>
                   <NFTLandingPage />
                 </Route>
-                <Route exact path={['/NFTs/profile', '/NFTs/profile/:userId']}>
+                <Route exact path={['/NFTs/profile', '/NFTs/profile/:userAddress']}>
                   <Profile />
                 </Route>
                 <Route exact path="/NFTs/collection/:collectionName">
