@@ -1,4 +1,4 @@
-import * as splToken from '@solana/spl-token'
+import * as splToken from '@solana/spl-token-v2'
 import * as beet from '@metaplex-foundation/beet'
 import { PublicKey, AccountMeta, SystemProgram, SYSVAR_RENT_PUBKEY, TransactionInstruction } from '@solana/web3.js'
 import { AUCTION_HOUSE_PROGRAM_ID } from '../../../ids'
