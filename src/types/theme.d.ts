@@ -39,6 +39,7 @@ export interface Colors {
   text25: Color
   comingSoon: Color
   blackToGrey: Color
+  tableBorder: Color
 
   // backgrounds / greys
   bg0: Color
