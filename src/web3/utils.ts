@@ -4,6 +4,7 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction } 
 import { Connection, PublicKey, Signer, Transaction, sendAndConfirmTransaction } from '@solana/web3.js'
 import { getHashedName, getNameAccountKey, NameRegistryState } from '@solana/spl-name-service'
 import { useLocalStorage } from '../utils'
+import { NETWORK_CONSTANTS } from '../constants'
 
 export const SOL_TLD_AUTHORITY = new PublicKey('58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx')
 
@@ -157,5 +158,5 @@ export const bnTo8 = (bn: BN): Uint8Array => {
 }
 
 export const getNetworkConnectionText = (network) => {
-  return network === 'devnet' ? 'DEVNET' : 'MAINNET'
+  return network === NETWORK_CONSTANTS.DEVNET ? NETWORK_CONSTANTS.DEVNET_SDK : NETWORK_CONSTANTS.MAINNET_SDK
 }
