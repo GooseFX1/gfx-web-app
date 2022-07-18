@@ -76,7 +76,7 @@ export function colors(mode: string): Colors {
     text24: mode === 'dark' ? '#EFEDED' : '#636363',
     text25: mode === 'dark' ? '#7D7D7D' : '#636363',
     text1h: '#7d7d7d',
-    comingSoon: mode === 'dark' ? '#000' : '#b5b5b5',
+    comingSoon: mode === 'dark' ? '#262626' : '#b5b5b5',
 
     // backgrounds / greys
     bg0: mode === 'dark' ? '#000' : '#fff',
