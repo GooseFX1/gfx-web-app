@@ -21,11 +21,11 @@ const MINT_BUTTON_BAR = styled.div`
   height: 70px;
   z-index: 99;
   min-width: 650px;
-  width: 35vw;
+  width: 35vw !important;
   max-width: 800px;
+  border-top: 1px solid #eeeeee;
   position: relative;
   border-radius: 0 0 25px 25px;
-  width: 100%;
   display: flex;
   flex-direction: row-reverse;
   backdrop-filter: blur(23.9091px);

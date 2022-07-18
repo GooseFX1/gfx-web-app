@@ -21,8 +21,7 @@ const CircularDiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  bottom: -32%;
-  margin-left: -130px;
+  bottom: -27%;
 
   .outer-bg {
     display: flex;
@@ -31,8 +30,8 @@ const CircularDiv = styled.div`
     width: 400px;
     height: 400px;
     border-radius: 50%;
-    border: 6px solid #262626;
-    background: #2a2a2a;
+    background: ${({ theme }) => theme.bg9};
+    border: 6px solid ${({ theme }) => theme.circleBoxShadow};
   }
   .inner-bg {
     display: flex;
@@ -41,7 +40,8 @@ const CircularDiv = styled.div`
     width: 351px;
     height: 351px;
     border-radius: 50%;
-    background: #373636;
+    background: ${({ theme }) => theme.innerCircle};
+    box-shadow: 0px -10px 10px ${({ theme }) => theme.circleBoxShadow};
   }
   .go-btn {
     width: 150px;
@@ -53,20 +53,40 @@ const CircularDiv = styled.div`
     height: 150px;
     font-weight: 600;
     font-size: 25px;
-    background: linear-gradient(142.39deg, #c922f7 21.76%, rgba(71, 51, 194, 0) 67.58%);
+    color: ${({ theme }) => theme.bg0};
+    background: ${({ theme }) => theme.goBtn};
   }
   .go-text {
     margin-top: -50px;
+    color: white;
+  }
+  .cmg-soon {
+    width: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    height: 150px;
+    font-weight: 600;
+    font-size: 18px;
+    color: ${({ theme }) => theme.bg0};
+    background: ${({ theme }) => theme.comingSoon};
+  }
+  .cmg-soon-text {
+    margin-top: -60px;
+    color: ${({ theme }) => theme.text7};
+    text-align: center;
   }
   .semiCircle {
-    position: relative;
-    margin-left: 125px;
-    bottom: -18px;
+    position: absolute;
+    margin-left: 0px;
+    top: 0px;
+    z-index: 100;
   }
   .leftArrow {
     position: absolute;
-    transform: rotate(90deg) scale(1.3);
-    margin-left: 180px;
+    transform: scale(1);
+    margin-left: -80px;
     margin-top: -220px;
     cursor: pointer;
   }
@@ -74,9 +94,9 @@ const CircularDiv = styled.div`
   .rightArrow {
     cursor: pointer;
     position: absolute;
-    margin-right: -125px;
+    margin-right: 150px;
     margin-top: -220px;
-    transform: rotate(270deg) scale(1.3);
+    transform: rotate(180deg) scale(1);
     margin-left: 220px;
   }
 `
@@ -133,17 +153,26 @@ const MenuPopup = ({ rewardToggle }) => {
           <img src="/img/assets/semiCircle.png" alt="semi circle" />
         </div>
         <span className="leftArrow" onClick={next}>
-          <img src="/img/assets/arrow-down-large.svg" alt="arrow" />
+          <img src={`/img/assets/arrow-left${mode}.svg`} alt="arrow" />
         </span>
         <span className="rightArrow" onClick={prev}>
-          <img src="/img/assets/arrow-down-large.svg" alt="arrow" />
+          <img src={`/img/assets/arrow-left${mode}.svg`} alt="arrow" />
         </span>
 
         <div className="outer-bg">
           <div className="inner-bg">
-            <div className="go-btn" onClick={redirectToPage}>
-              <div className="go-text">Go!</div>
-            </div>
+            {carousel[0].redirect ? (
+              <div className="go-btn" onClick={redirectToPage}>
+                <div className="go-text">Go!</div>
+              </div>
+            ) : (
+              <div className="cmg-soon">
+                <div className="cmg-soon-text">
+                  Comming
+                  <br /> Soon
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </CircularDiv>

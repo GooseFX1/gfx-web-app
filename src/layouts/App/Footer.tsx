@@ -50,7 +50,7 @@ const AltRow = styled(Row)`
 
 const WRAPPER = styled(SpaceBetweenDiv)`
   height: ${APP_LAYOUT_FOOTER_HEIGHT};
-  width: 100vw;
+  width: 98vw;
   padding: 0 ${({ theme }) => theme.margin(4)};
   border-top: 1px solid ${({ theme }) => theme.appLayoutFooterBorder};
   background-color: ${({ theme }) => theme.bg2};
