@@ -286,7 +286,7 @@ export const SingleCollection: FC = () => {
     (!selectedProject?.whitelist && parseInt(selectedProject?.startsOn) < Date.now())
   const displayProgressBar =
     isLive && cndyValues ? (
-      <MintProgressBar minted={cndyValues?.itemsRedeemed} totalNFTs={cndyValues?.itemsAvailable} />
+      <MintProgressBar minted={cndyValues?.itemsRedeemed} totalNFTs={selectedProject?.items} />
     ) : isLive && !cndyValues ? (
       <SkeletonCommon style={{ marginTop: '20px' }} width="600px" height={'70px'} borderRadius="10px" />
     ) : (
