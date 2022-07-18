@@ -5,7 +5,7 @@ import { SOCIAL_MEDIAS } from '../../../../constants'
 
 const Container = styled.div`
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   margin-top: 200px !important ;
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   border-radius: 15px;
@@ -14,7 +14,7 @@ const Container = styled.div`
 
   .startContainer {
     height: 295px;
-    padding-right: 10px;
+    padding-right: 100px;
     position: relative;
     display: flex;
     align-items: center;
