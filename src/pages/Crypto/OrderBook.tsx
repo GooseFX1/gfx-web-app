@@ -5,9 +5,9 @@ import styled from 'styled-components'
 import { Expand } from '../../components'
 import { MarketSide, useCrypto, useOrder, useOrderBook, useTradeHistory } from '../../context'
 import { removeFloatingPointError } from '../../utils'
-import tw from "twin.macro"
+import tw from 'twin.macro'
 
-const SPREADS = [1 / 100, 5 / 100, 1 / 10, 5 / 10, 1];
+const SPREADS = [1 / 100, 5 / 100, 1 / 10, 5 / 10, 1]
 
 const HEADER = styled.div`
   ${tw`h-17.5 rounded-b-small w-full py-2.5`}
@@ -17,38 +17,38 @@ const HEADER = styled.div`
     ${tw`flex justify-between items-center`}
     color: #e7e7e7;
 
-  span {
-    ${tw`inline-block w-1/3 text-tiny`}
-  }
-  span:nth-child(2) {
-    ${tw`text-center`}
-  }
-  div:nth-child(3) {
-    ${tw`text-right w-1/3 justify-end`}
-    .spreadDropdown {
-      ${tw`justify-end cursor-pointer w-12 text-smaller w-12.5`}
-      background: linear-gradient(90.62deg, #f48537 2.36%, #a72ebd 99.71%);
+    span {
+      ${tw`inline-block w-1/3 text-tiny`}
+    }
+    span:nth-child(2) {
+      ${tw`text-center`}
+    }
+    div:nth-child(3) {
+      ${tw`text-right w-1/3 justify-end`}
+      .spreadDropdown {
+        ${tw`justify-end cursor-pointer w-12 text-smaller w-12.5`}
+        background: linear-gradient(90.62deg, #f48537 2.36%, #a72ebd 99.71%);
+      }
     }
   }
-}
-div:nth-child(2) {
-  color: ${({ theme }) => theme.text23};
-  ${tw`mt-3.75`}
-  span {
-    ${tw`text-smallest`}
+  div:nth-child(2) {
+    color: ${({ theme }) => theme.text23};
+    ${tw`mt-3.75`}
+    span {
+      ${tw`text-smallest`}
+    }
+    span:nth-child(3) {
+      ${tw`text-right`}
+    }
   }
-  span:nth-child(3) {
-    ${tw`text-right`}
+  .buy {
+    color: #50bb35;
+    font-weight: 700 bold;
   }
-}
-.buy {
-  color: #50bb35;
-  font-weight: 700 bold;
-}
-.sell {
-  ${tw`font-bold`}
-  color: #f06565;
-}
+  .sell {
+    ${tw`font-bold`}
+    color: #f06565;
+  }
 `
 
 const LOADER = styled(Skeleton.Input)`
@@ -351,7 +351,9 @@ export const OrderBook: FC = () => {
   const SPREAD_DROPDOWN = (
     <Menu>
       {SPREADS.map((item, index) => (
-        <Menu.Item onClick={() => setSpreadIndex(index)}>{item}</Menu.Item>
+        <Menu.Item key={index} onClick={() => setSpreadIndex(index)}>
+          {item}
+        </Menu.Item>
       ))}
     </Menu>
   )
