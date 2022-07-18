@@ -232,6 +232,9 @@ const BANNER_TOGGLE = styled.button`
   }
 `
 //#endregion
+export const copyToClipboard = async () => {
+  await navigator.clipboard.writeText(window.location.href)
+}
 
 export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) => {
   const { mode } = useDarkMode()
@@ -291,10 +294,6 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
       default:
         break
     }
-  }
-
-  const copyToClipboard = async () => {
-    await navigator.clipboard.writeText(window.location.href)
   }
 
   const iconStyle = { transform: `rotate(${collapse ? 0 : 180}deg)`, marginTop: `${collapse ? '5px' : '2px'}` }

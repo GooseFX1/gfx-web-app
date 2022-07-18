@@ -29,5 +29,18 @@ export const httpClient = (base: string) => {
     }
   })
 }
+export const customClient = (customURL: string, collectionId?: number) => {
+  let data = JSON.stringify({
+    collectionId: collectionId
+  })
+  return axios.create({
+    baseURL: customURL,
+    responseType: 'json',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
 
 export default apiClient

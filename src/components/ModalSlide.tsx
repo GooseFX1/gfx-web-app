@@ -2,8 +2,14 @@ import React, { Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { RewardsPopup } from './RewardsPopup'
 import { FeesPopup } from './FeesPopup'
+//import { GoldenTicketPopup } from '../pages/NFTs/launchpad/pages/LaunchpadComponents'
+import MenuPopup from './popups/MenuPopup'
 import { MODAL_TYPES } from '../constants'
-import tw from "twin.macro"
+import { GoldenTicketPopup } from '../pages/NFTs/launchpad/pages/LaunchpadComponents'
+import SubmitPopup from '../pages/NFTs/CreatorPage/Popup/SubmitPopup'
+import RelaxPopup from '../pages/NFTs/CreatorPage/Popup/Relax'
+import DisclaimerPopup from '../pages/NFTs/CreatorPage/Popup/Disclaimer'
+import tw from 'twin.macro'
 
 const WRAPPER = styled.div`
   ${tw`absolute top-0 left-0 right-0 bottom-0 h-screen w-screen overflow-hidden z-[999]`}
@@ -35,7 +41,7 @@ const MODAL = styled.div`
 `
 interface IModalSlide {
   rewardModal?: boolean
-  rewardToggle?: Dispatch<SetStateAction<boolean>>
+  rewardToggle?: any
   modalType: string
 }
 
@@ -50,7 +56,12 @@ export const ModalSlide = (props: IModalSlide) => {
     <WRAPPER id="wrapper-background" onClick={(e) => closeRewardModal(e, props.rewardToggle)}>
       <MODAL id="modal">
         {props.modalType === MODAL_TYPES.REWARDS && <RewardsPopup />}
+        {props.modalType === MODAL_TYPES.SUBMIT && <SubmitPopup rewardToggle={props.rewardToggle} />}
+        {props.modalType === MODAL_TYPES.RELAX && <RelaxPopup rewardToggle={props.rewardToggle} />}
+        {props.modalType === MODAL_TYPES.CREATOR_DISCLAIMER && <DisclaimerPopup rewardToggle={props.rewardToggle} />}
         {props.modalType === MODAL_TYPES.FEES && <FeesPopup {...props} />}
+        {props.modalType === MODAL_TYPES.NFT_MENU && <MenuPopup rewardToggle={props.rewardToggle} />}
+        {/* {props.modalType === MODAL_TYPES.GOLDEN_TICKET && <GoldenTicketPopup />} */}
       </MODAL>
     </WRAPPER>
   )

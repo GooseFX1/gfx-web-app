@@ -74,7 +74,9 @@ export function colors(mode: string): Colors {
     text22: mode === 'dark' ? '#9C9C9C' : '#3C3C3C',
     text23: mode === 'dark' ? '#9A9A9A' : '#BABABA',
     text24: mode === 'dark' ? '#EFEDED' : '#636363',
+    text25: mode === 'dark' ? '#7D7D7D' : '#636363',
     text1h: '#7d7d7d',
+    comingSoon: mode === 'dark' ? '#262626' : '#b5b5b5',
 
     // backgrounds / greys
     bg0: mode === 'dark' ? '#000' : '#fff',
@@ -104,6 +106,14 @@ export function colors(mode: string): Colors {
     bg16: mode === 'dark' ? '#1E1E1E' : '#EEEEEE',
     bg17: mode === 'dark' ? '#343434' : '#FFFFFF',
     bg18: mode === 'dark' ? '#2a2a2a' : '#dadada',
+    lpbg: mode === 'dark' ? '#2a2a2a' : '#d2d2d2',
+    pbbg: mode === 'dark' ? '#1a1a1a' : '#868686',
+    goBtn:
+      mode === 'dark'
+        ? 'linear-gradient(142.39deg, #c922f7 21.76%, rgba(71, 51, 194, 0) 67.58%);'
+        : 'linear-gradient(141.56deg, #C922F7 22.12%, rgba(71, 51, 194, 0.78) 77.26%);',
+    infoDivBackground:
+      'linear-gradient(0deg, rgba(116, 116, 116, 0.2), rgba(116, 116, 116, 0.2)), linear-gradient(94.33deg, rgba(247, 147, 26, 0.3) 5.26%, rgba(224, 60, 255, 0.3) 96.87%);',
 
     modalBackground: mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(96, 96, 96, 0.5)',
     bgReward:
@@ -116,6 +126,8 @@ export function colors(mode: string): Colors {
     grey4: '#121212',
     grey5: '#1a1a1a',
     darkButton: '#000000',
+    circleBoxShadow: mode === 'dark' ? '#262626' : '#E6E6E6',
+    innerCircle: mode === 'dark' ? '#373636' : white,
     opacity: mode === 'dark' ? '0.7' : '1',
     scrollBarColor: mode === 'dark' ? '#434343' : '#e0e0e0',
     boxShadow: mode === 'dark' ? '0 4px 4px 0 rgba(0, 0, 0, 0.25)' : '0 7px 10px 0 rgba(189, 189, 189, 0.25)',
@@ -137,6 +149,10 @@ export function colors(mode: string): Colors {
 
     // card
     cardBg: mode === 'dark' ? '#171717' : 'rgba(114, 114, 114, 1)',
+    tableBorder: mode === 'dark' ? '#3C3C3C' : '#eeeeee',
+
+    //color changing options
+    blackToGrey: mode === 'dark' ? '' : 'invert(30%)',
 
     // share modal
     textShareModal: mode === 'dark' ? '#fff' : 'rgba(60, 60, 60, 1)',
@@ -165,6 +181,7 @@ export function colors(mode: string): Colors {
     inputPropertyBg: mode === 'dark' ? '#131313' : '#A7A7A7',
     inputFence: mode === 'dark' ? '#2a2a2a' : '#C7C7C7',
     propertyBg: mode === 'dark' ? '#2F2F2F' : '#C7C7C7',
+    propertyBg2: mode === 'dark' ? '#2F2F2F' : '#FFFFFF',
     propertyItemBg: mode === 'dark' ? '#000' : '#7D7D7D',
     typePropertyColor: mode === 'dark' ? '#565656' : '#C7C7C7',
 

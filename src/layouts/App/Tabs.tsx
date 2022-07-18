@@ -3,13 +3,32 @@ import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { useDarkMode } from '../../context'
 import { CenteredDiv, CenteredImg, SVGToGrey2, SVGToPrimary2, SVGToWhite } from '../../styles'
-import tw from "twin.macro"
+import tw from 'twin.macro'
 
 const TABS = ['/swap', '/trade', '/NFTs', '/farm']
 
 const LABEL = styled.span<{ $mode: string; $hover: boolean }>`
+  height: 14px;
+  width: 7vw;
+  ${({ theme }) => theme.flexCenter}
+  font-size: 14px;
+  color: ${({ $hover, $mode, theme }) =>
+    $hover && $mode === 'dark'
+      ? '#FFFFFF'
+      : $hover && $mode !== 'dark'
+      ? '#5855FF'
+      : $mode === 'dark'
+      ? '#4E4E4E'
+      : '#636363'};
   ${tw`h-3.5 w-[7vw] flex justify-center items-center text-smallest capitalize sm:text-regular`}
-  color: ${({ $hover, $mode, theme }) => (($hover && $mode==='dark') ? '#FFFFFF' : (($hover && $mode!=='dark') ? '#5855FF' : ($mode==='dark' ? '#4E4E4E' : '#636363')))};
+  color: ${({ $hover, $mode, theme }) =>
+    $hover && $mode === 'dark'
+      ? '#FFFFFF'
+      : $hover && $mode !== 'dark'
+      ? '#5855FF'
+      : $mode === 'dark'
+      ? '#4E4E4E'
+      : '#636363'};
   font-weight: ${({ $hover }) => ($hover ? '600' : 'normal')};
 
   @media (max-width: 500px) {
@@ -38,7 +57,7 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     ${tw`absolute top-0 block h-2 w-11 rounded-b-circle`}
     content: '';
     left: ${({ $index }) => 2 * $index * 40 + 18}px;
-    background: #5855FF;
+    background: #5855ff;
     transition: left ${({ theme }) => theme.mainTransitionTime} ease-in-out;
   }
 
@@ -143,7 +162,7 @@ export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
         >
           <TAB_ICON>
             {(() => {
-              const icon = mode === 'dark' ? `/img/assets${path}_icon_dark.svg` : `/img/assets${path}_icon_lite.svg`;
+              const icon = mode === 'dark' ? `/img/assets${path}_icon_dark.svg` : `/img/assets${path}_icon_lite.svg`
 
               if (cleanedPathName === path) {
                 return mode === 'dark' ? (
@@ -156,7 +175,9 @@ export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
               }
             })()}
           </TAB_ICON>
-          <LABEL $mode={mode} $hover={cleanedPathName === path}>{path.slice(1)}</LABEL>
+          <LABEL $mode={mode} $hover={cleanedPathName === path}>
+            {path.slice(1)}
+          </LABEL>
         </TAB>
       ))}
     </WRAPPER>
