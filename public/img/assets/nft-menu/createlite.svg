@@ -1,0 +1,52 @@
+<svg width="198" height="220" viewBox="0 0 198 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g filter="url(#qhoycq9uca)">
+        <circle cx="99" cy="95" r="80" fill="#EEE"/>
+        <circle cx="99" cy="95" r="79" stroke="url(#ga7ch8d1zb)" stroke-width="2"/>
+    </g>
+    <circle cx="99" cy="96" r="46.5" fill="url(#hplj4ueuec)"/>
+    <mask id="2m24gfz71e" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="51" y="48" width="96" height="95">
+        <circle cx="99" cy="95.5" r="46" fill="url(#pwv1xmw13d)" stroke="#fff" stroke-width="3"/>
+    </mask>
+    <g mask="url(#2m24gfz71e)">
+        <path d="m59.02 148.542 65.014-54.407a3 3 0 0 1 3.97.105l26.887 25.031c.609.568.956 1.363.956 2.196v16.393a3 3 0 0 1-2.756 2.99l-94.07 7.692z" fill="url(#b5c8mnqicf)"/>
+        <path d="m71.87 84.028 63.547 60.16-90.978-3.384a5 5 0 0 1-4.814-4.996v-24.236l28.083-27.509a3 3 0 0 1 4.162-.035z" fill="url(#skaae4hxpg)"/>
+    </g>
+    <circle cx="99" cy="95.835" r="46" stroke="#fff" stroke-width="3"/>
+    <circle cx="129" cy="63" r="14" fill="url(#09g4iixzah)"/>
+    <defs>
+        <linearGradient id="ga7ch8d1zb" x1="99" y1="15" x2="99" y2="175" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#E9D7FF"/>
+            <stop offset="1" stop-color="#8D4CDD"/>
+        </linearGradient>
+        <linearGradient id="hplj4ueuec" x1="82.338" y1="72.362" x2="142.4" y2="125.062" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#C0D3D7"/>
+            <stop offset="1" stop-color="#3151C4"/>
+        </linearGradient>
+        <linearGradient id="pwv1xmw13d" x1="81.979" y1="71.354" x2="143.333" y2="125.187" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#D7D7C0"/>
+            <stop offset="1" stop-color="#3151C4"/>
+        </linearGradient>
+        <linearGradient id="b5c8mnqicf" x1="124.139" y1="95.304" x2="115.155" y2="140.706" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#665136"/>
+            <stop offset="1" stop-color="#CFCFCF" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="skaae4hxpg" x1="83.563" y1="82.042" x2="83.563" y2="140.625" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#D6A56B"/>
+            <stop offset="1" stop-color="#4F4848" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="09g4iixzah" x1="129" y1="49" x2="127.8" y2="73" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FCAC34"/>
+            <stop offset="1" stop-color="#B6CAD6"/>
+        </linearGradient>
+        <filter id="qhoycq9uca" x="-11" y="0" width="220" height="220" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+            <feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+            <feOffset dy="15"/>
+            <feGaussianBlur stdDeviation="15"/>
+            <feComposite in2="hardAlpha" operator="out"/>
+            <feColorMatrix values="0 0 0 0 0.775 0 0 0 0 0.775 0 0 0 0 0.775 0 0 0 1 0"/>
+            <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_11357_42878"/>
+            <feBlend in="SourceGraphic" in2="effect1_dropShadow_11357_42878" result="shape"/>
+        </filter>
+    </defs>
+</svg>

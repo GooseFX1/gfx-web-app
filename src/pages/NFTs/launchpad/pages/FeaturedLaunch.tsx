@@ -12,6 +12,7 @@ import { SVGDynamicReverseMode } from '../../../../styles/utils'
 import { InfoDivUSDCTheme, DarkDiv, TokenSwitch } from './LaunchpadComponents'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 import { useUSDCToggle } from '../../../../context/nft_launchpad'
+import { useDarkMode, useNavCollapse } from '../../../../context'
 
 //#region styles
 const IMAGE = styled.div`
@@ -43,9 +44,10 @@ const IMAGE = styled.div`
     }
   `}
 `
-const NFT_DETAILS = styled.div`
+const NFT_DETAILS = styled.div<{ $navCollapsed: boolean }>`
   height: 100%;
   margin: 0 auto;
+  margin-top: calc(150px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
 
   .nd-content {
     height: 100%;
@@ -162,10 +164,9 @@ const FEATURED_IMG = styled.div`
 const BACK_IMG = styled.div`
   width: 40px;
   height: 40px;
-  margin-left: -30px;
-  transform: rotate(90deg) scale(1.6);
+  margin-left: -10px;
+  transform: scale(1.2);
   margin-right: 30px;
-  margin-top: 35px;
   cursor: pointer;
 `
 
@@ -216,6 +217,7 @@ const MINT_BTN = styled.div`
 const ITEMS = styled.div`
   font-weight: 600;
   font-size: 22px;
+  color: ${({ theme }) => theme.text4};
 `
 const PRICE_DISPLAY = styled.div`
   display: flex;
@@ -274,12 +276,12 @@ export const FeaturedLaunch: FC<{
       setFeaturedDisplay([featuredList[featuredIndex]])
     }
   }, [featuredIndex, liveNFTProjects, featuredList])
+  const { mode } = useDarkMode()
+  const { isCollapsed } = useNavCollapse()
 
   return (
     <>
-      {featuredDisplay[0]?.currency ? <TokenSwitch disabled={false} currency={featuredDisplay[0]?.currency} /> : <></>}
-
-      <NFT_DETAILS {...rest}>
+      <NFT_DETAILS {...rest} $navCollapsed={isCollapsed}>
         {!featuredDisplay[0] ? (
           <>
             <img
@@ -308,7 +310,7 @@ export const FeaturedLaunch: FC<{
                   <LEFT_WRAPPER>
                     <YELLOW>
                       <BACK_IMG onClick={() => history.goBack()}>
-                        <img src="/img/assets/arrow-down-large.svg" />{' '}
+                        <img src={`/img/assets/arrow-left${mode}.svg`} />{' '}
                       </BACK_IMG>
                       <FEATURED_IMG>
                         <img src="/img/assets/Launchpad.png" />{' '}
@@ -348,6 +350,12 @@ export const FeaturedLaunch: FC<{
               </div>
             </div>
             <GRAPHIC_IMG>
+              {featuredDisplay[0]?.currency ? (
+                <TokenSwitch disabled={false} currency={featuredDisplay[0]?.currency} />
+              ) : (
+                <></>
+              )}
+
               {featuredDisplay[0] ? (
                 <DarkDiv coverUrl={featuredDisplay[0]?.coverUrl} />
               ) : (

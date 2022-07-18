@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { Col, Row, Tabs } from 'antd'
 import { MintProgressBar, TokenSwitch, MintStarts } from './LaunchpadComponents'
 import { InfoDivLightTheme, Vesting, RoadMap } from './LaunchpadComponents'
-import { SVGDynamicReverseMode } from '../../../../styles'
+import { SVGBlackToGrey, SVGDynamicReverseMode } from '../../../../styles'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { MintButton } from '../launchpadComp/MintButton'
 import { TeamMembers } from './LaunchpadComponents'
@@ -39,7 +39,7 @@ export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
         width: 100%;
         height: 100%;
         background-color: ${theme.tabContentBidBackground};
-        border-radius: 15px 15px 0 0;
+        border-radius: 15px 15px 25px 25px;
       }
     }
     .ant-tabs-ink-bar {
@@ -73,7 +73,8 @@ export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
     }
     .ant-tabs-content-holder {
       height: 450px;
-      background-color: ${theme.tabContentBidBackground};
+      z-index: 0;
+      background-color: ${({ theme }) => theme.bg9}; !important;
       transform: translateY(-32px);
       padding-top: ${({ theme }) => theme.margin(4)};
       padding-bottom: ${({ theme }) => theme.margin(8)};
@@ -225,12 +226,14 @@ const COLLECTION_NAME = styled.div`
   font-weight: 700;
   font-size: 55px;
   line-height: 67px;
+  color: ${({ theme }) => theme.text7};
 `
 const TAG_LINE = styled.div`
   margin-top: 14px;
   font-weight: 600;
   font-size: 30px;
   line-height: 37px;
+  color: ${({ theme }) => theme.text4};
 `
 const PRICE_SOCIAL = styled.div`
   display: flex;
@@ -252,6 +255,7 @@ const SUMMARY_TAB_CONTENT = styled.div`
   margin-top: 10%;
   font-weight: 600;
   font-size: 20px;
+  color: ${({ theme }) => theme.text4};
 `
 export const SingleCollection: FC = () => {
   const { selectedProject, cndyValues } = useNFTLPSelected()
@@ -307,17 +311,17 @@ export const SingleCollection: FC = () => {
                 <Row justify="space-between" align="middle" style={{ marginLeft: '10px' }}>
                   <Col span={2}>
                     <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.website)}>
-                      <SVGDynamicReverseMode src="/img/assets/domains.svg" alt="domain-icon" />
+                      <SVGBlackToGrey src="/img/assets/domains.svg" alt="domain-icon" />
                     </SOCIAL_ICON>
                   </Col>
                   <Col span={2}>
                     <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.discord)}>
-                      <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
+                      <SVGBlackToGrey src="/img/assets/discord_small.svg" alt="discord-icon" />
                     </SOCIAL_ICON>
                   </Col>
                   <Col span={2}>
                     <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.twitter)}>
-                      <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
+                      <SVGBlackToGrey src="/img/assets/twitter_small.svg" alt="twitter-icon" />
                     </SOCIAL_ICON>
                   </Col>
                 </Row>
@@ -359,9 +363,6 @@ export const SingleCollection: FC = () => {
           </div>
         </div>
         <div className="rightPart">
-          <TOGGLE_SPACE>
-            {selectedProject?.currency ? <TokenSwitch disabled={true} currency={selectedProject?.currency} /> : <></>}
-          </TOGGLE_SPACE>
           <NFT_COVER>
             {selectedProject?.coverUrl ? (
               <>
