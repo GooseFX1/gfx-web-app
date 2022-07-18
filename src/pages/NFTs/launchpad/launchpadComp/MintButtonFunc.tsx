@@ -35,6 +35,9 @@ const SHARE_BTN = styled.div`
   margin-top: 10px;
   margin-right: 10px;
   position: absolute;
+  @media (max-width: 500px) {
+    display: none;
+  }
 `
 const MINT_BTN = styled.div<{ active: boolean }>`
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
@@ -48,6 +51,12 @@ const MINT_BTN = styled.div<{ active: boolean }>`
   font-size: 15px;
   justify-content: center;
   cursor: ${({ active }) => (!active ? 'not-allowed' : 'pointer')};
+  @media (max-width: 500px) {
+    margin: 0;
+    margin-top: 10px;
+    z-index: 100;
+    justify-content: center;
+  }
 `
 const WHITELIST_SPOTS = styled.div`
   position: absolute;
