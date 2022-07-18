@@ -149,9 +149,10 @@ export function colors(mode: string): Colors {
 
     // card
     cardBg: mode === 'dark' ? '#171717' : 'rgba(114, 114, 114, 1)',
+    tableBorder: mode === 'dark' ? '#3C3C3C' : '#eeeeee',
 
     //color changing options
-    blackToGrey: mode === 'dark' ? 'invert(1)' : 'invert(20%)',
+    blackToGrey: mode === 'dark' ? '' : 'invert(30%)',
 
     // share modal
     textShareModal: mode === 'dark' ? '#fff' : 'rgba(60, 60, 60, 1)',

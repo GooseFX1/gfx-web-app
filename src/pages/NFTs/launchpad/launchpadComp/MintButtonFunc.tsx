@@ -23,19 +23,13 @@ const MINT_BUTTON_BAR = styled.div`
   min-width: 650px;
   width: 35vw !important;
   max-width: 800px;
-  border-top: 1px solid #eeeeee;
+  border-top: 1px solid ${({ theme }) => theme.tableBorder};
   position: relative;
   border-radius: 0 0 25px 25px;
   display: flex;
   flex-direction: row-reverse;
   backdrop-filter: blur(23.9091px);
-  background: radial-gradient(
-    81.62% 135.01% at 15.32% 21.04%,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(141, 141, 141, 0.05) 68.23%,
-    rgba(255, 255, 255, 0.05) 77.08%,
-    rgba(255, 255, 255, 0.0315) 100%
-  );
+  background-color: ${({ theme }) => theme.bg9} !important;
 `
 const SHARE_BTN = styled.div`
   margin-top: 10px;

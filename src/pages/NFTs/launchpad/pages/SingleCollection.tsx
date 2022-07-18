@@ -10,7 +10,8 @@ import { MintButton } from '../launchpadComp/MintButton'
 import { TeamMembers } from './LaunchpadComponents'
 import { Share } from '../../Share'
 import { copyToClipboard } from '../../Collection/CollectionHeader'
-import { useNavCollapse } from '../../../../context'
+import { useDarkMode, useNavCollapse } from '../../../../context'
+import { useHistory } from 'react-router-dom'
 
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme, activeTab }) => css`
@@ -138,7 +139,15 @@ export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
     }
   `}
 `
-
+const BACK_IMG = styled.div`
+  width: 40px;
+  height: 40px;
+  margin-left: -30px;
+  transform: scale(1.2);
+  margin-top: 20px;
+  margin-right: 0px;
+  cursor: pointer;
+`
 const SOCIAL_ICON = styled.button`
   background: transparent;
   border: none;
@@ -152,7 +161,7 @@ const { TabPane } = Tabs
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   display: flex;
   align-items: center;
-  margin-top: calc(140px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+  margin-top: calc(100px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
   justify-content: space-between;
   .leftPart {
     width: 45%;
@@ -240,6 +249,7 @@ const PRICE_SOCIAL = styled.div`
   margin-top: 25px;
   margin-bottom: 35px;
 `
+
 const TOGGLE_SPACE = styled.div`
   width: 260px;
   position: absolute;
@@ -248,18 +258,26 @@ const TOGGLE_SPACE = styled.div`
   margin-left: 420px;
 `
 const SUMMARY_TAB_CONTENT = styled.div`
-  display: flex;
   margin: auto;
   padding-left: 30px;
   padding-right: 30px;
-  margin-top: 10%;
+  margin-top: 6%;
   font-weight: 600;
   font-size: 20px;
   color: ${({ theme }) => theme.text4};
+  div {
+    text-align: center;
+    span {
+      color: ${({ theme }) => theme.primary3};
+      text-align: center;
+    }
+  }
 `
 export const SingleCollection: FC = () => {
   const { selectedProject, cndyValues } = useNFTLPSelected()
   const { isCollapsed } = useNavCollapse()
+  const { mode } = useDarkMode()
+  const history = useHistory()
   const isLive =
     (selectedProject?.whitelist && parseInt(selectedProject?.whitelist) < Date.now()) ||
     (!selectedProject?.whitelist && parseInt(selectedProject?.startsOn) < Date.now())
@@ -278,9 +296,12 @@ export const SingleCollection: FC = () => {
   )
   if (selectedProject?.ended) ProgressBar = <></>
   return (
-    <div>
+    <div style={{ height: isCollapsed ? '90vh' : '82vh' }}>
       <WRAPPER $navCollapsed={isCollapsed}>
         <div className="leftPart">
+          <BACK_IMG onClick={() => history.goBack()}>
+            <img src={`/img/assets/arrow-left${mode}.svg`} />{' '}
+          </BACK_IMG>
           <div>
             {selectedProject?.collectionName ? (
               <COLLECTION_NAME>{selectedProject?.collectionName}</COLLECTION_NAME>
@@ -339,6 +360,10 @@ export const SingleCollection: FC = () => {
                       <TabPane tab="Summary" key="1">
                         <SUMMARY_TAB_CONTENT>
                           <div>{selectedProject?.summary}</div>
+                          <br />
+                          <div>
+                            <span style={{ fontSize: '18px' }}>{selectedProject?.highlightText}</span>
+                          </div>
                         </SUMMARY_TAB_CONTENT>
                       </TabPane>
                       <TabPane tab="Roadmap" key="2">
