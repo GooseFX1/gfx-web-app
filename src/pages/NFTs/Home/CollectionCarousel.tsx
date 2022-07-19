@@ -123,9 +123,16 @@ const CollectionCarousel: FC<ICollectionCarousel> = ({ isLaunch, title, collecti
         collections.map(async (collection: NFTBaseCollection) => await fetchDetails(collection.collection_id))
       )
     )
-      .sort((a, b) => (b.collection_vol && a.collection_vol ? b.collection_vol.weekly - a.collection_vol.weekly : null))
+      //sort by volume, sort by floor price will be resorted if volume exists
+      //sort by volume before floor_price to allow listed collection come first if no volume yet and then yearly and monthly by order of priority with weekly being the highest priority
+      .sort(
+        (a, b) =>
+          b.collection_vol.weekly - a.collection_vol.weekly ||
+          b.collection_floor - a.collection_floor ||
+          b.collection_vol.monthly - a.collection_vol.monthly ||
+          b.collection_vol.yearly - a.collection_vol.yearly
+      )
       .map((col) => col.collection[0])
-
     setUpdatedCollections(collectionsDetails)
   }
 
