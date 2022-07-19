@@ -226,9 +226,9 @@ export const InfoBanner: FC<{
           <div>
             <span>$ {range.min}</span>
             <span>
-              {[0, 1, 2, 3, 4, 5].map((item) => {
-                if (item < bars) return <div className="verticalLines coloured"></div>
-                else return <div className="verticalLines grey"></div>
+              {[0, 1, 2, 3, 4, 5].map((item, index) => {
+                if (item < bars) return <div key={index} className="verticalLines coloured"></div>
+                else return <div key={index} className="verticalLines grey"></div>
               })}
             </span>
             <span>$ {range.max}</span>

@@ -118,9 +118,9 @@ export const OrderHistory: FC = () => {
         <Loader />
       ) : (
         <TRADE_WRAPPER>
-          {tradeHistory.map((item) => {
+          {tradeHistory.map((item, index) => {
             return (
-              <TRADE_ROW $side={item.side === 'buy'}>
+              <TRADE_ROW key={index} $side={item.side === 'buy'}>
                 <span>{item.price.toFixed(2)}</span>
                 <span>{item.size}</span>
                 <span>{moment(item.time).format('LTS')}</span>

@@ -232,14 +232,14 @@ export const HistoryPanel: FC = () => {
         <HEADER>
           <div>
             {tabs.map((item, index) => (
-              <span className={index === activeTab ? 'active' : ''} onClick={() => setActiveTab(index)}>
+              <span key={index} className={index === activeTab ? 'active' : ''} onClick={() => setActiveTab(index)}>
                 {item}
               </span>
             ))}
           </div>
           <div className={tabs[activeTab]}>
-            {columns[activeTab][tabs[activeTab]].map((item) => (
-              <span>{item}</span>
+            {columns[activeTab][tabs[activeTab]].map((item, index) => (
+              <span key={index}>{item}</span>
             ))}
           </div>
         </HEADER>

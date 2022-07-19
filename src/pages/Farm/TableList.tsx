@@ -23,7 +23,7 @@ import { SSL_LAYOUT, LIQUIDITY_ACCOUNT_LAYOUT, CONTROLLER_LAYOUT, ADDRESSES as S
 import { useConnectionConfig, usePriceFeedFarm, useFarmContext } from '../../context'
 import { ADDRESSES } from '../../web3'
 import { MorePoolsSoon } from './MorePoolsSoon'
-import { NATIVE_MINT } from '@solana/spl-token'
+import { NATIVE_MINT } from '@solana/spl-token-v2'
 import { CONTROLLER_IDL, SSL_IDL } from 'goosefx-ssl-sdk'
 import { NETWORK_CONSTANTS, TOKEN_NAMES } from '../../constants'
 

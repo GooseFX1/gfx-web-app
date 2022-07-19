@@ -1,4 +1,4 @@
-import { NATIVE_MINT } from '@solana/spl-token'
+import { NATIVE_MINT } from '@solana/spl-token-v2'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { AccountInfo, PublicKey } from '@solana/web3.js'
 import { StringPublicKey } from './metaplex'

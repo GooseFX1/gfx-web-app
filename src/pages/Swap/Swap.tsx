@@ -525,7 +525,7 @@ const TokenContent: FC = () => {
       </TokenHeader>
       <ListWrapper>
         {tokenDetails.map((detail) => (
-          <AltTokenDetail>
+          <AltTokenDetail key={detail.name}>
             <TokenTitle>{detail.name}</TokenTitle>
             <SmallTitle>
               {detail.currency || null} {detail.value}
@@ -642,8 +642,8 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
         </SmallTitleFlex>
       </TokenDetail>
       <ListWrapper>
-        {details.map((detail) => (
-          <AltTokenDetail>
+        {details.map((detail, index) => (
+          <AltTokenDetail key={index}>
             <TokenTitle>
               {detail.name}{' '}
               {detail.icon && (
@@ -719,8 +719,9 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
         {routes?.length < 1
           ? Array(3)
               .fill(1)
-              .map(() => (
+              .map((n, i) => (
                 <SkeletonCommon
+                  key={i}
                   width={'330px'}
                   height={checkMobile() ? '64px' : '100px'}
                   borderRadius="10px"
@@ -733,6 +734,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
               ))
           : (!less ? details : details.slice(0, 2)).map((detail, k) => (
               <SWAP_ROUTE_ITEM
+                key={k}
                 $clicked={k === clickNo}
                 $cover={mode === 'dark' ? '#3c3b3ba6' : '#ffffffa6'}
                 onClick={() => setClickNo(k)}

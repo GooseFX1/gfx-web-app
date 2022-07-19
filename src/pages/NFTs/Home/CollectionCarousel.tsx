@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
@@ -8,6 +8,7 @@ import { ButtonWrapper } from '../NFTButton'
 import NFTImageCarouselItem from './NFTImageCarouselItem'
 import { NFTBaseCollection, NFTFeaturedCollection, NFTUpcomingCollection } from '../../../types/nft_collections.d'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
 import isEmpty from 'lodash/isEmpty'
 
 const CAROUSEL_WRAPPER = styled.div`
@@ -108,6 +109,41 @@ const CollectionCarousel: FC<ICollectionCarousel> = ({ isLaunch, title, collecti
   const slickPrev = () => slickRef?.current?.slickPrev()
 
   const isCollectionsEmpty = isEmpty(collections)
+  const [updatedCollections, setUpdatedCollections] = useState(collections)
+
+  useEffect(() => {
+    if (title === 'Popular Collections') {
+      sortCollectionData()
+    }
+  }, [title, collections])
+
+  const sortCollectionData = async () => {
+    const collectionsDetails = (
+      await Promise.all(
+        collections.map(async (collection: NFTBaseCollection) => await fetchDetails(collection.collection_id))
+      )
+    )
+      //sort by volume, sort by floor price will be resorted if volume exists
+      //sort by volume before floor_price to allow listed collection come first if no volume yet and then yearly and monthly by order of priority with weekly being the highest priority
+      .sort(
+        (a, b) =>
+          b.collection_vol.weekly - a.collection_vol.weekly ||
+          b.collection_floor - a.collection_floor ||
+          b.collection_vol.monthly - a.collection_vol.monthly ||
+          b.collection_vol.yearly - a.collection_vol.yearly
+      )
+      .map((col) => col.collection[0])
+    setUpdatedCollections(collectionsDetails)
+  }
+
+  const fetchDetails = async (id: number) => {
+    try {
+      const res = await fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.SINGLE_COLLECTION, `${id}`)
+      return res.data
+    } catch (error) {
+      return null
+    }
+  }
 
   return (
     <CAROUSEL_WRAPPER>
@@ -130,11 +166,13 @@ const CollectionCarousel: FC<ICollectionCarousel> = ({ isLaunch, title, collecti
             </div>
           ))}
         </SKELETON_SLIDER>
-      ) : collections.length > 0 ? (
+      ) : updatedCollections.length > 0 ? (
         <Slider ref={slickRef} {...settings}>
-          {collections.map((item: NFTBaseCollection | NFTFeaturedCollection | NFTUpcomingCollection, i: number) => (
-            <NFTImageCarouselItem key={i} item={item} type={collectionType} />
-          ))}
+          {updatedCollections.map(
+            (item: NFTBaseCollection | NFTFeaturedCollection | NFTUpcomingCollection, i: number) => (
+              <NFTImageCarouselItem key={i} item={item} type={collectionType} />
+            )
+          )}
         </Slider>
       ) : (
         <EMPTY_CAROUSEL>
