@@ -11,6 +11,7 @@ interface ICreatorConfig {
   saveDataForStep: Function
   creatorData: ICreatorData
   submit: Function
+  setCurrentStep: Function
 }
 
 const NFTCreatorContext = createContext<ICreatorConfig>(null)
@@ -74,7 +75,8 @@ export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) =>
         creatorData: creatorData,
         previousStep: previousStep,
         nextStep: nextStep,
-        submit: submit
+        submit: submit,
+        setCurrentStep: setCurrentStep
       }}
     >
       {children}
@@ -88,6 +90,7 @@ export const useNFTCreator = () => {
   if (!context) {
     throw new Error('Missing NFT Creator context')
   }
-  const { isAllowed, currentStep, saveDataForStep, creatorData, previousStep, nextStep, submit } = context
-  return { isAllowed, currentStep, saveDataForStep, creatorData, previousStep, nextStep, submit }
+  const { isAllowed, currentStep, saveDataForStep, creatorData, previousStep, nextStep, submit, setCurrentStep } =
+    context
+  return { isAllowed, currentStep, saveDataForStep, creatorData, previousStep, nextStep, submit, setCurrentStep }
 }

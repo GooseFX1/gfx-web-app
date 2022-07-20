@@ -92,7 +92,7 @@ const WRAPPER = styled.div`
 `
 
 export const Step3: FC = () => {
-  const { previousStep, creatorData } = useNFTCreator()
+  const { previousStep, creatorData, currentStep } = useNFTCreator()
 
   const [isVesting, setIsVesting] = useState<boolean>(false)
   const [vestingOptionIndex, setVestingOptionIndex] = useState<number>(0)
@@ -100,12 +100,36 @@ export const Step3: FC = () => {
   const [timeIndex, setTimeIndex] = useState<number>(-1)
   const [selectedDate, setSelectedDate] = useState<any>(MINIMUM_DATE)
   const [nextButtonActive, setNextButtonActive] = useState<boolean>(false)
+  const vestingOptionsArr = [
+    [50, 25, 25],
+    [40, 30, 20]
+  ]
 
   let dateFrom = MINIMUM_DATE.format('DD-MM-YYYY')
 
   const handleDateOk = (e) => {
     if (MINIMUM_DATE.isBefore(e)) setSelectedDate(e)
   }
+  useEffect(() => {
+    console.log('current step')
+    const timeSelected = creatorData[3]?.time
+    const vestingSelected = creatorData[3]?.vesting
+    const dateSelected = creatorData[3]?.date
+
+    if (timeSelected) {
+      const index = TIME_OPTIONS.findIndex((time) => time === timeSelected)
+      setTimeIndex(index)
+    }
+    if (dateSelected) {
+      //setSelectedDate(dateSelected)
+    }
+    if (vestingSelected) {
+      setIsVesting(true)
+      if (vestingSelected[0] === vestingOptionsArr[0][0] && vestingSelected[1] === vestingOptionsArr[0][1])
+        setVestingOptionIndex(0)
+      else setVestingOptionIndex(1)
+    }
+  }, [currentStep])
 
   useEffect(() => {
     if (dateOptionIndex !== -1 && timeIndex !== -1) setNextButtonActive(true)
@@ -117,13 +141,19 @@ export const Step3: FC = () => {
     date: dateOptionIndex === 0 ? MINIMUM_DATE.format('DD-MM-YYYY') : selectedDate.format('DD-MM-YYYY'),
     time: timeIndex > -1 ? TIME_OPTIONS[timeIndex] : ''
   }
+  console.log(creatorData[3])
 
   return (
     <WRAPPER>
       <Row>
         <Col span={12}>
           <Row className="relative-row">
-            <img onClick={() => previousStep()} className="back-button" src="/img/assets/backArrow.svg" alt="back" />
+            <img
+              onClick={() => previousStep()}
+              className="back-button"
+              src="/img/assets/backArrowWhite.svg"
+              alt="back"
+            />
             <div className="big-label">3. Do you want to vest your funds?</div>
           </Row>
           <Row>

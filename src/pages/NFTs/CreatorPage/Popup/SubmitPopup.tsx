@@ -10,18 +10,27 @@ import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 import { useHistory } from 'react-router-dom'
 import { useNavCollapse } from '../../../../context'
 
-const TEXT = styled.div`
+const STEP_TEXT = styled.div`
   font-style: normal;
   font-weight: 600;
   font-size: 20px;
   line-height: 24px;
+  display: flex;
+  justify-content: space-between;
   margin-left: 20px;
-  margin-top: 20px;
+  margin-top: 25px;
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-fill-color: transparent;
+  img {
+    cursor: pointer;
+    margin-top: -10px;
+    margin-right: 80px;
+    width: 40px;
+    height: 40px;
+  }
 `
 export const CENTER_WRAP = styled.div`
   display: flex;
@@ -112,7 +121,7 @@ const WRAPPER = styled.div`
 const SubmitPopup = ({ rewardToggle }) => {
   const [disclaimer, setDisclaimer] = useState<boolean>(false)
   const [acceptRisk, setRisk] = useState<boolean>(false)
-  const { creatorData } = useNFTCreator()
+  const { creatorData, setCurrentStep } = useNFTCreator()
   const history = useHistory()
   const { setRelaxPopup } = useNavCollapse()
   const handleCheckboxClick = (e) => {
@@ -277,5 +286,15 @@ const SubmitPopup = ({ rewardToggle }) => {
 export default SubmitPopup
 
 const StepText = ({ text }) => {
-  return <TEXT>Step {text}</TEXT>
+  const { setCurrentStep } = useNFTCreator()
+
+  const redirectToEditStep = () => {
+    setCurrentStep(text)
+  }
+  return (
+    <STEP_TEXT>
+      <>Step {text}</>
+      <img src="/img/assets/editSubmit.svg" alt="edit" onClick={redirectToEditStep} />
+    </STEP_TEXT>
+  )
 }

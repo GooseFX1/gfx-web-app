@@ -106,7 +106,7 @@ const WRAPPER = styled.div`
   }
 `
 export const Step4: FC = () => {
-  const { previousStep, creatorData } = useNFTCreator()
+  const { previousStep, creatorData, currentStep } = useNFTCreator()
   const [uploadedFile, setUploadedFile] = useState(null)
   const inputReference = React.useRef(null)
 
@@ -125,6 +125,13 @@ export const Step4: FC = () => {
   }
 
   useEffect(() => {
+    const delayedRevelSelected = creatorData[4]?.delayedReveal
+    const uploadedFilesSelected = creatorData[4].uploadedFiles
+    if (delayedRevelSelected) setIsDelayedReveal(delayedRevelSelected)
+    if (uploadedFilesSelected) setUploadedFile(uploadedFilesSelected)
+  }, [currentStep])
+
+  useEffect(() => {
     if (uploadedFile) setNextButtonActive(true)
     else setNextButtonActive(false)
   }, [uploadedFile])
@@ -134,7 +141,12 @@ export const Step4: FC = () => {
       <Row>
         <Col span={13}>
           <Row className="relative-row">
-            <img onClick={() => previousStep()} className="back-button" src="/img/assets/backArrow.svg" alt="back" />
+            <img
+              onClick={() => previousStep()}
+              className="back-button"
+              src="/img/assets/backArrowWhite.svg"
+              alt="back"
+            />
             <div className="big-label">4. Do you plan a deleyed reveal for the collection?</div>
           </Row>
           <Row>
