@@ -71,6 +71,13 @@ export const STYLED_TABLE_LIST = styled(Table)`
      top: 200px;
      background: ${theme.farmHeaderBg};
     > tr {
+      >th:first-child > div {
+        width: 105px;
+      }
+      >th:second-child > div {
+        display: flex;
+        justify-content: end;
+      }
       > th {
         border: none;
         height: 74px;
@@ -107,7 +114,7 @@ export const STYLED_TABLE_LIST = styled(Table)`
         padding: ${theme.margin(3)};
 
         @media (max-width: 500px){
-          padding: 24px 0px 24px 22px;
+          padding: 38px 0px 38px 22px;
         }
       }
       &.ant-table-row {
@@ -122,7 +129,9 @@ export const STYLED_TABLE_LIST = styled(Table)`
       }
     }
   }
-
+  .ant-table-placeholder{
+    display: none;
+  }
   .hide-row {
     display: none;
   }

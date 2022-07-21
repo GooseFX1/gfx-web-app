@@ -2,16 +2,10 @@ import React from 'react'
 import styled from 'styled-components'
 import { Switch } from 'antd'
 import { useFarmContext } from '../../context/farm'
+import tw from 'twin.macro'
 
 const STYLED_TOGGLE = styled.div`
-  @media(max-width: 500px){
-    display: block;
-    margin-left: 10%;
-    margin-top: 5px;
-  }
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  ${tw`sm:block sm:ml-[10%] sm:mt-[5px] flex items-center justify-center`}
   .ant-switch-checked {
     &:focus {
       box-shadow: none;
@@ -27,16 +21,9 @@ const STYLED_TOGGLE = styled.div`
     }
   }
   .gray {
-    @media(max-width: 500px){
-      width: 70px;
-      height: 35px;
-    }
-    width: 62px;
+    ${tw`sm:w-[70px] sm:h-[35px] w-[62px]`}
     .ant-switch-handle {
-      @media(max-width: 500px){
-        height: 35px;
-        width: 35px;
-      }
+      ${tw`sm:h-[35px] sm:w-[35px]`}
       top: 0;
       left: 0;
       width: 30px;
@@ -88,15 +75,8 @@ const STYLED_TOGGLE = styled.div`
     }
   }
 
-  .text {
-    @media(max-width: 500px){
-      margin-left: 0;
-      color: #eee;
-      font-size: 13px;
-      margin-top: 8px;
-      margin-bottom: 2px;
-    }
-
+  .textToggle {
+    ${tw`sm:ml-0 sm:text-[#eee] sm:text-smaller sm:mt-2 sm:mt-0.5`}
     font-family: Montserrat;
     font-size: 14px;
     font-weight: 600;
@@ -126,7 +106,7 @@ export const Toggle = ({ text, defaultChecked, checkedChildren, unCheckedChildre
         unCheckedChildren={unCheckedChildren}
         onChange={(e) => toggleDeposited(e)}
       />
-      {text && <div className="text">{text}</div>}
+      {text && <div className="textToggle">{text}</div>}
     </STYLED_TOGGLE>
   )
 }
