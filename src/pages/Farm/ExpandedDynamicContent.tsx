@@ -28,11 +28,12 @@ import { Collapse } from 'antd'
 import { SSLButtons, StakeButtons } from './ExpandedButtons'
 import DisplayRowData from './DisplayRowData'
 import { TOKEN_NAMES } from '../../constants'
+import tw from "twin.macro"
 
 //#region styles
 const STYLED_EXPANDED_ROW = styled.div`
+  ${tw`sm:pr-0 pl-0`}
   padding-bottom: ${({ theme }) => theme.margin(4)};
-  padding-left: ${({ theme }) => theme.margin(0)};
   padding-right: ${({ theme }) => theme.margin(2)};
   background: ${({ theme }) => theme.expendedRowBg};
   @media(max-width: 500px){
@@ -41,12 +42,7 @@ const STYLED_EXPANDED_ROW = styled.div`
 `
 
 const STYLED_EXPANDED_CONTENT = styled.div`
-  display: flex;
-  align-items: center;
-
-  @media(max-width: 500px){
-    display: block;
-  }
+  ${tw`flex flex-row items-center sm:block`}
 `
 const STYLED_LEFT_CONTENT = styled.div`
   width: 23%;

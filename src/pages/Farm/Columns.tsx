@@ -3,25 +3,20 @@ import styled from 'styled-components'
 import { Tooltip } from '../../components/Tooltip'
 import { moneyFormatter, nFormatter } from '../../utils/math'
 import { Skeleton } from 'antd'
-
-export const STYLED_TITLE = styled.div<{ $text: String }>`
-
-  @media(max-width: 500px){
-    margin-left: ${({$text}) => $text === 'Name' ? '-15px' : '0'};
-  }
+import tw from 'twin.macro'
+ 
+export const STYLED_TITLE = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  .text {
+  .textTitle{
+    ${tw`sm:font-semibold sm:text-base text-tiny font-medium text-left`}
     font-family: Montserrat;
-    font-size: 15px;
-    font-weight: 500;
-    text-align: left;
     color: #fff;
 
     @media(max-width: 500px){
-      font-size: 16px;
-      color: #eee;
+      ${tw`text-[#eee]`}
+      line-height: normal;
     }
   }
   .info-icon {
@@ -42,7 +37,8 @@ export const STYLED_TITLE = styled.div<{ $text: String }>`
 export const STYLED_NAME = styled.div`
   display: flex;
   align-items: center;
-  .text {
+  .textName{
+    ${tw`sm:ml-[15px]`}
     font-size: 18px;
     font-weight: 600;
     color: ${({ theme }) => theme.text8};
@@ -81,6 +77,10 @@ const ICON_WRAPPER = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  .arrow-down{
+        filter: ${({ theme }) => theme.filterArrowDown};
+  }
 `
 
 export const Loader: FC = () => {
@@ -97,8 +97,8 @@ export const HeaderTooltip = (text: string) => {
 }
 
 const Title = (text: string, infoText: string, isArrowDown: boolean) => (
-  <STYLED_TITLE $text={text}>
-    <div className="text">{text}</div>
+  <STYLED_TITLE>
+    <div className="textTitle">{text}</div>
     {infoText && HeaderTooltip(infoText)}
     {isArrowDown && <img className="arrow-down" src={`/img/assets/arrow-down.svg`} alt="" />}
   </STYLED_TITLE>
@@ -117,7 +117,7 @@ export const columns = [
           src={`/img/crypto/${text?.toUpperCase().replace(' ', '-')}.svg`}
           alt=""
         />
-        <div className="text">{text}</div>
+        <div className="textName">{text}</div>
       </STYLED_NAME>
     )
   },
@@ -189,7 +189,7 @@ export const mobileColumns = [
           src={`/img/crypto/${text.toUpperCase().replace(' ', '-')}.svg`}
           alt=""
         />
-        <div className="text">{text}</div>
+        <div className="textName">{text}</div>
       </STYLED_NAME>
     )
   },
