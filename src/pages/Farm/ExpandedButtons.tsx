@@ -7,7 +7,9 @@ import { useFarmContext, usePriceFeedFarm, useAccounts, useTokenRegistry, useCon
 import { invalidInputErrMsg } from './FarmClickHandler'
 import { checkMobile, notify } from '../../utils'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { ExpandedContent } from './ExpandedContent';
+import { ADDRESSES } from '../../web3'
+import { TOKEN_NAMES } from '../../constants'
+import { ExpandedContent } from './ExpandedContent'
 
 const STYLED_RIGHT_CONTENT = styled.div`
   display: flex;
@@ -268,12 +270,12 @@ export const StakeButtons: FC<{
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
     [tokenInfo?.address, getUIAmount, publicKey]
   )
-  const current = 123;
+  const current = 123
   //const { current } = useMemo(() => prices[`${name.toUpperCase()}/USDC`], [prices])
   const tokenData = farmDataContext.find((token) => token.name === 'GOFX')
   return (
     <>
-      {(wallet.publicKey && !checkMobile()) ? (
+      {wallet.publicKey && !checkMobile() ? (
         <>
           <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
             <div className="left-inner">
@@ -336,19 +338,19 @@ export const StakeButtons: FC<{
             </div>
           </STYLED_RIGHT_CONTENT>
         </>
-      ) : (checkMobile() && wallet.publicKey) ? (
+      ) : (checkMobile()) ? (
         <ExpandedContent
-            name={name}
-            wallet={wallet}
-            stakeRef={stakeRef}
-            unstakeRef={unstakeRef}
-            onClickHalf={onClickHalf}
-            onClickMax={onClickMax}
-            isStakeLoading={isStakeLoading}
-            isUnstakeLoading={isUnstakeLoading}
-            onClickStake={onClickStake}
-            onClickUnstake={onClickUnstake}
-            rowData={rowData}
+          name={name}
+          wallet={wallet}
+          stakeRef={stakeRef}
+          unstakeRef={unstakeRef}
+          onClickHalf={onClickHalf}
+          onClickMax={onClickMax}
+          isStakeLoading={isStakeLoading}
+          isUnstakeLoading={isUnstakeLoading}
+          onClickStake={onClickStake}
+          onClickUnstake={onClickUnstake}
+          rowData={rowData}
         />
       ) : (
         <>
@@ -486,7 +488,7 @@ export const SSLButtons: FC<{
   }
   return (
     <>
-      {(wallet.publicKey && !checkMobile()) ? (
+      {wallet.publicKey && !checkMobile() ? (
         <>
           <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
             <div className="left-inner">
@@ -561,7 +563,7 @@ export const SSLButtons: FC<{
             </div>
           </STYLED_RIGHT_CONTENT>
         </>
-      ) : (checkMobile() && wallet.publicKey) ? (
+      ) : (checkMobile()) ? (
           <ExpandedContent 
               isSsl = {true}
               name={name.toString()}

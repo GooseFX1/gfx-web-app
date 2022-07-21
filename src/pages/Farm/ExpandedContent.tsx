@@ -7,32 +7,19 @@ import tw from "twin.macro"
 import { Loader } from '../Farm/Columns'
 import { moneyFormatter, percentFormatter } from '../../utils/math'
 import { HeaderTooltip } from "../Farm/Columns"
+import { Connect } from '../../layouts/App/Connect'
 
 const STYLED_SOL = styled.div`
-  ${tw`flex items-center justify-between rounded-[60px] h-[50px] w-[372px] sm:w-[90%] sm:my-[20px] sm:mx-auto`}
-
-  @media(max-width: 500px){
+  ${tw`flex items-center justify-between rounded-[60px] h-[50px] w-[372px] w-[90%] my-[20px] mx-auto`}
     background-color: ${({ theme }) => theme.solPillBg};
-  }
 
   .value {
-    ${tw`text-average font-medium text-center`}
+    ${tw`text-left font-semibold text-[18px]`}
     font-family: Montserrat;
     color: ${({ theme }) => theme.text15};
-    @media(max-width: 500px){
-      color: #b5b5b5;
-      text-align: left;
-      font-size: 18px;
-      font-weight: 600;
-    }
-  }
-  &.active {
-    .value {
-      ${tw`text-white font-semibold`}
-    }
   }
   .textMain {
-    ${tw`text-tiny font-semibold text-center flex z-[2] mb-1.5 ml-[--100px] sm:p-[5%] sm:m-0`}
+    ${tw`text-tiny font-semibold text-center flex z-[2] p-[5%] m-0`}
     font-family: Montserrat;
     color: ${({ theme }) => theme.text14};
   }
@@ -41,7 +28,7 @@ const STYLED_SOL = styled.div`
   }
 `
 const STYLED_INPUT = styled.input`
-  ${tw`flex items-center justify-between rounded-[60px] h-[44px] w-[372px] my-3 mx-2 py-0 px-8 sm:h-full sm:w-[70%] sm:m-0 sm:p-[5%] sm: block`}
+  ${tw`rounded-[60px] h-full w-[70%] m-0 p-[5%] border-0 border-none outline-none`}
   background-color: ${({ theme }) => theme.solPillBg};
   border: none;
   ::-webkit-outer-spin-button,
@@ -50,21 +37,6 @@ const STYLED_INPUT = styled.input`
     margin: 0;
   }
 
-  @media(max-width: 500px){
-    border: none;
-    outline: none;
-  }
-  .value {
-    ${tw`text-average font-medium text-center sm:text-left`}
-    font-family: Montserrat;
-    color: ${({ theme }) => theme.text15};
-    color: #b5b5b5;
-  }
-  &.active {
-    .value {
-      ${tw`font-semibold`}
-    }
-  }
   .textMain {
     ${tw`text-tiny font-semibold text-center flex`}
     font-family: Montserrat;
@@ -75,19 +47,12 @@ const STYLED_INPUT = styled.input`
   }
 `
 
-const STYLED_BUTTON = styled.button`
-    ${tw`w-[65px] h-10 rounded-[50px] font-semibold text-center`}
-    border: none;
-`
-
 const STYLED_STAKE_PILL = styled(MainButton)`
-  ${tw`w-[372px] h-[44px] text-[14px] font-semibold cursor-pointer rounded-circle text-center leading-[49px] opacity-50`}
-  background-color: ${({ theme }) => theme.stakePillBg};
+  ${tw`w-[90%] mt-0 mx-auto mb-5 h-12.5 text-base font-semibold rounded-circle bg-[#131313] text-center opacity-50`}
+  line-height: normal;
   font-family: Montserrat;
   color: ${({ theme }) => theme.text14};
-  margin: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(1.5)} 0;
   transition: all 0.3s ease;
-  &.active,
   &:hover,
   &:focus {
     background: ${({ theme }) => theme.primary3};
@@ -96,92 +61,55 @@ const STYLED_STAKE_PILL = styled(MainButton)`
       ${tw`opacity-50`}
     }
   }
-  @media(max-width: 500px){
-    ${tw`w-[90%] mt-0 mx-auto h-12.5`}
-    opacity: 0.5;
-    font-size: 16px;
-    color: #b5b5b5;
-    margin-bottom: 20px;
-    background: #131313;
-    &:focus {
-      background-color: ${({ theme }) => theme.stakePillBg}; 
-      color: #fff;
-  }
-  &.miniButtons {
-  }
 `
 const MAX_BUTTON = styled.div`
-  cursor: pointer;
+  ${tw`cursor-pointer`}
 `
 
 const EXPAND_WRAPPER = styled.div`
+  ${tw`font-semibold text-base`}
   .details{
     font-family: Montserrat;
-    font-size: 16px;
-    font-weight: 600;
-    color: #fff;
+    line-height: normal;
+    color: ${({ theme }) => theme.text1}; 
   }
 `
 
 const ROW = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 14px;
+  ${tw`flex justify-between mb-3.5`}
 `
 const Tooltip_holder=styled.div`
-  display: flex;
+  ${tw`flex`}
 `
 const ROW_WRAPPER = styled.div`
-  padding: 20px 20px 24px 20px;
+  ${tw`px-5 pt-5 pb-6`}
 `
 
 const STAKE_UNSTAKE = styled.div`
-  display: flex;
-  justify-content: center;
+  ${tw`flex justify-center px-[2%]`}
 
   .selected{
+    ${tw`text-white`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%) !important;
-    color: white;
   }
 `
 
 const BUTTONS = styled.button`
-  width: 168px;
-  height: 40px;
-  border-radius: 36px;
-  border: none;
+  ${tw`w-1/2 h-10 rounded-[36px] border-0 border-none font-semibold text-tiny text-[#b5b5b5] text-center cursor-pointer`}
   font-family: 'Montserrat';
-  font-weight: 600;
-  font-size: 15px;
-  color: #b5b5b5;
-  text-align: center;
-  cursor: pointer;
   background: none;
   :disabled {
     cursor: wait;
   }
 `
 
-const STAKE = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-right: 25%;
-  margin-top: 15px;
-  margin-bottom: 20px;
-`
-const EARN = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 15px;
-  margin-bottom: 20px;
-`
-
 const Reward = styled.div`
+ ${tw`text-center font-semibold text-tiny`}
   font-family: Montserrat;
-  font-size: 15px;
-  font-weight: 600;
-  text-align: center;
-  color: #eee;
+  color: ${({ theme }) => theme.text1}; 
+`
+const ConnectWrapper = styled.div`
+  ${tw`flex flex-row justify-center`}
 `
 
 export const ExpandedContent: FC<{
@@ -303,6 +231,8 @@ export const ExpandedContent: FC<{
               <span className="details">{userTokenBalance?.toFixed(3)}</span>
           </ROW>
        </ROW_WRAPPER>
+       {wallet.publicKey ? (
+       <>
        <STAKE_UNSTAKE>
             <BUTTONS 
               className={process === 'Stake' ? 'selected' : ''}
@@ -349,11 +279,7 @@ export const ExpandedContent: FC<{
         :
         <STYLED_STAKE_PILL
           loading={process==='Stake' ? isStakeLoading : isWithdrawLoading}
-          // disabled={process==='Stake' ?
-          //     isStakeLoading || notEnough
-          //   : isUnstakeLoading || parseFloat(availableToMint.toFixed(DISPLAY_DECIMAL)) <= 0 || operationPending
-          // }
-            onClick={() => process==='Stake' ? onClickDeposit() : withdrawClicked()}
+          onClick={() => process==='Stake' ? onClickDeposit() : withdrawClicked()}
         >
           {process === 'Stake' ? 'Stake' : 'Unstake and Claim'}
         </STYLED_STAKE_PILL>
@@ -363,6 +289,12 @@ export const ExpandedContent: FC<{
         Daily rewards: {`${tokenData.rewards.toFixed(3)} ${name}`}
       </Reward>) : ""
       }
+       </>
+    ) : (
+      <ConnectWrapper>
+        <Connect />
+      </ConnectWrapper>
+    )}
      </EXPAND_WRAPPER>
     </>
     )

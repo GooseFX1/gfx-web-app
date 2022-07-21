@@ -3,23 +3,17 @@ import { STYLED_NAME } from './Columns'
 import { moneyFormatter, percentFormatter } from '../../utils/math'
 import { Loader } from '../Farm/Columns'
 import { checkMobile } from '../../utils'
+import tw from 'twin.macro'
 
 const ROW_CONTAINER = styled.div`
+${tw`sm:m-0 sm:pt-[38px] sm:pb-0 sm:pl-[22px] sm:pr-[0]`}
   display: flex;
   margin-left: ${({ theme }) => theme.margin(3)};
   padding-top: ${({ theme }) => theme.margin(3)};
   padding-bottom: ${({ theme }) => theme.margin(2)};
 
-  @media(max-width: 500px){
-    margin: 0;
-    padding: 24px 0px 24px 22px;
-  }
   .set-width {
-    width: 14%;
-
-    @media(max-width: 500px){
-      width: 45%;
-    }
+    ${tw`sm:w-[45%] w-[14%]`}
   }
   .set-width-balance {
     width: 17%;
@@ -27,20 +21,10 @@ const ROW_CONTAINER = styled.div`
     padding-right: 12px;
   }
   .set-width-earned {
-    width: 20%;
-    margin: auto;
-    padding-left: 10px;
-
-    @media(max-width: 500px){
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      margin: 0 auto;
-      padding-left: 1px;
-    }
+    ${tw`sm:flex sm:items-center sm:justify-center sm:w-full sm:my-0 sm:mx-auto sm:pl-px w-1/5 m-auto pl-2.5`}
   }
   .set-width-apr {
+    ${tw`sm:w-full sm:ml-[-4%] w-1/5 m-auto`}
     width: 20%;
     margin: auto;
 
@@ -61,17 +45,12 @@ const ROW_CONTAINER = styled.div`
 `
 
 export const STYLED_EXPAND_ICON = styled.div`
-  cursor: pointer;
+  ${tw`sm:m-0 sm:mt-2.5  cursor-pointer`}
   margin-left: 3% !important;
   margin-right: 10px;
   margin-top: 10px;
-  filter: ${({ theme }) => theme.filterDownIcon};
+  filter: ${({ theme }) => theme.filterArrowDown};
   transform: rotate(180deg);
-
-  @media(max-width: 500px){
-    margin: 0;
-    margin-top: 10px;
-  }
 `
 const EXPAND_ICON_WRAPPER = styled.div`
   display: flex;
@@ -88,7 +67,7 @@ const DisplayRowData = ({ rowData, onExpandIcon }) => {
           src={`/img/crypto/${rowData?.name.toUpperCase()}.svg`}
           alt=""
         />
-        <div className="text">{rowData?.name}</div>
+        <div className="textName">{rowData?.name}</div>
       </STYLED_NAME>
       <div className="liquidity normal-text set-width-balance">
         {rowData?.currentlyStaked >= 0 ? ` ${moneyFormatter(rowData.currentlyStaked)}` : <Loader />}
@@ -119,7 +98,7 @@ const DisplayRowData = ({ rowData, onExpandIcon }) => {
           src={`/img/crypto/${rowData?.name.toUpperCase()}.svg`}
           alt=""
         />
-        <div className="text">{rowData?.name}</div>
+        <div className="textName">{rowData?.name}</div>
       </STYLED_NAME>
       <div className="liquidity normal-text set-width-apr">
           {rowData?.apr === '-' ? '-' : rowData?.apr !== undefined ? `${percentFormatter(rowData?.apr)}` : <Loader />}

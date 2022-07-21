@@ -4,22 +4,15 @@ import { TooltipPlacement } from 'antd/lib/tooltip'
 import styled from 'styled-components'
 import { useDarkMode } from '../context'
 import { CenteredImg } from '../styles'
+import tw from "twin.macro"
 
 const ICON = styled(CenteredImg)<{ notDoxxed?: boolean }>`
+  ${tw`sm:h-[18px] sm:w-[18px] sm:ml-1.5 ml-2`}  
   ${({ theme, notDoxxed }) => !notDoxxed && theme.measurements(theme.margin(1.5))}
-  margin-left: ${({ theme }) => theme.margin(1)};
-
-  @media(max-width: 500px){
-    height: 18px;
-    width: 18px;
-    margin-left: 6px;
-  }
 `
 
 const TEXT = styled.span`
-  font-size: 10px;
-  color: white;
-  padding-bottom: 10px;
+  ${tw`text-[10px] text-white pb-2.5`}
 `
 
 export const Tooltip: FC<{

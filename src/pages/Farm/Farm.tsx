@@ -6,13 +6,10 @@ import { TableList } from './TableList'
 import { FarmHeader } from './FarmHeader'
 import { useNavCollapse, FarmProvider, useConnectionConfig, ENDPOINTS, PriceFeedFarmProvider } from '../../context'
 import { notify, checkMobile } from '../../utils'
+import tw from 'twin.macro'
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 100vw;
-
+  ${tw`sm:px-0 relative flex flex-col w-screen`}
   padding-top: calc(80px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
   padding-left: ${({ theme }) => theme.margin(3)};
   padding-right: ${({ theme }) => theme.margin(3)};
@@ -33,6 +30,7 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
 `
 
 const BODY = styled.div<{ $navCollapsed: boolean }>`
+  ${tw`sm:pl-0 sm:pr-0 sm:!pt-[17px]`}
   height: calc(85vh + ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
   padding: ${({ theme }) => theme.margin(8)};
   padding-top: 43px !important;

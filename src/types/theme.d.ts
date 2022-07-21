@@ -166,6 +166,7 @@ export interface Colors {
   tableListBoxShadow: Color
   expendedRowBg: Color
   filterDownIcon: Color
+  filterArrowDown: Color
 
   // secondary
   secondary1: Color

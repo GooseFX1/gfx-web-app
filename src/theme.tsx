@@ -220,6 +220,10 @@ export function colors(mode: string): Colors {
       mode === 'dark'
         ? '#000'
         : 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)',
+    filterArrowDown:
+    mode === 'lite'
+      ? 'invert(53%) sepia(68%) saturate(7332%) hue-rotate(231deg) brightness(99%) contrast(110%);'
+      : '#000',
 
     // primary colors
     primary1: '#302eb8',

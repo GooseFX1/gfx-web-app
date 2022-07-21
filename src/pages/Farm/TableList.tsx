@@ -23,10 +23,11 @@ import {
 import { useConnectionConfig, usePriceFeedFarm, useFarmContext } from '../../context'
 import { ADDRESSES } from '../../web3'
 import { MorePoolsSoon } from './MorePoolsSoon'
+import { NATIVE_MINT } from '@solana/spl-token-v2'
+import { CONTROLLER_IDL, SSL_IDL } from 'goosefx-ssl-sdk'
+import { NETWORK_CONSTANTS, TOKEN_NAMES } from '../../constants'
 import { checkMobile } from '../../utils'
 
-const StakeIDL = require('../../web3/idl/stake.json')
-const SSLIDL = require('../../web3/idl/ssl.json')
 
 //#region styles
 export const STYLED_TABLE_LIST = styled(Table)`
@@ -71,6 +72,13 @@ export const STYLED_TABLE_LIST = styled(Table)`
      top: 200px;
      background: ${theme.farmHeaderBg};
     > tr {
+      >th:first-child > div {
+        width: 105px;
+      }
+      >th:second-child > div {
+        display: flex;
+        justify-content: end;
+      }
       > th {
         border: none;
         height: 74px;
@@ -107,7 +115,7 @@ export const STYLED_TABLE_LIST = styled(Table)`
         padding: ${theme.margin(3)};
 
         @media (max-width: 500px){
-          padding: 24px 0px 24px 22px;
+          padding: 38px 0px 38px 22px;
         }
       }
       &.ant-table-row {
@@ -122,7 +130,9 @@ export const STYLED_TABLE_LIST = styled(Table)`
       }
     }
   }
-
+  .ant-table-placeholder{
+    display: none;
+  }
   .hide-row {
     display: none;
   }
