@@ -736,9 +736,10 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
   const [emptyFixedPrice, setEmptyFixedPrice] = useState(false)
   const sliderRef = useRef<any>()
   const { getUIAmount } = useAccounts()
-  const { getTokenInfoForFarming } = useTokenRegistry()
+  const { getTokenInfoFromSymbol } = useTokenRegistry()
+
   const userSOLBalance = useMemo(
-    () => (publicKey ? getUIAmount(getTokenInfoForFarming('SOL').address) : 0),
+    () => (publicKey ? getUIAmount(getTokenInfoFromSymbol('SOL')?.address) : 0),
     [getUIAmount, publicKey]
   )
 
