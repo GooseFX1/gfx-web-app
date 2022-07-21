@@ -62,7 +62,7 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
           name: 'ETH',
           symbol: 'ETH'
         })
-        console.log(farmSupportedList)
+        //console.log(farmSupportedList)
         setFarmingTokens(farmSupportedList)
       } else setFarmingTokens(farmSupportedList)
 
