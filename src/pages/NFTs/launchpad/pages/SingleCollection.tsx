@@ -369,13 +369,14 @@ export const SingleCollection: FC = () => {
                           </div>
                         </SUMMARY_TAB_CONTENT>
                       </TabPane>
-                      <TabPane tab="Roadmap" key="2">
+                      <TabPane tab="Tiers" key="2"></TabPane>
+                      <TabPane tab="Roadmap" key="3">
                         <RoadMap roadmap={selectedProject?.roadmap} />
                       </TabPane>
-                      <TabPane tab="Team" key="3">
+                      <TabPane tab="Team" key="4">
                         <TeamMembers teamMembers={selectedProject?.team} />
                       </TabPane>
-                      <TabPane tab="Vesting" key="4">
+                      <TabPane tab="Vesting" key="5">
                         <Vesting currency={selectedProject?.currency} str={''} />
                       </TabPane>
                     </Tabs>
