@@ -12,6 +12,7 @@ import { useDarkMode, useNavCollapse } from '../../../../context'
 import { useHistory } from 'react-router-dom'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { checkMobile } from '../../../../utils'
 
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme, activeTab }) => css`
@@ -19,6 +20,11 @@ export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
     width: 35vw;
     max-width: 800px;
     min-width: 650px;
+    @media(max-width: 500px){
+      width: 90%;
+      min-width: 300px;
+      margin: 0 auto;
+    }
     .ant-tabs-nav {
       position: relative;
       z-index: 1;
@@ -147,6 +153,18 @@ const BACK_IMG = styled.div`
   margin-top: 20px;
   margin-right: 0px;
   cursor: pointer;
+
+  @media(max-width: 500px){
+    position: relative;
+    left: 5%;
+    margin: 0;
+    margin-top: 20px;
+
+    img{
+      height: 20px;
+      width: 10px;
+    }
+}
 `
 const SOCIAL_ICON = styled.button`
   background: transparent;
@@ -200,11 +218,20 @@ const NFT_COVER = styled.div`
     padding: 5px;
     margin-top: 32px;
     margin-bottom: 30px;
+
+    @media(max-width: 500px){
+      background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+      width: 90%;
+      height: 350px;
+      border-radius: 18px;
+      padding: 3px;
+      margin: 30px auto;
+    }
   }
   .ended-img {
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-    width: 608px;
-    height: 608px;
+    width: 0px;
+    height: 0px;
     border-radius: 20px;
     padding: 5px;
     margin-top: 32px;
@@ -213,11 +240,11 @@ const NFT_COVER = styled.div`
   }
   .sold-text {
     position: absolute;
-    width: 600px;
+    width: 00px;
     margin-top: -35%;
     height: 600px;
     font-weight: 700;
-    font-size: 50px;
+    font-size: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -229,6 +256,11 @@ const NFT_COVER = styled.div`
     height: 600px;
     object-fit: cover;
     border-radius: 20px;
+
+    @media(max-width: 500px){
+      width: 100%;
+      height: 344px;
+    }
   }
 `
 const COLLECTION_NAME = styled.div`
@@ -236,6 +268,15 @@ const COLLECTION_NAME = styled.div`
   font-size: 55px;
   line-height: 67px;
   color: ${({ theme }) => theme.text7};
+
+  @media(max-width: 500px){
+    font-family: Montserrat;
+    font-size: 35px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    padding: 0 5%;
+  }
 `
 const TAG_LINE = styled.div`
   margin-top: 14px;
@@ -243,6 +284,17 @@ const TAG_LINE = styled.div`
   font-size: 30px;
   line-height: 37px;
   color: ${({ theme }) => theme.text4};
+  margin-bottom: 14px;
+
+  @media(max-width: 500px){
+    font-family: Montserrat;
+    margin-top: 0;
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    color: #eee;
+    padding: 0 5%;
+  }
 `
 const PRICE_SOCIAL = styled.div`
   display: flex;
@@ -339,6 +391,19 @@ const getRemaningTime = (time): string => {
   return d > 0 ? dDisplay + hDisplay : h > 0 ? hDisplay + mDisplay : mDisplay + sDisplay
 }
 
+const MOB_WRAPPER = styled.div<{ $navCollapsed: boolean }>`
+  margin-top: calc(120px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+`;
+
+const ROW = styled.div`
+  display: flex;
+  justify-content: center;
+
+  button{
+    margin-right: 10px;
+  }
+`
+
 export const SingleCollection: FC = () => {
   const { selectedProject, cndyValues } = useNFTLPSelected()
   const { isCollapsed } = useNavCollapse()
@@ -361,6 +426,100 @@ export const SingleCollection: FC = () => {
     <SkeletonCommon style={{ marginTop: '20px' }} width="600px" height={'70px'} borderRadius="10px" />
   )
   if (selectedProject?.ended) ProgressBar = <></>
+
+  if(checkMobile()){
+    return(
+      <MOB_WRAPPER $navCollapsed={isCollapsed}>
+        <ROW>
+          <BACK_IMG onClick={() => history.goBack()}>
+            <img src={`/img/assets/arrow-left${mode}.svg`} />{' '}
+          </BACK_IMG>
+          {selectedProject?.collectionName ? (
+              <COLLECTION_NAME>{selectedProject?.collectionName}</COLLECTION_NAME>
+            ) : (
+              <COLLECTION_NAME>
+                <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
+              </COLLECTION_NAME>
+            )}
+        </ROW>  
+        {selectedProject?.tagLine ? (
+              <TAG_LINE>{selectedProject?.tagLine}</TAG_LINE>
+            ) : (
+              <TAG_LINE>
+                <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
+              </TAG_LINE>
+        )}
+        <ROW>
+          <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.website)}>
+            <SVGBlackToGrey src="/img/assets/domains.svg" alt="domain-icon" />
+          </SOCIAL_ICON>
+          <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.discord)}>
+            <SVGBlackToGrey src="/img/assets/discord_small.svg" alt="discord-icon" />
+          </SOCIAL_ICON>
+          <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.twitter)}>
+            <SVGBlackToGrey src="/img/assets/twitter_small.svg" alt="twitter-icon" />
+          </SOCIAL_ICON>
+        </ROW>
+        <ROW style={{ justifyContent: 'space-evenly', marginTop: '18px' }}>
+          <InfoDivLightTheme
+            items={selectedProject?.items}
+            currency={undefined}
+            price={undefined}
+          ></InfoDivLightTheme>
+          <InfoDivLightTheme
+            items={selectedProject}
+            price={selectedProject?.price}
+            currency={selectedProject?.currency}
+          ></InfoDivLightTheme>
+        </ROW>
+        <NFT_COVER>
+            {selectedProject?.coverUrl ? (
+              <>
+                <div className={selectedProject?.ended ? 'ended-img' : 'image-border'}>
+                  <img className="inner-image" alt="cover" src={selectedProject?.coverUrl} />
+                </div>
+                {selectedProject?.ended ? <div className="sold-text">SOLD OUT</div> : <></>}
+              </>
+            ) : (
+              <SkeletonCommon width="90%" height="350px" borderRadius="10px" />
+            )}
+          </NFT_COVER>
+          {selectedProject?.summary ? (
+            <div>
+              <RIGHT_SECTION_TABS activeTab={'4'}>
+                <Tabs>
+                  <TabPane tab="Summary" key="1">
+                    <SUMMARY_TAB_CONTENT>
+                      <div>{selectedProject?.summary}</div>
+                      <br />
+                      <div>
+                        <span style={{ fontSize: '18px' }}>{selectedProject?.highlightText}</span>
+                      </div>
+                    </SUMMARY_TAB_CONTENT>
+                  </TabPane>
+                  <TabPane tab="Tiers" key="2"></TabPane>
+                  <TabPane tab="Roadmap" key="3">
+                    <RoadMap roadmap={selectedProject?.roadmap} />
+                  </TabPane>
+                  <TabPane tab="Team" key="4">
+                    <TeamMembers teamMembers={selectedProject?.team} />
+                  </TabPane>
+                  <TabPane tab="Vesting" key="5">
+                    <Vesting currency={selectedProject?.currency} str={''} />
+                  </TabPane>
+                </Tabs>
+              </RIGHT_SECTION_TABS>
+              {!selectedProject?.ended ? <MintButton isLive={isLive} /> : <></>}
+            </div>
+          ) : (
+            <>
+              <SkeletonCommon width="700px" height={'450px'} borderRadius="10px" />
+            </>
+              )}
+      </MOB_WRAPPER>
+    )
+  }
+
   return (
     <HEIGHT style={{ height: isCollapsed ? '90vh' : '82vh' }}>
       <WRAPPER $navCollapsed={isCollapsed}>

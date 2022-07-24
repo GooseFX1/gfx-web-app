@@ -155,6 +155,12 @@ const INFO_DIV_LIGHT = styled.div`
   border-radius: 47px !important;
   padding: 1px;
 
+  @media(max-width: 500px){
+    width: 40%;
+    height: 42px;
+    margin-right: 0;
+  }
+
   .inner {
     width: 100%;
     height: 100%;
@@ -163,6 +169,9 @@ const INFO_DIV_LIGHT = styled.div`
   }
 
   .inner-2 {
+    @media(max-width: 500px){
+      font-size: 13px;
+    }
     position: relative;
     width: 100%;
     height: 100%;
