@@ -91,77 +91,7 @@ const Wrapper = styled.div`
 ${tw`mt-6 flex flex-row`}
 `
 
-const DropdownContainer = styled.div`
-  width: 102px;
-  height: 45px;
-  background: #9625ae;
-  border-radius: 23px;
-  display: flex;
-  justify-content: center;
-`
-const Wrapper = styled.div`
-display: flex;
-margin-top: 24px;
-`
-
-const PoolSelector = styled.div`
-  width: 250px;
-  background: #1e1e1e;
-  padding: 20px 21px 20px;
-
-  li:last-child{
-    margin: 0;
-  }
-
- li{
-  margin-bottom: 26px;
-  span{
-    font-family: Avenir;
-    font-size: 15px;
-    font-weight: 900;
-    text-align: center;
-    color: #fff;
-  }
-  &:hover span {
-    color: #fff;
-  }
- }
-
-input[type='radio'] {
-  width: 15px;
-  height: 15px;
-}
-
-input[type='radio']:checked:after {
-  width: 15px;
-  height: 15px;
-  border-radius: 10px;
-  background-color: #50bb35;
-  content: '';
-  display: inline-block;
-  visibility: visible;
-  border: 1px solid #0f0f0f;
-  position: relative;
-  top: -1px;
-}
-`
-
 const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
-
-const Overlay: any = ({ setPoolFilter, poolFilter }) => {
-  return(
-      <PoolSelector>
-        {poolTypes.map((pool, index) => {
-          return(
-            <MenuItem key={index}> 
-              <span>{pool.name}</span>
-              <input type="radio" name="pool" value={pool.name} checked={poolFilter==pool.name ? true: false} onChange={(e)=>setPoolFilter(pool.name)}/>
-            </MenuItem> 
-          )
-        })}
-      </PoolSelector>
-  )
-}
 
 export const FarmFilter = () => {
   const { poolFilter, setPoolFilter, setSearchFilter, setCounter, operationPending } = useFarmContext()
