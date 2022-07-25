@@ -711,8 +711,10 @@ export const SingleCollection: FC = () => {
                                         ? 'Starts in: '
                                         : 'Ended'}
                                     </span>
-                                    {cndyValues?.tiers[index]?.status !== 'ended' &&
-                                    index !== selectedProject?.tiers.length - 1 ? (
+                                    {cndyValues?.tiers[index]?.status === 'upcoming' ? (
+                                      <span>{getRemaningTime(cndyValues?.tiers[index]?.time)}</span>
+                                    ) : cndyValues?.tiers[index]?.status !== 'ended' &&
+                                      index !== selectedProject?.tiers.length - 1 ? (
                                       <span>{getRemaningTime(cndyValues?.tiers[index]?.time)}</span>
                                     ) : index === selectedProject?.tiers.length - 1 ? (
                                       <span>{getRemaningTime(selectedProject?.startsOn)}</span>
