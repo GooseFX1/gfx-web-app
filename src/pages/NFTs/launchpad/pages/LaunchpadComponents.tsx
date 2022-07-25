@@ -9,6 +9,10 @@ const ROADMAP_WRAPPER = styled.div`
   color: ${({ theme }) => theme.text4};
 
   .elipse {
+    @media(max-width: 500px){
+      height: 30px;
+      width: 30px;
+    }
     height: 60px;
     width: 60px;
     margin-left: 2%;
@@ -16,12 +20,19 @@ const ROADMAP_WRAPPER = styled.div`
     border: none;
   }
   .verticalLine {
+    @media(max-width: 500px){
+      width: 25%;
+      margin-left: 2%;
+    }
     width: 35%;
     height: 5px;
     margin-top: -60px;
     margin-left: 20px;
   }
   .verticalContainer {
+    @media(max-width: 500px){
+      margin-top: 75px;
+    }
     margin-top: 70px;
     display: flex;
     align-items: center;
@@ -29,6 +40,11 @@ const ROADMAP_WRAPPER = styled.div`
     min-height: 30px;
   }
   .headingText {
+    @media(max-width: 500px){
+      font-weight: 500;
+      font-size: 15px;
+      line-height: 20px;
+    }
     font-weight: 600;
     font-size: 18px;
     margin-left: 10%;
@@ -37,6 +53,9 @@ const ROADMAP_WRAPPER = styled.div`
     text-align: center;
   }
   .subHeadingText {
+    @media(max-width: 500px){
+      width: auto;
+    }
     font-weight: 500;
     font-size: 15px;
     right: 10px;
@@ -113,6 +132,10 @@ const TEAM_MEMBER_WRAPPER = styled.div`
   display: grid;
   grid-template-columns: auto auto auto;
   color: ${({ theme }) => theme.text4};
+  @media(max-width: 500px){
+    grid-template-columns: auto auto;
+    padding: 5%;
+  }
 
   .teamContainer {
     width: 80%;

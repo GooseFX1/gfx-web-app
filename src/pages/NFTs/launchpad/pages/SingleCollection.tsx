@@ -61,6 +61,9 @@ export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
       }
     }
     .ant-tabs-tab {
+      @media(max-width: 500px){
+        margin: 0;
+      }
       color: #616161;
       font-size: 14px;
       font-weight: 500;
@@ -79,6 +82,9 @@ export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
       font-family: Montserrat;
     }
     .ant-tabs-content-holder {
+      @media(max-width: 500px){
+        height: 350px;
+      }
       height: 450px;
       z-index: 0;
       background-color: ${({ theme }) => theme.bg9}; !important;
@@ -313,6 +319,14 @@ const TOGGLE_SPACE = styled.div`
   margin-left: 420px;
 `
 const SUMMARY_TAB_CONTENT = styled.div`
+ @media(max-width: 500px){
+   margin: 20px auto;
+   font-weight: 500;
+   font-size: 15px;
+   color: #eeeeee;
+   line-height: 1.5;
+
+ }
   margin: auto;
   padding-left: 30px;
   padding-right: 30px;
@@ -329,10 +343,14 @@ const SUMMARY_TAB_CONTENT = styled.div`
   }
 `
 const TIER_WRAPPER = styled.div`
+  @media(max-width: 500px){
+    padding: 0 15px;
+  }
   margin: auto;
   padding-left: 30px;
   padding-right: 30px;
   margin-top: 6%;
+  margin-bottom: 6%;
   font-weight: 600;
   font-size: 20px;
   color: ${({ theme }) => theme.text4};
@@ -347,6 +365,9 @@ const TIER_WRAPPER = styled.div`
       border-image-slice: 1;
     }
     .rightSection {
+      @media(max-width: 500px){
+        margin-right: 5px;
+      }
       margin-left: auto;
       margin-right: 20px;
       .textStatus {
@@ -358,6 +379,9 @@ const TIER_WRAPPER = styled.div`
         }
       }
       .textPrice {
+        @media(max-width: 500px){
+          color: #7d7d7d;
+        }
         color: ${({ theme }) => theme.text8};
         &.active {
           color: ${({ theme }) => theme.primary1Active};
@@ -497,7 +521,59 @@ export const SingleCollection: FC = () => {
                       </div>
                     </SUMMARY_TAB_CONTENT>
                   </TabPane>
-                  <TabPane tab="Tiers" key="2"></TabPane>
+                  <TabPane tab="Tiers" key="2">
+                  <TIER_WRAPPER>
+                    {selectedProject?.tiers?.map((item, index) => (
+                      <div
+                        className={'tierRow ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')}
+                        tw="flex"
+                      >
+                        <div className="leftSection">
+                          <div tw="flex flex-col items-start justify-center h-full">
+                            <div tw="text-[15px]" className="label-text">
+                              {'Tier ' + (index + 1) + ' - ' + item.name}
+                            </div>
+                            <div tw="text-[12px]" className="limit-text">
+                              {item.number + " NFT's. Max " + item.limit + " NFT's"}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="rightSection">
+                          <div tw="flex flex-col items-end justify-center h-full">
+                            <div
+                              className={
+                                'textStatus ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
+                              }
+                              tw="text-[11px] px-1"
+                            >
+                              <span>
+                                {cndyValues?.tiers[index]?.status === 'live'
+                                  ? 'Ends in: '
+                                  : cndyValues?.tiers[index]?.status === 'upcoming'
+                                  ? 'Starts in: '
+                                  : 'Ended'}
+                              </span>
+                              {cndyValues?.tiers[index]?.status !== 'ended' &&
+                              index !== selectedProject?.tiers.length - 1 ? (
+                                <span>{getRemaningTime(cndyValues?.tiers[index]?.time)}</span>
+                              ) : index === selectedProject?.tiers.length - 1 ? (
+                                <span>{getRemaningTime(selectedProject?.startsOn)}</span>
+                              ) : null}
+                            </div>
+                            <div
+                              className={
+                                'textPrice ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
+                              }
+                              tw="text-[12px]"
+                            >
+                              {item.price ? item.price : 'FREE'}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </TIER_WRAPPER>
+                  </TabPane>
                   <TabPane tab="Roadmap" key="3">
                     <RoadMap roadmap={selectedProject?.roadmap} />
                   </TabPane>
