@@ -3,17 +3,21 @@ import styled from 'styled-components'
 import { Tooltip } from '../../components/Tooltip'
 import { moneyFormatter, nFormatter } from '../../utils/math'
 import { Skeleton } from 'antd'
-
+import tw from 'twin.macro'
+ 
 export const STYLED_TITLE = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  .text {
+  .textTitle{
+    ${tw`sm:font-semibold sm:text-base text-tiny font-medium text-left`}
     font-family: Montserrat;
-    font-size: 15px;
-    font-weight: 500;
-    text-align: left;
     color: #fff;
+
+    @media(max-width: 500px){
+      ${tw`text-[#eee]`}
+      line-height: normal;
+    }
   }
   .info-icon {
     width: 15px;
@@ -33,12 +37,16 @@ export const STYLED_TITLE = styled.div`
 export const STYLED_NAME = styled.div`
   display: flex;
   align-items: center;
-  .text {
+  .textName{
+    ${tw`sm:ml-[15px]`}
     font-size: 18px;
     font-weight: 600;
     color: ${({ theme }) => theme.text8};
     max-width: 90px;
     margin-left: ${({ theme }) => theme.margin(2.5)};
+    @media(max-width: 500px){
+      margin-left: 15px;
+    }
   }
   .coin-image {
     width: 41px;
@@ -65,10 +73,20 @@ export const STYLED_EARNED = styled.div`
   text-align: center;
 `
 
+const ICON_WRAPPER = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .arrow-down{
+        filter: ${({ theme }) => theme.filterArrowDown};
+  }
+`
+
 export const Loader: FC = () => {
   return <Skeleton.Button active size="small" style={{ display: 'flex', height: '15px', borderRadius: '5px' }} />
 }
-const HeaderTooltip = (text: string) => {
+export const HeaderTooltip = (text: string) => {
   return (
     <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
       <Tooltip dark placement="bottomLeft" color="#000000">
@@ -80,7 +98,7 @@ const HeaderTooltip = (text: string) => {
 
 const Title = (text: string, infoText: string, isArrowDown: boolean) => (
   <STYLED_TITLE>
-    <div className="text">{text}</div>
+    <div className="textTitle">{text}</div>
     {infoText && HeaderTooltip(infoText)}
     {isArrowDown && <img className="arrow-down" src={`/img/assets/arrow-down.svg`} alt="" />}
   </STYLED_TITLE>
@@ -99,7 +117,7 @@ export const columns = [
           src={`/img/crypto/${text?.toUpperCase().replace(' ', '-')}.svg`}
           alt=""
         />
-        <div className="text">{text}</div>
+        <div className="textName">{text}</div>
       </STYLED_NAME>
     )
   },
@@ -156,4 +174,51 @@ export const columns = [
       </div>
     )
   }
+]
+
+export const mobileColumns = [
+  {
+    title: Title('Name', '', true),
+    dataIndex: 'name',
+    key: 'name',
+    width: '10%',
+    render: (text, record) => (
+      <STYLED_NAME>
+        <img
+          className={`coin-image ${record.type === 'Double Sided' ? 'double-sided' : ''}`}
+          src={`/img/crypto/${text.toUpperCase().replace(' ', '-')}.svg`}
+          alt=""
+        />
+        <div className="textName">{text}</div>
+      </STYLED_NAME>
+    )
+  },
+  {
+    title: Title('APR', 'Yearly deposit earned on your deposit.', true),
+    dataIndex: 'apr',
+    key: 'apr',
+    width: '30%',
+    render: (text) => (
+      <ICON_WRAPPER>
+        <div className="apr normal-text">
+          {text === '-' ? '-' : text !== undefined ? `${text.toFixed(0)}%` : <Loader />}
+        </div>
+      </ICON_WRAPPER>
+    )
+  },
+  {
+    title: (
+    <a href="/farm">
+      <img style={{display: "block", margin: "auto", marginRight: "25%"}}src={'/img/assets/refresh.svg'} />
+    </a>
+    ),
+    dataIndex: 'apr',
+    key: 'apr',
+    width: '30%',
+    render: (text) => (
+      <ICON_WRAPPER>
+        <img className="arrow-down" src={`/img/assets/arrow-down-large.svg`}/>
+      </ICON_WRAPPER>
+    )
+  },
 ]
