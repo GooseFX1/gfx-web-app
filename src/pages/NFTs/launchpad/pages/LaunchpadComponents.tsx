@@ -22,7 +22,7 @@ const ROADMAP_WRAPPER = styled.div`
     margin-left: 20px;
   }
   .verticalContainer {
-    margin-top: 60px;
+    margin-top: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -34,7 +34,7 @@ const ROADMAP_WRAPPER = styled.div`
     margin-left: 10%;
     line-height: 20px;
     right: 15px;
-    text-align: right;
+    text-align: center;
   }
   .subHeadingText {
     font-weight: 500;
@@ -42,7 +42,7 @@ const ROADMAP_WRAPPER = styled.div`
     right: 10px;
     line-height: 18px;
     color: #b5b5b5;
-    text-align: right;
+    text-align: center;
     width: 300px;
     padding-top: 5px;
   }
@@ -619,7 +619,7 @@ export const RoadMap = ({ roadmap }) => {
           <div className="verticalContainer">
             <img className="elipse" src={`/img/assets/elipse.png`} alt="" />
             <img className="verticalLine" src="/img/assets/vectorLine.svg" alt="" />
-            <div style={{ marginTop: '-50px' }}>
+            <div style={{ marginTop: '-50px', marginLeft: '10px' }}>
               <div className="headingText">{road?.heading}</div>
               <div className="subHeadingText">{road?.subheading}</div>
             </div>

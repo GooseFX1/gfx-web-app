@@ -96,7 +96,8 @@ interface Tiers {
   time: string
   number: string
   limit: string
-  contractTier: number
+  contractTier: string
+  price: string | null
 }
 
 interface ISelectedProject {
@@ -357,31 +358,57 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
           //
           let publicMint = true
 
-          let tiers = selectedProject.tiers,
-            activeTierInfo = null
+          let tiers = selectedProject?.tiers,
+            activeTierInfo = null,
+            activeTierIndex = undefined
           for (let i = 0; i < tiers.length; i++) {
             const item = tiers[i]
             if (new Date().getTime() > parseFloat(item.time)) {
-              activeTierInfo = item
+              activeTierInfo = { ...item, status: 'live' }
+              activeTierIndex = i
               publicMint = false
             }
             if (new Date().getTime() > parseFloat(selectedProject?.startsOn)) {
               activeTierInfo = null
               publicMint = true
+              activeTierIndex = null
               break
             }
           }
+          if (activeTierIndex || activeTierIndex === 0) {
+            tiers = tiers.map((item, index) => {
+              if (index < activeTierIndex) return { ...item, status: 'ended' }
+              else if (index === activeTierIndex) return { ...item, status: 'live' }
+              else return { ...item, status: 'upcoming' }
+            })
+          } else if (activeTierIndex === undefined) {
+            tiers = tiers.map((item) => {
+              return { ...item, status: 'upcoming' }
+            })
+          } else {
+            tiers = tiers.map((item) => {
+              return { ...item, status: 'ended' }
+            })
+          }
+          console.log(tiers)
           cndyState['publicMint'] = publicMint
           cndyState['activeTierInfo'] = activeTierInfo
+
+          cndyState['tiers'] = tiers
 
           let whitelistInfo = await getWhitelistInfo(candyM.program, wallet.publicKey)
           cndyState['whitelistInfo'] = whitelistInfo
           cndyState['isWhiteListUser'] = false
+
+          let walletTier = null
+          for (let i in whitelistInfo?.whitelistType) {
+            walletTier = i
+          }
           if (
             whitelistInfo &&
             whitelistInfo.numberOfWhitelistSpotsPerUser.toString() > 0 &&
             activeTierInfo &&
-            whitelistInfo.whitelistType.toString() === activeTierInfo.contractTier
+            walletTier === activeTierInfo.contractTier
           ) {
             cndyState['isWhiteListUser'] = true
           }

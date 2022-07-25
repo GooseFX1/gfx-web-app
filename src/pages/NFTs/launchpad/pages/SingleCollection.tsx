@@ -8,10 +8,10 @@ import { SVGBlackToGrey, SVGDynamicReverseMode } from '../../../../styles'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { MintButton } from '../launchpadComp/MintButton'
 import { TeamMembers } from './LaunchpadComponents'
-import { Share } from '../../Share'
-import { copyToClipboard } from '../../Collection/CollectionHeader'
 import { useDarkMode, useNavCollapse } from '../../../../context'
 import { useHistory } from 'react-router-dom'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme, activeTab }) => css`
@@ -276,6 +276,69 @@ const SUMMARY_TAB_CONTENT = styled.div`
     }
   }
 `
+const TIER_WRAPPER = styled.div`
+  margin: auto;
+  padding-left: 30px;
+  padding-right: 30px;
+  margin-top: 6%;
+  font-weight: 600;
+  font-size: 20px;
+  color: ${({ theme }) => theme.text4};
+  .tierRow {
+    height: 55px;
+    width: 100%;
+    margin-bottom: 20px;
+    border: 1px solid ${({ theme }) => theme.text1h};
+    border-radius: 8px;
+    &.active {
+      border-image-source: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
+      border-image-slice: 1;
+    }
+    .rightSection {
+      margin-left: auto;
+      margin-right: 20px;
+      .textStatus {
+        border: 1.5px solid ${({ theme }) => theme.text8};
+        color: ${({ theme }) => theme.text8};
+        &.active {
+          border: 1.5px solid ${({ theme }) => theme.primary1Active};
+          color: ${({ theme }) => theme.primary1Active};
+        }
+      }
+      .textPrice {
+        color: ${({ theme }) => theme.text8};
+        &.active {
+          color: ${({ theme }) => theme.primary1Active};
+        }
+      }
+    }
+    .leftSection {
+      margin-left: 20px;
+      .label-text {
+        color: ${({ theme }) => theme.text7};
+      }
+      .limit-text {
+        color: ${({ theme }) => theme.text11};
+      }
+    }
+  }
+`
+const getRemaningTime = (time): string => {
+  const startsOn = parseFloat(time)
+  const timeDiffrence = startsOn - Date.now()
+  let seconds = Number(timeDiffrence / 1000)
+  var d = Math.floor(seconds / (3600 * 24))
+  var h = Math.floor((seconds % (3600 * 24)) / 3600)
+  var m = Math.floor((seconds % 3600) / 60)
+  var s = Math.floor(seconds % 60)
+
+  var dDisplay = d > 0 ? d + (d === 1 ? 'd ' : 'd ') : ''
+  var hDisplay = h > 0 ? h + (h === 1 ? 'h ' : 'h ') : ''
+  var mDisplay = m > 0 ? m + (m === 1 ? 'min ' : 'mins ') : ''
+  var sDisplay = s > 0 ? s + (s === 1 ? 's ' : 's') : ''
+  return d > 0 ? dDisplay + hDisplay : h > 0 ? hDisplay + mDisplay : mDisplay + sDisplay
+}
+
 export const SingleCollection: FC = () => {
   const { selectedProject, cndyValues } = useNFTLPSelected()
   const { isCollapsed } = useNavCollapse()
@@ -369,7 +432,59 @@ export const SingleCollection: FC = () => {
                           </div>
                         </SUMMARY_TAB_CONTENT>
                       </TabPane>
-                      <TabPane tab="Tiers" key="2"></TabPane>
+                      <TabPane tab="Tiers" key="2">
+                        <TIER_WRAPPER>
+                          {selectedProject?.tiers?.map((item, index) => (
+                            <div
+                              className={'tierRow ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')}
+                              tw="flex"
+                            >
+                              <div className="leftSection">
+                                <div tw="flex flex-col items-start justify-center h-full">
+                                  <div tw="text-[17px]" className="label-text">
+                                    {'Tier ' + (index + 1) + ' - ' + item.name}
+                                  </div>
+                                  <div tw="text-[14px]" className="limit-text">
+                                    {item.number + " NFT's. Max " + item.limit + " NFT's"}
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="rightSection">
+                                <div tw="flex flex-col items-end justify-center h-full">
+                                  <div
+                                    className={
+                                      'textStatus ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
+                                    }
+                                    tw="text-[11px] px-1"
+                                  >
+                                    <span>
+                                      {cndyValues?.tiers[index]?.status === 'live'
+                                        ? 'Ends in: '
+                                        : cndyValues?.tiers[index]?.status === 'upcoming'
+                                        ? 'Starts in: '
+                                        : 'Ended'}
+                                    </span>
+                                    {cndyValues?.tiers[index]?.status !== 'ended' &&
+                                    index !== selectedProject?.tiers.length - 1 ? (
+                                      <span>{getRemaningTime(cndyValues?.tiers[index]?.time)}</span>
+                                    ) : index === selectedProject?.tiers.length - 1 ? (
+                                      <span>{getRemaningTime(selectedProject?.startsOn)}</span>
+                                    ) : null}
+                                  </div>
+                                  <div
+                                    className={
+                                      'textPrice ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
+                                    }
+                                    tw="text-[14px]"
+                                  >
+                                    {item.price ? item.price : 'FREE'}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </TIER_WRAPPER>
+                      </TabPane>
                       <TabPane tab="Roadmap" key="3">
                         <RoadMap roadmap={selectedProject?.roadmap} />
                       </TabPane>
