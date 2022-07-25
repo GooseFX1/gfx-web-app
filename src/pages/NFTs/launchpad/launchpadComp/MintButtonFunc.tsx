@@ -17,6 +17,10 @@ import { copyToClipboard } from '../../Collection/CollectionHeader'
 import * as anchor from '@project-serum/anchor'
 
 const MINT_BUTTON_BAR = styled.div`
+  @media(max-width: 500px){
+    margin-top: -80px;
+    justify-content: start;
+  }
   margin-top: -100px;
   height: 70px;
   z-index: 99;
@@ -56,6 +60,7 @@ const MINT_BTN = styled.div<{ active: boolean }>`
     margin-top: 10px;
     z-index: 100;
     justify-content: center;
+    margin-left: 60px;
   }
 `
 const WHITELIST_SPOTS = styled.div`
