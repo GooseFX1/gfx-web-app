@@ -239,6 +239,8 @@ export function colors(mode: string): Colors {
         : 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)',
 
     // primary colors
+    primary1Active: mode === 'dark' ? 'white' : '#302eb8',
+
     primary1: '#302eb8',
     primary2: '#3735bb',
     primary3: '#5855FF',

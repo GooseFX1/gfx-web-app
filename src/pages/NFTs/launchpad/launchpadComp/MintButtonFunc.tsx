@@ -134,9 +134,9 @@ export const MintButtonFunc = ({
         cndyValues.whitelistInfo &&
         cndyValues.whitelistInfo.numberOfWhitelistSpotsPerUser.toString() > 0
       ) {
-        return 'WHITELIST MINT'
+        return 'MINT'
       } else {
-        return 'WHITELIST MINT'
+        return 'MINT'
       }
     }
 

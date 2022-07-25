@@ -161,6 +161,8 @@ export interface Colors {
   // main tab
   tabNameColor: Color
 
+  primary1Active: Color
+
   // primary
   primary1: Color
   primary2: Color
