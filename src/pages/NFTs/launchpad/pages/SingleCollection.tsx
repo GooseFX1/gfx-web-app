@@ -68,6 +68,9 @@ export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
       font-size: 14px;
       font-weight: 500;
       .ant-tabs-tab-btn {
+        @media(max-width: 500px){
+          font-size: 15px;
+        }
         font-size: 17px;
       }
       &.ant-tabs-tab-active {
@@ -371,6 +374,10 @@ const TIER_WRAPPER = styled.div`
       margin-left: auto;
       margin-right: 20px;
       .textStatus {
+        @media(max-width: 500px){
+          border: 1px solid #7d7d7d;
+          color: #7d7d7d;
+        }
         border: 1.5px solid ${({ theme }) => theme.text8};
         color: ${({ theme }) => theme.text8};
         &.active {
@@ -439,15 +446,19 @@ export const SingleCollection: FC = () => {
   const displayProgressBar =
     isLive && cndyValues ? (
       <MintProgressBar minted={cndyValues?.itemsRedeemed} totalNFTs={selectedProject?.items} />
-    ) : isLive && !cndyValues ? (
-      <SkeletonCommon style={{ marginTop: '20px' }} width="600px" height={'70px'} borderRadius="10px" />
+    ) : isLive && !cndyValues ? ( checkMobile() ? 
+    <SkeletonCommon style={{ marginTop: '20px', marginLeft: "auto", marginRight: "auto" }} width="90%" height={'60px'} borderRadius="10px" /> 
+    : 
+    <SkeletonCommon style={{ marginTop: '20px' }} width="600px" height={'70px'} borderRadius="10px" />
     ) : (
       <MintStarts time={selectedProject?.whitelist || selectedProject?.startsOn} />
     )
   let ProgressBar = selectedProject?.items ? (
     displayProgressBar
-  ) : (
-    <SkeletonCommon style={{ marginTop: '20px' }} width="600px" height={'70px'} borderRadius="10px" />
+  ) : (checkMobile() ? 
+  <SkeletonCommon style={{ marginTop: '20px', marginLeft: "auto", marginRight: "auto" }} width="90%" height={'60px'} borderRadius="10px" /> 
+  :
+  <SkeletonCommon style={{ marginTop: '20px' }} width="600px" height={'70px'} borderRadius="10px" />
   )
   if (selectedProject?.ended) ProgressBar = <></>
 
@@ -508,10 +519,11 @@ export const SingleCollection: FC = () => {
               <SkeletonCommon width="90%" height="350px" borderRadius="10px" />
             )}
           </NFT_COVER>
+          {ProgressBar}
           {selectedProject?.summary ? (
             <div>
               <RIGHT_SECTION_TABS activeTab={'4'}>
-                <Tabs>
+                <Tabs defaultActiveKey={'2'}>
                   <TabPane tab="Summary" key="1">
                     <SUMMARY_TAB_CONTENT>
                       <div>{selectedProject?.summary}</div>
@@ -657,7 +669,7 @@ export const SingleCollection: FC = () => {
               {selectedProject?.summary ? (
                 <div>
                   <RIGHT_SECTION_TABS activeTab={'4'}>
-                    <Tabs>
+                    <Tabs defaultActiveKey={'2'}>
                       <TabPane tab="Summary" key="1">
                         <SUMMARY_TAB_CONTENT>
                           <div>{selectedProject?.summary}</div>
