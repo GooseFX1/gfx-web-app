@@ -130,6 +130,26 @@ export const NFTHomeSlider = () => {
   return (
     <CAROUSEL_WRAPPER>
       <Slider {...settings}>
+        <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/champz.jpeg`}>
+          <div className="home-slider-content">
+            <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>
+              Become
+            </h1>
+            <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>
+              a verified creator
+            </h1>
+            <TERTIERY_BTN
+              className="home-slider-button"
+              height={'40px'}
+              status="action"
+              width={'141px'}
+              onClick={() => history.push('/NFTs/launchpad/champz')}
+            >
+              <span>Mint Now</span>
+            </TERTIERY_BTN>
+          </div>
+        </SLIDER_ITEM>
+
         <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/becoma-a-creator.png`}>
           <div className="home-slider-content">
             <h1 className="home-slider-title">Become </h1>
