@@ -10,8 +10,8 @@ const ROADMAP_WRAPPER = styled.div`
 
   .elipse {
     @media(max-width: 500px){
-      height: 30px;
-      width: 30px;
+      height: 45px;
+      width: 45px;
     }
     height: 60px;
     width: 60px;
@@ -253,6 +253,11 @@ const INFO_DIV_BRIGHT = styled.div`
 `
 
 const ProgressBarBG = styled.div`
+ @media(max-width: 500px){
+   width: 90%;
+   margin: 0 auto 20px;
+   height: 60px;
+ }
   width: 610px;
   height: 70px;
   margin-bottom: 20px;
@@ -321,6 +326,12 @@ const VESTING_WRAPPER = styled.div`
   display: flex;
   flex-direction: column;
   .vestingStr {
+    @media(max-width: 500px){
+      font-weight: 500;
+      font-size: 15px;
+      color: #eeeeee;
+      line-height: 1.5;
+    }
     margin: auto;
     margin-left: 40px;
     margin-right: 40px;
@@ -430,8 +441,6 @@ const LIVE_BTN = styled.div`
 `
 
 export const MintProgressBar = ({ minted, totalNFTs }) => {
-  // const minted = 2000
-  // const totalNFTs = 10000
   let mintPercent = (minted / totalNFTs) * 100
   mintPercent = parseFloat(mintPercent.toFixed(0))
   return (
