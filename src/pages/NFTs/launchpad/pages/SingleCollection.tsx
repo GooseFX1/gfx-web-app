@@ -13,6 +13,8 @@ import { useHistory } from 'react-router-dom'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { checkMobile } from '../../../../utils'
+import analytics from '../../../../analytics'
+import { logEvent } from 'firebase/analytics'
 
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme, activeTab }) => css`
@@ -446,6 +448,15 @@ export const SingleCollection: FC = () => {
     return () => {
       clearInterval(interval)
     }
+  }, [])
+
+  useEffect(() => {
+    const an = analytics()
+    an !== null &&
+      logEvent(an, 'screen_view', {
+        firebase_screen: 'Launchpad: Mint',
+        firebase_screen_class: 'load'
+      })
   }, [])
 
   const isLive =
