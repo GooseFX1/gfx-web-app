@@ -62,6 +62,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
   const [isActive, setIsActive] = useState(false)
   const [needTxnSplit, setNeedTxnSplit] = useState(true)
   const [discountPrice, setDiscountPrice] = useState<anchor.BN>()
+  const [publicMint, setPublicMint] = useState<boolean>(true)
   //
   const [isNonce, setIsNonce] = useState<boolean>(false)
 
@@ -210,7 +211,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
           }
         } else {
           let mintResult = null
-          if (isWhitelist()) {
+          if (!publicMint) {
             let wallet_pda = await getWalletWhitelistPda(wallet.publicKey)
             mintResult = await mintOneTokenWhitelist(
               candyMachine,
@@ -350,6 +351,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
       setIsActive(cndyValues.isActive)
       setItemsRemaining(cndyValues.itemsRemaining)
       setNeedTxnSplit(cndyValues.needTxnSplit)
+      setPublicMint(cndyValues.publicMint)
     }
   }, [cndyValues, wallet.connected, wallet.publicKey])
 
@@ -462,7 +464,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
         setIsMinting={(val) => setIsUserMinting(val)}
         isActive={isActive || (isWhitelistUser && isValidBalance)}
         isLive={isLive}
-        isWhitelist={isWhitelist()}
+        isWhitelist={!publicMint}
         cndyValues={cndyValues}
       ></MintButtonFunc>
     </GatewayProvider>
@@ -474,7 +476,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
       setIsMinting={(val) => setIsUserMinting(val)}
       isActive={isActive || (isWhitelistUser && isValidBalance)}
       isLive={isLive}
-      isWhitelist={isWhitelist()}
+      isWhitelist={!publicMint}
       cndyValues={cndyValues}
     ></MintButtonFunc>
   )

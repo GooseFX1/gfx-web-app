@@ -243,6 +243,8 @@ export function colors(mode: string): Colors {
       : '#000',
 
     // primary colors
+    primary1Active: mode === 'dark' ? 'white' : '#302eb8',
+
     primary1: '#302eb8',
     primary2: '#3735bb',
     primary3: '#5855FF',
