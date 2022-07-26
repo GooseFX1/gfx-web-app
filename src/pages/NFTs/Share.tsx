@@ -7,8 +7,14 @@ const STYLED_SHARE_PROFILE = styled(PopupCustom)`
   ${({ theme }) => `
     .ant-modal-body {
       padding: ${theme.margin(5)} ${theme.margin(7)};
+      @media(max-width: 500px){
+        padding: 0;
+      }
     }
     .ant-modal-close {
+      @media(max-width: 500px){
+        top: 6px;
+      }
       right: 35px;
       top: 35px;
       left: auto;
@@ -22,16 +28,32 @@ const STYLED_SHARE_PROFILE = styled(PopupCustom)`
       font-weight: 600;
       color: ${theme.textShareModal};
       margin-bottom: ${theme.margin(4)};
+      @media(max-width: 500px){
+        margin-top: 20px;
+        margin-left: 20px;
+      }
+
     }
     .social-list {
       display: flex;
       align-item: center;
       margin: 0 -${theme.margin(2)};
+      @media(max-width: 500px){
+        margin: 30px 0;
+        justify-content: space-evenly;
+      }
     }
     .social-item {
       padding: 0 ${theme.margin(2)};
+      @media(max-width: 500px){
+        padding: 0;
+      }
       img {
         cursor: pointer;
+        @media(max-width: 500px){
+          height: 70px;
+          width: 70px;
+        }
       }
     }
     .social-text {
@@ -42,6 +64,9 @@ const STYLED_SHARE_PROFILE = styled(PopupCustom)`
       text-align: center;
       margin-top: 20px;
       color: ${theme.textShareModal};
+      @media(max-width: 500px){
+        font-size: 13px;
+      }
     }
     .social-icon--img {
       height: 90px;
@@ -51,6 +76,10 @@ const STYLED_SHARE_PROFILE = styled(PopupCustom)`
       display: flex;
       justify-content: center;
       align-items: center;
+      @media(max-width: 500px){
+        height: 70px;
+        width: 70px;
+      }
       
       svg {
         display: block;

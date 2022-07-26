@@ -1,15 +1,15 @@
-import React from 'react'
+import React, { useState, FC } from 'react'
 import styled from 'styled-components'
 import { Toggle } from './Toggle'
 import { SearchBar, Categories } from '../../components'
-import { Button } from 'antd'
+import { Button, Radio } from 'antd'
 import { useFarmContext } from '../../context'
+import { checkMobile } from '../../utils'
+import tw from "twin.macro"
+import 'styled-components/macro'
 
 const STYLED_FARM_HEADER = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 23px;
+  ${tw`sm:block sm:px-[15px] sm:pt-[20px] sm:pb-[8px] flex flex-row items-center justify-between pb-[23px]`}
   .search-bar {
     height: 60px;
     margin: 0;
@@ -35,51 +35,119 @@ const STYLED_FARM_HEADER = styled.div`
   .selectedBackground {
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%) !important;
     color: white;
+    transition: background 500ms ease-in-out 0s;
+  }
+
+    @media (max-width: 500px){
+    .search-bar {
+      background: ${({ theme }) => theme.searchbarBackground} !important;
+      input {
+        bbackground: ${({ theme }) => theme.searchbarBackground} !important;
+      }
+    }
+  }
+
+  @media (max-width: 500px){
+    display: block;
+    padding: 20px 15px 8px;
+    border-radius: 15px 15px 0 0;
+
+    .search-bar {
+      background: #2a2a2a !important;
+      input {
+        background: #2a2a2a !important;
+      }
+    }
   }
 `
 const STYLED_BUTTON = styled.button`
-  width: 112px;
-  height: 44px;
-  border-radius: 36px;
-  border: none;
-  margin-left: 5px;
+  ${tw`sm:m-auto cursor-pointer text-center border-none border-0 font-semibold text-base ml-[5px] mr-2.5 w-[112px] h-[44px] rounded-[36px]`}
   font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  color: #ffffff;
-  text-align: center;
-  cursor: pointer;
+  line-height: normal;
   background: none;
   color: ${({ theme }) => theme.text17};
-  margin-right: 10px;
   :disabled {
     cursor: wait;
+  }
+
+  @media(max-width: 500px){
+    margin: auto;
   }
 `
 
 const ButtonContainer = styled.div`
-  margin-right: 0px;
-  display: flex;
+  ${tw`mr-0 flex flex-row`}
 `
 
 const RefreshIcon = styled.a`
-  cursor: pointer;
-  height: 40px;
-  width: 40px;
-  padding-top: 4px;
-  margin-right: 25px;
-  margin-left: 40px;
+ ${tw`cursor-pointer h-10 w-10 pt-1 mr-[25px] ml-10`}
 `
 
 const IconContainer = styled.div`
-  display: flex;
+${tw`flex flex-row`}
+`
+
+const Wrapper = styled.div`
+${tw`mt-6 flex flex-row`}
 `
 
 const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
 
 export const FarmFilter = () => {
   const { poolFilter, setPoolFilter, setSearchFilter, setCounter, operationPending } = useFarmContext()
+  const [arrowRotation, setArrowRotation] = useState(false)
+  const [dropdownVisible, setDropdownVisible] = useState(false)
+
+  const handleClick = () => {
+    setArrowRotation(!arrowRotation)
+    setDropdownVisible(!dropdownVisible)
+  }
+
+  if(checkMobile()){
+    return(
+      <STYLED_FARM_HEADER>
+          <ButtonContainer>
+            {poolTypes.map((pool) => (
+              <STYLED_BUTTON
+                disabled={operationPending}
+                key={pool.name}
+                onClick={() => setPoolFilter(pool.name)}
+                className={pool.name === poolFilter ? 'selectedBackground' : ''}
+              >
+                {pool.name}
+              </STYLED_BUTTON>
+            ))}
+        </ButtonContainer>
+        <Wrapper>
+          <SearchBar className="search-bar" placeholder="Search by token" setSearchFilter={setSearchFilter} />
+          <Toggle className="toggle" text="Deposited" defaultUnchecked />
+        </Wrapper>
+        </STYLED_FARM_HEADER>
+    )
+  }
+
+  if(checkMobile()){
+    return(
+      <STYLED_FARM_HEADER>
+          <ButtonContainer>
+            {poolTypes.map((pool) => (
+              <STYLED_BUTTON
+                disabled={operationPending}
+                key={pool.name}
+                onClick={() => setPoolFilter(pool.name)}
+                className={pool.name === poolFilter ? 'selectedBackground' : ''}
+              >
+                {pool.name}
+              </STYLED_BUTTON>
+            ))}
+        </ButtonContainer>
+        <Wrapper>
+          <SearchBar className="search-bar" placeholder="Search by token" setSearchFilter={setSearchFilter} />
+          <Toggle className="toggle" text="Deposited" defaultUnchecked />
+        </Wrapper>
+        </STYLED_FARM_HEADER>
+    )
+  }
 
   return (
     <>

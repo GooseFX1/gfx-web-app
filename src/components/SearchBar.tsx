@@ -2,8 +2,10 @@ import { Image } from 'antd'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { SpaceBetweenDiv } from '../styles'
+import tw from 'twin.macro'
 
 const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)`
+${tw`sm:w-3/4 sm:!h-[45px]`}
   width: 50%;
   max-width: 583px;
   height: 44px !important;
@@ -14,10 +16,17 @@ const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)`
   background: ${({ theme }) => theme.searchbarBackground} !important;
 
   .ant-image {
+    ${tw`sm:relative sm:left-2.5`}
     filter: ${({ theme }) => theme.filterWhiteIcon};
+
+    @media(max-width: 500px){
+      position: relative;
+      left: 10px;
+    }
   }
 
   > input {
+    ${tw`sm:w-full`}
     height: ${({ theme }) => theme.margin(5)};
     font-size: 16px;
     text-align: left;
@@ -29,6 +38,13 @@ const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)`
     outline: none;
     ::placeholder {
       color: ${({ theme }) => theme.text18};
+    }
+  }
+
+
+    .ant-image-img {
+      filter: ${({ theme }) => theme.filterWhiteIcon};
+      width: 16px;
     }
   }
 `

@@ -15,8 +15,6 @@
 
 - [ ] The related ClickUp task has been linked to this PR
 - [ ] The person creating the pull request is listed in "Assignees"
-- [ ] My code follows the code style of this project .
-- [ ] My change requires a change to the documentation.
-- [ ] I have updated the documentation accordingly.
+- [ ] Change requires updated documentation
 
-## Screenshots or Loom Video (if appropriate):
+## Screenshots or Loom Video (optional):

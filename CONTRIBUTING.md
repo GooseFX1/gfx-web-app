@@ -11,6 +11,8 @@ In ClickUp, _“UI: Farm - Create V2 Header”_ becomes _“Farm - Create V2 Hea
 
 ### Branching
 
+The `dev` branch is the `origin/HEAD` of the project and therefor, the history of this branch is important and should maintain its integrity. The `release/prod` and `release/staging` serve as triggers for CI/CD so their history is not as important and can be set and reset as needed. The `feature/*` branches are just clones of the `dev` branch that serve to help with small tests and consolidate changes with `dev`.
+
 **Branch Format**
 
 - release/prod
@@ -70,33 +72,26 @@ Each PR **MUST**:
 #### Template
 
 ```
-<!-- TITLE FORMATTING -->
-<!-- ClickUp, “UI: Farm - Create Header” becomes “Farm: Create Header” in pull requests -->
+<!-- **TITLE FORMATTING** - ClickUp title “UI: Farm - Create Header” becomes “Farm: Create Header” as title of pull request -->
 
 ## Description
-<!--- Describe your changes in detail -->
 
 ## How has this been tested?
-<!--- Please describe in detail how you tested your changes. -->
-<!--- Include details of your testing environment, tests ran to see how -->
-<!--- your change affects other areas of the code, etc. -->
 
 ## Types of changes
-<!--- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->
+
+- [ ] Technical Debt (non-breaking change which removes unused code/assets)
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 
 ## Checklist:
-<!--- Go over all the following points, and put an `x` in all the boxes that apply. -->
-<!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
+
 - [ ] The related ClickUp task has been linked to this PR
 - [ ] The person creating the pull request is listed in "Assignees"
-- [ ] My code follows the code style of this project .
-- [ ] My change requires a change to the documentation.
-- [ ] I have updated the documentation accordingly.
+- [ ] Change requires updated documentation
 
-## Screenshots or Loom Video (if appropriate):
+## Screenshots or Loom Video (optional):
 ```
 
 #### Adding Tokens To Farm Page

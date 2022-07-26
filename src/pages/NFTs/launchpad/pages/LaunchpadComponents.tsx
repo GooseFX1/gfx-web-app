@@ -9,6 +9,10 @@ const ROADMAP_WRAPPER = styled.div`
   color: ${({ theme }) => theme.text4};
 
   .elipse {
+    @media(max-width: 500px){
+      height: 45px;
+      width: 45px;
+    }
     height: 60px;
     width: 60px;
     margin-left: 2%;
@@ -16,33 +20,48 @@ const ROADMAP_WRAPPER = styled.div`
     border: none;
   }
   .verticalLine {
+    @media(max-width: 500px){
+      width: 25%;
+      margin-left: 2%;
+    }
     width: 35%;
     height: 5px;
     margin-top: -60px;
     margin-left: 20px;
   }
   .verticalContainer {
-    margin-top: 60px;
+    @media(max-width: 500px){
+      margin-top: 75px;
+    }
+    margin-top: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 30px;
   }
   .headingText {
+    @media(max-width: 500px){
+      font-weight: 500;
+      font-size: 15px;
+      line-height: 20px;
+    }
     font-weight: 600;
     font-size: 18px;
     margin-left: 10%;
     line-height: 20px;
     right: 15px;
-    text-align: right;
+    text-align: center;
   }
   .subHeadingText {
+    @media(max-width: 500px){
+      width: auto;
+    }
     font-weight: 500;
     font-size: 15px;
     right: 10px;
     line-height: 18px;
     color: #b5b5b5;
-    text-align: right;
+    text-align: center;
     width: 300px;
     padding-top: 5px;
   }
@@ -113,6 +132,10 @@ const TEAM_MEMBER_WRAPPER = styled.div`
   display: grid;
   grid-template-columns: auto auto auto;
   color: ${({ theme }) => theme.text4};
+  @media(max-width: 500px){
+    grid-template-columns: auto auto;
+    padding: 5%;
+  }
 
   .teamContainer {
     width: 80%;
@@ -155,6 +178,12 @@ const INFO_DIV_LIGHT = styled.div`
   border-radius: 47px !important;
   padding: 1px;
 
+  @media(max-width: 500px){
+    width: 40%;
+    height: 42px;
+    margin-right: 0;
+  }
+
   .inner {
     width: 100%;
     height: 100%;
@@ -163,6 +192,9 @@ const INFO_DIV_LIGHT = styled.div`
   }
 
   .inner-2 {
+    @media(max-width: 500px){
+      font-size: 13px;
+    }
     position: relative;
     width: 100%;
     height: 100%;
@@ -221,6 +253,11 @@ const INFO_DIV_BRIGHT = styled.div`
 `
 
 const ProgressBarBG = styled.div`
+ @media(max-width: 500px){
+   width: 90%;
+   margin: 0 auto 20px;
+   height: 60px;
+ }
   width: 610px;
   height: 70px;
   margin-bottom: 20px;
@@ -289,6 +326,12 @@ const VESTING_WRAPPER = styled.div`
   display: flex;
   flex-direction: column;
   .vestingStr {
+    @media(max-width: 500px){
+      font-weight: 500;
+      font-size: 15px;
+      color: #eeeeee;
+      line-height: 1.5;
+    }
     margin: auto;
     margin-left: 40px;
     margin-right: 40px;
@@ -398,8 +441,6 @@ const LIVE_BTN = styled.div`
 `
 
 export const MintProgressBar = ({ minted, totalNFTs }) => {
-  // const minted = 2000
-  // const totalNFTs = 10000
   let mintPercent = (minted / totalNFTs) * 100
   mintPercent = parseFloat(mintPercent.toFixed(0))
   return (
@@ -619,7 +660,7 @@ export const RoadMap = ({ roadmap }) => {
           <div className="verticalContainer">
             <img className="elipse" src={`/img/assets/elipse.png`} alt="" />
             <img className="verticalLine" src="/img/assets/vectorLine.svg" alt="" />
-            <div style={{ marginTop: '-50px' }}>
+            <div style={{ marginTop: '-50px', marginLeft: '10px' }}>
               <div className="headingText">{road?.heading}</div>
               <div className="subHeadingText">{road?.subheading}</div>
             </div>

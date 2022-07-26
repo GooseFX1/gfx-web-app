@@ -91,6 +91,15 @@ export const useNFTLaunchpad = (): INFTLaunchpadConfig => {
 }
 
 // Selected Context
+interface Tiers {
+  name: string
+  time: string
+  number: string
+  limit: string
+  contractTier: string
+  price: string | null
+}
+
 interface ISelectedProject {
   candyMachine: string
   collectionId: number
@@ -107,6 +116,7 @@ interface ISelectedProject {
   urlName: any
   nonceStatus: nonceStatus
   whitelist: string
+  tiers: Tiers[] | null
 }
 
 const CANDY_MACHINE_PROGRAM = new anchor.web3.PublicKey('cndy3Z4yapfJBmL3ShUp5exZKqR3z33thTzeNMm2gRZ')
@@ -263,15 +273,15 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
               // only whitelist the user if the balance > 0
               cndyState['isWhiteListUser'] = isWLUser
 
-              if (cndy.state.isWhitelistOnly) {
-                active = isWLUser && (presale || active)
-              }
+              //  if (cndy.state.isWhitelistOnly) {
+              //    active = isWLUser && (presale || active)
+              //  }
             } catch (e) {
               cndyState['isWhiteListUser'] = false
               // no whitelist user, no mint
-              if (cndy.state.isWhitelistOnly) {
-                active = false
-              }
+              //  if (cndy.state.isWhitelistOnly) {
+              //    active = false
+              //  }
               //console.log('There was a problem fetching whitelist token balance')
             }
           }
@@ -346,10 +356,60 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
           cndyState['needTxnSplit'] = txnEstimate > 1230
 
           //
+          let publicMint = true
+
+          let tiers = selectedProject?.tiers,
+            activeTierInfo = null,
+            activeTierIndex = undefined
+          for (let i = 0; i < tiers.length; i++) {
+            const item = tiers[i]
+            if (new Date().getTime() > parseFloat(item.time)) {
+              activeTierInfo = { ...item, status: 'live' }
+              activeTierIndex = i
+              publicMint = false
+            }
+            if (new Date().getTime() > parseFloat(selectedProject?.startsOn)) {
+              activeTierInfo = null
+              publicMint = true
+              activeTierIndex = null
+              break
+            }
+          }
+          if (activeTierIndex || activeTierIndex === 0) {
+            tiers = tiers.map((item, index) => {
+              if (index < activeTierIndex) return { ...item, status: 'ended' }
+              else if (index === activeTierIndex) return { ...item, status: 'live' }
+              else return { ...item, status: 'upcoming' }
+            })
+          } else if (activeTierIndex === undefined) {
+            tiers = tiers.map((item) => {
+              return { ...item, status: 'upcoming' }
+            })
+          } else {
+            tiers = tiers.map((item) => {
+              return { ...item, status: 'ended' }
+            })
+          }
+          console.log(tiers)
+          cndyState['publicMint'] = publicMint
+          cndyState['activeTierInfo'] = activeTierInfo
+
+          cndyState['tiers'] = tiers
+
           let whitelistInfo = await getWhitelistInfo(candyM.program, wallet.publicKey)
           cndyState['whitelistInfo'] = whitelistInfo
           cndyState['isWhiteListUser'] = false
-          if (whitelistInfo && whitelistInfo.numberOfWhitelistSpotsPerUser.toString() > 0) {
+
+          let walletTier = null
+          for (let i in whitelistInfo?.whitelistType) {
+            walletTier = i
+          }
+          if (
+            whitelistInfo &&
+            whitelistInfo.numberOfWhitelistSpotsPerUser.toString() > 0 &&
+            activeTierInfo &&
+            walletTier === activeTierInfo.contractTier
+          ) {
             cndyState['isWhiteListUser'] = true
           }
           //

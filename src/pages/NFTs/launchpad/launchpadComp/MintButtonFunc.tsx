@@ -17,6 +17,16 @@ import { copyToClipboard } from '../../Collection/CollectionHeader'
 import * as anchor from '@project-serum/anchor'
 
 const MINT_BUTTON_BAR = styled.div`
+  @media (max-width: 500px) {
+    margin-top: 0px;
+    border-radius: 15px 15px 0 0;
+    width: 100% !important;
+    justify-content: space-evenly;
+    min-width: 350px;
+    align-items: center;
+    position: sticky;
+    bottom: 0;
+  }
   margin-top: -100px;
   height: 70px;
   z-index: 99;
@@ -36,7 +46,8 @@ const SHARE_BTN = styled.div`
   margin-right: 10px;
   position: absolute;
   @media (max-width: 500px) {
-    display: none;
+    position: static;
+    margin: 0;
   }
 `
 const MINT_BTN = styled.div<{ active: boolean }>`
@@ -53,7 +64,6 @@ const MINT_BTN = styled.div<{ active: boolean }>`
   cursor: ${({ active }) => (!active ? 'not-allowed' : 'pointer')};
   @media (max-width: 500px) {
     margin: 0;
-    margin-top: 10px;
     z-index: 100;
     justify-content: center;
   }
@@ -134,9 +144,9 @@ export const MintButtonFunc = ({
         cndyValues.whitelistInfo &&
         cndyValues.whitelistInfo.numberOfWhitelistSpotsPerUser.toString() > 0
       ) {
-        return 'WHITELIST MINT'
+        return 'MINT'
       } else {
-        return 'WHITELIST MINT'
+        return 'MINT'
       }
     }
 

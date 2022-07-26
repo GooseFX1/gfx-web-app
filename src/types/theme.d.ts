@@ -161,6 +161,8 @@ export interface Colors {
   // main tab
   tabNameColor: Color
 
+  primary1Active: Color
+
   // primary
   primary1: Color
   primary2: Color
@@ -177,6 +179,7 @@ export interface Colors {
   tableListBoxShadow: Color
   expendedRowBg: Color
   filterDownIcon: Color
+  filterArrowDown: Color
 
   // secondary
   secondary1: Color
