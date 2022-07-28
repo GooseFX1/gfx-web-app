@@ -6,7 +6,7 @@ import { Row } from 'antd'
 import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
 import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nft_details.d'
-import { useNFTProfile, useNFTDetails, useConnectionConfig, useDarkMode } from '../../../context'
+import { useNFTProfile, useNFTDetails, useConnectionConfig, useDarkMode, usePriceFeed } from '../../../context'
 import { fetchSingleNFT } from '../../../api/NFTs'
 import { getParsedAccountByMint, StringPublicKey, ParsedAccount } from '../../../web3'
 import { Loader } from '../../../components'
@@ -147,7 +147,8 @@ export const Card = (props: ICard) => {
   const history = useHistory()
   const { mode } = useDarkMode()
   const { connection } = useConnectionConfig()
-  const { sessionUser, sessionUserParsedAccounts, likeDislike } = useNFTProfile()
+  const { sessionUser, sessionUserParsedAccounts, likeDislike, userCurrency } = useNFTProfile()
+  const { prices } = usePriceFeed()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   /** setters are only for populating context before location change to details page */
   const { setGeneral, setNftMetadata, setBids, setAsk, setTotalLikes } = useNFTDetails()
@@ -244,6 +245,16 @@ export const Card = (props: ICard) => {
     return true
   }
 
+  const dynamicPriceValue = (currency: string, priceFeed: any, value: number) => {
+    let mainValue = value
+    if (currency === 'USD') {
+      const mult = priceFeed['SOL/USDC'].current
+      mainValue = mainValue * mult
+    }
+
+    return `${moneyFormatter(mainValue)} ${currency}`
+  }
+
   return (
     <CARD {...props} className="card">
       <div
@@ -303,7 +314,7 @@ export const Card = (props: ICard) => {
               {displayPrice === '0' ? (
                 <LIGHT_TEXT>No Bids</LIGHT_TEXT>
               ) : (
-                `${moneyFormatter(parseFloat(displayPrice) / LAMPORTS_PER_SOL)} SOL`
+                dynamicPriceValue(userCurrency, prices, parseFloat(displayPrice) / LAMPORTS_PER_SOL)
               )}
             </div>
           ) : (
