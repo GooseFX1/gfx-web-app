@@ -3,7 +3,7 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Button, Dropdown, Menu } from 'antd'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
-import { useNFTCollections, useDarkMode } from '../../../context'
+import { useNFTCollections, useDarkMode, useNFTProfile, usePriceFeed } from '../../../context'
 import { Share } from '../Share'
 import { SVGToGrey2 } from '../../../styles'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
@@ -239,6 +239,8 @@ export const copyToClipboard = async () => {
 export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
+  const { userCurrency } = useNFTProfile()
+  const { prices } = usePriceFeed()
   const { singleCollection, fixedPriceWithinCollection, openBidWithinCollection } = useNFTCollections()
   const [shareModal, setShareModal] = useState(false)
   const [sweeperModal, setSweeperModal] = useState<boolean>(false)
@@ -294,6 +296,16 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
       default:
         break
     }
+  }
+
+  const dynamicPriceValue = (currency: string, priceFeed: any, value: number) => {
+    let mainValue = value
+    if (currency === 'USD') {
+      const mult = priceFeed['SOL/USDC'].current
+      mainValue = mainValue * mult
+    }
+
+    return `${mainValue.toFixed(3)} ${currency}`
   }
 
   const iconStyle = { transform: `rotate(${collapse ? 0 : 180}deg)`, marginTop: `${collapse ? '5px' : '2px'}` }
@@ -364,7 +376,9 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
               {isCollectionItemEmpty ? (
                 <SkeletonCommon width="106px" height="25px" />
               ) : (
-                <span>{singleCollection.collection_floor / LAMPORTS_PER_SOL || '0.00'} SOL</span>
+                <span>
+                  {dynamicPriceValue(userCurrency, prices, singleCollection.collection_floor / LAMPORTS_PER_SOL || 0)}
+                </span>
               )}
             </div>
             <div className="text">
