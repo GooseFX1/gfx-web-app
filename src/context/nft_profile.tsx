@@ -14,6 +14,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const [userActivity, setUserActivity] = useState<INFTUserActivity[]>([])
   const [sessionUserParsedAccounts, setParsedAccounts] = useState<ParsedAccount[]>([])
   const [nonSessionUserParsedAccounts, setNonSessionUserParsedAccounts] = useState<ParsedAccount[]>()
+  const [userCurrency, setUserCurrency] = useState<string>('SOL')
 
   const fetchSessionUser = useCallback(
     async (type: UserFetchType, parameter: string, connection: Connection): Promise<any> => {
@@ -171,7 +172,9 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         fetchNonSessionProfile,
         nonSessionUserParsedAccounts,
         setNonSessionProfile,
-        setNonSessionUserParsedAccounts
+        setNonSessionUserParsedAccounts,
+        userCurrency,
+        setUserCurrency
       }}
     >
       {children}
@@ -201,6 +204,8 @@ export const useNFTProfile = (): INFTProfileConfig => {
     fetchNonSessionProfile: context.fetchNonSessionProfile,
     nonSessionUserParsedAccounts: context.nonSessionUserParsedAccounts,
     setNonSessionProfile: context.setNonSessionProfile,
-    setNonSessionUserParsedAccounts: context.setNonSessionUserParsedAccounts
+    setNonSessionUserParsedAccounts: context.setNonSessionUserParsedAccounts,
+    userCurrency: context.userCurrency,
+    setUserCurrency: context.setUserCurrency
   }
 }
