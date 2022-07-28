@@ -8,6 +8,7 @@ import { ButtonWrapper } from '../NFTButton'
 // import { SearchBar, Categories } from '../../../components'
 import { SearchBar } from '../../../components'
 import { SpaceBetweenDiv } from '../../../styles'
+import DropdownButton from '../../../layouts/App/DropDownButton'
 // import { categories, coins } from './data'
 // import { useLocalStorageState } from '../../../utils'
 import PopupCompleteProfile from '../Profile/PopupCompleteProfile'
@@ -144,7 +145,7 @@ const AVATAR_NFT = styled(Image)`
 
 export const Header = ({ setFilter, filter, filteredCollections, totalCollections, setTotalCollections }) => {
   const history = useHistory()
-  const { sessionUser } = useNFTProfile()
+  const { sessionUser, userCurrency, setUserCurrency } = useNFTProfile()
   const { isCollapsed } = useNavCollapse()
   const { connected, publicKey, ready, connect } = useWallet()
   const [visibleCompletePopup, setVisibleCompletePopup] = useState<boolean>(false)
@@ -296,6 +297,23 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
             <CREATE onClick={onCreateCollectible}>
               <span>Create</span>
             </CREATE>
+
+            <DropdownButton
+              title={userCurrency}
+              options={[
+                { displayName: 'SOL', value: 'SOL', icon: 'SOL' },
+                { displayName: 'USD', value: 'USD', icon: 'USD' }
+              ]}
+              handleSelect={setUserCurrency}
+              folder="crypto"
+              style={{
+                marginLeft: '1rem',
+                width: '80px',
+                height: '45px',
+                borderRadius: '15px',
+                justifyContent: 'space-between'
+              }}
+            />
           </div>
         )}
         {/* {!isHeaderData ? (
