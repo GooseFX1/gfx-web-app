@@ -9,7 +9,8 @@ import {
   useNFTDetails,
   useNFTProfile,
   useTokenRegistry,
-  useDarkMode
+  useDarkMode,
+  usePriceFeed
 } from '../../../context'
 import { CenteredDiv, SVGToWhite, SVGDynamicReverseMode } from '../../../styles'
 import { LAMPORTS_PER_SOL, PublicKey, Transaction, TransactionInstruction, SystemProgram } from '@solana/web3.js'
@@ -717,13 +718,14 @@ interface ISweepModal {
 export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice }: ISweepModal) => {
   const { mode } = useDarkMode()
   const { fixedPriceWithinCollection, singleCollection } = useNFTCollections()
+  const { prices } = usePriceFeed()
   const [dropdownSelection, setDropdownSelection] = useState(null)
   const [nftBatch, setNftBatch] = useState([])
   const [sweeping, setIsSweeping] = useState<boolean>(false)
   const [sweepComplete, setSweepComplete] = useState<boolean>(false)
   const { connected, publicKey, sendTransaction } = useWallet()
   const { connection } = useConnectionConfig()
-  const { sessionUser } = useNFTProfile()
+  const { sessionUser, userCurrency } = useNFTProfile()
   const { bidOnSingleNFT } = useNFTDetails()
   const [nftState, setNftState] = useState([])
   //0 signifies loading, -1 signifies error and 1 signfies success
@@ -885,6 +887,16 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
 
   const timeout = async (ms) => {
     return new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
+  const dynamicPriceValue = (currency: string, priceFeed: any, value: number) => {
+    let mainValue = value
+    if (currency === 'USD') {
+      const mult = priceFeed['SOL/USDC'].current
+      mainValue = mainValue * mult
+    }
+
+    return `${mainValue.toFixed(1)} ${currency}`
   }
 
   const callBuyInstruction = async (e: any) => {
@@ -1336,8 +1348,14 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
                               <Meta
                                 title={
                                   <span>
-                                    <span className="sweep-price">{item.price / LAMPORTS_PER_SOL} SOL</span>
-                                    <img className="sweeper-solana-logo" src={`/img/assets/solana-logo.png`} alt="" />
+                                    <span className="sweep-price">
+                                      {dynamicPriceValue(userCurrency, prices, item.price / LAMPORTS_PER_SOL)}
+                                    </span>
+                                    <img
+                                      className="sweeper-solana-logo"
+                                      src={`/img/crypto/${userCurrency}.svg`}
+                                      alt=""
+                                    />
                                   </span>
                                 }
                               />
