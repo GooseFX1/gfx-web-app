@@ -890,7 +890,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
   }
 
   const dynamicPriceValue = (currency: string, priceFeed: any, value: number) => {
-    const val = currency === 'USD' ? priceFeed['SOL/USDC'].current * value : value
+    const val = currency === 'USD' ? value * priceFeed['SOL/USDC']?.current : value
     return `${val.toFixed(1)} ${currency}`
   }
 

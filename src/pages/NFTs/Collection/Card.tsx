@@ -246,13 +246,9 @@ export const Card = (props: ICard) => {
   }
 
   const dynamicPriceValue = (currency: string, priceFeed: any, value: number) => {
-    let mainValue = value
-    if (currency === 'USD') {
-      const mult = priceFeed['SOL/USDC'].current
-      mainValue = mainValue * mult
-    }
+    const val = currency === 'USD' ? value * priceFeed['SOL/USDC']?.current : value
 
-    return `${moneyFormatter(mainValue)} ${currency}`
+    return `${moneyFormatter(val)} ${currency}`
   }
 
   return (
