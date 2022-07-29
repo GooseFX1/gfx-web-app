@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { NFTBaseCollection, NFTCollection } from '../../../types/nft_collections.d'
 import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
 import { nFormatter } from '../../../utils'
+import { useNFTProfile, usePriceFeed } from '../../../context'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 const TAB_CONTENT = styled.div`
@@ -71,9 +72,9 @@ const ANALYTIC_ITEM = styled.div`
     font-weight: 600;
     color: ${({ theme }) => theme.text2};
 
-    img {
-      width: 33px;
-      height: 33px;
+    .currency-icon {
+      width: 22px;
+      height: 22px;
       margin-left: ${({ theme }) => theme.margin(1)};
     }
   }
@@ -167,12 +168,19 @@ interface IAnalyticItem {
 
 const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
   const history = useHistory()
+  const { prices } = usePriceFeed()
+  const { userCurrency } = useNFTProfile()
   const [isCollection, setIsCollection] = useState(false)
 
   useEffect(() => {
     setIsCollection(collection !== undefined)
     return () => setIsCollection(false)
   }, [])
+
+  const dynamicPriceValue = (currency: string, priceFeed: any, value: number) => {
+    const val = currency === 'USD' ? value * priceFeed['SOL/USDC']?.current : value
+    return nFormatter(val, 2)
+  }
 
   return (
     <ANALYTIC_ITEM
@@ -215,12 +223,20 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
               </div>
             ) : collectionFilter === 'floor' ? (
               <div>
-                {collection.collection_floor ? nFormatter(collection.collection_floor / LAMPORTS_PER_SOL, 2) : '0'}
-                <img className="sol-icon" src={`${process.env.PUBLIC_URL}/img/assets/SOL-icon.svg`} alt="" />
+                {collection.collection_floor
+                  ? dynamicPriceValue(userCurrency, prices, collection.collection_floor / LAMPORTS_PER_SOL)
+                  : '0'}
+                <img
+                  className="currency-icon"
+                  src={`${process.env.PUBLIC_URL}/img/crypto/${userCurrency}.svg`}
+                  alt=""
+                />
               </div>
             ) : (
               collectionFilter === 'volume' &&
-              (collection.collection_vol ? nFormatter(collection.collection_vol.weekly, 2) : '0')
+              (collection.collection_vol
+                ? dynamicPriceValue(userCurrency, prices, collection.collection_vol.weekly)
+                : '0')
             )}
           </div>
         </div>

@@ -42,4 +42,6 @@ export interface INFTProfileConfig {
   nonSessionUserParsedAccounts: ParsedAccount[]
   setNonSessionProfile: Dispatch<SetStateAction<INFTProfile>>
   setNonSessionUserParsedAccounts: Dispatch<SetStateAction<ParsedAccount[]>>
+  userCurrency: string
+  setUserCurrency: Dispatch<SetStateAction<string>>
 }

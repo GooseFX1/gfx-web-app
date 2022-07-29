@@ -11,11 +11,15 @@ const DROP_DOWN_WRAPPER = MainText(styled.button`
   border: none;
   ${({ theme }) => theme.roundedBorders}
   padding: 0 ${({ theme }) => theme.margin(2)};
+  background-color: ${({ theme }) => theme.textBox};
   span {
     font-size: 12px;
     font-weight: bold;
     color: white;
     cursor: pointer;
+  }
+  .ant-dropdown-arrow {
+    display: none;
   }
 `)
 
@@ -24,13 +28,14 @@ type listItem = { displayName: string; value: string; icon: string }
 const Overlay: FC<{
   onOptionClick: (currentOption: listItem) => void
   options: Array<listItem>
-}> = ({ onOptionClick, options }) => {
+  folder: string
+}> = ({ onOptionClick, options, folder }) => {
   return (
     <Menu>
       {options.map((item) => (
         <MenuItem onClick={() => onOptionClick(item)}>
           <span>{item.displayName}</span>
-          <img src={`/img/assets/${item.icon}.svg`} alt="disconnect" />
+          <img src={`/img/${folder}/${item.icon}.svg`} alt="icon" />
         </MenuItem>
       ))}
     </Menu>
@@ -43,7 +48,8 @@ const DropdownButton: FC<{
   options: Array<listItem>
   style?: any
   className?: string
-}> = ({ title, handleSelect, options, style, className }) => {
+  folder: string
+}> = ({ title, handleSelect, options, style, className, folder = 'assets' }) => {
   const [arrowRotation, setArrowRotation] = useState(false)
   const [currentTitle, setCurrentTitle] = useState(title)
 
@@ -59,9 +65,9 @@ const DropdownButton: FC<{
       <ArrowDropdown
         arrow
         arrowRotation={arrowRotation}
-        offset={[9, 30]}
+        offset={[20, 10]}
         onVisibleChange={(visible: boolean) => {}}
-        overlay={<Overlay options={options} onOptionClick={onOptionClick} />}
+        overlay={<Overlay options={options} onOptionClick={onOptionClick} folder={folder} />}
         setArrowRotation={setArrowRotation}
       />
     </DROP_DOWN_WRAPPER>
