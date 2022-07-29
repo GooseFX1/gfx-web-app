@@ -21,9 +21,7 @@ The `dev` branch is the default branch of origin (`origin/HEAD`) of the project 
 
 The `release/prod` and `release/staging` will be share a base with dev and will be set to a given commit hash on the `dev`/`origin/HEAD`.
 
-All changes to `dev` will be commited on working branches, ex: `farm-<update>`. These branches will be created off of `dev` where a rebase to `origin/dev` throughout the life of the branch will occur. These working branches will be deleted after pull requests; ideally, this will result in a closed-loop pattern. The merge strategy will be a Rebase and Merge:
-
-> ... commits from the pull request’s branch are rebased on to the tip of the base branch, and then the base branch itself is fast forwarded to this newly rebased head. Rebases automatically set the committer of the rebased commits to the current user, while keeping authorship information intact.
+All changes to `dev` will be commited on working branches, ex: `farm-<update>`. These branches will be created off of `dev` where a rebase to `origin/dev` throughout the life of the branch will occur. These working branches will be deleted after pull requests; ideally, this will result in a closed-loop pattern. The merge strategy will be a merge commit which will create the close-loop pattern.
 
 #### Branch Dynamic URLs
 
