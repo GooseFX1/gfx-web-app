@@ -213,17 +213,17 @@ export const Step2: FC = () => {
 
   useEffect(() => {
     if (creatorData[2]) {
-      setMintPrice(creatorData[2].mintPrice)
+      setMintPrice(creatorData[2].price)
       setIsUSDC(creatorData[2].currency === 'USDC')
       setUploadedImage(creatorData[2].image)
-      setItems(creatorData[2].numberOfItems.toString())
+      setItems(creatorData[2].items.toString())
     }
   }, [])
 
   let creatorStepData: ICreatorData[2] = {
-    numberOfItems: parseInt(items),
+    items: parseInt(items),
     currency: isUSDC ? 'USDC' : 'SOL',
-    mintPrice: mintPrice,
+    price: mintPrice,
     image: uploadedImage
   }
 

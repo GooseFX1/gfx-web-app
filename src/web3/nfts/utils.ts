@@ -22,3 +22,31 @@ export async function getSolanaMetadataAddress(tokenMint: PublicKey) {
     )
   )[0]
 }
+var getDaysArray = function (start, end) {
+  for (var arr = [], dt = new Date(start); dt <= new Date(end); dt.setDate(dt.getDate() + 1)) {
+    arr.push(new Date(dt))
+  }
+  return arr
+}
+function formatDate(input) {
+  let datePart = input.match(/\d+/g),
+    year = datePart[0], // get only two digits1
+    month = datePart[1],
+    day = datePart[2]
+  return day + '-' + month + '-' + year
+}
+export const formatTommddyyyy = (input) => {
+  let datePart = input.match(/\d+/g),
+    year = datePart[2],
+    month = datePart[1],
+    day = datePart[0]
+  return month + '-' + day + '-' + year
+}
+
+export const getDateInArray = () => {
+  var todayObj = new Date()
+  var daylist = getDaysArray(new Date(new Date()), new Date(todayObj.setDate(todayObj.getDate() + 20)))
+  daylist = daylist.map((v) => formatDate(v.toISOString().slice(0, 10)))
+  console.log(daylist)
+  return daylist
+}
