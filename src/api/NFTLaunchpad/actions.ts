@@ -3,6 +3,10 @@ import { ICreatorData } from '../../types/nft_launchpad'
 import { NFT_LAUNCHPAD_API_ENDPOINTS } from '../NFTLaunchpad/constants'
 var axios = require('axios')
 
+let PROD_URL = ''
+const TEST_URL = 'http://localhost:4000'
+PROD_URL = TEST_URL
+
 export const fetchAllNFTLaunchpadData = async () => {
   try {
     const res = await customClient(NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE).get(
@@ -42,6 +46,26 @@ export const isCreatorAllowed = async (walletAddress: string) => {
       config = {
         method: 'POST',
         url: 'http://localhost:4000' + NFT_LAUNCHPAD_API_ENDPOINTS.IS_CREATOR_ALLOWED,
+        //url: NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.IS_CREATOR_ALLOWED,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: data
+      }
+    let result = await axios(config)
+    return result.data.allowed
+  } catch (e) {
+    return false
+  }
+}
+export const isAdminAllowed = async (walletAddress: string) => {
+  try {
+    let data = JSON.stringify({
+        walletAddress: walletAddress
+      }),
+      config = {
+        method: 'POST',
+        url: PROD_URL + NFT_LAUNCHPAD_API_ENDPOINTS.IS_ADMIN_ALLOWED,
         //url: NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.IS_CREATOR_ALLOWED,
         headers: {
           'Content-Type': 'application/json'
@@ -122,5 +146,70 @@ export const sendNonceTransaction = async (transaction, collectionId, walletAddr
     return {
       status: 'failed'
     }
+  }
+}
+
+export const approveProject = async (project: ICreatorData, wallet: any) => {
+  try {
+    const url = PROD_URL + NFT_LAUNCHPAD_API_ENDPOINTS.APPROVE_PROJECT
+    //   const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE  + NFT_LAUNCHPAD_API_ENDPOINTS.APPROVE_PROJECT
+
+    let dataToSend = JSON.stringify({
+      projectData: project,
+      walletAddress: wallet.toString()
+    })
+
+    const response = await axios({
+      method: 'POST',
+      url: url,
+      data: dataToSend,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    return response.data
+  } catch (e) {
+    console.log(e)
+    return {
+      status: 'failed'
+    }
+  }
+}
+export const rejectProject = async (project: ICreatorData) => {
+  try {
+    const url = PROD_URL + NFT_LAUNCHPAD_API_ENDPOINTS.REJECT_PROJECT
+    //const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE  + NFT_LAUNCHPAD_API_ENDPOINTS.REJECT_PROJECT
+    let dataToSend = JSON.stringify({
+      projectData: project
+    })
+
+    const response = await axios({
+      method: 'POST',
+      url: url,
+      data: dataToSend,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    return response.data
+  } catch (e) {
+    console.log(e)
+    return {
+      status: 'failed'
+    }
+  }
+}
+
+export const fetchCreatorProjects = async () => {
+  try {
+    const url = PROD_URL + NFT_LAUNCHPAD_API_ENDPOINTS.REJECT_PROJECT
+
+    // const res = await customClient(NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE).get(
+    const res = await customClient(PROD_URL).get(`${NFT_LAUNCHPAD_API_ENDPOINTS.GET_CREATOR_PROJECT}`)
+    return res
+  } catch (err) {
+    return err
   }
 }

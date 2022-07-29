@@ -19,10 +19,10 @@ export interface ICreatorData {
     collectionDescription: string
   } | null
   2: {
-    numberOfItems: number
+    items: number
     currency: currency
-    mintPrice: number
-    image: File
+    price: number
+    image: File | any
   } | null
   3: {
     vesting: vesting
@@ -31,7 +31,7 @@ export interface ICreatorData {
   } | null
   4: {
     delayedReveal: boolean
-    uploadedFiles: File
+    uploadedFiles: File | any
   } | null
   5: {
     discord: string
@@ -41,5 +41,19 @@ export interface ICreatorData {
     team: { name: string; twitterUsername: string; dp_url?: null | string }[] | [] | null
   } | null
 }
-
+export interface INFTProjectConfig {
+  collectionId: number
+  collectionName: string
+  coverUrl: string
+  items: number
+  price: 100
+  startsOn: string
+  status: string
+  ended?: boolean | string
+  currency: string
+  whitelist: string
+  tagLine?: string
+  time?: string
+  date?: string
+}
 export type nonceStatus = 'completed' | 'inProgress' | null
