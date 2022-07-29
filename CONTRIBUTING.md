@@ -11,52 +11,19 @@ In ClickUp, _“UI: Farm - Create V2 Header”_ becomes _“Farm - Create V2 Hea
 
 ### Branching
 
-The `dev` branch is the `origin/HEAD` of the project and therefor, the history of this branch is important and should maintain its integrity. The `release/prod` and `release/staging` serve as triggers for CI/CD so their history is not as important and can be set and reset as needed. The `feature/*` branches are just clones of the `dev` branch that serve to help with small tests and consolidate changes with `dev`.
+The `dev` branch is the `origin/HEAD` of the project and therefor, the history of this branch is important and should maintain integrity. The `release/prod` and `release/staging` will be set to a given commit hash on the dev branch. All changes to `dev` will happen on working branches and will be deleted after they are merged. Ideally, this will result in a closed-loop pattern.
 
 **Branch Format**
 
+- dev (default)
+- release/staging
 - release/prod
-  - release/staging
-    - dev
-      - feature/swap-v2
-        - add-tokens (merge commits via PR into parent)
-      - feature/dex-v2
-      - feature/nft-v2
-      - feature/farm-v2
-        - fix-decimal (merge commits via PR into parent)
-
-#### Feature Branches
-
-There exists a feature branch for each feature on the GooseFX platfrom and is based on the `dev` branch. These branches are versioned: example, `feature/swap-v2`. When working toward feature completion, start by creating a branch off of openning a PR and push commits to the PR on a daily basis as you work toward completion. This allows the feature to demonstrate a dif in Github for review.
-
-Because the GooseFX platform has several features that are developing on their own timeline, each feature will need to be developed on its own branch until it can move into `dev`. This means that changes merged into `dev` should be ready to be promoted to staging; if they are not ready, continue to develop on the branch.
-
-These features will likely accumulate a lot of changes before merging into `dev` but rebasing will de-risk complications if done regularly. This also means there could be several ClickUp tasks that are represented within a single PR.
-
-Rebasing daily or frequently should allow your feature branch to always be safely merged when the time comes to add it to `dev`.
-
-Good daily habits on feature branches (assumes on working branch):
-
-1. `git fetch --all`
-2. `git rebase origin/feature/<my-feature>`
-
-Periodic rebasing of the feature branch with latest dev when features complete.
 
 #### Branch Dynamic URLs
 
-Each branch prefixed with `feature/` will auto build and deploy to a url for testing the updates represented in that merge commit. This allows for testing before a commitment to promote it has been made.
+Optionally, branches prefixed with `feature/` will auto build and deploy to a url for testing the updates represented in that merge commit. This allows for testing before a merging to `dev`.
 
-When the feature is complete, use Github to merge it into `dev` after looking over the dif **or** request a review from a team member.
-
-### Staging Release
-
-When releasing to staging, the `release/staging` branch will merge `dev` at the desired commit ID and then will be pushed to `origin/release/staging` which will initialize an auto deploy to the AWS Amplify resource.
-
-### Production Release
-
-It is important to ensure that the staging environment does not possess errors or breaking changes before releasing to production.
-
-When releasing to production, the `release/prod` branch will merge the `release/staging` at the desired commit ID and then will be pushed to `origin/release/prod` which will initialize an auto deploy to the AWS Amplify resource.
+When the branch is complete, use Github to merge it into `dev` via PR after looking over the dif **or** request a review from a team member.
 
 ### Raising a Pull Request
 
