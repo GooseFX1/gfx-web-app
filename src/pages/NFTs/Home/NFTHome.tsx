@@ -16,8 +16,8 @@ import { MODAL_TYPES } from '../../../constants'
 
 const BETA_BANNER = styled.div`
   position: fixed;
-  right: 24px;
-  bottom: 150px;
+  left: 42px;
+  bottom: 42px;
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   border-radius: 10px;
   padding: 1px;
