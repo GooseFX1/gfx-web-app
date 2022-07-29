@@ -299,13 +299,8 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
   }
 
   const dynamicPriceValue = (currency: string, priceFeed: any, value: number) => {
-    let mainValue = value
-    if (currency === 'USD') {
-      const mult = priceFeed['SOL/USDC'].current
-      mainValue = mainValue * mult
-    }
-
-    return `${mainValue.toFixed(3)} ${currency}`
+    const val = currency === 'USD' ? priceFeed['SOL/USDC'].current * value : value
+    return `${val.toFixed(3)} ${currency}`
   }
 
   const iconStyle = { transform: `rotate(${collapse ? 0 : 180}deg)`, marginTop: `${collapse ? '5px' : '2px'}` }
