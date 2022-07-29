@@ -7,21 +7,27 @@ To run the environment locally for developent, you will need to get the environm
 All features should be defined in a ClickUp task with a branch or a PR linked to the task and feature branches linked to milestones. When creating PR, use the title of the ClickUp task. Remove “UI” since the repo is only frontend (UI is just a ClickUp designator since API and Docs etc are tracked there).
 
 Example
-In ClickUp, _“UI: Farm - Create V2 Header”_ becomes _“Farm - Create V2 Header”_ in pull requests
+In ClickUp, _“UI: Farm - Create V2 Header”_ becomes _“Farm - Create V2 Header”_ for pull request title.
 
 ### Branching
 
-The `dev` branch is the `origin/HEAD` of the project and therefor, the history of this branch is important and should maintain integrity. The `release/prod` and `release/staging` will be set to a given commit hash on the dev branch. All changes to `dev` will happen on working branches and will be deleted after they are merged. Ideally, this will result in a closed-loop pattern.
-
 **Branch Format**
 
-- dev (default)
+- dev (origin/HEAD)
 - release/staging
 - release/prod
 
+The `dev` branch is the default branch of origin (`origin/HEAD`) of the project and therefor, the history of this branch is important and should maintain integrity.
+
+The `release/prod` and `release/staging` will be share a base with dev and will be set to a given commit hash on the `dev`/`origin/HEAD`.
+
+All changes to `dev` will be commited on working branches, ex: `farm-<update>`. These branches will be created off of `dev` where a rebase to `origin/dev` throughout the life of the branch will occur. These working branches will be deleted after pull requests; ideally, this will result in a closed-loop pattern. The merge strategy will be a Rebase and Merge:
+
+> ... commits from the pull request’s branch are rebased on to the tip of the base branch, and then the base branch itself is fast forwarded to this newly rebased head. Rebases automatically set the committer of the rebased commits to the current user, while keeping authorship information intact.
+
 #### Branch Dynamic URLs
 
-Optionally, branches prefixed with `feature/` will auto build and deploy to a url for testing the updates represented in that merge commit. This allows for testing before a merging to `dev`.
+Optionally, branches prefixed with `feature/` will auto build and deploy to a url for testing the updates represented in that merge commit. This allows for testing before a merge to `dev`.
 
 When the branch is complete, use Github to merge it into `dev` via PR after looking over the dif **or** request a review from a team member.
 
