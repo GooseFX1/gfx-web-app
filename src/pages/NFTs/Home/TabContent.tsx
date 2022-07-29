@@ -72,9 +72,9 @@ const ANALYTIC_ITEM = styled.div`
     font-weight: 600;
     color: ${({ theme }) => theme.text2};
 
-    img {
-      width: 33px;
-      height: 33px;
+    .currency-icon {
+      width: 22px;
+      height: 22px;
       margin-left: ${({ theme }) => theme.margin(1)};
     }
   }
@@ -178,13 +178,8 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
   }, [])
 
   const dynamicPriceValue = (currency: string, priceFeed: any, value: number) => {
-    let mainValue = value
-    if (currency === 'USD') {
-      const mult = priceFeed['SOL/USDC'].current
-      mainValue = mainValue * mult
-    }
-
-    return nFormatter(mainValue, 2)
+    const val = currency === 'USD' ? priceFeed['SOL/USDC'].current * value : value
+    return nFormatter(val, 2)
   }
 
   return (
@@ -231,7 +226,11 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
                 {collection.collection_floor
                   ? dynamicPriceValue(userCurrency, prices, collection.collection_floor / LAMPORTS_PER_SOL)
                   : '0'}
-                <img className="sol-icon" src={`${process.env.PUBLIC_URL}/img/crypto/${userCurrency}.svg`} alt="" />
+                <img
+                  className="currency-icon"
+                  src={`${process.env.PUBLIC_URL}/img/crypto/${userCurrency}.svg`}
+                  alt=""
+                />
               </div>
             ) : (
               collectionFilter === 'volume' &&
