@@ -2659,7 +2659,7 @@
   dependencies:
     cross-fetch "3.0.6"
 
-"@solana/spl-token-v2@npm:@solana/spl-token@0.2.0", "@solana/spl-token@^0.2.0":
+"@solana/spl-token-v2@npm:@solana/spl-token@0.2.0", "@solana/spl-token@0.2.0", "@solana/spl-token@^0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@solana/spl-token/-/spl-token-0.2.0.tgz#329bb6babb5de0f9c40035ddb1657f01a8347acd"
   integrity sha512-RWcn31OXtdqIxmkzQfB2R+WpsJOVS6rKuvpxJFjvik2LyODd+WN58ZP3Rpjpro03fscGAkzlFuP3r42doRJgyQ==
@@ -7910,10 +7910,10 @@ globby@^6.1.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
-goosefx-ssl-sdk@^1.2.5:
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.2.5.tgz#8dee93eb1d84341dd3078ac4fec9179426d694a8"
-  integrity sha512-u/lSFPGDfkDBNk66YhR3S8s/VoU9vPYkN6ClWn4ALYT0Lupe1EDXHlGrNsXGF08iWj+TLaxUxxQ0gDpSsCfnGQ==
+goosefx-ssl-sdk@^1.2.7:
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.2.7.tgz#9e3cc384d30fd10e4df4f64c951e28f6a5c11476"
+  integrity sha512-8vwtX+rHix1V9+l/tGhqi0qctOzzZYwJ0FLiBvbrHKuv7YqdgYEDY1VERTF2GM03iTuVurpbupmKGwVYPDWpAA==
   dependencies:
     "@project-serum/anchor" "^0.17.1-beta.1"
     "@solana/buffer-layout" "^4.0.0"
