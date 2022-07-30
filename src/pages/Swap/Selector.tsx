@@ -1,7 +1,7 @@
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { Input } from 'antd'
 import styled from 'styled-components'
-import { TokenListProvider, TokenInfo } from '@solana/spl-token-registry'
+import { TokenListProvider } from '@solana/spl-token-registry'
 import { ArrowClickerWhite, Modal } from '../../components'
 import { ISwapToken, useTokenRegistry, useDarkMode, useConnectionConfig, useSwap } from '../../context'
 import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
@@ -140,10 +140,6 @@ const TOKEN_INFO = styled.div`
   color: ${({ theme }) => theme.text1};
 `
 
-interface NewTokenInfo extends TokenInfo {
-  imageURL?: string
-}
-
 export const Selector: FC<{
   height: string
   otherToken: ISwapToken | null
@@ -156,7 +152,7 @@ export const Selector: FC<{
   const { tokenA, tokenB } = useSwap()
   const { chainId } = useConnectionConfig()
   const [filterKeywords, setFilterKeywords] = useState('')
-  const [filteredTokens, setFilteredTokens] = useState<NewTokenInfo[]>(tokens)
+  const [filteredTokens, setFilteredTokens] = useState(tokens)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -179,13 +175,8 @@ export const Selector: FC<{
         }
       }
 
-      const updatedFilteredTokensList = filteredTokensList.map((tk) => ({
-        ...tk,
-        imageURL: checkFile(tk.symbol, 'svg', 3)
-      }))
-
       setFilteredTokens(
-        updatedFilteredTokensList.sort((a, b) => {
+        filteredTokensList.sort((a, b) => {
           let fa = a.symbol.toLowerCase(),
             fb = b.symbol.toLowerCase()
 
@@ -202,26 +193,6 @@ export const Selector: FC<{
 
     addExternalTokens()
   }, [filterKeywords, otherToken, tokens])
-
-  const checkFile = (symbol: string, extension: string, retries: number) => {
-    var res = new XMLHttpRequest()
-    res.open('HEAD', `/img/crypto/${symbol}.${extension}`, false)
-    res.send()
-
-    if (retries <= 0) {
-      return `/img/crypto/${symbol}.${extension}`
-    }
-
-    if (res.status === 404 || res.status === 400) {
-      if (symbol.toUpperCase() === symbol && extension === 'svg') {
-        return checkFile(symbol.toUpperCase(), 'png', retries - 1)
-      } else {
-        return checkFile(symbol.toUpperCase(), extension, retries - 1)
-      }
-    } else {
-      return `/img/crypto/${symbol}.${extension}`
-    }
-  }
 
   return (
     <>
@@ -241,7 +212,7 @@ export const Selector: FC<{
           </MAGNIFYING_GLASS>
         </INPUT>
         <BODY>
-          {filteredTokens.map(({ address, chainId, decimals, name, symbol, imageURL }, index) => (
+          {filteredTokens.map(({ address, chainId, decimals, name, symbol }, index) => (
             <TOKEN
               key={index}
               onClick={async () => {
@@ -250,7 +221,11 @@ export const Selector: FC<{
               }}
             >
               <TOKEN_ICON>
-                <img src={imageURL} alt="" onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')} />
+                <img
+                  src={`/img/crypto/${symbol}.svg`}
+                  alt=""
+                  onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+                />
               </TOKEN_ICON>
               <TOKEN_INFO>
                 <span>{symbol}</span>
@@ -267,7 +242,7 @@ export const Selector: FC<{
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <CLICKER_ICON>
                   <img
-                    src={checkFile(token.symbol, 'svg', 3)}
+                    src={`/img/crypto/${token.symbol}.svg`}
                     alt=""
                     onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
                   />
