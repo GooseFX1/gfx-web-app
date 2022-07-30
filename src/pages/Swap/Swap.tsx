@@ -41,7 +41,7 @@ const WRAPPER = styled.div`
 `
 
 const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
-  ${tw`flex pt-10p items-center w-screen mb-7 max-h-80p sm:justify-start sm:flex sm:flex-col sm:items-center sm:h-full`}
+  ${tw`flex pt-[124px] items-center w-screen mb-7 max-h-80p sm:justify-start sm:flex sm:flex-col sm:items-center sm:h-full`}
 
   color: ${({ theme }) => theme.text1};
   justify-content: ${({ $desktop }) => ($desktop ? 'space-between' : 'space-around')};
