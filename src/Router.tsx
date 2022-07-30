@@ -28,7 +28,7 @@ export const Router: FC = () => {
         <AppLayout>
           <Switch>
             <Route exact path="/swap/:tradePair?">
-              {blacklisted ? <Restricted /> : <Swap />}
+              <Swap />
             </Route>
             <Route exact path="/trade">
               {blacklisted ? (
