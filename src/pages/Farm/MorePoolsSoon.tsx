@@ -1,5 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
+import Lottie from 'lottie-react'
+import MorePools from './MorePools.json'
+import MorePoolsLite from './MorePoolsLite.json'
+import { useDarkMode } from '../../context'
 
 const CONTAINER = styled.div`
   background: ${({ theme }) => theme.bg17};
@@ -24,13 +28,13 @@ const MoreText = styled.div`
 `
 
 export const MorePoolsSoon = () => {
+  const { mode } = useDarkMode()
   return (
     <CONTAINER>
       <MorePoolImg>
-        <img src={`/img/assets/moreSoonDark.svg`} alt="" />
+        <Lottie animationData={mode === 'dark' ? MorePools : MorePoolsLite} className="animation-404" />
       </MorePoolImg>
       <MoreText>More pools coming soon</MoreText>
     </CONTAINER>
   )
 }
-export default {}
