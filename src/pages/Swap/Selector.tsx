@@ -181,7 +181,7 @@ export const Selector: FC<{
 
       const updatedFilteredTokensList = filteredTokensList.map((tk) => ({
         ...tk,
-        imageURL: checkFile(tk.symbol, 'svg', 3)
+        imageURL: checkFile(tk.symbol, 'svg')
       }))
 
       setFilteredTokens(
@@ -201,26 +201,35 @@ export const Selector: FC<{
     }
 
     addExternalTokens()
-  }, [filterKeywords, otherToken, tokens])
+  }, [filterKeywords, tokens])
 
-  const checkFile = (symbol: string, extension: string, retries: number) => {
+  const checkFileAvailability = (location: string) => {
     var res = new XMLHttpRequest()
-    res.open('HEAD', `/img/crypto/${symbol}.${extension}`, false)
+    res.open('HEAD', location, false)
     res.send()
 
-    if (retries <= 0) {
-      return `/img/crypto/${symbol}.${extension}`
+    if (res.status === 200) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  const checkFile = (symbol: string, extension: string) => {
+    const files = [
+      `/img/crypto/${symbol}.${extension}`,
+      `/img/crypto/${symbol.toUpperCase()}.${extension}`,
+      `/img/crypto/${symbol}.${'png'}`
+    ] //three captured scenarios
+
+    for (let i = 0; i < files.length; i++) {
+      const available = checkFileAvailability(files[i])
+      if (available) {
+        return files[i]
+      }
     }
 
-    if (res.status === 404 || res.status === 400) {
-      if (symbol.toUpperCase() === symbol && extension === 'svg') {
-        return checkFile(symbol.toUpperCase(), 'png', retries - 1)
-      } else {
-        return checkFile(symbol.toUpperCase(), extension, retries - 1)
-      }
-    } else {
-      return `/img/crypto/${symbol}.${extension}`
-    }
+    return files[0]
   }
 
   return (
@@ -267,7 +276,7 @@ export const Selector: FC<{
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <CLICKER_ICON>
                   <img
-                    src={checkFile(token.symbol, 'svg', 3)}
+                    src={filteredTokens.find((i) => i.name === token.name).imageURL}
                     alt=""
                     onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
                   />
