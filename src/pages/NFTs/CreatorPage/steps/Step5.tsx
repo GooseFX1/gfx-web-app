@@ -139,7 +139,15 @@ export const Step5: FC = () => {
       setDiscordValue(creatorData[5].discord)
       setTwitter(creatorData[5].twitter)
       setWebsiteValue(creatorData[5].website)
-      setMileStones(creatorData[5].roadmap)
+      let roadmapObj = creatorData[5].roadmap.map((item) => {
+        let obj = {
+          input1: item.heading.split(' ')[0],
+          input2: item.heading.split(' ')[1] || '',
+          input3: item.subHeading
+        }
+        return obj
+      })
+      setMileStones(roadmapObj)
       setTeamMembers(creatorData[5].team)
     }
   }, [creatorData])

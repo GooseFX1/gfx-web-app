@@ -119,7 +119,6 @@ const SubmitPopup = ({ rewardToggle }) => {
   const handleSubmitClicked = async () => {
     submit()
     setRelaxPopup(true)
-    submit()
     history.push('/NFTs/launchpad')
   }
   return (

@@ -115,7 +115,7 @@ export const Step3: FC = () => {
   useEffect(() => {
     if (creatorData && creatorData[3]) {
       setIsVesting(!!creatorData[3].vesting)
-      setSelectedDate(creatorData[3].date)
+      setSelectedDate(moment(creatorData[3].date, 'DD-MM-YYYY'))
       creatorData[3].date === dateFrom ? setDateOptionIndex(0) : setDateOptionIndex(1)
       TIME_OPTIONS.map((item, index) => {
         if (item === creatorData[3].time) setTimeIndex(index)
