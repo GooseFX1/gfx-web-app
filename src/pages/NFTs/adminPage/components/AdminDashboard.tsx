@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import { fetchCreatorProjects } from '../../../../api/NFTLaunchpad'
 import { ModalSlide } from '../../../../components/ModalSlide'
-import { adminData, MODAL_TYPES } from '../../../../constants'
+import { MODAL_TYPES } from '../../../../constants'
 import { useNavCollapse, useNFTAdmin } from '../../../../context'
 import { Connect } from '../../../../layouts/App/Connect'
 import { ICreatorData } from '../../../../types/nft_launchpad'
@@ -26,7 +26,7 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
     width: 74vw;
     margin-top: -20px;
     height: 120px;
-    padding-left: 25px;
+    padding-left: 2%;
     border-bottom: 2px solid #3c3c3c;
   }
   .welcome {
@@ -43,7 +43,7 @@ const AdminDashboard = () => {
   const [reviewProjects, setReviewProjects] = useState<ICreatorData[]>()
   const [approvePopup, setApprovePopup] = useState<boolean>(false)
   const [rejectPopup, setRejectPopup] = useState<boolean>(false)
-  const { setAdminSelected } = useNFTAdmin()
+  const { setAdminSelected, update } = useNFTAdmin()
 
   useEffect(() => {
     // fetch Review projects this is temp
@@ -56,13 +56,12 @@ const AdminDashboard = () => {
     } catch (e) {
       console.log(e)
     }
-  }, [])
+  }, [update])
 
   const btnClicked = (project: ICreatorData, param: string) => {
     if (param) setRejectPopup(true)
     else setApprovePopup(true)
     setAdminSelected(project)
-    console.log(project)
   }
 
   return (
