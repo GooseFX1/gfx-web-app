@@ -111,7 +111,6 @@ const SubmitPopup = ({ rewardToggle }) => {
   const [disclaimer, setDisclaimer] = useState<boolean>(false)
   const [acceptRisk, setRisk] = useState<boolean>(false)
   const { creatorData, submit } = useNFTCreator()
-  const wallet = useWallet()
   const history = useHistory()
   const { setRelaxPopup } = useNavCollapse()
   const handleCheckboxClick = (e) => {
@@ -169,12 +168,12 @@ const SubmitPopup = ({ rewardToggle }) => {
             <GradientText fontSize={20} fontWeight={600} text={'Step 2'} />
           </Col>
           <br />
-          <Col span={12} className="reviewItems">
+          {/*<Col span={12} className="reviewItems">
             Cover image launchpad
           </Col>
           <Col span={12} className="reviewItems">
-            {creatorData[2]?.image.name.substring(0, 24) + '...'}
-          </Col>
+            {{creatorData[2]?.image.name.substring(0, 24) + '...'}}
+          </Col>*/}
           <Col span={12} className="reviewItems">
             Number of items
           </Col>
@@ -230,12 +229,12 @@ const SubmitPopup = ({ rewardToggle }) => {
           <Col span={12} className="reviewItems">
             {creatorData[4]?.delayedReveal.toString()}
           </Col>
-          <Col span={12} className="reviewItems">
+          {/*<Col span={12} className="reviewItems">
             Zip file name
           </Col>
           <Col span={12} className="reviewItems">
             {creatorData[4]?.uploadedFiles.name.substring(0, 24) + '...'}
-          </Col>
+          </Col>*/}
 
           {/* Step 5 */}
           <Col span={24}>

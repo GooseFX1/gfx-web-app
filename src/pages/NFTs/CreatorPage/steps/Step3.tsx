@@ -112,6 +112,17 @@ export const Step3: FC = () => {
     else setNextButtonActive(false)
   }, [dateOptionIndex, timeIndex])
 
+  useEffect(() => {
+    if (creatorData && creatorData[3]) {
+      setIsVesting(!!creatorData[3].vesting)
+      setSelectedDate(moment(creatorData[3].date, 'DD-MM-YYYY'))
+      creatorData[3].date === dateFrom ? setDateOptionIndex(0) : setDateOptionIndex(1)
+      TIME_OPTIONS.map((item, index) => {
+        if (item === creatorData[3].time) setTimeIndex(index)
+      })
+    }
+  }, [creatorData])
+
   let creatorStepData: ICreatorData[3] = {
     vesting: !isVesting ? false : vestingOptionIndex === 0 ? [50, 25, 25] : [40, 30, 30],
     date: dateOptionIndex === 0 ? MINIMUM_DATE.format('DD-MM-YYYY') : selectedDate.format('DD-MM-YYYY'),

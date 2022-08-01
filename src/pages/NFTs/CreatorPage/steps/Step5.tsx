@@ -134,6 +134,24 @@ export const Step5: FC = () => {
     else setNextButtonActive(false)
   }, [discordValue, twitter, mileStones])
 
+  useEffect(() => {
+    if (creatorData && creatorData[5]) {
+      setDiscordValue(creatorData[5].discord)
+      setTwitter(creatorData[5].twitter)
+      setWebsiteValue(creatorData[5].website)
+      let roadmapObj = creatorData[5].roadmap.map((item) => {
+        let obj = {
+          input1: item.heading.split(' ')[0],
+          input2: item.heading.split(' ')[1] || '',
+          input3: item.subHeading
+        }
+        return obj
+      })
+      setMileStones(roadmapObj)
+      setTeamMembers(creatorData[5].team)
+    }
+  }, [creatorData])
+
   return (
     <WRAPPER>
       {submitPopup && <ModalSlide rewardToggle={setSubmitPopup} modalType={MODAL_TYPES.SUBMIT} />}

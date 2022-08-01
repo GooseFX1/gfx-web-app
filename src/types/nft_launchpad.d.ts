@@ -22,7 +22,7 @@ export interface ICreatorData {
     items: number
     currency: currency
     price: number
-    image: File | any
+    image: string
   } | null
   3: {
     vesting: vesting
@@ -31,7 +31,7 @@ export interface ICreatorData {
   } | null
   4: {
     delayedReveal: boolean
-    uploadedFiles: File | any
+    uploadedFiles: string
   } | null
   5: {
     discord: string

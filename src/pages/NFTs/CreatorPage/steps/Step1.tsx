@@ -78,7 +78,7 @@ export const Step1: FC = () => {
       if (creatorData[1].legality === 'author') setTagIndex(0)
       else if (creatorData[1].legality === 'permission') setTagIndex(1)
     }
-  }, [])
+  }, [creatorData])
 
   useEffect(() => {
     if (projectName.length > 0 && collectionName.length > 0 && description.length > 0 && tagIndex > -1 && tagIndex < 2)
