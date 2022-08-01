@@ -71,7 +71,7 @@ export const Step1: FC = () => {
   const [nextButtonActive, setNextButtonActive] = useState<boolean>(false)
 
   useEffect(() => {
-    if (creatorData[1]) {
+    if (creatorData && creatorData[1]) {
       setProjectName(creatorData[1].projectName)
       setCollectionName(creatorData[1].collectionName)
       setDescription(creatorData[1].collectionDescription)
