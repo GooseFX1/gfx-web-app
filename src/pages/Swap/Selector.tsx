@@ -181,7 +181,7 @@ export const Selector: FC<{
 
       const updatedFilteredTokensList = filteredTokensList.map((tk) => ({
         ...tk,
-        imageURL: checkFile(tk.symbol, 'svg')
+        imageURL: `/img/crypto/${tk.symbol}.svg`
       }))
 
       setFilteredTokens(
@@ -202,35 +202,6 @@ export const Selector: FC<{
 
     addExternalTokens()
   }, [filterKeywords, tokens])
-
-  const checkFileAvailability = (location: string) => {
-    var res = new XMLHttpRequest()
-    res.open('HEAD', location, false)
-    res.send()
-
-    if (res.status === 200) {
-      return true
-    } else {
-      return false
-    }
-  }
-
-  const checkFile = (symbol: string, extension: string) => {
-    const files = [
-      `/img/crypto/${symbol}.${extension}`,
-      `/img/crypto/${symbol.toUpperCase()}.${extension}`,
-      `/img/crypto/${symbol}.${'png'}`
-    ] //three captured scenarios
-
-    for (let i = 0; i < files.length; i++) {
-      const available = checkFileAvailability(files[i])
-      if (available) {
-        return files[i]
-      }
-    }
-
-    return files[0]
-  }
 
   return (
     <>
@@ -259,7 +230,11 @@ export const Selector: FC<{
               }}
             >
               <TOKEN_ICON>
-                <img src={imageURL} alt="" onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')} />
+                <img
+                  src={imageURL}
+                  alt="token-icon"
+                  onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+                />
               </TOKEN_ICON>
               <TOKEN_INFO>
                 <span>{symbol}</span>
@@ -276,8 +251,8 @@ export const Selector: FC<{
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <CLICKER_ICON>
                   <img
-                    src={filteredTokens.find((i) => i.name === token.name).imageURL}
-                    alt=""
+                    src={filteredTokens.find((i) => i.name === token.name)?.imageURL}
+                    alt="active-icon"
                     onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
                   />
                 </CLICKER_ICON>
