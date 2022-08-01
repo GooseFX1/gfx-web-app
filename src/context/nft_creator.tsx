@@ -42,7 +42,7 @@ export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const submit = async () => {
     let data = creatorData
     let walletAddress = wallet.publicKey.toBase58()
-    data = { ...data, ...{ walletAddress: walletAddress } }
+    data = { ...data, ...{ walletAddress: walletAddress, adminApproved: null } }
     try {
       const response = await saveData(data)
       return response.data.status !== 'failed'
@@ -62,7 +62,7 @@ export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) =>
   }
 
   const nextStep = () => {
-    if (currentStep < 6) setCurrentStep(currentStep + 1)
+    if (currentStep < 5) setCurrentStep(currentStep + 1)
   }
 
   return (

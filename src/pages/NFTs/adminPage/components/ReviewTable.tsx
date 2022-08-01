@@ -4,6 +4,8 @@ import { ICreatorData } from '../../../../types/nft_launchpad'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { GradientText } from './UpcomingMints'
+import { useNFTAdmin } from '../../../../context'
+import { useHistory } from 'react-router-dom'
 
 const NOTHING_REVIEW = styled.div`
   ${tw`font-semibold text-2xl`}
@@ -75,6 +77,10 @@ const WRAPPER = styled.div`
     margin-left: 20px;
     width: 15%;
   }
+  .editBtn {
+    position: absolute;
+    right: 5%;
+  }
   .innerDivTitle {
     ${tw`w-1/4 ml-5 mt-7`}
   }
@@ -130,6 +136,13 @@ const ReviewTable = ({ reviewProjects, btnClicked }) => {
 
 const RowComponent: React.FC<{ project: ICreatorData; index: number; btnClicked: any }> = ({ project, btnClicked }) => {
   const [expand, setExpand] = useState<boolean>(false)
+  const { setAdminSelected } = useNFTAdmin()
+  const history = useHistory()
+
+  const arrowDownClicked = () => {
+    setExpand(!expand)
+    setAdminSelected(project)
+  }
 
   const vestingString = (vest): string => {
     let str = ''
@@ -145,20 +158,20 @@ const RowComponent: React.FC<{ project: ICreatorData; index: number; btnClicked:
     const ans = []
     if (socials.discord)
       ans.push(
-        <a className="whiteText" href={socials.discord} target="_blank">
+        <a className="whiteText" key={1} href={socials.discord} target="_blank">
           {' '}
           <u> Discord</u>
         </a>
       )
     if (socials.twitter)
       ans.push(
-        <a className="whiteText" href={socials.twitter} target="_blank">
+        <a className="whiteText" key={2} href={socials.twitter} target="_blank">
           <u> Twitter </u>{' '}
         </a>
       )
     if (socials.website)
       ans.push(
-        <a className="whiteText" href={socials.twitter} target="_blank">
+        <a className="whiteText" key={3} href={socials.twitter} target="_blank">
           {' '}
           <u> Web </u>{' '}
         </a>
@@ -167,7 +180,7 @@ const RowComponent: React.FC<{ project: ICreatorData; index: number; btnClicked:
   }
   return (
     <Row className="table-row" style={{ height: expand ? '750px' : '160px' }}>
-      <GradientImageBorder img={project[2].image.src} width={120} height={120} />
+      <GradientImageBorder img={project[2].image} width={120} height={120} />
       <div className="rejectIcon" onClick={() => btnClicked(project, 'reject')}>
         <img src="/img/assets/nft-admin/closeRed.svg" alt="close" />
       </div>
@@ -176,7 +189,7 @@ const RowComponent: React.FC<{ project: ICreatorData; index: number; btnClicked:
         <div className="tagLine">{project[1].collectionName} </div>
       </div>
       <div className="innerDiv">
-        <div className="secondryText">Mint price </div>
+        <div className="secondryText">Mint price</div>
         <div className="whiteText">{project[2].price + ' ' + project[2].currency} </div>
       </div>
       <div className="innerDiv">
@@ -185,7 +198,7 @@ const RowComponent: React.FC<{ project: ICreatorData; index: number; btnClicked:
       </div>
       <Button onClick={() => btnClicked(project)}>Approve project</Button>
       <img
-        onClick={() => setExpand(!expand)}
+        onClick={() => arrowDownClicked()}
         style={expand ? { transform: 'rotate(180deg)' } : {}}
         className="arrow"
         src="/img/assets/nft-admin/arrow-down.svg"
@@ -195,6 +208,9 @@ const RowComponent: React.FC<{ project: ICreatorData; index: number; btnClicked:
         <div className="expanded">
           <div className="sub-row">
             <GradientText text={'Step 1'} fontSize={20} fontWeight={600} />
+            <div className="editBtn" onClick={() => history.push(`/NFTs/Creator/${project['walletAddress']}`)}>
+              <img src="/img/assets/nft-admin/editBtn.png" alt="edit" />
+            </div>
             <div className="expandedRow">
               <div className="secondryText">Legal Permission</div>
               <div className="whiteText">Yes, I'm author</div>
@@ -216,7 +232,7 @@ const RowComponent: React.FC<{ project: ICreatorData; index: number; btnClicked:
             <GradientText text={'Step 2'} fontSize={20} fontWeight={600} />
             <div className="expandedRow">
               <div className="secondryText">Cover image</div>
-              <div className="whiteText">{project[2]?.image.src.substring(0, 20)}</div>
+              <div className="whiteText">{project[2]?.image?.substring(0, 20)}</div>
             </div>
             <div className="expandedRow">
               <div className="secondryText">Number of items</div>

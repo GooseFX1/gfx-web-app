@@ -47,6 +47,5 @@ export const getDateInArray = () => {
   var todayObj = new Date()
   var daylist = getDaysArray(new Date(new Date()), new Date(todayObj.setDate(todayObj.getDate() + 20)))
   daylist = daylist.map((v) => formatDate(v.toISOString().slice(0, 10)))
-  console.log(daylist)
   return daylist
 }
