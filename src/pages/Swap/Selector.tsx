@@ -1,7 +1,7 @@
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { Input } from 'antd'
 import styled from 'styled-components'
-import { TokenListProvider } from '@solana/spl-token-registry'
+import { TokenListProvider, TokenInfo } from '@solana/spl-token-registry'
 import { ArrowClickerWhite, Modal } from '../../components'
 import { ISwapToken, useTokenRegistry, useDarkMode, useConnectionConfig, useSwap } from '../../context'
 import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
@@ -140,6 +140,10 @@ const TOKEN_INFO = styled.div`
   color: ${({ theme }) => theme.text1};
 `
 
+interface NewTokenInfo extends TokenInfo {
+  imageURL?: string
+}
+
 export const Selector: FC<{
   height: string
   otherToken: ISwapToken | null
@@ -152,7 +156,7 @@ export const Selector: FC<{
   const { tokenA, tokenB } = useSwap()
   const { chainId } = useConnectionConfig()
   const [filterKeywords, setFilterKeywords] = useState('')
-  const [filteredTokens, setFilteredTokens] = useState(tokens)
+  const [filteredTokens, setFilteredTokens] = useState<NewTokenInfo[]>(tokens)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -175,8 +179,13 @@ export const Selector: FC<{
         }
       }
 
+      const updatedFilteredTokensList = filteredTokensList.map((tk) => ({
+        ...tk,
+        imageURL: `/img/crypto/${tk.symbol}.svg`
+      }))
+
       setFilteredTokens(
-        filteredTokensList.sort((a, b) => {
+        updatedFilteredTokensList.sort((a, b) => {
           let fa = a.symbol.toLowerCase(),
             fb = b.symbol.toLowerCase()
 
@@ -192,7 +201,7 @@ export const Selector: FC<{
     }
 
     addExternalTokens()
-  }, [filterKeywords, otherToken, tokens])
+  }, [filterKeywords, tokens])
 
   return (
     <>
@@ -212,7 +221,7 @@ export const Selector: FC<{
           </MAGNIFYING_GLASS>
         </INPUT>
         <BODY>
-          {filteredTokens.map(({ address, chainId, decimals, name, symbol }, index) => (
+          {filteredTokens.map(({ address, chainId, decimals, name, symbol, imageURL }, index) => (
             <TOKEN
               key={index}
               onClick={async () => {
@@ -222,8 +231,8 @@ export const Selector: FC<{
             >
               <TOKEN_ICON>
                 <img
-                  src={`/img/crypto/${symbol}.svg`}
-                  alt=""
+                  src={imageURL}
+                  alt="token-icon"
                   onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
                 />
               </TOKEN_ICON>
@@ -242,8 +251,8 @@ export const Selector: FC<{
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <CLICKER_ICON>
                   <img
-                    src={`/img/crypto/${token.symbol}.svg`}
-                    alt=""
+                    src={filteredTokens.find((i) => i.name === token.name)?.imageURL}
+                    alt="active-icon"
                     onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
                   />
                 </CLICKER_ICON>
