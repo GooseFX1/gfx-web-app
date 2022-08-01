@@ -6,7 +6,17 @@ import tw from 'twin.macro'
 import { FileDrop } from 'react-file-drop'
 import { useNFTCreator } from '../../../../context/nft_creator'
 import { ICreatorData } from '../../../../types/nft_launchpad'
+import { uploadFile } from 'react-s3'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { notify } from '../../../../utils'
 var axios = require('axios')
+
+const config = {
+  bucketName: 'gfx-nest-image-resources',
+  region: 'ap-south-1',
+  accessKeyId: 'AKIAZVHLHTVY5QIIEJEK',
+  secretAccessKey: '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'
+}
 
 const WRAPPER = styled.div`
   ${tw`mb-12`}
@@ -160,13 +170,13 @@ const WRAPPER = styled.div`
 `
 
 export const Step2: FC = () => {
-  const [uploadedImage, setUploadedImage] = useState(null)
+  const [imageLink, setImageLink] = useState<string>('')
   const inputReference = React.useRef(null)
   const [items, setItems] = useState<string>()
   const [isUSDC, setIsUSDC] = useState<boolean>(false)
   const [mintPrice, setMintPrice] = useState<number>()
   const [nextButtonActive, setNextButtonActive] = useState<boolean>(false)
-
+  const wallet = useWallet()
   const { creatorData, previousStep } = useNFTCreator()
   const fileConstraints = async (file) => {
     let extension = file.name.split('.')[1]
@@ -178,53 +188,39 @@ export const Step2: FC = () => {
         extension === 'mp4') &&
       file.size < 20 * 1024 * 1024
     ) {
-      const url = 'http://localhost:4000/upload'
-      let data = JSON.stringify({
-        files: {
-          sampleFile: file
-        }
+      notify({
+        message: 'Upload Started...'
       })
-      let config = {
-        method: 'post',
-        url: url,
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        data: data
-      }
-      console.log(file)
-      let formData = new FormData()
-      formData.append('file', file)
-      const response2 = axios
-        .post(url, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        })
-        .then((response) => console.log(response))
-      setUploadedImage(file)
+      uploadFile(file, { ...config, dirName: 'launchpad_' + wallet.publicKey.toBase58() + '_cover' }).then(
+        (data: any) => {
+          setImageLink(data.location)
+          notify({
+            message: 'Upload Complete!'
+          })
+        }
+      ) //save image link with setS3Link(dataLink)
     }
   }
 
   useEffect(() => {
-    if (uploadedImage && items && parseInt(items) > 0 && mintPrice && mintPrice > 0) setNextButtonActive(true)
+    if (imageLink && items && parseInt(items) > 0 && mintPrice && mintPrice > 0) setNextButtonActive(true)
     else setNextButtonActive(false)
-  }, [uploadedImage, items, mintPrice])
+  }, [imageLink, items, mintPrice])
 
   useEffect(() => {
-    if (creatorData[2]) {
+    if (creatorData && creatorData[2]) {
       setMintPrice(creatorData[2].price)
       setIsUSDC(creatorData[2].currency === 'USDC')
-      setUploadedImage(creatorData[2].image)
+      setImageLink(creatorData[2].image)
       setItems(creatorData[2].items.toString())
     }
-  }, [])
+  }, [creatorData])
 
   let creatorStepData: ICreatorData[2] = {
     items: parseInt(items),
     currency: isUSDC ? 'USDC' : 'SOL',
     price: mintPrice,
-    image: uploadedImage
+    image: imageLink
   }
 
   return (
@@ -237,8 +233,8 @@ export const Step2: FC = () => {
           </Row>
           <div>
             <FileDrop onDrop={(files, event) => fileConstraints(files[0])}>
-              {!uploadedImage ? 'Drag and drop a file to upload or' : ''}
-              {!uploadedImage ? (
+              {!imageLink ? 'Drag and drop a file to upload or' : ''}
+              {!imageLink ? (
                 <>
                   <input
                     className="hiddenInput"
@@ -254,10 +250,12 @@ export const Step2: FC = () => {
                     className="close-icon"
                     alt="close"
                     src={'/img/assets/close-gray-icon.svg'}
-                    onClick={() => setUploadedImage(null)}
+                    onClick={() => {
+                      setImageLink('')
+                    }}
                   />
-                  <img className="uploaded-image" alt="not found" src={URL.createObjectURL(uploadedImage)} />
-                  <div className="image-info">{uploadedImage?.name}</div>
+                  <img className="uploaded-image" alt="not found" src={imageLink} />
+                  {/*<div className="image-info">{uploadedImage?.name}</div>*/}
                 </div>
               )}
             </FileDrop>
@@ -297,7 +295,7 @@ export const Step2: FC = () => {
         </Col>
         <Col span={12}>
           <Row>
-            <ImageContainer fileName={uploadedImage} imageName="no-image" />
+            <ImageContainer fileName={imageLink} imageName="no-image" />
           </Row>
           <Row className="full-width-row" justify="space-between">
             <Col span={10}>

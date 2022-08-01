@@ -69,9 +69,9 @@ export const isAdminAllowed = async (walletAddress: string) => {
         data: data
       }
     let result = await axios(config)
-    return result.data.allowed
+    return result.data
   } catch (e) {
-    return false
+    return { allowed: false, data: null }
   }
 }
 

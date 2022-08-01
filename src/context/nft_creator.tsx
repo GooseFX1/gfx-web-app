@@ -26,7 +26,8 @@ export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) =>
       ;(async () => {
         const response = await isCreatorAllowed(wallet.publicKey.toBase58())
         console.log(response)
-        setIsAllowed(response)
+        setIsAllowed(response.allowed)
+        setCreatorData(response.data)
       })()
     } else setIsAllowed(false)
   }, [wallet.publicKey, wallet.connected])
