@@ -9,20 +9,9 @@ import { useNFTCreator } from '../../../../context/nft_creator'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 import { useHistory } from 'react-router-dom'
 import { useNavCollapse } from '../../../../context'
+import { GradientText } from '../../adminPage/components/UpcomingMints'
+import { useWallet } from '@solana/wallet-adapter-react'
 
-const TEXT = styled.div`
-  font-style: normal;
-  font-weight: 600;
-  font-size: 20px;
-  line-height: 24px;
-  margin-left: 20px;
-  margin-top: 20px;
-  background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
-`
 export const CENTER_WRAP = styled.div`
   display: flex;
   align-items: center;
@@ -35,6 +24,7 @@ const WRAPPER = styled.div`
   position: absolute;
   width: 610px;
   height: 85%;
+  min-height: 700px;
   background: #2a2a2a;
   border-radius: 25px;
   .titleText {
@@ -47,9 +37,15 @@ const WRAPPER = styled.div`
     padding-bottom: 10px;
     border-bottom: 2px solid #3d3d3d;
   }
+  .ant-col {
+    margin-top: 10px;
+    padding-left: 20px;
+  }
+
   .stepsContainer {
     overflow-y: scroll;
     overflow-x: hidden;
+    min-height: 490px;
     height: 65%;
   }
   .save-button {
@@ -70,6 +66,8 @@ const WRAPPER = styled.div`
     }
   }
   .submitContainer {
+    background: #2a2a2a;
+    border-radius: 0px 0px 25px 25px;
     height: 120px;
     width: 100%;
     bottom: 0;
@@ -112,13 +110,15 @@ const WRAPPER = styled.div`
 const SubmitPopup = ({ rewardToggle }) => {
   const [disclaimer, setDisclaimer] = useState<boolean>(false)
   const [acceptRisk, setRisk] = useState<boolean>(false)
-  const { creatorData } = useNFTCreator()
+  const { creatorData, submit } = useNFTCreator()
+  const wallet = useWallet()
   const history = useHistory()
   const { setRelaxPopup } = useNavCollapse()
   const handleCheckboxClick = (e) => {
     setRisk(e.target.checked)
   }
-  const handleSubmitClicked = () => {
+  const handleSubmitClicked = async () => {
+    submit()
     setRelaxPopup(true)
     history.push('/NFTs/launchpad')
   }
@@ -130,13 +130,12 @@ const SubmitPopup = ({ rewardToggle }) => {
           <img className="closeImg" src="/img/assets/close-white-icon.svg" alt="" onClick={() => rewardToggle(false)} />
           You are about to submit <br />
           <strong style={{ color: 'white' }}>
-            {`Tier #1 "The Egg"`} by {`NestQuest`}
+            {creatorData[1]?.collectionName} by {creatorData[1]?.projectName}
           </strong>
         </div>
         <Row className="stepsContainer">
           <Col span={24}>
-            {' '}
-            <StepText text={1} />
+            <GradientText fontSize={20} fontWeight={600} text={'Step 1'} />
           </Col>
           <br />
           <Col span={12} className="reviewItems">
@@ -167,7 +166,7 @@ const SubmitPopup = ({ rewardToggle }) => {
           {/* Step 2 */}
           <Col span={24}>
             {' '}
-            <StepText text={2} />
+            <GradientText fontSize={20} fontWeight={600} text={'Step 2'} />
           </Col>
           <br />
           <Col span={12} className="reviewItems">
@@ -180,7 +179,7 @@ const SubmitPopup = ({ rewardToggle }) => {
             Number of items
           </Col>
           <Col span={12} className="reviewItems">
-            {creatorData[2]?.numberOfItems}
+            {creatorData[2]?.items}
           </Col>
           <Col span={12} className="reviewItems">
             Raised token
@@ -192,12 +191,12 @@ const SubmitPopup = ({ rewardToggle }) => {
             Mint Price
           </Col>
           <Col span={12} className="reviewItems">
-            {creatorData[2]?.mintPrice}
+            {creatorData[2]?.price}
           </Col>
           {/* Step 3 */}
           <Col span={24}>
             {' '}
-            <StepText text={3} />
+            <GradientText fontSize={20} fontWeight={600} text={'Step 3'} />
           </Col>
           <br />
           <Col span={12} className="reviewItems">
@@ -222,7 +221,7 @@ const SubmitPopup = ({ rewardToggle }) => {
           {/* Step 4 */}
           <Col span={24}>
             {' '}
-            <StepText text={4} />
+            <GradientText fontSize={20} fontWeight={600} text={'Step 4'} />
           </Col>
           <br />
           <Col span={12} className="reviewItems">
@@ -241,7 +240,7 @@ const SubmitPopup = ({ rewardToggle }) => {
           {/* Step 5 */}
           <Col span={24}>
             {' '}
-            <StepText text={5} />
+            <GradientText fontSize={20} fontWeight={600} text={'Step 5'} />
           </Col>
           <br />
           <Col span={12} className="reviewItems">
@@ -275,7 +274,3 @@ const SubmitPopup = ({ rewardToggle }) => {
 }
 
 export default SubmitPopup
-
-const StepText = ({ text }) => {
-  return <TEXT>Step {text}</TEXT>
-}

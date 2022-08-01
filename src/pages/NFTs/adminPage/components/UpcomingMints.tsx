@@ -186,14 +186,17 @@ const UpcomingMints = () => {
     setDatesArr(getDateInArray())
     ;(async () => {
       const { data } = await fetchAllNFTLaunchpadData()
-      setUpcomingMints(data.data)
-      setShowMints(data.data)
-      setSelected(data.data[1])
+      const mints = data.data.filter((mint) => mint.ended === false)
+      setUpcomingMints(mints)
+      setShowMints(mints)
+      setSelected(mints[0])
     })()
   }, [])
 
   useEffect(() => {
-    setShowMints(upcomingMints.filter((mint: INFTProjectConfig) => mint.date === datesArr[selectIndex]))
+    setShowMints(
+      upcomingMints.filter((mint: INFTProjectConfig) => mint.date === datesArr[selectIndex] && mint.ended === false)
+    )
   }, [selectIndex])
 
   if (upcomingMints.length < 1)

@@ -87,7 +87,7 @@ export const ApprovePopup = ({ rewardToggle }) => {
   const wallet = useWallet()
   const approveClicked = async () => {
     try {
-      await approveProject(adminSelected, wallet.publicKey)
+      await approveProject(adminSelected)
       setApprove(true)
       setUpdate((prev) => prev + 1)
     } catch (e) {
@@ -127,7 +127,7 @@ export const ApproveCompletePopup = ({ rewardToggle }) => {
       <WRAPPER>
         <img className="close" src="/img/assets/close-white-icon.svg" alt="x" onClick={() => rewardToggle(false)} />
         <div className="approved">Sucessfully approved</div>
-        <GradientImageBorder height={200} width={200} img={adminSelected[2]?.image?.src} />
+        <GradientImageBorder height={200} width={200} img={adminSelected[2]?.image} />
         <div className="approved">{adminSelected[1].projectName}</div>
         <div className="secondaryText">{adminSelected[1].collectionName}</div>
       </WRAPPER>
