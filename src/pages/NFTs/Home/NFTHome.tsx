@@ -71,6 +71,7 @@ export const NFT_MENU = styled.div`
   bottom: -12px;
   cursor: pointer;
   background: url('/img/assets/menuButton.svg');
+  z-index: 100;
 `
 const NFTLandingPage: FC = (): JSX.Element => {
   const { allCollections, fetchAllCollections, setNFTMenuPopup, nftMenuPopup } = useNFTCollections()
@@ -79,7 +80,6 @@ const NFTLandingPage: FC = (): JSX.Element => {
   const [isAllLoading, setIsAllLoading] = useState<boolean>(true)
   const [betaBanner, setBetaBanner] = useState<boolean>(true)
   const [search, setSearch] = useState<string>('')
-  const [nftMenu, setNFTMenu] = useState<boolean>(true)
 
   useEffect(() => {
     fetchAllCollections().then((res) => setIsAllLoading(false))

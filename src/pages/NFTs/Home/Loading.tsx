@@ -9,7 +9,7 @@ const CONTAINER = styled.div`
   display: flex;
   flex-wrap: wrap;
   background-color: ${({ theme }) => `${theme.bg2}`};
-  z-index: 1000;
+  z-index: 10;
 `
 
 const ITEM = styled.div`
