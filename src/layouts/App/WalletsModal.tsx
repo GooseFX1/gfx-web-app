@@ -3,7 +3,7 @@ import { logEvent } from 'firebase/analytics'
 import analytics from '../../analytics'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { WalletName } from '@solana/wallet-adapter-wallets'
+import { WalletName } from '@solana/wallet-adapter-base'
 import { TermsOfService } from './TermsOfService'
 import { Modal } from '../../components'
 import { LITEPAPER_ADDRESS } from '../../constants'
@@ -87,7 +87,7 @@ export const WalletsModal: FC = () => {
   )
 
   const handleWalletClick = useCallback(
-    (event: React.MouseEvent<HTMLElement>, walletName: WalletName) => {
+    (event: React.MouseEvent<HTMLElement>, walletName: WalletName<string>) => {
       // analytics logger
       const an = analytics()
       an !== null &&
@@ -113,10 +113,10 @@ export const WalletsModal: FC = () => {
           .
         </DISCLAIMER>
         {wallets.map((wallet, index) => (
-          <WALLET key={index} onClick={(event) => handleWalletClick(event, wallet.name)}>
-            <NAME>{wallet.name}</NAME>
+          <WALLET key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
+            <NAME>{wallet.adapter.name}</NAME>
             <ICON>
-              <img src={wallet.icon} alt="icon" />
+              <img src={wallet.adapter.icon} alt="icon" />
             </ICON>
           </WALLET>
         ))}
