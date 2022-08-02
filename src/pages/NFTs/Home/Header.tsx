@@ -189,10 +189,6 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
     history.push({ pathname: `/NFTs/profile/${publicKey.toBase58()}`, state: { isCreatingProfile: true } })
   }, [handleDismissModal])
 
-  const onCreateCollectible = () => {
-    history.push('/NFTs/drafts')
-  }
-
   const goProfile = () => history.push(`/NFTs/profile/${publicKey.toBase58()}`)
 
   const handleWalletModal: MouseEventHandler<HTMLButtonElement> = useCallback(
@@ -203,25 +199,26 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
     },
     [setModalVisible, publicKey, connected]
   )
-  const handleFilterChange = (filter) => {
-    let newFilteredCol
-    if (filter.toLowerCase() == 'verified') {
-      newFilteredCol = totalCollections.filter((i) => i.is_verified)
-    } else if (filter.toLowerCase() == 'unverified') {
-      newFilteredCol = totalCollections.filter((i) => !i.is_verified)
-    } else if (filter.toLowerCase() == 'all') {
-      newFilteredCol = totalCollections
-    } else {
-      newFilteredCol = totalCollections.filter((i) =>
-        i.category_tags
-          .split(' ')
-          .map((i) => i.toLowerCase())
-          .includes(filter.toLowerCase())
-      )
-    }
-    //setFilteredCollections(newFilteredCol)
-    setTotalCollections(newFilteredCol)
-  }
+
+  // const handleFilterChange = (filter) => {
+  //   let newFilteredCol
+  //   if (filter.toLowerCase() == 'verified') {
+  //     newFilteredCol = totalCollections.filter((i) => i.is_verified)
+  //   } else if (filter.toLowerCase() == 'unverified') {
+  //     newFilteredCol = totalCollections.filter((i) => !i.is_verified)
+  //   } else if (filter.toLowerCase() == 'all') {
+  //     newFilteredCol = totalCollections
+  //   } else {
+  //     newFilteredCol = totalCollections.filter((i) =>
+  //       i.category_tags
+  //         .split(' ')
+  //         .map((i) => i.toLowerCase())
+  //         .includes(filter.toLowerCase())
+  //     )
+  //   }
+  //   setFilteredCollections(newFilteredCol)
+  //   setTotalCollections(newFilteredCol)
+  // }
 
   const genMenu = () => {
     return filter.length > 0 ? (
@@ -291,12 +288,6 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
                 <span>Connect Wallet</span>
               </CONNECT>
             )}
-            <SELL onClick={goProfile}>
-              <span>Sell</span>
-            </SELL>
-            <CREATE onClick={onCreateCollectible}>
-              <span>Create</span>
-            </CREATE>
 
             <DropdownButton
               title={userCurrency}
