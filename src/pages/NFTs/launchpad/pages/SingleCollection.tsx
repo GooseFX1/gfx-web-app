@@ -241,8 +241,8 @@ const NFT_COVER = styled.div`
   }
   .ended-img {
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-    width: 0px;
-    height: 0px;
+    width: 600px;
+    height: 600px;
     border-radius: 20px;
     padding: 5px;
     margin-top: 32px;
@@ -251,11 +251,11 @@ const NFT_COVER = styled.div`
   }
   .sold-text {
     position: absolute;
-    width: 00px;
+    width: 600px;
     margin-top: -35%;
     height: 600px;
     font-weight: 700;
-    font-size: 10px;
+    font-size: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
