@@ -130,7 +130,7 @@ export const NFTHomeSlider = () => {
   return (
     <CAROUSEL_WRAPPER>
       <Slider {...settings}>
-        <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/become-a-creator.svg`}>
+        <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/become-a-creator.webp`}>
           <div className="home-slider-content">
             <h1 className="home-slider-title">Launch </h1>
             <h1 className="home-slider-title">Your Collection</h1>
