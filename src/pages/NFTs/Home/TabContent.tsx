@@ -7,6 +7,7 @@ import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../ap
 import { nFormatter } from '../../../utils'
 import { useNFTProfile, usePriceFeed } from '../../../context'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import { Image } from 'antd'
 
 const TAB_CONTENT = styled.div`
   min-height: 300px;
@@ -193,7 +194,7 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
       {!isCollection ? (
         <SkeletonCommon width="100px" height="100px" style={{ marginRight: '30px' }} />
       ) : (
-        <img
+        <Image
           className="analytic-image"
           // @ts-ignorese
           src={
@@ -201,6 +202,7 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
               ? collection.collection[0].profile_pic_link
               : `/img/assets/nft-preview.svg`
           }
+          fallback={`/img/assets/nft-preview.svg`}
           alt="analytic-img"
         />
       )}
