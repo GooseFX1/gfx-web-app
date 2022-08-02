@@ -147,7 +147,7 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
   const history = useHistory()
   const { sessionUser, userCurrency, setUserCurrency } = useNFTProfile()
   const { isCollapsed } = useNavCollapse()
-  const { connected, publicKey, ready, connect } = useWallet()
+  const { connected, publicKey, connect } = useWallet()
   const [visibleCompletePopup, setVisibleCompletePopup] = useState<boolean>(false)
   const { setVisible: setModalVisible } = useWalletModal()
   const { mode } = useDarkMode()
@@ -173,10 +173,10 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
   }, [sessionUser])
 
   useEffect(() => {
-    if (ready && !connected) {
+    if (!connected) {
       connect().catch(() => {})
     }
-  }, [ready])
+  }, [connected])
 
   const handleDismissModal = useCallback(() => {
     setVisibleCompletePopup(false)

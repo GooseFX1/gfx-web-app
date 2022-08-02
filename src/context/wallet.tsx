@@ -1,14 +1,5 @@
 import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
-import {
-  getLedgerWallet,
-  getMathWallet,
-  getPhantomWallet,
-  getSolflareWallet,
-  getSolletWallet,
-  getSolongWallet,
-  getSlopeWallet,
-  getTorusWallet
-} from '@solana/wallet-adapter-wallets'
+import { getWalletAdapters } from '../utils/wallets'
 import { useWallet, WalletProvider as WalletAdapterProvider } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
 import { WalletsModal } from '../layouts/App/WalletsModal'
@@ -35,28 +26,14 @@ export const WalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { network } = useConnectionConfig()
   const { disconnect } = useWallet()
 
-  const wallets = useMemo(
-    () => [
-      getPhantomWallet(),
-      getSlopeWallet(),
-      getSolflareWallet(),
-      getLedgerWallet(),
-      getMathWallet(),
-      getSolongWallet(),
-      getTorusWallet({
-        options: { clientId: 'Get a client ID @ https://developer.tor.us' }
-      }),
-      getSolletWallet({ network })
-    ],
-    [network]
-  )
+  const wallets = useMemo(() => getWalletAdapters(network), [network])
 
   useEffect(() => {
     disconnect && disconnect().catch()
   }, [disconnect, network])
 
   return (
-    <WalletAdapterProvider wallets={wallets} localStorageKey="wallet">
+    <WalletAdapterProvider wallets={wallets} localStorageKey="wallet" autoConnect>
       <WalletModalProvider modal={<WalletsModal />}>{children}</WalletModalProvider>
     </WalletAdapterProvider>
   )
