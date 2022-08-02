@@ -1,14 +1,10 @@
 import React, { useState, useEffect, FC } from 'react'
-import axios from 'axios'
 import Slider from 'react-slick'
-import styled, { css } from 'styled-components'
-import { Col, Dropdown, Row, Menu, Checkbox, Button, Card } from 'antd'
-import Meta from 'antd/lib/card/Meta'
+import styled from 'styled-components'
+import { Row, Card } from 'antd'
 import { useHistory } from 'react-router-dom'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
-
-import { theme } from '../../../../theme'
 import { GetNftPrice } from './FeaturedLaunch'
 import { useUSDCToggle } from '../../../../context/nft_launchpad'
 

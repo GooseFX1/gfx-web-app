@@ -1,49 +1,17 @@
-import React, { FC, useEffect, useState, useCallback, useMemo, MouseEventHandler } from 'react'
-import { Row, Col, Progress } from 'antd'
+import React, { FC, useEffect, useState } from 'react'
+import { Row } from 'antd'
 // import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 // import { WRAPPED_SOL_MINT } from '../../web3'
 import { MintItemViewStatus, INFTMetadata } from '../../../../types/nft_details'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
-import { MainButton } from '../../../../components/MainButton'
-import { SOCIAL_MEDIAS } from '../../../../constants'
-import { SVGDynamicReverseMode } from '../../../../styles/utils'
-import { InfoDivUSDCTheme, DarkDiv, TokenSwitch } from './LaunchpadComponents'
+import { DarkDiv, TokenSwitch } from './LaunchpadComponents'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 import { useUSDCToggle } from '../../../../context/nft_launchpad'
 import { useDarkMode, useNavCollapse } from '../../../../context'
 
 //#region styles
-const IMAGE = styled.div`
-  width: 100%;
-  min-height: 550px;
-
-  ${({ theme }) => css`
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    color: ${theme.text1};
-
-    .ls-image {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100%;
-      border-radius: 20px;
-      z-index: 0;
-    }
-
-    .ls-video {
-      border-radius: 20px;
-      box-shadow: 3px 3px 14px 0px rgb(0 0 0 / 43%);
-      z-index: 10;
-    }
-  `}
-`
 const NFT_DETAILS = styled.div<{ $navCollapsed: boolean }>`
   height: 100%;
   margin: 0 auto;
@@ -118,36 +86,6 @@ const LEFT_WRAPPER = styled.div`
     }
   }
 `
-const PILL_SECONDARY = styled.div`
-  background: linear-gradient(90deg, rgba(247, 147, 26, 0.5) 0%, rgba(220, 31, 255, 0.5) 100%);
-  border-radius: 50px;
-  width: 150px;
-  height: 45px;
-  padding: 2px;
-
-  div {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 15px;
-    line-height: 18px;
-    background: #3c3b3ba6;
-    border-radius: 50px;
-    filter: drop-shadow(0px 6px 9px rgba(36, 36, 36, 0.15));
-  }
-`
-
-const SOCIAL_ICON = styled.button`
-  background: transparent;
-  border: none;
-
-  img {
-    height: 24px;
-  }
-`
 
 const DESCRIPTION = styled.p`
   font-weight: 600;
@@ -170,27 +108,6 @@ const BACK_IMG = styled.div`
   cursor: pointer;
 `
 
-const MINT_PROGRESS = styled(Progress)<{ num: number }>`
-  .ant-progress-outer {
-    height: 50px;
-    margin-right: 0;
-    padding-right: 0;
-    .ant-progress-inner {
-      height: 100%;
-      background-color: ${({ theme }) => theme.bg1};
-
-      .ant-progress-bg {
-        height: 100% !important;
-        background-color: ${({ theme }) => theme.primary4};
-      }
-    }
-  }
-  .ant-progress-text {
-    position: absolute;
-    top: 19px;
-    left: calc(${({ num }) => num}% - 64px);
-  }
-`
 const GRAPHIC_IMG = styled.div``
 
 export const SpaceBetweenDiv = styled.div`
@@ -229,6 +146,7 @@ export const GetNftPrice = ({ item }) => {
       <img
         style={{ margin: '0px 10px 5px 10px', width: '25px', height: '25px' }}
         src={`/img/crypto/${item?.currency}.svg`}
+        alt="price"
       />
       <span>{`  ${item?.currency}`}</span>
     </PRICE_DISPLAY>
@@ -310,10 +228,10 @@ export const FeaturedLaunch: FC<{
                   <LEFT_WRAPPER>
                     <YELLOW>
                       <BACK_IMG onClick={() => history.goBack()}>
-                        <img src={`/img/assets/arrow-left${mode}.svg`} />{' '}
+                        <img src={`/img/assets/arrow-left${mode}.svg`} alt="arrow" />{' '}
                       </BACK_IMG>
                       <FEATURED_IMG>
-                        <img src="/img/assets/Launchpad.png" />{' '}
+                        <img src="/img/assets/Launchpad.png" alt="arrow" />{' '}
                       </FEATURED_IMG>
                       Featured Launch
                     </YELLOW>

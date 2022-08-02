@@ -3,23 +3,17 @@ import LaunchCollection from '../launchpadComp/LaunchCollection'
 import UpcomingCollections from './UpcomingCollections'
 import EndedCollections from './EndedCollections'
 import { FeaturedLaunch } from './FeaturedLaunch'
-import {
-  InfoDivLightTheme,
-  TokenSwitch,
-  MintStarts,
-  MintProgressBar,
-  DarkDiv,
-  InfoDivUSDCTheme,
-  GoldenTicketPopup
-} from './LaunchpadComponents'
 import styled from 'styled-components'
 import { useNavCollapse } from '../../../../context'
 import { ModalSlide } from '../../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../../constants'
+
 const WRAPPER = styled.div`
   max-width: 99%;
   padding-left: 70px;
-  .switchHolder {
+
+  * {
+    font-family: ${({ theme }) => theme.fontFamily};
   }
 `
 

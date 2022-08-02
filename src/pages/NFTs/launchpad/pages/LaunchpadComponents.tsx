@@ -3,13 +3,13 @@ import styled from 'styled-components'
 import { Progress, Switch } from 'antd'
 import { ModalSlide } from '../../../../components/ModalSlide'
 import { useUSDCToggle } from '../../../../context/nft_launchpad'
-import { useDarkMode, useNavCollapse } from '../../../../context'
+import { useNavCollapse } from '../../../../context'
 
 const ROADMAP_WRAPPER = styled.div`
   color: ${({ theme }) => theme.text4};
 
   .elipse {
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       height: 45px;
       width: 45px;
     }
@@ -20,7 +20,7 @@ const ROADMAP_WRAPPER = styled.div`
     border: none;
   }
   .verticalLine {
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       width: 25%;
       margin-left: 2%;
     }
@@ -30,7 +30,7 @@ const ROADMAP_WRAPPER = styled.div`
     margin-left: 20px;
   }
   .verticalContainer {
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       margin-top: 75px;
     }
     margin-top: 70px;
@@ -40,7 +40,7 @@ const ROADMAP_WRAPPER = styled.div`
     min-height: 30px;
   }
   .headingText {
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       font-weight: 500;
       font-size: 15px;
       line-height: 20px;
@@ -53,7 +53,7 @@ const ROADMAP_WRAPPER = styled.div`
     text-align: center;
   }
   .subHeadingText {
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       width: auto;
     }
     font-weight: 500;
@@ -132,7 +132,7 @@ const TEAM_MEMBER_WRAPPER = styled.div`
   display: grid;
   grid-template-columns: auto auto auto;
   color: ${({ theme }) => theme.text4};
-  @media(max-width: 500px){
+  @media (max-width: 500px) {
     grid-template-columns: auto auto;
     padding: 5%;
   }
@@ -178,7 +178,7 @@ const INFO_DIV_LIGHT = styled.div`
   border-radius: 47px !important;
   padding: 1px;
 
-  @media(max-width: 500px){
+  @media (max-width: 500px) {
     width: 40%;
     height: 42px;
     margin-right: 0;
@@ -192,7 +192,7 @@ const INFO_DIV_LIGHT = styled.div`
   }
 
   .inner-2 {
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       font-size: 13px;
     }
     position: relative;
@@ -253,11 +253,11 @@ const INFO_DIV_BRIGHT = styled.div`
 `
 
 const ProgressBarBG = styled.div`
- @media(max-width: 500px){
-   width: 90%;
-   margin: 0 auto 20px;
-   height: 60px;
- }
+  @media (max-width: 500px) {
+    width: 90%;
+    margin: 0 auto 20px;
+    height: 60px;
+  }
   width: 610px;
   height: 70px;
   margin-bottom: 20px;
@@ -326,7 +326,7 @@ const VESTING_WRAPPER = styled.div`
   display: flex;
   flex-direction: column;
   .vestingStr {
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       font-weight: 500;
       font-size: 15px;
       color: #eeeeee;
@@ -602,7 +602,7 @@ export const DarkDiv = ({ coverUrl }) => {
 
       <div className="image-border">
         <div className="inner-image-bg">
-          <img className="inner-image" src={coverUrl} />
+          <img className="inner-image" src={coverUrl} alt="cover" />
         </div>
       </div>
     </DARK_DIV>
@@ -616,7 +616,7 @@ export const GoldenTicketPopup = ({}) => {
   return (
     <GOLDEN_POPUP id="golden-ticket-popup" onClick={(e) => closeGoldenPopup(e)}>
       <div className="circle">
-        <img className="ticket" src="/img/assets/GoldenTicket.png" />
+        <img className="ticket" src="/img/assets/GoldenTicket.png" alt="ticket" />
       </div>
       <div className="available-text">Available:</div>
       <div className="available-text">3 Golden Tickets</div>

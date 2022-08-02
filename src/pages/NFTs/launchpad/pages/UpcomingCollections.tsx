@@ -211,13 +211,11 @@ const UpcomingCollectins: FC = () => {
       {!dataFetched ? (
         <>
           <FLEX>
-            {loading.map(() => {
-              return (
-                <div className="space">
-                  <SkeletonCommon width="460px" height="460px" borderRadius="15px" />
-                </div>
-              )
-            })}
+            {loading.map((n) => (
+              <div className="space" key={n}>
+                <SkeletonCommon width="460px" height="460px" borderRadius="15px" />
+              </div>
+            ))}
           </FLEX>
         </>
       ) : (

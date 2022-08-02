@@ -2,15 +2,14 @@ import React, { FC, useEffect, useState } from 'react'
 import { useNFTLPSelected } from '../../../../context/nft_launchpad'
 import styled, { css } from 'styled-components'
 import { Col, Row, Tabs } from 'antd'
-import { MintProgressBar, TokenSwitch, MintStarts } from './LaunchpadComponents'
+import { MintProgressBar, MintStarts } from './LaunchpadComponents'
 import { InfoDivLightTheme, Vesting, RoadMap } from './LaunchpadComponents'
-import { SVGBlackToGrey, SVGDynamicReverseMode } from '../../../../styles'
+import { SVGBlackToGrey } from '../../../../styles'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { MintButton } from '../launchpadComp/MintButton'
 import { TeamMembers } from './LaunchpadComponents'
 import { useDarkMode, useNavCollapse } from '../../../../context'
 import { useHistory } from 'react-router-dom'
-import tw from 'twin.macro'
 import 'styled-components/macro'
 import { checkMobile } from '../../../../utils'
 import analytics from '../../../../analytics'
@@ -240,7 +239,7 @@ const NFT_COVER = styled.div`
     }
   }
   .ended-img {
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       display: none;
     }
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
@@ -253,7 +252,7 @@ const NFT_COVER = styled.div`
     opacity: 0.4;
   }
   .sold-text {
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       display: none;
     }
     position: absolute;
@@ -320,6 +319,9 @@ const PRICE_SOCIAL = styled.div`
 `
 const HEIGHT = styled.div`
   min-height: 800px !important ;
+  * {
+    font-family: ${({ theme }) => theme.fontFamily};
+  }
 `
 
 const TOGGLE_SPACE = styled.div`
@@ -431,6 +433,9 @@ const getRemaningTime = (time): string => {
 
 const MOB_WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   margin-top: calc(120px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+  * {
+    font-family: ${({ theme }) => theme.fontFamily};
+  }
 `
 
 const ROW = styled.div`
@@ -504,7 +509,7 @@ export const SingleCollection: FC = () => {
       <MOB_WRAPPER $navCollapsed={isCollapsed}>
         <ROW>
           <BACK_IMG onClick={() => history.goBack()}>
-            <img src={`/img/assets/arrow-left${mode}.svg`} />{' '}
+            <img src={`/img/assets/arrow-left${mode}.svg`} alt="arrow" />{' '}
           </BACK_IMG>
           {selectedProject?.collectionName ? (
             <COLLECTION_NAME>{selectedProject?.collectionName}</COLLECTION_NAME>
@@ -646,7 +651,7 @@ export const SingleCollection: FC = () => {
       <WRAPPER $navCollapsed={isCollapsed}>
         <div className="leftPart">
           <BACK_IMG onClick={() => history.goBack()}>
-            <img src={`/img/assets/arrow-left${mode}.svg`} />{' '}
+            <img src={`/img/assets/arrow-left${mode}.svg`} alt="arrow" />{' '}
           </BACK_IMG>
           <div>
             {selectedProject?.collectionName ? (
