@@ -56,19 +56,12 @@ const CAROUSEL_WRAPPER = styled.div`
     height: 100%;
   }
 
-  .slick-slide {
-    margin-right: ${({ theme }) => theme.margin(3)};
-  }
-`
-const NFT_CONTAINER = styled.div`
-  opacity: 0.8;
-  .slick-slide slick-active {
-    border: 12px solid green;
-    height: 200px;
+  .slick-track {
+    width: 100% !important;
   }
 
-  .slick-slide img {
-    height: 200px;
+  .slick-slide {
+    margin-right: ${({ theme }) => theme.margin(3)};
   }
 `
 
@@ -80,10 +73,6 @@ const ENDED_TEXT = styled.div`
   margin-bottom: 40px;
 `
 
-const NFT_TITLE = styled.div`
-  font-weight: 600;
-  font-size: 22px !important;
-`
 const NFT_INFO = styled.div`
   font-weight: 600;
   line-height: 22px;

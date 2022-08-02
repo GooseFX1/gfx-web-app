@@ -6,7 +6,6 @@ import { SOCIAL_MEDIAS } from '../../../../constants'
 const Container = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 200px !important ;
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   border-radius: 15px;
   margin-right: 40px !important ;
@@ -59,7 +58,7 @@ const LaunchCollection: FC = () => {
     <Container>
       <div className="startContainer">
         <IMG>
-          <img src={LaunchImg} />
+          <img src={LaunchImg} alt="launch-collection" />
         </IMG>
         <TEXT_CONTAINER>
           <TEXT>Launch your collection today!</TEXT>

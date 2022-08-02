@@ -461,10 +461,9 @@ export const MintProgressBar = ({ minted, totalNFTs }) => {
   )
 }
 export const SWITCH_HOLDER = styled.div<{ $navCollapsed: boolean }>`
-  width: 250px;
   position: absolute;
-  top: 0px;
-  margin-left: 570px;
+  top: 0;
+  right: 0;
   margin-top: calc(100px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
 `
 

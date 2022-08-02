@@ -148,7 +148,11 @@ export const getNftPrice = (item) => {
   return (
     <PRICE_DISPLAY>
       {`${item?.price} `}
-      <img style={{ margin: '0px 10px', width: '25px', height: '25px' }} src={`/img/crypto/${item?.currency}.svg`} />
+      <img
+        style={{ margin: '0px 10px', width: '25px', height: '25px' }}
+        src={`/img/crypto/${item?.currency}.svg`}
+        alt="price"
+      />
       {` ${item?.currency}`}
     </PRICE_DISPLAY>
   )
@@ -194,10 +198,10 @@ const UpcomingCollectins: FC = () => {
     var m = Math.floor((seconds % 3600) / 60)
     var s = Math.floor(seconds % 60)
 
-    var dDisplay = d > 0 ? d + (d == 1 ? ' d ' : ' d ') : ''
-    var hDisplay = h > 0 ? h + (h == 1 ? ' h ' : ' h ') : ''
-    var mDisplay = m > 0 ? m + (m == 1 ? ' m ' : ' m ') : ''
-    var sDisplay = s > 0 ? s + (s == 1 ? ' s ' : ' s') : ''
+    var dDisplay = d > 0 ? d + (d === 1 ? ' d ' : ' d ') : ''
+    var hDisplay = h > 0 ? h + (h === 1 ? ' h ' : ' h ') : ''
+    var mDisplay = m > 0 ? m + (m === 1 ? ' m ' : ' m ') : ''
+    var sDisplay = s > 0 ? s + (s === 1 ? ' s ' : ' s') : ''
     return d > 1 ? dDisplay + hDisplay + mDisplay : hDisplay + mDisplay + sDisplay
   }
 

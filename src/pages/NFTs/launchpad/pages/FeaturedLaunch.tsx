@@ -10,6 +10,7 @@ import { DarkDiv, TokenSwitch } from './LaunchpadComponents'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 import { useUSDCToggle } from '../../../../context/nft_launchpad'
 import { useDarkMode, useNavCollapse } from '../../../../context'
+import { SpaceBetweenDiv } from '../../../../styles'
 
 //#region styles
 const NFT_DETAILS = styled.div<{ $navCollapsed: boolean }>`
@@ -20,15 +21,14 @@ const NFT_DETAILS = styled.div<{ $navCollapsed: boolean }>`
   .nd-content {
     height: 100%;
   }
+
   .detailsContainer {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    height: 567px;
-    margin: 20px 70px 0px 0px;
+    margin: 20px 70px 200px 0px;
   }
-  .nd-details {
-  }
+
   ${({ theme }) => css`
     .nd-back-icon {
       position: absolute;
@@ -110,11 +110,6 @@ const BACK_IMG = styled.div`
 
 const GRAPHIC_IMG = styled.div``
 
-export const SpaceBetweenDiv = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`
 //#endregion
 const MINT_BTN = styled.div`
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
@@ -165,10 +160,10 @@ export const FeaturedLaunch: FC<{
 
   // const [notEnough, setNotEnough] = useState<boolean>(false)
   const { isUSDC } = useUSDCToggle()
-  const [featuredIndex, setFeaturedIndex] = useState(0)
-  const [featuredDisplay, setFeaturedDisplay] = useState([])
-  const [featuredList, setFeaturedList] = useState([])
   const { liveNFTProjects } = useNFTLaunchpad()
+  const [featuredIndex, setFeaturedIndex] = useState<number>(0)
+  const [featuredDisplay, setFeaturedDisplay] = useState<any[]>()
+  const [featuredList, setFeaturedList] = useState<any[]>([])
 
   useEffect(() => {
     setFeaturedList(
@@ -190,9 +185,7 @@ export const FeaturedLaunch: FC<{
   }
 
   useEffect(() => {
-    if (featuredList) {
-      setFeaturedDisplay([featuredList[featuredIndex]])
-    }
+    setFeaturedDisplay(featuredList.length > 0 ? [featuredList[featuredIndex]] : [])
   }, [featuredIndex, liveNFTProjects, featuredList])
   const { mode } = useDarkMode()
   const { isCollapsed } = useNavCollapse()
@@ -200,31 +193,16 @@ export const FeaturedLaunch: FC<{
   return (
     <>
       <NFT_DETAILS {...rest} $navCollapsed={isCollapsed}>
-        {!featuredDisplay[0] ? (
-          <>
-            <img
-              className="nd-back-icon"
-              src={`/img/assets/arrow.svg`}
-              alt="back"
-              onClick={() => {
-                backUrl ? history.push(backUrl) : history.goBack()
-              }}
-            />
-            <SkeletonCommon width="100%" height="400px" borderRadius="10px" />
-            <br />
-          </>
+        {featuredDisplay === undefined ? (
+          <SpaceBetweenDiv style={{ margin: '0 70px 200px 0' }}>
+            <SkeletonCommon width="42vw" height="500px" borderRadius="10px" />
+            <SkeletonCommon width="42vw" height="500px" borderRadius="10px" />
+          </SpaceBetweenDiv>
         ) : (
-          <div className="detailsContainer">
-            <div className="nd-details">
-              <div>
-                {!featuredDisplay[0].collectionName ? (
-                  <>
-                    <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
-                    <br />
-                    <SkeletonCommon width="100%" height="350px" borderRadius="10px" />
-                    <br />
-                  </>
-                ) : (
+          <div>
+            {featuredDisplay.length > 0 ? (
+              <div className="detailsContainer">
+                <div className="nd-details">
                   <LEFT_WRAPPER>
                     <YELLOW>
                       <BACK_IMG onClick={() => history.goBack()}>
@@ -264,22 +242,18 @@ export const FeaturedLaunch: FC<{
                       />
                     </div>
                   </LEFT_WRAPPER>
-                )}
-              </div>
-            </div>
-            <GRAPHIC_IMG>
-              {featuredDisplay[0]?.currency ? (
-                <TokenSwitch disabled={false} currency={featuredDisplay[0]?.currency} />
-              ) : (
-                <></>
-              )}
+                </div>
+                <GRAPHIC_IMG>
+                  {featuredDisplay.length > 0 && (
+                    <TokenSwitch disabled={false} currency={featuredDisplay[0]?.currency} />
+                  )}
 
-              {featuredDisplay[0] ? (
-                <DarkDiv coverUrl={featuredDisplay[0]?.coverUrl} />
-              ) : (
-                <SkeletonCommon width="100%" height="550px" borderRadius="10px" />
-              )}
-            </GRAPHIC_IMG>
+                  {featuredDisplay.length > 0 ? <DarkDiv coverUrl={featuredDisplay[0]?.coverUrl} /> : <></>}
+                </GRAPHIC_IMG>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         )}
       </NFT_DETAILS>
