@@ -134,7 +134,12 @@ export const Step3: FC = () => {
       <Row>
         <Col span={12}>
           <Row className="relative-row">
-            <img onClick={() => previousStep()} className="back-button" src="/img/assets/backArrow.svg" alt="back" />
+            <img
+              onClick={() => previousStep()}
+              className="back-button"
+              src="/img/assets/backArrowWhite.svg"
+              alt="back"
+            />
             <div className="big-label">3. Do you want to vest your funds?</div>
           </Row>
           <Row>

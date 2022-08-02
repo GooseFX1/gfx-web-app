@@ -228,7 +228,12 @@ export const Step2: FC = () => {
       <Row>
         <Col span={12}>
           <Row className="relative-row">
-            <img onClick={() => previousStep()} className="back-button" src="/img/assets/backArrow.svg" alt="back" />
+            <img
+              onClick={() => previousStep()}
+              className="back-button"
+              src="/img/assets/backArrowWhite.svg"
+              alt="back"
+            />
             <div className="big-label">2. Cover image and number of items</div>
           </Row>
           <div>

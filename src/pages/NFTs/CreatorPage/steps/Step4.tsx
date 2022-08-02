@@ -162,7 +162,12 @@ export const Step4: FC = () => {
       <Row>
         <Col span={13}>
           <Row className="relative-row">
-            <img onClick={() => previousStep()} className="back-button" src="/img/assets/backArrow.svg" alt="back" />
+            <img
+              onClick={() => previousStep()}
+              className="back-button"
+              src="/img/assets/backArrowWhite.svg"
+              alt="back"
+            />
             <div className="big-label">4. Do you plan a deleyed reveal for the collection?</div>
           </Row>
           <Row>
