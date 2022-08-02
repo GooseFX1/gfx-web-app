@@ -535,7 +535,7 @@ const TokenContent: FC = () => {
       </ListWrapper>
       <Socials>
         {socials.map((social) => (
-          <SocialsButton key={social.id} onClick={() => window.open(social.link, '_blank')}>
+          <SocialsButton key={social.name} onClick={() => window.open(social.link, '_blank')}>
             {social.name}
           </SocialsButton>
         ))}
