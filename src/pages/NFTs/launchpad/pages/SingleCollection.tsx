@@ -25,7 +25,7 @@ export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
     @media(max-width: 500px){
       width: 90%;
       min-width: 300px;
-      margin: 0 auto;
+      margin: 20px auto;
     }
     .ant-tabs-nav {
       position: relative;
@@ -240,6 +240,9 @@ const NFT_COVER = styled.div`
     }
   }
   .ended-img {
+    @media(max-width: 500px){
+      display: none;
+    }
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     width: 600px;
     height: 600px;
@@ -250,6 +253,9 @@ const NFT_COVER = styled.div`
     opacity: 0.4;
   }
   .sold-text {
+    @media(max-width: 500px){
+      display: none;
+    }
     position: absolute;
     width: 600px;
     margin-top: -35%;
