@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Link, useHistory, useLocation } from 'react-router-dom'
-import { CAROUSEL } from '../../constants'
+import { useHistory } from 'react-router-dom'
 import { useDarkMode } from '../../context'
+import { SVGDynamicReverseMode } from '../../styles'
 
 const WRAPPER = styled.div`
   width: 100%;
@@ -157,6 +157,7 @@ const WRAPPER = styled.div`
 `
 
 export const CircularMenu = ({ carousel, rotateClicked, clickCounter, rewardToggle }) => {
+  const { mode } = useDarkMode()
   const [rotationClass, setRotationClass] = useState('carousel')
   const [indexClass, setIndexClass] = useState<'active' | 'inactive'>()
   const history = useHistory()
@@ -175,12 +176,12 @@ export const CircularMenu = ({ carousel, rotateClicked, clickCounter, rewardTogg
       history.push(carousel[0].redirect)
     }
   }
-  const { mode } = useDarkMode()
+
   return (
     <>
       <WRAPPER>
         <div className="closeIcon" onClick={() => rewardToggle(false)}>
-          <img src="/img/assets/close-white-icon.svg" alt="close" />
+          <SVGDynamicReverseMode src={`/img/assets/close-white-icon.svg`} alt="close" />
         </div>
         <div className="featuresText">Features</div>
         <div className="exploreFeaturesText">
