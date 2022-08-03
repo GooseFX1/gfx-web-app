@@ -8,5 +8,9 @@ export enum NFT_LAUNCHPAD_API_ENDPOINTS {
   IS_CREATOR_ALLOWED = '/nft-launchpad/isUserAllowed',
   UPLOAD_FILES = '/nft-launchpad/uploadFiles',
   SAVE_DATA = '/nft-launchpad/saveData',
-  SAVE_TRANSACTION = '/nft-launchpad/saveTransaction'
+  SAVE_TRANSACTION = '/nft-launchpad/saveTransaction',
+  APPROVE_PROJECT = '/nft-launchpad/approveProject',
+  REJECT_PROJECT = '/nft-launchpad/rejectProject',
+  IS_ADMIN_ALLOWED = '/nft-launchpad/isAdminAllowed',
+  GET_CREATOR_PROJECT = '/nft-launchpad/getCreatorProjects'
 }

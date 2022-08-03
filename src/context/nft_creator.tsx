@@ -26,7 +26,8 @@ export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) =>
       ;(async () => {
         const response = await isCreatorAllowed(wallet.publicKey.toBase58())
         console.log(response)
-        setIsAllowed(response)
+        setIsAllowed(response.allowed)
+        setCreatorData(response.data)
       })()
     } else setIsAllowed(false)
   }, [wallet.publicKey, wallet.connected])
@@ -42,7 +43,7 @@ export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const submit = async () => {
     let data = creatorData
     let walletAddress = wallet.publicKey.toBase58()
-    data = { ...data, ...{ walletAddress: walletAddress } }
+    data = { ...data, ...{ walletAddress: walletAddress, adminApproved: null } }
     try {
       const response = await saveData(data)
       return response.data.status !== 'failed'

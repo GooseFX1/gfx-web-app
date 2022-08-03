@@ -49,7 +49,7 @@ export const ImageContainer: FC<{
   imageName?: string
   projectName?: string
   collectionName?: string
-  fileName?: File
+  fileName?: File | string
 }> = ({ imageName, projectName, collectionName, fileName }) => {
   return (
     <PICTURE_CONTAINER>
@@ -61,7 +61,11 @@ export const ImageContainer: FC<{
             {collectionName ? <div className="collectionName">{collectionName}</div> : null}
           </>
         ) : (
-          <img className="inner-image" alt="not fount" src={URL.createObjectURL(fileName)} />
+          <img
+            className="inner-image"
+            alt="not fount"
+            src={typeof fileName === 'string' ? fileName : URL.createObjectURL(fileName)}
+          />
         )}
       </div>
     </PICTURE_CONTAINER>
