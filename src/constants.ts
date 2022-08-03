@@ -1,3 +1,4 @@
+import { ICreatorData } from './types/nft_launchpad.d'
 import { ADDRESSES } from './web3'
 export const LITEPAPER_ADDRESS: string = 'https://docs.goosefx.io'
 export const SOCIAL_MEDIAS: { [key: string]: string } = {
@@ -18,7 +19,9 @@ export const MODAL_TYPES = {
   NFT_MENU: 'NFT_MENU',
   CREATOR_DISCLAIMER: 'CREATOR_DISCLAIMER',
   SUBMIT: 'SUBMIT',
-  RELAX: 'RELAX'
+  RELAX: 'RELAX',
+  APPROVE_PROJECT: 'APPROVE_PROJECT',
+  REJECT_PROJECT: 'REJECT_PROJECT'
 }
 export const CAROUSEL = [
   { name: 'Create', id: 0, position: 1, redirect: 'NFTs/create' },
