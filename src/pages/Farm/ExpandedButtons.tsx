@@ -1,8 +1,8 @@
-import React, { FC, ReactElement, useMemo, useState, useEffect } from 'react'
+import React, { FC, useMemo, useEffect } from 'react'
 import { MainButton } from '../../components'
 import { Connect } from '../../layouts/App/Connect'
 import styled from 'styled-components'
-import { WalletContextState, useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { useFarmContext, usePriceFeedFarm, useAccounts, useTokenRegistry, useConnectionConfig } from '../../context'
 import { invalidInputErrMsg } from './FarmClickHandler'
 import { checkMobile, notify } from '../../utils'
@@ -270,9 +270,10 @@ export const StakeButtons: FC<{
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
     [tokenInfo?.address, getUIAmount, publicKey]
   )
-  const current = 123
-  //const { current } = useMemo(() => prices[`${name.toUpperCase()}/USDC`], [prices])
+
+  const { current } = useMemo(() => prices[`${name.toUpperCase()}/USDC`], [prices])
   const tokenData = farmDataContext.find((token) => token.name === 'GOFX')
+
   return (
     <>
       {wallet.publicKey && !checkMobile() ? (
