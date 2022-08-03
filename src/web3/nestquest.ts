@@ -9,6 +9,9 @@ import { TOKEN_PROGRAM_ID, ADDRESSES } from './ids'
 import { signAndSendRawTransaction } from './utils'
 
 const GOFX_MINT = ADDRESSES['devnet'].mints.GOFX.address
+const CIVIC_GATEKEEPER = web3.PublicKey.default
+const SOL_REVENUE = web3.PublicKey.default
+const GOFX_REVENUE = web3.PublicKey.default
 
 const buildAssocIx = (nftUserAccount: web3.PublicKey, walletPubkey: web3.PublicKey, nftMint: web3.PublicKey) => {
   const temp = []
@@ -37,7 +40,8 @@ const fetchAvailableNft = async (
 const buyWithSOL = async (
   wallet: WalletContextState,
   connection: web3.Connection,
-  nftMint: web3.PublicKey
+  nftMint: web3.PublicKey,
+  civicGatewayToken: web3.PublicKey
 ): Promise<web3.Transaction | string | null> => {
   const [nftAuth] = await web3.PublicKey.findProgramAddress([Buffer.from('auth')], PROGRAM_ID)
 
@@ -57,6 +61,9 @@ const buyWithSOL = async (
     nftUserAccount,
     nftAuth,
     nftMint,
+    revenue: SOL_REVENUE,
+    civicGatewayToken,
+    civicGatekeeper: CIVIC_GATEKEEPER,
     tokenProgram: TOKEN_PROGRAM_ID,
     systemProgram: web3.SystemProgram.programId
   }
@@ -86,7 +93,8 @@ const buyWithSOL = async (
 const buyWithGOFX = async (
   wallet: any,
   connection: web3.Connection,
-  nftMint: web3.PublicKey
+  nftMint: web3.PublicKey,
+  civicGatewayToken: web3.PublicKey
 ): Promise<web3.Transaction | string | null> => {
   const [nftAuth] = await web3.PublicKey.findProgramAddress([Buffer.from('auth')], PROGRAM_ID)
 
@@ -119,6 +127,10 @@ const buyWithGOFX = async (
     nftUserAccount,
     nftAuth,
     nftMint,
+    revenue: SOL_REVENUE,
+    gofxRevenue: GOFX_REVENUE,
+    civicGatewayToken,
+    civicGatekeeper: CIVIC_GATEKEEPER,
     tokenProgram: TOKEN_PROGRAM_ID,
     systemProgram: web3.SystemProgram.programId
   }

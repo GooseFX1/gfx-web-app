@@ -9,7 +9,7 @@ import { ShareInternal } from './NestQuestComponent'
 import { onShare } from './NestQuestSingleListing'
 import { Creator, StringPublicKey, buyWithSOL, fetchAvailableNft, buyWithGOFX } from '../../../web3'
 import { notify } from '../../../utils'
-//import { PublicKey } from '@solana/web3.js'
+import { PublicKey } from '@solana/web3.js'
 
 //#region styles
 const STYLED_POPUP = styled(PopupCustom)`
@@ -290,8 +290,13 @@ const LoadBuy = ({ nestQuestData, setPhase }: MintProps) => {
     }
   }, [wallet.publicKey, connection])
 
+  // TODO
+  const civicGatewayToken = PublicKey.default
   const purchase = (token: string, nft: any) => {
-    const buyFunction = token === 'SOL' ? buyWithSOL(wallet, connection, nft) : buyWithGOFX(wallet, connection, nft)
+    const buyFunction =
+      token === 'SOL'
+        ? buyWithSOL(wallet, connection, nft, civicGatewayToken)
+        : buyWithGOFX(wallet, connection, nft, civicGatewayToken)
 
     buyFunction
       .then((result) => {
