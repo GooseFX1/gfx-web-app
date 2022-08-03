@@ -1,8 +1,8 @@
-import React, { FC, ReactElement, useMemo, useState, useEffect } from 'react'
+import React, { FC, useMemo, useEffect } from 'react'
 import { MainButton } from '../../components'
 import { Connect } from '../../layouts/App/Connect'
 import styled from 'styled-components'
-import { WalletContextState, useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { useFarmContext, usePriceFeedFarm, useAccounts, useTokenRegistry, useConnectionConfig } from '../../context'
 import { invalidInputErrMsg } from './FarmClickHandler'
 import { checkMobile, notify } from '../../utils'
@@ -258,38 +258,55 @@ export const StakeButtons: FC<{
   isUnstakeLoading,
   rowData
 }) => {
-    const { farmDataContext } = useFarmContext()
-    const { prices } = usePriceFeedFarm()
-    const { getUIAmount } = useAccounts()
-    const { publicKey } = useWallet()
-    const { getTokenInfoForFarming } = useTokenRegistry()
-    const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
-    const userTokenBalance = useMemo(
-      () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
-      [tokenInfo?.address, getUIAmount, publicKey]
-    )
-    const [stakeAmt, setStakeAmt] = useState<number | undefined>()
+  const { farmDataContext } = useFarmContext()
+  const { prices } = usePriceFeedFarm()
+  const { getUIAmount } = useAccounts()
+  const { publicKey } = useWallet()
+  const { getTokenInfoForFarming } = useTokenRegistry()
+  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
+  const userTokenBalance = useMemo(
+    () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
+    [tokenInfo?.address, getUIAmount, publicKey]
+  )
 
-    const { current } = useMemo(() => prices[`${name.toUpperCase()}/USDC`], [prices])
-    const tokenData = farmDataContext.find((token) => token.name === 'GOFX')
-    const [notEnoughFunds, setNotEnough] = useState<boolean>()
-    useEffect(() => {
-      const amt = parseFloat(stakeRef.current?.value).toFixed(3)
-      const ans = parseFloat(amt) > parseFloat(userTokenBalance.toFixed(3))
-      setNotEnough(ans)
-    }, [stakeAmt])
+  const { current } = useMemo(() => prices[`${name.toUpperCase()}/USDC`], [prices])
+  const tokenData = farmDataContext.find((token) => token.name === 'GOFX')
 
-    return (
-      <>
-        {wallet.publicKey && !checkMobile() ? (
-          <>
-            <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
-              <div className="left-inner">
-                <STYLED_STAKED_EARNED_CONTENT>
-                  <div className="info-item">
-                    <div className="title">Daily Rewards</div>
-                    <div className="value">{`${tokenData.rewards.toFixed(3)} ${name}`}</div>
-                    <div className="price">{`$${(current * tokenData.rewards).toFixed(3)} USDC`}</div>
+  return (
+    <>
+      {wallet.publicKey && !checkMobile() ? (
+        <>
+          <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
+            <div className="left-inner">
+              <STYLED_STAKED_EARNED_CONTENT>
+                <div className="info-item">
+                  <div className="title">Daily Rewards</div>
+                  <div className="value">{`${tokenData.rewards.toFixed(3)} ${name}`}</div>
+                  <div className="price">{`$${(current * tokenData.rewards).toFixed(3)} USDC`}</div>
+                </div>
+                {wallet.publicKey && (
+                  <STYLED_DESC>
+                    <div className="text">{name} Wallet Balance:</div>
+                    <div className="value">
+                      {userTokenBalance?.toFixed(3)} {name}
+                    </div>
+                  </STYLED_DESC>
+                )}
+              </STYLED_STAKED_EARNED_CONTENT>
+            </div>
+          </STYLED_LEFT_CONTENT>
+          <STYLED_RIGHT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
+            <div className="right-inner">
+              <div className="SOL-item">
+                <STYLED_SOL>
+                  <STYLED_INPUT className="value" type="number" ref={stakeRef} />
+                  <div className="text">
+                    <MAX_BUTTON onClick={() => onClickHalf('stake')} className="text-1">
+                      Half
+                    </MAX_BUTTON>
+                    <MAX_BUTTON onClick={() => onClickMax('stake')} className="text-2">
+                      Max
+                    </MAX_BUTTON>
                   </div>
                   {wallet.publicKey && (
                     <STYLED_DESC>
