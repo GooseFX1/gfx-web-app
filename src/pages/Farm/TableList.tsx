@@ -228,7 +228,7 @@ export const TableList = ({ dataSource }: any) => {
   const gofxPrice = useMemo(() => prices['GOFX/USDC'], [prices])
   useEffect(() => {
     setAllTokenPrices(() => setAllTokenPrices(prices))
-  }, [priceFetched])
+  }, [priceFetched, prices])
 
   const stakeProgram: Program = useMemo(() => {
     return wallet.publicKey
