@@ -1,11 +1,10 @@
-import React, { useState, FC } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Toggle } from './Toggle'
-import { SearchBar, Categories } from '../../components'
-import { Button, Radio } from 'antd'
-import { useFarmContext } from '../../context'
+import { SearchBar } from '../../components'
+import { useFarmContext, usePriceFeedFarm } from '../../context'
 import { checkMobile } from '../../utils'
-import tw from "twin.macro"
+import tw from 'twin.macro'
 import 'styled-components/macro'
 
 const STYLED_FARM_HEADER = styled.div`
@@ -38,7 +37,7 @@ const STYLED_FARM_HEADER = styled.div`
     transition: background 500ms ease-in-out 0s;
   }
 
-    @media (max-width: 500px){
+  @media (max-width: 500px) {
     .search-bar {
       background: ${({ theme }) => theme.searchbarBackground} !important;
       input {
@@ -47,7 +46,7 @@ const STYLED_FARM_HEADER = styled.div`
     }
   }
 
-  @media (max-width: 500px){
+  @media (max-width: 500px) {
     display: block;
     padding: 20px 15px 8px;
     border-radius: 15px 15px 0 0;
@@ -70,7 +69,7 @@ const STYLED_BUTTON = styled.button`
     cursor: wait;
   }
 
-  @media(max-width: 500px){
+  @media (max-width: 500px) {
     margin: auto;
   }
 `
@@ -79,22 +78,23 @@ const ButtonContainer = styled.div`
   ${tw`mr-0 flex flex-row`}
 `
 
-const RefreshIcon = styled.a`
- ${tw`cursor-pointer h-10 w-10 pt-1 mr-[25px] ml-10`}
+const RefreshIcon = styled.button`
+  ${tw`cursor-pointer mr-[25px] ml-10 rounded-full border-0 p-0 bg-transparent`}
 `
 
 const IconContainer = styled.div`
-${tw`flex flex-row`}
+  ${tw`flex flex-row`}
 `
 
 const Wrapper = styled.div`
-${tw`mt-6 flex flex-row`}
+  ${tw`mt-6 flex flex-row`}
 `
 
 const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
 
 export const FarmFilter = () => {
-  const { poolFilter, setPoolFilter, setSearchFilter, setCounter, operationPending } = useFarmContext()
+  const { poolFilter, setPoolFilter, setSearchFilter, operationPending } = useFarmContext()
+  const { refreshTokenData } = usePriceFeedFarm()
   const [arrowRotation, setArrowRotation] = useState(false)
   const [dropdownVisible, setDropdownVisible] = useState(false)
 
@@ -103,49 +103,49 @@ export const FarmFilter = () => {
     setDropdownVisible(!dropdownVisible)
   }
 
-  if(checkMobile()){
-    return(
+  if (checkMobile()) {
+    return (
       <STYLED_FARM_HEADER>
-          <ButtonContainer>
-            {poolTypes.map((pool) => (
-              <STYLED_BUTTON
-                disabled={operationPending}
-                key={pool.name}
-                onClick={() => setPoolFilter(pool.name)}
-                className={pool.name === poolFilter ? 'selectedBackground' : ''}
-              >
-                {pool.name}
-              </STYLED_BUTTON>
-            ))}
+        <ButtonContainer>
+          {poolTypes.map((pool) => (
+            <STYLED_BUTTON
+              disabled={operationPending}
+              key={pool.name}
+              onClick={() => setPoolFilter(pool.name)}
+              className={pool.name === poolFilter ? 'selectedBackground' : ''}
+            >
+              {pool.name}
+            </STYLED_BUTTON>
+          ))}
         </ButtonContainer>
         <Wrapper>
           <SearchBar className="search-bar" placeholder="Search by token" setSearchFilter={setSearchFilter} />
           <Toggle className="toggle" text="Deposited" defaultUnchecked />
         </Wrapper>
-        </STYLED_FARM_HEADER>
+      </STYLED_FARM_HEADER>
     )
   }
 
-  if(checkMobile()){
-    return(
+  if (checkMobile()) {
+    return (
       <STYLED_FARM_HEADER>
-          <ButtonContainer>
-            {poolTypes.map((pool) => (
-              <STYLED_BUTTON
-                disabled={operationPending}
-                key={pool.name}
-                onClick={() => setPoolFilter(pool.name)}
-                className={pool.name === poolFilter ? 'selectedBackground' : ''}
-              >
-                {pool.name}
-              </STYLED_BUTTON>
-            ))}
+        <ButtonContainer>
+          {poolTypes.map((pool) => (
+            <STYLED_BUTTON
+              disabled={operationPending}
+              key={pool.name}
+              onClick={() => setPoolFilter(pool.name)}
+              className={pool.name === poolFilter ? 'selectedBackground' : ''}
+            >
+              {pool.name}
+            </STYLED_BUTTON>
+          ))}
         </ButtonContainer>
         <Wrapper>
           <SearchBar className="search-bar" placeholder="Search by token" setSearchFilter={setSearchFilter} />
           <Toggle className="toggle" text="Deposited" defaultUnchecked />
         </Wrapper>
-        </STYLED_FARM_HEADER>
+      </STYLED_FARM_HEADER>
     )
   }
 
@@ -168,8 +168,8 @@ export const FarmFilter = () => {
 
         <SearchBar className="search-bar" placeholder="Search by token symbol" setSearchFilter={setSearchFilter} />
         <IconContainer>
-          <RefreshIcon href={'/farm'}>
-            <img src={'/img/assets/refresh.svg'} />
+          <RefreshIcon onClick={() => refreshTokenData()}>
+            <img src={'/img/assets/refresh.svg'} alt="refresh" />
           </RefreshIcon>
           <Toggle className="toggle" text="Show Deposited" defaultUnchecked />
         </IconContainer>

@@ -1,20 +1,20 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
 import { Tooltip } from '../../components/Tooltip'
-import { moneyFormatter, nFormatter } from '../../utils/math'
+import { moneyFormatter } from '../../utils/math'
 import { Skeleton } from 'antd'
 import tw from 'twin.macro'
- 
+
 export const STYLED_TITLE = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  .textTitle{
+  .textTitle {
     ${tw`sm:font-semibold sm:text-base text-tiny font-medium text-left`}
     font-family: Montserrat;
     color: #fff;
 
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       ${tw`text-[#eee]`}
       line-height: normal;
     }
@@ -37,14 +37,14 @@ export const STYLED_TITLE = styled.div`
 export const STYLED_NAME = styled.div`
   display: flex;
   align-items: center;
-  .textName{
+  .textName {
     ${tw`sm:ml-[15px]`}
     font-size: 18px;
     font-weight: 600;
     color: ${({ theme }) => theme.text8};
     max-width: 90px;
     margin-left: ${({ theme }) => theme.margin(2.5)};
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       margin-left: 15px;
     }
   }
@@ -78,14 +78,19 @@ const ICON_WRAPPER = styled.div`
   flex-direction: column;
   align-items: center;
 
-  .arrow-down{
-        filter: ${({ theme }) => theme.filterArrowDown};
+  .arrow-down {
+    filter: ${({ theme }) => theme.filterArrowDown};
   }
+`
+
+const RefreshIcon = styled.a`
+  ${tw`cursor-pointer mr-[25px] ml-10 rounded-full border-0 p-0 bg-transparent`}
 `
 
 export const Loader: FC = () => {
   return <Skeleton.Button active size="small" style={{ display: 'flex', height: '15px', borderRadius: '5px' }} />
 }
+
 export const HeaderTooltip = (text: string) => {
   return (
     <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
@@ -208,17 +213,21 @@ export const mobileColumns = [
   },
   {
     title: (
-    <a href="/farm">
-      <img style={{display: "block", margin: "auto", marginRight: "25%"}}src={'/img/assets/refresh.svg'} />
-    </a>
+      <RefreshIcon href="/farm">
+        <img
+          style={{ display: 'block', margin: 'auto', marginRight: '25%' }}
+          src={'/img/assets/refresh.svg'}
+          alt="refresh"
+        />
+      </RefreshIcon>
     ),
     dataIndex: 'apr',
     key: 'apr',
     width: '30%',
     render: (text) => (
       <ICON_WRAPPER>
-        <img className="arrow-down" src={`/img/assets/arrow-down-large.svg`}/>
+        <img className="arrow-down" src={`/img/assets/arrow-down-large.svg`} alt="arrow" />
       </ICON_WRAPPER>
     )
-  },
+  }
 ]
