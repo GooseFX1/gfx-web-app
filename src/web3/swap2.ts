@@ -39,15 +39,18 @@ export const wrapSolToken = async (wallet: WalletContextState, connection: Conne
   try {
     const tx = new Transaction()
     const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
+    let wsol = null
 
     // Create token account to hold your wrapped SOL
     if (associatedTokenAccount) {
       //check if wrapped sol already exists
-      const wsol = await connection.getTokenAccountBalance(associatedTokenAccount)
-      //close wrapped sol amount that existed already
-      if (Number(wsol.value.amount) > 0) {
-        tx.add(createCloseAccountInstruction(associatedTokenAccount, wallet.publicKey, wallet.publicKey))
-      }
+      try {
+        wsol = await connection.getTokenAccountBalance(associatedTokenAccount)
+        //close wrapped sol amount that existed already
+        if (Number(wsol?.value?.amount || 0) > 0) {
+          tx.add(createCloseAccountInstruction(associatedTokenAccount, wallet.publicKey, wallet.publicKey))
+        }
+      } catch {}
 
       tx.add(
         createAssociatedTokenAccountInstruction(wallet.publicKey, associatedTokenAccount, wallet.publicKey, NATIVE_MINT)
@@ -58,7 +61,7 @@ export const wrapSolToken = async (wallet: WalletContextState, connection: Conne
         SystemProgram.transfer({
           fromPubkey: wallet.publicKey,
           toPubkey: associatedTokenAccount,
-          lamports: amount + parseInt(wsol.value.amount)
+          lamports: amount + parseInt(wsol?.value?.amount || 0)
         }),
         createSyncNativeInstruction(associatedTokenAccount)
       )
