@@ -5,31 +5,6 @@ import { Tooltip } from '../../components'
 import { useDarkMode, useSlippageConfig } from '../../context'
 import { CenteredDiv } from '../../styles'
 
-const BODY = styled(CenteredDiv)`
-  flex-direction: column;
-  flex: 1;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: Montserrat;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-  letter-spacing: normal;
-  margin-top: ${({ theme }) => theme.margin(4)};
-  padding-bottom: ${({ theme }) => theme.margin(2.5)};
-
-  > div {
-    display: flex;
-    align-items: center;
-    width: 100%;
-
-    &:nth-child(2) {
-      margin: ${({ theme }) => theme.margin(3)} 0;
-    }
-  }
-`
-
 const BUTTON = styled.button`
   padding: ${({ theme }) => theme.margin(1.5)};
   border: none;
@@ -85,6 +60,14 @@ const BUTTON_CONTAINER = styled(CenteredDiv)`
   }
 `
 
+const SETTING_INPUT = styled(Input)`
+  padding: 1.5rem;
+  height: 50px;
+  margin: 1rem 0rem 1.5rem 0rem;
+  background-color: ${({ theme }) => theme.bg10 + ' !important'};
+  box-shadow: 0 0 0 0 !important;
+`
+
 export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible }) => {
   const { mode } = useDarkMode()
   const { slippage, setSlippage } = useSlippageConfig()
@@ -94,7 +77,30 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
     setSlippage(value / 100)
   }, [value])
 
-  const localCSS = css`
+  const BODY = styled(CenteredDiv)`
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Montserrat;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    margin-top: ${({ theme }) => theme.margin(4)};
+    padding-bottom: ${({ theme }) => theme.margin(2.5)};
+
+    > div {
+      display: flex;
+      align-items: center;
+      width: 100%;
+
+      &:nth-child(2) {
+        margin: ${({ theme }) => theme.margin(3)} 0;
+      }
+    }
+
     .ant-input-affix-wrapper {
       position: relative;
       display: flex;
@@ -110,14 +116,6 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
       height: 24px;
       width: 24px;
     }
-  `
-
-  const SETTING_INPUT = styled(Input)`
-    padding: 1.5rem;
-    height: 50px;
-    margin: 1rem 0rem 1.5rem 0rem;
-    background-color: ${({ theme }) => theme.bg10 + ' !important'};
-    box-shadow: 0 0 0 0 !important;
   `
 
   return (
@@ -145,7 +143,7 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
         <TITLE>Or input manually</TITLE>
       </div>
       <div>
-        <style>{localCSS}</style>
+        {/* <style>{localCSS}</style> */}
         <SETTING_INPUT
           maxLength={6}
           onChange={(x: BaseSyntheticEvent) =>
