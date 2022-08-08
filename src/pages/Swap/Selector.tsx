@@ -251,7 +251,7 @@ export const Selector: FC<{
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <CLICKER_ICON>
                   <img
-                    src={filteredTokens.find((i) => i.name === token.name)?.imageURL}
+                    src={`/img/crypto/${token.symbol}.svg`}
                     alt="active-icon"
                     onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
                   />

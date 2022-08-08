@@ -66,7 +66,7 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
         setFarmingTokens(farmSupportedList)
       } else setFarmingTokens(farmSupportedList)
 
-      let filteredList = [...splList]
+      let filteredList = [...splList].map((i) => (i.symbol === 'SOL' ? { ...i, name: 'SOLANA' } : i))
       if (chainId === ENV.Devnet) {
         filteredList = []
         filteredList.push({
