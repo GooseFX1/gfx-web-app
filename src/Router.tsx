@@ -17,6 +17,7 @@ import useBlacklisted from './utils/useBlacklisted'
 import { Launchpad } from './pages/NFTs/launchpad/Launchpad'
 import { Creator } from './pages/NFTs/CreatorPage/Creator'
 import { AdminWrapper } from './pages/NFTs/adminPage/components/AdminWrapper'
+import { AnalyticsWrapper } from './pages/Analytics/AnalyticsWrapper'
 
 export const Router: FC = () => {
   const blacklisted = useBlacklisted()
@@ -63,6 +64,9 @@ export const Router: FC = () => {
             </Route>
             <Route exact path="/farm">
               <Farm />
+            </Route>
+            <Route exact path="/analytics">
+              <AnalyticsWrapper />
             </Route>
             <Route>
               <GenericNotFound />
