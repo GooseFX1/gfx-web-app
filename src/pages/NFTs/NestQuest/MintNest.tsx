@@ -7,7 +7,8 @@ import { MainButton } from '../../../components'
 import { useConnectionConfig } from '../../../context'
 import { ShareInternal } from './NestQuestComponent'
 import { onShare } from './NestQuestSingleListing'
-import { Creator, StringPublicKey, buyWithSOL, fetchAvailableNft, buyWithGOFX } from '../../../web3'
+import { StringPublicKey, buyWithSOL, fetchAvailableNft, buyWithGOFX } from '../../../web3'
+import { GatewayStatus, useGateway } from '@civic/solana-gateway-react'
 import { notify } from '../../../utils'
 import { PublicKey } from '@solana/web3.js'
 
@@ -16,6 +17,11 @@ const STYLED_POPUP = styled(PopupCustom)`
   * {
     font-family: 'Montserrat';
     color: ${({ theme }) => theme.text2};
+    z-index: 900 !important;
+  }
+
+  .ant-modal-wrap {
+    z-index: 900 !important;
   }
 
   .ant-input-number {
@@ -25,6 +31,7 @@ const STYLED_POPUP = styled(PopupCustom)`
     .ant-modal-body {
       padding: ${theme.margin(3.5)} ${theme.margin(6)} ${theme.margin(2)};
     }
+
     .ant-modal-close {
       right: 35px;
       top: 35px;
@@ -178,6 +185,16 @@ interface Props {
 
 const RoyaltiesStep = ({ modalVisible, setModalOpen, nestQuestData }: Props) => {
   const [phase, setPhase] = useState(1)
+  const { requestGatewayToken, gatewayStatus, gatewayToken } = useGateway()
+
+  useEffect(() => {
+    ;(async function () {
+      if (!gatewayToken || gatewayStatus !== GatewayStatus.ACTIVE) {
+        setModalOpen(false)
+        await requestGatewayToken()
+      }
+    })()
+  }, [gatewayToken, gatewayStatus, requestGatewayToken, setModalOpen])
 
   return (
     <>
@@ -199,7 +216,12 @@ const RoyaltiesStep = ({ modalVisible, setModalOpen, nestQuestData }: Props) => 
         {phase === 1 ? (
           <ConfirmMint nestQuestData={nestQuestData} setPhase={setPhase} />
         ) : phase === 2 ? (
-          <LoadBuy nestQuestData={nestQuestData} setPhase={setPhase} />
+          <LoadBuy
+            nestQuestData={nestQuestData}
+            setPhase={setPhase}
+            gatewayToken={gatewayToken}
+            gatewayStatus={gatewayStatus}
+          />
         ) : (
           <SuccessBuy />
         )}
@@ -212,6 +234,8 @@ interface MintProps {
   modalVisible?: boolean
   setPhase: (data: number) => void
   nestQuestData: any
+  gatewayToken?: any
+  gatewayStatus?: any
 }
 
 const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
@@ -268,7 +292,7 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
   )
 }
 
-const LoadBuy = ({ nestQuestData, setPhase }: MintProps) => {
+const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintProps) => {
   const wallet = useWallet()
   const { connection } = useConnectionConfig()
 
@@ -290,13 +314,13 @@ const LoadBuy = ({ nestQuestData, setPhase }: MintProps) => {
     }
   }, [wallet.publicKey, connection])
 
-  // TODO
-  const civicGatewayToken = PublicKey.default
+  console.log({ gatewayToken, gatewayStatus, stat: GatewayStatus.ACTIVE })
+
   const purchase = (token: string, nft: any) => {
     const buyFunction =
       token === 'SOL'
-        ? buyWithSOL(wallet, connection, nft, civicGatewayToken)
-        : buyWithGOFX(wallet, connection, nft, civicGatewayToken)
+        ? buyWithSOL(wallet, connection, nft, gatewayToken?.publicKey)
+        : buyWithGOFX(wallet, connection, nft, gatewayToken?.publicKey)
 
     buyFunction
       .then((result) => {
