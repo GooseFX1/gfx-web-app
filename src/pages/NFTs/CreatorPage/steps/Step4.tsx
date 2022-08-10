@@ -222,7 +222,7 @@ export const Step4: FC = () => {
           <Row>
             <ImageContainer fileName={creatorData[2] && creatorData[2].image} imageName="no-image" />
           </Row>
-          <NextStepsButton data={creatorStepData} active={nextButtonActive} />
+          <NextStepsButton data={creatorStepData} active={nextButtonActive || true} />
         </Col>
       </Row>
     </WRAPPER>

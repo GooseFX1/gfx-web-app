@@ -427,8 +427,11 @@ export const SSLButtons: FC<{
   const { network } = useConnectionConfig()
 
   let tokenPrice = useMemo(() => {
-    if (name === 'USDC') {
-      return { current: 1 }
+    if (name === TOKEN_NAMES.USDC) {
+      return prices[`${name.toUpperCase()}/USDT`]
+    }
+    if (name === TOKEN_NAMES.USDT) {
+      return prices[`${name.toUpperCase()}/USD`]
     }
     // to get price of the token MSOL must be in upper case while to get tokenInfo address mSOL
     return prices[`${name.toUpperCase()}/USDC`]
