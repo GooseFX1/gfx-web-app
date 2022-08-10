@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import ModalMint from './MintNest'
 import { useAccounts, useConnectionConfig } from '../../../context'
-import { WRAPPED_SOL_MINT, fetchAvailableNft, ADDRESSES } from '../../../web3'
+import { WRAPPED_SOL_MINT, fetchAvailableNft, ADDRESSES, CIVIC_GATEKEEPER, publicKeyLayout } from '../../../web3'
 import { MintItemViewStatus, INFTMetadata } from '../../../types/nft_details'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { MainButton } from '../../../components/MainButton'
@@ -18,7 +18,9 @@ import { Share } from '../Share'
 import { generateTinyURL } from '../../../api/tinyUrl'
 import { notify } from '../../../utils'
 import { RoadMap, TeamMembers, Vesting } from './NestQuestComponent'
-import { publicKeyLayout } from '../../../web3/layout'
+import { GatewayProvider } from '@civic/solana-gateway-react'
+import { PublicKey, Transaction, sendAndConfirmRawTransaction } from '@solana/web3.js'
+
 const { TabPane } = Tabs
 
 //#region styles
@@ -393,8 +395,9 @@ export const NestQuestSingleListing: FC<{
 }> = ({ status = '', backUrl, handleClickPrimaryButton, ...rest }) => {
   const history = useHistory()
   const totalEggs = 10
-  const { connected, publicKey } = useWallet()
-  const { connection, network } = useConnectionConfig()
+  const { connected, publicKey, signTransaction } = useWallet()
+  const { connection, endpoint, network } = useConnectionConfig()
+  //const { candyMachine } = useNFTLPSelected()
   const { getUIAmount } = useAccounts()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [token, setToken] = useState<string>('SOL')
@@ -468,172 +471,223 @@ export const NestQuestSingleListing: FC<{
     [setModalVisible, publicKey, connected]
   )
 
+  async function CivicTransaction(transaction: Transaction) {
+    const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(publicKey!))
+    if (userMustSign) {
+      notify({
+        message: 'Please sign one-time Civic Pass issuance'
+      })
+      try {
+        transaction = await signTransaction!(transaction)
+      } catch (e) {
+        notify({
+          type: 'error',
+          message: 'User cancelled signing'
+        })
+        throw e
+      }
+    } else {
+      notify({
+        message: 'Refreshing Civic Pass, Please reload page if unresponsive'
+      })
+    }
+
+    try {
+      notify({
+        message: 'Please sign minting for civic token pass'
+      })
+      await sendAndConfirmRawTransaction(connection, transaction.serialize())
+    } catch (e) {
+      notify({
+        type: 'error',
+        message: 'Solana dropped the transaction, please try again'
+      })
+      console.error(e)
+      throw e
+    }
+    setModalVisible(true)
+  }
+
   return (
-    <NFT_DETAILS {...rest}>
-      <div style={{ position: 'absolute', top: '48px', left: '24px' }}>
-        <FloatingActionButton height={50} onClick={() => history.goBack()}>
-          <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
-        </FloatingActionButton>
-      </div>
+    <GatewayProvider
+      broadcastTransaction={false}
+      options={{ autoShowModal: false }}
+      wallet={{
+        publicKey: publicKey,
+        signTransaction: signTransaction
+      }}
+      clusterUrl={endpoint}
+      cluster={network}
+      handleTransaction={CivicTransaction}
+      gatekeeperNetwork={CIVIC_GATEKEEPER}
+    >
+      <NFT_DETAILS {...rest}>
+        <div style={{ position: 'absolute', top: '48px', left: '24px' }}>
+          <FloatingActionButton height={50} onClick={() => history.goBack()}>
+            <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
+          </FloatingActionButton>
+        </div>
 
-      <Row gutter={[24, 16]} className="nd-content" justify="center" align="top">
-        <Col sm={10} xl={10} xxl={10} className="nd-details">
-          <div>
-            {isLoading ? (
-              <>
-                <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
-                <br />
-                <SkeletonCommon width="100%" height="350px" borderRadius="10px" />
-                <br />
-              </>
-            ) : (
-              <div>
-                <YELLOW>Featured Launch {network !== 'devnet' && '(Coming Soon)'}</YELLOW>
-                {/* <DESCRIPTION>coming soon</DESCRIPTION> */}
-                <TITLE className="rs-name">NestQuest</TITLE>
-                <SUBTITLE>Tier #1 "The Egg"</SUBTITLE>
-                <br />
-                <Row justify="space-between" align="middle">
-                  <Col span={7}>
-                    <PILL_SECONDARY>
-                      <div>Items 10,018</div>
-                    </PILL_SECONDARY>
-                  </Col>
-                  <Col span={7}>
-                    <PILL_SECONDARY>
-                      <div>
-                        Price {mintPrice} <img className="icon-image" src={`/img/crypto/${token}.svg`} alt="" /> {token}
-                      </div>
-                    </PILL_SECONDARY>
-                  </Col>
-                  <Col span={2}>
-                    <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.nestquest)}>
-                      <SVGDynamicReverseMode src="/img/assets/domains.svg" alt="domain-icon" />
-                    </SOCIAL_ICON>
-                  </Col>
-                  <Col span={2}>
-                    <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.discord)}>
-                      <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
-                    </SOCIAL_ICON>
-                  </Col>
-                  <Col span={2}>
-                    <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.twitter)}>
-                      <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
-                    </SOCIAL_ICON>
-                  </Col>
-                </Row>
-                <br />
-                {network === 'devnet' && (
-                  <div>
-                    <Tabs className={'collection-tabs'} defaultActiveKey="1" centered>
-                      <TabPane tab="Summary" key="1">
-                        <DESCRIPTION>{nestData?.summary}</DESCRIPTION>
-                      </TabPane>
-                      <TabPane tab="Roadmap" key="2">
-                        <RoadMap roadmap={nestData?.roadmap} />
-                      </TabPane>
-                      <TabPane tab="Team" key="3">
-                        <TeamMembers teamMembers={nestData?.team} />
-                      </TabPane>
-                      <TabPane tab="Vesting" key="4">
-                        <Vesting currency={token} str={''} />
-                      </TabPane>
-                    </Tabs>
-                    <ACTION_BELOW>
-                      {publicKeyLayout ? (
-                        !mintDisabled && !insufficientToken ? (
-                          <ORANGE_BTN status="action" onClick={() => setModalVisible(true)} disabled={mintDisabled}>
-                            Mint
-                          </ORANGE_BTN>
+        <Row gutter={[24, 16]} className="nd-content" justify="center" align="top">
+          <Col sm={10} xl={10} xxl={10} className="nd-details">
+            <div>
+              {isLoading ? (
+                <>
+                  <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
+                  <br />
+                  <SkeletonCommon width="100%" height="350px" borderRadius="10px" />
+                  <br />
+                </>
+              ) : (
+                <div>
+                  <YELLOW>Featured Launch {network !== 'devnet' && '(Coming Soon)'}</YELLOW>
+                  {/* <DESCRIPTION>coming soon</DESCRIPTION> */}
+                  <TITLE className="rs-name">NestQuest</TITLE>
+                  <SUBTITLE>Tier #1 "The Egg"</SUBTITLE>
+                  <br />
+                  <Row justify="space-between" align="middle">
+                    <Col span={7}>
+                      <PILL_SECONDARY>
+                        <div>Items 10,018</div>
+                      </PILL_SECONDARY>
+                    </Col>
+                    <Col span={7}>
+                      <PILL_SECONDARY>
+                        <div>
+                          Price {mintPrice} <img className="icon-image" src={`/img/crypto/${token}.svg`} alt="" />{' '}
+                          {token}
+                        </div>
+                      </PILL_SECONDARY>
+                    </Col>
+                    <Col span={2}>
+                      <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.nestquest)}>
+                        <SVGDynamicReverseMode src="/img/assets/domains.svg" alt="domain-icon" />
+                      </SOCIAL_ICON>
+                    </Col>
+                    <Col span={2}>
+                      <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.discord)}>
+                        <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
+                      </SOCIAL_ICON>
+                    </Col>
+                    <Col span={2}>
+                      <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.twitter)}>
+                        <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
+                      </SOCIAL_ICON>
+                    </Col>
+                  </Row>
+                  <br />
+                  {network === 'devnet' && (
+                    <div>
+                      <Tabs className={'collection-tabs'} defaultActiveKey="1" centered>
+                        <TabPane tab="Summary" key="1">
+                          <DESCRIPTION>{nestData?.summary}</DESCRIPTION>
+                        </TabPane>
+                        <TabPane tab="Roadmap" key="2">
+                          <RoadMap roadmap={nestData?.roadmap} />
+                        </TabPane>
+                        <TabPane tab="Team" key="3">
+                          <TeamMembers teamMembers={nestData?.team} />
+                        </TabPane>
+                        <TabPane tab="Vesting" key="4">
+                          <Vesting currency={token} str={''} />
+                        </TabPane>
+                      </Tabs>
+                      <ACTION_BELOW>
+                        {publicKeyLayout ? (
+                          !mintDisabled && !insufficientToken ? (
+                            <ORANGE_BTN status="action" onClick={() => setModalVisible(true)} disabled={mintDisabled}>
+                              Mint
+                            </ORANGE_BTN>
+                          ) : (
+                            <CONNECT>
+                              <span>{insufficientToken ? 'Insufficient Balance' : 'Sold Out'}</span>
+                            </CONNECT>
+                          )
                         ) : (
-                          <CONNECT>
-                            <span>{insufficientToken ? 'Insufficient Balance' : 'Sold Out'}</span>
+                          <CONNECT onClick={handleWalletModal}>
+                            <span>Connect Wallet</span>
                           </CONNECT>
-                        )
-                      ) : (
-                        <CONNECT onClick={handleWalletModal}>
-                          <span>Connect Wallet</span>
-                        </CONNECT>
-                      )}
+                        )}
 
-                      <SHARE_BUTTON onClick={() => setShareModal(true)}>
-                        <img src={`/img/assets/share.svg`} alt="share-icon" />
-                      </SHARE_BUTTON>
-                    </ACTION_BELOW>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </Col>
-        <Col span={1}></Col>
-        <Col sm={10} xl={10} xxl={10}>
-          <TokenToggle
-            token={token}
-            toggleToken={() => {
-              token === 'SOL' ? setToken('GOFX') : setToken('SOL')
-              token === 'SOL' ? setMintPrice(750) : setMintPrice(2)
-            }}
-          />
-          {!isLoading ? (
-            <IMAGE>
-              <video
-                className="ls-video"
-                autoPlay
-                loop
-                src={'https://gfxnestquest.s3.ap-south-1.amazonaws.com/Egg.mov'}
-              ></video>
-            </IMAGE>
-          ) : (
-            <SkeletonCommon width="100%" height="550px" borderRadius="10px" />
-          )}
-          <br />
-
-          {!mintDisabled && (
-            <Live>
-              <LiveText>Live</LiveText>
-            </Live>
-          )}
-
-          {!isLoading ? (
-            network === 'devnet' ? (
-              <Row gutter={8}>
-                <Col span={7}></Col>
-                <MINT_PROGRESS_WRAPPER>
-                  <MINT_PROGRESS
-                    percent={((totalEggs - availableEggs) / totalEggs) * 100}
-                    status="active"
-                    num={((totalEggs - availableEggs) / totalEggs) * 100}
-                  />
-                  <REMNANT>
-                    <span>{totalEggs - availableEggs}</span>/{totalEggs}
-                  </REMNANT>
-                </MINT_PROGRESS_WRAPPER>
-              </Row>
+                        <SHARE_BUTTON onClick={() => setShareModal(true)}>
+                          <img src={`/img/assets/share.svg`} alt="share-icon" />
+                        </SHARE_BUTTON>
+                      </ACTION_BELOW>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </Col>
+          <Col span={1}></Col>
+          <Col sm={10} xl={10} xxl={10}>
+            <TokenToggle
+              token={token}
+              toggleToken={() => {
+                token === 'SOL' ? setToken('GOFX') : setToken('SOL')
+                token === 'SOL' ? setMintPrice(750) : setMintPrice(2)
+              }}
+            />
+            {!isLoading ? (
+              <IMAGE>
+                <video
+                  className="ls-video"
+                  autoPlay
+                  loop
+                  src={'https://gfxnestquest.s3.ap-south-1.amazonaws.com/Egg.mov'}
+                ></video>
+              </IMAGE>
             ) : (
-              <></>
-            )
-          ) : (
-            <SkeletonCommon width="100%" height="50px" borderRadius="50px" />
-          )}
-        </Col>
-      </Row>
+              <SkeletonCommon width="100%" height="550px" borderRadius="10px" />
+            )}
+            <br />
 
-      {shareModal && (
-        <Share
-          visible={shareModal}
-          handleCancel={() => setShareModal(false)}
-          socials={['twitter', 'telegram', 'facebook', 'copy link']}
-          handleShare={onShare}
-        />
-      )}
-      {modalVisible && !mintDisabled && (
-        <ModalMint
-          modalVisible={modalVisible}
-          setModalOpen={setModalVisible}
-          nestQuestData={{ name: 'Tier #1 “The Egg”', project: 'NestQuest', token }}
-        />
-      )}
-    </NFT_DETAILS>
+            {!mintDisabled && (
+              <Live>
+                <LiveText>Live</LiveText>
+              </Live>
+            )}
+
+            {!isLoading ? (
+              network === 'devnet' ? (
+                <Row gutter={8}>
+                  <Col span={7}></Col>
+                  <MINT_PROGRESS_WRAPPER>
+                    <MINT_PROGRESS
+                      percent={((totalEggs - availableEggs) / totalEggs) * 100}
+                      status="active"
+                      num={((totalEggs - availableEggs) / totalEggs) * 100}
+                    />
+                    <REMNANT>
+                      <span>{totalEggs - availableEggs}</span>/{totalEggs}
+                    </REMNANT>
+                  </MINT_PROGRESS_WRAPPER>
+                </Row>
+              ) : (
+                <></>
+              )
+            ) : (
+              <SkeletonCommon width="100%" height="50px" borderRadius="50px" />
+            )}
+          </Col>
+        </Row>
+
+        {shareModal && (
+          <Share
+            visible={shareModal}
+            handleCancel={() => setShareModal(false)}
+            socials={['twitter', 'telegram', 'facebook', 'copy link']}
+            handleShare={onShare}
+          />
+        )}
+        {modalVisible && !mintDisabled && (
+          <ModalMint
+            modalVisible={modalVisible}
+            setModalOpen={setModalVisible}
+            nestQuestData={{ name: 'Tier #1 “The Egg”', project: 'NestQuest', token }}
+          />
+        )}
+      </NFT_DETAILS>
+    </GatewayProvider>
   )
 }
