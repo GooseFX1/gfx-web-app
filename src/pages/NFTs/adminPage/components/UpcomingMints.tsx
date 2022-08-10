@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { fetchAllNFTLaunchpadData } from '../../../../api/NFTLaunchpad'
-import { useNavCollapse } from '../../../../context'
+import { useNavCollapse, useNFTAdmin } from '../../../../context'
 import { GradientImageBorder } from './ReviewTable'
 import { INFTProjectConfig } from '../../../../types/nft_launchpad'
 import { formatTommddyyyy, getDateInArray } from '../../../../web3/nfts/utils'
@@ -163,6 +163,7 @@ const UpcomingMints = () => {
   const { isCollapsed } = useNavCollapse()
   const [upcomingMints, setUpcomingMints] = useState([])
   const [showMints, setShowMints] = useState([])
+  const { update } = useNFTAdmin()
   const [selected, setSelected] = useState<INFTProjectConfig | undefined>(undefined)
   const [datesArr, setDatesArr] = useState<String[]>([])
   const [selectIndex, setSelectIndex] = useState<number | undefined>()
@@ -191,7 +192,7 @@ const UpcomingMints = () => {
       setShowMints(mints)
       setSelected(mints[0])
     })()
-  }, [])
+  }, [update])
 
   useEffect(() => {
     setShowMints(
