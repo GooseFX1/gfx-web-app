@@ -5,13 +5,10 @@ import { purchaseWithSol } from './nestquest-codegen/instructions/purchaseWithSo
 import { purchaseWithGofx } from './nestquest-codegen/instructions/purchaseWithGofx'
 import { PROGRAM_ID } from './nestquest-codegen/programId'
 import { createAssociatedTokenAccountInstruction } from './account'
-import { TOKEN_PROGRAM_ID, ADDRESSES } from './ids'
+import { TOKEN_PROGRAM_ID, ADDRESSES, CIVIC_GATEKEEPER, SOL_REVENUE, GOFX_REVENUE } from './ids'
 import { signAndSendRawTransaction } from './utils'
 
 const GOFX_MINT = ADDRESSES['devnet'].mints.GOFX.address
-const CIVIC_GATEKEEPER = web3.PublicKey.default
-const SOL_REVENUE = web3.PublicKey.default
-const GOFX_REVENUE = web3.PublicKey.default
 
 const buildAssocIx = (nftUserAccount: web3.PublicKey, walletPubkey: web3.PublicKey, nftMint: web3.PublicKey) => {
   const temp = []

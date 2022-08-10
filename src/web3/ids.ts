@@ -481,3 +481,9 @@ export const AH_BUMP: number = 253
 export const AH_FEE_BUMP: number = 251
 
 export const AH_TREASURY_BUMP: number = 255
+
+export const CIVIC_GATEKEEPER = new PublicKey('ignREusXmGrscGNUesoU9mxfds9AiYTezUKex2PsZV6')
+
+export const SOL_REVENUE = new PublicKey('9wN21Aghw1mt9rRaSKGkDpDNpUhMA7QQX3uGtYZBYaKU')
+
+export const GOFX_REVENUE = new PublicKey('AtzZfzmozqGLSpcTCXD9p4mTzxoJmpAtZigNJ3xTbAY2')
