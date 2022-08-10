@@ -7,6 +7,16 @@ import { FileDrop } from 'react-file-drop'
 import { ImageContainer, NextStepsButton } from '../components/SharedComponents'
 import 'styled-components/macro'
 import { ICreatorData } from '../../../../types/nft_launchpad'
+import { uploadFile } from 'react-s3'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { notify } from '../../../../utils'
+
+const config = {
+  bucketName: 'gfx-nest-image-resources',
+  region: 'ap-south-1',
+  accessKeyId: process.env.REACT_APP_S3_ACCESS_KEY,
+  secretAccessKey: process.env.REACT_APP_S3_SECRET_ACCESS_KEY
+}
 
 const WRAPPER = styled.div`
   ${tw`mb-12`}
@@ -107,34 +117,57 @@ const WRAPPER = styled.div`
 `
 export const Step4: FC = () => {
   const { previousStep, creatorData } = useNFTCreator()
-  const [uploadedFile, setUploadedFile] = useState(null)
+  const [imageLink, setImageLink] = useState('')
   const inputReference = React.useRef(null)
-
+  const wallet = useWallet()
   const [isDelayedReveal, setIsDelayedReveal] = useState<boolean>(false)
   const [nextButtonActive, setNextButtonActive] = useState<boolean>(false)
 
   const fileConstraints = (file) => {
     let extension = file.name.split('.')[1]
-    if ((extension === '7z' || extension === 'rar' || extension === 'zip') && file.size < 200 * 1024 * 1024)
-      setUploadedFile(file)
+    if ((extension === '7z' || extension === 'rar' || extension === 'zip') && file.size < 200 * 1024 * 1024) {
+      notify({
+        message: 'Please wait for the upload to finish it may take a while...'
+      })
+      uploadFile(file, { ...config, dirName: 'launchpad_' + wallet.publicKey.toBase58() + '_assets' }).then(
+        (data: any) => {
+          setImageLink(data.location)
+          notify({
+            message: 'Upload Complete!'
+          })
+        }
+      )
+    }
   }
 
   let creatorStepData: ICreatorData[4] = {
     delayedReveal: isDelayedReveal,
-    uploadedFiles: uploadedFile
+    uploadedFiles: imageLink
   }
 
   useEffect(() => {
-    if (uploadedFile) setNextButtonActive(true)
+    if (creatorData && creatorData[4]) {
+      setIsDelayedReveal(creatorData[4].delayedReveal)
+      setImageLink(creatorData[4].uploadedFiles)
+    }
+  }, [creatorData])
+
+  useEffect(() => {
+    if (imageLink) setNextButtonActive(true)
     else setNextButtonActive(false)
-  }, [uploadedFile])
+  }, [imageLink])
 
   return (
     <WRAPPER>
       <Row>
         <Col span={13}>
           <Row className="relative-row">
-            <img onClick={() => previousStep()} className="back-button" src="/img/assets/backArrow.svg" alt="back" />
+            <img
+              onClick={() => previousStep()}
+              className="back-button"
+              src="/img/assets/backArrowWhite.svg"
+              alt="back"
+            />
             <div className="big-label">4. Do you plan a deleyed reveal for the collection?</div>
           </Row>
           <Row>
@@ -153,14 +186,19 @@ export const Step4: FC = () => {
           <div className="next-day-label">Create a zip flie with all NFT's, we will take care of the rest!</div>
           <div tw="w-9/12">
             <FileDrop onDrop={(files, event) => fileConstraints(files[0])}>
-              {!uploadedFile ? 'Drag and drop a file to upload or' : ''}
-              {!uploadedFile ? (
+              {!imageLink ? 'Drag and drop a file to upload or' : ''}
+              {!imageLink ? (
                 <>
                   <input
                     className="hiddenInput"
                     type={'file'}
                     ref={inputReference}
-                    onChange={(e) => fileConstraints(e.target.files[0])}
+                    onChange={(e) => {
+                      notify({
+                        message: 'Uploading...'
+                      })
+                      fileConstraints(e.target.files[0])
+                    }}
                   />
                   <Button onClick={() => inputReference.current.click()}>Select File</Button>{' '}
                 </>
@@ -170,10 +208,10 @@ export const Step4: FC = () => {
                     className="close-icon"
                     alt="close"
                     src={'/img/assets/close-gray-icon.svg'}
-                    onClick={() => setUploadedFile(null)}
+                    onClick={() => setImageLink('')}
                   />
-                  <img className="uploaded-image" alt="not found" src={URL.createObjectURL(uploadedFile)} />
-                  <div className="image-info">{uploadedFile?.name}</div>
+                  <img className="uploaded-image" alt="not found" src={imageLink} />
+                  {/*<div className="image-info">{uploadedFile?.name}</div>*/}
                 </div>
               )}
             </FileDrop>
@@ -184,7 +222,7 @@ export const Step4: FC = () => {
           <Row>
             <ImageContainer fileName={creatorData[2] && creatorData[2].image} imageName="no-image" />
           </Row>
-          <NextStepsButton data={creatorStepData} active={nextButtonActive} />
+          <NextStepsButton data={creatorStepData} active={nextButtonActive || true} />
         </Col>
       </Row>
     </WRAPPER>

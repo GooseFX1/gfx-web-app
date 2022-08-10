@@ -179,6 +179,7 @@ interface ITeamMember {
 }
 
 export const TeamMembersContainer = ({ data, setTeamMembers }) => {
+  const { creatorData } = useNFTCreator()
   const twitterURL = 'www.twitter.com/'
   const nameRef = useRef<any>()
   const usernameRef = useRef<any>()
@@ -191,6 +192,14 @@ export const TeamMembersContainer = ({ data, setTeamMembers }) => {
     setCurrentName(teamArr[index]?.name ? teamArr[index].name : '')
     setCurrentUsername(teamArr[index]?.username ? teamArr[index]?.username : twitterURL)
   }, [index])
+
+  useEffect(() => {
+    if (creatorData && creatorData[5]) {
+      setTeamArr([...creatorData[5].team])
+      setCurrentName(creatorData[5].team[0]['name'])
+      setCurrentUsername(creatorData[5].team[0]['username'])
+    }
+  }, [])
 
   useEffect(() => {
     setTeamMembers(teamArr)

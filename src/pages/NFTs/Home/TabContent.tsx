@@ -203,6 +203,7 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
               : `/img/assets/nft-preview.svg`
           }
           fallback={`/img/assets/nft-preview.svg`}
+          preview={false}
           alt="analytic-img"
         />
       )}

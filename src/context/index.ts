@@ -17,3 +17,5 @@ export * from './reward_toggle'
 export * from './farm'
 export * from './price_feed_farm'
 export * from './nft_launchpad'
+export * from './nft_admin'
+

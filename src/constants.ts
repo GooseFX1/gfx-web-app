@@ -1,3 +1,4 @@
+import { ICreatorData } from './types/nft_launchpad.d'
 import { ADDRESSES } from './web3'
 export const LITEPAPER_ADDRESS: string = 'https://docs.goosefx.io'
 export const SOCIAL_MEDIAS: { [key: string]: string } = {
@@ -9,7 +10,7 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
   nftCreatorForm: 'https://docs.google.com/forms/d/e/1FAIpQLSeg1OzYlHdNqWiAEPl2QUZj7XwLvEpXAkGtWd4-H9SyyQe1DQ/viewform'
 }
 
-export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'SRM', 'ETH', 'GMT', 'mSOL']
+export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'USDT', 'SRM', 'ETH', 'GMT', 'mSOL']
 export let FARM_SUPPORTED_TOKEN_LIST = ['GOFX']
 export const MODAL_TYPES = {
   FEES: 'FEES',
@@ -18,7 +19,9 @@ export const MODAL_TYPES = {
   NFT_MENU: 'NFT_MENU',
   CREATOR_DISCLAIMER: 'CREATOR_DISCLAIMER',
   SUBMIT: 'SUBMIT',
-  RELAX: 'RELAX'
+  RELAX: 'RELAX',
+  APPROVE_PROJECT: 'APPROVE_PROJECT',
+  REJECT_PROJECT: 'REJECT_PROJECT'
 }
 export const CAROUSEL = [
   { name: 'Create', id: 0, position: 1, redirect: 'NFTs/create' },
@@ -38,7 +41,9 @@ export const NETWORK_CONSTANTS = {
 export const TOKEN_NAMES = {
   SOL: 'SOL',
   GOFX: 'GOFX',
-  GMT: 'GMT'
+  GMT: 'GMT',
+  USDT: 'USDT',
+  USDC: 'USDC'
 }
 
 export const TOKEN_BLACKLIST = [

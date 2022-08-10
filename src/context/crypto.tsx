@@ -47,7 +47,9 @@ export const FARM_TOKEN_LIST = [
   { decimals: 3, pair: 'SOL/USDC', type: 'crypto' as MarketType, coinGecko: 'solana' },
   { decimals: 3, pair: 'MSOL/USDC', type: 'crypto' as MarketType, coinGecko: 'Marinade staked SOL' },
   { decimals: 3, pair: 'SRM/USDC', type: 'crypto' as MarketType, coinGecko: 'serum' },
-  { decimals: 3, pair: 'GMT/USDC', type: 'crypto' as MarketType, coinGecko: 'stepn' }
+  { decimals: 3, pair: 'GMT/USDC', type: 'crypto' as MarketType, coinGecko: 'stepn' },
+  { decimals: 3, pair: 'USDT/USD', type: 'crypto' as MarketType, coinGecko: 'tether' },
+  { decimals: 3, pair: 'USDC/USDT', type: 'crypto' as MarketType, coinGecko: 'usd-coin' }
 ]
 
 const CryptoContext = createContext<ICryptoConfig | null>(null)

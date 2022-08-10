@@ -1,8 +1,8 @@
-import React, { FC, ReactElement, useMemo, useState, useEffect } from 'react'
+import React, { FC, useMemo, useState, useEffect } from 'react'
 import { MainButton } from '../../components'
 import { Connect } from '../../layouts/App/Connect'
 import styled from 'styled-components'
-import { WalletContextState, useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { useFarmContext, usePriceFeedFarm, useAccounts, useTokenRegistry, useConnectionConfig } from '../../context'
 import { invalidInputErrMsg } from './FarmClickHandler'
 import { checkMobile, notify } from '../../utils'
@@ -204,26 +204,24 @@ const STYLED_STAKE_PILL = styled(MainButton)`
   width: 372px;
   height: 44px;
   border-radius: 51px;
-  background-color: ${({ theme }) => theme.stakePillBg};
+  background: ${({ theme }) => theme.primary3};
   line-height: 49px;
   font-family: Montserrat;
   font-size: 14px;
   font-weight: 600;
   text-align: center;
-  opacity: 0.5;
-  color: ${({ theme }) => theme.text14};
+  opacity: 0.85;
+  color: #fff;
   margin: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(1.5)} 0;
   transition: all 0.3s ease;
   cursor: pointer;
   &.active,
   &:hover,
   &:focus {
-    background: ${({ theme }) => theme.primary3};
-    color: #fff;
     opacity: 1;
-    &:disabled {
-      opacity: 0.5;
-    }
+  }
+  &:disabled {
+    opacity: 0.5;
   }
 
   &.miniButtons {
@@ -232,7 +230,7 @@ const STYLED_STAKE_PILL = styled(MainButton)`
 const MAX_BUTTON = styled.div`
   cursor: pointer;
 `
-const STYLED_MINT = styled(MainButton)``
+
 const DISPLAY_DECIMAL = 3
 
 export const StakeButtons: FC<{
@@ -270,9 +268,17 @@ export const StakeButtons: FC<{
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
     [tokenInfo?.address, getUIAmount, publicKey]
   )
-  const current = 123
-  //const { current } = useMemo(() => prices[`${name.toUpperCase()}/USDC`], [prices])
+  const [stakeAmt, setStakeAmt] = useState<number | undefined>()
+
+  const { current } = useMemo(() => prices[`${name.toUpperCase()}/USDC`], [prices])
   const tokenData = farmDataContext.find((token) => token.name === 'GOFX')
+  const [notEnoughFunds, setNotEnough] = useState<boolean>()
+  useEffect(() => {
+    const amt = parseFloat(stakeRef.current?.value).toFixed(3)
+    const ans = parseFloat(amt) > parseFloat(userTokenBalance.toFixed(3))
+    setNotEnough(ans)
+  }, [stakeAmt])
+
   return (
     <>
       {wallet.publicKey && !checkMobile() ? (
@@ -300,7 +306,12 @@ export const StakeButtons: FC<{
             <div className="right-inner">
               <div className="SOL-item">
                 <STYLED_SOL>
-                  <STYLED_INPUT className="value" type="number" ref={stakeRef} />
+                  <STYLED_INPUT
+                    className="value"
+                    type="number"
+                    ref={stakeRef}
+                    onChange={(e) => setStakeAmt(parseFloat(e.target.value))}
+                  />
                   <div className="text">
                     <MAX_BUTTON onClick={() => onClickHalf('stake')} className="text-1">
                       Half
@@ -310,8 +321,12 @@ export const StakeButtons: FC<{
                     </MAX_BUTTON>
                   </div>
                 </STYLED_SOL>
-                <STYLED_STAKE_PILL loading={isStakeLoading} disabled={isStakeLoading} onClick={() => onClickStake()}>
-                  Stake
+                <STYLED_STAKE_PILL
+                  loading={isStakeLoading}
+                  disabled={notEnoughFunds || isStakeLoading}
+                  onClick={() => onClickStake()}
+                >
+                  {notEnoughFunds ? 'Not enough funds' : 'Stake'}
                 </STYLED_STAKE_PILL>
               </div>
 
@@ -412,8 +427,11 @@ export const SSLButtons: FC<{
   const { network } = useConnectionConfig()
 
   let tokenPrice = useMemo(() => {
-    if (name === 'USDC') {
-      return { current: 1 }
+    if (name === TOKEN_NAMES.USDC) {
+      return prices[`${name.toUpperCase()}/USDT`]
+    }
+    if (name === TOKEN_NAMES.USDT) {
+      return prices[`${name.toUpperCase()}/USD`]
     }
     // to get price of the token MSOL must be in upper case while to get tokenInfo address mSOL
     return prices[`${name.toUpperCase()}/USDC`]
@@ -452,7 +470,7 @@ export const SSLButtons: FC<{
     }
     return false
   }
-  let notEnough
+  let notEnough = false
   try {
     let amt = parseFloat(stakeRef.current?.value).toFixed(3)
     notEnough =
@@ -591,5 +609,3 @@ export const SSLButtons: FC<{
     </>
   )
 }
-
-export default {}

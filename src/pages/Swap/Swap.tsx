@@ -4,6 +4,7 @@ import { logEvent } from 'firebase/analytics'
 import analytics from '../../analytics'
 import styled, { css } from 'styled-components'
 import { Settings } from './Settings'
+import { Wrap } from './Wrap'
 import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
@@ -275,6 +276,18 @@ const SWAP_CONTENT = styled.div`
   @media (max-width:500px) {
     line-height: inherit;
   }
+
+  .wrapped-sol {
+    margin-right: 10px;
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 100%;
+    text-align: center;
+    line-height: 2.5rem;
+    font-size: 10px;
+    background-color: ${({ theme }) => theme.bg10};
+    cursor: pointer;
+  }
 `
 
 const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: number }> = ({
@@ -288,6 +301,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
   const { refreshRates, setFocused, switchTokens, setClickNo, tokenA, tokenB, inTokenAmount } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
   const [route, setRoute] = useState(routes[clickNo])
+  const [wrapModalVisible, setWrapModalVisible] = useState(false)
 
   useEffect(() => {
     const an = analytics()
@@ -348,6 +362,15 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
       >
         <Settings setVisible={setSettingsModalVisible} />
       </SETTING_MODAL>
+      <SETTING_MODAL
+        setVisible={setWrapModalVisible}
+        bigTitle={true}
+        title="SOL / WSOL"
+        visible={wrapModalVisible}
+        style={{ overflowY: 'hidden' }}
+      >
+        <Wrap setVisible={setWrapModalVisible} />
+      </SETTING_MODAL>
       <HEADER_WRAPPER $iconSize="40px">
         <HEADER_TITLE>
           <span>{checkMobile() ? 'Swap' : dateString(new Date())}</span>
@@ -355,6 +378,9 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
         </HEADER_TITLE>
 
         <div>
+          <div onClick={() => setWrapModalVisible(true)} className="wrapped-sol">
+            wSOL
+          </div>
           <div onClick={refreshRates}>
             <img src={`/img/assets/refresh.svg`} alt="refresh-icon" className={'header-icon'} />
           </div>

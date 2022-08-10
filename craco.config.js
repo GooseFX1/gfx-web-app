@@ -1,5 +1,6 @@
 const CracoLessPlugin = require('craco-less')
 const path = require('path')
+const webpack = require('webpack')
 
 module.exports = {
   plugins: [
@@ -40,6 +41,9 @@ module.exports = {
       })
 
       return webpackConfig
-    }
+    },
+    plugins: [
+      new webpack.NormalModuleReplacementPlugin(/@ledgerhq\/devices\/hid-framing/, '@ledgerhq/devices/lib/hid-framing')
+    ]
   }
 }
