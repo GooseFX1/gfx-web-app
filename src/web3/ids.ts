@@ -85,6 +85,10 @@ export const ADDRESSES: {
       GMT: {
         address: new PublicKey('7i5KKsX2weiTkry7jA4ZwSuXGhs5eJBEjY8vVxR4pfRx'),
         decimals: 9
+      },
+      ORCA: {
+        address: new PublicKey('orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE'),
+        decimals: 6
       }
     },
     mints: {
