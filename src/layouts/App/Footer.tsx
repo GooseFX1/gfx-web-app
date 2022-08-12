@@ -9,6 +9,7 @@ import { SOCIAL_MEDIAS } from '../../constants'
 import { SVGDynamicReverseMode } from '../../styles/utils'
 import { checkMobile } from '../../utils'
 import { ThemeToggle } from '../../components/ThemeToggle'
+import {useLocation} from 'react-router-dom';
 
 const SOCIAL_ICON = styled.button`
   background: transparent;
@@ -81,47 +82,54 @@ export const Footer: FC = () => {
   const { network } = useConnectionConfig()
   const [privacyPolicyVisible, setPrivacyPolicyVisible] = useState(false)
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState(false)
+  const location = useLocation();
+  const hideFooter = location.pathname.startsWith('/NFTs/launchpad/');
+  console.log("pathname", location.pathname);
+  console.log("hahaha", hideFooter);
 
-  if (checkMobile()) {
-    return (
-      <WRAPPER>
-        {/* <ThemeToggle /> */}
-        <AltRow justify="space-between" align="middle">
-          <Col span={2}>
-            <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.medium)}>
-              <SVGDynamicReverseMode src="/img/assets/medium_small.svg" alt="domain-icon" />
-            </SOCIAL_ICON>
-          </Col>
-          <Col span={2}>
-            <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.discord)}>
-              <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
-            </SOCIAL_ICON>
-          </Col>
-          <Col span={2}>
-            <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.telegram)}>
-              <SVGDynamicReverseMode src="/img/assets/telegram_small.svg" alt="domain-icon" />
-            </SOCIAL_ICON>
-          </Col>
-          <Col span={2}>
-            <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.twitter)}>
-              <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
-            </SOCIAL_ICON>
-          </Col>
-        </AltRow>
-        <PrivacyPolicy setVisible={setPrivacyPolicyVisible} visible={privacyPolicyVisible} />
-        <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
-        <TEXT>
-          Copyright © {new Date().getFullYear()} Goose Labs, Inc. All rights reserved. Please trade with your own
-          discretion. Certain features may be unavailable to your geographic location. Please refer to our Terms of
-          Service and Privacy Policy. Security audits by{' '}
-          <LINK href="https://halborn.com" target="_blank" rel="noopener noreferrer">
-            Halborn
-          </LINK>
-          , please use at your own risk
-        </TEXT>
-      </WRAPPER>
-    )
+  if(checkMobile() && hideFooter){
+    return(<></>)
   }
+  if (checkMobile()) {
+      return (
+        <WRAPPER>
+          {/* <ThemeToggle /> */}
+          <AltRow justify="space-between" align="middle">
+            <Col span={2}>
+              <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.medium)}>
+                <SVGDynamicReverseMode src="/img/assets/medium_small.svg" alt="domain-icon" />
+              </SOCIAL_ICON>
+            </Col>
+            <Col span={2}>
+              <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.discord)}>
+                <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
+              </SOCIAL_ICON>
+            </Col>
+            <Col span={2}>
+              <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.telegram)}>
+                <SVGDynamicReverseMode src="/img/assets/telegram_small.svg" alt="domain-icon" />
+              </SOCIAL_ICON>
+            </Col>
+            <Col span={2}>
+              <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.twitter)}>
+                <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
+              </SOCIAL_ICON>
+            </Col>
+          </AltRow>
+          <PrivacyPolicy setVisible={setPrivacyPolicyVisible} visible={privacyPolicyVisible} />
+          <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
+          <TEXT>
+            Copyright © {new Date().getFullYear()} Goose Labs, Inc. All rights reserved. Please trade with your own
+            discretion. Certain features may be unavailable to your geographic location. Please refer to our Terms of
+            Service and Privacy Policy. Security audits by{' '}
+            <LINK href="https://halborn.com" target="_blank" rel="noopener noreferrer">
+              Halborn
+            </LINK>
+            , please use at your own risk
+          </TEXT>
+        </WRAPPER>
+      )
+    }
   return (
     <WRAPPER>
       <PrivacyPolicy setVisible={setPrivacyPolicyVisible} visible={privacyPolicyVisible} />

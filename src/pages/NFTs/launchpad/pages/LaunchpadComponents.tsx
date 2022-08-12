@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Progress, Switch } from 'antd'
 import { ModalSlide } from '../../../../components/ModalSlide'
-import { useUSDCToggle } from '../../../../context/nft_launchpad'
+import { useUSDCToggle, useNFTLPSelected } from '../../../../context/nft_launchpad'
 import { useNavCollapse } from '../../../../context'
+import { Row, Col } from 'antd'
+import { SVGBlackToGrey } from '../../../../styles'
+import { checkMobile } from '../../../../utils'
 
 const ROADMAP_WRAPPER = styled.div`
   color: ${({ theme }) => theme.text4};
@@ -354,6 +357,14 @@ const VESTING_WRAPPER = styled.div`
     font-size: 25px;
   }
 `
+const SOCIAL_ICON = styled.button`
+  background: transparent;
+  border: none;
+
+  img {
+    height: 24px;
+  }
+`
 
 const DARK_DIV = styled.div`
   width: 45vw;
@@ -490,6 +501,30 @@ export const InfoDivLightTheme = ({ items, price, currency }) => {
     </>
   )
 }
+
+export const Socials = () => {
+  const { selectedProject, cndyValues } = useNFTLPSelected()
+  return (
+    <Row justify={checkMobile() ? "center" : "space-between"} align="middle" style={{ marginLeft: checkMobile() ? '0' : '10px' }}>
+    <Col span={2}  style={{marginRight: checkMobile() ?  "16px" : "0",  maxWidth: checkMobile() ? "100%" : ""}} >
+      <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.website)}>
+        <SVGBlackToGrey src="/img/assets/domains.svg" alt="domain-icon" />
+      </SOCIAL_ICON>
+    </Col>
+    <Col span={2} style={{marginRight: checkMobile() ?  "16px" : "0",  maxWidth: checkMobile() ? "100%" : ""}}>
+      <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.discord)}>
+        <SVGBlackToGrey src="/img/assets/discord_small.svg" alt="discord-icon" />
+      </SOCIAL_ICON>
+    </Col>
+    <Col span={2} style={{marginRight: checkMobile() ?  "16px" : "0",  maxWidth: checkMobile() ? "100%" : ""}}>
+      <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.twitter)}>
+        <SVGBlackToGrey src="/img/assets/twitter_small.svg" alt="twitter-icon" />
+      </SOCIAL_ICON>
+    </Col>
+  </Row>
+  )
+}
+
 export const Vesting = ({ currency, str }) => {
   return (
     <>
