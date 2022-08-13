@@ -163,10 +163,10 @@ const TAG_LINE = styled.div`
   color: ${({ theme }) => theme.text4};
 `
 const PRICE_SOCIAL = styled.div`
-${tw`flex flex-row mt-[25px] mb-[35px] sm:justify-evenly`}
+  ${tw`flex flex-row mt-[25px] mb-[35px] sm:justify-evenly`}
 `
 const HEIGHT = styled.div`
- ${tw`!min-h-[800px]`}
+  ${tw`!min-h-[800px]`}
   * {
     font-family: ${({ theme }) => theme.fontFamily};
   }
@@ -231,7 +231,7 @@ const TIER_WRAPPER = styled.div`
   }
 `
 const ROW = styled.div`
- ${tw`flex flex-row justify-start items-center sm:justify-center`}
+  ${tw`flex flex-row justify-start items-center sm:justify-center`}
 `
 
 const getRemaningTime = (time): string => {
@@ -277,12 +277,19 @@ export const SingleCollection: FC = () => {
     (selectedProject?.whitelist && parseInt(selectedProject?.whitelist) < Date.now()) ||
     (!selectedProject?.whitelist && parseInt(selectedProject?.startsOn) < Date.now())
   const displayProgressBar =
-  isLive && cndyValues ? (
+    isLive && cndyValues ? (
       <MintProgressBar minted={cndyValues?.itemsRedeemed} totalNFTs={selectedProject?.items} />
     ) : isLive && !cndyValues ? (
       checkMobile() ? (
         <SkeletonCommon
-          style={{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto' , display: 'block', marginBottom: '-20px', width: '90%'}}
+          style={{
+            marginTop: '20px',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            display: 'block',
+            marginBottom: '-20px',
+            width: '90%'
+          }}
           width="90%"
           height={'60px'}
           borderRadius="10px"
@@ -313,16 +320,16 @@ export const SingleCollection: FC = () => {
         <div className="leftPart">
           <div>
             <ROW>
-                <BACK_IMG onClick={() => history.goBack()}>
-                  <img src={`/img/assets/arrow-left${mode}.svg`} alt="arrow" />{' '}
-                </BACK_IMG>
-                {selectedProject?.collectionName ? (
-                  <COLLECTION_NAME>{selectedProject?.collectionName}</COLLECTION_NAME>
-                ) : (
-                  <COLLECTION_NAME>
-                    <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
-                  </COLLECTION_NAME>
-                )}
+              <BACK_IMG onClick={() => history.goBack()}>
+                <img src={`/img/assets/arrow-left${mode}.svg`} alt="arrow" />{' '}
+              </BACK_IMG>
+              {selectedProject?.collectionName ? (
+                <COLLECTION_NAME>{selectedProject?.collectionName}</COLLECTION_NAME>
+              ) : (
+                <COLLECTION_NAME>
+                  <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
+                </COLLECTION_NAME>
+              )}
             </ROW>
             {selectedProject?.tagLine ? (
               <TAG_LINE>{selectedProject?.tagLine}</TAG_LINE>
@@ -331,23 +338,23 @@ export const SingleCollection: FC = () => {
                 <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
               </TAG_LINE>
             )}
-            {selectedProject?.items && checkMobile() ?
-            <>
-             <Socials /> 
-             <PRICE_SOCIAL>
-             <InfoDivLightTheme
-               items={selectedProject?.items}
-               currency={undefined}
-               price={undefined}
-             ></InfoDivLightTheme>
-             <InfoDivLightTheme
-               items={selectedProject}
-               price={selectedProject?.price}
-               currency={selectedProject?.currency}
-             ></InfoDivLightTheme>
-           </PRICE_SOCIAL> 
-           </> : !checkMobile() ?
-            (
+            {selectedProject?.items && checkMobile() ? (
+              <>
+                <Socials />
+                <PRICE_SOCIAL>
+                  <InfoDivLightTheme
+                    items={selectedProject?.items}
+                    currency={undefined}
+                    price={undefined}
+                  ></InfoDivLightTheme>
+                  <InfoDivLightTheme
+                    items={selectedProject}
+                    price={selectedProject?.price}
+                    currency={selectedProject?.currency}
+                  ></InfoDivLightTheme>
+                </PRICE_SOCIAL>
+              </>
+            ) : !checkMobile() ? (
               <PRICE_SOCIAL>
                 <InfoDivLightTheme
                   items={selectedProject?.items}
@@ -362,27 +369,38 @@ export const SingleCollection: FC = () => {
                 <Socials />
               </PRICE_SOCIAL>
             ) : (
-                <SkeletonCommon width={checkMobile() ? "90%" : "500px"} height="35px" borderRadius="10px" style={{display: "block", margin: checkMobile() ? "0 auto" : "0"}} />
+              <SkeletonCommon
+                width={checkMobile() ? '90%' : '500px'}
+                height="35px"
+                borderRadius="10px"
+                style={{ display: 'block', margin: checkMobile() ? '0 auto' : '0' }}
+              />
             )}
             <>
-            {checkMobile() ? (
-              <>
-            <NFT_COVER>
-                {selectedProject?.coverUrl ? (
-                  <>
-                    <div className={selectedProject?.ended ? 'ended-img' : 'image-border'}>
-                      <img className="inner-image" alt="cover" src={selectedProject?.coverUrl} />
-                    </div>
-                    {selectedProject?.ended ? <div className="sold-text">SOLD OUT</div> : <></>}
-                  </>
-                ) : (
-                  <SkeletonCommon width="90%" height="354px" borderRadius="10px" style={{display: "block", margin: "auto"}} />
-                )}
-              </NFT_COVER>
-              {ProgressBar}
-              </>
-              ) : ""
-            }
+              {checkMobile() ? (
+                <>
+                  <NFT_COVER>
+                    {selectedProject?.coverUrl ? (
+                      <>
+                        <div className={selectedProject?.ended ? 'ended-img' : 'image-border'}>
+                          <img className="inner-image" alt="cover" src={selectedProject?.coverUrl} />
+                        </div>
+                        {selectedProject?.ended ? <div className="sold-text">SOLD OUT</div> : <></>}
+                      </>
+                    ) : (
+                      <SkeletonCommon
+                        width="90%"
+                        height="354px"
+                        borderRadius="10px"
+                        style={{ display: 'block', margin: 'auto' }}
+                      />
+                    )}
+                  </NFT_COVER>
+                  {ProgressBar}
+                </>
+              ) : (
+                ''
+              )}
               {selectedProject?.summary ? (
                 <div>
                   <RIGHT_SECTION_TABS activeTab={'4'}>
@@ -405,9 +423,7 @@ export const SingleCollection: FC = () => {
                             >
                               <div className="leftSection">
                                 <div tw="flex flex-col items-start justify-center h-full">
-                                  <div className="label-text">
-                                    {'Tier ' + (index + 1) + ' - ' + item.name}
-                                  </div>
+                                  <div className="label-text">{'Tier ' + (index + 1) + ' - ' + item.name}</div>
                                   <div tw="text-[14px]" className="limit-text">
                                     {item.number + " NFT's. Max " + item.limit + " NFT's"}
                                   </div>
@@ -462,7 +478,7 @@ export const SingleCollection: FC = () => {
                       </TabPane>
                     </Tabs>
                   </RIGHT_SECTION_TABS>
-                  {true ? <MintButton isLive={isLive} /> : <></>}
+                  {!selectedProject?.ended ? <MintButton isLive={isLive} /> : <></>}
                 </div>
               ) : (
                 <>
@@ -472,23 +488,25 @@ export const SingleCollection: FC = () => {
             </>
           </div>
         </div>
-        { !checkMobile() ? (
-        <div className="rightPart">
-          <NFT_COVER>
-            {selectedProject?.coverUrl ? (
-              <>
-                <div className={selectedProject?.ended ? 'ended-img' : 'image-border'}>
-                  <img className="inner-image" alt="cover" src={selectedProject?.coverUrl} />
-                </div>
-                {selectedProject?.ended ? <div className="sold-text">SOLD OUT</div> : <></>}
-              </>
-            ) : (
-              <SkeletonCommon width="540px" height="540px" borderRadius="10px" />
-            )}
-          </NFT_COVER>
-          {ProgressBar}
-        </div>
-        ) : ""}
+        {!checkMobile() ? (
+          <div className="rightPart">
+            <NFT_COVER>
+              {selectedProject?.coverUrl ? (
+                <>
+                  <div className={selectedProject?.ended ? 'ended-img' : 'image-border'}>
+                    <img className="inner-image" alt="cover" src={selectedProject?.coverUrl} />
+                  </div>
+                  {selectedProject?.ended ? <div className="sold-text">SOLD OUT</div> : <></>}
+                </>
+              ) : (
+                <SkeletonCommon width="540px" height="540px" borderRadius="10px" />
+              )}
+            </NFT_COVER>
+            {ProgressBar}
+          </div>
+        ) : (
+          ''
+        )}
       </WRAPPER>
     </HEIGHT>
   )
