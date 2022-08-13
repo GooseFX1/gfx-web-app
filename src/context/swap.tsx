@@ -79,7 +79,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [priceImpact, setPriceImpact] = useState(0)
   const [_, setFocused] = useState<SwapInput>(undefined)
   const [chosenRoutes, setRoutes] = useState([])
-  const [clickNo, setClickNo] = useState(network === 'devnet' ? 0 : 1)
+  const [clickNo, setClickNo] = useState(0)
   const [pool, setPool] = useState<IPool>({
     inAmount: 0,
     inValue: 0,
