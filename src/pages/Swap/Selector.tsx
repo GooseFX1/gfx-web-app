@@ -156,36 +156,51 @@ export const Selector: FC<{
   const { tokenA, tokenB } = useSwap()
   const { chainId } = useConnectionConfig()
   const [filterKeywords, setFilterKeywords] = useState('')
-  const [filteredTokens, setFilteredTokens] = useState<NewTokenInfo[]>(tokens)
   const [visible, setVisible] = useState(false)
+  const r = new RegExp(filterKeywords, 'i')
+  const [updatedTokens, setUpdatedTokens] = useState(
+    tokens.map((tk) => ({
+      ...tk,
+      imageURL: `/img/crypto/${tk.symbol}.svg`
+    }))
+  )
+  const [filteredTokens, setFilteredTokens] = useState<NewTokenInfo[]>(updatedTokens)
 
   useEffect(() => {
-    const r = new RegExp(filterKeywords, 'i')
-    const altTokens = JSON.parse(window.localStorage.getItem('myAddedTokenList')) || []
-    const filteredTokensList = tokens.filter(
-      ({ address, name, symbol }) =>
-        (r.test(name) || r.test(symbol) || r.test(address)) && (!otherToken || otherToken.address !== address)
+    setUpdatedTokens(
+      tokens.map((tk) => ({
+        ...tk,
+        imageURL: `/img/crypto/${tk.symbol}.svg`
+      }))
     )
-    filteredTokensList.push(...altTokens)
+  }, [tokens])
 
-    async function addExternalTokens() {
-      if (filteredTokensList.length < 1 && tokenA && tokenB) {
-        const list = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
-        const filteredTokensListAlt = list.filter(({ address }) => filterKeywords === address)
+  useEffect(() => {
+    const altTokens = JSON.parse(window.localStorage.getItem('myAddedTokenList')) || []
+    const tokenList = [...updatedTokens]
+    tokenList.push(...altTokens)
+
+    async function addAndFilterTokens() {
+      if (tokenList.length < 1 && tokenA && tokenB) {
+        const chainList = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
+        const filteredTokensListAlt = chainList.filter(({ address }) => filterKeywords === address)
 
         if (filteredTokensListAlt.length > 0) {
-          filteredTokensList.push(filteredTokensListAlt?.[0])
+          tokenList.push({
+            ...filteredTokensListAlt?.[0],
+            imageURL: `/img/crypto/${filteredTokensListAlt?.[0].symbol}.svg`
+          })
           window.localStorage.setItem('myAddedTokenList', JSON.stringify([...altTokens, filteredTokensListAlt?.[0]]))
         }
       }
 
-      const updatedFilteredTokensList = filteredTokensList.map((tk) => ({
-        ...tk,
-        imageURL: `/img/crypto/${tk.symbol}.svg`
-      }))
-
-      setFilteredTokens(
-        updatedFilteredTokensList.sort((a, b) => {
+      const filteredTokensList = tokenList
+        .filter(
+          ({ address, name, symbol }) =>
+            (r.test(name.split('(')[0]) || r.test(symbol) || filterKeywords === address) && //the split by "(" is to remove every string in name of token with (Portal) or (Sollet) or any other.
+            (!otherToken || otherToken.address !== address)
+        )
+        .sort((a, b) => {
           let fa = a.symbol.toLowerCase(),
             fb = b.symbol.toLowerCase()
 
@@ -197,11 +212,12 @@ export const Selector: FC<{
           }
           return 0
         })
-      )
+
+      setFilteredTokens(filteredTokensList)
     }
 
-    addExternalTokens()
-  }, [filterKeywords, tokens])
+    addAndFilterTokens() //(O)3n to (O)2n in time complexity (due to two loops, one filter and one sort)
+  }, [filterKeywords, updatedTokens, tokenA, tokenB, chainId])
 
   return (
     <>
