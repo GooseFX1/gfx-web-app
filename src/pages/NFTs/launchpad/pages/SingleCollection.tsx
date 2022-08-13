@@ -230,8 +230,11 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
 `
 
 const NFT_COVER = styled.div`
+  height: 550px;
+  width: 550px;
   @media(max-width: 500px){
     height: 350px;
+    width: 100%;
   }
   .image-border {
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
@@ -253,8 +256,8 @@ const NFT_COVER = styled.div`
   }
   .ended-img {
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-    width: 540px;
-    height: 540px;
+    width: 550px;
+    height: 550px;
     border-radius: 20px;
     padding: 5px;
     margin-top: 32px;
@@ -268,28 +271,15 @@ const NFT_COVER = styled.div`
   }
 
   .sold-text {
-    @media (max-width: 500px) {
-      position: relative;
-      bottom: 200px;
-      text-align: center;
-      font-size: 50px;
-      font-weight: 700;
-      height: 100%;
-      width: 100%;
-      display: block;
-      margin-top: 0;
-    }
-    position: absolute;
-    width: 540px;
-    margin-top: -35%;
-    height: 540px;
-    font-weight: 700;
-    font-size: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 24px;
+    position: relative;
+    bottom: 300px;
     text-align: center;
+    font-size: 50px;
+    font-weight: 700;
+    margin-top: 0;
+    @media (max-width: 500px) {
+      bottom: 200px;
+    }
   }
   .inner-image {
     width: 540px;
@@ -510,12 +500,12 @@ export const SingleCollection: FC = () => {
     (selectedProject?.whitelist && parseInt(selectedProject?.whitelist) < Date.now()) ||
     (!selectedProject?.whitelist && parseInt(selectedProject?.startsOn) < Date.now())
   const displayProgressBar =
-    isLive && cndyValues ? (
+  isLive && cndyValues ? (
       <MintProgressBar minted={cndyValues?.itemsRedeemed} totalNFTs={selectedProject?.items} />
     ) : isLive && !cndyValues ? (
       checkMobile() ? (
         <SkeletonCommon
-          style={{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto' }}
+          style={{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto' , display: 'block', marginBottom: '-20px', width: '90%'}}
           width="90%"
           height={'60px'}
           borderRadius="10px"
@@ -538,149 +528,7 @@ export const SingleCollection: FC = () => {
   ) : (
     <SkeletonCommon style={{ marginTop: '20px' }} width="540px" height={'70px'} borderRadius="10px" />
   )
-  //if (selectedProject?.ended) ProgressBar = <></>
-
-  // if (checkMobile()) {
-  //   return (
-  //     <MOB_WRAPPER $navCollapsed={isCollapsed}>
-  //       <ROW>
-  //         <BACK_IMG onClick={() => history.goBack()}>
-  //           <img src={`/img/assets/arrow-left${mode}.svg`} alt="arrow" />{' '}
-  //         </BACK_IMG>
-  //         {selectedProject?.collectionName ? (
-  //           <COLLECTION_NAME>{selectedProject?.collectionName}</COLLECTION_NAME>
-  //         ) : (
-  //           <COLLECTION_NAME>
-  //             <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
-  //           </COLLECTION_NAME>
-  //         )}
-  //       </ROW>
-  //       {selectedProject?.tagLine ? (
-  //         <TAG_LINE>{selectedProject?.tagLine}</TAG_LINE>
-  //       ) : (
-  //         <TAG_LINE>
-  //           <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
-  //         </TAG_LINE>
-  //       )}
-  //       <ROW>
-  //         <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.website)}>
-  //           <SVGBlackToGrey src="/img/assets/domains.svg" alt="domain-icon" />
-  //         </SOCIAL_ICON>
-  //         <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.discord)}>
-  //           <SVGBlackToGrey src="/img/assets/discord_small.svg" alt="discord-icon" />
-  //         </SOCIAL_ICON>
-  //         <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.twitter)}>
-  //           <SVGBlackToGrey src="/img/assets/twitter_small.svg" alt="twitter-icon" />
-  //         </SOCIAL_ICON>
-  //       </ROW>
-  //       <ROW style={{ justifyContent: 'space-evenly', marginTop: '18px' }}>
-  //         <InfoDivLightTheme items={selectedProject?.items} currency={undefined} price={undefined}></InfoDivLightTheme>
-  //         <InfoDivLightTheme
-  //           items={selectedProject}
-  //           price={selectedProject?.price}
-  //           currency={selectedProject?.currency}
-  //         ></InfoDivLightTheme>
-  //       </ROW>
-  //       <NFT_COVER>
-  //         {selectedProject?.coverUrl ? (
-  //           <>
-  //             <div className={selectedProject?.ended ? 'ended-img' : 'image-border'}>
-  //               <img className="inner-image" alt="cover" src={selectedProject?.coverUrl} />
-  //             </div>
-  //             {selectedProject?.ended ? <div className="sold-text">SOLD OUT</div> : <></>}
-  //           </>
-  //         ) : (
-  //           <SkeletonCommon width="90%" height="350px" borderRadius="10px" />
-  //         )}
-  //       </NFT_COVER>
-  //       {ProgressBar}
-  //       {selectedProject?.summary ? (
-  //         <div>
-  //           <RIGHT_SECTION_TABS activeTab={'4'}>
-  //             <Tabs defaultActiveKey={'2'}>
-  //               <TabPane tab="Summary" key="1">
-  //                 <SUMMARY_TAB_CONTENT>
-  //                   <div>{selectedProject?.summary}</div>
-  //                   <br />
-  //                   <div>
-  //                     <span style={{ fontSize: '18px' }}>{selectedProject?.highlightText}</span>
-  //                   </div>
-  //                 </SUMMARY_TAB_CONTENT>
-  //               </TabPane>
-  //               <TabPane tab="Tiers" key="2">
-  //                 <TIER_WRAPPER>
-  //                   {selectedProject?.tiers?.map((item, index) => (
-  //                     <div
-  //                       className={'tierRow ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')}
-  //                       tw="flex"
-  //                     >
-  //                       <div className="leftSection">
-  //                         <div tw="flex flex-col items-start justify-center h-full">
-  //                           <div tw="text-[15px]" className="label-text">
-  //                             {'Tier ' + (index + 1) + ' - ' + item.name}
-  //                           </div>
-  //                           <div tw="text-[12px]" className="limit-text">
-  //                             {item.number + " NFT's. Max " + item.limit + " NFT's"}
-  //                           </div>
-  //                         </div>
-  //                       </div>
-  //                       <div className="rightSection">
-  //                         <div tw="flex flex-col items-end justify-center h-full">
-  //                           <div
-  //                             className={
-  //                               'textStatus ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
-  //                             }
-  //                             tw="text-[11px] px-1"
-  //                           >
-  //                             <span>
-  //                               {cndyValues?.tiers[index]?.status === 'live'
-  //                                 ? 'Ends in: '
-  //                                 : cndyValues?.tiers[index]?.status === 'upcoming'
-  //                                 ? 'Starts in: '
-  //                                 : 'Ended'}
-  //                             </span>
-  //                             {cndyValues?.tiers[index]?.status !== 'ended' &&
-  //                             index !== selectedProject?.tiers.length - 1 ? (
-  //                               <span>{getRemaningTime(cndyValues?.tiers[index]?.time)}</span>
-  //                             ) : index === selectedProject?.tiers.length - 1 ? (
-  //                               <span>{getRemaningTime(selectedProject?.startsOn)}</span>
-  //                             ) : null}
-  //                           </div>
-  //                           <div
-  //                             className={
-  //                               'textPrice ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
-  //                             }
-  //                             tw="text-[12px]"
-  //                           >
-  //                             {item.price ? item.price : 'FREE'}
-  //                           </div>
-  //                         </div>
-  //                       </div>
-  //                     </div>
-  //                   ))}
-  //                 </TIER_WRAPPER>
-  //               </TabPane>
-  //               <TabPane tab="Roadmap" key="3">
-  //                 <RoadMap roadmap={selectedProject?.roadmap} />
-  //               </TabPane>
-  //               <TabPane tab="Team" key="4">
-  //                 <TeamMembers teamMembers={selectedProject?.team} />
-  //               </TabPane>
-  //               <TabPane tab="Vesting" key="5">
-  //                 <Vesting currency={selectedProject?.currency} str={''} />
-  //               </TabPane>
-  //             </Tabs>
-  //           </RIGHT_SECTION_TABS>
-  //           {!selectedProject?.ended ? <MintButton isLive={isLive} /> : <></>}
-  //         </div>
-  //       ) : (
-  //         <>
-  //           <SkeletonCommon width="700px" height={'450px'} borderRadius="10px" />
-  //         </>
-  //       )}
-  //     </MOB_WRAPPER>
-  //   )
-  // }
+  if (selectedProject?.ended) ProgressBar = <></>
 
   return (
     <HEIGHT style={{ height: checkMobile() ? '100%' : isCollapsed ? '90vh' : '82vh' }}>
@@ -737,9 +585,7 @@ export const SingleCollection: FC = () => {
                 <Socials />
               </PRICE_SOCIAL>
             ) : (
-              <PRICE_SOCIAL>
-                <SkeletonCommon width="500px" height="35px" borderRadius="10px" />
-              </PRICE_SOCIAL>
+                <SkeletonCommon width={checkMobile() ? "90%" : "500px"} height="35px" borderRadius="10px" style={{display: "block", margin: checkMobile() ? "0 auto" : "0"}} />
             )}
             <>
             {checkMobile() ? (
@@ -753,7 +599,7 @@ export const SingleCollection: FC = () => {
                     {selectedProject?.ended ? <div className="sold-text">SOLD OUT</div> : <></>}
                   </>
                 ) : (
-                  <SkeletonCommon width="540px" height="540px" borderRadius="10px" />
+                  <SkeletonCommon width="90%" height="354px" borderRadius="10px" style={{display: "block", margin: "auto"}} />
                 )}
               </NFT_COVER>
               {ProgressBar}

@@ -258,12 +258,11 @@ const INFO_DIV_BRIGHT = styled.div`
 const ProgressBarBG = styled.div`
   @media (max-width: 500px) {
     width: 90%;
-    margin: 0 auto 20px;
+    margin: 20px auto;
     height: 60px;
   }
-  width: 610px;
   height: 70px;
-  margin-bottom: 20px;
+  margin: 20px auto;
   display: flex;
   align-items: center;
   background: ${({ theme }) => theme.bg18};

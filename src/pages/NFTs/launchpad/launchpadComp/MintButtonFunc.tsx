@@ -23,7 +23,7 @@ const MINT_BUTTON_BAR = styled.div`
     border-radius: 15px 15px 0 0;
     width: 100% !important;
     justify-content: space-evenly;
-    min-width: 350px;
+    min-width: 300px;
     align-items: center;
     position: fixed;
     bottom: 0;
@@ -44,6 +44,7 @@ const MINT_BUTTON_BAR = styled.div`
 const SHARE_BTN = styled.div`
   margin-top: 10px;
   margin-right: 10px;
+  cursor: pointer;
   @media (max-width: 500px) {
     margin: 0;
   }
@@ -76,6 +77,10 @@ const WHITELIST_SPOTS = styled.div`
 `
 
 const CONNECT_WRAPPER = styled.div`
+ @media(max-width: 500px){
+  margin: 0;
+ }
+  margin: auto;
   > button{
     width: 260px;
     height: 50px;
