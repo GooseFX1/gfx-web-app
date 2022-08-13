@@ -3,13 +3,14 @@ import { useNFTLPSelected } from '../../../../context/nft_launchpad'
 import styled, { css } from 'styled-components'
 import { Col, Row, Tabs } from 'antd'
 import { MintProgressBar, MintStarts } from './LaunchpadComponents'
-import { InfoDivLightTheme, Vesting, RoadMap } from './LaunchpadComponents'
+import { InfoDivLightTheme, Vesting, RoadMap, Socials } from './LaunchpadComponents'
 import { SVGBlackToGrey } from '../../../../styles'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { MintButton } from '../launchpadComp/MintButton'
 import { TeamMembers } from './LaunchpadComponents'
 import { useDarkMode, useNavCollapse } from '../../../../context'
 import { useHistory } from 'react-router-dom'
+import tw from 'twin.macro'
 import 'styled-components/macro'
 import { checkMobile } from '../../../../utils'
 import analytics from '../../../../analytics'
@@ -17,120 +18,69 @@ import { logEvent } from 'firebase/analytics'
 
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme, activeTab }) => css`
-    position: relative;
-    width: 35vw;
-    max-width: 800px;
-    min-width: 650px;
-    @media(max-width: 500px){
-      width: 90%;
-      min-width: 300px;
-      margin: 20px auto;
-    }
+   ${tw`relative w-[35vw] max-w-[800px] min-w-[650px] sm:w-[90%] sm:my-5 sm:mx-auto sm:min-w-[300px]`}
     .ant-tabs-nav {
-      position: relative;
-      z-index: 1;
+      ${tw`relative z-10`}
       .ant-tabs-nav-wrap {
-        background-color: #000;
-        border-radius: 15px 15px 25px 25px;
-        padding-top: ${theme.margin(1.5)};
-        padding-bottom: ${theme.margin(1.5)};
+        ${tw`rounded-t-average rounded-b-half py-3 bg-black`}
         .ant-tabs-nav-list {
-          justify-content: space-around;
-          width: 100%;
+          ${tw`justify-around w-full`}
         }
       }
       &:before {
+        ${tw`absolute top-0 left-0 w-full h-full bg-[#2a2a2a] rounded-t-average rounded-b-half`}
         content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: ${theme.tabContentBidBackground};
-        border-radius: 15px 15px 25px 25px;
       }
     }
     .ant-tabs-ink-bar {
-      display: none;
+      ${tw`hidden`}
     }
     .ant-tabs-top {
       > .ant-tabs-nav {
-        margin-bottom: 0;
+       ${tw`mb-0`}
         &::before {
-          border: none;
+          ${tw`border-none border-0`}
         }
       }
     }
     .ant-tabs-tab {
-      @media(max-width: 500px){
-        margin: 0;
-      }
-      color: #616161;
-      font-size: 14px;
-      font-weight: 500;
+      ${tw`sm:m-0 text-[#616161] text-[14px] font-medium`}
       .ant-tabs-tab-btn {
-        @media(max-width: 500px){
-          font-size: 15px;
-        }
-        font-size: 17px;
+        ${tw`sm:text-tiny text-[17px]`}
       }
       &.ant-tabs-tab-active {
         .ant-tabs-tab-btn {
-          color: #fff;
+          ${tw`text-white`}
         }
       }
     }
     .desc {
-      font-size: 11px;
-      padding: ${({ theme }) => theme.margin(3)};
+      ${tw`text-smallest p-6`}
       font-family: Montserrat;
     }
     .ant-tabs-content-holder {
-      @media(max-width: 500px){
-        height: 350px;
-      }
-      height: 450px;
-      z-index: 0;
+      ${tw`sm:h-[350px] sm:pb-8 sm:mb-[50px] h-[450px] z-0 pt-8 pb-16 rounded-t-none rounded-b-half`}
       background-color: ${({ theme }) => theme.bg9}; !important;
       transform: translateY(-32px);
-      padding-top: ${({ theme }) => theme.margin(4)};
-      padding-bottom: ${({ theme }) => theme.margin(8)};
-      border-radius: 0 0 25px 25px;
       .ant-tabs-content {
-        height: 100%;
+        ${tw`h-full overflow-y-scroll`}
         overflow-x: none;
-        overflow-y: scroll;
         ${({ theme }) => theme.customScrollBar('6px')};
       }
     }
     .rst-footer {
-      width: 100%;
-      position: absolute;
-      display: flex;
-      left: 0;
-      bottom: 0;
-      padding: ${theme.margin(2)};
-      border-radius: 0 0 25px 25px;
-      border-top: 1px solid ${theme.borderColorTabBidFooter};
+      ${tw`w-full absolute flex flex-row left-0 top-0 p-4 rounded-t-none rounded-b-half border-t border-solid`}
+      border-top-color: ${theme.borderColorTabBidFooter};
       background: ${theme.tabContentBidFooterBackground};
       backdrop-filter: blur(23.9091px);
       .rst-footer-button {
+        ${tw`text-white h-[55px] text-[17px] flex flex-row justify-center items-center font-semibold border-0 border-none rounded-half py-0 px-4 cursor-pointer whitespace-nowrap`}
         flex: 1;
-        color: #fff;
-        white-space: nowrap;
-        height: 55px;
-        ${theme.flexCenter}
-        font-size: 17px;
-        font-weight: 600;
-        border: none;
-        border-radius: 29px;
-        padding: 0 ${theme.margin(2)};
-        cursor: pointer;
         &:not(:last-child) {
-          margin-right: ${theme.margin(1.5)};
+          ${tw`mr-3`}
         }
         &:hover {
-          opacity: 0.8;
+          ${tw`opacity-80`}
         }
         &-buy {
           background-color: ${theme.success};
@@ -147,241 +97,104 @@ export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
         }
       }
       .rst-footer-share-button {
-        cursor: pointer;
+        ${tw`cursor-pointer`}
         &:hover {
-          opacity: 0.8;
+          ${tw`opacity-80`}
         }
       }
     }
   `}
 `
 const BACK_IMG = styled.div`
-  width: 40px;
-  height: 40px;
-  margin-left: -30px;
+  ${tw`w-10 h-10 ml-[-30px] mt-2.5 mr-0 cursor-pointer sm:relative sm:left-[5%] sm:m-0 sm:mt-[15px]`}
   transform: scale(1.2);
-  margin-top: 20px;
-  margin-right: 0px;
-  cursor: pointer;
-
-  @media (max-width: 500px) {
-    position: relative;
-    left: 5%;
-    margin: 0;
-    margin-top: 20px;
-
     img {
-      height: 20px;
-      width: 10px;
+      ${tw`sm:h-5 sm:w-2.5`}
     }
   }
 `
-const SOCIAL_ICON = styled.button`
-  background: transparent;
-  border: none;
 
-  img {
-    height: 24px;
-  }
-`
 const { TabPane } = Tabs
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
-  display: flex;
-  align-items: center;
+  ${tw`flex flex-row items-center justify-between`}
   margin-top: calc(100px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
-  justify-content: space-between;
   .leftPart {
-    width: 45%;
-    margin-left: 5%;
-    display: flex;
-    justify-content: end;
+    ${tw`sm:w-full sm:ml-0 w-[45%] ml-[5%]`}
   }
   .button {
-    border: none;
-    background: pink;
-    width: 80px;
+    ${tw`border-none border-0 bg-[pink] w-20`}
   }
   .rightPart {
-    width: 50%;
-    padding-right: 70px;
-    margin-left: 100px;
+    ${tw`sm:w-0 sm:pr-0 sm:ml-0 w-1/2 pr-[70px] ml-[100px]`}
   }
   .collectionName {
-    font-weight: 700;
-    font-size: 55px;
-    line-height: 67px;
+    ${tw`font-bold text-[55px]`}
   }
   .tagLine {
-    font-weight: 600;
-    font-size: 30px;
-    line-height: 37px;
+    ${tw`font-semibold text-3xl`}
   }
 `
 
 const NFT_COVER = styled.div`
+  ${tw`h-[550px] w-[550px] sm:h-[350px] sm:w-full`}
   .image-border {
+    ${tw`w-[608px] h-[608px] p-[5px] rounded-bigger mt-8 mb-[30px] sm:w-[90%] sm:h-[350px] sm:rounded-[18px] sm:p-[3px] sm:my-[30px] sm:mx-auto`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-    width: 608px;
-    height: 608px;
-    border-radius: 20px;
-    padding: 5px;
-    margin-top: 32px;
-    margin-bottom: 30px;
-
-    @media (max-width: 500px) {
-      background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-      width: 90%;
-      height: 350px;
-      border-radius: 18px;
-      padding: 3px;
-      margin: 30px auto;
-    }
   }
   .ended-img {
-    @media (max-width: 500px) {
-      display: none;
-    }
+    ${tw`h-[550px] w-[550px] rounded-bigger p-[5px] mt-8 mb-[30px] opacity-40 sm:h-[354px] sm:w-[90%] sm:my-0 sm:mx-auto`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-    width: 600px;
-    height: 600px;
-    border-radius: 20px;
-    padding: 5px;
-    margin-top: 32px;
-    margin-bottom: 30px;
-    opacity: 0.4;
   }
+
   .sold-text {
-    @media (max-width: 500px) {
-      display: none;
-    }
-    position: absolute;
-    width: 600px;
-    margin-top: -35%;
-    height: 600px;
-    font-weight: 700;
-    font-size: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 24px;
-    text-align: center;
+    ${tw`relative font-bold text-center bottom-[300px] mt-0 text-[50px] sm:bottom-[200px]`}
   }
   .inner-image {
-    width: 600px;
-    height: 600px;
-    object-fit: cover;
-    border-radius: 20px;
-
-    @media (max-width: 500px) {
-      width: 100%;
-      height: 344px;
-    }
+    ${tw`h-[540px] w-[540px] rounded-bigger object-cover sm:h-[344px] sm:w-full`}
   }
 `
 const COLLECTION_NAME = styled.div`
-  font-weight: 700;
-  font-size: 55px;
-  line-height: 67px;
+  ${tw`font-bold text-[55px] leading-[67px] sm:text-[35px] sm:text-center sm:text-white sm:py-0 sm:px-[5%]`}
   color: ${({ theme }) => theme.text7};
-
-  @media (max-width: 500px) {
-    font-family: Montserrat;
-    font-size: 35px;
-    font-weight: bold;
-    text-align: center;
-    color: #fff;
-    padding: 0 5%;
-  }
 `
 const TAG_LINE = styled.div`
-  margin-top: 14px;
-  font-weight: 600;
-  font-size: 30px;
-  line-height: 37px;
+  ${tw`my-[14px] font-semibold text-3xl sm:mt-0 sm:text-center sm:text-white sm:py-0 sm:px-[5%] sm:text-[20px]`}
   color: ${({ theme }) => theme.text4};
-  margin-bottom: 14px;
-
-  @media (max-width: 500px) {
-    font-family: Montserrat;
-    margin-top: 0;
-    font-size: 20px;
-    font-weight: 600;
-    text-align: center;
-    color: #eee;
-    padding: 0 5%;
-  }
 `
 const PRICE_SOCIAL = styled.div`
-  display: flex;
-  margin-top: 25px;
-  margin-bottom: 35px;
+  ${tw`flex flex-row mt-[25px] mb-[35px] sm:justify-evenly`}
 `
 const HEIGHT = styled.div`
-  min-height: 800px !important ;
+  ${tw`!min-h-[800px]`}
   * {
     font-family: ${({ theme }) => theme.fontFamily};
   }
 `
 
-const TOGGLE_SPACE = styled.div`
-  width: 260px;
-  position: absolute;
-  z-index: 299;
-  top: 0;
-  margin-left: 420px;
-`
 const SUMMARY_TAB_CONTENT = styled.div`
-  @media (max-width: 500px) {
-    margin: 20px auto;
-    font-weight: 500;
-    font-size: 15px;
-    color: #eeeeee;
-    line-height: 1.5;
-  }
-  margin: auto;
-  padding-left: 30px;
-  padding-right: 30px;
-  margin-top: 6%;
-  font-weight: 600;
-  font-size: 20px;
+  ${tw`sm:my-5 sm:mx-auto sm:font-medium sm:text-tiny sm:text-[#eeeeee] sm:leading-normal m-auto px-[30px] mt-[6%] font-semibold text-[20px]`}
   color: ${({ theme }) => theme.text4};
   div {
-    text-align: center;
+    ${tw`text-center`}
     span {
+      ${tw`text-center`}
       color: ${({ theme }) => theme.primary3};
-      text-align: center;
     }
   }
 `
 const TIER_WRAPPER = styled.div`
-  @media (max-width: 500px) {
-    padding: 0 15px;
-  }
-  margin: auto;
-  padding-left: 30px;
-  padding-right: 30px;
-  margin-top: 6%;
-  margin-bottom: 6%;
-  font-weight: 600;
-  font-size: 20px;
+  ${tw`sm:py-0 sm:px-[15px] m-auto px-[30px] font-semibold my-[6%] text-[20px]`}
   color: ${({ theme }) => theme.text4};
   .tierRow {
-    height: 55px;
-    width: 100%;
-    margin-bottom: 20px;
+    ${tw`h-[55px] w-full mb-5 rounded-[8px]`}
     border: 1px solid ${({ theme }) => theme.text1h};
-    border-radius: 8px;
     &.active {
       border-image-source: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
       border-image-slice: 1;
     }
     .rightSection {
-      @media (max-width: 500px) {
-        margin-right: 5px;
-      }
-      margin-left: auto;
-      margin-right: 20px;
+      ${tw`sm:mr-[5px] ml-auto mr-5`}
       .textStatus {
         @media (max-width: 500px) {
           border: 1px solid #7d7d7d;
@@ -405,16 +218,22 @@ const TIER_WRAPPER = styled.div`
       }
     }
     .leftSection {
-      margin-left: 20px;
+      ${tw`ml-5`}
       .label-text {
+        ${tw`text-[17px] sm:text-tiny`}
         color: ${({ theme }) => theme.text7};
       }
       .limit-text {
+        ${tw`text-[14px] sm:text-[12px]`}
         color: ${({ theme }) => theme.text11};
       }
     }
   }
 `
+const ROW = styled.div`
+  ${tw`flex flex-row justify-start items-center sm:justify-center`}
+`
+
 const getRemaningTime = (time): string => {
   const startsOn = parseFloat(time)
   const timeDiffrence = startsOn - Date.now()
@@ -430,22 +249,6 @@ const getRemaningTime = (time): string => {
   var sDisplay = s > 0 ? s + (s === 1 ? 's ' : 's') : ''
   return d > 0 ? dDisplay + hDisplay : h > 0 ? hDisplay + mDisplay : mDisplay + sDisplay
 }
-
-const MOB_WRAPPER = styled.div<{ $navCollapsed: boolean }>`
-  margin-top: calc(120px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
-  * {
-    font-family: ${({ theme }) => theme.fontFamily};
-  }
-`
-
-const ROW = styled.div`
-  display: flex;
-  justify-content: center;
-
-  button {
-    margin-right: 10px;
-  }
-`
 
 export const SingleCollection: FC = () => {
   const { selectedProject, cndyValues } = useNFTLPSelected()
@@ -479,13 +282,20 @@ export const SingleCollection: FC = () => {
     ) : isLive && !cndyValues ? (
       checkMobile() ? (
         <SkeletonCommon
-          style={{ marginTop: '20px', marginLeft: 'auto', marginRight: 'auto' }}
+          style={{
+            marginTop: '20px',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            display: 'block',
+            marginBottom: '-20px',
+            width: '90%'
+          }}
           width="90%"
           height={'60px'}
           borderRadius="10px"
         />
       ) : (
-        <SkeletonCommon style={{ marginTop: '20px' }} width="600px" height={'70px'} borderRadius="10px" />
+        <SkeletonCommon style={{ marginTop: '20px' }} width="540px" height={'70px'} borderRadius="10px" />
       )
     ) : (
       <MintStarts time={selectedProject?.whitelist || selectedProject?.startsOn} />
@@ -500,167 +310,27 @@ export const SingleCollection: FC = () => {
       borderRadius="10px"
     />
   ) : (
-    <SkeletonCommon style={{ marginTop: '20px' }} width="600px" height={'70px'} borderRadius="10px" />
+    <SkeletonCommon style={{ marginTop: '20px' }} width="540px" height={'70px'} borderRadius="10px" />
   )
   if (selectedProject?.ended) ProgressBar = <></>
 
-  if (checkMobile()) {
-    return (
-      <MOB_WRAPPER $navCollapsed={isCollapsed}>
-        <ROW>
-          <BACK_IMG onClick={() => history.goBack()}>
-            <img src={`/img/assets/arrow-left${mode}.svg`} alt="arrow" />{' '}
-          </BACK_IMG>
-          {selectedProject?.collectionName ? (
-            <COLLECTION_NAME>{selectedProject?.collectionName}</COLLECTION_NAME>
-          ) : (
-            <COLLECTION_NAME>
-              <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
-            </COLLECTION_NAME>
-          )}
-        </ROW>
-        {selectedProject?.tagLine ? (
-          <TAG_LINE>{selectedProject?.tagLine}</TAG_LINE>
-        ) : (
-          <TAG_LINE>
-            <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
-          </TAG_LINE>
-        )}
-        <ROW>
-          <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.website)}>
-            <SVGBlackToGrey src="/img/assets/domains.svg" alt="domain-icon" />
-          </SOCIAL_ICON>
-          <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.discord)}>
-            <SVGBlackToGrey src="/img/assets/discord_small.svg" alt="discord-icon" />
-          </SOCIAL_ICON>
-          <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.twitter)}>
-            <SVGBlackToGrey src="/img/assets/twitter_small.svg" alt="twitter-icon" />
-          </SOCIAL_ICON>
-        </ROW>
-        <ROW style={{ justifyContent: 'space-evenly', marginTop: '18px' }}>
-          <InfoDivLightTheme items={selectedProject?.items} currency={undefined} price={undefined}></InfoDivLightTheme>
-          <InfoDivLightTheme
-            items={selectedProject}
-            price={selectedProject?.price}
-            currency={selectedProject?.currency}
-          ></InfoDivLightTheme>
-        </ROW>
-        <NFT_COVER>
-          {selectedProject?.coverUrl ? (
-            <>
-              <div className={selectedProject?.ended ? 'ended-img' : 'image-border'}>
-                <img className="inner-image" alt="cover" src={selectedProject?.coverUrl} />
-              </div>
-              {selectedProject?.ended ? <div className="sold-text">SOLD OUT</div> : <></>}
-            </>
-          ) : (
-            <SkeletonCommon width="90%" height="350px" borderRadius="10px" />
-          )}
-        </NFT_COVER>
-        {ProgressBar}
-        {selectedProject?.summary ? (
-          <div>
-            <RIGHT_SECTION_TABS activeTab={'4'}>
-              <Tabs defaultActiveKey={'2'}>
-                <TabPane tab="Summary" key="1">
-                  <SUMMARY_TAB_CONTENT>
-                    <div>{selectedProject?.summary}</div>
-                    <br />
-                    <div>
-                      <span style={{ fontSize: '18px' }}>{selectedProject?.highlightText}</span>
-                    </div>
-                  </SUMMARY_TAB_CONTENT>
-                </TabPane>
-                <TabPane tab="Tiers" key="2">
-                  <TIER_WRAPPER>
-                    {selectedProject?.tiers?.map((item, index) => (
-                      <div
-                        className={'tierRow ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')}
-                        tw="flex"
-                      >
-                        <div className="leftSection">
-                          <div tw="flex flex-col items-start justify-center h-full">
-                            <div tw="text-[15px]" className="label-text">
-                              {'Tier ' + (index + 1) + ' - ' + item.name}
-                            </div>
-                            <div tw="text-[12px]" className="limit-text">
-                              {item.number + " NFT's. Max " + item.limit + " NFT's"}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="rightSection">
-                          <div tw="flex flex-col items-end justify-center h-full">
-                            <div
-                              className={
-                                'textStatus ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
-                              }
-                              tw="text-[11px] px-1"
-                            >
-                              <span>
-                                {cndyValues?.tiers[index]?.status === 'live'
-                                  ? 'Ends in: '
-                                  : cndyValues?.tiers[index]?.status === 'upcoming'
-                                  ? 'Starts in: '
-                                  : 'Ended'}
-                              </span>
-                              {cndyValues?.tiers[index]?.status !== 'ended' &&
-                              index !== selectedProject?.tiers.length - 1 ? (
-                                <span>{getRemaningTime(cndyValues?.tiers[index]?.time)}</span>
-                              ) : index === selectedProject?.tiers.length - 1 ? (
-                                <span>{getRemaningTime(selectedProject?.startsOn)}</span>
-                              ) : null}
-                            </div>
-                            <div
-                              className={
-                                'textPrice ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
-                              }
-                              tw="text-[12px]"
-                            >
-                              {item.price ? item.price : 'FREE'}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </TIER_WRAPPER>
-                </TabPane>
-                <TabPane tab="Roadmap" key="3">
-                  <RoadMap roadmap={selectedProject?.roadmap} />
-                </TabPane>
-                <TabPane tab="Team" key="4">
-                  <TeamMembers teamMembers={selectedProject?.team} />
-                </TabPane>
-                <TabPane tab="Vesting" key="5">
-                  <Vesting currency={selectedProject?.currency} str={''} />
-                </TabPane>
-              </Tabs>
-            </RIGHT_SECTION_TABS>
-            {!selectedProject?.ended ? <MintButton isLive={isLive} /> : <></>}
-          </div>
-        ) : (
-          <>
-            <SkeletonCommon width="700px" height={'450px'} borderRadius="10px" />
-          </>
-        )}
-      </MOB_WRAPPER>
-    )
-  }
-
   return (
-    <HEIGHT style={{ height: isCollapsed ? '90vh' : '82vh' }}>
+    <HEIGHT style={{ height: checkMobile() ? '100%' : isCollapsed ? '90vh' : '82vh' }}>
       <WRAPPER $navCollapsed={isCollapsed}>
         <div className="leftPart">
-          <BACK_IMG onClick={() => history.goBack()}>
-            <img src={`/img/assets/arrow-left${mode}.svg`} alt="arrow" />{' '}
-          </BACK_IMG>
           <div>
-            {selectedProject?.collectionName ? (
-              <COLLECTION_NAME>{selectedProject?.collectionName}</COLLECTION_NAME>
-            ) : (
-              <COLLECTION_NAME>
-                <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
-              </COLLECTION_NAME>
-            )}
+            <ROW>
+              <BACK_IMG onClick={() => history.goBack()}>
+                <img src={`/img/assets/arrow-left${mode}.svg`} alt="arrow" />{' '}
+              </BACK_IMG>
+              {selectedProject?.collectionName ? (
+                <COLLECTION_NAME>{selectedProject?.collectionName}</COLLECTION_NAME>
+              ) : (
+                <COLLECTION_NAME>
+                  <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
+                </COLLECTION_NAME>
+              )}
+            </ROW>
             {selectedProject?.tagLine ? (
               <TAG_LINE>{selectedProject?.tagLine}</TAG_LINE>
             ) : (
@@ -668,7 +338,23 @@ export const SingleCollection: FC = () => {
                 <SkeletonCommon width="100%" height="100%" borderRadius="10px" />
               </TAG_LINE>
             )}
-            {selectedProject?.items ? (
+            {selectedProject?.items && checkMobile() ? (
+              <>
+                <Socials />
+                <PRICE_SOCIAL>
+                  <InfoDivLightTheme
+                    items={selectedProject?.items}
+                    currency={undefined}
+                    price={undefined}
+                  ></InfoDivLightTheme>
+                  <InfoDivLightTheme
+                    items={selectedProject}
+                    price={selectedProject?.price}
+                    currency={selectedProject?.currency}
+                  ></InfoDivLightTheme>
+                </PRICE_SOCIAL>
+              </>
+            ) : !checkMobile() ? (
               <PRICE_SOCIAL>
                 <InfoDivLightTheme
                   items={selectedProject?.items}
@@ -680,30 +366,41 @@ export const SingleCollection: FC = () => {
                   price={selectedProject?.price}
                   currency={selectedProject?.currency}
                 ></InfoDivLightTheme>
-                <Row justify="space-between" align="middle" style={{ marginLeft: '10px' }}>
-                  <Col span={2}>
-                    <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.website)}>
-                      <SVGBlackToGrey src="/img/assets/domains.svg" alt="domain-icon" />
-                    </SOCIAL_ICON>
-                  </Col>
-                  <Col span={2}>
-                    <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.discord)}>
-                      <SVGBlackToGrey src="/img/assets/discord_small.svg" alt="discord-icon" />
-                    </SOCIAL_ICON>
-                  </Col>
-                  <Col span={2}>
-                    <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.twitter)}>
-                      <SVGBlackToGrey src="/img/assets/twitter_small.svg" alt="twitter-icon" />
-                    </SOCIAL_ICON>
-                  </Col>
-                </Row>
+                <Socials />
               </PRICE_SOCIAL>
             ) : (
-              <PRICE_SOCIAL>
-                <SkeletonCommon width="500px" height="35px" borderRadius="10px" />
-              </PRICE_SOCIAL>
+              <SkeletonCommon
+                width={checkMobile() ? '90%' : '500px'}
+                height="35px"
+                borderRadius="10px"
+                style={{ display: 'block', margin: checkMobile() ? '0 auto' : '0' }}
+              />
             )}
             <>
+              {checkMobile() ? (
+                <>
+                  <NFT_COVER>
+                    {selectedProject?.coverUrl ? (
+                      <>
+                        <div className={selectedProject?.ended ? 'ended-img' : 'image-border'}>
+                          <img className="inner-image" alt="cover" src={selectedProject?.coverUrl} />
+                        </div>
+                        {selectedProject?.ended ? <div className="sold-text">SOLD OUT</div> : <></>}
+                      </>
+                    ) : (
+                      <SkeletonCommon
+                        width="90%"
+                        height="354px"
+                        borderRadius="10px"
+                        style={{ display: 'block', margin: 'auto' }}
+                      />
+                    )}
+                  </NFT_COVER>
+                  {ProgressBar}
+                </>
+              ) : (
+                ''
+              )}
               {selectedProject?.summary ? (
                 <div>
                   <RIGHT_SECTION_TABS activeTab={'4'}>
@@ -726,9 +423,7 @@ export const SingleCollection: FC = () => {
                             >
                               <div className="leftSection">
                                 <div tw="flex flex-col items-start justify-center h-full">
-                                  <div tw="text-[17px]" className="label-text">
-                                    {'Tier ' + (index + 1) + ' - ' + item.name}
-                                  </div>
+                                  <div className="label-text">{'Tier ' + (index + 1) + ' - ' + item.name}</div>
                                   <div tw="text-[14px]" className="limit-text">
                                     {item.number + " NFT's. Max " + item.limit + " NFT's"}
                                   </div>
@@ -793,21 +488,25 @@ export const SingleCollection: FC = () => {
             </>
           </div>
         </div>
-        <div className="rightPart">
-          <NFT_COVER>
-            {selectedProject?.coverUrl ? (
-              <>
-                <div className={selectedProject?.ended ? 'ended-img' : 'image-border'}>
-                  <img className="inner-image" alt="cover" src={selectedProject?.coverUrl} />
-                </div>
-                {selectedProject?.ended ? <div className="sold-text">SOLD OUT</div> : <></>}
-              </>
-            ) : (
-              <SkeletonCommon width="600px" height="600px" borderRadius="10px" />
-            )}
-          </NFT_COVER>
-          {ProgressBar}
-        </div>
+        {!checkMobile() ? (
+          <div className="rightPart">
+            <NFT_COVER>
+              {selectedProject?.coverUrl ? (
+                <>
+                  <div className={selectedProject?.ended ? 'ended-img' : 'image-border'}>
+                    <img className="inner-image" alt="cover" src={selectedProject?.coverUrl} />
+                  </div>
+                  {selectedProject?.ended ? <div className="sold-text">SOLD OUT</div> : <></>}
+                </>
+              ) : (
+                <SkeletonCommon width="540px" height="540px" borderRadius="10px" />
+              )}
+            </NFT_COVER>
+            {ProgressBar}
+          </div>
+        ) : (
+          ''
+        )}
       </WRAPPER>
     </HEIGHT>
   )

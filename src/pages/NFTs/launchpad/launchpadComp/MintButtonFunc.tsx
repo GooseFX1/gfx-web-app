@@ -14,6 +14,7 @@ import {
 import { useConnectionConfig } from '../../../../context'
 import { Share } from '../../Share'
 import { copyToClipboard } from '../../Collection/CollectionHeader'
+import { Connect } from '../../../../layouts/App/Connect'
 import * as anchor from '@project-serum/anchor'
 
 const MINT_BUTTON_BAR = styled.div`
@@ -22,9 +23,9 @@ const MINT_BUTTON_BAR = styled.div`
     border-radius: 15px 15px 0 0;
     width: 100% !important;
     justify-content: space-evenly;
-    min-width: 350px;
+    min-width: 300px;
     align-items: center;
-    position: sticky;
+    position: fixed;
     bottom: 0;
   }
   margin-top: -100px;
@@ -37,16 +38,14 @@ const MINT_BUTTON_BAR = styled.div`
   position: relative;
   border-radius: 0 0 25px 25px;
   display: flex;
-  flex-direction: row-reverse;
   backdrop-filter: blur(23.9091px);
   background-color: ${({ theme }) => theme.bg9} !important;
 `
 const SHARE_BTN = styled.div`
   margin-top: 10px;
   margin-right: 10px;
-  position: absolute;
+  cursor: pointer;
   @media (max-width: 500px) {
-    position: static;
     margin: 0;
   }
 `
@@ -75,6 +74,18 @@ const WHITELIST_SPOTS = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`
+
+const CONNECT_WRAPPER = styled.div`
+ @media(max-width: 500px){
+  margin: 0;
+ }
+  margin: auto;
+  > button{
+    width: 260px;
+    height: 50px;
+    background: #6b33b0;
+  }
 `
 
 export const MintButtonFunc = ({
@@ -180,11 +191,8 @@ export const MintButtonFunc = ({
 
   return (
     <MINT_BUTTON_BAR>
-      <SHARE_BTN onClick={() => setVisible(true)}>
-        <img src="/img/assets/shareBlue.svg" />
-      </SHARE_BTN>
       {handleShareClick()}
-      {isLive ? (
+      {isLive && wallet.wallet ? (
         <>
           <MINT_BTN
             active={!isMinting && isActive}
@@ -239,9 +247,12 @@ export const MintButtonFunc = ({
             <WHITELIST_SPOTS>{'You have ' + getWhitelistSpots() + ' spots left!'}</WHITELIST_SPOTS>
           )}
         </>
-      ) : (
+      ) : !wallet.wallet ? <CONNECT_WRAPPER><Connect /></CONNECT_WRAPPER> : (<>
         <MINT_BTN active={false}>JOIN WAITLIST</MINT_BTN>
-      )}
+      </>)}
+      <SHARE_BTN onClick={() => setVisible(true)}>
+          <img src="/img/assets/shareBlue.svg" />
+      </SHARE_BTN>
     </MINT_BUTTON_BAR>
   )
 }

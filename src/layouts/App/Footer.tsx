@@ -9,6 +9,7 @@ import { SOCIAL_MEDIAS } from '../../constants'
 import { SVGDynamicReverseMode } from '../../styles/utils'
 import { checkMobile } from '../../utils'
 import { ThemeToggle } from '../../components/ThemeToggle'
+import { useLocation } from 'react-router-dom'
 
 const SOCIAL_ICON = styled.button`
   background: transparent;
@@ -81,7 +82,12 @@ export const Footer: FC = () => {
   const { network } = useConnectionConfig()
   const [privacyPolicyVisible, setPrivacyPolicyVisible] = useState(false)
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState(false)
+  const location = useLocation()
+  const hideFooter = location.pathname.startsWith('/NFTs/launchpad/')
 
+  if (checkMobile() && hideFooter) {
+    return <></>
+  }
   if (checkMobile()) {
     return (
       <WRAPPER>
