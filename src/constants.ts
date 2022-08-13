@@ -41,7 +41,9 @@ export const NETWORK_CONSTANTS = {
 export const TOKEN_NAMES = {
   SOL: 'SOL',
   GOFX: 'GOFX',
-  GMT: 'GMT'
+  GMT: 'GMT',
+  USDT: 'USDT',
+  USDC: 'USDC'
 }
 
 export const TOKEN_BLACKLIST = [

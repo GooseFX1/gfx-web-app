@@ -66,6 +66,10 @@ export const ADDRESSES: {
         address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
         decimals: 6
       },
+      USDT: {
+        address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        decimals: 6
+      },
       ETH: {
         address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
         decimals: 8
@@ -81,6 +85,10 @@ export const ADDRESSES: {
       GMT: {
         address: new PublicKey('7i5KKsX2weiTkry7jA4ZwSuXGhs5eJBEjY8vVxR4pfRx'),
         decimals: 9
+      },
+      ORCA: {
+        address: new PublicKey('orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE'),
+        decimals: 6
       }
     },
     mints: {
@@ -98,6 +106,7 @@ export const ADDRESSES: {
         decimals: 6,
         sslPool: true
       },
+
       ETH: {
         address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
         decimals: 8

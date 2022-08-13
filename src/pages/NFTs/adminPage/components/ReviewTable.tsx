@@ -131,7 +131,11 @@ const ReviewTable = ({ reviewProjects, btnClicked }) => {
         })}
       </WRAPPER>
     )
-  return <WRAPPER> Loading...</WRAPPER>
+  return (
+    <WRAPPER>
+      <h1>Loading... </h1>
+    </WRAPPER>
+  )
 }
 
 const RowComponent: React.FC<{ project: ICreatorData; index: number; btnClicked: any }> = ({ project, btnClicked }) => {
