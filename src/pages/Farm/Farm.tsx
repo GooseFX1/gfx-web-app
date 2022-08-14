@@ -9,38 +9,18 @@ import { notify, checkMobile } from '../../utils'
 import tw from 'twin.macro'
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
-  ${tw`sm:px-0 relative flex flex-col w-screen`}
+  ${tw`sm:px-0 relative flex flex-col w-screen px-6 overflow-y-scroll overflow-x-hidden`}
   padding-top: calc(80px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
-  padding-left: ${({ theme }) => theme.margin(3)};
-  padding-right: ${({ theme }) => theme.margin(3)};
   color: ${({ theme }) => theme.text1};
-  overflow-y: scroll;
-  overflow-x: hidden;
-
   * {
     font-family: Montserrat;
   }
-
   ${({ theme }) => theme.customScrollBar('6px')};
-
-  @media (max-width: 500px){
-    padding-left: 0px;
-    padding-right: 0px;
-  }
 `
 
 const BODY = styled.div<{ $navCollapsed: boolean }>`
-  ${tw`sm:pl-0 sm:pr-0 sm:!pt-[17px]`}
+  ${tw`sm:px-0 sm:!pt-[17px] sm:h-full p-16 !pt-[43px] !pb-0`}
   height: calc(85vh + ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
-  padding: ${({ theme }) => theme.margin(8)};
-  padding-top: 43px !important;
-  padding-bottom: 0px !important;
-
-  @media (max-width: 500px){
-    padding-left: 0px;
-    padding-right: 0px;
-    padding-top: 17px !important;
-  }
 `
 
 export const Farm: FC = () => {

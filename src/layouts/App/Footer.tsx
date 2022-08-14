@@ -27,18 +27,14 @@ const SOCIAL_ICON = styled.button`
 
 const TEXT = styled.span`
   font-size: 11px;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.text26};
   margin-right: ${({ theme }) => theme.margin(1)};
-
-  span {
-    color: ${({ theme }) => theme.text3};
-    cursor: pointer;
-  }
 
   @media (max-width: 500px) {
     padding: 0.25rem;
     padding-bottom: 1rem;
     text-align: center;
+    font-size: 9px;
   }
 `
 
@@ -64,6 +60,7 @@ const WRAPPER = styled(SpaceBetweenDiv)`
   @media(max-width:500px) {
     flex-direction: column;
     width: 100%;
+    border-top: none;
   }
 `
 

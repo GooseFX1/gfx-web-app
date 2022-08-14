@@ -6,77 +6,43 @@ import { Skeleton } from 'antd'
 import tw from 'twin.macro'
 
 export const STYLED_TITLE = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  ${tw`flex flex-row items-center justify-center`}
   .textTitle {
-    ${tw`sm:font-semibold sm:text-base text-tiny font-medium text-left`}
+    ${tw`sm:font-semibold sm:text-base sm:text-white text-tiny font-medium text-left text-white`}
     font-family: Montserrat;
-    color: #fff;
-
-    @media (max-width: 500px) {
-      ${tw`text-[#eee]`}
-      line-height: normal;
-    }
   }
   .info-icon {
-    width: 15px;
-    height: auto;
-    display: block;
-    margin-left: ${({ theme }) => theme.margin(1)};
+    ${tw`w-[15px] h-auto block ml-2`}
   }
-
   .arrow-down {
-    width: 14px;
-    height: auto;
-    display: block;
-    margin-left: ${({ theme }) => theme.margin(1)};
+    ${tw`sm:w-[17px] sm:h-[7px] w-[14px] h-auto block ml-2`}
   }
 `
 
 export const STYLED_NAME = styled.div`
-  display: flex;
-  align-items: center;
+  ${tw`flex items-center`}
   .textName {
-    ${tw`sm:ml-[15px]`}
-    font-size: 18px;
-    font-weight: 600;
+    ${tw`text-regular font-semibold max-w-[90px] ml-5 sm:ml-3.75`}
     color: ${({ theme }) => theme.text8};
-    max-width: 90px;
-    margin-left: ${({ theme }) => theme.margin(2.5)};
-    @media (max-width: 500px) {
-      margin-left: 15px;
-    }
   }
   .coin-image {
-    width: 41px;
-    height: 41px;
-    display: block;
+    ${tw`w-[41px] h-[41px] block`}
     &.double-sided {
-      width: 91px;
+      ${tw`w-[91px]`}
     }
   }
-
   .percent-100 {
-    width: 36px;
-    height: auto;
-    display: block;
-    margin-left: ${({ theme }) => theme.margin(2.5)};
+    ${tw`w-9 h-auto block ml-5`}
   }
 `
 
 export const STYLED_EARNED = styled.div`
+  ${tw`text-[17px] font-semibold text-[#b1b1b1] text-center`}
   font-family: Montserrat;
-  font-size: 17px;
-  font-weight: 600;
-  color: #b1b1b1;
-  text-align: center;
 `
 
 const ICON_WRAPPER = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  ${tw`flex flex-col items-center`}
 
   .arrow-down {
     filter: ${({ theme }) => theme.filterArrowDown};
@@ -84,7 +50,7 @@ const ICON_WRAPPER = styled.div`
 `
 
 const RefreshIcon = styled.a`
-  ${tw`cursor-pointer mr-[25px] ml-10 rounded-full border-0 p-0 bg-transparent`}
+  ${tw`cursor-pointer mr-[25px] ml-10 rounded-full border-0 p-0 bg-transparent flex`}
 `
 
 export const Loader: FC = () => {

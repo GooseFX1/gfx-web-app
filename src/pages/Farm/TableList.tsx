@@ -36,9 +36,6 @@ export const STYLED_TABLE_LIST = styled(Table)`
     background: ${theme.bg17};
     border-radius: 20px 20px 0px 0px;
     box-shadow: ${theme.tableListBoxShadow};
-
-    @media (max-width: 500px){
-    }
   }
   .normal-text {
     font-family: Montserrat;
@@ -53,8 +50,8 @@ export const STYLED_TABLE_LIST = styled(Table)`
     border-bottom-left-radius: 25px;
 
     @media(max-width: 500px){
-      border-top-left-radius: 20px;
-      border-bottom-left-radius: 0;
+      border-top-left-radius: 25px;
+      border-bottom-left-radius: 10px;
     }
   }
   .ant-table-container table > thead > tr:first-child th:last-child {
@@ -62,8 +59,8 @@ export const STYLED_TABLE_LIST = styled(Table)`
     border-bottom-right-radius: 25px;
 
       @media(max-width: 500px){
-        border-top-right-radius: 20px;
-        border-bottom-right-radius: 0px;
+        border-top-right-radius: 25px;
+        border-bottom-right-radius: 10px;
 
     }
   }
@@ -171,7 +168,6 @@ export const STYLED_TABLE_LIST = styled(Table)`
       color: ${theme.text6};
     }
   }
-
 
   .expanded-active {
     cursor: pointer;
