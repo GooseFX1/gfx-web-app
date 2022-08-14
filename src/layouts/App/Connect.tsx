@@ -20,7 +20,7 @@ import { truncateAddress } from '../../utils'
 import tw from 'twin.macro'
 
 const WALLET_ICON = styled(CenteredImg)`
-  ${tw`bg-black h-6 w-6 mr-4 rounded-circle`}
+  ${tw`bg-black h-[30px] w-[30px] mr-4 rounded-circle`}
 
   img {
     ${tw`h-3 w-3`}

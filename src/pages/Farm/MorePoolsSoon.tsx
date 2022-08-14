@@ -4,27 +4,20 @@ import Lottie from 'lottie-react'
 import MorePools from '../MorePools_dark.json'
 import MorePoolsLite from '../MorePools_lite.json'
 import { useDarkMode } from '../../context'
+import tw from 'twin.macro'
 
 const CONTAINER = styled.div`
+  ${tw`flex flex-col items-center w-full min-h-[30vh]`}
   background: ${({ theme }) => theme.bg17};
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  min-height: 30vh;
 `
 const MorePoolImg = styled.div`
-  margin-top: 30px;
+  .animation-404{
+    ${tw`w-[188px] h-[120px] mt-[70px]`}
+  }
 `
 const MoreText = styled.div`
-  font-style: normal;
-  font-weight: 600;
-  font-size: 20px;
-  line-height: 24px;
+  ${tw`not-italic font-semibold text-xl mt-[30px] mb-[50px]`}
   color: ${({ theme }) => theme.text19};
-  bottom: 30px;
-  margin-top: 23px;
 `
 
 export const MorePoolsSoon = () => {

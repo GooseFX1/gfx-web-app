@@ -7,7 +7,7 @@ import { CenteredImg } from '../styles'
 import tw from "twin.macro"
 
 const ICON = styled(CenteredImg)<{ notDoxxed?: boolean }>`
-  ${tw`sm:h-[18px] sm:w-[18px] sm:ml-1.5 ml-2`}  
+  ${tw`sm:h-[20px] sm:w-[20px] sm:ml-1.5 ml-2`}  
   ${({ theme, notDoxxed }) => !notDoxxed && theme.measurements(theme.margin(1.5))}
 `
 

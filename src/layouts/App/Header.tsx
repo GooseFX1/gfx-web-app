@@ -37,13 +37,13 @@ const BUTTONS = styled(CenteredDiv)`
 `
 
 const WRAPPER = styled.nav`
-  ${tw`fixed w-full rounded-br-circle rounded-bl-circle z-[300] md:flex-nowrap md:flex md:h-auto md:p-2 min-md:flex min-md:items-center min-md:justify-center`}
+  ${tw`fixed w-full rounded-b-circle z-[300] md:flex-nowrap md:flex md:h-auto md:p-2 min-md:flex min-md:items-center min-md:justify-center`}
   background-color: ${({ theme }) => theme.bg9};
   ${({ theme }) => theme.smallShadow}
 `
 
 const MobileWrapper = styled(WRAPPER)`
-  ${tw`flex !flex-row justify-between items-center rounded-none shadow-none`}
+  ${tw`flex !flex-row justify-between items-center rounded-none shadow-none rounded-b-[30px]`}
   background-color: ${({ theme }) => theme.bg18};  
 `
 
