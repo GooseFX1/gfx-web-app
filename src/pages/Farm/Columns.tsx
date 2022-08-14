@@ -8,7 +8,7 @@ import tw from 'twin.macro'
 export const STYLED_TITLE = styled.div`
   ${tw`flex flex-row items-center justify-center`}
   .textTitle {
-    ${tw`sm:font-semibold sm:text-base sm:text-[#eee] text-tiny font-medium text-left text-white`}
+    ${tw`sm:font-semibold sm:text-base sm:text-white text-tiny font-medium text-left text-white`}
     font-family: Montserrat;
   }
   .info-icon {
@@ -22,7 +22,7 @@ export const STYLED_TITLE = styled.div`
 export const STYLED_NAME = styled.div`
   ${tw`flex items-center`}
   .textName {
-    ${tw`sm:ml-[15px] text-regular font-semibold max-w-[90px] ml-5 sm:ml-3.75`}
+    ${tw`text-regular font-semibold max-w-[90px] ml-5 sm:ml-3.75`}
     color: ${({ theme }) => theme.text8};
   }
   .coin-image {
