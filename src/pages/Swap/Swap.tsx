@@ -298,7 +298,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
   const location = useLocation<ILocationState>()
   const { setEndpoint, network } = useConnectionConfig()
   const { mode } = useDarkMode()
-  const { refreshRates, setFocused, switchTokens, setClickNo, tokenA, tokenB, inTokenAmount } = useSwap()
+  const { refreshRates, setFocused, switchTokens, setClickNo, setRoutes, tokenA, tokenB, inTokenAmount } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
   const [route, setRoute] = useState(routes[clickNo])
   const [wrapModalVisible, setWrapModalVisible] = useState(false)
@@ -324,6 +324,10 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
   const onClick = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation()
     setSettingsModalVisible(true)
+  }
+  const refresh = () => {
+    setRoutes([])
+    setTimeout(() => refreshRates(), 2000)
   }
 
   const dateString = (date: Date) => {
@@ -381,7 +385,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
           <div onClick={() => setWrapModalVisible(true)} className="wrapped-sol">
             wSOL
           </div>
-          <div onClick={refreshRates}>
+          <div onClick={refresh} style={{ cursor: 'pointer' }}>
             <img src={`/img/assets/refresh.svg`} alt="refresh-icon" className={'header-icon'} />
           </div>
           <SETTING_WRAPPER onClick={onClick}>
