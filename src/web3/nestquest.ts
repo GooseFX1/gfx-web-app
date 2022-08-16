@@ -5,10 +5,8 @@ import { purchaseWithSol } from './nestquest-codegen/instructions/purchaseWithSo
 import { purchaseWithGofx } from './nestquest-codegen/instructions/purchaseWithGofx'
 import { PROGRAM_ID } from './nestquest-codegen/programId'
 import { createAssociatedTokenAccountInstruction } from './account'
-import { TOKEN_PROGRAM_ID, ADDRESSES, CIVIC_GATEKEEPER, SOL_REVENUE, GOFX_REVENUE } from './ids'
+import { TOKEN_PROGRAM_ID, ADDRESSES } from './ids'
 import { signAndSendRawTransaction } from './utils'
-
-const GOFX_MINT = ADDRESSES['devnet'].mints.GOFX.address
 
 const buildAssocIx = (nftUserAccount: web3.PublicKey, walletPubkey: web3.PublicKey, nftMint: web3.PublicKey) => {
   const temp = []
@@ -20,7 +18,7 @@ const buildAssocIx = (nftUserAccount: web3.PublicKey, walletPubkey: web3.PublicK
 const fetchAvailableNft = async (
   connection: web3.Connection
 ): Promise<{ nft: web3.PublicKey | null; length: number }> => {
-  const walletAddress = ADDRESSES['devnet'].programs.nestquestSale.address
+  const walletAddress = ADDRESSES['mainnet-beta'].programs.nestquestSale.address
   const tokensRaw = await connection.getParsedTokenAccountsByOwner(walletAddress, {
     programId: TOKEN_PROGRAM_ID
   })
@@ -58,9 +56,9 @@ const buyWithSOL = async (
     nftUserAccount,
     nftAuth,
     nftMint,
-    revenue: SOL_REVENUE,
+    revenue: ADDRESSES['mainnet-beta'].programs.nestquestSale.sol_revenue,
     civicGatewayToken,
-    civicGatekeeper: CIVIC_GATEKEEPER,
+    civicGatekeeper: ADDRESSES['mainnet-beta'].programs.nestquestSale.civic_gatekeeper,
     tokenProgram: TOKEN_PROGRAM_ID,
     systemProgram: web3.SystemProgram.programId
   }
@@ -93,6 +91,7 @@ const buyWithGOFX = async (
   nftMint: web3.PublicKey,
   civicGatewayToken: web3.PublicKey
 ): Promise<web3.Transaction | string | null> => {
+  const GOFX_MINT = ADDRESSES['mainnet-beta'].mints.GOFX.address
   const [nftAuth] = await web3.PublicKey.findProgramAddress([Buffer.from('auth')], PROGRAM_ID)
 
   const nftVault = await utils.token.associatedAddress({
@@ -124,10 +123,10 @@ const buyWithGOFX = async (
     nftUserAccount,
     nftAuth,
     nftMint,
-    revenue: SOL_REVENUE,
-    gofxRevenue: GOFX_REVENUE,
+    revenue: ADDRESSES['mainnet-beta'].programs.nestquestSale.sol_revenue,
+    gofxRevenue: ADDRESSES['mainnet-beta'].programs.nestquestSale.gofx_revenue,
     civicGatewayToken,
-    civicGatekeeper: CIVIC_GATEKEEPER,
+    civicGatekeeper: ADDRESSES['mainnet-beta'].programs.nestquestSale.civic_gatekeeper,
     tokenProgram: TOKEN_PROGRAM_ID,
     systemProgram: web3.SystemProgram.programId
   }

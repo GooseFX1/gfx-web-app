@@ -10,7 +10,6 @@ import { onShare } from './NestQuestSingleListing'
 import { StringPublicKey, buyWithSOL, fetchAvailableNft, buyWithGOFX } from '../../../web3'
 import { GatewayStatus, useGateway } from '@civic/solana-gateway-react'
 import { notify } from '../../../utils'
-import { PublicKey } from '@solana/web3.js'
 
 //#region styles
 const STYLED_POPUP = styled(PopupCustom)`
@@ -249,7 +248,7 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
       <div>
         <CreatorStyle>
           <img className="icon" src={`/img/assets/check-icon.png`} alt="back" />
-          <p>This is a verified creator</p>
+          <span>This is a verified creator</span>
         </CreatorStyle>
         <PriceStyle>
           <span className="price">Price</span>
@@ -332,7 +331,7 @@ const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintP
             description: `You bought 1 "Tier 1 Egg" for at least ${token === 'SOL' ? '2 SOL' : '750 GOFX'}`,
             icon: 'success',
             txid: result as string,
-            network: 'devnet'
+            network: 'mainnet'
           })
         } else {
           throw new Error('an error occured')
