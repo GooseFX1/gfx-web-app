@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
 import { PairStats } from './PairStats'
-import { FEATURED_PAIRS_LIST } from '../../context'
+import { useCrypto } from '../../context'
 
 const WRAPPER = styled.div`
   display: -webkit-box;
@@ -39,10 +39,11 @@ const WRAPPER = styled.div`
 `
 
 export const Pairs: FC = () => {
+  const { pairs } = useCrypto()
   return (
     <WRAPPER>
-      {FEATURED_PAIRS_LIST.map(({ decimals, pair, type }, index) => (
-        <PairStats key={index} decimals={decimals} pair={pair} type={type} />
+      {pairs.map(({ pair, type, marketAddress }, index) => (
+        <PairStats key={index} pair={pair} type={type} marketAddress={marketAddress} />
       ))}
     </WRAPPER>
   )

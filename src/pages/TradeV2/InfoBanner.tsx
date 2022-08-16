@@ -176,8 +176,8 @@ export const InfoBanner: FC<{
 
   let changeValue = tokenInfos ? tokenInfos.change : ' ',
     classNameChange = ''
-  if (changeValue.substring(0, 1) === '-') classNameChange = 'down24h'
-  else if (changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
+  if (changeValue && changeValue.substring(0, 1) === '-') classNameChange = 'down24h'
+  else if (changeValue && changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
 
   const handleToggle = (e) => {
     if (e === 'spot') setIsSpot(true)
@@ -237,7 +237,7 @@ export const InfoBanner: FC<{
       </INFO_STATS>
       <FEES_BTN onClick={() => setFeesPopup((prev) => !prev)}>Fees </FEES_BTN>
       {isLocked ? (
-        <REFRESH_DATA onClick={() => refreshTokenData()}>
+        <REFRESH_DATA onClick={() => refreshTokenData(null)}>
           <img src={`/img/assets/whiteRefresh.svg`} alt="refresh" />
         </REFRESH_DATA>
       ) : (
