@@ -597,11 +597,13 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
   useEffect(() => {
     const route = routes?.[clickNo]
     if (!route) return
-    const totalLp = route.marketInfos[0].lpFee.amount / 10 ** tokenA.decimals
-    const percent = +((totalLp / inTokenAmount) * 100)?.toFixed(4)
-    const totalLpB = route.marketInfos.slice(-1)[0].lpFee.amount / 10 ** tokenB.decimals
+    const totalLp = route.marketInfos[0].lpFee.amount / 10 ** tokenA.decimals || 0.0
+    let percent = +((totalLp / inTokenAmount) * 100)?.toFixed(4) || 0.0
+    percent = isFinite(percent) ? percent : 0.0
+    const totalLpB = route.marketInfos.slice(-1)[0].lpFee.amount / 10 ** tokenB.decimals || 0.0
     const out = route.outAmount / 10 ** tokenB.decimals
-    const percentB = +((totalLpB / out) * 100)?.toFixed(4)
+    let percentB = +((totalLpB / out) * 100)?.toFixed(4) || 0.0
+    percentB = isFinite(percentB) ? percentB : 0.0
 
     setOutAmount(out)
 
