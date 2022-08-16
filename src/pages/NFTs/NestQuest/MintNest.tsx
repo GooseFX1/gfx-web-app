@@ -237,8 +237,12 @@ interface MintProps {
   gatewayStatus?: any
 }
 
+const GOFX_Price = 500
+const SOL_Price = 1
+
 const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
   const [loading, setLoading] = useState(false)
+
   return (
     <>
       <p className="title">
@@ -253,13 +257,13 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
         <PriceStyle>
           <span className="price">Price</span>
           <Col span={18}>
-            <span className="Big-Price">{nestQuestData.token === 'SOL' ? '2.00' : '750'}</span>
+            <span className="Big-Price">{nestQuestData.token === 'SOL' ? SOL_Price : GOFX_Price}</span>
             <span className="currency">{nestQuestData.token}</span>
           </Col>
         </PriceStyle>
         <ListStyle className="">
           <span>Price per item</span>
-          <span>{nestQuestData.token === 'SOL' ? '2.00 SOL' : '750 GOFX'}</span>
+          <span>{nestQuestData.token === 'SOL' ? `${SOL_Price} SOL` : `${GOFX_Price} GOFX`}</span>
         </ListStyle>
         <ListStyle className="">
           <span>Quantity</span>
@@ -271,7 +275,7 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
         </ListStyle>
         <ListStyle className="">
           <span>Total Price</span>
-          <span>{nestQuestData.token === 'SOL' ? '2.01 SOL' : '750 GOFX + 0.01 SOL'}</span>
+          <span>{nestQuestData.token === 'SOL' ? `${SOL_Price} SOL` : `${GOFX_Price} GOFX + 0.01 SOL`}</span>
         </ListStyle>
 
         <STYLED_CREATE_BTN
@@ -328,7 +332,9 @@ const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintP
           notify({
             type: 'success',
             message: 'Purchase successful!',
-            description: `You bought 1 "Tier 1 Egg" for at least ${token === 'SOL' ? '2 SOL' : '750 GOFX'}`,
+            description: `You bought 1 "Tier 1 Egg" for at least ${
+              token === 'SOL' ? `${SOL_Price} SOL` : `${GOFX_Price} GOFX`
+            }`,
             icon: 'success',
             txid: result as string,
             network: 'mainnet'

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, useCallback, MouseEventHandler } from 'react'
+import React, { FC, useEffect, useState, useCallback, useMemo, MouseEventHandler } from 'react'
 import { Row, Col, Progress } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
@@ -15,7 +15,7 @@ import { Tabs } from 'antd'
 import { TokenToggle } from '../../../components/TokenToggle'
 import { Share } from '../Share'
 import { generateTinyURL } from '../../../api/tinyUrl'
-import { notify } from '../../../utils'
+import { moneyFormatter, notify } from '../../../utils'
 import { GatewayProvider } from '@civic/solana-gateway-react'
 import { Transaction, sendAndConfirmRawTransaction } from '@solana/web3.js'
 import tw from 'twin.macro'
@@ -223,10 +223,11 @@ const DESCRIPTION = styled.p`
 `
 
 const REMNANT = styled.p`
-  font-size: 18px;
+  font-size: 16px;
   line-height: 22px;
   color: ${({ theme }) => theme.text1};
-  margin: 0px;
+  text-align: center;
+  margin: 0 0 0 4px;
 
   span {
     color: #7d7d7d;
@@ -252,7 +253,7 @@ const MINT_PROGRESS = styled(Progress)<{ num: number }>`
   .ant-progress-text {
     position: absolute;
     top: 19px;
-    left: calc(${({ num }) => num}% - 64px);
+    left: calc(${({ num }) => (num < 20 ? 20 : num)}% - 64px);
   }
 `
 
@@ -395,8 +396,6 @@ export const NestQuestSingleListing: FC<{
   arbData?: INFTMetadata
 }> = ({ status = '', backUrl, handleClickPrimaryButton, ...rest }) => {
   const history = useHistory()
-  // total supply, amount distr, yet to be sold
-  const totalEggs = 10
   const { connected, publicKey, signTransaction } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
   const { connection, endpoint, network } = useConnectionConfig()
@@ -407,23 +406,38 @@ export const NestQuestSingleListing: FC<{
   const [mintDisabled, setMintDisabled] = useState<boolean>(false)
   const [insufficientToken, setInsufficientToken] = useState<boolean>(false)
   const [mintPrice, setMintPrice] = useState<number>(1)
-  const [availableEggs, setAvailableEggs] = useState<number>(0)
+
+  // Using Total Number of NFTS as denominator
+  // const totalEggs = 25002
+  // const preSale = 2148
+  // const purse = 10217
+  // const [availableEggs, setAvailableEggs] = useState<number>(purse)
+  // const curPurchase = useMemo(() => preSale + (purse - availableEggs), [availableEggs])
+  // const currentlyMintedPercentage = useMemo(() => (curPurchase / totalEggs) * 100, [curPurchase])
+
+  // Using Number of Current Minted NFTS as denominator
+  // const purse = 10217
+  // const totalEggs = purse
+  // const preSale = 2148
+  // const [availableEggs, setAvailableEggs] = useState<number>(purse)
+  // const curPurchase = useMemo(() => totalEggs - availableEggs, [availableEggs])
+  // const currentlyMintedPercentage = useMemo(() => (curPurchase / totalEggs) * 100, [curPurchase])
 
   useEffect(() => {
     if (connection) {
       fetchAvailableNft(connection)
         .then((res) => {
           if (!res.nft) {
+            setMintDisabled(true)
             throw new Error('NFT sold out')
           } else {
-            setMintDisabled(false)
-            setAvailableEggs(res.length)
+            setMintDisabled(res.length > 0 ? false : true)
+            // setAvailableEggs(res.length)
           }
         })
         .catch((err) => {
           console.log("Couldn't fetch eggs from contract", err)
           notify({ type: 'error', message: "Couldn't fetch eggs from contract" })
-          setMintDisabled(true)
         })
     }
   }, [connection, mintPrice, network, token, mintModalVisible, mintDisabled])
@@ -518,7 +532,7 @@ export const NestQuestSingleListing: FC<{
                   <Col span={16}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <PILL_SECONDARY>
-                        <div>Items 10,018</div>
+                        <div>Supply 25,002</div>
                       </PILL_SECONDARY>
 
                       <PILL_SECONDARY>
@@ -568,14 +582,18 @@ export const NestQuestSingleListing: FC<{
                     </TabPane>
                   </Tabs>
                   <ACTION_BELOW>
-                    {publicKey ? (
-                      !mintDisabled && !insufficientToken ? (
-                        <ORANGE_BTN status="action" onClick={() => setMintModalVisible(true)} disabled={mintDisabled}>
+                    {mintDisabled ? (
+                      <DISABLED>
+                        <span>Minted Out</span>
+                      </DISABLED>
+                    ) : publicKey ? (
+                      !insufficientToken ? (
+                        <ORANGE_BTN status="action" onClick={() => setMintModalVisible(true)}>
                           Mint
                         </ORANGE_BTN>
                       ) : (
                         <DISABLED>
-                          <span>{insufficientToken ? 'Insufficient Balance' : 'Sold Out'}</span>
+                          <span>Insufficient Balance</span>
                         </DISABLED>
                       )
                     ) : (
@@ -610,27 +628,30 @@ export const NestQuestSingleListing: FC<{
                 src={'https://gfxnestquest.s3.ap-south-1.amazonaws.com/Egg.mov'}
               ></video>
 
-              {!mintDisabled && (
-                <Live>
-                  <span>Live</span>
-                </Live>
-              )}
+              <Live>
+                <span>{mintDisabled ? 'Minted Out' : 'Live'}</span>
+              </Live>
             </IMAGE>
             <br />
 
             <Row gutter={8}>
               <Col span={7}></Col>
-              <MINT_PROGRESS_WRAPPER>
-                {/*  */}
+              {/* <MINT_PROGRESS_WRAPPER>
                 <MINT_PROGRESS
-                  percent={((totalEggs - availableEggs) / totalEggs) * 100}
+                  percent={parseFloat(currentlyMintedPercentage.toFixed(1))}
                   status="active"
-                  num={((totalEggs - availableEggs) / totalEggs) * 100}
+                  num={parseFloat(currentlyMintedPercentage.toFixed(1))}
                 />
                 <REMNANT>
-                  <span>{totalEggs - availableEggs}</span>/{totalEggs}
+                  {availableEggs === 0 ? (
+                    'Minted Out'
+                  ) : (
+                    <span>
+                      <span>{moneyFormatter(curPurchase)}</span>/{moneyFormatter(totalEggs)}
+                    </span>
+                  )}
                 </REMNANT>
-              </MINT_PROGRESS_WRAPPER>
+              </MINT_PROGRESS_WRAPPER> */}
             </Row>
           </Col>
         </Row>
