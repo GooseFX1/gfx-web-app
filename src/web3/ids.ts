@@ -52,6 +52,9 @@ export const ADDRESSES: {
       }
       nestquestSale: {
         address: PublicKey
+        civic_gatekeeper: PublicKey
+        sol_revenue: PublicKey
+        gofx_revenue: PublicKey
       }
     }
   }
@@ -183,34 +186,10 @@ export const ADDRESSES: {
         controller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
       },
       nestquestSale: {
-        address: PublicKey.default
-      }
-    }
-  },
-  testnet: {
-    mints: {},
-    pools: {},
-    sslPool: {},
-    programs: {
-      pool: {
-        address: PublicKey.default,
-        controller: PublicKey.default,
-        priceAggregator: PublicKey.default
-      },
-      pythOracle: {
-        address: PublicKey.default
-      },
-      stake: {
-        address: PublicKey.default
-      },
-      swap: {
-        address: PublicKey.default
-      },
-      ssl: {
-        address: PublicKey.default
-      },
-      nestquestSale: {
-        address: PublicKey.default
+        address: new PublicKey('EBNsQvZppDTRgcW6jc93QbEqFUm2aJRyxK4CEFhgQ3V8'),
+        civic_gatekeeper: new PublicKey('ignREusXmGrscGNUesoU9mxfds9AiYTezUKex2PsZV6'),
+        sol_revenue: new PublicKey('4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'),
+        gofx_revenue: new PublicKey('AfbSheiV3PJdA8ydTDQjGnQfHLafsqZJFkJp2iENWcGb')
       }
     }
   },
@@ -353,7 +332,6 @@ export const ADDRESSES: {
         address: new PublicKey('BmA9Z6FjioHJPpjT39QazZyhDRUdZy2ezwx4GiDdE2u2')
       },
       stake: {
-        //devnet
         address: new PublicKey('3Gwyhoudx8XgYry8dzKQ2GGsofkUdm7VZUvddHxchL3x'),
         controller: new PublicKey('ApkmzBaTPUAeVj3QuqDcz6iLE6xZSLd29nke4McqrKw5'),
         admin: new PublicKey('Cir93Do3LGMYtYnbxpQAb5Gr5R5mS2c7gTS1AZkvYA3w')
@@ -367,7 +345,40 @@ export const ADDRESSES: {
         controller: new PublicKey('8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ')
       },
       nestquestSale: {
-        address: new PublicKey('3QvkzDXSgrLmsCK5ZDoddPFL7tYjzC5oHiiA5TJ9NsoA')
+        address: new PublicKey('3QvkzDXSgrLmsCK5ZDoddPFL7tYjzC5oHiiA5TJ9NsoA'),
+        civic_gatekeeper: new PublicKey('ignREusXmGrscGNUesoU9mxfds9AiYTezUKex2PsZV6'),
+        sol_revenue: new PublicKey('9wN21Aghw1mt9rRaSKGkDpDNpUhMA7QQX3uGtYZBYaKU'),
+        gofx_revenue: new PublicKey('AtzZfzmozqGLSpcTCXD9p4mTzxoJmpAtZigNJ3xTbAY2')
+      }
+    }
+  },
+  testnet: {
+    mints: {},
+    pools: {},
+    sslPool: {},
+    programs: {
+      pool: {
+        address: PublicKey.default,
+        controller: PublicKey.default,
+        priceAggregator: PublicKey.default
+      },
+      pythOracle: {
+        address: PublicKey.default
+      },
+      stake: {
+        address: PublicKey.default
+      },
+      swap: {
+        address: PublicKey.default
+      },
+      ssl: {
+        address: PublicKey.default
+      },
+      nestquestSale: {
+        address: PublicKey.default,
+        civic_gatekeeper: PublicKey.default,
+        sol_revenue: PublicKey.default,
+        gofx_revenue: PublicKey.default
       }
     }
   }

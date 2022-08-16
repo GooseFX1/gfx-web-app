@@ -1,2 +1,4 @@
-export type { purchaseWithGofx, PurchaseWithGofxAccounts } from './purchaseWithGofx'
-export type { purchaseWithSol, PurchaseWithSolAccounts } from './purchaseWithSol'
+export { purchaseWithGofx } from './purchaseWithGofx'
+export type { PurchaseWithGofxAccounts } from './purchaseWithGofx'
+export { purchaseWithSol } from './purchaseWithSol'
+export type { PurchaseWithSolAccounts } from './purchaseWithSol'
