@@ -181,7 +181,7 @@ export const mobileColumns = [
     title: (
       <RefreshIcon href="/farm">
         <img
-          style={{ display: 'block', margin: 'auto', marginRight: '25%' }}
+          style={{ display: 'block', margin: 'auto'}}
           src={'/img/assets/refresh.svg'}
           alt="refresh"
         />
