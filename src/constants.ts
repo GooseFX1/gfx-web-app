@@ -76,10 +76,10 @@ export const TOKEN_BLACKLIST = [
   '8gYZZsmP1v2WEebzNL1gH12WYqAFcspVByWZ2ejuJMm5',
   '47WYC41xdUjs1ZghfppBRFGmC3ztzecHhdy51QyBXgLz',
   'SRYWvj5Xw1UoivpdfJN4hFZU1qbtceMvfM5nBc3PsRC',
-  'Ga2AXHpfAF6mv2ekZwcsJFqu7wB4NV331qNH7fW9Nst8',
   'CYCPEtrCYjNycxZiZ2RyeBBUqzsgRh7yGjn4SwX2AnPF',
   'JetNnLZpbECCfyeZSvJdgg5gf37QfCkPrp2X8XfmNWn',
-  'iouQcQBAiEXe6cKLS85zmZxUqaCqBdeHFpqKoSz615u'
+  'iouQcQBAiEXe6cKLS85zmZxUqaCqBdeHFpqKoSz615u',
+  'BWnE6wM3DYyVCMHxsiSxKfNwrJy4G6kcKpSYESGxZWKf'
 ]
 
 export const SUPPORTED_TOKEN_LIST = [
@@ -165,7 +165,8 @@ export const SUPPORTED_TOKEN_LIST = [
   'FIDA',
   'AURY',
   'ICHI',
-  'ATLAS'
+  'ATLAS',
+  'SWAG'
 ]
 
 export const NFT_MARKET_TRANSACTION_FEE: number = 1
