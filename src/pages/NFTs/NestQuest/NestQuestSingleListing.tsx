@@ -7,7 +7,6 @@ import ModalMint from './MintNest'
 import { useWalletModal, useAccounts, useConnectionConfig } from '../../../context'
 import { WRAPPED_SOL_MINT, fetchAvailableNft, ADDRESSES } from '../../../web3'
 import { MintItemViewStatus, INFTMetadata } from '../../../types/nft_details'
-import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { MainButton } from '../../../components/MainButton'
 import { SOCIAL_MEDIAS } from '../../../constants'
 import { SVGDynamicReverseMode } from '../../../styles/utils'
@@ -36,17 +35,6 @@ const IMAGE = styled.div`
     flex-direction: column;
     justify-content: space-between;
     color: ${theme.text1};
-
-    .ls-image {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100%;
-      border-radius: 20px;
-      z-index: 0;
-    }
 
     .ls-video {
       border-radius: 20px;
@@ -412,9 +400,7 @@ export const NestQuestSingleListing: FC<{
   const { connected, publicKey, signTransaction } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
   const { connection, endpoint, network } = useConnectionConfig()
-  //const { candyMachine } = useNFTLPSelected()
   const { getUIAmount } = useAccounts()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [token, setToken] = useState<string>('SOL')
   const [mintModalVisible, setMintModalVisible] = useState(false)
   const [shareModal, setShareModal] = useState(false)
@@ -422,10 +408,6 @@ export const NestQuestSingleListing: FC<{
   const [insufficientToken, setInsufficientToken] = useState<boolean>(false)
   const [mintPrice, setMintPrice] = useState<number>(1)
   const [availableEggs, setAvailableEggs] = useState<number>(0)
-
-  useEffect(() => {
-    setTimeout(() => setIsLoading(false), 800)
-  }, [])
 
   useEffect(() => {
     if (connection) {
@@ -527,97 +509,87 @@ export const NestQuestSingleListing: FC<{
         <Row gutter={[64, 64]} className="nd-content" justify="center" align="top">
           <Col sm={10} xl={10} xxl={9} className="nd-details">
             <div>
-              {isLoading ? (
-                <>
-                  <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
-                  <br />
-                  <SkeletonCommon width="100%" height="350px" borderRadius="10px" />
-                  <br />
-                </>
-              ) : (
+              <div>
+                <YELLOW>Featured Launch</YELLOW>
+                <TITLE className="rs-name">NestQuest</TITLE>
+                <SUBTITLE>Tier #1 "The Egg"</SUBTITLE>
+                <br />
+                <Row justify="space-between" align="middle" gutter={[16, 16]}>
+                  <Col span={16}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <PILL_SECONDARY>
+                        <div>Items 10,018</div>
+                      </PILL_SECONDARY>
+
+                      <PILL_SECONDARY>
+                        <div>
+                          {mintPrice} <img className="icon-image" src={`/img/crypto/${token}.svg`} alt="" /> {token}
+                        </div>
+                      </PILL_SECONDARY>
+                    </div>
+                  </Col>
+                  <Col span={8}>
+                    <Row align="middle">
+                      <Col span={10}>
+                        <NQ_LOGO onClick={() => window.open(SOCIAL_MEDIAS.nestquest)}>
+                          <SVGDynamicReverseMode src="/img/assets/nestquest_logo.png" alt="domain-icon" />
+                        </NQ_LOGO>
+                      </Col>
+                      <Col span={7}>
+                        <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.discord)}>
+                          <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
+                        </SOCIAL_ICON>
+                      </Col>
+                      <Col span={7}>
+                        <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.twitter)}>
+                          <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
+                        </SOCIAL_ICON>
+                      </Col>
+                    </Row>
+                  </Col>
+                </Row>
+                <br />
+
                 <div>
-                  <YELLOW>Featured Launch</YELLOW>
-                  <TITLE className="rs-name">NestQuest</TITLE>
-                  <SUBTITLE>Tier #1 "The Egg"</SUBTITLE>
-                  <br />
-                  <Row justify="space-between" align="middle" gutter={[16, 16]}>
-                    <Col span={16}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <PILL_SECONDARY>
-                          <div>Items 10,018</div>
-                        </PILL_SECONDARY>
-
-                        <PILL_SECONDARY>
-                          <div>
-                            {mintPrice} <img className="icon-image" src={`/img/crypto/${token}.svg`} alt="" /> {token}
-                          </div>
-                        </PILL_SECONDARY>
-                      </div>
-                    </Col>
-                    <Col span={8}>
-                      <Row align="middle">
-                        <Col span={10}>
-                          <NQ_LOGO onClick={() => window.open(SOCIAL_MEDIAS.nestquest)}>
-                            <SVGDynamicReverseMode src="/img/assets/nestquest_logo.png" alt="domain-icon" />
-                          </NQ_LOGO>
-                        </Col>
-                        <Col span={7}>
-                          <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.discord)}>
-                            <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
-                          </SOCIAL_ICON>
-                        </Col>
-                        <Col span={7}>
-                          <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.twitter)}>
-                            <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
-                          </SOCIAL_ICON>
-                        </Col>
-                      </Row>
-                    </Col>
-                  </Row>
-                  <br />
-
-                  <div>
-                    <Tabs className={'collection-tabs'} defaultActiveKey="1" centered>
-                      <TabPane tab="Summary" key="1">
-                        <DESCRIPTION>
-                          NestQuest is an interactive platform tutorial designed to reward participants for using the
-                          GooseFX platform. There will be six total levels and tiers of NFTs as you evolve through the
-                          process. Higher tier NFTs will be extremely limited and the rewards will be vast. The first
-                          step is to connect your Tier 1 Egg NFT and incubate it for 30 days. We will be tracking usage
-                          amongst our platform with on-chain analytics. The training has paid off and the Hatchling has
-                          evolved into a much stronger Gosling. The Gosling still emits a dangerous flame from its mouth
-                          which appears to be related to its prior Aura. Additional training is required to evolve
-                          again.
-                        </DESCRIPTION>
-                      </TabPane>
-                      <TabPane tab="Team" key="2">
-                        <DESCRIPTION>The Nestquest project is created and maintained by the GooseFX team.</DESCRIPTION>
-                      </TabPane>
-                    </Tabs>
-                    <ACTION_BELOW>
-                      {publicKey ? (
-                        !mintDisabled && !insufficientToken ? (
-                          <ORANGE_BTN status="action" onClick={() => setMintModalVisible(true)} disabled={mintDisabled}>
-                            Mint
-                          </ORANGE_BTN>
-                        ) : (
-                          <DISABLED>
-                            <span>{insufficientToken ? 'Insufficient Balance' : 'Sold Out'}</span>
-                          </DISABLED>
-                        )
+                  <Tabs className={'collection-tabs'} defaultActiveKey="1" centered>
+                    <TabPane tab="Summary" key="1">
+                      <DESCRIPTION>
+                        NestQuest is an interactive platform tutorial designed to reward participants for using the
+                        GooseFX platform. There will be six total levels and tiers of NFTs as you evolve through the
+                        process. Higher tier NFTs will be extremely limited and the rewards will be vast. The first step
+                        is to connect your Tier 1 Egg NFT and incubate it for 30 days. We will be tracking usage amongst
+                        our platform with on-chain analytics. The training has paid off and the Hatchling has evolved
+                        into a much stronger Gosling. The Gosling still emits a dangerous flame from its mouth which
+                        appears to be related to its prior Aura. Additional training is required to evolve again.
+                      </DESCRIPTION>
+                    </TabPane>
+                    <TabPane tab="Team" key="2">
+                      <DESCRIPTION>The Nestquest project is created and maintained by the GooseFX team.</DESCRIPTION>
+                    </TabPane>
+                  </Tabs>
+                  <ACTION_BELOW>
+                    {publicKey ? (
+                      !mintDisabled && !insufficientToken ? (
+                        <ORANGE_BTN status="action" onClick={() => setMintModalVisible(true)} disabled={mintDisabled}>
+                          Mint
+                        </ORANGE_BTN>
                       ) : (
-                        <CONNECT onClick={handleWalletModal}>
-                          <span>Connect Wallet</span>
-                        </CONNECT>
-                      )}
+                        <DISABLED>
+                          <span>{insufficientToken ? 'Insufficient Balance' : 'Sold Out'}</span>
+                        </DISABLED>
+                      )
+                    ) : (
+                      <CONNECT onClick={handleWalletModal}>
+                        <span>Connect Wallet</span>
+                      </CONNECT>
+                    )}
 
-                      <SHARE_BUTTON onClick={() => setShareModal(true)}>
-                        <img src={`/img/assets/share.svg`} alt="share-icon" />
-                      </SHARE_BUTTON>
-                    </ACTION_BELOW>
-                  </div>
+                    <SHARE_BUTTON onClick={() => setShareModal(true)}>
+                      <img src={`/img/assets/share.svg`} alt="share-icon" />
+                    </SHARE_BUTTON>
+                  </ACTION_BELOW>
                 </div>
-              )}
+              </div>
             </div>
           </Col>
           <Col span={1}></Col>
@@ -629,43 +601,37 @@ export const NestQuestSingleListing: FC<{
                 token === 'SOL' ? setMintPrice(500) : setMintPrice(1)
               }}
             />
-            {!isLoading ? (
-              <IMAGE>
-                <video
-                  className="ls-video"
-                  autoPlay
-                  loop
-                  src={'https://gfxnestquest.s3.ap-south-1.amazonaws.com/Egg.mov'}
-                ></video>
-                {!mintDisabled && (
-                  <Live>
-                    <span>Live</span>
-                  </Live>
-                )}
-              </IMAGE>
-            ) : (
-              <SkeletonCommon width="100%" height="550px" borderRadius="10px" />
-            )}
+
+            <IMAGE>
+              <video
+                className="ls-video"
+                autoPlay
+                loop
+                src={'https://gfxnestquest.s3.ap-south-1.amazonaws.com/Egg.mov'}
+              ></video>
+
+              {!mintDisabled && (
+                <Live>
+                  <span>Live</span>
+                </Live>
+              )}
+            </IMAGE>
             <br />
 
-            {!isLoading ? (
-              <Row gutter={8}>
-                <Col span={7}></Col>
-                <MINT_PROGRESS_WRAPPER>
-                  {/*  */}
-                  <MINT_PROGRESS
-                    percent={((totalEggs - availableEggs) / totalEggs) * 100}
-                    status="active"
-                    num={((totalEggs - availableEggs) / totalEggs) * 100}
-                  />
-                  <REMNANT>
-                    <span>{totalEggs - availableEggs}</span>/{totalEggs}
-                  </REMNANT>
-                </MINT_PROGRESS_WRAPPER>
-              </Row>
-            ) : (
-              <SkeletonCommon width="100%" height="50px" borderRadius="50px" />
-            )}
+            <Row gutter={8}>
+              <Col span={7}></Col>
+              <MINT_PROGRESS_WRAPPER>
+                {/*  */}
+                <MINT_PROGRESS
+                  percent={((totalEggs - availableEggs) / totalEggs) * 100}
+                  status="active"
+                  num={((totalEggs - availableEggs) / totalEggs) * 100}
+                />
+                <REMNANT>
+                  <span>{totalEggs - availableEggs}</span>/{totalEggs}
+                </REMNANT>
+              </MINT_PROGRESS_WRAPPER>
+            </Row>
           </Col>
         </Row>
 
