@@ -34,7 +34,7 @@ export const STYLED_TABLE_LIST = styled(Table)`
   max-width: 100%;
   .ant-table {
     background: ${theme.bg17};
-    border-radius: 20px 20px 0px 0px;
+    border-radius: 25px 25px 0px 0px;
     box-shadow: ${theme.tableListBoxShadow};
   }
   .normal-text {
