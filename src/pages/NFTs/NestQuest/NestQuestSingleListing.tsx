@@ -420,7 +420,7 @@ export const NestQuestSingleListing: FC<{
   const [shareModal, setShareModal] = useState(false)
   const [mintDisabled, setMintDisabled] = useState<boolean>(false)
   const [insufficientToken, setInsufficientToken] = useState<boolean>(false)
-  const [mintPrice, setMintPrice] = useState<number>(2)
+  const [mintPrice, setMintPrice] = useState<number>(1)
   const [availableEggs, setAvailableEggs] = useState<number>(0)
 
   useEffect(() => {
@@ -626,7 +626,7 @@ export const NestQuestSingleListing: FC<{
               token={token}
               toggleToken={() => {
                 token === 'SOL' ? setToken('GOFX') : setToken('SOL')
-                token === 'SOL' ? setMintPrice(750) : setMintPrice(2)
+                token === 'SOL' ? setMintPrice(500) : setMintPrice(1)
               }}
             />
             {!isLoading ? (
