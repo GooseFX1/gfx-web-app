@@ -814,13 +814,14 @@ export const SwapMain: FC = () => {
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
   const [inAmountTotal, setInAmountTotal] = useState(0)
+  const [trigger, setTrigger] = useState(false)
 
   const { routes, exchange } = useJupiter({
     amount: JSBI.BigInt(inAmountTotal), // raw input amount of tokens
     inputMint: new PublicKey(tokenA?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     slippage: slippage, // 1% slippage
-    debounceTime: 250 // debounce ms time before refresh
+    debounceTime: 500 // debounce ms time before refresh
   })
 
   function marketInfoFormat(mkt: any) {
@@ -846,6 +847,26 @@ export const SwapMain: FC = () => {
       mainnetRoutes()
     }
   }, [tokenA?.symbol, tokenB?.symbol, routes, slippage, inTokenAmount, outTokenAmount, network])
+
+  useEffect(() => {
+    if (chosenRoutes?.length > 0 && !trigger) {
+      setTrigger(true)
+    }
+  }, [chosenRoutes]) //trigger once to switch default route based on symbols
+
+  useEffect(() => {
+    setTrigger(false)
+  }, [tokenA?.symbol, tokenB?.symbol, network]) //reset the triggers when token symbols or network are changed
+
+  useEffect(() => {
+    if (!chosenRoutes || chosenRoutes.length < 1) return
+
+    if (chosenRoutes?.findIndex((route) => route.marketInfos[0].amm.label === 'GooseFX') >= 0) {
+      setClickNo(1)
+    } else {
+      setClickNo(0)
+    }
+  }, [trigger]) // trigger default route switch
 
   function devnetRoutes() {
     setRoutes([])
@@ -916,11 +937,16 @@ export const SwapMain: FC = () => {
         priceImpactPct: priceImpact || 0
       }
 
-      if (supported) shortRoutes.splice(1, 0, GoFxRoute)
+      if (supported) {
+        if (GoFxRoute.outAmountWithSlippage >= shortRoutes[0].outAmountWithSlippage) {
+          shortRoutes.splice(0, 0, GoFxRoute)
+        } else {
+          shortRoutes.splice(1, 0, GoFxRoute)
+        }
+      }
     }
 
     setRoutes(shortRoutes)
-    //setClickNo(1)
   }
 
   if (checkMobile()) {
