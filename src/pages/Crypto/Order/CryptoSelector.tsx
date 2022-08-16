@@ -61,14 +61,12 @@ const Overlay: FC<{
   setArrowRotation: Dispatch<SetStateAction<boolean>>
   setVisible: Dispatch<SetStateAction<boolean>>
 }> = ({ setArrowRotation, setVisible }) => {
-  const { getAskSymbolFromPair, setSelectedCrypto } = useCrypto()
+  const { getAskSymbolFromPair, setSelectedCrypto, pairs } = useCrypto()
   const [filterKeywords, setFilterKeywords] = useState('')
-  const [filteredMarkets, setFilteredMarkets] = useState(AVAILABLE_MARKETS)
-
+  const [filteredMarkets, setFilteredMarkets] = useState(pairs)
   const handleClick = useCallback(
     (pair: string) => {
       setArrowRotation(false)
-      setSelectedCrypto({ decimals: 3, pair, type: 'crypto' })
       setVisible(false)
     },
     [setArrowRotation, setSelectedCrypto, setVisible]

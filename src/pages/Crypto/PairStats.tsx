@@ -54,7 +54,11 @@ const Loader: FC = () => {
   return <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
 }
 
-export const PairStats: FC<{ decimals: number; pair: string; type: MarketType }> = ({ decimals, pair, type }) => {
+export const PairStats: FC<{ pair: string; type: MarketType; marketAddress: string }> = ({
+  pair,
+  type,
+  marketAddress
+}) => {
   const { prices } = usePriceFeed()
   const { formatPair, getAskSymbolFromPair, selectedCrypto, setSelectedCrypto } = useCrypto()
   const history = useHistory()
@@ -65,10 +69,12 @@ export const PairStats: FC<{ decimals: number; pair: string; type: MarketType }>
   // const change24HIcon = useMemo(() => `price_${price.change24H >= 0 ? 'up' : 'down'}.svg`, [price])
 
   const handleClick = () => {
-    if (type === 'synth') {
-      history.push('/synths')
-    } else if (selectedCrypto.pair !== symbol) {
-      setSelectedCrypto({ decimals, pair, type })
+    // if (type === 'synth') {
+    //   history.push('/synths')
+    // } else
+    if (selectedCrypto.pair !== symbol) {
+      //history.push('/trade/' + pair)
+      setSelectedCrypto({ pair, marketAddress })
     }
   }
 

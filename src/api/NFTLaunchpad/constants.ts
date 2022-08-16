@@ -12,5 +12,8 @@ export enum NFT_LAUNCHPAD_API_ENDPOINTS {
   APPROVE_PROJECT = '/nft-launchpad/approveProject',
   REJECT_PROJECT = '/nft-launchpad/rejectProject',
   IS_ADMIN_ALLOWED = '/nft-launchpad/isAdminAllowed',
-  GET_CREATOR_PROJECT = '/nft-launchpad/getCreatorProjects'
+  GET_CREATOR_PROJECT = '/nft-launchpad/getCreatorProjects',
+
+  //trade apis but here since domain name same
+  GET_TOKEN_INFO = '/dex-data/getTokenData'
 }

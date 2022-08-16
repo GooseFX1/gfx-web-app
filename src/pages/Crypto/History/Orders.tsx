@@ -10,7 +10,7 @@ export const Orders: FC = () => {
   const handleClick = useCallback(
     (pair: string) => {
       if (selectedCrypto.pair !== pair) {
-        setSelectedCrypto({ decimals: 3, pair, type: 'crypto' })
+        //setSelectedCrypto({ pair, type: 'crypto' })
       }
     },
     [selectedCrypto.pair, setSelectedCrypto]
