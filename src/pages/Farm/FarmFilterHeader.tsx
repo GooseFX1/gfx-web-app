@@ -26,15 +26,16 @@ const STYLED_FARM_HEADER = styled.div`
     ${tw`ml-9`}
   }
   .selectedBackground {
-    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%) !important;
-    color: white;
-    transition: background 500ms ease-in-out 0s;
+    ${tw`text-white`}
+    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+    @media(max-width: 500px){
+      background: none;
+    }
   }
 `
 const STYLED_BUTTON = styled.button`
-  ${tw`sm:m-auto cursor-pointer text-center border-none border-0 font-semibold text-base ml-[5px] mr-2.5 w-[112px] h-[44px] rounded-[36px]`}
+  ${tw`sm:m-auto sm:w-1/3 cursor-pointer text-center border-none border-0 font-semibold text-base ml-[5px] mr-2.5 w-[112px] h-[44px] rounded-[36px]`}
   font-family: 'Montserrat';
-  line-height: normal;
   background: none;
   color: ${({ theme }) => theme.text17};
   :disabled {
@@ -42,8 +43,14 @@ const STYLED_BUTTON = styled.button`
   }
 `
 
-const ButtonContainer = styled.div`
-  ${tw`mr-0 flex flex-row`}
+const ButtonContainer = styled.div<{ $poolIndex: number }>`
+  ${tw`relative z-0`}
+  .slider-animation{
+    ${tw`absolute w-1/4 h-[44px] rounded-[36px] z-[-1]`}
+    left: ${({ $poolIndex }) => ($poolIndex * 33) + 4}%;
+    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+    transition: left 500ms ease-in-out;
+  }
 `
 
 const RefreshIcon = styled.button`
@@ -63,50 +70,27 @@ const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
 export const FarmFilter = () => {
   const { poolFilter, setPoolFilter, setSearchFilter, operationPending } = useFarmContext()
   const { refreshTokenData } = usePriceFeedFarm()
-  const [arrowRotation, setArrowRotation] = useState(false)
-  const [dropdownVisible, setDropdownVisible] = useState(false)
+  const [poolIndex, setPoolIndex] = useState(0)
 
-  const handleClick = () => {
-    setArrowRotation(!arrowRotation)
-    setDropdownVisible(!dropdownVisible)
+  const handleClick = (name, index) => {
+    setPoolFilter(name);
+    setPoolIndex(index);
   }
 
   if (checkMobile()) {
     return (
       <STYLED_FARM_HEADER>
-        <ButtonContainer>
-          {poolTypes.map((pool) => (
-            <STYLED_BUTTON
-              disabled={operationPending}
-              key={pool.name}
-              onClick={() => setPoolFilter(pool.name)}
-              className={pool.name === poolFilter ? 'selectedBackground' : ''}
-            >
-              {pool.name}
-            </STYLED_BUTTON>
-          ))}
-        </ButtonContainer>
-        <Wrapper>
-          <SearchBar className="search-bar" placeholder="Search by token" setSearchFilter={setSearchFilter} />
-          <Toggle className="toggle" text="Deposited" defaultUnchecked />
-        </Wrapper>
-      </STYLED_FARM_HEADER>
-    )
-  }
-
-  if (checkMobile()) {
-    return (
-      <STYLED_FARM_HEADER>
-        <ButtonContainer>
-          {poolTypes.map((pool) => (
-            <STYLED_BUTTON
-              disabled={operationPending}
-              key={pool.name}
-              onClick={() => setPoolFilter(pool.name)}
-              className={pool.name === poolFilter ? 'selectedBackground' : ''}
-            >
-              {pool.name}
-            </STYLED_BUTTON>
+        <ButtonContainer $poolIndex={poolIndex}>
+        <div className='slider-animation'></div>
+          {poolTypes.map((pool, index) => (
+              <STYLED_BUTTON
+                disabled={operationPending}
+                key={pool.name}
+                onClick={() => handleClick(pool.name, index)}
+                className={pool.name === poolFilter ? 'selectedBackground' : ''}
+              >
+                {pool.name}
+              </STYLED_BUTTON>
           ))}
         </ButtonContainer>
         <Wrapper>
@@ -120,7 +104,7 @@ export const FarmFilter = () => {
   return (
     <>
       <STYLED_FARM_HEADER>
-        <ButtonContainer>
+        <ButtonContainer $poolIndex={poolIndex}>
           {poolTypes.map((pool) => (
             <STYLED_BUTTON
               disabled={operationPending}

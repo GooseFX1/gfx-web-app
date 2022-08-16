@@ -1,15 +1,11 @@
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
-import { parsePriceData } from '@pythnetwork/client'
 import { Orderbook } from '@project-serum/serum'
-import { FARM_TOKEN_LIST, FEATURED_PAIRS_LIST } from './crypto'
-import { notify } from '../utils'
-import { pyth, serum } from '../web3'
+import { useCrypto } from './crypto'
+import { serum } from '../web3'
 import { useConnectionConfig } from '../context'
 import axios from 'axios'
-
-const coinGeckoUrl = 'https://api.coingecko.com/api/v3/coins/'
-const coinGeckoSuffix = '/market_chart?vs_currency=usd&days=1&interval=daily'
-const minMaxSuffix = '/ohlc?vs_currency=usd&days=7'
+import { useHistory, useLocation } from 'react-router-dom'
+import { NFT_LAUNCHPAD_API_ENDPOINTS } from '../api/NFTLaunchpad'
 
 interface IPrices {
   [x: string]: {
@@ -41,88 +37,36 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
   const [tokenInfo, setTokenInfo] = useState<IChange>({})
   const { connection } = useConnectionConfig()
   const [priceFetched, setPriceFetched] = useState<boolean>(false)
-
-  const getTokenInfo = async (coinGeckoId) => {
-    let url = coinGeckoUrl + coinGeckoId + coinGeckoSuffix,
-      response = null,
-      change = null,
-      volume = null,
-      initial = null,
-      current = null
-    try {
-      response = await axios.get(url)
-      if (response.status !== 200) throw Error
-    } catch (e) {
-      return {
-        change,
-        volume
-      }
-    }
-    try {
-      initial = response.data.prices[0][1]
-      current = response.data.prices[1][1]
-      change = (((current - initial) / initial) * 100).toFixed(1)
-      if (change && change.slice(0, 1) !== '-') change = '+' + change
-    } catch (e) {
-      change = null
-    }
-    try {
-      volume = response.data.total_volumes[1][1].toFixed(2)
-    } catch (e) {
-      volume = null
-    }
-    return {
-      change,
-      volume
-    }
-  }
-
-  const getRange = async (coinGeckoId) => {
-    let range = null,
-      response = null
-    try {
-      response = await axios.get(coinGeckoUrl + coinGeckoId + minMaxSuffix)
-      if (response.status !== 200) throw Error
-    } catch (e) {
-      return {
-        range
-      }
-    }
-    try {
-      let min = response.data[response.data.length - 1][3],
-        max = response.data[response.data.length - 1][2]
-      for (let i = response.data.length - 1; i > response.data.length - 7; i--) {
-        if (response.data[i][3] < min) min = response.data[i][3]
-        if (response.data[i][2] > max) max = response.data[i][2]
-      }
-      if (min.toFixed(2) === max.toFixed(2)) {
-        min = min.toFixed(3)
-        max = max.toFixed(3)
-      } else {
-        min = min.toFixed(2)
-        max = max.toFixed(2)
-      }
-      return {
-        min,
-        max
-      }
-    } catch (e) {
-      return range
-    }
-  }
+  const { pairs, selectedCrypto } = useCrypto()
+  const history = useHistory()
+  const location = useLocation()
 
   const refreshTokenData = async (coinGeckoId) => {
     if (!coinGeckoId) {
-      const cryptoMarkets = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'crypto')
-      for (const { pair, coinGecko } of cryptoMarkets) {
-        let tokenInfo = await getTokenInfo(coinGecko)
-        let range = await getRange(coinGecko)
-        setTokenInfo((prevState) => ({ ...prevState, [pair]: { ...tokenInfo, range } }))
+      const cryptoMarkets = pairs.filter(({ type }) => type === 'crypto')
+      const response =
+        cryptoMarkets.length &&
+        (await axios.post(
+          NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.GET_TOKEN_INFO,
+          JSON.stringify({ tokens: cryptoMarkets }),
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        ))
+      if (response) {
+        for (const { pair, change, volume, min, max } of response.data.data) {
+          setTokenInfo((prevState) => ({
+            ...prevState,
+            [pair]: {
+              change: change,
+              volume: volume,
+              range: { min: min, max: max }
+            }
+          }))
+        }
       }
-    } else {
-      let tokenInfo = await getTokenInfo(coinGeckoId.coinGecko)
-      let range = await getRange(coinGeckoId.coinGecko)
-      setTokenInfo((prevState) => ({ ...prevState, [coinGeckoId.pair]: { ...tokenInfo, range } }))
     }
   }
 
@@ -132,12 +76,13 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
 
     if (!cancelled) {
       ;(async () => {
-        const PAIR_LIST = [...FEATURED_PAIRS_LIST, ...FARM_TOKEN_LIST]
-        const cryptoMarkets = PAIR_LIST.filter(({ type }) => type === 'crypto')
-        for (const { pair, coinGecko } of cryptoMarkets) {
+        if (JSON.stringify(tokenInfo) === '{}') refreshTokenData(null)
+        const { pair, market } = selectedCrypto
+        if (location.pathname.includes('trade') && !location.pathname.includes(selectedCrypto.marketAddress)) {
+          history.push('/trade/' + selectedCrypto.marketAddress)
+        }
+        if (market) {
           try {
-            refreshTokenData({ pair, coinGecko })
-            const market = await serum.getMarket(connection, pair)
             const current = await serum.getLatestBid(connection, pair)
             setPrices((prevState) => ({ ...prevState, [pair]: { current } }))
             subscriptions.push(
@@ -150,32 +95,7 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
             console.error('Error fetching serum markets')
             // await notify({ type: 'error', message: 'Error fetching serum markets', icon: 'rate_error' }, e)
           }
-        }
-        setPriceFetched(true)
-
-        try {
-          const synths = FEATURED_PAIRS_LIST.filter(({ type }) => type === 'synth').map(({ pair }) => pair)
-          const products = await pyth.fetchProducts(connection, synths)
-          try {
-            const accounts = await pyth.fetchPriceAccounts(connection, products)
-            for (const { price, priceAccountKey, symbol } of accounts) {
-              if (price) {
-                setPrices((prevState) => ({ ...prevState, [symbol]: { current: parseFloat(price.toFixed(2)) } }))
-              }
-              subscriptions.push(
-                connection.onAccountChange(priceAccountKey, ({ data }) => {
-                  const { price } = parsePriceData(data)
-                  if (price) {
-                    setPrices((prevState) => ({ ...prevState, [symbol]: { current: parseFloat(price.toFixed(2)) } }))
-                  }
-                })
-              )
-            }
-          } catch (e: any) {
-            await notify({ type: 'error', message: 'Error fetching pyth price accounts', icon: 'rate_error' }, e)
-          }
-        } catch (e: any) {
-          await notify({ type: 'error', message: 'Error fetching pyth products', icon: 'rate_error' }, e)
+          setPriceFetched(true)
         }
       })()
     }
@@ -184,7 +104,7 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
       cancelled = true
       subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
     }
-  }, [connection])
+  }, [connection, selectedCrypto])
 
   return (
     <PriceFeedContext.Provider

@@ -3,7 +3,6 @@ import React, { FC, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { MarketType, useCrypto, usePriceFeed } from '../../context'
 import styled from 'styled-components'
-import { FEATURED_PAIRS_LIST } from '../../context'
 import { DownOutlined } from '@ant-design/icons'
 
 const SELECTED_PAIR = styled.div`
@@ -56,8 +55,8 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
 
   let changeValue = tokenInfo[pair] ? tokenInfo[pair].change : ' ',
     classNameChange = ''
-  if (changeValue.substring(0, 1) === '-') classNameChange = 'down24h'
-  else if (changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
+  if (changeValue && changeValue.substring(0, 1) === '-') classNameChange = 'down24h'
+  else if (changeValue && changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
 
   return (
     <DROPDOWN_PAIR_DIV>
@@ -69,7 +68,7 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
 }
 
 export const DropdownPairs: FC = () => {
-  const { selectedCrypto, setSelectedCrypto } = useCrypto()
+  const { selectedCrypto, setSelectedCrypto, pairs } = useCrypto()
   const history = useHistory()
 
   const handleSelection = (item) => {
@@ -82,7 +81,7 @@ export const DropdownPairs: FC = () => {
 
   const menus = (
     <Menu>
-      {FEATURED_PAIRS_LIST.map((item, index) => {
+      {pairs.map((item, index) => {
         return (
           <Menu.Item onClick={() => handleSelection(item)} key={index}>
             <PairComponents {...item} />

@@ -7,15 +7,20 @@ import { MainButton } from '../../../components'
 import { useConnectionConfig } from '../../../context'
 import { ShareInternal } from './NestQuestComponent'
 import { onShare } from './NestQuestSingleListing'
-import { Creator, StringPublicKey, buyWithSOL, fetchAvailableNft, buyWithGOFX } from '../../../web3'
+import { StringPublicKey, buyWithSOL, fetchAvailableNft, buyWithGOFX } from '../../../web3'
+import { GatewayStatus, useGateway } from '@civic/solana-gateway-react'
 import { notify } from '../../../utils'
-//import { PublicKey } from '@solana/web3.js'
 
 //#region styles
 const STYLED_POPUP = styled(PopupCustom)`
   * {
     font-family: 'Montserrat';
     color: ${({ theme }) => theme.text2};
+    z-index: 900 !important;
+  }
+
+  .ant-modal-wrap {
+    z-index: 900 !important;
   }
 
   .ant-input-number {
@@ -25,6 +30,7 @@ const STYLED_POPUP = styled(PopupCustom)`
     .ant-modal-body {
       padding: ${theme.margin(3.5)} ${theme.margin(6)} ${theme.margin(2)};
     }
+
     .ant-modal-close {
       right: 35px;
       top: 35px;
@@ -178,6 +184,16 @@ interface Props {
 
 const RoyaltiesStep = ({ modalVisible, setModalOpen, nestQuestData }: Props) => {
   const [phase, setPhase] = useState(1)
+  const { requestGatewayToken, gatewayStatus, gatewayToken } = useGateway()
+
+  useEffect(() => {
+    ;(async function () {
+      if (!gatewayToken || gatewayStatus !== GatewayStatus.ACTIVE) {
+        setModalOpen(false)
+        await requestGatewayToken()
+      }
+    })()
+  }, [gatewayToken, gatewayStatus, requestGatewayToken, setModalOpen])
 
   return (
     <>
@@ -199,7 +215,12 @@ const RoyaltiesStep = ({ modalVisible, setModalOpen, nestQuestData }: Props) => 
         {phase === 1 ? (
           <ConfirmMint nestQuestData={nestQuestData} setPhase={setPhase} />
         ) : phase === 2 ? (
-          <LoadBuy nestQuestData={nestQuestData} setPhase={setPhase} />
+          <LoadBuy
+            nestQuestData={nestQuestData}
+            setPhase={setPhase}
+            gatewayToken={gatewayToken}
+            gatewayStatus={gatewayStatus}
+          />
         ) : (
           <SuccessBuy />
         )}
@@ -212,10 +233,16 @@ interface MintProps {
   modalVisible?: boolean
   setPhase: (data: number) => void
   nestQuestData: any
+  gatewayToken?: any
+  gatewayStatus?: any
 }
+
+const GOFX_Price = 500
+const SOL_Price = 1
 
 const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
   const [loading, setLoading] = useState(false)
+
   return (
     <>
       <p className="title">
@@ -225,18 +252,18 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
       <div>
         <CreatorStyle>
           <img className="icon" src={`/img/assets/check-icon.png`} alt="back" />
-          <p>This is a verified creator</p>
+          <span>This is a verified creator</span>
         </CreatorStyle>
         <PriceStyle>
           <span className="price">Price</span>
           <Col span={18}>
-            <span className="Big-Price">{nestQuestData.token === 'SOL' ? '2.00' : '750'}</span>
+            <span className="Big-Price">{nestQuestData.token === 'SOL' ? SOL_Price : GOFX_Price}</span>
             <span className="currency">{nestQuestData.token}</span>
           </Col>
         </PriceStyle>
         <ListStyle className="">
           <span>Price per item</span>
-          <span>{nestQuestData.token === 'SOL' ? '2.00 SOL' : '750 GOFX'}</span>
+          <span>{nestQuestData.token === 'SOL' ? `${SOL_Price} SOL` : `${GOFX_Price} GOFX`}</span>
         </ListStyle>
         <ListStyle className="">
           <span>Quantity</span>
@@ -248,7 +275,7 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
         </ListStyle>
         <ListStyle className="">
           <span>Total Price</span>
-          <span>{nestQuestData.token === 'SOL' ? '2.01 SOL' : '750 GOFX + 0.01 SOL'}</span>
+          <span>{nestQuestData.token === 'SOL' ? `${SOL_Price} SOL` : `${GOFX_Price} GOFX + 0.01 SOL`}</span>
         </ListStyle>
 
         <STYLED_CREATE_BTN
@@ -268,7 +295,7 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
   )
 }
 
-const LoadBuy = ({ nestQuestData, setPhase }: MintProps) => {
+const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintProps) => {
   const wallet = useWallet()
   const { connection } = useConnectionConfig()
 
@@ -290,8 +317,13 @@ const LoadBuy = ({ nestQuestData, setPhase }: MintProps) => {
     }
   }, [wallet.publicKey, connection])
 
+  console.log({ gatewayToken, gatewayStatus, stat: GatewayStatus.ACTIVE })
+
   const purchase = (token: string, nft: any) => {
-    const buyFunction = token === 'SOL' ? buyWithSOL(wallet, connection, nft) : buyWithGOFX(wallet, connection, nft)
+    const buyFunction =
+      token === 'SOL'
+        ? buyWithSOL(wallet, connection, nft, gatewayToken?.publicKey)
+        : buyWithGOFX(wallet, connection, nft, gatewayToken?.publicKey)
 
     buyFunction
       .then((result) => {
@@ -300,10 +332,12 @@ const LoadBuy = ({ nestQuestData, setPhase }: MintProps) => {
           notify({
             type: 'success',
             message: 'Purchase successful!',
-            description: `You bought 1 "Tier 1 Egg" for at least ${token === 'SOL' ? '2 SOL' : '750 GOFX'}`,
+            description: `You bought 1 "Tier 1 Egg" for at least ${
+              token === 'SOL' ? `${SOL_Price} SOL` : `${GOFX_Price} GOFX`
+            }`,
             icon: 'success',
             txid: result as string,
-            network: 'devnet'
+            network: 'mainnet'
           })
         } else {
           throw new Error('an error occured')
