@@ -576,6 +576,7 @@ const TokenContent: FC = () => {
 
 const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes }) => {
   const { tokenA, tokenB, inTokenAmount } = useSwap()
+  const { tokens } = useTokenRegistry()
 
   const [details, setDetails] = useState([
     { name: 'Price Impact', value: '0%' },
@@ -584,7 +585,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
       value: 0 + ' ' + tokenB.symbol
     },
     {
-      name: 'Fees paid to Serum LP',
+      name: 'Fees paid to GooseFx LP',
       value: `${0} ${tokenA.symbol} (${0} %)`,
       extraValue: `0 ${tokenB.symbol} (0%)`
     },
@@ -597,13 +598,18 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
   useEffect(() => {
     const route = routes?.[clickNo]
     if (!route) return
-    const totalLp = route.marketInfos[0].lpFee.amount / 10 ** tokenA.decimals || 0.0
-    let percent = +((totalLp / inTokenAmount) * 100)?.toFixed(4) || 0.0
-    percent = isFinite(percent) ? percent : 0.0
-    const totalLpB = route.marketInfos.slice(-1)[0].lpFee.amount / 10 ** tokenB.decimals || 0.0
     const out = route.outAmount / 10 ** tokenB.decimals
-    let percentB = +((totalLpB / out) * 100)?.toFixed(4) || 0.0
-    percentB = isFinite(percentB) ? percentB : 0.0
+
+    const getPriceDetails = (num: number) => {
+      const totalLp = route.marketInfos[num].lpFee.amount / 10 ** tokenA.decimals || 0.0
+      let percent = route.marketInfos[num].lpFee.pct || +((totalLp / inTokenAmount) * 100)?.toFixed(4) || 0.0
+      percent = isFinite(percent) ? percent : 0.0
+      const totalLpB = route.marketInfos[num].lpFee.amount / 10 ** tokenB.decimals || 0.0
+      let percentB = +((totalLpB / out) * 100)?.toFixed(4) || 0.0
+      percentB = isFinite(percentB) ? percentB : 0.0
+      const token = tokens.find((tk) => tk.address === route.marketInfos[num].lpFee.mint)
+      return { totalLp, totalLpB, percent, percentB, token }
+    }
 
     setOutAmount(out)
 
@@ -613,14 +619,18 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
         name: checkMobile() ? 'Min. Received' : 'Minimum Received',
         value: `${nFormatter(route.outAmountWithSlippage / 10 ** tokenB.decimals, tokenB.decimals)} ${tokenB.symbol}`
       },
-      {
-        name: `Fees paid to ${route.marketInfos[0].amm.label || 'GooseFX'} LP`,
-        value: `${nFormatter(totalLp, tokenA.decimals)} ${tokenA.symbol} (${percent} %)`,
-        extraValue:
-          route?.marketInfos?.length > 1
-            ? `${nFormatter(totalLpB, tokenB.decimals)} ${tokenB.symbol} (${percentB}%)`
-            : `0 ${tokenB.symbol} (0%)`
-      },
+      ...route?.marketInfos.slice(0, 3).map((market: any, num: number) => ({
+        name: `Fees paid to ${market.amm.label || 'GooseFX'} LP`,
+        value: `${nFormatter(getPriceDetails(num).totalLp, getPriceDetails(num).token?.decimals || tokenA.decimals)} ${
+          getPriceDetails(num).token?.symbol || tokenA.symbol
+        } (${getPriceDetails(num).percent} %)`
+        // extraValue:
+        //   market.amm.label === 'GooseFX' ??
+        //   `${nFormatter(getPriceDetails(num).totalLpB, tokenB.decimals)} ${tokenB.symbol} (${
+        //     getPriceDetails(num).percentB
+        //   }%)`
+      })),
+
       { name: checkMobile() ? 'Trans. Fee' : 'Transaction Fee', value: '0.00005 SOL', icon: 'info' }
     ]
 
