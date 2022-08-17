@@ -122,7 +122,7 @@ const TokenHeader = styled.div`
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
-  ${tw`h-24.25 rounded-average p-px cursor-pointer mr-7 !min-w-330 sm:h-16.25 sm:mt-0 sm:mx-0 sm:mb-4`}
+  ${tw`h-24.25 rounded-average p-px cursor-pointer mr-7 !min-w-330 mb-4 sm:h-16.25 sm:mt-0 sm:mx-0 sm:mb-4`}
   background: ${({ theme, $clicked }) =>
     $clicked ? 'linear-gradient(90deg,rgba(247,147,26,0.5) 0%,rgba(220,31,255,0.5) 100%)' : theme.bg1};
   box-shadow: 0 6px 9px 0 rgba(36, 36, 36, 0.1);
@@ -189,8 +189,8 @@ const SWAP_ROUTES = styled.div<{ $less: boolean }>`
   ${tw`relative`}
 
   .swap-content {
-    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 mb-3 py-8 px-0 mx-8 sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0`}
-    justify-content: ${({ $less }) => ($less ? 'center' : 'flex-start')};
+    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 mb-3 py-8 px-0 mx-8 sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0 flex-wrap`}
+    justify-content: ${({ $less }) => ($less ? 'center' : 'center')};
   }
 
   .action {
