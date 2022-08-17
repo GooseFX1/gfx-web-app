@@ -7,9 +7,11 @@ import { MainButton } from '../../../components'
 import { useConnectionConfig } from '../../../context'
 import { ShareInternal } from './NestQuestComponent'
 import { onShare } from './NestQuestSingleListing'
-import { StringPublicKey, buyWithSOL, fetchAvailableNft, buyWithGOFX } from '../../../web3'
+import { buyWithSOL, fetchAvailableNft, buyWithGOFX } from '../../../web3'
 import { GatewayStatus, useGateway } from '@civic/solana-gateway-react'
 import { notify } from '../../../utils'
+import Lottie from 'lottie-react'
+import confettiAnimation from '../../../animations/confettiAnimation.json'
 
 //#region styles
 const STYLED_POPUP = styled(PopupCustom)`
@@ -59,8 +61,7 @@ const STYLED_POPUP = styled(PopupCustom)`
     }
 
     .ls-video {
-      border-radius: 20px;
-      box-shadow: 3px 3px 14px 0px rgb(0 0 0 / 43%);
+      border-radius: 12px;
       z-index: 10;
       height: 180px;
       width: 180px;
@@ -69,6 +70,7 @@ const STYLED_POPUP = styled(PopupCustom)`
     .big-text {
       font-size: 32px;
       font-weight: 600;
+      margin-bottom: 18px;
     }
 
     .collection-button{
@@ -108,6 +110,13 @@ const LoadStyle = styled.div`
   align-items: center;
   flex-direction: column;
   width: 100%;
+
+  .confettiAnimation {
+    position: absolute;
+    top: 0px;
+    z-index: 3;
+    pointer-events: none;
+  }
 `
 
 const CreatorStyle = styled(Row)`
@@ -162,19 +171,63 @@ const PriceStyle = styled(Row)`
     color: ${({ theme }) => theme.text2};
   }
 `
+const MINTING_PROGRESS = styled.div`
+  text-align: center;
 
+  .image-wrapper {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 56px auto;
+  }
+
+  @keyframes loadingAnimation {
+    from {
+      width: 20%;
+    }
+
+    to {
+      width: 100%;
+    }
+  }
+
+  .pink-loading-overlay {
+    position: absolute;
+    background: linear-gradient(272.26deg, #dd3dff 2%, rgba(220, 31, 255, 0) 108.73%);
+    opacity: 0.55;
+    top: 0;
+    height: 100%;
+    border-radius: 12px;
+    animation-duration: 3s;
+    animation-name: loadingAnimation;
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+  }
+`
+
+const NFT_WRAPPER = styled.div`
+  padding: 2px;
+  border-radius: 12px;
+  background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+  box-shadow: 3px 3px 14px 0px rgb(0 0 0 / 43%);
+
+  .inner-content {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    border-radius: 12px;
+    background-color: ${({ theme }) => theme.cardBg};
+
+    span {
+      font-weight: 500;
+      font-size: 18px;
+      line-height: 22px;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+  }
+`
 //#endregion
-
-interface UserValue {
-  key: StringPublicKey
-  label: StringPublicKey
-  value: StringPublicKey
-}
-
-interface Royalty {
-  creatorKey: StringPublicKey
-  amount: number
-}
 
 interface Props {
   modalVisible: boolean
@@ -332,9 +385,7 @@ const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintP
           notify({
             type: 'success',
             message: 'Purchase successful!',
-            description: `You bought 1 "Tier 1 Egg" for at least ${
-              token === 'SOL' ? `${SOL_Price} SOL` : `${GOFX_Price} GOFX`
-            }`,
+            description: `You bought 1 "Tier 1 Egg" for ${token === 'SOL' ? `${SOL_Price} SOL` : `${GOFX_Price} GOFX`}`,
             icon: 'success',
             txid: result as string,
             network: 'mainnet'
@@ -352,15 +403,22 @@ const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintP
 
   return (
     <LoadStyle>
-      <p className="big-text">Hold Tight!</p>
+      <MINTING_PROGRESS>
+        <span className="big-text">Hold tight!</span>
 
-      <p className="inner-title">We are minting your nft</p>
-      <video
-        className="ls-video"
-        autoPlay
-        loop
-        src={'https://gfxnestquest.s3.ap-south-1.amazonaws.com/Egg.mov'}
-      ></video>
+        <p className="inner-title">We are minting your nft</p>
+
+        <div className="image-wrapper">
+          <video
+            className="ls-video"
+            style={{ margin: '56px 0' }}
+            autoPlay
+            loop
+            src={'https://gfxnestquest.s3.ap-south-1.amazonaws.com/Egg.mov'}
+          ></video>
+          <div className="pink-loading-overlay"></div>
+        </div>
+      </MINTING_PROGRESS>
     </LoadStyle>
   )
 }
@@ -369,18 +427,24 @@ const SuccessBuy = () => {
   const wallet = useWallet()
   return (
     <LoadStyle>
+      <Lottie animationData={confettiAnimation} className="confettiAnimation" />
       <p className="big-text">Mission Accomplished!</p>
-      <p className="inner-title">You are now a proud owner of:</p>
-      <p className="inner-title">Tier 1 "The Egg"</p>
-      <video
-        className="ls-video"
-        autoPlay
-        loop
-        src={'https://gfxnestquest.s3.ap-south-1.amazonaws.com/Egg.mov'}
-      ></video>
-
+      <p style={{ fontSize: '16px' }}>You are now a proud owner of:</p>
+      <p className="inner-title">Tier #1 "The Egg"</p>
+      <NFT_WRAPPER>
+        <div className="inner-content">
+          <video
+            className="ls-video"
+            autoPlay
+            loop
+            src={'https://gfxnestquest.s3.ap-south-1.amazonaws.com/Egg.mov'}
+          ></video>
+          <br />
+          <span>Tier 1 "The Egg"</span>
+          <span>By NestQuest</span>
+        </div>
+      </NFT_WRAPPER>
       <ShareInternal socials={['twitter', 'telegram', 'facebook', 'copy link']} handleShare={onShare} />
-
       <STYLED_CREATE_BTN
         className="collection-button"
         onClick={() => {
