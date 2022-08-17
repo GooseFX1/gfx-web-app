@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, useCallback, useMemo, MouseEventHandler } from 'react'
+import React, { FC, useEffect, useState, useCallback, MouseEventHandler } from 'react'
 import { Row, Col, Progress } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
@@ -440,7 +440,7 @@ export const NestQuestSingleListing: FC<{
           notify({ type: 'error', message: "Couldn't fetch eggs from contract" })
         })
     }
-  }, [connection, mintPrice, network, token, mintModalVisible, mintDisabled])
+  }, [connection, network, mintDisabled])
 
   useEffect(() => {
     if (publicKey && connected) {
@@ -546,7 +546,7 @@ export const NestQuestSingleListing: FC<{
                     <Row align="middle">
                       <Col span={10}>
                         <NQ_LOGO onClick={() => window.open(SOCIAL_MEDIAS.nestquest)}>
-                          <SVGDynamicReverseMode src="/img/assets/nestquest_logo.png" alt="domain-icon" />
+                          <img src="/img/assets/nestquest_logo.png" alt="domain-icon" />
                         </NQ_LOGO>
                       </Col>
                       <Col span={7}>
@@ -613,7 +613,6 @@ export const NestQuestSingleListing: FC<{
           <Col span={1}></Col>
           <Col sm={9} xl={9} xxl={9}>
             <TokenToggle
-              token={token}
               toggleToken={() => {
                 token === 'SOL' ? setToken('GOFX') : setToken('SOL')
                 token === 'SOL' ? setMintPrice(500) : setMintPrice(1)

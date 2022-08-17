@@ -20,10 +20,10 @@ import { truncateAddress } from '../../utils'
 import tw from 'twin.macro'
 
 const WALLET_ICON = styled(CenteredImg)`
-  ${tw`bg-black h-[30px] w-[30px] mr-4 rounded-circle`}
+  ${tw`bg-black h-[30px] w-[30px] mr-[12px] rounded-circle`}
 
   img {
-    ${tw`h-3 w-3`}
+    ${tw`h-[16px] w-[16px]`}
   }
 `
 const WRAPPED_LOADER = styled.div`
@@ -35,8 +35,8 @@ const WRAPPED_LOADER = styled.div`
 `
 
 const WRAPPER = styled.button<{ $connected: boolean }>`
-  ${tw`py-0 px-4 flex items-center justify-center border-none border-0 h-9 rounded-circle cursor-pointer`}
-  ${({ theme, $connected }) => $connected && `padding-left: ${theme.margin(1.5)};`}
+  ${tw`py-0 px-[12px] flex items-center justify-center border-none border-0 h-9 rounded-circle cursor-pointer`}
+  ${({ theme, $connected }) => $connected && `padding-left: 4px;`}
   ${({ theme }) => theme.smallShadow}
   background-color: ${({ theme }) => theme.secondary3};
   transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;

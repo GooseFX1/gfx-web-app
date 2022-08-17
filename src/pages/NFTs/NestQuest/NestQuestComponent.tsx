@@ -61,7 +61,7 @@ const STYLED_SHARE_PROFILE = styled.div`
       font-size: 20px;
       font-weight: 600;
       color: ${theme.textShareModal};
-      margin-bottom: ${theme.margin(4)};
+      margin: 35px auto 15px;
     }
     .social-list {
       display: flex;
@@ -171,7 +171,7 @@ export const Vesting = ({ currency, str }) => {
     <>
       <VESTING_WRAPPER>
         <div className="wrapper">
-          <img className="currencyImg" src={`/img/crypto/${currency}.svg`} />
+          <img className="currencyImg" src={`/img/crypto/${currency}.svg`} alt="currency" />
           <div className="raisedText">{`${currency} raised:`}</div>
         </div>
 
@@ -199,7 +199,7 @@ export const ShareInternal = ({ socials, handleShare }: any) => {
 
   return (
     <STYLED_SHARE_PROFILE>
-      <h1 className="title">Share it with your friends!</h1>
+      <p className="title">Share it with your friends!</p>
       <div className="social-list">
         {socials.map((item: string) => (
           <div className="social-item" key={item} onClick={(e) => handleClick(item)}>

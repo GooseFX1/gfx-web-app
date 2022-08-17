@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useDarkMode } from '../../context'
 import { SVGDynamicReverseMode } from '../../styles'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const WRAPPER = styled.div`
   width: 100%;
@@ -158,6 +159,7 @@ const WRAPPER = styled.div`
 
 export const CircularMenu = ({ carousel, rotateClicked, clickCounter, rewardToggle }) => {
   const { mode } = useDarkMode()
+  const { publicKey } = useWallet()
   const [rotationClass, setRotationClass] = useState('carousel')
   const [indexClass, setIndexClass] = useState<'active' | 'inactive'>()
   const history = useHistory()
@@ -172,7 +174,9 @@ export const CircularMenu = ({ carousel, rotateClicked, clickCounter, rewardTogg
   }, [clickCounter])
 
   const redirectToPage = () => {
-    if (carousel[0].redirect) {
+    if (publicKey && carousel[0].name === 'Sell') {
+      history.push(`${carousel[0].redirect}/${publicKey.toBase58()}`)
+    } else if (carousel[0].redirect && carousel[0].name !== 'Sell') {
       history.push(carousel[0].redirect)
     }
   }

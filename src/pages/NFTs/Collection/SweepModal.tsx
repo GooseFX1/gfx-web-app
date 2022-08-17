@@ -39,7 +39,7 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import Meta from 'antd/lib/card/Meta'
 import Lottie from 'lottie-react'
-import confettiAnimation from './confettiAnimation.json'
+import confettiAnimation from '../../../animations/confettiAnimation.json'
 
 const ARROW_CLICKER = styled(CenteredDiv)`
   margin-left: ${({ theme }) => theme.margin(1)};
@@ -180,6 +180,10 @@ const SWEEP_MODAL = styled(Modal)`
         height: 60px;
         margin-right: 40px;
         cursor: pointer;
+
+        &:last-child {
+          margin: 0;
+        }
       }
       .settling-container {
         width: 80%;
@@ -553,6 +557,7 @@ const SLIDER_ITEM = styled.div`
     font-weight: 600;
     margin-top: 15px;
     color: ${({ theme }) => theme.text7};
+    ${({ theme }) => theme.ellipse};
   }
   .nft-sweep-success {
     display: flex;
@@ -1200,8 +1205,12 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
               </>
             ) : (
               <>
-                <Lottie animationData={confettiAnimation} className="confettiAnimation" />
-                <div className="topbar">{sweepSuccessFlag ? 'Mission accomplished!' : 'Almost all!'}</div>
+                {getSuccessfulSweeps() > 0 && (
+                  <Lottie animationData={confettiAnimation} className="confettiAnimation" />
+                )}
+                <div className="topbar">
+                  {sweepSuccessFlag ? 'Mission accomplished!' : getSuccessfulSweeps() > 0 ? 'Almost all!' : 'Try Again'}
+                </div>
                 <div className="successful-sweeps">
                   You are now the owner of<span className="count primary3color">{getSuccessfulSweeps()}</span>NFT's
                   from:
@@ -1275,38 +1284,33 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
                     </div>
                   ) : settleProgress === 2 ? (
                     <>
-                      <div>
-                        <img
-                          className="social-icon"
-                          src={`/img/assets/twitter-violet.svg`}
-                          alt=""
-                          onClick={() => onShare('twitter')}
-                        />
-                      </div>
-                      <div>
-                        <img
-                          className="social-icon"
-                          src={`/img/assets/telegram-violet.svg`}
-                          alt=""
-                          onClick={() => onShare('telegram')}
-                        />
-                      </div>
-                      <div>
-                        <img
-                          className="social-icon"
-                          src={`/img/assets/facebook-violet.svg`}
-                          alt=""
-                          onClick={() => onShare('facebook')}
-                        />
-                      </div>
-                      <div>
-                        <img
-                          className="social-icon"
-                          src={`/img/assets/copy-violet.svg`}
-                          alt=""
-                          onClick={() => onShare('copy')}
-                        />
-                      </div>
+                      <img
+                        className="social-icon"
+                        src={`/img/assets/twitter-violet.svg`}
+                        alt=""
+                        onClick={() => onShare('twitter')}
+                      />
+
+                      <img
+                        className="social-icon"
+                        src={`/img/assets/telegram-violet.svg`}
+                        alt=""
+                        onClick={() => onShare('telegram')}
+                      />
+
+                      <img
+                        className="social-icon"
+                        src={`/img/assets/facebook-violet.svg`}
+                        alt=""
+                        onClick={() => onShare('facebook')}
+                      />
+
+                      <img
+                        className="social-icon"
+                        src={`/img/assets/copy-violet.svg`}
+                        alt=""
+                        onClick={() => onShare('copy')}
+                      />
                     </>
                   ) : settleProgress === -1 ? (
                     <Button

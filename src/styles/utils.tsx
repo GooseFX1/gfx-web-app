@@ -77,27 +77,6 @@ export const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`
   }
 `
 
-export const TOKENTOGGLE = styled(CenteredDiv)<{ $mode: string }>`
-  height: 30px;
-  width: 60px;
-  border-radius: 30px;
-  margin-right: ${({ theme }) => theme.margin(5)};
-  background: ${({ $mode }) =>
-    $mode === 'SOL'
-      ? 'linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%);'
-      : 'linear-gradient(96.79deg, #5855FF 4.25%, #DC1FFF 97.61%);'};
-  &:hover {
-    cursor: pointer;
-  }
-  > div {
-    ${({ theme }) => theme.measurements(theme.margin(2.5))}
-    ${({ theme }) => theme.roundedBorders}
-    background-color: #fff;
-    font-weight: 600;
-    transform: translateX(${({ $mode }) => ($mode === 'SOL' ? '-' : '')}${({ theme }) => theme.margin(1.5)});
-  }
-`
-
 export const MODE_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margin(2))};
   .moon-image {
