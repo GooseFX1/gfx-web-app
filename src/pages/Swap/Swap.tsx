@@ -8,7 +8,7 @@ import { Wrap } from './Wrap'
 import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
-import { Modal } from '../../components'
+import { Modal, Tooltip } from '../../components'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 import {
   useDarkMode,
@@ -83,6 +83,10 @@ const TokenTitle = styled.div`
   ${tw`font-semibold text-lg`}
   color: ${({ theme }) => theme.text1};
   line-height: inherit;
+`
+
+const TokenTitleFees = styled(TokenTitle)`
+  ${tw`flex items-center`}
 `
 
 const SmallTitle = styled.div`
@@ -686,17 +690,23 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
       <ListWrapper>
         {details.map((detail, index) => (
           <AltTokenDetail key={index}>
-            <TokenTitle>
+            <TokenTitleFees>
               {detail.name}{' '}
               {detail.icon && (
-                <SVGDynamicReverseMode
-                  style={{ height: '12px', width: '12px' }}
-                  src={`/img/crypto/${detail.icon}.svg`}
-                  alt="jupiter-icon"
-                  className={'header-icon'}
-                />
-              )}
-            </TokenTitle>
+                  <SVGDynamicReverseMode
+                    style={{ height: '12px', width: '12px' }}
+                    src={`/img/crypto/${detail.icon}.svg`}
+                    alt="jupiter-icon"
+                    className={'header-icon'}
+                  />
+                ) && (
+                  <Tooltip dark placement="topLeft" color="#fff">
+                    <span style={{ color: '#000' }}>
+                      {'The amount of fee we take, in order to process your transaction.'}
+                    </span>
+                  </Tooltip>
+                )}
+            </TokenTitleFees>
             <SmallTitle>{detail.value}</SmallTitle>
             <SmallTitle>{detail.extraValue || null}</SmallTitle>
           </AltTokenDetail>
