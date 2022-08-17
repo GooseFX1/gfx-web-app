@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
-import { useDarkMode } from '../../context'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useDarkMode, useWalletModal } from '../../context'
 import { CircularMenu } from './CircularMenu'
 import { CAROUSEL } from '../../constants'
-import { Link, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 const WRAPPER = styled.div`
   height: 650px;
@@ -68,7 +69,7 @@ const CircularDiv = styled.div`
     border-radius: 50%;
     height: 150px;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 14px;
     color: ${({ theme }) => theme.bg0};
     background: ${({ theme }) => theme.comingSoon};
   }
@@ -104,6 +105,8 @@ const CircularDiv = styled.div`
 const MenuPopup = ({ rewardToggle }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
+  const { publicKey } = useWallet()
+  const { setVisible: setModalVisible } = useWalletModal()
   const [rotateClicked, setRotateClicked] = useState<'left' | 'right'>()
   const [clickCounter, setClickCounter] = useState<number>(0)
 
@@ -134,11 +137,18 @@ const MenuPopup = ({ rewardToggle }) => {
       setCarousel([...arr])
     }, 150)
   }
-  const redirectToPage = () => {
-    if (carousel[0].redirect) {
+  const redirectToPage = (isSell: boolean) => {
+    if (isSell) {
+      publicKey ? history.push(`${carousel[0].redirect}/${publicKey.toBase58()}`) : handleWalletModal()
+    } else if (carousel[0].redirect && !isSell) {
       history.push(carousel[0].redirect)
     }
   }
+
+  const handleWalletModal = useCallback(() => {
+    setModalVisible(true)
+  }, [setModalVisible])
+
   return (
     <WRAPPER>
       <CircularMenu
@@ -162,13 +172,13 @@ const MenuPopup = ({ rewardToggle }) => {
         <div className="outer-bg">
           <div className="inner-bg">
             {carousel[0].redirect ? (
-              <div className="go-btn" onClick={redirectToPage}>
-                <div className="go-text">Go!</div>
+              <div className="go-btn" onClick={(e) => redirectToPage(carousel[0].name === 'Sell')}>
+                <div className="go-text">{carousel[0].name === 'Sell' && !publicKey ? 'Connect' : 'Go!'}</div>
               </div>
             ) : (
               <div className="cmg-soon">
                 <div className="cmg-soon-text">
-                  Comming
+                  Coming
                   <br /> Soon
                 </div>
               </div>

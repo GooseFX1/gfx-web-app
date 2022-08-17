@@ -4,7 +4,7 @@ import { MainButton } from '../components'
 import { useDarkMode } from '../context'
 import { useHistory } from 'react-router-dom'
 import Lottie from 'lottie-react'
-import notFound from './404.json'
+import notFound from '../animations/404.json'
 
 const PAGE_CONTAINER = styled.div`
   width: 100vw;

@@ -25,7 +25,7 @@ export const MODAL_TYPES = {
 }
 export const CAROUSEL = [
   { name: 'Create', id: 0, position: 1, redirect: 'NFTs/create' },
-  { name: 'Sell', id: 1, position: 2 },
+  { name: 'Sell', id: 1, position: 2, redirect: 'NFTs/profile' },
   { name: 'Launchpad', id: 2, position: 3, redirect: 'NFTs/launchpad' },
   { name: 'Fractionalization', id: 3, position: 4 },
   { name: 'Lend', id: 4, position: 5 },

@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 import Lottie from 'lottie-react'
-import MorePools from '../MorePools_dark.json'
-import MorePoolsLite from '../MorePools_lite.json'
+import MorePools from '../../animations/MorePools_dark.json'
+import MorePoolsLite from '../../animations/MorePools_lite.json'
 import { useDarkMode } from '../../context'
 import tw from 'twin.macro'
 
@@ -11,7 +11,7 @@ const CONTAINER = styled.div`
   background: ${({ theme }) => theme.bg17};
 `
 const MorePoolImg = styled.div`
-  .animation-404{
+  .animation-404 {
     ${tw`w-[188px] h-[120px] mt-[70px]`}
   }
 `
