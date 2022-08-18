@@ -1,5 +1,6 @@
-import { PROGRAM_ID } from '../programId'
 import * as anchor from './anchor'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { ADDRESSES } from '../../ids'
 
 export function fromCode(code: number, logs?: string[]): anchor.AnchorError | null {
   return anchor.fromCode(code, logs)
@@ -11,7 +12,7 @@ function hasOwnProperty<X extends object, Y extends PropertyKey>(obj: X, prop: Y
 
 const errorRe = /Program (\w+) failed: custom program error: (\w+)/
 
-export function fromTxError(err: unknown): anchor.AnchorError | null {
+export function fromTxError(err: unknown, network: WalletAdapterNetwork): anchor.AnchorError | null {
   if (typeof err !== 'object' || err === null || !hasOwnProperty(err, 'logs') || !Array.isArray(err.logs)) {
     return null
   }
@@ -29,7 +30,7 @@ export function fromTxError(err: unknown): anchor.AnchorError | null {
   }
 
   const [programIdRaw, codeRaw] = firstMatch.slice(1)
-  if (programIdRaw !== PROGRAM_ID.toString()) {
+  if (programIdRaw !== ADDRESSES[network].programs.nestquestSale.program_id.toBase58()) {
     return null
   }
 

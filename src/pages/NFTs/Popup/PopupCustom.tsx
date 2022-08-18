@@ -1,6 +1,7 @@
 import React, { ReactNode, FC } from 'react'
 import { Modal } from 'antd'
 import styled from 'styled-components'
+import { SVGDynamicReverseMode } from '../../..//styles/utils'
 
 export const STYLED_POPUP = styled(Modal)<{ width: string; height: string }>`
   * {
@@ -10,11 +11,9 @@ export const STYLED_POPUP = styled(Modal)<{ width: string; height: string }>`
   height: ${({ height }) => height};
   width: ${({ width }) => width} !important;
   background-color: ${({ theme }) => theme.bg3};
-  ${({ theme }) => theme.largeBorderRadius};
+  padding-bottom: 0;
 
-  .ant-modal-body {
-    padding: ${({ theme }) => theme.margin(3)} ${({ theme }) => theme.margin(4)};
-  }
+  ${({ theme }) => theme.largeBorderRadius};
 
   .ant-modal-content {
     border-radius: 0;
@@ -23,17 +22,13 @@ export const STYLED_POPUP = styled(Modal)<{ width: string; height: string }>`
 
   .ant-modal-close {
     position: absolute;
-    right: ${({ theme }) => theme.margin(4)};
-    top: ${({ theme }) => theme.margin(3)};
+    right: 25px;
+    top: 25px;
 
     .ant-modal-close-x {
-      width: auto;
-      height: auto;
-      font-size: 26px;
-      line-height: 1;
-      svg {
-        color: ${({ theme }) => theme.text1};
-      }
+      display: flex;
+      height: 24px;
+      width: 24px;
     }
   }
 `
@@ -42,6 +37,7 @@ export const PopupCustom: FC<{
   width?: string
   height?: string
   children: ReactNode
+  closeIcon: any
   className?: string
   [x: string]: any
 }> = ({ width, height, children, className, ...props }) => {
@@ -51,7 +47,7 @@ export const PopupCustom: FC<{
       width={width}
       height={height}
       {...props}
-      closeIcon={<img className="close-white-icon" src={`/img/assets/close-white-icon.svg`} alt="" />}
+      closeIcon={<SVGDynamicReverseMode src={`/img/assets/close-white-icon.svg`} alt="" />}
     >
       {children}
     </STYLED_POPUP>

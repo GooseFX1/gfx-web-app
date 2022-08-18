@@ -59,6 +59,10 @@ const MINT_BUTTON = styled.button`
   ${({ theme }) => theme.roundedBorders};
   cursor: pointer;
 
+  span {
+    font-weight: 700;
+  }
+
   &:disabled {
     background-color: #7d7d7d;
   }
@@ -68,13 +72,16 @@ const DISPLAY_NUMBER = styled.span`
   font-weight: 600;
   line-height: 54px;
   margin: 0px ${({ theme }) => theme.margin(1)};
+  color: ${({ theme }) => theme.text7};
 `
 const HEADER = styled.span`
   margin-bottom: ${({ theme }) => theme.margin(2)};
   font-size: 22px;
   font-weight: 600;
+  color: ${({ theme }) => theme.text7};
 `
 const TITLE = styled.p`
+  color: ${({ theme }) => theme.text7};
   font-size: 30px;
   font-weight: 600;
   margin-bottom: ${({ theme }) => theme.margin(5)};
@@ -82,6 +89,7 @@ const TITLE = styled.p`
 const TICKER = styled.span`
   font-size: 25.8px;
   font-weight: 600;
+  color: ${({ theme }) => theme.text7};
 `
 const SOL_ICON = styled.span`
   img {

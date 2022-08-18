@@ -78,7 +78,6 @@ const PURCHASE_MODAL = styled(Modal)`
 
   .ant-modal-body {
     padding: ${({ theme }) => theme.margin(4.5)};
-    padding-bottom: ${({ theme }) => theme.margin(5)};
     overflow: auto !important;
   }
 
@@ -166,15 +165,12 @@ const PURCHASE_MODAL = styled(Modal)`
   }
 
   .bm-not-enough {
-    margin-top: ${({ theme }) => theme.margin(1)};
-    padding-bottom: ${({ theme }) => theme.margin(1)};
+    margin-top: ${({ theme }) => theme.margin(2)};
     text-align: center;
     font-size: 13px;
     font-weight: 600;
     color: #ff6b6b;
-    position: absolute;
     width: 100%;
-    left: 0;
   }
 
   .bm-review-alert {
@@ -272,7 +268,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
 
   const fiatCalc: string = useMemo(
     () => `${marketData && bidPrice ? (marketData.current * bidPrice).toFixed(3) : ''}`,
-    [bidPrice]
+    [marketData, bidPrice]
   )
 
   const notEnough: boolean = useMemo(

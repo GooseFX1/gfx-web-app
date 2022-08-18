@@ -62,6 +62,7 @@ export interface Colors {
   bg16: Color
   bg17: Color
   bg18: Color
+  bg19: Color
   lpbg: Color
   pbbg: Color
   goBtn: Color

@@ -144,11 +144,14 @@ const SAVE_BUTTON = styled(MainButton)`
   text-align: center;
   border: none;
   cursor: pointer;
-  color: white;
   padding: ${({ theme }) => `${theme.margin(2)} ${theme.margin(6)}`};
   background-color: transparent;
   margin-top: ${({ theme }) => theme.margin(1)};
   ${({ theme }) => theme.roundedBorders};
+
+  span {
+    color: ${({ theme }) => theme.text7};
+  }
 
   &:disabled {
     background-color: #5d5d5d;
