@@ -205,3 +205,6 @@ export const generateListOfSSLTokens = (network): any => {
   }
   return sslTokens
 }
+
+export const NQ_GOFX_PRICE = 500
+export const NQ_SOL_PRICE = 1
