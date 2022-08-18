@@ -8,7 +8,7 @@ import { Wrap } from './Wrap'
 import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
-import { Modal } from '../../components'
+import { Modal, Tooltip } from '../../components'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 import {
   useDarkMode,
@@ -85,6 +85,10 @@ const TokenTitle = styled.div`
   line-height: inherit;
 `
 
+const TokenTitleFees = styled(TokenTitle)`
+  ${tw`flex items-center`}
+`
+
 const SmallTitle = styled.div`
   ${tw`font-semibold text-tiny`}
   color: ${({ theme }) => theme.text12};
@@ -118,7 +122,7 @@ const TokenHeader = styled.div`
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
-  ${tw`h-24.25 rounded-average p-px cursor-pointer mr-7 !min-w-330 sm:h-16.25 sm:mt-0 sm:mx-0 sm:mb-4`}
+  ${tw`h-24.25 rounded-average p-px cursor-pointer mr-7 !min-w-330 mb-4 sm:h-16.25 sm:mt-0 sm:mx-0 sm:mb-4`}
   background: ${({ theme, $clicked }) =>
     $clicked ? 'linear-gradient(90deg,rgba(247,147,26,0.5) 0%,rgba(220,31,255,0.5) 100%)' : theme.bg1};
   box-shadow: 0 6px 9px 0 rgba(36, 36, 36, 0.1);
@@ -185,8 +189,8 @@ const SWAP_ROUTES = styled.div<{ $less: boolean }>`
   ${tw`relative`}
 
   .swap-content {
-    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 mb-3 py-8 px-0 mx-8 sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0`}
-    justify-content: ${({ $less }) => ($less ? 'center' : 'flex-start')};
+    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 mb-3 py-8 px-0 mx-8 sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0 flex-wrap`}
+    justify-content: ${({ $less }) => ($less ? 'center' : 'center')};
   }
 
   .action {
@@ -298,7 +302,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
   const location = useLocation<ILocationState>()
   const { setEndpoint, network } = useConnectionConfig()
   const { mode } = useDarkMode()
-  const { refreshRates, setFocused, switchTokens, setClickNo, tokenA, tokenB, inTokenAmount } = useSwap()
+  const { refreshRates, setFocused, switchTokens, setClickNo, setRoutes, tokenA, tokenB, inTokenAmount } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
   const [route, setRoute] = useState(routes[clickNo])
   const [wrapModalVisible, setWrapModalVisible] = useState(false)
@@ -324,6 +328,10 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
   const onClick = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation()
     setSettingsModalVisible(true)
+  }
+  const refresh = () => {
+    setRoutes([])
+    setTimeout(() => refreshRates(), 2000)
   }
 
   const dateString = (date: Date) => {
@@ -381,7 +389,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
           <div onClick={() => setWrapModalVisible(true)} className="wrapped-sol">
             wSOL
           </div>
-          <div onClick={refreshRates}>
+          <div onClick={refresh} style={{ cursor: 'pointer' }}>
             <img src={`/img/assets/refresh.svg`} alt="refresh-icon" className={'header-icon'} />
           </div>
           <SETTING_WRAPPER onClick={onClick}>
@@ -572,6 +580,7 @@ const TokenContent: FC = () => {
 
 const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes }) => {
   const { tokenA, tokenB, inTokenAmount } = useSwap()
+  const { tokens } = useTokenRegistry()
 
   const [details, setDetails] = useState([
     { name: 'Price Impact', value: '0%' },
@@ -580,7 +589,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
       value: 0 + ' ' + tokenB.symbol
     },
     {
-      name: 'Fees paid to Serum LP',
+      name: 'Fees paid to GooseFx LP',
       value: `${0} ${tokenA.symbol} (${0} %)`,
       extraValue: `0 ${tokenB.symbol} (0%)`
     },
@@ -593,11 +602,18 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
   useEffect(() => {
     const route = routes?.[clickNo]
     if (!route) return
-    const totalLp = route.marketInfos[0].lpFee.amount / 10 ** tokenA.decimals
-    const percent = +((totalLp / inTokenAmount) * 100)?.toFixed(4)
-    const totalLpB = route.marketInfos.slice(-1)[0].lpFee.amount / 10 ** tokenB.decimals
     const out = route.outAmount / 10 ** tokenB.decimals
-    const percentB = +((totalLpB / out) * 100)?.toFixed(4)
+
+    const getPriceDetails = (num: number) => {
+      const totalLp = route.marketInfos[num].lpFee.amount / 10 ** tokenA.decimals || 0.0
+      let percent = route.marketInfos[num].lpFee.pct || +((totalLp / inTokenAmount) * 100)?.toFixed(4) || 0.0
+      percent = isFinite(percent) ? percent : 0.0
+      const totalLpB = route.marketInfos[num].lpFee.amount / 10 ** tokenB.decimals || 0.0
+      let percentB = +((totalLpB / out) * 100)?.toFixed(4) || 0.0
+      percentB = isFinite(percentB) ? percentB : 0.0
+      const token = tokens.find((tk) => tk.address === route.marketInfos[num].lpFee.mint)
+      return { totalLp, totalLpB, percent, percentB, token }
+    }
 
     setOutAmount(out)
 
@@ -607,14 +623,18 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
         name: checkMobile() ? 'Min. Received' : 'Minimum Received',
         value: `${nFormatter(route.outAmountWithSlippage / 10 ** tokenB.decimals, tokenB.decimals)} ${tokenB.symbol}`
       },
-      {
-        name: `Fees paid to ${route.marketInfos[0].amm.label || 'GooseFX'} LP`,
-        value: `${nFormatter(totalLp, tokenA.decimals)} ${tokenA.symbol} (${percent} %)`,
-        extraValue:
-          route?.marketInfos?.length > 1
-            ? `${nFormatter(totalLpB, tokenB.decimals)} ${tokenB.symbol} (${percentB}%)`
-            : `0 ${tokenB.symbol} (0%)`
-      },
+      ...route?.marketInfos.slice(0, 3).map((market: any, num: number) => ({
+        name: `Fees paid to ${market.amm.label || 'GooseFX'} LP`,
+        value: `${nFormatter(getPriceDetails(num).totalLp, getPriceDetails(num).token?.decimals || tokenA.decimals)} ${
+          getPriceDetails(num).token?.symbol || tokenA.symbol
+        } (${getPriceDetails(num).percent} %)`
+        // extraValue:
+        //   market.amm.label === 'GooseFX' ??
+        //   `${nFormatter(getPriceDetails(num).totalLpB, tokenB.decimals)} ${tokenB.symbol} (${
+        //     getPriceDetails(num).percentB
+        //   }%)`
+      })),
+
       { name: checkMobile() ? 'Trans. Fee' : 'Transaction Fee', value: '0.00005 SOL', icon: 'info' }
     ]
 
@@ -670,17 +690,23 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
       <ListWrapper>
         {details.map((detail, index) => (
           <AltTokenDetail key={index}>
-            <TokenTitle>
+            <TokenTitleFees>
               {detail.name}{' '}
               {detail.icon && (
-                <SVGDynamicReverseMode
-                  style={{ height: '12px', width: '12px' }}
-                  src={`/img/crypto/${detail.icon}.svg`}
-                  alt="jupiter-icon"
-                  className={'header-icon'}
-                />
-              )}
-            </TokenTitle>
+                  <SVGDynamicReverseMode
+                    style={{ height: '12px', width: '12px' }}
+                    src={`/img/crypto/${detail.icon}.svg`}
+                    alt="jupiter-icon"
+                    className={'header-icon'}
+                  />
+                ) && (
+                  <Tooltip dark placement="topLeft" color="#fff">
+                    <span style={{ color: '#000' }}>
+                      {'The amount of fee we take, in order to process your transaction.'}
+                    </span>
+                  </Tooltip>
+                )}
+            </TokenTitleFees>
             <SmallTitle>{detail.value}</SmallTitle>
             <SmallTitle>{detail.extraValue || null}</SmallTitle>
           </AltTokenDetail>
