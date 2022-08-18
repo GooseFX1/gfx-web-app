@@ -44,6 +44,9 @@ const ROADMAP_WRAPPER = styled.div`
   }
 `
 const STYLED_SHARE_PROFILE = styled.div`
+  * {
+    z-index: 1;
+  }
   ${({ theme }) => `
     .ant-modal-body {
       padding: ${theme.margin(5)} ${theme.margin(7)};
@@ -56,12 +59,12 @@ const STYLED_SHARE_PROFILE = styled.div`
         filter: ${theme.filterCloseModalIcon};
       }
     }
-    .title {
+    .share {
       font-family: Montserrat;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 600;
       color: ${theme.textShareModal};
-      margin: 35px auto 15px;
+      text-align: center;
     }
     .social-list {
       display: flex;
@@ -73,8 +76,8 @@ const STYLED_SHARE_PROFILE = styled.div`
     .social-item {
       padding: 0 ${theme.margin(2)};
       img {
-        height: 40px;
-        width: 40px;
+        height: 60px;
+        width: 60px;
         cursor: pointer;
       }
     }
@@ -95,8 +98,8 @@ const STYLED_SHARE_PROFILE = styled.div`
     }
 
     .social-icon--img {
-      height: 40px;
-      width: 40px;
+      height: 60px;
+      width: 60px;
       background: ${theme.success};
       border-radius: 50%;
       display: flex;
@@ -199,7 +202,7 @@ export const ShareInternal = ({ socials, handleShare }: any) => {
 
   return (
     <STYLED_SHARE_PROFILE>
-      <p className="title">Share it with your friends!</p>
+      <p className="share">Share it with your friends!</p>
       <div className="social-list">
         {socials.map((item: string) => (
           <div className="social-item" key={item} onClick={(e) => handleClick(item)}>
@@ -210,7 +213,6 @@ export const ShareInternal = ({ socials, handleShare }: any) => {
                 <img src={`/img/assets/${item.replace(' ', '-')}-circle.svg`} alt="" />
               )}
             </div>
-            <div className="social-text">{item}</div>
           </div>
         ))}
       </div>

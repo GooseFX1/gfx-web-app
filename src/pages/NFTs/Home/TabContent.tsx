@@ -214,7 +214,7 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
             {!isCollection ? <SkeletonCommon width="149px" height="28px" /> : collection.collection[0].collection_name}
           </h2>
           {isCollection && collection && collection.collection[0].is_verified && (
-            <img className="check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.png`} alt="" />
+            <img className="check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.svg`} alt="" />
           )}
         </div>
         <div className="value">

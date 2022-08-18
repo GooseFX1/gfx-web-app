@@ -1199,7 +1199,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
                   <img className="small-image" src={singleCollection.collection[0].profile_pic_link} alt="the-nft" />
                   <span className="collection-name-sweeper">{singleCollection.collection[0].collection_name}</span>
                   {singleCollection.collection[0].is_verified && (
-                    <img className="verified-tick" src={`/img/assets/check-icon.png`} alt="" />
+                    <img className="verified-tick" src={`/img/assets/check-icon.svg`} alt="" />
                   )}
                 </Row>
               </>
@@ -1219,7 +1219,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
                   <img className="small-image" src={singleCollection.collection[0].profile_pic_link} alt="the-nft" />
                   <span className="collection-name-sweeper">{singleCollection.collection[0].collection_name}</span>
                   {singleCollection.collection[0].is_verified && (
-                    <img className="verified-tick" src={`/img/assets/check-icon.png`} alt="" />
+                    <img className="verified-tick" src={`/img/assets/check-icon.svg`} alt="" />
                   )}
                 </Row>
                 <Row justify="center" align="middle" className="imageRow2">

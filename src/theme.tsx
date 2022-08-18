@@ -76,6 +76,9 @@ export function colors(mode: string): Colors {
     text24: mode === 'dark' ? '#EFEDED' : '#636363',
     text25: mode === 'dark' ? '#7D7D7D' : '#636363',
     text26: mode === 'dark' ? '#999999' : '#353535',
+
+    textWhitePurple: mode === 'dark' ? '#fff' : '#8d4cdd',
+
     text1h: '#7d7d7d',
     comingSoon: mode === 'dark' ? '#262626' : '#b5b5b5',
 

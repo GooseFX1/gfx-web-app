@@ -324,7 +324,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
             </span>
           )}
           {currentUserProfile && currentUserProfile.is_verified && (
-            <img className="check-icon" src={`/img/assets/check-icon.png`} alt="is-verified-user" />
+            <img className="check-icon" src={`/img/assets/check-icon.svg`} alt="is-verified-user" />
           )}
         </div>
         <div>

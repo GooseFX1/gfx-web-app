@@ -618,7 +618,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
         <Col>
           <img
             className="bm-check-icon"
-            src={`/img/assets/${isVerified ? 'check-icon.png' : 'close-icon.svg'}`}
+            src={`/img/assets/${isVerified ? 'check-icon.svg' : 'close-icon.svg'}`}
             alt=""
           />
         </Col>

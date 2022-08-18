@@ -356,7 +356,7 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
             {isCollectionItemEmpty ? (
               <SkeletonCommon width="40px" height="40px" borderRadius="50%" />
             ) : (
-              singleCollection.collection[0].is_verified && <img src={`/img/assets/check-icon.png`} alt="" />
+              singleCollection.collection[0].is_verified && <img src={`/img/assets/check-icon.svg`} alt="" />
             )}
           </div>
           {isCollectionItemEmpty ? (

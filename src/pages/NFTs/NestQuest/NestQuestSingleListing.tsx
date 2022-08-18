@@ -4,7 +4,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import ModalMint from './MintNest'
-import { useWalletModal, useAccounts, useConnectionConfig } from '../../../context'
+import { useWalletModal, useAccounts, useConnectionConfig, useDarkMode } from '../../../context'
 import { WRAPPED_SOL_MINT, fetchAvailableNft, ADDRESSES } from '../../../web3'
 import { MintItemViewStatus, INFTMetadata } from '../../../types/nft_details'
 import { MainButton } from '../../../components/MainButton'
@@ -175,8 +175,11 @@ const SUBTITLE = styled.h2`
   color: ${({ theme }) => theme.text1};
 `
 
-const PILL_SECONDARY = styled.div`
-  background: linear-gradient(90deg, rgba(247, 147, 26, 0.5) 0%, rgba(220, 31, 255, 0.5) 100%);
+const PILL_SECONDARY = styled.div<{ $mode: string }>`
+  background: ${({ $mode }) =>
+    $mode === 'dark'
+      ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)'
+      : 'linear-gradient(to bottom, rgba(116, 116, 116, 0.2), rgba(116, 116, 116, 0.2)), linear-gradient(to right, #f7931a 1%, #e03cff 100%), linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)'};
   border-radius: 50px;
   width: 48%;
   height: 45px;
@@ -192,7 +195,7 @@ const PILL_SECONDARY = styled.div`
     font-weight: 600;
     font-size: 15px;
     line-height: 18px;
-    background: #3c3b3ba6;
+    background: ${({ $mode }) => ($mode === 'dark' ? '#3c3b3ba6' : '#ffffff57')};
     border-radius: 50px;
     filter: drop-shadow(0px 6px 9px rgba(36, 36, 36, 0.15));
   }
@@ -395,13 +398,14 @@ export const NestQuestSingleListing: FC<{
   backUrl?: string
   arbData?: INFTMetadata
 }> = ({ status = '', backUrl, handleClickPrimaryButton, ...rest }) => {
+  const { mode } = useDarkMode()
   const history = useHistory()
   const { connected, publicKey, signTransaction } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
   const { connection, endpoint, network } = useConnectionConfig()
   const { getUIAmount } = useAccounts()
   const [token, setToken] = useState<string>('SOL')
-  const [mintModalVisible, setMintModalVisible] = useState(false)
+  const [mintModalVisible, setMintModalVisible] = useState(true)
   const [shareModal, setShareModal] = useState(false)
   const [mintDisabled, setMintDisabled] = useState<boolean>(false)
   const [insufficientToken, setInsufficientToken] = useState<boolean>(false)
@@ -527,11 +531,11 @@ export const NestQuestSingleListing: FC<{
                 <Row justify="space-between" align="middle" gutter={[16, 16]}>
                   <Col span={16}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <PILL_SECONDARY>
+                      <PILL_SECONDARY $mode={mode}>
                         <div>Supply 25,002</div>
                       </PILL_SECONDARY>
 
-                      <PILL_SECONDARY>
+                      <PILL_SECONDARY $mode={mode}>
                         <div>
                           {mintPrice} <img className="icon-image" src={`/img/crypto/${token}.svg`} alt="" /> {token}
                         </div>

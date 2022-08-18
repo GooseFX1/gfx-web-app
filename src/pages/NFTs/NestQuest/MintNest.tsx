@@ -12,7 +12,7 @@ import { buyWithSOL, fetchAvailableNft, buyWithGOFX } from '../../../web3'
 import { onShare } from './NestQuestSingleListing'
 import { notify } from '../../../utils'
 import Lottie from 'lottie-react'
-import confettiAnimation from '../../../animations/confettiAnimation.json'
+import confettiYellowAnimation from '../../../animations/confettiYellowAnimation.json'
 
 //#region styles
 const STYLED_POPUP = styled(PopupCustom)`
@@ -25,29 +25,32 @@ const STYLED_POPUP = styled(PopupCustom)`
       padding: 48px 40px 32px;
 
       .title {
-        margin-top: ${theme.margin(4)};
-        width: 70%;
-        font-family: Montserrat;
-        font-size: 18px;
+        width: 100%;
+        font-size: 24px;
         font-weight: 500;
-        margin-left: 15%;
-        color: ${theme.text7};
-        margin-bottom: ${theme.margin(4)};
+        color: ${theme.text1};
         text-align: center;
+        margin: 0;
+        z-index: 10;
       }
 
       .inner-title {
-        font-family: Montserrat;
-        font-size: 20px;
-        font-weight: 600;
-        color: ${theme.text7};
+        font-size: 24px;
+        font-weight: 700;
+        
+        background: linear-gradient(92.45deg, #f7931a 6.46%, #ac1cc7 107.94%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+        z-index: 10;
       }
 
       .ls-video {
         border-radius: 12px;
-        z-index: 10;
         height: 180px;
         width: 180px;
+        z-index: 10;
       }
 
       .big-text {
@@ -55,6 +58,7 @@ const STYLED_POPUP = styled(PopupCustom)`
         font-size: 32px;
         font-weight: 600;
         margin-bottom: 18px;
+        z-index: 10;
       }
   `}
 `
@@ -68,7 +72,7 @@ const STYLED_CREATE_BTN = styled(MainButton)`
     font-weight: 600;
     line-height: 45px;
     border: none;
-    background-color: #5855FF;
+    background: ${theme.primary3};
     color: white;
     ${theme.roundedBorders}
 
@@ -76,7 +80,7 @@ const STYLED_CREATE_BTN = styled(MainButton)`
       color: #fff !important;
     }
 
-    &:hover, &:focus{
+    &:hover, &:focus {
       background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     }
     
@@ -85,7 +89,7 @@ const STYLED_CREATE_BTN = styled(MainButton)`
 
 const LoadStyle = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   flex-direction: column;
   height: 100%;
@@ -95,21 +99,34 @@ const LoadStyle = styled.div`
     position: absolute;
     height: 105%;
     bottom: -56px;
-    z-index: 3;
     pointer-events: none;
   }
 `
 
+const CONFIRM_MINT = styled.div`
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+`
+
 const CreatorStyle = styled(Row)`
+  margin-top: 42px;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
+  span {
+    font-size: 16px;
+    font-weight: 600;
+    color: ${({ theme }) => theme.text8};
+  }
 
   .icon {
-    height: 18px;
-    width: auto;
-    margin-right: 5px;
+    height: 32px;
+    width: 32px;
+    margin-right: 8px;
   }
 `
 
@@ -119,10 +136,12 @@ const ListStyle = styled(Row)`
   padding: 0.25rem 1rem 0.25rem 1rem;
   align-items: center;
   width: 100%;
-  font-family: Montserrat;
-  font-size: 14px;
-  font-weight: 500;
-  color: ${({ theme }) => theme.text6};
+
+  span {
+    font-size: 17px;
+    font-weight: 600;
+    color: ${({ theme }) => theme.text4};
+  }
 `
 
 const PriceStyle = styled(Row)`
@@ -132,24 +151,23 @@ const PriceStyle = styled(Row)`
   align-items: center;
   width: 100%;
   margin: 1rem 0rem 1rem 0rem;
-  font-family: Montserrat;
 
   .price {
-    font-size: 18px;
-    font-weight: 500;
-    color: ${({ theme }) => theme.text6};
+    font-size: 24px;
+    font-weight: 600;
+    color: #858585;
   }
 
   .Big-Price {
-    font-size: 60px;
+    font-size: 64px;
     font-weight: 600;
-    color: ${({ theme }) => theme.text2};
+    color: ${({ theme }) => theme.textWhitePurple};
   }
 
   .currency {
     font-size: 30px;
     font-weight: 600;
-    color: ${({ theme }) => theme.text2};
+    color: ${({ theme }) => theme.textWhitePurple};
   }
 `
 const MINTING_PROGRESS = styled.div`
@@ -192,6 +210,8 @@ const NFT_WRAPPER = styled.div`
   border-radius: 12px;
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   box-shadow: 3px 3px 14px 0px rgb(0 0 0 / 43%);
+  margin-bottom: 32px;
+  z-index: 10;
 
   .inner-content {
     display: flex;
@@ -223,12 +243,12 @@ const RoyaltiesStep = ({ modalVisible, setModalOpen, nestQuestData }: Props) => 
   const { requestGatewayToken, gatewayStatus, gatewayToken } = useGateway()
 
   useEffect(() => {
-    ;(async function () {
-      if (!gatewayToken || gatewayStatus !== GatewayStatus.ACTIVE) {
-        setModalOpen(false)
-        await requestGatewayToken()
-      }
-    })()
+    // ;(async function () {
+    //   if (!gatewayToken || gatewayStatus !== GatewayStatus.ACTIVE) {
+    //     setModalOpen(false)
+    //     await requestGatewayToken()
+    //   }
+    // })()
   }, [gatewayToken, gatewayStatus, requestGatewayToken, setModalOpen])
 
   return (
@@ -241,7 +261,7 @@ const RoyaltiesStep = ({ modalVisible, setModalOpen, nestQuestData }: Props) => 
         onCancel={() => setModalOpen(false)}
         footer={null}
       >
-        {phase === 1 ? (
+        {/* {phase === 1 ? (
           <ConfirmMint nestQuestData={nestQuestData} setPhase={setPhase} />
         ) : phase === 2 ? (
           <LoadBuy
@@ -252,7 +272,17 @@ const RoyaltiesStep = ({ modalVisible, setModalOpen, nestQuestData }: Props) => 
           />
         ) : (
           <SuccessBuy />
-        )}
+        )} */}
+
+        <ConfirmMint nestQuestData={nestQuestData} setPhase={setPhase} />
+        {/* <LoadBuy
+          nestQuestData={nestQuestData}
+          setPhase={setPhase}
+          gatewayToken={gatewayToken}
+          gatewayStatus={gatewayStatus}
+        /> */}
+
+        {/* <SuccessBuy /> */}
       </STYLED_POPUP>
     </>
   )
@@ -270,38 +300,45 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
   const [loading, setLoading] = useState(false)
 
   return (
-    <>
-      <p className="title">
-        You're about to mint <span className="inner-title">{nestQuestData.name}</span> by{' '}
-        <span className="inner-title">{nestQuestData.project}</span>{' '}
-      </p>
+    <CONFIRM_MINT>
       <div>
+        <p className="title">You're about to mint</p>
+        <p className="title">
+          <span className="inner-title">{nestQuestData.name}</span> by{' '}
+          <span className="inner-title">{nestQuestData.project}</span>
+        </p>
         <CreatorStyle>
-          <img className="icon" src={`/img/assets/check-icon.png`} alt="back" />
+          <img className="icon" src={`/img/assets/check-icon.svg`} alt="back" />
           <span>This is a verified creator</span>
         </CreatorStyle>
-        <PriceStyle>
-          <span className="price">Price</span>
-          <Col span={18}>
-            <span className="Big-Price">{nestQuestData.token === 'SOL' ? NQ_SOL_PRICE : NQ_GOFX_PRICE}</span>
-            <span className="currency">{nestQuestData.token}</span>
-          </Col>
-        </PriceStyle>
-        <ListStyle className="">
+      </div>
+
+      <PriceStyle>
+        <span className="price">Price</span>
+        <span>
+          <span className="Big-Price">{nestQuestData.token === 'SOL' ? NQ_SOL_PRICE : NQ_GOFX_PRICE}</span>{' '}
+          <span className="currency">{nestQuestData.token}</span>
+        </span>
+      </PriceStyle>
+
+      <div style={{ width: '100%' }}>
+        <ListStyle>
           <span>Price per item</span>
           <span>{nestQuestData.token === 'SOL' ? `${NQ_SOL_PRICE} SOL` : `${NQ_GOFX_PRICE} GOFX`}</span>
         </ListStyle>
-        <ListStyle className="">
+        <ListStyle>
           <span>Quantity</span>
           <span>1 NFT</span>
         </ListStyle>
-        <ListStyle className="">
+        <ListStyle>
           <span>Service fee</span>
           <span>0.01 SOL</span>
         </ListStyle>
-        <ListStyle className="">
+        <ListStyle>
           <span>Total Price</span>
-          <span>{nestQuestData.token === 'SOL' ? `${NQ_SOL_PRICE} SOL` : `${NQ_GOFX_PRICE} GOFX + 0.01 SOL`}</span>
+          <span style={{ fontWeight: '700' }}>
+            {nestQuestData.token === 'SOL' ? `${NQ_SOL_PRICE} SOL` : `${NQ_GOFX_PRICE} GOFX + 0.01 SOL`}
+          </span>
         </ListStyle>
 
         <STYLED_CREATE_BTN
@@ -317,7 +354,7 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
           Mint
         </STYLED_CREATE_BTN>
       </div>
-    </>
+    </CONFIRM_MINT>
   )
 }
 
@@ -379,9 +416,8 @@ const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintP
   return (
     <LoadStyle>
       <MINTING_PROGRESS>
-        <span className="big-text">Hold tight!</span>
-
-        <p className="inner-title">We are minting your nft</p>
+        <p className="big-text">Hold tight!</p>
+        <p className="title">We are minting your nft</p>
 
         <div className="image-wrapper">
           <img className="ls-video" src={`${window.origin}/img/assets/nft-preview.svg`} alt="minting" />
@@ -394,14 +430,15 @@ const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintP
 
 const SuccessBuy = () => {
   const wallet = useWallet()
+
   return (
     <LoadStyle>
-      <Lottie animationData={confettiAnimation} className="confettiAnimation" />
+      <Lottie animationData={confettiYellowAnimation} className="confettiAnimation" />
       <p className="big-text">Mission Accomplished!</p>
-      <p className="inner-title" style={{ fontSize: '16px' }}>
+      <p className="title" style={{ fontSize: '16px', zIndex: 1 }}>
         You are now a proud owner of:
       </p>
-      <p className="inner-title">Tier #1 "The Egg"</p>
+      <p style={{ fontSize: '20px', fontWeight: '600', zIndex: 1 }}>Tier #1 "The Egg"</p>
       <NFT_WRAPPER>
         <div className="inner-content">
           <video

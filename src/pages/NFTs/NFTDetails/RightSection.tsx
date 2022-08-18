@@ -252,7 +252,7 @@ export const RightSection: FC<{
             <Row align="middle">
               <div className="gi-item-thumbnail-wrapper">
                 <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-                <img className="gi-item-check-icon" src={`/img/assets/check-icon.png`} alt="" />
+                <img className="gi-item-check-icon" src={`/img/assets/check-icon.svg`} alt="" />
               </div>
               <div className="gi-item-title">{creator}</div>
             </Row>
