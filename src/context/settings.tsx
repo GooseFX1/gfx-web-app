@@ -2,7 +2,7 @@ import React, { Dispatch, FC, ReactNode, SetStateAction, useContext, useMemo, us
 import { ENV } from '@solana/spl-token-registry'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Connection } from '@solana/web3.js'
-import { useLocalStorageState } from '../utils'
+// import { useLocalStorageState } from '../utils'
 
 interface IEndpoint {
   chainId: ENV

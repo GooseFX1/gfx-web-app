@@ -107,6 +107,7 @@ export function colors(mode: string): Colors {
     bg16: mode === 'dark' ? '#1E1E1E' : '#EEEEEE',
     bg17: mode === 'dark' ? '#343434' : '#FFFFFF',
     bg18: mode === 'dark' ? '#2a2a2a' : '#dadada',
+    bg19: mode === 'dark' ? '#131313' : '#3c3c3c',
     lpbg: mode === 'dark' ? '#2a2a2a' : '#d2d2d2',
     pbbg: mode === 'dark' ? '#1a1a1a' : '#868686',
     goBtn:
@@ -239,9 +240,9 @@ export function colors(mode: string): Colors {
         ? '#000'
         : 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)',
     filterArrowDown:
-    mode === 'lite'
-      ? 'invert(53%) sepia(68%) saturate(7332%) hue-rotate(231deg) brightness(99%) contrast(110%);'
-      : '#000',
+      mode === 'lite'
+        ? 'invert(53%) sepia(68%) saturate(7332%) hue-rotate(231deg) brightness(99%) contrast(110%);'
+        : '#000',
 
     // primary colors
     primary1Active: mode === 'dark' ? 'white' : '#302eb8',
