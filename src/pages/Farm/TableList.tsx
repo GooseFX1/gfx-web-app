@@ -258,6 +258,17 @@ export const TableList = ({ dataSource }: any) => {
     return () => {}
   }, [wallet.publicKey, connection])
 
+  const getTokenPrice = (name) => {
+    if (name === TOKEN_NAMES.USDC) {
+      return prices[`${name.toUpperCase()}/USDT`]
+    }
+    if (name === TOKEN_NAMES.USDT) {
+      return prices[`${name.toUpperCase()}/USD`]
+    }
+    // to get price of the token MSOL must be in upper case while to get tokenInfo address mSOL
+    return prices[`${name.toUpperCase()}/USDC`]
+  }
+
   const calculateBalances = (
     sslAccountData,
     mainVault,
@@ -276,7 +287,7 @@ export const TableList = ({ dataSource }: any) => {
           const liquidityData =
             liquidityAccountData && liquidityAccountData[i] !== null ? liquidityAccountData[i].data : undefined
           const liquidityAccount = liquidityData ? LIQUIDITY_ACCOUNT_LAYOUT.decode(liquidityData) : undefined
-          const tokenPrice = tokenName === 'USDC' ? 1 : prices[`${tokenName.toUpperCase()}/USDC`]?.current
+          const tokenPrice = getTokenPrice(tokenName).current
           //@ts-ignore
           let liquidity = mainVaultData.amount + sslData.swappedLiabilityNative
           const APR = aprVolume[i * 2]
