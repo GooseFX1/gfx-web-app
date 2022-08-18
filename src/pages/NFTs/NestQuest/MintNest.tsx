@@ -1,98 +1,77 @@
 import React, { useEffect, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { GatewayStatus, useGateway } from '@civic/solana-gateway-react'
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
+import { NQ_GOFX_PRICE, NQ_SOL_PRICE } from '../../../constants'
 import { PopupCustom } from '../Popup/PopupCustom'
 import { MainButton } from '../../../components'
 import { useConnectionConfig } from '../../../context'
 import { ShareInternal } from './NestQuestComponent'
-import { onShare } from './NestQuestSingleListing'
 import { buyWithSOL, fetchAvailableNft, buyWithGOFX } from '../../../web3'
-import { GatewayStatus, useGateway } from '@civic/solana-gateway-react'
+import { onShare } from './NestQuestSingleListing'
 import { notify } from '../../../utils'
 import Lottie from 'lottie-react'
 import confettiAnimation from '../../../animations/confettiAnimation.json'
 
 //#region styles
 const STYLED_POPUP = styled(PopupCustom)`
-  * {
-    font-family: 'Montserrat';
-    color: ${({ theme }) => theme.text2};
-    z-index: 900 !important;
-  }
-
-  .ant-modal-wrap {
-    z-index: 900 !important;
-  }
-
-  .ant-input-number {
-    width: 100%;
-  }
   ${({ theme }) => `
-    .ant-modal-body {
-      padding: ${theme.margin(3.5)} ${theme.margin(6)} ${theme.margin(2)};
+    .ant-modal-content {
+      height: 100%;
     }
+    .ant-modal-body {
+      height: 100%;
+      padding: 48px 40px 32px;
 
-    .ant-modal-close {
-      right: 35px;
-      top: 35px;
-      left: auto;
-      svg {
+      .title {
+        margin-top: ${theme.margin(4)};
+        width: 70%;
+        font-family: Montserrat;
+        font-size: 18px;
+        font-weight: 500;
+        margin-left: 15%;
+        color: ${theme.text7};
+        margin-bottom: ${theme.margin(4)};
+        text-align: center;
+      }
+
+      .inner-title {
+        font-family: Montserrat;
+        font-size: 20px;
+        font-weight: 600;
         color: ${theme.text7};
       }
-    }
-    .title {
-      margin-top: ${theme.margin(4)};
-      width: 70%;
-      font-family: Montserrat;
-      font-size: 18px;
-      font-weight: 500;
-      margin-left: 15%;
-      color: ${theme.text6};
-      margin-bottom: ${theme.margin(4)};
-      text-align: center;
-    }
 
-    .inner-title {
-      font-family: Montserrat;
-      font-size: 20px;
-      font-weight: 600;
-      color: ${theme.text1};
-    }
+      .ls-video {
+        border-radius: 12px;
+        z-index: 10;
+        height: 180px;
+        width: 180px;
+      }
 
-    .ls-video {
-      border-radius: 12px;
-      z-index: 10;
-      height: 180px;
-      width: 180px;
-    }
-
-    .big-text {
-      font-size: 32px;
-      font-weight: 600;
-      margin-bottom: 18px;
-    }
-
-    .collection-button{
-      background: none;
-      background-color: #5855FF;
-      width: 80%;
-      color: white;
-    }
+      .big-text {
+        color: ${theme.text7};
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 18px;
+      }
   `}
 `
 
 const STYLED_CREATE_BTN = styled(MainButton)`
   ${({ theme }) => `
     margin-top: ${theme.margin(2)};
+    height: 60px;
     width: 100%;
     font-size: 17px;
     font-weight: 600;
     line-height: 45px;
-    height: 53px;
-    ${theme.roundedBorders}
     border: none;
-    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+    background-color: #5855FF;
+    color: white;
+    ${theme.roundedBorders}
+
     span {
       color: #fff !important;
     }
@@ -109,11 +88,13 @@ const LoadStyle = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  height: 100%;
   width: 100%;
 
   .confettiAnimation {
     position: absolute;
-    top: 0px;
+    height: 105%;
+    bottom: -56px;
     z-index: 3;
     pointer-events: none;
   }
@@ -172,13 +153,14 @@ const PriceStyle = styled(Row)`
   }
 `
 const MINTING_PROGRESS = styled.div`
+  height: 100%;
   text-align: center;
 
   .image-wrapper {
     position: relative;
     width: 180px;
     height: 180px;
-    margin: 56px auto;
+    margin: 128px auto;
   }
 
   @keyframes loadingAnimation {
@@ -216,9 +198,10 @@ const NFT_WRAPPER = styled.div`
     flex-direction: column;
     padding: 12px;
     border-radius: 12px;
-    background-color: ${({ theme }) => theme.cardBg};
+    background-color: ${({ theme }) => theme.bg19};
 
     span {
+      color: white;
       font-weight: 500;
       font-size: 18px;
       line-height: 22px;
@@ -251,18 +234,11 @@ const RoyaltiesStep = ({ modalVisible, setModalOpen, nestQuestData }: Props) => 
   return (
     <>
       <STYLED_POPUP
-        width="532px"
-        height={'auto'}
+        height={'786px'}
+        width={'532px'}
         title={null}
         visible={modalVisible}
-        onCancel={() => {
-          setModalOpen(false)
-        }}
-        closeIcon={
-          <div>
-            <img className="close-white-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-          </div>
-        }
+        onCancel={() => setModalOpen(false)}
         footer={null}
       >
         {phase === 1 ? (
@@ -290,9 +266,6 @@ interface MintProps {
   gatewayStatus?: any
 }
 
-const GOFX_Price = 500
-const SOL_Price = 1
-
 const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
   const [loading, setLoading] = useState(false)
 
@@ -310,13 +283,13 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
         <PriceStyle>
           <span className="price">Price</span>
           <Col span={18}>
-            <span className="Big-Price">{nestQuestData.token === 'SOL' ? SOL_Price : GOFX_Price}</span>
+            <span className="Big-Price">{nestQuestData.token === 'SOL' ? NQ_SOL_PRICE : NQ_GOFX_PRICE}</span>
             <span className="currency">{nestQuestData.token}</span>
           </Col>
         </PriceStyle>
         <ListStyle className="">
           <span>Price per item</span>
-          <span>{nestQuestData.token === 'SOL' ? `${SOL_Price} SOL` : `${GOFX_Price} GOFX`}</span>
+          <span>{nestQuestData.token === 'SOL' ? `${NQ_SOL_PRICE} SOL` : `${NQ_GOFX_PRICE} GOFX`}</span>
         </ListStyle>
         <ListStyle className="">
           <span>Quantity</span>
@@ -328,7 +301,7 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
         </ListStyle>
         <ListStyle className="">
           <span>Total Price</span>
-          <span>{nestQuestData.token === 'SOL' ? `${SOL_Price} SOL` : `${GOFX_Price} GOFX + 0.01 SOL`}</span>
+          <span>{nestQuestData.token === 'SOL' ? `${NQ_SOL_PRICE} SOL` : `${NQ_GOFX_PRICE} GOFX + 0.01 SOL`}</span>
         </ListStyle>
 
         <STYLED_CREATE_BTN
@@ -350,11 +323,11 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
 
 const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintProps) => {
   const wallet = useWallet()
-  const { connection } = useConnectionConfig()
+  const { connection, network } = useConnectionConfig()
 
   useEffect(() => {
     if (wallet.publicKey && connection) {
-      fetchAvailableNft(connection)
+      fetchAvailableNft(connection, network)
         .then((res) => {
           if (res) {
             purchase(nestQuestData.token, res.nft)
@@ -375,8 +348,8 @@ const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintP
   const purchase = (token: string, nft: any) => {
     const buyFunction =
       token === 'SOL'
-        ? buyWithSOL(wallet, connection, nft, gatewayToken?.publicKey)
-        : buyWithGOFX(wallet, connection, nft, gatewayToken?.publicKey)
+        ? buyWithSOL(wallet, connection, network, nft, gatewayToken?.publicKey)
+        : buyWithGOFX(wallet, connection, network, nft, gatewayToken?.publicKey)
 
     buyFunction
       .then((result) => {
@@ -385,7 +358,9 @@ const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintP
           notify({
             type: 'success',
             message: 'Purchase successful!',
-            description: `You bought 1 "Tier 1 Egg" for ${token === 'SOL' ? `${SOL_Price} SOL` : `${GOFX_Price} GOFX`}`,
+            description: `You bought 1 "Tier 1 Egg" for ${
+              token === 'SOL' ? `${NQ_SOL_PRICE} SOL` : `${NQ_GOFX_PRICE} GOFX`
+            }`,
             icon: 'success',
             txid: result as string,
             network: 'mainnet'
@@ -409,13 +384,7 @@ const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintP
         <p className="inner-title">We are minting your nft</p>
 
         <div className="image-wrapper">
-          <video
-            className="ls-video"
-            style={{ margin: '56px 0' }}
-            autoPlay
-            loop
-            src={'https://gfxnestquest.s3.ap-south-1.amazonaws.com/Egg.mov'}
-          ></video>
+          <img className="ls-video" src={`${window.origin}/img/assets/nft-preview.svg`} alt="minting" />
           <div className="pink-loading-overlay"></div>
         </div>
       </MINTING_PROGRESS>
@@ -429,7 +398,9 @@ const SuccessBuy = () => {
     <LoadStyle>
       <Lottie animationData={confettiAnimation} className="confettiAnimation" />
       <p className="big-text">Mission Accomplished!</p>
-      <p style={{ fontSize: '16px' }}>You are now a proud owner of:</p>
+      <p className="inner-title" style={{ fontSize: '16px' }}>
+        You are now a proud owner of:
+      </p>
       <p className="inner-title">Tier #1 "The Egg"</p>
       <NFT_WRAPPER>
         <div className="inner-content">

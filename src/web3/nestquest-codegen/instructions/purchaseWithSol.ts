@@ -1,7 +1,8 @@
 import { TransactionInstruction, PublicKey, AccountMeta } from '@solana/web3.js' // eslint-disable-line @typescript-eslint/no-unused-vars
 import BN from 'bn.js' // eslint-disable-line @typescript-eslint/no-unused-vars
 import * as borsh from '@project-serum/borsh' // eslint-disable-line @typescript-eslint/no-unused-vars
-import { PROGRAM_ID } from '../programId'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { ADDRESSES } from '../../ids'
 
 export interface PurchaseWithSolAccounts {
   payer: PublicKey
@@ -20,7 +21,7 @@ export interface PurchaseWithSolAccounts {
   systemProgram: PublicKey
 }
 
-export function purchaseWithSol(accounts: PurchaseWithSolAccounts) {
+export function purchaseWithSol(accounts: PurchaseWithSolAccounts, network: WalletAdapterNetwork) {
   const keys: Array<AccountMeta> = [
     { pubkey: accounts.payer, isSigner: true, isWritable: true },
     { pubkey: accounts.nftVault, isSigner: false, isWritable: true },
@@ -35,6 +36,6 @@ export function purchaseWithSol(accounts: PurchaseWithSolAccounts) {
   ]
   const identifier = Buffer.from([27, 238, 240, 155, 170, 180, 26, 118])
   const data = identifier
-  const ix = new TransactionInstruction({ keys, programId: PROGRAM_ID, data })
+  const ix = new TransactionInstruction({ keys, programId: ADDRESSES[network].programs.nestquestSale.program_id, data })
   return ix
 }

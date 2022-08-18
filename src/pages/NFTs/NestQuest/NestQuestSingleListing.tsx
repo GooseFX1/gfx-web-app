@@ -8,7 +8,7 @@ import { useWalletModal, useAccounts, useConnectionConfig } from '../../../conte
 import { WRAPPED_SOL_MINT, fetchAvailableNft, ADDRESSES } from '../../../web3'
 import { MintItemViewStatus, INFTMetadata } from '../../../types/nft_details'
 import { MainButton } from '../../../components/MainButton'
-import { SOCIAL_MEDIAS } from '../../../constants'
+import { NQ_GOFX_PRICE, NQ_SOL_PRICE, SOCIAL_MEDIAS } from '../../../constants'
 import { SVGDynamicReverseMode } from '../../../styles/utils'
 import { FloatingActionButton } from '../../../components'
 import { Tabs } from 'antd'
@@ -425,7 +425,7 @@ export const NestQuestSingleListing: FC<{
 
   useEffect(() => {
     if (connection) {
-      fetchAvailableNft(connection)
+      fetchAvailableNft(connection, network)
         .then((res) => {
           if (!res.nft) {
             setMintDisabled(true)
@@ -449,10 +449,6 @@ export const NestQuestSingleListing: FC<{
       } else {
         setInsufficientToken(mintPrice >= getUIAmount(ADDRESSES[network].mints.GOFX.address.toBase58()) ? true : false)
       }
-    }
-
-    if (network === 'devnet') {
-      setMintDisabled(true)
     }
   }, [connected, publicKey, getUIAmount, mintPrice, network, token])
 
@@ -615,7 +611,7 @@ export const NestQuestSingleListing: FC<{
             <TokenToggle
               toggleToken={() => {
                 token === 'SOL' ? setToken('GOFX') : setToken('SOL')
-                token === 'SOL' ? setMintPrice(500) : setMintPrice(1)
+                token === 'SOL' ? setMintPrice(NQ_GOFX_PRICE) : setMintPrice(NQ_SOL_PRICE)
               }}
             />
 

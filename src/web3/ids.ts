@@ -55,6 +55,7 @@ export const ADDRESSES: {
         civic_gatekeeper: PublicKey
         sol_revenue: PublicKey
         gofx_revenue: PublicKey
+        program_id: PublicKey
       }
     }
   }
@@ -189,7 +190,8 @@ export const ADDRESSES: {
         address: new PublicKey('EBNsQvZppDTRgcW6jc93QbEqFUm2aJRyxK4CEFhgQ3V8'),
         civic_gatekeeper: new PublicKey('ignREusXmGrscGNUesoU9mxfds9AiYTezUKex2PsZV6'),
         sol_revenue: new PublicKey('4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'),
-        gofx_revenue: new PublicKey('AfbSheiV3PJdA8ydTDQjGnQfHLafsqZJFkJp2iENWcGb')
+        gofx_revenue: new PublicKey('AfbSheiV3PJdA8ydTDQjGnQfHLafsqZJFkJp2iENWcGb'),
+        program_id: new PublicKey('NQSGXu86wvXx88mvzhh9PfD3dJfGX3n1SdFdYacGX9H')
       }
     }
   },
@@ -348,7 +350,8 @@ export const ADDRESSES: {
         address: new PublicKey('3QvkzDXSgrLmsCK5ZDoddPFL7tYjzC5oHiiA5TJ9NsoA'),
         civic_gatekeeper: new PublicKey('ignREusXmGrscGNUesoU9mxfds9AiYTezUKex2PsZV6'),
         sol_revenue: new PublicKey('9wN21Aghw1mt9rRaSKGkDpDNpUhMA7QQX3uGtYZBYaKU'),
-        gofx_revenue: new PublicKey('AtzZfzmozqGLSpcTCXD9p4mTzxoJmpAtZigNJ3xTbAY2')
+        gofx_revenue: new PublicKey('AtzZfzmozqGLSpcTCXD9p4mTzxoJmpAtZigNJ3xTbAY2'),
+        program_id: new PublicKey('MKT2yrwL977mJwu9suRUBkckpnBShxtKN3ppasBseAb')
       }
     }
   },
@@ -378,7 +381,8 @@ export const ADDRESSES: {
         address: PublicKey.default,
         civic_gatekeeper: PublicKey.default,
         sol_revenue: PublicKey.default,
-        gofx_revenue: PublicKey.default
+        gofx_revenue: PublicKey.default,
+        program_id: PublicKey.default
       }
     }
   }
