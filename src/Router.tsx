@@ -62,7 +62,7 @@ export const Router: FC = () => {
               </NFTProfileProvider>
             </Route>
             <Route exact path="/farm">
-              {blacklisted ? <Restricted /> : <Farm />}
+              <Farm />
             </Route>
             <Route>
               <GenericNotFound />
