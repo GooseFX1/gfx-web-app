@@ -370,8 +370,8 @@ export const RightSectionTabs: FC<{
   const handleSetBid = (type: string) => {
     switch (type) {
       case NFT_ACTIONS.BID:
-        setIsBuying(undefined)
         setBidModal(true)
+        setIsBuying(undefined)
         break
       case NFT_ACTIONS.BUY:
         setBidModal(true)
@@ -519,7 +519,7 @@ export const RightSectionTabs: FC<{
     } else if (bidModal) {
       return <BidModal visible={bidModal} setVisible={setBidModal} purchasePrice={isBuying} />
     }
-  }, [pendingTxSig, removeAskModal, userRecentBid, removeBidModal])
+  }, [pendingTxSig, removeAskModal, userRecentBid, removeBidModal, bidModal])
 
   return isLoading ? (
     <div></div>
