@@ -405,7 +405,7 @@ export const NestQuestSingleListing: FC<{
   const { connection, endpoint, network } = useConnectionConfig()
   const { getUIAmount } = useAccounts()
   const [token, setToken] = useState<string>('SOL')
-  const [mintModalVisible, setMintModalVisible] = useState(true)
+  const [mintModalVisible, setMintModalVisible] = useState(false)
   const [shareModal, setShareModal] = useState(false)
   const [mintDisabled, setMintDisabled] = useState<boolean>(false)
   const [insufficientToken, setInsufficientToken] = useState<boolean>(false)

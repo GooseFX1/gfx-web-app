@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GatewayStatus, useGateway } from '@civic/solana-gateway-react'
 import styled from 'styled-components'
-import { Row, Col } from 'antd'
+import { Row } from 'antd'
 import { NQ_GOFX_PRICE, NQ_SOL_PRICE } from '../../../constants'
 import { PopupCustom } from '../Popup/PopupCustom'
 import { MainButton } from '../../../components'
@@ -97,8 +97,8 @@ const LoadStyle = styled.div`
 
   .confettiAnimation {
     position: absolute;
-    height: 105%;
-    bottom: -56px;
+    height: 100%;
+    bottom: 0px;
     pointer-events: none;
   }
 `
@@ -243,12 +243,12 @@ const RoyaltiesStep = ({ modalVisible, setModalOpen, nestQuestData }: Props) => 
   const { requestGatewayToken, gatewayStatus, gatewayToken } = useGateway()
 
   useEffect(() => {
-    // ;(async function () {
-    //   if (!gatewayToken || gatewayStatus !== GatewayStatus.ACTIVE) {
-    //     setModalOpen(false)
-    //     await requestGatewayToken()
-    //   }
-    // })()
+    ;(async function () {
+      if (!gatewayToken || gatewayStatus !== GatewayStatus.ACTIVE) {
+        setModalOpen(false)
+        await requestGatewayToken()
+      }
+    })()
   }, [gatewayToken, gatewayStatus, requestGatewayToken, setModalOpen])
 
   return (
@@ -261,7 +261,7 @@ const RoyaltiesStep = ({ modalVisible, setModalOpen, nestQuestData }: Props) => 
         onCancel={() => setModalOpen(false)}
         footer={null}
       >
-        {/* {phase === 1 ? (
+        {phase === 1 ? (
           <ConfirmMint nestQuestData={nestQuestData} setPhase={setPhase} />
         ) : phase === 2 ? (
           <LoadBuy
@@ -272,17 +272,7 @@ const RoyaltiesStep = ({ modalVisible, setModalOpen, nestQuestData }: Props) => 
           />
         ) : (
           <SuccessBuy />
-        )} */}
-
-        <ConfirmMint nestQuestData={nestQuestData} setPhase={setPhase} />
-        {/* <LoadBuy
-          nestQuestData={nestQuestData}
-          setPhase={setPhase}
-          gatewayToken={gatewayToken}
-          gatewayStatus={gatewayStatus}
-        /> */}
-
-        {/* <SuccessBuy /> */}
+        )}
       </STYLED_POPUP>
     </>
   )
