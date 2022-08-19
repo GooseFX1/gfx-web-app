@@ -1,3 +1,4 @@
+import { ANALYTICS_API_ENDPOINTS, localhost } from './analytics/constants'
 import axios from 'axios'
 
 const DOMAIN = () => {
@@ -43,4 +44,28 @@ export const customClient = (customURL: string, collectionId?: number) => {
   })
 }
 
+export const logData = async (event: string) => {
+  console.log(event)
+  try {
+    const url = localhost + ANALYTICS_API_ENDPOINTS.LOG_DATA
+    //const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.SAVE_DATA
+
+    let dataToSend = JSON.stringify({
+      event: event
+    })
+    const response = await axios({
+      method: 'POST',
+      url: url,
+      data: dataToSend,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    return response.data
+  } catch (e) {
+    return {
+      status: 'failed'
+    }
+  }
+}
 export default apiClient

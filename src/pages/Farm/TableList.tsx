@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { Program, Provider } from '@project-serum/anchor'
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { fetchSSLVolumeData, fetchSSLAPR } from '../../api/SSL'
+import { fetchSSLVolumeData, fetchSSLAPR, saveLiquidtyVolume } from '../../api/SSL'
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
 import styled, { css } from 'styled-components'
 import { Table } from 'antd'
@@ -222,9 +222,18 @@ export const TableList = ({ dataSource }: any) => {
   const PAGE_SIZE = 10
   const controllerStr = SDK_ADDRESS[getNetworkConnection(network)].GFX_CONTROLLER.toString()
   const gofxPrice = useMemo(() => prices['GOFX/USDC'], [prices])
+  const [sslVolume, setSslVolume] = useState<number>(0)
+  const [stakeVolume, setStakeVolume] = useState<number>(0)
+
   useEffect(() => {
     setAllTokenPrices(() => setAllTokenPrices(prices))
   }, [priceFetched, prices])
+
+  useEffect(() => {
+    if (stakeVolume !== 0 && sslVolume !== 0) {
+      saveLiquidtyVolume(sslVolume, stakeVolume)
+    }
+  }, [sslVolume, stakeVolume])
 
   const stakeProgram: Program = useMemo(() => {
     return wallet.publicKey
@@ -277,6 +286,7 @@ export const TableList = ({ dataSource }: any) => {
     aprVolumePromise
   ) => {
     const farmCalculationsArr = []
+    let totalLiquidity = 0
     Promise.all(aprVolumePromise)
       .then((aprVolume) => {
         for (let i = 0; i < sslAccountData.length; i++) {
@@ -315,8 +325,10 @@ export const TableList = ({ dataSource }: any) => {
               isNaN(volumeDays?.volume) || volumeDays.volume * tokenPrice < 100 ? '-' : volumeDays.volume * tokenPrice
           }
           farmCalculationsArr.push(farmCalculation)
+          totalLiquidity += tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0
         }
         setFarmDataSSLContext(farmCalculationsArr)
+        setSslVolume(totalLiquidity)
       })
       .catch((err) => console.log(err))
     return
@@ -413,6 +425,7 @@ export const TableList = ({ dataSource }: any) => {
           }
         } else return data
       })
+      setStakeVolume(gofxPrice.current * liqidity)
       return newFarmDataContext
     } catch (err) {
       console.log(err)
