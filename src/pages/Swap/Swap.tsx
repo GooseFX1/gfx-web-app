@@ -8,7 +8,8 @@ import { Wrap } from './Wrap'
 import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
-import { Modal, Tooltip } from '../../components'
+import { Modal, Tooltip, SwapTokenToggle } from '../../components'
+
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 import {
   useDarkMode,
@@ -118,7 +119,7 @@ const SmallerTitle = styled.div`
   text-fill-color: transparent;
 `
 const TokenHeader = styled.div`
-  ${tw`flex items-center w-full mb-4.5`}
+  ${tw`flex flex-col w-full mb-4.5`}
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
@@ -157,7 +158,7 @@ const ListWrapper = styled.div`
 `
 
 const SubHeader = styled.div`
-  ${tw`ml-5 h-12`}
+  ${tw`h-12`}
 `
 
 const Socials = styled.div`
@@ -455,13 +456,21 @@ const TokenContent: FC = () => {
   const [socials, setSocials] = useState([])
   const [copiedAction, setCopiedAction] = useState(false)
   //CoinGeckoClient
-  const { tokenA } = useSwap()
+  const { tokenA, tokenB } = useSwap()
   const [tokenDetails, setDetails] = useState([
     { name: 'Price', value: '0', currency: '$' },
     { name: 'FDV', value: '0', currency: '$' },
     { name: 'Max Total Supply', value: '0' },
     { name: 'Holders', value: '0' }
   ])
+  const [tokenDetailsB, setDetailsB] = useState([
+    { name: 'Price', value: '0', currency: '$' },
+    { name: 'FDV', value: '0', currency: '$' },
+    { name: 'Max Total Supply', value: '0' },
+    { name: 'Holders', value: '0' }
+  ])
+  const [toggle, setToggle] = useState(false) //tokenA
+  const [token, setToken] = useState(tokenA)
 
   const truncate = (address: string) => {
     return address.slice(0, 7) + '...' + address.slice(-6)
@@ -473,7 +482,15 @@ const TokenContent: FC = () => {
     } catch (error) {
       console.log(error)
     }
-  }, [tokenA])
+  }, [tokenA, tokenB])
+
+  useEffect(() => {
+    if (toggle) {
+      setToken(tokenB)
+    } else {
+      setToken(tokenA)
+    }
+  }, [tokenA, tokenB])
 
   const handleCopyTokenMint = (e) => {
     setCopiedAction(true)
@@ -530,6 +547,48 @@ const TokenContent: FC = () => {
           })
           .catch((err) => console.error('ERROR: CoinGecko fetch'))
       }
+
+      if (tokenB) {
+        const token = tokens.data.find((i) => i.symbol.toLowerCase() === tokenB.symbol.toLowerCase())
+
+        CoinGeckoClient.coins
+          .fetch(token?.id || null, {})
+          .then(async (cgData: any) => {
+            const data = cgData.data
+            let res = null
+
+            try {
+              const fetchData = await fetch(
+                'https://public-api.solscan.io/token/holders?tokenAddress=' + tokenB.address
+              )
+              res = await fetchData.json()
+            } catch (e) {
+              console.error(e)
+            }
+
+            setDetailsB([
+              { name: 'Price', value: data?.market_data?.current_price?.usd || '0.0', currency: '$' },
+              {
+                name: 'FDV',
+                value:
+                  moneyFormatter(
+                    Math.floor(
+                      data?.market_data?.fully_diluted_valuation?.usd ||
+                        data?.market_data?.total_supply * data?.market_data?.current_price?.usd
+                    )
+                  ) || '0',
+                currency: '$'
+              },
+              {
+                name: 'Total Max Supply',
+                value:
+                  Math.floor(data?.market_data?.max_supply || data?.market_data?.total_supply)?.toLocaleString() || '0'
+              },
+              { name: 'Holders', value: res?.total?.toLocaleString() || 0 }
+            ])
+          })
+          .catch((err) => console.error('ERROR: CoinGecko fetch'))
+      }
     } catch (e) {
       console.log(e)
     }
@@ -538,19 +597,27 @@ const TokenContent: FC = () => {
   return (
     <TOKEN_WRAPPER>
       <TokenHeader>
-        <CLICKER_ICON>
+        <SwapTokenToggle
+          toggleToken={() => {
+            setToggle(!toggle)
+            !toggle ? setToken(tokenB) : setToken(tokenA)
+          }}
+          tokenA={tokenA}
+          tokenB={tokenB}
+        />
+        {/* <CLICKER_ICON>
           <img
-            src={`/img/crypto/${tokenA?.symbol}.svg`}
+            src={`/img/crypto/${token?.symbol}.svg`}
             alt=""
             onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
           />
-        </CLICKER_ICON>
+        </CLICKER_ICON> */}
         <SubHeader>
           <TokenTitle>
-            {tokenA?.name} ({tokenA?.symbol})
+            {token?.name} ({token?.symbol})
           </TokenTitle>
           <COPY style={{ display: 'flex', alignItems: 'center' }}>
-            <SmallerTitle>{truncate(tokenA?.address)}</SmallerTitle>
+            <SmallerTitle>{truncate(token?.address)}</SmallerTitle>
             <span className={`copy-button ${copiedAction ? 'copied' : ''}`} onClick={handleCopyTokenMint}>
               {copiedAction ? 'Copied!' : 'Copy'}
             </span>
@@ -558,7 +625,7 @@ const TokenContent: FC = () => {
         </SubHeader>
       </TokenHeader>
       <ListWrapper>
-        {tokenDetails.map((detail) => (
+        {(!toggle ? tokenDetails : tokenDetailsB).map((detail) => (
           <AltTokenDetail key={detail.name}>
             <TokenTitle>{detail.name}</TokenTitle>
             <SmallTitle>
