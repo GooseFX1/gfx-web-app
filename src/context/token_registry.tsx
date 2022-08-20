@@ -3,6 +3,7 @@ import { ENV, TokenInfo, TokenListProvider } from '@solana/spl-token-registry'
 import { useConnectionConfig } from './settings'
 import { SUPPORTED_TOKEN_LIST, FARM_SUPPORTED_TOKEN_LIST, TOKEN_BLACKLIST } from '../constants'
 import { ADDRESSES } from '../web3'
+import { TOKEN_LIST_URL } from '@jup-ag/core'
 
 interface ITokenRegistryConfig {
   getTokenInfoFromSymbol: (x: string) => TokenInfo | undefined
@@ -13,7 +14,7 @@ interface ITokenRegistryConfig {
 const TokenRegistryContext = createContext<ITokenRegistryConfig | null>(null)
 
 export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { chainId } = useConnectionConfig()
+  const { chainId, network } = useConnectionConfig()
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [farmingToken, setFarmingTokens] = useState<TokenInfo[]>([])
 
@@ -23,9 +24,11 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
   useEffect(() => {
     ;(async () => {
       const list = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
-      const splList = list
+      const newList = await (await fetch(TOKEN_LIST_URL[network])).json()
+
+      const splList = newList //we cannot use the full list because of limited icons (795 tokens) and loading time, so we'll keep on using the name addition for now
         .filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
-        .filter(({ address }) => !TOKEN_BLACKLIST.includes(address))
+      //.filter(({ address }) => !TOKEN_BLACKLIST.includes(address)) // no need for blacklist as all tokens should work
       let farmSupportedList = list.filter(({ symbol }) => FARM_SUPPORTED_TOKEN_LIST.includes(symbol))
       //TODO: Add filteredList from solana-spl-registry back
       //setFarmingTokens()
