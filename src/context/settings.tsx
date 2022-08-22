@@ -39,8 +39,7 @@ export const ENDPOINTS: IEndpoint[] = [
   {
     chainId: ENV.MainnetBeta,
     name: 'Syndica',
-    endpoint:
-      'https://solana-api.syndica.io/access-token/IOYLJaEtvN43W024NvifG71Bw1rfvPGHi8JgmOzdMc7SKSb4ruSafhRUtFG9jMbS/rpc',
+    endpoint: `https://solana-api.syndica.io/access-token/${process.env.REACT_APP_SYNDICA_TOKEN}/rpc`,
     network: WalletAdapterNetwork.Mainnet
   }
 ]
