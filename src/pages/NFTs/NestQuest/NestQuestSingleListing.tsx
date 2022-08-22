@@ -286,9 +286,10 @@ const DISABLED = styled(MainButton)`
 const Live = styled.div`
   ${tw`absolute top-4 right-4 bg-black h-[40px] w-[120px] flex justify-center items-center rounded-[10px]`}
   border: 1.5px solid #fff;
-  z-index: 10;
+  z-index: 12;
 
   span {
+    font-weight: 600;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     -webkit-text-fill-color: transparent;
     -webkit-background-clip: text;
@@ -444,7 +445,7 @@ export const NestQuestSingleListing: FC<{
           notify({ type: 'error', message: "Couldn't fetch eggs from contract" })
         })
     }
-  }, [connection, network, mintDisabled])
+  }, [connection, network, endpoint, mintDisabled])
 
   useEffect(() => {
     if (publicKey && connected) {
@@ -620,11 +621,18 @@ export const NestQuestSingleListing: FC<{
             />
 
             <IMAGE>
+              <img
+                className="ls-video"
+                src={`${window.origin}/img/assets/nft-preview-${mode}.svg`}
+                alt=""
+                style={{ opacity: 0.3 }}
+              />
               <video
                 className="ls-video"
                 autoPlay
                 loop
                 src={'https://gfxnestquest.s3.ap-south-1.amazonaws.com/Egg.mov'}
+                style={{ position: 'absolute', height: '99%', width: '99%', zIndex: '11' }}
               ></video>
 
               <Live>

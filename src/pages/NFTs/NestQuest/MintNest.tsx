@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
+import { web3 } from '@project-serum/anchor'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GatewayStatus, useGateway } from '@civic/solana-gateway-react'
 import styled from 'styled-components'
-import { Row } from 'antd'
+import { Image, Row } from 'antd'
 import { NQ_GOFX_PRICE, NQ_SOL_PRICE } from '../../../constants'
 import { PopupCustom } from '../Popup/PopupCustom'
 import { MainButton } from '../../../components'
-import { useConnectionConfig } from '../../../context'
+import { useConnectionConfig, useDarkMode } from '../../../context'
 import { ShareInternal } from './NestQuestComponent'
 import { buyWithSOL, fetchAvailableNft, buyWithGOFX } from '../../../web3'
 import { onShare } from './NestQuestSingleListing'
@@ -349,6 +351,7 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
 }
 
 const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintProps) => {
+  const { mode } = useDarkMode()
   const wallet = useWallet()
   const { connection, network } = useConnectionConfig()
 
@@ -368,7 +371,7 @@ const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintP
           setPhase(1)
         })
     }
-  }, [wallet.publicKey, connection])
+  }, [wallet.publicKey, connection, network])
 
   console.log({ gatewayToken, gatewayStatus, stat: GatewayStatus.ACTIVE })
 
@@ -390,7 +393,7 @@ const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintP
             }`,
             icon: 'success',
             txid: result as string,
-            network: 'mainnet'
+            network: network
           })
         } else {
           throw new Error('an error occured')
@@ -410,7 +413,13 @@ const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintP
         <p className="title">We are minting your nft</p>
 
         <div className="image-wrapper">
-          <img className="ls-video" src={`${window.origin}/img/assets/nft-preview.svg`} alt="minting" />
+          <Image
+            className="ls-video"
+            fallback={`${window.origin}/img/assets/nft-preview-${mode}.svg`}
+            src={`${window.origin}/img/assets/nft-preview-${mode}.svg`}
+            preview={false}
+            alt={'loading'}
+          />
           <div className="pink-loading-overlay"></div>
         </div>
       </MINTING_PROGRESS>
@@ -428,7 +437,9 @@ const SuccessBuy = () => {
       <p className="title" style={{ fontSize: '16px', zIndex: 1 }}>
         You are now a proud owner of:
       </p>
-      <p style={{ fontSize: '20px', fontWeight: '600', zIndex: 1 }}>Tier #1 "The Egg"</p>
+      <p className="title" style={{ fontSize: '20px', fontWeight: '600', marginBottom: '12px', zIndex: 1 }}>
+        Tier #1 "The Egg"
+      </p>
       <NFT_WRAPPER>
         <div className="inner-content">
           <video
@@ -438,7 +449,7 @@ const SuccessBuy = () => {
             src={'https://gfxnestquest.s3.ap-south-1.amazonaws.com/Egg.mov'}
           ></video>
           <br />
-          <span>Tier 1 "The Egg"</span>
+          <span>Tier #1 "The Egg"</span>
           <span>By NestQuest</span>
         </div>
       </NFT_WRAPPER>
