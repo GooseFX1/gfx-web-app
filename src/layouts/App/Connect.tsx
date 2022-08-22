@@ -96,7 +96,7 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
         <MenuItem
           onClick={() => {
             disconnect().then()
-            localStorage.removeItem('connectedWallet')
+            sessionStorage.removeItem('connectedGFXWallet')
             setArrowRotation(false)
           }}
         >
@@ -145,13 +145,20 @@ export const Connect: FC = () => {
 
   // watches for a selected wallet returned from modal
   useEffect(() => {
-    if (!base58 && !connected) {
-      connect().catch(() => {})
+    if (wallet && !connected) {
+      connect()
+        .then(() => {
+          sessionStorage.setItem('connectedGFXWallet', wallet.adapter.name)
+        })
+        .catch((e) => {
+          console.log({ e })
+        })
     }
-  }, [base58, connected])
+  }, [wallet, connect, connected])
 
+  //using session storage so that a new open tab will not try to login to wallet but a refresh will attept wallet login, localStorage stores it forever and will attempt login on new webpage
   useEffect(() => {
-    const walletName = localStorage.getItem('connectedWallet')
+    const walletName = sessionStorage.getItem('connectedGFXWallet')
     if (!base58 && !connected && walletName) {
       switch (walletName) {
         case 'Phantom': {
@@ -162,10 +169,10 @@ export const Connect: FC = () => {
           select('Solflare' as WalletName<string>)
           break
         }
-        // case 'Ledger': {
-        //   select('Ledger' as WalletName<string>)
-        //   break
-        // }
+        case 'Ledger': {
+          select('Ledger' as WalletName<string>)
+          break
+        }
         case 'MathWallet': {
           select('MathWallet' as WalletName<string>)
           break
@@ -193,17 +200,6 @@ export const Connect: FC = () => {
       }
     }
   }, [])
-
-  // watches for disconnection of wallet
-  useEffect(() => {
-    if (connected) {
-      localStorage.setItem('connectedWallet', wallet.adapter.name)
-    }
-    if (!base58 && !connected) {
-      // timeout used for smooth loading that matches the rate of tab slider
-      setTimeout(() => connect().catch(() => {}), 400)
-    }
-  }, [base58, connected])
 
   return (
     <WRAPPER $connected={!!base58} onClick={onSpanClick}>
