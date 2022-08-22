@@ -166,7 +166,8 @@ export const SUPPORTED_TOKEN_LIST = [
   'AURY',
   'ICHI',
   'ATLAS',
-  'SWAG'
+  'SWAG',
+  'GENE'
 ]
 
 export const NFT_MARKET_TRANSACTION_FEE: number = 1
