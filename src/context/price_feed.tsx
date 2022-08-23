@@ -83,6 +83,11 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
         }
         if (market) {
           try {
+            //set SOL/USDC price always
+            let solPair = 'SOL/USDC'
+            const solUsdc = await serum.getLatestBid(connection, solPair)
+            setPrices((prevState) => ({ ...prevState, [solPair]: { current: solUsdc } }))
+
             const current = await serum.getLatestBid(connection, pair)
             setPrices((prevState) => ({ ...prevState, [pair]: { current } }))
             subscriptions.push(
