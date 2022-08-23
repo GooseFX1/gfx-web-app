@@ -10,10 +10,41 @@ import { useDarkMode, useNFTProfile } from '../../../context'
 import apiClient from '../../../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
 import { deleteDraft } from '../actions'
+import { PopupCustom } from '../Popup/PopupCustom'
+import tw from 'twin.macro'
 
 const UPLOAD_CONTENT = styled.div`
   position: relative;
   padding-top: 50px;
+`
+
+const DELETE_MODAL = styled(PopupCustom)`
+  ${({ theme }) => `
+    .ant-modal-body {
+      padding: ${theme.margin(5)} ${theme.margin(7)};
+      @media(max-width: 500px){
+        padding: 0;
+      }
+    }
+    .ant-modal-close {
+      @media(max-width: 500px){
+        top: 6px;
+      }
+      right: 35px;
+      top: 35px;
+      left: auto;
+      img {
+        filter: ${theme.filterCloseModalIcon};
+      }
+    }
+`}
+`
+const CONFIRM_DELETE = styled.div`
+  width: 100%;
+  height: 344px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `
 
 const TITLE = MainText(styled.div`
@@ -32,6 +63,17 @@ const DESCRIPTION = MainText(styled.div`
   margin-top: ${({ theme }) => theme.margin(4)};
   margin-bottom: ${({ theme }) => theme.margin(4)};
 `)
+
+const DELETE_TEXT = styled(DESCRIPTION)`
+  ${tw`w-[465px] py-0 px-[50px] my-[24px] text-[22px] leading-[1.59]`}
+`
+const DELETED_TEXT = styled(DELETE_TEXT)`
+  ${tw`text-[25px]`}
+`
+const DELETE_ADVICE_TEXT = styled(DELETE_TEXT)`
+  ${tw`text-[20px] w-full my-0`}
+  color: ${({ theme }) => theme.text6} !important;
+`
 
 const UPLOAD_FILED = styled.div`
   position: relative;
@@ -61,6 +103,10 @@ const DRAFT_IMAGE = styled(Image)`
   height: 150px;
   margin-bottom: 0.5rem;
   border-radius: 20px;
+`
+
+const CONFIRM_IMAGE = styled(DRAFT_IMAGE)`
+  ${tw`h-[120px] rounded-full`}
 `
 
 const UPLOAD_SECTION = styled.div`
@@ -112,16 +158,16 @@ const IMAGE_COUNT_DESC_CONTAINER = styled.div`
 `
 
 const FLOATING_ACTION_ICON = styled.img`
+  transform: rotate(90deg);
   width: 16px;
   filter: ${({ theme }) => theme.filterBackIcon};
 `
 const SAVE_BUTTON = styled(MainButton)`
-  height: 200px;
-  width: 400px;
-  text-align: center;
-  border: none;
-  cursor: pointer;
-  background-color: transparent;
+  ${tw`h-[200px] w-[400px] text-center border-none cursor-pointer bg-transparent`}
+`
+
+const DELETE_BUTTON = styled(SAVE_BUTTON)`
+  ${tw`bg-red-400 h-[48px] w-[200px] py-[15px] px-[45px] rounded-[50px] mb-1`}
 `
 
 const LINE = styled.div`
@@ -139,6 +185,9 @@ export const NftDrafts = (): JSX.Element => {
   const [drafts, setDrafts] = useState([])
   const [draftIsLoading, setDraftIsLoading] = useState<boolean>(false)
   const [trigger, setTrigger] = useState<boolean>(false)
+  const [chosenDraft, setChosenDraft] = useState(null)
+  const [confirmDeleteModal, setConfirmDeleteModal] = useState(false)
+  const [deletedNFT, setDeletedNFT] = useState(false)
 
   const handleClick = async (id) => {
     if (connected && publicKey) {
@@ -192,6 +241,7 @@ export const NftDrafts = (): JSX.Element => {
 
   async function deleteAndRemoveDraft(draftId: string) {
     await deleteDraft(draftId)
+    setDeletedNFT(true)
     setTrigger(!trigger)
   }
 
@@ -210,7 +260,13 @@ export const NftDrafts = (): JSX.Element => {
           {drafts.map((draft) => (
             <div className="full-drafts">
               <div className="close-drafts">
-                <FloatingActionButton height={10} onClick={() => deleteAndRemoveDraft(draft.draft_id)}>
+                <FloatingActionButton
+                  height={10}
+                  onClick={() => {
+                    setChosenDraft(draft)
+                    setConfirmDeleteModal(true)
+                  }}
+                >
                   <FLOATING_ACTION_ICON src={`/img/assets/close-icon.svg`} alt="delete" />
                 </FloatingActionButton>
               </div>
@@ -228,13 +284,43 @@ export const NftDrafts = (): JSX.Element => {
             <Image
               draggable={false}
               preview={false}
-              src={`/img/assets/nft-preview${mode !== 'dark' ? '-light' : ''}.svg`}
+              src={`/img/assets/nft-preview${mode !== 'dark' ? '-lite' : '-dark'}.svg`}
             />
             <IMAGE_COUNT_DESC_NEW>New Collection</IMAGE_COUNT_DESC_NEW>
           </UPLOAD_FILED>
 
           <SAVE_BUTTON loading={draftIsLoading} />
         </UPLOAD_SECTION>
+
+        <DELETE_MODAL
+          width="784px"
+          height="416px"
+          title={null}
+          visible={confirmDeleteModal}
+          onCancel={() => setConfirmDeleteModal(false)}
+          footer={null}
+          centered
+        >
+          {!deletedNFT ? (
+            <CONFIRM_DELETE>
+              <CONFIRM_IMAGE
+                draggable={false}
+                preview={false}
+                src={chosenDraft?.image || '/img/assets/delete-draft.svg'}
+              />
+              <DELETE_TEXT>Are you sure you want to delete "#{chosenDraft?.draft_id}" from your drafts?</DELETE_TEXT>
+
+              <DELETE_BUTTON onClick={() => deleteAndRemoveDraft(chosenDraft?.draft_id)}>Delete</DELETE_BUTTON>
+              <SAVE_BUTTON onClick={() => setConfirmDeleteModal(false)}>Cancel</SAVE_BUTTON>
+            </CONFIRM_DELETE>
+          ) : (
+            <CONFIRM_DELETE>
+              <CONFIRM_IMAGE draggable={false} preview={false} src={'/img/assets/success-wriggle.svg'} />
+              <DELETED_TEXT>Draft successfully deleted</DELETED_TEXT>
+              <DELETE_ADVICE_TEXT>You can create this item again in the future.</DELETE_ADVICE_TEXT>
+            </CONFIRM_DELETE>
+          )}
+        </DELETE_MODAL>
       </UPLOAD_CONTENT>
     </>
   )
