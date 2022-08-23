@@ -349,8 +349,8 @@ export const ADDRESSES: {
       nestquestSale: {
         address: new PublicKey('3QvkzDXSgrLmsCK5ZDoddPFL7tYjzC5oHiiA5TJ9NsoA'),
         civic_gatekeeper: new PublicKey('ignREusXmGrscGNUesoU9mxfds9AiYTezUKex2PsZV6'),
-        sol_revenue: new PublicKey('9wN21Aghw1mt9rRaSKGkDpDNpUhMA7QQX3uGtYZBYaKU'),
-        gofx_revenue: new PublicKey('AtzZfzmozqGLSpcTCXD9p4mTzxoJmpAtZigNJ3xTbAY2'),
+        sol_revenue: new PublicKey('4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'),
+        gofx_revenue: new PublicKey('8mYdcqseZ327gLW1b5Mr19srw6yMP7z2ZG6sNbq8R8G2'),
         program_id: new PublicKey('MKT2yrwL977mJwu9suRUBkckpnBShxtKN3ppasBseAb')
       }
     }
