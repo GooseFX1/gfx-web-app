@@ -125,7 +125,7 @@ const PreviewImage = ({ file, status, image_url }: Props) => {
         <IMAGE_CONTAINER>
           <img
             className={`${image_url ? 'url-preview' : 'image-broken'}`}
-            src={image_url ? image_url : `/img/assets/nft-preview${mode !== 'dark' ? '-light' : ''}.svg`}
+            src={image_url ? image_url : `/img/assets/nft-preview-${mode}.svg`}
             alt="nft-preview"
           />
         </IMAGE_CONTAINER>

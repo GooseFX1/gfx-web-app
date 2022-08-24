@@ -83,7 +83,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
 
   useEffect(() => {
     fetchAllCollections().then((res) => setIsAllLoading(false))
-    fetchAllSingleNFTs().then((res) => setAllOneOfOnes(res.slice(0, 20)))
+    fetchAllSingleNFTs().then((res) => setAllOneOfOnes(res != null ? res.slice(0, 20) : []))
     return () => {}
   }, [])
 

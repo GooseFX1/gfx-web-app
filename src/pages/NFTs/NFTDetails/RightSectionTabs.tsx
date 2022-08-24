@@ -244,7 +244,7 @@ export const RightSectionTabs: FC<{
 
   const isLoading = general === undefined || nftMetadata === undefined
 
-  const enum NFT_ACTIONS {
+  enum NFT_ACTIONS {
     BID = 'bid',
     BUY = 'buy',
     CANCEL_BID = 'cancel-bid'

@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { NFTBaseCollection, NFTCollection } from '../../../types/nft_collections.d'
 import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
 import { nFormatter } from '../../../utils'
-import { useNFTProfile, usePriceFeed } from '../../../context'
+import { useNFTProfile, usePriceFeed, useDarkMode } from '../../../context'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { Image } from 'antd'
 
@@ -168,6 +168,7 @@ interface IAnalyticItem {
 }
 
 const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
+  const { mode } = useDarkMode()
   const history = useHistory()
   const { prices } = usePriceFeed()
   const { userCurrency } = useNFTProfile()
@@ -200,9 +201,9 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
           src={
             collection.collection[0].profile_pic_link.length > 0
               ? collection.collection[0].profile_pic_link
-              : `/img/assets/nft-preview.svg`
+              : `/img/assets/nft-preview-${mode}.svg`
           }
-          fallback={`/img/assets/nft-preview.svg`}
+          fallback={`/img/assets/nft-preview-${mode}.svg`}
           preview={false}
           alt="analytic-img"
         />

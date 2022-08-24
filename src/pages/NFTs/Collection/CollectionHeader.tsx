@@ -324,7 +324,7 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
     <COLLECTION_HEADER $height={collapse ? '30' : '45'}>
       {handleModal()}
       <div style={{ position: 'absolute', top: '72px', left: '55px' }}>
-        <FloatingActionButton height={50} onClick={() => history.goBack()}>
+        <FloatingActionButton height={40} onClick={() => history.goBack()}>
           <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
         </FloatingActionButton>
       </div>

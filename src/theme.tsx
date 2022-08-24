@@ -170,7 +170,7 @@ export function colors(mode: string): Colors {
     avatarInnerBackground: mode === 'dark' ? '#000' : '#7D7D7D',
 
     // upload image
-    uploadImageBackground: mode === 'dark' ? '#1e1e1e' : '#CACACA',
+    uploadImageBackground: mode === 'dark' ? '#131313' : '#3c3c3c',
     substractImg: mode === 'dark' ? 'invert(0%)' : 'invert(45%)',
 
     // input bg
