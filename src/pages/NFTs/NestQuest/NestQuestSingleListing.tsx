@@ -516,7 +516,7 @@ export const NestQuestSingleListing: FC<{
     >
       <NFT_DETAILS {...rest}>
         <div style={{ position: 'absolute', top: '48px', left: '24px' }}>
-          <FloatingActionButton height={50} onClick={() => history.goBack()}>
+          <FloatingActionButton height={40} onClick={() => history.goBack()}>
             <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
           </FloatingActionButton>
         </div>

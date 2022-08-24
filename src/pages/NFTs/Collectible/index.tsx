@@ -1,12 +1,16 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { FloatingActionButton } from '../../../components'
+import tw from 'twin.macro'
+import { MainButton, FloatingActionButton } from '../../../components'
 import { Image } from 'antd'
 import { MainText } from '../../../styles'
 import { notify } from '../../../utils'
-import { useDarkMode } from '../../../context'
+import apiClient from '../../../api'
+import { useDarkMode, useNFTProfile } from '../../../context'
+import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
+import { Connect } from '../../../layouts/App/Connect'
 
 const UPLOAD_CONTENT = styled.div`
   position: relative;
@@ -35,7 +39,7 @@ const UPLOAD_FILED = styled.div`
   width: 250px;
   height: 250px;
   border-radius: 20px;
-  background-color: ${({ theme }) => theme.uploadImageBackground};
+  background-color: ${({ theme }) => theme.bg18};
   cursor: pointer;
   justify-content: center;
   align-items: center;
@@ -92,17 +96,67 @@ const FLOATING_ACTION_ICON = styled.img`
 `
 
 const UPLOAD_TEXT = MainText(styled.div`
-  font-size: 20px;
+  ${tw`text-[20px] mt-[32px] text-center`}
   color: ${({ theme }) => theme.text8} !important;
-  text-align: center;
   font-weight: 600;
-  margin-top: ${({ theme }) => theme.margin(4)};
 `)
+
+const DRAFT_CHECK = styled.div`
+  font-family: Montserrat;
+
+  ${tw`flex flex-col items-center text-white mt-[32px]`}
+
+  div {
+    ${tw`text-[20px]`}
+  }
+
+  span {
+    font-size: 25px;
+    background-image: linear-gradient(95deg, #f7931a 1%, #ac1cc7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-background-clip: text;
+    -moz-text-fill-color: transparent;
+  }
+`
+
+const Button = styled(MainButton)`
+  ${tw`flex flex-row justify-center items-center my-[56px] px-[32px] text-white h-[60px] w-[274px] text-[18px]`}
+  background: linear-gradient(95deg, #f7931a 1%, #ac1cc7 100%);
+
+  font-weight: 600;
+
+  &:disabled {
+    background: linear-gradient(96.79deg, #5855ff 4.25%, #dc1fff 97.61%);
+  }
+`
+
+const ConnectWrapper = styled.div`
+  ${tw`flex flex-row justify-center mt-[56px]`}
+
+  button {
+    ${tw`h-[60px] w-[264px]`}
+    span {
+      ${tw`text-[18px]`}
+    }
+  }
+`
 
 export const Collectible = (): JSX.Element => {
   const history = useHistory()
   const { connected, publicKey } = useWallet()
   const { mode } = useDarkMode()
+  const { sessionUser } = useNFTProfile()
+  const [draftNum, setDraftsNum] = useState(0)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (sessionUser) {
+      checkForDrafts(sessionUser.user_id)
+    } else {
+      setLoading(false)
+    }
+  }, [sessionUser])
 
   const handleSelectSingleCollectable = async () => {
     if (connected && publicKey) {
@@ -115,11 +169,23 @@ export const Collectible = (): JSX.Element => {
     }
   }
 
+  const checkForDrafts = async (id: number) => {
+    try {
+      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.DRAFTS}?user_id=${id}`)
+      const result = await res.data
+      setDraftsNum(result.length)
+    } catch (err) {
+      console.error('ERROR Fetching Drafts', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <>
       <UPLOAD_CONTENT>
         <div style={{ position: 'absolute', top: '32px', left: '32px' }}>
-          <FloatingActionButton height={50} onClick={() => history.goBack()}>
+          <FloatingActionButton height={40} onClick={() => history.goBack()}>
             <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
           </FloatingActionButton>
         </div>
@@ -151,6 +217,31 @@ export const Collectible = (): JSX.Element => {
             <UPLOAD_TEXT>Multiple</UPLOAD_TEXT>
           </UPLOAD_FILED_CONTAINER_RIGHT>
         </UPLOAD_SECTION>
+        <br />
+
+        {sessionUser === undefined ? (
+          <ConnectWrapper>
+            <Connect />
+          </ConnectWrapper>
+        ) : (
+          <DRAFT_CHECK>
+            {draftNum > 0 && (
+              <div style={{ fontWeight: '600' }}>
+                It seems you currently have <span>{draftNum}</span> NFTs in drafts.
+              </div>
+            )}
+            <Button
+              status="action"
+              height="60px"
+              width="274px"
+              loading={loading}
+              disabled={draftNum <= 0}
+              onClick={() => history.push('/NFTs/drafts')}
+            >
+              {draftNum > 0 ? 'See my drafts' : 'No draft found!'}
+            </Button>
+          </DRAFT_CHECK>
+        )}
       </UPLOAD_CONTENT>
     </>
   )

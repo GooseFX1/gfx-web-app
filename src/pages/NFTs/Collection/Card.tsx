@@ -265,7 +265,7 @@ export const Card = (props: ICard) => {
 
         <img
           className="card-image"
-          src={localSingleNFT ? localSingleNFT.image_url : `${window.origin}/img/assets/nft-preview.svg`}
+          src={localSingleNFT ? localSingleNFT.image_url : `${window.origin}/img/assets/nft-preview-${mode}.svg`}
           alt="nft"
         />
       </div>

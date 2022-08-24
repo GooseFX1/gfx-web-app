@@ -602,7 +602,7 @@ export const SellNFT = () => {
         <UPLOAD_CONTENT>
           {modal()}
           <div style={{ position: 'absolute', top: '24px', left: '24px' }}>
-            <FloatingActionButton height={50} onClick={() => history.goBack()}>
+            <FloatingActionButton height={40} onClick={() => history.goBack()}>
               <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
             </FloatingActionButton>
           </div>

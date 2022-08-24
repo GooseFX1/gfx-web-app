@@ -228,7 +228,9 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
             <Menu.Item key={k}>
               <URL href={`/NFTs/collection/${i.collection_name.replaceAll(' ', '_')}`}>
                 <DETAILS>
-                  <TINYIMG src={i.profile_pic_link.length > 0 ? i.profile_pic_link : `/img/assets/nft-preview.svg`} />
+                  <TINYIMG
+                    src={i.profile_pic_link.length > 0 ? i.profile_pic_link : `/img/assets/nft-preview-${mode}.svg`}
+                  />
                   <p style={{ margin: '0px' }}>{i.collection_name}</p>
                 </DETAILS>
                 <RIGHTARROWICON src={'/img/assets/arrow.svg'} className="global-search-dropdown-icon" />
