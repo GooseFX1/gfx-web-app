@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Order } from '../Crypto/Order'
 import { OrderBook } from '../Crypto/OrderBook'
@@ -11,6 +11,7 @@ import { InfoBanner } from './InfoBanner'
 import { OrderHistory } from './OrderHistory'
 import { HistoryPanel } from './HistoryPanel'
 import { MODAL_TYPES } from '../../constants'
+import { logData } from '../../api'
 
 const ReactGridLayout = WidthProvider(Responsive)
 
@@ -117,6 +118,9 @@ export const CryptoContent: FC = () => {
     [selectedCrypto.pair]
   )
 
+  useEffect(() => {
+    logData('trade_page')
+  }, [])
   let defaultProps = {
     className: 'layout',
     items: 3,

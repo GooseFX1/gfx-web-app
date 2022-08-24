@@ -156,4 +156,13 @@ export const getLast = <T>(arr: T[]) => {
   return arr[arr.length - 1]
 }
 
+export const getDateInISOFormat = () => {
+  let today = new Date()
+  let dd = String(today.getDate()).padStart(2, '0')
+  let mm = String(today.getMonth() + 1).padStart(2, '0') //January is 0!
+  let yyyy = today.getFullYear()
+
+  return yyyy + '-' + mm + '-' + dd
+}
+
 export const truncateAddress = (address: string): string => `${address.substr(0, 4)}..${address.substr(-4, 4)}`

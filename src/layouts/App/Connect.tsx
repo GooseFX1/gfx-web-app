@@ -16,8 +16,9 @@ import { useWalletModal } from '../../context'
 import { CenteredImg } from '../../styles'
 import { Loader } from '../../components'
 import { WalletName } from '@solana/wallet-adapter-base'
-import { truncateAddress } from '../../utils'
+import { checkMobile, truncateAddress } from '../../utils'
 import tw from 'twin.macro'
+import { logData } from '../../api'
 
 const WALLET_ICON = styled(CenteredImg)`
   ${tw`bg-black h-[30px] w-[30px] mr-[12px] rounded-circle`}
@@ -115,6 +116,12 @@ export const Connect: FC = () => {
   const [visible, setVisible] = useState(false)
 
   const base58 = useMemo(() => publicKey?.toBase58(), [publicKey])
+  useEffect(() => {
+    if (connected) logData('wallet_connected')
+    else logData('wallet_not_connected')
+    if (checkMobile()) logData('mobile_view')
+  }, [connected])
+
   const content = useMemo(() => {
     if (!wallet) {
       return 'Connect Wallet'

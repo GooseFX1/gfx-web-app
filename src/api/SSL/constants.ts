@@ -4,5 +4,6 @@ export enum SSL_API_ENDPOINTS {
   APR = '/apr',
   Volume = '/volume',
   d7 = '7d',
-  d14 = '14d'
+  d14 = '14d',
+  SAVE_LIQUIDITY_DATA = '/saveLiquidityData'
 }

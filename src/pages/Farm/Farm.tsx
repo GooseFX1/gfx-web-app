@@ -7,6 +7,7 @@ import { FarmHeader } from './FarmHeader'
 import { useNavCollapse, FarmProvider, useConnectionConfig, ENDPOINTS, PriceFeedFarmProvider } from '../../context'
 import { notify, checkMobile } from '../../utils'
 import tw from 'twin.macro'
+import { logData } from '../../api'
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   ${tw`sm:px-0 relative flex flex-col w-screen px-6 overflow-y-scroll overflow-x-hidden`}
@@ -16,11 +17,25 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
     font-family: Montserrat;
   }
   ${({ theme }) => theme.customScrollBar('6px')};
+
+  @media (max-width: 500px) {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
 `
 
 const BODY = styled.div<{ $navCollapsed: boolean }>`
   ${tw`sm:px-0 sm:!pt-[17px] sm:h-full p-16 !pt-[43px] !pb-0`}
   height: calc(85vh + ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+  padding: ${({ theme }) => theme.margin(8)};
+  padding-top: 43px !important;
+  padding-bottom: 0px !important;
+
+  @media (max-width: 500px) {
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 17px !important;
+  }
 `
 
 export const Farm: FC = () => {
@@ -35,7 +50,7 @@ export const Farm: FC = () => {
         firebase_screen: 'Yield Farm',
         firebase_screen_class: 'load'
       })
-
+    logData('farm_page')
     if (network === 'devnet') {
       notify({ message: 'Switched to mainnet' })
       setEndpoint(ENDPOINTS[0].endpoint)

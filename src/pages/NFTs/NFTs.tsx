@@ -24,6 +24,7 @@ import {
   useConnectionConfig
 } from '../../context'
 import { GenericNotFound } from '../InvalidUrl'
+import { logData } from '../../api'
 
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
@@ -52,6 +53,7 @@ export const NFTs: FC = () => {
         firebase_screen: 'NFT Exchange',
         firebase_screen_class: 'load'
       })
+    logData('NFT_page')
   }, [location])
 
   useEffect(() => {
