@@ -51,7 +51,21 @@ export const moneyFormatter = (number: number, currency = '') => {
   if (!isNotEmpty(number)) return ''
   return number.toLocaleString() + currency
 }
+export const moneyFormatterWithComma = (number: number, currency = '') => {
+  if (!isNotEmpty(number)) return ''
+  return commafy(number) + currency
+}
 export const percentFormatter = (number: number) => {
   if (!isNotEmpty(number)) return 0
   return number.toFixed(0) + '%'
+}
+function commafy(num) {
+  var str = num.toString().split('.')
+  if (str[0].length >= 5) {
+    str[0] = str[0].replace(/(\d)(?=(\d{3})+$)/g, '$1,')
+  }
+  if (str[1] && str[1].length >= 5) {
+    str[1] = str[1].replace(/(\d{3})/g, '$1 ')
+  }
+  return str.join('.')
 }

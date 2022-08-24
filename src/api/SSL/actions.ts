@@ -1,3 +1,5 @@
+import { NFT_LAUNCHPAD_API_ENDPOINTS } from './../NFTLaunchpad/constants'
+import { getDateInISOFormat } from './../../utils/misc'
 import { httpClient } from '../../api'
 import { SSL_API_BASE, SSL_API_ENDPOINTS } from '../SSL/constants'
 import axios from 'axios'
@@ -25,13 +27,18 @@ export const fetchSSLVolumeData = async (tokenAddress: string, controller: strin
   }
 }
 
-export const saveLiquidtyVolume = async (sslVolume: number, stakeVolume: number) => {
+export const saveLiquidtyVolume = async (sslVolume: number, stakeVolume: number, liqObj: Object) => {
   try {
-    const url = 'http://localhost:4000' + SSL_API_ENDPOINTS.SAVE_LIQUIDITY_DATA
-    //const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.SAVE_DATA
+    //const url = 'http://localhost:4000' + SSL_API_ENDPOINTS.SAVE_LIQUIDITY_DATA
+    const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.SAVE_LIQUIDITY_DATA
     let dataToSend = JSON.stringify({
-      sslVolume: sslVolume,
-      stakeVolume: stakeVolume
+      date: getDateInISOFormat(),
+      aggregatedVolume: {
+        sslVolume: sslVolume,
+        stakeVolume: stakeVolume,
+        totalVolume: sslVolume + stakeVolume
+      },
+      seprateVolume: liqObj
     })
     const response = await axios({
       method: 'POST',

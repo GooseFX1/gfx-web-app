@@ -15,6 +15,7 @@ import 'styled-components/macro'
 import { checkMobile } from '../../../../utils'
 import analytics from '../../../../analytics'
 import { logEvent } from 'firebase/analytics'
+import { logData } from '../../../../api'
 
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme, activeTab }) => css`
@@ -271,6 +272,7 @@ export const SingleCollection: FC = () => {
         firebase_screen: 'Launchpad: Mint',
         firebase_screen_class: 'load'
       })
+    logData('launchpad mint')
   }, [])
 
   const isLive =

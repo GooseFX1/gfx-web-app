@@ -224,16 +224,22 @@ export const TableList = ({ dataSource }: any) => {
   const gofxPrice = useMemo(() => prices['GOFX/USDC'], [prices])
   const [sslVolume, setSslVolume] = useState<number>(0)
   const [stakeVolume, setStakeVolume] = useState<number>(0)
+  const [liquidityObject, setLiquidityObject] = useState({})
 
   useEffect(() => {
     setAllTokenPrices(() => setAllTokenPrices(prices))
   }, [priceFetched, prices])
 
   useEffect(() => {
-    if (stakeVolume !== 0 && sslVolume !== 0) {
-      saveLiquidtyVolume(sslVolume, stakeVolume)
+    if (
+      stakeVolume !== 0 &&
+      sslVolume !== 0 &&
+      Object.keys(liquidityObject).length > 0 &&
+      network === NETWORK_CONSTANTS.MAINNET
+    ) {
+      saveLiquidtyVolume(sslVolume, stakeVolume, liquidityObject)
     }
-  }, [sslVolume, stakeVolume])
+  }, [sslVolume, stakeVolume, liquidityObject])
 
   const stakeProgram: Program = useMemo(() => {
     return wallet.publicKey
@@ -287,6 +293,7 @@ export const TableList = ({ dataSource }: any) => {
   ) => {
     const farmCalculationsArr = []
     let totalLiquidity = 0
+    let liqObj = {}
     Promise.all(aprVolumePromise)
       .then((aprVolume) => {
         for (let i = 0; i < sslAccountData.length; i++) {
@@ -325,10 +332,12 @@ export const TableList = ({ dataSource }: any) => {
               isNaN(volumeDays?.volume) || volumeDays.volume * tokenPrice < 100 ? '-' : volumeDays.volume * tokenPrice
           }
           farmCalculationsArr.push(farmCalculation)
+          liqObj[`${tokenName}`] = tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0
           totalLiquidity += tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0
         }
         setFarmDataSSLContext(farmCalculationsArr)
         setSslVolume(totalLiquidity)
+        setLiquidityObject(liqObj)
       })
       .catch((err) => console.log(err))
     return

@@ -31,6 +31,7 @@ import { CURRENT_SUPPORTED_TOKEN_LIST } from '../../constants'
 import { useParams } from 'react-router-dom'
 import tw from 'twin.macro'
 import JSBI from 'jsbi'
+import { logData } from '../../api'
 
 const CoinGecko = require('coingecko-api')
 const CoinGeckoClient = new CoinGecko()
@@ -315,6 +316,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
         firebase_screen: 'Swap',
         firebase_screen_class: 'load'
       })
+    logData('swap_page')
 
     if (network === 'devnet') {
       setEndpoint(ENDPOINTS[0].endpoint)

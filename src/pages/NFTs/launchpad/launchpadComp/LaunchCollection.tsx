@@ -1,5 +1,6 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import styled from 'styled-components'
+import { logData } from '../../../../api'
 import LaunchImg from '../../../../assets/launch.svg'
 import { SOCIAL_MEDIAS } from '../../../../constants'
 
@@ -53,6 +54,9 @@ const LaunchCollection: FC = () => {
   const handleApplyClick = () => {
     window.open(SOCIAL_MEDIAS.nftCreatorForm)
   }
+  useEffect(() => {
+    logData('launchpad_page')
+  }, [])
 
   return (
     <Container>
