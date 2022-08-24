@@ -38,6 +38,7 @@ Note: Environment variables are needed to develop locally and need to be obtaine
 ```
 $nvm use
 $yarn install
+$npx install-peerdeps --dev eslint-config-airbnb
 $yarn start
 ```
 
