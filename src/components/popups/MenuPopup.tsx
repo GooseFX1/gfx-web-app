@@ -102,7 +102,11 @@ const CircularDiv = styled.div`
   }
 `
 
-const MenuPopup = ({ rewardToggle }) => {
+interface IMenuPopup {
+  rewardToggle: (bool: boolean) => void
+}
+
+const MenuPopup = ({ rewardToggle }: IMenuPopup) => {
   const { mode } = useDarkMode()
   const history = useHistory()
   const { publicKey } = useWallet()
@@ -138,11 +142,19 @@ const MenuPopup = ({ rewardToggle }) => {
     }, 150)
   }
   const redirectToPage = (isSell: boolean) => {
+    console.log(isSell)
+
     if (isSell) {
-      publicKey ? history.push(`${carousel[0].redirect}/${publicKey.toBase58()}`) : handleWalletModal()
+      publicKey ? locateToSell() : handleWalletModal()
     } else if (carousel[0].redirect && !isSell) {
+      rewardToggle(false)
       history.push(carousel[0].redirect)
     }
+  }
+
+  const locateToSell = () => {
+    rewardToggle(false)
+    history.push(`${carousel[0].redirect}/${publicKey.toBase58()}`)
   }
 
   const handleWalletModal = useCallback(() => {

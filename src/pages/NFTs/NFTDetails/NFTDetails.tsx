@@ -1,14 +1,14 @@
 import React, { FC, useEffect } from 'react'
 import { Row, Col } from 'antd'
-import { useHistory } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useNFTDetails, useConnectionConfig } from '../../../context'
 import { FloatingActionButton } from '../../../components'
 import { RightSection } from './RightSection'
 import { ImageShowcase } from './ImageShowcase'
 import { MintItemViewStatus, INFTMetadata } from '../../../types/nft_details'
-import { useParams } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params.d'
+import { FLOATING_ACTION_ICON } from '../../../styles'
 
 const NFT_DETAILS = styled.div`
   position: relative;
@@ -18,12 +18,6 @@ const NFT_DETAILS = styled.div`
   .nd-content {
     height: 100%;
   }
-`
-
-const FLOATING_ACTION_ICON = styled.img`
-  transform: rotate(90deg);
-  width: 16px;
-  filter: ${({ theme }) => theme.filterBackIcon};
 `
 
 export const NFTDetails: FC<{

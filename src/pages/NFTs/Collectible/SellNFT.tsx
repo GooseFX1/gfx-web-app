@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Form, Row, Col } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { IAppParams } from '../../../types/app_params.d'
-import { CenteredDiv, MainText, TXT_PRIMARY_GRADIENT, GFX_LINK } from '../../../styles'
+import { CenteredDiv, MainText, TXT_PRIMARY_GRADIENT, GFX_LINK, FLOATING_ACTION_ICON } from '../../../styles'
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { SellCategory } from '../SellCategory/SellCategory'
 import { FormDoubleItem } from '../Form/FormDoubleItem'
@@ -176,11 +176,6 @@ const BUTTON_TEXT = styled.div`
 
 const IMAGE_LABEL = styled(CenteredDiv)`
   margin-bottom: 12px;
-`
-const FLOATING_ACTION_ICON = styled.img`
-  transform: rotate(90deg);
-  width: 16px;
-  filter: ${({ theme }) => theme.filterBackIcon};
 `
 //#endregion
 

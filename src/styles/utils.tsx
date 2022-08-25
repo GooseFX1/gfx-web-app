@@ -43,7 +43,7 @@ export const SVGToPrimary2 = styled.img`
 `
 
 export const SVGToWhite = styled.img`
-  filter: invert(96%) sepia(73%) saturate(2%) hue-rotate(192deg) brightness(109%) contrast(101%); ;
+  filter: invert(96%) sepia(73%) saturate(2%) hue-rotate(192deg) brightness(150%) contrast(101%); ;
 `
 export const SVGToBlack = styled.img`
   filter: invert(100%);

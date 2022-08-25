@@ -181,8 +181,10 @@ export const CircularMenu = ({ carousel, rotateClicked, clickCounter, rewardTogg
 
   const redirectToPage = () => {
     if (publicKey && carousel[0].name === 'Sell') {
+      rewardToggle(false)
       history.push(`${carousel[0].redirect}/${publicKey.toBase58()}`)
     } else if (carousel[0].redirect && carousel[0].name !== 'Sell') {
+      rewardToggle(false)
       history.push(carousel[0].redirect)
     }
   }

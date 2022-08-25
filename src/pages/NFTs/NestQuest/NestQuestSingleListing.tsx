@@ -9,7 +9,7 @@ import { WRAPPED_SOL_MINT, fetchAvailableNft, ADDRESSES } from '../../../web3'
 import { MintItemViewStatus, INFTMetadata } from '../../../types/nft_details'
 import { MainButton } from '../../../components/MainButton'
 import { NQ_GOFX_PRICE, NQ_SOL_PRICE, SOCIAL_MEDIAS } from '../../../constants'
-import { SVGDynamicReverseMode } from '../../../styles/utils'
+import { SVGDynamicReverseMode, FLOATING_ACTION_ICON } from '../../../styles'
 import { FloatingActionButton } from '../../../components'
 import { Tabs } from 'antd'
 import { TokenToggle } from '../../../components/TokenToggle'
@@ -352,11 +352,6 @@ export const SpaceBetweenDiv = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-`
-const FLOATING_ACTION_ICON = styled.img`
-  transform: rotate(90deg);
-  width: 16px;
-  filter: ${({ theme }) => theme.filterBackIcon};
 `
 //#endregion
 

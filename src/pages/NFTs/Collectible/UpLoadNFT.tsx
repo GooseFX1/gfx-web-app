@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { uploadFile } from 'react-s3'
 import { deleteDraft } from '../actions'
 import { IAppParams } from '../../../types/app_params.d'
-import { MainText } from '../../../styles'
+import { MainText, FLOATING_ACTION_ICON } from '../../../styles'
 import InfoInput from './InfoInput'
 import { Categories, FloatingActionButton } from '../../../components'
 import PreviewImage from './PreviewImage'
@@ -253,12 +253,6 @@ const BUTTON_PLUS_WRAPPER = styled(ButtonWrapper)`
   &:disabled {
     background-color: #7d7d7d;
   }
-`
-
-const FLOATING_ACTION_ICON = styled.img`
-  transform: rotate(90deg);
-  width: 16px;
-  filter: ${({ theme }) => theme.filterBackIcon};
 `
 //#endregion
 

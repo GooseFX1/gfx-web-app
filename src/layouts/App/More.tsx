@@ -48,12 +48,12 @@ const ItemRow = styled.div`
   cursor: text;
 `
 
-const INPUT = styled(Input)`
-  ${tw`h-[36px] text-[14px] py-0 px-[16px] mt-[4px]`}
+const INPUT = styled.input`
+  ${tw`h-[40px] w-full text-[14px] py-0 px-[16px] mt-[4px] text-left`}
   font-weight: 500;
   ${({ theme }) => theme.largeBorderRadius}
   background-color: ${({ theme }) => theme.bg2};
-  border-color: ${({ theme }) => theme.bg2};
+  border-color: transparent;
   color: ${({ theme }) => theme.text4};
 
   ::placeholder {
@@ -66,20 +66,25 @@ const INPUT = styled(Input)`
   ::-ms-input-placeholder {
     color: #636363; /* Microsoft Edge */
   }
+
+  &:focus,
+  :active {
+    border-color: purple;
+  }
 `
 
 const Button = styled.button`
   width: 126px;
   height: 40px;
   margin: 13px 0 0;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
   padding: 0 ${({ theme }) => theme.margin(2)};
   ${({ theme }) => `padding-left: ${theme.margin(1.5)};`}
   ${({ theme }) => theme.flexCenter};
-  border: none;
   ${({ theme }) => theme.roundedBorders};
   ${({ theme }) => theme.smallShadow};
+  border: none;
   background-color: ${({ theme }) => theme.secondary7};
   cursor: pointer;
 `
@@ -134,6 +139,7 @@ const Overlay = () => {
             onChange={(x: BaseSyntheticEvent) => nodeURLHandler(x)}
             placeholder={'Enter Node URL'}
             value={nodeURL || undefined}
+            autoComplete={'off'}
           />
         </ItemRow>
       </ITEM>

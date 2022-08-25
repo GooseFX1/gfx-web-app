@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { FloatingActionButton, MainButton } from '../../../components'
 import { Image } from 'antd'
-import { MainText } from '../../../styles'
+import { MainText, FLOATING_ACTION_ICON } from '../../../styles'
 import { notify } from '../../../utils'
 import { useDarkMode, useNFTProfile } from '../../../context'
 import apiClient from '../../../api'
@@ -147,12 +147,6 @@ const IMAGE_COUNT_DESC_CONTAINER = styled.div`
   display: flex;
   flex-direction: column;
   color: #fff !important;
-`
-
-const FLOATING_ACTION_ICON = styled.img`
-  transform: rotate(90deg);
-  width: 16px;
-  filter: ${({ theme }) => theme.filterBackIcon};
 `
 
 const DELETE_DRAFT = styled.img`

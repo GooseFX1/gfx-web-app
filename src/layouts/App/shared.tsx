@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import tw from "twin.macro"
+import tw from 'twin.macro'
 
 export const Menu = styled.ul`
   ${tw`min-w-[140px] list-none py-3 px-4 rounded-[8px]`}
@@ -16,7 +16,7 @@ export const MenuItem = styled.li`
   ${tw`flex items-center justify-between cursor-pointer py-[5.6px] px-0`}
 
   &:hover span {
-    color: ${({ theme }) => theme.secondary4};
+    color: ${({ theme }) => theme.secondary7};
   }
 
   img {

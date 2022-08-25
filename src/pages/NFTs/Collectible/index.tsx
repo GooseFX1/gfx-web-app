@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import { MainButton, FloatingActionButton } from '../../../components'
 import { Image } from 'antd'
-import { MainText } from '../../../styles'
+import { MainText, FLOATING_ACTION_ICON } from '../../../styles'
 import { notify } from '../../../utils'
 import apiClient from '../../../api'
 import { useDarkMode, useNFTProfile } from '../../../context'
@@ -87,12 +87,6 @@ const IMAGE_COUNT_DESC = styled(DESCRIPTION)`
   margin-top: ${({ theme }) => theme.margin(2.5)};
   margin-bottom: ${({ theme }) => 0};
   color: #fff !important;
-`
-
-const FLOATING_ACTION_ICON = styled.img`
-  transform: rotate(90deg);
-  width: 16px;
-  filter: ${({ theme }) => theme.filterBackIcon};
 `
 
 const UPLOAD_TEXT = MainText(styled.div`

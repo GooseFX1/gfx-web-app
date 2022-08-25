@@ -41,7 +41,7 @@ const MODAL = styled.div`
 `
 interface IModalSlide {
   rewardModal?: boolean
-  rewardToggle?: any
+  rewardToggle?: (bool: boolean) => void
   modalType: string
 }
 

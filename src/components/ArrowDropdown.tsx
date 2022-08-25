@@ -4,13 +4,12 @@ import styled from 'styled-components'
 import { CenteredDiv, SVGToWhite, SVGDynamicMode } from '../styles'
 
 const ARROW_CLICKER = styled(CenteredDiv)<{ $arrowRotation?: boolean; $measurements?: string }>`
-  ${({ theme, $measurements }) => theme.measurements($measurements ? $measurements : theme.margin(1.5))}
   margin-left: ${({ theme }) => theme.margin(1)};
   border: none;
   background: transparent;
   cursor: pointer;
   img {
-    ${({ theme }) => theme.measurements('inherit')}
+    ${({ theme, $measurements }) => theme.measurements($measurements ? $measurements : theme.margin(1.5))}
     ${({ $arrowRotation }) => $arrowRotation && 'transform: rotateZ(180deg);'}
     transition: transform 200ms ease-in-out;
   }

@@ -23,6 +23,7 @@ import { notify } from '../../../utils'
 import { StyledHeaderProfile, StyledMenu, SETTLE_BALANCE_MODAL, MARGIN_VERTICAL } from './HeaderProfile.styled'
 import BN from 'bn.js'
 import { IAppParams } from '../../../types/app_params.d'
+import { FLOATING_ACTION_ICON } from '../../../styles'
 
 const DROPDOWN = styled(Dropdown)`
   width: auto;
@@ -39,12 +40,6 @@ const DROPDOWN = styled(Dropdown)`
   &:after {
     content: none;
   }
-`
-
-const FLOATING_ACTION_ICON = styled.img`
-  transform: rotate(90deg);
-  width: 16px;
-  filter: ${({ theme }) => theme.filterBackIcon};
 `
 
 type Props = {

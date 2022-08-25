@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useNFTCollections, useDarkMode, useNFTProfile, usePriceFeed } from '../../../context'
 import { Share } from '../Share'
-import { SVGToGrey2 } from '../../../styles'
+import { SVGToGrey2, FLOATING_ACTION_ICON } from '../../../styles'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { FloatingActionButton } from '../../../components'
 import { SweepModal } from './SweepModal'
@@ -13,12 +13,6 @@ import { generateTinyURL } from '../../../api/tinyUrl'
 import { notify } from '../../../utils'
 
 //#region styles
-const FLOATING_ACTION_ICON = styled.img`
-  transform: rotate(90deg);
-  width: 16px;
-  filter: ${({ theme }) => theme.filterBackIcon};
-`
-
 const COLLECTION_HEADER = styled.div<{ $height: string }>`
   position: relative;
   height: ${({ $height }) => `${$height}vh`};

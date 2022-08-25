@@ -91,3 +91,9 @@ export const NavBar = styled.nav`
   background-color: transparent;
   z-index: 300;
 `
+
+export const FLOATING_ACTION_ICON = styled.img`
+  transform: rotate(90deg);
+  width: 16px;
+  filter: ${({ theme }) => theme.filterBackIcon};
+`

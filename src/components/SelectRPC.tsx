@@ -87,6 +87,7 @@ export const SelectRPC = ({
     <WRAPPER mode={mode}>
       <ArrowDropdown
         arrowRotation={arrowRotation}
+        measurements="16px"
         offset={[20, 24]}
         onVisibleChange={handleClick}
         overlay={<Overlay handleClick={clickForRPC} />}
