@@ -2,28 +2,32 @@ import { BaseSyntheticEvent, FC, useState } from 'react'
 import { Dropdown, Input } from 'antd'
 import { logEvent } from 'firebase/analytics'
 import styled from 'styled-components'
+import tw from 'twin.macro'
 
 import analytics from '../../analytics'
 import { CenteredImg } from '../../styles'
 import { Menu, MenuItem } from './shared'
 import { notify } from '../../utils'
 import { SelectRPC } from '../../components'
+import { useDarkMode } from '../../context'
 import { ThemeToggle } from '../../components/ThemeToggle'
 import { useConnectionConfig } from '../../context'
 
-const ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(4.5))}
-  cursor: pointer;
+const ICON = styled(CenteredImg)<{ $mode: boolean }>`
+  ${tw`h-[36px] w-[36px] cursor-pointer`}
+
+  img {
+    filter: opacity(${({ $mode }) => ($mode ? 1 : 0.7)});
+  }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-left: ${({ theme }) => theme.margin(1)};
+    ${tw`ml-[8px]`}
   `}
 `
 
 const NewMenu = styled(Menu)`
-  width: ${({ theme }) => theme.margin(34.75)};
+  ${tw`w-[278px] mt-[16px]`}
   background-color: ${({ theme }) => theme.bg9};
-  margin-top: ${({ theme }) => theme.margin(2)};
 `
 
 const ITEM = styled(MenuItem)`
@@ -40,23 +44,17 @@ const ITEM = styled(MenuItem)`
 `
 
 const ItemRow = styled.div`
-  width: 100%;
-  margin-top: ${({ theme }) => theme.margin(0.5)};
-  padding: 0 0 2px 0;
+  ${tw`w-full p-[0 0 2px 0] mt-[4px]`}
   cursor: text;
 `
 
 const INPUT = styled(Input)`
-  font-size: 13px;
+  ${tw`h-[36px] text-[14px] py-0 px-[16px] mt-[4px]`}
   font-weight: 500;
-  text-align: start;
-  padding: 0px ${({ theme }) => theme.margin(2)};
-  height: 36px;
   ${({ theme }) => theme.largeBorderRadius}
-  background-color: ${({ theme }) => theme.bg10};
-  border-color: ${({ theme }) => theme.bg10};
+  background-color: ${({ theme }) => theme.bg2};
+  border-color: ${({ theme }) => theme.bg2};
   color: ${({ theme }) => theme.text4};
-  margin-top: ${({ theme }) => theme.margin(0.5)};
 
   ::placeholder {
     color: #636363;
@@ -82,7 +80,7 @@ const Button = styled.button`
   border: none;
   ${({ theme }) => theme.roundedBorders};
   ${({ theme }) => theme.smallShadow};
-  background-color: ${({ theme }) => theme.secondary2};
+  background-color: ${({ theme }) => theme.secondary7};
   cursor: pointer;
 `
 
@@ -147,6 +145,7 @@ const Overlay = () => {
 }
 
 export const More: FC = () => {
+  const { mode } = useDarkMode()
   return (
     <Dropdown
       align={{ offset: [0, 16] }}
@@ -155,7 +154,7 @@ export const More: FC = () => {
       placement="bottomLeft"
       trigger={['click']}
     >
-      <ICON>
+      <ICON $mode={mode === 'dark'}>
         <img src={`/img/assets/more_icon.svg`} alt="more" />
       </ICON>
     </Dropdown>

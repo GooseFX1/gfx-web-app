@@ -130,21 +130,6 @@ export const NFTHomeSlider = () => {
   return (
     <CAROUSEL_WRAPPER>
       <Slider {...settings}>
-        <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/become-a-creator.webp`}>
-          <div className="home-slider-content">
-            <h1 className="home-slider-title">Launch </h1>
-            <h1 className="home-slider-title">Your Collection</h1>
-            <TERTIERY_BTN
-              className="home-slider-button"
-              height={'40px'}
-              status="action"
-              width={'141px'}
-              onClick={handleCreatorApply}
-            >
-              <span>Apply</span>
-            </TERTIERY_BTN>
-          </div>
-        </SLIDER_ITEM>
         <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/NestQuest.png`}>
           <div className="home-slider-content">
             <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>
@@ -162,6 +147,21 @@ export const NFTHomeSlider = () => {
             >
               <span>Mint Now</span>
             </ORANGE_BTN>
+          </div>
+        </SLIDER_ITEM>
+        <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/become-a-creator.webp`}>
+          <div className="home-slider-content">
+            <h1 className="home-slider-title">Launch</h1>
+            <h1 className="home-slider-title">Your Collection</h1>
+            <TERTIERY_BTN
+              className="home-slider-button"
+              height={'40px'}
+              status="action"
+              width={'141px'}
+              onClick={handleCreatorApply}
+            >
+              <span>Apply</span>
+            </TERTIERY_BTN>
           </div>
         </SLIDER_ITEM>
         <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/upcoming_features.webp`}></SLIDER_ITEM>

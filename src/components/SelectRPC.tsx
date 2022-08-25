@@ -9,8 +9,8 @@ const WRAPPER = styled(SpaceBetweenDiv)<{ mode: string }>`
   padding: 0px ${({ theme }) => theme.margin(2)};
   height: 40px;
   margin: 6px 0 4px;
-  background-color: ${({ theme }) => theme.bg10};
-  border-color: ${({ theme }) => theme.bg10};
+  background-color: ${({ theme }) => theme.bg2};
+  border-color: ${({ theme }) => theme.bg2};
   cursor: pointer;
   ${({ theme }) => theme.largeBorderRadius};
 

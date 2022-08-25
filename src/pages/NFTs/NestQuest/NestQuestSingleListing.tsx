@@ -201,6 +201,14 @@ const PILL_SECONDARY = styled.div<{ $mode: string }>`
   }
 `
 
+const TOGGLE_WRAPPER = styled.div`
+  ${tw`flex mb-[32px]`}
+
+  > div {
+    ${tw` ml-auto`}
+  }
+`
+
 const SOCIAL_ICON = styled.button`
   background: transparent;
   border: none;
@@ -613,12 +621,16 @@ export const NestQuestSingleListing: FC<{
           </Col>
           <Col span={1}></Col>
           <Col sm={9} xl={9} xxl={9}>
-            <TokenToggle
-              toggleToken={() => {
-                token === 'SOL' ? setToken('GOFX') : setToken('SOL')
-                token === 'SOL' ? setMintPrice(NQ_GOFX_PRICE) : setMintPrice(NQ_SOL_PRICE)
-              }}
-            />
+            <TOGGLE_WRAPPER>
+              <TokenToggle
+                toggleToken={(curToken) => {
+                  setToken(curToken)
+                  curToken === 'SOL' ? setMintPrice(NQ_SOL_PRICE) : setMintPrice(NQ_GOFX_PRICE)
+                }}
+                tokenA={'SOL'}
+                tokenB={'GOFX'}
+              />
+            </TOGGLE_WRAPPER>
 
             <IMAGE>
               <img

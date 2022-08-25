@@ -104,10 +104,12 @@ const UPLOAD_TEXT = MainText(styled.div`
 const DRAFT_CHECK = styled.div`
   font-family: Montserrat;
 
-  ${tw`flex flex-col items-center text-white mt-[32px]`}
+  ${tw`flex flex-col items-center mt-[32px]`}
 
-  div {
+  p {
     ${tw`text-[20px]`}
+    font-weight: 600;
+    color: ${({ theme }) => theme.text8};
   }
 
   span {
@@ -121,7 +123,7 @@ const DRAFT_CHECK = styled.div`
 `
 
 const Button = styled(MainButton)`
-  ${tw`flex flex-row justify-center items-center my-[56px] px-[32px] text-white h-[60px] w-[274px] text-[18px]`}
+  ${tw`flex flex-row justify-center items-center mt-[32px] px-[32px] text-white h-[60px] w-[274px] text-[18px]`}
   background: linear-gradient(95deg, #f7931a 1%, #ac1cc7 100%);
 
   font-weight: 600;
@@ -226,9 +228,9 @@ export const Collectible = (): JSX.Element => {
         ) : (
           <DRAFT_CHECK>
             {draftNum > 0 && (
-              <div style={{ fontWeight: '600' }}>
+              <p>
                 It seems you currently have <span>{draftNum}</span> NFTs in drafts.
-              </div>
+              </p>
             )}
             <Button
               status="action"

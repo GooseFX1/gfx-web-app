@@ -282,7 +282,6 @@ export const NftDrafts = (): JSX.Element => {
               <DRAFT_IMAGE draggable={false} preview={false} src={`/img/assets/nft-preview-${mode}.svg`} />
               <IMAGE_COUNT_DESC_NEW>Create New Item</IMAGE_COUNT_DESC_NEW>
             </UPLOAD_FILED>
-            <SAVE_BUTTON loading={draftIsLoading} />
           </div>
         </UPLOAD_SECTION>
 
