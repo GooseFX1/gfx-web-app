@@ -76,16 +76,3 @@ export const TOGGLE = styled(CenteredDiv)<{ $mode: string }>`
     transform: translateX(${({ $mode }) => ($mode === 'dark' ? '-' : '')}${({ theme }) => theme.margin(1.5)});
   }
 `
-
-export const MODE_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(2))};
-  .moon-image {
-    width: 15px;
-    height: 15px;
-    margin-right: ${({ theme }) => theme.margin(1)};
-  }
-  .brightnessImage {
-    width: 19px;
-    height: 19px;
-  }
-`

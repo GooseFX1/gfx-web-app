@@ -12,7 +12,7 @@ import { useRewardToggle } from '../../context/reward_toggle'
 import { MODAL_TYPES } from '../../constants'
 import { checkMobile } from '../../utils'
 import { ThemeToggle } from '../../components/ThemeToggle'
-import tw from "twin.macro"
+import tw from 'twin.macro'
 
 const BRAND = styled.a`
   ${tw`absolute flex justify-center items-center text-big leading-5 font-bold w-21 md:relative md:top-2 md:left-2 md:mb-6 md:h-11.75 min-md:h-12.5 min-md:left-[58px]`}
@@ -44,19 +44,20 @@ const WRAPPER = styled.nav`
 
 const MobileWrapper = styled(WRAPPER)`
   ${tw`flex !flex-row justify-between items-center rounded-none shadow-none rounded-b-[30px]`}
-  background-color: ${({ theme }) => theme.bg18};  
+  background-color: ${({ theme }) => theme.bg18};
 `
 
 const CollapsibleWrapper = styled.div<{ $collapse: boolean }>`
   ${tw`absolute rounded-bl-bigger rounded-br-bigger justify-center cursor-pointer flex w-10 h-5 bottom-[-20px]`}
-  background: ${({ $collapse, theme }) => $collapse ? 'linear-gradient(158.4deg, #5855FF 14.18%, #DC1FFF 82.14%);' : theme.bg9};
+  background: ${({ $collapse, theme }) =>
+    $collapse ? 'linear-gradient(158.4deg, #5855FF 14.18%, #DC1FFF 82.14%);' : theme.bg9};
 
   img {
     ${tw`h-2.5 w-2.5`}
   }
 `
 const RESPONSIVE_MENU = styled.ul`
-${tw`absolute items-center flex flex-col left-0 top-0 h-screen w-screen pb-4 pt-[10vh] px-0`}
+  ${tw`absolute items-center flex flex-col left-0 top-0 h-screen w-screen pb-4 pt-[10vh] px-0`}
   background-color: ${({ theme }) => theme.bg1};
 `
 
@@ -80,7 +81,7 @@ const ResponsiveDropdown: FC<{ logoAnimationTime: number }> = ({ logoAnimationTi
 
   const computeDropdownIcon = useCallback(
     () =>
-      mode === 'dark' || window.location.hash ? (
+      mode === 'dark' ? (
         <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/dropdown_icon.svg`} onClick={toggleOpacity} />
       ) : (
         <img src={`${process.env.PUBLIC_URL}/img/assets/dropdown_icon.svg`} onClick={toggleOpacity} alt="" />
@@ -183,7 +184,8 @@ const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => v
   const handleCollapse = () => onCollapse(!collapse)
 
   return (
-    <CollapsibleWrapper $collapse={collapse}
+    <CollapsibleWrapper
+      $collapse={collapse}
       onClick={() => {
         handleCollapse()
       }}

@@ -28,8 +28,6 @@ const fetchAvailableNft = async (
       ? [new web3.PublicKey(tk.account.data.parsed.info.mint)]
       : []
   )
-  console.log('EGGGSSS', nfts.length)
-
   return { nft: nfts[0] || null, length: nfts.length || 0 }
 }
 

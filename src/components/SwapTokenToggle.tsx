@@ -22,7 +22,7 @@ const CLICKER_ICON = styled(CenteredImg)`
   ${tw`h-12 w-12 mr-1 rounded-circle`}
 `
 
-export const Toggle = styled(CenteredDiv)<{ $mode: number }>`
+const Toggle = styled(CenteredDiv)<{ $mode: number }>`
   height: 25px;
   width: 50px;
   border-radius: 40px;

@@ -6,9 +6,8 @@ import { useHistory } from 'react-router-dom'
 import { Image, Menu, Dropdown } from 'antd'
 import { ButtonWrapper } from '../NFTButton'
 // import { SearchBar, Categories } from '../../../components'
-import { SearchBar } from '../../../components'
+import { SearchBar, TokenToggle } from '../../../components'
 import { SpaceBetweenDiv } from '../../../styles'
-import DropdownButton from '../../../layouts/App/DropDownButton'
 // import { categories, coins } from './data'
 // import { useLocalStorageState } from '../../../utils'
 import PopupCompleteProfile from '../Profile/PopupCompleteProfile'
@@ -127,13 +126,6 @@ const CONNECT = styled(CTA_BTN)`
   background-color: ${({ theme }) => theme.secondary3};
 `
 
-const CREATE = styled(CTA_BTN)`
-  background-color: ${({ theme }) => theme.secondary5};
-`
-const SELL = styled(CTA_BTN)`
-  background-color: #bb3535;
-`
-
 const AVATAR_NFT = styled(Image)`
   border-radius: 50%;
   width: 56px;
@@ -145,7 +137,7 @@ const AVATAR_NFT = styled(Image)`
 
 export const Header = ({ setFilter, filter, filteredCollections, totalCollections, setTotalCollections }) => {
   const history = useHistory()
-  const { sessionUser, userCurrency, setUserCurrency } = useNFTProfile()
+  const { sessionUser, setUserCurrency } = useNFTProfile()
   const { isCollapsed } = useNavCollapse()
   const { connected, publicKey, connect } = useWallet()
   const [visibleCompletePopup, setVisibleCompletePopup] = useState<boolean>(false)
@@ -199,26 +191,6 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
     },
     [setModalVisible, publicKey, connected]
   )
-
-  // const handleFilterChange = (filter) => {
-  //   let newFilteredCol
-  //   if (filter.toLowerCase() == 'verified') {
-  //     newFilteredCol = totalCollections.filter((i) => i.is_verified)
-  //   } else if (filter.toLowerCase() == 'unverified') {
-  //     newFilteredCol = totalCollections.filter((i) => !i.is_verified)
-  //   } else if (filter.toLowerCase() == 'all') {
-  //     newFilteredCol = totalCollections
-  //   } else {
-  //     newFilteredCol = totalCollections.filter((i) =>
-  //       i.category_tags
-  //         .split(' ')
-  //         .map((i) => i.toLowerCase())
-  //         .includes(filter.toLowerCase())
-  //     )
-  //   }
-  //   setFilteredCollections(newFilteredCol)
-  //   setTotalCollections(newFilteredCol)
-  // }
 
   const genMenu = () => {
     return filter.length > 0 ? (
@@ -280,8 +252,7 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
       <BUTTON_SELECTION>
         {!isHeaderData ? (
           <div style={{ display: 'flex' }}>
-            <SkeletonCommon width="149px" height="45px" borderRadius="45px" />
-            <SkeletonCommon width="132px" height="45px" borderRadius="45px" style={{ marginLeft: '20px' }} />
+            <SkeletonCommon width="149px" height="45px" borderRadius="15px" />
           </div>
         ) : (
           <div style={{ display: 'flex' }}>
@@ -291,22 +262,7 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
               </CONNECT>
             )}
 
-            <DropdownButton
-              title={userCurrency}
-              options={[
-                { displayName: 'SOL', value: 'SOL', icon: 'SOL' },
-                { displayName: 'USD', value: 'USD', icon: 'USD' }
-              ]}
-              handleSelect={setUserCurrency}
-              folder="crypto"
-              style={{
-                marginLeft: '1rem',
-                width: '80px',
-                height: '45px',
-                borderRadius: '15px',
-                justifyContent: 'space-between'
-              }}
-            />
+            <TokenToggle toggleToken={setUserCurrency} tokenA={'SOL'} tokenB={'USD'} />
           </div>
         )}
         {/* {!isHeaderData ? (
