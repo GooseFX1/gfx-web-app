@@ -5,12 +5,20 @@
     "node": true
   },
   "plugins": ["@typescript-eslint", "unused-imports", "react", "import"],
-  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:react/jsx-runtime", "plugin:@typescript-eslint/recommended", "plugin:import/typescript", "prettier", "airbnb"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/typescript",
+    "prettier",
+    "airbnb"
+  ],
   "rules": {
     "import/prefer-default-export": "off",
     "no-console": "warn",
     "import/no-unresolved": "error",
-    "max-len": ["warn", { "code": 200 }],
+    "max-len": ["warn", { "code": 120 }],
     "@typescript-eslint/no-explicit-any": "off",
     "semi": "off",
     "comma-dangle": "warn",
