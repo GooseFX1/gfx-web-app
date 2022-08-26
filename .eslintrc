@@ -11,8 +11,7 @@
     "plugin:react/jsx-runtime",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/typescript",
-    "prettier",
-    "airbnb"
+    "prettier"
   ],
   "rules": {
     "import/prefer-default-export": "off",
@@ -29,7 +28,13 @@
     "import/no-cycle": "off",
     "no-new": "warn",
     "object-curly-newline": "off",
-    "implicit-arrow-linebreak": "off"
+    "implicit-arrow-linebreak": "off",
+    "@typescript-eslint/no-inferrable-types": "warn",
+    "@typescript-eslint/ban-ts-comment": "warn",
+    "no-empty": "warn",
+    "@typescript-eslint/no-var-requires": "warn",
+    "@typescript-eslint/no-this-alias": "warn",
+    "@typescript-eslint/ban-types": "warn"
   },
   "globals": {
     "React": true,

@@ -77,8 +77,8 @@ export const notify = async (
   if (e) {
     description = e.message
     if (description !== null && description !== undefined) {
-      let re = /custom program error: (0x\d+)/
-      let match = description.toString().match(re)
+      const re = /custom program error: (0x\d+)/
+      const match = description.toString().match(re)
       if (match) {
         description = (await import('gfx_stocks_pool')).format_error_code(parseInt(match[0]))
       }

@@ -4,7 +4,7 @@ export const sleep = (ms: number): Promise<void> => new Promise((resolve) => set
 
 export const getUnixTs = () => new Date().getTime() / 1000
 
-export function abbreviateNumber(num: number, fixed: number): String {
+export function abbreviateNumber(num: number, fixed: number): string {
   if (!num) {
     return '0'
   }
@@ -157,10 +157,10 @@ export const getLast = <T>(arr: T[]) => {
 }
 
 export const getDateInISOFormat = () => {
-  let today = new Date()
-  let dd = String(today.getDate()).padStart(2, '0')
-  let mm = String(today.getMonth() + 1).padStart(2, '0') //January is 0!
-  let yyyy = today.getFullYear()
+  const today = new Date()
+  const dd = String(today.getDate()).padStart(2, '0')
+  const mm = String(today.getMonth() + 1).padStart(2, '0') //January is 0!
+  const yyyy = today.getFullYear()
 
   return yyyy + '-' + mm + '-' + dd
 }
