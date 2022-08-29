@@ -76,19 +76,23 @@ const HEADER_TITLE = styled(CenteredDiv)`
 
 const TOKEN_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
-  ${tw`items-center w-81.5 rounded-r-bigger py-6 pr-6 pl-8 min-h-[527px] sm:w-full sm:rounded-bigger sm:min-h-0`}
+  ${tw`items-center w-81.5 rounded-r-bigger py-6 pr-6 pl-8 min-h-[501px] sm:w-full sm:rounded-bigger sm:min-h-0`}
   font-family: Montserrat;
   background: ${({ theme }) => theme.swapSides1};
 `
 
 const TokenTitle = styled.div`
-  ${tw`font-semibold text-lg`}
+  ${tw`font-semibold text-[20px]`}
   color: ${({ theme }) => theme.text1};
   line-height: inherit;
 `
 
 const TokenTitleFees = styled(TokenTitle)`
   ${tw`flex items-center`}
+`
+
+const TokenTitleFDV = styled(TokenTitle)`
+  ${tw`text-[20px]`}
 `
 
 const SmallTitle = styled.div`
@@ -120,7 +124,7 @@ const SmallerTitle = styled.div`
   text-fill-color: transparent;
 `
 const TokenHeader = styled.div`
-  ${tw`flex flex-col w-full mb-4.5`}
+  ${tw`flex flex-col w-full mb-4.5 ml-10 sm:ml-0 sm:items-center`}
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
@@ -158,12 +162,16 @@ const ListWrapper = styled.div`
   ${tw`w-full sm:flex sm:py-3 flex-wrap`}
 `
 
+const TokenListWrapper = styled(ListWrapper)`
+  ${tw`ml-10 sm:ml-0 sm:w-full sm:items-center`}
+`
+
 const SubHeader = styled.div`
-  ${tw`h-12`}
+  ${tw`ml-0 sm:ml-0 h-12`}
 `
 
 const Socials = styled.div`
-  ${tw`flex justify-between	w-full mt-auto`}
+  ${tw`flex justify-between	w-full mt-2`}
 `
 
 const SocialsButton = styled.div`
@@ -182,7 +190,7 @@ const SMALL_CLICKER_ICON = styled(CenteredImg)`
 
 const PRICE_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
-  ${tw`items-center h-full w-81.5 p-6 rounded-tl-bigger rounded-bl-bigger sm:w-full sm:rounded-bigger sm:mb-12`}
+  ${tw`items-center h-full w-81.5 p-6 rounded-tl-bigger min-h-[527px] rounded-bl-bigger sm:w-full sm:rounded-bigger sm:mb-12`}
   font-family: Montserrat;
   background: ${({ theme }) => theme.swapSides2};
 `
@@ -626,16 +634,16 @@ const TokenContent: FC = () => {
           </COPY>
         </SubHeader>
       </TokenHeader>
-      <ListWrapper>
+      <TokenListWrapper>
         {(!toggle ? tokenDetails : tokenDetailsB).map((detail) => (
           <AltTokenDetail key={detail.name}>
-            <TokenTitle>{detail.name}</TokenTitle>
+            <TokenTitleFDV>{detail.name}</TokenTitleFDV>
             <SmallTitle>
               {detail.currency || null} {detail.value}
             </SmallTitle>
           </AltTokenDetail>
         ))}
-      </ListWrapper>
+      </TokenListWrapper>
       <Socials>
         {socials.map((social) => (
           <SocialsButton key={social.name} onClick={() => window.open(social.link, '_blank')}>
@@ -732,7 +740,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
             <img
               src={`/img/crypto/${tokenA.symbol}.svg`}
               alt=""
-              onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+              onError={(e) => (e.currentTarget.src = tokenA.logoURI || '/img/crypto/Unknown.svg')}
             />
           </SMALL_CLICKER_ICON>
           <span className={'token-name'}>
@@ -742,7 +750,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
             <img
               src={`/img/crypto/${tokenB.symbol}.svg`}
               alt=""
-              onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+              onError={(e) => (e.currentTarget.src = tokenB.logoURI || '/img/crypto/Unknown.svg')}
             />
           </SMALL_CLICKER_ICON>
           <span className={'token-name'}>

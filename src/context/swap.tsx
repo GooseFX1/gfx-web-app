@@ -34,6 +34,7 @@ export interface ISwapToken {
   decimals: number
   symbol: string
   name?: string
+  logoURI?: string
 }
 
 interface ISwapConfig {

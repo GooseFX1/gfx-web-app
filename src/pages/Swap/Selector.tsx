@@ -237,19 +237,19 @@ export const Selector: FC<{
           </MAGNIFYING_GLASS>
         </INPUT>
         <BODY>
-          {filteredTokens.map(({ address, chainId, decimals, name, symbol, imageURL }, index) => (
+          {filteredTokens.map(({ address, chainId, decimals, name, symbol, imageURL, logoURI }, index) => (
             <TOKEN
               key={index}
               onClick={async () => {
-                setToken({ address, decimals, symbol, name })
+                setToken({ address, decimals, symbol, name, logoURI })
                 setVisible(false)
               }}
             >
               <TOKEN_ICON>
                 <img
-                  src={imageURL}
+                  src={imageURL || logoURI}
                   alt="token-icon"
-                  onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+                  onError={(e) => (e.currentTarget.src = logoURI || '/img/crypto/Unknown.svg')}
                 />
               </TOKEN_ICON>
               <TOKEN_INFO>
@@ -269,7 +269,7 @@ export const Selector: FC<{
                   <img
                     src={`/img/crypto/${token.symbol}.svg`}
                     alt="active-icon"
-                    onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+                    onError={(e) => (e.currentTarget.src = token.logoURI || '/img/crypto/Unknown.svg')}
                   />
                 </CLICKER_ICON>
                 <span className={'text-primary'}>{token.symbol}</span>

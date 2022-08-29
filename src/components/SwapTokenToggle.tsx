@@ -4,12 +4,12 @@ import { CenteredImg, SpaceBetweenDiv, CenteredDiv } from '../styles'
 import tw from 'twin.macro'
 
 const WRAPPER = styled(SpaceBetweenDiv)`
-  padding: 0.75rem 1.5rem 0.75rem 1.5rem;
+  padding: 0.75rem 1.5rem 0.75rem 0rem;
   border-radius: 12px;
   margin-bottom: 2rem;
-  width: 240px;
+  width: 200px;
   float: right;
-  background-color: ${({ theme }) => theme.bg1};
+  background-color: inherit;
 
   div {
     &:nth-child(2) {
@@ -27,15 +27,16 @@ const Toggle = styled(CenteredDiv)<{ $mode: number }>`
   width: 50px;
   border-radius: 40px;
   margin-right: ${({ theme }) => theme.margin(5)};
+  box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.25);
   background: ${({ $mode }) =>
     $mode === 0
-      ? 'linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%);'
+      ? 'linear-gradient(263.3deg,#f7931a 2.39%,#ac1cc7 97.61%);'
       : 'linear-gradient(96.79deg, #5855FF 4.25%, #DC1FFF 97.61%);'};
   &:hover {
     cursor: pointer;
   }
   > div {
-    ${({ theme }) => theme.measurements(theme.margin(2.5))}
+    ${({ theme }) => theme.measurements(theme.margin(3.125))}
     ${({ theme }) => theme.roundedBorders}
     background-color: #fff;
     font-weight: 600;
@@ -61,7 +62,7 @@ export const SwapTokenToggle: FC<{ toggleToken: () => void; tokenA: any; tokenB:
         <img
           src={`/img/crypto/${tokenA?.symbol}.svg`}
           alt="inputToken"
-          onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+          onError={(e) => (e.currentTarget.src = tokenA.logoURI || '/img/crypto/Unknown.svg')}
         />
       </CLICKER_ICON>
 
@@ -73,7 +74,7 @@ export const SwapTokenToggle: FC<{ toggleToken: () => void; tokenA: any; tokenB:
         <img
           src={`/img/crypto/${tokenB?.symbol}.svg`}
           alt="outputToken"
-          onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+          onError={(e) => (e.currentTarget.src = tokenB.logoURI || '/img/crypto/Unknown.svg')}
         />
       </CLICKER_ICON>
     </WRAPPER>
