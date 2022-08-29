@@ -740,7 +740,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
             <img
               src={`/img/crypto/${tokenA.symbol}.svg`}
               alt=""
-              onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+              onError={(e) => (e.currentTarget.src = tokenA.logoURI || '/img/crypto/Unknown.svg')}
             />
           </SMALL_CLICKER_ICON>
           <span className={'token-name'}>
@@ -750,7 +750,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
             <img
               src={`/img/crypto/${tokenB.symbol}.svg`}
               alt=""
-              onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+              onError={(e) => (e.currentTarget.src = tokenB.logoURI || '/img/crypto/Unknown.svg')}
             />
           </SMALL_CLICKER_ICON>
           <span className={'token-name'}>

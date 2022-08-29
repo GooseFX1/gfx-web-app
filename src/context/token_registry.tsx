@@ -26,9 +26,11 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
       const list = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
       const newList = await (await fetch(TOKEN_LIST_URL[network])).json()
 
-      const splList = newList //we cannot use the full list because of limited icons (795 tokens) and loading time, so we'll keep on using the name addition for now
+      const manualList = newList //we cannot use the full list because of limited icons (795 tokens) and loading time, so we'll keep on using the name addition for now
         .filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
-      //.filter(({ address }) => !TOKEN_BLACKLIST.includes(address)) // no need for blacklist as all tokens should work
+      const jupiterList = newList.filter(({ symbol }) => !SUPPORTED_TOKEN_LIST.includes(symbol)).slice(20, 100)
+      const splList = [...manualList, ...jupiterList]
+
       let farmSupportedList = list.filter(({ symbol }) => FARM_SUPPORTED_TOKEN_LIST.includes(symbol))
       //TODO: Add filteredList from solana-spl-registry back
       //setFarmingTokens()

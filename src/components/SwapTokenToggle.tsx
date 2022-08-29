@@ -62,7 +62,7 @@ export const SwapTokenToggle: FC<{ toggleToken: () => void; tokenA: any; tokenB:
         <img
           src={`/img/crypto/${tokenA?.symbol}.svg`}
           alt="inputToken"
-          onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+          onError={(e) => (e.currentTarget.src = tokenA.logoURI || '/img/crypto/Unknown.svg')}
         />
       </CLICKER_ICON>
 
@@ -74,7 +74,7 @@ export const SwapTokenToggle: FC<{ toggleToken: () => void; tokenA: any; tokenB:
         <img
           src={`/img/crypto/${tokenB?.symbol}.svg`}
           alt="outputToken"
-          onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
+          onError={(e) => (e.currentTarget.src = tokenB.logoURI || '/img/crypto/Unknown.svg')}
         />
       </CLICKER_ICON>
     </WRAPPER>
