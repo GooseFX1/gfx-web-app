@@ -1,6 +1,7 @@
 {
   "name": "gfx-web-app",
   "version": "0.1.0",
+  "license": "MIT",
   "dependencies": {
     "@civic/solana-gateway-react": "^0.7.5",
     "@craco/craco": "^6.2.0",
