@@ -120,7 +120,7 @@ const SmallerTitle = styled.div`
   text-fill-color: transparent;
 `
 const TokenHeader = styled.div`
-  ${tw`flex flex-col w-full mb-4.5`}
+  ${tw`flex flex-col w-full mb-4.5 items-center`}
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
@@ -158,8 +158,12 @@ const ListWrapper = styled.div`
   ${tw`w-full sm:flex sm:py-3 flex-wrap`}
 `
 
+const TokenListWrapper = styled(ListWrapper)`
+  ${tw`ml-[30%] sm:ml-0 sm:w-full sm:items-center`}
+`
+
 const SubHeader = styled.div`
-  ${tw`h-12`}
+  ${tw`ml-0 sm:ml-0 h-12`}
 `
 
 const Socials = styled.div`
@@ -626,7 +630,7 @@ const TokenContent: FC = () => {
           </COPY>
         </SubHeader>
       </TokenHeader>
-      <ListWrapper>
+      <TokenListWrapper>
         {(!toggle ? tokenDetails : tokenDetailsB).map((detail) => (
           <AltTokenDetail key={detail.name}>
             <TokenTitle>{detail.name}</TokenTitle>
@@ -635,7 +639,7 @@ const TokenContent: FC = () => {
             </SmallTitle>
           </AltTokenDetail>
         ))}
-      </ListWrapper>
+      </TokenListWrapper>
       <Socials>
         {socials.map((social) => (
           <SocialsButton key={social.name} onClick={() => window.open(social.link, '_blank')}>
