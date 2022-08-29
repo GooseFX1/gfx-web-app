@@ -36,7 +36,7 @@ export interface INFTProfileConfig {
   userActivity: Array<INFTUserActivity>
   setUserActivity: Dispatch<SetStateAction<INFTUserActivity[]>>
   fetchUserActivity: (id: number) => Promise<any>
-  likeDislike: Function
+  likeDislike: (user_id: number, nft_id: any) => Promise<any>
   nonSessionProfile: INFTProfile
   fetchNonSessionProfile: (type: UserFetchType, parameter: string | number, connection: Connection) => Promise<any>
   nonSessionUserParsedAccounts: ParsedAccount[]

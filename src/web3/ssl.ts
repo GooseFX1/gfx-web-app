@@ -472,7 +472,7 @@ export const executeDeposit = async (
   const amountInNative = amount * Math.pow(10, getTokenDecimal(network, tokenName))
 
   try {
-    let liquidityAccData = (await connection.getAccountInfo(liquidityAccountKey)).data
+    const liquidityAccData = (await connection.getAccountInfo(liquidityAccountKey)).data
     return depositAmount(
       amountInNative,
       network,

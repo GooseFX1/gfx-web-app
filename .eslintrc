@@ -1,0 +1,58 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "plugins": ["@typescript-eslint", "unused-imports", "react", "import"],
+  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+  "rules": {
+    "import/prefer-default-export": "off",
+    "semi": "off",
+    "camelcase": "off",
+    "import/extensions": "off",
+    "import/no-cycle": "off",
+    "object-curly-newline": "off",
+    "implicit-arrow-linebreak": "off",
+    "@typescript-eslint/no-explicit-any": "off", //main remvoals, the rest warning will be turned to errors later on
+    "no-console": "warn",
+    "import/no-unresolved": "warn", // change to "error"
+    "max-len": ["warn", { "code": 120 }],
+    "comma-dangle": "warn",
+    "no-unused-vars": "warn", // change to "error"
+    "arrow-body-style": "warn",
+    "no-new": "warn",
+    "no-param-reassign": "warn", // change to "error"
+    "@typescript-eslint/no-inferrable-types": "warn",
+    "@typescript-eslint/ban-ts-comment": "warn",
+    "no-empty": "warn", // change to "error"
+    "@typescript-eslint/no-var-requires": "warn",
+    "@typescript-eslint/no-this-alias": "warn",
+    "@typescript-eslint/ban-types": "warn",
+    "no-var": "warn", // change to "error"
+    "no-prototype-builtins": "warn",
+    "prefer-const": "warn", // change to "error"
+    "react/prop-types": "warn",
+    "no-async-promise-executor": "warn",
+    "@typescript-eslint/no-empty-function": "warn",
+    "react/jsx-key": "warn",
+    "no-empty-pattern": "warn",
+    "react/jsx-no-target-blank": "warn",
+    "react/no-unescaped-entities": "warn",
+    "prefer-spread": "warn"
+  },
+  "globals": {
+    "React": true,
+    "JSX": true
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true // always try to resolve types under `<root>@types` directory even it doesn't contain any source code, like `@types/unist`
+      }
+    }
+  }
+}

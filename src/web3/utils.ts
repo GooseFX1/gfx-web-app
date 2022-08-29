@@ -64,7 +64,7 @@ export const simulateTransaction = async (
 
   signers.forEach((signer) => transaction.partialSign(signer))
 
-  let sim = await connection.simulateTransaction(transaction)
+  const sim = await connection.simulateTransaction(transaction)
 
   return sim
 }
@@ -120,7 +120,7 @@ export const resolveDomainToWalletAddress = async ({
 
 // TODO: reconcile this function with other similar definition in the codebase
 export const findProgramAddress = async (seeds: (Buffer | Uint8Array)[], programId: PublicKey) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  // eslint-disable-next-line
   const localStorage = useLocalStorage()
   const key: string = `pda-${seeds.reduce((agg, item) => agg + item.toString('hex'), '')}${programId.toString()}`
 

@@ -142,7 +142,7 @@ export const swap = async (
     }
 
     const finalResult = await signAndSendRawTransaction(connection, txn, wallet)
-    let result = finalResult ? await connection.confirmTransaction(finalResult) : null
+    const result = finalResult ? await connection.confirmTransaction(finalResult) : null
 
     if (!result.value.err) {
       return finalResult
