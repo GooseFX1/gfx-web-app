@@ -98,8 +98,8 @@ export const uploadFiles = async (data) => {
 
 export const saveData = async (data: ICreatorData) => {
   try {
-    const url = 'http://localhost:4000' + NFT_LAUNCHPAD_API_ENDPOINTS.SAVE_DATA
-    //const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.SAVE_DATA
+    //const url = 'http://localhost:4000' + NFT_LAUNCHPAD_API_ENDPOINTS.SAVE_DATA
+    const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.SAVE_DATA
     let dataToSend = JSON.stringify({
       data: data
     })
