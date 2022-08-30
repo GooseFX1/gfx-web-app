@@ -1,3 +1,4 @@
+import { NFT_LAUNCHPAD_API_ENDPOINTS } from './../NFTLaunchpad/constants'
 import axios from 'axios'
 import { ANALYTICS_API_ENDPOINTS, SOLSCAN_BASE, localhost } from './constants'
 
@@ -12,7 +13,9 @@ export const getGofxHolders = async () => {
 
 export const getTotalLiquidityVolume = async () => {
   try {
-    const { data } = await axios(`${localhost}${ANALYTICS_API_ENDPOINTS.GET_LIQUIDITY}`)
+    const { data } = await axios(
+      `${NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE}${ANALYTICS_API_ENDPOINTS.GET_LIQUIDITY}`
+    )
     return data
   } catch (err) {
     return err
