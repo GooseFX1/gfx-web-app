@@ -200,7 +200,7 @@ export interface IFarmData {
 //#endregion
 
 export const TableList = ({ dataSource }: any) => {
-  const { prices, priceFetched } = usePriceFeedFarm()
+  const { prices, priceFetched, refreshTokenData } = usePriceFeedFarm()
   const { network, connection } = useConnectionConfig()
   const wallet = useWallet()
   const {
@@ -218,20 +218,15 @@ export const TableList = ({ dataSource }: any) => {
   const [mobileColumnData, setMobileColumnData] = useState(mobileColumns)
   const [farmData, setFarmData] = useState<IFarmData[]>([...farmDataContext, ...farmDataSSLContext])
   const [eKeys, setEKeys] = useState([])
-  const [allTokenPrices, setAllTokenPrices] = useState({})
   const PAGE_SIZE = 10
   const controllerStr = SDK_ADDRESS[getNetworkConnection(network)].GFX_CONTROLLER.toString()
-  const gofxPrice = useMemo(() => prices['GOFX/USDC'], [prices])
   const [sslVolume, setSslVolume] = useState<number>(0)
   const [stakeVolume, setStakeVolume] = useState<number>(0)
   const [liquidityObject, setLiquidityObject] = useState({})
   const [aprVolumeData, setAprVolumeData] = useState({})
 
   useEffect(() => {
-    setAllTokenPrices(() => setAllTokenPrices(prices))
-  }, [priceFetched, prices])
-
-  useEffect(() => {
+    refreshTokenData()
     ;(async () => {
       let SSLTokenNames = []
       const tokenMintAddresses = []
@@ -241,7 +236,11 @@ export const TableList = ({ dataSource }: any) => {
           const tokenMint = ADDRESSES[network].sslPool[SSLTokenNames[i]].address
           tokenMintAddresses.push(tokenMint)
         }
-        const { data } = await getVolumeApr(tokenMintAddresses, SSLTokenNames)
+        const { data } = await getVolumeApr(
+          tokenMintAddresses,
+          SSLTokenNames,
+          SDK_ADDRESS.MAINNET.GFX_CONTROLLER.toString()
+        )
         setAprVolumeData(data)
       }
     })()
@@ -376,10 +375,10 @@ export const TableList = ({ dataSource }: any) => {
         )
       }
     })()
-  }, [accountKey, counter, connection])
+  }, [accountKey, counter, connection, priceFetched])
 
   useEffect(() => {
-    if (gofxPrice !== undefined) {
+    if (priceFetched) {
       fetchGOFXData(accountKey)
         .then((farmData) => {
           if (farmData.length > 0) {
@@ -388,7 +387,7 @@ export const TableList = ({ dataSource }: any) => {
         })
         .catch((err) => console.log(err))
     }
-  }, [accountKey, gofxPrice, counter])
+  }, [accountKey, counter, priceFetched])
 
   useEffect(() => {
     // this useEffect is to monitor staking and SSL pools button
@@ -431,13 +430,13 @@ export const TableList = ({ dataSource }: any) => {
             earned: accountData.tokenEarned ? Math.max(accountData.tokenEarned, 0) : 0,
             apr: APR * 100,
             rewards: dailyRewards,
-            liquidity: gofxPrice.current * liqidity,
+            liquidity: getTokenPrice(TOKEN_NAMES.GOFX).current * liqidity,
             currentlyStaked: currentlyStaked,
             volume: '-'
           }
         } else return data
       })
-      setStakeVolume(gofxPrice.current * liqidity)
+      setStakeVolume(getTokenPrice(TOKEN_NAMES.GOFX).current * liqidity)
       return newFarmDataContext
     } catch (err) {
       console.log(err)

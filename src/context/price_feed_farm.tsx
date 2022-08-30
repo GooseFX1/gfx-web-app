@@ -33,19 +33,7 @@ const PriceFeedFarmContext = createContext<IPriceFeedConfig | null>(null)
 
 export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [prices, setPrices] = useState<IPrices>({})
-  const { connection } = useConnectionConfig()
   const [priceFetched, setPriceFetched] = useState<boolean>(false)
-
-  useEffect(() => {
-    let cancelled = false
-
-    if (!cancelled && !priceFetched) {
-      refreshTokenData()
-    }
-    return () => {
-      cancelled = true
-    }
-  }, [connection])
 
   const refreshTokenData = async () => {
     const PAIR_LIST = [...FARM_TOKEN_LIST]
