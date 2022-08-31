@@ -576,9 +576,7 @@ export const NestQuestSingleListing: FC<{
                         GooseFX platform. There will be six total levels and tiers of NFTs as you evolve through the
                         process. Higher tier NFTs will be extremely limited and the rewards will be vast. The first step
                         is to connect your Tier 1 Egg NFT and incubate it for 30 days. We will be tracking usage amongst
-                        our platform with on-chain analytics. The training has paid off and the Hatchling has evolved
-                        into a much stronger Gosling. The Gosling still emits a dangerous flame from its mouth which
-                        appears to be related to its prior Aura. Additional training is required to evolve again.
+                        our platform with on-chain analytics. Visit nestquest.io for all details.
                       </DESCRIPTION>
                     </TabPane>
                     <TabPane tab="Team" key="2">
