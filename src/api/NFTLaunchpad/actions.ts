@@ -1,7 +1,7 @@
 import { customClient } from '../../api'
 import { ICreatorData } from '../../types/nft_launchpad'
 import { NFT_LAUNCHPAD_API_ENDPOINTS } from '../NFTLaunchpad/constants'
-const axios = require('axios')
+import axios from 'axios'
 
 export const fetchAllNFTLaunchpadData = async () => {
   try {
@@ -18,7 +18,7 @@ export const fetchSelectedNFTLPData = async (urlName: string) => {
     const data = JSON.stringify({
       urlName: urlName
     })
-    const config = {
+    const config: { method: 'post'; url: string; headers: { 'Content-Type': string }; data: any } = {
       method: 'post',
       url: NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.GET_SELECTED_LAUNCH,
       headers: {
@@ -39,8 +39,8 @@ export const isCreatorAllowed = async (walletAddress: string) => {
     const data = JSON.stringify({
         walletAddress: walletAddress
       }),
-      config = {
-        method: 'POST',
+      config: { method: 'post'; url: string; headers: { 'Content-Type': string }; data: any } = {
+        method: 'post',
         //url: 'http://localhost:4000' + NFT_LAUNCHPAD_API_ENDPOINTS.IS_CREATOR_ALLOWED,
         url: NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.IS_CREATOR_ALLOWED,
         headers: {
@@ -59,8 +59,8 @@ export const isAdminAllowed = async (walletAddress: string) => {
     const data = JSON.stringify({
         walletAddress: walletAddress
       }),
-      config = {
-        method: 'POST',
+      config: { method: 'post'; url: string; headers: { 'Content-Type': string }; data: any } = {
+        method: 'post',
         //url: PROD_URL + NFT_LAUNCHPAD_API_ENDPOINTS.IS_ADMIN_ALLOWED,
         url: NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.IS_ADMIN_ALLOWED,
         headers: {

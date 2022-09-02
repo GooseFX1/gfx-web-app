@@ -33,7 +33,7 @@ import tw from 'twin.macro'
 import JSBI from 'jsbi'
 import { logData } from '../../api'
 
-const CoinGecko = require('coingecko-api')
+import CoinGecko from 'coingecko-api'
 const CoinGeckoClient = new CoinGecko()
 
 const WRAPPER = styled.div`

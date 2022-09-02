@@ -6,6 +6,7 @@ import { Connection, PublicKey, Transaction, TransactionSignature } from '@solan
 import { ADDRESSES } from './ids'
 import { createAssociatedTokenAccountIx, findAssociatedTokenAddress, signAndSendRawTransaction } from './utils'
 import { ISwapToken } from '../context'
+//eslint-disable-next-line
 const SwapIDL = require('./idl/swap.json')
 
 const getSwapProgram = (wallet: WalletContextState, connection: Connection, network: WalletAdapterNetwork): Program =>

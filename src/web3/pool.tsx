@@ -6,7 +6,7 @@ import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstructi
 import { ADDRESSES } from './ids'
 import { createAssociatedTokenAccountIx, findAssociatedTokenAddress, signAndSendRawTransaction } from './utils'
 
-const PoolIDL = require('./idl/pool.json')
+import PoolIDL from './idl/pool.json'
 
 export const track = async (tracker: PublicKey, trackerAccount: PublicKey, connection: Connection) => {
   const signers = [
@@ -227,7 +227,7 @@ const deposit = async (
 
 const getPoolProgram = (wallet: WalletContextState, connection: Connection, network: WalletAdapterNetwork): Program =>
   new Program(
-    PoolIDL,
+    PoolIDL as any,
     ADDRESSES[network].programs.pool.address,
     new Provider(connection, wallet as any, { commitment: 'processed' })
   )
