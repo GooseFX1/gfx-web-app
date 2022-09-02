@@ -3,12 +3,12 @@ import styled from 'styled-components'
 import { Row, Col } from 'antd'
 import { PrivacyPolicy } from './PrivacyPolicy'
 import { TermsOfService } from './TermsOfService'
-import { useConnectionConfig } from '../../context'
+//import { useConnectionConfig } from '../../context'
 import { APP_LAYOUT_FOOTER_HEIGHT, APP_LAYOUT_FOOTER_HEIGHT_MOBILE, SpaceBetweenDiv } from '../../styles'
 import { SOCIAL_MEDIAS } from '../../constants'
 import { SVGDynamicReverseMode } from '../../styles/utils'
 import { checkMobile } from '../../utils'
-import { ThemeToggle } from '../../components/ThemeToggle'
+//import { ThemeToggle } from '../../components/ThemeToggle'
 import { useLocation } from 'react-router-dom'
 
 const SOCIAL_ICON = styled.button`
@@ -76,7 +76,7 @@ const LINK = styled.a`
 `
 
 export const Footer: FC = () => {
-  const { network } = useConnectionConfig()
+  //const { network } = useConnectionConfig()
   const [privacyPolicyVisible, setPrivacyPolicyVisible] = useState(false)
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState(false)
   const location = useLocation()
@@ -91,22 +91,22 @@ export const Footer: FC = () => {
         {/* <ThemeToggle /> */}
         <AltRow justify="space-between" align="middle">
           <Col span={2}>
-            <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.medium)}>
+            <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.medium)}>
               <SVGDynamicReverseMode src="/img/assets/medium_small.svg" alt="domain-icon" />
             </SOCIAL_ICON>
           </Col>
           <Col span={2}>
-            <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.discord)}>
+            <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.discord)}>
               <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
             </SOCIAL_ICON>
           </Col>
           <Col span={2}>
-            <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.telegram)}>
+            <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.telegram)}>
               <SVGDynamicReverseMode src="/img/assets/telegram_small.svg" alt="domain-icon" />
             </SOCIAL_ICON>
           </Col>
           <Col span={2}>
-            <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.twitter)}>
+            <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.twitter)}>
               <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
             </SOCIAL_ICON>
           </Col>
@@ -140,22 +140,22 @@ export const Footer: FC = () => {
 
       <Row justify="space-between" align="middle">
         <Col span={2}>
-          <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.medium)}>
+          <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.medium)}>
             <SVGDynamicReverseMode src="/img/assets/medium_small.svg" alt="domain-icon" />
           </SOCIAL_ICON>
         </Col>
         <Col span={2}>
-          <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.discord)}>
+          <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.discord)}>
             <SVGDynamicReverseMode src="/img/assets/discord_small.svg" alt="discord-icon" />
           </SOCIAL_ICON>
         </Col>
         <Col span={2}>
-          <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.telegram)}>
+          <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.telegram)}>
             <SVGDynamicReverseMode src="/img/assets/telegram_small.svg" alt="domain-icon" />
           </SOCIAL_ICON>
         </Col>
         <Col span={2}>
-          <SOCIAL_ICON onClick={(e) => window.open(SOCIAL_MEDIAS.twitter)}>
+          <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.twitter)}>
             <SVGDynamicReverseMode src="/img/assets/twitter_small.svg" alt="twitter-icon" />
           </SOCIAL_ICON>
         </Col>

@@ -38,23 +38,22 @@ type Props = {
   selectPercentage: (num: number) => void
 }
 
-export const Donate = ({ label, desc, percents, selectPercentage }: Props) => {
-  return (
-    <STYLED_DONATE align="middle">
-      <Col span={12}>
-        <LabelSection isIcon label={label} size="20px" />
-        <div className="description">{desc}</div>
-      </Col>
-      <Col span={12}>
-        <div className="percents">
-          {percents.map((per, index) => (
-            <div
-              className={`item ${index === 0 ? 'active' : ''}`}
-              onClick={(e) => selectPercentage(per)}
-            >{`${per}%`}</div>
-          ))}
-        </div>
-      </Col>
-    </STYLED_DONATE>
-  )
-}
+export const Donate = ({ label, desc, percents, selectPercentage }: Props) => (
+  <STYLED_DONATE align="middle">
+    <Col span={12}>
+      <LabelSection isIcon label={label} size="20px" />
+      <div className="description">{desc}</div>
+    </Col>
+    <Col span={12}>
+      <div className="percents">
+        {percents.map((per, index) => (
+          <div
+            className={`item ${index === 0 ? 'active' : ''}`}
+            onClick={() => selectPercentage(per)}
+            key={index}
+          >{`${per}%`}</div>
+        ))}
+      </div>
+    </Col>
+  </STYLED_DONATE>
+)

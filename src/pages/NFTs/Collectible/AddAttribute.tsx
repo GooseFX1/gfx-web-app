@@ -162,22 +162,21 @@ const STYLED_ADD_BODY = styled.div`
 `
 
 const STYLED_ADD_MORE_BTN = styled(Button)`
-  ${({ theme }) => `
-    width: 143px;
-    height: 45px;
-    border-radius: 29px;
+  width: 143px;
+  height: 45px;
+  border-radius: 29px;
+  background-color: #3735bb;
+  color: #fff;
+  border: none;
+  margin-left: auto;
+  margin-right: 0;
+  display: block;
+  &:hover,
+  &:focus {
     background-color: #3735bb;
     color: #fff;
-    border: none;
-    margin-left: auto;
-    margin-right: 0;
-    display: block;
-    &:hover, &:focus {
-      background-color: #3735bb;
-      color: #fff;
-      opacity: 0.8;
-    }
-  `}
+    opacity: 0.8;
+  }
 `
 //#endregion
 

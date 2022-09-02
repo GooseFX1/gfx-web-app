@@ -15,7 +15,6 @@ import { useConnectionConfig } from '../../../../context'
 import { Share } from '../../Share'
 import { copyToClipboard } from '../../Collection/CollectionHeader'
 import { Connect } from '../../../../layouts/App/Connect'
-import * as anchor from '@project-serum/anchor'
 
 const MINT_BUTTON_BAR = styled.div`
   @media (max-width: 500px) {
@@ -77,11 +76,11 @@ const WHITELIST_SPOTS = styled.div`
 `
 
 const CONNECT_WRAPPER = styled.div`
- @media(max-width: 500px){
-  margin: 0;
- }
+  @media (max-width: 500px) {
+    margin: 0;
+  }
   margin: auto;
-  > button{
+  > button {
     width: 260px;
     height: 50px;
     background: #6b33b0;
@@ -113,7 +112,7 @@ export const MintButtonFunc = ({
   const [webSocketSubscriptionId, setWebSocketSubscriptionId] = useState(-1)
   const [clicked, setClicked] = useState(false)
   const [visible, setVisible] = useState(false)
-  const handleShare = () => {}
+  //const handleShare = () => {}
   const onShare = async (social: string) => {
     if (social === 'copy link') {
       copyToClipboard()
@@ -247,11 +246,17 @@ export const MintButtonFunc = ({
             <WHITELIST_SPOTS>{'You have ' + getWhitelistSpots() + ' spots left!'}</WHITELIST_SPOTS>
           )}
         </>
-      ) : !wallet.wallet ? <CONNECT_WRAPPER><Connect /></CONNECT_WRAPPER> : (<>
-        <MINT_BTN active={false}>JOIN WAITLIST</MINT_BTN>
-      </>)}
+      ) : !wallet.wallet ? (
+        <CONNECT_WRAPPER>
+          <Connect />
+        </CONNECT_WRAPPER>
+      ) : (
+        <>
+          <MINT_BTN active={false}>JOIN WAITLIST</MINT_BTN>
+        </>
+      )}
       <SHARE_BTN onClick={() => setVisible(true)}>
-          <img src="/img/assets/shareBlue.svg" />
+        <img src="/img/assets/shareBlue.svg" />
       </SHARE_BTN>
     </MINT_BUTTON_BAR>
   )

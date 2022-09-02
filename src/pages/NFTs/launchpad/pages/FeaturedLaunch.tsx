@@ -152,7 +152,7 @@ export const FeaturedLaunch: FC<{
   status?: MintItemViewStatus
   backUrl?: string
   arbData?: INFTMetadata
-}> = ({ status = '', backUrl, handleClickPrimaryButton, ...rest }) => {
+}> = ({ ...rest }) => {
   const history = useHistory()
   // const { connected, publicKey } = useWallet()
   // const { setVisible: setModalVisible } = useWalletModal()

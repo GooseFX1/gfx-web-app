@@ -22,6 +22,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
   const [upcomingCollections, setUpcomingCollections] = useState<Array<NFTUpcomingCollection>>([])
   const [nftMenuPopup, setNFTMenuPopup] = useState<boolean>(false)
 
+  //eslint-disable-next-line
   const fetchAllCollections = useCallback(async (loadingCallback: (isLoading: boolean) => void) => {
     try {
       const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS)
@@ -40,6 +41,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
     }
   }, [])
 
+  //eslint-disable-next-line
   const fetchUpcomingCollections = useCallback(async (loadingCallback: (isLoading: boolean) => void) => {
     try {
       const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.UPCOMING_COLLECTIONS)

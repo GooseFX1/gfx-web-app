@@ -137,27 +137,27 @@ export const InfoBanner: FC<{
   const tokenInfos = useMemo(() => tokenInfo[selectedCrypto.pair], [tokenInfo[selectedCrypto.pair]])
   const formatDisplayVolume = (volume) => {
     if (!volume) return null
-    let stringLength = volume.length
+    const stringLength = volume.length
     if (stringLength < 6) return volume
     else {
-      let [numberBeforeDecimal, numberAfterDecimal] = volume.split('.'),
-        reverseNumber = numberBeforeDecimal.split('').reverse().join(''),
-        answer = ''
+      const [numberBeforeDecimal, numberAfterDecimal] = volume.split('.'),
+        reverseNumber = numberBeforeDecimal.split('').reverse().join('')
+      let answer = ''
       for (let i = 0; i < reverseNumber.length; i++) {
         answer += reverseNumber.substring(i, i + 1)
         if (i % 3 === 2 && i !== reverseNumber.length - 1) answer = answer + ','
       }
-      let reversedResult = answer.split('').reverse().join('')
+      const reversedResult = answer.split('').reverse().join('')
       return reversedResult + '.' + numberAfterDecimal
     }
   }
 
   const calculateRangeValue = (range, marketData) => {
     if (!range || !range.min || !range.max || !marketData || !marketData.current) return { bars: 0 }
-    let difference = +range.max - +range.min,
+    const difference = +range.max - +range.min,
       size = difference / 6,
-      price = marketData.current,
-      bars = 0
+      price = marketData.current
+    let bars = 0
 
     for (let i = 0; i < 6; i++) {
       if (price < +range.min + size * (i + 1)) {
@@ -168,14 +168,14 @@ export const InfoBanner: FC<{
     return bars
   }
 
-  let volume = tokenInfos && tokenInfos.volume
-  let displayVolume = useMemo(() => formatDisplayVolume(volume), [selectedCrypto.pair, volume])
+  const volume = tokenInfos && tokenInfos.volume
+  const displayVolume = useMemo(() => formatDisplayVolume(volume), [selectedCrypto.pair, volume])
 
-  let range = tokenInfos && tokenInfos.range,
+  const range = tokenInfos && tokenInfos.range,
     bars = useMemo(() => calculateRangeValue(range, marketData), [selectedCrypto.pair, range])
 
-  let changeValue = tokenInfos ? tokenInfos.change : ' ',
-    classNameChange = ''
+  const changeValue = tokenInfos ? tokenInfos.change : ' '
+  let classNameChange = ''
   if (changeValue && changeValue.substring(0, 1) === '-') classNameChange = 'down24h'
   else if (changeValue && changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
 

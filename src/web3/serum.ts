@@ -49,7 +49,7 @@ const subscribeToOrderBook = async (
   connection: Connection,
   market: Market,
   side: MarketSide,
-  callback: (account: AccountInfo<Buffer>, market: Market) => void
+  callback: (account: AccountInfo<Buffer>, market: Market) => void //eslint-disable-line
 ): Promise<number> => {
   return connection.onAccountChange(market.decoded[side], (account) => callback(account, market))
 }

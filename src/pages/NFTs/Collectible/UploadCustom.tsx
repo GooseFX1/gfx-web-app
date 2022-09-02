@@ -146,18 +146,11 @@ interface Props {
   setDisabled: (value: boolean) => void
 }
 
-export const UploadCustom = ({
-  setPreviewImage,
-  setFilesForUpload,
-  nftMintingData,
-  setNftMintingData,
-  setS3Link,
-  setDisabled
-}: Props) => {
+export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingData, setNftMintingData }: Props) => {
   const [coverArtError, setCoverArtError] = useState<string>()
   // const [coverFile, setCoverFile] = useState<File | undefined>()
-  const [mainFile, setMainFile] = useState<File | undefined>()
-  const [customURL, setCustomURL] = useState<string>('')
+  const [mainFile] = useState<File | undefined>()
+  const [customURL] = useState<string>('')
   const [localFile, setLocalFile] = useState<any>(null)
   const [upload, setUpload] = useState<any>(false)
 
@@ -189,7 +182,7 @@ export const UploadCustom = ({
   }, [nftMintingData?.image, upload])
 
   const handleFileChange = async (info: UploadChangeParam<UploadFile<any>>) => {
-    let mainFile = info.fileList[0]
+    const mainFile = info.fileList[0]
 
     if (mainFile) {
       mainFile.error = null

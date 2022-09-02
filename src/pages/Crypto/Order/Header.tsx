@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
-import { CryptoSelector } from './CryptoSelector'
+//import { CryptoSelector } from './CryptoSelector'
 import { OrderSide, useCrypto, useOrder, usePriceFeed } from '../../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../../styles'
 
@@ -59,7 +59,7 @@ const SIDE = styled(SpaceBetweenDiv)<{ $display: boolean; $side: OrderSide }>`
     left: ${({ $side }) => ($side === 'buy' ? '-10' : '70')}%;
     width: 43%;
     height: 2px;
-    background-color: ${({ theme, $display, $side }) => theme[$side === 'buy' ? 'bids' : 'asks']};
+    background-color: ${({ theme, $side }) => theme[$side === 'buy' ? 'bids' : 'asks']};
     transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;
   }
 

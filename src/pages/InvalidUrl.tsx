@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { MainButton } from '../components'
 import { useDarkMode } from '../context'
@@ -70,7 +70,7 @@ export const GenericNotFound = () => {
           status={'action'}
           width={'267px'}
           radius={'20px'}
-          onClick={(e) => history.push('/swap')}
+          onClick={() => history.push('/swap')}
         >
           <span> Go Back Home</span>
         </HOME_BTN>

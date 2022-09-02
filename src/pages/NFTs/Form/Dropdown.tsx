@@ -48,7 +48,7 @@ const Overlay: FC<{
   open: boolean
   setOpen: (val: boolean) => void
   doOverlay: (val: boolean) => void
-}> = ({ setArrowRotation, setCurrentTitle, setDropdownVisible, days, open, setOpen, doOverlay }) => {
+}> = ({ setArrowRotation, setCurrentTitle, setDropdownVisible, days, setOpen, doOverlay }) => {
   const handleClick = useCallback(
     (name: string) => {
       setArrowRotation(false)
@@ -111,7 +111,7 @@ export const Dropdown = ({ days }: DropdownProps) => {
 
   const [open, setOpen] = useState(false)
 
-  const onChangeDate = (date, dtStr) => {}
+  const onChangeDate = () => {} // (date, dtStr) => {}
 
   const onOk = ({ value, doOverlay }) => {
     setCurrentTitle(value.format('YYYY-MM-DD HH:mm'))

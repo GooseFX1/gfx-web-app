@@ -95,7 +95,7 @@ interface IToggle {
   [x: string]: any
 }
 
-export const Toggle = ({ text, defaultChecked, checkedChildren, unCheckedChildren, className, ...rest }: IToggle) => {
+export const Toggle = ({ text, defaultChecked, checkedChildren, unCheckedChildren, className }: IToggle) => {
   const { toggleDeposited } = useFarmContext()
   return (
     <STYLED_TOGGLE>

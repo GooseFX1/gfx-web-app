@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, FC } from 'react'
 import styled from 'styled-components'
 import { CheckOutlined } from '@ant-design/icons'
 
@@ -169,27 +169,25 @@ const VESTING_WRAPPER = styled.div`
   }
 `
 
-export const Vesting = ({ currency, str }) => {
-  return (
-    <>
-      <VESTING_WRAPPER>
-        <div className="wrapper">
-          <img className="currencyImg" src={`/img/crypto/${currency}.svg`} alt="currency" />
-          <div className="raisedText">{`${currency} raised:`}</div>
-        </div>
+export const Vesting: FC<{ currency?: any; str?: string }> = ({ currency }) => (
+  <>
+    <VESTING_WRAPPER>
+      <div className="wrapper">
+        <img className="currencyImg" src={`/img/crypto/${currency}.svg`} alt="currency" />
+        <div className="raisedText">{`${currency} raised:`}</div>
+      </div>
 
-        <div className="vestingStr">
-          <span className="percentText">{`50% `}</span>
-          unlocked upfront,
-          <span className="percentText">{`25% `}</span>
-          after 3 months,
-          <span className="percentText">{`25% `}</span>
-          after 6 months.
-        </div>
-      </VESTING_WRAPPER>
-    </>
-  )
-}
+      <div className="vestingStr">
+        <span className="percentText">{`50% `}</span>
+        unlocked upfront,
+        <span className="percentText">{`25% `}</span>
+        after 3 months,
+        <span className="percentText">{`25% `}</span>
+        after 6 months.
+      </div>
+    </VESTING_WRAPPER>
+  </>
+)
 
 export const ShareInternal = ({ socials, handleShare }: any) => {
   const [selectedItem, setSelectedItem] = useState<string>()
@@ -205,7 +203,7 @@ export const ShareInternal = ({ socials, handleShare }: any) => {
       <p className="share">Share it with your friends!</p>
       <div className="social-list">
         {socials.map((item: string) => (
-          <div className="social-item" key={item} onClick={(e) => handleClick(item)}>
+          <div className="social-item" key={item} onClick={() => handleClick(item)}>
             <div className="social-icon">
               {item === selectedItem ? (
                 <CheckOutlined className={'social-icon--img'} />

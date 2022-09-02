@@ -2,7 +2,7 @@ import { useState, useEffect, FC, useRef } from 'react'
 import styled, { css } from 'styled-components'
 import { Row, Col } from 'antd'
 import { Card } from './Card'
-import { useNFTCollections, useNFTProfile } from '../../../context'
+import { useNFTCollections } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { Loader } from '../../../components'
 import debounce from 'lodash.debounce'
@@ -32,18 +32,18 @@ const NO_CONTENT = styled.div`
     margin-bottom: 20px;
   }
 `
-const EMPTY_MSG = styled.div`
-  ${({ theme }) => theme.flexCenter}
-  width: 100%;
-`
+// const EMPTY_MSG = styled.div`
+//   ${({ theme }) => theme.flexCenter}
+//   width: 100%;
+// `
 const WRAPPED_LOADER = styled.div`
   position: relative;
   height: 48px;
 `
 
-export const OpenBidsTabContent = ({ filter, setCollapse, ...rest }) => {
+export const OpenBidsTabContent: FC<{ filter: any; setCollapse?: (x: any) => void }> = ({ filter, ...rest }) => {
   const { openBidWithinCollection } = useNFTCollections()
-  const { sessionUser } = useNFTProfile()
+  //const { sessionUser } = useNFTProfile()
   const paginationNum = 12
 
   const [fileredLocalOpenBid, _setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>(Array.apply(null, Array(21)))

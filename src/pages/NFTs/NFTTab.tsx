@@ -66,16 +66,14 @@ type Props = {
   isExplore?: boolean
 }
 
-export const NFTTab = ({ tabPanes, isExplore, defaultActiveKey = '1' }: Props) => {
-  return (
-    <NFT_TAB>
-      <Tabs defaultActiveKey={defaultActiveKey} centered className="profile-tab-container">
-        {tabPanes.map((tab) => (
-          <TabPane tab={tab.name} key={tab.order} className="profile-tab-pane">
-            {tab.component}
-          </TabPane>
-        ))}
-      </Tabs>
-    </NFT_TAB>
-  )
-}
+export const NFTTab = ({ tabPanes, defaultActiveKey = '1' }: Props) => (
+  <NFT_TAB>
+    <Tabs defaultActiveKey={defaultActiveKey} centered className="profile-tab-container">
+      {tabPanes.map((tab) => (
+        <TabPane tab={tab.name} key={tab.order} className="profile-tab-pane">
+          {tab.component}
+        </TabPane>
+      ))}
+    </Tabs>
+  </NFT_TAB>
+)

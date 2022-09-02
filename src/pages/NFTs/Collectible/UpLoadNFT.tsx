@@ -98,28 +98,28 @@ const INPUT_SECTION = styled.div`
   justify-content: space-between;
 `
 
-const SPACE = styled.div`
-  width: ${({ theme }) => theme.margin(6)};
-`
+// const SPACE = styled.div`
+//   width: ${({ theme }) => theme.margin(6)};
+// `
 
 const BUTTON_SECTION = styled.div`
   display: flex;
   justify-content: flex-end;
 `
 
-const FLAT_BUTTON = styled.button`
-  height: 60px;
-  width: 200px;
-  padding: ${({ theme }) => `${theme.margin(2)} ${theme.margin(6)}`};
-  text-align: center;
-  color: ${({ theme }) => theme.white};
-  background: transparent;
-  margin-top: ${({ theme }) => theme.margin(5)};
-  margin-right: ${({ theme }) => theme.margin(2)};
-  border: none;
-  ${({ theme }) => theme.roundedBorders};
-  cursor: pointer;
-`
+// const FLAT_BUTTON = styled.button`
+//   height: 60px;
+//   width: 200px;
+//   padding: ${({ theme }) => `${theme.margin(2)} ${theme.margin(6)}`};
+//   text-align: center;
+//   color: ${({ theme }) => theme.white};
+//   background: transparent;
+//   margin-top: ${({ theme }) => theme.margin(5)};
+//   margin-right: ${({ theme }) => theme.margin(2)};
+//   border: none;
+//   ${({ theme }) => theme.roundedBorders};
+//   cursor: pointer;
+// `
 
 const NEXT_BUTTON = styled.button`
   height: 60px;

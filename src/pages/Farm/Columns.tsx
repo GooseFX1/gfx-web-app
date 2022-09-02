@@ -104,7 +104,8 @@ export const columns = [
   {
     title: Title(
       'Total Earned',
-      'The total profit and loss from SSL and is measured by comparing the total value of a pool’s assets (excluding trading fees) to their value if they had not been traded and instead were just held',
+      `The total profit and loss from SSL and is measured by comparing the total value of a pool’s assets (
+        excluding trading fees) to their value if they had not been traded and instead were just held`,
       true
     ),
     dataIndex: 'earned',
@@ -180,17 +181,13 @@ export const mobileColumns = [
   {
     title: (
       <RefreshIcon href="/farm">
-        <img
-          style={{ display: 'block', margin: 'auto'}}
-          src={'/img/assets/refresh.svg'}
-          alt="refresh"
-        />
+        <img style={{ display: 'block', margin: 'auto' }} src={'/img/assets/refresh.svg'} alt="refresh" />
       </RefreshIcon>
     ),
     dataIndex: 'apr',
     key: 'apr',
     width: '30%',
-    render: (text) => (
+    render: () => (
       <ICON_WRAPPER>
         <img className="arrow-down" src={`/img/assets/arrow-down-large.svg`} alt="arrow" />
       </ICON_WRAPPER>

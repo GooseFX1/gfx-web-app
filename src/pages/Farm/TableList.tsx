@@ -1,11 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { Program, Provider } from '@project-serum/anchor'
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { fetchSSLVolumeData, fetchSSLAPR, saveLiquidtyVolume, getVolumeApr } from '../../api/SSL'
+import { saveLiquidtyVolume, getVolumeApr } from '../../api/SSL'
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
 import styled, { css } from 'styled-components'
 import { Table } from 'antd'
-import BN from 'bn.js'
+//import BN from 'bn.js'
 import { columns, mobileColumns } from './Columns'
 import { ExpandedDynamicContent } from './ExpandedDynamicContent'
 import {
@@ -23,7 +23,7 @@ import { SSL_LAYOUT, LIQUIDITY_ACCOUNT_LAYOUT, CONTROLLER_LAYOUT, ADDRESSES as S
 import { useConnectionConfig, usePriceFeedFarm, useFarmContext } from '../../context'
 import { ADDRESSES } from '../../web3'
 import { MorePoolsSoon } from './MorePoolsSoon'
-import { NATIVE_MINT } from '@solana/spl-token-v2'
+//import { NATIVE_MINT } from '@solana/spl-token-v2'
 import { CONTROLLER_IDL, SSL_IDL } from 'goosefx-ssl-sdk'
 import { NETWORK_CONSTANTS, TOKEN_NAMES } from '../../constants'
 import { checkMobile } from '../../utils'
@@ -199,6 +199,7 @@ export interface IFarmData {
 }
 //#endregion
 
+//eslint-disable-next-line
 export const TableList = ({ dataSource }: any) => {
   const { prices, priceFetched, refreshTokenData } = usePriceFeedFarm()
   const { network, connection } = useConnectionConfig()
@@ -214,12 +215,12 @@ export const TableList = ({ dataSource }: any) => {
     setFarmDataSSLContext
   } = useFarmContext()
   const [accountKey, setAccountKey] = useState<PublicKey>()
-  const [columnData, setColumnData] = useState(columns)
-  const [mobileColumnData, setMobileColumnData] = useState(mobileColumns)
+  const [columnData] = useState(columns)
+  const [mobileColumnData] = useState(mobileColumns)
   const [farmData, setFarmData] = useState<IFarmData[]>([...farmDataContext, ...farmDataSSLContext])
   const [eKeys, setEKeys] = useState([])
-  const PAGE_SIZE = 10
-  const controllerStr = SDK_ADDRESS[getNetworkConnection(network)].GFX_CONTROLLER.toString()
+  //const PAGE_SIZE = 10
+  //const controllerStr = SDK_ADDRESS[getNetworkConnection(network)].GFX_CONTROLLER.toString()
   const [sslVolume, setSslVolume] = useState<number>(0)
   const [stakeVolume, setStakeVolume] = useState<number>(0)
   const [liquidityObject, setLiquidityObject] = useState({})
@@ -228,7 +229,7 @@ export const TableList = ({ dataSource }: any) => {
   useEffect(() => {
     refreshTokenData()
     ;(async () => {
-      let SSLTokenNames = []
+      const SSLTokenNames = []
       const tokenMintAddresses = []
       if (network !== NETWORK_CONSTANTS.DEVNET) {
         farmDataSSLContext.map((data) => SSLTokenNames.push(data.name))
@@ -303,7 +304,7 @@ export const TableList = ({ dataSource }: any) => {
   const calculateBalances = (sslAccountData, mainVault, liquidityAccountData, SSLTokenNames: string[]) => {
     const farmCalculationsArr = []
     let totalLiquidity = 0
-    let liqObj = {}
+    const liqObj = {}
     for (let i = 0; i < sslAccountData.length; i++) {
       const { data } = sslAccountData[i]
       const sslData = SSL_LAYOUT.decode(data)
@@ -314,7 +315,7 @@ export const TableList = ({ dataSource }: any) => {
       const liquidityAccount = liquidityData ? LIQUIDITY_ACCOUNT_LAYOUT.decode(liquidityData) : undefined
       const tokenPrice = getTokenPrice(tokenName).current
       //@ts-ignore
-      let liquidity = mainVaultData.amount + sslData.swappedLiabilityNative
+      const liquidity = mainVaultData.amount + sslData.swappedLiabilityNative
       const ptMinted = liquidityAccount ? liquidityAccount.ptMinted : 0
       //@ts-ignore
       const userLiablity = liquidityAccount ? (liquidity * liquidityAccount.share) / sslData.totalShare : 0n
@@ -354,7 +355,7 @@ export const TableList = ({ dataSource }: any) => {
   useEffect(() => {
     ;(async () => {
       if (priceFetched) {
-        let SSLTokenNames = []
+        const SSLTokenNames = []
         farmDataSSLContext.map((data) => SSLTokenNames.push(data.name))
         const SSLAccountKeys = []
         const liquidityAccountKeys = []
@@ -408,6 +409,7 @@ export const TableList = ({ dataSource }: any) => {
     setFarmData(farmDataStaked)
   }, [poolFilter, searchFilter, showDeposited, farmDataContext, farmDataSSLContext, priceFetched])
 
+  //eslint-disable-next-line
   const fetchGOFXData = async (accountKey: PublicKey) => {
     try {
       // pool data take this function to context

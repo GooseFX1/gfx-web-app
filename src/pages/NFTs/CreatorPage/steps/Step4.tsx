@@ -124,7 +124,7 @@ export const Step4: FC = () => {
   const [nextButtonActive, setNextButtonActive] = useState<boolean>(false)
 
   const fileConstraints = (file) => {
-    let extension = file.name.split('.')[1]
+    const extension = file.name.split('.')[1]
     if ((extension === '7z' || extension === 'rar' || extension === 'zip') && file.size < 200 * 1024 * 1024) {
       notify({
         message: 'Please wait for the upload to finish it may take a while...'
@@ -140,7 +140,7 @@ export const Step4: FC = () => {
     }
   }
 
-  let creatorStepData: ICreatorData[4] = {
+  const creatorStepData: ICreatorData[4] = {
     delayedReveal: isDelayedReveal,
     uploadedFiles: imageLink
   }
@@ -185,7 +185,7 @@ export const Step4: FC = () => {
           </Row>
           <div className="next-day-label">Create a zip flie with all NFT's, we will take care of the rest!</div>
           <div tw="w-9/12">
-            <FileDrop onDrop={(files, event) => fileConstraints(files[0])}>
+            <FileDrop onDrop={(files) => fileConstraints(files[0])}>
               {!imageLink ? 'Drag and drop a file to upload or' : ''}
               {!imageLink ? (
                 <>

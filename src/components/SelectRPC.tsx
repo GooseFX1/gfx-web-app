@@ -15,7 +15,7 @@ const WRAPPER = styled(SpaceBetweenDiv)<{ mode: string }>`
   ${({ theme }) => theme.largeBorderRadius};
 
   .arrow-icon {
-    filter: ${({ theme, mode }) => (mode === 'dark' ? 'invert' : 'brightness(1)')};
+    filter: ${({ mode }) => (mode === 'dark' ? 'invert' : 'brightness(1)')};
   }
 
   span {

@@ -1,5 +1,5 @@
 import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
-import { Input, Switch } from 'antd'
+import { Input } from 'antd'
 import styled, { css } from 'styled-components'
 import { FieldHeader } from './shared'
 import { useDarkMode, useCrypto, useOrder } from '../../../context'

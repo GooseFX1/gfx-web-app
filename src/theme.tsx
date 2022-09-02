@@ -117,8 +117,8 @@ export function colors(mode: string): Colors {
       mode === 'dark'
         ? 'linear-gradient(142.39deg, #c922f7 21.76%, rgba(71, 51, 194, 0) 67.58%);'
         : 'linear-gradient(141.56deg, #C922F7 22.12%, rgba(71, 51, 194, 0.78) 77.26%);',
-    infoDivBackground:
-      'linear-gradient(0deg, rgba(116, 116, 116, 0.2), rgba(116, 116, 116, 0.2)), linear-gradient(94.33deg, rgba(247, 147, 26, 0.3) 5.26%, rgba(224, 60, 255, 0.3) 96.87%);',
+    infoDivBackground: `linear-gradient(0deg, rgba(116, 116, 116, 0.2), rgba(116, 116, 116, 0.2)), 
+      linear-gradient(94.33deg, rgba(247, 147, 26, 0.3) 5.26%, rgba(224, 60, 255, 0.3) 96.87%);`,
 
     modalBackground: mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(96, 96, 96, 0.5)',
     bgReward:
@@ -210,7 +210,8 @@ export function colors(mode: string): Colors {
     tabContentBidBackground: mode === 'dark' ? '#2A2A2A' : '#fff',
     tabContentBidFooterBackground:
       mode === 'dark'
-        ? 'radial-gradient(81.62% 135.01% at 15.32% 21.04%, rgba(255, 255, 255, 0.05) 0%, rgba(141, 141, 141, 0.05) 68.23%, rgba(255, 255, 255, 0.05) 77.08%, rgba(255, 255, 255, 0.0315) 100%)'
+        ? `radial-gradient(81.62% 135.01% at 15.32% 21.04%, rgba(255, 255, 255, 0.05) 0%, 
+        rgba(141, 141, 141, 0.05) 68.23%, rgba(255, 255, 255, 0.05) 77.08%, rgba(255, 255, 255, 0.0315) 100%)`
         : 'rgba(64, 64, 64, 0.02)',
     borderColorTabBidFooter: mode === 'dark' ? '#131313' : '#EAEAEA',
 

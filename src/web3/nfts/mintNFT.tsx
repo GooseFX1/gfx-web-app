@@ -105,8 +105,6 @@ export const mintNFT = async (
 
   progressCallback(1)
 
-  const TOKEN_PROGRAM_ID = programIds().token
-
   // Allocate memory for the account
   const mintRent = await connection.getMinimumBalanceForRentExemption(MintLayout.span)
   // const accountRent = await connection.getMinimumBalanceForRentExemption(
@@ -210,7 +208,7 @@ export const mintNFT = async (
   const metadataFile = result.messages?.find((m) => m.filename === RESERVED_TXN_MANIFEST)
   if (metadataFile?.transactionId && wallet.publicKey) {
     const updateInstructions: TransactionInstruction[] = []
-    const updateSigners: Keypair[] = []
+    //const updateSigners: Keypair[] = []
 
     // TODO: connect to testnet arweave
     const arweaveLink = `https://arweave.net/${metadataFile.transactionId}`
@@ -268,7 +266,7 @@ export const mintNFT = async (
 
     progressCallback(8)
 
-    const txid = await sendTransactionWithRetry(connection, wallet, updateInstructions, updateSigners)
+    //const txid = await sendTransactionWithRetry(connection, wallet, updateInstructions, updateSigners)
 
     console.log({
       message: 'Art created on Solana',
@@ -294,7 +292,7 @@ export const mintNFT = async (
 export const prepPayForFilesTxn = async (
   wallet: WalletContextState,
   files: File[],
-  metadata: any
+  metadata: any //eslint-disable-line
 ): Promise<{
   instructions: TransactionInstruction[]
   signers: Keypair[]

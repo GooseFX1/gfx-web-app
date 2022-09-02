@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState, useCallback, MouseEventHandler } from 'react'
-import { Row, Col, Progress } from 'antd'
+import { Row, Col } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -15,7 +15,7 @@ import { Tabs } from 'antd'
 import { TokenToggle } from '../../../components/TokenToggle'
 import { Share } from '../Share'
 import { generateTinyURL } from '../../../api/tinyUrl'
-import { moneyFormatter, notify } from '../../../utils'
+import { notify } from '../../../utils'
 import { GatewayProvider } from '@civic/solana-gateway-react'
 import { Transaction, sendAndConfirmRawTransaction } from '@solana/web3.js'
 import tw from 'twin.macro'
@@ -179,7 +179,8 @@ const PILL_SECONDARY = styled.div<{ $mode: string }>`
   background: ${({ $mode }) =>
     $mode === 'dark'
       ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)'
-      : 'linear-gradient(to bottom, rgba(116, 116, 116, 0.2), rgba(116, 116, 116, 0.2)), linear-gradient(to right, #f7931a 1%, #e03cff 100%), linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)'};
+      : `linear-gradient(to bottom, rgba(116, 116, 116, 0.2), rgba(116, 116, 116, 0.2)), 
+      linear-gradient(to right, #f7931a 1%, #e03cff 100%), linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)`};
   border-radius: 50px;
   width: 48%;
   height: 45px;
@@ -233,50 +234,50 @@ const DESCRIPTION = styled.p`
   color: ${({ theme }) => theme.text4};
 `
 
-const REMNANT = styled.p`
-  font-size: 16px;
-  line-height: 22px;
-  color: ${({ theme }) => theme.text1};
-  text-align: center;
-  margin: 0 0 0 4px;
+// const REMNANT = styled.p`
+//   font-size: 16px;
+//   line-height: 22px;
+//   color: ${({ theme }) => theme.text1};
+//   text-align: center;
+//   margin: 0 0 0 4px;
 
-  span {
-    color: #7d7d7d;
-  }
-`
+//   span {
+//     color: #7d7d7d;
+//   }
+// `
 
-const MINT_PROGRESS = styled(Progress)<{ num: number }>`
-  width: 75%;
-  .ant-progress-outer {
-    height: 50px;
-    margin-right: 0;
-    padding-right: 0;
-    .ant-progress-inner {
-      height: 100%;
-      background-color: ${({ theme }) => theme.bg1};
+// const MINT_PROGRESS = styled(Progress)<{ num: number }>`
+//   width: 75%;
+//   .ant-progress-outer {
+//     height: 50px;
+//     margin-right: 0;
+//     padding-right: 0;
+//     .ant-progress-inner {
+//       height: 100%;
+//       background-color: ${({ theme }) => theme.bg1};
 
-      .ant-progress-bg {
-        height: 100% !important;
-        background: linear-gradient(96.79deg, #5855ff 4.25%, #dc1fff 97.61%);
-      }
-    }
-  }
-  .ant-progress-text {
-    position: absolute;
-    top: 19px;
-    left: calc(${({ num }) => (num < 20 ? 20 : num)}% - 64px);
-  }
-`
+//       .ant-progress-bg {
+//         height: 100% !important;
+//         background: linear-gradient(96.79deg, #5855ff 4.25%, #dc1fff 97.61%);
+//       }
+//     }
+//   }
+//   .ant-progress-text {
+//     position: absolute;
+//     top: 19px;
+//     left: calc(${({ num }) => (num < 20 ? 20 : num)}% - 64px);
+//   }
+// `
 
-const MINT_PROGRESS_WRAPPER = styled.div`
-  width: 100%;
-  background-color: ${({ theme }) => theme.bg18};
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  border-radius: 15px;
-`
+// const MINT_PROGRESS_WRAPPER = styled.div`
+//   width: 100%;
+//   background-color: ${({ theme }) => theme.bg18};
+//   padding: 1rem;
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-around;
+//   border-radius: 15px;
+// `
 
 const CONNECT = styled(MainButton)`
   height: 50px;
@@ -378,7 +379,8 @@ export const onShare = async (social: string): Promise<void> => {
   switch (social) {
     case 'twitter':
       window.open(
-        `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`,
+        `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%
+        20Exchange&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`,
         '_blank'
       )
       break
@@ -401,7 +403,7 @@ export const NestQuestSingleListing: FC<{
   status?: MintItemViewStatus
   backUrl?: string
   arbData?: INFTMetadata
-}> = ({ status = '', backUrl, handleClickPrimaryButton, ...rest }) => {
+}> = ({ ...rest }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
   const { connected, publicKey, signTransaction } = useWallet()
@@ -455,19 +457,19 @@ export const NestQuestSingleListing: FC<{
       if (token === 'SOL') {
         setInsufficientToken(mintPrice >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false)
       } else {
-        setInsufficientToken(mintPrice >= getUIAmount(ADDRESSES[network].mints.GOFX.address.toBase58()) ? true : false)
+        setInsufficientToken(
+          mintPrice >= getUIAmount(ADDRESSES[network].mints.GOFX.address.toBase58()) ? true : false
+        )
       }
     }
   }, [connected, publicKey, getUIAmount, mintPrice, network, token])
 
-  const handleWalletModal: MouseEventHandler<HTMLButtonElement> = useCallback(
-    (event) => {
-      setModalVisible(true)
-    },
-    [setModalVisible]
-  )
+  const handleWalletModal: MouseEventHandler<HTMLButtonElement> = useCallback(() => {
+    setModalVisible(true)
+  }, [setModalVisible])
 
-  async function CivicTransaction(transaction: Transaction) {
+  async function CivicTransaction(txn: Transaction) {
+    let transaction = txn
     const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(publicKey!))
     if (userMustSign) {
       notify({
@@ -541,7 +543,8 @@ export const NestQuestSingleListing: FC<{
 
                       <PILL_SECONDARY $mode={mode}>
                         <div>
-                          {mintPrice} <img className="icon-image" src={`/img/crypto/${token}.svg`} alt="" /> {token}
+                          {mintPrice} <img className="icon-image" src={`/img/crypto/${token}.svg`} alt="" />{' '}
+                          {token}
                         </div>
                       </PILL_SECONDARY>
                     </div>
@@ -573,14 +576,17 @@ export const NestQuestSingleListing: FC<{
                     <TabPane tab="Summary" key="1">
                       <DESCRIPTION>
                         NestQuest is an interactive platform tutorial designed to reward participants for using the
-                        GooseFX platform. There will be six total levels and tiers of NFTs as you evolve through the
-                        process. Higher tier NFTs will be extremely limited and the rewards will be vast. The first step
-                        is to connect your Tier 1 Egg NFT and incubate it for 30 days. We will be tracking usage amongst
-                        our platform with on-chain analytics. Visit nestquest.io for all details.
+                        GooseFX platform. There will be six total levels and tiers of NFTs as you evolve through
+                        the process. Higher tier NFTs will be extremely limited and the rewards will be vast. The
+                        first step is to connect your Tier 1 Egg NFT and incubate it for 30 days. We will be
+                        tracking usage amongst our platform with on-chain analytics. Visit nestquest.io for all
+                        details.
                       </DESCRIPTION>
                     </TabPane>
                     <TabPane tab="Team" key="2">
-                      <DESCRIPTION>The Nestquest project is created and maintained by the GooseFX team.</DESCRIPTION>
+                      <DESCRIPTION>
+                        The Nestquest project is created and maintained by the GooseFX team.
+                      </DESCRIPTION>
                     </TabPane>
                   </Tabs>
                   <ACTION_BELOW>

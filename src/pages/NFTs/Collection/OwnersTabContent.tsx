@@ -1,13 +1,13 @@
-import { FC, useCallback, useEffect, useRef, useState } from 'react'
+import React, { FC } from 'react'
 import styled, { css } from 'styled-components'
 import { Row, Col, Image } from 'antd'
-import apiClient from '../../../api'
-import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
-import { relativeTimeThreshold } from 'moment'
-import { useNFTCollections, useNFTProfile } from '../../../context'
+// import apiClient from '../../../api'
+// import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
+// import { relativeTimeThreshold } from 'moment'
+import { useNFTCollections } from '../../../context'
 import { CollectionOwner } from '../../../types/nft_collections'
 
-let ownersData = [...Array(100).keys()]
+//let ownersData = [...Array(100).keys()]
 
 const OWNERS_TAB = styled(Row)`
   ${({ theme }) => css`
@@ -53,7 +53,7 @@ const NO_CONTENT = styled.div`
 
 const OWNERS_ITEM = styled(Col)``
 
-export const OwnersTabContent = ({ filter, setCollapse, ...rest }) => {
+export const OwnersTabContent: FC<{ filter?: any; setCollapse?: (x: any) => void }> = ({ ...rest }) => {
   const { collectionOwners } = useNFTCollections()
 
   return (

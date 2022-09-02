@@ -119,7 +119,7 @@ export const Share = ({ visible, handleCancel, socials, handleShare }: IShare) =
       <h1 className="title">Share</h1>
       <div className="social-list">
         {socials.map((item) => (
-          <div className="social-item" key={item} onClick={(e) => handleClick(item)}>
+          <div className="social-item" key={item} onClick={() => handleClick(item)}>
             <div className="social-icon">
               {item === selectedItem ? (
                 <CheckOutlined className={'social-icon--img'} />

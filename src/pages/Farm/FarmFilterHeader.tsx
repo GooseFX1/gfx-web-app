@@ -28,13 +28,14 @@ const STYLED_FARM_HEADER = styled.div`
   .selectedBackground {
     ${tw`text-white`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       background: none;
     }
   }
 `
 const STYLED_BUTTON = styled.button`
-  ${tw`sm:m-auto sm:w-1/3 cursor-pointer text-center border-none border-0 font-semibold text-base ml-[5px] mr-2.5 w-[112px] h-[44px] rounded-[36px]`}
+  ${tw`sm:m-auto sm:w-1/3 cursor-pointer text-center border-none border-0 
+  font-semibold text-base ml-[5px] mr-2.5 w-[112px] h-[44px] rounded-[36px]`}
   font-family: 'Montserrat';
   background: none;
   color: ${({ theme }) => theme.text17};
@@ -45,9 +46,9 @@ const STYLED_BUTTON = styled.button`
 
 const ButtonContainer = styled.div<{ $poolIndex: number }>`
   ${tw`relative z-0`}
-  .slider-animation{
+  .slider-animation {
     ${tw`absolute w-1/4 h-[44px] rounded-[36px] z-[-1]`}
-    left: ${({ $poolIndex }) => ($poolIndex * 33) + 4}%;
+    left: ${({ $poolIndex }) => $poolIndex * 33 + 4}%;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
@@ -73,24 +74,24 @@ export const FarmFilter = () => {
   const [poolIndex, setPoolIndex] = useState(0)
 
   const handleClick = (name, index) => {
-    setPoolFilter(name);
-    setPoolIndex(index);
+    setPoolFilter(name)
+    setPoolIndex(index)
   }
 
   if (checkMobile()) {
     return (
       <STYLED_FARM_HEADER>
         <ButtonContainer $poolIndex={poolIndex}>
-        <div className='slider-animation'></div>
+          <div className="slider-animation"></div>
           {poolTypes.map((pool, index) => (
-              <STYLED_BUTTON
-                disabled={operationPending}
-                key={pool.name}
-                onClick={() => handleClick(pool.name, index)}
-                className={pool.name === poolFilter ? 'selectedBackground' : ''}
-              >
-                {pool.name}
-              </STYLED_BUTTON>
+            <STYLED_BUTTON
+              disabled={operationPending}
+              key={pool.name}
+              onClick={() => handleClick(pool.name, index)}
+              className={pool.name === poolFilter ? 'selectedBackground' : ''}
+            >
+              {pool.name}
+            </STYLED_BUTTON>
           ))}
         </ButtonContainer>
         <Wrapper>

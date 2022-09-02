@@ -137,7 +137,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [focused, order.price, order.size, order.total, selectedCrypto.market])
 
   const throttleDelay = 300
-  let sizeThrottle: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
+  const sizeThrottle: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
   const floorSize = useCallback(async () => {
     sizeThrottle.current && clearTimeout(sizeThrottle.current)
     sizeThrottle.current = setTimeout(async () => {
@@ -148,7 +148,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     ;(async () => await floorSize())()
   }, [floorSize, order.size])
 
-  let priceThrottle: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
+  const priceThrottle: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
   const floorPrice = useCallback(async () => {
     priceThrottle.current && clearTimeout(priceThrottle.current)
     priceThrottle.current = setTimeout(async () => {

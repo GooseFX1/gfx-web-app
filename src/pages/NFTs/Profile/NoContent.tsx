@@ -76,7 +76,7 @@ const NoContent = ({ type }: Props) => {
   const history = useHistory()
   const obj = options[type]
 
-  const handleNoContentClick = (e) => {
+  const handleNoContentClick = () => {
     switch (type) {
       case 'collected':
         history.push('/NFTs')

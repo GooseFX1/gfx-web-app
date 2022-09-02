@@ -1,10 +1,10 @@
-import React, { BaseSyntheticEvent, FC, useMemo, useEffect } from 'react'
+import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { Input } from 'antd'
 import { Selector } from './Selector'
 import { AmountField } from './shared'
 import { useAccounts, useSwap } from '../../context'
-import { checkMobile } from '../../utils'
+//import { checkMobile } from '../../utils'
 
 const QUICK_SELECT = styled.div`
   margin-left: 23.5%;

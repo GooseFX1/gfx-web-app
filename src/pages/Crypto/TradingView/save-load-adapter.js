@@ -5,7 +5,7 @@ const STUDIES_KEY = 'tradingviewStudies'
 
 export function getAllCharts() {
   // @ts-ignore
-  let charts = JSON.parse(localStorage.getItem(CHARTS_KEY)) || []
+  const charts = JSON.parse(localStorage.getItem(CHARTS_KEY)) || []
   return new Promise((resolve) => resolve(charts))
 }
 
@@ -19,6 +19,7 @@ export function removeChart(chartId) {
 }
 
 export function saveChart(chartData) {
+  //eslint-disable-next-line
   let { content, ...info } = chartData
   if (!info.id) {
     info.id = 'chart' + Math.floor(Math.random() * 1e8)
@@ -29,7 +30,7 @@ export function saveChart(chartData) {
   content['content'] = JSON.parse(content['content'])
   // Remove "study_Overlay" i.e the indexes
   try {
-    for (var i = 0; i < content['content']['charts'][0]['panes'][0]['sources'].length; i++) {
+    for (let i = 0; i < content['content']['charts'][0]['panes'][0]['sources'].length; i++) {
       if (content['content']['charts'][0]['panes'][0]['sources'][i]['type'] === 'study_Overlay') {
         content['content']['charts'][0]['panes'][0]['sources'].splice(i, 1)
       }
@@ -50,13 +51,13 @@ export function saveChart(chartData) {
 }
 
 export function getChartContent(chartId) {
-  let content = localStorage.getItem(CHARTS_KEY + '.' + chartId)
+  const content = localStorage.getItem(CHARTS_KEY + '.' + chartId)
   return new Promise((resolve) => resolve(content))
 }
 
 export function getAllStudyTemplates() {
   // @ts-ignore
-  let studies = JSON.parse(localStorage.getItem(STUDIES_KEY)) || []
+  const studies = JSON.parse(localStorage.getItem(STUDIES_KEY)) || []
   return new Promise((resolve) => resolve(studies))
 }
 
@@ -80,6 +81,6 @@ export function saveStudyTemplate({ content, ...info }) {
 }
 
 export function getStudyTemplateContent({ name }) {
-  let content = localStorage.getItem(STUDIES_KEY + '.' + name)
+  const content = localStorage.getItem(STUDIES_KEY + '.' + name)
   return new Promise((resolve) => resolve(content))
 }

@@ -93,7 +93,7 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
   margin: 0.9% 0.25rem 0.9% 0.25rem;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   ${({ theme }) => theme.roundedBorders}
-  background-color: ${({ theme }) => '#2a2a2a'};
+  background-color: #2a2a2a;
   cursor: pointer;
   z-index: 1;
 
@@ -150,7 +150,7 @@ export const Selector: FC<{
   setToken: Dispatch<SetStateAction<ISwapToken | null>>
   token: ISwapToken | null
   balance?: number
-}> = ({ height, otherToken, setToken, token, balance }) => {
+}> = ({ height, otherToken, setToken, token }) => {
   const { mode } = useDarkMode()
   const { tokens } = useTokenRegistry()
   const { tokenA, tokenB } = useSwap()
@@ -190,18 +190,22 @@ export const Selector: FC<{
             ...filteredTokensListAlt?.[0],
             imageURL: `/img/crypto/${filteredTokensListAlt?.[0].symbol}.svg`
           })
-          window.localStorage.setItem('myAddedTokenList', JSON.stringify([...altTokens, filteredTokensListAlt?.[0]]))
+          window.localStorage.setItem(
+            'myAddedTokenList',
+            JSON.stringify([...altTokens, filteredTokensListAlt?.[0]])
+          )
         }
       }
 
       const filteredTokensList = tokenList
         .filter(
           ({ address, name, symbol }) =>
-            (r.test(name.split('(')[0]) || r.test(symbol) || filterKeywords === address) && //the split by "(" is to remove every string in name of token with (Portal) or (Sollet) or any other.
+            (r.test(name.split('(')[0]) || r.test(symbol) || filterKeywords === address) &&
+            //the split by "(" is to remove every string in name of token with (Portal) or (Sollet) or any other.
             (!otherToken || otherToken.address !== address)
         )
         .sort((a, b) => {
-          let fa = a.symbol.toLowerCase(),
+          const fa = a.symbol.toLowerCase(),
             fb = b.symbol.toLowerCase()
 
           if (fa < fb) {
@@ -237,7 +241,7 @@ export const Selector: FC<{
           </MAGNIFYING_GLASS>
         </INPUT>
         <BODY>
-          {filteredTokens.map(({ address, chainId, decimals, name, symbol, imageURL, logoURI }, index) => (
+          {filteredTokens.map(({ address, decimals, name, symbol, imageURL, logoURI }, index) => (
             <TOKEN
               key={index}
               onClick={async () => {
@@ -260,7 +264,7 @@ export const Selector: FC<{
           ))}
         </BODY>
       </Modal>
-      <SELECTOR $height={height} onClick={(e) => setVisible(true)}>
+      <SELECTOR $height={height} onClick={() => setVisible(true)}>
         <CLICKER>
           {token ? (
             <MainTokenDisplay>

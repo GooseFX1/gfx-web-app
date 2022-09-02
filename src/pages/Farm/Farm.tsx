@@ -5,7 +5,7 @@ import analytics from '../../analytics'
 import { TableList } from './TableList'
 import { FarmHeader } from './FarmHeader'
 import { useNavCollapse, FarmProvider, useConnectionConfig, ENDPOINTS, PriceFeedFarmProvider } from '../../context'
-import { notify, checkMobile } from '../../utils'
+import { notify } from '../../utils'
 import tw from 'twin.macro'
 import { logData } from '../../api'
 
@@ -39,6 +39,7 @@ const BODY = styled.div<{ $navCollapsed: boolean }>`
 `
 
 export const Farm: FC = () => {
+  //eslint-disable-next-line
   const [filter, setFilter] = useState<string>('')
   const { isCollapsed } = useNavCollapse()
   const { setEndpoint, network } = useConnectionConfig()
@@ -57,7 +58,7 @@ export const Farm: FC = () => {
     }
   }, [])
 
-  const onFilter = (val) => {
+  const onFilter = () => {
     // if (val === 'All pools') {
     //   setFilter('')
     //   return

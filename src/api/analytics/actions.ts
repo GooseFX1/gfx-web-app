@@ -1,6 +1,6 @@
 import { NFT_LAUNCHPAD_API_ENDPOINTS } from './../NFTLaunchpad/constants'
 import axios from 'axios'
-import { ANALYTICS_API_ENDPOINTS, SOLSCAN_BASE, localhost } from './constants'
+import { ANALYTICS_API_ENDPOINTS, SOLSCAN_BASE } from './constants'
 
 export const getGofxHolders = async () => {
   try {

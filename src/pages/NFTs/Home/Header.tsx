@@ -134,7 +134,7 @@ const AVATAR_NFT = styled(Image)`
   margin-right: ${({ theme }) => theme.margin(1.5)};
 `
 //#endregion
-
+//eslint-disable-next-line
 export const Header = ({ setFilter, filter, filteredCollections, totalCollections, setTotalCollections }) => {
   const history = useHistory()
   const { sessionUser, setUserCurrency } = useNFTProfile()

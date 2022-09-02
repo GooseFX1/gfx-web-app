@@ -8,7 +8,7 @@ interface IOverlay {
 const { Provider, Consumer: OverlayConsumer } = createContext<IOverlay | null>(null)
 
 const Styled = styled.div<{ isOverlay: boolean }>`
-  ${({ theme, isOverlay }) => css`
+  ${({ isOverlay }) => css`
     color: ${({ theme }) => theme.text1};
     display: flex;
     flex: 1;

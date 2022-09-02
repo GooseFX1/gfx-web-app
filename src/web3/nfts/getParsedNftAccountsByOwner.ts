@@ -18,8 +18,8 @@ export type Options = {
   limit?: number
 }
 
-enum sortKeys {
-  updateAuthority = 'updateAuthority'
+enum sortKeys { //eslint-disable-line
+  updateAuthority = 'updateAuthority' //eslint-disable-line
 }
 
 export const getParsedNftAccountsByOwner = async ({

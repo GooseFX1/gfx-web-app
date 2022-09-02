@@ -2,7 +2,7 @@ import React, { FC, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { useDarkMode } from '../../context'
-import { CenteredDiv, CenteredImg, SVGToGrey2, SVGToPrimary2, SVGToWhite } from '../../styles'
+import { CenteredDiv, CenteredImg, SVGToPrimary2, SVGToWhite } from '../../styles'
 import tw from 'twin.macro'
 
 const TABS = ['/swap', '/trade', '/NFTs', '/farm']
@@ -12,7 +12,7 @@ const LABEL = styled.span<{ $mode: string; $hover: boolean }>`
   width: 7vw;
   ${({ theme }) => theme.flexCenter}
   font-size: 14px;
-  color: ${({ $hover, $mode, theme }) =>
+  color: ${({ $hover, $mode }) =>
     $hover && $mode === 'dark'
       ? '#FFFFFF'
       : $hover && $mode !== 'dark'
@@ -21,7 +21,7 @@ const LABEL = styled.span<{ $mode: string; $hover: boolean }>`
       ? '#4E4E4E'
       : '#636363'};
   ${tw`h-3.5 w-[7vw] flex justify-center items-center text-smallest capitalize sm:text-regular`}
-  color: ${({ $hover, $mode, theme }) =>
+  color: ${({ $hover, $mode }) =>
     $hover && $mode === 'dark'
       ? '#FFFFFF'
       : $hover && $mode !== 'dark'
@@ -89,7 +89,7 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     }
 
     @media (max-width: 500px) {
-      ${({ $width }) =>
+      ${({}) =>
         [...Array(TABS.length).keys()].map(
           (x) => `
           &:nth-child(${x + 1}) {
@@ -110,7 +110,7 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
 
     &:after {
       width: calc((100% / ${TABS.length}) + ${({ theme }) => theme.margin(2)});
-      left: calc(${({ $index, $width }) => $index} * (100% / ${TABS.length}) - ${({ theme }) => theme.margin(1)});
+      left: calc(${({ $index }) => $index} * (100% / ${TABS.length}) - ${({ theme }) => theme.margin(1)});
     }
   }
 
@@ -140,7 +140,7 @@ interface IProps {
 export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
   const { mode } = useDarkMode()
   const { pathname } = useLocation()
-  const [hovered, setHovered] = useState(-1)
+  const [, setHovered] = useState(-1)
 
   const cleanedPathName = useMemo(() => {
     const match = pathname.slice(1).indexOf('/')
@@ -156,7 +156,7 @@ export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
           onMouseEnter={() => setHovered(index)}
           onMouseLeave={() => setHovered(-1)}
           to={path}
-          onClick={(e) => {
+          onClick={() => {
             if (props.mobileToggle) props.mobileToggle()
           }}
         >

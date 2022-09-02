@@ -191,12 +191,15 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
     switch (social) {
       case 'twitter':
         window.open(
-          `https://twitter.com/intent/tweet?text=Check%20out%20${currentUserProfile.nickname}s%20collection%20on%20Nest%20NFT%20Exchange%20&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
+          `https://twitter.com/intent/tweet?text=Check%20out%20${currentUserProfile.nickname}s
+          %20collection%20on%20Nest%20NFT%20Exchange%20&url=${tinyURL}&via=GooseFX1&
+          original_referer=${window.location.host}${window.location.pathname}`
         )
         break
       case 'telegram':
         window.open(
-          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20${currentUserProfile.nickname}s%20collection%20on%20Nest%20NFT%20Exchange%20`
+          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20${currentUserProfile.nickname}s
+          %20collection%20on%20Nest%20NFT%20Exchange%20`
         )
         break
       case 'facebook':
@@ -240,11 +243,12 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
           <h2 className="bm-title bm-title-bold">Escrow Account</h2>
           <MARGIN_VERTICAL>
             <p>
-              Your escrow account is currently holding a balance. This amount will go toward future bids or purchases if
-              you leave it in the account.
+              Your escrow account is currently holding a balance. This amount will go toward future bids or
+              purchases if you leave it in the account.
             </p>
             <p>
-              If you wish to withdraw the amount, you can return the amount to your wallet by settling the amount here.
+              If you wish to withdraw the amount, you can return the amount to your wallet by settling the amount
+              here.
             </p>
           </MARGIN_VERTICAL>
           <MARGIN_VERTICAL>
@@ -325,7 +329,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
         <div>
           {currentUserProfile === undefined ? (
             <div className="social-list">
-              {[1, 2, 3, 4].map((dn) => (
+              {[1, 2, 3, 4].map(() => (
                 <span className="social-item">
                   <SkeletonCommon width="35px" height="35px" borderRadius="50%" />
                 </span>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { AnalyticsTable } from './AnalyticsTable'
@@ -10,12 +10,10 @@ const WRAPPER = styled.div`
   height: 90vh;
 `
 
-const AnalyticsDashboard = () => {
-  return (
-    <WRAPPER>
-      <AnalyticsTable />
-    </WRAPPER>
-  )
-}
+const AnalyticsDashboard = () => (
+  <WRAPPER>
+    <AnalyticsTable />
+  </WRAPPER>
+)
 
 export default AnalyticsDashboard

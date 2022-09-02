@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { useNFTCollections, useNavCollapse } from '../../../context'
 import { useParams } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params'
-import { NFT_MENU } from '../Home/NFTHome'
+// import { NFT_MENU } from '../Home/NFTHome'
 import { ModalSlide } from '../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../constants'
 import { GenericNotFound } from '../../InvalidUrl'
@@ -23,7 +23,6 @@ export const Collection: FC = (): JSX.Element => {
     setSingleCollection,
     setFixedPriceWithinCollection,
     setOpenBidWithinCollection,
-    collectionOwners,
     setCollectionOwners,
     nftMenuPopup,
     setNFTMenuPopup
@@ -32,14 +31,15 @@ export const Collection: FC = (): JSX.Element => {
   const [filter, setFilter] = useState('')
   const [collapse, setCollapse] = useState(true)
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       setSingleCollection(undefined)
       setFixedPriceWithinCollection(undefined)
       setOpenBidWithinCollection(undefined)
       setCollectionOwners(undefined)
-    }
-  }, [])
+    },
+    []
+  )
 
   useEffect(() => {
     if (!singleCollection || `${singleCollection.collection_id}` !== params.collectionName) {
@@ -53,7 +53,9 @@ export const Collection: FC = (): JSX.Element => {
     }
 
     return () => {}
-  }, [fetchSingleCollection, params.collectionName]) //had to remove singleCollection useState trigger as it leads to infinite loop as setSingleCollection is called in fecthSingleCollection
+  }, [fetchSingleCollection, params.collectionName])
+  //had to remove singleCollection useState trigger as it leads to
+  // infinite loop as setSingleCollection is called in fecthSingleCollection
 
   return err ? (
     <GenericNotFound />
