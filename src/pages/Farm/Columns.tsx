@@ -180,17 +180,13 @@ export const mobileColumns = [
   {
     title: (
       <RefreshIcon href="/farm">
-        <img
-          style={{ display: 'block', margin: 'auto'}}
-          src={'/img/assets/refresh.svg'}
-          alt="refresh"
-        />
+        <img style={{ display: 'block', margin: 'auto' }} src={'/img/assets/refresh.svg'} alt="refresh" />
       </RefreshIcon>
     ),
     dataIndex: 'apr',
     key: 'apr',
     width: '30%',
-    render: (text) => (
+    render: () => (
       <ICON_WRAPPER>
         <img className="arrow-down" src={`/img/assets/arrow-down-large.svg`} alt="arrow" />
       </ICON_WRAPPER>

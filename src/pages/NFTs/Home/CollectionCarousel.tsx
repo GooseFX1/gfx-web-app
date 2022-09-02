@@ -4,7 +4,7 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import styled from 'styled-components'
 import { ArrowClicker, Loader } from '../../../components'
-import { ButtonWrapper } from '../NFTButton'
+//import { ButtonWrapper } from '../NFTButton'
 import NFTImageCarouselItem from './NFTImageCarouselItem'
 import { NFTBaseCollection, NFTFeaturedCollection, NFTUpcomingCollection } from '../../../types/nft_collections.d'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
@@ -51,18 +51,18 @@ const HEADER_END_CAROUSEL = styled.div`
   padding-right: ${({ theme }) => theme.margin(2)};
 `
 
-const LAUNCH_BUTTON = styled(ButtonWrapper)`
-  height: 40px;
-  background-color: ${({ theme }) => theme.primary2};
-  margin-right: ${({ theme }) => theme.margin(2)};
-`
+// const LAUNCH_BUTTON = styled(ButtonWrapper)`
+//   height: 40px;
+//   background-color: ${({ theme }) => theme.primary2};
+//   margin-right: ${({ theme }) => theme.margin(2)};
+// `
 
-const SORT_BUTTON = styled(ButtonWrapper)`
-  height: 40px;
-  background-color: ${({ theme }) => theme.secondary2};
-  margin-right: ${({ theme }) => theme.margin(2)};
-  justify-content: space-between;
-`
+// const SORT_BUTTON = styled(ButtonWrapper)`
+//   height: 40px;
+//   background-color: ${({ theme }) => theme.secondary2};
+//   margin-right: ${({ theme }) => theme.margin(2)};
+//   justify-content: space-between;
+// `
 
 const EMPTY_CAROUSEL = styled.div`
   display: flex;
@@ -102,7 +102,7 @@ export interface ICollectionCarousel {
   title?: string
 }
 
-const CollectionCarousel: FC<ICollectionCarousel> = ({ isLaunch, title, collections, collectionType, isLoading }) => {
+const CollectionCarousel: FC<ICollectionCarousel> = ({ title, collections, collectionType, isLoading }) => {
   const slickRef = React.useRef<any>()
 
   const slickNext = () => slickRef?.current?.slickNext()

@@ -512,7 +512,7 @@ export const SellNFT = () => {
       return (
         <REVIEW_SELL_MODAL
           title={null}
-          onOk={(e) => setReviewSellModal(false)}
+          onOk={() => setReviewSellModal(false)}
           onCancel={(bool: boolean) => {
             setIsLoading(bool)
             setPendingTxSig(undefined)

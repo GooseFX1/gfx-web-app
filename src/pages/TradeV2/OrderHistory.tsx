@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
 import { useCrypto, useTradeHistory } from '../../context'

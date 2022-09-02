@@ -128,7 +128,7 @@ const UPLOAD_SECTION = styled.div`
 
 const IMAGE_COUNT_DESC = styled(DESCRIPTION)`
   margin-top: ${({ theme }) => theme.margin(0.5)};
-  margin-bottom: ${({ theme }) => 0};
+  margin-bottom: 0;
   color: #fff !important;
   font-family: Montserrat;
   font-size: 14px;
@@ -140,7 +140,7 @@ const IMAGE_COUNT_DESC_NEW = styled(IMAGE_COUNT_DESC)`
 `
 const IMAGE_COUNT_DESC_CONTAINER = styled.div`
   margin-top: ${({ theme }) => theme.margin(0.5)};
-  margin-bottom: ${({ theme }) => 0};
+  margin-bottom: 0;
   width: 100%;
   justify-content: center;
   align-items: flex-start;
@@ -169,6 +169,7 @@ export const NftDrafts = (): JSX.Element => {
   const { mode } = useDarkMode()
   const { sessionUser } = useNFTProfile()
   const [drafts, setDrafts] = useState([])
+  //eslint-disable-next-line
   const [draftIsLoading, setDraftIsLoading] = useState<boolean>(true)
   const [trigger, setTrigger] = useState<boolean>(false)
   const [chosenDraft, setChosenDraft] = useState(null)
@@ -248,8 +249,8 @@ export const NftDrafts = (): JSX.Element => {
 
         <UPLOAD_SECTION>
           <div className={'section-content'}>
-            {drafts.map((draft) => (
-              <div className="full-drafts">
+            {drafts.map((draft, index) => (
+              <div className="full-drafts" key={index}>
                 <div className="close-drafts">
                   <FloatingActionButton
                     height={42}
@@ -297,9 +298,7 @@ export const NftDrafts = (): JSX.Element => {
               />
               <DELETE_TEXT>Are you sure you want to delete "#{chosenDraft?.draft_id}" from your drafts?</DELETE_TEXT>
 
-              <DELETE_BUTTON onClick={(e: any) => deleteAndRemoveDraft(chosenDraft?.draft_id)}>
-                Delete draft
-              </DELETE_BUTTON>
+              <DELETE_BUTTON onClick={() => deleteAndRemoveDraft(chosenDraft?.draft_id)}>Delete draft</DELETE_BUTTON>
               <SAVE_BUTTON onClick={() => setConfirmDeleteModal(false)}>Cancel</SAVE_BUTTON>
             </CONFIRM_DELETE>
           ) : (

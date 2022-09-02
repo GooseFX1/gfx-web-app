@@ -1,7 +1,7 @@
 import { Button } from 'antd'
-import React, { useState, FC, useMemo, useCallback } from 'react'
+import React, { useState, FC, useMemo } from 'react'
 import styled from 'styled-components'
-import { useAccounts, useCrypto, usePriceFeed, useTokenRegistry, useTradeHistory } from '../../context'
+import { useAccounts, useCrypto, useTokenRegistry, useTradeHistory } from '../../context'
 import { SettlePanel } from './SettlePanel'
 
 const tabs = ['Balances', 'Open Orders', 'Trade History']
@@ -128,14 +128,14 @@ const NO_ORDER = styled.div`
 `
 
 const OpenOrdersComponent: FC = () => {
-  const { formatPair, selectedCrypto, setSelectedCrypto } = useCrypto()
+  const { formatPair } = useCrypto()
   const { cancelOrder, loading, orders } = useTradeHistory()
 
   const content = useMemo(
     () => (
       <OPEN_ORDER>
         {orders.map((order, index) => (
-          <div>
+          <div key={index}>
             <span className={order.order.side}>{order.order.side}</span>
             <span>{order.order.size}</span>
             <span>${order.order.price}</span>
@@ -163,9 +163,9 @@ const OpenOrdersComponent: FC = () => {
 export const HistoryPanel: FC = () => {
   const [activeTab, setActiveTab] = useState(0)
   const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto } = useCrypto()
-  const { getPairFromMarketAddress, loading, openOrders, settleFunds, cancelOrder, orders } = useTradeHistory()
-  const { prices } = usePriceFeed()
-  const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
+  const { openOrders } = useTradeHistory()
+  //const { prices } = usePriceFeed()
+  //const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { getUIAmount } = useAccounts()
   const symbolBid = useMemo(
@@ -215,10 +215,10 @@ export const HistoryPanel: FC = () => {
   }
 
   const { market } = selectedCrypto
-  let openOrder, pair, baseAvailable, baseBalance, quoteAvailable, quoteBalance
+  let openOrder, baseAvailable, baseBalance, quoteAvailable, quoteBalance
   if (openOrders.length > 0) {
     openOrder = openOrders[0]
-    pair = getPairFromMarketAddress(openOrder.market)
+    //pair = getPairFromMarketAddress(openOrder.market)
     baseAvailable = market?.baseSplSizeToNumber(openOrder.baseTokenFree)
     baseBalance = market?.baseSplSizeToNumber(openOrder.baseTokenTotal.sub(openOrder.baseTokenFree))
     quoteAvailable = market?.quoteSplSizeToNumber(openOrder.quoteTokenFree)

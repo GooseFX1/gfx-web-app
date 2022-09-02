@@ -720,7 +720,7 @@ interface ISweepModal {
   purchasePrice?: string
 }
 
-export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice }: ISweepModal) => {
+export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal) => {
   const { mode } = useDarkMode()
   const { fixedPriceWithinCollection, singleCollection } = useNFTCollections()
   const { prices } = usePriceFeed()
@@ -903,7 +903,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
     e.preventDefault()
 
     const transaction = new Transaction()
-    let tempTokenAccount = [],
+    const tempTokenAccount = [],
       tempNftState = [],
       tempNftBatch = nftBatch.slice(0, dropdownSelection)
     tempNftState.length = nftBatch.length
@@ -916,10 +916,10 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
     for (let i = 0; i < tempNftBatch.length; i++) sum += tempNftBatch[i].price
 
     for (let i = 0; i < tempNftBatch.length; i++) {
-      let token_account = await getParsedAccountByMint({ mintAddress: tempNftBatch[i].mint_address, connection })
+      const token_account = await getParsedAccountByMint({ mintAddress: tempNftBatch[i].mint_address, connection })
       tempTokenAccount.push(token_account.pubkey)
 
-      let { metaDataAccount, escrowPaymentAccount, buyerTradeState, buyerPrice } = await derivePDAsForInstruction({
+      const { metaDataAccount, escrowPaymentAccount, buyerTradeState, buyerPrice } = await derivePDAsForInstruction({
         ...tempNftBatch[i],
         token_account: token_account.pubkey
       })
@@ -932,7 +932,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
           res = 0
         }
         if (sum - res > 0) {
-          let initialix = SystemProgram.transfer({
+          const initialix = SystemProgram.transfer({
             fromPubkey: publicKey,
             toPubkey: escrowPaymentAccount[0],
             lamports: sum - res
@@ -976,7 +976,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
         buyerTradeState[0]
       )
 
-      let buyIX: TransactionInstruction = await createBuyInstruction(buyInstructionAccounts, buyInstructionArgs)
+      const buyIX: TransactionInstruction = await createBuyInstruction(buyInstructionAccounts, buyInstructionArgs)
       transaction.add(buyIX)
     }
 
@@ -992,12 +992,12 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
 
       if (confirm.value.err === null) {
         for (let index = 0; index < tempNftBatch.length; index++) {
-          let item = tempNftBatch[index]
-          let state_array = nftState
+          const item = tempNftBatch[index]
+          const state_array = nftState
           state_array[index] = 0
           setNftState(state_array)
           setActiveSweepIndex(index)
-          let res = await postBidToAPI(signature, item.price, { ...item, token_account: tempTokenAccount[index] })
+          const res = await postBidToAPI(signature, item.price, { ...item, token_account: tempTokenAccount[index] })
           if (res.data && res.data.bid_matched && res.data.tx_sig) {
             state_array[index] = 1
             setNftState(state_array)
@@ -1050,16 +1050,17 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
   }
 
   const sortNft = () => {
-    let nft_prices = fixedPriceWithinCollection.nft_prices,
-      nft_data = fixedPriceWithinCollection.nft_data,
+    const nft_prices = fixedPriceWithinCollection.nft_prices,
       size = fixedPriceWithinCollection.nft_data.length < 10 ? fixedPriceWithinCollection.nft_data.length : 10
+    let nft_data = fixedPriceWithinCollection.nft_data
+
     for (let i = 0; i < nft_prices.length; i++) {
       for (let j = 0; j < nft_prices.length - i - 1; j++) {
         if (+nft_prices[j] > +nft_prices[j + 1]) {
-          let temp = nft_prices[j + 1]
+          const temp = nft_prices[j + 1]
           nft_prices[j + 1] = nft_prices[j]
           nft_prices[j] = temp
-          let temp1 = { ...nft_data[j] },
+          const temp1 = { ...nft_data[j] },
             temp2 = { ...nft_data[j + 1] }
           nft_data[j] = temp2
           nft_data[j + 1] = temp1
@@ -1073,7 +1074,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
   }
 
   const handleClick = (e) => {
-    let index = +e.key
+    const index = +e.key
     setDropdownSelection(index)
   }
 
@@ -1227,7 +1228,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
                     <Slider {...settings}>
                       {nftBatch.map((item, index) => {
                         return index < dropdownSelection ? (
-                          <SLIDER_ITEM>
+                          <SLIDER_ITEM key={index}>
                             <Card
                               cover={<img className="nft-img" src={item.image_url} alt="NFT" />}
                               className={'sweep-card ' + (nftState[index] === -1 ? 'failed' : '')}
@@ -1339,7 +1340,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
                     <Slider {...settings}>
                       {nftBatch.map((item, index) => {
                         return (
-                          <SLIDER_ITEM>
+                          <SLIDER_ITEM key={index}>
                             <Card
                               cover={<img className="nft-img" src={item.image_url} alt="NFT" />}
                               className="sweep-card"
@@ -1441,10 +1442,11 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible, purchasePrice
                     <Slider {...settings_sweep} ref={sliderRef}>
                       <div></div>
                       {nftBatch.slice(0, dropdownSelection).map((item, index) => {
-                        let showSlide = index > activeSweepIndex - 2 && index < activeSweepIndex + 2 ? true : false
+                        //const showSlide = index > activeSweepIndex - 2 && index < activeSweepIndex + 2 ? true : false
                         return (
                           <div className={index === activeSweepIndex ? 'activeNftZoom' : 'nonactiveNftZoom'}>
                             <Card
+                              key={index}
                               cover={
                                 <>
                                   <img

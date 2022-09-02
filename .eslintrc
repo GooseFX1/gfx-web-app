@@ -19,8 +19,8 @@
     "import/no-unresolved": "off", // change to "error"
     "max-len": ["warn", { "code": 120 }],
     "comma-dangle": "warn",
-    "no-unused-vars": "error", // change to "error"
-    "arrow-body-style": "warn",
+    "no-unused-vars": "off", // change to "error"
+    "arrow-body-style": "warn", //change to error
     "no-new": "warn",
     "no-param-reassign": "error", // change to "error"
     "@typescript-eslint/no-inferrable-types": "warn",
@@ -29,6 +29,7 @@
     "@typescript-eslint/no-var-requires": "warn",
     "@typescript-eslint/no-this-alias": "warn",
     "@typescript-eslint/ban-types": "warn",
+    "@typescript-eslint/no-unused-vars": "error",
     "no-var": "error", // change to "error"
     "no-prototype-builtins": "warn",
     "prefer-const": "error", // change to "error"

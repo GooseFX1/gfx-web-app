@@ -1,4 +1,4 @@
-import { ANALYTICS_API_ENDPOINTS, localhost } from './analytics/constants'
+import { ANALYTICS_API_ENDPOINTS } from './analytics/constants'
 import axios from 'axios'
 import { NFT_LAUNCHPAD_API_ENDPOINTS } from './NFTLaunchpad'
 
@@ -32,7 +32,7 @@ export const httpClient = (base: string) => {
   })
 }
 export const customClient = (customURL: string, collectionId?: number) => {
-  let data = JSON.stringify({
+  const data = JSON.stringify({
     collectionId: collectionId
   })
   return axios.create({
@@ -51,7 +51,7 @@ export const logData = async (event: string) => {
       //const url = 'http://192.168.29.193:4000' + ANALYTICS_API_ENDPOINTS.LOG_DATA
 
       const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + ANALYTICS_API_ENDPOINTS.LOG_DATA
-      let dataToSend = JSON.stringify({
+      const dataToSend = JSON.stringify({
         event: event
       })
       const response = await axios({

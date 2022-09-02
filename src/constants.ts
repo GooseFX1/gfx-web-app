@@ -1,4 +1,4 @@
-import { ICreatorData } from './types/nft_launchpad.d'
+//import { ICreatorData } from './types/nft_launchpad.d'
 import { ADDRESSES } from './web3'
 export const LITEPAPER_ADDRESS: string = 'https://docs.goosefx.io'
 export const SOCIAL_MEDIAS: { [key: string]: string } = {
@@ -190,7 +190,7 @@ export const generateListOfSSLTokens = (network): any => {
   const sslTokens = []
   const obj = ADDRESSES[network].sslPool
   FARM_SUPPORTED_TOKEN_LIST = ['GOFX']
-  for (let key in obj) {
+  for (const key in obj) {
     FARM_SUPPORTED_TOKEN_LIST.push(key)
   }
   for (let i = 1; i < FARM_SUPPORTED_TOKEN_LIST.length; i++) {

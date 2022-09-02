@@ -1,6 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react'
-import React, { FC, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { FC } from 'react'
+//import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { useNFTAdmin } from '../../../../context'

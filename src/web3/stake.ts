@@ -1,6 +1,6 @@
 import BN from 'bn.js'
-import { Idl, Program, Provider } from '@project-serum/anchor'
-import { u64, publicKeyLayout } from './layout'
+import { Idl, Program } from '@project-serum/anchor'
+//import { u64, publicKeyLayout } from './layout'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
@@ -15,10 +15,10 @@ import {
 import { SYSTEM } from './ids'
 import { findAssociatedTokenAddress } from './utils'
 import { STAKE_PREFIX, toPublicKey, ADDRESSES } from '../web3'
-import { CONTROLLER_IDL, ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
+import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
 import { CONTROLLER_LAYOUT, STAKING_ACCOUNT_LAYOUT } from 'goosefx-ssl-sdk'
 
-const { blob, struct, u8 } = require('buffer-layout')
+//const { blob, struct, u8 } = require('buffer-layout')
 
 export const getStakingAccountKey = async (
   wallet: WalletContextState,

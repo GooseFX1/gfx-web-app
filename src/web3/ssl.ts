@@ -1,7 +1,6 @@
 import BN from 'bn.js'
-import * as lo from '@solana/buffer-layout'
-import { publicKey, u64, bool } from '@solana/buffer-layout-utils'
-import { Idl, Instruction, Program, Provider, Wallet } from '@project-serum/anchor'
+import { publicKey, u64 } from '@solana/buffer-layout-utils'
+import { Idl, Program } from '@project-serum/anchor'
 import { struct, u32, u8 } from '@solana/buffer-layout'
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
@@ -19,13 +18,12 @@ import {
   Transaction,
   TransactionInstruction,
   SYSVAR_RENT_PUBKEY,
-  SystemProgram,
-  LAMPORTS_PER_SOL
+  SystemProgram
 } from '@solana/web3.js'
 import { SYSTEM } from './ids'
 import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
 import { findAssociatedTokenAddress, createAssociatedTokenAccountIx, getNetworkConnectionText } from './utils'
-import { STAKE_PREFIX, SSL_PREFIX, LIQUIDITY_ACCOUNT_PREFIX, toPublicKey, ADDRESSES, PT_MINT_PREFIX } from '../web3'
+import { SSL_PREFIX, LIQUIDITY_ACCOUNT_PREFIX, toPublicKey, ADDRESSES, PT_MINT_PREFIX } from '../web3'
 import { TOKEN_NAMES } from '../constants'
 
 export interface Account {
@@ -57,9 +55,9 @@ export interface Account {
 
 /** Token account state as stored by the program */
 export enum AccountState {
-  Uninitialized = 0,
-  Initialized = 1,
-  Frozen = 2
+  Uninitialized = 0, //eslint-disable-line
+  Initialized = 1, //eslint-disable-line
+  Frozen = 2 //eslint-disable-line
 }
 
 export interface RawAccount {
@@ -472,7 +470,7 @@ export const executeDeposit = async (
   const amountInNative = amount * Math.pow(10, getTokenDecimal(network, tokenName))
 
   try {
-    const liquidityAccData = (await connection.getAccountInfo(liquidityAccountKey)).data
+    //const liquidityAccData = (await connection.getAccountInfo(liquidityAccountKey)).data
     return depositAmount(
       amountInNative,
       network,

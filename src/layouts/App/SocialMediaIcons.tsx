@@ -32,7 +32,7 @@ const SVGModeAdjust = styled.img`
   filter: ${({ theme }) => theme.filterWhiteIcon};
 `
 
-const Overlay = ({ theme }: { theme: string }) => {
+const Overlay = ({}: { theme?: string }) => {
   const target = {
     discord: SOCIAL_MEDIAS.discord,
     docs: LITEPAPER_ADDRESS,

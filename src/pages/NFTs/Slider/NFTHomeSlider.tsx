@@ -121,11 +121,11 @@ const settings = {
 }
 
 export const NFTHomeSlider = () => {
-  const handleCreatorApply = (e: any) => {
+  const handleCreatorApply = () => {
     window.open(SOCIAL_MEDIAS.nftCreatorForm)
   }
   const history = useHistory()
-  const goNestQuestSingleListing = (e: any) => history.push(`/NFTs/NestQuest`)
+  const goNestQuestSingleListing = () => history.push(`/NFTs/NestQuest`)
 
   return (
     <CAROUSEL_WRAPPER>

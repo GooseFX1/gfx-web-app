@@ -1,9 +1,9 @@
 import { useWallet } from '@solana/wallet-adapter-react'
-import React, { FC, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { FC } from 'react'
+//import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { useNFTCreator } from '../../../../context/nft_creator'
-import { ICreatorParams } from '../../../../types/nft_launchpad'
+//import { ICreatorParams } from '../../../../types/nft_launchpad'
 import { StepsWrapper } from './StepsWrapper'
 
 const WRAPPER = styled.div`
@@ -36,8 +36,8 @@ const WRAPPER = styled.div`
 `
 
 export const CreatorWrapper: FC = () => {
-  const routeParam = useParams<ICreatorParams>()
-  const walletAddress = routeParam.walletAddress
+  //const routeParam = useParams<ICreatorParams>()
+  //const walletAddress = routeParam.walletAddress
   const wallet = useWallet()
   const { isAllowed } = useNFTCreator()
 

@@ -64,18 +64,15 @@ const Overlay: FC<{
   const { getAskSymbolFromPair, setSelectedCrypto, pairs } = useCrypto()
   const [filterKeywords, setFilterKeywords] = useState('')
   const [filteredMarkets, setFilteredMarkets] = useState(pairs)
-  const handleClick = useCallback(
-    (pair: string) => {
-      setArrowRotation(false)
-      setVisible(false)
-    },
-    [setArrowRotation, setSelectedCrypto, setVisible]
-  )
+  const handleClick = useCallback(() => {
+    setArrowRotation(false)
+    setVisible(false)
+  }, [setArrowRotation, setSelectedCrypto, setVisible])
 
   const markets = useMemo(
     () =>
       filteredMarkets.map(({ name }, index) => (
-        <MARKET key={index} onClick={() => handleClick(name)}>
+        <MARKET key={index} onClick={() => handleClick()}>
           <CenteredImg>
             <img src={`/img/crypto/${getAskSymbolFromPair(name)}.svg`} alt="" />
           </CenteredImg>

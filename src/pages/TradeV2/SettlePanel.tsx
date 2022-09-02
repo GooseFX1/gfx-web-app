@@ -1,5 +1,5 @@
 import { Button } from 'antd'
-import React, { useState, FC, useMemo, useCallback } from 'react'
+import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { useCrypto, useTradeHistory } from '../../context'
 
@@ -80,13 +80,13 @@ const SettleCard: FC = () => {
     [symbolAsk, selectedCrypto.type]
   )
   const settleButtons = []
-  openOrders.map((openOrder, index) => {
+  openOrders.map((openOrder) => {
     const { market } = selectedCrypto
     const pair = getPairFromMarketAddress(openOrder.market)
     const baseAvailable = market?.baseSplSizeToNumber(openOrder.baseTokenFree)
-    const baseBalance = market?.baseSplSizeToNumber(openOrder.baseTokenTotal.sub(openOrder.baseTokenFree))
+    //const baseBalance = market?.baseSplSizeToNumber(openOrder.baseTokenTotal.sub(openOrder.baseTokenFree))
     const quoteAvailable = market?.quoteSplSizeToNumber(openOrder.quoteTokenFree)
-    const quoteBalance = market?.quoteSplSizeToNumber(openOrder.quoteTokenTotal.sub(openOrder.quoteTokenFree))
+    //const quoteBalance = market?.quoteSplSizeToNumber(openOrder.quoteTokenTotal.sub(openOrder.quoteTokenFree))
 
     if (quoteAvailable ?? 0) {
       const bidSettleButton = (

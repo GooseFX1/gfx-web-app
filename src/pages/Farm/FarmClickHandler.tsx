@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react'
-import { MainButton, SuccessfulListingMsg, TransactionErrorMsg } from '../../components'
+import React from 'react'
+import { SuccessfulListingMsg, TransactionErrorMsg } from '../../components'
 
 export const successfulMessage = (msg: string, signature: any, price: string, name: string, network: any) => ({
   message: (

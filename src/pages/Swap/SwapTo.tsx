@@ -54,6 +54,7 @@ export const SwapTo: FC<{ height: string }> = ({ height }) => {
     return parseFloat(getUIAmountString(address).slice(0, Math.min(decimals, 8)))
   }, [getUIAmountString, tokenB])
 
+  //eslint-disable-next-line
   const value = useMemo(() => {
     return (
       tokenB &&

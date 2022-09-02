@@ -9,7 +9,7 @@ import { ICreatorData } from '../../../../types/nft_launchpad'
 import { uploadFile } from 'react-s3'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { notify } from '../../../../utils'
-var axios = require('axios')
+//var axios = require('axios')
 
 const config = {
   bucketName: 'gfx-nest-image-resources',
@@ -179,7 +179,7 @@ export const Step2: FC = () => {
   const wallet = useWallet()
   const { creatorData, previousStep } = useNFTCreator()
   const fileConstraints = async (file) => {
-    let extension = file.name.split('.')[1]
+    const extension = file.name.split('.')[1]
     if (
       (extension === 'png' ||
         extension === 'jpg' ||
@@ -216,7 +216,7 @@ export const Step2: FC = () => {
     }
   }, [creatorData])
 
-  let creatorStepData: ICreatorData[2] = {
+  const creatorStepData: ICreatorData[2] = {
     items: parseInt(items),
     currency: isUSDC ? 'USDC' : 'SOL',
     price: mintPrice,
@@ -237,7 +237,7 @@ export const Step2: FC = () => {
             <div className="big-label">2. Cover image and number of items</div>
           </Row>
           <div>
-            <FileDrop onDrop={(files, event) => fileConstraints(files[0])}>
+            <FileDrop onDrop={(files) => fileConstraints(files[0])}>
               {!imageLink ? 'Drag and drop a file to upload or' : ''}
               {!imageLink ? (
                 <>

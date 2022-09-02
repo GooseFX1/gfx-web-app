@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Table, Tag, Space } from 'antd'
-import { dataSource, feesColumns } from '../pages/TradeV2/constants/feesConstants'
+import { Table } from 'antd'
+import { dataSource } from '../pages/TradeV2/constants/feesConstants'
 import Column from 'antd/lib/table/Column'
 import moment from 'moment'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -128,14 +128,14 @@ const HEADER = styled.div`
 `
 const SERUM_MINT = new PublicKey('SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt')
 
-export const FeesPopup: FC<{ rewardModal?; rewardToggle?; modalType }> = ({ rewardModal, rewardToggle, modalType }) => {
+export const FeesPopup: FC<{ rewardModal?; rewardToggle?; modalType }> = ({ rewardToggle }) => {
   const { connected } = useWallet()
   const [srmTier, setSrmTier] = useState<string>('0')
   const { getUIAmountString } = useAccounts()
   const { mode } = useDarkMode()
   const getSRMBalance = async () => {
-    let amount = getUIAmountString(SERUM_MINT.toBase58()),
-      tier = '0'
+    const amount = getUIAmountString(SERUM_MINT.toBase58())
+    let tier = '0'
     for (let i = 0; i < dataSource.length; i++) {
       if (+amount < dataSource[i].amount) {
         tier = dataSource[i].feeTier

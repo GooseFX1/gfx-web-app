@@ -82,7 +82,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
   const [search, setSearch] = useState<string>('')
 
   useEffect(() => {
-    fetchAllCollections().then((res) => setIsAllLoading(false))
+    fetchAllCollections().then(() => setIsAllLoading(false))
     fetchAllSingleNFTs().then((res) => setAllOneOfOnes(res != null ? res.slice(0, 20) : []))
     return () => {}
   }, [])
@@ -137,7 +137,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
               <h6>Marketplace is currently in Beta</h6>
             </div>
             <p>Please be patient, settle your balances, and enjoy!</p>
-            <button className={'close-button'} onClick={(e) => setBetaBanner(false)}>
+            <button className={'close-button'} onClick={() => setBetaBanner(false)}>
               <SVGDynamicReverseMode className="close-icon" src={`/img/assets/close-white-icon.svg`} alt="close" />
             </button>
           </div>

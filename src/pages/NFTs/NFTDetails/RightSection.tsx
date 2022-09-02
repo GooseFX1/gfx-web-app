@@ -144,9 +144,9 @@ const GRID_INFO = styled(Row)`
   `}
 `
 
-const HIGHEST_BIDDER = styled.span`
-  color: ${({ theme }) => theme.text9};
-`
+// const HIGHEST_BIDDER = styled.span`
+//   color: ${({ theme }) => theme.text9};
+// `
 //#endregion
 
 export const RightSection: FC<{

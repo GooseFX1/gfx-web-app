@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, FC, useMemo, useCallback, useRef } from 'react'
+import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
 import { Input, Slider } from 'antd'
 import { css } from 'styled-components'
 import { FieldHeader, Picker } from './shared'

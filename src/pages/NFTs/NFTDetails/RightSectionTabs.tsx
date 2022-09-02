@@ -35,7 +35,7 @@ const { TabPane } = Tabs
 
 //#region styles
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
-  ${({ theme, activeTab }) => css`
+  ${({ theme }) => css`
     position: relative;
 
     .ant-tabs-nav {
@@ -229,7 +229,7 @@ const REMOVE_MODAL = styled(Modal)`
 
 export const RightSectionTabs: FC<{
   status: MintItemViewStatus
-}> = ({ status, ...rest }) => {
+}> = ({ ...rest }) => {
   const history = useHistory()
   const [activeTab, setActiveTab] = useState('1')
   const { general, nftMetadata, ask, bids, removeNFTListing, removeBidOnSingleNFT, setAsk } = useNFTDetails()
@@ -553,14 +553,14 @@ export const RightSectionTabs: FC<{
               <>
                 <button
                   className={`rst-footer-button rst-footer-button-${ask === undefined ? 'sell' : 'flat'}`}
-                  onClick={(e) => handleUpdateAsk('list')}
+                  onClick={() => handleUpdateAsk('list')}
                 >
                   {ask === undefined ? 'List Item' : 'Edit Ask Price'}
                 </button>
                 {ask && (
                   <button
                     className="rst-footer-button rst-footer-button-sell"
-                    onClick={(e) => handleUpdateAsk('remove')}
+                    onClick={() => handleUpdateAsk('remove')}
                   >
                     Remove Ask Price
                   </button>
@@ -570,21 +570,21 @@ export const RightSectionTabs: FC<{
               <SpaceBetweenDiv style={{ flexGrow: 1 }}>
                 {bids.find((bid) => bid.wallet_key === wallet.publicKey.toBase58()) && (
                   <button
-                    onClick={(e) => handleSetBid(NFT_ACTIONS.CANCEL_BID)}
+                    onClick={() => handleSetBid(NFT_ACTIONS.CANCEL_BID)}
                     className="rst-footer-button rst-footer-button-flat"
                   >
                     Cancel Last Bid
                   </button>
                 )}
                 <button
-                  onClick={(e) => handleSetBid(NFT_ACTIONS.BID)}
+                  onClick={() => handleSetBid(NFT_ACTIONS.BID)}
                   className={'rst-footer-button rst-footer-button-bid'}
                 >
                   Bid
                 </button>
                 {ask && (
                   <button
-                    onClick={(e) => handleSetBid(NFT_ACTIONS.BUY)}
+                    onClick={() => handleSetBid(NFT_ACTIONS.BUY)}
                     className="rst-footer-button rst-footer-button-buy"
                   >
                     Buy Now
@@ -595,7 +595,7 @@ export const RightSectionTabs: FC<{
           ) : (
             <button
               className="rst-footer-button rst-footer-button-bid"
-              onClick={(e) => history.push(`/NFTs/profile/${wallet.publicKey.toBase58()}`)}
+              onClick={() => history.push(`/NFTs/profile/${wallet.publicKey.toBase58()}`)}
             >
               Complete profile
             </button>

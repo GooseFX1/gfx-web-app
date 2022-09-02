@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { getTotalLiquidityVolume } from '../../../api/analytics'
-import { moneyFormatter, moneyFormatterWithComma } from '../../../utils'
+import { moneyFormatterWithComma } from '../../../utils'
 import { GradientText } from '../../NFTs/adminPage/components/UpcomingMints'
 export const TotalLiquidityVolume = () => {
   const [farmData, setFarmData] = useState(null)

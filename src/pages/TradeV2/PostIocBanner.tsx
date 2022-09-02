@@ -1,6 +1,6 @@
-import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
-import { Input, Switch, Checkbox } from 'antd'
-import styled, { css } from 'styled-components'
+import React, { FC } from 'react'
+import { Checkbox } from 'antd'
+import styled from 'styled-components'
 import { useOrder } from '../../context'
 
 const TYPES = styled.div`

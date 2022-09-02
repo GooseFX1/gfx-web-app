@@ -101,7 +101,7 @@ export const Step3: FC = () => {
   const [selectedDate, setSelectedDate] = useState<any>(MINIMUM_DATE)
   const [nextButtonActive, setNextButtonActive] = useState<boolean>(false)
 
-  let dateFrom = MINIMUM_DATE.format('DD-MM-YYYY')
+  const dateFrom = MINIMUM_DATE.format('DD-MM-YYYY')
 
   const handleDateOk = (e) => {
     if (MINIMUM_DATE.isBefore(e)) setSelectedDate(e)
@@ -123,7 +123,7 @@ export const Step3: FC = () => {
     }
   }, [creatorData])
 
-  let creatorStepData: ICreatorData[3] = {
+  const creatorStepData: ICreatorData[3] = {
     vesting: !isVesting ? false : vestingOptionIndex === 0 ? [50, 25, 25] : [40, 30, 30],
     date: dateOptionIndex === 0 ? MINIMUM_DATE.format('DD-MM-YYYY') : selectedDate.format('DD-MM-YYYY'),
     time: timeIndex > -1 ? TIME_OPTIONS[timeIndex] : ''

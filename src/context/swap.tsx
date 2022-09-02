@@ -78,7 +78,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [outTokenAmount, setOutTokenAmount] = useState(0)
   const [gofxOutAmount, setGofxOutAmount] = useState(0)
   const [priceImpact, setPriceImpact] = useState(0)
-  const [_, setFocused] = useState<SwapInput>(undefined)
+  const [, setFocused] = useState<SwapInput>(undefined)
   const [chosenRoutes, setRoutes] = useState([])
   const [clickNo, setClickNo] = useState(0)
   const [pool, setPool] = useState<IPool>({
@@ -93,7 +93,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [tokenB, setTokenB] = useState<ISwapToken | null>(null)
   //const swap = new Swap(connection)
 
-  let refreshTimeout: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
+  const refreshTimeout: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
   const timeoutDelay = 200
   const refreshRates = useCallback(async () => {
     refreshTimeout.current && clearTimeout(refreshTimeout.current)
@@ -106,7 +106,9 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
         try {
           inValue = await serum.getLatestBid(connection, `${tokenA.symbol}/USDC`)
-        } catch (e) {}
+        } catch (e) {
+          console.log(e)
+        }
 
         setPool(({ inAmount, outAmount, outValue, outValuePerIn }) => ({
           inAmount,
@@ -123,7 +125,9 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
         try {
           outValue = await serum.getLatestBid(connection, `${tokenB.symbol}/USDC`)
-        } catch (e) {}
+        } catch (e) {
+          console.log(e)
+        }
 
         setPool(({ inAmount, inValue, outAmount, outValuePerIn }) => ({
           inAmount,
@@ -136,9 +140,9 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
 
       if (tokenA && tokenB) {
-        let inAmount = 0
-        let outAmount = 0
-        let outValuePerIn = 0
+        const inAmount = 0
+        const outAmount = 0
+        const outValuePerIn = 0
 
         try {
           //const { decimals } = tokenA
@@ -303,7 +307,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         routeInfo: revertRoute(route),
         onTransaction: async (txid: any) => {
           //console.log('sending transaction')
-          let result = await connection.confirmTransaction(txid)
+          const result = await connection.confirmTransaction(txid)
           //console.log('confirmed transaction')
           if (!result.value.err) {
             return await connection.getTransaction(txid, {

@@ -1,5 +1,5 @@
 import { BaseSyntheticEvent, FC, useState } from 'react'
-import { Dropdown, Input } from 'antd'
+import { Dropdown } from 'antd'
 import { logEvent } from 'firebase/analytics'
 import styled from 'styled-components'
 import tw from 'twin.macro'

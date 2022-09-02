@@ -86,7 +86,7 @@ export const Step1: FC = () => {
     else setNextButtonActive(false)
   }, [projectName, collectionName, description, tagIndex])
 
-  let creatorStepData: ICreatorData[1] = {
+  const creatorStepData: ICreatorData[1] = {
     legality: tagIndex === 0 ? 'author' : tagIndex === 1 ? 'permission' : 'no',
     projectName: projectName,
     collectionName: collectionName,

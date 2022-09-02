@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useMemo, useState, MouseEvent, useEffect } from 'react'
+import React, { FC, ReactNode, useMemo, useState, useEffect } from 'react'
 import { Dropdown, Menu, Skeleton } from 'antd'
 import { DownOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
@@ -229,13 +229,13 @@ export const OrderBook: FC = () => {
   const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto } = useCrypto()
   const { order, setFocused, setOrder } = useOrder()
   const { orderBook } = useOrderBook()
-  const [bids, setBids] = useState<MarketSide>('bids')
-  const [asks, setAsks] = useState<MarketSide>('asks')
+  const [bids] = useState<MarketSide>('bids')
+  const [asks] = useState<MarketSide>('asks')
   const bid = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
   const ask = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
   const { tradeHistory } = useTradeHistory()
   const [spreadIndex, setSpreadIndex] = useState<number>(0)
-  let lastTradedPrice = {
+  const lastTradedPrice = {
     price: tradeHistory[0] && tradeHistory[0].price,
     side: tradeHistory[0] && tradeHistory[0].side
   }
@@ -244,22 +244,22 @@ export const OrderBook: FC = () => {
   const [askOrderBookDisplay, setAskOrderBookDisplay] = useState([])
 
   const isModulo = (num1, num2) => {
-    let result = (num1 + 0.00001) % num2
+    const result = (num1 + 0.00001) % num2
     if (result < 0.0001) return true
     return false
   }
 
   const editOrderBookBid = () => {
     function getBucketValue(bidAmount, spread) {
-      let value = +(bidAmount / spread).toFixed(2)
+      const value = +(bidAmount / spread).toFixed(2)
       if (isModulo(bidAmount, spread)) return { decimal: false, value: bidAmount }
       else return { decimal: true, value: Math.floor(value) * spread }
     }
-    let completeOrderBookBids = orderBook[bids],
+    const completeOrderBookBids = orderBook[bids],
       selectedSpread = SPREADS[spreadIndex],
       buckets = [],
-      firstBucket = getBucketValue(completeOrderBookBids[0][0], selectedSpread).value,
-      lastBucket = firstBucket,
+      firstBucket = getBucketValue(completeOrderBookBids[0][0], selectedSpread).value
+    let lastBucket = firstBucket,
       currentBucketSum = 0
     for (let i = 0; i < 100 && i < completeOrderBookBids.length; i++) {
       if (completeOrderBookBids[i][0] >= lastBucket) {
@@ -275,15 +275,16 @@ export const OrderBook: FC = () => {
   }
   const editOrderBookAsk = () => {
     function getBucketValue(askAmount, spread) {
-      let value = +(askAmount / spread).toFixed(2)
+      const value = +(askAmount / spread).toFixed(2)
       if (isModulo(askAmount, spread)) return { decimal: false, value: askAmount }
       else return { decimal: true, value: (Math.floor(value) + 1) * spread }
     }
-    let completeOrderBookBids = orderBook[asks],
+    const completeOrderBookBids = orderBook[asks],
       selectedSpread = SPREADS[spreadIndex],
       buckets = [],
-      firstBucket = getBucketValue(completeOrderBookBids[0][0], selectedSpread).value,
-      lastBucket = firstBucket,
+      firstBucket = getBucketValue(completeOrderBookBids[0][0], selectedSpread).value
+
+    let lastBucket = firstBucket,
       currentBucketSum = 0
     for (let i = 0; i < 100 && i < completeOrderBookBids.length; i++) {
       if (completeOrderBookBids[i][0] <= lastBucket) {
@@ -329,12 +330,12 @@ export const OrderBook: FC = () => {
 
   const spreadAbsolute = useMemo(() => {
     if (!slicedOrderBookAsks.length || !slicedOrderBookBids.length) return [0, 0]
-    let midValue = +((slicedOrderBookAsks[0][0] + slicedOrderBookBids[0][0]) / 2).toFixed(2),
+    const midValue = +((slicedOrderBookAsks[0][0] + slicedOrderBookBids[0][0]) / 2).toFixed(2),
       absolute = +(slicedOrderBookAsks[0][0] - slicedOrderBookBids[0][0]).toFixed(2)
     return [absolute, ((absolute / midValue) * 100).toFixed(2)]
   }, [slicedOrderBookBids, slicedOrderBookAsks])
 
-  const symbol = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
+  //const symbol = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
 
   const handleExpandToggle = () => setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))
 
@@ -395,12 +396,8 @@ export const OrderBook: FC = () => {
                     acc.totalValue += value
                     acc.nodes.push(
                       <ORDER_BUY key={index}>
-                        <span onClick={(e: MouseEvent<HTMLSpanElement>) => handleSetSize(size)}>
-                          {removeFloatingPointError(size)}
-                        </span>
-                        <span onClick={(e: MouseEvent<HTMLSpanElement>) => handleSetPrice(price)}>
-                          ${removeFloatingPointError(price)}
-                        </span>
+                        <span onClick={() => handleSetSize(size)}>{removeFloatingPointError(size)}</span>
+                        <span onClick={() => handleSetPrice(price)}>${removeFloatingPointError(price)}</span>
 
                         <SIZE_BUY
                           style={{ width: `${(acc.totalValue / totalOrderBookValueBids) * 100}%` }}
@@ -422,12 +419,8 @@ export const OrderBook: FC = () => {
                     acc.totalValue += value
                     acc.nodes.push(
                       <ORDER_SELL key={index}>
-                        <span onClick={(e: MouseEvent<HTMLSpanElement>) => handleSetPrice(price)}>
-                          ${removeFloatingPointError(price)}
-                        </span>
-                        <span onClick={(e: MouseEvent<HTMLSpanElement>) => handleSetSize(size)}>
-                          {removeFloatingPointError(size)}
-                        </span>
+                        <span onClick={() => handleSetPrice(price)}>${removeFloatingPointError(price)}</span>
+                        <span onClick={() => handleSetSize(size)}>{removeFloatingPointError(size)}</span>
                         <SIZE_SELL
                           style={{ width: `${(acc.totalValue / totalOrderBookValueAsks) * 100}%` }}
                           $side={asks}

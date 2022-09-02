@@ -73,7 +73,7 @@ const DROPDOWN_ICON_WRAPPER = styled(CenteredImg)`
   ${tw`w-7 h-[21px]`}
 `
 
-const ResponsiveDropdown: FC<{ logoAnimationTime: number }> = ({ logoAnimationTime }) => {
+const ResponsiveDropdown: FC<{ logoAnimationTime?: number }> = ({}) => {
   const { mode } = useDarkMode()
   const [opacity, setOpacity] = useState(0)
 
@@ -115,7 +115,7 @@ export const Header: FC = () => {
   const { isCollapsed, toggleCollapse } = useNavCollapse()
   const { rewardModal, rewardToggle } = useRewardToggle()
   const { mode } = useDarkMode()
-  const [mobile, setMobile] = useState(true) //initial mobile
+  const [, setMobile] = useState(true) //initial mobile
 
   const handleCollapse = (val) => {
     toggleCollapse(val)

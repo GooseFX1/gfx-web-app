@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react'
-import { useLocation } from 'react-router-dom'
+import React, { useState, useEffect, useRef } from 'react'
+//import { useLocation } from 'react-router-dom'
 import axios from 'axios'
 import { Row, Col } from 'antd'
-import { notify } from '../../../utils'
+//import { notify } from '../../../utils'
 import { ParsedAccount } from '../../../web3'
 import { Card } from '../Collection/Card'
 import NoContent from './NoContent'
@@ -10,7 +10,7 @@ import { SearchBar, Loader } from '../../../components'
 import { useNFTProfile } from '../../../context'
 import { StyledTabContent } from './TabContent.styled'
 import { ISingleNFT } from '../../../types/nft_details.d'
-import { ILocationState } from '../../../types/app_params.d'
+//import { ILocationState } from '../../../types/app_params.d'
 import debounce from 'lodash.debounce'
 
 interface INFTDisplay {
@@ -20,16 +20,16 @@ interface INFTDisplay {
 }
 
 const NFTDisplay = (props: INFTDisplay): JSX.Element => {
-  const location = useLocation<ILocationState>()
+  //const location = useLocation<ILocationState>()
   const { sessionUser, nonSessionProfile } = useNFTProfile()
   const [collectedItems, setCollectedItems] = useState<ISingleNFT[]>()
   const [filteredCollectedItems, setFilteredCollectedItems] = useState<ISingleNFT[]>()
   const [search, setSearch] = useState<string>('')
-  const [level, _setLevel] = useState<number>(0)
+  //const [level, _setLevel] = useState<number>(0)
   const [loading, _setLoading] = useState<boolean>(false)
 
   const activePointRef = useRef(collectedItems)
-  const activePointLevel = useRef(level)
+  //const activePointLevel = useRef(level)
   const activePointLoader = useRef(loading)
 
   // in place of original `setActivePoint`
@@ -38,10 +38,10 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     setCollectedItems(x)
   }
 
-  const setLevel = (x) => {
-    activePointLevel.current = x // keep updated
-    _setLevel(x)
-  }
+  // const setLevel = (x) => {
+  //   activePointLevel.current = x // keep updated
+  //   _setLevel(x)
+  // }
 
   const setLoading = (x) => {
     activePointLoader.current = x // keep updated
@@ -141,18 +141,18 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     }
   }
 
-  const addToList = () => {
-    const total = activePointRef.current
-    const newLevel = activePointLevel.current + 1
+  // const addToList = () => {
+  //   const total = activePointRef.current
+  //   const newLevel = activePointLevel.current + 1
 
-    if (total?.length > newLevel * 25) {
-      setLoading(true)
-      const nextData = total.slice(newLevel * 25, (newLevel + 1) * 25)
-      setCollectedItemsPag([...activePointRef.current, ...nextData])
-      setLevel(newLevel)
-      setLoading(false)
-    }
-  }
+  //   if (total?.length > newLevel * 25) {
+  //     setLoading(true)
+  //     const nextData = total.slice(newLevel * 25, (newLevel + 1) * 25)
+  //     setCollectedItemsPag([...activePointRef.current, ...nextData])
+  //     setLevel(newLevel)
+  //     setLoading(false)
+  //   }
+  // }
 
   return (
     <StyledTabContent>

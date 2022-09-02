@@ -5,7 +5,7 @@ import { fetchSSLVolumeData, fetchSSLAPR, saveLiquidtyVolume } from '../../api/S
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
 import styled, { css } from 'styled-components'
 import { Table } from 'antd'
-import BN from 'bn.js'
+//import BN from 'bn.js'
 import { columns, mobileColumns } from './Columns'
 import { ExpandedDynamicContent } from './ExpandedDynamicContent'
 import {
@@ -23,7 +23,7 @@ import { SSL_LAYOUT, LIQUIDITY_ACCOUNT_LAYOUT, CONTROLLER_LAYOUT, ADDRESSES as S
 import { useConnectionConfig, usePriceFeedFarm, useFarmContext } from '../../context'
 import { ADDRESSES } from '../../web3'
 import { MorePoolsSoon } from './MorePoolsSoon'
-import { NATIVE_MINT } from '@solana/spl-token-v2'
+//import { NATIVE_MINT } from '@solana/spl-token-v2'
 import { CONTROLLER_IDL, SSL_IDL } from 'goosefx-ssl-sdk'
 import { NETWORK_CONSTANTS, TOKEN_NAMES } from '../../constants'
 import { checkMobile } from '../../utils'
@@ -199,6 +199,7 @@ export interface IFarmData {
 }
 //#endregion
 
+//eslint-disable-next-line
 export const TableList = ({ dataSource }: any) => {
   const { prices, priceFetched } = usePriceFeedFarm()
   const { network, connection } = useConnectionConfig()
@@ -214,12 +215,12 @@ export const TableList = ({ dataSource }: any) => {
     setFarmDataSSLContext
   } = useFarmContext()
   const [accountKey, setAccountKey] = useState<PublicKey>()
-  const [columnData, setColumnData] = useState(columns)
-  const [mobileColumnData, setMobileColumnData] = useState(mobileColumns)
+  const [columnData] = useState(columns)
+  const [mobileColumnData] = useState(mobileColumns)
   const [farmData, setFarmData] = useState<IFarmData[]>([...farmDataContext, ...farmDataSSLContext])
   const [eKeys, setEKeys] = useState([])
-  const [allTokenPrices, setAllTokenPrices] = useState({})
-  const PAGE_SIZE = 10
+  const [, setAllTokenPrices] = useState({})
+  //const PAGE_SIZE = 10
   const controllerStr = SDK_ADDRESS[getNetworkConnection(network)].GFX_CONTROLLER.toString()
   const gofxPrice = useMemo(() => prices['GOFX/USDC'], [prices])
   const [sslVolume, setSslVolume] = useState<number>(0)
@@ -289,11 +290,11 @@ export const TableList = ({ dataSource }: any) => {
     mainVault,
     liquidityAccountData,
     SSLTokenNames: string[],
-    aprVolumePromise
+    aprVolumePromise: any[]
   ) => {
     const farmCalculationsArr = []
     let totalLiquidity = 0
-    let liqObj = {}
+    const liqObj = {}
     Promise.all(aprVolumePromise)
       .then((aprVolume) => {
         for (let i = 0; i < sslAccountData.length; i++) {
@@ -306,9 +307,9 @@ export const TableList = ({ dataSource }: any) => {
           const liquidityAccount = liquidityData ? LIQUIDITY_ACCOUNT_LAYOUT.decode(liquidityData) : undefined
           const tokenPrice = getTokenPrice(tokenName).current
           //@ts-ignore
-          let liquidity = mainVaultData.amount + sslData.swappedLiabilityNative
+          const liquidity = mainVaultData.amount + sslData.swappedLiabilityNative
           const APR = aprVolume[i * 2]
-          const volumeDays = aprVolume[i * 2 + 1]
+          const volumeDays: any = aprVolume[i * 2 + 1]
           const ptMinted = liquidityAccount ? liquidityAccount.ptMinted : 0
           //@ts-ignore
           const userLiablity = liquidityAccount ? (liquidity * liquidityAccount.share) / sslData.totalShare : 0n
@@ -323,12 +324,14 @@ export const TableList = ({ dataSource }: any) => {
             type: 'SSL',
             id: tokenName,
             key: tokenName,
+            //eslint-disable-next-line
             apr: isNaN(APR) ? '-' : Math.max(APR * 100, 0),
             liquidity: tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0,
             currentlyStaked: Number(amountDeposited) / Math.pow(10, sslData.decimals),
             userLiablity: Number(userLiablity),
             ptMinted: Number(ptMinted) / Math.pow(10, 9),
             volume:
+              //eslint-disable-next-line
               isNaN(volumeDays?.volume) || volumeDays.volume * tokenPrice < 100 ? '-' : volumeDays.volume * tokenPrice
           }
           farmCalculationsArr.push(farmCalculation)
@@ -346,7 +349,7 @@ export const TableList = ({ dataSource }: any) => {
   useEffect(() => {
     ;(async () => {
       if (priceFetched) {
-        let SSLTokenNames = []
+        const SSLTokenNames = []
         farmDataSSLContext.map((data) => SSLTokenNames.push(data.name))
         const SSLAccountKeys = []
         const liquidityAccountKeys = []
@@ -406,6 +409,7 @@ export const TableList = ({ dataSource }: any) => {
     setFarmData(farmDataStaked)
   }, [poolFilter, searchFilter, showDeposited, farmDataContext, farmDataSSLContext, priceFetched])
 
+  //eslint-disable-next-line
   const fetchGOFXData = async (accountKey: PublicKey) => {
     try {
       // pool data take this function to context

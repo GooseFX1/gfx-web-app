@@ -185,7 +185,7 @@ export const Step4: FC = () => {
           </Row>
           <div className="next-day-label">Create a zip flie with all NFT's, we will take care of the rest!</div>
           <div tw="w-9/12">
-            <FileDrop onDrop={(files, event) => fileConstraints(files[0])}>
+            <FileDrop onDrop={(files) => fileConstraints(files[0])}>
               {!imageLink ? 'Drag and drop a file to upload or' : ''}
               {!imageLink ? (
                 <>

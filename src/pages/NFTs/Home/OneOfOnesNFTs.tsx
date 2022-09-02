@@ -1,12 +1,12 @@
 import React, { FC } from 'react'
 import Slider from 'react-slick'
-import { Row, Col } from 'antd'
+//import { Row, Col } from 'antd'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import styled from 'styled-components'
 import { ArrowClicker } from '../../../components'
-import { ButtonWrapper } from '../NFTButton'
-import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+//import { ButtonWrapper } from '../NFTButton'
+//import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { Card } from '../Collection/Card'
 
 const CAROUSEL_WRAPPER = styled.div`
@@ -56,23 +56,23 @@ const CARD_WRAPPER = styled.div`
   }
 `
 
-const SORT_BUTTON = styled(ButtonWrapper)`
-  height: 40px;
-  background-color: ${({ theme }) => theme.secondary2};
-  margin-right: ${({ theme }) => theme.margin(2)};
-  justify-content: space-between;
-`
+// const SORT_BUTTON = styled(ButtonWrapper)`
+//   height: 40px;
+//   background-color: ${({ theme }) => theme.secondary2};
+//   margin-right: ${({ theme }) => theme.margin(2)};
+//   justify-content: space-between;
+// `
 
-const WRAPPED_LOADER = styled.div`
-  position: relative;
-  height: 48px;
-`
-const SKELETON_SLIDER = styled.div`
-  display: flex;
-  .wrap {
-    margin: 0 ${({ theme }) => theme.margin(4)};
-  }
-`
+// const WRAPPED_LOADER = styled.div`
+//   position: relative;
+//   height: 48px;
+// `
+// const SKELETON_SLIDER = styled.div`
+//   display: flex;
+//   .wrap {
+//     margin: 0 ${({ theme }) => theme.margin(4)};
+//   }
+// `
 
 const settings = {
   infinite: false,
@@ -110,7 +110,7 @@ const OneOfOnesNFTs: FC<IOneOfOnesNFTs> = ({ items, title }) => {
         </HEADER_CAROUSEL>
 
         <Slider ref={slickRef} {...settings}>
-          {items.map((item: any, i: number) => (
+          {items.map((item: any) => (
             <CARD_WRAPPER key={item.non_fungible_id} style={{ minWidth: '300px', margin: '0 32px !important' }}>
               <Card singleNFT={item} />
             </CARD_WRAPPER>

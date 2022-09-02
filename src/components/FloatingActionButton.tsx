@@ -20,7 +20,7 @@ export const FloatingActionButton: FC<{
   background?: string
   loading?: boolean
   [x: string]: any
-}> = ({ children, height, background, loading = false, ...props }) => (
+}> = ({ children, height, background, ...props }) => (
   <FLOATING_ACTION_BTN $height={height} $background={background ? background : ''} {...props}>
     {children}
   </FLOATING_ACTION_BTN>

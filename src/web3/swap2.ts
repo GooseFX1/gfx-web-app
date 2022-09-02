@@ -27,14 +27,6 @@ import { ISwapToken } from '../context'
 const con = new Connection('https://solana-api.projectserum.com', 'confirmed')
 const SWAP = new Swap(con)
 
-export const computePoolsPDAs = async (
-  tokenA: ISwapToken,
-  tokenB: ISwapToken,
-  network: WalletAdapterNetwork
-): Promise<{ lpTokenMint: PublicKey; pool: PublicKey; pair: PublicKey }> => {
-  return { lpTokenMint: null, pair: null, pool: null }
-}
-
 export const wrapSolToken = async (wallet: WalletContextState, connection: Connection, amount: number) => {
   try {
     const tx = new Transaction()

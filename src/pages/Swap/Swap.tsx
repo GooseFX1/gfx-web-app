@@ -135,7 +135,7 @@ const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
 
   .inner-container {
     ${tw`relative flex justify-center items-center h-full w-full rounded-average p-4 sm:static`}
-    background: ${({ theme, $clicked, $cover }) => ($clicked ? $cover : 'transparent')};
+    background: ${({ $clicked, $cover }) => ($clicked ? $cover : 'transparent')};
 
     .content {
       ${tw`w-2/3 sm:w-85p`}
@@ -181,9 +181,9 @@ const SocialsButton = styled.div`
   line-height: inherit;
 `
 
-const CLICKER_ICON = styled(CenteredImg)`
-  ${tw`h-12 w-12 mr-1 rounded-circle`}
-`
+// const CLICKER_ICON = styled(CenteredImg)`
+//   ${tw`h-12 w-12 mr-1 rounded-circle`}
+// `
 const SMALL_CLICKER_ICON = styled(CenteredImg)`
   ${tw`h-5 w-5 mr-2 rounded-circle`}
 `
@@ -502,7 +502,7 @@ const TokenContent: FC = () => {
     }
   }, [tokenA, tokenB])
 
-  const handleCopyTokenMint = (e) => {
+  const handleCopyTokenMint = () => {
     setCopiedAction(true)
     navigator.clipboard.writeText(tokenA.address)
     setTimeout(() => setCopiedAction(false), 800)
@@ -555,7 +555,7 @@ const TokenContent: FC = () => {
               { name: 'Website', link: data?.links?.homepage?.[0] }
             ])
           })
-          .catch((err) => console.error('ERROR: CoinGecko fetch'))
+          .catch((err) => console.error('ERROR: CoinGecko fetch', err))
       }
 
       if (tokenB) {
@@ -597,7 +597,7 @@ const TokenContent: FC = () => {
               { name: 'Holders', value: res?.total?.toLocaleString() || 0 }
             ])
           })
-          .catch((err) => console.error('ERROR: CoinGecko fetch'))
+          .catch((err) => console.error('ERROR: CoinGecko fetch', err))
       }
     } catch (e) {
       console.log(e)

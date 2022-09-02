@@ -93,11 +93,11 @@ export const ImageShowcase: FC = ({ ...rest }) => {
   const [likes, setLikes] = useState(totalLikes)
 
   //const hearts = 12
-  const remaining = {
-    days: '10',
-    hours: '2',
-    minutes: '43'
-  }
+  // const remaining = {
+  //   days: '10',
+  //   hours: '2',
+  //   minutes: '43'
+  // }
 
   useEffect(() => {
     if (general && sessionUser) {
@@ -105,9 +105,9 @@ export const ImageShowcase: FC = ({ ...rest }) => {
     }
   }, [sessionUser])
 
-  const handleToggleLike = (e: any) => {
+  const handleToggleLike = () => {
     if (sessionUser) {
-      likeDislike(sessionUser.user_id, general.non_fungible_id).then((res) => {
+      likeDislike(sessionUser.user_id, general.non_fungible_id).then(() => {
         setLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
       })
       setIsFavorited((prev) => !prev)
@@ -175,7 +175,7 @@ export const ImageShowcase: FC = ({ ...rest }) => {
       {handleModal()}
       <img className="ls-image" src={general?.image_url || nftMetadata?.image} alt="the-nft" />
       <NFT_CONTAINER>
-        <SHARE_BUTTON onClick={(e) => setShareModal(true)}>
+        <SHARE_BUTTON onClick={() => setShareModal(true)}>
           <img src={`/img/assets/share.svg`} alt="share-icon" />
         </SHARE_BUTTON>
       </NFT_CONTAINER>

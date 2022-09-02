@@ -128,8 +128,8 @@ export const sendTransactions = async (
   signersSet: Keypair[][],
   sequenceType: SequenceType = SequenceType.Parallel,
   commitment: Commitment = 'singleGossip',
-  successCallback: (txid: string, ind: number) => void = (txid, ind) => {},
-  failCallback: (reason: string, ind: number) => boolean = (txid, ind) => false,
+  successCallback: (txid?: string, ind?: number) => void = () => {}, //eslint-disable-line
+  failCallback: (reason?: string, ind?: number) => boolean = () => false, //eslint-disable-line
   block?: BlockhashAndFeeCalculator,
   beforeTransactions: Transaction[] = [],
   afterTransactions: Transaction[] = []
@@ -187,7 +187,7 @@ export const sendTransactions = async (
 
     if (sequenceType !== SequenceType.Parallel) {
       try {
-        await signedTxnPromise.then(({ txid, slot }) => successCallback(txid, i))
+        await signedTxnPromise.then(({ txid }) => successCallback(txid, i))
         pendingTxns.push(signedTxnPromise)
       } catch (e) {
         console.log('Failed at txn index:', i)
@@ -440,6 +440,8 @@ async function awaitTransactionSignatureConfirmation(
     confirmations: 0,
     err: null
   }
+
+  //eslint-disable-next-line
   let subId = 0
   status = await new Promise(async (resolve, reject) => {
     setTimeout(() => {
@@ -451,6 +453,7 @@ async function awaitTransactionSignatureConfirmation(
       reject({ timeout: true })
     }, timeout)
     try {
+      //eslint-disable-next-line
       subId = connection.onSignature(
         txid,
         (result, context) => {

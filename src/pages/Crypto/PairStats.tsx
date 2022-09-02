@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from 'react'
 import { Skeleton } from 'antd'
-import { useHistory } from 'react-router-dom'
+//import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { MarketType, useCrypto, usePriceFeed } from '../../context'
 import { CenteredImg } from '../../styles'
@@ -61,7 +61,7 @@ export const PairStats: FC<{ pair: string; type: MarketType; marketAddress: stri
 }) => {
   const { prices } = usePriceFeed()
   const { formatPair, getAskSymbolFromPair, selectedCrypto, setSelectedCrypto } = useCrypto()
-  const history = useHistory()
+  //const history = useHistory()
 
   const formattedPair = useMemo(() => formatPair(pair), [formatPair, pair])
   const price = useMemo(() => prices[pair], [prices, pair])

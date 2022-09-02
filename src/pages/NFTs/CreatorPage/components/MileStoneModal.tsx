@@ -78,13 +78,13 @@ export const MileStoneModal: FC<IMileStoneModal> = ({ visible, setVisible, mileS
   }, [])
 
   const addMileStone = (input, data, index) => {
-    let existingMilestoneData = [...tempMS]
+    const existingMilestoneData = [...tempMS]
     existingMilestoneData[index][input] = data
     setTempMS(existingMilestoneData)
   }
 
   const addEmpty = () => {
-    let existingMilestoneData = [...tempMS]
+    const existingMilestoneData = [...tempMS]
     existingMilestoneData.push({
       input1: '',
       input2: '',
@@ -95,20 +95,20 @@ export const MileStoneModal: FC<IMileStoneModal> = ({ visible, setVisible, mileS
 
   const removeIndex = (index) => {
     if (tempMS.length > 1) {
-      let existingMilestoneData = [...tempMS]
+      const existingMilestoneData = [...tempMS]
       existingMilestoneData.splice(index, 1)
       setTempMS(existingMilestoneData)
     }
   }
 
   const saveInfo = () => {
-    let mileStonesSet = tempMS
+    const mileStonesSet = tempMS
     setMileStones(mileStonesSet)
     setVisible(false)
   }
 
   useEffect(() => {
-    let lastIndex = tempMS.length - 1
+    const lastIndex = tempMS.length - 1
     if (tempMS[lastIndex].input1 && tempMS[lastIndex].input2 && tempMS[lastIndex].input3) setAddButtonActive(true)
     else setAddButtonActive(false)
   }, [tempMS])
@@ -129,6 +129,7 @@ export const MileStoneModal: FC<IMileStoneModal> = ({ visible, setVisible, mileS
               remove={removeIndex}
               setMileStones={addMileStone}
               data={item}
+              key={index2}
             />
           ))}
         <div className="add-more-button">
@@ -179,7 +180,7 @@ const MileStoneComponent: FC<{
   add: Function
   remove: Function
   data: any
-}> = ({ mileStones, setMileStones, index, data, remove }) => {
+}> = ({ setMileStones, index, data, remove }) => {
   const [valueChanged, setValueChanged] = useState<number>(0)
 
   const callSetMileStones = (input, data) => {
@@ -206,7 +207,7 @@ const MileStoneComponent: FC<{
               value={data.input2}
               onChange={(e) => {
                 const reg = new RegExp('^\\d+$')
-                let isNumber = reg.test(e.target.value)
+                const isNumber = reg.test(e.target.value)
                 if (isNumber && e.target.value.length < 5) callSetMileStones('input2', e.target.value)
                 else if (e.target.value === '') callSetMileStones('input2', '')
               }}

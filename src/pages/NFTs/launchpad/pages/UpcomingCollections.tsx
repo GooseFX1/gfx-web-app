@@ -1,10 +1,9 @@
 import React, { useState, useEffect, FC } from 'react'
-import axios from 'axios'
 import Slider from 'react-slick'
 import { useHistory } from 'react-router-dom'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { Row, Card } from 'antd'
-import { theme } from '../../../../theme'
+//import { theme } from '../../../../theme'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 import { GetNftPrice } from './FeaturedLaunch'
@@ -60,17 +59,17 @@ const CAROUSEL_WRAPPER = styled.div`
     margin-right: ${({ theme }) => theme.margin(3)};
   }
 `
-const NFT_CONTAINER = styled.div`
-  opacity: 0.8;
-  .slick-slide slick-active {
-    border: 12px solid green;
-    height: 200px;
-  }
+// const NFT_CONTAINER = styled.div`
+//   opacity: 0.8;
+//   .slick-slide slick-active {
+//     border: 12px solid green;
+//     height: 200px;
+//   }
 
-  .slick-slide img {
-    height: 200px;
-  }
-`
+//   .slick-slide img {
+//     height: 200px;
+//   }
+// `
 
 const UPCOMING_TEXT = styled.div`
   font-weight: 700;
@@ -178,7 +177,7 @@ const UpcomingCollectins: FC = () => {
   const { upcomoingNFTProjects, dataFetched } = useNFTLaunchpad()
   const [upcomingList, setUpcomingList] = useState([])
   const { isUSDC } = useUSDCToggle()
-  const [isLoading, setIsLoading] = useState(true)
+  const [, setIsLoading] = useState(true)
 
   useEffect(() => {
     setUpcomingList(

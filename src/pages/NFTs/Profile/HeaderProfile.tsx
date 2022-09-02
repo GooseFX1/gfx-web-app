@@ -325,7 +325,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
         <div>
           {currentUserProfile === undefined ? (
             <div className="social-list">
-              {[1, 2, 3, 4].map((dn) => (
+              {[1, 2, 3, 4].map(() => (
                 <span className="social-item">
                   <SkeletonCommon width="35px" height="35px" borderRadius="50%" />
                 </span>

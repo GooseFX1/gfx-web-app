@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, FC, useEffect, useState, useMemo } from 'react'
+import React, { BaseSyntheticEvent, FC, useEffect, useState } from 'react'
 import { Input } from 'antd'
 import styled from 'styled-components'
 import { Tooltip } from '../../components'
@@ -32,7 +32,7 @@ const SETTING_BUTTON = styled(BUTTON)<{ clicked: boolean }>`
   border-bottom: 2.5px solid red;
   border-radius: 0px;
   border-color: ${({ clicked, theme }) => (clicked ? theme.secondary2 : theme.bg9)};
-  color: ${({ clicked, theme }) => theme.text21};
+  color: ${({ theme }) => theme.text21};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -114,7 +114,7 @@ const SETTING_INPUT = styled(Input)`
   font-size: 25px !important;
 `
 
-export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible }) => {
+export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = ({}) => {
   const { mode } = useDarkMode()
   const [wrap, setWrap] = useState(true)
   const [balanceWSOL, setBalanceWSOL] = useState(0)

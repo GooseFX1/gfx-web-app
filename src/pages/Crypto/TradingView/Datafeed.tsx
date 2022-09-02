@@ -11,7 +11,7 @@ export const useTvDataFeed = () => {
 }
 
 const makeDataFeed = () => {
-  let subscriptions = {}
+  const subscriptions = {}
   const overTime = {}
   const lastReqTime = {}
 
@@ -50,11 +50,12 @@ const makeDataFeed = () => {
         0
       )
     },
+    //eslint-disable-next-line
     async searchSymbol(userInput, exchange, symbolType, onResult) {
       // const result = await apiGet(`${URL_SERVER}search?query=${userInput}&type=${symbolType}&exchange=${exchange}&limit=${1}`);
       // onResult(result);
     },
-    async resolveSymbol(symbolName, onSymboleResolvedCallback, onResolveErrorCallback, extension?) {
+    async resolveSymbol(symbolName, onSymboleResolvedCallback, onResolveErrorCallback) {
       let fromCustomMarket = false
       let customMarket = []
       try {
@@ -100,18 +101,21 @@ const makeDataFeed = () => {
       }
       onSymboleResolvedCallback(result)
     },
-    async getBars(symbolInfo, resolution, from, to, onHistoryCallback, onErrorCallback, firstDataRequest) {
+    async getBars(symbolInfo, resolution, from, to, onHistoryCallback, onErrorCallback) {
+      //eslint-disable-next-line
       from = Math.floor(from)
+      //eslint-disable-next-line
       to = Math.ceil(to)
 
       window.localStorage.setItem('resolution', resolution)
+      //eslint-disable-next-line
       resolution = convertResolutionToApi(resolution)
 
       if (from < minTs(symbolInfo.out_count, resolution)) {
         onHistoryCallback([], { nodeData: false })
         return
       }
-
+      //eslint-disable-next-line
       if (from < 1609459200) from = 1609459200
 
       const key = `${symbolInfo.market}--${resolution}`
@@ -137,7 +141,7 @@ const makeDataFeed = () => {
         onErrorCallback(err)
       }
     },
-    async subscribeBars(symbolInfo, resolution, onRealtimeCallback, subscriberUID, onResetCacheNeededCallback) {
+    async subscribeBars(symbolInfo, resolution, onRealtimeCallback, subscriberUID) {
       if (subscriptions[subscriberUID]) {
         subscriptions[subscriberUID].stop()
         delete subscriptions[subscriberUID]

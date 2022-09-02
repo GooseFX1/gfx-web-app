@@ -36,6 +36,7 @@ const FooterCarousel = () => {
         setNfts(nfts.flat())
       } catch (error) {
         console.error(error)
+        setErr(true)
       }
     })
 

@@ -62,7 +62,7 @@ const STYLED_CREATE_BTN = styled(Button)`
 
 const BUTTON_PLUS_WRAPPER = styled(Button)<{ disabled: boolean }>`
   margin-top: 8px;
-  ${({ theme, disabled }) => `
+  ${({ disabled }) => `
     width: 143px;
     height: 45px;
     border-radius: 29px;
@@ -234,6 +234,7 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
     ]
     setFixedCreators(initCreator)
     setRoyalties(
+      //eslint-disable-next-line
       initCreator.map((creator) => ({
         creatorKey: key,
         amount: 100
@@ -277,6 +278,7 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
         })
     )
 
+    //eslint-disable-next-line
     const share = creatorStructs.reduce((acc, el) => (acc += el.share), 0)
 
     if (share > 100 && creatorStructs.length) {
@@ -427,60 +429,55 @@ interface IRoylatySplit {
   isShowErrors?: boolean
 }
 
-const RoyaltiesSplitter = ({ creators, royalties, setRoyalties, isShowErrors, removeCreator }: IRoylatySplit) => {
-  return (
-    <Col>
-      <Row gutter={[0, 24]}>
-        {creators.map((creator, idx) => {
-          const royalty = royalties.find((royalty) => royalty.creatorKey === creator.key)
-          if (!royalty) return null
+const RoyaltiesSplitter = ({ creators, royalties, setRoyalties, isShowErrors, removeCreator }: IRoylatySplit) => (
+  <Col>
+    <Row gutter={[0, 24]}>
+      {creators.map((creator, idx) => {
+        const royalty = royalties.find((royalty) => royalty.creatorKey === creator.key)
+        if (!royalty) return null
 
-          const amt = royalty.amount
+        const amt = royalty.amount
 
-          const handleChangeShare = (newAmt: number) => {
-            setRoyalties(
-              royalties.map((_royalty) => {
-                return {
-                  ..._royalty,
-                  amount: _royalty.creatorKey === royalty.creatorKey ? newAmt : _royalty.amount
-                }
-              })
-            )
-          }
-
-          return (
-            <CREATOR_CONTAINER>
-              <div className="close-btn" onClick={() => removeCreator(creator.key)}>
-                <img className="close-white-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-              </div>
-
-              <div className={'label'}>{truncateAddress(creator.label)}</div>
-
-              <div className={'slider'}>
-                <Slider value={amt} onChange={handleChangeShare} />
-              </div>
-
-              <div className={'input'}>
-                <InputNumber<number>
-                  min={0}
-                  max={100}
-                  formatter={(value) => `${value}%`}
-                  value={amt}
-                  parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
-                  onChange={handleChangeShare}
-                  className="royalties-input"
-                />
-              </div>
-
-              {isShowErrors && amt === 0 && (
-                <div>
-                  <Text type="danger">The split percentage for this creator cannot be 0%.</Text>
-                </div>
-              )}
-            </CREATOR_CONTAINER>
+        const handleChangeShare = (newAmt: number) =>
+          setRoyalties(
+            royalties.map((_royalty) => ({
+              ..._royalty,
+              amount: _royalty.creatorKey === royalty.creatorKey ? newAmt : _royalty.amount
+            }))
           )
-        })}
-      </Row>
-    </Col>
-  )
-}
+
+        return (
+          <CREATOR_CONTAINER key={idx}>
+            <div className="close-btn" onClick={() => removeCreator(creator.key)}>
+              <img className="close-white-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+            </div>
+
+            <div className={'label'}>{truncateAddress(creator.label)}</div>
+
+            <div className={'slider'}>
+              <Slider value={amt} onChange={handleChangeShare} />
+            </div>
+
+            <div className={'input'}>
+              <InputNumber<number>
+                min={0}
+                max={100}
+                formatter={(value) => `${value}%`}
+                value={amt}
+                parser={(value) => parseInt(value?.replace('%', '') ?? '0')}
+                onChange={handleChangeShare}
+                className="royalties-input"
+              />
+            </div>
+
+            {isShowErrors && amt === 0 && (
+              <div>
+                <Text type="danger">The split percentage for this creator cannot be 0%.</Text>
+              </div>
+            )}
+          </CREATOR_CONTAINER>
+        )
+      })}
+    </Row>
+  </Col>
+)

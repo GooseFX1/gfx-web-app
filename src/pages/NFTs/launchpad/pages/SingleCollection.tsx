@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useNFTLPSelected } from '../../../../context/nft_launchpad'
 import styled, { css } from 'styled-components'
-import { Col, Row, Tabs } from 'antd'
+import { Tabs } from 'antd'
 import { MintProgressBar, MintStarts } from './LaunchpadComponents'
 import { InfoDivLightTheme, Vesting, RoadMap, Socials } from './LaunchpadComponents'
-import { SVGBlackToGrey } from '../../../../styles'
+//import { SVGBlackToGrey } from '../../../../styles'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { MintButton } from '../launchpadComp/MintButton'
 import { TeamMembers } from './LaunchpadComponents'
@@ -18,7 +18,7 @@ import { logEvent } from 'firebase/analytics'
 import { logData } from '../../../../api'
 
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
-  ${({ theme, activeTab }) => css`
+  ${({ theme }) => css`
    ${tw`relative w-[35vw] max-w-[800px] min-w-[650px] sm:w-[90%] sm:my-5 sm:mx-auto sm:min-w-[300px]`}
     .ant-tabs-nav {
       ${tw`relative z-10`}
@@ -256,7 +256,7 @@ export const SingleCollection: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const { mode } = useDarkMode()
   const history = useHistory()
-  const [time, setTime] = useState(Date.now())
+  const [, setTime] = useState(Date.now())
 
   useEffect(() => {
     const interval = setInterval(() => setTime(Date.now()), 1000)
@@ -422,6 +422,7 @@ export const SingleCollection: FC = () => {
                             <div
                               className={'tierRow ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')}
                               tw="flex"
+                              key={index}
                             >
                               <div className="leftSection">
                                 <div tw="flex flex-col items-start justify-center h-full">

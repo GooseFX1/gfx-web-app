@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, FC } from 'react'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Button, Dropdown, Menu } from 'antd'
 import styled from 'styled-components'
@@ -230,7 +230,12 @@ export const copyToClipboard = async () => {
   await navigator.clipboard.writeText(window.location.href)
 }
 
-export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) => {
+export const CollectionHeader: FC<{
+  setFilter?: (x: any) => void
+  filter?: any
+  collapse: any
+  setCollapse: (x: any) => void
+}> = ({ collapse, setCollapse }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
   const { userCurrency } = useNFTProfile()
@@ -247,7 +252,7 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
   }
 
   const menu = (
-    <MENU_LIST onClick={(e) => setShareModal(true)}>
+    <MENU_LIST onClick={() => setShareModal(true)}>
       <Menu.Item key="share">Share</Menu.Item>
       {/* <Menu.Item>Report</Menu.Item> */}
     </MENU_LIST>

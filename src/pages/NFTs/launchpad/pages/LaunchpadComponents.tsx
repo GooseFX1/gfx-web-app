@@ -502,7 +502,7 @@ export const InfoDivLightTheme = ({ items, price, currency }) => {
 }
 
 export const Socials = () => {
-  const { selectedProject, cndyValues } = useNFTLPSelected()
+  const { selectedProject } = useNFTLPSelected()
   return (
     <Row
       justify={checkMobile() ? 'center' : 'space-between'}
@@ -510,24 +510,24 @@ export const Socials = () => {
       style={{ marginLeft: checkMobile() ? '0' : '10px' }}
     >
       <Col span={2} style={{ marginRight: checkMobile() ? '16px' : '0', maxWidth: checkMobile() ? '100%' : '' }}>
-        <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.website)}>
+        <SOCIAL_ICON onClick={() => window.open(selectedProject?.website)}>
           <SVGBlackToGrey src="/img/assets/domains.svg" alt="domain-icon" />
         </SOCIAL_ICON>
       </Col>
       <Col span={2} style={{ marginRight: checkMobile() ? '16px' : '0', maxWidth: checkMobile() ? '100%' : '' }}>
-        <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.discord)}>
+        <SOCIAL_ICON onClick={() => window.open(selectedProject?.discord)}>
           <SVGBlackToGrey src="/img/assets/discord_small.svg" alt="discord-icon" />
         </SOCIAL_ICON>
       </Col>
       <Col span={2} style={{ marginRight: checkMobile() ? '16px' : '0', maxWidth: checkMobile() ? '100%' : '' }}>
-        <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.twitter)}>
+        <SOCIAL_ICON onClick={() => window.open(selectedProject?.twitter)}>
           <SVGBlackToGrey src="/img/assets/twitter_small.svg" alt="twitter-icon" />
         </SOCIAL_ICON>
       </Col>
     </Row>
   )
 }
-
+//eslint-disable-next-line
 export const Vesting = ({ currency, str }) => {
   return (
     <>

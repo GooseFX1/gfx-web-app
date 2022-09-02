@@ -4,13 +4,13 @@ import { MODAL_TYPES } from '../../../../constants'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { Button, Checkbox, Col, Row } from 'antd'
+import { Checkbox, Col, Row } from 'antd'
 import { useNFTCreator } from '../../../../context/nft_creator'
-import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
+//import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 import { useHistory } from 'react-router-dom'
 import { useNavCollapse } from '../../../../context'
 import { GradientText } from '../../adminPage/components/UpcomingMints'
-import { useWallet } from '@solana/wallet-adapter-react'
+//import { useWallet } from '@solana/wallet-adapter-react'
 
 export const CENTER_WRAP = styled.div`
   display: flex;

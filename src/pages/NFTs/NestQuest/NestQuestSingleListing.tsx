@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState, useCallback, MouseEventHandler } from 'react'
-import { Row, Col, Progress } from 'antd'
+import { Row, Col } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -15,7 +15,7 @@ import { Tabs } from 'antd'
 import { TokenToggle } from '../../../components/TokenToggle'
 import { Share } from '../Share'
 import { generateTinyURL } from '../../../api/tinyUrl'
-import { moneyFormatter, notify } from '../../../utils'
+import { notify } from '../../../utils'
 import { GatewayProvider } from '@civic/solana-gateway-react'
 import { Transaction, sendAndConfirmRawTransaction } from '@solana/web3.js'
 import tw from 'twin.macro'
@@ -233,50 +233,50 @@ const DESCRIPTION = styled.p`
   color: ${({ theme }) => theme.text4};
 `
 
-const REMNANT = styled.p`
-  font-size: 16px;
-  line-height: 22px;
-  color: ${({ theme }) => theme.text1};
-  text-align: center;
-  margin: 0 0 0 4px;
+// const REMNANT = styled.p`
+//   font-size: 16px;
+//   line-height: 22px;
+//   color: ${({ theme }) => theme.text1};
+//   text-align: center;
+//   margin: 0 0 0 4px;
 
-  span {
-    color: #7d7d7d;
-  }
-`
+//   span {
+//     color: #7d7d7d;
+//   }
+// `
 
-const MINT_PROGRESS = styled(Progress)<{ num: number }>`
-  width: 75%;
-  .ant-progress-outer {
-    height: 50px;
-    margin-right: 0;
-    padding-right: 0;
-    .ant-progress-inner {
-      height: 100%;
-      background-color: ${({ theme }) => theme.bg1};
+// const MINT_PROGRESS = styled(Progress)<{ num: number }>`
+//   width: 75%;
+//   .ant-progress-outer {
+//     height: 50px;
+//     margin-right: 0;
+//     padding-right: 0;
+//     .ant-progress-inner {
+//       height: 100%;
+//       background-color: ${({ theme }) => theme.bg1};
 
-      .ant-progress-bg {
-        height: 100% !important;
-        background: linear-gradient(96.79deg, #5855ff 4.25%, #dc1fff 97.61%);
-      }
-    }
-  }
-  .ant-progress-text {
-    position: absolute;
-    top: 19px;
-    left: calc(${({ num }) => (num < 20 ? 20 : num)}% - 64px);
-  }
-`
+//       .ant-progress-bg {
+//         height: 100% !important;
+//         background: linear-gradient(96.79deg, #5855ff 4.25%, #dc1fff 97.61%);
+//       }
+//     }
+//   }
+//   .ant-progress-text {
+//     position: absolute;
+//     top: 19px;
+//     left: calc(${({ num }) => (num < 20 ? 20 : num)}% - 64px);
+//   }
+// `
 
-const MINT_PROGRESS_WRAPPER = styled.div`
-  width: 100%;
-  background-color: ${({ theme }) => theme.bg18};
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  border-radius: 15px;
-`
+// const MINT_PROGRESS_WRAPPER = styled.div`
+//   width: 100%;
+//   background-color: ${({ theme }) => theme.bg18};
+//   padding: 1rem;
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-around;
+//   border-radius: 15px;
+// `
 
 const CONNECT = styled(MainButton)`
   height: 50px;
@@ -401,7 +401,7 @@ export const NestQuestSingleListing: FC<{
   status?: MintItemViewStatus
   backUrl?: string
   arbData?: INFTMetadata
-}> = ({ status = '', backUrl, handleClickPrimaryButton, ...rest }) => {
+}> = ({ ...rest }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
   const { connected, publicKey, signTransaction } = useWallet()
@@ -460,14 +460,12 @@ export const NestQuestSingleListing: FC<{
     }
   }, [connected, publicKey, getUIAmount, mintPrice, network, token])
 
-  const handleWalletModal: MouseEventHandler<HTMLButtonElement> = useCallback(
-    (event) => {
-      setModalVisible(true)
-    },
-    [setModalVisible]
-  )
+  const handleWalletModal: MouseEventHandler<HTMLButtonElement> = useCallback(() => {
+    setModalVisible(true)
+  }, [setModalVisible])
 
-  async function CivicTransaction(transaction: Transaction) {
+  async function CivicTransaction(txn: Transaction) {
+    let transaction = txn
     const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(publicKey!))
     if (userMustSign) {
       notify({
