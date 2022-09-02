@@ -179,7 +179,8 @@ const PILL_SECONDARY = styled.div<{ $mode: string }>`
   background: ${({ $mode }) =>
     $mode === 'dark'
       ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)'
-      : 'linear-gradient(to bottom, rgba(116, 116, 116, 0.2), rgba(116, 116, 116, 0.2)), linear-gradient(to right, #f7931a 1%, #e03cff 100%), linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)'};
+      : `linear-gradient(to bottom, rgba(116, 116, 116, 0.2), rgba(116, 116, 116, 0.2)), 
+      linear-gradient(to right, #f7931a 1%, #e03cff 100%), linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)`};
   border-radius: 50px;
   width: 48%;
   height: 45px;
@@ -378,7 +379,8 @@ export const onShare = async (social: string): Promise<void> => {
   switch (social) {
     case 'twitter':
       window.open(
-        `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`,
+        `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%
+        20Exchange&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`,
         '_blank'
       )
       break
@@ -455,7 +457,9 @@ export const NestQuestSingleListing: FC<{
       if (token === 'SOL') {
         setInsufficientToken(mintPrice >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false)
       } else {
-        setInsufficientToken(mintPrice >= getUIAmount(ADDRESSES[network].mints.GOFX.address.toBase58()) ? true : false)
+        setInsufficientToken(
+          mintPrice >= getUIAmount(ADDRESSES[network].mints.GOFX.address.toBase58()) ? true : false
+        )
       }
     }
   }, [connected, publicKey, getUIAmount, mintPrice, network, token])
@@ -539,7 +543,8 @@ export const NestQuestSingleListing: FC<{
 
                       <PILL_SECONDARY $mode={mode}>
                         <div>
-                          {mintPrice} <img className="icon-image" src={`/img/crypto/${token}.svg`} alt="" /> {token}
+                          {mintPrice} <img className="icon-image" src={`/img/crypto/${token}.svg`} alt="" />{' '}
+                          {token}
                         </div>
                       </PILL_SECONDARY>
                     </div>
@@ -571,14 +576,17 @@ export const NestQuestSingleListing: FC<{
                     <TabPane tab="Summary" key="1">
                       <DESCRIPTION>
                         NestQuest is an interactive platform tutorial designed to reward participants for using the
-                        GooseFX platform. There will be six total levels and tiers of NFTs as you evolve through the
-                        process. Higher tier NFTs will be extremely limited and the rewards will be vast. The first step
-                        is to connect your Tier 1 Egg NFT and incubate it for 30 days. We will be tracking usage amongst
-                        our platform with on-chain analytics. Visit nestquest.io for all details.
+                        GooseFX platform. There will be six total levels and tiers of NFTs as you evolve through
+                        the process. Higher tier NFTs will be extremely limited and the rewards will be vast. The
+                        first step is to connect your Tier 1 Egg NFT and incubate it for 30 days. We will be
+                        tracking usage amongst our platform with on-chain analytics. Visit nestquest.io for all
+                        details.
                       </DESCRIPTION>
                     </TabPane>
                     <TabPane tab="Team" key="2">
-                      <DESCRIPTION>The Nestquest project is created and maintained by the GooseFX team.</DESCRIPTION>
+                      <DESCRIPTION>
+                        The Nestquest project is created and maintained by the GooseFX team.
+                      </DESCRIPTION>
                     </TabPane>
                   </Tabs>
                   <ACTION_BELOW>

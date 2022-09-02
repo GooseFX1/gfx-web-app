@@ -95,7 +95,8 @@ const STAKE_UNSTAKE = styled.div`
 `
 
 const BUTTONS = styled.button`
-  ${tw`w-1/2 h-10 rounded-[36px] border-0 border-none font-semibold text-tiny text-[#b5b5b5] text-center cursor-pointer`}
+  ${tw`w-1/2 h-10 rounded-[36px] border-0 border-none 
+  font-semibold text-tiny text-[#b5b5b5] text-center cursor-pointer`}
   font-family: 'Montserrat';
   background: none;
   :disabled {
@@ -217,10 +218,14 @@ export const ExpandedContent: FC<{
             <Tooltip_holder>
               <span className="details">Total Earned</span>
               {HeaderTooltip(
-                'The total profit and loss from SSL and is measured by comparing the total value of a pool’s assets (excluding trading fees) to their value if they had not been traded and instead were just held'
+                `The total profit and loss from SSL and is measured by comparing the total value of a pool’s assets (
+                  excluding trading fees) to their value if they had not been traded and instead were just held`
               )}
             </Tooltip_holder>
-            <span className="details"> {rowData?.earned >= 0 ? `${moneyFormatter(rowData?.earned)}` : <Loader />}</span>
+            <span className="details">
+              {' '}
+              {rowData?.earned >= 0 ? `${moneyFormatter(rowData?.earned)}` : <Loader />}
+            </span>
           </ROW>
           <ROW>
             <Tooltip_holder>
@@ -284,7 +289,10 @@ export const ExpandedContent: FC<{
                   >
                     HALF
                   </MAX_BUTTON>
-                  <MAX_BUTTON onClick={() => onClickMax(process === 'Stake' ? 'stake' : 'unstake')} className="textTwo">
+                  <MAX_BUTTON
+                    onClick={() => onClickMax(process === 'Stake' ? 'stake' : 'unstake')}
+                    className="textTwo"
+                  >
                     MAX
                   </MAX_BUTTON>
                 </div>

@@ -53,7 +53,9 @@ export const Collection: FC = (): JSX.Element => {
     }
 
     return () => {}
-  }, [fetchSingleCollection, params.collectionName]) //had to remove singleCollection useState trigger as it leads to infinite loop as setSingleCollection is called in fecthSingleCollection
+  }, [fetchSingleCollection, params.collectionName])
+  //had to remove singleCollection useState trigger as it leads to
+  // infinite loop as setSingleCollection is called in fecthSingleCollection
 
   return err ? (
     <GenericNotFound />

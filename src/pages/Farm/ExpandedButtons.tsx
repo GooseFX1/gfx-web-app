@@ -3,7 +3,13 @@ import { MainButton } from '../../components'
 import { Connect } from '../../layouts/App/Connect'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useFarmContext, usePriceFeedFarm, useAccounts, useTokenRegistry, useConnectionConfig } from '../../context'
+import {
+  useFarmContext,
+  usePriceFeedFarm,
+  useAccounts,
+  useTokenRegistry,
+  useConnectionConfig
+} from '../../context'
 import { invalidInputErrMsg } from './FarmClickHandler'
 import { checkMobile, notify } from '../../utils'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
@@ -462,7 +468,11 @@ export const SSLButtons: FC<{
 
   const checkbasicConditions = (amt: number, stakeRefBool?: boolean) => {
     const userAmount = stakeRefBool ? parseFloat(stakeRef.current.value) : parseFloat(unstakeRef.current.value)
-    if (isNaN(userAmount) || userAmount < 0.000001 || parseFloat(userAmount.toFixed(3)) > parseFloat(amt.toFixed(3))) {
+    if (
+      isNaN(userAmount) ||
+      userAmount < 0.000001 ||
+      parseFloat(userAmount.toFixed(3)) > parseFloat(amt.toFixed(3))
+    ) {
       stakeRefBool ? (stakeRef.current.value = 0) : (unstakeRef.current.value = 0)
       notify(invalidInputErrMsg(amt >= 0 ? amt : undefined, name))
       return true
@@ -484,7 +494,9 @@ export const SSLButtons: FC<{
       const amt = parseFloat(stakeRef.current?.value).toFixed(3)
       notEnough =
         parseFloat(amt) >
-        (name === TOKEN_NAMES.SOL ? parseFloat(userSOLBalance.toFixed(3)) : parseFloat(userTokenBalance.toFixed(3)))
+        (name === TOKEN_NAMES.SOL
+          ? parseFloat(userSOLBalance.toFixed(3))
+          : parseFloat(userTokenBalance.toFixed(3)))
     } catch (e) {
       console.log(e)
     }
@@ -526,7 +538,9 @@ export const SSLButtons: FC<{
                 <STYLED_DESC>
                   <div className="text">{name} Wallet Balance:</div>
                   <div className="value">
-                    {name === TOKEN_NAMES.SOL ? userSOLBalance?.toFixed(DISPLAY_DECIMAL) : userTokenBalance.toFixed(3)}{' '}
+                    {name === TOKEN_NAMES.SOL
+                      ? userSOLBalance?.toFixed(DISPLAY_DECIMAL)
+                      : userTokenBalance.toFixed(3)}{' '}
                     {name}
                   </div>
                 </STYLED_DESC>
@@ -574,7 +588,9 @@ export const SSLButtons: FC<{
                   <STYLED_STAKE_PILL
                     loading={isWithdrawLoading}
                     disabled={
-                      isUnstakeLoading || parseFloat(availableToMint.toFixed(DISPLAY_DECIMAL)) <= 0 || operationPending
+                      isUnstakeLoading ||
+                      parseFloat(availableToMint.toFixed(DISPLAY_DECIMAL)) <= 0 ||
+                      operationPending
                     }
                     className={miniButtonsClass}
                     title={'Withdraw tokens to your wallet'}

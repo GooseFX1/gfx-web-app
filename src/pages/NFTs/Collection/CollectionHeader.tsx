@@ -244,7 +244,8 @@ export const CollectionHeader: FC<{
   const [shareModal, setShareModal] = useState(false)
   const [sweeperModal, setSweeperModal] = useState<boolean>(false)
 
-  const isCollectionItemEmpty: boolean = !singleCollection || !fixedPriceWithinCollection || !openBidWithinCollection
+  const isCollectionItemEmpty: boolean =
+    !singleCollection || !fixedPriceWithinCollection || !openBidWithinCollection
   // const isCollectionItemEmpty: boolean = true
 
   const handleSweepClick = () => {
@@ -281,12 +282,15 @@ export const CollectionHeader: FC<{
     switch (social) {
       case 'twitter':
         window.open(
-          `https://twitter.com/intent/tweet?text=Check%20out%20the%20${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%20Exchange%20&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
+          `https://twitter.com/intent/tweet?text=Check%20out%20the%20
+          ${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%
+          20Exchange%20&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
         )
         break
       case 'telegram':
         window.open(
-          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20the%20${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%20Exchange%20`
+          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20the%20
+          ${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%20Exchange%20`
         )
         break
       case 'facebook':
@@ -371,7 +375,11 @@ export const CollectionHeader: FC<{
                 <SkeletonCommon width="106px" height="25px" />
               ) : (
                 <span>
-                  {dynamicPriceValue(userCurrency, prices, singleCollection.collection_floor / LAMPORTS_PER_SOL || 0)}
+                  {dynamicPriceValue(
+                    userCurrency,
+                    prices,
+                    singleCollection.collection_floor / LAMPORTS_PER_SOL || 0
+                  )}
                 </span>
               )}
             </div>

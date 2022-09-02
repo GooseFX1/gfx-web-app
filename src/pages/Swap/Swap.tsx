@@ -44,7 +44,8 @@ const WRAPPER = styled.div`
 `
 
 const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
-  ${tw`flex pt-[124px] items-center w-screen mb-7 max-h-80p sm:justify-start sm:flex sm:flex-col sm:items-center sm:h-full`}
+  ${tw`flex pt-[124px] items-center w-screen mb-7 
+  max-h-80p sm:justify-start sm:flex sm:flex-col sm:items-center sm:h-full`}
 
   color: ${({ theme }) => theme.text1};
   justify-content: ${({ $desktop }) => ($desktop ? 'space-between' : 'space-around')};
@@ -190,7 +191,8 @@ const SMALL_CLICKER_ICON = styled(CenteredImg)`
 
 const PRICE_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
-  ${tw`items-center h-full w-81.5 p-6 rounded-tl-bigger min-h-[527px] rounded-bl-bigger sm:w-full sm:rounded-bigger sm:mb-12`}
+  ${tw`items-center h-full w-81.5 p-6 rounded-tl-bigger 
+  min-h-[527px] rounded-bl-bigger sm:w-full sm:rounded-bigger sm:mb-12`}
   font-family: Montserrat;
   background: ${({ theme }) => theme.swapSides2};
 `
@@ -199,7 +201,9 @@ const SWAP_ROUTES = styled.div<{ $less: boolean }>`
   ${tw`relative`}
 
   .swap-content {
-    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 mb-3 py-8 px-0 mx-8 sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0 flex-wrap`}
+    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 mb-3 py-8 px-0 mx-8 
+    sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around 
+    sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0 flex-wrap`}
     justify-content: ${({ $less }) => ($less ? 'center' : 'center')};
   }
 
@@ -312,7 +316,8 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
   const location = useLocation<ILocationState>()
   const { setEndpoint, network } = useConnectionConfig()
   const { mode } = useDarkMode()
-  const { refreshRates, setFocused, switchTokens, setClickNo, setRoutes, tokenA, tokenB, inTokenAmount } = useSwap()
+  const { refreshRates, setFocused, switchTokens, setClickNo, setRoutes, tokenA, tokenB, inTokenAmount } =
+    useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
   const [route, setRoute] = useState(routes[clickNo])
   const [wrapModalVisible, setWrapModalVisible] = useState(false)
@@ -545,7 +550,8 @@ const TokenContent: FC = () => {
               {
                 name: 'Total Max Supply',
                 value:
-                  Math.floor(data?.market_data?.max_supply || data?.market_data?.total_supply)?.toLocaleString() || '0'
+                  Math.floor(data?.market_data?.max_supply || data?.market_data?.total_supply)?.toLocaleString() ||
+                  '0'
               },
               { name: 'Holders', value: res?.total?.toLocaleString() || 0 }
             ])
@@ -592,7 +598,8 @@ const TokenContent: FC = () => {
               {
                 name: 'Total Max Supply',
                 value:
-                  Math.floor(data?.market_data?.max_supply || data?.market_data?.total_supply)?.toLocaleString() || '0'
+                  Math.floor(data?.market_data?.max_supply || data?.market_data?.total_supply)?.toLocaleString() ||
+                  '0'
               },
               { name: 'Holders', value: res?.total?.toLocaleString() || 0 }
             ])
@@ -698,13 +705,16 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
       { name: 'Price Impact', value: `< ${Number(route.priceImpactPct).toFixed(6)}%` },
       {
         name: checkMobile() ? 'Min. Received' : 'Minimum Received',
-        value: `${nFormatter(route.outAmountWithSlippage / 10 ** tokenB.decimals, tokenB.decimals)} ${tokenB.symbol}`
+        value: `${nFormatter(route.outAmountWithSlippage / 10 ** tokenB.decimals, tokenB.decimals)} ${
+          tokenB.symbol
+        }`
       },
       ...route?.marketInfos.slice(0, 3).map((market: any, num: number) => ({
         name: `Fees paid to ${market.amm.label || 'GooseFX'} LP`,
-        value: `${nFormatter(getPriceDetails(num).totalLp, getPriceDetails(num).token?.decimals || tokenA.decimals)} ${
-          getPriceDetails(num).token?.symbol || tokenA.symbol
-        } (${getPriceDetails(num).percent} %)`
+        value: `${nFormatter(
+          getPriceDetails(num).totalLp,
+          getPriceDetails(num).token?.decimals || tokenA.decimals
+        )} ${getPriceDetails(num).token?.symbol || tokenA.symbol} (${getPriceDetails(num).percent} %)`
         // extraValue:
         //   market.amm.label === 'GooseFX' ??
         //   `${nFormatter(getPriceDetails(num).totalLpB, tokenB.decimals)} ${tokenB.symbol} (${

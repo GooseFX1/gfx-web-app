@@ -104,7 +104,8 @@ export const columns = [
   {
     title: Title(
       'Total Earned',
-      'The total profit and loss from SSL and is measured by comparing the total value of a pool’s assets (excluding trading fees) to their value if they had not been traded and instead were just held',
+      `The total profit and loss from SSL and is measured by comparing the total value of a pool’s assets (
+        excluding trading fees) to their value if they had not been traded and instead were just held`,
       true
     ),
     dataIndex: 'earned',

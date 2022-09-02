@@ -25,7 +25,9 @@ export const TotalLiquidityVolume = () => {
         <br />
         <span>
           <GradientText text={'SSL Volume'} fontSize={20} fontWeight={500} /> :
-          {farmData ? ` $ ` + moneyFormatterWithComma(farmData?.aggregatedVolume?.sslVolume?.toFixed(2)) : 'Loading...'}{' '}
+          {farmData
+            ? ` $ ` + moneyFormatterWithComma(farmData?.aggregatedVolume?.sslVolume?.toFixed(2))
+            : 'Loading...'}{' '}
         </span>{' '}
         <br />
         <span>

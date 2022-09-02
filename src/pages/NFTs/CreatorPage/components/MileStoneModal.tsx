@@ -156,7 +156,8 @@ const WRAPPER_COMPONENT = styled.div`
   .first-input-row {
     ${tw`flex justify-center items-center`}
     .ant-input:first-child {
-      ${tw`text-left pl-4 w-8/12 h-[53px] rounded-bl-[40px] border-0 rounded-tl-[40px] border-none border-r border-gray-1 border-solid text-[17px]`}
+      ${tw`text-left pl-4 w-8/12 h-[53px] rounded-bl-[40px] border-0 
+      rounded-tl-[40px] border-none border-r border-gray-1 border-solid text-[17px]`}
       background-color: ${({ theme }) => theme.sweepModalCard};
     }
     .ant-input:nth-child(2) {
@@ -193,7 +194,12 @@ const MileStoneComponent: FC<{
       <Row>
         <Col span={4}>
           <Row>
-            <img tw="cursor-pointer" alt="close" src="/img/assets/primary-close.svg" onClick={() => remove(index)} />
+            <img
+              tw="cursor-pointer"
+              alt="close"
+              src="/img/assets/primary-close.svg"
+              onClick={() => remove(index)}
+            />
           </Row>
         </Col>
         <Col span={20}>

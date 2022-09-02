@@ -124,7 +124,8 @@ const CollectionCarousel: FC<ICollectionCarousel> = ({ title, collections, colle
       )
     )
       //sort by volume, sort by floor price will be resorted if volume exists
-      //sort by volume before floor_price to allow listed collection come first if no volume yet and then yearly and monthly by order of priority with weekly being the highest priority
+      //sort by volume before floor_price to allow listed collection come first if no volume yet
+      //and then yearly and monthly by order of priority with weekly being the highest priority
       .sort(
         (a, b) =>
           b.collection_vol.weekly - a.collection_vol.weekly ||

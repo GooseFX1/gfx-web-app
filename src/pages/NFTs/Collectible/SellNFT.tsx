@@ -8,7 +8,13 @@ import { CenteredDiv, MainText, TXT_PRIMARY_GRADIENT, GFX_LINK, FLOATING_ACTION_
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { SellCategory } from '../SellCategory/SellCategory'
 import { FormDoubleItem } from '../Form/FormDoubleItem'
-import { SuccessfulListingMsg, TransactionErrorMsg, MainButton, Modal, FloatingActionButton } from '../../../components'
+import {
+  SuccessfulListingMsg,
+  TransactionErrorMsg,
+  MainButton,
+  Modal,
+  FloatingActionButton
+} from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { notify, truncateAddress } from '../../../utils'
 import { registerSingleNFT } from '../../../api/NFTs'
@@ -353,7 +359,10 @@ export const SellNFT = () => {
       programAsSignerPDA[0]
     )
 
-    const sellIX: TransactionInstruction = await createSellInstruction(sellInstructionAccounts, sellInstructionArgs)
+    const sellIX: TransactionInstruction = await createSellInstruction(
+      sellInstructionAccounts,
+      sellInstructionArgs
+    )
     console.log(sellIX)
 
     const transaction = new Transaction()
@@ -546,8 +555,8 @@ export const SellNFT = () => {
           <div style={{ marginBottom: '32px' }}>
             <div className="bm-title">Fixed Price</div>
             <div className="bm-support">
-              Users can still bid below the asking price. If a bid is placed that is equal to your asking price, your
-              item will be sold and transferred from your wallet.
+              Users can still bid below the asking price. If a bid is placed that is equal to your asking price,
+              your item will be sold and transferred from your wallet.
             </div>
           </div>
 
@@ -556,7 +565,10 @@ export const SellNFT = () => {
               <span>
                 <img
                   style={{ height: '26px', marginRight: '6px' }}
-                  src="https://www.gitbook.com/cdn-cgi/image/height=40,fit=contain,dpr=2,format=auto/https%3A%2F%2F2775063016-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252F-M2WGem6IdHOZpBD3zJX%252Flogo%252Fw9pblAvM5UayZbYEg4Cj%252FBlack.png%3Falt%3Dmedia%26token%3D9a925146-c226-4f09-b39b-f61642681016"
+                  src="https://www.gitbook.com/cdn-cgi/image/height=40,fit=contain,dpr=2,
+                  format=auto/https%3A%2F%2F2775063016-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%
+                  2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252F-M2WGem6IdHOZpBD3zJX%252Flogo%2
+                  52Fw9pblAvM5UayZbYEg4Cj%252FBlack.png%3Falt%3Dmedia%26token%3D9a925146-c226-4f09-b39b-f61642681016"
                   alt="solscan-icon"
                 />
               </span>
@@ -580,7 +592,12 @@ export const SellNFT = () => {
                 </Row>
               </Col>
             </Row>
-            <Row className="bm-details-price" justify="space-between" align="middle" style={{ marginBottom: '70px' }}>
+            <Row
+              className="bm-details-price"
+              justify="space-between"
+              align="middle"
+              style={{ marginBottom: '70px' }}
+            >
               <Col>You will receive</Col>
               <Col>
                 <Row gutter={8} justify="space-between" align="middle" style={{ fontWeight: 700 }}>
@@ -590,7 +607,13 @@ export const SellNFT = () => {
               </Col>
             </Row>
 
-            <MainButton height={'60px'} width="100%" status="action" onClick={callSellInstruction} loading={isLoading}>
+            <MainButton
+              height={'60px'}
+              width="100%"
+              status="action"
+              onClick={callSellInstruction}
+              loading={isLoading}
+            >
               <BUTTON_TEXT>List Now</BUTTON_TEXT>
             </MainButton>
           </div>
@@ -651,8 +674,8 @@ export const SellNFT = () => {
                       />
 
                       <STYLED_DESCRIPTION>
-                        Open bids are open to any amount and they will be closed after a bid matches the asking price or
-                        if the creator decides to remove it.
+                        Open bids are open to any amount and they will be closed after a bid matches the asking
+                        price or if the creator decides to remove it.
                       </STYLED_DESCRIPTION>
                     </div>
                   )}
@@ -662,7 +685,8 @@ export const SellNFT = () => {
                         data={[
                           {
                             id: 'minimumBid',
-                            defaultValue: ask === undefined ? '' : `${parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL}`,
+                            defaultValue:
+                              ask === undefined ? '' : `${parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL}`,
                             placeholder: 'Enter asking price',
                             hint: (
                               <div>
@@ -678,8 +702,8 @@ export const SellNFT = () => {
                       />
 
                       <STYLED_DESCRIPTION>
-                        Open bids are open to any amount and they will be closed after a bid matches the asking price or
-                        if the creator decides to remove it.
+                        Open bids are open to any amount and they will be closed after a bid matches the asking
+                        price or if the creator decides to remove it.
                       </STYLED_DESCRIPTION>
                     </div>
                   )}

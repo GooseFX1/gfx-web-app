@@ -5,7 +5,12 @@
     "node": true
   },
   "plugins": ["@typescript-eslint", "unused-imports", "react", "import"],
-  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
   "rules": {
     "import/prefer-default-export": "off",
     "semi": "off",
@@ -17,7 +22,7 @@
     "@typescript-eslint/no-explicit-any": "off", //main remvoals, the rest warning will be turned to errors later on
     "no-console": "off",
     "import/no-unresolved": "off", // change to "error"
-    "max-len": ["warn", { "code": 120 }],
+    "max-len": ["error", { "code": 120 }],
     "comma-dangle": "warn",
     "no-unused-vars": "off",
     "arrow-body-style": "warn", //change to error

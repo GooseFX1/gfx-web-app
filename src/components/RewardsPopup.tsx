@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import styled from 'styled-components'
 import { useRewardToggle } from '../context/reward_toggle'
 import { RewardInfoComponent, RewardRedirectComponent } from './RewardDetails'
-import tw from "twin.macro"
+import tw from 'twin.macro'
 
 const REWARD_INFO = styled.div`
   ${tw`w-[68%] h-[75vh] rounded-bigger`}
@@ -19,9 +19,10 @@ const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.bg9};
 `
 const REWARDS_BTN = styled.button`
-  ${tw`w-[111px] h-9 text-xs !font-semibold rounded-circle cursor-pointer text-white border-none border-0 sm:h-[70px] sm:w-full sm:text-regular sm:rounded-t-bigger sm:p-4 sm:mb-8`}
+  ${tw`w-[111px] h-9 text-xs !font-semibold rounded-circle cursor-pointer text-white 
+  border-none border-0 sm:h-[70px] sm:w-full sm:text-regular sm:rounded-t-bigger sm:p-4 sm:mb-8`}
   background-image: linear-gradient(90deg, #8ade75 0%, #4b831d 100%);
-  line-height: inherit
+  line-height: inherit;
 `
 const REWARDS_WITH_IMG = styled.img`
   ${tw`h-4 w-4 ml-2`}
@@ -50,17 +51,15 @@ export const RewardsButton: FC = () => {
   )
 }
 
-export const RewardsPopup: FC = () => {
-  return (
-    <Wrapper>
-      <REWARD_INFO>
-        <RewardInfoComponent />
-      </REWARD_INFO>
-      <REWARD_REDIRECT>
-        <RewardRedirectComponent />
-      </REWARD_REDIRECT>
-    </Wrapper>
-  )
-}
+export const RewardsPopup: FC = () => (
+  <Wrapper>
+    <REWARD_INFO>
+      <RewardInfoComponent />
+    </REWARD_INFO>
+    <REWARD_REDIRECT>
+      <RewardRedirectComponent />
+    </REWARD_REDIRECT>
+  </Wrapper>
+)
 
 export default RewardsPopup

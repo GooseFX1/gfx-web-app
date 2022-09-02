@@ -190,14 +190,18 @@ export const Selector: FC<{
             ...filteredTokensListAlt?.[0],
             imageURL: `/img/crypto/${filteredTokensListAlt?.[0].symbol}.svg`
           })
-          window.localStorage.setItem('myAddedTokenList', JSON.stringify([...altTokens, filteredTokensListAlt?.[0]]))
+          window.localStorage.setItem(
+            'myAddedTokenList',
+            JSON.stringify([...altTokens, filteredTokensListAlt?.[0]])
+          )
         }
       }
 
       const filteredTokensList = tokenList
         .filter(
           ({ address, name, symbol }) =>
-            (r.test(name.split('(')[0]) || r.test(symbol) || filterKeywords === address) && //the split by "(" is to remove every string in name of token with (Portal) or (Sollet) or any other.
+            (r.test(name.split('(')[0]) || r.test(symbol) || filterKeywords === address) &&
+            //the split by "(" is to remove every string in name of token with (Portal) or (Sollet) or any other.
             (!otherToken || otherToken.address !== address)
         )
         .sort((a, b) => {

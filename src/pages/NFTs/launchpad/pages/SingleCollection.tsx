@@ -75,7 +75,8 @@ export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
       background: ${theme.tabContentBidFooterBackground};
       backdrop-filter: blur(23.9091px);
       .rst-footer-button {
-        ${tw`text-white h-[55px] text-[17px] flex flex-row justify-center items-center font-semibold border-0 border-none rounded-half py-0 px-4 cursor-pointer whitespace-nowrap`}
+        ${tw`text-white h-[55px] text-[17px] flex flex-row justify-center items-center 
+        font-semibold border-0 border-none rounded-half py-0 px-4 cursor-pointer whitespace-nowrap`}
         flex: 1;
         &:not(:last-child) {
           ${tw`mr-3`}
@@ -140,11 +141,13 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
 const NFT_COVER = styled.div`
   ${tw`h-[550px] w-[550px] sm:h-[350px] sm:w-full`}
   .image-border {
-    ${tw`w-[608px] h-[608px] p-[5px] rounded-bigger mt-8 mb-[30px] sm:w-[90%] sm:h-[350px] sm:rounded-[18px] sm:p-[3px] sm:my-[30px] sm:mx-auto`}
+    ${tw`w-[608px] h-[608px] p-[5px] rounded-bigger mt-8 mb-[30px] 
+    sm:w-[90%] sm:h-[350px] sm:rounded-[18px] sm:p-[3px] sm:my-[30px] sm:mx-auto`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   }
   .ended-img {
-    ${tw`h-[550px] w-[550px] rounded-bigger p-[5px] mt-8 mb-[30px] opacity-40 sm:h-[354px] sm:w-[90%] sm:my-0 sm:mx-auto`}
+    ${tw`h-[550px] w-[550px] rounded-bigger p-[5px] mt-8 
+    mb-[30px] opacity-40 sm:h-[354px] sm:w-[90%] sm:my-0 sm:mx-auto`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   }
 
@@ -174,7 +177,8 @@ const HEIGHT = styled.div`
 `
 
 const SUMMARY_TAB_CONTENT = styled.div`
-  ${tw`sm:my-5 sm:mx-auto sm:font-medium sm:text-tiny sm:text-[#eeeeee] sm:leading-normal m-auto px-[30px] mt-[6%] font-semibold text-[20px]`}
+  ${tw`sm:my-5 sm:mx-auto sm:font-medium sm:text-tiny sm:text-[#eeeeee] 
+  sm:leading-normal m-auto px-[30px] mt-[6%] font-semibold text-[20px]`}
   color: ${({ theme }) => theme.text4};
   div {
     ${tw`text-center`}
@@ -420,7 +424,9 @@ export const SingleCollection: FC = () => {
                         <TIER_WRAPPER>
                           {selectedProject?.tiers?.map((item, index) => (
                             <div
-                              className={'tierRow ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')}
+                              className={
+                                'tierRow ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
+                              }
                               tw="flex"
                               key={index}
                             >
@@ -436,7 +442,8 @@ export const SingleCollection: FC = () => {
                                 <div tw="flex flex-col items-end justify-center h-full">
                                   <div
                                     className={
-                                      'textStatus ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
+                                      'textStatus ' +
+                                      (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
                                     }
                                     tw="text-[11px] px-1"
                                   >
@@ -458,7 +465,8 @@ export const SingleCollection: FC = () => {
                                   </div>
                                   <div
                                     className={
-                                      'textPrice ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
+                                      'textPrice ' +
+                                      (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
                                     }
                                     tw="text-[14px]"
                                   >

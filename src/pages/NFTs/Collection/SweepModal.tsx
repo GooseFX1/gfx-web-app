@@ -919,10 +919,11 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
       const token_account = await getParsedAccountByMint({ mintAddress: tempNftBatch[i].mint_address, connection })
       tempTokenAccount.push(token_account.pubkey)
 
-      const { metaDataAccount, escrowPaymentAccount, buyerTradeState, buyerPrice } = await derivePDAsForInstruction({
-        ...tempNftBatch[i],
-        token_account: token_account.pubkey
-      })
+      const { metaDataAccount, escrowPaymentAccount, buyerTradeState, buyerPrice } =
+        await derivePDAsForInstruction({
+          ...tempNftBatch[i],
+          token_account: token_account.pubkey
+        })
 
       if (i === 0) {
         let res = 0
@@ -997,7 +998,10 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
           state_array[index] = 0
           setNftState(state_array)
           setActiveSweepIndex(index)
-          const res = await postBidToAPI(signature, item.price, { ...item, token_account: tempTokenAccount[index] })
+          const res = await postBidToAPI(signature, item.price, {
+            ...item,
+            token_account: tempTokenAccount[index]
+          })
           if (res.data && res.data.bid_matched && res.data.tx_sig) {
             state_array[index] = 1
             setNftState(state_array)
@@ -1131,12 +1135,17 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
     switch (social) {
       case 'twitter':
         window.open(
-          `https://twitter.com/intent/tweet?text=Just%20Sweeping%20Up%20%F0%9F%A7%B9%F0%9F%A7%B9${collectionName}%20%F0%9F%A7%B9%F0%9F%A7%B9%0AProbably%20Nothing.%20%F0%9F%A4%AB%0ADeFi%20Simplified%20-%20%20%40GooseFX1%0A%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80&via=gooseFX1&original_referer=${window.location.host}${window.location.pathname}`
+          `https://twitter.com/intent/tweet?text=Just%20Sweeping%20Up%20%F0%9F%A7%B9%F0%9F%A7%
+          B9${collectionName}%20%F0%9F%A7%B9%F0%9F%A7%B9%0AProbably%20Nothing.%20%F0%9F%A4%AB%0ADeFi%
+          20Simplified%20-%20%20%40GooseFX1%0A%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80&via=gooseFX1&
+          original_referer=${window.location.host}${window.location.pathname}`
         )
         break
       case 'telegram':
         window.open(
-          `https://t.me/share/url?url=${tinyURL}&text=Just%20Sweeping%20Up%20%F0%9F%A7%B9%F0%9F%A7%B9${collectionName}%20%F0%9F%A7%B9%F0%9F%A7%B9%0AProbably%20Nothing.%20%F0%9F%A4%AB%0ADeFi%20Simplified%20-%20%20%40GooseFX1%0A%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80`
+          `https://t.me/share/url?url=${tinyURL}&text=Just%20Sweeping%20Up%20%F0%9F%A7%B9%F0%9F%A7
+          %B9${collectionName}%20%F0%9F%A7%B9%F0%9F%A7%B9%0AProbably%20Nothing.%20%F0%9F%A4%AB%
+          0ADeFi%20Simplified%20-%20%20%40GooseFX1%0A%F0%9F%9A%80%F0%9F%9A%80%F0%9F%9A%80`
         )
         break
       case 'facebook':
@@ -1197,7 +1206,11 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
                   />
                 </div>
                 <Row justify="center" align="middle" className="rowTwo">
-                  <img className="small-image" src={singleCollection.collection[0].profile_pic_link} alt="the-nft" />
+                  <img
+                    className="small-image"
+                    src={singleCollection.collection[0].profile_pic_link}
+                    alt="the-nft"
+                  />
                   <span className="collection-name-sweeper">{singleCollection.collection[0].collection_name}</span>
                   {singleCollection.collection[0].is_verified && (
                     <img className="verified-tick" src={`/img/assets/check-icon.svg`} alt="" />
@@ -1210,14 +1223,22 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
                   <Lottie animationData={confettiAnimation} className="confettiAnimation" />
                 )}
                 <div className="topbar">
-                  {sweepSuccessFlag ? 'Mission accomplished!' : getSuccessfulSweeps() > 0 ? 'Almost all!' : 'Try Again'}
+                  {sweepSuccessFlag
+                    ? 'Mission accomplished!'
+                    : getSuccessfulSweeps() > 0
+                    ? 'Almost all!'
+                    : 'Try Again'}
                 </div>
                 <div className="successful-sweeps">
                   You are now the owner of<span className="count primary3color">{getSuccessfulSweeps()}</span>NFT's
                   from:
                 </div>
                 <Row justify="center" align="middle" className="rowTwo">
-                  <img className="small-image" src={singleCollection.collection[0].profile_pic_link} alt="the-nft" />
+                  <img
+                    className="small-image"
+                    src={singleCollection.collection[0].profile_pic_link}
+                    alt="the-nft"
+                  />
                   <span className="collection-name-sweeper">{singleCollection.collection[0].collection_name}</span>
                   {singleCollection.collection[0].is_verified && (
                     <img className="verified-tick" src={`/img/assets/check-icon.svg`} alt="" />
@@ -1237,7 +1258,11 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
                                 title={
                                   <span>
                                     <span className="sweep-price">{item.price / LAMPORTS_PER_SOL} SOL</span>
-                                    <img className="sweeper-solana-logo" src={`/img/assets/solana-logo.png`} alt="" />
+                                    <img
+                                      className="sweeper-solana-logo"
+                                      src={`/img/assets/solana-logo.png`}
+                                      alt=""
+                                    />
                                   </span>
                                 }
                               />
@@ -1331,7 +1356,9 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
               <>
                 <Row justify="center" align="middle" className="rowThree">
                   <span className="sweepNumber primary3color">
-                    {fixedPriceWithinCollection.nft_data.length > 10 ? 10 : fixedPriceWithinCollection.nft_data.length}
+                    {fixedPriceWithinCollection.nft_data.length > 10
+                      ? 10
+                      : fixedPriceWithinCollection.nft_data.length}
                   </span>
                   Cheapest NFT's of the collection:
                 </Row>
@@ -1463,9 +1490,14 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
                                 title={
                                   <span>
                                     <span className="sweep-price">
-                                      {nftBatch[index] && (nftBatch[index].price / LAMPORTS_PER_SOL).toFixed(2)} SOL
+                                      {nftBatch[index] && (nftBatch[index].price / LAMPORTS_PER_SOL).toFixed(2)}{' '}
+                                      SOL
                                     </span>
-                                    <img className="sweeper-solana-logo" src={`/img/assets/solana-logo.png`} alt="" />
+                                    <img
+                                      className="sweeper-solana-logo"
+                                      src={`/img/assets/solana-logo.png`}
+                                      alt=""
+                                    />
                                   </span>
                                 }
                               />
@@ -1484,7 +1516,11 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
                   {nftState[activeSweepIndex] === 1 ? (
                     <div className="sweepStatus">
                       <div>
-                        <img src={`/img/assets/sweepCompleted.svg`} alt="sweep-completed" className="sweepCompleted" />
+                        <img
+                          src={`/img/assets/sweepCompleted.svg`}
+                          alt="sweep-completed"
+                          className="sweepCompleted"
+                        />
                       </div>
                       <div>Sweep Completed</div>
                     </div>

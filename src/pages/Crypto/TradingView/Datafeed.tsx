@@ -52,7 +52,8 @@ const makeDataFeed = () => {
     },
     //eslint-disable-next-line
     async searchSymbol(userInput, exchange, symbolType, onResult) {
-      // const result = await apiGet(`${URL_SERVER}search?query=${userInput}&type=${symbolType}&exchange=${exchange}&limit=${1}`);
+      // const result = await apiGet(`${URL_SERVER}search?query=${userInput}
+      //&type=${symbolType}&exchange=${exchange}&limit=${1}`);
       // onResult(result);
     },
     async resolveSymbol(symbolName, onSymboleResolvedCallback, onResolveErrorCallback) {
@@ -173,7 +174,8 @@ const makeDataFeed = () => {
           lastReqTime[subscriberUID] = new Date().getTime()
 
           const candle = await apiFetchHandler(
-            `${URL_SERVER}history?market=${symbolInfo.market}&resolution=${resolutionApi}&from_time=${from}&to_time=${to}`
+            `${URL_SERVER}history?market=${symbolInfo.market}&
+            resolution=${resolutionApi}&from_time=${from}&to_time=${to}`
           )
 
           for (const item of parseCandles(candle)) {
@@ -192,7 +194,9 @@ const makeDataFeed = () => {
       delete subscriptions[subscriberUID]
     },
     async searchSymbols(userInput: string, exchange: string, symbolType: string, onResult: SearchSymbolsCallback) {
-      const marketList: any[] = AVAILABLE_MARKETS.filter((item) => item.name.includes(userInput) && !item.deprecated)
+      const marketList: any[] = AVAILABLE_MARKETS.filter(
+        (item) => item.name.includes(userInput) && !item.deprecated
+      )
       const reList = []
       marketList.forEach((item) => {
         reList.push({

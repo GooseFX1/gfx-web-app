@@ -375,7 +375,12 @@ const wrapSolToken = async (wallet: any, connection: Connection, amount: number)
     // Create token account to hold your wrapped SOL
     if (!accountExists)
       tx.add(
-        createAssociatedTokenAccountInstruction(wallet.publicKey, associatedTokenAccount, wallet.publicKey, NATIVE_MINT)
+        createAssociatedTokenAccountInstruction(
+          wallet.publicKey,
+          associatedTokenAccount,
+          wallet.publicKey,
+          NATIVE_MINT
+        )
       )
 
     // Transfer SOL to associated token account and use SyncNative to update wrapped SOL balance
@@ -427,7 +432,8 @@ const depositAmount = async (
     userWallet: wallet.publicKey,
     tokenProgram: TOKEN_PROGRAM_ID
   }
-  //const amountInLamport = amount * Math.pow(10, getTokenDecimal(net)); // some strage co relation dont will check about it later
+  //const amountInLamport = amount * Math.pow(10, getTokenDecimal(net));
+  // some strage co relation dont will check about it later
   const amountInBN: BN = new BN(amountInNative)
   //@ts-ignore
   const depositAmountIX: TransactionInstruction = await program.instruction.deposit(amountInBN, {

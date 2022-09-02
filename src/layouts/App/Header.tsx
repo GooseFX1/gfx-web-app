@@ -15,7 +15,8 @@ import { ThemeToggle } from '../../components/ThemeToggle'
 import tw from 'twin.macro'
 
 const BRAND = styled.a`
-  ${tw`absolute flex justify-center items-center text-big leading-5 font-bold w-21 md:relative md:top-2 md:left-2 md:mb-6 md:h-11.75 min-md:h-12.5 min-md:left-[58px]`}
+  ${tw`absolute flex justify-center items-center text-big 
+  leading-5 font-bold w-21 md:relative md:top-2 md:left-2 md:mb-6 md:h-11.75 min-md:h-12.5 min-md:left-[58px]`}
 
   img {
     ${tw`h-inherit w-inherit object-contain`}
@@ -37,7 +38,8 @@ const BUTTONS = styled(CenteredDiv)`
 `
 
 const WRAPPER = styled.nav`
-  ${tw`fixed w-full rounded-b-circle z-[300] md:flex-nowrap md:flex md:h-auto md:p-2 min-md:flex min-md:items-center min-md:justify-center`}
+  ${tw`fixed w-full rounded-b-circle z-[300] md:flex-nowrap 
+  md:flex md:h-auto md:p-2 min-md:flex min-md:items-center min-md:justify-center`}
   background-color: ${({ theme }) => theme.bg9};
   ${({ theme }) => theme.smallShadow}
 `
@@ -178,7 +180,10 @@ export const Header: FC = () => {
   }
 }
 
-const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => void }> = ({ collapse, onCollapse }) => {
+const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => void }> = ({
+  collapse,
+  onCollapse
+}) => {
   const { mode } = useDarkMode()
   const icon = `/img/assets/arrow-down.svg`
   const handleCollapse = () => onCollapse(!collapse)

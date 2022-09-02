@@ -137,11 +137,14 @@ export const ImageShowcase: FC = ({ ...rest }) => {
     switch (social) {
       case 'twitter':
         window.open(
-          `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
+          `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%
+          20Exchange&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
         )
         break
       case 'telegram':
-        window.open(`https://t.me/share/url?url=${tinyURL}&text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange`)
+        window.open(
+          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange`
+        )
         break
       case 'facebook':
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${tinyURL}`)
@@ -201,7 +204,9 @@ export const ImageShowcase: FC = ({ ...rest }) => {
                   onClick={handleToggleLike}
                 />
               )}
-              <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>{likes}</span>
+              <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
+                {likes}
+              </span>
             </Col>
           )}
         </Row>
