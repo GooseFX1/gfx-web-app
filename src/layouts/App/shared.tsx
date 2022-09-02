@@ -16,7 +16,7 @@ export const MenuItem = styled.li`
   ${tw`flex items-center justify-between cursor-pointer py-[5.6px] px-0`}
 
   &:hover span {
-    color: ${({ theme }) => theme.secondary7};
+    color: ${({ theme }) => theme.secondary4};
   }
 
   img {

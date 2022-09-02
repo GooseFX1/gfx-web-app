@@ -56,3 +56,50 @@ export const saveLiquidtyVolume = async (sslVolume: number, stakeVolume: number,
     }
   }
 }
+
+export const getVolumeApr = async (tokenList: string[], SSLTokenNames: string[], controllerStr: string) => {
+  try {
+    //const url = 'http://localhost:4000' + SSL_API_ENDPOINTS.GET_VOLUME_APR_DATA
+    const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.GET_VOLUME_APR_DATA
+    let dataToSend = JSON.stringify({
+      tokens: tokenList,
+      SSLTokenNames: SSLTokenNames,
+      controllerStr: controllerStr
+    })
+    const response = await axios({
+      method: 'POST',
+      url: url,
+      data: dataToSend,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    return response.data
+  } catch (e) {
+    return {
+      status: 'failed'
+    }
+  }
+}
+export const getFarmTokenPrices = async (cryptoMarkets: Object) => {
+  try {
+    //const url = 'http://localhost:4000' + SSL_API_ENDPOINTS.GET_TOKEN_PRICES
+    const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.GET_TOKEN_PRICES
+    let dataToSend = JSON.stringify({
+      cryptoMarkets: cryptoMarkets
+    })
+    const response = await axios({
+      method: 'POST',
+      url: url,
+      data: dataToSend,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    return response.data
+  } catch (e) {
+    return {
+      status: 'failed'
+    }
+  }
+}

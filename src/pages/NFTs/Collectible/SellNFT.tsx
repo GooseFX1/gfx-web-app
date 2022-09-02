@@ -48,6 +48,7 @@ import {
 
 //#region styles
 const UPLOAD_CONTENT = styled.div`
+  position: relative;
   display: flex;
   flex-direction: row;
   padding: ${({ theme }) => theme.margin(6)} 0;
@@ -176,6 +177,15 @@ const BUTTON_TEXT = styled.div`
 
 const IMAGE_LABEL = styled(CenteredDiv)`
   margin-bottom: 12px;
+`
+
+const PRICE = styled.span`
+  font-weight: 700;
+  background: linear-gradient(92.45deg, #f7931a 6.46%, #ac1cc7 107.94%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
 `
 //#endregion
 
@@ -596,7 +606,7 @@ export const SellNFT = () => {
       ) : (
         <UPLOAD_CONTENT>
           {modal()}
-          <div style={{ position: 'absolute', top: '24px', left: '24px' }}>
+          <div style={{ position: 'absolute', top: '32px', left: '-48px' }}>
             <FloatingActionButton height={40} onClick={() => history.goBack()}>
               <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
             </FloatingActionButton>
@@ -609,8 +619,8 @@ export const SellNFT = () => {
                 <SellCategory setCategory={setCategory} category={category} />
 
                 <SECTION_TITLE>
-                  {ask === undefined ? 'Set' : 'Edit'} Asking Price{' '}
-                  {ask !== undefined && <span>: ({parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL})</span>}
+                  {ask === undefined ? 'Set' : 'Edit'} Asking Price:{' '}
+                  {ask !== undefined && <PRICE> {parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL} SOL</PRICE>}
                 </SECTION_TITLE>
                 <STYLED_FORM form={form} layout="vertical" initialValues={{}}>
                   {/* {category === '0' && (
