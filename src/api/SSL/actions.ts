@@ -61,7 +61,7 @@ export const getVolumeApr = async (tokenList: string[], SSLTokenNames: string[],
   try {
     //const url = 'http://localhost:4000' + SSL_API_ENDPOINTS.GET_VOLUME_APR_DATA
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.GET_VOLUME_APR_DATA
-    let dataToSend = JSON.stringify({
+    const dataToSend = JSON.stringify({
       tokens: tokenList,
       SSLTokenNames: SSLTokenNames,
       controllerStr: controllerStr
@@ -85,7 +85,7 @@ export const getFarmTokenPrices = async (cryptoMarkets: Object) => {
   try {
     //const url = 'http://localhost:4000' + SSL_API_ENDPOINTS.GET_TOKEN_PRICES
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.GET_TOKEN_PRICES
-    let dataToSend = JSON.stringify({
+    const dataToSend = JSON.stringify({
       cryptoMarkets: cryptoMarkets
     })
     const response = await axios({

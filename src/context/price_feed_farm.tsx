@@ -1,8 +1,8 @@
-import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useState } from 'react'
 import { FARM_TOKEN_LIST } from './crypto'
-import { serum } from '../web3'
-import { useConnectionConfig } from '../context'
-import axios from 'axios'
+// import { serum } from '../web3'
+// import { useConnectionConfig } from '../context'
+// import axios from 'axios'
 import { getFarmTokenPrices } from '../api/SSL'
 
 // const minMaxSuffix = '/ohlc?vs_currency=usd&days=7'
