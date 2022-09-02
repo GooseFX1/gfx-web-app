@@ -71,9 +71,10 @@ interface INotifyParams {
 const NOTIFICATION_TIMER = 5 * 1000
 
 export const notify = async (
-  { description, icon, message, txid, type = 'info', styles, network }: INotifyParams,
+  { description: desc, icon, message, txid, type = 'info', styles, network }: INotifyParams,
   e?: any
 ) => {
+  let description = desc
   if (e) {
     description = e.message
     if (description !== null && description !== undefined) {

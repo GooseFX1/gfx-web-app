@@ -188,7 +188,7 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible }) 
 
         const finalResult = await signAndSendRawTransaction(connection, txn, wallet)
 
-        let result = finalResult ? await connection.confirmTransaction(finalResult) : null
+        const result = finalResult ? await connection.confirmTransaction(finalResult) : null
 
         if (!result.value.err) {
           notify({

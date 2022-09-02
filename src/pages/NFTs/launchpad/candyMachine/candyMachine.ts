@@ -78,7 +78,7 @@ export const awaitTransactionSignatureConfirmation = async (
     confirmations: 0,
     err: null
   }
-  let subId = 0
+  const subId = 0
   status = await new Promise(async (resolve, reject) => {
     setTimeout(() => {
       if (done) {
@@ -1148,9 +1148,9 @@ export const getWhitelistConfigPda = async (payer: anchor.web3.PublicKey): Promi
 }
 
 export const getWhitelistInfo = async (candyMachine, payer: anchor.web3.PublicKey) => {
-  let whitelist_account = await getWalletWhitelistPda(payer)
+  const whitelist_account = await getWalletWhitelistPda(payer)
   try {
-    let whitelist_account_info = await candyMachine.account.walletWhitelist.fetch(whitelist_account[0])
+    const whitelist_account_info = await candyMachine.account.walletWhitelist.fetch(whitelist_account[0])
     return whitelist_account_info
   } catch (e) {
     return null

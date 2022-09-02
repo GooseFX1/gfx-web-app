@@ -504,23 +504,27 @@ export const InfoDivLightTheme = ({ items, price, currency }) => {
 export const Socials = () => {
   const { selectedProject, cndyValues } = useNFTLPSelected()
   return (
-    <Row justify={checkMobile() ? "center" : "space-between"} align="middle" style={{ marginLeft: checkMobile() ? '0' : '10px' }}>
-    <Col span={2}  style={{marginRight: checkMobile() ?  "16px" : "0",  maxWidth: checkMobile() ? "100%" : ""}} >
-      <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.website)}>
-        <SVGBlackToGrey src="/img/assets/domains.svg" alt="domain-icon" />
-      </SOCIAL_ICON>
-    </Col>
-    <Col span={2} style={{marginRight: checkMobile() ?  "16px" : "0",  maxWidth: checkMobile() ? "100%" : ""}}>
-      <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.discord)}>
-        <SVGBlackToGrey src="/img/assets/discord_small.svg" alt="discord-icon" />
-      </SOCIAL_ICON>
-    </Col>
-    <Col span={2} style={{marginRight: checkMobile() ?  "16px" : "0",  maxWidth: checkMobile() ? "100%" : ""}}>
-      <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.twitter)}>
-        <SVGBlackToGrey src="/img/assets/twitter_small.svg" alt="twitter-icon" />
-      </SOCIAL_ICON>
-    </Col>
-  </Row>
+    <Row
+      justify={checkMobile() ? 'center' : 'space-between'}
+      align="middle"
+      style={{ marginLeft: checkMobile() ? '0' : '10px' }}
+    >
+      <Col span={2} style={{ marginRight: checkMobile() ? '16px' : '0', maxWidth: checkMobile() ? '100%' : '' }}>
+        <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.website)}>
+          <SVGBlackToGrey src="/img/assets/domains.svg" alt="domain-icon" />
+        </SOCIAL_ICON>
+      </Col>
+      <Col span={2} style={{ marginRight: checkMobile() ? '16px' : '0', maxWidth: checkMobile() ? '100%' : '' }}>
+        <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.discord)}>
+          <SVGBlackToGrey src="/img/assets/discord_small.svg" alt="discord-icon" />
+        </SOCIAL_ICON>
+      </Col>
+      <Col span={2} style={{ marginRight: checkMobile() ? '16px' : '0', maxWidth: checkMobile() ? '100%' : '' }}>
+        <SOCIAL_ICON onClick={(e) => window.open(selectedProject?.twitter)}>
+          <SVGBlackToGrey src="/img/assets/twitter_small.svg" alt="twitter-icon" />
+        </SOCIAL_ICON>
+      </Col>
+    </Row>
   )
 }
 
@@ -563,11 +567,11 @@ export const MintStarts = ({ time }) => {
   const getRemaningTime = (time) => {
     const startsOn = parseFloat(time)
     const timeDiffrence = startsOn - Date.now()
-    let seconds = Number(timeDiffrence / 1000)
-    var d = Math.floor(seconds / (3600 * 24))
-    var h = Math.floor((seconds % (3600 * 24)) / 3600)
-    var m = Math.floor((seconds % 3600) / 60)
-    var s = Math.floor(seconds % 60)
+    const seconds = Number(timeDiffrence / 1000)
+    const d = Math.floor(seconds / (3600 * 24))
+    const h = Math.floor((seconds % (3600 * 24)) / 3600)
+    const m = Math.floor((seconds % 3600) / 60)
+    const s = Math.floor(seconds % 60)
 
     return { dDisplay: d, hDisplay: h, mDisplay: m, sDisplay: s }
   }

@@ -62,13 +62,14 @@ export enum SequenceType {
 export async function sendTransactionsWithManualRetry(
   connection: Connection,
   wallet: any,
-  instructions: TransactionInstruction[][],
+  ixs: TransactionInstruction[][],
   signers: Keypair[][]
 ): Promise<(string | undefined)[]> {
+  let instructions = ixs
   let stopPoint = 0
   let tries = 0
   let lastInstructionsLength = null
-  let toRemoveSigners: Record<number, boolean> = {}
+  const toRemoveSigners: Record<number, boolean> = {}
   instructions = instructions.filter((instr, i) => {
     if (instr.length > 0) {
       return true
@@ -138,6 +139,7 @@ export const sendTransactions = async (
   const unsignedTxns: Transaction[] = beforeTransactions
 
   if (!block) {
+    //eslint-disable-next-line
     block = await connection.getRecentBlockhash(commitment)
   }
 
@@ -149,7 +151,7 @@ export const sendTransactions = async (
       continue
     }
 
-    let transaction = new Transaction()
+    const transaction = new Transaction()
     instructions.forEach((instruction) => transaction.add(instruction))
     transaction.recentBlockhash = block.blockhash
     transaction.setSigners(
@@ -251,7 +253,7 @@ export const sendTransaction = async (
   }
 
   const rawTransaction = transaction.serialize()
-  let options = {
+  const options = {
     skipPreflight: true,
     commitment
   }
@@ -376,7 +378,9 @@ export async function sendSignedTransaction({
     let simulateResult: SimulatedTransactionResponse | null = null
     try {
       simulateResult = (await simulateTransaction(connection, signedTransaction, 'single')).value
-    } catch (e) {}
+    } catch (e) {
+      console.log(e)
+    }
     if (simulateResult && simulateResult.err) {
       if (simulateResult.logs) {
         for (let i = simulateResult.logs.length - 1; i >= 0; --i) {
@@ -512,8 +516,8 @@ export function sleep(ms: number): Promise<void> {
 }
 
 export async function nonceInstructions(connection, feePayer) {
-  let nonceAccount = web3.Keypair.generate()
-  let instrctions = []
+  const nonceAccount = web3.Keypair.generate()
+  const instrctions = []
 
   instrctions.push(
     SystemProgram.createAccount({
@@ -563,10 +567,10 @@ export const sendTransactionsNonce = async (
       continue
     }
 
-    let transaction = new Transaction()
+    const transaction = new Transaction()
     instructions.forEach((instruction) => transaction.add(instruction))
-    let accountInfo = await connection.getAccountInfo(nonce)
-    let nonceAccount = NonceAccount.fromAccountData(accountInfo.data)
+    const accountInfo = await connection.getAccountInfo(nonce)
+    const nonceAccount = NonceAccount.fromAccountData(accountInfo.data)
 
     transaction.recentBlockhash = nonceAccount.nonce
 

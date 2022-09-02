@@ -201,7 +201,7 @@ export const Selector: FC<{
             (!otherToken || otherToken.address !== address)
         )
         .sort((a, b) => {
-          let fa = a.symbol.toLowerCase(),
+          const fa = a.symbol.toLowerCase(),
             fb = b.symbol.toLowerCase()
 
           if (fa < fb) {

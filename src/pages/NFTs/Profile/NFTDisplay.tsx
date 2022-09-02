@@ -94,7 +94,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   }, [search, collectedItems])
 
   const fetchNFTData = async (parsedAccounts: ParsedAccount[]) => {
-    let nfts = []
+    const nfts = []
     for (let i = 0; i < parsedAccounts.length; i++) {
       try {
         const val = await axios.get(parsedAccounts[i].data.uri)

@@ -79,7 +79,7 @@ const SettleCard: FC = () => {
     () => `/img/${selectedCrypto.type}/${selectedCrypto.type === 'synth' ? `g${symbolAsk}` : symbolAsk}.svg`,
     [symbolAsk, selectedCrypto.type]
   )
-  let settleButtons = []
+  const settleButtons = []
   openOrders.map((openOrder, index) => {
     const { market } = selectedCrypto
     const pair = getPairFromMarketAddress(openOrder.market)
@@ -89,7 +89,7 @@ const SettleCard: FC = () => {
     const quoteBalance = market?.quoteSplSizeToNumber(openOrder.quoteTokenTotal.sub(openOrder.quoteTokenFree))
 
     if (quoteAvailable ?? 0) {
-      let bidSettleButton = (
+      const bidSettleButton = (
         <SETTLE_CARD>
           <div>
             <img className="asset-icon" src={assetIconBid} alt="" />
@@ -122,7 +122,7 @@ const SettleCard: FC = () => {
     }
 
     if (baseAvailable ?? 0) {
-      let bidSettleButton = (
+      const bidSettleButton = (
         <SETTLE_CARD>
           <div>
             <img className="asset-icon" src={assetIconAsk} alt="" />
@@ -155,7 +155,7 @@ const SettleCard: FC = () => {
     }
 
     if (settleButtons.length > 0) {
-      let settleAllButton = (
+      const settleAllButton = (
         <Button
           className="settleAllButton"
           loading={loading}
@@ -180,7 +180,7 @@ const SettleCard: FC = () => {
 }
 
 export const SettlePanel: FC = () => {
-  let comps = <SettleCard />
+  const comps = <SettleCard />
   if (comps.type() === null) return null
   else
     return (

@@ -116,12 +116,12 @@ export const Step5: FC = () => {
   const [teamMembers, setTeamMembers] = useState([])
   const [submitPopup, setSubmitPopup] = useState<boolean>(false)
 
-  let creatorStepData: ICreatorData[5] = {
+  const creatorStepData: ICreatorData[5] = {
     discord: discordValue,
     twitter: twitter,
     website: websiteValue,
     roadmap: mileStones.map((item) => {
-      let obj = {
+      const obj = {
         heading: item.input1 + ' ' + item.input2,
         subHeading: item.input3 + ''
       }
@@ -139,8 +139,8 @@ export const Step5: FC = () => {
       setDiscordValue(creatorData[5].discord)
       setTwitter(creatorData[5].twitter)
       setWebsiteValue(creatorData[5].website)
-      let roadmapObj = creatorData[5].roadmap.map((item) => {
-        let obj = {
+      const roadmapObj = creatorData[5].roadmap.map((item) => {
+        const obj = {
           input1: item.heading.split(' ')[0],
           input2: item.heading.split(' ')[1] || '',
           input3: item.subHeading
@@ -176,7 +176,7 @@ export const Step5: FC = () => {
                   <Input
                     value={discordValue}
                     onChange={(e) => {
-                      let typedText = e.target.value
+                      const typedText = e.target.value
                       if (typedText.includes(DISCORD_PREFIX)) setDiscordValue(typedText)
                       else setDiscordValue(DISCORD_PREFIX)
                     }}

@@ -1,7 +1,7 @@
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import BN from 'bn.js'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
-import { Connection, PublicKey, Signer, Transaction, sendAndConfirmTransaction } from '@solana/web3.js'
+import { Connection, PublicKey, Signer, Transaction } from '@solana/web3.js'
 import { getHashedName, getNameAccountKey, NameRegistryState } from '@solana/spl-name-service'
 import { useLocalStorage } from '../utils'
 import { NETWORK_CONSTANTS } from '../constants'
@@ -34,11 +34,12 @@ export const findAssociatedTokenAddress = async (
 
 export const signAndSendRawTransaction = async (
   connection: Connection,
-  transaction: Transaction,
+  transactionData: Transaction,
   wallet: any,
   ...signers: Array<Signer>
 ) => {
   try {
+    let transaction = transactionData
     transaction.feePayer = wallet.publicKey
     transaction.recentBlockhash = (await connection.getRecentBlockhash('max')).blockhash
 
@@ -55,10 +56,11 @@ export const signAndSendRawTransaction = async (
 
 export const simulateTransaction = async (
   connection: Connection,
-  transaction: Transaction,
+  transactionData: Transaction,
   wallet: any,
   ...signers: Array<Signer>
 ) => {
+  const transaction = transactionData
   transaction.feePayer = wallet.publicKey
   transaction.recentBlockhash = (await connection.getRecentBlockhash('max')).blockhash
 

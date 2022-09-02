@@ -31,7 +31,7 @@ import { getWalletWhitelistPda, getWhitelistConfigPda } from '../candyMachine/ca
 export const Whitelist: FC = () => {
   const { candyMachine, candyMachineState } = useNFTLPSelected()
   const wallet = useWallet()
-  let connection = new Connection(clusterApiUrl('devnet'))
+  const connection = new Connection(clusterApiUrl('devnet'))
 
   const getProgram = async () => {
     const wallet_t: any = wallet
@@ -191,10 +191,10 @@ export const Whitelist: FC = () => {
   }
 
   const multipleWhitelists = async () => {
-    let tx = new Transaction()
+    //let tx = new Transaction()
     for (let i = 0; i < whiteListAddresses.length; i++) {
-      let key = new PublicKey(whiteListAddresses[i])
-      let response = await createWhitelistAccount(key)
+      const key = new PublicKey(whiteListAddresses[i])
+      const response = await createWhitelistAccount(key)
       if (response) {
         notify({
           message: 'success for: ' + whiteListAddresses[i]
@@ -208,10 +208,10 @@ export const Whitelist: FC = () => {
   }
 
   const multipleWhitelistsOne = async () => {
-    let tx = new Transaction()
+    //let tx = new Transaction()
     for (let i = 0; i < whiteListAddressesOne.length; i++) {
-      let key = new PublicKey(whiteListAddresses[i])
-      let response = await createWhitelistAccountOne(key)
+      const key = new PublicKey(whiteListAddresses[i])
+      const response = await createWhitelistAccountOne(key)
       if (response) {
         notify({
           message: 'success for: ' + whiteListAddresses[i]

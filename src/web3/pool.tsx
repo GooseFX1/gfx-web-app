@@ -120,7 +120,7 @@ const burn = async (
     tx.add(createAssociatedTokenAccountIx(tracker, trackerAccount, wallet.publicKey))
   }
 
-  amount = amount * 10 ** mints[synth].decimals
+  const fullAmount = amount * 10 ** mints[synth].decimals
   const accounts = {
     controller: programs.pool.controller,
     listing: pools[pool].listing,
@@ -133,7 +133,7 @@ const burn = async (
     userWallet: wallet.publicKey
   }
 
-  tx.add(await instruction.burn(new BN(amount), { accounts }))
+  tx.add(await instruction.burn(new BN(fullAmount), { accounts }))
   const s = await signAndSendRawTransaction(connection, tx, wallet)
   value && (await track(tracker, trackerAccount, connection))
   return s
@@ -206,7 +206,7 @@ const deposit = async (
     tx.add(await initialize(pool, wallet, connection, network))
   }
 
-  amount = amount * 10 ** mints.GOFX.decimals
+  const fullAmount = amount * 10 ** mints.GOFX.decimals
   const accounts = {
     controller: programs.pool.controller,
     listing: pools[pool].listing,
@@ -219,7 +219,7 @@ const deposit = async (
     userWallet: wallet.publicKey
   }
 
-  tx.add(await instruction.depositCollateral(new BN(amount), { accounts }))
+  tx.add(await instruction.depositCollateral(new BN(fullAmount), { accounts }))
   const s = await signAndSendRawTransaction(connection, tx, wallet)
   value && (await track(tracker, trackerAccount, connection))
   return s
@@ -347,7 +347,7 @@ const mint = async (
     tx.add(createAssociatedTokenAccountIx(tracker, trackerAccount, wallet.publicKey))
   }
 
-  amount = amount * 10 ** mints[synth].decimals
+  const fullAmount = amount * 10 ** mints[synth].decimals
   const accounts = {
     controller: programs.pool.controller,
     listing: pools[pool].listing,
@@ -360,7 +360,7 @@ const mint = async (
     userWallet: wallet.publicKey
   }
 
-  tx.add(await instruction.mint(new BN(amount), { accounts }))
+  tx.add(await instruction.mint(new BN(fullAmount), { accounts }))
   const s = await signAndSendRawTransaction(connection, tx, wallet)
   value && (await track(tracker, trackerAccount, connection))
   return [s, fetchAccounts]
@@ -477,7 +477,7 @@ const withdraw = async (
     tx.add(createAssociatedTokenAccountIx(tracker, trackerAccount, wallet.publicKey))
   }
 
-  amount = amount * 10 ** mints.GOFX.decimals
+  const fullAmount = amount * 10 ** mints.GOFX.decimals
   const accounts = {
     controller: programs.pool.controller,
     listing: pools[pool].listing,
@@ -490,7 +490,7 @@ const withdraw = async (
     userWallet: wallet.publicKey
   }
 
-  tx.add(await instruction.withdrawCollateral(new BN(amount), { accounts }))
+  tx.add(await instruction.withdrawCollateral(new BN(fullAmount), { accounts }))
   const s = await signAndSendRawTransaction(connection, tx, wallet)
   value && (await track(tracker, trackerAccount, connection))
   return s

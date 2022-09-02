@@ -50,7 +50,9 @@ export const wrapSolToken = async (wallet: WalletContextState, connection: Conne
         if (Number(wsol?.value?.amount || 0) > 0) {
           tx.add(createCloseAccountInstruction(associatedTokenAccount, wallet.publicKey, wallet.publicKey))
         }
-      } catch {}
+      } catch (e) {
+        console.log(e)
+      }
 
       tx.add(
         createAssociatedTokenAccountInstruction(wallet.publicKey, associatedTokenAccount, wallet.publicKey, NATIVE_MINT)

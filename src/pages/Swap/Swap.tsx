@@ -346,10 +346,10 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
   }
 
   const dateString = (date: Date) => {
-    let datestring = date.toString().split(' ')
-    let month = datestring[1]
-    let day = datestring[2]
-    let time = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    const datestring = date.toString().split(' ')
+    const month = datestring[1]
+    const day = datestring[2]
+    const time = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
     return `${month} ${day}, ${time}`
   }
 

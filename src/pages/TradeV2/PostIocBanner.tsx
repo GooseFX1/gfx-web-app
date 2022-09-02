@@ -48,7 +48,7 @@ export const PostIocBanner: FC = () => {
     setOrder((prevState) => ({ ...prevState, type: event.target.checked ? 'ioc' : 'limit' }))
   const onChangePost = (event) =>
     setOrder((prevState) => ({ ...prevState, type: event.target.checked ? 'postOnly' : 'limit' }))
-  let isPostChecked = order.type === 'postOnly',
+  const isPostChecked = order.type === 'postOnly',
     isIocChecked = order.type === 'ioc'
   return (
     <TYPES>

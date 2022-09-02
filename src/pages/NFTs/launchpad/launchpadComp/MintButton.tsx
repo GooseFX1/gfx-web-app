@@ -82,7 +82,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
       document.getElementById('#identity')?.click()
       if (wallet.connected && candyMachine?.program && wallet.publicKey) {
         let setupMint: SetupState | undefined
-        let nonceAccount = anchor.web3.Keypair.generate()
+        const nonceAccount = anchor.web3.Keypair.generate()
         if (needTxnSplit && setupTxn === undefined) {
           notify({
             message: (
@@ -170,7 +170,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
           if (response) {
             // manual update since the refresh might not detect
             // the change immediately
-            let remaining = itemsRemaining! - 1
+            const remaining = itemsRemaining! - 1
             setItemsRemaining(remaining)
             setIsActive((candyMachine.state.isActive = remaining > 0))
             candyMachine.state.isSoldOut = remaining === 0
@@ -212,7 +212,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
         } else {
           let mintResult = null
           if (!publicMint) {
-            let wallet_pda = await getWalletWhitelistPda(wallet.publicKey)
+            const wallet_pda = await getWalletWhitelistPda(wallet.publicKey)
             mintResult = await mintOneTokenWhitelist(
               candyMachine,
               wallet.publicKey,
@@ -245,7 +245,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
           if (status && !status.err && metadataStatus) {
             // manual update since the refresh might not detect
             // the change immediately
-            let remaining = itemsRemaining! - 1
+            const remaining = itemsRemaining! - 1
             setItemsRemaining(remaining)
             setIsActive((candyMachine.state.isActive = remaining > 0))
             candyMachine.state.isSoldOut = remaining === 0
@@ -368,7 +368,8 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
       gatekeeperNetwork={candyMachine?.state?.gatekeeper?.gatekeeperNetwork}
       clusterUrl={endpoint}
       cluster={network}
-      handleTransaction={async (transaction: Transaction) => {
+      handleTransaction={async (trans: Transaction) => {
+        let transaction = trans //allow for mutation without breaking eslint rule
         setIsUserMinting(true)
         const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(wallet.publicKey!))
         if (userMustSign) {
@@ -418,7 +419,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
         }
         try {
           // await sendTransaction(connection, wallet, transaction, [], true, 'confirmed')
-          let res = await sendAndConfirmRawTransaction(connection, transaction.serialize())
+          //let res = await sendAndConfirmRawTransaction(connection, transaction.serialize())
           notify({
             message: (
               <MESSAGE>

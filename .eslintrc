@@ -15,23 +15,23 @@
     "object-curly-newline": "off",
     "implicit-arrow-linebreak": "off",
     "@typescript-eslint/no-explicit-any": "off", //main remvoals, the rest warning will be turned to errors later on
-    "no-console": "warn",
-    "import/no-unresolved": "warn", // change to "error"
+    "no-console": "off",
+    "import/no-unresolved": "off", // change to "error"
     "max-len": ["warn", { "code": 120 }],
     "comma-dangle": "warn",
-    "no-unused-vars": "warn", // change to "error"
+    "no-unused-vars": "error", // change to "error"
     "arrow-body-style": "warn",
     "no-new": "warn",
-    "no-param-reassign": "warn", // change to "error"
+    "no-param-reassign": "error", // change to "error"
     "@typescript-eslint/no-inferrable-types": "warn",
     "@typescript-eslint/ban-ts-comment": "warn",
-    "no-empty": "warn", // change to "error"
+    "no-empty": "error", // change to "error"
     "@typescript-eslint/no-var-requires": "warn",
     "@typescript-eslint/no-this-alias": "warn",
     "@typescript-eslint/ban-types": "warn",
-    "no-var": "warn", // change to "error"
+    "no-var": "error", // change to "error"
     "no-prototype-builtins": "warn",
-    "prefer-const": "warn", // change to "error"
+    "prefer-const": "error", // change to "error"
     "react/prop-types": "warn",
     "no-async-promise-executor": "warn",
     "@typescript-eslint/no-empty-function": "warn",

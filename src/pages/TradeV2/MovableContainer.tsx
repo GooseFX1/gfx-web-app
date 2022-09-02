@@ -113,7 +113,7 @@ export const CryptoContent: FC = () => {
   const [isLocked, setIsLocked] = useState(true)
   const [layout, setLayout] = useState({ lg: componentDimensions })
   const mode = useDarkMode()
-  let chartContainer = useMemo(
+  const chartContainer = useMemo(
     () => <TVChartContainer symbol={selectedCrypto.pair} visible={true} />,
     [selectedCrypto.pair]
   )
@@ -121,7 +121,7 @@ export const CryptoContent: FC = () => {
   useEffect(() => {
     logData('trade_page')
   }, [])
-  let defaultProps = {
+  const defaultProps = {
     className: 'layout',
     items: 3,
     rowHeight: 20,
