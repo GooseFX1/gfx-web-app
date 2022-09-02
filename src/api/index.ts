@@ -13,24 +13,24 @@ const DOMAIN = () => {
   return `${sub}goosefx.io`
 }
 
-const apiClient = (base: string) => {
-  return axios.create({
+const apiClient = (base: string) =>
+  axios.create({
     baseURL: `https://${base}.${DOMAIN()}`,
     responseType: 'json',
     headers: {
       'Content-Type': 'application/json'
     }
   })
-}
-export const httpClient = (base: string) => {
-  return axios.create({
+
+export const httpClient = (base: string) =>
+  axios.create({
     baseURL: `https://${base}.goosefx.io`,
     responseType: 'json',
     headers: {
       'Content-Type': 'application/json'
     }
   })
-}
+
 export const customClient = (customURL: string, collectionId?: number) => {
   const data = JSON.stringify({
     collectionId: collectionId
