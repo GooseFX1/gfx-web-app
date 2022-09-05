@@ -13,6 +13,8 @@ import Loading from './Loading'
 import { SVGDynamicReverseMode } from '../../../styles'
 import { ModalSlide } from '../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../constants'
+import { checkMobile } from '../../../utils'
+import tw from 'twin.macro'
 
 const BETA_BANNER = styled.div`
   position: fixed;
@@ -63,6 +65,7 @@ const BETA_BANNER = styled.div`
 `
 
 export const NFT_MENU = styled.div`
+  ${tw`sm:absolute`}
   position: fixed;
   z-index: 11;
   height: 150px;
@@ -129,7 +132,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
 
       <NFT_MENU onClick={() => setNFTMenuPopup((prev) => !prev)} />
 
-      {betaBanner && (
+      {betaBanner && !checkMobile() && (
         <BETA_BANNER>
           <div className={'inner'}>
             <div>

@@ -7,11 +7,14 @@ import { Share } from '../Share'
 import { ReactComponent as FixedPriceIcon } from '../../../assets/fixed-price.svg'
 import { ReactComponent as OpenBidIcon } from '../../../assets/open-bid.svg'
 import { generateTinyURL } from '../../../api/tinyUrl'
-import { notify } from '../../../utils'
+import { checkMobile, notify } from '../../../utils'
+import tw from 'twin.macro'
+
 
 //#region styles
 const LEFT_SECTION = styled.div`
   ${({ theme }) => css`
+    ${tw`sm:w-[90%] sm:my-5 sm:mx-auto`}
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -173,13 +176,13 @@ export const ImageShowcase: FC = ({ ...rest }) => {
   return general && nftMetadata ? (
     <LEFT_SECTION {...rest}>
       {handleModal()}
-      <img className="ls-image" src={general?.image_url || nftMetadata?.image} alt="the-nft" />
+      <img className="ls-image" height={checkMobile()? "360px" : "100%"} src={general?.image_url || nftMetadata?.image} alt="the-nft" />
       <NFT_CONTAINER>
         <SHARE_BUTTON onClick={(e) => setShareModal(true)}>
           <img src={`/img/assets/share.svg`} alt="share-icon" />
         </SHARE_BUTTON>
       </NFT_CONTAINER>
-      <div className="ls-bottom-panel">
+      { <div className="ls-bottom-panel">
         <Row justify="space-between" align="middle">
           <Col>
             {ask ? <FixedPriceIcon className="ls-action-button" /> : <OpenBidIcon className="ls-action-button" />}
@@ -205,9 +208,11 @@ export const ImageShowcase: FC = ({ ...rest }) => {
             </Col>
           )}
         </Row>
-      </div>
+      </div>}
     </LEFT_SECTION>
   ) : (
-    <SkeletonCommon width="100%" height="500px" borderRadius="10px" />
-  )
-}
+    !checkMobile() ? 
+      <SkeletonCommon width="100%" height="500px" borderRadius="10px" /> : 
+      <SkeletonCommon width="90%" height="360px" borderRadius="10px" style={{display: "block", margin: "20px auto"}}/>
+    )
+  }

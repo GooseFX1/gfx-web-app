@@ -30,6 +30,7 @@ import {
   bnTo8
 } from '../../../web3'
 import BN from 'bn.js'
+import tw from "twin.macro"
 
 const { TabPane } = Tabs
 
@@ -37,6 +38,7 @@ const { TabPane } = Tabs
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme, activeTab }) => css`
     position: relative;
+    margin-bottom: 20px;
 
     .ant-tabs-nav {
       position: relative;
@@ -83,8 +85,10 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
       color: #616161;
       font-size: 14px;
       font-weight: 500;
+      ${tw`sm:ml-0`}
 
       .ant-tabs-tab-btn {
+        ${tw`sm:text-tiny`}
         font-size: 17px;
       }
 
@@ -190,10 +194,11 @@ export const DETAILS_TAB_CONTENT = styled.div`
       font-weight: 500;
 
       .dtc-item-value {
-        color: #949494;
+        ${tw`sm:text-tiny`}
         color: ${theme.text8};
       }
       .dtc-item-title {
+        ${tw`sm:text-tiny`}
         color: ${theme.text7};
       }
     }
@@ -268,8 +273,7 @@ export const RightSectionTabs: FC<{
     return res
   }, [bids, wallet.publicKey])
 
-  const nftData = useMemo(() => {
-    return isLoading
+  const nftData = useMemo(() => isLoading
       ? []
       : [
           {
@@ -292,8 +296,7 @@ export const RightSectionTabs: FC<{
             title: 'Transaction Fee',
             value: `${NFT_MARKET_TRANSACTION_FEE}%`
           }
-        ]
-  }, [general])
+        ], [general])
 
   useEffect(() => {}, [wallet.publicKey])
 

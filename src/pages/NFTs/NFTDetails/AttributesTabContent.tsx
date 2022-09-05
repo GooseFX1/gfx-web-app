@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import styled, { css } from 'styled-components'
 import { IAttributesTabItemData } from '../../../types/nft_details'
+import tw from 'twin.macro'
 
 const ATTRIBUTES_TAB_CONTENT = styled.div`
   ${({ theme }) => css`
@@ -15,6 +16,7 @@ const ATTRIBUTES_TAB_CONTENT = styled.div`
 `
 
 const ATTRIBUTES_ITEM = styled.div`
+  ${tw`overflow-scroll`}
   height: 60px;
   border-radius: 10px;
   background-color: ${({ theme }) => theme.atrributeBg};

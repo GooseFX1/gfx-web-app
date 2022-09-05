@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import tw from 'twin.macro'
 
 export const StyledTabContent = styled.div`
   .profile-content-loading {
@@ -53,6 +54,15 @@ export const StyledTabContent = styled.div`
       overflow-x: hidden;
       overflow-y: scroll;
       ${theme.customScrollBar('4px')}
+
+      .card{
+        @media(max-width: 500px){
+          display: flex;
+          flex-direction: column;
+          height: 275px;
+          justify-content: center
+        }
+      }
     }
 
   `}

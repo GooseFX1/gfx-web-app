@@ -2,15 +2,17 @@ import React, { useEffect, useMemo, FC } from 'react'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Col, Row } from 'antd'
 import styled, { css } from 'styled-components'
-import { moneyFormatter, truncateAddress } from '../../../utils'
+import { checkMobile, moneyFormatter, truncateAddress } from '../../../utils'
 import { RightSectionTabs } from './RightSectionTabs'
 import { useNFTDetails, usePriceFeed } from '../../../context'
 import { MintItemViewStatus } from '../../../types/nft_details'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import tw from 'twin.macro'
 
 //#region styles
 const RIGHT_SECTION = styled.div`
   ${({ theme }) => css`
+    ${tw`sm:w-[90%] sm:mx-auto`}
     display: flex;
     flex-direction: column;
 
@@ -59,6 +61,7 @@ const RIGHT_SECTION = styled.div`
     }
 
     .rs-name {
+      ${tw`sm:text-[28px]`}
       font-size: 22px;
       font-weight: 600;
       margin-bottom: ${theme.margin(0.5)};
@@ -66,6 +69,7 @@ const RIGHT_SECTION = styled.div`
     }
 
     .rs-intro {
+      ${tw`sm:text-[14px] sm:text-[#b5b5b5] sm:mb-0`}
       font-size: 15px;
       font-weight: 500;
       max-height: 70px;
@@ -144,8 +148,41 @@ const GRID_INFO = styled(Row)`
   `}
 `
 
-const HIGHEST_BIDDER = styled.span`
-  color: ${({ theme }) => theme.text9};
+const ROW_CONTAINER = styled.div`
+${tw`my-6`}
+.gi-item {
+  ${tw`flex flex-row justify-between`}
+
+  .gi-item-category-title {
+    ${tw`text-tiny font-semibold mb-6`}
+    color: #b5b5b5;
+  }
+
+  .gi-item-thumbnail-wrapper {
+    ${tw`relative mr-2 flex flex-row`}
+
+    .gi-item-check-icon {
+      ${tw`absolute h-[15px] w-[15px] left-5 bottom-[15px]`}
+    }
+
+    .gi-item-icon {
+      ${tw`w-[30px] h-[30px] rounded-circle mr-2 flex flex-row justify-center items-center`}
+      
+      img {
+        ${tw`w-[16px] h-[16px]`}
+      }
+    }
+  }
+
+  .gi-item-thumbnail {
+    ${tw`w-[30px] h-[30px] rounded-circle mr-2`}
+  }
+
+  .gi-item-title {
+    ${tw`text-tiny font-medium capitalize underline`}
+    color: ${({ theme }) => theme.text8};
+    text-decoration-color: grey;
+  }
 `
 //#endregion
 
@@ -190,12 +227,12 @@ export const RightSection: FC<{
 
   return (
     <RIGHT_SECTION {...rest}>
-      {isLoading ? (
+      {isLoading && !checkMobile() ? (
         <>
           <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
           <br />
         </>
-      ) : (
+      ) : ( !checkMobile() &&
         <div>
           <Row justify="space-between">
             <Col className="rs-title">{price ? `Current ${ask ? 'Asking Price' : 'Bid'}` : 'No Current Bids'} </Col>
@@ -245,7 +282,7 @@ export const RightSection: FC<{
 
       {isLoading ? (
         <SkeletonCommon width="100%" height="300px" borderRadius="10px" />
-      ) : (
+      ) : !checkMobile() ? (  
         <GRID_INFO justify="space-between">
           <Col className="gi-item">
             <div className="gi-item-category-title">Creator</div>
@@ -263,7 +300,7 @@ export const RightSection: FC<{
               <Row align="middle">
                 <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
                 <div className="gi-item-title">
-                  {Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection.name}
+                {Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection.name}
                 </div>
               </Row>
             </Col>
@@ -283,7 +320,42 @@ export const RightSection: FC<{
             </Row>
           </Col>
         </GRID_INFO>
-      )}
+      ) : <ROW_CONTAINER>
+        <div className='gi-item'>
+            <div className="gi-item-category-title">Created by:</div>
+              <div className="gi-item-thumbnail-wrapper">
+                <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
+                <img className="gi-item-check-icon" src={`/img/assets/check-icon.svg`} alt="" />
+                <div className="gi-item-title">{creator}</div>
+              </div>
+        </div>
+        {nftMetadata.collection && (
+          <div className='gi-item'>
+              <div className="gi-item-category-title">Collection</div>
+                <div className="gi-item-thumbnail-wrapper">
+                  <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
+                  <div className="gi-item-title">
+                    {Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection.name}
+                  </div>
+              </div>
+          </div>
+        )} 
+        <div className='gi-item'>
+            <div className="gi-item-category-title">Category</div>
+            <div className="gi-item-thumbnail-wrapper">
+              <div className="gi-item-icon">
+                  <img
+                    src={`/img/assets/${
+                      nftMetadata.properties.category === 'image' ? 'art' : nftMetadata.properties.category
+                    }.svg`}
+                    alt=""
+                  />
+              </div>
+              <div className="gi-item-title">{nftMetadata.properties.category}</div>
+            </div>
+        </div>
+         </ROW_CONTAINER>
+      }
 
       <RightSectionTabs status={status} />
     </RIGHT_SECTION>

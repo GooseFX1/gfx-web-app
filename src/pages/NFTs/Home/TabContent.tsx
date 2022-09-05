@@ -8,6 +8,8 @@ import { nFormatter } from '../../../utils'
 import { useNFTProfile, usePriceFeed, useDarkMode } from '../../../context'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { Image } from 'antd'
+import { checkMobile } from '../../../utils'
+import tw from 'twin.macro'
 
 const TAB_CONTENT = styled.div`
   min-height: 300px;
@@ -15,7 +17,17 @@ const TAB_CONTENT = styled.div`
   display: flex;
   flex-wrap: wrap;
 `
+
+const ROW = styled.div`
+  ${tw`flex flex-row overflow-x-scroll py-0 px-3.5 mt-3`}
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`
+
 const ANALYTIC_ITEM = styled.div`
+ ${tw`sm:w-3/4`}
   display: flex;
   width: 25%;
   padding: ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(3)};
@@ -149,14 +161,33 @@ const TabContent = ({ baseCollections, collectionFilter, sort }: ITabContent) =>
   }
 
   return (
+    !checkMobile() ?
     <TAB_CONTENT>
       {collectionExtras &&
         collectionExtras
           .slice(0, 8)
+          .map((collection: NFTCollection, i) => <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />)}
+    </TAB_CONTENT> : 
+    <>
+    <ROW>
+      {collectionExtras &&
+        collectionExtras
+          .slice(0, 4)
           .map((collection: NFTCollection, i) => (
+              <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
+            )
+      )}
+    </ROW>
+    <ROW>
+    {collectionExtras &&
+      collectionExtras
+        .slice(4,8)
+        .map((collection: NFTCollection, i) => (
             <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
-          ))}
-    </TAB_CONTENT>
+          )
+    )}
+  </ROW>
+    </>
   )
 }
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import axios from 'axios'
 import { Row, Col } from 'antd'
-import { notify } from '../../../utils'
+import { checkMobile } from '../../../utils'
 import { ParsedAccount } from '../../../web3'
 import { Card } from '../Collection/Card'
 import NoContent from './NoContent'
@@ -94,7 +94,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   }, [search, collectedItems])
 
   const fetchNFTData = async (parsedAccounts: ParsedAccount[]) => {
-    let nfts = []
+    const nfts = []
     for (let i = 0; i < parsedAccounts.length; i++) {
       try {
         const val = await axios.get(parsedAccounts[i].data.uri)
@@ -156,9 +156,11 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
 
   return (
     <StyledTabContent>
-      <div className="actions-group">
-        <SearchBar className={'profile-search-bar'} filter={search} setFilter={setSearch} />
-      </div>
+      {!checkMobile() && 
+        <div className="actions-group">
+          <SearchBar className={'profile-search-bar'} filter={search} setFilter={setSearch} />
+        </div>
+      }
       {filteredCollectedItems === undefined ? (
         <div className="profile-content-loading">
           <div>
@@ -169,7 +171,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
         <div className="cards-list" id="border">
           <Row gutter={[24, 24]}>
             {filteredCollectedItems.map((nft: ISingleNFT) => (
-              <Col sm={10} md={7} lg={6} xl={4} xxl={4} key={nft.mint_address}>
+              <Col sm={10} md={7} lg={6} xl={4} xxl={4} key={nft.mint_address} span={checkMobile() ? 12 : ""}>
                 <Card singleNFT={nft} />
               </Col>
             ))}
