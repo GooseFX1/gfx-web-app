@@ -139,7 +139,6 @@ const CONNECT = styled(CTA_BTN)`
 `
 
 const AVATAR_NFT = styled(Image)`
-  ${tw`sm:mr-0`}
   border-radius: 50%;
   width: 56px;
   height: 56px;
@@ -172,7 +171,7 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
           setVisibleCompletePopup(true)
         }
       }
-    }, 0)
+    }, 750)
 
     return () => {}
   }, [sessionUser])
@@ -250,13 +249,13 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
         )}
         {!isHeaderData ? (
           <SkeletonCommon
-            style={{ minWidth: '300px', marginLeft: '20px', marginRight: '10px' }}
+            style={{ minWidth: !checkMobile() ? '550px' : '330px', marginLeft: !checkMobile() ? '20px' : '0', marginRight: !checkMobile() ? '10px' : '0' }}
             height="46px"
             borderRadius="46px"
-            width='350px'
+            width={!checkMobile() ? '350px' : '100%'}
           />
         ) : (
-          <Dropdown overlay={genMenu()} trigger={['click']}>
+          <Dropdown overlay={genMenu()} trigger={['click']} overlayClassName="nft-home-antd-dropdown">
             <SearchBar className="search-bar" setSearchFilter={setFilter} filter={filter} />
           </Dropdown>
         )}

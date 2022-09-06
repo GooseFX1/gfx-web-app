@@ -42,7 +42,7 @@ const CAROUSEL_WRAPPER = styled.div`
     transform: rotate(180deg);
   }
   .slick-next {
-    ${tw`sm:right-1`}
+    ${tw`sm:right-5`}
     right: 25px;
   }
 
@@ -59,6 +59,10 @@ const CAROUSEL_WRAPPER = styled.div`
 `
 
 const SLIDER_ITEM = styled.div<{ $url: string }>`
+  @media(max-width: 500px){
+    background: ${({ $url }) => `url(${$url})`}, center;
+    background-size: 100% 101%;
+  }
   ${tw`sm:rounded-average`}
   position: relative;
   height: 37vh;
