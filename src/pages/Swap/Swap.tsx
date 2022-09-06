@@ -509,7 +509,7 @@ const TokenContent: FC = () => {
 
   const handleCopyTokenMint = () => {
     setCopiedAction(true)
-    navigator.clipboard.writeText(tokenA.address)
+    navigator.clipboard.writeText(token.address)
     setTimeout(() => setCopiedAction(false), 800)
   }
 
@@ -885,7 +885,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
                   </TokenDetail>
                   <TokenTitle className={'price'}>{detail.price || null}</TokenTitle>
                   {detail.bestPrice && <BestPrice>Best Price</BestPrice>}
-                  {detail.fastest && <BestPrice>Best Choice</BestPrice>}
+                  {detail.fastest && <BestPrice>Preferred</BestPrice>}
                 </div>
               </SWAP_ROUTE_ITEM>
             ))}
