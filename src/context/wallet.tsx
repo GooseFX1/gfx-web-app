@@ -39,6 +39,4 @@ export const WalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 }
 
-export const useWalletModal = (): WalletModalContextState => {
-  return useContext(WalletModalContext)
-}
+export const useWalletModal = (): WalletModalContextState => useContext(WalletModalContext)
