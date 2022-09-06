@@ -355,7 +355,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                 </span>
               ))}
             </div>
-          ) : ( false ? 
+          ) : ( (currentUserProfile.twitter_link && currentUserProfile.instagram_link && currentUserProfile.telegram_link && currentUserProfile.youtube_link) ? 
             <div className="social-list">
               {currentUserProfile.twitter_link && (
                 <a
@@ -377,7 +377,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   <img className="social-icon" src={`/img/assets/instagram.svg`} alt="" />
                 </a>
               )}
-              {currentUserProfile.telegram_link  && (
+              {currentUserProfile.telegram_link && (
                 <a
                   className="social-item"
                   href={validExternalLink(currentUserProfile.telegram_link)}
@@ -397,7 +397,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   <img className="social-icon" src={`/img/assets/youtube.png`} alt="" />
                 </a>
               )}
-            </div> : <div className='complete-profile' onClick={() => setProfileModal(true)}>Complete Profile</div>
+            </div> : checkMobile() && <div className='complete-profile' onClick={() => setProfileModal(true)}>Complete Profile</div>
           )}
       </div>
      {!checkMobile() && <div className="action-wrap">

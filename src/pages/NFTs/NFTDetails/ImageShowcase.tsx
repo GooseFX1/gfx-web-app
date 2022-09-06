@@ -93,7 +93,7 @@ export const ImageShowcase: FC = ({ ...rest }) => {
   const [isFavorited, setIsFavorited] = useState(false)
   const { sessionUser, likeDislike } = useNFTProfile()
   const [shareModal, setShareModal] = useState(false)
-  const [likes, setLikes] = useState(totalLikes)
+  const [likes, setLikes] = useState(0)
 
   //const hearts = 12
   const remaining = {
@@ -106,14 +106,17 @@ export const ImageShowcase: FC = ({ ...rest }) => {
     if (general && sessionUser) {
       setIsFavorited(sessionUser.user_likes.includes(general.non_fungible_id))
     }
-  }, [sessionUser])
+  }, [sessionUser, general])
+
+  useEffect(() => {
+    setLikes(totalLikes)
+}, [totalLikes])
 
   const handleToggleLike = (e: any) => {
     if (sessionUser) {
       likeDislike(sessionUser.user_id, general.non_fungible_id).then((res) => {
         setLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
       })
-      setIsFavorited((prev) => !prev)
     }
   }
 
@@ -182,7 +185,7 @@ export const ImageShowcase: FC = ({ ...rest }) => {
           <img src={`/img/assets/share.svg`} alt="share-icon" />
         </SHARE_BUTTON>
       </NFT_CONTAINER>
-      { <div className="ls-bottom-panel">
+      {!checkMobile()  && <div className="ls-bottom-panel">
         <Row justify="space-between" align="middle">
           <Col>
             {ask ? <FixedPriceIcon className="ls-action-button" /> : <OpenBidIcon className="ls-action-button" />}

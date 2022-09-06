@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, FC } from 'react'
+import React, { useEffect, useMemo, FC, useState } from 'react'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Col, Row } from 'antd'
 import styled, { css } from 'styled-components'
 import { checkMobile, moneyFormatter, truncateAddress } from '../../../utils'
 import { RightSectionTabs } from './RightSectionTabs'
-import { useNFTDetails, usePriceFeed } from '../../../context'
+import { useNFTDetails, usePriceFeed, useNFTProfile } from '../../../context'
 import { MintItemViewStatus } from '../../../types/nft_details'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import tw from 'twin.macro'
@@ -60,8 +60,16 @@ const RIGHT_SECTION = styled.div`
       }
     }
 
+    .name-icon-row{
+      ${tw`sm:flex sm:flex-row sm:justify-between sm:items-center`}
+
+      .ls-favorite-number{
+        ${tw`sm:text-regular sm:ml-2`}
+      }
+    }
+
     .rs-name {
-      ${tw`sm:text-[28px]`}
+      ${tw`sm:mr-auto`}
       font-size: 22px;
       font-weight: 600;
       margin-bottom: ${theme.margin(0.5)};
@@ -189,8 +197,11 @@ ${tw`my-6`}
 export const RightSection: FC<{
   status: MintItemViewStatus
 }> = ({ status, ...rest }) => {
-  const { general, nftMetadata, bids, curHighestBid, ask } = useNFTDetails()
+  const { general, nftMetadata, bids, curHighestBid, ask, totalLikes } = useNFTDetails()
   const { prices } = usePriceFeed()
+  const { sessionUser, likeDislike } = useNFTProfile()
+  const [likes, setLikes] = useState(0)
+  const [isFavorited, setIsFavorited] = useState(false)
 
   const creator = useMemo(() => {
     if (nftMetadata?.collection) {
@@ -212,6 +223,24 @@ export const RightSection: FC<{
   }, [curHighestBid, ask])
 
   const marketData = useMemo(() => prices['SOL/USDC'], [prices])
+
+  useEffect(() => {
+    if (general && sessionUser) {
+      setIsFavorited(sessionUser.user_likes.includes(general.non_fungible_id))
+    }
+  }, [sessionUser, general])
+
+  useEffect(() => {
+      setLikes(totalLikes)
+  }, [totalLikes])
+
+  const handleToggleLike = (e: any) => {
+    if (sessionUser) {
+      likeDislike(sessionUser.user_id, general.non_fungible_id).then((res) => {
+        setLikes((prev) => ( isFavorited ? prev - 1 : prev + 1))
+      })
+    }
+  }
 
   const fiat = `${marketData && price ? (marketData.current * price).toFixed(3) : ''} USD`
   // const percent = '+ 1.15 %'
@@ -266,7 +295,30 @@ export const RightSection: FC<{
       ) : (
         <Row justify="space-between" align="middle">
           <Col span={24}>
-            <div className="rs-name">{general?.nft_name || nftMetadata?.name}</div>
+            <div className="name-icon-row">
+              <div className="rs-name">{general?.nft_name || nftMetadata?.name}</div>
+              {checkMobile() && general.non_fungible_id ? 
+                sessionUser && isFavorited ? (
+                  <img
+                    className="ls-favorite-heart"
+                    src={`/img/assets/heart-red.svg`}
+                    alt="heart-red"
+                    onClick={handleToggleLike}
+                    height="23px"
+                    width="25px"
+                  />
+                ) : (
+                  <img
+                    className="ls-favorite-heart"
+                    src={`/img/assets/heart-empty.svg`}
+                    alt="heart-empty"
+                    onClick={handleToggleLike}
+                    height="23px"
+                    width="25px"
+                  />
+                ) : <></>}
+                <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>{likes}</span>
+              </div>
             <div className="rs-intro">{nftMetadata.description}</div>
           </Col>
           <Col span={24}>

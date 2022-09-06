@@ -65,7 +65,6 @@ const BETA_BANNER = styled.div`
 `
 
 export const NFT_MENU = styled.div`
-  ${tw`sm:absolute`}
   position: fixed;
   z-index: 11;
   height: 150px;
