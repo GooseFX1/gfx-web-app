@@ -65,6 +65,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   const [settleBalanceModal, setSettleBalanceModal] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const handleCancel = () => setProfileModal(false)
+  const [randomBackground, setRandomBackground] = useState('');
 
   const currentUserProfile = useMemo(() => {
     if (nonSessionProfile !== undefined && !isSessionUser) {
@@ -98,6 +99,12 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   useEffect(() => {
     fetchEscrowPayment().then((escrowBalance: number | undefined) => setUserEscrowBalance(escrowBalance))
   }, [connected, publicKey])
+
+  useEffect(() => {
+    const backgroundArray = ['/img/assets/redBackground.png', '/img/assets/purpleBackground.png', '/img/assets/multiBackground.png'];
+    const randomImage = backgroundArray[Math.floor(Math.random() * backgroundArray.length)];
+    setRandomBackground(randomImage);
+  },[]);
 
   const fetchEscrowPayment = async (): Promise<number | undefined> => {
     try {
@@ -286,7 +293,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   )
 
   return (
-    <StyledHeaderProfile mode={mode}>
+    <StyledHeaderProfile mode={mode} background={randomBackground}>
       {handleModal()}
       {checkMobile() ?
         <div className='row' id='row'>
@@ -339,8 +346,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
           {currentUserProfile && currentUserProfile.is_verified && (
             <img className="check-icon" src={`/img/assets/check-icon.svg`} alt="is-verified-user" />
           )}
-        </div>
-        <div>
+        </div>       
         {currentUserProfile === undefined ? (
             <div className="social-list">
               {[1, 2, 3, 4].map((dn) => (
@@ -349,9 +355,9 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                 </span>
               ))}
             </div>
-          ) : (
+          ) : ( false ? 
             <div className="social-list">
-              {true && (
+              {currentUserProfile.twitter_link && (
                 <a
                   className="social-item"
                   href={validExternalLink(currentUserProfile.twitter_link)}
@@ -361,7 +367,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   <img className="social-icon" src={`/img/assets/twitter.svg`} alt="" />
                 </a>
               )}
-              {true && (
+              {currentUserProfile.instagram_link && (
                 <a
                   className="social-item"
                   href={validExternalLink(currentUserProfile.instagram_link)}
@@ -371,7 +377,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   <img className="social-icon" src={`/img/assets/instagram.svg`} alt="" />
                 </a>
               )}
-              {true && (
+              {currentUserProfile.telegram_link  && (
                 <a
                   className="social-item"
                   href={validExternalLink(currentUserProfile.telegram_link)}
@@ -381,7 +387,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   <img className="social-icon" src={`/img/assets/facebook.svg`} alt="" />
                 </a>
               )}
-              {true && (
+              {currentUserProfile.youtube_link && (
                 <a
                   className="social-item-yt"
                   href={validExternalLink(currentUserProfile.youtube_link)}
@@ -391,9 +397,8 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   <img className="social-icon" src={`/img/assets/youtube.png`} alt="" />
                 </a>
               )}
-            </div>
+            </div> : <div className='complete-profile' onClick={() => setProfileModal(true)}>Complete Profile</div>
           )}
-        </div>
       </div>
      {!checkMobile() && <div className="action-wrap">
         {isSessionUser && connected && publicKey ? (

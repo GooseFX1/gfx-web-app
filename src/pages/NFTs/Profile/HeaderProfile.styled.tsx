@@ -1,10 +1,9 @@
 import styled from 'styled-components'
 import { Dropdown, Menu } from 'antd'
 import { Modal } from '../../../components'
-import tw from 'twin.macro'
 
-export const StyledHeaderProfile = styled.div<{ mode?: string }>`
-  ${({ theme, mode }) => `
+export const StyledHeaderProfile = styled.div<{ mode?: string, background?: String}>`
+  ${({ theme, mode, background }) => `
   position: relative;
   height: 30vh;
   padding: ${theme.margin(3)};
@@ -24,6 +23,9 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
     flex-direction: column;
     align-items: inherit;
     justify-content: space-between;
+    background: url(${background});
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 
   .row{
@@ -124,6 +126,17 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
       width: 35px;
       height: 35px;
     }
+  }
+  .complete-profile{
+    height: 43px;
+    width: 153px;
+    background-image: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 45px;
+    color: #ffffff;
+    font-size: 14px;
   }
   .action-wrap {    
     margin-left: auto;
