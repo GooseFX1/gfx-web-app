@@ -1,7 +1,14 @@
 import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
 import BN from 'bn.js'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
-import { Connection, PublicKey, Signer, Transaction } from '@solana/web3.js'
+import {
+  Connection,
+  PublicKey,
+  Signer,
+  Transaction,
+  TransactionSignature,
+  SimulatedTransactionResponse
+} from '@solana/web3.js'
 import { getHashedName, getNameAccountKey, NameRegistryState } from '@solana/spl-name-service'
 import { useLocalStorage } from '../utils'
 import { NETWORK_CONSTANTS } from '../constants'
@@ -10,8 +17,7 @@ export const SOL_TLD_AUTHORITY = new PublicKey('58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZ
 
 export const isValidSolanaAddress = (address: string) => {
   try {
-    new PublicKey(address)
-    return true
+    return PublicKey.isOnCurve(address)
   } catch (error) {
     return false
   }
@@ -23,30 +29,45 @@ export const createAssociatedTokenAccountIx = (mint: PublicKey, associatedAccoun
 export const findAssociatedTokenAddress = async (
   walletAddress: PublicKey,
   tokenMintAddress: PublicKey
-): Promise<PublicKey | null> => {
-  return (
+): Promise<PublicKey | null> =>
+  (
     await PublicKey.findProgramAddress(
       [walletAddress.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), tokenMintAddress.toBuffer()],
       ASSOCIATED_TOKEN_PROGRAM_ID
     )
   )[0]
-}
 
 export const signAndSendRawTransaction = async (
   connection: Connection,
   transactionData: Transaction,
   wallet: any,
   ...signers: Array<Signer>
-) => {
+): Promise<TransactionSignature | null> => {
   try {
-    let transaction = transactionData
+    const transaction: Transaction = transactionData
     transaction.feePayer = wallet.publicKey
     transaction.recentBlockhash = (await connection.getRecentBlockhash('max')).blockhash
 
     signers.forEach((signer) => transaction.partialSign(signer))
 
-    transaction = await wallet.signTransaction(transaction)
-    const tx = await connection.sendRawTransaction(transaction!.serialize()) //, { skipPreflight: true }
+    let simulateResult: SimulatedTransactionResponse | null = null
+    try {
+      simulateResult = (await connection.simulateTransaction(transaction)).value
+      if (simulateResult.logs) {
+        for (let i = simulateResult.logs.length - 1; i >= 0; --i) {
+          const line = simulateResult.logs[i]
+          if (line.startsWith('Program log: ')) {
+            throw new Error('Transaction failed: ' + line.slice('Program log: '.length))
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Error: No simulation logs generated')
+      console.dir(e)
+    }
+
+    const signedTransaction = await wallet.signTransaction(transaction)
+    const tx = await connection.sendRawTransaction(signedTransaction?.serialize()) //, { skipPreflight: true }
     return tx
   } catch (e) {
     console.log(e)
@@ -124,7 +145,7 @@ export const resolveDomainToWalletAddress = async ({
 export const findProgramAddress = async (seeds: (Buffer | Uint8Array)[], programId: PublicKey) => {
   // eslint-disable-next-line
   const localStorage = useLocalStorage()
-  const key: string = `pda-${seeds.reduce((agg, item) => agg + item.toString('hex'), '')}${programId.toString()}`
+  const key = `pda-${seeds.reduce((agg, item) => agg + item.toString('hex'), '')}${programId.toString()}`
 
   const cached = localStorage.getItem(key)
   if (cached) {
