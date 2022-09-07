@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { getTotalLiquidityVolume } from '../../../api/analytics'
 import { moneyFormatterWithComma } from '../../../utils'
 import { GradientText } from '../../NFTs/adminPage/components/UpcomingMints'
+import { CARD } from './GofxHolders'
 export const TotalLiquidityVolume = () => {
   const [farmData, setFarmData] = useState(null)
   useEffect(() => {
@@ -11,8 +12,8 @@ export const TotalLiquidityVolume = () => {
     })()
   }, [])
   return (
-    <>
-      <div>Liquidity Volume</div>
+    <div>
+      <CARD>Liquidity Volume</CARD>
       <h5>
         <span>
           <GradientText text={'Stake Volume'} fontSize={20} fontWeight={500} /> :
@@ -31,12 +32,12 @@ export const TotalLiquidityVolume = () => {
         </span>{' '}
         <br />
         <span>
-          <GradientText text={'Total Volume'} fontSize={20} fontWeight={500} /> :
+          <GradientText text={'Farm TVL'} fontSize={20} fontWeight={500} /> :
           {farmData
             ? ` $ ` + moneyFormatterWithComma(farmData?.aggregatedVolume?.totalVolume?.toFixed(2))
             : ' Loading...'}{' '}
         </span>
       </h5>
-    </>
+    </div>
   )
 }

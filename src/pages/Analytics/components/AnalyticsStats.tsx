@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { GofxHolders } from './GofxHolders'
+import SwapVolume from './SwapVolume'
 import { TotalLiquidityVolume } from './TotalLiquidityVolume'
 
 const WRAPPER = styled.div`
@@ -14,6 +15,7 @@ export const AnalyticsStats = () => {
     <WRAPPER>
       <TotalLiquidityVolume />
       <GofxHolders />
+      <SwapVolume />
     </WRAPPER>
   )
 }

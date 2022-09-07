@@ -225,6 +225,7 @@ export const TableList = ({ dataSource }: any) => {
   const [stakeVolume, setStakeVolume] = useState<number>(0)
   const [liquidityObject, setLiquidityObject] = useState({})
   const [aprVolumeData, setAprVolumeData] = useState({})
+  const [savedVolume, setSavedVolume] = useState<boolean>(false)
 
   useEffect(() => {
     refreshTokenData()
@@ -252,9 +253,11 @@ export const TableList = ({ dataSource }: any) => {
       stakeVolume !== 0 &&
       sslVolume !== 0 &&
       Object.keys(liquidityObject).length > 0 &&
-      network === NETWORK_CONSTANTS.MAINNET
+      network === NETWORK_CONSTANTS.MAINNET &&
+      savedVolume === false
     ) {
       saveLiquidtyVolume(sslVolume, stakeVolume, liquidityObject)
+      setSavedVolume(true)
     }
   }, [sslVolume, stakeVolume, liquidityObject])
 
@@ -371,8 +374,8 @@ export const TableList = ({ dataSource }: any) => {
           }
         }
 
-        fetchAllSSLAmountStaked(connection, SSLAccountKeys, wallet, liquidityAccountKeys, mainVaultKeys).then((res) =>
-          calculateBalances(res.sslData, res.mainVault, res.liquidityData, SSLTokenNames)
+        fetchAllSSLAmountStaked(connection, SSLAccountKeys, wallet, liquidityAccountKeys, mainVaultKeys).then(
+          (res) => calculateBalances(res.sslData, res.mainVault, res.liquidityData, SSLTokenNames)
         )
       }
     })()
@@ -404,7 +407,8 @@ export const TableList = ({ dataSource }: any) => {
         if (tokenName.includes(searchFilter.toLowerCase())) return true
       })
 
-    if (showDeposited && wallet.publicKey) farmDataStaked = farmDataStaked.filter((fData) => fData.currentlyStaked > 0)
+    if (showDeposited && wallet.publicKey)
+      farmDataStaked = farmDataStaked.filter((fData) => fData.currentlyStaked > 0)
 
     setFarmData(farmDataStaked)
   }, [poolFilter, searchFilter, showDeposited, farmDataContext, farmDataSSLContext, priceFetched])
