@@ -72,11 +72,13 @@ const FLEX_COL_CONTAINER = styled(SpaceEvenlyDiv)`
 `
 
 const STAKE_BTN = styled.button`
-  ${tw`block w-[263px] h-[60px] rounded-[45px] bg-white border-none border-0 text-regular font-bold cursor-pointer text-[#7d289d]`}
+  ${tw`block w-[263px] h-[60px] rounded-[45px] bg-white border-none 
+  border-0 text-regular font-bold cursor-pointer text-[#7d289d]`}
 `
 
 const BUY_GOFX = styled.button`
-  ${tw`block w-[263px] h-[60px] rounded-[45px] text-center border-none border-0 text-[17px] font-bold cursor-pointer bg-transparent`}
+  ${tw`block w-[263px] h-[60px] rounded-[45px] text-center border-none 
+  border-0 text-[17px] font-bold cursor-pointer bg-transparent`}
 `
 
 const STAKE_TEXT = styled.div`
@@ -162,7 +164,8 @@ export const RewardInfoComponent: FC = () => {
               For each NFT sale you will receive <strong>50%</strong> of the sale fee in <strong>$GOFX</strong>.
             </TEXT_22>
             <TEXT_15>
-              If you sell an NFT for $100, we will split 1% or $1 worth of $GOFX to the buyer and seller respectively.
+              If you sell an NFT for $100, we will split 1% or $1 worth of $GOFX to the buyer and seller
+              respectively.
             </TEXT_15>
           </li>
         </ul>

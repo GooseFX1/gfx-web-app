@@ -65,11 +65,11 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   const getMarketTrades = useCallback(async () => {
     try {
       if (selectedCrypto.market && selectedCrypto.market.address) {
-        let marketAddress = selectedCrypto.market.address.toBase58(),
+        const marketAddress = selectedCrypto.market.address.toBase58(),
           url = historyUrl + marketAddress
         const response = await axios.get(url)
         if (response.data.data) {
-          let dataToSort = response.data.data
+          const dataToSort = response.data.data
           dataToSort.sort((a, b) => b.time - a.time)
           setTradeHistory(dataToSort)
         }

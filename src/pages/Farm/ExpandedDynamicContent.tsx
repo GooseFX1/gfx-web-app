@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { Program } from '@project-serum/anchor'
-import { MainButton } from '../../components'
-import { Connect } from '../../layouts/App/Connect'
+//import { MainButton } from '../../components'
+//import { Connect } from '../../layouts/App/Connect'
 import {
   successfulMessage,
   errorHandlingMessage,
@@ -24,11 +24,11 @@ import {
   executeMint,
   executeBurn
 } from '../../web3'
-import { Collapse } from 'antd'
+//import { Collapse } from 'antd'
 import { SSLButtons, StakeButtons } from './ExpandedButtons'
 import DisplayRowData from './DisplayRowData'
 import { TOKEN_NAMES } from '../../constants'
-import tw from "twin.macro"
+import tw from 'twin.macro'
 
 //#region styles
 const STYLED_EXPANDED_ROW = styled.div`
@@ -36,235 +36,13 @@ const STYLED_EXPANDED_ROW = styled.div`
   padding-bottom: ${({ theme }) => theme.margin(4)};
   padding-right: ${({ theme }) => theme.margin(2)};
   background: ${({ theme }) => theme.expendedRowBg};
-  @media(max-width: 500px){
+  @media (max-width: 500px) {
     padding-right: 0;
   }
 `
 
 const STYLED_EXPANDED_CONTENT = styled.div`
   ${tw`flex flex-row items-center sm:block`}
-`
-const STYLED_LEFT_CONTENT = styled.div`
-  width: 23%;
-  &.connected {
-    width: 20%;
-  }
-  .left-inner {
-    display: flex;
-    align-items: center;
-  }
-  &.disconnected {
-    .left-inner {
-      max-width: 270px;
-    }
-  }
-  .farm-logo {
-    width: 60px;
-    height: 60px;
-  }
-  button {
-    width: 169px;
-    height: 52px;
-    line-height: 42px;
-    border-radius: 52px;
-    font-family: Montserrat;
-    font-size: 13px;
-    font-weight: 600;
-    text-align: center;
-    color: #fff;
-    background-color: #6b33b0 !important;
-    border-color: #6b33b0 !important;
-    margin-left: ${({ theme }) => theme.margin(4)};
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-`
-
-const STYLED_SOL = styled.div`
-  width: 372px;
-  height: 60px;
-  border-radius: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  /* padding: 0 ${({ theme }) => theme.margin(4)};
-  margin: 0 ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(1)}; */
-  .value {
-    font-family: Montserrat;
-    font-size: 22px;
-    font-weight: 500;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    text-align: center;
-    color: ${({ theme }) => theme.text15};
-  }
-  &.active {
-    .value {
-      color: #fff;
-      font-weight: 600;
-    }
-  }
-  .text {
-    font-family: Montserrat;
-    font-size: 15px;
-    font-weight: 600;
-    text-align: center;
-    color: ${({ theme }) => theme.text14};
-    display: flex;
-    z-index: 2;
-    margin-bottom: 6px;
-    margin-left: -100px;
-  }
-  .text-2 {
-    margin-left: ${({ theme }) => theme.margin(1.5)};
-  }
-`
-const STYLED_STAKE_PILL = styled(MainButton)`
-  width: 372px;
-  height: 44px;
-  border-radius: 51px;
-  background-color: ${({ theme }) => theme.stakePillBg};
-  line-height: 49px;
-  font-family: Montserrat;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  opacity: 0.5;
-  color: ${({ theme }) => theme.text14};
-  margin: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(1.5)} 0;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  &.active,
-  &:hover {
-    background: ${({ theme }) => theme.primary3};
-    color: #fff;
-    opacity: 1;
-  }
-`
-
-const STYLED_STAKED_EARNED_CONTENT = styled.div`
-  display: flex;
-  align-items: center;
-  margin-left: ${({ theme }) => theme.margin(4)};
-  .info-item {
-    max-width: 150px;
-    min-width: 130px;
-    margin-right: ${({ theme }) => theme.margin(7)};
-    .title,
-    .value {
-      font-family: Montserrat;
-      font-size: 20px;
-      font-weight: 600;
-      color: ${({ theme }) => theme.text7};
-    }
-    .price {
-      font-family: Montserrat;
-      font-size: 16px;
-      font-weight: 500;
-      color: ${({ theme }) => theme.text13};
-    }
-    .value,
-    .price {
-      margin-bottom: ${({ theme }) => theme.margin(0.5)};
-    }
-  }
-`
-const STYLED_IMG = styled.img`
-  transform: scale(1.3);
-`
-
-const STYLED_DESC = styled.div`
-  display: flex;
-  .text {
-    margin-right: ${({ theme }) => theme.margin(1)};
-    font-family: Montserrat;
-    font-size: 14px;
-    font-weight: 500;
-    color: ${({ theme }) => theme.text7};
-  }
-  .value {
-    font-family: Montserrat;
-    font-size: 14px;
-    font-weight: 600;
-    color: #fff;
-    color: ${({ theme }) => theme.text8};
-  }
-`
-
-const MESSAGE = styled.div`
-  margin: -12px 0;
-  font-size: 12px;
-  font-weight: 700;
-
-  .m-title {
-    margin-bottom: 16px;
-  }
-
-  .m-icon {
-    width: 20.5px;
-    height: 20px;
-  }
-
-  p {
-    line-height: 1.3;
-    max-width: 200px;
-  }
-`
-const MAX_BUTTON = styled.div`
-  cursor: pointer;
-`
-const ROW_DATA = styled.div`
-  width: 100%;
-  height: 75px;
-  cursor: pointer;
-`
-const STYLED_INPUT = styled.input`
-  width: 372px;
-  height: 44px;
-  background-color: ${({ theme }) => theme.solPillBg};
-  border-radius: 60px;
-  display: flex;
-  border: none;
-  align-items: center;
-  justify-content: space-between;
-  ::-webkit-outer-spin-button,
-  ::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  padding: 0 ${({ theme }) => theme.margin(4)};
-  margin: 0 ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(1)};
-  .value {
-    font-family: Montserrat;
-    font-size: 22px;
-    font-weight: 500;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    text-align: center;
-    color: ${({ theme }) => theme.text15};
-  }
-  &.active {
-    .value {
-      color: #fff;
-      font-weight: 600;
-    }
-  }
-  .text {
-    font-family: Montserrat;
-    font-size: 15px;
-    font-weight: 600;
-    text-align: center;
-    color: ${({ theme }) => theme.text14};
-    display: flex;
-  }
-  .text-2 {
-    margin-left: ${({ theme }) => theme.margin(1.5)};
-  }
 `
 //#endregion
 
@@ -285,7 +63,7 @@ export const ExpandedDynamicContent = ({
   onExpandIcon,
   stakeAccountKey
 }: IExpandedContent) => {
-  const { name, image, earned, currentlyStaked, type } = rowData
+  const { name, earned, currentlyStaked, type } = rowData
   const { getUIAmount } = useAccounts()
   const { publicKey } = useWallet()
   const { getTokenInfoForFarming } = useTokenRegistry()
@@ -371,7 +149,8 @@ export const ExpandedDynamicContent = ({
     let amount = parseFloat(unstakeRef.current.value)
     if (parseFloat(availableToMint.toFixed(3)) == parseFloat(unstakeRef.current.value)) amount = availableToMint
     try {
-      const confirm = executeMint(SSLProgram, wallet, connection, network, name, amount).then((con) => {
+      //const confirm =
+      executeMint(SSLProgram, wallet, connection, network, name, amount).then((con) => {
         setMintLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
@@ -392,7 +171,8 @@ export const ExpandedDynamicContent = ({
     const amount = parseFloat(unstakeRef.current.value)
     setBurnLoading(true)
     try {
-      const confirm = executeBurn(SSLProgram, wallet, connection, network, name, amount).then((con) => {
+      //const confirm =
+      executeBurn(SSLProgram, wallet, connection, network, name, amount).then((con) => {
         setBurnLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
@@ -413,7 +193,8 @@ export const ExpandedDynamicContent = ({
     setWithdrawLoading(true)
 
     try {
-      const confirm = executeWithdraw(SSLProgram, wallet, connection, network, name, amount).then((con) => {
+      //const confirm =
+      executeWithdraw(SSLProgram, wallet, connection, network, name, amount).then((con) => {
         setWithdrawLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
@@ -586,3 +367,227 @@ export const ExpandedDynamicContent = ({
     </STYLED_EXPANDED_ROW>
   )
 }
+
+//#Remove style that might be needed later
+// const STYLED_LEFT_CONTENT = styled.div`
+//   width: 23%;
+//   &.connected {
+//     width: 20%;
+//   }
+//   .left-inner {
+//     display: flex;
+//     align-items: center;
+//   }
+//   &.disconnected {
+//     .left-inner {
+//       max-width: 270px;
+//     }
+//   }
+//   .farm-logo {
+//     width: 60px;
+//     height: 60px;
+//   }
+//   button {
+//     width: 169px;
+//     height: 52px;
+//     line-height: 42px;
+//     border-radius: 52px;
+//     font-family: Montserrat;
+//     font-size: 13px;
+//     font-weight: 600;
+//     text-align: center;
+//     color: #fff;
+//     background-color: #6b33b0 !important;
+//     border-color: #6b33b0 !important;
+//     margin-left: ${({ theme }) => theme.margin(4)};
+//     &:hover {
+//       opacity: 0.8;
+//     }
+//   }
+// `
+
+// const STYLED_SOL = styled.div`
+//   width: 372px;
+//   height: 60px;
+//   border-radius: 60px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+//   /* padding: 0 ${({ theme }) => theme.margin(4)};
+//   margin: 0 ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(1)}; */
+//   .value {
+//     font-family: Montserrat;
+//     font-size: 22px;
+//     font-weight: 500;
+//     font-stretch: normal;
+//     font-style: normal;
+//     line-height: normal;
+//     letter-spacing: normal;
+//     text-align: center;
+//     color: ${({ theme }) => theme.text15};
+//   }
+//   &.active {
+//     .value {
+//       color: #fff;
+//       font-weight: 600;
+//     }
+//   }
+//   .text {
+//     font-family: Montserrat;
+//     font-size: 15px;
+//     font-weight: 600;
+//     text-align: center;
+//     color: ${({ theme }) => theme.text14};
+//     display: flex;
+//     z-index: 2;
+//     margin-bottom: 6px;
+//     margin-left: -100px;
+//   }
+//   .text-2 {
+//     margin-left: ${({ theme }) => theme.margin(1.5)};
+//   }
+// `
+// const STYLED_STAKE_PILL = styled(MainButton)`
+//   width: 372px;
+//   height: 44px;
+//   border-radius: 51px;
+//   background-color: ${({ theme }) => theme.stakePillBg};
+//   line-height: 49px;
+//   font-family: Montserrat;
+//   font-size: 14px;
+//   font-weight: 600;
+//   text-align: center;
+//   opacity: 0.5;
+//   color: ${({ theme }) => theme.text14};
+//   margin: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(1.5)} 0;
+//   transition: all 0.3s ease;
+//   cursor: pointer;
+//   &.active,
+//   &:hover {
+//     background: ${({ theme }) => theme.primary3};
+//     color: #fff;
+//     opacity: 1;
+//   }
+// `
+
+// const STYLED_STAKED_EARNED_CONTENT = styled.div`
+//   display: flex;
+//   align-items: center;
+//   margin-left: ${({ theme }) => theme.margin(4)};
+//   .info-item {
+//     max-width: 150px;
+//     min-width: 130px;
+//     margin-right: ${({ theme }) => theme.margin(7)};
+//     .title,
+//     .value {
+//       font-family: Montserrat;
+//       font-size: 20px;
+//       font-weight: 600;
+//       color: ${({ theme }) => theme.text7};
+//     }
+//     .price {
+//       font-family: Montserrat;
+//       font-size: 16px;
+//       font-weight: 500;
+//       color: ${({ theme }) => theme.text13};
+//     }
+//     .value,
+//     .price {
+//       margin-bottom: ${({ theme }) => theme.margin(0.5)};
+//     }
+//   }
+// `
+// const STYLED_IMG = styled.img`
+//   transform: scale(1.3);
+// `
+
+// const STYLED_DESC = styled.div`
+//   display: flex;
+//   .text {
+//     margin-right: ${({ theme }) => theme.margin(1)};
+//     font-family: Montserrat;
+//     font-size: 14px;
+//     font-weight: 500;
+//     color: ${({ theme }) => theme.text7};
+//   }
+//   .value {
+//     font-family: Montserrat;
+//     font-size: 14px;
+//     font-weight: 600;
+//     color: #fff;
+//     color: ${({ theme }) => theme.text8};
+//   }
+// `
+
+// const MESSAGE = styled.div`
+//   margin: -12px 0;
+//   font-size: 12px;
+//   font-weight: 700;
+
+//   .m-title {
+//     margin-bottom: 16px;
+//   }
+
+//   .m-icon {
+//     width: 20.5px;
+//     height: 20px;
+//   }
+
+//   p {
+//     line-height: 1.3;
+//     max-width: 200px;
+//   }
+// `
+// const MAX_BUTTON = styled.div`
+//   cursor: pointer;
+// `
+// const ROW_DATA = styled.div`
+//   width: 100%;
+//   height: 75px;
+//   cursor: pointer;
+// `
+// const STYLED_INPUT = styled.input`
+//   width: 372px;
+//   height: 44px;
+//   background-color: ${({ theme }) => theme.solPillBg};
+//   border-radius: 60px;
+//   display: flex;
+//   border: none;
+//   align-items: center;
+//   justify-content: space-between;
+//   ::-webkit-outer-spin-button,
+//   ::-webkit-inner-spin-button {
+//     -webkit-appearance: none;
+//     margin: 0;
+//   }
+//   padding: 0 ${({ theme }) => theme.margin(4)};
+//   margin: 0 ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(1)};
+//   .value {
+//     font-family: Montserrat;
+//     font-size: 22px;
+//     font-weight: 500;
+//     font-stretch: normal;
+//     font-style: normal;
+//     line-height: normal;
+//     letter-spacing: normal;
+//     text-align: center;
+//     color: ${({ theme }) => theme.text15};
+//   }
+//   &.active {
+//     .value {
+//       color: #fff;
+//       font-weight: 600;
+//     }
+//   }
+//   .text {
+//     font-family: Montserrat;
+//     font-size: 15px;
+//     font-weight: 600;
+//     text-align: center;
+//     color: ${({ theme }) => theme.text14};
+//     display: flex;
+//   }
+//   .text-2 {
+//     margin-left: ${({ theme }) => theme.margin(1.5)};
+//   }
+// `

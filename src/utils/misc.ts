@@ -4,12 +4,12 @@ export const sleep = (ms: number): Promise<void> => new Promise((resolve) => set
 
 export const getUnixTs = () => new Date().getTime() / 1000
 
-export function abbreviateNumber(num: number, fixed: number): string {
+export function abbreviateNumber(num: number, fixedNum: number): string {
   if (!num) {
     return '0'
   }
 
-  fixed = !fixed || fixed < 0 ? 0 : fixed
+  const fixed = !fixedNum || fixedNum < 0 ? 0 : fixedNum
   const b = num.toPrecision(2).split('e')
   const k = b.length === 1 ? 0 : Math.floor(Math.min(Number(b[1].slice(1)), 14) / 3)
   const c = Number(k < 1 ? num.toFixed(fixed) : (num / Math.pow(10, k * 3)).toFixed(1 + fixed))
@@ -27,8 +27,8 @@ export function chunks<T>(array: T[], size: number): T[][] {
   )
 }
 
-export function ellipseNumber(x: number | string | undefined, length: number = 15): string {
-  x = String(x)
+export function ellipseNumber(num: number | string | undefined, length: number = 15): string {
+  const x = String(num)
   return x.length > length ? x.slice(0, length).concat('...') : x
 }
 
@@ -142,7 +142,7 @@ export function debounce(callback: any, wait: number) {
 
 export const createUUID = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    var r = (Math.random() * 16) | 0,
+    const r = (Math.random() * 16) | 0,
       v = c == 'x' ? r : (r & 0x3) | 0x8
     return v.toString(16)
   })

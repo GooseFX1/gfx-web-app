@@ -2,7 +2,7 @@ import React, { createContext, Dispatch, FC, ReactNode, SetStateAction, useConte
 import { Market } from '@project-serum/serum'
 import { useConnectionConfig } from './settings'
 import { serum } from '../web3'
-const MARKET_PAIRS = require('../pages/TradeV2/constants/MARKET_PAIRS.json')
+import MARKET_PAIRS from '../pages/TradeV2/constants/MARKET_PAIRS.json'
 
 interface ICrypto {
   market?: Market
@@ -60,13 +60,13 @@ const CryptoContext = createContext<ICryptoConfig | null>(null)
 
 export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [pairs, setPairs] = useState([])
-  const pairsToset = MARKET_PAIRS
+  const pairsToset = MARKET_PAIRS as any
 
   const getPairWithMarketAddress = () => {
     let pairSet = pairsToset[0]
     try {
-      let paths = window.location.href.split('/')
-      let marketAddress = paths[4]
+      const paths = window.location.href.split('/')
+      const marketAddress = paths[4]
       pairsToset.map((item) => {
         if (marketAddress === item.marketAddress) {
           pairSet = item
@@ -93,7 +93,9 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
       try {
         const market = await serum.getMarket(connection, selectedCrypto.pair)
         setSelectedCrypto((prevState) => ({ ...prevState, market }))
-      } catch (e) {}
+      } catch (e) {
+        console.log(e)
+      }
     })()
   }, [connection, selectedCrypto.pair])
 

@@ -1,7 +1,7 @@
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
 import { ENV, TokenInfo, TokenListProvider } from '@solana/spl-token-registry'
 import { useConnectionConfig } from './settings'
-import { SUPPORTED_TOKEN_LIST, FARM_SUPPORTED_TOKEN_LIST, TOKEN_BLACKLIST } from '../constants'
+import { SUPPORTED_TOKEN_LIST, FARM_SUPPORTED_TOKEN_LIST } from '../constants'
 import { ADDRESSES } from '../web3'
 import { TOKEN_LIST_URL } from '@jup-ag/core'
 
@@ -26,8 +26,9 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
       const list = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
       const newList = await (await fetch(TOKEN_LIST_URL[network])).json()
 
-      const manualList = newList //we cannot use the full list because of limited icons (795 tokens) and loading time, so we'll keep on using the name addition for now
-        .filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
+      //we cannot use the full list because of limited icons (795 tokens) and loading time,
+      // so we'll keep on using the name addition for now
+      const manualList = newList.filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
       const jupiterList = newList.filter(({ symbol }) => !SUPPORTED_TOKEN_LIST.includes(symbol)).slice(20, 100)
       const splList = [...manualList, ...jupiterList]
 

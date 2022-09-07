@@ -1,5 +1,5 @@
 import { Image } from 'antd'
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { SpaceBetweenDiv } from '../styles'
 import tw from 'twin.macro'

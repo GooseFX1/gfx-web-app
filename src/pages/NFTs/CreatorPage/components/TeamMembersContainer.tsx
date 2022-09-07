@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState, FC } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -172,20 +172,20 @@ const PREV_BTN = styled.button`
   }
 `
 
-interface ITeamMember {
-  name: string
-  username: string
-  dp_url?: string
-}
+// interface ITeamMember {
+//   name: string
+//   username: string
+//   dp_url?: string
+// }
 
-export const TeamMembersContainer = ({ data, setTeamMembers }) => {
+export const TeamMembersContainer: FC<{ data?: any; setTeamMembers: (x: any) => void }> = ({ setTeamMembers }) => {
   const { creatorData } = useNFTCreator()
   const twitterURL = 'www.twitter.com/'
   const nameRef = useRef<any>()
   const usernameRef = useRef<any>()
   const [index, setIndex] = useState<number>(0)
-  const [currentName, setCurrentName] = useState<String>('')
-  const [twitterUsername, setCurrentUsername] = useState<String>()
+  const [currentName, setCurrentName] = useState<string>('')
+  const [twitterUsername, setCurrentUsername] = useState<string>()
   const [teamArr, setTeamArr] = useState([])
 
   useEffect(() => {

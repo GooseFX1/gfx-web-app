@@ -66,7 +66,7 @@ const DropdownButton: FC<{
         arrow
         arrowRotation={arrowRotation}
         offset={[20, 10]}
-        onVisibleChange={(visible: boolean) => {}}
+        onVisibleChange={() => {}}
         overlay={<Overlay options={options} onOptionClick={onOptionClick} folder={folder} />}
         setArrowRotation={setArrowRotation}
       />

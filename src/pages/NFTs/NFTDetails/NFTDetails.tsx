@@ -26,7 +26,7 @@ export const NFTDetails: FC<{
   status?: MintItemViewStatus
   backUrl?: string
   arbData?: INFTMetadata
-}> = ({ status = '', backUrl, handleClickPrimaryButton, ...rest }) => {
+}> = ({ status = '', ...rest }) => {
   const history = useHistory()
   const { general, nftMetadata, fetchGeneral } = useNFTDetails()
   const { connection } = useConnectionConfig()

@@ -85,7 +85,7 @@ const COVER = styled(UPLOAD_SECTION)<{ $mode: boolean }>`
 
 const IMAGE_COUNT_DESC = styled(DESCRIPTION)`
   margin-top: ${({ theme }) => theme.margin(2.5)};
-  margin-bottom: ${({ theme }) => 0};
+  margin-bottom: 0;
   color: #fff !important;
 `
 

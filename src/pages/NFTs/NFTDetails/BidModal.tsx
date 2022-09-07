@@ -561,7 +561,9 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
     <PURCHASE_MODAL setVisible={setVisible} title="" visible={visible} onCancel={onCancel}>
       <div className="bm-title">
         You are about to{' '}
-        {purchasePrice && `${parseFloat(bidPriceInput) * LAMPORTS_PER_SOL}` === ask.buyer_price ? 'purchase' : 'bid on'}{' '}
+        {purchasePrice && `${parseFloat(bidPriceInput) * LAMPORTS_PER_SOL}` === ask.buyer_price
+          ? 'purchase'
+          : 'bid on'}{' '}
       </div>
       <Row className="bm-title" align="middle" justify="center" gutter={4}>
         <Col className="bm-title-bold">
@@ -633,7 +635,11 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
       {pendingTxSig && (
         <div style={{ marginBottom: '56px' }} className="bm-title">
           ⚠️ Sometimes there are delays on the network. You can track the{' '}
-          <GFX_LINK href={`http://solscan.io/tx/${pendingTxSig}?cluster=${network}`} target={'_blank'} rel="noreferrer">
+          <GFX_LINK
+            href={`http://solscan.io/tx/${pendingTxSig}?cluster=${network}`}
+            target={'_blank'}
+            rel="noreferrer"
+          >
             status of the transaction on solscan
           </GFX_LINK>
         </div>

@@ -1,6 +1,6 @@
 import React, { BaseSyntheticEvent, FC, useEffect, useState } from 'react'
 import { Input } from 'antd'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { Tooltip } from '../../components'
 import { useDarkMode, useSlippageConfig } from '../../context'
 import { CenteredDiv } from '../../styles'

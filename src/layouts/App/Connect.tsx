@@ -163,7 +163,8 @@ export const Connect: FC = () => {
     }
   }, [wallet, connect, connected])
 
-  //using session storage so that a new open tab will not try to login to wallet but a refresh will attept wallet login, localStorage stores it forever and will attempt login on new webpage
+  //using session storage so that a new open tab will not try to login to wallet
+  //but a refresh will attept wallet login, localStorage stores it forever and will attempt login on new webpage
   useEffect(() => {
     const walletName = sessionStorage.getItem('connectedGFXWallet')
     if (!base58 && !connected && walletName) {

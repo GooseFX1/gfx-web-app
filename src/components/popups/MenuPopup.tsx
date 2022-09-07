@@ -184,7 +184,7 @@ const MenuPopup = ({ rewardToggle }: IMenuPopup) => {
         <div className="outer-bg">
           <div className="inner-bg">
             {carousel[0].redirect ? (
-              <div className="go-btn" onClick={(e) => redirectToPage(carousel[0].name === 'Sell')}>
+              <div className="go-btn" onClick={() => redirectToPage(carousel[0].name === 'Sell')}>
                 <div className="go-text">{carousel[0].name === 'Sell' && !publicKey ? 'Connect' : 'Go!'}</div>
               </div>
             ) : (

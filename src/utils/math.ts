@@ -11,8 +11,9 @@ export function floorValue(n: number, value: number | undefined): number {
   return removeFloatingPointError(Math.floor(n / value) * value)
 }
 
-export function removeFloatingPointError(n: number): number {
-  const s = n.toString()
+export function removeFloatingPointError(num: number): number {
+  let n = num ///allow num to be updated inside block functions
+  const s = num.toString()
 
   const dotPosition = s.indexOf('.')
   if (dotPosition === -1) {

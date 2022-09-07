@@ -53,8 +53,8 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
   const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
   const assetIcon = useMemo(() => `/img/${type}/${type === 'synth' ? `g${symbol}` : symbol}.svg`, [symbol, type])
 
-  let changeValue = tokenInfo[pair] ? tokenInfo[pair].change : ' ',
-    classNameChange = ''
+  const changeValue = tokenInfo[pair] ? tokenInfo[pair].change : ' '
+  let classNameChange = ''
   if (changeValue && changeValue.substring(0, 1) === '-') classNameChange = 'down24h'
   else if (changeValue && changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
 

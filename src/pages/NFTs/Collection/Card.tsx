@@ -201,7 +201,7 @@ export const Card = (props: ICard) => {
     }
   }, [sessionUser])
 
-  const handleToggleLike = (e: any) => {
+  const handleToggleLike = () => {
     if (sessionUser && sessionUser.user_id) {
       likeDislike(sessionUser.user_id, localSingleNFT.non_fungible_id)
       setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
@@ -255,7 +255,7 @@ export const Card = (props: ICard) => {
     <CARD {...props} className="card">
       <div
         className="card-image-wrapper"
-        onClick={(e) => (localSingleNFT !== undefined ? goToDetails(localSingleNFT.mint_address) : null)}
+        onClick={() => (localSingleNFT !== undefined ? goToDetails(localSingleNFT.mint_address) : null)}
       >
         {isLoadingBeforeRelocate && (
           <COVER $mode={mode === 'dark'}>
@@ -322,12 +322,12 @@ export const Card = (props: ICard) => {
               isOwner ? (
                 <BID_BUTTON
                   cardStatus={localAsk ? 'listed' : 'unlisted'}
-                  onClick={(e) => goToDetails(localSingleNFT.mint_address)}
+                  onClick={() => goToDetails(localSingleNFT.mint_address)}
                 >
                   {getButtonText(isOwner, localAsk)}
                 </BID_BUTTON>
               ) : (
-                <BID_BUTTON cardStatus={'bid'} onClick={(e) => goToDetails(localSingleNFT.mint_address)}>
+                <BID_BUTTON cardStatus={'bid'} onClick={() => goToDetails(localSingleNFT.mint_address)}>
                   {getButtonText(isOwner, localAsk)}
                 </BID_BUTTON>
               )

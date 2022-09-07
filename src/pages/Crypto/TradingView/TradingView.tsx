@@ -34,7 +34,7 @@ export interface ChartContainerProps {
 
 export const TVChartContainer: FC<{ symbol: string; visible: boolean }> = ({ symbol, visible }) => {
   const { mode } = useDarkMode()
-  let datafeed = useTvDataFeed()
+  const datafeed = useTvDataFeed()
   let resolution = window.localStorage.getItem('resolution') ?? '60'
 
   try {

@@ -115,7 +115,7 @@ const PreviewImage = ({ file, status, image_url }: Props) => {
         </IMAGE_CONTAINER>
       ) : file ? (
         <Upload
-          beforeUpload={(e) => false}
+          beforeUpload={() => false}
           listType="picture-card"
           maxCount={1}
           fileList={[file]}

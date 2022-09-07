@@ -473,12 +473,12 @@ export async function updateMetadata(
   mintKey: StringPublicKey,
   updateAuthority: StringPublicKey,
   instructions: TransactionInstruction[],
-  metadataAccount?: StringPublicKey
+  mtdAccount?: StringPublicKey
 ) {
   const metadataProgramId = programIds().metadata
 
-  metadataAccount =
-    metadataAccount ||
+  const metadataAccount =
+    mtdAccount ||
     (
       await findProgramAddress(
         [Buffer.from('metadata'), toPublicKey(metadataProgramId).toBuffer(), toPublicKey(mintKey).toBuffer()],

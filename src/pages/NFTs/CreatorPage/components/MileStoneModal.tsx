@@ -78,13 +78,13 @@ export const MileStoneModal: FC<IMileStoneModal> = ({ visible, setVisible, mileS
   }, [])
 
   const addMileStone = (input, data, index) => {
-    let existingMilestoneData = [...tempMS]
+    const existingMilestoneData = [...tempMS]
     existingMilestoneData[index][input] = data
     setTempMS(existingMilestoneData)
   }
 
   const addEmpty = () => {
-    let existingMilestoneData = [...tempMS]
+    const existingMilestoneData = [...tempMS]
     existingMilestoneData.push({
       input1: '',
       input2: '',
@@ -95,20 +95,20 @@ export const MileStoneModal: FC<IMileStoneModal> = ({ visible, setVisible, mileS
 
   const removeIndex = (index) => {
     if (tempMS.length > 1) {
-      let existingMilestoneData = [...tempMS]
+      const existingMilestoneData = [...tempMS]
       existingMilestoneData.splice(index, 1)
       setTempMS(existingMilestoneData)
     }
   }
 
   const saveInfo = () => {
-    let mileStonesSet = tempMS
+    const mileStonesSet = tempMS
     setMileStones(mileStonesSet)
     setVisible(false)
   }
 
   useEffect(() => {
-    let lastIndex = tempMS.length - 1
+    const lastIndex = tempMS.length - 1
     if (tempMS[lastIndex].input1 && tempMS[lastIndex].input2 && tempMS[lastIndex].input3) setAddButtonActive(true)
     else setAddButtonActive(false)
   }, [tempMS])
@@ -129,6 +129,7 @@ export const MileStoneModal: FC<IMileStoneModal> = ({ visible, setVisible, mileS
               remove={removeIndex}
               setMileStones={addMileStone}
               data={item}
+              key={index2}
             />
           ))}
         <div className="add-more-button">
@@ -155,7 +156,8 @@ const WRAPPER_COMPONENT = styled.div`
   .first-input-row {
     ${tw`flex justify-center items-center`}
     .ant-input:first-child {
-      ${tw`text-left pl-4 w-8/12 h-[53px] rounded-bl-[40px] border-0 rounded-tl-[40px] border-none border-r border-gray-1 border-solid text-[17px]`}
+      ${tw`text-left pl-4 w-8/12 h-[53px] rounded-bl-[40px] border-0 
+      rounded-tl-[40px] border-none border-r border-gray-1 border-solid text-[17px]`}
       background-color: ${({ theme }) => theme.sweepModalCard};
     }
     .ant-input:nth-child(2) {
@@ -179,7 +181,7 @@ const MileStoneComponent: FC<{
   add: Function
   remove: Function
   data: any
-}> = ({ mileStones, setMileStones, index, data, remove }) => {
+}> = ({ setMileStones, index, data, remove }) => {
   const [valueChanged, setValueChanged] = useState<number>(0)
 
   const callSetMileStones = (input, data) => {
@@ -192,7 +194,12 @@ const MileStoneComponent: FC<{
       <Row>
         <Col span={4}>
           <Row>
-            <img tw="cursor-pointer" alt="close" src="/img/assets/primary-close.svg" onClick={() => remove(index)} />
+            <img
+              tw="cursor-pointer"
+              alt="close"
+              src="/img/assets/primary-close.svg"
+              onClick={() => remove(index)}
+            />
           </Row>
         </Col>
         <Col span={20}>
@@ -206,7 +213,7 @@ const MileStoneComponent: FC<{
               value={data.input2}
               onChange={(e) => {
                 const reg = new RegExp('^\\d+$')
-                let isNumber = reg.test(e.target.value)
+                const isNumber = reg.test(e.target.value)
                 if (isNumber && e.target.value.length < 5) callSetMileStones('input2', e.target.value)
                 else if (e.target.value === '') callSetMileStones('input2', '')
               }}

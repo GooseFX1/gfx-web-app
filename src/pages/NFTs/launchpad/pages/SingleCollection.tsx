@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useNFTLPSelected } from '../../../../context/nft_launchpad'
 import styled, { css } from 'styled-components'
-import { Col, Row, Tabs } from 'antd'
+import { Tabs } from 'antd'
 import { MintProgressBar, MintStarts } from './LaunchpadComponents'
 import { InfoDivLightTheme, Vesting, RoadMap, Socials } from './LaunchpadComponents'
-import { SVGBlackToGrey } from '../../../../styles'
+//import { SVGBlackToGrey } from '../../../../styles'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { MintButton } from '../launchpadComp/MintButton'
 import { TeamMembers } from './LaunchpadComponents'
@@ -18,7 +18,7 @@ import { logEvent } from 'firebase/analytics'
 import { logData } from '../../../../api'
 
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
-  ${({ theme, activeTab }) => css`
+  ${({ theme }) => css`
    ${tw`relative w-[35vw] max-w-[800px] min-w-[650px] sm:w-[90%] sm:my-5 sm:mx-auto sm:min-w-[300px]`}
     .ant-tabs-nav {
       ${tw`relative z-10`}
@@ -75,7 +75,8 @@ export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
       background: ${theme.tabContentBidFooterBackground};
       backdrop-filter: blur(23.9091px);
       .rst-footer-button {
-        ${tw`text-white h-[55px] text-[17px] flex flex-row justify-center items-center font-semibold border-0 border-none rounded-half py-0 px-4 cursor-pointer whitespace-nowrap`}
+        ${tw`text-white h-[55px] text-[17px] flex flex-row justify-center items-center 
+        font-semibold border-0 border-none rounded-half py-0 px-4 cursor-pointer whitespace-nowrap`}
         flex: 1;
         &:not(:last-child) {
           ${tw`mr-3`}
@@ -140,11 +141,13 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
 const NFT_COVER = styled.div`
   ${tw`h-[550px] w-[550px] sm:h-[350px] sm:w-full`}
   .image-border {
-    ${tw`w-[608px] h-[608px] p-[5px] rounded-bigger mt-8 mb-[30px] sm:w-[90%] sm:h-[350px] sm:rounded-[18px] sm:p-[3px] sm:my-[30px] sm:mx-auto`}
+    ${tw`w-[608px] h-[608px] p-[5px] rounded-bigger mt-8 mb-[30px] 
+    sm:w-[90%] sm:h-[350px] sm:rounded-[18px] sm:p-[3px] sm:my-[30px] sm:mx-auto`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   }
   .ended-img {
-    ${tw`h-[550px] w-[550px] rounded-bigger p-[5px] mt-8 mb-[30px] opacity-40 sm:h-[354px] sm:w-[90%] sm:my-0 sm:mx-auto`}
+    ${tw`h-[550px] w-[550px] rounded-bigger p-[5px] mt-8 
+    mb-[30px] opacity-40 sm:h-[354px] sm:w-[90%] sm:my-0 sm:mx-auto`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   }
 
@@ -174,7 +177,8 @@ const HEIGHT = styled.div`
 `
 
 const SUMMARY_TAB_CONTENT = styled.div`
-  ${tw`sm:my-5 sm:mx-auto sm:font-medium sm:text-tiny sm:text-[#eeeeee] sm:leading-normal m-auto px-[30px] mt-[6%] font-semibold text-[20px]`}
+  ${tw`sm:my-5 sm:mx-auto sm:font-medium sm:text-tiny sm:text-[#eeeeee] 
+  sm:leading-normal m-auto px-[30px] mt-[6%] font-semibold text-[20px]`}
   color: ${({ theme }) => theme.text4};
   div {
     ${tw`text-center`}
@@ -238,16 +242,16 @@ const ROW = styled.div`
 const getRemaningTime = (time): string => {
   const startsOn = parseFloat(time)
   const timeDiffrence = startsOn - Date.now()
-  let seconds = Number(timeDiffrence / 1000)
-  var d = Math.floor(seconds / (3600 * 24))
-  var h = Math.floor((seconds % (3600 * 24)) / 3600)
-  var m = Math.floor((seconds % 3600) / 60)
-  var s = Math.floor(seconds % 60)
+  const seconds = Number(timeDiffrence / 1000)
+  const d = Math.floor(seconds / (3600 * 24))
+  const h = Math.floor((seconds % (3600 * 24)) / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = Math.floor(seconds % 60)
 
-  var dDisplay = d > 0 ? d + (d === 1 ? 'd ' : 'd ') : ''
-  var hDisplay = h > 0 ? h + (h === 1 ? 'h ' : 'h ') : ''
-  var mDisplay = m > 0 ? m + (m === 1 ? 'min ' : 'mins ') : ''
-  var sDisplay = s > 0 ? s + (s === 1 ? 's ' : 's') : ''
+  const dDisplay = d > 0 ? d + (d === 1 ? 'd ' : 'd ') : ''
+  const hDisplay = h > 0 ? h + (h === 1 ? 'h ' : 'h ') : ''
+  const mDisplay = m > 0 ? m + (m === 1 ? 'min ' : 'mins ') : ''
+  const sDisplay = s > 0 ? s + (s === 1 ? 's ' : 's') : ''
   return d > 0 ? dDisplay + hDisplay : h > 0 ? hDisplay + mDisplay : mDisplay + sDisplay
 }
 
@@ -256,7 +260,7 @@ export const SingleCollection: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const { mode } = useDarkMode()
   const history = useHistory()
-  const [time, setTime] = useState(Date.now())
+  const [, setTime] = useState(Date.now())
 
   useEffect(() => {
     const interval = setInterval(() => setTime(Date.now()), 1000)
@@ -420,8 +424,11 @@ export const SingleCollection: FC = () => {
                         <TIER_WRAPPER>
                           {selectedProject?.tiers?.map((item, index) => (
                             <div
-                              className={'tierRow ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')}
+                              className={
+                                'tierRow ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
+                              }
                               tw="flex"
+                              key={index}
                             >
                               <div className="leftSection">
                                 <div tw="flex flex-col items-start justify-center h-full">
@@ -435,7 +442,8 @@ export const SingleCollection: FC = () => {
                                 <div tw="flex flex-col items-end justify-center h-full">
                                   <div
                                     className={
-                                      'textStatus ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
+                                      'textStatus ' +
+                                      (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
                                     }
                                     tw="text-[11px] px-1"
                                   >
@@ -457,7 +465,8 @@ export const SingleCollection: FC = () => {
                                   </div>
                                   <div
                                     className={
-                                      'textPrice ' + (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
+                                      'textPrice ' +
+                                      (cndyValues?.activeTierInfo?.name === item.name ? 'active' : '')
                                     }
                                     tw="text-[14px]"
                                   >

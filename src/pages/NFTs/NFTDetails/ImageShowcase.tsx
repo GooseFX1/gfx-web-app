@@ -96,11 +96,11 @@ export const ImageShowcase: FC = ({ ...rest }) => {
   const [likes, setLikes] = useState(0)
 
   //const hearts = 12
-  const remaining = {
-    days: '10',
-    hours: '2',
-    minutes: '43'
-  }
+  // const remaining = {
+  //   days: '10',
+  //   hours: '2',
+  //   minutes: '43'
+  // }
 
   useEffect(() => {
     if (general && sessionUser) {
@@ -112,9 +112,9 @@ export const ImageShowcase: FC = ({ ...rest }) => {
     setLikes(totalLikes)
 }, [totalLikes])
 
-  const handleToggleLike = (e: any) => {
+  const handleToggleLike = () => {
     if (sessionUser) {
-      likeDislike(sessionUser.user_id, general.non_fungible_id).then((res) => {
+      likeDislike(sessionUser.user_id, general.non_fungible_id).then(() => {
         setLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
       })
     }
@@ -143,11 +143,14 @@ export const ImageShowcase: FC = ({ ...rest }) => {
     switch (social) {
       case 'twitter':
         window.open(
-          `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
+          `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%
+          20Exchange&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
         )
         break
       case 'telegram':
-        window.open(`https://t.me/share/url?url=${tinyURL}&text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange`)
+        window.open(
+          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange`
+        )
         break
       case 'facebook':
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${tinyURL}`)
@@ -181,7 +184,7 @@ export const ImageShowcase: FC = ({ ...rest }) => {
       {handleModal()}
       <img className="ls-image" height={checkMobile()? "360px" : "100%"} src={general?.image_url || nftMetadata?.image} alt="the-nft" />
       <NFT_CONTAINER>
-        <SHARE_BUTTON onClick={(e) => setShareModal(true)}>
+        <SHARE_BUTTON onClick={() => setShareModal(true)}>
           <img src={`/img/assets/share.svg`} alt="share-icon" />
         </SHARE_BUTTON>
       </NFT_CONTAINER>
@@ -207,7 +210,9 @@ export const ImageShowcase: FC = ({ ...rest }) => {
                   onClick={handleToggleLike}
                 />
               )}
-              <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>{likes}</span>
+              <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
+                {likes}
+              </span>
             </Col>
           )}
         </Row>

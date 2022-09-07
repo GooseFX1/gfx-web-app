@@ -1,4 +1,4 @@
-import { bool } from '@metaplex-foundation/beet'
+//import { bool } from '@metaplex-foundation/beet'
 import { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction, useEffect } from 'react'
 import { stakeTokens, generateListOfSSLTokens } from '../constants'
 import { IFarmData } from '../pages/Farm/TableList'
@@ -26,7 +26,7 @@ export const FarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [mode, setMode] = useState<boolean>(false)
   const [filter, setFilter] = useState('All pools')
   const [searchFilter, setSearchFilter] = useState(null)
-  const { endpointName, network } = useConnectionConfig()
+  const { network } = useConnectionConfig()
   const [farmDataContext, setFarmDataContext] = useState<IFarmData[]>(stakeTokens)
   const [farmDataSSLContext, setFarmDataSSLContext] = useState<IFarmData[]>(generateListOfSSLTokens(network))
   const [counter, setCounter] = useState<number>(0)

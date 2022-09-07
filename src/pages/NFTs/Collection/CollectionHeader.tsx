@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, FC } from 'react'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Button, Dropdown, Menu } from 'antd'
 import styled from 'styled-components'
@@ -230,7 +230,12 @@ export const copyToClipboard = async () => {
   await navigator.clipboard.writeText(window.location.href)
 }
 
-export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) => {
+export const CollectionHeader: FC<{
+  setFilter?: (x: any) => void
+  filter?: any
+  collapse: any
+  setCollapse: (x: any) => void
+}> = ({ collapse, setCollapse }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
   const { userCurrency } = useNFTProfile()
@@ -239,7 +244,8 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
   const [shareModal, setShareModal] = useState(false)
   const [sweeperModal, setSweeperModal] = useState<boolean>(false)
 
-  const isCollectionItemEmpty: boolean = !singleCollection || !fixedPriceWithinCollection || !openBidWithinCollection
+  const isCollectionItemEmpty: boolean =
+    !singleCollection || !fixedPriceWithinCollection || !openBidWithinCollection
   // const isCollectionItemEmpty: boolean = true
 
   const handleSweepClick = () => {
@@ -247,7 +253,7 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
   }
 
   const menu = (
-    <MENU_LIST onClick={(e) => setShareModal(true)}>
+    <MENU_LIST onClick={() => setShareModal(true)}>
       <Menu.Item key="share">Share</Menu.Item>
       {/* <Menu.Item>Report</Menu.Item> */}
     </MENU_LIST>
@@ -276,12 +282,15 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
     switch (social) {
       case 'twitter':
         window.open(
-          `https://twitter.com/intent/tweet?text=Check%20out%20the%20${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%20Exchange%20&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
+          `https://twitter.com/intent/tweet?text=Check%20out%20the%20
+          ${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%
+          20Exchange%20&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
         )
         break
       case 'telegram':
         window.open(
-          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20the%20${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%20Exchange%20`
+          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20the%20
+          ${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%20Exchange%20`
         )
         break
       case 'facebook':
@@ -366,7 +375,11 @@ export const CollectionHeader = ({ setFilter, filter, collapse, setCollapse }) =
                 <SkeletonCommon width="106px" height="25px" />
               ) : (
                 <span>
-                  {dynamicPriceValue(userCurrency, prices, singleCollection.collection_floor / LAMPORTS_PER_SOL || 0)}
+                  {dynamicPriceValue(
+                    userCurrency,
+                    prices,
+                    singleCollection.collection_floor / LAMPORTS_PER_SOL || 0
+                  )}
                 </span>
               )}
             </div>

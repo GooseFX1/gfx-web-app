@@ -1,11 +1,11 @@
 import { Button } from 'antd'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import tw from 'twin.macro'
+//import tw from 'twin.macro'
 import 'styled-components/macro'
 import { approveProject, rejectProject } from '../../../../api/NFTLaunchpad'
 import { useNFTAdmin } from '../../../../context'
-import { useWallet } from '@solana/wallet-adapter-react'
+//import { useWallet } from '@solana/wallet-adapter-react'
 import { GradientImageBorder } from './ReviewTable'
 
 const POPUP = styled.div`
@@ -84,7 +84,7 @@ export const ApprovePopup = ({ rewardToggle }) => {
   const { adminSelected, setUpdate } = useNFTAdmin()
   const [showApproveComplete, setApprove] = useState<boolean>(false)
 
-  const wallet = useWallet()
+  //const wallet = useWallet()
   const approveClicked = async () => {
     try {
       await approveProject(adminSelected)

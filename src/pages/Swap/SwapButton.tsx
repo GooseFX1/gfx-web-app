@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { MainButton } from '../../components'
 import { useAccounts, useConnectionConfig, useSwap, useWalletModal, useDarkMode } from '../../context'
-import { ADDRESSES } from '../../web3'
+//import { ADDRESSES } from '../../web3'
 
 enum State {
   Connect = 0,
@@ -35,7 +35,7 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
   const { setVisible } = useWalletModal()
 
   const state = useMemo(() => {
-    const { pools } = ADDRESSES[network]
+    //const { pools } = ADDRESSES[network]
     //console.log(pools, network)
 
     if (!wallet || !publicKey) {

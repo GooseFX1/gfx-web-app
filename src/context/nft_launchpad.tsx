@@ -119,7 +119,7 @@ interface ISelectedProject {
   tiers: Tiers[] | null
 }
 
-const CANDY_MACHINE_PROGRAM = new anchor.web3.PublicKey('cndy3Z4yapfJBmL3ShUp5exZKqR3z33thTzeNMm2gRZ')
+//const CANDY_MACHINE_PROGRAM = new anchor.web3.PublicKey('cndy3Z4yapfJBmL3ShUp5exZKqR3z33thTzeNMm2gRZ')
 interface CandyMachineState {
   authority: anchor.web3.PublicKey
   itemsAvailable: number
@@ -236,7 +236,7 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
       console.log('candy Machine is: ', candyM)
       setCandyMachine(candyM)
       setCandyMachineState(candyM?.state)
-      let cndyState = {}
+      const cndyState = {}
       if (candyM) {
         try {
           const cndy = candyM
@@ -323,7 +323,7 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
           }
           // amount to stop the mint?
           if (cndy?.state.endSettings?.endSettingType.amount) {
-            let limit = Math.min(cndy.state.endSettings.number.toNumber(), cndy.state.itemsAvailable)
+            const limit = Math.min(cndy.state.endSettings.number.toNumber(), cndy.state.itemsAvailable)
             if (cndy.state.itemsRedeemed < limit) {
               cndyState['itemsRemaining'] = limit - cndy.state.itemsRedeemed
             } else {
@@ -390,17 +390,17 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
               return { ...item, status: 'ended' }
             })
           }
-          console.log(tiers)
           cndyState['publicMint'] = publicMint
           cndyState['activeTierInfo'] = activeTierInfo
 
           cndyState['tiers'] = tiers
 
-          let whitelistInfo = await getWhitelistInfo(candyM.program, wallet.publicKey)
+          const whitelistInfo = await getWhitelistInfo(candyM.program, wallet.publicKey)
           cndyState['whitelistInfo'] = whitelistInfo
           cndyState['isWhiteListUser'] = false
 
           let walletTier = null
+          //eslint-disable-next-line
           for (let i in whitelistInfo?.whitelistType) {
             walletTier = i
           }

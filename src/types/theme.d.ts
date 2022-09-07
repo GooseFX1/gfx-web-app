@@ -1,6 +1,6 @@
 import { Color } from './theme.d'
 import { FlattenSimpleInterpolation, ThemedCssFunction, CSSProp } from 'styled-components'
-import tw from 'twin.macro'
+//import tw from 'twin.macro'
 
 export type Color = string
 
@@ -225,6 +225,7 @@ declare module 'react' {
     tw?: string
   }
   // The inline svg css prop
+  //eslint-disable-next-line
   interface SVGProps<T> extends SVGProps<SVGSVGElement> {
     css?: CSSProp
     tw?: string

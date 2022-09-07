@@ -1,8 +1,8 @@
 import { useState, useEffect, FC } from 'react'
-import { useHistory } from 'react-router-dom'
+// import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { Card } from './Card'
-import { useNFTCollections, useNFTProfile } from '../../../context'
+import { useNFTCollections } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
 import { Loader } from '../../../components'
@@ -37,8 +37,8 @@ const WRAPPED_LOADER = styled.div`
 
 export const LiveAuctionsTabContent: FC = ({ ...rest }) => {
   const { singleCollection } = useNFTCollections()
-  const history = useHistory()
-  const { sessionUser } = useNFTProfile()
+  //const history = useHistory()
+  //const { sessionUser } = useNFTProfile()
 
   const [localLiveAuction, setLocalLiveAuction] = useState<Array<ISingleNFT>>()
   const [err, setErr] = useState(false)
@@ -56,7 +56,7 @@ export const LiveAuctionsTabContent: FC = ({ ...rest }) => {
     return () => {}
   }, [])
 
-  const goToLiveAuctionDetails = (id: number): void => history.push(`/NFTs/live-auction/${id}`)
+  //const goToLiveAuctionDetails = (id: number): void => history.push(`/NFTs/live-auction/${id}`)
 
   return (
     <WRAPPER>

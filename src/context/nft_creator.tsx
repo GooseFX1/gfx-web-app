@@ -1,7 +1,7 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { createContext, ReactNode, useContext, useState, FC, useEffect } from 'react'
 import { ICreatorData } from '../types/nft_launchpad'
-import { isCreatorAllowed, saveData, uploadFiles } from '../api/NFTLaunchpad/actions'
+import { isCreatorAllowed, saveData } from '../api/NFTLaunchpad/actions'
 
 interface ICreatorConfig {
   isAllowed: boolean
@@ -33,7 +33,7 @@ export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) =>
   }, [wallet.publicKey, wallet.connected])
 
   const saveDataForStep = (data) => {
-    let obj = {
+    const obj = {
       ...creatorData
     }
     obj[currentStep] = data
@@ -42,7 +42,7 @@ export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const submit = async () => {
     let data = creatorData
-    let walletAddress = wallet.publicKey.toBase58()
+    const walletAddress = wallet.publicKey.toBase58()
     data = { ...data, ...{ walletAddress: walletAddress, adminApproved: null } }
     try {
       const response = await saveData(data)
