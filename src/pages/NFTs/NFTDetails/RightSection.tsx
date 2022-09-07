@@ -297,8 +297,9 @@ export const RightSection: FC<{
           <Col span={24}>
             <div className="name-icon-row">
               <div className="rs-name">{general?.nft_name || nftMetadata?.name}</div>
-              {checkMobile() && general.non_fungible_id ? 
-                sessionUser && isFavorited ? (
+              {checkMobile() && general.non_fungible_id ?
+              <>
+                {sessionUser && isFavorited ? (
                   <img
                     className="ls-favorite-heart"
                     src={`/img/assets/heart-red.svg`}
@@ -316,8 +317,9 @@ export const RightSection: FC<{
                     height="23px"
                     width="25px"
                   />
-                ) : <></>}
-                <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>{likes}</span>
+                )}
+              <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>{likes}</span>
+              </>  : <></>}
               </div>
             <div className="rs-intro">{nftMetadata.description}</div>
           </Col>

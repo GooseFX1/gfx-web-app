@@ -5,7 +5,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
 import { Col, Row } from 'antd'
 import { MainButton, Modal, SuccessfulListingMsg } from '../../../components'
-import { notify, truncateAddress } from '../../../utils'
+import { checkMobile, notify, truncateAddress } from '../../../utils'
 import { useNFTProfile, usePriceFeed, useNFTDetails, useConnectionConfig, useAccounts } from '../../../context'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import BN from 'bn.js'
@@ -153,6 +153,9 @@ const PURCHASE_MODAL = styled(Modal)`
     font-size: 14px;
     font-weight: 600;
     color: ${({ theme }) => theme.text2};
+    @media(max-width: 500px){
+      justify-content: center;
+    }
 
     .bm-alert {
       max-width: 200px;
@@ -569,7 +572,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
       </Row>
       <div className="bm-confirm">
         {!notEnough && purchasePrice === undefined && <div className="bm-confirm-text-1">Place your bid:</div>}
-        <input value={bidPriceInput} onChange={handleBidInput} className="bm-confirm-price" placeholder="000.000" />
+        <input value={bidPriceInput} onChange={handleBidInput} className="bm-confirm-price" placeholder={checkMobile() ? "00.00": "000.000"} />
         <div className="bm-confirm-text-2">
           {mode === 'bid' ? 'There is no minimum amount this is an open bid.' : `${fiatCalc} USD`}
         </div>

@@ -42,7 +42,7 @@ const CAROUSEL_WRAPPER = styled.div`
     transform: rotate(180deg);
   }
   .slick-next {
-    ${tw`sm:right-5`}
+    ${tw`sm:right-1`}
     right: 25px;
   }
 
