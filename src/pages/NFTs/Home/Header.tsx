@@ -28,7 +28,7 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
 
   .search-bar {
     ${tw`sm:w-3/4 sm:m-0`}
-    @media(max-width: 500px){
+    @media(max-width: 500px) {
       background: ${({ theme }) => theme.bg9} !important;
     }
     width: 100%;
@@ -39,7 +39,7 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
     border: 1px solid ${({ theme }) => theme.bg1};
 
     > input {
-      @media(max-width: 500px){
+      @media (max-width: 500px) {
         background: ${({ theme }) => theme.bg9} !important;
       }
       &::placeholder {
@@ -164,7 +164,9 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
   useEffect(() => {
     setTimeout(() => {
       const fetchUserProfileStatus = publicKey ? localStorage.getItem(publicKey.toBase58()) : undefined
-      const firstTimeUser = fetchUserProfileStatus ? JSON.parse(localStorage.getItem(publicKey.toBase58())) : undefined
+      const firstTimeUser = fetchUserProfileStatus
+        ? JSON.parse(localStorage.getItem(publicKey.toBase58()))
+        : undefined
 
       if (firstTimeUser && publicKey) {
         if (firstTimeUser.pubKey === publicKey.toBase58() && firstTimeUser.isNew) {
@@ -204,7 +206,8 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
     [setModalVisible, publicKey, connected]
   )
 
-  const genMenu = () => filter.length > 0 ? (
+  const genMenu = () =>
+    filter.length > 0 ? (
       <Menu className={`global-search-dropdown global-search-dropdown-${mode}`}>
         {filteredCollections.length > 0 ? (
           filteredCollections.map((i, k) => (
@@ -212,7 +215,9 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
               <URL href={`/NFTs/collection/${i.collection_name.replaceAll(' ', '_')}`}>
                 <DETAILS>
                   <TINYIMG
-                    src={i.profile_pic_link.length > 0 ? i.profile_pic_link : `/img/assets/nft-preview-${mode}.svg`}
+                    src={
+                      i.profile_pic_link.length > 0 ? i.profile_pic_link : `/img/assets/nft-preview-${mode}.svg`
+                    }
                   />
                   <p style={{ margin: '0px' }}>{i.collection_name}</p>
                 </DETAILS>
@@ -238,7 +243,8 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
           <SkeletonCommon width="50px" height="50px" borderRadius="50%" />
         ) : (
           connected &&
-          publicKey && !checkMobile() && (
+          publicKey &&
+          !checkMobile() && (
             <AVATAR_NFT
               fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
               src={sessionUser ? sessionUser.profile_pic_link : ''}
@@ -249,7 +255,11 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
         )}
         {!isHeaderData ? (
           <SkeletonCommon
-            style={{ minWidth: !checkMobile() ? '550px' : '330px', marginLeft: !checkMobile() ? '20px' : '0', marginRight: !checkMobile() ? '10px' : '0' }}
+            style={{
+              minWidth: !checkMobile() ? '550px' : '330px',
+              marginLeft: !checkMobile() ? '20px' : '0',
+              marginRight: !checkMobile() ? '10px' : '0'
+            }}
             height="46px"
             borderRadius="46px"
             width={!checkMobile() ? '350px' : '100%'}
@@ -263,7 +273,8 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
           <SkeletonCommon width="50px" height="50px" borderRadius="50%" />
         ) : (
           connected &&
-          publicKey && checkMobile() && (
+          publicKey &&
+          checkMobile() && (
             <AVATAR_NFT
               fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
               src={sessionUser ? sessionUser.profile_pic_link : ''}
@@ -273,35 +284,37 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
           )
         )}
       </AVATAR_WRAPPER>
-      {!checkMobile() ? 
-      <BUTTON_SELECTION>
-        {!isHeaderData ? (
-          <div style={{ display: 'flex' }}>
-            <SkeletonCommon width="149px" height="45px" borderRadius="15px" />
-          </div>
-        ) : (
-          <div style={{ display: 'flex' }}>
-            {isCollapsed && !connected && (
-              <CONNECT onClick={handleWalletModal}>
-                <span>Connect Wallet</span>
-              </CONNECT>
-            )}
+      {!checkMobile() ? (
+        <BUTTON_SELECTION>
+          {!isHeaderData ? (
+            <div style={{ display: 'flex' }}>
+              <SkeletonCommon width="149px" height="45px" borderRadius="15px" />
+            </div>
+          ) : (
+            <div style={{ display: 'flex' }}>
+              {isCollapsed && !connected && (
+                <CONNECT onClick={handleWalletModal}>
+                  <span>Connect Wallet</span>
+                </CONNECT>
+              )}
 
-            <TokenToggle toggleToken={setUserCurrency} tokenA={'SOL'} tokenB={'USD'} /> 
-          </div>
-        )}
-        {/* {!isHeaderData ? (
+              <TokenToggle toggleToken={setUserCurrency} tokenA={'SOL'} tokenB={'USD'} />
+            </div>
+          )}
+          {/* {!isHeaderData ? (
           <SkeletonCommon width="132px" height="45px" borderRadius="45px" style={{ marginLeft: '20px' }} />
         ) : (
           <Categories categories={categories} className="categories" onChange={(e) => handleFilterChange(e)} />
         )} */}
-        {/* {!isHeaderData ? (
+          {/* {!isHeaderData ? (
           <SkeletonCommon width="68px" height="45px" borderRadius="12px" style={{ marginLeft: '20px' }} />
         ) : (
           <Categories categories={coins} className="coins" />
         )} */}
-      </BUTTON_SELECTION>
-      : <></>}
+        </BUTTON_SELECTION>
+      ) : (
+        <></>
+      )}
     </HEADER_WRAPPER>
   )
 }

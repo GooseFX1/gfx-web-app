@@ -6,7 +6,6 @@ import { SOCIAL_MEDIAS } from '../../../constants'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-import { truncateSync } from 'fs'
 import { checkMobile } from '../../../utils'
 import tw from 'twin.macro'
 
@@ -50,7 +49,7 @@ const CAROUSEL_WRAPPER = styled.div`
     margin-right: ${({ theme }) => theme.margin(2)};
     min-width: 630px;
 
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       min-width: 275px;
       width: 32% !important;
       margin-right: 1%;
@@ -59,7 +58,7 @@ const CAROUSEL_WRAPPER = styled.div`
 `
 
 const SLIDER_ITEM = styled.div<{ $url: string }>`
-  @media(max-width: 500px){
+  @media (max-width: 500px) {
     background: ${({ $url }) => `url(${$url})`}, center;
     background-size: 100% 101%;
   }

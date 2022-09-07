@@ -10,7 +10,6 @@ import { generateTinyURL } from '../../../api/tinyUrl'
 import { checkMobile, notify } from '../../../utils'
 import tw from 'twin.macro'
 
-
 //#region styles
 const LEFT_SECTION = styled.div`
   ${({ theme }) => css`
@@ -110,7 +109,7 @@ export const ImageShowcase: FC = ({ ...rest }) => {
 
   useEffect(() => {
     setLikes(totalLikes)
-}, [totalLikes])
+  }, [totalLikes])
 
   const handleToggleLike = () => {
     if (sessionUser) {
@@ -182,45 +181,61 @@ export const ImageShowcase: FC = ({ ...rest }) => {
   return general && nftMetadata ? (
     <LEFT_SECTION {...rest}>
       {handleModal()}
-      <img className="ls-image" height={checkMobile()? "360px" : "100%"} src={general?.image_url || nftMetadata?.image} alt="the-nft" />
+      <img
+        className="ls-image"
+        height={checkMobile() ? '360px' : '100%'}
+        src={general?.image_url || nftMetadata?.image}
+        alt="the-nft"
+      />
       <NFT_CONTAINER>
         <SHARE_BUTTON onClick={() => setShareModal(true)}>
           <img src={`/img/assets/share.svg`} alt="share-icon" />
         </SHARE_BUTTON>
       </NFT_CONTAINER>
-      {!checkMobile()  && <div className="ls-bottom-panel">
-        <Row justify="space-between" align="middle">
-          <Col>
-            {ask ? <FixedPriceIcon className="ls-action-button" /> : <OpenBidIcon className="ls-action-button" />}
-          </Col>
-          {general.non_fungible_id && (
+      {!checkMobile() && (
+        <div className="ls-bottom-panel">
+          <Row justify="space-between" align="middle">
             <Col>
-              {sessionUser && isFavorited ? (
-                <img
-                  className="ls-favorite-heart"
-                  src={`/img/assets/heart-red.svg`}
-                  alt="heart-red"
-                  onClick={handleToggleLike}
-                />
+              {ask ? (
+                <FixedPriceIcon className="ls-action-button" />
               ) : (
-                <img
-                  className="ls-favorite-heart"
-                  src={`/img/assets/heart-empty.svg`}
-                  alt="heart-empty"
-                  onClick={handleToggleLike}
-                />
+                <OpenBidIcon className="ls-action-button" />
               )}
-              <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
-                {likes}
-              </span>
             </Col>
-          )}
-        </Row>
-      </div>}
+            {general.non_fungible_id && (
+              <Col>
+                {sessionUser && isFavorited ? (
+                  <img
+                    className="ls-favorite-heart"
+                    src={`/img/assets/heart-red.svg`}
+                    alt="heart-red"
+                    onClick={handleToggleLike}
+                  />
+                ) : (
+                  <img
+                    className="ls-favorite-heart"
+                    src={`/img/assets/heart-empty.svg`}
+                    alt="heart-empty"
+                    onClick={handleToggleLike}
+                  />
+                )}
+                <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
+                  {likes}
+                </span>
+              </Col>
+            )}
+          </Row>
+        </div>
+      )}
     </LEFT_SECTION>
+  ) : !checkMobile() ? (
+    <SkeletonCommon width="100%" height="500px" borderRadius="10px" />
   ) : (
-    !checkMobile() ? 
-      <SkeletonCommon width="100%" height="500px" borderRadius="10px" /> : 
-      <SkeletonCommon width="90%" height="360px" borderRadius="10px" style={{display: "block", margin: "20px auto"}}/>
-    )
-  }
+    <SkeletonCommon
+      width="90%"
+      height="360px"
+      borderRadius="10px"
+      style={{ display: 'block', margin: '20px auto' }}
+    />
+  )
+}

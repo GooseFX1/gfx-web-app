@@ -14,7 +14,6 @@ import { SVGDynamicReverseMode } from '../../../styles'
 import { ModalSlide } from '../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../constants'
 import { checkMobile } from '../../../utils'
-import tw from 'twin.macro'
 
 const BETA_BANNER = styled.div`
   position: fixed;

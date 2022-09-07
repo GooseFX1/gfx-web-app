@@ -60,10 +60,10 @@ const RIGHT_SECTION = styled.div`
       }
     }
 
-    .name-icon-row{
+    .name-icon-row {
       ${tw`sm:flex sm:flex-row sm:justify-between sm:items-center`}
 
-      .ls-favorite-number{
+      .ls-favorite-number {
         ${tw`sm:text-regular sm:ml-2`}
       }
     }
@@ -231,13 +231,13 @@ export const RightSection: FC<{
   }, [sessionUser, general])
 
   useEffect(() => {
-      setLikes(totalLikes)
+    setLikes(totalLikes)
   }, [totalLikes])
 
-  const handleToggleLike = (e: any) => {
+  const handleToggleLike = () => {
     if (sessionUser) {
-      likeDislike(sessionUser.user_id, general.non_fungible_id).then((res) => {
-        setLikes((prev) => ( isFavorited ? prev - 1 : prev + 1))
+      likeDislike(sessionUser.user_id, general.non_fungible_id).then(() => {
+        setLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
       })
     }
   }
@@ -261,30 +261,34 @@ export const RightSection: FC<{
           <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
           <br />
         </>
-      ) : ( !checkMobile() &&
-        <div>
-          <Row justify="space-between">
-            <Col className="rs-title">{price ? `Current ${ask ? 'Asking Price' : 'Bid'}` : 'No Current Bids'} </Col>
-          </Row>
-          {price && (
-            <Row align="middle" gutter={8} className="rs-prices">
-              <Col>
-                <img className="rs-solana-logo" src={`/img/assets/solana-logo.png`} alt="" />
+      ) : (
+        !checkMobile() && (
+          <div>
+            <Row justify="space-between">
+              <Col className="rs-title">
+                {price ? `Current ${ask ? 'Asking Price' : 'Bid'}` : 'No Current Bids'}{' '}
               </Col>
-              <Col className="rs-price">{`${moneyFormatter(price)} SOL`}</Col>
-              <Col>
-                <span className="rs-fiat">{`${fiat}`}</span>
-              </Col>
-              {/* TODO: calc price movement
+            </Row>
+            {price && (
+              <Row align="middle" gutter={8} className="rs-prices">
+                <Col>
+                  <img className="rs-solana-logo" src={`/img/assets/solana-logo.png`} alt="" />
+                </Col>
+                <Col className="rs-price">{`${moneyFormatter(price)} SOL`}</Col>
+                <Col>
+                  <span className="rs-fiat">{`${fiat}`}</span>
+                </Col>
+                {/* TODO: calc price movement
                <Col>
                 <Row>
                   <img src={`/img/assets/increase-arrow.svg`} alt="" />
                   <div className="rs-percent">{percent}</div>
                 </Row>
               </Col> */}
-            </Row>
-          )}
-        </div>
+              </Row>
+            )}
+          </div>
+        )
       )}
 
       {isLoading ? (
@@ -297,30 +301,35 @@ export const RightSection: FC<{
           <Col span={24}>
             <div className="name-icon-row">
               <div className="rs-name">{general?.nft_name || nftMetadata?.name}</div>
-              {checkMobile() && general.non_fungible_id ?
-              <>
-                {sessionUser && isFavorited ? (
-                  <img
-                    className="ls-favorite-heart"
-                    src={`/img/assets/heart-red.svg`}
-                    alt="heart-red"
-                    onClick={handleToggleLike}
-                    height="23px"
-                    width="25px"
-                  />
-                ) : (
-                  <img
-                    className="ls-favorite-heart"
-                    src={`/img/assets/heart-empty.svg`}
-                    alt="heart-empty"
-                    onClick={handleToggleLike}
-                    height="23px"
-                    width="25px"
-                  />
-                )}
-              <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>{likes}</span>
-              </>  : <></>}
-              </div>
+              {checkMobile() && general.non_fungible_id ? (
+                <>
+                  {sessionUser && isFavorited ? (
+                    <img
+                      className="ls-favorite-heart"
+                      src={`/img/assets/heart-red.svg`}
+                      alt="heart-red"
+                      onClick={handleToggleLike}
+                      height="23px"
+                      width="25px"
+                    />
+                  ) : (
+                    <img
+                      className="ls-favorite-heart"
+                      src={`/img/assets/heart-empty.svg`}
+                      alt="heart-empty"
+                      onClick={handleToggleLike}
+                      height="23px"
+                      width="25px"
+                    />
+                  )}
+                  <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
+                    {likes}
+                  </span>
+                </>
+              ) : (
+                <></>
+              )}
+            </div>
             <div className="rs-intro">{nftMetadata.description}</div>
           </Col>
           <Col span={24}>
@@ -336,7 +345,7 @@ export const RightSection: FC<{
 
       {isLoading ? (
         <SkeletonCommon width="100%" height="300px" borderRadius="10px" />
-      ) : !checkMobile() ? (  
+      ) : !checkMobile() ? (
         <GRID_INFO justify="space-between">
           <Col className="gi-item">
             <div className="gi-item-category-title">Creator</div>
@@ -354,7 +363,9 @@ export const RightSection: FC<{
               <Row align="middle">
                 <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
                 <div className="gi-item-title">
-                {Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection.name}
+                  {Array.isArray(nftMetadata.collection)
+                    ? nftMetadata.collection[0].name
+                    : nftMetadata.collection.name}
                 </div>
               </Row>
             </Col>
@@ -374,42 +385,45 @@ export const RightSection: FC<{
             </Row>
           </Col>
         </GRID_INFO>
-      ) : <ROW_CONTAINER>
-        <div className='gi-item'>
+      ) : (
+        <ROW_CONTAINER>
+          <div className="gi-item">
             <div className="gi-item-category-title">Created by:</div>
+            <div className="gi-item-thumbnail-wrapper">
+              <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
+              <img className="gi-item-check-icon" src={`/img/assets/check-icon.svg`} alt="" />
+              <div className="gi-item-title">{creator}</div>
+            </div>
+          </div>
+          {nftMetadata.collection && (
+            <div className="gi-item">
+              <div className="gi-item-category-title">Collection</div>
               <div className="gi-item-thumbnail-wrapper">
                 <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-                <img className="gi-item-check-icon" src={`/img/assets/check-icon.svg`} alt="" />
-                <div className="gi-item-title">{creator}</div>
+                <div className="gi-item-title">
+                  {Array.isArray(nftMetadata.collection)
+                    ? nftMetadata.collection[0].name
+                    : nftMetadata.collection.name}
+                </div>
               </div>
-        </div>
-        {nftMetadata.collection && (
-          <div className='gi-item'>
-              <div className="gi-item-category-title">Collection</div>
-                <div className="gi-item-thumbnail-wrapper">
-                  <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-                  <div className="gi-item-title">
-                    {Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection.name}
-                  </div>
-              </div>
-          </div>
-        )} 
-        <div className='gi-item'>
+            </div>
+          )}
+          <div className="gi-item">
             <div className="gi-item-category-title">Category</div>
             <div className="gi-item-thumbnail-wrapper">
               <div className="gi-item-icon">
-                  <img
-                    src={`/img/assets/${
-                      nftMetadata.properties.category === 'image' ? 'art' : nftMetadata.properties.category
-                    }.svg`}
-                    alt=""
-                  />
+                <img
+                  src={`/img/assets/${
+                    nftMetadata.properties.category === 'image' ? 'art' : nftMetadata.properties.category
+                  }.svg`}
+                  alt=""
+                />
               </div>
               <div className="gi-item-title">{nftMetadata.properties.category}</div>
             </div>
-        </div>
-         </ROW_CONTAINER>
-      }
+          </div>
+        </ROW_CONTAINER>
+      )}
 
       <RightSectionTabs status={status} />
     </RIGHT_SECTION>

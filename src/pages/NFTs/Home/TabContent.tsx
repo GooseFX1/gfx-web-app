@@ -27,7 +27,7 @@ const ROW = styled.div`
 `
 
 const ANALYTIC_ITEM = styled.div`
- ${tw`sm:w-3/4`}
+  ${tw`sm:w-3/4`}
   display: flex;
   width: 25%;
   padding: ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(3)};
@@ -160,33 +160,33 @@ const TabContent = ({ baseCollections, collectionFilter, sort }: ITabContent) =>
     }
   }
 
-  return (
-    !checkMobile() ?
+  return !checkMobile() ? (
     <TAB_CONTENT>
       {collectionExtras &&
         collectionExtras
           .slice(0, 8)
-          .map((collection: NFTCollection, i) => <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />)}
-    </TAB_CONTENT> : 
-    <>
-    <ROW>
-      {collectionExtras &&
-        collectionExtras
-          .slice(0, 4)
           .map((collection: NFTCollection, i) => (
-              <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
-            )
-      )}
-    </ROW>
-    <ROW>
-    {collectionExtras &&
-      collectionExtras
-        .slice(4,8)
-        .map((collection: NFTCollection, i) => (
             <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
-          )
-    )}
-  </ROW>
+          ))}
+    </TAB_CONTENT>
+  ) : (
+    <>
+      <ROW>
+        {collectionExtras &&
+          collectionExtras
+            .slice(0, 4)
+            .map((collection: NFTCollection, i) => (
+              <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
+            ))}
+      </ROW>
+      <ROW>
+        {collectionExtras &&
+          collectionExtras
+            .slice(4, 8)
+            .map((collection: NFTCollection, i) => (
+              <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
+            ))}
+      </ROW>
     </>
   )
 }
@@ -243,7 +243,11 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
         <div style={{ position: 'relative' }}>
           <h2 className="title">
             {/* @ts-ignore */}
-            {!isCollection ? <SkeletonCommon width="149px" height="28px" /> : collection.collection[0].collection_name}
+            {!isCollection ? (
+              <SkeletonCommon width="149px" height="28px" />
+            ) : (
+              collection.collection[0].collection_name
+            )}
           </h2>
           {isCollection && collection && collection.collection[0].is_verified && (
             <img className="check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.svg`} alt="" />

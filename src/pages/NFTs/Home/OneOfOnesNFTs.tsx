@@ -16,7 +16,7 @@ const CAROUSEL_WRAPPER = styled.div`
   flex-direction: column;
   padding: 16px 0 16px 32px;
 
-  .card-image{
+  .card-image {
     ${tw`h-[300px]`}
   }
 `
@@ -29,7 +29,7 @@ const HEADER_CAROUSEL = styled.div`
 const ROW = styled.div`
   ${tw`flex overflow-x-scroll`}
 
-  ::-webkit-scrollbar{
+  ::-webkit-scrollbar {
     display: none;
   }
 `
@@ -117,28 +117,32 @@ const OneOfOnesNFTs: FC<IOneOfOnesNFTs> = ({ items, title }) => {
       <CAROUSEL_WRAPPER>
         <HEADER_CAROUSEL>
           {title !== undefined && <TITLE_CAROUSEL>{title}</TITLE_CAROUSEL>}
-          {!checkMobile() ? 
+          {!checkMobile() ? (
             <HEADER_END_CAROUSEL>
               <LEFT_ARROW onClick={slickPrev} />
               <RIGHT_ARROW onClick={slickNext} />
             </HEADER_END_CAROUSEL>
-          : <></>}
+          ) : (
+            <></>
+          )}
         </HEADER_CAROUSEL>
         {!checkMobile() ? (
-        <Slider ref={slickRef} {...settings}>
-          {items.map((item: any, i: number) => (
-            <CARD_WRAPPER key={item.non_fungible_id} style={{ marginRight: '10px' }}>
-              <Card singleNFT={item} />
-            </CARD_WRAPPER>
-          ))}
-        </Slider>
-        ) : <ROW>
-            {items.map((item: any, i: number) => (
+          <Slider ref={slickRef} {...settings}>
+            {items.map((item: any) => (
+              <CARD_WRAPPER key={item.non_fungible_id} style={{ minWidth: '300px', margin: '0 32px !important' }}>
+                <Card singleNFT={item} />
+              </CARD_WRAPPER>
+            ))}
+          </Slider>
+        ) : (
+          <ROW>
+            {items.map((item: any) => (
               <CARD_WRAPPER key={item.non_fungible_id} style={{ marginRight: '10px' }}>
                 <Card singleNFT={item} />
               </CARD_WRAPPER>
             ))}
-          </ROW>}
+          </ROW>
+        )}
       </CAROUSEL_WRAPPER>
     )
   } else {
