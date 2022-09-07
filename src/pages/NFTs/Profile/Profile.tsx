@@ -103,7 +103,7 @@ export const Profile: FC = (): JSX.Element => {
   return (
     isSessionUser !== undefined && (
       <PROFILE_CONTAINER>
-        <HeaderProfile isSessionUser={isSessionUser} />
+        <HeaderProfile isSessionUser={isSessionUser}  />
         <ContentProfile isSessionUser={isSessionUser} />
       </PROFILE_CONTAINER>
     )
