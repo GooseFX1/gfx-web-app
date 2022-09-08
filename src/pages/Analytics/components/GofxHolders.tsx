@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from 'react'
+import styled from 'styled-components'
 import { getGofxHolders } from '../../../api/analytics'
+
+export const CARD = styled.span`
+  width: 100%;
+  padding: 0.8%;
+  display: block;
+  width: fit-content;
+  border-radius: 10px;
+  background: linear-gradient(88.43deg, #2a2a2a 1.68%, #181818 105.14%);
+`
 
 export const GofxHolders = () => {
   const [holders, setHolders] = useState<null | string>(null)
