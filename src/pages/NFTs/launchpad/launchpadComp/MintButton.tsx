@@ -170,7 +170,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
           if (response) {
             // manual update since the refresh might not detect
             // the change immediately
-            const remaining = itemsRemaining! - 1
+            const remaining = itemsRemaining - 1
             setItemsRemaining(remaining)
             setIsActive((candyMachine.state.isActive = remaining > 0))
             candyMachine.state.isSoldOut = remaining === 0
@@ -245,7 +245,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
           if (status && !status.err && metadataStatus) {
             // manual update since the refresh might not detect
             // the change immediately
-            const remaining = itemsRemaining! - 1
+            const remaining = itemsRemaining - 1
             setItemsRemaining(remaining)
             setIsActive((candyMachine.state.isActive = remaining > 0))
             candyMachine.state.isSoldOut = remaining === 0
@@ -274,8 +274,8 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
                     </Col>
                   </Row>
                   <div>
-                    Mint likely failed! Anti-bot SOL 0.01 fee potentially charged! Check the explorer to confirm the
-                    mint failed and if so, make sure you are eligible to mint before trying again.
+                    Mint likely failed! Anti-bot SOL 0.01 fee potentially charged! Check the explorer to confirm
+                    the mint failed and if so, make sure you are eligible to mint before trying again.
                   </div>
                 </MESSAGE>
               )
@@ -362,7 +362,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
     <GatewayProvider
       wallet={{
         publicKey: wallet.publicKey || new PublicKey(CANDY_MACHINE_PROGRAM),
-        //@ts-ignore
+
         signTransaction: wallet.signTransaction
       }}
       gatekeeperNetwork={candyMachine?.state?.gatekeeper?.gatekeeperNetwork}
@@ -371,13 +371,13 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
       handleTransaction={async (trans: Transaction) => {
         let transaction = trans //allow for mutation without breaking eslint rule
         setIsUserMinting(true)
-        const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(wallet.publicKey!))
+        const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(wallet.publicKey))
         if (userMustSign) {
           notify({
             message: 'Please sign one-time Civic Pass issuance'
           })
           try {
-            transaction = await wallet.signTransaction!(transaction)
+            transaction = await wallet.signTransaction(transaction)
           } catch (e) {
             notify({
               type: 'error',

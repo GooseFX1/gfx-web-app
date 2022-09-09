@@ -18,7 +18,13 @@ import {
 } from './utils'
 
 //import magic_hat_idl from '../customSC/magic_hat.json'
-import { MAGIC_HAT_CREATOR, MAGIC_HAT_ID, MAGIC_HAT_PROGRAM_V2_ID, pdaSeed, pdaWhitelistSeed } from '../customSC/config'
+import {
+  MAGIC_HAT_CREATOR,
+  MAGIC_HAT_ID,
+  MAGIC_HAT_PROGRAM_V2_ID,
+  pdaSeed,
+  pdaWhitelistSeed
+} from '../customSC/config'
 //import { Program } from '@project-serum/anchor'
 
 export const CANDY_MACHINE_PROGRAM = new anchor.web3.PublicKey('cndy3Z4yapfJBmL3ShUp5exZKqR3z33thTzeNMm2gRZ')
@@ -202,41 +208,37 @@ export const getCandyMachineState = async (
   }
 }
 
-const getMasterEdition = async (mint: anchor.web3.PublicKey): Promise<anchor.web3.PublicKey> => {
-  return (
+const getMasterEdition = async (mint: anchor.web3.PublicKey): Promise<anchor.web3.PublicKey> =>
+  (
     await anchor.web3.PublicKey.findProgramAddress(
       [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer(), Buffer.from('edition')],
       TOKEN_METADATA_PROGRAM_ID
     )
   )[0]
-}
 
-const getMetadata = async (mint: anchor.web3.PublicKey): Promise<anchor.web3.PublicKey> => {
-  return (
+const getMetadata = async (mint: anchor.web3.PublicKey): Promise<anchor.web3.PublicKey> =>
+  (
     await anchor.web3.PublicKey.findProgramAddress(
       [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer()],
       TOKEN_METADATA_PROGRAM_ID
     )
   )[0]
-}
 
 export const getCandyMachineCreator = async (
   candyMachine: anchor.web3.PublicKey
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
+): Promise<[anchor.web3.PublicKey, number]> =>
+  await anchor.web3.PublicKey.findProgramAddress(
     [Buffer.from('candy_machine'), candyMachine.toBuffer()],
     CANDY_MACHINE_PROGRAM
   )
-}
 
 export const getCollectionPDA = async (
   candyMachineAddress: anchor.web3.PublicKey
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
+): Promise<[anchor.web3.PublicKey, number]> =>
+  await anchor.web3.PublicKey.findProgramAddress(
     [Buffer.from('collection'), candyMachineAddress.toBuffer()],
     CANDY_MACHINE_PROGRAM
   )
-}
 
 export interface CollectionData {
   mint: anchor.web3.PublicKey
@@ -246,8 +248,8 @@ export interface CollectionData {
 export const getCollectionAuthorityRecordPDA = async (
   mint: anchor.web3.PublicKey,
   newAuthority: anchor.web3.PublicKey
-): Promise<anchor.web3.PublicKey> => {
-  return (
+): Promise<anchor.web3.PublicKey> =>
+  (
     await anchor.web3.PublicKey.findProgramAddress(
       [
         Buffer.from('metadata'),
@@ -259,7 +261,6 @@ export const getCollectionAuthorityRecordPDA = async (
       TOKEN_METADATA_PROGRAM_ID
     )
   )[0]
-}
 
 export type SetupState = {
   mint: anchor.web3.Keypair
@@ -340,7 +341,9 @@ export const mintOneToken = async (
           fromPubkey: payer,
           newAccountPubkey: mint.publicKey,
           space: MintLayout.span,
-          lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(MintLayout.span),
+          lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(
+            MintLayout.span
+          ),
           programId: TOKEN_PROGRAM_ID
         }),
         createInitializeMintInstruction(mint.publicKey, 0, payer, payer),
@@ -441,7 +444,9 @@ export const mintOneToken = async (
 
   if (collectionPDAAccount && candyMachine.state.retainAuthority) {
     try {
-      const collectionData = (await candyMachine.program.account.collectionPda.fetch(collectionPDA)) as CollectionData
+      const collectionData = (await candyMachine.program.account.collectionPda.fetch(
+        collectionPDA
+      )) as CollectionData
       console.log(collectionData)
       const collectionMint = collectionData.mint
       const collectionAuthorityRecord = await getCollectionAuthorityRecordPDA(collectionMint, collectionPDA)
@@ -508,8 +513,8 @@ export const mintOneTokenNonce = async (
   afterTransactions: Transaction[] = [],
   setupState: SetupState,
   nonceAccount: anchor.web3.Keypair,
-  collectionId: String,
-  walletAddress: String
+  collectionId: string,
+  walletAddress: string
 ) => {
   const mint = setupState?.mint
 
@@ -620,7 +625,9 @@ export const mintOneTokenNonce = async (
 
   if (collectionPDAAccount && candyMachine.state.retainAuthority) {
     try {
-      const collectionData = (await candyMachine.program.account.collectionPda.fetch(collectionPDA)) as CollectionData
+      const collectionData = (await candyMachine.program.account.collectionPda.fetch(
+        collectionPDA
+      )) as CollectionData
       console.log(collectionData)
       const collectionMint = collectionData.mint
       const collectionAuthorityRecord = await getCollectionAuthorityRecordPDA(collectionMint, collectionPDA)
@@ -698,7 +705,9 @@ export const mintOneTokenCustom = async (
           fromPubkey: payer,
           newAccountPubkey: mint.publicKey,
           space: MintLayout.span,
-          lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(MintLayout.span),
+          lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(
+            MintLayout.span
+          ),
           programId: TOKEN_PROGRAM_ID
         }),
         createInitializeMintInstruction(mint.publicKey, 0, payer, payer),
@@ -797,7 +806,9 @@ export const mintOneTokenCustom = async (
 
   if (collectionPDAAccount && candyMachine.state.retainAuthority) {
     try {
-      const collectionData = (await candyMachine.program.account.collectionPda.fetch(collectionPDA)) as CollectionData
+      const collectionData = (await candyMachine.program.account.collectionPda.fetch(
+        collectionPDA
+      )) as CollectionData
       const collectionMint = collectionData.mint
       const collectionAuthorityRecord = await getCollectionAuthorityRecordPDA(collectionMint, collectionPDA)
       if (collectionMint) {
@@ -882,7 +893,9 @@ export const mintOneTokenWhitelist = async (
           fromPubkey: payer,
           newAccountPubkey: mint.publicKey,
           space: MintLayout.span,
-          lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(MintLayout.span),
+          lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(
+            MintLayout.span
+          ),
           programId: TOKEN_PROGRAM_ID
         }),
         createInitializeMintInstruction(mint.publicKey, 0, payer, payer),
@@ -982,7 +995,9 @@ export const mintOneTokenWhitelist = async (
 
   if (collectionPDAAccount && candyMachine.state.retainAuthority) {
     try {
-      const collectionData = (await candyMachine.program.account.collectionPda.fetch(collectionPDA)) as CollectionData
+      const collectionData = (await candyMachine.program.account.collectionPda.fetch(
+        collectionPDA
+      )) as CollectionData
       console.log(collectionData)
       const collectionMint = collectionData.mint
       const collectionAuthorityRecord = await getCollectionAuthorityRecordPDA(collectionMint, collectionPDA)
@@ -1042,13 +1057,10 @@ export const mintOneTokenWhitelist = async (
   return null
 }
 
-export const shortenAddress = (address: string, chars = 4): string => {
-  return `${address.slice(0, chars)}...${address.slice(-chars)}`
-}
+export const shortenAddress = (address: string, chars = 4): string =>
+  `${address.slice(0, chars)}...${address.slice(-chars)}`
 
-const sleep = (ms: number): Promise<void> => {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
+const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
 
 export const createAccountsForMintNonce = async (
   candyMachine: CandyMachineAccount,
@@ -1076,7 +1088,9 @@ export const createAccountsForMintNonce = async (
     SystemProgram.createAccount({
       fromPubkey: payer,
       newAccountPubkey: nonceAcc.publicKey,
-      lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(NONCE_ACCOUNT_LENGTH),
+      lamports: await candyMachine.program.provider.connection.getMinimumBalanceForRentExemption(
+        NONCE_ACCOUNT_LENGTH
+      ),
       space: NONCE_ACCOUNT_LENGTH,
       programId: SystemProgram.programId
     })
@@ -1117,35 +1131,37 @@ export const createAccountsForMintNonce = async (
 //   return new Program(idl_o, MAGIC_HAT_PROGRAM_V2_ID, provider)
 // }
 
-export const getMagicHatCreator = async (magicHat: anchor.web3.PublicKey): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
+export const getMagicHatCreator = async (
+  magicHat: anchor.web3.PublicKey
+): Promise<[anchor.web3.PublicKey, number]> =>
+  await anchor.web3.PublicKey.findProgramAddress(
     [Buffer.from('magic_hat'), magicHat.toBuffer()],
     MAGIC_HAT_PROGRAM_V2_ID
   )
-}
 
 export const getPublicWalletWhitelistPda = async (
   payer: anchor.web3.PublicKey
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
+): Promise<[anchor.web3.PublicKey, number]> =>
+  await anchor.web3.PublicKey.findProgramAddress(
     [Buffer.from(pdaSeed), payer!.toBuffer()],
     MAGIC_HAT_PROGRAM_V2_ID
   )
-}
 
-export const getWalletWhitelistPda = async (payer: anchor.web3.PublicKey): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
+export const getWalletWhitelistPda = async (
+  payer: anchor.web3.PublicKey
+): Promise<[anchor.web3.PublicKey, number]> =>
+  await anchor.web3.PublicKey.findProgramAddress(
     [Buffer.from(pdaSeed), payer!.toBuffer(), MAGIC_HAT_CREATOR.toBuffer()],
     MAGIC_HAT_PROGRAM_V2_ID
   )
-}
 
-export const getWhitelistConfigPda = async (payer: anchor.web3.PublicKey): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
+export const getWhitelistConfigPda = async (
+  payer: anchor.web3.PublicKey
+): Promise<[anchor.web3.PublicKey, number]> =>
+  await anchor.web3.PublicKey.findProgramAddress(
     [Buffer.from(pdaWhitelistSeed), payer.toBuffer()],
     MAGIC_HAT_PROGRAM_V2_ID
   )
-}
 
 export const getWhitelistInfo = async (candyMachine, payer: anchor.web3.PublicKey) => {
   const whitelist_account = await getWalletWhitelistPda(payer)

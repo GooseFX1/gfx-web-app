@@ -6,7 +6,7 @@ import { checkMobile } from '../../utils'
 import tw from 'twin.macro'
 
 const ROW_CONTAINER = styled.div`
-${tw`sm:m-0 sm:pt-[38px] sm:pb-0 sm:pl-[22px] sm:pr-[0]`}
+  ${tw`sm:m-0 sm:pt-[38px] sm:pb-0 sm:pl-[22px] sm:pr-[0]`}
   display: flex;
   margin-left: ${({ theme }) => theme.margin(3)};
   padding-top: ${({ theme }) => theme.margin(3)};
@@ -28,7 +28,7 @@ ${tw`sm:m-0 sm:pt-[38px] sm:pb-0 sm:pl-[22px] sm:pr-[0]`}
     width: 20%;
     margin: auto;
 
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       width: 100%;
       margin-left: -4%;
     }
@@ -58,8 +58,8 @@ const EXPAND_ICON_WRAPPER = styled.div`
   align-items: center;
   width: 42%;
 `
-const DisplayRowData = ({ rowData, onExpandIcon }) => {
-  return !checkMobile() ? (
+const DisplayRowData = ({ rowData, onExpandIcon }) =>
+  !checkMobile() ? (
     <ROW_CONTAINER>
       <STYLED_NAME className="set-width">
         <img
@@ -76,7 +76,13 @@ const DisplayRowData = ({ rowData, onExpandIcon }) => {
         {rowData?.earned >= 0 ? `${moneyFormatter(rowData?.earned)}` : <Loader />}
       </div>
       <div className="liquidity normal-text set-width-apr">
-        {rowData?.apr === '-' ? '-' : rowData?.apr !== undefined ? `${percentFormatter(rowData?.apr)}` : <Loader />}
+        {rowData?.apr === '-' ? (
+          '-'
+        ) : rowData?.apr !== undefined ? (
+          `${percentFormatter(rowData?.apr)}`
+        ) : (
+          <Loader />
+        )}
       </div>
       <div className="liquidity normal-text set-width-liquidity">
         {rowData?.liquidity >= 0 ? `$ ${moneyFormatter(rowData?.liquidity)}` : <Loader />}
@@ -101,8 +107,14 @@ const DisplayRowData = ({ rowData, onExpandIcon }) => {
         <div className="textName">{rowData?.name}</div>
       </STYLED_NAME>
       <div className="liquidity normal-text set-width-apr">
-          {rowData?.apr === '-' ? '-' : rowData?.apr !== undefined ? `${percentFormatter(rowData?.apr)}` : <Loader />}
-        </div>
+        {rowData?.apr === '-' ? (
+          '-'
+        ) : rowData?.apr !== undefined ? (
+          `${percentFormatter(rowData?.apr)}`
+        ) : (
+          <Loader />
+        )}
+      </div>
       <EXPAND_ICON_WRAPPER>
         <STYLED_EXPAND_ICON onClick={() => onExpandIcon(rowData.id)}>
           <img src={'/img/assets/arrow-down-large.svg'} />
@@ -110,6 +122,5 @@ const DisplayRowData = ({ rowData, onExpandIcon }) => {
       </EXPAND_ICON_WRAPPER>
     </ROW_CONTAINER>
   )
-}
 
 export default DisplayRowData

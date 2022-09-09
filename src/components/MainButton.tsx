@@ -45,10 +45,8 @@ export const MainButton: FC<{
   loading?: boolean
   radius?: string
   [x: string]: any
-}> = ({ children, height, loading = false, status, width, radius, ...props }) => {
-  return (
-    <BUTTON $height={height} $status={status} $width={width} $radius={radius} {...props}>
-      {loading ? <Loader /> : children}
-    </BUTTON>
-  )
-}
+}> = ({ children, height, loading = false, status, width, radius, ...props }) => (
+  <BUTTON $height={height} $status={status} $width={width} $radius={radius} {...props}>
+    {loading ? <Loader /> : children}
+  </BUTTON>
+)

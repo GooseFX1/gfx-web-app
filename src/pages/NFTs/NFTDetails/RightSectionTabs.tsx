@@ -268,32 +268,34 @@ export const RightSectionTabs: FC<{
     return res
   }, [bids, wallet.publicKey])
 
-  const nftData = useMemo(() => {
-    return isLoading
-      ? []
-      : [
-          {
-            title: 'Mint address',
-            value: truncateAddress(general.mint_address)
-          },
-          {
-            title: 'Token Address',
-            value: general.token_account ? truncateAddress(general.token_account) : ''
-          },
-          {
-            title: 'Owner',
-            value: general.owner ? truncateAddress(general.owner) : ''
-          },
-          {
-            title: 'Artist Royalties',
-            value: `${(nftMetadata.seller_fee_basis_points / 100).toFixed(2)}%`
-          },
-          {
-            title: 'Transaction Fee',
-            value: `${NFT_MARKET_TRANSACTION_FEE}%`
-          }
-        ]
-  }, [general])
+  const nftData = useMemo(
+    () =>
+      isLoading
+        ? []
+        : [
+            {
+              title: 'Mint address',
+              value: truncateAddress(general.mint_address)
+            },
+            {
+              title: 'Token Address',
+              value: general.token_account ? truncateAddress(general.token_account) : ''
+            },
+            {
+              title: 'Owner',
+              value: general.owner ? truncateAddress(general.owner) : ''
+            },
+            {
+              title: 'Artist Royalties',
+              value: `${(nftMetadata.seller_fee_basis_points / 100).toFixed(2)}%`
+            },
+            {
+              title: 'Transaction Fee',
+              value: `${NFT_MARKET_TRANSACTION_FEE}%`
+            }
+          ],
+    [general]
+  )
 
   useEffect(() => {}, [wallet.publicKey])
 
@@ -318,7 +320,13 @@ export const RightSectionTabs: FC<{
     const { tradeState, buyerPrice } = await derivePDAsForInstruction()
 
     try {
-      const { signature, confirm } = await callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
+      const { signature, confirm } = await callCancelInstruction(
+        wallet,
+        connection,
+        general,
+        tradeState,
+        buyerPrice
+      )
       setPendingTxSig(signature)
       if (confirm.value.err === null) {
         setRemoveAskModal(false)

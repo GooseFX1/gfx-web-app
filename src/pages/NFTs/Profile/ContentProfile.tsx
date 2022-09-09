@@ -73,9 +73,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
     [currentUserParsedAccounts, createdItems, userActivity, favoritedItems]
   )
 
-  useEffect(() => {
-    return () => {}
-  }, [tabPanes])
+  useEffect(() => () => {}, [tabPanes])
 
   useEffect(() => {
     if (currentUserProfile && currentUserParsedAccounts && currentUserParsedAccounts.length > 0) {

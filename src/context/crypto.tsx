@@ -1,4 +1,13 @@
-import React, { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react'
+import React, {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
 import { Market } from '@project-serum/serum'
 import { useConnectionConfig } from './settings'
 import { serum } from '../web3'
@@ -114,9 +123,8 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const getBidSymbolFromPair = (pair: string): string => pair.slice(pair.indexOf('/') + 1)
 
-  const getSymbolFromPair = (pair: string, side: 'buy' | 'sell'): string => {
-    return side === 'buy' ? getBidSymbolFromPair(pair) : getAskSymbolFromPair(pair)
-  }
+  const getSymbolFromPair = (pair: string, side: 'buy' | 'sell'): string =>
+    side === 'buy' ? getBidSymbolFromPair(pair) : getAskSymbolFromPair(pair)
 
   return (
     <CryptoContext.Provider

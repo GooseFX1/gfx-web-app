@@ -43,14 +43,12 @@ const STYLED_RIGHT = styled.div`
   border: 20px !important;
   padding-left: ${({ theme }) => theme.margin(11)};
 `
-export const FarmHeader: FC<{ onFilter?: () => void }> = ({}) => {
-  return (
-    <>
-      <FarmFilter />
-      <STYLED_RIGHT>
-        {/* <Categories className="pools" categories={poolTypes} /> */}
-        {/* <Toggle className="live" checkedChildren="Ended" unCheckedChildren="Live" defaultChecked={false} /> */}
-      </STYLED_RIGHT>
-    </>
-  )
-}
+export const FarmHeader: FC<{ onFilter?: () => void }> = ({}) => (
+  <>
+    <FarmFilter />
+    <STYLED_RIGHT>
+      {/* <Categories className="pools" categories={poolTypes} /> */}
+      {/* <Toggle className="live" checkedChildren="Ended" unCheckedChildren="Live" defaultChecked={false} /> */}
+    </STYLED_RIGHT>
+  </>
+)

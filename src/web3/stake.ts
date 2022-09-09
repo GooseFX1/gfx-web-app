@@ -63,9 +63,7 @@ export const executeStake = async (
   }
 }
 
-const getGOFXMintAddress = (network): string => {
-  return ADDRESSES[network].mints['GOFX'].address
-}
+const getGOFXMintAddress = (network): string => ADDRESSES[network].mints['GOFX'].address
 const stakeAmount = async (
   network: WalletAdapterNetwork,
   amountInBN: BN,
@@ -154,12 +152,8 @@ export const executeUnstakeAndClaim = async (
   }
 }
 
-export const getNetworkConnection = (network) => {
-  return network === 'devnet' ? 'DEVNET' : 'MAINNET'
-}
-const getAdmin = (network) => {
-  return ADDRESSES[network].programs.stake.admin
-}
+export const getNetworkConnection = (network) => (network === 'devnet' ? 'DEVNET' : 'MAINNET')
+const getAdmin = (network) => ADDRESSES[network].programs.stake.admin
 
 export const fetchCurrentAmountStaked = async (
   connection: Connection,

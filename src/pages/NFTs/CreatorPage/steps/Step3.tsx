@@ -202,16 +202,14 @@ export const Step3: FC = () => {
             <div className="next-day-label">Pick a time based on availability</div>
           </Row>
           <Row tw="flex justify-between items-center w-full mt-5">
-            {TIME_OPTIONS.map((item, index) => {
-              return (
-                <div
-                  className={'circle-time ' + (timeIndex === index ? 'active' : '')}
-                  onClick={() => setTimeIndex(index)}
-                >
-                  {item}
-                </div>
-              )
-            })}
+            {TIME_OPTIONS.map((item, index) => (
+              <div
+                className={'circle-time ' + (timeIndex === index ? 'active' : '')}
+                onClick={() => setTimeIndex(index)}
+              >
+                {item}
+              </div>
+            ))}
           </Row>
         </Col>
         <Col span={12}>

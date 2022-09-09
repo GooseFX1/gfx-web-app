@@ -26,11 +26,9 @@ type Props = {
   size?: string
 }
 
-export const LabelSection = ({ label, isIcon, className, size = '17px' }: Props) => {
-  return (
-    <STYLED_LABLE className={className} size={size}>
-      {label}
-      {isIcon && <img className="heart-purple" src={`/img/assets/heart-purple.svg`} alt="" />}
-    </STYLED_LABLE>
-  )
-}
+export const LabelSection = ({ label, isIcon, className, size = '17px' }: Props) => (
+  <STYLED_LABLE className={className} size={size}>
+    {label}
+    {isIcon && <img className="heart-purple" src={`/img/assets/heart-purple.svg`} alt="" />}
+  </STYLED_LABLE>
+)

@@ -890,9 +890,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
     }
   }
 
-  const timeout = async (ms) => {
-    return new Promise((resolve) => setTimeout(resolve, ms))
-  }
+  const timeout = async (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
   const dynamicPriceValue = (currency: string, priceFeed: any, value: number) => {
     const val = currency === 'USD' ? value * priceFeed['SOL/USDC']?.current : value
@@ -1071,9 +1069,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
         }
       }
     }
-    nft_data = nft_data.map((item, index) => {
-      return { ...item, price: +nft_prices[index] }
-    })
+    nft_data = nft_data.map((item, index) => ({ ...item, price: +nft_prices[index] }))
     setNftBatch(nft_data.slice(0, size))
   }
 
@@ -1247,8 +1243,8 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
                 <Row justify="center" align="middle" className="imageRow2">
                   <CAROUSEL_WRAPPER2>
                     <Slider {...settings}>
-                      {nftBatch.map((item, index) => {
-                        return index < dropdownSelection ? (
+                      {nftBatch.map((item, index) =>
+                        index < dropdownSelection ? (
                           <SLIDER_ITEM key={index}>
                             <Card
                               cover={<img className="nft-img" src={item.image_url} alt="NFT" />}
@@ -1281,7 +1277,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
                             </div>
                           </SLIDER_ITEM>
                         ) : null
-                      })}
+                      )}
                     </Slider>
                   </CAROUSEL_WRAPPER2>
                   <div className="you-paid-text">You Paid:</div>
@@ -1365,32 +1361,30 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
                 <Row justify="center" align="middle" className="imageRow">
                   <CAROUSEL_WRAPPER>
                     <Slider {...settings}>
-                      {nftBatch.map((item, index) => {
-                        return (
-                          <SLIDER_ITEM key={index}>
-                            <Card
-                              cover={<img className="nft-img" src={item.image_url} alt="NFT" />}
-                              className="sweep-card"
-                            >
-                              <Meta
-                                title={
-                                  <span>
-                                    <span className="sweep-price">
-                                      {dynamicPriceValue(userCurrency, prices, item.price / LAMPORTS_PER_SOL)}
-                                    </span>
-                                    <img
-                                      className="sweeper-solana-logo"
-                                      src={`/img/crypto/${userCurrency}.svg`}
-                                      alt=""
-                                    />
+                      {nftBatch.map((item, index) => (
+                        <SLIDER_ITEM key={index}>
+                          <Card
+                            cover={<img className="nft-img" src={item.image_url} alt="NFT" />}
+                            className="sweep-card"
+                          >
+                            <Meta
+                              title={
+                                <span>
+                                  <span className="sweep-price">
+                                    {dynamicPriceValue(userCurrency, prices, item.price / LAMPORTS_PER_SOL)}
                                   </span>
-                                }
-                              />
-                            </Card>
-                            <div className="sweep-nft-name">{item.nft_name}</div>
-                          </SLIDER_ITEM>
-                        )
-                      })}
+                                  <img
+                                    className="sweeper-solana-logo"
+                                    src={`/img/crypto/${userCurrency}.svg`}
+                                    alt=""
+                                  />
+                                </span>
+                              }
+                            />
+                          </Card>
+                          <div className="sweep-nft-name">{item.nft_name}</div>
+                        </SLIDER_ITEM>
+                      ))}
                     </Slider>
                   </CAROUSEL_WRAPPER>
                 </Row>
@@ -1468,46 +1462,43 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
                   <SWEEP_CARD>
                     <Slider {...settings_sweep} ref={sliderRef}>
                       <div></div>
-                      {nftBatch.slice(0, dropdownSelection).map((item, index) => {
+                      {nftBatch.slice(0, dropdownSelection).map((item, index) => (
                         //const showSlide = index > activeSweepIndex - 2 && index < activeSweepIndex + 2 ? true : false
-                        return (
-                          <div className={index === activeSweepIndex ? 'activeNftZoom' : 'nonactiveNftZoom'}>
-                            <Card
-                              key={index}
-                              cover={
-                                <>
-                                  <img
-                                    className="nft-img"
-                                    src={nftBatch[index] && nftBatch[index].image_url}
-                                    alt="NFT"
-                                  />
-                                  <div className="pink-loading-overlay"></div>
-                                </>
-                              }
-                              className={'sweeping-card '}
-                            >
-                              <Meta
-                                title={
-                                  <span>
-                                    <span className="sweep-price">
-                                      {nftBatch[index] && (nftBatch[index].price / LAMPORTS_PER_SOL).toFixed(2)}{' '}
-                                      SOL
-                                    </span>
-                                    <img
-                                      className="sweeper-solana-logo"
-                                      src={`/img/assets/solana-logo.png`}
-                                      alt=""
-                                    />
+                        <div className={index === activeSweepIndex ? 'activeNftZoom' : 'nonactiveNftZoom'}>
+                          <Card
+                            key={index}
+                            cover={
+                              <>
+                                <img
+                                  className="nft-img"
+                                  src={nftBatch[index] && nftBatch[index].image_url}
+                                  alt="NFT"
+                                />
+                                <div className="pink-loading-overlay"></div>
+                              </>
+                            }
+                            className={'sweeping-card '}
+                          >
+                            <Meta
+                              title={
+                                <span>
+                                  <span className="sweep-price">
+                                    {nftBatch[index] && (nftBatch[index].price / LAMPORTS_PER_SOL).toFixed(2)} SOL
                                   </span>
-                                }
-                              />
-                            </Card>
-                            <div className="sweep-nft-name">
-                              {nftBatch && nftBatch[index] && nftBatch[index].nft_name}
-                            </div>
+                                  <img
+                                    className="sweeper-solana-logo"
+                                    src={`/img/assets/solana-logo.png`}
+                                    alt=""
+                                  />
+                                </span>
+                              }
+                            />
+                          </Card>
+                          <div className="sweep-nft-name">
+                            {nftBatch && nftBatch[index] && nftBatch[index].nft_name}
                           </div>
-                        )
-                      })}
+                        </div>
+                      ))}
                       <div></div>
                     </Slider>
                   </SWEEP_CARD>

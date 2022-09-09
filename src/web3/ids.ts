@@ -389,9 +389,9 @@ export const ADDRESSES: {
 }
 
 export class LazyAccountInfoProxy<T> {
-  executable: boolean = false
+  executable = false
   owner: StringPublicKey = ''
-  lamports: number = 0
+  lamports = 0
 
   get data() {
     //
@@ -422,9 +422,8 @@ export const toPublicKey = (key: string | PublicKey) => {
   return result
 }
 
-export const pubkeyToString = (key: PublicKey | null | string = '') => {
-  return typeof key === 'string' ? key : key?.toBase58() || ''
-}
+export const pubkeyToString = (key: PublicKey | null | string = '') =>
+  typeof key === 'string' ? key : key?.toBase58() || ''
 
 export interface PublicKeyStringAndAccount<T> {
   pubkey: string
@@ -437,7 +436,9 @@ export const WRAPPED_SOL_MINT = new PublicKey('So1111111111111111111111111111111
 
 export const TOKEN_PROGRAM_ID = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA')
 
-export const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL')
+export const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new PublicKey(
+  'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'
+)
 
 export const BPF_UPGRADE_LOADER_ID = new PublicKey('BPFLoaderUpgradeab1e11111111111111111111111')
 
@@ -459,18 +460,18 @@ export const SYSTEM = new PublicKey('11111111111111111111111111111111')
 
 // STAKE CONSTANTS
 
-export const STAKE_PREFIX: string = 'GFX-STAKINGACCOUNT'
+export const STAKE_PREFIX = 'GFX-STAKINGACCOUNT'
 
-export const SSL_PREFIX: string = 'GFX-SSL'
+export const SSL_PREFIX = 'GFX-SSL'
 
-export const LIQUIDITY_ACCOUNT_PREFIX: string = 'GFX-LIQUIDITYACCOUNT'
+export const LIQUIDITY_ACCOUNT_PREFIX = 'GFX-LIQUIDITYACCOUNT'
 
-export const PT_MINT_PREFIX: string = 'GFX-SSL-PTMINT'
+export const PT_MINT_PREFIX = 'GFX-SSL-PTMINT'
 
 export const STAKE_PROGRAM_ID: StringPublicKey = '8KJx48PYGHVC9fxzRRtYp4x4CM2HyYCm2EjVuAP4vvrx'
 
 // AUCTION HOUSE CONSTANTS
-export const AUCTION_HOUSE_PREFIX: string = 'auction_house'
+export const AUCTION_HOUSE_PREFIX = 'auction_house'
 
 export const AUCTION_HOUSE_PROGRAM_ID: StringPublicKey = 'hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk'
 
@@ -490,18 +491,18 @@ export const FEE_PAYER_WITHDRAWAL_ACCT: StringPublicKey = '4puafxtL1437aibBy4pCt
 
 export const TREASURY_WITHDRAWAL_ACCT: StringPublicKey = '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'
 
-export const FEE_PAYER_BAL_GENESIS: number = 0
+export const FEE_PAYER_BAL_GENESIS = 0
 
-export const TREASURY_BAL_GENESIS: number = 0
+export const TREASURY_BAL_GENESIS = 0
 
-export const SELLER_FEE_BASIS_POINTS: number = 100
+export const SELLER_FEE_BASIS_POINTS = 100
 
-export const REQUIRES_SIGN_OFF: boolean = false
+export const REQUIRES_SIGN_OFF = false
 
-export const CAN_CHANGE_SALE_PRICE: boolean = false
+export const CAN_CHANGE_SALE_PRICE = false
 
-export const AH_BUMP: number = 253
+export const AH_BUMP = 253
 
-export const AH_FEE_BUMP: number = 251
+export const AH_FEE_BUMP = 251
 
-export const AH_TREASURY_BUMP: number = 255
+export const AH_TREASURY_BUMP = 255

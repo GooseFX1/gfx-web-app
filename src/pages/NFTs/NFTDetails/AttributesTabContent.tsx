@@ -34,15 +34,13 @@ const ATTRIBUTES_ITEM = styled.div`
   }
 `
 
-export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ data, ...rest }) => {
-  return (
-    <ATTRIBUTES_TAB_CONTENT {...rest}>
-      {data.map((item, index) => (
-        <ATTRIBUTES_ITEM key={index}>
-          <div className="ai-title">{item.trait_type}</div>
-          <div className="ai-value">{item.value}</div>
-        </ATTRIBUTES_ITEM>
-      ))}
-    </ATTRIBUTES_TAB_CONTENT>
-  )
-}
+export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ data, ...rest }) => (
+  <ATTRIBUTES_TAB_CONTENT {...rest}>
+    {data.map((item, index) => (
+      <ATTRIBUTES_ITEM key={index}>
+        <div className="ai-title">{item.trait_type}</div>
+        <div className="ai-value">{item.value}</div>
+      </ATTRIBUTES_ITEM>
+    ))}
+  </ATTRIBUTES_TAB_CONTENT>
+)

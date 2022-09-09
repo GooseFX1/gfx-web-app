@@ -90,18 +90,20 @@ export const mintNFT = async (
     external_url: metadata.external_url,
     properties: {
       ...metadata.properties,
-      creators: metadata.creators?.map((creator) => {
-        return {
-          address: creator.address,
-          share: creator.share
-        }
-      })
+      creators: metadata.creators?.map((creator) => ({
+        address: creator.address,
+        share: creator.share
+      }))
     }
   }
 
   const realFiles: File[] = [...files, new File([JSON.stringify(metadataContent)], RESERVED_METADATA)]
 
-  const { instructions: pushInstructions, signers: pushSigners } = await prepPayForFilesTxn(wallet, realFiles, metadata)
+  const { instructions: pushInstructions, signers: pushSigners } = await prepPayForFilesTxn(
+    wallet,
+    realFiles,
+    metadata
+  )
 
   progressCallback(1)
 

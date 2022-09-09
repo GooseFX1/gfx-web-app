@@ -561,10 +561,11 @@ export const UpLoadNFT = (): JSX.Element => {
   }, [])
 
   const handleCancelCreatorData = () => {
-    setNftMintingData((prev) => {
-      //console.log(prev)
-      return prev
-    })
+    setNftMintingData(
+      (prev) =>
+        //console.log(prev)
+        prev
+    )
     setCreatorModal(false)
   }
 
@@ -663,7 +664,10 @@ export const UpLoadNFT = (): JSX.Element => {
                 <SECTION_HEADING>Creator Info</SECTION_HEADING>
                 <BUTTON_PLUS_WRAPPER onClick={() => setCreatorModal(true)}>
                   <span>Creator Info</span>
-                  <img src={`/img/assets/${nftMintingData.creators.length > 0 ? 'check' : 'plus'}.svg`} alt="Create" />
+                  <img
+                    src={`/img/assets/${nftMintingData.creators.length > 0 ? 'check' : 'plus'}.svg`}
+                    alt="Create"
+                  />
                 </BUTTON_PLUS_WRAPPER>
               </SELECTION_SECTION>
             </INFO_SECTION>

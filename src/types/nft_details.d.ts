@@ -138,12 +138,12 @@ export interface INFTDetailsConfig {
   nftMetadata: INFTMetadata
   setNftMetadata: Dispatch<SetStateAction<INFTMetadata>>
   bids: INFTBid[]
-  setBids: Function
+  setBids: (b: INFTBid[]) => void
   bidOnSingleNFT: any
   curHighestBid: INFTBid | undefined
   removeBidOnSingleNFT: any
   ask: INFTAsk
-  setAsk: Function
+  setAsk: (a: INFTAsk) => void
   nftMintingData: IMetadataContext | undefined
   setNftMintingData: Dispatch<SetStateAction<IMetadataContext>>
   updateUserInput: (params: any) => Promise<any>

@@ -114,7 +114,7 @@ const SETTING_INPUT = styled(Input)`
   font-size: 25px !important;
 `
 
-export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = ({}) => {
+export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
   const { mode } = useDarkMode()
   const [wrap, setWrap] = useState(true)
   const [balanceWSOL, setBalanceWSOL] = useState(0)

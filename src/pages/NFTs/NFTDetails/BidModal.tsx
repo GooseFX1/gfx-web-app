@@ -276,13 +276,14 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
     [bidPrice]
   )
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       setMode('bid')
       setBidPriceInput('')
       setIsLoading(false)
-    }
-  }, [])
+    },
+    []
+  )
 
   useEffect(() => {
     if (connected && publicKey) {

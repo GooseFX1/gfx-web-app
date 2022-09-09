@@ -50,9 +50,7 @@ const STATS = styled.div`
   cursor: pointer;
 `
 
-const Loader: FC = () => {
-  return <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
-}
+const Loader: FC = () => <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
 
 export const PairStats: FC<{ pair: string; type: MarketType; marketAddress: string }> = ({
   pair,
@@ -100,7 +98,9 @@ export const PairStats: FC<{ pair: string; type: MarketType; marketAddress: stri
           </div>
         ) TODO RESTORE */}
       </INFO>
-      <PRICE>{!price || !price.current ? <Loader /> : <span>$ {removeFloatingPointError(price.current)}</span>}</PRICE>
+      <PRICE>
+        {!price || !price.current ? <Loader /> : <span>$ {removeFloatingPointError(price.current)}</span>}
+      </PRICE>
     </STATS>
   )
 }

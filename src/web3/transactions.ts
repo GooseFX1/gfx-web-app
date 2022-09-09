@@ -32,9 +32,8 @@ export const envFor = (connection: Connection): string => {
   return 'mainnet-beta'
 }
 
-export const explorerLinkFor = (txid: TransactionSignature, connection: Connection): string => {
-  return `https://solscan.io/tx/${txid}?cluster=${envFor(connection)}`
-}
+export const explorerLinkFor = (txid: TransactionSignature, connection: Connection): string =>
+  `https://solscan.io/tx/${txid}?cluster=${envFor(connection)}`
 
 export const sendTransactionWithRetry = async (
   connection: Connection,
@@ -42,7 +41,7 @@ export const sendTransactionWithRetry = async (
   instructions: TransactionInstruction[],
   signers: Keypair[],
   commitment: Commitment = 'singleGossip',
-  includesFeePayer: boolean = false,
+  includesFeePayer = false,
   block?: BlockhashAndFeeCalculator,
   beforeSend?: () => void
 ) => {
@@ -87,7 +86,7 @@ export const sendTransactionWithRetryWithKeypair = async (
   instructions: TransactionInstruction[],
   signers: Keypair[],
   commitment: Commitment = 'singleGossip',
-  includesFeePayer: boolean = false,
+  includesFeePayer = false,
   block?: BlockhashAndFeeCalculator,
   beforeSend?: () => void
 ) => {

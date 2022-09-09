@@ -50,28 +50,30 @@ export const CIVIC = new anchor.web3.PublicKey('gatem74V238djXdzWnJf94Wo1DcnuGkf
 export const getAtaForMint = async (
   mint: anchor.web3.PublicKey,
   buyer: anchor.web3.PublicKey
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
+): Promise<[anchor.web3.PublicKey, number]> =>
+  await anchor.web3.PublicKey.findProgramAddress(
     [buyer.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mint.toBuffer()],
     SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
   )
-}
 
 export const getNetworkExpire = async (
   gatekeeperNetwork: anchor.web3.PublicKey
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress([gatekeeperNetwork.toBuffer(), Buffer.from('expire')], CIVIC)
-}
+): Promise<[anchor.web3.PublicKey, number]> =>
+  await anchor.web3.PublicKey.findProgramAddress([gatekeeperNetwork.toBuffer(), Buffer.from('expire')], CIVIC)
 
 export const getNetworkToken = async (
   wallet: anchor.web3.PublicKey,
   gatekeeperNetwork: anchor.web3.PublicKey
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [wallet.toBuffer(), Buffer.from('gateway'), Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]), gatekeeperNetwork.toBuffer()],
+): Promise<[anchor.web3.PublicKey, number]> =>
+  await anchor.web3.PublicKey.findProgramAddress(
+    [
+      wallet.toBuffer(),
+      Buffer.from('gateway'),
+      Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]),
+      gatekeeperNetwork.toBuffer()
+    ],
     CIVIC
   )
-}
 
 export function createAssociatedTokenAccountInstruction(
   associatedTokenAddress: anchor.web3.PublicKey,

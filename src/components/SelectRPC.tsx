@@ -41,21 +41,17 @@ const Overlay = ({
   handleClick
 }: {
   handleClick: (e: any, endpoint: string, endpointName: string, network: string) => void
-}) => {
-  return (
-    <RPCMenu>
-      {ENDPOINTS.map((point, index) => {
-        return (
-          <MenuItem key={index} onClick={(e) => handleClick(e, point.endpoint, point.name, point.network)}>
-            <span>
-              {point.name} {point.network.includes('devnet') && `(${point.network})`}
-            </span>
-          </MenuItem>
-        )
-      })}
-    </RPCMenu>
-  )
-}
+}) => (
+  <RPCMenu>
+    {ENDPOINTS.map((point, index) => (
+      <MenuItem key={index} onClick={(e) => handleClick(e, point.endpoint, point.name, point.network)}>
+        <span>
+          {point.name} {point.network.includes('devnet') && `(${point.network})`}
+        </span>
+      </MenuItem>
+    ))}
+  </RPCMenu>
+)
 
 export const SelectRPC = ({
   handleClickForRPC,

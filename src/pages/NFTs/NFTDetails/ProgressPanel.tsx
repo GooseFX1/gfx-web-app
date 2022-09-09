@@ -26,11 +26,9 @@ const PROGRESS_PANEL = styled.div`
   }
 `
 
-export const ProgressPanel = () => {
-  return (
-    <PROGRESS_PANEL>
-      <Progress percent={70} status="active" />
-      <div className="progress-rate">(5,120/9,111)</div>
-    </PROGRESS_PANEL>
-  )
-}
+export const ProgressPanel = () => (
+  <PROGRESS_PANEL>
+    <Progress percent={70} status="active" />
+    <div className="progress-rate">(5,120/9,111)</div>
+  </PROGRESS_PANEL>
+)

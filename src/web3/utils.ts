@@ -176,10 +176,7 @@ export const int64to8 = (n: number): Uint8Array => {
   return new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
 }
 
-export const bnTo8 = (bn: BN): Uint8Array => {
-  return Buffer.from([...bn.toArray('le', 8)])
-}
+export const bnTo8 = (bn: BN): Uint8Array => Buffer.from([...bn.toArray('le', 8)])
 
-export const getNetworkConnectionText = (network) => {
-  return network === NETWORK_CONSTANTS.DEVNET ? NETWORK_CONSTANTS.DEVNET_SDK : NETWORK_CONSTANTS.MAINNET_SDK
-}
+export const getNetworkConnectionText = (network) =>
+  network === NETWORK_CONSTANTS.DEVNET ? NETWORK_CONSTANTS.DEVNET_SDK : NETWORK_CONSTANTS.MAINNET_SDK

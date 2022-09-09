@@ -6,9 +6,7 @@ import { sleep, getUnixTs } from '../../../utils/misc'
 
 const URL_SERVER = 'https://api.raydium.io/tv/'
 
-export const useTvDataFeed = () => {
-  return useMemo(() => makeDataFeed(), [])
-}
+export const useTvDataFeed = () => useMemo(() => makeDataFeed(), [])
 
 const makeDataFeed = () => {
   const subscriptions = {}

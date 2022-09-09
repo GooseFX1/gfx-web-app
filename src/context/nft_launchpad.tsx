@@ -382,13 +382,9 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
               else return { ...item, status: 'upcoming' }
             })
           } else if (activeTierIndex === undefined) {
-            tiers = tiers.map((item) => {
-              return { ...item, status: 'upcoming' }
-            })
+            tiers = tiers.map((item) => ({ ...item, status: 'upcoming' }))
           } else {
-            tiers = tiers.map((item) => {
-              return { ...item, status: 'ended' }
-            })
+            tiers = tiers.map((item) => ({ ...item, status: 'ended' }))
           }
           cndyState['publicMint'] = publicMint
           cndyState['activeTierInfo'] = activeTierInfo

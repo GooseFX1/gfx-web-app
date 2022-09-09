@@ -143,19 +143,17 @@ const PRICE_DISPLAY = styled.div`
   display: flex;
 `
 
-export const getNftPrice = (item) => {
-  return (
-    <PRICE_DISPLAY>
-      {`${item?.price} `}
-      <img
-        style={{ margin: '0px 10px', width: '25px', height: '25px' }}
-        src={`/img/crypto/${item?.currency}.svg`}
-        alt="price"
-      />
-      {` ${item?.currency}`}
-    </PRICE_DISPLAY>
-  )
-}
+export const getNftPrice = (item) => (
+  <PRICE_DISPLAY>
+    {`${item?.price} `}
+    <img
+      style={{ margin: '0px 10px', width: '25px', height: '25px' }}
+      src={`/img/crypto/${item?.currency}.svg`}
+      alt="price"
+    />
+    {` ${item?.currency}`}
+  </PRICE_DISPLAY>
+)
 
 const UpcomingCollectins: FC = () => {
   const loading = [1, 2, 3, 4]
@@ -230,33 +228,31 @@ const UpcomingCollectins: FC = () => {
           <Row justify="start" align="middle" className="imageRow">
             <CAROUSEL_WRAPPER>
               <Slider {...settings}>
-                {upcomingList.map((item, index) => {
-                  return (
-                    <SLIDER_ITEM key={index} onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
-                      <Card
-                        cover={
-                          <>
-                            <img className="nft-img" src={item.coverUrl} alt="NFT" />
-                            <NFT_META>
-                              <span className="flex">
-                                <NFT_TITLE> {item?.collectionName}</NFT_TITLE>
-                                <NFT_TITLE> {`Items ${item?.items}`}</NFT_TITLE>
-                              </span>
-                              <span className="flex">
-                                <NFT_INFO> {getRemaningTime(item)}</NFT_INFO>
-                                <NFT_INFO>
-                                  {' '}
-                                  <GetNftPrice item={item} />
-                                </NFT_INFO>
-                              </span>
-                            </NFT_META>
-                          </>
-                        }
-                        className="sweep-card"
-                      ></Card>
-                    </SLIDER_ITEM>
-                  )
-                })}
+                {upcomingList.map((item, index) => (
+                  <SLIDER_ITEM key={index} onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
+                    <Card
+                      cover={
+                        <>
+                          <img className="nft-img" src={item.coverUrl} alt="NFT" />
+                          <NFT_META>
+                            <span className="flex">
+                              <NFT_TITLE> {item?.collectionName}</NFT_TITLE>
+                              <NFT_TITLE> {`Items ${item?.items}`}</NFT_TITLE>
+                            </span>
+                            <span className="flex">
+                              <NFT_INFO> {getRemaningTime(item)}</NFT_INFO>
+                              <NFT_INFO>
+                                {' '}
+                                <GetNftPrice item={item} />
+                              </NFT_INFO>
+                            </span>
+                          </NFT_META>
+                        </>
+                      }
+                      className="sweep-card"
+                    ></Card>
+                  </SLIDER_ITEM>
+                ))}
               </Slider>
             </CAROUSEL_WRAPPER>
           </Row>{' '}

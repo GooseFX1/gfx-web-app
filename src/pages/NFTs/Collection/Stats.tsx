@@ -46,15 +46,13 @@ const STATS_ITEM = styled(Col)`
   }
 `
 
-export const Stats: FC<{ stats: StatsItemType[] }> = ({ stats, ...rest }: any) => {
-  return (
-    <STATS justify="center" gutter={26} {...rest}>
-      {stats.map((item: StatsItemType) => (
-        <STATS_ITEM>
-          <div className="stats-item-quantity">{`${nFormatter(item.total)} ${item.unit}`}</div>
-          <div className="stats-item-title">{item.title}</div>
-        </STATS_ITEM>
-      ))}
-    </STATS>
-  )
-}
+export const Stats: FC<{ stats: StatsItemType[] }> = ({ stats, ...rest }: any) => (
+  <STATS justify="center" gutter={26} {...rest}>
+    {stats.map((item: StatsItemType) => (
+      <STATS_ITEM>
+        <div className="stats-item-quantity">{`${nFormatter(item.total)} ${item.unit}`}</div>
+        <div className="stats-item-title">{item.title}</div>
+      </STATS_ITEM>
+    ))}
+  </STATS>
+)

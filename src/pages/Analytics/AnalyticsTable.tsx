@@ -30,14 +30,12 @@ const WRAPPER = styled.div`
   }
 `
 
-export const AnalyticsTable = () => {
-  return (
-    <WRAPPER>
-      <AnalyticsSection />
-      <FiniancialSection />
-    </WRAPPER>
-  )
-}
+export const AnalyticsTable = () => (
+  <WRAPPER>
+    <AnalyticsSection />
+    <FiniancialSection />
+  </WRAPPER>
+)
 
 const AnalyticsSection = () => {
   const arrowDownClicked = () => {

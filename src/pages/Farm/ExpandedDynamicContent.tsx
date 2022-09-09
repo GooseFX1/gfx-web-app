@@ -121,7 +121,7 @@ export const ExpandedDynamicContent = ({
     setTokenStaked((prev) => prev + parseFloat(stakeRef.current.value))
   }
 
-  const enoughSOLInWallet = (): Boolean => {
+  const enoughSOLInWallet = (): boolean => {
     if (userSOLBalance < 0.000001) {
       notify(insufficientSOLMsg())
       return false
@@ -283,7 +283,14 @@ export const ExpandedDynamicContent = ({
       const tokenInPercent = tokenStakedPlusEarned
         ? (parseFloat(unstakeRef.current.value) / parseFloat(tokenStakedPlusEarned.toFixed(DISPLAY_DECIMAL))) * 100
         : 0
-      const confirm = executeUnstakeAndClaim(stakeProgram, stakeAccountKey, wallet, connection, network, tokenInPercent)
+      const confirm = executeUnstakeAndClaim(
+        stakeProgram,
+        stakeAccountKey,
+        wallet,
+        connection,
+        network,
+        tokenInPercent
+      )
       confirm.then((con) => {
         const { confirm, signature } = con
         setIsUnstakeLoading(false)

@@ -33,11 +33,12 @@ type IRemoveModalContent = {
 const RemoveModalContent = ({ title, caption, removeFunction, pendingTxSig, network }: IRemoveModalContent) => {
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       setIsLoading(false)
-    }
-  }, [])
+    },
+    []
+  )
 
   useEffect(() => {
     console.log(pendingTxSig)

@@ -218,44 +218,36 @@ export const ShareInternal = ({ socials, handleShare }: any) => {
   )
 }
 
-export const TeamMembers = ({ teamMembers }) => {
-  return (
-    <TEAM_MEMBER_WRAPPER>
-      {teamMembers?.map((team) => {
-        return (
-          <div>
-            {team?.dp_url ? (
-              <div className="avatar">
-                <img src={team?.dp_url} alt="" />
-              </div>
-            ) : (
-              <div className="avatar">
-                <img src={`/img/assets/avatar.svg`} alt="" />
-              </div>
-            )}
-            <div className="userNameText">{team?.name}</div>
+export const TeamMembers = ({ teamMembers }) => (
+  <TEAM_MEMBER_WRAPPER>
+    {teamMembers?.map((team) => (
+      <div>
+        {team?.dp_url ? (
+          <div className="avatar">
+            <img src={team?.dp_url} alt="" />
           </div>
-        )
-      })}
-    </TEAM_MEMBER_WRAPPER>
-  )
-}
+        ) : (
+          <div className="avatar">
+            <img src={`/img/assets/avatar.svg`} alt="" />
+          </div>
+        )}
+        <div className="userNameText">{team?.name}</div>
+      </div>
+    ))}
+  </TEAM_MEMBER_WRAPPER>
+)
 
-export const RoadMap = ({ roadmap }) => {
-  return (
-    <ROADMAP_WRAPPER>
-      {roadmap?.map((road) => {
-        return (
-          <div className="verticalContainer">
-            <img className="elipse" src="/img/assets/elipse.svg" alt="" />
-            <img className="verticalLine" src="/img/assets/vectorLine.svg" alt="" />
-            <div className="main-text">
-              <div className="headingText">{road?.heading}</div>
-              <div className="subHeadingText">{road?.subheading + ' ' + road?.subheading}</div>
-            </div>
-          </div>
-        )
-      })}
-    </ROADMAP_WRAPPER>
-  )
-}
+export const RoadMap = ({ roadmap }) => (
+  <ROADMAP_WRAPPER>
+    {roadmap?.map((road) => (
+      <div className="verticalContainer">
+        <img className="elipse" src="/img/assets/elipse.svg" alt="" />
+        <img className="verticalLine" src="/img/assets/vectorLine.svg" alt="" />
+        <div className="main-text">
+          <div className="headingText">{road?.heading}</div>
+          <div className="subHeadingText">{road?.subheading + ' ' + road?.subheading}</div>
+        </div>
+      </div>
+    ))}
+  </ROADMAP_WRAPPER>
+)

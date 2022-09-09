@@ -258,25 +258,29 @@ export const TableList = ({ dataSource }: any) => {
     }
   }, [sslVolume, stakeVolume, liquidityObject])
 
-  const stakeProgram: Program = useMemo(() => {
-    return wallet.publicKey
-      ? new Program(
-          CONTROLLER_IDL as any,
-          SDK_ADDRESS[getNetworkConnection(network)].CONTROLLER_PROGRAM_ID,
-          new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
-        )
-      : undefined
-  }, [connection, wallet.publicKey, network])
+  const stakeProgram: Program = useMemo(
+    () =>
+      wallet.publicKey
+        ? new Program(
+            CONTROLLER_IDL as any,
+            SDK_ADDRESS[getNetworkConnection(network)].CONTROLLER_PROGRAM_ID,
+            new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
+          )
+        : undefined,
+    [connection, wallet.publicKey, network]
+  )
 
-  const SSLProgram: Program = useMemo(() => {
-    return wallet.publicKey
-      ? new Program(
-          SSL_IDL as any,
-          SDK_ADDRESS[getNetworkConnection(network)].SSL_PROGRAM_ID,
-          new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
-        )
-      : undefined
-  }, [connection, wallet.publicKey])
+  const SSLProgram: Program = useMemo(
+    () =>
+      wallet.publicKey
+        ? new Program(
+            SSL_IDL as any,
+            SDK_ADDRESS[getNetworkConnection(network)].SSL_PROGRAM_ID,
+            new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
+          )
+        : undefined,
+    [connection, wallet.publicKey]
+  )
 
   useEffect(() => {
     if (wallet.publicKey) {
@@ -371,8 +375,8 @@ export const TableList = ({ dataSource }: any) => {
           }
         }
 
-        fetchAllSSLAmountStaked(connection, SSLAccountKeys, wallet, liquidityAccountKeys, mainVaultKeys).then((res) =>
-          calculateBalances(res.sslData, res.mainVault, res.liquidityData, SSLTokenNames)
+        fetchAllSSLAmountStaked(connection, SSLAccountKeys, wallet, liquidityAccountKeys, mainVaultKeys).then(
+          (res) => calculateBalances(res.sslData, res.mainVault, res.liquidityData, SSLTokenNames)
         )
       }
     })()
@@ -404,7 +408,8 @@ export const TableList = ({ dataSource }: any) => {
         if (tokenName.includes(searchFilter.toLowerCase())) return true
       })
 
-    if (showDeposited && wallet.publicKey) farmDataStaked = farmDataStaked.filter((fData) => fData.currentlyStaked > 0)
+    if (showDeposited && wallet.publicKey)
+      farmDataStaked = farmDataStaked.filter((fData) => fData.currentlyStaked > 0)
 
     setFarmData(farmDataStaked)
   }, [poolFilter, searchFilter, showDeposited, farmDataContext, farmDataSSLContext, priceFetched])
@@ -466,17 +471,15 @@ export const TableList = ({ dataSource }: any) => {
           onClick: () => onExpandIcon(record.id)
         })}
         expandRowByClick={true}
-        expandedRowRender={(rowData: IFarmData) => {
-          return (
-            <ExpandedDynamicContent
-              rowData={rowData}
-              onExpandIcon={onExpandIcon}
-              stakeProgram={stakeProgram}
-              SSLProgram={SSLProgram}
-              stakeAccountKey={accountKey}
-            />
-          )
-        }}
+        expandedRowRender={(rowData: IFarmData) => (
+          <ExpandedDynamicContent
+            rowData={rowData}
+            onExpandIcon={onExpandIcon}
+            stakeProgram={stakeProgram}
+            SSLProgram={SSLProgram}
+            stakeAccountKey={accountKey}
+          />
+        )}
         expandIcon={(ps) => <ExpandIcon {...ps} onClick={onExpandIcon} />}
         expandIconColumnIndex={checkMobile() ? -1 : 6}
       />

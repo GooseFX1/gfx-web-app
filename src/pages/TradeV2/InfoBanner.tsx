@@ -120,9 +120,7 @@ const RESET_LAYOUT_BUTTON = styled.div`
   color: ${({ theme }) => theme.text4};
 `
 
-const Loader: FC = () => {
-  return <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
-}
+const Loader: FC = () => <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
 
 export const InfoBanner: FC<{
   isLocked: boolean
@@ -188,7 +186,11 @@ export const InfoBanner: FC<{
   return (
     <INFO_WRAPPER>
       <div className="spot-toggle">
-        <span className={'spot toggle ' + (isSpot ? 'selected' : '')} key="spot" onClick={() => handleToggle('spot')}>
+        <span
+          className={'spot toggle ' + (isSpot ? 'selected' : '')}
+          key="spot"
+          onClick={() => handleToggle('spot')}
+        >
           Spot
         </span>
         <span

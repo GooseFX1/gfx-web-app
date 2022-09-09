@@ -43,26 +43,22 @@ const ROADMAP_WRAPPER = styled.div`
   }
 `
 
-export const MileStoneBox: FC<{ roadmap: any }> = ({ roadmap }) => {
-  return (
-    <ROADMAP_WRAPPER>
-      {roadmap?.map((road) => {
-        return (
-          <div className="verticalContainer">
-            <div className="column-one">
-              <img className="elipse" src="/img/assets/elipse.png" alt="" />
-            </div>
-            <img className="verticalLine" src="/img/assets/vectorLine.svg" alt="" />
-            <div className="column-three">
-              <div className="headingText">{road?.input1 + ' ' + road?.input2}</div>
-              <div className="subHeadingText">
-                {road?.input3}
-                {/*{road?.subheading}*/}
-              </div>
-            </div>
+export const MileStoneBox: FC<{ roadmap: any }> = ({ roadmap }) => (
+  <ROADMAP_WRAPPER>
+    {roadmap?.map((road) => (
+      <div className="verticalContainer">
+        <div className="column-one">
+          <img className="elipse" src="/img/assets/elipse.png" alt="" />
+        </div>
+        <img className="verticalLine" src="/img/assets/vectorLine.svg" alt="" />
+        <div className="column-three">
+          <div className="headingText">{road?.input1 + ' ' + road?.input2}</div>
+          <div className="subHeadingText">
+            {road?.input3}
+            {/*{road?.subheading}*/}
           </div>
-        )
-      })}
-    </ROADMAP_WRAPPER>
-  )
-}
+        </div>
+      </div>
+    ))}
+  </ROADMAP_WRAPPER>
+)

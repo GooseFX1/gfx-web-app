@@ -3,21 +3,20 @@ import { Order } from '@project-serum/serum/lib/market'
 import { AccountInfo, Connection, PublicKey } from '@solana/web3.js'
 import { AVAILABLE_MARKETS, MarketSide } from '../context'
 
-const getLatestBid = async (connection: Connection, pair: string, canBeDeprecated: boolean = false) => {
+const getLatestBid = async (connection: Connection, pair: string, canBeDeprecated = false) => {
   const [[latestBid]] = (await (await getMarket(connection, pair, canBeDeprecated)).loadBids(connection)).getL2(1)
   return latestBid
 }
 
-const getMarket = async (connection: Connection, pair: string, canBeDeprecated: boolean = false): Promise<Market> => {
+const getMarket = async (connection: Connection, pair: string, canBeDeprecated = false): Promise<Market> => {
   const { address, programId } = getMarketInfo(pair, canBeDeprecated)
   return await Market.load(connection, address, undefined, programId)
 }
 
-const getMarketFromAddress = (address: PublicKey) => {
-  return AVAILABLE_MARKETS.find(({ address: x }) => x.toString() === address.toString())
-}
+const getMarketFromAddress = (address: PublicKey) =>
+  AVAILABLE_MARKETS.find(({ address: x }) => x.toString() === address.toString())
 
-const getMarketInfo = (pair: string, canBeDeprecated: boolean = false) => {
+const getMarketInfo = (pair: string, canBeDeprecated = false) => {
   if (pair === 'GOFX/USDC') {
     return {
       name: 'GOFX/USDC',
@@ -37,22 +36,18 @@ const getMarketInfo = (pair: string, canBeDeprecated: boolean = false) => {
   return match
 }
 
-const getOpenOrders = async (connection: Connection, market: Market, owner: PublicKey): Promise<OpenOrders[]> => {
-  return await market.findOpenOrdersAccountsForOwner(connection, owner)
-}
+const getOpenOrders = async (connection: Connection, market: Market, owner: PublicKey): Promise<OpenOrders[]> =>
+  await market.findOpenOrdersAccountsForOwner(connection, owner)
 
-const getOrders = async (connection: Connection, market: Market, owner: PublicKey): Promise<Order[]> => {
-  return await market.loadOrdersForOwner(connection, owner)
-}
+const getOrders = async (connection: Connection, market: Market, owner: PublicKey): Promise<Order[]> =>
+  await market.loadOrdersForOwner(connection, owner)
 
 const subscribeToOrderBook = async (
   connection: Connection,
   market: Market,
   side: MarketSide,
   callback: (account: AccountInfo<Buffer>, market: Market) => void //eslint-disable-line
-): Promise<number> => {
-  return connection.onAccountChange(market.decoded[side], (account) => callback(account, market))
-}
+): Promise<number> => connection.onAccountChange(market.decoded[side], (account) => callback(account, market))
 
 export const serum = {
   getLatestBid,

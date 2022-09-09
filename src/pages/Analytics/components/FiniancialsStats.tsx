@@ -1,5 +1,3 @@
 import React from 'react'
 
-export const FiniancialsStats = () => {
-  return <div>FiniancialsStats</div>
-}
+export const FiniancialsStats = () => <div>FiniancialsStats</div>

@@ -134,19 +134,17 @@ const ITEMS = styled.div`
 const PRICE_DISPLAY = styled.div`
   display: flex;
 `
-export const GetNftPrice = ({ item }) => {
-  return (
-    <PRICE_DISPLAY>
-      <span>{`Price: ${item?.price}`}</span>
-      <img
-        style={{ margin: '0px 10px 5px 10px', width: '25px', height: '25px' }}
-        src={`/img/crypto/${item?.currency}.svg`}
-        alt="price"
-      />
-      <span>{`  ${item?.currency}`}</span>
-    </PRICE_DISPLAY>
-  )
-}
+export const GetNftPrice = ({ item }: { item: any }) => (
+  <PRICE_DISPLAY>
+    <span>{`Price: ${item?.price}`}</span>
+    <img
+      style={{ margin: '0px 10px 5px 10px', width: '25px', height: '25px' }}
+      src={`/img/crypto/${item?.currency}.svg`}
+      alt="price"
+    />
+    <span>{`  ${item?.currency}`}</span>
+  </PRICE_DISPLAY>
+)
 export const FeaturedLaunch: FC<{
   handleClickPrimaryButton?: (type: string) => void
   status?: MintItemViewStatus

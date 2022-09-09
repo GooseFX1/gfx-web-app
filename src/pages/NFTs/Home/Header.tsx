@@ -152,7 +152,9 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
   useEffect(() => {
     setTimeout(() => {
       const fetchUserProfileStatus = publicKey ? localStorage.getItem(publicKey.toBase58()) : undefined
-      const firstTimeUser = fetchUserProfileStatus ? JSON.parse(localStorage.getItem(publicKey.toBase58())) : undefined
+      const firstTimeUser = fetchUserProfileStatus
+        ? JSON.parse(localStorage.getItem(publicKey.toBase58()))
+        : undefined
 
       if (firstTimeUser && publicKey) {
         if (firstTimeUser.pubKey === publicKey.toBase58() && firstTimeUser.isNew) {
@@ -192,8 +194,8 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
     [setModalVisible, publicKey, connected]
   )
 
-  const genMenu = () => {
-    return filter.length > 0 ? (
+  const genMenu = () =>
+    filter.length > 0 ? (
       <Menu className={`global-search-dropdown global-search-dropdown-${mode}`}>
         {filteredCollections.length > 0 ? (
           filteredCollections.map((i, k) => (
@@ -201,7 +203,9 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
               <URL href={`/NFTs/collection/${i.collection_name.replaceAll(' ', '_')}`}>
                 <DETAILS>
                   <TINYIMG
-                    src={i.profile_pic_link.length > 0 ? i.profile_pic_link : `/img/assets/nft-preview-${mode}.svg`}
+                    src={
+                      i.profile_pic_link.length > 0 ? i.profile_pic_link : `/img/assets/nft-preview-${mode}.svg`
+                    }
                   />
                   <p style={{ margin: '0px' }}>{i.collection_name}</p>
                 </DETAILS>
@@ -218,7 +222,6 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
         <p className="empty">Start typing to search</p>
       </Menu>
     )
-  }
 
   return (
     <HEADER_WRAPPER>

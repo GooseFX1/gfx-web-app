@@ -92,29 +92,27 @@ export const Header: FC<{
   setPanel,
   underlinePositions,
   underlineWidths
-}) => {
-  return (
-    <WRAPPER>
-      <Expand onClick={expand} />
-      <PANELS
-        $activePanel={panels.indexOf(activePanel)}
-        $justify={justify}
-        $positions={underlinePositions}
-        $widths={underlineWidths}
-      >
-        {panels.map((panel, index) => (
-          <PANEL key={index} $active={activePanel === panel} $centerLabels={centerLabels}>
-            <span onClick={() => setPanel(panel)}>{panel}</span>
-          </PANEL>
-        ))}
-      </PANELS>
-      <FIELDS>
-        {fields[activePanel].map((field, index) => (
-          <FIELD key={index} $width={100 / fields[activePanel].length}>
-            {field}
-          </FIELD>
-        ))}
-      </FIELDS>
-    </WRAPPER>
-  )
-}
+}) => (
+  <WRAPPER>
+    <Expand onClick={expand} />
+    <PANELS
+      $activePanel={panels.indexOf(activePanel)}
+      $justify={justify}
+      $positions={underlinePositions}
+      $widths={underlineWidths}
+    >
+      {panels.map((panel, index) => (
+        <PANEL key={index} $active={activePanel === panel} $centerLabels={centerLabels}>
+          <span onClick={() => setPanel(panel)}>{panel}</span>
+        </PANEL>
+      ))}
+    </PANELS>
+    <FIELDS>
+      {fields[activePanel].map((field, index) => (
+        <FIELD key={index} $width={100 / fields[activePanel].length}>
+          {field}
+        </FIELD>
+      ))}
+    </FIELDS>
+  </WRAPPER>
+)
