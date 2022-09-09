@@ -813,6 +813,22 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   const [tokens, setTokens] = useState([])
   const [details, setDetails] = useState([])
 
+  const swapAndFindBestPrice = (details) => {
+    details[0] = {
+      ...details[0],
+      bestPrice: true
+    }
+    if (details[1] && details[1]?.name.toLowerCase().includes('goosefx')) {
+      details[1] = {
+        ...details[1],
+        fastest: true
+      }
+      const swap = details[0]
+      details[0] = details[1]
+      details[1] = swap
+    }
+    return details
+  }
   useEffect(() => {
     fetch(TOKEN_LIST_URL['mainnet-beta'])
       .then((response) => response.json())
@@ -837,21 +853,16 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
             tokenB.symbol
       const out = +(route.outAmount / 10 ** tokenB.decimals).toFixed(3)
       const outAmount = +(route.outAmount / 10 ** tokenB.decimals).toFixed(7)
-
-      if (no === 0) {
-        return { name, value, price: out, outAmount, bestPrice: true }
-      } else if (no === 1 && name.toLowerCase().includes('goosefx')) {
-        return { name, value, price: out, outAmount, fastest: true }
-      }
       return { name, value, price: out, outAmount }
     }
-
-    const details = routes.map((_, k) => getObjectDetails(k))
+    let details = routes.map((_, k) => getObjectDetails(k))
+    if (details.length > 0) {
+      details = swapAndFindBestPrice(details)
+    }
     setDetails(details)
   }, [routes, tokenA.symbol, tokenB.symbol, tokens])
 
   const [less, setLess] = useState(false)
-
   return (
     <SWAP_ROUTES $less={less || details.length < 4}>
       <div className="swap-content">
@@ -880,10 +891,10 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
               >
                 <div className={'inner-container'}>
                   <TokenDetail className={'content'}>
-                    <TokenTitle>{detail.name.slice(0, 20)}</TokenTitle>
-                    <AltSmallTitle>{detail.value}</AltSmallTitle>
+                    <TokenTitle>{detail?.name.slice(0, 20)}</TokenTitle>
+                    <AltSmallTitle>{detail?.value}</AltSmallTitle>
                   </TokenDetail>
-                  <TokenTitle className={'price'}>{detail.price || null}</TokenTitle>
+                  <TokenTitle className={'price'}>{detail?.price || null}</TokenTitle>
                   {detail.bestPrice && <BestPrice>Best Price</BestPrice>}
                   {detail.fastest && <BestPrice>Preferred</BestPrice>}
                 </div>
@@ -974,11 +985,7 @@ export const SwapMain: FC = () => {
   useEffect(() => {
     if (!chosenRoutes || chosenRoutes.length < 1) return
 
-    if (chosenRoutes?.findIndex((route) => route.marketInfos[0].amm.label === 'GooseFX') >= 0) {
-      setClickNo(1)
-    } else {
-      setClickNo(0)
-    }
+    setClickNo(0)
   }, [trigger]) // trigger default route switch
 
   function devnetRoutes() {
