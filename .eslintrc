@@ -25,7 +25,7 @@
     "max-len": ["error", { "code": 120 }],
     "comma-dangle": "warn",
     "no-unused-vars": "off",
-    "arrow-body-style": "warn", //change to error
+    "arrow-body-style": "error", //change to error
     "no-new": "warn",
     "no-param-reassign": "error", // change to "error"
     "@typescript-eslint/no-inferrable-types": "warn",
