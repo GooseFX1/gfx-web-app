@@ -112,7 +112,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
       <NFTHomeSlider />
       <br />
       <div>
-        {isAllLoading && <Loading />}
+        {isAllLoading && !checkMobile() && <Loading />}
         <AnalyticsTabs allCollections={allCollections} />
       </div>
       <br />

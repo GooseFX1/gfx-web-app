@@ -12,7 +12,7 @@ import { AttributesTabContent } from './AttributesTabContent'
 import RemoveModalContent from './RemoveModalContent'
 import { Modal, SuccessfulListingMsg } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
-import { notify, truncateAddress } from '../../../utils'
+import { checkMobile, notify, truncateAddress } from '../../../utils'
 import { tradeStatePDA, callCancelInstruction, callWithdrawInstruction, tokenSize } from '../actions'
 import { removeNonCollectionListing } from '../../../api/NFTs'
 import { BidModal } from './BidModal'
@@ -30,7 +30,7 @@ import {
   bnTo8
 } from '../../../web3'
 import BN from 'bn.js'
-import tw from "twin.macro"
+import tw from 'twin.macro'
 
 const { TabPane } = Tabs
 
@@ -106,6 +106,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
     }
 
     .ant-tabs-content-holder {
+      ${tw`sm:mb-12 sm:rounded-none`}
       height: 275px;
       background-color: ${theme.tabContentBidBackground};
       transform: translateY(-32px);
@@ -122,6 +123,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
     }
 
     .rst-footer {
+      ${tw`sm:block`}
       width: 100%;
       position: absolute;
       display: flex;
@@ -132,6 +134,10 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
       border-top: 1px solid ${theme.borderColorTabBidFooter};
       background: ${theme.tabContentBidFooterBackground};
       backdrop-filter: blur(23.9091px);
+
+      .last-bid {
+        margin: 0 auto;
+      }
 
       .rst-footer-button {
         flex: 1;
@@ -273,30 +279,34 @@ export const RightSectionTabs: FC<{
     return res
   }, [bids, wallet.publicKey])
 
-  const nftData = useMemo(() => isLoading
-      ? []
-      : [
-          {
-            title: 'Mint address',
-            value: truncateAddress(general.mint_address)
-          },
-          {
-            title: 'Token Address',
-            value: general.token_account ? truncateAddress(general.token_account) : ''
-          },
-          {
-            title: 'Owner',
-            value: general.owner ? truncateAddress(general.owner) : ''
-          },
-          {
-            title: 'Artist Royalties',
-            value: `${(nftMetadata.seller_fee_basis_points / 100).toFixed(2)}%`
-          },
-          {
-            title: 'Transaction Fee',
-            value: `${NFT_MARKET_TRANSACTION_FEE}%`
-          }
-        ], [general])
+  const nftData = useMemo(
+    () =>
+      isLoading
+        ? []
+        : [
+            {
+              title: 'Mint address',
+              value: truncateAddress(general.mint_address)
+            },
+            {
+              title: 'Token Address',
+              value: general.token_account ? truncateAddress(general.token_account) : ''
+            },
+            {
+              title: 'Owner',
+              value: general.owner ? truncateAddress(general.owner) : ''
+            },
+            {
+              title: 'Artist Royalties',
+              value: `${(nftMetadata.seller_fee_basis_points / 100).toFixed(2)}%`
+            },
+            {
+              title: 'Transaction Fee',
+              value: `${NFT_MARKET_TRANSACTION_FEE}%`
+            }
+          ],
+    [general]
+  )
 
   useEffect(() => {}, [wallet.publicKey])
 
@@ -321,7 +331,13 @@ export const RightSectionTabs: FC<{
     const { tradeState, buyerPrice } = await derivePDAsForInstruction()
 
     try {
-      const { signature, confirm } = await callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
+      const { signature, confirm } = await callCancelInstruction(
+        wallet,
+        connection,
+        general,
+        tradeState,
+        buyerPrice
+      )
       setPendingTxSig(signature)
       if (confirm.value.err === null) {
         setRemoveAskModal(false)
@@ -569,7 +585,7 @@ export const RightSectionTabs: FC<{
                   </button>
                 )}
               </>
-            ) : (
+            ) : !checkMobile() ? (
               <SpaceBetweenDiv style={{ flexGrow: 1 }}>
                 {bids.find((bid) => bid.wallet_key === wallet.publicKey.toBase58()) && (
                   <button
@@ -594,6 +610,35 @@ export const RightSectionTabs: FC<{
                   </button>
                 )}
               </SpaceBetweenDiv>
+            ) : (
+              <>
+                <div>
+                  {bids.find((bid) => bid.wallet_key === wallet.publicKey.toBase58()) && (
+                    <button
+                      onClick={() => handleSetBid(NFT_ACTIONS.CANCEL_BID)}
+                      className="rst-footer-button rst-footer-button-flat last-bid"
+                    >
+                      Cancel Last Bid
+                    </button>
+                  )}
+                </div>
+                <SpaceBetweenDiv style={{ flexGrow: 1 }}>
+                  <button
+                    onClick={() => handleSetBid(NFT_ACTIONS.BID)}
+                    className={'rst-footer-button rst-footer-button-bid'}
+                  >
+                    Bid
+                  </button>
+                  {ask && (
+                    <button
+                      onClick={() => handleSetBid(NFT_ACTIONS.BUY)}
+                      className="rst-footer-button rst-footer-button-buy"
+                    >
+                      Buy Now
+                    </button>
+                  )}
+                </SpaceBetweenDiv>
+              </>
             )
           ) : (
             <button

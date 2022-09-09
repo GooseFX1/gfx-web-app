@@ -58,8 +58,14 @@ export const StyledTabContent = styled.div`
         @media(max-width: 500px){
           display: flex;
           flex-direction: column;
-          height: 275px;
-          justify-content: center
+          height: auto;
+          justify-content: center;
+        }
+
+        .card-image-wrapper{
+          @media(max-width: 500px){
+            padding: 8px;
+          }
         }
       }
     }

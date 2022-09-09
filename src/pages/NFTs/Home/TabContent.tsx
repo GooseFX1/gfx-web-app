@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
@@ -169,24 +170,24 @@ const TabContent = ({ baseCollections, collectionFilter, sort }: ITabContent) =>
             <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
           ))}
     </TAB_CONTENT>
-  ) : (
+  ) : collectionExtras && collectionExtras.length > 0 ? (
     <>
       <ROW>
-        {collectionExtras &&
-          collectionExtras
-            .slice(0, 4)
-            .map((collection: NFTCollection, i) => (
-              <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
-            ))}
+        {collectionExtras.slice(0, 4).map((collection: NFTCollection, i) => (
+          <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
+        ))}
       </ROW>
       <ROW>
-        {collectionExtras &&
-          collectionExtras
-            .slice(4, 8)
-            .map((collection: NFTCollection, i) => (
-              <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
-            ))}
+        {collectionExtras.slice(4, 8).map((collection: NFTCollection, i) => (
+          <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
+        ))}
       </ROW>
+    </>
+  ) : (
+    <>
+      {[1, 2].map(() => (
+        <SkeletonCommon height="100px" width="90%" style={{ margin: '28px auto 0', display: 'block' }} />
+      ))}
     </>
   )
 }

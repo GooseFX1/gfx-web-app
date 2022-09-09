@@ -60,7 +60,8 @@ const CAROUSEL_WRAPPER = styled.div`
 const SLIDER_ITEM = styled.div<{ $url: string }>`
   @media (max-width: 500px) {
     background: ${({ $url }) => `url(${$url})`}, center;
-    background-size: 100% 101%;
+    background-size: auto 101%;
+    background-position: center;
   }
   ${tw`sm:rounded-average`}
   position: relative;
