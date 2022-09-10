@@ -230,7 +230,9 @@ export const TeamMembersContainer: FC<{ data?: any; setTeamMembers: (x: any) => 
         <UserImgSlides index={index} />
 
         <span className="secondryText">{currentName ? currentName : 'Team member name'}</span>
-        <span className="secondryText">@twitter {twitterUsername ? twitterUsername.split('/')[1] : 'username'}</span>
+        <span className="secondryText">
+          @twitter {twitterUsername ? twitterUsername.split('/')[1] : 'username'}
+        </span>
         <span className="inputHeader">Name</span>
         {
           <STYLED_INPUT
@@ -268,26 +270,24 @@ export const TeamMembersContainer: FC<{ data?: any; setTeamMembers: (x: any) => 
 
 export default TeamMembersContainer
 
-const UserImgSlides = ({ index }) => {
-  return (
-    <>
-      <span className="userImg">
-        <img src="/img/assets/avatarPlaceHolder.png" alt="avatar" />
-      </span>
-      <span className="nextUserImg">
-        <img src="/img/assets/avatarPlaceHolder.png" alt="avatar" />
-      </span>
-      <span className="hideImg"></span>
-      {index !== 0 ? (
-        <>
-          <div className="prevUserImg">
-            <img src="/img/assets/avatarPlaceHolder.png" alt="avatar" />
-          </div>
-          <span className="hidePrevImg"></span>
-        </>
-      ) : (
-        <></>
-      )}
-    </>
-  )
-}
+const UserImgSlides = ({ index }: { index: number }) => (
+  <>
+    <span className="userImg">
+      <img src="/img/assets/avatarPlaceHolder.png" alt="avatar" />
+    </span>
+    <span className="nextUserImg">
+      <img src="/img/assets/avatarPlaceHolder.png" alt="avatar" />
+    </span>
+    <span className="hideImg"></span>
+    {index !== 0 ? (
+      <>
+        <div className="prevUserImg">
+          <img src="/img/assets/avatarPlaceHolder.png" alt="avatar" />
+        </div>
+        <span className="hidePrevImg"></span>
+      </>
+    ) : (
+      <></>
+    )}
+  </>
+)

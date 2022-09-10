@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Tabs } from 'antd'
 import { Categories } from '../../../components'
 import TabContent from './TabContent'
-import tw from "twin.macro"
+import tw from 'twin.macro'
 const { TabPane } = Tabs
 
 //#region styles
@@ -101,7 +101,7 @@ const ANALYTICS_DROPDOWN = styled.div`
     margin-right: ${({ theme }) => theme.margin(3)};
   }
   .analytics-dropwdown {
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       background: ${({ theme }) => theme.primary3};
       height: 40px;
     }
@@ -114,7 +114,7 @@ const ANALYTICS_DROPDOWN = styled.div`
 `
 //#endregion
 
-const AnalyticsTabs = ({ allCollections }) => {
+const AnalyticsTabs = ({ allCollections }: { allCollections: any[] }) => {
   //const { allCollections } = useNFTCollections()
   const [mainCollections, setMainCollections] = useState(allCollections)
   const [sort, setSort] = useState('high')

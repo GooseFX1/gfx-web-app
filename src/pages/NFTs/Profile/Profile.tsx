@@ -35,8 +35,8 @@ const PROFILE_CONTAINER = styled.div`
           margin-left: auto;
           padding-right: 21px;
 
-          ::-webkit-scrollbar{
-            display:none;
+          ::-webkit-scrollbar {
+            display: none;
           }
 
           .ant-tabs-tab {
@@ -74,8 +74,13 @@ const PROFILE_CONTAINER = styled.div`
 export const Profile: FC = (): JSX.Element => {
   const history = useHistory()
   const params = useParams<IAppParams>()
-  const { sessionUser, setUserActivity, setParsedAccounts, setNonSessionProfile, setNonSessionUserParsedAccounts } =
-    useNFTProfile()
+  const {
+    sessionUser,
+    setUserActivity,
+    setParsedAccounts,
+    setNonSessionProfile,
+    setNonSessionUserParsedAccounts
+  } = useNFTProfile()
   const { connected, publicKey } = useWallet()
   const [isSessionUser, setIsSessionUser] = useState<boolean>()
 
@@ -103,7 +108,7 @@ export const Profile: FC = (): JSX.Element => {
   return (
     isSessionUser !== undefined && (
       <PROFILE_CONTAINER>
-        <HeaderProfile isSessionUser={isSessionUser}  />
+        <HeaderProfile isSessionUser={isSessionUser} />
         <ContentProfile isSessionUser={isSessionUser} />
       </PROFILE_CONTAINER>
     )

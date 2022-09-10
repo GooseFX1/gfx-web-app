@@ -37,7 +37,7 @@ export const NFTDetails: FC<{
       fetchGeneral(params.nftMintAddress, connection)
     }
 
-    return () => {}
+    return null
   }, [])
 
   return (
@@ -47,19 +47,21 @@ export const NFTDetails: FC<{
           <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
         </FloatingActionButton>
       </div>
-      {!checkMobile() ?
-      <Row gutter={[12, 16]} className="nd-content" justify="space-around" align="middle">
-        <Col sm={10} xl={9} xxl={8}>
+      {!checkMobile() ? (
+        <Row gutter={[12, 16]} className="nd-content" justify="space-around" align="middle">
+          <Col sm={10} xl={9} xxl={8}>
+            <ImageShowcase />
+          </Col>
+          <Col sm={10} xl={9} xxl={7} className="nd-details">
+            <RightSection status={status} />
+          </Col>
+        </Row>
+      ) : (
+        <>
           <ImageShowcase />
-        </Col>
-        <Col sm={10} xl={9} xxl={7} className="nd-details">
           <RightSection status={status} />
-        </Col>
-      </Row> : (<> 
-      <ImageShowcase />
-      <RightSection status={status} />
-      </>)
-      }
+        </>
+      )}
     </NFT_DETAILS>
   )
 }

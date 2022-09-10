@@ -34,7 +34,7 @@ const DROPDOWN = styled(Dropdown)`
   margin-left: ${({ theme }) => theme.margin(3)};
 
   .collection-more-icon {
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       transform: rotate(90deg);
     }
     width: 43px;
@@ -65,7 +65,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   const [settleBalanceModal, setSettleBalanceModal] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const handleCancel = () => setProfileModal(false)
-  const [randomBackground, setRandomBackground] = useState('');
+  const [randomBackground, setRandomBackground] = useState('')
 
   const currentUserProfile = useMemo(() => {
     if (nonSessionProfile !== undefined && !isSessionUser) {
@@ -79,7 +79,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
 
   useEffect(() => {
     isCreatingProfile()
-    return () => {}
+    return null
   }, [])
 
   useEffect(() => {
@@ -93,7 +93,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
       )
     }
 
-    return () => {}
+    return null
   }, [isSessionUser, nonSessionProfile, params.userAddress])
 
   useEffect(() => {
@@ -101,10 +101,14 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   }, [connected, publicKey])
 
   useEffect(() => {
-    const backgroundArray = ['/img/assets/redBackground.png', '/img/assets/purpleBackground.png', '/img/assets/multiBackground.png'];
-    const randomImage = backgroundArray[Math.floor(Math.random() * backgroundArray.length)];
-    setRandomBackground(randomImage);
-  },[]);
+    const backgroundArray = [
+      '/img/assets/redBackground.png',
+      '/img/assets/purpleBackground.png',
+      '/img/assets/multiBackground.png'
+    ]
+    const randomImage = backgroundArray[Math.floor(Math.random() * backgroundArray.length)]
+    setRandomBackground(randomImage)
+  }, [])
 
   const fetchEscrowPayment = async (): Promise<number | undefined> => {
     try {
@@ -299,44 +303,60 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   return (
     <StyledHeaderProfile mode={mode} background={randomBackground}>
       {handleModal()}
-      {checkMobile() ?
-        <div className='row' id='row'>
+      {checkMobile() ? (
+        <div className="row" id="row">
           <div style={{ position: checkMobile() ? 'static' : 'absolute', top: '24px', left: '24px' }}>
             <FloatingActionButton height={40} onClick={() => history.goBack()}>
               <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
             </FloatingActionButton>
           </div>
           <div>
-          <DROPDOWN overlay={menu} trigger={['click']} placement="bottomRight" getPopupContainer={() => document.getElementById("row")}>
-            <Button style={{ height: 'auto' }}>
-              <img className="collection-more-icon" src={`/img/assets/more_icon.svg`} alt="more" />
-            </Button>
-          </DROPDOWN>
+            <DROPDOWN
+              overlay={menu}
+              trigger={['click']}
+              placement="bottomRight"
+              getPopupContainer={() => document.getElementById('row')}
+            >
+              <Button style={{ height: 'auto' }}>
+                <img className="collection-more-icon" src={`/img/assets/more_icon.svg`} alt="more" />
+              </Button>
+            </DROPDOWN>
           </div>
-        </div> :  <div style={{ position: 'absolute', top: '24px', left: '24px' }}>
-            <FloatingActionButton height={40} onClick={() => history.goBack()}>
-              <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
-            </FloatingActionButton>
-          </div>
-      }
+        </div>
+      ) : (
+        <div style={{ position: 'absolute', top: '24px', left: '24px' }}>
+          <FloatingActionButton height={40} onClick={() => history.goBack()}>
+            <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
+          </FloatingActionButton>
+        </div>
+      )}
 
-      {!checkMobile() && <div className="avatar-profile-wrap">
-        <Image
-          className="avatar-profile"
-          fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-          src={
-            currentUserProfile
-              ? currentUserProfile.profile_pic_link
-              : `/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`
-          }
-          preview={false}
-          alt={currentUserProfile ? currentUserProfile.nickname : 'loading'}
-        />
-        {connected && currentUserProfile && isSessionUser && (
-          <img className="edit-icon" src={`/img/assets/edit.svg`} alt="" onClick={() => setProfileModal(true)} />
-        )}
-      </div>}
-      <div style={{display: checkMobile() ? 'flex' : 'block', justifyContent: 'space-between', alignItems: 'center', height: checkMobile() ? '35px' : 'auto'}}>
+      {!checkMobile() && (
+        <div className="avatar-profile-wrap">
+          <Image
+            className="avatar-profile"
+            fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+            src={
+              currentUserProfile
+                ? currentUserProfile.profile_pic_link
+                : `/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`
+            }
+            preview={false}
+            alt={currentUserProfile ? currentUserProfile.nickname : 'loading'}
+          />
+          {connected && currentUserProfile && isSessionUser && (
+            <img className="edit-icon" src={`/img/assets/edit.svg`} alt="" onClick={() => setProfileModal(true)} />
+          )}
+        </div>
+      )}
+      <div
+        style={{
+          display: checkMobile() ? 'flex' : 'block',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          height: checkMobile() ? '35px' : 'auto'
+        }}
+      >
         <div className="name-wrap">
           {currentUserProfile === undefined ? (
             <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
@@ -350,81 +370,92 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
           {currentUserProfile && currentUserProfile.is_verified && (
             <img className="check-icon" src={`/img/assets/check-icon.svg`} alt="is-verified-user" />
           )}
-        </div>       
+        </div>
         {currentUserProfile === undefined ? (
-            <div className="social-list">
-              {[1, 2, 3, 4].map(() => (
-                <span className="social-item">
-                  <SkeletonCommon width="35px" height="35px" borderRadius="50%" />
-                </span>
-              ))}
-            </div>
-          ) : ( (currentUserProfile.twitter_link && currentUserProfile.instagram_link && currentUserProfile.telegram_link && currentUserProfile.youtube_link) ? 
-            <div className="social-list">
-              {currentUserProfile.twitter_link && (
-                <a
-                  className="social-item"
-                  href={validExternalLink(currentUserProfile.twitter_link)}
-                  target={'_blank'}
-                  rel={'noreferrer'}
-                >
-                  <img className="social-icon" src={`/img/assets/twitter.svg`} alt="" />
-                </a>
-              )}
-              {currentUserProfile.instagram_link && (
-                <a
-                  className="social-item"
-                  href={validExternalLink(currentUserProfile.instagram_link)}
-                  target={'_blank'}
-                  rel={'noreferrer'}
-                >
-                  <img className="social-icon" src={`/img/assets/instagram.svg`} alt="" />
-                </a>
-              )}
-              {currentUserProfile.telegram_link && (
-                <a
-                  className="social-item"
-                  href={validExternalLink(currentUserProfile.telegram_link)}
-                  target={'_blank'}
-                  rel={'noreferrer'}
-                >
-                  <img className="social-icon" src={`/img/assets/facebook.svg`} alt="" />
-                </a>
-              )}
-              {currentUserProfile.youtube_link && (
-                <a
-                  className="social-item-yt"
-                  href={validExternalLink(currentUserProfile.youtube_link)}
-                  target={'_blank'}
-                  rel={'noreferrer'}
-                >
-                  <img className="social-icon" src={`/img/assets/youtube.png`} alt="" />
-                </a>
-              )}
-            </div> : checkMobile() && <div className='complete-profile' onClick={() => setProfileModal(true)}>Complete Profile</div>
-          )}
-      </div>
-     {!checkMobile() && <div className="action-wrap">
-        {isSessionUser && connected && publicKey ? (
-          <button className="btn-purple" onClick={() => setSettleBalanceModal(true)}>
-            <span>
-              Settle Balance: <strong>{userEscrowBalance ? userEscrowBalance.toFixed(2) : 0}</strong>
-            </span>
-          </button>
+          <div className="social-list">
+            {[1, 2, 3, 4].map((_, key) => (
+              <span className="social-item" key={key}>
+                <SkeletonCommon width="35px" height="35px" borderRadius="50%" />
+              </span>
+            ))}
+          </div>
+        ) : currentUserProfile.twitter_link &&
+          currentUserProfile.instagram_link &&
+          currentUserProfile.telegram_link &&
+          currentUserProfile.youtube_link ? (
+          <div className="social-list">
+            {currentUserProfile.twitter_link && (
+              <a
+                className="social-item"
+                href={validExternalLink(currentUserProfile.twitter_link)}
+                target={'_blank'}
+                rel={'noreferrer'}
+              >
+                <img className="social-icon" src={`/img/assets/twitter.svg`} alt="" />
+              </a>
+            )}
+            {currentUserProfile.instagram_link && (
+              <a
+                className="social-item"
+                href={validExternalLink(currentUserProfile.instagram_link)}
+                target={'_blank'}
+                rel={'noreferrer'}
+              >
+                <img className="social-icon" src={`/img/assets/instagram.svg`} alt="" />
+              </a>
+            )}
+            {currentUserProfile.telegram_link && (
+              <a
+                className="social-item"
+                href={validExternalLink(currentUserProfile.telegram_link)}
+                target={'_blank'}
+                rel={'noreferrer'}
+              >
+                <img className="social-icon" src={`/img/assets/facebook.svg`} alt="" />
+              </a>
+            )}
+            {currentUserProfile.youtube_link && (
+              <a
+                className="social-item-yt"
+                href={validExternalLink(currentUserProfile.youtube_link)}
+                target={'_blank'}
+                rel={'noreferrer'}
+              >
+                <img className="social-icon" src={`/img/assets/youtube.png`} alt="" />
+              </a>
+            )}
+          </div>
         ) : (
-          <span></span>
+          checkMobile() && (
+            <div className="complete-profile" onClick={() => setProfileModal(true)}>
+              Complete Profile
+            </div>
+          )
         )}
-        {isSessionUser && connected && publicKey && (
-          <button className="btn-create" onClick={() => history.push('/NFTs/create')}>
-            <span>Create</span>
-          </button>
-        )}
-        <DROPDOWN overlay={menu} trigger={['click']} placement="bottomRight" align={{ offset: [0, 26] }}>
-          <Button style={{ height: 'auto' }}>
-            <img className="collection-more-icon" src={`/img/assets/more_icon.svg`} alt="more" />
-          </Button>
-        </DROPDOWN>
-      </div>}
+      </div>
+      {!checkMobile() && (
+        <div className="action-wrap">
+          {isSessionUser && connected && publicKey ? (
+            <button className="btn-purple" onClick={() => setSettleBalanceModal(true)}>
+              <span>
+                Settle Balance: <strong>{userEscrowBalance ? userEscrowBalance.toFixed(2) : 0}</strong>
+              </span>
+            </button>
+          ) : (
+            <span></span>
+          )}
+          {isSessionUser && connected && publicKey && (
+            <button className="btn-create" onClick={() => history.push('/NFTs/create')}>
+              <span>Create</span>
+            </button>
+          )}
+          <DROPDOWN overlay={menu} trigger={['click']} placement="bottomRight" align={{ offset: [0, 26] }}>
+            <Button style={{ height: 'auto' }}>
+              <img className="collection-more-icon" src={`/img/assets/more_icon.svg`} alt="more" />
+            </Button>
+          </DROPDOWN>
+        </div>
+      )}
     </StyledHeaderProfile>
   )
 }

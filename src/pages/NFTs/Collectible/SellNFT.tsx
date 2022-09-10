@@ -236,7 +236,7 @@ export const SellNFT = () => {
     }
   }, [nftMetadata])
 
-  useEffect(() => {}, [history.location, history.location.state])
+  //useEffect(() => {}, [history.location, history.location.state])
 
   useEffect(() => {
     if (params.nftMintAddress && (!general || !nftMetadata)) {

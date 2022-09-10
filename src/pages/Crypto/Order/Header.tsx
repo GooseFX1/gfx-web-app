@@ -100,16 +100,17 @@ const WRAPPER = styled.div`
   ${({ theme }) => theme.largeShadow}
 `
 
-const Loader: FC = () => {
-  return <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
-}
+const Loader: FC = () => <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
 
 export const Header: FC = () => {
   const { prices } = usePriceFeed()
   const { formatPair, getAskSymbolFromPair, selectedCrypto } = useCrypto()
   const { order, setOrder } = useOrder()
 
-  const symbol = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
+  const symbol = useMemo(
+    () => getAskSymbolFromPair(selectedCrypto.pair),
+    [getAskSymbolFromPair, selectedCrypto.pair]
+  )
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
   // const change24HIcon = useMemo(() => `price_${marketData?.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData])
   const formattedPair = useMemo(() => formatPair(selectedCrypto.pair), [formatPair, selectedCrypto])

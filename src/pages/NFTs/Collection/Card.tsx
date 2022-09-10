@@ -98,17 +98,15 @@ const BID_BUTTON = styled.button<{ cardStatus: string }>`
   border-radius: 50px;
   color: ${({ theme }) => theme.white};
   font-family: Montserrat;
-  ${({ cardStatus, theme }) => {
-    return css`
-      height: 34px;
-      background-color: ${cardStatus === 'unlisted' ? '#bb3535' : cardStatus === 'listed' ? `#bb3535` : '#3735bb'};
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 600;
-      padding: ${theme.margin(1)} ${theme.margin(2)};
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    `
-  }}
+  ${({ cardStatus, theme }) => css`
+    height: 34px;
+    background-color: ${cardStatus === 'unlisted' ? '#bb3535' : cardStatus === 'listed' ? `#bb3535` : '#3735bb'};
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    padding: ${theme.margin(1)} ${theme.margin(2)};
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  `}
 `
 
 const LIGHT_TEXT = styled.span`

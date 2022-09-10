@@ -217,13 +217,11 @@ const EndedCollections: FC = () => {
       {!dataFetched ? (
         <>
           <FLEX>
-            {loading.map(() => {
-              return (
-                <div className="space">
-                  <SkeletonCommon width="460px" height="460px" borderRadius="15px" />
-                </div>
-              )
-            })}
+            {loading.map((_, key) => (
+              <div className="space" key={key}>
+                <SkeletonCommon width="460px" height="460px" borderRadius="15px" />
+              </div>
+            ))}
           </FLEX>
         </>
       ) : (
@@ -237,45 +235,41 @@ const EndedCollections: FC = () => {
               <Row justify="center" align="middle" className="imageRow">
                 <CAROUSEL_WRAPPER>
                   <Slider {...settings}>
-                    {endedList.map((item, index) => {
-                      return (
-                        <SLIDER_ITEM key={index} onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
-                          <Card
-                            cover={
-                              <>
-                                <img className="nft-img" src={item.coverUrl} alt="NFT" />
-                                <NFT_SOLD>
-                                  <div className="collection-name">{item?.collectionName}</div>
-                                  <div className="sold-text">SOLD OUT</div>
-                                </NFT_SOLD>
-                                <NFT_META>
-                                  <span className="column">
-                                    <NFT_INFO> Items {item?.items} </NFT_INFO>
-                                    <NFT_INFO>
-                                      <GetNftPrice item={item} />
-                                    </NFT_INFO>
-                                  </span>
-                                </NFT_META>
-                              </>
-                            }
-                            className="sweep-card"
-                          ></Card>
-                        </SLIDER_ITEM>
-                      )
-                    })}
+                    {endedList.map((item, index) => (
+                      <SLIDER_ITEM key={index} onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
+                        <Card
+                          cover={
+                            <>
+                              <img className="nft-img" src={item.coverUrl} alt="NFT" />
+                              <NFT_SOLD>
+                                <div className="collection-name">{item?.collectionName}</div>
+                                <div className="sold-text">SOLD OUT</div>
+                              </NFT_SOLD>
+                              <NFT_META>
+                                <span className="column">
+                                  <NFT_INFO> Items {item?.items} </NFT_INFO>
+                                  <NFT_INFO>
+                                    <GetNftPrice item={item} />
+                                  </NFT_INFO>
+                                </span>
+                              </NFT_META>
+                            </>
+                          }
+                          className="sweep-card"
+                        ></Card>
+                      </SLIDER_ITEM>
+                    ))}
                   </Slider>
                 </CAROUSEL_WRAPPER>
               </Row>
             </>
           ) : (
             <FLEX>
-              {loading.map(() => {
-                return (
-                  <div className="space">
-                    <SkeletonCommon width="300px" height="300px" borderRadius="15px" />
-                  </div>
-                )
-              })}
+              {loading.map((_, key) => (
+                <div className="space" key={key}>
+                  <SkeletonCommon width="300px" height="300px" borderRadius="15px" />
+                </div>
+              ))}
             </FLEX>
           )}
         </>

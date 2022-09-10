@@ -40,7 +40,7 @@ const FooterCarousel = () => {
       }
     })
 
-    return () => {}
+    return null
   }, [])
 
   return (

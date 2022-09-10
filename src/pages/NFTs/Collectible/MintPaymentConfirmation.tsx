@@ -116,28 +116,28 @@ const MintPaymentConfirmation = (props: {
       props.connection.getMinimumBalanceForRentExemption(MAX_METADATA_LEN)
     ])
     if (files.length)
-      getAssetCostToStore([...files, new File([JSON.stringify(metadata)], 'metadata.json')]).then(async (lamports) => {
-        const sol = lamports / LAMPORT_MULTIPLIER
+      getAssetCostToStore([...files, new File([JSON.stringify(metadata)], 'metadata.json')]).then(
+        async (lamports) => {
+          const sol = lamports / LAMPORT_MULTIPLIER
 
-        // TODO: cache this and batch in one call
-        const [mintRent, metadataRent] = await rentCall
+          // TODO: cache this and batch in one call
+          const [mintRent, metadataRent] = await rentCall
 
-        // const uriStr = 'x';
-        // let uriBuilder = '';
-        // for (let i = 0; i < MAX_URI_LENGTH; i++) {
-        //   uriBuilder += uriStr;
-        // }
+          // const uriStr = 'x';
+          // let uriBuilder = '';
+          // for (let i = 0; i < MAX_URI_LENGTH; i++) {
+          //   uriBuilder += uriStr;
+          // }
 
-        const additionalSol = (metadataRent + mintRent) / LAMPORT_MULTIPLIER
+          const additionalSol = (metadataRent + mintRent) / LAMPORT_MULTIPLIER
 
-        // TODO: add fees based on number of transactions and signers
-        setCost(sol + additionalSol)
-      })
+          // TODO: add fees based on number of transactions and signers
+          setCost(sol + additionalSol)
+        }
+      )
   }, [files, metadata, setCost])
 
-  useEffect(() => {
-    return () => setCost(0)
-  }, [props.visible])
+  useEffect(() => () => setCost(0), [props.visible])
 
   return (
     <CUSTOM_CONTAINER

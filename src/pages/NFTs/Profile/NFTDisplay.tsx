@@ -156,11 +156,11 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
 
   return (
     <StyledTabContent>
-      {!checkMobile() && 
+      {!checkMobile() && (
         <div className="actions-group">
           <SearchBar className={'profile-search-bar'} filter={search} setFilter={setSearch} />
         </div>
-      }
+      )}
       {filteredCollectedItems === undefined ? (
         <div className="profile-content-loading">
           <div>
@@ -171,7 +171,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
         <div className="cards-list" id="border">
           <Row gutter={[24, 24]}>
             {filteredCollectedItems.map((nft: ISingleNFT) => (
-              <Col sm={10} md={7} lg={6} xl={4} xxl={4} key={nft.mint_address} span={checkMobile() ? 12 : ""}>
+              <Col sm={10} md={7} lg={6} xl={4} xxl={4} key={nft.mint_address} span={checkMobile() ? 12 : ''}>
                 <Card singleNFT={nft} />
               </Col>
             ))}

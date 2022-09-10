@@ -118,15 +118,13 @@ export const OrderHistory: FC = () => {
         <Loader />
       ) : (
         <TRADE_WRAPPER>
-          {tradeHistory.map((item, index) => {
-            return (
-              <TRADE_ROW key={index} $side={item.side === 'buy'}>
-                <span>{item.price.toFixed(2)}</span>
-                <span>{item.size}</span>
-                <span>{moment(item.time).format('LTS')}</span>
-              </TRADE_ROW>
-            )
-          })}
+          {tradeHistory.map((item, index) => (
+            <TRADE_ROW key={index} $side={item.side === 'buy'}>
+              <span>{item.price.toFixed(2)}</span>
+              <span>{item.size}</span>
+              <span>{moment(item.time).format('LTS')}</span>
+            </TRADE_ROW>
+          ))}
         </TRADE_WRAPPER>
       )}
     </WRAPPER>

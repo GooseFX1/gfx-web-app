@@ -29,27 +29,25 @@ const REMAINING_PANEL = styled(Row)`
   `}
 `
 
-export const TimePanel: FC<{ time: IRemainingPanelData }> = ({ time, ...rest }) => {
-  return (
-    <REMAINING_PANEL justify="space-between" {...rest}>
-      <Row align="middle">
-        <Row justify="center" align="middle" className="rp-bubble">
-          {time?.days}
-        </Row>
-        <div className="rp-text">Days</div>
+export const TimePanel: FC<{ time: IRemainingPanelData }> = ({ time, ...rest }) => (
+  <REMAINING_PANEL justify="space-between" {...rest}>
+    <Row align="middle">
+      <Row justify="center" align="middle" className="rp-bubble">
+        {time?.days}
       </Row>
-      <Row align="middle">
-        <Row justify="center" align="middle" className="rp-bubble">
-          {time?.hours}
-        </Row>
-        <div className="rp-text">Hours</div>
+      <div className="rp-text">Days</div>
+    </Row>
+    <Row align="middle">
+      <Row justify="center" align="middle" className="rp-bubble">
+        {time?.hours}
       </Row>
-      <Row align="middle">
-        <Row justify="center" align="middle" className="rp-bubble">
-          {time?.minutes}
-        </Row>
-        <div className="rp-text">Minutes</div>
+      <div className="rp-text">Hours</div>
+    </Row>
+    <Row align="middle">
+      <Row justify="center" align="middle" className="rp-bubble">
+        {time?.minutes}
       </Row>
-    </REMAINING_PANEL>
-  )
-}
+      <div className="rp-text">Minutes</div>
+    </Row>
+  </REMAINING_PANEL>
+)

@@ -147,7 +147,17 @@ const AVATAR_NFT = styled(Image)`
 `
 //#endregion
 //eslint-disable-next-line
-export const Header = ({ setFilter, filter, filteredCollections, totalCollections, setTotalCollections }) => {
+export const Header = ({
+  setFilter,
+  filter,
+  filteredCollections
+}: // totalCollections,
+// setTotalCollections
+{
+  setFilter: (s: string) => void
+  filter: string
+  filteredCollections: any[]
+}) => {
   const history = useHistory()
   const { sessionUser, setUserCurrency } = useNFTProfile()
   const { isCollapsed } = useNavCollapse()
@@ -159,6 +169,7 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
 
   useEffect(() => {
     setTimeout(() => setIsHeaderData(true), 1000)
+    console.log()
   }, [])
 
   useEffect(() => {
@@ -175,12 +186,14 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
       }
     }, 750)
 
-    return () => {}
+    return null
   }, [sessionUser])
 
   useEffect(() => {
     if (!connected) {
-      connect().catch(() => {})
+      connect().catch((e: Error) => {
+        console.log(e)
+      })
     }
   }, [connected])
 

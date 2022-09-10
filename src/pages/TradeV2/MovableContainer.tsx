@@ -130,8 +130,8 @@ export const CryptoContent: FC = () => {
     isBounded: true,
     isDraggable: !isLocked
   }
-  const generateDOM = () => {
-    return _.map(_.range(layout.lg.length), function (i) {
+  const generateDOM = () =>
+    _.map(_.range(layout.lg.length), function (i) {
       if (i === 0)
         return (
           <div key={i}>
@@ -139,7 +139,9 @@ export const CryptoContent: FC = () => {
             {!isLocked ? (
               <UNLOCKED_OVERLAY>
                 <img
-                  src={mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
+                  src={
+                    mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
+                  }
                   alt="reposition"
                 />
                 <span>Drag to Reposition</span>
@@ -155,7 +157,9 @@ export const CryptoContent: FC = () => {
               {!isLocked ? (
                 <UNLOCKED_OVERLAY>
                   <img
-                    src={mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
+                    src={
+                      mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
+                    }
                     alt="reposition"
                   />
                   <span>Drag to Reposition</span>
@@ -172,7 +176,9 @@ export const CryptoContent: FC = () => {
             {!isLocked ? (
               <UNLOCKED_OVERLAY>
                 <img
-                  src={mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
+                  src={
+                    mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
+                  }
                   alt="reposition"
                 />
                 <span>Drag to Reposition</span>
@@ -190,7 +196,11 @@ export const CryptoContent: FC = () => {
                 {!isLocked ? (
                   <UNLOCKED_OVERLAY>
                     <img
-                      src={mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
+                      src={
+                        mode.mode === 'dark'
+                          ? `/img/assets/repositionWhite.svg`
+                          : `/img/assets/repositionBlack.svg`
+                      }
                       alt="reposition"
                     />
                     <span>Drag to Reposition</span>
@@ -208,7 +218,9 @@ export const CryptoContent: FC = () => {
             {!isLocked ? (
               <UNLOCKED_OVERLAY>
                 <img
-                  src={mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
+                  src={
+                    mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
+                  }
                   alt="reposition"
                 />
                 <span>Drag to Reposition</span>
@@ -222,7 +234,6 @@ export const CryptoContent: FC = () => {
         </div>
       )
     })
-  }
 
   const onLayoutChange = (layout) => {
     setLayout({ lg: layout })
@@ -234,8 +245,15 @@ export const CryptoContent: FC = () => {
 
   return (
     <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked}>
-      <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} setFeesPopup={setFeesPopup} />
-      {feesPopup && <ModalSlide rewardModal={feesPopup} rewardToggle={setFeesPopup} modalType={MODAL_TYPES.FEES} />}
+      <InfoBanner
+        isLocked={isLocked}
+        setIsLocked={setIsLocked}
+        resetLayout={resetLayout}
+        setFeesPopup={setFeesPopup}
+      />
+      {feesPopup && (
+        <ModalSlide rewardModal={feesPopup} rewardToggle={setFeesPopup} modalType={MODAL_TYPES.FEES} />
+      )}
       <ReactGridLayout
         compactType="vertical"
         measureBeforeMount={false}

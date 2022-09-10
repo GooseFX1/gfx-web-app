@@ -2,9 +2,9 @@ import styled from 'styled-components'
 import { Form, Modal } from 'antd'
 
 export const StyledPopupProfile = styled(Modal)`
-   @media(max-width: 500px){
-      max-width: 100%;
-   }
+  @media (max-width: 500px) {
+    max-width: 100%;
+  }
   * {
     font-family: 'Montserrat' !important;
   }

@@ -159,7 +159,7 @@ export const ExpandedContent: FC<{
   const { publicKey } = useWallet()
   const { getTokenInfoForFarming } = useTokenRegistry()
   const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
-  const [process, setProcess] = useState<String>('Stake')
+  const [process, setProcess] = useState<string>('Stake')
   const DISPLAY_DECIMAL = 3
   let userTokenBalance = useMemo(
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),

@@ -487,9 +487,7 @@ const TokenContent: FC = () => {
   const [toggle, setToggle] = useState(false) //tokenA
   const [token, setToken] = useState(tokenA)
 
-  const truncate = (address: string) => {
-    return address.slice(0, 7) + '...' + address.slice(-6)
-  }
+  const truncate = (address: string) => address.slice(0, 7) + '...' + address.slice(-6)
 
   useEffect(() => {
     try {
@@ -1128,10 +1126,8 @@ const SwapMainProvider: FC = () => {
   )
 }
 
-export const Swap: FC = () => {
-  return (
-    <SwapProvider>
-      <SwapMainProvider />
-    </SwapProvider>
-  )
-}
+export const Swap: FC = () => (
+  <SwapProvider>
+    <SwapMainProvider />
+  </SwapProvider>
+)

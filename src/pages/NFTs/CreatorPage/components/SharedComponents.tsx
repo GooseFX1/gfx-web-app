@@ -50,27 +50,25 @@ export const ImageContainer: FC<{
   projectName?: string
   collectionName?: string
   fileName?: File | string
-}> = ({ imageName, projectName, collectionName, fileName }) => {
-  return (
-    <PICTURE_CONTAINER>
-      <div className="normal-background">
-        {!fileName ? (
-          <>
-            <img className="inner-image" alt="launchpad-logo" src={`/img/assets/${imageName}.svg`} />
-            {projectName ? <div className="projectName">{projectName}</div> : null}
-            {collectionName ? <div className="collectionName">{collectionName}</div> : null}
-          </>
-        ) : (
-          <img
-            className="inner-image"
-            alt="not fount"
-            src={typeof fileName === 'string' ? fileName : URL.createObjectURL(fileName)}
-          />
-        )}
-      </div>
-    </PICTURE_CONTAINER>
-  )
-}
+}> = ({ imageName, projectName, collectionName, fileName }) => (
+  <PICTURE_CONTAINER>
+    <div className="normal-background">
+      {!fileName ? (
+        <>
+          <img className="inner-image" alt="launchpad-logo" src={`/img/assets/${imageName}.svg`} />
+          {projectName ? <div className="projectName">{projectName}</div> : null}
+          {collectionName ? <div className="collectionName">{collectionName}</div> : null}
+        </>
+      ) : (
+        <img
+          className="inner-image"
+          alt="not fount"
+          src={typeof fileName === 'string' ? fileName : URL.createObjectURL(fileName)}
+        />
+      )}
+    </div>
+  </PICTURE_CONTAINER>
+)
 
 const INPUT_WRAPPER = styled.div`
   ${tw`w-full`}

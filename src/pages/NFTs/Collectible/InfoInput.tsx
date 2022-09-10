@@ -67,27 +67,30 @@ const InfoInput: FC<{
   onChange: (val: any) => void
   title?: string
   maxLength?: number
-}> = ({ title, maxLength, placeholder, onChange, value, type }) => {
-  return (
-    <INPUT_CONTAINER>
-      {title && <INPUT_TITLE>{title}</INPUT_TITLE>}
-      {type === 'input' ? (
-        <STYLED_INPUT value={value ? value : ''} placeholder={placeholder} onChange={onChange} maxLength={maxLength} />
-      ) : (
-        <STYLED_TEXTAREA
-          value={value ? value : ''}
-          placeholder={placeholder}
-          onChange={onChange}
-          maxLength={maxLength}
-        />
-      )}
-      {maxLength && (
-        <INPUT_LIMIT>
-          {value ? value.length : 0} of {maxLength} characters limit
-        </INPUT_LIMIT>
-      )}
-    </INPUT_CONTAINER>
-  )
-}
+}> = ({ title, maxLength, placeholder, onChange, value, type }) => (
+  <INPUT_CONTAINER>
+    {title && <INPUT_TITLE>{title}</INPUT_TITLE>}
+    {type === 'input' ? (
+      <STYLED_INPUT
+        value={value ? value : ''}
+        placeholder={placeholder}
+        onChange={onChange}
+        maxLength={maxLength}
+      />
+    ) : (
+      <STYLED_TEXTAREA
+        value={value ? value : ''}
+        placeholder={placeholder}
+        onChange={onChange}
+        maxLength={maxLength}
+      />
+    )}
+    {maxLength && (
+      <INPUT_LIMIT>
+        {value ? value.length : 0} of {maxLength} characters limit
+      </INPUT_LIMIT>
+    )}
+  </INPUT_CONTAINER>
+)
 
 export default React.memo(InfoInput)

@@ -119,9 +119,7 @@ export const fetchAllSSLAmountStaked = async (
     promiseData.push(connection.getMultipleAccountsInfo(mainVaultKeys))
     if (wallet.publicKey) promiseData.push(connection.getMultipleAccountsInfo(liquidityAccountKeys))
     const ans = Promise.all(promiseData)
-    return ans.then((res) => {
-      return { sslData: res[0], mainVault: res[1], liquidityData: res[2] }
-    })
+    return ans.then((res) => ({ sslData: res[0], mainVault: res[1], liquidityData: res[2] }))
   } catch (err) {
     console.log(err)
   }

@@ -11,17 +11,16 @@ const RESTRICTED = styled(FlexColumnDiv)`
   margin: 0 auto;
 `
 
-const Restricted: FC = () => {
-  return (
-    <RESTRICTED>
-      <h2>Restricted</h2>
-      <div>
-        Access is prohibited for Belarus, the Central African Republic, the Democratic Republic of Congo, the Democratic
-        People’s Republic of Korea, Crimea, Cuba, Iran, Libya, Somalia, Sudan, South Sudan, Syria, Thailand, UK, USA,
-        Yemen, Zimbabwe and any other jurisdiction in which accessing or using this website is prohibited.
-      </div>
-    </RESTRICTED>
-  )
-}
+const Restricted: FC = () => (
+  <RESTRICTED>
+    <h2>Restricted</h2>
+    <div>
+      Access is prohibited for Belarus, the Central African Republic, the Democratic Republic of Congo, the
+      Democratic People’s Republic of Korea, Crimea, Cuba, Iran, Libya, Somalia, Sudan, South Sudan, Syria,
+      Thailand, UK, USA, Yemen, Zimbabwe and any other jurisdiction in which accessing or using this website is
+      prohibited.
+    </div>
+  </RESTRICTED>
+)
 
 export default Restricted

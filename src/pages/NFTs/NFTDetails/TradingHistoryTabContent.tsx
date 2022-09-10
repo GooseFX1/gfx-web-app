@@ -82,9 +82,7 @@ const bidColumns = [
     key: 'event',
     dataIndex: 'event',
     title: 'Event',
-    render: (val: string) => {
-      return <div className="thtc-event">{val == 'ask' ? 'ASK' : 'BID'}</div>
-    },
+    render: (val: string) => <div className="thtc-event">{val == 'ask' ? 'ASK' : 'BID'}</div>,
     width: '19%'
   },
   {
@@ -142,7 +140,11 @@ export const TradingHistoryTabContent: FC = ({ ...rest }) => {
           <p>No bids so far, be the first to bid for this amazing piece.</p>
         </div>
       ) : (
-        <Table columns={bidColumns} dataSource={bids.map((bid) => ({ ...bid, key: bid.bid_id }))} pagination={false} />
+        <Table
+          columns={bidColumns}
+          dataSource={bids.map((bid) => ({ ...bid, key: bid.bid_id }))}
+          pagination={false}
+        />
       )}
     </TRADING_HISTORY_TAB_CONTENT>
   )

@@ -112,7 +112,7 @@ const WRAPPER = styled.div`
   }
 `
 
-const ReviewTable = ({ reviewProjects, btnClicked }) => {
+const ReviewTable = ({ reviewProjects, btnClicked }: { reviewProjects: any[]; btnClicked: any }) => {
   if (reviewProjects?.length < 1)
     return (
       <NOTHING_REVIEW>
@@ -126,9 +126,9 @@ const ReviewTable = ({ reviewProjects, btnClicked }) => {
   if (reviewProjects?.length > 0)
     return (
       <WRAPPER>
-        {reviewProjects.map((project: ICreatorData, index: number) => {
-          return <RowComponent project={project} key={index} index={index} btnClicked={btnClicked} />
-        })}
+        {reviewProjects.map((project: ICreatorData, index: number) => (
+          <RowComponent project={project} key={index} index={index} btnClicked={btnClicked} />
+        ))}
       </WRAPPER>
     )
   return (
@@ -138,7 +138,10 @@ const ReviewTable = ({ reviewProjects, btnClicked }) => {
   )
 }
 
-const RowComponent: React.FC<{ project: ICreatorData; index: number; btnClicked: any }> = ({ project, btnClicked }) => {
+const RowComponent: React.FC<{ project: ICreatorData; index: number; btnClicked: any }> = ({
+  project,
+  btnClicked
+}) => {
   const [expand, setExpand] = useState<boolean>(false)
   const { setAdminSelected } = useNFTAdmin()
   const history = useHistory()
@@ -162,20 +165,20 @@ const RowComponent: React.FC<{ project: ICreatorData; index: number; btnClicked:
     const ans = []
     if (socials.discord)
       ans.push(
-        <a className="whiteText" key={1} href={socials.discord} target="_blank">
+        <a className="whiteText" key={1} href={socials.discord} target="_blank" rel="noreferrer">
           {' '}
           <u> Discord</u>
         </a>
       )
     if (socials.twitter)
       ans.push(
-        <a className="whiteText" key={2} href={socials.twitter} target="_blank">
+        <a className="whiteText" key={2} href={socials.twitter} target="_blank" rel="noreferrer">
           <u> Twitter </u>{' '}
         </a>
       )
     if (socials.website)
       ans.push(
-        <a className="whiteText" key={3} href={socials.twitter} target="_blank">
+        <a className="whiteText" key={3} href={socials.twitter} target="_blank" rel="noreferrer">
           {' '}
           <u> Web </u>{' '}
         </a>
@@ -316,13 +319,11 @@ const GRADIENT_BORDER = styled.span`
   }
 `
 
-export const GradientImageBorder = ({ img, height, width }) => {
-  return (
-    <GRADIENT_BORDER style={{ width: width, height: height }}>
-      <div className="innerBg" style={{ width: width - 7, height: height - 7 }}></div>
-      <img style={{ width: width - 15, height: height - 15 }} src={img} alt="nft cover" />
-    </GRADIENT_BORDER>
-  )
-}
+export const GradientImageBorder = ({ img, height, width }: { img: string; height: number; width: number }) => (
+  <GRADIENT_BORDER style={{ width: width, height: height }}>
+    <div className="innerBg" style={{ width: width - 7, height: height - 7 }}></div>
+    <img style={{ width: width - 15, height: height - 15 }} src={img} alt="nft cover" />
+  </GRADIENT_BORDER>
+)
 
 export default ReviewTable

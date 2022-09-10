@@ -97,8 +97,8 @@ const Overlay: FC<{
 
   return (
     <MENU>
-      {sorts.map((item) => (
-        <MENU_ITEM onClick={() => handleClick(item.title)}>
+      {sorts.map((item, index) => (
+        <MENU_ITEM onClick={() => handleClick(item.title)} key={index}>
           <span>{item.title}</span>
         </MENU_ITEM>
       ))}

@@ -88,7 +88,7 @@ const ROW = styled.div`
   display: flex;
   overflow-x: scroll;
 
-  ::-webkit-scrollbar{
+  ::-webkit-scrollbar {
     display: none;
   }
 `
@@ -177,20 +177,24 @@ const CollectionCarousel: FC<ICollectionCarousel> = ({ title, collections, colle
             </div>
           ))}
         </SKELETON_SLIDER>
-      ) : updatedCollections.length > 0 ? ( !checkMobile() ?
-        <Slider ref={slickRef} {...settings}>
-          {updatedCollections.map(
-            (item: NFTBaseCollection | NFTFeaturedCollection | NFTUpcomingCollection, i: number) => (
-              <NFTImageCarouselItem key={i} item={item} type={collectionType} />
-            )
-          )}
-        </Slider> : <ROW>
+      ) : updatedCollections.length > 0 ? (
+        !checkMobile() ? (
+          <Slider ref={slickRef} {...settings}>
             {updatedCollections.map(
-                (item: NFTBaseCollection | NFTFeaturedCollection | NFTUpcomingCollection, i: number) => (
-                  <NFTImageCarouselItem key={i} item={item} type={collectionType} />
-                )
-              )}
-        </ROW>
+              (item: NFTBaseCollection | NFTFeaturedCollection | NFTUpcomingCollection, i: number) => (
+                <NFTImageCarouselItem key={i} item={item} type={collectionType} />
+              )
+            )}
+          </Slider>
+        ) : (
+          <ROW>
+            {updatedCollections.map(
+              (item: NFTBaseCollection | NFTFeaturedCollection | NFTUpcomingCollection, i: number) => (
+                <NFTImageCarouselItem key={i} item={item} type={collectionType} />
+              )
+            )}
+          </ROW>
+        )
       ) : (
         <EMPTY_CAROUSEL>
           {isLoading ? (

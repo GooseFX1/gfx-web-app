@@ -208,9 +208,7 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
 
   useEffect(() => {
     // When royalties changes, sum up all the amounts.
-    const total = royalties.reduce((totalShares, royalty) => {
-      return totalShares + royalty.amount
-    }, 0)
+    const total = royalties.reduce((totalShares, royalty) => totalShares + royalty.amount, 0)
 
     setTotalRoyaltiesShare(total)
   }, [royalties])
@@ -366,8 +364,8 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
               <label className="action-field" style={{ width: '100%' }}>
                 <span className="field-title">Creators Split</span>
                 <p>
-                  This is how much of the proceeds from the initial sale and any royalties will be split out amongst the
-                  creators.
+                  This is how much of the proceeds from the initial sale and any royalties will be split out
+                  amongst the creators.
                 </p>
                 <RoyaltiesSplitter
                   creators={[...fixedCreators, ...creators]}
@@ -424,7 +422,7 @@ export default React.memo(RoyaltiesStep)
 interface IRoylatySplit {
   creators: Array<UserValue>
   royalties: Array<Royalty>
-  setRoyalties: Function
+  setRoyalties: (arr: any[]) => void
   removeCreator: (key: string) => void
   isShowErrors?: boolean
 }

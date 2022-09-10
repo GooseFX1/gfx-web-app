@@ -164,7 +164,7 @@ const HEADING = styled(CenteredDiv)`
 `
 //#endregion
 
-const UploadProgress = (props: { mint: Function; step: number }) => {
+const UploadProgress = (props: { mint: () => void; step: number }) => {
   useEffect(() => {
     const func = async () => {
       await props.mint()
@@ -188,7 +188,11 @@ const UploadProgress = (props: { mint: Function; step: number }) => {
       <Card bordered={false}>
         <Steps direction="horizontal" current={props.step}>
           <Steps.Step className={'white-description'} title="Minting" description="Starting Mint Process" />
-          <Steps.Step className={'white-description'} title="Preparing Assets" description="Your assets are ready" />
+          <Steps.Step
+            className={'white-description'}
+            title="Preparing Assets"
+            description="Your assets are ready"
+          />
           <Steps.Step
             className={'white-description'}
             title="Signing Transaction"
@@ -210,7 +214,11 @@ const UploadProgress = (props: { mint: Function; step: number }) => {
             description="Waiting for confirmation"
           />
           <Steps.Step className={'white-description'} title="Arweave" description="Uploading to Arweave" />
-          <Steps.Step className={'white-description'} title="Updating Metadata" description="with Arweave response" />
+          <Steps.Step
+            className={'white-description'}
+            title="Updating Metadata"
+            description="with Arweave response"
+          />
           <Steps.Step
             className={'white-description'}
             title="Signing Token Transaction"

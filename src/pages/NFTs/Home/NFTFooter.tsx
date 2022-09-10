@@ -58,7 +58,7 @@ const FOLLOW_US_BUTTON = styled.a`
     color: white;
     box-shadow: 0 3px 6px 1px #00000045;
   }
-  > span{
+  > span {
     ${tw`sm:font-semibold sm:text-tiny`}
   }
 `

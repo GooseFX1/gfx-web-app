@@ -16,9 +16,9 @@ const CONTAINER = styled.div<{ $visible: boolean }>`
 
 export interface ChartContainerProps {
   symbol: ChartingLibraryWidgetOptions['symbol']
-  interval: ChartingLibraryWidgetOptions['interval']
+  interval: ChartingLibraryWidgetOptions['interval'] | string
   auto_save_delay: ChartingLibraryWidgetOptions['auto_save_delay']
-  datafeedUrl: string
+  datafeedUrl?: string
   libraryPath: ChartingLibraryWidgetOptions['library_path']
   chartsStorageUrl: ChartingLibraryWidgetOptions['charts_storage_url']
   chartsStorageApiVersion: ChartingLibraryWidgetOptions['charts_storage_api_version']
@@ -28,7 +28,7 @@ export interface ChartContainerProps {
   autosize: ChartingLibraryWidgetOptions['autosize']
   studiesOverrides: ChartingLibraryWidgetOptions['studies_overrides']
   containerId: ChartingLibraryWidgetOptions['container_id']
-  theme: string
+  theme?: string
   timeframe: ChartingLibraryWidgetOptions['timeframe']
 }
 
@@ -45,7 +45,6 @@ export const TVChartContainer: FC<{ symbol: string; visible: boolean }> = ({ sym
 
   const defaultProps: ChartContainerProps = {
     symbol: symbol,
-    // @ts-ignore
     interval: resolution ? resolution : '60',
     auto_save_delay: 5,
     containerId: 'tv_chart_container',
@@ -107,7 +106,7 @@ export const TVChartContainer: FC<{ symbol: string; visible: boolean }> = ({ sym
         'mainSeriesProperties.candleStyle.wickUpColor': '#41C77A',
         'mainSeriesProperties.candleStyle.wickDownColor': '#F23B69'
       },
-      // @ts-ignore
+
       save_load_adapter: saveLoadAdapter,
       settings_adapter: {
         initialSettings: {
@@ -125,7 +124,8 @@ export const TVChartContainer: FC<{ symbol: string; visible: boolean }> = ({ sym
               hideFloatingPanel: 1
             }),
           'chart.favoriteDrawings': localStorage.getItem('chart.favoriteDrawings') || JSON.stringify([]),
-          'chart.favoriteDrawingsPosition': localStorage.getItem('chart.favoriteDrawingsPosition') || JSON.stringify({})
+          'chart.favoriteDrawingsPosition':
+            localStorage.getItem('chart.favoriteDrawingsPosition') || JSON.stringify({})
         },
         setValue: (key, value) => {
           localStorage.setItem(key, value)
@@ -142,9 +142,7 @@ export const TVChartContainer: FC<{ symbol: string; visible: boolean }> = ({ sym
 
     tvWidget.onChartReady(() => {
       tvWidgetRef.current = tvWidget
-      tvWidget
-        // @ts-ignore
-        .subscribe('onAutoSaveNeeded', () => tvWidget.saveChartToServer())
+      tvWidget.subscribe('onAutoSaveNeeded', () => tvWidget.saveChartToServer())
     })
   }, [
     mode,

@@ -227,7 +227,7 @@ export class Metadata {
 }
 
 class CreateMetadataArgs {
-  instruction: number = 0
+  instruction = 0
   data: Data
   isMutable: boolean
 
@@ -237,7 +237,7 @@ class CreateMetadataArgs {
   }
 }
 class UpdateMetadataArgs {
-  instruction: number = 1
+  instruction = 1
   data: Data | null
   // Not used by this app, just required for instruction
   updateAuthority: StringPublicKey | null
@@ -250,7 +250,7 @@ class UpdateMetadataArgs {
 }
 
 class CreateMasterEditionArgs {
-  instruction: number = 10
+  instruction = 10
   maxSupply: BN | null
   constructor(args: { maxSupply: BN | null }) {
     this.maxSupply = args.maxSupply
@@ -258,7 +258,7 @@ class CreateMasterEditionArgs {
 }
 
 class MintPrintingTokensArgs {
-  instruction: number = 9
+  instruction = 9
   supply: BN
 
   constructor(args: { supply: BN }) {
@@ -454,9 +454,7 @@ export const decodeEditionMarker = (buffer: Buffer): EditionMarker => {
   return editionMarker
 }
 
-export const decodeEdition = (buffer: Buffer) => {
-  return deserializeUnchecked(METADATA_SCHEMA, Edition, buffer) as Edition
-}
+export const decodeEdition = (buffer: Buffer) => deserializeUnchecked(METADATA_SCHEMA, Edition, buffer) as Edition
 
 export const decodeMasterEdition = (buffer: Buffer): MasterEditionV1 | MasterEditionV2 => {
   if (buffer[0] == MetadataKey.MasterEditionV1) {
@@ -489,7 +487,8 @@ export async function updateMetadata(
   const value = new UpdateMetadataArgs({
     data,
     updateAuthority: !newUpdateAuthority ? undefined : newUpdateAuthority,
-    primarySaleHappened: primarySaleHappened === null || primarySaleHappened === undefined ? null : primarySaleHappened
+    primarySaleHappened:
+      primarySaleHappened === null || primarySaleHappened === undefined ? null : primarySaleHappened
   })
   const txnData = Buffer.from(serialize(METADATA_SCHEMA, value))
   const keys = [
@@ -1135,7 +1134,11 @@ export async function getMetadata(tokenMint: StringPublicKey): Promise<StringPub
 
   return (
     await findProgramAddress(
-      [Buffer.from(METADATA_PREFIX), toPublicKey(PROGRAM_IDS.metadata).toBuffer(), toPublicKey(tokenMint).toBuffer()],
+      [
+        Buffer.from(METADATA_PREFIX),
+        toPublicKey(PROGRAM_IDS.metadata).toBuffer(),
+        toPublicKey(tokenMint).toBuffer()
+      ],
       toPublicKey(PROGRAM_IDS.metadata)
     )
   )[0]

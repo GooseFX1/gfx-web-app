@@ -90,7 +90,13 @@ export async function sendTransactionsWithManualRetry(
 
     try {
       if (instructions.length === 1) {
-        const id = await sendTransactionWithRetry(connection, wallet, instructions[0], filteredSigners[0], 'single')
+        const id = await sendTransactionWithRetry(
+          connection,
+          wallet,
+          instructions[0],
+          filteredSigners[0],
+          'single'
+        )
         ids.push(id.txid)
         stopPoint = 1
       } else {
@@ -221,7 +227,7 @@ export const sendTransaction = async (
   signers: Keypair[],
   awaitConfirmation = true,
   commitment: Commitment = 'singleGossip',
-  includesFeePayer: boolean = false,
+  includesFeePayer = false,
   block?: BlockhashAndFeeCalculator
 ) => {
   if (!wallet.publicKey) throw new WalletNotConnectedError()
@@ -284,7 +290,7 @@ export const sendTransactionWithRetry = async (
   instructions: TransactionInstruction[],
   signers: Keypair[],
   commitment: Commitment = 'singleGossip',
-  includesFeePayer: boolean = false,
+  includesFeePayer = false,
   block?: BlockhashAndFeeCalculator,
   beforeSend?: () => void
 ) => {
@@ -323,9 +329,7 @@ export const sendTransactionWithRetry = async (
   return { txid, slot }
 }
 
-export const getUnixTs = () => {
-  return new Date().getTime() / 1000
-}
+export const getUnixTs = () => new Date().getTime() / 1000
 
 export async function sendSignedTransaction({
   signedTransaction,
@@ -443,7 +447,7 @@ async function awaitTransactionSignatureConfirmation(
 
   //eslint-disable-next-line
   let subId = 0
-  status = await new Promise(async (resolve, reject) => {
+  status = await new Promise((resolve, reject) => {
     setTimeout(() => {
       if (done) {
         return
@@ -477,38 +481,41 @@ async function awaitTransactionSignatureConfirmation(
       done = true
       console.error('WS error in setup', txid, e)
     }
-    while (!done && queryStatus) {
-      // eslint-disable-next-line no-loop-func
-      ;(async () => {
-        try {
-          const signatureStatuses = await connection.getSignatureStatuses([txid])
-          status = signatureStatuses && signatureStatuses.value[0]
-          if (!done) {
-            if (!status) {
-              console.log('REST null result for', txid, status)
-            } else if (status.err) {
-              console.log('REST error for', txid, status)
-              done = true
-              reject(status.err)
-            } else if (!status.confirmations) {
-              console.log('REST no confirmations for', txid, status)
-            } else {
-              console.log('REST confirmation for', txid, status)
-              done = true
-              resolve(status)
+
+    //since await is only in while function, we pu in an executable function
+    ;(async () => {
+      while (!done && queryStatus) {
+        // eslint-disable-next-line no-loop-func
+        ;(async () => {
+          try {
+            const signatureStatuses = await connection.getSignatureStatuses([txid])
+            status = signatureStatuses && signatureStatuses.value[0]
+            if (!done) {
+              if (!status) {
+                console.log('REST null result for', txid, status)
+              } else if (status.err) {
+                console.log('REST error for', txid, status)
+                done = true
+                reject(status.err)
+              } else if (!status.confirmations) {
+                console.log('REST no confirmations for', txid, status)
+              } else {
+                console.log('REST confirmation for', txid, status)
+                done = true
+                resolve(status)
+              }
+            }
+          } catch (e) {
+            if (!done) {
+              console.log('REST connection error: txid', txid, e)
             }
           }
-        } catch (e) {
-          if (!done) {
-            console.log('REST connection error: txid', txid, e)
-          }
-        }
-      })()
-      await sleep(2000)
-    }
+        })()
+        await sleep(2000)
+      }
+    })()
   })
 
-  //@ts-ignore
   //if (connection._signatureSubscriptions[subId]) connection.removeSignatureListener(subId)
   done = true
   console.log('Returning status', status)
@@ -555,8 +562,8 @@ export const sendTransactionsNonce = async (
   beforeTransactions: Transaction[] = [],
   afterTransactions: Transaction[] = [],
   nonce: any,
-  collectionId: String,
-  walletAddress: String
+  collectionId: string,
+  walletAddress: string
 ): Promise<{ number: number; txs: { txid: string; slot: number }[] }> => {
   if (!wallet.publicKey) throw new WalletNotConnectedError()
 

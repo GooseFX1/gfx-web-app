@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { useMemo } from 'react'
 // import { USE_MARKETS } from './markets'
 import { AVAILABLE_MARKETS } from '../../../context'
@@ -6,9 +5,7 @@ import { sleep, getUnixTs } from '../../../utils/misc'
 
 const URL_SERVER = 'https://api.raydium.io/tv/'
 
-export const useTvDataFeed = () => {
-  return useMemo(() => makeDataFeed(), [])
-}
+export const useTvDataFeed = () => useMemo(() => makeDataFeed(), [])
 
 const makeDataFeed = () => {
   const subscriptions = {}
@@ -193,7 +190,8 @@ const makeDataFeed = () => {
       subscriptions[subscriberUID].stop()
       delete subscriptions[subscriberUID]
     },
-    async searchSymbols(userInput: string, exchange: string, symbolType: string, onResult: SearchSymbolsCallback) {
+    //eslint-disable-next-line
+    async searchSymbols(userInput: string, exchange: string, symbolType: string, onResult: Function) {
       const marketList: any[] = AVAILABLE_MARKETS.filter(
         (item) => item.name.includes(userInput) && !item.deprecated
       )

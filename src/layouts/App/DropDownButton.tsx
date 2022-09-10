@@ -29,18 +29,16 @@ const Overlay: FC<{
   onOptionClick: (currentOption: listItem) => void
   options: Array<listItem>
   folder: string
-}> = ({ onOptionClick, options, folder }) => {
-  return (
-    <Menu>
-      {options.map((item) => (
-        <MenuItem onClick={() => onOptionClick(item)}>
-          <span>{item.displayName}</span>
-          <img src={`/img/${folder}/${item.icon}.svg`} alt="icon" />
-        </MenuItem>
-      ))}
-    </Menu>
-  )
-}
+}> = ({ onOptionClick, options, folder }) => (
+  <Menu>
+    {options.map((item, index) => (
+      <MenuItem onClick={() => onOptionClick(item)} key={index}>
+        <span>{item.displayName}</span>
+        <img src={`/img/${folder}/${item.icon}.svg`} alt="icon" />
+      </MenuItem>
+    ))}
+  </Menu>
+)
 
 const DropdownButton: FC<{
   title: string
@@ -66,7 +64,9 @@ const DropdownButton: FC<{
         arrow
         arrowRotation={arrowRotation}
         offset={[20, 10]}
-        onVisibleChange={() => {}}
+        onVisibleChange={() => {
+          //empty function that needs to be filled
+        }}
         overlay={<Overlay options={options} onOptionClick={onOptionClick} folder={folder} />}
         setArrowRotation={setArrowRotation}
       />

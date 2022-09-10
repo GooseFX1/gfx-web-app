@@ -82,8 +82,12 @@ const Overlay: FC<{
   )
   return (
     <STYLED_POOL_MENU className={`${type === 'dot' ? 'dot-menu' : ''}`}>
-      {categories.map((item) => (
-        <MenuItem onClick={() => handleClick(item.name)} className={`${currentTitle === item.name ? 'active' : ''}`}>
+      {categories.map((item, index) => (
+        <MenuItem
+          onClick={() => handleClick(item.name)}
+          className={`${currentTitle === item.name ? 'active' : ''}`}
+          key={index}
+        >
           <span>{item.name}</span>
           {type !== 'dot' ? (
             <SVGDynamicReverseMode src={`/img/assets/${item.icon}.svg`} alt="disconnect" />

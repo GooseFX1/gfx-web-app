@@ -36,7 +36,7 @@ export const Whitelist: FC = () => {
       const walletProgram = await getProgram()
       //eslint-disable-next-line
       const [whitelist_config_pda, bump] = await PublicKey.findProgramAddress(
-        [Buffer.from(pdaWhitelistSeed), wallet.publicKey!.toBuffer()],
+        [Buffer.from(pdaWhitelistSeed), wallet.publicKey?.toBuffer()],
         MAGIC_HAT_PROGRAM_V2_ID
       )
 
@@ -76,7 +76,7 @@ export const Whitelist: FC = () => {
     try {
       //eslint-disable-next-line
       const [whitelist_config_pda, bump] = await PublicKey.findProgramAddress(
-        [Buffer.from(pdaWhitelistSeed), wallet.publicKey!.toBuffer()],
+        [Buffer.from(pdaWhitelistSeed), wallet.publicKey?.toBuffer()],
         MAGIC_HAT_PROGRAM_V2_ID
       )
       //const wallet_create =
@@ -114,7 +114,7 @@ export const Whitelist: FC = () => {
     try {
       //eslint-disable-next-line
       const [wallet_pda, wallet_bump] = await PublicKey.findProgramAddress(
-        [Buffer.from(pdaSeed), wallet.publicKey!.toBuffer()],
+        [Buffer.from(pdaSeed), wallet.publicKey?.toBuffer()],
         MAGIC_HAT_PROGRAM_V2_ID
       )
       //eslint-disable-next-line

@@ -10,12 +10,10 @@ const WRAPPER = styled.div`
   color: #eeeeee;
 `
 
-export const AnalyticsStats = () => {
-  return (
-    <WRAPPER>
-      <TotalLiquidityVolume />
-      <GofxHolders />
-      <SwapVolume />
-    </WRAPPER>
-  )
-}
+export const AnalyticsStats = () => (
+  <WRAPPER>
+    <TotalLiquidityVolume />
+    <GofxHolders />
+    <SwapVolume />
+  </WRAPPER>
+)

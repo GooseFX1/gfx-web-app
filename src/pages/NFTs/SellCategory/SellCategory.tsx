@@ -59,21 +59,19 @@ interface ICategory {
   setCategory: (val: string) => void
 }
 
-export const SellCategory = ({ category, setCategory }: ICategory) => {
-  return (
-    <STYLED_SELL_CATEGORY gutter={[48, 0]}>
-      {dataCategories.map((item, index) => (
-        <Col key={index}>
-          <div className="item-wrap" onClick={() => setCategory(item.icon)}>
-            <img
-              className={`${item.icon === category ? 'active' : ''} item-image`}
-              src={`/img/assets/${item.icon}${item.icon === category ? '-active' : ''}.svg`}
-              alt={item.icon}
-            />
-            <div className="item-text">{item.name}</div>
-          </div>
-        </Col>
-      ))}
-    </STYLED_SELL_CATEGORY>
-  )
-}
+export const SellCategory = ({ category, setCategory }: ICategory) => (
+  <STYLED_SELL_CATEGORY gutter={[48, 0]}>
+    {dataCategories.map((item, index) => (
+      <Col key={index}>
+        <div className="item-wrap" onClick={() => setCategory(item.icon)}>
+          <img
+            className={`${item.icon === category ? 'active' : ''} item-image`}
+            src={`/img/assets/${item.icon}${item.icon === category ? '-active' : ''}.svg`}
+            alt={item.icon}
+          />
+          <div className="item-text">{item.name}</div>
+        </div>
+      </Col>
+    ))}
+  </STYLED_SELL_CATEGORY>
+)

@@ -266,25 +266,29 @@ export const TableList = ({ dataSource }: any) => {
     }
   }, [sslVolume, stakeVolume, liquidityObject])
 
-  const stakeProgram: Program = useMemo(() => {
-    return wallet.publicKey
-      ? new Program(
-          CONTROLLER_IDL as any,
-          SDK_ADDRESS[getNetworkConnection(network)].CONTROLLER_PROGRAM_ID,
-          new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
-        )
-      : undefined
-  }, [connection, wallet.publicKey, network])
+  const stakeProgram: Program = useMemo(
+    () =>
+      wallet.publicKey
+        ? new Program(
+            CONTROLLER_IDL as any,
+            SDK_ADDRESS[getNetworkConnection(network)].CONTROLLER_PROGRAM_ID,
+            new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
+          )
+        : undefined,
+    [connection, wallet.publicKey, network]
+  )
 
-  const SSLProgram: Program = useMemo(() => {
-    return wallet.publicKey
-      ? new Program(
-          SSL_IDL as any,
-          SDK_ADDRESS[getNetworkConnection(network)].SSL_PROGRAM_ID,
-          new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
-        )
-      : undefined
-  }, [connection, wallet.publicKey])
+  const SSLProgram: Program = useMemo(
+    () =>
+      wallet.publicKey
+        ? new Program(
+            SSL_IDL as any,
+            SDK_ADDRESS[getNetworkConnection(network)].SSL_PROGRAM_ID,
+            new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
+          )
+        : undefined,
+    [connection, wallet.publicKey]
+  )
 
   useEffect(() => {
     if (wallet.publicKey) {
@@ -295,7 +299,7 @@ export const TableList = ({ dataSource }: any) => {
       setAccountKey(undefined)
     }
 
-    return () => {}
+    return null
   }, [wallet.publicKey, connection])
 
   const getTokenPrice = (name) => {
@@ -475,17 +479,15 @@ export const TableList = ({ dataSource }: any) => {
           onClick: () => onExpandIcon(record.id)
         })}
         expandRowByClick={true}
-        expandedRowRender={(rowData: IFarmData) => {
-          return (
-            <ExpandedDynamicContent
-              rowData={rowData}
-              onExpandIcon={onExpandIcon}
-              stakeProgram={stakeProgram}
-              SSLProgram={SSLProgram}
-              stakeAccountKey={accountKey}
-            />
-          )
-        }}
+        expandedRowRender={(rowData: IFarmData) => (
+          <ExpandedDynamicContent
+            rowData={rowData}
+            onExpandIcon={onExpandIcon}
+            stakeProgram={stakeProgram}
+            SSLProgram={SSLProgram}
+            stakeAccountKey={accountKey}
+          />
+        )}
         expandIcon={(ps) => <ExpandIcon {...ps} onClick={onExpandIcon} />}
         expandIconColumnIndex={checkMobile() ? -1 : 6}
       />
@@ -496,7 +498,7 @@ export const TableList = ({ dataSource }: any) => {
   return TableData
 }
 
-const ExpandIcon = (props) => {
+const ExpandIcon = (props: { expanded: boolean; record: any; onClick: (a: any) => void }) => {
   const { expanded, record, onClick } = props
   return (
     <STYLED_EXPAND_ICON

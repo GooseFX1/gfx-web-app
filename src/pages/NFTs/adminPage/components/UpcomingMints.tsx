@@ -139,18 +139,24 @@ const GRADIENT_TEXT = styled.span`
   text-fill-color: transparent;
   width: fit-content;
 `
-export const GradientText = ({ text, fontSize, fontWeight }) => {
-  return (
-    <GRADIENT_TEXT
-      style={{
-        fontSize: fontSize + 'px',
-        fontWeight: fontWeight ? fontWeight : 600
-      }}
-    >
-      {text}
-    </GRADIENT_TEXT>
-  )
-}
+export const GradientText = ({
+  text,
+  fontSize,
+  fontWeight
+}: {
+  text: string | number
+  fontSize: number
+  fontWeight: number
+}) => (
+  <GRADIENT_TEXT
+    style={{
+      fontSize: fontSize + 'px',
+      fontWeight: fontWeight ? fontWeight : 600
+    }}
+  >
+    {text}
+  </GRADIENT_TEXT>
+)
 
 const settings = {
   dots: true,
@@ -165,7 +171,7 @@ const UpcomingMints = () => {
   const [showMints, setShowMints] = useState([])
   const { update } = useNFTAdmin()
   const [selected, setSelected] = useState<INFTProjectConfig | undefined>(undefined)
-  const [datesArr, setDatesArr] = useState<String[]>([])
+  const [datesArr, setDatesArr] = useState<string[]>([])
   const [selectIndex, setSelectIndex] = useState<number | undefined>()
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
   const month = [
@@ -196,7 +202,9 @@ const UpcomingMints = () => {
 
   useEffect(() => {
     setShowMints(
-      upcomingMints.filter((mint: INFTProjectConfig) => mint.date === datesArr[selectIndex] && mint.ended === false)
+      upcomingMints.filter(
+        (mint: INFTProjectConfig) => mint.date === datesArr[selectIndex] && mint.ended === false
+      )
     )
   }, [selectIndex])
 
@@ -212,7 +220,7 @@ const UpcomingMints = () => {
     <WRAPPER $navCollapsed={isCollapsed}>
       <div className="upcomingTitle">
         <span>
-          <GradientText text={upcomingMints?.length} fontSize={60} fontWeight={700} />{' '}
+          <GradientText text={upcomingMints?.length + ''} fontSize={60} fontWeight={700} />{' '}
         </span>
         <span style={{ marginLeft: '15px' }}>
           <GradientText text={'Upcoming Mints'} fontSize={35} fontWeight={700} />{' '}
@@ -241,29 +249,25 @@ const UpcomingMints = () => {
           {` ` + datesArr[selectIndex ? selectIndex : 0].substring(6)}
         </div>
         <Slider {...settings}>
-          {datesArr.map((date: any, index: number) => {
-            return (
-              <div className="date-row" key={index} onClick={() => setSelectIndex(index)}>
-                <div className="day">{days[new Date(formatTommddyyyy(date)).getDay()]}</div>
-                <div className={index === selectIndex ? 'gradientBg' : 'date'}>{date.substring(0, 2)}</div>
-              </div>
-            )
-          })}
+          {datesArr.map((date: any, index: number) => (
+            <div className="date-row" key={index} onClick={() => setSelectIndex(index)}>
+              <div className="day">{days[new Date(formatTommddyyyy(date)).getDay()]}</div>
+              <div className={index === selectIndex ? 'gradientBg' : 'date'}>{date.substring(0, 2)}</div>
+            </div>
+          ))}
         </Slider>
       </div>
       <div className="listOfUpcomingMints">
-        {showMints.map((mint: INFTProjectConfig, index: number) => {
-          return (
-            <div className="rowContainer" key={index} onClick={() => setSelected(mint)}>
-              <img src={mint?.coverUrl} className="" alt="img" />
-              <div>
-                <div className="mintNamePrimary">{mint?.collectionName}</div>
-                <div className="mintNameSecondary">{mint?.collectionName}</div>
-                <div className="mintNameSecondary">{mint?.time}</div>
-              </div>
+        {showMints.map((mint: INFTProjectConfig, index: number) => (
+          <div className="rowContainer" key={index} onClick={() => setSelected(mint)}>
+            <img src={mint?.coverUrl} className="" alt="img" />
+            <div>
+              <div className="mintNamePrimary">{mint?.collectionName}</div>
+              <div className="mintNameSecondary">{mint?.collectionName}</div>
+              <div className="mintNameSecondary">{mint?.time}</div>
             </div>
-          )
-        })}
+          </div>
+        ))}
       </div>
     </WRAPPER>
   )

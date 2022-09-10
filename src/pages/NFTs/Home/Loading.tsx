@@ -31,30 +31,28 @@ const ITEM = styled.div`
   }
 `
 
-const Loading = () => {
-  return (
-    <CONTAINER>
-      {Array.apply(null, Array(8)).map((item, index) => (
-        <ITEM key={index}>
-          <SkeletonCommon width="100px" height="100px" style={{ marginRight: '30px' }} />
+const Loading = () => (
+  <CONTAINER>
+    {[...Array(8)].map((_, index) => (
+      <ITEM key={index}>
+        <SkeletonCommon width="100px" height="100px" style={{ marginRight: '30px' }} />
 
-          <div className="analytic-content">
-            <div style={{ position: 'relative' }}>
-              <SkeletonCommon width="149px" height="28px" />
-            </div>
-            <div className="value">
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <SkeletonCommon width="89px" height="24px" style={{ marginRight: '10px' }} />
-                  <SkeletonCommon width="33px" height="33px" borderRadius="50%" />
-                </div>
+        <div className="analytic-content">
+          <div style={{ position: 'relative' }}>
+            <SkeletonCommon width="149px" height="28px" />
+          </div>
+          <div className="value">
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <SkeletonCommon width="89px" height="24px" style={{ marginRight: '10px' }} />
+                <SkeletonCommon width="33px" height="33px" borderRadius="50%" />
               </div>
             </div>
           </div>
-        </ITEM>
-      ))}
-    </CONTAINER>
-  )
-}
+        </div>
+      </ITEM>
+    ))}
+  </CONTAINER>
+)
 
 export default Loading

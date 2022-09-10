@@ -81,18 +81,19 @@ export const DropdownPairs: FC = () => {
 
   const menus = (
     <Menu>
-      {pairs.map((item, index) => {
-        return (
-          <Menu.Item onClick={() => handleSelection(item)} key={index}>
-            <PairComponents {...item} />
-          </Menu.Item>
-        )
-      })}
+      {pairs.map((item, index) => (
+        <Menu.Item onClick={() => handleSelection(item)} key={index}>
+          <PairComponents {...item} />
+        </Menu.Item>
+      ))}
     </Menu>
   )
   const { getAskSymbolFromPair, formatPair } = useCrypto()
   const formattedPair = useMemo(() => formatPair(selectedCrypto.pair), [formatPair, selectedCrypto.pair])
-  const symbol = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
+  const symbol = useMemo(
+    () => getAskSymbolFromPair(selectedCrypto.pair),
+    [getAskSymbolFromPair, selectedCrypto.pair]
+  )
   const assetIcon = useMemo(
     () => `/img/${selectedCrypto.type}/${selectedCrypto.type === 'synth' ? `g${symbol}` : symbol}.svg`,
     [symbol, selectedCrypto.type]

@@ -79,7 +79,13 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
       if (!event.defaultPrevented) {
-        state === State.CanSwap ? swapTokens(route, exchange) : !wallet ? setVisible(true) : connect().catch(() => {})
+        state === State.CanSwap
+          ? swapTokens(route, exchange)
+          : !wallet
+          ? setVisible(true)
+          : connect().catch((e: Error) => {
+              console.log(e)
+            })
       }
     },
     [connect, setVisible, state, swapTokens, wallet, route]

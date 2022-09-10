@@ -115,11 +115,13 @@ const Activity = (props: IActivity) => {
 
   return (
     <StyledTabContent>
-      {!checkMobile() && <div className="actions-group">
-        <div className="search-group">
-          <SearchBar className={'profile-search-bar '} />
+      {!checkMobile() && (
+        <div className="actions-group">
+          <div className="search-group">
+            <SearchBar className={'profile-search-bar '} />
+          </div>
         </div>
-      </div>}
+      )}
       {!activity ? (
         <div className="profile-content-loading">
           <div>

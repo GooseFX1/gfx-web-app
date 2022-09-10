@@ -75,7 +75,7 @@ const DROPDOWN_ICON_WRAPPER = styled(CenteredImg)`
   ${tw`w-7 h-[21px]`}
 `
 
-const ResponsiveDropdown: FC<{ logoAnimationTime?: number }> = ({}) => {
+const ResponsiveDropdown: FC<{ logoAnimationTime?: number }> = () => {
   const { mode } = useDarkMode()
   const [opacity, setOpacity] = useState(0)
 

@@ -47,11 +47,9 @@ export const FixedPriceTabContent: FC<{ filter: any; setCollapse?: (x: any) => v
   const { fixedPriceWithinCollection } = useNFTCollections()
   //const { sessionUser } = useNFTProfile()
 
-  const [fileredLocalFixedPrice, _setFilteredLocalFixedPrice] = useState<Array<ISingleNFT>>(
-    Array.apply(null, Array(21))
-  )
+  const [fileredLocalFixedPrice, _setFilteredLocalFixedPrice] = useState<Array<ISingleNFT>>(Array(21).fill(null))
   const [shortfileredLocalFixedPrice, _setShortFilteredLocalFixedPrice] = useState<Array<ISingleNFT>>(
-    Array.apply(null, Array(21))
+    Array(21).fill(null)
   )
   const [level, _setLevel] = useState<number>(0)
   const [loading, _setLoading] = useState<boolean>(false)

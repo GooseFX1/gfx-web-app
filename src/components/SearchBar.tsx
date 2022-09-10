@@ -49,15 +49,13 @@ ${tw`sm:w-3/4 sm:!h-[45px]`}
   }
 `
 
-export const SearchBar = ({ placeholder, setSearchFilter, filter, ...rest }: any) => {
-  return (
-    <SEARCH_BAR_WRAPPER {...rest}>
-      <input
-        placeholder={placeholder || 'Search by nft name'}
-        value={filter}
-        onChange={(e) => setSearchFilter(e.target.value)}
-      />
-      <Image preview={false} src={`/img/assets/search.svg`} />
-    </SEARCH_BAR_WRAPPER>
-  )
-}
+export const SearchBar = ({ placeholder, setSearchFilter, filter, ...rest }: any) => (
+  <SEARCH_BAR_WRAPPER {...rest}>
+    <input
+      placeholder={placeholder || 'Search by nft name'}
+      value={filter}
+      onChange={(e) => setSearchFilter(e.target.value)}
+    />
+    <Image preview={false} src={`/img/assets/search.svg`} />
+  </SEARCH_BAR_WRAPPER>
+)

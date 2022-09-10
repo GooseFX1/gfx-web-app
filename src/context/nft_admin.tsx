@@ -6,9 +6,9 @@ import { isAdminAllowed } from '../api/NFTLaunchpad/actions'
 interface IAdminConfig {
   adminAllowed: boolean
   adminSelected: ICreatorData
-  setAdminSelected: Function
+  setAdminSelected: (a: ICreatorData | undefined) => void
   update: number
-  setUpdate: Function
+  setUpdate: Function //eslint-disable-line
 }
 
 const NFTAdminContext = createContext<IAdminConfig>(null)

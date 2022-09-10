@@ -53,19 +53,16 @@ const RefreshIcon = styled.a`
   ${tw`cursor-pointer mr-[25px] ml-10 rounded-full border-0 p-0 bg-transparent flex`}
 `
 
-export const Loader: FC = () => {
-  return <Skeleton.Button active size="small" style={{ display: 'flex', height: '15px', borderRadius: '5px' }} />
-}
+export const Loader: FC = () => (
+  <Skeleton.Button active size="small" style={{ display: 'flex', height: '15px', borderRadius: '5px' }} />
+)
 
-export const HeaderTooltip = (text: string) => {
-  return (
-    <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
-      <Tooltip dark placement="bottomLeft" color="#000000">
-        <span>{text}</span>
-      </Tooltip>
-    )
+export const HeaderTooltip = (text: string) =>
+  <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
+    <Tooltip dark placement="bottomLeft" color="#000000">
+      <span>{text}</span>
+    </Tooltip>
   )
-}
 
 const Title = (text: string, infoText: string, isArrowDown: boolean) => (
   <STYLED_TITLE>
@@ -97,9 +94,9 @@ export const columns = [
     dataIndex: 'currentlyStaked',
     key: 'Balance',
     width: '16.6%',
-    render: (text) => {
-      return <div className="liquidity normal-text"> {text >= 0 ? `${moneyFormatter(text)}` : <Loader />}</div>
-    }
+    render: (text) => (
+      <div className="liquidity normal-text"> {text >= 0 ? `${moneyFormatter(text)}` : <Loader />}</div>
+    )
   },
   {
     title: Title(

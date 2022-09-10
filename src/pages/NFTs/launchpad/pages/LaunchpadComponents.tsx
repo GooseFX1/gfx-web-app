@@ -450,7 +450,7 @@ const LIVE_BTN = styled.div`
   }
 `
 
-export const MintProgressBar = ({ minted, totalNFTs }) => {
+export const MintProgressBar = ({ minted, totalNFTs }: { minted: number; totalNFTs: number }) => {
   let mintPercent = (minted / totalNFTs) * 100
   mintPercent = parseFloat(mintPercent.toFixed(0))
   return (
@@ -477,29 +477,27 @@ export const SWITCH_HOLDER = styled.div<{ $navCollapsed: boolean }>`
   margin-top: calc(100px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
 `
 
-export const InfoDivLightTheme = ({ items, price, currency }) => {
-  return (
-    <>
-      <INFO_DIV_LIGHT>
-        <div className={'inner'}>
-          {price ? (
-            <>
-              <div className="inner-2">
-                <>
-                  {'Price ' + price + ' '}
-                  <img className="priceImg" src={`/img/crypto/${currency}.svg`} />
-                  {currency}
-                </>
-              </div>
-            </>
-          ) : (
-            <div className="inner-2">{'Items ' + items}</div>
-          )}
-        </div>
-      </INFO_DIV_LIGHT>
-    </>
-  )
-}
+export const InfoDivLightTheme = ({ items, price, currency }: { items: any; price: number; currency: string }) => (
+  <>
+    <INFO_DIV_LIGHT>
+      <div className={'inner'}>
+        {price ? (
+          <>
+            <div className="inner-2">
+              <>
+                {'Price ' + price + ' '}
+                <img className="priceImg" src={`/img/crypto/${currency}.svg`} />
+                {currency}
+              </>
+            </div>
+          </>
+        ) : (
+          <div className="inner-2">{'Items ' + items}</div>
+        )}
+      </div>
+    </INFO_DIV_LIGHT>
+  </>
+)
 
 export const Socials = () => {
   const { selectedProject } = useNFTLPSelected()
@@ -539,17 +537,15 @@ export const Vesting = ({ currency, str }) => {
     </>
   )
 }
-export const InfoDivBrightTheme = ({ items }) => {
-  return (
-    <>
-      <INFO_DIV_BRIGHT>
-        <div className="inner-2">{items}</div>
-      </INFO_DIV_BRIGHT>
-    </>
-  )
-}
+export const InfoDivBrightTheme = ({ items }: { items: any }) => (
+  <>
+    <INFO_DIV_BRIGHT>
+      <div className="inner-2">{items}</div>
+    </INFO_DIV_BRIGHT>
+  </>
+)
 export const InfoDivUSDCTheme = () => {
-  const [goldenTicket, setGoldenTicket] = useState<Boolean>()
+  const [goldenTicket, setGoldenTicket] = useState<boolean>()
 
   return (
     <>
@@ -563,7 +559,7 @@ export const InfoDivUSDCTheme = () => {
   )
 }
 
-export const MintStarts = ({ time }) => {
+export const MintStarts = ({ time }: { time: string }) => {
   const getRemaningTime = (time) => {
     const startsOn = parseFloat(time)
     const timeDiffrence = startsOn - Date.now()
@@ -592,11 +588,9 @@ export const MintStarts = ({ time }) => {
     </>
   )
 }
-const TimerCircle = ({ data }) => {
-  return <div className="timer-circle">{data}</div>
-}
+const TimerCircle = ({ data }: { data: any }) => <div className="timer-circle">{data}</div>
 
-export const TokenSwitch = ({ disabled, currency }) => {
+export const TokenSwitch = ({ disabled, currency }: { disabled: boolean; currency: string }) => {
   const { isUSDC, setIsUSDC } = useUSDCToggle()
   const { isCollapsed } = useNavCollapse()
 
@@ -621,33 +615,29 @@ export const TokenSwitch = ({ disabled, currency }) => {
   )
 }
 
-export const LiveButton = () => {
-  return (
-    <LIVE_BTN>
-      <div className="liveText">Live</div>
-    </LIVE_BTN>
-  )
-}
+export const LiveButton = () => (
+  <LIVE_BTN>
+    <div className="liveText">Live</div>
+  </LIVE_BTN>
+)
 
-export const DarkDiv = ({ coverUrl }) => {
-  return (
-    <DARK_DIV>
-      <div className="dark-3" />
-      <div className="dark-2" />
-      <div className="dark-1" />
-      <LiveButton />
+export const DarkDiv = ({ coverUrl }: { coverUrl: string }) => (
+  <DARK_DIV>
+    <div className="dark-3" />
+    <div className="dark-2" />
+    <div className="dark-1" />
+    <LiveButton />
 
-      <div className="image-border">
-        <div className="inner-image-bg">
-          <img className="inner-image" src={coverUrl} alt="cover" />
-        </div>
+    <div className="image-border">
+      <div className="inner-image-bg">
+        <img className="inner-image" src={coverUrl} alt="cover" />
       </div>
-    </DARK_DIV>
-  )
-}
+    </div>
+  </DARK_DIV>
+)
 
-export const GoldenTicketPopup = ({}) => {
-  const closeGoldenPopup = (e) => {
+export const GoldenTicketPopup = () => {
+  const closeGoldenPopup = (e: any) => {
     if (e.target.id !== 'golden-ticket-popup') console.log('close popup')
   }
   return (
@@ -666,44 +656,36 @@ export const GoldenTicketPopup = ({}) => {
   )
 }
 
-export const TeamMembers = ({ teamMembers }) => {
-  return (
-    <TEAM_MEMBER_WRAPPER>
-      {teamMembers?.map((team) => {
-        return (
-          <div className="teamContainer">
-            {team?.dp_url ? (
-              <div className="avatar">
-                <img src={team?.dp_url} alt="" />
-              </div>
-            ) : (
-              <div className="avatar">
-                <img src={`/img/assets/avatarDark.png`} alt="" />
-              </div>
-            )}
-            <div className="userNameText">{team?.name}</div>
+export const TeamMembers = ({ teamMembers }: { teamMembers: any[] }) => (
+  <TEAM_MEMBER_WRAPPER>
+    {teamMembers?.map((team, key) => (
+      <div className="teamContainer" key={key}>
+        {team?.dp_url ? (
+          <div className="avatar">
+            <img src={team?.dp_url} alt="" />
           </div>
-        )
-      })}
-    </TEAM_MEMBER_WRAPPER>
-  )
-}
+        ) : (
+          <div className="avatar">
+            <img src={`/img/assets/avatarDark.png`} alt="" />
+          </div>
+        )}
+        <div className="userNameText">{team?.name}</div>
+      </div>
+    ))}
+  </TEAM_MEMBER_WRAPPER>
+)
 
-export const RoadMap = ({ roadmap }) => {
-  return (
-    <ROADMAP_WRAPPER>
-      {roadmap?.map((road) => {
-        return (
-          <div className="verticalContainer">
-            <img className="elipse" src={`/img/assets/elipse.png`} alt="" />
-            <img className="verticalLine" src="/img/assets/vectorLine.svg" alt="" />
-            <div style={{ marginTop: '-50px', marginLeft: '10px' }}>
-              <div className="headingText">{road?.heading}</div>
-              <div className="subHeadingText">{road?.subheading}</div>
-            </div>
-          </div>
-        )
-      })}
-    </ROADMAP_WRAPPER>
-  )
-}
+export const RoadMap = ({ roadmap }: { roadmap: any[] }) => (
+  <ROADMAP_WRAPPER>
+    {roadmap?.map((road, key) => (
+      <div className="verticalContainer" key={key}>
+        <img className="elipse" src={`/img/assets/elipse.png`} alt="" />
+        <img className="verticalLine" src="/img/assets/vectorLine.svg" alt="" />
+        <div style={{ marginTop: '-50px', marginLeft: '10px' }}>
+          <div className="headingText">{road?.heading}</div>
+          <div className="subHeadingText">{road?.subheading}</div>
+        </div>
+      </div>
+    ))}
+  </ROADMAP_WRAPPER>
+)

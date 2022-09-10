@@ -27,7 +27,7 @@ export function chunks<T>(array: T[], size: number): T[][] {
   )
 }
 
-export function ellipseNumber(num: number | string | undefined, length: number = 15): string {
+export function ellipseNumber(num: number | string | undefined, length = 15): string {
   const x = String(num)
   return x.length > length ? x.slice(0, length).concat('...') : x
 }
@@ -39,7 +39,7 @@ export function flatten(
   let restrict = restrictTo
 
   if (restrict) {
-    restrict = restrict.filter((k) => obj.hasOwnProperty(k))
+    restrict = restrict.filter((k) => !!obj.getOwnPropertyDescriptor(k))
   }
 
   const result: { [x: string]: any } = {}
@@ -102,9 +102,7 @@ type UseStorageReturnValue = {
 export const useLocalStorage = (): UseStorageReturnValue => {
   const isBrowser: boolean = ((): boolean => typeof window !== 'undefined')()
 
-  const getItem = (key: string): string => {
-    return isBrowser ? window.localStorage[key] : ''
-  }
+  const getItem = (key: string): string => (isBrowser ? window.localStorage[key] : '')
 
   const setItem = (key: string, value: string): boolean => {
     if (isBrowser) {
@@ -134,19 +132,17 @@ export const checkMobile = () => {
 export function debounce(callback: any, wait: number) {
   let timeout
   return (...args) => {
-    const context = this
     clearTimeout(timeout)
-    timeout = setTimeout(() => callback.apply(context, args), wait)
+    timeout = setTimeout(() => callback.apply(this, args), wait)
   }
 }
 
-export const createUUID = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+export const createUUID = () =>
+  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     const r = (Math.random() * 16) | 0,
       v = c == 'x' ? r : (r & 0x3) | 0x8
     return v.toString(16)
   })
-}
 
 export const getLast = <T>(arr: T[]) => {
   if (arr.length <= 0) {

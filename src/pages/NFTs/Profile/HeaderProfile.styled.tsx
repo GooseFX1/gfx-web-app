@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { Dropdown, Menu } from 'antd'
 import { Modal } from '../../../components'
 
-export const StyledHeaderProfile = styled.div<{ mode?: string, background?: String}>`
+export const StyledHeaderProfile = styled.div<{ mode?: string; background?: string }>`
   ${({ theme, mode, background }) => `
   position: relative;
   height: 30vh;
@@ -188,7 +188,7 @@ export const StyledDropdown = styled(Dropdown)`
   }
 `
 export const StyledMenu = styled(Menu)`
-  @media(max-width: 500px){
+  @media (max-width: 500px) {
     margin-top: 0;
     background-color: #383838;
     min-width: inherit;

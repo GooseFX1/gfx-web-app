@@ -84,9 +84,10 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
 
   const showQuickSelect = useMemo(() => balance > 0, [balance])
 
-  const value = useMemo(() => {
-    return inTokenAmount && pool.inValue && `${(pool.inValue * inTokenAmount).toString().slice(0, 8)} USDC`
-  }, [inTokenAmount, pool.inValue])
+  const value = useMemo(
+    () => inTokenAmount && pool.inValue && `${(pool.inValue * inTokenAmount).toString().slice(0, 8)} USDC`,
+    [inTokenAmount, pool.inValue]
+  )
 
   return (
     <WRAPPER>
@@ -113,7 +114,9 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
         <Input
           maxLength={15}
           onBlur={() => setFocused(undefined)}
-          onChange={(x: BaseSyntheticEvent) => tokenA && !isNaN(x.target.value) && setInTokenAmount(x.target.value)}
+          onChange={(x: BaseSyntheticEvent) =>
+            tokenA && !isNaN(x.target.value) && setInTokenAmount(x.target.value)
+          }
           onFocus={() => setFocused('from')}
           pattern="\d+(\.\d+)?"
           placeholder={inTokenAmount.toString()}

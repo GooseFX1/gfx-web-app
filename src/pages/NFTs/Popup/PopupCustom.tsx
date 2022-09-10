@@ -40,16 +40,14 @@ export const PopupCustom: FC<{
   closeIcon: any
   className?: string
   [x: string]: any
-}> = ({ width, height, children, className, ...props }) => {
-  return (
-    <STYLED_POPUP
-      className={className}
-      width={width}
-      height={height}
-      {...props}
-      closeIcon={<SVGDynamicReverseMode src={`/img/assets/close-white-icon.svg`} alt="" />}
-    >
-      {children}
-    </STYLED_POPUP>
-  )
-}
+}> = ({ width, height, children, className, ...props }) => (
+  <STYLED_POPUP
+    className={className}
+    width={width}
+    height={height}
+    {...props}
+    closeIcon={<SVGDynamicReverseMode src={`/img/assets/close-white-icon.svg`} alt="" />}
+  >
+    {children}
+  </STYLED_POPUP>
+)

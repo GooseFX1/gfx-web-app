@@ -52,7 +52,7 @@ export const Collection: FC = (): JSX.Element => {
       })
     }
 
-    return () => {}
+    return null
   }, [fetchSingleCollection, params.collectionName])
   //had to remove singleCollection useState trigger as it leads to
   // infinite loop as setSingleCollection is called in fecthSingleCollection

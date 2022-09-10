@@ -13,6 +13,4 @@ const WRAPPER = styled(CenteredDiv)`
   cursor: pointer;
 `
 
-export const Expand: FC<{ [x: string]: any }> = ({ ...props }) => {
-  return <WRAPPER {...props} />
-}
+export const Expand: FC<{ [x: string]: any }> = ({ ...props }) => <WRAPPER {...props} />

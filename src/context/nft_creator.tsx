@@ -6,11 +6,11 @@ import { isCreatorAllowed, saveData } from '../api/NFTLaunchpad/actions'
 interface ICreatorConfig {
   isAllowed: boolean
   currentStep: number
-  previousStep: Function
-  nextStep: Function
-  saveDataForStep: Function
+  previousStep: () => void
+  nextStep: () => void
+  saveDataForStep: (d: any) => void
   creatorData: ICreatorData
-  submit: Function
+  submit: () => Promise<boolean>
 }
 
 const NFTCreatorContext = createContext<ICreatorConfig>(null)

@@ -197,7 +197,7 @@ ${tw`my-6`}
 export const RightSection: FC<{
   status: MintItemViewStatus
 }> = ({ status, ...rest }) => {
-  const { general, nftMetadata, bids, curHighestBid, ask, totalLikes } = useNFTDetails()
+  const { general, nftMetadata, curHighestBid, ask, totalLikes } = useNFTDetails()
   const { prices } = usePriceFeed()
   const { sessionUser, likeDislike } = useNFTProfile()
   const [likes, setLikes] = useState(0)
@@ -246,7 +246,7 @@ export const RightSection: FC<{
   // const percent = '+ 1.15 %'
   const isForCharity = false
 
-  useEffect(() => {}, [bids])
+  //useEffect(() => {}, [bids])
 
   if (nftMetadata === null) {
     return <div>Error loading metadata</div>

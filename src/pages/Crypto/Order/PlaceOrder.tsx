@@ -27,8 +27,8 @@ export const PlaceOrder: FC = () => {
     if (!publicKey) {
       return State.Connect
     }
-    // @ts-ignore
-    if (!order.size || order.size === '0') {
+
+    if (!order.size || order.size === 0) {
       return State.NullAmount
     }
 
@@ -59,7 +59,13 @@ export const PlaceOrder: FC = () => {
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
       if (!event.defaultPrevented) {
-        state === State.CanPlaceOrder ? placeOrder() : !wallet ? setVisible(true) : connect().catch(() => {})
+        state === State.CanPlaceOrder
+          ? placeOrder()
+          : !wallet
+          ? setVisible(true)
+          : connect().catch((e: Error) => {
+              console.log(e)
+            })
       }
     },
     [connect, placeOrder, setVisible, state, wallet]

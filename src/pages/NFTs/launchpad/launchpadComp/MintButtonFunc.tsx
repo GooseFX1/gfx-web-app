@@ -135,7 +135,11 @@ export const MintButtonFunc = ({
   const { connection } = useConnectionConfig()
 
   const getWhitelistSpots = () => {
-    if (cndyValues && cndyValues.whitelistInfo && cndyValues.whitelistInfo.numberOfWhitelistSpotsPerUser.toString() > 0)
+    if (
+      cndyValues &&
+      cndyValues.whitelistInfo &&
+      cndyValues.whitelistInfo.numberOfWhitelistSpotsPerUser.toString() > 0
+    )
       return cndyValues.whitelistInfo.numberOfWhitelistSpotsPerUser.toString()
     return null
   }
@@ -212,7 +216,7 @@ export const MintButtonFunc = ({
                   setClicked(true)
                   const gatewayToken = await findGatewayToken(
                     connection,
-                    wallet.publicKey!,
+                    wallet.publicKey,
                     candyMachine.state.gatekeeper.gatekeeperNetwork
                   )
 
@@ -222,7 +226,7 @@ export const MintButtonFunc = ({
                     window.open(`https://verify.encore.fans/?gkNetwork=${network}`, '_blank')
 
                     const gatewayTokenAddress = await getGatewayTokenAddressForOwnerAndGatekeeperNetwork(
-                      wallet.publicKey!,
+                      wallet.publicKey,
                       candyMachine.state.gatekeeper.gatekeeperNetwork
                     )
 

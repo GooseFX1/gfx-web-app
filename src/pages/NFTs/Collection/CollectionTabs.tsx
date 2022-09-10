@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { Tabs } from 'antd'
 import { useNFTCollections } from '../../../context'
@@ -136,10 +136,20 @@ const STYLED_SEARCH_BAR = styled.div`
 `
 //#endregion
 
-export const CollectionTabs = ({ filter, setFilter, collapse, setCollapse }) => {
+export const CollectionTabs = ({
+  filter,
+  setFilter,
+  collapse,
+  setCollapse
+}: {
+  filter: string
+  setFilter: (s: string) => void
+  collapse: boolean
+  setCollapse: (b: boolean) => void
+}) => {
   const { singleCollection } = useNFTCollections()
 
-  useEffect(() => {}, [singleCollection])
+  //useEffect(() => {}, [singleCollection])
 
   /*<TabPane tab="Owners" key="3">
       <OwnersTabContent />
