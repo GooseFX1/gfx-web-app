@@ -105,9 +105,9 @@ const ResponsiveDropdown: FC<{ logoAnimationTime?: number }> = () => {
           src={`${process.env.PUBLIC_URL}/img/assets/cross.svg`}
           onClick={toggleOpacity}
         />
+        <ThemeToggle />
         <Tabs mobileToggle={toggleOpacity} />
         <RewardsButton />
-        <ThemeToggle />
       </RESPONSIVE_MENU>
     </RESPONSIVE_DROPDOWN_WRAPPER>
   )

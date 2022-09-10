@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { PopupCustom } from './Popup/PopupCustom'
 import { CheckOutlined } from '@ant-design/icons'
+import { checkMobile } from '../../utils'
 
 const STYLED_SHARE_PROFILE = styled(PopupCustom)`
   ${({ theme }) => `
@@ -110,7 +111,7 @@ export const Share = ({ visible, handleCancel, socials, handleShare }: IShare) =
   return (
     <STYLED_SHARE_PROFILE
       width="587px"
-      height="310px"
+      height={checkMobile() ? 'auto' : '310px'}
       title={null}
       visible={visible}
       onCancel={handleCancel}

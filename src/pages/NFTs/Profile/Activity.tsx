@@ -5,7 +5,7 @@ import { fetchNFTById } from '../../../api/NFTs'
 import { SearchBar, Loader } from '../../../components'
 import { StyledTabContent } from './TabContent.styled'
 import { useNFTProfile, useConnectionConfig } from '../../../context'
-import { truncateAddress } from '../../../utils'
+import { checkMobile, truncateAddress } from '../../../utils'
 // import { INFTMetadata } from '../../../types/nft_details.d'
 
 export const columns = [
@@ -115,11 +115,13 @@ const Activity = (props: IActivity) => {
 
   return (
     <StyledTabContent>
-      <div className="actions-group">
-        <div className="search-group">
-          <SearchBar className={'profile-search-bar '} />
+      {!checkMobile() && (
+        <div className="actions-group">
+          <div className="search-group">
+            <SearchBar className={'profile-search-bar '} />
+          </div>
         </div>
-      </div>
+      )}
       {!activity ? (
         <div className="profile-content-loading">
           <div>

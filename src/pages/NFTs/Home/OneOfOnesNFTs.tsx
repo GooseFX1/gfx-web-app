@@ -8,17 +8,30 @@ import { ArrowClicker } from '../../../components'
 //import { ButtonWrapper } from '../NFTButton'
 //import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { Card } from '../Collection/Card'
+import { checkMobile } from '../../../utils'
+import tw from 'twin.macro'
 
 const CAROUSEL_WRAPPER = styled.div`
   display: flex;
   flex-direction: column;
   padding: 16px 0 16px 32px;
+
+  .card-image {
+    ${tw`h-[300px]`}
+  }
 `
 
 const HEADER_CAROUSEL = styled.div`
   display: flex;
   margin: ${({ theme }) => theme.margin(4)} 0;
   align-items: center;
+`
+const ROW = styled.div`
+  ${tw`flex overflow-x-scroll`}
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `
 
 const LEFT_ARROW = styled(ArrowClicker)`
@@ -51,6 +64,7 @@ const HEADER_END_CAROUSEL = styled.div`
 
 const CARD_WRAPPER = styled.div`
   .card {
+    ${tw`sm:mx-0`}
     margin: 0 32px;
     width: 332px;
   }
@@ -103,19 +117,32 @@ const OneOfOnesNFTs: FC<IOneOfOnesNFTs> = ({ items, title }) => {
       <CAROUSEL_WRAPPER>
         <HEADER_CAROUSEL>
           {title !== undefined && <TITLE_CAROUSEL>{title}</TITLE_CAROUSEL>}
-          <HEADER_END_CAROUSEL>
-            <LEFT_ARROW onClick={slickPrev} />
-            <RIGHT_ARROW onClick={slickNext} />
-          </HEADER_END_CAROUSEL>
+          {!checkMobile() ? (
+            <HEADER_END_CAROUSEL>
+              <LEFT_ARROW onClick={slickPrev} />
+              <RIGHT_ARROW onClick={slickNext} />
+            </HEADER_END_CAROUSEL>
+          ) : (
+            <></>
+          )}
         </HEADER_CAROUSEL>
-
-        <Slider ref={slickRef} {...settings}>
-          {items.map((item: any) => (
-            <CARD_WRAPPER key={item.non_fungible_id} style={{ minWidth: '300px', margin: '0 32px !important' }}>
-              <Card singleNFT={item} />
-            </CARD_WRAPPER>
-          ))}
-        </Slider>
+        {!checkMobile() ? (
+          <Slider ref={slickRef} {...settings}>
+            {items.map((item: any) => (
+              <CARD_WRAPPER key={item.non_fungible_id} style={{ minWidth: '300px', margin: '0 32px !important' }}>
+                <Card singleNFT={item} />
+              </CARD_WRAPPER>
+            ))}
+          </Slider>
+        ) : (
+          <ROW>
+            {items.map((item: any) => (
+              <CARD_WRAPPER key={item.non_fungible_id} style={{ marginRight: '10px' }}>
+                <Card singleNFT={item} />
+              </CARD_WRAPPER>
+            ))}
+          </ROW>
+        )}
       </CAROUSEL_WRAPPER>
     )
   } else {

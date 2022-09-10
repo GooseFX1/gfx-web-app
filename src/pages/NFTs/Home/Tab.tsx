@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Tabs } from 'antd'
 import { Categories } from '../../../components'
 import TabContent from './TabContent'
+import tw from 'twin.macro'
 const { TabPane } = Tabs
 
 //#region styles
@@ -39,6 +40,7 @@ const ANALYTICS_TABS = styled.div`
         display: block;
 
         .ant-tabs-nav-list {
+          ${tw`sm:pr-0 sm:mx-0 sm:mt-2.5 sm:w-full`}
           position: relative;
           display: flex;
           justify-content: space-around;
@@ -52,12 +54,14 @@ const ANALYTICS_TABS = styled.div`
   }
 
   .ant-tabs-tab {
+    ${tw`sm:text-regular`}
     color: ${({ theme }) => theme.tabNameColor};
     font-size: 22px;
     font-family: Montserrat;
 
     &.ant-tabs-tab-active {
       .ant-tabs-tab-btn {
+        ${tw`sm:text-regular`}
         color: ${({ theme }) => theme.text7};
         font-weight: 600;
         position: relative;
@@ -80,6 +84,7 @@ const ANALYTICS_TABS = styled.div`
 `
 
 const ANALYTICS_DROPDOWN = styled.div`
+  ${tw`sm:static sm:w-full sm:justify-around`}
   position: absolute;
   left: 32px;
   width: 355px;
@@ -88,6 +93,7 @@ const ANALYTICS_DROPDOWN = styled.div`
   align-items: center;
   z-index: 4;
   .title {
+    ${tw`sm:text-regular sm:mr-0`}
     font-size: 22px;
     font-weight: 600;
     color: ${({ theme }) => theme.text2};
@@ -95,6 +101,10 @@ const ANALYTICS_DROPDOWN = styled.div`
     margin-right: ${({ theme }) => theme.margin(3)};
   }
   .analytics-dropwdown {
+    @media (max-width: 500px) {
+      background: ${({ theme }) => theme.primary3};
+      height: 40px;
+    }
     width: 136px;
     height: 45px;
     span {

@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import { GradientText } from '../NFTs/adminPage/components/UpcomingMints'
 import { AnalyticsStats } from './components/AnalyticsStats'
-import { FiniancialsStats } from './components/FiniancialsStats'
+import { FinancialsStats } from './components/FinancialsStats'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col`}
@@ -33,7 +33,7 @@ const WRAPPER = styled.div`
 export const AnalyticsTable = () => (
   <WRAPPER>
     <AnalyticsSection />
-    <FiniancialSection />
+    <FinancialSection />
   </WRAPPER>
 )
 
@@ -61,14 +61,14 @@ const AnalyticsSection = () => {
   )
 }
 
-const FiniancialSection = () => {
+const FinancialSection = () => {
   const arrowDownClicked = () => {
     setExpand((prev) => !prev)
   }
   const [expand, setExpand] = useState<boolean>(false)
   return (
     <div className="title" style={{ height: expand ? '50%' : '80px' }}>
-      <GradientText text={'Finiancials'} fontSize={40} fontWeight={600} />
+      <GradientText text={'Financials'} fontSize={40} fontWeight={600} />
       <span>
         <img
           onClick={() => arrowDownClicked()}
@@ -79,7 +79,7 @@ const FiniancialSection = () => {
         />
       </span>
       {expand && <h2 />}
-      {expand && <FiniancialsStats />}
+      {expand && <FinancialsStats />}
     </div>
   )
 }

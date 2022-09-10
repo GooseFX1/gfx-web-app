@@ -47,7 +47,12 @@ export const wrapSolToken = async (wallet: WalletContextState, connection: Conne
       }
 
       tx.add(
-        createAssociatedTokenAccountInstruction(wallet.publicKey, associatedTokenAccount, wallet.publicKey, NATIVE_MINT)
+        createAssociatedTokenAccountInstruction(
+          wallet.publicKey,
+          associatedTokenAccount,
+          wallet.publicKey,
+          NATIVE_MINT
+        )
       )
 
       // Transfer SOL to associated token account and use SyncNative to update wrapped SOL balance
@@ -175,9 +180,9 @@ export const preSwapAmount = async (
       }
       const { getQuote } = SWAP
       const quote = await getQuote(new PublicKey(tokenA.address), new PublicKey(tokenB.address), BigInt(inAmount))
-      const { out, impact } = quote
+      const { amountOut, impact } = quote
       priceImpact = Number(impact)
-      outAmount = Number(out.toString()) / 10 ** tokenB.decimals
+      outAmount = Number(amountOut.toString()) / 10 ** tokenB.decimals
     } catch (e) {
       console.log(e)
     }

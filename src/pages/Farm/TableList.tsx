@@ -65,6 +65,11 @@ export const STYLED_TABLE_LIST = styled(Table)`
     }
   }
   .ant-table-thead {
+    .ant-table-cell{
+      @media(max-width: 500px){
+        height: 68px;
+      }
+    }
      top: 200px;
      background: ${theme.farmHeaderBg};
     > tr {
@@ -225,6 +230,7 @@ export const TableList = ({ dataSource }: any) => {
   const [stakeVolume, setStakeVolume] = useState<number>(0)
   const [liquidityObject, setLiquidityObject] = useState({})
   const [aprVolumeData, setAprVolumeData] = useState({})
+  const [savedVolume, setSavedVolume] = useState<boolean>(false)
 
   useEffect(() => {
     refreshTokenData()
@@ -252,9 +258,11 @@ export const TableList = ({ dataSource }: any) => {
       stakeVolume !== 0 &&
       sslVolume !== 0 &&
       Object.keys(liquidityObject).length > 0 &&
-      network === NETWORK_CONSTANTS.MAINNET
+      network === NETWORK_CONSTANTS.MAINNET &&
+      savedVolume === false
     ) {
       saveLiquidtyVolume(sslVolume, stakeVolume, liquidityObject)
+      setSavedVolume(true)
     }
   }, [sslVolume, stakeVolume, liquidityObject])
 

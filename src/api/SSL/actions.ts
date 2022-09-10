@@ -33,6 +33,7 @@ export const saveLiquidtyVolume = async (sslVolume: number, stakeVolume: number,
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.SAVE_LIQUIDITY_DATA
     const dataToSend = JSON.stringify({
       date: getDateInISOFormat(),
+      updatedTime: new Date().getTime(),
       aggregatedVolume: {
         sslVolume: sslVolume,
         stakeVolume: stakeVolume,

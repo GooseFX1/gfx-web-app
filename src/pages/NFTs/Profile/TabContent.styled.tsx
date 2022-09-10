@@ -53,6 +53,21 @@ export const StyledTabContent = styled.div`
       overflow-x: hidden;
       overflow-y: scroll;
       ${theme.customScrollBar('4px')}
+
+      .card{
+        @media(max-width: 500px){
+          display: flex;
+          flex-direction: column;
+          height: auto;
+          justify-content: center;
+        }
+
+        .card-image-wrapper{
+          @media(max-width: 500px){
+            padding: 8px;
+          }
+        }
+      }
     }
 
   `}

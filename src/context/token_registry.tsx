@@ -29,7 +29,7 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
       //we cannot use the full list because of limited icons (795 tokens) and loading time,
       // so we'll keep on using the name addition for now
       const manualList = newList.filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
-      const jupiterList = newList.filter(({ symbol }) => !SUPPORTED_TOKEN_LIST.includes(symbol)).slice(20, 100)
+      const jupiterList = newList.filter(({ symbol }) => !SUPPORTED_TOKEN_LIST.includes(symbol)).slice(1, 150)
       const splList = [...manualList, ...jupiterList]
 
       let farmSupportedList = list.filter(({ symbol }) => FARM_SUPPORTED_TOKEN_LIST.includes(symbol))

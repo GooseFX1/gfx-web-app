@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
@@ -8,6 +9,8 @@ import { nFormatter } from '../../../utils'
 import { useNFTProfile, usePriceFeed, useDarkMode } from '../../../context'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { Image } from 'antd'
+import { checkMobile } from '../../../utils'
+import tw from 'twin.macro'
 
 const TAB_CONTENT = styled.div`
   min-height: 300px;
@@ -15,7 +18,17 @@ const TAB_CONTENT = styled.div`
   display: flex;
   flex-wrap: wrap;
 `
+
+const ROW = styled.div`
+  ${tw`flex flex-row overflow-x-scroll py-0 px-3.5 mt-3`}
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`
+
 const ANALYTIC_ITEM = styled.div`
+  ${tw`sm:w-3/4`}
   display: flex;
   width: 25%;
   padding: ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(3)};
@@ -148,7 +161,7 @@ const TabContent = ({ baseCollections, collectionFilter, sort }: ITabContent) =>
     }
   }
 
-  return (
+  return !checkMobile() ? (
     <TAB_CONTENT>
       {collectionExtras &&
         collectionExtras
@@ -157,6 +170,25 @@ const TabContent = ({ baseCollections, collectionFilter, sort }: ITabContent) =>
             <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
           ))}
     </TAB_CONTENT>
+  ) : collectionExtras && collectionExtras.length > 0 ? (
+    <>
+      <ROW>
+        {collectionExtras.slice(0, 4).map((collection: NFTCollection, i) => (
+          <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
+        ))}
+      </ROW>
+      <ROW>
+        {collectionExtras.slice(4, 8).map((collection: NFTCollection, i) => (
+          <AnalyticItem collection={collection} key={i} collectionFilter={collectionFilter} />
+        ))}
+      </ROW>
+    </>
+  ) : (
+    <>
+      {[1, 2].map(() => (
+        <SkeletonCommon height="100px" width="90%" style={{ margin: '28px auto 0', display: 'block' }} />
+      ))}
+    </>
   )
 }
 
@@ -212,7 +244,11 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
         <div style={{ position: 'relative' }}>
           <h2 className="title">
             {/* @ts-ignore */}
-            {!isCollection ? <SkeletonCommon width="149px" height="28px" /> : collection.collection[0].collection_name}
+            {!isCollection ? (
+              <SkeletonCommon width="149px" height="28px" />
+            ) : (
+              collection.collection[0].collection_name
+            )}
           </h2>
           {isCollection && collection && collection.collection[0].is_verified && (
             <img className="check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.svg`} alt="" />

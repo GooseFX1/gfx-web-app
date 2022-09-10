@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { HeaderProfile } from './HeaderProfile'
 import { ContentProfile } from './ContentProfile'
 import { useNFTProfile } from '../../../context'
+import tw from 'twin.macro'
 
 //#region styles
 const PROFILE_CONTAINER = styled.div`
@@ -24,6 +25,7 @@ const PROFILE_CONTAINER = styled.div`
         display: block;
 
         .ant-tabs-nav-list {
+          ${tw`sm:w-full sm:block sm:pt-2.5 overflow-scroll`}
           position: relative;
           display: flex;
           justify-content: space-around;
@@ -33,7 +35,12 @@ const PROFILE_CONTAINER = styled.div`
           margin-left: auto;
           padding-right: 21px;
 
+          ::-webkit-scrollbar {
+            display: none;
+          }
+
           .ant-tabs-tab {
+            ${tw`sm:my-0 sm:mx-8`}
             padding: 16px 0;
           }
           .ant-tabs-tab-active {
@@ -67,8 +74,13 @@ const PROFILE_CONTAINER = styled.div`
 export const Profile: FC = (): JSX.Element => {
   const history = useHistory()
   const params = useParams<IAppParams>()
-  const { sessionUser, setUserActivity, setParsedAccounts, setNonSessionProfile, setNonSessionUserParsedAccounts } =
-    useNFTProfile()
+  const {
+    sessionUser,
+    setUserActivity,
+    setParsedAccounts,
+    setNonSessionProfile,
+    setNonSessionUserParsedAccounts
+  } = useNFTProfile()
   const { connected, publicKey } = useWallet()
   const [isSessionUser, setIsSessionUser] = useState<boolean>()
 

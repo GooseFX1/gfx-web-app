@@ -2,6 +2,9 @@ import styled from 'styled-components'
 import { Form, Modal } from 'antd'
 
 export const StyledPopupProfile = styled(Modal)`
+  @media (max-width: 500px) {
+    max-width: 100%;
+  }
   * {
     font-family: 'Montserrat' !important;
   }
@@ -12,10 +15,13 @@ export const StyledPopupProfile = styled(Modal)`
   width: 500px !important;
   
   .ant-modal-header {
-    ${theme.largeBorderRadius}
+    ${theme.largeBorderRadius};
     background: ${theme.bg3};
     padding: ${theme.margin(4)} ${theme.margin(5.5)} 0 ${theme.margin(5.5)};
     border: none;
+    @media(max-width: 500px){
+      padding: 32px 25px 0 25px;
+    }
     .ant-modal-title {
       font-size: 25px;
       color: ${theme.text7};
@@ -28,6 +34,9 @@ export const StyledPopupProfile = styled(Modal)`
   }
   .ant-modal-body {
     padding: ${theme.margin(1)} ${theme.margin(5.5)} ${theme.margin(4)};
+    @media(max-width: 500px){
+      padding: 25px;
+    }
   }
   .ant-modal-close {
     top: 23px;
@@ -128,11 +137,17 @@ export const StyledFormProfile = styled(Form)`
   ${({ theme }) => `
   margin-top: ${theme.margin(3)};
   .half-width {
+    @media(max-width: 500px){
+      width: 100%;
+    }
     flex: 1;
     width: 50%;
     margin: 0 ${theme.margin(1)};
   }
   .full-width {
+    @media(max-width: 500px){
+      display: block;
+    }
     display: flex;
     margin: 0 -${theme.margin(0.5)} ${theme.margin(1)};;
   }

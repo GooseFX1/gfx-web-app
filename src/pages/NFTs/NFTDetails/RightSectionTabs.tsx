@@ -12,7 +12,7 @@ import { AttributesTabContent } from './AttributesTabContent'
 import RemoveModalContent from './RemoveModalContent'
 import { Modal, SuccessfulListingMsg } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
-import { notify, truncateAddress } from '../../../utils'
+import { checkMobile, notify, truncateAddress } from '../../../utils'
 import { tradeStatePDA, callCancelInstruction, callWithdrawInstruction, tokenSize } from '../actions'
 import { removeNonCollectionListing } from '../../../api/NFTs'
 import { BidModal } from './BidModal'
@@ -30,6 +30,7 @@ import {
   bnTo8
 } from '../../../web3'
 import BN from 'bn.js'
+import tw from 'twin.macro'
 
 const { TabPane } = Tabs
 
@@ -37,6 +38,7 @@ const { TabPane } = Tabs
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme }) => css`
     position: relative;
+    margin-bottom: 20px;
 
     .ant-tabs-nav {
       position: relative;
@@ -83,8 +85,10 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
       color: #616161;
       font-size: 14px;
       font-weight: 500;
+      ${tw`sm:ml-0`}
 
       .ant-tabs-tab-btn {
+        ${tw`sm:text-tiny`}
         font-size: 17px;
       }
 
@@ -102,6 +106,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
     }
 
     .ant-tabs-content-holder {
+      ${tw`sm:mb-12 sm:rounded-none`}
       height: 275px;
       background-color: ${theme.tabContentBidBackground};
       transform: translateY(-32px);
@@ -118,6 +123,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
     }
 
     .rst-footer {
+      ${tw`sm:block`}
       width: 100%;
       position: absolute;
       display: flex;
@@ -128,6 +134,10 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
       border-top: 1px solid ${theme.borderColorTabBidFooter};
       background: ${theme.tabContentBidFooterBackground};
       backdrop-filter: blur(23.9091px);
+
+      .last-bid {
+        margin: 0 auto;
+      }
 
       .rst-footer-button {
         flex: 1;
@@ -190,10 +200,11 @@ export const DETAILS_TAB_CONTENT = styled.div`
       font-weight: 500;
 
       .dtc-item-value {
-        color: #949494;
+        ${tw`sm:text-tiny`}
         color: ${theme.text8};
       }
       .dtc-item-title {
+        ${tw`sm:text-tiny`}
         color: ${theme.text7};
       }
     }
@@ -574,7 +585,7 @@ export const RightSectionTabs: FC<{
                   </button>
                 )}
               </>
-            ) : (
+            ) : !checkMobile() ? (
               <SpaceBetweenDiv style={{ flexGrow: 1 }}>
                 {bids.find((bid) => bid.wallet_key === wallet.publicKey.toBase58()) && (
                   <button
@@ -599,6 +610,35 @@ export const RightSectionTabs: FC<{
                   </button>
                 )}
               </SpaceBetweenDiv>
+            ) : (
+              <>
+                <div>
+                  {bids.find((bid) => bid.wallet_key === wallet.publicKey.toBase58()) && (
+                    <button
+                      onClick={() => handleSetBid(NFT_ACTIONS.CANCEL_BID)}
+                      className="rst-footer-button rst-footer-button-flat last-bid"
+                    >
+                      Cancel Last Bid
+                    </button>
+                  )}
+                </div>
+                <SpaceBetweenDiv style={{ flexGrow: 1 }}>
+                  <button
+                    onClick={() => handleSetBid(NFT_ACTIONS.BID)}
+                    className={'rst-footer-button rst-footer-button-bid'}
+                  >
+                    Bid
+                  </button>
+                  {ask && (
+                    <button
+                      onClick={() => handleSetBid(NFT_ACTIONS.BUY)}
+                      className="rst-footer-button rst-footer-button-buy"
+                    >
+                      Buy Now
+                    </button>
+                  )}
+                </SpaceBetweenDiv>
+              </>
             )
           ) : (
             <button

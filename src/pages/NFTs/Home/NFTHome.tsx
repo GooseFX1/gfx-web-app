@@ -13,6 +13,7 @@ import Loading from './Loading'
 import { SVGDynamicReverseMode } from '../../../styles'
 import { ModalSlide } from '../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../constants'
+import { checkMobile } from '../../../utils'
 
 const BETA_BANNER = styled.div`
   position: fixed;
@@ -111,7 +112,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
       <NFTHomeSlider />
       <br />
       <div>
-        {isAllLoading && <Loading />}
+        {isAllLoading && !checkMobile() && <Loading />}
         <AnalyticsTabs allCollections={allCollections} />
       </div>
       <br />
@@ -129,7 +130,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
 
       <NFT_MENU onClick={() => setNFTMenuPopup((prev) => !prev)} />
 
-      {betaBanner && (
+      {betaBanner && !checkMobile() && (
         <BETA_BANNER>
           <div className={'inner'}>
             <div>

@@ -7,11 +7,13 @@ import { Share } from '../Share'
 import { ReactComponent as FixedPriceIcon } from '../../../assets/fixed-price.svg'
 import { ReactComponent as OpenBidIcon } from '../../../assets/open-bid.svg'
 import { generateTinyURL } from '../../../api/tinyUrl'
-import { notify } from '../../../utils'
+import { checkMobile, notify } from '../../../utils'
+import tw from 'twin.macro'
 
 //#region styles
 const LEFT_SECTION = styled.div`
   ${({ theme }) => css`
+    ${tw`sm:w-[90%] sm:my-5 sm:mx-auto`}
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -90,7 +92,7 @@ export const ImageShowcase: FC = ({ ...rest }) => {
   const [isFavorited, setIsFavorited] = useState(false)
   const { sessionUser, likeDislike } = useNFTProfile()
   const [shareModal, setShareModal] = useState(false)
-  const [likes, setLikes] = useState(totalLikes)
+  const [likes, setLikes] = useState(0)
 
   //const hearts = 12
   // const remaining = {
@@ -103,14 +105,17 @@ export const ImageShowcase: FC = ({ ...rest }) => {
     if (general && sessionUser) {
       setIsFavorited(sessionUser.user_likes.includes(general.non_fungible_id))
     }
-  }, [sessionUser])
+  }, [sessionUser, general])
+
+  useEffect(() => {
+    setLikes(totalLikes)
+  }, [totalLikes])
 
   const handleToggleLike = () => {
     if (sessionUser) {
       likeDislike(sessionUser.user_id, general.non_fungible_id).then(() => {
         setLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
       })
-      setIsFavorited((prev) => !prev)
     }
   }
 
@@ -176,43 +181,61 @@ export const ImageShowcase: FC = ({ ...rest }) => {
   return general && nftMetadata ? (
     <LEFT_SECTION {...rest}>
       {handleModal()}
-      <img className="ls-image" src={general?.image_url || nftMetadata?.image} alt="the-nft" />
+      <img
+        className="ls-image"
+        height={checkMobile() ? '360px' : '100%'}
+        src={general?.image_url || nftMetadata?.image}
+        alt="the-nft"
+      />
       <NFT_CONTAINER>
         <SHARE_BUTTON onClick={() => setShareModal(true)}>
           <img src={`/img/assets/share.svg`} alt="share-icon" />
         </SHARE_BUTTON>
       </NFT_CONTAINER>
-      <div className="ls-bottom-panel">
-        <Row justify="space-between" align="middle">
-          <Col>
-            {ask ? <FixedPriceIcon className="ls-action-button" /> : <OpenBidIcon className="ls-action-button" />}
-          </Col>
-          {general.non_fungible_id && (
+      {!checkMobile() && (
+        <div className="ls-bottom-panel">
+          <Row justify="space-between" align="middle">
             <Col>
-              {sessionUser && isFavorited ? (
-                <img
-                  className="ls-favorite-heart"
-                  src={`/img/assets/heart-red.svg`}
-                  alt="heart-red"
-                  onClick={handleToggleLike}
-                />
+              {ask ? (
+                <FixedPriceIcon className="ls-action-button" />
               ) : (
-                <img
-                  className="ls-favorite-heart"
-                  src={`/img/assets/heart-empty.svg`}
-                  alt="heart-empty"
-                  onClick={handleToggleLike}
-                />
+                <OpenBidIcon className="ls-action-button" />
               )}
-              <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
-                {likes}
-              </span>
             </Col>
-          )}
-        </Row>
-      </div>
+            {general.non_fungible_id && (
+              <Col>
+                {sessionUser && isFavorited ? (
+                  <img
+                    className="ls-favorite-heart"
+                    src={`/img/assets/heart-red.svg`}
+                    alt="heart-red"
+                    onClick={handleToggleLike}
+                  />
+                ) : (
+                  <img
+                    className="ls-favorite-heart"
+                    src={`/img/assets/heart-empty.svg`}
+                    alt="heart-empty"
+                    onClick={handleToggleLike}
+                  />
+                )}
+                <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
+                  {likes}
+                </span>
+              </Col>
+            )}
+          </Row>
+        </div>
+      )}
     </LEFT_SECTION>
-  ) : (
+  ) : !checkMobile() ? (
     <SkeletonCommon width="100%" height="500px" borderRadius="10px" />
+  ) : (
+    <SkeletonCommon
+      width="90%"
+      height="360px"
+      borderRadius="10px"
+      style={{ display: 'block', margin: '20px auto' }}
+    />
   )
 }
