@@ -470,13 +470,13 @@ export const NestQuestSingleListing: FC<{
 
   async function CivicTransaction(txn: Transaction) {
     let transaction = txn
-    const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(publicKey!))
+    const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(publicKey))
     if (userMustSign) {
       notify({
         message: 'Please sign one-time Civic Pass issuance'
       })
       try {
-        transaction = await signTransaction!(transaction)
+        transaction = await signTransaction(transaction)
       } catch (e) {
         notify({
           type: 'error',

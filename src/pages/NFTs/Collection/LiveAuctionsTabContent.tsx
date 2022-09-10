@@ -53,7 +53,7 @@ export const LiveAuctionsTabContent: FC = ({ ...rest }) => {
       }
     )
 
-    return () => {}
+    return null
   }, [])
 
   //const goToLiveAuctionDetails = (id: number): void => history.push(`/NFTs/live-auction/${id}`)

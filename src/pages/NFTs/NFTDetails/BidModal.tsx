@@ -305,7 +305,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
       }
     }
 
-    return () => {}
+    return null
   }, [publicKey, connected])
 
   const fetchUser = () => {

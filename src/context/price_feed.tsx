@@ -26,7 +26,7 @@ interface IChange {
 interface IPriceFeedConfig {
   prices: IPrices
   tokenInfo: IChange
-  refreshTokenData: Function
+  refreshTokenData: (d: string) => void
   priceFetched: boolean
 }
 

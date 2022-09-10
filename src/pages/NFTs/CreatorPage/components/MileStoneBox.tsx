@@ -45,8 +45,8 @@ const ROADMAP_WRAPPER = styled.div`
 
 export const MileStoneBox: FC<{ roadmap: any }> = ({ roadmap }) => (
   <ROADMAP_WRAPPER>
-    {roadmap?.map((road) => (
-      <div className="verticalContainer">
+    {roadmap?.map((road, key) => (
+      <div className="verticalContainer" key={key}>
         <div className="column-one">
           <img className="elipse" src="/img/assets/elipse.png" alt="" />
         </div>

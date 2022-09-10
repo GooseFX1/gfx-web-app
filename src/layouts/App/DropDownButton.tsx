@@ -31,8 +31,8 @@ const Overlay: FC<{
   folder: string
 }> = ({ onOptionClick, options, folder }) => (
   <Menu>
-    {options.map((item) => (
-      <MenuItem onClick={() => onOptionClick(item)}>
+    {options.map((item, index) => (
+      <MenuItem onClick={() => onOptionClick(item)} key={index}>
         <span>{item.displayName}</span>
         <img src={`/img/${folder}/${item.icon}.svg`} alt="icon" />
       </MenuItem>
@@ -64,7 +64,9 @@ const DropdownButton: FC<{
         arrow
         arrowRotation={arrowRotation}
         offset={[20, 10]}
-        onVisibleChange={() => {}}
+        onVisibleChange={() => {
+          //empty function that needs to be filled
+        }}
         overlay={<Overlay options={options} onOptionClick={onOptionClick} folder={folder} />}
         setArrowRotation={setArrowRotation}
       />

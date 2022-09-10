@@ -63,9 +63,15 @@ export const NFTs: FC = () => {
           if (res && res.status === 200) {
             const userProfileStatus = localStorage.getItem(publicKey.toBase58())
             if (res.data.length === 0 && userProfileStatus === null) {
-              localStorage.setItem(publicKey.toBase58(), JSON.stringify({ pubKey: publicKey.toBase58(), isNew: true }))
+              localStorage.setItem(
+                publicKey.toBase58(),
+                JSON.stringify({ pubKey: publicKey.toBase58(), isNew: true })
+              )
             } else {
-              localStorage.setItem(publicKey.toBase58(), JSON.stringify({ pubKey: publicKey.toBase58(), isNew: false }))
+              localStorage.setItem(
+                publicKey.toBase58(),
+                JSON.stringify({ pubKey: publicKey.toBase58(), isNew: false })
+              )
             }
           } else {
             console.error(res)
@@ -75,7 +81,7 @@ export const NFTs: FC = () => {
     } else {
       setSessionUser(undefined)
     }
-    return () => {}
+    return null
   }, [publicKey, connected])
 
   return (

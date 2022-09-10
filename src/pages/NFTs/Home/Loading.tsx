@@ -33,7 +33,7 @@ const ITEM = styled.div`
 
 const Loading = () => (
   <CONTAINER>
-    {Array.apply(null, Array(8)).map((item, index) => (
+    {[...Array(8)].map((_, index) => (
       <ITEM key={index}>
         <SkeletonCommon width="100px" height="100px" style={{ marginRight: '30px' }} />
 

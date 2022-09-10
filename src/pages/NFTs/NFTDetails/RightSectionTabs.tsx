@@ -1,4 +1,4 @@
-import { useEffect, useState, FC, useMemo, useCallback } from 'react'
+import { useState, FC, useMemo, useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -297,7 +297,7 @@ export const RightSectionTabs: FC<{
     [general]
   )
 
-  useEffect(() => {}, [wallet.publicKey])
+  //useEffect(() => {}, [wallet.publicKey])
 
   const derivePDAsForInstruction = async () => {
     const buyerPrice: BN = new BN(ask.buyer_price)

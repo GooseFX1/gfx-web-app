@@ -176,10 +176,10 @@ const WRAPPER_COMPONENT = styled.div`
 
 const MileStoneComponent: FC<{
   mileStones: any
-  setMileStones: Function
+  setMileStones: (b: any, d: any, i: any) => void
   index: number
-  add: Function
-  remove: Function
+  add?: (b: number) => void
+  remove: (b: number) => void
   data: any
 }> = ({ setMileStones, index, data, remove }) => {
   const [valueChanged, setValueChanged] = useState<number>(0)

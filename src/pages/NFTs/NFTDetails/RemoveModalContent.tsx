@@ -25,7 +25,7 @@ const TEXT = styled.p`
 type IRemoveModalContent = {
   title: string
   caption: string
-  removeFunction: Function
+  removeFunction: (a: any) => void
   pendingTxSig: string | undefined
   network: string | undefined
 }
@@ -42,7 +42,7 @@ const RemoveModalContent = ({ title, caption, removeFunction, pendingTxSig, netw
 
   useEffect(() => {
     console.log(pendingTxSig)
-    return () => {}
+    return null
   }, [pendingTxSig])
 
   const handleButtonClick = (e: any) => {

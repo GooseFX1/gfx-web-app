@@ -76,7 +76,7 @@ const AdminDashboard = () => {
         <div className="welcome">Hi, Welcome</div>
         {reviewProjects?.length > 0 && (
           <>
-            <GradientText text={reviewProjects?.length} fontSize={40} fontWeight={700} />
+            <GradientText text={reviewProjects?.length + ''} fontSize={40} fontWeight={700} />
             <span className="noOfProjects">Projects to review</span>
           </>
         )}

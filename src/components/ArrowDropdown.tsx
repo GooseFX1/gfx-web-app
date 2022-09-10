@@ -40,6 +40,15 @@ export const ArrowDropdown: FC<{
   measurements?: string
   offset?: [number, number]
   onVisibleChange: (x: boolean) => void
+  placement?:
+    | 'top'
+    | 'bottom'
+    | 'bottomLeft'
+    | 'bottomRight'
+    | 'topLeft'
+    | 'topCenter'
+    | 'topRight'
+    | 'bottomCenter'
   overlay: ReactElement | (() => ReactElement)
   children?: ReactElement | (() => ReactElement)
   [x: string]: any

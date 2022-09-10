@@ -41,7 +41,7 @@ const WRAPPER = styled.div`
   }
 `
 
-const DisclaimerPopup = ({ rewardToggle }) => (
+const DisclaimerPopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => void }) => (
   <WRAPPER>
     <img onClick={() => rewardToggle(false)} className="closeIcon" src="/img/assets/close-white-icon.svg" alt="" />
     <div className="riskTitle">Risks and Discalimers</div>

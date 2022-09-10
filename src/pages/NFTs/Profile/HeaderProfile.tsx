@@ -74,7 +74,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
 
   useEffect(() => {
     isCreatingProfile()
-    return () => {}
+    return null
   }, [])
 
   useEffect(() => {
@@ -88,7 +88,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
       )
     }
 
-    return () => {}
+    return null
   }, [isSessionUser, nonSessionProfile, params.userAddress])
 
   useEffect(() => {
@@ -329,8 +329,8 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
         <div>
           {currentUserProfile === undefined ? (
             <div className="social-list">
-              {[1, 2, 3, 4].map(() => (
-                <span className="social-item">
+              {[1, 2, 3, 4].map((_, key) => (
+                <span className="social-item" key={key}>
                   <SkeletonCommon width="35px" height="35px" borderRadius="50%" />
                 </span>
               ))}

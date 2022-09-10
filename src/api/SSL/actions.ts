@@ -27,7 +27,7 @@ export const fetchSSLVolumeData = async (tokenAddress: string, controller: strin
   }
 }
 
-export const saveLiquidtyVolume = async (sslVolume: number, stakeVolume: number, liqObj: Object) => {
+export const saveLiquidtyVolume = async (sslVolume: number, stakeVolume: number, liqObj: object) => {
   try {
     //const url = 'http://localhost:4000' + SSL_API_ENDPOINTS.SAVE_LIQUIDITY_DATA
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.SAVE_LIQUIDITY_DATA
@@ -81,7 +81,7 @@ export const getVolumeApr = async (tokenList: string[], SSLTokenNames: string[],
     }
   }
 }
-export const getFarmTokenPrices = async (cryptoMarkets: Object) => {
+export const getFarmTokenPrices = async (cryptoMarkets: object) => {
   try {
     //const url = 'http://localhost:4000' + SSL_API_ENDPOINTS.GET_TOKEN_PRICES
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.GET_TOKEN_PRICES

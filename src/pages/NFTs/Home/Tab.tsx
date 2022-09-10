@@ -104,7 +104,7 @@ const ANALYTICS_DROPDOWN = styled.div`
 `
 //#endregion
 
-const AnalyticsTabs = ({ allCollections }) => {
+const AnalyticsTabs = ({ allCollections }: { allCollections: any[] }) => {
   //const { allCollections } = useNFTCollections()
   const [mainCollections, setMainCollections] = useState(allCollections)
   const [sort, setSort] = useState('high')

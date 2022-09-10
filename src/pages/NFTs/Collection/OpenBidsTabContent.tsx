@@ -46,9 +46,9 @@ export const OpenBidsTabContent: FC<{ filter: any; setCollapse?: (x: any) => voi
   //const { sessionUser } = useNFTProfile()
   const paginationNum = 12
 
-  const [fileredLocalOpenBid, _setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>(Array.apply(null, Array(21)))
+  const [fileredLocalOpenBid, _setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>(Array(21).fill(null))
   const [shortfilteredLocalOpenBid, _setShortFilteredLocalOpenBid] = useState<Array<ISingleNFT>>(
-    Array.apply(null, Array(21))
+    Array(21).fill(null)
   )
   const [level, _setLevel] = useState<number>(0)
   const [loading, _setLoading] = useState<boolean>(false)

@@ -58,7 +58,7 @@ const EXPAND_ICON_WRAPPER = styled.div`
   align-items: center;
   width: 42%;
 `
-const DisplayRowData = ({ rowData, onExpandIcon }) =>
+const DisplayRowData = ({ rowData, onExpandIcon }: { rowData: any; onExpandIcon: (a: any) => void }) =>
   !checkMobile() ? (
     <ROW_CONTAINER>
       <STYLED_NAME className="set-width">

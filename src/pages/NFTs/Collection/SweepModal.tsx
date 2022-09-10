@@ -1464,7 +1464,10 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
                       <div></div>
                       {nftBatch.slice(0, dropdownSelection).map((item, index) => (
                         //const showSlide = index > activeSweepIndex - 2 && index < activeSweepIndex + 2 ? true : false
-                        <div className={index === activeSweepIndex ? 'activeNftZoom' : 'nonactiveNftZoom'}>
+                        <div
+                          className={index === activeSweepIndex ? 'activeNftZoom' : 'nonactiveNftZoom'}
+                          key={index}
+                        >
                           <Card
                             key={index}
                             cover={

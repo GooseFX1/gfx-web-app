@@ -43,7 +43,7 @@ const STYLED_RIGHT = styled.div`
   border: 20px !important;
   padding-left: ${({ theme }) => theme.margin(11)};
 `
-export const FarmHeader: FC<{ onFilter?: () => void }> = ({}) => (
+export const FarmHeader: FC<{ onFilter?: () => void }> = () => (
   <>
     <FarmFilter />
     <STYLED_RIGHT>

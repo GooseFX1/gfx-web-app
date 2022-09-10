@@ -45,7 +45,13 @@ interface ITradeHistoryConfig {
   openOrders: OpenOrders[]
   panel: HistoryPanel
   setPanel: Dispatch<SetStateAction<HistoryPanel>>
-  settleFunds: (x: OpenOrders, yA: number | undefined, zA: number | undefined, yB: string, zB: string) => Promise<void>
+  settleFunds: (
+    x: OpenOrders,
+    yA: number | undefined,
+    zA: number | undefined,
+    yB: string,
+    zB: string
+  ) => Promise<void>
   tradeHistory: any[]
 }
 
@@ -84,7 +90,11 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   const fetchBalances = useCallback(async () => {
     if (wallet.publicKey && selectedCrypto.market) {
       try {
-        const openOrders = await serum.getOpenOrders(connection, selectedCrypto.market, wallet.publicKey as PublicKey)
+        const openOrders = await serum.getOpenOrders(
+          connection,
+          selectedCrypto.market,
+          wallet.publicKey as PublicKey
+        )
         setOpenOrders(openOrders)
       } catch (e: any) {
         await notify({ type: 'error', message: `Error fetching balances from serum market`, icon: 'error' }, e)
@@ -95,7 +105,11 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   const fetchOpenOrders = useCallback(async () => {
     if (wallet.publicKey && selectedCrypto.market) {
       try {
-        const marketsOrders = await serum.getOrders(connection, selectedCrypto.market, wallet.publicKey as PublicKey)
+        const marketsOrders = await serum.getOrders(
+          connection,
+          selectedCrypto.market,
+          wallet.publicKey as PublicKey
+        )
         setOrders(marketsOrders.map((marketOrder) => ({ order: marketOrder, name: selectedCrypto.pair })))
       } catch (e: any) {
         await notify({ type: 'error', message: `Error fetching open orders from serum market`, icon: 'error' }, e)
@@ -103,7 +117,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
     }
   }, [connection, selectedCrypto.market, selectedCrypto.pair, wallet.publicKey])
 
-  const getPairFromMarketAddress = (address: PublicKey) => serum.getMarketFromAddress(address)!.name
+  const getPairFromMarketAddress = (address: PublicKey) => serum.getMarketFromAddress(address)?.name
 
   const cancelOrder = async (order: IOrder) => {
     setLoading(true)

@@ -89,7 +89,7 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     }
 
     @media (max-width: 500px) {
-      ${({}) =>
+      ${() =>
         [...Array(TABS.length).keys()].map(
           (x) => `
           &:nth-child(${x + 1}) {
@@ -134,7 +134,7 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
 `
 
 interface IProps {
-  mobileToggle?: Function
+  mobileToggle?: () => void
 }
 
 export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
@@ -162,7 +162,8 @@ export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
         >
           <TAB_ICON>
             {(() => {
-              const icon = mode === 'dark' ? `/img/assets${path}_icon_dark.svg` : `/img/assets${path}_icon_lite.svg`
+              const icon =
+                mode === 'dark' ? `/img/assets${path}_icon_dark.svg` : `/img/assets${path}_icon_lite.svg`
 
               if (cleanedPathName === path) {
                 return mode === 'dark' ? (

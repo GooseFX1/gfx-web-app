@@ -85,7 +85,7 @@ export const awaitTransactionSignatureConfirmation = async (
     err: null
   }
   //const subId = 0
-  status = await new Promise(async (resolve, reject) => {
+  status = await new Promise((resolve, reject) => {
     setTimeout(() => {
       if (done) {
         return
@@ -94,36 +94,37 @@ export const awaitTransactionSignatureConfirmation = async (
       console.log('Rejecting for timeout...')
       reject({ timeout: true })
     }, timeout)
-
-    while (!done && queryStatus) {
-      // eslint-disable-next-line no-loop-func
-      ;(async () => {
-        try {
-          const signatureStatuses = await connection.getSignatureStatuses([txid])
-          status = signatureStatuses && signatureStatuses.value[0]
-          if (!done) {
-            if (!status) {
-              console.log('REST null result for', txid, status)
-            } else if (status.err) {
-              console.log('REST error for', txid, status)
-              done = true
-              reject(status.err)
-            } else if (!status.confirmations) {
-              console.log('REST no confirmations for', txid, status)
-            } else {
-              console.log('REST confirmation for', txid, status)
-              done = true
-              resolve(status)
+    ;(async () => {
+      while (!done && queryStatus) {
+        // eslint-disable-next-line no-loop-func
+        ;(async () => {
+          try {
+            const signatureStatuses = await connection.getSignatureStatuses([txid])
+            status = signatureStatuses && signatureStatuses.value[0]
+            if (!done) {
+              if (!status) {
+                console.log('REST null result for', txid, status)
+              } else if (status.err) {
+                console.log('REST error for', txid, status)
+                done = true
+                reject(status.err)
+              } else if (!status.confirmations) {
+                console.log('REST no confirmations for', txid, status)
+              } else {
+                console.log('REST confirmation for', txid, status)
+                done = true
+                resolve(status)
+              }
+            }
+          } catch (e) {
+            if (!done) {
+              console.log('REST connection error: txid', txid, e)
             }
           }
-        } catch (e) {
-          if (!done) {
-            console.log('REST connection error: txid', txid, e)
-          }
-        }
-      })()
-      await sleep(2000)
-    }
+        })()
+        await sleep(2000)
+      }
+    })()
   })
 
   //@ts-ignore
@@ -176,7 +177,7 @@ export const getCandyMachineState = async (
 
   const idl = await anchor.Program.fetchIdl(CANDY_MACHINE_PROGRAM, provider)
 
-  const program = new anchor.Program(idl!, CANDY_MACHINE_PROGRAM, provider)
+  const program = new anchor.Program(idl, CANDY_MACHINE_PROGRAM, provider)
 
   const state: any = await program.account.candyMachine.fetch(candyMachineId)
   const itemsAvailable = state.data.itemsAvailable.toNumber()
@@ -300,7 +301,7 @@ export const createAccountsForMint = async (
         [signers],
         SequenceType.StopOnFailure,
         'singleGossip',
-        () => {},
+        () => null,
         () => false,
         undefined,
         [],
@@ -488,7 +489,7 @@ export const mintOneToken = async (
         signersMatrix,
         SequenceType.StopOnFailure,
         'singleGossip',
-        () => {},
+        () => null,
         () => false,
         undefined,
         beforeTransactions,
@@ -848,7 +849,7 @@ export const mintOneTokenCustom = async (
         signersMatrix,
         SequenceType.StopOnFailure,
         'singleGossip',
-        () => {},
+        () => null,
         () => false,
         undefined,
         beforeTransactions,
@@ -1039,7 +1040,7 @@ export const mintOneTokenWhitelist = async (
         signersMatrix,
         SequenceType.StopOnFailure,
         'singleGossip',
-        () => {},
+        () => null,
         () => false,
         undefined,
         beforeTransactions,
@@ -1114,7 +1115,9 @@ export const createAccountsForMintNonce = async (
         [signers],
         SequenceType.StopOnFailure,
         'singleGossip',
-        () => {},
+        () => {
+          //empty function should be filled up or removed please
+        },
         () => false,
         undefined,
         [],
@@ -1143,7 +1146,7 @@ export const getPublicWalletWhitelistPda = async (
   payer: anchor.web3.PublicKey
 ): Promise<[anchor.web3.PublicKey, number]> =>
   await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from(pdaSeed), payer!.toBuffer()],
+    [Buffer.from(pdaSeed), payer?.toBuffer()],
     MAGIC_HAT_PROGRAM_V2_ID
   )
 
@@ -1151,7 +1154,7 @@ export const getWalletWhitelistPda = async (
   payer: anchor.web3.PublicKey
 ): Promise<[anchor.web3.PublicKey, number]> =>
   await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from(pdaSeed), payer!.toBuffer(), MAGIC_HAT_CREATOR.toBuffer()],
+    [Buffer.from(pdaSeed), payer?.toBuffer(), MAGIC_HAT_CREATOR.toBuffer()],
     MAGIC_HAT_PROGRAM_V2_ID
   )
 

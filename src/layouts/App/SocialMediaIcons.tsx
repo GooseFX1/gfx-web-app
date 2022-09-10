@@ -31,7 +31,7 @@ const ITEM = styled(MenuItem)`
 const SVGModeAdjust = styled.img`
   filter: ${({ theme }) => theme.filterWhiteIcon};
 `
-
+//eslint-disable-next-line
 const Overlay = ({}: { theme?: string }) => {
   const target = {
     discord: SOCIAL_MEDIAS.discord,

@@ -84,7 +84,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
   useEffect(() => {
     fetchAllCollections().then(() => setIsAllLoading(false))
     fetchAllSingleNFTs().then((res) => setAllOneOfOnes(res != null ? res.slice(0, 20) : []))
-    return () => {}
+    return null
   }, [])
 
   const find = useCallback((col: string | string[], search: string) => col.includes(search), [])
@@ -103,10 +103,10 @@ const NFTLandingPage: FC = (): JSX.Element => {
       {displayMenu()}
       <Header
         setFilter={setSearch}
-        totalCollections={allCollections}
+        //totalCollections={allCollections}
         filter={search}
         filteredCollections={filteredCollections}
-        setTotalCollections={setFilteredCollections}
+        //setTotalCollections={setFilteredCollections}
       />
       <NFTHomeSlider />
       <br />

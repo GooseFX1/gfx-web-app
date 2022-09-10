@@ -291,7 +291,7 @@ export const TableList = ({ dataSource }: any) => {
       setAccountKey(undefined)
     }
 
-    return () => {}
+    return null
   }, [wallet.publicKey, connection])
 
   const getTokenPrice = (name) => {
@@ -490,7 +490,7 @@ export const TableList = ({ dataSource }: any) => {
   return TableData
 }
 
-const ExpandIcon = (props) => {
+const ExpandIcon = (props: { expanded: boolean; record: any; onClick: (a: any) => void }) => {
   const { expanded, record, onClick } = props
   return (
     <STYLED_EXPAND_ICON

@@ -124,9 +124,9 @@ const Loader: FC = () => <Skeleton.Button active size="small" style={{ display: 
 
 export const InfoBanner: FC<{
   isLocked: boolean
-  setIsLocked: Function
-  resetLayout: Function
-  setFeesPopup: Function
+  setIsLocked: (a: boolean) => void
+  resetLayout: () => void
+  setFeesPopup: (b: (c: any) => boolean) => void
 }> = ({ isLocked, setIsLocked, resetLayout, setFeesPopup }) => {
   const [isSpot, setIsSpot] = useState(true)
   const { selectedCrypto } = useCrypto()

@@ -270,7 +270,7 @@ export const TeamMembersContainer: FC<{ data?: any; setTeamMembers: (x: any) => 
 
 export default TeamMembersContainer
 
-const UserImgSlides = ({ index }) => (
+const UserImgSlides = ({ index }: { index: number }) => (
   <>
     <span className="userImg">
       <img src="/img/assets/avatarPlaceHolder.png" alt="avatar" />

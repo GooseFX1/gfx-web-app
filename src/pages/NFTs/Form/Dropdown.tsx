@@ -71,7 +71,7 @@ const Overlay: FC<{
   return (
     <STYLED_MENU>
       {days.map((item, index) => (
-        <MenuItem onClick={() => onClickItem({ index, name: item?.name })}>
+        <MenuItem onClick={() => onClickItem({ index, name: item?.name })} key={index}>
           <span>{item.name}</span>
         </MenuItem>
       ))}
@@ -111,7 +111,7 @@ export const Dropdown = ({ days }: DropdownProps) => {
 
   const [open, setOpen] = useState(false)
 
-  const onChangeDate = () => {} // (date, dtStr) => {}
+  //const onChangeDate = () => {} // (date, dtStr) => {}
 
   const onOk = ({ value, doOverlay }) => {
     setCurrentTitle(value.format('YYYY-MM-DD HH:mm'))
@@ -128,7 +128,6 @@ export const Dropdown = ({ days }: DropdownProps) => {
               className="date-picker-custom"
               dropdownClassName={mode === 'lite' ? 'light-date-pick-popup' : ''}
               open={open}
-              onChange={onChangeDate}
               showTime
               format="YYYY-MM-DD HH:mm"
               onOk={(value) => onOk({ value, doOverlay })}

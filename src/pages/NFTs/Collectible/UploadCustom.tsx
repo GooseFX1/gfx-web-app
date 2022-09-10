@@ -226,7 +226,8 @@ export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingDat
           .filter((f) => f)
           .map((f) => {
             const uri = typeof f === 'string' ? f : f?.name || ''
-            const type = typeof f === 'string' || !f ? 'unknown' : f.type || getLast(f.name.split('.')) || 'unknown'
+            const type =
+              typeof f === 'string' || !f ? 'unknown' : f.type || getLast(f.name.split('.')) || 'unknown'
 
             return {
               uri,
@@ -301,7 +302,9 @@ export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingDat
             maxCount={1}
             onChange={handleFileChange}
             accept={acceptableFiles(nftMintingData.properties?.category)}
-            onPreview={() => {}}
+            onPreview={() => {
+              //empty function that you need to fill
+            }}
             beforeUpload={handleBeforeUpload}
             onRemove={onRemove}
             fileList={localFile ? [localFile] : []}

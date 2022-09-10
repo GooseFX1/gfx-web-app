@@ -73,7 +73,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
     [currentUserParsedAccounts, createdItems, userActivity, favoritedItems]
   )
 
-  useEffect(() => () => {}, [tabPanes])
+  //useEffect(() => () => {}, [tabPanes])
 
   useEffect(() => {
     if (currentUserProfile && currentUserParsedAccounts && currentUserParsedAccounts.length > 0) {
@@ -94,7 +94,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
       setFavoritedItems([])
     }
 
-    return () => {}
+    return null
   }, [currentUserProfile])
 
   useEffect(() => {
@@ -104,7 +104,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
       setUserActivity([])
     }
 
-    return () => {}
+    return null
   }, [currentUserProfile, fetchUserActivity, setUserActivity])
 
   const fetchFavorites = async (userLikes: number[]) => {

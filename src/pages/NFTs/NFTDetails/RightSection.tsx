@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, FC } from 'react'
+import React, { useMemo, FC } from 'react'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Col, Row } from 'antd'
 import styled, { css } from 'styled-components'
@@ -152,7 +152,7 @@ const GRID_INFO = styled(Row)`
 export const RightSection: FC<{
   status: MintItemViewStatus
 }> = ({ status, ...rest }) => {
-  const { general, nftMetadata, bids, curHighestBid, ask } = useNFTDetails()
+  const { general, nftMetadata, curHighestBid, ask } = useNFTDetails()
   const { prices } = usePriceFeed()
 
   const creator = useMemo(() => {
@@ -180,7 +180,7 @@ export const RightSection: FC<{
   // const percent = '+ 1.15 %'
   const isForCharity = false
 
-  useEffect(() => {}, [bids])
+  //useEffect(() => {}, [bids])
 
   if (nftMetadata === null) {
     return <div>Error loading metadata</div>
@@ -198,7 +198,9 @@ export const RightSection: FC<{
       ) : (
         <div>
           <Row justify="space-between">
-            <Col className="rs-title">{price ? `Current ${ask ? 'Asking Price' : 'Bid'}` : 'No Current Bids'} </Col>
+            <Col className="rs-title">
+              {price ? `Current ${ask ? 'Asking Price' : 'Bid'}` : 'No Current Bids'}{' '}
+            </Col>
           </Row>
           {price && (
             <Row align="middle" gutter={8} className="rs-prices">
@@ -263,7 +265,9 @@ export const RightSection: FC<{
               <Row align="middle">
                 <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
                 <div className="gi-item-title">
-                  {Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection.name}
+                  {Array.isArray(nftMetadata.collection)
+                    ? nftMetadata.collection[0].name
+                    : nftMetadata.collection.name}
                 </div>
               </Row>
             </Col>

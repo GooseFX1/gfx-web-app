@@ -107,7 +107,7 @@ const WRAPPER = styled.div`
   }
 `
 
-const SubmitPopup = ({ rewardToggle }) => {
+const SubmitPopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => void }) => {
   const [disclaimer, setDisclaimer] = useState<boolean>(false)
   const [acceptRisk, setRisk] = useState<boolean>(false)
   const { creatorData, submit } = useNFTCreator()
@@ -126,7 +126,12 @@ const SubmitPopup = ({ rewardToggle }) => {
       {disclaimer && <ModalSlide rewardToggle={setDisclaimer} modalType={MODAL_TYPES.CREATOR_DISCLAIMER} />}
       <WRAPPER>
         <div className="titleText">
-          <img className="closeImg" src="/img/assets/close-white-icon.svg" alt="" onClick={() => rewardToggle(false)} />
+          <img
+            className="closeImg"
+            src="/img/assets/close-white-icon.svg"
+            alt=""
+            onClick={() => rewardToggle(false)}
+          />
           You are about to submit <br />
           <strong style={{ color: 'white' }}>
             {creatorData[1]?.collectionName} by {creatorData[1]?.projectName}
@@ -262,7 +267,10 @@ const SubmitPopup = ({ rewardToggle }) => {
             </u>
           </div>
           <Row className="save-button">
-            <div onClick={() => handleSubmitClicked()} className={acceptRisk ? 'active button-save' : 'button-save'}>
+            <div
+              onClick={() => handleSubmitClicked()}
+              className={acceptRisk ? 'active button-save' : 'button-save'}
+            >
               Submit
             </div>
           </Row>

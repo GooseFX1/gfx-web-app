@@ -37,7 +37,7 @@ export const Modal: FC<{
   bigTitle?: boolean
   style?: any
   large?: boolean
-  onCancel?: Function
+  onCancel?: () => void
   [x: string]: any
 }> = ({ children, onCancel, large = false, setVisible, title, visible, style, bigTitle, ...props }) => {
   const { mode } = useDarkMode()

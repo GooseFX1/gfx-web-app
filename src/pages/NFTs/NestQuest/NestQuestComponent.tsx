@@ -218,10 +218,10 @@ export const ShareInternal = ({ socials, handleShare }: any) => {
   )
 }
 
-export const TeamMembers = ({ teamMembers }) => (
+export const TeamMembers = ({ teamMembers }: { teamMembers: any[] }) => (
   <TEAM_MEMBER_WRAPPER>
-    {teamMembers?.map((team) => (
-      <div>
+    {teamMembers?.map((team, key) => (
+      <div key={key}>
         {team?.dp_url ? (
           <div className="avatar">
             <img src={team?.dp_url} alt="" />
@@ -237,10 +237,10 @@ export const TeamMembers = ({ teamMembers }) => (
   </TEAM_MEMBER_WRAPPER>
 )
 
-export const RoadMap = ({ roadmap }) => (
+export const RoadMap = ({ roadmap }: { roadmap: any[] }) => (
   <ROADMAP_WRAPPER>
-    {roadmap?.map((road) => (
-      <div className="verticalContainer">
+    {roadmap?.map((road, key) => (
+      <div className="verticalContainer" key={key}>
         <img className="elipse" src="/img/assets/elipse.svg" alt="" />
         <img className="verticalLine" src="/img/assets/vectorLine.svg" alt="" />
         <div className="main-text">

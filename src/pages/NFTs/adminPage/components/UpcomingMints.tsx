@@ -139,7 +139,15 @@ const GRADIENT_TEXT = styled.span`
   text-fill-color: transparent;
   width: fit-content;
 `
-export const GradientText = ({ text, fontSize, fontWeight }) => (
+export const GradientText = ({
+  text,
+  fontSize,
+  fontWeight
+}: {
+  text: string | number
+  fontSize: number
+  fontWeight: number
+}) => (
   <GRADIENT_TEXT
     style={{
       fontSize: fontSize + 'px',
@@ -212,7 +220,7 @@ const UpcomingMints = () => {
     <WRAPPER $navCollapsed={isCollapsed}>
       <div className="upcomingTitle">
         <span>
-          <GradientText text={upcomingMints?.length} fontSize={60} fontWeight={700} />{' '}
+          <GradientText text={upcomingMints?.length + ''} fontSize={60} fontWeight={700} />{' '}
         </span>
         <span style={{ marginLeft: '15px' }}>
           <GradientText text={'Upcoming Mints'} fontSize={35} fontWeight={700} />{' '}

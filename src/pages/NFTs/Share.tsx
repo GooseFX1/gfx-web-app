@@ -92,6 +92,7 @@ const STYLED_SHARE_PROFILE = styled(PopupCustom)`
 
 interface IShare {
   visible: boolean
+  //eslint-disable-next-line
   handleCancel: Function
   socials: string[]
   handleShare: (social: string) => void

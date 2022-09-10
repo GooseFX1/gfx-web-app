@@ -110,7 +110,7 @@ export const ExpandedDynamicContent = ({
   useEffect(() => {
     setTokenStaked(parseFloat(currentlyStaked))
     setTokenEarned(Math.abs(parseFloat(earned)))
-    return () => {}
+    return null
   }, [earned, currentlyStaked])
 
   useEffect(() => {

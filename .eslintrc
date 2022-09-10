@@ -29,22 +29,22 @@
     "no-new": "warn",
     "no-param-reassign": "error", // change to "error"
     "@typescript-eslint/no-inferrable-types": "warn",
-    "@typescript-eslint/ban-ts-comment": "warn",
+    "@typescript-eslint/ban-ts-comment": "off",
     "no-empty": "error", // change to "error"
     "@typescript-eslint/no-var-requires": "error",
-    "@typescript-eslint/no-this-alias": "warn",
+    "@typescript-eslint/no-this-alias": "error",
     "@typescript-eslint/ban-types": "warn",
     "@typescript-eslint/no-unused-vars": "error",
     "no-var": "error", // change to "error"
     "no-prototype-builtins": "warn",
     "prefer-const": "error", // change to "error"
-    "react/prop-types": "warn",
+    "react/prop-types": "error",
     "no-async-promise-executor": "warn",
-    "@typescript-eslint/no-empty-function": "warn",
+    "@typescript-eslint/no-empty-function": "error",
     "react/jsx-key": "warn",
     "no-empty-pattern": "warn",
     "react/jsx-no-target-blank": "warn",
-    "react/no-unescaped-entities": "warn",
+    "react/no-unescaped-entities": "off",
     "prefer-spread": "warn"
   },
   "globals": {

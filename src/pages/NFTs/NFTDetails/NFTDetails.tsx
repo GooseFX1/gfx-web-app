@@ -36,7 +36,7 @@ export const NFTDetails: FC<{
       fetchGeneral(params.nftMintAddress, connection)
     }
 
-    return () => {}
+    return null
   }, [])
 
   return (

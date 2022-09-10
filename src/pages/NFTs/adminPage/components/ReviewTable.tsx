@@ -112,7 +112,7 @@ const WRAPPER = styled.div`
   }
 `
 
-const ReviewTable = ({ reviewProjects, btnClicked }) => {
+const ReviewTable = ({ reviewProjects, btnClicked }: { reviewProjects: any[]; btnClicked: any }) => {
   if (reviewProjects?.length < 1)
     return (
       <NOTHING_REVIEW>
@@ -319,7 +319,7 @@ const GRADIENT_BORDER = styled.span`
   }
 `
 
-export const GradientImageBorder = ({ img, height, width }) => (
+export const GradientImageBorder = ({ img, height, width }: { img: string; height: number; width: number }) => (
   <GRADIENT_BORDER style={{ width: width, height: height }}>
     <div className="innerBg" style={{ width: width - 7, height: height - 7 }}></div>
     <img style={{ width: width - 15, height: height - 15 }} src={img} alt="nft cover" />

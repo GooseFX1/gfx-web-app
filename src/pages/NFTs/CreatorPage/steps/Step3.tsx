@@ -204,6 +204,7 @@ export const Step3: FC = () => {
           <Row tw="flex justify-between items-center w-full mt-5">
             {TIME_OPTIONS.map((item, index) => (
               <div
+                key={index}
                 className={'circle-time ' + (timeIndex === index ? 'active' : '')}
                 onClick={() => setTimeIndex(index)}
               >

@@ -159,7 +159,17 @@ const WRAPPER = styled.div`
   }
 `
 
-export const CircularMenu = ({ carousel, rotateClicked, clickCounter, rewardToggle }) => {
+export const CircularMenu = ({
+  carousel,
+  rotateClicked,
+  clickCounter,
+  rewardToggle
+}: {
+  carousel: any[]
+  rotateClicked: string
+  clickCounter: number
+  rewardToggle: (b: boolean) => void
+}) => {
   const { mode } = useDarkMode()
   const { publicKey } = useWallet()
   const [rotationClass, setRotationClass] = useState('carousel')

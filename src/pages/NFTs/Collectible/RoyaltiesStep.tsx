@@ -422,7 +422,7 @@ export default React.memo(RoyaltiesStep)
 interface IRoylatySplit {
   creators: Array<UserValue>
   royalties: Array<Royalty>
-  setRoyalties: Function
+  setRoyalties: (arr: any[]) => void
   removeCreator: (key: string) => void
   isShowErrors?: boolean
 }

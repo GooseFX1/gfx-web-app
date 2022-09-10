@@ -80,7 +80,7 @@ const WRAPPER = styled.div`
     margin-top: 30px;
   }
 `
-export const ApprovePopup = ({ rewardToggle }) => {
+export const ApprovePopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => void }) => {
   const { adminSelected, setUpdate } = useNFTAdmin()
   const [showApproveComplete, setApprove] = useState<boolean>(false)
 
@@ -99,10 +99,16 @@ export const ApprovePopup = ({ rewardToggle }) => {
   return (
     <POPUP>
       <WRAPPER>
-        <img className="close" src="/img/assets/close-white-icon.svg" alt="x" onClick={() => rewardToggle(false)} />
+        <img
+          className="close"
+          src="/img/assets/close-white-icon.svg"
+          alt="x"
+          onClick={() => rewardToggle(false)}
+        />
         <img className="launchpad" src="/img/assets/launchpad-logo.svg" alt="launchpad" />
         <div className="approveText">
-          You are about to approve “{adminSelected[1]?.projectName}” and it will be added to the calendar inmediatly.
+          You are about to approve “{adminSelected[1]?.projectName}” and it will be added to the calendar
+          inmediatly.
         </div>
         <Button onClick={() => approveClicked()}>Approve project</Button>
 
@@ -113,7 +119,7 @@ export const ApprovePopup = ({ rewardToggle }) => {
     </POPUP>
   )
 }
-export const ApproveCompletePopup = ({ rewardToggle }) => {
+export const ApproveCompletePopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => void }) => {
   const { adminSelected } = useNFTAdmin()
 
   useEffect(() => {
@@ -125,7 +131,12 @@ export const ApproveCompletePopup = ({ rewardToggle }) => {
   return (
     <POPUP>
       <WRAPPER>
-        <img className="close" src="/img/assets/close-white-icon.svg" alt="x" onClick={() => rewardToggle(false)} />
+        <img
+          className="close"
+          src="/img/assets/close-white-icon.svg"
+          alt="x"
+          onClick={() => rewardToggle(false)}
+        />
         <div className="approved">Sucessfully approved</div>
         <GradientImageBorder height={200} width={200} img={adminSelected[2]?.image} />
         <div className="approved">{adminSelected[1].projectName}</div>
@@ -135,7 +146,7 @@ export const ApproveCompletePopup = ({ rewardToggle }) => {
   )
 }
 
-export const RejectPopup = ({ rewardToggle }) => {
+export const RejectPopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => void }) => {
   const { adminSelected, setUpdate } = useNFTAdmin()
   const [showRejectionComplete, setComplete] = useState<boolean>(false)
   const rejectClicked = async () => {
@@ -152,9 +163,16 @@ export const RejectPopup = ({ rewardToggle }) => {
     return (
       <POPUP>
         <WRAPPER>
-          <img className="close" src="/img/assets/close-white-icon.svg" alt="x" onClick={() => rewardToggle(false)} />
+          <img
+            className="close"
+            src="/img/assets/close-white-icon.svg"
+            alt="x"
+            onClick={() => rewardToggle(false)}
+          />
           <img className="launchpad" src="/img/assets/launchpad-logo.svg" alt="launchpad" />
-          <div className="approveText">Are you sure you want to reject “{adminSelected[1]?.projectName}” project?</div>
+          <div className="approveText">
+            Are you sure you want to reject “{adminSelected[1]?.projectName}” project?
+          </div>
           <Button className="reject" onClick={() => rejectClicked()}>
             Reject project
           </Button>
@@ -165,7 +183,7 @@ export const RejectPopup = ({ rewardToggle }) => {
       </POPUP>
     )
 }
-export const RejectionCompletePopup = ({ rewardToggle }) => {
+export const RejectionCompletePopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => void }) => {
   useEffect(() => {
     setTimeout(() => {
       rewardToggle(false)
@@ -174,7 +192,12 @@ export const RejectionCompletePopup = ({ rewardToggle }) => {
   return (
     <POPUP>
       <WRAPPER>
-        <img className="close" src="/img/assets/close-white-icon.svg" alt="x" onClick={() => rewardToggle(false)} />
+        <img
+          className="close"
+          src="/img/assets/close-white-icon.svg"
+          alt="x"
+          onClick={() => rewardToggle(false)}
+        />
         <div className="approveText">Project successfully rejected</div>
         <img
           className="greenCheck"
