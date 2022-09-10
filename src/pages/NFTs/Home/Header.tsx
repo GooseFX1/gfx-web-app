@@ -13,9 +13,12 @@ import { SpaceBetweenDiv } from '../../../styles'
 import PopupCompleteProfile from '../Profile/PopupCompleteProfile'
 import { useNFTProfile } from '../../../context'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import { checkMobile } from '../../../utils'
+import tw from 'twin.macro'
 
 //#region styles
 const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
+  ${tw`sm:px-0`}
   padding-top: ${({ theme }) => theme.margin(5.5)};
   padding-bottom: ${({ theme }) => theme.margin(3)};
   padding-left: ${({ theme }) => theme.margin(4)};
@@ -24,6 +27,10 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
   z-index: 5;
 
   .search-bar {
+    ${tw`sm:w-3/4 sm:m-0`}
+    @media(max-width: 500px) {
+      background: ${({ theme }) => theme.bg9} !important;
+    }
     width: 100%;
     max-width: 600px;
     background: ${({ theme }) => theme.bg1};
@@ -32,6 +39,9 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
     border: 1px solid ${({ theme }) => theme.bg1};
 
     > input {
+      @media (max-width: 500px) {
+        background: ${({ theme }) => theme.bg9} !important;
+      }
       &::placeholder {
         color: rgba(114, 114, 114, 1);
       }
@@ -63,6 +73,7 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)`
 `
 
 const TINYIMG = styled.img`
+  ${tw`sm:ml-0`}
   height: 24px;
   width: 24px;
   border-radius: 25%;
@@ -90,6 +101,7 @@ const RIGHTARROWICON = styled.img`
 `
 
 const AVATAR_WRAPPER = styled.div`
+  ${tw`sm:justify-evenly`}
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -152,7 +164,9 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
   useEffect(() => {
     setTimeout(() => {
       const fetchUserProfileStatus = publicKey ? localStorage.getItem(publicKey.toBase58()) : undefined
-      const firstTimeUser = fetchUserProfileStatus ? JSON.parse(localStorage.getItem(publicKey.toBase58())) : undefined
+      const firstTimeUser = fetchUserProfileStatus
+        ? JSON.parse(localStorage.getItem(publicKey.toBase58()))
+        : undefined
 
       if (firstTimeUser && publicKey) {
         if (firstTimeUser.pubKey === publicKey.toBase58() && firstTimeUser.isNew) {
@@ -192,8 +206,8 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
     [setModalVisible, publicKey, connected]
   )
 
-  const genMenu = () => {
-    return filter.length > 0 ? (
+  const genMenu = () =>
+    filter.length > 0 ? (
       <Menu className={`global-search-dropdown global-search-dropdown-${mode}`}>
         {filteredCollections.length > 0 ? (
           filteredCollections.map((i, k) => (
@@ -201,7 +215,9 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
               <URL href={`/NFTs/collection/${i.collection_name.replaceAll(' ', '_')}`}>
                 <DETAILS>
                   <TINYIMG
-                    src={i.profile_pic_link.length > 0 ? i.profile_pic_link : `/img/assets/nft-preview-${mode}.svg`}
+                    src={
+                      i.profile_pic_link.length > 0 ? i.profile_pic_link : `/img/assets/nft-preview-${mode}.svg`
+                    }
                   />
                   <p style={{ margin: '0px' }}>{i.collection_name}</p>
                 </DETAILS>
@@ -218,17 +234,17 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
         <p className="empty">Start typing to search</p>
       </Menu>
     )
-  }
 
   return (
     <HEADER_WRAPPER>
       <PopupCompleteProfile visible={visibleCompletePopup} handleOk={onContinue} handleCancel={onSkip} />
       <AVATAR_WRAPPER>
-        {!isHeaderData ? (
+        {!isHeaderData && !checkMobile() ? (
           <SkeletonCommon width="50px" height="50px" borderRadius="50%" />
         ) : (
           connected &&
-          publicKey && (
+          publicKey &&
+          !checkMobile() && (
             <AVATAR_NFT
               fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
               src={sessionUser ? sessionUser.profile_pic_link : ''}
@@ -239,43 +255,66 @@ export const Header = ({ setFilter, filter, filteredCollections, totalCollection
         )}
         {!isHeaderData ? (
           <SkeletonCommon
-            style={{ minWidth: '550px', maxWidth: '600px', marginLeft: '20px' }}
+            style={{
+              minWidth: !checkMobile() ? '550px' : '330px',
+              marginLeft: !checkMobile() ? '20px' : '0',
+              marginRight: !checkMobile() ? '10px' : '0'
+            }}
             height="46px"
             borderRadius="46px"
+            width={!checkMobile() ? '350px' : '100%'}
           />
         ) : (
-          <Dropdown overlay={genMenu()} trigger={['click']}>
+          <Dropdown overlay={genMenu()} trigger={['click']} overlayClassName="nft-home-antd-dropdown">
             <SearchBar className="search-bar" setSearchFilter={setFilter} filter={filter} />
           </Dropdown>
         )}
-      </AVATAR_WRAPPER>
-      <BUTTON_SELECTION>
-        {!isHeaderData ? (
-          <div style={{ display: 'flex' }}>
-            <SkeletonCommon width="149px" height="45px" borderRadius="15px" />
-          </div>
+        {!isHeaderData && checkMobile() ? (
+          <SkeletonCommon width="50px" height="50px" borderRadius="50%" />
         ) : (
-          <div style={{ display: 'flex' }}>
-            {isCollapsed && !connected && (
-              <CONNECT onClick={handleWalletModal}>
-                <span>Connect Wallet</span>
-              </CONNECT>
-            )}
-
-            <TokenToggle toggleToken={setUserCurrency} tokenA={'SOL'} tokenB={'USD'} />
-          </div>
+          connected &&
+          publicKey &&
+          checkMobile() && (
+            <AVATAR_NFT
+              fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+              src={sessionUser ? sessionUser.profile_pic_link : ''}
+              preview={false}
+              onClick={goProfile}
+            />
+          )
         )}
-        {/* {!isHeaderData ? (
+      </AVATAR_WRAPPER>
+      {!checkMobile() ? (
+        <BUTTON_SELECTION>
+          {!isHeaderData ? (
+            <div style={{ display: 'flex' }}>
+              <SkeletonCommon width="149px" height="45px" borderRadius="15px" />
+            </div>
+          ) : (
+            <div style={{ display: 'flex' }}>
+              {isCollapsed && !connected && (
+                <CONNECT onClick={handleWalletModal}>
+                  <span>Connect Wallet</span>
+                </CONNECT>
+              )}
+
+              <TokenToggle toggleToken={setUserCurrency} tokenA={'SOL'} tokenB={'USD'} />
+            </div>
+          )}
+          {/* {!isHeaderData ? (
           <SkeletonCommon width="132px" height="45px" borderRadius="45px" style={{ marginLeft: '20px' }} />
         ) : (
           <Categories categories={categories} className="categories" onChange={(e) => handleFilterChange(e)} />
         )} */}
-        {/* {!isHeaderData ? (
+          {/* {!isHeaderData ? (
           <SkeletonCommon width="68px" height="45px" borderRadius="12px" style={{ marginLeft: '20px' }} />
         ) : (
           <Categories categories={coins} className="coins" />
         )} */}
-      </BUTTON_SELECTION>
+        </BUTTON_SELECTION>
+      ) : (
+        <></>
+      )}
     </HEADER_WRAPPER>
   )
 }

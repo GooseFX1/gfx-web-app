@@ -6,9 +6,12 @@ import { SOCIAL_MEDIAS } from '../../../constants'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import { checkMobile } from '../../../utils'
+import tw from 'twin.macro'
 
 //#region styles
 const CAROUSEL_WRAPPER = styled.div`
+  ${tw`sm:px-0`}
   position: relative;
   padding-left: ${({ theme }) => theme.margin(4)};
 
@@ -32,21 +35,35 @@ const CAROUSEL_WRAPPER = styled.div`
   }
 
   .slick-prev {
+    ${tw`sm:left-1`}
     top: calc(50% - 56px);
     left: 25px;
     transform: rotate(180deg);
   }
   .slick-next {
+    ${tw`sm:right-1`}
     right: 25px;
   }
 
   .slick-slide {
     margin-right: ${({ theme }) => theme.margin(2)};
     min-width: 630px;
+
+    @media (max-width: 500px) {
+      min-width: 275px;
+      width: 32% !important;
+      margin-right: 1%;
+    }
   }
 `
 
 const SLIDER_ITEM = styled.div<{ $url: string }>`
+  @media (max-width: 500px) {
+    background: ${({ $url }) => `url(${$url})`}, center;
+    background-size: auto 101%;
+    background-position: center;
+  }
+  ${tw`sm:rounded-average`}
   position: relative;
   height: 37vh;
   min-height: 350px;
@@ -115,7 +132,7 @@ const settings = {
   snapCenter: true,
   initialSlide: 0,
   arrows: true,
-  variableWidth: true,
+  variableWidth: checkMobile() ? false : true,
   nextArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-next" />,
   prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-previous" />
 }

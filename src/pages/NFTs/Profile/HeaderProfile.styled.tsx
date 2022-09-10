@@ -2,8 +2,8 @@ import styled from 'styled-components'
 import { Dropdown, Menu } from 'antd'
 import { Modal } from '../../../components'
 
-export const StyledHeaderProfile = styled.div<{ mode?: string }>`
-  ${({ theme, mode }) => `
+export const StyledHeaderProfile = styled.div<{ mode?: string, background?: String}>`
+  ${({ theme, mode, background }) => `
   position: relative;
   height: 30vh;
   padding: ${theme.margin(3)};
@@ -17,6 +17,26 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
       ? 'linear-gradient(180deg, rgba(19, 19, 19, 1) 17.43%, rgba(85, 50, 111, 1) 85.26%)'
       : 'linear-gradient(180deg, #eeeeee 17.43%, #C986FB 85.26%);'
   };
+
+  @media(max-width: 500px){
+    height: 50vh;
+    flex-direction: column;
+    align-items: inherit;
+    justify-content: space-between;
+    background: url(${background});
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  .row{
+    display: flex;
+    justify-content: space-between;
+
+    .ant-dropdown{
+      z-index: 0;
+    }
+  }
+  
 
   .back-icon {
     position: absolute;
@@ -51,11 +71,18 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
     }
   }
   .name-wrap {
+    @media(max-width: 500px){
+      margin-left: 0;
+    }
     display: flex;
     align-items: start;
     margin-left: ${theme.margin(1)};
   }
   .name {
+    @media(max-width: 500px){
+      font-size: 20px;
+      margin-left: 0;
+    }
     color: ${theme.text1};
     font-size: 35px;
     font-weight: 600;
@@ -67,6 +94,9 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
     height: 24px;
   }
   .social-list {
+    @media(max-width: 500px){
+      margin-top: 0;
+    }
     margin-top: ${theme.margin(2)};
     ${theme.flexCenter}
     .social-item {
@@ -96,6 +126,17 @@ export const StyledHeaderProfile = styled.div<{ mode?: string }>`
       width: 35px;
       height: 35px;
     }
+  }
+  .complete-profile{
+    height: 43px;
+    width: 153px;
+    background-image: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 45px;
+    color: #ffffff;
+    font-size: 14px;
   }
   .action-wrap {    
     margin-left: auto;
@@ -147,6 +188,11 @@ export const StyledDropdown = styled(Dropdown)`
   }
 `
 export const StyledMenu = styled(Menu)`
+  @media(max-width: 500px){
+    margin-top: 0;
+    background-color: #383838;
+    min-width: inherit;
+  }
   ${({ theme }) => `
   font-size: 12px;
   color: ${theme.white};

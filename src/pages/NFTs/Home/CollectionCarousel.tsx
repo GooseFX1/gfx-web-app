@@ -10,6 +10,7 @@ import { NFTBaseCollection, NFTFeaturedCollection, NFTUpcomingCollection } from 
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
 import isEmpty from 'lodash/isEmpty'
+import { checkMobile } from '../../../utils'
 
 const CAROUSEL_WRAPPER = styled.div`
   display: flex;
@@ -83,6 +84,15 @@ const SKELETON_SLIDER = styled.div`
   }
 `
 
+const ROW = styled.div`
+  display: flex;
+  overflow-x: scroll;
+
+  ::-webkit-scrollbar{
+    display: none;
+  }
+`
+
 const settings = {
   infinite: false,
   speed: 500,
@@ -151,7 +161,7 @@ const CollectionCarousel: FC<ICollectionCarousel> = ({ title, collections, colle
       <HEADER_CAROUSEL>
         <TITLE_CAROUSEL>{title}</TITLE_CAROUSEL>
         <HEADER_END_CAROUSEL>
-          {!isCollectionsEmpty && (
+          {!isCollectionsEmpty && !checkMobile() && (
             <>
               <LEFT_ARROW onClick={slickPrev} />
               <RIGHT_ARROW onClick={slickNext} />
@@ -167,14 +177,20 @@ const CollectionCarousel: FC<ICollectionCarousel> = ({ title, collections, colle
             </div>
           ))}
         </SKELETON_SLIDER>
-      ) : updatedCollections.length > 0 ? (
+      ) : updatedCollections.length > 0 ? ( !checkMobile() ?
         <Slider ref={slickRef} {...settings}>
           {updatedCollections.map(
             (item: NFTBaseCollection | NFTFeaturedCollection | NFTUpcomingCollection, i: number) => (
               <NFTImageCarouselItem key={i} item={item} type={collectionType} />
             )
           )}
-        </Slider>
+        </Slider> : <ROW>
+            {updatedCollections.map(
+                (item: NFTBaseCollection | NFTFeaturedCollection | NFTUpcomingCollection, i: number) => (
+                  <NFTImageCarouselItem key={i} item={item} type={collectionType} />
+                )
+              )}
+        </ROW>
       ) : (
         <EMPTY_CAROUSEL>
           {isLoading ? (

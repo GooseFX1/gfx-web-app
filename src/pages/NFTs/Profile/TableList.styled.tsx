@@ -51,6 +51,12 @@ export const StyledTableList = styled(Table)`
     color: ${theme.text1};
   }
 
+  .ant-table-container{
+   @media(max-width: 500px){
+    overflow-x: scroll;
+   }
+  }
+
   .ant-table-thead {
     > tr {
       > th {

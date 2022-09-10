@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect, useMemo, FC } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
@@ -19,7 +20,7 @@ import {
 } from '../../../web3'
 import { callWithdrawInstruction } from '../actions'
 import { MainButton, SuccessfulListingMsg, FloatingActionButton } from '../../../components'
-import { notify } from '../../../utils'
+import { checkMobile, notify } from '../../../utils'
 import { StyledHeaderProfile, StyledMenu, SETTLE_BALANCE_MODAL, MARGIN_VERTICAL } from './HeaderProfile.styled'
 import BN from 'bn.js'
 import { IAppParams } from '../../../types/app_params.d'
@@ -33,6 +34,9 @@ const DROPDOWN = styled(Dropdown)`
   margin-left: ${({ theme }) => theme.margin(3)};
 
   .collection-more-icon {
+    @media(max-width: 500px){
+      transform: rotate(90deg);
+    }
     width: 43px;
     height: 41px;
   }
@@ -61,6 +65,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   const [settleBalanceModal, setSettleBalanceModal] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const handleCancel = () => setProfileModal(false)
+  const [randomBackground, setRandomBackground] = useState('');
 
   const currentUserProfile = useMemo(() => {
     if (nonSessionProfile !== undefined && !isSessionUser) {
@@ -94,6 +99,12 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   useEffect(() => {
     fetchEscrowPayment().then((escrowBalance: number | undefined) => setUserEscrowBalance(escrowBalance))
   }, [connected, publicKey])
+
+  useEffect(() => {
+    const backgroundArray = ['/img/assets/redBackground.png', '/img/assets/purpleBackground.png', '/img/assets/multiBackground.png'];
+    const randomImage = backgroundArray[Math.floor(Math.random() * backgroundArray.length)];
+    setRandomBackground(randomImage);
+  },[]);
 
   const fetchEscrowPayment = async (): Promise<number | undefined> => {
     try {
@@ -275,27 +286,41 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
 
   const menu = (
     <StyledMenu>
+      <Menu.Item onClick={() => setProfileModal(true)}>
+        <div>Edit profile</div>
+      </Menu.Item>
       <Menu.Item onClick={() => setShareModal(true)}>
         <div>Share Profile</div>
       </Menu.Item>
-      {/* <Menu.Item onClick={() => console.log('report')}>
-        <div>Report</div>
-      </Menu.Item>
-      <Menu.Item>Help</Menu.Item> */}
+      {/* {<Menu.Item>Help</Menu.Item> } */}
     </StyledMenu>
   )
 
   return (
-    <StyledHeaderProfile mode={mode}>
+    <StyledHeaderProfile mode={mode} background={randomBackground}>
       {handleModal()}
+      {checkMobile() ?
+        <div className='row' id='row'>
+          <div style={{ position: checkMobile() ? 'static' : 'absolute', top: '24px', left: '24px' }}>
+            <FloatingActionButton height={40} onClick={() => history.goBack()}>
+              <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
+            </FloatingActionButton>
+          </div>
+          <div>
+          <DROPDOWN overlay={menu} trigger={['click']} placement="bottomRight" getPopupContainer={() => document.getElementById("row")}>
+            <Button style={{ height: 'auto' }}>
+              <img className="collection-more-icon" src={`/img/assets/more_icon.svg`} alt="more" />
+            </Button>
+          </DROPDOWN>
+          </div>
+        </div> :  <div style={{ position: 'absolute', top: '24px', left: '24px' }}>
+            <FloatingActionButton height={40} onClick={() => history.goBack()}>
+              <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
+            </FloatingActionButton>
+          </div>
+      }
 
-      <div style={{ position: 'absolute', top: '24px', left: '24px' }}>
-        <FloatingActionButton height={40} onClick={() => history.goBack()}>
-          <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
-        </FloatingActionButton>
-      </div>
-
-      <div className="avatar-profile-wrap">
+      {!checkMobile() && <div className="avatar-profile-wrap">
         <Image
           className="avatar-profile"
           fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
@@ -310,8 +335,8 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
         {connected && currentUserProfile && isSessionUser && (
           <img className="edit-icon" src={`/img/assets/edit.svg`} alt="" onClick={() => setProfileModal(true)} />
         )}
-      </div>
-      <div>
+      </div>}
+      <div style={{display: checkMobile() ? 'flex' : 'block', justifyContent: 'space-between', alignItems: 'center', height: checkMobile() ? '35px' : 'auto'}}>
         <div className="name-wrap">
           {currentUserProfile === undefined ? (
             <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
@@ -325,9 +350,8 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
           {currentUserProfile && currentUserProfile.is_verified && (
             <img className="check-icon" src={`/img/assets/check-icon.svg`} alt="is-verified-user" />
           )}
-        </div>
-        <div>
-          {currentUserProfile === undefined ? (
+        </div>       
+        {currentUserProfile === undefined ? (
             <div className="social-list">
               {[1, 2, 3, 4].map(() => (
                 <span className="social-item">
@@ -335,7 +359,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                 </span>
               ))}
             </div>
-          ) : (
+          ) : ( (currentUserProfile.twitter_link && currentUserProfile.instagram_link && currentUserProfile.telegram_link && currentUserProfile.youtube_link) ? 
             <div className="social-list">
               {currentUserProfile.twitter_link && (
                 <a
@@ -377,11 +401,10 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   <img className="social-icon" src={`/img/assets/youtube.png`} alt="" />
                 </a>
               )}
-            </div>
+            </div> : checkMobile() && <div className='complete-profile' onClick={() => setProfileModal(true)}>Complete Profile</div>
           )}
-        </div>
       </div>
-      <div className="action-wrap">
+     {!checkMobile() && <div className="action-wrap">
         {isSessionUser && connected && publicKey ? (
           <button className="btn-purple" onClick={() => setSettleBalanceModal(true)}>
             <span>
@@ -401,7 +424,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
             <img className="collection-more-icon" src={`/img/assets/more_icon.svg`} alt="more" />
           </Button>
         </DROPDOWN>
-      </div>
+      </div>}
     </StyledHeaderProfile>
   )
 }

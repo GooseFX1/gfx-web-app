@@ -2,8 +2,10 @@ import React, { FC } from 'react'
 import styled from 'styled-components'
 import { useHistory } from 'react-router'
 import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
+import tw from 'twin.macro'
 
 const CAROUSEL_ITEM = styled.div<{ $url: string }>`
+  ${tw`sm:overflow-visible sm:min-w-[310px] sm:m-0 sm:mr-8`}
   width: 450px;
   height: 220px;
   display: flex;
