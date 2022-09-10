@@ -65,6 +65,11 @@ export const STYLED_TABLE_LIST = styled(Table)`
     }
   }
   .ant-table-thead {
+    .ant-table-cell{
+      @media(max-width: 500px){
+        height: 68px;
+      }
+    }
      top: 200px;
      background: ${theme.farmHeaderBg};
     > tr {
