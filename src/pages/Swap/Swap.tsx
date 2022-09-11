@@ -662,7 +662,6 @@ const TokenContent: FC = () => {
 
 const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes }) => {
   const { tokenA, tokenB, inTokenAmount } = useSwap()
-  const { tokens } = useTokenRegistry()
 
   const [details, setDetails] = useState([
     { name: 'Price Impact', value: '0%' },
@@ -680,6 +679,13 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
   const [outAmount, setOutAmount] = useState(0)
   const [outTokenPercentage, setOutTokenPercentage] = useState(0)
   const [cheap, setCheap] = useState(true)
+  const [tokens, setTokens] = useState([])
+
+  useEffect(() => {
+    fetch(TOKEN_LIST_URL['mainnet-beta'])
+      .then((response) => response.json())
+      .then((result) => setTokens(result))
+  }, [])
 
   useEffect(() => {
     const route = routes?.[clickNo]
