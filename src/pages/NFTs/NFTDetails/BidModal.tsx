@@ -640,13 +640,19 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
 
       {pendingTxSig && (
         <div style={{ marginBottom: '56px' }} className="bm-title">
-          ⚠️ Sometimes there are delays on the network. You can track the{' '}
+          <span>
+            <img
+              style={{ height: '26px', marginRight: '6px' }}
+              src={`/img/assets/solscan.png`}
+              alt="solscan-icon"
+            />
+          </span>
           <GFX_LINK
             href={`http://solscan.io/tx/${pendingTxSig}?cluster=${network}`}
             target={'_blank'}
             rel="noreferrer"
           >
-            status of the transaction on solscan
+            View Transaction
           </GFX_LINK>
         </div>
       )}

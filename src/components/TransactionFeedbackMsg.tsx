@@ -41,14 +41,7 @@ export const SuccessfulListingMsg = (props: ISuccessfulListingMsg) => (
         rel="noopener noreferrer"
       >
         <span>
-          <img
-            style={{ height: '18px', marginRight: '4px' }}
-            src="https://www.gitbook.com/cdn-cgi/image/height=40,fit=contain,dpr=2,
-            format=auto/https%3A%2F%2F2775063016-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.co
-            m%2Fo%2Fspaces%252F-M2WGem6IdHOZpBD3zJX%252Flogo%252Fw9pblAvM5UayZbYEg4Cj%252FBlack.png%3Falt%
-            3Dmedia%26token%3D9a925146-c226-4f09-b39b-f61642681016"
-            alt="solscan-icon"
-          />
+          <img style={{ height: '18px', marginRight: '4px' }} src={`/img/assets/solscan.png`} alt="solscan-icon" />
         </span>
         Transaction ID
       </a>
@@ -79,10 +72,7 @@ export const TransactionErrorMsg = (props: ITransactionErrorMsg) => (
           <span>
             <img
               style={{ height: '18px', marginRight: '4px' }}
-              src="https://www.gitbook.com/cdn-cgi/image/height=40,fit=contain,dpr=2,
-              format=auto/https%3A%2F%2F2775063016-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com
-              %2Fo%2Fspaces%252F-M2WGem6IdHOZpBD3zJX%252Flogo%252Fw9pblAvM5UayZbYEg4Cj%252FBlack.png%
-              3Falt%3Dmedia%26token%3D9a925146-c226-4f09-b39b-f61642681016"
+              src={`/img/assets/solscan.png`}
               alt="solscan-icon"
             />
           </span>
