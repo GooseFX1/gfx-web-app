@@ -1,7 +1,5 @@
-import React, { createContext, FC, ReactNode, useContext, useState } from 'react'
+import React, { createContext, Dispatch, FC, ReactNode, useContext, useState } from 'react'
 import { FARM_TOKEN_LIST } from './crypto'
-// import { serum } from '../web3'
-// import { useConnectionConfig } from '../context'
 // import axios from 'axios'
 import { getFarmTokenPrices } from '../api/SSL'
 
@@ -22,11 +20,17 @@ interface IChange {
     }
   }
 }
+interface IStats {
+  tvl: number
+  volume7dSum: number
+}
 interface IPriceFeedConfig {
   prices: IPrices
   tokenInfo?: IChange
   refreshTokenData: () => void
   priceFetched: boolean
+  statsData: IStats
+  setStatsData: Dispatch<IStats>
 }
 
 const PriceFeedFarmContext = createContext<IPriceFeedConfig | null>(null)
@@ -34,6 +38,7 @@ const PriceFeedFarmContext = createContext<IPriceFeedConfig | null>(null)
 export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [prices, setPrices] = useState<IPrices>({})
   const [priceFetched, setPriceFetched] = useState<boolean>(false)
+  const [statsData, setStatsData] = useState<IStats | null>()
 
   const refreshTokenData = async () => {
     const PAIR_LIST = [...FARM_TOKEN_LIST]
@@ -50,7 +55,9 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
       value={{
         prices,
         refreshTokenData,
-        priceFetched
+        priceFetched,
+        statsData,
+        setStatsData
       }}
     >
       {children}
@@ -67,6 +74,8 @@ export const usePriceFeedFarm = (): IPriceFeedConfig => {
   return {
     prices: context.prices,
     refreshTokenData: context.refreshTokenData,
-    priceFetched: context.priceFetched
+    priceFetched: context.priceFetched,
+    statsData: context.statsData,
+    setStatsData: context.setStatsData
   }
 }
