@@ -45,8 +45,8 @@ export const PopupCustom: FC<{
     className={className}
     width={width}
     height={height}
+    closeIcon={<SVGDynamicReverseMode src={`/img/assets/close-white-icon.svg`} alt="smalllll" />}
     {...props}
-    closeIcon={<SVGDynamicReverseMode src={`/img/assets/close-white-icon.svg`} alt="" />}
   >
     {children}
   </STYLED_POPUP>
