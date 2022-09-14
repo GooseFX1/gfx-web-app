@@ -1,7 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { clusterApiUrl, Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram } from '@solana/web3.js'
 import React, { FC } from 'react'
-//import { useNFTLPSelected } from '../../../../context/nft_launchpad'
 import {
   pdaWhitelistSeed,
   MAGIC_HAT_PROGRAM_V2_ID,
@@ -15,12 +14,10 @@ import {
 import * as anchor from '@project-serum/anchor'
 import idl from './magic_hat.json'
 import { Program, BN } from '@project-serum/anchor'
-//import Borsh from '@project-serum/borsh'
 import { notify } from '../../../../utils'
 import { getWalletWhitelistPda, getWhitelistConfigPda } from '../candyMachine/candyMachine'
 
 export const Whitelist: FC = () => {
-  //const { candyMachine, candyMachineState } = useNFTLPSelected()
   const wallet = useWallet()
   const connection = new Connection(clusterApiUrl('devnet'))
 
@@ -40,8 +37,6 @@ export const Whitelist: FC = () => {
         MAGIC_HAT_PROGRAM_V2_ID
       )
 
-      //let config_t: any = Borsh.struct(JSON.stringify(config))
-      //const wallet_create =
       await walletProgram.rpc.createWhitelistConfig(
         new BN(5),
         new BN(2 * LAMPORTS_PER_SOL),
@@ -79,7 +74,6 @@ export const Whitelist: FC = () => {
         [Buffer.from(pdaWhitelistSeed), wallet.publicKey?.toBuffer()],
         MAGIC_HAT_PROGRAM_V2_ID
       )
-      //const wallet_create =
       await walletProgram.rpc.updateWhitelistConfig(
         new BN(0),
         new BN(1 * LAMPORTS_PER_SOL),
@@ -102,7 +96,6 @@ export const Whitelist: FC = () => {
       )
       const whitelistConfigAccounts = await walletProgram.account.whitelistConfig.fetch(whitelist_config_pda)
       console.log(whitelistConfigAccounts)
-      // return { whitelistConfigAccounts };
     } catch (error) {
       console.log('Transaction error: ', error)
     }
@@ -131,10 +124,8 @@ export const Whitelist: FC = () => {
           systemProgram: SystemProgram.programId
         }
       })
-      //const whitelistAccounts = await walletProgram.account.walletWhitelist.fetch(wallet_pda)
-      //console.log(whitelistAccounts)
+
       return true
-      // return { whitelistAccounts };
     } catch (error) {
       console.log('Transaction error: ', error)
       return false
@@ -149,7 +140,6 @@ export const Whitelist: FC = () => {
       //eslint-disable-next-line
       const [whitelist_config_pda, bump] = await getWhitelistConfigPda(wallet.publicKey)
 
-      //const wallet_create =
       await walletProgram.rpc.createWhitelistAccount('Two', {
         accounts: {
           walletWhitelist: wallet_pda,
@@ -160,7 +150,6 @@ export const Whitelist: FC = () => {
         }
       })
       return true
-      // return { whitelistAccounts };
     } catch (error) {
       console.log('Transaction error: ', error)
       return false
@@ -175,7 +164,6 @@ export const Whitelist: FC = () => {
       //eslint-disable-next-line
       const [whitelist_config_pda, bump] = await getWhitelistConfigPda(wallet.publicKey)
 
-      //const wallet_create =
       await walletProgram.rpc.createWhitelistAccount('One', {
         accounts: {
           walletWhitelist: wallet_pda,
@@ -186,7 +174,6 @@ export const Whitelist: FC = () => {
         }
       })
       return true
-      // return { whitelistAccounts };
     } catch (error) {
       console.log('Transaction error: ', error)
       return false
@@ -194,7 +181,6 @@ export const Whitelist: FC = () => {
   }
 
   const multipleWhitelists = async () => {
-    //let tx = new Transaction()
     for (let i = 0; i < whiteListAddresses.length; i++) {
       const key = new PublicKey(whiteListAddresses[i])
       const response = await createWhitelistAccount(key)
@@ -211,7 +197,6 @@ export const Whitelist: FC = () => {
   }
 
   const multipleWhitelistsOne = async () => {
-    //let tx = new Transaction()
     for (let i = 0; i < whiteListAddressesOne.length; i++) {
       const key = new PublicKey(whiteListAddresses[i])
       const response = await createWhitelistAccountOne(key)

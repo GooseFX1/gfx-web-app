@@ -119,7 +119,6 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
   const [wrap, setWrap] = useState(true)
   const [balanceWSOL, setBalanceWSOL] = useState(0)
   const [balance, setBalance] = useState(0)
-  //const { getUIAmountString } = useAccounts()
   const { connection, network } = useConnectionConfig()
   const wallet = useWallet()
   const [toggle, setToggle] = useState(false)
@@ -300,7 +299,6 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
             </INPUT_BALANCE>
           </INPUT_WRAPPER>
           <div>
-            {/* <style>{locCSS}</style> */}
             <SETTING_INPUT
               maxLength={6}
               onChange={(x: BaseSyntheticEvent) =>

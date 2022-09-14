@@ -308,8 +308,6 @@ export const RightSectionTabs: FC<{
     [general]
   )
 
-  //useEffect(() => {}, [wallet.publicKey])
-
   const derivePDAsForInstruction = async () => {
     const buyerPrice: BN = new BN(ask.buyer_price)
 

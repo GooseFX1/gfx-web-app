@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { MainButton } from '../../components'
 import { useAccounts, useConnectionConfig, useSwap, useWalletModal, useDarkMode } from '../../context'
-//import { ADDRESSES } from '../../web3'
 
 enum State {
   Connect = 0,
@@ -35,15 +34,10 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
   const { setVisible } = useWalletModal()
 
   const state = useMemo(() => {
-    //const { pools } = ADDRESSES[network]
-    //console.log(pools, network)
-
     if (!wallet || !publicKey) {
       return State.Connect
     } else if (!tokenA || !tokenB) {
       return State.Enter
-      // } else if (!pools[[tokenA.symbol, tokenB.symbol].sort((a, b) => a.localeCompare(b)).join('/')]?.address) {
-      //   return State.PoolNotFound
     } else if (inTokenAmount === 0) {
       return State.Enter
     } else if (inTokenAmount > parseFloat(getAmount(tokenA.address)) / 10 ** tokenA.decimals) {
@@ -57,9 +51,7 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
     switch (state) {
       case State.CanSwap:
         return 'action'
-      // case State.BalanceExceeded:
-      // case State.PoolNotFound:
-      //   return 'not-allowed'
+
       case State.Connect:
       case State.Enter:
       case State.BalanceExceeded:

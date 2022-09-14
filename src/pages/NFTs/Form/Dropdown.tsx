@@ -111,8 +111,6 @@ export const Dropdown = ({ days }: DropdownProps) => {
 
   const [open, setOpen] = useState(false)
 
-  //const onChangeDate = () => {} // (date, dtStr) => {}
-
   const onOk = ({ value, doOverlay }) => {
     setCurrentTitle(value.format('YYYY-MM-DD HH:mm'))
     setOpen(false)

@@ -423,7 +423,6 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
 
   useEffect(() => {
     ;(async () => {
-      //setInterval(async () => {
       const data = await fetchSelectedNFTLPData(params.urlName)
       refreshCandyMachineState(data.data.candyMachine)
       setSelectedProject(data.data)

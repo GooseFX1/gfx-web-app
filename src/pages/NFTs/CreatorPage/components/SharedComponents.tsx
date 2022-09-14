@@ -4,7 +4,7 @@ import { Button } from 'antd'
 import tw from 'twin.macro'
 import { useNFTCreator } from '../../../../context/nft_creator'
 import { ICreatorData } from '../../../../types/nft_launchpad'
-//const { TextArea } = Input
+
 const PICTURE_CONTAINER = styled.div`
   height: 600px;
   width: 600px;

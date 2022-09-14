@@ -158,7 +158,6 @@ interface Props {
 }
 
 const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmit, handleCancel }: Props) => {
-  // const file = nftMintingData.image;
   const { publicKey } = useWallet()
   const [inputVal, setInputVal] = useState<any>()
   const [creators, setCreators] = useState<Array<UserValue>>([])
@@ -393,12 +392,6 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
             >
               <span>Add Creator</span>
             </BUTTON_PLUS_WRAPPER>
-            {/* <MetaplexModal visible={showCreatorsModal} onCancel={() => setShowCreatorsModal(false)}>
-              <label className="action-field" style={{ width: '100%' }}>
-                <span className="field-title">Creators</span>
-                <UserSearch setCreators={setCreators} />
-              </label>
-            </MetaplexModal> */}
           </Row>
           {isShowErrors && totalRoyaltyShares !== 100 && (
             <Row>

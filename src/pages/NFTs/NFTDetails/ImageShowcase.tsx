@@ -94,13 +94,6 @@ export const ImageShowcase: FC = ({ ...rest }) => {
   const [shareModal, setShareModal] = useState(false)
   const [likes, setLikes] = useState(0)
 
-  //const hearts = 12
-  // const remaining = {
-  //   days: '10',
-  //   hours: '2',
-  //   minutes: '43'
-  // }
-
   useEffect(() => {
     if (general && sessionUser) {
       setIsFavorited(sessionUser.user_likes.includes(general.non_fungible_id))

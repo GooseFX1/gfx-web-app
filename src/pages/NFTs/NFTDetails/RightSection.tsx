@@ -243,10 +243,7 @@ export const RightSection: FC<{
   }
 
   const fiat = `${marketData && price ? (marketData.current * price).toFixed(3) : ''} USD`
-  // const percent = '+ 1.15 %'
   const isForCharity = false
-
-  //useEffect(() => {}, [bids])
 
   if (nftMetadata === null) {
     return <div>Error loading metadata</div>
@@ -278,13 +275,6 @@ export const RightSection: FC<{
                 <Col>
                   <span className="rs-fiat">{`${fiat}`}</span>
                 </Col>
-                {/* TODO: calc price movement
-               <Col>
-                <Row>
-                  <img src={`/img/assets/increase-arrow.svg`} alt="" />
-                  <div className="rs-percent">{percent}</div>
-                </Row>
-              </Col> */}
               </Row>
             )}
           </div>

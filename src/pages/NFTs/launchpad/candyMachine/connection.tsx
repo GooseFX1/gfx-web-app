@@ -396,7 +396,6 @@ export async function sendSignedTransaction({
       }
       throw new Error(JSON.stringify(simulateResult.err))
     }
-    // throw new Error('Transaction failed');
   } finally {
     done = true
   }
@@ -516,7 +515,6 @@ async function awaitTransactionSignatureConfirmation(
     })()
   })
 
-  //if (connection._signatureSubscriptions[subId]) connection.removeSignatureListener(subId)
   done = true
   console.log('Returning status', status)
   return status

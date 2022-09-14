@@ -41,7 +41,7 @@ export const isCreatorAllowed = async (walletAddress: string) => {
       }),
       config: { method: 'post'; url: string; headers: { 'Content-Type': string }; data: any } = {
         method: 'post',
-        //url: 'http://localhost:4000' + NFT_LAUNCHPAD_API_ENDPOINTS.IS_CREATOR_ALLOWED,
+
         url: NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.IS_CREATOR_ALLOWED,
         headers: {
           'Content-Type': 'application/json'
@@ -61,7 +61,7 @@ export const isAdminAllowed = async (walletAddress: string) => {
       }),
       config: { method: 'post'; url: string; headers: { 'Content-Type': string }; data: any } = {
         method: 'post',
-        //url: PROD_URL + NFT_LAUNCHPAD_API_ENDPOINTS.IS_ADMIN_ALLOWED,
+
         url: NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.IS_ADMIN_ALLOWED,
         headers: {
           'Content-Type': 'application/json'
@@ -78,7 +78,7 @@ export const isAdminAllowed = async (walletAddress: string) => {
 export const uploadFiles = async (data) => {
   try {
     const { coverImage, zipUpload } = data
-    //const url = 'http://localhost:4000' + NFT_LAUNCHPAD_API_ENDPOINTS.UPLOAD_FILES
+
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.UPLOAD_FILES
     const formData = new FormData()
     formData.append('coverImage', coverImage)
@@ -98,7 +98,6 @@ export const uploadFiles = async (data) => {
 
 export const saveData = async (data: ICreatorData) => {
   try {
-    //const url = 'http://localhost:4000' + NFT_LAUNCHPAD_API_ENDPOINTS.SAVE_DATA
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.SAVE_DATA
     const dataToSend = JSON.stringify({
       data: data
@@ -121,7 +120,6 @@ export const saveData = async (data: ICreatorData) => {
 
 export const sendNonceTransaction = async (transaction, collectionId, walletAddress) => {
   try {
-    //const url = 'http://localhost:4000' + NFT_LAUNCHPAD_API_ENDPOINTS.SAVE_TRANSACTION
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.SAVE_TRANSACTION
     const dataToSend = JSON.stringify({
       transaction: transaction,
@@ -147,7 +145,6 @@ export const sendNonceTransaction = async (transaction, collectionId, walletAddr
 
 export const approveProject = async (project: ICreatorData) => {
   try {
-    //const url = PROD_URL + NFT_LAUNCHPAD_API_ENDPOINTS.APPROVE_PROJECT
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.APPROVE_PROJECT
     const dataToSend = JSON.stringify({
       projectData: project,
@@ -173,7 +170,6 @@ export const approveProject = async (project: ICreatorData) => {
 }
 export const rejectProject = async (project: ICreatorData) => {
   try {
-    //const url = PROD_URL + NFT_LAUNCHPAD_API_ENDPOINTS.REJECT_PROJECT
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.REJECT_PROJECT
     const dataToSend = JSON.stringify({
       projectData: project
@@ -199,7 +195,6 @@ export const rejectProject = async (project: ICreatorData) => {
 
 export const fetchCreatorProjects = async () => {
   try {
-    //const res = await customClient(PROD_URL).get(`${NFT_LAUNCHPAD_API_ENDPOINTS.GET_CREATOR_PROJECT}`)
     const res = await customClient(NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE).get(
       `${NFT_LAUNCHPAD_API_ENDPOINTS.GET_CREATOR_PROJECT}`
     )

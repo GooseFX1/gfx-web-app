@@ -390,7 +390,7 @@ const wrapSolToken = async (wallet: any, connection: Connection, amount: number)
       }),
       createSyncNativeInstruction(associatedTokenAccount)
     )
-    return tx //signAndSendRawTransaction(connection, tx, wallet)
+    return tx
   } catch {
     return null
   }
@@ -430,7 +430,6 @@ const depositAmount = async (
     userWallet: wallet.publicKey,
     tokenProgram: TOKEN_PROGRAM_ID
   }
-  //const amountInLamport = amount * Math.pow(10, getTokenDecimal(net));
   // some strage co relation dont will check about it later
   const amountInBN: BN = new BN(amountInNative)
   //@ts-ignore
@@ -474,7 +473,6 @@ export const executeDeposit = async (
   const amountInNative = amount * Math.pow(10, getTokenDecimal(network, tokenName))
 
   try {
-    //const liquidityAccData = (await connection.getAccountInfo(liquidityAccountKey)).data
     return depositAmount(
       amountInNative,
       network,

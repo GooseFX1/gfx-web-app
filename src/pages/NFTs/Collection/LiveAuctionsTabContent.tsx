@@ -1,5 +1,4 @@
 import { useState, useEffect, FC } from 'react'
-// import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { Card } from './Card'
 import { useNFTCollections } from '../../../context'
@@ -24,7 +23,6 @@ const LIVE_AUCTIONS_TAB = styled.div`
     }
   `}
 `
-// grid-template-columns: repeat(5, 1fr);
 
 const EMPTY_MSG = styled.div`
   ${({ theme }) => theme.flexCenter}
@@ -37,8 +35,6 @@ const WRAPPED_LOADER = styled.div`
 
 export const LiveAuctionsTabContent: FC = ({ ...rest }) => {
   const { singleCollection } = useNFTCollections()
-  //const history = useHistory()
-  //const { sessionUser } = useNFTProfile()
 
   const [localLiveAuction, setLocalLiveAuction] = useState<Array<ISingleNFT>>()
   const [err, setErr] = useState(false)
@@ -55,8 +51,6 @@ export const LiveAuctionsTabContent: FC = ({ ...rest }) => {
 
     return null
   }, [])
-
-  //const goToLiveAuctionDetails = (id: number): void => history.push(`/NFTs/live-auction/${id}`)
 
   return (
     <WRAPPER>

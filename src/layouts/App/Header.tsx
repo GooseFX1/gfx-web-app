@@ -129,14 +129,6 @@ export const Header: FC = () => {
     }
   }
 
-  // const mobileNavItems = ['/swap', '/trade', '/NFTs', '/farm'].map((link: string) => {
-  //   return (
-  //     <LINK onClick={() => updatePath(link, link === 'docs')} href={'javascript:void(0);'}>
-  //       <LINK_TEXT>{link}</LINK_TEXT>
-  //     </LINK>
-  //   )
-  // })
-
   useEffect(() => {
     const mobile = window?.innerWidth < 500
     setMobile(mobile)
@@ -152,7 +144,6 @@ export const Header: FC = () => {
           <Connect />
           <ResponsiveDropdown logoAnimationTime={2} />
         </AlignCenterDiv>
-        {/* <More /> */}
       </MobileWrapper>
     )
   } else {

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-//import { web3 } from '@project-serum/anchor'
-//import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GatewayStatus, useGateway } from '@civic/solana-gateway-react'
 import styled from 'styled-components'
