@@ -301,8 +301,8 @@ export const CreatorsLanding: FC<{
               <img
                 src={
                   checkMobile()
-                    ? '/img/assets/creatorsLanding/readyTolaunchMobile.png'
-                    : '/img/assets/creatorsLanding/readyTolaunch.svg'
+                    ? '/img/assets/creatorsLanding/readyToLaunchMobile.png'
+                    : '/img/assets/creatorsLanding/readyToLaunch.svg'
                 }
                 height={checkMobile() ? '321' : '498'}
                 width={checkMobile() ? '90%' : '100%'}
