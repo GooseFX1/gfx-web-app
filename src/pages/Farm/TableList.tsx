@@ -204,7 +204,7 @@ export interface IFarmData {
 
 //eslint-disable-next-line
 export const TableList = ({ dataSource }: any) => {
-  const { prices, priceFetched, refreshTokenData } = usePriceFeedFarm()
+  const { prices, priceFetched, refreshTokenData, setStatsData } = usePriceFeedFarm()
   const { network, connection } = useConnectionConfig()
   const wallet = useWallet()
   const {
@@ -225,8 +225,9 @@ export const TableList = ({ dataSource }: any) => {
   const [sslVolume, setSslVolume] = useState<number>(0)
   const [stakeVolume, setStakeVolume] = useState<number>(0)
   const [liquidityObject, setLiquidityObject] = useState({})
-  const [aprVolumeData, setAprVolumeData] = useState({})
+  const [aprVolumeData, setAprVolumeData] = useState<any>()
   const [savedVolume, setSavedVolume] = useState<boolean>(false)
+  const [volume7daySum, setVolume7daySum] = useState<number>(0)
 
   useEffect(() => {
     refreshTokenData()
@@ -261,6 +262,11 @@ export const TableList = ({ dataSource }: any) => {
       setSavedVolume(true)
     }
   }, [sslVolume, stakeVolume, liquidityObject])
+
+  useEffect(() => {
+    if (stakeVolume !== 0 && sslVolume !== 0 && volume7daySum !== 0)
+      setStatsData({ tvl: sslVolume + stakeVolume, volume7dSum: volume7daySum })
+  }, [volume7daySum, sslVolume, stakeVolume])
 
   const stakeProgram: Program = useMemo(
     () =>
@@ -312,6 +318,7 @@ export const TableList = ({ dataSource }: any) => {
   const calculateBalances = (sslAccountData, mainVault, liquidityAccountData, SSLTokenNames: string[]) => {
     const farmCalculationsArr = []
     let totalLiquidity = 0
+    let volume7dSum = 0
     const liqObj = {}
     for (let i = 0; i < sslAccountData.length; i++) {
       const { data } = sslAccountData[i]
@@ -331,8 +338,8 @@ export const TableList = ({ dataSource }: any) => {
       //@ts-ignore
       const earned = liquidityAccount ? userLiablity - amountDeposited : 0
 
-      const APR = aprVolumeData[tokenName]?.apr
-      const volumeDays = aprVolumeData[tokenName]?.volume
+      const APR = aprVolumeData && aprVolumeData[tokenName]?.apr
+      const volumeDays = aprVolumeData && aprVolumeData[tokenName]?.volume
 
       const farmCalculation = {
         //@ts-ignore
@@ -350,19 +357,20 @@ export const TableList = ({ dataSource }: any) => {
         volume: isNaN(volumeDays) || volumeDays * tokenPrice < 10 ? '-' : volumeDays * tokenPrice
       }
       farmCalculationsArr.push(farmCalculation)
+      volume7dSum += volumeDays * tokenPrice
       liqObj[`${tokenName}`] = tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0
       totalLiquidity += tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0
     }
     setFarmDataSSLContext(farmCalculationsArr)
     setSslVolume(totalLiquidity)
     setLiquidityObject(liqObj)
-
+    setVolume7daySum(volume7dSum)
     return
   }
 
   useEffect(() => {
     ;(async () => {
-      if (priceFetched) {
+      if (priceFetched && aprVolumeData) {
         const SSLTokenNames = []
         farmDataSSLContext.map((data) => SSLTokenNames.push(data.name))
         const SSLAccountKeys = []
@@ -384,13 +392,13 @@ export const TableList = ({ dataSource }: any) => {
         )
       }
     })()
-  }, [accountKey, counter, connection, priceFetched])
+  }, [accountKey, counter, connection, priceFetched, aprVolumeData])
 
   useEffect(() => {
     if (priceFetched) {
-      fetchGOFXData(accountKey)
+      fetchGOFXData()
         .then((farmData) => {
-          if (farmData.length > 0) {
+          if (farmData?.length > 0) {
             setFarmDataContext(farmData)
           }
         })
@@ -418,8 +426,7 @@ export const TableList = ({ dataSource }: any) => {
     setFarmData(farmDataStaked)
   }, [poolFilter, searchFilter, showDeposited, farmDataContext, farmDataSSLContext, priceFetched])
 
-  //eslint-disable-next-line
-  const fetchGOFXData = async (accountKey: PublicKey) => {
+  const fetchGOFXData = async () => {
     try {
       // pool data take this function to context
       const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER

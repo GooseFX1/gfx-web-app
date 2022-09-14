@@ -471,46 +471,24 @@ export const executeDeposit = async (
   const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress, network)
   const sslAccountKey = await getSslAccountKey(tokenMintAddress, network)
   const amountInNative = amount * Math.pow(10, getTokenDecimal(network, tokenName))
+  const liqAccData = await connection.getAccountInfo(liquidityAccountKey)
 
-  try {
-    return depositAmount(
-      amountInNative,
-      network,
-      program,
-      sslAccountKey,
-      liquidityAccountKey,
-      wallet,
-      connection,
-      tokenMintAddress,
-      tokenName,
-      undefined
-    )
-  } catch (err) {
-    try {
-      const createLiquidtyIX = await createLiquidityAccountIX(
-        program,
-        network,
-        wallet,
-        liquidityAccountKey,
-        sslAccountKey
-      )
-      return depositAmount(
-        amountInNative,
-        network,
-        program,
-        sslAccountKey,
-        liquidityAccountKey,
-        wallet,
-        connection,
-        tokenMintAddress,
-        tokenName,
-        createLiquidtyIX
-      )
-    } catch (err) {
-      console.log(err)
-    }
-    console.log(err)
+  let createLiquidtyIX = undefined
+  if (!liqAccData) {
+    createLiquidtyIX = await createLiquidityAccountIX(program, network, wallet, liquidityAccountKey, sslAccountKey)
   }
+  return depositAmount(
+    amountInNative,
+    network,
+    program,
+    sslAccountKey,
+    liquidityAccountKey,
+    wallet,
+    connection,
+    tokenMintAddress,
+    tokenName,
+    createLiquidtyIX
+  )
 }
 
 export const createLiquidityAccountIX = async (
