@@ -3,9 +3,23 @@ import styled from 'styled-components'
 import { Toggle } from './Toggle'
 import { SearchBar } from '../../components'
 import { useFarmContext, usePriceFeedFarm } from '../../context'
-import { checkMobile } from '../../utils'
+import { checkMobile, moneyFormatterWithComma } from '../../utils'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+
+const WRAPPER = styled.div`
+  ${tw`flex flex-col`}
+  font-family: 'Montserrat';
+  .textContainer {
+    ${tw`flex w-11/12 text-white z-10 flex-row 
+    items-center justify-between m-auto pr-20 pl-12 mb-9 -mt-7 text-sm font-semibold`}
+  }
+  .statsBackground {
+    ${tw`h-9 w-11/12 opacity-80 z-0 rounded-lg flex flex-row  m-auto items-center justify-between pr-16 pl-16`};
+    border: 1px solid #fff;
+    background-image: linear-gradient(91deg, #f7931a 0%, #ac1cc7 100%);
+  }
+`
 
 const STYLED_FARM_HEADER = styled.div`
   ${tw`sm:block sm:pt-[20px] sm:pb-[8px] sm:px-[15px] flex flex-row items-center justify-between pb-[23px]`}
@@ -69,8 +83,10 @@ const Wrapper = styled.div`
 const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
 
 export const FarmFilter = () => {
-  const { poolFilter, setPoolFilter, setSearchFilter, operationPending } = useFarmContext()
+  const { poolFilter, setPoolFilter, setSearchFilter, operationPending, farmDataContext, farmDataSSLContext } =
+    useFarmContext()
   const { refreshTokenData } = usePriceFeedFarm()
+  const { prices, statsData } = usePriceFeedFarm()
   const [poolIndex, setPoolIndex] = useState(0)
 
   const handleClick = (name, index) => {
@@ -103,7 +119,14 @@ export const FarmFilter = () => {
   }
 
   return (
-    <>
+    <WRAPPER>
+      <div className="statsBackground" />
+      <div className="textContainer">
+        <div>GooseFX TVL: {statsData && ` $ ` + moneyFormatterWithComma(statsData.tvl)}</div>
+        <div>Pools: {farmDataContext?.length + farmDataSSLContext?.length}</div>
+        <div>7d Volume: {statsData && ` $ ` + moneyFormatterWithComma(statsData.volume7dSum)} </div>
+        <div>GOFX Price: {prices && ` $ ` + prices['GOFX/USDC']?.current} </div>
+      </div>
       <STYLED_FARM_HEADER>
         <ButtonContainer $poolIndex={poolIndex}>
           {poolTypes.map((pool) => (
@@ -118,7 +141,6 @@ export const FarmFilter = () => {
             </STYLED_BUTTON>
           ))}
         </ButtonContainer>
-
         <SearchBar className="search-bar" placeholder="Search by token symbol" setSearchFilter={setSearchFilter} />
         <IconContainer>
           <RefreshIcon onClick={() => refreshTokenData()}>
@@ -127,6 +149,6 @@ export const FarmFilter = () => {
           <Toggle className="toggle" text="Show Deposited" defaultUnchecked />
         </IconContainer>
       </STYLED_FARM_HEADER>
-    </>
+    </WRAPPER>
   )
 }
