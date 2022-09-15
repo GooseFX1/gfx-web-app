@@ -141,7 +141,10 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const floorSize = useCallback(async () => {
     sizeThrottle.current && clearTimeout(sizeThrottle.current)
     sizeThrottle.current = setTimeout(async () => {
-      setOrder((prevState) => ({ ...prevState, size: floorValue(order.size, selectedCrypto.market?.minOrderSize) }))
+      setOrder((prevState) => ({
+        ...prevState,
+        size: floorValue(order.size, selectedCrypto.market?.minOrderSize)
+      }))
     }, throttleDelay)
   }, [order.size, selectedCrypto.market?.minOrderSize])
   useEffect(() => {
@@ -199,16 +202,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
 
     setLoading(false)
-  }, [
-    connection,
-    fetchAccounts,
-    fetchOpenOrders,
-    getAskSymbolFromPair,
-    order,
-    selectedCrypto.market,
-    selectedCrypto.pair,
-    wallet
-  ])
+  }, [connection, order, selectedCrypto.market, selectedCrypto.pair, wallet])
 
   return (
     <OrderContext.Provider
