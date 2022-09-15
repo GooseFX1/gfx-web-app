@@ -120,7 +120,6 @@ export const Header: FC = () => {
           <span onClick={() => handleSelectOrderSide('sell')}>Sell</span>
         </SIDE>
       </INFO>
-      {/*<CryptoSelector />*/}
     </WRAPPER>
   )
 }
