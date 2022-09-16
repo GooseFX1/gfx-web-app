@@ -201,6 +201,10 @@ export const StyledFormProfile = styled(Form)`
       }
     }
   }
+
+  .ant-form-item-control-input-content{
+    padding-bottom: 1rem;
+  }
   .section-label {
     font-size: 17px;
     font-weight: 600;
