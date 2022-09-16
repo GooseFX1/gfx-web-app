@@ -7,7 +7,15 @@ import { SVGDynamicReverseMode } from '../../../styles'
 import { INFTProfile } from '../../../types/nft_profile.d'
 import { completeNFTUserProfile, updateNFTUser } from '../../../api/NFTs'
 import { Loader } from '../../../components'
+import { Upload, UploadProps } from 'antd'
+import { uploadFile } from 'react-s3'
 
+const config = {
+  bucketName: 'gfx-nest-image-resources',
+  region: 'ap-south-1',
+  accessKeyId: process.env.REACT_APP_S3_ACCESS_KEY,
+  secretAccessKey: process.env.REACT_APP_S3_SECRET_ACCESS_KEY
+}
 interface Props {
   visible: boolean
   setVisible: (value: boolean) => void
@@ -19,6 +27,8 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
   const [form] = Form.useForm()
   const isCompletingProfile = useMemo(() => sessionUser.uuid === null, [sessionUser])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [profileImage, setProfileImage] = useState<File>()
+  const [imageLink, setImageLink] = useState<string>('')
 
   useEffect(() => {
     form.setFieldsValue(sessionUser)
@@ -32,7 +42,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
     if (sessionUser.uuid === null) {
       completeProfile(formattedProfile)
     } else {
-      const updatedProfile = { ...formattedProfile, user_id: sessionUser.user_id, uuid: sessionUser.uuid }
+      const updatedProfile = { ...formattedProfile, user_id: sessionUser.uuid, profile_pic_link: imageLink }
       updateProfile(updatedProfile)
     }
   }
@@ -50,7 +60,6 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
     }
 
     completeNFTUserProfile(sessionUser.pubkey).then((res) => {
-      console.dir(res)
       if (res && res.status === 200 && res.data) {
         const profile = res.data[0]
 
@@ -59,7 +68,8 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
           uuid: profile.uuid,
           user_id: profile.user_id,
           pubkey: profile.pubkey,
-          is_verified: profile.is_verified
+          is_verified: profile.is_verified,
+          profile_pic_link: imageLink
         }
 
         updateProfile(forUpdate)
@@ -81,6 +91,36 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
         console.error(`Error Updating user ${sessionUser.nickname}`)
       }
     })
+  }
+  const beforeChange = (file: File) => {
+    const isImg = ['png', 'jpg', 'gif', 'jpeg'].includes(file.type.slice(-3))
+    if (isImg) {
+      setProfileImage(file)
+      return true
+    }
+    return false
+  }
+
+  const handleUpload: UploadProps['onChange'] = async (info) => {
+    if (profileImage) {
+      uploadFile(profileImage, config)
+        .then((data: any) => {
+          setImageLink(data.location)
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    } else {
+      const url = await fetch(info.fileList[0].url).then((res) => res.blob())
+      const file = new File([url], info.fileList[0].url)
+      uploadFile(file, config)
+        .then((data: any) => {
+          setImageLink(data.location)
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    }
   }
 
   return (
@@ -123,8 +163,9 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
               </div>
             </div>
             <Form.Item name="profile_pic_link" label="Profile Image">
-              <Input />
-              <div className="hint">Use a link from https://imgur.com etc.</div>
+              <Upload beforeUpload={beforeChange} onChange={handleUpload}>
+                <Button className="btn-save">Upload Profile Image</Button>
+              </Upload>
             </Form.Item>
             <Form.Item name="bio" label="Bio">
               <Input />
