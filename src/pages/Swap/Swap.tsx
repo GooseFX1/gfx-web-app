@@ -923,7 +923,7 @@ export const SwapMain: FC = () => {
     inputMint: new PublicKey(tokenA?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     slippage: slippage, // 1% slippage
-    debounceTime: 500 // debounce ms time before refresh
+    debounceTime: 250 // debounce ms time before refresh
   })
 
   function marketInfoFormat(mkt: any) {
@@ -1036,11 +1036,7 @@ export const SwapMain: FC = () => {
       }
 
       if (supported) {
-        if (GoFxRoute.outAmountWithSlippage >= shortRoutes[0].outAmountWithSlippage) {
-          shortRoutes.splice(0, 0, GoFxRoute)
-        } else {
-          shortRoutes.splice(1, 0, GoFxRoute)
-        }
+        shortRoutes.splice(0, 0, GoFxRoute)
       }
     }
 
