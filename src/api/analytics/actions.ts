@@ -27,7 +27,7 @@ export const getSwapVolume = async () => {
   try {
     const { data } = await axios(
       //`${localhost}${ANALYTICS_API_ENDPOINTS.GET_SWAP_VOLUME}`
-      `${NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE}${ANALYTICS_API_ENDPOINTS.GET_LIQUIDITY}`
+      `${NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE}${ANALYTICS_API_ENDPOINTS.GET_SWAP_VOLUME}`
     )
     return data
   } catch (err) {
