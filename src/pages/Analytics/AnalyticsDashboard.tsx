@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
+import { SettingsProvider } from '../../context'
 import { AnalyticsTable } from './AnalyticsTable'
 
 const WRAPPER = styled.div`
@@ -12,7 +13,9 @@ const WRAPPER = styled.div`
 
 const AnalyticsDashboard = () => (
   <WRAPPER>
-    <AnalyticsTable />
+    <SettingsProvider>
+      <AnalyticsTable />
+    </SettingsProvider>
   </WRAPPER>
 )
 
