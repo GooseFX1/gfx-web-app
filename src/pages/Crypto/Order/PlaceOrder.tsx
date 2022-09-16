@@ -78,7 +78,7 @@ export const PlaceOrder: FC = () => {
       onClick={handleClick}
       status={buttonStatus}
       width="100%"
-      className={buttonStatus === 'action' ? order.side + ' button' : ''}
+      className={!publicKey ? 'not-connected' : buttonStatus === 'action' ? order.side + ' button' : 'color-style'}
     >
       <span>{content}</span>
     </MainButton>

@@ -40,6 +40,7 @@ const HEADER = styled.div`
     }
     span.active {
       color: #ffffff;
+      font-weight: 600;
     }
   }
   div:nth-child(2) {
@@ -232,7 +233,11 @@ export const HistoryPanel: FC = () => {
         <HEADER>
           <div>
             {tabs.map((item, index) => (
-              <span key={index} className={index === activeTab ? 'active' : ''} onClick={() => setActiveTab(index)}>
+              <span
+                key={index}
+                className={index === activeTab ? 'active' : ''}
+                onClick={() => setActiveTab(index)}
+              >
                 {item}
               </span>
             ))}

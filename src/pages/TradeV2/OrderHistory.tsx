@@ -14,6 +14,7 @@ const HEADER = styled.div`
     padding-right: 10px;
     color: #e7e7e7;
     font-size: 15px;
+    font-weight: 600;
   }
   div:nth-child(2) {
     display: flex;
@@ -46,6 +47,7 @@ const LOADER = styled(Skeleton.Input)`
   width: 100%;
   max-height: 328px;
   height: 20px;
+  border-radius: 10px;
   .ant-skeleton-input {
     width: 100%;
   }

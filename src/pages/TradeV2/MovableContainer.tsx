@@ -28,8 +28,7 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean }>
     font-family: Montserrat;
   }
   .layout {
-    margin-top: 20px;
-    padding-left: 20px;
+    margin: 20px auto 0;
     width: 99%;
     position: relative;
     .react-grid-item.react-draggable:nth-child(4) {
@@ -37,9 +36,18 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean }>
     }
     .react-grid-item {
       div:first-child {
-        filter: blur(${({ $isLocked }) => ($isLocked ? 0 : 1)}px);
+        filter: blur(${({ $isLocked }) => ($isLocked ? 0 : 3)}px);
       }
     }
+  }
+  .spacing {
+    padding: 5px;
+  }
+  .react-draggable-dragging {
+    border: 2px solid #ff8c00;
+    padding: 0;
+    border-radius: 10px;
+    z-index: 100;
   }
 `
 
@@ -55,6 +63,7 @@ const UNLOCKED_OVERLAY = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  border-radius: 10px;
   img {
     position: relative;
     height: 45px;
@@ -151,7 +160,7 @@ export const CryptoContent: FC = () => {
         )
       if (i === 3) {
         return (
-          <div key={i}>
+          <div key={i} className="spacing">
             <>
               <Order />
               {!isLocked ? (
@@ -171,7 +180,7 @@ export const CryptoContent: FC = () => {
       }
       if (i === 2) {
         return (
-          <div key={i}>
+          <div key={i} className="spacing">
             <OrderHistory />
             {!isLocked ? (
               <UNLOCKED_OVERLAY>
@@ -189,7 +198,7 @@ export const CryptoContent: FC = () => {
       }
       if (i === 1)
         return (
-          <div key={i}>
+          <div key={i} className="spacing">
             <>
               <OrderBookProvider>
                 <OrderBook />
@@ -212,7 +221,7 @@ export const CryptoContent: FC = () => {
         )
       if (i === 4)
         return (
-          <div key={i}>
+          <div key={i} className="spacing">
             {/*<History chartsVisible={true} setChartsVisible={null} />*/}
             <HistoryPanel />
             {!isLocked ? (

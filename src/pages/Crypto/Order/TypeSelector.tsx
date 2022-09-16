@@ -36,6 +36,10 @@ const WRAPPER = styled(SpaceBetweenDiv)`
     font-weight: bold;
     color: #e7e7e7;
   }
+  img {
+    height: 20px;
+    width: 20px;
+  }
 `
 
 const Overlay: FC<{

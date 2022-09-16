@@ -2,7 +2,7 @@ import React, { FC, ReactNode, useMemo, useState, useEffect } from 'react'
 import { Dropdown, Menu, Skeleton } from 'antd'
 import { DownOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
-import { Expand } from '../../components'
+//import { Expand } from '../../components'
 import { MarketSide, useCrypto, useOrder, useOrderBook, useTradeHistory } from '../../context'
 import { removeFloatingPointError } from '../../utils'
 import tw from 'twin.macro'
@@ -18,7 +18,7 @@ const HEADER = styled.div`
     color: #e7e7e7;
 
     span {
-      ${tw`inline-block w-1/3 text-tiny`}
+      ${tw`inline-block w-1/3 text-tiny font-semibold`}
     }
     span:nth-child(2) {
       ${tw`text-center`}
@@ -26,7 +26,7 @@ const HEADER = styled.div`
     div:nth-child(3) {
       ${tw`text-right w-1/3 justify-end`}
       .spreadDropdown {
-        ${tw`justify-end cursor-pointer w-12 text-smaller w-12.5`}
+        ${tw`justify-end cursor-pointer w-12 text-smaller w-12.5 rounded-[5px]`}
         background: linear-gradient(90.62deg, #f48537 2.36%, #a72ebd 99.71%);
       }
     }
@@ -337,7 +337,7 @@ export const OrderBook: FC = () => {
 
   //const symbol = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
 
-  const handleExpandToggle = () => setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))
+  //const handleExpandToggle = () => setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))
 
   const handleSetPrice = (price: number) => {
     setOrder((prevState) => ({ ...prevState, price }))
@@ -361,7 +361,7 @@ export const OrderBook: FC = () => {
 
   return (
     <WRAPPER>
-      <Expand onClick={handleExpandToggle} />
+      {/* <Expand onClick={handleExpandToggle} /> */}
       <HEADER>
         <div>
           <span>Orderbook</span>

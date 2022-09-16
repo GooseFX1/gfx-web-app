@@ -29,6 +29,9 @@ const BUTTON = styled.button<{ $height: string; $status: Status; $width: string;
     font-weight: bold;
     color: white;
   }
+  &.not-connected {
+    background-color: ${({ theme }) => theme.secondary3};
+  }
   &.buy.button {
     background: linear-gradient(90deg, #1b8101 1.75%, #f7c71b 100%);
   }

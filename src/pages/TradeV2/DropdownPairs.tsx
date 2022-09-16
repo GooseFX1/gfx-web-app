@@ -99,7 +99,13 @@ export const DropdownPairs: FC = () => {
     [symbol, selectedCrypto.type]
   )
   return (
-    <Dropdown overlay={menus} trigger={['click']} placement="bottom">
+    <Dropdown
+      overlay={menus}
+      trigger={['click']}
+      placement="bottom"
+      align={{ offset: [0, 10] }}
+      overlayClassName="antd-radius-trade-v2"
+    >
       <SELECTED_PAIR>
         <img className="asset-icon" src={assetIcon} alt="" />
         {formattedPair}

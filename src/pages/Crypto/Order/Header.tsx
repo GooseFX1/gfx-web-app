@@ -55,7 +55,7 @@ const SIDE = styled(SpaceBetweenDiv)<{ $display: boolean; $side: OrderSide }>`
     content: '';
     display: block;
     position: absolute;
-    bottom: -14.5px;
+    bottom: -11.5px;
     left: ${({ $side }) => ($side === 'buy' ? '-10' : '70')}%;
     width: 43%;
     height: 2px;
@@ -97,6 +97,7 @@ const WRAPPER = styled.div`
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
   background-color: ${({ theme }) => theme.bg14};
+  border: 2.5px solid #484848;
   ${({ theme }) => theme.largeShadow}
 `
 
