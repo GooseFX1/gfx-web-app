@@ -1,13 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { MainButton } from '../../../components/MainButton'
-import { SOCIAL_MEDIAS } from '../../../constants'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { checkMobile } from '../../../utils'
 import tw from 'twin.macro'
+import { CreatorsLanding } from '../launchpad/pages/CreatorsLanding'
 
 //#region styles
 const CAROUSEL_WRAPPER = styled.div`
@@ -138,52 +138,57 @@ const settings = {
 }
 
 export const NFTHomeSlider = () => {
+  const [modal, showModal] = useState(false)
+
   const handleCreatorApply = () => {
-    window.open(SOCIAL_MEDIAS.nftCreatorForm)
+    showModal(true)
   }
   const history = useHistory()
   const goNestQuestSingleListing = () => history.push(`/NFTs/NestQuest`)
 
   return (
-    <CAROUSEL_WRAPPER>
-      <Slider {...settings}>
-        <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/NestQuest.png`}>
-          <div className="home-slider-content">
-            <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>
-              NestQuest
-            </h1>
-            <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>
-              Tier #1
-            </h1>
-            <ORANGE_BTN
-              className="home-slider-button"
-              height={'40px'}
-              status="action"
-              width={'141px'}
-              onClick={goNestQuestSingleListing}
-            >
-              <span>Mint Now</span>
-            </ORANGE_BTN>
-          </div>
-        </SLIDER_ITEM>
-        <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/become-a-creator.webp`}>
-          <div className="home-slider-content">
-            <h1 className="home-slider-title">Launch</h1>
-            <h1 className="home-slider-title">Your Collection</h1>
-            <TERTIERY_BTN
-              className="home-slider-button"
-              height={'40px'}
-              status="action"
-              width={'141px'}
-              onClick={handleCreatorApply}
-            >
-              <span>Apply</span>
-            </TERTIERY_BTN>
-          </div>
-        </SLIDER_ITEM>
-        <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/upcoming_features.webp`}></SLIDER_ITEM>
-      </Slider>
-      <div className="fade"></div>
-    </CAROUSEL_WRAPPER>
+    <>
+      <CAROUSEL_WRAPPER>
+        {modal && <CreatorsLanding showModal={showModal} />}
+        <Slider {...settings}>
+          <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/NestQuest.png`}>
+            <div className="home-slider-content">
+              <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>
+                NestQuest
+              </h1>
+              <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>
+                Tier #1
+              </h1>
+              <ORANGE_BTN
+                className="home-slider-button"
+                height={'40px'}
+                status="action"
+                width={'141px'}
+                onClick={goNestQuestSingleListing}
+              >
+                <span>Mint Now</span>
+              </ORANGE_BTN>
+            </div>
+          </SLIDER_ITEM>
+          <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/become-a-creator.webp`}>
+            <div className="home-slider-content">
+              <h1 className="home-slider-title">Launch</h1>
+              <h1 className="home-slider-title">Your Collection</h1>
+              <TERTIERY_BTN
+                className="home-slider-button"
+                height={'40px'}
+                status="action"
+                width={'141px'}
+                onClick={handleCreatorApply}
+              >
+                <span>Apply</span>
+              </TERTIERY_BTN>
+            </div>
+          </SLIDER_ITEM>
+          <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/upcoming_features.webp`}></SLIDER_ITEM>
+        </Slider>
+        <div className="fade"></div>
+      </CAROUSEL_WRAPPER>
+    </>
   )
 }
