@@ -102,7 +102,7 @@ const TEXT_HOLDER = styled.div`
 `
 
 const TEXT_CONTAINER = styled.div`
-  ${tw`sm:w-[90%] sm:m-6 w-[30%] text-center flex flex-col justify-start`}
+  ${tw`sm:w-[90%] sm:m-6 w-[30%] text-center flex flex-col justify-center`}
 `
 
 const ANIMATION = styled.div`
