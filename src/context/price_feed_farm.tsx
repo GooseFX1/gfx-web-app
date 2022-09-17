@@ -1,10 +1,6 @@
 import React, { createContext, Dispatch, FC, ReactNode, useContext, useState } from 'react'
 import { FARM_TOKEN_LIST } from './crypto'
-// import axios from 'axios'
 import { getFarmTokenPrices } from '../api/SSL'
-
-// const minMaxSuffix = '/ohlc?vs_currency=usd&days=7'
-
 interface IPrices {
   [x: string]: {
     current: number

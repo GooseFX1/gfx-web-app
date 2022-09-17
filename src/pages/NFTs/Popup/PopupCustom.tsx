@@ -1,7 +1,7 @@
 import React, { ReactNode, FC } from 'react'
 import { Modal } from 'antd'
 import styled from 'styled-components'
-import { SVGDynamicReverseMode } from '../../..//styles/utils'
+import { SVGDynamicReverseMode } from '../../../styles/utils'
 
 export const STYLED_POPUP = styled(Modal)<{ width: string; height: string }>`
   * {

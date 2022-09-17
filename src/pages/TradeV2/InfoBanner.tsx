@@ -179,8 +179,6 @@ export const InfoBanner: FC<{
 
   const handleToggle = (e) => {
     if (e === 'spot') setIsSpot(true)
-    //else setIsSpot(false)
-    //Disabling perps for now
   }
 
   return (

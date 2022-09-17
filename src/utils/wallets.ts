@@ -7,11 +7,13 @@ import {
   SlopeWalletAdapter,
   TorusWalletAdapter,
   MathWalletAdapter,
-  //LedgerWalletAdapter,
   SolongWalletAdapter
 } from '@solana/wallet-adapter-wallets'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { createDefaultAuthorizationResultCache, SolanaMobileWalletAdapter } from '@solana-mobile/wallet-adapter-mobile'
+import {
+  createDefaultAuthorizationResultCache,
+  SolanaMobileWalletAdapter
+} from '@solana-mobile/wallet-adapter-mobile'
 
 export const getWalletAdapters = (network: WalletAdapterNetwork) => [
   new PhantomWalletAdapter(),
@@ -19,7 +21,6 @@ export const getWalletAdapters = (network: WalletAdapterNetwork) => [
   new SolflareWalletAdapter({ network }),
   new TorusWalletAdapter(),
   new MathWalletAdapter(),
-  //new LedgerWalletAdapter(),
   new SolongWalletAdapter(),
   new SolletExtensionWalletAdapter({ network }),
   new SolletWalletAdapter({ network }),

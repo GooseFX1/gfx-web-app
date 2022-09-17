@@ -6,11 +6,9 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Checkbox, Col, Row } from 'antd'
 import { useNFTCreator } from '../../../../context/nft_creator'
-//import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 import { useHistory } from 'react-router-dom'
 import { useNavCollapse } from '../../../../context'
 import { GradientText } from '../../adminPage/components/UpcomingMints'
-//import { useWallet } from '@solana/wallet-adapter-react'
 
 export const CENTER_WRAP = styled.div`
   display: flex;
@@ -173,12 +171,7 @@ const SubmitPopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => void }) =
             <GradientText fontSize={20} fontWeight={600} text={'Step 2'} />
           </Col>
           <br />
-          {/*<Col span={12} className="reviewItems">
-            Cover image launchpad
-          </Col>
-          <Col span={12} className="reviewItems">
-            {{creatorData[2]?.image.name.substring(0, 24) + '...'}}
-          </Col>*/}
+
           <Col span={12} className="reviewItems">
             Number of items
           </Col>

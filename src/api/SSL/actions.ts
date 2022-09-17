@@ -4,7 +4,6 @@ import { httpClient } from '../../api'
 import { SSL_API_BASE, SSL_API_ENDPOINTS } from '../SSL/constants'
 import axios from 'axios'
 
-//const callProdAPI = true
 export const fetchSSLAPR = async (tokenAddress: string, controller: string) => {
   try {
     const res = await httpClient(SSL_API_BASE).get(
@@ -29,7 +28,6 @@ export const fetchSSLVolumeData = async (tokenAddress: string, controller: strin
 
 export const saveLiquidtyVolume = async (sslVolume: number, stakeVolume: number, liqObj: object) => {
   try {
-    //const url = 'http://localhost:4000' + SSL_API_ENDPOINTS.SAVE_LIQUIDITY_DATA
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.SAVE_LIQUIDITY_DATA
     const dataToSend = JSON.stringify({
       date: getDateInISOFormat(),
@@ -60,7 +58,6 @@ export const saveLiquidtyVolume = async (sslVolume: number, stakeVolume: number,
 
 export const getVolumeApr = async (tokenList: string[], SSLTokenNames: string[], controllerStr: string) => {
   try {
-    //const url = 'http://localhost:4000' + SSL_API_ENDPOINTS.GET_VOLUME_APR_DATA
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.GET_VOLUME_APR_DATA
     const dataToSend = JSON.stringify({
       tokens: tokenList,
@@ -84,7 +81,6 @@ export const getVolumeApr = async (tokenList: string[], SSLTokenNames: string[],
 }
 export const getFarmTokenPrices = async (cryptoMarkets: object) => {
   try {
-    //const url = 'http://localhost:4000' + SSL_API_ENDPOINTS.GET_TOKEN_PRICES
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.GET_TOKEN_PRICES
     const dataToSend = JSON.stringify({
       cryptoMarkets: cryptoMarkets

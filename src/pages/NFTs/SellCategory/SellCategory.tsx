@@ -38,21 +38,12 @@ export const STYLED_SELL_CATEGORY = styled(Row)`
   }
 `
 
-// {
-//   icon: 'live-auction',
-//   name: 'Live auction'
-// },
 const dataCategories = [
   {
     icon: 'fixed-price',
     name: 'Fixed price'
   }
 ]
-
-// {
-//   icon: 'open-bid',
-//   name: 'Open bid'
-// }
 
 interface ICategory {
   category: string

@@ -172,13 +172,6 @@ const UploadProgress = (props: { mint: () => void; step: number }) => {
     func()
   }, [])
 
-  // const setIconForStep = (currentStep: number, componentStep) => {
-  //   if (currentStep === componentStep) {
-  //     return <Loader />
-  //   }
-  //   return null
-  // }
-
   return (
     <CONTAINER>
       <HEADING>

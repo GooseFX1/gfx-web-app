@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-//import { useParams } from 'react-router-dom'
-//import { IProjectParams } from '../../../../types/nft_launchpad'
+
 import { useNFTLPSelected } from '../../../../context/nft_launchpad'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
@@ -9,7 +8,6 @@ import * as anchor from '@project-serum/anchor'
 import {
   awaitTransactionSignatureConfirmation,
   createAccountsForMint,
-  //mintOneToken,
   SetupState,
   CANDY_MACHINE_PROGRAM,
   createAccountsForMintNonce,
@@ -18,10 +16,8 @@ import {
   getWalletWhitelistPda,
   mintOneTokenCustom
 } from '../candyMachine/candyMachine'
-//import { AlertState } from '../candyMachine/utils'
 import { Transaction, PublicKey } from '@solana/web3.js'
 import { GatewayProvider } from '@civic/solana-gateway-react'
-//import { sendTransaction } from '../candyMachine/connection'
 import { MintButtonFunc } from './MintButtonFunc'
 import { notify } from '../../../../utils'
 import { Col, Row } from 'antd'
@@ -42,16 +38,11 @@ const MESSAGE = styled.div`
 `
 
 export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
-  //const params = useParams<IProjectParams>()
   const wallet = useWallet()
   const { connection, endpoint, network } = useConnectionConfig()
   const { selectedProject, candyMachine, cndyValues } = useNFTLPSelected()
   const [isUserMinting, setIsUserMinting] = useState(false)
-  // const [alertState, setAlertState] = useState<AlertState>({
-  //   open: false,
-  //   message: '',
-  //   severity: undefined
-  // })
+
   const [setupTxn, setSetupTxn] = useState<SetupState>()
 
   //hooks in context
@@ -61,20 +52,8 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
   const [itemsRemaining, setItemsRemaining] = useState<number>()
   const [isActive, setIsActive] = useState(false)
   const [needTxnSplit, setNeedTxnSplit] = useState(true)
-  //const [discountPrice, setDiscountPrice] = useState<anchor.BN>()
   const [publicMint, setPublicMint] = useState<boolean>(true)
-  //
   const [isNonce] = useState<boolean>(false)
-
-  // const isWhitelist = () => {
-  //   if (
-  //     parseFloat(selectedProject.whitelist) &&
-  //     parseFloat(selectedProject.whitelist) < Date.now() &&
-  //     parseFloat(selectedProject.startsOn) > Date.now()
-  //   )
-  //     return true
-  //   return false
-  // }
 
   const onMint = async (beforeTransactions: Transaction[] = [], afterTransactions: Transaction[] = []) => {
     try {
@@ -175,12 +154,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
             setIsActive((candyMachine.state.isActive = remaining > 0))
             candyMachine.state.isSoldOut = remaining === 0
             setSetupTxn(undefined)
-            //  setAlertState({
-            //    open: true,
-            //    message: 'Congratulations! Mint succeeded!',
-            //    severity: 'success',
-            //    hideDuration: 7000
-            //  })
+
             notify({
               message: (
                 <MESSAGE>
@@ -340,13 +314,10 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
     }
   }
 
-  //
-
   useEffect(() => {
     if (cndyValues) {
       setIsWhitelistUser(cndyValues.isWhiteListUser)
       setIsValidBalance(cndyValues.validBalance)
-      //setDiscountPrice()
       setEndDate(cndyValues.endDate)
       setIsActive(cndyValues.isActive)
       setItemsRemaining(cndyValues.itemsRemaining)
@@ -393,16 +364,10 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
                 </MESSAGE>
               )
             })
-            // setTimeout(() => window.location.reload(), 2000);
             setIsUserMinting(false)
             throw e
           }
         } else {
-          //  setAlertState({
-          //    open: true,
-          //    message: 'Refreshing Civic Pass',
-          //    severity: 'info'
-          //  })
           notify({
             message: (
               <MESSAGE>
@@ -418,8 +383,6 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
           })
         }
         try {
-          // await sendTransaction(connection, wallet, transaction, [], true, 'confirmed')
-          //let res = await sendAndConfirmRawTransaction(connection, transaction.serialize())
           notify({
             message: (
               <MESSAGE>
@@ -449,7 +412,6 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
             )
           })
           console.error(e)
-          // setTimeout(() => window.location.reload(), 2000);
           setIsUserMinting(false)
           throw e
         }

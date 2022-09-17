@@ -102,13 +102,7 @@ const NFTLandingPage: FC = (): JSX.Element => {
   return (
     <>
       {displayMenu()}
-      <Header
-        setFilter={setSearch}
-        //totalCollections={allCollections}
-        filter={search}
-        filteredCollections={filteredCollections}
-        //setTotalCollections={setFilteredCollections}
-      />
+      <Header setFilter={setSearch} filter={search} filteredCollections={filteredCollections} />
       <NFTHomeSlider />
       <br />
       <div>

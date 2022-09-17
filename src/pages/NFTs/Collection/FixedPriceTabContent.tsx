@@ -34,10 +34,7 @@ const NO_CONTENT = styled.div`
     margin-bottom: 20px;
   }
 `
-// const EMPTY_MSG = styled.div`
-//   ${({ theme }) => theme.flexCenter}
-//   width: 100%;
-// `
+
 const WRAPPED_LOADER = styled.div`
   position: relative;
   height: 48px;
@@ -45,7 +42,6 @@ const WRAPPED_LOADER = styled.div`
 
 export const FixedPriceTabContent: FC<{ filter: any; setCollapse?: (x: any) => void }> = ({ filter, ...rest }) => {
   const { fixedPriceWithinCollection } = useNFTCollections()
-  //const { sessionUser } = useNFTProfile()
 
   const [fileredLocalFixedPrice, _setFilteredLocalFixedPrice] = useState<Array<ISingleNFT>>(Array(21).fill(null))
   const [shortfileredLocalFixedPrice, _setShortFilteredLocalFixedPrice] = useState<Array<ISingleNFT>>(
@@ -123,11 +119,7 @@ export const FixedPriceTabContent: FC<{ filter: any; setCollapse?: (x: any) => v
     if (border !== null) {
       const mainHeight = window.innerHeight
       const totalscroll = mainHeight + border.scrollTop + 100
-      // if (border.scrollTop < 50) {
-      //   setCollapse(false)
-      // } else {
-      //   setCollapse(true)
-      // }
+
       if (Math.ceil(totalscroll) < border.scrollHeight || activePointLoader.current) {
         setLoading(false)
       } else {
@@ -148,8 +140,6 @@ export const FixedPriceTabContent: FC<{ filter: any; setCollapse?: (x: any) => v
       setLoading(false)
 
       // force scroll up to avoid over push
-      // let border = document.getElementById('border')
-      // border.scrollTop = border.scrollTop
     }
   }
 

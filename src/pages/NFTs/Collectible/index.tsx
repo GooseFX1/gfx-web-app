@@ -192,7 +192,6 @@ export const Collectible = (): JSX.Element => {
           <br />
           if you want to sell one collectible multiple times
         </DESCRIPTION>
-        {/* <SMALL_DESCRIPTION>Live auctions option is avilable only for single items.</SMALL_DESCRIPTION> */}
         <br />
         <br />
         <br />

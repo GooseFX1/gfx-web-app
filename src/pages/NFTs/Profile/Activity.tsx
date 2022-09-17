@@ -6,7 +6,6 @@ import { SearchBar, Loader } from '../../../components'
 import { StyledTabContent } from './TabContent.styled'
 import { useNFTProfile, useConnectionConfig } from '../../../context'
 import { checkMobile, truncateAddress } from '../../../utils'
-// import { INFTMetadata } from '../../../types/nft_details.d'
 
 export const columns = [
   {

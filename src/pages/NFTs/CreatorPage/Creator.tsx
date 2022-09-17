@@ -4,7 +4,6 @@ import { NFTCreatorProvider } from '../../../context/nft_creator'
 import { CreatorWrapper } from './components/CreatorWrapper'
 
 export const Creator: FC = () => (
-  //const { path } = useRouteMatch()
   <Switch>
     <Route exact path="/NFTs/Creator/:walletAddress">
       <NFTCreatorProvider>

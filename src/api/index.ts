@@ -48,8 +48,6 @@ export const customClient = (customURL: string, collectionId?: number) => {
 export const logData = async (event: string) => {
   try {
     if (process.env.NODE_ENV === 'production') {
-      //const url = 'http://192.168.29.193:4000' + ANALYTICS_API_ENDPOINTS.LOG_DATA
-
       const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + ANALYTICS_API_ENDPOINTS.LOG_DATA
       const dataToSend = JSON.stringify({
         event: event

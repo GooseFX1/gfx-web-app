@@ -182,9 +182,6 @@ const SocialsButton = styled.div`
   line-height: inherit;
 `
 
-// const CLICKER_ICON = styled(CenteredImg)`
-//   ${tw`h-12 w-12 mr-1 rounded-circle`}
-// `
 const SMALL_CLICKER_ICON = styled(CenteredImg)`
   ${tw`h-5 w-5 mr-2 rounded-circle`}
 `
@@ -235,11 +232,6 @@ const ShowMore = styled.div`
 const PriceHeader = styled.div`
   ${tw`flex w-full items-center`}
 `
-
-// const WRAPPED_LOADER = styled.div`
-//   position: relative;
-//   height: 14px;
-// `
 
 const PriceTitle = styled.div`
   ${tw`font-semibold text-average`}
@@ -413,7 +405,6 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
           </SETTING_WRAPPER>
         </div>
       </HEADER_WRAPPER>
-      {/* <Rate /> */}
       <BODY>
         <style>{localCSS}</style>
         <SwapFrom height={height} />
@@ -620,13 +611,7 @@ const TokenContent: FC = () => {
           tokenA={tokenA}
           tokenB={tokenB}
         />
-        {/* <CLICKER_ICON>
-          <img
-            src={`/img/crypto/${token?.symbol}.svg`}
-            alt=""
-            onError={(e) => (e.currentTarget.src = '/img/crypto/Unknown.svg')}
-          />
-        </CLICKER_ICON> */}
+
         <SubHeader>
           <TokenTitle>
             {token?.name} ({token?.symbol})
@@ -719,11 +704,6 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
           getPriceDetails(num).totalLp,
           getPriceDetails(num).token?.decimals || tokenA.decimals
         )} ${getPriceDetails(num).token?.symbol || tokenA.symbol} (${getPriceDetails(num).percent} %)`
-        // extraValue:
-        //   market.amm.label === 'GooseFX' ??
-        //   `${nFormatter(getPriceDetails(num).totalLpB, tokenB.decimals)} ${tokenB.symbol} (${
-        //     getPriceDetails(num).percentB
-        //   }%)`
       })),
 
       { name: checkMobile() ? 'Trans. Fee' : 'Transaction Fee', value: '0.00005 SOL', icon: 'info' }
@@ -740,12 +720,6 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
     <PRICE_WRAPPER>
       <PriceHeader>
         <PriceTitle>Price Info</PriceTitle>
-        {/* <WRAPPED_LOADER>
-          <Loader />
-        </WRAPPED_LOADER> */}
-        {/* <SMALL_CLICKER_ICON>
-          <img src={`/img/crypto/GOFX.svg`} alt="" />
-        </SMALL_CLICKER_ICON> */}
       </PriceHeader>
       <TokenDetail>
         <TokenTitle>Rate</TokenTitle>

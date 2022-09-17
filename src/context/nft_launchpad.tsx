@@ -119,7 +119,6 @@ interface ISelectedProject {
   tiers: Tiers[] | null
 }
 
-//const CANDY_MACHINE_PROGRAM = new anchor.web3.PublicKey('cndy3Z4yapfJBmL3ShUp5exZKqR3z33thTzeNMm2gRZ')
 interface CandyMachineState {
   authority: anchor.web3.PublicKey
   itemsAvailable: number
@@ -423,7 +422,6 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
 
   useEffect(() => {
     ;(async () => {
-      //setInterval(async () => {
       const data = await fetchSelectedNFTLPData(params.urlName)
       refreshCandyMachineState(data.data.candyMachine)
       setSelectedProject(data.data)

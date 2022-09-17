@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-// import { USE_MARKETS } from './markets'
 import { AVAILABLE_MARKETS } from '../../../context'
 import { sleep, getUnixTs } from '../../../utils/misc'
 
@@ -47,12 +46,7 @@ const makeDataFeed = () => {
         0
       )
     },
-    //eslint-disable-next-line
-    async searchSymbol(userInput, exchange, symbolType, onResult) {
-      // const result = await apiGet(`${URL_SERVER}search?query=${userInput}
-      //&type=${symbolType}&exchange=${exchange}&limit=${1}`);
-      // onResult(result);
-    },
+
     async resolveSymbol(symbolName, onSymboleResolvedCallback, onResolveErrorCallback) {
       let fromCustomMarket = false
       let customMarket = []
