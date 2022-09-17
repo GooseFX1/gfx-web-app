@@ -6,6 +6,7 @@ import { Row, Col } from 'antd'
 import tw from 'twin.macro'
 import { checkMobile } from '../../../../utils'
 
+//#region styles
 const STYLED_POPUP = styled(PopupCustom)`
   ${tw`static max-w-[100vw] m-0`}
   .close-icon {
@@ -16,6 +17,7 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
   .ant-modal-body {
     ${tw`p-0`}
+    overflow-x: hidden;
   }
 `
 
@@ -34,11 +36,7 @@ const TEXT = styled.div`
 `
 
 const Wrapper = styled.div`
-  ${tw`sm:p-0 w-full h-full p-[75px] bg-[#eeeeee]`}
-
-  .arrow {
-    ${tw`block w-9 h-[15px] mt-[7%] mx-auto mb-0 cursor-pointer`}
-  }
+  ${tw`sm:p-0 w-full h-full px-[75px] bg-[#eeeeee]`}
 
   .heading {
     ${tw`sm:text-[35px] text-[70px] mt-[50px] mx-auto mb-0 text-[#3c3c3c] text-center font-bold`}
@@ -50,16 +48,25 @@ const Wrapper = styled.div`
 `
 
 const ROW_ONE = styled.div`
-  ${tw`sm:p-0 sm:pt-20 sm:flex-col-reverse sm:items-center flex flex-row justify-between p-12`}
+  ${tw`relative h-[100vh] flex flex-row justify-between px-12`}
+  ${tw`sm:p-0 sm:pt-20 sm:flex-col-reverse sm:items-center sm:justify-end`}
+
+  .arrow {
+    ${tw`absolute sm:bottom-8 bottom-16 w-full flex justify-center`}
+
+    .arrow-btn {
+      ${tw`w-9 h-[15px] cursor-pointer`}
+    }
+  }
 `
 
-const PAGE_CONTENT = styled.div<{ $index: Number }>`
-  ${tw`sm:flex sm:flex-col-reverse sm:items-center sm:mt-[50px] sm:mb-[75px] justify-around mt-[140px]`}
-  display: flex;
+const PAGE_CONTENT = styled.div<{ $index: number }>`
+  ${tw`flex justify-around mt-[140px]`}
+  ${tw`sm:flex sm:flex-col-reverse sm:items-center sm:mt-[50px] sm:mb-[75px] `}
   flex-direction: ${({ $index }) => ($index % 2 === 0 ? 'row-reverse' : 'reverse')};
 
   .feature-img {
-    ${tw`sm:h-[220px] sm:w-3/4 h-[336px] w-[384px] mt-[15px] absolute left-0`}
+    ${tw`sm:h-[220px] sm:w-auto h-auto w-[384px] mt-[15px] absolute`}
   }
 `
 const feauturesToShow = [
@@ -99,13 +106,15 @@ const TEXT_CONTAINER = styled.div`
 `
 
 const ANIMATION = styled.div`
-  ${tw`sm:left-[10%] sm:w-full relative`}
+  ${tw`sm:w-full justify-center relative flex items-center`}
 
   .one-stop-solution{
-    ${tw`absolute left-0`}
+    ${tw`absolute h-[60vh] w-auto sm:h-[42vh]`}
   }
 
   .animation{
+    width: 100%;
+    height: auto;
     -webkit-animation:spin 4s linear infinite;
     -moz-animation:spin 4s linear infinite;
     animation:spin 4s linear infinite;
@@ -135,10 +144,10 @@ const TEXT_TWO = styled.div`
 `
 
 const HEADER = styled.div`
-  ${tw`sm:text-[35px] sm:font-bold text-[#3c3c3c] text-[50px]`}
+  ${tw`sm:text-[35px] sm:font-bold text-[#3c3c3c] text-[50px] font-bold`}
 
   span {
-    ${tw`sm:text-[35px] sm:font-bold`}
+    ${tw`sm:text-[35px] font-bold`}
     background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -161,20 +170,24 @@ const SOCIAL_ICON = styled.button`
 `
 
 const BANNER = styled.div`
-  ${tw`relative`}
+  ${tw`relative sm:mt-10 mt-40`}
   .banner-img {
-    ${tw`sm:mt-10 sm:rounded-half block mt-20 mb-0 mx-auto`}
+    ${tw`sm:rounded-half block  mb-0 mx-auto`}
   }
 
   .ready-to-launch {
-    ${tw`sm:top-0 sm:left-[10%] absolute top-[10%] left-[8%]`}
+    ${tw`sm:top-2 sm:left-[10%] absolute top-[10%] left-[8%]`}
     .ready {
       ${tw`sm:text-[38px] sm:font-semibold text-[50px] text-white font-bold`}
     }
   }
 
+  .btn-section {
+    ${tw`absolute bottom-[25%] w-full flex justify-center`}
+  }
+
   .apply-btn {
-    ${tw`absolute text-[#5855ff] bottom-[150px] left-[45%] 
+    ${tw`text-[#5855ff] bottom-[150px] left-[45%] 
     h-[70px] w-[15%] border-none rounded-[80px] text-[25px] font-semibold
     sm:bottom-[50px] sm:left-[30%] sm:h-12 sm:w-[172px] text-regular`}
   }
@@ -196,8 +209,9 @@ const FEATURE = styled.div`
 `
 
 const FOOTER = styled.div`
-  ${tw`mt-7`}
+  ${tw`mt-7 pb-7`}
 `
+//#endregion
 
 export const CreatorsLanding: FC<{
   showModal: any
@@ -214,12 +228,10 @@ export const CreatorsLanding: FC<{
         height="100%"
         title={null}
         visible={true}
-        onCancel={() => {
-          showModal(false)
-        }}
+        onCancel={() => showModal(false)}
         closeIcon={
           <div>
-            <img className="close-icon" src={`/img/assets/creatorsLanding/closeButton.png`} alt="" />
+            <img className="close-icon" src={`/img/assets/creatorsLanding/closeButton.svg`} alt="" />
           </div>
         }
         footer={null}
@@ -228,13 +240,13 @@ export const CreatorsLanding: FC<{
           <ROW_ONE>
             <TEXT_HOLDER>
               <HEADER>
-                One stop solution to launch your <span>NFT collection</span>.
+                One stop solution to launch your <span>NFT collection.</span>
               </HEADER>
               <SUBHEADER>
                 Together we create the best and most personalized soution to launch your NFT collection.
               </SUBHEADER>
             </TEXT_HOLDER>
-            <ANIMATION style={{ left: '5%' }}>
+            <ANIMATION>
               <img
                 src="img/assets/creatorsLanding/backgroundCover.svg"
                 alt="animation"
@@ -249,19 +261,20 @@ export const CreatorsLanding: FC<{
                 className="one-stop-solution"
               />
             </ANIMATION>
+            <div className="arrow">
+              <img
+                src="/img/assets/creatorsLanding/arrowButton.png"
+                alt="arrow-down"
+                className="arrow-btn"
+                onClick={() => handleScroll()}
+              />
+            </div>
           </ROW_ONE>
-          <img
-            src="/img/assets/creatorsLanding/arrowButton.png"
-            alt="arrow-down"
-            className="arrow"
-            onClick={() => {
-              handleScroll()
-            }}
-          />
+
           <div id="scroll-here">
             <h1 className="heading">Why GooseFX?</h1>
             {feauturesToShow.map((feature, index) => (
-              <PAGE_CONTENT $index={index}>
+              <PAGE_CONTENT $index={index} key={index}>
                 <TEXT_CONTAINER>
                   <TEXT_ONE>{feature.name}</TEXT_ONE>
                   <TEXT_TWO>{feature.desc}</TEXT_TWO>
@@ -304,7 +317,7 @@ export const CreatorsLanding: FC<{
                     ? '/img/assets/creatorsLanding/readyToLaunchMobile.png'
                     : '/img/assets/creatorsLanding/readyToLaunch.svg'
                 }
-                height={checkMobile() ? '321' : '498'}
+                height={'auto'}
                 width={checkMobile() ? '90%' : '100%'}
                 className="banner-img"
               />
@@ -312,9 +325,11 @@ export const CreatorsLanding: FC<{
                 <div className="ready"> Ready </div>
                 <div className="ready">to Launch?</div>
               </div>
-              <button onClick={() => window.open(SOCIAL_MEDIAS.nftCreatorForm)} className="apply-btn">
-                Apply
-              </button>
+              <div className="btn-section">
+                <button onClick={() => window.open(SOCIAL_MEDIAS.nftCreatorForm)} className="apply-btn">
+                  Apply
+                </button>
+              </div>
             </BANNER>
             <FOOTER>
               <Row justify={checkMobile() ? 'space-around' : 'center'} align="middle">
