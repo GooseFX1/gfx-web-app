@@ -249,9 +249,9 @@ export const InfoBanner: FC<{
           ) : (
             <div className={classNameChange}>
               {classNameChange === 'up24h' ? (
-                <img src="/img/assets/24hourup.png" height="10" alt="up24h" />
+                <img src="/img/assets/24hourup.png" height="10" alt="up-icon" />
               ) : (
-                <img src="/img/assets/24hourup.png" height="10" alt="down24h" />
+                <img src="/img/assets/24hourdown.svg" height="10" alt="down-icon" />
               )}
               {changeValue} %
             </div>
