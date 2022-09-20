@@ -91,7 +91,6 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   })
   const [tokenA, setTokenA] = useState<ISwapToken | null>(null)
   const [tokenB, setTokenB] = useState<ISwapToken | null>(null)
-  //const swap = new Swap(connection)
 
   const refreshTimeout: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
   const timeoutDelay = 200
@@ -145,19 +144,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const outValuePerIn = 0
 
         try {
-          //const { decimals } = tokenA
-          // const { pool } = await computePoolsPDAs(tokenA, tokenB, network)
-          // const [aAccount, bAccount] = await Promise.all([
-          //   connection.getParsedTokenAccountsByOwner(pool, { mint: new PublicKey(tokenA.address) }),
-          //   connection.getParsedTokenAccountsByOwner(pool, { mint: new PublicKey(tokenB.address) })
-          // ])
-
-          // inAmount = parseFloat(aAccount.value[0].account.data.parsed.info.tokenAmount.amount)
-          // outAmount = parseFloat(bAccount.value[0].account.data.parsed.info.tokenAmount.amount)
-          // outValuePerIn = (outAmount - (inAmount * outAmount) / (inAmount + 10 ** decimals)) / 10 ** decimals
           amountPool()
         } catch (e) {
-          //setOutTokenAmount(0)
           console.log(e)
         }
 
@@ -197,18 +185,12 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         } else {
           notify({ type: 'error', message: 'Fetch Pre-swap Amount Failed', icon: 'error' })
         }
-        //outAmount - (inAmount * outAmount) / (inAmount + inTokenAmount * 10 ** tokenA.decimals)
       }
       setOutTokenAmount(outTokenAmount)
     } else {
       setOutTokenAmount(0)
     }
   }, [tokenA, tokenB, inTokenAmount, chosenRoutes, clickNo])
-
-  // useEffect(() => {
-  //   setTokenA(null)
-  //   setTokenB(null)
-  // }, [connection])
 
   useEffect(() => {
     if (chosenRoutes.length < 1 && inTokenAmount > 0 && tokenA && tokenB) {
@@ -221,10 +203,6 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     amountPool()
   }, [inTokenAmount, pool, slippage, tokenA, tokenB, chosenRoutes, clickNo])
-
-  // useEffect(() => {
-  //   refreshRates().then()
-  // }, [inTokenAmount, refreshRates, tokenA, tokenB])
 
   useEffect(() => {
     const interval = setInterval(() => amountPool(), 20000)
@@ -306,9 +284,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         },
         routeInfo: revertRoute(route),
         onTransaction: async (txid: any) => {
-          //console.log('sending transaction')
           const result = await connection.confirmTransaction(txid)
-          //console.log('confirmed transaction')
           if (!result.value.err) {
             return await connection.getTransaction(txid, {
               commitment: 'confirmed'

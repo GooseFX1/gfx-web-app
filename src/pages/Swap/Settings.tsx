@@ -123,7 +123,8 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
       <div>
         <TITLE>Slippage tolerance</TITLE>
         <Tooltip notInherit={true}>
-          The minimum amount on how many tokens you will accept, in the event that the price increases or decreases.
+          The minimum amount on how many tokens you will accept, in the event that the price increases or
+          decreases.
         </Tooltip>
       </div>
       <BUTTON_CONTAINER>
@@ -143,7 +144,6 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
         <TITLE>Or input manually</TITLE>
       </div>
       <div>
-        {/* <style>{localCSS}</style> */}
         <SETTING_INPUT
           maxLength={6}
           onChange={(x: BaseSyntheticEvent) =>

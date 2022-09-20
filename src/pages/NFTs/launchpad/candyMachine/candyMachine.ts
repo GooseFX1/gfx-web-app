@@ -17,7 +17,6 @@ import {
   SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
 } from './utils'
 
-//import magic_hat_idl from '../customSC/magic_hat.json'
 import {
   MAGIC_HAT_CREATOR,
   MAGIC_HAT_ID,
@@ -25,7 +24,6 @@ import {
   pdaSeed,
   pdaWhitelistSeed
 } from '../customSC/config'
-//import { Program } from '@project-serum/anchor'
 
 export const CANDY_MACHINE_PROGRAM = new anchor.web3.PublicKey('cndy3Z4yapfJBmL3ShUp5exZKqR3z33thTzeNMm2gRZ')
 
@@ -84,7 +82,6 @@ export const awaitTransactionSignatureConfirmation = async (
     confirmations: 0,
     err: null
   }
-  //const subId = 0
   status = await new Promise((resolve, reject) => {
     setTimeout(() => {
       if (done) {
@@ -128,11 +125,8 @@ export const awaitTransactionSignatureConfirmation = async (
   })
 
   //@ts-ignore
-  //  if (connection._signatureSubscriptions[subId]) {
-  //    connection.removeSignatureListener(subId)
-  //  }
+
   done = true
-  console.log('Returning status', status)
   return status
 }
 
@@ -1126,13 +1120,6 @@ export const createAccountsForMintNonce = async (
     ).txs[0].txid
   }
 }
-
-// const getProgram = async (connection, wallet) => {
-//   const wallet_t: any = wallet
-//   const provider = new anchor.Provider(connection, wallet_t, anchor.Provider.defaultOptions())
-//   const idl_o: any = magic_hat_idl
-//   return new Program(idl_o, MAGIC_HAT_PROGRAM_V2_ID, provider)
-// }
 
 export const getMagicHatCreator = async (
   magicHat: anchor.web3.PublicKey

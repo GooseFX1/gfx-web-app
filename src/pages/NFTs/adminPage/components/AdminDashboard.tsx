@@ -36,7 +36,6 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
     ${tw`font-semibold text-4xl text-white ml-2`}
   }
 `
-//const LEFT_WRAPPER = styled.div<{ $navCollapsed: boolean }>``
 
 const AdminDashboard = () => {
   const { isCollapsed, toggleCollapse } = useNavCollapse()

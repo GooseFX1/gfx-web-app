@@ -1,12 +1,9 @@
 import React, { FC } from 'react'
 import Slider from 'react-slick'
-//import { Row, Col } from 'antd'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import styled from 'styled-components'
 import { ArrowClicker } from '../../../components'
-//import { ButtonWrapper } from '../NFTButton'
-//import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { Card } from '../Collection/Card'
 import { checkMobile } from '../../../utils'
 import tw from 'twin.macro'
@@ -69,24 +66,6 @@ const CARD_WRAPPER = styled.div`
     width: 332px;
   }
 `
-
-// const SORT_BUTTON = styled(ButtonWrapper)`
-//   height: 40px;
-//   background-color: ${({ theme }) => theme.secondary2};
-//   margin-right: ${({ theme }) => theme.margin(2)};
-//   justify-content: space-between;
-// `
-
-// const WRAPPED_LOADER = styled.div`
-//   position: relative;
-//   height: 48px;
-// `
-// const SKELETON_SLIDER = styled.div`
-//   display: flex;
-//   .wrap {
-//     margin: 0 ${({ theme }) => theme.margin(4)};
-//   }
-// `
 
 const settings = {
   infinite: false,

@@ -4,7 +4,6 @@ import { Input } from 'antd'
 import { Selector } from './Selector'
 import { AmountField } from './shared'
 import { useAccounts, useSwap } from '../../context'
-//import { checkMobile } from '../../utils'
 
 const QUICK_SELECT = styled.div`
   margin-left: 23.5%;

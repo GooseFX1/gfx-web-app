@@ -62,7 +62,6 @@ export const ModalSlide = (props: IModalSlide) => (
       {props.modalType === MODAL_TYPES.APPROVE_PROJECT && <ApprovePopup rewardToggle={props.rewardToggle} />}
       {props.modalType === MODAL_TYPES.REJECT_PROJECT && <RejectPopup rewardToggle={props.rewardToggle} />}
       {props.modalType === MODAL_TYPES.NFT_MENU && <MenuPopup rewardToggle={props.rewardToggle} />}
-      {/* {props.modalType === MODAL_TYPES.GOLDEN_TICKET && <GoldenTicketPopup />} */}
     </MODAL>
   </WRAPPER>
 )

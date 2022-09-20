@@ -1,6 +1,5 @@
 import React, { FC, useMemo } from 'react'
 import { Skeleton } from 'antd'
-//import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { MarketType, useCrypto, usePriceFeed } from '../../context'
 import { CenteredImg } from '../../styles'
@@ -9,10 +8,6 @@ import { removeFloatingPointError } from '../../utils'
 const ASSET_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margin(2))}
 `
-
-/* const CHANGE_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(1))}
-` */
 
 const INFO = styled.div`
   display: flex;
@@ -59,19 +54,13 @@ export const PairStats: FC<{ pair: string; type: MarketType; marketAddress: stri
 }) => {
   const { prices } = usePriceFeed()
   const { formatPair, getAskSymbolFromPair, selectedCrypto, setSelectedCrypto } = useCrypto()
-  //const history = useHistory()
 
   const formattedPair = useMemo(() => formatPair(pair), [formatPair, pair])
   const price = useMemo(() => prices[pair], [prices, pair])
   const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
-  // const change24HIcon = useMemo(() => `price_${price.change24H >= 0 ? 'up' : 'down'}.svg`, [price])
 
   const handleClick = () => {
-    // if (type === 'synth') {
-    //   history.push('/synths')
-    // } else
     if (selectedCrypto.pair !== symbol) {
-      //history.push('/trade/' + pair)
       setSelectedCrypto({ pair, marketAddress })
     }
   }
@@ -87,16 +76,6 @@ export const PairStats: FC<{ pair: string; type: MarketType; marketAddress: stri
           </ASSET_ICON>
           <span>{formattedPair}</span>
         </div>
-        {/* !price.change24H ? (
-          <Loader />
-        ) : (
-          <div>
-            <CHANGE_ICON>
-              <img src={`/img/assets/${change24HIcon}`} alt="" />
-            </CHANGE_ICON>
-            <span>{price.change24H}</span>
-          </div>
-        ) TODO RESTORE */}
       </INFO>
       <PRICE>
         {!price || !price.current ? <Loader /> : <span>$ {removeFloatingPointError(price.current)}</span>}

@@ -84,9 +84,7 @@ const SettleCard: FC = () => {
     const { market } = selectedCrypto
     const pair = getPairFromMarketAddress(openOrder.market)
     const baseAvailable = market?.baseSplSizeToNumber(openOrder.baseTokenFree)
-    //const baseBalance = market?.baseSplSizeToNumber(openOrder.baseTokenTotal.sub(openOrder.baseTokenFree))
     const quoteAvailable = market?.quoteSplSizeToNumber(openOrder.quoteTokenFree)
-    //const quoteBalance = market?.quoteSplSizeToNumber(openOrder.quoteTokenTotal.sub(openOrder.quoteTokenFree))
 
     if (quoteAvailable ?? 0) {
       const bidSettleButton = (

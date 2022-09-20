@@ -335,9 +335,7 @@ export const OrderBook: FC = () => {
     return [absolute, ((absolute / midValue) * 100).toFixed(2)]
   }, [slicedOrderBookBids, slicedOrderBookAsks])
 
-  //const symbol = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
-
-  //const handleExpandToggle = () => setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))
+  const handleExpandToggle = () => setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))
 
   const handleSetPrice = (price: number) => {
     setOrder((prevState) => ({ ...prevState, price }))

@@ -123,12 +123,6 @@ const MintPaymentConfirmation = (props: {
           // TODO: cache this and batch in one call
           const [mintRent, metadataRent] = await rentCall
 
-          // const uriStr = 'x';
-          // let uriBuilder = '';
-          // for (let i = 0; i < MAX_URI_LENGTH; i++) {
-          //   uriBuilder += uriStr;
-          // }
-
           const additionalSol = (metadataRent + mintRent) / LAMPORT_MULTIPLIER
 
           // TODO: add fees based on number of transactions and signers

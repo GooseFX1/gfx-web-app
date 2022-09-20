@@ -1,4 +1,3 @@
-//import { ICreatorData } from './types/nft_launchpad.d'
 import { ADDRESSES } from './web3'
 export const LITEPAPER_ADDRESS = 'https://docs.goosefx.io'
 export const SOCIAL_MEDIAS: { [key: string]: string } = {
@@ -31,7 +30,6 @@ export const CAROUSEL = [
   { name: 'Fractionalization', id: 3, position: 4 },
   { name: 'Lend', id: 4, position: 5 },
   { name: 'Borrow', id: 5, position: 6 }
-  // { name: 'Borrow', id: 25, position: 7 },
 ]
 export const NETWORK_CONSTANTS = {
   DEVNET: 'devnet',

@@ -85,7 +85,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
     } catch (e) {
       await notify({ type: 'error', message: `Error fetching market trades`, icon: 'error' }, e)
     }
-  }, [connection, selectedCrypto.market])
+  }, [selectedCrypto.market])
 
   const fetchBalances = useCallback(async () => {
     if (wallet.publicKey && selectedCrypto.market) {
@@ -182,6 +182,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   useEffect(() => {
     getMarketTrades()
   }, [selectedCrypto.market])
+
   useEffect(() => {
     fetchBalances()
     fetchOpenOrders()

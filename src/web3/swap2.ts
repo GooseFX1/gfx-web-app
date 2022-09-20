@@ -66,7 +66,7 @@ export const wrapSolToken = async (wallet: WalletContextState, connection: Conne
       )
     }
 
-    return tx //signAndSendRawTransaction(connection, tx, wallet)
+    return tx
   } catch (e) {
     console.log(e)
     return null

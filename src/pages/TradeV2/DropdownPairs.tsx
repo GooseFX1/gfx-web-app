@@ -49,7 +49,6 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
   const { formatPair, getAskSymbolFromPair } = useCrypto()
 
   const formattedPair = useMemo(() => formatPair(pair), [formatPair, pair])
-  //const price = useMemo(() => prices[pair], [prices, pair])
   const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
   const assetIcon = useMemo(() => `/img/${type}/${type === 'synth' ? `g${symbol}` : symbol}.svg`, [symbol, type])
 

@@ -246,7 +246,6 @@ export const CollectionHeader: FC<{
 
   const isCollectionItemEmpty: boolean =
     !singleCollection || !fixedPriceWithinCollection || !openBidWithinCollection
-  // const isCollectionItemEmpty: boolean = true
 
   const handleSweepClick = () => {
     setSweeperModal(true)
@@ -255,7 +254,6 @@ export const CollectionHeader: FC<{
   const menu = (
     <MENU_LIST onClick={() => setShareModal(true)}>
       <Menu.Item key="share">Share</Menu.Item>
-      {/* <Menu.Item>Report</Menu.Item> */}
     </MENU_LIST>
   )
 

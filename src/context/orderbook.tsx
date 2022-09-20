@@ -5,7 +5,6 @@ import { useConnectionConfig } from './settings'
 import { notify } from '../utils'
 import { serum } from '../web3'
 import { MarketSide, useCrypto } from './crypto'
-//import { Connection } from '@solana/web3.js'
 
 type OrderBook = {
   [x in MarketSide]: [number, number, BN, BN][]

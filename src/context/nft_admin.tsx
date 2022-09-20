@@ -24,7 +24,6 @@ export const NFTAdminProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (wallet.connected) {
       ;(async () => {
         const response = await isAdminAllowed(wallet.publicKey.toBase58())
-        console.log(response)
         setIsAllowed(response)
       })()
     } else setIsAllowed(false)

@@ -1,23 +1,8 @@
 import React, { FC, useMemo } from 'react'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
-//import { CryptoSelector } from './CryptoSelector'
 import { OrderSide, useCrypto, useOrder, usePriceFeed } from '../../../context'
 import { CenteredImg, SpaceBetweenDiv } from '../../../styles'
-
-/* const CHANGE = styled(CenteredImg)`
-  display: flex;
-
-  > div {
-    ${({ theme }) => theme.measurements(theme.margin(1.5))}
-    margin-right: ${({ theme }) => theme.margin(1)};
-  }
-
-  span {
-    font-size: 10px;
-    font-weight: bold;
-  }
-` */
 
 const ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margin(4))}
@@ -113,7 +98,6 @@ export const Header: FC = () => {
     [getAskSymbolFromPair, selectedCrypto.pair]
   )
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
-  // const change24HIcon = useMemo(() => `price_${marketData?.change24H >= 0 ? 'up' : 'down'}.svg`, [marketData])
   const formattedPair = useMemo(() => formatPair(selectedCrypto.pair), [formatPair, selectedCrypto])
 
   const handleSelectOrderSide = (side: OrderSide) => {
@@ -130,16 +114,6 @@ export const Header: FC = () => {
       <INFO>
         <div>
           <TICKER>{formattedPair}</TICKER>
-          {/* !marketData || !marketData.change24H ? (
-            <Loader />
-          ) : (
-            <CHANGE>
-              <CenteredImg>
-                <img src={`/img/assets/${change24HIcon}`} alt="" />
-              </CenteredImg>
-              <span>{marketData.change24H}</span>
-            </CHANGE>
-          ) TODO RESTORE */}
         </div>
         <PRICE>{!marketData || !marketData.current ? <Loader /> : <>Price: $ {marketData.current}</>}</PRICE>
         <SIDE $display={!order.isHidden} $side={order.side}>
@@ -147,7 +121,6 @@ export const Header: FC = () => {
           <span onClick={() => handleSelectOrderSide('sell')}>Sell</span>
         </SIDE>
       </INFO>
-      {/*<CryptoSelector />*/}
     </WRAPPER>
   )
 }

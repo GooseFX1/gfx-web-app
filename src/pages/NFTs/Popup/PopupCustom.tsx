@@ -1,7 +1,7 @@
 import React, { ReactNode, FC } from 'react'
 import { Modal } from 'antd'
 import styled from 'styled-components'
-import { SVGDynamicReverseMode } from '../../..//styles/utils'
+import { SVGDynamicReverseMode } from '../../../styles/utils'
 
 export const STYLED_POPUP = styled(Modal)<{ width: string; height: string }>`
   * {
@@ -45,8 +45,8 @@ export const PopupCustom: FC<{
     className={className}
     width={width}
     height={height}
+    closeIcon={<SVGDynamicReverseMode src={`/img/assets/close-white-icon.svg`} alt="smalllll" />}
     {...props}
-    closeIcon={<SVGDynamicReverseMode src={`/img/assets/close-white-icon.svg`} alt="" />}
   >
     {children}
   </STYLED_POPUP>

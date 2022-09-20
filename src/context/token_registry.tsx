@@ -34,7 +34,6 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
 
       let farmSupportedList = list.filter(({ symbol }) => FARM_SUPPORTED_TOKEN_LIST.includes(symbol))
       //TODO: Add filteredList from solana-spl-registry back
-      //setFarmingTokens()
       if (chainId === ENV.Devnet) {
         farmSupportedList = []
         farmSupportedList.push({
@@ -68,7 +67,6 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
           name: 'ETH',
           symbol: 'ETH'
         })
-        //console.log(farmSupportedList)
         setFarmingTokens(farmSupportedList)
       } else setFarmingTokens(farmSupportedList)
 

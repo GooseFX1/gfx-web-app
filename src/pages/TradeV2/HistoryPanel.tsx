@@ -142,13 +142,7 @@ const OpenOrdersComponent: FC = () => {
             <span>${order.order.price}</span>
             <span>0</span>
             <span>
-              <Button
-                //height="30px"
-                loading={loading}
-                onClick={() => cancelOrder(order)}
-                //status="action"
-                //width="150px"
-              >
+              <Button loading={loading} onClick={() => cancelOrder(order)}>
                 Cancel
               </Button>
             </span>
@@ -165,8 +159,7 @@ export const HistoryPanel: FC = () => {
   const [activeTab, setActiveTab] = useState(0)
   const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto } = useCrypto()
   const { openOrders } = useTradeHistory()
-  //const { prices } = usePriceFeed()
-  //const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
+
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { getUIAmount } = useAccounts()
   const symbolBid = useMemo(
@@ -219,7 +212,6 @@ export const HistoryPanel: FC = () => {
   let openOrder, baseAvailable, baseBalance, quoteAvailable, quoteBalance
   if (openOrders.length > 0) {
     openOrder = openOrders[0]
-    //pair = getPairFromMarketAddress(openOrder.market)
     baseAvailable = market?.baseSplSizeToNumber(openOrder.baseTokenFree)
     baseBalance = market?.baseSplSizeToNumber(openOrder.baseTokenTotal.sub(openOrder.baseTokenFree))
     quoteAvailable = market?.quoteSplSizeToNumber(openOrder.quoteTokenFree)
