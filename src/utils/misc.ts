@@ -139,6 +139,12 @@ export const createUUID = () =>
     return v.toString(16)
   })
 
+export const validateUUID = (uuid: string): boolean => {
+  const validUUIDRegexExp =
+    /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi
+  return validUUIDRegexExp.test(uuid)
+}
+
 export const getLast = <T>(arr: T[]) => {
   if (arr.length <= 0) {
     return undefined
