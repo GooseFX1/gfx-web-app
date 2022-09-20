@@ -74,3 +74,13 @@ Each PR **MUST**:
 5. Go to solscan and search the mint address of the token, you will find the decimals supported
 6. ./public/img/assets/ add image with the token short name
 7. Submit PR to dev branch
+
+### Updating Environment variables
+
+Environment variables are stored in HashiCorp Vault and usually require running a new build - either manually or via a release to staging and prod respectively.
+
+To create an release with updated env vars:
+
+- change env var value in HashiCorp Vault (speak with a team member for access)
+- in Terraform Cloud, generate a new run of `infra`, this will set the new values
+- in AWS, go to Amplify/gfx-app, select `release/staging` or `release/prod`, and click 'Redeploy this version'. This will run a new build with refreshed values
