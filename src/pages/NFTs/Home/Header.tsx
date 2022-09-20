@@ -185,6 +185,7 @@ export const Header = ({
   }, [sessionUser])
 
   useEffect(() => {
+    // TODO: resolve error that keeps being thrown
     if (!connected) {
       connect().catch((e: Error) => {
         console.log(e)

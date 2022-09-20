@@ -66,6 +66,7 @@ export type INFTMetadata = {
 }
 
 export type ISingleNFT = {
+  uuid: string
   non_fungible_id: number | null
   nft_name: string
   nft_description: string
@@ -88,6 +89,7 @@ export type IRegisterNFT = {
 }
 
 export type INFTBid = {
+  uuid: string
   bid_id: number
   clock: string
   tx_sig: string

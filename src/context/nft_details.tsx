@@ -104,13 +104,13 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
-  const removeBidOnSingleNFT = useCallback(async (bidId: any): Promise<any> => {
+  const removeBidOnSingleNFT = useCallback(async (bidUUID: string): Promise<any> => {
     try {
       const res = await apiClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.BID}`, {
-        bid_id: bidId
+        bid_id: bidUUID
       })
 
-      setBids((prev) => prev.filter((bid) => bid.bid_id !== bidId))
+      setBids((prev) => prev.filter((bid) => bid.uuid !== bidUUID))
       return res
     } catch (err) {
       return err
@@ -185,7 +185,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const getLikesNFT = useCallback(async (user_id: number, nft_id: any): Promise<any> => {
     try {
       const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_LIKES}?user_id=${user_id}`)
-      return res?.data?.filter((i) => i.non_fungible_id == nft_id) || []
+      return res?.data?.filter((i) => i.uuid == nft_id) || []
     } catch (error) {
       console.log(error)
       return []

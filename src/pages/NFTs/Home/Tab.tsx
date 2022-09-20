@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Tabs } from 'antd'
+import { useNFTCollections } from '../../../context'
+import { NFTCollection } from '../../../types/nft_collections.d'
 import { Categories } from '../../../components'
 import TabContent from './TabContent'
 import tw from 'twin.macro'
@@ -114,13 +116,14 @@ const ANALYTICS_DROPDOWN = styled.div`
 `
 //#endregion
 
-const AnalyticsTabs = ({ allCollections }: { allCollections: any[] }) => {
-  const [mainCollections, setMainCollections] = useState(allCollections)
+const AnalyticsTabs = () => {
+  const { detailedCollections } = useNFTCollections()
+  const [mainCollections, setMainCollections] = useState<NFTCollection[]>(detailedCollections)
   const [sort, setSort] = useState('high')
 
   useEffect(() => {
-    setMainCollections(allCollections)
-  }, [allCollections])
+    setMainCollections(detailedCollections)
+  }, [detailedCollections])
 
   const handleSort = (choice) => {
     const first = choice.split(' ')
@@ -142,10 +145,10 @@ const AnalyticsTabs = ({ allCollections }: { allCollections: any[] }) => {
       </ANALYTICS_DROPDOWN>
       <Tabs defaultActiveKey="1" centered>
         <TabPane tab="Floor" key="1">
-          <TabContent baseCollections={mainCollections} sort={sort} collectionFilter={'floor'} />
+          <TabContent detailedCollections={mainCollections} sort={sort} collectionFilter={'floor'} />
         </TabPane>
         <TabPane tab="Volume" key="2">
-          <TabContent baseCollections={mainCollections} sort={sort} collectionFilter={'volume'} />
+          <TabContent detailedCollections={mainCollections} sort={sort} collectionFilter={'volume'} />
         </TabPane>
       </Tabs>
 

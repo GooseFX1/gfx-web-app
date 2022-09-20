@@ -36,8 +36,6 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
   }, [isSessionUser, sessionUser, nonSessionProfile])
 
   const currentUserParsedAccounts = useMemo(() => {
-    console.log(sessionUserParsedAccounts, nonSessionUserParsedAccounts)
-
     if (nonSessionUserParsedAccounts !== undefined && !isSessionUser) {
       return nonSessionUserParsedAccounts
     } else if (sessionUserParsedAccounts !== undefined && isSessionUser) {
@@ -96,8 +94,8 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
   }, [currentUserProfile])
 
   useEffect(() => {
-    if (currentUserProfile && currentUserProfile.user_id) {
-      fetchUserActivity(currentUserProfile.user_id)
+    if (currentUserProfile && currentUserProfile.uuid) {
+      fetchUserActivity(currentUserProfile.uuid)
     } else {
       setUserActivity([])
     }
@@ -105,8 +103,8 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
     return null
   }, [currentUserProfile, fetchUserActivity, setUserActivity])
 
-  const fetchFavorites = async (userLikes: number[]) => {
-    const favorites: ISingleNFT[] = await Promise.all(userLikes.map((i: number) => fetchNFTById(i, connection)))
+  const fetchFavorites = async (userLikes: string[]) => {
+    const favorites: ISingleNFT[] = await Promise.all(userLikes.map((i: string) => fetchNFTById(i, connection)))
 
     setFavoritedItems(favorites.map((f: any) => f.data[0]))
   }

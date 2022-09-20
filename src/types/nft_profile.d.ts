@@ -3,6 +3,7 @@ import { Connection } from '@solana/web3.js'
 import { UserFetchType } from '../context'
 
 export interface INFTProfile {
+  uuid: string
   user_id: number
   pubkey: string
   nickname: string
@@ -14,7 +15,7 @@ export interface INFTProfile {
   youtube_link: string
   profile_pic_link: string
   is_verified: boolean
-  user_likes: number[]
+  user_likes: string[]
 }
 
 export interface INFTUserActivity {
@@ -30,13 +31,13 @@ export interface INFTUserActivity {
 export interface INFTProfileConfig {
   sessionUser: INFTProfile
   setSessionUser: Dispatch<SetStateAction<INFTProfile>>
-  fetchSessionUser: (type: UserFetchType, parameter: string | number, connection: Connection) => Promise<any>
+  fetchSessionUser: (type: UserFetchType, parameter: string, connection: Connection) => Promise<any>
   sessionUserParsedAccounts: ParsedAccount[]
   setParsedAccounts: Dispatch<SetStateAction<ParsedAccount[]>>
   userActivity: Array<INFTUserActivity>
   setUserActivity: Dispatch<SetStateAction<INFTUserActivity[]>>
-  fetchUserActivity: (id: number) => Promise<any>
-  likeDislike: (user_id: number, nft_id: any) => Promise<any>
+  fetchUserActivity: (id: string) => Promise<any>
+  likeDislike: (user_id: string, nft_id: string) => Promise<any>
   nonSessionProfile: INFTProfile
   fetchNonSessionProfile: (type: UserFetchType, parameter: string | number, connection: Connection) => Promise<any>
   nonSessionUserParsedAccounts: ParsedAccount[]

@@ -565,7 +565,7 @@ export const RightSectionTabs: FC<{
       </Tabs>
       {wallet.publicKey && (
         <SpaceBetweenDiv className="rst-footer">
-          {sessionUser && sessionUser.user_id ? (
+          {sessionUser && sessionUser.uuid ? (
             wallet.publicKey.toBase58() === general.owner ? (
               <>
                 <button

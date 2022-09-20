@@ -148,7 +148,7 @@ export const Collectible = (): JSX.Element => {
 
   useEffect(() => {
     if (sessionUser) {
-      checkForDrafts(sessionUser.user_id)
+      checkForDrafts(sessionUser.uuid)
     } else {
       setLoading(false)
     }
@@ -165,9 +165,9 @@ export const Collectible = (): JSX.Element => {
     }
   }
 
-  const checkForDrafts = async (id: number) => {
+  const checkForDrafts = async (userUUID: string) => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.DRAFTS}?user_id=${id}`)
+      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.DRAFTS}?user_id=${userUUID}`)
       const result = await res.data
       setDraftsNum(result.length)
     } catch (err) {

@@ -17,7 +17,7 @@ interface Props {
 export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
   const { sessionUser, setSessionUser } = useNFTProfile()
   const [form] = Form.useForm()
-  const isCompletingProfile = useMemo(() => sessionUser.user_id === null, [sessionUser])
+  const isCompletingProfile = useMemo(() => sessionUser.uuid === null, [sessionUser])
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
@@ -29,10 +29,10 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
   const onFinish = (profileFormData: any) => {
     setIsLoading(true)
     const formattedProfile = profileFormData
-    if (sessionUser.user_id === null) {
+    if (sessionUser.uuid === null) {
       completeProfile(formattedProfile)
     } else {
-      const updatedProfile = { ...formattedProfile, user_id: sessionUser.user_id }
+      const updatedProfile = { ...formattedProfile, user_id: sessionUser.user_id, uuid: sessionUser.uuid }
       updateProfile(updatedProfile)
     }
   }
@@ -56,6 +56,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
 
         const forUpdate = {
           ...profileFormData,
+          uuid: profile.uuid,
           user_id: profile.user_id,
           pubkey: profile.pubkey,
           is_verified: profile.is_verified

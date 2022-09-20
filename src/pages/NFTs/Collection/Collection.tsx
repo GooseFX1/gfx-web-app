@@ -41,14 +41,10 @@ export const Collection: FC = (): JSX.Element => {
   )
 
   useEffect(() => {
-    if (!singleCollection || `${singleCollection.collection_id}` !== params.collectionName) {
-      fetchSingleCollection(params.collectionName.replaceAll('_', ' ')).then((res) => {
-        if (res?.status === 200) {
-          setErr(false)
-        } else {
-          setErr(true)
-        }
-      })
+    const curColNameParam = params.collectionName.replaceAll('_', ' ')
+
+    if (!singleCollection || singleCollection.collection.collection_name !== curColNameParam) {
+      fetchSingleCollection(curColNameParam).then((res) => setErr(res && res.status === 200 ? false : true))
     }
 
     return null
