@@ -198,7 +198,7 @@ export const preSwapAmount = async (
       (tokenB.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA.symbol)) ||
       (tokenA.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenB.symbol))
 
-    if ((available && clickNo !== 1) || !available) {
+    if ((available && clickNo !== 0) || !available) {
       if (route) {
         const outedAmount = +(route.outAmount / 10 ** tokenB.decimals).toFixed(7)
         return {

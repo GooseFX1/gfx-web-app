@@ -711,7 +711,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
 
     setDetails(priceDetails)
 
-    const percentageCheap = +(((route.outAmount - routes[1]?.outAmount) / route.outAmount) * 100).toFixed(3)
+    const percentageCheap = +(((route.outAmount - routes[0]?.outAmount) / route.outAmount) * 100).toFixed(5)
     setOutTokenPercentage(Math.abs(percentageCheap))
     setCheap(percentageCheap < 0 ? false : true)
   }, [clickNo, inTokenAmount, tokenA.symbol, tokenB.symbol, routes])
@@ -747,7 +747,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
         </SmallTitleFlex>
         <SmallTitleFlex>
           <span style={{ color: cheap ? '#5fc8a7' : '#bb3535', marginRight: '0.25rem', fontWeight: '600' }}>
-            {outTokenPercentage || 0}% {cheap ? 'cheaper' : 'higher'}
+            {isFinite(outTokenPercentage) ? outTokenPercentage : 0}% {cheap ? 'cheaper' : 'higher'}
           </span>
           <span style={{ fontWeight: '600' }}>than coingecko</span>
         </SmallTitleFlex>
@@ -787,23 +787,20 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   routes
 }) => {
   const { mode } = useDarkMode()
-  const { tokenA, tokenB } = useSwap()
+  const { tokenA, tokenB, outTokenAmount } = useSwap()
   const [tokens, setTokens] = useState([])
   const [details, setDetails] = useState([])
 
   const swapAndFindBestPrice = (details) => {
-    details[0] = {
-      ...details[0],
-      bestPrice: true
-    }
-    if (details[1] && details[1]?.name.toLowerCase().includes('goosefx')) {
-      details[1] = {
-        ...details[1],
-        fastest: true
+    const gfxindx = details.findIndex((deet) => deet.name.toLowerCase().includes('goosefx'))
+
+    if (gfxindx >= 0 && details[gfxindx] && details[gfxindx]?.name.toLowerCase().includes('goosefx')) {
+      details[0].fastest = true
+      if (details[gfxindx].price < details[gfxindx + 1].price) {
+        details[gfxindx + 1].bestPrice = true
       }
-      const swap = details[0]
-      details[0] = details[1]
-      details[1] = swap
+    } else {
+      details[0].bestPrice = true
     }
     return details
   }
@@ -829,7 +826,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
             (tokens.find((i) => i.address === route.marketInfos[0].outputMint.toBase58())?.symbol || 'unknown') +
             ' to ' +
             tokenB.symbol
-      const out = +(route.outAmount / 10 ** tokenB.decimals).toFixed(3)
+      const out = +(route.outAmount / 10 ** tokenB.decimals).toFixed(4)
       const outAmount = +(route.outAmount / 10 ** tokenB.decimals).toFixed(7)
       return { name, value, price: out, outAmount }
     }
@@ -838,7 +835,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
       details = swapAndFindBestPrice(details)
     }
     setDetails(details)
-  }, [routes, tokenA.symbol, tokenB.symbol, tokens])
+  }, [routes, tokenA.symbol, tokenB.symbol, tokens, outTokenAmount])
 
   const [less, setLess] = useState(false)
   return (
@@ -847,7 +844,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
         {routes?.length < 1
           ? Array(3)
               .fill(1)
-              .map((n, i) => (
+              .map((_, i) => (
                 <SkeletonCommon
                   key={i}
                   width={'330px'}
@@ -923,7 +920,7 @@ export const SwapMain: FC = () => {
     inputMint: new PublicKey(tokenA?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     slippage: slippage, // 1% slippage
-    debounceTime: 250 // debounce ms time before refresh
+    debounceTime: 750 // debounce ms time before refresh
   })
 
   function marketInfoFormat(mkt: any) {
