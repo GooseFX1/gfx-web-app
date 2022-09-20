@@ -40,6 +40,7 @@ const HEADER = styled.div`
     }
     span.active {
       color: #ffffff;
+      font-weight: 600;
     }
   }
   div:nth-child(2) {

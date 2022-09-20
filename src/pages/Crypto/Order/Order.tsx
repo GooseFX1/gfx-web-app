@@ -19,6 +19,10 @@ const CONTENT = styled.div<{ $display: boolean }>`
       margin: ${({ theme }) => theme.margin(3.5)} 0 ${({ theme }) => theme.margin(1.5)};
     }
   }
+
+  .color-style > span {
+    color: #7d7d7d;
+  }
 `
 
 const WRAPPER = styled.div`

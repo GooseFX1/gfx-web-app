@@ -63,6 +63,9 @@ const INFO_STATS = styled.div`
       }
     }
   }
+  img {
+    margin: 4px;
+  }
 `
 
 const REFRESH_DATA = styled.div`
@@ -73,35 +76,42 @@ const REFRESH_DATA = styled.div`
   text-align: center;
   cursor: pointer;
   img {
-    height: 15px;
-    width: 15px;
-    position: relative;
-    top: 6px;
+    height: 40px;
+    width: 40px;
   }
 `
 
-const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
+const LOCK_LAYOUT_CTN = styled.div<{ $isLocked: boolean }>`
   line-height: 40px;
   width: 65px;
-  background-color: ${({ theme }) => theme.bg3};
+  background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
   background: ${({ $isLocked }) =>
     $isLocked ? '' : 'linear-gradient(90deg, rgba(247, 147, 26, 0.3) 12.88%, rgba(220, 31, 255, 0.3) 100%)'};
   margin-left: 20px;
   border-radius: 36px;
   text-align: center;
   cursor: pointer;
+  padding: 1px 0 0 1px;
+`
+
+const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
+  line-height: 38px;
+  width: 63px;
+  background-color: ${({ theme }) => theme.bg3};
+  background: ${({ $isLocked }) =>
+    $isLocked ? '' : 'linear-gradient(90deg, rgba(247, 147, 26, 0.3) 12.88%, rgba(220, 31, 255, 0.3) 100%)'};
+  border-radius: 36px;
+  text-align: center;
   img {
     position: relative;
     bottom: 2px;
   }
 `
-
-const FEES_BTN = styled.div`
+const FEES_BTN_CTN = styled.div`
   margin-left: auto;
   width: 88px;
   height: 40px;
-  border: 1px solid pink;
-  background: #2a2a2a;
+  background: linear-gradient(108deg, #5855ff 0%, #dc1fff 135%);
   border-radius: 36px;
   margin-right: 20px;
   display: flex;
@@ -110,12 +120,31 @@ const FEES_BTN = styled.div`
   cursor: pointer;
 `
 
-const RESET_LAYOUT_BUTTON = styled.div`
+const FEES_BTN = styled.div`
+  width: 86px;
+  height: 38px;
+  background: #2a2a2a;
+  border-radius: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+`
+
+const RESET_LAYOUT_BUTTON_CTN = styled.div`
   cursor: pointer;
+  background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
+  height: 42px;
+  padding: 1px;
+  margin-left: auto;
+  border-radius: 36px;
+  color: ${({ theme }) => theme.text4};
+`
+
+const RESET_LAYOUT_BUTTON = styled.div`
   background-color: ${({ theme }) => theme.bg9};
   height: 40px;
   padding: 10px 20px;
-  margin-left: 20px;
   border-radius: 36px;
   color: ${({ theme }) => theme.text4};
 `
@@ -215,7 +244,18 @@ export const InfoBanner: FC<{
       <INFO_STATS>
         <>
           <div>24hr Change</div>
-          {!changeValue ? <Loader /> : <div className={classNameChange}>{changeValue} %</div>}
+          {!changeValue ? (
+            <Loader />
+          ) : (
+            <div className={classNameChange}>
+              {classNameChange === 'up24h' ? (
+                <img src="/img/assets/24hourup.png" height="10" alt="up-icon" />
+              ) : (
+                <img src="/img/assets/24hourdown.svg" height="10" alt="down-icon" />
+              )}
+              {changeValue} %
+            </div>
+          )}
         </>
       </INFO_STATS>
       <INFO_STATS>
@@ -235,17 +275,25 @@ export const InfoBanner: FC<{
           </div>
         )}
       </INFO_STATS>
-      <FEES_BTN onClick={() => setFeesPopup((prev) => !prev)}>Fees </FEES_BTN>
+      {isLocked && (
+        <FEES_BTN_CTN>
+          <FEES_BTN onClick={() => setFeesPopup((prev) => !prev)}>Fees </FEES_BTN>
+        </FEES_BTN_CTN>
+      )}
       {isLocked ? (
         <REFRESH_DATA onClick={() => refreshTokenData(null)}>
-          <img src={`/img/assets/whiteRefresh.svg`} alt="refresh" />
+          <img src={`/img/assets/refreshButton.png`} alt="refresh" />
         </REFRESH_DATA>
       ) : (
-        <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>
+        <RESET_LAYOUT_BUTTON_CTN>
+          <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>
+        </RESET_LAYOUT_BUTTON_CTN>
       )}
-      <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
-        <img src={isLocked ? `/img/assets/whiteLock.svg` : `/img/assets/whiteUnlock.svg`} alt="lock" />
-      </LOCK_LAYOUT>
+      <LOCK_LAYOUT_CTN $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
+        <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
+          <img src={isLocked ? `/img/assets/whiteLock.svg` : `/img/assets/whiteUnlock.svg`} alt="lock" />
+        </LOCK_LAYOUT>
+      </LOCK_LAYOUT_CTN>
     </INFO_WRAPPER>
   )
 }
