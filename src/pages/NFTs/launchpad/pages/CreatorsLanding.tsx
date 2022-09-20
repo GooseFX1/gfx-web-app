@@ -32,27 +32,31 @@ const LINK = styled.a`
 `
 
 const TEXT = styled.div`
-  ${tw`sm:w-[90%] sm:mb-[30px] w-1/2 text-center mt-[30px] mx-auto mb-0 text-[#636363] text-smallest`}
+  ${tw`sm:w-[90%] sm:mb-[30px] text-center mt-[30px] mx-auto mb-0 text-[#636363] text-smallest `}
+
+  a {
+    ${tw`no-underline text-[#5855ff]`}
+  }
 `
 
 const Wrapper = styled.div`
-  ${tw`sm:p-0 w-full h-full px-[75px] bg-[#eeeeee]`}
+  ${tw`sm:p-0 w-full h-full pl-[35px] pr-0 bg-[#eeeeee]`}
 
   .heading {
     ${tw`sm:text-[35px] text-[70px] mt-[50px] mx-auto mb-0 text-[#3c3c3c] text-center font-bold`}
   }
 
   #scroll-here {
-    ${tw`hidden`}
+    ${tw`hidden pl-10 pr-[75px] sm:p-0`}
   }
 `
 
 const ROW_ONE = styled.div`
-  ${tw`relative h-[100vh] flex flex-row justify-between px-12`}
-  ${tw`sm:p-0 sm:pt-20 sm:flex-col-reverse sm:items-center sm:justify-end`}
+  ${tw`relative h-[100vh] flex flex-row justify-between overflow-hidden`}
+  ${tw`sm:p-0 sm:pt-7 sm:flex-col-reverse sm:items-center sm:justify-end`}
 
   .arrow {
-    ${tw`absolute sm:bottom-8 bottom-16 w-full flex justify-center`}
+    ${tw`absolute sm:bottom-8 bottom-[75px] w-full flex justify-center`}
 
     .arrow-btn {
       ${tw`w-9 h-[15px] cursor-pointer`}
@@ -98,15 +102,17 @@ const feauturesToShow = [
 ]
 
 const TEXT_HOLDER = styled.div`
-  ${tw`sm:w-[90%] sm:my-0 sm:mx-auto sm:text-center flex flex-col justify-center w-3/5`}
+  ${tw`sm:w-[90%] sm:my-0 sm:mx-auto sm:text-center flex flex-col justify-center`}
 `
 
 const TEXT_CONTAINER = styled.div`
   ${tw`sm:w-[90%] sm:m-6 w-[30%] text-center flex flex-col justify-center`}
 `
 
-const ANIMATION = styled.div`
-  ${tw`sm:w-full justify-center relative flex items-center`}
+const ANIMATION = styled.div<{ $notCentered: boolean }>`
+  ${tw`sm:w-full sm:left-0 justify-center relative flex items-center`}
+  left: ${({ $notCentered }) => ($notCentered ? '50px' : '0')};
+  height: ${({ $notCentered }) => ($notCentered && checkMobile() ? '42vh' : '100%')};
 
   .one-stop-solution{
     ${tw`absolute h-[60vh] w-auto sm:h-[42vh]`}
@@ -155,7 +161,7 @@ const HEADER = styled.div`
 `
 
 const SUBHEADER = styled.div`
-  ${tw`sm:text-tiny sm:w-3/4 sm:text-center sm:my-4 sm:mx-auto mt-4 text-average text-[#636363]`}
+  ${tw`sm:text-tiny sm:w-3/4 sm:text-center sm:my-4 sm:mx-auto mt-4 text-average text-[#636363] font-medium`}
 `
 
 const ROW_LAST = styled.div`
@@ -165,31 +171,31 @@ const ROW_LAST = styled.div`
 const SOCIAL_ICON = styled.button`
   ${tw`bg-transparent border-none`}
   img {
-    ${tw`h-auto w-[18px] sm:w-[25px]`}
+    ${tw`sm:w-[25px]`}
   }
 `
 
 const BANNER = styled.div`
   ${tw`relative sm:mt-10 mt-40`}
   .banner-img {
-    ${tw`sm:rounded-half block  mb-0 mx-auto`}
+    ${tw`sm:rounded-half sm:max-w-full block  mb-0 mx-auto max-w-[70%]`}
   }
 
   .ready-to-launch {
-    ${tw`sm:top-2 sm:left-[10%] absolute top-[10%] left-[8%]`}
+    ${tw`sm:top-2 sm:left-[10%] absolute top-[10%] left-[17%]`}
     .ready {
-      ${tw`sm:text-[38px] sm:font-semibold text-[50px] text-white font-bold`}
+      ${tw`sm:text-[38px] sm:font-semibold text-[35px] text-white font-bold`}
     }
   }
 
   .btn-section {
-    ${tw`absolute bottom-[25%] w-full flex justify-center`}
+    ${tw`absolute bottom-[15%] w-full flex justify-center`}
   }
 
   .apply-btn {
     ${tw`text-[#5855ff] bottom-[150px] left-[45%] 
-    h-[70px] w-[15%] border-none rounded-[80px] text-[25px] font-semibold
-    sm:bottom-[50px] sm:left-[30%] sm:h-12 sm:w-[172px] text-regular`}
+    h-[60px] w-[10%] border-none rounded-[80px] text-[25px] font-semibold
+    sm:bottom-[50px] sm:left-[30%] sm:h-12 sm:w-[172px] text-[20px]`}
   }
 `
 
@@ -240,13 +246,14 @@ export const CreatorsLanding: FC<{
           <ROW_ONE>
             <TEXT_HOLDER>
               <HEADER>
-                One stop solution to launch your <span>NFT collection.</span>
+                One stop solution to {!checkMobile() && <br />}
+                launch your <span>NFT collection.</span>
               </HEADER>
               <SUBHEADER>
                 Together we create the best and most personalized soution to launch your NFT collection.
               </SUBHEADER>
             </TEXT_HOLDER>
-            <ANIMATION>
+            <ANIMATION $notCentered={true}>
               <img
                 src="img/assets/creatorsLanding/backgroundCover.svg"
                 alt="animation"
@@ -263,7 +270,7 @@ export const CreatorsLanding: FC<{
             </ANIMATION>
             <div className="arrow">
               <img
-                src="/img/assets/creatorsLanding/arrowButton.png"
+                src="/img/assets/creatorsLanding/arrowButton.svg"
                 alt="arrow-down"
                 className="arrow-btn"
                 onClick={() => handleScroll()}
@@ -355,8 +362,8 @@ export const CreatorsLanding: FC<{
                 </Col>
               </Row>
               <TEXT>
-                Copyright © {new Date().getFullYear()} Goose Labs, Inc. All rights reserved. Certain features may
-                be unavailable to your geographic location. Please refer to our{' '}
+                Copyright © {new Date().getFullYear()} Goose Labs, Inc. All rights reserved. Certain features may{' '}
+                be unavailable {!checkMobile() && <br />} to your geographic location. Please refer to our{' '}
                 <LINK href="https://docs.goosefx.io/" target="_blank" rel="noopener noreferrer">
                   Terms and condition
                 </LINK>{' '}
