@@ -7,6 +7,7 @@ export enum COLLECTION_TYPES {
 }
 
 export type NFTBaseCollection = {
+  uuid: string
   collection_id: number
   collection_name: string
   collection_description: string
@@ -34,12 +35,15 @@ export type NFTCollection = {
 }
 
 export type CollectionOwner = {
+  uuid: string
   id: number
-  collection_id: number
-  nickname: string
+  clock: string
+  pubkey: string
   user_id: number
-  profile_pic_link: string
   non_fungible_id: number
+  collection_id: number
+  profile_pic_link: string
+  nickname: string
 }
 
 export interface IFixedPriceWithinCollection {
@@ -72,11 +76,13 @@ export type NFTUpcomingCollection = {
 
 export interface INFTCollectionConfig {
   allCollections: NFTBaseCollection[]
+  detailedCollections: NFTCollection[]
   collectionOwners: CollectionOwner[]
-  fetchCollectionOwners: (collectionId: number) => Promise<any>
+  fetchCollectionOwners: (collectionId: string) => Promise<any>
   featuredCollections: NFTFeaturedCollection[]
   upcomingCollections: NFTUpcomingCollection[]
   fetchAllCollections: any
+  fetchAllCollectionDetails: (collections: NFTBaseCollection[]) => Promise<void>
   fetchFeaturedCollections: any
   fetchUpcomingCollections: any
   singleCollection: NFTCollection

@@ -17,7 +17,7 @@ import AddAttribute from './AddAttribute'
 import RoyaltiesStep from './RoyaltiesStep'
 import { useDarkMode, useNFTDetails, useConnectionConfig, useNFTProfile } from '../../../context'
 import { Creator, mintNFT, MetadataCategory, ENDPOINTS } from '../../../web3'
-import { notify } from '../../../utils'
+import { notify, validateUUID } from '../../../utils'
 import { ButtonWrapper } from '../NFTButton'
 import apiClient from '../../../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
@@ -310,7 +310,7 @@ export const UpLoadNFT = (): JSX.Element => {
   }, [setNftMintingData, localAttributes])
 
   useEffect(() => {
-    if (sessionUser?.user_id && draftId) {
+    if (sessionUser?.uuid && draftId && validateUUID(draftId)) {
       setCurrentDraftId(draftId)
       pullDraft(draftId)
     }
@@ -354,12 +354,12 @@ export const UpLoadNFT = (): JSX.Element => {
       const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.DRAFTS}`, {
         ...nftMintingData,
         seller_fee_basis_points: nftMintingData.sellerFeeBasisPoints,
-        user_id: sessionUser.user_id,
+        user_id: sessionUser.uuid,
         image: s3Link
       })
 
       const result = await res.data
-      setCurrentDraftId(result.draft_id)
+      setCurrentDraftId(result.uuid)
       notify({
         type: 'success',
         message: 'Draft Saved',
@@ -382,9 +382,8 @@ export const UpLoadNFT = (): JSX.Element => {
         new_draft_data: {
           ...nftMintingData,
           seller_fee_basis_points: nftMintingData.sellerFeeBasisPoints,
-          user_id: sessionUser.user_id,
-          image: sLink || nftMintingData.image,
-          draft_id: currentDraftId
+          user_id: sessionUser.uuid,
+          image: sLink || nftMintingData.image
         }
       })
       await res.data
@@ -403,18 +402,18 @@ export const UpLoadNFT = (): JSX.Element => {
     }
   }
 
-  const pullDraft = async (id: string) => {
+  const pullDraft = async (draftUUID: string) => {
     try {
       setDraftUploadInProgress(true)
       const res = await apiClient(NFT_API_BASE).get(
-        `${NFT_API_ENDPOINTS.DRAFTS}?user_id=${sessionUser?.user_id}&draft_id=${id}`
+        `${NFT_API_ENDPOINTS.DRAFTS}?user_id=${sessionUser?.uuid}&draft_id=${draftUUID}`
       )
       const data = await res.data
-      const result = data.find((i) => `${i.draft_id}` === id)
+      const result = data.find((i) => `${i.uuid}` === draftUUID)
 
       if (result) {
         setS3Link(result.image)
-        setCurrentDraftId(result.draft_id)
+        setCurrentDraftId(result.uuid)
         setLocalAttributes(result?.attributes)
 
         // update nft data object

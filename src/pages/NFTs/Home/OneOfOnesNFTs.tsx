@@ -108,7 +108,7 @@ const OneOfOnesNFTs: FC<IOneOfOnesNFTs> = ({ items, title }) => {
         {!checkMobile() ? (
           <Slider ref={slickRef} {...settings}>
             {items.map((item: any) => (
-              <CARD_WRAPPER key={item.non_fungible_id} style={{ minWidth: '300px', margin: '0 32px !important' }}>
+              <CARD_WRAPPER key={item.uuid} style={{ minWidth: '300px', margin: '0 32px !important' }}>
                 <Card singleNFT={item} />
               </CARD_WRAPPER>
             ))}
@@ -116,7 +116,7 @@ const OneOfOnesNFTs: FC<IOneOfOnesNFTs> = ({ items, title }) => {
         ) : (
           <ROW>
             {items.map((item: any) => (
-              <CARD_WRAPPER key={item.non_fungible_id} style={{ marginRight: '10px' }}>
+              <CARD_WRAPPER key={item.uuid} style={{ marginRight: '10px' }}>
                 <Card singleNFT={item} />
               </CARD_WRAPPER>
             ))}

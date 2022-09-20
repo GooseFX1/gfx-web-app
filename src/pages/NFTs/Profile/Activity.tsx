@@ -83,7 +83,7 @@ const Activity = (props: IActivity) => {
   const fetchActivity = async (): Promise<any> => {
     const userActivities = await Promise.all(
       props.data.map(async (activity) => {
-        const extraData = await fetchNFTById(activity.non_fungible_id, 'mainnet')
+        const extraData = await fetchNFTById(activity.uuid, 'mainnet')
 
         let transactionData = {}
         if (activity.tx_sig) {

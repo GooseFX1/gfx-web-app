@@ -150,7 +150,7 @@ export const FixedPriceTabContent: FC<{ filter: any; setCollapse?: (x: any) => v
         <FIXED_PRICE_TAB {...rest} className="card-list">
           <Row gutter={[32, 24]}>
             {shortfileredLocalFixedPrice.map((item: ISingleNFT | null, index: number) => (
-              <Col sm={10} md={8} lg={6} xl={4} xxl={4} key={item ? item.non_fungible_id : index}>
+              <Col sm={10} md={8} lg={6} xl={4} xxl={4} key={item ? item.uuid : index}>
                 <Card singleNFT={item} />
               </Col>
             ))}

@@ -299,7 +299,7 @@ export const SellNFT = () => {
     e.preventDefault()
 
     // asserts current NFT does not belong to collection, is one-off
-    if (general.non_fungible_id === null) {
+    if (general.uuid === null) {
       try {
         const registeredNFT = await registerSingleNFT({
           nft_name: general.nft_name,
@@ -310,7 +310,11 @@ export const SellNFT = () => {
           animation_url: general.animation_url
         })
 
-        setGeneral({ non_fungible_id: registeredNFT.data.non_fungible_id, ...general })
+        setGeneral({
+          uuid: registeredNFT.data.uuid,
+          non_fungible_id: registeredNFT.data.non_fungible_id,
+          ...general
+        })
       } catch (error) {
         notify({
           type: 'error',

@@ -42,7 +42,12 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
     if (sessionUser.uuid === null) {
       completeProfile(formattedProfile)
     } else {
-      const updatedProfile = { ...formattedProfile, user_id: sessionUser.uuid, profile_pic_link: imageLink }
+      const updatedProfile = {
+        ...formattedProfile,
+        user_id: sessionUser.user_id,
+        profile_pic_link: imageLink,
+        uuid: sessionUser.uuid
+      }
       updateProfile(updatedProfile)
     }
   }
@@ -65,6 +70,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
 
         const forUpdate = {
           ...profileFormData,
+          uuid: profile.uuid,
           user_id: profile.user_id,
           pubkey: profile.pubkey,
           is_verified: profile.is_verified,

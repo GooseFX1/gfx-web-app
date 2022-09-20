@@ -138,7 +138,7 @@ type ICard = {
   singleNFT: ISingleNFT
   className?: string
   listingType?: string
-  userId?: number
+  userId?: string
 }
 
 export const Card = (props: ICard) => {
@@ -195,13 +195,13 @@ export const Card = (props: ICard) => {
 
   useEffect(() => {
     if (props.singleNFT && sessionUser && sessionUser.user_likes) {
-      setIsFavorited(sessionUser.user_likes.includes(props.singleNFT.non_fungible_id))
+      setIsFavorited(sessionUser.user_likes.includes(props.singleNFT.uuid))
     }
   }, [sessionUser])
 
   const handleToggleLike = () => {
-    if (sessionUser && sessionUser.user_id) {
-      likeDislike(sessionUser.user_id, localSingleNFT.non_fungible_id)
+    if (sessionUser && sessionUser.uuid) {
+      likeDislike(sessionUser.uuid, localSingleNFT.uuid)
       setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
       setIsFavorited((prev) => !prev)
     }
@@ -275,7 +275,7 @@ export const Card = (props: ICard) => {
             <SkeletonCommon width="130px" height="25px" />
           )}
 
-          {localSingleNFT && localSingleNFT.non_fungible_id !== null && (
+          {localSingleNFT && localSingleNFT.uuid !== null && (
             <span className="card-favorite-heart-container">
               {sessionUser && isFavorited ? (
                 <img
