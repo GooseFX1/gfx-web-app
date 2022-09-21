@@ -199,11 +199,11 @@ export const Card = (props: ICard) => {
     }
   }, [sessionUser])
 
-  const handleToggleLike = () => {
+  const handleToggleLike = async () => {
     if (sessionUser && sessionUser.uuid) {
-      likeDislike(sessionUser.uuid, localSingleNFT.uuid)
+      const res = await likeDislike(sessionUser.uuid, localSingleNFT.uuid)
       setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
-      setIsFavorited((prev) => !prev)
+      setIsFavorited(res.data.action === 'liked')
     }
   }
 
