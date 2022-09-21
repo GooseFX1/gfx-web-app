@@ -2,7 +2,6 @@ import React, { FC, ReactNode, useMemo, useState, useEffect } from 'react'
 import { Dropdown, Menu, Skeleton } from 'antd'
 import { DownOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
-//import { Expand } from '../../components'
 import { MarketSide, useCrypto, useOrder, useOrderBook, useTradeHistory } from '../../context'
 import { removeFloatingPointError } from '../../utils'
 import tw from 'twin.macro'
@@ -335,8 +334,6 @@ export const OrderBook: FC = () => {
     return [absolute, ((absolute / midValue) * 100).toFixed(2)]
   }, [slicedOrderBookBids, slicedOrderBookAsks])
 
-  const handleExpandToggle = () => setOrder((prevState) => ({ ...prevState, isHidden: !prevState.isHidden }))
-
   const handleSetPrice = (price: number) => {
     setOrder((prevState) => ({ ...prevState, price }))
     setFocused('price')
@@ -359,7 +356,6 @@ export const OrderBook: FC = () => {
 
   return (
     <WRAPPER>
-      {/* <Expand onClick={handleExpandToggle} /> */}
       <HEADER>
         <div>
           <span>Orderbook</span>
