@@ -42,6 +42,7 @@ export interface Colors {
   comingSoon: Color
   blackToGrey: Color
   tableBorder: Color
+  borderBottom: Color
 
   // backgrounds / greys
   bg0: Color
@@ -183,6 +184,7 @@ export interface Colors {
   expendedRowBg: Color
   filterDownIcon: Color
   filterArrowDown: Color
+  tableHeader: Color
 
   // secondary
   secondary1: Color

@@ -111,6 +111,8 @@ export function colors(mode: string): Colors {
     bg17: mode === 'dark' ? '#343434' : '#FFFFFF',
     bg18: mode === 'dark' ? '#2a2a2a' : '#dadada',
     bg19: mode === 'dark' ? '#131313' : '#3c3c3c',
+    tableHeader: mode === 'dark' ? '#2a2a2a' : '#636363',
+    borderBottom: mode === 'dark' ? '#555555' : '#cacaca',
     lpbg: mode === 'dark' ? '#2a2a2a' : '#d2d2d2',
     pbbg: mode === 'dark' ? '#1a1a1a' : '#868686',
     goBtn:
@@ -232,13 +234,13 @@ export function colors(mode: string): Colors {
     farmHeaderBg: '#2a2a2a',
     solPillBg: mode === 'dark' ? '#111' : '#313131',
     stakePillBg: mode === 'dark' ? '#1e1e1e' : 'rgba(49, 49, 49, 0.5)',
-    hoverTrFarmBg: mode === 'dark' ? 'rgba(64, 64, 64, 0.7)' : 'rgba(64, 64, 64, 0.05)',
+    hoverTrFarmBg: mode === 'dark' ? 'rgba(64, 64, 64, 0.3)' : 'rgba(64, 64, 64, 0.05)',
     tableHeaderBoxShadow: mode === 'dark' ? '0px 8px 6px -3px rgb(0 0 0 / 30%)' : 'none',
     tableListBoxShadow: mode === 'dark' ? 'none' : '-2px 27px 30px -10px rgb(189 189 189 / 25%)',
     expendedRowBg:
       mode === 'dark'
-        ? 'linear-gradient(90deg, rgba(247, 147, 26, 0.2) 0%, rgba(220, 31, 255, 0.2) 100%)'
-        : 'linear-gradient(90deg, rgba(247, 147, 26, 0.2) 0%, rgba(220, 31, 255, 0.2) 100%)',
+        ? 'linear-gradient(90deg, rgba(247, 147, 26, 0.3) 0%, rgba(220, 31, 255, 0.2) 100%)'
+        : 'linear-gradient(90deg, rgba(247, 147, 26, 0.5) 0%, rgba(220, 31, 255, 0.4) 100%)',
     filterDownIcon:
       mode === 'dark'
         ? '#000'

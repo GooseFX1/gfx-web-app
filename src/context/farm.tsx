@@ -1,7 +1,7 @@
 //import { bool } from '@metaplex-foundation/beet'
 import { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction, useEffect } from 'react'
 import { stakeTokens, generateListOfSSLTokens } from '../constants'
-import { IFarmData } from '../pages/Farm/TableList'
+import { IFarmData } from '../pages/Farm/CustomTableList'
 import { useConnectionConfig } from './settings'
 interface IShowDeposited {
   showDeposited: boolean

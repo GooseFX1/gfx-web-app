@@ -7,8 +7,12 @@ import { useDarkMode } from '../../context'
 import tw from 'twin.macro'
 
 const CONTAINER = styled.div`
-  ${tw`flex flex-col items-center w-full min-h-[30vh]`}
+  ${tw`flex flex-col items-center min-h-[30vh]`}
   background: ${({ theme }) => theme.bg17};
+  width: 90vw;
+  @media (max-width: 500px) {
+    width: 100vw;
+  }
 `
 const MorePoolImg = styled.div`
   .animation-404 {

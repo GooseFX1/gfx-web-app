@@ -76,9 +76,12 @@ export const Footer: FC = () => {
   const [privacyPolicyVisible, setPrivacyPolicyVisible] = useState(false)
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState(false)
   const location = useLocation()
-  const hideFooter = location.pathname.startsWith('/NFTs/launchpad/')
+  const hideFooterArr = ['/NFTs/launchpad', '/farm']
+  let hideFooter = false
+  for (let i = 0; i < hideFooterArr.length; i++)
+    hideFooter = hideFooter || location.pathname.startsWith(hideFooterArr[i])
 
-  if (checkMobile() && hideFooter) {
+  if ((checkMobile() && hideFooter) || hideFooter) {
     return <></>
   }
   if (checkMobile()) {

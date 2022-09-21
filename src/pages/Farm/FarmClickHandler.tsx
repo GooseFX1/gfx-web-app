@@ -27,7 +27,13 @@ export const sslSuccessfulMessage = (
     />
   )
 })
-export const errorHandlingMessage = (msg: string, name: string, supportTxt: string, signature: any, network: any) => ({
+export const errorHandlingMessage = (
+  msg: string,
+  name: string,
+  supportTxt: string,
+  signature: any,
+  network: any
+) => ({
   type: 'error',
   message: (
     <TransactionErrorMsg
@@ -39,7 +45,13 @@ export const errorHandlingMessage = (msg: string, name: string, supportTxt: stri
   )
 })
 
-export const sslErrorMessage = (name: string, supportTxt: string, signature: any, network: any, operation: string) => ({
+export const sslErrorMessage = (
+  name: string,
+  supportTxt: string,
+  signature: any,
+  network: any,
+  operation: string
+) => ({
   type: 'error',
   message: (
     <TransactionErrorMsg
@@ -65,3 +77,10 @@ export const genericErrMsg = (error: string) => ({
   type: 'error',
   message: error
 })
+
+export const Mint = `Mint`
+export const Burn = `Burn`
+export const Deposit = `Deposit`
+export const Withdraw = `Withdraw`
+export const StakeString = `Stake`
+export const UnstakeString = 'Unstake and Cliam'

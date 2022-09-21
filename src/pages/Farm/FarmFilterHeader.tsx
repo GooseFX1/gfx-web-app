@@ -6,6 +6,7 @@ import { useFarmContext, usePriceFeedFarm } from '../../context'
 import { checkMobile, moneyFormatterWithComma } from '../../utils'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col`}
@@ -88,6 +89,7 @@ export const FarmFilter = () => {
   const { refreshTokenData } = usePriceFeedFarm()
   const { prices, statsData } = usePriceFeedFarm()
   const [poolIndex, setPoolIndex] = useState(0)
+  const { publicKey } = useWallet()
 
   const handleClick = (name, index) => {
     setPoolFilter(name)
@@ -112,7 +114,7 @@ export const FarmFilter = () => {
         </ButtonContainer>
         <Wrapper>
           <SearchBar className="search-bar" placeholder="Search by token" setSearchFilter={setSearchFilter} />
-          <Toggle className="toggle" text="Deposited" defaultUnchecked />
+          {publicKey && <Toggle className="toggle" text="Deposited" defaultUnchecked />}
         </Wrapper>
       </STYLED_FARM_HEADER>
     )
@@ -146,7 +148,7 @@ export const FarmFilter = () => {
           <RefreshIcon onClick={() => refreshTokenData()}>
             <img src={'/img/assets/refresh.svg'} alt="refresh" />
           </RefreshIcon>
-          <Toggle className="toggle" text="Show Deposited" defaultUnchecked />
+          {publicKey && <Toggle className="toggle" text="Show Deposited" defaultUnchecked />}
         </IconContainer>
       </STYLED_FARM_HEADER>
     </WRAPPER>

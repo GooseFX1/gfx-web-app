@@ -178,10 +178,10 @@ export const stakeTokens = [
     name: 'GOFX',
     earned: undefined,
     rewards: 100,
-    liquidity: -1,
+    liquidity: undefined,
     type: 'Staking',
-    currentlyStaked: -1,
-    volume: '-'
+    currentlyStaked: undefined,
+    volume: -1
   }
 ]
 
