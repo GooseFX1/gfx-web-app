@@ -145,10 +145,10 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
-  const removeNFTListing = useCallback(async (id: number): Promise<any> => {
+  const removeNFTListing = useCallback(async (askUUID: string): Promise<any> => {
     try {
       const res = await apiClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.ASK}`, {
-        ask_id: id
+        ask_id: askUUID
       })
 
       if (res.data) setAsk(undefined)
@@ -157,38 +157,6 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     } catch (error) {
       console.log(error)
       return error
-    }
-  }, [])
-
-  const likeDislike = useCallback(async (user_id: number, nft_id: any): Promise<any> => {
-    try {
-      const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.LIKE}`, {
-        nft_id,
-        user_id
-      })
-      return res
-    } catch (error) {
-      console.log(error)
-    }
-  }, [])
-
-  const getLikesUser = useCallback(async (user_id: number): Promise<any> => {
-    try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_LIKES}?user_id=${user_id}`)
-      return res?.data || []
-    } catch (error) {
-      console.log(error)
-      return []
-    }
-  }, [])
-
-  const getLikesNFT = useCallback(async (user_id: number, nft_id: any): Promise<any> => {
-    try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_LIKES}?user_id=${user_id}`)
-      return res?.data?.filter((i) => i.uuid == nft_id) || []
-    } catch (error) {
-      console.log(error)
-      return []
     }
   }, [])
 
@@ -213,9 +181,6 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         fetchUserInput,
         sellNFT,
         removeNFTListing,
-        likeDislike,
-        getLikesUser,
-        getLikesNFT,
         totalLikes,
         setTotalLikes
       }}
@@ -250,9 +215,6 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     fetchUserInput: context.fetchUserInput,
     sellNFT: context.sellNFT,
     removeNFTListing: context.removeNFTListing,
-    likeDislike: context.likeDislike,
-    getLikesUser: context.getLikesUser,
-    getLikesNFT: context.getLikesNFT,
     totalLikes: context.totalLikes,
     setTotalLikes: context.setTotalLikes
   }

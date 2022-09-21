@@ -104,8 +104,8 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         ...prev,
         user_likes:
           res.data.action === 'liked'
-            ? [...prev.user_likes, res.data.nft_id]
-            : prev.user_likes.filter((n) => n !== res.data.nft_id)
+            ? [...prev.user_likes, res.data.nft_uuid]
+            : prev.user_likes.filter((n) => n !== res.data.nft_uuid)
       }))
       return res
     } catch (error) {

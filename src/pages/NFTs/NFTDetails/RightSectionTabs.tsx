@@ -340,7 +340,7 @@ export const RightSectionTabs: FC<{
       if (confirm.value.err === null) {
         setRemoveAskModal(false)
         notify(successfulRemoveAskMsg(signature, nftMetadata, ask.buyer_price))
-        postCancelAskToAPI(ask.ask_id).then((res) => {
+        postCancelAskToAPI(ask.uuid).then((res) => {
           console.log(res)
           setPendingTxSig(undefined)
         })
@@ -354,7 +354,7 @@ export const RightSectionTabs: FC<{
     }
   }
 
-  const postCancelAskToAPI = async (id: any): Promise<any> => {
+  const postCancelAskToAPI = async (askUUID: string): Promise<any> => {
     console.log(general.collection_id)
     // asserts the nft does not belong to a collection; is a single listing item
     if (general.collection_id === null) {
@@ -363,7 +363,7 @@ export const RightSectionTabs: FC<{
       if (removedSingleListingAsk === true) setAsk(undefined)
       return removedSingleListingAsk
     } else {
-      const removedCollectionItemAsk = await removeNFTListing(id)
+      const removedCollectionItemAsk = await removeNFTListing(askUUID)
       console.log('collection item removed')
       return removedCollectionItemAsk
     }
