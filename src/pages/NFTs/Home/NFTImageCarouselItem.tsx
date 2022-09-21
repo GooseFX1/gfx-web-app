@@ -67,8 +67,6 @@ const NFTImageCarouselItem: FC<{ item: any; type: string }> = ({ item, type }) =
   return (
     <CAROUSEL_ITEM $url={renderImage()} onClick={goToCollection}>
       <TITLE>{item.collection_name}</TITLE>
-      {/* <CAROUSEL_IMAGE preview={false} src={renderImage()} onClick={goToCollection} /> */}
-      {/* {renderItemFooter()} */}
     </CAROUSEL_ITEM>
   )
 }

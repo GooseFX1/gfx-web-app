@@ -154,7 +154,6 @@ export const ExpandedContent: FC<{
   rowData
 }) => {
   const { farmDataContext, farmDataSSLContext } = useFarmContext()
-  //const { prices } = usePriceFeedFarm()
   const { getUIAmount } = useAccounts()
   const { publicKey } = useWallet()
   const { getTokenInfoForFarming } = useTokenRegistry()
@@ -169,17 +168,8 @@ export const ExpandedContent: FC<{
     ? farmDataContext.find((token) => token.name === 'GOFX')
     : farmDataSSLContext.find((farmData) => farmData.name === name)
 
-  // const tokenPrice = useMemo(() => {
-  //   if (name === 'USDC') {
-  //     return { current: 1 }
-  //   }
-  //   // to get price of the token MSOL must be in upper case while to get tokenInfo address mSOL
-  //   return prices[`${name.toUpperCase()}/USDC`]
-  // }, [prices[`${name.toUpperCase()}/USDC`]])
-
   const availableToMint =
     tokenData?.ptMinted >= 0 ? tokenData.currentlyStaked + tokenData.earned - tokenData.ptMinted : 0
-  //const availableToMintFiat = tokenPrice && availableToMint * tokenPrice.current
 
   const onClickHalfSsl = (buttonId: string) => {
     if (name === 'SOL') userTokenBalance = userSOLBalance
@@ -192,16 +182,6 @@ export const ExpandedContent: FC<{
     if (buttonId === 'deposit') stakeRef.current.value = userTokenBalance.toFixed(DISPLAY_DECIMAL)
     else unstakeRef.current.value = availableToMint.toFixed(DISPLAY_DECIMAL)
   }
-
-  // let notEnough
-  // try {
-  //   const amt = parseFloat(stakeRef.current?.value).toFixed(3)
-  //   notEnough =
-  //     parseFloat(amt) >
-  //     (name === 'SOL' ? parseFloat(userSOLBalance.toFixed(3)) : parseFloat(userTokenBalance.toFixed(3)))
-  // } catch (e) {
-  //   console.log(e);
-  // }
 
   return (
     <>

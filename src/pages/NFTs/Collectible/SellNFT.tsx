@@ -45,12 +45,6 @@ import {
   StringPublicKey,
   bnTo8
 } from '../../../web3'
-// import { dataFormRow2 } from './data'
-// import { Donate } from '../Form/Donate'
-// const dataDonate = {
-//   desc: 'We will donate a percentage of the total price for people in need.',
-//   percents: [0, 10, 20, 50, 100]
-// }
 
 //#region styles
 const UPLOAD_CONTENT = styled.div`
@@ -236,8 +230,6 @@ export const SellNFT = () => {
     }
   }, [nftMetadata])
 
-  //useEffect(() => {}, [history.location, history.location.state])
-
   useEffect(() => {
     if (params.nftMintAddress && (!general || !nftMetadata)) {
       fetchGeneral(params.nftMintAddress, connection).then((res) => {
@@ -350,7 +342,7 @@ export const SellNFT = () => {
       tokenSize: tokenSize
     }
 
-    const sellInstructionAccounts: SellInstructionAccounts = await getSellInstructionAccounts(
+    const sellInstructionAccounts: SellInstructionAccounts = getSellInstructionAccounts(
       publicKey,
       general,
       metaDataAccount,
@@ -359,11 +351,7 @@ export const SellNFT = () => {
       programAsSignerPDA[0]
     )
 
-    const sellIX: TransactionInstruction = await createSellInstruction(
-      sellInstructionAccounts,
-      sellInstructionArgs
-    )
-    console.log(sellIX)
+    const sellIX: TransactionInstruction = createSellInstruction(sellInstructionAccounts, sellInstructionArgs)
 
     const transaction = new Transaction()
 
@@ -643,12 +631,6 @@ export const SellNFT = () => {
                   {ask !== undefined && <PRICE> {parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL} SOL</PRICE>}
                 </SECTION_TITLE>
                 <STYLED_FORM form={form} layout="vertical" initialValues={{}}>
-                  {/* {category === '0' && (
-                  <>
-                    <FormDoubleItem startingDays={startingDays} expirationDays={expirationDays} className="mb-3x" />
-                    <FormDoubleItem data={dataFormRow2} className="mb-3x" onChange={onChange} />
-                  </>
-                )} */}
                   {category === 'open-bid' && (
                     <div>
                       <FormDoubleItem
@@ -704,13 +686,6 @@ export const SellNFT = () => {
                       </STYLED_DESCRIPTION>
                     </div>
                   )}
-                  {/* <Donate
-                {...dataDonate}
-
-                const 
-                label={`${category === 'open-bid' ? '3.' : '4.'} Donate for charity`}
-                // selectPercentage={handleSelectPercentage}
-              /> */}
                 </STYLED_FORM>
               </UPLOAD_INFO_CONTAINER>
             </Col>

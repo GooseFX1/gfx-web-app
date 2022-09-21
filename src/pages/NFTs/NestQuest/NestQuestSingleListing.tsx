@@ -226,58 +226,12 @@ const NQ_LOGO = styled(SOCIAL_ICON)`
     width: 52px;
   }
 `
-
 const DESCRIPTION = styled.p`
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
   color: ${({ theme }) => theme.text4};
 `
-
-// const REMNANT = styled.p`
-//   font-size: 16px;
-//   line-height: 22px;
-//   color: ${({ theme }) => theme.text1};
-//   text-align: center;
-//   margin: 0 0 0 4px;
-
-//   span {
-//     color: #7d7d7d;
-//   }
-// `
-
-// const MINT_PROGRESS = styled(Progress)<{ num: number }>`
-//   width: 75%;
-//   .ant-progress-outer {
-//     height: 50px;
-//     margin-right: 0;
-//     padding-right: 0;
-//     .ant-progress-inner {
-//       height: 100%;
-//       background-color: ${({ theme }) => theme.bg1};
-
-//       .ant-progress-bg {
-//         height: 100% !important;
-//         background: linear-gradient(96.79deg, #5855ff 4.25%, #dc1fff 97.61%);
-//       }
-//     }
-//   }
-//   .ant-progress-text {
-//     position: absolute;
-//     top: 19px;
-//     left: calc(${({ num }) => (num < 20 ? 20 : num)}% - 64px);
-//   }
-// `
-
-// const MINT_PROGRESS_WRAPPER = styled.div`
-//   width: 100%;
-//   background-color: ${({ theme }) => theme.bg18};
-//   padding: 1rem;
-//   display: flex;
-//   align-items: center;
-//   justify-content: space-around;
-//   border-radius: 15px;
-// `
 
 const CONNECT = styled(MainButton)`
   height: 50px;
@@ -417,22 +371,6 @@ export const NestQuestSingleListing: FC<{
   const [insufficientToken, setInsufficientToken] = useState<boolean>(false)
   const [mintPrice, setMintPrice] = useState<number>(1)
 
-  // Using Total Number of NFTS as denominator
-  // const totalEggs = 25002
-  // const preSale = 2148
-  // const purse = 10217
-  // const [availableEggs, setAvailableEggs] = useState<number>(purse)
-  // const curPurchase = useMemo(() => preSale + (purse - availableEggs), [availableEggs])
-  // const currentlyMintedPercentage = useMemo(() => (curPurchase / totalEggs) * 100, [curPurchase])
-
-  // Using Number of Current Minted NFTS as denominator
-  // const purse = 10217
-  // const totalEggs = purse
-  // const preSale = 2148
-  // const [availableEggs, setAvailableEggs] = useState<number>(purse)
-  // const curPurchase = useMemo(() => totalEggs - availableEggs, [availableEggs])
-  // const currentlyMintedPercentage = useMemo(() => (curPurchase / totalEggs) * 100, [curPurchase])
-
   useEffect(() => {
     if (connection) {
       fetchAvailableNft(connection, network)
@@ -442,7 +380,6 @@ export const NestQuestSingleListing: FC<{
             throw new Error('NFT sold out')
           } else {
             setMintDisabled(res.length > 0 ? false : true)
-            // setAvailableEggs(res.length)
           }
         })
         .catch((err) => {
@@ -654,22 +591,6 @@ export const NestQuestSingleListing: FC<{
 
             <Row gutter={8}>
               <Col span={7}></Col>
-              {/* <MINT_PROGRESS_WRAPPER>
-                <MINT_PROGRESS
-                  percent={parseFloat(currentlyMintedPercentage.toFixed(1))}
-                  status="active"
-                  num={parseFloat(currentlyMintedPercentage.toFixed(1))}
-                />
-                <REMNANT>
-                  {availableEggs === 0 ? (
-                    'Minted Out'
-                  ) : (
-                    <span>
-                      <span>{moneyFormatter(curPurchase)}</span>/{moneyFormatter(totalEggs)}
-                    </span>
-                  )}
-                </REMNANT>
-              </MINT_PROGRESS_WRAPPER> */}
             </Row>
           </Col>
         </Row>

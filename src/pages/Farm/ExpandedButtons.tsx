@@ -384,11 +384,6 @@ export const StakeButtons: FC<{
   )
 }
 
-// const poolTokenAddress = {
-//   gUSDC: '7Hvq1zbYWmBpJ7qb4AZSpC1gLC95eBdQgdT3aLQyq6pG',
-//   gSOL: 'CiBddaPynSdAG2SkbrusBfyrUKdCSXVPHs6rTgSEkfsV'
-// }
-
 export const SSLButtons: FC<{
   wallet: any
   name: string
@@ -447,10 +442,6 @@ export const SSLButtons: FC<{
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
     [tokenInfo?.address, getUIAmount, publicKey]
   )
-  // const userPoolTokenBalance = useMemo(
-  //   () => (publicKey ? getUIAmount(poolTokenAddress['g' + name]) : 0),
-  //   [getUIAmount, publicKey]
-  // )
 
   const onClickMax = (buttonId: string) => {
     if (name === TOKEN_NAMES.SOL) userTokenBalance = userSOLBalance
@@ -502,16 +493,7 @@ export const SSLButtons: FC<{
     }
   }, [stakeRef.current?.value])
 
-  // const mintClicked = () => {
-  //   if (checkbasicConditions(availableToMint)) return
-  //   onClickMint(availableToMint)
-  // }
-  // const burnClicked = () => {
-  //   if (checkbasicConditions(userPoolTokenBalance)) return
-  //   onClickBurn()
-  // }
   const withdrawClicked = () => {
-    // (amt / userLiablity) * 10000
     if (checkbasicConditions(availableToMint)) return
     const decimals = ADDRESSES[network]?.sslPool[name]?.decimals
     const multiplier = name === 'SOL' || name === 'GMT' || decimals === 9 ? 10000 : 10

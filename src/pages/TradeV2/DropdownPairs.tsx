@@ -49,7 +49,6 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
   const { formatPair, getAskSymbolFromPair } = useCrypto()
 
   const formattedPair = useMemo(() => formatPair(pair), [formatPair, pair])
-  //const price = useMemo(() => prices[pair], [prices, pair])
   const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
   const assetIcon = useMemo(() => `/img/${type}/${type === 'synth' ? `g${symbol}` : symbol}.svg`, [symbol, type])
 
@@ -99,7 +98,13 @@ export const DropdownPairs: FC = () => {
     [symbol, selectedCrypto.type]
   )
   return (
-    <Dropdown overlay={menus} trigger={['click']} placement="bottom">
+    <Dropdown
+      overlay={menus}
+      trigger={['click']}
+      placement="bottom"
+      align={{ offset: [0, 10] }}
+      overlayClassName="antd-radius-trade-v2"
+    >
       <SELECTED_PAIR>
         <img className="asset-icon" src={assetIcon} alt="" />
         {formattedPair}

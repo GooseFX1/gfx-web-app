@@ -3,12 +3,10 @@ import styled from 'styled-components'
 import { Row, Col } from 'antd'
 import { PrivacyPolicy } from './PrivacyPolicy'
 import { TermsOfService } from './TermsOfService'
-//import { useConnectionConfig } from '../../context'
 import { APP_LAYOUT_FOOTER_HEIGHT, APP_LAYOUT_FOOTER_HEIGHT_MOBILE, SpaceBetweenDiv } from '../../styles'
 import { SOCIAL_MEDIAS } from '../../constants'
 import { SVGDynamicReverseMode } from '../../styles/utils'
 import { checkMobile } from '../../utils'
-//import { ThemeToggle } from '../../components/ThemeToggle'
 import { useLocation } from 'react-router-dom'
 
 const SOCIAL_ICON = styled.button`
@@ -75,7 +73,6 @@ const LINK = styled.a`
 `
 
 export const Footer: FC = () => {
-  //const { network } = useConnectionConfig()
   const [privacyPolicyVisible, setPrivacyPolicyVisible] = useState(false)
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState(false)
   const location = useLocation()
@@ -87,7 +84,6 @@ export const Footer: FC = () => {
   if (checkMobile()) {
     return (
       <WRAPPER>
-        {/* <ThemeToggle /> */}
         <AltRow justify="space-between" align="middle">
           <Col span={2}>
             <SOCIAL_ICON onClick={() => window.open(SOCIAL_MEDIAS.medium)}>

@@ -82,9 +82,6 @@ export function useConnectionConfig() {
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [endpoint, setEndpoint] = useState(ENDPOINTS[process.env.NODE_ENV === 'production' ? 4 : 3].endpoint)
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE.toString())
-
-  // useLocalStorageState('slippage', DEFAULT_SLIPPAGE.toString())
-
   const connection = useMemo(() => new Connection(endpoint, 'confirmed'), [endpoint])
 
   const endpointObj = ENDPOINTS.find((e) => e.endpoint === endpoint)

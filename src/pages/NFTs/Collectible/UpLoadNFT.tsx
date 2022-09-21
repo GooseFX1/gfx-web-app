@@ -98,28 +98,10 @@ const INPUT_SECTION = styled.div`
   justify-content: space-between;
 `
 
-// const SPACE = styled.div`
-//   width: ${({ theme }) => theme.margin(6)};
-// `
-
 const BUTTON_SECTION = styled.div`
   display: flex;
   justify-content: flex-end;
 `
-
-// const FLAT_BUTTON = styled.button`
-//   height: 60px;
-//   width: 200px;
-//   padding: ${({ theme }) => `${theme.margin(2)} ${theme.margin(6)}`};
-//   text-align: center;
-//   color: ${({ theme }) => theme.white};
-//   background: transparent;
-//   margin-top: ${({ theme }) => theme.margin(5)};
-//   margin-right: ${({ theme }) => theme.margin(2)};
-//   border: none;
-//   ${({ theme }) => theme.roundedBorders};
-//   cursor: pointer;
-// `
 
 const NEXT_BUTTON = styled.button`
   height: 60px;
@@ -263,7 +245,7 @@ export const UpLoadNFT = (): JSX.Element => {
   const { nftMintingData, setNftMintingData } = useNFTDetails()
   const wallet = useWallet()
   const { connection } = useConnectionConfig()
-  const { sessionUser } = useNFTProfile() //sessionUser.user_id
+  const { sessionUser } = useNFTProfile()
   const [localFiles, setLocalFiles] = useState<any>()
   const [filesForUpload, setFilesForUpload] = useState<File[]>([])
   const [creatorModal, setCreatorModal] = useState<boolean>(false)
@@ -429,7 +411,6 @@ export const UpLoadNFT = (): JSX.Element => {
       )
       const data = await res.data
       const result = data.find((i) => `${i.draft_id}` === id)
-      //console.log(result, result.image)
 
       if (result) {
         setS3Link(result.image)
@@ -561,11 +542,7 @@ export const UpLoadNFT = (): JSX.Element => {
   }, [])
 
   const handleCancelCreatorData = () => {
-    setNftMintingData(
-      (prev) =>
-        //console.log(prev)
-        prev
-    )
+    setNftMintingData((prev) => prev)
     setCreatorModal(false)
   }
 

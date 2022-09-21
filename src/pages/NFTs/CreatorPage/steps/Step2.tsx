@@ -9,7 +9,6 @@ import { ICreatorData } from '../../../../types/nft_launchpad'
 import { uploadFile } from 'react-s3'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { notify } from '../../../../utils'
-//var axios = require('axios')
 
 const config = {
   bucketName: 'gfx-nest-image-resources',

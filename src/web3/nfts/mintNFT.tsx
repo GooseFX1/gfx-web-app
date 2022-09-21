@@ -165,14 +165,6 @@ export const mintNFT = async (
   progressCallback(2)
 
   // TODO: enable when using payer account to avoid 2nd popup
-  // const block = await connection.getRecentBlockhash('singleGossip');
-  // instructions.push(
-  //   SystemProgram.transfer({
-  //     fromPubkey: wallet.publicKey,
-  //     toPubkey: payerPublicKey,
-  //     lamports: 0.5 * LAMPORTS_PER_SOL // block.feeCalculator.lamportsPerSignature * 3 + mintRent, // TODO
-  //   }),
-  // );
 
   const { txid } = await sendTransactionWithRetry(connection, wallet, instructions, signers, 'single')
   progressCallback(3)
@@ -185,7 +177,6 @@ export const mintNFT = async (
   }
 
   // Force wait for max confirmations
-  // await connection.confirmTransaction(txid, 'max');
   await connection.getParsedConfirmedTransaction(txid, 'confirmed')
 
   progressCallback(5)
@@ -210,7 +201,6 @@ export const mintNFT = async (
   const metadataFile = result.messages?.find((m) => m.filename === RESERVED_TXN_MANIFEST)
   if (metadataFile?.transactionId && wallet.publicKey) {
     const updateInstructions: TransactionInstruction[] = []
-    //const updateSigners: Keypair[] = []
 
     // TODO: connect to testnet arweave
     const arweaveLink = `https://arweave.net/${metadataFile.transactionId}`
@@ -246,29 +236,7 @@ export const mintNFT = async (
       updateInstructions
     )
 
-    // TODO: enable when using payer account to avoid 2nd popup
-    /*  if (maxSupply !== undefined)
-      updateInstructions.push(
-        setAuthority({
-          target: authTokenAccount,
-          currentAuthority: payerPublicKey,
-          newAuthority: wallet.publicKey,
-          authorityType: 'AccountOwner',
-        }),
-      );
-*/
-    // TODO: enable when using payer account to avoid 2nd popup
-    // Note with refactoring this needs to switch to the updateMetadataAccount command
-    // await transferUpdateAuthority(
-    //   metadataAccount,
-    //   payerPublicKey,
-    //   wallet.publicKey,
-    //   updateInstructions,
-    // );
-
     progressCallback(8)
-
-    //const txid = await sendTransactionWithRetry(connection, wallet, updateInstructions, updateSigners)
 
     console.log({
       message: 'Art created on Solana',

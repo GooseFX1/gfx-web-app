@@ -3,7 +3,6 @@ import Slider from 'react-slick'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { Row, Card } from 'antd'
-//import { theme } from '../../../../theme'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 import { GetNftPrice } from './FeaturedLaunch'
@@ -59,17 +58,6 @@ const CAROUSEL_WRAPPER = styled.div`
     margin-right: ${({ theme }) => theme.margin(3)};
   }
 `
-// const NFT_CONTAINER = styled.div`
-//   opacity: 0.8;
-//   .slick-slide slick-active {
-//     border: 12px solid green;
-//     height: 200px;
-//   }
-
-//   .slick-slide img {
-//     height: 200px;
-//   }
-// `
 
 const UPCOMING_TEXT = styled.div`
   font-weight: 700;
@@ -202,11 +190,6 @@ const UpcomingCollectins: FC = () => {
     return d > 1 ? dDisplay + hDisplay + mDisplay : hDisplay + mDisplay + sDisplay
   }
 
-  //   <FLEX>
-  //   <div className="space">
-  //     <SkeletonCommon width="460px" height="460px" borderRadius="15px" />
-  //   </div>
-  // </FLEX>
   return (
     <>
       {!dataFetched ? (

@@ -35,6 +35,9 @@ button:disabled {
   width: 90%;
   min-width: 320px !important;
 }
+.antd-radius-trade-v2 ul {
+  border-radius: 8px;
+}
 .up24h {
   color: #50bb35;
 }

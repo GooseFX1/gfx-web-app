@@ -1,9 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Row } from 'antd'
-// import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-// import { WRAPPED_SOL_MINT } from '../../web3'
 import { MintItemViewStatus, INFTMetadata } from '../../../../types/nft_details'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { DarkDiv, TokenSwitch } from './LaunchpadComponents'
@@ -152,11 +150,7 @@ export const FeaturedLaunch: FC<{
   arbData?: INFTMetadata
 }> = ({ ...rest }) => {
   const history = useHistory()
-  // const { connected, publicKey } = useWallet()
-  // const { setVisible: setModalVisible } = useWalletModal()
-  // const { getUIAmount } = useAccounts()
 
-  // const [notEnough, setNotEnough] = useState<boolean>(false)
   const { isUSDC } = useUSDCToggle()
   const { liveNFTProjects } = useNFTLaunchpad()
   const [featuredIndex, setFeaturedIndex] = useState<number>(0)

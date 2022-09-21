@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Upload } from 'antd'
 import styled from 'styled-components'
 import { MainText } from '../../../styles'
@@ -101,10 +101,6 @@ interface Props {
 const PreviewImage = ({ file, status, image_url }: Props) => {
   const { nftMetadata, nftMintingData } = useNFTDetails()
   const { mode } = useDarkMode()
-
-  useEffect(() => {
-    // console.log(file)
-  }, [file])
 
   return (
     <PREVIEW_CONTAINER>

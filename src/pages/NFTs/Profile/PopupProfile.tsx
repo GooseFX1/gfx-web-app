@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Form, Input, Button } from 'antd'
-// import { PlusOutlined } from '@ant-design/icons'
-// import { UploadChangeParam } from 'antd/lib/upload'
-// import { UploadFile } from 'antd/lib/upload/interface'
+
 import { StyledPopupProfile, StyledFormProfile } from './PopupProfile.styled'
 import { useNFTProfile } from '../../../context'
 import { SVGDynamicReverseMode } from '../../../styles'
@@ -138,35 +136,6 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
           </div>
         }
       >
-        {/* <div className="avatar-wrapper">
-          <div className="image-group">
-            <div>
-              <Upload className="avatar-image" listType="picture-card" maxCount={1} onChange={handleAvatar}>
-                <div className="image-wrap">
-                  {!avatar && (
-                    <img
-                      className="img-current avatar-image"
-                      src={`${
-                        !sessionUser.profile_pic_link || sessionUser.profile_pic_link === ''
-                          ? `/img/assets/avatar.svg}`
-                          : sessionUser.profile_pic_link
-                      }`}
-                      alt="profile"
-                    />
-                  )}
-                  <div className="icon-upload">
-                    <PlusOutlined />
-                  </div>
-                </div>
-              </Upload>
-              <div className="text">Preview</div>
-            </div>
-            <div className="note">
-              <div>Minimum size 400x 400</div>
-              <div>(Gif's work too).</div>
-            </div>
-          </div>
-        </div> */}
         <StyledFormProfile
           form={form}
           layout="vertical"

@@ -296,7 +296,6 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
       <Menu.Item onClick={() => setShareModal(true)}>
         <div>Share Profile</div>
       </Menu.Item>
-      {/* {<Menu.Item>Help</Menu.Item> } */}
     </StyledMenu>
   )
 

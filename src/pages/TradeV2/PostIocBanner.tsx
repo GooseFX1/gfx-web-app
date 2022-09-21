@@ -29,9 +29,12 @@ const TYPES = styled.div`
     .ant-checkbox-inner {
       height: 20px;
       width: 20px;
+      border-radius: 4px;
+      border: solid 1px #535353;
     }
     .ant-checkbox {
       background: ${({ theme }) => theme.bg13};
+      border-radius: 4px;
     }
     .ant-checkbox.ant-checkbox-checked {
       .ant-checkbox-inner {

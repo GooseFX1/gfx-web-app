@@ -172,12 +172,6 @@ const PREV_BTN = styled.button`
   }
 `
 
-// interface ITeamMember {
-//   name: string
-//   username: string
-//   dp_url?: string
-// }
-
 export const TeamMembersContainer: FC<{ data?: any; setTeamMembers: (x: any) => void }> = ({ setTeamMembers }) => {
   const { creatorData } = useNFTCreator()
   const twitterURL = 'www.twitter.com/'

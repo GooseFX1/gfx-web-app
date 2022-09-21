@@ -3,10 +3,8 @@ import styled from 'styled-components'
 import { Tabs } from 'antd'
 import { useNFTCollections } from '../../../context'
 import { SearchBar } from '../../../components'
-// import { Sort } from './Sort'
 import { FixedPriceTabContent } from './FixedPriceTabContent'
 import { OpenBidsTabContent } from './OpenBidsTabContent'
-// import { OwnersTabContent } from './OwnersTabContent'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { OwnersTabContent } from './OwnersTabContent'
 
@@ -149,12 +147,6 @@ export const CollectionTabs = ({
 }) => {
   const { singleCollection } = useNFTCollections()
 
-  //useEffect(() => {}, [singleCollection])
-
-  /*<TabPane tab="Owners" key="3">
-      <OwnersTabContent />
-      </TabPane>*/
-
   return (
     <COLLECTION_TABS id="border" $height={collapse ? '67' : '50'}>
       <STYLED_SEARCH_BAR>
@@ -164,7 +156,6 @@ export const CollectionTabs = ({
           setFilter={setFilter}
           filter={filter}
         />
-        {/* <Sort /> */}
       </STYLED_SEARCH_BAR>
       {singleCollection ? (
         <Tabs className={'collection-tabs'} defaultActiveKey="1" centered>

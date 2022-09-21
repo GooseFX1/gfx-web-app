@@ -803,10 +803,6 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
     try {
       const res = await bidOnSingleNFT(bidObject)
       // useful for testing without transaction hence not removing
-      // let res
-      //  return {
-      //    data: { bid_matched: true, tx_sig: true }
-      //  }
 
       if (res.isAxiosError) {
         notify({
@@ -981,8 +977,6 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
 
     try {
       //    useful for testing
-      //  let signature = 'abc'
-      //  let confirm = { value: { err: null } }
 
       setActiveSweepIndex(0)
       setIsSweeping(true)
@@ -1463,7 +1457,6 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
                     <Slider {...settings_sweep} ref={sliderRef}>
                       <div></div>
                       {nftBatch.slice(0, dropdownSelection).map((item, index) => (
-                        //const showSlide = index > activeSweepIndex - 2 && index < activeSweepIndex + 2 ? true : false
                         <div
                           className={index === activeSweepIndex ? 'activeNftZoom' : 'nonactiveNftZoom'}
                           key={index}

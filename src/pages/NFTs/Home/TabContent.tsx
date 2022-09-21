@@ -280,16 +280,6 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
             )}
           </div>
         </div>
-        {/* <div className="progress">
-          {analyticData ? (
-            <span>
-              <img className="progress-icon" src={`${process.env.PUBLIC_URL}/img/assets/increase-icon.svg`} alt="" />
-              <span className="percent">+ 1.15 %</span>
-            </span>
-          ) : (
-            <Skeleton.Button active size="small" style={{ display: 'flex', height: '20px' }} />
-          )}
-        </div> */}
       </div>
     </ANALYTIC_ITEM>
   )

@@ -1,7 +1,5 @@
 import styled from 'styled-components'
-//import Button from '@material-ui/core/Button'
 import { CandyMachineAccount } from '../candyMachine/candyMachine'
-//import { CircularProgress } from '@material-ui/core'
 import { GatewayStatus, useGateway } from '@civic/solana-gateway-react'
 import { useEffect, useState, useRef } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -112,7 +110,6 @@ export const MintButtonFunc = ({
   const [webSocketSubscriptionId, setWebSocketSubscriptionId] = useState(-1)
   const [clicked, setClicked] = useState(false)
   const [visible, setVisible] = useState(false)
-  //const handleShare = () => {}
   const onShare = async (social: string) => {
     if (social === 'copy link') {
       copyToClipboard()
@@ -206,7 +203,6 @@ export const MintButtonFunc = ({
                   if (gatewayStatus === GatewayStatus.ACTIVE) {
                     await onMint()
                   } else {
-                    //setIsMinting(true)
                     await requestGatewayToken()
                   }
                 } else if (

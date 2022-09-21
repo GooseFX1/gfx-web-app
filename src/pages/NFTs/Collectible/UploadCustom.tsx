@@ -148,7 +148,6 @@ interface Props {
 
 export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingData, setNftMintingData }: Props) => {
   const [coverArtError, setCoverArtError] = useState<string>()
-  // const [coverFile, setCoverFile] = useState<File | undefined>()
   const [mainFile] = useState<File | undefined>()
   const [customURL] = useState<string>('')
   const [localFile, setLocalFile] = useState<any>(null)

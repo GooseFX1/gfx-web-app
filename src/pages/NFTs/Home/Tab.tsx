@@ -115,7 +115,6 @@ const ANALYTICS_DROPDOWN = styled.div`
 //#endregion
 
 const AnalyticsTabs = ({ allCollections }: { allCollections: any[] }) => {
-  //const { allCollections } = useNFTCollections()
   const [mainCollections, setMainCollections] = useState(allCollections)
   const [sort, setSort] = useState('high')
 
@@ -148,9 +147,6 @@ const AnalyticsTabs = ({ allCollections }: { allCollections: any[] }) => {
         <TabPane tab="Volume" key="2">
           <TabContent baseCollections={mainCollections} sort={sort} collectionFilter={'volume'} />
         </TabPane>
-        {/* <TabPane tab="Listed NFT’S" key="3">
-          <TabContent baseCollections={mainCollections} collectionFilter={'listed'} />
-        </TabPane> */}
       </Tabs>
 
       {/* TODO: fade to be used when carousel is implemented <div className="fade"></div> */}
