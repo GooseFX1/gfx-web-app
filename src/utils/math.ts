@@ -54,7 +54,7 @@ export const moneyFormatter = (number: number, currency = '') => {
 }
 export const moneyFormatterWithComma = (number: number, currency = '') => {
   if (!isNotEmpty(number)) return ''
-  return commafy(number) + currency
+  return currency + ' ' + commafy(number)
 }
 export const percentFormatter = (number: number) => {
   if (!isNotEmpty(number)) return 0
