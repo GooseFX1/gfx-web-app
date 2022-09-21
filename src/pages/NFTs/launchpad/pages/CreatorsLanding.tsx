@@ -81,7 +81,9 @@ const feauturesToShow = [
   },
   {
     name: 'Funds Vesting',
-    desc: 'Creators can assign milestones and vesting timelines to show how they eir community post-mint.',
+    desc:
+      'Creators can assign milestones and vesting timelines to show how they intend to build ' +
+      'their community post-mint.',
     image: 'fundsVesting'
   },
   {
@@ -96,7 +98,9 @@ const feauturesToShow = [
   },
   {
     name: 'Hidden Reveal',
-    desc: 'NFTs metadata is hidden upon initial mint. Allowing the creator ts to see the final assets and metadata.',
+    desc:
+      'NFTs metadata is hidden upon initial mint. Allowing the creator to control when ' +
+      'the community gets to see the final assets and metadata.',
     image: 'hiddenReveal'
   }
 ]
