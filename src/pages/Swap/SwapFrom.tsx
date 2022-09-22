@@ -4,6 +4,7 @@ import { Input } from 'antd'
 import { Selector } from './Selector'
 import { AmountField } from './shared'
 import { useAccounts, useSwap } from '../../context'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const QUICK_SELECT = styled.div`
   margin-left: 23.5%;
@@ -58,6 +59,7 @@ const LABEL = styled.span`
 
 export const SwapFrom: FC<{ height: string }> = ({ height }) => {
   const { getUIAmount, getUIAmountString } = useAccounts()
+  const { publicKey } = useWallet()
   const { inTokenAmount, pool, setFocused, setInTokenAmount, setTokenA, tokenA, tokenB } = useSwap()
 
   const setHalf = () => {
@@ -76,10 +78,11 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
 
   const balance = useMemo(() => {
     if (!tokenA) return 0
+    if (!publicKey) return 0
 
     const { address, decimals } = tokenA
     return parseFloat(getUIAmountString(address).slice(0, Math.min(decimals, 8)))
-  }, [getUIAmountString, tokenA])
+  }, [getUIAmountString, tokenA, publicKey])
 
   const showQuickSelect = useMemo(() => balance > 0, [balance])
 
