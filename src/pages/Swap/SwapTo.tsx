@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { AmountField } from './shared'
 import { Selector } from './Selector'
 import { useAccounts, useSlippageConfig, useSwap } from '../../context'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const AMOUNT = styled.div`
   display: flex;
@@ -45,14 +46,16 @@ const LABEL = styled.span`
 export const SwapTo: FC<{ height: string }> = ({ height }) => {
   const { getUIAmountString } = useAccounts()
   const { slippage } = useSlippageConfig()
+  const { publicKey } = useWallet()
   const { outTokenAmount, setTokenB, tokenA, tokenB } = useSwap()
 
   const balance = useMemo(() => {
     if (!tokenB) return 0
+    if (!publicKey) return 0
 
     const { address, decimals } = tokenB
     return parseFloat(getUIAmountString(address).slice(0, Math.min(decimals, 8)))
-  }, [getUIAmountString, tokenB])
+  }, [getUIAmountString, tokenB, publicKey])
 
   //eslint-disable-next-line
   const value = useMemo(() => {
@@ -66,7 +69,12 @@ export const SwapTo: FC<{ height: string }> = ({ height }) => {
   return (
     <WRAPPER>
       <LABEL>You Receive</LABEL>
-      <AmountField $balance={balance + ' ' + (tokenB?.symbol || '')} $height={height} $value={undefined} $down={true}>
+      <AmountField
+        $balance={balance + ' ' + (tokenB?.symbol || '')}
+        $height={height}
+        $value={undefined}
+        $down={true}
+      >
         <Selector height={height} otherToken={tokenA} setToken={setTokenB} token={tokenB} />
         <AMOUNT>
           <span>{outTokenAmount || 0}</span>
