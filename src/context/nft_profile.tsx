@@ -21,7 +21,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
       try {
         const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SESSION_USER}?${type}=${parameter}`)
         if (res.data.length > 0) {
-          const userLikes = await fetchUserLikes(res.data[0].user_id)
+          const userLikes = await fetchUserLikes(res.data[0].uuid)
           const user = { ...res.data[0], user_likes: userLikes }
           _setUser(user, setSessionUser)
         } else {
@@ -68,9 +68,9 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
     []
   )
 
-  const fetchUserActivity = useCallback(async (id: number): Promise<any> => {
+  const fetchUserActivity = useCallback(async (userUUID: string): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.USER_ACTIVITY}?user_id=${id}`)
+      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.USER_ACTIVITY}?user_id=${userUUID}`)
 
       setUserActivity(res.data.slice(res.data.length - 11, res.data.length - 1))
       return res
@@ -79,11 +79,11 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
-  const fetchUserLikes = useCallback(async (id: number): Promise<any> => {
+  const fetchUserLikes = useCallback(async (userUUID: string): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_USER_LIKES}?user_id=${id}`)
+      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_USER_LIKES}?user_id=${userUUID}`)
       if (res.data.length > 0 && Array.isArray(res.data)) {
-        return res.data.map((nft) => nft.non_fungible_id)
+        return res.data.map((nft) => nft.uuid)
       } else {
         return []
       }
@@ -93,7 +93,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
-  const likeDislike = useCallback(async (user_id: number, nft_id: any): Promise<any> => {
+  const likeDislike = useCallback(async (user_id: string, nft_id: string): Promise<any> => {
     try {
       const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.LIKE}`, {
         nft_id,
@@ -104,8 +104,8 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         ...prev,
         user_likes:
           res.data.action === 'liked'
-            ? [...prev.user_likes, res.data.nft_id]
-            : prev.user_likes.filter((n) => n !== res.data.nft_id)
+            ? [...prev.user_likes, res.data.nft_uuid]
+            : prev.user_likes.filter((n) => n !== res.data.nft_uuid)
       }))
       return res
     } catch (error) {
@@ -118,7 +118,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
       try {
         const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.NON_SESSION_USER}?${type}=${parameter}`)
         if (res.data.length > 0) {
-          const userLikes = await fetchUserLikes(res.data[0].user_id)
+          const userLikes = await fetchUserLikes(res.data[0].uuid)
           const user = { ...res.data[0], user_likes: userLikes }
           _setUser(user, setNonSessionProfile)
         } else {
@@ -141,6 +141,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
     } else {
       setter({
         ...userObj,
+        uuid: userObj.uuid ? userObj.uuid : null,
         user_id: userObj.user_id ? userObj.user_id : null,
         pubkey: userObj.pubkey ? userObj.pubkey : '',
         nickname: userObj.nickname ? userObj.nickname : 'Unnamed',

@@ -226,7 +226,7 @@ export const RightSection: FC<{
 
   useEffect(() => {
     if (general && sessionUser) {
-      setIsFavorited(sessionUser.user_likes.includes(general.non_fungible_id))
+      setIsFavorited(sessionUser.user_likes.includes(general.uuid))
     }
   }, [sessionUser, general])
 
@@ -236,7 +236,7 @@ export const RightSection: FC<{
 
   const handleToggleLike = () => {
     if (sessionUser) {
-      likeDislike(sessionUser.user_id, general.non_fungible_id).then(() => {
+      likeDislike(sessionUser.uuid, general.uuid).then(() => {
         setLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
       })
     }
@@ -291,7 +291,7 @@ export const RightSection: FC<{
           <Col span={24}>
             <div className="name-icon-row">
               <div className="rs-name">{general?.nft_name || nftMetadata?.name}</div>
-              {checkMobile() && general.non_fungible_id ? (
+              {checkMobile() && general.uuid ? (
                 <>
                   {sessionUser && isFavorited ? (
                     <img

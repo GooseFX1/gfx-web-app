@@ -96,7 +96,7 @@ export const ImageShowcase: FC = ({ ...rest }) => {
 
   useEffect(() => {
     if (general && sessionUser) {
-      setIsFavorited(sessionUser.user_likes.includes(general.non_fungible_id))
+      setIsFavorited(sessionUser.user_likes.includes(general.uuid))
     }
   }, [sessionUser, general])
 
@@ -106,7 +106,7 @@ export const ImageShowcase: FC = ({ ...rest }) => {
 
   const handleToggleLike = () => {
     if (sessionUser) {
-      likeDislike(sessionUser.user_id, general.non_fungible_id).then(() => {
+      likeDislike(sessionUser.uuid, general.uuid).then(() => {
         setLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
       })
     }
@@ -195,7 +195,7 @@ export const ImageShowcase: FC = ({ ...rest }) => {
                 <OpenBidIcon className="ls-action-button" />
               )}
             </Col>
-            {general.non_fungible_id && (
+            {general.uuid && (
               <Col>
                 {sessionUser && isFavorited ? (
                   <img

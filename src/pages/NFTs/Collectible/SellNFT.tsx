@@ -299,7 +299,7 @@ export const SellNFT = () => {
     e.preventDefault()
 
     // asserts current NFT does not belong to collection, is one-off
-    if (general.non_fungible_id === null) {
+    if (general.uuid === null) {
       try {
         const registeredNFT = await registerSingleNFT({
           nft_name: general.nft_name,
@@ -310,7 +310,11 @@ export const SellNFT = () => {
           animation_url: general.animation_url
         })
 
-        setGeneral({ non_fungible_id: registeredNFT.data.non_fungible_id, ...general })
+        setGeneral({
+          uuid: registeredNFT.data.uuid,
+          non_fungible_id: registeredNFT.data.non_fungible_id,
+          ...general
+        })
       } catch (error) {
         notify({
           type: 'error',
@@ -386,7 +390,7 @@ export const SellNFT = () => {
       if (confirm.value.err === null) {
         // asserts existing ask and removes it from nest-api
         if (ask !== undefined) {
-          const askRemoved = await postCancelAskToAPI(ask.ask_id)
+          const askRemoved = await postCancelAskToAPI(ask.uuid)
           console.log(`askRemoved: ${askRemoved}`)
           if (askRemoved === false) {
             // TODO: needs to abort operation or retry removing
@@ -483,9 +487,9 @@ export const SellNFT = () => {
     return cancelIX
   }
 
-  const postCancelAskToAPI = async (id: number) => {
+  const postCancelAskToAPI = async (askUUID: string) => {
     try {
-      const res = await removeNFTListing(id)
+      const res = await removeNFTListing(askUUID)
       console.log('Asking Price Attempt Remove', res)
       return res.data
     } catch (error) {

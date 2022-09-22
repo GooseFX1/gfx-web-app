@@ -3,11 +3,11 @@ import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import styled from 'styled-components'
+import { useNFTCollections } from '../../../context'
 import { ArrowClicker, Loader } from '../../../components'
 import NFTImageCarouselItem from './NFTImageCarouselItem'
 import { NFTBaseCollection, NFTFeaturedCollection, NFTUpcomingCollection } from '../../../types/nft_collections.d'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
-import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
 import isEmpty from 'lodash/isEmpty'
 import { checkMobile } from '../../../utils'
 
@@ -91,37 +91,31 @@ const settings = {
 }
 
 export interface ICollectionCarousel {
-  collections: Array<NFTBaseCollection | NFTFeaturedCollection | NFTUpcomingCollection>
   collectionType: string
   isLoading: boolean
   isLaunch?: boolean
   title?: string
 }
 
-const CollectionCarousel: FC<ICollectionCarousel> = ({ title, collections, collectionType, isLoading }) => {
+const CollectionCarousel: FC<ICollectionCarousel> = ({ title, collectionType, isLoading }) => {
+  const { detailedCollections } = useNFTCollections()
   const slickRef = React.useRef<any>()
 
   const slickNext = () => slickRef?.current?.slickNext()
   const slickPrev = () => slickRef?.current?.slickPrev()
 
-  const isCollectionsEmpty = isEmpty(collections)
-  const [updatedCollections, setUpdatedCollections] = useState(collections)
+  const isCollectionsEmpty = isEmpty(detailedCollections)
+  const [updatedCollections, setUpdatedCollections] = useState<NFTBaseCollection[]>([])
 
   useEffect(() => {
-    if (title === 'Popular Collections') {
-      sortCollectionData()
-    }
-  }, [title, collections])
+    if (title === 'Popular Collections' && detailedCollections.length > 0) sortCollectionData()
+  }, [title, detailedCollections])
 
   const sortCollectionData = async () => {
-    const collectionsDetails = (
-      await Promise.all(
-        collections.map(async (collection: NFTBaseCollection) => await fetchDetails(collection.collection_id))
-      )
-    )
-      //sort by volume, sort by floor price will be resorted if volume exists
-      //sort by volume before floor_price to allow listed collection come first if no volume yet
-      //and then yearly and monthly by order of priority with weekly being the highest priority
+    //sort by volume, sort by floor price will be resorted if volume exists
+    //sort by volume before floor_price to allow listed collection come first if no volume yet
+    //and then yearly and monthly by order of priority with weekly being the highest priority
+    const sortedCollections = detailedCollections
       .sort(
         (a, b) =>
           b.collection_vol.weekly - a.collection_vol.weekly ||
@@ -130,16 +124,9 @@ const CollectionCarousel: FC<ICollectionCarousel> = ({ title, collections, colle
           b.collection_vol.yearly - a.collection_vol.yearly
       )
       .map((col) => col.collection[0])
-    setUpdatedCollections(collectionsDetails)
-  }
 
-  const fetchDetails = async (id: number) => {
-    try {
-      const res = await fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.SINGLE_COLLECTION, `${id}`)
-      return res.data
-    } catch (error) {
-      return null
-    }
+    //sets sorted data
+    setUpdatedCollections(sortedCollections)
   }
 
   return (

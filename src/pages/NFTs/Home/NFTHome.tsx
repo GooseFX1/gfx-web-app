@@ -8,7 +8,7 @@ import AnalyticsTabs from './Tab'
 import NFTFooter from './NFTFooter'
 import CollectionCarousel from './CollectionCarousel'
 import OneOfOnesNFTs from './OneOfOnesNFTs'
-import { COLLECTION_TYPES } from '../../../types/nft_collections.d'
+import { COLLECTION_TYPES, NFTBaseCollection } from '../../../types/nft_collections.d'
 import Loading from './Loading'
 import { SVGDynamicReverseMode } from '../../../styles'
 import { ModalSlide } from '../../../components/ModalSlide'
@@ -75,7 +75,8 @@ export const NFT_MENU = styled.div`
   z-index: 100;
 `
 const NFTLandingPage: FC = (): JSX.Element => {
-  const { allCollections, fetchAllCollections, setNFTMenuPopup, nftMenuPopup } = useNFTCollections()
+  const { allCollections, fetchAllCollections, fetchAllCollectionDetails, setNFTMenuPopup, nftMenuPopup } =
+    useNFTCollections()
   const [filteredCollections, setFilteredCollections] = useState([])
   const [oneOfOnes, setAllOneOfOnes] = useState([])
   const [isAllLoading, setIsAllLoading] = useState<boolean>(true)
@@ -83,7 +84,9 @@ const NFTLandingPage: FC = (): JSX.Element => {
   const [search, setSearch] = useState<string>('')
 
   useEffect(() => {
-    fetchAllCollections().then(() => setIsAllLoading(false))
+    fetchAllCollections().then((collections: NFTBaseCollection[]) => {
+      fetchAllCollectionDetails(collections).then(() => setIsAllLoading(false))
+    })
     fetchAllSingleNFTs().then((res) => setAllOneOfOnes(res != null ? res.slice(0, 20) : []))
     return null
   }, [])
@@ -107,12 +110,11 @@ const NFTLandingPage: FC = (): JSX.Element => {
       <br />
       <div>
         {isAllLoading && !checkMobile() && <Loading />}
-        <AnalyticsTabs allCollections={allCollections} />
+        <AnalyticsTabs />
       </div>
       <br />
       <div>
         <CollectionCarousel
-          collections={allCollections}
           collectionType={COLLECTION_TYPES.NFT_COLLECTION}
           title="Popular Collections"
           isLaunch

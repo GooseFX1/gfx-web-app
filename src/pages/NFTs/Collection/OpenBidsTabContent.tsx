@@ -138,7 +138,7 @@ export const OpenBidsTabContent: FC<{ filter: any; setCollapse?: (x: any) => voi
         <OPEN_BIDS_TAB {...rest} className="card-list">
           <Row gutter={[32, 24]}>
             {shortfilteredLocalOpenBid.map((item: ISingleNFT | null, index: number) => (
-              <Col sm={10} md={7} lg={6} xl={4} xxl={4} key={item ? item.non_fungible_id : index}>
+              <Col sm={10} md={7} lg={6} xl={4} xxl={4} key={item ? item.uuid : index}>
                 <Card singleNFT={item} />
               </Col>
             ))}

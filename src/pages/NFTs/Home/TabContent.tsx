@@ -112,52 +112,39 @@ const ANALYTIC_ITEM = styled.div`
 `
 
 interface ITabContent {
-  baseCollections: NFTBaseCollection[]
+  detailedCollections: NFTCollection[]
   collectionFilter: 'floor' | 'volume' | 'listed'
   sort?: string | undefined
 }
 
-const TabContent = ({ baseCollections, collectionFilter, sort }: ITabContent) => {
+const TabContent = ({ detailedCollections, collectionFilter, sort }: ITabContent) => {
   const [collectionExtras, setCollectionExtras] = useState<NFTCollection[]>()
 
   useEffect(() => {
-    setCollectionSort(baseCollections)
-  }, [baseCollections, sort, collectionFilter])
+    setCollectionSort(detailedCollections)
+  }, [detailedCollections, sort, collectionFilter])
 
-  const setCollectionSort = async (cols: NFTBaseCollection[]) => {
-    const fullCollections = await Promise.all(
-      cols.map(async (col: NFTBaseCollection) => await fetchDetails(col.collection_id))
-    )
-
+  const setCollectionSort = async (collections: NFTCollection[]) => {
     if (collectionFilter === 'floor') {
       if (sort === 'high') {
-        setCollectionExtras(fullCollections.sort((a, b) => b.collection_floor - a.collection_floor))
+        setCollectionExtras(collections.sort((a, b) => b.collection_floor - a.collection_floor))
       } else if (sort === 'low') {
-        setCollectionExtras(fullCollections.sort((a, b) => a.collection_floor - b.collection_floor))
+        setCollectionExtras(collections.sort((a, b) => a.collection_floor - b.collection_floor))
       }
     } else if (collectionFilter === 'volume') {
       if (sort === 'high') {
         setCollectionExtras(
-          fullCollections.sort((a, b) =>
+          collections.sort((a, b) =>
             b.collection_vol && a.collection_vol ? b.collection_vol.weekly - a.collection_vol.weekly : null
           )
         )
       } else if (sort === 'low') {
         setCollectionExtras(
-          fullCollections.sort((a, b) =>
+          collections.sort((a, b) =>
             a.collection_vol && b.collection_vol ? a.collection_vol.weekly - b.collection_vol.weekly : null
           )
         )
       }
-    }
-  }
-
-  const fetchDetails = async (id: number) => {
-    try {
-      const res = await fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.SINGLE_COLLECTION, `${id}`)
-      return res.data
-    } catch (error) {
-      return null
     }
   }
 

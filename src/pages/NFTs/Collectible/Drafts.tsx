@@ -67,7 +67,8 @@ const DESCRIPTION = MainText(styled.div`
 `)
 
 const DELETE_TEXT = styled(DESCRIPTION)`
-  ${tw`w-[465px] py-0 px-[50px] my-[24px] text-[22px] leading-[1.59]`}
+  ${tw`w-full h-[300px] py-0 px-[50px] my-[24px] text-[22px] leading-[1.59]`}
+  overflow: hidden;
 `
 const DELETED_TEXT = styled(DELETE_TEXT)`
   ${tw`text-[25px]`}
@@ -176,7 +177,7 @@ export const NftDrafts = (): JSX.Element => {
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false)
   const [deletedNFT, setDeletedNFT] = useState(false)
 
-  const handleClick = async (id) => {
+  const handleClick = async (id: string) => {
     if (connected && publicKey) {
       if (id) {
         history.push(`/NFTs/create-single/${id}`)
@@ -193,7 +194,7 @@ export const NftDrafts = (): JSX.Element => {
 
   const pullDrafts = async () => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.DRAFTS}?user_id=${sessionUser?.user_id}`)
+      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.DRAFTS}?user_id=${sessionUser?.uuid}`)
       const result = await res.data
       if (result.length > 0) {
         setDrafts(result)
@@ -243,7 +244,8 @@ export const NftDrafts = (): JSX.Element => {
             </FloatingActionButton>
           </div>
           <h1>
-            Choose an NFT from your {drafts.length > 1 ? `${drafts.length} drafts` : `1 draft`} to complete the creation
+            Choose an NFT from your {drafts.length > 1 ? `${drafts.length} drafts` : `1 draft`} to complete the
+            creation
           </h1>
         </TITLE>
 
@@ -263,10 +265,9 @@ export const NftDrafts = (): JSX.Element => {
                     <DELETE_DRAFT src={`/img/assets/close-white-icon.svg`} alt="delete" />
                   </FloatingActionButton>
                 </div>
-                <UPLOAD_FILED onClick={() => handleClick(draft.draft_id)}>
+                <UPLOAD_FILED onClick={() => handleClick(draft.uuid)}>
                   <DRAFT_IMAGE draggable={false} preview={false} src={draft.image} />
                   <IMAGE_COUNT_DESC_CONTAINER>
-                    <IMAGE_COUNT_DESC>#{draft.draft_id}</IMAGE_COUNT_DESC>
                     <IMAGE_COUNT_DESC>{draft.name}</IMAGE_COUNT_DESC>
                     <IMAGE_COUNT_DESC>Royalty: {draft.seller_fee_basis_points / 100}%</IMAGE_COUNT_DESC>
                   </IMAGE_COUNT_DESC_CONTAINER>
@@ -296,9 +297,9 @@ export const NftDrafts = (): JSX.Element => {
                 preview={false}
                 src={chosenDraft?.image || '/img/assets/delete-draft.svg'}
               />
-              <DELETE_TEXT>Are you sure you want to delete "#{chosenDraft?.draft_id}" from your drafts?</DELETE_TEXT>
+              <DELETE_TEXT>Are you sure you want to delete "{chosenDraft?.name}" from your drafts?</DELETE_TEXT>
 
-              <DELETE_BUTTON onClick={() => deleteAndRemoveDraft(chosenDraft?.draft_id)}>Delete draft</DELETE_BUTTON>
+              <DELETE_BUTTON onClick={() => deleteAndRemoveDraft(chosenDraft?.uuid)}>Delete draft</DELETE_BUTTON>
               <SAVE_BUTTON onClick={() => setConfirmDeleteModal(false)}>Cancel</SAVE_BUTTON>
             </CONFIRM_DELETE>
           ) : (

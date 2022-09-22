@@ -66,6 +66,7 @@ export type INFTMetadata = {
 }
 
 export type ISingleNFT = {
+  uuid: string
   non_fungible_id: number | null
   nft_name: string
   nft_description: string
@@ -88,6 +89,7 @@ export type IRegisterNFT = {
 }
 
 export type INFTBid = {
+  uuid: string
   bid_id: number
   clock: string
   tx_sig: string
@@ -105,6 +107,7 @@ export type INFTBid = {
 }
 
 export type INFTAsk = {
+  uuid: string
   ask_id: number
   clock: string
   tx_sig: string
@@ -149,10 +152,7 @@ export interface INFTDetailsConfig {
   updateUserInput: (params: any) => Promise<any>
   fetchUserInput: () => Promise<any>
   sellNFT: (params: any) => Promise<any>
-  removeNFTListing: (id: number) => Promise<any>
-  getLikesNFT: (user_id: any, nft_id: any) => Promise<any>
-  getLikesUser: (user_id: number) => Promise<any>
-  likeDislike: (user_id: number, nft_id: any) => Promise<any>
+  removeNFTListing: (id: string) => Promise<any>
   totalLikes: number
   setTotalLikes: Dispatch<SetStateAction<number>>
 }

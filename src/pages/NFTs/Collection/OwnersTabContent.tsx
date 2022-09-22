@@ -57,7 +57,7 @@ export const OwnersTabContent: FC<{ filter?: any; setCollapse?: (x: any) => void
       {collectionOwners.length > 0 ? (
         <OWNERS_TAB {...rest}>
           {collectionOwners.map((item: CollectionOwner | null, index: number) => (
-            <OWNERS_ITEM span={3} key={item.non_fungible_id || item.id || index}>
+            <OWNERS_ITEM span={3} key={item.uuid || item.id || index}>
               <Image
                 className="owners-tab-avatar"
                 preview={false}

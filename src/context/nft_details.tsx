@@ -59,10 +59,10 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         connection: conncetion
       })
 
-      const accountInfo =
-        parsedAccounts !== undefined
-          ? { token_account: parsedAccounts.pubkey, owner: parsedAccounts.account?.data?.parsed?.info.owner }
-          : { token_account: null, owner: null }
+      const accountInfo = {
+        token_account: parsedAccounts !== undefined ? parsedAccounts.pubkey : null,
+        owner: parsedAccounts !== undefined ? parsedAccounts.owner : null
+      }
 
       await fetchMetaData(nft.data[0].metadata_url)
 
@@ -104,13 +104,13 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
-  const removeBidOnSingleNFT = useCallback(async (bidId: any): Promise<any> => {
+  const removeBidOnSingleNFT = useCallback(async (bidUUID: string): Promise<any> => {
     try {
       const res = await apiClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.BID}`, {
-        bid_id: bidId
+        bid_id: bidUUID
       })
 
-      setBids((prev) => prev.filter((bid) => bid.bid_id !== bidId))
+      setBids((prev) => prev.filter((bid) => bid.uuid !== bidUUID))
       return res
     } catch (err) {
       return err
@@ -145,10 +145,12 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
-  const removeNFTListing = useCallback(async (id: number): Promise<any> => {
+  const removeNFTListing = useCallback(async (askUUID: string): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.ASK}`, {
-        ask_id: id
+      const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.ASK}`, {
+        data: {
+          ask_id: askUUID
+        }
       })
 
       if (res.data) setAsk(undefined)
@@ -157,38 +159,6 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     } catch (error) {
       console.log(error)
       return error
-    }
-  }, [])
-
-  const likeDislike = useCallback(async (user_id: number, nft_id: any): Promise<any> => {
-    try {
-      const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.LIKE}`, {
-        nft_id,
-        user_id
-      })
-      return res
-    } catch (error) {
-      console.log(error)
-    }
-  }, [])
-
-  const getLikesUser = useCallback(async (user_id: number): Promise<any> => {
-    try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_LIKES}?user_id=${user_id}`)
-      return res?.data || []
-    } catch (error) {
-      console.log(error)
-      return []
-    }
-  }, [])
-
-  const getLikesNFT = useCallback(async (user_id: number, nft_id: any): Promise<any> => {
-    try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_LIKES}?user_id=${user_id}`)
-      return res?.data?.filter((i) => i.non_fungible_id == nft_id) || []
-    } catch (error) {
-      console.log(error)
-      return []
     }
   }, [])
 
@@ -213,9 +183,6 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         fetchUserInput,
         sellNFT,
         removeNFTListing,
-        likeDislike,
-        getLikesUser,
-        getLikesNFT,
         totalLikes,
         setTotalLikes
       }}
@@ -250,9 +217,6 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     fetchUserInput: context.fetchUserInput,
     sellNFT: context.sellNFT,
     removeNFTListing: context.removeNFTListing,
-    likeDislike: context.likeDislike,
-    getLikesUser: context.getLikesUser,
-    getLikesNFT: context.getLikesNFT,
     totalLikes: context.totalLikes,
     setTotalLikes: context.setTotalLikes
   }

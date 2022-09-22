@@ -9088,10 +9088,10 @@ globrex@^0.1.2:
   resolved "https://registry.yarnpkg.com/globrex/-/globrex-0.1.2.tgz#dd5d9ec826232730cd6793a5e33a9302985e6098"
   integrity sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==
 
-goosefx-ssl-sdk@^1.2.11:
-  version "1.2.11"
-  resolved "https://registry.yarnpkg.com/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.2.11.tgz#a916c742bae3bc20e0b7951a16a09603d4a4ba47"
-  integrity sha512-D4mJY0N4WZaHyYdzuJhRVxU4qLNSJluvMhTkjnnn9B2swijladwEtQNjeIo+3XJ4+l18p0rNOVty/IBZyyGCpQ==
+goosefx-ssl-sdk@^1.2.12:
+  version "1.2.12"
+  resolved "https://registry.yarnpkg.com/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.2.12.tgz#59ac7079f6b0a9daa2572446dbcec70e3a930cee"
+  integrity sha512-VU4W7n2+eNA17zoPBU/+7jx+4vYenHjpGplNxMYxlP41N44Tml+pVvJq136FQNeYHaqWRguPtcEbmGiBf2jAeQ==
   dependencies:
     "@project-serum/anchor" "^0.17.1-beta.1"
     "@solana/buffer-layout" "^4.0.0"
