@@ -22,7 +22,7 @@ export interface INFTProfile {
 export interface INFTUserActivity {
   activity_id: number
   tx_sig: null | string
-  kind: string
+  kind: 'bid' | 'ask' | 'like' | 'bid_matched'
   authority: string
   clock: string
   user_id: number

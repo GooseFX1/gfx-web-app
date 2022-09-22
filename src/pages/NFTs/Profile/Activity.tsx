@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { StyledTableList } from './TableList.styled'
 import NoContent from './NoContent'
-import { fetchNFTById } from '../../../api/NFTs'
+// import { fetchNFTById } from '../../../api/NFTs'
 import { SearchBar, Loader } from '../../../components'
 import { StyledTabContent } from './TabContent.styled'
 import { useNFTProfile, useConnectionConfig } from '../../../context'
 import { checkMobile, truncateAddress } from '../../../utils'
+import { INFTUserActivity } from '../../../types/nft_profile.d'
 
 export const columns = [
   {
@@ -65,51 +66,64 @@ export const columns = [
   }
 ]
 
-interface IActivity {
-  data: any
+interface IProps {
+  data: INFTUserActivity[]
 }
 
-const Activity = (props: IActivity) => {
-  const [activity, setActivity] = useState<any>()
+const Activity = (props: IProps) => {
+  const [activityLog, setActivitLog] = useState<any>([])
   const { sessionUser, nonSessionProfile } = useNFTProfile()
   const { connection } = useConnectionConfig()
 
   useEffect(() => {
-    fetchActivity().then((activities) => setActivity(activities))
+    console.log(props.data)
 
-    return () => setActivity(undefined)
+    // fetchActivity(props.data).then((actvsLog) => setActivitLog(actvsLog))
+    fetchActivity([]).then((actvsLog) => setActivitLog(actvsLog))
+
+    return () => setActivitLog(undefined)
   }, [props.data])
 
-  const fetchActivity = async (): Promise<any> => {
-    const userActivities = await Promise.all(
-      props.data.map(async (activity) => {
-        const extraData = await fetchNFTById(activity.uuid, 'mainnet')
+  const fetchActivity = async (actvLog: INFTUserActivity[]): Promise<any> => {
+    // const userActivities = await Promise.all(
+    //   actvLog.map(async (actv: INFTUserActivity) => {
+    //     let nftDetails = {}
+    //     try {
+    //       const nftData = await fetchNFTById(`${actv.non_fungible_id}`, 'mainnet')
+    //       nftDetails = nftData.data[0]
+    //     } catch (err) {
+    //       console.error(err)
+    //     }
 
-        let transactionData = {}
-        if (activity.tx_sig) {
-          transactionData = await connection.getParsedConfirmedTransaction(activity.tx_sig, 'confirmed')
-        }
+    //     let transactionData = {}
+    //     if (actv.tx_sig) {
+    //       transactionData = await connection.getParsedConfirmedTransaction(actv.tx_sig, 'confirmed')
+    //     }
 
-        const currentUserAddress = nonSessionProfile ? nonSessionProfile.pubkey : sessionUser.pubkey
+    //     const currentUserAddress = nonSessionProfile ? nonSessionProfile.pubkey : sessionUser.pubkey
+    //     const adjustedDate = parseFloat(actv.clock) * 1000
 
-        return {
-          ...activity,
-          from: truncateAddress(currentUserAddress),
-          quantity: 1,
-          price: activity.price || 0,
-          ...extraData.data[0],
-          to: truncateAddress(extraData.data[0].mint_address),
-          date: new Date(activity.clock * 1000).toLocaleDateString('en-US'),
-          item: {
-            name: extraData.data[0].nft_name,
-            image_url: extraData.data[0].image_url
-          },
-          ...transactionData
-        }
-      })
-    )
+    //     return {
+    //       ...actv,
+    //       from: truncateAddress(currentUserAddress),
+    //       quantity: 1,
+    //       price: 0,
+    //       ...nftDetails,
+    //       to: truncateAddress(nftDetails.mint_address),
+    //       date: new Date(adjustedDate).toLocaleDateString('en-US'),
+    //       item: {
+    //         name: nftDetails.nft_name,
+    //         image_url: nftDetails.image_url
+    //       },
+    //       ...transactionData
+    //     }
+    //   })
+    // )
 
-    return userActivities.sort((a: any, b: any) => b.clock - a.clock)
+    // return userActivities.sort((a: any, b: any) => b.clock - a.clock)
+    console.log(actvLog, sessionUser, nonSessionProfile, connection)
+    truncateAddress('testtesttest')
+    return actvLog
   }
 
   return (
@@ -121,14 +135,14 @@ const Activity = (props: IActivity) => {
           </div>
         </div>
       )}
-      {!activity ? (
+      {!activityLog ? (
         <div className="profile-content-loading">
           <div>
             <Loader />
           </div>
         </div>
-      ) : activity.length > 0 ? (
-        <StyledTableList columns={columns} dataSource={activity} pagination={false} bordered={false} />
+      ) : activityLog.length > 0 ? (
+        <StyledTableList columns={columns} dataSource={activityLog} pagination={false} bordered={false} />
       ) : (
         <NoContent type={'activity'} />
       )}
