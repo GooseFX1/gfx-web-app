@@ -343,13 +343,13 @@ export const TableList = ({ dataSource }: any) => {
 
       const farmCalculation = {
         //@ts-ignore
-        earned: Number(earned) / Math.pow(10, sslData.decimals),
+        earned: Math.max(Number(earned) / Math.pow(10, sslData.decimals), 0),
         image: tokenName,
         name: tokenName,
         type: 'SSL',
         id: tokenName,
         key: tokenName,
-        apr: isNaN(APR) ? '-' : APR * 100,
+        apr: isNaN(APR) ? '-' : Math.max(APR * 100, 0),
         liquidity: tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0,
         currentlyStaked: Number(amountDeposited) / Math.pow(10, sslData.decimals),
         userLiablity: Number(userLiablity),
