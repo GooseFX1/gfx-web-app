@@ -122,7 +122,7 @@ export const FarmFilter = () => {
     <WRAPPER>
       <div className="statsBackground" />
       <div className="textContainer">
-        <div>GooseFX TVL: {statsData && ` $ ` + moneyFormatterWithComma(statsData.tvl)}</div>
+        <div>TVL: {statsData && ` $ ` + moneyFormatterWithComma(statsData.tvl)}</div>
         <div>Pools: {farmDataContext?.length + farmDataSSLContext?.length}</div>
         <div>7d Volume: {statsData && ` $ ` + moneyFormatterWithComma(statsData.volume7dSum)} </div>
         <div>GOFX Price: {prices && ` $ ` + prices['GOFX/USDC']?.current} </div>

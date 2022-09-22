@@ -343,7 +343,7 @@ export const TableList = ({ dataSource }: any) => {
 
       const farmCalculation = {
         //@ts-ignore
-        earned: Math.max(Number(earned) / Math.pow(10, sslData.decimals), 0),
+        earned: Number(earned) / Math.pow(10, sslData.decimals),
         image: tokenName,
         name: tokenName,
         type: 'SSL',
