@@ -911,8 +911,9 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
 
     for (let i = 0; i < tempNftBatch.length; i++) {
       const token_account = await getParsedAccountByMint({ mintAddress: tempNftBatch[i].mint_address, connection })
-      tempTokenAccount.push(token_account.pubkey)
+      if (token_account === undefined) throw new Error('Token account could not be parsed')
 
+      tempTokenAccount.push(token_account.pubkey)
       const { metaDataAccount, escrowPaymentAccount, buyerTradeState, buyerPrice } =
         await derivePDAsForInstruction({
           ...tempNftBatch[i],

@@ -233,10 +233,10 @@ export const Card = (props: ICard) => {
       connection: connection
     })
 
-    const accountInfo =
-      parsedAccounts !== undefined
-        ? { token_account: parsedAccounts.pubkey, owner: parsedAccounts.account?.data?.parsed?.info.owner }
-        : { token_account: null, owner: null }
+    const accountInfo = {
+      token_account: parsedAccounts !== undefined ? parsedAccounts.pubkey : null,
+      owner: parsedAccounts !== undefined ? parsedAccounts.owner : null
+    }
 
     await setGeneral({ ...localSingleNFT, ...accountInfo })
     setIsLoadingBeforeRelocate(false)

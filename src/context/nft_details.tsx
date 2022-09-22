@@ -59,10 +59,10 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         connection: conncetion
       })
 
-      const accountInfo =
-        parsedAccounts !== undefined
-          ? { token_account: parsedAccounts.pubkey, owner: parsedAccounts.account?.data?.parsed?.info.owner }
-          : { token_account: null, owner: null }
+      const accountInfo = {
+        token_account: parsedAccounts !== undefined ? parsedAccounts.pubkey : null,
+        owner: parsedAccounts !== undefined ? parsedAccounts.owner : null
+      }
 
       await fetchMetaData(nft.data[0].metadata_url)
 
@@ -147,8 +147,10 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const removeNFTListing = useCallback(async (askUUID: string): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.ASK}`, {
-        ask_id: askUUID
+      const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.ASK}`, {
+        data: {
+          ask_id: askUUID
+        }
       })
 
       if (res.data) setAsk(undefined)

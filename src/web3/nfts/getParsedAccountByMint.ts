@@ -5,7 +5,11 @@ import { StringPublicKey } from '../metaplex'
 interface IGetParsedAccountByMint {
   mintAddress: StringPublicKey
   connection: Connection
-  stringifyPubKeys?: boolean
+}
+
+interface ITokenData {
+  owner: string
+  pubkey: string
 }
 
 function isParsedAccountData(obj: any): obj is ParsedAccountData {
@@ -20,9 +24,8 @@ function isParsedAccountData(obj: any): obj is ParsedAccountData {
  */
 export const getParsedAccountByMint = async ({
   mintAddress,
-  connection,
-  stringifyPubKeys = true
-}: IGetParsedAccountByMint) => {
+  connection
+}: IGetParsedAccountByMint): Promise<ITokenData | undefined> => {
   const res = await connection.getParsedProgramAccounts(new PublicKey(TOKEN_PROGRAM_ID), {
     filters: [
       { dataSize: 165 },
@@ -39,25 +42,20 @@ export const getParsedAccountByMint = async ({
     return undefined
   }
 
-  const positiveAmountResult = res?.find(({ account }) => {
+  const positiveAmountResult = res.find(({ account }) => {
     const data = account.data
+
     if (isParsedAccountData(data)) {
-      const amount = +data?.parsed?.info?.tokenAmount?.amount
-      return amount
+      const amount = data?.parsed?.info?.tokenAmount?.amount
+      return amount === '1'
     }
     return false
   })
 
-  const formatedData = stringifyPubKeys ? publicKeyToString(positiveAmountResult) : positiveAmountResult
-
-  return formatedData
+  return positiveAmountResult
+    ? {
+        owner: positiveAmountResult.account.owner.toString(),
+        pubkey: positiveAmountResult.pubkey.toString()
+      }
+    : undefined
 }
-
-const publicKeyToString = (tokenData: any) => ({
-  ...tokenData,
-  account: {
-    ...tokenData?.account,
-    owner: new PublicKey(tokenData?.account.owner)?.toString?.()
-  },
-  pubkey: new PublicKey(tokenData?.pubkey)?.toString?.()
-})
