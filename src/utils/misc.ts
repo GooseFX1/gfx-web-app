@@ -34,13 +34,8 @@ export function ellipseNumber(num: number | string | undefined, length = 15): st
 
 export function flatten(
   obj: { [x: string]: any },
-  { prefix = '', restrictTo }: { prefix?: string; restrictTo: string[] }
+  { prefix = ''}: { prefix?: string; restrictTo: string[] }
 ) {
-  let restrict = restrictTo
-
-  if (restrict) {
-    restrict = restrict.filter((k) => !!obj.getOwnPropertyDescriptor(k))
-  }
 
   const result: { [x: string]: any } = {}
   ;(function recurse(obj, current, keys) {
@@ -54,7 +49,7 @@ export function flatten(
         result[newKey] = value
       }
     })
-  })(obj, prefix, restrict)
+  })(obj, prefix)
 
   return result
 }
