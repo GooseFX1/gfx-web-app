@@ -42,14 +42,20 @@ const ExpandRowView: FC<{ farm: IFarmData; index: number }> = ({ farm, index }) 
   const { publicKey } = useWallet()
 
   return (
-    <TABLE_ROW isOpen={isOpen} publicKey={publicKey} onClick={() => !isOpen && publicKey && setIsOpen(true)}>
-      {checkMobile() ? (
-        <ColumnMobile farm={farm} isOpen={isOpen} index={index} setIsOpen={setIsOpen} />
-      ) : (
-        <ColumnWeb farm={farm} isOpen={isOpen} index={index} setIsOpen={setIsOpen} />
+    <>
+      <TABLE_ROW isOpen={isOpen} publicKey={publicKey} onClick={() => !isOpen && publicKey && setIsOpen(true)}>
+        {checkMobile() ? (
+          <ColumnMobile farm={farm} isOpen={isOpen} index={index} setIsOpen={setIsOpen} />
+        ) : (
+          <ColumnWeb farm={farm} isOpen={isOpen} index={index} setIsOpen={setIsOpen} />
+        )}
+      </TABLE_ROW>
+      {isOpen && (
+        <tr>
+          <ExpandedComponent farm={farm} />
+        </tr>
       )}
-      {isOpen && (checkMobile() ? <ExpandedContentMobile farm={farm} /> : <ExpandedComponent farm={farm} />)}
-    </TABLE_ROW>
+    </>
   )
 }
 
@@ -98,10 +104,10 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
 
   // const { current } = useMemo(() => prices[`${name.toUpperCase()}/USDC`], [prices])
   const [notEnoughFunds, setNotEnough] = useState<boolean>()
-  const [userSOLBalance, setSOLBalance] = useState<number>()
   const [tokenStaked, setTokenStaked] = useState<number>(parseFloat(currentlyStaked))
   const [tokenEarned, setTokenEarned] = useState<number>(parseFloat(earned))
   const tokenStakedPlusEarned = tokenEarned + tokenStaked
+  const [userSOLBalance, setSOLBalance] = useState<number>()
 
   const getSuccessUnstakeMsg = (): string => `Successfully Unstaked amount of ${unstakeAmt} ${name}!`
   const getSuccessStakeMsg = (): string => `Successfully staked amount of ${stakeAmt} ${name}!`
@@ -119,10 +125,12 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
   useEffect(() => {
     let tokenBalance = userTokenBalance
     if (name === TOKEN_NAMES.SOL) tokenBalance = userSOLBalance
-    if (parseFloat(tokenBalance.toFixed(3)) < stakeAmt) {
+    if (parseFloat(tokenBalance?.toFixed(3)) < stakeAmt) {
       setNotEnough(true)
+      setDepositClass('')
     } else {
       setNotEnough(false)
+      if (stakeAmt) setDepositClass(' active')
     }
   }, [stakeAmt])
 
@@ -323,8 +331,31 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
     }
   }
 
-  return (
-    <TOKEN_OPERATIONS_CONTAINER>
+  return checkMobile() ? (
+    <>
+      <ExpandedContentMobile
+        stakeAmt={stakeAmt}
+        unstakeAmt={unstakeAmt}
+        withdrawClicked={withdrawClicked}
+        isStakeLoading={isStakeLoading}
+        isUnstakeLoading={isUnstakeLoading}
+        setStakeAmt={setStakeAmt}
+        setUnstakeAmt={setUnstakeAmt}
+        userSOLBalance={userSOLBalance}
+        onClickHalf={onClickHalf}
+        onClickMax={onClickMax}
+        onClickStake={onClickStake}
+        onClickUnstake={onClickUnstake}
+        onClickWithdraw={onClickWithdraw}
+        onClickDeposit={onClickDeposit}
+        notEnoughFunds={notEnoughFunds}
+        depositBtnClass={depositBtnClass}
+        setDepositClass={setDepositClass}
+        farm={farm}
+      />
+    </>
+  ) : (
+    <TOKEN_OPERATIONS_CONTAINER colSpan={7}>
       <div className="availableToMint">
         <>
           <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
@@ -356,6 +387,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
               <div>
                 <INPUT_CONTAINER>
                   <STYLED_INPUT
+                    placeholder={`0.00 ${name}`}
                     type="number"
                     onBlur={() => setDepositClass('')}
                     onFocus={() => !zeroFunds && setDepositClass(' active')}
@@ -389,6 +421,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
               <div>
                 <INPUT_CONTAINER>
                   <STYLED_INPUT
+                    placeholder={`0.00 ${name}`}
                     onBlur={() => setWithdarwClass('')}
                     onFocus={() =>
                       ((SSL && availableToMint) || tokenStakedPlusEarned) && setWithdarwClass(' active')

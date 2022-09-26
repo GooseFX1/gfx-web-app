@@ -4,15 +4,18 @@ import { TooltipPlacement } from 'antd/lib/tooltip'
 import styled from 'styled-components'
 import { useDarkMode } from '../context'
 import { CenteredImg } from '../styles'
-import tw from "twin.macro"
+import tw from 'twin.macro'
 
 const ICON = styled(CenteredImg)<{ notDoxxed?: boolean }>`
-  ${tw`sm:h-[20px] sm:w-[20px] sm:ml-1.5 ml-2`}  
+  ${tw`sm:h-[20px] sm:w-[20px] sm:ml-1.5 ml-2`}
   ${({ theme, notDoxxed }) => !notDoxxed && theme.measurements(theme.margin(1.5))}
+  .tooltipIcon {
+    ${tw`h-5 w-5 ml-3`}
+  }
 `
 
 const TEXT = styled.span`
-  ${tw`text-[10px] text-white pb-2.5`}
+  ${tw`text-[12px] text-white pb-2.5`}
 `
 
 export const Tooltip: FC<{
@@ -36,13 +39,13 @@ export const Tooltip: FC<{
         display: 'flex',
         alignItems: 'center',
         padding: '8px 8px 0',
-        maxWidth: '132px'
+        maxWidth: '180px'
       }}
       placement={placement}
       title={<TEXT>{children}</TEXT>}
     >
       <ICON notDoxxed={!!notInherit}>
-        <img src={icon} alt="tooltip" />
+        <img className="tooltipIcon" src={icon} alt="tooltip" />
       </ICON>
     </ANTDTooltip>
   )

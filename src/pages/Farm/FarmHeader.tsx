@@ -5,6 +5,7 @@ import { FarmFilter } from './FarmFilterHeader'
 
 const STYLED_RIGHT = styled.div`
   width: 100%;
+  border: 1px solid;
   display: flex;
   align-items: center;
   justify-content: flex-start;

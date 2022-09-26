@@ -44,15 +44,27 @@ export interface IFarmData {
 }
 
 const WRAPPER = styled.div`
+  margin-top: 70px;
+  height: 74vh !important;
+  overflow-y: auto;
+  overflow-x: hidden;
+  ${({ theme }) => theme.customScrollBar('6px')}
+  @media(max-width: 500px) {
+    height: 100vh !important;
+  }
+
   table {
     @media (max-width: 500px) {
       width: 100vw;
+      position: absolute;
+      margin-top: 90px;
     }
     width: 90vw;
     background: ${({ theme }) => theme.bg17};
     border-radius: 20px 20px 0 0;
   }
   .tableHeader {
+    position: sticky;
     ${tw`h-20 text-base font-semibold	text-white`}
     background: ${({ theme }) => theme.tableHeader};
   }
@@ -62,6 +74,7 @@ const WRAPPER = styled.div`
       width: 30%;
     }
   }
+
   .borderRow2 {
     border-radius: 0px 20px 25px 0px;
     color: ${({ theme }) => theme.tableHeader};
@@ -80,11 +93,10 @@ const CustomTableList = () => {
     farmDataContext,
     setFarmDataContext,
     farmDataSSLContext,
-    setFarmDataSSLContext
+    setFarmDataSSLContext,
+    setRefreshClass
   } = useFarmContext()
   const [accountKey, setAccountKey] = useState<PublicKey>()
-  // const [columnData] = useState(columns)
-  // const [mobileColumnData] = useState(mobileColumns)
   const [farmData, setFarmData] = useState<IFarmData[]>([...farmDataContext, ...farmDataSSLContext])
   const [sslVolume, setSslVolume] = useState<number>(0)
   const [stakeVolume, setStakeVolume] = useState<number>(0)
@@ -187,7 +199,7 @@ const CustomTableList = () => {
         type: 'SSL',
         id: tokenName,
         key: tokenName,
-        apr: isNaN(APR) ? '-' : Math.max(APR * 100, 0),
+        apr: isNaN(APR) ? '-' : APR * 100,
         liquidity: tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0,
         currentlyStaked: wallet.publicKey ? Number(amountDeposited) / Math.pow(10, sslData.decimals) : undefined,
         earned: wallet.publicKey ? Math.max(Number(earned) / Math.pow(10, sslData.decimals), 0) : undefined,
@@ -204,6 +216,7 @@ const CustomTableList = () => {
     setSslVolume(totalLiquidity)
     setLiquidityObject(liqObj)
     setVolume7daySum(volume7dSum)
+    setRefreshClass('')
     return
   }
 
@@ -284,7 +297,7 @@ const CustomTableList = () => {
         if (data.name === TOKEN_NAMES.GOFX) {
           return {
             ...data,
-            earned: accountData.tokenEarned ? Math.max(accountData.tokenEarned, 0) : undefined,
+            earned: accountData.tokenEarned ? accountData.tokenEarned : undefined,
             apr: APR * 100,
             rewards: dailyRewards,
             liquidity: getTokenPrice(TOKEN_NAMES.GOFX).current * liqidity,
@@ -303,16 +316,16 @@ const CustomTableList = () => {
   return (
     <WRAPPER>
       <table>
-        <thead>
-          <tr className="tableHeader">{checkMobile() ? <ColumnHeadersMobile /> : <ColumnHeadersWeb />}</tr>
+        <thead className="tableHeader">
+          <tr>{checkMobile() ? <ColumnHeadersMobile /> : <ColumnHeadersWeb />}</tr>
         </thead>
         <tbody>
           {farmData.map((farm: IFarmData, index: number) => (
             <ExpandRowView key={index} index={index} farm={farm} />
           ))}
+          <MorePoolsSoon />
         </tbody>
       </table>
-      <MorePoolsSoon />
     </WRAPPER>
   )
 }

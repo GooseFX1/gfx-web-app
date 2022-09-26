@@ -93,35 +93,36 @@ export const STYLED_INPUT = styled.input`
 export const TABLE_ROW = styled.tr<{ isOpen: boolean; publicKey: any }>`
   ${({ isOpen, publicKey }) => css`
     cursor: ${!isOpen && publicKey && 'pointer'};
-    height: ${isOpen ? '230px' : '90px'} !important;
+    height: ${!isOpen && '90px'} !important;
     background: ${({ theme }) => theme.expendedRowBg};
     background: ${!isOpen && 'none'};
+    border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
+    border-bottom: ${isOpen && 'none'};
     @media (max-width: 500px) {
-      height: ${isOpen ? '450px' : '80px'} !important;
+      height: ${isOpen ? '470px' : '80px'} !important;
     }
   `}
 
-  border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
   ${tw`text-base font-medium`}
   td {
     ${tw`align-top text-center pt-8`}
   }
   .nameColumn {
-    width: 10%;
+    width: 11%;
     img {
       ${tw`w-10 h-10 mr-12 -mt-2.5`}
     }
     .columnText {
-      ${tw`absolute -mt-8`}
+      ${tw`pl-12 -mt-8`}
       margin-left: 5%;
       @media (max-width: 500px) {
-        margin-left: 62px;
+        margin-left: 15px;
         padding-top: 2px;
       }
     }
   }
   .balanceColumn {
-    width: 17%;
+    width: 18%;
   }
   .balanceConnectWallet {
     width: 17%;
@@ -151,12 +152,12 @@ export const STYLED_STAKED_EARNED_CONTENT = styled.div`
   }
 `
 export const TOKEN_OPERATIONS_CONTAINER = styled.td`
-  ${tw`absolute w-10/12 mt-9 `}
-  left: 5vw;
-  height: 150px;
+  height: 160px;
+  background: ${({ theme }) => theme.expendedRowBg};
+  border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
+  padding-left: 2.5vw;
   .availableToMint {
     ${tw`text-lg font-semibold mt-4 flex`}
-    margin-left: 2%;
   }
   .halfMaxBtn {
     cursor: pointer;
