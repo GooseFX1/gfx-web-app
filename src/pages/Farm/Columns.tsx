@@ -7,6 +7,7 @@ import tw from 'twin.macro'
 import { IFarmData } from './CustomTableList'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts/App/Connect'
+import { RefreshBtnWithAnimation } from './FarmFilterHeader'
 const DISPLAY_DECIMAL = 3
 
 const DEPOSIT_BTN = styled.button`
@@ -239,7 +240,7 @@ export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; i
     <>
       <td className="nameColumn">
         <div>
-          <img src={`/img/crypto/${name}.svg`} />
+          <img src={`/img/crypto/${name.toUpperCase()}.svg`} />
         </div>
         <div className="columnText">{name}</div>
       </td>
@@ -299,7 +300,9 @@ export const ColumnHeadersMobile = () => (
   <>
     <th className="borderRow">Name</th>
     <th>{Title('APR', APRTooltip, false)}</th>
-    <th className="borderRow2"></th>
+    <th className="borderRow2">
+      <RefreshBtnWithAnimation />
+    </th>
   </>
 )
 export const ColumnMobile: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; index: number }> = ({
@@ -314,7 +317,7 @@ export const ColumnMobile: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean
     <>
       <td className="nameColumn">
         <div>
-          <img src={`/img/crypto/${name}.svg`} />
+          <img src={`/img/crypto/${name.toUpperCase()}.svg`} />
         </div>
         <div className="columnText">{name}</div>
       </td>

@@ -1,19 +1,19 @@
 import React, { FC, useState, useMemo } from 'react'
 import styled from 'styled-components'
 import { MainButton } from '../../components'
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useFarmContext, useAccounts, useTokenRegistry } from '../../context'
+import { useFarmContext, useAccounts, useTokenRegistry, usePriceFeedFarm } from '../../context'
 import tw from 'twin.macro'
 import { Loader } from '../Farm/Columns'
 import { moneyFormatter } from '../../utils/math'
 import { HeaderTooltip } from '../Farm/Columns'
 import { Connect } from '../../layouts/App/Connect'
 import { IFarmData } from './CustomTableList'
+import { TOKEN_NAMES } from '../../constants'
 
 const STYLED_SOL = styled.div`
-  ${tw`flex items-center justify-between rounded-[60px] h-[50px] w-[372px] w-[90%] my-[20px] mx-auto`}
+  ${tw`flex items-center justify-between rounded-[60px] h-11 w-[372px] w-[90%] my-[15px] mx-auto`}
   background-color: ${({ theme }) => theme.solPillBg};
 
   .value {
@@ -39,7 +39,6 @@ const STYLED_INPUT = styled.input`
     -webkit-appearance: none;
     margin: 0;
   }
-
   .textMain {
     ${tw`text-tiny font-semibold text-center flex`}
     font-family: Montserrat;
@@ -50,13 +49,14 @@ const STYLED_INPUT = styled.input`
   }
 `
 
-const STYLED_STAKE_PILL = styled(MainButton)`
-  ${tw`w-[90%] mt-0 mx-auto mb-5 h-12.5 text-base font-semibold rounded-circle bg-[#131313] text-center opacity-50`}
+const STYLED_BTN = styled(MainButton)`
+  ${tw`w-[90%] mt-0 mx-auto mb-2.5 h-11 text-base font-semibold rounded-circle bg-[#131313] text-center`}
   line-height: normal;
   font-family: Montserrat;
   color: ${({ theme }) => theme.text14};
   transition: all 0.3s ease;
-  &:hover,
+  opacity: 0.65;
+  border: 2px solid;
   &:focus {
     background: ${({ theme }) => theme.primary3};
     ${tw`text-white opacity-100`}
@@ -64,13 +64,23 @@ const STYLED_STAKE_PILL = styled(MainButton)`
       ${tw`opacity-50`}
     }
   }
+  &:focus,
+  &.active {
+    ${tw`opacity-100 text-white`}
+    background: ${({ theme }) => theme.primary3};
+  }
+  &:disabled {
+    opacity: 0.5;
+    border: none;
+  }
 `
 const MAX_BUTTON = styled.div`
   ${tw`cursor-pointer`}
 `
 
 const EXPAND_WRAPPER = styled.td`
-  ${tw`font-semibold text-base absolute w-full mt-10 left-0`}
+  ${tw`font-semibold text-base absolute w-full left-0`}
+  margin-top: -390px;
   .details {
     font-family: Montserrat;
     line-height: normal;
@@ -97,7 +107,7 @@ const STAKE_UNSTAKE = styled.div`
   }
 `
 
-const BUTTONS = styled.button`
+const OPERATION_BTN = styled.button`
   ${tw`w-1/2 h-10 rounded-[36px] border-0 border-none 
   font-semibold text-tiny text-[#b5b5b5] text-center cursor-pointer`}
   font-family: 'Montserrat';
@@ -123,13 +133,19 @@ export const ExpandedContentMobile: FC<{
   onClickUnstake?: any
   onClickDeposit?: any
   onClickWithdraw?: any
-  isStakeLoading?: boolean
+  isStakeLoading: boolean
   isWithdrawLoading?: boolean
+  isUnstakeLoading: boolean
   userSOLBalance?: number
-  isUnstakeLoading?: boolean
-  isSsl?: boolean
-  withdrawClicked?: () => void
+  stakeAmt: number
+  setStakeAmt: any
+  setUnstakeAmt: any
+  unstakeAmt: number
+  withdrawClicked: () => void
   farm: IFarmData
+  notEnoughFunds: boolean
+  depositBtnClass: String
+  setDepositClass: any
 }> = ({
   onClickHalf,
   onClickMax,
@@ -138,56 +154,69 @@ export const ExpandedContentMobile: FC<{
   isStakeLoading,
   isUnstakeLoading,
   onClickDeposit,
-  userSOLBalance,
-  isWithdrawLoading,
-  isSsl,
   withdrawClicked,
+  userSOLBalance,
+  setStakeAmt,
+  stakeAmt,
+  setUnstakeAmt,
+  unstakeAmt,
+  notEnoughFunds,
+  depositBtnClass,
+  setDepositClass,
   farm
 }) => {
   const { farmDataContext, farmDataSSLContext } = useFarmContext()
   //const { prices } = usePriceFeedFarm()
   const wallet = useWallet()
-  const { name } = farm
-
+  const { name, currentlyStaked, earned } = farm
+  const isSSL = farm.type === 'SSL'
   const { getUIAmount } = useAccounts()
   const { publicKey } = useWallet()
   const { getTokenInfoForFarming } = useTokenRegistry()
   const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
   const [process, setProcess] = useState<string>('Stake')
   const DISPLAY_DECIMAL = 3
+  const { prices } = usePriceFeedFarm()
 
-  const userTokenBalance = useMemo(
+  let userTokenBalance = useMemo(
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
     [tokenInfo?.address, getUIAmount, publicKey]
   )
-  const tokenData = !isSsl
+  const tokenData = !isSSL
     ? farmDataContext.find((token) => token.name === 'GOFX')
     : farmDataSSLContext.find((farmData) => farmData.name === name)
 
-  // const tokenPrice = useMemo(() => {
-  //   if (name === 'USDC') {
-  //     return { current: 1 }
-  //   }
-  //   // to get price of the token MSOL must be in upper case while to get tokenInfo address mSOL
-  //   return prices[`${name.toUpperCase()}/USDC`]
-  // }, [prices[`${name.toUpperCase()}/USDC`]])
+  const tokenPrice = useMemo(() => {
+    if (name === TOKEN_NAMES.USDC) {
+      return prices[`${name.toUpperCase()}/USDT`]
+    }
+    if (name === TOKEN_NAMES.USDT) {
+      return prices[`${name.toUpperCase()}/USD`]
+    }
+    // to get price of the token MSOL must be in upper case while to get tokenInfo address mSOL
+    return prices[`${name.toUpperCase()}/USDC`]
+  }, [prices[`${name.toUpperCase()}/USDC`]])
 
   const availableToMint =
     tokenData?.ptMinted >= 0 ? tokenData.currentlyStaked + tokenData.earned - tokenData.ptMinted : 0
-  //const availableToMintFiat = tokenPrice && availableToMint * tokenPrice.current
-  console.log(availableToMint)
+  const availableToMintFiat = tokenPrice && availableToMint * tokenPrice.current
+  console.log(availableToMintFiat)
 
-  // const onClickHalfSsl = (buttonId: string) => {
-  //     if (name === 'SOL') userTokenBalance = userSOLBalance
-  //     if (buttonId === 'deposit') stakeRef.current.value = (userTokenBalance / 2).toFixed(DISPLAY_DECIMAL)
-  //     else unstakeRef.current.value = (availableToMint / 2).toFixed(DISPLAY_DECIMAL)
-  // }
+  const onClickHalfSsl = (buttonId: string) => {
+    if (name === 'SOL') userTokenBalance = userSOLBalance
+    if (buttonId === 'deposit') setStakeAmt(parseFloat((userTokenBalance / 2).toFixed(DISPLAY_DECIMAL)))
+    if (buttonId === 'stake') setStakeAmt(parseFloat(((currentlyStaked + earned) / 2).toFixed(DISPLAY_DECIMAL)))
+    else setUnstakeAmt(parseFloat((availableToMint / 2).toFixed(DISPLAY_DECIMAL)))
+  }
 
-  // const onClickMaxSsl = (buttonId: string) => {
-  //     if (name === 'SOL') userTokenBalance = userSOLBalance
-  //     if (buttonId === 'deposit') stakeRef.current.value = userTokenBalance.toFixed(DISPLAY_DECIMAL)
-  //     else unstakeRef.current.value = availableToMint.toFixed(DISPLAY_DECIMAL)
-  // }
+  const onClickMaxSsl = (buttonId: string) => {
+    if (name === 'SOL') userTokenBalance = userSOLBalance
+    if (buttonId === 'deposit') setStakeAmt(parseFloat(userTokenBalance.toFixed(DISPLAY_DECIMAL)))
+    if (buttonId === 'stake') setStakeAmt(parseFloat((currentlyStaked + earned).toFixed(DISPLAY_DECIMAL)))
+    else setUnstakeAmt(parseFloat(availableToMint.toFixed(DISPLAY_DECIMAL)))
+  }
+
+  const stakeProcess = process === 'Stake'
 
   // let notEnough
   // try {
@@ -214,8 +243,7 @@ export const ExpandedContentMobile: FC<{
             <Tooltip_holder>
               <span className="details">Total Earned</span>
               {HeaderTooltip(
-                `The total profit and loss from SSL and is measured
-                                     by comparing the total value of a pool’s assets (
+                `The total profit and loss from SSL and is measured by comparing the total value of a pool’s assets (
                   excluding trading fees) to their value if they had not been traded and instead were just held`
               )}
             </Tooltip_holder>
@@ -252,31 +280,38 @@ export const ExpandedContentMobile: FC<{
         {wallet.publicKey ? (
           <>
             <STAKE_UNSTAKE>
-              <BUTTONS
+              <OPERATION_BTN
                 className={process === 'Stake' ? 'selected' : ''}
                 onClick={() => {
                   setProcess('Stake')
                 }}
               >
-                Stake
-              </BUTTONS>
-              <BUTTONS
+                Deposit
+              </OPERATION_BTN>
+              <OPERATION_BTN
                 className={process !== 'Stake' ? 'selected' : ''}
                 onClick={() => {
                   setProcess('Claim')
                 }}
               >
-                Unstake and claim
-              </BUTTONS>
+                {isSSL ? 'Withdraw' : 'Unstake and claim'}
+              </OPERATION_BTN>
             </STAKE_UNSTAKE>
             <STYLED_SOL>
               <STYLED_INPUT
+                onFocus={() => setDepositClass(' active')}
+                onBlur={() => setDepositClass('')}
+                value={stakeProcess ? stakeAmt : unstakeAmt}
+                onChange={(e) =>
+                  stakeProcess
+                    ? setStakeAmt(parseFloat(e.target.value))
+                    : setUnstakeAmt(parseFloat(e.target.value))
+                }
                 className="value"
                 type="number"
                 placeholder={`0.00 ${name}`}
-                // ref={process === 'Stake' ? stakeRef : unstakeRef}
               />
-              {!isSsl ? (
+              {!isSSL ? (
                 <div className="textMain">
                   <MAX_BUTTON
                     onClick={() => onClickHalf(process === 'Stake' ? 'stake' : 'unstake')}
@@ -294,13 +329,13 @@ export const ExpandedContentMobile: FC<{
               ) : (
                 <div className="textMain">
                   <MAX_BUTTON
-                    // onClick={() => onClickHalfSsl(process === 'Stake' ? 'deposit' : 'mint')}
+                    onClick={() => onClickHalfSsl(stakeProcess ? 'deposit' : 'mint')}
                     className="textOne"
                   >
                     HALF
                   </MAX_BUTTON>
                   <MAX_BUTTON
-                    // onClick={() => onClickMaxSsl(process === 'Stake' ? 'deposit' : 'mint')}
+                    onClick={() => onClickMaxSsl(process === 'Stake' ? 'deposit' : 'mint')}
                     className="textTwo"
                   >
                     MAX
@@ -308,21 +343,24 @@ export const ExpandedContentMobile: FC<{
                 </div>
               )}
             </STYLED_SOL>
-            {!isSsl ? (
-              <STYLED_STAKE_PILL
+            {!isSSL ? (
+              <STYLED_BTN
+                className={depositBtnClass}
                 loading={process === 'Stake' ? isStakeLoading : isUnstakeLoading}
-                disabled={process === 'Stake' ? isStakeLoading : isUnstakeLoading}
+                disabled={process === 'Stake' ? isStakeLoading : isUnstakeLoading || notEnoughFunds}
                 onClick={() => (process === 'Stake' ? onClickStake() : onClickUnstake())}
               >
-                {process === 'Stake' ? 'Stake' : 'Unstake and Claim'}
-              </STYLED_STAKE_PILL>
+                {stakeProcess ? (notEnoughFunds ? `Not enough ${name}` : 'Deposit') : 'Unstake and Claim'}
+              </STYLED_BTN>
             ) : (
-              <STYLED_STAKE_PILL
-                loading={process === 'Stake' ? isStakeLoading : isWithdrawLoading}
-                onClick={() => (process === 'Stake' ? onClickDeposit() : withdrawClicked())}
+              <STYLED_BTN
+                className={depositBtnClass}
+                disabled={stakeProcess && notEnoughFunds}
+                loading={stakeProcess ? isStakeLoading : isUnstakeLoading}
+                onClick={() => (stakeProcess ? onClickDeposit() : withdrawClicked())}
               >
-                {process === 'Stake' ? 'Stake' : 'Unstake and Claim'}
-              </STYLED_STAKE_PILL>
+                {stakeProcess ? (notEnoughFunds ? `Not enough ${name}` : 'Deposit') : 'Withdraw'}
+              </STYLED_BTN>
             )}
             {name === 'GOFX' ? <Reward>Daily rewards: {`${tokenData.rewards.toFixed(3)} ${name}`}</Reward> : ''}
           </>

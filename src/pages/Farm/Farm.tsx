@@ -11,7 +11,7 @@ import { logData } from '../../api'
 import CustomTableList from './CustomTableList'
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
-  ${tw`sm:px-0 relative flex flex-col w-screen px-6 overflow-y-scroll overflow-x-hidden`}
+  ${tw`sm:px-0 relative flex flex-col w-screen px-6 overflow-y-auto overflow-x-hidden`}
   padding-top: calc(80px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
   color: ${({ theme }) => theme.text1};
   * {
@@ -27,7 +27,7 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
 
 const BODY = styled.div<{ $navCollapsed: boolean }>`
   ${tw`sm:px-0 sm:!pt-[17px] sm:h-full p-16 !pt-[43px] !pb-0`}
-  height: calc(92vh + ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+  height: calc(92vh + ${({ $navCollapsed }) => ($navCollapsed ? '150px' : '0px')});
   padding: ${({ theme }) => theme.margin(8)};
   padding-top: 43px !important;
   padding-bottom: 0px !important;
