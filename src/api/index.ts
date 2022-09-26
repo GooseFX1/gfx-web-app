@@ -69,4 +69,5 @@ export const logData = async (event: string) => {
     }
   }
 }
+
 export default apiClient

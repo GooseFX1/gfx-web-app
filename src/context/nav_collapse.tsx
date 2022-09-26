@@ -1,4 +1,14 @@
-import React, { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction } from 'react'
+import React, {
+  FC,
+  useState,
+  useCallback,
+  ReactNode,
+  createContext,
+  useContext,
+  Dispatch,
+  SetStateAction
+} from 'react'
+import { logData } from '../api'
 
 interface INavCollapseConfig {
   isCollapsed: boolean
@@ -13,11 +23,19 @@ export const NavCollapseProvider: FC<{ children: ReactNode }> = ({ children }) =
   const [mode, setMode] = useState<boolean>(false)
   const [relaxPopup, setRelaxPopup] = useState<boolean>(false)
 
+  const handleCollapse = useCallback(
+    (bool: boolean) => {
+      setMode(bool)
+      logData(`main-nav-${bool ? 'collapsed' : 'uncollapsed'}`)
+    },
+    [mode, setMode]
+  )
+
   return (
     <NavCollapseContext.Provider
       value={{
         isCollapsed: mode,
-        toggleCollapse: setMode,
+        toggleCollapse: handleCollapse,
         relaxPopup: relaxPopup,
         setRelaxPopup: setRelaxPopup
       }}
