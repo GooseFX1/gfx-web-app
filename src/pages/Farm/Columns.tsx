@@ -11,7 +11,7 @@ import { RefreshBtnWithAnimation } from './FarmFilterHeader'
 const DISPLAY_DECIMAL = 3
 
 const DEPOSIT_BTN = styled.button`
-  ${tw`h-8 w-32 rounded-3xl border-none font-semibold`}
+  ${tw`h-8 w-32 text-white rounded-3xl border-none font-semibold`}
   font-size: 15px;
   background: #5855ff;
   @media (max-width: 500px) {

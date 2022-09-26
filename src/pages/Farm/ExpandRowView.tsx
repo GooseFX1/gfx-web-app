@@ -63,8 +63,8 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
   const { name, earned, currentlyStaked, type } = farm
 
   const DISPLAY_DECIMAL = 3
-  const [depositBtnClass, setDepositClass] = useState<String>('')
-  const [withdrawBtnClass, setWithdarwClass] = useState<String>('')
+  const [depositBtnClass, setDepositClass] = useState<string>('')
+  const [withdrawBtnClass, setWithdarwClass] = useState<string>('')
 
   const wallet = useWallet()
   const SSL = type === 'SSL'
