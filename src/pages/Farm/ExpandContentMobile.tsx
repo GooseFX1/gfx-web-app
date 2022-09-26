@@ -144,7 +144,7 @@ export const ExpandedContentMobile: FC<{
   withdrawClicked: () => void
   farm: IFarmData
   notEnoughFunds: boolean
-  depositBtnClass: String
+  depositBtnClass: string
   setDepositClass: any
 }> = ({
   onClickHalf,
