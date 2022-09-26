@@ -1,4 +1,3 @@
-import { Image } from 'antd'
 import React from 'react'
 import styled from 'styled-components'
 import { SpaceBetweenDiv } from '../styles'
@@ -56,6 +55,6 @@ export const SearchBar = ({ placeholder, setSearchFilter, filter, ...rest }: any
       value={filter}
       onChange={(e) => setSearchFilter(e.target.value)}
     />
-    <Image preview={false} src={`/img/assets/search.svg`} />
+    <img style={{ height: '20px', width: '20px' }} src={`/img/assets/search.svg`} />
   </SEARCH_BAR_WRAPPER>
 )

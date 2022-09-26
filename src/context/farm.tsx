@@ -1,7 +1,7 @@
 //import { bool } from '@metaplex-foundation/beet'
 import { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction, useEffect } from 'react'
 import { stakeTokens, generateListOfSSLTokens } from '../constants'
-import { IFarmData } from '../pages/Farm/TableList'
+import { IFarmData } from '../pages/Farm/CustomTableList'
 import { useConnectionConfig } from './settings'
 interface IShowDeposited {
   showDeposited: boolean
@@ -18,6 +18,8 @@ interface IShowDeposited {
   setFarmDataSSLContext: Dispatch<SetStateAction<IFarmData[]>>
   operationPending: boolean
   setOperationPending: Dispatch<SetStateAction<boolean>>
+  refreshClass: string
+  setRefreshClass: Dispatch<SetStateAction<string>>
 }
 
 const FarmContext = createContext<IShowDeposited | null>(null)
@@ -31,6 +33,8 @@ export const FarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [farmDataSSLContext, setFarmDataSSLContext] = useState<IFarmData[]>(generateListOfSSLTokens(network))
   const [counter, setCounter] = useState<number>(0)
   const [operationPending, setOperationPending] = useState<boolean>(false)
+  const [refreshClass, setRefreshClass] = useState<string>('')
+
   useEffect(() => {
     setFarmDataSSLContext(generateListOfSSLTokens(network))
   }, [network])
@@ -51,7 +55,9 @@ export const FarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
         farmDataContext: farmDataContext,
         farmDataSSLContext: farmDataSSLContext,
         setFarmDataContext: setFarmDataContext,
-        setFarmDataSSLContext: setFarmDataSSLContext
+        setFarmDataSSLContext: setFarmDataSSLContext,
+        refreshClass: refreshClass,
+        setRefreshClass: setRefreshClass
       }}
     >
       {children}
@@ -79,7 +85,9 @@ export const useFarmContext = (): IShowDeposited => {
     farmDataContext,
     farmDataSSLContext,
     setFarmDataContext,
-    setFarmDataSSLContext
+    setFarmDataSSLContext,
+    refreshClass,
+    setRefreshClass
   } = context
   return {
     showDeposited,
@@ -95,6 +103,8 @@ export const useFarmContext = (): IShowDeposited => {
     farmDataContext,
     farmDataSSLContext,
     setFarmDataContext,
-    setFarmDataSSLContext
+    setFarmDataSSLContext,
+    refreshClass,
+    setRefreshClass
   }
 }
