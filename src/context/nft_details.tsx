@@ -106,8 +106,10 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const removeBidOnSingleNFT = useCallback(async (bidUUID: string): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.BID}`, {
-        bid_id: bidUUID
+      const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.BID}`, {
+        data: {
+          bid_id: bidUUID
+        }
       })
 
       setBids((prev) => prev.filter((bid) => bid.uuid !== bidUUID))
