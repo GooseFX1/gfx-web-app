@@ -59,7 +59,7 @@ const WRAPPER = styled.div`
       position: absolute;
       margin-top: 90px;
     }
-    width: 90vw;
+    width: 100%;
     background: ${({ theme }) => theme.bg17};
     border-radius: 20px 20px 0 0;
   }

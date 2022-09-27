@@ -9,7 +9,7 @@ import {
   usePriceFeedFarm,
   useTokenRegistry
 } from '../../context'
-import { checkMobile, notify } from '../../utils'
+import { checkMobile, moneyFormatterWithComma, notify } from '../../utils'
 import { ADDRESSES, executeDeposit, executeStake, executeUnstakeAndClaim, executeWithdraw } from '../../web3'
 import { ColumnMobile, ColumnWeb } from './Columns'
 import { IFarmData } from './CustomTableList'
@@ -470,9 +470,9 @@ const DailyRewards = ({ tokenPrice, tokenData, name }: any) =>
 
 const AvailableToMintComp = ({ availableToMintFiat, availableToMint, name }: any) => (
   <div className="info-item">
-    <div className="title">Available to mint</div>
-    <div className="value">{`${availableToMint.toFixed(3)} g${name}`}</div>
-    <div className="price">{`$${availableToMintFiat.toFixed(3)} USDC`}</div>
+    <div className="title">Available {name}</div>
+    <div className="value">{`${moneyFormatterWithComma(availableToMint.toFixed(3))} ${name}`}</div>
+    <div className="price">{`$${moneyFormatterWithComma(availableToMintFiat.toFixed(3))} USDC`}</div>
   </div>
 )
 
