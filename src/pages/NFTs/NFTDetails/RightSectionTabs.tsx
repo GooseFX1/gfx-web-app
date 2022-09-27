@@ -434,11 +434,11 @@ export const RightSectionTabs: FC<{
     const signature = await wallet.sendTransaction(transaction, connection)
     console.log(signature)
     setPendingTxSig(signature)
-    const confirm = await connection.confirmTransaction(signature, 'processed')
+    const confirm = await connection.confirmTransaction(signature, 'finalized')
     console.log(confirm)
 
     if (confirm.value.err === null) {
-      removeBidOnSingleNFT(userRecentBid.bid_id).then((res) => {
+      removeBidOnSingleNFT(userRecentBid.uuid).then((res) => {
         console.log(res)
         if (res.data) {
           callAuctionHouseWithdraw(buyerPrice)
