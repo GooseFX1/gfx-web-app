@@ -252,7 +252,14 @@ export const Selector: FC<{
                 <img
                   src={imageURL || logoURI}
                   alt="token-icon"
-                  onError={(e) => (e.currentTarget.src = logoURI || '/img/crypto/Unknown.svg')}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null
+                    if (e.currentTarget.src === logoURI) {
+                      e.currentTarget.src = '/img/crypto/Unknown.svg'
+                    } else {
+                      e.currentTarget.src = logoURI || '/img/crypto/Unknown.svg'
+                    }
+                  }}
                 />
               </TOKEN_ICON>
               <TOKEN_INFO>
@@ -272,7 +279,14 @@ export const Selector: FC<{
                   <img
                     src={`/img/crypto/${token.symbol}.svg`}
                     alt="active-icon"
-                    onError={(e) => (e.currentTarget.src = token.logoURI || '/img/crypto/Unknown.svg')}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null
+                      if (e.currentTarget.src === token.logoURI) {
+                        e.currentTarget.src = '/img/crypto/Unknown.svg'
+                      } else {
+                        e.currentTarget.src = token.logoURI || '/img/crypto/Unknown.svg'
+                      }
+                    }}
                   />
                 </CLICKER_ICON>
                 <span className={'text-primary'}>{token.symbol}</span>
