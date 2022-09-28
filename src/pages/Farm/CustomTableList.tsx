@@ -104,6 +104,7 @@ const CustomTableList = () => {
   const [aprVolumeData, setAprVolumeData] = useState<any>()
   const [savedVolume, setSavedVolume] = useState<boolean>(false)
   const [volume7daySum, setVolume7daySum] = useState<number>(0)
+  const [sortColumn, setSortColumn] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     refreshTokenData()
@@ -274,9 +275,15 @@ const CustomTableList = () => {
 
     if (showDeposited && wallet.publicKey)
       farmDataStaked = farmDataStaked.filter((fData) => fData.currentlyStaked > 0)
-
+    if (sortColumn !== undefined) {
+      const sortedData = farmDataStaked.sort((a, b) => {
+        if (sortColumn === 'name') return a[sortColumn].localeCompare(b[sortColumn])
+        else return b[sortColumn] - a[sortColumn]
+      })
+      farmDataStaked = sortedData
+    }
     setFarmData(farmDataStaked)
-  }, [poolFilter, searchFilter, showDeposited, farmDataContext, farmDataSSLContext, priceFetched])
+  }, [poolFilter, searchFilter, showDeposited, farmDataContext, farmDataSSLContext, sortColumn, priceFetched])
 
   const fetchGOFXData = async () => {
     try {
@@ -317,7 +324,13 @@ const CustomTableList = () => {
     <WRAPPER>
       <table>
         <thead className="tableHeader">
-          <tr>{checkMobile() ? <ColumnHeadersMobile /> : <ColumnHeadersWeb />}</tr>
+          <tr>
+            {checkMobile() ? (
+              <ColumnHeadersMobile sortColumn={sortColumn} setSortColumn={setSortColumn} />
+            ) : (
+              <ColumnHeadersWeb sortColumn={sortColumn} setSortColumn={setSortColumn} />
+            )}
+          </tr>
         </thead>
         <tbody>
           {farmData.map((farm: IFarmData, index: number) => (
