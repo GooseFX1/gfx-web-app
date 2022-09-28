@@ -355,7 +355,6 @@ export const RightSectionTabs: FC<{
   }
 
   const postCancelAskToAPI = async (askUUID: string): Promise<any> => {
-    console.log(general.collection_id)
     // asserts the nft does not belong to a collection; is a single listing item
     if (general.collection_id === null) {
       const removedSingleListingAsk = await removeNonCollectionListing(general.mint_address)
@@ -405,6 +404,13 @@ export const RightSectionTabs: FC<{
   const handleRemoveBid = async (e: any) => {
     e.preventDefault()
     console.log(userRecentBid)
+    if (userRecentBid === undefined || userRecentBid.uuid == undefined) {
+      notify({
+        type: 'error',
+        message: 'Error getting bid info. Reload and try again'
+      })
+      return
+    }
 
     const buyerPrice: BN = new BN(userRecentBid.buyer_price)
     console.log(buyerPrice)
@@ -438,13 +444,18 @@ export const RightSectionTabs: FC<{
     console.log(confirm)
 
     if (confirm.value.err === null) {
-      removeBidOnSingleNFT(userRecentBid.uuid).then((res) => {
-        console.log(res)
-        if (res.data) {
-          callAuctionHouseWithdraw(buyerPrice)
-          setPendingTxSig(undefined)
-        }
-      })
+      removeBidOnSingleNFT(userRecentBid.uuid)
+        .then((res) => {
+          console.log(res)
+          if (res.data) {
+            callAuctionHouseWithdraw(buyerPrice)
+            setPendingTxSig(undefined)
+          }
+        })
+        .catch((err) => {
+          console.error(err)
+          throw new Error('Error syncing transaction with GFX apis')
+        })
     }
   }
 
@@ -516,12 +527,7 @@ export const RightSectionTabs: FC<{
       )
     } else if (userRecentBid !== undefined && removeBidModal) {
       return (
-        <REMOVE_MODAL
-          visible={removeBidModal}
-          setVisible={setRemoveBidModal}
-          title=""
-          onCancel={() => console.log('cancel')}
-        >
+        <REMOVE_MODAL visible={removeBidModal} setVisible={setRemoveBidModal}>
           <RemoveModalContent
             title={'Remove most recent bid'}
             caption={`This action will cancel your most recent bid of ${
