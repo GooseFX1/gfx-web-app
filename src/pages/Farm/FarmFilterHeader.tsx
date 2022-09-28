@@ -184,13 +184,13 @@ export const FarmFilter = () => {
   if (checkMobile()) {
     return (
       <ABSTRACT>
-        <div className="statsBackground" />
+        {/* <div className="statsBackground" />
         <div className="textContainer">
           <div>TVL: {statsData && ` $ ` + moneyFormatterWithComma(statsData.tvl)}</div>
           <div>Pools: {farmDataContext?.length + farmDataSSLContext?.length}</div>
           <div>7d Volume: {statsData && ` $ ` + moneyFormatterWithComma(statsData.volume7dSum)} </div>
           <div>GOFX Price: {prices && ` $ ` + prices['GOFX/USDC']?.current} </div>
-        </div>
+        </div> */}
         <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
 
         <STYLED_FARM_HEADER>

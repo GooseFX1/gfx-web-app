@@ -25,10 +25,16 @@ export const STYLED_TITLE = styled.div`
     ${tw`font-semibold text-base text-white`}
   }
   .info-icon {
-    ${tw`w-[15px] h-auto block ml-2`}
+    ${tw`w-[20px] h-[20px] block ml-2`}
   }
   .arrowDown {
-    ${tw`sm:w-[17px] sm:h-[7px] w-[14px] h-auto block ml-2`}
+    ${tw`sm:w-[17px] cursor-pointer sm:h-[7px] w-[17px] h-[7px] ml-[10px] `}
+  }
+  .invert {
+    transform: rotate(180deg);
+  }
+  .tooltipIcon {
+    margin-right: 8px;
   }
 `
 
@@ -91,11 +97,13 @@ export const HeaderTooltip = (text: string) =>
     </Tooltip>
   )
 
-const Title = (text: string, infoText: string, isArrowDown: boolean) => (
+const Title = (text: string, infoText: string, isArrowDown: boolean, invert?: boolean) => (
   <STYLED_TITLE>
     <div className="textTitle">{text}</div>
     {infoText && HeaderTooltip(infoText)}
-    {isArrowDown && <img className="arrowDown" src={`/img/assets/arrow-down.svg`} alt="" />}
+    {isArrowDown && (
+      <img className={'arrowDown' + (invert ? ' invert' : '')} src={`/img/assets/arrow-down.svg`} alt="" />
+    )}
   </STYLED_TITLE>
 )
 
@@ -284,22 +292,35 @@ export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; i
   )
 }
 
-export const ColumnHeadersWeb = () => (
+export const ColumnHeadersWeb = ({ sortColumn, setSortColumn }: any) => (
   <>
-    <th className="borderRow">Name</th>
-    <th>{Title('Deposited', '', false)}</th>
-    <th>{Title('Total earned', TotalEarnedTooltip, false)}</th>
-    <th>{Title('APR', APRTooltip, false)}</th>
-    <th>{Title('Liquidity', LiquidityTooltip, false)}</th>
-    <th style={{ paddingRight: '40px' }}>{Title('7d volume', '', false)}</th>
+    <th onClick={() => setSortColumn('name')} className="borderRow">
+      {Title('Name', '', true, sortColumn === 'name')}
+    </th>
+    <th onClick={() => setSortColumn('currentlyStaked')}>
+      {Title('Deposited', '', true, sortColumn === 'currentlyStaked')}
+    </th>
+    <th onClick={() => setSortColumn('earned')}>
+      {Title('Total earned', TotalEarnedTooltip, true, sortColumn === 'earned')}
+    </th>
+    <th onClick={() => setSortColumn('apr')}>{Title('APR', APRTooltip, true, sortColumn === 'apr')}</th>
+    <th onClick={() => setSortColumn('liquidity')}>
+      {Title('Liquidity', LiquidityTooltip, true, sortColumn === 'liquidity')}
+    </th>
+    <th onClick={() => setSortColumn('volume')} style={{ paddingRight: '40px' }}>
+      {Title('7d volume', '', true, sortColumn === 'volume')}
+    </th>
     <th className="borderRow2"></th>
   </>
 )
 
-export const ColumnHeadersMobile = () => (
+export const ColumnHeadersMobile = ({ sortColumn, setSortColumn }: any) => (
   <>
-    <th className="borderRow">Name</th>
-    <th>{Title('APR', APRTooltip, false)}</th>
+    <th onClick={() => setSortColumn('name')} className="borderRow">
+      {Title('Name', '', true, sortColumn === 'name')}
+    </th>
+
+    <th onClick={() => setSortColumn('apr')}>{Title('APR', APRTooltip, true, sortColumn === 'apr')}</th>
     <th className="borderRow2">
       <RefreshBtnWithAnimation />
     </th>
