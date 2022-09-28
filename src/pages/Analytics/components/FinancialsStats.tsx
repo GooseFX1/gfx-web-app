@@ -5,6 +5,7 @@ import { useConnectionConfig } from '../../../context'
 import { TOKEN_PROGRAM_ID } from '../../../web3'
 import { revenueCol, TOKEN_PAIRS } from '../constants'
 import { Table } from 'antd'
+import { moneyFormatterWithComma } from '../../../utils'
 
 export interface IAccounts {
   [mint: string]: IAccount
@@ -22,6 +23,7 @@ export const SSLRevenue = () => {
   const [revenueObj, setRevenueObj] = useState<any>()
   const [tokenPrices, setTokenprices] = useState<any>()
   const [dataSource, setDataSource] = useState<any>()
+  const [dollarSum, setDollarSum] = useState<number>(0)
   //const [revenueUsingName, setRevenueUsingName] = useState<any>();
   const publicKey = new PublicKey('6nRsKbwm7Ezz4frjkdCNjBWyFjzZfW5jsWCaSVMARcsJ')
   const { connection } = useConnectionConfig()
@@ -43,27 +45,33 @@ export const SSLRevenue = () => {
   }, [])
 
   useEffect(() => {
-    getpairInfo(revenueObj)
-  }, [revenueObj])
+    if (revenueObj && tokenPrices) getpairInfo(revenueObj)
+  }, [revenueObj, tokenPrices])
 
   const getpairInfo = (revenueObj: any) => {
     const arr = []
+    let sum = 0
     for (const mint in revenueObj) {
       const mintPrice = tokenPrices[TOKEN_PAIRS[mint].pair]['current']
       const mintRevenue = revenueObj[mint].uiAmount
+      sum += mintRevenue * mintPrice
       arr.push({
         token: TOKEN_PAIRS[mint].name,
         price: '$ ' + mintPrice,
         native: mintRevenue,
-        dollar: '$ ' + mintRevenue * mintPrice
+        dollar: '$ ' + moneyFormatterWithComma(mintRevenue * mintPrice)
       })
+      setDollarSum(sum)
     }
     setDataSource(arr)
   }
 
   return (
     <div>
-      <h1>SSL Revenue</h1>
+      <h1>
+        SSL Revenue
+        <div>{moneyFormatterWithComma(dollarSum, '$')}</div>
+      </h1>
       <Table columns={revenueCol} dataSource={dataSource} />
     </div>
   )
