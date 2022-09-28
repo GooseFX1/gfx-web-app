@@ -95,7 +95,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
       })
 
       if (res.data.bid_id) {
-        setBids((prevBids) => [...prevBids, { ...bidObject, bid_id: res.data.bid_id }])
+        setBids((prevBids) => [...prevBids, { ...bidObject, bid_id: res.data.bid_id, uuid: res.data.bid_uuid }])
       }
 
       return res
@@ -147,6 +147,33 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
+  const patchNFTAsk = useCallback(async (ask: INFTAsk): Promise<any> => {
+    try {
+      const res = await apiClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.ASK}`, {
+        ask_uuid: ask.uuid,
+        new_ask_data: {
+          clock: ask.clock,
+          tx_sig: ask.tx_sig,
+          wallet_key: ask.wallet_key,
+          auction_house_key: ask.auction_house_key,
+          token_account_key: ask.token_account_key,
+          auction_house_treasury_mint_key: ask.auction_house_treasury_mint_key,
+          token_account_mint_key: ask.token_account_mint_key,
+          buyer_price: ask.buyer_price,
+          token_size: ask.token_size,
+          non_fungible_id: ask.non_fungible_id,
+          collection_id: ask.collection_id,
+          user_id: ask.user_id
+        }
+      })
+
+      if (res.data) setAsk(res.data)
+      return res
+    } catch (err) {
+      return err
+    }
+  }, [])
+
   const removeNFTListing = useCallback(async (askUUID: string): Promise<any> => {
     try {
       const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.ASK}`, {
@@ -177,6 +204,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         bidOnSingleNFT,
         curHighestBid,
         removeBidOnSingleNFT,
+        patchNFTAsk,
         ask,
         setAsk,
         nftMintingData,
@@ -210,6 +238,7 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     bidOnSingleNFT: context.bidOnSingleNFT,
     curHighestBid: context.curHighestBid,
     removeBidOnSingleNFT: context.removeBidOnSingleNFT,
+    patchNFTAsk: context.patchNFTAsk,
     ask: context.ask,
     setAsk: context.setAsk,
     fetchGeneral: context.fetchGeneral,
