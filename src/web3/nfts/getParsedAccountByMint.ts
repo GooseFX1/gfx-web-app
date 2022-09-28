@@ -42,9 +42,8 @@ export const getParsedAccountByMint = async ({
     return undefined
   }
 
-  const positiveAmountResult = res.find(({ account }) => {
+  const positiveAmountResult: any = res.find(({ account }) => {
     const data = account.data
-
     if (isParsedAccountData(data)) {
       const amount = data?.parsed?.info?.tokenAmount?.amount
       return amount === '1'
@@ -54,7 +53,7 @@ export const getParsedAccountByMint = async ({
 
   return positiveAmountResult
     ? {
-        owner: positiveAmountResult.account.owner.toString(),
+        owner: positiveAmountResult.account.data.parsed.info.owner,
         pubkey: positiveAmountResult.pubkey.toString()
       }
     : undefined
