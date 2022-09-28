@@ -27,6 +27,7 @@ export interface INFTUserActivity {
   clock: string
   user_id: number
   non_fungible_id: number
+  non_fungible_uuid: string
 }
 
 export interface INFTProfileConfig {

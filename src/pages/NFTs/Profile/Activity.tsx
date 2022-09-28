@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { StyledTableList } from './TableList.styled'
 import NoContent from './NoContent'
-// import { fetchNFTById } from '../../../api/NFTs'
+import { fetchNFTById } from '../../../api/NFTs'
 import { SearchBar, Loader } from '../../../components'
 import { StyledTabContent } from './TabContent.styled'
 import { useNFTProfile, useConnectionConfig } from '../../../context'
@@ -76,54 +76,48 @@ const Activity = (props: IProps) => {
   const { connection } = useConnectionConfig()
 
   useEffect(() => {
-    console.log(props.data)
-
-    // fetchActivity(props.data).then((actvsLog) => setActivitLog(actvsLog))
-    fetchActivity([]).then((actvsLog) => setActivitLog(actvsLog))
-
+    fetchActivity(props.data).then((actvsLog) => setActivitLog(actvsLog))
     return () => setActivitLog(undefined)
   }, [props.data])
 
   const fetchActivity = async (actvLog: INFTUserActivity[]): Promise<any> => {
-    // const userActivities = await Promise.all(
-    //   actvLog.map(async (actv: INFTUserActivity) => {
-    //     let nftDetails = {}
-    //     try {
-    //       const nftData = await fetchNFTById(`${actv.non_fungible_id}`, 'mainnet')
-    //       nftDetails = nftData.data[0]
-    //     } catch (err) {
-    //       console.error(err)
-    //     }
+    const userActivities = await Promise.all(
+      actvLog.map(async (actv: INFTUserActivity) => {
+        let nftDetails: any = {}
+        try {
+          const nftData = await fetchNFTById(actv.non_fungible_uuid)
+          nftDetails = nftData.data[0]
+        } catch (err) {
+          console.error(err)
+          throw new Error('Error Fetching Activity Details')
+        }
 
-    //     let transactionData = {}
-    //     if (actv.tx_sig) {
-    //       transactionData = await connection.getParsedConfirmedTransaction(actv.tx_sig, 'confirmed')
-    //     }
+        let transactionData = {}
+        if (actv.tx_sig) {
+          transactionData = await connection.getParsedConfirmedTransaction(actv.tx_sig, 'confirmed')
+        }
 
-    //     const currentUserAddress = nonSessionProfile ? nonSessionProfile.pubkey : sessionUser.pubkey
-    //     const adjustedDate = parseFloat(actv.clock) * 1000
+        const currentUserAddress = nonSessionProfile ? nonSessionProfile.pubkey : sessionUser.pubkey
+        const adjustedDate = parseFloat(actv.clock) * 1000
 
-    //     return {
-    //       ...actv,
-    //       from: truncateAddress(currentUserAddress),
-    //       quantity: 1,
-    //       price: 0,
-    //       ...nftDetails,
-    //       to: truncateAddress(nftDetails.mint_address),
-    //       date: new Date(adjustedDate).toLocaleDateString('en-US'),
-    //       item: {
-    //         name: nftDetails.nft_name,
-    //         image_url: nftDetails.image_url
-    //       },
-    //       ...transactionData
-    //     }
-    //   })
-    // )
+        return {
+          ...actv,
+          ...nftDetails,
+          ...transactionData,
+          from: truncateAddress(currentUserAddress),
+          quantity: 1,
+          price: 0,
+          to: truncateAddress(nftDetails.mint_address),
+          date: new Date(adjustedDate).toLocaleDateString('en-US'),
+          item: {
+            name: nftDetails.nft_name,
+            image_url: nftDetails.image_url
+          }
+        }
+      })
+    )
 
-    // return userActivities.sort((a: any, b: any) => b.clock - a.clock)
-    console.log(actvLog, sessionUser, nonSessionProfile, connection)
-    truncateAddress('testtesttest')
-    return actvLog
+    return userActivities.sort((a: any, b: any) => b.clock - a.clock)
   }
 
   return (
