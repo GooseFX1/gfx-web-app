@@ -41,13 +41,19 @@ const RemoveModalContent = ({ title, caption, removeFunction, pendingTxSig, netw
   )
 
   useEffect(() => {
-    console.log(pendingTxSig)
+    console.log('removing')
     return null
   }, [pendingTxSig])
 
-  const handleButtonClick = (e: any) => {
+  const handleButtonClick = async (e: any) => {
     setIsLoading(true)
-    removeFunction(e)
+    try {
+      await removeFunction(e)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
