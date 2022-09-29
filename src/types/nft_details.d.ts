@@ -145,6 +145,7 @@ export interface INFTDetailsConfig {
   bidOnSingleNFT: any
   curHighestBid: INFTBid | undefined
   removeBidOnSingleNFT: any
+  patchNFTAsk: (ask: INFTAsk) => Promise<any>
   ask: INFTAsk
   setAsk: (a: INFTAsk) => void
   nftMintingData: IMetadataContext | undefined

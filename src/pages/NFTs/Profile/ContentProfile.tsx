@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, FC } from 'react'
-import { useNFTProfile, useConnectionConfig } from '../../../context'
+import { useNFTProfile } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { ParsedAccount } from '../../../web3'
 import { fetchNFTById } from '../../../api/NFTs/actions'
@@ -12,7 +12,6 @@ type Props = {
 }
 
 export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
-  const { connection } = useConnectionConfig()
   const {
     sessionUser,
     sessionUserParsedAccounts,
@@ -104,7 +103,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
   }, [currentUserProfile, fetchUserActivity, setUserActivity])
 
   const fetchFavorites = async (userLikes: string[]) => {
-    const favorites: ISingleNFT[] = await Promise.all(userLikes.map((i: string) => fetchNFTById(i, connection)))
+    const favorites: ISingleNFT[] = await Promise.all(userLikes.map((nftUUID: string) => fetchNFTById(nftUUID)))
 
     setFavoritedItems(favorites.map((f: any) => f.data[0]))
   }

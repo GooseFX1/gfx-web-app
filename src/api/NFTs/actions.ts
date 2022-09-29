@@ -75,7 +75,7 @@ export const fetchSingleNFT = async (address: string): Promise<any> => {
   }
 }
 //eslint-disable-next-line
-export const fetchNFTById = async (nftUUID: string, connection?: any): Promise<any> => {
+export const fetchNFTById = async (nftUUID: string): Promise<any> => {
   try {
     const res = await apiClient(NFT_API_BASE).get(
       `${NFT_API_ENDPOINTS.SINGLE_NFT}?nft_id=${nftUUID}&network=mainnet`

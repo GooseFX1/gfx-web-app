@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Router } from './Router'
 import {
   AccountsProvider,
@@ -11,8 +11,14 @@ import {
 } from './context'
 import ThemeProvider from './theme'
 import './App.less'
+import { checkMobile } from './utils'
+import { logData } from './api'
 
 export default function App(): JSX.Element {
+  useEffect(() => {
+    if (checkMobile()) logData('mobile_view')
+  }, [])
+
   return (
     <DarkModeProvider>
       <ThemeProvider>

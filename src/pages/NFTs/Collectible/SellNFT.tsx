@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { Form, Row, Col } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { IAppParams } from '../../../types/app_params.d'
+import { INFTAsk } from '../../../types/nft_details.d'
 import { CenteredDiv, MainText, TXT_PRIMARY_GRADIENT, GFX_LINK, FLOATING_ACTION_ICON } from '../../../styles'
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { SellCategory } from '../SellCategory/SellCategory'
@@ -192,7 +193,7 @@ const PRICE = styled.span`
 export const SellNFT = () => {
   const history = useHistory()
   const params = useParams<IAppParams>()
-  const { general, setGeneral, ask, fetchGeneral, nftMetadata, updateUserInput, sellNFT, removeNFTListing } =
+  const { general, setGeneral, ask, fetchGeneral, nftMetadata, updateUserInput, sellNFT, patchNFTAsk } =
     useNFTDetails()
   const { sessionUser } = useNFTProfile()
   const wallet = useWallet()
@@ -388,20 +389,9 @@ export const SellNFT = () => {
       console.log(confirm)
       // successfully list nft
       if (confirm.value.err === null) {
-        // asserts existing ask and removes it from nest-api
-        if (ask !== undefined) {
-          const askRemoved = await postCancelAskToAPI(ask.uuid)
-          console.log(`askRemoved: ${askRemoved}`)
-          if (askRemoved === false) {
-            // TODO: needs to abort operation or retry removing
-            handleTxError(nftMetadata.name, 'Failed to remove prior asking price')
-          }
-        }
-
         // create asking price
-        postTransationToAPI(signature, buyerPrice, tokenSize).then((res) => {
-          console.log('postTransationToAPI: ', res)
-
+        postAskToAPI(signature, buyerPrice, tokenSize, ask).then((res) => {
+          console.log('Ask data synced: ', res)
           if (!res) {
             handleTxError(nftMetadata.name, 'Listing has been canceled. Please try againg')
             callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
@@ -412,6 +402,7 @@ export const SellNFT = () => {
             }, 2000)
           }
         })
+
         // unsuccessfully list nft
       } else {
         handleTxError(nftMetadata.name, '')
@@ -421,7 +412,7 @@ export const SellNFT = () => {
     }
   }
 
-  const postTransationToAPI = async (txSig: any, buyerPrice: BN, tokenSize: BN) => {
+  const postAskToAPI = async (txSig: any, buyerPrice: BN, tokenSize: BN, ask: INFTAsk | undefined) => {
     const sellObject = {
       ask_id: null,
       clock: Date.now().toString(),
@@ -439,8 +430,11 @@ export const SellNFT = () => {
     }
 
     try {
-      const res = await sellNFT(sellObject)
-      console.dir(res)
+      const res =
+        ask === undefined
+          ? await sellNFT(sellObject)
+          : await patchNFTAsk({ ...sellObject, ask_id: ask.ask_id, uuid: ask.uuid })
+
       if (res.isAxiosError) {
         notify({
           type: 'error',
@@ -485,17 +479,6 @@ export const SellNFT = () => {
       cancelInstructionArgs
     )
     return cancelIX
-  }
-
-  const postCancelAskToAPI = async (askUUID: string) => {
-    try {
-      const res = await removeNFTListing(askUUID)
-      console.log('Asking Price Attempt Remove', res)
-      return res.data
-    } catch (error) {
-      console.error(`Error Removing Ask: ${error}`)
-      return false
-    }
   }
 
   const successfulListingMsg = (signature: any, nftMetadata: any, price: string) => ({
