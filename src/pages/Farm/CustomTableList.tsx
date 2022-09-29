@@ -200,7 +200,7 @@ const CustomTableList = () => {
         type: 'SSL',
         id: tokenName,
         key: tokenName,
-        apr: isNaN(APR) ? '-' : APR * 100,
+        apr: isNaN(APR) ? '-' : tokenName === TOKEN_NAMES.GMT ? 0 : APR * 100,
         liquidity: tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0,
         currentlyStaked: wallet.publicKey ? Number(amountDeposited) / Math.pow(10, sslData.decimals) : undefined,
         earned: wallet.publicKey ? Math.max(Number(earned) / Math.pow(10, sslData.decimals), 0) : undefined,

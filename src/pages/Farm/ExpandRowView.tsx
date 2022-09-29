@@ -9,6 +9,7 @@ import {
   usePriceFeedFarm,
   useTokenRegistry
 } from '../../context'
+import { Connect } from '../../layouts/App/Connect'
 import { checkMobile, moneyFormatterWithComma, notify } from '../../utils'
 import { ADDRESSES, executeDeposit, executeStake, executeUnstakeAndClaim, executeWithdraw } from '../../web3'
 import { ColumnMobile, ColumnWeb } from './Columns'
@@ -43,7 +44,7 @@ const ExpandRowView: FC<{ farm: IFarmData; index: number }> = ({ farm, index }) 
 
   return (
     <>
-      <TABLE_ROW isOpen={isOpen} publicKey={publicKey} onClick={() => !isOpen && publicKey && setIsOpen(true)}>
+      <TABLE_ROW isOpen={isOpen} publicKey={publicKey} onClick={() => !isOpen && setIsOpen(true)}>
         {checkMobile() ? (
           <ColumnMobile farm={farm} isOpen={isOpen} index={index} setIsOpen={setIsOpen} />
         ) : (
@@ -357,101 +358,107 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
   ) : (
     <TOKEN_OPERATIONS_CONTAINER colSpan={7}>
       <div className="availableToMint">
-        <>
-          <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
-            <div className="leftInner">
-              {wallet.publicKey && (
-                <STYLED_STAKED_EARNED_CONTENT>
-                  {SSL ? (
-                    <AvailableToMintComp
-                      availableToMintFiat={availableToMintFiat}
-                      availableToMint={availableToMint}
-                      name={name}
+        {publicKey ? (
+          <>
+            <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
+              <div className="leftInner">
+                {wallet.publicKey && (
+                  <STYLED_STAKED_EARNED_CONTENT>
+                    {SSL ? (
+                      <AvailableToMintComp
+                        availableToMintFiat={availableToMintFiat}
+                        availableToMint={availableToMint}
+                        name={name}
+                      />
+                    ) : (
+                      <DailyRewards tokenData={tokenData} tokenPrice={tokenPrice} name={name} />
+                    )}
+
+                    <STYLED_DESC>
+                      <div className="balanceAvailable">Wallet balance:</div>
+                      <div className="value">
+                        {userTokenBalance?.toFixed(3)} {name}
+                      </div>
+                    </STYLED_DESC>
+                  </STYLED_STAKED_EARNED_CONTENT>
+                )}
+              </div>
+            </STYLED_LEFT_CONTENT>
+            <STYLED_RIGHT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
+              <div className="rightInner">
+                <div>
+                  <INPUT_CONTAINER>
+                    <STYLED_INPUT
+                      placeholder={`0.00 ${name}`}
+                      type="number"
+                      onBlur={() => setDepositClass('')}
+                      onFocus={() => !zeroFunds && setDepositClass(' active')}
+                      value={stakeAmt}
+                      onChange={(e) => setStakeAmt(parseFloat(e.target.value))}
                     />
-                  ) : (
-                    <DailyRewards tokenData={tokenData} tokenPrice={tokenPrice} name={name} />
-                  )}
+                    <div className="halfMaxText">
+                      <div onClick={() => onClickHalf('stake')}> HALF </div>
+                      <div onClick={() => onClickMax('stake')} className="text2">
+                        {' '}
+                        MAX
+                      </div>
+                    </div>
+                  </INPUT_CONTAINER>
+                  <OPERATIONS_BTN
+                    className={depositBtnClass}
+                    loading={isStakeLoading}
+                    disabled={notEnoughFunds || isStakeLoading || zeroFunds}
+                    onClick={() => (SSL ? onClickDeposit() : onClickStake())}
+                  >
+                    {zeroFunds
+                      ? `Insufficient ${name}`
+                      : notEnoughFunds
+                      ? 'Not enough funds'
+                      : SSL
+                      ? 'Deposit'
+                      : 'Stake'}
+                  </OPERATIONS_BTN>
+                </div>
 
-                  <STYLED_DESC>
-                    <div className="balanceAvailable">Wallet balance:</div>
-                    <div className="value">
-                      {userTokenBalance?.toFixed(3)} {name}
+                <div>
+                  <INPUT_CONTAINER>
+                    <STYLED_INPUT
+                      placeholder={`0.00 ${name}`}
+                      onBlur={() => setWithdarwClass('')}
+                      onFocus={() =>
+                        ((SSL && availableToMint) || tokenStakedPlusEarned) && setWithdarwClass(' active')
+                      }
+                      value={unstakeAmt}
+                      onChange={(e) => setUnstakeAmt(parseFloat(e.target.value))}
+                      type="number"
+                      min="0"
+                      max="100"
+                    />
+                    <div className="halfMaxText">
+                      <div onClick={() => onClickHalf('unstake')}> HALF </div>
+                      <div onClick={() => onClickMax('unstake')} className="text2">
+                        {' '}
+                        MAX{' '}
+                      </div>
                     </div>
-                  </STYLED_DESC>
-                </STYLED_STAKED_EARNED_CONTENT>
-              )}
-            </div>
-          </STYLED_LEFT_CONTENT>
-          <STYLED_RIGHT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
-            <div className="rightInner">
-              <div>
-                <INPUT_CONTAINER>
-                  <STYLED_INPUT
-                    placeholder={`0.00 ${name}`}
-                    type="number"
-                    onBlur={() => setDepositClass('')}
-                    onFocus={() => !zeroFunds && setDepositClass(' active')}
-                    value={stakeAmt}
-                    onChange={(e) => setStakeAmt(parseFloat(e.target.value))}
-                  />
-                  <div className="halfMaxText">
-                    <div onClick={() => onClickHalf('stake')}> HALF </div>
-                    <div onClick={() => onClickMax('stake')} className="text2">
-                      {' '}
-                      MAX
-                    </div>
-                  </div>
-                </INPUT_CONTAINER>
-                <OPERATIONS_BTN
-                  className={depositBtnClass}
-                  loading={isStakeLoading}
-                  disabled={notEnoughFunds || isStakeLoading || zeroFunds}
-                  onClick={() => (SSL ? onClickDeposit() : onClickStake())}
-                >
-                  {zeroFunds
-                    ? `Insufficient ${name}`
-                    : notEnoughFunds
-                    ? 'Not enough funds'
-                    : SSL
-                    ? 'Deposit'
-                    : 'Stake'}
-                </OPERATIONS_BTN>
+                  </INPUT_CONTAINER>
+                  <OPERATIONS_BTN
+                    className={withdrawBtnClass}
+                    onClick={() => (SSL ? withdrawClicked() : onClickUnstake())}
+                    loading={isUnstakeLoading}
+                    disabled={isUnstakeLoading || (SSL && !availableToMint)}
+                  >
+                    {SSL ? 'Withdraw' : 'Unstake and Claim'}
+                  </OPERATIONS_BTN>
+                </div>
               </div>
-
-              <div>
-                <INPUT_CONTAINER>
-                  <STYLED_INPUT
-                    placeholder={`0.00 ${name}`}
-                    onBlur={() => setWithdarwClass('')}
-                    onFocus={() =>
-                      ((SSL && availableToMint) || tokenStakedPlusEarned) && setWithdarwClass(' active')
-                    }
-                    value={unstakeAmt}
-                    onChange={(e) => setUnstakeAmt(parseFloat(e.target.value))}
-                    type="number"
-                    min="0"
-                    max="100"
-                  />
-                  <div className="halfMaxText">
-                    <div onClick={() => onClickHalf('unstake')}> HALF </div>
-                    <div onClick={() => onClickMax('unstake')} className="text2">
-                      {' '}
-                      MAX{' '}
-                    </div>
-                  </div>
-                </INPUT_CONTAINER>
-                <OPERATIONS_BTN
-                  className={withdrawBtnClass}
-                  onClick={() => (SSL ? withdrawClicked() : onClickUnstake())}
-                  loading={isUnstakeLoading}
-                  disabled={isUnstakeLoading || (SSL && !availableToMint)}
-                >
-                  {SSL ? 'Withdraw' : 'Unstake and Claim'}
-                </OPERATIONS_BTN>
-              </div>
-            </div>
-          </STYLED_RIGHT_CONTENT>
-        </>
+            </STYLED_RIGHT_CONTENT>
+          </>
+        ) : (
+          <>
+            <Connect />
+          </>
+        )}
       </div>
     </TOKEN_OPERATIONS_CONTAINER>
   )

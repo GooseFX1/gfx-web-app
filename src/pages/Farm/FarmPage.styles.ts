@@ -92,14 +92,14 @@ export const STYLED_INPUT = styled.input`
 
 export const TABLE_ROW = styled.tr<{ isOpen: boolean; publicKey: any }>`
   ${({ isOpen, publicKey }) => css`
-    cursor: ${!isOpen && publicKey && 'pointer'};
+    cursor: ${!isOpen && 'pointer'};
     height: ${!isOpen && '90px'} !important;
     background: ${({ theme }) => theme.expendedRowBg};
     background: ${!isOpen && 'none'};
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
     border-bottom: ${isOpen && 'none'};
     @media (max-width: 500px) {
-      height: ${isOpen ? '470px' : '80px'} !important;
+      height: ${isOpen ? (publicKey ? '470px' : '250px') : '80px'} !important;
     }
   `}
 
