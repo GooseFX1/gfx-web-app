@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useEffect, FC } from 'react'
 import styled from 'styled-components'
+import tw from 'twin.macro'
 import { useNFTCollections } from '../../../context'
 import { fetchAllSingleNFTs } from '../../../api/NFTs'
 import { Header } from './Header'
@@ -10,70 +11,22 @@ import CollectionCarousel from './CollectionCarousel'
 import OneOfOnesNFTs from './OneOfOnesNFTs'
 import { COLLECTION_TYPES, NFTBaseCollection } from '../../../types/nft_collections.d'
 import Loading from './Loading'
-import { SVGDynamicReverseMode } from '../../../styles'
 import { ModalSlide } from '../../../components/ModalSlide'
+import { Banner } from '../../../components/Banner'
 import { MODAL_TYPES } from '../../../constants'
 import { checkMobile } from '../../../utils'
 
-const BETA_BANNER = styled.div`
-  position: fixed;
-  left: 42px;
-  bottom: 42px;
-  background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-  border-radius: 10px;
-  padding: 1px;
-  z-index: 10;
-
-  .inner {
-    padding: 12px 24px;
-    border-radius: 10px;
-    background: ${({ theme }) => theme.bg9};
-  }
-
-  h6 {
-    color: ${({ theme }) => theme.text1};
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 17px;
-  }
-
-  p {
-    color: ${({ theme }) => theme.text6};
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 15px;
-    margin: 0;
-  }
-
-  .info-icon {
-    float: left;
-    margin-right: 12px;
-  }
-
-  .close-button {
-    position: absolute;
-    top: 4px;
-    right: 8px;
-    background: transparent;
-    border: none;
-
-    .close-icon {
-      height: 8px;
-    }
-  }
-`
-
 export const NFT_MENU = styled.div`
-  position: fixed;
-  z-index: 11;
-  height: 150px;
-  width: 180px;
-  right: -20px;
-  bottom: -12px;
-  cursor: pointer;
+  ${tw`fixed h-[150px] w-[180px] right-[-20px] bottom-[-12px] cursor-pointer`}
   background: url('/img/assets/menuButton.svg');
   z-index: 100;
 `
+
+const BETA_BANNER = styled.div`
+  ${tw`fixed left-[42px] bottom-[42px]`}
+  z-index: 10;
+`
+
 const NFTLandingPage: FC = (): JSX.Element => {
   const { allCollections, fetchAllCollections, fetchAllCollectionDetails, setNFTMenuPopup, nftMenuPopup } =
     useNFTCollections()
@@ -128,16 +81,12 @@ const NFTLandingPage: FC = (): JSX.Element => {
 
       {betaBanner && !checkMobile() && (
         <BETA_BANNER>
-          <div className={'inner'}>
-            <div>
-              <SVGDynamicReverseMode className="info-icon" src={`/img/assets/info-icon.svg`} alt="info" />
-              <h6>Marketplace is currently in Beta</h6>
-            </div>
-            <p>Please be patient, settle your balances, and enjoy!</p>
-            <button className={'close-button'} onClick={() => setBetaBanner(false)}>
-              <SVGDynamicReverseMode className="close-icon" src={`/img/assets/close-white-icon.svg`} alt="close" />
-            </button>
-          </div>
+          <Banner
+            title="Marketplace is currently in Beta"
+            support={'Please be patient, settle your balances, and enjoy!'}
+            iconFileName={'info-icon.svg'}
+            handleDismiss={setBetaBanner}
+          />
         </BETA_BANNER>
       )}
     </>

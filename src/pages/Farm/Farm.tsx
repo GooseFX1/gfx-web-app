@@ -1,14 +1,15 @@
 import React, { FC, useState, useEffect } from 'react'
 import styled from 'styled-components'
+import tw from 'twin.macro'
 import { logEvent } from 'firebase/analytics'
 import analytics from '../../analytics'
 //import { TableList } from './TableList'
 import { FarmHeader } from './FarmHeader'
 import { useNavCollapse, FarmProvider, useConnectionConfig, ENDPOINTS, PriceFeedFarmProvider } from '../../context'
-import { notify } from '../../utils'
-import tw from 'twin.macro'
+import { notify, checkMobile } from '../../utils'
 import { logData } from '../../api'
 import CustomTableList from './CustomTableList'
+import { Banner } from '../../components/Banner'
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   ${tw`sm:px-0 relative flex flex-col w-screen px-6 overflow-y-auto overflow-x-hidden`}
@@ -39,11 +40,17 @@ const BODY = styled.div<{ $navCollapsed: boolean }>`
   }
 `
 
+const BETA_BANNER = styled.div`
+  ${tw`fixed left-[42px] bottom-[42px]`}
+  z-index: 10;
+`
+
 export const Farm: FC = () => {
   //eslint-disable-next-line
   const [filter, setFilter] = useState<string>('')
   const { isCollapsed } = useNavCollapse()
   const { setEndpoint, network } = useConnectionConfig()
+  const [betaBanner, setBetaBanner] = useState<boolean>(true)
 
   useEffect(() => {
     const an = analytics()
@@ -77,6 +84,16 @@ export const Farm: FC = () => {
             <FarmHeader onFilter={onFilter} />
             {/* <TableList filter={filter} /> */}
             <CustomTableList />
+            {betaBanner && !checkMobile() && (
+              <BETA_BANNER>
+                <Banner
+                  title="SSL Beta Testing"
+                  support={'There may be significant APR fluctuations for a few weeks, deposit at your own risk'}
+                  iconFileName={'info-icon.svg'}
+                  handleDismiss={setBetaBanner}
+                />
+              </BETA_BANNER>
+            )}
           </BODY>
         </PriceFeedFarmProvider>
       </FarmProvider>
