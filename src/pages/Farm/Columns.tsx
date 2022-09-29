@@ -10,15 +10,6 @@ import { Connect } from '../../layouts/App/Connect'
 import { RefreshBtnWithAnimation } from './FarmFilterHeader'
 const DISPLAY_DECIMAL = 3
 
-const DEPOSIT_BTN = styled.button`
-  ${tw`h-8 w-32 text-white rounded-3xl border-none font-semibold`}
-  font-size: 15px;
-  background: #5855ff;
-  @media (max-width: 500px) {
-    ${tw`h-7 w-20 absolute -ml-20 -mt-0.5`}
-  }
-`
-
 export const STYLED_TITLE = styled.div`
   ${tw`flex flex-row items-center justify-center`}
   .textTitle {
@@ -61,7 +52,6 @@ export const STYLED_EARNED = styled.div`
 `
 
 const ICON_WRAPPER = styled.div`
-  border: 1px solid;
   ${tw`flex flex-col items-end h-10 w-20`}
   .arrowDown {
     cursor: pointer;
@@ -134,12 +124,7 @@ export const columns = [
     )
   },
   {
-    title: Title(
-      'Total Earned',
-      `The total profit and loss from SSL and is measured by comparing the total value of a pool’s assets (
-        excluding trading fees) to their value if they had not been traded and instead were just held`,
-      true
-    ),
+    title: Title('Total Earned', `Yearly deposit earned on your deposit.`, true),
     dataIndex: 'earned',
     key: 'earned',
     width: '16.6%',
@@ -148,7 +133,13 @@ export const columns = [
     )
   },
   {
-    title: Title('APR', 'Yearly deposit earned on your deposit.', true),
+    title: Title(
+      'APR',
+      `The total profit and loss from SSL 
+    and is measured by comparing the total value of a pool's assets
+     ( excluding trading fees) to their value if they had not been traded and instead were just held`,
+      true
+    ),
     dataIndex: 'apr',
     key: 'apr',
     width: '16.6%',
@@ -232,8 +223,6 @@ export const mobileColumns = [
   }
 ]
 
-const DepositButton = () => <DEPOSIT_BTN>Deposit</DEPOSIT_BTN>
-
 export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; index: number }> = ({
   farm,
   setIsOpen,
@@ -253,18 +242,12 @@ export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; i
         <div className="columnText">{name}</div>
       </td>
       {!publicKey ? (
-        <td className={showConnect ? 'balanceConnectWallet' : 'balanceColumn'}>
-          {showConnect ? <Connect /> : '----'}
+        <td className={showConnect ? (!isOpen ? 'balanceConnectWallet' : '') : 'balanceColumn'}>
+          {showConnect ? !isOpen ? <Connect /> : '----' : '----'}
         </td>
       ) : (
         <td className="balanceColumn">
-          {currentlyStaked === 0 ? (
-            <DepositButton />
-          ) : currentlyStaked !== undefined ? (
-            currentlyStaked?.toFixed(DISPLAY_DECIMAL)
-          ) : (
-            <Loader />
-          )}
+          {currentlyStaked !== undefined ? currentlyStaked?.toFixed(DISPLAY_DECIMAL) : <Loader />}
         </td>
       )}
       <td className="earnedColumn">
@@ -285,7 +268,7 @@ export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; i
           volume === '-' ? '-' : volume >= 0 ? moneyFormatterWithComma(parseFloat(volume), '$') : <Loader />
         }
       </td>
-      <ICON_WRAPPER_TD onClick={() => publicKey && setIsOpen((prev) => !prev)}>
+      <ICON_WRAPPER_TD onClick={() => setIsOpen((prev) => !prev)}>
         <img className={isOpen ? 'invertArrow' : ''} src={`/img/assets/arrow-down-large.svg`} alt="arrow" />
       </ICON_WRAPPER_TD>
     </>
@@ -331,8 +314,7 @@ export const ColumnMobile: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean
   setIsOpen,
   isOpen
 }) => {
-  const { name, currentlyStaked, apr } = farm
-  const { publicKey } = useWallet()
+  const { name, apr } = farm
 
   return (
     <>
@@ -348,8 +330,7 @@ export const ColumnMobile: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean
           apr === '-' ? '-' : apr !== undefined ? `${parseFloat(apr)?.toFixed(0)}%` : <Loader />
         }
       </td>
-      <ICON_WRAPPER_TD onClick={() => publicKey && setIsOpen((prev) => !prev)}>
-        {!currentlyStaked && <DepositButton />}
+      <ICON_WRAPPER_TD onClick={() => setIsOpen((prev) => !prev)}>
         <img className={isOpen ? 'invertArrow' : ''} src={`/img/assets/arrow-down-large.svg`} alt="arrow" />
       </ICON_WRAPPER_TD>
     </>

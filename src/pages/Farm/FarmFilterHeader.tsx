@@ -15,6 +15,12 @@ const ABSTRACT = styled.div`
     color: ${({ theme }) => theme.tabNameColor};
     animation: openAnimation 1s forwards;
   }
+  .totalContainer {
+    padding: 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+  }
 
   .hide {
     animation: closeMe 0.5s;
@@ -35,26 +41,44 @@ const ABSTRACT = styled.div`
       height: 40px;
     }
   }
+  .generalStatsBg {
+    border: 1px solid #fff;
+    border-style: solid none;
+    height: 36px;
+    background-image: linear-gradient(91deg, rgba(247, 147, 26, 0.8) 0%, rgba(220, 31, 255, 0.6) 100%);
+  }
+  td {
+    ${tw`text-white font-semibold text-sm pl-2.5 pr-2.5`}
+  }
   .textContainer {
     ${tw`flex w-11/12 text-white z-10 flex-row   
-    items-center justify-between  pr-20 pl-12 mb-9 mt-2 text-sm font-semibold`}
+    items-center justify-between  pr-20 pl-12 mb-9 sm:mb-5 mt-2 text-sm font-semibold`}
     @media(max-width: 500px) {
       width: 200vw;
+      overflow-y: hidden;
+      overflow-x: auto;
+      flex: none;
       color: #fff;
       z-index: 10;
       opacity: 1;
+      position: absolute;
     }
   }
   .statsBackground {
     ${tw`h-9 w-[100vw] opacity-80 z-0 absolute
     left-0 flex flex-row  m-auto items-center justify-between pr-16 pl-16`};
     border: 1px solid #fff;
+
     border-style: solid none;
     background-image: linear-gradient(91deg, #f7931a 0%, #ac1cc7 100%);
     @media (max-width: 500px) {
-      overflow: scroll;
+      overflow-y: hidden;
+      overflow-x: auto;
       width: 200vw;
       z-index: 5;
+      flex: none;
+
+      position: absolute;
     }
   }
 `
@@ -184,13 +208,18 @@ export const FarmFilter = () => {
   if (checkMobile()) {
     return (
       <ABSTRACT>
-        {/* <div className="statsBackground" />
-        <div className="textContainer">
-          <div>TVL: {statsData && ` $ ` + moneyFormatterWithComma(statsData.tvl)}</div>
-          <div>Pools: {farmDataContext?.length + farmDataSSLContext?.length}</div>
-          <div>7d Volume: {statsData && ` $ ` + moneyFormatterWithComma(statsData.volume7dSum)} </div>
-          <div>GOFX Price: {prices && ` $ ` + prices['GOFX/USDC']?.current} </div>
-        </div> */}
+        <div className="totalContainer">
+          <table>
+            <tbody>
+              <tr className="generalStatsBg">
+                <td>TVL: {statsData && ` $ ` + moneyFormatterWithComma(statsData.tvl)}</td>
+                <td>Pools: {farmDataContext?.length + farmDataSSLContext?.length}</td>
+                <td>7d Volume: {statsData && ` $ ` + moneyFormatterWithComma(statsData.volume7dSum)}</td>
+                <td>GOFX Price: {prices && ` $ ` + prices['GOFX/USDC']?.current}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
 
         <STYLED_FARM_HEADER>

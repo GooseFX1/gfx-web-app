@@ -1,16 +1,15 @@
 import React, { FC, useState, useMemo } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { MainButton } from '../../components'
 
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useFarmContext, useAccounts, useTokenRegistry, usePriceFeedFarm } from '../../context'
+import { useFarmContext, useAccounts, useTokenRegistry } from '../../context'
 import tw from 'twin.macro'
 import { Loader } from '../Farm/Columns'
 import { moneyFormatter } from '../../utils/math'
 import { HeaderTooltip } from '../Farm/Columns'
 import { Connect } from '../../layouts/App/Connect'
 import { IFarmData } from './CustomTableList'
-import { TOKEN_NAMES } from '../../constants'
 
 const STYLED_SOL = styled.div`
   ${tw`flex items-center justify-between rounded-[60px] h-11 w-[372px] w-[90%] my-[15px] mx-auto`}
@@ -78,14 +77,18 @@ const MAX_BUTTON = styled.div`
   ${tw`cursor-pointer`}
 `
 
-const EXPAND_WRAPPER = styled.td`
-  ${tw`font-semibold text-base absolute w-full left-0`}
-  margin-top: -390px;
-  .details {
-    font-family: Montserrat;
-    line-height: normal;
-    color: ${({ theme }) => theme.text1};
-  }
+const EXPAND_WRAPPER = styled.td<{ publicKey: any }>`
+  ${({ publicKey }) => css`
+    ${tw`font-semibold text-base absolute w-full left-0`}
+    margin-top: -390px;
+    width: ${publicKey ? '100%' : '200px'};
+    margin-left: ${!publicKey && '30%'};
+    .details {
+      font-family: Montserrat;
+      line-height: normal;
+      color: ${({ theme }) => theme.text1};
+    }
+  `}
 `
 
 const ROW = styled.div`
@@ -123,7 +126,7 @@ const Reward = styled.div`
   color: ${({ theme }) => theme.text1};
 `
 const ConnectWrapper = styled.div`
-  ${tw`flex flex-row justify-center`}
+  ${tw`flex flex-row justify-center mt-60 w-9/12`}
 `
 
 export const ExpandedContentMobile: FC<{
@@ -176,7 +179,6 @@ export const ExpandedContentMobile: FC<{
   const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
   const [process, setProcess] = useState<string>('Stake')
   const DISPLAY_DECIMAL = 3
-  const { prices } = usePriceFeedFarm()
 
   let userTokenBalance = useMemo(
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
@@ -186,21 +188,8 @@ export const ExpandedContentMobile: FC<{
     ? farmDataContext.find((token) => token.name === 'GOFX')
     : farmDataSSLContext.find((farmData) => farmData.name === name)
 
-  const tokenPrice = useMemo(() => {
-    if (name === TOKEN_NAMES.USDC) {
-      return prices[`${name.toUpperCase()}/USDT`]
-    }
-    if (name === TOKEN_NAMES.USDT) {
-      return prices[`${name.toUpperCase()}/USD`]
-    }
-    // to get price of the token MSOL must be in upper case while to get tokenInfo address mSOL
-    return prices[`${name.toUpperCase()}/USDC`]
-  }, [prices[`${name.toUpperCase()}/USDC`]])
-
   const availableToMint =
     tokenData?.ptMinted >= 0 ? tokenData.currentlyStaked + tokenData.earned - tokenData.ptMinted : 0
-  const availableToMintFiat = tokenPrice && availableToMint * tokenPrice.current
-  console.log(availableToMintFiat)
 
   const onClickHalfSsl = (buttonId: string) => {
     if (name === 'SOL') userTokenBalance = userSOLBalance
@@ -218,66 +207,59 @@ export const ExpandedContentMobile: FC<{
 
   const stakeProcess = process === 'Stake'
 
-  // let notEnough
-  // try {
-  //   const amt = parseFloat(stakeRef.current?.value).toFixed(3)
-  //   notEnough =
-  //     parseFloat(amt) >
-  //     (name === 'SOL' ? parseFloat(userSOLBalance.toFixed(3)) : parseFloat(userTokenBalance.toFixed(3)))
-  // } catch (e) {
-  //   console.log(e);
-  // }
-
   return (
-    <>
-      <EXPAND_WRAPPER>
-        <ROW_WRAPPER>
-          <ROW>
-            <span className="details">Balance</span>
-            <span className="details">
-              {' '}
-              {farm?.currentlyStaked >= 0 ? ` ${moneyFormatter(farm.currentlyStaked)}` : <Loader />}
-            </span>
-          </ROW>
-          <ROW>
-            <Tooltip_holder>
-              <span className="details">Total Earned</span>
-              {HeaderTooltip(
-                `The total profit and loss from SSL and is measured by comparing the total value of a pool’s assets (
+    <EXPAND_WRAPPER publicKey={wallet.publicKey}>
+      {wallet.publicKey ? (
+        <>
+          <ROW_WRAPPER>
+            <ROW>
+              <span className="details">Balance</span>
+              <span className="details">
+                {' '}
+                {farm?.currentlyStaked >= 0 ? ` ${moneyFormatter(farm.currentlyStaked)}` : <Loader />}
+              </span>
+            </ROW>
+            <ROW>
+              <Tooltip_holder>
+                <span className="details">Total Earned</span>
+                {HeaderTooltip(
+                  `The total profit and loss from SSL and is measured by comparing the total value of a pool’s assets (
                   excluding trading fees) to their value if they had not been traded and instead were just held`
-              )}
-            </Tooltip_holder>
-            <span className="details"> {farm?.earned >= 0 ? `${moneyFormatter(farm?.earned)}` : <Loader />}</span>
-          </ROW>
-          <ROW>
-            <Tooltip_holder>
-              <span className="details">Liquidity</span>
-              {HeaderTooltip("Total value of funds in this farm's liquidity pool.")}
-            </Tooltip_holder>
-            <span className="details">
-              {farm?.liquidity >= 0 ? `$ ${moneyFormatter(farm?.liquidity)}` : <Loader />}
-            </span>
-          </ROW>
-          <ROW>
-            <span className="details">7d Volume</span>
-            <span className="details">
-              {' '}
-              {farm?.volume === '-' ? (
-                '-'
-              ) : farm.volume >= 0 ? (
-                //@ts-ignore
-                `$ ${moneyFormatter(farm?.volume)}`
-              ) : (
-                <Loader />
-              )}
-            </span>
-          </ROW>
-          <ROW>
-            <span className="details">{name} Wallet Balance:</span>
-            <span className="details">{userTokenBalance?.toFixed(3)}</span>
-          </ROW>
-        </ROW_WRAPPER>
-        {wallet.publicKey ? (
+                )}
+              </Tooltip_holder>
+              <span className="details">
+                {' '}
+                {farm?.earned >= 0 ? `${moneyFormatter(farm?.earned)}` : <Loader />}
+              </span>
+            </ROW>
+            <ROW>
+              <Tooltip_holder>
+                <span className="details">Liquidity</span>
+                {HeaderTooltip("Total value of funds in this farm's liquidity pool.")}
+              </Tooltip_holder>
+              <span className="details">
+                {farm?.liquidity >= 0 ? `$ ${moneyFormatter(farm?.liquidity)}` : <Loader />}
+              </span>
+            </ROW>
+            <ROW>
+              <span className="details">7d Volume</span>
+              <span className="details">
+                {' '}
+                {farm?.volume === '-' ? (
+                  '-'
+                ) : farm.volume >= 0 ? (
+                  //@ts-ignore
+                  `$ ${moneyFormatter(farm?.volume)}`
+                ) : (
+                  <Loader />
+                )}
+              </span>
+            </ROW>
+            <ROW>
+              <span className="details">{name} Wallet Balance:</span>
+              <span className="details">{userTokenBalance?.toFixed(3)}</span>
+            </ROW>
+          </ROW_WRAPPER>
           <>
             <STAKE_UNSTAKE>
               <OPERATION_BTN
@@ -364,12 +346,12 @@ export const ExpandedContentMobile: FC<{
             )}
             {name === 'GOFX' ? <Reward>Daily rewards: {`${tokenData.rewards.toFixed(3)} ${name}`}</Reward> : ''}
           </>
-        ) : (
-          <ConnectWrapper>
-            <Connect />
-          </ConnectWrapper>
-        )}
-      </EXPAND_WRAPPER>
-    </>
+        </>
+      ) : (
+        <ConnectWrapper>
+          <Connect />
+        </ConnectWrapper>
+      )}
+    </EXPAND_WRAPPER>
   )
 }
