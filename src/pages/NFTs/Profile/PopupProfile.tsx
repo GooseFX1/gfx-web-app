@@ -27,7 +27,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
   const isCompletingProfile = useMemo(() => sessionUser.uuid === null, [sessionUser])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [profileImage, setProfileImage] = useState<File>()
-  const [imageLink, setImageLink] = useState<string>('')
+  //const [imageLink, setImageLink] = useState<string>('')
 
   useEffect(() => {
     form.setFieldsValue(sessionUser)
@@ -35,19 +35,31 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
     return () => form.setFieldsValue(undefined)
   }, [sessionUser])
 
-  const onFinish = (profileFormData: any) => {
+  const onFinish = async (profileFormData: any) => {
     setIsLoading(true)
-    const formattedProfile = profileFormData
-    if (sessionUser.uuid === null) {
-      completeProfile(formattedProfile)
-    } else {
-      const updatedProfile = {
-        ...formattedProfile,
-        user_id: sessionUser.user_id,
-        uuid: sessionUser.uuid,
-        profile_pic_link: imageLink
+    try {
+      const formattedProfile = profileFormData
+      let imageLink = ''
+
+      if (profileImage) {
+        imageLink = (await uploadFile(profileImage, config)).location
       }
-      updateProfile(updatedProfile)
+
+      if (sessionUser.uuid === null) {
+        await completeProfile(formattedProfile, imageLink)
+      } else {
+        const updatedProfile = {
+          ...formattedProfile,
+          user_id: sessionUser.user_id,
+          uuid: sessionUser.uuid,
+          profile_pic_link: imageLink
+        }
+        await updateProfile(updatedProfile)
+      }
+      setIsLoading(false)
+    } catch (err) {
+      console.error(err)
+      setIsLoading(false)
     }
   }
 
@@ -57,13 +69,13 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
     handleCancel()
   }
 
-  const completeProfile = (profileFormData: INFTProfile) => {
+  const completeProfile = async (profileFormData: INFTProfile, imageLink: string) => {
     if (sessionUser.pubkey.length === 0) {
       console.error('Error: Invalid Public Key')
       return
     }
 
-    completeNFTUserProfile(sessionUser.pubkey).then((res) => {
+    return completeNFTUserProfile(sessionUser.pubkey).then((res) => {
       if (res && res.status === 200 && res.data) {
         const profile = res.data[0]
 
@@ -106,29 +118,10 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
   }
 
   const handleUpload: UploadProps['onChange'] = async (info) => {
-    setIsLoading(true)
-    if (profileImage) {
-      uploadFile(profileImage, config)
-        .then((data: any) => {
-          setImageLink(data.location)
-          setIsLoading(false)
-        })
-        .catch((err) => {
-          console.error(err)
-          setIsLoading(false)
-        })
-    } else {
+    if (!profileImage) {
       const url = await fetch(info.fileList[0].url).then((res) => res.blob())
       const file = new File([url], info.fileList[0].url)
-      uploadFile(file, config)
-        .then((data: any) => {
-          setImageLink(data.location)
-          setIsLoading(false)
-        })
-        .catch((err) => {
-          console.error(err)
-          setIsLoading(false)
-        })
+      setProfileImage(file)
     }
   }
 
