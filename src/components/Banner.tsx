@@ -49,7 +49,7 @@ const BANNER = styled.div`
 
 interface IProps {
   title: string
-  support?: string
+  support?: string | JSX.Element
   iconFileName?: string
   handleDismiss?: (bool: boolean) => void
   [x: string]: any

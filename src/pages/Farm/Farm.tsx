@@ -10,6 +10,7 @@ import { notify, checkMobile } from '../../utils'
 import { logData } from '../../api'
 import CustomTableList from './CustomTableList'
 import { Banner } from '../../components/Banner'
+import { GFX_LINK } from '../../styles'
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   ${tw`sm:px-0 relative flex flex-col w-screen px-6 overflow-y-auto overflow-x-hidden`}
@@ -88,7 +89,16 @@ export const Farm: FC = () => {
               <BETA_BANNER>
                 <Banner
                   title="SSL Beta Testing"
-                  support={'There may be significant APR fluctuations for a few weeks, deposit at your own risk'}
+                  support={
+                    <span>
+                      There may be significant APY fluctuations while SSL v1 pools are in testing phase. We are
+                      implementing improvements for v2 coming soon. Deposit at your own risk. For more information
+                      please visit{' '}
+                      <GFX_LINK href="https://docs.goosefx.io" target="_blank" rel="noreferrer" fontSize={12}>
+                        docs.goosefx.io
+                      </GFX_LINK>
+                    </span>
+                  }
                   iconFileName={'info-icon.svg'}
                   handleDismiss={setBetaBanner}
                 />

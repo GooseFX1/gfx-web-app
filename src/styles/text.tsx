@@ -239,7 +239,7 @@ export const TXT_PRIMARY_GRADIENT = styled.span`
   -webkit-text-fill-color: transparent;
 `
 
-export const GFX_LINK = styled.a`
+export const GFX_LINK = styled.a<{ fontSize?: number }>`
   font-family: '${fontFamily}';
   font-stretch: normal;
   font-style: normal;
@@ -247,21 +247,10 @@ export const GFX_LINK = styled.a`
   font-weight: bold;
   color: ${({ theme }) => theme.secondary4};
   border-bottom: 2px solid ${({ theme }) => theme.secondary4};
+  font-size: ${({ fontSize }) => (fontSize ? fontSize : '14')}px;
+  line-height: ${({ fontSize }) => (fontSize ? fontSize + 2 : '16')}px;
 
   &:hover {
     color: ${({ theme }) => theme.secondary1};
   }
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    font-size: 14px;
-      line-height: 16px;
-  `}
-  ${({ theme }) => theme.mediaWidth.fromSmall`
-    font-size: 18px;
-      line-height: 20px;
-  `}
-  ${({ theme }) => theme.mediaWidth.fromMedium`
-    font-size: 20px;
-      line-height: 22px;
-  `}
 `
