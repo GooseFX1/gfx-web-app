@@ -1,5 +1,11 @@
 [
   {
+    "pair": "SOL/USDC",
+    "type": "crypto",
+    "coinGecko": "solana",
+    "marketAddress": "9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT"
+  },
+  {
     "pair": "GOFX/USDC",
     "type": "crypto",
     "coinGecko": "goosefx",
@@ -292,12 +298,6 @@
     "type": "crypto",
     "coinGecko": "synthetify-token",
     "marketAddress": "DPfj2jYwPaezkCmUNm5SSYfkrkz8WFqwGLcxDDUsN3gA"
-  },
-  {
-    "pair": "SOL/USDC",
-    "type": "crypto",
-    "coinGecko": "solana",
-    "marketAddress": "9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT"
   },
   {
     "pair": "SOL/USDT",

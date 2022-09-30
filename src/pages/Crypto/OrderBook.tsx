@@ -183,7 +183,7 @@ const WRAPPER = styled.div`
   padding: 0px 0px 20px 0px;
 
   border-radius: 10px;
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg17};
   overflow: hidden;
 `
 

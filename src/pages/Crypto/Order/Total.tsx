@@ -4,6 +4,7 @@ import { css } from 'styled-components'
 import { FieldHeader, Picker } from './shared'
 import { useDarkMode, useCrypto, useOrder, useTokenRegistry, useAccounts } from '../../../context'
 import { removeFloatingPointError } from '../../../utils'
+import { floorValue } from '../../../utils'
 
 export const Total: FC = () => {
   const { getUIAmount } = useAccounts()
@@ -110,6 +111,38 @@ export const Total: FC = () => {
             onClick={() => {
               setFocused('total')
               setOrder((prevState) => ({ ...prevState, total: userBalance }))
+            }}
+          >
+            Use Max
+          </span>
+        </Picker>
+      )}
+      {order.side === 'sell' && (
+        <Picker>
+          <Slider
+            id="size-input"
+            max={userBalance}
+            min={0}
+            onChange={(size) => setOrder((prevState) => ({ ...prevState, size }))}
+            step={selectedCrypto.market?.minOrderSize}
+            value={order.size}
+            trackStyle={{
+              height: '10px'
+            }}
+            handleStyle={{
+              height: '20px',
+              width: '20px',
+              background: 'linear-gradient(55.89deg, #8D26AE 21.49%, #D4D3FF 88.89%)',
+              border: '2px solid #FFFFFF'
+            }}
+          />
+          <span
+            onClick={() => {
+              setFocused('size')
+              setOrder((prevState) => ({
+                ...prevState,
+                size: floorValue(userBalance, selectedCrypto.market?.minOrderSize)
+              }))
             }}
           >
             Use Max
