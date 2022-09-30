@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Form, Input, Button } from 'antd'
-
 import { StyledPopupProfile, StyledFormProfile } from './PopupProfile.styled'
 import { useNFTProfile } from '../../../context'
 import { SVGDynamicReverseMode } from '../../../styles'
@@ -42,7 +41,12 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
     if (sessionUser.uuid === null) {
       completeProfile(formattedProfile)
     } else {
-      const updatedProfile = { ...formattedProfile, user_id: sessionUser.uuid, profile_pic_link: imageLink }
+      const updatedProfile = {
+        ...formattedProfile,
+        user_id: sessionUser.user_id,
+        uuid: sessionUser.uuid,
+        profile_pic_link: imageLink
+      }
       updateProfile(updatedProfile)
     }
   }
@@ -102,13 +106,16 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
   }
 
   const handleUpload: UploadProps['onChange'] = async (info) => {
+    setIsLoading(true)
     if (profileImage) {
       uploadFile(profileImage, config)
         .then((data: any) => {
           setImageLink(data.location)
+          setIsLoading(false)
         })
         .catch((err) => {
           console.error(err)
+          setIsLoading(false)
         })
     } else {
       const url = await fetch(info.fileList[0].url).then((res) => res.blob())
@@ -116,9 +123,11 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
       uploadFile(file, config)
         .then((data: any) => {
           setImageLink(data.location)
+          setIsLoading(false)
         })
         .catch((err) => {
           console.error(err)
+          setIsLoading(false)
         })
     }
   }
@@ -163,7 +172,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
               </div>
             </div>
             <Form.Item name="profile_pic_link" label="Profile Image">
-              <Upload beforeUpload={beforeChange} onChange={handleUpload}>
+              <Upload beforeUpload={beforeChange} onChange={handleUpload} listType="picture" maxCount={1}>
                 <Button className="btn-save">Upload Profile Image</Button>
               </Upload>
             </Form.Item>
@@ -202,7 +211,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
                 <div className="hint">Will be used as public URL</div>
               </div>
             </div>
-            <Button className="btn-save" type="primary" htmlType="submit">
+            <Button className="btn-save" type="primary" htmlType="submit" disabled={isLoading}>
               {isLoading ? <Loader /> : 'Save changes'}
             </Button>
           </section>
