@@ -82,5 +82,5 @@ Environment variables are stored in HashiCorp Vault and usually require running 
 To create an release with updated env vars:
 
 - change env var value in HashiCorp Vault (speak with a team member for access)
-- in Terraform Cloud, generate a new run of `infra`, this will set the new values
+- in Terraform Cloud, generate a new run of `infra` manually or via merge commit to the [infra repo](https://github.com/GooseFX1/gfx-infra/pulls). This will set the new values
 - in AWS, go to Amplify/gfx-app, select `release/staging` or `release/prod`, and click 'Redeploy this version'. This will run a new build with refreshed values
