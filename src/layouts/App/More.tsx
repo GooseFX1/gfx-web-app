@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, FC, useState } from 'react'
+import { BaseSyntheticEvent, FC, useState, useEffect } from 'react'
 import { Dropdown } from 'antd'
 import { logEvent } from 'firebase/analytics'
 import styled from 'styled-components'
@@ -113,12 +113,30 @@ const Overlay = () => {
       an !== null && logEvent(an, 'rpc-selector', { ...rpcState })
       notify({ message: `Switched to  ${rpcState.endpointName} (${rpcState.network})` })
     }
+
+    window.sessionStorage.setItem(
+      'gfx-user-rpc-preference',
+      JSON.stringify({
+        ...rpcState,
+        endpointName: isCustomNode ? 'Custom' : rpcState.endpointName,
+        endpoint: nodeURL || rpcState.endpoint
+      })
+    )
   }
 
   const nodeURLHandler = ({ target }) => {
     setNodeURL(target.value)
     setIsCustomNode(rpcState.endpoint !== nodeURL)
   }
+
+  useEffect(() => {
+    const savedState = JSON.parse(window.sessionStorage.getItem('gfx-user-rpc-preference'))
+    if (savedState) {
+      handleClickForRPC(savedState.endpoint, savedState.endpointName, savedState.network)
+      setEndpoint(savedState.endpoint)
+      savedState.endpointName === 'Custom' && setIsCustomNode(true)
+    }
+  }, [network])
 
   return (
     <NewMenu>
@@ -128,7 +146,11 @@ const Overlay = () => {
       <ITEM>
         <ItemRow>
           <span>RPC EndPoint</span>
-          <SelectRPC handleClickForRPC={handleClickForRPC} isCustomNode={isCustomNode} />
+          <SelectRPC
+            endpointName={rpcState.endpointName}
+            handleClickForRPC={handleClickForRPC}
+            isCustomNode={isCustomNode}
+          />
         </ItemRow>
       </ITEM>
       <ITEM>
@@ -152,6 +174,15 @@ const Overlay = () => {
 
 export const More: FC = () => {
   const { mode } = useDarkMode()
+  const { network, setEndpoint } = useConnectionConfig()
+
+  useEffect(() => {
+    const savedState = JSON.parse(window.sessionStorage.getItem('gfx-user-rpc-preference'))
+    if (savedState) {
+      setEndpoint(savedState.endpoint)
+    }
+  }, [network])
+
   return (
     <Dropdown
       align={{ offset: [0, 16] }}
