@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { Form, Input, Button } from 'antd'
+import { Form, Input, Button, Upload, UploadProps, Image } from 'antd'
+import { uploadFile } from 'react-s3'
 import { StyledPopupProfile, StyledFormProfile } from './PopupProfile.styled'
-import { useNFTProfile } from '../../../context'
+import { useNFTProfile, useDarkMode } from '../../../context'
 import { SVGDynamicReverseMode } from '../../../styles'
 import { INFTProfile } from '../../../types/nft_profile.d'
 import { completeNFTUserProfile, updateNFTUser } from '../../../api/NFTs'
 import { Loader } from '../../../components'
-import { Upload, UploadProps } from 'antd'
-import { uploadFile } from 'react-s3'
+import { CenteredDiv } from '../../../styles'
 
 const config = {
   bucketName: 'gfx-nest-image-resources',
@@ -27,6 +27,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
   const isCompletingProfile = useMemo(() => sessionUser.uuid === null, [sessionUser])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [profileImage, setProfileImage] = useState<File>()
+  const { mode } = useDarkMode()
   //const [imageLink, setImageLink] = useState<string>('')
 
   useEffect(() => {
@@ -56,9 +57,9 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
         }
         await updateProfile(updatedProfile)
       }
-      setIsLoading(false)
     } catch (err) {
       console.error(err)
+    } finally {
       setIsLoading(false)
     }
   }
@@ -144,6 +145,29 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
           onFinish={onFinish}
         >
           <section>
+            <CenteredDiv>
+              <Image
+                fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+                src={sessionUser.profile_pic_link}
+                preview={false}
+                className="profile-image-upload"
+              />
+            </CenteredDiv>
+
+            <CenteredDiv style={{ margin: '32px 0' }}>
+              <Upload
+                beforeUpload={beforeChange}
+                onChange={handleUpload}
+                listType="picture"
+                maxCount={1}
+                className={'profile-pic-upload-zone'}
+                onPreview={() => false}
+                accept="image/png, image/jpeg, image/jpg, image/svg+xml, gif"
+              >
+                Update Profile Picture
+              </Upload>
+            </CenteredDiv>
+
             <div className="full-width">
               <div className="half-width">
                 <Form.Item
@@ -161,18 +185,6 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
                 <div className="hint">Will be used for notifications</div>
               </div>
             </div>
-            <Form.Item name="profile_pic_link" label="Profile Image">
-              <Upload
-                beforeUpload={beforeChange}
-                onChange={handleUpload}
-                listType="picture"
-                maxCount={1}
-                onPreview={() => false}
-                accept="image/png, image/jpeg, image/jpg, image/svg+xml, gif"
-              >
-                <Button className="btn-save">Upload Profile Image</Button>
-              </Upload>
-            </Form.Item>
             <Form.Item name="bio" label="Bio">
               <Input />
             </Form.Item>

@@ -134,8 +134,34 @@ export const StyledFormProfile = styled(Form)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  .profile-pic-upload-zone {
+    max-width: 100%;
+
+    span.ant-upload {
+      display: flex;
+      align-items: center;
+      background-color: ${({ theme }) => theme.primary2};
+      padding: 0 ${({ theme }) => theme.margin(4)};
+      height: 42px;
+      width: auto;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      ${({ theme }) => theme.roundedBorders}
+    }
+  }
+
   ${({ theme }) => `
   margin-top: ${theme.margin(3)};
+
+  .profile-image-upload {
+    border-radius: 50%;
+    width: 76px;
+    height: 76px;
+    cursor: pointer;
+  }
+
   .half-width {
     @media(max-width: 500px){
       width: 100%;
@@ -212,6 +238,7 @@ export const StyledFormProfile = styled(Form)`
     line-height: 1;
     margin: ${theme.margin(3)} 0 ${theme.margin(2)};
   }
+
   .btn-save {
     display: flex;
     justify-content: center;
