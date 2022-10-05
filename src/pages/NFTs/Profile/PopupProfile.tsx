@@ -108,12 +108,9 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
       }
     })
   }
+
   const beforeChange = (file: File) => {
-    const isImg = ['png', 'jpg', 'gif', 'jpeg'].includes(file.type.slice(-3))
-    if (isImg) {
-      setProfileImage(file)
-      return true
-    }
+    setProfileImage(file)
     return false
   }
 
@@ -165,7 +162,14 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
               </div>
             </div>
             <Form.Item name="profile_pic_link" label="Profile Image">
-              <Upload beforeUpload={beforeChange} onChange={handleUpload} listType="picture" maxCount={1}>
+              <Upload
+                beforeUpload={beforeChange}
+                onChange={handleUpload}
+                listType="picture"
+                maxCount={1}
+                onPreview={() => false}
+                accept="image/png, image/jpeg, image/jpg, image/svg+xml, gif"
+              >
                 <Button className="btn-save">Upload Profile Image</Button>
               </Upload>
             </Form.Item>
