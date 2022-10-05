@@ -148,7 +148,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
             <CenteredDiv>
               <Image
                 fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-                src={sessionUser.profile_pic_link}
+                src={profileImage ? URL?.createObjectURL(profileImage) : sessionUser.profile_pic_link}
                 preview={false}
                 className="profile-image-upload"
               />
@@ -158,7 +158,6 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
               <Upload
                 beforeUpload={beforeChange}
                 onChange={handleUpload}
-                listType="picture"
                 maxCount={1}
                 className={'profile-pic-upload-zone'}
                 onPreview={() => false}
