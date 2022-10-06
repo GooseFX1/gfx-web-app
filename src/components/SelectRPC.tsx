@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Menu, MenuItem } from '../layouts/App/shared'
 import { ENDPOINTS, useConnectionConfig, useDarkMode } from '../context'
@@ -55,13 +55,15 @@ const Overlay = ({
 
 export const SelectRPC = ({
   handleClickForRPC,
-  isCustomNode
+  isCustomNode,
+  endpointName: extEndpointName
 }: {
   handleClickForRPC: (endpoint: string, endpointName: string, network: string) => void
   isCustomNode: boolean
+  endpointName: string
 }) => {
   const { endpointName } = useConnectionConfig()
-  const [RPCEndpoint, setRPCEndpoint] = useState(endpointName)
+  const [RPCEndpoint, setRPCEndpoint] = useState(extEndpointName || endpointName)
   const [arrowRotation, setArrowRotation] = useState(false)
   const [dropdownVisible, setDropdownVisible] = useState(false)
   const { mode } = useDarkMode()
@@ -79,6 +81,10 @@ export const SelectRPC = ({
     handleClickForRPC(endpoint, endpointName, network)
   }
 
+  useEffect(() => {
+    setRPCEndpoint(extEndpointName)
+  }, [extEndpointName])
+
   return (
     <WRAPPER mode={mode}>
       <ArrowDropdown
@@ -90,7 +96,7 @@ export const SelectRPC = ({
         visible={dropdownVisible}
       >
         <CHILDREN>
-          <span>{isCustomNode ? 'Custom' : RPCEndpoint}</span>
+          <span>{isCustomNode ? 'Custom' : RPCEndpoint || extEndpointName}</span>
         </CHILDREN>
       </ArrowDropdown>
     </WRAPPER>
