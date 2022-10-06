@@ -137,6 +137,9 @@ export const StyledFormProfile = styled(Form)`
 
   .profile-pic-upload-zone {
     max-width: 100%;
+    .ant-upload-list-text {
+      display: none;
+    }
 
     span.ant-upload {
       display: flex;
