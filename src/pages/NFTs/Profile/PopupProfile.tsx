@@ -111,14 +111,17 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
   }
 
   const beforeChange = (file: File) => {
-    setProfileImage(file)
+    const extension = file.name.split('.')[1]
+    const newFile = new File([file], `profile-image-${sessionUser.pubkey}.${extension}`, { type: file.type })
+    setProfileImage(newFile)
     return false
   }
 
   const handleUpload: UploadProps['onChange'] = async (info) => {
     if (!profileImage) {
+      const extension = info.fileList[0].url.split('.')[1]
       const url = await fetch(info.fileList[0].url).then((res) => res.blob())
-      const file = new File([url], info.fileList[0].url)
+      const file = new File([url], `profile-image-${sessionUser.pubkey}.${extension}`)
       setProfileImage(file)
     }
   }
