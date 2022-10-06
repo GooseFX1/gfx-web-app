@@ -90,11 +90,11 @@ export const STYLED_INPUT = styled.input`
   }
 `
 
-export const TABLE_ROW = styled.tr<{ isOpen: boolean; publicKey: any }>`
-  ${({ isOpen, publicKey }) => css`
+export const TABLE_ROW = styled.tr<{ isOpen: boolean; publicKey: any; checkMobile: boolean }>`
+  ${({ isOpen, publicKey, checkMobile }) => css`
     cursor: ${!isOpen && 'pointer'};
     height: ${!isOpen && '90px'} !important;
-    background: ${({ theme }) => theme.expendedRowBg};
+    background: ${({ theme }) => (checkMobile ? theme.expendedRowBg : theme.cellBackground)};
     background: ${!isOpen && 'none'};
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
     border-bottom: ${isOpen && 'none'};

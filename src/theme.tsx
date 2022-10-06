@@ -239,8 +239,8 @@ export function colors(mode: string): Colors {
     tableListBoxShadow: mode === 'dark' ? 'none' : '-2px 27px 30px -10px rgb(189 189 189 / 25%)',
     expendedRowBg:
       mode === 'dark'
-        ? 'linear-gradient(90deg, rgba(247, 147, 26, 0.3) 0%, rgba(220, 31, 255, 0.2) 100%)'
-        : 'linear-gradient(90deg, rgba(247, 147, 26, 0.5) 0%, rgba(220, 31, 255, 0.4) 100%)',
+        ? 'linear-gradient(0deg, rgba(247, 147, 26, 0.3) 0%, rgba(220, 31, 255, 0.2) 100%)'
+        : 'linear-gradient(0deg, rgba(247, 147, 26, 0.5) 0%, rgba(220, 31, 255, 0.4) 100%)',
     filterDownIcon:
       mode === 'dark'
         ? '#000'
@@ -249,6 +249,7 @@ export function colors(mode: string): Colors {
       mode === 'lite'
         ? 'invert(53%) sepia(68%) saturate(7332%) hue-rotate(231deg) brightness(99%) contrast(110%);'
         : '#000',
+    cellBackground: mode === 'dark' ? 'rgba(220, 31, 255, 0.2) 100%' : 'rgba(220, 31, 255, 0.4) 100%',
 
     // primary colors
     primary1Active: mode === 'dark' ? 'white' : '#302eb8',

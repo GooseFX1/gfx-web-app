@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { saveLiquidtyVolume, getVolumeApr } from '../../api/SSL'
+import { saveLiquidtyVolume, getVolumeApr, fetchTotalVolumeTrade } from '../../api/SSL'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
 //import BN from 'bn.js'
@@ -65,13 +65,15 @@ const WRAPPER = styled.div`
   }
   .tableHeader {
     position: sticky;
-    ${tw`h-20 text-base font-semibold	text-white`}
+    ${tw`text-base font-semibold	text-white`}
     background: ${({ theme }) => theme.tableHeader};
   }
   .borderRow {
     border-radius: 20px 0px 0px 25px;
+    height: 74px;
     @media (max-width: 500px) {
       width: 30%;
+      height: 68px;
     }
   }
 
@@ -105,6 +107,7 @@ const CustomTableList = () => {
   const [savedVolume, setSavedVolume] = useState<boolean>(false)
   const [volume7daySum, setVolume7daySum] = useState<number>(0)
   const [sortColumn, setSortColumn] = useState<string | undefined>(undefined)
+  const [totalVolumeTrade, setTotalVolumeTrade] = useState<number | undefined>(undefined)
 
   useEffect(() => {
     refreshTokenData()
@@ -123,9 +126,13 @@ const CustomTableList = () => {
           SDK_ADDRESS.MAINNET.GFX_CONTROLLER.toString()
         )
         setAprVolumeData(data)
+        const totalVolumeTrade = await fetchTotalVolumeTrade()
+        console.log(totalVolumeTrade)
+        setTotalVolumeTrade(totalVolumeTrade)
       }
     })()
-  }, [])
+  }, [counter])
+
   useEffect(() => {
     if (
       stakeVolume !== 0 &&
@@ -140,8 +147,12 @@ const CustomTableList = () => {
   }, [sslVolume, stakeVolume, liquidityObject])
 
   useEffect(() => {
-    if (stakeVolume !== 0 && sslVolume !== 0 && volume7daySum !== 0)
-      setStatsData({ tvl: sslVolume + stakeVolume, volume7dSum: volume7daySum })
+    if (stakeVolume !== 0 && sslVolume !== 0 && volume7daySum !== 0 && totalVolumeTrade)
+      setStatsData({
+        tvl: sslVolume + stakeVolume,
+        volume7dSum: volume7daySum,
+        totalVolumeTrade: totalVolumeTrade
+      })
   }, [volume7daySum, sslVolume, stakeVolume])
 
   useEffect(() => {
@@ -200,7 +211,7 @@ const CustomTableList = () => {
         type: 'SSL',
         id: tokenName,
         key: tokenName,
-        apr: isNaN(APR) ? '-' : tokenName === TOKEN_NAMES.GMT ? 0 : APR * 100,
+        apr: isNaN(APR) ? '-' : tokenName === TOKEN_NAMES.GMT ? 0 : Math.max(APR * 100, -100),
         liquidity: tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0,
         currentlyStaked: wallet.publicKey ? Number(amountDeposited) / Math.pow(10, sslData.decimals) : undefined,
         earned: wallet.publicKey ? Math.max(Number(earned) / Math.pow(10, sslData.decimals), 0) : undefined,

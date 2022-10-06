@@ -7,11 +7,12 @@ import { checkMobile, moneyFormatterWithComma } from '../../utils'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { Loader } from './Columns'
 
 const ABSTRACT = styled.div`
   .lastRefreshed {
     ${tw`flex w-full justify-center font-medium text-center text-base
-  sm:pt-3 sm:text-sm`}
+   sm:text-sm`}
     color: ${({ theme }) => theme.tabNameColor};
     animation: openAnimation 1s forwards;
   }
@@ -27,7 +28,7 @@ const ABSTRACT = styled.div`
   }
   @keyframes closeMe {
     0% {
-      height: 40px;
+      height: 45px;
     }
     100% {
       height: 0px;
@@ -38,21 +39,39 @@ const ABSTRACT = styled.div`
       height: 0px;
     }
     100% {
-      height: 40px;
+      height: 45px;
     }
   }
   .generalStatsBg {
+    display: flex;
+    ${tw`overflow-hidden h-9 whitespace-nowrap font-semibold text-sm`}
     border: 1px solid #fff;
     border-style: solid none;
-    height: 36px;
     background-image: linear-gradient(91deg, rgba(247, 147, 26, 0.8) 0%, rgba(220, 31, 255, 0.6) 100%);
+  }
+  .scroll {
+    animation: marquee 20s linear infinite;
+    padding-right: 10px;
+    display: flex;
+    align-items: center;
+    div {
+      margin-right: 12px;
+    }
+  }
+  @keyframes marquee {
+    0% {
+      transform: translate(110%, 0);
+    }
+    100% {
+      transform: translate(-200%, 0);
+    }
   }
   td {
     ${tw`text-white font-semibold text-sm pl-2.5 pr-2.5`}
   }
   .textContainer {
     ${tw`flex w-11/12 text-white z-10 flex-row   
-    items-center justify-between  pr-20 pl-12 mb-9 sm:mb-5 mt-2 text-sm font-semibold`}
+    items-center justify-between mb-9 sm:mb-5 mt-2 text-sm font-semibold`}
     @media(max-width: 500px) {
       width: 200vw;
       overflow-y: hidden;
@@ -208,20 +227,8 @@ export const FarmFilter = () => {
   if (checkMobile()) {
     return (
       <ABSTRACT>
-        <div className="totalContainer">
-          <table>
-            <tbody>
-              <tr className="generalStatsBg">
-                <td>TVL: {statsData && ` $ ` + moneyFormatterWithComma(statsData.tvl)}</td>
-                <td>Pools: {farmDataContext?.length + farmDataSSLContext?.length}</td>
-                <td>7d Volume: {statsData && ` $ ` + moneyFormatterWithComma(statsData.volume7dSum)}</td>
-                <td>GOFX Price: {prices && ` $ ` + prices['GOFX/USDC']?.current}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
         <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
-
+        <GeneralStatsBarMobile />
         <STYLED_FARM_HEADER>
           <ButtonContainer $poolIndex={poolIndex}>
             <div className="slider-animation"></div>
@@ -251,10 +258,14 @@ export const FarmFilter = () => {
       <WRAPPER>
         <div className="statsBackground" />
         <div className="textContainer">
-          <div>TVL: {statsData && ` $ ` + moneyFormatterWithComma(statsData.tvl)}</div>
+          <div>TVL: {statsData ? ` $ ` + moneyFormatterWithComma(statsData.tvl) : <Loader />}</div>
           <div>Pools: {farmDataContext?.length + farmDataSSLContext?.length}</div>
-          <div>7d Volume: {statsData && ` $ ` + moneyFormatterWithComma(statsData.volume7dSum)} </div>
-          <div>GOFX Price: {prices && ` $ ` + prices['GOFX/USDC']?.current} </div>
+          <div>7d Volume: {statsData ? ` $ ` + moneyFormatterWithComma(statsData.volume7dSum) : <Loader />} </div>
+          <div>
+            Total Volume Trade:{' '}
+            {statsData ? ` $ ` + moneyFormatterWithComma(statsData.totalVolumeTrade) : <Loader />}
+          </div>
+          <div>GOFX Price: {prices['GOFX/USDC'] ? ` $ ` + prices['GOFX/USDC']?.current : <Loader />} </div>
         </div>
         <STYLED_FARM_HEADER>
           <ButtonContainer $poolIndex={poolIndex}>
@@ -310,3 +321,23 @@ const LastRefreshedAnimation = ({ lastRefreshedClass }: any) => (
     )}
   </div>
 )
+
+const GeneralStatsBarMobile = () => {
+  const { farmDataContext, farmDataSSLContext } = useFarmContext()
+  const { prices, statsData } = usePriceFeedFarm()
+
+  return (
+    <div className="generalStatsBg">
+      <div className="scroll">
+        <div>TVL: {statsData && ` $ ` + moneyFormatterWithComma(statsData.tvl)}</div>
+        <div>7d Volume: {statsData && ` $ ` + moneyFormatterWithComma(statsData.volume7dSum)}</div>
+        <div>Pools: {farmDataContext?.length + farmDataSSLContext?.length}</div>
+        <div>
+          Total Volume Trade:{' '}
+          {statsData ? ` $ ` + moneyFormatterWithComma(statsData.totalVolumeTrade) : <Loader />}
+        </div>
+        <div> GOFX Price: {prices && ` $ ` + prices['GOFX/USDC']?.current}</div>
+      </div>
+    </div>
+  )
+}
