@@ -301,9 +301,7 @@ export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingDat
             maxCount={1}
             onChange={handleFileChange}
             accept={acceptableFiles(nftMintingData.properties?.category)}
-            onPreview={() => {
-              //empty function that you need to fill
-            }}
+            onPreview={() => false}
             beforeUpload={handleBeforeUpload}
             onRemove={onRemove}
             fileList={localFile ? [localFile] : []}

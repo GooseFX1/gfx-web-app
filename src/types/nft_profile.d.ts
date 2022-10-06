@@ -5,6 +5,7 @@ import { UserFetchType } from '../context'
 export interface INFTProfile {
   uuid: string
   user_id: number
+  uuid: string
   pubkey: string
   nickname: string
   email: string

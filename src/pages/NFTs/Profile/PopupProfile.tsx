@@ -1,13 +1,20 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { Form, Input, Button } from 'antd'
-
+import { Form, Input, Button, Upload, UploadProps, Image } from 'antd'
+import { uploadFile } from 'react-s3'
 import { StyledPopupProfile, StyledFormProfile } from './PopupProfile.styled'
-import { useNFTProfile } from '../../../context'
+import { useNFTProfile, useDarkMode } from '../../../context'
 import { SVGDynamicReverseMode } from '../../../styles'
 import { INFTProfile } from '../../../types/nft_profile.d'
 import { completeNFTUserProfile, updateNFTUser } from '../../../api/NFTs'
 import { Loader } from '../../../components'
+import { CenteredDiv } from '../../../styles'
 
+const config = {
+  bucketName: 'gfx-nest-image-resources',
+  region: 'ap-south-1',
+  accessKeyId: process.env.REACT_APP_S3_ACCESS_KEY,
+  secretAccessKey: process.env.REACT_APP_S3_SECRET_ACCESS_KEY
+}
 interface Props {
   visible: boolean
   setVisible: (value: boolean) => void
@@ -19,6 +26,9 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
   const [form] = Form.useForm()
   const isCompletingProfile = useMemo(() => sessionUser.uuid === null, [sessionUser])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [profileImage, setProfileImage] = useState<File>()
+  const { mode } = useDarkMode()
+  //const [imageLink, setImageLink] = useState<string>('')
 
   useEffect(() => {
     form.setFieldsValue(sessionUser)
@@ -26,14 +36,31 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
     return () => form.setFieldsValue(undefined)
   }, [sessionUser])
 
-  const onFinish = (profileFormData: any) => {
+  const onFinish = async (profileFormData: any) => {
     setIsLoading(true)
-    const formattedProfile = profileFormData
-    if (sessionUser.uuid === null) {
-      completeProfile(formattedProfile)
-    } else {
-      const updatedProfile = { ...formattedProfile, user_id: sessionUser.user_id, uuid: sessionUser.uuid }
-      updateProfile(updatedProfile)
+    try {
+      const formattedProfile = profileFormData
+      let imageLink = ''
+
+      if (profileImage) {
+        imageLink = (await uploadFile(profileImage, config)).location
+      }
+
+      if (sessionUser.uuid === null) {
+        await completeProfile(formattedProfile, imageLink)
+      } else {
+        const updatedProfile = {
+          ...formattedProfile,
+          user_id: sessionUser.user_id,
+          uuid: sessionUser.uuid,
+          profile_pic_link: imageLink
+        }
+        await updateProfile(updatedProfile)
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -43,14 +70,13 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
     handleCancel()
   }
 
-  const completeProfile = (profileFormData: INFTProfile) => {
+  const completeProfile = async (profileFormData: INFTProfile, imageLink: string) => {
     if (sessionUser.pubkey.length === 0) {
       console.error('Error: Invalid Public Key')
       return
     }
 
-    completeNFTUserProfile(sessionUser.pubkey).then((res) => {
-      console.dir(res)
+    return completeNFTUserProfile(sessionUser.pubkey).then((res) => {
       if (res && res.status === 200 && res.data) {
         const profile = res.data[0]
 
@@ -59,7 +85,8 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
           uuid: profile.uuid,
           user_id: profile.user_id,
           pubkey: profile.pubkey,
-          is_verified: profile.is_verified
+          is_verified: profile.is_verified,
+          profile_pic_link: imageLink
         }
 
         updateProfile(forUpdate)
@@ -81,6 +108,22 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
         console.error(`Error Updating user ${sessionUser.nickname}`)
       }
     })
+  }
+
+  const beforeChange = (file: File) => {
+    const extension = file.name.split('.')[1]
+    const newFile = new File([file], `profile-image-${sessionUser.pubkey}.${extension}`, { type: file.type })
+    setProfileImage(newFile)
+    return false
+  }
+
+  const handleUpload: UploadProps['onChange'] = async (info) => {
+    if (!profileImage) {
+      const extension = info.fileList[0].url.split('.')[1]
+      const url = await fetch(info.fileList[0].url).then((res) => res.blob())
+      const file = new File([url], `profile-image-${sessionUser.pubkey}.${extension}`)
+      setProfileImage(file)
+    }
   }
 
   return (
@@ -105,6 +148,28 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
           onFinish={onFinish}
         >
           <section>
+            <CenteredDiv>
+              <Image
+                fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+                src={profileImage ? URL?.createObjectURL(profileImage) : sessionUser.profile_pic_link}
+                preview={false}
+                className="profile-image-upload"
+              />
+            </CenteredDiv>
+
+            <CenteredDiv style={{ margin: '32px 0' }}>
+              <Upload
+                beforeUpload={beforeChange}
+                onChange={handleUpload}
+                maxCount={1}
+                className={'profile-pic-upload-zone'}
+                onPreview={() => false}
+                accept="image/png, image/jpeg, image/jpg, image/svg+xml, gif"
+              >
+                Update Profile Picture
+              </Upload>
+            </CenteredDiv>
+
             <div className="full-width">
               <div className="half-width">
                 <Form.Item
@@ -122,10 +187,6 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
                 <div className="hint">Will be used for notifications</div>
               </div>
             </div>
-            <Form.Item name="profile_pic_link" label="Profile Image">
-              <Input />
-              <div className="hint">Use a link from https://imgur.com etc.</div>
-            </Form.Item>
             <Form.Item name="bio" label="Bio">
               <Input />
             </Form.Item>
@@ -161,7 +222,7 @@ export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
                 <div className="hint">Will be used as public URL</div>
               </div>
             </div>
-            <Button className="btn-save" type="primary" htmlType="submit">
+            <Button className="btn-save" type="primary" htmlType="submit" disabled={isLoading}>
               {isLoading ? <Loader /> : 'Save changes'}
             </Button>
           </section>

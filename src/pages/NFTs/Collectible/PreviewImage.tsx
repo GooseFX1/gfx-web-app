@@ -115,9 +115,7 @@ const PreviewImage = ({ file, status, image_url }: Props) => {
           listType="picture-card"
           maxCount={1}
           fileList={[file]}
-          onPreview={() => {
-            //fill up the function
-          }}
+          onPreview={() => false}
         />
       ) : (
         <IMAGE_CONTAINER>

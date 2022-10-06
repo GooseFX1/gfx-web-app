@@ -94,7 +94,6 @@ export const Profile: FC = (): JSX.Element => {
     }
 
     if (publicKey !== null) {
-      console.log('!!!PROFILE LOAD!!!', params.userAddress, publicKey.toBase58())
       setIsSessionUser(params.userAddress === publicKey.toBase58())
     }
 
