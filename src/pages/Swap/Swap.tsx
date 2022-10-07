@@ -793,8 +793,8 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
 
     .action {
       ${less
-        ? tw`absolute bottom-0  right-1/3 sm:!text-base sm:!top-[88%] sm:!right-0`
-        : tw`absolute bottom-0  right-60 sm:!text-base sm:!top-[88%] sm:!right-0`}
+        ? tw`absolute bottom-0  right-[28%] sm:!text-base sm:!top-[88%] sm:!right-0`
+        : tw`absolute bottom-0  right-20 sm:!text-base sm:!top-[88%] sm:!right-0`}
     }
   `
 
