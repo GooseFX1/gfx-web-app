@@ -163,7 +163,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }, timeoutDelay)
   }, [connection, network, setPool, tokenA, tokenB])
 
-  const amountPool = useCallback(async () => {
+  const amountPool = async () => {
     if (tokenA && tokenB) {
       let outTokenAmount = 0
       if (inTokenAmount && inTokenAmount != 0) {
@@ -190,7 +190,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } else {
       setOutTokenAmount(0)
     }
-  }, [tokenA, tokenB, inTokenAmount, chosenRoutes, clickNo])
+  }
 
   useEffect(() => {
     if (chosenRoutes.length < 1 && inTokenAmount > 0 && tokenA && tokenB) {
@@ -202,10 +202,10 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     amountPool()
-  }, [inTokenAmount, pool, slippage, tokenA, tokenB, chosenRoutes, clickNo])
+  }, [inTokenAmount, pool, slippage, tokenA, tokenB, clickNo])
 
   useEffect(() => {
-    const interval = setInterval(() => amountPool(), 20000)
+    const interval = setInterval(() => amountPool(), 1500)
     return () => clearInterval(interval)
   }, [amountPool])
 
