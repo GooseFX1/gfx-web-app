@@ -25,11 +25,8 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
     ;(async () => {
       const list = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
       const newList = await (await fetch(TOKEN_LIST_URL[network])).json()
-
-      //we cannot use the full list because of limited icons (795 tokens) and loading time,
-      // so we'll keep on using the name addition for now
       const manualList = newList.filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
-      const jupiterList = newList.filter(({ symbol }) => !SUPPORTED_TOKEN_LIST.includes(symbol)).slice(1, 150)
+      const jupiterList = newList.filter(({ symbol }) => !SUPPORTED_TOKEN_LIST.includes(symbol)).slice(0, 300)
       const splList = [...manualList, ...jupiterList]
 
       let farmSupportedList = list.filter(({ symbol }) => FARM_SUPPORTED_TOKEN_LIST.includes(symbol))

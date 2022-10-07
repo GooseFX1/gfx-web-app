@@ -48,8 +48,8 @@ const INNER_WRAPPER = styled.div`
 
 const LABEL = styled.span`
   font-weight: 500;
-  font-size: 20px;
-  line-height: 24px;
+  font-size: 15px;
+  line-height: normal;
 
   @media (max-width: 500px) {
     font-size: 15px;
