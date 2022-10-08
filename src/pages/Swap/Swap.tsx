@@ -155,6 +155,23 @@ const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
   }
 `
 
+const SWAP_ROUTES = styled.div<{ less: boolean }>`
+  ${tw`relative `}
+
+  .swap-content {
+    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 mb-3 py-8 px-0 mx-8 
+    sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around 
+    sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0 flex-wrap`}
+    justify-content: ${({ less }) => (less ? 'center' : 'center')};
+  }
+
+  .action {
+    ${tw`absolute bottom-0 sm:!text-base sm:!top-[88%] sm:!right-0`}
+
+    right: ${({ less }) => (less ? '28% !important' : '5rem !important')};
+  }
+`
+
 const TokenDetail = styled.div`
   ${tw`flex flex-col w-full py-3`}
 `
@@ -781,23 +798,6 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   const [tokens, setTokens] = useState([])
   const [details, setDetails] = useState([])
 
-  const SWAP_ROUTES = styled.div<{ $less: boolean }>`
-    ${tw`relative `}
-
-    .swap-content {
-      ${tw`flex h-1/5 items-end overflow-x-auto mt-0 mb-3 py-8 px-0 mx-8 
-    sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around 
-    sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0 flex-wrap`}
-      justify-content: ${({ $less }) => ($less ? 'center' : 'center')};
-    }
-
-    .action {
-      ${less
-        ? tw`absolute bottom-0  right-[28%] sm:!text-base sm:!top-[88%] sm:!right-0`
-        : tw`absolute bottom-0  right-20 sm:!text-base sm:!top-[88%] sm:!right-0`}
-    }
-  `
-
   const swapAndFindBestPrice = (details) => {
     const gfxindx = details.findIndex((deet) => deet.name.toLowerCase().includes('goosefx'))
 
@@ -846,10 +846,10 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   }, [routes, tokenA.symbol, tokenB.symbol, tokens, outTokenAmount])
 
   return (
-    <SWAP_ROUTES $less={less || details.length < 4}>
+    <SWAP_ROUTES less={less || details.length < 4}>
       <div className="swap-content">
         {routes?.length < 1
-          ? Array(4)
+          ? Array(2)
               .fill(1)
               .map((_, i) => (
                 <SkeletonCommon
@@ -925,7 +925,7 @@ export const SwapMain: FC = () => {
     inputMint: new PublicKey(tokenA?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     slippage: slippage, // 1% slippage
-    debounceTime: 2500 // debounce ms time before refresh
+    debounceTime: 850 // debounce ms time before refresh
   })
 
   function marketInfoFormat(mkt: any) {
@@ -950,7 +950,7 @@ export const SwapMain: FC = () => {
     } else {
       mainnetRoutes()
     }
-  }, [tokenA?.symbol, tokenB?.symbol, routes, slippage, inTokenAmount, outTokenAmount, network])
+  }, [tokenA?.symbol, tokenB?.symbol, routes, slippage, inTokenAmount, outTokenAmount, gofxOutAmount, network])
 
   function devnetRoutes() {
     setRoutes([])

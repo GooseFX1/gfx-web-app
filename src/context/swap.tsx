@@ -204,7 +204,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       chosenRoutes[0]?.marketInfos?.[0].amm.label.toLowerCase().includes('goosefx')
     ) {
       // needed weak comaprison because of '0.00'=='0'
-      const { impact, gofxAmount } = await preSwapAmount(
+      const { gofxAmount } = await preSwapAmount(
         tokenA,
         tokenB,
         inTokenAmount,
@@ -214,7 +214,6 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         chosenRoutes[0]
       )
       if (gofxAmount) {
-        setPriceImpact(impact)
         setGofxOutAmount(Number(gofxAmount))
       }
     }
@@ -230,16 +229,16 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     amountPool()
-  }, [inTokenAmount, pool, tokenA, tokenB, clickNo])
+  }, [inTokenAmount, pool, slippage, tokenA, tokenB, clickNo])
 
   useEffect(() => {
     amountPoolGoose()
-  }, [inTokenAmount, tokenA, tokenB])
+  }, [inTokenAmount, slippage, tokenA, tokenB])
 
   useEffect(() => {
     const interval = setInterval(() => {
       amountPool()
-    }, 2500)
+    }, 1500)
     return () => clearInterval(interval)
   }, [amountPool])
 
