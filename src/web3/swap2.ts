@@ -1,7 +1,6 @@
 import { Buffer } from 'buffer'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Swap } from 'goosefx-ssl-sdk'
-import { CURRENT_SUPPORTED_TOKEN_LIST } from '../constants'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 
 import {
@@ -161,8 +160,7 @@ export const preSwapAmount = async (
   wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork,
-  route: any,
-  clickNo?: number
+  route: any
 ): Promise<{
   preSwapResult: TransactionSignature | undefined
   impact: number
@@ -172,6 +170,16 @@ export const preSwapAmount = async (
     if (!inTokenAmount || inTokenAmount === 0) return { impact: 0, preSwapResult: '0' }
     const inAmount = BigInt(Math.round(inTokenAmount * 10 ** tokenA.decimals))
     let outAmount: number, priceImpact: number
+
+    if (route && !route.marketInfos[0].amm.label.toLowerCase().includes('goosefx')) {
+      const outedAmount = +(route.outAmount / 10 ** tokenB.decimals).toFixed(7)
+      return {
+        impact: Number(route.priceImpactPct.toFixed(6)),
+        preSwapResult: outedAmount.toString(),
+        gofxAmount: '0'
+      }
+    }
+
     try {
       SWAP.connection = connection
       if (network === 'devnet') {
@@ -187,33 +195,9 @@ export const preSwapAmount = async (
       console.log(e)
     }
 
-    if (network === 'devnet') {
-      return {
-        preSwapResult: outAmount?.toString() || '0',
-        impact: Number(priceImpact),
-        gofxAmount: outAmount?.toString() || '0'
-      }
-    }
-    const available =
-      (tokenB.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA.symbol)) ||
-      (tokenA.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenB.symbol))
-
-    if ((available && clickNo !== 0) || !available) {
-      if (route) {
-        const outedAmount = +(route.outAmount / 10 ** tokenB.decimals).toFixed(7)
-        return {
-          impact: Number(route.priceImpactPct.toFixed(6)),
-          preSwapResult: outedAmount.toString(),
-          gofxAmount: outAmount?.toString() || '0'
-        }
-      } else {
-        return { impact: 0, preSwapResult: '0', gofxAmount: '0' }
-      }
-    }
-
     return {
       preSwapResult: outAmount?.toString() || '0',
-      impact: Number(priceImpact),
+      impact: Number(priceImpact) || 0,
       gofxAmount: outAmount?.toString() || '0'
     }
   } catch (e) {

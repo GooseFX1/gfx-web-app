@@ -920,14 +920,13 @@ export const SwapMain: FC = () => {
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
   const [inAmountTotal, setInAmountTotal] = useState(0)
-  const [trigger, setTrigger] = useState(false)
 
   const { routes, exchange } = useJupiter({
     amount: JSBI.BigInt(inAmountTotal), // raw input amount of tokens
     inputMint: new PublicKey(tokenA?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     slippage: slippage, // 1% slippage
-    debounceTime: 750 // debounce ms time before refresh
+    debounceTime: 2500 // debounce ms time before refresh
   })
 
   function marketInfoFormat(mkt: any) {
@@ -953,22 +952,6 @@ export const SwapMain: FC = () => {
       mainnetRoutes()
     }
   }, [tokenA?.symbol, tokenB?.symbol, routes, slippage, inTokenAmount, outTokenAmount, network])
-
-  useEffect(() => {
-    if (chosenRoutes?.length > 0 && !trigger) {
-      setTrigger(true)
-    }
-  }, [chosenRoutes]) //trigger once to switch default route based on symbols
-
-  useEffect(() => {
-    setTrigger(false)
-  }, [tokenA?.symbol, tokenB?.symbol, network]) //reset the triggers when token symbols or network are changed
-
-  useEffect(() => {
-    if (!chosenRoutes || chosenRoutes.length < 1) return
-
-    setClickNo(0)
-  }, [trigger]) // trigger default route switch
 
   function devnetRoutes() {
     setRoutes([])
