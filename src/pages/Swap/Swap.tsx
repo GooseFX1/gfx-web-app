@@ -889,7 +889,6 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
           <ShowLess
             onClick={() => {
               setLess(true)
-              setClickNo(1)
             }}
           >
             Show Less
