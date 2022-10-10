@@ -95,7 +95,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
   const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
   let userTokenBalance = useMemo(
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
-    [tokenInfo?.address, getUIAmount, publicKey]
+    [tokenInfo?.address, getUIAmount, publicKey, counter]
   )
   const availableToMint =
     tokenData?.ptMinted >= 0 ? tokenData.currentlyStaked + tokenData.earned - tokenData.ptMinted : 0
