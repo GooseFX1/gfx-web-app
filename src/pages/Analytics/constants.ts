@@ -34,6 +34,10 @@ export const TOKEN_PAIRS = {
   mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So: {
     name: 'MSOL',
     pair: 'MSOL/USDC'
+  },
+  '7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj': {
+    name: 'stSOL',
+    pair: 'STSOL/USDC'
   }
 }
 

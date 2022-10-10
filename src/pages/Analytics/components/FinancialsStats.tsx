@@ -25,7 +25,7 @@ export const SSLRevenue = () => {
   const [dataSource, setDataSource] = useState<any>()
   const [dollarSum, setDollarSum] = useState<number>(0)
   //const [revenueUsingName, setRevenueUsingName] = useState<any>();
-  const publicKey = new PublicKey('6nRsKbwm7Ezz4frjkdCNjBWyFjzZfW5jsWCaSVMARcsJ')
+  const publicKey = new PublicKey('GFXSwpZBSU9LF1gHRpRv2u967ACKKncFnfy3VKyQqwhp')
   const { connection } = useConnectionConfig()
   useEffect(() => {
     ;(async () => {
@@ -52,8 +52,11 @@ export const SSLRevenue = () => {
     const arr = []
     let sum = 0
     for (const mint in revenueObj) {
+      if (!TOKEN_PAIRS[mint]) continue
       const mintPrice = tokenPrices[TOKEN_PAIRS[mint].pair]['current']
-      const mintRevenue = revenueObj[mint].uiAmount
+        ? tokenPrices[TOKEN_PAIRS[mint].pair]['current']
+        : 0
+      const mintRevenue = revenueObj && revenueObj[mint].uiAmount
       sum += mintRevenue * mintPrice
       arr.push({
         token: TOKEN_PAIRS[mint].name,
