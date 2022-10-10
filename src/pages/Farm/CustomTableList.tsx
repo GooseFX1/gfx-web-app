@@ -209,7 +209,7 @@ const CustomTableList = () => {
         volume: isNaN(volumeDays) || volumeDays * tokenPrice < 10 ? '-' : volumeDays * tokenPrice
       }
       farmCalculationsArr.push(farmCalculation)
-      volume7dSum += volumeDays * tokenPrice
+      volume7dSum += volumeDays ? volumeDays * tokenPrice : 0
       liqObj[`${tokenName}`] = tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0
       totalLiquidity += tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0
     }
