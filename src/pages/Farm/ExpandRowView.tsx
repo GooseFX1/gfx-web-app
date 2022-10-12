@@ -108,7 +108,6 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
   const [stakeAmt, setStakeAmt] = useState<number | undefined>()
   const [unstakeAmt, setUnstakeAmt] = useState<number | undefined>()
 
-  // const { current } = useMemo(() => prices[`${name.toUpperCase()}/USDC`], [prices])
   const [notEnoughFunds, setNotEnough] = useState<boolean>()
   const [tokenStaked, setTokenStaked] = useState<number>(parseFloat(currentlyStaked))
   const [tokenEarned, setTokenEarned] = useState<number>(parseFloat(earned))
@@ -119,8 +118,10 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
   const getSuccessStakeMsg = (): string => `Successfully staked amount of ${stakeAmt} ${name}!`
   const getErrStakeMsg = (): string => `Staking ${name} error!`
   const getErrUntakeMsg = (): string => `Unstaking ${name} error!`
-  const zeroFunds = name === TOKEN_NAMES.SOL ? userSOLBalance === 0 : userTokenBalance === 0
-
+  const zeroFunds =
+    name === TOKEN_NAMES.SOL
+      ? parseFloat(userSOLBalance?.toFixed(3)) === 0
+      : parseFloat(userTokenBalance?.toFixed(3)) === 0
   useEffect(() => {
     if (wallet.publicKey && name === TOKEN_NAMES.SOL) {
       const SOL = connection.getAccountInfo(wallet.publicKey)
@@ -355,6 +356,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
         onClickWithdraw={onClickWithdraw}
         onClickDeposit={onClickDeposit}
         notEnoughFunds={notEnoughFunds}
+        zeroFunds={zeroFunds}
         depositBtnClass={depositBtnClass}
         setDepositClass={setDepositClass}
         farm={farm}
@@ -451,9 +453,9 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
                     className={withdrawBtnClass}
                     onClick={() => (SSL ? withdrawClicked() : onClickUnstake())}
                     loading={isUnstakeLoading}
-                    disabled={isUnstakeLoading || (SSL && !availableToMint)}
+                    disabled={isUnstakeLoading || !availableToMint}
                   >
-                    {SSL ? 'Withdraw' : 'Unstake and Claim'}
+                    {SSL ? (!availableToMint ? 'No funds to withdraw' : 'Withdraw') : 'Unstake and Claim'}
                   </OPERATIONS_BTN>
                 </div>
               </div>
@@ -470,7 +472,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
 }
 
 const DailyRewards = ({ tokenPrice, tokenData, name }: any) =>
-  tokenData?.rewards ? (
+  tokenData?.rewards !== undefined ? (
     <div className="info-item">
       <div className="title">Daily Rewards</div>
       <div className="value">{`${tokenData?.rewards?.toFixed(3)} ${name}`}</div>

@@ -1,9 +1,6 @@
 import React, { FC, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
-import { logEvent } from 'firebase/analytics'
-import analytics from '../../analytics'
-//import { TableList } from './TableList'
 import { FarmHeader } from './FarmHeader'
 import { useNavCollapse, FarmProvider, useConnectionConfig, ENDPOINTS, PriceFeedFarmProvider } from '../../context'
 import { notify, checkMobile } from '../../utils'
@@ -19,7 +16,7 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   * {
     font-family: Montserrat;
   }
-  ${({ theme }) => theme.customScrollBar('6px')};
+  ${({ theme }) => theme.customScrollBar('0px')};
 
   @media (max-width: 500px) {
     padding-left: 0px;
@@ -54,12 +51,6 @@ export const Farm: FC = () => {
   const [betaBanner, setBetaBanner] = useState<boolean>(true)
 
   useEffect(() => {
-    const an = analytics()
-    an !== null &&
-      logEvent(an, 'screen_view', {
-        firebase_screen: 'Yield Farm',
-        firebase_screen_class: 'load'
-      })
     logData('farm_page')
     if (network === 'devnet') {
       notify({ message: 'Switched to mainnet' })
@@ -83,7 +74,6 @@ export const Farm: FC = () => {
         <PriceFeedFarmProvider>
           <BODY $navCollapsed={isCollapsed}>
             <FarmHeader onFilter={onFilter} />
-            {/* <TableList filter={filter} /> */}
             <CustomTableList />
             {betaBanner && !checkMobile() && (
               <BETA_BANNER>
