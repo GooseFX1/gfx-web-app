@@ -453,7 +453,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
                     className={withdrawBtnClass}
                     onClick={() => (SSL ? withdrawClicked() : onClickUnstake())}
                     loading={isUnstakeLoading}
-                    disabled={isUnstakeLoading || !availableToMint}
+                    disabled={isUnstakeLoading || SSL ? !availableToMint : currentlyStaked + earned <= 0}
                   >
                     {SSL ? (!availableToMint ? 'No funds to withdraw' : 'Withdraw') : 'Unstake and Claim'}
                   </OPERATIONS_BTN>

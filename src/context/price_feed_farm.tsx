@@ -1,5 +1,4 @@
 import React, { createContext, Dispatch, FC, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
-import { FARM_TOKEN_LIST } from './crypto'
 import { getFarmTokenPrices } from '../api/SSL'
 import { Program, Provider } from '@project-serum/anchor'
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
@@ -87,10 +86,8 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
   )
 
   const refreshTokenData = async () => {
-    const PAIR_LIST = [...FARM_TOKEN_LIST]
     ;(async () => {
-      const cryptoMarkets = PAIR_LIST.filter(({ type }) => type === 'crypto')
-      const { data } = await getFarmTokenPrices(cryptoMarkets)
+      const { data } = await getFarmTokenPrices()
       setPrices(data)
       setPriceFetched(true)
     })()
