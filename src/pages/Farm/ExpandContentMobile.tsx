@@ -149,6 +149,7 @@ export const ExpandedContentMobile: FC<{
   notEnoughFunds: boolean
   depositBtnClass: string
   setDepositClass: any
+  zeroFunds: boolean
 }> = ({
   onClickHalf,
   onClickMax,
@@ -166,7 +167,8 @@ export const ExpandedContentMobile: FC<{
   notEnoughFunds,
   depositBtnClass,
   setDepositClass,
-  farm
+  farm,
+  zeroFunds
 }) => {
   const { farmDataContext, farmDataSSLContext } = useFarmContext()
   //const { prices } = usePriceFeedFarm()
@@ -179,7 +181,6 @@ export const ExpandedContentMobile: FC<{
   const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
   const [process, setProcess] = useState<string>('Stake')
   const DISPLAY_DECIMAL = 3
-
   let userTokenBalance = useMemo(
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
     [tokenInfo?.address, getUIAmount, publicKey]
@@ -204,8 +205,12 @@ export const ExpandedContentMobile: FC<{
     if (buttonId === 'stake') setStakeAmt(parseFloat((currentlyStaked + earned).toFixed(DISPLAY_DECIMAL)))
     else setUnstakeAmt(parseFloat(availableToMint.toFixed(DISPLAY_DECIMAL)))
   }
-
   const stakeProcess = process === 'Stake'
+
+  const gofxBtnDisabled = stakeProcess
+    ? isStakeLoading || notEnoughFunds
+    : isUnstakeLoading || currentlyStaked + earned <= 0
+  const SSLDisabledBtn = stakeProcess ? isStakeLoading || notEnoughFunds || zeroFunds : !availableToMint
 
   return (
     <EXPAND_WRAPPER publicKey={wallet.publicKey}>
@@ -223,7 +228,8 @@ export const ExpandedContentMobile: FC<{
               <Tooltip_holder>
                 <span className="details">Total Earned</span>
                 {HeaderTooltip(
-                  `The total profit and loss from SSL and is measured by comparing the total value of a pool’s assets (
+                  `The total profit and loss from SSL and is measured by comparing the total 
+                    value of a pool’s assets (
                   excluding trading fees) to their value if they had not been traded and instead were just held`
                 )}
               </Tooltip_holder>
@@ -281,7 +287,7 @@ export const ExpandedContentMobile: FC<{
             </STAKE_UNSTAKE>
             <STYLED_SOL>
               <STYLED_INPUT
-                onFocus={() => setDepositClass(' active')}
+                onFocus={() => (isSSL ? !SSLDisabledBtn : !gofxBtnDisabled) && setDepositClass(' active')}
                 onBlur={() => setDepositClass('')}
                 value={stakeProcess ? stakeAmt : unstakeAmt}
                 onChange={(e) =>
@@ -329,7 +335,7 @@ export const ExpandedContentMobile: FC<{
               <STYLED_BTN
                 className={depositBtnClass}
                 loading={process === 'Stake' ? isStakeLoading : isUnstakeLoading}
-                disabled={process === 'Stake' ? isStakeLoading : isUnstakeLoading || notEnoughFunds}
+                disabled={gofxBtnDisabled}
                 onClick={() => (process === 'Stake' ? onClickStake() : onClickUnstake())}
               >
                 {stakeProcess ? (notEnoughFunds ? `Not enough ${name}` : 'Deposit') : 'Unstake and Claim'}
@@ -337,11 +343,17 @@ export const ExpandedContentMobile: FC<{
             ) : (
               <STYLED_BTN
                 className={depositBtnClass}
-                disabled={stakeProcess && notEnoughFunds}
+                disabled={SSLDisabledBtn}
                 loading={stakeProcess ? isStakeLoading : isUnstakeLoading}
                 onClick={() => (stakeProcess ? onClickDeposit() : withdrawClicked())}
               >
-                {stakeProcess ? (notEnoughFunds ? `Not enough ${name}` : 'Deposit') : 'Withdraw'}
+                {stakeProcess
+                  ? notEnoughFunds || zeroFunds
+                    ? `Not enough ${name}`
+                    : 'Deposit'
+                  : !availableToMint
+                  ? 'No funds to withdraw'
+                  : 'Withdraw'}
               </STYLED_BTN>
             )}
             {name === 'GOFX' ? <Reward>Daily rewards: {`${tokenData.rewards.toFixed(3)} ${name}`}</Reward> : ''}

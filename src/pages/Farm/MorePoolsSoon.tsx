@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Lottie from 'lottie-react'
 import MorePools from '../../animations/MorePools_dark.json'
 import MorePoolsLite from '../../animations/MorePools_lite.json'
-import { useDarkMode } from '../../context'
+import { useDarkMode, useFarmContext } from '../../context'
 import tw from 'twin.macro'
+import { checkMobile } from '../../utils'
 
 const CONTAINER = styled.div`
   ${tw`flex flex-col items-center min-h-[30vh]`}
@@ -23,12 +24,28 @@ const MoreText = styled.div`
   color: ${({ theme }) => theme.text19};
 `
 
-export const MorePoolsSoon = () => {
+export const MorePoolsSoon = ({ tableRef, length }: any) => {
   const { mode } = useDarkMode()
+  const screenHeight = window.innerHeight
+  const seventyVh = screenHeight / 1.34
+  const [tableHeight, setHeight] = useState<number>()
+  const { toggleDeposited } = useFarmContext()
+  const getSizes = () => {
+    const newHeight = tableRef.current?.clientHeight
+    setHeight(newHeight)
+  }
+  useEffect(() => {
+    getSizes()
+  }, [length, toggleDeposited])
+
   return (
     <tr>
       <td colSpan={7}>
-        <CONTAINER>
+        <CONTAINER
+          style={{
+            paddingTop: tableHeight < seventyVh && !checkMobile() ? seventyVh - tableHeight : 0
+          }}
+        >
           <MorePoolImg>
             <Lottie animationData={mode == 'dark' ? MorePools : MorePoolsLite} className="animation-404" />
           </MorePoolImg>

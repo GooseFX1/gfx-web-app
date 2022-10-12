@@ -44,13 +44,13 @@ const ABSTRACT = styled.div`
   }
   .generalStatsBg {
     display: flex;
-    ${tw`overflow-hidden h-9 whitespace-nowrap font-semibold text-sm`}
+    ${tw`overflow-hidden h-9 whitespace-nowrap font-semibold text-sm mb-1`}
     border: 1px solid #fff;
     border-style: solid none;
     background-image: linear-gradient(91deg, rgba(247, 147, 26, 0.8) 0%, rgba(220, 31, 255, 0.6) 100%);
   }
   .scroll {
-    animation: marquee 20s linear infinite;
+    animation: marquee 120s linear infinite;
     padding-right: 10px;
     display: flex;
     align-items: center;
@@ -60,14 +60,17 @@ const ABSTRACT = styled.div`
   }
   @keyframes marquee {
     0% {
-      transform: translate(110%, 0);
+      transform: translate(80%, 0);
     }
     100% {
-      transform: translate(-200%, 0);
+      transform: translate(-600%, 0);
     }
   }
   td {
     ${tw`text-white font-semibold text-sm pl-2.5 pr-2.5`}
+  }
+  .toggle {
+    ${tw`ml-4`}
   }
   .textContainer {
     ${tw`flex w-11/12 text-white z-10 flex-row   
@@ -96,7 +99,6 @@ const ABSTRACT = styled.div`
       width: 200vw;
       z-index: 5;
       flex: none;
-
       position: absolute;
     }
   }
@@ -107,10 +109,10 @@ const WRAPPER = styled.div`
 `
 
 const STYLED_FARM_HEADER = styled.div`
-  ${tw`absolute w-11/12 mt-16 sm:mt-0`}
-  ${tw`sm:block sm:pt-[20px] sm:pb-[8px] sm:px-[15px] flex flex-row items-center justify-between pb-[23px]`}
+  ${tw`w-[100%] sm:mt-0`}
+  ${tw`sm:block sm:pt-[2px] sm:pb-[8px] sm:px-[15px] flex flex-row items-center justify-between pb-[23px]`}
   .search-bar {
-    ${tw`h-[60px] m-0 bg-black w-[400px] sm:!bg-[#2a2a2a] sm:!pl-[15px]`}
+    ${tw`h-[60px] m-0 bg-black mr-52 sm:mr-0 w-[25vw] sm:w-[400px] sm:!bg-[#2a2a2a] sm:!pl-[15px]`}
     input {
       ${tw`bg-black sm:!bg-[#2a2a2a]`}
     }
@@ -127,15 +129,15 @@ const STYLED_FARM_HEADER = styled.div`
   }
   .selectedBackground {
     ${tw`text-white`}
-    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+    transition: 500ms ease-in-out;
     @media (max-width: 500px) {
       background: none;
     }
   }
 `
 const STYLED_BUTTON = styled.button`
-  ${tw`sm:m-auto sm:w-1/3 cursor-pointer text-center border-none border-0 
-  font-semibold text-base ml-[5px] mr-2.5 w-[112px] h-[44px] rounded-[36px]`}
+  ${tw`sm:m-auto sm:w-1/3 cursor-pointer w-[120px] text-center border-none border-0 
+  font-semibold text-base h-[44px] rounded-[36px] duration-700 `}
   font-family: 'Montserrat';
   background: none;
   color: ${({ theme }) => theme.text17};
@@ -145,17 +147,23 @@ const STYLED_BUTTON = styled.button`
 `
 
 const ButtonContainer = styled.div<{ $poolIndex: number }>`
-  ${tw`relative z-0`}
+  ${tw`relative z-0 sm:mt-2`}
   .slider-animation {
     ${tw`absolute w-1/4 h-[44px] rounded-[36px] z-[-1]`}
-    left: ${({ $poolIndex }) => $poolIndex * 33 + 4}%;
+    left: ${({ $poolIndex }) => $poolIndex * 33 + 4.5}%;
+    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+    transition: left 500ms ease-in-out;
+  }
+  .slider-animation-web {
+    ${tw`absolute w-[30%] h-[44px] rounded-[36px] z-[-1]`}
+    left: ${({ $poolIndex }) => $poolIndex * 33 + 2}%;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
 `
 
 const RefreshIcon = styled.button`
-  ${tw`cursor-pointer mr-[25px] ml-10 rounded-full border-0 p-0 bg-transparent`}
+  ${tw`cursor-pointer  sm:ml-10 rounded-full border-0 p-0 bg-transparent`}
   .rotateRefreshBtn {
     -webkit-animation: cog 1s infinite;
     -moz-animation: cog 1s infinite;
@@ -180,7 +188,7 @@ const IconContainer = styled.div`
 `
 
 const MobileWrapper = styled.div`
-  ${tw`mt-6 flex flex-row `}
+  ${tw`mt-4 flex flex-row `}
   width: 92vw;
 `
 
@@ -227,7 +235,7 @@ export const FarmFilter = () => {
   if (checkMobile()) {
     return (
       <ABSTRACT>
-        <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
+        {/* <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} /> */}
         <GeneralStatsBarMobile />
         <STYLED_FARM_HEADER>
           <ButtonContainer $poolIndex={poolIndex}>
@@ -269,12 +277,13 @@ export const FarmFilter = () => {
         </div>
         <STYLED_FARM_HEADER>
           <ButtonContainer $poolIndex={poolIndex}>
-            {poolTypes.map((pool) => (
+            <div className="slider-animation-web"></div>
+            {poolTypes.map((pool, index) => (
               <STYLED_BUTTON
                 disabled={operationPending}
                 key={pool.name}
                 title={pool.name === 'SSL' ? 'Single Sided Liquidity' : ''}
-                onClick={() => setPoolFilter(pool.name)}
+                onClick={() => handleClick(pool.name, index)}
                 className={pool.name === poolFilter ? 'selectedBackground' : ''}
               >
                 {pool.name}
@@ -325,10 +334,12 @@ const LastRefreshedAnimation = ({ lastRefreshedClass }: any) => (
 const GeneralStatsBarMobile = () => {
   const { farmDataContext, farmDataSSLContext } = useFarmContext()
   const { prices, statsData } = usePriceFeedFarm()
+  const [divArr, setDivArr] = useState<any[]>([])
 
-  return (
-    <div className="generalStatsBg">
-      <div className="scroll">
+  const arr = []
+  for (let i = 0; i < 20; i++)
+    arr.push(
+      <div className="scroll" key={i}>
         <div>TVL: {statsData && ` $ ` + moneyFormatterWithComma(statsData.tvl)}</div>
         <div>7d Volume: {statsData && ` $ ` + moneyFormatterWithComma(statsData.volume7dSum)}</div>
         <div>Pools: {farmDataContext?.length + farmDataSSLContext?.length}</div>
@@ -338,6 +349,10 @@ const GeneralStatsBarMobile = () => {
         </div>
         <div> GOFX Price: {prices && ` $ ` + prices['GOFX/USDC']?.current}</div>
       </div>
-    </div>
-  )
+    )
+  useEffect(() => {
+    statsData && setDivArr(arr)
+  }, [statsData])
+
+  return <div className="generalStatsBg">{divArr}</div>
 }

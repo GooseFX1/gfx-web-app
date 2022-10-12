@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { saveLiquidtyVolume, getVolumeApr, fetchTotalVolumeTrade } from '../../api/SSL'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -44,11 +44,11 @@ export interface IFarmData {
 }
 
 const WRAPPER = styled.div`
-  margin-top: 70px;
+  margin-top: 10px;
   height: 74vh !important;
   overflow-y: auto;
   overflow-x: hidden;
-  ${({ theme }) => theme.customScrollBar('6px')}
+  ${({ theme }) => theme.customScrollBar('0px')}
   @media(max-width: 500px) {
     height: 100vh !important;
   }
@@ -57,7 +57,7 @@ const WRAPPER = styled.div`
     @media (max-width: 500px) {
       width: 100vw;
       position: absolute;
-      margin-top: 90px;
+      margin-top: 2px;
     }
     width: 100%;
     background: ${({ theme }) => theme.bg17};
@@ -108,6 +108,8 @@ const CustomTableList = () => {
   const [volume7daySum, setVolume7daySum] = useState<number>(0)
   const [sortColumn, setSortColumn] = useState<string | undefined>(undefined)
   const [totalVolumeTrade, setTotalVolumeTrade] = useState<number | undefined>(undefined)
+
+  const tableRef = useRef(null)
 
   useEffect(() => {
     refreshTokenData()
@@ -309,13 +311,14 @@ const CustomTableList = () => {
       const APR: number = (1 / liqidity) * DR * 365
       // user account data
       const accountData = await fetchCurrentAmountStaked(connection, network, wallet)
-      const currentlyStaked = accountData.tokenStaked ? accountData.tokenStaked : undefined
+      const currentlyStaked = accountData.tokenStaked !== undefined ? accountData.tokenStaked : undefined
+
       const dailyRewards = (APR * currentlyStaked) / 365
       const newFarmDataContext = farmDataContext.map((data) => {
         if (data.name === TOKEN_NAMES.GOFX) {
           return {
             ...data,
-            earned: accountData.tokenEarned ? accountData.tokenEarned : undefined,
+            earned: accountData.tokenEarned !== undefined ? accountData.tokenEarned : undefined,
             apr: APR * 100,
             rewards: dailyRewards,
             liquidity: getTokenPrice(TOKEN_NAMES.GOFX).current * liqidity,
@@ -333,7 +336,7 @@ const CustomTableList = () => {
 
   return (
     <WRAPPER>
-      <table>
+      <table ref={tableRef}>
         <thead className="tableHeader">
           <tr>
             {checkMobile() ? (
@@ -347,7 +350,7 @@ const CustomTableList = () => {
           {farmData.map((farm: IFarmData, index: number) => (
             <ExpandRowView key={index} index={index} farm={farm} />
           ))}
-          <MorePoolsSoon />
+          <MorePoolsSoon tableRef={tableRef} length={farmData.length} />
         </tbody>
       </table>
     </WRAPPER>
