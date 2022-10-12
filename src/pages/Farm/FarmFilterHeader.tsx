@@ -235,7 +235,7 @@ export const FarmFilter = () => {
   if (checkMobile()) {
     return (
       <ABSTRACT>
-        {/* <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} /> */}
+        <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
         <GeneralStatsBarMobile />
         <STYLED_FARM_HEADER>
           <ButtonContainer $poolIndex={poolIndex}>
