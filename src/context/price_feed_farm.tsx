@@ -28,6 +28,7 @@ interface IChange {
 interface IStats {
   tvl: number
   volume7dSum: number
+  totalVolumeTrade?: number
 }
 interface IPriceFeedConfig {
   prices: IPrices

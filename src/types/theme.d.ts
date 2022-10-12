@@ -185,6 +185,7 @@ export interface Colors {
   filterDownIcon: Color
   filterArrowDown: Color
   tableHeader: Color
+  cellBackground: Color
 
   // secondary
   secondary1: Color

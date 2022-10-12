@@ -25,6 +25,17 @@ export const fetchSSLVolumeData = async (tokenAddress: string, controller: strin
     return err
   }
 }
+export const fetchTotalVolumeTrade = async () => {
+  try {
+    const res = await axios.get(
+      NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + `${SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE}`
+    )
+    //const res = await axios.get('http://localhost:4000' + SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE)
+    return res.data.data
+  } catch (err) {
+    return err
+  }
+}
 
 export const saveLiquidtyVolume = async (sslVolume: number, stakeVolume: number, liqObj: object) => {
   try {
