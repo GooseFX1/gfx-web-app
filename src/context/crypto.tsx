@@ -52,19 +52,6 @@ export const FEATURED_PAIRS_LIST = [
   { pair: 'AMZN/USD', type: 'synth' as MarketType, coinGecko: '' },
   { pair: 'TSLA/USD', type: 'synth' as MarketType, coinGecko: '' }
 ]
-export const FARM_TOKEN_LIST = [
-  // this is added to fetch current price from coin geko
-  { decimals: 3, pair: 'GOFX/USDC', type: 'crypto' as MarketType, coinGecko: 'goosefx' },
-  { decimals: 2, pair: 'ETH/USDC', type: 'crypto' as MarketType, coinGecko: 'ethereum' },
-  { decimals: 3, pair: 'SOL/USDC', type: 'crypto' as MarketType, coinGecko: 'solana' },
-  { decimals: 3, pair: 'MSOL/USDC', type: 'crypto' as MarketType, coinGecko: 'solana' },
-  { decimals: 3, pair: 'SRM/USDC', type: 'crypto' as MarketType, coinGecko: 'serum' },
-  { decimals: 3, pair: 'GMT/USDC', type: 'crypto' as MarketType, coinGecko: 'stepn' },
-  { decimals: 3, pair: 'USDT/USD', type: 'crypto' as MarketType, coinGecko: 'tether' },
-  { decimals: 3, pair: 'USDC/USDT', type: 'crypto' as MarketType, coinGecko: 'usd-coin' },
-  { decimals: 3, pair: 'ORCA/USDC', type: 'crypto' as MarketType, coinGecko: 'orca' },
-  { decimals: 3, pair: 'STSOL/USDC', type: 'crypto' as MarketType, coinGecko: 'lido-staked-sol' }
-]
 
 const CryptoContext = createContext<ICryptoConfig | null>(null)
 

@@ -38,7 +38,7 @@ export const SSLRevenue = () => {
         acc[mint] = tokenAmount
         return acc
       }, {})
-      const { data } = await getFarmTokenPrices({})
+      const { data } = await getFarmTokenPrices()
       setTokenprices(data)
       setRevenueObj(accounts)
     })()
