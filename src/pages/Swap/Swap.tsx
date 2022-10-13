@@ -133,7 +133,9 @@ const TokenHeader = styled.div`
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
-  ${tw`h-[75px] rounded-average p-px cursor-pointer mr-7 !w-[310px] mb-4 sm:h-16.25 sm:mt-0 sm:mx-0 sm:mb-4`}
+  ${tw`h-[75px] rounded-average p-px cursor-pointer mr-7 !min-w-[310px] mb-4 
+  sm:h-16.25 sm:mt-0 sm:mx-0 sm:mb-4 sm:min-w-[80vw]`}
+
   background: ${({ theme, $clicked }) =>
     $clicked ? 'linear-gradient(90deg,rgba(247,147,26,0.5) 0%,rgba(220,31,255,0.5) 100%)' : theme.bg1};
   box-shadow: 0 6px 9px 0 rgba(36, 36, 36, 0.1);
@@ -156,17 +158,21 @@ const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
 `
 
 const SWAP_ROUTES = styled.div<{ less: boolean }>`
-  ${tw`relative `}
+  ${tw`relative mx-[24px] pt-4`}
 
   .swap-content {
-    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 mb-3 py-8 px-0 mx-8 
+    ${tw`flex h-1/5 mt-0 mb-3 pt-4 pl-4 justify-center
     sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around 
-    sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0 flex-wrap`}
-    justify-content: ${({ less }) => (less ? 'center' : 'center')};
+    sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0`}
+    overflow-x: scroll;
+
+    @media (max-width: 1415px) {
+      justify-content: start;
+    }
   }
 
   .action {
-    ${tw`absolute bottom-0 sm:!text-base sm:!top-[88%] sm:!right-0`}
+    ${tw`absolute bottom-[-36px] sm:!text-base sm:!top-[88%] sm:!right-0`}
 
     right: ${({ less }) => (less ? '28% !important' : '5rem !important')};
   }
@@ -215,16 +221,11 @@ const PRICE_WRAPPER = styled.div`
   background: ${({ theme }) => theme.swapSides2};
 `
 
-const BestPrice = styled.div`
-  ${tw`absolute font-semibold items-center text-xs p-2 rounded-md text-white leading-3`}
-  margin-top: -90px;
-  margin-left: 220px;
+const ROUTE_TAG = styled.div`
+  ${tw`absolute top-[-12px] right-[-18px] font-semibold items-center text-xs p-2 rounded-md text-white leading-3 
+  sm:top-[32px] sm:right-0`}
   background-color: #be2cff;
   z-index: 100;
-
-  @media (max-width: 500px) {
-    margin-top: -60px;
-  }
 `
 
 const ShowLess = styled.div`
@@ -877,8 +878,8 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
                     <AltSmallTitle>{detail?.value}</AltSmallTitle>
                   </TokenDetail>
                   <TokenPrice className={'price'}>{detail?.price || null}</TokenPrice>
-                  {detail.bestPrice && <BestPrice>Best Price</BestPrice>}
-                  {detail.fastest && <BestPrice>Preferred</BestPrice>}
+                  {detail.bestPrice && <ROUTE_TAG>Best Price</ROUTE_TAG>}
+                  {detail.fastest && <ROUTE_TAG>Preferred</ROUTE_TAG>}
                 </div>
               </SWAP_ROUTE_ITEM>
             ))}
