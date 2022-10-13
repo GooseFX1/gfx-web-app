@@ -238,7 +238,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       amountPool()
-    }, 1500)
+    }, 5000)
     return () => clearInterval(interval)
   }, [amountPool])
 
