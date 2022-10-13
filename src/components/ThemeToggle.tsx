@@ -21,8 +21,8 @@ const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
     ${({ theme }) => theme.roundedBorders}
     background: ${({ $mode }) =>
       $mode
-        ? 'linear-gradient(96.79deg, #5855FF 4.25%, #DC1FFF 97.61%);'
-        : 'linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%);'};
+        ? 'linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%);'
+        : 'linear-gradient(96.79deg, #5855FF 4.25%, #DC1FFF 97.61%);'};
 
     transform: translateX(${({ $mode }) => ($mode ? '-12px' : '12px')});
 `

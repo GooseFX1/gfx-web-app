@@ -32,13 +32,15 @@ const LABEL = styled.span<{ $mode: string; $hover: boolean }>`
   font-weight: ${({ $hover }) => ($hover ? '600' : 'normal')};
 
   @media (max-width: 500px) {
-    color: #4e4e4e;
-    color: ${({ $hover }) => ($hover ? 'white' : '#4e4e4e')};
+    color: ${({ $hover, $mode }) => ($hover ? '#FFFFFF' : $mode === 'dark' ? '#4E4E4E' : '#636363')};
   }
 `
 
-const TAB = styled(Link)`
+const TAB = styled(Link)<{ $hover: boolean }>`
   ${tw`flex flex-col items-center justify-center sm:relative sm:flex-row sm:justify-center sm:w-full`}
+  @media (max-width: 500px) {
+    background-color: ${({ $hover }) => ($hover ? '#5855FF' : 'inherit')};
+  }
 `
 
 const TAB_ICON = styled(CenteredImg)`
@@ -46,7 +48,7 @@ const TAB_ICON = styled(CenteredImg)`
 `
 
 const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: number }>`
-  ${tw`relative h-20 rounded-circle`}
+  ${tw`relative h-20 rounded-circle sm:mt-8`}
   background-color: ${({ theme }) => theme.bg9};
 
   .arrow-down {
@@ -159,6 +161,7 @@ export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
           onClick={() => {
             if (props.mobileToggle) props.mobileToggle()
           }}
+          $hover={cleanedPathName === path}
         >
           <TAB_ICON>
             {(() => {
@@ -166,6 +169,9 @@ export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
                 mode === 'dark' ? `/img/assets${path}_icon_dark.svg` : `/img/assets${path}_icon_lite.svg`
 
               if (cleanedPathName === path) {
+                if (window?.innerWidth < 500) {
+                  return <SVGToWhite src={`/img/assets${path}_icon_dark.svg`} alt="gfx-tab-icon" />
+                }
                 return mode === 'dark' ? (
                   <SVGToWhite src={icon} alt="gfx-tab-icon" />
                 ) : (
