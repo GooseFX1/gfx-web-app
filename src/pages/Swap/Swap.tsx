@@ -69,7 +69,7 @@ const BODY = styled.div`
 
 const HEADER_TITLE = styled(CenteredDiv)`
   span {
-    ${tw`text-xl font-semibold mt-[1px]`}
+    ${tw`text-[20px] font-semibold mt-[1px] `}
     color: ${({ theme }) => theme.text1};
     font-family: Montserrat;
   }
@@ -83,7 +83,7 @@ const TOKEN_WRAPPER = styled.div`
 `
 
 const TokenTitle = styled.div`
-  ${tw`font-semibold text-[20px]`}
+  ${tw`font-semibold text-[18px]`}
   color: ${({ theme }) => theme.text1};
   line-height: inherit;
 `
@@ -92,8 +92,12 @@ const TokenTitleFees = styled(TokenTitle)`
   ${tw`flex items-center`}
 `
 
+const TokenPrice = styled(TokenTitle)`
+  ${tw`text-[16px]`}
+`
+
 const TokenTitleFDV = styled(TokenTitle)`
-  ${tw`text-[20px]`}
+  ${tw`text-[18px]`}
 `
 
 const SmallTitle = styled.div`
@@ -102,7 +106,7 @@ const SmallTitle = styled.div`
 `
 
 const AltSmallTitle = styled.div`
-  ${tw`font-semibold text-xs`}
+  ${tw`font-semibold text-[15px]`}
   color: ${({ theme }) => theme.text12};
   line-height: inherit;
 `
@@ -125,17 +129,19 @@ const SmallerTitle = styled.div`
   text-fill-color: transparent;
 `
 const TokenHeader = styled.div`
-  ${tw`flex flex-col w-full mb-4.5 ml-10 sm:ml-0 sm:items-center`}
+  ${tw`flex flex-col w-full mb-2.5 ml-10 sm:ml-0 sm:items-center`}
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
-  ${tw`h-24.25 rounded-average p-px cursor-pointer mr-7 !min-w-330 mb-4 sm:h-16.25 sm:mt-0 sm:mx-0 sm:mb-4`}
+  ${tw`h-[75px] rounded-average p-px cursor-pointer mr-7 !min-w-[310px] mb-4 
+  sm:h-16.25 sm:mt-0 sm:mx-0 sm:mb-4 sm:min-w-[80vw]`}
+
   background: ${({ theme, $clicked }) =>
     $clicked ? 'linear-gradient(90deg,rgba(247,147,26,0.5) 0%,rgba(220,31,255,0.5) 100%)' : theme.bg1};
   box-shadow: 0 6px 9px 0 rgba(36, 36, 36, 0.1);
 
   .inner-container {
-    ${tw`relative flex justify-center items-center h-full w-full rounded-average p-4 sm:static`}
+    ${tw`relative flex justify-center items-center h-full w-full rounded-average p-2 sm:static`}
     background: ${({ $clicked, $cover }) => ($clicked ? $cover : 'transparent')};
 
     .content {
@@ -148,6 +154,27 @@ const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
     .price {
       ${tw`w-30p ml-1`}
     }
+  }
+`
+
+const SWAP_ROUTES = styled.div<{ less: boolean }>`
+  ${tw`relative mx-[24px] pt-4`}
+
+  .swap-content {
+    ${tw`flex h-1/5 mt-0 mb-3 pt-4 pl-4 justify-center
+    sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around 
+    sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0`}
+    overflow-x: scroll;
+
+    @media (max-width: 1415px) {
+      justify-content: start;
+    }
+  }
+
+  .action {
+    ${tw`absolute bottom-[-36px] sm:!text-base sm:!top-[88%] sm:!right-0`}
+
+    right: ${({ less }) => (less ? '28% !important' : '5rem !important')};
   }
 `
 
@@ -194,31 +221,11 @@ const PRICE_WRAPPER = styled.div`
   background: ${({ theme }) => theme.swapSides2};
 `
 
-const SWAP_ROUTES = styled.div<{ $less: boolean }>`
-  ${tw`relative`}
-
-  .swap-content {
-    ${tw`flex h-1/5 items-end overflow-x-auto mt-0 mb-3 py-8 px-0 mx-8 
-    sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around 
-    sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0 flex-wrap`}
-    justify-content: ${({ $less }) => ($less ? 'center' : 'center')};
-  }
-
-  .action {
-    ${tw`absolute top-0 right-8 sm:!text-base sm:!top-[88%] sm:!right-0`}
-  }
-`
-
-const BestPrice = styled.div`
-  ${tw`absolute font-semibold items-center text-xs p-2 rounded-md text-white leading-3`}
-  margin-top: -90px;
-  margin-left: 230px;
+const ROUTE_TAG = styled.div`
+  ${tw`absolute top-[-12px] right-[-18px] font-semibold items-center text-xs p-2 rounded-md text-white leading-3 
+  sm:top-[32px] sm:right-0`}
   background-color: #be2cff;
   z-index: 100;
-
-  @media (max-width: 500px) {
-    margin-top: -60px;
-  }
 `
 
 const ShowLess = styled.div`
@@ -358,7 +365,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
       border-radius: 45px;
       border: none;
       padding-right: 20px;
-      font-size: 16px;
+      font-size: 20px !important;
       font-weight: 600;
     }
 
@@ -786,6 +793,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   clickNo,
   routes
 }) => {
+  const [less, setLess] = useState(false)
   const { mode } = useDarkMode()
   const { tokenA, tokenB, outTokenAmount } = useSwap()
   const [tokens, setTokens] = useState([])
@@ -814,20 +822,21 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
     function getObjectDetails(no: number) {
       const route = routes[no]
       const market = route.marketInfos
-      const name =
+      let name =
         market.length === 1
           ? market[0].amm.label
           : market[0].amm.label + ' x ' + route.marketInfos.slice(-1)[0].amm.label
+      name = name.length > 18 ? name.slice(0, 18) + '...' : name
       const value =
         route.marketInfos.length < 2
-          ? tokenA.symbol + ' to ' + tokenB.symbol
+          ? tokenA.symbol + ' • ' + tokenB.symbol
           : tokenA.symbol +
-            ' to ' +
+            ' • ' +
             (tokens.find((i) => i.address === route.marketInfos[0].outputMint.toBase58())?.symbol || 'unknown') +
-            ' to ' +
+            ' • ' +
             tokenB.symbol
-      const out = +(route.outAmount / 10 ** tokenB.decimals).toFixed(4)
-      const outAmount = +(route.outAmount / 10 ** tokenB.decimals).toFixed(7)
+      const out = +(route.outAmount / 10 ** tokenB.decimals).toFixed(6)
+      const outAmount = +(route.outAmount / 10 ** tokenB.decimals).toFixed(6)
       return { name, value, price: out, outAmount }
     }
     let details = routes.map((_, k) => getObjectDetails(k))
@@ -837,18 +846,17 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
     setDetails(details)
   }, [routes, tokenA.symbol, tokenB.symbol, tokens, outTokenAmount])
 
-  const [less, setLess] = useState(false)
   return (
-    <SWAP_ROUTES $less={less || details.length < 4}>
+    <SWAP_ROUTES less={less || details.length < 4}>
       <div className="swap-content">
         {routes?.length < 1
-          ? Array(3)
+          ? Array(2)
               .fill(1)
               .map((_, i) => (
                 <SkeletonCommon
                   key={i}
-                  width={'330px'}
-                  height={checkMobile() ? '64px' : '100px'}
+                  width={'310px'}
+                  height={checkMobile() ? '64px' : '75px'}
                   borderRadius="10px"
                   style={{
                     marginRight: checkMobile() ? '0px' : '16px',
@@ -866,12 +874,12 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
               >
                 <div className={'inner-container'}>
                   <TokenDetail className={'content'}>
-                    <TokenTitle>{detail?.name.slice(0, 20)}</TokenTitle>
+                    <TokenTitle>{detail?.name}</TokenTitle>
                     <AltSmallTitle>{detail?.value}</AltSmallTitle>
                   </TokenDetail>
-                  <TokenTitle className={'price'}>{detail?.price || null}</TokenTitle>
-                  {detail.bestPrice && <BestPrice>Best Price</BestPrice>}
-                  {detail.fastest && <BestPrice>Preferred</BestPrice>}
+                  <TokenPrice className={'price'}>{detail?.price || null}</TokenPrice>
+                  {detail.bestPrice && <ROUTE_TAG>Best Price</ROUTE_TAG>}
+                  {detail.fastest && <ROUTE_TAG>Preferred</ROUTE_TAG>}
                 </div>
               </SWAP_ROUTE_ITEM>
             ))}
@@ -882,7 +890,6 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
           <ShowLess
             onClick={() => {
               setLess(true)
-              setClickNo(1)
             }}
           >
             Show Less
@@ -913,14 +920,13 @@ export const SwapMain: FC = () => {
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
   const [inAmountTotal, setInAmountTotal] = useState(0)
-  const [trigger, setTrigger] = useState(false)
 
   const { routes, exchange } = useJupiter({
     amount: JSBI.BigInt(inAmountTotal), // raw input amount of tokens
     inputMint: new PublicKey(tokenA?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     slippage: slippage, // 1% slippage
-    debounceTime: 750 // debounce ms time before refresh
+    debounceTime: 850 // debounce ms time before refresh
   })
 
   function marketInfoFormat(mkt: any) {
@@ -945,23 +951,7 @@ export const SwapMain: FC = () => {
     } else {
       mainnetRoutes()
     }
-  }, [tokenA?.symbol, tokenB?.symbol, routes, slippage, inTokenAmount, outTokenAmount, network])
-
-  useEffect(() => {
-    if (chosenRoutes?.length > 0 && !trigger) {
-      setTrigger(true)
-    }
-  }, [chosenRoutes]) //trigger once to switch default route based on symbols
-
-  useEffect(() => {
-    setTrigger(false)
-  }, [tokenA?.symbol, tokenB?.symbol, network]) //reset the triggers when token symbols or network are changed
-
-  useEffect(() => {
-    if (!chosenRoutes || chosenRoutes.length < 1) return
-
-    setClickNo(0)
-  }, [trigger]) // trigger default route switch
+  }, [tokenA?.symbol, tokenB?.symbol, routes, slippage, inTokenAmount, outTokenAmount, gofxOutAmount, network])
 
   function devnetRoutes() {
     setRoutes([])

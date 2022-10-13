@@ -17,6 +17,7 @@ export const AmountField = styled.div<{ $balance: string; $height: string; $valu
     font-size: 15px;
     font-weight: 500;
     white-space: nowrap;
+    font-family: Montserrat;
 
     @media (max-width: 500px) {
       top: ${({ theme, $down }) => (!$down ? `-${theme.margin(5)}` : theme.margin(9))};

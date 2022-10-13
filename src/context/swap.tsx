@@ -163,7 +163,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }, timeoutDelay)
   }, [connection, network, setPool, tokenA, tokenB])
 
-  const amountPool = useCallback(async () => {
+  const amountPool = async () => {
     if (tokenA && tokenB) {
       let outTokenAmount = 0
       if (inTokenAmount && inTokenAmount != 0) {
@@ -175,13 +175,16 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
           wallet,
           connection,
           network,
-          chosenRoutes[clickNo],
-          clickNo
+          chosenRoutes[clickNo]
         )
         if (preSwapResult) {
           outTokenAmount = Number(preSwapResult)
           setPriceImpact(impact)
-          setGofxOutAmount(Number(gofxAmount))
+          if (!chosenRoutes[clickNo]?.marketInfos?.[0].amm.label.toLowerCase().includes('goosefx')) {
+            amountPoolGoose()
+          } else {
+            setGofxOutAmount(Number(gofxAmount))
+          }
         } else {
           notify({ type: 'error', message: 'Fetch Pre-swap Amount Failed', icon: 'error' })
         }
@@ -190,7 +193,31 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } else {
       setOutTokenAmount(0)
     }
-  }, [tokenA, tokenB, inTokenAmount, chosenRoutes, clickNo])
+  }
+
+  const amountPoolGoose = async () => {
+    if (
+      tokenA &&
+      tokenB &&
+      inTokenAmount &&
+      inTokenAmount != 0 &&
+      chosenRoutes[0]?.marketInfos?.[0].amm.label.toLowerCase().includes('goosefx')
+    ) {
+      // needed weak comaprison because of '0.00'=='0'
+      const { gofxAmount } = await preSwapAmount(
+        tokenA,
+        tokenB,
+        inTokenAmount,
+        wallet,
+        connection,
+        network,
+        chosenRoutes[0]
+      )
+      if (gofxAmount) {
+        setGofxOutAmount(Number(gofxAmount))
+      }
+    }
+  }
 
   useEffect(() => {
     if (chosenRoutes.length < 1 && inTokenAmount > 0 && tokenA && tokenB) {
@@ -202,10 +229,16 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     amountPool()
-  }, [inTokenAmount, pool, slippage, tokenA, tokenB, chosenRoutes, clickNo])
+  }, [inTokenAmount, pool, slippage, tokenA, tokenB, clickNo])
 
   useEffect(() => {
-    const interval = setInterval(() => amountPool(), 20000)
+    amountPoolGoose()
+  }, [inTokenAmount, slippage, tokenA, tokenB])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      amountPool()
+    }, 5000)
     return () => clearInterval(interval)
   }, [amountPool])
 

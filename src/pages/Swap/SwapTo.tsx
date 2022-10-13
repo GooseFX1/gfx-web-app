@@ -15,7 +15,7 @@ const AMOUNT = styled.div`
     display: block;
     padding: 0 20px 0 120px;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 20px;
     line-height: 22px;
     white-space: nowrap;
     overflow: hidden;
@@ -32,10 +32,15 @@ const WRAPPER = styled.div`
   }
 `
 
+const LabelDiv = styled.div`
+  padding-bottom: 0.5rem;
+`
+
 const LABEL = styled.span`
   font-weight: 500;
-  font-size: 20px;
-  line-height: 24px;
+  font-size: 15px;
+  line-height: normal;
+  margin-top: -1rem;
 
   @media (max-width: 500px) {
     font-size: 15px;
@@ -68,7 +73,9 @@ export const SwapTo: FC<{ height: string }> = ({ height }) => {
 
   return (
     <WRAPPER>
-      <LABEL>You Receive</LABEL>
+      <LabelDiv>
+        <LABEL>You Receive</LABEL>
+      </LabelDiv>
       <AmountField
         $balance={balance + ' ' + (tokenB?.symbol || '')}
         $height={height}
