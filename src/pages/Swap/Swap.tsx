@@ -133,7 +133,7 @@ const TokenHeader = styled.div`
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
-  ${tw`h-[75px] rounded-average p-px cursor-pointer mr-7 !min-w-[310px] mb-4 
+  ${tw`h-[75px] rounded-average p-px cursor-pointer mr-7 !min-w-[342px] mb-4 
   sm:h-16.25 sm:mt-0 sm:mx-0 sm:mb-4 sm:min-w-[80vw]`}
 
   background: ${({ theme, $clicked }) =>
@@ -145,14 +145,14 @@ const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
     background: ${({ $clicked, $cover }) => ($clicked ? $cover : 'transparent')};
 
     .content {
-      ${tw`w-2/3 sm:w-85p`}
+      ${tw`w-1/2`}
 
       div {
         ${({ theme }) => theme.ellipse}
       }
     }
     .price {
-      ${tw`w-30p ml-1`}
+      ${tw`w-1/2 text-right`}
     }
   }
 `
@@ -166,7 +166,7 @@ const SWAP_ROUTES = styled.div<{ less: boolean }>`
     sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0`}
     overflow-x: scroll;
 
-    @media (max-width: 1415px) {
+    @media (max-width: 1515px) {
       justify-content: start;
     }
   }
@@ -855,7 +855,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
               .map((_, i) => (
                 <SkeletonCommon
                   key={i}
-                  width={'310px'}
+                  width={'342px'}
                   height={checkMobile() ? '64px' : '75px'}
                   borderRadius="10px"
                   style={{
