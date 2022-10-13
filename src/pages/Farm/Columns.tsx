@@ -127,7 +127,7 @@ export const columns = [
     )
   },
   {
-    title: Title('Total Earned', `Yearly deposit earned on your deposit.`, true),
+    title: Title('Total Earned', `Yearly amount earned on your deposit.`, true),
     dataIndex: 'earned',
     key: 'earned',
     width: '16.6%',
