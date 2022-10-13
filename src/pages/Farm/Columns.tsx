@@ -60,13 +60,6 @@ export const STYLED_EARNED = styled.div`
   font-family: Montserrat;
 `
 
-const ICON_WRAPPER = styled.div`
-  ${tw`flex flex-col items-end h-10 w-20`}
-  .arrowDown {
-    cursor: pointer;
-    filter: ${({ theme }) => theme.filterArrowDown};
-  }
-`
 const ICON_WRAPPER_TD = styled.td`
   cursor: pointer;
   filter: ${({ theme }) => theme.filterArrowDown};
@@ -84,10 +77,6 @@ const ICON_WRAPPER_TD = styled.td`
       ${tw`mt-1.5 ml-3 absolute`}
     }
   }
-`
-
-const RefreshIcon = styled.a`
-  ${tw`cursor-pointer mr-[25px] ml-10 rounded-full border-0 p-0 bg-transparent flex`}
 `
 
 export const Loader: FC = () => (
@@ -184,58 +173,11 @@ export const columns = [
     )
   }
 ]
-const TotalEarnedTooltip = `The total profit and loss from SSL and is measured by comparing the total 
+const APYTooltip = `The total profit and loss from SSL and is measured by comparing the total 
 value of a pool’s assets (excluding trading fees) to their value if they had not been traded and instead were just held`
 
-const APRTooltip = 'Yearly deposit earned on your deposit.'
+const TotalEarnedTooltip = 'Yearly deposit earned on your deposit.'
 const LiquidityTooltip = "Total value of funds in this farm's liquidity pool."
-
-export const mobileColumns = [
-  {
-    title: Title('Name', '', true),
-    dataIndex: 'name',
-    key: 'name',
-    width: '10%',
-    render: (text, record) => (
-      <STYLED_NAME>
-        <img
-          className={`coin-image ${record.type === 'Double Sided' ? 'double-sided' : ''}`}
-          src={`/img/crypto/${text.toUpperCase().replace(' ', '-')}.svg`}
-          alt=""
-        />
-        <div className="textName">{text}</div>
-      </STYLED_NAME>
-    )
-  },
-  {
-    title: Title('APR', 'Yearly deposit earned on your deposit.', true),
-    dataIndex: 'apr',
-    key: 'apr',
-    width: '30%',
-    render: (text) => (
-      <ICON_WRAPPER>
-        <div className="apr normal-text">
-          {text === '-' ? '-' : text !== undefined ? `${text.toFixed(0)}%` : <Loader />}
-        </div>
-      </ICON_WRAPPER>
-    )
-  },
-  {
-    title: (
-      <RefreshIcon href="/farm">
-        <img style={{ display: 'block', margin: 'auto' }} src={'/img/assets/refresh.svg'} alt="refresh" />
-      </RefreshIcon>
-    ),
-    dataIndex: 'apr',
-    key: 'apr',
-    width: '30%',
-    render: () => (
-      <ICON_WRAPPER>
-        <img className="arrowDown" src={`/img/assets/arrow-down-large.svg`} alt="arrow" />
-      </ICON_WRAPPER>
-    )
-  }
-]
 
 const DepositButton = () => <DEPOSIT_BTN>Deposit</DEPOSIT_BTN>
 
@@ -320,7 +262,7 @@ export const ColumnHeadersWeb = ({ sortColumn, setSortColumn }: any) => (
       {Title('Total earned', TotalEarnedTooltip, true, sortColumn === 'earned')}
     </th>
     <th onClick={() => setSortColumn((p) => (p !== 'apr' ? 'apr' : undefined))}>
-      {Title('APY', APRTooltip, true, sortColumn === 'apr')}
+      {Title('APY', APYTooltip, true, sortColumn === 'apr')}
     </th>
     <th onClick={() => setSortColumn('liquidity')}>
       {Title('Liquidity', LiquidityTooltip, true, sortColumn === 'liquidity')}
@@ -342,7 +284,7 @@ export const ColumnHeadersMobile = ({ sortColumn, setSortColumn }: any) => (
     </th>
 
     <th onClick={() => setSortColumn((p) => (p !== 'apr' ? 'apr' : undefined))}>
-      {Title('APR', APRTooltip, true, sortColumn === 'apr')}
+      {Title('APY', APYTooltip, true, sortColumn === 'apr')}
     </th>
     <th className="borderRow2">
       <RefreshBtnWithAnimation />
