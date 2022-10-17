@@ -110,7 +110,7 @@ const ResponsiveDropdown: FC<{ logoAnimationTime?: number }> = () => {
         />
         <ThemeToggle />
         <Tabs mobileToggle={toggleOpacity} />
-        <RewardsButton />
+        {/* <RewardsButton /> */}
       </RESPONSIVE_MENU>
     </RESPONSIVE_DROPDOWN_WRAPPER>
   )
