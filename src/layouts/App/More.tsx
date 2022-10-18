@@ -90,7 +90,7 @@ const Button = styled.button`
 `
 
 const Overlay = () => {
-  const { endpoint, network, endpointName, setEndpoint } = useConnectionConfig()
+  const { endpoint, network, endpointName, setEndpoint, reconstructEndpoint } = useConnectionConfig()
   const [nodeURL, setNodeURL] = useState(endpoint.split('/')[0] + '//' + endpoint.split('/')[2])
   const [isCustomNode, setIsCustomNode] = useState(false)
   const [rpcState, setRpcState] = useState({ endpoint, endpointName, network })
@@ -105,11 +105,16 @@ const Overlay = () => {
     // analytics logger
     const an = analytics()
     if (isCustomNode) {
-      setEndpoint(nodeURL)
+      setEndpoint(reconstructEndpoint(rpcState.endpointName, nodeURL))
       an !== null && logEvent(an, 'rpc-selector', { ...rpcState, endpoint: nodeURL })
       notify({ message: 'Switched to Custom' })
     } else {
-      setEndpoint(rpcState.endpoint)
+      setEndpoint(
+        reconstructEndpoint(
+          rpcState.endpointName,
+          rpcState.endpoint.split('/')[0] + '//' + rpcState.endpoint.split('/')[2]
+        )
+      )
       an !== null && logEvent(an, 'rpc-selector', { ...rpcState })
       notify({ message: `Switched to  ${rpcState.endpointName} (${rpcState.network})` })
     }
@@ -126,14 +131,14 @@ const Overlay = () => {
 
   const nodeURLHandler = ({ target }) => {
     setNodeURL(target.value)
-    setIsCustomNode(rpcState.endpoint !== nodeURL)
+    setIsCustomNode(rpcState.endpoint.split('/')[0] + '//' + rpcState.endpoint.split('/')[2] !== nodeURL)
   }
 
   useEffect(() => {
     const savedState = JSON.parse(window.sessionStorage.getItem('gfx-user-rpc-preference'))
     if (savedState) {
       handleClickForRPC(savedState.endpoint, savedState.endpointName, savedState.network)
-      setEndpoint(savedState.endpoint)
+      setEndpoint(reconstructEndpoint(savedState.endpointName, savedState.endpoint))
       savedState.endpointName === 'Custom' && setIsCustomNode(true)
     }
   }, [network])
@@ -174,12 +179,12 @@ const Overlay = () => {
 
 export const More: FC = () => {
   const { mode } = useDarkMode()
-  const { network, setEndpoint } = useConnectionConfig()
+  const { network, setEndpoint, reconstructEndpoint } = useConnectionConfig()
 
   useEffect(() => {
     const savedState = JSON.parse(window.sessionStorage.getItem('gfx-user-rpc-preference'))
     if (savedState) {
-      setEndpoint(savedState.endpoint)
+      setEndpoint(reconstructEndpoint(savedState.endpointName, savedState.endpoint))
     }
   }, [network])
 
