@@ -164,7 +164,7 @@ const SWAP_ROUTES = styled.div<{ less: boolean }>`
     ${tw`flex h-1/5 mt-0 mb-3 pt-4 pl-4 justify-center
     sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around 
     sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0`}
-    overflow-x: scroll;
+    overflow-x: auto;
 
     @media (max-width: 1515px) {
       justify-content: start;
