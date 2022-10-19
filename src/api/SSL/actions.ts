@@ -31,7 +31,7 @@ export const fetchTotalVolumeTrade = async () => {
       NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + `${SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE}`
     )
     // const res = await axios.get('http://localhost:4000' + SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE)
-    return res.data.data
+    return res.data
   } catch (err) {
     return err
   }

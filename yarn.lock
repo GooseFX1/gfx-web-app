@@ -9581,7 +9581,7 @@
   "resolved" "https://registry.npmjs.org/highcharts-react-official/-/highcharts-react-official-3.1.0.tgz"
   "version" "3.1.0"
 
-"highcharts@>=6.0.0":
+"highcharts@^10.2.1", "highcharts@>=6.0.0":
   "integrity" "sha512-4QwLQwWc0XdBHXc2Uy6IJisAUir+sgQIMyFqYZc3BD9iFSFUdllLkRyoed6y33aPb73LAMZE2qLB5SuLqFE/fg=="
   "resolved" "https://registry.npmjs.org/highcharts/-/highcharts-10.2.1.tgz"
   "version" "10.2.1"

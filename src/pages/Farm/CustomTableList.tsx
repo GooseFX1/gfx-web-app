@@ -129,8 +129,7 @@ const CustomTableList = () => {
         )
         setAprVolumeData(data)
         const totalVolumeTrade = await fetchTotalVolumeTrade()
-        console.log(totalVolumeTrade)
-        setTotalVolumeTrade(isNaN(totalVolumeTrade) ? totalVolumeTrade.totalVolumeTrade : totalVolumeTrade)
+        setTotalVolumeTrade(totalVolumeTrade.data.totalVolumeTrade)
       }
     })()
   }, [counter])
