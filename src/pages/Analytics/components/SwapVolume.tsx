@@ -1,15 +1,33 @@
+import { useWallet } from '@solana/wallet-adapter-react'
 import React, { useEffect, useState } from 'react'
-import { getSwapVolume } from '../../../api/analytics'
+import { fetchTotalVolumeTrade, fetchTotalVolumeTradeChart } from '../../../api/SSL/index'
 import { moneyFormatterWithComma } from '../../../utils'
 import { GradientText } from '../../NFTs/adminPage/components/UpcomingMints'
 import { CARD } from './GofxHolders'
+import { SwapVolumeChart } from './SwapVolumeChart'
 
 const SwapVolume = () => {
   const [swapData, setData] = useState<any>(null)
+  const wallet = useWallet()
+  const [swapDataGraph, setGraphData] = useState([])
   useEffect(() => {
     ;(async () => {
-      const { data } = await getSwapVolume()
+      const { data } = await fetchTotalVolumeTrade()
       setData(data)
+    })()
+  }, [])
+  useEffect(() => {
+    ;(async () => {
+      const { data } = await fetchTotalVolumeTradeChart(wallet?.publicKey)
+      const arr = []
+      data && data.map((day) => arr.push([day.date, day.totalVolumeTrade]))
+      arr.sort(function (a, b) {
+        const date1 = new Date(a[0])
+        const date2 = new Date(b[0])
+        //@ts-ignore
+        return date1 - date2
+      })
+      setGraphData(arr)
     })()
   }, [])
 
@@ -18,24 +36,23 @@ const SwapVolume = () => {
       <GradientText fontSize={28} fontWeight={600} text={'Swap Volume'} />
       <div style={{ display: 'flex' }}>
         <CARD>
-          Past week :{' '}
-          {swapData?.ssl_volume_past_week
-            ? moneyFormatterWithComma(swapData?.ssl_volume_past_week.toFixed(2), '$')
-            : 'Loading...'}
+          Day :{' '}
+          {swapData?.totalVolumeTradeDay && moneyFormatterWithComma(swapData?.totalVolumeTradeDay.toFixed(2), '$')}
         </CARD>
         <CARD>
-          Past month :{' '}
-          {swapData?.ssl_volume_past_month
-            ? moneyFormatterWithComma(swapData?.ssl_volume_past_month.toFixed(2), '$')
-            : 'Loading...'}
+          week :{' '}
+          {swapData?.totalVolumeTrade && moneyFormatterWithComma(swapData?.totalVolumeTradeWeek.toFixed(2), '$')}
+        </CARD>
+        <CARD>
+          month :{' '}
+          {swapData?.totalVolumeTrade && moneyFormatterWithComma(swapData?.totalVolumeTradeMonth.toFixed(2), '$')}
         </CARD>
         <CARD>
           Total Swap :
-          {swapData?.ssl_volume_total
-            ? moneyFormatterWithComma(swapData?.ssl_volume_total.toFixed(2), '$')
-            : 'Loading...'}
+          {swapData?.totalVolumeTrade && moneyFormatterWithComma(swapData?.totalVolumeTrade.toFixed(2), '$')}
         </CARD>
       </div>
+      <SwapVolumeChart data={swapDataGraph} />
     </>
   )
 }

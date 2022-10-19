@@ -176,7 +176,7 @@ export const columns = [
 const APYTooltip = `The total profit and loss from SSL and is measured by comparing the total 
 value of a pool’s assets (excluding trading fees) to their value if they had not been traded and instead were just held`
 
-const TotalEarnedTooltip = 'Yearly deposit earned on your deposit.'
+const TotalEarnedTooltip = 'Total amount earned on your deposit.'
 const LiquidityTooltip = "Total value of funds in this farm's liquidity pool."
 
 const DepositButton = () => <DEPOSIT_BTN>Deposit</DEPOSIT_BTN>

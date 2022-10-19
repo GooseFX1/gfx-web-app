@@ -17,7 +17,6 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
     font-family: Montserrat;
   }
   ${({ theme }) => theme.customScrollBar('0px')};
-
   @media (max-width: 500px) {
     padding-left: 0px;
     padding-right: 0px;
@@ -26,11 +25,9 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
 
 const BODY = styled.div<{ $navCollapsed: boolean }>`
   ${tw`sm:px-0 sm:!pt-[17px] sm:h-full p-16 !pt-[43px] !pb-0`}
-  height: calc(92vh + ${({ $navCollapsed }) => ($navCollapsed ? '150px' : '0px')});
   padding: ${({ theme }) => theme.margin(8)};
   padding-top: 43px !important;
   padding-bottom: 0px !important;
-
   @media (max-width: 500px) {
     padding-left: 0px;
     padding-right: 0px;

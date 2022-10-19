@@ -16,7 +16,7 @@ import {
   getNetworkConnectionText
 } from '../../web3'
 import { SSL_LAYOUT, LIQUIDITY_ACCOUNT_LAYOUT, CONTROLLER_LAYOUT, ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
-import { useConnectionConfig, usePriceFeedFarm, useFarmContext } from '../../context'
+import { useConnectionConfig, usePriceFeedFarm, useFarmContext, useNavCollapse } from '../../context'
 import { ADDRESSES } from '../../web3'
 import { MorePoolsSoon } from './MorePoolsSoon'
 //import { NATIVE_MINT } from '@solana/spl-token-v2'
@@ -43,9 +43,9 @@ export interface IFarmData {
   volume?: number | string
 }
 
-const WRAPPER = styled.div`
+const WRAPPER = styled.div<{ $navCollapsed }>`
   margin-top: 10px;
-  height: 74vh !important;
+  height: calc(75vh + ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
   overflow-y: auto;
   overflow-x: hidden;
   ${({ theme }) => theme.customScrollBar('0px')}
@@ -129,8 +129,7 @@ const CustomTableList = () => {
         )
         setAprVolumeData(data)
         const totalVolumeTrade = await fetchTotalVolumeTrade()
-        console.log(totalVolumeTrade)
-        setTotalVolumeTrade(totalVolumeTrade)
+        setTotalVolumeTrade(totalVolumeTrade.data.totalVolumeTrade)
       }
     })()
   }, [counter])
@@ -333,9 +332,9 @@ const CustomTableList = () => {
       console.log(err)
     }
   }
-
+  const { isCollapsed } = useNavCollapse()
   return (
-    <WRAPPER>
+    <WRAPPER $navCollapsed={isCollapsed}>
       <table ref={tableRef}>
         <thead className="tableHeader">
           <tr>
