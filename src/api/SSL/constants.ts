@@ -8,5 +8,6 @@ export enum SSL_API_ENDPOINTS {
   SAVE_LIQUIDITY_DATA = '/saveLiquidityData',
   GET_VOLUME_APR_DATA = '/getVolumeApr',
   GET_TOKEN_PRICES = '/getFarmTokenPrices',
-  TOTAL_VOLUME_TRADE = '/getTotalVolumeTrade'
+  TOTAL_VOLUME_TRADE = '/getTotalVolumeTrade',
+  TOTAL_VOLUME_TRADE_CHART = '/getTotalVolumeTradeChart'
 }

@@ -60,10 +60,10 @@ const ABSTRACT = styled.div`
   }
   @keyframes marquee {
     0% {
-      transform: translate(80%, 0);
+      transform: translate(50%, 0);
     }
     100% {
-      transform: translate(-600%, 0);
+      transform: translate(-650%, 0);
     }
   }
   td {
@@ -90,7 +90,6 @@ const ABSTRACT = styled.div`
     ${tw`h-9 w-[100vw] opacity-80 z-0 absolute
     left-0 flex flex-row  m-auto items-center justify-between pr-16 pl-16`};
     border: 1px solid #fff;
-
     border-style: solid none;
     background-image: linear-gradient(91deg, #f7931a 0%, #ac1cc7 100%);
     @media (max-width: 500px) {
@@ -336,22 +335,24 @@ const GeneralStatsBarMobile = () => {
   const { prices, statsData } = usePriceFeedFarm()
   const [divArr, setDivArr] = useState<any[]>([])
 
-  const arr = []
-  for (let i = 0; i < 20; i++)
-    arr.push(
-      <div className="scroll" key={i}>
-        <div>TVL: {statsData && ` $ ` + moneyFormatterWithComma(statsData.tvl)}</div>
-        <div>7d Volume: {statsData && ` $ ` + moneyFormatterWithComma(statsData.volume7dSum)}</div>
-        <div>Pools: {farmDataContext?.length + farmDataSSLContext?.length}</div>
-        <div>
-          Total Volume Trade:{' '}
-          {statsData ? ` $ ` + moneyFormatterWithComma(statsData.totalVolumeTrade) : <Loader />}
-        </div>
-        <div> GOFX Price: {prices && ` $ ` + prices['GOFX/USDC']?.current}</div>
-      </div>
-    )
   useEffect(() => {
-    statsData && setDivArr(arr)
+    if (statsData) {
+      const arr = []
+      for (let i = 0; i < 20; i++)
+        arr.push(
+          <div className="scroll" key={i}>
+            <div>TVL: {statsData && ` $ ` + moneyFormatterWithComma(statsData.tvl)}</div>
+            <div>7d Volume: {statsData && ` $ ` + moneyFormatterWithComma(statsData.volume7dSum)}</div>
+            <div>Pools: {farmDataContext?.length + farmDataSSLContext?.length}</div>
+            <div>
+              Total Volume Trade:{' '}
+              {statsData ? ` $ ` + moneyFormatterWithComma(statsData.totalVolumeTrade) : <Loader />}
+            </div>
+            <div> GOFX Price: {prices && ` $ ` + prices['GOFX/USDC']?.current}</div>
+          </div>
+        )
+      setDivArr(arr)
+    }
   }, [statsData])
 
   return <div className="generalStatsBg">{divArr}</div>

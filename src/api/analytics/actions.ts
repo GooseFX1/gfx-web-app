@@ -17,17 +17,7 @@ export const getTotalLiquidityVolume = async () => {
   try {
     const { data } = await axios(
       `${NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE}${ANALYTICS_API_ENDPOINTS.GET_LIQUIDITY}`
-    )
-    return data
-  } catch (err) {
-    return err
-  }
-}
-export const getSwapVolume = async () => {
-  try {
-    const { data } = await axios(
-      //`${localhost}${ANALYTICS_API_ENDPOINTS.GET_SWAP_VOLUME}`
-      `${NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE}${ANALYTICS_API_ENDPOINTS.GET_SWAP_VOLUME}`
+      //`${'http://localhost:4000'}${ANALYTICS_API_ENDPOINTS.GET_LIQUIDITY}`
     )
     return data
   } catch (err) {

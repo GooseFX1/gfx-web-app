@@ -44,7 +44,7 @@ const AnalyticsSection = () => {
   const [expand, setExpand] = useState<boolean>(false)
 
   return (
-    <div className="title" style={{ height: expand ? '50%' : '80px' }}>
+    <div className="title" style={{ height: expand ? 'fit-content' : '80px' }}>
       <GradientText text={'Analytics'} fontSize={40} fontWeight={600} />
       <span>
         <img
@@ -67,7 +67,7 @@ const FinancialSection = () => {
   }
   const [expand, setExpand] = useState<boolean>(false)
   return (
-    <div className="title" style={{ height: expand ? '50%' : '80px' }}>
+    <div className="title" style={{ height: expand ? 'fit-content' : '80px' }}>
       <GradientText text={'Financials'} fontSize={40} fontWeight={600} />
       <span>
         <img

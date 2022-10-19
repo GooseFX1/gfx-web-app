@@ -76,7 +76,7 @@ export const Footer: FC = () => {
   const [privacyPolicyVisible, setPrivacyPolicyVisible] = useState(false)
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState(false)
   const location = useLocation()
-  const hideFooterArr = ['/NFTs/launchpad', '/farm']
+  const hideFooterArr = ['/NFTs/launchpad', '/farm', '/analytics']
   let hideFooter = false
   for (let i = 0; i < hideFooterArr.length; i++)
     hideFooter = hideFooter || location.pathname.startsWith(hideFooterArr[i])
