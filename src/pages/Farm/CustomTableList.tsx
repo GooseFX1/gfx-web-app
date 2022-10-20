@@ -45,7 +45,7 @@ export interface IFarmData {
 
 const WRAPPER = styled.div<{ $navCollapsed }>`
   margin-top: 10px;
-  height: calc(75vh + ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+  height: calc(100vh - 188px - ${({ $navCollapsed }) => (!$navCollapsed ? '80px' : '0px')});
   overflow-y: auto;
   overflow-x: hidden;
   ${({ theme }) => theme.customScrollBar('0px')}
