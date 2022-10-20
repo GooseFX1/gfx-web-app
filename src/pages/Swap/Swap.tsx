@@ -16,7 +16,7 @@ import {
   useSwap,
   SwapProvider,
   useSlippageConfig,
-  ENDPOINTS,
+  DEFAULT_MAINNET_RPC,
   useConnectionConfig,
   useTokenRegistry
 } from '../../context'
@@ -313,7 +313,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
   clickNo
 }) => {
   const location = useLocation<ILocationState>()
-  const { setEndpoint, network } = useConnectionConfig()
+  const { setEndpointName, network } = useConnectionConfig()
   const { mode } = useDarkMode()
   const { refreshRates, setFocused, switchTokens, setClickNo, setRoutes, tokenA, tokenB, inTokenAmount } =
     useSwap()
@@ -331,7 +331,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
     logData('swap_page')
 
     if (network === 'devnet') {
-      setEndpoint(ENDPOINTS[0].endpoint)
+      setEndpointName(DEFAULT_MAINNET_RPC)
       notify({ message: `Switched to mainnet` })
     }
   }, [location])

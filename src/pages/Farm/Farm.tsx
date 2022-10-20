@@ -2,7 +2,13 @@ import React, { FC, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { FarmHeader } from './FarmHeader'
-import { useNavCollapse, FarmProvider, useConnectionConfig, ENDPOINTS, PriceFeedFarmProvider } from '../../context'
+import {
+  useNavCollapse,
+  FarmProvider,
+  useConnectionConfig,
+  DEFAULT_MAINNET_RPC,
+  PriceFeedFarmProvider
+} from '../../context'
 import { notify, checkMobile } from '../../utils'
 import { logData } from '../../api'
 import CustomTableList from './CustomTableList'
@@ -44,14 +50,14 @@ export const Farm: FC = () => {
   //eslint-disable-next-line
   const [filter, setFilter] = useState<string>('')
   const { isCollapsed } = useNavCollapse()
-  const { setEndpoint, network } = useConnectionConfig()
+  const { setEndpointName, network } = useConnectionConfig()
   const [betaBanner, setBetaBanner] = useState<boolean>(true)
 
   useEffect(() => {
     logData('farm_page')
     if (network === 'devnet') {
       notify({ message: 'Switched to mainnet' })
-      setEndpoint(ENDPOINTS[0].endpoint)
+      setEndpointName(DEFAULT_MAINNET_RPC)
     }
   }, [])
 
