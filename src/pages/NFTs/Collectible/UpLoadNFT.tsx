@@ -15,8 +15,15 @@ import MintPaymentConfirmation from './MintPaymentConfirmation'
 import UploadProgress from './UploadProgress'
 import AddAttribute from './AddAttribute'
 import RoyaltiesStep from './RoyaltiesStep'
-import { useDarkMode, useNFTDetails, useConnectionConfig, useNFTProfile } from '../../../context'
-import { Creator, mintNFT, MetadataCategory, ENDPOINTS } from '../../../web3'
+import {
+  useDarkMode,
+  useNFTDetails,
+  useConnectionConfig,
+  useNFTProfile,
+  DEFAULT_MAINNET_RPC,
+  ENDPOINTS
+} from '../../../context'
+import { Creator, mintNFT, MetadataCategory } from '../../../web3'
 import { notify, validateUUID } from '../../../utils'
 import { ButtonWrapper } from '../NFTButton'
 import apiClient from '../../../api'
@@ -473,7 +480,7 @@ export const UpLoadNFT = (): JSX.Element => {
       const res = await mintNFT(
         connection,
         wallet,
-        ENDPOINTS[2].name,
+        ENDPOINTS[DEFAULT_MAINNET_RPC].name,
         filesForUpload,
         nftMintingData,
         setNFTcreateProgress,

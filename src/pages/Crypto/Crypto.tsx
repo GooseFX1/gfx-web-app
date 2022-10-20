@@ -8,7 +8,7 @@ import { OrderBook } from './OrderBook'
 import { Pairs } from './Pairs'
 import { TVChartContainer } from './TradingView'
 import {
-  ENDPOINTS,
+  DEFAULT_MAINNET_RPC,
   CryptoProvider,
   useNavCollapse,
   OrderProvider,
@@ -94,7 +94,7 @@ const CryptoContent: FC = () => {
 }
 
 export const Crypto: FC = () => {
-  const { network, setEndpoint } = useConnectionConfig()
+  const { network, setEndpointName } = useConnectionConfig()
 
   useEffect(() => {
     const an = analytics()
@@ -106,7 +106,7 @@ export const Crypto: FC = () => {
 
     if (network === 'devnet') {
       notify({ message: 'Switched to mainnet' })
-      setEndpoint(ENDPOINTS[0].endpoint)
+      setEndpointName(DEFAULT_MAINNET_RPC)
     }
   }, [])
 

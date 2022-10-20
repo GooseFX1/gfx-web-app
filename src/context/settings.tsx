@@ -4,45 +4,57 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Connection } from '@solana/web3.js'
 // import { useLocalStorageState } from '../utils'
 
-interface IEndpoint {
+export enum GFX_RPCS {
+  QUICKNODE = 'QuickNode Pro',
+  SOLANA_RPC = 'Solana',
+  SERUM = 'Project Serum',
+  GENGO = 'GenesysGo',
+  SYNDICA = 'Syndica'
+}
+
+export const DEFAULT_MAINNET_RPC = GFX_RPCS.SYNDICA
+
+type RPC = {
   chainId: ENV
-  endpoint: string
   name: string
+  endpoint: string
   network: WalletAdapterNetwork
 }
 
-export const ENDPOINTS: IEndpoint[] = [
-  {
+type ENDPOINTS = { [key: string]: RPC }
+
+export const ENDPOINTS: ENDPOINTS = {
+  [GFX_RPCS.QUICKNODE]: {
     chainId: ENV.MainnetBeta,
-    name: 'QuickNode Pro',
+    name: GFX_RPCS.QUICKNODE,
     endpoint: `https://green-little-wind.solana-mainnet.quiknode.pro/${process.env.REACT_APP_QUICKNODE_TOKEN}`,
     network: WalletAdapterNetwork.Mainnet
   },
-  {
+  [GFX_RPCS.SOLANA_RPC]: {
     chainId: ENV.Devnet,
-    name: 'Solana',
+    name: GFX_RPCS.SOLANA_RPC,
     endpoint: 'https://api.devnet.solana.com',
     network: WalletAdapterNetwork.Devnet
   },
-  {
+  [GFX_RPCS.SERUM]: {
     chainId: ENV.MainnetBeta,
-    name: 'Project Serum',
+    name: GFX_RPCS.SERUM,
     endpoint: 'https://solana-api.projectserum.com',
     network: WalletAdapterNetwork.Mainnet
   },
-  {
+  [GFX_RPCS.GENGO]: {
     chainId: ENV.MainnetBeta,
-    name: 'GenesysGo',
+    name: GFX_RPCS.GENGO,
     endpoint: 'https://ssc-dao.genesysgo.net',
     network: WalletAdapterNetwork.Mainnet
   },
-  {
+  [GFX_RPCS.SYNDICA]: {
     chainId: ENV.MainnetBeta,
-    name: 'Syndica',
+    name: GFX_RPCS.SYNDICA,
     endpoint: `https://solana-api.syndica.io/access-token/${process.env.REACT_APP_SYNDICA_TOKEN}/rpc`,
     network: WalletAdapterNetwork.Mainnet
   }
-]
+}
 
 interface ISettingsConfig {
   chainId: ENV
@@ -50,12 +62,12 @@ interface ISettingsConfig {
   endpoint: string
   endpointName: string
   network: WalletAdapterNetwork
-  setEndpoint: Dispatch<SetStateAction<string>>
+  setEndpointName: Dispatch<SetStateAction<string>>
   setSlippage: Dispatch<SetStateAction<number>>
   slippage: number
 }
 
-export const DEFAULT_SLIPPAGE = 0.0015
+export const DEFAULT_SLIPPAGE = '0.0015'
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
 
@@ -75,19 +87,57 @@ export function useConnectionConfig() {
     throw new Error('Missing settings context')
   }
 
-  const { chainId, connection, endpoint, network, endpointName, setEndpoint } = context
-  return { chainId, connection, endpoint, network, endpointName, setEndpoint }
+  const { chainId, connection, endpoint, network, endpointName, setEndpointName } = context
+  return { chainId, connection, endpoint, network, endpointName, setEndpointName }
 }
 
-export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [endpoint, setEndpoint] = useState(ENDPOINTS[process.env.NODE_ENV === 'production' ? 4 : 2].endpoint)
-  const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE.toString())
-  const connection = useMemo(() => new Connection(endpoint, 'confirmed'), [endpoint])
+type RPC_CACHE = null | { endpointName: string; endpoint: string | null }
 
-  const endpointObj = ENDPOINTS.find((e) => e.endpoint === endpoint)
-  const chainId = useMemo(() => endpointObj?.chainId ?? ENV.MainnetBeta, [endpoint])
-  const network = useMemo(() => endpointObj?.network ?? WalletAdapterNetwork.Mainnet, [endpoint])
-  const endpointName = useMemo(() => endpointObj?.name ?? 'Custom', [endpoint])
+export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE)
+
+  const init = (): string => {
+    const existingUserPreference: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-rpc'))
+
+    if (existingUserPreference === null) {
+      return process.env.NODE_ENV === 'production' ? GFX_RPCS.SYNDICA : GFX_RPCS.SERUM
+    } else if (existingUserPreference.endpoint === null) {
+      return existingUserPreference.endpointName
+    } else {
+      return 'Custom'
+    }
+  }
+
+  const [endpointName, setEndpointName] = useState<string>(init())
+
+  const chainId = useMemo(
+    () => (endpointName in ENDPOINTS ? ENDPOINTS[endpointName].chainId : ENV.MainnetBeta),
+    [endpointName]
+  )
+
+  const network = useMemo(
+    () => (endpointName in ENDPOINTS ? ENDPOINTS[endpointName].network : WalletAdapterNetwork.Mainnet),
+    [endpointName]
+  )
+
+  const endpoint = useMemo(() => {
+    // checks cache for persisted custom endpoint
+    const existingUserPreference: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-rpc'))
+
+    if (existingUserPreference !== null && existingUserPreference.endpoint !== null) {
+      return existingUserPreference.endpoint
+    } else {
+      // asserts 'Custom' is cached with a null enpoint value - results in default reset
+      if (endpointName === 'Custom') {
+        setEndpointName(DEFAULT_MAINNET_RPC)
+        return ENDPOINTS[DEFAULT_MAINNET_RPC].endpoint
+      } else {
+        return ENDPOINTS[endpointName].endpoint
+      }
+    }
+  }, [endpointName])
+
+  const connection = useMemo(() => new Connection(endpoint, 'confirmed'), [endpoint])
 
   return (
     <SettingsContext.Provider
@@ -97,7 +147,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         endpoint,
         network,
         endpointName,
-        setEndpoint,
+        setEndpointName,
         setSlippage: (val) => setSlippage(val.toString()),
         slippage: parseFloat(slippage)
       }}

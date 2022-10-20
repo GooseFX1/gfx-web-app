@@ -16,7 +16,7 @@ import {
   useSwap,
   SwapProvider,
   useSlippageConfig,
-  ENDPOINTS,
+  DEFAULT_MAINNET_RPC,
   useConnectionConfig,
   useTokenRegistry
 } from '../../context'
@@ -164,7 +164,7 @@ const SWAP_ROUTES = styled.div<{ less: boolean }>`
     ${tw`flex h-1/5 mt-0 mb-3 pt-4 pl-4 justify-center
     sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around 
     sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0`}
-    overflow-x: scroll;
+    overflow-x: auto;
 
     @media (max-width: 1515px) {
       justify-content: start;
@@ -313,7 +313,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
   clickNo
 }) => {
   const location = useLocation<ILocationState>()
-  const { setEndpoint, network } = useConnectionConfig()
+  const { setEndpointName, network } = useConnectionConfig()
   const { mode } = useDarkMode()
   const { refreshRates, setFocused, switchTokens, setClickNo, setRoutes, tokenA, tokenB, inTokenAmount } =
     useSwap()
@@ -331,7 +331,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
     logData('swap_page')
 
     if (network === 'devnet') {
-      setEndpoint(ENDPOINTS[0].endpoint)
+      setEndpointName(DEFAULT_MAINNET_RPC)
       notify({ message: `Switched to mainnet` })
     }
   }, [location])
