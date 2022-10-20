@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, FC, useState, useEffect } from 'react'
+import { BaseSyntheticEvent, FC, useState } from 'react'
 import { Dropdown } from 'antd'
 import { logEvent } from 'firebase/analytics'
 import styled from 'styled-components'
@@ -90,7 +90,7 @@ const Button = styled.button`
 `
 
 const Overlay = () => {
-  const { endpoint, network, endpointName, setEndpoint, reconstructEndpoint } = useConnectionConfig()
+  const { endpoint, network, endpointName, setEndpointName } = useConnectionConfig()
   const [nodeURL, setNodeURL] = useState(endpoint.split('/')[0] + '//' + endpoint.split('/')[2])
   const [isCustomNode, setIsCustomNode] = useState(false)
   const [rpcState, setRpcState] = useState({ endpoint, endpointName, network })
@@ -104,44 +104,30 @@ const Overlay = () => {
   const saveHandler = () => {
     // analytics logger
     const an = analytics()
+
+    window.localStorage.setItem(
+      'gfx-user-rpc',
+      JSON.stringify({
+        endpointName: isCustomNode ? 'Custom' : rpcState.endpointName,
+        endpoint: isCustomNode ? nodeURL : null
+      })
+    )
+
     if (isCustomNode) {
-      setEndpoint(reconstructEndpoint(rpcState.endpointName, nodeURL))
+      setEndpointName('Custom')
       an !== null && logEvent(an, 'rpc-selector', { ...rpcState, endpoint: nodeURL })
       notify({ message: 'Switched to Custom' })
     } else {
-      setEndpoint(
-        reconstructEndpoint(
-          rpcState.endpointName,
-          rpcState.endpoint.split('/')[0] + '//' + rpcState.endpoint.split('/')[2]
-        )
-      )
+      setEndpointName(rpcState.endpointName)
       an !== null && logEvent(an, 'rpc-selector', { ...rpcState })
       notify({ message: `Switched to  ${rpcState.endpointName} (${rpcState.network})` })
     }
-
-    window.sessionStorage.setItem(
-      'gfx-user-rpc-preference',
-      JSON.stringify({
-        ...rpcState,
-        endpointName: isCustomNode ? 'Custom' : rpcState.endpointName,
-        endpoint: nodeURL || rpcState.endpoint
-      })
-    )
   }
 
   const nodeURLHandler = ({ target }) => {
     setNodeURL(target.value)
-    setIsCustomNode(rpcState.endpoint.split('/')[0] + '//' + rpcState.endpoint.split('/')[2] !== nodeURL)
+    setIsCustomNode(rpcState.endpoint !== target.value)
   }
-
-  useEffect(() => {
-    const savedState = JSON.parse(window.sessionStorage.getItem('gfx-user-rpc-preference'))
-    if (savedState) {
-      handleClickForRPC(savedState.endpoint, savedState.endpointName, savedState.network)
-      setEndpoint(reconstructEndpoint(savedState.endpointName, savedState.endpoint))
-      savedState.endpointName === 'Custom' && setIsCustomNode(true)
-    }
-  }, [network])
 
   return (
     <NewMenu>
@@ -179,22 +165,14 @@ const Overlay = () => {
 
 export const More: FC = () => {
   const { mode } = useDarkMode()
-  const { network, setEndpoint, reconstructEndpoint } = useConnectionConfig()
-
-  useEffect(() => {
-    const savedState = JSON.parse(window.sessionStorage.getItem('gfx-user-rpc-preference'))
-    if (savedState) {
-      setEndpoint(reconstructEndpoint(savedState.endpointName, savedState.endpoint))
-    }
-  }, [network])
 
   return (
     <Dropdown
       align={{ offset: [0, 16] }}
       destroyPopupOnHide
       overlay={<Overlay />}
-      placement="bottomLeft"
-      trigger={['click']}
+      placement="bottomRight"
+      trigger={['hover']}
     >
       <ICON $mode={mode === 'dark'}>
         <img src={`/img/assets/more_icon.svg`} alt="more" />

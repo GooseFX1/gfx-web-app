@@ -43,7 +43,7 @@ const Overlay = ({
   handleClick: (e: any, endpoint: string, endpointName: string, network: string) => void
 }) => (
   <RPCMenu>
-    {ENDPOINTS.map((point, index) => (
+    {Object.values(ENDPOINTS).map((point, index) => (
       <MenuItem key={index} onClick={(e) => handleClick(e, point.endpoint, point.name, point.network)}>
         <span>
           {point.name} {point.network.includes('devnet') && `(${point.network})`}
