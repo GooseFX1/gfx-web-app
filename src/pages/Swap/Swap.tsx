@@ -315,8 +315,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
   const location = useLocation<ILocationState>()
   const { setEndpointName, network } = useConnectionConfig()
   const { mode } = useDarkMode()
-  const { refreshRates, setFocused, switchTokens, setClickNo, setRoutes, tokenA, tokenB, inTokenAmount } =
-    useSwap()
+  const { amountPool, setFocused, switchTokens, setClickNo, setRoutes, tokenA, tokenB, inTokenAmount } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
   const [route, setRoute] = useState(routes[clickNo])
   const [wrapModalVisible, setWrapModalVisible] = useState(false)
@@ -345,8 +344,9 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
     setSettingsModalVisible(true)
   }
   const refresh = () => {
+    setClickNo(0)
     setRoutes([])
-    setTimeout(() => refreshRates(), 2000)
+    setTimeout(() => amountPool(), 2000)
   }
 
   const dateString = (date: Date) => {
