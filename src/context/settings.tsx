@@ -100,7 +100,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const existingUserPreference: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-rpc'))
 
     if (existingUserPreference === null) {
-      return process.env.NODE_ENV === 'production' ? GFX_RPCS.SYNDICA : GFX_RPCS.SERUM
+      return process.env.NODE_ENV === 'production' ? DEFAULT_MAINNET_RPC : GFX_RPCS.SERUM
     } else if (existingUserPreference.endpoint === null) {
       return existingUserPreference.endpointName
     } else {

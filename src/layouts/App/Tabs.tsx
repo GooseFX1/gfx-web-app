@@ -8,36 +8,22 @@ import tw from 'twin.macro'
 const TABS = ['/swap', '/trade', '/NFTs', '/farm']
 
 const LABEL = styled.span<{ $mode: string; $hover: boolean }>`
-  height: 14px;
-  width: 7vw;
-  ${({ theme }) => theme.flexCenter}
-  font-size: 14px;
-  color: ${({ $hover, $mode }) =>
-    $hover && $mode === 'dark'
-      ? '#FFFFFF'
-      : $hover && $mode !== 'dark'
-      ? '#5855FF'
-      : $mode === 'dark'
-      ? '#4E4E4E'
-      : '#636363'};
-  ${tw`h-3.5 w-[7vw] flex justify-center items-center text-smallest capitalize sm:text-regular`}
-  color: ${({ $hover, $mode }) =>
-    $hover && $mode === 'dark'
-      ? '#FFFFFF'
-      : $hover && $mode !== 'dark'
-      ? '#5855FF'
-      : $mode === 'dark'
-      ? '#4E4E4E'
-      : '#636363'};
+  ${tw`h-[3.5] w-[7vw] flex justify-center items-center text-smallest capitalize sm:text-regular`};
   font-weight: ${({ $hover }) => ($hover ? '600' : 'normal')};
-
-  @media (max-width: 500px) {
-    color: ${({ $hover, $mode }) => ($hover ? '#FFFFFF' : $mode === 'dark' ? '#4E4E4E' : '#636363')};
-  }
+  color: ${({ $hover, $mode }) =>
+    $hover && $mode === 'dark'
+      ? '#FFFFFF'
+      : $hover && $mode !== 'dark'
+      ? '#5855FF'
+      : $mode === 'dark'
+      ? '#4E4E4E'
+      : '#636363'};
+  ${({ theme }) => theme.flexCenter}
 `
 
-const TAB = styled(Link)<{ $hover: boolean }>`
+const TAB = styled(Link)<{ $hover: boolean; $mode: string }>`
   ${tw`flex flex-col items-center justify-center sm:relative sm:flex-row sm:justify-center sm:w-full`}
+
   @media (max-width: 500px) {
     background-color: ${({ $hover }) => ($hover ? '#5855FF' : 'inherit')};
   }
@@ -121,10 +107,18 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     background-color: ${({ theme }) => theme.bg1};
 
     > a {
-      ${tw`w-full text-regular h-16 rounded-none mx-0 my-4`}
+      ${tw`w-full text-regular h-20 rounded-none mx-0`}
 
       &:hover {
-        background-color: #3735bb;
+        opacity: 1;
+        background-color: #5855ff;
+        span {
+          color: white;
+          font-weight: 600;
+        }
+        div {
+          filter: invert(1);
+        }
       }
     }
 
@@ -162,6 +156,7 @@ export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
             if (props.mobileToggle) props.mobileToggle()
           }}
           $hover={cleanedPathName === path}
+          $mode={mode}
         >
           <TAB_ICON>
             {(() => {
