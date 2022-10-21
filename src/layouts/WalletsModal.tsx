@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { WalletName } from '@solana/wallet-adapter-base'
+import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base'
 import { TermsOfService } from './TermsOfService'
 import { Modal } from '../components'
 import { LITEPAPER_ADDRESS } from '../constants'
@@ -104,14 +104,16 @@ export const WalletsModal: FC = () => {
           </a>
           .
         </DISCLAIMER>
-        {wallets.map((wallet, index) => (
-          <WALLET key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
-            <NAME>{wallet.adapter.name}</NAME>
-            <ICON>
-              <img src={wallet.adapter.icon} alt="icon" />
-            </ICON>
-          </WALLET>
-        ))}
+        {wallets
+          .filter(({ readyState }) => readyState !== WalletReadyState.Unsupported)
+          .map((wallet, index) => (
+            <WALLET key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
+              <NAME>{wallet.adapter.name}</NAME>
+              <ICON>
+                <img src={wallet.adapter.icon} alt="icon" />
+              </ICON>
+            </WALLET>
+          ))}
       </BODY>
     </Modal>
   )
