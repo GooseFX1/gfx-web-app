@@ -69,6 +69,9 @@ const CLOSE = styled.img`
 
 const RESPONSIVE_DROPDOWN_WRAPPER = styled.div`
   ${tw`mr-2 ml-[22px] min-sm:hidden`}
+  @media (max-width: 500px) {
+    background-color: ${({ theme }) => theme.bg2};
+  }
 `
 
 const DROPDOWN_ICON_WRAPPER = styled(CenteredImg)`
@@ -107,7 +110,7 @@ const ResponsiveDropdown: FC<{ logoAnimationTime?: number }> = () => {
         />
         <ThemeToggle />
         <Tabs mobileToggle={toggleOpacity} />
-        <RewardsButton />
+        {/* <RewardsButton /> */}
       </RESPONSIVE_MENU>
     </RESPONSIVE_DROPDOWN_WRAPPER>
   )

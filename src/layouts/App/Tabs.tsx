@@ -8,37 +8,25 @@ import tw from 'twin.macro'
 const TABS = ['/swap', '/trade', '/NFTs', '/farm']
 
 const LABEL = styled.span<{ $mode: string; $hover: boolean }>`
-  height: 14px;
-  width: 7vw;
-  ${({ theme }) => theme.flexCenter}
-  font-size: 14px;
-  color: ${({ $hover, $mode }) =>
-    $hover && $mode === 'dark'
-      ? '#FFFFFF'
-      : $hover && $mode !== 'dark'
-      ? '#5855FF'
-      : $mode === 'dark'
-      ? '#4E4E4E'
-      : '#636363'};
-  ${tw`h-3.5 w-[7vw] flex justify-center items-center text-smallest capitalize sm:text-regular`}
-  color: ${({ $hover, $mode }) =>
-    $hover && $mode === 'dark'
-      ? '#FFFFFF'
-      : $hover && $mode !== 'dark'
-      ? '#5855FF'
-      : $mode === 'dark'
-      ? '#4E4E4E'
-      : '#636363'};
+  ${tw`h-[3.5] w-[7vw] flex justify-center items-center text-smallest capitalize sm:text-regular`};
   font-weight: ${({ $hover }) => ($hover ? '600' : 'normal')};
-
-  @media (max-width: 500px) {
-    color: #4e4e4e;
-    color: ${({ $hover }) => ($hover ? 'white' : '#4e4e4e')};
-  }
+  color: ${({ $hover, $mode }) =>
+    $hover && $mode === 'dark'
+      ? '#FFFFFF'
+      : $hover && $mode !== 'dark'
+      ? '#5855FF'
+      : $mode === 'dark'
+      ? '#4E4E4E'
+      : '#636363'};
+  ${({ theme }) => theme.flexCenter}
 `
 
-const TAB = styled(Link)`
+const TAB = styled(Link)<{ $hover: boolean; $mode: string }>`
   ${tw`flex flex-col items-center justify-center sm:relative sm:flex-row sm:justify-center sm:w-full`}
+
+  @media (max-width: 500px) {
+    background-color: ${({ $hover }) => ($hover ? '#5855FF' : 'inherit')};
+  }
 `
 
 const TAB_ICON = styled(CenteredImg)`
@@ -46,7 +34,7 @@ const TAB_ICON = styled(CenteredImg)`
 `
 
 const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: number }>`
-  ${tw`relative h-20 rounded-circle`}
+  ${tw`relative h-20 rounded-circle sm:mt-8`}
   background-color: ${({ theme }) => theme.bg9};
 
   .arrow-down {
@@ -119,10 +107,18 @@ const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: n
     background-color: ${({ theme }) => theme.bg1};
 
     > a {
-      ${tw`w-full text-regular h-16 rounded-none mx-0 my-4`}
+      ${tw`w-full text-regular h-20 rounded-none mx-0`}
 
       &:hover {
-        background-color: #3735bb;
+        opacity: 1;
+        background-color: #5855ff;
+        span {
+          color: white;
+          font-weight: 600;
+        }
+        div {
+          filter: invert(1);
+        }
       }
     }
 
@@ -159,6 +155,8 @@ export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
           onClick={() => {
             if (props.mobileToggle) props.mobileToggle()
           }}
+          $hover={cleanedPathName === path}
+          $mode={mode}
         >
           <TAB_ICON>
             {(() => {
@@ -166,6 +164,9 @@ export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
                 mode === 'dark' ? `/img/assets${path}_icon_dark.svg` : `/img/assets${path}_icon_lite.svg`
 
               if (cleanedPathName === path) {
+                if (window?.innerWidth < 500) {
+                  return <SVGToWhite src={`/img/assets${path}_icon_dark.svg`} alt="gfx-tab-icon" />
+                }
                 return mode === 'dark' ? (
                   <SVGToWhite src={icon} alt="gfx-tab-icon" />
                 ) : (

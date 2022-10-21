@@ -20,7 +20,7 @@ const Wrapper = styled.div`
 `
 const REWARDS_BTN = styled.button`
   ${tw`w-[111px] h-9 text-xs !font-semibold rounded-circle cursor-pointer text-white 
-  border-none border-0 sm:h-[70px] sm:w-full sm:text-regular sm:rounded-t-bigger sm:p-4 sm:mb-8`}
+  border-none border-0 sm:h-[70px] sm:w-full sm:text-regular  sm:rounded-none sm:rounded-t-bigger sm:p-4 sm:mb-32`}
   background-image: linear-gradient(90deg, #8ade75 0%, #4b831d 100%);
   line-height: inherit;
 `
@@ -37,7 +37,7 @@ const REWARD_BTN_TITLE = styled.span`
 `
 
 export const RewardsButton: FC = () => {
-  const { rewardToggle } = useRewardToggle()
+  const { rewardModal, rewardToggle } = useRewardToggle()
 
   const handleModalClick = () => {
     rewardToggle(true)
@@ -47,6 +47,7 @@ export const RewardsButton: FC = () => {
     <REWARDS_BTN onClick={handleModalClick}>
       <REWARD_BTN_TITLE>Rewards</REWARD_BTN_TITLE>
       <REWARDS_WITH_IMG src={'/img/assets/rewards.svg'} alt="rewards" />
+      {rewardModal && <RewardsPopup />}
     </REWARDS_BTN>
   )
 }
