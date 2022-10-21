@@ -154,7 +154,7 @@ const CustomTableList = () => {
         volume7dSum: volume7daySum,
         totalVolumeTrade: totalVolumeTrade
       })
-  }, [volume7daySum, sslVolume, stakeVolume])
+  }, [volume7daySum, sslVolume, stakeVolume, totalVolumeTrade])
 
   useEffect(() => {
     if (wallet.publicKey) {
