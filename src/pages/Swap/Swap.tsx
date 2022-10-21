@@ -133,19 +133,19 @@ const TokenHeader = styled.div`
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
-  ${tw`h-[75px] rounded-average p-px cursor-pointer mr-7 !min-w-[342px] mb-4 
-  sm:h-16.25 sm:mt-0 sm:mx-0 sm:mb-4 sm:min-w-[80vw]`}
+  ${tw`h-[75px] rounded-[10px] p-px cursor-pointer mr-7 !min-w-[342px] mb-4 
+  sm:h-16.25 sm:mt-0 sm:mx-0 sm:mb-4 sm:min-w-[80vw] sm:!w-[316px]`}
 
   background: ${({ theme, $clicked }) =>
     $clicked ? 'linear-gradient(90deg,rgba(247,147,26,0.5) 0%,rgba(220,31,255,0.5) 100%)' : theme.bg1};
   box-shadow: 0 6px 9px 0 rgba(36, 36, 36, 0.1);
 
   .inner-container {
-    ${tw`relative flex justify-center items-center h-full w-full rounded-average p-2 sm:static`}
+    ${tw`relative flex justify-center items-center h-full w-full rounded-[10px] p-2 sm:static`}
     background: ${({ $clicked, $cover }) => ($clicked ? $cover : 'transparent')};
 
     .content {
-      ${tw`w-1/2`}
+      ${tw`w-[55%]`}
 
       div {
         ${({ theme }) => theme.ellipse}
@@ -161,20 +161,26 @@ const SWAP_ROUTES = styled.div<{ less: boolean }>`
   ${tw`relative mx-[24px] pt-4`}
 
   .swap-content {
-    ${tw`flex h-1/5 mt-0 mb-3 pt-4 pl-4 justify-center
+    ${tw`flex h-1/5 mt-0 pb-3 pt-4 pl-4 justify-center
     sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around 
     sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0`}
     overflow-x: auto;
 
     @media (max-width: 1515px) {
-      justify-content: start;
+      justify-content: ${({ less }) => (less ? 'center' : 'start')};
     }
   }
 
   .action {
-    ${tw`absolute bottom-[-36px] sm:!text-base sm:!top-[88%] sm:!right-0`}
+    ${tw`mb-2 sm:absolute sm:!text-base sm:!right-0`}
 
-    right: ${({ less }) => (less ? '28% !important' : '5rem !important')};
+    @media (max-width: 500px) {
+      top: ${({ less }) => (less ? '80%' : '88%')};
+    }
+
+    div {
+      ${tw`text-right`}
+    }
   }
 `
 
@@ -315,8 +321,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
   const location = useLocation<ILocationState>()
   const { setEndpointName, network } = useConnectionConfig()
   const { mode } = useDarkMode()
-  const { refreshRates, setFocused, switchTokens, setClickNo, setRoutes, tokenA, tokenB, inTokenAmount } =
-    useSwap()
+  const { amountPool, setFocused, switchTokens, setClickNo, setRoutes, tokenA, tokenB, inTokenAmount } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
   const [route, setRoute] = useState(routes[clickNo])
   const [wrapModalVisible, setWrapModalVisible] = useState(false)
@@ -345,8 +350,9 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
     setSettingsModalVisible(true)
   }
   const refresh = () => {
+    setClickNo(0)
     setRoutes([])
-    setTimeout(() => refreshRates(), 2000)
+    setTimeout(() => amountPool(), 2000)
   }
 
   const dateString = (date: Date) => {
@@ -885,19 +891,21 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
             ))}
       </div>
 
-      <div className="action">
-        {!less ? (
-          <ShowLess
-            onClick={() => {
-              setLess(true)
-            }}
-          >
-            Show Less
-          </ShowLess>
-        ) : (
-          <ShowMore onClick={() => setLess(false)}>Show More</ShowMore>
-        )}
-      </div>
+      {routes.length > 2 && (
+        <div className="action">
+          {!less ? (
+            <ShowLess
+              onClick={() => {
+                setLess(true)
+              }}
+            >
+              Show Less
+            </ShowLess>
+          ) : (
+            <ShowMore onClick={() => setLess(false)}>Show More</ShowMore>
+          )}
+        </div>
+      )}
     </SWAP_ROUTES>
   )
 }

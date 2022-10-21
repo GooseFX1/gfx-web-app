@@ -2,13 +2,10 @@ import React, {
   createContext,
   Dispatch,
   FC,
-  MutableRefObject,
   ReactNode,
   SetStateAction,
-  useCallback,
   useContext,
   useEffect,
-  useRef,
   useState
 } from 'react'
 import moment from 'moment'
@@ -16,7 +13,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useAccounts } from './accounts'
 import { useConnectionConfig, useSlippageConfig } from './settings'
 import { notify } from '../utils'
-import { serum, swap, preSwapAmount } from '../web3'
+import { swap, preSwapAmount } from '../web3'
 import JSBI from 'jsbi'
 export type SwapInput = undefined | 'from' | 'to'
 
@@ -43,7 +40,6 @@ interface ISwapConfig {
   loading: boolean
   outTokenAmount: number
   pool: IPool
-  refreshRates: () => void
   setFocused: Dispatch<SetStateAction<SwapInput>>
   setInTokenAmount: Dispatch<SetStateAction<number>>
   setOutTokenAmount: Dispatch<SetStateAction<number>>
@@ -53,6 +49,7 @@ interface ISwapConfig {
   setTokenB: Dispatch<SetStateAction<ISwapToken | null>>
   swapTokens: (a: any, b: any) => void
   switchTokens: () => void
+  amountPool: () => Promise<void>
   tokenA: ISwapToken | null
   tokenB: ISwapToken | null
   connection?: any
@@ -72,7 +69,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection, network } = useConnectionConfig()
   const { slippage } = useSlippageConfig()
   const wallet = useWallet()
-  const [fetching, setFetching] = useState(false)
+  const [fetching] = useState(false)
   const [inTokenAmount, setInTokenAmount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [outTokenAmount, setOutTokenAmount] = useState(0)
@@ -92,99 +89,33 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [tokenA, setTokenA] = useState<ISwapToken | null>(null)
   const [tokenB, setTokenB] = useState<ISwapToken | null>(null)
 
-  const refreshTimeout: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
-  const timeoutDelay = 200
-  const refreshRates = useCallback(async () => {
-    refreshTimeout.current && clearTimeout(refreshTimeout.current)
-    refreshTimeout.current = setTimeout(async () => {
-      setFetching(true)
-      const time = moment().format('MMMM DD, h:mm a')
-
-      if (tokenA) {
-        let inValue = 0
-
-        try {
-          inValue = await serum.getLatestBid(connection, `${tokenA.symbol}/USDC`)
-        } catch (e) {
-          console.log(e)
-        }
-
-        setPool(({ inAmount, outAmount, outValue, outValuePerIn }) => ({
-          inAmount,
-          inValue,
-          outAmount,
-          outValue,
-          outValuePerIn,
-          time
-        }))
-      }
-
-      if (tokenB) {
-        let outValue = 0
-
-        try {
-          outValue = await serum.getLatestBid(connection, `${tokenB.symbol}/USDC`)
-        } catch (e) {
-          console.log(e)
-        }
-
-        setPool(({ inAmount, inValue, outAmount, outValuePerIn }) => ({
-          inAmount,
-          inValue,
-          outAmount,
-          outValue,
-          outValuePerIn,
-          time
-        }))
-      }
-
-      if (tokenA && tokenB) {
-        const inAmount = 0
-        const outAmount = 0
-        const outValuePerIn = 0
-
-        try {
-          amountPool()
-        } catch (e) {
-          console.log(e)
-        }
-
-        setPool(({ inValue, outValue }) => ({
-          inAmount,
-          inValue,
-          outAmount,
-          outValue,
-          outValuePerIn,
-          time
-        }))
-      }
-
-      setFetching(false)
-    }, timeoutDelay)
-  }, [connection, network, setPool, tokenA, tokenB])
-
   const amountPool = async () => {
     if (tokenA && tokenB) {
       let outTokenAmount = 0
-      if (inTokenAmount && inTokenAmount != 0) {
-        // needed weak comaprison because of '0.00'=='0'
-        const { preSwapResult, impact, gofxAmount } = await preSwapAmount(
-          tokenA,
-          tokenB,
-          inTokenAmount,
-          wallet,
-          connection,
-          network,
-          chosenRoutes[clickNo]
-        )
+      if (
+        inTokenAmount &&
+        inTokenAmount != 0 &&
+        chosenRoutes[clickNo] &&
+        !chosenRoutes[clickNo]?.marketInfos?.[0].amm.label.toLowerCase().includes('goosefx')
+      ) {
+        const { priceImpactPct: impact, outAmount } = chosenRoutes[clickNo]
+        const outedAmount = +(outAmount / 10 ** tokenB.decimals).toFixed(7)
+
+        if (outedAmount) {
+          outTokenAmount = Number(outedAmount)
+          setPriceImpact(impact)
+        } else {
+          notify({ type: 'error', message: 'Fetch Pre-swap Amount Failed', icon: 'error' })
+        }
+      } else if (
+        inTokenAmount &&
+        inTokenAmount != 0 &&
+        chosenRoutes[clickNo]?.marketInfos?.[0].amm.label.toLowerCase().includes('goosefx')
+      ) {
+        const { impact, preSwapResult } = await getGofxPool()
         if (preSwapResult) {
           outTokenAmount = Number(preSwapResult)
           setPriceImpact(impact)
-          if (!chosenRoutes[clickNo]?.marketInfos?.[0].amm.label.toLowerCase().includes('goosefx')) {
-            amountPoolGoose()
-          } else {
-            setGofxOutAmount(Number(gofxAmount))
-          }
         } else {
           notify({ type: 'error', message: 'Fetch Pre-swap Amount Failed', icon: 'error' })
         }
@@ -195,16 +126,15 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }
 
-  const amountPoolGoose = async () => {
+  const getGofxPool = async () => {
     if (
       tokenA &&
       tokenB &&
       inTokenAmount &&
       inTokenAmount != 0 &&
-      chosenRoutes[0]?.marketInfos?.[0].amm.label.toLowerCase().includes('goosefx')
+      chosenRoutes[clickNo]?.marketInfos?.[0].amm.label.toLowerCase().includes('goosefx')
     ) {
-      // needed weak comaprison because of '0.00'=='0'
-      const { gofxAmount } = await preSwapAmount(
+      const { gofxAmount, impact, preSwapResult } = await preSwapAmount(
         tokenA,
         tokenB,
         inTokenAmount,
@@ -216,6 +146,34 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (gofxAmount) {
         setGofxOutAmount(Number(gofxAmount))
       }
+
+      return { impact, preSwapResult }
+    }
+  }
+
+  const amountPoolGoose = async () => {
+    const index = chosenRoutes.findIndex((route) =>
+      route.marketInfos?.[0].amm.label.toLowerCase().includes('goosefx')
+    )
+
+    if (index < 0 || clickNo !== index) return //allow only to refresh if chosen route is gofx route
+
+    const { gofxAmount, impact, preSwapResult } = await preSwapAmount(
+      tokenA,
+      tokenB,
+      inTokenAmount,
+      wallet,
+      connection,
+      network,
+      chosenRoutes[index]
+    )
+    if (gofxAmount) {
+      setGofxOutAmount(Number(gofxAmount))
+    }
+
+    if (preSwapResult) {
+      setOutTokenAmount(Number(preSwapResult))
+      setPriceImpact(impact)
     }
   }
 
@@ -229,18 +187,14 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     amountPool()
-  }, [inTokenAmount, pool, slippage, tokenA, tokenB, clickNo])
-
-  useEffect(() => {
-    amountPoolGoose()
-  }, [inTokenAmount, slippage, tokenA, tokenB])
+  }, [inTokenAmount, slippage, tokenA, tokenB, clickNo])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      amountPool()
+      amountPoolGoose()
     }, 5000)
     return () => clearInterval(interval)
-  }, [amountPool])
+  }, [amountPoolGoose])
 
   const swapTokens = async (route: any, exchange: any) => {
     if (!tokenA || !tokenB) return
@@ -338,10 +292,10 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         loading,
         outTokenAmount,
         pool,
-        refreshRates,
         setFocused,
         setInTokenAmount,
         setOutTokenAmount,
+        amountPool,
         setPool,
         setTokenA,
         setTokenB,
@@ -377,7 +331,6 @@ export const useSwap = (): ISwapConfig => {
     loading: context.loading,
     outTokenAmount: context.outTokenAmount,
     pool: context.pool,
-    refreshRates: context.refreshRates,
     setFocused: context.setFocused,
     setInTokenAmount: context.setInTokenAmount,
     setOutTokenAmount: context.setOutTokenAmount,
@@ -396,6 +349,7 @@ export const useSwap = (): ISwapConfig => {
     setClickNo: context.setClickNo,
     clickNo: context.clickNo,
     network: context.network,
-    gofxOutAmount: context.gofxOutAmount
+    gofxOutAmount: context.gofxOutAmount,
+    amountPool: context.amountPool
   }
 }
