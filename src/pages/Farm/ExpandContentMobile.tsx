@@ -126,7 +126,7 @@ const Reward = styled.div`
   color: ${({ theme }) => theme.text1};
 `
 const ConnectWrapper = styled.div`
-  ${tw`flex flex-row justify-center mt-60 w-9/12`}
+  ${tw`flex flex-row justify-center mt-[260px] w-9/12`}
 `
 
 export const ExpandedContentMobile: FC<{
