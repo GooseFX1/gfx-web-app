@@ -111,6 +111,7 @@ export function colors(mode: string): Colors {
     bg17: mode === 'dark' ? '#272727' : '#FFFFFF',
     bg18: mode === 'dark' ? '#2a2a2a' : '#dadada',
     bg19: mode === 'dark' ? '#131313' : '#3c3c3c',
+    bg20: mode === 'dark' ? '#1c1c1c' : white,
     tableHeader: mode === 'dark' ? '#1c1c1c' : '#636363',
     borderBottom: mode === 'dark' ? '#555555' : '#cacaca',
     lpbg: mode === 'dark' ? '#2a2a2a' : '#d2d2d2',
