@@ -16,7 +16,7 @@ const BUTTON = styled.button`
   padding: ${({ theme }) => theme.margin(1.5)};
   border: none;
   ${({ theme }) => theme.roundedBorders}
-  background-color: ${({ theme }) => theme.bg10};
+  background-color: ${({ theme }) => theme.bg12};
   transition: background-color 200ms ease-in-out;
 
   span {
@@ -98,7 +98,7 @@ const INPUT_BALANCE_BUTTON = styled.div`
     line-height: 24px;
     color: ${({ theme }) => theme.text9};
     cursor: pointer;
-    background-color: ${({ theme }) => theme.bg10};
+    background-color: ${({ theme }) => theme.bg12};
     padding: 4px ${({ theme }) => theme.margin(1.5)};
     border-radius: 1rem;
   }
@@ -108,7 +108,7 @@ const SETTING_INPUT = styled(Input)`
   padding: 1.5rem;
   height: 75px;
   margin: 1rem 0rem 1.5rem 0rem;
-  background-color: ${({ theme }) => theme.bg10 + ' !important'};
+  background-color: ${({ theme }) => theme.bg12 + ' !important'};
   box-shadow: 0 0 0 0 !important;
   border-radius: 10px;
   font-size: 25px !important;

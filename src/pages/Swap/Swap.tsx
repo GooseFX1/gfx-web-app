@@ -41,10 +41,11 @@ const WRAPPER = styled.div`
   min-height: calc(100vh - 58px);
   color: ${({ theme }) => theme.text1};
   font-family: Montserrat;
+  background-color: ${({ theme }) => theme.bg2};
 `
 
 const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
-  ${tw`flex pt-[124px] items-center w-screen mb-7 
+  ${tw`flex pt-[200px] items-center w-screen mb-7 
   max-h-80p sm:justify-start sm:flex sm:flex-col sm:items-center sm:h-full`}
 
   color: ${({ theme }) => theme.text1};
@@ -56,9 +57,9 @@ const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
 `
 
 const SETTING_MODAL = styled(Modal)`
-  height: 425px !important;
+  height: 500px !important;
   width: 628px !important;
-  background-color: ${({ theme }) => theme.bg8};
+  background-color: ${({ theme }) => theme.bg20} !important;
 `
 
 const BODY = styled.div`
@@ -137,7 +138,11 @@ const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
   sm:h-16.25 sm:mt-0 sm:mx-0 sm:mb-4 sm:min-w-[80vw] sm:!w-[316px]`}
 
   background: ${({ theme, $clicked }) =>
-    $clicked ? 'linear-gradient(90deg,rgba(247,147,26,0.5) 0%,rgba(220,31,255,0.5) 100%)' : theme.bg1};
+    $clicked
+      ? 'linear-gradient(90deg,rgba(247,147,26,0.5) 0%,rgba(220,31,255,0.5) 100%)'
+      : checkMobile()
+      ? theme.bg10
+      : theme.bg20};
   box-shadow: 0 6px 9px 0 rgba(36, 36, 36, 0.1);
 
   .inner-container {
@@ -222,7 +227,7 @@ const SMALL_CLICKER_ICON = styled(CenteredImg)`
 const PRICE_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   ${tw`items-center h-full w-81.5 p-6 rounded-tl-bigger 
-  min-h-[527px] rounded-bl-bigger sm:w-full sm:rounded-bigger sm:mb-12`}
+  h-[575px] rounded-bl-bigger sm:w-full sm:rounded-bigger sm:mb-12`}
   font-family: Montserrat;
   background: ${({ theme }) => theme.swapSides2};
 `
@@ -235,11 +240,11 @@ const ROUTE_TAG = styled.div`
 `
 
 const ShowLess = styled.div`
-  ${tw`font-semibold cursor-pointer rounded-lg text-lg`}
+  ${tw`font-semibold cursor-pointer rounded-lg text-lg mr-12! sm:mr-0!`}
 `
 
 const ShowMore = styled.div`
-  ${tw`font-semibold cursor-pointer rounded-lg text-lg`}
+  ${tw`font-semibold cursor-pointer rounded-lg text-lg mr-[27.5%]! sm:mr-0!`}
 `
 
 const PriceHeader = styled.div`
@@ -294,9 +299,10 @@ const SWITCH = styled(CenteredImg)<{ measurements: number }>`
 const SWAP_CONTENT = styled.div`
   ${tw`items-center p-8 w-628 max-h-90p min-h-400 rounded-bigger sm:w-full sm:mb-12 sm:p-5 sm:text-sm`}
   ${({ theme }) => theme.flexColumnNoWrap}
-  background-color: ${({ theme }) => theme.bg9};
-  ${({ theme }) => theme.largeShadow}
-  @media (max-width:500px) {
+  background-color: ${({ theme }) => theme.bg20};
+
+  box-shadow: 0 7px 15px 5px rgba(0, 0, 0, 0.15);
+  @media (max-width: 500px) {
     line-height: inherit;
   }
 
@@ -378,6 +384,13 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
     .ant-modal-centered {
       top: -75px;
     }
+    .ant-modal {
+      border-radius: 20px;
+    }
+    .ant-modal-content,
+    .ant-modal-body {
+      min-height: 100%;
+    }
   `
 
   return (
@@ -387,7 +400,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
         bigTitle={true}
         title="Settings"
         visible={settingsModalVisible}
-        style={{ overflowY: 'hidden' }}
+        style={{ overflowY: 'hidden', backgroundColor: mode === 'dark' ? '#1c1c1c' : 'white' }}
       >
         <Settings setVisible={setSettingsModalVisible} />
       </SETTING_MODAL>
@@ -396,7 +409,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
         bigTitle={true}
         title="SOL / WSOL"
         visible={wrapModalVisible}
-        style={{ overflowY: 'hidden' }}
+        style={{ overflowY: 'hidden', backgroundColor: mode === 'dark' ? '#1c1c1c' : 'white' }}
       >
         <Wrap setVisible={setWrapModalVisible} />
       </SETTING_MODAL>
@@ -778,7 +791,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
                     className={'header-icon'}
                   />
                 ) && (
-                  <Tooltip dark placement="topLeft" color="#fff">
+                  <Tooltip dark placement="top" color="#fff">
                     <span style={{ color: '#000' }}>
                       {'The amount of fee we take, in order to process your transaction.'}
                     </span>
@@ -853,7 +866,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   }, [routes, tokenA.symbol, tokenB.symbol, tokens, outTokenAmount])
 
   return (
-    <SWAP_ROUTES less={less || details.length < 4}>
+    <SWAP_ROUTES less={less || details.length < 2}>
       <div className="swap-content">
         {routes?.length < 1
           ? Array(2)
@@ -1082,18 +1095,18 @@ const SwapMainProvider: FC = () => {
       ? tokens?.find((i) => i.symbol.toLowerCase() === tradePair?.split('-')[1].toLowerCase())
       : null
     const usd = tokens?.find((i) => i.symbol === 'USDC')
-    const sol = tokens?.find((i) => i.symbol === 'SOL')
+    const gfx = tokens?.find((i) => i.symbol === 'GOFX')
 
     if (token1) {
       setTokenA({ address: token1.address, decimals: token1.decimals, symbol: token1.symbol, name: token1.name })
-    } else if (usd) {
-      setTokenA({ address: usd.address, decimals: usd.decimals, symbol: usd.symbol, name: usd.name })
+    } else if (gfx) {
+      setTokenA({ address: gfx.address, decimals: gfx.decimals, symbol: gfx.symbol, name: gfx.name })
     }
 
     if (token2) {
       setTokenB({ address: token2.address, decimals: token2.decimals, symbol: token2.symbol, name: token2.name })
-    } else if (sol) {
-      setTokenB({ address: sol.address, decimals: sol.decimals, symbol: sol.symbol, name: sol.name })
+    } else if (usd) {
+      setTokenB({ address: usd.address, decimals: usd.decimals, symbol: usd.symbol, name: usd.name })
     }
   }, [setTokenA, setTokenB, tokens, tradePair])
 

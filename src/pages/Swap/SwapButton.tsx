@@ -16,7 +16,7 @@ const SWAP_BUTTON = styled(MainButton)<{ status: any; mode: any }>`
   width: 220px;
   padding: 0 32px;
   background-color: ${({ status, mode }) =>
-    status === 'action' ? '#5855FF' : mode === 'dark' ? '#202020' : '#ABABAB'};
+    status === 'action' ? '#5855FF' : mode === 'dark' ? '#131313' : '#ABABAB'};
 `
 
 const TEXT = styled.span`
