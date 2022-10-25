@@ -143,7 +143,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
 
   useEffect(() => {
     setTokenStaked(parseFloat(currentlyStaked))
-    setTokenEarned(Math.abs(parseFloat(earned)))
+    setTokenEarned(parseFloat(earned))
     return null
   }, [earned, currentlyStaked])
 
@@ -222,7 +222,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
     const decimals = ADDRESSES[network]?.sslPool[name]?.decimals
     const multiplier = name === 'SOL' || name === 'GMT' || decimals === 9 ? 10000 : 10
     let amountInNative = (unstakeAmt / tokenData?.userLiablity) * LAMPORTS_PER_SOL * multiplier
-    if (parseFloat(availableToMint.toFixed(3)) === parseFloat(unstakeAmt.toFixed(3))) {
+    if (parseFloat(availableToMint.toFixed(3)) >= parseFloat(unstakeAmt.toFixed(3))) {
       amountInNative = 100 * 100
     }
     onClickWithdraw(amountInNative)
@@ -485,8 +485,8 @@ const DailyRewards = ({ tokenPrice, tokenData, name }: any) =>
 const AvailableToMintComp = ({ availableToMintFiat, availableToMint, name }: any) => (
   <div className="info-item">
     <div className="title">Available {name}</div>
-    <div className="value">{`${moneyFormatterWithComma(availableToMint.toFixed(3))} ${name}`}</div>
-    <div className="price">{`$${moneyFormatterWithComma(availableToMintFiat.toFixed(3))} USDC`}</div>
+    <div className="value">{`${moneyFormatterWithComma(availableToMint)} ${name}`}</div>
+    <div className="price">{`$${moneyFormatterWithComma(availableToMintFiat)} USDC`}</div>
   </div>
 )
 
