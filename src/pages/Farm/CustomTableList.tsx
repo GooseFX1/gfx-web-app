@@ -215,7 +215,7 @@ const CustomTableList = () => {
         apr: isNaN(APR) ? '-' : tokenName === TOKEN_NAMES.GMT ? 0 : Math.max(APR * 100, -100),
         liquidity: tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0,
         currentlyStaked: wallet.publicKey ? Number(amountDeposited) / Math.pow(10, sslData.decimals) : undefined,
-        earned: wallet.publicKey ? Math.max(Number(earned) / Math.pow(10, sslData.decimals), 0) : undefined,
+        earned: wallet.publicKey ? Number(earned) / Math.pow(10, sslData.decimals) : undefined,
         userLiablity: Number(userLiablity),
         ptMinted: Number(ptMinted) / Math.pow(10, 9),
         volume: isNaN(volumeDays) || volumeDays * tokenPrice < 10 ? '-' : volumeDays * tokenPrice
@@ -310,14 +310,18 @@ const CustomTableList = () => {
       const APR: number = (1 / liqidity) * DR * 365
       // user account data
       const accountData = await fetchCurrentAmountStaked(connection, network, wallet)
-      const currentlyStaked = accountData.tokenStaked !== undefined ? accountData.tokenStaked : undefined
-
+      const currentlyStaked = liqidity
+        ? accountData.tokenStaked !== undefined
+          ? accountData.tokenStaked
+          : 0
+        : undefined
+      const earned = liqidity ? (accountData.tokenEarned !== undefined ? accountData.tokenEarned : 0) : undefined
       const dailyRewards = (APR * currentlyStaked) / 365
       const newFarmDataContext = farmDataContext.map((data) => {
         if (data.name === TOKEN_NAMES.GOFX) {
           return {
             ...data,
-            earned: accountData.tokenEarned !== undefined ? accountData.tokenEarned : undefined,
+            earned: earned,
             apr: APR * 100,
             rewards: dailyRewards,
             liquidity: getTokenPrice(TOKEN_NAMES.GOFX).current * liqidity,

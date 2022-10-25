@@ -1,4 +1,4 @@
-import React, { FC, useState, useMemo } from 'react'
+import React, { FC, useState, useMemo, useRef } from 'react'
 import styled, { css } from 'styled-components'
 import { MainButton } from '../../components'
 
@@ -80,7 +80,7 @@ const MAX_BUTTON = styled.div`
 const EXPAND_WRAPPER = styled.td<{ publicKey: any }>`
   ${({ publicKey }) => css`
     ${tw`font-semibold text-base absolute w-full left-0`}
-    margin-top: -390px;
+    margin-top: -395px;
     width: ${publicKey ? '100%' : '200px'};
     margin-left: ${!publicKey && '30%'};
     .details {
@@ -98,7 +98,7 @@ const Tooltip_holder = styled.div`
   ${tw`flex`}
 `
 const ROW_WRAPPER = styled.div`
-  ${tw`px-5 pb-6`}
+  ${tw`px-5 pb-5`}
 `
 
 const STAKE_UNSTAKE = styled.div`
@@ -193,6 +193,8 @@ export const ExpandedContentMobile: FC<{
     tokenData?.ptMinted >= 0 ? tokenData.currentlyStaked + tokenData.earned - tokenData.ptMinted : 0
 
   const onClickHalfSsl = (buttonId: string) => {
+    //@ts-ignore
+    inputRef?.current && inputRef?.current?.focus()
     if (name === 'SOL') userTokenBalance = userSOLBalance
     if (buttonId === 'deposit') setStakeAmt(parseFloat((userTokenBalance / 2).toFixed(DISPLAY_DECIMAL)))
     if (buttonId === 'stake') setStakeAmt(parseFloat(((currentlyStaked + earned) / 2).toFixed(DISPLAY_DECIMAL)))
@@ -200,13 +202,15 @@ export const ExpandedContentMobile: FC<{
   }
 
   const onClickMaxSsl = (buttonId: string) => {
+    //@ts-ignore
+    inputRef?.current && inputRef?.current?.focus()
     if (name === 'SOL') userTokenBalance = userSOLBalance
     if (buttonId === 'deposit') setStakeAmt(parseFloat(userTokenBalance.toFixed(DISPLAY_DECIMAL)))
     if (buttonId === 'stake') setStakeAmt(parseFloat((currentlyStaked + earned).toFixed(DISPLAY_DECIMAL)))
     else setUnstakeAmt(parseFloat(availableToMint.toFixed(DISPLAY_DECIMAL)))
   }
   const stakeProcess = process === 'Stake'
-
+  const inputRef = useRef()
   const gofxBtnDisabled = stakeProcess
     ? isStakeLoading || notEnoughFunds
     : isUnstakeLoading || currentlyStaked + earned <= 0
@@ -221,7 +225,7 @@ export const ExpandedContentMobile: FC<{
               <span className="details">Balance</span>
               <span className="details">
                 {' '}
-                {farm?.currentlyStaked >= 0 ? ` ${moneyFormatter(farm.currentlyStaked)}` : <Loader />}
+                {farm?.currentlyStaked !== undefined ? ` ${moneyFormatter(farm.currentlyStaked)}` : <Loader />}
               </span>
             </ROW>
             <ROW>
@@ -235,7 +239,7 @@ export const ExpandedContentMobile: FC<{
               </Tooltip_holder>
               <span className="details">
                 {' '}
-                {farm?.earned >= 0 ? `${moneyFormatter(farm?.earned)}` : <Loader />}
+                {farm?.earned !== undefined ? `${moneyFormatter(farm?.earned)}` : <Loader />}
               </span>
             </ROW>
             <ROW>
@@ -287,6 +291,7 @@ export const ExpandedContentMobile: FC<{
             </STAKE_UNSTAKE>
             <STYLED_SOL>
               <STYLED_INPUT
+                ref={inputRef}
                 onFocus={() => (isSSL ? !SSLDisabledBtn : !gofxBtnDisabled) && setDepositClass(' active')}
                 onBlur={() => setDepositClass('')}
                 value={stakeProcess ? stakeAmt : unstakeAmt}
@@ -302,13 +307,21 @@ export const ExpandedContentMobile: FC<{
               {!isSSL ? (
                 <div className="textMain">
                   <MAX_BUTTON
-                    onClick={() => onClickHalf(process === 'Stake' ? 'stake' : 'unstake')}
+                    onClick={() => {
+                      //@ts-ignore
+                      inputRef?.current && inputRef?.current.focus()
+                      onClickHalf(process === 'Stake' ? 'stake' : 'unstake')
+                    }}
                     className="textOne"
                   >
                     HALF
                   </MAX_BUTTON>
                   <MAX_BUTTON
-                    onClick={() => onClickMax(process === 'Stake' ? 'stake' : 'unstake')}
+                    onClick={() => {
+                      //@ts-ignore
+                      inputRef?.current && inputRef?.current.focus()
+                      onClickMax(process === 'Stake' ? 'stake' : 'unstake')
+                    }}
                     className="textTwo"
                   >
                     MAX
