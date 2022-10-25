@@ -22,7 +22,7 @@
     "@solana/spl-token": "^0.2.0",
     "@solana/spl-token-registry": "0.2.221",
     "@solana/wallet-adapter-base": "^0.9.18",
-    "@solana/wallet-adapter-react": "^0.15.21-rc.6",
+    "@solana/wallet-adapter-react": "rc",
     "@solana/wallet-adapter-wallets": "^0.19.5",
     "@solana/web3.js": "^1.58.0",
     "@testing-library/jest-dom": "^5.14.1",
