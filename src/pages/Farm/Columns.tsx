@@ -11,11 +11,11 @@ import { RefreshBtnWithAnimation } from './FarmFilterHeader'
 const DISPLAY_DECIMAL = 3
 
 const DEPOSIT_BTN = styled.button`
-  ${tw`h-[34px] w-[125px] -mt-3 text-white rounded-3xl border-none font-semibold`}
+  ${tw`h-[34px] w-[130px] -mt-3 text-white rounded-3xl border-none font-semibold`}
   font-size: 15px;
   background: #5855ff;
   @media (max-width: 500px) {
-    ${tw`h-7 w-20 absolute -ml-20 -mt-0.5`}
+    ${tw`h-7 w-[90px]  -ml-20 -mt-0.5`}
   }
 `
 export const STYLED_TITLE = styled.div`
@@ -71,7 +71,7 @@ const ICON_WRAPPER_TD = styled.td`
     transition: transform 500ms ease-out;
   }
   @media (max-width: 500px) {
-    width: 30%;
+    width: 33%;
     img {
       transition: transform 500ms ease-out;
       ${tw`mt-1.5 ml-3 absolute`}
