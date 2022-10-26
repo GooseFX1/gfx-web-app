@@ -51,9 +51,7 @@ const ABSTRACT = styled.div`
   }
   .scroll {
     animation: marquee 120s linear infinite;
-    padding-right: 10px;
-    display: flex;
-    align-items: center;
+    ${tw`text-white flex items-center pr-[15px]	`}
     div {
       margin-right: 12px;
     }
@@ -111,9 +109,9 @@ const STYLED_FARM_HEADER = styled.div`
   ${tw`w-[100%] sm:mt-0`}
   ${tw`sm:block sm:pt-[2px] sm:pb-[8px] sm:px-[15px] flex flex-row items-center justify-between pb-[23px]`}
   .search-bar {
-    ${tw`h-[60px] m-0 bg-black mr-52 sm:mr-0 w-[25vw] sm:w-[400px] sm:!bg-[#2a2a2a] sm:!pl-[15px]`}
+    ${tw`h-[60px] m-0 bg-black mr-52 sm:mr-0 w-[25vw] sm:w-[400px] sm:!pl-[15px]`}
     input {
-      ${tw`bg-black sm:!bg-[#2a2a2a]`}
+      ${tw`bg-black `}
     }
   }
   .pools {

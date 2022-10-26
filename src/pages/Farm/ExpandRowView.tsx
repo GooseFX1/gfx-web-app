@@ -1,6 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
-import React, { FC, useMemo, useState, useEffect } from 'react'
+import React, { FC, useMemo, useState, useEffect, useRef } from 'react'
 import { TOKEN_NAMES } from '../../constants'
 import {
   useAccounts,
@@ -114,6 +114,11 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
   const tokenStakedPlusEarned = tokenEarned + tokenStaked
   const [userSOLBalance, setSOLBalance] = useState<number>()
 
+  // refs
+  const depositRef = useRef<HTMLInputElement>(null)
+  const withdrawRef = useRef<HTMLInputElement>(null)
+  const isMobile = checkMobile()
+
   const getSuccessUnstakeMsg = (): string => `Successfully Unstaked amount of ${unstakeAmt} ${name}!`
   const getSuccessStakeMsg = (): string => `Successfully staked amount of ${stakeAmt} ${name}!`
   const getErrStakeMsg = (): string => `Staking ${name} error!`
@@ -149,8 +154,13 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
 
   const onClickHalf = (buttonId: string): void => {
     if (name === TOKEN_NAMES.SOL) userTokenBalance = userSOLBalance
-    if (buttonId === 'stake') setStakeAmt(parseFloat((userTokenBalance / 2).toFixed(DISPLAY_DECIMAL)))
-    else setUnstakeAmt(parseFloat(((tokenStaked + tokenEarned) / 2).toFixed(DISPLAY_DECIMAL)))
+    if (buttonId === 'stake') {
+      !isMobile && depositRef.current.focus()
+      setStakeAmt(parseFloat((userTokenBalance / 2).toFixed(DISPLAY_DECIMAL)))
+    } else {
+      !isMobile && withdrawRef.current.focus()
+      setUnstakeAmt(parseFloat(((tokenStaked + tokenEarned) / 2).toFixed(DISPLAY_DECIMAL)))
+    }
   }
   const updateStakedValue = () => {
     setTokenStaked((prev) => prev + stakeAmt)
@@ -159,8 +169,10 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
     //add focus element
     if (name === TOKEN_NAMES.SOL) userTokenBalance = userSOLBalance
     if (buttonId === 'stake') {
+      !isMobile && depositRef.current.focus()
       setStakeAmt(parseFloat(userTokenBalance.toFixed(DISPLAY_DECIMAL)))
     } else {
+      !isMobile && withdrawRef.current.focus()
       setUnstakeAmt(parseFloat((tokenEarned + tokenStaked).toFixed(DISPLAY_DECIMAL)))
     }
   }
@@ -398,6 +410,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
                     <STYLED_INPUT
                       placeholder={`0.00 ${name}`}
                       type="number"
+                      ref={depositRef}
                       onBlur={() => setDepositClass('')}
                       onFocus={() => !zeroFunds && setDepositClass(' active')}
                       value={stakeAmt}
@@ -431,6 +444,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
                   <INPUT_CONTAINER>
                     <STYLED_INPUT
                       placeholder={`0.00 ${name}`}
+                      ref={withdrawRef}
                       onBlur={() => setWithdarwClass('')}
                       onFocus={() =>
                         ((SSL && availableToMint) || tokenStakedPlusEarned) && setWithdarwClass(' active')
