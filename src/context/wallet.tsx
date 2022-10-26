@@ -27,7 +27,7 @@ export const WalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const wallets = useMemo(() => getWalletAdapters(network), [network])
   return (
-    <WalletAdapterProvider wallets={wallets} localStorageKey="wallet">
+    <WalletAdapterProvider wallets={wallets} localStorageKey="wallet" autoConnect>
       <WalletModalProvider modal={<WalletsModal />}>{children}</WalletModalProvider>
     </WalletAdapterProvider>
   )
