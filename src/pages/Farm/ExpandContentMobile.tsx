@@ -61,6 +61,7 @@ const STYLED_BTN = styled(MainButton)`
     ${tw`text-white opacity-100`}
     &:disabled {
       ${tw`opacity-50`}
+      color: ${({ theme }) => theme.text14} !important;
     }
   }
   &:focus,
@@ -69,8 +70,8 @@ const STYLED_BTN = styled(MainButton)`
     background: ${({ theme }) => theme.primary3};
   }
   &:disabled {
-    opacity: 0.5;
-    border: none;
+    ${tw`opacity-50	bg-[#131313] border-none`}
+    color: ${({ theme }) => theme.text14};
   }
 `
 const MAX_BUTTON = styled.div`
@@ -193,8 +194,7 @@ export const ExpandedContentMobile: FC<{
     tokenData?.ptMinted >= 0 ? tokenData.currentlyStaked + tokenData.earned - tokenData.ptMinted : 0
 
   const onClickHalfSsl = (buttonId: string) => {
-    //@ts-ignore
-    inputRef?.current && inputRef?.current?.focus()
+    inputRef?.current?.focus()
     if (name === 'SOL') userTokenBalance = userSOLBalance
     if (buttonId === 'deposit') setStakeAmt(parseFloat((userTokenBalance / 2).toFixed(DISPLAY_DECIMAL)))
     if (buttonId === 'stake') setStakeAmt(parseFloat(((currentlyStaked + earned) / 2).toFixed(DISPLAY_DECIMAL)))
@@ -202,19 +202,20 @@ export const ExpandedContentMobile: FC<{
   }
 
   const onClickMaxSsl = (buttonId: string) => {
-    //@ts-ignore
-    inputRef?.current && inputRef?.current?.focus()
+    inputRef?.current?.focus()
     if (name === 'SOL') userTokenBalance = userSOLBalance
     if (buttonId === 'deposit') setStakeAmt(parseFloat(userTokenBalance.toFixed(DISPLAY_DECIMAL)))
     if (buttonId === 'stake') setStakeAmt(parseFloat((currentlyStaked + earned).toFixed(DISPLAY_DECIMAL)))
     else setUnstakeAmt(parseFloat(availableToMint.toFixed(DISPLAY_DECIMAL)))
   }
   const stakeProcess = process === 'Stake'
-  const inputRef = useRef()
+  const inputRef = useRef<HTMLInputElement>(null)
   const gofxBtnDisabled = stakeProcess
     ? isStakeLoading || notEnoughFunds
-    : isUnstakeLoading || currentlyStaked + earned <= 0
-  const SSLDisabledBtn = stakeProcess ? isStakeLoading || notEnoughFunds || zeroFunds : !availableToMint
+    : isUnstakeLoading || currentlyStaked + earned <= 0 || unstakeAmt > currentlyStaked + earned
+  const SSLDisabledBtn = stakeProcess
+    ? isStakeLoading || notEnoughFunds || zeroFunds
+    : !availableToMint || unstakeAmt > availableToMint
 
   return (
     <EXPAND_WRAPPER publicKey={wallet.publicKey}>
@@ -308,8 +309,7 @@ export const ExpandedContentMobile: FC<{
                 <div className="textMain">
                   <MAX_BUTTON
                     onClick={() => {
-                      //@ts-ignore
-                      inputRef?.current && inputRef?.current.focus()
+                      inputRef?.current.focus()
                       onClickHalf(process === 'Stake' ? 'stake' : 'unstake')
                     }}
                     className="textOne"
@@ -318,8 +318,7 @@ export const ExpandedContentMobile: FC<{
                   </MAX_BUTTON>
                   <MAX_BUTTON
                     onClick={() => {
-                      //@ts-ignore
-                      inputRef?.current && inputRef?.current.focus()
+                      inputRef?.current.focus()
                       onClickMax(process === 'Stake' ? 'stake' : 'unstake')
                     }}
                     className="textTwo"
