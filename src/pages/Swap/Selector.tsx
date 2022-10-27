@@ -12,6 +12,10 @@ const BODY = styled.div`
   overflow-y: auto;
 `
 
+const SELECTOR_MODAL = styled(Modal)`
+  background-color: ${({ theme }) => theme.bg12 + '!important'};
+`
+
 const CLICKER = styled(SpaceBetweenDiv)`
   position: relative;
   width: 100%;
@@ -95,7 +99,7 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
   ${({ theme }) => theme.roundedBorders}
   cursor: pointer;
   z-index: 1;
-  background-color: ${({ theme }) => theme.bg20};
+  background-color: ${({ theme }) => theme.bg21};
 
   @media (max-width: 500px) {
     top: 4px;
@@ -112,7 +116,7 @@ const TOKEN = styled.div`
   cursor: pointer;
 
   &:hover {
-    background-color: ${({ theme }) => theme.bg4};
+    background-color: ${({ theme }) => theme.bg9};
   }
 
   > div:last-child {
@@ -224,7 +228,7 @@ export const Selector: FC<{
 
   return (
     <>
-      <Modal setVisible={setVisible} title="Select a token" visible={visible}>
+      <SELECTOR_MODAL setVisible={setVisible} title="Select a token" visible={visible}>
         <INPUT>
           <Input
             onChange={(x: any) => setFilterKeywords(x.target.value)}
@@ -269,7 +273,7 @@ export const Selector: FC<{
             </TOKEN>
           ))}
         </BODY>
-      </Modal>
+      </SELECTOR_MODAL>
       <SELECTOR $height={height} onClick={() => setVisible(true)}>
         <CLICKER>
           {token ? (

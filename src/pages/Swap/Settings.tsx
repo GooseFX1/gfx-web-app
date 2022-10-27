@@ -9,8 +9,9 @@ const BUTTON = styled.button`
   padding: ${({ theme }) => theme.margin(1.5)};
   border: none;
   ${({ theme }) => theme.roundedBorders}
-  background-color: ${({ theme }) => theme.bg12};
+  background-color: ${({ theme }) => theme.bg22};
   transition: background-color 200ms ease-in-out;
+  height: 50px;
 
   &:active {
     background-image: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
@@ -26,7 +27,7 @@ const SETTING_BUTTON = styled(BUTTON)<{ clicked: boolean }>`
   width: 166px;
   height: 50px;
   background: ${({ clicked, theme }) =>
-    clicked ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)' : theme.bg12};
+    clicked ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)' : theme.bg22};
 
   @media (max-width: 500px) {
     width: 83px;
@@ -64,7 +65,7 @@ const SETTING_INPUT = styled(Input)`
   padding: 1.5rem;
   height: 50px;
   margin: 1rem 0rem 1.5rem 0rem;
-  background-color: ${({ theme }) => theme.bg12 + ' !important'};
+  background-color: ${({ theme }) => theme.bg22 + ' !important'};
   box-shadow: 0 0 0 0 !important;
 `
 

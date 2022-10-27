@@ -6,6 +6,7 @@ import { CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../styles'
 
 const ANTMODAL = styled(AntModal)`
   ${({ theme }) => theme.customScrollBar('4px')};
+  background-color: ${({ theme }) => theme.bg9};
 `
 
 const CLOSE_ICON = styled(CenteredImg)`
@@ -49,7 +50,6 @@ export const Modal: FC<{
   return (
     <ANTMODAL
       bodyStyle={{
-        backgroundColor: mode === 'dark' ? '#2a2a2a' : 'white',
         borderRadius: '20px',
         maxHeight: '95vh',
         fontFamily: 'Montserrat',

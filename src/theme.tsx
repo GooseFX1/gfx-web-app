@@ -76,6 +76,7 @@ export function colors(mode: string): Colors {
     text24: mode === 'dark' ? '#EFEDED' : '#636363',
     text25: mode === 'dark' ? '#7D7D7D' : '#636363',
     text26: mode === 'dark' ? '#999999' : '#353535',
+    text27: mode === 'dark' ? '#b5b5b5' : '#eee',
 
     textWhitePurple: mode === 'dark' ? '#fff' : '#8d4cdd',
 
@@ -98,12 +99,12 @@ export function colors(mode: string): Colors {
     bg12: mode === 'dark' ? '#131313' : '#ababab',
     swapSides1:
       mode === 'dark'
-        ? 'linear-gradient(256deg, #2a2a2a 1.49%, #181818 93.4%)'
-        : 'linear-gradient(256deg, #FDFDFD 1.49%, #EEEEEE 93.4%)',
+        ? 'linear-gradient(256deg, #2a2a2a 1.49%, #131313 93.4%)'
+        : 'linear-gradient(256deg, #fff 1.49%, #EEEEEE 93.4%)',
     swapSides2:
       mode === 'dark'
-        ? 'linear-gradient(88.61deg, #2a2a2a 1.49%, #181818 93.4%)'
-        : 'linear-gradient(88.61deg, #FDFDFD 1.49%, #EEEEEE 93.4%)',
+        ? 'linear-gradient(88.61deg, #2a2a2a 1.49%, #131313 93.4%)'
+        : 'linear-gradient(88.61deg, #fff 1.49%, #EEEEEE 93.4%)',
     bg13: mode === 'dark' ? '#191919' : '#eee',
     bg14: mode === 'dark' ? '#1b1b1b' : '#555555',
     bg15: mode === 'dark' ? '#191919' : '#555555',
@@ -112,6 +113,8 @@ export function colors(mode: string): Colors {
     bg18: mode === 'dark' ? '#2a2a2a' : '#dadada',
     bg19: mode === 'dark' ? '#131313' : '#3c3c3c',
     bg20: mode === 'dark' ? '#1c1c1c' : white,
+    bg21: mode === 'dark' ? '#1c1c1c' : '#3c3c3c',
+    bg22: mode === 'dark' ? '#131313' : '#cacaca',
     tableHeader: mode === 'dark' ? '#1c1c1c' : '#636363',
     borderBottom: mode === 'dark' ? '#555555' : '#cacaca',
     lpbg: mode === 'dark' ? '#2a2a2a' : '#d2d2d2',

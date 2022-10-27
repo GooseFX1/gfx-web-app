@@ -5,7 +5,7 @@ export const AmountField = styled.div<{ $balance: string; $height: string; $valu
   height: ${({ $height }) => $height};
   margin-top: ${({ theme }) => theme.margin(1)};
   ${({ theme }) => theme.roundedBorders}
-  background-color: ${({ theme }) => theme.bg12};
+  background-color: ${({ theme }) => theme.bg22};
 
   &:before {
     content: 'Balance: ${({ $balance }) => $balance}';

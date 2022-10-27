@@ -16,7 +16,7 @@ const BUTTON = styled.button`
   padding: ${({ theme }) => theme.margin(1.5)};
   border: none;
   ${({ theme }) => theme.roundedBorders}
-  background-color: ${({ theme }) => theme.bg12};
+  background-color: ${({ theme }) => theme.bg22};
   transition: background-color 200ms ease-in-out;
 
   span {
@@ -46,10 +46,10 @@ const SETTING_BUTTON = styled(BUTTON)<{ clicked: boolean }>`
 `
 
 const SAVE_BUTTON = styled(BUTTON)`
-  height: 70px;
+  height: 50px;
   width: 222px;
   margin-top: 30px;
-  border-radius: 10px;
+  border-radius: 25px;
 
   &:hover {
     background-color: #5855ff;
@@ -96,9 +96,9 @@ const INPUT_BALANCE_BUTTON = styled.div`
     font-weight: 600;
     font-size: 15px;
     line-height: 24px;
-    color: ${({ theme }) => theme.text9};
+    color: ${({ theme }) => theme.text27};
     cursor: pointer;
-    background-color: ${({ theme }) => theme.bg12};
+    background-color: ${({ theme }) => theme.bg21};
     padding: 4px ${({ theme }) => theme.margin(1.5)};
     border-radius: 1rem;
   }
@@ -108,10 +108,11 @@ const SETTING_INPUT = styled(Input)`
   padding: 1.5rem;
   height: 75px;
   margin: 1rem 0rem 1.5rem 0rem;
-  background-color: ${({ theme }) => theme.bg12 + ' !important'};
+  background-color: ${({ theme }) => theme.bg22 + ' !important'};
   box-shadow: 0 0 0 0 !important;
   border-radius: 10px;
   font-size: 25px !important;
+  color: ${({ theme }) => theme.text6};
 `
 
 export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
@@ -241,7 +242,14 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
     }
 
     .ant-input {
-      font-size: 25px;
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 22px;
+      color: ${({ theme }) => theme.text6};
+
+      &:placeholder {
+        color: ${({ theme }) => theme.text21 + '!important'};
+      }
     }
 
     .ant-input-affix-wrapper {
@@ -257,6 +265,13 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
     .modal-close-icon > img {
       height: 24px;
       width: 24px;
+    }
+
+    .swapper-input {
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 22px;
+      color: ${({ theme }) => theme.text6};
     }
   `
 
@@ -300,14 +315,13 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
           </INPUT_WRAPPER>
           <div>
             <SETTING_INPUT
-              maxLength={6}
-              onChange={(x: BaseSyntheticEvent) =>
-                !isNaN(x.target.value) && setValue(x.target.value >= 25 ? 25 : x.target.value)
-              }
+              maxLength={8}
+              onChange={(x: BaseSyntheticEvent) => !isNaN(x.target.value) && setValue(x.target.value)}
               pattern="\d+(\.\d+)?"
-              placeholder={value.toString()}
+              placeholder={'25'}
               suffix={<span>SOL</span>}
-              value={value}
+              value={value > 0 ? value : ''}
+              className={'swapper-input'}
             />
           </div>
         </>
