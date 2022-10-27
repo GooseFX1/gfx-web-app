@@ -42,6 +42,56 @@ const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text1};
   font-family: Montserrat;
   background-color: ${({ theme }) => theme.bg2};
+
+  .lastRefreshed {
+    animation: openAnimation 0.5s forwards;
+  }
+
+  .hidelastRefreshed {
+    animation: closeMe 0.5s;
+  }
+
+  @keyframes closeMe {
+    0% {
+      top: 125px;
+    }
+    100% {
+      top: 0px;
+    }
+  }
+
+  @keyframes openAnimation {
+    0% {
+      top: 0px;
+    }
+    100% {
+      top: 125px;
+    }
+  }
+
+  .rotateRefreshBtn {
+    -webkit-animation: cog 1.5s infinite;
+    -moz-animation: cog 1.5s infinite;
+    -ms-animation: cog 1.5s infinite;
+    animation: cog 1.5s infinite;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-timing-function: linear;
+    -ms-animation-timing-function: linear;
+    animation-timing-function: linear;
+    @keyframes cog {
+      100% {
+        -moz-transform: rotate(-360deg);
+        -ms-transform: rotate(-360deg);
+        transform: rotate(-360deg);
+      }
+    }
+  }
+`
+
+const RefreshAlert = styled.div`
+  ${tw`flex w-full absolute left-0 top-0 justify-center p-2 items-center font-medium text-center text-base
+sm:text-sm`}
+  color: ${({ theme }) => theme.tabNameColor};
 `
 
 const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
@@ -78,7 +128,7 @@ const HEADER_TITLE = styled(CenteredDiv)`
 
 const TOKEN_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
-  ${tw`items-center w-81.5 rounded-r-bigger py-6 pr-6 pl-8 min-h-[501px] sm:w-full sm:rounded-bigger sm:min-h-0`}
+  ${tw`items-center w-81.5 rounded-r-bigger py-6 pr-6 pl-8 h-[575px] sm:w-full sm:rounded-bigger sm:min-h-0`}
   font-family: Montserrat;
   background: ${({ theme }) => theme.swapSides1};
 `
@@ -219,6 +269,7 @@ const SocialsButton = styled.div`
   color: ${({ theme }) => theme.text14};
   line-height: inherit;
 `
+//background-color: ${({ theme }) => theme.bg19};
 
 const SMALL_CLICKER_ICON = styled(CenteredImg)`
   ${tw`h-5 w-5 mr-2 rounded-circle`}
@@ -240,11 +291,11 @@ const ROUTE_TAG = styled.div`
 `
 
 const ShowLess = styled.div`
-  ${tw`font-semibold cursor-pointer rounded-lg text-lg mr-12! sm:mr-0!`}
+  ${tw`font-semibold cursor-pointer rounded-lg text-lg mr-[9.5%]! sm:mr-0!`}
 `
 
 const ShowMore = styled.div`
-  ${tw`font-semibold cursor-pointer rounded-lg text-lg mr-[27.5%]! sm:mr-0!`}
+  ${tw`font-semibold cursor-pointer rounded-lg text-lg mr-[30%]! sm:mr-0!`}
 `
 
 const PriceHeader = styled.div`
@@ -314,16 +365,19 @@ const SWAP_CONTENT = styled.div`
     text-align: center;
     line-height: 2.5rem;
     font-size: 10px;
-    background-color: ${({ theme }) => theme.bg10};
+    background-color: ${({ theme }) => theme.bg22};
     cursor: pointer;
   }
 `
 
-const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: number }> = ({
-  exchange,
-  routes,
-  clickNo
-}) => {
+const SwapContent: FC<{
+  exchange?: (any: any) => void
+  routes: any
+  clickNo: number
+  setRefreshed: React.Dispatch<React.SetStateAction<boolean>>
+  setRefreshAnimationClass: React.Dispatch<React.SetStateAction<string>>
+  refreshed: boolean
+}> = ({ exchange, routes, clickNo, setRefreshed, setRefreshAnimationClass, refreshed }) => {
   const location = useLocation<ILocationState>()
   const { setEndpointName, network } = useConnectionConfig()
   const { mode } = useDarkMode()
@@ -358,7 +412,9 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
   const refresh = () => {
     setClickNo(0)
     setRoutes([])
-    setTimeout(() => amountPool(), 2000)
+    setRefreshed(true)
+    setRefreshAnimationClass('lastRefreshed')
+    setTimeout(() => amountPool(), 3000)
   }
 
   const dateString = (date: Date) => {
@@ -416,7 +472,7 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
       <HEADER_WRAPPER $iconSize="40px">
         <HEADER_TITLE>
           <span>{checkMobile() ? 'Swap' : dateString(new Date())}</span>
-          <img src={`/img/crypto/jup_${mode}.svg`} alt="jupiter-icon" className={'jup-icon'} />
+          <img src={`/img/crypto/jup_${mode}.svg`} alt="jupiter-icon" className={' jup-icon'} />
         </HEADER_TITLE>
 
         <div>
@@ -424,7 +480,11 @@ const SwapContent: FC<{ exchange?: (any: any) => void; routes: any; clickNo: num
             wSOL
           </div>
           <div onClick={refresh} style={{ cursor: 'pointer' }}>
-            <img src={`/img/assets/refresh.svg`} alt="refresh-icon" className={'header-icon'} />
+            <img
+              src={`/img/assets/refresh.svg`}
+              alt="refresh-icon"
+              className={refreshed ? 'rotateRefreshBtn' : '' + 'header-icon'}
+            />
           </div>
           <SETTING_WRAPPER onClick={onClick}>
             <img src={`/img/assets/settings_${mode}_mode.svg`} alt="settings" className={'smaller-header-icon'} />
@@ -640,7 +700,7 @@ const TokenContent: FC = () => {
 
         <SubHeader>
           <TokenTitle>
-            {token?.name} ({token?.symbol})
+            {token?.name.length < 12 ? token?.name : token?.name.slice(0, 12) + '...'} ({token?.symbol})
           </TokenTitle>
           <COPY style={{ display: 'flex', alignItems: 'center' }}>
             <SmallerTitle>{truncate(token?.address)}</SmallerTitle>
@@ -941,6 +1001,8 @@ export const SwapMain: FC = () => {
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState(false)
   const [inAmountTotal, setInAmountTotal] = useState(0)
+  const [refreshed, setRefreshed] = useState(false)
+  const [refreshAnimationClass, setRefreshAnimationClass] = useState('')
 
   const { routes, exchange } = useJupiter({
     amount: JSBI.BigInt(inAmountTotal), // raw input amount of tokens
@@ -1051,11 +1113,44 @@ export const SwapMain: FC = () => {
     setRoutes(shortRoutes)
   }
 
+  useEffect(() => {
+    if (refreshed) {
+      setTimeout(() => {
+        setRefreshAnimationClass('hidelastRefreshed')
+      }, 2000)
+
+      setTimeout(() => {
+        setRefreshed(false)
+        setRefreshAnimationClass('')
+      }, 2500)
+    }
+  }, [refreshed])
+
+  const RefreshedAnimation = () => (
+    <RefreshAlert className={refreshAnimationClass}>
+      <div>
+        Last updated: {checkMobile() && <br />}{' '}
+        {
+          //@ts-ignore
+          new Date().toGMTString()
+        }
+      </div>
+    </RefreshAlert>
+  )
+
   if (checkMobile()) {
     return (
       <WRAPPER>
+        {refreshed && <RefreshedAnimation />}
         <INNERWRAPPER $desktop={!checkMobile()}>
-          <SwapContent exchange={exchange} routes={chosenRoutes} clickNo={clickNo} />
+          <SwapContent
+            exchange={exchange}
+            routes={chosenRoutes}
+            clickNo={clickNo}
+            setRefreshed={setRefreshed}
+            setRefreshAnimationClass={setRefreshAnimationClass}
+            refreshed={refreshed}
+          />
           {allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
           {allowed && <TokenContent />}
         </INNERWRAPPER>
@@ -1064,9 +1159,17 @@ export const SwapMain: FC = () => {
   } else {
     return (
       <WRAPPER>
+        <RefreshedAnimation />
         <INNERWRAPPER $desktop={desktop && allowed}>
           {desktop && allowed && <TokenContent />}
-          <SwapContent exchange={exchange} routes={chosenRoutes} clickNo={clickNo} />
+          <SwapContent
+            exchange={exchange}
+            routes={chosenRoutes}
+            clickNo={clickNo}
+            setRefreshed={setRefreshed}
+            setRefreshAnimationClass={setRefreshAnimationClass}
+            refreshed={refreshed}
+          />
           {desktop && allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
         </INNERWRAPPER>
         {allowed && inTokenAmount > 0 && (

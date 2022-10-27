@@ -46,10 +46,10 @@ const SETTING_BUTTON = styled(BUTTON)<{ clicked: boolean }>`
 `
 
 const SAVE_BUTTON = styled(BUTTON)`
-  height: 50px;
-  width: 222px;
+  min-width: 222px;
   margin-top: 30px;
-  border-radius: 25px;
+  border-radius: 35px;
+  padding: 1.5rem;
 
   &:hover {
     background-color: #5855ff;
@@ -98,7 +98,7 @@ const INPUT_BALANCE_BUTTON = styled.div`
     line-height: 24px;
     color: ${({ theme }) => theme.text27};
     cursor: pointer;
-    background-color: ${({ theme }) => theme.bg21};
+    background-color: ${({ theme }) => theme.bg19};
     padding: 4px ${({ theme }) => theme.margin(1.5)};
     border-radius: 1rem;
   }
@@ -110,7 +110,7 @@ const SETTING_INPUT = styled(Input)`
   margin: 1rem 0rem 1.5rem 0rem;
   background-color: ${({ theme }) => theme.bg22 + ' !important'};
   box-shadow: 0 0 0 0 !important;
-  border-radius: 10px;
+  border-radius: 37.5px;
   font-size: 25px !important;
   color: ${({ theme }) => theme.text6};
 `
@@ -279,7 +279,9 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
     <BODY>
       <div>
         <TITLE>Wrap / Unwrap SOL</TITLE>
-        <Tooltip notInherit={true}>You can now manually wrap SOL and unwrap wSOL here.</Tooltip>
+        <Tooltip placement="top" notInherit={true}>
+          You can now manually wrap SOL and unwrap wSOL here.
+        </Tooltip>
       </div>
       <BUTTON_CONTAINER>
         <SETTING_BUTTON

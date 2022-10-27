@@ -37,9 +37,11 @@ const SETTING_BUTTON = styled(BUTTON)<{ clicked: boolean }>`
 `
 
 const SAVE_BUTTON = styled(BUTTON)`
-  height: 50px;
   width: 222px;
+  height: auto;
   margin-top: 30px;
+  border-radius: 35px;
+  padding: 1.5rem;
 
   &:hover {
     background-color: #5855ff;
@@ -62,8 +64,9 @@ const BUTTON_CONTAINER = styled(CenteredDiv)`
 `
 
 const SETTING_INPUT = styled(Input)`
-  padding: 1.5rem;
+  padding: 2rem;
   height: 50px;
+  font-size: 20px;
   margin: 1rem 0rem 1.5rem 0rem;
   background-color: ${({ theme }) => theme.bg22 + ' !important'};
   box-shadow: 0 0 0 0 !important;
@@ -102,13 +105,20 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
       }
     }
 
+    .ant-input {
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 22px;
+    }
+
     .ant-input-affix-wrapper {
       position: relative;
       display: flex;
-      flex: 5;
+      flex: 1;
       align-items: center;
       height: 50px;
-      border: ${slippage > 0.001 ? `2px solid ${slippage > 0.005 ? 'red' : 'orange'}` : 'none'} !important;
+      border: none;
+      font-size: 20px;
       background-color: ${mode === 'dark' ? '#474747' : '#808080'};
       box-shadow: 0 4px 15px 2px rgb(0, 0, 0, ${mode === 'dark' ? '0.25' : '0.1'});
     }
@@ -123,7 +133,7 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
     <BODY>
       <div>
         <TITLE>Slippage tolerance</TITLE>
-        <Tooltip notInherit={true}>
+        <Tooltip notInherit={true} placement="top">
           The minimum amount on how many tokens you will accept, in the event that the price increases or
           decreases.
         </Tooltip>
@@ -148,12 +158,12 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
         <SETTING_INPUT
           maxLength={6}
           onChange={(x: BaseSyntheticEvent) =>
-            !isNaN(x.target.value) && setValue(x.target.value >= 25 ? 25 : x.target.value)
+            !isNaN(x.target.value) && Number(x.target.value) <= 25 && setValue(x.target.value)
           }
           pattern="\d+(\.\d+)?"
-          placeholder={value.toString()}
+          placeholder={'0.00'}
           suffix={<span>%</span>}
-          value={value}
+          value={value > 0 ? value : ''}
         />
       </div>
       <SAVE_BUTTON
