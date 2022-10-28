@@ -1,4 +1,6 @@
 import React, { FC } from 'react'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import styled from 'styled-components'
 import { Tooltip } from '../../components/Tooltip'
 import { moneyFormatter, moneyFormatterWithComma } from '../../utils/math'
@@ -8,6 +10,7 @@ import { IFarmData } from './CustomTableList'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts/App/Connect'
 import { RefreshBtnWithAnimation } from './FarmFilterHeader'
+import { useDarkMode } from '../../context'
 const DISPLAY_DECIMAL = 3
 
 const DEPOSIT_BTN = styled.button`
@@ -66,17 +69,14 @@ const ICON_WRAPPER_TD = styled.td`
   .invertArrow {
     transform: rotate(180deg);
     transition: transform 500ms ease-out;
-    filter: ${({ theme }) => theme.filterArrowDown};
   }
   .dontInvert {
     transition: transform 500ms ease-out;
-    filter: ${({ theme }) => theme.filterArrowDown};
   }
   @media (max-width: 500px) {
     width: 33%;
     img {
       transition: transform 500ms ease-out;
-      filter: ${({ theme }) => theme.filterArrowDown};
       ${tw`mt-1.5 ml-3 absolute`}
     }
   }
@@ -84,6 +84,13 @@ const ICON_WRAPPER_TD = styled.td`
 
 export const Loader: FC = () => (
   <Skeleton.Button active size="small" style={{ display: 'flex', height: '15px', borderRadius: '5px' }} />
+)
+export const LoaderLeftSpace: FC = () => (
+  <Skeleton.Button
+    active
+    size="small"
+    style={{ display: 'flex', height: '15px', borderRadius: '5px', marginLeft: 6 }}
+  />
 )
 
 export const HeaderTooltip = (text: string) =>
@@ -194,6 +201,7 @@ export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; i
   const { publicKey } = useWallet()
   const showConnect = index === 0
   const toggle = () => setIsOpen((prev) => !prev)
+  const { mode } = useDarkMode()
 
   return (
     <>
@@ -245,7 +253,7 @@ export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; i
       <ICON_WRAPPER_TD onClick={() => setIsOpen((prev) => !prev)}>
         <img
           className={isOpen ? 'invertArrow' : 'dontInvert'}
-          src={`/img/assets/arrow-down-large.svg`}
+          src={`/img/assets/arrow-down-${mode}.svg`}
           alt="arrow"
         />
       </ICON_WRAPPER_TD>
@@ -300,6 +308,7 @@ export const ColumnMobile: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean
   isOpen
 }) => {
   const { name, apr, currentlyStaked } = farm
+  const { mode } = useDarkMode()
 
   return (
     <>
@@ -317,7 +326,7 @@ export const ColumnMobile: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean
       </td>
       <ICON_WRAPPER_TD onClick={() => setIsOpen((prev) => !prev)}>
         {currentlyStaked === 0 && <DepositButton />}
-        <img className={isOpen ? 'invertArrow' : ''} src={`/img/assets/arrow-down-large.svg`} alt="arrow" />
+        <img className={isOpen ? 'invertArrow' : ''} src={`/img/assets/arrow-down-${mode}.svg`} alt="arrow" />
       </ICON_WRAPPER_TD>
     </>
   )

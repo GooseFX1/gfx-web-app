@@ -43,9 +43,13 @@ export interface IFarmData {
   volume?: number | string
 }
 
-const WRAPPER = styled.div<{ $navCollapsed }>`
-  margin-top: 10px;
-  height: calc(100vh - 188px - ${({ $navCollapsed }) => (!$navCollapsed ? '80px' : '0px')});
+const WRAPPER = styled.div<{ $navCollapsed; $lastRefreshedClass }>`
+  margin-top: 5px;
+  height: calc(
+    100vh - ${({ $lastRefreshedClass }) => (!$lastRefreshedClass ? '45px' : '0px')} - 184px -
+      ${({ $navCollapsed }) => (!$navCollapsed ? '80px' : '0px')}
+  );
+  transition: 0.5s ease;
   overflow-y: auto;
   overflow-x: hidden;
   ${({ theme }) => theme.customScrollBar('0px')}
@@ -71,15 +75,15 @@ const WRAPPER = styled.div<{ $navCollapsed }>`
   .borderRow {
     border-radius: 20px 0px 0px 25px;
     height: 74px;
+    border-right: 2px solid ${({ theme }) => theme.tableHeader};
     @media (max-width: 500px) {
       width: 30%;
       height: 68px;
     }
   }
-
   .borderRow2 {
     border-radius: 0px 20px 25px 0px;
-    color: ${({ theme }) => theme.tableHeader};
+    border-left: 2px solid ${({ theme }) => theme.tableHeader};
   }
 `
 
@@ -96,7 +100,8 @@ const CustomTableList = () => {
     setFarmDataContext,
     farmDataSSLContext,
     setFarmDataSSLContext,
-    setRefreshClass
+    setRefreshClass,
+    lastRefreshedClass
   } = useFarmContext()
   const [accountKey, setAccountKey] = useState<PublicKey>()
   const [farmData, setFarmData] = useState<IFarmData[]>([...farmDataContext, ...farmDataSSLContext])
@@ -229,7 +234,9 @@ const CustomTableList = () => {
     setSslVolume(totalLiquidity)
     setLiquidityObject(liqObj)
     setVolume7daySum(volume7dSum)
-    setRefreshClass('')
+    setTimeout(() => {
+      setRefreshClass('')
+    }, 1800)
     return
   }
 
@@ -337,8 +344,12 @@ const CustomTableList = () => {
     }
   }
   const { isCollapsed } = useNavCollapse()
+  console.log(lastRefreshedClass)
   return (
-    <WRAPPER $navCollapsed={isCollapsed}>
+    <WRAPPER
+      $navCollapsed={isCollapsed}
+      $lastRefreshedClass={lastRefreshedClass === 'hide' || lastRefreshedClass === undefined}
+    >
       <table ref={tableRef}>
         <thead className="tableHeader">
           <tr>
