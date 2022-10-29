@@ -35,7 +35,7 @@ const TAB_ICON = styled(CenteredImg)`
 
 const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: number }>`
   ${tw`relative h-20 rounded-circle sm:mt-8`}
-  background-color: ${({ theme }) => theme.bg9};
+  background-color: ${({ theme }) => theme.bg20};
 
   .arrow-down {
     ${tw`w-3.5 h-auto block`}
