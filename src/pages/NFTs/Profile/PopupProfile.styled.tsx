@@ -69,7 +69,7 @@ export const StyledPopupProfile = styled(Modal)`
     }
     .text {
       font-size: 10px;
-      color: ${theme.text8};
+      color: ${theme.text4};
       text-align: center;
       max-width: 70px;
       margin-top: ${theme.margin(0.5)};
@@ -77,7 +77,7 @@ export const StyledPopupProfile = styled(Modal)`
     .note {
       padding-left: ${theme.margin(2.5)};
       font-size: 14px;
-      color: ${theme.text8};
+      color: ${theme.text4};
     }
     .image-wrap {
       position: relative;

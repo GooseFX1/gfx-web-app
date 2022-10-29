@@ -43,20 +43,20 @@ const RIGHT_SECTION = styled.div`
       .rs-price {
         font-size: 25px;
         font-weight: bold;
-        color: ${theme.text8};
+        color: ${theme.text4};
       }
 
       .rs-fiat {
         font-size: 14px;
         font-weight: 500;
-        color: ${theme.text8};
+        color: ${theme.text4};
       }
 
       .rs-percent {
         font-size: 11px;
         font-weight: 600;
         margin-left: ${theme.margin(0.5)};
-        color: ${theme.text8};
+        color: ${theme.text4};
       }
     }
 
@@ -82,7 +82,7 @@ const RIGHT_SECTION = styled.div`
       font-weight: 500;
       max-height: 70px;
       margin-bottom: ${theme.margin(1.5)};
-      color: ${theme.text8};
+      color: ${theme.text4};
       overflow-y: scroll;
       overflow-x: hidden;
       ${({ theme }) => theme.customScrollBar('4px')};
@@ -93,7 +93,7 @@ const RIGHT_SECTION = styled.div`
       font-weight: 600;
       max-width: 64px;
       margin-left: ${theme.margin(1.5)};
-      color: ${theme.text8};
+      color: ${theme.text4};
     }
   `}
 `
@@ -150,7 +150,7 @@ const GRID_INFO = styled(Row)`
     .gi-item-title {
       font-size: 18px;
       font-weight: 500;
-      color: ${theme.text8};
+      color: ${theme.text4};
       text-transform: capitalize;
     }
   `}
@@ -188,7 +188,7 @@ ${tw`my-6`}
 
   .gi-item-title {
     ${tw`text-tiny font-medium capitalize underline`}
-    color: ${({ theme }) => theme.text8};
+    color: ${({ theme }) => theme.text4};
     text-decoration-color: grey;
   }
 `

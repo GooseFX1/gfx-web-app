@@ -67,7 +67,7 @@ interface ISettingsConfig {
   slippage: number
 }
 
-export const DEFAULT_SLIPPAGE = '0.0015'
+export const DEFAULT_SLIPPAGE = 0.005
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
 
@@ -94,7 +94,7 @@ export function useConnectionConfig() {
 type RPC_CACHE = null | { endpointName: string; endpoint: string | null }
 
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE)
+  const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
 
   const init = (): string => {
     const existingUserPreference: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-rpc'))
@@ -148,8 +148,8 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         network,
         endpointName,
         setEndpointName,
-        setSlippage: (val) => setSlippage(val.toString()),
-        slippage: parseFloat(slippage)
+        setSlippage: (val: number) => setSlippage(val),
+        slippage: slippage
       }}
     >
       {children}

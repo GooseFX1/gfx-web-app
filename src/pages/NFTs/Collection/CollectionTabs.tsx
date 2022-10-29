@@ -123,7 +123,7 @@ const STYLED_SEARCH_BAR = styled.div`
     input {
       background-color: ${({ theme }) => theme.searchbarSmallBackground};
       &::placeholder {
-        color: ${({ theme }) => theme.text8};
+        color: ${({ theme }) => theme.text4};
       }
     }
   }

@@ -93,7 +93,7 @@ const SECTION_TITLE = MainText(styled.div`
 const SUB_TITLE = MainText(styled.div`
   font-size: 17px;
   font-weight: 600;
-  color: ${({ theme }) => theme.text8} !important;
+  color: ${({ theme }) => theme.text4} !important;
   text-align: left;
   margin-top: ${({ theme }) => theme.margin(0.5)};
   margin-bottom: ${({ theme }) => theme.margin(1)};
@@ -218,7 +218,7 @@ const SELECTION_SECTION = styled.div`
 const SECTION_HEADING = MainText(styled.div`
   font-size: 17px;
   font-weight: 600;
-  color: ${({ theme }) => theme.text8} !important;
+  color: ${({ theme }) => theme.text4} !important;
   margin-bottom: ${({ theme }) => theme.margin(1)};
 `)
 

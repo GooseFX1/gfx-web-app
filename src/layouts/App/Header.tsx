@@ -40,7 +40,7 @@ const BUTTONS = styled(CenteredDiv)`
 const WRAPPER = styled.nav`
   ${tw`fixed w-full rounded-b-circle z-[300] md:flex-nowrap 
   md:flex md:h-auto md:p-2 min-md:flex min-md:items-center min-md:justify-center`}
-  background-color: ${({ theme }) => theme.bg9};
+  background-color: ${({ theme }) => theme.bg20};
   ${({ theme }) => theme.smallShadow}
 `
 
@@ -52,7 +52,7 @@ const MobileWrapper = styled(WRAPPER)`
 const CollapsibleWrapper = styled.div<{ $collapse: boolean }>`
   ${tw`absolute rounded-bl-bigger rounded-br-bigger justify-center cursor-pointer flex w-10 h-5 bottom-[-20px]`}
   background: ${({ $collapse, theme }) =>
-    $collapse ? 'linear-gradient(158.4deg, #5855FF 14.18%, #DC1FFF 82.14%);' : theme.bg9};
+    $collapse ? 'linear-gradient(158.4deg, #5855FF 14.18%, #DC1FFF 82.14%);' : theme.bg20};
 
   img {
     ${tw`h-2.5 w-2.5`}

@@ -34,7 +34,7 @@ const WRAPPER = styled.div`
   }
   .second-line {
     ${tw`text-lg mt-6 font-medium	w-96 text-center`}
-    color: ${({ theme }) => theme.text8};
+    color: ${({ theme }) => theme.text4};
   }
 `
 

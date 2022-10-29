@@ -58,7 +58,7 @@ const TITLE = MainText(styled.div`
 
 const DESCRIPTION = MainText(styled.div`
   font-size: 15px;
-  color: ${({ theme }) => theme.text8} !important;
+  color: ${({ theme }) => theme.text4} !important;
   text-align: center;
   font-weight: 600;
   line-height: 18px;

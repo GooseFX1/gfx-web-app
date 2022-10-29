@@ -49,7 +49,7 @@ export const StyledPopupCompletedProfile = styled(Modal)`
     margin-top: ${theme.margin(2.5)};
     font-size: 20px;
     font-weight: 500;
-    color: ${theme.text8};
+    color: ${theme.text4};
   }
   .ant-modal-body {
     padding: ${theme.margin(3.5)} 155px;
@@ -76,7 +76,7 @@ export const StyledPopupCompletedProfile = styled(Modal)`
       }
       font-size: 20px;
       font-weight: 500;
-      color: ${theme.text8};
+      color: ${theme.text4};
       background-color: transparent;
       border: none;
       cursor: pointer;

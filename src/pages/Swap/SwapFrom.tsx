@@ -13,9 +13,9 @@ const QUICK_SELECT = styled.div`
     font-weight: 600;
     font-size: 15px;
     line-height: 24px;
-    color: ${({ theme }) => theme.text9};
+    color: ${({ theme }) => theme.text27};
     cursor: pointer;
-    background-color: ${({ theme }) => theme.bg10};
+    background-color: ${({ theme }) => theme.bg19};
     padding: 4px ${({ theme }) => theme.margin(1.5)};
     border-radius: 1rem;
   }
@@ -121,7 +121,7 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
           }
           onFocus={() => setFocused('from')}
           pattern="\d+(\.\d+)?"
-          placeholder={inTokenAmount.toString()}
+          placeholder={'0.00'}
           value={inTokenAmount}
           className={'swap-input'}
         />

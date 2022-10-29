@@ -26,7 +26,7 @@ const TITLE = MainText(styled.div`
 
 const DESCRIPTION = MainText(styled.div`
   font-size: 15px;
-  color: ${({ theme }) => theme.text8} !important;
+  color: ${({ theme }) => theme.text4} !important;
   text-align: center;
   font-weight: 600;
   line-height: 18px;
@@ -91,7 +91,7 @@ const IMAGE_COUNT_DESC = styled(DESCRIPTION)`
 
 const UPLOAD_TEXT = MainText(styled.div`
   ${tw`text-[20px] mt-[32px] text-center`}
-  color: ${({ theme }) => theme.text8} !important;
+  color: ${({ theme }) => theme.text4} !important;
   font-weight: 600;
 `)
 
@@ -103,7 +103,7 @@ const DRAFT_CHECK = styled.div`
   p {
     ${tw`text-[20px]`}
     font-weight: 600;
-    color: ${({ theme }) => theme.text8};
+    color: ${({ theme }) => theme.text4};
   }
 
   span {

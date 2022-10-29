@@ -166,7 +166,7 @@ const STYLED_DESC = styled.div`
     font-size: 14px;
     font-weight: 600;
     color: #fff;
-    color: ${({ theme }) => theme.text8};
+    color: ${({ theme }) => theme.text4};
   }
 `
 
