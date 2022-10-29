@@ -12,6 +12,58 @@ import { useConnectionConfig } from '../../context'
 import { wrapSolToken, signAndSendRawTransaction } from '../../web3'
 import { Transaction } from '@solana/web3.js'
 
+//#region styles
+const BODY = styled(CenteredDiv)<{ $mode: string }>`
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: Montserrat;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  margin-top: ${({ theme }) => theme.margin(4)};
+  padding-bottom: ${({ theme }) => theme.margin(2.5)};
+
+  > div {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    &:nth-child(2) {
+      margin: ${({ theme }) => theme.margin(3)} 0;
+    }
+  }
+
+  .ant-input {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 22px;
+    color: ${({ theme }) => theme.text6};
+
+    &:placeholder {
+      color: ${({ theme }) => theme.text21 + '!important'};
+    }
+  }
+
+  .ant-input-affix-wrapper {
+    position: relative;
+    display: flex;
+    flex: 5;
+    align-items: center;
+    border: 0px solid black !important;
+    background-color: ${({ $mode }) => ($mode === 'dark' ? '#474747' : '#808080')};
+    box-shadow: 0 4px 15px 2px rgb(0, 0, 0, ${({ $mode }) => ($mode === 'dark' ? '0.25' : '0.1')});
+  }
+
+  .modal-close-icon > img {
+    height: 24px;
+    width: 24px;
+  }
+`
+
 const BUTTON = styled.button`
   padding: ${({ theme }) => theme.margin(1.5)};
   border: none;
@@ -46,10 +98,9 @@ const SETTING_BUTTON = styled(BUTTON)<{ clicked: boolean }>`
 `
 
 const SAVE_BUTTON = styled(BUTTON)`
-  min-width: 222px;
-  margin-top: 30px;
+  height: 50px;
+  width: 222px;
   border-radius: 35px;
-  padding: 1.5rem;
 
   &:hover {
     background-color: #5855ff;
@@ -57,6 +108,7 @@ const SAVE_BUTTON = styled(BUTTON)`
 `
 
 const TITLE = styled.span`
+  font-weight: 600;
   font-size: 18px;
   color: ${({ theme }) => theme.text13};
 `
@@ -105,15 +157,15 @@ const INPUT_BALANCE_BUTTON = styled.div`
 `
 
 const SETTING_INPUT = styled(Input)`
-  padding: 1.5rem;
-  height: 75px;
+  height: 50px;
   margin: 1rem 0rem 1.5rem 0rem;
   background-color: ${({ theme }) => theme.bg22 + ' !important'};
   box-shadow: 0 0 0 0 !important;
   border-radius: 37.5px;
-  font-size: 25px !important;
+  font-size: 20px !important;
   color: ${({ theme }) => theme.text6};
 `
+//#endregion
 
 export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
   const { mode } = useDarkMode()
@@ -217,66 +269,8 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
     }
   }
 
-  const BODY = styled(CenteredDiv)`
-    flex-direction: column;
-    flex: 1;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    font-family: Montserrat;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    margin-top: ${({ theme }) => theme.margin(4)};
-    padding-bottom: ${({ theme }) => theme.margin(2.5)};
-
-    > div {
-      display: flex;
-      align-items: center;
-      width: 100%;
-
-      &:nth-child(2) {
-        margin: ${({ theme }) => theme.margin(3)} 0;
-      }
-    }
-
-    .ant-input {
-      font-weight: 600;
-      font-size: 24px;
-      line-height: 22px;
-      color: ${({ theme }) => theme.text6};
-
-      &:placeholder {
-        color: ${({ theme }) => theme.text21 + '!important'};
-      }
-    }
-
-    .ant-input-affix-wrapper {
-      position: relative;
-      display: flex;
-      flex: 5;
-      align-items: center;
-      border: 0px solid black !important;
-      background-color: ${mode === 'dark' ? '#474747' : '#808080'};
-      box-shadow: 0 4px 15px 2px rgb(0, 0, 0, ${mode === 'dark' ? '0.25' : '0.1'});
-    }
-
-    .modal-close-icon > img {
-      height: 24px;
-      width: 24px;
-    }
-
-    .swapper-input {
-      font-weight: 600;
-      font-size: 18px;
-      line-height: 22px;
-      color: ${({ theme }) => theme.text6};
-    }
-  `
-
   return (
-    <BODY>
+    <BODY $mode={mode}>
       <div>
         <TITLE>Wrap / Unwrap SOL</TITLE>
         <Tooltip placement="top" notInherit={true}>

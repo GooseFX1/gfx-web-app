@@ -107,7 +107,6 @@ const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
 `
 
 const SETTING_MODAL = styled(Modal)`
-  height: 500px !important;
   width: 628px !important;
   background-color: ${({ theme }) => theme.bg20} !important;
 `
@@ -443,17 +442,13 @@ const SwapContent: FC<{
     .ant-modal {
       border-radius: 20px;
     }
-    .ant-modal-content,
-    .ant-modal-body {
-      min-height: 100%;
-    }
   `
 
   return (
     <SWAP_CONTENT>
       <SETTING_MODAL
         setVisible={setSettingsModalVisible}
-        bigTitle={true}
+        bigTitle={false}
         title="Settings"
         visible={settingsModalVisible}
         style={{ overflowY: 'hidden', backgroundColor: mode === 'dark' ? '#1c1c1c' : 'white' }}
@@ -462,7 +457,7 @@ const SwapContent: FC<{
       </SETTING_MODAL>
       <SETTING_MODAL
         setVisible={setWrapModalVisible}
-        bigTitle={true}
+        bigTitle={false}
         title="SOL / WSOL"
         visible={wrapModalVisible}
         style={{ overflowY: 'hidden', backgroundColor: mode === 'dark' ? '#1c1c1c' : 'white' }}

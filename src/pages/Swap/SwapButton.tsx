@@ -13,15 +13,17 @@ enum State {
 }
 
 const SWAP_BUTTON = styled(MainButton)<{ status: any; mode: any }>`
+  height: 50px;
   width: 220px;
   padding: 0 32px;
   background-color: ${({ status, mode }) =>
-    status === 'action' ? '#5855FF' : mode === 'dark' ? '#131313' : '#CACACA'};
+    status === 'action' ? '#5855FF' : status === 'connect' ? '#8d4cdd' : mode === 'dark' ? '#131313' : '#CACACA'};
+  cursor: pointer;
 `
 
 const TEXT = styled.span`
   font-weight: 600 !important;
-  font-size: 17px !important;
+  font-size: 15px !important;
   line-height: 21px !important;
 `
 
@@ -34,6 +36,8 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
   const { setVisible } = useWalletModal()
 
   const state = useMemo(() => {
+    console.log(inTokenAmount)
+
     if (!wallet || !publicKey) {
       return State.Connect
     } else if (!tokenA || !tokenB) {
@@ -49,10 +53,11 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
 
   const buttonStatus = useMemo(() => {
     switch (state) {
+      case State.Connect:
+        return 'connect'
       case State.CanSwap:
         return 'action'
 
-      case State.Connect:
       case State.Enter:
       case State.BalanceExceeded:
       default:
@@ -62,7 +67,7 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
 
   const content = useMemo(
     () =>
-      ['Connect wallet', 'Swap', 'Enter amount', `Insufficient ${tokenA?.symbol || 'Balance'}`, 'Pool not found'][
+      ['Connect Wallet', 'Swap', 'Enter amount', `Insufficient ${tokenA?.symbol || 'Balance'}`, 'Pool not found'][
         state
       ],
     [state, tokenA?.symbol]

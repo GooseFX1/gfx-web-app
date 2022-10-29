@@ -13,7 +13,7 @@ const BODY = styled.div`
 `
 
 const SELECTOR_MODAL = styled(Modal)`
-  background-color: ${({ theme }) => theme.bg12 + '!important'};
+  background-color: ${({ theme }) => theme.bg20 + '!important'};
 `
 
 const CLICKER = styled(SpaceBetweenDiv)`

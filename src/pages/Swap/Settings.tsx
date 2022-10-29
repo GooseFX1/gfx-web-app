@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, FC, useEffect, useState } from 'react'
+import React, { BaseSyntheticEvent, FC, useState } from 'react'
 import { Input } from 'antd'
 import styled from 'styled-components'
 import { Tooltip } from '../../components'
@@ -23,11 +23,15 @@ const BUTTON = styled.button`
   }
 `
 
-const SETTING_BUTTON = styled(BUTTON)<{ clicked: boolean }>`
+const SETTING_BUTTON = styled(BUTTON)<{ $curSlippage: boolean }>`
   width: 166px;
   height: 50px;
-  background: ${({ clicked, theme }) =>
-    clicked ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)' : theme.bg22};
+  background: ${({ $curSlippage, theme }) =>
+    $curSlippage ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)' : theme.bg22};
+
+  span {
+    color: ${({ theme, $curSlippage }) => ($curSlippage ? 'white' : theme.text9)};
+  }
 
   @media (max-width: 500px) {
     width: 83px;
@@ -36,20 +40,28 @@ const SETTING_BUTTON = styled(BUTTON)<{ clicked: boolean }>`
   }
 `
 
-const SAVE_BUTTON = styled(BUTTON)`
+const SAVE_BUTTON = styled(BUTTON)<{ $pendingUpdate: boolean }>`
   width: 222px;
-  height: auto;
-  margin-top: 30px;
+  height: 50px;
   border-radius: 35px;
-  padding: 1.5rem;
+  background-color: ${({ theme, $pendingUpdate }) => ($pendingUpdate ? '#5855ff' : theme.bg22)};
+
+  span {
+    color: ${({ theme, $pendingUpdate }) => ($pendingUpdate ? 'white' : theme.text9)};
+    font-size: 15px;
+  }
 
   &:hover {
     background-color: #5855ff;
+    span {
+      color: white;
+    }
   }
 `
 
 const TITLE = styled.span`
   font-size: 18px;
+  font-weight: 600;
   color: ${({ theme }) => theme.text13};
 `
 
@@ -64,22 +76,28 @@ const BUTTON_CONTAINER = styled(CenteredDiv)`
 `
 
 const SETTING_INPUT = styled(Input)`
-  padding: 2rem;
   height: 50px;
   font-size: 20px;
-  margin: 1rem 0rem 1.5rem 0rem;
+  margin: 20px 0rem 30px 0rem;
+  padding: 0 20px;
   background-color: ${({ theme }) => theme.bg22 + ' !important'};
   box-shadow: 0 0 0 0 !important;
+
+  input,
+  .ant-input-suffix {
+    color: ${({ theme }) => theme.text9};
+  }
 `
 
 export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible }) => {
   const { mode } = useDarkMode()
   const { slippage, setSlippage } = useSlippageConfig()
-  const [value, setValue] = useState(slippage * 100)
+  const [value, setValue] = useState<number>(slippage)
 
-  useEffect(() => {
-    setSlippage(value / 100)
-  }, [value])
+  const handleSlippageChange = (x: BaseSyntheticEvent) => {
+    console.log(x.target.value)
+    !isNaN(x.target.value) && setValue(parseFloat(x.target.value) / 100)
+  }
 
   const BODY = styled(CenteredDiv)`
     flex-direction: column;
@@ -92,8 +110,7 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
     font-style: normal;
     line-height: normal;
     letter-spacing: normal;
-    margin-top: ${({ theme }) => theme.margin(4)};
-    padding-bottom: ${({ theme }) => theme.margin(2.5)};
+    margin-top: 26px;
 
     > div {
       display: flex;
@@ -109,6 +126,7 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
       font-weight: 600;
       font-size: 20px;
       line-height: 22px;
+      text-align: left;
     }
 
     .ant-input-affix-wrapper {
@@ -122,11 +140,6 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
       background-color: ${mode === 'dark' ? '#474747' : '#808080'};
       box-shadow: 0 4px 15px 2px rgb(0, 0, 0, ${mode === 'dark' ? '0.25' : '0.1'});
     }
-
-    .modal-close-icon > img {
-      height: 24px;
-      width: 24px;
-    }
   `
 
   return (
@@ -139,15 +152,9 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
         </Tooltip>
       </div>
       <BUTTON_CONTAINER>
-        {[0.1, 0.5, 1].map((item, index) => (
-          <SETTING_BUTTON
-            key={index}
-            clicked={item === value}
-            onClick={() => {
-              setValue(item)
-            }}
-          >
-            <span>{item}%</span>
+        {[0.001, 0.005, 0.01].map((slippage, index) => (
+          <SETTING_BUTTON key={index} $curSlippage={slippage === value} onClick={() => setValue(slippage)}>
+            <span>{slippage * 100}%</span>
           </SETTING_BUTTON>
         ))}
       </BUTTON_CONTAINER>
@@ -157,16 +164,15 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
       <div>
         <SETTING_INPUT
           maxLength={6}
-          onChange={(x: BaseSyntheticEvent) =>
-            !isNaN(x.target.value) && Number(x.target.value) <= 25 && setValue(x.target.value)
-          }
+          onChange={handleSlippageChange}
           pattern="\d+(\.\d+)?"
-          placeholder={'0.00'}
+          placeholder={'0.00%'}
           suffix={<span>%</span>}
-          value={value > 0 ? value : ''}
+          value={value > 0 ? value * 100 : ''}
         />
       </div>
       <SAVE_BUTTON
+        $pendingUpdate={value !== slippage}
         onClick={() => {
           setSlippage(value)
           setVisible(false)

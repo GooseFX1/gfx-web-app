@@ -16,18 +16,22 @@ const CLOSE_ICON = styled(CenteredImg)`
 
 const HEADER = styled(SpaceBetweenDiv)`
   width: 100%;
+  .modal-close-icon > img {
+    height: 24px;
+    width: 24px;
+  }
 `
 
 const TITLE = styled.span`
-  font-size: 14px;
+  font-size: 20px;
   font-weight: bold;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text7};
 `
 
 const BIG_TITLE = styled.span`
   font-size: 30px;
   font-weight: bold;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text7};
 `
 
 export const Modal: FC<{
