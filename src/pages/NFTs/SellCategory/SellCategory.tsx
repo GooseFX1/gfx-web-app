@@ -33,7 +33,7 @@ export const STYLED_SELL_CATEGORY = styled(Row)`
       margin-top: ${({ theme }) => theme.margin(1)};
       font-size: 14px;
       font-weight: 600;
-      color: ${({ theme }) => theme.text8};
+      color: ${({ theme }) => theme.text4};
     }
   }
 `

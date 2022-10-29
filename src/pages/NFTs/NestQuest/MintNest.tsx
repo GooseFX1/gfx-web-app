@@ -121,7 +121,7 @@ const CreatorStyle = styled(Row)`
   span {
     font-size: 16px;
     font-weight: 600;
-    color: ${({ theme }) => theme.text8};
+    color: ${({ theme }) => theme.text4};
   }
 
   .icon {

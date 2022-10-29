@@ -57,7 +57,6 @@ export function colors(mode: string): Colors {
     text5: mode === 'dark' ? '#949494' : '#fff',
     text6: mode === 'dark' ? '#cccccc' : '#353535',
     text7: mode === 'dark' ? white : '#3C3C3C',
-    text8: mode === 'dark' ? white : '#636363',
     text9: mode === 'dark' ? '#616161' : '#3C3C3C',
     text10: mode === 'dark' ? '#4b4b4b' : '#BDBDBD',
     text11: mode === 'dark' ? '#bebebe' : '#636363',
@@ -266,7 +265,7 @@ export function colors(mode: string): Colors {
     // secondary colors
     secondary1: '#9e35b1',
     secondary2: '#9625ae',
-    secondary3: '#6b33b0',
+    secondary3: '#8d4cdd',
     secondary4: '#d655fe',
     secondary5: '#3735bb',
     secondary6: '#DC1FFF',

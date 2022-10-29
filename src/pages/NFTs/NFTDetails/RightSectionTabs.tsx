@@ -201,7 +201,7 @@ export const DETAILS_TAB_CONTENT = styled.div`
 
       .dtc-item-value {
         ${tw`sm:text-tiny`}
-        color: ${theme.text8};
+        color: ${theme.text4};
       }
       .dtc-item-title {
         ${tw`sm:text-tiny`}

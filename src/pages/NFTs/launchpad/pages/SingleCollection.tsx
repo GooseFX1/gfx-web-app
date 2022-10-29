@@ -204,8 +204,8 @@ const TIER_WRAPPER = styled.div`
           border: 1px solid #7d7d7d;
           color: #7d7d7d;
         }
-        border: 1.5px solid ${({ theme }) => theme.text8};
-        color: ${({ theme }) => theme.text8};
+        border: 1.5px solid ${({ theme }) => theme.text4};
+        color: ${({ theme }) => theme.text4};
         &.active {
           border: 1.5px solid ${({ theme }) => theme.primary1Active};
           color: ${({ theme }) => theme.primary1Active};
@@ -215,7 +215,7 @@ const TIER_WRAPPER = styled.div`
         @media (max-width: 500px) {
           color: #7d7d7d;
         }
-        color: ${({ theme }) => theme.text8};
+        color: ${({ theme }) => theme.text4};
         &.active {
           color: ${({ theme }) => theme.primary1Active};
         }

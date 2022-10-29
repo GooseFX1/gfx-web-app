@@ -17,13 +17,13 @@ const NO_CONTENT = styled.div`
   .main-text {
     font-size: 17px;
     font-weight: 600;
-    color: ${({ theme }) => theme.text8};
+    color: ${({ theme }) => theme.text4};
     margin-bottom: 5px;
   }
   .sub-text {
     font-size: 13px;
     font-weight: 500;
-    color: ${({ theme }) => theme.text8};
+    color: ${({ theme }) => theme.text4};
   }
   .btn {
     min-width: 132px;

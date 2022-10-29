@@ -23,7 +23,7 @@ const WRAPPER = styled.div`
     width: 350px;
     text-align: center;
     font-weight: 500;
-    color: ${({ theme }) => theme.text8};
+    color: ${({ theme }) => theme.text4};
     .email-style {
       background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
       -webkit-background-clip: text;

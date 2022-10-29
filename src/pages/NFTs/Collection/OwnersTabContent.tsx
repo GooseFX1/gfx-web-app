@@ -17,7 +17,7 @@ const OWNERS_TAB = styled(Row)`
     }
 
     .owners-tab-name {
-      color: ${theme.text8};
+      color: ${theme.text4};
       margin-top: ${theme.margin(1.0)};
       font-family: Montserrat;
       font-size: 16px;
@@ -39,7 +39,7 @@ const NO_CONTENT = styled.div`
   align-items: center;
   text-align: center;
   height: 100%;
-  color: ${({ theme }) => theme.text8};
+  color: ${({ theme }) => theme.text4};
 
   .no-data-image {
     max-width: 160px;

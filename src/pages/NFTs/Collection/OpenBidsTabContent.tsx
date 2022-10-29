@@ -25,7 +25,7 @@ const NO_CONTENT = styled.div`
   align-items: center;
   text-align: center;
   height: 100%;
-  color: ${({ theme }) => theme.text8};
+  color: ${({ theme }) => theme.text4};
 
   .no-data-image {
     max-width: 160px;

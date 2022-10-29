@@ -5,7 +5,7 @@ import { MainText } from '../../../styles'
 const INPUT_TITLE = MainText(styled.span`
   font-size: 17px;
   font-weight: 600;
-  color: ${({ theme }) => theme.text8} !important;
+  color: ${({ theme }) => theme.text4} !important;
   text-align: left;
   margin-bottom: ${({ theme }) => theme.margin(1)};
 `)
@@ -13,7 +13,7 @@ const INPUT_TITLE = MainText(styled.span`
 const INPUT_LIMIT = MainText(styled.span`
   font-size: 9px;
   font-weight: 600;
-  color: ${({ theme }) => theme.text8} !important;
+  color: ${({ theme }) => theme.text4} !important;
   text-align: left;
   margin-top: ${({ theme }) => theme.margin(1)};
 `)

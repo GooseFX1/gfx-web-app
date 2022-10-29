@@ -43,7 +43,7 @@ export const STYLED_NAME = styled.div`
   ${tw`flex items-center`}
   .textName {
     ${tw`text-regular font-semibold max-w-[90px] ml-5 sm:ml-3.75`}
-    color: ${({ theme }) => theme.text8};
+    color: ${({ theme }) => theme.text4};
   }
   .coin-image {
     ${tw`w-[41px] h-[41px] block`}
