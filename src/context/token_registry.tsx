@@ -1,5 +1,5 @@
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
-import { ENV, TokenInfo, TokenListProvider } from '@solana/spl-token-registry'
+import { ENV, TokenInfo } from '@solana/spl-token-registry'
 import { useConnectionConfig } from './settings'
 import { SUPPORTED_TOKEN_LIST, FARM_SUPPORTED_TOKEN_LIST } from '../constants'
 import { ADDRESSES } from '../web3'
@@ -23,13 +23,30 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
 
   useEffect(() => {
     ;(async () => {
-      const list = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
+      const myList = []
+      const obj = ADDRESSES[network].sslPool
+      myList.push({
+        address: 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD',
+        chainId,
+        decimals: 9,
+        name: 'GooseFX',
+        symbol: 'GOFX'
+      })
+      for (const key in obj) {
+        myList.push({
+          chainId: chainId,
+          address: obj[key].address.toBase58(),
+          symbol: key,
+          name: obj[key].name,
+          decimals: obj[key].decimals
+        })
+      }
       const newList = await (await fetch(TOKEN_LIST_URL[network])).json()
       const manualList = newList.filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
       const jupiterList = newList.filter(({ symbol }) => !SUPPORTED_TOKEN_LIST.includes(symbol)).slice(0, 300)
       const splList = [...manualList, ...jupiterList]
 
-      let farmSupportedList = list.filter(({ symbol }) => FARM_SUPPORTED_TOKEN_LIST.includes(symbol))
+      let farmSupportedList = myList.filter(({ symbol }) => FARM_SUPPORTED_TOKEN_LIST.includes(symbol))
       //TODO: Add filteredList from solana-spl-registry back
       if (chainId === ENV.Devnet) {
         farmSupportedList = []

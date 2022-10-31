@@ -42,6 +42,10 @@ export const TOKEN_PAIRS = {
   '9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E': {
     name: 'BTC',
     pair: 'BTC/USDC'
+  },
+  '6LNeTYMqtNm1pBFN8PfhQaoLyegAH8GD32WmHU9erXKN': {
+    name: 'APT',
+    pair: 'APT/USDC'
   }
 }
 
