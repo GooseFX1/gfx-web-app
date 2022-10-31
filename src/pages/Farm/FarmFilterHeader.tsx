@@ -7,7 +7,7 @@ import { checkMobile, moneyFormatterWithComma } from '../../utils'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Loader } from './Columns'
+import { LoaderLeftSpace } from './Columns'
 
 const ABSTRACT = styled.div`
   .lastRefreshed {
@@ -189,6 +189,9 @@ const MobileWrapper = styled.div`
   width: 92vw;
 `
 
+const HOLD = styled.div`
+  ${tw`items-center flex`}
+`
 const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
 
 export const FarmFilter = () => {
@@ -199,12 +202,13 @@ export const FarmFilter = () => {
     operationPending,
     farmDataContext,
     farmDataSSLContext,
-    refreshClass
+    refreshClass,
+    setLastRefreshedClass,
+    lastRefreshedClass
   } = useFarmContext()
   const { prices, statsData } = usePriceFeedFarm()
   const [poolIndex, setPoolIndex] = useState(0)
   const { publicKey } = useWallet()
-  const [lastRefreshedClass, setLastRefreshClass] = useState<string>()
   const [firstPageLoad, setFirstPageLoad] = useState<boolean>(true)
 
   const handleClick = (name, index) => {
@@ -217,14 +221,14 @@ export const FarmFilter = () => {
 
   useEffect(() => {
     if (refreshClass === '' && !firstPageLoad) {
-      setLastRefreshClass('lastRefreshed')
+      setLastRefreshedClass('lastRefreshed')
     }
   }, [refreshClass])
 
   useEffect(() => {
     if (lastRefreshedClass !== 'hide' && !firstPageLoad) {
       setTimeout(() => {
-        setLastRefreshClass('hide')
+        setLastRefreshedClass('hide')
       }, 2500)
     }
   }, [lastRefreshedClass])
@@ -263,14 +267,19 @@ export const FarmFilter = () => {
       <WRAPPER>
         <div className="statsBackground" />
         <div className="textContainer">
-          <div>TVL: {statsData ? ` $ ` + moneyFormatterWithComma(statsData.tvl) : <Loader />}</div>
-          <div>Pools: {farmDataContext?.length + farmDataSSLContext?.length}</div>
-          <div>7d Volume: {statsData ? ` $ ` + moneyFormatterWithComma(statsData.volume7dSum) : <Loader />} </div>
-          <div>
+          <HOLD>TVL: {statsData ? ` $ ` + moneyFormatterWithComma(statsData.tvl) : <LoaderLeftSpace />}</HOLD>
+          <HOLD>Pools: {farmDataContext?.length + farmDataSSLContext?.length}</HOLD>
+          <HOLD>
+            7d Volume:
+            {statsData ? ` $ ` + moneyFormatterWithComma(statsData.volume7dSum) : <LoaderLeftSpace />}{' '}
+          </HOLD>
+          <HOLD>
             Total Volume Trade:{' '}
-            {statsData ? ` $ ` + moneyFormatterWithComma(statsData.totalVolumeTrade) : <Loader />}
-          </div>
-          <div>GOFX Price: {prices['GOFX/USDC'] ? ` $ ` + prices['GOFX/USDC']?.current : <Loader />} </div>
+            {statsData ? ` $ ` + moneyFormatterWithComma(statsData.totalVolumeTrade) : <LoaderLeftSpace />}
+          </HOLD>
+          <HOLD>
+            GOFX Price: {prices['GOFX/USDC'] ? ` $ ` + prices['GOFX/USDC']?.current : <LoaderLeftSpace />}{' '}
+          </HOLD>
         </div>
         <STYLED_FARM_HEADER>
           <ButtonContainer $poolIndex={poolIndex}>
@@ -339,12 +348,12 @@ const GeneralStatsBarMobile = () => {
       for (let i = 0; i < 20; i++)
         arr.push(
           <div className="scroll" key={i}>
-            <div>TVL: {statsData && ` $ ` + moneyFormatterWithComma(statsData.tvl)}</div>
-            <div>7d Volume: {statsData && ` $ ` + moneyFormatterWithComma(statsData.volume7dSum)}</div>
+            <div>TVL: {` $ ` + moneyFormatterWithComma(statsData.tvl)}</div>
+            <div>7d Volume: {` $ ` + moneyFormatterWithComma(statsData.volume7dSum)}</div>
             <div>Pools: {farmDataContext?.length + farmDataSSLContext?.length}</div>
             <div>
-              Total Volume Trade:{' '}
-              {statsData ? ` $ ` + moneyFormatterWithComma(statsData.totalVolumeTrade) : <Loader />}
+              Total Volume Trade:
+              {` $ ` + moneyFormatterWithComma(statsData.totalVolumeTrade)}
             </div>
             <div> GOFX Price: {prices && ` $ ` + prices['GOFX/USDC']?.current}</div>
           </div>

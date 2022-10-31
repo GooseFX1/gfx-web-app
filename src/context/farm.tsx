@@ -20,6 +20,8 @@ interface IShowDeposited {
   setOperationPending: Dispatch<SetStateAction<boolean>>
   refreshClass: string
   setRefreshClass: Dispatch<SetStateAction<string>>
+  lastRefreshedClass: string
+  setLastRefreshedClass: Dispatch<SetStateAction<string>>
 }
 
 const FarmContext = createContext<IShowDeposited | null>(null)
@@ -34,6 +36,7 @@ export const FarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [counter, setCounter] = useState<number>(0)
   const [operationPending, setOperationPending] = useState<boolean>(false)
   const [refreshClass, setRefreshClass] = useState<string>('')
+  const [lastRefreshedClass, setLastRefreshClass] = useState<string>()
 
   useEffect(() => {
     setFarmDataSSLContext(generateListOfSSLTokens(network))
@@ -57,7 +60,9 @@ export const FarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setFarmDataContext: setFarmDataContext,
         setFarmDataSSLContext: setFarmDataSSLContext,
         refreshClass: refreshClass,
-        setRefreshClass: setRefreshClass
+        setRefreshClass: setRefreshClass,
+        lastRefreshedClass: lastRefreshedClass,
+        setLastRefreshedClass: setLastRefreshClass
       }}
     >
       {children}
@@ -87,7 +92,9 @@ export const useFarmContext = (): IShowDeposited => {
     setFarmDataContext,
     setFarmDataSSLContext,
     refreshClass,
-    setRefreshClass
+    setRefreshClass,
+    lastRefreshedClass,
+    setLastRefreshedClass
   } = context
   return {
     showDeposited,
@@ -105,6 +112,8 @@ export const useFarmContext = (): IShowDeposited => {
     setFarmDataContext,
     setFarmDataSSLContext,
     refreshClass,
-    setRefreshClass
+    setRefreshClass,
+    lastRefreshedClass,
+    setLastRefreshedClass
   }
 }
