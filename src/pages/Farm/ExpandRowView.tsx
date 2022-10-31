@@ -234,7 +234,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
     const decimals = ADDRESSES[network]?.sslPool[name]?.decimals
     const multiplier = name === 'SOL' || name === 'GMT' || decimals === 9 ? 10000 : 10
     let amountInNative = (unstakeAmt / tokenData?.userLiablity) * LAMPORTS_PER_SOL * multiplier
-    if (parseFloat(availableToMint.toFixed(3)) >= parseFloat(unstakeAmt.toFixed(3))) {
+    if (parseFloat(unstakeAmt.toFixed(3)) >= parseFloat(availableToMint.toFixed(3))) {
       amountInNative = 100 * 100
     }
     onClickWithdraw(amountInNative)

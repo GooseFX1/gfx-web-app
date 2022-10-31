@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import styled from 'styled-components'
 import { Tooltip } from '../../components/Tooltip'

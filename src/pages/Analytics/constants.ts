@@ -38,6 +38,14 @@ export const TOKEN_PAIRS = {
   '7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj': {
     name: 'stSOL',
     pair: 'STSOL/USDC'
+  },
+  '9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E': {
+    name: 'BTC',
+    pair: 'BTC/USDC'
+  },
+  '6LNeTYMqtNm1pBFN8PfhQaoLyegAH8GD32WmHU9erXKN': {
+    name: 'APT',
+    pair: 'APT/USDC'
   }
 }
 

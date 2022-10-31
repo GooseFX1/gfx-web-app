@@ -344,7 +344,6 @@ const CustomTableList = () => {
     }
   }
   const { isCollapsed } = useNavCollapse()
-  console.log(lastRefreshedClass)
   return (
     <WRAPPER
       $navCollapsed={isCollapsed}
