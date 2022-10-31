@@ -19,6 +19,7 @@ import { WalletName } from '@solana/wallet-adapter-base'
 import { truncateAddress } from '../../utils'
 import tw from 'twin.macro'
 import { logData } from '../../api'
+import { SolanaMobileWalletAdapterWalletName } from '@solana-mobile/wallet-adapter-mobile'
 
 const WALLET_ICON = styled(CenteredImg)`
   ${tw`bg-black h-[30px] w-[30px] mr-[12px] rounded-circle`}
@@ -95,7 +96,8 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
       )}
       {wallet && (
         <MenuItem
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault()
             disconnect().then()
             sessionStorage.removeItem('connectedGFXWallet')
             setArrowRotation(false)
@@ -121,7 +123,7 @@ export const Connect: FC = () => {
   }, [connected])
 
   const content = useMemo(() => {
-    if (!wallet) {
+    if (!wallet || (!base58 && wallet.adapter.name === SolanaMobileWalletAdapterWalletName)) {
       return 'Connect Wallet'
     } else if (!base58) {
       return (
@@ -136,8 +138,12 @@ export const Connect: FC = () => {
 
   const onSpanClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
-      if (!event.defaultPrevented && !wallet) {
-        setModalVisible(true)
+      if (!event.defaultPrevented) {
+        if (!base58 && wallet?.adapter.name === SolanaMobileWalletAdapterWalletName) {
+          connect().then()
+        } else if (!wallet) {
+          setModalVisible(true)
+        }
       }
     },
     [setModalVisible, wallet]
@@ -150,7 +156,7 @@ export const Connect: FC = () => {
 
   // watches for a selected wallet returned from modal
   useEffect(() => {
-    if (wallet && !connected) {
+    if (wallet && wallet.adapter.name !== SolanaMobileWalletAdapterWalletName && !connected) {
       connect()
         .then(() => {
           sessionStorage.setItem('connectedGFXWallet', wallet.adapter.name)
@@ -201,6 +207,10 @@ export const Connect: FC = () => {
         }
         case 'Glow': {
           select('Glow' as WalletName<string>)
+          break
+        }
+        case SolanaMobileWalletAdapterWalletName: {
+          select(SolanaMobileWalletAdapterWalletName as WalletName<string>)
           break
         }
       }
