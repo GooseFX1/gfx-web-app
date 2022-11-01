@@ -876,9 +876,14 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   const swapAndFindBestPrice = (details) => {
     const gfxindx = details.findIndex((deet) => deet.name.toLowerCase().includes('goosefx'))
 
-    if (gfxindx >= 0 && details[gfxindx] && details[gfxindx]?.name.toLowerCase().includes('goosefx')) {
+    if (
+      gfxindx >= 0 &&
+      details.length > 0 &&
+      details[gfxindx] &&
+      details[gfxindx]?.name.toLowerCase().includes('goosefx')
+    ) {
       details[0].fastest = true
-      if (details[gfxindx].price < details[gfxindx + 1].price) {
+      if (details[gfxindx].price < details[gfxindx + 1]?.price) {
         details[gfxindx + 1].bestPrice = true
       }
     } else {
@@ -921,7 +926,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   }, [routes, tokenA.symbol, tokenB.symbol, tokens, outTokenAmount])
 
   return (
-    <SWAP_ROUTES less={less || details.length < 2}>
+    <SWAP_ROUTES less={less || details.length < 4}>
       <div className="swap-content">
         {routes?.length < 1
           ? Array(2)
@@ -1083,7 +1088,7 @@ export const SwapMain: FC = () => {
 
     const shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
 
-    if (tokenB && shortRoutes.length > 0) {
+    if (tokenB && shortRoutes.length >= 0) {
       const GoFxRoute = {
         marketInfos: [
           {

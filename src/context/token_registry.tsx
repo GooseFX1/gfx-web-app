@@ -1,7 +1,7 @@
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
 import { ENV, TokenInfo } from '@solana/spl-token-registry'
 import { useConnectionConfig } from './settings'
-import { SUPPORTED_TOKEN_LIST, FARM_SUPPORTED_TOKEN_LIST } from '../constants'
+import { SUPPORTED_TOKEN_LIST, FARM_SUPPORTED_TOKEN_LIST, TOKEN_BLACKLIST } from '../constants'
 import { ADDRESSES } from '../web3'
 import { TOKEN_LIST_URL } from '@jup-ag/core'
 
@@ -44,7 +44,17 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
       const newList = await (await fetch(TOKEN_LIST_URL[network])).json()
       const manualList = newList.filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
       const jupiterList = newList.filter(({ symbol }) => !SUPPORTED_TOKEN_LIST.includes(symbol)).slice(0, 300)
-      const splList = [...manualList, ...jupiterList]
+      const splList = [
+        ...manualList,
+        ...jupiterList,
+        {
+          address: '6LNeTYMqtNm1pBFN8PfhQaoLyegAH8GD32WmHU9erXKN',
+          decimals: 8,
+          name: 'Aptos Coin (Wormhole)',
+          symbol: 'APT',
+          chainId: 101
+        }
+      ]
 
       let farmSupportedList = myList.filter(({ symbol }) => FARM_SUPPORTED_TOKEN_LIST.includes(symbol))
       //TODO: Add filteredList from solana-spl-registry back
@@ -84,7 +94,10 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
         setFarmingTokens(farmSupportedList)
       } else setFarmingTokens(farmSupportedList)
 
-      let filteredList = [...splList].map((i) => (i.symbol === 'SOL' ? { ...i, name: 'SOLANA' } : i))
+      let filteredList = [...splList]
+        .map((i) => (i.symbol === 'SOL' ? { ...i, name: 'SOLANA' } : i))
+        .filter((i) => !TOKEN_BLACKLIST.includes(i.address))
+
       if (chainId === ENV.Devnet) {
         filteredList = []
         filteredList.push({
