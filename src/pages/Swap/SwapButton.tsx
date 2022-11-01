@@ -36,8 +36,6 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
   const { setVisible } = useWalletModal()
 
   const state = useMemo(() => {
-    console.log(inTokenAmount)
-
     if (!wallet || !publicKey) {
       return State.Connect
     } else if (!tokenA || !tokenB) {
