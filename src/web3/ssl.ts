@@ -112,7 +112,7 @@ export const fetchAllSSLAmountStaked = async (
   wallet: WalletContextState,
   liquidityAccountKeys: PublicKey[],
   mainVaultKeys: PublicKey[]
-) => {
+): Promise<{ sslData: any; mainVault: any; liquidityData: any }> => {
   try {
     const promiseData = []
     promiseData.push(connection.getMultipleAccountsInfo(sslAccountKeys))

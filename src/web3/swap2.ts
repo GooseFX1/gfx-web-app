@@ -26,7 +26,11 @@ import { ISwapToken } from '../context'
 const con = new Connection('https://solana-api.projectserum.com', 'confirmed')
 const SWAP = new Swap(con)
 
-export const wrapSolToken = async (wallet: WalletContextState, connection: Connection, amount: number) => {
+export const wrapSolToken = async (
+  wallet: WalletContextState,
+  connection: Connection,
+  amount: number
+): Promise<Transaction | null> => {
   try {
     const tx = new Transaction()
     const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
@@ -72,7 +76,11 @@ export const wrapSolToken = async (wallet: WalletContextState, connection: Conne
   }
 }
 
-export const getPairDetails = async (tokenA: ISwapToken, tokenB: ISwapToken, network: WalletAdapterNetwork) => {
+export const getPairDetails = async (
+  tokenA: ISwapToken,
+  tokenB: ISwapToken,
+  network: WalletAdapterNetwork
+): Promise<PublicKey> => {
   const addresses = [new PublicKey(tokenA.address).toBuffer(), new PublicKey(tokenB.address).toBuffer()].sort(
     Buffer.compare
   )

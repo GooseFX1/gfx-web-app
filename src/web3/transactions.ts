@@ -20,6 +20,11 @@ interface BlockhashAndFeeCalculator {
   feeCalculator: FeeCalculator
 }
 
+interface TransactionResult {
+  txid: string
+  slot: number
+}
+
 export const DEFAULT_TIMEOUT = 15000
 
 export const envFor = (connection: Connection): string => {
@@ -44,7 +49,7 @@ export const sendTransactionWithRetry = async (
   includesFeePayer = false,
   block?: BlockhashAndFeeCalculator,
   beforeSend?: () => void
-) => {
+): Promise<TransactionResult> => {
   if (!wallet.publicKey) throw new WalletNotConnectedError()
 
   let transaction = new Transaction()
@@ -89,7 +94,7 @@ export const sendTransactionWithRetryWithKeypair = async (
   includesFeePayer = false,
   block?: BlockhashAndFeeCalculator,
   beforeSend?: () => void
-) => {
+): Promise<TransactionResult> => {
   const transaction = new Transaction()
   instructions.forEach((instruction) => transaction.add(instruction))
   transaction.recentBlockhash = (block || (await connection.getRecentBlockhash(commitment))).blockhash
@@ -133,7 +138,7 @@ export async function sendSignedTransaction({
   sentMessage?: string
   successMessage?: string
   timeout?: number
-}): Promise<{ txid: string; slot: number }> {
+}): Promise<TransactionResult> {
   const rawTransaction = signedTransaction.serialize()
   const startTime = getUnixTs()
   let slot = 0
