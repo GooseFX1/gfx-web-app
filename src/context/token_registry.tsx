@@ -1,7 +1,7 @@
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
 import { ENV, TokenInfo } from '@solana/spl-token-registry'
 import { useConnectionConfig } from './settings'
-import { SUPPORTED_TOKEN_LIST, FARM_SUPPORTED_TOKEN_LIST, TOKEN_BLACKLIST } from '../constants'
+import { SUPPORTED_TOKEN_LIST, FARM_SUPPORTED_TOKEN_LIST } from '../constants'
 import { ADDRESSES } from '../web3'
 import { TOKEN_LIST_URL } from '@jup-ag/core'
 
@@ -94,9 +94,13 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
         setFarmingTokens(farmSupportedList)
       } else setFarmingTokens(farmSupportedList)
 
-      let filteredList = [...splList]
-        .map((i) => (i.symbol === 'SOL' ? { ...i, name: 'SOLANA' } : i))
-        .filter((i) => !TOKEN_BLACKLIST.includes(i.address))
+      let filteredList = [...splList].map((i) =>
+        i.symbol === 'SOL'
+          ? { ...i, name: 'SOLANA' }
+          : i.address === 'APTtJyaRX5yGTsJU522N4VYWg3vCvSb65eam5GrPT5Rt'
+          ? { ...i, symbol: 'APCT' }
+          : i
+      )
 
       if (chainId === ENV.Devnet) {
         filteredList = []
