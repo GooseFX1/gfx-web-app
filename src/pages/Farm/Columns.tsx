@@ -99,7 +99,7 @@ export const HeaderTooltip = (text: string) =>
     </Tooltip>
   )
 
-const Title = (text: string, infoText: string, isArrowDown: boolean, invert?: boolean) => (
+export const Title = (text: string, infoText: string, isArrowDown: boolean, invert?: boolean) => (
   <STYLED_TITLE>
     <div className="textTitle">{text}</div>
     {infoText && HeaderTooltip(infoText)}
@@ -109,79 +109,6 @@ const Title = (text: string, infoText: string, isArrowDown: boolean, invert?: bo
   </STYLED_TITLE>
 )
 
-export const columns = [
-  {
-    title: Title('Name', '', true),
-    dataIndex: 'name',
-    key: 'name',
-    width: '15',
-    render: (text, record) => (
-      <STYLED_NAME>
-        <img
-          className={`coin-image ${record.type === 'Double Sided' ? 'double-sided' : ''}`}
-          src={`/img/crypto/${text?.toUpperCase().replace(' ', '-')}.svg`}
-          alt=""
-        />
-        <div className="textName">{text}</div>
-      </STYLED_NAME>
-    )
-  },
-  {
-    title: Title('Balance', '', true),
-    dataIndex: 'currentlyStaked',
-    key: 'Balance',
-    width: '16.6%',
-    render: (text) => (
-      <div className="liquidity normal-text"> {text >= 0 ? `${moneyFormatter(text)}` : <Loader />}</div>
-    )
-  },
-  {
-    title: Title('Total Earned', `Yearly amount earned on your deposit.`, true),
-    dataIndex: 'earned',
-    key: 'earned',
-    width: '16.6%',
-    render: (text) => (
-      <div className="liquidity normal-text">{text !== undefined ? `${moneyFormatter(text)}` : <Loader />}</div>
-    )
-  },
-  {
-    title: Title(
-      'APY',
-      `The total profit and loss from SSL 
-    and is measured by comparing the total value of a pool's assets
-     ( excluding trading fees) to their value if they had not been traded and instead were just held`,
-      true
-    ),
-    dataIndex: 'apr',
-    key: 'apr',
-    width: '16.6%',
-    render: (text) => (
-      <div className="apr normal-text">
-        {text === '-' ? '-' : text !== undefined ? `${text.toFixed(0)}%` : <Loader />}
-      </div>
-    )
-  },
-  {
-    title: Title('Liquidity', "Total value of funds in this farm's liquidity pool.", true),
-    dataIndex: 'liquidity',
-    width: '16.6%',
-    key: 'liquidity',
-    render: (text) => (
-      <div className="liquidity normal-text">{text >= 0 ? `$ ${moneyFormatter(text)}` : <Loader />}</div>
-    )
-  },
-  {
-    title: Title('7d Volume', '', true),
-    dataIndex: 'volume',
-    width: '16.6%',
-    key: 'volume',
-    render: (text) => (
-      <div className="liquidity normal-text">
-        {text === '-' ? `-` : text >= 0 ? `$ ${moneyFormatter(text)}` : <Loader />}
-      </div>
-    )
-  }
-]
 const APYTooltip = `The total profit and loss from SSL and is measured by comparing the total 
 value of a pool’s assets (excluding trading fees) to their value if they had not been traded and instead were just held`
 

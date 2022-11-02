@@ -132,9 +132,9 @@ const STYLED_FARM_HEADER = styled.div`
     }
   }
 `
-const STYLED_BUTTON = styled.button`
+export const STYLED_BUTTON = styled.button`
   ${tw`sm:m-auto sm:w-1/3 cursor-pointer w-[120px] text-center border-none border-0 
-  font-semibold text-base h-[44px] rounded-[36px] duration-700 `}
+  font-semibold text-base h-[44px] rounded-[36px] duration-700 text-[15px] `}
   font-family: 'Montserrat';
   background: none;
   color: ${({ theme }) => theme.text17};
@@ -143,7 +143,7 @@ const STYLED_BUTTON = styled.button`
   }
 `
 
-const ButtonContainer = styled.div<{ $poolIndex: number }>`
+export const ButtonContainer = styled.div<{ $poolIndex: number }>`
   ${tw`relative z-0 sm:mt-2`}
   .slider-animation {
     ${tw`absolute w-1/4 h-[44px] rounded-[36px] z-[-1]`}
