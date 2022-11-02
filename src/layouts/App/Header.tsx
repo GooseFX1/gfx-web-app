@@ -45,8 +45,8 @@ const WRAPPER = styled.nav`
 `
 
 const MobileWrapper = styled(WRAPPER)`
-  ${tw`flex !flex-row justify-between items-center rounded-none shadow-none rounded-b-[30px]`}
-  background-color: ${({ theme }) => theme.bg18};
+  ${tw`flex !flex-row justify-between items-center rounded-none rounded-b-[30px]`}
+  background-color: ${({ theme }) => theme.bg20};
 `
 
 const CollapsibleWrapper = styled.div<{ $collapse: boolean }>`
@@ -69,9 +69,6 @@ const CLOSE = styled.img`
 
 const RESPONSIVE_DROPDOWN_WRAPPER = styled.div`
   ${tw`mr-2 ml-[22px] min-sm:hidden`}
-  @media (max-width: 500px) {
-    background-color: ${({ theme }) => theme.bg2};
-  }
 `
 
 const DROPDOWN_ICON_WRAPPER = styled(CenteredImg)`
