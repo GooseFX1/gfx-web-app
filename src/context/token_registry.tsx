@@ -94,13 +94,15 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
         setFarmingTokens(farmSupportedList)
       } else setFarmingTokens(farmSupportedList)
 
-      let filteredList = [...splList].map((i) =>
-        i.symbol === 'SOL'
-          ? { ...i, name: 'SOLANA' }
-          : i.address === 'APTtJyaRX5yGTsJU522N4VYWg3vCvSb65eam5GrPT5Rt'
-          ? { ...i, symbol: 'APCT' }
-          : i
-      )
+      let filteredList = [...splList].map((i) => {
+        if (i.symbol === 'SOL') {
+          return { ...i, name: 'SOLANA' }
+        } else if (i.address === 'APTtJyaRX5yGTsJU522N4VYWg3vCvSb65eam5GrPT5Rt') {
+          return { ...i, symbol: 'APRT' }
+        } else {
+          return i
+        }
+      })
 
       if (chainId === ENV.Devnet) {
         filteredList = []
