@@ -100,7 +100,8 @@ export const HeaderTooltip = (text: string): JSX.Element =>
     </Tooltip>
   )
 
-const Title = (text: string, infoText: string, isArrowDown: boolean, invert?: boolean) => (
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const Title = (text: string, infoText: string, isArrowDown: boolean, invert?: boolean) =>
   <STYLED_TITLE>
     <div className="textTitle">{text}</div>
     {infoText && HeaderTooltip(infoText)}
@@ -108,7 +109,7 @@ const Title = (text: string, infoText: string, isArrowDown: boolean, invert?: bo
       <img className={'arrowDown' + (invert ? ' invert' : '')} src={`/img/assets/arrow-down.svg`} alt="" />
     )}
   </STYLED_TITLE>
-)
+
 
 export const columns = [
   {
