@@ -10,7 +10,7 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
     'https://docs.google.com/forms/d/e/1FAIpQLSeg1OzYlHdNqWiAEPl2QUZj7XwLvEpXAkGtWd4-H9SyyQe1DQ/viewform'
 }
 
-export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'SRM', 'ETH', 'GMT', 'mSOL']
+export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'SRM', 'ETH', 'GMT', 'mSOL', 'APT']
 export let FARM_SUPPORTED_TOKEN_LIST = ['GOFX']
 export const MODAL_TYPES = {
   FEES: 'FEES',
@@ -45,41 +45,7 @@ export const TOKEN_NAMES = {
   USDC: 'USDC'
 }
 
-export const TOKEN_BLACKLIST = [
-  'totCSh2TfEPTRovc4rMGz1ezukAdPxYWzh9jnXppeqY',
-  '6hQpbdmmX6gXGUkmjJ82UtfFBzyTP3Hiqv1KZMtHWXpv',
-  'ES4isqfcWbeBZwtH2eLRjk5oUzaMyZZrW2uhDM6yde6h',
-  'FJtaAZd6tXNCFGTq7ifRHt9AWoVdads6gWNc4SXCPw1k',
-  'GeJ3ZUT42ywiaj9jUJQr7XPpBWyrKgpmRsdaH6wamvJy',
-  'CReAmEhV7CCMaQ8YCEc23SAY2ARXnXZQX7M2AkR5LRqw',
-  '8RGdXex7StmeGsxmTcZDt37qhmtiRpDmHJDyCA97nhaY',
-  '2QHx6MmrsAXSKLynJ55GofBbveYaDPLvn6qgdefey5za',
-  'wmcSVkHBkGa9MH633Cs1BoPKD2FbuFe8bQBoRTnaEuv',
-  'FDM3oFJ8tfr9VnZMFrFKvGLAUzaVhQyfgxv2YhkBjsBL',
-  '2ueY1bLcPHfuFzEJq7yN1V2Wrpu8nkun9xG2TVCE1mhD',
-  '64L6o4G2H7Ln1vN7AHZsUMW4pbFciHyuwn4wUdSbcFxh',
-  'KeeXNee3oU933sbyAo9A1H71zT4ZWZrdrSMxnfDgvMk',
-  '5Wc4U1ZoQRzF4tPdqKQzBwRSjYe8vEf3EvZMuXgtKUW6',
-  'MSRMcoVyrFxnSgo5uXwone5SKcGhT1KEJMFEkMEWf9L',
-  'H5K7BAvYMtkA6yw2ceQ9uhVNcSg821oYoiYZGiKWkWDT',
-  'BRWmzjdY5dHgXsWRa7a3kuM22NEyDk6eAX8d7yx4bR7L',
-  '3nGtw9cDwi8Nj81p2t53KxCQ8jjAdRScEX1yPSkwmcY6',
-  'Ha8pzMaX6shu6N3pCehkGZ1nNuryUn24qh14xr4cgvYR',
-  'EnuMQfSqi7vWq69yF2popGkBg2M7ioUxZ2snT9igkuff',
-  '3G23ehQ6puSm6e29q7CN6uA1kMVpwiTsMWJb3KrE5RwC',
-  '9AaKcdu5eymQwR19qwYFsqiqcXgL3iAxMQyshRpbqg6z',
-  '9vagRqeuePiHniXNR6uGQbMYJabbjqKQsokL5QNPRXT8',
-  'HavbxBPK1uY9kMNqKPkWDEQXWw6FYERrLxeMtWiXnwko',
-  'FTtXEUosNn6EKG2SQtfbGuYB4rBttreQQcoWn1YDsuTq',
-  'CW2sMRF3JJ7q8rqamJz3iZcdPRNiv3RYKDQ4LfKTkUm7',
-  '8gYZZsmP1v2WEebzNL1gH12WYqAFcspVByWZ2ejuJMm5',
-  '47WYC41xdUjs1ZghfppBRFGmC3ztzecHhdy51QyBXgLz',
-  'SRYWvj5Xw1UoivpdfJN4hFZU1qbtceMvfM5nBc3PsRC',
-  'CYCPEtrCYjNycxZiZ2RyeBBUqzsgRh7yGjn4SwX2AnPF',
-  'JetNnLZpbECCfyeZSvJdgg5gf37QfCkPrp2X8XfmNWn',
-  'iouQcQBAiEXe6cKLS85zmZxUqaCqBdeHFpqKoSz615u',
-  'BWnE6wM3DYyVCMHxsiSxKfNwrJy4G6kcKpSYESGxZWKf'
-]
+export const TOKEN_BLACKLIST = ['APTtJyaRX5yGTsJU522N4VYWg3vCvSb65eam5GrPT5Rt']
 
 export const SUPPORTED_TOKEN_LIST = [
   'AKRO',
