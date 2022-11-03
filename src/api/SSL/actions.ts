@@ -3,8 +3,9 @@ import { getDateInISOFormat } from './../../utils/misc'
 import { httpClient } from '../../api'
 import { SSL_API_BASE, SSL_API_ENDPOINTS } from '../SSL/constants'
 import axios from 'axios'
+import { PublicKey } from '@solana/web3.js'
 
-export const fetchSSLAPR = async (tokenAddress: string, controller: string) => {
+export const fetchSSLAPR = async (tokenAddress: string, controller: string): Promise<any> => {
   try {
     const res = await httpClient(SSL_API_BASE).get(
       `${SSL_API_ENDPOINTS.APR}?controller=${controller}&mint=${tokenAddress}`
@@ -15,7 +16,7 @@ export const fetchSSLAPR = async (tokenAddress: string, controller: string) => {
   }
 }
 
-export const fetchSSLVolumeData = async (tokenAddress: string, controller: string) => {
+export const fetchSSLVolumeData = async (tokenAddress: string, controller: string): Promise<any> => {
   try {
     const res = await httpClient(SSL_API_BASE).get(
       `${SSL_API_ENDPOINTS.Volume}?controller=${controller}&mint=${tokenAddress}&interval=${SSL_API_ENDPOINTS.d7}`
@@ -25,7 +26,7 @@ export const fetchSSLVolumeData = async (tokenAddress: string, controller: strin
     return err
   }
 }
-export const fetchTotalVolumeTrade = async () => {
+export const fetchTotalVolumeTrade = async (): Promise<any> => {
   try {
     const res = await axios.get(
       NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + `${SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE}`
@@ -36,7 +37,7 @@ export const fetchTotalVolumeTrade = async () => {
     return err
   }
 }
-export const fetchTotalVolumeTradeChart = async (walletAddress) => {
+export const fetchTotalVolumeTradeChart = async (walletAddress: PublicKey): Promise<any> => {
   try {
     const res = await axios.get(
       NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE +
@@ -51,7 +52,8 @@ export const fetchTotalVolumeTradeChart = async (walletAddress) => {
   }
 }
 
-export const saveLiquidtyVolume = async (sslVolume: number, stakeVolume: number, liqObj: object) => {
+//eslint-disable-next-line
+export const saveLiquidtyVolume = async (sslVolume: number, stakeVolume: number, liqObj: any): Promise<any> => {
   try {
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.SAVE_LIQUIDITY_DATA
     const dataToSend = JSON.stringify({
@@ -81,7 +83,11 @@ export const saveLiquidtyVolume = async (sslVolume: number, stakeVolume: number,
   }
 }
 
-export const getVolumeApr = async (tokenList: string[], SSLTokenNames: string[], controllerStr: string) => {
+export const getVolumeApr = async (
+  tokenList: string[],
+  SSLTokenNames: string[],
+  controllerStr: string
+): Promise<any> => {
   try {
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.GET_VOLUME_APR_DATA
     const dataToSend = JSON.stringify({
@@ -104,7 +110,7 @@ export const getVolumeApr = async (tokenList: string[], SSLTokenNames: string[],
     }
   }
 }
-export const getFarmTokenPrices = async () => {
+export const getFarmTokenPrices = async (): Promise<any> => {
   try {
     const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.GET_TOKEN_PRICES
     const dataToSend = JSON.stringify({})

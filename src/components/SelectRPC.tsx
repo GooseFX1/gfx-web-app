@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, FC } from 'react'
 import styled from 'styled-components'
 import { Menu, MenuItem } from '../layouts/App/shared'
 import { ENDPOINTS, useConnectionConfig, useDarkMode } from '../context'
@@ -53,15 +53,11 @@ const Overlay = ({
   </RPCMenu>
 )
 
-export const SelectRPC = ({
-  handleClickForRPC,
-  isCustomNode,
-  endpointName: extEndpointName
-}: {
+export const SelectRPC: FC<{
   handleClickForRPC: (endpoint: string, endpointName: string, network: string) => void
   isCustomNode: boolean
   endpointName: string
-}) => {
+}> = ({ handleClickForRPC, isCustomNode, endpointName: extEndpointName }) => {
   const { endpointName } = useConnectionConfig()
   const [RPCEndpoint, setRPCEndpoint] = useState(extEndpointName || endpointName)
   const [arrowRotation, setArrowRotation] = useState(false)

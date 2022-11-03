@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, FC } from 'react'
 import styled from 'styled-components'
 import { Tabs } from 'antd'
 
@@ -66,7 +66,7 @@ type Props = {
   isExplore?: boolean
 }
 
-export const NFTTab = ({ tabPanes, defaultActiveKey = '1' }: Props) => (
+export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }) => (
   <NFT_TAB>
     <Tabs defaultActiveKey={defaultActiveKey} centered className="profile-tab-container">
       {tabPanes.map((tab) => (

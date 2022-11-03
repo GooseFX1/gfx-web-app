@@ -4,7 +4,7 @@ import orderBy from 'lodash.orderby'
 import { decodeTokenMetadata, getSolanaMetadataAddress } from './utils'
 import { isValidSolanaAddress } from '../utils'
 import { TOKEN_PROGRAM_ID } from '../ids'
-import { MetaplexMetadata, StringPublicKey } from '../metaplex'
+import { MetaplexMetadata, StringPublicKey, MetadataKey } from '../metaplex'
 import { PromiseSettledResult, PromiseFulfilledResult } from './types'
 
 // sanitize: Remove possible rusts empty string symbols `\x00` from the values
@@ -18,6 +18,25 @@ export type Options = {
   limit?: number
 }
 
+export interface AccountsFiltered {
+  mint: string
+  updateAuthority: string
+  data: {
+    creators: any[]
+    name: string
+    symbol: string
+    uri: string
+    sellerFeeBasisPoints: number
+  }
+  key: MetadataKey
+  primarySaleHappened: boolean
+  isMutable: boolean
+  editionNonce: number
+  masterEdition?: string
+  edition?: string
+}
+;[]
+
 enum sortKeys { //eslint-disable-line
   updateAuthority = 'updateAuthority' //eslint-disable-line
 }
@@ -29,7 +48,7 @@ export const getParsedNftAccountsByOwner = async ({
   stringifyPubKeys = true,
   sort = true,
   limit = 5000
-}: Options) => {
+}: Options): Promise<AccountsFiltered[]> => {
   const isValidAddress = isValidSolanaAddress(publicAddress)
   if (!isValidAddress) {
     return []
@@ -127,7 +146,7 @@ const publicKeyToString = (tokenData: MetaplexMetadata) => ({
 })
 
 // cleans string; symbols from buffer return "\x0000" instead of usual spaces
-export const sanitizeMetaStrings = (metaString: string) => metaString.replace(/\0/g, '')
+export const sanitizeMetaStrings = (metaString: string): string => metaString.replace(/\0/g, '')
 
 const onlySuccessfullPromises = (result: PromiseSettledResult<unknown>): boolean =>
   result && result.status === 'fulfilled'

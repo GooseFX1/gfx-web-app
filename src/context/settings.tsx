@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, ReactNode, SetStateAction, useContext, useMemo, useState } from 'react'
+import React, { Dispatch, ReactNode, SetStateAction, useContext, useMemo, useState, FC } from 'react'
 import { ENV } from '@solana/spl-token-registry'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Connection } from '@solana/web3.js'
@@ -63,15 +63,18 @@ interface ISettingsConfig {
   endpointName: string
   network: WalletAdapterNetwork
   setEndpointName: Dispatch<SetStateAction<string>>
-  setSlippage: Dispatch<SetStateAction<number>>
-  slippage: number
+  setSlippage?: Dispatch<SetStateAction<number>>
+  slippage?: number
 }
 
 export const DEFAULT_SLIPPAGE = 0.005
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
 
-export function useSlippageConfig() {
+export function useSlippageConfig(): {
+  slippage: number
+  setSlippage: React.Dispatch<React.SetStateAction<number>>
+} {
   const context = useContext(SettingsContext)
   if (!context) {
     throw new Error('Missing settings context')
@@ -81,7 +84,7 @@ export function useSlippageConfig() {
   return { slippage, setSlippage }
 }
 
-export function useConnectionConfig() {
+export function useConnectionConfig(): ISettingsConfig {
   const context = useContext(SettingsContext)
   if (!context) {
     throw new Error('Missing settings context')

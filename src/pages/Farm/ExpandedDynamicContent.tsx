@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react'
+import React, { useState, useMemo, useEffect, useRef, FC } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
@@ -54,13 +54,13 @@ interface IExpandedContent {
 
 const DISPLAY_DECIMAL = 3
 
-export const ExpandedDynamicContent = ({
+export const ExpandedDynamicContent: FC<IExpandedContent> = ({
   rowData,
   stakeProgram,
   SSLProgram,
   onExpandIcon,
   stakeAccountKey
-}: IExpandedContent) => {
+}) => {
   const { name, earned, currentlyStaked, type } = rowData
   const { getUIAmount } = useAccounts()
   const { publicKey } = useWallet()

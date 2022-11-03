@@ -131,7 +131,7 @@ const PRICE_DISPLAY = styled.div`
   display: flex;
 `
 
-export const getNftPrice = (item) => (
+export const getNftPrice: FC = (item: any) => (
   <PRICE_DISPLAY>
     {`${item?.price} `}
     <img

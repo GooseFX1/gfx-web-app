@@ -1,4 +1,11 @@
-import { PublicKey, Transaction, TransactionInstruction, Connection } from '@solana/web3.js'
+import {
+  PublicKey,
+  Transaction,
+  TransactionInstruction,
+  Connection,
+  SignatureResult,
+  RpcResponseAndContext
+} from '@solana/web3.js'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { notify } from '../../utils'
 import apiClient from '../../api'
@@ -121,7 +128,10 @@ export const callCancelInstruction = async (
   general: ISingleNFT,
   tradeState: [PublicKey, number],
   buyerPrice: BN
-) => {
+): Promise<{
+  signature: string
+  confirm: RpcResponseAndContext<SignatureResult>
+}> => {
   const cancelInstructionArgs: CancelInstructionArgs = {
     buyerPrice: buyerPrice,
     tokenSize: tokenSize
@@ -150,7 +160,14 @@ export const callCancelInstruction = async (
   return { signature, confirm }
 }
 
-export const callWithdrawInstruction = async (wallet: PublicKey, escrow: [PublicKey, number], bidAmount: BN) => {
+export const callWithdrawInstruction = async (
+  wallet: PublicKey,
+  escrow: [PublicKey, number],
+  bidAmount: BN
+): Promise<{
+  withdrawInstructionAccounts: WithdrawInstructionAccounts
+  withdrawInstructionArgs: WithdrawInstructionArgs
+}> => {
   const withdrawInstructionArgs: WithdrawInstructionArgs = {
     escrowPaymentBump: escrow[1],
     amount: bidAmount
@@ -169,7 +186,7 @@ export const callWithdrawInstruction = async (wallet: PublicKey, escrow: [Public
   return { withdrawInstructionAccounts, withdrawInstructionArgs }
 }
 
-export const deleteDraft = async (currentDraftId: string) => {
+export const deleteDraft = async (currentDraftId: string): Promise<any> => {
   try {
     const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.DRAFTS}`, {
       data: { draft_id: currentDraftId }

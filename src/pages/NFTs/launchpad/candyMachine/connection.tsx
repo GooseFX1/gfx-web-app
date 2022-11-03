@@ -12,11 +12,12 @@ import {
   FeeCalculator,
   SystemProgram,
   NONCE_ACCOUNT_LENGTH,
-  NonceAccount
+  NonceAccount,
+  PublicKey
 } from '@solana/web3.js'
-
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base'
 import { web3 } from '@project-serum/anchor'
+import { WalletContextState } from '@solana/wallet-adapter-react'
 import { sendNonceTransaction } from '../../../../api/NFTLaunchpad'
 
 interface BlockhashAndFeeCalculator {
@@ -26,7 +27,7 @@ interface BlockhashAndFeeCalculator {
 
 export const DEFAULT_TIMEOUT = 60000
 
-export const getErrorForTransaction = async (connection: Connection, txid: string) => {
+export const getErrorForTransaction = async (connection: Connection, txid: string): Promise<string[]> => {
   // wait for all confirmation before geting transaction
   await connection.confirmTransaction(txid, 'max')
 
@@ -61,7 +62,7 @@ export enum SequenceType {
 
 export async function sendTransactionsWithManualRetry(
   connection: Connection,
-  wallet: any,
+  wallet: WalletContextState,
   ixs: TransactionInstruction[][],
   signers: Keypair[][]
 ): Promise<(string | undefined)[]> {
@@ -129,13 +130,13 @@ export async function sendTransactionsWithManualRetry(
 
 export const sendTransactions = async (
   connection: Connection,
-  wallet: any,
+  wallet: WalletContextState,
   instructionSet: TransactionInstruction[][],
   signersSet: Keypair[][],
   sequenceType: SequenceType = SequenceType.Parallel,
   commitment: Commitment = 'singleGossip',
   successCallback: (txid?: string, ind?: number) => void = () => {}, //eslint-disable-line
-  failCallback: (reason?: string, ind?: number) => boolean = () => false, //eslint-disable-line
+  failCallback: (reason?: Transaction, ind?: number) => boolean = () => false, //eslint-disable-line
   block?: BlockhashAndFeeCalculator,
   beforeTransactions: Transaction[] = [],
   afterTransactions: Transaction[] = []
@@ -222,14 +223,14 @@ export const sendTransactions = async (
 
 export const sendTransaction = async (
   connection: Connection,
-  wallet: any,
+  wallet: WalletContextState,
   instructions: TransactionInstruction[] | Transaction,
   signers: Keypair[],
   awaitConfirmation = true,
   commitment: Commitment = 'singleGossip',
   includesFeePayer = false,
   block?: BlockhashAndFeeCalculator
-) => {
+): Promise<{ txid: string; slot: number }> => {
   if (!wallet.publicKey) throw new WalletNotConnectedError()
 
   let transaction: Transaction
@@ -286,14 +287,14 @@ export const sendTransaction = async (
 
 export const sendTransactionWithRetry = async (
   connection: Connection,
-  wallet: any,
+  wallet: WalletContextState,
   instructions: TransactionInstruction[],
   signers: Keypair[],
   commitment: Commitment = 'singleGossip',
   includesFeePayer = false,
   block?: BlockhashAndFeeCalculator,
   beforeSend?: () => void
-) => {
+): Promise<{ txid: string; slot: number }> => {
   if (!wallet.publicKey) throw new WalletNotConnectedError()
 
   let transaction = new Transaction()
@@ -329,7 +330,7 @@ export const sendTransactionWithRetry = async (
   return { txid, slot }
 }
 
-export const getUnixTs = () => new Date().getTime() / 1000
+export const getUnixTs = (): number => new Date().getTime() / 1000
 
 export async function sendSignedTransaction({
   signedTransaction,
@@ -523,7 +524,10 @@ export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-export async function nonceInstructions(connection, feePayer) {
+export async function nonceInstructions(
+  connection: Connection,
+  feePayer: { publicKey: PublicKey }
+): Promise<void> {
   const nonceAccount = web3.Keypair.generate()
   const instrctions = []
 
@@ -554,12 +558,12 @@ export async function nonceInstructions(connection, feePayer) {
 
 export const sendTransactionsNonce = async (
   connection: Connection,
-  wallet: any,
+  wallet: WalletContextState,
   instructionSet: TransactionInstruction[][],
   signersSet: Keypair[][],
   beforeTransactions: Transaction[] = [],
   afterTransactions: Transaction[] = [],
-  nonce: any,
+  nonce: PublicKey,
   collectionId: string,
   walletAddress: string
 ): Promise<{ number: number; txs: { txid: string; slot: number }[] }> => {

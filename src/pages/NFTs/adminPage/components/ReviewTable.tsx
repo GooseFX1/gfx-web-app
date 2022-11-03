@@ -1,5 +1,5 @@
 import { Button, Row } from 'antd'
-import React, { useState } from 'react'
+import React, { useState, FC } from 'react'
 import { ICreatorData } from '../../../../types/nft_launchpad'
 import styled from 'styled-components'
 import tw from 'twin.macro'
@@ -112,7 +112,7 @@ const WRAPPER = styled.div`
   }
 `
 
-const ReviewTable = ({ reviewProjects, btnClicked }: { reviewProjects: any[]; btnClicked: any }) => {
+const ReviewTable: FC<{ reviewProjects: any[]; btnClicked: any }> = ({ reviewProjects, btnClicked }) => {
   if (reviewProjects?.length < 1)
     return (
       <NOTHING_REVIEW>
@@ -319,7 +319,11 @@ const GRADIENT_BORDER = styled.span`
   }
 `
 
-export const GradientImageBorder = ({ img, height, width }: { img: string; height: number; width: number }) => (
+export const GradientImageBorder: FC<{ img: string; height: number; width: number }> = ({
+  img,
+  height,
+  width
+}) => (
   <GRADIENT_BORDER style={{ width: width, height: height }}>
     <div className="innerBg" style={{ width: width - 7, height: height - 7 }}></div>
     <img style={{ width: width - 15, height: height - 15 }} src={img} alt="nft cover" />

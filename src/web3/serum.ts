@@ -3,7 +3,14 @@ import { Order } from '@project-serum/serum/lib/market'
 import { AccountInfo, Connection, PublicKey } from '@solana/web3.js'
 import { AVAILABLE_MARKETS, MarketSide } from '../context'
 
-const getLatestBid = async (connection: Connection, pair: string, canBeDeprecated = false) => {
+export interface MarketInfo {
+  address: PublicKey
+  name: string
+  programId: PublicKey
+  deprecated: boolean
+}
+
+const getLatestBid = async (connection: Connection, pair: string, canBeDeprecated = false): Promise<number> => {
   const [[latestBid]] = (await (await getMarket(connection, pair, canBeDeprecated)).loadBids(connection)).getL2(1)
   return latestBid
 }
@@ -13,10 +20,10 @@ const getMarket = async (connection: Connection, pair: string, canBeDeprecated =
   return await Market.load(connection, address, undefined, programId)
 }
 
-const getMarketFromAddress = (address: PublicKey) =>
+const getMarketFromAddress = (address: PublicKey): MarketInfo | undefined =>
   AVAILABLE_MARKETS.find(({ address: x }) => x.toString() === address.toString())
 
-const getMarketInfo = (pair: string, canBeDeprecated = false) => {
+const getMarketInfo = (pair: string, canBeDeprecated = false): MarketInfo => {
   if (pair === 'GOFX/USDC') {
     return {
       name: 'GOFX/USDC',

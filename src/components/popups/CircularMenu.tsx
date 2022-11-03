@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, FC } from 'react'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useDarkMode } from '../../context'
@@ -159,17 +159,12 @@ const WRAPPER = styled.div`
   }
 `
 
-export const CircularMenu = ({
-  carousel,
-  rotateClicked,
-  clickCounter,
-  rewardToggle
-}: {
+export const CircularMenu: FC<{
   carousel: any[]
   rotateClicked: string
   clickCounter: number
   rewardToggle: (b: boolean) => void
-}) => {
+}> = ({ carousel, rotateClicked, clickCounter, rewardToggle }) => {
   const { mode } = useDarkMode()
   const { publicKey } = useWallet()
   const [rotationClass, setRotationClass] = useState('carousel')

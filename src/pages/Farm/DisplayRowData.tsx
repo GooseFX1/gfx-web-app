@@ -4,6 +4,7 @@ import { moneyFormatter, percentFormatter } from '../../utils/math'
 import { Loader } from '../Farm/Columns'
 import { checkMobile } from '../../utils'
 import tw from 'twin.macro'
+import { FC } from 'react'
 
 const ROW_CONTAINER = styled.div`
   ${tw`sm:m-0 sm:pt-[38px] sm:pb-0 sm:pl-[22px] sm:pr-[0]`}
@@ -58,7 +59,7 @@ const EXPAND_ICON_WRAPPER = styled.div`
   align-items: center;
   width: 42%;
 `
-const DisplayRowData = ({ rowData, onExpandIcon }: { rowData: any; onExpandIcon: (a: any) => void }) =>
+const DisplayRowData: FC<{ rowData: any; onExpandIcon: (a: any) => void }> = ({ rowData, onExpandIcon }) =>
   !checkMobile() ? (
     <ROW_CONTAINER>
       <STYLED_NAME className="set-width">

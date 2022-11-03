@@ -98,7 +98,7 @@ type DropdownProps = {
   days: any
 }
 
-export const Dropdown = ({ days }: DropdownProps) => {
+export const Dropdown: FC<DropdownProps> = ({ days }) => {
   const { mode } = useDarkMode()
   const [arrowRotation, setArrowRotation] = useState(false)
   const [currentTitle, setCurrentTitle] = useState(days[0].name)

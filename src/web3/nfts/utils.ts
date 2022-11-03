@@ -7,13 +7,13 @@ const metaProgamPublicKey = new PublicKey(METADATA_PROGRAM)
 const metaProgamPublicKeyBuffer = metaProgamPublicKey.toBuffer()
 const metaProgamPrefixBuffer = Buffer.from(METADATA_PREFIX)
 
-export const decodeTokenMetadata = async (buffer: Buffer) =>
+export const decodeTokenMetadata = async (buffer: Buffer): Promise<MetaplexMetadata> =>
   deserializeUnchecked(PARSE_NFT_ACCOUNT_SCHEMA, MetaplexMetadata, buffer)
 
 /**
  * Get Addresses of Metadata account assosiated with Mint Token
  */
-export async function getSolanaMetadataAddress(tokenMint: PublicKey) {
+export async function getSolanaMetadataAddress(tokenMint: PublicKey): Promise<PublicKey> {
   const metaProgamPublicKey = new PublicKey(METADATA_PROGRAM)
   return (
     await PublicKey.findProgramAddress(
@@ -22,6 +22,7 @@ export async function getSolanaMetadataAddress(tokenMint: PublicKey) {
     )
   )[0]
 }
+
 const getDaysArray = function (start, end) {
   //eslint-disable-next-line
   for (var arr = [], dt = new Date(start); dt <= new Date(end); dt.setDate(dt.getDate() + 1)) {
@@ -36,7 +37,7 @@ function formatDate(input) {
     day = datePart[2]
   return day + '-' + month + '-' + year
 }
-export const formatTommddyyyy = (input) => {
+export const formatTommddyyyy = (input: string): string => {
   const datePart = input.match(/\d+/g),
     year = datePart[2],
     month = datePart[1],
@@ -44,7 +45,7 @@ export const formatTommddyyyy = (input) => {
   return month + '-' + day + '-' + year
 }
 
-export const getDateInArray = () => {
+export const getDateInArray = (): string[] => {
   const todayObj = new Date()
   let daylist = getDaysArray(new Date(new Date()), new Date(todayObj.setDate(todayObj.getDate() + 20)))
   daylist = daylist.map((v) => formatDate(v.toISOString().slice(0, 10)))

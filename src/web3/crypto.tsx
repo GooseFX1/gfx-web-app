@@ -1,11 +1,18 @@
 import { Connection, PublicKey, Transaction } from '@solana/web3.js'
 import { Market, OpenOrders } from '@project-serum/serum'
+import { WalletContextState } from '@solana/wallet-adapter-react'
+
 import { Order } from '@project-serum/serum/lib/market'
 import { WRAPPED_SOL_MINT } from '@project-serum/serum/lib/token-instructions'
 import { createAssociatedTokenAccountIx, findAssociatedTokenAddress, signAndSendRawTransaction } from './utils'
 import { IOrder } from '../context'
 
-const cancelOrder = async (connection: Connection, market: Market, order: Order, wallet: any) => {
+const cancelOrder = async (
+  connection: Connection,
+  market: Market,
+  order: Order,
+  wallet: WalletContextState
+): Promise<string> => {
   if (!wallet.publicKey || !wallet.signTransaction) return
 
   const tx = new Transaction()
@@ -17,7 +24,12 @@ const cancelOrder = async (connection: Connection, market: Market, order: Order,
   return await signAndSendRawTransaction(connection, tx, wallet)
 }
 
-const placeOrder = async (connection: Connection, market: Market, order: IOrder, wallet: any) => {
+const placeOrder = async (
+  connection: Connection,
+  market: Market,
+  order: IOrder,
+  wallet: WalletContextState
+): Promise<string> => {
   if (!wallet.publicKey || !wallet.signTransaction) return
 
   const tx = new Transaction()
@@ -51,7 +63,12 @@ const placeOrder = async (connection: Connection, market: Market, order: IOrder,
   return await signAndSendRawTransaction(connection, tx, wallet, ...signers)
 }
 
-const settleFunds = async (connection: Connection, market: Market, openOrders: OpenOrders, wallet: any) => {
+const settleFunds = async (
+  connection: Connection,
+  market: Market,
+  openOrders: OpenOrders,
+  wallet: WalletContextState
+): Promise<string> => {
   if (!wallet.publicKey || !wallet.signTransaction) return
 
   const tx = new Transaction()

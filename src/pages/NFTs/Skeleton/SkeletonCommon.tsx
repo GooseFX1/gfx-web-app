@@ -1,20 +1,15 @@
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
 import { useDarkMode } from '../../../context'
 import 'react-loading-skeleton/dist/skeleton.css'
+import { FC } from 'react'
 
-export const SkeletonCommon = ({
-  height,
-  width = '100%',
-  borderRadius = '6px',
-  style = {},
-  isReverse = false
-}: {
+export const SkeletonCommon: FC<{
   height: string
   width?: string
   borderRadius?: string
   style?: any
   isReverse?: boolean
-}) => {
+}> = ({ height, width = '100%', borderRadius = '6px', style = {}, isReverse = false }) => {
   const { mode } = useDarkMode()
   const isLite = mode === 'lite'
   const baseColor = isLite ? 'rgba(255, 255, 255, 1)' : 'rgba(71, 71, 71, 1)'

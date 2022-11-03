@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, FC } from 'react'
 import styled from 'styled-components'
 import { Progress, Switch } from 'antd'
 import { ModalSlide } from '../../../../components/ModalSlide'
@@ -450,7 +450,7 @@ const LIVE_BTN = styled.div`
   }
 `
 
-export const MintProgressBar = ({ minted, totalNFTs }: { minted: number; totalNFTs: number }) => {
+export const MintProgressBar = ({ minted, totalNFTs }: { minted: number; totalNFTs: number }): JSX.Element => {
   let mintPercent = (minted / totalNFTs) * 100
   mintPercent = parseFloat(mintPercent.toFixed(0))
   return (
@@ -477,7 +477,15 @@ export const SWITCH_HOLDER = styled.div<{ $navCollapsed: boolean }>`
   margin-top: calc(100px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
 `
 
-export const InfoDivLightTheme = ({ items, price, currency }: { items: any; price: number; currency: string }) => (
+export const InfoDivLightTheme = ({
+  items,
+  price,
+  currency
+}: {
+  items: any
+  price: number
+  currency: string
+}): JSX.Element => (
   <>
     <INFO_DIV_LIGHT>
       <div className={'inner'}>
@@ -499,7 +507,7 @@ export const InfoDivLightTheme = ({ items, price, currency }: { items: any; pric
   </>
 )
 
-export const Socials = () => {
+export const Socials: FC = () => {
   const { selectedProject } = useNFTLPSelected()
   return (
     <Row
@@ -526,7 +534,7 @@ export const Socials = () => {
   )
 }
 //eslint-disable-next-line
-export const Vesting = ({ currency, str }) => {
+export const Vesting = ({ currency, str }): JSX.Element => {
   return (
     <>
       <VESTING_WRAPPER>
@@ -537,14 +545,14 @@ export const Vesting = ({ currency, str }) => {
     </>
   )
 }
-export const InfoDivBrightTheme = ({ items }: { items: any }) => (
+export const InfoDivBrightTheme = ({ items }: { items: any }): JSX.Element => (
   <>
     <INFO_DIV_BRIGHT>
       <div className="inner-2">{items}</div>
     </INFO_DIV_BRIGHT>
   </>
 )
-export const InfoDivUSDCTheme = () => {
+export const InfoDivUSDCTheme: FC = () => {
   const [goldenTicket, setGoldenTicket] = useState<boolean>()
 
   return (
@@ -559,7 +567,7 @@ export const InfoDivUSDCTheme = () => {
   )
 }
 
-export const MintStarts = ({ time }: { time: string }) => {
+export const MintStarts = ({ time }: { time: string }): JSX.Element => {
   const getRemaningTime = (time) => {
     const startsOn = parseFloat(time)
     const timeDiffrence = startsOn - Date.now()
@@ -590,7 +598,7 @@ export const MintStarts = ({ time }: { time: string }) => {
 }
 const TimerCircle = ({ data }: { data: any }) => <div className="timer-circle">{data}</div>
 
-export const TokenSwitch = ({ disabled, currency }: { disabled: boolean; currency: string }) => {
+export const TokenSwitch = ({ disabled, currency }: { disabled: boolean; currency: string }): JSX.Element => {
   const { isUSDC, setIsUSDC } = useUSDCToggle()
   const { isCollapsed } = useNavCollapse()
 
@@ -615,13 +623,13 @@ export const TokenSwitch = ({ disabled, currency }: { disabled: boolean; currenc
   )
 }
 
-export const LiveButton = () => (
+export const LiveButton: FC = () => (
   <LIVE_BTN>
     <div className="liveText">Live</div>
   </LIVE_BTN>
 )
 
-export const DarkDiv = ({ coverUrl }: { coverUrl: string }) => (
+export const DarkDiv = ({ coverUrl }: { coverUrl: string }): JSX.Element => (
   <DARK_DIV>
     <div className="dark-3" />
     <div className="dark-2" />
@@ -636,7 +644,7 @@ export const DarkDiv = ({ coverUrl }: { coverUrl: string }) => (
   </DARK_DIV>
 )
 
-export const GoldenTicketPopup = () => {
+export const GoldenTicketPopup = (): JSX.Element => {
   const closeGoldenPopup = (e: any) => {
     if (e.target.id !== 'golden-ticket-popup') console.log('close popup')
   }
@@ -656,7 +664,7 @@ export const GoldenTicketPopup = () => {
   )
 }
 
-export const TeamMembers = ({ teamMembers }: { teamMembers: any[] }) => (
+export const TeamMembers = ({ teamMembers }: { teamMembers: any[] }): JSX.Element => (
   <TEAM_MEMBER_WRAPPER>
     {teamMembers?.map((team, key) => (
       <div className="teamContainer" key={key}>
@@ -675,7 +683,7 @@ export const TeamMembers = ({ teamMembers }: { teamMembers: any[] }) => (
   </TEAM_MEMBER_WRAPPER>
 )
 
-export const RoadMap = ({ roadmap }: { roadmap: any[] }) => (
+export const RoadMap = ({ roadmap }: { roadmap: any[] }): JSX.Element => (
   <ROADMAP_WRAPPER>
     {roadmap?.map((road, key) => (
       <div className="verticalContainer" key={key}>

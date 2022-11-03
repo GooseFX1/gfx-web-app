@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, FC } from 'react'
 import { Upload, Typography } from 'antd'
 import { UploadChangeParam } from 'antd/lib/upload'
 import { UploadFile } from 'antd/lib/upload/interface'
@@ -146,7 +146,12 @@ interface Props {
   setDisabled: (value: boolean) => void
 }
 
-export const UploadCustom = ({ setPreviewImage, setFilesForUpload, nftMintingData, setNftMintingData }: Props) => {
+export const UploadCustom: FC<Props> = ({
+  setPreviewImage,
+  setFilesForUpload,
+  nftMintingData,
+  setNftMintingData
+}) => {
   const [coverArtError, setCoverArtError] = useState<string>()
   const [mainFile] = useState<File | undefined>()
   const [customURL] = useState<string>('')

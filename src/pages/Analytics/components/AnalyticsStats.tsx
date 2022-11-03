@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import { GofxHolders } from './GofxHolders'
 import SwapVolume from './SwapVolume'
@@ -10,7 +10,7 @@ const WRAPPER = styled.div`
   color: #eeeeee;
 `
 
-export const AnalyticsStats = () => (
+export const AnalyticsStats: FC = () => (
   <WRAPPER>
     <TotalLiquidityVolume />
     <GofxHolders />

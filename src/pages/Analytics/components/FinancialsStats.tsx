@@ -1,5 +1,5 @@
 import { PublicKey } from '@solana/web3.js'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, FC } from 'react'
 import { getFarmTokenPrices } from '../../../api/SSL'
 import { useConnectionConfig } from '../../../context'
 import { TOKEN_PROGRAM_ID } from '../../../web3'
@@ -17,9 +17,9 @@ export type IAccount = {
   uiAmountString: string
 }
 
-export const FinancialsStats = () => <SSLRevenue />
+export const FinancialsStats: FC = () => <SSLRevenue />
 
-export const SSLRevenue = () => {
+export const SSLRevenue: FC = () => {
   const [revenueObj, setRevenueObj] = useState<any>()
   const [tokenPrices, setTokenprices] = useState<any>()
   const [dataSource, setDataSource] = useState<any>()

@@ -226,7 +226,7 @@ const BANNER_TOGGLE = styled.button`
   }
 `
 //#endregion
-export const copyToClipboard = async () => {
+export const copyToClipboard = async (): Promise<void> => {
   await navigator.clipboard.writeText(window.location.href)
 }
 

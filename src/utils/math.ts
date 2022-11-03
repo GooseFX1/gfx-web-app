@@ -43,21 +43,23 @@ export const nFormatter = (n: number, digits = 1, withPlus = false): string => {
   if (n >= 1e12) return `${+(n / 1e12).toFixed(digits)}T ${withPlus ? '+' : ''}`
 }
 
-export const isHasValue = (value: any) => value !== null && typeof value !== 'undefined'
+//eslint-disable-next-line
+export const isHasValue = (value: any): boolean => value !== null && typeof value !== 'undefined'
 
+//eslint-disable-next-line
 export const isNotEmpty = (value: any) => isHasValue(value) && (value + '').trim().length > 0
 
 // Format money
-export const moneyFormatter = (number: number, currency = '') => {
+export const moneyFormatter = (number: number, currency = ''): string => {
   if (!isNotEmpty(number)) return ''
   return number.toLocaleString() + currency
 }
-export const moneyFormatterWithComma = (number: number, currency = '') => {
+export const moneyFormatterWithComma = (number: number, currency = ''): string => {
   if (!isNotEmpty(number)) return ''
   return currency + ' ' + commafy(number)
 }
-export const percentFormatter = (number: number) => {
-  if (!isNotEmpty(number)) return 0
+export const percentFormatter = (number: number): string => {
+  if (!isNotEmpty(number)) return '0'
   return number.toFixed(0) + '%'
 }
 function commafy(num) {

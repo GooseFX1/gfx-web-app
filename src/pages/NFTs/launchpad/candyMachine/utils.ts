@@ -10,7 +10,7 @@ export interface AlertState {
   hideDuration?: number | null
 }
 
-export const toDate = (value?: anchor.BN) => {
+export const toDate = (value?: anchor.BN): Date => {
   if (!value) {
     return
   }
@@ -25,14 +25,14 @@ const numberFormater = new Intl.NumberFormat('en-US', {
 })
 
 export const formatNumber = {
-  format: (val?: number) => {
+  format: (val?: number): string => {
     if (!val) {
       return '--'
     }
 
     return numberFormater.format(val)
   },
-  asNumber: (val?: anchor.BN) => {
+  asNumber: (val?: anchor.BN): number | undefined => {
     if (!val) {
       return undefined
     }
@@ -80,7 +80,7 @@ export function createAssociatedTokenAccountInstruction(
   payer: anchor.web3.PublicKey,
   walletAddress: anchor.web3.PublicKey,
   splTokenMintAddress: anchor.web3.PublicKey
-) {
+): TransactionInstruction {
   const keys = [
     {
       pubkey: payer,

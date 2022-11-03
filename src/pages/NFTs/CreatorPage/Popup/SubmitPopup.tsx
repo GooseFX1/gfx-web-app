@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, FC } from 'react'
 import { ModalSlide } from '../../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../../constants'
 import styled from 'styled-components'
@@ -105,7 +105,7 @@ const WRAPPER = styled.div`
   }
 `
 
-const SubmitPopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => void }) => {
+const SubmitPopup: FC<{ rewardToggle: (b: boolean) => void }> = ({ rewardToggle }) => {
   const [disclaimer, setDisclaimer] = useState<boolean>(false)
   const [acceptRisk, setRisk] = useState<boolean>(false)
   const { creatorData, submit } = useNFTCreator()

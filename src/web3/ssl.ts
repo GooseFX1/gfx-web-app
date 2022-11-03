@@ -25,7 +25,7 @@ import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
 import { findAssociatedTokenAddress, createAssociatedTokenAccountIx, getNetworkConnectionText } from './utils'
 import { SSL_PREFIX, LIQUIDITY_ACCOUNT_PREFIX, toPublicKey, ADDRESSES, PT_MINT_PREFIX } from '../web3'
 import { TOKEN_NAMES } from '../constants'
-
+import { TxnReturn } from './stake'
 export interface Account {
   /** Address of the account */
   address: PublicKey
@@ -112,7 +112,7 @@ export const fetchAllSSLAmountStaked = async (
   wallet: WalletContextState,
   liquidityAccountKeys: PublicKey[],
   mainVaultKeys: PublicKey[]
-) => {
+): Promise<{ sslData: any; mainVault: any; liquidityData: any }> => {
   try {
     const promiseData = []
     promiseData.push(connection.getMultipleAccountsInfo(sslAccountKeys))
@@ -184,7 +184,7 @@ export const getLiquidityAccountKey = async (
     return undefined
   }
 }
-export const getTokenAddresses = (SSLTokensNames: any[], network: WalletAdapterNetwork) => {
+export const getTokenAddresses = (SSLTokensNames: any[], network: WalletAdapterNetwork): PublicKey[] => {
   const SSLTokenAddresses = SSLTokensNames.map((token) => getTokenMintAddress(network, token))
   return SSLTokenAddresses
 }
@@ -196,7 +196,7 @@ export const executeBurn = async (
   network: WalletAdapterNetwork,
   tokenName: string,
   amount: number
-) => {
+): Promise<TxnReturn> => {
   const tokenMintAddress = getTokenMintAddress(network, tokenName)
   const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress, network)
   const sslAccountKey = await getSslAccountKey(tokenMintAddress, network)
@@ -242,7 +242,7 @@ export const executeMint = async (
   network: WalletAdapterNetwork,
   tokenName: string,
   amount: number
-) => {
+): Promise<TxnReturn> => {
   const tokenMintAddress = getTokenMintAddress(network, tokenName)
   const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress, network)
   const sslAccountKey = await getSslAccountKey(tokenMintAddress, network)
@@ -292,7 +292,7 @@ export const executeWithdraw = async (
   network: WalletAdapterNetwork,
   tokenName: string,
   amount: number
-) => {
+): Promise<TxnReturn> => {
   const tokenMintAddress = getTokenMintAddress(network, tokenName)
   const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress, network)
   const sslAccountKey = await getSslAccountKey(tokenMintAddress, network)
@@ -416,7 +416,7 @@ const depositAmount = async (
   tokenMintAddress: PublicKey,
   tokenName: string,
   createLiquidityIX: TransactionInstruction | undefined
-) => {
+): Promise<TxnReturn> => {
   const RTVault = await findAssociatedTokenAddress(sslAccountKey, tokenMintAddress)
   const userRtAta = await findAssociatedTokenAddress(wallet.publicKey, tokenMintAddress)
   const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
@@ -466,7 +466,7 @@ export const executeDeposit = async (
   network: WalletAdapterNetwork,
   amount: number,
   tokenName: string
-) => {
+): Promise<TxnReturn> => {
   const tokenMintAddress = getTokenMintAddress(network, tokenName)
   const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress, network)
   const sslAccountKey = await getSslAccountKey(tokenMintAddress, network)
@@ -495,9 +495,9 @@ export const createLiquidityAccountIX = async (
   program: Program<Idl>,
   network: WalletAdapterNetwork,
   wallet: WalletContextState,
-  liquidityAccount: any,
+  liquidityAccount: PublicKey,
   sslKey: PublicKey
-) => {
+): Promise<TransactionInstruction> => {
   const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
   const createLiquidityInstructionAccount = {
     controller: CONTROLLER_KEY,

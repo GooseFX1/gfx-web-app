@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, FC } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useDarkMode, useWalletModal } from '../../context'
@@ -106,7 +106,7 @@ interface IMenuPopup {
   rewardToggle: (bool: boolean) => void
 }
 
-const MenuPopup = ({ rewardToggle }: IMenuPopup) => {
+const MenuPopup: FC<IMenuPopup> = ({ rewardToggle }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
   const { publicKey } = useWallet()

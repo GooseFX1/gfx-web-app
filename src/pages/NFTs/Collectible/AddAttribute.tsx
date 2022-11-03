@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, FC } from 'react'
 import { Button, Input } from 'antd'
 import styled from 'styled-components'
 import { PopupCustom } from '../Popup/PopupCustom'
@@ -194,7 +194,7 @@ interface Props {
   setAttributeList: (items: Array<Item>) => void
 }
 
-const AddAttribute = ({ visible, handleCancel, handleOk, attributeList, setAttributeList }: Props) => {
+const AddAttribute: FC<Props> = ({ visible, handleCancel, handleOk, attributeList, setAttributeList }) => {
   const inputType = React.useRef(null)
 
   const [disabled, setDisabled] = useState(false)

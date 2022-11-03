@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 
 const WRAPPER = styled.div`
@@ -49,7 +49,7 @@ const WRAPPER = styled.div`
   }
 `
 
-const RelaxPopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => void }) => (
+const RelaxPopup: FC<{ rewardToggle: (b: boolean) => void }> = ({ rewardToggle }) => (
   <WRAPPER>
     <img className="image" src="/img/assets/Launchpad.png" alt="" />
     <img className="closeIcon" src="/img/assets/close-white-icon.svg" alt="" onClick={() => rewardToggle(false)} />

@@ -1,9 +1,9 @@
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import { useState } from 'react'
+import { useState, FC } from 'react'
 import { Switch } from 'antd'
 
-export const SwapVolumeChart = ({ data }: any) => {
+export const SwapVolumeChart: FC<any> = ({ data }) => {
   console.log(data)
   const [shwoWeek, setShowWeek] = useState<boolean>(false)
   const displayArr = shwoWeek && data ? [...data].splice(23, 7) : data

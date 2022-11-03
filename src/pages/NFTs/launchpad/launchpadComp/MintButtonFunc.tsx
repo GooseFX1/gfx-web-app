@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FC } from 'react'
 import { CandyMachineAccount } from '../candyMachine/candyMachine'
 import { GatewayStatus, useGateway } from '@civic/solana-gateway-react'
 import { useEffect, useState, useRef } from 'react'
@@ -85,16 +86,7 @@ const CONNECT_WRAPPER = styled.div`
   }
 `
 
-export const MintButtonFunc = ({
-  onMint,
-  candyMachine,
-  isMinting,
-  setIsMinting,
-  isActive,
-  isLive,
-  isWhitelist,
-  cndyValues
-}: {
+export const MintButtonFunc: FC<{
   onMint: () => Promise<void>
   candyMachine?: CandyMachineAccount
   isMinting: boolean
@@ -103,7 +95,7 @@ export const MintButtonFunc = ({
   isLive: boolean
   isWhitelist: boolean
   cndyValues: any
-}) => {
+}> = ({ onMint, candyMachine, isMinting, setIsMinting, isActive, isLive, isWhitelist, cndyValues }) => {
   const wallet = useWallet()
   const [verified, setVerified] = useState(false)
   const { requestGatewayToken, gatewayStatus } = useGateway()

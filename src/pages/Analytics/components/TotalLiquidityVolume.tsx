@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, FC } from 'react'
 import { getTotalLiquidityVolume } from '../../../api/analytics'
 import { moneyFormatterWithComma } from '../../../utils'
 import { GradientText } from '../../NFTs/adminPage/components/UpcomingMints'
 import { TVLChart } from './TVLChart'
-export const TotalLiquidityVolume = () => {
+
+export const TotalLiquidityVolume: FC = () => {
   const [farmData, setFarmData] = useState(null)
   const [chartData, setChartData] = useState<number[]>()
   useEffect(() => {

@@ -24,7 +24,8 @@ const fetchAvailableNft = async (
   })
 
   const nfts = tokensRaw.value.flatMap((tk) =>
-    tk.account.data.parsed.info.tokenAmount.uiAmount === 1 && tk.account.data.parsed.info.tokenAmount.decimals === 0
+    tk.account.data.parsed.info.tokenAmount.uiAmount === 1 &&
+    tk.account.data.parsed.info.tokenAmount.decimals === 0
       ? [new web3.PublicKey(tk.account.data.parsed.info.mint)]
       : []
   )
@@ -89,7 +90,7 @@ const buyWithSOL = async (
 }
 
 const buyWithGOFX = async (
-  wallet: any,
+  wallet: WalletContextState,
   connection: web3.Connection,
   network: WalletAdapterNetwork,
   nftMint: web3.PublicKey,

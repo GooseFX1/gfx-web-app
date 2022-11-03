@@ -418,6 +418,7 @@ export function theme(mode: string): DefaultTheme {
   }
 }
 
+//eslint-disable-next-line
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { mode } = useDarkMode()
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { Row, Col } from 'antd'
 import styled from 'styled-components'
 
@@ -50,7 +50,7 @@ interface ICategory {
   setCategory: (val: string) => void
 }
 
-export const SellCategory = ({ category, setCategory }: ICategory) => (
+export const SellCategory: FC<ICategory> = ({ category, setCategory }) => (
   <STYLED_SELL_CATEGORY gutter={[48, 0]}>
     {dataCategories.map((item, index) => (
       <Col key={index}>

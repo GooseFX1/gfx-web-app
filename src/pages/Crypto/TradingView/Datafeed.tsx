@@ -4,7 +4,7 @@ import { sleep, getUnixTs } from '../../../utils/misc'
 
 const URL_SERVER = 'https://api.raydium.io/tv/'
 
-export const useTvDataFeed = () => useMemo(() => makeDataFeed(), [])
+export const useTvDataFeed = (): any => useMemo(() => makeDataFeed(), [])
 
 const makeDataFeed = () => {
   const subscriptions = {}
@@ -303,7 +303,7 @@ const reduceTs = (ts: number, resolutionTv: string) => {
   }
 }
 
-export const convertResolutionToApi = (resolution: string) => {
+export const convertResolutionToApi = (resolution: string): string => {
   switch (resolution) {
     case '1':
       return '1min'

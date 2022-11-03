@@ -9,7 +9,9 @@ import {
   Transaction,
   TransactionInstruction,
   SYSVAR_RENT_PUBKEY,
-  LAMPORTS_PER_SOL
+  LAMPORTS_PER_SOL,
+  RpcResponseAndContext,
+  SignatureResult
 } from '@solana/web3.js'
 import { SYSTEM } from './ids'
 import { findAssociatedTokenAddress } from './utils'
@@ -17,9 +19,22 @@ import { STAKE_PREFIX, toPublicKey, ADDRESSES } from '../web3'
 import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
 import { CONTROLLER_LAYOUT, STAKING_ACCOUNT_LAYOUT } from 'goosefx-ssl-sdk'
 
+export interface TxnReturn {
+  error?: Error
+  confirm?: RpcResponseAndContext<SignatureResult>
+  signature: string
+}
+
+interface FetchCurrentAmountStaked {
+  tokenStakedPlusEarned: number
+  tokenStaked: number
+  tokenEarned: number
+  stakingBalance: number
+}
+
 export const getStakingAccountKey = async (
   wallet: WalletContextState,
-  network: any
+  network: WalletAdapterNetwork
 ): Promise<undefined | PublicKey> => {
   const NETWORK = getNetworkConnection(network)
   try {
@@ -40,7 +55,7 @@ export const executeStake = async (
   connection: Connection,
   network: WalletAdapterNetwork,
   amount: number
-) => {
+): Promise<TxnReturn> => {
   //these 2 will be same irrespective of coins program and stakingAccountKey
   const amountInLamport = amount * LAMPORTS_PER_SOL
   const amountInBN: BN = new BN(amountInLamport)
@@ -69,7 +84,7 @@ const stakeAmount = async (
   wallet: WalletContextState,
   connection: Connection,
   createStakingIX: TransactionInstruction | undefined
-) => {
+): Promise<TxnReturn> => {
   const GOFX_MINT = getGOFXMintAddress(network)
   const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnection(network)].GFX_CONTROLLER
   //TODO : mint Address need to be passed into the function when more tokens are supported
@@ -114,7 +129,7 @@ export const executeUnstakeAndClaim = async (
   connection: Connection,
   network: WalletAdapterNetwork,
   percent: number
-) => {
+): Promise<TxnReturn> => {
   const GOFX_MINT = getGOFXMintAddress(network)
   const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnection(network)].GFX_CONTROLLER
   // get admin from controller
@@ -149,14 +164,15 @@ export const executeUnstakeAndClaim = async (
   }
 }
 
-export const getNetworkConnection = (network) => (network === 'devnet' ? 'DEVNET' : 'MAINNET')
+export const getNetworkConnection = (network: WalletAdapterNetwork): string =>
+  network === 'devnet' ? 'DEVNET' : 'MAINNET'
 const getAdmin = (network) => ADDRESSES[network].programs.stake.admin
 
 export const fetchCurrentAmountStaked = async (
   connection: Connection,
   network: WalletAdapterNetwork,
   wallet: WalletContextState
-) => {
+): Promise<FetchCurrentAmountStaked> => {
   const NETWORK = getNetworkConnection(network)
   const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnection(network)].GFX_CONTROLLER
 
@@ -189,7 +205,7 @@ export const createStakingAccountIX = async (
   program: Program<Idl>,
   stakingAccountKey: PublicKey,
   wallet: WalletContextState
-) => {
+): Promise<TransactionInstruction> => {
   const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnection(network)].GFX_CONTROLLER
   // check for sol in wallet
   const createStakingInstructionAccounts = {

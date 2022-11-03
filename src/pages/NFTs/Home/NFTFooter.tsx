@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import { useDarkMode } from '../../../context'
 import FooterCarousel from './FooterCarousel'
@@ -63,7 +63,7 @@ const FOLLOW_US_BUTTON = styled.a`
   }
 `
 
-const NFTFooter = () => {
+const NFTFooter: FC = () => {
   const { mode } = useDarkMode()
   return (
     <FOOTER_WRAPPER>

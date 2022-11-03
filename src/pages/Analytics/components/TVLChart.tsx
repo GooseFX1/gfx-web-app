@@ -1,9 +1,9 @@
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import { useState } from 'react'
+import { useState, FC } from 'react'
 import { Switch } from 'antd'
 
-export const TVLChart = ({ data }: any) => {
+export const TVLChart: FC<any> = ({ data }) => {
   const [shwoWeek, setShowWeek] = useState<boolean>(false)
   const displayArr = shwoWeek && data ? [...data].splice(23, 7) : data
   const options = {

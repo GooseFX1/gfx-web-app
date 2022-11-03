@@ -7,15 +7,18 @@ import {
   Signer,
   Transaction,
   TransactionSignature,
-  SimulatedTransactionResponse
+  TransactionInstruction,
+  SimulatedTransactionResponse,
+  RpcResponseAndContext
 } from '@solana/web3.js'
 import { getHashedName, getNameAccountKey, NameRegistryState } from '@solana/spl-name-service'
 import { useLocalStorage } from '../utils'
 import { NETWORK_CONSTANTS } from '../constants'
+import { WalletContextState } from '@solana/wallet-adapter-react'
 
 export const SOL_TLD_AUTHORITY = new PublicKey('58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx')
 
-export const isValidSolanaAddress = (address: string) => {
+export const isValidSolanaAddress = (address: string): boolean => {
   try {
     return PublicKey.isOnCurve(address)
   } catch (error) {
@@ -23,8 +26,11 @@ export const isValidSolanaAddress = (address: string) => {
   }
 }
 
-export const createAssociatedTokenAccountIx = (mint: PublicKey, associatedAccount: PublicKey, owner: PublicKey) =>
-  createAssociatedTokenAccountInstruction(owner, associatedAccount, owner, mint)
+export const createAssociatedTokenAccountIx = (
+  mint: PublicKey,
+  associatedAccount: PublicKey,
+  owner: PublicKey
+): TransactionInstruction => createAssociatedTokenAccountInstruction(owner, associatedAccount, owner, mint)
 
 export const findAssociatedTokenAddress = async (
   walletAddress: PublicKey,
@@ -40,7 +46,7 @@ export const findAssociatedTokenAddress = async (
 export const signAndSendRawTransaction = async (
   connection: Connection,
   transactionData: Transaction,
-  wallet: any,
+  wallet: WalletContextState,
   ...signers: Array<Signer>
 ): Promise<TransactionSignature | null> => {
   try {
@@ -78,9 +84,9 @@ export const signAndSendRawTransaction = async (
 export const simulateTransaction = async (
   connection: Connection,
   transactionData: Transaction,
-  wallet: any,
+  wallet: WalletContextState,
   ...signers: Array<Signer>
-) => {
+): Promise<RpcResponseAndContext<SimulatedTransactionResponse>> => {
   const transaction = transactionData
   transaction.feePayer = wallet.publicKey
   transaction.recentBlockhash = (await connection.getRecentBlockhash('max')).blockhash
@@ -92,7 +98,9 @@ export const simulateTransaction = async (
   return sim
 }
 
-export const getInputKey = async (input: any) => {
+export const getInputKey = async (
+  input: string
+): Promise<{ hashedInputName: Buffer; inputDomainKey: PublicKey }> => {
   const hashedInputName = await getHashedName(input)
   const inputDomainKey = await getNameAccountKey(hashedInputName, undefined, SOL_TLD_AUTHORITY)
   return { inputDomainKey, hashedInputName }
@@ -142,7 +150,10 @@ export const resolveDomainToWalletAddress = async ({
 }
 
 // TODO: reconcile this function with other similar definition in the codebase
-export const findProgramAddress = async (seeds: (Buffer | Uint8Array)[], programId: PublicKey) => {
+export const findProgramAddress = async (
+  seeds: (Buffer | Uint8Array)[],
+  programId: PublicKey
+): Promise<[string, number]> => {
   // eslint-disable-next-line
   const localStorage = useLocalStorage()
   const key = `pda-${seeds.reduce((agg, item) => agg + item.toString('hex'), '')}${programId.toString()}`
@@ -178,5 +189,5 @@ export const int64to8 = (n: number): Uint8Array => {
 
 export const bnTo8 = (bn: BN): Uint8Array => Buffer.from([...bn.toArray('le', 8)])
 
-export const getNetworkConnectionText = (network) =>
+export const getNetworkConnectionText = (network: string): string =>
   network === NETWORK_CONSTANTS.DEVNET ? NETWORK_CONSTANTS.DEVNET_SDK : NETWORK_CONSTANTS.MAINNET_SDK

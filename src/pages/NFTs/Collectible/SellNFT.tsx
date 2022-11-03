@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react'
+import React, { useMemo, useState, useEffect, FC } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { Form, Row, Col } from 'antd'
@@ -190,7 +190,7 @@ const PRICE = styled.span`
 `
 //#endregion
 
-export const SellNFT = () => {
+export const SellNFT: FC = () => {
   const history = useHistory()
   const params = useParams<IAppParams>()
   const { general, setGeneral, ask, fetchGeneral, nftMetadata, updateUserInput, sellNFT, patchNFTAsk } =

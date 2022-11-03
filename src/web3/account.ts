@@ -12,7 +12,7 @@ export function createUninitializedMint(
   payer: PublicKey,
   amount: number,
   signers: Keypair[]
-) {
+): PublicKey {
   const account = Keypair.generate()
   instructions.push(
     SystemProgram.createAccount({
@@ -34,7 +34,7 @@ export function createUninitializedAccount(
   payer: PublicKey,
   amount: number,
   signers: Keypair[]
-) {
+): PublicKey {
   const account = Keypair.generate()
   instructions.push(
     SystemProgram.createAccount({
@@ -57,7 +57,7 @@ export function createAssociatedTokenAccountInstruction(
   payer: PublicKey,
   walletAddress: PublicKey,
   splTokenMintAddress: PublicKey
-) {
+): void {
   const keys = [
     {
       pubkey: payer,
@@ -112,7 +112,7 @@ export function createMint(
   owner: PublicKey,
   freezeAuthority: PublicKey,
   signers: Keypair[]
-) {
+): PublicKey {
   const account = createUninitializedMint(instructions, payer, mintRentExempt, signers)
 
   instructions.push(createInitializeMintInstruction(account, decimals, owner, freezeAuthority))
@@ -127,7 +127,7 @@ export function createTokenAccount(
   mint: PublicKey,
   owner: PublicKey,
   signers: Keypair[]
-) {
+): PublicKey {
   const account = createUninitializedAccount(instructions, payer, accountRentExempt, signers)
 
   instructions.push(createInitializeAccountInstruction(account, mint, owner))

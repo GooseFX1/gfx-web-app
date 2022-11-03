@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { Row, Col } from 'antd'
+import { FC } from 'react'
 
 const MESSAGE = styled.div`
   margin: -12px 0;
@@ -23,7 +24,7 @@ interface ISuccessfulListingMsg {
   tx_url: string
 }
 
-export const SuccessfulListingMsg = (props: ISuccessfulListingMsg) => (
+export const SuccessfulListingMsg: FC<ISuccessfulListingMsg> = (props) => (
   <MESSAGE>
     <Row className="m-title" justify="space-between" align="middle">
       <Col>{props.title}</Col>
@@ -56,7 +57,7 @@ interface ITransactionErrorMsg {
   tx_url?: string
 }
 
-export const TransactionErrorMsg = (props: ITransactionErrorMsg) => (
+export const TransactionErrorMsg: FC<ITransactionErrorMsg> = (props) => (
   <MESSAGE>
     <Row className="m-title" justify="space-between" align="middle">
       <Col>{props.title}</Col>

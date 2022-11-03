@@ -81,7 +81,7 @@ const fetchProducts = async (connection: Connection, markets?: string[]): Promis
   return markets ? productsData.filter(({ product }) => markets.includes(product.symbol)) : productsData
 }
 
-const getPriceFromPriceAccount = (product: AccountInfo<any>) => parsePriceData(product.data).price
+const getPriceFromPriceAccount = (product: AccountInfo<any>): string | number => parsePriceData(product.data).price
 
 export const pyth = {
   fetchPriceAccounts,

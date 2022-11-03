@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import { RewardsPopup } from './RewardsPopup'
 import { FeesPopup } from './FeesPopup'
@@ -51,7 +51,7 @@ const closeRewardModal = (e, rewardToggle) => {
   }
 }
 
-export const ModalSlide = (props: IModalSlide) => (
+export const ModalSlide: FC<IModalSlide> = (props) => (
   <WRAPPER id="wrapper-background" onClick={(e) => closeRewardModal(e, props.rewardToggle)}>
     <MODAL id="modal">
       {props.modalType === MODAL_TYPES.REWARDS && <RewardsPopup />}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import { MainButton } from '../components'
 import { useDarkMode } from '../context'
@@ -54,7 +54,7 @@ const HOME_BTN = styled(MainButton)`
   }
 `
 
-export const GenericNotFound = () => {
+export const GenericNotFound: FC = () => {
   const { mode } = useDarkMode()
   const history = useHistory()
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import { Switch } from 'antd'
 import { useFarmContext } from '../../context/farm'
@@ -93,7 +93,7 @@ interface IToggle {
   [x: string]: any
 }
 
-export const Toggle = ({ text, defaultChecked, checkedChildren, unCheckedChildren, className }: IToggle) => {
+export const Toggle: FC<IToggle> = ({ text, defaultChecked, checkedChildren, unCheckedChildren, className }) => {
   const { toggleDeposited } = useFarmContext()
   return (
     <STYLED_TOGGLE>

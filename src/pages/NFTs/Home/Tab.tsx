@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, FC } from 'react'
 import styled from 'styled-components'
 import { Tabs } from 'antd'
 import { useNFTCollections } from '../../../context'
@@ -116,7 +116,7 @@ const ANALYTICS_DROPDOWN = styled.div`
 `
 //#endregion
 
-const AnalyticsTabs = () => {
+const AnalyticsTabs: FC = () => {
   const { detailedCollections } = useNFTCollections()
   const [mainCollections, setMainCollections] = useState<NFTCollection[]>(detailedCollections)
   const [sort, setSort] = useState('high')

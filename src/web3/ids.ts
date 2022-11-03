@@ -418,7 +418,7 @@ export class LazyAccountInfoProxy<T> {
   owner: StringPublicKey = ''
   lamports = 0
 
-  get data() {
+  get data(): any {
     //
     return undefined as unknown as T
   }
@@ -433,7 +433,7 @@ export interface LazyAccountInfo {
 
 const PubKeysInternedMap = new Map<string, PublicKey>()
 
-export const toPublicKey = (key: string | PublicKey) => {
+export const toPublicKey = (key: string | PublicKey): PublicKey => {
   if (typeof key !== 'string') {
     return key
   }
@@ -447,7 +447,7 @@ export const toPublicKey = (key: string | PublicKey) => {
   return result
 }
 
-export const pubkeyToString = (key: PublicKey | null | string = '') =>
+export const pubkeyToString = (key: PublicKey | null | string = ''): string =>
   typeof key === 'string' ? key : key?.toBase58() || ''
 
 export interface PublicKeyStringAndAccount<T> {

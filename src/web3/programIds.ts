@@ -16,7 +16,22 @@ import {
   toPublicKey
 } from './ids'
 
-export const getStoreID = async (storeOwnerAddress?: string) => {
+export interface Programs {
+  token: PublicKey
+  associatedToken: PublicKey
+  bpf_upgrade_loader: PublicKey
+  system: PublicKey
+  metadata: string
+  memo: PublicKey
+  vault: string
+  auction: string
+  metaplex: string
+  pack_create: PublicKey
+  oracle: PublicKey
+  store: PublicKey
+}
+
+export const getStoreID = async (storeOwnerAddress?: string): Promise<string> => {
   if (!storeOwnerAddress) {
     return undefined
   }
@@ -31,13 +46,13 @@ export const getStoreID = async (storeOwnerAddress?: string) => {
   return storeAddress
 }
 
-export const setProgramIds = async (store?: string) => {
+export const setProgramIds = async (store?: string): Promise<void> => {
   STORE = store ? toPublicKey(store) : undefined
 }
 
 let STORE: PublicKey | undefined
 
-export const programIds = () => ({
+export const programIds = (): Programs => ({
   token: TOKEN_PROGRAM_ID,
   associatedToken: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
   bpf_upgrade_loader: BPF_UPGRADE_LOADER_ID,
