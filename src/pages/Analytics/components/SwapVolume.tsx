@@ -1,12 +1,12 @@
 import { useWallet } from '@solana/wallet-adapter-react'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, FC } from 'react'
 import { fetchTotalVolumeTrade, fetchTotalVolumeTradeChart } from '../../../api/SSL/index'
 import { moneyFormatterWithComma } from '../../../utils'
 import { GradientText } from '../../NFTs/adminPage/components/UpcomingMints'
 import { CARD } from './GofxHolders'
 import { SwapVolumeChart } from './SwapVolumeChart'
 
-const SwapVolume = () => {
+const SwapVolume: FC = () => {
   const [swapData, setData] = useState<any>(null)
   const wallet = useWallet()
   const [swapDataGraph, setGraphData] = useState([])

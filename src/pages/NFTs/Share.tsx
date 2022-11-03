@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, FC } from 'react'
 import styled from 'styled-components'
 import { PopupCustom } from './Popup/PopupCustom'
 import { CheckOutlined } from '@ant-design/icons'
@@ -99,7 +99,7 @@ interface IShare {
   handleShare: (social: string) => void
 }
 
-export const Share = ({ visible, handleCancel, socials, handleShare }: IShare) => {
+export const Share: FC<IShare> = ({ visible, handleCancel, socials, handleShare }) => {
   const [selectedItem, setSelectedItem] = useState<string>()
 
   const handleClick = (item: string) => {

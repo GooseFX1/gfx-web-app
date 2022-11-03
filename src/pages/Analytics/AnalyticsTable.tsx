@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, FC } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { GradientText } from '../NFTs/adminPage/components/UpcomingMints'
@@ -30,14 +30,14 @@ const WRAPPER = styled.div`
   }
 `
 
-export const AnalyticsTable = () => (
+export const AnalyticsTable: FC = () => (
   <WRAPPER>
     <AnalyticsSection />
     <FinancialSection />
   </WRAPPER>
 )
 
-const AnalyticsSection = () => {
+const AnalyticsSection: FC = () => {
   const arrowDownClicked = () => {
     setExpand((prev) => !prev)
   }
@@ -61,7 +61,7 @@ const AnalyticsSection = () => {
   )
 }
 
-const FinancialSection = () => {
+const FinancialSection: FC = () => {
   const arrowDownClicked = () => {
     setExpand((prev) => !prev)
   }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, FC } from 'react'
 import { Card, Steps } from 'antd'
 import styled from 'styled-components'
 import { CenteredDiv } from '../../../styles'
@@ -164,7 +164,7 @@ const HEADING = styled(CenteredDiv)`
 `
 //#endregion
 
-const UploadProgress = (props: { mint: () => void; step: number }) => {
+const UploadProgress: FC<{ mint: () => void; step: number }> = (props) => {
   useEffect(() => {
     const func = async () => {
       await props.mint()

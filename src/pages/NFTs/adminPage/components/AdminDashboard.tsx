@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, FC } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { fetchCreatorProjects } from '../../../../api/NFTLaunchpad'
@@ -37,7 +37,7 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   }
 `
 
-const AdminDashboard = () => {
+const AdminDashboard: FC = () => {
   const { isCollapsed, toggleCollapse } = useNavCollapse()
   const [reviewProjects, setReviewProjects] = useState<ICreatorData[]>()
   const [approvePopup, setApprovePopup] = useState<boolean>(false)

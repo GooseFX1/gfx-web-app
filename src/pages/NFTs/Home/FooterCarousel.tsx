@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, FC } from 'react'
 import styled from 'styled-components'
 import { Image } from 'antd'
 import { useNFTCollections } from '../../../context'
@@ -20,7 +20,7 @@ const FOOTER_IMAGE = styled(Image)`
   margin: 0 ${({ theme }) => theme.margin(3)};
 `
 
-const FooterCarousel = () => {
+const FooterCarousel: FC = () => {
   const { allCollections } = useNFTCollections()
   const [nfts, setNfts] = useState<NFTBaseCollection[]>([])
 

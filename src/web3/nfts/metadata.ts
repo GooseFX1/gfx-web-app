@@ -141,7 +141,7 @@ export class EditionMarker {
     this.ledger = args.ledger
   }
 
-  editionTaken(edition: number) {
+  editionTaken(edition: number): boolean {
     const editionOffset = edition % EDITION_MARKER_BIT_SIZE
     const indexOffset = Math.floor(editionOffset / 8)
 
@@ -203,7 +203,7 @@ export class Metadata {
     this.editionNonce = args.editionNonce ?? null
   }
 
-  public async init() {
+  public async init(): Promise<void> {
     this.edition = await getEdition(this.mint)
     this.masterEdition = this.edition
   }
@@ -437,7 +437,8 @@ export const decodeEditionMarker = (buffer: Buffer): EditionMarker => {
   return editionMarker
 }
 
-export const decodeEdition = (buffer: Buffer) => deserializeUnchecked(METADATA_SCHEMA, Edition, buffer) as Edition
+export const decodeEdition = (buffer: Buffer): Edition =>
+  deserializeUnchecked(METADATA_SCHEMA, Edition, buffer) as Edition
 
 export const decodeMasterEdition = (buffer: Buffer): MasterEditionV1 | MasterEditionV2 => {
   if (buffer[0] == MetadataKey.MasterEditionV1) {
@@ -455,7 +456,7 @@ export async function updateMetadata(
   updateAuthority: StringPublicKey,
   instructions: TransactionInstruction[],
   mtdAccount?: StringPublicKey
-) {
+): Promise<string> {
   const metadataProgramId = programIds().metadata
 
   const metadataAccount =
@@ -504,7 +505,7 @@ export async function createMetadata(
   mintAuthorityKey: StringPublicKey,
   instructions: TransactionInstruction[],
   payer: StringPublicKey
-) {
+): Promise<string> {
   const metadataProgramId = programIds().metadata
 
   const metadataAccount = (
@@ -572,7 +573,7 @@ export async function createMasterEdition(
   mintAuthorityKey: StringPublicKey,
   payer: StringPublicKey,
   instructions: TransactionInstruction[]
-) {
+): Promise<void> {
   const metadataProgramId = programIds().metadata
 
   const metadataAccount = (
@@ -666,7 +667,7 @@ export async function deprecatedMintNewEditionFromMasterEditionViaPrintingToken(
   reservationList: StringPublicKey | undefined,
   instructions: TransactionInstruction[],
   payer: StringPublicKey
-) {
+): Promise<void> {
   const metadataProgramId = programIds().metadata
 
   const newMetadataKey = await getMetadata(newMint)
@@ -775,7 +776,7 @@ export async function mintNewEditionFromMasterEditionViaToken(
   instructions: TransactionInstruction[],
   payer: StringPublicKey,
   edition: BN
-) {
+): Promise<void> {
   const metadataProgramId = programIds().metadata
 
   const newMetadataKey = await getMetadata(newMint)
@@ -873,7 +874,7 @@ export async function updatePrimarySaleHappenedViaToken(
   owner: StringPublicKey,
   tokenAccount: StringPublicKey,
   instructions: TransactionInstruction[]
-) {
+): Promise<void> {
   const metadataProgramId = programIds().metadata
 
   const data = Buffer.from([4])
@@ -911,7 +912,7 @@ export async function deprecatedCreateReservationList(
   updateAuthority: StringPublicKey,
   payer: StringPublicKey,
   instructions: TransactionInstruction[]
-) {
+): Promise<void> {
   const metadataProgramId = programIds().metadata
 
   const reservationList = await deprecatedGetReservationList(masterEdition, resource)
@@ -973,7 +974,7 @@ export async function signMetadata(
   metadata: StringPublicKey,
   creator: StringPublicKey,
   instructions: TransactionInstruction[]
-) {
+): Promise<void> {
   const metadataProgramId = programIds().metadata
 
   const data = Buffer.from([7])
@@ -1007,7 +1008,7 @@ export async function deprecatedMintPrintingTokens(
   masterEdition: StringPublicKey,
   supply: BN,
   instructions: TransactionInstruction[]
-) {
+): Promise<void> {
   const PROGRAM_IDS = programIds()
   const metadataProgramId = PROGRAM_IDS.metadata
 
@@ -1065,7 +1066,7 @@ export async function convertMasterEditionV1ToV2(
   oneTimeAuthMint: StringPublicKey,
   printingMint: StringPublicKey,
   instructions: TransactionInstruction[]
-) {
+): Promise<void> {
   const metadataProgramId = programIds().metadata
 
   const data = Buffer.from([12])

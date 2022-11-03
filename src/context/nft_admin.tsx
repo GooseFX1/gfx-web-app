@@ -1,5 +1,5 @@
 import { useWallet } from '@solana/wallet-adapter-react'
-import { createContext, ReactNode, useContext, useState, FC, useEffect } from 'react'
+import { createContext, ReactNode, useContext, useState, FC, useEffect, Dispatch, SetStateAction } from 'react'
 import { ICreatorData } from '../types/nft_launchpad'
 import { isAdminAllowed } from '../api/NFTLaunchpad/actions'
 
@@ -8,7 +8,15 @@ interface IAdminConfig {
   adminSelected: ICreatorData
   setAdminSelected: (a: ICreatorData | undefined) => void
   update: number
-  setUpdate: Function //eslint-disable-line
+  setUpdate: Dispatch<SetStateAction<number>>
+}
+
+interface NFTAdmin {
+  adminAllowed: boolean
+  adminSelected: ICreatorData
+  setAdminSelected: (a: ICreatorData) => void
+  update: number
+  setUpdate: Dispatch<SetStateAction<number>>
 }
 
 const NFTAdminContext = createContext<IAdminConfig>(null)
@@ -44,7 +52,7 @@ export const NFTAdminProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 }
 
-export const useNFTAdmin = () => {
+export const useNFTAdmin = (): NFTAdmin => {
   const context = useContext(NFTAdminContext)
 
   if (!context) {

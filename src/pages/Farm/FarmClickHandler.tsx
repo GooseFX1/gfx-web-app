@@ -1,7 +1,19 @@
 import React from 'react'
 import { SuccessfulListingMsg, TransactionErrorMsg } from '../../components'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 
-export const successfulMessage = (msg: string, signature: any, price: string, name: string, network: any) => ({
+interface Message {
+  type?: string
+  message: string | JSX.Element
+}
+
+export const successfulMessage = (
+  msg: string,
+  signature: string,
+  price: string,
+  name: string,
+  network: WalletAdapterNetwork
+): Message => ({
   message: (
     <SuccessfulListingMsg
       title={msg}
@@ -12,12 +24,12 @@ export const successfulMessage = (msg: string, signature: any, price: string, na
   )
 })
 export const sslSuccessfulMessage = (
-  signature: any,
+  signature: string,
   price: string | number,
   name: string,
-  network: any,
+  network: WalletAdapterNetwork,
   operation: string
-) => ({
+): Message => ({
   message: (
     <SuccessfulListingMsg
       title={`${name} ${operation} sucessfull!`}
@@ -31,9 +43,9 @@ export const errorHandlingMessage = (
   msg: string,
   name: string,
   supportTxt: string,
-  signature: any,
-  network: any
-) => ({
+  signature: string,
+  network: WalletAdapterNetwork
+): Message => ({
   type: 'error',
   message: (
     <TransactionErrorMsg
@@ -48,10 +60,10 @@ export const errorHandlingMessage = (
 export const sslErrorMessage = (
   name: string,
   supportTxt: string,
-  signature: any,
-  network: any,
+  signature: string,
+  network: WalletAdapterNetwork,
   operation: string
-) => ({
+): Message => ({
   type: 'error',
   message: (
     <TransactionErrorMsg
@@ -63,17 +75,17 @@ export const sslErrorMessage = (
   )
 })
 
-export const insufficientSOLMsg = () => ({
+export const insufficientSOLMsg = (): Message => ({
   type: 'error',
   message: 'You need minimum of 0.000001 SOL in your wallet to perform this transaction'
 })
 
-export const invalidInputErrMsg = (userTokenBalance: number, name: string) => ({
+export const invalidInputErrMsg = (userTokenBalance: number, name: string): Message => ({
   type: 'error',
   message: `Please give valid input from 0.00001 to ${userTokenBalance?.toFixed(3)} ${name}`
 })
 
-export const genericErrMsg = (error: string) => ({
+export const genericErrMsg = (error: string): Message => ({
   type: 'error',
   message: error
 })

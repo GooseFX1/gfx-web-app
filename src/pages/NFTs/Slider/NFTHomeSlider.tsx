@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, FC } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { MainButton } from '../../../components/MainButton'
@@ -137,7 +137,7 @@ const settings = {
   prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-previous" />
 }
 
-export const NFTHomeSlider = () => {
+export const NFTHomeSlider: FC = () => {
   const [modal, showModal] = useState(false)
 
   const handleCreatorApply = () => {

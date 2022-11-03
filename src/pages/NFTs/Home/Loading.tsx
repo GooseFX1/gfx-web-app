@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
@@ -31,7 +31,7 @@ const ITEM = styled.div`
   }
 `
 
-const Loading = () => (
+const Loading: FC = () => (
   <CONTAINER>
     {[...Array(8)].map((_, index) => (
       <ITEM key={index}>

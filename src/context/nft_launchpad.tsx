@@ -32,6 +32,13 @@ interface INFTLaunchpadConfig {
   dataFetched: boolean
 }
 
+interface NFTLPSelected {
+  selectedProject: any
+  candyMachineState: any
+  candyMachine: any
+  cndyValues: any
+}
+
 const NFTLaunchpadContext = createContext<INFTLaunchpadConfig | null>(null)
 export const NFTLaunchpadProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [upcomoingNFTProjects, setUpcomingNFTProjects] = useState([])
@@ -459,7 +466,7 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
     </NFTLPSelectedContext.Provider>
   )
 }
-export const useNFTLPSelected = () => {
+export const useNFTLPSelected = (): NFTLPSelected => {
   const context = useContext(NFTLPSelectedContext)
 
   if (!context) {

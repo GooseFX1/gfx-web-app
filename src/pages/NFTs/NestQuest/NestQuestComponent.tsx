@@ -189,7 +189,7 @@ export const Vesting: FC<{ currency?: any; str?: string }> = ({ currency }) => (
   </>
 )
 
-export const ShareInternal = ({ socials, handleShare }: any) => {
+export const ShareInternal: FC<any> = ({ socials, handleShare }) => {
   const [selectedItem, setSelectedItem] = useState<string>()
 
   const handleClick = (item: string) => {
@@ -218,7 +218,7 @@ export const ShareInternal = ({ socials, handleShare }: any) => {
   )
 }
 
-export const TeamMembers = ({ teamMembers }: { teamMembers: any[] }) => (
+export const TeamMembers: FC<{ teamMembers: any[] }> = ({ teamMembers }) => (
   <TEAM_MEMBER_WRAPPER>
     {teamMembers?.map((team, key) => (
       <div key={key}>
@@ -237,7 +237,7 @@ export const TeamMembers = ({ teamMembers }: { teamMembers: any[] }) => (
   </TEAM_MEMBER_WRAPPER>
 )
 
-export const RoadMap = ({ roadmap }: { roadmap: any[] }) => (
+export const RoadMap: FC<{ roadmap: any[] }> = ({ roadmap }) => (
   <ROADMAP_WRAPPER>
     {roadmap?.map((road, key) => (
       <div className="verticalContainer" key={key}>

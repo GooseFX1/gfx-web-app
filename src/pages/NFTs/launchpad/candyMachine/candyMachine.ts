@@ -8,6 +8,7 @@ import {
 } from '@solana/spl-token-v2'
 import { SystemProgram, Transaction, SYSVAR_SLOT_HASHES_PUBKEY, NONCE_ACCOUNT_LENGTH } from '@solana/web3.js'
 import { sendTransactions, sendTransactionsNonce, SequenceType } from './connection'
+import { WalletContextState } from '@solana/wallet-adapter-react'
 
 import {
   CIVIC,
@@ -290,7 +291,7 @@ export const createAccountsForMint = async (
     transaction: (
       await sendTransactions(
         candyMachine.program.provider.connection,
-        candyMachine.program.provider.wallet,
+        candyMachine.program.provider.wallet as WalletContextState, //eslint-disable-line
         [instructions],
         [signers],
         SequenceType.StopOnFailure,
@@ -478,7 +479,7 @@ export const mintOneToken = async (
     const txns = (
       await sendTransactions(
         candyMachine.program.provider.connection,
-        candyMachine.program.provider.wallet,
+        candyMachine.program.provider.wallet as WalletContextState, //eslint-disable-line
         instructionsMatrix,
         signersMatrix,
         SequenceType.StopOnFailure,
@@ -510,7 +511,13 @@ export const mintOneTokenNonce = async (
   nonceAccount: anchor.web3.Keypair,
   collectionId: string,
   walletAddress: string
-) => {
+): Promise<{
+  number: number
+  txs: {
+    txid: string
+    slot: number
+  }[]
+}> => {
   const mint = setupState?.mint
 
   const userPayingAccountAddress = candyMachine.state.tokenMint
@@ -658,7 +665,7 @@ export const mintOneTokenNonce = async (
   try {
     const response = await sendTransactionsNonce(
       candyMachine.program.provider.connection,
-      candyMachine.program.provider.wallet,
+      candyMachine.program.provider.wallet as WalletContextState, //eslint-disable-line
       instructionsMatrix,
       signersMatrix,
       beforeTransactions,
@@ -838,7 +845,7 @@ export const mintOneTokenCustom = async (
     const txns = (
       await sendTransactions(
         candyMachine.program.provider.connection,
-        candyMachine.program.provider.wallet,
+        candyMachine.program.provider.wallet as WalletContextState,
         instructionsMatrix,
         signersMatrix,
         SequenceType.StopOnFailure,
@@ -1029,7 +1036,7 @@ export const mintOneTokenWhitelist = async (
     const txns = (
       await sendTransactions(
         candyMachine.program.provider.connection,
-        candyMachine.program.provider.wallet,
+        candyMachine.program.provider.wallet as WalletContextState,
         instructionsMatrix,
         signersMatrix,
         SequenceType.StopOnFailure,
@@ -1104,7 +1111,7 @@ export const createAccountsForMintNonce = async (
     transaction: (
       await sendTransactions(
         candyMachine.program.provider.connection,
-        candyMachine.program.provider.wallet,
+        candyMachine.program.provider.wallet as WalletContextState,
         [instructions],
         [signers],
         SequenceType.StopOnFailure,
@@ -1153,7 +1160,8 @@ export const getWhitelistConfigPda = async (
     MAGIC_HAT_PROGRAM_V2_ID
   )
 
-export const getWhitelistInfo = async (candyMachine, payer: anchor.web3.PublicKey) => {
+//eslint-disable-next-line
+export const getWhitelistInfo = async (candyMachine: any, payer: anchor.web3.PublicKey): Promise<any> => {
   const whitelist_account = await getWalletWhitelistPda(payer)
   try {
     const whitelist_account_info = await candyMachine.account.walletWhitelist.fetch(whitelist_account[0])

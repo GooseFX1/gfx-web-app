@@ -72,8 +72,8 @@ const NOTIFICATION_TIMER = 5 * 1000
 
 export const notify = async (
   { description: desc, icon, message, txid, type = 'info', styles, network }: INotifyParams,
-  e?: any
-) => {
+  e?: Error
+): Promise<void> => {
   let description = desc
   if (e) {
     description = e.message

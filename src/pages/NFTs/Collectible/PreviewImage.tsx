@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { Upload } from 'antd'
 import styled from 'styled-components'
 import { MainText } from '../../../styles'
@@ -98,7 +98,7 @@ interface Props {
   image_url?: string
 }
 
-const PreviewImage = ({ file, status, image_url }: Props) => {
+const PreviewImage: FC<Props> = ({ file, status, image_url }) => {
   const { nftMetadata, nftMintingData } = useNFTDetails()
   const { mode } = useDarkMode()
 

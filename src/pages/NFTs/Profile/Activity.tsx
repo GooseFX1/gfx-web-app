@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, FC } from 'react'
 import { StyledTableList } from './TableList.styled'
 import NoContent from './NoContent'
 import { fetchNFTById } from '../../../api/NFTs'
@@ -13,13 +13,13 @@ export const columns = [
     title: 'Event',
     dataIndex: 'kind',
     key: 'kind',
-    render: (text) => <span className="text-normal">{text === 'bid_matched' ? 'sold' : text}</span>
+    render: (text): JSX.Element => <span className="text-normal">{text === 'bid_matched' ? 'sold' : text}</span>
   },
   {
     title: 'Item',
     dataIndex: 'item',
     key: 'item',
-    render: (record) => (
+    render: (record): JSX.Element => (
       <div className="item">
         <img className="image" src={record.image_url} alt="" />
         <div className="text">
@@ -33,7 +33,7 @@ export const columns = [
     dataIndex: 'price',
     key: 'price',
     width: '22%',
-    render: (price) => (
+    render: (price): JSX.Element => (
       <div className="price-wrap">
         <img className="image" src={`/img/assets/price.svg`} alt="" />
         <span className="price">{price} SOL</span>
@@ -44,25 +44,25 @@ export const columns = [
     title: 'Quantity',
     dataIndex: 'quantity',
     key: 'quantity',
-    render: (text) => <span className="text-normal">{text}</span>
+    render: (text): JSX.Element => <span className="text-normal">{text}</span>
   },
   {
     title: 'From',
     dataIndex: 'from',
     key: 'from',
-    render: (text) => <span className="from">{text}</span>
+    render: (text): JSX.Element => <span className="from">{text}</span>
   },
   {
     title: 'To',
     dataIndex: 'to',
     key: 'to',
-    render: (text) => <span className="from">{text}</span>
+    render: (text): JSX.Element => <span className="from">{text}</span>
   },
   {
     title: 'Date',
     dataIndex: 'date',
     key: 'date',
-    render: (text) => <span className="text-normal">{text}</span>
+    render: (text): JSX.Element => <span className="text-normal">{text}</span>
   }
 ]
 
@@ -70,7 +70,7 @@ interface IProps {
   data: INFTUserActivity[]
 }
 
-const Activity = (props: IProps) => {
+const Activity: FC<IProps> = (props) => {
   const [activityLog, setActivitLog] = useState<any>([])
   const { sessionUser, nonSessionProfile } = useNFTProfile()
   const { connection } = useConnectionConfig()

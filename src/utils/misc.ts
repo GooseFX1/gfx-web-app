@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 
 export const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
 
-export const getUnixTs = () => new Date().getTime() / 1000
+export const getUnixTs = (): number => new Date().getTime() / 1000
 
 export function abbreviateNumber(num: number, fixedNum: number): string {
   if (!num) {
@@ -34,9 +34,8 @@ export function ellipseNumber(num: number | string | undefined, length = 15): st
 
 export function flatten(
   obj: { [x: string]: any },
-  { prefix = ''}: { prefix?: string; restrictTo: string[] }
-) {
-
+  { prefix = '' }: { prefix?: string; restrictTo: string[] }
+): { [x: string]: any } {
   const result: { [x: string]: any } = {}
   ;(function recurse(obj, current, keys) {
     ;(keys || Object.keys(obj)).forEach((key) => {
@@ -62,7 +61,7 @@ export function shortenAddress(address: string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`
 }
 
-export function useLocalStorageState(key: string, defaultState?: string) {
+export function useLocalStorageState(key: string, defaultState?: string): any[] {
   const [state, setState] = useState(() => {
     const storedState = localStorage.getItem(key)
     if (storedState === 'undefined') {
@@ -119,12 +118,13 @@ export const useLocalStorage = (): UseStorageReturnValue => {
   }
 }
 
-export const checkMobile = () => {
+export const checkMobile = (): boolean => {
   const isBrowser: boolean = ((): boolean => typeof window !== 'undefined')()
   return isBrowser ? window?.innerWidth < 500 : false
 }
 
-export function debounce(callback: any, wait: number) {
+//eslint-disable-next-line
+export function debounce(callback: any, wait: number): (x: any) => void {
   let timeout
   return (...args) => {
     clearTimeout(timeout)
@@ -132,7 +132,7 @@ export function debounce(callback: any, wait: number) {
   }
 }
 
-export const createUUID = () =>
+export const createUUID = (): string =>
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     const r = (Math.random() * 16) | 0,
       v = c == 'x' ? r : (r & 0x3) | 0x8
@@ -145,7 +145,7 @@ export const validateUUID = (uuid: string): boolean => {
   return validUUIDRegexExp.test(uuid)
 }
 
-export const getLast = <T>(arr: T[]) => {
+export const getLast = <T>(arr: T[]): T => {
   if (arr.length <= 0) {
     return undefined
   }
@@ -153,7 +153,7 @@ export const getLast = <T>(arr: T[]) => {
   return arr[arr.length - 1]
 }
 
-export const getDateInISOFormat = () => {
+export const getDateInISOFormat = (): string => {
   const today = new Date()
   const dd = String(today.getDate()).padStart(2, '0')
   const mm = String(today.getMonth() + 1).padStart(2, '0') //January is 0!

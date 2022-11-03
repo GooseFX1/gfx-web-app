@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, FC } from 'react'
 import axios from 'axios'
 import { useHistory } from 'react-router'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
@@ -141,7 +141,7 @@ type ICard = {
   userId?: string
 }
 
-export const Card = (props: ICard) => {
+export const Card: FC<ICard> = (props) => {
   const history = useHistory()
   const { mode } = useDarkMode()
   const { connection } = useConnectionConfig()

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, FC } from 'react'
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { saveLiquidtyVolume, getVolumeApr, fetchTotalVolumeTrade } from '../../api/SSL'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -87,7 +87,7 @@ const WRAPPER = styled.div<{ $navCollapsed; $lastRefreshedClass }>`
   }
 `
 
-const CustomTableList = () => {
+const CustomTableList: FC = () => {
   const { prices, priceFetched, refreshTokenData, setStatsData } = usePriceFeedFarm()
   const { network, connection } = useConnectionConfig()
   const wallet = useWallet()

@@ -4,7 +4,7 @@ import { text } from '../theme'
 
 const { fontFamily } = text('Montserrat')
 
-export const H1 = (color?: Color) => styled.h1`
+export const H1 = (color?: Color): AnyStyledComponent => styled.h1`
   font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
@@ -23,7 +23,7 @@ export const H1 = (color?: Color) => styled.h1`
   `}
 `
 
-export const H2 = (color?: Color) => styled.h2`
+export const H2 = (color?: Color): AnyStyledComponent => styled.h2`
   font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
@@ -45,7 +45,7 @@ export const H2 = (color?: Color) => styled.h2`
   `}
 `
 
-export const H3 = (color?: Color) => styled.h3`
+export const H3 = (color?: Color): AnyStyledComponent => styled.h3`
   font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
@@ -67,7 +67,7 @@ export const H3 = (color?: Color) => styled.h3`
   `}
 `
 
-export const MainText = (t: AnyStyledComponent, color?: Color) => styled(t)`
+export const MainText = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
   font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
@@ -76,7 +76,7 @@ export const MainText = (t: AnyStyledComponent, color?: Color) => styled(t)`
   color: ${({ theme }) => color || theme.text1};
 `
 
-export const TextSmall = (t: AnyStyledComponent, color?: Color) => styled(t)`
+export const TextSmall = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
   font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
@@ -95,7 +95,7 @@ export const TextSmall = (t: AnyStyledComponent, color?: Color) => styled(t)`
   `}
 `
 
-export const TextSmallBold = (t: AnyStyledComponent, color?: Color) => styled(t)`
+export const TextSmallBold = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
   font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
@@ -115,7 +115,7 @@ export const TextSmallBold = (t: AnyStyledComponent, color?: Color) => styled(t)
   `}
 `
 
-export const TextMedium = (t: AnyStyledComponent, color?: Color) => styled(t)`
+export const TextMedium = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
   font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
@@ -134,7 +134,7 @@ export const TextMedium = (t: AnyStyledComponent, color?: Color) => styled(t)`
   `}
 `
 
-export const TextMediumBold = (t: AnyStyledComponent, color?: Color) => styled(t)`
+export const TextMediumBold = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
   font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
@@ -154,7 +154,7 @@ export const TextMediumBold = (t: AnyStyledComponent, color?: Color) => styled(t
   `}
 `
 
-export const TextLarge = (t: AnyStyledComponent, color?: Color) => styled(t)`
+export const TextLarge = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
   font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
@@ -173,7 +173,7 @@ export const TextLarge = (t: AnyStyledComponent, color?: Color) => styled(t)`
   `}
 `
 
-export const TextLargeBold = (t: AnyStyledComponent, color?: Color) => styled(t)`
+export const TextLargeBold = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
   font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
@@ -193,7 +193,7 @@ export const TextLargeBold = (t: AnyStyledComponent, color?: Color) => styled(t)
   `}
 `
 
-export const TextXLarge = (t: AnyStyledComponent, color?: Color) => styled(t)`
+export const TextXLarge = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
   font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
@@ -212,7 +212,7 @@ export const TextXLarge = (t: AnyStyledComponent, color?: Color) => styled(t)`
   `}
 `
 
-export const TextXLargeBold = (t: AnyStyledComponent, color?: Color) => styled(t)`
+export const TextXLargeBold = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
   font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;

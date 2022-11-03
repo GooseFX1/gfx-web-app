@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, FC } from 'react'
 import styled from 'styled-components'
 import { fetchAllNFTLaunchpadData } from '../../../../api/NFTLaunchpad'
 import { useNavCollapse, useNFTAdmin } from '../../../../context'
@@ -139,15 +139,11 @@ const GRADIENT_TEXT = styled.span`
   text-fill-color: transparent;
   width: fit-content;
 `
-export const GradientText = ({
-  text,
-  fontSize,
-  fontWeight
-}: {
+export const GradientText: FC<{
   text: string | number
   fontSize: number
   fontWeight: number
-}) => (
+}> = ({ text, fontSize, fontWeight }) => (
   <GRADIENT_TEXT
     style={{
       fontSize: fontSize + 'px',
@@ -165,7 +161,7 @@ const settings = {
   slidesToShow: 7,
   slidesToScroll: 6
 }
-const UpcomingMints = () => {
+const UpcomingMints: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const [upcomingMints, setUpcomingMints] = useState([])
   const [showMints, setShowMints] = useState([])

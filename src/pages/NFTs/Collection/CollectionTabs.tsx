@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import { Tabs } from 'antd'
 import { useNFTCollections } from '../../../context'
@@ -134,17 +134,12 @@ const STYLED_SEARCH_BAR = styled.div`
 `
 //#endregion
 
-export const CollectionTabs = ({
-  filter,
-  setFilter,
-  collapse,
-  setCollapse
-}: {
+export const CollectionTabs: FC<{
   filter: string
   setFilter: (s: string) => void
   collapse: boolean
   setCollapse: (b: boolean) => void
-}) => {
+}> = ({ filter, setFilter, collapse, setCollapse }) => {
   const { singleCollection } = useNFTCollections()
 
   return (

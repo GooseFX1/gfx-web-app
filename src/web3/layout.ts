@@ -14,12 +14,12 @@ class Zeros extends Blob {
   }
 }
 
-export function zeros(length) {
+export function zeros(length: number): number[] {
   return new Zeros(length)
 }
 
 class PublicKeyLayout extends Blob {
-  constructor(property) {
+  constructor(property: any) {
     super(32, property)
   }
 
@@ -31,8 +31,8 @@ class PublicKeyLayout extends Blob {
     return super.encode(src.toBuffer(), b, offset)
   }
 }
-
-export function publicKeyLayout(property) {
+//eslint-disable-next-line
+export function publicKeyLayout(property: any): PublicKeyLayout {
   return new PublicKeyLayout(property)
 }
 
@@ -45,11 +45,12 @@ class BNLayout extends Blob {
     return super.encode(src.toArrayLike(Buffer, 'le', this.span), b, offset)
   }
 }
-
+//eslint-disable-next-line
 export function u64(property) {
   return new BNLayout(8, property)
 }
 
+//eslint-disable-next-line
 export function u128(property) {
   return new BNLayout(16, property)
 }
@@ -69,12 +70,14 @@ export const Oracle = struct([
 ])
 
 export class WideBits extends Layout {
+  //eslint-disable-next-line
   constructor(property) {
     super(8, property)
     this._lower = bits(u32(), false)
     this._upper = bits(u32(), false)
   }
 
+  //eslint-disable-next-line
   addBoolean(property) {
     if (this._lower.fields.length < 32) {
       this._lower.addBoolean(property)
@@ -83,28 +86,33 @@ export class WideBits extends Layout {
     }
   }
 
+  //eslint-disable-next-line
   decode(b, offset = 0) {
     const lowerDecoded = this._lower.decode(b, offset)
     const upperDecoded = this._upper.decode(b, offset + this._lower.span)
     return { ...lowerDecoded, ...upperDecoded }
   }
 
+  //eslint-disable-next-line
   encode(src, b, offset = 0) {
     return this._lower.encode(src, b, offset) + this._upper.encode(src, b, offset + this._lower.span)
   }
 }
 
 export class VersionedLayout extends Layout {
+  //eslint-disable-next-line
   constructor(version, inner, property) {
     super(inner.span > 0 ? inner.span + 1 : inner.span, property)
     this.version = version
     this.inner = inner
   }
 
+  //eslint-disable-next-line
   decode(b, offset = 0) {
     return this.inner.decode(b, offset + 1)
   }
 
+  //eslint-disable-next-line
   encode(src, b, offset = 0) {
     b.writeUInt8(this.version, offset)
     return 1 + this.inner.encode(src, b, offset + 1)

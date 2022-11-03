@@ -13,6 +13,16 @@ interface ICreatorConfig {
   submit: () => Promise<boolean>
 }
 
+interface NFTCreator {
+  isAllowed: boolean
+  currentStep: number
+  saveDataForStep: (d: any) => void
+  creatorData: ICreatorData
+  previousStep: () => void
+  nextStep: () => void
+  submit: () => Promise<boolean>
+}
+
 const NFTCreatorContext = createContext<ICreatorConfig>(null)
 export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isAllowed, setIsAllowed] = useState<boolean>(false)
@@ -83,7 +93,7 @@ export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) =>
   )
 }
 
-export const useNFTCreator = () => {
+export const useNFTCreator = (): NFTCreator => {
   const context = useContext(NFTCreatorContext)
 
   if (!context) {

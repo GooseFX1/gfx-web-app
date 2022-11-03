@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, FC } from 'react'
 import styled from 'styled-components'
 import { MainButton } from '../../../components'
 import { GFX_LINK } from '../../../styles'
@@ -30,7 +30,13 @@ type IRemoveModalContent = {
   network: string | undefined
 }
 
-const RemoveModalContent = ({ title, caption, removeFunction, pendingTxSig, network }: IRemoveModalContent) => {
+const RemoveModalContent: FC<IRemoveModalContent> = ({
+  title,
+  caption,
+  removeFunction,
+  pendingTxSig,
+  network
+}) => {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(

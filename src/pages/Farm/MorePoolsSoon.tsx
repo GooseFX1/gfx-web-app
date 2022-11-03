@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, FC } from 'react'
 import styled from 'styled-components'
 import Lottie from 'lottie-react'
 import MorePools from '../../animations/MorePools_dark.json'
@@ -24,7 +24,7 @@ const MoreText = styled.div`
   color: ${({ theme }) => theme.text19};
 `
 
-export const MorePoolsSoon = ({ tableRef, length }: any) => {
+export const MorePoolsSoon: FC<any> = ({ tableRef, length }) => {
   const { mode } = useDarkMode()
   const screenHeight = window.innerHeight
   const seventyVh = screenHeight / 1.34

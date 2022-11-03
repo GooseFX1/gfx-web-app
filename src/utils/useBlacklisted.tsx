@@ -1,9 +1,25 @@
 import React from 'react'
 import axios from 'axios'
 
-export default function useBlacklisted() {
+export default function useBlacklisted(): boolean {
   const [blacklisted, setBlacklisted] = React.useState(false)
-  const banned_countries = ['BY', 'CF', 'CD', 'KP', 'CU', 'IR', 'LY', 'SO', 'SS', 'SD', 'SY', 'TH', 'US', 'YE', 'ZW']
+  const banned_countries = [
+    'BY',
+    'CF',
+    'CD',
+    'KP',
+    'CU',
+    'IR',
+    'LY',
+    'SO',
+    'SS',
+    'SD',
+    'SY',
+    'TH',
+    'US',
+    'YE',
+    'ZW'
+  ]
 
   function setCountry() {
     axios

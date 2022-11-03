@@ -55,7 +55,7 @@ interface IProps {
   [x: string]: any
 }
 
-export const Banner = ({ title, support, handleDismiss, iconFileName }: IProps) => (
+export const Banner = ({ title, support, handleDismiss, iconFileName }: IProps): any => (
   <BANNER>
     <div className={'inner'}>
       <div>

@@ -2,6 +2,7 @@ import { Buffer } from 'buffer'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Swap } from 'goosefx-ssl-sdk'
 import { WalletContextState } from '@solana/wallet-adapter-react'
+import { RouteInfo } from '@jup-ag/react-hook'
 
 import {
   NATIVE_MINT,
@@ -168,7 +169,7 @@ export const preSwapAmount = async (
   wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork,
-  route: any
+  route: RouteInfo
 ): Promise<{
   preSwapResult: TransactionSignature | undefined
   impact: number
@@ -180,7 +181,7 @@ export const preSwapAmount = async (
     let outAmount: number, priceImpact: number
 
     if (route && !route.marketInfos[0].amm.label.toLowerCase().includes('goosefx')) {
-      const outedAmount = +(route.outAmount / 10 ** tokenB.decimals).toFixed(7)
+      const outedAmount = +(Number(route.outAmount) / 10 ** tokenB.decimals).toFixed(7)
       return {
         impact: Number(route.priceImpactPct.toFixed(6)),
         preSwapResult: outedAmount.toString(),

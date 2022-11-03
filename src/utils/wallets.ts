@@ -15,7 +15,7 @@ import {
   SolanaMobileWalletAdapter
 } from '@solana-mobile/wallet-adapter-mobile'
 
-export const getWalletAdapters = (network: WalletAdapterNetwork) => [
+export const getWalletAdapters = (network: WalletAdapterNetwork): any[] => [
   new PhantomWalletAdapter(),
   new GlowWalletAdapter(),
   new SolflareWalletAdapter({ network }),

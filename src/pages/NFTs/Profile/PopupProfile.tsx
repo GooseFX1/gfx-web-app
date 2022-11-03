@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, FC } from 'react'
 import { Form, Input, Button, Upload, UploadProps, Image } from 'antd'
 import { uploadFile } from 'react-s3'
 import { StyledPopupProfile, StyledFormProfile } from './PopupProfile.styled'
@@ -21,7 +21,7 @@ interface Props {
   handleCancel: () => void
 }
 
-export const PopupProfile = ({ visible, setVisible, handleCancel }: Props) => {
+export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) => {
   const { sessionUser, setSessionUser } = useNFTProfile()
   const [form] = Form.useForm()
   const isCompletingProfile = useMemo(() => sessionUser.uuid === null, [sessionUser])

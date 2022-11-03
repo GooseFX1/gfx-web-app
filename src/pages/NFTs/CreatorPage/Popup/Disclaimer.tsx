@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import 'styled-components/macro'
 
@@ -40,7 +40,7 @@ const WRAPPER = styled.div`
   }
 `
 
-const DisclaimerPopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => void }) => (
+const DisclaimerPopup: FC<{ rewardToggle: (b: boolean) => void }> = ({ rewardToggle }) => (
   <WRAPPER>
     <img onClick={() => rewardToggle(false)} className="closeIcon" src="/img/assets/close-white-icon.svg" alt="" />
     <div className="riskTitle">Risks and Discalimers</div>

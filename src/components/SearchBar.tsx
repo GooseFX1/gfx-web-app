@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import { SpaceBetweenDiv } from '../styles'
 import tw from 'twin.macro'
@@ -48,7 +48,7 @@ ${tw`sm:w-3/4 sm:!h-[45px]`}
   }
 `
 
-export const SearchBar = ({ placeholder, setSearchFilter, filter, ...rest }: any) => (
+export const SearchBar: FC<any> = ({ placeholder, setSearchFilter, filter, ...rest }) => (
   <SEARCH_BAR_WRAPPER {...rest}>
     <input
       placeholder={placeholder || 'Search by nft name'}

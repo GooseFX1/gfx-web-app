@@ -1,4 +1,4 @@
-export const addAnalytics = () => {
+export const addAnalytics = (): void => {
   const globalTag: HTMLScriptElement = document.createElement('script')
   globalTag.async = true
   globalTag.src = `https://www.googletagmanager.com/gtag/js?id=G-JD6R8S3EXS`
@@ -24,7 +24,7 @@ export const addAnalytics = () => {
   document.body.appendChild(noScript)
 }
 
-export const sendPageView = (path: string) => {
+export const sendPageView = (path: string): void => {
   const pageView = {
     event: 'Pageview',
     pagePath: path,

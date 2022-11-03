@@ -132,7 +132,7 @@ const ITEMS = styled.div`
 const PRICE_DISPLAY = styled.div`
   display: flex;
 `
-export const GetNftPrice = ({ item }: { item: any }) => (
+export const GetNftPrice: FC<{ item: any }> = ({ item }) => (
   <PRICE_DISPLAY>
     <span>{`Price: ${item?.price}`}</span>
     <img

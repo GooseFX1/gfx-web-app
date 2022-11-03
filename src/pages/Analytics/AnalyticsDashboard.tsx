@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { SettingsProvider } from '../../context'
@@ -10,7 +10,7 @@ const WRAPPER = styled.div`
   padding-top: 60px;
 `
 
-const AnalyticsDashboard = () => (
+const AnalyticsDashboard: FC = () => (
   <WRAPPER>
     <SettingsProvider>
       <AnalyticsTable />

@@ -4,7 +4,7 @@ import { getAnalytics } from 'firebase/analytics'
 // https://firebase.google.com/docs/web/setup#available-libraries
 // Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-
+//eslint-disable-next-line
 const analytics = () => {
   // creates control statement to asset environment variables are present
   const activeAnalytics: boolean =

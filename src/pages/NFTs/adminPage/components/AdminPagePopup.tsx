@@ -1,5 +1,5 @@
 import { Button } from 'antd'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, FC } from 'react'
 import styled from 'styled-components'
 import 'styled-components/macro'
 import { approveProject, rejectProject } from '../../../../api/NFTLaunchpad'
@@ -78,7 +78,7 @@ const WRAPPER = styled.div`
     margin-top: 30px;
   }
 `
-export const ApprovePopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => void }) => {
+export const ApprovePopup: FC<{ rewardToggle: (b: boolean) => void }> = ({ rewardToggle }) => {
   const { adminSelected, setUpdate } = useNFTAdmin()
   const [showApproveComplete, setApprove] = useState<boolean>(false)
 
@@ -116,7 +116,7 @@ export const ApprovePopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => v
     </POPUP>
   )
 }
-export const ApproveCompletePopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => void }) => {
+export const ApproveCompletePopup: FC<{ rewardToggle: (b: boolean) => void }> = ({ rewardToggle }) => {
   const { adminSelected } = useNFTAdmin()
 
   useEffect(() => {
@@ -143,7 +143,7 @@ export const ApproveCompletePopup = ({ rewardToggle }: { rewardToggle: (b: boole
   )
 }
 
-export const RejectPopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => void }) => {
+export const RejectPopup: FC<{ rewardToggle: (b: boolean) => void }> = ({ rewardToggle }) => {
   const { adminSelected, setUpdate } = useNFTAdmin()
   const [showRejectionComplete, setComplete] = useState<boolean>(false)
   const rejectClicked = async () => {
@@ -180,7 +180,7 @@ export const RejectPopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => vo
       </POPUP>
     )
 }
-export const RejectionCompletePopup = ({ rewardToggle }: { rewardToggle: (b: boolean) => void }) => {
+export const RejectionCompletePopup: FC<{ rewardToggle: (b: boolean) => void }> = ({ rewardToggle }) => {
   useEffect(() => {
     setTimeout(() => {
       rewardToggle(false)

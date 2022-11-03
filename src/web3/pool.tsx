@@ -8,7 +8,11 @@ import { createAssociatedTokenAccountIx, findAssociatedTokenAddress, signAndSend
 
 import PoolIDL from './idl/pool.json'
 
-export const track = async (tracker: PublicKey, trackerAccount: PublicKey, connection: Connection) => {
+export const track = async (
+  tracker: PublicKey,
+  trackerAccount: PublicKey,
+  connection: Connection
+): Promise<void> => {
   const signers = [
     {
       publicKey: new PublicKey('5b2XtcNc6mEPRSC2LpHfPrn1ARzuEEMSN6hAdtRkEZHX'),
@@ -96,7 +100,7 @@ const burn = async (
   amount: number,
   pool: string,
   synth: string,
-  wallet: any,
+  wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<string> => {
@@ -141,7 +145,7 @@ const burn = async (
 
 const claim = async (
   pool: string,
-  wallet: any,
+  wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<string> => {
@@ -182,7 +186,7 @@ const claim = async (
 const deposit = async (
   amount: number,
   pool: string,
-  wallet: any,
+  wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<string> => {
@@ -252,7 +256,7 @@ const getUserAccountInfo = async (
 
 const getUserAccountPublicKey = async (
   pool: string,
-  wallet: any,
+  wallet: WalletContextState,
   network: WalletAdapterNetwork
 ): Promise<PublicKey> => (await getUserAccountInfo(pool, wallet, network))[0]
 
@@ -279,7 +283,7 @@ const initialize = async (
 
 const listingAccount = async (
   pool: string,
-  wallet: any,
+  wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<ListingAccount> => {
@@ -293,7 +297,7 @@ const mint = async (
   amount: number,
   pool: string,
   synth: string,
-  wallet: any,
+  wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<[string, boolean]> => {
@@ -340,7 +344,7 @@ const mint = async (
 
 const poolAccount = async (
   pool: string,
-  wallet: any,
+  wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<PoolAccount> => {
@@ -352,7 +356,7 @@ const poolAccount = async (
 
 const priceAggregatorAccount = async (
   pool: string,
-  wallet: any,
+  wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<PriceAggregatorAccount> => {
@@ -367,7 +371,7 @@ const swap = async (
   inTokenAmount: number,
   inToken: string,
   outToken: string,
-  wallet: any,
+  wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<[string, boolean]> => {
@@ -417,7 +421,7 @@ const swap = async (
 
 const userAccount = async (
   pool: string,
-  wallet: any,
+  wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<UserAccount | undefined> => {
@@ -432,7 +436,7 @@ const userAccount = async (
 const withdraw = async (
   amount: number,
   pool: string,
-  wallet: any,
+  wallet: WalletContextState,
   connection: Connection,
   network: WalletAdapterNetwork
 ): Promise<string> => {

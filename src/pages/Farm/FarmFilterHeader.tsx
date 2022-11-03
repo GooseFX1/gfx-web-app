@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, FC } from 'react'
 import styled from 'styled-components'
 import { Toggle } from './Toggle'
 import { SearchBar } from '../../components'
@@ -194,7 +194,7 @@ const HOLD = styled.div`
 `
 const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
 
-export const FarmFilter = () => {
+export const FarmFilter: FC = () => {
   const {
     poolFilter,
     setPoolFilter,
@@ -311,7 +311,7 @@ export const FarmFilter = () => {
   )
 }
 
-export const RefreshBtnWithAnimation = () => {
+export const RefreshBtnWithAnimation: FC = () => {
   const { refreshClass, setRefreshClass, setCounter } = useFarmContext()
   const refreshFeed = () => {
     setRefreshClass('rotateRefreshBtn')

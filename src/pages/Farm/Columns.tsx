@@ -12,6 +12,11 @@ import { RefreshBtnWithAnimation } from './FarmFilterHeader'
 import { useDarkMode } from '../../context'
 const DISPLAY_DECIMAL = 3
 
+interface Column {
+  sortColumn: string
+  setSortColumn: React.Dispatch<React.SetStateAction<string>>
+}
+
 const DEPOSIT_BTN = styled.button`
   ${tw`h-[34px] w-[130px] -mt-3 text-white rounded-3xl border-none font-semibold`}
   font-size: 15px;
@@ -92,7 +97,7 @@ export const LoaderLeftSpace: FC = () => (
   />
 )
 
-export const HeaderTooltip = (text: string) =>
+export const HeaderTooltip = (text: string): JSX.Element =>
   <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
     <Tooltip dark placement="bottomLeft" color="#000000">
       <span>{text}</span>
@@ -115,7 +120,7 @@ export const columns = [
     dataIndex: 'name',
     key: 'name',
     width: '15',
-    render: (text, record) => (
+    render: (text, record): JSX.Element => (
       <STYLED_NAME>
         <img
           className={`coin-image ${record.type === 'Double Sided' ? 'double-sided' : ''}`}
@@ -131,7 +136,7 @@ export const columns = [
     dataIndex: 'currentlyStaked',
     key: 'Balance',
     width: '16.6%',
-    render: (text) => (
+    render: (text): JSX.Element => (
       <div className="liquidity normal-text"> {text >= 0 ? `${moneyFormatter(text)}` : <Loader />}</div>
     )
   },
@@ -140,7 +145,7 @@ export const columns = [
     dataIndex: 'earned',
     key: 'earned',
     width: '16.6%',
-    render: (text) => (
+    render: (text): JSX.Element => (
       <div className="liquidity normal-text">{text !== undefined ? `${moneyFormatter(text)}` : <Loader />}</div>
     )
   },
@@ -155,7 +160,7 @@ export const columns = [
     dataIndex: 'apr',
     key: 'apr',
     width: '16.6%',
-    render: (text) => (
+    render: (text): JSX.Element => (
       <div className="apr normal-text">
         {text === '-' ? '-' : text !== undefined ? `${text.toFixed(0)}%` : <Loader />}
       </div>
@@ -166,7 +171,7 @@ export const columns = [
     dataIndex: 'liquidity',
     width: '16.6%',
     key: 'liquidity',
-    render: (text) => (
+    render: (text): JSX.Element => (
       <div className="liquidity normal-text">{text >= 0 ? `$ ${moneyFormatter(text)}` : <Loader />}</div>
     )
   },
@@ -175,7 +180,7 @@ export const columns = [
     dataIndex: 'volume',
     width: '16.6%',
     key: 'volume',
-    render: (text) => (
+    render: (text): JSX.Element => (
       <div className="liquidity normal-text">
         {text === '-' ? `-` : text >= 0 ? `$ ${moneyFormatter(text)}` : <Loader />}
       </div>
@@ -260,7 +265,7 @@ export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; i
   )
 }
 
-export const ColumnHeadersWeb = ({ sortColumn, setSortColumn }: any) => (
+export const ColumnHeadersWeb: FC<Column> = ({ sortColumn, setSortColumn }) => (
   <>
     <th onClick={() => setSortColumn((prev) => (prev !== 'name' ? 'name' : undefined))} className="borderRow">
       {Title('Name', '', true, sortColumn === 'name')}
@@ -287,7 +292,7 @@ export const ColumnHeadersWeb = ({ sortColumn, setSortColumn }: any) => (
   </>
 )
 
-export const ColumnHeadersMobile = ({ sortColumn, setSortColumn }: any) => (
+export const ColumnHeadersMobile: FC<Column> = ({ sortColumn, setSortColumn }) => (
   <>
     <th onClick={() => setSortColumn((p) => (p !== 'name' ? 'name' : undefined))} className="borderRow">
       {Title('Name', '', true, sortColumn === 'name')}

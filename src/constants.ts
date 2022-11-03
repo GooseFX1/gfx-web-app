@@ -1,4 +1,6 @@
 import { ADDRESSES } from './web3'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+
 export const LITEPAPER_ADDRESS = 'https://docs.goosefx.io'
 export const SOCIAL_MEDIAS: { [key: string]: string } = {
   discord: 'https://discord.gg/cDEPXpY26q',
@@ -151,7 +153,7 @@ export const stakeTokens = [
   }
 ]
 
-export const generateListOfSSLTokens = (network): any => {
+export const generateListOfSSLTokens = (network: WalletAdapterNetwork): any => {
   const sslTokens = []
   const obj = ADDRESSES[network].sslPool
   FARM_SUPPORTED_TOKEN_LIST = ['GOFX']

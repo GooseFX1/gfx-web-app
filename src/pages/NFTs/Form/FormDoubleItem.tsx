@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, FC } from 'react'
 import { Form, Input, DatePicker, Col } from 'antd'
 import { DownOutlined } from '@ant-design/icons'
 import { StyledFormDoubleItem } from './FormDoubleItem.styled'
@@ -22,7 +22,7 @@ type Props = {
   onChange?: (val: any) => void
 }
 
-export const FormDoubleItem = ({ className, data, startingDays, expirationDays, onChange }: Props) => (
+export const FormDoubleItem: FC<Props> = ({ className, data, startingDays, expirationDays, onChange }) => (
   <StyledFormDoubleItem className={className}>
     {!isEmpty(data) ? (
       data.map((item, index) => (

@@ -19,10 +19,17 @@ import { STAKE_PREFIX, toPublicKey, ADDRESSES } from '../web3'
 import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
 import { CONTROLLER_LAYOUT, STAKING_ACCOUNT_LAYOUT } from 'goosefx-ssl-sdk'
 
-interface TxnReturn {
+export interface TxnReturn {
   error?: Error
   confirm?: RpcResponseAndContext<SignatureResult>
   signature: string
+}
+
+interface FetchCurrentAmountStaked {
+  tokenStakedPlusEarned: number
+  tokenStaked: number
+  tokenEarned: number
+  stakingBalance: number
 }
 
 export const getStakingAccountKey = async (
@@ -165,15 +172,7 @@ export const fetchCurrentAmountStaked = async (
   connection: Connection,
   network: WalletAdapterNetwork,
   wallet: WalletContextState
-): Promise<
-  | {
-      tokenStakedPlusEarned: number
-      tokenStaked: number
-      tokenEarned: number
-      stakingBalance: number
-    }
-  | Error
-> => {
+): Promise<FetchCurrentAmountStaked> => {
   const NETWORK = getNetworkConnection(network)
   const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnection(network)].GFX_CONTROLLER
 
