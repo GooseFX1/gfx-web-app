@@ -3,3 +3,7 @@ src/assets
 src/web3/nestquest-codegen
 src/web3/idl
 src/web3/auction-house
+src/web3/layout.ts
+src/api/index.ts
+src/serviceWorker.ts
+src/pages/Crypto/TradingView/save-load-adapter.js
