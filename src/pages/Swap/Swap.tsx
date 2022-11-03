@@ -43,33 +43,11 @@ const WRAPPER = styled.div`
   font-family: Montserrat;
   background-color: ${({ theme }) => theme.bg2};
 
-  .lastRefreshed {
-    animation: openAnimation 0.5s forwards;
-  }
-
-  .hidelastRefreshed {
-    animation: closeMe 0.5s;
-  }
-
-  @keyframes closeMe {
-    0% {
-      top: 125px;
-    }
-    100% {
-      top: 0px;
-    }
-  }
-
-  @keyframes openAnimation {
-    0% {
-      top: 0px;
-    }
-    100% {
-      top: 125px;
-    }
-  }
-
   .rotateRefreshBtn {
+    ${tw`h-[40px]`}
+  }
+
+  .rotateRefreshBtn-rotate {
     -webkit-animation: cog 1.5s infinite;
     -moz-animation: cog 1.5s infinite;
     -ms-animation: cog 1.5s infinite;
@@ -88,21 +66,43 @@ const WRAPPER = styled.div`
   }
 `
 
-const RefreshAlert = styled.div`
-  ${tw`flex w-full absolute left-0 top-0 justify-center p-2 items-center font-medium text-center text-base
-sm:text-sm`}
+const RefreshAlert = styled.div<{ $active: boolean; $isMobile: boolean }>`
+  ${tw`flex w-full absolute left-0 top-0 justify-center p-2 items-center 
+    font-medium text-center text-base sm:text-sm`}
   color: ${({ theme }) => theme.tabNameColor};
+  display: ${({ $active }) => ($active ? 'block' : 'none')};
+  opacity: 0;
+  animation: ${({ $active }) => ($active ? 'openAnimation 3s' : 'none')};
+
+  @keyframes openAnimation {
+    0% {
+      top: 0px;
+      opacity: 0;
+    }
+    20% {
+      top: ${({ $isMobile }) => ($isMobile ? '88px' : '125px')};
+      opacity: 1;
+    }
+    80% {
+      top: ${({ $isMobile }) => ($isMobile ? '88px' : '125px')};
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      top: 0px;
+    }
+  }
 `
 
 const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
-  ${tw`flex pt-[200px] items-center w-screen mb-7 
+  ${tw`flex pt-[142px] items-center w-screen mb-7 
   max-h-80p sm:justify-start sm:flex sm:flex-col sm:items-center sm:h-full`}
 
   color: ${({ theme }) => theme.text1};
   justify-content: ${({ $desktop }) => ($desktop ? 'space-between' : 'space-around')};
 
   @media (max-width: 500px) {
-    padding: 15vh 15px 1rem 15px;
+    padding: 142px 15px 1rem;
   }
 `
 
@@ -318,7 +318,7 @@ const HEADER_WRAPPER = styled(SpaceBetweenDiv)<{ $iconSize: string }>`
   }
 
   .header-icon {
-    ${tw`h-10 items-center`}
+    ${tw`items-center`}
   }
 
   .jup-icon {
@@ -374,9 +374,8 @@ const SwapContent: FC<{
   routes: any
   clickNo: number
   setRefreshed: React.Dispatch<React.SetStateAction<boolean>>
-  setRefreshAnimationClass: React.Dispatch<React.SetStateAction<string>>
   refreshed: boolean
-}> = ({ exchange, routes, clickNo, setRefreshed, setRefreshAnimationClass, refreshed }) => {
+}> = ({ exchange, routes, clickNo, setRefreshed, refreshed }) => {
   const location = useLocation<ILocationState>()
   const { setEndpointName, network } = useConnectionConfig()
   const { mode } = useDarkMode()
@@ -408,12 +407,15 @@ const SwapContent: FC<{
     e.stopPropagation()
     setSettingsModalVisible(true)
   }
+
   const refresh = () => {
     setClickNo(0)
     setRoutes([])
     setRefreshed(true)
-    setRefreshAnimationClass('lastRefreshed')
-    setTimeout(() => amountPool(), 3000)
+    setTimeout(() => {
+      setRefreshed(false)
+      amountPool()
+    }, 3000)
   }
 
   const dateString = (date: Date) => {
@@ -478,7 +480,7 @@ const SwapContent: FC<{
             <img
               src={`/img/assets/refresh.svg`}
               alt="refresh-icon"
-              className={refreshed ? 'rotateRefreshBtn' : '' + 'header-icon'}
+              className={`rotateRefreshBtn ${refreshed ? 'rotateRefreshBtn-rotate' : ''}`}
             />
           </div>
           <SETTING_WRAPPER onClick={onClick}>
@@ -1002,7 +1004,6 @@ export const SwapMain: FC = () => {
   const [allowed, setallowed] = useState(false)
   const [inAmountTotal, setInAmountTotal] = useState(0)
   const [refreshed, setRefreshed] = useState(false)
-  const [refreshAnimationClass, setRefreshAnimationClass] = useState('')
 
   const { routes, exchange } = useJupiter({
     amount: JSBI.BigInt(inAmountTotal), // raw input amount of tokens
@@ -1113,27 +1114,10 @@ export const SwapMain: FC = () => {
     setRoutes(shortRoutes)
   }
 
-  useEffect(() => {
-    if (refreshed) {
-      setTimeout(() => {
-        setRefreshAnimationClass('hidelastRefreshed')
-      }, 2000)
-
-      setTimeout(() => {
-        setRefreshed(false)
-        setRefreshAnimationClass('')
-      }, 2500)
-    }
-  }, [refreshed])
-
-  const RefreshedAnimation = () => (
-    <RefreshAlert className={refreshAnimationClass}>
+  const RefreshedAnimation: FC<{ active: boolean; isMobile: boolean }> = ({ active, isMobile }) => (
+    <RefreshAlert $active={active} $isMobile={isMobile}>
       <div>
-        Last updated: {checkMobile() && <br />}{' '}
-        {
-          //@ts-ignore
-          new Date().toGMTString()
-        }
+        Last updated: {checkMobile() && <br />} {new Date().toUTCString()}
       </div>
     </RefreshAlert>
   )
@@ -1141,14 +1125,13 @@ export const SwapMain: FC = () => {
   if (checkMobile()) {
     return (
       <WRAPPER>
-        {refreshed && <RefreshedAnimation />}
-        <INNERWRAPPER $desktop={!checkMobile()}>
+        <RefreshedAnimation active={refreshed} isMobile={true} />
+        <INNERWRAPPER $desktop={false}>
           <SwapContent
             exchange={exchange}
             routes={chosenRoutes}
             clickNo={clickNo}
             setRefreshed={setRefreshed}
-            setRefreshAnimationClass={setRefreshAnimationClass}
             refreshed={refreshed}
           />
           {allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
@@ -1159,7 +1142,7 @@ export const SwapMain: FC = () => {
   } else {
     return (
       <WRAPPER>
-        <RefreshedAnimation />
+        <RefreshedAnimation active={refreshed} isMobile={false} />
         <INNERWRAPPER $desktop={desktop && allowed}>
           {desktop && allowed && <TokenContent />}
           <SwapContent
@@ -1167,7 +1150,6 @@ export const SwapMain: FC = () => {
             routes={chosenRoutes}
             clickNo={clickNo}
             setRefreshed={setRefreshed}
-            setRefreshAnimationClass={setRefreshAnimationClass}
             refreshed={refreshed}
           />
           {desktop && allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}

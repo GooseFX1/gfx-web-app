@@ -76,13 +76,11 @@ const STYLED_TOGGLE = styled.div`
   }
 
   .textToggle {
-    ${tw`sm:ml-0 sm:text-[#eee] sm:text-smaller sm:mt-2 sm:mt-0.5`}
+    ${tw`text-left ml-[10px] sm:text-[#eee] sm:text-smaller sm:mt-2 sm:mx-auto sm:text-right`}
     font-family: Montserrat;
     font-size: 14px;
     font-weight: 600;
-    text-align: left;
     color: ${({ theme }) => theme.text4};
-    margin-left: ${({ theme }) => theme.margin(2)};
     max-width: 77px;
   }
 `
