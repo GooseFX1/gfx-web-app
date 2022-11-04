@@ -68,7 +68,7 @@ export function colors(mode: string): Colors {
     text17: mode === 'dark' ? '#636363' : '#B9B9B9',
     text18: mode === 'dark' ? '#727272' : '#BABABA',
     text19: mode === 'dark' ? '#919191' : '#B6B6B6',
-    text20: mode === 'dark' ? '#636363' : '#b5b5b5',
+    text20: mode === 'dark' ? '#b5b5b5' : '#636363',
     text21: mode === 'dark' ? '#e7e7e7' : '#636363',
     text22: mode === 'dark' ? '#9C9C9C' : '#3C3C3C',
     text23: mode === 'dark' ? '#9A9A9A' : '#BABABA',
@@ -76,6 +76,8 @@ export function colors(mode: string): Colors {
     text25: mode === 'dark' ? '#7D7D7D' : '#636363',
     text26: mode === 'dark' ? '#999999' : '#353535',
     text27: mode === 'dark' ? '#b5b5b5' : '#eee',
+    text28: mode === 'dark' ? '#ffffff' : '#3c3c3c',
+    text29: mode === 'dark' ? '#EEEEEE' : '#636363',
 
     textWhitePurple: mode === 'dark' ? '#fff' : '#8d4cdd',
 
@@ -114,6 +116,8 @@ export function colors(mode: string): Colors {
     bg20: mode === 'dark' ? '#1c1c1c' : white,
     bg21: mode === 'dark' ? '#1c1c1c' : '#3c3c3c',
     bg22: mode === 'dark' ? '#131313' : '#cacaca',
+    bg23: mode === 'dark' ? '#272727' : '#EEEEEE',
+
     tableHeader: mode === 'dark' ? '#1c1c1c' : '#636363',
     tokenBorder: mode === 'dark' ? '#3c3c3c' : '#cacaca',
     borderBottom: mode === 'dark' ? '#555555' : '#cacaca',
