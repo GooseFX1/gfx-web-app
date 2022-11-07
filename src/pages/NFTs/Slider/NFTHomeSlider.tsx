@@ -51,7 +51,7 @@ const CAROUSEL_WRAPPER = styled.div`
 
     @media (max-width: 500px) {
       min-width: 275px;
-      width: 32% !important;
+      width: 24% !important;
       margin-right: 1%;
     }
   }
@@ -113,6 +113,31 @@ const SLIDER_ITEM = styled.div<{ $url: string }>`
       margin: ${({ theme }) => theme.margin(2)} auto 0;
     }
   }
+
+  .multichain-content {
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    @media (max-width: 500px) {
+      top: 70%;
+    }
+
+    .home-slider-title {
+      font-size: 35px;
+      font-weight: bold;
+      color: #fff;
+      line-height: 40px;
+      margin: 0;
+
+      @media (max-width: 500px) {
+        font-size: 30px;
+      }
+    }
+  }
 `
 
 const ORANGE_BTN = styled(MainButton)`
@@ -122,10 +147,30 @@ const ORANGE_BTN = styled(MainButton)`
 const TERTIERY_BTN = styled(MainButton)`
   background: ${({ theme }) => theme.primary3} !important;
 `
+
+const EXPLORE_BTN = styled.button`
+  background: #fff;
+  color: #00a5a1;
+  height: 40px;
+  width: 141px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 50px;
+  border: none;
+  margin-top: 8px;
+  font-weight: bold;
+
+  @media (max-width: 500px) {
+    width: 162px;
+    height: 37px;
+    border-radius: 37px;
+    margin-top: 28px;
+  }
+`
 //#endregion
 
 const settings = {
-  infinite: false,
+  infinite: checkMobile() ? false : true,
   speed: 500,
   swipeToSlide: true,
   slidesToScroll: 1,
@@ -145,6 +190,7 @@ export const NFTHomeSlider: FC = () => {
   }
   const history = useHistory()
   const goNestQuestSingleListing = () => history.push(`/NFTs/NestQuest`)
+  const goMultichainLandingPage = () => window.open('https://www.multichain.goosefx.io/')
 
   return (
     <>
@@ -168,6 +214,12 @@ export const NFTHomeSlider: FC = () => {
               >
                 <span>Mint Now</span>
               </ORANGE_BTN>
+            </div>
+          </SLIDER_ITEM>
+          <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/multichainBanner.png`}>
+            <div className="multichain-content">
+              <h1 className="home-slider-title">View Live Mints</h1>
+              <EXPLORE_BTN onClick={goMultichainLandingPage}>Explore</EXPLORE_BTN>
             </div>
           </SLIDER_ITEM>
           <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/become-a-creator.webp`}>
