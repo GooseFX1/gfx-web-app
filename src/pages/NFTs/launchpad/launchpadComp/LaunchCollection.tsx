@@ -11,6 +11,7 @@ const Container = styled.div`
   border-radius: 15px;
   margin-right: 40px !important ;
   margin-bottom: 70px;
+  margin-top: 70px;
 
   .startContainer {
     height: 295px;
@@ -62,7 +63,7 @@ const LaunchCollection: FC = () => {
     <Container>
       <div className="startContainer">
         <IMG>
-          <img src={LaunchImg} alt="launch-collection" />
+          <img src={LaunchImg} alt="launch-your-collection" />
         </IMG>
         <TEXT_CONTAINER>
           <TEXT>Launch your collection today!</TEXT>

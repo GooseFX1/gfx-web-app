@@ -7,6 +7,7 @@ import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 import { GetNftPrice } from './FeaturedLaunch'
 import { useUSDCToggle } from '../../../../context/nft_launchpad'
+import { checkMobile } from '../../../../utils'
 
 const CAROUSEL_WRAPPER = styled.div`
   position: relative;
@@ -66,11 +67,18 @@ const CAROUSEL_WRAPPER = styled.div`
 `
 
 const ENDED_TEXT = styled.div`
-  margin-top: 150px;
   font-weight: 700;
   font-size: 30px;
   color: ${({ theme }) => theme.text7};
   margin-bottom: 40px;
+
+  @media (max-width: 500px) {
+    font-size: 25px;
+    font-weight: bold;
+    margin-left: 20px;
+    margin-bottom: 30px;
+    margin-top: 45px;
+  }
 `
 
 const NFT_INFO = styled.div`
@@ -78,6 +86,11 @@ const NFT_INFO = styled.div`
   line-height: 22px;
   font-size: 18px !important;
   margin-bottom: 10px;
+
+  @media (max-width: 500px) {
+    font-size: 14px !important;
+    font-weight: 600;
+  }
 `
 const SLIDER_ITEM = styled.div`
   position: relative;
@@ -86,17 +99,28 @@ const SLIDER_ITEM = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 20px;
+  @media (max-width: 500px) {
+    margin-right: 25px;
+  }
   .sweep-card.failed {
     opacity: 0.5;
   }
   .sweep-card {
     border: none;
+    @media (max-width: 500px) {
+      height: 280px;
+      width: 280px;
+    }
     .nft-img {
       border-radius: 15px;
       padding-bottom: 0px;
       opacity: 0.4;
       width: 300px !important;
       height: 300px;
+      @media (max-width: 500px) {
+        height: 226px;
+        width: 280px !important;
+      }
     }
     .ant-card-body {
       text-align: center;
@@ -146,11 +170,19 @@ export const NFT_SOLD = styled.div`
   display: flex;
   flex-direction: column;
   bottom: 0px;
+  @media(max-width: 500px){
+    width: 280px;
+    }
+  }
 
   .collection-name {
     font-weight: 600;
     font-size: 25px;
     line-height: 30px;
+
+    @media(max-width: 500px){
+      font-size: 22px;
+    }
   }
   .sold-text {
     font-weight: 700;
@@ -158,6 +190,11 @@ export const NFT_SOLD = styled.div`
     font-size: 20px;
     line-height: 24px;
     text-align: center;
+
+    @media(max-width: 500px){
+      margin-top: 8px;
+      font-weight: 600;
+    }
   }
 `
 const NFT_META = styled.div`
@@ -171,11 +208,24 @@ const NFT_META = styled.div`
   backdrop-filter: blur(60px);
   border-radius: 15px 10px 10px 15px;
   bottom: 0px;
+  @media (max-width: 500px) {
+    height: 74px;
+    width: 280px;
+  }
   .column {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 12px;
+  }
+`
+
+const ENDED_NFTS = styled.div`
+  display: flex;
+  padding: 0 20px;
+  overflow-x: scroll;
+  ::-webkit-scrollbar {
+    display: none;
   }
 `
 
@@ -229,39 +279,68 @@ const EndedCollections: FC = () => {
       )}
       {endedList && endedList.length > 0 ? (
         <>
-          <ENDED_TEXT>Ended</ENDED_TEXT>
           {endedList.length > 0 ? (
             <>
-              <Row justify="center" align="middle" className="imageRow">
-                <CAROUSEL_WRAPPER>
-                  <Slider {...settings}>
-                    {endedList.map((item, index) => (
-                      <SLIDER_ITEM key={index} onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
-                        <Card
-                          cover={
-                            <>
-                              <img className="nft-img" src={item.coverUrl} alt="NFT" />
-                              <NFT_SOLD>
-                                <div className="collection-name">{item?.collectionName}</div>
-                                <div className="sold-text">SOLD OUT</div>
-                              </NFT_SOLD>
-                              <NFT_META>
-                                <span className="column">
-                                  <NFT_INFO> Items {item?.items} </NFT_INFO>
-                                  <NFT_INFO>
-                                    <GetNftPrice item={item} />
-                                  </NFT_INFO>
-                                </span>
-                              </NFT_META>
-                            </>
-                          }
-                          className="sweep-card"
-                        ></Card>
-                      </SLIDER_ITEM>
-                    ))}
-                  </Slider>
-                </CAROUSEL_WRAPPER>
-              </Row>
+              <ENDED_TEXT>Ended</ENDED_TEXT>
+              {!checkMobile() ? (
+                <Row justify="center" align="middle" className="imageRow">
+                  <CAROUSEL_WRAPPER>
+                    <Slider {...settings}>
+                      {endedList.map((item, index) => (
+                        <SLIDER_ITEM key={index} onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
+                          <Card
+                            cover={
+                              <>
+                                <img className="nft-img" src={item.coverUrl} alt="NFT" />
+                                <NFT_SOLD>
+                                  <div className="collection-name">{item?.collectionName}</div>
+                                  <div className="sold-text">SOLD OUT</div>
+                                </NFT_SOLD>
+                                <NFT_META>
+                                  <span className="column">
+                                    <NFT_INFO> Items: {item?.items} </NFT_INFO>
+                                    <NFT_INFO>
+                                      <GetNftPrice item={item} />
+                                    </NFT_INFO>
+                                  </span>
+                                </NFT_META>
+                              </>
+                            }
+                            className="sweep-card"
+                          ></Card>
+                        </SLIDER_ITEM>
+                      ))}
+                    </Slider>
+                  </CAROUSEL_WRAPPER>
+                </Row>
+              ) : (
+                <ENDED_NFTS>
+                  {endedList.map((item, index) => (
+                    <SLIDER_ITEM key={index} onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
+                      <Card
+                        cover={
+                          <>
+                            <img className="nft-img" src={item.coverUrl} alt="NFT" />
+                            <NFT_SOLD>
+                              <div className="collection-name">{item?.collectionName}</div>
+                              <div className="sold-text">SOLD OUT</div>
+                            </NFT_SOLD>
+                            <NFT_META>
+                              <span className="column">
+                                <NFT_INFO> Items: {item?.items} </NFT_INFO>
+                                <NFT_INFO>
+                                  <GetNftPrice item={item} />
+                                </NFT_INFO>
+                              </span>
+                            </NFT_META>
+                          </>
+                        }
+                        className="sweep-card"
+                      ></Card>
+                    </SLIDER_ITEM>
+                  ))}
+                </ENDED_NFTS>
+              )}
             </>
           ) : (
             <FLEX>

@@ -169,6 +169,79 @@ const TEAM_MEMBER_WRAPPER = styled.div`
     font-size: 16px;
   }
 `
+const NFT_BORDER = styled.div`
+  width: 90%;
+  margin: 0 auto;
+  height: 425px;
+
+  .nft-border-outer {
+    height: 350px;
+    border-radius: 20px;
+    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+    padding: 4px;
+    position: relative;
+    z-index: 1;
+  }
+  .nft-border-inner {
+    background: black;
+    border-radius: 20px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nft-banner {
+    border-radius: 20px;
+  }
+  .top-div {
+    height: 395px;
+    width: 85%;
+    opacity: 0.3;
+    bottom: 350px;
+    background: #2a2a2a;
+    border-radius: 20px;
+    position: relative;
+    margin: 0 auto;
+    margin-bottom: -350px;
+  }
+  .middle-div {
+    height: 380px;
+    width: 90%;
+    opacity: 0.5;
+    background: #2a2a2a;
+    position: relative;
+    bottom: 395px;
+    border-radius: 20px;
+    margin: 0 auto;
+    margin-bottom: -395px;
+  }
+  .bottom-div {
+    height: 365px;
+    width: 95%;
+    opacity: 1;
+    background: #2a2a2a;
+    position: relative;
+    bottom: 380px;
+    border-radius: 20px;
+    margin: 0 auto;
+    margin-bottom: -300px;
+  }
+  .navigation-left {
+    position: absolute;
+    top: 160px;
+    left: -5%;
+    height: 60px;
+    width: 60px;
+  }
+  .navigation-right {
+    position: absolute;
+    top: 160px;
+    right: -5%;
+    height: 60px;
+    width: 60px;
+  }
+`
 
 const INFO_DIV_LIGHT = styled.div`
   display: flex;
@@ -367,6 +440,7 @@ const SOCIAL_ICON = styled.button`
 
 const DARK_DIV = styled.div`
   width: 45vw;
+  margin-top: 75px;
 
   .dark-1 {
     //biggest
@@ -402,10 +476,10 @@ const DARK_DIV = styled.div`
     border-radius: 20px;
   }
   .image-border {
-    margin-left: 180px;
+    margin-left: 165px;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     position: absolute;
-    width: 567px;
+    width: 40%;
     height: 567px;
     border-radius: 20px;
     margin-top: -7px;
@@ -433,10 +507,22 @@ const LIVE_BTN = styled.div`
   border: 1.5px solid #ffffff;
   backdrop-filter: blur(23.9091px);
   position: absolute;
-  margin-left: 575px;
+  margin-left: 560px;
   margin-top: 30px;
   z-index: 299;
   border-radius: 10px;
+  @media (max-width: 500px) {
+    width: 75px;
+    height: 28px;
+    border: 1.5px solid #ffffff;
+    backdrop-filter: blur(23.9091px);
+    position: absolute;
+    margin: 0;
+    z-index: 299;
+    border-radius: 8px;
+    top: 20px;
+    right: 24px;
+  }
   .liveText {
     display: flex;
     align-items: center;
@@ -447,6 +533,12 @@ const LIVE_BTN = styled.div`
     background: linear-gradient(96.79deg, #f7931a 4.25%, #d832f7 97.61%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    @media (max-width: 500px) {
+      display: flex;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: bold;
+    }
   }
 `
 
@@ -473,7 +565,7 @@ export const MintProgressBar = ({ minted, totalNFTs }: { minted: number; totalNF
 export const SWITCH_HOLDER = styled.div<{ $navCollapsed: boolean }>`
   position: absolute;
   top: 0;
-  right: 0;
+  right: 30px;
   margin-top: calc(100px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
 `
 
@@ -504,6 +596,40 @@ export const InfoDivLightTheme = ({
         )}
       </div>
     </INFO_DIV_LIGHT>
+  </>
+)
+
+export const NFTBanner = ({
+  coverUrl,
+  handleScroller
+}: {
+  coverUrl: string
+  handleScroller: any
+}): JSX.Element => (
+  <>
+    <NFT_BORDER>
+      <div className="nft-border-outer">
+        <LiveButton />
+        <div className="nft-border-inner">
+          <img className="nft-banner" src={coverUrl} alt="nft-banner" width="90%" height="322" />
+        </div>
+        <img
+          className="navigation-left"
+          alt="navigateImg"
+          onClick={() => handleScroller('-')}
+          src="/img/assets/navigateLeft.svg"
+        />
+        <img
+          className="navigation-right"
+          alt="navigateImg"
+          onClick={() => handleScroller('+')}
+          src="/img/assets/navigateRight.svg"
+        />
+      </div>
+      <div className="top-div"></div>
+      <div className="middle-div"></div>
+      <div className="bottom-div"></div>
+    </NFT_BORDER>
   </>
 )
 

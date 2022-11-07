@@ -409,7 +409,7 @@ export const SingleCollection: FC = () => {
               {selectedProject?.summary ? (
                 <div>
                   <RIGHT_SECTION_TABS activeTab={'4'}>
-                    <Tabs defaultActiveKey={'2'}>
+                    <Tabs defaultActiveKey={'1'}>
                       <TabPane tab="Summary" key="1">
                         <SUMMARY_TAB_CONTENT>
                           <div>{selectedProject?.summary}</div>

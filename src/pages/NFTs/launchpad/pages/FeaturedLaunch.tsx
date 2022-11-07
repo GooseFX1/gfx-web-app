@@ -4,11 +4,12 @@ import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { MintItemViewStatus, INFTMetadata } from '../../../../types/nft_details'
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
-import { DarkDiv, TokenSwitch } from './LaunchpadComponents'
+import { DarkDiv, NFTBanner, TokenSwitch } from './LaunchpadComponents'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 import { useUSDCToggle } from '../../../../context/nft_launchpad'
 import { useDarkMode, useNavCollapse } from '../../../../context'
 import { SpaceBetweenDiv } from '../../../../styles'
+import { checkMobile } from '../../../../utils'
 
 //#region styles
 const NFT_DETAILS = styled.div<{ $navCollapsed: boolean }>`
@@ -23,8 +24,12 @@ const NFT_DETAILS = styled.div<{ $navCollapsed: boolean }>`
   .detailsContainer {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
-    margin: 20px 70px 200px 0px;
+    justify-content: space-around;
+    margin: 20px 70px 50px 0px;
+
+    @media (max-width: 500px) {
+      display: block;
+    }
   }
 
   ${({ theme }) => css`
@@ -64,14 +69,13 @@ const TITLE = styled.h1`
   line-height: 73px;
   margin-top: 50px;
   color: ${({ theme }) => theme.text1};
-`
 
-const SUBTITLE = styled.h2`
-  font-weight: 700;
-  font-size: 35px;
-  line-height: 43px;
-  margin: 0;
-  color: ${({ theme }) => theme.text1};
+  @media (max-width: 500px) {
+    font-weight: 700;
+    font-size: 35px;
+    text-align: center;
+    margin-top: 5px;
+  }
 `
 
 const LEFT_WRAPPER = styled.div`
@@ -90,6 +94,14 @@ const DESCRIPTION = styled.p`
   font-size: 20px;
   line-height: 24px;
   color: ${({ theme }) => theme.text4};
+  text-align: justify;
+
+  @media (max-width: 500px) {
+    width: 90%;
+    margin: 14px auto 30px;
+    color: #d4d4d4;
+    font-size: 15px;
+  }
 `
 const FEATURED_IMG = styled.div`
   width: 85px;
@@ -104,9 +116,26 @@ const BACK_IMG = styled.div`
   transform: scale(1.2);
   margin-right: 30px;
   cursor: pointer;
+
+  @media (max-width: 500px) {
+    margin: 0;
+    height: 20px;
+    width: 20px;
+  }
 `
 
 const GRAPHIC_IMG = styled.div``
+
+const IMG_CONTAINER = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  .header {
+    position: absolute;
+    left: 20px;
+  }
+`
 
 //#endregion
 const MINT_BTN = styled.div`
@@ -122,24 +151,77 @@ const MINT_BTN = styled.div`
   justify-content: center;
   margin-right: 60px;
   cursor: pointer;
+
+  @media (max-width: 500px) {
+    width: 90%;
+    margin: 0 auto 65px;
+    height: 60px;
+    border-radius: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+  }
 `
 
 const ITEMS = styled.div`
   font-weight: 600;
   font-size: 22px;
   color: ${({ theme }) => theme.text4};
+
+  @media (max-width: 500px) {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 10px 5px;
+  }
 `
 const PRICE_DISPLAY = styled.div`
   display: flex;
+
+  @media (max-width: 500px) {
+    align-items: center;
+  }
+  img {
+    height: 25px;
+    width: 25px;
+    margin: 0px 10px 5px 10px;
+    @media (max-width: 500px) {
+      margin: 0 2px;
+    }
+  }
+  span {
+    @media (max-width: 500px) {
+      font-weight: 600;
+    }
+  }
 `
+
+const DETAILS = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  margin: 0 auto;
+  align-items: center;
+`
+
+const WRAPPER = styled.div`
+  margin-top: 100px;
+`
+const HEADER = styled.div`
+  font-weight: 700;
+  font-size: 18px;
+  margin-left: 10px;
+  background: linear-gradient(92.45deg, #ea7e00 6.46%, #f1c52a 107.94%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`
+
 export const GetNftPrice: FC<{ item: any }> = ({ item }) => (
   <PRICE_DISPLAY>
     <span>{`Price: ${item?.price}`}</span>
-    <img
-      style={{ margin: '0px 10px 5px 10px', width: '25px', height: '25px' }}
-      src={`/img/crypto/${item?.currency}.svg`}
-      alt="price"
-    />
+    <img src={`/img/crypto/${item?.currency}.svg`} alt="price" />
     <span>{`  ${item?.currency}`}</span>
   </PRICE_DISPLAY>
 )
@@ -182,14 +264,39 @@ export const FeaturedLaunch: FC<{
   const { mode } = useDarkMode()
   const { isCollapsed } = useNavCollapse()
 
-  return (
+  return checkMobile() ? (
+    featuredDisplay && featuredDisplay.length > 0 ? (
+      <WRAPPER>
+        <IMG_CONTAINER>
+          <img
+            className="header"
+            height="20px"
+            src={`/img/assets/arrow-left${mode}.svg`}
+            alt="arrow"
+            onClick={() => history.goBack()}
+          />{' '}
+          <img src="/img/assets/Launchpad.png" alt="arrow" height="50px" width="50px" />
+          <HEADER> Featured Launch</HEADER>
+        </IMG_CONTAINER>
+        <TITLE>{featuredDisplay[0]?.collectionName}</TITLE>
+        <NFTBanner handleScroller={handleScroller} coverUrl={featuredDisplay[0]?.coverUrl} />
+        <DETAILS>
+          <ITEMS>{`Items: ${featuredDisplay[0]?.items}`}</ITEMS>
+          <ITEMS>
+            <GetNftPrice item={featuredDisplay[0]} />
+          </ITEMS>
+        </DETAILS>
+        <DESCRIPTION>{featuredDisplay[0]?.summary}</DESCRIPTION>
+        <MINT_BTN onClick={() => history.push(`/NFTs/launchpad/${featuredDisplay[0].urlName}`)}>Mint</MINT_BTN>
+      </WRAPPER>
+    ) : (
+      <></>
+    )
+  ) : (
     <>
       <NFT_DETAILS {...rest} $navCollapsed={isCollapsed}>
-        {featuredDisplay === undefined ? (
-          <SpaceBetweenDiv style={{ margin: '0 70px 200px 0' }}>
-            <SkeletonCommon width="42vw" height="500px" borderRadius="10px" />
-            <SkeletonCommon width="42vw" height="500px" borderRadius="10px" />
-          </SpaceBetweenDiv>
+        {!featuredDisplay ? (
+          <></>
         ) : (
           <div>
             {featuredDisplay.length > 0 ? (
@@ -206,10 +313,8 @@ export const FeaturedLaunch: FC<{
                       Featured Launch
                     </YELLOW>
                     <TITLE className="rs-name">{featuredDisplay[0]?.collectionName}</TITLE>
-                    <SUBTITLE>{featuredDisplay[0]?.tagLine}</SUBTITLE>
-                    <br />
                     <Row justify="space-between" align="middle" style={{ marginRight: '50px' }}>
-                      <ITEMS>{`Items ${featuredDisplay[0]?.items}`}</ITEMS>
+                      <ITEMS>{`Items: ${featuredDisplay[0]?.items}`}</ITEMS>
                       <ITEMS>
                         <GetNftPrice item={featuredDisplay[0]} />
                       </ITEMS>
@@ -244,7 +349,10 @@ export const FeaturedLaunch: FC<{
                 </GRAPHIC_IMG>
               </div>
             ) : (
-              <></>
+              <SpaceBetweenDiv style={{ margin: '0 70px 200px 0' }}>
+                <SkeletonCommon width="42vw" height="500px" borderRadius="10px" />
+                <SkeletonCommon width="42vw" height="500px" borderRadius="10px" />
+              </SpaceBetweenDiv>
             )}
           </div>
         )}

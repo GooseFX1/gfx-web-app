@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import { useNavCollapse } from '../../../../context'
 import { ModalSlide } from '../../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../../constants'
+import { checkMobile } from '../../../../utils'
 
 const WRAPPER = styled.div`
   max-width: 99%;
@@ -14,6 +15,11 @@ const WRAPPER = styled.div`
 
   * {
     font-family: ${({ theme }) => theme.fontFamily};
+  }
+
+  @media (max-width: 500px) {
+    max-width: 100%;
+    padding-left: 0;
   }
 `
 
@@ -32,7 +38,7 @@ export const LandingPage: FC = () => {
         {relaxPopup && <ModalSlide rewardToggle={setRelaxPopup} modalType={MODAL_TYPES.RELAX} />}
         <FeaturedLaunch />
         <UpcomingCollections />
-        <LaunchCollection />
+        {!checkMobile() && <LaunchCollection />}
         <EndedCollections />
       </WRAPPER>
     </>
