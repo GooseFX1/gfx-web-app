@@ -18,7 +18,6 @@ import { Launchpad } from './pages/NFTs/launchpad/Launchpad'
 import { Creator } from './pages/NFTs/CreatorPage/Creator'
 import { AdminWrapper } from './pages/NFTs/adminPage/components/AdminWrapper'
 import { AnalyticsWrapper } from './pages/Analytics/AnalyticsWrapper'
-import NFTLandingPageV2 from './pages/NFTs/Home/NFTLandingPageV2'
 
 export const Router: FC = () => {
   const blacklisted = useBlacklisted()
@@ -61,11 +60,6 @@ export const Router: FC = () => {
             <Route path="/NFTs">
               <NFTProfileProvider>
                 <NFTs />
-              </NFTProfileProvider>
-            </Route>
-            <Route path="/NFTAgg">
-              <NFTProfileProvider>
-                <NFTLandingPageV2 />
               </NFTProfileProvider>
             </Route>
             <Route exact path="/farm">

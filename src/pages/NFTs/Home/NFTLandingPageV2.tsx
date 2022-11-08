@@ -1,18 +1,18 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import { SearchBar } from '../../../components'
 import { ModalSlide } from '../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../constants'
-import { useNavCollapse } from '../../../context'
+import { useNavCollapse, useNFTCollections } from '../../../context'
 import { STYLED_BUTTON } from '../../Farm/FarmFilterHeader'
-import { NFT_STATS_CONTAINER, STATS_BTN } from './NFTAggregator.styles'
+import { NFT_STATS_CONTAINER, SEARCH_RESULT_CONTAINER, STATS_BTN } from './NFTAggregator.styles'
 import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'
 
 const WRAPPER = styled.div<{ $navCollapsed }>`
-  padding-top: ${({ $navCollapsed }) => ($navCollapsed ? '0px' : '80px')};
+  /* padding-top: ${({ $navCollapsed }) => ($navCollapsed ? '0px' : '0px')}; */
   transition: 0.5s ease;
   font-family: 'Montserrat';
   font-style: normal;
@@ -35,11 +35,9 @@ const EYE_CONTAINER = styled.div`
     ${tw`mr-2 duration-500`}
   }
 `
-
 const FILTERS_CONTAINER = styled.div`
   ${tw`flex mt-4`}
 `
-
 export const ButtonContainer = styled.div<{ $poolIndex: number }>`
   ${tw`relative z-0 `}
   font-size: 20px !important;
@@ -79,7 +77,7 @@ const NFTLandingPageV2 = () => {
       <BannerContainer showBanner={showBanner}>
         <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} />
 
-        {<NFTBanners showBanner={showBanner} />}
+        <NFTBanners showBanner={showBanner} />
         <FiltersContainer />
       </BannerContainer>
       <NFTCollectionsTable showBanner={showBanner} />
@@ -90,14 +88,20 @@ const NFTLandingPageV2 = () => {
 const FiltersContainer = () => {
   const [poolIndex, setPoolIndex] = useState<number>(0)
   const [poolFilter, setPoolFilter] = useState<string>('Popular')
+  const [searchFilter, setSearchFilter] = useState<string>(undefined)
 
   const handleClick = (poolName, index) => {
     setPoolIndex(index)
     setPoolFilter(poolName)
   }
+  console.log(searchFilter)
   return (
     <FILTERS_CONTAINER>
-      <SearchBar className="search-bar" placeholder="Search by collections or markets" />
+      <SearchBar
+        className="search-bar"
+        setSearchFilter={setSearchFilter}
+        placeholder="Search by collections or markets"
+      />
       <ButtonContainer $poolIndex={poolIndex}>
         <div className="slider-animation-web"></div>
         {poolTypes.map((pool, index) => (
@@ -110,6 +114,7 @@ const FiltersContainer = () => {
           </STYLED_BUTTON>
         ))}
       </ButtonContainer>
+      {searchFilter && <SearchResultContainer searchFilter={searchFilter} />}
     </FILTERS_CONTAINER>
   )
 }
@@ -125,17 +130,37 @@ const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
   )
 }
 
-const StatsContainer = ({ showBanner, setShowBanner }: any) => {
-  console.log('object')
+const SearchResultContainer = ({ searchFilter }: any) => {
+  const { allCollections } = useNFTCollections()
+  const searchResultArr = useMemo(() => {
+    if (!searchFilter) return allCollections
+    const searchFiltered = allCollections.filter((result) => {
+      const collectionName = result.collection_name.toLowerCase()
+      if (collectionName.includes(searchFilter.toLowerCase())) return true
+    })
+    return searchFiltered
+  }, [searchFilter])
+
   return (
-    <NFT_STATS_CONTAINER>
-      <StatsButton data={'Total volume traded: 2332'} />
-      <StatsButton data={'Total volume traded: 2332'} />
-      <StatsButton data={'Total Volume: 2010'} />
-      <ShowBannerEye showBanner={showBanner} setShowBanner={setShowBanner} />
-    </NFT_STATS_CONTAINER>
+    <SEARCH_RESULT_CONTAINER>
+      {searchResultArr.map((data, index) => (
+        <div className="searchResultRow" key={index}>
+          <img src={data.profile_pic_link} alt="" />
+          <div className="searchText">{data.collection_name}</div>
+        </div>
+      ))}
+    </SEARCH_RESULT_CONTAINER>
   )
 }
+
+const StatsContainer = ({ showBanner, setShowBanner }: any) => (
+  <NFT_STATS_CONTAINER>
+    <StatsButton data={'Total volume traded: 2332'} />
+    <StatsButton data={'Total volume traded: 2332'} />
+    <StatsButton data={'Total Volume: 2010'} />
+    <ShowBannerEye showBanner={showBanner} setShowBanner={setShowBanner} />
+  </NFT_STATS_CONTAINER>
+)
 
 const StatsButton = ({ data }: any) => (
   <STATS_BTN>
