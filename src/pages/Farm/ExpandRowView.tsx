@@ -366,7 +366,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
         onClickStake={onClickStake}
         onClickUnstake={onClickUnstake}
         onClickWithdraw={onClickWithdraw}
-        onClickDeposit={onClickDeposit}
+        // TEMP_DEP_DISABLE onClickDeposit={onClickDeposit}
         notEnoughFunds={notEnoughFunds}
         zeroFunds={zeroFunds}
         depositBtnClass={depositBtnClass}
@@ -408,23 +408,23 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
                 <div>
                   <INPUT_CONTAINER>
                     <STYLED_INPUT
-                      placeholder={`0.00 ${name}`}
                       type="number"
                       ref={depositRef}
-                      onBlur={() => setDepositClass('')}
-                      onFocus={() => !zeroFunds && setDepositClass(' active')}
-                      value={stakeAmt}
-                      onChange={(e) => setStakeAmt(parseFloat(e.target.value))}
+                      // TEMP_DEP_DISABLE placeholder={`0.00 ${name}`}
+                      // onBlur={() => setDepositClass('')}
+                      // onFocus={() => !zeroFunds && setDepositClass(' active')}
+                      // value={stakeAmt}
+                      // onChange={(e) => setStakeAmt(parseFloat(e.target.value))}
+                      disabled={true}
                     />
                     <div className="halfMaxText">
-                      <div onClick={() => onClickHalf('stake')}> HALF </div>
+                      {/* TEMP_DEP_DISABLE <div onClick={() => onClickHalf('stake')}>HALF</div>{' '}
                       <div onClick={() => onClickMax('stake')} className="text2">
-                        {' '}
                         MAX
-                      </div>
+                      </div> */}
                     </div>
                   </INPUT_CONTAINER>
-                  <OPERATIONS_BTN
+                  {/* TEMP_DEP_DISABLE <OPERATIONS_BTN
                     className={depositBtnClass}
                     loading={isStakeLoading}
                     disabled={notEnoughFunds || isStakeLoading || zeroFunds}
@@ -436,6 +436,20 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
                       ? 'Not enough funds'
                       : SSL
                       ? 'Deposit'
+                      : 'Stake'}
+                  </OPERATIONS_BTN> */}
+                  <OPERATIONS_BTN
+                    className={depositBtnClass}
+                    loading={isStakeLoading}
+                    disabled={true}
+                    onClick={() => (SSL ? onClickDeposit() : onClickStake())}
+                  >
+                    {zeroFunds
+                      ? `Insufficient ${name}`
+                      : notEnoughFunds
+                      ? 'Not enough funds'
+                      : SSL
+                      ? 'Deposit Temp Unavailable'
                       : 'Stake'}
                   </OPERATIONS_BTN>
                 </div>
@@ -459,7 +473,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
                       <div onClick={() => onClickHalf('unstake')}> HALF </div>
                       <div onClick={() => onClickMax('unstake')} className="text2">
                         {' '}
-                        MAX{' '}
+                        MAX
                       </div>
                     </div>
                   </INPUT_CONTAINER>
@@ -490,7 +504,7 @@ const DailyRewards = ({ tokenPrice, tokenData, name }: any) =>
     <div className="info-item">
       <div className="title">Daily Rewards</div>
       <div className="value">{`${tokenData?.rewards?.toFixed(3)} ${name}`}</div>
-      <div className="price">{`$${(tokenPrice?.current * parseFloat(tokenData?.rewards)).toFixed(3)} USDC`}</div>
+      <div className="price">{`$${(tokenPrice?.current * parseFloat(tokenData?.rewards)).toFixed(3)} USD`}</div>
     </div>
   ) : (
     <></>
@@ -500,7 +514,7 @@ const AvailableToMintComp = ({ availableToMintFiat, availableToMint, name }: any
   <div className="info-item">
     <div className="title">Available {name}</div>
     <div className="value">{`${moneyFormatterWithComma(availableToMint)} ${name}`}</div>
-    <div className="price">{`$${moneyFormatterWithComma(availableToMintFiat)} USDC`}</div>
+    <div className="price">{`$${moneyFormatterWithComma(availableToMintFiat)} USD`}</div>
   </div>
 )
 

@@ -8,6 +8,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { LoaderLeftSpace } from './Columns'
+import { CenteredDiv } from '../../styles'
 
 const ABSTRACT = styled.div`
   .lastRefreshed {
@@ -192,6 +193,12 @@ const MobileWrapper = styled.div`
 const HOLD = styled.div`
   ${tw`items-center flex`}
 `
+
+//TEMP_DEP_DISABLE
+const TEMP_BANNER = styled.h2`
+  color: ${({ theme }) => theme.text1};
+`
+
 const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
 
 export const FarmFilter: FC = () => {
@@ -281,6 +288,10 @@ export const FarmFilter: FC = () => {
             GOFX Price: {prices['GOFX/USDC'] ? ` $ ` + prices['GOFX/USDC']?.current : <LoaderLeftSpace />}{' '}
           </HOLD>
         </div>
+        {/* TEMP_DEP_DISABLE */}
+        <CenteredDiv>
+          <TEMP_BANNER>⚠️ SSL Pools Have Temporarily Disabled Deposits</TEMP_BANNER>
+        </CenteredDiv>
         <STYLED_FARM_HEADER>
           <ButtonContainer $poolIndex={poolIndex}>
             <div className="slider-animation-web"></div>
