@@ -10,6 +10,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts/App/Connect'
 import { RefreshBtnWithAnimation } from './FarmFilterHeader'
 import { useDarkMode } from '../../context'
+import { nFormatter } from '../../utils'
 const DISPLAY_DECIMAL = 3
 
 interface Column {
@@ -17,19 +18,20 @@ interface Column {
   setSortColumn: React.Dispatch<React.SetStateAction<string>>
 }
 
-const DEPOSIT_BTN = styled.button`
-  ${tw`h-[34px] w-[130px] -mt-3 text-white rounded-3xl border-none font-semibold`}
-  font-size: 15px;
-  background: #5855ff;
-  @media (max-width: 500px) {
-    ${tw`h-7 w-[90px] -mt-0.5`}
-    margin-left: -5.5rem;
-  }
-`
+// TEMP_DEP_DISABLE const DEPOSIT_BTN = styled.button`
+//   ${tw`h-[34px] w-[130px] -mt-3 text-white rounded-3xl border-none font-semibold`}
+//   font-size: 15px;
+//   background: #5855ff;
+//   @media (max-width: 500px) {
+//     ${tw`h-7 w-[90px] -mt-0.5`}
+//     margin-left: -5.5rem;
+//   }
+// `
 export const STYLED_TITLE = styled.div`
   ${tw`flex flex-row items-center justify-center`}
   .textTitle {
     ${tw`font-semibold text-base text-white`}
+    text-transform: capitalize;
   }
   .info-icon {
     ${tw`w-[20px] h-[20px] block ml-2`}
@@ -193,7 +195,7 @@ value of a pool’s assets (excluding trading fees) to their value if they had n
 const TotalEarnedTooltip = 'Total amount earned on your deposit.'
 const LiquidityTooltip = "Total value of funds in this farm's liquidity pool."
 
-const DepositButton = () => <DEPOSIT_BTN>Deposit</DEPOSIT_BTN>
+// TEMP_DEP_DISABLE const DepositButton = () => <DEPOSIT_BTN>Deposit</DEPOSIT_BTN>
 
 export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; index: number }> = ({
   farm,
@@ -204,7 +206,7 @@ export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; i
   const { name, earned, currentlyStaked, apr, volume, liquidity } = farm
   const { publicKey } = useWallet()
   const showConnect = index === 0
-  const toggle = () => setIsOpen((prev) => !prev)
+  // TEMP_DEP_DISABLE const toggle = () => setIsOpen((prev) => !prev)
   const { mode } = useDarkMode()
 
   return (
@@ -227,13 +229,14 @@ export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; i
         </td>
       ) : (
         <td className="balanceColumn">
-          {currentlyStaked === 0 ? (
+          {/* TEMP_DEP_DISABLE {currentlyStaked === 0 ? (
             <DEPOSIT_BTN onClick={toggle}>Deposit</DEPOSIT_BTN>
           ) : currentlyStaked !== undefined ? (
             currentlyStaked?.toFixed(DISPLAY_DECIMAL)
           ) : (
             <Loader />
-          )}
+          )} */}
+          {currentlyStaked !== undefined ? currentlyStaked?.toFixed(DISPLAY_DECIMAL) : <Loader />}
         </td>
       )}
       <td className="earnedColumn">
@@ -242,7 +245,7 @@ export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; i
       <td className="tableData">
         {
           //@ts-ignore
-          apr === '-' ? '-' : apr !== undefined ? `${parseFloat(apr)?.toFixed(0)}%` : <Loader />
+          apr === '-' ? '-' : apr !== undefined ? `${nFormatter(parseFloat(apr))}%` : <Loader />
         }
       </td>
       <td className="tableData">
@@ -311,7 +314,8 @@ export const ColumnMobile: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean
   setIsOpen,
   isOpen
 }) => {
-  const { name, apr, currentlyStaked } = farm
+  // TEMP_DEP_DISABLE const { name, apr, currentlyStaked } = farm
+  const { name, apr } = farm
   const { mode } = useDarkMode()
 
   return (
@@ -325,11 +329,11 @@ export const ColumnMobile: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean
       <td className="tableData">
         {
           //@ts-ignore
-          apr === '-' ? '-' : apr !== undefined ? `${parseFloat(apr)?.toFixed(0)}%` : <Loader />
+          apr === '-' ? '-' : apr !== undefined ? `${nFormatter(parseFloat(apr))}%` : <Loader />
         }
       </td>
       <ICON_WRAPPER_TD onClick={() => setIsOpen((prev) => !prev)}>
-        {currentlyStaked === 0 && <DepositButton />}
+        {/* TEMP_DEP_DISABLE {currentlyStaked === 0 && <DepositButton />} */}
         <img className={isOpen ? 'invertArrow' : ''} src={`/img/assets/arrow-down-${mode}.svg`} alt="arrow" />
       </ICON_WRAPPER_TD>
     </>

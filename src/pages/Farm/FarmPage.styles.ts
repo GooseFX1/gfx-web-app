@@ -88,6 +88,10 @@ export const STYLED_INPUT = styled.input`
   .text2 {
     margin-left: ${({ theme }) => theme.margin(2)};
   }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `
 
 export const TABLE_ROW = styled.tr<{ isOpen: boolean; publicKey: any; checkMobile: boolean }>`
