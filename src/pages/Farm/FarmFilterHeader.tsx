@@ -201,7 +201,7 @@ const TEMP_BANNER = styled.h2`
   text-align: center;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    background-color: #1e1e1e;
+    background-color: ${({ theme }) => theme.bg1};
     margin: 1rem;
     border-radius: 10px;
   `}
