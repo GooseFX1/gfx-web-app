@@ -1,5 +1,6 @@
 import {
   GlowWalletAdapter,
+  ExodusWalletAdapter,
   PhantomWalletAdapter,
   SolflareWalletAdapter,
   SolletExtensionWalletAdapter,
@@ -19,12 +20,13 @@ export const getWalletAdapters = (network: WalletAdapterNetwork): any[] => [
   new PhantomWalletAdapter(),
   new GlowWalletAdapter(),
   new SolflareWalletAdapter({ network }),
-  new TorusWalletAdapter(),
-  new MathWalletAdapter(),
-  new SolongWalletAdapter(),
+  new ExodusWalletAdapter(),
   new SolletExtensionWalletAdapter({ network }),
   new SolletWalletAdapter({ network }),
+  new SolongWalletAdapter(),
   new SlopeWalletAdapter(),
+  new TorusWalletAdapter(),
+  new MathWalletAdapter(),
   new SolanaMobileWalletAdapter({
     appIdentity: { name: 'Goosefx App' },
     authorizationResultCache: createDefaultAuthorizationResultCache(),
