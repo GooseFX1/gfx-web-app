@@ -7,6 +7,7 @@ import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 import { GetNftPrice } from './FeaturedLaunch'
 import { useUSDCToggle } from '../../../../context/nft_launchpad'
+import { checkMobile } from '../../../../utils'
 
 const CAROUSEL_WRAPPER = styled.div`
   position: relative;
@@ -49,6 +50,10 @@ const CAROUSEL_WRAPPER = styled.div`
     justify-content: center;
     padding-left: ${({ theme }) => theme.margin(2)};
     padding-right: ${({ theme }) => theme.margin(2)};
+
+    .slick-track {
+      width: 100% !important;
+    }
   }
   .slick-slider {
     height: 100%;
@@ -62,17 +67,21 @@ const CAROUSEL_WRAPPER = styled.div`
 const UPCOMING_TEXT = styled.div`
   font-weight: 700;
   font-size: 30px;
-  margin-top: 100px;
   margin-bottom: 40px;
+
+  font-size: 25px;
+  font-weight: bold;
+  margin-left: 20px;
+  margin-bottom: 30px;
 `
 
-const NFT_TITLE = styled.div`
-  font-weight: 600;
-  font-size: 22px !important;
-`
 const NFT_INFO = styled.div`
   font-weight: 600;
   font-size: 18px !important;
+
+  @media (max-width: 500px) {
+    font-size: 14px !important;
+  }
 `
 const SLIDER_ITEM = styled.div`
   position: relative;
@@ -81,16 +90,33 @@ const SLIDER_ITEM = styled.div`
   justify-content: space-between;
   align-items: center;
   border-radius: 20px;
+  @media (max-width: 500px) {
+    margin-right: 25px;
+  }
   .sweep-card.failed {
     opacity: 0.5;
   }
   .sweep-card {
     border: none;
+    @media (max-width: 500px) {
+      height: 280px;
+      width: 280px;
+    }
     .nft-img {
       border-radius: 15px;
       padding-bottom: 0px;
-      width: 460px !important;
+      width: 90%;
       height: 460px;
+      .ant-card-cover {
+        margin: 0;
+      }
+      @media (max-width: 500px) {
+        height: 226px;
+        width: 280px;
+      }
+    }
+    .ant-card-cover {
+      margin: 0;
     }
     .ant-card-body {
       text-align: center;
@@ -111,12 +137,12 @@ const FLEX = styled.div`
 
 const NFT_META = styled.div`
   position: absolute;
-  width: 460px;
+  width: 90%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100px;
-  padding: ${({ theme }) => theme.margin(3)};
+  padding: 15px;
   background: linear-gradient(68.66deg, rgba(255, 255, 255, 0.1) 21.47%, rgba(255, 255, 255, 0.015) 102.44%);
   backdrop-filter: blur(50px);
   border-radius: 15px 10px 10px 15px;
@@ -125,10 +151,39 @@ const NFT_META = styled.div`
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    .name {
+      font-size: 22px;
+      font-weight: 600;
+      @media (max-width: 500px) {
+        font-size: 18px;
+      }
+    }
+    .item {
+      font-size: 20px;
+      font-weight: 600;
+      @media (max-width: 500px) {
+        font-size: 14px;
+      }
+    }
+  }
+  @media (max-width: 500px) {
+    width: 100%;
+    height: 74px;
+    padding: 10px 5px;
   }
 `
 const PRICE_DISPLAY = styled.div`
   display: flex;
+`
+
+const UPCOMING_NFTS = styled.div`
+  display: flex;
+  padding: 0 20px;
+  overflow-x: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `
 
 export const getNftPrice: FC = (item: any) => (
@@ -208,9 +263,41 @@ const UpcomingCollectins: FC = () => {
       {upcomingList.length > 0 ? (
         <>
           <UPCOMING_TEXT>Upcoming</UPCOMING_TEXT>
-          <Row justify="start" align="middle" className="imageRow">
-            <CAROUSEL_WRAPPER>
-              <Slider {...settings}>
+          {!checkMobile() ? (
+            <Row justify="start" align="middle" className="imageRow">
+              <CAROUSEL_WRAPPER>
+                <Slider {...settings}>
+                  {upcomingList.map((item, index) => (
+                    <SLIDER_ITEM key={index} onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
+                      <Card
+                        cover={
+                          <>
+                            <img className="nft-img" src={item.coverUrl} alt="NFT" height="460px" width="90%" />
+                            <NFT_META>
+                              <span className="flex">
+                                <div className="name"> {item?.collectionName}</div>
+                                <div className="items"> {`Items: ${item?.items}`}</div>
+                              </span>
+                              <span className="flex">
+                                <NFT_INFO> {getRemaningTime(item)}</NFT_INFO>
+                                <NFT_INFO>
+                                  {' '}
+                                  <GetNftPrice item={item} />
+                                </NFT_INFO>
+                              </span>
+                            </NFT_META>
+                          </>
+                        }
+                        className="sweep-card"
+                      ></Card>
+                    </SLIDER_ITEM>
+                  ))}
+                </Slider>
+              </CAROUSEL_WRAPPER>
+            </Row>
+          ) : (
+            <>
+              <UPCOMING_NFTS>
                 {upcomingList.map((item, index) => (
                   <SLIDER_ITEM key={index} onClick={() => history.push(`/NFTs/launchpad/${item?.urlName}`)}>
                     <Card
@@ -219,11 +306,11 @@ const UpcomingCollectins: FC = () => {
                           <img className="nft-img" src={item.coverUrl} alt="NFT" />
                           <NFT_META>
                             <span className="flex">
-                              <NFT_TITLE> {item?.collectionName}</NFT_TITLE>
-                              <NFT_TITLE> {`Items ${item?.items}`}</NFT_TITLE>
+                              <div className="name"> {item?.collectionName}</div>
+                              <div className="title"> {`Items ${item?.items}`}</div>
                             </span>
                             <span className="flex">
-                              <NFT_INFO> {getRemaningTime(item)}</NFT_INFO>
+                              <NFT_INFO> {getRemaningTime(item)} </NFT_INFO>
                               <NFT_INFO>
                                 {' '}
                                 <GetNftPrice item={item} />
@@ -236,9 +323,9 @@ const UpcomingCollectins: FC = () => {
                     ></Card>
                   </SLIDER_ITEM>
                 ))}
-              </Slider>
-            </CAROUSEL_WRAPPER>
-          </Row>{' '}
+              </UPCOMING_NFTS>
+            </>
+          )}
         </>
       ) : (
         <></>
