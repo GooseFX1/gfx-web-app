@@ -197,6 +197,14 @@ const HOLD = styled.div`
 //TEMP_DEP_DISABLE
 const TEMP_BANNER = styled.h2`
   color: ${({ theme }) => theme.text1};
+  padding: 1rem;
+  text-align: center;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    background-color: #1e1e1e;
+    margin: 1rem;
+    border-radius: 10px;
+  `}
 `
 
 const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
@@ -245,6 +253,10 @@ export const FarmFilter: FC = () => {
       <ABSTRACT>
         <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
         <GeneralStatsBarMobile />
+        {/* TEMP_DEP_DISABLE */}
+        <CenteredDiv>
+          <TEMP_BANNER>⚠️ SSL Pools Have Temporarily Disabled Deposits</TEMP_BANNER>
+        </CenteredDiv>
         <STYLED_FARM_HEADER>
           <ButtonContainer $poolIndex={poolIndex}>
             <div className="slider-animation"></div>
