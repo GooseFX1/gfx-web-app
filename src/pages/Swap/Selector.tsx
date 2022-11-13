@@ -287,6 +287,7 @@ export const Selector: FC<{
             filteredTokensList.map(async (tk) => {
               const token = coingeckoTokens.find((i) => i.symbol.toLowerCase() === tk.symbol.toLowerCase())
               try {
+                if (!token) return { ...tk, vol: 0 }
                 const data = await CoinGeckoClient.coins.fetch(token?.id || null, {})
                 const res = Math.floor(data?.data?.market_data?.total_volume?.usd || 0)
                 return { ...tk, vol: !isNaN(res) ? res : 0 }
