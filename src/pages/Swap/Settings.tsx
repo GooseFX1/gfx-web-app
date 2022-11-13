@@ -82,10 +82,11 @@ const SETTING_INPUT = styled(Input)`
   padding: 0 20px;
   background-color: ${({ theme }) => theme.bg22 + ' !important'};
   box-shadow: 0 0 0 0 !important;
+  color: ${({ theme }) => theme.text6};
 
   input,
   .ant-input-suffix {
-    color: ${({ theme }) => theme.text9};
+    color: ${({ theme }) => theme.text6};
   }
 `
 
@@ -95,7 +96,6 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
   const [value, setValue] = useState<number>(slippage)
 
   const handleSlippageChange = (x: BaseSyntheticEvent) => {
-    console.log(x.target.value)
     !isNaN(x.target.value) && setValue(parseFloat(x.target.value) / 100)
   }
 
@@ -166,8 +166,8 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
           maxLength={6}
           onChange={handleSlippageChange}
           pattern="\d+(\.\d+)?"
-          placeholder={'0.00%'}
-          suffix={<span>%</span>}
+          placeholder={'0.00'}
+          suffix={<span> % </span>}
           value={value > 0 ? value * 100 : ''}
         />
       </div>

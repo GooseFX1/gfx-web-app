@@ -79,6 +79,7 @@ export interface Colors {
   infoDivBackground: Color
   bgReward: Color
   substractImg: Color
+  tokenBorder: Color
   grey1: Color
   grey2: Color
   grey3: Color

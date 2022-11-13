@@ -5,6 +5,10 @@ import { TokenListProvider, TokenInfo } from '@solana/spl-token-registry'
 import { ArrowClickerWhite, Modal } from '../../components'
 import { ISwapToken, useTokenRegistry, useDarkMode, useConnectionConfig, useSwap } from '../../context'
 import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
+import { POPULAR_TOKENS } from '../../constants'
+import { checkMobile } from '../../utils'
+
+import tw from 'twin.macro'
 
 const BODY = styled.div`
   height: 33vh;
@@ -13,7 +17,12 @@ const BODY = styled.div`
 `
 
 const SELECTOR_MODAL = styled(Modal)`
+  ${tw`w-[40vw]! sm:w-full!`}
   background-color: ${({ theme }) => theme.bg20 + '!important'};
+`
+
+const SELECTOR_INPUT = styled(Input)`
+  border-radius: 1rem;
 `
 
 const CLICKER = styled(SpaceBetweenDiv)`
@@ -58,16 +67,7 @@ const INPUT = styled.div`
   position: relative;
   margin-top: ${({ theme }) => theme.margin(2)};
   color: ${({ theme }) => theme.text1};
-
-  &:after {
-    content: '';
-    display: block;
-    height: 1px;
-    width: calc(100% + ${({ theme }) => theme.margin(3)} * 2);
-    margin-top: ${({ theme }) => theme.margin(2)};
-    margin-left: -${({ theme }) => theme.margin(3)};
-    background-color: ${({ theme }) => theme.text1};
-  }
+  border-radius: 1rem;
 
   input {
     height: ${({ theme }) => theme.margin(5)};
@@ -86,6 +86,12 @@ const MAGNIFYING_GLASS = styled(CenteredImg)`
   top: 12px;
   right: 12px;
   ${({ theme }) => theme.measurements(theme.margin(2))}
+
+  span {
+    cursor: pointer;
+    margin-left: -24px;
+    color: ${({ theme }) => theme.text1};
+  }
 `
 
 const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
@@ -93,7 +99,7 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
   top: 2px;
   left: 4px;
   height: 50px;
-  width: 164px;
+  width: 200px;
   margin: 0.9% 0.25rem 0.9% 0.25rem;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   ${({ theme }) => theme.roundedBorders}
@@ -105,6 +111,31 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
     top: 4px;
     left: 4px;
     width: 140px;
+  }
+`
+
+const POP_TEXT = styled.p`
+  color: ${({ theme }) => theme.text1};
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0.35rem;
+`
+
+const POPULAR = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-content: center;
+  padding: 0rem;
+  flex-wrap: wrap;
+
+  &:after {
+    content: '';
+    display: block;
+    height: 1px;
+    width: calc(100% + ${({ theme }) => theme.margin(3)} * 2);
+    margin-top: ${({ theme }) => theme.margin(2)};
+    margin-left: -${({ theme }) => theme.margin(3)};
+    background-color: ${({ theme }) => theme.tokenBorder};
   }
 `
 
@@ -132,6 +163,21 @@ const TOKEN = styled.div`
   }
 `
 
+const POPULAR_TK = styled(TOKEN)`
+  ${tw`w-[96px]! rounded-lg sm:w-full flex justify-center h-[50px] mb-0 mt-1 mx-0`}
+  border: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
+  background-color: ${({ theme }) => theme.bg2};
+  padding: 8px;
+
+  img {
+    height: 30px !important;
+    width: 30px !important;
+  }
+  span {
+    font-weight: 600;
+  }
+`
+
 const TOKEN_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margin(4))}
   margin-right: ${({ theme }) => theme.margin(2)};
@@ -141,6 +187,18 @@ const TOKEN_ICON = styled(CenteredImg)`
 
 const TOKEN_INFO = styled.div`
   color: ${({ theme }) => theme.text1};
+  font-weight: 600;
+`
+
+const DESK_TOKEN_INFO = styled(TOKEN_INFO)`
+  display: flex;
+  align-items: center;
+  flex-direction: row !important;
+
+  .token-name {
+    color: ${({ theme }) => theme.text20};
+    margin-left: 0.25rem;
+  }
 `
 
 interface NewTokenInfo extends TokenInfo {
@@ -156,7 +214,7 @@ export const Selector: FC<{
 }> = ({ height, otherToken, setToken, token }) => {
   const { mode } = useDarkMode()
   const { tokens } = useTokenRegistry()
-  const { tokenA, tokenB } = useSwap()
+  const { tokenA, tokenB, CoinGeckoClient, coingeckoTokens } = useSwap() //CoinGeckoClient
   const { chainId } = useConnectionConfig()
   const [filterKeywords, setFilterKeywords] = useState('')
   const [visible, setVisible] = useState(false)
@@ -167,6 +225,7 @@ export const Selector: FC<{
       imageURL: `/img/crypto/${tk.symbol}.svg`
     }))
   )
+  const popularTokens = updatedTokens.filter((i) => POPULAR_TOKENS.includes(i.symbol))
   const [filteredTokens, setFilteredTokens] = useState<NewTokenInfo[]>(updatedTokens)
 
   useEffect(() => {
@@ -219,8 +278,29 @@ export const Selector: FC<{
           }
           return 0
         })
-
       setFilteredTokens(filteredTokensList)
+
+      if (filterKeywords.length > 1) {
+        //allow at least two inputs to allow less tokens being mapped and decrease load time for popular tokens
+        const popularityFilteredTokensList = (
+          await Promise.all(
+            filteredTokensList.map(async (tk) => {
+              const token = coingeckoTokens.find((i) => i.symbol.toLowerCase() === tk.symbol.toLowerCase())
+              try {
+                const data = await CoinGeckoClient.coins.fetch(token?.id || null, {})
+                const res = Math.floor(
+                  data?.data?.market_data?.total_volume?.usd ||
+                    data?.data?.market_data?.total_supply * data?.market_data?.current_price?.usd
+                )
+                return { ...tk, vol: !isNaN(res) ? res : 0 }
+              } catch {
+                return { ...tk, vol: 0 }
+              }
+            })
+          )
+        ).sort((a, b) => b.vol - a.vol)
+        setFilteredTokens(popularityFilteredTokensList)
+      }
     }
 
     addAndFilterTokens() //(O)3n to (O)2n in time complexity (due to two loops, one filter and one sort)
@@ -230,19 +310,51 @@ export const Selector: FC<{
     <>
       <SELECTOR_MODAL setVisible={setVisible} title="Select a token" visible={visible}>
         <INPUT>
-          <Input
+          <SELECTOR_INPUT
             onChange={(x: any) => setFilterKeywords(x.target.value)}
             placeholder="Search name or paste address"
             value={filterKeywords}
           />
           <MAGNIFYING_GLASS>
-            {mode === 'dark' ? (
+            {filterKeywords.length > 0 ? (
+              <span onClick={() => setFilterKeywords('')}> Cancel </span>
+            ) : mode === 'dark' ? (
               <SVGToWhite src={`/img/assets/magnifying_glass.svg`} alt="token-search-icon" />
             ) : (
               <img src={`/img/assets/magnifying_glass.svg`} alt="token-search-icon" />
             )}
           </MAGNIFYING_GLASS>
         </INPUT>
+        <POP_TEXT>Most Popular</POP_TEXT>
+        <POPULAR>
+          {popularTokens.map(({ address, decimals, name, symbol, imageURL, logoURI }, index) => (
+            <POPULAR_TK
+              key={index}
+              onClick={async () => {
+                setToken({ address, decimals, symbol, name, logoURI })
+                setVisible(false)
+              }}
+            >
+              <TOKEN_ICON>
+                <img
+                  src={imageURL || logoURI}
+                  alt="token-icon"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null
+                    if (e.currentTarget.src === logoURI) {
+                      e.currentTarget.src = '/img/crypto/Unknown.svg'
+                    } else {
+                      e.currentTarget.src = logoURI || '/img/crypto/Unknown.svg'
+                    }
+                  }}
+                />
+              </TOKEN_ICON>
+              <TOKEN_INFO>
+                <span>{symbol}</span>
+              </TOKEN_INFO>
+            </POPULAR_TK>
+          ))}
+        </POPULAR>
         <BODY>
           {filteredTokens.map(({ address, decimals, name, symbol, imageURL, logoURI }, index) => (
             <TOKEN
@@ -266,10 +378,17 @@ export const Selector: FC<{
                   }}
                 />
               </TOKEN_ICON>
-              <TOKEN_INFO>
-                <span>{symbol}</span>
-                <span>{name}</span>
-              </TOKEN_INFO>
+              {checkMobile() ? (
+                <TOKEN_INFO>
+                  <span>{symbol}</span>
+                  <span>{name}</span>
+                </TOKEN_INFO>
+              ) : (
+                <DESK_TOKEN_INFO>
+                  <span>{symbol}</span>
+                  <span className="token-name"> ( {name.replaceAll('(', '').replaceAll(')', '')} )</span>
+                </DESK_TOKEN_INFO>
+              )}
             </TOKEN>
           ))}
         </BODY>

@@ -48,6 +48,7 @@ export const TOKEN_NAMES = {
 }
 
 export const TOKEN_BLACKLIST = ['APTtJyaRX5yGTsJU522N4VYWg3vCvSb65eam5GrPT5Rt']
+export const POPULAR_TOKENS = ['SOL', 'USDC', 'USDT', 'mSOL', 'GOFX']
 
 export const SUPPORTED_TOKEN_LIST = [
   'AKRO',
