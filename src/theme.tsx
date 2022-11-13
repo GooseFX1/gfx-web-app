@@ -414,6 +414,32 @@ export function theme(mode: string): DefaultTheme {
         border-radius: 20px;
       }
 
+      &::-moz-scrollbar {
+        width: ${size};
+      }
+
+      &::-moz-scrollbar-track {
+        background: transparent;
+      }
+
+      &::-moz-scrollbar-thumb {
+        background-color: ${({ theme }) => theme.scrollBarColor};
+        border-radius: 20px;
+      }
+
+      &::-ms-scrollbar {
+        width: ${size};
+      }
+
+      &::-ms-scrollbar-track {
+        background: transparent;
+      }
+
+      &::-ms-scrollbar-thumb {
+        background-color: ${({ theme }) => theme.scrollBarColor};
+        border-radius: 20px;
+      }
+
       -ms-overflow-style: none !important;
     `
   }
