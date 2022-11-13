@@ -33,9 +33,6 @@ import tw from 'twin.macro'
 import JSBI from 'jsbi'
 import { logData } from '../../api'
 
-import CoinGecko from 'coingecko-api'
-const CoinGeckoClient = new CoinGecko()
-
 const WRAPPER = styled.div`
   ${tw`w-screen not-italic`}
   min-height: calc(100vh - 58px);
@@ -545,7 +542,7 @@ const TokenContent: FC = () => {
   const [socials, setSocials] = useState([])
   const [copiedAction, setCopiedAction] = useState(false)
   //CoinGeckoClient
-  const { tokenA, tokenB } = useSwap()
+  const { tokenA, tokenB, CoinGeckoClient, coingeckoTokens } = useSwap()
   const [tokenDetails, setDetails] = useState([
     { name: 'Price', value: '0', currency: '$' },
     { name: 'FDV', value: '0', currency: '$' },
@@ -587,9 +584,8 @@ const TokenContent: FC = () => {
 
   const fetchCoinGecko = async () => {
     try {
-      const tokens = await CoinGeckoClient.coins.list()
       if (tokenA) {
-        const token = tokens.data.find((i) => i.symbol.toLowerCase() === tokenA.symbol.toLowerCase())
+        const token = coingeckoTokens.find((i) => i.symbol.toLowerCase() === tokenA.symbol.toLowerCase())
 
         CoinGeckoClient.coins
           .fetch(token?.id || null, {})
@@ -637,7 +633,7 @@ const TokenContent: FC = () => {
       }
 
       if (tokenB) {
-        const token = tokens.data.find((i) => i.symbol.toLowerCase() === tokenB.symbol.toLowerCase())
+        const token = coingeckoTokens.find((i) => i.symbol.toLowerCase() === tokenB.symbol.toLowerCase())
 
         CoinGeckoClient.coins
           .fetch(token?.id || null, {})
