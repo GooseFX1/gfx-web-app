@@ -99,7 +99,7 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
   top: 2px;
   left: 4px;
   height: 50px;
-  width: 200px;
+  width: 216px;
   margin: 0.9% 0.25rem 0.9% 0.25rem;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   ${({ theme }) => theme.roundedBorders}
@@ -110,7 +110,7 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
   @media (max-width: 500px) {
     top: 4px;
     left: 4px;
-    width: 140px;
+    width: 184px;
   }
 `
 
