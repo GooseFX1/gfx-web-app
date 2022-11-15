@@ -78,11 +78,7 @@ export const ADDRESSES: {
         decimals: 6,
         name: 'USDT'
       },
-      BTC: {
-        address: new PublicKey('9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E'),
-        decimals: 6,
-        name: 'Wrapped Bitcoin (Sollet)'
-      },
+
       ETH: {
         address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
         decimals: 8,
