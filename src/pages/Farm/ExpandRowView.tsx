@@ -232,7 +232,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
   const withdrawClicked = () => {
     if (checkbasicConditionsForWithdraw(availableToMint)) return
     const decimals = ADDRESSES[network]?.sslPool[name]?.decimals
-    const multiplier = name === 'SOL' || name === 'GMT' || decimals === 9 ? 10000 : 10
+    const multiplier = 10 * Math.pow(10, decimals - 6) // decimals === 9 ? 10000 : decimals === 8 ? 1000 : 10
     let amountInNative = (unstakeAmt / tokenData?.userLiablity) * LAMPORTS_PER_SOL * multiplier
     if (parseFloat(unstakeAmt.toFixed(3)) >= parseFloat(availableToMint.toFixed(3))) {
       amountInNative = 100 * 100
