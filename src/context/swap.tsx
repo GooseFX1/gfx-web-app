@@ -15,6 +15,8 @@ import { useConnectionConfig, useSlippageConfig } from './settings'
 import { notify } from '../utils'
 import { swap, preSwapAmount } from '../web3'
 import JSBI from 'jsbi'
+import CoinGecko from 'coingecko-api'
+const CoinGeckoClient = new CoinGecko()
 export type SwapInput = undefined | 'from' | 'to'
 
 interface IPool {
@@ -60,6 +62,8 @@ interface ISwapConfig {
   clickNo: number
   setClickNo: (r: number) => void
   gofxOutAmount: number
+  CoinGeckoClient: any
+  coingeckoTokens: any[]
 }
 
 const SwapContext = createContext<ISwapConfig | null>(null)
@@ -78,6 +82,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [, setFocused] = useState<SwapInput>(undefined)
   const [chosenRoutes, setRoutes] = useState([])
   const [clickNo, setClickNo] = useState(0)
+  const [coingeckoTokens, setCoingeckoTokens] = useState([])
   const [pool, setPool] = useState<IPool>({
     inAmount: 0,
     inValue: 0,
@@ -188,6 +193,12 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     amountPool()
   }, [inTokenAmount, slippage, tokenA, tokenB, clickNo])
+
+  useEffect(() => {
+    ;(async function () {
+      setCoingeckoTokens((await CoinGeckoClient.coins.list()).data)
+    })()
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -311,7 +322,9 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setClickNo,
         clickNo,
         network,
-        gofxOutAmount
+        gofxOutAmount,
+        CoinGeckoClient,
+        coingeckoTokens
       }}
     >
       {children}
@@ -350,6 +363,8 @@ export const useSwap = (): ISwapConfig => {
     clickNo: context.clickNo,
     network: context.network,
     gofxOutAmount: context.gofxOutAmount,
-    amountPool: context.amountPool
+    amountPool: context.amountPool,
+    CoinGeckoClient: context.CoinGeckoClient,
+    coingeckoTokens: context.coingeckoTokens
   }
 }

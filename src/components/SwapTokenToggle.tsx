@@ -19,6 +19,7 @@ const WRAPPER = styled(SpaceBetweenDiv)`
 `
 
 const CLICKER_ICON = styled(CenteredImg)`
+  overflow: hidden;
   ${tw`h-12 w-12 mr-1 rounded-circle`}
 `
 
@@ -63,7 +64,6 @@ export const SwapTokenToggle: FC<{ toggleToken: () => void; tokenA: any; tokenB:
           onError={(e) => (e.currentTarget.src = tokenA.logoURI || '/img/crypto/Unknown.svg')}
         />
       </CLICKER_ICON>
-
       <Toggle $mode={position} onClick={handleToggle}>
         <div />
       </Toggle>
