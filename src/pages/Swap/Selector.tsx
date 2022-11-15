@@ -1,8 +1,8 @@
-import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useEffect, useState, useMemo } from 'react'
 import { Input } from 'antd'
 import styled from 'styled-components'
 import { TokenListProvider, TokenInfo } from '@solana/spl-token-registry'
-import { ArrowClickerWhite, Modal } from '../../components'
+import { Modal } from '../../components'
 import { ISwapToken, useTokenRegistry, useDarkMode, useConnectionConfig, useSwap } from '../../context'
 import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
 import { POPULAR_TOKENS } from '../../constants'
@@ -28,46 +28,33 @@ const SELECTOR_INPUT = styled(Input)`
 const CLICKER = styled(SpaceBetweenDiv)`
   position: relative;
   width: 100%;
-  padding: ${({ theme }) => theme.margin(1.5)};
+  padding: 8px 12px 8px 8px;
   align-items: flex-center;
+  justify-content: space-between;
   color: ${({ theme }) => theme.white};
-
-  > div:not(:last-child) {
-    width: 100%;
-  }
-`
-const MainTokenDisplay = styled.div`
   height: 100%;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 
   .text-primary {
     font-weight: 600;
     font-size: 18px;
     line-height: 22px;
-    padding-left: ${({ theme }) => theme.margin(1)};
   }
-`
 
-const CLICKER_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(4))}
-  margin-right: ${({ theme }) => theme.margin(0.5)};
-  ${({ theme }) => theme.roundedBorders}
-`
-
-const EmptyMessage = styled.span`
-  align-self: center;
-  font-weight: 600;
-  font-size: 12.5px;
-  line-height: 15px;
+  .icon-left img {
+    margin-right: ${({ theme }) => theme.margin(0.5)};
+    overflow: hidden;
+    ${({ theme }) => theme.measurements(theme.margin(4))}
+    ${({ theme }) => theme.roundedBorders}
+  }
+  .icon-right {
+  }
 `
 
 const INPUT = styled.div`
   position: relative;
   margin-top: ${({ theme }) => theme.margin(2)};
   color: ${({ theme }) => theme.text1};
-  border-radius: 1rem;
 
   input {
     height: ${({ theme }) => theme.margin(5)};
@@ -75,6 +62,8 @@ const INPUT = styled.div`
     font-size: 12px;
     text-align: left;
     color: ${({ theme }) => theme.text1};
+    border-radius: 45px;
+
     &::placeholder {
       color: ${({ theme }) => theme.text9};
     }
@@ -96,16 +85,16 @@ const MAGNIFYING_GLASS = styled(CenteredImg)`
 
 const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
   position: absolute;
-  top: 2px;
-  left: 4px;
-  height: 50px;
-  width: 216px;
-  margin: 0.9% 0.25rem 0.9% 0.25rem;
+  top: 6px;
+  left: 6px;
+  height: 44px;
+  width: auto;
+  min-width: 216px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  background-color: ${({ theme }) => theme.bg21};
   ${({ theme }) => theme.roundedBorders}
   cursor: pointer;
   z-index: 1;
-  background-color: ${({ theme }) => theme.bg21};
 
   @media (max-width: 500px) {
     top: 4px;
@@ -133,8 +122,7 @@ const POPULAR = styled.div`
     display: block;
     height: 1px;
     width: calc(100% + ${({ theme }) => theme.margin(3)} * 2);
-    margin-top: ${({ theme }) => theme.margin(2)};
-    margin-left: -${({ theme }) => theme.margin(3)};
+    margin: 16px -24px 0;
     background-color: ${({ theme }) => theme.tokenBorder};
   }
 `
@@ -164,10 +152,11 @@ const TOKEN = styled.div`
 `
 
 const POPULAR_TK = styled(TOKEN)`
-  ${tw`w-[96px]! rounded-lg sm:w-full flex justify-center h-[50px] mb-0 mt-1 mx-0`}
+  ${tw`w-[96px]! sm:w-full flex justify-between h-[40px] mb-0 mt-1 mx-0`}
+  border-radius: 20px;
   border: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
   background-color: ${({ theme }) => theme.bg2};
-  padding: 8px;
+  padding: 0 16px 0 4px;
 
   img {
     height: 30px !important;
@@ -175,6 +164,8 @@ const POPULAR_TK = styled(TOKEN)`
   }
   span {
     font-weight: 600;
+    font-size: 15px;
+    line-height: 18px;
   }
 `
 
@@ -216,8 +207,8 @@ export const Selector: FC<{
   const { tokens } = useTokenRegistry()
   const { tokenA, tokenB, CoinGeckoClient, coingeckoTokens } = useSwap() //CoinGeckoClient
   const { chainId } = useConnectionConfig()
-  const [filterKeywords, setFilterKeywords] = useState('')
-  const [visible, setVisible] = useState(false)
+  const [filterKeywords, setFilterKeywords] = useState<string>('')
+  const [visible, setVisible] = useState<boolean>(false)
   const r = new RegExp(filterKeywords, 'i')
   const [updatedTokens, setUpdatedTokens] = useState(
     tokens.map((tk) => ({
@@ -225,7 +216,11 @@ export const Selector: FC<{
       imageURL: `/img/crypto/${tk.symbol}.svg`
     }))
   )
-  const popularTokens = updatedTokens.filter((i) => POPULAR_TOKENS.includes(i.symbol))
+
+  const popularTokens = useMemo(
+    () => updatedTokens.filter((i) => POPULAR_TOKENS.includes(i.symbol)),
+    [updatedTokens]
+  )
   const [filteredTokens, setFilteredTokens] = useState<NewTokenInfo[]>(updatedTokens)
 
   useEffect(() => {
@@ -306,7 +301,7 @@ export const Selector: FC<{
 
   return (
     <>
-      <SELECTOR_MODAL setVisible={setVisible} title="Select a token" visible={visible}>
+      <SELECTOR_MODAL setVisible={setVisible} visible={visible}>
         <INPUT>
           <SELECTOR_INPUT
             onChange={(x: any) => setFilterKeywords(x.target.value)}
@@ -333,7 +328,7 @@ export const Selector: FC<{
                 setVisible(false)
               }}
             >
-              <TOKEN_ICON>
+              <div>
                 <img
                   src={imageURL || logoURI}
                   alt="token-icon"
@@ -346,7 +341,7 @@ export const Selector: FC<{
                     }
                   }}
                 />
-              </TOKEN_ICON>
+              </div>
               <TOKEN_INFO>
                 <span>{symbol}</span>
               </TOKEN_INFO>
@@ -393,30 +388,27 @@ export const Selector: FC<{
       </SELECTOR_MODAL>
       <SELECTOR $height={height} onClick={() => setVisible(true)}>
         <CLICKER>
-          {token ? (
-            <MainTokenDisplay>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <CLICKER_ICON>
-                  <img
-                    src={`/img/crypto/${token.symbol}.svg`}
-                    alt="active-icon"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null
-                      if (e.currentTarget.src === token.logoURI) {
-                        e.currentTarget.src = '/img/crypto/Unknown.svg'
-                      } else {
-                        e.currentTarget.src = token.logoURI || '/img/crypto/Unknown.svg'
-                      }
-                    }}
-                  />
-                </CLICKER_ICON>
-                <span className={'text-primary'}>{token.symbol}</span>
-              </div>
-            </MainTokenDisplay>
-          ) : (
-            <EmptyMessage>Select a token</EmptyMessage>
-          )}
-          <ArrowClickerWhite />
+          <div className={'icon-left'}>
+            {token ? (
+              <img
+                src={`/img/crypto/${token.symbol}.svg`}
+                alt="active-icon"
+                onError={(e) => {
+                  e.currentTarget.onerror = null
+                  if (e.currentTarget.src === token.logoURI) {
+                    e.currentTarget.src = '/img/crypto/Unknown.svg'
+                  } else {
+                    e.currentTarget.src = token.logoURI || '/img/crypto/Unknown.svg'
+                  }
+                }}
+              />
+            ) : (
+              <></>
+            )}
+          </div>
+          <span className={'text-primary'}>{token ? token.symbol : 'null'}</span>
+
+          <SVGToWhite src={`/img/assets/arrow.svg`} alt="arrow" className={'icon-right'} />
         </CLICKER>
       </SELECTOR>
     </>

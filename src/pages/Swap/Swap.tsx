@@ -268,6 +268,7 @@ const SocialsButton = styled.div`
 //background-color: ${({ theme }) => theme.bg19};
 
 const SMALL_CLICKER_ICON = styled(CenteredImg)`
+  overflow: hidden;
   ${tw`h-5 w-5 mr-2 rounded-circle`}
 `
 
@@ -423,7 +424,7 @@ const SwapContent: FC<{
     return `${month} ${day}, ${time}`
   }
 
-  const height = '65px'
+  const height = '56px'
 
   const localCSS = css`
     .swap-input {
