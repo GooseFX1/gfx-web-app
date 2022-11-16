@@ -1,12 +1,12 @@
-import React, { FC, useState, useEffect } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
+import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
-// import Close from "/img/assets/close-white-icon.svg";
 import { useHistory } from 'react-router-dom'
 import { Row, Col } from 'antd'
-import { useRewardToggle } from '../context/reward_toggle'
-import { fetchRewardsByAddress } from '../api/NFTs'
+import { useRewardToggle } from '../context'
 import { SpaceEvenlyDiv } from '../styles'
+import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { ADDRESSES as SDK_ADDRESS, CONTROLLER_LAYOUT } from 'goosefx-ssl-sdk'
+
 import tw from 'twin.macro'
 
 const REWARD_INFO_TEXT = styled.div`
@@ -49,9 +49,9 @@ const TEXT_15 = styled.div`
   color: ${({ theme }) => theme.text16};
 `
 
-const GREEN60 = styled(TEXT_60)`
-  background-image: linear-gradient(264deg, #9cc034 56%, #49821c 99%);
-`
+// const GREEN60 = styled(TEXT_60)`
+//   background-image: linear-gradient(264deg, #9cc034 56%, #49821c 99%);
+// `
 
 const REWARD_DETAILS_CONTAINER = styled.div`
   ${tw`mt-[1%]`}
@@ -96,87 +96,61 @@ const BOLD_TEXT = styled.span`
   ${tw`font-extrabold`}
 `
 
-export const RewardInfoComponent: FC = () => {
-  const { publicKey } = useWallet()
-  const [rewardsPerAddress, setrewardsPerAddress] = useState<number>()
+export const RewardInfoComponent: FC = () => (
+  <REWARD_INFO_TEXT>
+    <div>
+      <TEXT_25>
+        Rewards <REWARD_ICON src={'/img/assets/rewards.svg'} alt="rewards" />
+      </TEXT_25>
+    </div>
+    <Row justify="space-between" align="middle" style={{ margin: '3vh 0 6vh' }}>
+      <Col>
+        <PURPLE60>
+          42.69 M <TEXT_50> $GOFX</TEXT_50>
+        </PURPLE60>
+        <TEXT_20> Rewards over the next 12 months</TEXT_20>
+      </Col>
+    </Row>
 
-  useEffect(() => {
-    if (publicKey) {
-      fetchRewards(publicKey.toBase58())
-    }
-  }, [publicKey])
-
-  const fetchRewards = async (address: string): Promise<void> => {
-    try {
-      const res = await fetchRewardsByAddress(address)
-      setrewardsPerAddress(res.data === 0 ? 0.0 : res.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  return (
-    <REWARD_INFO_TEXT>
+    <REWARD_DETAILS_CONTAINER>
       <div>
-        <TEXT_25>
-          Rewards <REWARD_ICON src={'/img/assets/rewards.svg'} alt="rewards" />
-        </TEXT_25>
+        <TEXT_25>Active Rewards</TEXT_25>
       </div>
-      <Row justify="space-between" align="middle" style={{ margin: '3vh 0 6vh' }}>
-        <Col span="">
-          <PURPLE60>
-            42.69 M <TEXT_50> $GOFX</TEXT_50>
-          </PURPLE60>
-          <TEXT_20> Rewards over the next 12 months</TEXT_20>
-        </Col>
-        <Col span="">
-          <GREEN60>{rewardsPerAddress !== undefined ? rewardsPerAddress.toFixed(3) : '0.000'}</GREEN60>
 
-          <div style={{ textAlign: 'right' }}>
-            <TEXT_20>$GOFX Earned</TEXT_20>
-          </div>
-        </Col>
-      </Row>
+      <LINE />
 
-      <REWARD_DETAILS_CONTAINER>
-        <div>
-          <TEXT_25>Active Rewards</TEXT_25>
-        </div>
-
-        <LINE />
-
-        <ul style={{ padding: '0 12px' }}>
-          <li>
-            <TEXT_22>
-              A simple <strong>1%</strong> exchange fee
-            </TEXT_22>
-            <TEXT_15>1% listing fee for the first 60 days on our NFT exchange.</TEXT_15>
-          </li>
-          <li>
-            <TEXT_22>
-              For each listing you will receive <strong>25 $GOFX</strong>, up to the first <strong>100,000</strong>{' '}
-              listings.
-            </TEXT_22>
-            <TEXT_15>Up to 100,000 lisitings (We will re-asses after reaching the target).</TEXT_15>
-          </li>
-          <li>
-            <TEXT_22>
-              For each NFT sale you will receive <strong>50%</strong> of the sale fee in <strong>$GOFX</strong>.
-            </TEXT_22>
-            <TEXT_15>
-              If you sell an NFT for $100, we will split 1% or $1 worth of $GOFX to the buyer and seller
-              respectively.
-            </TEXT_15>
-          </li>
-        </ul>
-      </REWARD_DETAILS_CONTAINER>
-    </REWARD_INFO_TEXT>
-  )
-}
+      <ul style={{ padding: '0 12px' }}>
+        <li>
+          <TEXT_22>
+            A simple <strong>1%</strong> exchange fee
+          </TEXT_22>
+          <TEXT_15>1% listing fee for the first 60 days on our NFT exchange.</TEXT_15>
+        </li>
+        <li>
+          <TEXT_22>
+            For each listing you will receive <strong>25 $GOFX</strong>, up to the first <strong>100,000</strong>{' '}
+            listings.
+          </TEXT_22>
+          <TEXT_15>Up to 100,000 lisitings (We will re-asses after reaching the target).</TEXT_15>
+        </li>
+        <li>
+          <TEXT_22>
+            For each NFT sale you will receive <strong>50%</strong> of the sale fee in <strong>$GOFX</strong>.
+          </TEXT_22>
+          <TEXT_15>
+            If you sell an NFT for $100, we will split 1% or $1 worth of $GOFX to the buyer and seller
+            respectively.
+          </TEXT_15>
+        </li>
+      </ul>
+    </REWARD_DETAILS_CONTAINER>
+  </REWARD_INFO_TEXT>
+)
 
 export const RewardRedirectComponent: FC = () => {
   const history = useHistory()
   const { rewardToggle } = useRewardToggle()
+  const [apr, setApr] = useState(0)
 
   const handleStakeClick = () => {
     rewardToggle(false)
@@ -192,6 +166,29 @@ export const RewardRedirectComponent: FC = () => {
     rewardToggle(false)
   }
 
+  useEffect(() => {
+    ;(async () => {
+      fetchGOFXData()
+    })()
+  }, [])
+
+  const fetchGOFXData = async () => {
+    try {
+      const con = new Connection('https://solana-api.projectserum.com', 'confirmed')
+      const CONTROLLER_KEY = SDK_ADDRESS.MAINNET.GFX_CONTROLLER
+      const { data: controllerData } = await con.getAccountInfo(CONTROLLER_KEY)
+      const { stakingBalance, dailyReward } = await CONTROLLER_LAYOUT.decode(controllerData)
+      //@ts-ignore
+      const liqidity = Number(stakingBalance / BigInt(LAMPORTS_PER_SOL))
+      //@ts-ignore
+      const DR = Number(dailyReward / BigInt(LAMPORTS_PER_SOL))
+      const APR: number = (1 / liqidity) * DR * 365 * 100
+      setApr(APR)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   return (
     <FLEX_COL_CONTAINER>
       <CLOSE_ICON onClick={closeRewardModal}>
@@ -200,7 +197,7 @@ export const RewardRedirectComponent: FC = () => {
       <STAKE_TEXT>
         Stake your <BOLD_TEXT>$GOFX</BOLD_TEXT>
         <br /> and earn up to
-        <APR_TEXT>200% APR</APR_TEXT>
+        <APR_TEXT>{+apr.toFixed(2)}% APR</APR_TEXT>
       </STAKE_TEXT>
       <div style={{ textAlign: 'center' }}>
         <STAKE_BTN onClick={handleStakeClick}>Stake</STAKE_BTN>
