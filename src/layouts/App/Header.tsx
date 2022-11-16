@@ -125,7 +125,13 @@ export const Header: FC = () => {
 
   const slideModal = () => {
     if (rewardModal) {
-      return <ModalSlide rewardModal={rewardModal} modalType={MODAL_TYPES.REWARDS} rewardToggle={rewardToggle} />
+      return (
+        <ModalSlide
+          rewardModal={rewardModal}
+          modalType={MODAL_TYPES.REWARDS}
+          rewardToggle={!checkMobile() && rewardToggle}
+        />
+      )
     }
   }
 

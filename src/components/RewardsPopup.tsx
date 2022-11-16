@@ -37,7 +37,7 @@ const REWARD_BTN_TITLE = styled.span`
 `
 
 export const RewardsButton: FC = () => {
-  const { rewardModal, rewardToggle } = useRewardToggle()
+  const { rewardToggle } = useRewardToggle()
 
   const handleModalClick = () => {
     rewardToggle(true)
@@ -47,7 +47,6 @@ export const RewardsButton: FC = () => {
     <REWARDS_BTN onClick={handleModalClick}>
       <REWARD_BTN_TITLE>Rewards</REWARD_BTN_TITLE>
       <REWARDS_WITH_IMG src={'/img/assets/rewards.svg'} alt="rewards" />
-      {rewardModal && <RewardsPopup />}
     </REWARDS_BTN>
   )
 }
