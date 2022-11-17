@@ -55,7 +55,7 @@ const CollapsibleWrapper = styled.div<{ $collapse: boolean }>`
     $collapse ? 'linear-gradient(158.4deg, #5855FF 14.18%, #DC1FFF 82.14%);' : theme.bg20};
 
   img {
-    ${tw`h-2.5 w-2.5`}
+    ${tw`h-2.5 w-[14px]`}
   }
 `
 const RESPONSIVE_MENU = styled.ul`
