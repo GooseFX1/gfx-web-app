@@ -135,7 +135,7 @@ export const ExpandedContentMobile: FC<{
   onClickMax?: (x: string) => void
   onClickStake?: any
   onClickUnstake?: any
-  // TEMP_DEP_DISABLE onClickDeposit?: any
+  onClickDeposit?: any
   onClickWithdraw?: any
   isStakeLoading: boolean
   isWithdrawLoading?: boolean
@@ -158,7 +158,7 @@ export const ExpandedContentMobile: FC<{
   onClickUnstake,
   isStakeLoading,
   isUnstakeLoading,
-  // TEMP_DEP_DISABLE onClickDeposit,
+  onClickDeposit,
   withdrawClicked,
   userSOLBalance,
   setStakeAmt,
@@ -180,7 +180,7 @@ export const ExpandedContentMobile: FC<{
   const { publicKey } = useWallet()
   const { getTokenInfoForFarming } = useTokenRegistry()
   const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
-  const [process, setProcess] = useState<string>('Claim') //TEMP_DEP_DISABLE
+  const [process, setProcess] = useState<string>(isSSL ? 'Claim' : 'Stake') //TEMP_DEP_DISABLE
   const DISPLAY_DECIMAL = 3
   let userTokenBalance = useMemo(
     () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
@@ -275,9 +275,8 @@ export const ExpandedContentMobile: FC<{
             <STAKE_UNSTAKE>
               <OPERATION_BTN
                 className={process === 'Stake' ? 'selected' : ''}
-                // TEMP_DEP_DISABLE onClick={() => {
-                //   setProcess('Stake')
-                // }}
+                // TEMP_DEP_DISABLE
+                onClick={() => (isSSL ? null : setProcess('Stake'))}
               >
                 Deposit
               </OPERATION_BTN>
@@ -305,7 +304,7 @@ export const ExpandedContentMobile: FC<{
                     : setUnstakeAmt(parseFloat(e.target.value))
                 }
                 //TEMP_DEP_DISABLE
-                disabled={stakeProcess}
+                disabled={isSSL}
               />
               {!isSSL ? (
                 <div className="textMain">
@@ -355,27 +354,19 @@ export const ExpandedContentMobile: FC<{
                 {stakeProcess ? (notEnoughFunds ? `Not enough ${name}` : 'Deposit') : 'Unstake and Claim'}
               </STYLED_BTN>
             ) : (
-              // TEMP_DEP_DISABLE <STYLED_BTN
-              //   className={depositBtnClass}
-              //   disabled={SSLDisabledBtn}
-              //   loading={stakeProcess ? isStakeLoading : isUnstakeLoading}
-              //   onClick={() => (stakeProcess ? onClickDeposit() : withdrawClicked())}
-              // >
-              //   {stakeProcess
-              //     ? notEnoughFunds || zeroFunds
-              //       ? `Not enough ${name}`
-              //       : 'Deposit'
-              //     : !availableToMint
-              //     ? 'No funds to withdraw'
-              //     : 'Withdraw'}
-              // </STYLED_BTN>
               <STYLED_BTN
                 className={depositBtnClass}
                 disabled={SSLDisabledBtn}
                 loading={stakeProcess ? isStakeLoading : isUnstakeLoading}
-                onClick={() => withdrawClicked()}
+                onClick={() => (stakeProcess ? onClickDeposit() : withdrawClicked())}
               >
-                {!availableToMint ? 'No funds to withdraw' : 'Withdraw'}
+                {stakeProcess
+                  ? notEnoughFunds || zeroFunds
+                    ? `Not enough ${name}`
+                    : 'Deposit'
+                  : !availableToMint
+                  ? 'No funds to withdraw'
+                  : 'Withdraw'}
               </STYLED_BTN>
             )}
             {name === 'GOFX' ? <Reward>Daily rewards: {`${tokenData.rewards.toFixed(3)} ${name}`}</Reward> : ''}

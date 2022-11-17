@@ -66,21 +66,21 @@ const ExpandRowView: FC<{ farm: IFarmData; index: number }> = ({ farm, index }) 
 }
 
 const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
-  const { name, earned, currentlyStaked, type } = farm
-
   const DISPLAY_DECIMAL = 3
-  const [depositBtnClass, setDepositClass] = useState<string>('')
-  const [withdrawBtnClass, setWithdarwClass] = useState<string>('')
+  const { name, earned, currentlyStaked, type } = farm
+  const isSSL = type === 'SSL'
 
   const wallet = useWallet()
-  const SSL = type === 'SSL'
-  const { farmDataContext, farmDataSSLContext } = useFarmContext()
+  const { farmDataContext, farmDataSSLContext, counter, setCounter, setOperationPending } = useFarmContext()
   const { prices, stakeAccountKey, stakeProgram, SSLProgram } = usePriceFeedFarm()
+  const { network, connection } = useConnectionConfig()
+
+  const [withdrawBtnClass, setWithdarwClass] = useState<string>('')
+  const [depositBtnClass, setDepositClass] = useState<string>('')
   const [isStakeLoading, setIsStakeLoading] = useState<boolean>(false)
   const [isUnstakeLoading, setIsUnstakeLoading] = useState<boolean>(false)
   const { getUIAmount } = useAccounts()
-  const { connection } = useConnectionConfig()
-  const { counter, setCounter, setOperationPending } = useFarmContext()
+
   const tokenData = [...farmDataContext, ...farmDataSSLContext].find((farmData) => farmData.name === name)
   const tokenPrice = useMemo(() => {
     if (name === TOKEN_NAMES.USDC) {
@@ -93,14 +93,12 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
     return prices[`${name.toUpperCase()}/USDC`]
   }, [prices[`${name.toUpperCase()}/USDC`]])
 
-  const { publicKey } = useWallet()
   const { getTokenInfoForFarming } = useTokenRegistry()
-  const { network } = useConnectionConfig()
+  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, wallet.publicKey])
 
-  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
   let userTokenBalance = useMemo(
-    () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
-    [tokenInfo?.address, getUIAmount, publicKey, counter]
+    () => (wallet.publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
+    [tokenInfo?.address, getUIAmount, wallet.publicKey, counter]
   )
   const availableToMint =
     tokenData?.ptMinted >= 0 ? tokenData.currentlyStaked + tokenData.earned - tokenData.ptMinted : 0
@@ -127,6 +125,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
     name === TOKEN_NAMES.SOL
       ? parseFloat(userSOLBalance?.toFixed(3)) === 0
       : parseFloat(userTokenBalance?.toFixed(3)) === 0
+
   useEffect(() => {
     if (wallet.publicKey && name === TOKEN_NAMES.SOL) {
       const SOL = connection.getAccountInfo(wallet.publicKey)
@@ -377,13 +376,13 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
   ) : (
     <TOKEN_OPERATIONS_CONTAINER colSpan={7}>
       <div className="availableToMint">
-        {publicKey ? (
+        {wallet.publicKey ? (
           <>
             <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
               <div className="leftInner">
                 {wallet.publicKey && (
                   <STYLED_STAKED_EARNED_CONTENT>
-                    {SSL ? (
+                    {isSSL ? (
                       <AvailableToMintComp
                         availableToMintFiat={availableToMintFiat}
                         availableToMint={availableToMint}
@@ -407,50 +406,53 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
               <div className="rightInner">
                 <div>
                   <INPUT_CONTAINER>
+                    {/*TEMP_DEP_DISABLE <STYLED_INPUT
+                      placeholder={`0.00 ${name}`}
+                      type="number"
+                      ref={depositRef}
+                      onBlur={() => setDepositClass('')}
+                      onFocus={() => !zeroFunds && setDepositClass(' active')}
+                      value={stakeAmt}
+                      onChange={(e) => setStakeAmt(parseFloat(e.target.value))}
+                    /> */}
                     <STYLED_INPUT
                       type="number"
                       ref={depositRef}
-                      // TEMP_DEP_DISABLE placeholder={`0.00 ${name}`}
-                      // onBlur={() => setDepositClass('')}
-                      // onFocus={() => !zeroFunds && setDepositClass(' active')}
-                      // value={stakeAmt}
-                      // onChange={(e) => setStakeAmt(parseFloat(e.target.value))}
-                      disabled={true}
+                      placeholder={`0.00 ${name}`}
+                      onBlur={() => setDepositClass('')}
+                      onFocus={() => !zeroFunds && setDepositClass(' active')}
+                      value={!isSSL ? stakeAmt : null}
+                      onChange={(e) => (!isSSL ? setStakeAmt(parseFloat(e.target.value)) : null)}
+                      disabled={isSSL}
                     />
                     <div className="halfMaxText">
-                      {/* TEMP_DEP_DISABLE <div onClick={() => onClickHalf('stake')}>HALF</div>{' '}
+                      <div onClick={() => onClickHalf('stake')}>HALF</div>{' '}
                       <div onClick={() => onClickMax('stake')} className="text2">
                         MAX
-                      </div> */}
+                      </div>
                     </div>
                   </INPUT_CONTAINER>
                   {/* TEMP_DEP_DISABLE <OPERATIONS_BTN
                     className={depositBtnClass}
                     loading={isStakeLoading}
                     disabled={notEnoughFunds || isStakeLoading || zeroFunds}
-                    onClick={() => (SSL ? onClickDeposit() : onClickStake())}
+                    onClick={() => (isSSL ? onClickDeposit() : onClickStake())}
                   >
                     {zeroFunds
                       ? `Insufficient ${name}`
                       : notEnoughFunds
                       ? 'Not enough funds'
-                      : SSL
+                      : isSSL
                       ? 'Deposit'
                       : 'Stake'}
                   </OPERATIONS_BTN> */}
                   <OPERATIONS_BTN
                     className={depositBtnClass}
                     loading={isStakeLoading}
-                    disabled={true}
-                    onClick={() => (SSL ? onClickDeposit() : onClickStake())}
+                    disabled={isSSL}
+                    onClick={() => onClickDeposit()}
                   >
-                    {zeroFunds
-                      ? `Insufficient ${name}`
-                      : notEnoughFunds
-                      ? 'Not enough funds'
-                      : SSL
-                      ? 'Deposit Temp Unavailable'
-                      : 'Stake'}
+                    {zeroFunds ? `Insufficient ${name}` : notEnoughFunds ? 'Not enough funds' : 'Stake'}
                   </OPERATIONS_BTN>
                 </div>
 
@@ -461,7 +463,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
                       ref={withdrawRef}
                       onBlur={() => setWithdarwClass('')}
                       onFocus={() =>
-                        ((SSL && availableToMint) || tokenStakedPlusEarned) && setWithdarwClass(' active')
+                        ((isSSL && availableToMint) || tokenStakedPlusEarned) && setWithdarwClass(' active')
                       }
                       value={unstakeAmt}
                       onChange={(e) => setUnstakeAmt(parseFloat(e.target.value))}
@@ -479,11 +481,11 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
                   </INPUT_CONTAINER>
                   <OPERATIONS_BTN
                     className={withdrawBtnClass}
-                    onClick={() => (SSL ? withdrawClicked() : onClickUnstake())}
+                    onClick={() => (isSSL ? withdrawClicked() : onClickUnstake())}
                     loading={isUnstakeLoading}
-                    disabled={isUnstakeLoading || SSL ? !availableToMint : currentlyStaked + earned <= 0}
+                    disabled={isUnstakeLoading || isSSL ? !availableToMint : currentlyStaked + earned <= 0}
                   >
-                    {SSL ? (!availableToMint ? 'No funds to withdraw' : 'Withdraw') : 'Unstake and Claim'}
+                    {isSSL ? (!availableToMint ? 'No funds to withdraw' : 'Withdraw') : 'Unstake and Claim'}
                   </OPERATIONS_BTN>
                 </div>
               </div>
