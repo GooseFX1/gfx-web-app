@@ -450,7 +450,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
                     className={depositBtnClass}
                     loading={isStakeLoading}
                     disabled={isSSL}
-                    onClick={() => onClickDeposit()}
+                    onClick={() => (isSSL ? onClickDeposit() : onClickStake())}
                   >
                     {zeroFunds ? `Insufficient ${name}` : notEnoughFunds ? 'Not enough funds' : 'Stake'}
                   </OPERATIONS_BTN>
