@@ -1,16 +1,18 @@
 import styled, { AnyStyledComponent } from 'styled-components'
 import { Color } from '../types/theme'
 import { text } from '../theme'
+import tw from 'twin.macro'
 
 const { fontFamily } = text('Montserrat')
 
-export const H1 = (color?: Color): AnyStyledComponent => styled.h1`
-  font-family: ${fontFamily};
-  font-stretch: normal;
+export const H1 = styled.h1<{ $color: string }>`
+  font-family: 'Montserrat';
   font-style: normal;
-  line-height: normal;
-  letter-spacing: normal;
-  color: ${({ theme }) => color || theme.text1};
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  color: ${({ $color }) => $color};
+  ${tw`py-8 px-10`}
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     font-size: 2rem;
