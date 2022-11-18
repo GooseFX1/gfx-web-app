@@ -1,6 +1,4 @@
 import React, { FC, useCallback, useState } from 'react'
-import { logEvent } from 'firebase/analytics'
-import analytics from '../../analytics'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletName } from '@solana/wallet-adapter-base'
@@ -88,12 +86,6 @@ export const WalletsModal: FC = () => {
 
   const handleWalletClick = useCallback(
     (event: React.MouseEvent<HTMLElement>, walletName: WalletName<string>) => {
-      // analytics logger
-      const an = analytics()
-      an !== null &&
-        logEvent(an, 'wallet-selection', {
-          walletName: walletName
-        })
       select(walletName)
       handleCancel(event)
     },
