@@ -27,7 +27,7 @@ const numberFormater = new Intl.NumberFormat('en-US', {
 export const formatNumber = {
   format: (val?: number): string => {
     if (!val) {
-      return '--'
+      return '0.00'
     }
 
     return numberFormater.format(val)

@@ -13,7 +13,7 @@ export const StyledTableList = styled(Table)`
       height: 30px;
       ${theme.smallBorderRadius}
     }
-    .text {
+    .content {
       font-size: 12px;
       font-weight: 500;
       color: ${theme.text1};
@@ -37,7 +37,7 @@ export const StyledTableList = styled(Table)`
       padding-left: ${theme.margin(1)};
     }
   }
-  .from,
+  .sender,
   .to {
     font-size: 15px;
     font-weight: 600;
@@ -45,7 +45,7 @@ export const StyledTableList = styled(Table)`
     text-align: center;
   }
 
-  .text-normal {
+  .normal-text {
     font-size: 15px;
     font-weight: 500;
     color: ${theme.text1};
