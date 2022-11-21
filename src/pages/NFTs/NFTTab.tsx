@@ -5,16 +5,21 @@ import { Tabs } from 'antd'
 const { TabPane } = Tabs
 
 const NFT_TAB = styled.div`
-  min-height: 60vh;
+  min-height: 650px;
   z-index: 3;
-  margin-top: -${({ theme }) => theme.margin(6)};
+  margin-top: 65px;
+  width: 75vw;
+
+  @media (max-width: 500px) {
+    width: 100vw;
+  }
 
   .profile-tab-container,
   .profile-tab-pane,
   .ant-tabs-content {
     background: ${({ theme }) => theme.profileTabContainerBg};
     height: 100%;
-    border-radius: 20px 20px 0 0;
+    border-radius: 0 20px 0 0;
     overflow-x: hidden;
     overflow-y: scroll;
 

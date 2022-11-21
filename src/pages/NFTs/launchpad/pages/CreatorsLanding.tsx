@@ -241,7 +241,7 @@ export const CreatorsLanding: FC<{
         onCancel={() => showModal(false)}
         closeIcon={
           <div>
-            <img className="close-icon" src={`/img/assets/creatorsLanding/closeButton.svg`} alt="" />
+            <img className="close-icon" src={`/img/assets/creatorsLanding/closeButton.svg`} alt="close-icon" />
           </div>
         }
         footer={null}

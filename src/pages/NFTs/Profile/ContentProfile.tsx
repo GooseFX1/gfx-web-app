@@ -6,10 +6,18 @@ import { fetchNFTById } from '../../../api/NFTs/actions'
 import { NFTTab } from '../NFTTab'
 import NFTDisplay from './NFTDisplay'
 import Activity from './Activity'
+import styled from 'styled-components'
+import { Sidebar } from './Sidebar'
 
 type Props = {
   isSessionUser: boolean
 }
+
+const WRAPPER = styled.div`
+  display: flex;
+  height: 715px;
+  background: linear-gradient(0deg, rgba(19, 19, 19, 1) 17.43%, rgba(85, 50, 111, 1) 85.26%);
+`
 
 export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
   const {
@@ -51,11 +59,11 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
         name: `Collection (${currentUserParsedAccounts ? currentUserParsedAccounts.length : 0})`,
         component: <NFTDisplay parsedAccounts={currentUserParsedAccounts} type={'collected'} />
       },
-      {
-        order: '2',
-        name: `Created (${createdItems ? createdItems.length : 0})`,
-        component: <NFTDisplay parsedAccounts={createdItems} type={'created'} />
-      },
+      // {
+      //   order: '2',
+      //   name: `Created (${createdItems ? createdItems.length : 0})`,
+      //   component: <NFTDisplay parsedAccounts={createdItems} type={'created'} />
+      // },
       {
         order: '3',
         name: `Favorited (${favoritedItems ? favoritedItems.length : 0})`,
@@ -108,5 +116,10 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
     setFavoritedItems(favorites.map((f: any) => f.data[0]))
   }
 
-  return <NFTTab tabPanes={tabPanes} />
+  return (
+    <WRAPPER>
+      <Sidebar isSessionUser={isSessionUser} />
+      <NFTTab tabPanes={tabPanes} />
+    </WRAPPER>
+  )
 }
