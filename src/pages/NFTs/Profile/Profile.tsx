@@ -15,6 +15,7 @@ const PROFILE_CONTAINER = styled.div`
 
   .ant-tabs-top {
     overflow: initial;
+    position: relative;
     > .ant-tabs-nav {
       margin-bottom: 0;
       border-bottom: 1px solid ${({ theme }) => theme.bg1};
@@ -27,9 +28,6 @@ const PROFILE_CONTAINER = styled.div`
         .ant-tabs-nav-list {
           ${tw`sm:w-full sm:block sm:pt-2.5 overflow-scroll`}
           position: relative;
-          display: flex;
-          justify-content: space-around;
-          transition: transform 0.3s;
           height: 100%;
           width: 55%;
           margin-left: auto;
@@ -40,21 +38,27 @@ const PROFILE_CONTAINER = styled.div`
           }
 
           .ant-tabs-tab {
-            ${tw`sm:my-0 sm:mx-8`}
-            padding: 16px 0;
+            margin: 0 30px;
+            .ant-tabs-tab-btn {
+              ${tw`sm:my-0 sm:mx-8`}
+              padding: 16px 0;
+              color: ${({ theme }) => theme.text28};
+              font-size: 15px;
+            }
           }
           .ant-tabs-tab-active {
             .ant-tabs-tab-btn {
-              color: ${({ theme }) => theme.text7};
+              color: ${({ theme }) => theme.text29};
               font-weight: 600;
               position: relative;
+              font-size: 15px;
 
               &:before {
                 position: absolute;
                 content: '';
                 height: 7px;
                 width: 100%;
-                bottom: -28px;
+                bottom: -12px;
                 left: 50%;
                 background: rgba(88, 85, 255, 1);
                 z-index: 6;
