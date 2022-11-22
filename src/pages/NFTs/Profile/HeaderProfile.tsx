@@ -65,7 +65,6 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   const [settleBalanceModal, setSettleBalanceModal] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const handleCancel = () => setProfileModal(false)
-  const [randomBackground, setRandomBackground] = useState('')
 
   const currentUserProfile = useMemo(() => {
     if (nonSessionProfile !== undefined && !isSessionUser) {
@@ -99,16 +98,6 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   useEffect(() => {
     fetchEscrowPayment().then((escrowBalance: number | undefined) => setUserEscrowBalance(escrowBalance))
   }, [connected, publicKey])
-
-  useEffect(() => {
-    const backgroundArray = [
-      '/img/assets/redBackground.png',
-      '/img/assets/purpleBackground.png',
-      '/img/assets/multiBackground.png'
-    ]
-    const randomImage = backgroundArray[Math.floor(Math.random() * backgroundArray.length)]
-    setRandomBackground(randomImage)
-  }, [])
 
   const fetchEscrowPayment = async (): Promise<number | undefined> => {
     try {
@@ -300,11 +289,11 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   )
 
   return (
-    <StyledHeaderProfile mode={mode} background={randomBackground}>
+    <StyledHeaderProfile mode={mode}>
       {handleModal()}
       {checkMobile() ? (
         <div className="row" id="row">
-          <div style={{ position: checkMobile() ? 'static' : 'absolute', top: '24px', left: '24px' }}>
+          <div style={{ position: checkMobile() ? 'static' : 'absolute', top: '18px', left: '24px' }}>
             <FloatingActionButton height={40} onClick={() => history.goBack()}>
               <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
             </FloatingActionButton>
@@ -330,7 +319,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
         </div>
       )}
 
-      {!checkMobile() && (
+      {/* {!checkMobile() && (
         <div className="avatar-profile-wrap">
           <Image
             className="avatar-profile"
@@ -347,91 +336,91 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
             <img className="edit-icon" src={`/img/assets/edit.svg`} alt="" onClick={() => setProfileModal(true)} />
           )}
         </div>
-      )}
-      <div
-        style={{
-          display: checkMobile() ? 'flex' : 'block',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          height: checkMobile() ? '35px' : 'auto'
-        }}
-      >
-        <div className="name-wrap">
-          {currentUserProfile === undefined ? (
-            <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
-          ) : (
-            <span className="name">
-              {currentUserProfile.nickname !== null && currentUserProfile.nickname.length > 0
-                ? currentUserProfile.nickname
-                : 'Unnamed'}
-            </span>
-          )}
-          {currentUserProfile && currentUserProfile.is_verified && (
-            <img className="check-icon" src={`/img/assets/check-icon.svg`} alt="is-verified-user" />
-          )}
-        </div>
-        {currentUserProfile === undefined ? (
-          <div className="social-list">
-            {[1, 2, 3, 4].map((_, key) => (
-              <span className="social-item" key={key}>
-                <SkeletonCommon width="35px" height="35px" borderRadius="50%" />
+      )} */}
+      {checkMobile() && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            height: '35px'
+          }}
+        >
+          <div className="name-wrap">
+            {currentUserProfile === undefined ? (
+              <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
+            ) : (
+              <span className="name">
+                {currentUserProfile.nickname !== null && currentUserProfile.nickname.length > 0
+                  ? currentUserProfile.nickname
+                  : 'Unnamed'}
               </span>
-            ))}
-          </div>
-        ) : currentUserProfile.twitter_link &&
-          currentUserProfile.instagram_link &&
-          currentUserProfile.telegram_link &&
-          currentUserProfile.youtube_link ? (
-          <div className="social-list">
-            {currentUserProfile.twitter_link && (
-              <a
-                className="social-item"
-                href={validExternalLink(currentUserProfile.twitter_link)}
-                target={'_blank'}
-                rel={'noreferrer'}
-              >
-                <img className="social-icon" src={`/img/assets/twitter.svg`} alt="" />
-              </a>
             )}
-            {currentUserProfile.instagram_link && (
-              <a
-                className="social-item"
-                href={validExternalLink(currentUserProfile.instagram_link)}
-                target={'_blank'}
-                rel={'noreferrer'}
-              >
-                <img className="social-icon" src={`/img/assets/instagram.svg`} alt="" />
-              </a>
-            )}
-            {currentUserProfile.telegram_link && (
-              <a
-                className="social-item"
-                href={validExternalLink(currentUserProfile.telegram_link)}
-                target={'_blank'}
-                rel={'noreferrer'}
-              >
-                <img className="social-icon" src={`/img/assets/facebook.svg`} alt="" />
-              </a>
-            )}
-            {currentUserProfile.youtube_link && (
-              <a
-                className="social-item-yt"
-                href={validExternalLink(currentUserProfile.youtube_link)}
-                target={'_blank'}
-                rel={'noreferrer'}
-              >
-                <img className="social-icon" src={`/img/assets/youtube.png`} alt="" />
-              </a>
+            {currentUserProfile && currentUserProfile.is_verified && (
+              <img className="check-icon" src={`/img/assets/check-icon.svg`} alt="is-verified-user" />
             )}
           </div>
-        ) : (
-          checkMobile() && (
+          {currentUserProfile === undefined ? (
+            <div className="social-list">
+              {[1, 2, 3, 4].map((_, key) => (
+                <span className="social-item" key={key}>
+                  <SkeletonCommon width="35px" height="35px" borderRadius="50%" />
+                </span>
+              ))}
+            </div>
+          ) : currentUserProfile.twitter_link &&
+            currentUserProfile.instagram_link &&
+            currentUserProfile.telegram_link &&
+            currentUserProfile.youtube_link ? (
+            <div className="social-list">
+              {currentUserProfile.twitter_link && (
+                <a
+                  className="social-item"
+                  href={validExternalLink(currentUserProfile.twitter_link)}
+                  target={'_blank'}
+                  rel={'noreferrer'}
+                >
+                  <img className="social-icon" src={`/img/assets/twitter.svg`} alt="" />
+                </a>
+              )}
+              {currentUserProfile.instagram_link && (
+                <a
+                  className="social-item"
+                  href={validExternalLink(currentUserProfile.instagram_link)}
+                  target={'_blank'}
+                  rel={'noreferrer'}
+                >
+                  <img className="social-icon" src={`/img/assets/instagram.svg`} alt="" />
+                </a>
+              )}
+              {currentUserProfile.telegram_link && (
+                <a
+                  className="social-item"
+                  href={validExternalLink(currentUserProfile.telegram_link)}
+                  target={'_blank'}
+                  rel={'noreferrer'}
+                >
+                  <img className="social-icon" src={`/img/assets/facebook.svg`} alt="" />
+                </a>
+              )}
+              {currentUserProfile.youtube_link && (
+                <a
+                  className="social-item-yt"
+                  href={validExternalLink(currentUserProfile.youtube_link)}
+                  target={'_blank'}
+                  rel={'noreferrer'}
+                >
+                  <img className="social-icon" src={`/img/assets/youtube.png`} alt="" />
+                </a>
+              )}
+            </div>
+          ) : (
             <div className="complete-profile" onClick={() => setProfileModal(true)}>
               Complete Profile
             </div>
-          )
-        )}
-      </div>
+          )}
+        </div>
+      )}
       {!checkMobile() && (
         <div className="action-wrap">
           {isSessionUser && connected && publicKey ? (
@@ -443,16 +432,21 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
           ) : (
             <span></span>
           )}
-          {isSessionUser && connected && publicKey && (
+          {
+            <div className="complete-profile" onClick={() => setProfileModal(true)}>
+              Complete Profile
+            </div>
+          }
+          {/* {isSessionUser && connected && publicKey && (
             <button className="btn-create" onClick={() => history.push('/NFTs/create')}>
               <span>Create</span>
             </button>
-          )}
-          <DROPDOWN overlay={menu} trigger={['click']} placement="bottomRight" align={{ offset: [0, 26] }}>
+          )} */}
+          {/* <DROPDOWN overlay={menu} trigger={['click']} placement="bottomRight" align={{ offset: [0, 26] }}>
             <Button style={{ height: 'auto' }}>
               <img className="collection-more-icon" src={`/img/assets/more_icon.svg`} alt="more" />
             </Button>
-          </DROPDOWN>
+          </DROPDOWN> */}
         </div>
       )}
     </StyledHeaderProfile>

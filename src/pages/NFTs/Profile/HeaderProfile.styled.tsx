@@ -5,18 +5,12 @@ import { Modal } from '../../../components'
 export const StyledHeaderProfile = styled.div<{ mode?: string; background?: string }>`
   ${({ theme, mode, background }) => `
   position: relative;
-  height: 30vh;
+  height: 24vh;
   padding: ${theme.margin(3)};
   padding-bottom: ${theme.margin(8)};
-  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
-  background: ${
-    mode === 'dark'
-      ? 'linear-gradient(180deg, rgba(19, 19, 19, 1) 17.43%, rgba(85, 50, 111, 1) 85.26%)'
-      : 'linear-gradient(180deg, #eeeeee 17.43%, #C986FB 85.26%);'
-  };
 
   @media(max-width: 500px){
     height: 50vh;
@@ -135,8 +129,16 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
     justify-content: center;
     align-items: center;
     border-radius: 45px;
-    color: #ffffff;
-    font-size: 14px;
+    color: ${theme.white};
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    top: 15vh;
+    @media(max-width: 500px){
+      font-size: 14px;
+      position: static;
+    }
   }
   .action-wrap {    
     margin-left: auto;
@@ -170,7 +172,9 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
       background-color: ${theme.secondary3};
       border: none;
       cursor: pointer;
-      ${theme.roundedBorders}
+      ${theme.roundedBorders};
+      position: relative;
+      top: 15vh;
     }
   }
 `}
