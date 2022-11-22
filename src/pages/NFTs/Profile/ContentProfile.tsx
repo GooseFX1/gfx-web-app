@@ -13,10 +13,9 @@ type Props = {
   isSessionUser: boolean
 }
 
-const WRAPPER = styled.div`
+const WRAPPER = styled.div<{ background?: string }>`
   display: flex;
   height: 715px;
-  background: linear-gradient(0deg, rgba(19, 19, 19, 1) 17.43%, rgba(85, 50, 111, 1) 85.26%);
 `
 
 export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
