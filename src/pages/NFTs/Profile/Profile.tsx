@@ -9,9 +9,13 @@ import { useNFTProfile } from '../../../context'
 import tw from 'twin.macro'
 
 //#region styles
-const PROFILE_CONTAINER = styled.div`
+const PROFILE_CONTAINER = styled.div<{ background?: string }>`
+  ${({ background }) => `
   display: flex;
   flex-direction: column;
+  background : url(${background});
+  background-repeat: no-repeat;
+  background-size: 100%;
 
   .ant-tabs-top {
     overflow: initial;
@@ -72,12 +76,15 @@ const PROFILE_CONTAINER = styled.div`
       }
     }
   }
+`}
 `
 //#endregion
 
 export const Profile: FC = (): JSX.Element => {
   const history = useHistory()
   const params = useParams<IAppParams>()
+  const [randomBackground, setRandomBackground] = useState('')
+
   const {
     sessionUser,
     setUserActivity,
@@ -110,9 +117,19 @@ export const Profile: FC = (): JSX.Element => {
     }
   }, [sessionUser, publicKey, connected, params.userAddress])
 
+  useEffect(() => {
+    const backgroundArray = [
+      '/img/assets/redBackground.png',
+      '/img/assets/purpleBackground.png',
+      '/img/assets/multiBackground.png'
+    ]
+    const randomImage = backgroundArray[Math.floor(Math.random() * backgroundArray.length)]
+    setRandomBackground(randomImage)
+  }, [])
+
   return (
-    isSessionUser !== null && (
-      <PROFILE_CONTAINER>
+    isSessionUser !== undefined && (
+      <PROFILE_CONTAINER background={randomBackground}>
         <HeaderProfile isSessionUser={isSessionUser} />
         <ContentProfile isSessionUser={isSessionUser} />
       </PROFILE_CONTAINER>
