@@ -1,15 +1,101 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, FC } from 'react'
 import axios from 'axios'
 import { Row, Col } from 'antd'
 import { checkMobile } from '../../../utils'
 import { ParsedAccount } from '../../../web3'
 import { Card } from '../Collection/Card'
 import NoContent from './NoContent'
-import { SearchBar, Loader } from '../../../components'
+import { SearchBar, Loader, ArrowDropdown } from '../../../components'
 import { useNFTProfile } from '../../../context'
 import { StyledTabContent } from './TabContent.styled'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import debounce from 'lodash.debounce'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import { CenteredDiv } from '../../../styles'
+
+const WRAPPER = styled.div`
+  background-color: ${({ theme }) => theme.primary3};
+  position: absolute;
+  left: 367px;
+  height: 40px;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  width: 115px;
+  border-radius: 59px;
+  display: flex;
+  justify-content: center;
+
+  .ant-row {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+  }
+`
+
+const REFRESH = styled.div`
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  right: 110px;
+  cursor: pointer;
+`
+const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
+  ${tw`h-[25px] w-[50px] rounded-[40px] cursor-pointer`}
+  border-radius: 30px;
+  background-image: linear-gradient(to right, #f7931a 25%, #ac1cc7 100%);
+  position: absolute;
+  right: 20px;
+  top: 30px;
+
+  > div {
+    ${tw`h-[30px] w-[30px]`}
+    ${({ theme }) => theme.roundedBorders}
+    box-shadow: 0 3.5px 3.5px 0 rgba(0, 0, 0, 0.25);
+    background-image: url('/img/assets/solana-logo.png');
+    background-position: center; 
+    background-size: 100%;
+    background-repeat: no-repeat;
+    transform: translateX(${({ $mode }) => ($mode ? '-12px' : '12px')});
+`
+
+const DROPDOWN_WRAPPER = styled.div`
+  padding: 12px;
+  width: 115px;
+  height: 98px;
+  border-radius: 5px;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  background-color: ${({ theme }) => theme.bg23};
+
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  input[type='radio'] {
+    width: 15px;
+    height: 15px;
+    appearance: none;
+    border-radius: 50%;
+    outline: none;
+    background: ${({ theme }) => theme.bg24};
+    accent-color: yellow;
+    cursor: pointer;
+  }
+
+  input[type='radio']:checked {
+    background-image: linear-gradient(111deg, #f7931a 11%, #ac1cc7 94%);
+    border: 3px solid #1c1c1c;
+  }
+`
+
+interface Props {
+  nftFilterArr: string[]
+  setNftFilter: (index: number) => void
+}
 
 interface INFTDisplay {
   type: 'collected' | 'created' | 'favorited'
@@ -23,6 +109,9 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const [filteredCollectedItems, setFilteredCollectedItems] = useState<ISingleNFT[]>()
   const [search, setSearch] = useState<string>('')
   const [loading, _setLoading] = useState<boolean>(false)
+  const [isSol, setIsSol] = useState<boolean>(true)
+  const nftFilterArr = ['All', 'Offers', 'On Sell']
+  const [nftFilter, setNftFilter] = useState<number>(0)
 
   const activePointRef = useRef(collectedItems)
   const activePointLoader = useRef(loading)
@@ -31,6 +120,10 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const setCollectedItemsPag = (x) => {
     activePointRef.current = x // keep updated
     setCollectedItems(x)
+  }
+
+  const toggleSol = () => {
+    setIsSol((prev) => !prev)
   }
 
   const setLoading = (x) => {
@@ -101,6 +194,27 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     handleScroll()
   }, 100)
 
+  const Menu: FC<Props> = ({ nftFilterArr, setNftFilter }): JSX.Element => (
+    <>
+      <DROPDOWN_WRAPPER>
+        {nftFilterArr.map((item, index) => (
+          <div key={index}>
+            <span>{item}</span>
+            <input
+              type="radio"
+              value={item}
+              name="nft_filter"
+              checked={index === nftFilter}
+              onChange={() => {
+                setNftFilter(index)
+              }}
+            />
+          </div>
+        ))}
+      </DROPDOWN_WRAPPER>
+    </>
+  )
+
   const handleScroll = () => {
     const border = document.getElementById('border')
     if (border !== null) {
@@ -116,9 +230,31 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   return (
     <StyledTabContent>
       {!checkMobile() && (
-        <div className="actions-group">
-          <SearchBar className={'profile-search-bar'} filter={search} setFilter={setSearch} />
-        </div>
+        <>
+          <div className="actions-group">
+            <SearchBar className={'profile-search-bar'} filter={search} setFilter={setSearch} />
+          </div>
+          <WRAPPER>
+            <ArrowDropdown
+              measurements="16px"
+              offset={[4, 8]}
+              placement="bottom"
+              overlay={<Menu nftFilterArr={nftFilterArr} setNftFilter={setNftFilter} />}
+              onVisibleChange={() => {
+                console.log('haha')
+                //TODO
+              }}
+            >
+              <div className="active">{nftFilterArr[nftFilter]}</div>
+            </ArrowDropdown>
+          </WRAPPER>
+          <REFRESH>
+            <img src="/img/assets/refreshButton.png" alt="refresh" />
+          </REFRESH>
+          <Toggle $mode={isSol} onClick={toggleSol}>
+            <div />
+          </Toggle>
+        </>
       )}
       {filteredCollectedItems === undefined ? (
         <div className="profile-content-loading">
