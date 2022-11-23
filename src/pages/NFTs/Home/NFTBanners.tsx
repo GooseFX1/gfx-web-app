@@ -81,6 +81,11 @@ const SLIDER_ITEM = styled.div<{ $url: string }>`
     width: auto;
   }
 
+  .logo {
+    width: 84px;
+    height: 77px;
+  }
+
   .home-slider-content {
     /* width: 100%; */
     text-align: center;
@@ -132,8 +137,8 @@ const settings = {
   slidesToShow: 3,
   initialSlide: 0,
   arrows: true,
-  variableWidth: checkMobile() ? false : true,
-  nextArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-next" />
+  variableWidth: checkMobile() ? false : true
+  // nextArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-next" />
   //prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-previous" />
 }
 
@@ -150,7 +155,7 @@ export const NFTBanners = ({ showBanner }: any) => {
       <CAROUSEL_WRAPPER showBanner={showBanner}>
         {modal && <CreatorsLanding showModal={showModal} />}
         <Slider {...settings}>
-          <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/DailySaleCollectionsBanner.svg`}></SLIDER_ITEM>
+          <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/DailySaleCollectionsBanner.png`} />
 
           <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/NestQuest.png`}>
             <div className="home-slider-content">
@@ -187,7 +192,24 @@ export const NFTBanners = ({ showBanner }: any) => {
               </TERTIERY_BTN>
             </div>
           </SLIDER_ITEM>
-          <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/MultichainBanner.svg`}></SLIDER_ITEM>
+          <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/multiChainBg.png`}>
+            <div className="home-slider-content">
+              <h1 className="home-slider-title">
+                <img className="logo" src={`${process.env.PUBLIC_URL}/img/assets/multiChainLogo.png`} alt="" />
+              </h1>
+              <h1 className="home-slider-title">View Live Mints</h1>
+              <TERTIERY_BTN
+                className="home-slider-button"
+                height={'30px'}
+                status="action"
+                width={'140px'}
+                onClick={handleCreatorApply}
+              >
+                <span>More info</span>
+              </TERTIERY_BTN>
+            </div>
+          </SLIDER_ITEM>
+          {/* <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/MultichainBanner.svg`}></SLIDER_ITEM> */}
         </Slider>
         <div className="fade"></div>
       </CAROUSEL_WRAPPER>
