@@ -1,15 +1,39 @@
-const CracoLessPlugin = require('craco-less')
+const CracoSwcPlugin = require('craco-swc')
 const path = require('path')
 const webpack = require('webpack')
 
 module.exports = {
   plugins: [
     {
-      plugin: CracoLessPlugin,
+      plugin: {
+        ...CracoSwcPlugin,
+        // overrideCracoConfig: ({ cracoConfig }) => {
+        //   if (typeof cracoConfig.eslint.enable !== 'undefined') {
+        //     cracoConfig.disableEslint = !cracoConfig.eslint.enable
+        //   }
+        //   delete cracoConfig.eslint
+        //   return cracoConfig
+        // },
+        overrideWebpackConfig: ({ webpackConfig, cracoConfig }) => {
+          if (typeof cracoConfig.disableEslint !== 'undefined' && cracoConfig.disableEslint === true) {
+            webpackConfig.plugins = webpackConfig.plugins.filter(
+              (instance) => instance.constructor.name !== 'ESLintWebpackPlugin'
+            )
+          }
+          return webpackConfig
+        }
+      },
       options: {
-        lessLoaderOptions: {
-          lessOptions: {
-            javascriptEnabled: true
+        swcLoaderOptions: {
+          jsc: {
+            externalHelpers: true,
+            target: 'es5',
+            parser: {
+              syntax: 'typescript',
+              tsx: true,
+              dynamicImport: true,
+              exportDefaultFrom: true
+            }
           }
         }
       }
@@ -43,7 +67,10 @@ module.exports = {
       return webpackConfig
     },
     plugins: [
-      new webpack.NormalModuleReplacementPlugin(/@ledgerhq\/devices\/hid-framing/, '@ledgerhq/devices/lib/hid-framing')
+      new webpack.NormalModuleReplacementPlugin(
+        /@ledgerhq\/devices\/hid-framing/,
+        '@ledgerhq/devices/lib/hid-framing'
+      )
     ]
   }
 }
