@@ -40,12 +40,13 @@ export interface Colors {
   text27: Color
   text28: Color
   text29: Color
+  text30: Color
   textWhitePurple: Color
   comingSoon: Color
   blackToGrey: Color
   tableBorder: Color
   borderBottom: Color
-
+  bgForNFTCollection: Color
   // backgrounds / greys
   bg0: Color
   bg1: Color
@@ -74,6 +75,7 @@ export interface Colors {
   lpbg: Color
   pbbg: Color
   goBtn: Color
+  backBtnBg: Color
   innerCircle: Color
   circleBoxShadow: Color
   swapSides1: Color

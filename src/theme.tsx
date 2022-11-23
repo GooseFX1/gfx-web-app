@@ -78,6 +78,7 @@ export function colors(mode: string): Colors {
     text27: mode === 'dark' ? '#b5b5b5' : '#eee',
     text28: mode === 'dark' ? '#ffffff' : '#3c3c3c',
     text29: mode === 'dark' ? '#EEEEEE' : '#636363',
+    text30: mode === 'dark' ? '#eeeeee' : '#3c3c3c',
 
     textWhitePurple: mode === 'dark' ? '#fff' : '#8d4cdd',
 
@@ -116,7 +117,9 @@ export function colors(mode: string): Colors {
     bg20: mode === 'dark' ? '#1c1c1c' : white,
     bg21: mode === 'dark' ? '#1c1c1c' : '#3c3c3c',
     bg22: mode === 'dark' ? '#131313' : '#cacaca',
-    bg23: mode === 'dark' ? '#272727' : '#EEEEEE',
+    bg23: mode === 'dark' ? '#272727' : '#e2e2e2',
+    bgForNFTCollection: mode === 'dark' ? '#131313' : '#ffffff',
+    backBtnBg: mode === 'dark' ? '#2a2a2a' : '#5855ff',
 
     tableHeader: mode === 'dark' ? '#1c1c1c' : '#636363',
     tokenBorder: mode === 'dark' ? '#3c3c3c' : '#cacaca',
