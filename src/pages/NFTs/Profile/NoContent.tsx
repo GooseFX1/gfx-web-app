@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
+import { useDarkMode } from '../../../context'
 
 const NO_CONTENT = styled.div`
   display: flex;
@@ -10,6 +11,10 @@ const NO_CONTENT = styled.div`
   text-align: center;
   padding: 16px 0;
 
+  .spacing {
+    margin-top: 250px;
+  }
+
   .no-data-image {
     max-width: 160px;
     margin-bottom: 20px;
@@ -17,13 +22,13 @@ const NO_CONTENT = styled.div`
   .main-text {
     font-size: 17px;
     font-weight: 600;
-    color: ${({ theme }) => theme.text4};
+    color: ${({ theme }) => theme.text32};
     margin-bottom: 5px;
   }
   .sub-text {
     font-size: 13px;
     font-weight: 500;
-    color: ${({ theme }) => theme.text4};
+    color: ${({ theme }) => theme.text30};
   }
   .btn {
     min-width: 132px;
@@ -31,6 +36,7 @@ const NO_CONTENT = styled.div`
     background: #9625ae;
     margin-top: 30px;
     font-size: 12px;
+    font-weight: 600;
     color: #fff;
     border: none;
     border-radius: 41px;
@@ -48,22 +54,22 @@ interface Props {
 
 const options = {
   collected: {
-    mainText: 'No NFT’s Collected',
-    subText: 'Let’s start your collection, go and buy your 1st NFT',
+    mainText: 'No Collection',
+    subText: 'Start adding NFTs to your collection',
     textButton: 'Explore NFT’s',
-    bgButton: '#9625ae'
+    bgButton: '#5855ff'
   },
-  created: {
-    mainText: 'No NFT’s Created',
-    subText: 'Start your journey as a creator today.',
-    textButton: 'Create NFT',
-    bgButton: '#3735bb'
-  },
+  // created: {
+  //   mainText: 'No NFT’s Created',
+  //   subText: 'Start your journey as a creator today.',
+  //   textButton: 'Create NFT',
+  //   bgButton: '#3735bb'
+  // },
   favorited: {
-    mainText: 'No NFT’s Liked',
+    mainText: 'No Favorites',
     subText: 'Explore and like your most favorite ones.',
     textButton: 'Explore NFT’s',
-    bgButton: '#9625ae'
+    bgButton: '#5855ff'
   },
   activity: {
     mainText: 'No Recent Activity',
@@ -75,6 +81,7 @@ const options = {
 const NoContent = ({ type }: Props) => {
   const history = useHistory()
   const obj = options[type]
+  const { mode } = useDarkMode()
 
   const handleNoContentClick = () => {
     switch (type) {
@@ -94,8 +101,12 @@ const NoContent = ({ type }: Props) => {
 
   return (
     <NO_CONTENT>
-      <div>
-        <img className="no-data-image" src={`/img/assets/${type}-no-data.png`} alt="" />
+      <div className="spacing">
+        <img
+          className="no-data-image"
+          src={`/img/assets/${type}-no-data-${mode === 'dark' ? 'dark' : 'lite'}.png`}
+          alt={`no-${type}-found`}
+        />
         <div className="main-text">{obj.mainText}</div>
         <div className="sub-text">{obj.subText}</div>
         {obj.textButton && (
