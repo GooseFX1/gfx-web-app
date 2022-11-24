@@ -20,7 +20,7 @@ const WIDTH_FROM = {
 const mediaWidthTemplatesUpTo: {
   [width in keyof typeof WIDTH_UP_TO]: typeof css
 } = Object.keys(WIDTH_UP_TO).reduce((accumulator, size) => {
-  ;(accumulator as any)[size] = (a: any, b: any, c: any) => css`
+  ; (accumulator as any)[size] = (a: any, b: any, c: any) => css`
     @media (max-width: ${(WIDTH_UP_TO as any)[size]}px) {
       ${css(a, b, c)}
     }
@@ -31,7 +31,7 @@ const mediaWidthTemplatesUpTo: {
 const mediaWidthTemplatesFrom: {
   [width in keyof typeof WIDTH_FROM]: typeof css
 } = Object.keys(WIDTH_FROM).reduce((accumulator, size) => {
-  ;(accumulator as any)[size] = (a: any, b: any, c: any) => css`
+  ; (accumulator as any)[size] = (a: any, b: any, c: any) => css`
     @media (min-width: ${(WIDTH_FROM as any)[size]}px) {
       ${css(a, b, c)}
     }
