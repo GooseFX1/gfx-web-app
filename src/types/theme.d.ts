@@ -42,7 +42,7 @@ export interface Colors {
   text29: Color
   text30: Color
   text31: Color
-
+  text32: Color
   textWhitePurple: Color
   comingSoon: Color
   blackToGrey: Color

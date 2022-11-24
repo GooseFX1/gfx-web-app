@@ -1,15 +1,15 @@
 /* eslint-disable */
 import { FC, useMemo, useState } from 'react'
-import { Image } from 'antd'
+import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { useAccounts, useDarkMode, useNFTProfile } from '../../../context'
 import { checkMobile, notify, truncateAddress } from '../../../utils'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { PopupProfile } from './PopupProfile'
 import { Share } from '../Share'
 import { generateTinyURL } from '../../../api/tinyUrl'
 import { WRAPPED_SOL_MINT } from '@jup-ag/core'
 import { formatNumber } from '../launchpad/candyMachine/utils'
+import { IAppParams } from '../../../types/app_params'
 
 const PROFILE = styled.div`
   width: 25vw;
@@ -191,18 +191,17 @@ export const Sidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
       return undefined
     }
   }, [isSessionUser, sessionUser, nonSessionProfile])
-  const { connected, publicKey } = useWallet()
   const { mode } = useDarkMode()
   const [profileModal, setProfileModal] = useState(false)
   const [shareModal, setShareModal] = useState(false)
   const handleCancel = () => setProfileModal(false)
-  const base58 = useMemo(() => publicKey?.toBase58(), [publicKey])
   const { getUIAmount } = useAccounts()
   const solAmount = getUIAmount(WRAPPED_SOL_MINT.toBase58())
   const userSol = formatNumber.format(solAmount)
-  const [twitterHover, setTwitterHover] = useState(false)
-  const [telegramHover, setTelegramHover] = useState(false)
-  const [discordHover, setDiscordHover] = useState(false)
+  const [twitterHover, setTwitterHover] = useState<boolean>(false)
+  const [telegramHover, setTelegramHover] = useState<boolean>(false)
+  const [discordHover, setDiscordHover] = useState<boolean>(false)
+  const params = useParams<IAppParams>()
 
   const handleModal = () => {
     if (profileModal) {
@@ -290,34 +289,35 @@ export const Sidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
               <img
                 className="avatar-profile"
                 src={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-                alt="user-image"
+                alt="avatar-image"
                 height="116px"
                 width="116px"
               />
             )}
 
-            {connected && currentUserProfile && isSessionUser ? (
+            {isSessionUser && currentUserProfile && currentUserProfile.profile_pic_link ? (
               <img
                 className="icon"
                 src={`/img/assets/edit.svg`}
                 alt="edit-image"
                 onClick={() => setProfileModal(true)}
               />
-            ) : (
+            ) : isSessionUser && currentUserProfile && !currentUserProfile.profile_pic_link ? (
               <img
                 className="icon"
                 src={`/img/assets/addImage.svg`}
                 alt="add-image"
                 onClick={() => setProfileModal(true)}
               />
+            ) : (
+              <></>
             )}
           </div>
         )}
         {currentUserProfile &&
         currentUserProfile.twitter_link &&
         currentUserProfile.instagram_link &&
-        currentUserProfile.telegram_link &&
-        currentUserProfile.youtube_link ? (
+        currentUserProfile.telegram_link ? (
           <div className="social-list">
             {currentUserProfile.twitter_link && (
               <a
@@ -387,15 +387,17 @@ export const Sidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
           </div>
         )}
       </div>
-      <SCAN_SHARE>
-        <span>{base58 && truncateAddress(base58)}</span>
-        <a href="">
-          <img src="/img/assets/solscanBlack.svg" alt="solscan-icon" className="solscan-img" />
-        </a>
-        <div onClick={() => setShareModal(true)} className="share-img">
-          <img src="/img/assets/shareBlue.svg" height="40px" width="40px" />
-        </div>
-      </SCAN_SHARE>
+      {params && params.userAddress && (
+        <SCAN_SHARE>
+          <span>{truncateAddress(params.userAddress)}</span>
+          <a href={`https://solscan.io/account/${params.userAddress}`} target="_blank">
+            <img src="/img/assets/solscanBlack.svg" alt="solscan-icon" className="solscan-img" />
+          </a>
+          <div onClick={() => setShareModal(true)} className="share-img">
+            <img src="/img/assets/shareBlue.svg" height="40px" width="40px" />
+          </div>
+        </SCAN_SHARE>
+      )}
       {currentUserProfile && currentUserProfile.bio ? (
         <div className="bio">{currentUserProfile.bio}</div>
       ) : (
@@ -410,12 +412,14 @@ export const Sidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
           Track your colection portfolio like <br /> never before!
         </div>
       </div>
-      <SOL>
-        <div>Wallet Ballance</div>
-        <span>{userSol ? userSol : '0.00'}</span>
-        <span className="sol">SOL</span>
-        <img src="/img/crypto/sol.png" alt="sol-icon" />
-      </SOL>
+      {isSessionUser && (
+        <SOL>
+          <div>Wallet Ballance</div>
+          <span>{userSol ? userSol : '0.00'}</span>
+          <span className="sol">SOL</span>
+          <img src="/img/crypto/sol.png" alt="sol-icon" />
+        </SOL>
+      )}
     </PROFILE>
   )
 }
