@@ -432,11 +432,11 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
           ) : (
             <span></span>
           )}
-          {
+          {isSessionUser && connected && publicKey && (
             <div className="complete-profile" onClick={() => setProfileModal(true)}>
               Complete Profile
             </div>
-          }
+          )}
           {/* {isSessionUser && connected && publicKey && (
             <button className="btn-create" onClick={() => history.push('/NFTs/create')}>
               <span>Create</span>
