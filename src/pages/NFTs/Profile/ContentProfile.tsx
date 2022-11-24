@@ -8,6 +8,7 @@ import NFTDisplay from './NFTDisplay'
 import Activity from './Activity'
 import styled from 'styled-components'
 import { Sidebar } from './Sidebar'
+import { checkMobile } from '../../../utils'
 
 type Props = {
   isSessionUser: boolean
@@ -117,7 +118,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
 
   return (
     <WRAPPER>
-      <Sidebar isSessionUser={isSessionUser} />
+      {!checkMobile() && <Sidebar isSessionUser={isSessionUser} />}
       <NFTTab tabPanes={tabPanes} />
     </WRAPPER>
   )
