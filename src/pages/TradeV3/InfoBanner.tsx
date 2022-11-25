@@ -2,7 +2,7 @@ import { Skeleton } from 'antd'
 import React, { FC, useState, useMemo } from 'react'
 import styled from 'styled-components'
 import { useCrypto, usePriceFeed } from '../../context'
-//import { DropdownPairs } from './DropdownPairs'
+import { DropdownPairs } from './DropdownPairs'
 
 const INFO_WRAPPER = styled.div`
   padding: 0px 30px;
@@ -228,7 +228,7 @@ export const InfoBanner: FC<{
           Perps
         </span>
       </div>
-      {/* <DropdownPairs /> */}
+      <DropdownPairs />
       <INFO_STATS>
         <>
           <div>Price</div>
