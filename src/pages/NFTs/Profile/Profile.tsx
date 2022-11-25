@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { HeaderProfile } from './HeaderProfile'
 import { ContentProfile } from './ContentProfile'
 import { useNFTProfile } from '../../../context'
-import tw from 'twin.macro'
+import { isValidSolanaAddress } from '../../../web3'
 
 //#region styles
 const PROFILE_CONTAINER = styled.div<{ background?: string }>`
@@ -16,6 +16,9 @@ const PROFILE_CONTAINER = styled.div<{ background?: string }>`
   background : url(${background});
   background-repeat: no-repeat;
   background-size: 100%;
+  @media(max-width: 500px){
+    background-size: 100% 100%;
+  }
 
   .ant-tabs-top {
     overflow: initial;
@@ -30,12 +33,19 @@ const PROFILE_CONTAINER = styled.div<{ background?: string }>`
         display: block;
 
         .ant-tabs-nav-list {
-          ${tw`sm:w-full sm:block sm:pt-2.5 overflow-scroll`}
           position: relative;
           height: 100%;
           width: 55%;
           margin-left: auto;
           padding-right: 21px;
+          overflow: scroll;
+          @media(max-width: 500px){
+            width: 100%;
+            display: block;
+            padding-top: 10px;
+            height: auto;
+
+          }
 
           ::-webkit-scrollbar {
             display: none;
@@ -44,10 +54,12 @@ const PROFILE_CONTAINER = styled.div<{ background?: string }>`
           .ant-tabs-tab {
             margin: 0 30px;
             .ant-tabs-tab-btn {
-              ${tw`sm:my-0 sm:mx-8`}
               padding: 16px 0;
               color: ${({ theme }) => theme.text28};
               font-size: 15px;
+              @media(max-width: 500px){
+                margin: 0 32px;
+              }
             }
           }
           .ant-tabs-tab-active {
@@ -96,7 +108,7 @@ export const Profile: FC = (): JSX.Element => {
   const [isSessionUser, setIsSessionUser] = useState<boolean>()
 
   useEffect(() => {
-    if (params.userAddress === undefined) history.push(`/NFTs`)
+    if (params.userAddress === undefined || !isValidSolanaAddress(params.userAddress)) history.push(`/NFTs`)
 
     // asserts there is no wallet connection and no session user
     if (sessionUser === undefined || !connected || publicKey === null) {
