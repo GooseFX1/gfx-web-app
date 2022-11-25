@@ -12,6 +12,8 @@ const NFT_TAB = styled.div`
 
   @media (max-width: 500px) {
     width: 100vw;
+    min-height: auto;
+    margin-top: 0;
   }
 
   .profile-tab-container,

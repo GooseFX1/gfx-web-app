@@ -20,6 +20,7 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
     background: url(${background});
     background-repeat: no-repeat;
     background-size: cover;
+    padding-bottom: ${theme.margin(2.5)};
   }
 
   .row{
