@@ -142,6 +142,7 @@ export const CryptoContent: FC = () => {
   const generateDOM = () =>
     _.map(_.range(layout.lg.length), function (i) {
       if (i === 0)
+        //charts
         return (
           <div key={i}>
             {chartContainer}
@@ -159,6 +160,7 @@ export const CryptoContent: FC = () => {
           </div>
         )
       if (i === 3) {
+        //order placing
         return (
           <div key={i} className="spacing">
             <>
@@ -179,6 +181,7 @@ export const CryptoContent: FC = () => {
         )
       }
       if (i === 2) {
+        //recent trades
         return (
           <div key={i} className="spacing">
             <OrderHistory />
@@ -197,6 +200,7 @@ export const CryptoContent: FC = () => {
         )
       }
       if (i === 1)
+        //orderbook
         return (
           <div key={i} className="spacing">
             <>
@@ -220,6 +224,7 @@ export const CryptoContent: FC = () => {
           </div>
         )
       if (i === 4)
+        //history panel
         return (
           <div key={i} className="spacing">
             {/*<History chartsVisible={true} setChartsVisible={null} />*/}
