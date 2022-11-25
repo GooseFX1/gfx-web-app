@@ -13,6 +13,9 @@ const NO_CONTENT = styled.div`
 
   .spacing {
     margin-top: 250px;
+    @media (max-width: 500px) {
+      margin-top: 100px;
+    }
   }
 
   .no-data-image {
