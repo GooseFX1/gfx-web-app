@@ -7,7 +7,7 @@ import { NFTTab } from '../NFTTab'
 import NFTDisplay from './NFTDisplay'
 import Activity from './Activity'
 import styled from 'styled-components'
-import { Sidebar } from './Sidebar'
+import { ProfilePageSidebar } from './ProfilePageSidebar'
 import { checkMobile } from '../../../utils'
 
 type Props = {
@@ -116,10 +116,12 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
     setFavoritedItems(favorites.map((f: any) => f.data[0]))
   }
 
-  return (
+  return !checkMobile() ? (
     <WRAPPER>
-      {!checkMobile() && <Sidebar isSessionUser={isSessionUser} />}
+      <ProfilePageSidebar isSessionUser={isSessionUser} />
       <NFTTab tabPanes={tabPanes} />
     </WRAPPER>
+  ) : (
+    <NFTTab tabPanes={tabPanes} />
   )
 }
