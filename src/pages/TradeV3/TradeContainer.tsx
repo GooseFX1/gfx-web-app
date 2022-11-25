@@ -3,7 +3,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNavCollapse, OrderBookProvider, useCrypto, useDarkMode } from '../../context'
 import styled from 'styled-components'
 import { Order } from '../Crypto/Order'
-import { OrderBook } from '../Crypto/OrderBook'
+import { OrderbookTabs } from './OrderbookTabs'
 import { TVChartContainer } from '../Crypto/TradingView'
 import { Responsive, WidthProvider } from 'react-grid-layout'
 import _ from 'lodash'
@@ -74,7 +74,6 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean }>
   .react-draggable-dragging {
     ${tw`border-solid border-2 p-0 rounded-[10px]`}
     border-color: #ff8c00;
-    border-radius: 10px;
     z-index: 100;
   }
 `
@@ -124,8 +123,8 @@ export const CryptoContent: FC = () => {
     items: 3,
     rowHeight: 20,
     cols: { lg: 4, md: 4, sm: 2, xs: 2, xxs: 2 },
-    isResizable: false,
-    isBounded: true,
+    isResizable: true,
+    isBounded: false,
     isDraggable: !isLocked
   }
   const generateDOM = () =>
@@ -189,7 +188,7 @@ export const CryptoContent: FC = () => {
           <div key={i} className="spacing">
             <>
               <OrderBookProvider>
-                <OrderBook />
+                <OrderbookTabs />
                 {!isLocked ? (
                   <UNLOCKED_OVERLAY>
                     <img
@@ -236,12 +235,12 @@ export const CryptoContent: FC = () => {
   }
   return (
     <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked}>
-      {/* <InfoBanner
+      <InfoBanner
         isLocked={isLocked}
         setIsLocked={setIsLocked}
         resetLayout={resetLayout}
         setFeesPopup={setFeesPopup}
-      /> */}
+      />
       {/* {feesPopup && (
       <ModalSlide rewardModal={feesPopup} rewardToggle={setFeesPopup} modalType={MODAL_TYPES.FEES} />
     )} */}
