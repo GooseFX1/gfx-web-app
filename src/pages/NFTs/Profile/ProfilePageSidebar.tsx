@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { FC, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -180,7 +179,7 @@ type Props = {
   isSessionUser: boolean
 }
 
-export const Sidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
+export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
   const { sessionUser, nonSessionProfile } = useNFTProfile()
   const currentUserProfile = useMemo(() => {
     if (nonSessionProfile !== undefined && !isSessionUser) {
@@ -323,7 +322,7 @@ export const Sidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
               <a
                 className="social-item"
                 target={'_blank'}
-                rel={'noreferrer'}
+                rel="noreferrer"
                 onMouseEnter={() => {
                   setTwitterHover(true)
                 }}
@@ -390,7 +389,7 @@ export const Sidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
       {params && params.userAddress && (
         <SCAN_SHARE>
           <span>{truncateAddress(params.userAddress)}</span>
-          <a href={`https://solscan.io/account/${params.userAddress}`} target="_blank">
+          <a href={`https://solscan.io/account/${params.userAddress}`} target="_blank" rel="noreferrer">
             <img src="/img/assets/solscanBlack.svg" alt="solscan-icon" className="solscan-img" />
           </a>
           <div onClick={() => setShareModal(true)} className="share-img">
