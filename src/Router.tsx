@@ -12,7 +12,7 @@ import {
 } from './context'
 import Restricted from './pages/Restricted'
 import { GenericNotFound } from './pages/InvalidUrl'
-import { CryptoContent } from './pages/TradeV2/MovableContainer'
+import { CryptoContent } from './pages/TradeV3/TradeContainer'
 import useBlacklisted from './utils/useBlacklisted'
 import { Launchpad } from './pages/NFTs/launchpad/Launchpad'
 import { Creator } from './pages/NFTs/CreatorPage/Creator'
