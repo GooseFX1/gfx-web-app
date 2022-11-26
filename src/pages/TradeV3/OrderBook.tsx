@@ -10,15 +10,15 @@ import tw from 'twin.macro'
 const SPREADS = [1 / 100, 5 / 100, 1 / 10, 5 / 10, 1]
 
 const HEADER = styled.div`
-  ${tw`h-[31px] rounded-b-small w-full py-2.5 text-xs`}
-  padding: 10px 15px;
-  background-color: ${({ theme }) => theme.bg15};
+  ${tw`h-[31px] w-full p-0 text-xs h-7 border-solid border-r border-b border-l`}
+  border-top: none;
+  border-color: #3c3c3c;
   & div {
-    ${tw`flex justify-between items-center`}
-    color: #e7e7e7;
+    ${tw`flex justify-between items-center h-full px-2`}
+    color: #636363;
 
     span {
-      ${tw`inline-block w-1/3 text-xs font-semibold`}
+      ${tw`inline-block w-1/3 text-xs font-medium`}
     }
     span:nth-child(2) {
       ${tw`text-center`}
@@ -185,10 +185,7 @@ const SIZE_SELL = styled.span<{ $side: MarketSide }>`
 const WRAPPER = styled.div`
   position: relative;
   width: 100%;
-  padding: 0px 0px 20px 0px;
-
-  border-radius: 10px;
-  background-color: ${({ theme }) => theme.bg3};
+  padding: 0px 0px 0px 0px;
   overflow: hidden;
 `
 
@@ -365,9 +362,9 @@ export const OrderBook: FC = () => {
     <WRAPPER>
       <HEADER>
         <div>
-          <span>Size({ask})</span>
-          <span> Price({bid})</span>
-          <span>Size({ask})</span>
+          <span>Size ({ask})</span>
+          <span> Price ({bid})</span>
+          <span>Size ({ask})</span>
         </div>
       </HEADER>
       <ORDERS $visible={order.isHidden || !slicedOrderBookBids.length}>
@@ -423,14 +420,14 @@ export const OrderBook: FC = () => {
           </ORDERBOOK_CONTAINER>
         )}
       </ORDERS>
-      <SPREAD_FOOTER>
+      {/*<SPREAD_FOOTER>
         <div>
           Spread
           <span>
             {spreadAbsolute[0]}, {spreadAbsolute[1]}%
           </span>
         </div>
-      </SPREAD_FOOTER>
+      </SPREAD_FOOTER>*/}
     </WRAPPER>
   )
 }
