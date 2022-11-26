@@ -9,6 +9,7 @@ import { Responsive, WidthProvider } from 'react-grid-layout'
 import _ from 'lodash'
 import tw from 'twin.macro'
 import { InfoBanner } from './InfoBanner'
+import { PlaceOrder } from './PlaceOrder'
 
 const ReactGridLayout = WidthProvider(Responsive)
 
@@ -150,7 +151,7 @@ export const CryptoContent: FC = () => {
         return (
           <div key={i} className="spacing">
             <>
-              <Order />
+              <PlaceOrder />
               {!isLocked ? (
                 <UNLOCKED_OVERLAY>
                   <img
