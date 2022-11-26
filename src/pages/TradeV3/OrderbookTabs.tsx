@@ -20,11 +20,12 @@ const WRAPPER = styled.div`
 const HEADER_WRAPPER = styled.div`
   ${tw`w-full flex flex-row`}
   .tabGroup {
-    ${tw`w-full`}
+    ${tw`w-full flex`}
     .individualTabs {
-      ${tw`w-5/12 text-center`}
+      ${tw`w-5/12 text-center h-7 flex justify-center items-center`}
     }
     .priceTab {
+      ${tw`h-7 w-2/12 flex justify-center items-center`}
     }
   }
 `
