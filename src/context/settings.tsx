@@ -8,7 +8,7 @@ export enum GFX_RPC_NAMES {
   QUICKNODE = 'QuickNode Pro',
   SYNDICA = 'Syndica',
   TRITON = 'Triton',
-  HELIUS = 'Heluis',
+  HELIUS = 'Helius',
   SOLANA_RPC = 'Solana'
 }
 
@@ -24,17 +24,17 @@ type RPC = {
 type ENDPOINTS = { [key: string]: RPC }
 
 export const ENDPOINTS: ENDPOINTS = {
-  [GFX_RPC_NAMES.QUICKNODE]: {
-    chainId: ENV.MainnetBeta,
-    name: GFX_RPC_NAMES.QUICKNODE,
-    endpoint: `https://green-little-wind.solana-mainnet.quiknode.pro/${process.env.REACT_APP_QUICKNODE_TOKEN}`,
-    network: WalletAdapterNetwork.Mainnet
-  },
   [GFX_RPC_NAMES.SOLANA_RPC]: {
     chainId: ENV.Devnet,
     name: GFX_RPC_NAMES.SOLANA_RPC,
     endpoint: 'https://api.devnet.solana.com',
     network: WalletAdapterNetwork.Devnet
+  },
+  [GFX_RPC_NAMES.QUICKNODE]: {
+    chainId: ENV.MainnetBeta,
+    name: GFX_RPC_NAMES.QUICKNODE,
+    endpoint: `https://green-little-wind.solana-mainnet.quiknode.pro/${process.env.REACT_APP_QUICKNODE_TOKEN}`,
+    network: WalletAdapterNetwork.Mainnet
   },
   [GFX_RPC_NAMES.TRITON]: {
     chainId: ENV.MainnetBeta,
