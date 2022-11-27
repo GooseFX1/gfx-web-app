@@ -46,7 +46,8 @@
     "no-empty-pattern": "warn",
     "react/jsx-no-target-blank": "warn",
     "react/no-unescaped-entities": "off",
-    "prefer-spread": "warn"
+    "prefer-spread": "warn",
+    "react/no-unknown-property": "warn"
   },
   "globals": {
     "React": true,
