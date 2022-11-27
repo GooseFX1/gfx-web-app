@@ -2653,6 +2653,13 @@
   dependencies:
     buffer "^6.0.1"
 
+"@pythnetwork/client@^2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@pythnetwork/client/-/client-2.8.0.tgz#1b764d710f17c2f3cd3c9ba0c4ae74d26e72b01b"
+  integrity sha512-YqqZSDDsEApC/F4H5ejcl8OCr7gsWv0noTK8YABT8pCtFRTQxXBP0r2S8KQMaIw1x97Mue/jkYybdMeFQzPjCw==
+  dependencies:
+    buffer "^6.0.1"
+
 "@react-native-async-storage/async-storage@^1.17.7":
   version "1.17.7"
   resolved "https://registry.npmjs.org/@react-native-async-storage/async-storage/-/async-storage-1.17.7.tgz"
@@ -9098,12 +9105,13 @@ globrex@^0.1.2:
   resolved "https://registry.npmjs.org/globrex/-/globrex-0.1.2.tgz"
   integrity sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==
 
-goosefx-ssl-sdk@^1.2.12:
-  version "1.2.13"
-  resolved "https://registry.npmjs.org/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.2.13.tgz"
-  integrity sha512-Za3MbX08WDwAYhmdljURk0MluZ3SujiTjv4F4pYlEsiyOlJdOgb6hj1urIFOpFVVxUJd9c7F1gQ1APCQAov4Cw==
+goosefx-ssl-sdk@latest:
+  version "1.2.18"
+  resolved "https://registry.yarnpkg.com/goosefx-ssl-sdk/-/goosefx-ssl-sdk-1.2.18.tgz#15dd7498a548164e74a81d24a5b1ecf6c49de2b8"
+  integrity sha512-8aiSoLPEh07x8lmBtaiJcb6P9bcHNQvoRRF4Ur9DoenrXPgTAA8Lt91PJM7bX3TER9bu0ZEuZvdnaBW7+s/SRg==
   dependencies:
     "@project-serum/anchor" "^0.17.1-beta.1"
+    "@pythnetwork/client" "^2.8.0"
     "@solana/buffer-layout" "^4.0.0"
     "@solana/spl-token" "^0.2.0"
     "@solana/web3.js" "^1.41.1"
