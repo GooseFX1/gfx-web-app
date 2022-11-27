@@ -4,15 +4,15 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Connection } from '@solana/web3.js'
 // import { useLocalStorageState } from '../utils'
 
-export enum GFX_RPCS {
+export enum GFX_RPC_NAMES {
   QUICKNODE = 'QuickNode Pro',
-  SOLANA_RPC = 'Solana',
-  SERUM = 'Project Serum',
-  GENGO = 'GenesysGo',
-  SYNDICA = 'Syndica'
+  SYNDICA = 'Syndica',
+  TRITON = 'Triton',
+  HELIUS = 'Heluis',
+  SOLANA_RPC = 'Solana'
 }
 
-export const DEFAULT_MAINNET_RPC = GFX_RPCS.SYNDICA
+export const DEFAULT_MAINNET_RPC = GFX_RPC_NAMES.SYNDICA
 
 type RPC = {
   chainId: ENV
@@ -24,33 +24,33 @@ type RPC = {
 type ENDPOINTS = { [key: string]: RPC }
 
 export const ENDPOINTS: ENDPOINTS = {
-  [GFX_RPCS.QUICKNODE]: {
+  [GFX_RPC_NAMES.QUICKNODE]: {
     chainId: ENV.MainnetBeta,
-    name: GFX_RPCS.QUICKNODE,
+    name: GFX_RPC_NAMES.QUICKNODE,
     endpoint: `https://green-little-wind.solana-mainnet.quiknode.pro/${process.env.REACT_APP_QUICKNODE_TOKEN}`,
     network: WalletAdapterNetwork.Mainnet
   },
-  [GFX_RPCS.SOLANA_RPC]: {
+  [GFX_RPC_NAMES.SOLANA_RPC]: {
     chainId: ENV.Devnet,
-    name: GFX_RPCS.SOLANA_RPC,
+    name: GFX_RPC_NAMES.SOLANA_RPC,
     endpoint: 'https://api.devnet.solana.com',
     network: WalletAdapterNetwork.Devnet
   },
-  [GFX_RPCS.SERUM]: {
+  [GFX_RPC_NAMES.TRITON]: {
     chainId: ENV.MainnetBeta,
-    name: GFX_RPCS.SERUM,
-    endpoint: 'https://solana-api.projectserum.com',
+    name: GFX_RPC_NAMES.TRITON,
+    endpoint: `https://goosefx-mainnet-7f4e.mainnet.rpcpool.com/${process.env.REACT_APP_TRITON_TOKEN}`,
     network: WalletAdapterNetwork.Mainnet
   },
-  [GFX_RPCS.GENGO]: {
+  [GFX_RPC_NAMES.HELIUS]: {
     chainId: ENV.MainnetBeta,
-    name: GFX_RPCS.GENGO,
-    endpoint: 'https://ssc-dao.genesysgo.net',
+    name: GFX_RPC_NAMES.HELIUS,
+    endpoint: `https://rpc.helius.xyz/?api-key=${process.env.REACT_APP_HELUIS_TOKEN}`,
     network: WalletAdapterNetwork.Mainnet
   },
-  [GFX_RPCS.SYNDICA]: {
+  [GFX_RPC_NAMES.SYNDICA]: {
     chainId: ENV.MainnetBeta,
-    name: GFX_RPCS.SYNDICA,
+    name: GFX_RPC_NAMES.SYNDICA,
     endpoint: `https://solana-api.syndica.io/access-token/${process.env.REACT_APP_SYNDICA_TOKEN}/rpc`,
     network: WalletAdapterNetwork.Mainnet
   }
@@ -103,7 +103,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const existingUserPreference: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-rpc'))
 
     if (existingUserPreference === null) {
-      return process.env.NODE_ENV === 'production' ? DEFAULT_MAINNET_RPC : GFX_RPCS.SERUM
+      return process.env.NODE_ENV === 'production' ? DEFAULT_MAINNET_RPC : GFX_RPC_NAMES.HELIUS
     } else if (existingUserPreference.endpoint === null) {
       return existingUserPreference.endpointName
     } else {

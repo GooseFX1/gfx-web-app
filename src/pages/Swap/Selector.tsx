@@ -1,5 +1,5 @@
 import React, { Dispatch, FC, SetStateAction, useEffect, useState, useMemo } from 'react'
-import { Input } from 'antd'
+import { Input, Image } from 'antd'
 import styled from 'styled-components'
 import { TokenListProvider, TokenInfo } from '@solana/spl-token-registry'
 import { Modal } from '../../components'
@@ -172,8 +172,9 @@ const POPULAR_TK = styled(TOKEN)`
 const TOKEN_ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margin(4))}
   margin-right: ${({ theme }) => theme.margin(2)};
-  ${({ theme }) => theme.roundedBorders}
   box-shadow: 0 4px 10px 1px rgb(0 0 0 / 20%);
+  overflow: hidden;
+  ${({ theme }) => theme.roundedBorders}
 `
 
 const TOKEN_INFO = styled.div`
@@ -358,18 +359,7 @@ export const Selector: FC<{
               }}
             >
               <TOKEN_ICON>
-                <img
-                  src={imageURL || logoURI}
-                  alt="token-icon"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null
-                    if (e.currentTarget.src === logoURI) {
-                      e.currentTarget.src = '/img/crypto/Unknown.svg'
-                    } else {
-                      e.currentTarget.src = logoURI || '/img/crypto/Unknown.svg'
-                    }
-                  }}
-                />
+                <Image draggable={false} preview={false} src={imageURL} fallback={logoURI} alt="token" />
               </TOKEN_ICON>
               {checkMobile() ? (
                 <TOKEN_INFO>
@@ -390,17 +380,12 @@ export const Selector: FC<{
         <CLICKER>
           <div className={'icon-left'}>
             {token ? (
-              <img
+              <Image
+                draggable={false}
+                preview={false}
                 src={`/img/crypto/${token.symbol}.svg`}
-                alt="active-icon"
-                onError={(e) => {
-                  e.currentTarget.onerror = null
-                  if (e.currentTarget.src === token.logoURI) {
-                    e.currentTarget.src = '/img/crypto/Unknown.svg'
-                  } else {
-                    e.currentTarget.src = token.logoURI || '/img/crypto/Unknown.svg'
-                  }
-                }}
+                fallback={token.logoURI || '/img/crypto/Unknown.svg'}
+                alt="token"
               />
             ) : (
               <></>
