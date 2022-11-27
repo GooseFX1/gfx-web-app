@@ -1,4 +1,5 @@
 const CracoSwcPlugin = require('craco-swc')
+const CracoLessPlugin = require('craco-less')
 const path = require('path')
 const webpack = require('webpack')
 
@@ -34,6 +35,16 @@ module.exports = {
               dynamicImport: true,
               exportDefaultFrom: true
             }
+          }
+        }
+      }
+    },
+    {
+      plugin: CracoLessPlugin,
+      options: {
+        lessLoaderOptions: {
+          lessOptions: {
+            javascriptEnabled: true
           }
         }
       }
