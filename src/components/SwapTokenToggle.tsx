@@ -1,6 +1,7 @@
 import { useState, FC } from 'react'
 import styled from 'styled-components'
 import { CenteredImg, SpaceBetweenDiv, CenteredDiv } from '../styles'
+import { Image } from 'antd'
 import tw from 'twin.macro'
 
 const WRAPPER = styled(SpaceBetweenDiv)`
@@ -58,10 +59,12 @@ export const SwapTokenToggle: FC<{ toggleToken: () => void; tokenA: any; tokenB:
   return (
     <WRAPPER>
       <CLICKER_ICON>
-        <img
+        <Image
+          draggable={false}
+          preview={false}
           src={`/img/crypto/${tokenA?.symbol}.svg`}
+          fallback={tokenA.logoURI || '/img/crypto/Unknown.svg'}
           alt="inputToken"
-          onError={(e) => (e.currentTarget.src = tokenA.logoURI || '/img/crypto/Unknown.svg')}
         />
       </CLICKER_ICON>
       <Toggle $mode={position} onClick={handleToggle}>
@@ -69,10 +72,12 @@ export const SwapTokenToggle: FC<{ toggleToken: () => void; tokenA: any; tokenB:
       </Toggle>
 
       <CLICKER_ICON>
-        <img
+        <Image
+          draggable={false}
+          preview={false}
           src={`/img/crypto/${tokenB?.symbol}.svg`}
-          alt="outputToken"
-          onError={(e) => (e.currentTarget.src = tokenB.logoURI || '/img/crypto/Unknown.svg')}
+          fallback={tokenB.logoURI || '/img/crypto/Unknown.svg'}
+          alt="inputToken"
         />
       </CLICKER_ICON>
     </WRAPPER>

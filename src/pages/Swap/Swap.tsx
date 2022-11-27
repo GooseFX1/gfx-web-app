@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import { Image } from 'antd'
 import { logEvent } from 'firebase/analytics'
 import analytics from '../../analytics'
 import styled, { css } from 'styled-components'
@@ -805,20 +806,24 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
         <TokenTitle>Rate</TokenTitle>
         <SmallTitleFlex>
           <SMALL_CLICKER_ICON>
-            <img
+            <Image
+              draggable={false}
+              preview={false}
               src={`/img/crypto/${tokenA.symbol}.svg`}
-              alt=""
-              onError={(e) => (e.currentTarget.src = tokenA.logoURI || '/img/crypto/Unknown.svg')}
+              fallback={tokenA.logoURI || '/img/crypto/Unknown.svg'}
+              alt="inputToken"
             />
           </SMALL_CLICKER_ICON>
           <span className={'token-name'}>
             {inTokenAmount} {tokenA.symbol} ≈{'  '}
           </span>
           <SMALL_CLICKER_ICON style={{ marginLeft: '0.5rem' }}>
-            <img
+            <Image
+              draggable={false}
+              preview={false}
               src={`/img/crypto/${tokenB.symbol}.svg`}
-              alt=""
-              onError={(e) => (e.currentTarget.src = tokenB.logoURI || '/img/crypto/Unknown.svg')}
+              fallback={tokenB.logoURI || '/img/crypto/Unknown.svg'}
+              alt="out-token"
             />
           </SMALL_CLICKER_ICON>
           <span className={'token-name'}>
