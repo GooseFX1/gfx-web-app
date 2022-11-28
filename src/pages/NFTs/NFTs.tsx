@@ -1,8 +1,6 @@
 import React, { useEffect, FC } from 'react'
 import { useRouteMatch, Route, Switch, useLocation } from 'react-router-dom'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { logEvent } from 'firebase/analytics'
-import analytics from '../../analytics'
 import styled from 'styled-components'
 import { ILocationState } from '../../types/app_params.d'
 import NFTLandingPage from './Home/NFTHome'
@@ -47,12 +45,6 @@ export const NFTs: FC = () => {
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
 
   useEffect(() => {
-    const an = analytics()
-    an !== null &&
-      logEvent(an, 'screen_view', {
-        firebase_screen: 'NFT Exchange',
-        firebase_screen_class: 'load'
-      })
     logData('NFT_page')
   }, [location])
 

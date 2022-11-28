@@ -1,10 +1,8 @@
 import { BaseSyntheticEvent, FC, useState } from 'react'
 import { Dropdown } from 'antd'
-import { logEvent } from 'firebase/analytics'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 
-import analytics from '../../analytics'
 import { CenteredImg } from '../../styles'
 import { Menu, MenuItem } from './shared'
 import { notify } from '../../utils'
@@ -103,7 +101,6 @@ const Overlay = () => {
 
   const saveHandler = () => {
     // analytics logger
-    const an = analytics()
 
     window.localStorage.setItem(
       'gfx-user-rpc',
@@ -115,11 +112,9 @@ const Overlay = () => {
 
     if (isCustomNode) {
       setEndpointName('Custom')
-      an !== null && logEvent(an, 'rpc-selector', { ...rpcState, endpoint: nodeURL })
       notify({ message: 'Switched to Custom' })
     } else {
       setEndpointName(rpcState.endpointName)
-      an !== null && logEvent(an, 'rpc-selector', { ...rpcState })
       notify({ message: `Switched to  ${rpcState.endpointName} (${rpcState.network})` })
     }
   }

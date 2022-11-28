@@ -1,9 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Image } from 'antd'
-import { logEvent } from 'firebase/analytics'
-import analytics from '../../analytics'
 import styled, { css } from 'styled-components'
+import { Image } from 'antd'
 import { Settings } from './Settings'
 import { Wrap } from './Wrap'
 import { SwapButton } from './SwapButton'
@@ -384,12 +382,6 @@ const SwapContent: FC<{
   const [wrapModalVisible, setWrapModalVisible] = useState(false)
 
   useEffect(() => {
-    const an = analytics()
-    an !== null &&
-      logEvent(an, 'screen_view', {
-        firebase_screen: 'Swap',
-        firebase_screen_class: 'load'
-      })
     logData('swap_page')
 
     if (network === 'devnet') {

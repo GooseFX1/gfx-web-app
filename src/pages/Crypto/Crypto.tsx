@@ -1,7 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { logEvent } from 'firebase/analytics'
-import analytics from '../../analytics'
 import { History } from './History'
 import { Order } from './Order'
 import { OrderBook } from './OrderBook'
@@ -97,13 +95,6 @@ export const Crypto: FC = () => {
   const { network, setEndpointName } = useConnectionConfig()
 
   useEffect(() => {
-    const an = analytics()
-    an !== null &&
-      logEvent(an, 'screen_view', {
-        firebase_screen: 'Crypto',
-        firebase_screen_class: 'load'
-      })
-
     if (network === 'devnet') {
       notify({ message: 'Switched to mainnet' })
       setEndpointName(DEFAULT_MAINNET_RPC)

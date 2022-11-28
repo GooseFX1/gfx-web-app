@@ -12,8 +12,6 @@ import { useHistory } from 'react-router-dom'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { checkMobile } from '../../../../utils'
-import analytics from '../../../../analytics'
-import { logEvent } from 'firebase/analytics'
 import { logData } from '../../../../api'
 
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
@@ -269,12 +267,6 @@ export const SingleCollection: FC = () => {
   }, [])
 
   useEffect(() => {
-    const an = analytics()
-    an !== null &&
-      logEvent(an, 'screen_view', {
-        firebase_screen: 'Launchpad: Mint',
-        firebase_screen_class: 'load'
-      })
     logData('launchpad mint')
   }, [])
 
