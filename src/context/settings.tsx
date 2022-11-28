@@ -39,7 +39,7 @@ export const ENDPOINTS: ENDPOINTS = {
   [GFX_RPC_NAMES.TRITON]: {
     chainId: ENV.MainnetBeta,
     name: GFX_RPC_NAMES.TRITON,
-    endpoint: `https://goosefx-mainnet-7f4e.mainnet.rpcpool.com/${process.env.REACT_APP_TRITON_TOKEN}`,
+    endpoint: `https://goosefx-mainnet-7f4e.mainnet.rpcpool.com/`,
     network: WalletAdapterNetwork.Mainnet
   },
   [GFX_RPC_NAMES.HELIUS]: {
