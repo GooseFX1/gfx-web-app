@@ -2,11 +2,10 @@ import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { Row, Col } from 'antd'
-import { useRewardToggle } from '../context'
+import { useRewardToggle, useConnectionConfig } from '../context'
 import { SpaceEvenlyDiv } from '../styles'
-import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { ADDRESSES as SDK_ADDRESS, CONTROLLER_LAYOUT } from 'goosefx-ssl-sdk'
-
 import tw from 'twin.macro'
 
 const REWARD_INFO_TEXT = styled.div`
@@ -150,6 +149,7 @@ export const RewardInfoComponent: FC = () => (
 export const RewardRedirectComponent: FC = () => {
   const history = useHistory()
   const { rewardToggle } = useRewardToggle()
+  const { connection } = useConnectionConfig()
   const [apr, setApr] = useState(0)
 
   const handleStakeClick = () => {
@@ -174,9 +174,8 @@ export const RewardRedirectComponent: FC = () => {
 
   const fetchGOFXData = async () => {
     try {
-      const con = new Connection('https://solana-api.projectserum.com', 'confirmed')
       const CONTROLLER_KEY = SDK_ADDRESS.MAINNET.GFX_CONTROLLER
-      const { data: controllerData } = await con.getAccountInfo(CONTROLLER_KEY)
+      const { data: controllerData } = await connection.getAccountInfo(CONTROLLER_KEY)
       const { stakingBalance, dailyReward } = await CONTROLLER_LAYOUT.decode(controllerData)
       //@ts-ignore
       const liqidity = Number(stakingBalance / BigInt(LAMPORTS_PER_SOL))
