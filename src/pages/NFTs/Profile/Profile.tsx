@@ -19,7 +19,12 @@ const PROFILE_CONTAINER = styled.div<{ background?: string }>`
   @media(max-width: 500px){
     background-size: 100% 100%;
   }
-
+  .ant-drawer-content {
+    background: #1c1c1c;
+  }
+  .ant-drawer-content-wrapper{
+    height: 90% !important;
+  }
   .ant-tabs-top {
     overflow: initial;
     position: relative;
@@ -35,7 +40,7 @@ const PROFILE_CONTAINER = styled.div<{ background?: string }>`
         .ant-tabs-nav-list {
           position: relative;
           height: 100%;
-          width: 55%;
+          width: 55%;         
           margin-left: auto;
           padding-right: 21px;
           overflow: scroll;
@@ -44,7 +49,6 @@ const PROFILE_CONTAINER = styled.div<{ background?: string }>`
             display: block;
             padding-top: 10px;
             height: auto;
-
           }
 
           ::-webkit-scrollbar {
@@ -139,7 +143,7 @@ export const Profile: FC = (): JSX.Element => {
 
   return (
     isSessionUser !== undefined && (
-      <PROFILE_CONTAINER background={randomBackground}>
+      <PROFILE_CONTAINER id="nft-profile-container" background={randomBackground}>
         <HeaderProfile isSessionUser={isSessionUser} />
         <ContentProfile isSessionUser={isSessionUser} />
       </PROFILE_CONTAINER>
