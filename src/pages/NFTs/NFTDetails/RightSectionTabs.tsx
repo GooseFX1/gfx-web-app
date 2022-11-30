@@ -12,7 +12,7 @@ import { AttributesTabContent } from './AttributesTabContent'
 import RemoveModalContent from './RemoveModalContent'
 import { Modal, SuccessfulListingMsg } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
-import { checkMobile, notify, truncateAddress } from '../../../utils'
+import { notify, truncateAddress } from '../../../utils'
 import { tradeStatePDA, callCancelInstruction, callWithdrawInstruction, tokenSize } from '../actions'
 import { removeNonCollectionListing } from '../../../api/NFTs'
 import { BidModal } from './BidModal'
@@ -40,151 +40,162 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
     position: relative;
     margin-bottom: 20px;
 
-    .ant-tabs-nav {
-      position: relative;
-      z-index: 1;
+    .buy-sell-screen {
+      .ant-tabs-nav {
+        position: relative;
+        z-index: 1;
+        height: 60px !important;
 
-      .ant-tabs-nav-wrap {
-        background-color: #000;
-        border-radius: 15px 15px 25px 25px;
-        padding-top: ${theme.margin(1.5)};
-        padding-bottom: ${theme.margin(1.5)};
-        .ant-tabs-nav-list {
-          justify-content: space-around;
+        .ant-tabs-nav-wrap {
+          background-color: #1f1f1f;
+          border-radius: 15px 15px 0 0;
           width: 100%;
+          .ant-tabs-nav-list {
+            display: flex;
+            justify-content: space-around;
+            width: 100% !important;
+            padding-right: 0 !important;
+            height: 100% !important;
+            padding-top: 0 !important;
+          }
+        }
+
+        &:before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: ${theme.tabContentBidBackground};
+          border-radius: 15px 15px 0 0;
         }
       }
 
-      &:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: ${theme.tabContentBidBackground};
-        border-radius: 15px 15px 0 0;
+      .ant-tabs-ink-bar {
+        display: none;
       }
-    }
 
-    .ant-tabs-ink-bar {
-      display: none;
-    }
+      .ant-tabs-top {
+        > .ant-tabs-nav {
+          margin-bottom: 0;
 
-    .ant-tabs-top {
-      > .ant-tabs-nav {
-        margin-bottom: 0;
-
-        &::before {
-          border: none;
+          &::before {
+            border: none;
+          }
         }
       }
-    }
 
-    .ant-tabs-tab {
-      color: #616161;
-      font-size: 14px;
-      font-weight: 500;
-      ${tw`sm:ml-0`}
+      .ant-tabs-tab {
+        color: #616161;
+        font-size: 14px;
+        font-weight: 500;
+        ${tw`sm:!m-0 sm:!p-0`}
 
-      .ant-tabs-tab-btn {
-        ${tw`sm:text-tiny`}
-        font-size: 17px;
-      }
-
-      &.ant-tabs-tab-active {
         .ant-tabs-tab-btn {
-          color: #fff;
+          ${tw`sm:text-tiny sm:!my-0 sm:!mx-5`}
+          font-size: 17px;
+
+          &:before {
+            content: '' !important;
+            height: 0 !important;
+          }
+        }
+
+        &.ant-tabs-tab-active {
+          .ant-tabs-tab-btn {
+            color: #fff;
+          }
+        }
+      }
+
+      .desc {
+        font-size: 11px;
+        padding: ${({ theme }) => theme.margin(3)};
+        font-family: Montserrat;
+      }
+
+      .ant-tabs-content-holder {
+        ${tw`sm:mb-12 sm:rounded-none`}
+        height: 230px;
+        background-color: #131313;
+        transform: translateY(-32px);
+        margin-top: 32px;
+        padding: 15px 0;
+        border-radius: 0 0 25px 25px;
+
+        .ant-tabs-content {
+          height: 100%;
+          overflow-x: none;
+          overflow-y: scroll;
+          ${({ theme }) => theme.customScrollBar('6px')};
         }
       }
     }
-
-    .desc {
-      font-size: 11px;
-      padding: ${({ theme }) => theme.margin(3)};
-      font-family: Montserrat;
-    }
-
-    .ant-tabs-content-holder {
-      ${tw`sm:mb-12 sm:rounded-none`}
-      height: 275px;
-      background-color: ${theme.tabContentBidBackground};
-      transform: translateY(-32px);
-      padding-top: ${({ theme }) => theme.margin(4)};
-      padding-bottom: ${({ theme }) => theme.margin(8)};
-      border-radius: 0 0 25px 25px;
-
-      .ant-tabs-content {
-        height: 100%;
-        overflow-x: none;
-        overflow-y: scroll;
-        ${({ theme }) => theme.customScrollBar('6px')};
-      }
-    }
-
     .rst-footer {
-      ${tw`sm:block`}
-      width: 100%;
-      position: absolute;
+      ${tw`sm:block sm:w-full`}
+      width: 32%;
+      position: fixed;
       display: flex;
-      left: 0;
+      right: 0;
       bottom: 0;
       padding: ${theme.margin(2)};
       border-radius: 0 0 25px 25px;
       border-top: 1px solid ${theme.borderColorTabBidFooter};
       background: ${theme.tabContentBidFooterBackground};
       backdrop-filter: blur(23.9091px);
+      z-index: 1;
 
       .last-bid {
         margin: 0 auto;
       }
+    }
+    .rst-footer-button {
+      flex: 1;
+      color: #fff;
+      white-space: nowrap;
+      height: 55px;
+      ${theme.flexCenter}
+      font-size: 17px;
+      font-weight: 600;
+      border: none;
+      border-radius: 29px;
+      padding: 0 ${theme.margin(2)};
+      cursor: pointer;
 
-      .rst-footer-button {
-        flex: 1;
-        color: #fff;
-        white-space: nowrap;
-        height: 55px;
-        ${theme.flexCenter}
-        font-size: 17px;
-        font-weight: 600;
-        border: none;
-        border-radius: 29px;
-        padding: 0 ${theme.margin(2)};
-        cursor: pointer;
-
-        &:not(:last-child) {
-          margin-right: ${theme.margin(1.5)};
-        }
-
-        &:hover {
-          opacity: 0.8;
-        }
-
-        &-buy {
-          background-color: ${theme.success};
-        }
-
-        &-bid {
-          background-color: ${theme.primary2};
-        }
-
-        &-sell {
-          background-color: #bb3535;
-        }
-
-        &-flat {
-          background-color: transparent;
-          color: ${theme.text1};
-        }
+      &:not(:last-child) {
+        margin-right: ${theme.margin(1.5)};
       }
 
-      .rst-footer-share-button {
-        cursor: pointer;
-
-        &:hover {
-          opacity: 0.8;
-        }
+      &:hover {
+        opacity: 0.8;
       }
+
+      &-buy {
+        background-color: ${theme.success};
+      }
+
+      &-bid {
+        background-color: ${theme.primary2};
+      }
+
+      &-sell {
+        background-color: #bb3535;
+      }
+
+      &-flat {
+        background-color: transparent;
+        color: ${theme.text1};
+      }
+    }
+
+    .rst-footer-share-button {
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
     }
   `}
 `
@@ -195,17 +206,17 @@ export const DETAILS_TAB_CONTENT = styled.div`
     color: ${theme.white};
 
     .dtc-item {
-      padding: ${theme.margin(0.5)} 0;
+      margin-bottom: 15px;
       font-size: 16px;
       font-weight: 500;
 
       .dtc-item-value {
-        ${tw`sm:text-tiny`}
+        ${tw`text-tiny`}
         color: ${theme.text4};
       }
       .dtc-item-title {
-        ${tw`sm:text-tiny`}
-        color: ${theme.text7};
+        ${tw`text-tiny`}
+        color: ${theme.text17};
       }
     }
   `}
@@ -586,7 +597,7 @@ export const RightSectionTabs: FC<{
                   </button>
                 )}
               </>
-            ) : !checkMobile() ? (
+            ) : (
               <SpaceBetweenDiv style={{ flexGrow: 1 }}>
                 {bids.find((bid) => bid.wallet_key === publicKey.toBase58()) && (
                   <button
