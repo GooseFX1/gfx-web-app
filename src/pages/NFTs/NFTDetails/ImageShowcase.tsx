@@ -1,4 +1,3 @@
-import { Col, Row } from 'antd'
 import { FC, useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { useNFTDetails, useNFTProfile } from '../../../context'
@@ -8,16 +7,30 @@ import { ReactComponent as FixedPriceIcon } from '../../../assets/fixed-price.sv
 import { ReactComponent as OpenBidIcon } from '../../../assets/open-bid.svg'
 import { generateTinyURL } from '../../../api/tinyUrl'
 import { checkMobile, notify } from '../../../utils'
-import tw from 'twin.macro'
 
 //#region styles
 const LEFT_SECTION = styled.div`
   ${({ theme }) => css`
-    ${tw`sm:w-[90%] sm:my-5 sm:mx-auto`}
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     color: ${theme.text1};
+    position: relative;
+
+    .close-icon-holder {
+      height: 30px;
+      width: 30px;
+      border-radius: 50%;
+      background: #131313;
+      position: absolute;
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      top: 12px;
+      left: 12px;
+      cursor: pointer;
+    }
 
     .ls-image {
       border-radius: 20px;
@@ -26,6 +39,15 @@ const LEFT_SECTION = styled.div`
 
     .ls-bottom-panel {
       margin-top: ${theme.margin(2.5)};
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .img-holder {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
       .ls-end-text {
         font-size: 12px;
@@ -48,46 +70,38 @@ const LEFT_SECTION = styled.div`
         font-size: 18px;
         font-weight: 600;
         color: #4b4b4b;
+        margin-right: 12px;
       }
 
       .ls-favorite-number-highlight {
         color: ${theme.text1};
+        margin-right: 12px;
       }
 
       .ls-action-button {
         color: ${theme.text1};
+        margin-right: auto;
+      }
+
+      .solscan-icon {
+        margin-right: 12px;
+        height: 40px;
+        width: 40px;
+        cursor: pointer;
+      }
+
+      .share-icon {
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
       }
     }
   `}
 `
 
-const NFT_CONTAINER = styled.div`
-  position: relative;
-`
-
-const SHARE_BUTTON = styled.button`
-  position: absolute;
-  bottom: 4px;
-  right: 4px;
-  background: black;
-  border: transparent;
-  border-radius: 50%;
-  padding: 0;
-  cursor: pointer;
-
-  &:hover {
-    background-color: black;
-  }
-
-  img {
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-`
 //#endregion
 
-export const ImageShowcase: FC = ({ ...rest }) => {
+export const ImageShowcase: FC<{ setShowSingleNFT?: any }> = ({ setShowSingleNFT, ...rest }) => {
   const { general, nftMetadata, totalLikes, ask } = useNFTDetails()
   const [isFavorited, setIsFavorited] = useState(false)
   const { sessionUser, likeDislike } = useNFTProfile()
@@ -174,61 +188,53 @@ export const ImageShowcase: FC = ({ ...rest }) => {
   return general && nftMetadata ? (
     <LEFT_SECTION {...rest}>
       {handleModal()}
-      <img
-        className="ls-image"
-        height={checkMobile() ? '360px' : '100%'}
-        src={general?.image_url || nftMetadata?.image}
-        alt="the-nft"
-      />
-      <NFT_CONTAINER>
-        <SHARE_BUTTON onClick={() => setShareModal(true)}>
-          <img src={`/img/assets/share.svg`} alt="share-icon" />
-        </SHARE_BUTTON>
-      </NFT_CONTAINER>
-      {!checkMobile() && (
-        <div className="ls-bottom-panel">
-          <Row justify="space-between" align="middle">
-            <Col>
-              {ask ? (
-                <FixedPriceIcon className="ls-action-button" />
-              ) : (
-                <OpenBidIcon className="ls-action-button" />
-              )}
-            </Col>
-            {general.uuid && (
-              <Col>
-                {sessionUser && isFavorited ? (
-                  <img
-                    className="ls-favorite-heart"
-                    src={`/img/assets/heart-red.svg`}
-                    alt="heart-red"
-                    onClick={handleToggleLike}
-                  />
-                ) : (
-                  <img
-                    className="ls-favorite-heart"
-                    src={`/img/assets/heart-empty.svg`}
-                    alt="heart-empty"
-                    onClick={handleToggleLike}
-                  />
-                )}
-                <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
-                  {likes}
-                </span>
-              </Col>
+      <div
+        className="close-icon-holder"
+        onClick={() => {
+          setShowSingleNFT(false)
+        }}
+      >
+        <img src="/img/assets/close-white-icon.svg" alt="" height="12px" width="12px" />
+      </div>
+      <img className="ls-image" height={'100%'} src={general?.image_url || nftMetadata?.image} alt="the-nft" />
+      <div className="ls-bottom-panel">
+        {ask ? <FixedPriceIcon className="ls-action-button" /> : <OpenBidIcon className="ls-action-button" />}
+        {general.uuid && (
+          <div className="img-holder">
+            {sessionUser && isFavorited ? (
+              <img
+                className="ls-favorite-heart"
+                src={`/img/assets/heart-red.svg`}
+                alt="heart-red"
+                onClick={handleToggleLike}
+              />
+            ) : (
+              <img
+                className="ls-favorite-heart"
+                src={`/img/assets/heart-empty.svg`}
+                alt="heart-empty"
+                onClick={handleToggleLike}
+              />
             )}
-          </Row>
-        </div>
-      )}
+            <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
+              {likes}
+            </span>
+            <a href={`https://solscan.io/token/${general.mint_address}`} target="_blank" rel="noreferrer">
+              <img src="/img/assets/solScanBlack.svg" alt="solscan-icon" className="solscan-icon" />
+            </a>
+            <img
+              src="/img/assets/shareBlue.svg"
+              alt="share-icon"
+              className="share-icon"
+              onClick={() => {
+                setShareModal(true)
+              }}
+            />
+          </div>
+        )}
+      </div>
     </LEFT_SECTION>
-  ) : !checkMobile() ? (
-    <SkeletonCommon width="100%" height="500px" borderRadius="10px" />
   ) : (
-    <SkeletonCommon
-      width="90%"
-      height="360px"
-      borderRadius="10px"
-      style={{ display: 'block', margin: '20px auto' }}
-    />
+    <SkeletonCommon width="100%" height={checkMobile() ? '360px' : '500px'} borderRadius="10px" />
   )
 }
