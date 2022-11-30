@@ -1,6 +1,5 @@
 const CracoSwcPlugin = require('craco-swc')
 const CracoLessPlugin = require('craco-less')
-// const CracoEsbuildPlugin = require('craco-esbuild')
 const path = require('path')
 const webpack = require('webpack')
 
@@ -64,13 +63,7 @@ module.exports = {
     {
       plugin: {
         ...CracoSwcPlugin,
-        // overrideCracoConfig: ({ cracoConfig }) => {
-        //   if (typeof cracoConfig.eslint.enable !== 'undefined') {
-        //     cracoConfig.disableEslint = !cracoConfig.eslint.enable
-        //   }
-        //   delete cracoConfig.eslint
-        //   return cracoConfig
-        // },
+
         overrideWebpackConfig: ({ webpackConfig, cracoConfig }) => {
           if (typeof cracoConfig.disableEslint !== 'undefined' && cracoConfig.disableEslint === true) {
             webpackConfig.plugins = webpackConfig.plugins.filter(
@@ -85,12 +78,25 @@ module.exports = {
           jsc: {
             externalHelpers: true,
             target: 'es5',
+            experimental: {
+              swcPlugins: [['stailwc/install', {}]]
+            },
             parser: {
               syntax: 'typescript',
               tsx: true,
               dynamicImport: true,
               exportDefaultFrom: true
             }
+          }
+        }
+      }
+    },
+    {
+      plugin: CracoLessPlugin,
+      options: {
+        lessLoaderOptions: {
+          lessOptions: {
+            javascriptEnabled: true
           }
         }
       }
