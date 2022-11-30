@@ -15,34 +15,40 @@ const ATTRIBUTES_TAB_CONTENT = styled.div`
   `}
 `
 
-const ATTRIBUTES_ITEM = styled.div`
-  ${tw`overflow-scroll`}
-  height: 60px;
+const BORDER = styled.div`
+  background: linear-gradient(96.79deg, #f7931a 100%, #ac1cc7 100%);
   border-radius: 10px;
-  background-color: ${({ theme }) => theme.atrributeBg};
+  padding: 1px;
+`
+const ATTRIBUTES_ITEM = styled.div`
+  ${tw`overflow-scroll sm:h-full`}
+  height: 60px;
+  background: linear-gradient(96.79deg, #f7931a 10%, #ac1cc7 97.61%);
   padding: ${({ theme }) => theme.margin(1)};
+  border-radius: 10px;
 
   .ai-title {
-    font-size: 11px;
-    font-weight: 500;
-    color: ${({ theme }) => theme.text9};
-    background-color: ${({ theme }) => theme.atrributeBg};
+    font-size: 12px;
+    font-weight: 600;
+    color: ${({ theme }) => theme.text30};
   }
 
   .ai-value {
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 600;
-    color: #fff;
+    color: #eee;
   }
 `
 
 export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ data, ...rest }) => (
   <ATTRIBUTES_TAB_CONTENT {...rest}>
     {data.map((item, index) => (
-      <ATTRIBUTES_ITEM key={index}>
-        <div className="ai-title">{item.trait_type}</div>
-        <div className="ai-value">{item.value}</div>
-      </ATTRIBUTES_ITEM>
+      <BORDER key={index}>
+        <ATTRIBUTES_ITEM>
+          <div className="ai-title">{item.trait_type}</div>
+          <div className="ai-value">{item.value}</div>
+        </ATTRIBUTES_ITEM>
+      </BORDER>
     ))}
   </ATTRIBUTES_TAB_CONTENT>
 )

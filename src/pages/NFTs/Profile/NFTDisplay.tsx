@@ -266,7 +266,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
         <div className="cards-list" id="border">
           <Row gutter={[24, 24]}>
             {filteredCollectedItems.map((nft: ISingleNFT) => (
-              <Col sm={10} md={7} lg={6} xl={4} xxl={4} key={nft.mint_address} span={checkMobile() ? 12 : ''}>
+              <Col sm={10} md={7} lg={6} xl={6} xxl={4} key={nft.mint_address} span={checkMobile() ? 12 : ''}>
                 <Card singleNFT={nft} />
               </Col>
             ))}
