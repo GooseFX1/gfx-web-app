@@ -240,6 +240,7 @@ export const SellNFT: FC = () => {
   }, [])
 
   useEffect(() => {
+    //TODO-PROFILE: NEED TO TEST THIS AND OPEN THE SELL POPUP ON THE SAME SCREEN
     if (!sessionUser || !connected || !publicKey) {
       history.push(`/NFTs/details/${params.nftMintAddress}`)
     }
