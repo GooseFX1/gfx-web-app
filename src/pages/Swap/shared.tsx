@@ -54,6 +54,6 @@ export const AmountField = styled.div<{ $balance: string; $height: string; $valu
     font-weight: 600;
     font-size: 18px;
     line-height: 22px;
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.text11};
   }
 `

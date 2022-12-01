@@ -3,6 +3,7 @@ import { Modal as AntModal } from 'antd'
 import styled from 'styled-components'
 import { useDarkMode } from '../context'
 import { CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../styles'
+import tw from 'twin.macro'
 
 const ANTMODAL = styled(AntModal)`
   ${({ theme }) => theme.customScrollBar('4px')};
@@ -10,16 +11,15 @@ const ANTMODAL = styled(AntModal)`
 `
 
 const CLOSE_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements('14px')}
-  cursor: pointer;
+  ${tw`absolute top-[28px] right-[25px] cursor-pointer`}
+
+  img {
+    ${tw`h-[20px] w-[20px] opacity-60`}
+  }
 `
 
 const HEADER = styled(SpaceBetweenDiv)`
   width: 100%;
-  .modal-close-icon > img {
-    height: 24px;
-    width: 24px;
-  }
 `
 
 const TITLE = styled.span`
@@ -70,7 +70,7 @@ export const Modal: FC<{
     >
       <HEADER>
         {bigTitle ? <BIG_TITLE>{title}</BIG_TITLE> : <TITLE>{title}</TITLE>}
-        <CLOSE_ICON className="modal-close-icon" onClick={handleCancel}>
+        <CLOSE_ICON onClick={handleCancel}>
           {mode === 'dark' ? (
             <SVGToWhite src={`/img/assets/cross.svg`} alt="close" />
           ) : (

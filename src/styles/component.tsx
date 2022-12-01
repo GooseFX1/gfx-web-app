@@ -71,7 +71,8 @@ const MAIN_BUTTON = styled.a`
     left: 0;
     ${({ theme }) => theme.measurements('100%')}
     border-radius: 25px;
-    background-image: linear-gradient(to right, ${({ theme }) => theme.primary1}, ${({ theme }) => theme.secondary2});
+    background-image: linear-gradient(to right, ${({ theme }) => theme.primary1}, ${({ theme }) =>
+  theme.secondary2});
     opacity: 1;
     
     @supports(transition: initial) {
@@ -83,14 +84,6 @@ const MAIN_BUTTON = styled.a`
 export function MainButton({ children, href }: { children: JSX.Element; href?: string }): JSX.Element {
   return <MAIN_BUTTON href={href}>{children}</MAIN_BUTTON>
 }
-
-export const NavBar = styled.nav`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
-  width: 100%;
-  background-color: transparent;
-  z-index: 300;
-`
 
 export const FLOATING_ACTION_ICON = styled.img`
   transform: rotate(90deg);
