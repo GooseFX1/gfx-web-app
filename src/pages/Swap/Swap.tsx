@@ -17,9 +17,10 @@ import {
   useSlippageConfig,
   DEFAULT_MAINNET_RPC,
   useConnectionConfig,
+  useNavCollapse,
   useTokenRegistry
 } from '../../context'
-import { CenteredImg, SpaceBetweenDiv, CenteredDiv, SVGDynamicReverseMode } from '../../styles'
+import { CenteredImg, SpaceBetweenDiv, CenteredDiv } from '../../styles'
 import { JupiterProvider, useJupiter } from '@jup-ag/react-hook'
 import { PublicKey } from '@solana/web3.js'
 import { TOKEN_LIST_URL } from '@jup-ag/core'
@@ -34,7 +35,6 @@ import { logData } from '../../api'
 
 const WRAPPER = styled.div`
   ${tw`w-screen not-italic`}
-  min-height: calc(100vh - 58px);
   color: ${({ theme }) => theme.text1};
   font-family: Montserrat;
   background-color: ${({ theme }) => theme.bg2};
@@ -90,15 +90,15 @@ const RefreshAlert = styled.div<{ $active: boolean; $isMobile: boolean }>`
   }
 `
 
-const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
-  ${tw`flex pt-[142px] items-center w-screen mb-7 
-  max-h-80p sm:justify-start sm:flex sm:flex-col sm:items-center sm:h-full`}
+const INNERWRAPPER = styled.div<{ $desktop: boolean; $navCollapsed: boolean }>`
+  ${tw`flex items-center w-screen mb-[42px] sm:justify-start sm:flex-col sm:items-center sm:h-full`}
 
+  margin-top: ${({ $navCollapsed }) => ($navCollapsed ? '42px' : '142px')};
   color: ${({ theme }) => theme.text1};
   justify-content: ${({ $desktop }) => ($desktop ? 'space-between' : 'space-around')};
 
   @media (max-width: 500px) {
-    padding: 142px 15px 1rem;
+    padding: 1rem;
   }
 `
 
@@ -191,7 +191,7 @@ const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
   box-shadow: 0 6px 9px 0 rgba(36, 36, 36, 0.1);
 
   .inner-container {
-    ${tw`relative flex justify-center items-center h-full w-full rounded-[10px] p-2 sm:static`}
+    ${tw`relative flex justify-center items-center h-full w-full rounded-[10px] p-2`}
     background: ${({ $clicked, $cover }) => ($clicked ? $cover : 'transparent')};
 
     .content {
@@ -208,12 +208,12 @@ const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
 `
 
 const SWAP_ROUTES = styled.div<{ less: boolean }>`
-  ${tw`relative mx-[24px] pt-4`}
+  ${tw`relative mx-[24px] pb-[24px]`}
 
   .swap-content {
-    ${tw`flex h-1/5 mt-0 pb-3 pt-4 pl-4 justify-center
+    ${tw`relative flex h-1/5 mt-0 mx-auto pb-3 pt-4 pl-4 justify-center
     sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around 
-    sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0`}
+    sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0 sm:pt-[12px]`}
     overflow-x: auto;
 
     @media (max-width: 1515px) {
@@ -222,7 +222,8 @@ const SWAP_ROUTES = styled.div<{ less: boolean }>`
   }
 
   .action {
-    ${tw`mb-2 sm:absolute sm:!text-base sm:!right-0`}
+    ${tw`absolute right-0 bottom-0 sm:!text-base cursor-pointer text-lg font-semibold`}
+    text-decoration: underline;
 
     @media (max-width: 500px) {
       top: ${({ less }) => (less ? '80%' : '88%')};
@@ -243,7 +244,7 @@ const AltTokenDetail = styled(TokenDetail)`
 `
 
 const ListWrapper = styled.div`
-  ${tw`w-full sm:flex sm:py-3 flex-wrap`}
+  ${tw`w-full sm:flex sm:py-3 flex-wrap overflow-y-scroll`}
 `
 
 const TokenListWrapper = styled(ListWrapper)`
@@ -266,7 +267,7 @@ const SocialsButton = styled.div`
 `
 //background-color: ${({ theme }) => theme.bg19};
 
-const SMALL_CLICKER_ICON = styled(CenteredImg)`
+const SMALL_CLICKER_ICON = styled(Image)`
   overflow: hidden;
   ${tw`h-5 w-5 mr-2 rounded-circle`}
 `
@@ -275,23 +276,15 @@ const PRICE_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   ${tw`items-center h-full w-81.5 p-6 rounded-tl-bigger 
   h-[575px] rounded-bl-bigger sm:w-full sm:rounded-bigger sm:mb-12`}
-  font-family: Montserrat;
+  
   background: ${({ theme }) => theme.swapSides2};
 `
 
 const ROUTE_TAG = styled.div`
-  ${tw`absolute top-[-12px] right-[-18px] font-semibold items-center text-xs p-2 rounded-md text-white leading-3 
-  sm:top-[32px] sm:right-0`}
+  ${tw`absolute top-[-12px] right-[-18px] font-semibold items-center text-xs p-2 rounded-md  
+   text-white leading-3 sm:right-0`}
   background-color: #be2cff;
   z-index: 100;
-`
-
-const ShowLess = styled.div`
-  ${tw`font-semibold cursor-pointer rounded-lg text-lg mr-[9.5%]! sm:mr-0!`}
-`
-
-const ShowMore = styled.div`
-  ${tw`font-semibold cursor-pointer rounded-lg text-lg mr-[30%]! sm:mr-0!`}
 `
 
 const PriceHeader = styled.div`
@@ -331,15 +324,19 @@ const SETTING_WRAPPER = styled(CenteredImg)`
   ${tw`h-10 w-10 rounded-circle ml-2`}
 `
 
-const SWITCH = styled(CenteredImg)<{ measurements: number }>`
-  ${tw`absolute cursor-pointer`}
-  top: calc(50% - ${({ measurements }) => measurements}px / 2 + ${({ theme }) => theme.margin(3)});
+const SWITCH = styled(CenteredDiv)<{ measurements: number }>`
+  ${tw`absolute h-[64px] w-[64px] cursor-pointer rounded-circle z-[100]`}
+  top: calc(50% - ${({ measurements }) => measurements}px / 2 + 18px);
   left: calc(50% - ${({ measurements }) => measurements}px / 2);
-  ${({ measurements, theme }) => theme.measurements(measurements + 'px')}
-  z-index: 1;
+  box-shadow: 0 4.5px 26px 11px rgb(88 85 255 / 43%);
+
+  @media (max-width: 500px) {
+    top: calc(58% - ${({ measurements }) => measurements}px / 2 + 18px);
+    left: calc(52% - ${({ measurements }) => measurements}px / 2);
+  }
 
   .swap-switch {
-    ${tw`h-auto w-auto sm:h-32 sm:w-32 sm:mt-10`}
+    ${tw`h-[90px] w-auto sm:h-[84px] z-[100]`}
   }
 `
 
@@ -427,6 +424,13 @@ const SwapContent: FC<{
       padding-right: 20px;
       font-size: 20px !important;
       font-weight: 600;
+      &:hover {
+        border-color: #5755ff;
+      }
+      &:focus {
+        border-color: #5755ff;
+        box-shadow: 0 0 0 2px rgb(23 125 220 / 20%);
+      }
     }
 
     .ant-modal-centered {
@@ -483,7 +487,7 @@ const SwapContent: FC<{
         <style>{localCSS}</style>
         <SwapFrom height={height} />
         <SWITCH
-          measurements={100}
+          measurements={64}
           onClick={() => {
             setFocused('from')
             switchTokens()
@@ -797,36 +801,33 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
       <TokenDetail>
         <TokenTitle>Rate</TokenTitle>
         <SmallTitleFlex>
-          <SMALL_CLICKER_ICON>
-            <Image
-              draggable={false}
-              preview={false}
-              src={`/img/crypto/${tokenA.symbol}.svg`}
-              fallback={tokenA.logoURI || '/img/crypto/Unknown.svg'}
-              alt="inputToken"
-            />
-          </SMALL_CLICKER_ICON>
+          <SMALL_CLICKER_ICON
+            draggable={false}
+            preview={false}
+            src={`/img/crypto/${tokenA.symbol}.svg`}
+            fallback={tokenA.logoURI || '/img/crypto/Unknown.svg'}
+            alt="inputToken"
+          />
           <span className={'token-name'}>
             {inTokenAmount} {tokenA.symbol} ≈{'  '}
           </span>
-          <SMALL_CLICKER_ICON style={{ marginLeft: '0.5rem' }}>
-            <Image
-              draggable={false}
-              preview={false}
-              src={`/img/crypto/${tokenB.symbol}.svg`}
-              fallback={tokenB.logoURI || '/img/crypto/Unknown.svg'}
-              alt="out-token"
-            />
-          </SMALL_CLICKER_ICON>
+          <SMALL_CLICKER_ICON
+            draggable={false}
+            preview={false}
+            src={`/img/crypto/${tokenB.symbol}.svg`}
+            fallback={tokenB.logoURI || '/img/crypto/Unknown.svg'}
+            alt="out-token"
+            style={{ marginLeft: '8px' }}
+          />
           <span className={'token-name'}>
             {+outAmount.toFixed(3)} {tokenB.symbol}
           </span>
         </SmallTitleFlex>
         <SmallTitleFlex>
-          <span style={{ color: cheap ? '#5fc8a7' : '#bb3535', marginRight: '0.25rem', fontWeight: '600' }}>
-            {isFinite(outTokenPercentage) ? outTokenPercentage : 0}% {cheap ? 'cheaper' : 'higher'}
-          </span>
-          <span style={{ fontWeight: '600' }}>than coingecko</span>
+          <strong style={{ color: cheap ? '#5fc8a7' : '#bb3535', marginRight: '0.25rem' }}>
+            {isFinite(outTokenPercentage) ? outTokenPercentage.toFixed(2) : 0}% {cheap ? 'cheaper' : 'higher'}
+          </strong>
+          <strong>than CoinGecko</strong>
         </SmallTitleFlex>
       </TokenDetail>
       <ListWrapper>
@@ -835,19 +836,12 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
             <TokenTitleFees>
               {detail.name}{' '}
               {detail.icon && (
-                  <SVGDynamicReverseMode
-                    style={{ height: '12px', width: '12px' }}
-                    src={`/img/crypto/${detail.icon}.svg`}
-                    alt="jupiter-icon"
-                    className={'header-icon'}
-                  />
-                ) && (
-                  <Tooltip dark placement="top" color="#fff">
-                    <span style={{ color: '#000' }}>
-                      {'The amount of fee we take, in order to process your transaction.'}
-                    </span>
-                  </Tooltip>
-                )}
+                <Tooltip dark placement="top" color="#fff">
+                  <span style={{ color: '#000' }}>
+                    {'The amount of fee we take, in order to process your transaction.'}
+                  </span>
+                </Tooltip>
+              )}
             </TokenTitleFees>
             <SmallTitle>{detail.value}</SmallTitle>
             <SmallTitle>{detail.extraValue || null}</SmallTitle>
@@ -959,20 +953,15 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
               </SWAP_ROUTE_ITEM>
             ))}
       </div>
-
       {routes.length > 2 && (
         <div className="action">
-          {!less ? (
-            <ShowLess
-              onClick={() => {
-                setLess(true)
-              }}
-            >
-              Show Less
-            </ShowLess>
-          ) : (
-            <ShowMore onClick={() => setLess(false)}>Show More</ShowMore>
-          )}
+          <div
+            onClick={() => {
+              setLess((prev) => !prev)
+            }}
+          >
+            {less ? 'Show More' : 'Show Less'}
+          </div>
         </div>
       )}
     </SWAP_ROUTES>
@@ -980,6 +969,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
 }
 
 export const SwapMain: FC = () => {
+  const { isCollapsed } = useNavCollapse()
   const desktop = window.innerWidth > 1300
   const {
     tokenA,
@@ -1007,21 +997,19 @@ export const SwapMain: FC = () => {
     debounceTime: 850 // debounce ms time before refresh
   })
 
-  function marketInfoFormat(mkt: any) {
-    return {
-      ...mkt,
-      inAmount: JSBI.toNumber(mkt.inAmount),
-      outAmount: JSBI.toNumber(mkt.outAmount),
-      lpFee: {
-        ...mkt.lpFee,
-        amount: JSBI.toNumber(mkt.lpFee.amount)
-      },
-      platformFee: {
-        ...mkt.platformFee,
-        amount: JSBI.toNumber(mkt.platformFee.amount)
-      }
+  const marketInfoFormat = (mkt: any): any => ({
+    ...mkt,
+    inAmount: JSBI.toNumber(mkt.inAmount),
+    outAmount: JSBI.toNumber(mkt.outAmount),
+    lpFee: {
+      ...mkt.lpFee,
+      amount: JSBI.toNumber(mkt.lpFee.amount)
+    },
+    platformFee: {
+      ...mkt.platformFee,
+      amount: JSBI.toNumber(mkt.platformFee.amount)
     }
-  }
+  })
 
   useEffect(() => {
     if (network === 'devnet') {
@@ -1031,7 +1019,7 @@ export const SwapMain: FC = () => {
     }
   }, [tokenA?.symbol, tokenB?.symbol, routes, slippage, inTokenAmount, outTokenAmount, gofxOutAmount, network])
 
-  function devnetRoutes() {
+  const devnetRoutes = () => {
     setRoutes([])
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
     setInAmountTotal(Math.round(inAmountTotal))
@@ -1055,7 +1043,7 @@ export const SwapMain: FC = () => {
     setRoutes([GoFxRoute])
   }
 
-  function mainnetRoutes() {
+  const mainnetRoutes = () => {
     setRoutes([])
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
     setInAmountTotal(Math.round(inAmountTotal))
@@ -1120,7 +1108,7 @@ export const SwapMain: FC = () => {
     return (
       <WRAPPER>
         <RefreshedAnimation active={refreshed} isMobile={true} />
-        <INNERWRAPPER $desktop={false}>
+        <INNERWRAPPER $desktop={false} $navCollapsed={false}>
           <SwapContent
             exchange={exchange}
             routes={chosenRoutes}
@@ -1137,7 +1125,7 @@ export const SwapMain: FC = () => {
     return (
       <WRAPPER>
         <RefreshedAnimation active={refreshed} isMobile={false} />
-        <INNERWRAPPER $desktop={desktop && allowed}>
+        <INNERWRAPPER $desktop={desktop && allowed} $navCollapsed={isCollapsed}>
           {desktop && allowed && <TokenContent />}
           <SwapContent
             exchange={exchange}

@@ -11,9 +11,8 @@ export const SkeletonCommon: FC<{
   isReverse?: boolean
 }> = ({ height, width = '100%', borderRadius = '6px', style = {}, isReverse = false }) => {
   const { mode } = useDarkMode()
-  const isLite = mode === 'lite'
-  const baseColor = isLite ? 'rgba(255, 255, 255, 1)' : 'rgba(71, 71, 71, 1)'
-  const highlightColor = isLite ? 'rgba(186, 186, 186, 0.5)' : 'rgba(19, 19, 19, 0.5)'
+  const baseColor = mode === 'lite' ? 'rgba(255, 255, 255, 1)' : 'rgba(71, 71, 71, 1)'
+  const highlightColor = mode === 'lite' ? 'rgba(186, 186, 186, 0.5)' : 'rgba(19, 19, 19, 0.5)'
 
   return (
     <SkeletonTheme

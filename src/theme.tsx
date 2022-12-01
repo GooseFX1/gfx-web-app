@@ -59,7 +59,7 @@ export function colors(mode: string): Colors {
     text7: mode === 'dark' ? white : '#3C3C3C',
     text9: mode === 'dark' ? '#616161' : '#3C3C3C',
     text10: mode === 'dark' ? '#4b4b4b' : '#BDBDBD',
-    text11: mode === 'dark' ? '#bebebe' : '#636363',
+    text11: mode === 'dark' ? '#eeeeee' : '#636363',
     text12: mode === 'dark' ? '#909090' : '#636363',
     text13: mode === 'dark' ? 'rgba(255, 255, 255, 0.55)' : '#636363',
     text14: mode === 'dark' ? '#b1b1b1' : '#fff',

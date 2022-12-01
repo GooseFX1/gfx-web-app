@@ -1,48 +1,36 @@
 import React, { useEffect, useState, FC } from 'react'
 import styled from 'styled-components'
-import { Toggle } from './Toggle'
-import { SearchBar } from '../../components'
-import { useFarmContext, usePriceFeedFarm } from '../../context'
-import { checkMobile, moneyFormatterWithComma } from '../../utils'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { Toggle } from './Toggle'
+import { SearchBar, Pill } from '../../components'
+import { useFarmContext, usePriceFeedFarm } from '../../context'
+import { checkMobile, moneyFormatterWithComma } from '../../utils'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { LoaderLeftSpace } from './Columns'
 import { CenteredDiv } from '../../styles'
 
 const ABSTRACT = styled.div`
   .lastRefreshed {
-    ${tw`flex w-full justify-center font-medium text-center text-base
-   sm:text-sm`}
+    ${tw`flex flex-col justify-end items-center w-full sm:text-sm`}
     color: ${({ theme }) => theme.tabNameColor};
-    animation: openAnimation 1s forwards;
-  }
-  .totalContainer {
-    padding: 4px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
+    animation: openAnimation 3s forwards;
   }
 
-  .hide {
-    animation: closeMe 0.5s;
-  }
-  @keyframes closeMe {
-    0% {
-      height: 45px;
-    }
-    100% {
-      height: 0px;
-    }
-  }
   @keyframes openAnimation {
     0% {
       height: 0px;
     }
+    30% {
+      height: 64px;
+    }
+    50% {
+      height: 64px;
+    }
     100% {
-      height: 45px;
+      height: 0px;
     }
   }
+
   .generalStatsBg {
     display: flex;
     ${tw`overflow-hidden h-9 whitespace-nowrap font-semibold text-sm mb-1`}
@@ -71,9 +59,10 @@ const ABSTRACT = styled.div`
   .toggle {
     ${tw`ml-4`}
   }
-  .textContainer {
-    ${tw`flex w-11/12 text-white z-10 flex-row   
-    items-center justify-between mb-9 sm:mb-5 mt-2 text-sm font-semibold`}
+
+  .stats-container {
+    ${tw`flex w-full items-center justify-between sm:mb-5 mb-[20px]`}
+
     @media(max-width: 500px) {
       width: 200vw;
       overflow-y: hidden;
@@ -82,21 +71,6 @@ const ABSTRACT = styled.div`
       color: #fff;
       z-index: 10;
       opacity: 1;
-      position: absolute;
-    }
-  }
-  .statsBackground {
-    ${tw`h-9 w-[100vw] opacity-80 z-0 absolute
-    left-0 flex flex-row  m-auto items-center justify-between pr-16 pl-16`};
-    border: 1px solid #fff;
-    border-style: solid none;
-    background-image: linear-gradient(91deg, #f7931a 0%, #ac1cc7 100%);
-    @media (max-width: 500px) {
-      overflow-y: hidden;
-      overflow-x: auto;
-      width: 200vw;
-      z-index: 5;
-      flex: none;
       position: absolute;
     }
   }
@@ -190,15 +164,12 @@ const MobileWrapper = styled.div`
   width: 92vw;
 `
 
-const HOLD = styled.div`
-  ${tw`items-center flex`}
-`
-
 //TEMP_DEP_DISABLE
 const TEMP_BANNER = styled.h2`
+  margin: 28px 0 24px;
   color: ${({ theme }) => theme.text1};
-  padding: 1rem;
   text-align: center;
+  font-weight: 600;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     background-color: ${({ theme }) => theme.bg1};
@@ -242,9 +213,7 @@ export const FarmFilter: FC = () => {
 
   useEffect(() => {
     if (lastRefreshedClass !== 'hide' && !firstPageLoad) {
-      setTimeout(() => {
-        setLastRefreshedClass('hide')
-      }, 2500)
+      setTimeout(() => setLastRefreshedClass('hide'), 3000)
     }
   }, [lastRefreshedClass])
 
@@ -283,27 +252,31 @@ export const FarmFilter: FC = () => {
   return (
     <ABSTRACT>
       <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
+      {/* TEMP_DEP_DISABLE */}
+      <CenteredDiv>
+        <TEMP_BANNER>⚠️ SSL Pools Have Temporarily Disabled Deposits</TEMP_BANNER>
+      </CenteredDiv>
       <WRAPPER>
-        <div className="statsBackground" />
-        <div className="textContainer">
-          <HOLD>TVL: {statsData ? ` $ ` + moneyFormatterWithComma(statsData.tvl) : <LoaderLeftSpace />}</HOLD>
-          <HOLD>Pools: {farmDataContext?.length + farmDataSSLContext?.length}</HOLD>
-          <HOLD>
-            7d Volume:
-            {statsData ? ` $ ` + moneyFormatterWithComma(statsData.volume7dSum) : <LoaderLeftSpace />}{' '}
-          </HOLD>
-          <HOLD>
-            Total Volume Trade:{' '}
-            {statsData ? ` $ ` + moneyFormatterWithComma(statsData.totalVolumeTrade) : <LoaderLeftSpace />}
-          </HOLD>
-          <HOLD>
-            GOFX Price: {prices['GOFX/USDC'] ? ` $ ` + prices['GOFX/USDC']?.current : <LoaderLeftSpace />}{' '}
-          </HOLD>
+        <div className="stats-container">
+          <Pill label={'TVL:'} value={statsData ? `$${moneyFormatterWithComma(statsData.tvl)}` : null} />
+          <Pill
+            label={'Pools: '}
+            value={
+              farmDataContext && farmDataSSLContext
+                ? `${farmDataContext.length + farmDataSSLContext.length}`
+                : null
+            }
+          />
+          <Pill
+            label={'7d Volume:'}
+            value={statsData ? `$${moneyFormatterWithComma(statsData.volume7dSum)}` : null}
+          />
+          <Pill
+            label={'Total Volume Trade:'}
+            value={statsData ? `$${moneyFormatterWithComma(statsData.totalVolumeTrade)}` : null}
+          />
+          <Pill label={'GOFX Price:'} value={prices['GOFX/USDC'] ? `$ ${prices['GOFX/USDC']?.current}` : null} />
         </div>
-        {/* TEMP_DEP_DISABLE */}
-        <CenteredDiv>
-          <TEMP_BANNER>⚠️ SSL Pools Have Temporarily Disabled Deposits</TEMP_BANNER>
-        </CenteredDiv>
         <STYLED_FARM_HEADER>
           <ButtonContainer $poolIndex={poolIndex}>
             <div className="slider-animation-web"></div>
@@ -349,13 +322,13 @@ export const RefreshBtnWithAnimation: FC = () => {
 const LastRefreshedAnimation = ({ lastRefreshedClass }: any) => (
   <div className={lastRefreshedClass}>
     {lastRefreshedClass === 'lastRefreshed' && (
-      <div>
+      <strong>
         Last updated: {checkMobile() && <br />}{' '}
         {
           //@ts-ignore
           new Date().toGMTString()
         }
-      </div>
+      </strong>
     )}
   </div>
 )

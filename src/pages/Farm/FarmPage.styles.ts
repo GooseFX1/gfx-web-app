@@ -110,6 +110,7 @@ export const TABLE_ROW = styled.tr<{ isOpen: boolean; publicKey: any; checkMobil
   ${tw`text-base font-medium`}
   td {
     ${tw`align-top text-center pt-8`}
+    color: ${({ theme }) => theme.text7};
   }
   .nameColumn {
     width: 11%;

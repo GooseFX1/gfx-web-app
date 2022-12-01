@@ -11,61 +11,56 @@ import { checkMobile } from '../../utils'
 import tw from 'twin.macro'
 
 const BODY = styled.div`
-  height: 33vh;
+  ${tw`h-[300px] sm:h-[268px]`}
   margin: 0 -${({ theme }) => theme.margin(3)};
   overflow-y: auto;
 `
 
 const SELECTOR_MODAL = styled(Modal)`
-  ${tw`w-[40vw]! sm:w-full!`}
-  background-color: ${({ theme }) => theme.bg20 + '!important'};
+  ${tw`top-[-24px]! w-[628px]! sm:w-full!`}
+  background-color: ${({ theme }) => theme.bg20} !important;
 `
 
-const SELECTOR_INPUT = styled(Input)`
-  border-radius: 1rem;
-`
+const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
+  ${tw`absolute top-[7px] left-[7px] h-[42px] w-[188px] rounded-circle cursor-pointer z-[1] sm:w-[142px]`}
 
-const CLICKER = styled(SpaceBetweenDiv)`
-  position: relative;
-  width: 100%;
-  padding: 8px 12px 8px 8px;
-  align-items: flex-center;
-  justify-content: space-between;
-  color: ${({ theme }) => theme.white};
-  height: 100%;
-  display: flex;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  background-color: ${({ theme }) => theme.bg21};
 
-  .text-primary {
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 22px;
-  }
+  .selector-inner {
+    ${tw`relative h-full w-full p-[8px]`}
+    color: ${({ theme }) => theme.white};
 
-  .icon-left img {
-    margin-right: ${({ theme }) => theme.margin(0.5)};
-    overflow: hidden;
-    ${({ theme }) => theme.measurements(theme.margin(4))}
-    ${({ theme }) => theme.roundedBorders}
-  }
-  .icon-right {
+    .text-primary {
+      ${tw`sm:w-[50px] sm:text-[15px]`}
+      ${({ theme }) => theme.ellipse}
+    }
+
+    .icon-left img {
+      ${tw`h-[30px] w-[30px] overflow-hidden`}
+      ${({ theme }) => theme.roundedBorders}
+    }
+    .icon-right {
+      ${tw`mr-[4px]`}
+    }
   }
 `
 
 const INPUT = styled.div`
-  position: relative;
-  margin-top: ${({ theme }) => theme.margin(2)};
-  color: ${({ theme }) => theme.text1};
+  ${tw`relative w-[528px] sm:w-[290px]`}
 
   input {
     height: ${({ theme }) => theme.margin(5)};
-    background-color: ${({ theme }) => theme.bg4};
-    font-size: 12px;
+    background-color: ${({ theme }) => theme.bg2};
+    font-size: 15px;
+    font-weight: 500;
     text-align: left;
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.text11};
     border-radius: 45px;
+    border-color: transparent;
 
     &::placeholder {
-      color: ${({ theme }) => theme.text9};
+      color: ${({ theme }) => theme.text17};
     }
   }
 `
@@ -74,57 +69,28 @@ const MAGNIFYING_GLASS = styled(CenteredImg)`
   position: absolute;
   top: 12px;
   right: 12px;
-  ${({ theme }) => theme.measurements(theme.margin(2))}
-
-  span {
-    cursor: pointer;
-    margin-left: -24px;
-    color: ${({ theme }) => theme.text1};
-  }
-`
-
-const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  height: 44px;
+  height: 16px;
   width: auto;
-  min-width: 216px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  background-color: ${({ theme }) => theme.bg21};
-  ${({ theme }) => theme.roundedBorders}
-  cursor: pointer;
-  z-index: 1;
 
-  @media (max-width: 500px) {
-    top: 4px;
-    left: 4px;
-    width: 184px;
+  strong {
+    color: ${({ theme }) => theme.text11};
   }
 `
 
 const POP_TEXT = styled.p`
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text11};
   font-size: 18px;
   font-weight: 600;
   margin: 0.35rem;
 `
 
-const POPULAR = styled.div`
-  display: flex;
-  justify-content: space-around;
-  align-content: center;
-  padding: 0rem;
-  flex-wrap: wrap;
-
-  &:after {
-    content: '';
-    display: block;
-    height: 1px;
-    width: calc(100% + ${({ theme }) => theme.margin(3)} * 2);
-    margin: 16px -24px 0;
-    background-color: ${({ theme }) => theme.tokenBorder};
-  }
+const GFX_HR = styled.hr`
+  display: block;
+  height: 1px;
+  width: calc(100% + ${({ theme }) => theme.margin(3)} * 2);
+  margin: 16px -24px 0;
+  background-color: ${({ theme }) => theme.tokenBorder};
+  border: none;
 `
 
 const TOKEN = styled.div`
@@ -151,34 +117,40 @@ const TOKEN = styled.div`
   }
 `
 
+const POPULAR = styled.div`
+  ${tw`flex justify-center p-0 sm:flex-wrap sm:justify-start`}
+`
+
 const POPULAR_TK = styled(TOKEN)`
-  ${tw`w-[96px]! sm:w-full flex justify-between h-[40px] mb-0 mt-1 mx-0`}
+  ${tw`flex justify-between h-[40px] w-auto ml-[12px] sm:m-[4px]`}
   border-radius: 20px;
   border: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
   background-color: ${({ theme }) => theme.bg2};
   padding: 0 16px 0 4px;
 
   img {
-    height: 30px !important;
-    width: 30px !important;
+    ${tw`h-[30px] w-[30px] mr-[8px]`}
   }
-  span {
-    font-weight: 600;
+
+  strong {
+    color: ${({ theme }) => theme.text11};
     font-size: 15px;
     line-height: 18px;
+  }
+
+  &:first-child {
+    margin-left: 0;
   }
 `
 
 const TOKEN_ICON = styled(CenteredImg)`
-  ${({ theme }) => theme.measurements(theme.margin(4))}
-  margin-right: ${({ theme }) => theme.margin(2)};
-  box-shadow: 0 4px 10px 1px rgb(0 0 0 / 20%);
+  ${tw`h-[40px] w-[40px] mr-[18px] rounded-circle`}
   overflow: hidden;
-  ${({ theme }) => theme.roundedBorders}
 `
 
 const TOKEN_INFO = styled.div`
-  color: ${({ theme }) => theme.text1};
+  font-size: 18px;
+  color: ${({ theme }) => theme.text11};
   font-weight: 600;
 `
 
@@ -302,16 +274,18 @@ export const Selector: FC<{
 
   return (
     <>
-      <SELECTOR_MODAL setVisible={setVisible} visible={visible}>
+      <SELECTOR_MODAL setVisible={setVisible} visible={visible} style={{ paddingTop: '18px' }}>
         <INPUT>
-          <SELECTOR_INPUT
+          <Input
             onChange={(x: any) => setFilterKeywords(x.target.value)}
             placeholder="Search name or paste address"
             value={filterKeywords}
           />
           <MAGNIFYING_GLASS>
             {filterKeywords.length > 0 ? (
-              <span onClick={() => setFilterKeywords('')}> Cancel </span>
+              <strong onClick={() => setFilterKeywords('')} style={{ cursor: 'pointer' }}>
+                Cancel
+              </strong>
             ) : mode === 'dark' ? (
               <SVGToWhite src={`/img/assets/magnifying_glass.svg`} alt="token-search-icon" />
             ) : (
@@ -319,36 +293,38 @@ export const Selector: FC<{
             )}
           </MAGNIFYING_GLASS>
         </INPUT>
-        <POP_TEXT>Most Popular</POP_TEXT>
-        <POPULAR>
-          {popularTokens.map(({ address, decimals, name, symbol, imageURL, logoURI }, index) => (
-            <POPULAR_TK
-              key={index}
-              onClick={async () => {
-                setToken({ address, decimals, symbol, name, logoURI })
-                setVisible(false)
-              }}
-            >
-              <div>
-                <img
-                  src={imageURL || logoURI}
-                  alt="token-icon"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null
-                    if (e.currentTarget.src === logoURI) {
-                      e.currentTarget.src = '/img/crypto/Unknown.svg'
-                    } else {
-                      e.currentTarget.src = logoURI || '/img/crypto/Unknown.svg'
-                    }
-                  }}
-                />
-              </div>
-              <TOKEN_INFO>
-                <span>{symbol}</span>
-              </TOKEN_INFO>
-            </POPULAR_TK>
-          ))}
-        </POPULAR>
+        <div>
+          <POP_TEXT>Most Popular</POP_TEXT>
+          <POPULAR>
+            {popularTokens.map(({ address, decimals, name, symbol, imageURL, logoURI }, index) => (
+              <POPULAR_TK
+                key={index}
+                onClick={async () => {
+                  setToken({ address, decimals, symbol, name, logoURI })
+                  setVisible(false)
+                }}
+              >
+                <div>
+                  <img
+                    src={imageURL || logoURI}
+                    alt="token-icon"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null
+                      if (e.currentTarget.src === logoURI) {
+                        e.currentTarget.src = '/img/crypto/Unknown.svg'
+                      } else {
+                        e.currentTarget.src = logoURI || '/img/crypto/Unknown.svg'
+                      }
+                    }}
+                  />
+                </div>
+
+                <strong>{symbol}</strong>
+              </POPULAR_TK>
+            ))}
+          </POPULAR>
+        </div>
+        <GFX_HR />
         <BODY>
           {filteredTokens.map(({ address, decimals, name, symbol, imageURL, logoURI }, index) => (
             <TOKEN
@@ -368,8 +344,8 @@ export const Selector: FC<{
                 </TOKEN_INFO>
               ) : (
                 <DESK_TOKEN_INFO>
-                  <span>{symbol}</span>
-                  <span className="token-name"> ( {name.replaceAll('(', '').replaceAll(')', '')} )</span>
+                  <strong>{symbol}</strong>
+                  <strong className="token-name"> ({name.replaceAll('(', '').replaceAll(')', '')})</strong>
                 </DESK_TOKEN_INFO>
               )}
             </TOKEN>
@@ -377,7 +353,7 @@ export const Selector: FC<{
         </BODY>
       </SELECTOR_MODAL>
       <SELECTOR $height={height} onClick={() => setVisible(true)}>
-        <CLICKER>
+        <SpaceBetweenDiv className={'selector-inner'}>
           <div className={'icon-left'}>
             {token ? (
               <Image
@@ -391,10 +367,10 @@ export const Selector: FC<{
               <></>
             )}
           </div>
-          <span className={'text-primary'}>{token ? token.symbol : 'null'}</span>
+          <strong className={'text-primary'}>{token && token.symbol}</strong>
 
           <SVGToWhite src={`/img/assets/arrow.svg`} alt="arrow" className={'icon-right'} />
-        </CLICKER>
+        </SpaceBetweenDiv>
       </SELECTOR>
     </>
   )
