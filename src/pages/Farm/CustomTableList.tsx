@@ -44,11 +44,10 @@ export interface IFarmData {
 }
 
 const WRAPPER = styled.div<{ $navCollapsed; $lastRefreshedClass }>`
-  margin-top: 5px;
-  height: calc(
-    100vh - ${({ $lastRefreshedClass }) => (!$lastRefreshedClass ? '45px' : '0px')} - 184px -
-      ${({ $navCollapsed }) => (!$navCollapsed ? '80px' : '0px')}
-  );
+  margin-top: 5px; // ${({ $lastRefreshedClass }) => (!$lastRefreshedClass ? '45px' : '0px')}
+  // window height - banner height - nav height
+  height: calc(100vh - 216px - ${({ $navCollapsed }) => (!$navCollapsed ? '80px' : '0px')});
+
   transition: 0.5s ease;
   overflow-y: auto;
   overflow-x: hidden;

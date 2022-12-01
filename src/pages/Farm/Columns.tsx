@@ -91,13 +91,6 @@ const ICON_WRAPPER_TD = styled.td`
 export const Loader: FC = () => (
   <Skeleton.Button active size="small" style={{ display: 'flex', height: '15px', borderRadius: '5px' }} />
 )
-export const LoaderLeftSpace: FC = () => (
-  <Skeleton.Button
-    active
-    size="small"
-    style={{ display: 'flex', height: '15px', borderRadius: '5px', marginLeft: 6 }}
-  />
-)
 
 export const HeaderTooltip = (text: string): JSX.Element =>
   <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
