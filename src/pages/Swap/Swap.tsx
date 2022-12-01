@@ -20,7 +20,7 @@ import {
   useNavCollapse,
   useTokenRegistry
 } from '../../context'
-import { CenteredImg, SpaceBetweenDiv, CenteredDiv, SVGDynamicReverseMode } from '../../styles'
+import { CenteredImg, SpaceBetweenDiv, CenteredDiv } from '../../styles'
 import { JupiterProvider, useJupiter } from '@jup-ag/react-hook'
 import { PublicKey } from '@solana/web3.js'
 import { TOKEN_LIST_URL } from '@jup-ag/core'
@@ -244,7 +244,7 @@ const AltTokenDetail = styled(TokenDetail)`
 `
 
 const ListWrapper = styled.div`
-  ${tw`w-full sm:flex sm:py-3 flex-wrap`}
+  ${tw`w-full sm:flex sm:py-3 flex-wrap overflow-y-scroll`}
 `
 
 const TokenListWrapper = styled(ListWrapper)`
@@ -276,7 +276,7 @@ const PRICE_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   ${tw`items-center h-full w-81.5 p-6 rounded-tl-bigger 
   h-[575px] rounded-bl-bigger sm:w-full sm:rounded-bigger sm:mb-12`}
-  font-family: Montserrat;
+  
   background: ${({ theme }) => theme.swapSides2};
 `
 
@@ -824,10 +824,10 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
           </span>
         </SmallTitleFlex>
         <SmallTitleFlex>
-          <span style={{ color: cheap ? '#5fc8a7' : '#bb3535', marginRight: '0.25rem', fontWeight: '600' }}>
-            {isFinite(outTokenPercentage) ? outTokenPercentage : 0}% {cheap ? 'cheaper' : 'higher'}
-          </span>
-          <span style={{ fontWeight: '600' }}>than coingecko</span>
+          <strong style={{ color: cheap ? '#5fc8a7' : '#bb3535', marginRight: '0.25rem' }}>
+            {isFinite(outTokenPercentage) ? outTokenPercentage.toFixed(2) : 0}% {cheap ? 'cheaper' : 'higher'}
+          </strong>
+          <strong>than CoinGecko</strong>
         </SmallTitleFlex>
       </TokenDetail>
       <ListWrapper>
@@ -836,19 +836,12 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
             <TokenTitleFees>
               {detail.name}{' '}
               {detail.icon && (
-                  <SVGDynamicReverseMode
-                    style={{ height: '12px', width: '12px' }}
-                    src={`/img/crypto/${detail.icon}.svg`}
-                    alt="jupiter-icon"
-                    className={'header-icon'}
-                  />
-                ) && (
-                  <Tooltip dark placement="top" color="#fff">
-                    <span style={{ color: '#000' }}>
-                      {'The amount of fee we take, in order to process your transaction.'}
-                    </span>
-                  </Tooltip>
-                )}
+                <Tooltip dark placement="top" color="#fff">
+                  <span style={{ color: '#000' }}>
+                    {'The amount of fee we take, in order to process your transaction.'}
+                  </span>
+                </Tooltip>
+              )}
             </TokenTitleFees>
             <SmallTitle>{detail.value}</SmallTitle>
             <SmallTitle>{detail.extraValue || null}</SmallTitle>
