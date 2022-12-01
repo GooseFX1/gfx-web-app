@@ -19,6 +19,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
+b {
+  font-weight: 700;
+}
+
+strong {
+  font-weight: 600;
+}
+
 button {
   cursor: pointer;
 }
