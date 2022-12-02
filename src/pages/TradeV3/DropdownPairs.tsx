@@ -118,6 +118,13 @@ const DROPDOWN_MODAL = styled(Modal)`
       font-size: 15px;
     }
   }
+
+  .no-result-found {
+    text-align: center;
+    margin-top: 150px;
+    font-size: 18px;
+    font-weight: 500;
+  }
 `
 
 const GRADIENT_BORDER = styled.div<{ $hoverBorder: boolean }>`
@@ -141,7 +148,8 @@ const MostPopularCrypto: FC<{ pair: string; type: MarketType }> = ({ pair, type 
 }
 
 const SelectCryptoModal: FC = () => {
-  const { selectedCrypto, setSelectedCrypto, pairs, setShowModal, getAskSymbolFromPair } = useCrypto()
+  const { selectedCrypto, setSelectedCrypto, pairs, setShowModal, getAskSymbolFromPair, filteredSearchPairs } =
+    useCrypto()
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
     [getAskSymbolFromPair, selectedCrypto.pair]
@@ -158,8 +166,8 @@ const SelectCryptoModal: FC = () => {
     }
   }
   return (
-    <div>
-      <div className="popular">Most Popular</div>
+    <>
+      <div className="popular">Most popular</div>
       <div className="row">
         {pairs &&
           pairs.slice(0, 3).map((item, index) => (
@@ -168,13 +176,16 @@ const SelectCryptoModal: FC = () => {
             </div>
           ))}
       </div>
-      {pairs &&
-        pairs.map((item, index) => (
+      {filteredSearchPairs && filteredSearchPairs.length > 0 ? (
+        filteredSearchPairs.map((item, index) => (
           <li onClick={() => handleSelection(item)} key={index}>
             <PairComponents {...item} />
           </li>
-        ))}
-    </div>
+        ))
+      ) : (
+        <div className="no-result-found">Sorry, no result found!</div>
+      )}
+    </>
   )
 }
 
@@ -204,9 +215,16 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
 }
 
 export const DropdownPairs: FC = () => {
-  const { selectedCrypto } = useCrypto()
   const menus = <></>
-  const { getAskSymbolFromPair, formatPair, showModal, setShowModal } = useCrypto()
+  const {
+    selectedCrypto,
+    getAskSymbolFromPair,
+    formatPair,
+    showModal,
+    setShowModal,
+    setFilteredSearchPairs,
+    pairs
+  } = useCrypto()
   const formattedPair = useMemo(() => formatPair(selectedCrypto.pair), [formatPair, selectedCrypto.pair])
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
@@ -216,14 +234,31 @@ export const DropdownPairs: FC = () => {
     () => `/img/${selectedCrypto.type}/${selectedCrypto.type === 'synth' ? `g${symbol}` : symbol}.svg`,
     [symbol, selectedCrypto.type]
   )
+  const handleDropdownSearch = (searchString: string) => {
+    const filteredResult = pairs.filter((item) =>
+      getAskSymbolFromPair(item.pair).includes(searchString.toUpperCase())
+    )
+    setFilteredSearchPairs(filteredResult)
+  }
+  const closeModal = () => {
+    setShowModal(false)
+    setFilteredSearchPairs(pairs)
+  }
+
   return (
     <>
       {showModal && (
         <DROPDOWN_MODAL
-          setVisible={setShowModal}
+          setVisible={closeModal}
           bigTitle={false}
           visible={true}
-          title={<SearchBar className="dropdown-modal-search" />}
+          title={
+            <SearchBar
+              className="dropdown-modal-search"
+              placeholder="Search by name"
+              setSearchFilter={handleDropdownSearch}
+            />
+          }
         >
           <SelectCryptoModal />
         </DROPDOWN_MODAL>
@@ -239,7 +274,7 @@ export const DropdownPairs: FC = () => {
         }}
       >
         <SELECTED_PAIR>
-          <img className="asset-icon" src={assetIcon} alt="" />
+          <img className="asset-icon" src={assetIcon} alt="asset-icon" />
           {formattedPair}
           <DownOutlined />
         </SELECTED_PAIR>
