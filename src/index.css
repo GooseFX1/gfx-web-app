@@ -48,7 +48,9 @@ button:disabled {
 }
 .up24h {
   color: #50bb35;
+  margin-right: 10px;
 }
 .down24h {
   color: #f06565;
+  margin-right: 10px;
 }
