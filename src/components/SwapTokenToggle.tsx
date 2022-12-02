@@ -7,7 +7,6 @@ import tw from 'twin.macro'
 const WRAPPER = styled(SpaceBetweenDiv)`
   padding: 0.75rem 1.5rem 0.75rem 0rem;
   border-radius: 12px;
-  margin-bottom: 2rem;
   width: 200px;
   float: right;
   background-color: inherit;

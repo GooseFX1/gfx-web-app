@@ -123,8 +123,8 @@ const HEADER_TITLE = styled(CenteredDiv)`
 
 const TOKEN_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
-  ${tw`items-center w-81.5 rounded-r-bigger py-6 pr-6 pl-8 h-[575px] sm:w-full sm:rounded-bigger sm:min-h-0`}
-  font-family: Montserrat;
+  ${tw`justify-between items-center w-81.5 rounded-r-bigger py-[16px] pr-[16px] pl-[44px] h-[575px] 
+    sm:w-full sm:rounded-bigger sm:h-[400px] sm:pl-[32px]`}
   background: ${({ theme }) => theme.swapSides1};
 `
 
@@ -175,7 +175,7 @@ const SmallerTitle = styled.div`
   text-fill-color: transparent;
 `
 const TokenHeader = styled.div`
-  ${tw`flex flex-col w-full mb-2.5 ml-10 sm:ml-0 sm:items-center`}
+  ${tw`flex flex-col w-full mb-2.5 sm:ml-0 sm:items-center`}
 `
 
 const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
@@ -244,11 +244,11 @@ const AltTokenDetail = styled(TokenDetail)`
 `
 
 const ListWrapper = styled.div`
-  ${tw`w-full sm:flex sm:py-3 flex-wrap overflow-y-scroll`}
+  ${tw`w-full sm:flex flex-wrap sm:py-3 overflow-y-scroll`}
 `
 
 const TokenListWrapper = styled(ListWrapper)`
-  ${tw`ml-10 sm:ml-0 sm:w-full sm:items-center`}
+  ${tw`sm:ml-0 sm:w-full sm:items-center`}
 `
 
 const SubHeader = styled.div`
@@ -256,7 +256,7 @@ const SubHeader = styled.div`
 `
 
 const Socials = styled.div`
-  ${tw`flex justify-between	w-full mt-2`}
+  ${tw`flex justify-between	w-full`}
 `
 
 const SocialsButton = styled.div`
@@ -275,7 +275,7 @@ const SMALL_CLICKER_ICON = styled(Image)`
 const PRICE_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   ${tw`items-center h-full w-81.5 p-6 rounded-tl-bigger 
-  h-[575px] rounded-bl-bigger sm:w-full sm:rounded-bigger sm:mb-12`}
+  h-[575px] rounded-bl-bigger sm:h-[400px] sm:w-full sm:rounded-bigger sm:mb-12`}
   
   background: ${({ theme }) => theme.swapSides2};
 `
@@ -701,7 +701,7 @@ const TokenContent: FC = () => {
           </COPY>
         </SubHeader>
       </TokenHeader>
-      <TokenListWrapper>
+      <TokenListWrapper className={'no-scrollbar'}>
         {(!toggle ? tokenDetails : tokenDetailsB).map((detail) => (
           <AltTokenDetail key={detail.name}>
             <TokenTitleFDV>{detail.name}</TokenTitleFDV>
@@ -830,7 +830,7 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
           <strong>than CoinGecko</strong>
         </SmallTitleFlex>
       </TokenDetail>
-      <ListWrapper>
+      <ListWrapper className={'no-scrollbar'}>
         {details.map((detail, index) => (
           <AltTokenDetail key={index}>
             <TokenTitleFees>

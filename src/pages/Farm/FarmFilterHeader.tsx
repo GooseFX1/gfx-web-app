@@ -11,9 +11,9 @@ import { CenteredDiv } from '../../styles'
 
 const ABSTRACT = styled.div`
   .lastRefreshed {
-    ${tw`flex flex-col justify-end items-center w-full sm:text-sm`}
+    ${tw`flex flex-col h-[0px] justify-end items-center w-full sm:text-sm`}
     color: ${({ theme }) => theme.tabNameColor};
-    animation: openAnimation 3s forwards;
+    animation: openAnimation 3s ease-in-out;
   }
 
   @keyframes openAnimation {
@@ -212,8 +212,8 @@ export const FarmFilter: FC = () => {
   }, [refreshClass])
 
   useEffect(() => {
-    if (lastRefreshedClass !== 'hide' && !firstPageLoad) {
-      setTimeout(() => setLastRefreshedClass('hide'), 3000)
+    if (lastRefreshedClass !== ' ' && !firstPageLoad) {
+      setTimeout(() => setLastRefreshedClass(' '), 3000)
     }
   }, [lastRefreshedClass])
 
