@@ -33,6 +33,8 @@ interface ICryptoConfig {
   setSelectedCrypto: Dispatch<SetStateAction<ICrypto>>
   showModal: boolean
   setShowModal: Dispatch<SetStateAction<boolean>>
+  filteredSearchPairs: any
+  setFilteredSearchPairs: Dispatch<SetStateAction<any>>
 }
 
 export type MarketType = 'crypto' | 'synth'
@@ -52,6 +54,7 @@ const CryptoContext = createContext<ICryptoConfig | null>(null)
 
 export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [pairs, setPairs] = useState([])
+  const [filteredSearchPairs, setFilteredSearchPairs] = useState([])
   const pairsToset = MARKET_PAIRS as any
 
   const getPairWithMarketAddress = () => {
@@ -77,6 +80,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     ;(async () => {
       const pairsToset = MARKET_PAIRS
       setPairs(pairsToset)
+      setFilteredSearchPairs(pairsToset)
     })()
   }, [])
 
@@ -111,7 +115,9 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         selectedCrypto,
         setSelectedCrypto,
         showModal,
-        setShowModal
+        setShowModal,
+        filteredSearchPairs,
+        setFilteredSearchPairs
       }}
     >
       {children}
@@ -134,6 +140,8 @@ export const useCrypto = (): ICryptoConfig => {
     selectedCrypto: context.selectedCrypto,
     setSelectedCrypto: context.setSelectedCrypto,
     showModal: context.showModal,
-    setShowModal: context.setShowModal
+    setShowModal: context.setShowModal,
+    filteredSearchPairs: context.filteredSearchPairs,
+    setFilteredSearchPairs: context.setFilteredSearchPairs
   }
 }
