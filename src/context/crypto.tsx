@@ -31,6 +31,8 @@ interface ICryptoConfig {
   getSymbolFromPair: (x: string, y: 'buy' | 'sell') => string
   selectedCrypto: ICrypto
   setSelectedCrypto: Dispatch<SetStateAction<ICrypto>>
+  showModal: boolean
+  setShowModal: Dispatch<SetStateAction<boolean>>
 }
 
 export type MarketType = 'crypto' | 'synth'
@@ -69,6 +71,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
   const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(getPairWithMarketAddress)
   const { connection } = useConnectionConfig()
+  const [showModal, setShowModal] = useState<boolean>(false)
 
   useEffect(() => {
     ;(async () => {
@@ -106,7 +109,9 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         getBidSymbolFromPair,
         getSymbolFromPair,
         selectedCrypto,
-        setSelectedCrypto
+        setSelectedCrypto,
+        showModal,
+        setShowModal
       }}
     >
       {children}
@@ -127,6 +132,8 @@ export const useCrypto = (): ICryptoConfig => {
     getBidSymbolFromPair: context.getBidSymbolFromPair,
     getSymbolFromPair: context.getSymbolFromPair,
     selectedCrypto: context.selectedCrypto,
-    setSelectedCrypto: context.setSelectedCrypto
+    setSelectedCrypto: context.setSelectedCrypto,
+    showModal: context.showModal,
+    setShowModal: context.setShowModal
   }
 }
