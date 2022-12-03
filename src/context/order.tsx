@@ -32,10 +32,10 @@ export type OrderType = 'limit' | 'ioc' | 'postOnly'
 export interface IOrder {
   display: OrderDisplayType
   isHidden: boolean
-  price: number
+  price: number | string
   side: OrderSide
-  size: number
-  total: number
+  size: number | string
+  total: number | string
   type: OrderType
 }
 
@@ -118,7 +118,10 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     type: 'limit'
   })
 
-  useEffect(() => setOrder((prevState) => ({ ...prevState, price: 0, size: 0, total: 0 })), [selectedCrypto])
+  useEffect(
+    () => setOrder((prevState) => ({ ...prevState, price: undefined, size: undefined, total: undefined })),
+    [selectedCrypto]
+  )
 
   useEffect(() => {
     switch (focused) {
@@ -126,12 +129,12 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       case 'size':
         return setOrder((prevState) => ({
           ...prevState,
-          total: removeFloatingPointError((order.price || 1) * order.size)
+          total: removeFloatingPointError((+order.price || 1) * +order.size)
         }))
       case 'total':
         return setOrder((prevState) => ({
           ...prevState,
-          size: removeFloatingPointError(order.total / (order.price || 1))
+          size: removeFloatingPointError(+order.total / (+order.price || 1))
         }))
     }
   }, [focused, order.price, order.size, order.total, selectedCrypto.market])
@@ -142,8 +145,8 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     sizeThrottle.current && clearTimeout(sizeThrottle.current)
     sizeThrottle.current = setTimeout(async () => {
       setOrder((prevState) => ({
-        ...prevState,
-        size: floorValue(order.size, selectedCrypto.market?.minOrderSize)
+        ...prevState
+        //size: floorValue(+order.size, selectedCrypto.market?.minOrderSize)
       }))
     }, throttleDelay)
   }, [order.size, selectedCrypto.market?.minOrderSize])
@@ -155,7 +158,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const floorPrice = useCallback(async () => {
     priceThrottle.current && clearTimeout(priceThrottle.current)
     priceThrottle.current = setTimeout(async () => {
-      setOrder((prevState) => ({ ...prevState, price: floorValue(order.price, selectedCrypto.market?.tickSize) }))
+      //setOrder((prevState) => ({ ...prevState, price: floorValue(+order.price, selectedCrypto.market?.tickSize) }))
     }, throttleDelay)
   }, [order.price, selectedCrypto.market?.tickSize])
   useEffect(() => {
@@ -177,8 +180,8 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       await crypto.placeOrder(connection, selectedCrypto.market as Market, order, wallet)
       const ask = getAskSymbolFromPair(selectedCrypto.pair)
-      const price = floorValue(order.price, selectedCrypto.market?.tickSize)
-      const size = floorValue(order.size, selectedCrypto.market?.minOrderSize)
+      const price = floorValue(+order.price, selectedCrypto.market?.tickSize)
+      const size = floorValue(+order.size, selectedCrypto.market?.minOrderSize)
       await notify({
         type: 'success',
         message: `${capitalizeFirstLetter(order.display)} order placed successfully!`,
