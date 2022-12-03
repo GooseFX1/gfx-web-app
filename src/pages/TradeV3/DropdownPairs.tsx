@@ -2,69 +2,46 @@ import { Dropdown } from 'antd'
 import React, { FC, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { MarketType, useCrypto, usePriceFeed } from '../../context'
-import styled from 'styled-components'
 import { DownOutlined } from '@ant-design/icons'
 import { Modal, SearchBar } from '../../components'
+import tw, { styled } from 'twin.macro'
 
 const SELECTED_PAIR = styled.div`
-  line-height: 40px;
-  margin-left: 35px;
-  border-radius: 36px;
+  ${tw`leading-10 ml-[35px] rounded-[36px] text-center w-[180px] cursor-pointer flex 
+  flex-row justify-between items-center font-medium pl-2.5`}
   background-color: ${({ theme }) => theme.bg9};
-  width: 180px;
-  text-align: center;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  font-size: 16px;
-  font-weight: 500;
-  align-items: center;
-  padding-left: 10px;
   color: ${({ theme }) => theme.text21};
+  font-size: 16px;
   .anticon-down {
-    margin-right: 10px;
-    width: 14px;
+    ${tw`mr-2.5 w-3.5`}
   }
   .asset-icon {
-    width: 28px;
-    height: 28px;
+    ${tw`mr-2.5 w-7 h-7`}
   }
 `
 
 const DROPDOWN_PAIR_DIV = styled.div`
-  height: 49px;
-  display: flex;
-  align-items: center;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  background: #1c1c1c;
+  ${tw`h-12.5 flex items-center text-regular font-semibold cursor-pointer`}
+  background-color: ${({ theme }) => theme.bg20};
+
   .asset-icon {
-    width: 28px;
-    height: 28px;
-    margin-right: 18px;
-    margin-left: 10px;
+    ${tw`h-7 w-7 mr-4.5 ml-2.5`}
   }
   .spacing {
-    margin-right: auto;
+    ${tw`mr-auto`}
   }
 `
 
 const DROPDOWN_MODAL = styled(Modal)`
-  width: 528px !important;
-  height: 528px !important;
+  ${tw`!h-[528px] !w-[528px] rounded-[22px]`}
   background-color: ${({ theme }) => theme.bg20} !important;
-  border-radius: 22px;
 
   .ant-modal-content {
-    height: 100%;
-    overflow: scroll;
+    ${tw`h-full overflow-scroll`}
   }
 
   .dropdown-modal-search {
-    background: red;
-    width: 440px;
-    margin: 0;
+    ${tw`w-[440px] m-0`}
     background-color: ${({ theme }) => theme.bg2} !important;
 
     > input {
@@ -73,65 +50,42 @@ const DROPDOWN_MODAL = styled(Modal)`
   }
 
   .popular {
-    font-weight: 600;
-    font-size: 18px;
-    color: #eeeeee;
-    margin: 10px 0;
+    ${tw`font-semibold text-regular text-[#eeeeee] my-2.5 mx-0`}
   }
 
-  .row {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    flex-wrap: wrap;
+  .popular-container {
+    ${tw`flex flex-row items-center justify-around flex-wrap`}
   }
 
-  .row:after {
-    height: 1.5px;
-    display: flex;
-    width: 528px;
+  .popular-container:after {
+    ${tw`flex w-[528px] m-0 p-0 h-[1.5px]`}
     background-color: ${({ theme }) => theme.tokenBorder};
     content: '';
-    padding: 0;
-    margin: 0;
   }
 
   .popular-tokens {
+    ${tw`rounded-[27px] flex flex-row justify-center items-center h-[42px] mb-3 py-0 px-2.5 cursor-pointer`}
     border: 1.5px solid ${({ theme }) => theme.tokenBorder};
-    border-radius: 27px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 42px;
-    padding: 0 10px;
-    margin-bottom: 12px;
-    cursor: pointer;
 
     .asset-icon {
-      height: 30px;
-      width: 30px;
-      margin-right: 10px;
+      ${tw`h-[30px] w-[30px] mr-2.5`}
     }
 
     .pair {
-      font-weight: 600;
-      font-size: 15px;
+      ${tw`font-semibold text-tiny`}
     }
   }
 
   .no-result-found {
-    text-align: center;
-    margin-top: 150px;
-    font-size: 18px;
-    font-weight: 500;
+    ${tw`text-center text-regular font-medium mt-[150px]`}
   }
 `
 
 const GRADIENT_BORDER = styled.div<{ $hoverBorder: boolean }>`
-  background: #1c1c1c;
-  padding: 1px;
-  background: ${({ $hoverBorder }) =>
-    $hoverBorder === true ? 'linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);' : '#1c1c1c;'};
+  ${tw`p-px`}
+  background-color: ${({ theme }) => theme.bg20};
+  background: ${({ $hoverBorder, theme }) =>
+    $hoverBorder === true ? 'linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);' : theme.bg20};
 `
 
 const MostPopularCrypto: FC<{ pair: string; type: MarketType }> = ({ pair, type }) => {
@@ -168,7 +122,7 @@ const SelectCryptoModal: FC = () => {
   return (
     <>
       <div className="popular">Most popular</div>
-      <div className="row">
+      <div className="popular-container">
         {pairs &&
           pairs.slice(0, 3).map((item, index) => (
             <div onClick={() => handleSelection(item)} key={index}>
