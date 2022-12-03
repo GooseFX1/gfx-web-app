@@ -93,7 +93,7 @@ export const Size: FC = () => {
             min={0}
             onChange={(size) => setOrder((prevState) => ({ ...prevState, size }))}
             step={selectedCrypto.market?.minOrderSize}
-            value={order.size}
+            //value={order.size}
             trackStyle={{
               height: '10px'
             }}
