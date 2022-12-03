@@ -60,7 +60,7 @@ export const Total: FC = () => {
   const handleSliderChange = (total: number) =>
     setOrder((prevState) => ({
       ...prevState,
-      size: removeFloatingPointError(total / (order.price || 1)),
+      size: removeFloatingPointError(total / (+order.price || 1)),
       total
     }))
 
@@ -95,7 +95,7 @@ export const Total: FC = () => {
             min={0}
             onChange={handleSliderChange}
             step={selectedCrypto.market?.tickSize}
-            value={order.total}
+            value={+order.total}
             trackStyle={{
               height: '10px'
             }}
