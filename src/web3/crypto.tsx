@@ -53,8 +53,8 @@ const placeOrder = async (
     owner: wallet.publicKey,
     payer,
     side: order.side,
-    price: order.price,
-    size: order.size,
+    price: +order.price,
+    size: +order.size,
     orderType: order.type
   })
   tx.add(transaction)
