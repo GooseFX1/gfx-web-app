@@ -155,7 +155,15 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [endpointName])
 
-  const connection = useMemo(() => new Connection(endpoint, 'confirmed'), [endpoint])
+  const connection = useMemo(
+    () =>
+      new Connection(
+        // eslint-disable-next-line max-len
+        'https://convincing-skilled-pool.solana-mainnet.discover.quiknode.pro/8a09882644cf43347f5c23fa91461bc870b6858a/',
+        'confirmed'
+      ),
+    [endpoint]
+  )
 
   return (
     <SettingsContext.Provider
