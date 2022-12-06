@@ -1,43 +1,50 @@
 import React, { FC, ReactNode, createContext, useContext, useEffect, useState } from 'react'
 import { getWorkingRPCEndpoints } from '../api/analytics'
 
-interface IDarkModeConfig {
-  endpoints: any
+type RPC_HEALTH = {
+  name: string
+  health: boolean
+  health_utc: string
 }
 
-const WorkingRPCContext = createContext<IDarkModeConfig | null>(null)
+interface IRPCHealthContext {
+  rpcHealth: RPC_HEALTH[] | null
+}
+
+const RPCHealthContext = createContext<IRPCHealthContext | null>(null)
 
 export const WorkingRPCProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [hasBeenCalled, setHasBeenCalled] = useState(false)
-  const [endpoints, setEndpoints] = useState<any>(null)
+  const [rpcHealth, setRPCHealth] = useState<RPC_HEALTH[] | null>(null)
 
-  const getRPCEndpoints = async (setHasBeenCalled, hasBeenCalled, setEndpoints) => {
-    if (hasBeenCalled) return
+  const fetchRPCHealthStatus = async (curHealth: RPC_HEALTH[] | null): Promise<RPC_HEALTH[]> => {
+    if (curHealth !== null) return curHealth
     const { data } = await getWorkingRPCEndpoints()
-    setEndpoints(data)
-    setHasBeenCalled(true)
+    return data
   }
 
   useEffect(() => {
-    getRPCEndpoints(setHasBeenCalled, hasBeenCalled, setEndpoints)
+    fetchRPCHealthStatus(rpcHealth).then((rpcHealthStats) => {
+      setRPCHealth(rpcHealthStats)
+    })
   }, [])
+
   return (
-    <WorkingRPCContext.Provider
+    <RPCHealthContext.Provider
       value={{
-        endpoints
+        rpcHealth
       }}
     >
       {children}
-    </WorkingRPCContext.Provider>
+    </RPCHealthContext.Provider>
   )
 }
 
-export const useRPCContext = (): IDarkModeConfig => {
-  const context = useContext(WorkingRPCContext)
+export const useRPCContext = (): IRPCHealthContext => {
+  const context = useContext(RPCHealthContext)
   if (!context) {
     throw new Error('Missing dark mode context')
   }
 
-  const { endpoints } = context
-  return { endpoints }
+  const { rpcHealth } = context
+  return { rpcHealth }
 }
