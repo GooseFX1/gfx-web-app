@@ -1,7 +1,7 @@
-import { useState, useEffect, FC } from 'react'
+import { useState, useEffect, useMemo, FC } from 'react'
 import styled from 'styled-components'
 import { Menu, MenuItem } from '../layouts/App/shared'
-import { ENDPOINTS, useConnectionConfig, useDarkMode } from '../context'
+import { useRPCContext, ENDPOINTS, useConnectionConfig, useDarkMode } from '../context'
 import { ArrowDropdown } from './ArrowDropdown'
 import { SpaceBetweenDiv } from '../styles'
 
@@ -41,17 +41,22 @@ const Overlay = ({
   handleClick
 }: {
   handleClick: (e: any, endpoint: string, endpointName: string, network: string) => void
-}) => (
-  <RPCMenu>
-    {Object.values(ENDPOINTS).map((point, index) => (
-      <MenuItem key={index} onClick={(e) => handleClick(e, point.endpoint, point.name, point.network)}>
-        <span>
-          {point.name} {point.network.includes('devnet') && `(${point.network})`}
-        </span>
-      </MenuItem>
-    ))}
-  </RPCMenu>
-)
+}) => {
+  const { rpcHealth } = useRPCContext()
+  const healthyEndpoints = useMemo(() => Object.keys(rpcHealth).map((rpc: string) => ENDPOINTS[rpc]), [rpcHealth])
+
+  return (
+    <RPCMenu>
+      {Object.values(healthyEndpoints).map((point, index) => (
+        <MenuItem key={index} onClick={(e) => handleClick(e, point.endpoint, point.name, point.network)}>
+          <span>
+            {point.name} {point.network.includes('devnet') && `(${point.network})`}
+          </span>
+        </MenuItem>
+      ))}
+    </RPCMenu>
+  )
+}
 
 export const SelectRPC: FC<{
   handleClickForRPC: (endpoint: string, endpointName: string, network: string) => void
