@@ -167,24 +167,23 @@ export const RewardRedirectComponent: FC = () => {
   }
 
   useEffect(() => {
-    ;(async () => {
-      fetchGOFXData()
-    })()
+    fetchGOFXData()
+      .then((apr) => setApr(apr))
+      .catch((err) => console.error(err))
   }, [])
 
   const fetchGOFXData = async () => {
     try {
-      const CONTROLLER_KEY = SDK_ADDRESS.MAINNET.GFX_CONTROLLER
-      const { data: controllerData } = await connection.getAccountInfo(CONTROLLER_KEY)
+      const { data: controllerData } = await connection.getAccountInfo(SDK_ADDRESS.MAINNET.GFX_CONTROLLER)
       const { stakingBalance, dailyReward } = await CONTROLLER_LAYOUT.decode(controllerData)
       //@ts-ignore
       const liqidity = Number(stakingBalance / BigInt(LAMPORTS_PER_SOL))
       //@ts-ignore
       const DR = Number(dailyReward / BigInt(LAMPORTS_PER_SOL))
       const APR: number = (1 / liqidity) * DR * 365 * 100
-      setApr(APR)
+      return APR
     } catch (err) {
-      console.log(err)
+      return err
     }
   }
 
