@@ -34,7 +34,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
 
   const fetchOrderBook = async (subscriptions: number[]) => {
     try {
-      const market = await serum.getMarket(connection, selectedCrypto.pair)
+      const market = selectedCrypto.market ?? (await serum.getMarket(connection, selectedCrypto.pair))
       const asks = await market.loadAsks(connection)
       const bids = await market.loadBids(connection)
       setOrderBook((prevState) => ({ ...prevState, asks: asks.getL2(20), bids: bids.getL2(20) }))
