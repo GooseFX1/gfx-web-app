@@ -14,8 +14,8 @@ import ThemeProvider from './theme'
 import './App.less'
 
 export default function AppInner(): JSX.Element {
-  const { endpoints } = useRPCContext()
-  return endpoints ? (
+  const { rpcHealth } = useRPCContext()
+  return rpcHealth ? (
     <DarkModeProvider>
       <ThemeProvider>
         <SettingsProvider>
