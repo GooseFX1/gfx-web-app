@@ -1,7 +1,8 @@
-import React, { Dispatch, ReactNode, SetStateAction, useContext, useMemo, useState, FC } from 'react'
+import React, { Dispatch, SetStateAction, useContext, useMemo, useState, FC } from 'react'
 import { ENV } from '@solana/spl-token-registry'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Connection } from '@solana/web3.js'
+import { useRPCContext } from './rpc_context'
 // import { useLocalStorageState } from '../utils'
 
 export enum GFX_RPC_NAMES {
@@ -23,35 +24,17 @@ type RPC = {
 
 type ENDPOINTS = { [key: string]: RPC }
 
-export const ENDPOINTS: ENDPOINTS = {
+export let ENDPOINTS: ENDPOINTS = {
   [GFX_RPC_NAMES.SOLANA_RPC]: {
     chainId: ENV.Devnet,
     name: GFX_RPC_NAMES.SOLANA_RPC,
     endpoint: 'https://api.devnet.solana.com',
     network: WalletAdapterNetwork.Devnet
   },
-  [GFX_RPC_NAMES.QUICKNODE]: {
-    chainId: ENV.MainnetBeta,
-    name: GFX_RPC_NAMES.QUICKNODE,
-    endpoint: `https://green-little-wind.solana-mainnet.quiknode.pro/${process.env.REACT_APP_QUICKNODE_TOKEN}`,
-    network: WalletAdapterNetwork.Mainnet
-  },
-  [GFX_RPC_NAMES.TRITON]: {
-    chainId: ENV.MainnetBeta,
-    name: GFX_RPC_NAMES.TRITON,
-    endpoint: `https://goosefx-mainnet-7f4e.mainnet.rpcpool.com/`,
-    network: WalletAdapterNetwork.Mainnet
-  },
   [GFX_RPC_NAMES.HELIUS]: {
     chainId: ENV.MainnetBeta,
     name: GFX_RPC_NAMES.HELIUS,
     endpoint: `https://rpc.helius.xyz/?api-key=${process.env.REACT_APP_HELUIS_TOKEN}`,
-    network: WalletAdapterNetwork.Mainnet
-  },
-  [GFX_RPC_NAMES.SYNDICA]: {
-    chainId: ENV.MainnetBeta,
-    name: GFX_RPC_NAMES.SYNDICA,
-    endpoint: `https://solana-api.syndica.io/access-token/${process.env.REACT_APP_SYNDICA_TOKEN}/rpc`,
     network: WalletAdapterNetwork.Mainnet
   }
 }
@@ -95,18 +78,28 @@ export function useConnectionConfig(): ISettingsConfig {
 }
 
 type RPC_CACHE = null | { endpointName: string; endpoint: string | null }
-
-export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export const SettingsProvider: FC<{ children: any }> = ({ children }) => {
+  const { endpoints } = useRPCContext()
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
-
   const init = (): string => {
-    const existingUserPreference: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-rpc'))
+    if (process.env.NODE_ENV === 'production') {
+      ENDPOINTS = {
+        ...endpoints
+      }
+    } else {
+      ENDPOINTS = {
+        ...endpoints,
+        ...ENDPOINTS
+      }
+    }
 
+    const existingUserPreference: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-rpc'))
     if (existingUserPreference === null) {
-      return process.env.NODE_ENV === 'production' ? DEFAULT_MAINNET_RPC : GFX_RPC_NAMES.HELIUS
+      return process.env.NODE_ENV === 'production' ? Object.keys(ENDPOINTS)[0] : Object.keys(ENDPOINTS)[0]
     } else if (existingUserPreference.endpoint === null) {
       return existingUserPreference.endpointName
-    } else {
+    } else if (ENDPOINTS[existingUserPreference.endpointName]) return existingUserPreference.endpointName
+    else {
       return 'Custom'
     }
   }
@@ -126,7 +119,6 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const endpoint = useMemo(() => {
     // checks cache for persisted custom endpoint
     const existingUserPreference: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-rpc'))
-
     if (existingUserPreference !== null && existingUserPreference.endpoint !== null) {
       return existingUserPreference.endpoint
     } else {
