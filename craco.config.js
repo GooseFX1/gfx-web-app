@@ -1,9 +1,24 @@
+const CracoEsbuildPlugin = require('craco-esbuild')
 const CracoLessPlugin = require('craco-less')
 const path = require('path')
 const webpack = require('webpack')
 
 module.exports = {
   plugins: [
+    {
+      plugin: {
+        ...CracoEsbuildPlugin,
+
+        overrideWebpackConfig: ({ webpackConfig, cracoConfig }) => {
+          if (typeof cracoConfig.disableEslint !== 'undefined' && cracoConfig.disableEslint === true) {
+            webpackConfig.plugins = webpackConfig.plugins.filter(
+              (instance) => instance.constructor.name !== 'ESLintWebpackPlugin'
+            )
+          }
+          return webpackConfig
+        }
+      }
+    },
     {
       plugin: CracoLessPlugin,
       options: {
@@ -43,7 +58,10 @@ module.exports = {
       return webpackConfig
     },
     plugins: [
-      new webpack.NormalModuleReplacementPlugin(/@ledgerhq\/devices\/hid-framing/, '@ledgerhq/devices/lib/hid-framing')
+      new webpack.NormalModuleReplacementPlugin(
+        /@ledgerhq\/devices\/hid-framing/,
+        '@ledgerhq/devices/lib/hid-framing'
+      )
     ]
   }
 }
