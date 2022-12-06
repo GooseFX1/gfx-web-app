@@ -52,7 +52,7 @@ const HEADER = styled.div`
   .orderSide {
     ${tw`h-1/2 w-full flex justify-between text-xs items-center`}
     .gradientBorder {
-      ${tw`w-1/2 font-semibold text-center h-full flex items-center justify-center`}
+      ${tw`w-1/2 font-semibold text-center h-full flex items-center justify-center cursor-pointer`}
       border:none;
       color: #636363;
       background-color: #3c3c3c;
@@ -118,7 +118,9 @@ const INPUT_WRAPPER = styled.div`
     border: 1px solid #3c3c3c;
   }
   .dropdownContainer {
-    ${tw`w-full h-12 flex justify-between items-center`}
+    ${tw`w-full h-12 flex justify-between items-center px-2`}
+    border: 1px solid #3c3c3c;
+    background-color: #1c1c1c;
     .ant-dropdown-trigger {
       ${tw`w-full flex justify-end`}
     }
@@ -292,7 +294,7 @@ export const PlaceOrder: FC = () => {
         <div className="pairInfo">
           <div className="pairName">
             <img src={`/img/crypto/${symbol}.svg`} alt="" />
-            SOL/USDC
+            {symbol + '/' + bid}
           </div>
           {selectedCrypto.type !== 'crypto' ? <div className="pairLeverage">20x</div> : null}
         </div>
