@@ -11,5 +11,6 @@ export enum ANALYTICS_API_ENDPOINTS {
   GET_SELECTED_LAUNCH = '/nft-launchpad/getOneLaunch',
   IS_CREATOR_ALLOWED = '/nft-launchpad/isUserAllowed',
   IS_ADMIN_ALLOWED = '/nft-launchpad/isAdminAllowed',
-  GET_CREATOR_PROJECT = '/nft-launchpad/getCreatorProjects'
+  GET_CREATOR_PROJECT = '/nft-launchpad/getCreatorProjects',
+  GET_WORKING_RPC_ENDPOINT = '/getRPC'
 }

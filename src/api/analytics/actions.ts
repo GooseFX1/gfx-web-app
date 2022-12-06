@@ -24,3 +24,15 @@ export const getTotalLiquidityVolume = async (): Promise<any> => {
     return err
   }
 }
+
+export const getWorkingRPCEndpoints = async (): Promise<any> => {
+  try {
+    const { data } = await axios(
+      `${NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE}${ANALYTICS_API_ENDPOINTS.GET_WORKING_RPC_ENDPOINT}`
+      // `${'http://localhost:4000'}${ANALYTICS_API_ENDPOINTS.GET_WORKING_RPC_ENDPOINT}`
+    )
+    return data
+  } catch (err) {
+    return err
+  }
+}
