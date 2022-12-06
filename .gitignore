@@ -8,7 +8,7 @@ package-lock.json
 /.cert
 # testing
 /coverage
-
+.history
 # production
 /
 /bin
