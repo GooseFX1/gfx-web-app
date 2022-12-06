@@ -21,12 +21,6 @@ interface ICrypto {
   marketAddress: string
 }
 
-interface CryptoChange {
-  pair: string
-  change?: string
-  coinGeckoId: string
-}
-
 export type MarketSide = 'asks' | 'bids'
 
 interface ICryptoConfig {
@@ -37,7 +31,6 @@ interface ICryptoConfig {
   getSymbolFromPair: (x: string, y: 'buy' | 'sell') => string
   selectedCrypto: ICrypto
   setSelectedCrypto: Dispatch<SetStateAction<ICrypto>>
-  change24h: [CryptoChange]
 }
 
 export type MarketType = 'crypto' | 'synth'
@@ -76,7 +69,6 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
   const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(getPairWithMarketAddress)
   const { connection } = useConnectionConfig()
-  const [change24h, setChange24h] = useState<[CryptoChange]>(null)
 
   useEffect(() => {
     ;(async () => {
@@ -96,15 +88,6 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [connection, selectedCrypto.pair])
 
-  useEffect(() => {
-    setChange24h([
-      {
-        pair: 'as',
-        coinGeckoId: 'as'
-      }
-    ])
-  }, [])
-
   const formatPair = (symbol: string) => symbol.replace('/', ' / ')
 
   const getAskSymbolFromPair = (pair: string): string => pair.slice(0, pair.indexOf('/'))
@@ -123,8 +106,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         getBidSymbolFromPair,
         getSymbolFromPair,
         selectedCrypto,
-        setSelectedCrypto,
-        change24h
+        setSelectedCrypto
       }}
     >
       {children}
@@ -145,7 +127,6 @@ export const useCrypto = (): ICryptoConfig => {
     getBidSymbolFromPair: context.getBidSymbolFromPair,
     getSymbolFromPair: context.getSymbolFromPair,
     selectedCrypto: context.selectedCrypto,
-    setSelectedCrypto: context.setSelectedCrypto,
-    change24h: context.change24h
+    setSelectedCrypto: context.setSelectedCrypto
   }
 }
