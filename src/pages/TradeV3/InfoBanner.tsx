@@ -82,7 +82,7 @@ const REFRESH_DATA = styled.div`
 `
 
 const LOCK_LAYOUT_CTN = styled.div<{ $isLocked: boolean }>`
-  line-height: 40px;
+  height: 40px;
   width: 65px;
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
   background: ${({ $isLocked }) =>
