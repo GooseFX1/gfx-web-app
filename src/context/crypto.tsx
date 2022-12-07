@@ -31,8 +31,6 @@ interface ICryptoConfig {
   getSymbolFromPair: (x: string, y: 'buy' | 'sell') => string
   selectedCrypto: ICrypto
   setSelectedCrypto: Dispatch<SetStateAction<ICrypto>>
-  showModal: boolean
-  setShowModal: Dispatch<SetStateAction<boolean>>
   filteredSearchPairs: any
   setFilteredSearchPairs: Dispatch<SetStateAction<any>>
 }
@@ -74,7 +72,6 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
   const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(getPairWithMarketAddress)
   const { connection } = useConnectionConfig()
-  const [showModal, setShowModal] = useState<boolean>(false)
 
   useEffect(() => {
     ;(async () => {
@@ -114,8 +111,6 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         getSymbolFromPair,
         selectedCrypto,
         setSelectedCrypto,
-        showModal,
-        setShowModal,
         filteredSearchPairs,
         setFilteredSearchPairs
       }}
@@ -139,8 +134,6 @@ export const useCrypto = (): ICryptoConfig => {
     getSymbolFromPair: context.getSymbolFromPair,
     selectedCrypto: context.selectedCrypto,
     setSelectedCrypto: context.setSelectedCrypto,
-    showModal: context.showModal,
-    setShowModal: context.setShowModal,
     filteredSearchPairs: context.filteredSearchPairs,
     setFilteredSearchPairs: context.setFilteredSearchPairs
   }
