@@ -6,8 +6,13 @@ import { DownOutlined } from '@ant-design/icons'
 import { Modal, SearchBar } from '../../components'
 import tw, { styled } from 'twin.macro'
 
+const SELECTED_PAIR_CTN = styled.div`
+  ${tw`ml-[35px] rounded-[36px] w-[180px] cursor-pointer p-px`}
+  background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
+`
+
 const SELECTED_PAIR = styled.div`
-  ${tw`leading-10 ml-[35px] rounded-[36px] text-center w-[180px] cursor-pointer flex 
+  ${tw`leading-10 rounded-[36px] text-center flex 
   flex-row justify-between items-center font-medium pl-2.5`}
   background-color: ${({ theme }) => theme.bg9};
   color: ${({ theme }) => theme.text21};
@@ -101,9 +106,8 @@ const MostPopularCrypto: FC<{ pair: string; type: MarketType }> = ({ pair, type 
   )
 }
 
-const SelectCryptoModal: FC = () => {
-  const { selectedCrypto, setSelectedCrypto, pairs, setShowModal, getAskSymbolFromPair, filteredSearchPairs } =
-    useCrypto()
+const SelectCryptoModal: FC<{ setShowModal: (arg: boolean) => void }> = ({ setShowModal }) => {
+  const { selectedCrypto, setSelectedCrypto, pairs, getAskSymbolFromPair, filteredSearchPairs } = useCrypto()
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
     [getAskSymbolFromPair, selectedCrypto.pair]
@@ -169,16 +173,9 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
 }
 
 export const DropdownPairs: FC = () => {
+  const [showModal, setShowModal] = useState<boolean>(false)
   const menus = <></>
-  const {
-    selectedCrypto,
-    getAskSymbolFromPair,
-    formatPair,
-    showModal,
-    setShowModal,
-    setFilteredSearchPairs,
-    pairs
-  } = useCrypto()
+  const { selectedCrypto, getAskSymbolFromPair, formatPair, setFilteredSearchPairs, pairs } = useCrypto()
   const formattedPair = useMemo(() => formatPair(selectedCrypto.pair), [formatPair, selectedCrypto.pair])
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
@@ -214,7 +211,7 @@ export const DropdownPairs: FC = () => {
             />
           }
         >
-          <SelectCryptoModal />
+          <SelectCryptoModal setShowModal={setShowModal} />
         </DROPDOWN_MODAL>
       )}
       <Dropdown
@@ -227,11 +224,13 @@ export const DropdownPairs: FC = () => {
           setShowModal(true)
         }}
       >
-        <SELECTED_PAIR>
-          <img className="asset-icon" src={assetIcon} alt="asset-icon" />
-          {formattedPair}
-          <DownOutlined />
-        </SELECTED_PAIR>
+        <SELECTED_PAIR_CTN>
+          <SELECTED_PAIR>
+            <img className="asset-icon" src={assetIcon} alt="asset-icon" />
+            {formattedPair}
+            <DownOutlined />
+          </SELECTED_PAIR>
+        </SELECTED_PAIR_CTN>
       </Dropdown>
     </>
   )
