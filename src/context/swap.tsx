@@ -97,6 +97,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const amountPool = async () => {
     if (tokenA && tokenB) {
       let outTokenAmount = 0
+      setLoading(true)
       if (
         inTokenAmount &&
         inTokenAmount != 0 &&
@@ -129,6 +130,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } else {
       setOutTokenAmount(0)
     }
+    setLoading(false)
   }
 
   const getGofxPool = async () => {
@@ -192,7 +194,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     amountPool()
-  }, [inTokenAmount, slippage, tokenA, tokenB, clickNo])
+  }, [inTokenAmount, slippage, tokenA, tokenB, clickNo, chosenRoutes])
 
   useEffect(() => {
     ;(async function () {

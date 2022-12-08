@@ -994,7 +994,7 @@ export const SwapMain: FC = () => {
     inputMint: new PublicKey(tokenA?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     slippage: slippage, // 1% slippage
-    debounceTime: 850 // debounce ms time before refresh
+    debounceTime: 1500 // debounce ms time before refresh
   })
 
   const marketInfoFormat = (mkt: any): any => ({
@@ -1071,7 +1071,7 @@ export const SwapMain: FC = () => {
 
     const shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
 
-    if (tokenB && shortRoutes.length >= 0) {
+    if (tokenB && shortRoutes.length > 0) {
       const GoFxRoute = {
         marketInfos: [
           {
