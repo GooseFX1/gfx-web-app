@@ -42,7 +42,7 @@ const DROPDOWN_MODAL = styled(Modal)`
   background-color: ${({ theme }) => theme.bg20} !important;
 
   .ant-modal-content {
-    ${tw`h-full overflow-scroll`}
+    ${tw`h-full overflow-y-hidden overflow-x-hidden`}
   }
 
   .dropdown-modal-search {
@@ -60,6 +60,9 @@ const DROPDOWN_MODAL = styled(Modal)`
 
   .popular-container {
     ${tw`flex flex-row items-center justify-around flex-wrap`}
+  }
+  .allPairContainer {
+    ${tw`overflow-y-scroll h-full`}
   }
 
   .popular-container:after {
@@ -134,15 +137,17 @@ const SelectCryptoModal: FC<{ setShowModal: (arg: boolean) => void }> = ({ setSh
             </div>
           ))}
       </div>
-      {filteredSearchPairs && filteredSearchPairs.length > 0 ? (
-        filteredSearchPairs.map((item, index) => (
-          <li onClick={() => handleSelection(item)} key={index}>
-            <PairComponents {...item} />
-          </li>
-        ))
-      ) : (
-        <div className="no-result-found">Sorry, no result found!</div>
-      )}
+      <div className="allPairContainer">
+        {filteredSearchPairs && filteredSearchPairs.length > 0 ? (
+          filteredSearchPairs.map((item, index) => (
+            <li onClick={() => handleSelection(item)} key={index}>
+              <PairComponents {...item} />
+            </li>
+          ))
+        ) : (
+          <div className="no-result-found">Sorry, no result found!</div>
+        )}
+      </div>
     </>
   )
 }
