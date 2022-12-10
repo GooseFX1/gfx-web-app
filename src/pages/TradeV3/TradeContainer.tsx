@@ -10,6 +10,9 @@ import _ from 'lodash'
 import tw from 'twin.macro'
 import { InfoBanner } from './InfoBanner'
 import { PlaceOrder } from './PlaceOrder'
+import CollateralPanel from './perps/components/CollateralPanel'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { Connect } from '../../layouts/App/Connect'
 
 const ReactGridLayout = WidthProvider(Responsive)
 
@@ -48,6 +51,13 @@ const componentDimensions = [
     i: '4',
     h: 10,
     w: 3
+  },
+  {
+    x: 3,
+    y: 20,
+    i: '5',
+    h: 15,
+    w: 1
   }
 ]
 
@@ -103,6 +113,20 @@ const UNLOCKED_OVERLAY = styled.div`
     font-size: 16px;
     color: ${({ theme }) => theme.text1};
   }
+  .overlay-text {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+  }
+  button {
+    height: 40px;
+    width: 165px;
+    margin-top: 40px;
+    span {
+      font-size: 15px;
+      font-weight: 600;
+    }
+  }
 `
 
 export const CryptoContent: FC = () => {
@@ -113,6 +137,14 @@ export const CryptoContent: FC = () => {
 
   const mode = useDarkMode()
   const { selectedCrypto } = useCrypto()
+  const { wallet } = useWallet()
+
+  useEffect(() => {
+    if (selectedCrypto.type === 'perps') setLayout({ lg: componentDimensions })
+    else {
+      setLayout({ lg: componentDimensions.slice(0, 5) })
+    }
+  }, [selectedCrypto])
 
   const chartContainer = useMemo(
     () => <TVChartContainer symbol={selectedCrypto.pair} visible={true} />,
@@ -211,6 +243,31 @@ export const CryptoContent: FC = () => {
         return (
           <div key={i} className="spacing">
             {/*<History chartsVisible={true} setChartsVisible={null} />*/}
+            {!isLocked ? (
+              <UNLOCKED_OVERLAY>
+                <img
+                  src={
+                    mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
+                  }
+                  alt="reposition"
+                />
+                <span>Drag to Reposition</span>
+              </UNLOCKED_OVERLAY>
+            ) : null}
+          </div>
+        )
+      if (i === 5)
+        return (
+          <div key={i} className="spacing">
+            <CollateralPanel wallet={wallet} />
+            {!wallet && isLocked && (
+              <UNLOCKED_OVERLAY>
+                <div className="overlay-text">
+                  See all our <br /> amazing features!
+                </div>
+                <Connect />
+              </UNLOCKED_OVERLAY>
+            )}
             {!isLocked ? (
               <UNLOCKED_OVERLAY>
                 <img
