@@ -1,5 +1,5 @@
 import { Skeleton } from 'antd'
-import React, { FC, useState, useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { useCrypto, usePriceFeed } from '../../context'
 import { DropdownPairs } from './DropdownPairs'
@@ -8,7 +8,7 @@ const INFO_WRAPPER = styled.div`
   padding: 0px 30px;
   display: flex;
   .spot-toggle .perps {
-    cursor: not-allowed;
+    cursor: pointer;
   }
   .spot-toggle .spot {
     cursor: pointer;
@@ -157,8 +157,7 @@ export const InfoBanner: FC<{
   resetLayout: () => void
   setFeesPopup: (b: (c: any) => boolean) => void
 }> = ({ isLocked, setIsLocked, resetLayout, setFeesPopup }) => {
-  const [isSpot, setIsSpot] = useState(true)
-  const { selectedCrypto } = useCrypto()
+  const { selectedCrypto, isSpot, setIsSpot } = useCrypto()
   const { prices, tokenInfo, refreshTokenData } = usePriceFeed()
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
   const tokenInfos = useMemo(() => tokenInfo[selectedCrypto.pair], [tokenInfo[selectedCrypto.pair]])
@@ -208,6 +207,7 @@ export const InfoBanner: FC<{
 
   const handleToggle = (e) => {
     if (e === 'spot') setIsSpot(true)
+    else setIsSpot(false)
   }
 
   return (
