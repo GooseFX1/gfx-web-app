@@ -1,27 +1,19 @@
 import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
-import { Input, Slider } from 'antd'
+import { Input } from 'antd'
 import { css } from 'styled-components'
-import { FieldHeader, Picker } from './shared'
-import { useAccounts, useDarkMode, useCrypto, useOrder, useTokenRegistry } from '../../../context'
-import { floorValue } from '../../../utils'
+import { FieldHeader } from './shared'
+import { useDarkMode, useCrypto, useOrder } from '../../../context'
 
 export const Size: FC = () => {
-  const { getUIAmount } = useAccounts()
   const { mode } = useDarkMode()
-  const { getAskSymbolFromPair, getSymbolFromPair, selectedCrypto } = useCrypto()
+  const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
   const { order, setFocused, setOrder } = useOrder()
-  const { getTokenInfoFromSymbol } = useTokenRegistry()
 
   const ask = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
   const assetIcon = useMemo(
     () => `/img/${selectedCrypto.type}/${selectedCrypto.type === 'synth' ? `g${ask}` : ask}.svg`,
     [ask, selectedCrypto.type]
   )
-  const tokenInfo = useMemo(
-    () => getTokenInfoFromSymbol(getSymbolFromPair(selectedCrypto.pair, order.side)),
-    [getSymbolFromPair, getTokenInfoFromSymbol, order.side, selectedCrypto.pair]
-  )
-  const userBalance = useMemo(() => (tokenInfo ? getUIAmount(tokenInfo.address) : 0), [tokenInfo, getUIAmount])
 
   const localCSS = css`
     .order-size {
@@ -85,38 +77,6 @@ export const Size: FC = () => {
         }
         value={order.size || undefined}
       />
-      {order.side === 'sell' && (
-        <Picker>
-          <Slider
-            id="size-input"
-            max={userBalance}
-            min={0}
-            onChange={(size) => setOrder((prevState) => ({ ...prevState, size }))}
-            step={selectedCrypto.market?.minOrderSize}
-            value={order.size}
-            trackStyle={{
-              height: '10px'
-            }}
-            handleStyle={{
-              height: '20px',
-              width: '20px',
-              background: 'linear-gradient(55.89deg, #8D26AE 21.49%, #D4D3FF 88.89%)',
-              border: '2px solid #FFFFFF'
-            }}
-          />
-          <span
-            onClick={() => {
-              setFocused('size')
-              setOrder((prevState) => ({
-                ...prevState,
-                size: floorValue(userBalance, selectedCrypto.market?.minOrderSize)
-              }))
-            }}
-          >
-            Use Max
-          </span>
-        </Picker>
-      )}
     </div>
   )
 }

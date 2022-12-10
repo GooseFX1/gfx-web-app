@@ -2,11 +2,11 @@ import React, { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { ArrowDropdown, Tooltip } from '../../../components'
 import { AVAILABLE_ORDERS, OrderDisplayType, OrderSide, useOrder } from '../../../context'
-import { CenteredDiv, SpaceBetweenDiv, TRADE_ORDER_WIDTH } from '../../../styles'
+import { CenteredDiv, SpaceBetweenDiv } from '../../../styles'
 
 const SELECTOR = styled(CenteredDiv)`
   flex-direction: column;
-  width: ${({ theme }) => `calc(${TRADE_ORDER_WIDTH} - 2 * ${theme.margin(1)})`};
+  width: 150px;
   padding: ${({ theme }) => theme.margin(1.5)} 0;
   ${({ theme }) => theme.smallBorderRadius};
   background-color: ${({ theme }) => theme.bg15};
@@ -87,7 +87,7 @@ export const TypeSelector: FC = () => {
       <span>{displayedOrder?.text}</span>
       <ArrowDropdown
         arrowRotation={arrowRotation}
-        offset={[20, 24]}
+        offset={[10, 20]}
         onVisibleChange={handleClick}
         overlay={
           <Overlay setArrowRotation={setArrowRotation} setDropdownVisible={setDropdownVisible} side={order.side} />

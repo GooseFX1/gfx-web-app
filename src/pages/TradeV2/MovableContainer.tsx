@@ -12,6 +12,9 @@ import { OrderHistory } from './OrderHistory'
 import { HistoryPanel } from './HistoryPanel'
 import { MODAL_TYPES } from '../../constants'
 import { logData } from '../../api'
+import Perps from './Perps'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { Connect } from '../../layouts/App/Connect'
 
 const ReactGridLayout = WidthProvider(Responsive)
 
@@ -75,6 +78,21 @@ const UNLOCKED_OVERLAY = styled.div`
     font-size: 16px;
     color: ${({ theme }) => theme.text1};
   }
+  .overlay-text {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+  }
+  button {
+    height: 40px;
+    width: 165px;
+    margin-top: 40px;
+
+    span {
+      font-size: 15px;
+      font-weight: 600;
+    }
+  }
 `
 
 const componentDimensions = [
@@ -112,6 +130,13 @@ const componentDimensions = [
     i: '4',
     h: 10,
     w: 3
+  },
+  {
+    x: 3,
+    y: 20,
+    i: '5',
+    h: 14,
+    w: 1
   }
 ]
 
@@ -126,6 +151,7 @@ export const CryptoContent: FC = () => {
     () => <TVChartContainer symbol={selectedCrypto.pair} visible={true} />,
     [selectedCrypto.pair]
   )
+  const { wallet } = useWallet()
 
   useEffect(() => {
     logData('trade_page')
@@ -224,6 +250,31 @@ export const CryptoContent: FC = () => {
           <div key={i} className="spacing">
             {/*<History chartsVisible={true} setChartsVisible={null} />*/}
             <HistoryPanel />
+            {!isLocked ? (
+              <UNLOCKED_OVERLAY>
+                <img
+                  src={
+                    mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
+                  }
+                  alt="reposition"
+                />
+                <span>Drag to Reposition</span>
+              </UNLOCKED_OVERLAY>
+            ) : null}
+          </div>
+        )
+      if (i === 5)
+        return (
+          <div key={i} className="spacing">
+            <Perps wallet={wallet} />
+            {!wallet && isLocked && (
+              <UNLOCKED_OVERLAY>
+                <div className="overlay-text">
+                  See all our <br /> amazing features!
+                </div>
+                <Connect />
+              </UNLOCKED_OVERLAY>
+            )}
             {!isLocked ? (
               <UNLOCKED_OVERLAY>
                 <img
