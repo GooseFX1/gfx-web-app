@@ -18,6 +18,7 @@ import { Launchpad } from './pages/NFTs/launchpad/Launchpad'
 import { Creator } from './pages/NFTs/CreatorPage/Creator'
 import { AdminWrapper } from './pages/NFTs/adminPage/components/AdminWrapper'
 import { AnalyticsWrapper } from './pages/Analytics/AnalyticsWrapper'
+import { TraderProvider } from './context/trader_risk_group'
 
 export const Router: FC = () => {
   const blacklisted = useBlacklisted()
@@ -40,7 +41,9 @@ export const Router: FC = () => {
                 <PriceFeedProvider>
                   <TradeHistoryProvider>
                     <OrderProvider>
-                      <CryptoContent />
+                      <TraderProvider>
+                        <CryptoContent />
+                      </TraderProvider>
                     </OrderProvider>
                   </TradeHistoryProvider>
                 </PriceFeedProvider>

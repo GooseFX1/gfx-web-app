@@ -24,7 +24,7 @@ import { crypto } from '../web3'
 import { useAccounts } from './accounts'
 import { PublicKey } from '@solana/web3.js'
 
-type OrderInput = undefined | 'price' | 'size' | 'total'
+export type OrderInput = undefined | 'price' | 'size' | 'total'
 export type OrderDisplayType = 'market' | 'limit'
 export type OrderSide = 'buy' | 'sell'
 export type OrderType = 'limit' | 'ioc' | 'postOnly'
