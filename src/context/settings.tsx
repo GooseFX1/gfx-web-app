@@ -104,7 +104,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const init = (): string => {
     const existingUserPreference: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-rpc'))
 
-    const healthyRPCS: string[] = Object.keys(rpcHealth)
+    const healthyRPCS: string[] = rpcHealth.map((rpc) => rpc.name)
 
     if (existingUserPreference === null) {
       return healthyRPCS.includes(DEFAULT_MAINNET_RPC) ? DEFAULT_MAINNET_RPC : healthyRPCS[0]
