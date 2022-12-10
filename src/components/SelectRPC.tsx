@@ -43,14 +43,14 @@ const Overlay = ({
   handleClick: (e: any, endpoint: string, endpointName: string, network: string) => void
 }) => {
   const { rpcHealth } = useRPCContext()
-  const healthyEndpoints = useMemo(() => Object.keys(rpcHealth).map((rpc: string) => ENDPOINTS[rpc]), [rpcHealth])
+  const healthyEndpoints = useMemo(() => rpcHealth.map((rpc) => rpc.health && ENDPOINTS[rpc.name]), [rpcHealth])
 
   return (
     <RPCMenu>
-      {Object.values(healthyEndpoints).map((point, index) => (
-        <MenuItem key={index} onClick={(e) => handleClick(e, point.endpoint, point.name, point.network)}>
+      {healthyEndpoints.map((rpc, index) => (
+        <MenuItem key={index} onClick={(e) => handleClick(e, rpc.endpoint, rpc.name, rpc.network)}>
           <span>
-            {point.name} {point.network.includes('devnet') && `(${point.network})`}
+            {rpc.name} {rpc.network.includes('devnet') && `(${rpc.network})`}
           </span>
         </MenuItem>
       ))}
