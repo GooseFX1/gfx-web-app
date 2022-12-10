@@ -389,5 +389,11 @@
     "type": "crypto",
     "coinGecko": "yearn-finance",
     "marketAddress": "9sue9TZAeUhNtNAPPGb9dke7rkJeXktGD3u8ZC37GWnQ"
+  },
+  {
+    "pair": "SOL/USDC",
+    "type": "perps",
+    "coinGecko": "solana",
+    "marketAddress": "9gVLq3Gg6M1NxhM25rKTS4njhfMx1NoGXX7ktvvHWs4k"
   }
 ]
