@@ -28,14 +28,16 @@ interface ICryptoConfig {
   formatPair: (x: string) => string
   getAskSymbolFromPair: (x: string) => string
   getBidSymbolFromPair: (x: string) => string
-  getSymbolFromPair: (x: string, y: 'buy' | 'sell') => string
+  getSymbolFromPair: (x: string, y: 'buy' | 'sell' | 'bid' | 'ask') => string
   selectedCrypto: ICrypto
   setSelectedCrypto: Dispatch<SetStateAction<ICrypto>>
   filteredSearchPairs: any
   setFilteredSearchPairs: Dispatch<SetStateAction<any>>
+  isSpot: boolean
+  setIsSpot: Dispatch<SetStateAction<boolean>>
 }
 
-export type MarketType = 'crypto' | 'synth'
+export type MarketType = 'crypto' | 'synth' | 'perps'
 
 export const FEATURED_PAIRS_LIST = [
   { pair: 'GOFX/USDC', type: 'crypto' as MarketType, coinGecko: 'goosefx' },
@@ -57,35 +59,54 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const getPairWithMarketAddress = () => {
     let pairSet = pairsToset[0]
+    let isSpotCheck = true
     try {
       const paths = window.location.href.split('/')
       const marketAddress = paths[4]
       pairsToset.map((item) => {
         if (marketAddress === item.marketAddress) {
           pairSet = item
+          if (item.type === 'perps') isSpotCheck = false
         }
       })
-      return pairSet
+      return { set: pairSet, isSpot: isSpotCheck }
     } catch (e) {
-      return pairSet
+      return { set: pairSet, isSpot: isSpotCheck }
     }
   }
-  const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(getPairWithMarketAddress)
+  const [isSpot, setIsSpot] = useState<boolean>(getPairWithMarketAddress().isSpot)
+  const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(getPairWithMarketAddress().set)
   const { connection } = useConnectionConfig()
 
   useEffect(() => {
-    ;(async () => {
-      const pairsToset = MARKET_PAIRS
-      setPairs(pairsToset)
-      setFilteredSearchPairs(pairsToset)
-    })()
+    const pairsToset = isSpot
+      ? MARKET_PAIRS.filter((item) => item.type === 'crypto')
+      : MARKET_PAIRS.filter((item) => item.type === 'perps')
+    setPairs(pairsToset)
   }, [])
+
+  useEffect(() => {
+    const pairsToset = isSpot
+      ? MARKET_PAIRS.filter((item) => item.type === 'crypto')
+      : MARKET_PAIRS.filter((item) => item.type === 'perps')
+    setPairs(pairsToset)
+  }, [isSpot])
+
+  useEffect(() => {
+    if (pairs.length > 0) {
+      setSelectedCrypto(pairs[0])
+    }
+  }, [pairs])
 
   useEffect(() => {
     ;(async () => {
       try {
-        const market = await serum.getMarket(connection, selectedCrypto.pair)
-        setSelectedCrypto((prevState) => ({ ...prevState, market }))
+        if (selectedCrypto.type === 'crypto') {
+          const market = await serum.getMarket(connection, selectedCrypto.pair)
+          setSelectedCrypto((prevState) => ({ ...prevState, market }))
+        } else {
+          setSelectedCrypto((prevState) => ({ ...prevState, market: null }))
+        }
       } catch (e) {
         console.log(e)
       }
@@ -112,7 +133,9 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         selectedCrypto,
         setSelectedCrypto,
         filteredSearchPairs,
-        setFilteredSearchPairs
+        setFilteredSearchPairs,
+        isSpot,
+        setIsSpot
       }}
     >
       {children}
@@ -135,6 +158,8 @@ export const useCrypto = (): ICryptoConfig => {
     selectedCrypto: context.selectedCrypto,
     setSelectedCrypto: context.setSelectedCrypto,
     filteredSearchPairs: context.filteredSearchPairs,
-    setFilteredSearchPairs: context.setFilteredSearchPairs
+    setFilteredSearchPairs: context.setFilteredSearchPairs,
+    isSpot: context.isSpot,
+    setIsSpot: context.setIsSpot
   }
 }

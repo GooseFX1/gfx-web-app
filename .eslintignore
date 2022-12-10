@@ -7,3 +7,4 @@ src/web3/layout.ts
 src/api/index.ts
 src/serviceWorker.ts
 src/pages/Crypto/TradingView/save-load-adapter.js
+src/pages/TradeV3/perps/dexterity
