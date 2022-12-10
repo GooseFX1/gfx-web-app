@@ -1,0 +1,355 @@
+{
+  "version": "0.1.0",
+  "name": "instruments",
+  "instructions": [
+    {
+      "name": "initializeDerivative",
+      "accounts": [
+        {
+          "name": "derivativeMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "priceOracle",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "marketProductGroup",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "clock",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "InitializeDerivativeParams"
+          }
+        }
+      ]
+    },
+    {
+      "name": "settleDerivative",
+      "accounts": [
+        {
+          "name": "marketProductGroup",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "derivativeMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "priceOracle",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "dexProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "clock",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "closeDerivativeAccount",
+      "accounts": [
+        {
+          "name": "derivativeMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "closeAuthority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "destination",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "DerivativeMetadata",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "tag",
+            "type": {
+              "defined": "AccountTag"
+            }
+          },
+          {
+            "name": "expired",
+            "type": {
+              "defined": "ExpirationStatus"
+            }
+          },
+          {
+            "name": "oracleType",
+            "type": {
+              "defined": "OracleType"
+            }
+          },
+          {
+            "name": "instrumentType",
+            "type": {
+              "defined": "InstrumentType"
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u64"
+          },
+          {
+            "name": "strike",
+            "type": {
+              "defined": "Fractional"
+            }
+          },
+          {
+            "name": "initializationTime",
+            "type": "i64"
+          },
+          {
+            "name": "fullFundingPeriod",
+            "type": "i64"
+          },
+          {
+            "name": "minimumFundingPeriod",
+            "type": "i64"
+          },
+          {
+            "name": "priceOracle",
+            "type": "publicKey"
+          },
+          {
+            "name": "marketProductGroup",
+            "type": "publicKey"
+          },
+          {
+            "name": "closeAuthority",
+            "type": "publicKey"
+          },
+          {
+            "name": "clock",
+            "type": "publicKey"
+          },
+          {
+            "name": "lastFundingTime",
+            "type": "i64"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "Fractional",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "m",
+            "type": "i64"
+          },
+          {
+            "name": "exp",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "InitializeDerivativeParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "instrumentType",
+            "type": {
+              "defined": "InstrumentType"
+            }
+          },
+          {
+            "name": "strike",
+            "type": {
+              "defined": "Fractional"
+            }
+          },
+          {
+            "name": "fullFundingPeriod",
+            "type": "i64"
+          },
+          {
+            "name": "minimumFundingPeriod",
+            "type": "i64"
+          },
+          {
+            "name": "initializationTime",
+            "type": "i64"
+          },
+          {
+            "name": "closeAuthority",
+            "type": "publicKey"
+          },
+          {
+            "name": "oracleType",
+            "type": {
+              "defined": "OracleType"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "DerivativeError",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "AccountAlreadyInitialized"
+          },
+          {
+            "name": "InvalidSettlementTime"
+          },
+          {
+            "name": "InvalidCreationTime"
+          },
+          {
+            "name": "UninitializedAccount"
+          },
+          {
+            "name": "InvalidSequenceNumber"
+          },
+          {
+            "name": "UnsettledAccounts"
+          },
+          {
+            "name": "InvalidOracleConfig"
+          },
+          {
+            "name": "NumericalOverflow"
+          },
+          {
+            "name": "CannotBeDeleted"
+          },
+          {
+            "name": "ContractIsExpired"
+          },
+          {
+            "name": "InvalidDate"
+          },
+          {
+            "name": "InvalidAccount"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AccountTag",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Uninitialized"
+          },
+          {
+            "name": "DerivativeMetadata"
+          },
+          {
+            "name": "FixedIncomeMetadata"
+          }
+        ]
+      }
+    },
+    {
+      "name": "InstrumentType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Uninitialized"
+          },
+          {
+            "name": "RecurringCall"
+          },
+          {
+            "name": "RecurringPut"
+          },
+          {
+            "name": "ExpiringCall"
+          },
+          {
+            "name": "ExpiringPut"
+          }
+        ]
+      }
+    },
+    {
+      "name": "OracleType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Uninitialized"
+          },
+          {
+            "name": "Pyth"
+          },
+          {
+            "name": "Dummy"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ExpirationStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Expired"
+          }
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "address": "2bEbbbQ9exihNsik8CUyeqN9BsFKWbdjPNhE7a9xDVqy"
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "version": "0.1.0",
+  "name": "risk",
+  "instructions": [
+    {
+      "name": "validateAccountHealth",
+      "accounts": [
+        {
+          "name": "marketProductGroup",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "traderRiskGroup",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "outRegisterRiskInfo",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "riskState",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "riskModelConfiguration",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "riskSigner",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "validateAccountLiquidation",
+      "accounts": [
+        {
+          "name": "marketProductGroup",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "traderRiskGroup",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "outRegisterRiskInfo",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "riskState",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "riskModelConfiguration",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "riskSigner",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "createRiskStateAccount",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "riskSigner",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "riskState",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "marketProductGroup",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Health",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "marginReq",
+            "type": {
+              "defined": "Fractional"
+            }
+          },
+          {
+            "name": "portfolioValue",
+            "type": {
+              "defined": "Fractional"
+            }
+          },
+          {
+            "name": "totalAbsDollarPosition",
+            "type": {
+              "defined": "Fractional"
+            }
+          },
+          {
+            "name": "absDollarPosition",
+            "type": {
+              "vec": {
+                "defined": "Fractional"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "Fractional",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "m",
+            "type": "i64"
+          },
+          {
+            "name": "exp",
+            "type": "u64"
+          }
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "address": "GDQCED2bSKi7fsHFPANQt3vBAFREbAYw7otCxt5rw7sY"
+  }
+}

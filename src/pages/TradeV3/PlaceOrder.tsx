@@ -209,7 +209,7 @@ const ORDER_CATEGORY_TYPE = [
 export const PlaceOrder: FC = () => {
   const { getUIAmount, balances } = useAccounts()
   const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair } = useCrypto()
-  const { order, setOrder, setFocused } = useOrder()
+  const { order, setOrder, setFocused, placeOrder } = useOrder()
   const [selectedTotal, setSelectedTotal] = useState<number>(null)
   const [arrowRotation, setArrowRotation] = useState(false)
   const [dropdownVisible, setDropdownVisible] = useState(false)
@@ -230,7 +230,8 @@ export const PlaceOrder: FC = () => {
 
   const buttonState = useMemo(() => {
     if (!connected) return ButtonState.Connect
-    if (order.total > userBalance) return ButtonState.BalanceExceeded
+    if ((order.side === 'buy' && order.total > userBalance) || (order.side === 'sell' && order.size > userBalance))
+      return ButtonState.BalanceExceeded
     if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
     return ButtonState.CanPlaceOrder
   }, [connected, selectedCrypto.pair, order])
@@ -272,12 +273,17 @@ export const PlaceOrder: FC = () => {
   }
 
   const handleClick = (value: number) => {
-    const total = removeFloatingPointError(value * userBalance)
-    if (total) {
+    const finalValue = removeFloatingPointError(value * userBalance)
+    if (finalValue) {
       setSelectedTotal(value)
-      setFocused('total')
-      setOrder((prev) => ({ ...prev, total }))
-    } else if (!total && value === 0) {
+      if (order.side === 'buy') {
+        setFocused('total')
+        setOrder((prev) => ({ ...prev, total: finalValue }))
+      } else {
+        setFocused('size')
+        setOrder((prev) => ({ ...prev, size: finalValue }))
+      }
+    } else if (!finalValue && value === 0) {
       setSelectedTotal(value)
       setFocused('total')
       setOrder((prev) => ({ ...prev, total: 0 }))
@@ -406,7 +412,9 @@ export const PlaceOrder: FC = () => {
             </div>
           ))}
         </ORDER_CATEGORY>
-        <PLACE_ORDER_BUTTON $action={buttonState === ButtonState.CanPlaceOrder}>{buttonText}</PLACE_ORDER_BUTTON>
+        <PLACE_ORDER_BUTTON $action={buttonState === ButtonState.CanPlaceOrder} onClick={placeOrder}>
+          {buttonText}
+        </PLACE_ORDER_BUTTON>
       </BODY>
     </WRAPPER>
   )
