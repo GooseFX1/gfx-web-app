@@ -121,6 +121,8 @@ export function colors(mode: string): Colors {
     bg21: mode === 'dark' ? '#1c1c1c' : '#3c3c3c',
     bg22: mode === 'dark' ? '#131313' : '#cacaca',
     bg23: mode === 'dark' ? '#272727' : '#e2e2e2',
+    bg24: mode === 'dark' ? '#272727' : '#e2e2e2',
+    bg25: mode === 'dark' ? '#272727' : '#e2e2e2',
     bgForNFTCollection: mode === 'dark' ? '#131313' : '#ffffff',
     backBtnBg: mode === 'dark' ? '#2a2a2a' : '#5855ff',
 
