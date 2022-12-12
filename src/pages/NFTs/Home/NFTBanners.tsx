@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -5,8 +6,6 @@ import { MainButton } from '../../../components/MainButton'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { checkMobile } from '../../../utils'
 import tw from 'twin.macro'
 import { CreatorsLanding } from '../launchpad/pages/CreatorsLanding'
@@ -130,11 +129,11 @@ const settings = {
   swipeToSlide: true,
   slidesToScroll: 1,
   snapCenter: true,
-  slidesToShow: 1,
+  slidesToShow: 3,
   initialSlide: 0,
   arrows: true,
-  variableWidth: checkMobile() ? false : true
-  //nextArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-next" />,
+  variableWidth: checkMobile() ? false : true,
+  nextArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-next" />
   //prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-previous" />
 }
 

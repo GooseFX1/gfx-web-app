@@ -8,7 +8,8 @@ import {
   OrderProvider,
   PriceFeedProvider,
   TradeHistoryProvider,
-  NFTAdminProvider
+  NFTAdminProvider,
+  NFTCollectionProvider
 } from './context'
 import Restricted from './pages/Restricted'
 import { GenericNotFound } from './pages/InvalidUrl'
@@ -18,6 +19,8 @@ import { Launchpad } from './pages/NFTs/launchpad/Launchpad'
 import { Creator } from './pages/NFTs/CreatorPage/Creator'
 import { AdminWrapper } from './pages/NFTs/adminPage/components/AdminWrapper'
 import { AnalyticsWrapper } from './pages/Analytics/AnalyticsWrapper'
+// import NFTLandingPageV2 from './pages/NFTs/Home/NFTLandingPageV2'
+import NFTAgg from './pages/NFTs/NFTAgg'
 
 export const Router: FC = () => {
   const blacklisted = useBlacklisted()
@@ -61,6 +64,11 @@ export const Router: FC = () => {
               <NFTProfileProvider>
                 <NFTs />
               </NFTProfileProvider>
+            </Route>
+            <Route path="/NFTAgg">
+              <NFTCollectionProvider>
+                <NFTAgg />
+              </NFTCollectionProvider>
             </Route>
             <Route exact path="/farm">
               <Farm />
