@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, FC } from 'react'
 import styled from 'styled-components'
 import { Menu, MenuItem } from '../layouts/App/shared'
-import { useRPCContext, ENDPOINTS, useConnectionConfig, useDarkMode } from '../context'
+import { useRPCContext, ENDPOINTS, useConnectionConfig, useDarkMode, RPC, RPC_HEALTH } from '../context'
 import { ArrowDropdown } from './ArrowDropdown'
 import { SpaceBetweenDiv } from '../styles'
 
@@ -43,11 +43,22 @@ const Overlay = ({
   handleClick: (e: any, endpoint: string, endpointName: string, network: string) => void
 }) => {
   const { rpcHealth } = useRPCContext()
-  const healthyEndpoints = useMemo(() => rpcHealth.map((rpc) => rpc.health && ENDPOINTS[rpc.name]), [rpcHealth])
+
+  // creates an array of strings representing unhealthy rpc
+  const unhealthRPCs: string[] = useMemo(
+    () => rpcHealth.filter((rpc: RPC_HEALTH) => !rpc.health).map((r: RPC_HEALTH) => r.name),
+    [rpcHealth]
+  )
+
+  // filters unhealthy rpcs out of the rpc set
+  const healthyEndpoints: RPC[] = useMemo(
+    () => Object.values(ENDPOINTS).filter((rpc: RPC) => !unhealthRPCs.includes(rpc.name)),
+    [unhealthRPCs]
+  )
 
   return (
     <RPCMenu>
-      {healthyEndpoints.map((rpc, index) => (
+      {healthyEndpoints.map((rpc: RPC, index: number) => (
         <MenuItem key={index} onClick={(e) => handleClick(e, rpc.endpoint, rpc.name, rpc.network)}>
           <span>
             {rpc.name} {rpc.network.includes('devnet') && `(${rpc.network})`}
