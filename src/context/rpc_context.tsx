@@ -1,7 +1,7 @@
 import React, { FC, ReactNode, createContext, useContext, useEffect, useState } from 'react'
 import { getWorkingRPCEndpoints } from '../api/analytics'
 
-type RPC_HEALTH = {
+export type RPC_HEALTH = {
   name: string
   health: boolean
   health_utc: string
