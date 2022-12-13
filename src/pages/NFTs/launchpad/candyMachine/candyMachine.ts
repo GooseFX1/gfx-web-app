@@ -125,8 +125,6 @@ export const awaitTransactionSignatureConfirmation = async (
     })()
   })
 
-  //@ts-ignore
-
   done = true
   return status
 }

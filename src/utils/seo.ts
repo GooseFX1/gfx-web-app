@@ -1,3 +1,11 @@
+type WindowWithDataLayer = Window & {
+  dataLayer: Record<string, any>[]
+}
+
+// Adds type support for GTM data:
+// https://github.com/vercel/next.js/discussions/20784#discussioncomment-4101864
+declare const window: WindowWithDataLayer
+
 export const addAnalytics = (): void => {
   const globalTag: HTMLScriptElement = document.createElement('script')
   globalTag.async = true
@@ -31,6 +39,5 @@ export const sendPageView = (path: string): void => {
     pageTitle: path
   }
 
-  // @ts-ignore
   window?.dataLayer?.push(pageView)
 }

@@ -24,8 +24,7 @@ const SwapVolume: FC = () => {
       arr.sort(function (a, b) {
         const date1 = new Date(a[0])
         const date2 = new Date(b[0])
-        //@ts-ignore
-        return date1 - date2
+        return date1.getTime() - date2.getTime()
       })
       setGraphData(arr)
     })()

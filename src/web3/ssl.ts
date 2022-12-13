@@ -214,7 +214,6 @@ export const executeBurn = async (
     userWallet: wallet.publicKey,
     tokenProgram: TOKEN_PROGRAM_ID
   }
-  //@ts-ignore
   const burnPtIX: TransactionInstruction = await program.instruction.burnPt(new BN(amountInNative), {
     accounts: burnPtInstructionAccount
   })
@@ -260,7 +259,6 @@ export const executeMint = async (
     userWallet: wallet.publicKey,
     tokenProgram: TOKEN_PROGRAM_ID
   }
-  //@ts-ignore
   const mintPtIX: TransactionInstruction = await program.instruction.mintPt(new BN(amountInNative), {
     accounts: mintPtInstructionAccount
   })
@@ -309,7 +307,6 @@ export const executeWithdraw = async (
     userWallet: wallet.publicKey,
     tokenProgram: TOKEN_PROGRAM_ID
   }
-  //@ts-ignore
   const withdrawIX: TransactionInstruction = await program.instruction.withdraw(new BN(amount), {
     //percent withdraw
     accounts: withdrawInstructionAccount
@@ -432,7 +429,6 @@ const depositAmount = async (
   }
   // some strage co relation dont will check about it later
   const amountInBN: BN = new BN(amountInNative)
-  //@ts-ignore
   const depositAmountIX: TransactionInstruction = await program.instruction.deposit(amountInBN, {
     accounts: depositInstructionAccount
   })
@@ -507,7 +503,6 @@ export const createLiquidityAccountIX = async (
     systemProgram: SYSTEM,
     rent: SYSVAR_RENT_PUBKEY
   }
-  //@ts-ignore
   const createLiquidityIX: TransactionInstruction = await program.instruction.createLiquidityAccount({
     accounts: createLiquidityInstructionAccount
   })

@@ -99,7 +99,7 @@ const stakeAmount = async (
     userWallet: wallet.publicKey,
     tokenProgram: TOKEN_PROGRAM_ID
   }
-  //@ts-ignore
+
   const stakeAmountIX: TransactionInstruction = await program.instruction.stake(amountInBN, {
     accounts: stakingAmountInstruction
   })
@@ -148,7 +148,6 @@ export const executeUnstakeAndClaim = async (
   }
   let signature
   try {
-    //@ts-ignore
     const unstakeAmountIX: TransactionInstruction = await program.instruction.unstake(new BN(percent * 100), {
       accounts: unstakeAmountInstruction
     })
@@ -185,7 +184,7 @@ export const fetchCurrentAmountStaked = async (
     const { amountStaked, share } = STAKING_ACCOUNT_LAYOUT.decode(data)
     const { data: controllerData } = await connection.getAccountInfo(CONTROLLER_KEY)
     const { stakingBalance, totalStakingShare } = CONTROLLER_LAYOUT.decode(controllerData)
-    //@ts-ignore
+
     const amountStakedPlusEarned = (stakingBalance * share) / totalStakingShare
     const amountEarned = Number(amountStakedPlusEarned) - Number(amountStaked)
 
@@ -215,7 +214,7 @@ export const createStakingAccountIX = async (
     systemProgram: SYSTEM,
     rent: SYSVAR_RENT_PUBKEY
   }
-  // @ts-ignore
+
   const createStakingIX: TransactionInstruction = await program.instruction.createStakingAccount({
     accounts: createStakingInstructionAccounts
   })

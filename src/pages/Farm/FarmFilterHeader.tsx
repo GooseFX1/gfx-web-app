@@ -323,11 +323,7 @@ const LastRefreshedAnimation = ({ lastRefreshedClass }: any) => (
   <div className={lastRefreshedClass}>
     {lastRefreshedClass === 'lastRefreshed' && (
       <strong>
-        Last updated: {checkMobile() && <br />}{' '}
-        {
-          //@ts-ignore
-          new Date().toGMTString()
-        }
+        Last updated: {checkMobile() && <br />} {new Date().toUTCString()}
       </strong>
     )}
   </div>

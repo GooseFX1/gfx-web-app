@@ -216,7 +216,6 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
       ) : (
         <Image
           className="analytic-image"
-          // @ts-ignorese
           src={
             collection.collection[0].profile_pic_link.length > 0
               ? collection.collection[0].profile_pic_link
@@ -230,7 +229,6 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
       <div className="analytic-content">
         <div style={{ position: 'relative' }}>
           <h2 className="title">
-            {/* @ts-ignore */}
             {!isCollection ? (
               <SkeletonCommon width="149px" height="28px" />
             ) : (

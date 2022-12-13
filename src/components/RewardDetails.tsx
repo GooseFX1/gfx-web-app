@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import { Row, Col } from 'antd'
 import { useRewardToggle, useConnectionConfig } from '../context'
 import { SpaceEvenlyDiv } from '../styles'
-import { LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL } from '../constants'
 import { ADDRESSES as SDK_ADDRESS, CONTROLLER_LAYOUT } from 'goosefx-ssl-sdk'
 import tw from 'twin.macro'
 
@@ -176,10 +176,8 @@ export const RewardRedirectComponent: FC = () => {
     try {
       const { data: controllerData } = await connection.getAccountInfo(SDK_ADDRESS.MAINNET.GFX_CONTROLLER)
       const { stakingBalance, dailyReward } = await CONTROLLER_LAYOUT.decode(controllerData)
-      //@ts-ignore
-      const liqidity = Number(stakingBalance / BigInt(LAMPORTS_PER_SOL))
-      //@ts-ignore
-      const DR = Number(dailyReward / BigInt(LAMPORTS_PER_SOL))
+      const liqidity = Number(stakingBalance / LAMPORTS_PER_SOL)
+      const DR = Number(dailyReward / LAMPORTS_PER_SOL)
       const APR: number = (1 / liqidity) * DR * 365 * 100
       return APR
     } catch (err) {

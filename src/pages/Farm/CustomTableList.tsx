@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, FC } from 'react'
-import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { PublicKey } from '@solana/web3.js'
 import { saveLiquidtyVolume, getVolumeApr, fetchTotalVolumeTrade } from '../../api/SSL'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
@@ -20,7 +20,7 @@ import { useConnectionConfig, usePriceFeedFarm, useFarmContext, useNavCollapse }
 import { ADDRESSES } from '../../web3'
 import { MorePoolsSoon } from './MorePoolsSoon'
 //import { NATIVE_MINT } from '@solana/spl-token-v2'
-import { NETWORK_CONSTANTS, TOKEN_NAMES } from '../../constants'
+import { ZERO, NETWORK_CONSTANTS, TOKEN_NAMES, LAMPORTS_PER_SOL } from '../../constants'
 //import { checkMobile } from '../../utils'
 import ExpandRowView from './ExpandRowView'
 import tw from 'twin.macro'
@@ -197,20 +197,19 @@ const CustomTableList: FC = () => {
         liquidityAccountData && liquidityAccountData[i] !== null ? liquidityAccountData[i].data : undefined
       const liquidityAccount = liquidityData ? LIQUIDITY_ACCOUNT_LAYOUT.decode(liquidityData) : undefined
       const tokenPrice = getTokenPrice(tokenName).current
-      //@ts-ignore
+
       const liquidity = mainVaultData.amount + sslData.swappedLiabilityNative
       const ptMinted = liquidityAccount ? liquidityAccount.ptMinted : 0
-      //@ts-ignore
-      const userLiablity = liquidityAccount ? (liquidity * liquidityAccount.share) / sslData.totalShare : 0n
-      const amountDeposited = liquidityAccount ? liquidityAccount.amountDeposited : 0
-      //@ts-ignore
+
+      const userLiablity = liquidityAccount ? (liquidity * liquidityAccount.share) / sslData.totalShare : ZERO
+      const amountDeposited = liquidityAccount ? liquidityAccount.amountDeposited : ZERO
+
       const earned = liquidityAccount ? userLiablity - amountDeposited : 0
 
       const APR = aprVolumeData && aprVolumeData[tokenName]?.apr
       const volumeDays = aprVolumeData && aprVolumeData[tokenName]?.volume
 
       const farmCalculation = {
-        //@ts-ignore
         image: tokenName,
         name: tokenName,
         type: 'SSL',
@@ -309,10 +308,10 @@ const CustomTableList: FC = () => {
       const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
       const { data: controllerData } = await connection.getAccountInfo(CONTROLLER_KEY)
       const { stakingBalance, dailyReward } = await CONTROLLER_LAYOUT.decode(controllerData)
-      //@ts-ignore
-      const liqidity = Number(stakingBalance / BigInt(LAMPORTS_PER_SOL))
-      //@ts-ignore
-      const DR = Number(dailyReward / BigInt(LAMPORTS_PER_SOL))
+
+      const liqidity = Number(stakingBalance / LAMPORTS_PER_SOL)
+
+      const DR = Number(dailyReward / LAMPORTS_PER_SOL)
       const APR: number = (1 / liqidity) * DR * 365
       // user account data
       const accountData = await fetchCurrentAmountStaked(connection, network, wallet)

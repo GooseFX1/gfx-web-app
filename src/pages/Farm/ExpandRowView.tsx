@@ -310,7 +310,6 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
           setTimeout(() => setStakeAmt(0), 500)
           setCounter((prev) => prev + 1)
         } else {
-          //@ts-ignore
           const { signature, error } = con
           notify(sslErrorMessage(name, error?.message, signature, network, Deposit))
           return
