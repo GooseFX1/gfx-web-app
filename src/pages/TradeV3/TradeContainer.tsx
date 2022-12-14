@@ -13,6 +13,7 @@ import { PlaceOrder } from './PlaceOrder'
 import CollateralPanel from './perps/components/CollateralPanel'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts/App/Connect'
+import { HistoryPanel } from '../TradeV3/HistoryPanel'
 
 const ReactGridLayout = WidthProvider(Responsive)
 
@@ -242,7 +243,7 @@ export const CryptoContent: FC = () => {
       if (i === 4)
         return (
           <div key={i} className="spacing">
-            {/*<History chartsVisible={true} setChartsVisible={null} />*/}
+            <HistoryPanel />
             {!isLocked ? (
               <UNLOCKED_OVERLAY>
                 <img
