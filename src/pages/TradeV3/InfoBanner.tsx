@@ -1,9 +1,34 @@
 import { Skeleton } from 'antd'
-import React, { FC, useMemo } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { useCrypto, usePriceFeed } from '../../context'
 import { DropdownPairs } from './DropdownPairs'
-import tw from 'twin.macro'
+import { PlaceOrder } from './perps/DepositWithdraw'
+import { PopupCustom } from '../NFTs/Popup/PopupCustom'
+
+const SETTING_MODAL = styled(PopupCustom)`
+  height: 356px !important;
+  width: 628px !important;
+  background-color: ${({ theme }) => theme.bg20};
+  border-radius: 25px;
+
+  .ant-modal-header {
+    background-color: ${({ theme }) => theme.bg20};
+    border-bottom: none;
+    padding: 20px 25px 0;
+    border-radius: 25px 25px 0 0;
+  }
+  .ant-modal-content {
+    box-shadow: none;
+
+    .ant-modal-close {
+      top: 30px;
+    }
+  }
+  .ant-modal-body {
+    padding: 0 25px;
+  }
+`
 
 const INFO_WRAPPER = styled.div`
   padding: 0px 30px;
@@ -98,7 +123,7 @@ const LOCK_LAYOUT_CTN = styled.div<{ $isLocked: boolean }>`
 const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
   line-height: 38px;
   width: 63px;
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg20};
   background: ${({ $isLocked }) =>
     $isLocked ? '' : 'linear-gradient(90deg, rgba(247, 147, 26, 0.3) 12.88%, rgba(220, 31, 255, 0.3) 100%)'};
   border-radius: 36px;
@@ -108,37 +133,37 @@ const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
     bottom: 2px;
   }
 `
-const FEES_BTN_CTN = styled.div`
-  //margin-left: auto;
-  width: 88px;
+const DEPOSIT_WRAPPER = styled.div`
+  margin-left: auto;
+  width: 158px;
   height: 40px;
-  background: linear-gradient(108deg, #5855ff 0%, #dc1fff 135%);
+  background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
   border-radius: 36px;
-  margin-right: 20px;
+  margin-right: 15px;
+  padding: 1px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
 `
-const DEPOSIT_BTN = styled.div`
-  ${tw`ml-auto`}
-`
 
-const FEES_BTN = styled.div`
-  width: 86px;
-  height: 38px;
-  background: #2a2a2a;
+const DEPOSIT_BTN = styled.div`
+  width: 100%;
+  height: 100%;
+  background: ${({ theme }) => theme.bg20};
   border-radius: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
+  font-size: 12px;
+  color: ${({ theme }) => theme.text1};
 `
 
 const RESET_LAYOUT_BUTTON_CTN = styled.div`
   cursor: pointer;
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-  height: 42px;
+  height: 40px;
   padding: 1px;
   margin-left: auto;
   border-radius: 36px;
@@ -146,23 +171,76 @@ const RESET_LAYOUT_BUTTON_CTN = styled.div`
 `
 
 const RESET_LAYOUT_BUTTON = styled.div`
-  background-color: ${({ theme }) => theme.bg9};
-  height: 40px;
-  padding: 10px 20px;
+  background-color: ${({ theme }) => theme.bg21};
+  height: 38px;
+  padding: 8px 20px;
   border-radius: 36px;
   color: ${({ theme }) => theme.text4};
 `
 
+const HEADER = styled.div`
+  display: flex;
+  align-items: center;
+
+  .cta {
+    background-color: ${({ theme }) => theme.bg21};
+    border-radius: 20px;
+    width: 120px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: ${({ theme }) => theme.text20};
+    cursor: pointer;
+  }
+  .cta.active-text {
+    color: ${({ theme }) => theme.text1};
+  }
+
+  .active {
+    background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
+    padding: 1px;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+
+  img {
+    margin-left: auto;
+    margin-right: 50px;
+    height: 40px;
+    width: 40px;
+    cursor: pointer;
+  }
+`
+
 const Loader: FC = () => <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
+
+const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: string }> = ({
+  setTradeType,
+  tradeType
+}) => (
+  <HEADER>
+    <div className={tradeType === 'deposit' ? 'active' : ''} onClick={() => setTradeType('deposit')}>
+      <div className={tradeType === 'deposit' ? 'active-text cta' : 'cta'}>Deposit</div>
+    </div>
+    <div className={tradeType === 'withdraw' ? 'active' : ''} onClick={() => setTradeType('withdraw')}>
+      <div className={tradeType === 'withdraw' ? 'active-text cta' : 'cta'}>Withdraw</div>
+    </div>
+    <img src="/img/assets/refresh.svg" alt="refresh-icon" />
+  </HEADER>
+)
 
 export const InfoBanner: FC<{
   isLocked: boolean
   setIsLocked: (a: boolean) => void
   resetLayout: () => void
-  setFeesPopup: (b: (c: any) => boolean) => void
-}> = ({ isLocked, setIsLocked, resetLayout, setFeesPopup }) => {
+}> = ({ isLocked, setIsLocked, resetLayout }) => {
   const { selectedCrypto, isSpot, setIsSpot } = useCrypto()
   const { prices, tokenInfo, refreshTokenData } = usePriceFeed()
+  const [tradeType, setTradeType] = useState<string>('deposit')
+  const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
   const tokenInfos = useMemo(() => tokenInfo[selectedCrypto.pair], [tokenInfo[selectedCrypto.pair]])
   const formatDisplayVolume = (volume) => {
@@ -216,6 +294,25 @@ export const InfoBanner: FC<{
 
   return (
     <INFO_WRAPPER>
+      {depositWithdrawModal && (
+        <SETTING_MODAL
+          setVisible={true}
+          visible={true}
+          centered={true}
+          footer={null}
+          title={<ModalHeader setTradeType={setTradeType} tradeType={tradeType} />}
+          closeIcon={
+            <img
+              src="/img/assets/close-gray-icon.svg"
+              height="20px"
+              width="20px"
+              onClick={() => setDepositWithdrawModal(false)}
+            />
+          }
+        >
+          <PlaceOrder tradeType={tradeType} />
+        </SETTING_MODAL>
+      )}
       <div className="spot-toggle">
         <span
           className={'spot toggle ' + (isSpot ? 'selected' : '')}
@@ -281,9 +378,9 @@ export const InfoBanner: FC<{
       </INFO_STATS>
       <DEPOSIT_BTN>{isLocked && !isSpot && <button>Hello</button>}</DEPOSIT_BTN>
       {isLocked && (
-        <FEES_BTN_CTN>
-          <FEES_BTN onClick={() => setFeesPopup((prev) => !prev)}>Fees </FEES_BTN>
-        </FEES_BTN_CTN>
+        <DEPOSIT_WRAPPER>
+          <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
+        </DEPOSIT_WRAPPER>
       )}
       {isLocked ? (
         <REFRESH_DATA onClick={() => refreshTokenData(null)}>
