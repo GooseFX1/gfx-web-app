@@ -376,7 +376,6 @@ export const InfoBanner: FC<{
           </div>
         )}
       </INFO_STATS>
-      <DEPOSIT_BTN>{isLocked && !isSpot && <button>Hello</button>}</DEPOSIT_BTN>
       {isLocked && (
         <DEPOSIT_WRAPPER>
           <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
