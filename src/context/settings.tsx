@@ -159,7 +159,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     () =>
       new Connection(
         // eslint-disable-next-line max-len
-        'https://convincing-skilled-pool.solana-mainnet.discover.quiknode.pro/8a09882644cf43347f5c23fa91461bc870b6858a/',
+        'https://api.devnet.solana.com',
         'confirmed'
       ),
     [endpoint]
