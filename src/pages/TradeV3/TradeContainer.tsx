@@ -16,6 +16,7 @@ import useBlacklisted from '../../utils/useBlacklisted'
 import useWindowSize from '../../utils/useWindowSize'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
+//import { Connect } from '../../layouts/App/Connect'
 
 const ReactGridLayout = WidthProvider(Responsive)
 
