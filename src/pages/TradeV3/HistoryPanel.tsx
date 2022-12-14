@@ -378,10 +378,6 @@ export const HistoryPanel: FC = () => {
           </>
         ) : activeTab === 1 ? (
           <OpenOrdersComponent />
-        ) : activeTab === 2 ? (
-          <TradeHistoryComponent />
-        ) : activeTab === 3 ? (
-          <SettlePanel />
         ) : null}
       </WRAPPER>
     </>
