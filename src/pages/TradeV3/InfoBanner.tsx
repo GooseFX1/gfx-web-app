@@ -3,6 +3,7 @@ import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { useCrypto, usePriceFeed } from '../../context'
 import { DropdownPairs } from './DropdownPairs'
+import tw from 'twin.macro'
 
 const INFO_WRAPPER = styled.div`
   padding: 0px 30px;
@@ -108,7 +109,7 @@ const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
   }
 `
 const FEES_BTN_CTN = styled.div`
-  margin-left: auto;
+  //margin-left: auto;
   width: 88px;
   height: 40px;
   background: linear-gradient(108deg, #5855ff 0%, #dc1fff 135%);
@@ -118,6 +119,9 @@ const FEES_BTN_CTN = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+`
+const DEPOSIT_BTN = styled.div`
+  ${tw`ml-auto`}
 `
 
 const FEES_BTN = styled.div`
@@ -275,6 +279,7 @@ export const InfoBanner: FC<{
           </div>
         )}
       </INFO_STATS>
+      <DEPOSIT_BTN>{isLocked && !isSpot && <button>Hello</button>}</DEPOSIT_BTN>
       {isLocked && (
         <FEES_BTN_CTN>
           <FEES_BTN onClick={() => setFeesPopup((prev) => !prev)}>Fees </FEES_BTN>
