@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { Button } from 'antd'
 import React, { useState, FC, useMemo } from 'react'
 import { useAccounts, useCrypto, useTokenRegistry, useTradeHistory } from '../../context'
@@ -49,7 +48,8 @@ const HEADER = styled.div`
       ${tw`w-1/4 h-[31px] p-px`}
       border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
       .tab {
-        ${tw`cursor-pointer h-full w-full flex flex-row items-center justify-center font-semibold cursor-pointer text-12`}
+        ${tw`cursor-pointer h-full w-full flex flex-row items-center 
+        justify-center font-semibold cursor-pointer text-12`}
         background-color: ${({ theme }) => theme.bg15};
         color: ${({ theme }) => theme.text20};
       }
@@ -126,6 +126,9 @@ const OPEN_ORDER = styled.div`
   div {
     ${tw`w-full h-[45px] py-0 pr-0 pl-3 flex justify-between items-center text-14 font-medium`}
     color: ${({ theme }) => theme.text24};
+    .ant-btn > span {
+      ${tw`inline`}
+    }
     img {
       ${tw`w-[25px] h-[25px] mr-[5px]`}
     }
@@ -198,24 +201,24 @@ export const HistoryPanel: FC = () => {
 
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { getUIAmount } = useAccounts()
-  const symbolBid = useMemo(
-    () => getBidSymbolFromPair(selectedCrypto.pair),
-    [getBidSymbolFromPair, selectedCrypto.pair]
-  )
-  const symbolAsk = useMemo(
-    () => getAskSymbolFromPair(selectedCrypto.pair),
-    [getAskSymbolFromPair, selectedCrypto.pair]
-  )
+  // const symbolBid = useMemo(
+  //   () => getBidSymbolFromPair(selectedCrypto.pair),
+  //   [getBidSymbolFromPair, selectedCrypto.pair]
+  // )
+  // const symbolAsk = useMemo(
+  //   () => getAskSymbolFromPair(selectedCrypto.pair),
+  //   [getAskSymbolFromPair, selectedCrypto.pair]
+  // )
 
-  const assetIconBid = useMemo(
-    () => `/img/${selectedCrypto.type}/${selectedCrypto.type === 'synth' ? `g${symbolBid}` : symbolBid}.svg`,
-    [symbolBid, selectedCrypto.type]
-  )
+  // const assetIconBid = useMemo(
+  //   () => `/img/${selectedCrypto.type}/${selectedCrypto.type === 'synth' ? `g${symbolBid}` : symbolBid}.svg`,
+  //   [symbolBid, selectedCrypto.type]
+  // )
 
-  const assetIconAsk = useMemo(
-    () => `/img/${selectedCrypto.type}/${selectedCrypto.type === 'synth' ? `g${symbolAsk}` : symbolAsk}.svg`,
-    [symbolAsk, selectedCrypto.type]
-  )
+  // const assetIconAsk = useMemo(
+  //   () => `/img/${selectedCrypto.type}/${selectedCrypto.type === 'synth' ? `g${symbolAsk}` : symbolAsk}.svg`,
+  //   [symbolAsk, selectedCrypto.type]
+  // )
 
   const tokenInfoAsk = useMemo(
     () => getTokenInfoFromSymbol(getAskSymbolFromPair(selectedCrypto.pair)),

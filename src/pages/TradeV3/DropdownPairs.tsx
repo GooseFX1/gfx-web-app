@@ -43,6 +43,10 @@ const DROPDOWN_MODAL = styled(Modal)`
 
   .ant-modal-content {
     ${tw`h-full overflow-y-hidden overflow-x-hidden`}
+
+    .ant-modal-body {
+      ${tw`pb-12`}
+    }
   }
 
   .dropdown-modal-search {
@@ -225,8 +229,10 @@ export const DropdownPairs: FC = () => {
         placement="bottom"
         align={{ offset: [0, 10] }}
         overlayClassName="antd-radius-trade-v2"
+        //DELETE
         onVisibleChange={() => {
           setShowModal(true)
+          setFilteredSearchPairs(pairs)
         }}
       >
         <SELECTED_PAIR_CTN>
