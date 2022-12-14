@@ -100,7 +100,7 @@ const MostPopularCrypto: FC<{ pair: string; type: MarketType }> = ({ pair, type 
   const { getAskSymbolFromPair } = useCrypto()
 
   const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
-  const assetIcon = useMemo(() => `/img/${type}/${type === 'synth' ? `g${symbol}` : symbol}.svg`, [symbol, type])
+  const assetIcon = useMemo(() => `/img/crypto/${type === 'synth' ? `g${symbol}` : symbol}.svg`, [symbol, type])
   return (
     <div className="popular-tokens">
       <img className="asset-icon" src={assetIcon} alt="crypto-icon" />
@@ -159,7 +159,7 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
 
   const formattedPair = useMemo(() => formatPair(pair), [formatPair, pair])
   const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
-  const assetIcon = useMemo(() => `/img/${type}/${type === 'synth' ? `g${symbol}` : symbol}.svg`, [symbol, type])
+  const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, type])
 
   const changeValue = tokenInfo[pair] ? tokenInfo[pair].change : ' '
   let classNameChange = ''
@@ -187,7 +187,7 @@ export const DropdownPairs: FC = () => {
     [getAskSymbolFromPair, selectedCrypto.pair]
   )
   const assetIcon = useMemo(
-    () => `/img/${selectedCrypto.type}/${selectedCrypto.type === 'synth' ? `g${symbol}` : symbol}.svg`,
+    () => `/img/crypto/${selectedCrypto.type === 'synth' ? `g${symbol}` : symbol}.svg`,
     [symbol, selectedCrypto.type]
   )
   const handleDropdownSearch = (searchString: string) => {
