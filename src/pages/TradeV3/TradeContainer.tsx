@@ -298,7 +298,7 @@ export const CryptoContent: FC = () => {
         isLocked={isLocked}
         setIsLocked={setIsLocked}
         resetLayout={resetLayout}
-        setFeesPopup={setFeesPopup}
+        //setFeesPopup={setFeesPopup}
       />
       {/* {feesPopup && (
       <ModalSlide rewardModal={feesPopup} rewardToggle={setFeesPopup} modalType={MODAL_TYPES.FEES} />
