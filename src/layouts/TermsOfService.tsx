@@ -1,6 +1,6 @@
 import React, { Dispatch, FC, SetStateAction } from 'react'
 import styled from 'styled-components'
-import { Modal } from '../../components'
+import { Modal } from '../components'
 
 const WRAPPER = styled.span`
   color: ${({ theme }) => theme.text1};

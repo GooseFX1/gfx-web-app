@@ -2,9 +2,9 @@ import React, { FC } from 'react'
 import { Dropdown } from 'antd'
 import styled from 'styled-components'
 import { Menu, MenuItem } from './shared'
-import { LITEPAPER_ADDRESS, SOCIAL_MEDIAS } from '../../constants'
-import { CenteredImg } from '../../styles'
-import { useDarkMode } from '../../context/dark_mode'
+import { LITEPAPER_ADDRESS, SOCIAL_MEDIAS } from '../constants'
+import { CenteredImg } from '../styles'
+import { useDarkMode } from '../context/dark_mode'
 
 const ICON = styled(CenteredImg)`
   ${({ theme }) => theme.measurements(theme.margin(4.5))}

@@ -2,7 +2,7 @@ import React, { createContext, FC, ReactNode, useContext, useMemo, useState } fr
 import { getWalletAdapters } from '../utils/wallets'
 import { WalletProvider as WalletAdapterProvider } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
-import { WalletsModal } from '../layouts/App/WalletsModal'
+import { WalletsModal } from '../layouts'
 
 interface WalletModalContextState {
   visible: boolean

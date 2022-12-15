@@ -1,9 +1,9 @@
 import React, { FC, useEffect, useState } from 'react'
-import styled from 'styled-components'
-import { CenteredDiv, CenteredImg } from '../../styles'
-import { serum } from '../../web3'
 import { Orderbook } from '@project-serum/serum'
-import { useConnectionConfig } from '../../context'
+import styled from 'styled-components'
+import { CenteredDiv, CenteredImg } from '../styles'
+import { serum } from '../web3'
+import { useConnectionConfig } from '../context'
 
 const WRAPPER = styled(CenteredDiv)`
   padding: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(1)}

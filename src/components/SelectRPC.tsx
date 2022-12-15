@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, FC } from 'react'
 import styled from 'styled-components'
-import { Menu, MenuItem } from '../layouts/App/shared'
+import { Menu, MenuItem } from '../layouts/shared'
 import { useRPCContext, ENDPOINTS, useConnectionConfig, useDarkMode, RPC, RPC_HEALTH } from '../context'
 import { ArrowDropdown } from './ArrowDropdown'
 import { SpaceBetweenDiv } from '../styles'

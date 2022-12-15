@@ -3,10 +3,10 @@ import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletName } from '@solana/wallet-adapter-base'
 import { TermsOfService } from './TermsOfService'
-import { Modal } from '../../components'
-import { LITEPAPER_ADDRESS } from '../../constants'
-import { useWalletModal } from '../../context'
-import { CenteredImg, SpaceBetweenDiv } from '../../styles'
+import { Modal } from '../components'
+import { LITEPAPER_ADDRESS } from '../constants'
+import { useWalletModal } from '../context'
+import { CenteredImg, SpaceBetweenDiv } from '../styles'
 
 const BODY = styled.div`
   max-height: 64vh;

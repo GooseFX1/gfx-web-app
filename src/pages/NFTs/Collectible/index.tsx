@@ -10,7 +10,7 @@ import { notify } from '../../../utils'
 import apiClient from '../../../api'
 import { useDarkMode, useNFTProfile } from '../../../context'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
-import { Connect } from '../../../layouts/App/Connect'
+import { Connect } from '../../../layouts'
 
 const UPLOAD_CONTENT = styled.div`
   position: relative;

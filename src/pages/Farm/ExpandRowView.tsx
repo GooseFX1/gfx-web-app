@@ -9,7 +9,7 @@ import {
   usePriceFeedFarm,
   useTokenRegistry
 } from '../../context'
-import { Connect } from '../../layouts/App/Connect'
+import { Connect } from '../../layouts'
 import { checkMobile, moneyFormatterWithComma, notify } from '../../utils'
 import { ADDRESSES, executeDeposit, executeStake, executeUnstakeAndClaim, executeWithdraw } from '../../web3'
 import { ColumnMobile, ColumnWeb } from './Columns'

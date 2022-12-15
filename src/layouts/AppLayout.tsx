@@ -1,8 +1,8 @@
 import React, { FC, ReactNode } from 'react'
-import { useRewardToggle } from '../../context'
-import styled from 'styled-components'
-import { Header } from './Header'
 import tw from 'twin.macro'
+import styled from 'styled-components'
+import { MainNav } from './MainNav'
+import { useRewardToggle } from '../context'
 
 const Wrapper = styled.div<{ $rewardModal: boolean }>`
   ${tw`overflow-x-hidden min-w-vw min-h-vh sm:max-h-vh`}
@@ -14,7 +14,7 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const { rewardModal } = useRewardToggle()
   return (
     <Wrapper $rewardModal={rewardModal}>
-      <Header />
+      <MainNav />
       {children}
     </Wrapper>
   )

@@ -11,14 +11,14 @@ import React, {
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Menu, MenuItem } from './shared'
-import { ArrowDropdown } from '../../components'
-import { useWalletModal } from '../../context'
-import { CenteredImg } from '../../styles'
-import { Loader } from '../../components'
+import { ArrowDropdown } from '../components'
+import { useWalletModal } from '../context'
+import { CenteredImg } from '../styles'
+import { Loader } from '../components'
 import { WalletName } from '@solana/wallet-adapter-base'
-import { truncateAddress } from '../../utils'
+import { truncateAddress } from '../utils'
 import tw from 'twin.macro'
-import { logData } from '../../api'
+import { logData } from '../api'
 
 const WALLET_ICON = styled(CenteredImg)`
   ${tw`bg-black h-[30px] w-[30px] mr-[12px] rounded-circle`}

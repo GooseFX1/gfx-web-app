@@ -13,7 +13,7 @@ import {
 import { useConnectionConfig } from '../../../../context'
 import { Share } from '../../Share'
 import { copyToClipboard } from '../../Collection/CollectionHeader'
-import { Connect } from '../../../../layouts/App/Connect'
+import { Connect } from '../../../../layouts'
 
 const MINT_BUTTON_BAR = styled.div`
   @media (max-width: 500px) {

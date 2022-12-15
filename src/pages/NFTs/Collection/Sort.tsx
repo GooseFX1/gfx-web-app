@@ -1,6 +1,6 @@
 import { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
 import styled from 'styled-components'
-import { Menu, MenuItem } from '../../../layouts/App/shared'
+import { Menu, MenuItem } from '../../../layouts'
 import { ArrowDropdown } from '../../../components'
 
 const WRAPPER = styled.button`

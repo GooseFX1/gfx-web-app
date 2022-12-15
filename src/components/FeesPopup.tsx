@@ -5,7 +5,7 @@ import { dataSource } from '../pages/TradeV2/constants/feesConstants'
 import Column from 'antd/lib/table/Column'
 import moment from 'moment'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Connect } from '../layouts/App/Connect'
+import { Connect } from '../layouts'
 import { useAccounts, useDarkMode } from '../context'
 import { PublicKey } from '@solana/web3.js'
 

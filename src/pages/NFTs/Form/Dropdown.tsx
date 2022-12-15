@@ -1,7 +1,7 @@
 import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { DatePicker } from 'antd'
-import { Menu, MenuItem } from '../../../layouts/App/shared'
+import { Menu, MenuItem } from '../../../layouts'
 import { ArrowDropdown } from '../../../components'
 import { OverlayConsumer } from '../../../context/overlay'
 import { useDarkMode } from '../../../context'

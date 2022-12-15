@@ -1,9 +1,9 @@
 import React, { FC, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import { useDarkMode } from '../../context'
-import { CenteredDiv, CenteredImg, SVGToPrimary2, SVGToWhite } from '../../styles'
 import tw from 'twin.macro'
+import { useDarkMode } from '../context'
+import { CenteredDiv, CenteredImg, SVGToPrimary2, SVGToWhite } from '../styles'
 
 const TABS = ['/swap', '/trade', '/NFTs', '/farm']
 

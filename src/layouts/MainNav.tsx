@@ -3,15 +3,15 @@ import styled from 'styled-components'
 import { Connect } from './Connect'
 import { More } from './More'
 import { Tabs } from './Tabs'
-import { RewardsButton } from '../../components/RewardsPopup'
-import { useDarkMode } from '../../context'
-import { SVGToGrey2, CenteredDiv, SVGToWhite, CenteredImg, AlignCenterDiv } from '../../styles'
-import { useNavCollapse } from '../../context'
-import { ModalSlide } from '../../components/ModalSlide'
-import { useRewardToggle } from '../../context/reward_toggle'
-import { MODAL_TYPES } from '../../constants'
-import { checkMobile } from '../../utils'
-import { ThemeToggle } from '../../components/ThemeToggle'
+import { RewardsButton } from '../components/RewardsPopup'
+import { useDarkMode } from '../context'
+import { SVGToGrey2, CenteredDiv, SVGToWhite, CenteredImg, AlignCenterDiv } from '../styles'
+import { useNavCollapse } from '../context'
+import { ModalSlide } from '../components/ModalSlide'
+import { useRewardToggle } from '../context/reward_toggle'
+import { MODAL_TYPES } from '../constants'
+import { checkMobile } from '../utils'
+import { ThemeToggle } from '../components/ThemeToggle'
 import tw from 'twin.macro'
 
 const BRAND = styled.a`
@@ -113,7 +113,7 @@ const ResponsiveDropdown: FC<{ logoAnimationTime?: number }> = () => {
   )
 }
 
-export const Header: FC = () => {
+export const MainNav: FC = () => {
   const { isCollapsed, toggleCollapse } = useNavCollapse()
   const { rewardModal, rewardToggle } = useRewardToggle()
   const { mode } = useDarkMode()

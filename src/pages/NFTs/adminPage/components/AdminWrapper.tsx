@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import { useNFTAdmin } from '../../../../context'
 import AdminDashboard from './AdminDashboard'
-import { Connect } from '../../../../layouts/App/Connect'
+import { Connect } from '../../../../layouts'
 import { GradientText } from './UpcomingMints'
 
 const CONNECT_WALLET_WRAPPER = styled.div`

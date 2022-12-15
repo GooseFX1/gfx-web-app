@@ -1,10 +1,10 @@
 import React, { FC, useState } from 'react'
 import styled from 'styled-components'
 import { Menu, MenuItem } from './shared'
-import { ArrowDropdown } from '../../components'
-import { MainText } from '../../styles'
+import { ArrowDropdown } from '../components'
+import { MainText } from '../styles'
 
-// TODO: refactor this component and '../../components/Categories.tsx' into one component
+// TODO: refactor this component and '../components/Categories.tsx' into one component
 const DROP_DOWN_WRAPPER = MainText(styled.button`
   ${({ theme }) => theme.flexCenter}
   height: ${({ theme }) => theme.margin(5)};

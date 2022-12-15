@@ -3,13 +3,13 @@ import { Dropdown } from 'antd'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 
-import { CenteredImg } from '../../styles'
+import { CenteredImg } from '../styles'
 import { Menu, MenuItem } from './shared'
-import { notify } from '../../utils'
-import { SelectRPC } from '../../components'
-import { useDarkMode } from '../../context'
-import { ThemeToggle } from '../../components/ThemeToggle'
-import { useConnectionConfig } from '../../context'
+import { notify } from '../utils'
+import { SelectRPC } from '../components'
+import { useDarkMode } from '../context'
+import { ThemeToggle } from '../components/ThemeToggle'
+import { useConnectionConfig } from '../context'
 
 const ICON = styled(CenteredImg)<{ $mode: boolean }>`
   ${tw`h-[36px] w-[36px] cursor-pointer`}

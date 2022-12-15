@@ -1,6 +1,6 @@
 import React, { FC, useMemo, useState, useEffect } from 'react'
 import { MainButton } from '../../components'
-import { Connect } from '../../layouts/App/Connect'
+import { Connect } from '../../layouts'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {

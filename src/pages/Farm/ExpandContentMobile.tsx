@@ -8,7 +8,7 @@ import tw from 'twin.macro'
 import { Loader } from '../Farm/Columns'
 import { moneyFormatter } from '../../utils/math'
 import { HeaderTooltip } from '../Farm/Columns'
-import { Connect } from '../../layouts/App/Connect'
+import { Connect } from '../../layouts'
 import { IFarmData } from './CustomTableList'
 
 const STYLED_SOL = styled.div`

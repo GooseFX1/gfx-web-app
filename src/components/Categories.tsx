@@ -1,6 +1,6 @@
 import React, { Dispatch, FC, SetStateAction, useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Menu, MenuItem } from '../layouts/App/shared'
+import { Menu, MenuItem } from '../layouts/shared'
 import { ArrowDropdown } from '../components'
 import { SVGDynamicReverseMode } from '../styles'
 

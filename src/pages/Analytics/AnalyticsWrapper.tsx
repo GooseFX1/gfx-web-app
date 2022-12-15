@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import { isAdminAllowed } from '../../api/NFTLaunchpad'
 import { useNavCollapse } from '../../context'
-import { Connect } from '../../layouts/App/Connect'
+import { Connect } from '../../layouts'
 import { GradientText } from '../NFTs/adminPage/components/UpcomingMints'
 import AnalyticsDashboard from './AnalyticsDashboard'
 
