@@ -89,10 +89,11 @@ const NFTStatsContainer = () => {
 const NFTGridContainer = (): ReactElement => {
   const { isCollapsed } = useNavCollapse()
   const [open, setOpen] = useState<boolean>(true)
+  const [displayIndex, setDisplayIndex] = useState<number>(0)
 
   return (
     <GRID_CONTAINER navCollapsed={isCollapsed}>
-      <FiltersContainer setOpen={setOpen} />
+      <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
       <div className="flexContainer">
         <AdditionalFilters open={open} />
         <NFTCollectionsGrid open={open} />
@@ -101,7 +102,7 @@ const NFTGridContainer = (): ReactElement => {
   )
 }
 
-const FiltersContainer = ({ setOpen }: any): ReactElement => {
+const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): ReactElement => {
   const { mode } = useDarkMode()
   const { sortingAsc, setSortAsc } = useNFTAggregator()
   const items = [
@@ -109,7 +110,7 @@ const FiltersContainer = ({ setOpen }: any): ReactElement => {
     { label: 'Tab 2', key: 'item-2', children: 'Content 2' }
   ]
   return (
-    <NFT_FILTERS_CONTAINER open={true}>
+    <NFT_FILTERS_CONTAINER index={displayIndex}>
       <img onClick={() => setOpen((prev) => !prev)} src={`/img/assets/Aggregator/filtersIcon${mode}.svg`} />
       <SearchBar placeholder="Search by nft or owner" />
       <div className="sortingBtn" onClick={() => setSortAsc((prev) => !prev)}>
