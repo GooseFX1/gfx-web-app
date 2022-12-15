@@ -217,28 +217,4 @@ export const NFTBanners = ({ showBanner }: any) => {
   )
 }
 
-// const NFTBanners: FC<{ showBanner: boolean }> = ({ showBanner }) => {
-//   console.log(showBanner)
-
-//   return (
-//     <>
-//       <BANNER_CONTAINER className={showBanner ? 'showBanner' : 'closeBanner'} showBanner={showBanner}>
-//         <BANNER showBanner={showBanner} >
-//           <img src={'/img/assets/Daily sale collections banner.svg'} alt="" />
-//         </BANNER>
-//         <BANNER showBanner={showBanner} >
-//           <img src={'/img/assets/Launch your collection.svg'} alt="" />
-//         </BANNER>
-//         <BANNER showBanner={showBanner} >
-//           <img src={'/img/assets/NestQuest Banner.svg'} alt="" />
-//         </BANNER>
-//         <BANNER showBanner={showBanner} >
-//           <img src={'/img/assets/Multichain banner.svg'} alt="" />
-//         </BANNER>
-
-//       </BANNER_CONTAINER>
-//     </>
-//   )
-// }
-
 export default NFTBanners
