@@ -30,9 +30,9 @@ const WRAPPER = styled.div`
   }
 
   .submit-btn {
-    ${tw`block h-[50px] w-[222px] rounded-circle mx-auto mt-6 mb-0 font-semibold text-tiny border-0 border-none`}
+    ${tw`block h-[50px] w-[222px] rounded-circle mx-auto mt-6 mb-0 font-semibold 
+      text-tiny border-0 border-none bg-[#5855ff]`}
     color: ${({ theme }) => theme.text2};
-    background: #5855ff;
     outline: none;
   }
 `
@@ -150,7 +150,7 @@ const INPUT = styled.div`
   }
 `
 
-export const PlaceOrder: FC<{ tradeType: string }> = ({ tradeType }) => {
+export const DepositWithdraw: FC<{ tradeType: string }> = ({ tradeType }) => {
   const { balances } = useAccounts()
   const [amount, setAmount] = useState('0.00')
   const perpTokenList = PERPS_COLLATERAL
