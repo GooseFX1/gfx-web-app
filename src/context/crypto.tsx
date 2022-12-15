@@ -96,6 +96,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (pairs.length > 0) {
       setSelectedCrypto(pairs[0])
     }
+    setFilteredSearchPairs(pairs)
   }, [pairs])
 
   useEffect(() => {

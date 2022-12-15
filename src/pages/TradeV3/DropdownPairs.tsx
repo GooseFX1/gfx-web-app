@@ -229,10 +229,8 @@ export const DropdownPairs: FC = () => {
         placement="bottom"
         align={{ offset: [0, 10] }}
         overlayClassName="antd-radius-trade-v2"
-        //DELETE
         onVisibleChange={() => {
           setShowModal(true)
-          setFilteredSearchPairs(pairs)
         }}
       >
         <SELECTED_PAIR_CTN>
