@@ -1,217 +1,144 @@
 import { Skeleton } from 'antd'
 import React, { FC, useMemo, useState } from 'react'
-import styled from 'styled-components'
+import tw, { styled } from 'twin.macro'
 import { useCrypto, usePriceFeed } from '../../context'
 import { DropdownPairs } from './DropdownPairs'
-import { PlaceOrder } from './perps/DepositWithdraw'
+import { DepositWithdraw } from './perps/DepositWithdraw'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 
 const SETTING_MODAL = styled(PopupCustom)`
-  height: 356px !important;
-  width: 628px !important;
+  ${tw`!h-[356px] !w-[628px] rounded-half`}
   background-color: ${({ theme }) => theme.bg20};
-  border-radius: 25px;
 
   .ant-modal-header {
+    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
     background-color: ${({ theme }) => theme.bg20};
-    border-bottom: none;
-    padding: 20px 25px 0;
-    border-radius: 25px 25px 0 0;
   }
   .ant-modal-content {
-    box-shadow: none;
+    ${tw`shadow-none`}
 
     .ant-modal-close {
-      top: 30px;
+      ${tw`top-[30px]`}
     }
   }
   .ant-modal-body {
-    padding: 0 25px;
+    ${tw`py-0 px-[25px]`}
   }
 `
 
 const INFO_WRAPPER = styled.div`
-  padding: 0px 30px;
-  display: flex;
+  ${tw`py-0 px-[30px] flex flex-row`}
   .spot-toggle .perps {
-    cursor: pointer;
+    ${tw`cursor-pointer`}
   }
   .spot-toggle .spot {
-    cursor: pointer;
+    ${tw`cursor-pointer`}
   }
   .spot-toggle .selected {
+    ${tw`!text-white border border-solid border-black`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-    color: white !important;
-    border: 1px solid black;
   }
   .spot-toggle .toggle {
-    border-radius: 36px;
-    height: 40px;
-    line-height: 40px;
-    vertical-align: middle;
-    width: 90px;
-    display: inline-block;
-    text-align: center;
+    ${tw`rounded-[36px] h-10 leading-[40px] inline-block text-center border-0 border-none align-middle w-[90px]`}
     font-size: 16px;
     color: ${({ theme }) => theme.text16};
-    border: none;
   }
 `
 const INFO_STATS = styled.div`
-  margin-left: 30px;
-  line-height: 20px;
+  ${tw`ml-[30px] leading-5`}
   div:first-child {
-    font-size: 15px;
-    font-weight: 500;
+    ${tw`text-tiny font-medium`}
     color: ${({ theme }) => theme.text22};
   }
   div:nth-child(2) {
+    ${tw`text-tiny font-semibold text-center flex`}
     color: ${({ theme }) => theme.text21};
-    font-size: 15px;
-    font-weight: 600;
-    text-align: center;
-    display: flex;
     span:nth-child(2) {
-      display: flex;
-      align-items: center;
-      margin-left: 10px;
-      margin-right: 10px;
+      ${tw`mx-2.5 text-center flex`}
       .verticalLines {
-        height: 12px;
-        width: 3px;
-        margin-left: 3px;
+        ${tw`h-3 w-[3px] ml-[3px]`}
       }
       .coloured {
         background: linear-gradient(88.42deg, #f7931a 4.59%, #e649ae 98.77%);
       }
       .grey {
-        background-color: #2a2a2a;
+        background-color: ${({ theme }) => theme.bg18};
       }
     }
   }
   img {
-    margin: 4px;
+    ${tw`m-1`}
   }
 `
 
 const REFRESH_DATA = styled.div`
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
-  background-color: #5855ff;
-  text-align: center;
-  cursor: pointer;
+  ${tw`h-10 w-10 rounded-circle bg-[#5855ff] text-center cursor-pointer`}
   img {
-    height: 40px;
-    width: 40px;
+    ${tw`h-10 w-10`}
   }
 `
 
 const LOCK_LAYOUT_CTN = styled.div<{ $isLocked: boolean }>`
+  ${tw`h-10 w-[65px] ml-5 rounded-[36px] text-center cursor-pointer pt-px pl-px`}
   height: 40px;
   width: 65px;
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
   background: ${({ $isLocked }) =>
     $isLocked ? '' : 'linear-gradient(90deg, rgba(247, 147, 26, 0.3) 12.88%, rgba(220, 31, 255, 0.3) 100%)'};
-  margin-left: 20px;
-  border-radius: 36px;
-  text-align: center;
-  cursor: pointer;
-  padding: 1px 0 0 1px;
 `
 
 const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
-  line-height: 38px;
-  width: 63px;
+  ${tw`w-[63px] leading-[38px] rounded-[36px] text-center`}
   background-color: ${({ theme }) => theme.bg20};
   background: ${({ $isLocked }) =>
     $isLocked ? '' : 'linear-gradient(90deg, rgba(247, 147, 26, 0.3) 12.88%, rgba(220, 31, 255, 0.3) 100%)'};
-  border-radius: 36px;
-  text-align: center;
   img {
-    position: relative;
-    bottom: 2px;
+    ${tw`relative bottom-0.5`}
   }
 `
 const DEPOSIT_WRAPPER = styled.div`
-  margin-left: auto;
-  width: 158px;
-  height: 40px;
+  ${tw`w-[158px] h-10 rounded-[36px] flex flex-row items-center justify-center ml-auto cursor-pointer p-px mr-3.75`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-  border-radius: 36px;
-  margin-right: 15px;
-  padding: 1px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
 `
 
 const DEPOSIT_BTN = styled.div`
-  width: 100%;
-  height: 100%;
+  ${tw`w-full h-full rounded-[36px] flex flex-row items-center justify-center text-12 font-semibold`}
   background: ${({ theme }) => theme.bg20};
-  border-radius: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 12px;
   color: ${({ theme }) => theme.text1};
 `
 
 const RESET_LAYOUT_BUTTON_CTN = styled.div`
-  cursor: pointer;
+  ${tw`cursor-pointer h-10 p-px ml-auto rounded-[36px]`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-  height: 40px;
-  padding: 1px;
-  margin-left: auto;
-  border-radius: 36px;
   color: ${({ theme }) => theme.text4};
 `
 
 const RESET_LAYOUT_BUTTON = styled.div`
+  ${tw`h-[38px] rounded-[36px] py-2 px-5 `}
   background-color: ${({ theme }) => theme.bg21};
-  height: 38px;
-  padding: 8px 20px;
-  border-radius: 36px;
   color: ${({ theme }) => theme.text4};
 `
 
 const HEADER = styled.div`
-  display: flex;
-  align-items: center;
+  ${tw`flex items-center`}
 
   .cta {
+    ${tw`rounded-bigger w-[120px] h-[30px] flex flex-row items-center 
+    justify-center text-tiny font-semibold cursor-pointer`}
     background-color: ${({ theme }) => theme.bg21};
-    border-radius: 20px;
-    width: 120px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    font-weight: 600;
     color: ${({ theme }) => theme.text20};
-    cursor: pointer;
   }
   .cta.active-text {
     color: ${({ theme }) => theme.text1};
   }
 
   .active {
+    ${tw`p-px rounded-bigger cursor-pointer`}
     background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-    padding: 1px;
-    border-radius: 20px;
-    cursor: pointer;
   }
 
   img {
-    margin-left: auto;
-    margin-right: 50px;
-    height: 40px;
-    width: 40px;
-    cursor: pointer;
+    ${tw`ml-auto h-10 w-10 cursor-pointer mr-[50px]`}
   }
 `
 
@@ -296,7 +223,6 @@ export const InfoBanner: FC<{
     <INFO_WRAPPER>
       {depositWithdrawModal && (
         <SETTING_MODAL
-          setVisible={true}
           visible={true}
           centered={true}
           footer={null}
@@ -310,7 +236,7 @@ export const InfoBanner: FC<{
             />
           }
         >
-          <PlaceOrder tradeType={tradeType} />
+          <DepositWithdraw tradeType={tradeType} />
         </SETTING_MODAL>
       )}
       <div className="spot-toggle">
