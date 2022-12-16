@@ -19,6 +19,7 @@ import { removeFloatingPointError } from '../../utils'
 import { Checkbox } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ArrowDropdown } from '../../components'
+import { useTraderConfig } from '../../context/trader_risk_group'
 
 enum ButtonState {
   Connect = 0,
@@ -208,8 +209,9 @@ const ORDER_CATEGORY_TYPE = [
 
 export const PlaceOrder: FC = () => {
   const { getUIAmount, balances } = useAccounts()
-  const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair } = useCrypto()
+  const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isSpot } = useCrypto()
   const { order, setOrder, setFocused, placeOrder } = useOrder()
+  const { newOrder } = useTraderConfig()
   const [selectedTotal, setSelectedTotal] = useState<number>(null)
   const [arrowRotation, setArrowRotation] = useState(false)
   const [dropdownVisible, setDropdownVisible] = useState(false)
@@ -412,7 +414,10 @@ export const PlaceOrder: FC = () => {
             </div>
           ))}
         </ORDER_CATEGORY>
-        <PLACE_ORDER_BUTTON $action={buttonState === ButtonState.CanPlaceOrder} onClick={placeOrder}>
+        <PLACE_ORDER_BUTTON
+          $action={buttonState === ButtonState.CanPlaceOrder}
+          onClick={() => (isSpot ? placeOrder() : newOrder())}
+        >
           {buttonText}
         </PLACE_ORDER_BUTTON>
       </BODY>

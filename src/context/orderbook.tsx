@@ -105,8 +105,8 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   }
 
   const fetchPerpsOpenOrders = async () => {
-    console.log('open: ', orderBook.bids)
-    console.log(traderInfo.traderRiskGroupKey.toBase58())
+    // console.log('open: ', orderBook.bids)
+    // console.log(traderInfo.traderRiskGroupKey.toBase58())
   }
 
   const fetchOrderBook = async (subscriptions: number[]) => {
