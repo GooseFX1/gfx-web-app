@@ -10,7 +10,7 @@ import _ from 'lodash'
 import tw from 'twin.macro'
 import { InfoBanner } from './InfoBanner'
 import { PlaceOrder } from './PlaceOrder'
-import CollateralPanel from './perps/components/CollateralPanel'
+import { CollateralPanel } from './perps/components/CollateralPanel'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts/App/Connect'
 import { HistoryPanel } from '../TradeV3/HistoryPanel'
@@ -257,7 +257,7 @@ export const CryptoContent: FC = () => {
       if (i === 5)
         return (
           <div key={i}>
-            <CollateralPanel wallet={wallet} />
+            <CollateralPanel />
             {!wallet && isLocked && (
               <UNLOCKED_OVERLAY>
                 <div className="overlay-text">
