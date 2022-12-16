@@ -384,7 +384,7 @@ export const loadBidsSlab = async (connection: Connection, bidAccount: string) =
   if (!bidsInfo?.data) {
     throw new Error('Invalid asks account')
   }
-  return Slab.deserialize(bidsInfo.data, new anchor.BN(10))
+  return Slab.deserialize(bidsInfo.data, new anchor.BN(40))
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
