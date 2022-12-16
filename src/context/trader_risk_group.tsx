@@ -62,7 +62,7 @@ import {
   newOrderIx,
   withdrawFundsIx
 } from '../pages/TradeV3/perps/ixUtils'
-import { OrderDisplayType, OrderType, OrderInput } from './order'
+import { OrderDisplayType, OrderType, OrderInput, useOrder, IOrder } from './order'
 import { removeFloatingPointError } from '../utils'
 import { pyth } from '../web3/pyth'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
@@ -105,15 +105,6 @@ interface ITraderRiskGroup {
   traderRiskGroupKey: PublicKey
   traderFeeStateAcct: PublicKey
   traderRiskStateAcct: PublicKey
-}
-
-interface IOrder {
-  side: 'bid' | 'ask'
-  display: OrderDisplayType
-  price: number
-  total: number
-  size: number
-  type: OrderType
 }
 
 interface ICollateralInfo {
@@ -189,14 +180,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     balance: '0'
   })
 
-  const [order, setOrder] = useState<IOrder>({
-    side: 'bid',
-    display: 'limit',
-    price: 0,
-    total: 0,
-    size: 0,
-    type: 'limit'
-  })
+  const { order, setOrder } = useOrder()
   const [currentSide, setSide] = useState<'bid' | 'ask'>('bid')
 
   const wallet = useWallet()
@@ -276,19 +260,19 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       case 'size':
         return setOrder((prevState) => ({
           ...prevState,
-          total: removeFloatingPointError((order.price || 1) * order.size)
+          total: removeFloatingPointError((+order.price || 1) * +order.size)
         }))
       case 'total':
         return setOrder((prevState) => ({
           ...prevState,
-          size: removeFloatingPointError(order.total / (order.price || 1))
+          size: removeFloatingPointError(+order.total / (+order.price || 1))
         }))
     }
   }, [focused, order.price, order.size, order.total, activeProduct])
 
   const getNewOrderParams = () => ({
     maxBaseQty: convertToFractional(order.size.toString()),
-    side: order.side === 'bid' ? new Bid().toEncodable() : new Ask().toEncodable(),
+    side: order.side === 'buy' ? new Bid().toEncodable() : new Ask().toEncodable(),
     selfTradeBehavior: new DecrementTake().toEncodable(),
     matchLimit: new anchor.BN(10),
     orderType:
