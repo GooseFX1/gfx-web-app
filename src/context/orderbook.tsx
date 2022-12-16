@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
 import BN from 'bn.js'
 import { Orderbook } from '@project-serum/serum'
@@ -8,14 +9,21 @@ import { MarketSide, useCrypto } from './crypto'
 import { loadBidsSlab } from '../pages/TradeV3/perps/utils'
 import { useTraderConfig } from './trader_risk_group'
 import * as anchor from '@project-serum/anchor'
+import { PublicKey } from '@solana/web3.js'
 
 type OrderBook = {
-  [x in MarketSide]: [number, number, BN, BN][]
+  [x in MarketSide]: [number, number, BN, BN, string?][]
 }
 
 interface IOrderBookConfig {
   orderBook: OrderBook
   openOrders: any[]
+}
+
+interface IOrderbookType {
+  price: bigint
+  size: bigint
+  user: string
 }
 
 const DEFAULT_ORDER_BOOK = { asks: [], bids: [] }
@@ -47,48 +55,58 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   }, [selectedCrypto.pair, marketProductGroup])
 
   useEffect(() => {
-    if (selectedCrypto.type === 'perps' && marketProductGroup && traderInfo.traderRiskGroup) {
-      const t = setInterval(fetchOpenOrders, 1000)
-      return () => clearInterval(t) // clear
-    }
-  }, [traderInfo, marketProductGroup])
+    if (traderInfo.traderRiskGroupKey) fetchPerpsOpenOrders()
+  }, [traderInfo, orderBook])
 
-  const convertBidsAsks = (bids, asks) => {
-    const bidReturn = bids.map((item) => {
+  const convertBidsAsks = (bids: IOrderbookType[], asks: IOrderbookType[]) => {
+    const bidReturn: [number, number, BN, BN, string][] = bids.map((item) => {
       let size = item.size
-      size = size / 10 ** activeProduct.decimals
+      size = size / BigInt(10 ** activeProduct.decimals)
       let price = item.price
       price = BigInt(price) >> BigInt(32)
-      price = Number(price) * activeProduct.tick_size
-      return [price, size, new anchor.BN(price), new anchor.BN(size)]
+      price = BigInt(price) / BigInt(activeProduct.tick_size)
+      return [Number(price), Number(size), new anchor.BN(Number(price)), new anchor.BN(Number(size)), item.user]
     })
-    const askReturn = asks.map((item) => {
+    const askReturn: [number, number, BN, BN, string][] = asks.map((item) => {
       let size = item.size
-      size = size / 10 ** activeProduct.decimals
+      size = size / BigInt(10 ** activeProduct.decimals)
       let price = item.price
       price = BigInt(price) >> BigInt(32)
-      price = Number(price) * activeProduct.tick_size
-      return [price, size, new anchor.BN(price), new anchor.BN(size)]
+      price = BigInt(price) / BigInt(activeProduct.tick_size)
+      return [Number(price), Number(size), new anchor.BN(Number(price)), new anchor.BN(Number(size)), item.user]
     })
     return [bidReturn.reverse(), askReturn]
   }
+
   const fetchPerpsOrderBook = async () => {
     const bidResponse = await loadBidsSlab(connection, activeProduct.bids)
-    const bidDepth = bidResponse.getL2DepthJS(10, true)
     const askResponse = await loadBidsSlab(connection, activeProduct.asks)
-    const askDepth = askResponse.getL2DepthJS(10, true)
-    const setBook = convertBidsAsks(bidDepth, askDepth)
-    setOrderBook((prevState) => ({ ...prevState, asks: setBook[1], bids: setBook[0] }))
+    const bids: IOrderbookType[] = []
+    const asks: IOrderbookType[] = []
 
-    //convertAOBtoPrice(marketProductGroup, depth[0].price.toString())
+    for (const bid of bidResponse.items(false)) {
+      const callbackBuffer = bidResponse.getCallBackInfo(bid.callBackInfoPt)
+      bids.push({
+        price: BigInt(bid.getPrice().toString()),
+        size: BigInt(bid.baseQuantity.toString()),
+        user: new PublicKey(callbackBuffer.slice(0, 32)).toBase58()
+      })
+    }
+    for (const ask of askResponse.items(false)) {
+      const callbackBuffer = askResponse.getCallBackInfo(ask.callBackInfoPt)
+      asks.push({
+        price: BigInt(ask.getPrice().toString()),
+        size: BigInt(ask.baseQuantity.toString()),
+        user: new PublicKey(callbackBuffer.slice(0, 32)).toBase58()
+      })
+    }
+    const setBook = convertBidsAsks(bids, asks)
+    setOrderBook((prevState) => ({ ...prevState, asks: setBook[1], bids: setBook[0] }))
   }
 
-  const fetchOpenOrders = async () => {
-    const trg = traderInfo.traderRiskGroup
-    //const activeIndex = trg.activeProducts
-    const openAsk = trg.openOrders.products[0].askQtyInBook
-    const openBid = trg.openOrders.products[0].bidQtyInBook
-    setOpenOrders([openBid, openAsk])
+  const fetchPerpsOpenOrders = async () => {
+    console.log('open: ', orderBook.bids)
+    console.log(traderInfo.traderRiskGroupKey.toBase58())
   }
 
   const fetchOrderBook = async (subscriptions: number[]) => {
