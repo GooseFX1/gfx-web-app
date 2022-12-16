@@ -91,6 +91,45 @@ export const MPs = [
   }
 ]
 
+export const PERPS_FEES = [
+  {
+    tier: 'Tier',
+    stake: 'Stake',
+    taker: 'Taker',
+    maker: 'Maker'
+  },
+  {
+    tier: '1',
+    stake: '100 GOFX',
+    taker: '0.05%',
+    maker: '0%'
+  },
+  {
+    tier: '2',
+    stake: '1,000 GOFX',
+    taker: '0.04%',
+    maker: '0%'
+  },
+  {
+    tier: '3',
+    stake: '10,000 GOFX',
+    taker: '0.03%',
+    maker: '0%'
+  },
+  {
+    tier: '4',
+    stake: '100,000 GOFX',
+    taker: '0.02%',
+    maker: '0%'
+  },
+  {
+    tier: '5',
+    stake: '1,000,000 GOFX',
+    taker: '0.01%',
+    maker: '0%'
+  }
+]
+
 export const MAX_FRACTIONAL_M_LENGTH = 17
 export const ZERO_FRACTIONAL = new Fractional({ m: new anchor.BN(0), exp: new anchor.BN(0) })
 export const ALPHA = new Fractional({ m: new anchor.BN(9), exp: new anchor.BN(1) })
