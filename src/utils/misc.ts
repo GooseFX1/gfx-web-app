@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react'
 
+export type ConditionalData<T> = 'not-supported' | 'loading' | T
+
 export const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
 
 export const getUnixTs = (): number => new Date().getTime() / 1000

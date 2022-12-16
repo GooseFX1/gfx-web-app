@@ -5,6 +5,13 @@ import { SSL_API_BASE, SSL_API_ENDPOINTS } from '../SSL/constants'
 import axios from 'axios'
 import { PublicKey } from '@solana/web3.js'
 
+export type VolumeAprRecord = Record<string, VolumeApr>
+
+export type VolumeApr = {
+  volume: number
+  apr: number
+}
+
 export const fetchSSLAPR = async (tokenAddress: string, controller: string): Promise<any> => {
   try {
     const res = await httpClient(SSL_API_BASE).get(
@@ -87,28 +94,28 @@ export const getVolumeApr = async (
   tokenList: string[],
   SSLTokenNames: string[],
   controllerStr: string
-): Promise<any> => {
-  try {
-    const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.GET_VOLUME_APR_DATA
-    const dataToSend = JSON.stringify({
-      tokens: tokenList,
-      SSLTokenNames: SSLTokenNames,
-      controllerStr: controllerStr
-    })
-    const response = await axios({
-      method: 'POST',
-      url: url,
-      data: dataToSend,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    return response.data
-  } catch (e) {
-    return {
-      status: 'failed'
+): Promise<VolumeAprRecord> => {
+  //try {
+  const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.GET_VOLUME_APR_DATA
+  const dataToSend = JSON.stringify({
+    tokens: tokenList,
+    SSLTokenNames: SSLTokenNames,
+    controllerStr: controllerStr
+  })
+  const response = await axios({
+    method: 'POST',
+    url: url,
+    data: dataToSend,
+    headers: {
+      'Content-Type': 'application/json'
     }
-  }
+  })
+  return response.data.data
+  //} catch (e) {
+  //return {
+  //status: 'failed'
+  //}
+  //}
 }
 export const getFarmTokenPrices = async (): Promise<any> => {
   try {

@@ -2,6 +2,7 @@ import React, { FC, useState, useMemo, useRef } from 'react'
 import styled, { css } from 'styled-components'
 import { MainButton } from '../../components'
 
+import { match } from 'ts-pattern'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useFarmContext, useAccounts, useTokenRegistry } from '../../context'
 import tw from 'twin.macro'
@@ -256,14 +257,10 @@ export const ExpandedContentMobile: FC<{
               <span className="details">7d Volume</span>
               <span className="details">
                 {' '}
-                {farm?.volume === '-' ? (
-                  '-'
-                ) : farm.volume >= 0 ? (
-                  //@ts-ignore
-                  `$ ${moneyFormatter(farm?.volume)}`
-                ) : (
-                  <Loader />
-                )}
+                {match(farm.volume)
+                  .with('not-supported', () => '-')
+                  .with('loading', () => <Loader />)
+                  .otherwise(() => (value) => `$ ${moneyFormatter(value)}`)}
               </span>
             </ROW>
             <ROW>

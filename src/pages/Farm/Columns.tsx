@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 
+import { match } from 'ts-pattern'
 import styled from 'styled-components'
 import { Tooltip } from '../../components/Tooltip'
 import { moneyFormatter, moneyFormatterWithComma } from '../../utils/math'
@@ -10,7 +11,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
 import { RefreshBtnWithAnimation } from './FarmFilterHeader'
 import { useDarkMode } from '../../context'
-import { nFormatter } from '../../utils'
+import { nFormatter, ConditionalData } from '../../utils'
 const DISPLAY_DECIMAL = 3
 
 interface Column {
@@ -188,6 +189,13 @@ value of a pool’s assets (excluding trading fees) to their value if they had n
 const TotalEarnedTooltip = 'Total amount earned on your deposit.'
 const LiquidityTooltip = "Total value of funds in this farm's liquidity pool."
 
+const displayApr = (data: ConditionalData<number>) => {
+  return match(data)
+    .with('not-supported', () => '-')
+    .with('loading', () => <Loader />)
+    .otherwise(() => (value) => `${nFormatter(parseFloat(value))}%`)
+}
+
 // TEMP_DEP_DISABLE const DepositButton = () => <DEPOSIT_BTN>Deposit</DEPOSIT_BTN>
 
 export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; index: number }> = ({
@@ -235,20 +243,15 @@ export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; i
       <td className="earnedColumn">
         {!publicKey ? '----' : earned !== undefined ? moneyFormatter(earned) : <Loader />}
       </td>
-      <td className="tableData">
-        {
-          //@ts-ignore
-          apr === '-' ? '-' : apr !== undefined ? `${nFormatter(parseFloat(apr))}%` : <Loader />
-        }
-      </td>
+      <td className="tableData">{displayApr(apr)}</td>
       <td className="tableData">
         {liquidity !== undefined ? moneyFormatterWithComma(farm.liquidity, '$') : <Loader />}
       </td>
       <td className="volumeColumn">
-        {
-          //@ts-ignore
-          volume === '-' ? '-' : volume >= 0 ? moneyFormatterWithComma(parseFloat(volume), '$') : <Loader />
-        }
+        {match(volume)
+          .with('not-supported', () => '-')
+          .with('loading', () => <Loader />)
+          .otherwise(() => (value) => moneyFormatterWithComma(parseFloat(value), '$'))}
       </td>
       <ICON_WRAPPER_TD onClick={() => setIsOpen((prev) => !prev)}>
         <img
@@ -319,12 +322,7 @@ export const ColumnMobile: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean
         </div>
         <div className="columnText">{name}</div>
       </td>
-      <td className="tableData">
-        {
-          //@ts-ignore
-          apr === '-' ? '-' : apr !== undefined ? `${nFormatter(parseFloat(apr))}%` : <Loader />
-        }
-      </td>
+      <td className="tableData">{displayApr(apr)}</td>
       <ICON_WRAPPER_TD onClick={() => setIsOpen((prev) => !prev)}>
         {/* TEMP_DEP_DISABLE {currentlyStaked === 0 && <DepositButton />} */}
         <img className={isOpen ? 'invertArrow' : ''} src={`/img/assets/arrow-down-${mode}.svg`} alt="arrow" />
