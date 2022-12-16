@@ -80,9 +80,6 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean }>
       }
     }
   }
-  .spacing {
-    ${tw`p-1`}
-  }
   .react-draggable-dragging {
     ${tw`border-solid border-2 p-0 rounded-[10px]`}
     border-color: #ff8c00;
@@ -182,7 +179,7 @@ export const CryptoContent: FC = () => {
         )
       if (i === 3) {
         return (
-          <div key={i} className="spacing">
+          <div key={i}>
             <>
               <PlaceOrder />
               {!isLocked ? (
@@ -202,7 +199,7 @@ export const CryptoContent: FC = () => {
       }
       if (i === 2) {
         return (
-          <div key={i} className="spacing">
+          <div key={i}>
             {!isLocked ? (
               <UNLOCKED_OVERLAY>
                 <img
@@ -219,7 +216,7 @@ export const CryptoContent: FC = () => {
       }
       if (i === 1)
         return (
-          <div key={i} className="spacing">
+          <div key={i}>
             <>
               <OrderBookProvider>
                 <OrderbookTabs />
@@ -242,7 +239,7 @@ export const CryptoContent: FC = () => {
         )
       if (i === 4)
         return (
-          <div key={i} className="spacing">
+          <div key={i}>
             <HistoryPanel />
             {!isLocked ? (
               <UNLOCKED_OVERLAY>
@@ -259,7 +256,7 @@ export const CryptoContent: FC = () => {
         )
       if (i === 5)
         return (
-          <div key={i} className="spacing">
+          <div key={i}>
             <CollateralPanel wallet={wallet} />
             {!wallet && isLocked && (
               <UNLOCKED_OVERLAY>
