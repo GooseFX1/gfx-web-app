@@ -4,6 +4,7 @@ import tw, { styled } from 'twin.macro'
 import { Tooltip } from '../../../../components/Tooltip'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { PERPS_FEES } from '../perpsConstants'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const { TabPane } = Tabs
 
@@ -46,7 +47,7 @@ const WRAPPER = styled.div`
     ${tw`mr-2.5`}
   }
   .heart-icon {
-    margin-left: 8px;
+    ${tw`ml-2`}
   }
   .tooltipIcon {
     ${tw`w-4 h-4 ml-0 cursor-pointer`}
@@ -76,8 +77,7 @@ const WRAPPER = styled.div`
     ${tw`bg-[#2a2a2a]`}
   }
   .separator {
-    border-bottom: 5px dashed #4a4a4a;
-    margin-bottom: 15px;
+    ${tw`mb-3.75 border-b-[5px] border-dashed border-[#4a4a4a]`}
   }
 `
 
@@ -92,45 +92,38 @@ const ACCOUNT_ROW = styled.div`
     color: ${({ theme }) => theme.text11};
   }
   .balances {
-    text-align: right;
+    ${tw`text-right`}
     > div {
-      margin-bottom: 5px;
+      ${tw`text-right mb-[5px]`}
     }
   }
 `
 
 const FEES = styled.div`
-  padding: 15px;
+  ${tw`p-[15px]`}
   .tier-info {
-    text-align: center;
-    margin-bottom: 15px;
+    ${tw`text-center mb-3.75`}
   }
   .spacing {
-    margin-bottom: 5px;
+    ${tw`mb-[5px]`}
   }
   .value {
     ${tw`text-12 font-semibold`}
     color: ${({ theme }) => theme.text27};
   }
   .tier {
-    font-size: 12px;
+    ${tw`text-12 font-semibold mb-[5px]`}
     color: ${({ theme }) => theme.text11};
-    font-weight: 600;
-    margin-bottom: 5px;
-
     > span {
+      ${tw`text-12 font-semibold`}
       background: -webkit-linear-gradient(96.79deg, #f7931a, #dc1fff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      font-size: 12px;
-      font-weight: 600;
     }
   }
   .disclaimer {
-    font-size: 9px;
-    font-weight: 500;
+    ${tw`text-[9px] font-medium mb-4.5`}
     color: ${({ theme }) => theme.text20};
-    margin-bottom: 18px;
   }
 `
 
@@ -235,21 +228,23 @@ const Fees = () => {
   )
 }
 
-const CollateralPanel: FC<{ wallet: any }> = ({ wallet }) => (
-  <>
-    <TABS_WRAPPER $wallet={wallet}>
-      <Tabs defaultActiveKey={'1'}>
-        <TabPane tab="SOL Account" key="1">
-          <Accounts isSolAccount={true} />
-        </TabPane>
-        <TabPane tab="All Accounts" key="2">
-          <Accounts isSolAccount={false} />
-        </TabPane>
-        <TabPane tab="Fees" key="3">
-          <Fees />
-        </TabPane>
-      </Tabs>
-    </TABS_WRAPPER>
-  </>
-)
-export default CollateralPanel
+export const CollateralPanel: FC = (): JSX.Element => {
+  const { wallet } = useWallet()
+  return (
+    <>
+      <TABS_WRAPPER $wallet={wallet}>
+        <Tabs defaultActiveKey={'1'}>
+          <TabPane tab="SOL Account" key="1">
+            <Accounts isSolAccount={true} />
+          </TabPane>
+          <TabPane tab="All Accounts" key="2">
+            <Accounts isSolAccount={false} />
+          </TabPane>
+          <TabPane tab="Fees" key="3">
+            <Fees />
+          </TabPane>
+        </Tabs>
+      </TABS_WRAPPER>
+    </>
+  )
+}
