@@ -9,7 +9,7 @@ import { PERPS_COLLATERAL } from './perpsConstants'
 
 const WRAPPER = styled.div`
   .input-row {
-    ${tw`flex flex-row h-[50px]`}
+    ${tw`flex flex-row h-12.5`}
   }
 
   .percentage {
@@ -18,8 +18,7 @@ const WRAPPER = styled.div`
   }
 
   .percentage-num {
-    ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center justify-center h-full`}
-    font-size: 16px;
+    ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center justify-center h-full text-[16px]`}
     color: ${({ theme }) => theme.text20};
   }
 
@@ -38,96 +37,66 @@ const WRAPPER = styled.div`
 `
 
 const DROPDOWN_PAIR_DIV = styled.div`
-  height: 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-  margin-left: -5px;
-  margin-right: -5px;
+  ${tw`h-10 flex justify-between items-center text-14 -mx-1`}
   .asset-icon {
-    width: 28px;
-    height: 28px;
+    ${tw`h-7 w-7`}
   }
   .available-bal {
-    margin-right: 15px;
+    ${tw`mr-3.75`}
   }
 `
 
 const SELECTED_COIN = styled.div`
-  line-height: 40px;
-  border-radius: 36px;
+  ${tw`leading-[40px] rounded-[36px] flex items-center text-center cursor-pointer pl-2.5 font-medium text-[16px]`}
   background-color: ${({ theme }) => theme.bg2};
-  text-align: center;
-  cursor: pointer;
-  display: flex;
-  font-size: 16px;
-  font-weight: 500;
-  align-items: center;
-  padding-left: 10px;
   color: ${({ theme }) => theme.text21};
   .anticon-down {
-    margin-right: 10px;
-    width: 14px;
+    ${tw`mr-1.5 w-3.5`}
   }
   .asset-icon {
-    width: 28px;
-    height: 28px;
+    ${tw`h-7 w-7`}
   }
 
   .dropdown {
-    display: flex;
-    align-items: center;
-    margin-right: 10px;
+    ${tw`flex items-center mr-2.5`}
 
     .available-bal {
-      margin-right: 15px;
+      ${tw`mr-3.75`}
     }
   }
 `
 
 const COIN_INFO = styled.div`
-  display: flex;
-  align-items: center;
-  margin-right: auto;
+  ${tw`flex items-center mr-auto`}
 
   > * {
-    margin-right: 10px;
+    ${tw`mr-2.5`}
   }
 
   .market-add {
+    ${tw`text-[16px]`}
     color: ${({ theme }) => theme.text17};
-    font-size: 16px;
   }
 
   .coin {
-    font-size: 16px;
-    font-weight: 600;
+    ${tw`text-[16px] font-semibold`}
   }
 `
 
 const LABEL = styled.div`
-  font-size: 20px;
+  ${tw`text-[20px] font-semibold mx-0 mb-2.5 mt-4.5`}
   color: ${({ theme }) => theme.text1};
-  font-weight: 600;
-  margin: 18px 0 10px;
 `
 
 const INPUT = styled.div`
-  background: #131313;
-  width: 280px;
-  border-radius: 50px;
-  padding: 10px 20px;
+  ${tw`w-[280px] rounded-circle py-2.5 px-5`}
+  background: ${({ theme }) => theme.bg12};
 
   .input-amt {
-    width: 80%;
-    background: #131313;
-    border: none;
+    ${tw`w-4/5 border-0 border-none text-[16px] font-semibold mr-auto`}
     outline: none;
+    background: ${({ theme }) => theme.bg12};
     color: ${({ theme }) => theme.text1};
-    font-size: 16px;
-    font-weight: 600;
-    margin-right: auto;
   }
 
   .input-amt::placeholder {
@@ -136,17 +105,16 @@ const INPUT = styled.div`
 
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
+    ${tw`m-0`}
     -webkit-appearance: none;
-    margin: 0;
   }
 
   input[type='number'] {
     -moz-appearance: textfield;
   }
   .token {
+    ${tw`text-[16px] font-semibold`}
     color: ${({ theme }) => theme.text1};
-    font-size: 16px;
-    font-weight: 600;
   }
 `
 
