@@ -86,7 +86,7 @@ export const MPs = [
     bids: '4pfS4oeuwWXvmecuE7YypC3N2DcYaoYgVdewRtPHYvZy',
     asks: '9jE7rJTUyhgtbf8Vsyyq8kcnJc9NcHigqzoa23fMjzWN',
     event_queue: 'Hj7LiqPd8Uqkyvz8VntBjNFEWSV3JmD44zQNwA5eTcfW',
-    tick_size: 0.01,
+    tick_size: 100,
     decimals: 7
   }
 ]
