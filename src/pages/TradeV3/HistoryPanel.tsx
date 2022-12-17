@@ -1,6 +1,7 @@
+/* eslint-disable */
 import { Button } from 'antd'
 import React, { useState, FC, useMemo } from 'react'
-import { useAccounts, useCrypto, useTokenRegistry, useTradeHistory } from '../../context'
+import { useAccounts, useCrypto, useTokenRegistry, useTradeHistory, useOrderBook } from '../../context'
 import tw, { styled } from 'twin.macro'
 
 const tabs = ['Positions', 'Open Orders', 'Trade History', 'SOL Unsettled P&L']
@@ -152,8 +153,10 @@ const NO_ORDER = styled.div`
 `
 
 const OpenOrdersComponent: FC = () => {
-  const { formatPair } = useCrypto()
+  const { formatPair, isSpot } = useCrypto()
   const { cancelOrder, loading, orders } = useTradeHistory()
+  const { perpsOpenOrders } = useOrderBook()
+  console.log('consumeing', perpsOpenOrders)
   //DELETE:
   const abc = [
     {
@@ -171,11 +174,13 @@ const OpenOrdersComponent: FC = () => {
       }
     }
   ]
+  const openOrderUI = isSpot ? abc : perpsOpenOrders
+  console.log('open', openOrderUI)
 
   const content = useMemo(
     () => (
       <OPEN_ORDER>
-        {abc.map((order, index) => (
+        {openOrderUI.map((order, index) => (
           <div key={index}>
             <span className={order.order.side}>{order.order.side}</span>
             <span>{order.order.size}</span>
@@ -188,7 +193,7 @@ const OpenOrdersComponent: FC = () => {
         ))}
       </OPEN_ORDER>
     ),
-    [cancelOrder, formatPair, loading, orders]
+    [cancelOrder, formatPair, loading, orders, perpsOpenOrders, isSpot]
   )
   return <>{!abc.length ? <NO_ORDER>No open orders</NO_ORDER> : content}</>
 }
