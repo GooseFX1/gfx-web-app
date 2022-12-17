@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable */
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
 import BN from 'bn.js'
 import { Orderbook } from '@project-serum/serum'
@@ -14,10 +14,14 @@ import { PublicKey } from '@solana/web3.js'
 type OrderBook = {
   [x in MarketSide]: [number, number, BN, BN, string?][]
 }
-
+// type perpsOpenOrder = {
+//   [x in MarketSide]: [number, number][]
+// }
 interface IOrderBookConfig {
   orderBook: OrderBook
   openOrders: any[]
+  perpsOpenOrders: any[]
+  setPerpsOpenOrders: any
 }
 
 interface IOrderbookType {
@@ -35,6 +39,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   const { connection } = useConnectionConfig()
   const [orderBook, setOrderBook] = useState<OrderBook>(DEFAULT_ORDER_BOOK)
   const [openOrders, setOpenOrders] = useState([])
+  const [perpsOpenOrders, setPerpsOpenOrders] = useState([])
   const { activeProduct, marketProductGroup, traderInfo } = useTraderConfig()
 
   useEffect(() => {
@@ -105,8 +110,21 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   }
 
   const fetchPerpsOpenOrders = async () => {
-    // console.log('open: ', orderBook.bids)
-    // console.log(traderInfo.traderRiskGroupKey.toBase58())
+    const perpsOrders = []
+    const user = traderInfo.traderRiskGroupKey.toBase58()
+    console.log('open: ', orderBook.asks)
+    for (const ask of orderBook.asks) {
+      for (const i of ask) {
+        if (i === user) perpsOrders.push({ order: { side: 'sell', price: ask[0], size: ask[1] } })
+      }
+    }
+    for (const bid of orderBook.bids) {
+      for (const i of bid) {
+        if (i === user) perpsOrders.push({ order: { side: 'buy', price: bid[0], size: bid[1] } })
+      }
+    }
+    setPerpsOpenOrders(perpsOrders)
+    console.log('orders', perpsOrders, traderInfo.traderRiskGroupKey.toBase58())
   }
 
   const fetchOrderBook = async (subscriptions: number[]) => {
@@ -133,7 +151,11 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
     }
   }
 
-  return <OrderBookContext.Provider value={{ orderBook, openOrders }}>{children}</OrderBookContext.Provider>
+  return (
+    <OrderBookContext.Provider value={{ orderBook, openOrders, perpsOpenOrders, setPerpsOpenOrders }}>
+      {children}
+    </OrderBookContext.Provider>
+  )
 }
 
 export const useOrderBook = (): IOrderBookConfig => {
@@ -144,6 +166,8 @@ export const useOrderBook = (): IOrderBookConfig => {
 
   return {
     orderBook: context.orderBook,
-    openOrders: context.openOrders
+    openOrders: context.openOrders,
+    perpsOpenOrders: context.perpsOpenOrders,
+    setPerpsOpenOrders: context.setPerpsOpenOrders
   }
 }
