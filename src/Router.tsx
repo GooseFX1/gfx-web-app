@@ -8,7 +8,8 @@ import {
   OrderProvider,
   PriceFeedProvider,
   TradeHistoryProvider,
-  NFTAdminProvider
+  NFTAdminProvider,
+  OrderBookProvider
 } from './context'
 import Restricted from './pages/Restricted'
 import { GenericNotFound } from './pages/InvalidUrl'
@@ -42,7 +43,9 @@ export const Router: FC = () => {
                   <TradeHistoryProvider>
                     <OrderProvider>
                       <TraderProvider>
-                        <CryptoContent />
+                        <OrderBookProvider>
+                          <CryptoContent />
+                        </OrderBookProvider>
                       </TraderProvider>
                     </OrderProvider>
                   </TradeHistoryProvider>

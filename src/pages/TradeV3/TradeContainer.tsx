@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC, useEffect, useMemo, useState } from 'react'
-import { useNavCollapse, OrderBookProvider, useCrypto, useDarkMode } from '../../context'
+import { useNavCollapse, useCrypto, useDarkMode } from '../../context'
 import styled from 'styled-components'
 import { Order } from '../Crypto/Order'
 import { OrderbookTabs } from './OrderbookTabs'
@@ -218,22 +218,18 @@ export const CryptoContent: FC = () => {
         return (
           <div key={i}>
             <>
-              <OrderBookProvider>
-                <OrderbookTabs />
-                {!isLocked ? (
-                  <UNLOCKED_OVERLAY>
-                    <img
-                      src={
-                        mode.mode === 'dark'
-                          ? `/img/assets/repositionWhite.svg`
-                          : `/img/assets/repositionBlack.svg`
-                      }
-                      alt="reposition"
-                    />
-                    <span>Drag to Reposition</span>
-                  </UNLOCKED_OVERLAY>
-                ) : null}
-              </OrderBookProvider>
+              <OrderbookTabs />
+              {!isLocked ? (
+                <UNLOCKED_OVERLAY>
+                  <img
+                    src={
+                      mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
+                    }
+                    alt="reposition"
+                  />
+                  <span>Drag to Reposition</span>
+                </UNLOCKED_OVERLAY>
+              ) : null}
             </>
           </div>
         )
