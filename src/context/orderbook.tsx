@@ -57,7 +57,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
       const t = setInterval(refreshOrderbook, 1000)
       return () => clearInterval(t) // clear
     }
-  }, [selectedCrypto.pair, marketProductGroup])
+  }, [selectedCrypto.pair, marketProductGroup, selectedCrypto.type])
 
   useEffect(() => {
     if (traderInfo.traderRiskGroupKey) fetchPerpsOpenOrders()
@@ -112,7 +112,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   const fetchPerpsOpenOrders = async () => {
     const perpsOrders = []
     const user = traderInfo.traderRiskGroupKey.toBase58()
-    console.log('open: ', orderBook.asks)
+    //console.log('open: ', orderBook.asks)
     for (const ask of orderBook.asks) {
       for (const i of ask) {
         if (i === user) perpsOrders.push({ order: { side: 'sell', price: ask[0], size: ask[1] } })
@@ -124,7 +124,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
       }
     }
     setPerpsOpenOrders(perpsOrders)
-    console.log('orders', perpsOrders, traderInfo.traderRiskGroupKey.toBase58())
+    //console.log('orders', perpsOrders, traderInfo.traderRiskGroupKey.toBase58())
   }
 
   const fetchOrderBook = async (subscriptions: number[]) => {
