@@ -156,7 +156,6 @@ const OpenOrdersComponent: FC = () => {
   const { formatPair, isSpot } = useCrypto()
   const { cancelOrder, loading, orders } = useTradeHistory()
   const { perpsOpenOrders } = useOrderBook()
-  console.log('consumeing', perpsOpenOrders)
   //DELETE:
   const abc = [
     {
@@ -175,7 +174,6 @@ const OpenOrdersComponent: FC = () => {
     }
   ]
   const openOrderUI = isSpot ? abc : perpsOpenOrders
-  console.log('open', openOrderUI)
 
   const content = useMemo(
     () => (
@@ -200,12 +198,13 @@ const OpenOrdersComponent: FC = () => {
 
 export const HistoryPanel: FC = () => {
   const [activeTab, setActiveTab] = useState(0)
-  const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto } = useCrypto()
+  const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto, isSpot } = useCrypto()
   const { openOrders } = useTradeHistory()
   const { orders } = useTradeHistory()
 
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { getUIAmount } = useAccounts()
+  const { perpsOpenOrders } = useOrderBook()
   // const symbolBid = useMemo(
   //   () => getBidSymbolFromPair(selectedCrypto.pair),
   //   [getBidSymbolFromPair, selectedCrypto.pair]
@@ -273,7 +272,9 @@ export const HistoryPanel: FC = () => {
                   {index === 1 ? (
                     <div className="open-order-header">
                       <div>{item}</div>
-                      <div className="count">{orders.length > 0 ? orders.length : 0}</div>
+                      {!isSpot && (
+                        <div className="count">{perpsOpenOrders.length > 0 ? perpsOpenOrders.length : 0}</div>
+                      )}
                     </div>
                   ) : (
                     item
