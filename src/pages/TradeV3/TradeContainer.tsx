@@ -22,35 +22,35 @@ const componentDimensions = [
     x: 0,
     y: 0,
     i: '0',
-    h: 20,
+    h: 30,
     w: 2
   },
   {
     x: 2,
     y: 0,
     i: '1',
-    h: 11,
+    h: 16,
     w: 1
   },
   {
     x: 2,
     y: 11,
     i: '2',
-    h: 9,
+    h: 14,
     w: 1
   },
   {
     x: 3,
     y: 0,
     i: '3',
-    h: 20,
+    h: 30,
     w: 1
   },
   {
     x: 0,
     y: 20,
     i: '4',
-    h: 10,
+    h: 15,
     w: 3
   },
   {
@@ -152,11 +152,12 @@ export const CryptoContent: FC = () => {
   const defaultProps = {
     className: 'layout',
     items: 3,
-    rowHeight: 20,
+    rowHeight: 20, //DELETE: change height to fix scroll
     cols: { lg: 4, md: 4, sm: 2, xs: 2, xxs: 2 },
     isResizable: true,
     isBounded: false,
-    isDraggable: !isLocked
+    isDraggable: !isLocked,
+    margin: [0, 0]
   }
   const generateDOM = () =>
     _.map(_.range(layout.lg.length), function (i) {
