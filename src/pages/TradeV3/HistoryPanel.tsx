@@ -89,7 +89,6 @@ const HEADER = styled.div`
 const POSITIONS = styled.div`
   ${tw`w-full`}
   height: calc(100% - 80px);
-  border-right: ${({ theme }) => '1px solid ' + theme.tokenBorder};
 
   div {
     ${tw`w-full h-10 p-0 flex flex-row justify-between items-center text-14 font-medium`}
