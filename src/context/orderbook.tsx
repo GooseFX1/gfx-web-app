@@ -28,6 +28,7 @@ interface IOrderbookType {
   price: bigint
   size: bigint
   user: string
+  orderId: string
 }
 
 const DEFAULT_ORDER_BOOK = { asks: [], bids: [] }
@@ -40,6 +41,10 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   const [orderBook, setOrderBook] = useState<OrderBook>(DEFAULT_ORDER_BOOK)
   const [openOrders, setOpenOrders] = useState([])
   const [perpsOpenOrders, setPerpsOpenOrders] = useState([])
+  const [orderbookResponse, setOrderbookResponse] = useState({
+    bids: null,
+    asks: null
+  })
   const { activeProduct, marketProductGroup, traderInfo } = useTraderConfig()
 
   useEffect(() => {
@@ -60,25 +65,59 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   }, [selectedCrypto.pair, marketProductGroup, selectedCrypto.type])
 
   useEffect(() => {
-    if (traderInfo.traderRiskGroupKey) fetchPerpsOpenOrders()
-  }, [traderInfo, orderBook])
+    if (traderInfo.traderRiskGroupKey && orderbookResponse.bids && orderbookResponse.asks) fetchPerpsOpenOrders()
+  }, [traderInfo, orderbookResponse])
 
   const convertBidsAsks = (bids: IOrderbookType[], asks: IOrderbookType[]) => {
-    const bidReturn: [number, number, BN, BN, string][] = bids.map((item) => {
+    const bidReturn: [number, number, BN, BN, string, string][] = bids.map((item) => {
       let size = item.size
       size = size / BigInt(10 ** activeProduct.decimals)
       let price = item.price
       price = BigInt(price) >> BigInt(32)
       price = BigInt(price) / BigInt(activeProduct.tick_size)
-      return [Number(price), Number(size), new anchor.BN(Number(price)), new anchor.BN(Number(size)), item.user]
+      return [
+        Number(price),
+        Number(size),
+        new anchor.BN(Number(price)),
+        new anchor.BN(Number(size)),
+        item.user,
+        item.orderId
+      ]
     })
-    const askReturn: [number, number, BN, BN, string][] = asks.map((item) => {
+    const askReturn: [number, number, BN, BN, string, string][] = asks.map((item) => {
       let size = item.size
       size = size / BigInt(10 ** activeProduct.decimals)
       let price = item.price
       price = BigInt(price) >> BigInt(32)
       price = BigInt(price) / BigInt(activeProduct.tick_size)
-      return [Number(price), Number(size), new anchor.BN(Number(price)), new anchor.BN(Number(size)), item.user]
+      return [
+        Number(price),
+        Number(size),
+        new anchor.BN(Number(price)),
+        new anchor.BN(Number(size)),
+        item.user,
+        item.orderId
+      ]
+    })
+    return [bidReturn.reverse(), askReturn]
+  }
+
+  const convertBidsAsksOld = (bids, asks) => {
+    const bidReturn = bids.map((item) => {
+      let size = item.size
+      size = size / 10 ** activeProduct.decimals
+      let price = item.price
+      price = BigInt(price) >> BigInt(32)
+      price = Number(price) / activeProduct.tick_size
+      return [price, size]
+    })
+    const askReturn = asks.map((item) => {
+      let size = item.size
+      size = size / 10 ** activeProduct.decimals
+      let price = item.price
+      price = BigInt(price) >> BigInt(32)
+      price = Number(price) / activeProduct.tick_size
+      return [price, size]
     })
     return [bidReturn.reverse(), askReturn]
   }
@@ -86,41 +125,48 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   const fetchPerpsOrderBook = async () => {
     const bidResponse = await loadBidsSlab(connection, activeProduct.bids)
     const askResponse = await loadBidsSlab(connection, activeProduct.asks)
-    const bids: IOrderbookType[] = []
-    const asks: IOrderbookType[] = []
-
-    for (const bid of bidResponse.items(false)) {
-      const callbackBuffer = bidResponse.getCallBackInfo(bid.callBackInfoPt)
-      bids.push({
-        price: BigInt(bid.getPrice().toString()),
-        size: BigInt(bid.baseQuantity.toString()),
-        user: new PublicKey(callbackBuffer.slice(0, 32)).toBase58()
-      })
-    }
-    for (const ask of askResponse.items(false)) {
-      const callbackBuffer = askResponse.getCallBackInfo(ask.callBackInfoPt)
-      asks.push({
-        price: BigInt(ask.getPrice().toString()),
-        size: BigInt(ask.baseQuantity.toString()),
-        user: new PublicKey(callbackBuffer.slice(0, 32)).toBase58()
-      })
-    }
-    const setBook = convertBidsAsks(bids, asks)
+    const bidDepth = bidResponse.getL2DepthJS(10, true)
+    const askDepth = askResponse.getL2DepthJS(10, true)
+    const setBook = convertBidsAsksOld(bidDepth, askDepth)
+    setOrderbookResponse({
+      bids: bidResponse,
+      asks: askResponse
+    })
     setOrderBook((prevState) => ({ ...prevState, asks: setBook[1], bids: setBook[0] }))
   }
 
   const fetchPerpsOpenOrders = async () => {
+    const bids: IOrderbookType[] = []
+    const asks: IOrderbookType[] = []
+    for (const bid of orderbookResponse.bids.items(false)) {
+      const callbackBuffer = orderbookResponse.bids.getCallBackInfo(bid.callBackInfoPt)
+      bids.push({
+        price: BigInt(bid.getPrice().toString()),
+        size: BigInt(bid.baseQuantity.toString()),
+        user: new PublicKey(callbackBuffer.slice(0, 32)).toBase58(),
+        orderId: bid.key.toString()
+      })
+    }
+    for (const ask of orderbookResponse.asks.items(false)) {
+      const callbackBuffer = orderbookResponse.asks.getCallBackInfo(ask.callBackInfoPt)
+      asks.push({
+        price: BigInt(ask.getPrice().toString()),
+        size: BigInt(ask.baseQuantity.toString()),
+        user: new PublicKey(callbackBuffer.slice(0, 32)).toBase58(),
+        orderId: ask.key.toString()
+      })
+    }
+    const setBook = convertBidsAsks(bids, asks)
     const perpsOrders = []
     const user = traderInfo.traderRiskGroupKey.toBase58()
-    //console.log('open: ', orderBook.asks)
-    for (const ask of orderBook.asks) {
+    for (const ask of setBook[1]) {
       for (const i of ask) {
-        if (i === user) perpsOrders.push({ order: { side: 'sell', price: ask[0], size: ask[1] } })
+        if (i === user) perpsOrders.push({ order: { side: 'sell', price: ask[0], size: ask[1], orderId: ask[5] } })
       }
     }
-    for (const bid of orderBook.bids) {
+    for (const bid of setBook[0]) {
       for (const i of bid) {
-        if (i === user) perpsOrders.push({ order: { side: 'buy', price: bid[0], size: bid[1] } })
+        if (i === user) perpsOrders.push({ order: { side: 'buy', price: bid[0], size: bid[1], orderId: bid[5] } })
       }
     }
     setPerpsOpenOrders(perpsOrders)
