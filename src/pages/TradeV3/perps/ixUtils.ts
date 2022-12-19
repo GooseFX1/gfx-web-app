@@ -8,7 +8,8 @@ import {
   IDepositFundsParams,
   IWithdrawFundsAccounts,
   IWithdrawFundsParams,
-  IConsumeOB
+  IConsumeOB,
+  ICancelOrderAccounts
 } from '../../../types/dexterity_instructions'
 import { sendTransaction } from '../../NFTs/launchpad/candyMachine/connection'
 import {
@@ -41,22 +42,9 @@ export const newOrderIx = async (
   wallet,
   connection: Connection
 ) => {
-  console.log(newOrderParams)
   const instructions = []
   const dexProgram = await getDexProgram(connection, wallet)
-  const consumeAccounts = {
-    aaobProgram: new PublicKey(ORDERBOOK_P_ID),
-    marketProductGroup: new PublicKey(MPG_ID),
-    product: new PublicKey(MPs[0].id),
-    marketSigner: getMarketSigner(new PublicKey(MPs[0].id)),
-    orderbook: new PublicKey(MPs[0].orderbook_id),
-    eventQueue: new PublicKey(MPs[0].event_queue),
-    rewardTarget: wallet.publicKey,
-    feeModelProgram: new PublicKey(FEES_ID),
-    feeModelConfigurationAcct: newOrderAccounts.feeModelConfigurationAcct,
-    feeOutputRegister: new PublicKey(FEE_OUTPUT_REGISTER),
-    riskAndFeeSigner: getRiskSigner()
-  }
+
   //instructions.push(await consumeOBIx(wallet, connection, consumeAccounts))
   instructions.push(
     await dexProgram.instruction.newOrder(newOrderParams, {
@@ -99,6 +87,52 @@ export const newOrderIx = async (
     })
   }
   //return response
+}
+
+export const cancelOrderIx = async (
+  cancelOrderAccounts: ICancelOrderAccounts,
+  cancelOrderParams,
+  wallet,
+  connection: Connection
+) => {
+  const instructions = []
+  const dexProgram = await getDexProgram(connection, wallet)
+  instructions.push(
+    await dexProgram.instruction.cancelOrder(cancelOrderParams, {
+      accounts: {
+        user: wallet.publicKey,
+        traderRiskGroup: cancelOrderAccounts.traderRiskGroup,
+        marketProductGroup: cancelOrderAccounts.marketProductGroup,
+        product: cancelOrderAccounts.product,
+        aaobProgram: cancelOrderAccounts.aaobProgram,
+        orderbook: cancelOrderAccounts.orderbook,
+        marketSigner: cancelOrderAccounts.marketSigner,
+        eventQueue: cancelOrderAccounts.eventQueue,
+        bids: cancelOrderAccounts.bids,
+        asks: cancelOrderAccounts.asks,
+        systemProgram: cancelOrderAccounts.systemProgram,
+        riskEngineProgram: cancelOrderAccounts.riskEngineProgram,
+        riskModelConfigurationAcct: cancelOrderAccounts.riskModelConfigurationAcct,
+        riskOutputRegister: cancelOrderAccounts.riskOutputRegister,
+        traderRiskStateAcct: cancelOrderAccounts.traderRiskStateAcct,
+        riskSigner: cancelOrderAccounts.riskAndFeeSigner
+      }
+    })
+  )
+  try {
+    const response = await sendTransaction(connection, wallet, instructions, [])
+    if (response && response.txid) {
+      notify({
+        message: 'Order canceled Successfully!'
+      })
+    }
+  } catch (e) {
+    console.log(e)
+    notify({
+      message: 'Order cancel failed!',
+      type: 'error'
+    })
+  }
 }
 
 export const depositFundsIx = async (
