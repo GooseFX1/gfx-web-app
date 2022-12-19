@@ -95,6 +95,25 @@ export interface INewOrderAccounts {
   riskAndFeeSigner?: PublicKey
 }
 
+export interface ICancelOrderAccounts {
+  user: PublicKey
+  traderRiskGroup: PublicKey
+  marketProductGroup: PublicKey
+  product: PublicKey
+  aaobProgram: PublicKey
+  orderbook: PublicKey
+  marketSigner: PublicKey
+  eventQueue: PublicKey
+  bids: PublicKey
+  asks: PublicKey
+  systemProgram: PublicKey
+  riskEngineProgram: PublicKey
+  riskModelConfigurationAcct: PublicKey
+  riskOutputRegister: PublicKey
+  traderRiskStateAcct: PublicKey
+  riskAndFeeSigner?: PublicKey
+}
+
 enum Side {
   'Bid',
   'Ask'
