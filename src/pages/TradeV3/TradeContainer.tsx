@@ -12,7 +12,7 @@ import { InfoBanner } from './InfoBanner'
 import { PlaceOrder } from './PlaceOrder'
 import { CollateralPanel } from './perps/components/CollateralPanel'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Connect } from '../../layouts/App/Connect'
+//import { Connect } from '../../layouts/Connect'
 import { HistoryPanel } from '../TradeV3/HistoryPanel'
 
 const ReactGridLayout = WidthProvider(Responsive)
@@ -260,7 +260,7 @@ export const CryptoContent: FC = () => {
                 <div className="overlay-text">
                   See all our <br /> amazing features!
                 </div>
-                <Connect />
+                {/* <Connect /> */}
               </UNLOCKED_OVERLAY>
             )}
             {!isLocked ? (

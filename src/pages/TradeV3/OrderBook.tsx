@@ -374,7 +374,7 @@ export const OrderBook: FC = () => {
           <ORDERBOOK_CONTAINER>
             <span>
               {
-                slicedOrderBookBids.reduce(
+                orderBook.bids.reduce(
                   (acc: { nodes: ReactNode[]; totalValue: number }, [price, size], index) => {
                     const value = price * size
                     acc.totalValue += value
@@ -397,7 +397,7 @@ export const OrderBook: FC = () => {
             </span>
             <span>
               {
-                slicedOrderBookAsks.reduce(
+                orderBook.asks.reduce(
                   (acc: { nodes: ReactNode[]; totalValue: number }, [price, size], index) => {
                     const value = price * size
                     acc.totalValue += value
