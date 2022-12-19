@@ -3,6 +3,7 @@ import { Button } from 'antd'
 import React, { useState, FC, useMemo } from 'react'
 import { useAccounts, useCrypto, useTokenRegistry, useTradeHistory, useOrderBook } from '../../context'
 import tw, { styled } from 'twin.macro'
+import { useTraderConfig } from '../../context/trader_risk_group'
 
 const tabs = ['Positions', 'Open Orders', 'Trade History', 'SOL Unsettled P&L']
 
@@ -155,6 +156,8 @@ const OpenOrdersComponent: FC = () => {
   const { formatPair, isSpot } = useCrypto()
   const { cancelOrder, loading, orders } = useTradeHistory()
   const { perpsOpenOrders } = useOrderBook()
+  const { cancelOrder: perpsCancelOrder } = useTraderConfig()
+
   //DELETE:
   const abc = [
     {
@@ -174,6 +177,10 @@ const OpenOrdersComponent: FC = () => {
   ]
   const openOrderUI = isSpot ? abc : perpsOpenOrders
 
+  const cancelOrderFn = (orderId: string) => {
+    perpsCancelOrder(orderId)
+  }
+
   const content = useMemo(
     () => (
       <OPEN_ORDER>
@@ -182,9 +189,11 @@ const OpenOrdersComponent: FC = () => {
             <span className={order.order.side}>{order.order.side}</span>
             <span>{order.order.size}</span>
             <span>${order.order.price}</span>
-            <span>0</span>
+            <span>{(order.order.size * order.order.price).toFixed(2)}</span>
             <span>
-              <Button loading={loading}>Cancel</Button>
+              <Button loading={loading} onClick={() => cancelOrderFn(order.order.orderId)}>
+                Cancel
+              </Button>
             </span>
           </div>
         ))}

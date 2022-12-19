@@ -48,7 +48,12 @@ import {
   int64to8,
   reduceFractional
 } from '../pages/TradeV3/perps/utils'
-import { INewOrderAccounts, IDepositFundsAccounts, IWithdrawFundsAccounts } from '../types/dexterity_instructions'
+import {
+  INewOrderAccounts,
+  IDepositFundsAccounts,
+  IWithdrawFundsAccounts,
+  ICancelOrderAccounts
+} from '../types/dexterity_instructions'
 import { useConnectionConfig } from './settings'
 import * as anchor from '@project-serum/anchor'
 import { Bid, Ask } from '../pages/TradeV3/perps/dexterity/types/Side'
@@ -56,6 +61,7 @@ import { ImmediateOrCancel, Limit, FillOrKill, PostOnly } from '../pages/TradeV3
 import { DecrementTake } from '../pages/TradeV3/perps/dexterity/types/SelfTradeBehavior'
 import { findAssociatedTokenAddress } from '../web3'
 import {
+  cancelOrderIx,
   depositFundsIx,
   initializeTRG,
   initTrgDepositIx,
@@ -118,6 +124,7 @@ interface IPerpsInfo {
   traderInfo: ITraderRiskGroup
   marketProductGroupKey: PublicKey
   newOrder: () => Promise<void>
+  cancelOrder: (orderId: string) => Promise<void>
   depositFunds: (amount: Fractional) => Promise<void>
   withdrawFunds: (amount: Fractional) => Promise<void>
   activeProduct: any
@@ -139,6 +146,7 @@ export function useTraderConfig() {
     marketProductGroup,
     marketProductGroupKey,
     newOrder,
+    cancelOrder,
     depositFunds,
     withdrawFunds,
     activeProduct,
@@ -153,6 +161,7 @@ export function useTraderConfig() {
     marketProductGroup,
     marketProductGroupKey,
     newOrder,
+    cancelOrder,
     depositFunds,
     withdrawFunds,
     activeProduct,
@@ -312,6 +321,37 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     refreshTraderRiskGroup()
   }, [traderRiskGroup, order, marketProductGroup])
 
+  const cancelOrder = useCallback(
+    async (orderId: string) => {
+      const cancelOrderAccounts: ICancelOrderAccounts = {
+        user: wallet.publicKey,
+        traderRiskGroup: currentTRG,
+        marketProductGroup: currentMPG,
+        product: new PublicKey(activeProduct.id),
+        aaobProgram: new PublicKey(ORDERBOOK_P_ID),
+        orderbook: new PublicKey(activeProduct.orderbook_id),
+        marketSigner: getMarketSigner(new PublicKey(activeProduct.id)),
+        eventQueue: new PublicKey(activeProduct.event_queue),
+        bids: new PublicKey(activeProduct.bids),
+        asks: new PublicKey(activeProduct.asks),
+        systemProgram: SystemProgram.programId,
+        riskEngineProgram: new PublicKey(RISK_ID),
+        riskModelConfigurationAcct: new PublicKey(RISK_MODEL_CONFIG_ACCT),
+        riskOutputRegister: new PublicKey(RISK_OUTPUT_REGISTER),
+        traderRiskStateAcct: traderRiskGroup.riskStateAccount,
+        riskAndFeeSigner: getRiskAndFeeSigner(new PublicKey(MPG_ID))
+      }
+      const response = await cancelOrderIx(
+        cancelOrderAccounts,
+        { orderId: new anchor.BN(orderId) },
+        wallet,
+        connection
+      )
+      refreshTraderRiskGroup()
+    },
+    [traderRiskGroup, marketProductGroup]
+  )
+
   const depositFunds = useCallback(
     async (amount: Fractional) => {
       const newTrg = anchor.web3.Keypair.generate()
@@ -368,6 +408,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         marketProductGroup: marketProductGroup,
         marketProductGroupKey: currentMPG,
         newOrder: newOrder,
+        cancelOrder: cancelOrder,
         depositFunds: depositFunds,
         withdrawFunds: withdrawFunds,
         activeProduct: activeProduct,
