@@ -1,7 +1,15 @@
 import { useState, useEffect, useMemo, FC } from 'react'
 import styled from 'styled-components'
 import { Menu, MenuItem } from '../layouts/shared'
-import { useRPCContext, ENDPOINTS, useConnectionConfig, useDarkMode, RPC, RPC_HEALTH } from '../context'
+import {
+  useRPCContext,
+  ENDPOINTS,
+  useConnectionConfig,
+  useDarkMode,
+  RPC,
+  RPC_HEALTH,
+  GFX_RPC_NAMES
+} from '../context'
 import { ArrowDropdown } from './ArrowDropdown'
 import { SpaceBetweenDiv } from '../styles'
 
@@ -52,7 +60,12 @@ const Overlay = ({
 
   // filters unhealthy rpcs out of the rpc set
   const healthyEndpoints: RPC[] = useMemo(
-    () => Object.values(ENDPOINTS).filter((rpc: RPC) => !unhealthRPCs.includes(rpc.name)),
+    () =>
+      process.env.NODE_ENV === 'development'
+        ? Object.values(ENDPOINTS).filter(
+            (rpc: RPC) => rpc.name === GFX_RPC_NAMES.MONKE_RPC || rpc.name === GFX_RPC_NAMES.SOLANA_RPC_DEV
+          )
+        : Object.values(ENDPOINTS).filter((rpc: RPC) => !unhealthRPCs.includes(rpc.name)),
     [unhealthRPCs]
   )
 

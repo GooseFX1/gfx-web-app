@@ -73,7 +73,8 @@ interface ISettingsConfig {
   slippage?: number
 }
 
-export const DEFAULT_MAINNET_RPC = GFX_RPC_NAMES.SYNDICA
+export const DEFAULT_MAINNET_RPC =
+  process.env.NODE_ENV === 'production' ? GFX_RPC_NAMES.SYNDICA : GFX_RPC_NAMES.MONKE_RPC
 export const DEFAULT_SLIPPAGE = 0.005
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
