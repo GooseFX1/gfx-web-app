@@ -7,6 +7,7 @@ import { useRPCContext } from './rpc_context'
 
 export enum GFX_RPC_NAMES {
   QUICKNODE = 'QuickNode Pro',
+  MONKE_RPC = 'Monke DAO',
   SYNDICA = 'Syndica',
   TRITON = 'Triton',
   HELIUS = 'Helius',
@@ -33,6 +34,12 @@ export const ENDPOINTS: ENDPOINTS = {
     chainId: ENV.MainnetBeta,
     name: GFX_RPC_NAMES.QUICKNODE,
     endpoint: `https://green-little-wind.solana-mainnet.quiknode.pro/${process.env.REACT_APP_QUICKNODE_TOKEN}`,
+    network: WalletAdapterNetwork.Mainnet
+  },
+  [GFX_RPC_NAMES.MONKE_RPC]: {
+    chainId: ENV.MainnetBeta,
+    name: GFX_RPC_NAMES.MONKE_RPC,
+    endpoint: `https://${process.env.REACT_APP_MONKE_RPC}.xyz2.hyperplane.dev`,
     network: WalletAdapterNetwork.Mainnet
   },
   [GFX_RPC_NAMES.TRITON]: {
