@@ -22,41 +22,34 @@ const componentDimensions = [
     x: 0,
     y: 0,
     i: '0',
-    h: 30,
+    h: 26.5,
     w: 2
   },
   {
     x: 2,
     y: 0,
     i: '1',
-    h: 16,
-    w: 1
-  },
-  {
-    x: 2,
-    y: 11,
-    i: '2',
-    h: 14,
+    h: 26.5,
     w: 1
   },
   {
     x: 3,
     y: 0,
-    i: '3',
-    h: 30,
+    i: '2',
+    h: 26.5,
     w: 1
   },
   {
     x: 0,
     y: 20,
-    i: '4',
+    i: '3',
     h: 15,
     w: 3
   },
   {
     x: 3,
     y: 20,
-    i: '5',
+    i: '4',
     h: 15,
     w: 1
   }
@@ -111,11 +104,6 @@ const UNLOCKED_OVERLAY = styled.div`
     font-size: 16px;
     color: ${({ theme }) => theme.text1};
   }
-  .overlay-text {
-    font-size: 20px;
-    font-weight: 600;
-    text-align: center;
-  }
   button {
     height: 40px;
     width: 165px;
@@ -131,7 +119,6 @@ export const CryptoContent: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const [isLocked, setIsLocked] = useState(true)
   const [layout, setLayout] = useState({ lg: componentDimensions })
-  const [feesPopup, setFeesPopup] = useState<boolean>(false)
 
   const mode = useDarkMode()
   const { selectedCrypto } = useCrypto()
@@ -140,7 +127,7 @@ export const CryptoContent: FC = () => {
   useEffect(() => {
     if (selectedCrypto.type === 'perps') setLayout({ lg: componentDimensions })
     else {
-      setLayout({ lg: componentDimensions.slice(0, 5) })
+      setLayout({ lg: componentDimensions.slice(0, 4) })
     }
   }, [selectedCrypto])
 
@@ -178,43 +165,6 @@ export const CryptoContent: FC = () => {
             ) : null}
           </div>
         )
-      if (i === 3) {
-        return (
-          <div key={i}>
-            <>
-              <PlaceOrder />
-              {!isLocked ? (
-                <UNLOCKED_OVERLAY>
-                  <img
-                    src={
-                      mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
-                    }
-                    alt="reposition"
-                  />
-                  <span>Drag to Reposition</span>
-                </UNLOCKED_OVERLAY>
-              ) : null}
-            </>
-          </div>
-        )
-      }
-      if (i === 2) {
-        return (
-          <div key={i}>
-            {!isLocked ? (
-              <UNLOCKED_OVERLAY>
-                <img
-                  src={
-                    mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
-                  }
-                  alt="reposition"
-                />
-                <span>Drag to Reposition</span>
-              </UNLOCKED_OVERLAY>
-            ) : null}
-          </div>
-        )
-      }
       if (i === 1)
         return (
           <div key={i}>
@@ -234,7 +184,27 @@ export const CryptoContent: FC = () => {
             </>
           </div>
         )
-      if (i === 4)
+      if (i === 2) {
+        return (
+          <div key={i}>
+            <>
+              <PlaceOrder />
+              {!isLocked ? (
+                <UNLOCKED_OVERLAY>
+                  <img
+                    src={
+                      mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
+                    }
+                    alt="reposition"
+                  />
+                  <span>Drag to Reposition</span>
+                </UNLOCKED_OVERLAY>
+              ) : null}
+            </>
+          </div>
+        )
+      }
+      if (i === 3)
         return (
           <div key={i}>
             <HistoryPanel />
@@ -251,7 +221,7 @@ export const CryptoContent: FC = () => {
             ) : null}
           </div>
         )
-      if (i === 5)
+      if (i === 4)
         return (
           <div key={i}>
             <CollateralPanel />
@@ -288,15 +258,7 @@ export const CryptoContent: FC = () => {
   }
   return (
     <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked}>
-      <InfoBanner
-        isLocked={isLocked}
-        setIsLocked={setIsLocked}
-        resetLayout={resetLayout}
-        //setFeesPopup={setFeesPopup}
-      />
-      {/* {feesPopup && (
-      <ModalSlide rewardModal={feesPopup} rewardToggle={setFeesPopup} modalType={MODAL_TYPES.FEES} />
-    )} */}
+      <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} />
       <ReactGridLayout
         compactType="vertical"
         measureBeforeMount={false}

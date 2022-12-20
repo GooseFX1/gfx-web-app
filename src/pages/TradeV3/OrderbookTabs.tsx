@@ -18,6 +18,7 @@ const TAB_NAMES = [
 
 const WRAPPER = styled.div`
   ${tw`w-full flex flex-col h-full`}
+  background: ${({ theme }) => theme.bg2};
 `
 
 const HEADER_WRAPPER = styled.div`
