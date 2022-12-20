@@ -12,13 +12,14 @@ import {
   useCrypto,
   useOrder,
   useOrderBook,
+  useDarkMode,
   useTokenRegistry
 } from '../../context'
 import { Input } from 'antd'
 import { removeFloatingPointError } from '../../utils'
 import { Checkbox } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { ArrowDropdown } from '../../components'
+import { ArrowDropdown, Tooltip } from '../../components'
 import { useTraderConfig } from '../../context/trader_risk_group'
 
 enum ButtonState {
@@ -29,12 +30,15 @@ enum ButtonState {
 }
 
 const WRAPPER = styled.div`
-  ${tw`h-full w-full border-solid border`}
-  border-color: #3c3c3c;
+  ${tw`h-full w-full`}
+  border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
+  border-bottom-width: 0;
+  background: ${({ theme }) => theme.bg2};
 `
 
 const HEADER = styled.div`
   ${tw`h-16 w-full flex flex-col items-center`}
+  background: ${({ theme }) => theme.bg2};
 
   .pairInfo {
     ${tw`h-1/2 w-full flex justify-between px-2.5 border-solid border-b items-center text-base font-semibold`}
@@ -43,11 +47,17 @@ const HEADER = styled.div`
     border-right: none;
     border-color: #3c3c3c;
     .pairName {
+      color: ${({ theme }) => theme.text28};
       img {
         height: 20px;
         width: 20px;
         margin-right: 10px;
       }
+    }
+    .pairLeverage {
+      ${tw`rounded-[5px] border-solid border border-[#b5b5b5] flex items-center justify-center h-5.5 text-[13px] w-16`}
+      border-color: ${({ theme }) => theme.multiplierBorder};
+      color: ${({ theme }) => theme.text21};
     }
   }
   .orderSide {
@@ -99,31 +109,43 @@ const INPUT_GRID_WRAPPER = styled.div`
 const INPUT_WRAPPER = styled.div`
   ${tw`flex justify-center items-start w-full flex-col h-full px-3`}
   .label {
-    ${tw`pb-1 text-[15px]`}
-    color: #B5B5B5;
+    ${tw`pb-1 text-tiny font-semibold`}
+    color: ${({ theme }) => theme.text29};
   }
   img {
     height: 20px;
     width: 20px;
   }
   .suffixText {
-    ${tw`text-xs font-medium`}
+    ${tw`text-12 font-semibold`}
+    color: ${({ theme }) => theme.text29};
   }
   .ant-input {
     ${tw`text-left font-medium`}
   }
+  .ant-input::placeholder {
+    ${tw`text-tiny font-semibold`}
+    color: ${({ theme }) => theme.text20};
+  }
   .ant-input-affix-wrapper {
     ${tw`font-medium h-12`}
     border-radius: 0px;
-    background-color: #1c1c1c;
+    background: ${({ theme }) => theme.bg2};
     border: 1px solid #3c3c3c;
   }
   .dropdownContainer {
-    ${tw`w-full h-12 flex justify-between items-center px-2`}
+    ${tw`w-full h-12 flex justify-between items-center px-2 text-red-100 font-semibold text-tiny`}
+    color: ${({ theme }) => theme.text21};
     border: 1px solid #3c3c3c;
-    background-color: #1c1c1c;
+    background: ${({ theme }) => theme.bg2};
+
     .ant-dropdown-trigger {
       ${tw`w-full flex justify-end`}
+    }
+  }
+  .dropdownContainer.lite {
+    .arrow-icon {
+      filter: invert(28%) sepia(88%) saturate(1781%) hue-rotate(230deg) brightness(99%) contrast(105%);
     }
   }
 `
@@ -131,8 +153,9 @@ const INPUT_WRAPPER = styled.div`
 const TOTAL_SELECTOR = styled.div`
   ${tw`flex mt-2.5 justify-between items-center px-3`}
   .valueSelector {
-    ${tw`cursor-pointer flex justify-center items-center rounded-[36px] w-14 h-[30px] text-xs font-semibold`}
-    background-color: #1c1c1c;
+    ${tw`cursor-pointer flex justify-center items-center rounded-[36px] w-14 h-[30px] text-12 
+    text-[#636363] font-semibold`}
+    background: ${({ theme }) => theme.bg23};
     &.selected {
       background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     }
@@ -166,6 +189,24 @@ const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean }>`
   background: ${({ $action }) =>
     $action ? 'linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%)' : '#1C1C1C'};
   color: ${({ $action }) => ($action ? 'white' : '#636363')};
+`
+
+const FEES = styled.div`
+  ${tw`flex items-center justify-center my-3`}
+
+  div {
+    margin-left: 0;
+    margin-right: 5px;
+    img {
+      height: 14px !important;
+      width: 14px !important;
+      margin-left: 0 !important;
+    }
+  }
+
+  span {
+    ${tw`font-semibold text-12 text-[#636363] ml-[5px]`}
+  }
 `
 
 const TOTAL_VALUES = [
@@ -217,6 +258,7 @@ export const PlaceOrder: FC = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false)
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { connected } = useWallet()
+  const { mode } = useDarkMode()
 
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
@@ -326,7 +368,7 @@ export const PlaceOrder: FC = () => {
           <div className="inputRow">
             <INPUT_WRAPPER>
               <div className="label">Order Type</div>
-              <div className="dropdownContainer">
+              <div className={`dropdownContainer ${mode}`}>
                 <div>{displayedOrder?.text}</div>
                 <ArrowDropdown
                   arrowRotation={arrowRotation}
@@ -340,6 +382,7 @@ export const PlaceOrder: FC = () => {
                     />
                   }
                   visible={dropdownVisible}
+                  measurements="13px !important"
                 />
               </div>
             </INPUT_WRAPPER>
@@ -420,6 +463,12 @@ export const PlaceOrder: FC = () => {
         >
           {buttonText}
         </PLACE_ORDER_BUTTON>
+        <FEES>
+          <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+            Solana network fee, is the fee you pay in order to make transaction over the solana blockchain.
+          </Tooltip>
+          <span>SOL network fee: ~ 0.03</span>
+        </FEES>
       </BODY>
     </WRAPPER>
   )
