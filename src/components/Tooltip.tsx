@@ -15,7 +15,8 @@ const ICON = styled(CenteredImg)<{ notDoxxed?: boolean }>`
 `
 
 const TEXT = styled.span`
-  ${tw`text-[12px] text-white pb-2.5`}
+  ${tw`text-[12px] pb-2.5`}
+  color: ${({ theme }) => theme.text0};
 `
 
 export const Tooltip: FC<{

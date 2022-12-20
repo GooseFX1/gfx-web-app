@@ -76,6 +76,8 @@ export function colors(mode: string): Colors {
     text25: mode === 'dark' ? '#7D7D7D' : '#636363',
     text26: mode === 'dark' ? '#999999' : '#353535',
     text27: mode === 'dark' ? '#b5b5b5' : '#eee',
+    text28: mode === 'dark' ? '#eeeeee' : '#3C3C3C',
+    text29: mode === 'dark' ? '#b5b5b5' : '#636363',
 
     textWhitePurple: mode === 'dark' ? '#fff' : '#8d4cdd',
 
@@ -114,9 +116,11 @@ export function colors(mode: string): Colors {
     bg20: mode === 'dark' ? '#1c1c1c' : white,
     bg21: mode === 'dark' ? '#1c1c1c' : '#3c3c3c',
     bg22: mode === 'dark' ? '#131313' : '#cacaca',
+    bg23: mode === 'dark' ? '#1c1c1c' : '#cacaca',
     tableHeader: mode === 'dark' ? '#1c1c1c' : '#636363',
     tokenBorder: mode === 'dark' ? '#3c3c3c' : '#cacaca',
     borderBottom: mode === 'dark' ? '#555555' : '#cacaca',
+    multiplierBorder: mode === 'dark' ? '#b5b5b5' : '#5855ff',
     lpbg: mode === 'dark' ? '#2a2a2a' : '#d2d2d2',
     pbbg: mode === 'dark' ? '#1a1a1a' : '#868686',
     goBtn:

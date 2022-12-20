@@ -5,6 +5,7 @@ import { Tooltip } from '../../../../components/Tooltip'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { PERPS_FEES } from '../perpsConstants'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { useDarkMode } from '../../../../context'
 
 const { TabPane } = Tabs
 
@@ -129,6 +130,7 @@ const FEES = styled.div`
 
 const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
   const { collateralInfo } = useTraderConfig()
+  const { mode } = useDarkMode()
 
   const getHealthData = () => {
     //DELETE: hardcoded percent
@@ -155,8 +157,8 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
         <div className="health-icon">
           <span className="key">Health</span>
           <img src="/img/assets/heart-red.svg" alt="heart-icon" width="19" height="17" className="heart-icon" />
-          <Tooltip>
-            The account will be liquidated if Health ratio reaches 0% and will continue until Health is above 0.{' '}
+          <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+            The heath graph represents, how close you are to be liquidated.{' '}
           </Tooltip>
         </div>
         {getHealthData()}
