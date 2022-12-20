@@ -47,6 +47,7 @@ export interface Colors {
   blackToGrey: Color
   tableBorder: Color
   borderBottom: Color
+  multiplierBorder: Color
 
   // backgrounds / greys
   bg0: Color
@@ -70,6 +71,7 @@ export interface Colors {
   bg20: Color
   bg21: Color
   bg22: Color
+  bg23: Color
   lpbg: Color
   pbbg: Color
   goBtn: Color
