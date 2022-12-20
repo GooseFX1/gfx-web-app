@@ -1,7 +1,7 @@
 import { Skeleton } from 'antd'
 import React, { FC, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
-import { useCrypto, usePriceFeed } from '../../context'
+import { useCrypto, usePriceFeed, useDarkMode } from '../../context'
 import { DropdownPairs } from './DropdownPairs'
 import { DepositWithdraw } from './perps/DepositWithdraw'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
@@ -104,13 +104,12 @@ const DEPOSIT_WRAPPER = styled.div`
 const DEPOSIT_BTN = styled.div`
   ${tw`w-full h-full rounded-[36px] flex flex-row items-center justify-center text-12 font-semibold`}
   background: ${({ theme }) => theme.bg20};
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text11};
 `
 
 const RESET_LAYOUT_BUTTON_CTN = styled.div`
   ${tw`cursor-pointer h-10 p-px ml-auto rounded-[36px]`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-  color: ${({ theme }) => theme.text4};
 `
 
 const RESET_LAYOUT_BUTTON = styled.div`
@@ -166,6 +165,7 @@ export const InfoBanner: FC<{
 }> = ({ isLocked, setIsLocked, resetLayout }) => {
   const { selectedCrypto, isSpot, setIsSpot } = useCrypto()
   const { prices, tokenInfo, refreshTokenData } = usePriceFeed()
+  const { mode } = useDarkMode()
   const [tradeType, setTradeType] = useState<string>('deposit')
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
@@ -318,7 +318,7 @@ export const InfoBanner: FC<{
       )}
       <LOCK_LAYOUT_CTN $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
         <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
-          <img src={isLocked ? `/img/assets/whiteLock.svg` : `/img/assets/whiteUnlock.svg`} alt="lock" />
+          <img src={isLocked ? `/img/assets/${mode}_lock.svg` : `/img/assets/${mode}_unlock.svg`} alt="lock" />
         </LOCK_LAYOUT>
       </LOCK_LAYOUT_CTN>
     </INFO_WRAPPER>
