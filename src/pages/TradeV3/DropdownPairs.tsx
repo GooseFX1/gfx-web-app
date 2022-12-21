@@ -1,28 +1,32 @@
 import { Dropdown } from 'antd'
 import React, { FC, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { MarketType, useCrypto, usePriceFeed } from '../../context'
+import { MarketType, useCrypto, useDarkMode, usePriceFeed } from '../../context'
 import { DownOutlined } from '@ant-design/icons'
 import { Modal, SearchBar } from '../../components'
 import tw, { styled } from 'twin.macro'
 
-const SELECTED_PAIR_CTN = styled.div`
-  ${tw`ml-[35px] rounded-[36px] w-[180px] cursor-pointer p-px`}
-  background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
+const SELECTED_PAIR_CTN = styled.div<{ $mode: string }>`
+  ${tw`h-10 w-[180px] rounded-[36px] cursor-pointer`}
+  padding: ${({ $mode }) => ($mode === 'lite' ? '2px' : '1px')};
+  background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
 `
 
-const SELECTED_PAIR = styled.div`
-  ${tw`leading-10 rounded-[36px] text-center flex 
-  flex-row justify-between items-center font-medium pl-2.5`}
-  background-color: ${({ theme }) => theme.bg9};
-  color: ${({ theme }) => theme.text21};
-  font-size: 16px;
+const SELECTED_PAIR = styled.div<{ $mode: string }>`
+  ${tw`h-full w-full rounded-[36px] flex justify-around items-center text-tiny font-semibold`}
+  color: ${({ theme }) => theme.text28};
+  background: ${({ $mode }) => ($mode === 'lite' ? 'white' : '#1c1c1c')};
   .anticon-down {
     ${tw`mr-2.5 w-3.5`}
   }
   .asset-icon {
-    ${tw`mr-2.5 w-7 h-7`}
+    ${tw`w-7 h-7`}
   }
+`
+
+const GRADIENT_BACKGROUND = styled.div`
+  ${tw`h-full w-full rounded-[36px] flex justify-around items-center`}
+  background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
 `
 
 const DROPDOWN_PAIR_DIV = styled.div`
@@ -183,9 +187,9 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
 
 export const DropdownPairs: FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
-  const menus = <></>
   const { selectedCrypto, getAskSymbolFromPair, formatPair, setFilteredSearchPairs, pairs } = useCrypto()
   const formattedPair = useMemo(() => formatPair(selectedCrypto.pair), [formatPair, selectedCrypto.pair])
+  const { mode } = useDarkMode()
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
     [getAskSymbolFromPair, selectedCrypto.pair]
@@ -224,20 +228,27 @@ export const DropdownPairs: FC = () => {
         </DROPDOWN_MODAL>
       )}
       <Dropdown
-        overlay={menus}
+        overlay={<></>}
         trigger={['click']}
-        placement="bottom"
-        align={{ offset: [0, 10] }}
-        overlayClassName="antd-radius-trade-v2"
         onVisibleChange={() => {
           setShowModal(true)
         }}
       >
-        <SELECTED_PAIR_CTN>
-          <SELECTED_PAIR>
-            <img className="asset-icon" src={assetIcon} alt="asset-icon" />
-            {formattedPair}
-            <DownOutlined />
+        <SELECTED_PAIR_CTN $mode={mode}>
+          <SELECTED_PAIR $mode={mode}>
+            {mode === 'lite' ? (
+              <GRADIENT_BACKGROUND>
+                <img className="asset-icon" src={assetIcon} alt="asset-icon" />
+                {formattedPair}
+                <DownOutlined />
+              </GRADIENT_BACKGROUND>
+            ) : (
+              <>
+                <img className="asset-icon" src={assetIcon} alt="asset-icon" />
+                {formattedPair}
+                <DownOutlined />
+              </>
+            )}
           </SELECTED_PAIR>
         </SELECTED_PAIR_CTN>
       </Dropdown>
