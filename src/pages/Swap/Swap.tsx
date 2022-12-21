@@ -328,7 +328,9 @@ const SWITCH = styled(CenteredDiv)<{ measurements: number }>`
   ${tw`absolute h-[64px] w-[64px] cursor-pointer rounded-circle z-[100]`}
   top: calc(50% - ${({ measurements }) => measurements}px / 2 + 18px);
   left: calc(50% - ${({ measurements }) => measurements}px / 2);
+  background-color: rgb(88 85 255);
   box-shadow: 0 4.5px 26px 11px rgb(88 85 255 / 43%);
+  animation: 1.5s ease-in-out 0s 1 normal forwards running fadein;
 
   @media (max-width: 500px) {
     top: calc(58% - ${({ measurements }) => measurements}px / 2 + 18px);
@@ -337,6 +339,15 @@ const SWITCH = styled(CenteredDiv)<{ measurements: number }>`
 
   .swap-switch {
     ${tw`h-[90px] w-auto sm:h-[84px] z-[100]`}
+  }
+
+  @keyframes fadein {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
 `
 
