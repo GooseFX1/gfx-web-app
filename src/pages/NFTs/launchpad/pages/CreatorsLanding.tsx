@@ -32,7 +32,7 @@ const LINK = styled.a`
 `
 
 const TEXT = styled.div`
-  ${tw`sm:w-[90%] sm:mb-[30px] text-center mt-[30px] mx-auto mb-0 text-[#636363] text-smallest `}
+  ${tw`sm:w-[90%] sm:mb-[30px] text-center mt-[30px] mx-auto mb-0 text-gray-2 text-smallest `}
 
   a {
     ${tw`no-underline text-[#5855ff]`}
@@ -146,7 +146,7 @@ const TEXT_ONE = styled.div`
 `
 
 const TEXT_TWO = styled.div`
-  ${tw`sm:text-tiny sm:w-3/4 sm:mx-auto text-[#636363] text-[24px] mt-2.5`}
+  ${tw`sm:text-tiny sm:w-3/4 sm:mx-auto text-gray-2 text-[24px] mt-2.5`}
 `
 
 const HEADER = styled.div`
@@ -161,7 +161,7 @@ const HEADER = styled.div`
 `
 
 const SUBHEADER = styled.div`
-  ${tw`sm:text-tiny sm:w-3/4 sm:text-center sm:my-4 sm:mx-auto mt-4 text-average text-[#636363] font-medium`}
+  ${tw`sm:text-tiny sm:w-3/4 sm:text-center sm:my-4 sm:mx-auto mt-4 text-average text-gray-2 font-medium`}
 `
 
 const ROW_LAST = styled.div`
@@ -210,7 +210,7 @@ const FEATURE = styled.div`
   }
 
   .sub-header {
-    ${tw`sm:text-tiny sm:w-3/4 sm:mx-auto sm:mb-10 text-[20px] font-medium text-[#636363] mt-2.5`}
+    ${tw`sm:text-tiny sm:w-3/4 sm:mx-auto sm:mb-10 text-[20px] font-medium text-gray-2 mt-2.5`}
   }
 `
 
