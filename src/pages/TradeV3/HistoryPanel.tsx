@@ -310,16 +310,6 @@ export const HistoryPanel: FC = () => {
                 <span>0</span>
                 <button>Close Position</button>
               </div>
-              <div>
-                <span className="short">Short</span>
-                <span>{addNumbers(quoteBalance, quoteAvailable, userBidBalance)}</span>
-                <span>{quoteBalance ? quoteBalance : 0}</span>
-                <span>{quoteAvailable ? quoteAvailable : 0}</span>
-                <span>{userBidBalance > 0 ? userBidBalance.toFixed(2) : userBidBalance}</span>
-                <span>0</span>
-                <span>0</span>
-                <button>Close Position</button>
-              </div>
             </POSITIONS>
           </>
         ) : activeTab === 1 ? (
