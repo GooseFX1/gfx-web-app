@@ -29,7 +29,7 @@ const SETTING_MODAL = styled(PopupCustom)`
 const INFO_WRAPPER = styled.div`
   ${tw`py-0 px-[30px] flex flex-row`}
   .spot-toggle .perps {
-    ${tw`cursor-pointer`}
+    ${tw`cursor-pointer mr-[35px]`}
   }
   .spot-toggle .spot {
     ${tw`cursor-pointer`}
@@ -97,25 +97,25 @@ const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
   }
 `
 const DEPOSIT_WRAPPER = styled.div`
-  ${tw`w-[158px] h-10 rounded-[36px] flex flex-row items-center justify-center ml-auto cursor-pointer p-px mr-3.75`}
+  ${tw`w-[158px] h-10 rounded-[36px] flex items-center justify-center ml-auto cursor-pointer p-px mr-3.75`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
 `
 
 const DEPOSIT_BTN = styled.div`
-  ${tw`w-full h-full rounded-[36px] flex flex-row items-center justify-center text-12 font-semibold`}
+  ${tw`w-full h-full rounded-[36px] flex items-center justify-center text-12 font-semibold`}
   background: ${({ theme }) => theme.bg20};
   color: ${({ theme }) => theme.text11};
 `
 
 const RESET_LAYOUT_BUTTON_CTN = styled.div`
-  ${tw`cursor-pointer h-10 p-px ml-auto rounded-[36px]`}
+  ${tw`w-[130px] cursor-pointer h-10 p-px rounded-[36px] flex items-center justify-center`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
 `
 
 const RESET_LAYOUT_BUTTON = styled.div`
-  ${tw`h-[38px] rounded-[36px] py-2 px-5 `}
-  background-color: ${({ theme }) => theme.bg21};
-  color: ${({ theme }) => theme.text4};
+  ${tw`h-[38px] w-full rounded-[36px] text-12 flex items-center justify-center font-semibold`}
+  background: ${({ theme }) => theme.bg20};
+  color: ${({ theme }) => theme.text11};
 `
 
 const HEADER = styled.div`
@@ -302,11 +302,9 @@ export const InfoBanner: FC<{
           </div>
         )}
       </INFO_STATS>
-      {isLocked && (
-        <DEPOSIT_WRAPPER>
-          <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
-        </DEPOSIT_WRAPPER>
-      )}
+      <DEPOSIT_WRAPPER>
+        <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
+      </DEPOSIT_WRAPPER>
       {isLocked ? (
         <REFRESH_DATA onClick={() => refreshTokenData(null)}>
           <img src={`/img/assets/refreshButton.png`} alt="refresh" />
