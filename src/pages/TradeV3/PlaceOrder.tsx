@@ -100,7 +100,7 @@ const BODY = styled.div`
 `
 
 const INPUT_GRID_WRAPPER = styled.div`
-  ${tw`flex justify-center items-center flex-col py-3.5`}
+  ${tw`flex justify-center items-center flex-col py-2`}
   .inputRow {
     ${tw`flex justify-between items-center w-full h-16`}
   }
@@ -122,21 +122,29 @@ const INPUT_WRAPPER = styled.div`
   }
   .ant-input {
     ${tw`text-left font-medium`}
+    color: ${({ theme }) => theme.text1};
   }
   .ant-input::placeholder {
     ${tw`text-tiny font-semibold`}
     color: ${({ theme }) => theme.text20};
   }
   .ant-input-affix-wrapper {
-    ${tw`font-medium h-12`}
-    border-radius: 0px;
+    ${tw`font-medium rounded-[5px] border border-solid h-[30px]`}
     background: ${({ theme }) => theme.bg2};
-    border: 1px solid #3c3c3c;
+    border-color: ${({ theme }) => theme.tokenBorder};
+  }
+  .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
+    border-color: ${({ theme }) => theme.tokenBorder};
+  }
+  .ant-input-affix-wrapper:focus,
+  .ant-input-affix-wrapper-focused {
+    box-shadow: none;
   }
   .dropdownContainer {
-    ${tw`w-full h-12 flex justify-between items-center px-2 text-red-100 font-semibold text-tiny`}
+    ${tw`w-full h-[30px] flex justify-between items-center px-2 text-red-100 
+    font-semibold text-tiny border border-solid`}
     color: ${({ theme }) => theme.text21};
-    border: 1px solid #3c3c3c;
+    border-color: ${({ theme }) => theme.tokenBorder};
     background: ${({ theme }) => theme.bg2};
 
     .ant-dropdown-trigger {
@@ -151,10 +159,10 @@ const INPUT_WRAPPER = styled.div`
 `
 
 const TOTAL_SELECTOR = styled.div`
-  ${tw`flex mt-2.5 justify-between items-center px-3`}
+  ${tw`flex mt-[3px] justify-between items-center px-3`}
   .valueSelector {
     ${tw`cursor-pointer flex justify-center items-center rounded-[36px] w-14 h-[30px] text-12 
-    text-[#636363] font-semibold`}
+    text-gray-2 font-semibold`}
     background: ${({ theme }) => theme.bg23};
     &.selected {
       background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
@@ -163,36 +171,32 @@ const TOTAL_SELECTOR = styled.div`
 `
 
 const ORDER_CATEGORY = styled.div`
-  ${tw`flex justify-center items-center mt-6`}
+  ${tw`flex justify-center items-center mt-3.75 h-5`}
   .orderCategoryCheckboxWrapper {
     ${tw`mx-3 flex items-center justify-center`}
     .ant-checkbox-wrapper {
       .ant-checkbox-inner {
-        height: 20px;
-        width: 20px;
-        border-radius: 4px;
+        ${tw`w-5 h-5 rounded`}
       }
     }
     .ant-checkbox-checked .ant-checkbox-inner {
-      background-color: #5855ff;
+      ${tw`bg-[#5855ff]`}
     }
     .orderCategoryName {
-      ${tw`text-[15px] font-semibold ml-2`}
-      color: #636363;
+      ${tw`text-tiny font-semibold ml-2 text-gray-2`}
     }
   }
 `
 
 const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean }>`
-  ${tw`w-11/12 mt-6 rounded-[30px] h-[30px] text-xs font-semibold`}
-  border: none;
-  background: ${({ $action }) =>
-    $action ? 'linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%)' : '#1C1C1C'};
+  ${tw`w-11/12 mt-3 rounded-[30px] h-[30px] text-12 font-semibold border-0 border-none`}
+  background: ${({ $action, theme }) =>
+    $action ? 'linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%)' : theme.bg23}};
   color: ${({ $action }) => ($action ? 'white' : '#636363')};
 `
 
 const FEES = styled.div`
-  ${tw`flex items-center justify-center my-3`}
+  ${tw`flex items-center justify-center my-2`}
 
   div {
     margin-left: 0;
@@ -205,7 +209,7 @@ const FEES = styled.div`
   }
 
   span {
-    ${tw`font-semibold text-12 text-[#636363] ml-[5px]`}
+    ${tw`font-semibold text-12 text-gray-2 ml-[5px]`}
   }
 `
 
