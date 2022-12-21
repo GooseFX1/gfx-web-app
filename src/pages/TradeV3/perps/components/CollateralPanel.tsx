@@ -43,7 +43,7 @@ const TABS_WRAPPER = styled.div<{ $isLocked: boolean }>`
 `
 
 const WRAPPER = styled.div`
-  ${tw`p-[15px]`}
+  ${tw`py-2 px-[15px]`}
   .coin-icon {
     ${tw`mr-2.5`}
   }
@@ -66,16 +66,16 @@ const WRAPPER = styled.div`
     ${tw`mr-4`}
   }
   .green {
-    ${tw`bg-[#50BB35]`}
+    ${tw`bg-[#71C25D]`}
   }
   .red {
     ${tw`bg-[#F06565]`}
   }
   .yellow {
-    ${tw`bg-[#F7931A]`}
+    ${tw`bg-[#F0B865]`}
   }
   .gray {
-    ${tw`bg-[#2a2a2a]`}
+    background: ${({ theme }) => theme.bg24};
   }
   .separator {
     ${tw`mb-3.75 border-b-[5px] border-dashed border-[#4a4a4a]`}
@@ -83,7 +83,8 @@ const WRAPPER = styled.div`
 `
 
 const ACCOUNT_ROW = styled.div`
-  ${tw`flex flex-row justify-between items-start mb-6`}
+  ${tw`flex flex-row justify-between items-start mb-3`}
+  line-height: normal;
   .key {
     ${tw`text-tiny font-semibold`}
     color: ${({ theme }) => theme.text20};
@@ -95,22 +96,23 @@ const ACCOUNT_ROW = styled.div`
   .balances {
     ${tw`text-right`}
     > div {
-      ${tw`text-right mb-[5px]`}
+      ${tw`text-right mb-[2px]`}
     }
   }
 `
 
 const FEES = styled.div`
-  ${tw`p-[15px]`}
+  ${tw`py-2 px-5`}
   .tier-info {
-    ${tw`text-center mb-3.75`}
+    ${tw`text-center mb-2`}
+    line-height: normal;
   }
   .spacing {
-    ${tw`mb-[5px]`}
+    ${tw`mb-1`}
   }
   .value {
     ${tw`text-12 font-semibold`}
-    color: ${({ theme }) => theme.text27};
+    color: ${({ theme }) => theme.text29};
   }
   .tier {
     ${tw`text-12 font-semibold mb-[5px]`}
@@ -123,8 +125,7 @@ const FEES = styled.div`
     }
   }
   .disclaimer {
-    ${tw`text-[9px] font-medium mb-4.5`}
-    color: ${({ theme }) => theme.text20};
+    ${tw`text-[9px] font-medium mb-3 text-gray-2`}
   }
 `
 
@@ -189,10 +190,12 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
         <span className="key">SOL/USDC Margin Available</span>
         <span className="value">0.23</span>
       </ACCOUNT_ROW>
-      <ACCOUNT_ROW>
-        <span className="key">SOL/USDC Est. Liq. Price</span>
-        <span className="value">100%</span>
-      </ACCOUNT_ROW>
+      {isSolAccount && (
+        <ACCOUNT_ROW>
+          <span className="key">SOL/USDC Est. Liq. Price</span>
+          <span className="value">100%</span>
+        </ACCOUNT_ROW>
+      )}
     </WRAPPER>
   )
 }
