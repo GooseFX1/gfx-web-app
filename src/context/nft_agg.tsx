@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useWallet } from '@solana/wallet-adapter-react'
-import { createContext, ReactNode, useContext, useState, FC, useEffect, SetStateAction } from 'react'
+import { createContext, ReactNode, useContext, useState, FC, useEffect, SetStateAction, Dispatch } from 'react'
 import { ICreatorData } from '../types/nft_launchpad'
 
 interface INFTAggConfig {
   sortingAsc: boolean
   nftCollections: any[]
   setSortAsc: any
+  setSelectedNFT: Dispatch<SetStateAction<any>>
+  selectedNFT: any
   currentStep?: number
   previousStep?: () => void
   nextStep?: () => void
@@ -20,6 +22,8 @@ interface NFTAgg {
   nftCollections: any[]
   setSortAsc: any
   currentStep?: number
+  setSelectedNFT: Dispatch<SetStateAction<any>>
+  selectedNFT: any
   saveDataForStep?: (d: any) => void
   creatorData?: ICreatorData
   previousStep?: () => void
@@ -31,6 +35,7 @@ const NFTAggContext = createContext<INFTAggConfig>(null)
 export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [sortingAsc, setSortAsc] = useState<boolean>(true)
   const [nftCollections, setCollections] = useState<any[]>([])
+  const [selectedNFT, setSelectedNFT] = useState<number | undefined>()
 
   useEffect(() => {
     const collections = []
@@ -39,7 +44,7 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
         key: i,
         name: 'Some random collection',
         nft_url: 'https://ca.slack-edge.com/T021XPFKRQV-U02R0LLQ8KX-1cd23a0ef132-512',
-        collectionId: i * 5 + 1000,
+        collectionId: i + 1000,
         collectionName: 'DeGods',
         nftPrice: i * 50,
         currency: i < 10 ? 'USDC' : 'SOL'
@@ -53,12 +58,15 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
     sortedData.sort((a, b) => (sortingAsc ? a.nftPrice - b.nftPrice : b.nftPrice - a.nftPrice))
     sortedData.length && setCollections(sortedData)
   }, [sortingAsc])
+
   return (
     <NFTAggContext.Provider
       value={{
         sortingAsc: sortingAsc,
         setSortAsc: setSortAsc,
-        nftCollections: nftCollections
+        nftCollections: nftCollections,
+        selectedNFT: selectedNFT,
+        setSelectedNFT: setSelectedNFT
       }}
     >
       {children}
@@ -72,6 +80,6 @@ export const useNFTAggregator = (): NFTAgg => {
   if (!context) {
     throw new Error('Missing NFT Aggregator context')
   }
-  const { sortingAsc, setSortAsc, nftCollections } = context
-  return { sortingAsc, setSortAsc, nftCollections }
+  const { sortingAsc, setSortAsc, nftCollections, selectedNFT, setSelectedNFT } = context
+  return { sortingAsc, setSortAsc, nftCollections, selectedNFT, setSelectedNFT }
 }

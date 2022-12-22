@@ -137,9 +137,9 @@ export const NFT_COLLECTIONS_GRID = styled.div`
     }
   }
 `
-export const NFT_FILTERS_CONTAINER = styled.div<{ open }>`
-  ${({ open }) => css`
-    ${tw`duration-500 items-center flex w-full h-[70px]`}
+export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
+  ${({ index }) => css`
+    ${tw`duration-500 items-center flex h-[70px]`}
     border-radius: 30px 30px 0 0;
     background: ${({ theme }) => theme.bg23};
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
@@ -149,6 +149,27 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ open }>`
     }
     img {
       ${tw`h-10 w-10 ml-3 cursor-pointer`}
+    }
+    .flexContainer {
+      margin-left: auto;
+      height: fit-content;
+      color: ${({ theme }) => theme.text12};
+      ${tw`mt-10 text-[15px] font-medium`}
+    }
+    .selected {
+      color: ${({ theme }) => theme.text4};
+      ${tw`w-[140px] mb-4 items-center font-semibold  flex justify-between flex-col cursor-pointer`}
+    }
+    .flexItem {
+      ${tw` w-[140px] mb-4 items-center  flex justify-between flex-col cursor-pointer`}
+    }
+    .activeItem {
+      ${tw`h-2  block mt-3 rounded-b-circle font-semibold duration-500 	`}
+      content: '';
+      width: 70%;
+      background: #5855ff;
+      transform: rotate(180deg);
+      margin-left: ${index * 280 + `px`};
     }
   `}
 `
