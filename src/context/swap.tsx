@@ -134,13 +134,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   const getGofxPool = async () => {
-    if (
-      tokenA &&
-      tokenB &&
-      inTokenAmount &&
-      inTokenAmount != 0 &&
-      chosenRoutes[clickNo]?.marketInfos?.[0].amm.label.toLowerCase().includes('goosefx')
-    ) {
+    if (tokenA && tokenB && inTokenAmount && inTokenAmount != 0) {
       const { gofxAmount, impact, preSwapResult } = await preSwapAmount(
         tokenA,
         tokenB,
@@ -194,7 +188,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     amountPool()
-  }, [inTokenAmount, slippage, tokenA, tokenB, clickNo, chosenRoutes])
+    getGofxPool()
+  }, [inTokenAmount, slippage, tokenA, tokenB, clickNo])
 
   useEffect(() => {
     ;(async function () {
@@ -207,7 +202,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       amountPoolGoose()
     }, 5000)
     return () => clearInterval(interval)
-  }, [amountPoolGoose])
+  }, [])
 
   const swapTokens = async (route: any, exchange: any) => {
     if (!tokenA || !tokenB) return
