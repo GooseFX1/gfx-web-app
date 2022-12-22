@@ -237,15 +237,15 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   const setAccountHealthFn = async () => {
-    const res = computeHealth(traderRiskGroup, marketProductGroup)
-    console.log(res)
-    const liquidationP = getLiquidationPrice(res.traderPortfolioValue)
+    // const res = computeHealth(traderRiskGroup, marketProductGroup)
+    // console.log(res)
+    // const liquidationP = getLiquidationPrice(res.traderPortfolioValue)
   }
 
   useEffect(() => {
     if (wallet.connected) {
-      testing()
-      setTraderDetails()
+      if (!marketProductGroup) setTraderDetails()
+      //if (marketProductGroup) testing()
     } else {
       setTraderRiskGroup(null)
       setTraderFeeStateAcct(null)
@@ -254,14 +254,14 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [wallet.connected])
 
   const testing = async () => {
-    //const res = await adminInitialiseMPG(connection, wallet)
-    //console.log(res)
-    //const res = await adminCreateMarket(connection, wallet)
-    //console.log(res)
-    //const res = await updateFeesIx(wallet, connection, {
-    //  feeModelConfigAcct: marketProductGroup.feeModelConfigurationAcct
-    //})
-    //console.log(res)
+    // const res = await adminInitialiseMPG(connection, wallet)
+    // console.log(res)
+    // const res = await adminCreateMarket(connection, wallet)
+    // console.log(res)
+    // const res = await updateFeesIx(wallet, connection, {
+    //   feeModelConfigAcct: marketProductGroup.feeModelConfigurationAcct
+    // })
+    // console.log(res)
   }
   useEffect(() => {
     setMPG(new PublicKey(MPG_ID))
