@@ -178,11 +178,11 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
       </ACCOUNT_ROW>
       <ACCOUNT_ROW>
         <span className="key">Unrealized P&L</span>
-        <span className="value">{Number(collateralInfo.balance).toFixed(2)}</span>
+        <span className="value">-</span>
       </ACCOUNT_ROW>
       <ACCOUNT_ROW>
         <span className="key">Collateral Available</span>
-        <span className="value">0.20</span>
+        <span className="value">{Number(collateralInfo.balance).toFixed(2)}</span>
       </ACCOUNT_ROW>
       <ACCOUNT_ROW>
         <span className="key">SOL/USDC Margin Available</span>
