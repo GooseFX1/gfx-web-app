@@ -57,7 +57,7 @@ const fetchPriceAccounts = async (
 }
 
 const fetchProducts = async (connection: Connection, markets?: string[]): Promise<ProductData[]> => {
-  const { address } = ADDRESSES['mainnet-beta'].programs.pythOracle
+  const { address } = ADDRESSES['devnet'].programs.pythOracle
 
   let allProductAccountKeys: PublicKey[] = []
   let anotherMappingAccount: PublicKey | null = address
