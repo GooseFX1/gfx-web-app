@@ -106,6 +106,7 @@ const NFTGridContainer = (): ReactElement => {
 const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): ReactElement => {
   const { mode } = useDarkMode()
   const { sortingAsc, setSortAsc } = useNFTAggregator()
+
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
       <img onClick={() => setOpen((prev) => !prev)} src={`/img/assets/Aggregator/filtersIcon${mode}.svg`} />
