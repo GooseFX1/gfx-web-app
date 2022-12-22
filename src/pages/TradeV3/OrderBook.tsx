@@ -303,11 +303,10 @@ export const OrderBook: FC = () => {
   useEffect(() => {
     if (orderBook[bids].length > 0) {
       editOrderBookBid()
+    } else setBidOrderBookDisplay([])
+    if (orderBook[asks].length > 0) {
       editOrderBookAsk()
-    } else {
-      setBidOrderBookDisplay([])
-      setAskOrderBookDisplay([])
-    }
+    } else setAskOrderBookDisplay([])
   }, [orderBook, spreadIndex, selectedCrypto.pair])
 
   const slicedOrderBookBids = useMemo(

@@ -32,10 +32,15 @@ export const MINT_DECIMALS = 6
 export const VAULT_MINT = 'Bg2f3jstf2Co4Hkrxsn7evzvRwLbWYmuzaLUPGnjCwAA'
 
 //export const MPG_ID = '7EUw8KH3KHoNNtMrKGswab3gWwM5tBqBbHKZ8eUiSQWP'
-export const MPG_ID = '33dgY7mZmMybc5CKEmnPk9G5T2Njr1oBJTeiG9aVfoRB'
-export const RISK_OUTPUT_REGISTER = '6bsx3FYadj5UaUegNdSFnJ27RrWvHAN9REGq9suNuvDJ'
-export const FEE_OUTPUT_REGISTER = 'GChviJ5JKFzEnnxG2cQvZVTdfGsEEgA4FgcWvVmZFajk'
-export const RISK_MODEL_CONFIG_ACCT = 'F9GZrXtg9Ssk4tDx3CBaWxyVXYin9zYgyJWDrY3FgNAj'
+//export const MPG_ID = '33dgY7mZmMybc5CKEmnPk9G5T2Njr1oBJTeiG9aVfoRB'
+//export const RISK_OUTPUT_REGISTER = '6bsx3FYadj5UaUegNdSFnJ27RrWvHAN9REGq9suNuvDJ'
+// export const FEE_OUTPUT_REGISTER = 'GChviJ5JKFzEnnxG2cQvZVTdfGsEEgA4FgcWvVmZFajk'
+// export const RISK_MODEL_CONFIG_ACCT = 'F9GZrXtg9Ssk4tDx3CBaWxyVXYin9zYgyJWDrY3FgNAj'
+export const MPG_ID = 'Ft1NJVw1oTdk1DhqSE4cwDqpteMcZQeKraq5vy43Ed9b'
+
+export const RISK_OUTPUT_REGISTER = 'CVLyxaB5c6cNScbVBHnB9Wg6ux4916N4PfjVhn7cnthz'
+export const FEE_OUTPUT_REGISTER = '8wca9RPSqBURHo2VU2gDaz5pmnYpj2dXPkS88mVdfoTy'
+export const RISK_MODEL_CONFIG_ACCT = '9uEGTZRoDwZa4N1asf1p1pnF4HEuUtG2BZBVY26feBDM'
 export const MPG_ACCOUNT_SIZE = 143864
 export const OUT_REGISTER_SIZE = 432
 
@@ -79,13 +84,25 @@ export const PERPS_COLLATERAL = [
 //  }
 //]
 
+// export const MPs = [
+//   {
+//     id: '9gVLq3Gg6M1NxhM25rKTS4njhfMx1NoGXX7ktvvHWs4k',
+//     orderbook_id: 'EWi9j1bPPM7KjudL3RsigRAg8uMLd1pPBULM2MvUFNQC',
+//     bids: '4pfS4oeuwWXvmecuE7YypC3N2DcYaoYgVdewRtPHYvZy',
+//     asks: '9jE7rJTUyhgtbf8Vsyyq8kcnJc9NcHigqzoa23fMjzWN',
+//     event_queue: 'Hj7LiqPd8Uqkyvz8VntBjNFEWSV3JmD44zQNwA5eTcfW',
+//     tick_size: 100,
+//     decimals: 7
+//   }
+// ]
+
 export const MPs = [
   {
-    id: '9gVLq3Gg6M1NxhM25rKTS4njhfMx1NoGXX7ktvvHWs4k',
-    orderbook_id: 'EWi9j1bPPM7KjudL3RsigRAg8uMLd1pPBULM2MvUFNQC',
-    bids: '4pfS4oeuwWXvmecuE7YypC3N2DcYaoYgVdewRtPHYvZy',
-    asks: '9jE7rJTUyhgtbf8Vsyyq8kcnJc9NcHigqzoa23fMjzWN',
-    event_queue: 'Hj7LiqPd8Uqkyvz8VntBjNFEWSV3JmD44zQNwA5eTcfW',
+    id: 'FAywzzHNxt7snJwM145uDFhv81SbeXTDSiebQUjx7SMg',
+    orderbook_id: '4soawRtgsNp1VVw2DXUEnFAv6E36mQDkvDHz6qX4NPVe',
+    bids: '91WyAc56BbjQTVrsm4YKA2NcryJ3AozFJsSKC2CAPcbD',
+    asks: '14Ty2G1wDyQsuARePQooQBC53nZ5GCvzoUTWMFkXYG4h',
+    event_queue: '36G7UgfijGecvZEXUiwhmUaivb2a2RRikj446SjP5Y97',
     tick_size: 100,
     decimals: 7
   }

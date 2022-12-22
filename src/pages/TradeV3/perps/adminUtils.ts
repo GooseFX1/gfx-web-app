@@ -246,7 +246,8 @@ export const createAAMarket = async (wallet: any, connection: Connection, caller
   console.log('eventQueue: ', eventQueue.publicKey.toBase58())
   console.log('bids: ', bids.publicKey.toBase58())
   console.log('asks: ', asks.publicKey.toBase58())
-  const eventQueueSize = 42 + 33 + 120 + 34 + 1 + 73
+  // const eventQueueSize = 42 + 33 + 120 + 34 + 1 + 73 //303
+  const eventQueueSize = 42 + 33 + 11400 //100 eq amx size
   instructions.push(
     SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
@@ -375,7 +376,7 @@ export const adminCreateMP = async (
     orderbook: new PublicKey(orderbookId)
   }
   const paramObj = {
-    name: Buffer.from('PROD104'),
+    name: Buffer.from('PROD404'),
     tickSize: new Fractional({
       m: new anchor.BN(100),
       exp: new anchor.BN(4)

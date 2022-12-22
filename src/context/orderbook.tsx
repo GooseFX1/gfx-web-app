@@ -109,7 +109,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
       let price = item.price
       price = BigInt(price) >> BigInt(32)
       price = Number(price) / activeProduct.tick_size
-      return [price, size]
+      return [new anchor.BN(Number(price)), new anchor.BN(Number(size)), price, size]
     })
     const askReturn = asks.map((item) => {
       let size = item.size
@@ -117,7 +117,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
       let price = item.price
       price = BigInt(price) >> BigInt(32)
       price = Number(price) / activeProduct.tick_size
-      return [price, size]
+      return [new anchor.BN(Number(price)), new anchor.BN(Number(size)), price, size]
     })
     return [bidReturn.reverse(), askReturn]
   }
