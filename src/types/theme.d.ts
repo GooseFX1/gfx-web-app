@@ -41,6 +41,9 @@ export interface Colors {
   text28: Color
   text29: Color
   text30: Color
+  text31: Color
+  text32: Color
+  text33: Color
   textWhitePurple: Color
   comingSoon: Color
   blackToGrey: Color
