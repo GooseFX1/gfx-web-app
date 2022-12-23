@@ -235,7 +235,7 @@ export const OrderBook: FC = () => {
   const bid = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
   const ask = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
   const { tradeHistory } = useTradeHistory()
-  const [spreadIndex, setSpreadIndex] = useState<number>(0)
+  const [spreadIndex, setSpreadIndex] = useState<number>(2)
   const lastTradedPrice = {
     price: tradeHistory[0] && tradeHistory[0].price,
     side: tradeHistory[0] && tradeHistory[0].side
@@ -260,6 +260,8 @@ export const OrderBook: FC = () => {
       selectedSpread = SPREADS[spreadIndex],
       buckets = [],
       firstBucket = getBucketValue(completeOrderBookBids[0][0], selectedSpread).value
+    console.log('first bucket: ', firstBucket)
+    console.log('first bid: ', completeOrderBookBids[2][0])
     let lastBucket = firstBucket,
       currentBucketSum = 0
     for (let i = 0; i < 100 && i < completeOrderBookBids.length; i++) {
@@ -270,6 +272,7 @@ export const OrderBook: FC = () => {
         currentBucketSum = 0
         lastBucket = getBucketValue(completeOrderBookBids[i][0], selectedSpread).value
         currentBucketSum += completeOrderBookBids[i][1]
+        if (i === completeOrderBookBids.length - 1) buckets.push([lastBucket, currentBucketSum])
       }
     }
     setBidOrderBookDisplay(buckets)
@@ -366,14 +369,14 @@ export const OrderBook: FC = () => {
           <span>Size ({ask})</span>
         </div>
       </HEADER>
-      <ORDERS $visible={order.isHidden || !slicedOrderBookBids.length}>
-        {!slicedOrderBookBids.length ? (
+      <ORDERS $visible={order.isHidden || (!orderBook.bids.length && !orderBook.asks.length)}>
+        {!orderBook.bids.length && !orderBook.asks.length ? (
           <Loader />
         ) : (
           <ORDERBOOK_CONTAINER>
             <span>
               {
-                orderBook.bids.reduce(
+                slicedOrderBookBids.reduce(
                   (acc: { nodes: ReactNode[]; totalValue: number }, [price, size], index) => {
                     const value = price * size
                     acc.totalValue += value
@@ -396,7 +399,7 @@ export const OrderBook: FC = () => {
             </span>
             <span>
               {
-                orderBook.asks.reduce(
+                slicedOrderBookAsks.reduce(
                   (acc: { nodes: ReactNode[]; totalValue: number }, [price, size], index) => {
                     const value = price * size
                     acc.totalValue += value
