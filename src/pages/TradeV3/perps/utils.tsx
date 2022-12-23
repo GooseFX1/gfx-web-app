@@ -392,7 +392,6 @@ export const getPythPrice = async (connection: Connection, tokenName: string) =>
   try {
     const res = await pyth.fetchProducts(connection, [tokenName])
     const res2 = await pyth.fetchPriceAccounts(connection, res)
-    console.log(res2[0].price)
     return res2[0].price
   } catch (e) {
     return null
