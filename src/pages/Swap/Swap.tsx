@@ -413,7 +413,7 @@ const SwapContent: FC<{
     setRefreshed(true)
     setTimeout(() => {
       setRefreshed(false)
-      amountPool()
+      amountPool?.()
     }, 3000)
   }
 
@@ -1005,7 +1005,7 @@ export const SwapMain: FC = () => {
     inputMint: new PublicKey(tokenA?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     slippage: slippage, // 1% slippage
-    debounceTime: 1500 // debounce ms time before refresh
+    debounceTime: 2000 // debounce ms time before refresh
   })
 
   const marketInfoFormat = (mkt: any): any => ({
