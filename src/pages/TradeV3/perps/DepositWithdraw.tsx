@@ -130,7 +130,7 @@ export const DepositWithdraw: FC<{
   const defualtPerpToken = perpTokenList[0]
   const [percentageIndex, setPercentageindex] = useState(null)
   const [perpToken, setPerpToken] = useState(defualtPerpToken)
-  const { depositFunds } = useTraderConfig()
+  const { depositFunds, withdrawFunds } = useTraderConfig()
   const truncateAddress = (address: string): string => `${address.substr(0, 5)}..${address.substr(-5, 5)}`
   const trunMarketAddress = truncateAddress(perpToken.marketAddress)
   const symbol = perpToken.token
@@ -162,7 +162,7 @@ export const DepositWithdraw: FC<{
   const handleSubmit = async () => {
     try {
       const answer = convertToFractional(amount)
-      const response = await depositFunds(answer)
+      const response = tradeType === 'deposit' ? await depositFunds(answer) : await withdrawFunds(answer)
       if (response && response.txid) setDepositWithdrawModal(false)
     } catch (e) {
       console.log(e)

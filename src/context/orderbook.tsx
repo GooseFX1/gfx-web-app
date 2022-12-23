@@ -74,9 +74,8 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
       size = size / BigInt(10 ** activeProduct.decimals)
       let price = item.price
       price = BigInt(price) >> BigInt(32)
-      price = BigInt(price) / BigInt(activeProduct.tick_size)
       return [
-        Number(price),
+        Number(price) / activeProduct.tick_size,
         Number(size),
         new anchor.BN(Number(price)),
         new anchor.BN(Number(size)),
@@ -89,9 +88,8 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
       size = size / BigInt(10 ** activeProduct.decimals)
       let price = item.price
       price = BigInt(price) >> BigInt(32)
-      price = BigInt(price) / BigInt(activeProduct.tick_size)
       return [
-        Number(price),
+        Number(price) / activeProduct.tick_size,
         Number(size),
         new anchor.BN(Number(price)),
         new anchor.BN(Number(size)),
