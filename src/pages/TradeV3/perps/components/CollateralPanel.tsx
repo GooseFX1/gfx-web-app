@@ -128,7 +128,7 @@ const FEES = styled.div`
 `
 
 const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
-  const { collateralInfo } = useTraderConfig()
+  const { collateralInfo, traderInfo } = useTraderConfig()
   const { mode } = useDarkMode()
 
   const getHealthData = () => {
@@ -166,11 +166,11 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
         <span className="key">{isSolAccount ? 'Balance' : 'Balances'}</span>
         {isSolAccount ? (
           <span className="value">
-            ${(Number(collateralInfo.balance) * Number(collateralInfo.price)).toFixed(2)}
+            ${(Number(traderInfo.collateralAvailable) * Number(collateralInfo.price)).toFixed(2)}
           </span>
         ) : (
           <div className="balances value">
-            <div>${(Number(collateralInfo.balance) * Number(collateralInfo.price)).toFixed(2)}</div>
+            <div>${(Number(traderInfo.collateralAvailable) * Number(collateralInfo.price)).toFixed(2)}</div>
             <div>0.3344 BTC</div>
             <span className="value">1,888.55 USDC</span>
           </div>
@@ -182,7 +182,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
       </ACCOUNT_ROW>
       <ACCOUNT_ROW>
         <span className="key">Collateral Available</span>
-        <span className="value">{Number(collateralInfo.balance).toFixed(2)}</span>
+        <span className="value">{Number(traderInfo.collateralAvailable).toFixed(2)}</span>
       </ACCOUNT_ROW>
       <ACCOUNT_ROW>
         <span className="key">SOL/USDC Margin Available</span>
