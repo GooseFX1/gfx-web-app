@@ -10,7 +10,8 @@ import React, {
   useEffect,
   useState,
   FC,
-  useCallback
+  useCallback,
+  useMemo
 } from 'react'
 import {
   CREATE_RISK_STATE_ACCOUNT_DISCRIMINANT,
@@ -106,15 +107,19 @@ export const AVAILABLE_ORDERS_PERPS = [
   }
 ]
 
+interface ITraderBalances {
+  balance: string
+  productKey: PublicKey
+}
+
 interface ITraderRiskGroup {
   traderRiskGroup: TraderRiskGroup
   traderRiskGroupKey: PublicKey
-  traderFeeStateAcct: PublicKey
-  traderRiskStateAcct: PublicKey
+  collateralAvailable: string
+  balances?: ITraderBalances[]
 }
 
 interface ICollateralInfo {
-  balance: string
   price: string
   name: string
 }
@@ -190,8 +195,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [collateralInfo, setCollateralInfo] = useState<ICollateralInfo>({
     price: '0',
-    name: '',
-    balance: '0'
+    name: ''
   })
 
   const { order, setOrder } = useOrder()
@@ -227,18 +231,18 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     //}
   }
 
-  const setCollateralInfoFn = async () => {
+  const setCollateralPrice = async () => {
     const collateralPrice = await getPythPrice(connection, 'Crypto.USDC/USD')
+    console.log(collateralPrice)
     setCollateralInfo({
-      balance: traderRiskGroup.cashBalance ? displayFractional(traderRiskGroup.cashBalance) : '',
-      price: collateralPrice ? collateralPrice.toString() : '',
+      price: collateralPrice ? collateralPrice.toString() : '1',
       name: 'Crypto.USDC/USD'
     })
   }
 
   const setAccountHealthFn = async () => {
-    // const res = computeHealth(traderRiskGroup, marketProductGroup)
-    // console.log(res)
+    const res = computeHealth(traderRiskGroup, marketProductGroup)
+    console.log(res)
     // const liquidationP = getLiquidationPrice(res.traderPortfolioValue)
   }
 
@@ -266,6 +270,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     setMPG(new PublicKey(MPG_ID))
     setActiveProduct(MPs[0])
+    setCollateralPrice()
   }, [])
 
   useEffect(() => {
@@ -402,15 +407,19 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (traderRiskGroup && marketProductGroup) {
-      setCollateralInfoFn()
       setAccountHealthFn()
     }
   }, [traderRiskGroup, marketProductGroup])
 
+  const collateralAvailable: string = useMemo(
+    () => (traderRiskGroup && traderRiskGroup.cashBalance ? displayFractional(traderRiskGroup.cashBalance) : '0'),
+    [traderRiskGroup]
+  )
+
   return (
     <TraderContext.Provider
       value={{
-        traderInfo: { traderRiskGroup, traderFeeStateAcct, traderRiskStateAcct, traderRiskGroupKey: currentTRG },
+        traderInfo: { traderRiskGroup, traderRiskGroupKey: currentTRG, collateralAvailable },
         marketProductGroup: marketProductGroup,
         marketProductGroupKey: currentMPG,
         newOrder: newOrder,
