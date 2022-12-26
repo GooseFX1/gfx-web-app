@@ -17,6 +17,8 @@ import { swap, preSwapAmount } from '../web3'
 import JSBI from 'jsbi'
 import CoinGecko from 'coingecko-api'
 const CoinGeckoClient = new CoinGecko()
+import { CURRENT_SUPPORTED_TOKEN_LIST } from '../constants'
+
 export type SwapInput = undefined | 'from' | 'to'
 
 interface IPool {
@@ -51,7 +53,9 @@ interface ISwapConfig {
   setTokenB: Dispatch<SetStateAction<ISwapToken | null>>
   swapTokens: (a: any, b: any) => void
   switchTokens: () => void
-  amountPool: () => Promise<void>
+  amountPool?: () => Promise<void>
+  amountPoolJup?: () => Promise<void>
+  amountPoolGfx?: () => Promise<void>
   tokenA: ISwapToken | null
   tokenB: ISwapToken | null
   connection?: any
@@ -94,7 +98,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [tokenA, setTokenA] = useState<ISwapToken | null>(null)
   const [tokenB, setTokenB] = useState<ISwapToken | null>(null)
 
-  const amountPool = async () => {
+  const amountPoolJup = async () => {
     if (tokenA && tokenB) {
       let outTokenAmount = 0
       setLoading(true)
@@ -113,42 +117,41 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         } else {
           notify({ type: 'error', message: 'Fetch Pre-swap Amount Failed', icon: 'error' })
         }
-      } else if (
-        inTokenAmount &&
-        inTokenAmount != 0 &&
-        chosenRoutes[clickNo]?.marketInfos?.[0].amm.label.toLowerCase().includes('goosefx')
-      ) {
-        const { impact, preSwapResult } = await getGofxPool()
-        if (preSwapResult) {
-          outTokenAmount = Number(preSwapResult)
-          setPriceImpact(impact)
-        } else {
-          notify({ type: 'error', message: 'Fetch Pre-swap Amount Failed', icon: 'error' })
-        }
+        setOutTokenAmount(outTokenAmount)
       }
-      setOutTokenAmount(outTokenAmount)
     } else {
       setOutTokenAmount(0)
     }
     setLoading(false)
   }
 
+  const amountPoolGfx = async () => {
+    if (tokenA && tokenB) {
+      let outTokenAmount = 0
+      if (
+        inTokenAmount &&
+        inTokenAmount >= 0 &&
+        CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA?.symbol) &&
+        CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenB?.symbol)
+      ) {
+        const gfxPool = await getGofxPool()
+        if (gfxPool !== undefined) {
+          outTokenAmount = Number(gfxPool.preSwapResult)
+          setPriceImpact(gfxPool.impact)
+          setOutTokenAmount(outTokenAmount)
+        }
+      }
+    }
+  }
+
   const getGofxPool = async () => {
-    if (
-      tokenA &&
-      tokenB &&
-      inTokenAmount &&
-      inTokenAmount != 0 &&
-      chosenRoutes[clickNo]?.marketInfos?.[0].amm.label.toLowerCase().includes('goosefx')
-    ) {
+    if (tokenA && tokenB && inTokenAmount && inTokenAmount != 0) {
       const { gofxAmount, impact, preSwapResult } = await preSwapAmount(
         tokenA,
         tokenB,
         inTokenAmount,
-        wallet,
         connection,
-        network,
-        chosenRoutes[0]
+        network
       )
       if (gofxAmount) {
         setGofxOutAmount(Number(gofxAmount))
@@ -164,19 +167,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     )
 
     if (index < 0 || clickNo !== index) return //allow only to refresh if chosen route is gofx route
-
-    const { gofxAmount, impact, preSwapResult } = await preSwapAmount(
-      tokenA,
-      tokenB,
-      inTokenAmount,
-      wallet,
-      connection,
-      network,
-      chosenRoutes[index]
-    )
-    if (gofxAmount) {
-      setGofxOutAmount(Number(gofxAmount))
-    }
+    const { impact, preSwapResult } = await getGofxPool()
 
     if (preSwapResult) {
       setOutTokenAmount(Number(preSwapResult))
@@ -193,8 +184,12 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [chosenRoutes, inTokenAmount, tokenA, tokenB])
 
   useEffect(() => {
-    amountPool()
+    amountPoolJup()
   }, [inTokenAmount, slippage, tokenA, tokenB, clickNo, chosenRoutes])
+
+  useEffect(() => {
+    amountPoolGfx()
+  }, [inTokenAmount, slippage, tokenA, tokenB, clickNo, loading])
 
   useEffect(() => {
     ;(async function () {
@@ -207,7 +202,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       amountPoolGoose()
     }, 5000)
     return () => clearInterval(interval)
-  }, [amountPoolGoose])
+  }, [])
 
   const swapTokens = async (route: any, exchange: any) => {
     if (!tokenA || !tokenB) return
@@ -308,7 +303,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setFocused,
         setInTokenAmount,
         setOutTokenAmount,
-        amountPool,
+        amountPoolGfx,
+        amountPoolJup,
         setPool,
         setTokenA,
         setTokenB,
@@ -365,7 +361,7 @@ export const useSwap = (): ISwapConfig => {
     clickNo: context.clickNo,
     network: context.network,
     gofxOutAmount: context.gofxOutAmount,
-    amountPool: context.amountPool,
+    amountPool: context.amountPoolJup,
     CoinGeckoClient: context.CoinGeckoClient,
     coingeckoTokens: context.coingeckoTokens
   }
