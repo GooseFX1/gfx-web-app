@@ -65,7 +65,9 @@ const Overlay = ({
         ? Object.values(ENDPOINTS).filter(
             (rpc: RPC) => rpc.name === GFX_RPC_NAMES.MONKE_RPC || rpc.name === GFX_RPC_NAMES.SOLANA_RPC_DEV
           )
-        : Object.values(ENDPOINTS).filter((rpc: RPC) => !unhealthRPCs.includes(rpc.name)),
+        : Object.values(ENDPOINTS)
+            .filter((rpc: RPC) => !unhealthRPCs.includes(rpc.name))
+            .filter((r: RPC) => r.name !== GFX_RPC_NAMES.MONKE_RPC),
     [unhealthRPCs]
   )
 
