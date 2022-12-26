@@ -29,7 +29,7 @@
     "no-new": "warn",
     "no-param-reassign": "error", // change to "error"
     "@typescript-eslint/no-inferrable-types": "warn",
-    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/ban-ts-comment": "error",
     "no-empty": "error", // change to "error"
     "@typescript-eslint/no-var-requires": "error",
     "@typescript-eslint/no-this-alias": "error",

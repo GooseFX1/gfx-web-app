@@ -12,7 +12,7 @@ const SwapVolume: FC = () => {
   const [swapDataGraph, setGraphData] = useState([])
   useEffect(() => {
     ;(async () => {
-      const { data } = await fetchTotalVolumeTrade()
+      const data = await fetchTotalVolumeTrade()
       setData(data)
     })()
   }, [])

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { clusterApiUrl, Connection, Commitment, PublicKey } from '@solana/web3.js'
 import { MetaplexMetadata } from '..'
 import { METADATA_PROGRAM } from '../metaplex'
@@ -23,7 +22,7 @@ export const getParsedNftAccountsByUpdateAuthority = async ({
         {
           memcmp: {
             offset: 1,
-            bytes: updateAuthority
+            bytes: updateAuthority.toString()
           }
         }
       ]

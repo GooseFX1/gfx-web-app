@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, FC } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { saveLiquidtyVolume, getVolumeApr, fetchTotalVolumeTrade, VolumeAprRecord } from '../../api/SSL'
+import { saveLiquidityVolume, getVolumeApr, fetchTotalVolumeTrade, VolumeAprRecord } from '../../api/SSL'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
 //import BN from 'bn.js'
@@ -106,7 +106,7 @@ const CustomTableList: FC = () => {
   const [farmData, setFarmData] = useState<IFarmData[]>([...farmDataContext, ...farmDataSSLContext])
   const [sslVolume, setSslVolume] = useState<number>(0)
   const [stakeVolume, setStakeVolume] = useState<number>(0)
-  const [liquidityObject, setLiquidityObject] = useState({})
+  const [liquidityObject, setLiquidityObject] = useState<Record<string, number>>({})
   const [aprVolumeData, setAprVolumeData] = useState<VolumeAprRecord>()
   const [savedVolume, setSavedVolume] = useState<boolean>(false)
   const [volume7daySum, setVolume7daySum] = useState<number>(0)
@@ -126,15 +126,14 @@ const CustomTableList: FC = () => {
           const tokenMint = ADDRESSES[network].sslPool[SSLTokenNames[i]].address
           tokenMintAddresses.push(tokenMint)
         }
-        //const { data } = await getVolumeApr(
         const data = await getVolumeApr(
           tokenMintAddresses,
           SSLTokenNames,
           SDK_ADDRESS.MAINNET.GFX_CONTROLLER.toString()
         )
         setAprVolumeData(data)
-        const totalVolumeTrade = await fetchTotalVolumeTrade()
-        setTotalVolumeTrade(totalVolumeTrade.data.totalVolumeTrade)
+        const totalVolume = await fetchTotalVolumeTrade()
+        setTotalVolumeTrade(totalVolume.totalVolumeTrade)
       }
     })()
   }, [counter])
@@ -147,8 +146,7 @@ const CustomTableList: FC = () => {
       network === NETWORK_CONSTANTS.MAINNET &&
       savedVolume === false
     ) {
-      saveLiquidtyVolume(sslVolume, stakeVolume, liquidityObject)
-      setSavedVolume(true)
+      saveLiquidityVolume(sslVolume, stakeVolume, liquidityObject).then(() => setSavedVolume(true))
     }
   }, [sslVolume, stakeVolume, liquidityObject])
 
@@ -188,7 +186,7 @@ const CustomTableList: FC = () => {
     const farmCalculationsArr: IFarmData[] = []
     let totalLiquidity = 0
     let volume7dSum = 0
-    const liqObj = {}
+    const liqObj: Record<string, number> = {}
     sslAccountData.forEach(({ data }, i) => {
       const sslData = SSL_LAYOUT.decode(data)
       const mainVaultData = AccountLayout.decode(mainVault[i].data)
@@ -330,8 +328,8 @@ const CustomTableList: FC = () => {
         : undefined
       const earned = liqidity ? (accountData.tokenEarned !== undefined ? accountData.tokenEarned : 0) : undefined
       const dailyRewards = (APR * currentlyStaked) / 365
-      const newFarmDataContext: IFarmData[] = farmDataContext.map((data) => {
-        return data.name === TOKEN_NAMES.GOFX
+      const newFarmDataContext: IFarmData[] = farmDataContext.map((data) =>
+        data.name === TOKEN_NAMES.GOFX
           ? {
               ...data,
               earned: earned,
@@ -342,7 +340,7 @@ const CustomTableList: FC = () => {
               volume: 'not-supported'
             }
           : data
-      })
+      )
       setStakeVolume(getTokenPrice(TOKEN_NAMES.GOFX).current * liqidity)
       return newFarmDataContext
     } catch (err) {

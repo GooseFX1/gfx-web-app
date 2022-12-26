@@ -1,6 +1,6 @@
-import React, { FC } from 'react'
+import React, { FC, ReactElement } from 'react'
 
-import { match } from 'ts-pattern'
+import { match, Pattern } from 'ts-pattern'
 import styled from 'styled-components'
 import { Tooltip } from '../../components/Tooltip'
 import { moneyFormatter, moneyFormatterWithComma } from '../../utils/math'
@@ -189,12 +189,12 @@ value of a pool’s assets (excluding trading fees) to their value if they had n
 const TotalEarnedTooltip = 'Total amount earned on your deposit.'
 const LiquidityTooltip = "Total value of funds in this farm's liquidity pool."
 
-const displayApr = (data: ConditionalData<number>) => {
-  return match(data)
-    .with('not-supported', () => '-')
+const displayApr = (data: ConditionalData<number>): ReactElement<any, any> =>
+  match(data)
+    .with('not-supported', () => <div>'-'</div>)
     .with('loading', () => <Loader />)
-    .otherwise(() => (value) => `${nFormatter(parseFloat(value))}%`)
-}
+    .with(Pattern.number, (value) => <text>{nFormatter(value) + '%'}</text>)
+    .exhaustive()
 
 // TEMP_DEP_DISABLE const DepositButton = () => <DEPOSIT_BTN>Deposit</DEPOSIT_BTN>
 
