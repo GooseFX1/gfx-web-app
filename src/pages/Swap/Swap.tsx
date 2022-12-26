@@ -62,7 +62,7 @@ const WRAPPER = styled.div`
   }
 `
 
-const RefreshAlert = styled.div<{ $active: boolean; $isMobile: boolean }>`
+const RefreshAlert = styled.div<{ $active: boolean; $isMobile: boolean; $navCollapsed: boolean }>`
   ${tw`flex w-full absolute left-0 top-0 justify-center p-2 items-center 
     font-medium text-center text-base sm:text-sm`}
   color: ${({ theme }) => theme.tabNameColor};
@@ -76,11 +76,11 @@ const RefreshAlert = styled.div<{ $active: boolean; $isMobile: boolean }>`
       opacity: 0;
     }
     20% {
-      top: ${({ $isMobile }) => ($isMobile ? '88px' : '125px')};
+      top: ${({ $isMobile, $navCollapsed }) => ($isMobile ? '88px' : $navCollapsed ? '45px' : '125px')};
       opacity: 1;
     }
     80% {
-      top: ${({ $isMobile }) => ($isMobile ? '88px' : '125px')};
+      top: ${({ $isMobile, $navCollapsed }) => ($isMobile ? '88px' : $navCollapsed ? '45px' : '125px')};
       opacity: 1;
     }
     100% {
@@ -222,7 +222,7 @@ const SWAP_ROUTES = styled.div<{ less: boolean }>`
   }
 
   .action {
-    ${tw`absolute right-0 bottom-0 sm:!text-base cursor-pointer text-lg font-semibold`}
+    ${tw`absolute right-0 bottom-0 sm:!text-base cursor-pointer text-lg font-semibold cursor-pointer`}
     text-decoration: underline;
 
     @media (max-width: 500px) {
@@ -1107,8 +1107,12 @@ export const SwapMain: FC = () => {
     setRoutes(shortRoutes)
   }
 
-  const RefreshedAnimation: FC<{ active: boolean; isMobile: boolean }> = ({ active, isMobile }) => (
-    <RefreshAlert $active={active} $isMobile={isMobile}>
+  const RefreshedAnimation: FC<{ active: boolean; isMobile: boolean; navCollapsed: boolean }> = ({
+    active,
+    isMobile,
+    navCollapsed
+  }) => (
+    <RefreshAlert $active={active} $isMobile={isMobile} $navCollapsed={navCollapsed}>
       <div>
         Last updated: {checkMobile() && <br />} {new Date().toUTCString()}
       </div>
@@ -1118,7 +1122,7 @@ export const SwapMain: FC = () => {
   if (checkMobile()) {
     return (
       <WRAPPER>
-        <RefreshedAnimation active={refreshed} isMobile={true} />
+        <RefreshedAnimation active={refreshed} isMobile={true} navCollapsed={isCollapsed} />
         <INNERWRAPPER $desktop={false} $navCollapsed={false}>
           <SwapContent
             exchange={exchange}
@@ -1135,7 +1139,7 @@ export const SwapMain: FC = () => {
   } else {
     return (
       <WRAPPER>
-        <RefreshedAnimation active={refreshed} isMobile={false} />
+        <RefreshedAnimation active={refreshed} isMobile={false} navCollapsed={isCollapsed} />
         <INNERWRAPPER $desktop={desktop && allowed} $navCollapsed={isCollapsed}>
           {desktop && allowed && <TokenContent />}
           <SwapContent

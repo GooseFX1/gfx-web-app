@@ -134,10 +134,10 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA?.symbol) &&
         CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenB?.symbol)
       ) {
-        const { impact, preSwapResult } = await getGofxPool()
-        if (preSwapResult) {
-          outTokenAmount = Number(preSwapResult)
-          setPriceImpact(impact)
+        const gfxPool = await getGofxPool()
+        if (gfxPool !== undefined) {
+          outTokenAmount = Number(gfxPool.preSwapResult)
+          setPriceImpact(gfxPool.impact)
           setOutTokenAmount(outTokenAmount)
         }
       }
