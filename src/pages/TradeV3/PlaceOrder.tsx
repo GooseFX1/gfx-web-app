@@ -21,12 +21,14 @@ import { Checkbox } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ArrowDropdown, Tooltip } from '../../components'
 import { useTraderConfig } from '../../context/trader_risk_group'
+import { displayFractional } from './perps/utils'
 
 enum ButtonState {
   Connect = 0,
   CanPlaceOrder = 1,
   NullAmount = 2,
-  BalanceExceeded = 3
+  BalanceExceeded = 3,
+  CreateAccount = 4
 }
 
 const WRAPPER = styled.div`
@@ -257,7 +259,7 @@ export const PlaceOrder: FC = () => {
   const { getUIAmount, balances } = useAccounts()
   const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isSpot } = useCrypto()
   const { order, setOrder, setFocused, placeOrder } = useOrder()
-  const { newOrder } = useTraderConfig()
+  const { newOrder, traderInfo } = useTraderConfig()
   const [selectedTotal, setSelectedTotal] = useState<number>(null)
   const [arrowRotation, setArrowRotation] = useState(false)
   const [dropdownVisible, setDropdownVisible] = useState(false)
@@ -277,17 +279,43 @@ export const PlaceOrder: FC = () => {
   )
   const userBalance = useMemo(() => (tokenInfo ? getUIAmount(tokenInfo.address) : 0), [tokenInfo, getUIAmount])
 
+  const perpsBidBalance: number = useMemo(() => {
+    if (!traderInfo || !traderInfo.balances || !traderInfo.traderRiskGroup) return 0
+    const balanceBid = Number(displayFractional(traderInfo?.traderRiskGroup.cashBalance))
+    return balanceBid
+  }, [traderInfo])
+
+  const perpsAskBalance: number = useMemo(() => {
+    if (!traderInfo || !traderInfo.balances || !traderInfo.balances[0] || !traderInfo.traderRiskGroup) return 0
+    const balanceAsk = Math.abs(Number(traderInfo.balances[0].balance))
+    return balanceAsk
+  }, [traderInfo])
+
   const buttonState = useMemo(() => {
-    if (!connected) return ButtonState.Connect
-    if ((order.side === 'buy' && order.total > userBalance) || (order.side === 'sell' && order.size > userBalance))
-      return ButtonState.BalanceExceeded
-    if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
-    return ButtonState.CanPlaceOrder
-  }, [connected, selectedCrypto.pair, order])
+    if (isSpot) {
+      if (!connected) return ButtonState.Connect
+      if (
+        (order.side === 'buy' && order.total > userBalance) ||
+        (order.side === 'sell' && order.size > userBalance)
+      )
+        return ButtonState.BalanceExceeded
+      if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
+      return ButtonState.CanPlaceOrder
+    } else {
+      if (!connected) return ButtonState.Connect
+      if (!traderInfo?.traderRiskGroupKey) return ButtonState.CreateAccount
+      if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
+      const balanceBid = Number(displayFractional(traderInfo?.traderRiskGroup.cashBalance))
+      if (order.side === 'buy' && order.total > perpsBidBalance) return ButtonState.BalanceExceeded
+      if (order.side === 'sell' && order.size > perpsAskBalance) return ButtonState.BalanceExceeded
+      return ButtonState.CanPlaceOrder
+    }
+  }, [connected, selectedCrypto.pair, order, isSpot, traderInfo])
 
   const buttonText = useMemo(() => {
     if (buttonState === ButtonState.BalanceExceeded) return 'Insufficient Balance'
     else if (buttonState === ButtonState.Connect) return 'Connect Wallet'
+    else if (buttonState === ButtonState.CreateAccount) return 'Create Account!'
     if (order.side === 'buy') return 'BUY ' + symbol
     else return 'SELL ' + symbol
   }, [buttonState, order.side])
@@ -322,20 +350,41 @@ export const PlaceOrder: FC = () => {
   }
 
   const handleClick = (value: number) => {
-    const finalValue = removeFloatingPointError(value * userBalance)
-    if (finalValue) {
-      setSelectedTotal(value)
-      if (order.side === 'buy') {
+    if (isSpot) {
+      const finalValue = removeFloatingPointError(value * userBalance)
+      if (finalValue) {
+        setSelectedTotal(value)
+        if (order.side === 'buy') {
+          setFocused('total')
+          setOrder((prev) => ({ ...prev, total: finalValue }))
+        } else {
+          setFocused('size')
+          setOrder((prev) => ({ ...prev, size: finalValue }))
+        }
+      } else if (!finalValue && value === 0) {
+        setSelectedTotal(value)
         setFocused('total')
-        setOrder((prev) => ({ ...prev, total: finalValue }))
-      } else {
-        setFocused('size')
-        setOrder((prev) => ({ ...prev, size: finalValue }))
+        setOrder((prev) => ({ ...prev, total: 0 }))
       }
-    } else if (!finalValue && value === 0) {
-      setSelectedTotal(value)
-      setFocused('total')
-      setOrder((prev) => ({ ...prev, total: 0 }))
+    } else {
+      const finalValue =
+        order.side === 'buy'
+          ? removeFloatingPointError(value * +perpsBidBalance)
+          : removeFloatingPointError(value * +perpsAskBalance)
+      if (finalValue) {
+        setSelectedTotal(value)
+        if (order.side === 'buy') {
+          setFocused('total')
+          setOrder((prev) => ({ ...prev, total: finalValue }))
+        } else {
+          setFocused('size')
+          setOrder((prev) => ({ ...prev, size: finalValue }))
+        }
+      } else if (!finalValue && value === 0) {
+        setSelectedTotal(value)
+        setFocused('total')
+        setOrder((prev) => ({ ...prev, total: 0 }))
+      }
     }
   }
 
