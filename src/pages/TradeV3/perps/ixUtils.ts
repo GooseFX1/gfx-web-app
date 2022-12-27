@@ -162,11 +162,13 @@ export const depositFundsIx = async (
         message: 'Deposit of ' + displayFractional(depositFundsParams.quantity) + ' successful'
       })
     }
+    return response
   } catch (e) {
     notify({
       message: 'Deposit of ' + displayFractional(depositFundsParams.quantity) + ' failed',
       type: 'error'
     })
+    return e
   }
 }
 

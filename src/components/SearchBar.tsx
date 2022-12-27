@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import styled from 'styled-components'
 import { SpaceBetweenDiv } from '../styles'
 import tw from 'twin.macro'
+import { useDarkMode } from '../context'
 
 const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)`
 ${tw`sm:w-3/4 sm:!h-[45px]`}
@@ -48,13 +49,16 @@ ${tw`sm:w-3/4 sm:!h-[45px]`}
   }
 `
 
-export const SearchBar: FC<any> = ({ placeholder, setSearchFilter, filter, ...rest }) => (
-  <SEARCH_BAR_WRAPPER {...rest}>
-    <input
-      placeholder={placeholder || 'Search by nft name'}
-      value={filter}
-      onChange={(e) => setSearchFilter(e.target.value)}
-    />
-    <img style={{ height: '20px', width: '20px' }} src={`/img/assets/search.svg`} />
-  </SEARCH_BAR_WRAPPER>
-)
+export const SearchBar: FC<any> = ({ placeholder, setSearchFilter, filter, ...rest }) => {
+  const { mode } = useDarkMode()
+  return (
+    <SEARCH_BAR_WRAPPER {...rest}>
+      <input
+        placeholder={placeholder || 'Search by nft name'}
+        value={filter}
+        onChange={(e) => setSearchFilter(e.target.value)}
+      />
+      <img style={{ height: '20px', width: '20px' }} src={`/img/assets/search_${mode}.svg`} />
+    </SEARCH_BAR_WRAPPER>
+  )
+}
