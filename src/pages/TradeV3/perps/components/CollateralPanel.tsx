@@ -137,7 +137,6 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
   const currentMarketBalance: string = useMemo(() => {
     let balance = '0'
     traderInfo?.balances?.map((item) => {
-      console.log(item)
       if (item.productKey.toBase58() === activeProduct.id) {
         balance = item.balance
       }
