@@ -158,8 +158,9 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const connection = useMemo(
     () =>
       new Connection(
+        'https://api.devnet.solana.com',
         // eslint-disable-next-line max-len
-        'https://monke9e00d723218b4f1bbb2e80ecb49f360a.xyz2.hyperplane.dev/',
+        //'https://monke9e00d723218b4f1bbb2e80ecb49f360a.xyz2.hyperplane.dev',
         'confirmed'
       ),
     [endpoint]
