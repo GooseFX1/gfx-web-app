@@ -119,13 +119,18 @@ interface ICollateralInfo {
   name: string
 }
 
+interface DepositIx {
+  txid: string
+  slot: number
+}
+
 interface IPerpsInfo {
   marketProductGroup: MarketProductGroup
   traderInfo: ITraderRiskGroup
   marketProductGroupKey: PublicKey
   newOrder: () => Promise<void>
   cancelOrder: (orderId: string) => Promise<void>
-  depositFunds: (amount: Fractional) => Promise<void>
+  depositFunds: (amount: Fractional) => Promise<DepositIx | void>
   withdrawFunds: (amount: Fractional) => Promise<void>
   activeProduct: any
   order: IOrder
@@ -368,6 +373,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         ? await depositFundsIx(depositFundsAccounts, { quantity: amount }, wallet, connection)
         : await initTrgDepositIx(depositFundsAccounts, { quantity: amount }, wallet, connection, newTrg)
       refreshTraderRiskGroup()
+      return response
     },
     [traderRiskGroup, marketProductGroup]
   )

@@ -13,7 +13,6 @@ const TABS_WRAPPER = styled.div<{ $isLocked: boolean }>`
   ${tw`h-full w-full relative`}
   filter: blur(${({ $wallet }) => ($wallet ? 0 : 3)}px) !important;
   border-right: ${({ theme }) => '1px solid ' + theme.tokenBorder};
-  border-left: ${({ theme }) => '1px solid ' + theme.tokenBorder};
   .ant-tabs-nav {
     ${tw`mb-0`}
   }
@@ -86,12 +85,11 @@ const ACCOUNT_ROW = styled.div`
   ${tw`flex flex-row justify-between items-start mb-3`}
   line-height: normal;
   .key {
-    ${tw`text-tiny font-semibold`}
-    color: ${({ theme }) => theme.text20};
+    ${tw`text-tiny font-semibold text-gray-2`}
   }
   .value {
     ${tw`text-tiny font-semibold`}
-    color: ${({ theme }) => theme.text11};
+    color: ${({ theme }) => theme.text28};
   }
   .balances {
     ${tw`text-right`}

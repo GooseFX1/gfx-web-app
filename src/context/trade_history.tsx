@@ -175,7 +175,6 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
 
   useEffect(() => {
     setOpenOrders([])
-    setOrders([])
     setTradeHistory([])
   }, [selectedCrypto])
 
