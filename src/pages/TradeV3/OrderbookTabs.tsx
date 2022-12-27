@@ -28,16 +28,17 @@ const HEADER_WRAPPER = styled.div`
     //antd classes
     .ant-radio-button-wrapper-disabled {
       cursor: default;
-      background-color: #131313 !important ;
+      background: ${({ theme }) => theme.bg2} !important;
+      color: ${({ theme }) => theme.text1} !important;
     }
     .ant-radio-button-wrapper-checked:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper {
       background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%) !important;
       position: relative;
-      color: white !important;
+      color: ${({ theme }) => theme.text1} !important;
       .ant-radio-button.ant-radio-button-checked {
         height: calc(100% - 2px);
         width: calc(100% - 2px);
-        background-color: #131313;
+        background: ${({ theme }) => theme.bg2};
         top: 1px;
         left: 1px;
 
@@ -46,6 +47,7 @@ const HEADER_WRAPPER = styled.div`
     }
     .individualTabs {
       ${tw`w-5/12 text-center h-7 flex justify-center items-center`}
+      color: ${({ theme }) => theme.text1} !important;
     }
     .activeTab {
       border: none;

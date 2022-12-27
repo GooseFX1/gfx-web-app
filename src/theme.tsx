@@ -118,6 +118,7 @@ export function colors(mode: string): Colors {
     bg22: mode === 'dark' ? '#131313' : '#cacaca',
     bg23: mode === 'dark' ? '#1c1c1c' : '#cacaca',
     bg24: mode === 'dark' ? '#2A2A2A' : '#cacaca',
+    bg25: mode === 'dark' ? '#1c1c1c' : '#eeeeee',
     tableHeader: mode === 'dark' ? '#1c1c1c' : '#636363',
     tokenBorder: mode === 'dark' ? '#3c3c3c' : '#cacaca',
     borderBottom: mode === 'dark' ? '#555555' : '#cacaca',

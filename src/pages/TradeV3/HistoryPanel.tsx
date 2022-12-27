@@ -1,9 +1,17 @@
 /* eslint-disable */
 import { Button } from 'antd'
 import React, { useState, FC, useMemo } from 'react'
-import { useAccounts, useCrypto, useTokenRegistry, useTradeHistory, useOrderBook } from '../../context'
+import {
+  useAccounts,
+  useCrypto,
+  useTokenRegistry,
+  useTradeHistory,
+  useOrderBook,
+  useDarkMode
+} from '../../context'
 import tw, { styled } from 'twin.macro'
 import { useTraderConfig } from '../../context/trader_risk_group'
+import { SettlePanel } from '../TradeV3/SettlePanel'
 
 const tabs = ['Positions', 'Open Orders', 'Trade History', 'SOL Unsettled P&L']
 
@@ -26,18 +34,26 @@ const columns = [
     'Trade History': ['Time', 'Size', 'Filled', 'Price', 'USD Value']
   },
   {
-    'SOL Unsettled P&L': ['Time', 'Size', 'Filled', 'Price', 'USD Value']
+    'SOL Unsettled P&L': ['Market', 'Size', 'Amount USDC']
   }
 ]
 const WRAPPER = styled.div`
   ${tw`h-full w-full`}
+  .no-positions-found {
+    padding-top: 40px;
+    text-align: center;
+
+    > div {
+      ${tw`mt-3.75 text-gray-2 text-tiny font-semibold`}
+    }
 `
 
 const HEADER = styled.div`
   ${tw`w-full`}
-  background-color: ${({ theme }) => theme.bg15};
+  background-color: ${({ theme }) => theme.bg2};
   .header-wrapper {
     ${tw`flex justify-around`}
+    background-color: ${({ theme }) => theme.bg2};
     .open-order-header {
       ${tw`flex flex-row`}
       .count {
@@ -47,22 +63,24 @@ const HEADER = styled.div`
       }
     }
     .gradient-border {
-      ${tw`w-1/4 h-[31px] p-px`}
+      ${tw`w-1/4 h-[31px] p-0.5`}
       border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
       .tab {
         ${tw`cursor-pointer h-full w-full flex flex-row items-center 
-        justify-center font-semibold cursor-pointer text-12`}
-        background-color: ${({ theme }) => theme.bg15};
-        color: ${({ theme }) => theme.text20};
+        justify-center font-semibold cursor-pointer text-12 text-gray-2`}
+        background-color: ${({ theme }) => theme.bg2};
       }
       .tab.active {
-        ${tw`text-white`}
+        color: ${({ theme }) => theme.text28};
+        background-image: linear-gradient(to right, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
+      }
+      .white-background {
+        ${tw`bg-white h-full w-full`}
       }
     }
     .gradient-border.active {
-      background-image: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
-      border-right: none;
-      border-left: none;
+      background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
+      border: none;
     }
   }
 
@@ -73,8 +91,7 @@ const HEADER = styled.div`
     border-left: ${({ theme }) => '1px solid ' + theme.tokenBorder};
 
     span {
-      ${tw`text-12 font-semibold w-[13%] inline-block`}
-      color: ${({ theme }) => theme.text20};
+      ${tw`text-12 font-semibold w-[13%] inline-block text-gray-2`}
     }
   }
   .headers.Open-Orders > span {
@@ -84,19 +101,20 @@ const HEADER = styled.div`
     ${tw`w-1/5`}
   }
   .headers.SOL-Unsettled-P-L > span {
-    ${tw`w-1/5`}
+    ${tw`w-1/3`}
   }
 `
 const POSITIONS = styled.div`
   ${tw`w-full`}
   height: calc(100% - 80px);
+  border-right: ${({ theme }) => '1px solid ' + theme.tokenBorder};
+  }
 
-  div {
-    ${tw`w-full h-10 p-0 flex flex-row justify-between items-center text-14 font-medium`}
-    color: ${({ theme }) => theme.text24};
+  .positions {
+    ${tw`w-full h-10 p-0 flex flex-row justify-between items-center text-14 font-semibold`}
+    color: ${({ theme }) => theme.text28};
     span {
       ${tw`w-[12.5%]`}
-      width: 12.5%;
     }
     span {
       ${tw`text-center`}
@@ -105,16 +123,15 @@ const POSITIONS = styled.div`
       ${tw`pl-3 text-left`}
     }
     button {
-      ${tw`h-[30px] w-[12.5%] rounded-[12px] text-12 font-semibold border-none m-[5px]`}
-      background-image: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
-      color: ${({ theme }) => theme.text1};
+      ${tw`h-[30px] w-[12.5%] rounded-[12px] text-12 font-semibold border-none m-[5px] text-white`}
+      background linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
       outline: none;
     }
     .long {
-      ${tw`text-[#50d71e]`}
+      ${tw`text-[#71c25d] text-12`}
     }
     .short {
-      ${tw`text-[#f06565]`}
+      ${tw`text-[#f06565] text-12`}
     }
   }
 `
@@ -148,34 +165,14 @@ const OPEN_ORDER = styled.div`
   }
 `
 
-const NO_ORDER = styled.div`
-  ${tw`flex justify-center mt-[50px]`}
-`
-
 const OpenOrdersComponent: FC = () => {
   const { formatPair, isSpot } = useCrypto()
   const { cancelOrder, loading, orders } = useTradeHistory()
   const { perpsOpenOrders } = useOrderBook()
   const { cancelOrder: perpsCancelOrder } = useTraderConfig()
+  const { mode } = useDarkMode()
 
-  //DELETE:
-  const abc = [
-    {
-      order: {
-        side: 'buy',
-        size: 10.2,
-        price: '14'
-      }
-    },
-    {
-      order: {
-        side: 'sell',
-        size: 10.2,
-        price: '14'
-      }
-    }
-  ]
-  const openOrderUI = isSpot ? abc : perpsOpenOrders
+  const openOrderUI = isSpot ? orders : perpsOpenOrders
 
   const cancelOrderFn = (orderId: string) => {
     perpsCancelOrder(orderId)
@@ -184,53 +181,47 @@ const OpenOrdersComponent: FC = () => {
   const content = useMemo(
     () => (
       <OPEN_ORDER>
-        {openOrderUI.map((order, index) => (
-          <div key={index}>
-            <span className={order.order.side}>{order.order.side}</span>
-            <span>{order.order.size}</span>
-            <span>${order.order.price}</span>
-            <span>{(order.order.size * order.order.price).toFixed(2)}</span>
-            <span>
-              <Button loading={loading} onClick={() => cancelOrderFn(order.order.orderId)}>
-                Cancel
-              </Button>
-            </span>
-          </div>
-        ))}
+        {openOrderUI &&
+          openOrderUI.length > 0 &&
+          openOrderUI.map((order, index) => (
+            <div key={index}>
+              <span className={order.order.side}>{order.order.side}</span>
+              <span>{order.order.size}</span>
+              <span>${order.order.price}</span>
+              <span>{(order.order.size * order.order.price).toFixed(2)}</span>
+              <span>
+                <Button loading={loading} onClick={() => cancelOrderFn(order.order.orderId)}>
+                  Cancel
+                </Button>
+              </span>
+            </div>
+          ))}
       </OPEN_ORDER>
     ),
     [cancelOrder, formatPair, loading, orders, perpsOpenOrders, isSpot]
   )
-  return <>{!abc.length ? <NO_ORDER>No open orders</NO_ORDER> : content}</>
+  return (
+    <>
+      {!openOrderUI.length ? (
+        <div className="no-positions-found">
+          <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-positions-found" />
+          <div>No Open Orders</div>
+        </div>
+      ) : (
+        content
+      )}
+    </>
+  )
 }
 
 export const HistoryPanel: FC = () => {
   const [activeTab, setActiveTab] = useState(0)
   const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto, isSpot } = useCrypto()
   const { openOrders } = useTradeHistory()
-  const { orders } = useTradeHistory()
-
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { getUIAmount } = useAccounts()
   const { perpsOpenOrders } = useOrderBook()
-  // const symbolBid = useMemo(
-  //   () => getBidSymbolFromPair(selectedCrypto.pair),
-  //   [getBidSymbolFromPair, selectedCrypto.pair]
-  // )
-  // const symbolAsk = useMemo(
-  //   () => getAskSymbolFromPair(selectedCrypto.pair),
-  //   [getAskSymbolFromPair, selectedCrypto.pair]
-  // )
-
-  // const assetIconBid = useMemo(
-  //   () => `/img/${selectedCrypto.type}/${selectedCrypto.type === 'synth' ? `g${symbolBid}` : symbolBid}.svg`,
-  //   [symbolBid, selectedCrypto.type]
-  // )
-
-  // const assetIconAsk = useMemo(
-  //   () => `/img/${selectedCrypto.type}/${selectedCrypto.type === 'synth' ? `g${symbolAsk}` : symbolAsk}.svg`,
-  //   [symbolAsk, selectedCrypto.type]
-  // )
+  const { mode } = useDarkMode()
 
   const tokenInfoAsk = useMemo(
     () => getTokenInfoFromSymbol(getAskSymbolFromPair(selectedCrypto.pair)),
@@ -239,15 +230,6 @@ export const HistoryPanel: FC = () => {
   const userAskBalance = useMemo(
     () => (tokenInfoAsk ? getUIAmount(tokenInfoAsk.address) : 0),
     [tokenInfoAsk, getUIAmount]
-  )
-
-  const tokenInfoBid = useMemo(
-    () => getTokenInfoFromSymbol(getBidSymbolFromPair(selectedCrypto.pair)),
-    [selectedCrypto.pair]
-  )
-  const userBidBalance = useMemo(
-    () => (tokenInfoBid ? getUIAmount(tokenInfoBid.address) : 0),
-    [tokenInfoBid, getUIAmount]
   )
 
   const addNumbers = (arg1, arg2, arg3) => {
@@ -276,17 +258,19 @@ export const HistoryPanel: FC = () => {
           <div className="header-wrapper">
             {tabs.map((item, index) => (
               <div className={index === activeTab ? 'active gradient-border' : 'gradient-border'} key={index}>
-                <div className={index === activeTab ? 'active tab' : 'tab'} onClick={() => setActiveTab(index)}>
-                  {index === 1 ? (
-                    <div className="open-order-header">
-                      <div>{item}</div>
-                      {!isSpot && (
-                        <div className="count">{perpsOpenOrders.length > 0 ? perpsOpenOrders.length : 0}</div>
-                      )}
-                    </div>
-                  ) : (
-                    item
-                  )}
+                <div className="white-background">
+                  <div className={index === activeTab ? 'active tab' : 'tab'} onClick={() => setActiveTab(index)}>
+                    {index === 1 ? (
+                      <div className="open-order-header">
+                        <div>{item}</div>
+                        {!isSpot && (
+                          <div className="count">{perpsOpenOrders.length > 0 ? perpsOpenOrders.length : 0}</div>
+                        )}
+                      </div>
+                    ) : (
+                      item
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
@@ -300,20 +284,29 @@ export const HistoryPanel: FC = () => {
         {activeTab === 0 ? (
           <>
             <POSITIONS>
-              <div>
-                <span className="long">Long</span>
-                <span>{addNumbers(baseBalance, baseAvailable, userAskBalance)}</span>
-                <span>{baseBalance ? baseBalance : 0}</span>
-                <span>{baseAvailable ? baseAvailable : 0}</span>
-                <span>{userAskBalance > 0 ? userAskBalance.toFixed(2) : userAskBalance}</span>
-                <span>{userAskBalance > 0 ? userAskBalance.toFixed(2) : userAskBalance}</span>
-                <span>0</span>
-                <button>Close Position</button>
-              </div>
+              {baseBalance ? (
+                <div className="positions">
+                  <span className="long">Long</span>
+                  <span>{addNumbers(baseBalance, baseAvailable, userAskBalance)}</span>
+                  <span>{baseBalance ? baseBalance : 0}</span>
+                  <span>{baseAvailable ? baseAvailable : 0}</span>
+                  <span>{userAskBalance > 0 ? userAskBalance.toFixed(2) : userAskBalance}</span>
+                  <span>{userAskBalance > 0 ? userAskBalance.toFixed(2) : userAskBalance}</span>
+                  <span>0</span>
+                  <button>Close Position</button>
+                </div>
+              ) : (
+                <div className="no-positions-found">
+                  <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-positions-found" />
+                  <div>No Positions Found</div>
+                </div>
+              )}
             </POSITIONS>
           </>
         ) : activeTab === 1 ? (
           <OpenOrdersComponent />
+        ) : activeTab === 3 ? (
+          <SettlePanel />
         ) : null}
       </WRAPPER>
     </>

@@ -8,11 +8,11 @@ import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 
 const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[356px] !w-[628px] rounded-half`}
-  background-color: ${({ theme }) => theme.bg20};
+  background-color: ${({ theme }) => theme.bg25};
 
   .ant-modal-header {
     ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
-    background-color: ${({ theme }) => theme.bg20};
+    background-color: ${({ theme }) => theme.bg25};
   }
   .ant-modal-content {
     ${tw`shadow-none`}
@@ -122,18 +122,35 @@ const HEADER = styled.div`
   ${tw`flex items-center`}
 
   .cta {
-    ${tw`rounded-bigger w-[120px] h-[30px] flex flex-row items-center 
-    justify-center text-tiny font-semibold cursor-pointer`}
-    background-color: ${({ theme }) => theme.bg21};
-    color: ${({ theme }) => theme.text20};
+    ${tw`rounded-bigger w-[120px] h-[30px] mr-[13px] cursor-pointer`}
+
+    .btn {
+      ${tw`flex items-center justify-center text-tiny font-semibold w-full h-full`}
+      color: ${({ theme }) => theme.text30};
+    }
+
+    .gradient-bg {
+      ${tw`h-full w-full rounded-bigger`}
+      background-image: linear-gradient(to right, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
+    }
   }
-  .cta.active-text {
-    color: ${({ theme }) => theme.text1};
+
+  .white-background {
+    ${tw`h-full w-full rounded-bigger`}
   }
 
   .active {
-    ${tw`p-px rounded-bigger cursor-pointer`}
+    ${tw`p-0.5 cursor-auto`}
     background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
+
+    .btn {
+      background-color: ${({ theme }) => theme.bg25};
+      color: ${({ theme }) => theme.text28};
+    }
+
+    .white-background {
+      background-color: white;
+    }
   }
 
   img {
@@ -148,11 +165,15 @@ const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: st
   tradeType
 }) => (
   <HEADER>
-    <div className={tradeType === 'deposit' ? 'active' : ''} onClick={() => setTradeType('deposit')}>
-      <div className={tradeType === 'deposit' ? 'active-text cta' : 'cta'}>Deposit</div>
+    <div className={tradeType === 'deposit' ? 'active cta' : 'cta'} onClick={() => setTradeType('deposit')}>
+      <div className="white-background">
+        <div className={tradeType === 'deposit' ? 'gradient-bg btn' : 'btn'}>Deposit</div>
+      </div>
     </div>
-    <div className={tradeType === 'withdraw' ? 'active' : ''} onClick={() => setTradeType('withdraw')}>
-      <div className={tradeType === 'withdraw' ? 'active-text cta' : 'cta'}>Withdraw</div>
+    <div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('withdraw')}>
+      <div className="white-background">
+        <div className={tradeType === 'withdraw' ? 'gradient-bg btn' : 'btn'}>Withdraw</div>
+      </div>
     </div>
     <img src="/img/assets/refresh.svg" alt="refresh-icon" />
   </HEADER>
@@ -229,14 +250,14 @@ export const InfoBanner: FC<{
           title={<ModalHeader setTradeType={setTradeType} tradeType={tradeType} />}
           closeIcon={
             <img
-              src="/img/assets/close-gray-icon.svg"
+              src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
               height="20px"
               width="20px"
               onClick={() => setDepositWithdrawModal(false)}
             />
           }
         >
-          <DepositWithdraw tradeType={tradeType} />
+          <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
         </SETTING_MODAL>
       )}
       <div className="spot-toggle">

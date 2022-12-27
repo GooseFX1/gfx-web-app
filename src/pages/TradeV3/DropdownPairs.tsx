@@ -2,23 +2,18 @@ import { Dropdown } from 'antd'
 import React, { FC, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { MarketType, useCrypto, useDarkMode, usePriceFeed } from '../../context'
-import { DownOutlined } from '@ant-design/icons'
 import { Modal, SearchBar } from '../../components'
 import tw, { styled } from 'twin.macro'
 
-const SELECTED_PAIR_CTN = styled.div<{ $mode: string }>`
-  ${tw`h-10 w-[180px] rounded-[36px] cursor-pointer`}
-  padding: ${({ $mode }) => ($mode === 'lite' ? '2px' : '1px')};
+const SELECTED_PAIR_CTN = styled.div`
+  ${tw`h-10 w-[180px] rounded-[36px] cursor-pointer p-0.5`}
   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
 `
 
-const SELECTED_PAIR = styled.div<{ $mode: string }>`
+const SELECTED_PAIR = styled.div`
   ${tw`h-full w-full rounded-[36px] flex justify-around items-center text-tiny font-semibold`}
   color: ${({ theme }) => theme.text28};
-  background: ${({ $mode }) => ($mode === 'lite' ? 'white' : '#1c1c1c')};
-  .anticon-down {
-    ${tw`mr-2.5 w-3.5`}
-  }
+  background: ${({ theme }) => theme.bg20};
   .asset-icon {
     ${tw`w-7 h-7`}
   }
@@ -29,15 +24,16 @@ const GRADIENT_BACKGROUND = styled.div`
   background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
 `
 
-const DROPDOWN_PAIR_DIV = styled.div`
+const DROPDOWN_PAIR_DIV = styled.div<{ $hoverBorder: boolean }>`
   ${tw`h-12.5 flex items-center text-regular font-semibold cursor-pointer`}
-  background-color: ${({ theme }) => theme.bg20};
+  background-color: ${({ theme, $hoverBorder }) => ($hoverBorder ? theme.bg2 : theme.bg20)};
 
   .asset-icon {
     ${tw`h-7 w-7 mr-4.5 ml-2.5`}
   }
   .spacing {
-    ${tw`mr-auto`}
+    ${tw`mr-auto text-regular font-semibold`}
+    color: ${({ theme }) => theme.text11};
   }
 `
 
@@ -49,7 +45,7 @@ const DROPDOWN_MODAL = styled(Modal)`
     ${tw`h-full overflow-y-hidden overflow-x-hidden`}
 
     .ant-modal-body {
-      ${tw`pb-12`}
+      ${tw`pb-12 pt-[16px]`}
     }
   }
 
@@ -60,10 +56,15 @@ const DROPDOWN_MODAL = styled(Modal)`
     > input {
       background-color: ${({ theme }) => theme.bg2} !important;
     }
+    > input::placeholder {
+      ${tw`text-tiny font-medium`}
+      color: ${({ theme }) => theme.text31};
+    }
   }
 
   .popular {
-    ${tw`font-semibold text-regular text-[#eeeeee] my-2.5 mx-0`}
+    ${tw`font-semibold text-regular my-2.5 mx-0`}
+    color: ${({ theme }) => theme.text11};
   }
 
   .popular-container {
@@ -81,6 +82,7 @@ const DROPDOWN_MODAL = styled(Modal)`
 
   .popular-tokens {
     ${tw`rounded-[27px] flex flex-row justify-center items-center h-[42px] mb-3 py-0 px-2.5 cursor-pointer`}
+    background: ${({ theme }) => theme.bg2};
     border: 1.5px solid ${({ theme }) => theme.tokenBorder};
 
     .asset-icon {
@@ -89,19 +91,20 @@ const DROPDOWN_MODAL = styled(Modal)`
 
     .pair {
       ${tw`font-semibold text-tiny`}
+      color: ${({ theme }) => theme.text11};
     }
   }
 
   .no-result-found {
     ${tw`text-center text-regular font-medium mt-[150px]`}
+    color: ${({ theme }) => theme.text1};
   }
 `
 
 const GRADIENT_BORDER = styled.div<{ $hoverBorder: boolean }>`
   ${tw`p-px`}
-  background-color: ${({ theme }) => theme.bg20};
   background: ${({ $hoverBorder, theme }) =>
-    $hoverBorder === true ? 'linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);' : theme.bg20};
+    $hoverBorder ? 'linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);' : theme.bg20};
 `
 
 const MostPopularCrypto: FC<{ pair: string; type: MarketType }> = ({ pair, type }) => {
@@ -176,7 +179,11 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
 
   return (
     <GRADIENT_BORDER $hoverBorder={hoverBorder}>
-      <DROPDOWN_PAIR_DIV onMouseEnter={() => setHoverBorder(true)} onMouseLeave={() => setHoverBorder(false)}>
+      <DROPDOWN_PAIR_DIV
+        onMouseEnter={() => setHoverBorder(true)}
+        onMouseLeave={() => setHoverBorder(false)}
+        $hoverBorder={hoverBorder}
+      >
         <img className="asset-icon" src={assetIcon} alt="" />
         <div className="spacing">{formattedPair}</div>
         {changeValue !== ' ' ? <div className={classNameChange}>{changeValue}%</div> : <div />}
@@ -234,21 +241,18 @@ export const DropdownPairs: FC = () => {
           setShowModal(true)
         }}
       >
-        <SELECTED_PAIR_CTN $mode={mode}>
-          <SELECTED_PAIR $mode={mode}>
-            {mode === 'lite' ? (
-              <GRADIENT_BACKGROUND>
-                <img className="asset-icon" src={assetIcon} alt="asset-icon" />
-                {formattedPair}
-                <DownOutlined />
-              </GRADIENT_BACKGROUND>
-            ) : (
-              <>
-                <img className="asset-icon" src={assetIcon} alt="asset-icon" />
-                {formattedPair}
-                <DownOutlined />
-              </>
-            )}
+        <SELECTED_PAIR_CTN>
+          <SELECTED_PAIR>
+            <GRADIENT_BACKGROUND>
+              <img className="asset-icon" src={assetIcon} alt="asset-icon" />
+              {formattedPair}
+              <img
+                src={mode === 'lite' ? '/img/assets/arrow.svg' : '/img/assets/arrow-down.svg'}
+                alt="arrow-icon"
+                height="7"
+                width="15"
+              />
+            </GRADIENT_BACKGROUND>
           </SELECTED_PAIR>
         </SELECTED_PAIR_CTN>
       </Dropdown>
