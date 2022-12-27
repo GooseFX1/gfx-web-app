@@ -158,12 +158,13 @@ export const getRiskOutputRegister = async (
 
 export const displayFractional = (val: Fractional): string => {
   const base = val.m.toString()
+  const sign = val.m.toString()[0] === '-' ? '-' : ''
   if (Number(base) === 0) return '0.00'
   const decimals = Number(val.exp.toString())
   if (decimals === 0) return base
   if (base.length === decimals) return '0.' + base
   if (base.length < decimals) return '0.' + '0'.repeat(decimals - base.length) + base
-  return base.slice(0, -decimals) + '.' + base.slice(-decimals)
+  return sign + base.slice(0, -decimals) + '.' + base.slice(-decimals)
 }
 
 export const addFractionals = (a: Fractional, b: Fractional): Fractional => {

@@ -1,11 +1,11 @@
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { Tabs, Row, Col } from 'antd'
 import tw, { styled } from 'twin.macro'
 import { Tooltip } from '../../../../components/Tooltip'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { PERPS_FEES } from '../perpsConstants'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useDarkMode } from '../../../../context'
+import { useCrypto, useDarkMode } from '../../../../context'
 
 const { TabPane } = Tabs
 
@@ -128,8 +128,22 @@ const FEES = styled.div`
 `
 
 const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
-  const { collateralInfo, traderInfo } = useTraderConfig()
+  const { collateralInfo, traderInfo, activeProduct } = useTraderConfig()
   const { mode } = useDarkMode()
+  const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
+
+  const bid = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
+
+  const currentMarketBalance: string = useMemo(() => {
+    let balance = '0'
+    traderInfo?.balances?.map((item) => {
+      console.log(item)
+      if (item.productKey.toBase58() === activeProduct.id) {
+        balance = item.balance
+      }
+    })
+    return balance + ' ' + bid
+  }, [traderInfo, activeProduct])
 
   const getHealthData = () => {
     //DELETE: hardcoded percent
@@ -165,9 +179,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
       <ACCOUNT_ROW>
         <span className="key">{isSolAccount ? 'Balance' : 'Balances'}</span>
         {isSolAccount ? (
-          <span className="value">
-            ${(Number(traderInfo.collateralAvailable) * Number(collateralInfo.price)).toFixed(2)}
-          </span>
+          <span className="value">{currentMarketBalance}</span>
         ) : (
           <div className="balances value">
             <div>${(Number(traderInfo.collateralAvailable) * Number(collateralInfo.price)).toFixed(2)}</div>
