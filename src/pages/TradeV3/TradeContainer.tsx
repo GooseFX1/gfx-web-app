@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNavCollapse, useCrypto, useDarkMode } from '../../context'
-import styled from 'styled-components'
-import { Order } from '../Crypto/Order'
 import { OrderbookTabs } from './OrderbookTabs'
 import { TVChartContainer } from '../Crypto/TradingView'
 import { Responsive, WidthProvider } from 'react-grid-layout'
 import _ from 'lodash'
-import tw from 'twin.macro'
+import tw, { styled } from 'twin.macro'
 import { InfoBanner } from './InfoBanner'
 import { PlaceOrder } from './PlaceOrder'
 import { CollateralPanel } from './perps/components/CollateralPanel'
@@ -55,7 +53,7 @@ const componentDimensions = [
   }
 ]
 
-const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean }>`
+const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean; $isGeoBlocked: boolean }>`
   ${tw`relative flex w-screen flex-col overflow-y-scroll overflow-x-hidden`}
   padding-top: calc(112px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
 
@@ -72,6 +70,11 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean }>
         filter: blur(${({ $isLocked }) => ($isLocked ? 0 : 3)}px);
       }
     }
+    .filtering {
+      div:first-child {
+        filter: blur(3px);
+      }
+    }
   }
   .react-draggable-dragging {
     ${tw`border-solid border-2 p-0 rounded-[10px]`}
@@ -80,7 +83,7 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean }>
   }
 `
 
-const UNLOCKED_OVERLAY = styled.div`
+const UNLOCKED_OVERLAY = styled.div<{ $isGeoBlocked?: boolean }>`
   height: 100%;
   width: 100%;
   background: linear-gradient(101.33deg, rgba(247, 147, 26, 0.5) 7.41%, rgba(220, 31, 255, 0.3) 87.43%);
@@ -92,12 +95,37 @@ const UNLOCKED_OVERLAY = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 10px;
-  img {
+  border-radius: ${({ $isGeoBlocked }) => ($isGeoBlocked ? '0' : '10px')};
+  .reposition {
     position: relative;
     height: 45px;
     width: 45px;
     margin-bottom: 10px;
+  }
+  .geoblocked {
+    position: relative;
+    height: 100px;
+    width: 140px;
+    margin-bottom: 10px;
+  }
+  .geo-msg {
+    font-weight: 600;
+    font-size: 7px;
+    color: ${({ theme }) => theme.text28};
+    text-align: center;
+    position: absolute;
+    bottom: 20px;
+  }
+  .unavailable-msg {
+    font-weight: 600;
+    font-size: 15px;
+    color: ${({ theme }) => theme.text28};
+  }
+  .header-text {
+    font-weight: 600;
+    font-size: 30px;
+    color: ${({ theme }) => theme.text28};
+    margin: 20px 0;
   }
   span {
     position: relative;
@@ -119,6 +147,7 @@ export const CryptoContent: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const [isLocked, setIsLocked] = useState(true)
   const [layout, setLayout] = useState({ lg: componentDimensions })
+  const [isGeoBlocked, setIsGeoBlocked] = useState<boolean>(true)
 
   const mode = useDarkMode()
   const { selectedCrypto } = useCrypto()
@@ -139,11 +168,11 @@ export const CryptoContent: FC = () => {
   const defaultProps = {
     className: 'layout',
     items: 3,
-    rowHeight: 20, //DELETE: change height to fix scroll
+    rowHeight: 20,
     cols: { lg: 4, md: 4, sm: 2, xs: 2, xxs: 2 },
     isResizable: true,
     isBounded: false,
-    isDraggable: !isLocked,
+    isDraggable: !isGeoBlocked && !isLocked,
     margin: [0, 0]
   }
   const generateDOM = () =>
@@ -159,6 +188,7 @@ export const CryptoContent: FC = () => {
                     mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
                   }
                   alt="reposition"
+                  className="reposition"
                 />
                 <span>Drag to Reposition</span>
               </UNLOCKED_OVERLAY>
@@ -177,6 +207,7 @@ export const CryptoContent: FC = () => {
                       mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
                     }
                     alt="reposition"
+                    className="reposition"
                   />
                   <span>Drag to Reposition</span>
                 </UNLOCKED_OVERLAY>
@@ -186,16 +217,33 @@ export const CryptoContent: FC = () => {
         )
       if (i === 2) {
         return (
-          <div key={i}>
+          <div key={i} className={isGeoBlocked ? 'filtering' : ''}>
             <>
               <PlaceOrder />
-              {!isLocked ? (
+              {isGeoBlocked ? (
+                <UNLOCKED_OVERLAY $isGeoBlocked={isGeoBlocked}>
+                  <img
+                    src={
+                      mode.mode === 'dark'
+                        ? `/img/assets/georestricted_dark.png`
+                        : `/img/assets/georestricted_lite.png`
+                    }
+                    alt="reposition"
+                    className="geoblocked"
+                  />
+                  <span className="header-text">We’re sorry.</span>
+                  <span className="unavailable-msg">
+                    GooseFX DEX is unavailable <br /> in your location.
+                  </span>
+                </UNLOCKED_OVERLAY>
+              ) : !isLocked ? (
                 <UNLOCKED_OVERLAY>
                   <img
                     src={
                       mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
                     }
                     alt="reposition"
+                    className="reposition"
                   />
                   <span>Drag to Reposition</span>
                 </UNLOCKED_OVERLAY>
@@ -215,6 +263,7 @@ export const CryptoContent: FC = () => {
                     mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
                   }
                   alt="reposition"
+                  className="reposition"
                 />
                 <span>Drag to Reposition</span>
               </UNLOCKED_OVERLAY>
@@ -223,7 +272,7 @@ export const CryptoContent: FC = () => {
         )
       if (i === 4)
         return (
-          <div key={i}>
+          <div key={i} className={isGeoBlocked ? 'filtering' : ''}>
             <CollateralPanel />
             {!wallet && isLocked && (
               <UNLOCKED_OVERLAY>
@@ -233,13 +282,23 @@ export const CryptoContent: FC = () => {
                 {/* <Connect /> */}
               </UNLOCKED_OVERLAY>
             )}
-            {!isLocked ? (
+            {isGeoBlocked ? (
+              <UNLOCKED_OVERLAY $isGeoBlocked={isGeoBlocked}>
+                <span className="geo-msg">
+                  Access is prohibited for Belarus, Central African Republic, Democratic Republic of Congo,
+                  Democratic People’s Republic of Korea, Crimea, Cuba, Iran, Libya, Somalia, Sudan, South Sudan,
+                  Syria, Thailand, UK, US, Yemen, Zimbabwe and any other jurisdiction in which accessing or using
+                  this website is prohibited.
+                </span>
+              </UNLOCKED_OVERLAY>
+            ) : !isLocked ? (
               <UNLOCKED_OVERLAY>
                 <img
                   src={
                     mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
                   }
                   alt="reposition"
+                  className="reposition"
                 />
                 <span>Drag to Reposition</span>
               </UNLOCKED_OVERLAY>
@@ -257,7 +316,7 @@ export const CryptoContent: FC = () => {
     setLayout({ lg: componentDimensions })
   }
   return (
-    <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked}>
+    <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked} $isGeoBlocked={isGeoBlocked}>
       <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} />
       <ReactGridLayout
         compactType="vertical"
