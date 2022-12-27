@@ -231,7 +231,6 @@ export const TeamMembersContainer: FC<{ data?: any; setTeamMembers: (x: any) => 
         {
           <STYLED_INPUT
             className="inputValue"
-            //@ts-ignore
             value={currentName}
             placeholder="Add name"
             ref={nameRef}
@@ -242,7 +241,6 @@ export const TeamMembersContainer: FC<{ data?: any; setTeamMembers: (x: any) => 
         {
           <STYLED_INPUT
             className="inputValue"
-            //@ts-ignore
             value={twitterUsername}
             ref={usernameRef}
             onChange={(e) => updateCurrentUsername(e)}

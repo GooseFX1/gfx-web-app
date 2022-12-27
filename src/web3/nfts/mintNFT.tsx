@@ -49,7 +49,6 @@ interface IArweaveResult {
 const uploadToArweave = async (data: FormData): Promise<IArweaveResult> => {
   const resp = await fetch(ARWEAVE_UPLOAD_ENDPOINT, {
     method: 'POST',
-    // @ts-ignore
     body: data
   })
 

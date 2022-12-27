@@ -215,7 +215,6 @@ export const ExpandedDynamicContent: FC<IExpandedContent> = ({
       const confirm = executeDeposit(SSLProgram, wallet, connection, network, amount, name)
       confirm.then((con) => {
         setIsStakeLoading(false)
-        //@ts-ignore
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage(signature, amount, name, network, Deposit))
@@ -223,7 +222,6 @@ export const ExpandedDynamicContent: FC<IExpandedContent> = ({
           setTimeout(() => (stakeRef.current.value = 0), 500)
           setCounter((prev) => prev + 1)
         } else {
-          //@ts-ignore
           const { signature, error } = con
           notify(sslErrorMessage(name, error?.message, signature, network, Deposit))
           return

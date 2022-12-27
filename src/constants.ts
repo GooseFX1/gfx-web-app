@@ -1,5 +1,6 @@
 import { ADDRESSES } from './web3'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { IFarmData } from './pages/Farm/CustomTableList'
 
 export const LITEPAPER_ADDRESS = 'https://docs.goosefx.io'
 export const SOCIAL_MEDIAS: { [key: string]: string } = {
@@ -12,8 +13,8 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
     'https://docs.google.com/forms/d/e/1FAIpQLSeg1OzYlHdNqWiAEPl2QUZj7XwLvEpXAkGtWd4-H9SyyQe1DQ/viewform'
 }
 
-export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'SRM', 'ETH', 'GMT', 'mSOL', 'APT', 'stSOL']
-export let FARM_SUPPORTED_TOKEN_LIST = ['GOFX']
+export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'SRM', 'ETH', 'GMT', 'mSOL', 'APT']
+export const FARM_SUPPORTED_TOKEN_LIST = ['GOFX']
 export const MODAL_TYPES = {
   FEES: 'FEES',
   REWARDS: 'REWARDS',
@@ -140,40 +141,37 @@ export const SUPPORTED_TOKEN_LIST = [
 
 export const NFT_MARKET_TRANSACTION_FEE = 1
 
-export const stakeTokens = [
+export const stakeTokens: IFarmData[] = [
   {
     id: '0',
     image: 'GOFX',
     name: 'GOFX',
-    earned: undefined,
+    apr: 'not-supported',
+    volume: 'not-supported',
+    earned: null,
     rewards: 100,
-    liquidity: undefined,
+    liquidity: null,
     type: 'Staking',
-    currentlyStaked: undefined,
-    volume: -1
+    currentlyStaked: null
   }
 ]
 
-export const generateListOfSSLTokens = (network: WalletAdapterNetwork): any => {
-  const sslTokens = []
-  const obj = ADDRESSES[network].sslPool
-  FARM_SUPPORTED_TOKEN_LIST = ['GOFX']
-  for (const key in obj) {
-    FARM_SUPPORTED_TOKEN_LIST.push(key)
-  }
-  for (let i = 1; i < FARM_SUPPORTED_TOKEN_LIST.length; i++) {
-    sslTokens.push({
-      id: i + 1,
-      image: FARM_SUPPORTED_TOKEN_LIST[i],
-      name: FARM_SUPPORTED_TOKEN_LIST[i],
-      earned: undefined,
-      liquidity: undefined,
-      type: 'SSL',
-      currentlyStaked: undefined
-    })
-  }
-  return sslTokens
+export const generateListOfSSLTokens = (network: WalletAdapterNetwork): IFarmData[] => {
+  const supportedTokens = Object.keys(ADDRESSES[network].sslPool)
+  return supportedTokens.map((token, n) => ({
+    id: String(n + 1),
+    image: token,
+    apr: 'loading',
+    volume: 'loading',
+    name: token,
+    earned: null,
+    liquidity: null,
+    type: 'SSL',
+    currentlyStaked: null
+  }))
 }
 
 export const NQ_GOFX_PRICE = 500
 export const NQ_SOL_PRICE = 1
+export const LAMPORTS_PER_SOL = BigInt(1000000000)
+export const ZERO = BigInt(0)
