@@ -159,7 +159,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     () =>
       new Connection(
         // eslint-disable-next-line max-len
-        'https://api.devnet.solana.com',
+        'https://monke9e00d723218b4f1bbb2e80ecb49f360a.xyz2.hyperplane.dev/',
         'confirmed'
       ),
     [endpoint]
