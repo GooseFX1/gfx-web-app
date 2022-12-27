@@ -51,8 +51,8 @@ const fetchPriceAccounts = async (
   )
   return prices.array.map(({ data }, index) => {
     const { product, priceAccountKey } = products[index]
-    const { price } = parsePriceData(data)
-    return { priceAccountKey, price, symbol: product.symbol }
+    const priceData = parsePriceData(data)
+    return { priceAccountKey, price: priceData.previousPrice, symbol: product.symbol }
   })
 }
 
