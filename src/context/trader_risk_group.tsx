@@ -231,7 +231,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const setCollateralPrice = async () => {
     const collateralPrice = await getPythPrice(connection, 'Crypto.USDC/USD')
-    console.log(collateralPrice)
     setCollateralInfo({
       price: collateralPrice ? collateralPrice.toString() : '1',
       name: 'Crypto.USDC/USD'
@@ -240,7 +239,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const parseTraderInfo = async () => {
     const res = computeHealth(traderRiskGroup, marketProductGroup)
-    console.log(res.traderPortfolioValue.toJSON())
     const balancesArray: ITraderBalances[] = []
     for (let i = 0; i < traderRiskGroup.traderPositions.length; i++) {
       const traderPosition = traderRiskGroup.traderPositions[i]
