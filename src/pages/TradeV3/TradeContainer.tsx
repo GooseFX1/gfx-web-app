@@ -12,6 +12,7 @@ import { CollateralPanel } from './perps/components/CollateralPanel'
 import { useWallet } from '@solana/wallet-adapter-react'
 //import { Connect } from '../../layouts/Connect'
 import { HistoryPanel } from '../TradeV3/HistoryPanel'
+import useBlacklisted from '../../utils/useBlacklisted'
 
 const ReactGridLayout = WidthProvider(Responsive)
 
@@ -53,7 +54,7 @@ const componentDimensions = [
   }
 ]
 
-const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean; $isGeoBlocked: boolean }>`
+const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean }>`
   ${tw`relative flex w-screen flex-col overflow-y-scroll overflow-x-hidden`}
   padding-top: calc(112px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
 
@@ -147,8 +148,7 @@ export const CryptoContent: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const [isLocked, setIsLocked] = useState(true)
   const [layout, setLayout] = useState({ lg: componentDimensions })
-  const [isGeoBlocked, setIsGeoBlocked] = useState<boolean>(true)
-
+  const isGeoBlocked = useBlacklisted()
   const mode = useDarkMode()
   const { selectedCrypto } = useCrypto()
   const { wallet } = useWallet()
@@ -274,14 +274,6 @@ export const CryptoContent: FC = () => {
         return (
           <div key={i} className={isGeoBlocked ? 'filtering' : ''}>
             <CollateralPanel />
-            {!wallet && isLocked && (
-              <UNLOCKED_OVERLAY>
-                <div className="overlay-text">
-                  See all our <br /> amazing features!
-                </div>
-                {/* <Connect /> */}
-              </UNLOCKED_OVERLAY>
-            )}
             {isGeoBlocked ? (
               <UNLOCKED_OVERLAY $isGeoBlocked={isGeoBlocked}>
                 <span className="geo-msg">
@@ -302,6 +294,13 @@ export const CryptoContent: FC = () => {
                 />
                 <span>Drag to Reposition</span>
               </UNLOCKED_OVERLAY>
+            ) : !wallet && isLocked ? (
+              <UNLOCKED_OVERLAY>
+                <div className="overlay-text">
+                  See all our <br /> amazing features!
+                </div>
+                {/* <Connect /> */}
+              </UNLOCKED_OVERLAY>
             ) : null}
           </div>
         )
@@ -316,7 +315,7 @@ export const CryptoContent: FC = () => {
     setLayout({ lg: componentDimensions })
   }
   return (
-    <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked} $isGeoBlocked={isGeoBlocked}>
+    <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked}>
       <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} />
       <ReactGridLayout
         compactType="vertical"
