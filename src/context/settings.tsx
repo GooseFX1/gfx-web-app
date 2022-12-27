@@ -151,20 +151,29 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [endpointName])
 
-  const connection = useMemo(() => {
-    // sets rpc info to cache
-    window.localStorage.setItem(
-      'gfx-user-cache',
-      JSON.stringify({
-        ...existingUserCache,
-        endpointName: endpointName,
-        endpoint: existingUserCache.endpointName === 'Custom' ? endpoint : null
-      })
-    )
+  //  const connection = useMemo(() => {
+  //    // sets rpc info to cache
+  //    window.localStorage.setItem(
+  //      'gfx-user-cache',
+  //      JSON.stringify({
+  //        ...existingUserCache,
+  //        endpoint: existingUserCache.endpointName === 'Custom' ? endpoint : null
+  //      })
+  //    )
 
-    // creates connection
-    return new Connection(endpoint, 'confirmed')
-  }, [endpoint])
+  //    // creates connection
+  //    return new Connection(endpoint, 'confirmed')
+  //  }, [endpoint])
+  const connection = useMemo(
+    () =>
+      new Connection(
+        'https://api.devnet.solana.com',
+        // eslint-disable-next-line max-len
+        //'https://monke9e00d723218b4f1bbb2e80ecb49f360a.xyz2.hyperplane.dev',
+        'confirmed'
+      ),
+    [endpoint]
+  )
 
   return (
     <SettingsContext.Provider

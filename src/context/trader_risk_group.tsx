@@ -189,17 +189,15 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [traderRiskGroup, setTraderRiskGroup] = useState<TraderRiskGroup | null>(null)
   const [marketProductGroup, setMarketProductGroup] = useState<MarketProductGroup | null>(null)
   const [activeProduct, setActiveProduct] = useState(MPs[0])
-  const [traderFeeStateAcct, setTraderFeeStateAcct] = useState<PublicKey>(null)
-  const [traderRiskStateAcct, setTraderRiskStateAcct] = useState<PublicKey>(null)
   const [focused, setFocused] = useState<OrderInput>(undefined)
   const [loading, setLoading] = useState<boolean>(false)
+  const [traderBalances, setTraderBalances] = useState<ITraderBalances[]>([])
   const [collateralInfo, setCollateralInfo] = useState<ICollateralInfo>({
     price: '0',
     name: ''
   })
 
   const { order, setOrder } = useOrder()
-  const [currentSide, setSide] = useState<'bid' | 'ask'>('bid')
 
   const wallet = useWallet()
   const { connection } = useConnectionConfig()
@@ -214,7 +212,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }
 
-  const setTraderDetails = async () => {
+  const setMPGDetails = async () => {
     MarketProductGroup.fetch(connection, new PublicKey(MPG_ID)).then((mpgRes) => {
       mpgRes ? setMarketProductGroup(mpgRes) : setMarketProductGroup(null)
     })
@@ -240,20 +238,28 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })
   }
 
-  const setAccountHealthFn = async () => {
+  const parseTraderInfo = async () => {
     const res = computeHealth(traderRiskGroup, marketProductGroup)
-    console.log(res)
+    console.log(res.traderPortfolioValue.toJSON())
+    const balancesArray: ITraderBalances[] = []
+    for (let i = 0; i < traderRiskGroup.traderPositions.length; i++) {
+      const traderPosition = traderRiskGroup.traderPositions[i]
+      if (traderPosition.productKey.toBase58() === '11111111111111111111111111111111') continue
+      balancesArray.push({
+        productKey: traderPosition.productKey,
+        balance: displayFractional(traderPosition.position)
+      })
+    }
+    setTraderBalances(balancesArray)
     // const liquidationP = getLiquidationPrice(res.traderPortfolioValue)
   }
 
   useEffect(() => {
     if (wallet.connected) {
-      if (!marketProductGroup) setTraderDetails()
+      if (!marketProductGroup) setMPGDetails()
       //if (marketProductGroup) testing()
     } else {
       setTraderRiskGroup(null)
-      setTraderFeeStateAcct(null)
-      setTraderRiskStateAcct(null)
     }
   }, [wallet.connected])
 
@@ -407,7 +413,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (traderRiskGroup && marketProductGroup) {
-      setAccountHealthFn()
+      parseTraderInfo()
     }
   }, [traderRiskGroup, marketProductGroup])
 
@@ -419,7 +425,12 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <TraderContext.Provider
       value={{
-        traderInfo: { traderRiskGroup, traderRiskGroupKey: currentTRG, collateralAvailable },
+        traderInfo: {
+          traderRiskGroup,
+          traderRiskGroupKey: currentTRG,
+          collateralAvailable,
+          balances: traderBalances
+        },
         marketProductGroup: marketProductGroup,
         marketProductGroupKey: currentMPG,
         newOrder: newOrder,
