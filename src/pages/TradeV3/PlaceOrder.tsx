@@ -41,13 +41,13 @@ const HEADER = styled.div`
   background: ${({ theme }) => theme.bg2};
 
   .pairInfo {
-    ${tw`h-1/2 w-full flex justify-between px-2.5 border-solid border-b items-center text-base font-semibold`}
+    ${tw`h-1/2 w-full flex justify-between px-2.5 border-b items-center text-base font-semibold`}
     border-top:none;
     border-left: none;
     border-right: none;
     border-color: #3c3c3c;
     .pairName {
-      color: ${({ theme }) => theme.text30};
+      color: ${({ theme }) => theme.text32};
       img {
         height: 20px;
         width: 20px;
@@ -70,12 +70,12 @@ const HEADER = styled.div`
       &.selected {
         //border-color: green; //change to gradient here
         background: linear-gradient(55.89deg, #f7931a 21.49%, #ac1cc7 88.89%);
-        color: white;
+        color: ${({ theme }) => theme.text1};
       }
       .overlayBorder {
         height: calc(100% - 2px);
         width: calc(100% - 2px);
-        background-color: #131313;
+        background: ${({ theme }) => theme.bg2};
         ${tw`flex justify-center items-center`}
       }
     }
@@ -166,6 +166,7 @@ const TOTAL_SELECTOR = styled.div`
     background: ${({ theme }) => theme.bg23};
     &.selected {
       background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+      color: ${({ theme }) => theme.text0};
     }
   }
 `

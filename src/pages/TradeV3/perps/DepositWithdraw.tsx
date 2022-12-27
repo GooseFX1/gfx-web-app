@@ -1,8 +1,8 @@
+import { Dispatch, SetStateAction } from 'react'
 import tw, { styled } from 'twin.macro'
 import { Dropdown, Menu } from 'antd'
-import { MarketType, useAccounts } from '../../../context'
+import { MarketType, useAccounts, useDarkMode } from '../../../context'
 import { useMemo, FC, useState } from 'react'
-import { DownOutlined } from '@ant-design/icons'
 import { convertToFractional } from './utils'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { PERPS_COLLATERAL } from './perpsConstants'
@@ -14,17 +14,16 @@ const WRAPPER = styled.div`
 
   .percentage {
     ${tw`w-[280px] ml-auto rounded-circle flex flex-row`}
-    background: ${({ theme }) => theme.bg12};
+    background: ${({ theme }) => theme.bg22};
   }
 
   .percentage-num {
     ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center justify-center h-full text-[16px]`}
-    color: ${({ theme }) => theme.text20};
+    color: ${({ theme }) => theme.text30};
   }
 
   .selected {
-    ${tw`rounded-half`}
-    color: ${({ theme }) => theme.text1};
+    ${tw`rounded-half text-white`}
     background-image: linear-gradient(105deg, #f7931a 6%, #ac1cc7 96%);
   }
 
@@ -42,14 +41,13 @@ const DROPDOWN_PAIR_DIV = styled.div`
     ${tw`h-7 w-7`}
   }
   .available-bal {
-    ${tw`mr-3.75`}
+    ${tw`mr-3.75 text-[16px] font-semibold`}
   }
 `
 
 const SELECTED_COIN = styled.div`
-  ${tw`leading-[40px] rounded-[36px] flex items-center text-center cursor-pointer pl-2.5 font-medium text-[16px]`}
-  background-color: ${({ theme }) => theme.bg2};
-  color: ${({ theme }) => theme.text21};
+  ${tw`leading-[40px] rounded-[36px] flex items-center text-center cursor-pointer pl-3 font-medium text-[16px]`}
+  background-color: ${({ theme }) => theme.bg22};
   .anticon-down {
     ${tw`mr-1.5 w-3.5`}
   }
@@ -61,7 +59,8 @@ const SELECTED_COIN = styled.div`
     ${tw`flex items-center mr-2.5`}
 
     .available-bal {
-      ${tw`mr-3.75`}
+      ${tw`mr-3.75 text-[16px] font-semibold`}
+      color: ${({ theme }) => theme.text28};
     }
   }
 `
@@ -74,12 +73,13 @@ const COIN_INFO = styled.div`
   }
 
   .market-add {
-    ${tw`text-[16px]`}
-    color: ${({ theme }) => theme.text17};
+    ${tw`text-[16px] font-semibold`}
+    color: ${({ theme }) => theme.text31};
   }
 
   .coin {
     ${tw`text-[16px] font-semibold`}
+    color: ${({ theme }) => theme.text11};
   }
 `
 
@@ -90,17 +90,17 @@ const LABEL = styled.div`
 
 const INPUT = styled.div`
   ${tw`w-[280px] rounded-circle py-2.5 px-5`}
-  background: ${({ theme }) => theme.bg12};
+  background: ${({ theme }) => theme.bg22};
 
   .input-amt {
     ${tw`w-4/5 border-0 border-none text-[16px] font-semibold mr-auto`}
     outline: none;
-    background: ${({ theme }) => theme.bg12};
-    color: ${({ theme }) => theme.text1};
+    background: ${({ theme }) => theme.bg22};
+    color: ${({ theme }) => theme.text28};
   }
 
   .input-amt::placeholder {
-    color: ${({ theme }) => theme.text17};
+    color: ${({ theme }) => theme.text30};
   }
 
   input::-webkit-outer-spin-button,
@@ -114,13 +114,17 @@ const INPUT = styled.div`
   }
   .token {
     ${tw`text-[16px] font-semibold`}
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.text11}
   }
 `
 
-export const DepositWithdraw: FC<{ tradeType: string }> = ({ tradeType }) => {
+export const DepositWithdraw: FC<{
+  tradeType: string
+  setDepositWithdrawModal: Dispatch<SetStateAction<boolean>>
+}> = ({ tradeType, setDepositWithdrawModal }) => {
   const { balances } = useAccounts()
-  const [amount, setAmount] = useState('0.00')
+  const { mode } = useDarkMode()
+  const [amount, setAmount] = useState('')
   const perpTokenList = PERPS_COLLATERAL
   const percentageArr = [25, 50, 75, 100]
   const defualtPerpToken = perpTokenList[0]
@@ -150,14 +154,16 @@ export const DepositWithdraw: FC<{ tradeType: string }> = ({ tradeType }) => {
   }
   const handleInputChange = (e) => {
     const t = e.target.value
-    e.target.value = t.indexOf('.') >= 0 ? t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 5) : t
-    setAmount(e.target.value)
+    if (!isNaN(+t)) {
+      e.target.value = t.indexOf('.') >= 0 ? t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 5) : t
+      setAmount(e.target.value)
+    }
   }
   const handleSubmit = async () => {
     try {
       const answer = convertToFractional(amount)
       const response = await depositFunds(answer)
-      console.log(response)
+      if (response && response.txid) setDepositWithdrawModal(false)
     } catch (e) {
       console.log(e)
     }
@@ -189,7 +195,12 @@ export const DepositWithdraw: FC<{ tradeType: string }> = ({ tradeType }) => {
           </COIN_INFO>
           <div className="dropdown">
             <div className="available-bal">{tokenAmount ? tokenAmount.uiAmountString : '0.00'}</div>
-            <DownOutlined />
+            <img
+              src={mode === 'lite' ? '/img/assets/arrow.svg' : '/img/assets/arrow-down.svg'}
+              alt="arrow-icon"
+              height="8"
+              width="16"
+            />
           </div>
         </SELECTED_COIN>
       </Dropdown>
@@ -199,7 +210,7 @@ export const DepositWithdraw: FC<{ tradeType: string }> = ({ tradeType }) => {
           <input
             className="input-amt"
             placeholder="0.00"
-            type="number"
+            type="text"
             value={amount}
             onChange={handleInputChange}
           />
