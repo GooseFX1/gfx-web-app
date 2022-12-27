@@ -77,8 +77,10 @@ export function colors(mode: string): Colors {
     text26: mode === 'dark' ? '#999999' : '#353535',
     text27: mode === 'dark' ? '#b5b5b5' : '#eee',
     text28: mode === 'dark' ? '#b5b5b5' : '#636363',
-    text30: mode === 'dark' ? '#eeeeee' : '#3C3C3C',
+    text32: mode === 'dark' ? '#eeeeee' : '#3C3C3C',
     text29: mode === 'dark' ? '#b5b5b5' : '#636363',
+    text30: mode === 'dark' ? '#3c3c3c' : '#636363',
+    text31: mode === 'dark' ? '#3c3c3c' : '#9C9C9C',
 
     textWhitePurple: mode === 'dark' ? '#fff' : '#8d4cdd',
 
@@ -118,6 +120,7 @@ export function colors(mode: string): Colors {
     bg22: mode === 'dark' ? '#131313' : '#cacaca',
     bg23: mode === 'dark' ? '#1c1c1c' : '#cacaca',
     bg24: mode === 'dark' ? '#2A2A2A' : '#cacaca',
+    bg25: mode === 'dark' ? '#1c1c1c' : '#eeeeee',
     tableHeader: mode === 'dark' ? '#1c1c1c' : '#636363',
     tokenBorder: mode === 'dark' ? '#3c3c3c' : '#cacaca',
     borderBottom: mode === 'dark' ? '#555555' : '#cacaca',
