@@ -52,16 +52,23 @@ export const TermsOfService: FC<{
   visible?: boolean
 }> = ({ setVisible, visible }) => {
   const localStorage = useLocalStorage()
+  const cache = JSON.parse(localStorage.getItem('gfx-user-cache') || null)
   const [toShow, setToShow] = useState<boolean>(!!visible && true)
   const [checked, setChecked] = useState(false)
   const [read, setRead] = useState(false)
   const [error, setError] = useState(false)
 
+  console.log(visible, toShow)
+
   useEffect(() => {
-    const cache = JSON.parse(localStorage.getItem('gfx-user-cache') || null)
-    console.log(!cache?.hasSignedTC, true, !cache?.hasSignedTC && true)
     setToShow(!cache?.hasSignedTC && true)
   }, [])
+
+  useEffect(() => {
+    if (visible) {
+      setToShow(true)
+    }
+  }, [visible])
 
   const accept = () => {
     const cache = JSON.parse(localStorage.getItem('gfx-user-cache') || null)
@@ -87,10 +94,10 @@ export const TermsOfService: FC<{
   }
 
   const confirmReading = (e) => {
+    setError(false)
     const scrollHeight = e.target.scrollHeight
     const scrollTop = e.target.scrollTop
     if (scrollTop + 500 > scrollHeight) {
-      setError(false)
       setRead(true)
     }
   }
