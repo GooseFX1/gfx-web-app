@@ -20,6 +20,7 @@ const CLOSE_ICON = styled(CenteredImg)`
 
 const HEADER = styled(SpaceBetweenDiv)`
   width: 100%;
+  margin-bottom: 0.5rem;
 `
 
 const TITLE = styled.span`
@@ -42,9 +43,21 @@ export const Modal: FC<{
   bigTitle?: boolean
   style?: any
   large?: boolean
+  centerTitle?: boolean
   onCancel?: () => void
   [x: string]: any
-}> = ({ children, onCancel, large = false, setVisible, title, visible, style, bigTitle, ...props }) => {
+}> = ({
+  children,
+  onCancel,
+  large = false,
+  setVisible,
+  title,
+  visible,
+  style,
+  bigTitle,
+  centerTitle,
+  ...props
+}) => {
   const { mode } = useDarkMode()
   const handleCancel = () => {
     onCancel && onCancel()
@@ -68,7 +81,7 @@ export const Modal: FC<{
       width={large ? '50vw' : 350}
       {...props}
     >
-      <HEADER>
+      <HEADER style={centerTitle && { justifyContent: 'center' }}>
         {bigTitle ? <BIG_TITLE>{title}</BIG_TITLE> : <TITLE>{title}</TITLE>}
         <CLOSE_ICON onClick={handleCancel}>
           {mode === 'dark' ? (
