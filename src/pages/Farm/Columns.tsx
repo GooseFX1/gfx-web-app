@@ -172,7 +172,7 @@ export const columns = [
     )
   },
   {
-    title: Title('7d Volume', '', true),
+    title: Title('7D volume', '', true),
     dataIndex: 'volume',
     width: '16.6%',
     key: 'volume',
@@ -198,6 +198,24 @@ const displayApr = (data: ConditionalData<number>): ReactElement<any, any> =>
 
 // TEMP_DEP_DISABLE const DepositButton = () => <DEPOSIT_BTN>Deposit</DEPOSIT_BTN>
 
+const DISPLAY_VAR = styled.div`
+  ${tw`flex items-center justify-center`}
+  .variable {
+    cursor: auto !important;
+  }
+`
+const DisplayVariable = ({ data, isOpen }: any) => {
+  const preventClose = (event) => {
+    isOpen && event.stopPropagation()
+  }
+  return (
+    <DISPLAY_VAR>
+      <div className="variable" onClick={preventClose}>
+        {data}
+      </div>
+    </DISPLAY_VAR>
+  )
+}
 export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; index: number }> = ({
   farm,
   setIsOpen,
@@ -210,13 +228,19 @@ export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; i
   // TEMP_DEP_DISABLE const toggle = () => setIsOpen((prev) => !prev)
   const { mode } = useDarkMode()
 
+  const preventClose = (event) => {
+    isOpen && event.stopPropagation()
+  }
+
   return (
     <>
       <td className="nameColumn">
-        <div>
+        <div onClick={preventClose}>
           <img src={`/img/crypto/${name.toUpperCase()}.svg`} />
         </div>
-        <div className="columnText">{name}</div>
+        <div className="columnText" onClick={preventClose}>
+          {name}
+        </div>
       </td>
       {!publicKey ? (
         <td className={showConnect ? 'balanceConnectWallet' : ''}>
@@ -237,21 +261,40 @@ export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; i
           ) : (
             <Loader />
           )} */}
-          {currentlyStaked !== undefined ? currentlyStaked?.toFixed(DISPLAY_DECIMAL) : <Loader />}
+          {currentlyStaked !== undefined ? (
+            <DisplayVariable data={currentlyStaked?.toFixed(DISPLAY_DECIMAL)} isOpen={isOpen} />
+          ) : (
+            <Loader />
+          )}
         </td>
       )}
       <td className="earnedColumn">
-        {!publicKey ? '----' : earned !== undefined ? moneyFormatter(earned) : <Loader />}
+        {!publicKey ? (
+          '----'
+        ) : earned !== undefined ? (
+          <DisplayVariable data={moneyFormatter(earned)} isOpen={isOpen} />
+        ) : (
+          <Loader />
+        )}
       </td>
-      <td className="tableData">{displayApr(apr)}</td>
       <td className="tableData">
-        {liquidity !== undefined ? moneyFormatterWithComma(farm.liquidity, '$') : <Loader />}
+        {' '}
+        <DisplayVariable data={displayApr(apr)} isOpen={isOpen} />
+      </td>
+      <td className="tableData">
+        {liquidity !== undefined ? (
+          <DisplayVariable data={moneyFormatterWithComma(farm.liquidity, '$')} isOpen={isOpen} />
+        ) : (
+          <Loader />
+        )}
       </td>
       <td className="volumeColumn">
         {match(volume)
           .with('not-supported', () => '-')
           .with('loading', () => <Loader />)
-          .otherwise(() => (value) => moneyFormatterWithComma(parseFloat(value), '$'))}
+          .otherwise(() => (
+            <DisplayVariable data={moneyFormatterWithComma(volume, '$', 0)} isOpen={isOpen} />
+          ))}
       </td>
       <ICON_WRAPPER_TD onClick={() => setIsOpen((prev) => !prev)}>
         <img
@@ -285,7 +328,7 @@ export const ColumnHeadersWeb: FC<Column> = ({ sortColumn, setSortColumn }) => (
       onClick={() => setSortColumn((p) => (p !== 'volume' ? 'volume' : undefined))}
       style={{ paddingRight: '40px' }}
     >
-      {Title('7d volume', '', true, sortColumn === 'volume')}
+      {Title('7D volume', '', true, sortColumn === 'volume')}
     </th>
     <th className="borderRow2"></th>
   </>

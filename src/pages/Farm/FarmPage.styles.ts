@@ -24,6 +24,7 @@ export const STYLED_RIGHT_CONTENT = styled.div`
     width: 60%;
   }
   .rightInner {
+    cursor: auto !important;
     display: flex;
     margin-right: 0;
     margin-left: auto;
@@ -37,6 +38,7 @@ export const STYLED_LEFT_CONTENT = styled.div`
   .leftInner {
     display: flex;
     align-items: center;
+    cursor: auto !important;
   }
   &.disconnected {
     .leftInner {
@@ -96,7 +98,7 @@ export const STYLED_INPUT = styled.input`
 
 export const TABLE_ROW = styled.tr<{ isOpen: boolean; publicKey: any; checkMobile: boolean }>`
   ${({ isOpen, publicKey, checkMobile }) => css`
-    cursor: ${!isOpen && 'pointer'};
+    cursor: ${'pointer'};
     height: ${!isOpen && '90px'} !important;
     background: ${({ theme }) => (checkMobile ? theme.expendedRowBg : theme.cellBackground)};
     background: ${!isOpen && 'none'};
@@ -115,10 +117,12 @@ export const TABLE_ROW = styled.tr<{ isOpen: boolean; publicKey: any; checkMobil
   .nameColumn {
     width: 11%;
     img {
+      cursor: auto !important;
       ${tw`w-10 h-10 mr-12 -mt-2.5`}
     }
     .columnText {
       ${tw`pl-12 -mt-8`}
+      cursor: auto !important;
       margin-left: 5%;
       @media (max-width: 500px) {
         margin-left: 15px;
@@ -158,6 +162,7 @@ export const STYLED_STAKED_EARNED_CONTENT = styled.div`
 `
 export const TOKEN_OPERATIONS_CONTAINER = styled.td`
   height: 160px;
+  cursor: pointer;
   background: ${({ theme }) => theme.expendedRowBg};
   border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
   padding-left: 2.5vw;
