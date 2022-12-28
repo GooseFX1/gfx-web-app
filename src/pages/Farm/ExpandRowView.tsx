@@ -48,7 +48,7 @@ const ExpandRowView: FC<{ farm: IFarmData; index: number }> = ({ farm, index }) 
         isOpen={isOpen}
         checkMobile={checkMobile()}
         publicKey={publicKey}
-        onClick={() => !isOpen && setIsOpen(true)}
+        onClick={() => setIsOpen((prev) => !prev)}
       >
         {checkMobile() ? (
           <ColumnMobile farm={farm} isOpen={isOpen} index={index} setIsOpen={setIsOpen} />
@@ -58,14 +58,14 @@ const ExpandRowView: FC<{ farm: IFarmData; index: number }> = ({ farm, index }) 
       </TABLE_ROW>
       {isOpen && (
         <tr>
-          <ExpandedComponent farm={farm} />
+          <ExpandedComponent farm={farm} setIsOpen={setIsOpen} />
         </tr>
       )}
     </>
   )
 }
 
-const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
+const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setIsOpen }: any) => {
   const DISPLAY_DECIMAL = 3
   const { name, earned, currentlyStaked, type } = farm
   const isSSL = type === 'SSL'
@@ -348,6 +348,9 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
     }
   }
 
+  const preventClose = (event) => {
+    event.stopPropagation()
+  }
   return checkMobile() ? (
     <>
       <ExpandedContentMobile
@@ -373,12 +376,12 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
       />
     </>
   ) : (
-    <TOKEN_OPERATIONS_CONTAINER colSpan={7}>
+    <TOKEN_OPERATIONS_CONTAINER colSpan={7} onClick={() => setIsOpen((prev) => !prev)}>
       <div className="availableToMint">
         {wallet.publicKey ? (
           <>
             <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
-              <div className="leftInner">
+              <div className="leftInner" onClick={preventClose}>
                 {wallet.publicKey && (
                   <STYLED_STAKED_EARNED_CONTENT>
                     {isSSL ? (
@@ -402,7 +405,7 @@ const ExpandedComponent: FC<{ farm: IFarmData }> = ({ farm }: any) => {
               </div>
             </STYLED_LEFT_CONTENT>
             <STYLED_RIGHT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
-              <div className="rightInner">
+              <div className="rightInner" onClick={preventClose}>
                 <div>
                   <INPUT_CONTAINER>
                     {/*TEMP_DEP_DISABLE <STYLED_INPUT

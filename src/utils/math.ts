@@ -54,16 +54,16 @@ export const moneyFormatter = (number: number, currency = ''): string => {
   if (!isNotEmpty(number)) return ''
   return number.toLocaleString() + currency
 }
-export const moneyFormatterWithComma = (number: number, currency = ''): string => {
+export const moneyFormatterWithComma = (number: number | any, currency = '', decimal = 3): string => {
   if (!isNotEmpty(number)) return ''
-  return currency + ' ' + commafy(number)
+  return currency + ' ' + commafy(number, decimal)
 }
 export const percentFormatter = (number: number): string => {
   if (!isNotEmpty(number)) return '0'
   return number.toFixed(0) + '%'
 }
-function commafy(num) {
-  let str: any = parseFloat(num).toFixed(3)
+function commafy(num, decimal) {
+  let str: any = parseFloat(num).toFixed(decimal)
   str = str.toString().split('.')
   if (str[0].length >= 5) {
     str[0] = str[0].replace(/(\d)(?=(\d{3})+$)/g, '$1,')
