@@ -24,10 +24,9 @@ const TEXT_AREA = styled.div<{ error }>`
   }
 `
 const MAJOR_IMAGE = styled(Image)`
-  width: 100%;
+  width: calc(100% + 48px);
   height: auto;
-  margin-top: 4rem;
-  margin-bottom: 2rem;
+  margin: 4rem -24px 1.5rem -24px;
 `
 const TOS_MODAL = styled(Modal)`
   ${tw`w-[600px]! sm:w-full! p-0!`}
@@ -39,6 +38,8 @@ const CONFIRM = styled.div`
 
 const MAINBUTTON = styled(MainButton)<{ checked }>`
   background-color: ${({ theme, checked }) =>
+    checked ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)' : theme.bg22};
+  background-image: ${({ theme, checked }) =>
     checked ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)' : theme.bg22};
 `
 
@@ -57,8 +58,6 @@ export const TermsOfService: FC<{
   const [checked, setChecked] = useState(false)
   const [read, setRead] = useState(false)
   const [error, setError] = useState(false)
-
-  console.log(visible, toShow)
 
   useEffect(() => {
     setToShow(!cache?.hasSignedTC && true)
