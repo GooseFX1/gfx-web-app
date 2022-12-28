@@ -10,3 +10,11 @@ export interface ILocationState {
   isCreatingProfile?: boolean
   newlyMintedNFT?: any
 }
+
+export interface RPC_CACHE {
+  endpointName: string
+  endpoint: string | null
+  hasSignedTC?: boolean
+  hasDexOnboarded?: boolean
+  hasAggOnboarded?: boolean
+}

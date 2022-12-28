@@ -10,6 +10,7 @@ import { SelectRPC } from '../components'
 import { useDarkMode } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { useConnectionConfig } from '../context'
+import { RPC_CACHE } from '../types/app_params'
 
 const ICON = styled(CenteredImg)<{ $mode: boolean }>`
   ${tw`h-[36px] w-[36px] cursor-pointer`}
@@ -101,10 +102,14 @@ const Overlay = () => {
 
   const saveHandler = () => {
     // analytics logger
-
+    const existingUserPreference: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache') || null)
     window.localStorage.setItem(
-      'gfx-user-rpc',
+      'gfx-user-cache',
       JSON.stringify({
+        hasDexOnboarded: false,
+        hasAggOnboarded: false,
+        hasSignedTC: false,
+        ...existingUserPreference,
         endpointName: isCustomNode ? 'Custom' : rpcState.endpointName,
         endpoint: isCustomNode ? nodeURL : null
       })

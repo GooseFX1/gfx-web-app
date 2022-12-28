@@ -3,6 +3,7 @@ import { ENV } from '@solana/spl-token-registry'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Connection, clusterApiUrl } from '@solana/web3.js'
 import { useRPCContext } from './rpc_context'
+import { RPC_CACHE } from '../types/app_params'
 // import { useLocalStorageState } from '../utils'
 
 export enum GFX_RPC_NAMES {
@@ -102,7 +103,7 @@ export function useConnectionConfig(): ISettingsConfig {
   return { chainId, connection, endpoint, network, endpointName, setEndpointName }
 }
 
-type RPC_CACHE = null | { endpointName: string; endpoint: string | null }
+type IRPC_CACHE = null | RPC_CACHE
 
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
@@ -112,7 +113,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const init = (): string => {
     if (process.env.NODE_ENV === 'development') return DEFAULT_MAINNET_RPC
 
-    const existingUserPreference: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-rpc'))
+    const existingUserPreference: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
     const healthyRPCS: string[] = rpcHealth.map((rpc) => rpc.name)
 
     if (existingUserPreference === null) {
@@ -140,7 +141,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const endpoint = useMemo(() => {
     // checks cache for persisted custom endpoint
-    const existingUserPreference: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-rpc'))
+    const existingUserPreference: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
     if (existingUserPreference !== null && existingUserPreference.endpoint !== null) {
       return existingUserPreference.endpoint
