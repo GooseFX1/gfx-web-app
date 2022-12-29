@@ -4,6 +4,7 @@ import { Checkbox, Image } from 'antd'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { useLocalStorage } from '../utils'
+import useBlacklisted from '../utils/useBlacklisted'
 
 const TEXT_AREA = styled.div<{ error }>`
   width: 100%;
@@ -53,6 +54,8 @@ export const TermsOfService: FC<{
   visible?: boolean
 }> = ({ setVisible, visible }) => {
   const localStorage = useLocalStorage()
+  const blacklisted = useBlacklisted()
+  console.log(blacklisted)
   const cache = JSON.parse(localStorage.getItem('gfx-user-cache') || null)
   const [toShow, setToShow] = useState<boolean>(!!visible && true)
   const [checked, setChecked] = useState(false)
@@ -60,11 +63,11 @@ export const TermsOfService: FC<{
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    setToShow(!cache?.hasSignedTC && true)
+    setToShow(blacklisted ? false : !cache?.hasSignedTC && true)
   }, [])
 
   useEffect(() => {
-    if (visible) {
+    if (visible && !blacklisted) {
       setToShow(true)
     }
   }, [visible])
