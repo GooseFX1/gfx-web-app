@@ -11,7 +11,7 @@ import { useDarkMode } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { useConnectionConfig } from '../context'
 
-const ICON = styled(CenteredImg)<{ $mode: boolean }>`
+export const ICON = styled(CenteredImg)<{ $mode: boolean }>`
   ${tw`h-[36px] w-[36px] cursor-pointer`}
 
   img {
