@@ -6,6 +6,7 @@ import tw from 'twin.macro'
 import { Modal, MainButton } from '../components'
 import useBlacklisted from '../utils/useBlacklisted'
 import { GFX_LINK } from '../styles'
+import { USER_CONFIG_CACHE } from '../types/app_params'
 
 const TEXT_AREA = styled.div<{ error }>`
   width: 100%;
@@ -80,7 +81,7 @@ export const TermsOfService: FC<{
 }> = ({ setVisible, visible }) => {
   const { mode } = useDarkMode()
   const blacklisted = useBlacklisted()
-  const existingUserCache: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
   const [toShow, setToShow] = useState<boolean>(!!visible && true)
   const [checked, setChecked] = useState<boolean>(false)

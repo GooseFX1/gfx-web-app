@@ -10,7 +10,7 @@ import { SelectRPC } from '../components'
 import { useDarkMode } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { useConnectionConfig } from '../context'
-import { RPC_CACHE } from '../types/app_params'
+import { USER_CONFIG_CACHE } from '../types/app_params'
 
 const ICON = styled(CenteredImg)<{ $mode: boolean }>`
   ${tw`h-[36px] w-[36px] cursor-pointer`}
@@ -101,7 +101,7 @@ const Overlay = () => {
   }
 
   const saveHandler = () => {
-    const existingUserCache: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+    const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
     window.localStorage.setItem(
       'gfx-user-cache',
       JSON.stringify({

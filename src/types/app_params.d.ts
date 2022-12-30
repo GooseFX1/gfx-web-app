@@ -11,7 +11,7 @@ export interface ILocationState {
   newlyMintedNFT?: any
 }
 
-export interface RPC_CACHE {
+export interface USER_CONFIG_CACHE {
   endpointName: string | null
   endpoint: string | null
   hasSignedTC: boolean

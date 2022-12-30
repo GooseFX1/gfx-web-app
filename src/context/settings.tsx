@@ -3,7 +3,7 @@ import { ENV } from '@solana/spl-token-registry'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Connection, clusterApiUrl } from '@solana/web3.js'
 import { useRPCContext } from './rpc_context'
-import { RPC_CACHE } from '../types/app_params'
+import { USER_CONFIG_CACHE } from '../types/app_params'
 // import { useLocalStorageState } from '../utils'
 
 export enum GFX_RPC_NAMES {
@@ -103,7 +103,7 @@ export function useConnectionConfig(): ISettingsConfig {
   return { chainId, connection, endpoint, network, endpointName, setEndpointName }
 }
 
-type IRPC_CACHE = null | RPC_CACHE
+type IRPC_CACHE = null | USER_CONFIG_CACHE
 
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)

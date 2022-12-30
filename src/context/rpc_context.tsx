@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, createContext, useContext, useEffect, useState } from 'react'
 import { getWorkingRPCEndpoints } from '../api/analytics'
-import { RPC_CACHE } from '../types/app_params'
+import { USER_CONFIG_CACHE } from '../types/app_params'
 
 export type RPC_HEALTH = {
   name: string
@@ -32,7 +32,7 @@ export const WorkingRPCProvider: FC<{ children: ReactNode }> = ({ children }) =>
   }, [])
 
   const initUserConfigCache = () => {
-    const existingUserCache: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache') || null)
+    const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache') || null)
 
     if (existingUserCache === null) {
       window.localStorage.setItem(
