@@ -3,6 +3,7 @@ import { ENV } from '@solana/spl-token-registry'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Connection, clusterApiUrl } from '@solana/web3.js'
 import { useRPCContext } from './rpc_context'
+import { USER_CONFIG_CACHE } from '../types/app_params'
 // import { useLocalStorageState } from '../utils'
 
 export enum GFX_RPC_NAMES {
@@ -102,25 +103,22 @@ export function useConnectionConfig(): ISettingsConfig {
   return { chainId, connection, endpoint, network, endpointName, setEndpointName }
 }
 
-type RPC_CACHE = null | { endpointName: string; endpoint: string | null }
+type IRPC_CACHE = null | USER_CONFIG_CACHE
 
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
   const { rpcHealth } = useRPCContext()
+  const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
   // returns endpoint name id as string
   const init = (): string => {
-    if (process.env.NODE_ENV === 'development') return DEFAULT_MAINNET_RPC
+    if (process.env.NODE_ENV === 'development')
+      return existingUserCache.endpoint === null ? DEFAULT_MAINNET_RPC : 'Custom'
 
-    const existingUserPreference: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-rpc'))
     const healthyRPCS: string[] = rpcHealth.map((rpc) => rpc.name)
 
-    if (existingUserPreference === null) {
+    if (existingUserCache.endpointName === null || existingUserCache.endpoint === null) {
       return healthyRPCS.includes(DEFAULT_MAINNET_RPC) ? DEFAULT_MAINNET_RPC : healthyRPCS[0]
-    } else if (existingUserPreference.endpoint === null) {
-      return healthyRPCS.includes(existingUserPreference.endpointName)
-        ? existingUserPreference.endpointName
-        : healthyRPCS[0]
     } else {
       return 'Custom'
     }
@@ -139,11 +137,8 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 
   const endpoint = useMemo(() => {
-    // checks cache for persisted custom endpoint
-    const existingUserPreference: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-rpc'))
-
-    if (existingUserPreference !== null && existingUserPreference.endpoint !== null) {
-      return existingUserPreference.endpoint
+    if (existingUserCache.endpoint !== null) {
+      return existingUserCache.endpoint
     } else {
       // asserts 'Custom' is cached with a null enpoint value - results in default reset
       if (endpointName === 'Custom') {
@@ -155,7 +150,19 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [endpointName])
 
-  const connection = useMemo(() => new Connection(endpoint, 'confirmed'), [endpoint])
+  const connection = useMemo(() => {
+    // sets rpc info to cache
+    window.localStorage.setItem(
+      'gfx-user-cache',
+      JSON.stringify({
+        ...existingUserCache,
+        endpoint: existingUserCache.endpointName === 'Custom' ? endpoint : null
+      })
+    )
+
+    // creates connection
+    return new Connection(endpoint, 'confirmed')
+  }, [endpoint])
 
   return (
     <SettingsContext.Provider

@@ -10,6 +10,7 @@ import { SelectRPC } from '../components'
 import { useDarkMode } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { useConnectionConfig } from '../context'
+import { USER_CONFIG_CACHE } from '../types/app_params'
 
 const ICON = styled(CenteredImg)<{ $mode: boolean }>`
   ${tw`h-[36px] w-[36px] cursor-pointer`}
@@ -90,8 +91,8 @@ const Button = styled.button`
 const Overlay = () => {
   const { endpoint, network, endpointName, setEndpointName } = useConnectionConfig()
   const [nodeURL, setNodeURL] = useState(endpoint.split('/')[0] + '//' + endpoint.split('/')[2])
-  const [isCustomNode, setIsCustomNode] = useState(false)
   const [rpcState, setRpcState] = useState({ endpoint, endpointName, network })
+  const [isCustomNode, setIsCustomNode] = useState<boolean>(endpointName === 'Custom')
 
   const handleClickForRPC = (endpoint, endpointName, network) => {
     setIsCustomNode(false)
@@ -100,11 +101,11 @@ const Overlay = () => {
   }
 
   const saveHandler = () => {
-    // analytics logger
-
+    const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
     window.localStorage.setItem(
-      'gfx-user-rpc',
+      'gfx-user-cache',
       JSON.stringify({
+        ...existingUserCache,
         endpointName: isCustomNode ? 'Custom' : rpcState.endpointName,
         endpoint: isCustomNode ? nodeURL : null
       })
