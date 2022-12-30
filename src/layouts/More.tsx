@@ -91,8 +91,8 @@ const Button = styled.button`
 const Overlay = () => {
   const { endpoint, network, endpointName, setEndpointName } = useConnectionConfig()
   const [nodeURL, setNodeURL] = useState(endpoint.split('/')[0] + '//' + endpoint.split('/')[2])
-  const [isCustomNode, setIsCustomNode] = useState(false)
   const [rpcState, setRpcState] = useState({ endpoint, endpointName, network })
+  const [isCustomNode, setIsCustomNode] = useState<boolean>(endpointName === 'Custom')
 
   const handleClickForRPC = (endpoint, endpointName, network) => {
     setIsCustomNode(false)
@@ -101,15 +101,11 @@ const Overlay = () => {
   }
 
   const saveHandler = () => {
-    // analytics logger
-    const existingUserPreference: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache') || null)
+    const existingUserCache: RPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
     window.localStorage.setItem(
       'gfx-user-cache',
       JSON.stringify({
-        hasDexOnboarded: false,
-        hasAggOnboarded: false,
-        hasSignedTC: false,
-        ...existingUserPreference,
+        ...existingUserCache,
         endpointName: isCustomNode ? 'Custom' : rpcState.endpointName,
         endpoint: isCustomNode ? nodeURL : null
       })
