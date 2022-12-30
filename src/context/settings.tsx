@@ -108,20 +108,17 @@ type IRPC_CACHE = null | RPC_CACHE
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
   const { rpcHealth } = useRPCContext()
+  const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
   // returns endpoint name id as string
   const init = (): string => {
-    if (process.env.NODE_ENV === 'development') return DEFAULT_MAINNET_RPC
+    if (process.env.NODE_ENV === 'development')
+      return existingUserCache.endpoint === null ? DEFAULT_MAINNET_RPC : 'Custom'
 
-    const existingUserPreference: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
     const healthyRPCS: string[] = rpcHealth.map((rpc) => rpc.name)
 
-    if (existingUserPreference === null) {
+    if (existingUserCache.endpointName === null || existingUserCache.endpoint === null) {
       return healthyRPCS.includes(DEFAULT_MAINNET_RPC) ? DEFAULT_MAINNET_RPC : healthyRPCS[0]
-    } else if (existingUserPreference.endpoint === null) {
-      return healthyRPCS.includes(existingUserPreference.endpointName)
-        ? existingUserPreference.endpointName
-        : healthyRPCS[0]
     } else {
       return 'Custom'
     }
@@ -140,11 +137,8 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 
   const endpoint = useMemo(() => {
-    // checks cache for persisted custom endpoint
-    const existingUserPreference: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
-
-    if (existingUserPreference !== null && existingUserPreference.endpoint !== null) {
-      return existingUserPreference.endpoint
+    if (existingUserCache.endpoint !== null) {
+      return existingUserCache.endpoint
     } else {
       // asserts 'Custom' is cached with a null enpoint value - results in default reset
       if (endpointName === 'Custom') {
@@ -156,7 +150,19 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [endpointName])
 
-  const connection = useMemo(() => new Connection(endpoint, 'confirmed'), [endpoint])
+  const connection = useMemo(() => {
+    // sets rpc info to cache
+    window.localStorage.setItem(
+      'gfx-user-cache',
+      JSON.stringify({
+        ...existingUserCache,
+        endpoint: existingUserCache.endpointName === 'Custom' ? endpoint : null
+      })
+    )
+
+    // creates connection
+    return new Connection(endpoint, 'confirmed')
+  }, [endpoint])
 
   return (
     <SettingsContext.Provider

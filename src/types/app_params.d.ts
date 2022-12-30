@@ -12,9 +12,9 @@ export interface ILocationState {
 }
 
 export interface RPC_CACHE {
-  endpointName: string
+  endpointName: string | null
   endpoint: string | null
-  hasSignedTC?: boolean
-  hasDexOnboarded?: boolean
-  hasAggOnboarded?: boolean
+  hasSignedTC: boolean
+  hasDexOnboarded: boolean
+  hasAggOnboarded: boolean
 }
