@@ -3,8 +3,10 @@ import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import { SearchBar } from '../../../components'
 import { ModalSlide } from '../../../components/ModalSlide'
+import { NFTAggTerms } from '../../../components/NFTAggWelcome'
 import { MODAL_TYPES } from '../../../constants'
 import { useNavCollapse, useNFTCollections } from '../../../context'
+import { checkMobile } from '../../../utils'
 import { STYLED_BUTTON } from '../../Farm/FarmFilterHeader'
 import { NFT_STATS_CONTAINER, SEARCH_RESULT_CONTAINER, STATS_BTN } from './NFTAggregator.styles'
 import NFTBanners from './NFTBanners'
@@ -17,12 +19,18 @@ const WRAPPER = styled.div<{ $navCollapsed }>`
   font-style: normal;
   .search-bar {
     transition: 0.5s ease;
+    ${tw`sm:w-0`}
+    border: 1px solid;
   }
 `
 const BannerContainer = styled.div<{ showBanner: boolean }>`
   ${({ showBanner }) => css`
     height: ${showBanner ? '290px' : '80px'};
     transition: 0.5s ease;
+    @media (max-width: 500px) {
+      ${tw`h-[100px] mt-[90px]`}
+      border: 1px solid;
+    }
   `}
 `
 
@@ -35,14 +43,19 @@ const EYE_CONTAINER = styled.div`
   }
 `
 const FILTERS_CONTAINER = styled.div`
-  ${tw`flex mt-4`}
+  ${tw`flex mt-4 sm:mt-[20px]`}
 `
 export const ButtonContainer = styled.div<{ $poolIndex: number }>`
-  ${tw`relative z-0 `}
-  font-size: 20px !important;
+  ${tw`relative z-0 mr-1`}
+  .slider-animation-timeline {
+    ${tw`absolute w-[60px] h-[44px] rounded-[36px]  z-[-1]`}
+    left: ${({ $poolIndex }) => $poolIndex * 25}%;
+    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+    transition: left 500ms ease-in-out;
+  }
   .slider-animation {
-    ${tw`absolute w-1/4 h-[44px] rounded-[36px] z-[-1]`}
-    left: ${({ $poolIndex }) => $poolIndex * 50 + 4.5}%;
+    ${tw`absolute w-[85px] h-[44px] rounded-[36px]  z-[-1]`}
+    left: ${({ $poolIndex }) => $poolIndex * 50}%;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
@@ -61,24 +74,40 @@ export const ButtonContainer = styled.div<{ $poolIndex: number }>`
   }
 `
 
+const MOBILE_FILTERS_HEADER = styled.div`
+  .flexContainer {
+    ${tw`h-[40px] flex ml-[10px] mb-4`}
+  }
+  .iconImg {
+    ${tw`h-[40px] w-[40px] rounded flex items-center justify-center rounded-full	mr-3 `}
+    border: 1px solid #cacaca;
+    background: ${({ theme }) => theme.bg0};
+  }
+`
+
 const poolTypes = [{ name: 'Popular' }, { name: 'Trending' }]
+const timelineVolume = [{ name: '24h' }, { name: '7d' }, { name: '30d' }, { name: 'All' }]
 
 const NFTLandingPageV2 = (): ReactElement => {
   const { isCollapsed } = useNavCollapse()
   const [showBanner, setShowBanner] = useState<boolean>(true)
   const [showPopup, setShowPopup] = useState<boolean>(false)
+  const [showTerms, setShowTerms] = useState<boolean>(true)
 
   return (
     <WRAPPER $navCollapsed={isCollapsed}>
+      {<NFTAggTerms setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={setShowPopup} />}
       {showPopup && (
         <ModalSlide modalType={MODAL_TYPES.NFT_AGG_WELCOME} rewardToggle={setShowPopup} rewardModal={showBanner} />
       )}
-      <BannerContainer showBanner={showBanner}>
-        <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} />
+      {!checkMobile() && (
+        <BannerContainer showBanner={showBanner}>
+          <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} />
+          <NFTBanners showBanner={showBanner} />
+        </BannerContainer>
+      )}
+      <FiltersContainer />
 
-        <NFTBanners showBanner={showBanner} />
-        <FiltersContainer />
-      </BannerContainer>
       <NFTCollectionsTable showBanner={showBanner} />
     </WRAPPER>
   )
@@ -86,6 +115,8 @@ const NFTLandingPageV2 = (): ReactElement => {
 
 const FiltersContainer = () => {
   const [poolIndex, setPoolIndex] = useState<number>(0)
+  const [timelineIndex, setTimelineIndex] = useState<number>(0)
+  const [timelineName, setTimelineName] = useState<string>('24h')
   const [poolFilter, setPoolFilter] = useState<string>('Popular')
   const [searchFilter, setSearchFilter] = useState<string>(undefined)
 
@@ -93,28 +124,82 @@ const FiltersContainer = () => {
     setPoolIndex(index)
     setPoolFilter(poolName)
   }
-  return (
-    <FILTERS_CONTAINER>
-      <SearchBar
-        className="search-bar"
-        setSearchFilter={setSearchFilter}
-        placeholder="Search by collections or markets"
-      />
-      <ButtonContainer $poolIndex={poolIndex}>
-        <div className="slider-animation-web"></div>
-        {poolTypes.map((pool, index) => (
-          <STYLED_BUTTON
-            key={pool.name}
-            onClick={() => handleClick(pool.name, index)}
-            className={pool.name === poolFilter ? 'selectedBackground' : ''}
-          >
-            {pool.name}
-          </STYLED_BUTTON>
-        ))}
-      </ButtonContainer>
-      {searchFilter && <SearchResultContainer searchFilter={searchFilter} />}
-    </FILTERS_CONTAINER>
-  )
+  const handleClickTimeline = (poolName, index) => {
+    setTimelineIndex(index)
+    setTimelineName(poolName)
+  }
+  // const {} = wall
+  if (checkMobile())
+    return (
+      <MOBILE_FILTERS_HEADER>
+        <FILTERS_CONTAINER>
+          <div className="flexContainer">
+            <div className="iconImg">
+              <img style={{ height: '20px', width: '20px' }} src={`/img/assets/search.svg`} />
+            </div>
+            <div className="iconImg">
+              <img src={`/img/assets/Aggregator/menu.svg`} />
+            </div>
+            <div className="iconImg">
+              <img src={`/img/assets/Aggregator/menu.svg`} />
+            </div>
+          </div>
+          <ButtonContainer $poolIndex={poolIndex} style={{ marginLeft: 'auto' }}>
+            <div className="slider-animation"></div>
+            {poolTypes.map((pool, index) => (
+              <STYLED_BUTTON
+                key={pool.name}
+                style={{ width: 85, marginRight: 10 }}
+                onClick={() => handleClick(pool.name, index)}
+                className={pool.name === poolFilter ? 'selectedBackground' : ''}
+              >
+                {pool.name}
+              </STYLED_BUTTON>
+            ))}
+          </ButtonContainer>
+
+          {/* {searchFilter && <SearchResultContainer searchFilter={searchFilter} />} */}
+        </FILTERS_CONTAINER>
+        <div className="flexContainer" style={{ marginBottom: 20 }}>
+          <ButtonContainer $poolIndex={timelineIndex}>
+            <div className="slider-animation-timeline"></div>
+            {timelineVolume.map((timeline, index) => (
+              <STYLED_BUTTON
+                style={{ width: 60 }}
+                key={timeline.name}
+                onClick={() => handleClickTimeline(timeline.name, index)}
+                className={timeline.name === timelineName ? 'selectedBackground' : ''}
+              >
+                {timeline.name}
+              </STYLED_BUTTON>
+            ))}
+          </ButtonContainer>
+        </div>
+      </MOBILE_FILTERS_HEADER>
+    )
+  else
+    return (
+      <FILTERS_CONTAINER>
+        <SearchBar
+          className="search-bar"
+          setSearchFilter={setSearchFilter}
+          placeholder="Search by collections or markets"
+        />
+        <ButtonContainer $poolIndex={poolIndex}>
+          <div className="slider-animation-web"></div>
+          {poolTypes.map((pool, index) => (
+            <STYLED_BUTTON
+              key={pool.name}
+              onClick={() => handleClick(pool.name, index)}
+              className={pool.name === poolFilter ? 'selectedBackground' : ''}
+            >
+              {pool.name}
+            </STYLED_BUTTON>
+          ))}
+        </ButtonContainer>
+        {searchFilter && <SearchResultContainer searchFilter={searchFilter} />}
+      </FILTERS_CONTAINER>
+    )
 }
 const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
   const eyeImg = `/img/assets/${showBanner ? 'show' : 'hide'}Eye.svg`
