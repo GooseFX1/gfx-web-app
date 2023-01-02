@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable */
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNavCollapse, useCrypto, useDarkMode } from '../../context'
 import { OrderbookTabs } from './OrderbookTabs'
@@ -13,6 +13,9 @@ import { useWallet } from '@solana/wallet-adapter-react'
 //import { Connect } from '../../layouts/Connect'
 import { HistoryPanel } from '../TradeV3/HistoryPanel'
 import useBlacklisted from '../../utils/useBlacklisted'
+import useWindowSize from '../../utils/useWindowSize'
+import 'react-grid-layout/css/styles.css'
+import 'react-resizable/css/styles.css'
 
 const ReactGridLayout = WidthProvider(Responsive)
 
@@ -22,40 +25,45 @@ const componentDimensions = [
     y: 0,
     i: '0',
     h: 17.5,
-    w: 2
+    w: 4,
+    autoSize: true
   },
   {
-    x: 2,
+    x: 4,
     y: 0,
     i: '1',
     h: 17.5,
-    w: 1
+    w: 2,
+    autoSize: true
   },
   {
-    x: 3,
+    x: 6,
     y: 0,
     i: '2',
     h: 17.5,
-    w: 1
+    w: 2,
+    autoSize: true
   },
   {
     x: 0,
     y: 20,
     i: '3',
     h: 11.5,
-    w: 3
+    w: 6,
+    autoSize: true
   },
   {
-    x: 3,
+    x: 6,
     y: 20,
     i: '4',
     h: 11.5,
-    w: 1
+    w: 2,
+    autoSize: true
   }
 ]
 
-const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean }>`
-  ${tw`relative flex w-screen flex-col overflow-y-scroll overflow-x-hidden`}
+const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean; $mode: string }>`
+  ${tw`relative flex w-screen h-screen flex-col overflow-y-scroll overflow-x-hidden`}
   padding-top: calc(112px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
 
   * {
@@ -75,6 +83,20 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean }>
       div:first-child {
         filter: blur(3px);
       }
+    }
+    .react-resizable-handle-se {
+      background: ${({ $mode }) =>
+        $mode === 'dark'
+          ? 'url(/img/assets/resizeArrow_dark.svg) center no-repeat #eeeeee'
+          : 'url(/img/assets/resizeArrow_lite.svg) center no-repeat, linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%)'};
+      height: 20px;
+      width: 20px;
+      display: ${({ $isLocked }) => ($isLocked ? 'none' : 'block')};
+
+      border-top-left-radius: 8px;
+    }
+    .react-grid-item > .react-resizable-handle::after {
+      border: none;
     }
   }
   .react-draggable-dragging {
@@ -96,7 +118,6 @@ const UNLOCKED_OVERLAY = styled.div<{ $isGeoBlocked?: boolean }>`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: ${({ $isGeoBlocked }) => ($isGeoBlocked ? '0' : '10px')};
   .reposition {
     position: relative;
     height: 45px;
@@ -149,7 +170,8 @@ export const CryptoContent: FC = () => {
   const [isLocked, setIsLocked] = useState(true)
   const [layout, setLayout] = useState({ lg: componentDimensions })
   const isGeoBlocked = useBlacklisted()
-  const mode = useDarkMode()
+  const { height } = useWindowSize()
+  const { mode } = useDarkMode()
   const { selectedCrypto } = useCrypto()
   const { wallet } = useWallet()
 
@@ -165,12 +187,15 @@ export const CryptoContent: FC = () => {
     [selectedCrypto.pair]
   )
 
+  const getRowHeight = (height: number) => {
+    return height < 800 ? 20 : height / 38
+  }
+
   const defaultProps = {
     className: 'layout',
     items: 3,
-    rowHeight: 20,
-    cols: { lg: 4, md: 4, sm: 2, xs: 2, xxs: 2 },
-    isResizable: true,
+    rowHeight: getRowHeight(height),
+    cols: { lg: 8, md: 4, sm: 2, xs: 2, xxs: 2 },
     isBounded: false,
     isDraggable: !isGeoBlocked && !isLocked,
     margin: [0, 0]
@@ -184,9 +209,7 @@ export const CryptoContent: FC = () => {
             {!isLocked ? (
               <UNLOCKED_OVERLAY>
                 <img
-                  src={
-                    mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
-                  }
+                  src={mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
                   alt="reposition"
                   className="reposition"
                 />
@@ -203,9 +226,7 @@ export const CryptoContent: FC = () => {
               {!isLocked ? (
                 <UNLOCKED_OVERLAY>
                   <img
-                    src={
-                      mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
-                    }
+                    src={mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
                     alt="reposition"
                     className="reposition"
                   />
@@ -224,9 +245,7 @@ export const CryptoContent: FC = () => {
                 <UNLOCKED_OVERLAY $isGeoBlocked={isGeoBlocked}>
                   <img
                     src={
-                      mode.mode === 'dark'
-                        ? `/img/assets/georestricted_dark.png`
-                        : `/img/assets/georestricted_lite.png`
+                      mode === 'dark' ? `/img/assets/georestricted_dark.png` : `/img/assets/georestricted_lite.png`
                     }
                     alt="reposition"
                     className="geoblocked"
@@ -239,9 +258,7 @@ export const CryptoContent: FC = () => {
               ) : !isLocked ? (
                 <UNLOCKED_OVERLAY>
                   <img
-                    src={
-                      mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
-                    }
+                    src={mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
                     alt="reposition"
                     className="reposition"
                   />
@@ -259,9 +276,7 @@ export const CryptoContent: FC = () => {
             {!isLocked ? (
               <UNLOCKED_OVERLAY>
                 <img
-                  src={
-                    mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
-                  }
+                  src={mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
                   alt="reposition"
                   className="reposition"
                 />
@@ -286,9 +301,7 @@ export const CryptoContent: FC = () => {
             ) : !isLocked ? (
               <UNLOCKED_OVERLAY>
                 <img
-                  src={
-                    mode.mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`
-                  }
+                  src={mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
                   alt="reposition"
                   className="reposition"
                 />
@@ -315,14 +328,15 @@ export const CryptoContent: FC = () => {
     setLayout({ lg: componentDimensions })
   }
   return (
-    <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked}>
+    <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked} $mode={mode}>
       <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} />
       <ReactGridLayout
         compactType="vertical"
-        measureBeforeMount={false}
+        measureBeforeMount={true}
         layouts={layout}
         onLayoutChange={onLayoutChange}
         useCSSTransforms={true}
+        resizeHandles={['se']}
         {...defaultProps}
       >
         {generateDOM()}
