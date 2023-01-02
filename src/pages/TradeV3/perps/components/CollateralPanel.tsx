@@ -6,6 +6,7 @@ import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { PERPS_FEES } from '../perpsConstants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useCrypto, useDarkMode } from '../../../../context'
+import useWindowSize from '../../../../utils/useWindowSize'
 
 const { TabPane } = Tabs
 
@@ -41,8 +42,8 @@ const TABS_WRAPPER = styled.div<{ $isLocked: boolean }>`
   }
 `
 
-const WRAPPER = styled.div`
-  ${tw`py-2 px-[15px]`}
+const WRAPPER = styled.div<{ $height: boolean }>`
+  padding: ${({ $height }) => ($height > 900 ? '20px 15px' : '8px 15px')};
   .coin-icon {
     ${tw`mr-2.5`}
   }
@@ -81,8 +82,9 @@ const WRAPPER = styled.div`
   }
 `
 
-const ACCOUNT_ROW = styled.div`
-  ${tw`flex flex-row justify-between items-start mb-3`}
+const ACCOUNT_ROW = styled.div<{ $height: boolean }>`
+  ${tw`flex flex-row justify-between items-start`}
+  margin-bottom: ${({ $height }) => ($height > 900 ? '18px' : '12px')};
   line-height: normal;
   .key {
     ${tw`text-tiny font-semibold text-gray-2`}
@@ -99,11 +101,12 @@ const ACCOUNT_ROW = styled.div`
   }
 `
 
-const FEES = styled.div`
-  ${tw`py-2 px-5`}
+const FEES = styled.div<{ $height: boolean }>`
+  padding: ${({ $height }) => ($height > 900 ? '20px' : '8px 20px')};
   .tier-info {
     ${tw`text-center mb-2`}
     line-height: normal;
+    margin-bottom: ${({ $height }) => ($height > 900 ? '14px' : '10px')};
   }
   .spacing {
     ${tw`mb-1`}
@@ -130,6 +133,7 @@ const FEES = styled.div`
 const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
   const { collateralInfo, traderInfo, activeProduct } = useTraderConfig()
   const { mode } = useDarkMode()
+  const { height } = useWindowSize()
   const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
 
   const bid = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
@@ -164,8 +168,8 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
   }
 
   return (
-    <WRAPPER>
-      <ACCOUNT_ROW>
+    <WRAPPER $height={height}>
+      <ACCOUNT_ROW $height={height}>
         <div className="health-icon">
           <span className="key">Health</span>
           <img src="/img/assets/heart-red.svg" alt="heart-icon" width="19" height="17" className="heart-icon" />
@@ -175,7 +179,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
         </div>
         {getHealthData()}
       </ACCOUNT_ROW>
-      <ACCOUNT_ROW>
+      <ACCOUNT_ROW $height={height}>
         <span className="key">{isSolAccount ? 'Balance' : 'Balances'}</span>
         {isSolAccount ? (
           <span className="value">{currentMarketBalance}</span>
@@ -187,20 +191,20 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
           </div>
         )}
       </ACCOUNT_ROW>
-      <ACCOUNT_ROW>
+      <ACCOUNT_ROW $height={height}>
         <span className="key">Unrealized P&L</span>
         <span className="value">-</span>
       </ACCOUNT_ROW>
-      <ACCOUNT_ROW>
+      <ACCOUNT_ROW $height={height}>
         <span className="key">Collateral Available</span>
         <span className="value">{Number(traderInfo.collateralAvailable).toFixed(2)}</span>
       </ACCOUNT_ROW>
-      <ACCOUNT_ROW>
+      <ACCOUNT_ROW $height={height}>
         <span className="key">SOL/USDC Margin Available</span>
         <span className="value">0.23</span>
       </ACCOUNT_ROW>
       {isSolAccount && (
-        <ACCOUNT_ROW>
+        <ACCOUNT_ROW $height={height}>
           <span className="key">SOL/USDC Est. Liq. Price</span>
           <span className="value">100%</span>
         </ACCOUNT_ROW>
@@ -212,8 +216,9 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
 const Fees = () => {
   const feesInfo = PERPS_FEES
   const currentTier = feesInfo[1]
+  const { height } = useWindowSize()
   return (
-    <FEES>
+    <FEES $height={height}>
       <div className="tier">
         My current tier:{' '}
         <span>
