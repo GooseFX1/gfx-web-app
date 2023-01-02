@@ -75,8 +75,7 @@ const WRAPPER = styled.div<{ $navCollapsed; $lastRefreshedClass }>`
     height: 74px;
     border-right: 2px solid ${({ theme }) => theme.tableHeader};
     @media (max-width: 500px) {
-      width: 30%;
-      height: 68px;
+      ${tw`h-[68px] w-[30%]`}
     }
   }
   .borderRow2 {
