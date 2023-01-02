@@ -76,6 +76,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
   }
   .nftNameColumn {
     text-align: left;
+    border: 1px solid;
     img {
       border-radius: 5px;
       ${tw`w-10 h-10  ml-4 mt-5`}
