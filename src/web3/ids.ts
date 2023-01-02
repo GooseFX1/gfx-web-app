@@ -94,11 +94,7 @@ export const ADDRESSES: {
         decimals: 6,
         name: 'Serum'
       },
-      GMT: {
-        address: new PublicKey('7i5KKsX2weiTkry7jA4ZwSuXGhs5eJBEjY8vVxR4pfRx'),
-        decimals: 9,
-        name: 'GMT'
-      },
+
       stSOL: {
         address: new PublicKey('7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj'),
         decimals: 9,
@@ -109,11 +105,6 @@ export const ADDRESSES: {
         address: new PublicKey('orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE'),
         decimals: 6,
         name: 'ORCA'
-      },
-      APT: {
-        address: new PublicKey('6LNeTYMqtNm1pBFN8PfhQaoLyegAH8GD32WmHU9erXKN'),
-        decimals: 8,
-        name: 'Aptos Coin (Wormhole)'
       }
     },
     mints: {
