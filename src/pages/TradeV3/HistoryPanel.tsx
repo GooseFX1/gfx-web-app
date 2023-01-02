@@ -38,7 +38,9 @@ const columns = [
   }
 ]
 const WRAPPER = styled.div`
-  ${tw`h-full w-full`}
+  ${tw`h-full w-full overflow-y-hidden`}
+  border-right: ${({ theme }) => '1px solid ' + theme.tokenBorder};
+  border-bottom: ${({ theme }) => '1px solid ' + theme.tokenBorder};
   .no-positions-found {
     padding-top: 40px;
     text-align: center;
@@ -107,7 +109,6 @@ const HEADER = styled.div`
 const POSITIONS = styled.div`
   ${tw`w-full`}
   height: calc(100% - 80px);
-  border-right: ${({ theme }) => '1px solid ' + theme.tokenBorder};
   }
 
   .positions {
@@ -139,7 +140,6 @@ const POSITIONS = styled.div`
 const OPEN_ORDER = styled.div`
   ${tw`w-full`}
   height: calc(100% - 80px);
-  border-right: ${({ theme }) => '1px solid ' + theme.tokenBorder};
 
   div {
     ${tw`w-full h-[45px] py-0 pr-0 pl-3 flex justify-between items-center text-14 font-medium`}
