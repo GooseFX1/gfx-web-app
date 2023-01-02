@@ -11,7 +11,7 @@ import React, {
 import { Market } from '@project-serum/serum'
 import { useConnectionConfig } from './settings'
 import { serum } from '../web3'
-import MARKET_PAIRS from '../pages/TradeV2/constants/MARKET_PAIRS.json'
+import MARKET_PAIRS from '../pages/TradeV3/constants/MARKET_PAIRS.json'
 
 interface ICrypto {
   market?: Market
