@@ -11,9 +11,11 @@ import useWindowSize from '../../../../utils/useWindowSize'
 const { TabPane } = Tabs
 
 const TABS_WRAPPER = styled.div<{ $isLocked: boolean }>`
-  ${tw`h-full w-full relative`}
+  ${tw`h-full w-full relative overflow-y-hidden`}
   filter: blur(${({ $wallet }) => ($wallet ? 0 : 3)}px) !important;
   border-right: ${({ theme }) => '1px solid ' + theme.tokenBorder};
+  border-bottom: ${({ theme }) => '1px solid ' + theme.tokenBorder};
+  border-left: ${({ theme }) => '1px solid ' + theme.tokenBorder};
   .ant-tabs-nav {
     ${tw`mb-0`}
   }
