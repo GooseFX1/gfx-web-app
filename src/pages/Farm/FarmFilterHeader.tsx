@@ -108,9 +108,8 @@ const STYLED_FARM_HEADER = styled.div`
   }
 `
 export const STYLED_BUTTON = styled.button`
-  ${tw`sm:m-auto sm:w-1/3 cursor-pointer w-[120px] text-center border-none border-0 
+  ${tw`sm:m-auto  cursor-pointer w-[120px] sm:w-[100px] text-center border-none border-0 
   font-semibold text-base h-[44px] rounded-[36px] duration-700 text-[15px] `}
-  font-family: 'Montserrat';
   background: none;
   color: ${({ theme }) => theme.text17};
   :disabled {
