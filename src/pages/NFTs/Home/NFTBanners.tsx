@@ -85,6 +85,12 @@ const SLIDER_ITEM = styled.div<{ $url: string }>`
     width: 84px;
     height: 77px;
   }
+  .logoCenter {
+    ${tw`w-[52px] h-[48px] ml-[40px]`}
+  }
+  .launchpad {
+    ${tw`text-[17px] font-bold text-white mt-2`}
+  }
 
   .home-slider-content {
     /* width: 100%; */
@@ -121,6 +127,13 @@ const SLIDER_ITEM = styled.div<{ $url: string }>`
 
 const ORANGE_BTN = styled(MainButton)`
   background: linear-gradient(270deg, #dc1fff 0%, #f7931a 106.38%);
+`
+
+const EXPLORE_BTN = styled(MainButton)`
+  background: white;
+  span {
+    ${tw`text-[15px] font-semibold text-[#00A5A1] `}
+  }
 `
 
 const TERTIERY_BTN = styled(MainButton)`
@@ -195,18 +208,25 @@ export const NFTBanners = ({ showBanner }: any) => {
           <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/multiChainBg.png`}>
             <div className="home-slider-content">
               <h1 className="home-slider-title">
-                <img className="logo" src={`${process.env.PUBLIC_URL}/img/assets/multiChainLogo.png`} alt="" />
+                <div className="logoCenter">
+                  <img
+                    style={{ width: 52, height: 48 }}
+                    src={`${process.env.PUBLIC_URL}/img/assets/multiChainLogo.png`}
+                    alt=""
+                  />
+                </div>
               </h1>
-              <h1 className="home-slider-title">View Live Mints</h1>
-              <TERTIERY_BTN
+              <div className="launchpad">Launchpad</div>
+              {/* <h1 className="home-slider-title">View Live Mints</h1> */}
+              <EXPLORE_BTN
                 className="home-slider-button"
-                height={'30px'}
+                height={'40px'}
                 status="action"
                 width={'140px'}
                 onClick={handleCreatorApply}
               >
-                <span>More info</span>
-              </TERTIERY_BTN>
+                <span>Explore</span>
+              </EXPLORE_BTN>
             </div>
           </SLIDER_ITEM>
           {/* <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/MultichainBanner.svg`}></SLIDER_ITEM> */}
