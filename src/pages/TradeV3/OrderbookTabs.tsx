@@ -17,7 +17,7 @@ const TAB_NAMES = [
 ]
 
 const WRAPPER = styled.div`
-  ${tw`w-full flex flex-col h-full`}
+  ${tw`w-full flex flex-col h-full overflow-y-hidden`}
   background: ${({ theme }) => theme.bg2};
 `
 
