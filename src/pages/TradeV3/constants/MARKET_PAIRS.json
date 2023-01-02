@@ -1,0 +1,80 @@
+[
+  {
+    "pair": "SOL/USDC",
+    "type": "crypto",
+    "coinGecko": "solana",
+    "marketAddress": "8BnEgHoWFysVcuFFX7QztDmzuH8r5ZFvyP3sYwn1XTh6"
+  },
+  {
+    "pair": "GOFX/USDC",
+    "type": "crypto",
+    "coinGecko": "goosefx",
+    "marketAddress": "2wgi2FabNsSDdb8dke9mHFB67QtMYjYa318HpSqyJLDD"
+  },
+  {
+    "pair": "ETH/USDC",
+    "type": "crypto",
+    "coinGecko": "ethereum",
+    "marketAddress": "FZxi3yWkE5mMjyaZj6utmYL54QQYfMCKMcLaQZq4UwnA"
+  },
+  {
+    "pair": "mSOL/USDC",
+    "type": "crypto",
+    "coinGecko": "msol",
+    "marketAddress": "9Lyhks5bQQxb9EyyX55NtgKQzpM4WK7JCmeaWuQ5MoXD"
+  },
+  {
+    "pair": "scnSOL/USDC",
+    "type": "crypto",
+    "coinGecko": "socean-staked-sol",
+    "marketAddress": "3vtRgLDesutQdwotnoUuSMuKKj8YJAE85s938mGKfxXZ"
+  },
+  {
+    "pair": "stSOL/USDC",
+    "type": "crypto",
+    "coinGecko": "lido-staked-sol",
+    "marketAddress": "JCKa72xFYGWBEVJZ7AKZ2ofugWPBfrrouQviaGaohi3R"
+  },
+  {
+    "pair": "MNGO/USDC",
+    "type": "crypto",
+    "coinGecko": "mango-marketAddresss",
+    "marketAddress": "3NnxQvDcZXputNMxaxsGvqiKpqgPfSYXpNigZNFcknmD"
+  },
+  {
+    "pair": "RAY/USDC",
+    "type": "crypto",
+    "coinGecko": "raydium",
+    "marketAddress": "DZjbn4XC8qoHKikZqzmhemykVzmossoayV9ffbsUqxVj"
+  },
+  {
+    "pair": "RAY/USDT",
+    "type": "crypto",
+    "coinGecko": "raydium",
+    "marketAddress": "GpHbiJJ9VHiuHVXeoet121Utrbm1CSNNzYrBKB8Xz2oz"
+  },
+  {
+    "pair": "SOL/USDT",
+    "type": "crypto",
+    "coinGecko": "solana",
+    "marketAddress": "2AdaV97p6SfkuMQJdu8DHhBhmJe7oWdvbm52MJfYQmfA"
+  },
+  {
+    "pair": "USDT/USDC",
+    "type": "crypto",
+    "coinGecko": "",
+    "marketAddress": "B2na8Awyd7cpC59iEU43FagJAPLigr3AP3s38KM982bu"
+  },
+  {
+    "pair": "SLND/USDC",
+    "type": "crypto",
+    "coinGecko": "solend",
+    "marketAddress": "HTHMfoxePjcXFhrV74pfCUNoWGe374ecFwiDjPGTkzHr"
+  },
+  {
+    "pair": "SOL/USDC",
+    "type": "perps",
+    "coinGecko": "solana",
+    "marketAddress": "FAywzzHNxt7snJwM145uDFhv81SbeXTDSiebQUjx7SMg"
+  }
+]

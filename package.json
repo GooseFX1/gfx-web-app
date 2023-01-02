@@ -13,7 +13,7 @@
     "@n8tb1t/use-scroll-position": "^2.0.3",
     "@project-serum/anchor": "^0.17.1-beta.1",
     "@project-serum/borsh": "^0.2.5",
-    "@project-serum/serum": "^0.13.58",
+    "@project-serum/serum": "openbook-dex/openbook-ts/packages/serum#6913cb3",
     "@project-serum/sol-wallet-adapter": "^0.2.5",
     "@pythnetwork/client": "^2.2.0",
     "@solana/buffer-layout": "^4.0.0",

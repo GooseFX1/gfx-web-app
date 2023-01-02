@@ -45,7 +45,7 @@ const DROPDOWN_MODAL = styled(Modal)`
     ${tw`h-full overflow-y-hidden overflow-x-hidden`}
 
     .ant-modal-body {
-      ${tw`pb-12 pt-[16px]`}
+      ${tw`pb-0 pt-[16px]`}
     }
   }
 
@@ -71,7 +71,8 @@ const DROPDOWN_MODAL = styled(Modal)`
     ${tw`flex flex-row items-center justify-around flex-wrap`}
   }
   .allPairContainer {
-    ${tw`overflow-y-scroll h-full`}
+    ${tw`overflow-y-scroll`}
+    height: calc(100% - 160px);
   }
 
   .popular-container:after {
