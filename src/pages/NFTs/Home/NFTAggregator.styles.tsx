@@ -20,18 +20,18 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   margin-top: 10px;
   overflow-x: hidden;
   padding: 0px 20px;
-
   ${({ theme }) => theme.customScrollBar('0px')}
   @media(max-width: 500px) {
-    height: 100vh !important;
+    height: calc(100vh - 240px);
+    padding: 0;
   }
   table {
     @media (max-width: 500px) {
       width: 100vw;
-      ${tw`sticky mt-[20px]`}
+      height: calc(100vh - 230px);
+      ${tw`sticky mt-[0px]`}
     }
     ${tw`mt-[25px] w-full  `}
-    /* padding: 0px 20px; */
     background: ${({ theme }) => theme.bg17};
     border-radius: 20px 20px 0 0;
   }
@@ -60,18 +60,24 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
     );
     overflow-y: auto;
     transition: 0.5s ease;
+    @media (max-width: 500px) {
+      height: calc(100vh - 280px);
+    }
   }
   td {
-    height: 76px;
+    ${tw`h-[76px] sm:h-[78px]`}
   }
   tbody td,
   thead th {
     width: 12.5%;
     float: left;
     text-align: center;
+    @media (max-width: 500px) {
+      ${tw`w-[33%] `}
+    }
   }
   .tdItem {
-    ${tw`align-top text-center pt-[28px]`}
+    ${tw`align-top text-center pt-[28px] sm:w-[30%]`}
   }
 
   tbody {
@@ -90,25 +96,39 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
     /* padding-top: 25px; */
   }
   .tableHeader {
-    ${tw`text-base font-semibold h-[64px]`}
+    ${tw`text-base font-semibold h-[64px] sm:h-[52px]`}
+  }
+  .index {
+    ${tw`sm:w-[5%] flex items-center ml-[6px]`}
   }
   .nftNameColumn {
-    width: 25%;
     text-align: left;
+    ${tw`w-[25%] sm:w-[60%]`}
     img {
-      ${tw`w-10 h-10  ml-4 mt-5 rounded-full	`}
+      ${tw`w-10 h-10  sm:h-[42px] sm:w-[42px] ml-4 mt-5 rounded-full sm:mt-[18px] sm:ml-[8px]`}
+    }
+    span {
+      ${tw` ml-[6px] font-semibold text-[15px]`}
     }
   }
   .nftCollectionName {
-    ${tw`ml-16 -mt-7`}
+    ${tw`ml-16 -mt-7 sm:-mt-11 sm:ml-[60px] `}
     padding-top: 0!important;
+  }
+  .nftCollectionFloor {
+    ${tw`ml-16 -mt-7 sm:-mt-0 sm:ml-[60px] flex text-[15px] font-semibold`}
+    padding-top: 0!important;
+  }
+  .grey {
+    ${tw`mr-1`}
+    color: ${({ theme }) => theme.text17}
   }
 
   .borderRow {
     border-radius: 20px 0px 0px 25px;
-    ${tw`w-[25%] pr-[10%]`}
+    ${tw`w-[25%] pr-[10%] `}
     @media(max-width: 500px) {
-      ${tw`w-[30%] h-[68px]`}
+      ${tw`w-[42%] h-[52px] pr-0`}
     }
   }
   .tableRow {
@@ -118,6 +138,9 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   .borderRow2 {
     border-radius: 0px 20px 25px 0px;
     color: ${({ theme }) => theme.tableHeader};
+    @media (max-width: 500px) {
+      ${tw`w-[26%] h-[52px]`}
+    }
   }
 `
 export const SEARCH_RESULT_CONTAINER = styled.div`
