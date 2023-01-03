@@ -3,6 +3,7 @@ import { getWalletAdapters } from '../utils/wallets'
 import { WalletProvider as WalletAdapterProvider } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
 import { WalletsModal } from '../layouts'
+import { WalletReadyState } from '@solana/wallet-adapter-base'
 
 interface WalletModalContextState {
   visible: boolean
@@ -25,7 +26,10 @@ const WalletModalProvider: FC<{ children: ReactNode; modal: ReactNode }> = ({ ch
 export const WalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { network } = useConnectionConfig()
 
-  const wallets = useMemo(() => getWalletAdapters(network), [network])
+  const wallets = useMemo(
+    () => getWalletAdapters(network).filter((a) => a.readyState !== WalletReadyState.Unsupported),
+    [network]
+  )
   return (
     <WalletAdapterProvider wallets={wallets} localStorageKey="wallet" autoConnect>
       <WalletModalProvider modal={<WalletsModal />}>{children}</WalletModalProvider>
