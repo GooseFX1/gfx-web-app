@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Switch } from 'antd'
 import React, { ReactElement, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
@@ -8,11 +10,13 @@ import { MODAL_TYPES } from '../../../constants'
 import { useNavCollapse, useNFTCollections } from '../../../context'
 import { checkMobile } from '../../../utils'
 import { STYLED_BUTTON } from '../../Farm/FarmFilterHeader'
+import MenuNFTPopup from './MenuNFTPopup'
 import { NFT_STATS_CONTAINER, SEARCH_RESULT_CONTAINER, STATS_BTN } from './NFTAggregator.styles'
 import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'
+import SearchNFTMobile from './SearchNFTMobile'
 
-const WRAPPER = styled.div<{ $navCollapsed }>`
+const WRAPPER = styled.div<{ $navCollapsed; $currency }>`
   /* padding-top: ${({ $navCollapsed }) => ($navCollapsed ? '0px' : '80px')}; */
   transition: 0.5s ease;
   font-family: 'Montserrat';
@@ -21,6 +25,31 @@ const WRAPPER = styled.div<{ $navCollapsed }>`
     transition: 0.5s ease;
     ${tw`sm:w-0`}
     border: 1px solid;
+  }
+  .flexContainer {
+    ${tw`h-[40px] flex ml-[10px] mb-4`}
+  }
+  .iconImg {
+    ${tw`h-[40px] w-[40px] rounded flex items-center justify-center rounded-full	mr-3 `}
+    border: 1px solid #cacaca;
+    background: ${({ theme }) => theme.bg0};
+  }
+  .ant-switch {
+    ${tw`h-[40px] w-[75px] ml-auto mr-3`}
+    background: linear-gradient(90.95deg, #F7931A 25.41%, #AC1CC7 99.19%) !important;
+  }
+  .ant-switch-handle {
+    ${tw`w-[40px] h-[40px] left-[2px] top-[1px]`}
+    ::before {
+      ${tw`w-[38px] h-[38px] rounded-[40px] duration-500`}
+      background:url(${({ $currency }) => `/img/crypto/${$currency}.svg`}) no-repeat center;
+    }
+  }
+  .ant-switch-checked {
+    .ant-switch-handle {
+      left: calc(100% - 40px);
+    }
+    background: linear-gradient(90.95deg, #f7931a 25.41%, #ac1cc7 99.19%) !important;
   }
 `
 const BannerContainer = styled.div<{ showBanner: boolean }>`
@@ -92,10 +121,11 @@ const NFTLandingPageV2 = (): ReactElement => {
   const { isCollapsed } = useNavCollapse()
   const [showBanner, setShowBanner] = useState<boolean>(true)
   const [showPopup, setShowPopup] = useState<boolean>(false)
-  const [showTerms, setShowTerms] = useState<boolean>(true)
+  const [showTerms, setShowTerms] = useState<boolean>(false)
+  const [currency, setCurrency] = useState<'SOL' | 'USDC'>('SOL')
 
   return (
-    <WRAPPER $navCollapsed={isCollapsed}>
+    <WRAPPER $navCollapsed={isCollapsed} $currency={currency}>
       {<NFTAggTerms setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={setShowPopup} />}
       {showPopup && (
         <ModalSlide modalType={MODAL_TYPES.NFT_AGG_WELCOME} rewardToggle={setShowPopup} rewardModal={showBanner} />
@@ -106,24 +136,30 @@ const NFTLandingPageV2 = (): ReactElement => {
           <NFTBanners showBanner={showBanner} />
         </BannerContainer>
       )}
-      <FiltersContainer />
+      <FiltersContainer setCurrency={setCurrency} />
 
       <NFTCollectionsTable showBanner={showBanner} />
     </WRAPPER>
   )
 }
 
-const FiltersContainer = () => {
+const FiltersContainer = ({ setCurrency }: any) => {
   const [poolIndex, setPoolIndex] = useState<number>(0)
   const [timelineIndex, setTimelineIndex] = useState<number>(0)
   const [timelineName, setTimelineName] = useState<string>('24h')
   const [poolFilter, setPoolFilter] = useState<string>('Popular')
   const [searchFilter, setSearchFilter] = useState<string>(undefined)
+  const [searchPopup, setSearchPopup] = useState<boolean>(false)
+  const [menuPopup, setMenuPopup] = useState<boolean>(true)
 
   const handleClick = (poolName, index) => {
     setPoolIndex(index)
     setPoolFilter(poolName)
   }
+  const changeCurrency = () => {
+    setCurrency((prev) => (prev === 'SOL' ? 'USDC' : 'SOL'))
+  }
+
   const handleClickTimeline = (poolName, index) => {
     setTimelineIndex(index)
     setTimelineName(poolName)
@@ -131,13 +167,19 @@ const FiltersContainer = () => {
   // const {} = wall
   if (checkMobile())
     return (
-      <MOBILE_FILTERS_HEADER>
+      <div>
+        <SearchNFTMobile searchPopup={searchPopup} setSearchPopup={setSearchPopup} />
+        <MenuNFTPopup menuPopup={menuPopup} setMenuPopup={setMenuPopup} />
         <FILTERS_CONTAINER>
           <div className="flexContainer">
             <div className="iconImg">
-              <img style={{ height: '20px', width: '20px' }} src={`/img/assets/search.svg`} />
+              <img
+                style={{ height: '20px', width: '20px' }}
+                onClick={() => setSearchPopup(true)}
+                src={`/img/assets/search.svg`}
+              />
             </div>
-            <div className="iconImg">
+            <div className="iconImg" onClick={() => setMenuPopup(true)}>
               <img src={`/img/assets/Aggregator/menu.svg`} />
             </div>
             <div className="iconImg">
@@ -174,8 +216,9 @@ const FiltersContainer = () => {
               </STYLED_BUTTON>
             ))}
           </ButtonContainer>
+          <Switch onChange={changeCurrency} />
         </div>
-      </MOBILE_FILTERS_HEADER>
+      </div>
     )
   else
     return (
@@ -202,7 +245,7 @@ const FiltersContainer = () => {
     )
 }
 const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
-  const eyeImg = `/img/assets/${showBanner ? 'show' : 'hide'}Eye.svg`
+  const eyeImg = `/img/assets/${showBanner ? 'show' : 'hide'} Eye.svg`
   return (
     <EYE_CONTAINER onClick={() => setShowBanner((prev) => !prev)}>
       <div>
