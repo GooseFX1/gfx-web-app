@@ -28,7 +28,7 @@ ${tw`sm:w-3/4 sm:!h-[45px]`}
   > input {
     ${tw`sm:w-full`}
     height: ${({ theme }) => theme.margin(5)};
-    font-size: 16px;
+    font-size: 15px;
     text-align: left;
     background: ${({ theme }) => theme.searchbarBackground} !important;
     flex: 1;
