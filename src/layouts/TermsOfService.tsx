@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect, Dispatch, SetStateAction } from 'react'
-import { Checkbox, Image } from 'antd'
-import { useDarkMode } from '../context'
+import { Checkbox } from 'antd'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { Modal, MainButton } from '../components'
@@ -9,14 +8,9 @@ import { GFX_LINK } from '../styles'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 
 const TEXT_AREA = styled.div<{ error }>`
-  width: 100%;
-  height: 155px;
+  ${tw`h-[470px] w-full p-[12px] mt-4 sm:h-[64vh] rounded-[8px] overflow-auto`}
   flex-grow: 0;
-  padding: 10px;
-  border-radius: 7px;
   border: solid 1.5px ${({ theme, error }) => (error ? '#f06565' : theme.text20)};
-  background-color: inherit;
-  overflow: auto;
   color: ${({ theme }) => theme.text28};
 
   h3 {
@@ -34,11 +28,7 @@ const TEXT_AREA = styled.div<{ error }>`
     text-align: left;
   }
 `
-const MAJOR_IMAGE = styled(Image)`
-  width: calc(100% + 48px);
-  height: auto;
-  margin: 4rem -24px 1.5rem -24px;
-`
+
 const TOS_MODAL = styled(Modal)`
   ${tw`w-[600px]! sm:w-full! p-0!`}
 `
@@ -79,7 +69,6 @@ export const TermsOfService: FC<{
   setVisible?: Dispatch<SetStateAction<boolean>>
   visible?: boolean
 }> = ({ setVisible, visible }) => {
-  const { mode } = useDarkMode()
   const blacklisted = useBlacklisted()
   const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
@@ -126,8 +115,13 @@ export const TermsOfService: FC<{
   }
 
   return (
-    <TOS_MODAL setVisible={changeTOSState} title="Welcome to GooseFX" visible={toShow} centerTitle large={true}>
-      <MAJOR_IMAGE width={'100%'} src={`/img/assets/terms_of_service_${mode}.svg`} preview={false} />
+    <TOS_MODAL
+      setVisible={changeTOSState}
+      title="GooseFX Terms of Service"
+      visible={toShow}
+      centerTitle
+      large={true}
+    >
       {error && <ERROR>Please read all the information to unlock the checkbox.</ERROR>}
       <TEXT_AREA error={error} onScroll={confirmReading}>
         <span>
