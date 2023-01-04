@@ -216,12 +216,7 @@ const DisplayVariable = ({ data, isOpen }: any) => {
     </DISPLAY_VAR>
   )
 }
-export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; index: number }> = ({
-  farm,
-  setIsOpen,
-  isOpen,
-  index
-}) => {
+export const ColumnWeb: FC<{ farm: IFarmData; isOpen: boolean; index: number }> = ({ farm, isOpen, index }) => {
   const { name, earned, currentlyStaked, apr, volume, liquidity } = farm
   const { publicKey } = useWallet()
   const showConnect = index === 0
@@ -296,7 +291,7 @@ export const ColumnWeb: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; i
             <DisplayVariable data={moneyFormatterWithComma(volume, '$', 0)} isOpen={isOpen} />
           ))}
       </td>
-      <ICON_WRAPPER_TD onClick={() => setIsOpen((prev) => !prev)}>
+      <ICON_WRAPPER_TD>
         <img
           className={isOpen ? 'invertArrow' : 'dontInvert'}
           src={`/img/assets/arrow-down-${mode}.svg`}
@@ -348,11 +343,7 @@ export const ColumnHeadersMobile: FC<Column> = ({ sortColumn, setSortColumn }) =
     </th>
   </>
 )
-export const ColumnMobile: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean; index: number }> = ({
-  farm,
-  setIsOpen,
-  isOpen
-}) => {
+export const ColumnMobile: FC<{ farm: IFarmData; isOpen: boolean; index: number }> = ({ farm, isOpen }) => {
   // TEMP_DEP_DISABLE const { name, apr, currentlyStaked } = farm
   const { name, apr } = farm
   const { mode } = useDarkMode()
@@ -366,7 +357,7 @@ export const ColumnMobile: FC<{ farm: IFarmData; setIsOpen: any; isOpen: boolean
         <div className="columnText">{name}</div>
       </td>
       <td className="tableData">{displayApr(apr)}</td>
-      <ICON_WRAPPER_TD onClick={() => setIsOpen((prev) => !prev)}>
+      <ICON_WRAPPER_TD>
         {/* TEMP_DEP_DISABLE {currentlyStaked === 0 && <DepositButton />} */}
         <img className={isOpen ? 'invertArrow' : ''} src={`/img/assets/arrow-down-${mode}.svg`} alt="arrow" />
       </ICON_WRAPPER_TD>

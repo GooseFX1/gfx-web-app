@@ -51,9 +51,9 @@ const ExpandRowView: FC<{ farm: IFarmData; index: number }> = ({ farm, index }) 
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {checkMobile() ? (
-          <ColumnMobile farm={farm} isOpen={isOpen} index={index} setIsOpen={setIsOpen} />
+          <ColumnMobile farm={farm} isOpen={isOpen} index={index} />
         ) : (
-          <ColumnWeb farm={farm} isOpen={isOpen} index={index} setIsOpen={setIsOpen} />
+          <ColumnWeb farm={farm} isOpen={isOpen} index={index} />
         )}
       </TABLE_ROW>
       {isOpen && (
