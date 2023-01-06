@@ -43,7 +43,7 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
       }
       const newList = await (await fetch(TOKEN_LIST_URL[network])).json()
       const manualList = newList.filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
-      const jupiterList = newList.filter(({ symbol }) => !SUPPORTED_TOKEN_LIST.includes(symbol)).slice(0, 300)
+      const jupiterList = newList.filter(({ symbol }) => !SUPPORTED_TOKEN_LIST.includes(symbol))
       const splList = [
         ...manualList,
         ...jupiterList,
