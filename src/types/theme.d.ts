@@ -39,6 +39,7 @@ export interface Colors {
   text26: Color
   text27: Color
   text28: Color
+  text29: Color
   textWhitePurple: Color
   comingSoon: Color
   blackToGrey: Color
@@ -69,6 +70,7 @@ export interface Colors {
   bg20: Color
   bg21: Color
   bg22: Color
+  bg23: Color
   lpbg: Color
   pbbg: Color
   goBtn: Color

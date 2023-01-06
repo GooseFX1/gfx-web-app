@@ -3,8 +3,11 @@ import React, { useState } from 'react'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import { SearchBar } from '../../../components'
+import { ModalSlide } from '../../../components/ModalSlide'
+import { MODAL_TYPES } from '../../../constants'
 import { useNavCollapse } from '../../../context'
 import { STYLED_BUTTON } from '../../Farm/FarmFilterHeader'
+import { NFT_STATS_CONTAINER, STATS_BTN } from './NFTAggregator.styles'
 import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'
 
@@ -19,20 +22,22 @@ const WRAPPER = styled.div<{ $navCollapsed }>`
 `
 const BannerContainer = styled.div<{ showBanner: boolean }>`
   ${({ showBanner }) => css`
-    height: ${showBanner ? '260px' : '80px'};
+    height: ${showBanner ? '290px' : '80px'};
     transition: 0.5s ease;
   `}
 `
 
 const EYE_CONTAINER = styled.div`
-  ${tw`absolute right-[2%] text-[15px] font-semibold top-[100px] duration-500	 `}
+  width: fit-content;
+  right: 2%;
+  ${tw`text-[15px] font-semibold absolute duration-500 cursor-pointer mt-1`}
   img {
-    ${tw` mr-2 right-[120%] duration-500	 `}
+    ${tw`mr-2 duration-500`}
   }
 `
 
 const FILTERS_CONTAINER = styled.div`
-  ${tw`mt-2 flex mt-8`}
+  ${tw`flex mt-4`}
 `
 
 export const ButtonContainer = styled.div<{ $poolIndex: number }>`
@@ -64,11 +69,16 @@ const poolTypes = [{ name: 'Popular' }, { name: 'Trending' }]
 const NFTLandingPageV2 = () => {
   const { isCollapsed } = useNavCollapse()
   const [showBanner, setShowBanner] = useState<boolean>(true)
+  const [showPopup, setShowPopup] = useState<boolean>(true)
 
   return (
     <WRAPPER $navCollapsed={isCollapsed}>
+      {showPopup && (
+        <ModalSlide modalType={MODAL_TYPES.NFT_AGG_WELCOME} rewardToggle={setShowPopup} rewardModal={showBanner} />
+      )}
       <BannerContainer showBanner={showBanner}>
-        <ShowBannerEye showBanner={showBanner} setShowBanner={setShowBanner} />
+        <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} />
+
         {<NFTBanners showBanner={showBanner} />}
         <FiltersContainer />
       </BannerContainer>
@@ -114,5 +124,23 @@ const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
     </EYE_CONTAINER>
   )
 }
+
+const StatsContainer = ({ showBanner, setShowBanner }: any) => {
+  console.log('object')
+  return (
+    <NFT_STATS_CONTAINER>
+      <StatsButton data={'Total volume traded: 2332'} />
+      <StatsButton data={'Total volume traded: 2332'} />
+      <StatsButton data={'Total Volume: 2010'} />
+      <ShowBannerEye showBanner={showBanner} setShowBanner={setShowBanner} />
+    </NFT_STATS_CONTAINER>
+  )
+}
+
+const StatsButton = ({ data }: any) => (
+  <STATS_BTN>
+    <span className="innerCover">{data}</span>
+  </STATS_BTN>
+)
 
 export default NFTLandingPageV2
