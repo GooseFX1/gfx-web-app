@@ -3,6 +3,7 @@ import { Button, Switch, Tooltip } from 'antd'
 import React, { ReactElement, FC, useState, useMemo } from 'react'
 import styled from 'styled-components'
 import tw, { css } from 'twin.macro'
+import { checkMobile } from '../../../utils'
 import { HeaderTooltip } from '../../../utils/GenericDegsin'
 import { ArrowIcon } from './CollectionV2.styles'
 export const ADDITIONAL_FILTERS = styled.div<{ open }>`
@@ -74,12 +75,12 @@ export const LISTING_TYPE = styled.div<{ isOpen }>`
 `
 
 const AdditionalFilters: FC<{ open: boolean }> = ({ open }: any): ReactElement => {
-  console.log()
+  console.log(checkMobile())
   return (
     <ADDITIONAL_FILTERS open={open}>
       <>
         <div className="filtersTitle">Filters</div>
-        <ListingType />
+        {!checkMobile() && <ListingType />}
         <PriceRange />
         <Attributes />
       </>

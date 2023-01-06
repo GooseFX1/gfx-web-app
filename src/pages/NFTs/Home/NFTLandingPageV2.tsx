@@ -16,6 +16,25 @@ import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'
 import SearchNFTMobile from './SearchNFTMobile'
 
+const CURRENCY_SWITCH = styled.div<{ $currency }>`
+  .ant-switch {
+    ${tw`h-[40px] sm:h-[35px] sm:w-[65px] w-[75px] ml-auto mr-3`}
+    background: linear-gradient(90.95deg, #F7931A 25.41%, #AC1CC7 99.19%) !important;
+  }
+  .ant-switch-handle {
+    ${tw`w-[40px] h-[40px] left-[2px] top-[1px]`}
+    ::before {
+      ${tw`w-[38px] h-[38px] sm:w-[32px] sm:h-[32px] rounded-[40px] duration-500`}
+      background:url(${({ $currency }) => `/img/crypto/${$currency}.svg`}) no-repeat center;
+    }
+  }
+  .ant-switch-checked {
+    .ant-switch-handle {
+      left: calc(100% - 35px);
+    }
+    background: linear-gradient(90.95deg, #f7931a 25.41%, #ac1cc7 99.19%) !important;
+  }
+`
 const WRAPPER = styled.div<{ $navCollapsed; $currency }>`
   /* padding-top: ${({ $navCollapsed }) => ($navCollapsed ? '0px' : '80px')}; */
   transition: 0.5s ease;
@@ -33,23 +52,6 @@ const WRAPPER = styled.div<{ $navCollapsed; $currency }>`
     ${tw`h-[40px] w-[40px] rounded flex items-center justify-center rounded-full	mr-3 `}
     border: 1px solid #cacaca;
     background: ${({ theme }) => theme.bg0};
-  }
-  .ant-switch {
-    ${tw`h-[40px] w-[75px] ml-auto mr-3`}
-    background: linear-gradient(90.95deg, #F7931A 25.41%, #AC1CC7 99.19%) !important;
-  }
-  .ant-switch-handle {
-    ${tw`w-[40px] h-[40px] left-[2px] top-[1px]`}
-    ::before {
-      ${tw`w-[38px] h-[38px] rounded-[40px] duration-500`}
-      background:url(${({ $currency }) => `/img/crypto/${$currency}.svg`}) no-repeat center;
-    }
-  }
-  .ant-switch-checked {
-    .ant-switch-handle {
-      left: calc(100% - 40px);
-    }
-    background: linear-gradient(90.95deg, #f7931a 25.41%, #ac1cc7 99.19%) !important;
   }
 `
 const BannerContainer = styled.div<{ showBanner: boolean }>`
@@ -156,9 +158,6 @@ const FiltersContainer = ({ setCurrency }: any) => {
     setPoolIndex(index)
     setPoolFilter(poolName)
   }
-  const changeCurrency = () => {
-    setCurrency((prev) => (prev === 'SOL' ? 'USDC' : 'SOL'))
-  }
 
   const handleClickTimeline = (poolName, index) => {
     setTimelineIndex(index)
@@ -216,7 +215,7 @@ const FiltersContainer = ({ setCurrency }: any) => {
               </STYLED_BUTTON>
             ))}
           </ButtonContainer>
-          <Switch onChange={changeCurrency} />
+          <CurrencySwitch />
         </div>
       </div>
     )
@@ -255,7 +254,18 @@ const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
     </EYE_CONTAINER>
   )
 }
+export const CurrencySwitch = (): ReactElement => {
+  const [currency, setCurrency] = useState<'SOL' | 'USDC'>('SOL')
 
+  const changeCurrency = () => {
+    setCurrency((prev) => (prev === 'SOL' ? 'USDC' : 'SOL'))
+  }
+  return (
+    <CURRENCY_SWITCH $currency={currency} style={{ marginLeft: 'auto', marginRight: 15 }}>
+      <Switch onChange={changeCurrency} />
+    </CURRENCY_SWITCH>
+  )
+}
 const SearchResultContainer = ({ searchFilter }: any) => {
   const { allCollections } = useNFTCollections()
   const searchResultArr = useMemo(() => {
