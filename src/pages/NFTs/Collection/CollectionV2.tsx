@@ -6,7 +6,9 @@ import { SearchBar } from '../../../components'
 import { useDarkMode, useNavCollapse, useNFTAggregator } from '../../../context'
 import { ICON } from '../../../layouts'
 import { IAppParams } from '../../../types/app_params'
+import { checkMobile } from '../../../utils'
 import { GradientText } from '../adminPage/components/UpcomingMints'
+import { CurrencySwitch } from '../Home/NFTLandingPageV2'
 import ActivityNFTSection from './ActivityNFTSection'
 import AdditionalFilters from './AdditionalFilters'
 import { BuyNFTModal } from './BuyNFTModal'
@@ -34,9 +36,11 @@ const NFTStatsContainer = () => {
     'frames(,0)/https://storage.googleapis.com/feliz-crypto/project_photos/degodslogo.jpg'
   return (
     <div className="nftStatsContainer">
-      <div className="backBtn">
-        <img src="/img/assets/arrow-leftdark.svg" />
-      </div>
+      {!checkMobile() && (
+        <div className="backBtn">
+          <img src="/img/assets/arrow-leftdark.svg" />
+        </div>
+      )}
 
       <div className="collectionNameContainer">
         <div className="collectionName">
@@ -45,6 +49,14 @@ const NFTStatsContainer = () => {
             De Gods
             <img style={{ height: 25, width: 25, marginLeft: 8 }} src="/img/assets/Aggregator/verifiedNFT.svg" />
           </div>
+          {checkMobile() && (
+            <div className="title" style={{ marginLeft: 'auto', marginRight: 20 }}>
+              <div>
+                <img className="sweepMobile" src="/img/assets/Aggregator/sweepButtonMobile.svg" />
+              </div>
+              <div></div>
+            </div>
+          )}
         </div>
 
         <div className="generalStats">
@@ -60,28 +72,32 @@ const NFTStatsContainer = () => {
             <div className="titleText"> 180 SOL </div>
             <div className="subTitleText">Floor Price</div>
           </div>
-          <div className="wrapper">
-            <div className="titleText">112/10K</div>
-            <div className="subTitleText"> Listed</div>
-          </div>
+          {!checkMobile() && (
+            <div className="wrapper">
+              <div className="titleText">112/10K</div>
+              <div className="subTitleText"> Listed</div>
+            </div>
+          )}
           <div className="wrapper">
             <div className="titleText"> 1800 SOL </div>
             <div className="subTitleText"> 24h volume </div>
           </div>
         </div>
-        <div className="moreOptions">
-          <div>
-            <img src="/img/assets/refreshButton.png" />
+        {!checkMobile() && (
+          <div className="moreOptions">
+            <div>
+              <img src="/img/assets/refreshButton.png" />
+            </div>
+            <div className="sweepBtn">
+              <img src="/img/assets/Aggregator/sweepButton.svg" alt="" />
+            </div>
+            <div>
+              <ICON $mode={mode === 'dark'}>
+                <img src={`/img/assets/more_icon.svg`} alt="more" />
+              </ICON>
+            </div>
           </div>
-          <div className="sweepBtn">
-            <img src="/img/assets/Aggregator/sweepButton.svg" alt="" />
-          </div>
-          <div>
-            <ICON $mode={mode === 'dark'}>
-              <img src={`/img/assets/more_icon.svg`} alt="more" />
-            </ICON>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   )
@@ -95,7 +111,7 @@ const NFTGridContainer = (): ReactElement => {
     <GRID_CONTAINER navCollapsed={isCollapsed}>
       <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
       <div className="flexContainer">
-        <AdditionalFilters open={open} />
+        {!checkMobile() && <AdditionalFilters open={open} />}
         {displayIndex !== 2 && <NFTCollectionsGrid open={open} />}
         {displayIndex === 2 && <ActivityNFTSection />}
       </div>
@@ -109,24 +125,27 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
-      <img onClick={() => setOpen((prev) => !prev)} src={`/img/assets/Aggregator/filtersIcon${mode}.svg`} />
-      <SearchBar placeholder="Search by nft or owner" />
-      <div className="sortingBtn" onClick={() => setSortAsc((prev) => !prev)}>
-        Price: {sortingAsc ? 'Ascending' : 'Descending'}
+      <div className="flitersFlexContainer">
+        <img onClick={() => setOpen((prev) => !prev)} src={`/img/assets/Aggregator/filtersIcon${mode}.svg`} />
+        <SearchBar placeholder={checkMobile() ? `Search by nft ` : `Search by nft o owner`} />
+        {!checkMobile() && (
+          <div className="sortingBtn" onClick={() => setSortAsc((prev) => !prev)}>
+            Price: {sortingAsc ? 'Ascending' : 'Descending'}
+          </div>
+        )}
+        {checkMobile() && <CurrencySwitch />}
       </div>
-      <div className="flexContainer">
+
+      <div className="flitersViewCategory">
         <div className={displayIndex === 0 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(0)}>
-          {' '}
           Listed (243)
           <div className="activeItem" />
         </div>
         <div className={displayIndex === 1 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(1)}>
-          {' '}
-          All items (10K){' '}
+          All items (10K)
         </div>
         <div className={displayIndex === 2 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(2)}>
-          {' '}
-          Activity{' '}
+          Activity
         </div>
       </div>
     </NFT_FILTERS_CONTAINER>
