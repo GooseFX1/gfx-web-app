@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import { Loader } from '../../../components'
 import { useNavCollapse } from '../../../context'
+import { checkMobile } from '../../../utils'
 import { GradientText } from '../adminPage/components/UpcomingMints'
 import { NFTActivitySectionWeb } from '../Home/NFTTableColumns'
 
@@ -18,7 +19,6 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
   table {
     @media (max-width: 500px) {
       width: 100%;
-      ${tw`sticky mt-[20px]`}
     }
     ${tw`w-full`}
     background: ${({ theme }) => theme.bg17};
@@ -33,7 +33,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
 
   tr:after {
     content: ' ';
-    display: block;
+    /* display: block; */
     visibility: hidden;
     clear: both;
   }
@@ -47,7 +47,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
     transition: 0.5s ease;
   }
   td {
-    height: 76px;
+    ${tw`h-[76px] sm:h-[72px]`}
   }
   tbody td,
   thead th {
@@ -71,27 +71,50 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
     ${tw`text-[15px] font-semibold`}
     color: ${({ theme }) => theme.text20};
   }
+  .tableRow {
+    ${tw``}
+    @media(max-width: 500px) {
+      /* border-bottom: 1px solid ${({ theme }) => theme.borderBottom} ; */
+    }
+  }
   .tableHeader {
     ${tw`text-[15px] font-semibold h-[26px]`}
   }
   .nftNameColumn {
     text-align: left;
-    border: 1px solid;
     img {
       border-radius: 5px;
-      ${tw`w-10 h-10  ml-4 mt-5`}
+      ${tw`w-10 h-10 sm:mt-3 ml-4 mt-5`}
     }
   }
   .collectionName {
-    ${tw`ml-16 -mt-0`}/* padding-top: 0!important; */
+    ${tw`ml-16 flex text-[15px] sm:ml-16 sm:mt-0
+     sm:flex sm:justify-between sm:items-center w-[140%]`}/* padding-top: 0!important; */
   }
   .nftCollectionName {
-    ${tw`ml-16 -mt-10`}
+    ${tw`ml-16 sm:-mt-11 -mt-10`}
     padding-top: 0!important;
+  }
+  .textContainer {
+    ${tw`text-[15px] text-right pt-3 mr-[45px] `}
+  }
+  .primaryText {
+    color: ${({ theme }) => theme.text30};
+    img {
+      ${tw`h-[20px] w-[20px] ml-2`}
+    }
+  }
+  .secondaryText {
+    color: ${({ theme }) => theme.text20};
+  }
+  .solscan {
+    ${tw`h-[35px] w-[35px] -mt-11 ml-auto`}
+  }
+  .priceActivity {
+    ${tw`flex flex-col w-[42%]`}
   }
 `
 const ActivityNFTSection = (): ReactElement => {
-  console.log('first')
   const [activityData, setActivityData] = useState<any[]>()
   useEffect(() => {
     const arr = []
@@ -104,7 +127,7 @@ const ActivityNFTSection = (): ReactElement => {
         buyer: 'Lorem, ipsum.',
         img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGDjdpLSpGgAdpvFjjmgtkdhCeH6vSUrxLOA&usqp=CAU',
         seller: 'Lorem, ipsum',
-        time: new Date().toLocaleDateString()
+        time: '14:52 pm'
       })
     }
     setActivityData(arr)
@@ -113,19 +136,66 @@ const ActivityNFTSection = (): ReactElement => {
   return (
     <WRAPPER_TABLE $navCollapsed={isCollapsed}>
       <table>
-        <thead className="tableHeader">
-          <NFTActivitySectionWeb />
-        </thead>
+        {!checkMobile() && (
+          <thead className="tableHeader">
+            <NFTActivitySectionWeb />
+          </thead>
+        )}
         <tbody>
           {/* <NFTTableRow allItems={allItems} /> */}
-          {activityData && <NFTActivityRow activityData={activityData} />}
+          {checkMobile()
+            ? activityData && <NFTActivityRowMobile activityData={activityData} />
+            : activityData && <NFTActivityRowWeb activityData={activityData} />}
         </tbody>
       </table>
     </WRAPPER_TABLE>
   )
 }
 
-const NFTActivityRow = ({ activityData }: any): any => (
+const NFTActivityRowMobile = ({ activityData }: any): any => (
+  <>
+    {activityData.map((item, index) => (
+      <tr className="tableRow" key={index}>
+        <td className="nftNameColumn" colSpan={4}>
+          {item?.collectionId ? (
+            <div>
+              <img src={item.img} alt="" />
+              <div className="nftCollectionName">{item?.collectionId}</div>
+              <div className="collectionName">
+                Type:
+                <GradientText text={item?.type} fontSize={15} fontWeight={600} />
+              </div>
+            </div>
+          ) : (
+            <div>
+              <Loader />
+            </div>
+          )}
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        {/* <td></td> */}
+        <td className="priceActivity">
+          <div className="textContainer">
+            <div className="primaryText">
+              {item?.price}
+              <img src="/img/crypto/SOL.png" />
+            </div>
+            <div className="secondaryText">
+              <div>{item?.time}</div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex' }}>
+            <img src="/img/assets/Aggregator/solscan.svg" className="solscan" />
+          </div>
+        </td>
+      </tr>
+    ))}
+  </>
+)
+const NFTActivityRowWeb = ({ activityData }: any): any => (
   <>
     {activityData.map((item, index) => (
       <tr className="tableRow" key={index}>
