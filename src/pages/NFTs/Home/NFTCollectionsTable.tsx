@@ -4,7 +4,7 @@ import { useNavCollapse, useNFTCollections } from '../../../context'
 import { checkMobile } from '../../../utils'
 import { Loader } from '../../Farm/Columns'
 import { WRAPPER_TABLE } from './NFTAggregator.styles'
-import { NFTColumnsTitleMobile, NFTColumnsTitleWeb } from './NFTTableColumns'
+import { NFTColumnsTitleWeb } from './NFTTableColumns'
 
 const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   const { isCollapsed } = useNavCollapse()
