@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   GlowWalletAdapter,
   PhantomWalletAdapter,
@@ -23,7 +24,7 @@ export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[
     addressSelector: createDefaultAddressSelector(),
     appIdentity: {
       name: 'GooseFX',
-      uri: 'https://goosefx.io/',
+      uri: 'https://app.goosefx.io/',
       icon: '/img/assets/GOFX-icon.svg'
     },
     authorizationResultCache: createDefaultAuthorizationResultCache(),
