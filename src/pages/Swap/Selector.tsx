@@ -166,6 +166,11 @@ const DESK_TOKEN_INFO = styled(TOKEN_INFO)`
     color: ${({ theme }) => theme.text20};
     margin-left: 0.25rem;
   }
+  .token-balance {
+    color: ${({ theme }) => theme.text20};
+    position: absolute;
+    right: 1rem;
+  }
 `
 
 interface NewTokenInfo extends TokenInfo {
@@ -204,7 +209,10 @@ export const Selector: FC<{
   useEffect(() => {
     ;(async function () {
       let newTokens: NewTokenInfo[] = [...tokens]
-      newTokens = await getTokenAccounts(publicKey?.toBase58(), newTokens)
+      if (!checkMobile()) {
+        newTokens = await getTokenAccounts(publicKey?.toBase58(), newTokens)
+      }
+
       setUpdatedTokens(
         newTokens.map((tk) => ({
           ...tk,
@@ -216,7 +224,7 @@ export const Selector: FC<{
   }, [publicKey, tokens])
 
   async function getTokenAccounts(wallet: string, tokens: NewTokenInfo[]) {
-    if (!wallet) return []
+    if (!wallet) return tokens
     const filters = [
       {
         dataSize: 165 //size of account (bytes)
@@ -241,7 +249,6 @@ export const Selector: FC<{
       const tokenBalance: number = parsedAccountInfo['parsed']['info']['tokenAmount']['uiAmount']
       const token = tokens[tokens.findIndex((el) => el.address === mintAddress)]
       if (token) {
-        console.log({ token, tokenBalance })
         token.tokenBalance = tokenBalance
         tokens[tokens.findIndex((el) => el.address === mintAddress)] = token
       }
@@ -251,9 +258,7 @@ export const Selector: FC<{
   }
 
   useEffect(() => {
-    const altTokens = JSON.parse(window.localStorage.getItem('myAddedTokenList')) || []
     const tokenList = [...updatedTokens]
-    tokenList.push(...altTokens)
 
     async function addAndFilterTokens() {
       if (tokenList.length < 1 && tokenA && tokenB) {
@@ -265,10 +270,6 @@ export const Selector: FC<{
             ...filteredTokensListAlt?.[0],
             imageURL: `/img/crypto/${filteredTokensListAlt?.[0].symbol}.svg`
           })
-          window.localStorage.setItem(
-            'myAddedTokenList',
-            JSON.stringify([...altTokens, filteredTokensListAlt?.[0]])
-          )
         }
       }
 
@@ -277,7 +278,7 @@ export const Selector: FC<{
           ({ address, name, symbol }) =>
             (r.test(name.split('(')[0]) || r.test(symbol) || filterKeywords === address) &&
             //the split by "(" is to remove every string in name of token with (Portal) or (Sollet) or any other.
-            (!otherToken || otherToken.address !== address)
+            otherToken?.address !== address
         )
         .sort((a, b) => {
           const fa = a.symbol.toLowerCase(),
@@ -392,7 +393,7 @@ export const Selector: FC<{
                 <DESK_TOKEN_INFO>
                   <strong>{symbol}</strong>
                   <strong className="token-name"> ({name.replaceAll('(', '').replaceAll(')', '')})</strong>
-                  {tokenBalance > 0 && <strong className="token-name"> {tokenBalance}</strong>}
+                  {tokenBalance > 0 && <strong className="token-balance"> {tokenBalance}</strong>}
                 </DESK_TOKEN_INFO>
               )}
             </TOKEN>
