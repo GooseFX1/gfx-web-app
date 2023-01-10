@@ -1,6 +1,6 @@
+/* eslint-disable */
 import {
   GlowWalletAdapter,
-  ExodusWalletAdapter,
   PhantomWalletAdapter,
   SolflareWalletAdapter,
   SolletExtensionWalletAdapter,
@@ -10,26 +10,34 @@ import {
   MathWalletAdapter,
   SolongWalletAdapter
 } from '@solana/wallet-adapter-wallets'
+import { WalletAdapter } from '@solana/wallet-adapter-base'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import {
+  createDefaultAddressSelector,
   createDefaultAuthorizationResultCache,
+  createDefaultWalletNotFoundHandler,
   SolanaMobileWalletAdapter
 } from '@solana-mobile/wallet-adapter-mobile'
 
-export const getWalletAdapters = (network: WalletAdapterNetwork): any[] => [
+export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[] => [
+  new SolanaMobileWalletAdapter({
+    addressSelector: createDefaultAddressSelector(),
+    appIdentity: {
+      name: 'GooseFX',
+      uri: 'https://app.goosefx.io/',
+      icon: '/img/assets/GOFX-icon.svg'
+    },
+    authorizationResultCache: createDefaultAuthorizationResultCache(),
+    cluster: network,
+    onWalletNotFound: createDefaultWalletNotFoundHandler()
+  }),
   new PhantomWalletAdapter(),
-  new GlowWalletAdapter(),
+  new GlowWalletAdapter({ network }),
   new SolflareWalletAdapter({ network }),
-  new ExodusWalletAdapter(),
-  new SolletExtensionWalletAdapter({ network }),
-  new SolletWalletAdapter({ network }),
-  new SolongWalletAdapter(),
-  new SlopeWalletAdapter(),
   new TorusWalletAdapter(),
   new MathWalletAdapter(),
-  new SolanaMobileWalletAdapter({
-    appIdentity: { name: 'Goosefx App' },
-    authorizationResultCache: createDefaultAuthorizationResultCache(),
-    cluster: network
-  })
+  new SolongWalletAdapter(),
+  new SolletExtensionWalletAdapter({ network }),
+  new SolletWalletAdapter({ network }),
+  new SlopeWalletAdapter()
 ]
