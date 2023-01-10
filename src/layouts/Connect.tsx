@@ -171,48 +171,7 @@ export const Connect: FC = () => {
   useEffect(() => {
     const walletName = sessionStorage.getItem('connectedGFXWallet')
     if (!base58 && !connected && walletName) {
-      switch (walletName) {
-        case 'Phantom': {
-          select('Phantom' as WalletName<string>)
-          break
-        }
-        case 'Solflare': {
-          select('Solflare' as WalletName<string>)
-          break
-        }
-        case 'Ledger': {
-          select('Ledger' as WalletName<string>)
-          break
-        }
-        case 'MathWallet': {
-          select('MathWallet' as WalletName<string>)
-          break
-        }
-        case 'Slope': {
-          select('Slope' as WalletName<string>)
-          break
-        }
-        case 'Solang': {
-          select('Solang' as WalletName<string>)
-          break
-        }
-        case 'Torus': {
-          select('Torus' as WalletName<string>)
-          break
-        }
-        case 'Sollet': {
-          select('Sollet' as WalletName<string>)
-          break
-        }
-        case 'Glow': {
-          select('Glow' as WalletName<string>)
-          break
-        }
-        case SolanaMobileWalletAdapterWalletName: {
-          select(SolanaMobileWalletAdapterWalletName as WalletName<string>)
-          break
-        }
-      }
+      select(walletName as WalletName<string>)
     }
   }, [])
 
@@ -224,7 +183,7 @@ export const Connect: FC = () => {
         </WALLET_ICON>
       )}
       <span>{content}</span>
-      {wallet && (
+      {wallet && base58 && (
         <ArrowDropdown
           arrowRotation={arrowRotation}
           offset={[9, 30]}

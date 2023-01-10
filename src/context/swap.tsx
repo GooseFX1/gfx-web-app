@@ -192,9 +192,15 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [inTokenAmount, slippage, tokenA, tokenB, clickNo, loading])
 
   useEffect(() => {
-    ;(async function () {
-      setCoingeckoTokens((await CoinGeckoClient.coins.list()).data)
-    })()
+    CoinGeckoClient.coins
+      .list()
+      .then((data) => {
+        setCoingeckoTokens(data.data)
+        console.log('data', data.data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }, [])
 
   useEffect(() => {
