@@ -224,37 +224,40 @@ export const Selector: FC<{
   }, [publicKey, tokens])
 
   async function getTokenAccounts(wallet: string, tokens: NewTokenInfo[]) {
-    if (!wallet) return tokens
-    const filters = [
-      {
-        dataSize: 165 //size of account (bytes)
-      },
-      {
-        memcmp: {
-          offset: 32, //location of our query in the account (bytes)
-          bytes: wallet //our search criteria, a base58 encoded string
+    try {
+      if (!wallet) return tokens
+      const filters = [
+        {
+          dataSize: 165 //size of account (bytes)
+        },
+        {
+          memcmp: {
+            offset: 32, //location of our query in the account (bytes)
+            bytes: wallet //our search criteria, a base58 encoded string
+          }
         }
-      }
-    ]
-    let accounts = await connection.getParsedProgramAccounts(TOKEN_PROGRAM_ID, { filters: filters })
-    accounts = accounts.filter((account) => {
-      const parsedAccountInfo: any = account.account.data
-      const tokenBalance: number = parsedAccountInfo['parsed']['info']['tokenAmount']['uiAmount']
-      return tokenBalance > 0
-    })
-    accounts.forEach((account) => {
-      //Parse the account data
-      const parsedAccountInfo: any = account.account.data
-      const mintAddress: string = parsedAccountInfo['parsed']['info']['mint']
-      const tokenBalance: number = parsedAccountInfo['parsed']['info']['tokenAmount']['uiAmount']
-      const token = tokens[tokens.findIndex((el) => el.address === mintAddress)]
-      if (token) {
-        token.tokenBalance = tokenBalance
-        tokens[tokens.findIndex((el) => el.address === mintAddress)] = token
-      }
-    })
-
-    return tokens
+      ]
+      let accounts = await connection.getParsedProgramAccounts(TOKEN_PROGRAM_ID, { filters: filters })
+      accounts = accounts.filter((account) => {
+        const parsedAccountInfo: any = account.account.data
+        const tokenBalance: number = parsedAccountInfo['parsed']['info']['tokenAmount']['uiAmount']
+        return tokenBalance > 0
+      })
+      accounts.forEach((account) => {
+        //Parse the account data
+        const parsedAccountInfo: any = account.account.data
+        const mintAddress: string = parsedAccountInfo['parsed']['info']['mint']
+        const tokenBalance: number = parsedAccountInfo['parsed']['info']['tokenAmount']['uiAmount']
+        const token = tokens[tokens.findIndex((el) => el.address === mintAddress)]
+        if (token) {
+          token.tokenBalance = tokenBalance
+          tokens[tokens.findIndex((el) => el.address === mintAddress)] = token
+        }
+      })
+      return tokens
+    } catch {
+      return tokens
+    }
   }
 
   useEffect(() => {
