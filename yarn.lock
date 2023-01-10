@@ -1805,7 +1805,7 @@
     decimal.js "10.3.1"
     jsbi "4.3.0"
 
-"@jup-ag/react-hook@^2.0.0-beta.1":
+"@jup-ag/react-hook@^2.0.0-beta.8":
   version "2.0.0-beta.8"
   resolved "https://registry.yarnpkg.com/@jup-ag/react-hook/-/react-hook-2.0.0-beta.8.tgz#f3dd49e9ff1ad74acb55c4c0e77bb293b1bc0fd3"
   integrity sha512-UqHuwV4MUKFlTYoArif2gWbR6W3gSghvG5P6VwFuHx/KbtX13B1LfndYRItfPqfmZcw1PqwmLJPPYIrmHhTmyQ==

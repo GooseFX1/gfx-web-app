@@ -261,66 +261,68 @@ export const Selector: FC<{
   }
 
   useEffect(() => {
-    const tokenList = [...updatedTokens]
+    //(O)3n to (O)2n in time complexity (due to two loops, one filter and one sort)
+    addAndFilterTokens([...updatedTokens], filterKeywords, tokenA, tokenB, chainId)
+  }, [filterKeywords, updatedTokens, tokenA, tokenB, chainId])
 
-    async function addAndFilterTokens() {
-      if (tokenList.length < 1 && tokenA && tokenB) {
-        const chainList = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
-        const filteredTokensListAlt = chainList.filter(({ address }) => filterKeywords === address)
+  const addAndFilterTokens = async (tokenList, filterKeywords, tokenA, tokenB, chainId) => {
+    if (tokenList.length < 1 && tokenA && tokenB) {
+      const chainList = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
+      const filteredTokensListAlt = chainList.filter(({ address }) => filterKeywords === address)
 
-        if (filteredTokensListAlt.length > 0) {
-          tokenList.push({
-            ...filteredTokensListAlt?.[0],
-            imageURL: `/img/crypto/${filteredTokensListAlt?.[0].symbol}.svg`
-          })
-        }
-      }
-
-      const filteredTokensList = tokenList
-        .filter(
-          ({ address, name, symbol }) =>
-            (r.test(name.split('(')[0]) || r.test(symbol) || filterKeywords === address) &&
-            //the split by "(" is to remove every string in name of token with (Portal) or (Sollet) or any other.
-            otherToken?.address !== address
-        )
-        .sort((a, b) => {
-          const fa = a.symbol.toLowerCase(),
-            fb = b.symbol.toLowerCase()
-
-          if (fa < fb) {
-            return -1
-          }
-          if (fa > fb) {
-            return 1
-          }
-          return 0
+      if (filteredTokensListAlt.length > 0) {
+        tokenList.push({
+          ...filteredTokensListAlt?.[0],
+          imageURL: `/img/crypto/${filteredTokensListAlt?.[0].symbol}.svg`
         })
-        .sort((a, b) => b?.tokenBalance - a?.tokenBalance)
-      setFilteredTokens(filteredTokensList)
-
-      if (filterKeywords.length > 1) {
-        //allow at least two inputs to allow less tokens being mapped and decrease load time for popular tokens
-        const popularityFilteredTokensList = (
-          await Promise.all(
-            filteredTokensList.map(async (tk) => {
-              const token = coingeckoTokens.find((i) => i.symbol.toLowerCase() === tk.symbol.toLowerCase())
-              try {
-                if (!token) return { ...tk, vol: 0 }
-                const data = await CoinGeckoClient.coins.fetch(token?.id || null, {})
-                const res = Math.floor(data?.data?.market_data?.total_volume?.usd || 0)
-                return { ...tk, vol: !isNaN(res) ? res : 0 }
-              } catch {
-                return { ...tk, vol: 0 }
-              }
-            })
-          )
-        ).sort((a, b) => b.vol - a.vol)
-        setFilteredTokens(popularityFilteredTokensList)
       }
     }
 
-    addAndFilterTokens() //(O)3n to (O)2n in time complexity (due to two loops, one filter and one sort)
-  }, [filterKeywords, updatedTokens, tokenA, tokenB, chainId])
+    const filteredTokensList = tokenList
+      .filter(
+        ({ address, name, symbol }) =>
+          (r.test(name.split('(')[0]) || r.test(symbol) || filterKeywords === address) &&
+          //the split by "(" is to remove every string in name of token with (Portal) or (Sollet) or any other.
+          otherToken?.address !== address
+      )
+      .sort((a, b) => {
+        const fa = a.symbol.toLowerCase(),
+          fb = b.symbol.toLowerCase()
+
+        if (fa < fb) {
+          return -1
+        }
+        if (fa > fb) {
+          return 1
+        }
+        return 0
+      })
+      .sort((a, b) => b?.tokenBalance - a?.tokenBalance)
+
+    setFilteredTokens(filteredTokensList)
+
+    if (filterKeywords.length > 1) {
+      //allow at least two inputs to allow less tokens being mapped and decrease load time for popular tokens
+      const popularityFilteredTokensList = (
+        await Promise.all(
+          filteredTokensList.map(async (tk) => {
+            const token = coingeckoTokens.find((i) => i.symbol.toLowerCase() === tk.symbol.toLowerCase())
+            if (!token) return { ...tk, vol: 0 }
+
+            try {
+              const data = await CoinGeckoClient.coins.fetch(token?.id || null, {})
+              const res = Math.floor(data?.data?.market_data?.total_volume?.usd || 0)
+              return { ...tk, vol: !isNaN(res) ? res : 0 }
+            } catch {
+              return { ...tk, vol: 0 }
+            }
+          })
+        )
+      ).sort((a, b) => b.vol - a.vol)
+
+      setFilteredTokens(popularityFilteredTokensList)
+    }
+  }
 
   return (
     <>
