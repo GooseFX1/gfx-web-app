@@ -1,5 +1,6 @@
 /* eslint-disable */
 import {
+  BackpackWalletAdapter,
   GlowWalletAdapter,
   PhantomWalletAdapter,
   SolflareWalletAdapter,
@@ -31,6 +32,7 @@ export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[
     cluster: network,
     onWalletNotFound: createDefaultWalletNotFoundHandler()
   }),
+  new BackpackWalletAdapter(),
   new PhantomWalletAdapter(),
   new GlowWalletAdapter({ network }),
   new SolflareWalletAdapter({ network }),
