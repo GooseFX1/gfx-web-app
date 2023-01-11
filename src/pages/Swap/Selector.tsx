@@ -102,6 +102,7 @@ const TOKEN = styled.div`
   width: 100%;
   padding: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(3)};
   cursor: pointer;
+  position: relative;
 
   &:hover {
     background-color: ${({ theme }) => theme.bg9};
@@ -207,21 +208,14 @@ export const Selector: FC<{
   const [filteredTokens, setFilteredTokens] = useState<NewTokenInfo[]>(updatedTokens)
 
   useEffect(() => {
-    ;(async function () {
-      let newTokens: NewTokenInfo[] = [...tokens]
-      if (!checkMobile()) {
-        newTokens = await getTokenAccounts(publicKey?.toBase58(), newTokens)
-      }
-
-      setUpdatedTokens(
-        newTokens.map((tk) => ({
-          ...tk,
-          imageURL: `/img/crypto/${tk.symbol}.svg`,
-          tokenBalance: tk?.tokenBalance || 0
-        }))
-      )
-    })()
-  }, [publicKey, tokens])
+    setUpdatedTokens(
+      [...tokens].map((tk) => ({
+        ...tk,
+        imageURL: `/img/crypto/${tk.symbol}.svg`,
+        tokenBalance: 0
+      }))
+    )
+  }, [tokens])
 
   async function getTokenAccounts(wallet: string, tokens: NewTokenInfo[]) {
     try {
@@ -261,9 +255,16 @@ export const Selector: FC<{
   }
 
   useEffect(() => {
-    //(O)3n to (O)2n in time complexity (due to two loops, one filter and one sort)
-    addAndFilterTokens([...updatedTokens], filterKeywords, tokenA, tokenB, chainId)
-  }, [filterKeywords, updatedTokens, tokenA, tokenB, chainId])
+    ;(async function () {
+      let newTokens = [...updatedTokens]
+      if (!checkMobile()) {
+        newTokens = await getTokenAccounts(publicKey?.toBase58(), newTokens)
+      }
+
+      //(O)3n to (O)2n in time complexity (due to two loops, one filter and one sort)
+      addAndFilterTokens([...newTokens], filterKeywords, tokenA, tokenB, chainId)
+    })()
+  }, [filterKeywords, updatedTokens, tokenA, tokenB, chainId, publicKey])
 
   const addAndFilterTokens = async (tokenList, filterKeywords, tokenA, tokenB, chainId) => {
     if (tokenList.length < 1 && tokenA && tokenB) {
