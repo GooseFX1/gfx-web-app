@@ -7,6 +7,9 @@ import { ISwapToken, useTokenRegistry, useDarkMode, useConnectionConfig, useSwap
 import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
 import { POPULAR_TOKENS } from '../../constants'
 import { checkMobile } from '../../utils'
+import { Connection } from '@solana/web3.js'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { TOKEN_PROGRAM_ID } from '../../web3'
 
 import tw from 'twin.macro'
 
@@ -99,6 +102,7 @@ const TOKEN = styled.div`
   width: 100%;
   padding: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(3)};
   cursor: pointer;
+  position: relative;
 
   &:hover {
     background-color: ${({ theme }) => theme.bg9};
@@ -163,10 +167,16 @@ const DESK_TOKEN_INFO = styled(TOKEN_INFO)`
     color: ${({ theme }) => theme.text20};
     margin-left: 0.25rem;
   }
+  .token-balance {
+    color: ${({ theme }) => theme.text20};
+    position: absolute;
+    right: 1rem;
+  }
 `
 
 interface NewTokenInfo extends TokenInfo {
   imageURL?: string
+  tokenBalance?: number
 }
 
 export const Selector: FC<{
@@ -175,21 +185,22 @@ export const Selector: FC<{
   setToken: Dispatch<SetStateAction<ISwapToken | null>>
   token: ISwapToken | null
   balance?: number
-}> = ({ height, otherToken, setToken, token }) => {
+  connection?: Connection
+}> = ({ height, otherToken, setToken, token, connection }) => {
   const { mode } = useDarkMode()
   const { tokens } = useTokenRegistry()
   const { tokenA, tokenB, CoinGeckoClient, coingeckoTokens } = useSwap() //CoinGeckoClient
   const { chainId } = useConnectionConfig()
+  const { publicKey } = useWallet()
   const [filterKeywords, setFilterKeywords] = useState<string>('')
   const [visible, setVisible] = useState<boolean>(false)
   const r = new RegExp(filterKeywords, 'i')
-  const [updatedTokens, setUpdatedTokens] = useState(
+  const [updatedTokens, setUpdatedTokens] = useState<NewTokenInfo[]>(
     tokens.map((tk) => ({
       ...tk,
       imageURL: `/img/crypto/${tk.symbol}.svg`
     }))
   )
-
   const popularTokens = useMemo(
     () => updatedTokens.filter((i) => POPULAR_TOKENS.includes(i.symbol)),
     [updatedTokens]
@@ -198,79 +209,121 @@ export const Selector: FC<{
 
   useEffect(() => {
     setUpdatedTokens(
-      tokens.map((tk) => ({
+      [...tokens].map((tk) => ({
         ...tk,
-        imageURL: `/img/crypto/${tk.symbol}.svg`
+        imageURL: `/img/crypto/${tk.symbol}.svg`,
+        tokenBalance: 0
       }))
     )
   }, [tokens])
 
-  useEffect(() => {
-    const altTokens = JSON.parse(window.localStorage.getItem('myAddedTokenList')) || []
-    const tokenList = [...updatedTokens]
-    tokenList.push(...altTokens)
-
-    async function addAndFilterTokens() {
-      if (tokenList.length < 1 && tokenA && tokenB) {
-        const chainList = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
-        const filteredTokensListAlt = chainList.filter(({ address }) => filterKeywords === address)
-
-        if (filteredTokensListAlt.length > 0) {
-          tokenList.push({
-            ...filteredTokensListAlt?.[0],
-            imageURL: `/img/crypto/${filteredTokensListAlt?.[0].symbol}.svg`
-          })
-          window.localStorage.setItem(
-            'myAddedTokenList',
-            JSON.stringify([...altTokens, filteredTokensListAlt?.[0]])
-          )
+  async function getTokenAccounts(wallet: string, tokens: NewTokenInfo[]) {
+    try {
+      if (!wallet) return tokens
+      const filters = [
+        {
+          dataSize: 165 //size of account (bytes)
+        },
+        {
+          memcmp: {
+            offset: 32, //location of our query in the account (bytes)
+            bytes: wallet //our search criteria, a base58 encoded string
+          }
         }
+      ]
+      let accounts = await connection.getParsedProgramAccounts(TOKEN_PROGRAM_ID, { filters: filters })
+      accounts = accounts.filter((account) => {
+        const parsedAccountInfo: any = account.account.data
+        const tokenBalance: number = parsedAccountInfo['parsed']['info']['tokenAmount']['uiAmount']
+        return tokenBalance > 0
+      })
+      accounts.forEach((account) => {
+        //Parse the account data
+        const parsedAccountInfo: any = account.account.data
+        const mintAddress: string = parsedAccountInfo['parsed']['info']['mint']
+        const tokenBalance: number = parsedAccountInfo['parsed']['info']['tokenAmount']['uiAmount']
+        const token = tokens[tokens.findIndex((el) => el.address === mintAddress)]
+        if (token) {
+          token.tokenBalance = tokenBalance
+          tokens[tokens.findIndex((el) => el.address === mintAddress)] = token
+        }
+      })
+      return tokens
+    } catch {
+      return tokens
+    }
+  }
+
+  useEffect(() => {
+    ;(async function () {
+      let newTokens = [...updatedTokens]
+      if (!checkMobile()) {
+        newTokens = await getTokenAccounts(publicKey?.toBase58(), newTokens)
       }
 
-      const filteredTokensList = tokenList
-        .filter(
-          ({ address, name, symbol }) =>
-            (r.test(name.split('(')[0]) || r.test(symbol) || filterKeywords === address) &&
-            //the split by "(" is to remove every string in name of token with (Portal) or (Sollet) or any other.
-            (!otherToken || otherToken.address !== address)
-        )
-        .sort((a, b) => {
-          const fa = a.symbol.toLowerCase(),
-            fb = b.symbol.toLowerCase()
+      //(O)3n to (O)2n in time complexity (due to two loops, one filter and one sort)
+      addAndFilterTokens([...newTokens], filterKeywords, tokenA, tokenB, chainId)
+    })()
+  }, [filterKeywords, updatedTokens, tokenA, tokenB, chainId, publicKey])
 
-          if (fa < fb) {
-            return -1
-          }
-          if (fa > fb) {
-            return 1
-          }
-          return 0
+  const addAndFilterTokens = async (tokenList, filterKeywords, tokenA, tokenB, chainId) => {
+    if (tokenList.length < 1 && tokenA && tokenB) {
+      const chainList = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
+      const filteredTokensListAlt = chainList.filter(({ address }) => filterKeywords === address)
+
+      if (filteredTokensListAlt.length > 0) {
+        tokenList.push({
+          ...filteredTokensListAlt?.[0],
+          imageURL: `/img/crypto/${filteredTokensListAlt?.[0].symbol}.svg`
         })
-      setFilteredTokens(filteredTokensList)
-
-      if (filterKeywords.length > 1) {
-        //allow at least two inputs to allow less tokens being mapped and decrease load time for popular tokens
-        const popularityFilteredTokensList = (
-          await Promise.all(
-            filteredTokensList.map(async (tk) => {
-              const token = coingeckoTokens.find((i) => i.symbol.toLowerCase() === tk.symbol.toLowerCase())
-              try {
-                if (!token) return { ...tk, vol: 0 }
-                const data = await CoinGeckoClient.coins.fetch(token?.id || null, {})
-                const res = Math.floor(data?.data?.market_data?.total_volume?.usd || 0)
-                return { ...tk, vol: !isNaN(res) ? res : 0 }
-              } catch {
-                return { ...tk, vol: 0 }
-              }
-            })
-          )
-        ).sort((a, b) => b.vol - a.vol)
-        setFilteredTokens(popularityFilteredTokensList)
       }
     }
 
-    addAndFilterTokens() //(O)3n to (O)2n in time complexity (due to two loops, one filter and one sort)
-  }, [filterKeywords, updatedTokens, tokenA, tokenB, chainId])
+    const filteredTokensList = tokenList
+      .filter(
+        ({ address, name, symbol }) =>
+          (r.test(name.split('(')[0]) || r.test(symbol) || filterKeywords === address) &&
+          //the split by "(" is to remove every string in name of token with (Portal) or (Sollet) or any other.
+          otherToken?.address !== address
+      )
+      .sort((a, b) => {
+        const fa = a.symbol.toLowerCase(),
+          fb = b.symbol.toLowerCase()
+
+        if (fa < fb) {
+          return -1
+        }
+        if (fa > fb) {
+          return 1
+        }
+        return 0
+      })
+      .sort((a, b) => b?.tokenBalance - a?.tokenBalance)
+
+    setFilteredTokens(filteredTokensList)
+
+    if (filterKeywords.length > 1) {
+      //allow at least two inputs to allow less tokens being mapped and decrease load time for popular tokens
+      const popularityFilteredTokensList = (
+        await Promise.all(
+          filteredTokensList.map(async (tk) => {
+            const token = coingeckoTokens.find((i) => i.symbol.toLowerCase() === tk.symbol.toLowerCase())
+            if (!token) return { ...tk, vol: 0 }
+
+            try {
+              const data = await CoinGeckoClient.coins.fetch(token?.id || null, {})
+              const res = Math.floor(data?.data?.market_data?.total_volume?.usd || 0)
+              return { ...tk, vol: !isNaN(res) ? res : 0 }
+            } catch {
+              return { ...tk, vol: 0 }
+            }
+          })
+        )
+      ).sort((a, b) => b.vol - a.vol)
+
+      setFilteredTokens(popularityFilteredTokensList)
+    }
+  }
 
   return (
     <>
@@ -326,7 +379,7 @@ export const Selector: FC<{
         </div>
         <GFX_HR />
         <BODY>
-          {filteredTokens.map(({ address, decimals, name, symbol, imageURL, logoURI }, index) => (
+          {filteredTokens.map(({ address, decimals, name, symbol, imageURL, logoURI, tokenBalance }, index) => (
             <TOKEN
               key={index}
               onClick={async () => {
@@ -346,6 +399,7 @@ export const Selector: FC<{
                 <DESK_TOKEN_INFO>
                   <strong>{symbol}</strong>
                   <strong className="token-name"> ({name.replaceAll('(', '').replaceAll(')', '')})</strong>
+                  {tokenBalance > 0 && <strong className="token-balance"> {tokenBalance}</strong>}
                 </DESK_TOKEN_INFO>
               )}
             </TOKEN>

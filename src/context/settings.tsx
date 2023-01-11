@@ -156,6 +156,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       'gfx-user-cache',
       JSON.stringify({
         ...existingUserCache,
+        endpointName: endpointName,
         endpoint: existingUserCache.endpointName === 'Custom' ? endpoint : null
       })
     )

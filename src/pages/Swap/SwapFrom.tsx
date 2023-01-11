@@ -60,7 +60,7 @@ const LABEL = styled.span`
 export const SwapFrom: FC<{ height: string }> = ({ height }) => {
   const { getUIAmount, getUIAmountString } = useAccounts()
   const { publicKey } = useWallet()
-  const { inTokenAmount, pool, setFocused, setInTokenAmount, setTokenA, tokenA, tokenB } = useSwap()
+  const { inTokenAmount, pool, setFocused, setInTokenAmount, setTokenA, tokenA, tokenB, connection } = useSwap()
 
   const setHalf = () => {
     if (tokenA) {
@@ -112,7 +112,14 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
         $value={value || undefined}
         $down={false}
       >
-        <Selector balance={balance} height={height} otherToken={tokenB} setToken={setTokenA} token={tokenA} />
+        <Selector
+          balance={balance}
+          height={height}
+          otherToken={tokenB}
+          setToken={setTokenA}
+          token={tokenA}
+          connection={connection}
+        />
         <Input
           maxLength={15}
           onBlur={() => setFocused(undefined)}
