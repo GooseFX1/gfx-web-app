@@ -22,6 +22,7 @@ import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pub
 import riskIdl from './idl/alpha_risk_engine.json'
 import dexIdl from './idl/dex.json'
 import { Fractional } from './dexterity/types'
+import { ITraderBalances } from '../../../types/dexterity_instructions'
 import { MarketProductGroup, TraderRiskGroup } from './dexterity/accounts'
 import { pyth, SYSTEM } from '../../../web3'
 import { Slab } from './instructions/Agnostic'
@@ -112,9 +113,9 @@ export const getAllMP = async (wallet: any, connection: Connection): Promise<any
 export const getTraderRiskGroupAccount = async (wallet: any, connection: Connection): Promise<any> => {
   const response = await connection.getParsedProgramAccounts(new PublicKey(DEX_ID), {
     filters: [
-      {
-        dataSize: 63632 // number of bytes
-      },
+      //  {
+      //    dataSize: 63632 // number of bytes
+      //  },
       {
         memcmp: {
           offset: 48,
@@ -299,8 +300,8 @@ export const fetchPrice = (marketProductGroup: MarketProductGroup, idx: number) 
   } else if (!prevAskCheck && prevBidCheck) {
     return prevBid
   } else {
-    const askCheck = bid.m.toString().length < 17
-    const bidCheck = ask.m.toString().length < 17
+    const bidCheck = bid.m.toString().length < 17
+    const askCheck = ask.m.toString().length < 17
 
     if (askCheck && bidCheck) {
       const sumPrice = addFractionals(ask, bid)
@@ -320,11 +321,16 @@ export const computeHealth = (traderRiskGroup: TraderRiskGroup, marketProductGro
   let marginReq = ZERO_FRACTIONAL
   const absDollarPosition: Fractional[] = [ZERO_FRACTIONAL]
   let totalAbsDollarPosition: Fractional = ZERO_FRACTIONAL
+  const balancesArray: ITraderBalances[] = []
   for (let i = 0; i < traderRiskGroup.traderPositions.length; i++) {
     if (traderRiskGroup.traderPositions[i].productKey.toBase58() === SYSTEM.toBase58()) {
       continue
     } //account is not initiliazed hence skip
     const traderPos = traderRiskGroup.traderPositions[i]
+    balancesArray.push({
+      productKey: traderPos.productKey,
+      balance: displayFractional(traderPos.position)
+    })
     const idx = traderPos.productIndex.toJSON().userAccount
     const price = fetchPrice(marketProductGroup, Number(idx))
     const size = addFractionals(traderPos.position, traderPos.pendingPosition)
@@ -337,14 +343,14 @@ export const computeHealth = (traderRiskGroup: TraderRiskGroup, marketProductGro
       traderRiskGroup.openOrders.products[Number(idx)].askQtyInBook,
       traderRiskGroup.openOrders.products[Number(idx)].bidQtyInBook
     )
-    //console.log(price.toJSON())
     marginReq = addFractionals(marginReq, mulFractionals(outrightQty, price))
   }
   const retObj = {
     marginReq,
     totalAbsDollarPosition,
-    //outrightQty,
-    traderPortfolioValue
+    absDollarPosition,
+    traderPortfolioValue,
+    balancesArray
   }
   return retObj
 }
@@ -385,7 +391,7 @@ export const loadBidsSlab = async (connection: Connection, bidAccount: string) =
   if (!bidsInfo?.data) {
     throw new Error('Invalid asks account')
   }
-  return Slab.deserialize(bidsInfo.data, new anchor.BN(40))
+  return Slab.deserialize(bidsInfo.data, 40)
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

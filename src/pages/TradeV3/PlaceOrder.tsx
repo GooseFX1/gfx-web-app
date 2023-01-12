@@ -194,7 +194,7 @@ const ORDER_CATEGORY = styled.div`
 const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean }>`
   ${tw`w-11/12 mt-3 rounded-[30px] h-[30px] text-12 font-semibold border-0 border-none`}
   background: ${({ $action, theme }) =>
-    $action ? 'linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%)' : theme.bg23}};
+    $action ? 'linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%)' : theme.bg23};
   color: ${({ $action }) => ($action ? 'white' : '#636363')};
 `
 
