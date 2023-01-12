@@ -53,7 +53,8 @@ import {
   INewOrderAccounts,
   IDepositFundsAccounts,
   IWithdrawFundsAccounts,
-  ICancelOrderAccounts
+  ICancelOrderAccounts,
+  ITraderBalances
 } from '../types/dexterity_instructions'
 import { useConnectionConfig } from './settings'
 import * as anchor from '@project-serum/anchor'
@@ -106,11 +107,6 @@ export const AVAILABLE_ORDERS_PERPS = [
     tooltip: 'Limit order is executed only when the market reaches the price you specify.'
   }
 ]
-
-interface ITraderBalances {
-  balance: string
-  productKey: PublicKey
-}
 
 interface ITraderRiskGroup {
   traderRiskGroup: TraderRiskGroup
@@ -239,37 +235,29 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const parseTraderInfo = async () => {
     const res = computeHealth(traderRiskGroup, marketProductGroup)
-    const balancesArray: ITraderBalances[] = []
-    for (let i = 0; i < traderRiskGroup.traderPositions.length; i++) {
-      const traderPosition = traderRiskGroup.traderPositions[i]
-      if (traderPosition.productKey.toBase58() === '11111111111111111111111111111111') continue
-      balancesArray.push({
-        productKey: traderPosition.productKey,
-        balance: displayFractional(traderPosition.position)
-      })
-    }
-    setTraderBalances(balancesArray)
+
+    setTraderBalances(res.balancesArray)
     // const liquidationP = getLiquidationPrice(res.traderPortfolioValue)
   }
 
   useEffect(() => {
     if (wallet.connected) {
       if (!marketProductGroup) setMPGDetails()
-      //if (marketProductGroup) testing()
+      if (marketProductGroup) testing()
     } else {
       setTraderRiskGroup(null)
     }
-  }, [wallet.connected])
+  }, [wallet.connected, marketProductGroup])
 
   const testing = async () => {
-    // const res = await adminInitialiseMPG(connection, wallet)
-    // console.log(res)
-    // const res = await adminCreateMarket(connection, wallet)
-    // console.log(res)
-    // const res = await updateFeesIx(wallet, connection, {
+    // const res1 = await adminInitialiseMPG(connection, wallet)
+    // console.log(res1)
+    // const res2 = await adminCreateMarket(connection, wallet)
+    // console.log(res2)
+    // const res3 = await updateFeesIx(wallet, connection, {
     //   feeModelConfigAcct: marketProductGroup.feeModelConfigurationAcct
     // })
-    // console.log(res)
+    // console.log(res3)
   }
   useEffect(() => {
     setMPG(new PublicKey(MPG_ID))

@@ -145,21 +145,21 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
     const bids: IOrderbookType[] = []
     const asks: IOrderbookType[] = []
     for (const bid of orderbookResponse.bids.items(false)) {
-      const callbackBuffer = orderbookResponse.bids.getCallBackInfo(bid.callBackInfoPt)
+      const callbackBuffer = bid.callbackInfo
       bids.push({
-        price: BigInt(bid.getPrice().toString()),
-        size: BigInt(bid.baseQuantity.toString()),
+        price: BigInt(bid.leafNode.getPrice().toString()),
+        size: BigInt(bid.leafNode.baseQuantity.toString()),
         user: new PublicKey(callbackBuffer.slice(0, 32)).toBase58(),
-        orderId: bid.key.toString()
+        orderId: bid.leafNode.key.toString()
       })
     }
     for (const ask of orderbookResponse.asks.items(false)) {
-      const callbackBuffer = orderbookResponse.asks.getCallBackInfo(ask.callBackInfoPt)
+      const callbackBuffer = ask.callbackInfo
       asks.push({
-        price: BigInt(ask.getPrice().toString()),
-        size: BigInt(ask.baseQuantity.toString()),
+        price: BigInt(ask.leafNode.getPrice().toString()),
+        size: BigInt(ask.leafNode.baseQuantity.toString()),
         user: new PublicKey(callbackBuffer.slice(0, 32)).toBase58(),
-        orderId: ask.key.toString()
+        orderId: ask.leafNode.key.toString()
       })
     }
     const setBook = convertBidsAsks(bids, asks)
