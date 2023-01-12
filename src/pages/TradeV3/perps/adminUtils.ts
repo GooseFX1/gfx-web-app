@@ -8,7 +8,7 @@ import {
   FIND_FEES_DISCRIMINANT_LEN,
   MPG_ACCOUNT_SIZE,
   MPG_ID,
-  ORDERBOOK_P_ID,
+  //ORDERBOOK_P_ID,
   RISK_ID,
   VALIDATE_ACCOUNT_HEALTH_DISCRIMINANT,
   VALIDATE_ACCOUNT_HEALTH_DISCRIMINANT_LEN,
@@ -36,7 +36,6 @@ import { struct, u8, u32 } from '@solana/buffer-layout'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { initializeDerivative } from './instructions/derivativeIx'
 import { Fractional } from './dexterity/types'
-import { createMarketInstruction } from './instructions/AAOrderbookIx'
 
 export const initializeMarketProductGroup = async (
   initializeProductGroupAccounts: IInitializeMarketProductGroupAccounts,
@@ -216,7 +215,7 @@ export const adminInitialiseMPG = async (connection: Connection, wallet: any) =>
   }
   SYSVAR_RENT_PUBKEY
   const paramsObject = {
-    name: Buffer.from('BTCTEST'),
+    name: Buffer.from('GFXTEST'),
     validateAccountDiscriminantLen: new anchor.BN(VALIDATE_ACCOUNT_HEALTH_DISCRIMINANT_LEN),
     findFeesDiscriminantLen: new anchor.BN(FIND_FEES_DISCRIMINANT_LEN),
     validateAccountHealthDiscriminant: VALIDATE_ACCOUNT_HEALTH_DISCRIMINANT,
@@ -238,6 +237,8 @@ export const createAAMarket = async (wallet: any, connection: Connection, caller
   const bids = anchor.web3.Keypair.generate()
   const asks = anchor.web3.Keypair.generate()
 
+  const dexProgram = await getDexProgram(connection, wallet)
+
   console.log('caller authority ', caller_authority.toBase58())
   console.log('In buffer terms: ', caller_authority.toBuffer())
 
@@ -247,14 +248,14 @@ export const createAAMarket = async (wallet: any, connection: Connection, caller
   console.log('bids: ', bids.publicKey.toBase58())
   console.log('asks: ', asks.publicKey.toBase58())
   // const eventQueueSize = 42 + 33 + 120 + 34 + 1 + 73 //303
-  const eventQueueSize = 42 + 33 + 11400 //100 eq amx size
+  const eventQueueSize = 42 + 33 + 11400 - 43 //100 eq amx size
   instructions.push(
     SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
       newAccountPubkey: eventQueue.publicKey,
       lamports: await connection.getMinimumBalanceForRentExemption(eventQueueSize), //Need to change
       space: eventQueueSize, //Need to change
-      programId: new PublicKey(ORDERBOOK_P_ID)
+      programId: new PublicKey(DEX_ID)
     })
   )
 
@@ -262,9 +263,9 @@ export const createAAMarket = async (wallet: any, connection: Connection, caller
     SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
       newAccountPubkey: market.publicKey,
-      lamports: await connection.getMinimumBalanceForRentExemption(192), //Need to change
-      space: 192, //Need to change
-      programId: new PublicKey(ORDERBOOK_P_ID)
+      lamports: await connection.getMinimumBalanceForRentExemption(120), //Need to change
+      space: 120, //Need to change
+      programId: new PublicKey(DEX_ID)
     })
   )
 
@@ -272,9 +273,9 @@ export const createAAMarket = async (wallet: any, connection: Connection, caller
     SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
       newAccountPubkey: asks.publicKey,
-      lamports: await connection.getMinimumBalanceForRentExemption(65536), //Need to change
-      space: 65536, //Need to change
-      programId: new PublicKey(ORDERBOOK_P_ID)
+      lamports: await connection.getMinimumBalanceForRentExemption(96008), //Need to change
+      space: 96008, //Need to change
+      programId: new PublicKey(DEX_ID)
     })
   )
 
@@ -282,28 +283,32 @@ export const createAAMarket = async (wallet: any, connection: Connection, caller
     SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
       newAccountPubkey: bids.publicKey,
-      lamports: await connection.getMinimumBalanceForRentExemption(65536), //Need to change
-      space: 65536, //Need to change
-      programId: new PublicKey(ORDERBOOK_P_ID)
+      lamports: await connection.getMinimumBalanceForRentExemption(96008), //Need to change
+      space: 96008, //Need to change
+      programId: new PublicKey(DEX_ID)
     })
   )
 
-  const res = new createMarketInstruction({
-    callerAuthority: caller_authority.toBuffer(),
-    callbackInfoLen: new anchor.BN(40),
-    callbackIdLen: new anchor.BN(32),
-    minBaseOrderSize: new anchor.BN(1),
-    tickSize: new anchor.BN(1),
-    crankerReward: new anchor.BN(1000)
-  }).getInstruction(
-    new PublicKey(ORDERBOOK_P_ID),
-    market.publicKey,
-    eventQueue.publicKey,
-    bids.publicKey,
-    asks.publicKey
+  instructions.push(
+    await dexProgram.instruction.createMarket(
+      {
+        minBaseOrderSize: new anchor.BN(1),
+        tickSize: new anchor.BN(1)
+      },
+      {
+        accounts: {
+          market: market.publicKey,
+          eventQueue: eventQueue.publicKey,
+          bids: bids.publicKey,
+          asks: asks.publicKey,
+          authority: wallet.publicKey,
+          marketProductGroup: new PublicKey(MPG_ID)
+        },
+        signers: [eventQueue, market, bids, asks]
+      }
+    )
   )
 
-  instructions.push(res)
   const response = await sendTransaction(connection, wallet, instructions, [eventQueue, market, bids, asks])
   console.log(response)
   return market

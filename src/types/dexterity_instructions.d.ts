@@ -289,3 +289,8 @@ export interface IConsumeOB {
   feeOutputRegister: PublicKey
   riskAndFeeSigner: PublicKey
 }
+
+export interface ITraderBalances {
+    balance: string
+    productKey: PublicKey
+}

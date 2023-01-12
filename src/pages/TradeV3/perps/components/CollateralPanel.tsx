@@ -138,7 +138,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
   const { height } = useWindowSize()
   const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
 
-  const bid = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
+  const ask = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
 
   const currentMarketBalance: string = useMemo(() => {
     let balance = '0'
@@ -147,7 +147,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
         balance = item.balance
       }
     })
-    return balance + ' ' + bid
+    return balance + ' ' + ask
   }, [traderInfo, activeProduct])
 
   const getHealthData = () => {
@@ -202,12 +202,12 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
         <span className="value">{Number(traderInfo.collateralAvailable).toFixed(2)}</span>
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>
-        <span className="key">SOL/USDC Margin Available</span>
+        <span className="key">Margin Available</span>
         <span className="value">0.23</span>
       </ACCOUNT_ROW>
       {isSolAccount && (
         <ACCOUNT_ROW $height={height}>
-          <span className="key">SOL/USDC Est. Liq. Price</span>
+          <span className="key">{ask + ' Liquidation Price'}</span>
           <span className="value">100%</span>
         </ACCOUNT_ROW>
       )}
