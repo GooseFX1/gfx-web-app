@@ -270,8 +270,8 @@ export const OrderBook: FC = () => {
         currentBucketSum = 0
         lastBucket = getBucketValue(completeOrderBookBids[i][0], selectedSpread).value
         currentBucketSum += completeOrderBookBids[i][1]
-        if (i === completeOrderBookBids.length - 1) buckets.push([lastBucket, currentBucketSum])
       }
+      if (i === completeOrderBookBids.length - 1) buckets.push([lastBucket, currentBucketSum])
     }
     setBidOrderBookDisplay(buckets)
   }
@@ -296,8 +296,8 @@ export const OrderBook: FC = () => {
         currentBucketSum = 0
         lastBucket = getBucketValue(completeOrderBookBids[i][0], selectedSpread).value
         currentBucketSum += completeOrderBookBids[i][1]
-        if (i === completeOrderBookBids.length - 1) buckets.push([lastBucket, currentBucketSum])
       }
+      if (i === completeOrderBookBids.length - 1) buckets.push([lastBucket, currentBucketSum])
     }
     setAskOrderBookDisplay(buckets)
   }

@@ -328,8 +328,8 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
     SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
       newAccountPubkey: traderRiskGroup.publicKey,
-      lamports: await connection.getMinimumBalanceForRentExemption(63632), //Need to change
-      space: 63632, //Need to change
+      lamports: await connection.getMinimumBalanceForRentExemption(34448), //Need to change
+      space: 34448, //Need to change
       programId: new PublicKey(DEX_ID)
     })
   )

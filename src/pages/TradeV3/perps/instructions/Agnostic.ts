@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable prefer-const */
 /* eslint-disable no-constant-condition */
-import { PublicKey } from '@solana/web3.js'
+//import { PublicKey } from '@solana/web3.js'
 import { Schema, deserializeUnchecked } from 'borsh'
 import BN from 'bn.js'
 // Uncomment to use WebAssembly for OB deserialization
@@ -24,10 +24,16 @@ enum AccountTag {
   Asks = 4
 }
 
+///////////////////////////////////////////////
+////// Nodes and Slab
+///////////////////////////////////////////////
+
 export class InnerNode {
   prefixLen: BN
   key: BN
   children: number[]
+
+  static LEN = 32
 
   static schema: Schema = new Map([
     [
@@ -35,8 +41,8 @@ export class InnerNode {
       {
         kind: 'struct',
         fields: [
-          ['prefixLen', 'u64'],
           ['key', 'u128'],
+          ['prefixLen', 'u64'],
           ['children', ['u32', 2]]
         ]
       }
@@ -52,8 +58,9 @@ export class InnerNode {
 
 export class LeafNode {
   key: BN
-  callBackInfoPt: BN
   baseQuantity: BN
+
+  static LEN = 24
 
   static schema: Schema = new Map([
     [
@@ -62,16 +69,14 @@ export class LeafNode {
         kind: 'struct',
         fields: [
           ['key', 'u128'],
-          ['callBackInfoPt', 'u64'],
           ['baseQuantity', 'u64']
         ]
       }
     ]
   ])
 
-  constructor(arg: { key: BN; callBackInfoPt: BN; baseQuantity: BN }) {
+  constructor(arg: { key: BN; baseQuantity: BN }) {
     this.key = arg.key
-    this.callBackInfoPt = arg.callBackInfoPt
     this.baseQuantity = arg.baseQuantity
   }
 
@@ -83,61 +88,22 @@ export class LeafNode {
   }
 }
 
-export class FreeNode {
-  next: number
-
-  static schema: Schema = new Map([
-    [
-      FreeNode,
-      {
-        kind: 'struct',
-        fields: [['next', 'u32']]
-      }
-    ]
-  ])
-
-  constructor(arg: { next: number }) {
-    this.next = arg.next
-  }
-}
-
-/**
- * Deserializes a node buffer
- * @param data Buffer to deserialize
- * @returns Returns a node
- */
-export function parseNode(data: Buffer): undefined | FreeNode | LeafNode | InnerNode {
-  switch (data[0]) {
-    case 0:
-      throw new Error('node is unitialized')
-    case 1:
-      return deserializeUnchecked(InnerNode.schema, InnerNode, data.slice(Slab.NODE_TAG_SIZE))
-    case 2:
-      return deserializeUnchecked(LeafNode.schema, LeafNode, data.slice(Slab.NODE_TAG_SIZE))
-    case 3:
-      return deserializeUnchecked(FreeNode.schema, FreeNode, data.slice(Slab.NODE_TAG_SIZE))
-    case 4:
-      return deserializeUnchecked(FreeNode.schema, FreeNode, data.slice(Slab.NODE_TAG_SIZE))
-    default:
-      throw new Error('Invalid data')
-  }
+function isLeaf(handle: number): boolean {
+  return (handle & Slab.INNER_FLAG) == 0
 }
 
 export class SlabHeader {
   accountTag: AccountTag
-  bumpIndex: BN
-  freeListLen: BN
-  freeListHead: number
-  callbackMemoryOffset: BN
-  callbackFreeListLen: BN
-  callbackFreeListHead: BN
-  callbackBumpIndex: BN
+  leafFreeListLen: number
+  leafFreeListHead: number
+  leafBumpIndex: number
+  innerNodeFreeListLen: number
+  innerNodeFreeListHead: number
+  innerNodeBumpIndex: number
   rootNode: number
-  leafCount: BN
-  marketAddress: PublicKey
+  leafCount: number
 
-  static LEN: number = 97
-  static PADDED_LEN: number = SlabHeader.LEN + 7
+  static LEN: number = 40
 
   static schema: Schema = new Map([
     [
@@ -145,77 +111,97 @@ export class SlabHeader {
       {
         kind: 'struct',
         fields: [
-          ['accountTag', 'u8'],
-          ['bumpIndex', 'u64'],
-          ['freeListLen', 'u64'],
-          ['freeListHead', 'u32'],
-          ['callbackMemoryOffset', 'u64'],
-          ['callbackFreeListLen', 'u64'],
-          ['callbackFreeListHead', 'u64'],
-          ['callbackBumpIndex', 'u64'],
+          ['accountTag', 'u64'],
+
+          ['leafFreeListLen', 'u32'],
+          ['leafFreeListHead', 'u32'],
+          ['leafBumpIndex', 'u32'],
+
+          ['innerNodeFreeListLen', 'u32'],
+          ['innerNodeFreeListHead', 'u32'],
+          ['innerNodeBumpIndex', 'u32'],
+
           ['rootNode', 'u32'],
-          ['leafCount', 'u64'],
-          ['marketAddress', [32]]
+          ['leafCount', 'u32']
         ]
       }
     ]
   ])
 
   constructor(arg: {
-    accountTag: number
-    bumpIndex: BN
-    freeListLen: BN
-    freeListHead: number
-    callbackMemoryOffset: BN
-    callbackFreeListLen: BN
-    callbackFreeListHead: BN
-    callbackBumpIndex: BN
+    accountTag: BN
+    leafFreeListLen: number
+    leafFreeListHead: number
+    leafBumpIndex: number
+    innerNodeFreeListLen: number
+    innerNodeFreeListHead: number
+    innerNodeBumpIndex: number
     rootNode: number
-    leafCount: BN
-    marketAddress: Uint8Array
+    leafCount: number
   }) {
-    this.accountTag = arg.accountTag as AccountTag
-    this.bumpIndex = arg.bumpIndex
-    this.freeListLen = arg.freeListLen
-    this.freeListHead = arg.freeListHead
-    this.callbackMemoryOffset = arg.callbackMemoryOffset
-    this.callbackFreeListLen = arg.callbackFreeListLen
-    this.callbackFreeListHead = arg.callbackFreeListHead
-    this.callbackBumpIndex = arg.callbackBumpIndex
+    this.accountTag = arg.accountTag.toNumber() as AccountTag
     this.rootNode = arg.rootNode
     this.leafCount = arg.leafCount
-    this.marketAddress = new PublicKey(arg.marketAddress)
+
+    this.leafFreeListLen = arg.leafFreeListLen
+    this.leafFreeListHead = arg.leafFreeListHead
+    this.leafBumpIndex = arg.leafBumpIndex
+    this.innerNodeFreeListLen = arg.innerNodeFreeListLen
+    this.innerNodeFreeListHead = arg.innerNodeFreeListHead
+    this.innerNodeBumpIndex = arg.innerNodeBumpIndex
   }
+}
+
+export interface LeafNodeRef {
+  leafNode: LeafNode
+  callbackInfo: Buffer
 }
 
 export class Slab {
   header: SlabHeader
-  buffer: Buffer
-  callBackInfoLen: BN
+  leafBuffer: Buffer
+  innerNodeBuffer: Buffer
+  callbackInfoBuffer: Buffer
+  callBackInfoLen: number
   orderCapacity: number
-  callbackMemoryOffset: BN
 
   static NODE_SIZE: number = 32
   static NODE_TAG_SIZE: number = 8
   static SLOT_SIZE: number = Slab.NODE_TAG_SIZE + Slab.NODE_SIZE
+  static INNER_FLAG: number = 1 << 31
 
-  constructor(arg: { header: SlabHeader; buffer: Buffer; callBackInfoLen: BN }) {
+  constructor(arg: { header: SlabHeader; buffer: Buffer; callBackInfoLen: number }) {
     this.header = arg.header
-    this.buffer = arg.buffer
     this.callBackInfoLen = arg.callBackInfoLen
+    const leafSize = LeafNode.LEN + arg.callBackInfoLen
 
-    const capacity = new BN(this.buffer.length - SlabHeader.PADDED_LEN)
-    const size = this.callBackInfoLen.addn(Slab.SLOT_SIZE * 2)
-    this.orderCapacity = Math.floor(capacity.div(size).toNumber())
-    this.callbackMemoryOffset = new BN(this.orderCapacity).muln(2 * Slab.SLOT_SIZE).addn(SlabHeader.PADDED_LEN)
+    const capacity = (arg.buffer.length - SlabHeader.LEN - leafSize) / (leafSize + InnerNode.LEN)
+    let innerNodesBufferOffset = SlabHeader.LEN + (capacity + 1) * LeafNode.LEN
+    let leavesBuffer = arg.buffer.slice(SlabHeader.LEN, innerNodesBufferOffset)
+    let callbackInfoBufferOffset = innerNodesBufferOffset + capacity * InnerNode.LEN
+    let innerNodeBuffer = arg.buffer.slice(innerNodesBufferOffset, callbackInfoBufferOffset)
+    let callbackInfoBuffer = arg.buffer.slice(callbackInfoBufferOffset)
+    this.orderCapacity = Math.floor(capacity)
+    this.leafBuffer = leavesBuffer
+    this.innerNodeBuffer = innerNodeBuffer
+    this.callbackInfoBuffer = callbackInfoBuffer
   }
 
-  static deserialize(data: Buffer, callBackInfoLen: BN) {
+  static deserialize(data: Buffer, callBackInfoLen: number) {
     return new Slab({
       header: deserializeUnchecked(SlabHeader.schema, SlabHeader, data),
       buffer: data,
       callBackInfoLen
     })
+  }
+
+  static computeAllocationSize(desiredOrderCapacity: number, callbackInfoLen: number): number {
+    return (
+      SlabHeader.LEN +
+      LeafNode.LEN +
+      callbackInfoLen +
+      (desiredOrderCapacity - 1) * (LeafNode.LEN + InnerNode.LEN + callbackInfoLen)
+    )
   }
 
   /**
@@ -224,13 +210,12 @@ export class Slab {
    * @returns A node LeafNode object
    */
   getNodeByKey(key: BN): LeafNode | undefined {
-    if (this.header.leafCount.eqn(0)) {
+    if (this.header.leafCount == 0) {
       return undefined
     }
-    let pointer = this.header.rootNode
+    let nodeHandle = this.header.rootNode
     while (true) {
-      const offset = SlabHeader.PADDED_LEN + pointer * Slab.SLOT_SIZE
-      let node = parseNode(this.buffer.slice(offset, offset + Slab.SLOT_SIZE))
+      let node = this.getNode(nodeHandle)
       if (node instanceof InnerNode) {
         let common_prefix_len = 128 - node.key.xor(key).bitLength()
         if (common_prefix_len < node.prefixLen.toNumber()) {
@@ -238,7 +223,7 @@ export class Slab {
         }
         const critBitMasks = new BN(1).shln(127 - node.prefixLen.toNumber())
         let critBit = key.and(critBitMasks).isZero() ? 0 : 1
-        pointer = node.children[critBit]
+        nodeHandle = node.children[critBit]
       } else if (node instanceof LeafNode) {
         if (node.key.cmp(key) !== 0) {
           return undefined
@@ -248,6 +233,16 @@ export class Slab {
         throw new Error("Couldn't parse node!")
       }
     }
+  }
+
+  getNode(handle: number): InnerNode | LeafNode {
+    if (isLeaf(handle)) {
+      let buff = this.leafBuffer.slice(handle * LeafNode.LEN, (handle + 1) * LeafNode.LEN)
+      return deserializeUnchecked(LeafNode.schema, LeafNode, buff) as LeafNode
+    }
+    let index = new BN(handle).notn(32).toNumber()
+    let buff = this.innerNodeBuffer.slice(index * InnerNode.LEN, (index + 1) * InnerNode.LEN)
+    return deserializeUnchecked(InnerNode.schema, InnerNode, buff) as InnerNode
   }
 
   // Uncomment if you are using webassembly
@@ -290,18 +285,19 @@ export class Slab {
    * @param descending
    * @returns
    */
-  *items(descending = false): Generator<LeafNode> {
-    if (this.header.leafCount.eq(new BN(0))) {
+  *items(descending = false): Generator<LeafNodeRef> {
+    if (this.header.leafCount == 0) {
       return
     }
     const stack = [this.header.rootNode]
     while (stack.length > 0) {
-      const pointer = stack.pop()
-      if (pointer === undefined) throw new Error('unreachable!')
-      let offset = SlabHeader.PADDED_LEN + pointer * Slab.SLOT_SIZE
-      const node = parseNode(this.buffer.slice(offset, offset + Slab.SLOT_SIZE))
+      const nodeHandle = stack.pop() as number
+      const node = this.getNode(nodeHandle)
       if (node instanceof LeafNode) {
-        yield node
+        yield {
+          leafNode: node,
+          callbackInfo: this.getCallBackInfo(nodeHandle) as Buffer
+        }
       } else if (node instanceof InnerNode) {
         if (descending) {
           stack.push(node.children[0], node.children[1])
@@ -348,7 +344,7 @@ export class Slab {
    * @returns Returns an array of LeafNode object
    */
   getMinMaxNodes(maxNbOrders: number, max: boolean) {
-    const minMaxOrders: LeafNode[] = []
+    const minMaxOrders: LeafNodeRef[] = []
     for (const leafNode of this.items(max)) {
       if (minMaxOrders.length === maxNbOrders) {
         break
@@ -365,21 +361,20 @@ export class Slab {
    * @returns aggregated quantities at each price level
    */
   getL2DepthJS(depth: number, increasing: boolean): Price[] {
-    if (this.header.leafCount.eq(new BN(0))) {
+    if (this.header.leafCount == 0) {
       return []
     }
-    let raw: number[] = []
+    let raw: BN[] = []
     let stack = [this.header.rootNode]
     while (true) {
       const current = stack.pop()
       if (current === undefined) break
-      let offset = SlabHeader.PADDED_LEN + current * Slab.SLOT_SIZE
-      const node = parseNode(this.buffer.slice(offset, offset + Slab.SLOT_SIZE))
+      const node = this.getNode(current)
       if (node instanceof LeafNode) {
         const leafPrice = node.getPrice()
-        if (raw[raw.length - 1] === leafPrice.toNumber()) {
+        if (raw[raw.length - 1]?.eq(leafPrice)) {
           const idx = raw.length - 2
-          raw[idx] += node.baseQuantity.toNumber()
+          raw[idx].iadd(node.baseQuantity)
         } else if (raw.length === 2 * depth) {
           // The price has changed and we have enough prices. Note that the
           // above branch will be hit even if we already have `depth` prices
@@ -388,8 +383,8 @@ export class Slab {
           // we will accumulate both orders.
           break
         } else {
-          raw.push(node.baseQuantity.toNumber())
-          raw.push(leafPrice.toNumber())
+          raw.push(node.baseQuantity)
+          raw.push(leafPrice)
         }
       }
       if (node instanceof InnerNode) {
@@ -400,8 +395,8 @@ export class Slab {
     let result: Price[] = []
     for (let i = 0; i < raw.length / 2; i++) {
       result.push({
-        size: Number(raw[2 * i]),
-        price: Number(raw[2 * i + 1])
+        size: Number(raw[2 * i].toString()),
+        price: Number(raw[2 * i + 1].toString())
       })
     }
     return result
@@ -412,7 +407,13 @@ export class Slab {
    * the info in the appropriate Slab.
    * @returns the raw binary callback info for the node
    */
-  getCallBackInfo(callBackInfoPt: BN) {
-    return this.buffer.slice(callBackInfoPt.toNumber(), callBackInfoPt.add(this.callBackInfoLen).toNumber())
+  getCallBackInfo(nodeHandle: number) {
+    if (!isLeaf(nodeHandle)) {
+      return undefined
+    }
+    return this.callbackInfoBuffer.slice(
+      nodeHandle * this.callBackInfoLen,
+      (nodeHandle + 1) * this.callBackInfoLen
+    )
   }
 }
