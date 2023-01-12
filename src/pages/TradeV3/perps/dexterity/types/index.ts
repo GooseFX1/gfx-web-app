@@ -59,6 +59,13 @@ export { SocialLoss } from './SocialLoss'
 export type { SocialLossFields, SocialLossJSON } from './SocialLoss'
 export { OrderInfo } from './OrderInfo'
 export type { OrderInfoFields, OrderInfoJSON } from './OrderInfo'
+export { TradeHistory } from "./TradeHistory"
+export type { TradeHistoryFields, TradeHistoryJSON } from "./TradeHistory"
+export { AveragePosition } from "./AveragePosition"
+export type {
+  AveragePositionFields,
+  AveragePositionJSON,
+} from "./AveragePosition"
 export { TraderPosition } from './TraderPosition'
 export type { TraderPositionFields, TraderPositionJSON } from './TraderPosition'
 export { Bitset } from './Bitset'

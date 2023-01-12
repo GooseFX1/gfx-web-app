@@ -1,8 +1,8 @@
-import { PublicKey, Connection } from '@solana/web3.js'
-import BN from 'bn.js' // eslint-disable-line @typescript-eslint/no-unused-vars
-import * as borsh from '@project-serum/borsh' // eslint-disable-line @typescript-eslint/no-unused-vars
-import * as types from '../types' // eslint-disable-line @typescript-eslint/no-unused-vars
-import { PROGRAM_ID } from '../programId'
+import { PublicKey, Connection } from "@solana/web3.js"
+import BN from "bn.js" // eslint-disable-line @typescript-eslint/no-unused-vars
+import * as borsh from "@project-serum/borsh" // eslint-disable-line @typescript-eslint/no-unused-vars
+import * as types from "../types" // eslint-disable-line @typescript-eslint/no-unused-vars
+import { PROGRAM_ID } from "../programId"
 
 export interface TraderRiskGroupFields {
   tag: types.AccountTag
@@ -22,6 +22,8 @@ export interface TraderRiskGroupFields {
   feeStateAccount: PublicKey
   clientOrderId: BN
   openOrders: types.OpenOrdersFields
+  tradeHistory: Array<types.TradeHistoryFields>
+  avgPosition: Array<types.AveragePositionFields>
 }
 
 export interface TraderRiskGroupJSON {
@@ -42,6 +44,8 @@ export interface TraderRiskGroupJSON {
   feeStateAccount: string
   clientOrderId: string
   openOrders: types.OpenOrdersJSON
+  tradeHistory: Array<types.TradeHistoryJSON>
+  avgPosition: Array<types.AveragePositionJSON>
 }
 
 export class TraderRiskGroup {
@@ -62,27 +66,33 @@ export class TraderRiskGroup {
   readonly feeStateAccount: PublicKey
   readonly clientOrderId: BN
   readonly openOrders: types.OpenOrders
+  readonly tradeHistory: Array<types.TradeHistory>
+  readonly avgPosition: Array<types.AveragePosition>
 
-  static readonly discriminator = Buffer.from([121, 228, 110, 56, 254, 207, 245, 168])
+  static readonly discriminator = Buffer.from([
+    121, 228, 110, 56, 254, 207, 245, 168,
+  ])
 
   static readonly layout = borsh.struct([
-    types.AccountTag.layout('tag'),
-    borsh.publicKey('marketProductGroup'),
-    borsh.publicKey('owner'),
-    borsh.array(borsh.u8(), 128, 'activeProducts'),
-    types.Fractional.layout('totalDeposited'),
-    types.Fractional.layout('totalWithdrawn'),
-    types.Fractional.layout('cashBalance'),
-    types.Fractional.layout('pendingCashBalance'),
-    types.Fractional.layout('pendingFees'),
-    borsh.i64('validUntil'),
-    borsh.i32('makerFeeBps'),
-    borsh.i32('takerFeeBps'),
-    borsh.array(types.TraderPosition.layout(), 16, 'traderPositions'),
-    borsh.publicKey('riskStateAccount'),
-    borsh.publicKey('feeStateAccount'),
-    borsh.u128('clientOrderId'),
-    types.OpenOrders.layout('openOrders')
+    types.AccountTag.layout("tag"),
+    borsh.publicKey("marketProductGroup"),
+    borsh.publicKey("owner"),
+    borsh.array(borsh.u8(), 128, "activeProducts"),
+    types.Fractional.layout("totalDeposited"),
+    types.Fractional.layout("totalWithdrawn"),
+    types.Fractional.layout("cashBalance"),
+    types.Fractional.layout("pendingCashBalance"),
+    types.Fractional.layout("pendingFees"),
+    borsh.i64("validUntil"),
+    borsh.i32("makerFeeBps"),
+    borsh.i32("takerFeeBps"),
+    borsh.array(types.TraderPosition.layout(), 16, "traderPositions"),
+    borsh.publicKey("riskStateAccount"),
+    borsh.publicKey("feeStateAccount"),
+    borsh.u128("clientOrderId"),
+    types.OpenOrders.layout("openOrders"),
+    borsh.array(types.TradeHistory.layout(), 64, "tradeHistory"),
+    borsh.array(types.AveragePosition.layout(), 64, "avgPosition"),
   ])
 
   constructor(fields: TraderRiskGroupFields) {
@@ -94,20 +104,31 @@ export class TraderRiskGroup {
     this.totalWithdrawn = new types.Fractional({ ...fields.totalWithdrawn })
     this.cashBalance = new types.Fractional({ ...fields.cashBalance })
     this.pendingCashBalance = new types.Fractional({
-      ...fields.pendingCashBalance
+      ...fields.pendingCashBalance,
     })
     this.pendingFees = new types.Fractional({ ...fields.pendingFees })
     this.validUntil = fields.validUntil
     this.makerFeeBps = fields.makerFeeBps
     this.takerFeeBps = fields.takerFeeBps
-    this.traderPositions = fields.traderPositions.map((item) => new types.TraderPosition({ ...item }))
+    this.traderPositions = fields.traderPositions.map(
+      (item) => new types.TraderPosition({ ...item })
+    )
     this.riskStateAccount = fields.riskStateAccount
     this.feeStateAccount = fields.feeStateAccount
     this.clientOrderId = fields.clientOrderId
     this.openOrders = new types.OpenOrders({ ...fields.openOrders })
+    this.tradeHistory = fields.tradeHistory.map(
+      (item) => new types.TradeHistory({ ...item })
+    )
+    this.avgPosition = fields.avgPosition.map(
+      (item) => new types.AveragePosition({ ...item })
+    )
   }
 
-  static async fetch(c: Connection, address: PublicKey): Promise<TraderRiskGroup | null> {
+  static async fetch(
+    c: Connection,
+    address: PublicKey
+  ): Promise<TraderRiskGroup | null> {
     const info = await c.getAccountInfo(address)
 
     if (info === null) {
@@ -120,7 +141,10 @@ export class TraderRiskGroup {
     return this.decode(info.data)
   }
 
-  static async fetchMultiple(c: Connection, addresses: PublicKey[]): Promise<Array<TraderRiskGroup | null>> {
+  static async fetchMultiple(
+    c: Connection,
+    addresses: PublicKey[]
+  ): Promise<Array<TraderRiskGroup | null>> {
     const infos = await c.getMultipleAccountsInfo(addresses)
 
     return infos.map((info) => {
@@ -137,7 +161,7 @@ export class TraderRiskGroup {
 
   static decode(data: Buffer): TraderRiskGroup {
     if (!data.slice(0, 8).equals(TraderRiskGroup.discriminator)) {
-      throw new Error('invalid account discriminator')
+      throw new Error("invalid account discriminator")
     }
 
     const dec = TraderRiskGroup.layout.decode(data.slice(8))
@@ -156,13 +180,24 @@ export class TraderRiskGroup {
       makerFeeBps: dec.makerFeeBps,
       takerFeeBps: dec.takerFeeBps,
       traderPositions: dec.traderPositions.map(
-        (item: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) =>
-          types.TraderPosition.fromDecoded(item)
+        (
+          item: any /* eslint-disable-line @typescript-eslint/no-explicit-any */
+        ) => types.TraderPosition.fromDecoded(item)
       ),
       riskStateAccount: dec.riskStateAccount,
       feeStateAccount: dec.feeStateAccount,
       clientOrderId: dec.clientOrderId,
-      openOrders: types.OpenOrders.fromDecoded(dec.openOrders)
+      openOrders: types.OpenOrders.fromDecoded(dec.openOrders),
+      tradeHistory: dec.tradeHistory.map(
+        (
+          item: any /* eslint-disable-line @typescript-eslint/no-explicit-any */
+        ) => types.TradeHistory.fromDecoded(item)
+      ),
+      avgPosition: dec.avgPosition.map(
+        (
+          item: any /* eslint-disable-line @typescript-eslint/no-explicit-any */
+        ) => types.AveragePosition.fromDecoded(item)
+      ),
     })
   }
 
@@ -184,7 +219,9 @@ export class TraderRiskGroup {
       riskStateAccount: this.riskStateAccount.toString(),
       feeStateAccount: this.feeStateAccount.toString(),
       clientOrderId: this.clientOrderId.toString(),
-      openOrders: this.openOrders.toJSON()
+      openOrders: this.openOrders.toJSON(),
+      tradeHistory: this.tradeHistory.map((item) => item.toJSON()),
+      avgPosition: this.avgPosition.map((item) => item.toJSON()),
     }
   }
 
@@ -202,11 +239,19 @@ export class TraderRiskGroup {
       validUntil: new BN(obj.validUntil),
       makerFeeBps: obj.makerFeeBps,
       takerFeeBps: obj.takerFeeBps,
-      traderPositions: obj.traderPositions.map((item) => types.TraderPosition.fromJSON(item)),
+      traderPositions: obj.traderPositions.map((item) =>
+        types.TraderPosition.fromJSON(item)
+      ),
       riskStateAccount: new PublicKey(obj.riskStateAccount),
       feeStateAccount: new PublicKey(obj.feeStateAccount),
       clientOrderId: new BN(obj.clientOrderId),
-      openOrders: types.OpenOrders.fromJSON(obj.openOrders)
+      openOrders: types.OpenOrders.fromJSON(obj.openOrders),
+      tradeHistory: obj.tradeHistory.map((item) =>
+        types.TradeHistory.fromJSON(item)
+      ),
+      avgPosition: obj.avgPosition.map((item) =>
+        types.AveragePosition.fromJSON(item)
+      ),
     })
   }
 }

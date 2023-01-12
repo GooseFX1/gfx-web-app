@@ -195,45 +195,45 @@ export class cancelOrderInstruction {
   }
 }
 export class createMarketInstruction {
-  tag: number
-  callerAuthority: Uint8Array
-  callbackInfoLen: BN
-  callbackIdLen: BN
+  // tag: number
+  // callerAuthority: Uint8Array
+  // callbackInfoLen: BN
+  // callbackIdLen: BN
   minBaseOrderSize: BN
   tickSize: BN
-  crankerReward: BN
+  // crankerReward: BN
   static schema: Schema = new Map([
     [
       createMarketInstruction,
       {
         kind: 'struct',
         fields: [
-          ['tag', 'u8'],
-          ['callerAuthority', [32]],
-          ['callbackInfoLen', 'u64'],
-          ['callbackIdLen', 'u64'],
+          // ['tag', 'u8'],
+          // ['callerAuthority', [32]],
+          // ['callbackInfoLen', 'u64'],
+          // ['callbackIdLen', 'u64'],
           ['minBaseOrderSize', 'u64'],
-          ['tickSize', 'u64'],
-          ['crankerReward', 'u64']
+          ['tickSize', 'u64']
+          // ['crankerReward', 'u64']
         ]
       }
     ]
   ])
   constructor(obj: {
-    callerAuthority: Uint8Array
-    callbackInfoLen: BN
-    callbackIdLen: BN
+    // callerAuthority: Uint8Array
+    // callbackInfoLen: BN
+    // callbackIdLen: BN
     minBaseOrderSize: BN
     tickSize: BN
-    crankerReward: BN
+    // crankerReward: BN
   }) {
-    this.tag = 0
-    this.callerAuthority = obj.callerAuthority
-    this.callbackInfoLen = obj.callbackInfoLen
-    this.callbackIdLen = obj.callbackIdLen
+    //this.tag = 0
+    // this.callerAuthority = obj.callerAuthority
+    // this.callbackInfoLen = obj.callbackInfoLen
+    // this.callbackIdLen = obj.callbackIdLen
     this.minBaseOrderSize = obj.minBaseOrderSize
     this.tickSize = obj.tickSize
-    this.crankerReward = obj.crankerReward
+    // this.crankerReward = obj.crankerReward
   }
   serialize(): Uint8Array {
     return serialize(createMarketInstruction.schema, this)
@@ -243,7 +243,9 @@ export class createMarketInstruction {
     market: PublicKey,
     eventQueue: PublicKey,
     bids: PublicKey,
-    asks: PublicKey
+    asks: PublicKey,
+    authority: PublicKey,
+    market_product_group: PublicKey
   ): TransactionInstruction {
     const data = Buffer.from(this.serialize())
     const keys: AccountKey[] = []
@@ -266,6 +268,16 @@ export class createMarketInstruction {
       pubkey: asks,
       isSigner: false,
       isWritable: true
+    })
+    keys.push({
+      pubkey: authority,
+      isSigner: true,
+      isWritable: true
+    })
+    keys.push({
+      pubkey: market_product_group,
+      isSigner: false,
+      isWritable: false
     })
     return new TransactionInstruction({
       keys,

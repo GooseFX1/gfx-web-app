@@ -2,13 +2,23 @@ import { Fractional } from '../perps/dexterity/types'
 import * as anchor from '@project-serum/anchor'
 import { MarketType } from '../../../context'
 
-export const DEX_ID = 'AEWt3M4zHBPXGieh6Y1PXAFnEZpz1pF1EUuUWyXtdkfd'
+// export const DEX_ID = 'AEWt3M4zHBPXGieh6Y1PXAFnEZpz1pF1EUuUWyXtdkfd'
 
-export const INSTRUMENTS_ID = '2bEbbbQ9exihNsik8CUyeqN9BsFKWbdjPNhE7a9xDVqy'
+// export const INSTRUMENTS_ID = '2bEbbbQ9exihNsik8CUyeqN9BsFKWbdjPNhE7a9xDVqy'
 
-export const FEES_ID = 'C5PSiaCxUk3YpLxYEJ3VRBHBFeV2WbK3xEHPyXMdAozN'
+// export const FEES_ID = 'C5PSiaCxUk3YpLxYEJ3VRBHBFeV2WbK3xEHPyXMdAozN'
 
-export const RISK_ID = 'GDQCED2bSKi7fsHFPANQt3vBAFREbAYw7otCxt5rw7sY'
+// export const RISK_ID = 'GDQCED2bSKi7fsHFPANQt3vBAFREbAYw7otCxt5rw7sY'
+
+// export const ORDERBOOK_P_ID = 'A83oDxWdJBDE5LdDXDDcZeuZZSQtV1X1YnbFRDHQjBeZ'
+
+export const DEX_ID = 'BjpU1ACJY2bFj7aVTiMJLhM7H1ePxwkfDhjyY9dW9dbo'
+
+export const INSTRUMENTS_ID = 'VXD2JfYWTiLuQLZA4jXN58cCxQe1XhaquNHAA1FEDWW'
+
+export const FEES_ID = '2o2VABUDicRrLSzb5U4VvBrnVbtnDdCMowrMg9x7RGnD'
+
+export const RISK_ID = 'GW31SEFBLtoEhBYFJi2KUdmdnBG4xapjE7ARBWB5MQT2'
 
 export const ORDERBOOK_P_ID = 'A83oDxWdJBDE5LdDXDDcZeuZZSQtV1X1YnbFRDHQjBeZ'
 
@@ -36,11 +46,18 @@ export const VAULT_MINT = 'Bg2f3jstf2Co4Hkrxsn7evzvRwLbWYmuzaLUPGnjCwAA'
 //export const RISK_OUTPUT_REGISTER = '6bsx3FYadj5UaUegNdSFnJ27RrWvHAN9REGq9suNuvDJ'
 // export const FEE_OUTPUT_REGISTER = 'GChviJ5JKFzEnnxG2cQvZVTdfGsEEgA4FgcWvVmZFajk'
 // export const RISK_MODEL_CONFIG_ACCT = 'F9GZrXtg9Ssk4tDx3CBaWxyVXYin9zYgyJWDrY3FgNAj'
-export const MPG_ID = 'Ft1NJVw1oTdk1DhqSE4cwDqpteMcZQeKraq5vy43Ed9b'
+// export const MPG_ID = 'Ft1NJVw1oTdk1DhqSE4cwDqpteMcZQeKraq5vy43Ed9b'
 
-export const RISK_OUTPUT_REGISTER = 'CVLyxaB5c6cNScbVBHnB9Wg6ux4916N4PfjVhn7cnthz'
-export const FEE_OUTPUT_REGISTER = '8wca9RPSqBURHo2VU2gDaz5pmnYpj2dXPkS88mVdfoTy'
-export const RISK_MODEL_CONFIG_ACCT = '9uEGTZRoDwZa4N1asf1p1pnF4HEuUtG2BZBVY26feBDM'
+// export const RISK_OUTPUT_REGISTER = 'CVLyxaB5c6cNScbVBHnB9Wg6ux4916N4PfjVhn7cnthz'
+// export const FEE_OUTPUT_REGISTER = '8wca9RPSqBURHo2VU2gDaz5pmnYpj2dXPkS88mVdfoTy'
+// export const RISK_MODEL_CONFIG_ACCT = '9uEGTZRoDwZa4N1asf1p1pnF4HEuUtG2BZBVY26feBDM'
+
+export const MPG_ID = '82iVHHceAWNQig1MQnka149pVGkyc4GvQ6hE8fjVRASd'
+
+export const RISK_OUTPUT_REGISTER = '7BDdpHxVx88y6N9Z4AypLYj8VQVVXyAWB1eKiKUTR2F1'
+export const FEE_OUTPUT_REGISTER = 'HNPBKzjAWH1b4WUgoCo211HKqdKtLTitvQN5xUc7ZWxN'
+export const RISK_MODEL_CONFIG_ACCT = 'H7CrwxNuUgpAZgD5ELThogUz1b6J6kQCXoSnQdaQ6qkL'
+
 export const MPG_ACCOUNT_SIZE = 143864
 export const OUT_REGISTER_SIZE = 432
 
@@ -96,13 +113,25 @@ export const PERPS_COLLATERAL = [
 //   }
 // ]
 
+// export const MPs = [
+//   {
+//     id: 'FAywzzHNxt7snJwM145uDFhv81SbeXTDSiebQUjx7SMg',
+//     orderbook_id: '4soawRtgsNp1VVw2DXUEnFAv6E36mQDkvDHz6qX4NPVe',
+//     bids: '91WyAc56BbjQTVrsm4YKA2NcryJ3AozFJsSKC2CAPcbD',
+//     asks: '14Ty2G1wDyQsuARePQooQBC53nZ5GCvzoUTWMFkXYG4h',
+//     event_queue: '36G7UgfijGecvZEXUiwhmUaivb2a2RRikj446SjP5Y97',
+//     tick_size: 100,
+//     decimals: 7
+//   }
+// ]
+
 export const MPs = [
   {
-    id: 'FAywzzHNxt7snJwM145uDFhv81SbeXTDSiebQUjx7SMg',
-    orderbook_id: '4soawRtgsNp1VVw2DXUEnFAv6E36mQDkvDHz6qX4NPVe',
-    bids: '91WyAc56BbjQTVrsm4YKA2NcryJ3AozFJsSKC2CAPcbD',
-    asks: '14Ty2G1wDyQsuARePQooQBC53nZ5GCvzoUTWMFkXYG4h',
-    event_queue: '36G7UgfijGecvZEXUiwhmUaivb2a2RRikj446SjP5Y97',
+    id: '8kbdxTuwRbNnGzjgkyNh6P2VjqC6KrkgVjh9pQuKJifz',
+    orderbook_id: 'GJsUqB5wmBUMsfJXJCVyUP5NV9TanwkrLQfsUnqW5uUF',
+    bids: 'F6fZs5XeJPGWJC3LUiAZnS8uvUfSfRAgTBV7cttDc9Fi',
+    asks: 'JA9T2Fd5zpfz8Z6NAyrn2D68kP4PcucGMrzBahcZw1DT',
+    event_queue: '6wQqi6Ud3NNazAin8y4RHffivyMncDG9RciEiei97CSv',
     tick_size: 100,
     decimals: 7
   }
