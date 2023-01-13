@@ -16,6 +16,7 @@ For more details: https://github.com/ben-rogerson/twin.examples/blob/master/cra-
 
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx,less}', './index.html'],
+  darkMode: 'class', //To enable dark mode using tailwind - using dark:classname
   theme: {
     extend: {
       screens: {
@@ -110,7 +111,7 @@ module.exports = {
         vh: '100vh'
       },
       fontSize: {
-        smallest: '11px',
+        smallest: '10px',
         smaller: '11px',
         tiny: '13px',
         regular: '15px',

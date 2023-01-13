@@ -18,7 +18,6 @@ const LABEL = styled.span<{ $mode: string; $hover: boolean }>`
       : $mode === 'dark'
       ? '#4E4E4E'
       : '#636363'};
-  ${({ theme }) => theme.flexCenter}
 `
 
 const TAB = styled(Link)<{ $hover: boolean; $mode: string }>`

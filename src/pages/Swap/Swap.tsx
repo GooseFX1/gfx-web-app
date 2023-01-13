@@ -352,25 +352,16 @@ const SWITCH = styled(CenteredDiv)<{ measurements: number }>`
 `
 
 const SWAP_CONTENT = styled.div`
-  ${tw`items-center p-8 w-628 max-h-90p min-h-400 rounded-bigger sm:w-full sm:mb-12 sm:p-5 sm:text-sm`}
-  ${({ theme }) => theme.flexColumnNoWrap}
-  background-color: ${({ theme }) => theme.bg20};
-
+  ${tw`items-center p-8 w-628 max-h-90p min-h-400 rounded-bigger sm:w-full sm:mb-12 sm:p-5 sm:text-sm 
+  dark:bg-[#1c1c1c] bg-white flex flex-col flex-nowrap`}
   box-shadow: 0 7px 15px 5px rgba(0, 0, 0, 0.15);
   @media (max-width: 500px) {
     line-height: inherit;
   }
 
   .wrapped-sol {
-    margin-right: 10px;
-    height: 2.5rem;
-    width: 2.5rem;
-    border-radius: 100%;
-    text-align: center;
-    line-height: 2.5rem;
-    font-size: 10px;
-    background-color: ${({ theme }) => theme.bg22};
-    cursor: pointer;
+    ${tw`mr-2.5 text-center cursor-pointer h-10 w-10 text-[10px] 
+      dark:bg-[#131313] bg-[#cacaca] rounded-[100%] leading-10`}
   }
 `
 
