@@ -1,8 +1,10 @@
+/* eslint-disable */
 import React, { FC, MouseEventHandler, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { MainButton } from '../../components'
 import { useAccounts, useConnectionConfig, useSwap, useWalletModal, useDarkMode } from '../../context'
+import { Button } from '../../components/common/Button'
 
 enum State {
   Connect = 0,
@@ -12,19 +14,17 @@ enum State {
   PoolNotFound = 4
 }
 
-const SWAP_BUTTON = styled(MainButton)<{ status: any; mode: any }>`
-  height: 50px;
-  width: 220px;
-  padding: 0 32px;
+//first technique
+const SWAP_BUTTON = styled(Button)<{ status: any; mode: any }>`
   background-color: ${({ status, mode }) =>
     status === 'action' ? '#5855FF' : status === 'connect' ? '#8d4cdd' : mode === 'dark' ? '#131313' : '#CACACA'};
-  cursor: pointer;
-`
 
-const TEXT = styled.span`
-  font-weight: 600 !important;
-  font-size: 15px !important;
-  line-height: 21px !important;
+  > span {
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 21px;
+    color: white;
+  }
 `
 
 export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ exchange, route }) => {
@@ -86,9 +86,21 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
     [connect, setVisible, state, swapTokens, wallet, route]
   )
 
+  //2nd: pass bgs as props
+  //3rd: pass bgs as style prop
   return (
-    <SWAP_BUTTON height="56px" loading={loading} status={buttonStatus} mode={mode} onClick={handleClick}>
-      <TEXT>{content}</TEXT>
+    <SWAP_BUTTON
+      height="50px"
+      width="220px"
+      borderRadius="50px"
+      mode={mode}
+      ltbg
+      loading={loading}
+      status={buttonStatus}
+      onClick={handleClick}
+      onFocus={() => console.log('shashank')}
+    >
+      <span>{content}</span>
     </SWAP_BUTTON>
   )
 }
