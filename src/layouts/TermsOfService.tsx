@@ -2,16 +2,16 @@ import React, { FC, useState, useEffect, Dispatch, SetStateAction } from 'react'
 import { Checkbox } from 'antd'
 import styled from 'styled-components'
 import tw from 'twin.macro'
-import { Modal, MainButton } from '../components'
+import { Modal } from '../components'
 import useBlacklisted from '../utils/useBlacklisted'
 import { GFX_LINK } from '../styles'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 
-const TEXT_AREA = styled.div<{ error }>`
-  ${tw`h-[470px] w-full p-[1.2px] mt-8 sm:h-[64vh] rounded-[8px]`}
-  flex-grow: 0;
-  background: ${({ error }) => (error ? '#f06565' : 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)')};
+const TEXT_AREA = styled.div`
+  ${tw`h-[470px] w-full p-[1.2px] mt-4 sm:h-[64vh] rounded-[8px]`}
+  background: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
   color: ${({ theme }) => theme.text28};
+  flex-grow: 0;
 
   .text-area-inner {
     ${tw`h-full w-full p-[12px] rounded-[8px] overflow-auto`}
@@ -34,9 +34,9 @@ const TEXT_AREA = styled.div<{ error }>`
   }
 `
 
-const ERROR = styled.span`
-  ${tw`absolute top-[56px]`}
-  color: #f06565;
+const ERROR = styled.div`
+  ${tw`mt-1`}
+  color: ${({ theme }) => theme.text5};
 `
 
 const TOS_MODAL = styled(Modal)`
@@ -44,17 +44,17 @@ const TOS_MODAL = styled(Modal)`
 `
 
 const CONFIRM = styled.div`
-  ${tw`flex p-2 mt-3`}
+  ${tw`flex p-2 mt-1`}
 `
 
-const MAINBUTTON = styled(MainButton)<{ checked }>`
-  background-color: ${({ theme, checked }) =>
-    checked ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)' : theme.bg22};
+const MAINBUTTON = styled.button<{ checked }>`
+  ${tw`h-[50px] w-[60%] rounded-circle border-none`}
+  background-color: ${({ theme }) => theme.bg22};
   background-image: ${({ theme, checked }) =>
     checked ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)' : theme.bg22};
 `
 
-const TOS_CHECKBOX = styled(Checkbox)`
+const TOS_CHECKBOX = styled(Checkbox)<{ $err: boolean }>`
   ${tw`items-center`}
 
   .ant-checkbox-inner {
@@ -68,6 +68,10 @@ const TOS_CHECKBOX = styled(Checkbox)`
     ${tw`text-[12px]`}
     color: ${({ theme }) => theme.text28};
   }
+
+  .ant-checkbox-wrapper .ant-checkbox-wrapper-disabled {
+    opacity: 0.5;
+  }
 `
 
 export const TermsOfService: FC<{
@@ -79,8 +83,8 @@ export const TermsOfService: FC<{
 
   const [toShow, setToShow] = useState<boolean>(!!visible && true)
   const [checked, setChecked] = useState<boolean>(false)
-  const [read, setRead] = useState<boolean>(false)
-  const [error, setError] = useState<boolean>(false)
+  const [isRead, setRead] = useState<boolean>(false)
+  const [isError, setError] = useState<boolean>(false)
 
   useEffect(() => {
     setToShow(blacklisted ? false : !existingUserCache.hasSignedTC && true)
@@ -127,8 +131,7 @@ export const TermsOfService: FC<{
       centerTitle
       large={true}
     >
-      {error && <ERROR>Please read all the information to unlock the checkbox.</ERROR>}
-      <TEXT_AREA error={error}>
+      <TEXT_AREA>
         <div className={'text-area-inner'} onScroll={confirmReading}>
           <span>
             <h3>General</h3>
@@ -447,23 +450,20 @@ export const TermsOfService: FC<{
           </span>
         </div>
       </TEXT_AREA>
+
+      {!isRead && <ERROR err={isError}>*please read all the information to unlock the checkbox</ERROR>}
+
       <CONFIRM>
         <TOS_CHECKBOX
           checked={checked}
           onChange={(e) => {
-            !read ? setError(true) : setChecked(e.target.checked)
+            !isRead ? setError(true) : setChecked(e.target.checked)
           }}
+          disabled={!isRead}
         >
-          I agree GooseFX terms and conditions and protocol disclaimer.
+          I agree to GooseFX terms and conditions and protocol disclaimer.
         </TOS_CHECKBOX>
-        <MAINBUTTON
-          height={'50px'}
-          width="60%"
-          status="action"
-          onClick={accept}
-          disabled={!checked}
-          checked={checked}
-        >
+        <MAINBUTTON onClick={accept} disabled={!checked} checked={checked}>
           <span>Continue</span>
         </MAINBUTTON>
       </CONFIRM>
