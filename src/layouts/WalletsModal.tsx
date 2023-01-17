@@ -1,10 +1,11 @@
-import React, { FC, useCallback, useState } from 'react'
+import React, { FC, useCallback, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base'
 import { TermsOfService } from './TermsOfService'
+import { USER_CONFIG_CACHE } from '../types/app_params'
 import { Modal } from '../components'
-import { LITEPAPER_ADDRESS } from '../constants'
+// import { LITEPAPER_ADDRESS } from '../constants'
 import { useWalletModal } from '../context'
 import { CenteredImg, SpaceBetweenDiv } from '../styles'
 
@@ -14,21 +15,6 @@ const BODY = styled.div`
   overflow-y: scroll;
   margin-top: 16px;
   ${({ theme }) => theme.customScrollBar('4px')}
-`
-
-const DISCLAIMER = styled.div`
-  padding: ${({ theme }) => theme.margin(1)};
-  border: solid 1px ${({ theme }) => theme.grey2};
-  ${({ theme }) => theme.smallBorderRadius}
-  font-size: 8px;
-  text-align: left;
-  color: ${({ theme }) => theme.text1};
-
-  a,
-  span {
-    color: ${({ theme }) => theme.text3};
-    cursor: pointer;
-  }
 `
 
 const ICON = styled(CenteredImg)`
@@ -68,20 +54,21 @@ const WALLET = styled(SpaceBetweenDiv)`
 export const WalletsModal: FC = () => {
   const { wallets, select } = useWallet()
   const { setVisible, visible } = useWalletModal()
-  const [termsOfServiceVisible, setTermsOfServiceVisible] = useState(false)
+  const [termsOfServiceVisible, setTermsOfServiceVisible] = useState<boolean>(false)
+  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+
+  useEffect(() => {
+    if (visible && !termsOfServiceVisible && !existingUserCache.hasSignedTC) {
+      setVisible(false)
+      setTermsOfServiceVisible(true)
+    }
+  }, [visible])
 
   const handleCancel = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
       if (!event.defaultPrevented) setVisible(false)
     },
     [setVisible]
-  )
-
-  const handleTOS = useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      if (!event.defaultPrevented) setTermsOfServiceVisible(true)
-    },
-    [setTermsOfServiceVisible]
   )
 
   const handleWalletClick = useCallback(
@@ -92,18 +79,11 @@ export const WalletsModal: FC = () => {
     [select, handleCancel]
   )
 
-  return (
+  return !existingUserCache.hasSignedTC && termsOfServiceVisible ? (
+    <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
+  ) : (
     <Modal setVisible={setVisible} title="Connect to a wallet" visible={visible}>
       <BODY>
-        <DISCLAIMER>
-          <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
-          By connecting a wallet, you agree to GooseFX,&nbsp;<span onClick={handleTOS}>Terms of Service</span>
-          &nbsp;and acknowledge that you have read and you understand the&nbsp;
-          <a href={`${LITEPAPER_ADDRESS}/#disclaimer`} target="_blank" rel="noopener noreferrer">
-            GooseFX protocol disclaimer
-          </a>
-          .
-        </DISCLAIMER>
         {wallets
           .filter(({ readyState }) => readyState !== WalletReadyState.Unsupported)
           .map((wallet, index) => (
