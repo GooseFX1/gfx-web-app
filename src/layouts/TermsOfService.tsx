@@ -54,7 +54,7 @@ const MAINBUTTON = styled.button<{ checked }>`
     checked ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)' : theme.bg22};
 `
 
-const TOS_CHECKBOX = styled(Checkbox)<{ $err: boolean }>`
+const TOS_CHECKBOX = styled(Checkbox)`
   ${tw`items-center`}
 
   .ant-checkbox-inner {
