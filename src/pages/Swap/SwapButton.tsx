@@ -1,10 +1,9 @@
-/* eslint-disable */
 import React, { FC, MouseEventHandler, useCallback, useMemo } from 'react'
-import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { MainButton } from '../../components'
 import { useAccounts, useConnectionConfig, useSwap, useWalletModal, useDarkMode } from '../../context'
 import { Button } from '../../components/common/Button'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 enum State {
   Connect = 0,
@@ -13,19 +12,6 @@ enum State {
   BalanceExceeded = 3,
   PoolNotFound = 4
 }
-
-//first technique
-const SWAP_BUTTON = styled(Button)<{ status: any; mode: any }>`
-  background-color: ${({ status, mode }) =>
-    status === 'action' ? '#5855FF' : status === 'connect' ? '#8d4cdd' : mode === 'dark' ? '#131313' : '#CACACA'};
-
-  > span {
-    font-weight: 600;
-    font-size: 15px;
-    line-height: 21px;
-    color: white;
-  }
-`
 
 export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ exchange, route }) => {
   const { getAmount } = useAccounts()
@@ -86,21 +72,24 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
     [connect, setVisible, state, swapTokens, wallet, route]
   )
 
-  //2nd: pass bgs as props
-  //3rd: pass bgs as style prop
   return (
-    <SWAP_BUTTON
+    <Button
       height="50px"
       width="220px"
-      borderRadius="50px"
-      mode={mode}
-      ltbg
       loading={loading}
-      status={buttonStatus}
       onClick={handleClick}
-      onFocus={() => console.log('shashank')}
+      cssStyle={
+        buttonStatus === 'action'
+          ? tw`bg-blue-1 rounded-circle border-0 hover:bg-purple-1`
+          : buttonStatus === 'connect'
+          ? tw`bg-purple-1 rounded-circle border-0`
+          : mode === 'dark'
+          ? tw`bg-black-1 rounded-circle border-0`
+          : tw`bg-grey-4 rounded-circle border-0`
+      }
+      disabled={buttonStatus !== 'action'}
     >
-      <span>{content}</span>
-    </SWAP_BUTTON>
+      <span tw="text-regular text-white font-semibold">{content}</span>
+    </Button>
   )
 }
