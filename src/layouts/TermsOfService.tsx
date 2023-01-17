@@ -34,8 +34,8 @@ const TEXT_AREA = styled.div`
   }
 `
 
-const ERROR = styled.div`
-  ${tw`mt-1`}
+const CAPTION = styled.div`
+  ${tw`absolute bottom-[96px]`}
   color: ${({ theme }) => theme.text5};
 `
 
@@ -44,7 +44,7 @@ const TOS_MODAL = styled(Modal)`
 `
 
 const CONFIRM = styled.div`
-  ${tw`flex p-2 mt-1`}
+  ${tw`flex p-2 mt-8`}
 `
 
 const MAINBUTTON = styled.button<{ checked }>`
@@ -84,7 +84,6 @@ export const TermsOfService: FC<{
   const [toShow, setToShow] = useState<boolean>(!!visible && true)
   const [checked, setChecked] = useState<boolean>(false)
   const [isRead, setRead] = useState<boolean>(false)
-  const [isError, setError] = useState<boolean>(false)
 
   useEffect(() => {
     setToShow(blacklisted ? false : !existingUserCache.hasSignedTC && true)
@@ -115,7 +114,6 @@ export const TermsOfService: FC<{
   }
 
   const confirmReading = (e) => {
-    setError(false)
     const scrollHeight = e.target.scrollHeight
     const scrollTop = e.target.scrollTop
     if (scrollTop + 500 > scrollHeight) {
@@ -125,11 +123,12 @@ export const TermsOfService: FC<{
 
   return (
     <TOS_MODAL
-      setVisible={changeTOSState}
       title="GooseFX Terms of Service"
-      visible={toShow}
       centerTitle
+      setVisible={changeTOSState}
+      visible={toShow}
       large={true}
+      maskClosable={false}
     >
       <TEXT_AREA>
         <div className={'text-area-inner'} onScroll={confirmReading}>
@@ -451,14 +450,12 @@ export const TermsOfService: FC<{
         </div>
       </TEXT_AREA>
 
-      {!isRead && <ERROR err={isError}>*please read all the information to unlock the checkbox</ERROR>}
+      {!isRead && <CAPTION>*Please read all the information to unlock the checkbox</CAPTION>}
 
       <CONFIRM>
         <TOS_CHECKBOX
           checked={checked}
-          onChange={(e) => {
-            !isRead ? setError(true) : setChecked(e.target.checked)
-          }}
+          onChange={(e) => isRead && setChecked(e.target.checked)}
           disabled={!isRead}
         >
           I agree to GooseFX terms and conditions and protocol disclaimer.
