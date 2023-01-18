@@ -11,7 +11,7 @@ import { useTraderConfig } from './trader_risk_group'
 import * as anchor from '@project-serum/anchor'
 import { PublicKey } from '@solana/web3.js'
 
-type OrderBook = {
+export type OrderBook = {
   [x in MarketSide]: [number, number, BN, BN, string?][]
 }
 // type perpsOpenOrder = {

@@ -1,7 +1,7 @@
-import { PublicKey } from "@solana/web3.js" // eslint-disable-line @typescript-eslint/no-unused-vars
-import BN from "bn.js" // eslint-disable-line @typescript-eslint/no-unused-vars
-import * as types from "../types" // eslint-disable-line @typescript-eslint/no-unused-vars
-import * as borsh from "@project-serum/borsh"
+import { PublicKey } from '@solana/web3.js' // eslint-disable-line @typescript-eslint/no-unused-vars
+import BN from 'bn.js' // eslint-disable-line @typescript-eslint/no-unused-vars
+import * as types from '../types' // eslint-disable-line @typescript-eslint/no-unused-vars
+import * as borsh from '@project-serum/borsh'
 
 export interface OpenOrdersFields {
   freeListHead: types.usizeFields
@@ -26,21 +26,17 @@ export class OpenOrders {
   constructor(fields: OpenOrdersFields) {
     this.freeListHead = new types.usize({ ...fields.freeListHead })
     this.totalOpenOrders = fields.totalOpenOrders
-    this.products = fields.products.map(
-      (item) => new types.OpenOrdersMetadata({ ...item })
-    )
-    this.orders = fields.orders.map(
-      (item) => new types.OpenOrdersNode({ ...item })
-    )
+    this.products = fields.products.map((item) => new types.OpenOrdersMetadata({ ...item }))
+    this.orders = fields.orders.map((item) => new types.OpenOrdersNode({ ...item }))
   }
 
   static layout(property?: string) {
     return borsh.struct(
       [
-        types.usize.layout("freeListHead"),
-        borsh.u64("totalOpenOrders"),
-        borsh.array(types.OpenOrdersMetadata.layout(), 256, "products"),
-        borsh.array(types.OpenOrdersNode.layout(), 1024, "orders"),
+        types.usize.layout('freeListHead'),
+        borsh.u64('totalOpenOrders'),
+        borsh.array(types.OpenOrdersMetadata.layout(), 64, 'products'),
+        borsh.array(types.OpenOrdersNode.layout(), 128, 'orders')
       ],
       property
     )
@@ -51,16 +47,12 @@ export class OpenOrders {
     return new OpenOrders({
       freeListHead: types.usize.fromDecoded(obj.freeListHead),
       totalOpenOrders: obj.totalOpenOrders,
-      products: obj.products.map(
-        (
-          item: any /* eslint-disable-line @typescript-eslint/no-explicit-any */
-        ) => types.OpenOrdersMetadata.fromDecoded(item)
+      products: obj.products.map((item: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) =>
+        types.OpenOrdersMetadata.fromDecoded(item)
       ),
-      orders: obj.orders.map(
-        (
-          item: any /* eslint-disable-line @typescript-eslint/no-explicit-any */
-        ) => types.OpenOrdersNode.fromDecoded(item)
-      ),
+      orders: obj.orders.map((item: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) =>
+        types.OpenOrdersNode.fromDecoded(item)
+      )
     })
   }
 
@@ -68,12 +60,8 @@ export class OpenOrders {
     return {
       freeListHead: types.usize.toEncodable(fields.freeListHead),
       totalOpenOrders: fields.totalOpenOrders,
-      products: fields.products.map((item) =>
-        types.OpenOrdersMetadata.toEncodable(item)
-      ),
-      orders: fields.orders.map((item) =>
-        types.OpenOrdersNode.toEncodable(item)
-      ),
+      products: fields.products.map((item) => types.OpenOrdersMetadata.toEncodable(item)),
+      orders: fields.orders.map((item) => types.OpenOrdersNode.toEncodable(item))
     }
   }
 
@@ -82,7 +70,7 @@ export class OpenOrders {
       freeListHead: this.freeListHead.toJSON(),
       totalOpenOrders: this.totalOpenOrders.toString(),
       products: this.products.map((item) => item.toJSON()),
-      orders: this.orders.map((item) => item.toJSON()),
+      orders: this.orders.map((item) => item.toJSON())
     }
   }
 
@@ -90,10 +78,8 @@ export class OpenOrders {
     return new OpenOrders({
       freeListHead: types.usize.fromJSON(obj.freeListHead),
       totalOpenOrders: new BN(obj.totalOpenOrders),
-      products: obj.products.map((item) =>
-        types.OpenOrdersMetadata.fromJSON(item)
-      ),
-      orders: obj.orders.map((item) => types.OpenOrdersNode.fromJSON(item)),
+      products: obj.products.map((item) => types.OpenOrdersMetadata.fromJSON(item)),
+      orders: obj.orders.map((item) => types.OpenOrdersNode.fromJSON(item))
     })
   }
 
