@@ -7,8 +7,9 @@ import { Radio, Tabs } from 'antd'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { OrderBook } from './OrderBook'
-import { useCrypto, usePriceFeed } from '../../context'
+import { useCrypto, useOrder, useOrderBook, usePriceFeed } from '../../context'
 import { Loader } from '../../components'
+import { getPerpsPrice } from './perps/utils'
 
 const TAB_NAMES = [
   { display: 'Orderbook', key: 'orderbook' },
@@ -69,9 +70,17 @@ export const OrderbookTabs: React.FC = () => {
   const { prices, tokenInfo, refreshTokenData } = usePriceFeed()
   const { selectedCrypto } = useCrypto()
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
+  const { orderBook } = useOrderBook()
+  const { setOrder, setFocused } = useOrder()
+  const perpsPrice = useMemo(() => getPerpsPrice(orderBook), [orderBook])
   const onChange = (e) => {
     setSelectedTab(e.target.value)
   }
+  const setOrderPrice = () => {
+    setOrder((prevState) => ({ ...prevState, price: perpsPrice }))
+    setFocused('price')
+  }
+
   return (
     <WRAPPER>
       <HEADER_WRAPPER>
@@ -88,10 +97,10 @@ export const OrderbookTabs: React.FC = () => {
             >
               {item.key !== 'price' ? (
                 item.display
-              ) : !marketData || !marketData.current ? (
-                <Loader />
+              ) : !perpsPrice ? (
+                ''
               ) : (
-                <div>${marketData.current}</div>
+                <div onClick={setOrderPrice}>${perpsPrice}</div>
               )}
             </Radio.Button>
           ))}
