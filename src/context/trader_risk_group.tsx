@@ -47,7 +47,8 @@ import {
   getRiskSigner,
   getTraderRiskGroupAccount,
   int64to8,
-  reduceFractional
+  reduceFractional,
+  tradeHistoryInfo
 } from '../pages/TradeV3/perps/utils'
 import {
   INewOrderAccounts,
@@ -70,7 +71,7 @@ import {
   newOrderIx,
   withdrawFundsIx
 } from '../pages/TradeV3/perps/ixUtils'
-import { OrderDisplayType, OrderType, OrderInput, useOrder, IOrder } from './order'
+import { OrderDisplayType, OrderType, OrderInput, useOrder, IOrder, OrderSide } from './order'
 import { removeFloatingPointError } from '../utils'
 import { pyth } from '../web3/pyth'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
@@ -112,6 +113,8 @@ interface ITraderRiskGroup {
   traderRiskGroup: TraderRiskGroup
   traderRiskGroupKey: PublicKey
   collateralAvailable: string
+  averagePosition: ITraderHistory
+  tradeHistory: ITraderHistory[]
   balances?: ITraderBalances[]
 }
 
@@ -139,6 +142,21 @@ interface IPerpsInfo {
   setFocused: Dispatch<SetStateAction<OrderInput>>
   loading: boolean
   collateralInfo: ICollateralInfo
+}
+
+export interface IActiveProduct {
+  id: string
+  orderbook_id: string
+  bids: string
+  asks: string
+  event_queue: string
+  tick_size: number
+  decimals: number
+}
+export interface ITraderHistory {
+  price: string
+  quantity: string
+  side: OrderSide | null
 }
 
 const TraderContext = React.createContext<IPerpsInfo | null>(null)
@@ -184,7 +202,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [currentTRG, setTRG] = useState<PublicKey | null>(null)
   const [traderRiskGroup, setTraderRiskGroup] = useState<TraderRiskGroup | null>(null)
   const [marketProductGroup, setMarketProductGroup] = useState<MarketProductGroup | null>(null)
-  const [activeProduct, setActiveProduct] = useState(MPs[0])
+  const [activeProduct, setActiveProduct] = useState<IActiveProduct>(MPs[0])
   const [focused, setFocused] = useState<OrderInput>(undefined)
   const [loading, setLoading] = useState<boolean>(false)
   const [traderBalances, setTraderBalances] = useState<ITraderBalances[]>([])
@@ -192,7 +210,12 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     price: '0',
     name: ''
   })
-
+  const [traderHistory, setTraderHistory] = useState<ITraderHistory[]>([])
+  const [averagePosition, setAveragePosition] = useState<ITraderHistory>({
+    price: '',
+    quantity: '',
+    side: null
+  })
   const { order, setOrder } = useOrder()
 
   const wallet = useWallet()
@@ -237,6 +260,12 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const res = computeHealth(traderRiskGroup, marketProductGroup)
 
     setTraderBalances(res.balancesArray)
+    const res2 = tradeHistoryInfo(traderRiskGroup, activeProduct, marketProductGroup)
+    if (res2) {
+      setAveragePosition(res2.averagePosition)
+      setTraderHistory(res2.traderHistory)
+    }
+
     // const liquidationP = getLiquidationPrice(res.traderPortfolioValue)
   }
 
@@ -415,7 +444,9 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           traderRiskGroup,
           traderRiskGroupKey: currentTRG,
           collateralAvailable,
-          balances: traderBalances
+          balances: traderBalances,
+          averagePosition: averagePosition,
+          tradeHistory: traderHistory
         },
         marketProductGroup: marketProductGroup,
         marketProductGroupKey: currentMPG,

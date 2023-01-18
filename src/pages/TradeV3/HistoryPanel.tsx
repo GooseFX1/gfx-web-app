@@ -12,6 +12,7 @@ import {
 import tw, { styled } from 'twin.macro'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import { SettlePanel } from '../TradeV3/SettlePanel'
+import { getPerpsPrice } from './perps/utils'
 
 const tabs = ['Positions', 'Open Orders', 'Trade History', 'SOL Unsettled P&L']
 
@@ -31,7 +32,7 @@ const columns = [
     'Open Orders': ['Side', 'Size', 'Price', 'USD Value', 'Condition']
   },
   {
-    'Trade History': ['Time', 'Size', 'Filled', 'Price', 'USD Value']
+    'Trade History': ['Side', 'Size', 'Price', 'USD Value']
   },
   {
     'SOL Unsettled P&L': ['Market', 'Size', 'Amount USDC']
@@ -48,6 +49,7 @@ const WRAPPER = styled.div`
     > div {
       ${tw`mt-3.75 text-gray-2 text-tiny font-semibold`}
     }
+  }
 `
 
 const HEADER = styled.div`
@@ -109,7 +111,6 @@ const HEADER = styled.div`
 const POSITIONS = styled.div`
   ${tw`w-full`}
   height: calc(100% - 80px);
-  }
 
   .positions {
     ${tw`w-full h-10 p-0 flex flex-row justify-between items-center text-14 font-semibold`}
@@ -125,7 +126,7 @@ const POSITIONS = styled.div`
     }
     button {
       ${tw`h-[30px] w-[12.5%] rounded-[12px] text-12 font-semibold border-none m-[5px] text-white`}
-      background linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
+      background: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
       outline: none;
     }
     .long {
@@ -168,7 +169,7 @@ const OPEN_ORDER = styled.div`
 const OpenOrdersComponent: FC = () => {
   const { formatPair, isSpot } = useCrypto()
   const { cancelOrder, loading, orders } = useTradeHistory()
-  const { perpsOpenOrders } = useOrderBook()
+  const { perpsOpenOrders, orderBook } = useOrderBook()
   const { cancelOrder: perpsCancelOrder } = useTraderConfig()
   const { mode } = useDarkMode()
 
@@ -220,8 +221,14 @@ export const HistoryPanel: FC = () => {
   const { openOrders } = useTradeHistory()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { getUIAmount } = useAccounts()
-  const { perpsOpenOrders } = useOrderBook()
+  const { perpsOpenOrders, orderBook } = useOrderBook()
   const { mode } = useDarkMode()
+  const { traderInfo } = useTraderConfig()
+  const perpsPrice = useMemo(() => getPerpsPrice(orderBook), [orderBook])
+  const notionalSize = useMemo(
+    () => (Number(traderInfo.averagePosition.quantity) * perpsPrice).toFixed(2),
+    [perpsPrice, traderInfo.averagePosition.quantity]
+  )
 
   const tokenInfoAsk = useMemo(
     () => getTokenInfoFromSymbol(getAskSymbolFromPair(selectedCrypto.pair)),
@@ -284,15 +291,17 @@ export const HistoryPanel: FC = () => {
         {activeTab === 0 ? (
           <>
             <POSITIONS>
-              {baseBalance ? (
+              {traderInfo.averagePosition.side ? (
                 <div className="positions">
-                  <span className="long">Long</span>
-                  <span>{addNumbers(baseBalance, baseAvailable, userAskBalance)}</span>
-                  <span>{baseBalance ? baseBalance : 0}</span>
+                  <span className={traderInfo.averagePosition.side === 'buy' ? 'long' : 'short'}>
+                    {traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}
+                  </span>
+                  <span>{traderInfo.averagePosition.quantity}</span>
+                  <span>{notionalSize}</span>
                   <span>{baseAvailable ? baseAvailable : 0}</span>
-                  <span>{userAskBalance > 0 ? userAskBalance.toFixed(2) : userAskBalance}</span>
-                  <span>{userAskBalance > 0 ? userAskBalance.toFixed(2) : userAskBalance}</span>
-                  <span>0</span>
+                  <span>{perpsPrice}</span>
+                  <span>{traderInfo.averagePosition.price}</span>
+                  <span>{traderInfo.averagePosition.price}</span>
                   <button>Close Position</button>
                 </div>
               ) : (
