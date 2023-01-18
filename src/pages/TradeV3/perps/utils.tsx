@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import {
   ALPHA,
@@ -26,6 +27,8 @@ import { ITraderBalances } from '../../../types/dexterity_instructions'
 import { MarketProductGroup, TraderRiskGroup } from './dexterity/accounts'
 import { pyth, SYSTEM } from '../../../web3'
 import { Slab } from './instructions/Agnostic'
+import { IActiveProduct, ITraderHistory } from '../../../context/trader_risk_group'
+import { OrderBook } from '../../../context'
 
 export const getDexProgram = async (connection: Connection, wallet: any): Promise<anchor.Program> => {
   const provider = new anchor.Provider(connection, wallet, anchor.Provider.defaultOptions())
@@ -355,6 +358,50 @@ export const computeHealth = (traderRiskGroup: TraderRiskGroup, marketProductGro
   return retObj
 }
 
+const handleDecimalPrice = (price: number) => {
+  const decimalPrice = price.toFixed(2)
+  return decimalPrice
+}
+
+export const tradeHistoryInfo = (
+  traderRiskGroup: TraderRiskGroup,
+  activeProduct: IActiveProduct,
+  marketProductGroup: MarketProductGroup
+) => {
+  let productIndex = null
+  marketProductGroup.marketProducts.array[0].value.outright
+  marketProductGroup.marketProducts.array.map((item, index) => {
+    if (item.value.outright.metadata.productKey.toBase58() === activeProduct.id) productIndex = index
+  })
+  if (productIndex === null) return null
+  const price = displayFractional(traderRiskGroup.avgPosition[productIndex].price)
+  const qty = displayFractional(traderRiskGroup.avgPosition[productIndex].qty)
+  const avgPrice = Number(price) / activeProduct.tick_size
+  const averagePosition: ITraderHistory = {
+    price: handleDecimalPrice(avgPrice),
+    quantity: qty[0] === '-' ? qty.slice(1, qty.length) : qty,
+    side: qty[0] === '-' ? 'buy' : 'sell'
+  }
+  const traderHistory: ITraderHistory[] = []
+  traderRiskGroup.tradeHistory[productIndex].price.map((item, index) => {
+    const qty = traderRiskGroup.tradeHistory[productIndex].qty[index]
+    const price = Number(displayFractional(item)) / activeProduct.tick_size
+
+    if (item.m.toNumber() !== 0 || qty.m.toNumber() !== 0) {
+      const qtyString = displayFractional(qty)
+      traderHistory.push({
+        price: handleDecimalPrice(price),
+        quantity: qtyString[0] === '-' ? qtyString.slice(1, qtyString.length) : qtyString,
+        side: qtyString[0] === '-' ? 'buy' : 'sell'
+      })
+    }
+  })
+  return {
+    averagePosition,
+    traderHistory
+  }
+}
+
 export const getLiquidationPrice = (portfolioValue: Fractional): Fractional => {
   if (portfolioValue.m.gte(new anchor.BN(0))) {
     return mulFractionals(portfolioValue, subFractionals(ALPHA, BETA))
@@ -403,4 +450,10 @@ export const getPythPrice = async (connection: Connection, tokenName: string) =>
   } catch (e) {
     return null
   }
+}
+
+export const getPerpsPrice = (orderbook: OrderBook): number => {
+  const bids = orderbook.bids
+  if (bids.length) return bids[0][0]
+  return 0
 }
