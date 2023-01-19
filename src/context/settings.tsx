@@ -74,8 +74,7 @@ interface ISettingsConfig {
   slippage?: number
 }
 
-export const DEFAULT_MAINNET_RPC =
-  process.env.NODE_ENV === 'production' ? GFX_RPC_NAMES.SYNDICA : GFX_RPC_NAMES.MONKE_RPC
+export const DEFAULT_MAINNET_RPC = GFX_RPC_NAMES.SYNDICA
 export const DEFAULT_SLIPPAGE = 0.005
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
@@ -113,11 +112,13 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   // returns endpoint name id as string
   const init = (): string => {
     if (process.env.NODE_ENV === 'development')
-      return existingUserCache.endpoint === null ? DEFAULT_MAINNET_RPC : 'Custom'
+      return existingUserCache.endpoint === null ? GFX_RPC_NAMES.MONKE_RPC : 'Custom'
 
     const healthyRPCS: string[] = rpcHealth.map((rpc) => rpc.name)
 
-    if (existingUserCache.endpointName === null || existingUserCache.endpoint === null) {
+    if (healthyRPCS.includes(existingUserCache.endpointName)) {
+      return existingUserCache.endpointName
+    } else if (existingUserCache.endpointName === null || existingUserCache.endpoint === null) {
       return healthyRPCS.includes(DEFAULT_MAINNET_RPC) ? DEFAULT_MAINNET_RPC : healthyRPCS[0]
     } else {
       return 'Custom'
