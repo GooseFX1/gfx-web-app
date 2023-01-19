@@ -20,7 +20,7 @@ const AMOUNT = styled.div`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.text4};
   }
 `
 

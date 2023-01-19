@@ -202,9 +202,10 @@ export const Selector: FC<{
     }))
   )
   const popularTokens = useMemo(
-    () => updatedTokens.filter((i) => POPULAR_TOKENS.includes(i.symbol)),
+    () => updatedTokens.filter((i) => POPULAR_TOKENS.includes(i.address)),
     [updatedTokens]
   )
+
   const [filteredTokens, setFilteredTokens] = useState<NewTokenInfo[]>(updatedTokens)
 
   useEffect(() => {
