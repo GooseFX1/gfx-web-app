@@ -87,7 +87,7 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
           ? tw`bg-black-1 rounded-circle border-0`
           : tw`bg-grey-4 rounded-circle border-0`
       }
-      disabled={buttonStatus !== 'action'}
+      disabled={buttonStatus !== 'action' && buttonStatus !== 'connect'}
     >
       <span tw="text-regular text-white font-semibold">{content}</span>
     </Button>
