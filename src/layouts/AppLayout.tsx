@@ -16,7 +16,6 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const { mode } = useDarkMode()
   return (
     <Wrapper $rewardModal={rewardModal} className={mode === 'dark' ? 'dark' : ''}>
-      {' '}
       {/*To enable dark mode using tailwind - using dark:classname*/}
       <MainNav />
       <TermsOfService />
