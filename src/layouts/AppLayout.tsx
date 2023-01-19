@@ -2,7 +2,7 @@ import React, { FC, ReactNode } from 'react'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { MainNav } from './MainNav'
-import { useRewardToggle } from '../context'
+import { useRewardToggle, useDarkMode } from '../context'
 import { TermsOfService } from './TermsOfService'
 
 const Wrapper = styled.div<{ $rewardModal: boolean }>`
@@ -13,8 +13,10 @@ const Wrapper = styled.div<{ $rewardModal: boolean }>`
 
 export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const { rewardModal } = useRewardToggle()
+  const { mode } = useDarkMode()
   return (
-    <Wrapper $rewardModal={rewardModal}>
+    <Wrapper $rewardModal={rewardModal} className={mode === 'dark' ? 'dark' : ''}>
+      {/*To enable dark mode using tailwind - using dark:classname*/}
       <MainNav />
       <TermsOfService />
       {children}

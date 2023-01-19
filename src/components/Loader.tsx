@@ -4,7 +4,8 @@ import styled, { css } from 'styled-components'
 const LOADER = styled.div<{ $color }>`
   position: absolute;
   top: 0;
-  ${({ theme }) => theme.measurements(theme.margin(1))}
+  height: 8px;
+  width: 8px;
   border-radius: 50%;
   font-size: 12px;
   color: ${({ $color }) => `${$color}`};
@@ -25,7 +26,8 @@ const LOADER = styled.div<{ $color }>`
     position: absolute;
     top: 0;
     border-radius: 50%;
-    ${({ theme }) => theme.measurements(theme.margin(1))}
+    height: 8px;
+    width: 8px;
     -webkit-animation-fill-mode: both;
     animation-fill-mode: both;
     -webkit-animation: loader 1.8s infinite ease-in-out;

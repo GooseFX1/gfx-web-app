@@ -15,7 +15,7 @@ import { ThemeToggle } from '../components/ThemeToggle'
 import tw from 'twin.macro'
 
 const BRAND = styled.a`
-  ${tw`absolute flex justify-center items-center text-big 
+  ${tw`absolute flex justify-center items-center text-lg 
   leading-5 font-bold w-21 md:relative md:top-2 md:left-2 md:mb-6 md:h-11.75 min-md:h-12.5 min-md:left-[58px]`}
 
   img {

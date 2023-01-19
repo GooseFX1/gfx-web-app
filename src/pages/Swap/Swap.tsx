@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import tw from 'twin.macro'
 import { Image } from 'antd'
 import { Settings } from './Settings'
 import { Wrap } from './Wrap'
@@ -29,7 +30,6 @@ import { ILocationState } from '../../types/app_params.d'
 import { notify, moneyFormatter, nFormatter, checkMobile } from '../../utils'
 import { CURRENT_SUPPORTED_TOKEN_LIST } from '../../constants'
 import { useParams } from 'react-router-dom'
-import tw from 'twin.macro'
 import JSBI from 'jsbi'
 import { logData } from '../../api'
 
@@ -352,25 +352,13 @@ const SWITCH = styled(CenteredDiv)<{ measurements: number }>`
 `
 
 const SWAP_CONTENT = styled.div`
-  ${tw`items-center p-8 w-628 max-h-90p min-h-400 rounded-bigger sm:w-full sm:mb-12 sm:p-5 sm:text-sm`}
-  ${({ theme }) => theme.flexColumnNoWrap}
-  background-color: ${({ theme }) => theme.bg20};
-
-  box-shadow: 0 7px 15px 5px rgba(0, 0, 0, 0.15);
-  @media (max-width: 500px) {
-    line-height: inherit;
-  }
+  ${tw`items-center p-8 w-628 max-h-90p min-h-400 rounded-bigger 
+  dark:bg-black-2 bg-white flex flex-col flex-nowrap shadow-[0 7px 15px 5px rgba(0, 0, 0, 0.15)] 
+  sm:w-full sm:mb-12 sm:p-5 sm:text-sm sm:leading-normal`}
 
   .wrapped-sol {
-    margin-right: 10px;
-    height: 2.5rem;
-    width: 2.5rem;
-    border-radius: 100%;
-    text-align: center;
-    line-height: 2.5rem;
-    font-size: 10px;
-    background-color: ${({ theme }) => theme.bg22};
-    cursor: pointer;
+    ${tw`mr-2.5 text-black-3 text-center cursor-pointer h-[40px] w-[40px] text-smallest 
+        dark:text-white dark:bg-black-4 bg-grey-4 rounded-[100%] leading-10`}
   }
 `
 
@@ -479,7 +467,7 @@ const SwapContent: FC<{
         </HEADER_TITLE>
 
         <div>
-          <div onClick={() => setWrapModalVisible(true)} className="wrapped-sol">
+          <div onClick={() => setWrapModalVisible(true)} className={'wrapped-sol'}>
             wSOL
           </div>
           <div onClick={refresh} style={{ cursor: 'pointer' }}>
