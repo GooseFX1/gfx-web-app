@@ -1,7 +1,7 @@
 import React, { FC, MouseEventHandler, useCallback, useMemo } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useAccounts, useConnectionConfig, useSwap, useWalletModal, useDarkMode } from '../../context'
-import { Button } from '../../components/common/Button'
+import { Button } from '../../components/Button'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 
@@ -89,7 +89,7 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
       }
       disabled={buttonStatus !== 'action' && buttonStatus !== 'connect'}
     >
-      <span tw="text-regular text-white font-semibold">{content}</span>
+      <span tw="text-regular text-white font-semibold leading-[48px]">{content}</span>
     </Button>
   )
 }
