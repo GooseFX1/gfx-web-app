@@ -42,7 +42,6 @@
     "coingecko-api": "^1.0.10",
     "craco-esbuild": "^0.4.5",
     "craco-less": "^1.18.0",
-    "craco-swc": "^0.5.1",
     "customize-cra": "^1.0.0",
     "echarts": "^5.1.2",
     "emailjs-com": "^3.2.0",
