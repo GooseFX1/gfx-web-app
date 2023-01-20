@@ -36,7 +36,7 @@ const WRAPPER = styled.div`
 `
 
 const DROPDOWN_PAIR_DIV = styled.div`
-  ${tw`h-10 flex justify-between items-center text-14 -mx-1`}
+  ${tw`h-10 flex justify-between items-center text-sm -mx-1`}
   .asset-icon {
     ${tw`h-7 w-7`}
   }

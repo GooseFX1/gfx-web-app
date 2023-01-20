@@ -119,7 +119,7 @@ const INPUT_WRAPPER = styled.div`
     width: 20px;
   }
   .suffixText {
-    ${tw`text-12 font-semibold`}
+    ${tw`text-tiny font-semibold`}
     color: ${({ theme }) => theme.text29};
   }
   .ant-input {
@@ -144,7 +144,7 @@ const INPUT_WRAPPER = styled.div`
   }
   .dropdownContainer {
     ${tw`w-full h-[30px] flex justify-between items-center px-2 text-red-100 
-    font-semibold text-tiny border border-solid`}
+    font-semibold text-tiny border border-solid rounded-[5px]`}
     color: ${({ theme }) => theme.text21};
     border-color: ${({ theme }) => theme.tokenBorder};
     background: ${({ theme }) => theme.bg2};
@@ -163,7 +163,7 @@ const INPUT_WRAPPER = styled.div`
 const TOTAL_SELECTOR = styled.div`
   ${tw`flex mt-[3px] justify-between items-center px-3`}
   .valueSelector {
-    ${tw`cursor-pointer flex justify-center items-center rounded-[36px] w-14 h-[30px] text-12 
+    ${tw`cursor-pointer flex justify-center items-center rounded-[36px] w-14 h-[30px] text-tiny 
     text-gray-2 font-semibold`}
     background: ${({ theme }) => theme.bg23};
     &.selected {
@@ -192,7 +192,7 @@ const ORDER_CATEGORY = styled.div`
 `
 
 const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean }>`
-  ${tw`w-11/12 mt-3 rounded-[30px] h-[30px] text-12 font-semibold border-0 border-none`}
+  ${tw`w-11/12 mt-3 rounded-[30px] h-[30px] text-tiny font-semibold border-0 border-none`}
   background: ${({ $action, theme }) =>
     $action ? 'linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%)' : theme.bg23};
   color: ${({ $action }) => ($action ? 'white' : '#636363')};
@@ -212,7 +212,7 @@ const FEES = styled.div`
   }
 
   span {
-    ${tw`font-semibold text-12 text-gray-2 ml-[5px]`}
+    ${tw`font-semibold text-tiny text-gray-2 ml-[5px]`}
   }
 `
 
@@ -426,8 +426,9 @@ export const PlaceOrder: FC = () => {
                 <div>{displayedOrder?.text}</div>
                 <ArrowDropdown
                   arrowRotation={arrowRotation}
-                  offset={[20, 24]}
+                  offset={[-50, 10]}
                   onVisibleChange={handleDropdownClick}
+                  placement="bottomLeft"
                   overlay={
                     <Overlay
                       setArrowRotation={setArrowRotation}
