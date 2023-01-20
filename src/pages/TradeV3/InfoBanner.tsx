@@ -102,7 +102,7 @@ const DEPOSIT_WRAPPER = styled.div`
 `
 
 const DEPOSIT_BTN = styled.div`
-  ${tw`w-full h-full rounded-[36px] flex items-center justify-center text-12 font-semibold`}
+  ${tw`w-full h-full rounded-[36px] flex items-center justify-center text-tiny font-semibold`}
   background: ${({ theme }) => theme.bg20};
   color: ${({ theme }) => theme.text11};
 `
@@ -113,7 +113,7 @@ const RESET_LAYOUT_BUTTON_CTN = styled.div`
 `
 
 const RESET_LAYOUT_BUTTON = styled.div`
-  ${tw`h-[38px] w-full rounded-[36px] text-12 flex items-center justify-center font-semibold`}
+  ${tw`h-[38px] w-full rounded-[36px] text-tiny flex items-center justify-center font-semibold`}
   background: ${({ theme }) => theme.bg20};
   color: ${({ theme }) => theme.text11};
 `

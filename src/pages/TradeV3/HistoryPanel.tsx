@@ -62,7 +62,7 @@ const HEADER = styled.div`
     .open-order-header {
       ${tw`flex flex-row`}
       .count {
-        ${tw`h-[18px] w-[18px] font-semibold ml-2.5 rounded-circle text-center text-12`}
+        ${tw`h-[18px] w-[18px] font-semibold ml-2.5 rounded-circle text-center text-tiny`}
         background-image: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
         color: ${({ theme }) => theme.text1};
       }
@@ -72,7 +72,7 @@ const HEADER = styled.div`
       border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
       .tab {
         ${tw`cursor-pointer h-full w-full flex flex-row items-center 
-        justify-center font-semibold cursor-pointer text-12 text-gray-2`}
+        justify-center font-semibold cursor-pointer text-tiny text-gray-2`}
         background-color: ${({ theme }) => theme.bg2};
       }
       .tab.active {
@@ -96,7 +96,7 @@ const HEADER = styled.div`
     border-left: ${({ theme }) => '1px solid ' + theme.tokenBorder};
 
     span {
-      ${tw`text-12 font-semibold w-[12.5%] inline-block text-gray-2`}
+      ${tw`text-tiny font-semibold w-[12.5%] inline-block text-[#b5b5b5]`}
     }
   }
   .headers.Open-Orders > span {
@@ -114,21 +114,21 @@ const POSITIONS = styled.div`
   height: calc(100% - 57px);
 
   .positions {
-    ${tw`w-full h-10 p-0 text-14 font-semibold`}
+    ${tw`w-full h-10 p-0 text-sm font-semibold`}
     color: ${({ theme }) => theme.text28};
     span {
       ${tw`w-[12.5%] inline-block`}
     }
     button {
-      ${tw`h-[30px] rounded-[12px] text-12 font-semibold border-none m-[5px] text-white`}
+      ${tw`h-[30px] rounded-[12px] text-tiny font-semibold border-none m-[5px] text-white`}
       background: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
       outline: none;
     }
     .long {
-      ${tw`text-[#71c25d] text-12`}
+      ${tw`text-[#71c25d] text-tiny`}
     }
     .short {
-      ${tw`text-[#f06565] text-12`}
+      ${tw`text-[#f06565] text-tiny`}
     }
   }
 `
@@ -138,7 +138,7 @@ const OPEN_ORDER = styled.div`
   height: calc(100% - 80px);
 
   div {
-    ${tw`w-full h-[45px] py-0 pr-0 pl-3 flex justify-between items-center text-14 font-medium`}
+    ${tw`w-full h-[45px] py-0 pr-0 pl-3 flex justify-between items-center text-sm font-medium`}
     color: ${({ theme }) => theme.text24};
     .ant-btn > span {
       ${tw`inline`}
@@ -169,7 +169,7 @@ const TRADE_HISTORY = styled.div`
     display: none;
   }
   div {
-    ${tw`w-full h-[45px] text-14 font-medium py-1`}
+    ${tw`w-full h-[45px] text-sm font-medium py-1`}
     color: ${({ theme }) => theme.text24};
     span {
       ${tw`w-1/4 inline-block capitalize`}

@@ -261,7 +261,10 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     setTraderBalances(res.balancesArray)
     const res2 = tradeHistoryInfo(traderRiskGroup, activeProduct, marketProductGroup)
+    console.log('***', res2)
+
     if (res2) {
+      console.log('***', res2)
       setAveragePosition(res2.averagePosition)
       setTraderHistory(res2.traderHistory)
     }
