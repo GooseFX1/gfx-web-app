@@ -148,10 +148,6 @@ const INPUT_WRAPPER = styled.div`
     color: ${({ theme }) => theme.text21};
     border-color: ${({ theme }) => theme.tokenBorder};
     background: ${({ theme }) => theme.bg2};
-
-    .ant-dropdown-trigger {
-      ${tw`w-full flex justify-end`}
-    }
   }
   .dropdownContainer.lite {
     .arrow-icon {
@@ -426,7 +422,7 @@ export const PlaceOrder: FC = () => {
                 <div>{displayedOrder?.text}</div>
                 <ArrowDropdown
                   arrowRotation={arrowRotation}
-                  offset={[-50, 10]}
+                  offset={[-120, 20]}
                   onVisibleChange={handleDropdownClick}
                   placement="bottomLeft"
                   overlay={
@@ -530,23 +526,19 @@ export const PlaceOrder: FC = () => {
 }
 
 const SELECTOR = styled.div`
-  width: 100%;
-  flex-direction: column;
-  padding: ${({ theme }) => theme.margin(1.5)} 0;
-  ${({ theme }) => theme.smallBorderRadius};
-  background-color: ${({ theme }) => theme.bg15};
-  > span {
-    ${({ theme }) => theme.flexCenter}
-    width: 100%;
-    padding: ${({ theme }) => theme.margin(1.5)} 0;
-    font-size: 12px;
-    font-weight: bold;
-    &:hover {
-      background-color: #1f1f1f;
-      cursor: pointer;
+  ${tw`bg-black-4 dark:bg-[#555555] w-[150px] h-16 rounded-[5px] pt-2 pb-3 pl-2.5`}
+  > div {
+    ${tw`flex items-center mb-2`}
+    > span {
+      ${tw`text-white text-regular font-semibold`}
     }
-    &:not(:last-child) {
-      margin-bottom: ${({ theme }) => theme.margin(1.5)};
+    > input[type='radio'] {
+      ${tw`appearance-none absolute right-3 h-[15px] w-[15px] bg-black-2 rounded-small cursor-pointer`}
+    }
+    > input[type='radio']:checked:after {
+      ${tw`rounded-small w-[9px] h-[9px] relative top-[-4px] left-[3px] inline-block`}
+      background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
+      content: '';
     }
   }
 `
@@ -558,7 +550,7 @@ const Overlay: FC<{
 }> = ({ setArrowRotation, setDropdownVisible, side }) => {
   const { setOrder } = useOrder()
 
-  const handleClick = (display: OrderDisplayType) => {
+  const handleChange = (display: OrderDisplayType) => {
     setOrder((prevState) => ({ ...prevState, display }))
     setArrowRotation(false)
     setDropdownVisible(false)
@@ -567,9 +559,10 @@ const Overlay: FC<{
   return (
     <SELECTOR>
       {AVAILABLE_ORDERS.filter(({ side: x }) => x === side).map((order, index) => (
-        <span key={index} onClick={() => handleClick(order.display)}>
-          {order.text}
-        </span>
+        <div key={index}>
+          <span>{order.text}</span>
+          <input type="radio" name="market" value={order.display} onChange={() => handleChange(order.display)} />
+        </div>
       ))}
     </SELECTOR>
   )
