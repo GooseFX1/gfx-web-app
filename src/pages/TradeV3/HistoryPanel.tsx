@@ -99,11 +99,17 @@ const HEADER = styled.div`
       ${tw`text-tiny font-semibold w-[12.5%] inline-block text-[#b5b5b5]`}
     }
   }
+  .headers.Positions {
+    ${tw`pl-1`}
+  }
   .headers.Open-Orders > span {
     ${tw`w-1/5`}
   }
-  .headers.Trade-History > span {
-    ${tw`w-1/5`}
+  .headers.Trade-History {
+    ${tw`pl-1`}
+    > span {
+      ${tw`w-1/4`}
+    }
   }
   .headers.SOL-Unsettled-P-L > span {
     ${tw`w-1/3`}
@@ -125,10 +131,10 @@ const POSITIONS = styled.div`
       outline: none;
     }
     .long {
-      ${tw`text-[#71c25d] text-tiny`}
+      ${tw`text-[#71c25d] text-tiny pl-1`}
     }
     .short {
-      ${tw`text-[#f06565] text-tiny`}
+      ${tw`text-[#f06565] text-tiny pl-1`}
     }
   }
 `
@@ -173,6 +179,12 @@ const TRADE_HISTORY = styled.div`
     color: ${({ theme }) => theme.text24};
     span {
       ${tw`w-1/4 inline-block capitalize`}
+    }
+    .Long {
+      ${tw`text-[#71c25d] text-tiny pl-1`}
+    }
+    .Short {
+      ${tw`text-[#f06565] text-tiny pl-1`}
     }
   }
 `
@@ -263,7 +275,7 @@ const TradeHistoryComponent: FC = () => {
             historyData.length > 0 &&
             historyData.map((order, index) => (
               <div key={index}>
-                <span>{selectedCrypto.type === 'perps' ? order.side : null}</span>
+                <span className={order.side}>{selectedCrypto.type === 'perps' ? order.side : null}</span>
                 <span>{order.size}</span>
                 <span>${order.price}</span>
                 <span>{(order.size * order.price).toFixed(2)}</span>
