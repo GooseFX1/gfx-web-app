@@ -162,13 +162,13 @@ export const getRiskOutputRegister = async (
 
 export const displayFractional = (val: Fractional): string => {
   const base = val.m.toString()
-  const sign = val.m.toString()[0] === '-' ? '-' : ''
   if (Number(base) === 0) return '0.00'
   const decimals = Number(val.exp.toString())
   if (decimals === 0) return base
-  if (base.length === decimals) return '0.' + base
-  if (base.length < decimals) return '0.' + '0'.repeat(decimals - base.length) + base
-  return sign + base.slice(0, -decimals) + '.' + base.slice(-decimals)
+  else if (base.length === decimals) return '0.' + base
+  else if (base[0] === '-' && base.length - 1 === decimals) return '-0.' + base.slice(1, base.length)
+  else if (base.length < decimals) return '0.' + '0'.repeat(decimals - base.length) + base
+  return base.slice(0, -decimals) + '.' + base.slice(-decimals)
 }
 
 export const addFractionals = (a: Fractional, b: Fractional): Fractional => {
@@ -382,9 +382,12 @@ export const tradeHistoryInfo = (
     quantity: qty[0] === '-' ? qty.slice(1, qty.length) : qty,
     side: qty[0] === '-' ? 'buy' : 'sell'
   }
+  const startingIndex = traderRiskGroup.tradeHistory[productIndex].latestIdx.userAccount.toNumber()
   const traderHistory: ITraderHistory[] = []
-  traderRiskGroup.tradeHistory[productIndex].price.map((item, index) => {
-    const qty = traderRiskGroup.tradeHistory[productIndex].qty[index]
+  let count = 0
+  for (let i = startingIndex; !(count > 0 && i === startingIndex); ) {
+    const item = traderRiskGroup.tradeHistory[productIndex].price[i]
+    const qty = traderRiskGroup.tradeHistory[productIndex].qty[i]
     const price = Number(displayFractional(item)) / activeProduct.tick_size
 
     if (item.m.toNumber() !== 0 || qty.m.toNumber() !== 0) {
@@ -395,7 +398,23 @@ export const tradeHistoryInfo = (
         side: qtyString[0] === '-' ? 'buy' : 'sell'
       })
     }
-  })
+    i--
+    count++
+    if (i === -1) i = traderRiskGroup.tradeHistory[productIndex].qty.length - 1
+  }
+  //  traderRiskGroup.tradeHistory[productIndex].price.map((item, index) => {
+  //    const qty = traderRiskGroup.tradeHistory[productIndex].qty[index]
+  //    const price = Number(displayFractional(item)) / activeProduct.tick_size
+
+  //    if (item.m.toNumber() !== 0 || qty.m.toNumber() !== 0) {
+  //      const qtyString = displayFractional(qty)
+  //      traderHistory.push({
+  //        price: handleDecimalPrice(price),
+  //        quantity: qtyString[0] === '-' ? qtyString.slice(1, qtyString.length) : qtyString,
+  //        side: qtyString[0] === '-' ? 'buy' : 'sell'
+  //      })
+  //    }
+  //  })
   return {
     averagePosition,
     traderHistory
