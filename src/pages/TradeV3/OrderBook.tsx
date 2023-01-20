@@ -29,7 +29,7 @@ const HEADER = styled.div`
     div:nth-child(3) {
       ${tw`text-right w-1/3 justify-end`}
       .spreadDropdown {
-        ${tw`justify-end cursor-pointer w-12 text-smaller w-12.5 rounded-[5px]`}
+        ${tw`justify-end cursor-pointer w-12 text-tiny w-12.5 rounded-[5px]`}
         background: linear-gradient(90.62deg, #f48537 2.36%, #a72ebd 99.71%);
       }
     }

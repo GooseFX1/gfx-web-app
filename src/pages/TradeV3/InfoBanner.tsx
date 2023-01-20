@@ -72,14 +72,14 @@ const INFO_STATS = styled.div`
 `
 
 const REFRESH_DATA = styled.div`
-  ${tw`h-10 w-10 rounded-circle bg-[#5855ff] text-center cursor-pointer`}
+  ${tw`h-10 w-10 rounded-circle bg-[#5855ff] text-center cursor-pointer ml-auto mr-3.75`}
   img {
     ${tw`h-10 w-10`}
   }
 `
 
 const LOCK_LAYOUT_CTN = styled.div<{ $isLocked: boolean }>`
-  ${tw`h-10 w-[65px] ml-5 rounded-[36px] text-center cursor-pointer pt-px pl-px`}
+  ${tw`h-10 w-[65px] ml-3.75 rounded-[36px] text-center cursor-pointer pt-px pl-px`}
   height: 40px;
   width: 65px;
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
@@ -97,7 +97,7 @@ const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
   }
 `
 const DEPOSIT_WRAPPER = styled.div`
-  ${tw`w-[158px] h-10 rounded-[36px] flex items-center justify-center ml-auto cursor-pointer p-px mr-3.75`}
+  ${tw`w-[158px] h-10 rounded-[36px] flex items-center justify-center cursor-pointer p-px`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
 `
 
@@ -108,7 +108,7 @@ const DEPOSIT_BTN = styled.div`
 `
 
 const RESET_LAYOUT_BUTTON_CTN = styled.div`
-  ${tw`w-[130px] cursor-pointer h-10 p-px rounded-[36px] flex items-center justify-center`}
+  ${tw`w-[130px] cursor-pointer h-10 p-px rounded-[36px] flex items-center justify-center ml-auto mr-3.75`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
 `
 
@@ -323,9 +323,6 @@ export const InfoBanner: FC<{
           </div>
         )}
       </INFO_STATS>
-      <DEPOSIT_WRAPPER>
-        <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
-      </DEPOSIT_WRAPPER>
       {isLocked ? (
         <REFRESH_DATA onClick={() => refreshTokenData(null)}>
           <img src={`/img/assets/refreshButton.png`} alt="refresh" />
@@ -335,6 +332,9 @@ export const InfoBanner: FC<{
           <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>
         </RESET_LAYOUT_BUTTON_CTN>
       )}
+      <DEPOSIT_WRAPPER>
+        <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
+      </DEPOSIT_WRAPPER>
       <LOCK_LAYOUT_CTN $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
         <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
           <img src={isLocked ? `/img/assets/${mode}_lock.svg` : `/img/assets/${mode}_unlock.svg`} alt="lock" />
