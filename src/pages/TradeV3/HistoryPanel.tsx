@@ -7,10 +7,11 @@ import {
   useTokenRegistry,
   useTradeHistory,
   useOrderBook,
-  useDarkMode
+  useDarkMode,
+  usePriceFeed
 } from '../../context'
 import tw, { styled } from 'twin.macro'
-import { useTraderConfig } from '../../context/trader_risk_group'
+import { ITraderHistory, useTraderConfig } from '../../context/trader_risk_group'
 import { SettlePanel } from '../TradeV3/SettlePanel'
 import { getPerpsPrice } from './perps/utils'
 
@@ -89,13 +90,13 @@ const HEADER = styled.div`
   }
 
   .headers {
-    ${tw`h-[26px] pl-3`}
+    ${tw`h-[26px]`}
     border-bottom: ${({ theme }) => '1px solid ' + theme.tokenBorder};
     border-right: ${({ theme }) => '1px solid ' + theme.tokenBorder};
     border-left: ${({ theme }) => '1px solid ' + theme.tokenBorder};
 
     span {
-      ${tw`text-12 font-semibold w-[13%] inline-block text-gray-2`}
+      ${tw`text-12 font-semibold w-[12.5%] inline-block text-gray-2`}
     }
   }
   .headers.Open-Orders > span {
@@ -110,22 +111,16 @@ const HEADER = styled.div`
 `
 const POSITIONS = styled.div`
   ${tw`w-full`}
-  height: calc(100% - 80px);
+  height: calc(100% - 57px);
 
   .positions {
-    ${tw`w-full h-10 p-0 flex flex-row justify-between items-center text-14 font-semibold`}
+    ${tw`w-full h-10 p-0 text-14 font-semibold`}
     color: ${({ theme }) => theme.text28};
     span {
-      ${tw`w-[12.5%]`}
-    }
-    span {
-      ${tw`text-center`}
-    }
-    span:first-child {
-      ${tw`pl-3 text-left`}
+      ${tw`w-[12.5%] inline-block`}
     }
     button {
-      ${tw`h-[30px] w-[12.5%] rounded-[12px] text-12 font-semibold border-none m-[5px] text-white`}
+      ${tw`h-[30px] rounded-[12px] text-12 font-semibold border-none m-[5px] text-white`}
       background: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
       outline: none;
     }
@@ -162,6 +157,22 @@ const OPEN_ORDER = styled.div`
       button {
         ${tw`w-1/2 p-0`}
       }
+    }
+  }
+`
+
+const TRADE_HISTORY = styled.div`
+  ${tw`w-full`}
+  height: calc(100% - 57px);
+  overflow-y: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  div {
+    ${tw`w-full h-[45px] text-14 font-medium py-1`}
+    color: ${({ theme }) => theme.text24};
+    span {
+      ${tw`w-1/4 inline-block capitalize`}
     }
   }
 `
@@ -210,6 +221,55 @@ const OpenOrdersComponent: FC = () => {
         </div>
       ) : (
         content
+      )}
+    </>
+  )
+}
+
+const TradeHistoryComponent: FC = () => {
+  const { tradeHistoryNew } = useTradeHistory()
+  const { selectedCrypto } = useCrypto()
+  const { mode } = useDarkMode()
+  const { prices } = usePriceFeed()
+  const { traderInfo } = useTraderConfig()
+  const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto])
+  //NEED TO USE THIS
+
+  const perpsHistory = useMemo(() => {
+    return traderInfo.tradeHistory.map((item) => {
+      return {
+        price: Number(item.price),
+        size: Number(item.quantity),
+        side: item.side === 'buy' ? 'Long' : 'Short'
+      }
+    })
+  }, [traderInfo.tradeHistory])
+
+  const historyData = useMemo(
+    () => (selectedCrypto.type === 'crypto' ? tradeHistoryNew : perpsHistory),
+    [selectedCrypto, tradeHistoryNew]
+  )
+
+  return (
+    <>
+      {!historyData || !historyData.length ? (
+        <div className="no-positions-found">
+          <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-positions-found" />
+          <div>No Trade History</div>
+        </div>
+      ) : (
+        <TRADE_HISTORY>
+          {historyData &&
+            historyData.length > 0 &&
+            historyData.map((order, index) => (
+              <div key={index}>
+                <span>{selectedCrypto.type === 'perps' ? order.side : null}</span>
+                <span>{order.size}</span>
+                <span>${order.price}</span>
+                <span>{(order.size * order.price).toFixed(2)}</span>
+              </div>
+            ))}
+        </TRADE_HISTORY>
       )}
     </>
   )
@@ -314,6 +374,8 @@ export const HistoryPanel: FC = () => {
           </>
         ) : activeTab === 1 ? (
           <OpenOrdersComponent />
+        ) : activeTab === 2 ? (
+          <TradeHistoryComponent />
         ) : activeTab === 3 ? (
           <SettlePanel />
         ) : null}
