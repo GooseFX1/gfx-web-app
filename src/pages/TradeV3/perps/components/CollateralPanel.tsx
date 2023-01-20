@@ -30,7 +30,7 @@ const TABS_WRAPPER = styled.div<{ $isLocked: boolean }>`
       }
     }
     .ant-tabs-tab-btn {
-      ${tw`text-12 font-semibold h-full w-full flex justify-center items-center`}
+      ${tw`text-tiny font-semibold h-full w-full flex justify-center items-center`}
       color: ${({ theme }) => theme.text17};
       background: ${({ theme }) => theme.bg20};
     }
@@ -114,14 +114,14 @@ const FEES = styled.div<{ $height: boolean }>`
     ${tw`mb-1`}
   }
   .value {
-    ${tw`text-12 font-semibold`}
+    ${tw`text-tiny font-semibold`}
     color: ${({ theme }) => theme.text29};
   }
   .tier {
-    ${tw`text-12 font-semibold mb-[5px]`}
+    ${tw`text-tiny font-semibold mb-[5px]`}
     color: ${({ theme }) => theme.text11};
     > span {
-      ${tw`text-12 font-semibold`}
+      ${tw`text-tiny font-semibold`}
       background: -webkit-linear-gradient(96.79deg, #f7931a, #dc1fff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
