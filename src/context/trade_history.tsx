@@ -53,6 +53,7 @@ interface ITradeHistoryConfig {
     zB: string
   ) => Promise<void>
   tradeHistory: any[]
+  tradeHistoryNew: any
 }
 
 const TradeHistoryContext = createContext<ITradeHistoryConfig | null>(null)
@@ -67,6 +68,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   const [orders, setOrders] = useState<IOrder[]>([])
   const [tradeHistory, setTradeHistory] = useState([])
   const [panel, setPanel] = useLocalStorageState('historyPanel', HistoryPanel.Orders)
+  const [tradeHistoryNew, setTradeHistoryNew] = useState<any>()
 
   const getMarketTrades = useCallback(async () => {
     try {
@@ -90,14 +92,32 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   const fetchBalances = useCallback(async () => {
     if (wallet.publicKey && selectedCrypto.market) {
       try {
-        const openOrders = await serum.getOpenOrders(
-          connection,
-          selectedCrypto.market,
-          wallet.publicKey as PublicKey
+        const allOrders = await selectedCrypto.market.loadFills(connection, 1000)
+        const openOrders = await selectedCrypto.market.findOpenOrdersAccountsForOwner(connection, wallet.publicKey)
+        const recentTrades = allOrders.filter((fill) =>
+          openOrders.some((openOrdersAccount) => fill.openOrders.equals(openOrdersAccount.publicKey))
         )
-        setOpenOrders(openOrders)
+        setTradeHistoryNew(recentTrades)
       } catch (e: any) {
         await notify({ type: 'error', message: `Error fetching balances from serum market`, icon: 'error' }, e)
+      }
+    }
+  }, [connection, selectedCrypto.market, wallet.publicKey])
+
+  const fetchTradeHistory = useCallback(async () => {
+    if (wallet.publicKey && selectedCrypto.market) {
+      try {
+        const a = await selectedCrypto.market.loadFills(connection, 1000)
+        const b = await selectedCrypto.market.findOpenOrdersAccountsForOwner(connection, wallet.publicKey)
+        const c = a.filter((fill) =>
+          b.some((openOrdersAccount) => fill.openOrders.equals(openOrdersAccount.publicKey))
+        )
+        setTradeHistoryNew(c)
+      } catch (e: any) {
+        await notify(
+          { type: 'error', message: `Error fetching new Trade history from openbook market`, icon: 'error' },
+          e
+        )
       }
     }
   }, [connection, selectedCrypto.market, wallet.publicKey])
@@ -176,10 +196,12 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   useEffect(() => {
     setOpenOrders([])
     setTradeHistory([])
+    setTradeHistoryNew([])
   }, [selectedCrypto])
 
   useEffect(() => {
     getMarketTrades()
+    fetchTradeHistory()
   }, [selectedCrypto.market])
 
   useEffect(() => {
@@ -199,7 +221,8 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
         panel,
         setPanel,
         settleFunds,
-        tradeHistory
+        tradeHistory,
+        tradeHistoryNew
       }}
     >
       {children}
@@ -223,6 +246,7 @@ export const useTradeHistory = (): ITradeHistoryConfig => {
     panel: context.panel,
     setPanel: context.setPanel,
     settleFunds: context.settleFunds,
-    tradeHistory: context.tradeHistory
+    tradeHistory: context.tradeHistory,
+    tradeHistoryNew: context.tradeHistoryNew
   }
 }
