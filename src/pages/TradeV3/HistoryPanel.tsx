@@ -283,7 +283,7 @@ export const HistoryPanel: FC = () => {
   const { getUIAmount } = useAccounts()
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const { mode } = useDarkMode()
-  const { traderInfo } = useTraderConfig()
+  const { traderInfo, closePosition } = useTraderConfig()
   const perpsPrice = useMemo(() => getPerpsPrice(orderBook), [orderBook])
   const notionalSize = useMemo(
     () => (Number(traderInfo.averagePosition.quantity) * perpsPrice).toFixed(2),
@@ -298,6 +298,10 @@ export const HistoryPanel: FC = () => {
     () => (tokenInfoAsk ? getUIAmount(tokenInfoAsk.address) : 0),
     [tokenInfoAsk, getUIAmount]
   )
+
+  const handleClosePosition = () => {
+    closePosition(orderBook)
+  }
 
   const addNumbers = (arg1, arg2, arg3) => {
     let sum = 0
@@ -362,7 +366,7 @@ export const HistoryPanel: FC = () => {
                   <span>{perpsPrice}</span>
                   <span>{traderInfo.averagePosition.price}</span>
                   <span>{traderInfo.averagePosition.price}</span>
-                  <button>Close Position</button>
+                  <button onClick={handleClosePosition}>Close Position</button>
                 </div>
               ) : (
                 <div className="no-positions-found">

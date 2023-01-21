@@ -47,6 +47,7 @@ import {
   getRiskSigner,
   getTraderRiskGroupAccount,
   int64to8,
+  mulFractionals,
   reduceFractional,
   tradeHistoryInfo
 } from '../pages/TradeV3/perps/utils'
@@ -81,6 +82,7 @@ import {
   initializeMarketProductGroup,
   updateFeesIx
 } from '../pages/TradeV3/perps/adminUtils'
+import { OrderBook } from './orderbook'
 
 export const AVAILABLE_ORDERS_PERPS = [
   {
@@ -133,6 +135,7 @@ interface IPerpsInfo {
   traderInfo: ITraderRiskGroup
   marketProductGroupKey: PublicKey
   newOrder: () => Promise<void>
+  closePosition: (orderbook: OrderBook) => Promise<void>
   cancelOrder: (orderId: string) => Promise<void>
   depositFunds: (amount: Fractional) => Promise<DepositIx | void>
   withdrawFunds: (amount: Fractional) => Promise<void>
@@ -170,6 +173,7 @@ export function useTraderConfig() {
     marketProductGroup,
     marketProductGroupKey,
     newOrder,
+    closePosition,
     cancelOrder,
     depositFunds,
     withdrawFunds,
@@ -185,6 +189,7 @@ export function useTraderConfig() {
     marketProductGroup,
     marketProductGroupKey,
     newOrder,
+    closePosition,
     cancelOrder,
     depositFunds,
     withdrawFunds,
@@ -355,6 +360,70 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     refreshTraderRiskGroup()
   }, [traderRiskGroup, order, marketProductGroup])
 
+  const closePosition = useCallback(
+    async (orderbook: OrderBook) => {
+      function getClosePositionPrice(qty: string) {
+        let qtyNum = Number(qty)
+        const orderbookSide = qtyNum < 0 ? orderbook.asks : orderbook.bids
+        qtyNum = qtyNum < 0 ? qtyNum * -1 : qtyNum
+        for (let i = 0; i < orderbookSide.length; i++) {
+          if (qtyNum < orderbookSide[i][1]) return orderbookSide[i][0]
+          qtyNum -= orderbookSide[i][1]
+        }
+        return null
+      }
+      let qtyToExit: Fractional | null = null,
+        priceToExit = null
+      traderBalances.map((item) => {
+        if (item.productKey.toBase58() === activeProduct.id) {
+          qtyToExit = item.balanceFractional
+          priceToExit = getClosePositionPrice(displayFractional(qtyToExit))
+        }
+      })
+      if (qtyToExit && priceToExit) {
+        let orderSide: any = new Ask().toEncodable()
+        console.log(qtyToExit.toJSON())
+        if (qtyToExit.m.toString()[0] === '-') {
+          orderSide = new Bid().toEncodable()
+          qtyToExit = mulFractionals(qtyToExit, new Fractional({ m: new anchor.BN(-1), exp: new anchor.BN(0) }))
+        }
+        console.log(qtyToExit.toJSON(), priceToExit, orderSide)
+        const newOrderAccounts: INewOrderAccounts = {
+            user: wallet.publicKey,
+            traderRiskGroup: currentTRG,
+            marketProductGroup: currentMPG,
+            product: new PublicKey(activeProduct.id),
+            aaobProgram: new PublicKey(ORDERBOOK_P_ID),
+            orderbook: new PublicKey(activeProduct.orderbook_id),
+            marketSigner: getMarketSigner(new PublicKey(activeProduct.id)),
+            eventQueue: new PublicKey(activeProduct.event_queue),
+            bids: new PublicKey(activeProduct.bids),
+            asks: new PublicKey(activeProduct.asks),
+            systemProgram: SystemProgram.programId,
+            feeModelProgram: new PublicKey(FEES_ID),
+            feeModelConfigurationAcct: getFeeConfigAcct(new PublicKey(MPG_ID)),
+            traderFeeStateAcct: traderRiskGroup.feeStateAccount,
+            feeOutputRegister: new PublicKey(FEE_OUTPUT_REGISTER),
+            riskEngineProgram: new PublicKey(RISK_ID),
+            riskModelConfigurationAcct: new PublicKey(RISK_MODEL_CONFIG_ACCT),
+            riskOutputRegister: new PublicKey(RISK_OUTPUT_REGISTER),
+            traderRiskStateAcct: traderRiskGroup.riskStateAccount,
+            riskAndFeeSigner: getRiskAndFeeSigner(new PublicKey(MPG_ID))
+          },
+          newOrderParams = {
+            maxBaseQty: qtyToExit,
+            side: orderSide,
+            selfTradeBehavior: new DecrementTake().toEncodable(),
+            matchLimit: new anchor.BN(10),
+            orderType: new Limit().toEncodable(),
+            limitPrice: convertToFractional(priceToExit.toString())
+          }
+        const response = await newOrderIx(newOrderAccounts, newOrderParams, wallet, connection)
+      }
+    },
+    [traderRiskGroup, traderBalances, marketProductGroup]
+  )
+
   const cancelOrder = useCallback(
     async (orderId: string) => {
       const cancelOrderAccounts: ICancelOrderAccounts = {
@@ -454,6 +523,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         marketProductGroup: marketProductGroup,
         marketProductGroupKey: currentMPG,
         newOrder: newOrder,
+        closePosition: closePosition,
         cancelOrder: cancelOrder,
         depositFunds: depositFunds,
         withdrawFunds: withdrawFunds,
