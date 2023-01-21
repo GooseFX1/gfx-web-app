@@ -151,12 +151,11 @@ const CustomTableList: FC = () => {
   }, [sslVolume, stakeVolume, liquidityObject])
 
   useEffect(() => {
-    if (stakeVolume !== 0 && sslVolume !== 0 && volume7daySum !== 0 && totalVolumeTrade)
-      setStatsData({
-        tvl: sslVolume + stakeVolume,
-        volume7dSum: volume7daySum,
-        totalVolumeTrade: totalVolumeTrade
-      })
+    setStatsData({
+      tvl: stakeVolume !== 0 && sslVolume !== 0 ? sslVolume + stakeVolume : null,
+      volume7dSum: volume7daySum !== 0 ? volume7daySum : null,
+      totalVolumeTrade: totalVolumeTrade ? totalVolumeTrade : null
+    })
   }, [volume7daySum, sslVolume, stakeVolume, totalVolumeTrade])
 
   useEffect(() => {
