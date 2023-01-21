@@ -291,6 +291,7 @@ export interface IConsumeOB {
 }
 
 export interface ITraderBalances {
-    balance: string
-    productKey: PublicKey
+  balance: string
+  productKey: PublicKey
+  balanceFractional?: Fractional
 }
