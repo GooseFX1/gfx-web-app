@@ -78,7 +78,6 @@ export const ADDRESSES: {
         decimals: 6,
         name: 'USDT'
       },
-
       ETH: {
         address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
         decimals: 8,
@@ -89,18 +88,11 @@ export const ADDRESSES: {
         decimals: 9,
         name: 'Marinade staked SOL'
       },
-      SRM: {
-        address: new PublicKey('SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt'),
-        decimals: 6,
-        name: 'Serum'
-      },
-
       stSOL: {
         address: new PublicKey('7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj'),
         decimals: 9,
         name: 'Lido Staked SOL'
       },
-
       ORCA: {
         address: new PublicKey('orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE'),
         decimals: 6,
