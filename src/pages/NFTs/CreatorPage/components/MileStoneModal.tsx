@@ -157,7 +157,7 @@ const WRAPPER_COMPONENT = styled.div`
     ${tw`flex justify-center items-center`}
     .ant-input:first-child {
       ${tw`text-left pl-4 w-8/12 h-[53px] rounded-bl-[40px] border-0 
-      rounded-tl-[40px] border-none border-r border-gray-1 border-solid text-[17px]`}
+      rounded-tl-[40px] border-none border-r border-grey-2 border-solid text-[17px]`}
       background-color: ${({ theme }) => theme.sweepModalCard};
     }
     .ant-input:nth-child(2) {

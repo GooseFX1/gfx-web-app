@@ -52,9 +52,7 @@ module.exports = {
         'primary-gradient-1': '#5855FF',
         'primary-gradient-2': '#DC1FFF',
         'secondary-gradient-1': '#F7931A',
-        'secondary-gradient-2': '#AC1CC7',
-        'gray-1': '#9A9A9A',
-        'gray-2': '#636363'
+        'secondary-gradient-2': '#AC1CC7'
       },
       padding: {
         0.75: '3px',
