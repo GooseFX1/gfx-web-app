@@ -2,6 +2,20 @@
   "name": "gfx-web-app",
   "version": "0.1.0",
   "license": "MIT",
+  "scripts": {
+    "start": "PORT=3000 craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "react-scripts eject",
+    "format:fix": "prettier --write \"src/*.+(js|jsx|ts|tsx|json|css|md)\"",
+    "format:check": "prettier -c \"src/*.+(js|jsx|ts|tsx|json|css|md)\"",
+    "prepare": "husky install",
+    "upgrade": "yarn-upgrade-all",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix && yarn format:fix",
+    "lint:strict": "eslint --max-warnings=0 src",
+    "typecheck": "tsc --noEmit --incremental false"
+  },
   "dependencies": {
     "@civic/solana-gateway-react": "^0.7.5",
     "@craco/craco": "^6.2.0",
@@ -81,20 +95,6 @@
       "preset": "styled-components",
       "includeClassNames": true
     }
-  },
-  "scripts": {
-    "start": "PORT=3000 craco start",
-    "build": "craco build",
-    "test": "craco test",
-    "eject": "react-scripts eject",
-    "format:fix": "prettier --write \"src/*.+(js|jsx|ts|tsx|json|css|md)\"",
-    "format:check": "prettier -c \"src/*.+(js|jsx|ts|tsx|json|css|md)\"",
-    "prepare": "husky install",
-    "upgrade": "yarn-upgrade-all",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix && yarn format:fix",
-    "lint:strict": "eslint --max-warnings=0 src",
-    "typecheck": "tsc --noEmit --incremental false"
   },
   "eslintConfig": {
     "extends": "react-app"

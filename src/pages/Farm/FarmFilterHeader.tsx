@@ -271,7 +271,11 @@ export const FarmFilter: FC = () => {
             label={'Total Volume Trade:'}
             value={statsData ? `$${moneyFormatterWithComma(statsData.totalVolumeTrade)}` : null}
           />
-          <Pill label={'GOFX Price:'} value={prices['GOFX/USDC'] ? `$ ${prices['GOFX/USDC']?.current}` : null} />
+          <Pill
+            loading={!statsData}
+            label={'GOFX Price:'}
+            value={prices['GOFX/USDC'] ? `$ ${prices['GOFX/USDC']?.current}` : null}
+          />
         </div>
         <STYLED_FARM_HEADER>
           <ButtonContainer $poolIndex={poolIndex}>
