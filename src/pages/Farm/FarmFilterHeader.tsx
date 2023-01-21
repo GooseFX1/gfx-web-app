@@ -59,21 +59,6 @@ const ABSTRACT = styled.div`
   .toggle {
     ${tw`ml-4`}
   }
-
-  .stats-container {
-    ${tw`flex w-full items-center justify-between sm:mb-5 mb-[20px]`}
-
-    @media(max-width: 500px) {
-      width: 200vw;
-      overflow-y: hidden;
-      overflow-x: auto;
-      flex: none;
-      color: #fff;
-      z-index: 10;
-      opacity: 1;
-      position: absolute;
-    }
-  }
 `
 const WRAPPER = styled.div`
   ${tw`flex flex-col items-center`}
@@ -257,9 +242,18 @@ export const FarmFilter: FC = () => {
         <TEMP_BANNER>⚠️ SSL Pools Have Temporarily Disabled Deposits</TEMP_BANNER>
       </CenteredDiv>
       <WRAPPER>
-        <div className="stats-container">
-          <Pill label={'TVL:'} value={statsData ? `$${moneyFormatterWithComma(statsData.tvl)}` : null} />
+        <div
+          tw="flex w-full items-center justify-between 
+          sm:mb-5 mb-[20px] sm:w-[200vw] sm:overflow-y-hidden sm:overflow-x-auto sm:flex-none sm:text-white 
+          sm:z-10 sm:opacity-100 sm:absolute"
+        >
           <Pill
+            loading={!statsData}
+            label={'TVL:'}
+            value={statsData ? `$${moneyFormatterWithComma(statsData.tvl)}` : null}
+          />
+          <Pill
+            loading={!statsData}
             label={'Pools: '}
             value={
               farmDataContext && farmDataSSLContext
@@ -268,10 +262,12 @@ export const FarmFilter: FC = () => {
             }
           />
           <Pill
+            loading={!statsData}
             label={'7d Volume:'}
             value={statsData ? `$${moneyFormatterWithComma(statsData.volume7dSum)}` : null}
           />
           <Pill
+            loading={!statsData}
             label={'Total Volume Trade:'}
             value={statsData ? `$${moneyFormatterWithComma(statsData.totalVolumeTrade)}` : null}
           />
