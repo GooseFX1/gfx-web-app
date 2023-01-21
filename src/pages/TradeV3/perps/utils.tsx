@@ -332,7 +332,8 @@ export const computeHealth = (traderRiskGroup: TraderRiskGroup, marketProductGro
     const traderPos = traderRiskGroup.traderPositions[i]
     balancesArray.push({
       productKey: traderPos.productKey,
-      balance: displayFractional(traderPos.position)
+      balance: displayFractional(traderPos.position),
+      balanceFractional: traderPos.position
     })
     const idx = traderPos.productIndex.toJSON().userAccount
     const price = fetchPrice(marketProductGroup, Number(idx))
@@ -380,7 +381,7 @@ export const tradeHistoryInfo = (
   const averagePosition: ITraderHistory = {
     price: handleDecimalPrice(avgPrice),
     quantity: qty[0] === '-' ? qty.slice(1, qty.length) : qty,
-    side: qty[0] === '-' ? 'buy' : 'sell'
+    side: avgPrice === 0 ? null : qty[0] === '-' ? 'buy' : 'sell'
   }
   const startingIndex = traderRiskGroup.tradeHistory[productIndex].latestIdx.userAccount.toNumber()
   const traderHistory: ITraderHistory[] = []
