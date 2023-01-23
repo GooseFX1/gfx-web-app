@@ -5,6 +5,7 @@ import tw from 'twin.macro'
 import { Image } from 'antd'
 import { Settings } from './Settings'
 import { Wrap } from './Wrap'
+import { History } from './History'
 import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
@@ -324,6 +325,16 @@ const SETTING_WRAPPER = styled(CenteredImg)`
   ${tw`h-10 w-10 rounded-circle ml-2`}
 `
 
+const HISTORY_WRAPPER = styled(CenteredImg)`
+  ${tw`h-10 w-10 rounded-circle mr-2`}
+  background-color: ${({ theme }) => theme.bg12};
+
+  img {
+    filter: ${({ theme }) => theme.filterHistory};
+    ${tw`h-6! w-6!`}
+  }
+`
+
 const SWITCH = styled(CenteredDiv)<{ measurements: number }>`
   ${tw`absolute h-[64px] w-[64px] cursor-pointer rounded-circle z-[100]`}
   top: calc(50% - ${({ measurements }) => measurements}px / 2 + 18px);
@@ -375,6 +386,7 @@ const SwapContent: FC<{
   const { amountPool, setFocused, switchTokens, setClickNo, setRoutes, tokenA, tokenB, inTokenAmount } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
   const [route, setRoute] = useState(routes[clickNo])
+  const [historyVisible, setHistoryVisible] = useState(false)
   const [wrapModalVisible, setWrapModalVisible] = useState(false)
 
   useEffect(() => {
@@ -390,9 +402,14 @@ const SwapContent: FC<{
     setRoute(routes[clickNo])
   }, [routes, clickNo])
 
-  const onClick = (e: React.MouseEvent<HTMLElement>) => {
+  const openSettings = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation()
     setSettingsModalVisible(true)
+  }
+
+  const openHistory = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation()
+    setHistoryVisible(true)
   }
 
   const refresh = () => {
@@ -460,6 +477,15 @@ const SwapContent: FC<{
       >
         <Wrap setVisible={setWrapModalVisible} />
       </SETTING_MODAL>
+      <SETTING_MODAL
+        setVisible={setHistoryVisible}
+        bigTitle={false}
+        title="Swap History"
+        visible={historyVisible}
+        style={{ overflowY: 'auto', backgroundColor: mode === 'dark' ? '#1c1c1c' : 'white' }}
+      >
+        <History setVisible={setHistoryVisible} />
+      </SETTING_MODAL>
       <HEADER_WRAPPER $iconSize="40px">
         <HEADER_TITLE>
           <span>{checkMobile() ? 'Swap' : dateString(new Date())}</span>
@@ -467,6 +493,9 @@ const SwapContent: FC<{
         </HEADER_TITLE>
 
         <div>
+          <HISTORY_WRAPPER onClick={openHistory}>
+            <img src={`/img/assets/history.svg`} alt="history" />
+          </HISTORY_WRAPPER>
           <div onClick={() => setWrapModalVisible(true)} className={'wrapped-sol'}>
             wSOL
           </div>
@@ -477,7 +506,7 @@ const SwapContent: FC<{
               className={`rotateRefreshBtn ${refreshed ? 'rotateRefreshBtn-rotate' : ''}`}
             />
           </div>
-          <SETTING_WRAPPER onClick={onClick}>
+          <SETTING_WRAPPER onClick={openSettings}>
             <img src={`/img/assets/settings_${mode}_mode.svg`} alt="settings" className={'smaller-header-icon'} />
           </SETTING_WRAPPER>
         </div>

@@ -188,6 +188,7 @@ export interface Colors {
   expendedRowBg: Color
   filterDownIcon: Color
   filterArrowDown: Color
+  filterHistory: Color
   tableHeader: Color
   cellBackground: Color
 
