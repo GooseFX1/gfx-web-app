@@ -109,7 +109,6 @@ export function colors(mode: string): Colors {
     bg14: mode === 'dark' ? '#1b1b1b' : '#555555',
     bg15: mode === 'dark' ? '#191919' : '#555555',
     bg16: mode === 'dark' ? '#1E1E1E' : '#EEEEEE',
-    bg17: mode === 'dark' ? '#272727' : '#FFFFFF',
     bg18: mode === 'dark' ? '#2a2a2a' : '#dadada',
     bg19: mode === 'dark' ? '#131313' : '#3c3c3c',
     bg20: mode === 'dark' ? '#1c1c1c' : white,

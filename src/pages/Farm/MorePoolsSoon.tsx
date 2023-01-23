@@ -4,24 +4,16 @@ import Lottie from 'lottie-react'
 import MorePools from '../../animations/MorePools_dark.json'
 import MorePoolsLite from '../../animations/MorePools_lite.json'
 import { useDarkMode, useFarmContext } from '../../context'
-import tw from 'twin.macro'
+import 'twin.macro'
+import 'styled-components/macro'
 import { checkMobile } from '../../utils'
 
-const CONTAINER = styled.div`
-  ${tw`flex flex-col items-center min-h-[30vh]`}
-  background: ${({ theme }) => theme.bg17};
-  @media (max-width: 500px) {
-    width: 100vw;
-  }
-`
 const MorePoolImg = styled.div`
   .animation-404 {
-    ${tw`w-[188px] h-[120px] mt-[70px]`}
+    width: 188px; 
+    height: 120px;
+    margin top: 70px;
   }
-`
-const MoreText = styled.div`
-  ${tw`not-italic font-semibold text-xl mt-[30px] mb-[50px]`}
-  color: ${({ theme }) => theme.text19};
 `
 
 export const MorePoolsSoon: FC<any> = ({ tableRef, length }) => {
@@ -40,8 +32,9 @@ export const MorePoolsSoon: FC<any> = ({ tableRef, length }) => {
 
   return (
     <tr>
-      <td colSpan={7}>
-        <CONTAINER
+      <td colSpan={7} tw="pt-[90px]">
+        <div
+          tw="flex flex-col items-center min-h-[30vh] sm:w-full dark:bg-black-3 bg-white"
           style={{
             paddingTop: tableHeight < seventyVh && !checkMobile() ? seventyVh - tableHeight : 0
           }}
@@ -49,8 +42,8 @@ export const MorePoolsSoon: FC<any> = ({ tableRef, length }) => {
           <MorePoolImg>
             <Lottie animationData={mode == 'dark' ? MorePools : MorePoolsLite} className="animation-404" />
           </MorePoolImg>
-          <MoreText>More pools coming soon</MoreText>
-        </CONTAINER>
+          <div tw="dark:text-grey-1 text-grey-2 not-italic font-semibold mt-[30px]">More pools coming soon</div>
+        </div>
       </td>
     </tr>
   )

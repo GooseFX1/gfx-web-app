@@ -63,13 +63,12 @@ const WRAPPER = styled.div<{ $navCollapsed; $lastRefreshedClass }>`
       margin-top: 2px;
     }
     width: 100%;
-    background: ${({ theme }) => theme.bg17};
+    ${tw`dark:bg-black-3 bg-white`}
     border-radius: 20px 20px 0 0;
   }
   .tableHeader {
     position: sticky;
-    ${tw`text-base font-semibold	text-white`}
-    background: ${({ theme }) => theme.tableHeader};
+    ${tw`text-base font-semibold text-white dark:bg-black-2 bg-black-4`}
   }
   .borderRow {
     border-radius: 20px 0px 0px 25px;

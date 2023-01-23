@@ -9,11 +9,11 @@ import {
   DEFAULT_MAINNET_RPC,
   PriceFeedFarmProvider
 } from '../../context'
-import { notify, checkMobile } from '../../utils'
+import { notify } from '../../utils' //checkMobile
 import { logData } from '../../api'
 import CustomTableList from './CustomTableList'
-import { Banner } from '../../components/Banner'
-import { GFX_LINK } from '../../styles'
+// import { Banner } from '../../components/Banner'
+// import { GFX_LINK } from '../../styles'
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   ${tw`sm:px-0 relative flex flex-col w-screen px-6 overflow-y-auto overflow-x-hidden`}
@@ -38,17 +38,17 @@ const BODY = styled.div<{ $navCollapsed: boolean }>`
   }
 `
 
-const BETA_BANNER = styled.div`
-  ${tw`fixed left-[42px] bottom-[42px]`}
-  z-index: 10;
-`
+// const BETA_BANNER = styled.div`
+//   ${tw`fixed left-[42px] bottom-[42px]`}
+//   z-index: 10;
+// `
 
 export const Farm: FC = () => {
   //eslint-disable-next-line
   const [filter, setFilter] = useState<string>('')
   const { isCollapsed } = useNavCollapse()
   const { setEndpointName, network } = useConnectionConfig()
-  const [betaBanner, setBetaBanner] = useState<boolean>(true)
+  // const [betaBanner, setBetaBanner] = useState<boolean>(true)
 
   useEffect(() => {
     logData('farm_page')
@@ -75,7 +75,7 @@ export const Farm: FC = () => {
           <BODY $navCollapsed={isCollapsed}>
             <FarmHeader onFilter={onFilter} />
             <CustomTableList />
-            {betaBanner && !checkMobile() && (
+            {/* {betaBanner && !checkMobile() && (
               <BETA_BANNER>
                 <Banner
                   title="SSL Beta Testing"
@@ -93,7 +93,7 @@ export const Farm: FC = () => {
                   handleDismiss={setBetaBanner}
                 />
               </BETA_BANNER>
-            )}
+            )} */}
           </BODY>
         </PriceFeedFarmProvider>
       </FarmProvider>
