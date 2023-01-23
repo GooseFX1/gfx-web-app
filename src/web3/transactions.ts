@@ -5,6 +5,7 @@ import {
   Connection,
   FeeCalculator,
   Keypair,
+  PublicKey,
   RpcResponseAndContext,
   SignatureStatus,
   SimulatedTransactionResponse,
@@ -14,7 +15,7 @@ import {
 } from '@solana/web3.js'
 
 import { WalletAdapter, WalletNotConnectedError } from '@solana/wallet-adapter-base'
-
+import { ADDRESSES } from './ids'
 interface BlockhashAndFeeCalculator {
   blockhash: Blockhash
   feeCalculator: FeeCalculator
@@ -315,4 +316,58 @@ export async function awaitTransactionSignatureConfirmation(
   done = true
   console.log('Returning status', status)
   return status
+}
+
+export async function getTransactionHistory(
+  address: PublicKey,
+  connection: Connection,
+  numTxn: number
+): Promise<any[]> {
+  if (address && connection) {
+    const txnList = await connection.getSignaturesForAddress(address, { limit: numTxn }, 'confirmed')
+    const signatureList = txnList.map((txn) => txn.signature)
+    const txnDetails = await connection.getParsedTransactions(signatureList, {
+      commitment: 'confirmed',
+      maxSupportedTransactionVersion: 0
+    })
+
+    const newTxnDetails = txnDetails
+      .filter(
+        (txn) =>
+          txn.transaction.message.instructions[1].programId.toBase58() ==
+          ADDRESSES['mainnet-beta'].programs.ssl.address.toBase58()
+      )
+      .slice(0, 5)
+      .map((txn) => {
+        /* eslint-disable @typescript-eslint/ban-ts-comment */
+        const [outAmount, inAmount] = [
+          // @ts-ignore
+          txn.meta.innerInstructions[0].instructions[2].parsed.info.amount,
+          // @ts-ignore
+          Number(txn.meta.innerInstructions[0].instructions[0].parsed.info.amount) +
+            // @ts-ignore
+            Number(txn.meta.innerInstructions[0].instructions[1].parsed.info.amount) +
+            ''
+        ]
+        /* eslint-disable @typescript-eslint/ban-ts-comment */
+        const [inMint, outMint] = [...new Set(txn.meta.preTokenBalances.map((i) => i.mint))]
+        const timestamp = new Date(txn.blockTime * 1000).toISOString()
+        const programId = txn.transaction.message.instructions[1].programId.toString()
+
+        return {
+          outAmount,
+          inAmount,
+          inMint,
+          outMint,
+          timestamp,
+          programId,
+          owner: address,
+          signatures: txn.transaction.signatures[0]
+        }
+      })
+
+    return newTxnDetails
+  }
+
+  return []
 }
