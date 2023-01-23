@@ -30,7 +30,12 @@ const BUTTON = styled.button`
 
 const MainContainer = styled.div`
   ${tw`flex flex-col items-start p-2 w-full mb-2 rounded-md`}
-  border: ${({ theme }) => `2px solid ${theme.bg22}`};
+  border: ${({ theme }) => `2px solid ${theme.bg18}`};
+
+  &:hover,
+  &:active {
+    background-color: ${({ theme }) => theme.bg18};
+  }
 `
 
 const MainFlexContainer = styled.div`
@@ -59,13 +64,14 @@ const LOADING = styled.div`
   ${tw`h-full w-full flex items-center justify-center font-bold text-lg`}
 `
 
-export const History: FC<{ setVisible?: (x: boolean) => void }> = () => {
+export const History: FC<{ reload: boolean }> = ({ reload }) => {
   const { getTransactionsHistory } = useSwap()
   const [txns, setTxns] = useState([])
 
   useEffect(() => {
+    console.log('dobby')
     getHistoryAndUpdate()
-  }, [])
+  }, [reload])
 
   const getHistoryAndUpdate = async () => {
     const tx = await getTransactionsHistory()
@@ -77,11 +83,12 @@ export const History: FC<{ setVisible?: (x: boolean) => void }> = () => {
     const time = new Date(isoTime)
     const difference = (now - time.getTime()) / 1000 //in seconds
     const days = difference / (24 * 3600)
-    if (days > 0) {
+
+    if (days > 1) {
       return `${Math.round(days)} day(s)`
     } else {
       const hours = difference / 3600
-      if (hours > 0) {
+      if (hours > 1) {
         return `${Math.round(hours)} hour(s)`
       } else {
         return `${Math.round(difference / 60)} minute(s)`
@@ -91,7 +98,7 @@ export const History: FC<{ setVisible?: (x: boolean) => void }> = () => {
 
   return (
     <BODY>
-      {txns.length == 0 && <LOADING>Loading ...</LOADING>}
+      {txns.length == 0 && <LOADING>Loading Your Transactions...</LOADING>}
       {txns.map((txn, k) => (
         <MainContainer key={k + 1}>
           <MainFlexContainer>

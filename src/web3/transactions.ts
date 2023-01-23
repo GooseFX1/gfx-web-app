@@ -332,21 +332,23 @@ export async function getTransactionHistory(
     })
 
     const newTxnDetails = txnDetails
-      .filter(
-        (txn) =>
-          txn.transaction.message.instructions[1].programId.toBase58() ==
+      .filter((txn) => {
+        const programIx = txn.transaction.message.instructions.length - 2
+        return (
+          txn.transaction.message.instructions[programIx].programId.toBase58() ===
           ADDRESSES['mainnet-beta'].programs.ssl.address.toBase58()
-      )
-      .slice(0, 5)
+        )
+      })
       .map((txn) => {
+        const ixs = txn.meta.innerInstructions.length - 1
         /* eslint-disable @typescript-eslint/ban-ts-comment */
         const [outAmount, inAmount] = [
           // @ts-ignore
-          txn.meta.innerInstructions[0].instructions[2].parsed.info.amount,
+          txn.meta.innerInstructions[ixs].instructions[2].parsed.info.amount,
           // @ts-ignore
-          Number(txn.meta.innerInstructions[0].instructions[0].parsed.info.amount) +
+          Number(txn.meta.innerInstructions[ixs].instructions[0].parsed.info.amount) +
             // @ts-ignore
-            Number(txn.meta.innerInstructions[0].instructions[1].parsed.info.amount) +
+            Number(txn.meta.innerInstructions[ixs].instructions[1].parsed.info.amount) +
             ''
         ]
         /* eslint-disable @typescript-eslint/ban-ts-comment */
@@ -362,7 +364,7 @@ export async function getTransactionHistory(
           timestamp,
           programId,
           owner: address,
-          signatures: txn.transaction.signatures[0]
+          signature: txn.transaction.signatures[0]
         }
       })
 

@@ -387,6 +387,7 @@ const SwapContent: FC<{
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
   const [route, setRoute] = useState(routes[clickNo])
   const [historyVisible, setHistoryVisible] = useState(false)
+  const [reloadTrigger, setReloadTrigger] = useState(false)
   const [wrapModalVisible, setWrapModalVisible] = useState(false)
 
   useEffect(() => {
@@ -410,6 +411,7 @@ const SwapContent: FC<{
   const openHistory = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation()
     setHistoryVisible(true)
+    setReloadTrigger(!reloadTrigger)
   }
 
   const refresh = () => {
@@ -484,7 +486,7 @@ const SwapContent: FC<{
         visible={historyVisible}
         style={{ overflowY: 'auto', backgroundColor: mode === 'dark' ? '#1c1c1c' : 'white' }}
       >
-        <History setVisible={setHistoryVisible} />
+        <History reload={reloadTrigger} />
       </SETTING_MODAL>
       <HEADER_WRAPPER $iconSize="40px">
         <HEADER_TITLE>
