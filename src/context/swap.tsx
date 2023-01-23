@@ -13,11 +13,12 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useAccounts } from './accounts'
 import { useConnectionConfig, useSlippageConfig } from './settings'
 import { notify } from '../utils'
-import { swap, preSwapAmount } from '../web3'
+import { swap, preSwapAmount, getTransactionHistory } from '../web3'
 import JSBI from 'jsbi'
 import CoinGecko from 'coingecko-api'
 const CoinGeckoClient = new CoinGecko()
 import { CURRENT_SUPPORTED_TOKEN_LIST } from '../constants'
+import { useTokenRegistry } from './token_registry'
 
 export type SwapInput = undefined | 'from' | 'to'
 
@@ -56,6 +57,7 @@ interface ISwapConfig {
   amountPool?: () => Promise<void>
   amountPoolJup?: () => Promise<void>
   amountPoolGfx?: () => Promise<void>
+  getTransactionsHistory?: () => Promise<any>
   tokenA: ISwapToken | null
   tokenB: ISwapToken | null
   connection?: any
@@ -76,6 +78,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { fetchAccounts } = useAccounts()
   const { connection, network } = useConnectionConfig()
   const { slippage } = useSlippageConfig()
+  const { tokens } = useTokenRegistry()
   const wallet = useWallet()
   const [fetching] = useState(false)
   const [inTokenAmount, setInTokenAmount] = useState(0)
@@ -175,6 +178,34 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }
 
+  const getTransactionsHistory = async () => {
+    //get past 5 transactions using jupiter stats api and get past 5 transactions using the txn history method.
+    // why I added jup api is based on the node rpc?
+    // getting the txn history directly is extremely unreliable for old txns beyond 24hrs
+    if (wallet?.publicKey) {
+      const url = `https://stats.jup.ag/transactions?publicKey=${wallet.publicKey}`
+      const response = await fetch(url)
+      const externalTxns = await response.json()
+      const gfxTxns = await getTransactionHistory(wallet.publicKey, connection, 5)
+      const txns = [...gfxTxns, ...externalTxns.slice(0, 10 - gfxTxns.length)].map((txn) => {
+        const tokenA = tokens.find((i) => i.address === txn.inMint)
+        const tokenB = tokens.find((i) => i.address === txn.outMint)
+
+        return {
+          ...txn,
+          inSymbol: txn.inSymbol || tokenA?.symbol,
+          outSymbol: txn.outSymbol || tokenB?.symbol,
+          inAmountInDecimal: Number(txn?.inAmountInDecimal) || Number(txn.inAmount) / 10 ** tokenA?.decimals,
+          outAmountInDecimal: Number(txn?.outAmountInDecimal) || Number(txn.outAmount) / 10 ** tokenB?.decimals,
+          logoUriA: tokenA?.logoURI,
+          logoUriB: tokenB?.logoURI
+        }
+      })
+      return txns.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    }
+    return []
+  }
+
   useEffect(() => {
     if (chosenRoutes.length < 1 && inTokenAmount > 0 && tokenA && tokenB) {
       setLoading(true)
@@ -196,7 +227,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       .list()
       .then((data) => {
         setCoingeckoTokens(data.data)
-        console.log('data', data.data)
+        //console.log('data', data.data)
       })
       .catch((err) => {
         console.log(err)
@@ -327,6 +358,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         clickNo,
         network,
         gofxOutAmount,
+        getTransactionsHistory,
         CoinGeckoClient,
         coingeckoTokens
       }}
@@ -369,6 +401,7 @@ export const useSwap = (): ISwapConfig => {
     gofxOutAmount: context.gofxOutAmount,
     amountPool: context.amountPoolJup,
     CoinGeckoClient: context.CoinGeckoClient,
-    coingeckoTokens: context.coingeckoTokens
+    coingeckoTokens: context.coingeckoTokens,
+    getTransactionsHistory: context.getTransactionsHistory
   }
 }
