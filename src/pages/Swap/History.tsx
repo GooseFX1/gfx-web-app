@@ -69,7 +69,6 @@ export const History: FC<{ reload: boolean }> = ({ reload }) => {
   const [txns, setTxns] = useState([])
 
   useEffect(() => {
-    console.log('dobby')
     getHistoryAndUpdate()
   }, [reload])
 
