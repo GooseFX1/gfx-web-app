@@ -325,7 +325,7 @@ export const InfoBanner: FC<{
       </INFO_STATS>
       {isLocked ? (
         <REFRESH_DATA onClick={() => refreshTokenData(null)}>
-          <img src={`/img/assets/refreshButton.png`} alt="refresh" />
+          <img src={`/img/assets/refresh.svg`} alt="refresh" />
         </REFRESH_DATA>
       ) : (
         <RESET_LAYOUT_BUTTON_CTN>
