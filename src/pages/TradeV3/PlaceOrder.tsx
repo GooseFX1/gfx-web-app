@@ -1,4 +1,4 @@
-/* eslint-disable arrow-body-style */
+/* eslint-disable */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { Dispatch, FC, SetStateAction, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
@@ -22,6 +22,10 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { ArrowDropdown, Tooltip } from '../../components'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import { displayFractional } from './perps/utils'
+import { PopupCustom } from '../NFTs/Popup/PopupCustom'
+import { TradeConfirmation } from './TradeConfirmation'
+import { PerpsEndModal } from './PerpsEndModal'
+import 'styled-components/macro'
 
 enum ButtonState {
   Connect = 0,
@@ -187,10 +191,10 @@ const ORDER_CATEGORY = styled.div`
   }
 `
 
-const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean }>`
+const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean; $orderSide: string }>`
   ${tw`w-11/12 mt-3 rounded-[30px] h-[30px] text-tiny font-semibold border-0 border-none`}
-  background: ${({ $action, theme }) =>
-    $action ? 'linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%)' : theme.bg23};
+  background: ${({ $action, $orderSide, theme }) =>
+    $action ? ($orderSide === 'buy' ? '#71C25D' : '#F06565') : theme.bg23};
   color: ${({ $action }) => ($action ? 'white' : '#636363')};
 `
 
@@ -209,6 +213,48 @@ const FEES = styled.div`
 
   span {
     ${tw`font-semibold text-tiny text-gray-2 ml-[5px]`}
+  }
+`
+
+const SETTING_MODAL = styled(PopupCustom)`
+  ${tw`!h-[536px] !w-[500px] rounded-bigger`}
+  background-color: ${({ theme }) => theme.bg25};
+
+  .ant-modal-header {
+    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
+    background-color: ${({ theme }) => theme.bg25};
+  }
+  .ant-modal-content {
+    ${tw`shadow-none`}
+  }
+  .ant-modal-body {
+    ${tw`py-0 px-[25px]`}
+  }
+`
+
+const TITLE = styled.span`
+  font-size: 25px;
+  font-weight: 600;
+  background: -webkit-linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 30px;
+  margin-left: 8px;
+`
+
+const END_MODAL = styled(PopupCustom)`
+  ${tw`!h-[450px] !w-[500px] rounded-bigger`}
+  background-color: ${({ theme }) => theme.bg25};
+
+  .ant-modal-header {
+    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
+    background-color: ${({ theme }) => theme.bg25};
+  }
+  .ant-modal-content {
+    ${tw`shadow-none`}
+  }
+  .ant-modal-body {
+    ${tw`py-0 px-[25px]`}
   }
 `
 
@@ -259,6 +305,8 @@ export const PlaceOrder: FC = () => {
   const [selectedTotal, setSelectedTotal] = useState<number>(null)
   const [arrowRotation, setArrowRotation] = useState(false)
   const [dropdownVisible, setDropdownVisible] = useState(false)
+  const [confirmationModal, setConfirmationModal] = useState<boolean>(false)
+  const [perpsEndModal, setPerpsEndModal] = useState<boolean>(false)
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { connected } = useWallet()
   const { mode } = useDarkMode()
@@ -391,6 +439,57 @@ export const PlaceOrder: FC = () => {
   return (
     <WRAPPER>
       <HEADER>
+        {perpsEndModal && (
+          <>
+            <END_MODAL
+              visible={true}
+              centered={true}
+              footer={null}
+              title={
+                <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold mb-4.5">
+                  Fortune Favours The Bold!
+                </span>
+              }
+              closeIcon={
+                <img
+                  src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+                  height="20px"
+                  width="20px"
+                  onClick={() => setPerpsEndModal(false)}
+                />
+              }
+              className={mode === 'dark' ? 'dark' : ''}
+            >
+              <PerpsEndModal />
+            </END_MODAL>
+          </>
+        )}
+        {confirmationModal && (
+          <>
+            <SETTING_MODAL
+              visible={true}
+              centered={true}
+              footer={null}
+              title={
+                <>
+                  <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold">Market Long</span>
+                  <TITLE>SOL-PERP</TITLE>
+                </>
+              }
+              closeIcon={
+                <img
+                  src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+                  height="20px"
+                  width="20px"
+                  onClick={() => setConfirmationModal(false)}
+                />
+              }
+              className={mode === 'dark' ? 'dark' : ''}
+            >
+              <TradeConfirmation />
+            </SETTING_MODAL>
+          </>
+        )}
         <div className="pairInfo">
           <div className="pairName">
             <img src={`/img/crypto/${symbol}.svg`} alt="" />
@@ -422,7 +521,7 @@ export const PlaceOrder: FC = () => {
                 <div>{displayedOrder?.text}</div>
                 <ArrowDropdown
                   arrowRotation={arrowRotation}
-                  offset={[-120, 20]}
+                  offset={[-125, 15]}
                   onVisibleChange={handleDropdownClick}
                   placement="bottomLeft"
                   overlay={
@@ -511,6 +610,7 @@ export const PlaceOrder: FC = () => {
         <PLACE_ORDER_BUTTON
           $action={buttonState === ButtonState.CanPlaceOrder}
           onClick={() => (isSpot ? placeOrder() : newOrder())}
+          $orderSide={order.side}
         >
           {buttonText}
         </PLACE_ORDER_BUTTON>
@@ -526,7 +626,7 @@ export const PlaceOrder: FC = () => {
 }
 
 const SELECTOR = styled.div`
-  ${tw`bg-black-4 dark:bg-[#555555] w-[150px] h-16 rounded-[5px] pt-2 pb-3 pl-2.5`}
+  ${tw`bg-black-4 dark:bg-[#555555] w-[160px] h-16 rounded-[5px] pt-2 pb-3 pl-2.5`}
   > div {
     ${tw`flex items-center mb-2`}
     > span {
@@ -548,7 +648,7 @@ const Overlay: FC<{
   setDropdownVisible: Dispatch<SetStateAction<boolean>>
   side: OrderSide
 }> = ({ setArrowRotation, setDropdownVisible, side }) => {
-  const { setOrder } = useOrder()
+  const { order, setOrder } = useOrder()
 
   const handleChange = (display: OrderDisplayType) => {
     setOrder((prevState) => ({ ...prevState, display }))
@@ -558,10 +658,16 @@ const Overlay: FC<{
 
   return (
     <SELECTOR>
-      {AVAILABLE_ORDERS.filter(({ side: x }) => x === side).map((order, index) => (
+      {AVAILABLE_ORDERS.filter(({ side: x }) => x === side).map((item, index) => (
         <div key={index}>
-          <span>{order.text}</span>
-          <input type="radio" name="market" value={order.display} onChange={() => handleChange(order.display)} />
+          <span>{item.text}</span>
+          <input
+            type="radio"
+            name="market"
+            value={item.display}
+            checked={order.display === item.display}
+            onChange={() => handleChange(item.display)}
+          />
         </div>
       ))}
     </SELECTOR>

@@ -4,7 +4,7 @@ import 'styled-components/macro'
 import { Loader } from './Loader'
 
 const BUTTON = styled.button<{ $cssStyle: TwStyle; $height: string; $width: string; $disabled: boolean }>`
-  ${tw`flex justify-center`}
+  ${tw`flex justify-center items-center`}
   ${({ $cssStyle }) => $cssStyle};
   height: ${({ $height }) => $height};
   width: ${({ $width }) => $width};
