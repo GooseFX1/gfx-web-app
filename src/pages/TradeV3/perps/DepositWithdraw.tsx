@@ -6,6 +6,7 @@ import { useMemo, FC, useState } from 'react'
 import { convertToFractional } from './utils'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { PERPS_COLLATERAL } from './perpsConstants'
+import 'styled-components/macro'
 
 const WRAPPER = styled.div`
   .input-row {
@@ -185,7 +186,15 @@ export const DepositWithdraw: FC<{
 
   return (
     <WRAPPER>
-      <LABEL>Asset</LABEL>
+      <div tw="flex flex-row items-center justify-between">
+        <LABEL>Asset</LABEL>
+        {tradeType === 'deposit' && (
+          <span tw="text-regular font-semibold dark:text-grey-2 text-grey-1 mt-3.75">
+            {' '}
+            Deposit Limit: $1,000,000.00{' '}
+          </span>
+        )}
+      </div>
       <Dropdown overlay={menus} trigger={['click']} placement="bottom" align={{ offset: [0, 10] }}>
         <SELECTED_COIN>
           <COIN_INFO>
