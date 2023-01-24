@@ -14,6 +14,9 @@ import tw, { styled } from 'twin.macro'
 import { ITraderHistory, useTraderConfig } from '../../context/trader_risk_group'
 import { SettlePanel } from '../TradeV3/SettlePanel'
 import { getPerpsPrice } from './perps/utils'
+import { ClosePosition } from './ClosePosition'
+import { PopupCustom } from '../NFTs/Popup/PopupCustom'
+import 'styled-components/macro'
 
 const tabs = ['Positions', 'Open Orders', 'Trade History', 'SOL Unsettled P&L']
 
@@ -99,9 +102,6 @@ const HEADER = styled.div`
       ${tw`text-tiny font-semibold w-[12.5%] inline-block text-[#b5b5b5]`}
     }
   }
-  .headers.Positions {
-    ${tw`pl-1`}
-  }
   .headers.Open-Orders > span {
     ${tw`w-1/5`}
   }
@@ -186,6 +186,26 @@ const TRADE_HISTORY = styled.div`
     .Short {
       ${tw`text-[#f06565] text-tiny pl-1`}
     }
+  }
+`
+
+const SETTING_MODAL = styled(PopupCustom)`
+  ${tw`!h-[478px] !w-[500px] rounded-bigger`}
+  background-color: ${({ theme }) => theme.bg25};
+
+  .ant-modal-header {
+    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
+    background-color: ${({ theme }) => theme.bg25};
+  }
+  .ant-modal-content {
+    ${tw`shadow-none`}
+
+    .ant-modal-close {
+      ${tw`top-[30px]`}
+    }
+  }
+  .ant-modal-body {
+    ${tw`py-0 px-[25px]`}
   }
 `
 
@@ -289,6 +309,7 @@ const TradeHistoryComponent: FC = () => {
 
 export const HistoryPanel: FC = () => {
   const [activeTab, setActiveTab] = useState(0)
+  const [closePosition, setClosePosition] = useState<boolean>(false)
   const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto, isSpot } = useCrypto()
   const { openOrders } = useTradeHistory()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
@@ -334,6 +355,36 @@ export const HistoryPanel: FC = () => {
     <>
       <WRAPPER>
         <HEADER>
+          {closePosition && (
+            <>
+              <SETTING_MODAL
+                visible={true}
+                centered={true}
+                footer={null}
+                title={
+                  <div tw="flex items-center">
+                    <span tw="font-semibold text-black-4 text-lg dark:text-grey-5">Close Position</span>
+                    <img
+                      src="/img/assets/refresh.svg"
+                      alt="refresh-icon"
+                      tw="ml-auto ml-auto h-10 w-10 cursor-pointer mr-10"
+                    />
+                  </div>
+                }
+                closeIcon={
+                  <img
+                    src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+                    height="20px"
+                    width="20px"
+                    onClick={() => setClosePosition(false)}
+                  />
+                }
+                className={mode === 'dark' ? 'dark' : ''}
+              >
+                <ClosePosition />
+              </SETTING_MODAL>
+            </>
+          )}
           <div className="header-wrapper">
             {tabs.map((item, index) => (
               <div className={index === activeTab ? 'active gradient-border' : 'gradient-border'} key={index}>
@@ -374,7 +425,7 @@ export const HistoryPanel: FC = () => {
                   <span>{perpsPrice}</span>
                   <span>{traderInfo.averagePosition.price}</span>
                   <span>{traderInfo.averagePosition.price}</span>
-                  <button>Close Position</button>
+                  <button onClick={() => setClosePosition(true)}>Close Position</button>
                 </div>
               ) : (
                 <div className="no-positions-found">
