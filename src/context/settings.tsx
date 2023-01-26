@@ -72,11 +72,14 @@ interface ISettingsConfig {
   setEndpointName: Dispatch<SetStateAction<string>>
   setSlippage?: Dispatch<SetStateAction<number>>
   slippage?: number
+  setPriorityFee?: Dispatch<SetStateAction<number>>
+  priorityFee?: number
 }
 
 export const DEFAULT_MAINNET_RPC =
   process.env.NODE_ENV === 'production' ? GFX_RPC_NAMES.SYNDICA : GFX_RPC_NAMES.MONKE_RPC
 export const DEFAULT_SLIPPAGE = 0.005
+export const DEFAULT_PRIORITY_FEE = 0
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
 
@@ -93,6 +96,19 @@ export function useSlippageConfig(): {
   return { slippage, setSlippage }
 }
 
+export function usePriorityFeeConfig(): {
+  priorityFee: number
+  setPriorityFee: React.Dispatch<React.SetStateAction<number>>
+} {
+  const context = useContext(SettingsContext)
+  if (!context) {
+    throw new Error('Missing settings context')
+  }
+
+  const { priorityFee, setPriorityFee } = context
+  return { priorityFee, setPriorityFee }
+}
+
 export function useConnectionConfig(): ISettingsConfig {
   const context = useContext(SettingsContext)
   if (!context) {
@@ -107,6 +123,7 @@ type IRPC_CACHE = null | USER_CONFIG_CACHE
 
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
+  const [priorityFee, setPriorityFee] = useState<number>(DEFAULT_PRIORITY_FEE)
   const { rpcHealth } = useRPCContext()
   const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
@@ -175,7 +192,9 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         endpointName,
         setEndpointName,
         setSlippage: (val: number) => setSlippage(val),
-        slippage: slippage
+        slippage: slippage,
+        setPriorityFee: (val: number) => setPriorityFee(val),
+        priorityFee: priorityFee
       }}
     >
       {children}

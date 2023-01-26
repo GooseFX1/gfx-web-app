@@ -2,7 +2,7 @@ import React, { BaseSyntheticEvent, FC, useState } from 'react'
 import { Input } from 'antd'
 import styled from 'styled-components'
 import { Tooltip } from '../../components'
-import { useDarkMode, useSlippageConfig } from '../../context'
+import { useDarkMode, usePriorityFeeConfig, useSlippageConfig } from '../../context'
 import { CenteredDiv } from '../../styles'
 
 const BUTTON = styled.button`
@@ -90,13 +90,28 @@ const SETTING_INPUT = styled(Input)`
   }
 `
 
-export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible }) => {
+const SPACER = styled.div`
+  margin-top: 72px;
+`
+const prioritiesLookup = {
+  Normal: 0,
+  Fast: 0.00005, //made to be higher than Jup fees so as to have an edge to be faster by default
+  Turbo: 0.0009
+}
+
+export const Settings: FC<{ setVisible?: (x: boolean) => void }> = () => {
   const { mode } = useDarkMode()
   const { slippage, setSlippage } = useSlippageConfig()
+  const { priorityFee, setPriorityFee } = usePriorityFeeConfig()
   const [value, setValue] = useState<number>(slippage)
+  const [newPriorityFee, setNewPriorityFee] = useState<number>(priorityFee)
 
   const handleSlippageChange = (x: BaseSyntheticEvent) => {
     !isNaN(x.target.value) && setValue(parseFloat(x.target.value) / 100)
+  }
+
+  const handlePriorityChanges = (x: BaseSyntheticEvent) => {
+    !isNaN(x.target.value) && setNewPriorityFee(parseFloat(x.target.value))
   }
 
   const BODY = styled(CenteredDiv)`
@@ -144,7 +159,7 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
 
   return (
     <BODY>
-      <div>
+      <div className="title-container">
         <TITLE>Slippage tolerance</TITLE>
         <Tooltip notInherit={true} placement="top">
           The minimum amount on how many tokens you will accept, in the event that the price increases or
@@ -175,10 +190,50 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
         $pendingUpdate={value !== slippage}
         onClick={() => {
           setSlippage(value)
-          setVisible(false)
         }}
       >
         <span>Save Settings</span>
+      </SAVE_BUTTON>
+
+      <SPACER />
+      <div>
+        <TITLE>Priority Fees</TITLE>
+        <Tooltip notInherit={true} placement="top">
+          The priority fee is paid to the Solana network. This additional fee helps boost how a transaction is
+          prioritized against others, resulting in faster transaction execution times.
+        </Tooltip>
+      </div>
+      <BUTTON_CONTAINER>
+        {['Normal', 'Fast', 'Turbo'].map((priority, index) => (
+          <SETTING_BUTTON
+            key={index}
+            $curSlippage={newPriorityFee === prioritiesLookup[priority]}
+            onClick={() => setNewPriorityFee(prioritiesLookup[priority])}
+          >
+            <span>{priority}</span>
+          </SETTING_BUTTON>
+        ))}
+      </BUTTON_CONTAINER>
+      <div>
+        <TITLE>Custom Input Priority Fee</TITLE>
+      </div>
+      <div>
+        <SETTING_INPUT
+          maxLength={6}
+          onChange={handlePriorityChanges}
+          pattern="\d+(\.\d+)?"
+          placeholder={'0.00'}
+          suffix={<span> SOL </span>}
+          value={newPriorityFee}
+        />
+      </div>
+      <SAVE_BUTTON
+        $pendingUpdate={newPriorityFee !== priorityFee}
+        onClick={() => {
+          setPriorityFee(newPriorityFee)
+        }}
+      >
+        <span>Update Priority Fees</span>
       </SAVE_BUTTON>
     </BODY>
   )
