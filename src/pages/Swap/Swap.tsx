@@ -275,7 +275,7 @@ const SMALL_CLICKER_ICON = styled(Image)`
 const PRICE_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   ${tw`items-center h-full w-81.5 p-6 rounded-tl-bigger 
-  h-[575px] rounded-bl-bigger sm:h-[400px] sm:w-full sm:rounded-bigger sm:mb-12`}
+  h-[585px] rounded-bl-bigger sm:h-[400px] sm:w-full sm:rounded-bigger sm:mb-12`}
   
   background: ${({ theme }) => theme.swapSides2};
 `
@@ -787,14 +787,18 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
         }`
       },
       ...route?.marketInfos.slice(0, 3).map((market: any, num: number) => ({
-        name: `Fees paid to ${market.amm.label || 'GooseFX'} LP`,
+        name: `Fees paid to ${market.label || 'GooseFX'} LP`,
         value: `${nFormatter(
           getPriceDetails(num).totalLp,
           getPriceDetails(num).token?.decimals || tokenA.decimals
         )} ${getPriceDetails(num).token?.symbol || tokenA.symbol} (${getPriceDetails(num).percent} %)`
       })),
 
-      { name: checkMobile() ? 'Trans. Fee' : 'Transaction Fee', value: '0.00005 SOL', icon: 'info' }
+      {
+        name: checkMobile() ? 'Trans. Fee' : 'Transaction Fee',
+        value: `${route?.fees?.totalFeeAndDeposits / 10 ** 8} SOL`, //always in SOL
+        icon: 'info'
+      }
     ]
 
     setDetails(priceDetails)
@@ -903,9 +907,7 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
       const route = routes[no]
       const market = route.marketInfos
       let name =
-        market.length === 1
-          ? market[0].amm.label
-          : market[0].amm.label + ' x ' + route.marketInfos.slice(-1)[0].amm.label
+        market.length === 1 ? market[0].label : market[0].label + ' x ' + route.marketInfos.slice(-1)[0].label
       name = name.length > 18 ? name.slice(0, 18) + '...' : name
       const value =
         route.marketInfos.length < 2
@@ -996,6 +998,7 @@ export const SwapMain: FC = () => {
     network
   } = useSwap()
   const { slippage } = useSlippageConfig()
+  // const { priorityFee, defaultDecimal } = usePriorityFeeConfig()
   const [allowed, setallowed] = useState(false)
   const [inAmountTotal, setInAmountTotal] = useState(0)
   const [refreshed, setRefreshed] = useState(false)
@@ -1006,6 +1009,8 @@ export const SwapMain: FC = () => {
     outputMint: new PublicKey(tokenB?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
     slippage: slippage, // 1% slippage
     debounceTime: 2000 // debounce ms time before refresh
+    //this is the ideal place to place priority fees but it is not yet available on the jup/react sdk,
+    // feeBps: priorityFee * defaultDecimal
   })
 
   const marketInfoFormat = (mkt: any): any => ({
@@ -1041,10 +1046,7 @@ export const SwapMain: FC = () => {
         {
           outputMint: new PublicKey(tokenB.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
           lpFee: { amount: 0.001 * inAmountTotal },
-
-          amm: {
-            label: 'GooseFX'
-          }
+          label: 'GooseFX'
         }
       ],
       outAmount: +((gofxOutAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
@@ -1088,10 +1090,7 @@ export const SwapMain: FC = () => {
           {
             outputMint: new PublicKey(tokenB.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
             lpFee: { amount: 0.001 * inAmountTotal },
-
-            amm: {
-              label: 'GooseFX'
-            }
+            label: 'GooseFX'
           }
         ],
         outAmount: +((gofxOutAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
@@ -1164,7 +1163,7 @@ interface RouteParams {
 }
 
 const SwapMainProvider: FC = () => {
-  const { connection, setTokenA, setTokenB, network } = useSwap()
+  const { connection, setTokenA, setTokenB } = useSwap()
   const wallet = useWallet()
   const { tokens } = useTokenRegistry()
   const { tradePair } = useParams<RouteParams>()
@@ -1193,7 +1192,7 @@ const SwapMainProvider: FC = () => {
   }, [setTokenA, setTokenB, tokens, tradePair])
 
   return (
-    <JupiterProvider connection={connection} cluster={network} userPublicKey={wallet?.publicKey}>
+    <JupiterProvider connection={connection} userPublicKey={wallet?.publicKey}>
       <SwapMain />
     </JupiterProvider>
   )

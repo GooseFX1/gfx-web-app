@@ -68,6 +68,7 @@ interface ISwapConfig {
   gofxOutAmount: number
   CoinGeckoClient: any
   coingeckoTokens: any[]
+  defaultDecimal: number
 }
 
 const SwapContext = createContext<ISwapConfig | null>(null)
@@ -97,6 +98,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   })
   const [tokenA, setTokenA] = useState<ISwapToken | null>(null)
   const [tokenB, setTokenB] = useState<ISwapToken | null>(null)
+  const defaultDecimal = 9
 
   const amountPoolJup = async () => {
     if (tokenA && tokenB) {
@@ -106,7 +108,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         inTokenAmount &&
         inTokenAmount != 0 &&
         chosenRoutes[clickNo] &&
-        !chosenRoutes[clickNo]?.marketInfos?.[0].amm.label.toLowerCase().includes('goosefx')
+        !chosenRoutes[clickNo]?.marketInfos?.[0].label.toLowerCase().includes('goosefx')
       ) {
         const { priceImpactPct: impact, outAmount } = chosenRoutes[clickNo]
         const outedAmount = +(outAmount / 10 ** tokenB.decimals).toFixed(7)
@@ -162,9 +164,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   const amountPoolGoose = async () => {
-    const index = chosenRoutes.findIndex((route) =>
-      route.marketInfos?.[0].amm.label.toLowerCase().includes('goosefx')
-    )
+    const index = chosenRoutes.findIndex((route) => route.marketInfos?.[0].label.toLowerCase().includes('goosefx'))
 
     if (index < 0 || clickNo !== index) return //allow only to refresh if chosen route is gofx route
     const { impact, preSwapResult } = await getGofxPool()
@@ -269,11 +269,14 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       amount: JSBI.BigInt(route.amount),
       outAmountWithSlippage: JSBI.BigInt(route.otherAmountThreshold),
       marketInfos: route.marketInfos.map((mkt) => marketInfoFormat(mkt))
+      // this is meant to manually manipulate the txn fees,
+      // since the priority fees is not yet offered in the jup/react package we use, I decided to do this,
+      // when the package gets updated and offers priority fees, it is advised to remove this block of code.
     }
   }
 
   async function callPathExchange(route: any, exchange: any) {
-    if (route.marketInfos[0].amm.label === 'GooseFX') {
+    if (route.marketInfos[0].label === 'GooseFX') {
       return await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
     } else {
       const swapResult = await exchange({
@@ -328,7 +331,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         network,
         gofxOutAmount,
         CoinGeckoClient,
-        coingeckoTokens
+        coingeckoTokens,
+        defaultDecimal
       }}
     >
       {children}
@@ -369,6 +373,7 @@ export const useSwap = (): ISwapConfig => {
     gofxOutAmount: context.gofxOutAmount,
     amountPool: context.amountPoolJup,
     CoinGeckoClient: context.CoinGeckoClient,
-    coingeckoTokens: context.coingeckoTokens
+    coingeckoTokens: context.coingeckoTokens,
+    defaultDecimal: context.defaultDecimal
   }
 }
