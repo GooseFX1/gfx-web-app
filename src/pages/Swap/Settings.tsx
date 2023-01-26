@@ -215,7 +215,7 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = () => {
         ))}
       </BUTTON_CONTAINER>
       <div>
-        <TITLE>Custom Input Priority Fee</TITLE>
+        <TITLE>Custom Priority Fee</TITLE>
       </div>
       <div>
         <SETTING_INPUT
