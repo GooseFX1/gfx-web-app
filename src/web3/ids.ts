@@ -92,11 +92,6 @@ export const ADDRESSES: {
         address: new PublicKey('7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj'),
         decimals: 9,
         name: 'Lido Staked SOL'
-      },
-      ORCA: {
-        address: new PublicKey('orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE'),
-        decimals: 6,
-        name: 'ORCA'
       }
     },
     mints: {
