@@ -76,7 +76,7 @@ export const INPUT_CONTAINER = styled.div`
 `
 export const STYLED_INPUT = styled.input`
   ${tw`w-96 h-11 flex items-center justify-between border-none font-semibold ml-4 
-  text-xl font-semibold text-left  pl-4 `}
+  text-lg font-semibold text-left  pl-4 `}
   background-color: ${({ theme }) => theme.solPillBg};
   border-radius: 60px;
   color: #fff;
