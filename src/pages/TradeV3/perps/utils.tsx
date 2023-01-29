@@ -383,7 +383,8 @@ export const tradeHistoryInfo = (
     quantity: qty[0] === '-' ? qty.slice(1, qty.length) : qty,
     side: avgPrice === 0 ? null : qty[0] === '-' ? 'buy' : 'sell'
   }
-  const startingIndex = traderRiskGroup.tradeHistory[productIndex].latestIdx.userAccount.toNumber()
+  let startingIndex = traderRiskGroup.tradeHistory[productIndex].latestIdx.userAccount.toNumber()
+  if (startingIndex === 10) startingIndex = 9
   const traderHistory: ITraderHistory[] = []
   let count = 0
   for (let i = startingIndex; !(count > 0 && i === startingIndex); ) {
