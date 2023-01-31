@@ -2,7 +2,7 @@ import BN from 'bn.js'
 import { publicKey, u64 } from '@solana/buffer-layout-utils'
 import { Idl, Program } from '@project-serum/anchor'
 import { struct, u32, u8 } from '@solana/buffer-layout'
-import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
+import { TOKEN_PROGRAM_ID } from 'openbook-ts/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import {
   NATIVE_MINT,

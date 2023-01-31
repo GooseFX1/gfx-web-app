@@ -8,7 +8,7 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { Market } from '@project-serum/serum'
+import { Market } from 'openbook-ts/serum'
 import { useConnectionConfig } from './settings'
 import { serum } from '../web3'
 import MARKET_PAIRS from '../pages/TradeV3/constants/MARKET_PAIRS.json'

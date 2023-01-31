@@ -1,5 +1,5 @@
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
-import { Orderbook } from '@project-serum/serum'
+import { Orderbook } from 'openbook-ts/serum'
 import { useCrypto } from './crypto'
 import { serum } from '../web3'
 import { useConnectionConfig } from '../context'

@@ -1,5 +1,5 @@
-import { Market, MARKETS, OpenOrders } from '@project-serum/serum'
-import { Order } from '@project-serum/serum/lib/market'
+import { Market, MARKETS, OpenOrders } from 'openbook-ts/serum'
+import { Order } from 'openbook-ts/serum/lib/market'
 import { AccountInfo, Connection, PublicKey } from '@solana/web3.js'
 import { AVAILABLE_MARKETS, MarketSide } from '../context'
 
