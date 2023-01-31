@@ -252,8 +252,6 @@ export function colors(mode: string): Colors {
       mode === 'lite'
         ? 'invert(53%) sepia(68%) saturate(7332%) hue-rotate(231deg) brightness(99%) contrast(110%);'
         : '#000',
-    filterHistory:
-      mode === 'dark' ? 'sepia(70%) brightness(150%) invert(60%);' : 'sepia(30%) brightness(100%) invert(20%);',
     cellBackground: mode === 'dark' ? 'rgba(220, 31, 255, 0.2) 100%' : 'rgba(220, 31, 255, 0.4) 100%',
 
     // primary colors
