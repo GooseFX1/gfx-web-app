@@ -96,7 +96,6 @@ export function colors(mode: string): Colors {
     bg9: mode === 'dark' ? '#2a2a2a' : white,
     bg10: mode === 'dark' ? '#191919' : '#ababab',
     bg11: mode === 'dark' ? '#202020' : '#f4f4f4',
-    bg12: mode === 'dark' ? '#131313' : '#ababab',
     swapSides1:
       mode === 'dark'
         ? 'linear-gradient(256deg, #2a2a2a 1.49%, #131313 93.4%)'

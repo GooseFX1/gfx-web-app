@@ -89,7 +89,12 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
       }
       disabled={buttonStatus !== 'action' && buttonStatus !== 'connect'}
     >
-      <span tw="text-regular text-white font-semibold leading-[48px]">{content}</span>
+      <span
+        tw="text-regular font-semibold leading-[48px]"
+        style={{ color: buttonStatus !== 'action' && buttonStatus !== 'connect' ? '#636363' : '#fff' }}
+      >
+        {content}
+      </span>
     </Button>
   )
 }

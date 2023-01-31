@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import tw from 'twin.macro'
 import { Image } from 'antd'
 import { Settings } from './Settings'
 import { Wrap } from './Wrap'
+import { History } from './History'
 import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
@@ -30,8 +30,10 @@ import { ILocationState } from '../../types/app_params.d'
 import { notify, moneyFormatter, nFormatter, checkMobile } from '../../utils'
 import { CURRENT_SUPPORTED_TOKEN_LIST } from '../../constants'
 import { useParams } from 'react-router-dom'
-import JSBI from 'jsbi'
 import { logData } from '../../api'
+import JSBI from 'jsbi'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 const WRAPPER = styled.div`
   ${tw`w-screen not-italic`}
@@ -260,8 +262,7 @@ const Socials = styled.div`
 `
 
 const SocialsButton = styled.div`
-  ${tw`cursor-pointer text-xs rounded-2xl py-1 px-3 leading-normal`}
-  background-color: ${({ theme }) => theme.bg12};
+  ${tw`dark:bg-black-1 bg-black-4 cursor-pointer text-smaller rounded-2xl py-1 px-3 leading-normal font-semibold`}
   color: ${({ theme }) => theme.text14};
   line-height: inherit;
 `
@@ -356,10 +357,7 @@ const SWAP_CONTENT = styled.div`
   dark:bg-black-2 bg-white flex flex-col flex-nowrap shadow-[0 7px 15px 5px rgba(0, 0, 0, 0.15)] 
   sm:w-full sm:mb-12 sm:p-5 sm:text-sm sm:leading-normal`}
 
-  .wrapped-sol {
-    ${tw`mr-2.5 text-black-3 text-center cursor-pointer h-[40px] w-[40px] text-smallest 
-        dark:text-white dark:bg-black-4 bg-grey-4 rounded-[100%] leading-10`}
-  }
+  wrapped-sol
 `
 
 const SwapContent: FC<{
@@ -369,13 +367,16 @@ const SwapContent: FC<{
   setRefreshed: React.Dispatch<React.SetStateAction<boolean>>
   refreshed: boolean
 }> = ({ exchange, routes, clickNo, setRefreshed, refreshed }) => {
+  const wallet = useWallet()
   const location = useLocation<ILocationState>()
   const { setEndpointName, network } = useConnectionConfig()
   const { mode } = useDarkMode()
   const { amountPool, setFocused, switchTokens, setClickNo, setRoutes, tokenA, tokenB, inTokenAmount } = useSwap()
-  const [settingsModalVisible, setSettingsModalVisible] = useState(false)
+  const [settingsModalVisible, setSettingsModalVisible] = useState<boolean>(false)
   const [route, setRoute] = useState(routes[clickNo])
-  const [wrapModalVisible, setWrapModalVisible] = useState(false)
+  const [historyVisible, setHistoryVisible] = useState<boolean>(false)
+  const [reloadTrigger, setReloadTrigger] = useState<boolean>(false)
+  const [wrapModalVisible, setWrapModalVisible] = useState<boolean>(false)
 
   useEffect(() => {
     logData('swap_page')
@@ -390,9 +391,15 @@ const SwapContent: FC<{
     setRoute(routes[clickNo])
   }, [routes, clickNo])
 
-  const onClick = (e: React.MouseEvent<HTMLElement>) => {
+  const openSettings = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation()
     setSettingsModalVisible(true)
+  }
+
+  const openHistory = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation()
+    setHistoryVisible(true)
+    setReloadTrigger(!reloadTrigger)
   }
 
   const refresh = () => {
@@ -460,6 +467,15 @@ const SwapContent: FC<{
       >
         <Wrap setVisible={setWrapModalVisible} />
       </SETTING_MODAL>
+      <SETTING_MODAL
+        setVisible={setHistoryVisible}
+        bigTitle={false}
+        title="Swap History"
+        visible={historyVisible}
+        style={{ overflowY: 'auto', backgroundColor: mode === 'dark' ? '#1c1c1c' : 'white' }}
+      >
+        <History reload={reloadTrigger} />
+      </SETTING_MODAL>
       <HEADER_WRAPPER $iconSize="40px">
         <HEADER_TITLE>
           <span>{checkMobile() ? 'Swap' : dateString(new Date())}</span>
@@ -467,7 +483,30 @@ const SwapContent: FC<{
         </HEADER_TITLE>
 
         <div>
-          <div onClick={() => setWrapModalVisible(true)} className={'wrapped-sol'}>
+          {wallet.publicKey && (
+            <div
+              onClick={openHistory}
+              tw="flex justify-center items-center dark:bg-black-1 bg-grey-4 h-10 w-10 
+                  rounded-circle mr-2 cursor-pointer"
+            >
+              <img
+                src={`/img/assets/history.svg`}
+                alt="history"
+                tw="h-4! w-4!"
+                style={{
+                  filter:
+                    mode === 'dark'
+                      ? 'sepia(70%) brightness(150%) invert(60%)'
+                      : 'sepia(30%) brightness(100%) invert(20%)'
+                }}
+              />
+            </div>
+          )}
+          <div
+            onClick={() => setWrapModalVisible(true)}
+            tw="mr-2.5 text-black-3 text-center cursor-pointer h-[40px] w-[40px] text-smallest 
+            dark:text-white dark:bg-black-4 bg-grey-4 rounded-[100%] leading-10"
+          >
             wSOL
           </div>
           <div onClick={refresh} style={{ cursor: 'pointer' }}>
@@ -477,7 +516,7 @@ const SwapContent: FC<{
               className={`rotateRefreshBtn ${refreshed ? 'rotateRefreshBtn-rotate' : ''}`}
             />
           </div>
-          <SETTING_WRAPPER onClick={onClick}>
+          <SETTING_WRAPPER onClick={openSettings}>
             <img src={`/img/assets/settings_${mode}_mode.svg`} alt="settings" className={'smaller-header-icon'} />
           </SETTING_WRAPPER>
         </div>
