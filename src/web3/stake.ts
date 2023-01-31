@@ -1,6 +1,6 @@
 import BN from 'bn.js'
 import { Idl, Program } from '@project-serum/anchor'
-import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
+import { TOKEN_PROGRAM_ID } from 'openbook-ts/serum/lib/token-instructions'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import {

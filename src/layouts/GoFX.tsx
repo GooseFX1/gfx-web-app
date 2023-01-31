@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import { Orderbook } from '@project-serum/serum'
+import { Orderbook } from 'openbook-ts/serum'
 import styled from 'styled-components'
 import { CenteredDiv, CenteredImg } from '../styles'
 import { serum } from '../web3'

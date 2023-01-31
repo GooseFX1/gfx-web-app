@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
 import BN from 'bn.js'
-import { Orderbook } from '@project-serum/serum'
+import { Orderbook } from 'openbook-ts/serum'
 import { useConnectionConfig } from './settings'
 import { notify } from '../utils'
 import { serum } from '../web3'
