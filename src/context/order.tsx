@@ -12,7 +12,7 @@ import React, {
   useRef,
   useState
 } from 'react'
-import { Market, MARKETS } from '@project-serum/serum'
+import { Market, MARKETS } from 'openbook-ts/serum'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useCrypto } from './crypto'
 import { usePriceFeed } from './price_feed'

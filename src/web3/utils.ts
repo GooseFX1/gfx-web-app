@@ -1,4 +1,4 @@
-import { TOKEN_PROGRAM_ID } from '@project-serum/serum/lib/token-instructions'
+import { TOKEN_PROGRAM_ID } from 'openbook-ts/serum/lib/token-instructions'
 import BN from 'bn.js'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
 import {

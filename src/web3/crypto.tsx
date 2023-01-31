@@ -1,9 +1,9 @@
 import { Connection, PublicKey, Transaction } from '@solana/web3.js'
-import { Market, OpenOrders } from '@project-serum/serum'
+import { Market, OpenOrders } from 'openbook-ts/serum'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 
-import { Order } from '@project-serum/serum/lib/market'
-import { WRAPPED_SOL_MINT } from '@project-serum/serum/lib/token-instructions'
+import { Order } from 'openbook-ts/serum/lib/market'
+import { WRAPPED_SOL_MINT } from 'openbook-ts/serum/lib/token-instructions'
 import { createAssociatedTokenAccountIx, findAssociatedTokenAddress, signAndSendRawTransaction } from './utils'
 import { IOrder } from '../context'
 
