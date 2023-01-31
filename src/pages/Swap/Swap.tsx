@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import tw from 'twin.macro'
 import { Image } from 'antd'
 import { Settings } from './Settings'
 import { Wrap } from './Wrap'
@@ -31,8 +30,10 @@ import { ILocationState } from '../../types/app_params.d'
 import { notify, moneyFormatter, nFormatter, checkMobile } from '../../utils'
 import { CURRENT_SUPPORTED_TOKEN_LIST } from '../../constants'
 import { useParams } from 'react-router-dom'
-import JSBI from 'jsbi'
 import { logData } from '../../api'
+import JSBI from 'jsbi'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 const WRAPPER = styled.div`
   ${tw`w-screen not-italic`}
@@ -261,8 +262,7 @@ const Socials = styled.div`
 `
 
 const SocialsButton = styled.div`
-  ${tw`cursor-pointer text-xs rounded-2xl py-1 px-3 leading-normal`}
-  background-color: ${({ theme }) => theme.bg12};
+  ${tw`dark:bg-black-1 bg-black-4 cursor-pointer text-smaller rounded-2xl py-1 px-3 leading-normal font-semibold`}
   color: ${({ theme }) => theme.text14};
   line-height: inherit;
 `
@@ -325,13 +325,9 @@ const SETTING_WRAPPER = styled(CenteredImg)`
   ${tw`h-10 w-10 rounded-circle ml-2`}
 `
 
-const HISTORY_WRAPPER = styled(CenteredImg)`
-  ${tw`h-10 w-10 rounded-circle mr-2`}
-  background-color: ${({ theme }) => theme.bg12};
-
+const HISTORY_WRAPPER = styled.div`
   img {
     filter: ${({ theme }) => theme.filterHistory};
-    ${tw`h-6! w-6!`}
   }
 `
 
@@ -367,10 +363,7 @@ const SWAP_CONTENT = styled.div`
   dark:bg-black-2 bg-white flex flex-col flex-nowrap shadow-[0 7px 15px 5px rgba(0, 0, 0, 0.15)] 
   sm:w-full sm:mb-12 sm:p-5 sm:text-sm sm:leading-normal`}
 
-  .wrapped-sol {
-    ${tw`mr-2.5 text-black-3 text-center cursor-pointer h-[40px] w-[40px] text-smallest 
-        dark:text-white dark:bg-black-4 bg-grey-4 rounded-[100%] leading-10`}
-  }
+  wrapped-sol
 `
 
 const SwapContent: FC<{
@@ -380,15 +373,16 @@ const SwapContent: FC<{
   setRefreshed: React.Dispatch<React.SetStateAction<boolean>>
   refreshed: boolean
 }> = ({ exchange, routes, clickNo, setRefreshed, refreshed }) => {
+  const wallet = useWallet()
   const location = useLocation<ILocationState>()
   const { setEndpointName, network } = useConnectionConfig()
   const { mode } = useDarkMode()
   const { amountPool, setFocused, switchTokens, setClickNo, setRoutes, tokenA, tokenB, inTokenAmount } = useSwap()
-  const [settingsModalVisible, setSettingsModalVisible] = useState(false)
+  const [settingsModalVisible, setSettingsModalVisible] = useState<boolean>(false)
   const [route, setRoute] = useState(routes[clickNo])
-  const [historyVisible, setHistoryVisible] = useState(false)
-  const [reloadTrigger, setReloadTrigger] = useState(false)
-  const [wrapModalVisible, setWrapModalVisible] = useState(false)
+  const [historyVisible, setHistoryVisible] = useState<boolean>(false)
+  const [reloadTrigger, setReloadTrigger] = useState<boolean>(false)
+  const [wrapModalVisible, setWrapModalVisible] = useState<boolean>(false)
 
   useEffect(() => {
     logData('swap_page')
@@ -495,10 +489,20 @@ const SwapContent: FC<{
         </HEADER_TITLE>
 
         <div>
-          <HISTORY_WRAPPER onClick={openHistory}>
-            <img src={`/img/assets/history.svg`} alt="history" />
-          </HISTORY_WRAPPER>
-          <div onClick={() => setWrapModalVisible(true)} className={'wrapped-sol'}>
+          {wallet.publicKey && (
+            <HISTORY_WRAPPER
+              onClick={openHistory}
+              tw="flex justify-center items-center dark:bg-black-1 bg-grey-4 h-10 w-10 
+                  rounded-circle mr-2 cursor-pointer"
+            >
+              <img src={`/img/assets/history.svg`} alt="history" tw="h-4! w-4!" />
+            </HISTORY_WRAPPER>
+          )}
+          <div
+            onClick={() => setWrapModalVisible(true)}
+            tw="mr-2.5 text-black-3 text-center cursor-pointer h-[40px] w-[40px] text-smallest 
+            dark:text-white dark:bg-black-4 bg-grey-4 rounded-[100%] leading-10"
+          >
             wSOL
           </div>
           <div onClick={refresh} style={{ cursor: 'pointer' }}>

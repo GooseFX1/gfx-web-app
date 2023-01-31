@@ -1,72 +1,27 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Image } from 'antd'
+import { useSwap } from '../../context'
 import styled from 'styled-components'
 import tw from 'twin.macro'
-import { useSwap } from '../../context'
-//import { CenteredDiv } from '../../styles'
+import 'styled-components/macro'
 
 const BODY = styled.div`
-  ${tw`h-[650px] w-full p-4`}
+  ${tw`h-[650px] w-full p-4 `}
   overflow: auto;
-  font-family: Montserrat;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-`
-
-const BUTTON = styled.button`
-  ${tw`p-4 h-[35px] text-center border-0 rounded flex items-center justify-center`}
-  background-color: ${({ theme }) => theme.bg22};
-  transition: background-color 200ms ease-in-out;
-
-  &:active {
-    background-image: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
-  }
-
-  span {
-    font-size: 14px;
-  }
 `
 
 const MainContainer = styled.div`
-  ${tw`flex flex-col items-start p-2 w-full mb-2 rounded-md`}
+  ${tw`flex flex-col items-start p-2 w-full mb-2 rounded-lg`}
   border: ${({ theme }) => `2px solid ${theme.bg18}`};
-
-  &:hover,
-  &:active {
-    background-color: ${({ theme }) => theme.bg18};
-  }
-`
-
-const MainFlexContainer = styled.div`
-  ${tw`flex items-center justify-between w-full p-2`}
-`
-
-const MainFlex = styled.div`
-  ${tw`flex items-center text-lg my-1`}
-  color: ${({ theme }) => theme.text12};
-
-  .token-name {
-    ${tw`font-semibold`}
-  }
-`
-
-const DAYS = styled.span`
-  color: ${({ theme }) => theme.text12};
 `
 
 const ICON = styled(Image)`
-  overflow: hidden;
-  ${tw`h-5 w-5 mr-2 rounded-circle`}
-`
-
-const LOADING = styled.div`
-  ${tw`h-full w-full flex items-center justify-center font-bold text-lg`}
+  ${tw`h-[25px] w-[25px] rounded-circle`}
 `
 
 export const History: FC<{ reload: boolean }> = ({ reload }) => {
   const { getTransactionsHistory } = useSwap()
-  const [txns, setTxns] = useState([])
+  const [txns, setTxns] = useState<any[] | null>(null)
 
   useEffect(() => {
     getHistoryAndUpdate()
@@ -84,58 +39,64 @@ export const History: FC<{ reload: boolean }> = ({ reload }) => {
     const days = difference / (24 * 3600)
 
     if (days > 1) {
-      return `${Math.round(days)} day(s)`
+      return `${Math.round(days)} days`
     } else {
       const hours = difference / 3600
       if (hours > 1) {
-        return `${Math.round(hours)} hour(s)`
+        return `${Math.round(hours)} hours`
       } else {
-        return `${Math.round(difference / 60)} minute(s)`
+        return `${Math.round(difference / 60)} minutes`
       }
     }
   }
 
   return (
     <BODY>
-      {txns.length == 0 && <LOADING>Loading Your Transactions...</LOADING>}
-      {txns.map((txn, k) => (
-        <MainContainer key={k + 1}>
-          <MainFlexContainer>
-            <MainFlex>
-              <ICON
-                draggable={false}
-                preview={false}
-                src={`/img/crypto/${txn.inSymbol}.svg`}
-                fallback={txn.logoUriA || '/img/crypto/Unknown.svg'}
-                alt="in-token"
-              />
-              <span className={'token-name'}>
-                {+txn.inAmountInDecimal.toFixed(3)} {txn.inSymbol} ≈{'  '}
-              </span>
-              <ICON
-                draggable={false}
-                preview={false}
-                src={`/img/crypto/${txn.outSymbol}.svg`}
-                fallback={txn.logoUriB || '/img/crypto/Unknown.svg'}
-                alt="out-token"
-                style={{ marginLeft: '8px' }}
-              />
-              <span className={'token-name'}>
-                {+txn.outAmountInDecimal.toFixed(3)} {txn.outSymbol}
-              </span>
-            </MainFlex>
-
-            <DAYS>{getTime(txn.timestamp)}</DAYS>
-          </MainFlexContainer>
-          <BUTTON
-            onClick={() => {
-              window.open(`https://solscan.io/tx/${txn.signature}`, '_blank')
-            }}
-          >
-            <span>Solscan</span>
-          </BUTTON>
-        </MainContainer>
-      ))}
+      {txns === null ? (
+        <div tw="h-full w-full flex items-center justify-center font-bold text-lg">
+          Loading Your Transactions...
+        </div>
+      ) : (
+        txns.map((txn, k) => (
+          <MainContainer key={k + 1}>
+            <div tw="flex items-center justify-between w-full">
+              <div tw="flex items-center text-lg my-1">
+                <ICON
+                  draggable={false}
+                  preview={false}
+                  src={`/img/crypto/${txn.inSymbol}.svg`}
+                  fallback={txn.logoUriA || '/img/crypto/Unknown.svg'}
+                  alt="in-token"
+                />
+                <span tw="dark:text-grey-5 text-grey-1">
+                  {+txn.inAmountInDecimal.toFixed(3)} {txn.inSymbol} ≈{'  '}
+                </span>
+                <ICON
+                  draggable={false}
+                  preview={false}
+                  src={`/img/crypto/${txn.outSymbol}.svg`}
+                  fallback={txn.logoUriB || '/img/crypto/Unknown.svg'}
+                  alt="out-token"
+                  style={{ marginLeft: '8px' }}
+                />
+                <span tw="dark:text-grey-5 text-grey-1">
+                  {+txn.outAmountInDecimal.toFixed(3)} {txn.outSymbol}
+                </span>
+              </div>
+              <button
+                tw="dark:bg-black-2 bg-grey-1 border-0 rounded-circle flex items-center justify-center p-0"
+                onClick={() => {
+                  window.open(`https://solscan.io/tx/${txn.signature}`, '_blank')
+                }}
+              >
+                <span tw="ml-2 mr-1">Solscan</span>
+                <ICON draggable={false} preview={false} src={`/img/assets/solscan.png`} alt="in-token" />
+              </button>
+            </div>
+            <span tw="dark:text-black-4 text-grey-3">{getTime(txn.timestamp)}</span>
+          </MainContainer>
+        ))
+      )}
     </BODY>
   )
 }
