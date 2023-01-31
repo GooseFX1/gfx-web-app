@@ -2324,17 +2324,6 @@
     bn.js "^5.1.2"
     buffer-layout "^1.2.0"
 
-"@project-serum/serum@openbook-dex/openbook-ts/packages/serum#6913cb3":
-  version "0.13.58"
-  resolved "https://registry.yarnpkg.com/@project-serum/serum/-/serum-0.13.58.tgz#0f4aaa98f28c1220f8131052cd33b36d43430266"
-  integrity sha512-g8PNsFiJ3qTGu5B1qHdGIfmXovka3DpC9cMhyYzdKKX3WqdpzHrwKYO/ZuqH+JBp+dGfjYTxRLQ3dNTxYWohHA==
-  dependencies:
-    "@project-serum/anchor" "^0.11.1"
-    "@solana/spl-token" "^0.1.6"
-    "@solana/web3.js" "^1.21.0"
-    bn.js "^5.1.2"
-    buffer-layout "^1.2.0"
-
 "@project-serum/sol-wallet-adapter@0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@project-serum/sol-wallet-adapter/-/sol-wallet-adapter-0.2.0.tgz#e1fa5508bf13110429bf26e10b818182015f2161"
@@ -12041,6 +12030,9 @@ open@^8.4.0:
     define-lazy-prop "^2.0.0"
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
+
+"openbook-ts@file:./openbook-package":
+  version "0.0.0"
 
 opn@^5.5.0:
   version "5.5.0"

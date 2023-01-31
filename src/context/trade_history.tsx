@@ -9,8 +9,8 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { Order } from '@project-serum/serum/lib/market'
-import { OpenOrders } from '@project-serum/serum'
+import { Order } from 'openbook-ts/serum/lib/market'
+import { OpenOrders } from 'openbook-ts/serum'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
 import { useCrypto } from './crypto'

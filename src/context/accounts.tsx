@@ -9,7 +9,7 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { TOKEN_PROGRAM_ID, WRAPPED_SOL_MINT } from '@project-serum/serum/lib/token-instructions'
+import { TOKEN_PROGRAM_ID, WRAPPED_SOL_MINT } from 'openbook-ts/serum/lib/token-instructions'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { useConnectionConfig } from './settings'
@@ -56,7 +56,10 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           try {
             const accountArr = (await connection.getParsedTokenAccountsByOwner(owner, { mint })).value
             const account = accountArr?.[0]?.account
-            setBalances((prevState) => ({ ...prevState, [mint.toString()]: account?.data?.parsed?.info?.tokenAmount }))
+            setBalances((prevState) => ({
+              ...prevState,
+              [mint.toString()]: account?.data?.parsed?.info?.tokenAmount
+            }))
           } catch (err) {
             console.log(err)
           }
@@ -88,7 +91,12 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
         const amount = solAmount.toString()
         const uiAmount = solAmount / 10 ** 9
-        accounts[WRAPPED_SOL_MINT.toString()] = { amount, decimals: 9, uiAmount, uiAmountString: uiAmount.toString() }
+        accounts[WRAPPED_SOL_MINT.toString()] = {
+          amount,
+          decimals: 9,
+          uiAmount,
+          uiAmountString: uiAmount.toString()
+        }
         setBalances(accounts)
       } catch (e: any) {
         await notify({ type: 'error', message: `Error fetching accounts`, icon: 'error' }, e)
