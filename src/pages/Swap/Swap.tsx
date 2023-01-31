@@ -325,12 +325,6 @@ const SETTING_WRAPPER = styled(CenteredImg)`
   ${tw`h-10 w-10 rounded-circle ml-2`}
 `
 
-const HISTORY_WRAPPER = styled.div`
-  img {
-    filter: ${({ theme }) => theme.filterHistory};
-  }
-`
-
 const SWITCH = styled(CenteredDiv)<{ measurements: number }>`
   ${tw`absolute h-[64px] w-[64px] cursor-pointer rounded-circle z-[100]`}
   top: calc(50% - ${({ measurements }) => measurements}px / 2 + 18px);
@@ -490,13 +484,23 @@ const SwapContent: FC<{
 
         <div>
           {wallet.publicKey && (
-            <HISTORY_WRAPPER
+            <div
               onClick={openHistory}
               tw="flex justify-center items-center dark:bg-black-1 bg-grey-4 h-10 w-10 
                   rounded-circle mr-2 cursor-pointer"
             >
-              <img src={`/img/assets/history.svg`} alt="history" tw="h-4! w-4!" />
-            </HISTORY_WRAPPER>
+              <img
+                src={`/img/assets/history.svg`}
+                alt="history"
+                tw="h-4! w-4!"
+                style={{
+                  filter:
+                    mode === 'dark'
+                      ? 'sepia(70%) brightness(150%) invert(60%)'
+                      : 'sepia(30%) brightness(100%) invert(20%)'
+                }}
+              />
+            </div>
           )}
           <div
             onClick={() => setWrapModalVisible(true)}

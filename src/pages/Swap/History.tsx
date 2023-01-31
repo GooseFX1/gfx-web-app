@@ -1,25 +1,11 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Image } from 'antd'
-import { useSwap } from '../../context'
-import styled from 'styled-components'
-import tw from 'twin.macro'
+import { useSwap, useDarkMode } from '../../context'
+import 'twin.macro'
 import 'styled-components/macro'
 
-const BODY = styled.div`
-  ${tw`h-[650px] w-full p-4 `}
-  overflow: auto;
-`
-
-const MainContainer = styled.div`
-  ${tw`flex flex-col items-start p-2 w-full mb-2 rounded-lg`}
-  border: ${({ theme }) => `2px solid ${theme.bg18}`};
-`
-
-const ICON = styled(Image)`
-  ${tw`h-[25px] w-[25px] rounded-circle`}
-`
-
 export const History: FC<{ reload: boolean }> = ({ reload }) => {
+  const { mode } = useDarkMode()
   const { getTransactionsHistory } = useSwap()
   const [txns, setTxns] = useState<any[] | null>(null)
 
@@ -51,27 +37,48 @@ export const History: FC<{ reload: boolean }> = ({ reload }) => {
   }
 
   return (
-    <BODY>
+    <div tw="h-[650px] w-full p-4">
+      {txns && txns.length === 0 && (
+        <div tw="flex items-center justify-center flex-col h-full w-full">
+          <img
+            src={`/img/assets/history.svg`}
+            alt="history"
+            tw="h-[75px] w-[75px] mb-2"
+            style={{
+              filter:
+                mode === 'dark'
+                  ? 'sepia(70%) brightness(150%) invert(60%)'
+                  : 'sepia(30%) brightness(100%) invert(20%)'
+            }}
+          />
+          <p tw="dark:text-grey-1 text-grey-1 font-semibold">No swaps on this account</p>
+        </div>
+      )}
       {txns === null ? (
         <div tw="h-full w-full flex items-center justify-center font-bold text-lg">
           Loading Your Transactions...
         </div>
       ) : (
         txns.map((txn, k) => (
-          <MainContainer key={k + 1}>
-            <div tw="flex items-center justify-between w-full">
-              <div tw="flex items-center text-lg my-1">
-                <ICON
+          <div
+            key={k + 1}
+            tw="flex flex-col items-start p-2 w-full mb-2 rounded-lg border-solid border border-grey-1"
+          >
+            <div tw="flex items-center justify-between w-full mb-2">
+              <div tw="flex items-center text-lg">
+                <Image
+                  tw="h-[25px] w-[25px] rounded-circle"
                   draggable={false}
                   preview={false}
                   src={`/img/crypto/${txn.inSymbol}.svg`}
                   fallback={txn.logoUriA || '/img/crypto/Unknown.svg'}
                   alt="in-token"
                 />
-                <span tw="dark:text-grey-5 text-grey-1">
+                <span tw="dark:text-grey-5 text-grey-1 ml-2">
                   {+txn.inAmountInDecimal.toFixed(3)} {txn.inSymbol} ≈{'  '}
                 </span>
-                <ICON
+                <Image
+                  tw="h-[25px] w-[25px] rounded-circle"
                   draggable={false}
                   preview={false}
                   src={`/img/crypto/${txn.outSymbol}.svg`}
@@ -79,24 +86,30 @@ export const History: FC<{ reload: boolean }> = ({ reload }) => {
                   alt="out-token"
                   style={{ marginLeft: '8px' }}
                 />
-                <span tw="dark:text-grey-5 text-grey-1">
+                <span tw="dark:text-grey-5 text-grey-1 ml-2">
                   {+txn.outAmountInDecimal.toFixed(3)} {txn.outSymbol}
                 </span>
               </div>
               <button
-                tw="dark:bg-black-2 bg-grey-1 border-0 rounded-circle flex items-center justify-center p-0"
+                tw="dark:bg-grey-5 bg-grey-1 border-0 rounded-circle flex items-center justify-center px-0"
                 onClick={() => {
                   window.open(`https://solscan.io/tx/${txn.signature}`, '_blank')
                 }}
               >
-                <span tw="ml-2 mr-1">Solscan</span>
-                <ICON draggable={false} preview={false} src={`/img/assets/solscan.png`} alt="in-token" />
+                <span tw="ml-2 mr-1 text-tiny font-semibold">solscan</span>
+                <Image
+                  tw="h-[25px] w-[25px] rounded-circle"
+                  draggable={false}
+                  preview={false}
+                  src={`/img/assets/solscan.png`}
+                  alt="in-token"
+                />
               </button>
             </div>
-            <span tw="dark:text-black-4 text-grey-3">{getTime(txn.timestamp)}</span>
-          </MainContainer>
+            <span tw="dark:text-black-4 text-grey-3 text-tiny font-semibold">{getTime(txn.timestamp)}</span>
+          </div>
         ))
       )}
-    </BODY>
+    </div>
   )
 }
