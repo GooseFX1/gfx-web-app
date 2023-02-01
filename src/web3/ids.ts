@@ -82,16 +82,6 @@ export const ADDRESSES: {
         address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
         decimals: 8,
         name: 'Wrapped Ether (Wormhole)'
-      },
-      mSOL: {
-        address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
-        decimals: 9,
-        name: 'Marinade staked SOL'
-      },
-      stSOL: {
-        address: new PublicKey('7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj'),
-        decimals: 9,
-        name: 'Lido Staked SOL'
       }
     },
     mints: {
