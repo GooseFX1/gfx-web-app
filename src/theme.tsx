@@ -77,6 +77,9 @@ export function colors(mode: string): Colors {
     text26: mode === 'dark' ? '#999999' : '#353535',
     text27: mode === 'dark' ? '#b5b5b5' : '#eee',
     text28: mode === 'dark' ? '#b5b5b5' : '#636363',
+    text29: mode === 'dark' ? '#b5b5b5' : '#8d4cdd',
+    text30: mode === 'dark' ? '#ffffff' : '#8d4cdd',
+    text31: mode === 'dark' ? '#636363' : '#8d4cdd',
 
     textWhitePurple: mode === 'dark' ? '#fff' : '#8d4cdd',
 
@@ -152,7 +155,7 @@ export function colors(mode: string): Colors {
     cryptoOrderHeaderBorder: mode === 'dark' ? '#9f9f9f' : white,
     tabsGradients: ['#3735bb', '#5232b9', '#672fb7', '#792cb4', '#8829b1', '#9625ae'],
     textBox: mode === 'dark' ? '#484747' : '#ABABAB',
-    walletModalWallet: mode === 'dark' ? '#1e1e1e' : '#e1e1e1',
+    walletModalWallet: mode === 'dark' ? '#1c1c1c' : '#eeeeee',
     searchbarBackground: mode === 'dark' ? '#1e1e1e' : '#fff',
     searchbarSmallBackground: mode === 'dark' ? '#404040' : 'white',
     collectionHeader: mode === 'dark' ? 'linear-gradient(0, #131313 0%, transparent 100%)' : '#fff',
@@ -200,7 +203,7 @@ export function colors(mode: string): Colors {
     sellTabActiveBg: mode === 'dark' ? '#131313' : '#404040',
 
     // time panel
-    timePanelBackground: mode === 'dark' ? '#131313' : '#CACACA',
+    timePanelBackground: mode === 'dark' ? '#131313' : '#ffffff',
 
     tabDivider: mode === 'dark' ? '#575757' : '#dadada',
 
