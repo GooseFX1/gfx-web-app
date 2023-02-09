@@ -111,13 +111,12 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
 }
 
 export const Connect: FC = () => {
-  const { connect, select, wallet, publicKey, connected } = useWallet()
+  const { connect, select, wallet, connected } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
   const [arrowRotation, setArrowRotation] = useState(false)
   const [visible, setVisible] = useState(false)
 
-  const base58 = useMemo(() => wallet?.adapter?.publicKey?.toBase58(), [publicKey, wallet?.adapter?.publicKey])
-  console.log('*****', wallet?.adapter?.publicKey?.toString(), base58, publicKey)
+  const base58 = useMemo(() => wallet?.adapter?.publicKey?.toBase58(), [wallet?.adapter?.publicKey])
   useEffect(() => {
     if (connected) logData('wallet_connected')
   }, [connected])
@@ -134,7 +133,7 @@ export const Connect: FC = () => {
     } else {
       return truncateAddress(base58)
     }
-  }, [wallet, base58, wallet?.adapter?.publicKey])
+  }, [wallet, wallet?.adapter?.publicKey])
 
   const onSpanClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
