@@ -309,7 +309,7 @@ const TradeHistoryComponent: FC = () => {
 
 export const HistoryPanel: FC = () => {
   const [activeTab, setActiveTab] = useState(0)
-  const [closePosition, setClosePosition] = useState<boolean>(false)
+  const [closePositionModal, setClosePositionModal] = useState<boolean>(false)
   const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto, isSpot } = useCrypto()
   const { openOrders } = useTradeHistory()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
@@ -359,7 +359,7 @@ export const HistoryPanel: FC = () => {
     <>
       <WRAPPER>
         <HEADER>
-          {closePosition && (
+          {closePositionModal && (
             <>
               <SETTING_MODAL
                 visible={true}
@@ -380,7 +380,7 @@ export const HistoryPanel: FC = () => {
                     src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
                     height="20px"
                     width="20px"
-                    onClick={() => setClosePosition(false)}
+                    onClick={() => setClosePositionModal(false)}
                   />
                 }
                 className={mode === 'dark' ? 'dark' : ''}
@@ -442,6 +442,10 @@ export const HistoryPanel: FC = () => {
           </>
         ) : activeTab === 1 ? (
           <OpenOrdersComponent />
+        ) : activeTab === 2 ? (
+          <TradeHistoryComponent />
+        ) : activeTab === 3 ? (
+          <SettlePanel />
         ) : null}
       </WRAPPER>
     </>
