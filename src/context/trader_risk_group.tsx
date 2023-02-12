@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useWallet } from '@solana/wallet-adapter-react'
-import { PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from '@solana/web3.js'
+import { AccountInfo, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from '@solana/web3.js'
 import React, {
   Dispatch,
   SetStateAction,
@@ -207,6 +207,10 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [currentTRG, setTRG] = useState<PublicKey | null>(null)
   const [traderRiskGroup, setTraderRiskGroup] = useState<TraderRiskGroup | null>(null)
   const [marketProductGroup, setMarketProductGroup] = useState<MarketProductGroup | null>(null)
+  const [rawData, setRawData] = useState<{
+    mpg: AccountInfo<Buffer>
+    trg: AccountInfo<Buffer>
+  }>({ mpg: null, trg: null })
   const [activeProduct, setActiveProduct] = useState<IActiveProduct>(MPs[0])
   const [focused, setFocused] = useState<OrderInput>(undefined)
   const [loading, setLoading] = useState<boolean>(false)
@@ -231,14 +235,16 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (traderRiskGroupAccount && traderRiskGroupAccount.pubkey) {
       setTRG(traderRiskGroupAccount.pubkey)
       TraderRiskGroup.fetch(connection, traderRiskGroupAccount.pubkey).then((trg) => {
-        trg ? setTraderRiskGroup(trg) : setTraderRiskGroup(null)
+        trg ? setTraderRiskGroup(trg[0]) : setTraderRiskGroup(null)
+        trg && setRawData((prevState) => ({ ...prevState, trg: trg[1] }))
       })
     }
   }
 
   const setMPGDetails = async () => {
     MarketProductGroup.fetch(connection, new PublicKey(MPG_ID)).then((mpgRes) => {
-      mpgRes ? setMarketProductGroup(mpgRes) : setMarketProductGroup(null)
+      mpgRes ? setMarketProductGroup(mpgRes[0]) : setMarketProductGroup(null)
+      mpgRes && setRawData((prevState) => ({ ...prevState, mpg: mpgRes[1] }))
     })
 
     refreshTraderRiskGroup()
@@ -261,15 +267,22 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })
   }
 
+  const perpsWasm = async () => {
+    const ww = await import('perps-wasm')
+    const mpg = rawData.mpg
+
+    const trg = rawData.trg
+
+    const res = ww.max_withrawable(mpg.data, trg.data)
+    console.log('wasm result: ', res)
+  }
+
   const parseTraderInfo = async () => {
     const res = computeHealth(traderRiskGroup, marketProductGroup)
-
     setTraderBalances(res.balancesArray)
     const res2 = tradeHistoryInfo(traderRiskGroup, activeProduct, marketProductGroup)
-    console.log('***', res2)
 
     if (res2) {
-      console.log('***', res2)
       setAveragePosition(res2.averagePosition)
       setTraderHistory(res2.traderHistory)
     }
@@ -387,7 +400,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           orderSide = new Bid().toEncodable()
           qtyToExit = mulFractionals(qtyToExit, new Fractional({ m: new anchor.BN(-1), exp: new anchor.BN(0) }))
         }
-        console.log(qtyToExit.toJSON(), priceToExit, orderSide)
         const newOrderAccounts: INewOrderAccounts = {
             user: wallet.publicKey,
             traderRiskGroup: currentTRG,
@@ -503,6 +515,12 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       parseTraderInfo()
     }
   }, [traderRiskGroup, marketProductGroup])
+
+  useEffect(() => {
+    if (rawData.mpg && rawData.trg) {
+      perpsWasm()
+    }
+  }, [rawData])
 
   const collateralAvailable: string = useMemo(
     () => (traderRiskGroup && traderRiskGroup.cashBalance ? displayFractional(traderRiskGroup.cashBalance) : '0'),
