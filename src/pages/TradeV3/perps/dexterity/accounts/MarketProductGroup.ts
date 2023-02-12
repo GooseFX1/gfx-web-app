@@ -172,7 +172,7 @@ export class MarketProductGroup {
     this.sequenceNumber = fields.sequenceNumber
   }
 
-  static async fetch(c: Connection, address: PublicKey): Promise<MarketProductGroup | null> {
+  static async fetch(c: Connection, address: PublicKey): Promise<[MarketProductGroup, any] | null> {
     const info = await c.getAccountInfo(address)
 
     if (info === null) {
@@ -182,7 +182,7 @@ export class MarketProductGroup {
       throw new Error("account doesn't belong to this program")
     }
 
-    return this.decode(info.data)
+    return [this.decode(info.data), info]
   }
 
   static async fetchMultiple(c: Connection, addresses: PublicKey[]): Promise<Array<MarketProductGroup | null>> {
