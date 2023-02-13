@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC, useCallback, useState, useEffect } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base'
@@ -36,11 +37,12 @@ const WALLET_MODAL = styled(SpaceBetweenDiv)`
     ${tw`text-white`}
   }
   img {
-    ${tw`h-[35px] w-[35px] sm:w-[25px] sm:h-[25px] m-auto mt-5 sm:mt-[18px]`}
+    ${tw`h-[35px] w-[35px] sm:w-[25px] rounded-full sm:h-[25px] m-auto mt-5 sm:mt-[18px]`}
   }
 `
 const WALLET_DETECTED = styled(SpaceBetweenDiv)`
-  ${tw`mr-[15px] h-[180px] rounded-[10px] flex flex-col border-2 cursor-pointer bg-white dark:bg-black-1 `}
+  ${tw`mr-[15px] h-[180px] rounded-[10px]
+    duration-500 flex flex-col border-2 cursor-pointer bg-white dark:bg-black-1 `}
   background-color: ${({ theme }) => theme.timePanelBackground};
   width: 160px !important;
   border: 1px solid #636363;
@@ -48,14 +50,14 @@ const WALLET_DETECTED = styled(SpaceBetweenDiv)`
     border: 1px solid ${({ theme }) => theme.text30};
   }
   img {
-    ${tw`h-[56px] w-[56px] m-auto mt-6`}
+    ${tw`h-[56px] w-[56px] m-auto mt-6 rounded-full`}
   }
 `
 const STYLED_POPUP = styled(PopupCustom)`
   color: ${({ theme }) => theme.text11};
   ${tw`dark:text-[pink] text-[10px]`}
   .ant-modal-body {
-    ${tw`py-6 pl-4 pr-1`}
+    ${tw`py-6 pl-3 pr-2`}
   }
   &.ant-modal {
     ${tw`dark:text-[20px]   text-[10px]`}
@@ -65,19 +67,37 @@ const STYLED_POPUP = styled(PopupCustom)`
     ${tw`text-[15px] font-semibold mb-2 text-[#636363] dark:text-[#b5b5b5]`}
     color: ${({ theme }) => theme.text28};
   }
+  .customNext {
+    ${tw`w-10 h-10 right-2 z-[100] absolute cursor-pointer`}
+  }
+  .customPrev {
+    transform: rotate(180deg);
+    ${tw`w-10 h-10 left-2 absolute z-[100] mt-[-26px] cursor-pointer`}
+  }
   .slick-prev,
   .slick-next {
-    ${tw`w-[32px] h-[32px] mr-4`}
+    ${tw`w-[42px] h-[42px] `}
     z-index: 200;
     &.slick-disabled {
       opacity: 0;
     }
   }
+  .slick-next {
+    ${tw` mr-7`}
+  }
   .slick-prev {
     transform: rotate(180deg);
-    ${tw`mt-[-10px] ml-4`}
+    ${tw`mt-[-28px] ml-6 `}
   }
-
+  .prevWallet {
+    ${tw`left-2 absolute duration-500`}
+  }
+  .currentWallet {
+    ${tw`left-[160px] absolute duration-500`}
+  }
+  .nextWallet {
+    ${tw`right-[-80px] absolute duration-500`}
+  }
   .ant-modal-close-x {
     height: 20px !important;
     width: 20px !important;
@@ -90,9 +110,6 @@ const STYLED_POPUP = styled(PopupCustom)`
     ${tw`mt-[36px] h-[230px]  `}
     .slick-track {
       ${tw`flex justify-center  h-[230px] ml-10 pl-[100px] sm:pl-[50px] `}
-    }
-    .slick-arrow {
-      ${tw`mt-[-30px]`}
     }
   }
 
@@ -113,7 +130,7 @@ const STYLED_POPUP = styled(PopupCustom)`
     }
   }
   .textDetected {
-    ${tw` ml-[45px] mt-[50px] text-[15px] font-semibold `}
+    ${tw` ml-[50px] mt-[50px] text-[15px] font-semibold `}
     color: ${({ theme }) => theme.text31};
   }
   .termsConditions {
@@ -134,8 +151,8 @@ const settings = {
   slidesToScroll: 2,
   arrows: checkMobile() ? false : true,
   variableWidth: false,
-  nextArrow: <img src={`/img/assets/nextBtn.svg`} alt="banner-next" />,
-  prevArrow: <img src={`/img/assets/nextBtn.svg`} alt="banner-previous" />
+  nextArrow: <img src={`/img/assets/home-slider-next.svg`} alt="banner-next" />,
+  prevArrow: <img src={`/img/assets/home-slider-next.svg`} alt="banner-previous" />
 }
 export const WalletsModal: FC = () => {
   const { wallets, select } = useWallet()
@@ -201,11 +218,11 @@ export const WalletsModal: FC = () => {
         <div className="detectedWallet">
           <Slider {...settings} slidesToShow={1.7} slidesToScroll={1}>
             {detectedWallets.length ? (
-              detectedWallets.map((wallet, index) => (
+              [...detectedWallets].map((wallet, index) => (
                 <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
                   <img src={wallet.adapter.icon} alt="icon" />
                   <DETECTED_NAME>
-                    {wallet.adapter.name} <br /> Wallet
+                    {wallet.adapter.name.replace('(Extension)', '')} <br /> Wallet
                   </DETECTED_NAME>
                   <div className="textDetected">Detected</div>
                 </WALLET_DETECTED>
@@ -228,7 +245,7 @@ export const WalletsModal: FC = () => {
             <WALLET_MODAL key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
               <img src={wallet.adapter.icon} alt="icon" />
               <NAME>
-                {wallet.adapter.name} <br /> Wallet
+                {wallet.adapter.name.replace('(Extension)', '')} <br /> Wallet
               </NAME>
             </WALLET_MODAL>
           ))}
