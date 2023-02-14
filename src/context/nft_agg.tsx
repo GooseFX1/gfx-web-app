@@ -63,7 +63,7 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
         collectionId: i + 1000,
         collectionName: 'DeGods',
         nftPrice: i * 50,
-        currency: i < 10 ? 'USDC' : 'SOL'
+        currency: 'SOL'
       })
     }
     setCollections(collections)
