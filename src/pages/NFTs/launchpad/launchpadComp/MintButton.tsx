@@ -38,7 +38,7 @@ const MESSAGE = styled.div`
 `
 
 export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
-  const { connected, signTransaction } = useWallet()
+  const { connected, signTransaction, wallet } = useWallet()
   const { connection, endpoint, network } = useConnectionConfig()
   const { selectedProject, candyMachine, cndyValues } = useNFTLPSelected()
   const [isUserMinting, setIsUserMinting] = useState<boolean>(false)

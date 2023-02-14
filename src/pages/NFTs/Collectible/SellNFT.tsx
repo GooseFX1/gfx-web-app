@@ -464,7 +464,7 @@ export const SellNFT: FC = () => {
     const usrAddr: PublicKey = wallet?.adapter?.publicKey
     if (!usrAddr) {
       console.log('no public key connected')
-      return false
+      return
     }
 
     const curAskingPrice: BN = new BN(parseFloat(ask.buyer_price))

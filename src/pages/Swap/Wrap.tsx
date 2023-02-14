@@ -173,7 +173,8 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
   const [balanceWSOL, setBalanceWSOL] = useState(0)
   const [balance, setBalance] = useState(0)
   const { connection, network } = useConnectionConfig()
-  const { wallet } = useWallet()
+  const wal = useWallet()
+  const { wallet } = wal
   const [toggle, setToggle] = useState(false)
   const [value, setValue] = useState(balance / 2)
 
@@ -208,8 +209,8 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
   const wrapper = async () => {
     notify({ message: `Trying to wrap native Solana Token` })
     try {
-      const txn = await wrapSolToken(wallet, connection, Math.floor(value * 10 ** 9))
-      const finalResult = await signAndSendRawTransaction(connection, txn, wallet)
+      const txn = await wrapSolToken(wal, connection, Math.floor(value * 10 ** 9))
+      const finalResult = await signAndSendRawTransaction(connection, txn, wal)
 
       const result = finalResult ? await connection.confirmTransaction(finalResult) : null
 
@@ -240,7 +241,7 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
         const tr = createCloseAccountInstruction(associatedTokenAccount, publicKey, publicKey)
         txn.add(tr)
 
-        const finalResult = await signAndSendRawTransaction(connection, txn, wallet)
+        const finalResult = await signAndSendRawTransaction(connection, txn, wal)
 
         const result = finalResult ? await connection.confirmTransaction(finalResult) : null
 

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, useCallback, MouseEventHandler } from 'react'
+import React, { FC, useEffect, useState, useCallback, useMemo, MouseEventHandler } from 'react'
 import { Row, Col } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'

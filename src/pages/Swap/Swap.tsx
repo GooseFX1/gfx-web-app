@@ -1192,7 +1192,7 @@ interface RouteParams {
 
 const SwapMainProvider: FC = () => {
   const { connection, setTokenA, setTokenB, network } = useSwap()
-  const wallet = useWallet()
+  const { wallet } = useWallet()
   const { tokens } = useTokenRegistry()
   const { tradePair } = useParams<RouteParams>()
 

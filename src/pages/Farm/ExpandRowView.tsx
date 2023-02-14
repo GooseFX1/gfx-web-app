@@ -71,6 +71,7 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
   const isSSL = type === 'SSL'
 
   const wal = useWallet()
+  const { wallet } = useWallet()
   const { farmDataContext, farmDataSSLContext, counter, setCounter, setOperationPending } = useFarmContext()
   const { prices, stakeAccountKey, stakeProgram, SSLProgram } = usePriceFeedFarm()
   const { network, connection } = useConnectionConfig()

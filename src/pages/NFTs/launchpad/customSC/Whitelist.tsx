@@ -19,6 +19,7 @@ import { getWalletWhitelistPda, getWhitelistConfigPda } from '../candyMachine/ca
 
 export const Whitelist: FC = () => {
   const wal = useWallet()
+  const { wallet } = useWallet()
   const connection = new Connection(clusterApiUrl('devnet'))
 
   const getProgram = async () => {

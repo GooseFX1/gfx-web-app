@@ -215,7 +215,7 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
   const [candyMachine, setCandyMachine] = useState<CandyMachineAccount>(null)
   const [cmValues, setCmValues] = useState(null)
   const params = useParams<IProjectParams>()
-  const { wallet, signAllTransactions, signTransaction } = useWallet()
+  const { wallet, connected, signAllTransactions, signTransaction } = useWallet()
   const { connection } = useConnectionConfig()
 
   const anchorWallet = useMemo(() => {
@@ -440,18 +440,18 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
     if (selectedProject && selectedProject.candyMachine) {
       refreshCandyMachineState(null)
     }
-  }, [wallet.connected, selectedProject])
+  }, [connected, selectedProject])
 
   useEffect(() => {
     ;(function loop() {
       setTimeout(() => {
-        if (selectedProject && selectedProject.candyMachine && wallet.connected) {
+        if (selectedProject && selectedProject.candyMachine && connected) {
           refreshCandyMachineState(null)
         }
         loop()
       }, 20000)
     })()
-  }, [selectedProject, wallet.connected, wallet?.adapter?.publicKey])
+  }, [selectedProject, connected, wallet?.adapter?.publicKey])
 
   return (
     <NFTLPSelectedContext.Provider
