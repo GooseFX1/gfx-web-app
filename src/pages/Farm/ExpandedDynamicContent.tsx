@@ -63,10 +63,10 @@ export const ExpandedDynamicContent: FC<IExpandedContent> = ({
 }) => {
   const { name, earned, currentlyStaked, type } = rowData
   const { getUIAmount } = useAccounts()
-  const { publicKey } = useWallet()
   const { getTokenInfoForFarming } = useTokenRegistry()
   const { network } = useConnectionConfig()
-  const wallet = useWallet()
+  const wal = useWallet()
+  const { wallet } = useWallet()
   const { connection } = useConnectionConfig()
   const { counter, setCounter, setOperationPending } = useFarmContext()
   //loading indicators
@@ -82,17 +82,21 @@ export const ExpandedDynamicContent: FC<IExpandedContent> = ({
   const stakeRef = useRef(null)
   const unstakeRef = useRef(null)
 
-  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey, network, counter])
+  const tokenInfo = useMemo(
+    () => getTokenInfoForFarming(name),
+    [name, wallet?.adapter?.publicKey, network, counter]
+  )
+
   useEffect(() => {
-    if (wallet.publicKey && name === TOKEN_NAMES.SOL) {
-      const SOL = connection.getAccountInfo(wallet.publicKey)
+    if (wallet?.adapter?.publicKey && name === TOKEN_NAMES.SOL) {
+      const SOL = connection.getAccountInfo(wallet?.adapter?.publicKey)
       SOL.then((res) => setSOLBalance(res.lamports / LAMPORTS_PER_SOL)).catch((err) => console.log(err))
     }
-  }, [counter, getUIAmount, wallet.publicKey, userSOLBalance])
+  }, [counter, getUIAmount, wallet?.adapter?.publicKey, userSOLBalance])
 
   let userTokenBalance = useMemo(
-    () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
-    [tokenInfo, getUIAmount, publicKey]
+    () => (wallet?.adapter?.publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
+    [tokenInfo, getUIAmount, wallet?.adapter?.publicKey]
   )
 
   const getSuccessUnstakeMsg = (): string => `Successfully Unstaked amount of ${unstakeRef.current.value} ${name}!`
@@ -147,7 +151,7 @@ export const ExpandedDynamicContent: FC<IExpandedContent> = ({
     let amount = parseFloat(unstakeRef.current.value)
     if (parseFloat(availableToMint.toFixed(3)) == parseFloat(unstakeRef.current.value)) amount = availableToMint
     try {
-      executeMint(SSLProgram, wallet, connection, network, name, amount).then((con) => {
+      executeMint(SSLProgram, wal, connection, network, name, amount).then((con) => {
         setMintLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
@@ -168,7 +172,7 @@ export const ExpandedDynamicContent: FC<IExpandedContent> = ({
     const amount = parseFloat(unstakeRef.current.value)
     setBurnLoading(true)
     try {
-      executeBurn(SSLProgram, wallet, connection, network, name, amount).then((con) => {
+      executeBurn(SSLProgram, wal, connection, network, name, amount).then((con) => {
         setBurnLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
@@ -189,7 +193,7 @@ export const ExpandedDynamicContent: FC<IExpandedContent> = ({
     setWithdrawLoading(true)
 
     try {
-      executeWithdraw(SSLProgram, wallet, connection, network, name, amount).then((con) => {
+      executeWithdraw(SSLProgram, wal, connection, network, name, amount).then((con) => {
         setWithdrawLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
@@ -212,7 +216,7 @@ export const ExpandedDynamicContent: FC<IExpandedContent> = ({
     if (amount === parseFloat(userTokenBalance.toFixed(3))) amount = userTokenBalance
     try {
       setIsStakeLoading(true)
-      const confirm = executeDeposit(SSLProgram, wallet, connection, network, amount, name)
+      const confirm = executeDeposit(SSLProgram, wal, connection, network, amount, name)
       confirm.then((con) => {
         setIsStakeLoading(false)
         const { confirm, signature } = con
@@ -238,7 +242,7 @@ export const ExpandedDynamicContent: FC<IExpandedContent> = ({
       setIsStakeLoading(true)
       let amount = parseFloat(stakeRef.current.value)
       if (amount === parseFloat(userTokenBalance.toFixed(3))) amount = userTokenBalance
-      const confirm = executeStake(stakeProgram, stakeAccountKey, wallet, connection, network, amount)
+      const confirm = executeStake(stakeProgram, stakeAccountKey, wal, connection, network, amount)
       confirm.then((con) => {
         setIsStakeLoading(false)
         const { confirm, signature } = con
@@ -279,7 +283,7 @@ export const ExpandedDynamicContent: FC<IExpandedContent> = ({
       const confirm = executeUnstakeAndClaim(
         stakeProgram,
         stakeAccountKey,
-        wallet,
+        wal,
         connection,
         network,
         tokenInPercent
@@ -332,7 +336,6 @@ export const ExpandedDynamicContent: FC<IExpandedContent> = ({
           {type === 'SSL' ? (
             <SSLButtons
               name={name.toString()}
-              wallet={wallet}
               stakeRef={stakeRef}
               unstakeRef={unstakeRef}
               onClickDeposit={onClickDeposit}
@@ -350,7 +353,6 @@ export const ExpandedDynamicContent: FC<IExpandedContent> = ({
           ) : (
             <StakeButtons
               name={name?.toString()}
-              wallet={wallet}
               stakeRef={stakeRef}
               unstakeRef={unstakeRef}
               onClickHalf={onClickHalf}

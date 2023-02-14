@@ -215,18 +215,18 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
   const [candyMachine, setCandyMachine] = useState<CandyMachineAccount>(null)
   const [cmValues, setCmValues] = useState(null)
   const params = useParams<IProjectParams>()
-  const wallet = useWallet()
+  const { wallet, signAllTransactions, signTransaction } = useWallet()
   const { connection } = useConnectionConfig()
 
   const anchorWallet = useMemo(() => {
-    if (!wallet || !wallet.publicKey || !wallet.signAllTransactions || !wallet.signTransaction) {
+    if (!wallet || !wallet?.adapter?.publicKey || signAllTransactions || signTransaction) {
       return
     }
 
     return {
-      publicKey: wallet.publicKey,
-      signAllTransactions: wallet.signAllTransactions,
-      signTransaction: wallet.signTransaction
+      publicKey: wallet?.adapter?.publicKey,
+      signAllTransactions,
+      signTransaction
     } as anchor.Wallet
   }, [wallet])
 
@@ -397,7 +397,7 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
 
           cndyState['tiers'] = tiers
 
-          const whitelistInfo = await getWhitelistInfo(candyM.program, wallet.publicKey)
+          const whitelistInfo = await getWhitelistInfo(candyM.program, wallet?.adapter?.publicKey)
           cndyState['whitelistInfo'] = whitelistInfo
           cndyState['isWhiteListUser'] = false
 
@@ -451,7 +451,7 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
         loop()
       }, 20000)
     })()
-  }, [selectedProject, wallet.connected, wallet.publicKey])
+  }, [selectedProject, wallet.connected, wallet?.adapter?.publicKey])
 
   return (
     <NFTLPSelectedContext.Provider

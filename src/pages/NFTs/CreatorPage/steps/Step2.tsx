@@ -175,7 +175,7 @@ export const Step2: FC = () => {
   const [isUSDC, setIsUSDC] = useState<boolean>(false)
   const [mintPrice, setMintPrice] = useState<number>()
   const [nextButtonActive, setNextButtonActive] = useState<boolean>(false)
-  const wallet = useWallet()
+  const { wallet } = useWallet()
   const { creatorData, previousStep } = useNFTCreator()
   const fileConstraints = async (file) => {
     const extension = file.name.split('.')[1]
@@ -190,14 +190,15 @@ export const Step2: FC = () => {
       notify({
         message: 'Upload Started...'
       })
-      uploadFile(file, { ...config, dirName: 'launchpad_' + wallet.publicKey.toBase58() + '_cover' }).then(
-        (data: any) => {
-          setImageLink(data.location)
-          notify({
-            message: 'Upload Complete!'
-          })
-        }
-      ) //save image link with setS3Link(dataLink)
+      uploadFile(file, {
+        ...config,
+        dirName: 'launchpad_' + wallet?.adapter?.publicKey.toBase58() + '_cover'
+      }).then((data: any) => {
+        setImageLink(data.location)
+        notify({
+          message: 'Upload Complete!'
+        })
+      }) //save image link with setS3Link(dataLink)
     }
   }
 

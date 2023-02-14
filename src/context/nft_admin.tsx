@@ -22,20 +22,21 @@ interface NFTAdmin {
 const NFTAdminContext = createContext<IAdminConfig>(null)
 
 export const NFTAdminProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { wallet, connected } = useWallet()
   const [adminAllowed, setIsAllowed] = useState<boolean>(false)
   const [adminSelected, setAdminSelected] = useState<ICreatorData | undefined>()
   const [update, setUpdate] = useState<number>(0)
 
-  const wallet = useWallet()
-
   useEffect(() => {
-    if (wallet.connected) {
+    if (wallet && connected) {
       ;(async () => {
-        const response = await isAdminAllowed(wallet.publicKey.toBase58())
+        const response = await isAdminAllowed(wallet.adapter?.publicKey.toBase58())
         setIsAllowed(response)
       })()
-    } else setIsAllowed(false)
-  }, [wallet.publicKey, wallet.connected])
+    } else {
+      setIsAllowed(false)
+    }
+  }, [wallet?.adapter?.publicKey, connected])
 
   return (
     <NFTAdminContext.Provider

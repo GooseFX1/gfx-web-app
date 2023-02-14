@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, FC, useEffect, useState } from 'react'
+import React, { BaseSyntheticEvent, FC, useEffect, useState, useMemo } from 'react'
 import { Input } from 'antd'
 import styled from 'styled-components'
 import { Tooltip } from '../../components'
@@ -173,14 +173,16 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
   const [balanceWSOL, setBalanceWSOL] = useState(0)
   const [balance, setBalance] = useState(0)
   const { connection, network } = useConnectionConfig()
-  const wallet = useWallet()
+  const { wallet } = useWallet()
   const [toggle, setToggle] = useState(false)
   const [value, setValue] = useState(balance / 2)
+
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
 
   useEffect(() => {
     async function getWSOLBalance() {
       try {
-        const wsol = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
+        const wsol = await getAssociatedTokenAddress(NATIVE_MINT, publicKey)
         const wsolbal = await connection.getTokenAccountBalance(wsol)
         setBalanceWSOL(parseFloat(wsolbal.value.uiAmountString.slice(0, 8)))
       } catch (e) {
@@ -190,7 +192,7 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
 
     async function getNSOLBalance() {
       try {
-        const solbal = await connection.getBalance(wallet.publicKey)
+        const solbal = await connection.getBalance(publicKey)
         const val = parseFloat((solbal / 10 ** 9 + '').slice(0, 8))
         setBalance(val)
         if (wrap) setValue(val / 2)
@@ -201,7 +203,7 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
 
     getWSOLBalance()
     getNSOLBalance()
-  }, [connection, wallet.publicKey, toggle])
+  }, [connection, publicKey, toggle])
 
   const wrapper = async () => {
     notify({ message: `Trying to wrap native Solana Token` })
@@ -233,9 +235,9 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
     notify({ message: `Trying to unwrap wrapped Solana Token` })
     try {
       const txn = new Transaction()
-      const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
+      const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, publicKey)
       if (associatedTokenAccount) {
-        const tr = createCloseAccountInstruction(associatedTokenAccount, wallet.publicKey, wallet.publicKey)
+        const tr = createCloseAccountInstruction(associatedTokenAccount, publicKey, publicKey)
         txn.add(tr)
 
         const finalResult = await signAndSendRawTransaction(connection, txn, wallet)

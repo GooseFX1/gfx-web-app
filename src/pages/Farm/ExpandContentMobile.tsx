@@ -174,18 +174,17 @@ export const ExpandedContentMobile: FC<{
 }) => {
   const { farmDataContext, farmDataSSLContext } = useFarmContext()
   //const { prices } = usePriceFeedFarm()
-  const wallet = useWallet()
+  const { wallet } = useWallet()
   const { name, currentlyStaked, earned } = farm
   const isSSL = farm.type === 'SSL'
   const { getUIAmount } = useAccounts()
-  const { publicKey } = useWallet()
   const { getTokenInfoForFarming } = useTokenRegistry()
-  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
+  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, wallet?.adapter?.publicKey])
   const [process, setProcess] = useState<string>(isSSL ? 'Claim' : 'Stake') //TEMP_DEP_DISABLE
   const DISPLAY_DECIMAL = 3
   let userTokenBalance = useMemo(
-    () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
-    [tokenInfo?.address, getUIAmount, publicKey]
+    () => (wallet?.adapter?.publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
+    [tokenInfo?.address, getUIAmount, wallet?.adapter?.publicKey]
   )
   const tokenData = !isSSL
     ? farmDataContext.find((token) => token.name === 'GOFX')
@@ -219,8 +218,8 @@ export const ExpandedContentMobile: FC<{
     : !availableToMint || unstakeAmt > availableToMint
 
   return (
-    <EXPAND_WRAPPER publicKey={wallet.publicKey}>
-      {wallet.publicKey ? (
+    <EXPAND_WRAPPER publicKey={wallet?.adapter?.publicKey}>
+      {wallet?.adapter?.publicKey ? (
         <>
           <ROW_WRAPPER>
             <ROW>

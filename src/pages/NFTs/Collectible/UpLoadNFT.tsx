@@ -250,7 +250,8 @@ export const UpLoadNFT = (): JSX.Element => {
   const history = useHistory()
   const { draftId } = useParams<IAppParams>()
   const { nftMintingData, setNftMintingData } = useNFTDetails()
-  const wallet = useWallet()
+  const wal = useWallet()
+  const { wallet } = useWallet()
   const { connection } = useConnectionConfig()
   const { sessionUser } = useNFTProfile()
   const [localFiles, setLocalFiles] = useState<any>()
@@ -269,10 +270,10 @@ export const UpLoadNFT = (): JSX.Element => {
   const [draftUploadInProgress, setDraftUploadInProgress] = useState<boolean>(false)
 
   useEffect(() => {
-    if (!wallet.publicKey) {
+    if (!wallet?.adapter?.publicKey) {
       notify({ message: 'Warning: wallet must be connected to mint an NFT', type: 'error' })
     }
-  }, [wallet.publicKey])
+  }, [wallet?.adapter?.publicKey])
 
   useEffect(() => {
     if (nftMintingData === undefined) {
@@ -479,7 +480,7 @@ export const UpLoadNFT = (): JSX.Element => {
     try {
       const res = await mintNFT(
         connection,
-        wallet,
+        wal,
         ENDPOINTS[DEFAULT_MAINNET_RPC].name,
         filesForUpload,
         nftMintingData,
@@ -512,7 +513,7 @@ export const UpLoadNFT = (): JSX.Element => {
 
     setTimeout(() => {
       history.push({
-        pathname: `/NFTs/profile/${wallet.publicKey.toBase58()}`,
+        pathname: `/NFTs/profile/${wallet?.adapter?.publicKey.toBase58()}`,
         state: { newlyMintedNFT: { name: name, metadataAccount: metadataAccount } }
       })
     }, 1500)

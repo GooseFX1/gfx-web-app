@@ -360,7 +360,7 @@ export const NestQuestSingleListing: FC<{
 }> = ({ ...rest }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
-  const { connected, publicKey, signTransaction } = useWallet()
+  const { connected, wallet, signTransaction } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
   const { connection, endpoint, network } = useConnectionConfig()
   const { getUIAmount } = useAccounts()
@@ -370,6 +370,8 @@ export const NestQuestSingleListing: FC<{
   const [mintDisabled, setMintDisabled] = useState<boolean>(false)
   const [insufficientToken, setInsufficientToken] = useState<boolean>(false)
   const [mintPrice, setMintPrice] = useState<number>(1)
+
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
 
   useEffect(() => {
     if (connection) {

@@ -218,7 +218,7 @@ const DisplayVariable = ({ data, isOpen }: any) => {
 }
 export const ColumnWeb: FC<{ farm: IFarmData; isOpen: boolean; index: number }> = ({ farm, isOpen, index }) => {
   const { name, earned, currentlyStaked, apr, volume, liquidity } = farm
-  const { publicKey } = useWallet()
+  const { wallet } = useWallet()
   const showConnect = index === 0
   // TEMP_DEP_DISABLE const toggle = () => setIsOpen((prev) => !prev)
   const { mode } = useDarkMode()
@@ -237,7 +237,7 @@ export const ColumnWeb: FC<{ farm: IFarmData; isOpen: boolean; index: number }> 
           {name}
         </div>
       </td>
-      {!publicKey ? (
+      {!wallet?.adapter?.publicKey ? (
         <td className={showConnect ? 'balanceConnectWallet' : ''}>
           {showConnect ? (
             <div style={{ marginTop: -7 }}>
@@ -264,7 +264,7 @@ export const ColumnWeb: FC<{ farm: IFarmData; isOpen: boolean; index: number }> 
         </td>
       )}
       <td className="earnedColumn">
-        {!publicKey ? (
+        {!wallet?.adapter?.publicKey ? (
           '----'
         ) : earned !== undefined ? (
           <DisplayVariable data={moneyFormatter(earned)} isOpen={isOpen} />

@@ -48,41 +48,42 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
   const [priceFetched, setPriceFetched] = useState<boolean>(false)
   const [statsData, setStatsData] = useState<IStats | null>()
   const [stakeAccountKey, setAccountKey] = useState<PublicKey>()
-  const wallet = useWallet()
+  const wal = useWallet()
+  const { wallet } = useWallet()
   const { network, connection } = useConnectionConfig()
   const stakeProgram: Program = useMemo(
     () =>
-      wallet.publicKey
+      wallet?.adapter?.publicKey
         ? new Program(
             CONTROLLER_IDL as any,
             SDK_ADDRESS[getNetworkConnection(network)].CONTROLLER_PROGRAM_ID,
-            new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
+            new Provider(connection, wal as WalletContextState, { commitment: 'finalized' })
           )
         : undefined,
-    [connection, wallet.publicKey, network]
+    [connection, wallet?.adapter?.publicKey, network]
   )
   useEffect(() => {
-    if (wallet.publicKey) {
+    if (wallet?.adapter?.publicKey) {
       if (stakeAccountKey === undefined) {
-        getStakingAccountKey(wallet, network).then((accountKey) => setAccountKey(accountKey))
+        getStakingAccountKey(wal, network).then((accountKey) => setAccountKey(accountKey))
       }
     } else {
       setAccountKey(undefined)
     }
 
     return null
-  }, [wallet.publicKey, connection])
+  }, [wallet?.adapter?.publicKey, connection])
 
   const SSLProgram: Program = useMemo(
     () =>
-      wallet.publicKey
+      wallet?.adapter?.publicKey
         ? new Program(
             SSL_IDL as any,
             SDK_ADDRESS[getNetworkConnection(network)].SSL_PROGRAM_ID,
-            new Provider(connection, wallet as WalletContextState, { commitment: 'finalized' })
+            new Provider(connection, wal as WalletContextState, { commitment: 'finalized' })
           )
         : undefined,
-    [connection, wallet.publicKey]
+    [connection, wallet?.adapter?.publicKey]
   )
 
   const refreshTokenData = async () => {

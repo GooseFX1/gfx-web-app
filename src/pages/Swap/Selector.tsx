@@ -191,7 +191,7 @@ export const Selector: FC<{
   const { tokens } = useTokenRegistry()
   const { tokenA, tokenB, CoinGeckoClient, coingeckoTokens } = useSwap() //CoinGeckoClient
   const { chainId } = useConnectionConfig()
-  const { publicKey } = useWallet()
+  const { wallet } = useWallet()
   const [filterKeywords, setFilterKeywords] = useState<string>('')
   const [visible, setVisible] = useState<boolean>(false)
   const r = new RegExp(filterKeywords, 'i')
@@ -201,6 +201,8 @@ export const Selector: FC<{
       imageURL: `/img/crypto/${tk.symbol}.svg`
     }))
   )
+
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
   const popularTokens = useMemo(
     () => updatedTokens.filter((i) => POPULAR_TOKENS.includes(i.address)),
     [updatedTokens]

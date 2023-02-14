@@ -114,7 +114,6 @@ const ConnectWrapper = styled.div`
 `
 
 export const ExpandedContent: FC<{
-  wallet: any
   name: string
   stakeRef: any
   unstakeRef: any
@@ -136,7 +135,6 @@ export const ExpandedContent: FC<{
   withdrawClicked?: () => void
   rowData: any
 }> = ({
-  wallet,
   name,
   stakeRef,
   unstakeRef,
@@ -155,14 +153,14 @@ export const ExpandedContent: FC<{
 }) => {
   const { farmDataContext, farmDataSSLContext } = useFarmContext()
   const { getUIAmount } = useAccounts()
-  const { publicKey } = useWallet()
+  const { wallet } = useWallet()
   const { getTokenInfoForFarming } = useTokenRegistry()
-  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
+  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, wallet?.adapter?.publicKey])
   const [process, setProcess] = useState<string>('Stake')
   const DISPLAY_DECIMAL = 3
   let userTokenBalance = useMemo(
-    () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
-    [tokenInfo?.address, getUIAmount, publicKey]
+    () => (wallet?.adapter?.publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
+    [tokenInfo?.address, getUIAmount, wallet?.adapter?.publicKey]
   )
   const tokenData = !isSsl
     ? farmDataContext.find((token) => token.name === 'GOFX')
@@ -234,7 +232,7 @@ export const ExpandedContent: FC<{
             <span className="details">{userTokenBalance?.toFixed(3)}</span>
           </ROW>
         </ROW_WRAPPER>
-        {wallet.publicKey ? (
+        {wallet?.adapter?.publicKey ? (
           <>
             <STAKE_UNSTAKE>
               <BUTTONS

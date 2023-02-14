@@ -18,11 +18,11 @@ import { notify } from '../../../../utils'
 import { getWalletWhitelistPda, getWhitelistConfigPda } from '../candyMachine/candyMachine'
 
 export const Whitelist: FC = () => {
-  const wallet = useWallet()
+  const wal = useWallet()
   const connection = new Connection(clusterApiUrl('devnet'))
 
   const getProgram = async () => {
-    const wallet_t: any = wallet
+    const wallet_t: any = wal
     const provider = new anchor.Provider(connection, wallet_t, anchor.Provider.defaultOptions())
     const idl_o: any = idl
     return new Program(idl_o, MAGIC_HAT_PROGRAM_V2_ID, provider)
@@ -33,7 +33,7 @@ export const Whitelist: FC = () => {
       const walletProgram = await getProgram()
       //eslint-disable-next-line
       const [whitelist_config_pda, bump] = await PublicKey.findProgramAddress(
-        [Buffer.from(pdaWhitelistSeed), wallet.publicKey?.toBuffer()],
+        [Buffer.from(pdaWhitelistSeed), wallet?.adapter?.publicKey?.toBuffer()],
         MAGIC_HAT_PROGRAM_V2_ID
       )
 
@@ -53,7 +53,7 @@ export const Whitelist: FC = () => {
         {
           accounts: {
             whitelistConfig: whitelist_config_pda,
-            magicHatCreator: wallet.publicKey,
+            magicHatCreator: wallet?.adapter?.publicKey,
             systemProgram: SystemProgram.programId
           }
         }
@@ -71,7 +71,7 @@ export const Whitelist: FC = () => {
     try {
       //eslint-disable-next-line
       const [whitelist_config_pda, bump] = await PublicKey.findProgramAddress(
-        [Buffer.from(pdaWhitelistSeed), wallet.publicKey?.toBuffer()],
+        [Buffer.from(pdaWhitelistSeed), wallet?.adapter?.publicKey?.toBuffer()],
         MAGIC_HAT_PROGRAM_V2_ID
       )
       await walletProgram.rpc.updateWhitelistConfig(
@@ -90,7 +90,7 @@ export const Whitelist: FC = () => {
         {
           accounts: {
             whitelistConfig: whitelist_config_pda,
-            magicHatCreator: wallet.publicKey
+            magicHatCreator: wallet?.adapter?.publicKey
           }
         }
       )
@@ -107,7 +107,7 @@ export const Whitelist: FC = () => {
     try {
       //eslint-disable-next-line
       const [wallet_pda, wallet_bump] = await PublicKey.findProgramAddress(
-        [Buffer.from(pdaSeed), wallet.publicKey?.toBuffer()],
+        [Buffer.from(pdaSeed), wallet?.adapter?.publicKey?.toBuffer()],
         MAGIC_HAT_PROGRAM_V2_ID
       )
       //eslint-disable-next-line
@@ -120,7 +120,7 @@ export const Whitelist: FC = () => {
         accounts: {
           walletWhitelist: wallet_pda,
           whitelistConfig: whitelist_config_pda,
-          whitelistedAddress: wallet.publicKey,
+          whitelistedAddress: wallet?.adapter?.publicKey,
           systemProgram: SystemProgram.programId
         }
       })
@@ -138,14 +138,14 @@ export const Whitelist: FC = () => {
       //eslint-disable-next-line
       const [wallet_pda, wallet_bump] = await getWalletWhitelistPda(whitelisting_address)
       //eslint-disable-next-line
-      const [whitelist_config_pda, bump] = await getWhitelistConfigPda(wallet.publicKey)
+      const [whitelist_config_pda, bump] = await getWhitelistConfigPda(wallet?.adapter?.publicKey)
 
       await walletProgram.rpc.createWhitelistAccount('Two', {
         accounts: {
           walletWhitelist: wallet_pda,
           whitelistConfig: whitelist_config_pda,
           whitelistedAddress: whitelisting_address,
-          magicHatCreator: wallet.publicKey,
+          magicHatCreator: wallet?.adapter?.publicKey,
           systemProgram: SystemProgram.programId
         }
       })
@@ -162,14 +162,14 @@ export const Whitelist: FC = () => {
       //eslint-disable-next-line
       const [wallet_pda, wallet_bump] = await getWalletWhitelistPda(whitelisting_address)
       //eslint-disable-next-line
-      const [whitelist_config_pda, bump] = await getWhitelistConfigPda(wallet.publicKey)
+      const [whitelist_config_pda, bump] = await getWhitelistConfigPda(wallet?.adapter?.publicKey)
 
       await walletProgram.rpc.createWhitelistAccount('One', {
         accounts: {
           walletWhitelist: wallet_pda,
           whitelistConfig: whitelist_config_pda,
           whitelistedAddress: whitelisting_address,
-          magicHatCreator: wallet.publicKey,
+          magicHatCreator: wallet?.adapter?.publicKey,
           systemProgram: SystemProgram.programId
         }
       })

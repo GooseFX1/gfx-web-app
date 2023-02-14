@@ -166,7 +166,7 @@ const DELETE_BUTTON = styled(SAVE_BUTTON)`
 
 export const NftDrafts = (): JSX.Element => {
   const history = useHistory()
-  const { connected, publicKey } = useWallet()
+  const { connected, wallet } = useWallet()
   const { mode } = useDarkMode()
   const { sessionUser } = useNFTProfile()
   const [drafts, setDrafts] = useState([])
@@ -178,7 +178,7 @@ export const NftDrafts = (): JSX.Element => {
   const [deletedNFT, setDeletedNFT] = useState(false)
 
   const handleClick = async (id: string) => {
-    if (connected && publicKey) {
+    if (connected && wallet?.adapter?.publicKey) {
       if (id) {
         history.push(`/NFTs/create-single/${id}`)
       } else {

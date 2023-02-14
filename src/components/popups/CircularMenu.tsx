@@ -166,7 +166,7 @@ export const CircularMenu: FC<{
   rewardToggle: (b: boolean) => void
 }> = ({ carousel, rotateClicked, clickCounter, rewardToggle }) => {
   const { mode } = useDarkMode()
-  const { publicKey } = useWallet()
+  const { wallet } = useWallet()
   const [rotationClass, setRotationClass] = useState('carousel')
   const [indexClass, setIndexClass] = useState<'active' | 'inactive'>()
   const history = useHistory()
@@ -185,9 +185,9 @@ export const CircularMenu: FC<{
   }, [clickCounter])
 
   const redirectToPage = () => {
-    if (publicKey && carousel[0].name === 'Sell') {
+    if (wallet?.adapter?.publicKey && carousel[0].name === 'Sell') {
       rewardToggle(false)
-      history.push(`${carousel[0].redirect}/${publicKey.toBase58()}`)
+      history.push(`${carousel[0].redirect}/${wallet?.adapter?.publicKey.toBase58()}`)
     } else if (carousel[0].redirect && carousel[0].name !== 'Sell') {
       rewardToggle(false)
       history.push(carousel[0].redirect)

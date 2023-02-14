@@ -41,7 +41,7 @@ export const NFTs: FC = () => {
   const location = useLocation<ILocationState>()
   const { path } = useRouteMatch()
   const { connection } = useConnectionConfig()
-  const { connected, publicKey } = useWallet()
+  const { connected, wallet } = useWallet()
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
 
   useEffect(() => {
@@ -49,20 +49,20 @@ export const NFTs: FC = () => {
   }, [location])
 
   useEffect(() => {
-    if (connected && publicKey) {
-      if (!sessionUser || sessionUser.pubkey !== publicKey.toBase58()) {
-        fetchSessionUser('address', publicKey.toBase58(), connection).then((res) => {
+    if (connected && wallet?.adapter?.publicKey) {
+      if (!sessionUser || sessionUser.pubkey !== wallet?.adapter?.publicKey.toBase58()) {
+        fetchSessionUser('address', wallet.adapter.publicKey.toBase58(), connection).then((res) => {
           if (res && res.status === 200) {
-            const userProfileStatus = localStorage.getItem(publicKey.toBase58())
+            const userProfileStatus = localStorage.getItem(wallet.adapter.publicKey.toBase58())
             if (res.data.length === 0 && userProfileStatus === null) {
               localStorage.setItem(
-                publicKey.toBase58(),
-                JSON.stringify({ pubKey: publicKey.toBase58(), isNew: true })
+                wallet?.adapter?.publicKey.toBase58(),
+                JSON.stringify({ pubKey: wallet.adapter.publicKey.toBase58(), isNew: true })
               )
             } else {
               localStorage.setItem(
-                publicKey.toBase58(),
-                JSON.stringify({ pubKey: publicKey.toBase58(), isNew: false })
+                wallet?.adapter?.publicKey.toBase58(),
+                JSON.stringify({ pubKey: wallet.adapter.publicKey.toBase58(), isNew: false })
               )
             }
           } else {
@@ -74,7 +74,7 @@ export const NFTs: FC = () => {
       setSessionUser(undefined)
     }
     return null
-  }, [publicKey, connected])
+  }, [wallet?.adapter?.publicKey, connected])
 
   return (
     <OverlayProvider>

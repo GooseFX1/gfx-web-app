@@ -367,7 +367,7 @@ const SwapContent: FC<{
   setRefreshed: React.Dispatch<React.SetStateAction<boolean>>
   refreshed: boolean
 }> = ({ exchange, routes, clickNo, setRefreshed, refreshed }) => {
-  const wallet = useWallet()
+  const { wallet } = useWallet()
   const location = useLocation<ILocationState>()
   const { setEndpointName, network } = useConnectionConfig()
   const { mode } = useDarkMode()
@@ -483,7 +483,7 @@ const SwapContent: FC<{
         </HEADER_TITLE>
 
         <div>
-          {wallet.publicKey && (
+          {wallet?.adapter?.publicKey && (
             <div
               onClick={openHistory}
               tw="flex justify-center items-center dark:bg-black-1 bg-grey-4 h-10 w-10 
@@ -1220,7 +1220,7 @@ const SwapMainProvider: FC = () => {
   }, [setTokenA, setTokenB, tokens, tradePair])
 
   return (
-    <JupiterProvider connection={connection} cluster={network} userPublicKey={wallet?.publicKey}>
+    <JupiterProvider connection={connection} cluster={network} userPublicKey={wallet?.adapter?.publicKey}>
       <SwapMain />
     </JupiterProvider>
   )

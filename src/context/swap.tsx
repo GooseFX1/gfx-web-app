@@ -79,7 +79,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection, network } = useConnectionConfig()
   const { slippage } = useSlippageConfig()
   const { tokens } = useTokenRegistry()
-  const wallet = useWallet()
+  const wal = useWallet()
+  const { sendTransaction, signAllTransactions, signTransaction, wallet } = useWallet()
   const [fetching] = useState(false)
   const [inTokenAmount, setInTokenAmount] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -182,11 +183,11 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     //get past 5 transactions using jupiter stats api and get past 5 transactions using the txn history method.
     // why I added jup api is based on the node rpc?
     // getting the txn history directly is extremely unreliable for old txns beyond 24hrs
-    if (wallet?.publicKey) {
-      const url = `https://stats.jup.ag/transactions?publicKey=${wallet.publicKey}`
+    if (wallet?.adapter?.publicKey) {
+      const url = `https://stats.jup.ag/transactions?publicKey=${wallet.adapter.publicKey}`
       const response = await fetch(url)
       const externalTxns = await response.json()
-      const gfxTxns = await getTransactionHistory(wallet.publicKey, connection, 5)
+      const gfxTxns = await getTransactionHistory(wallet.adapter.publicKey, connection, 5)
       const txns = [...gfxTxns, ...externalTxns.slice(0, 10 - gfxTxns.length)].map((txn) => {
         const tokenA = tokens.find((i) => i.address === txn.inMint)
         const tokenB = tokens.find((i) => i.address === txn.outMint)
@@ -260,7 +261,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         txid: signature,
         network: network
       })
-      setTimeout(() => wallet.publicKey && fetchAccounts(), 3000)
+      setTimeout(() => wallet?.adapter?.publicKey && fetchAccounts(), 3000)
     } catch (e: any) {
       console.log(e)
       notify({ type: 'error', message: 'Swap failed', icon: 'error' }, e)
@@ -305,14 +306,14 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   async function callPathExchange(route: any, exchange: any) {
     if (route.marketInfos[0].amm.label === 'GooseFX') {
-      return await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wallet, connection, network)
+      return await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wal, connection, network)
     } else {
       const swapResult = await exchange({
         wallet: {
-          sendTransaction: wallet.sendTransaction,
-          publicKey: wallet.publicKey,
-          signAllTransactions: wallet.signAllTransactions,
-          signTransaction: wallet.signTransaction
+          sendTransaction,
+          publicKey: wallet?.adapter?.publicKey,
+          signAllTransactions,
+          signTransaction
         },
         routeInfo: revertRoute(route),
         onTransaction: async (txid: any) => {

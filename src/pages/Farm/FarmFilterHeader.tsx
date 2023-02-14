@@ -179,7 +179,7 @@ export const FarmFilter: FC = () => {
   } = useFarmContext()
   const { prices, statsData } = usePriceFeedFarm()
   const [poolIndex, setPoolIndex] = useState(0)
-  const { publicKey } = useWallet()
+  const { wallet } = useWallet()
   const [firstPageLoad, setFirstPageLoad] = useState<boolean>(true)
 
   const handleClick = (name, index) => {
@@ -227,7 +227,7 @@ export const FarmFilter: FC = () => {
           </ButtonContainer>
           <MobileWrapper>
             <SearchBar className="search-bar" placeholder="Search by token" setSearchFilter={setSearchFilter} />
-            {publicKey && <Toggle className="toggle" text="Deposited" defaultUnchecked />}
+            {wallet?.adapter?.publicKey && <Toggle className="toggle" text="Deposited" defaultUnchecked />}
           </MobileWrapper>
         </STYLED_FARM_HEADER>
       </ABSTRACT>
@@ -299,7 +299,7 @@ export const FarmFilter: FC = () => {
           />
           <IconContainer>
             <RefreshBtnWithAnimation />
-            {publicKey && <Toggle className="toggle" text="Show Deposited" defaultUnchecked />}
+            {wallet?.adapter?.publicKey && <Toggle className="toggle" text="Show Deposited" defaultUnchecked />}
           </IconContainer>
         </STYLED_FARM_HEADER>
       </WRAPPER>

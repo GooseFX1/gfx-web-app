@@ -51,8 +51,10 @@ const LABEL = styled.span`
 export const SwapTo: FC<{ height: string }> = ({ height }) => {
   const { getUIAmountString } = useAccounts()
   const { slippage } = useSlippageConfig()
-  const { publicKey } = useWallet()
+  const { wallet } = useWallet()
   const { outTokenAmount, setTokenB, tokenA, tokenB, connection } = useSwap()
+
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
 
   const balance = useMemo(() => {
     if (!tokenB) return 0

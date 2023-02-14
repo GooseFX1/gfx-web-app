@@ -112,7 +112,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   // returns endpoint name id as string
   const init = (): string => {
     if (process.env.NODE_ENV === 'development')
-      return existingUserCache.endpoint === null ? GFX_RPC_NAMES.MONKE_RPC : 'Custom'
+      return existingUserCache.endpoint === null ? DEFAULT_MAINNET_RPC : 'Custom'
 
     const healthyRPCS: string[] = rpcHealth.map((rpc) => rpc.name)
 

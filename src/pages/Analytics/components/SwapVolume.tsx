@@ -8,17 +8,19 @@ import { SwapVolumeChart } from './SwapVolumeChart'
 
 const SwapVolume: FC = () => {
   const [swapData, setData] = useState<any>(null)
-  const wallet = useWallet()
+  const { wallet } = useWallet()
   const [swapDataGraph, setGraphData] = useState([])
+
   useEffect(() => {
     ;(async () => {
       const data = await fetchTotalVolumeTrade()
       setData(data)
     })()
   }, [])
+
   useEffect(() => {
     ;(async () => {
-      const { data } = await fetchTotalVolumeTradeChart(wallet?.publicKey)
+      const { data } = await fetchTotalVolumeTradeChart(wallet?.adapter?.publicKey)
       const arr = []
       data && data.map((day) => arr.push([day.date, day.totalVolumeTrade]))
       arr.sort(function (a, b) {

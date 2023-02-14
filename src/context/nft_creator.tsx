@@ -25,22 +25,23 @@ interface NFTCreator {
 
 const NFTCreatorContext = createContext<ICreatorConfig>(null)
 export const NFTCreatorProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { wallet, connected } = useWallet()
   const [isAllowed, setIsAllowed] = useState<boolean>(false)
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [creatorData, setCreatorData] = useState<ICreatorData>([null, null, null, null, null, null])
 
-  const wallet = useWallet()
-
   useEffect(() => {
-    if (wallet.connected) {
+    if (wallet && connected) {
       ;(async () => {
         const response = await isCreatorAllowed(wallet.publicKey.toBase58())
         console.log(response)
         setIsAllowed(response.allowed)
         setCreatorData(response.data)
       })()
-    } else setIsAllowed(false)
-  }, [wallet.publicKey, wallet.connected])
+    } else {
+      setIsAllowed(false)
+    }
+  }, [wallet?.adapter?.publicKey, connected])
 
   const saveDataForStep = (data) => {
     const obj = {

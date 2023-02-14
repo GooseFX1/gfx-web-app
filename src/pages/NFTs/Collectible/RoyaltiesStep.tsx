@@ -158,7 +158,7 @@ interface Props {
 }
 
 const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmit, handleCancel }: Props) => {
-  const { publicKey } = useWallet()
+  const { wallet } = useWallet()
   const [inputVal, setInputVal] = useState<any>()
   const [creators, setCreators] = useState<Array<UserValue>>([])
   const [fixedCreators, setFixedCreators] = useState<Array<UserValue>>([])
@@ -167,7 +167,7 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
   const [isShowErrors, setIsShowErrors] = useState<boolean>(false)
 
   useEffect(() => {
-    if (publicKey) {
+    if (wallet?.adapter?.publicKey) {
       initializeComponent()
     }
   }, [])
@@ -213,7 +213,7 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
   }, [royalties])
 
   const initializeComponent = () => {
-    const key = publicKey.toBase58()
+    const key = wallet?.adapter?.publicKey.toBase58()
     if (nftMintingData.creators.length === 0 && fixedCreators.length === 0 && creators.length === 0) {
       initializeCreator(key)
     } else {
@@ -270,7 +270,7 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
       (c) =>
         new Creator({
           address: c.value as StringPublicKey,
-          verified: c.value === publicKey?.toBase58(),
+          verified: c.value === wallet?.adapter?.publicKey?.toBase58(),
           share: royalties.find((r) => r.creatorKey === c.value)?.amount || Math.round(100 / royalties.length)
         })
     )
@@ -319,7 +319,7 @@ const RoyaltiesStep = ({ visible, nftMintingData, setNftMintingData, handleSubmi
         title={null}
         visible={visible}
         onCancel={() => {
-          if (publicKey) {
+          if (wallet?.adapter?.publicKey) {
             initializeComponent()
           }
           handleCancel()

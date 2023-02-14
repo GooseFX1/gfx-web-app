@@ -119,7 +119,7 @@ export const Step4: FC = () => {
   const { previousStep, creatorData } = useNFTCreator()
   const [imageLink, setImageLink] = useState('')
   const inputReference = React.useRef(null)
-  const wallet = useWallet()
+  const { wallet } = useWallet()
   const [isDelayedReveal, setIsDelayedReveal] = useState<boolean>(false)
   const [nextButtonActive, setNextButtonActive] = useState<boolean>(false)
 
@@ -129,14 +129,15 @@ export const Step4: FC = () => {
       notify({
         message: 'Please wait for the upload to finish it may take a while...'
       })
-      uploadFile(file, { ...config, dirName: 'launchpad_' + wallet.publicKey.toBase58() + '_assets' }).then(
-        (data: any) => {
-          setImageLink(data.location)
-          notify({
-            message: 'Upload Complete!'
-          })
-        }
-      )
+      uploadFile(file, {
+        ...config,
+        dirName: `launchpad_${wallet?.adapter?.publicKey.toBase58()}_assets`
+      }).then((data: any) => {
+        setImageLink(data.location)
+        notify({
+          message: 'Upload Complete!'
+        })
+      })
     }
   }
 

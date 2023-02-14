@@ -59,8 +59,10 @@ const LABEL = styled.span`
 
 export const SwapFrom: FC<{ height: string }> = ({ height }) => {
   const { getUIAmount, getUIAmountString } = useAccounts()
-  const { publicKey } = useWallet()
+  const { wallet } = useWallet()
   const { inTokenAmount, pool, setFocused, setInTokenAmount, setTokenA, tokenA, tokenB, connection } = useSwap()
+
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
 
   const setHalf = () => {
     if (tokenA) {

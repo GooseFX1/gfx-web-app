@@ -66,10 +66,10 @@ const SVGModeAdjust = styled.img`
 `
 
 const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ setArrowRotation }) => {
-  const { disconnect, publicKey, wallet } = useWallet()
+  const { disconnect, wallet } = useWallet()
   const { setVisible: setWalletModalVisible } = useWalletModal()
 
-  const base58 = useMemo(() => publicKey?.toBase58(), [publicKey])
+  const base58 = useMemo(() => wallet?.adapter?.publicKey?.toBase58(), [wallet?.adapter?.publicKey])
 
   return (
     <Menu>
@@ -117,6 +117,7 @@ export const Connect: FC = () => {
   const [visible, setVisible] = useState(false)
 
   const base58 = useMemo(() => wallet?.adapter?.publicKey?.toBase58(), [wallet?.adapter?.publicKey])
+
   useEffect(() => {
     if (connected) logData('wallet_connected')
   }, [connected])
