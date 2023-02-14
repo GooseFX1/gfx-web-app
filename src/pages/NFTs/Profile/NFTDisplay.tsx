@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useRef, FC } from 'react'
 import axios from 'axios'
 import { Row, Col } from 'antd'
@@ -6,18 +7,21 @@ import { ParsedAccount } from '../../../web3'
 import { Card } from '../Collection/Card'
 import NoContent from './NoContent'
 import { SearchBar, Loader, ArrowDropdown } from '../../../components'
-import { useNFTProfile } from '../../../context'
+import { useNavCollapse, useNFTProfile } from '../../../context'
 import { StyledTabContent } from './TabContent.styled'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import debounce from 'lodash.debounce'
 import styled from 'styled-components'
 import tw from 'twin.macro'
+import 'styled-components/macro'
 import { CenteredDiv } from '../../../styles'
+import { GRID_CONTAINER, NFT_COLLECTIONS_GRID } from '../Collection/CollectionV2.styles'
 
 const WRAPPER = styled.div`
   background-color: ${({ theme }) => theme.primary3};
   position: absolute;
   left: 367px;
+  border: 1px solid;
   height: 40px;
   color: #ffffff;
   font-size: 15px;
@@ -54,10 +58,11 @@ const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
     ${({ theme }) => theme.roundedBorders}
     box-shadow: 0 3.5px 3.5px 0 rgba(0, 0, 0, 0.25);
     background-image: url('/img/assets/solana-logo.png');
-    background-position: center; 
+    background-position: center;
     background-size: 100%;
     background-repeat: no-repeat;
     transform: translateX(${({ $mode }) => ($mode ? '-12px' : '12px')});
+  }
 `
 
 const DROPDOWN_WRAPPER = styled.div`
@@ -159,7 +164,6 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
 
     return () => setFilteredCollectedItems(undefined)
   }, [search, collectedItems])
-
   const fetchNFTData = async (parsedAccounts: ParsedAccount[]) => {
     const nfts = []
     for (let i = 0; i < parsedAccounts.length; i++) {
@@ -226,15 +230,15 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
       }
     }
   }
-
+  const { isCollapsed } = useNavCollapse()
   return (
-    <StyledTabContent>
+    <NFT_COLLECTIONS_GRID>
       {!checkMobile() && (
         <>
-          <div className="actions-group">
+          {/* <div className="actions-group">
             <SearchBar className={'profile-search-bar'} filter={search} setFilter={setSearch} />
-          </div>
-          <WRAPPER>
+          </div> */}
+          {/* <WRAPPER>
             <ArrowDropdown
               measurements="16px"
               offset={[4, 8]}
@@ -247,7 +251,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
             >
               <div className="active">{nftFilterArr[nftFilter]}</div>
             </ArrowDropdown>
-          </WRAPPER>
+          </WRAPPER> */}
           <REFRESH>
             <img src="/img/assets/refreshButton.png" alt="refresh" />
           </REFRESH>
@@ -263,19 +267,17 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
           </div>
         </div>
       ) : filteredCollectedItems && filteredCollectedItems.length > 0 ? (
-        <div className="cards-list" id="border">
-          <Row gutter={[24, 24]}>
-            {filteredCollectedItems.map((nft: ISingleNFT) => (
-              <Col sm={10} md={7} lg={6} xl={6} xxl={4} key={nft.mint_address} span={checkMobile() ? 12 : ''}>
-                <Card singleNFT={nft} />
-              </Col>
-            ))}
-          </Row>
+        <div className="gridContainer">
+          {[...filteredCollectedItems, ...filteredCollectedItems, ...filteredCollectedItems].map(
+            (nft: ISingleNFT) => (
+              <Card singleNFT={nft} />
+            )
+          )}
         </div>
       ) : (
         <NoContent type={props.type} />
       )}
-    </StyledTabContent>
+    </NFT_COLLECTIONS_GRID>
   )
 }
 

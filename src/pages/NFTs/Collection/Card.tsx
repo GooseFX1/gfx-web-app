@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useMemo, FC } from 'react'
 import axios from 'axios'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Row } from 'antd'
-import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
 import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nft_details.d'
 import { useNFTProfile, useNFTDetails, useConnectionConfig, useDarkMode, usePriceFeed } from '../../../context'
@@ -11,13 +11,14 @@ import { getParsedAccountByMint, StringPublicKey, ParsedAccount } from '../../..
 import { Loader } from '../../../components'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { BuySellNFTs } from '../Profile/BuySellNFTs'
+import styled, { css } from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
+import { GradientText } from '../adminPage/components/UpcomingMints'
 
 //#region styles
 const CARD = styled.div`
-  width: 100%;
-  cursor: pointer;
-  background-color: ${({ theme }) => theme.cardBg};
-  border-radius: 15px;
+  ${tw`dark:bg-black-1 bg-white rounded-[15px] cursor-pointer w-[190px] h-[275px]`}
 
   .card-image-wrapper {
     position: relative;
@@ -26,13 +27,14 @@ const CARD = styled.div`
     width: 100%;
     margin: 0 auto;
     padding: 10px;
-
     .ant-image-mask {
       display: none;
     }
     .card-image {
       object-fit: contain;
       width: 100%;
+      ${tw`w-[170px] h-[170px]`}
+
       max-height: 300px;
       ${({ theme }) => theme.largeBorderRadius}
     }
@@ -57,7 +59,7 @@ const CARD = styled.div`
     .card-name {
       font-size: 16px;
       font-weight: 600;
-      color: ${({ theme }) => theme.white};
+      ${tw`text-[#3c3c3c] dark:text-[#eee]`}
       font-family: Montserrat;
       width: calc(100% - 48px);
       ${({ theme }) => theme.ellipse}
@@ -85,8 +87,6 @@ const CARD = styled.div`
       font-weight: 600;
     }
   }
-  .card-price {
-  }
 `
 
 const BID_BUTTON = styled.button<{ cardStatus: string }>`
@@ -107,6 +107,7 @@ const BID_BUTTON = styled.button<{ cardStatus: string }>`
 `
 
 const LIGHT_TEXT = styled.span`
+  ${tw`text-[14px]`}
   color: ${({ theme }) => theme.hintInputColor};
 `
 
@@ -115,18 +116,14 @@ const COVER = styled.div<{ $mode: boolean }>`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  top: 16px;
-  bottom: 16px;
-  left: 16px;
-  right: 16px;
   background-color: ${({ $mode }) => ($mode ? 'rgb(0 0 0 / 66%)' : 'rgb(202 202 202 / 71%)')};
-  z-index: 10;
+  z-index: 1000;
   cursor: default;
   ${({ theme }) => theme.largeBorderRadius}
 
   div {
-    top: 40%;
+    border: 1px solid;
+    top: 10%;
   }
 `
 //#endregion
@@ -159,7 +156,7 @@ export const Card: FC<ICard> = (props) => {
         ? localAsk.buyer_price
         : localBids.length > 0
         ? localBids[localBids.length - 1].buyer_price
-        : '0',
+        : '123',
     [localAsk, localBids, sessionUser]
   )
 
@@ -242,15 +239,13 @@ export const Card: FC<ICard> = (props) => {
 
   const dynamicPriceValue = (currency: string, priceFeed: any, value: number) => {
     const val = currency === 'USD' ? value * priceFeed['SOL/USDC']?.current : value
-
-    return `${moneyFormatter(val)} ${currency}`
+    return `${moneyFormatter(parseFloat(displayPrice))}`
   }
-
   return (
     <>
       {showSingleNFT && <BuySellNFTs setShowSingleNFT={setShowSingleNFT} />}
-      <CARD {...props} className="card">
-        <div className="card-image-wrapper" onClick={() => (localSingleNFT !== undefined ? goToDetails() : null)}>
+      <div className="gridItem">
+        <div className="gridItemContainer" onClick={() => (localSingleNFT !== undefined ? goToDetails() : null)}>
           {isLoadingBeforeRelocate && (
             <COVER $mode={mode === 'dark'}>
               <Loader />
@@ -258,76 +253,45 @@ export const Card: FC<ICard> = (props) => {
           )}
 
           <img
-            className="card-image"
+            className="nftImg"
             src={localSingleNFT ? localSingleNFT.image_url : `${window.origin}/img/assets/nft-preview-${mode}.svg`}
             alt="nft"
           />
         </div>
-        <div className={'card-info'}>
-          <div className="card-details">
-            {localSingleNFT ? (
-              <div className="card-name">{localSingleNFT.nft_name}</div>
-            ) : (
-              <SkeletonCommon width="130px" height="25px" />
-            )}
 
-            {localSingleNFT && localSingleNFT.uuid !== null && (
-              <span className="card-favorite-heart-container">
-                {sessionUser && isFavorited ? (
-                  <img
-                    className="card-favorite-heart"
-                    src={`/img/assets/heart-red.svg`}
-                    alt="heart-selected"
-                    onClick={handleToggleLike}
-                  />
-                ) : (
-                  <img
-                    className={`card-favorite-heart ${!sessionUser ? 'card-favorite-heart--disabled' : ''}`}
-                    src={`/img/assets/heart-empty.svg`}
-                    alt="heart-empty"
-                    onClick={handleToggleLike}
-                  />
-                )}
-                <span
-                  className={`card-favorite-number ${isFavorited ? 'card-favorite-number-highlight' : ''} ${
-                    !sessionUser ? 'card-favorite-heart--disabled' : ''
-                  }`}
-                >
-                  {localTotalLikes}
-                </span>
-              </span>
-            )}
+        <div className={'nftTextContainer'}>
+          <div className="collectionId">
+            {localSingleNFT?.uuid ? localSingleNFT.uuid : '#8989'}
+            <img src="/img/assets/Aggregator/verifiedNFT.svg" />
           </div>
-          <Row justify="space-between" align="middle">
+          {localSingleNFT ? (
+            <GradientText text={localSingleNFT.nft_name.substring(0, 13) + '...'} fontSize={15} fontWeight={600} />
+          ) : (
+            <SkeletonCommon width="130px" height="25px" />
+          )}
+
+          <div>
             {localSingleNFT ? (
-              <div className="card-price">
+              <div>
                 {displayPrice === '0' ? (
                   <LIGHT_TEXT>No Bids</LIGHT_TEXT>
                 ) : (
-                  dynamicPriceValue(userCurrency, prices, parseFloat(displayPrice) / LAMPORTS_PER_SOL)
+                  <div className="nftPrice">
+                    {dynamicPriceValue(userCurrency, prices, parseFloat(displayPrice) / LAMPORTS_PER_SOL)}
+                    <img src={`/img/crypto/SOL.svg`} alt={'SOL'} />
+                  </div>
                 )}
               </div>
             ) : (
               <SkeletonCommon width="64px" height="24px" />
             )}
-
-            {sessionUser &&
-              (localSingleNFT ? (
-                isOwner ? (
-                  <BID_BUTTON cardStatus={localAsk ? 'listed' : 'unlisted'} onClick={() => goToDetails()}>
-                    {getButtonText(isOwner, localAsk)}
-                  </BID_BUTTON>
-                ) : (
-                  <BID_BUTTON cardStatus={'bid'} onClick={() => goToDetails()}>
-                    {getButtonText(isOwner, localAsk)}
-                  </BID_BUTTON>
-                )
-              ) : (
-                <SkeletonCommon width="76px" height="32px" borderRadius="50px" />
-              ))}
-          </Row>
+            <div className="apprisalPrice">
+              {dynamicPriceValue(userCurrency, prices, parseFloat(displayPrice) / LAMPORTS_PER_SOL)}
+              <img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'tooltip'} />
+            </div>
+          </div>
         </div>
-      </CARD>
+      </div>
     </>
   )
 }

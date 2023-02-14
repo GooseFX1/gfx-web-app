@@ -7,7 +7,7 @@ import { Image, Button, Dropdown, Menu } from 'antd'
 import styled from 'styled-components'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { generateTinyURL } from '../../../api/tinyUrl'
-import { useNFTProfile, useDarkMode, useConnectionConfig } from '../../../context'
+import { useNFTProfile, useDarkMode, useConnectionConfig, useNavCollapse } from '../../../context'
 import { ILocationState } from '../../../types/app_params.d'
 import { PopupProfile } from './PopupProfile'
 import { Share } from '../Share'
@@ -287,6 +287,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
       </Menu.Item>
     </StyledMenu>
   )
+  const { isCollapsed } = useNavCollapse()
 
   return (
     <StyledHeaderProfile mode={mode}>
@@ -312,7 +313,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
           </div>
         </div>
       ) : (
-        <div style={{ position: 'absolute', top: '24px', left: '24px' }}>
+        <div style={{ position: 'absolute', top: isCollapsed ? '24px' : '104px', left: '24px' }}>
           <FloatingActionButton height={40} onClick={() => history.goBack()}>
             <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
           </FloatingActionButton>

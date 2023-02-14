@@ -222,7 +222,7 @@ const WRAPPER = styled.div`
   `}
 `
 
-export const SingleViewNFT: FC = (): JSX.Element => {
+export const DetailViewNFT: FC = (): JSX.Element => {
   const { selectedNFT, setSelectedNFT, bidNowClicked, buyNowClicked, setBidNow, setBuyNow } = useNFTAggregator()
 
   const elem = document.getElementById('nft-aggerator-container') //TODO-PROFILE: Stop background scroll
@@ -324,4 +324,4 @@ const ButtonContainer = ({ setBuyNow, buyNowClicked, bidNowClicked, setBidNow }:
     </div>
   )
 }
-export default SingleViewNFT
+export default DetailViewNFT
