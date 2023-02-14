@@ -196,8 +196,8 @@ export const SellNFT: FC = () => {
   const { general, setGeneral, ask, fetchGeneral, nftMetadata, updateUserInput, sellNFT, patchNFTAsk } =
     useNFTDetails()
   const { sessionUser } = useNFTProfile()
-  const wallet = useWallet()
-  const { connected, publicKey, sendTransaction } = wallet
+  const wal = useWallet()
+  const { connected, wallet, sendTransaction } = wal
   const { connection, network } = useConnectionConfig()
   const [reviewSellModal, setReviewSellModal] = useState<boolean>(false)
   const [pendingTxSig, setPendingTxSig] = useState<string>()
@@ -240,10 +240,10 @@ export const SellNFT: FC = () => {
   }, [])
 
   useEffect(() => {
-    if (!sessionUser || !connected || !publicKey) {
+    if (!sessionUser || !connected || !wallet?.adapter?.publicKey) {
       history.push(`/NFTs/details/${params.nftMintAddress}`)
     }
-  }, [connected, publicKey])
+  }, [connected, wallet?.adapter?.publicKey])
 
   useEffect(() => {
     if (userInput.minimumBid.length > 0) {
@@ -276,8 +276,12 @@ export const SellNFT: FC = () => {
     const buyerPrice: BN = new BN(buyerPriceInLamports)
 
     const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
-    const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
-    const freeTradeState: [PublicKey, number] = await freeSellerTradeStatePDA(publicKey, general)
+    const tradeState: [PublicKey, number] = await tradeStatePDA(
+      wallet?.adapter?.publicKey,
+      general,
+      bnTo8(buyerPrice)
+    )
+    const freeTradeState: [PublicKey, number] = await freeSellerTradeStatePDA(wallet?.adapter?.publicKey, general)
     const programAsSignerPDA: [PublicKey, number] = await PublicKey.findProgramAddress(
       [Buffer.from(AUCTION_HOUSE_PREFIX), Buffer.from('signer')],
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
@@ -348,7 +352,7 @@ export const SellNFT: FC = () => {
     }
 
     const sellInstructionAccounts: SellInstructionAccounts = getSellInstructionAccounts(
-      publicKey,
+      wallet?.adapter?.publicKey,
       general,
       metaDataAccount,
       tradeState[0],
@@ -394,11 +398,11 @@ export const SellNFT: FC = () => {
           console.log('Ask data synced: ', res)
           if (!res) {
             handleTxError(nftMetadata.name, 'Listing has been canceled. Please try againg')
-            callCancelInstruction(wallet, connection, general, tradeState, buyerPrice)
+            callCancelInstruction(wal, connection, general, tradeState, buyerPrice)
           } else {
             setTimeout(() => {
               notify(successfulListingMsg(signature, nftMetadata, userInput['minimumBid']))
-              history.push(`/NFTs/profile/${publicKey.toBase58()}`)
+              history.push(`/NFTs/profile/${wallet?.adapter?.publicKey.toBase58()}`)
             }, 2000)
           }
         })
@@ -417,7 +421,7 @@ export const SellNFT: FC = () => {
       ask_id: null,
       clock: Date.now().toString(),
       tx_sig: txSig,
-      wallet_key: publicKey.toBase58(),
+      wallet_key: wallet?.adapter?.publicKey.toBase58(),
       auction_house_key: AUCTION_HOUSE,
       token_account_key: general.token_account,
       auction_house_treasury_mint_key: TREASURY_MINT,
@@ -457,15 +461,21 @@ export const SellNFT: FC = () => {
   }
 
   const createRemoveAskIX = async () => {
+    const usrAddr: PublicKey = wallet?.adapter?.publicKey
+    if (!usrAddr) {
+      console.log('no public key connected')
+      return
+    }
+
     const curAskingPrice: BN = new BN(parseFloat(ask.buyer_price))
-    const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(curAskingPrice))
+    const tradeState: [PublicKey, number] = await tradeStatePDA(usrAddr, general, bnTo8(curAskingPrice))
     const cancelInstructionArgs: CancelInstructionArgs = {
       buyerPrice: curAskingPrice,
       tokenSize: tokenSize
     }
 
     const cancelInstructionAccounts: CancelInstructionAccounts = {
-      wallet: wallet.publicKey,
+      wallet: wallet?.adapter?.publicKey,
       tokenAccount: new PublicKey(general.token_account),
       tokenMint: new PublicKey(general.mint_address),
       authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),

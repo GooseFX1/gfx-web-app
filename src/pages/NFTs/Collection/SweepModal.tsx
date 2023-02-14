@@ -728,7 +728,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
   const [nftBatch, setNftBatch] = useState([])
   const [sweeping, setIsSweeping] = useState<boolean>(false)
   const [sweepComplete, setSweepComplete] = useState<boolean>(false)
-  const { connected, publicKey, sendTransaction } = useWallet()
+  const { connected, wallet, sendTransaction } = useWallet()
   const { connection } = useConnectionConfig()
   const { sessionUser, userCurrency } = useNFTProfile()
   const { bidOnSingleNFT } = useNFTDetails()
@@ -746,13 +746,13 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
   const { getTokenInfoFromSymbol } = useTokenRegistry()
 
   const userSOLBalance = useMemo(
-    () => (publicKey ? getUIAmount(getTokenInfoFromSymbol('SOL')?.address) : 0),
-    [getUIAmount, publicKey]
+    () => (wallet?.adapter?.publicKey ? getUIAmount(getTokenInfoFromSymbol('SOL')?.address) : 0),
+    [getUIAmount, wallet?.adapter?.publicKey]
   )
 
   const callAuctionHouseWithdraw = async (escrowPaymentAccount, amount: BN) => {
     const { withdrawInstructionAccounts, withdrawInstructionArgs } = await callWithdrawInstruction(
-      publicKey,
+      wallet?.adapter?.publicKey,
       escrowPaymentAccount,
       amount
     )
@@ -788,7 +788,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
     const bidObject = {
       clock: Date.now().toString(),
       tx_sig: txSig,
-      wallet_key: publicKey.toBase58(),
+      wallet_key: wallet?.adapter?.publicKey.toBase58(),
       auction_house_key: AUCTION_HOUSE,
       token_account_key: nft_data.token_account,
       auction_house_treasury_mint_key: TREASURY_MINT,
@@ -835,7 +835,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
       const pda = await PublicKey.findProgramAddress(
         [
           Buffer.from(AUCTION_HOUSE_PREFIX),
-          publicKey.toBuffer(),
+          wallet?.adapter?.publicKey.toBuffer(),
           toPublicKey(AUCTION_HOUSE).toBuffer(),
           toPublicKey(token_account).toBuffer(),
           toPublicKey(TREASURY_MINT).toBuffer(),
@@ -858,7 +858,11 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
     const metaDataAccount: StringPublicKey = await getMetadata(nft_data.mint_address)
 
     const escrowPaymentAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
-      [Buffer.from(AUCTION_HOUSE_PREFIX), toPublicKey(AUCTION_HOUSE).toBuffer(), publicKey.toBuffer()],
+      [
+        Buffer.from(AUCTION_HOUSE_PREFIX),
+        toPublicKey(AUCTION_HOUSE).toBuffer(),
+        wallet?.adapter?.publicKey.toBuffer()
+      ],
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
     )
 
@@ -929,7 +933,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
         }
         if (sum - res > 0) {
           const initialix = SystemProgram.transfer({
-            fromPubkey: publicKey,
+            fromPubkey: wallet?.adapter?.publicKey,
             toPubkey: escrowPaymentAccount[0],
             lamports: sum - res
           })
@@ -965,7 +969,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
         tokenSize: tokenSize
       }
       const buyInstructionAccounts: BuyInstructionAccounts = await getBuyInstructionAccounts(
-        publicKey,
+        wallet?.adapter?.publicKey,
         { ...tempNftBatch[i], token_account: token_account.pubkey },
         metaDataAccount,
         escrowPaymentAccount[0],

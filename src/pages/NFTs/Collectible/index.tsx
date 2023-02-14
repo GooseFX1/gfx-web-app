@@ -140,7 +140,7 @@ const ConnectWrapper = styled.div`
 
 export const Collectible = (): JSX.Element => {
   const history = useHistory()
-  const { connected, publicKey } = useWallet()
+  const { connected, wallet } = useWallet()
   const { mode } = useDarkMode()
   const { sessionUser } = useNFTProfile()
   const [draftNum, setDraftsNum] = useState(0)
@@ -155,7 +155,7 @@ export const Collectible = (): JSX.Element => {
   }, [sessionUser])
 
   const handleSelectSingleCollectable = async () => {
-    if (connected && publicKey) {
+    if (connected && wallet?.adapter?.publicKey) {
       history.push('/NFTs/create-single')
     } else {
       notify({

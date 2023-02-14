@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, useMemo } from 'react'
 
 import { useNFTLPSelected } from '../../../../context/nft_launchpad'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -38,20 +38,21 @@ const MESSAGE = styled.div`
 `
 
 export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
-  const wallet = useWallet()
+  const { connected, signTransaction, wallet } = useWallet()
   const { connection, endpoint, network } = useConnectionConfig()
   const { selectedProject, candyMachine, cndyValues } = useNFTLPSelected()
-  const [isUserMinting, setIsUserMinting] = useState(false)
-
+  const [isUserMinting, setIsUserMinting] = useState<boolean>(false)
   const [setupTxn, setSetupTxn] = useState<SetupState>()
 
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
+
   //hooks in context
-  const [isWhitelistUser, setIsWhitelistUser] = useState(false)
-  const [isValidBalance, setIsValidBalance] = useState(false)
+  const [isWhitelistUser, setIsWhitelistUser] = useState<boolean>(false)
+  const [isValidBalance, setIsValidBalance] = useState<boolean>(false)
   const [, setEndDate] = useState<Date>()
   const [itemsRemaining, setItemsRemaining] = useState<number>()
-  const [isActive, setIsActive] = useState(false)
-  const [needTxnSplit, setNeedTxnSplit] = useState(true)
+  const [isActive, setIsActive] = useState<boolean>(false)
+  const [needTxnSplit, setNeedTxnSplit] = useState<boolean>(true)
   const [publicMint, setPublicMint] = useState<boolean>(true)
   const [isNonce] = useState<boolean>(false)
 
@@ -59,7 +60,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
     try {
       setIsUserMinting(true)
       document.getElementById('#identity')?.click()
-      if (wallet.connected && candyMachine?.program && wallet.publicKey) {
+      if (connected && candyMachine?.program && publicKey) {
         let setupMint: SetupState | undefined
         const nonceAccount = anchor.web3.Keypair.generate()
         if (needTxnSplit && setupTxn === undefined) {
@@ -77,9 +78,9 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
             )
           })
           if (!isNonce) {
-            setupMint = await createAccountsForMint(candyMachine, wallet.publicKey)
+            setupMint = await createAccountsForMint(candyMachine, publicKey)
           } else {
-            setupMint = await createAccountsForMintNonce(candyMachine, wallet.publicKey, nonceAccount)
+            setupMint = await createAccountsForMintNonce(candyMachine, publicKey, nonceAccount)
           }
           let status: any = { err: false }
           if (setupMint.transaction) {
@@ -137,13 +138,13 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
         if (isNonce) {
           const response = await mintOneTokenNonce(
             candyMachine,
-            wallet.publicKey,
+            publicKey,
             beforeTransactions,
             afterTransactions,
             setupMint ?? setupTxn,
             nonceAccount,
             selectedProject.collectionId,
-            wallet.publicKey.toBase58()
+            publicKey.toBase58()
           )
 
           if (response) {
@@ -186,10 +187,10 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
         } else {
           let mintResult = null
           if (!publicMint) {
-            const wallet_pda = await getWalletWhitelistPda(wallet.publicKey)
+            const wallet_pda = await getWalletWhitelistPda(publicKey)
             mintResult = await mintOneTokenWhitelist(
               candyMachine,
-              wallet.publicKey,
+              publicKey,
               beforeTransactions,
               afterTransactions,
               setupMint ?? setupTxn,
@@ -198,7 +199,7 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
           } else {
             mintResult = await mintOneTokenCustom(
               candyMachine,
-              wallet.publicKey,
+              publicKey,
               beforeTransactions,
               afterTransactions,
               setupMint ?? setupTxn
@@ -324,17 +325,13 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
       setNeedTxnSplit(cndyValues.needTxnSplit)
       setPublicMint(cndyValues.publicMint)
     }
-  }, [cndyValues, wallet.connected, wallet.publicKey])
+  }, [cndyValues, connected, publicKey])
 
-  return (isActive || isWhitelistUser) &&
-    candyMachine?.state.gatekeeper &&
-    wallet.publicKey &&
-    wallet.signTransaction ? (
+  return (isActive || isWhitelistUser) && candyMachine?.state.gatekeeper && publicKey && signTransaction ? (
     <GatewayProvider
       wallet={{
-        publicKey: wallet.publicKey || new PublicKey(CANDY_MACHINE_PROGRAM),
-
-        signTransaction: wallet.signTransaction
+        publicKey: publicKey || new PublicKey(CANDY_MACHINE_PROGRAM),
+        signTransaction: signTransaction
       }}
       gatekeeperNetwork={candyMachine?.state?.gatekeeper?.gatekeeperNetwork}
       clusterUrl={endpoint}
@@ -342,13 +339,13 @@ export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
       handleTransaction={async (trans: Transaction) => {
         let transaction = trans //allow for mutation without breaking eslint rule
         setIsUserMinting(true)
-        const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(wallet.publicKey))
+        const userMustSign = transaction.signatures.find((sig) => sig.publicKey.equals(publicKey))
         if (userMustSign) {
           notify({
             message: 'Please sign one-time Civic Pass issuance'
           })
           try {
-            transaction = await wallet.signTransaction(transaction)
+            transaction = await signTransaction(transaction)
           } catch (e) {
             notify({
               type: 'error',

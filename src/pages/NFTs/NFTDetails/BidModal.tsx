@@ -235,7 +235,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
   const { getUIAmount } = useAccounts()
   const history = useHistory()
   const { sessionUser, fetchSessionUser } = useNFTProfile()
-  const { connected, publicKey, sendTransaction } = useWallet()
+  const { connected, wallet, sendTransaction } = useWallet()
   const { connection, network } = useConnectionConfig()
   const { general, nftMetadata, bidOnSingleNFT, ask } = useNFTDetails()
 
@@ -245,6 +245,8 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
   )
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [pendingTxSig, setPendingTxSig] = useState<string>()
+
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
 
   const creator = useMemo(() => {
     if (nftMetadata === undefined) return null

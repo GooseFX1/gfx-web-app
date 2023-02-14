@@ -109,7 +109,7 @@ interface IMenuPopup {
 const MenuPopup: FC<IMenuPopup> = ({ rewardToggle }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
-  const { publicKey } = useWallet()
+  const { wallet } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
   const [rotateClicked, setRotateClicked] = useState<'left' | 'right'>()
   const [clickCounter, setClickCounter] = useState<number>(0)
@@ -142,19 +142,17 @@ const MenuPopup: FC<IMenuPopup> = ({ rewardToggle }) => {
     }, 150)
   }
   const redirectToPage = (isSell: boolean) => {
-    console.log(isSell)
-
     if (isSell) {
-      publicKey ? locateToSell() : handleWalletModal()
+      wallet?.adapter?.publicKey ? locateToSell(wallet.adapter.publicKey.toBase58()) : handleWalletModal()
     } else if (carousel[0].redirect && !isSell) {
       rewardToggle(false)
       history.push(carousel[0].redirect)
     }
   }
 
-  const locateToSell = () => {
+  const locateToSell = (address: string) => {
     rewardToggle(false)
-    history.push(`${carousel[0].redirect}/${publicKey.toBase58()}`)
+    history.push(`${carousel[0].redirect}/${address}`)
   }
 
   const handleWalletModal = useCallback(() => {
@@ -185,7 +183,9 @@ const MenuPopup: FC<IMenuPopup> = ({ rewardToggle }) => {
           <div className="inner-bg">
             {carousel[0].redirect ? (
               <div className="go-btn" onClick={() => redirectToPage(carousel[0].name === 'Sell')}>
-                <div className="go-text">{carousel[0].name === 'Sell' && !publicKey ? 'Connect' : 'Go!'}</div>
+                <div className="go-text">
+                  {carousel[0].name === 'Sell' && !wallet?.adapter?.publicKey ? 'Connect' : 'Go!'}
+                </div>
               </div>
             ) : (
               <div className="cmg-soon">

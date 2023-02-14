@@ -240,7 +240,6 @@ const MAX_BUTTON = styled.div`
 const DISPLAY_DECIMAL = 3
 
 export const StakeButtons: FC<{
-  wallet: any
   name: string
   stakeRef: any
   unstakeRef: any
@@ -252,7 +251,6 @@ export const StakeButtons: FC<{
   isUnstakeLoading?: boolean
   rowData: any
 }> = ({
-  wallet,
   name,
   stakeRef,
   unstakeRef,
@@ -267,12 +265,12 @@ export const StakeButtons: FC<{
   const { farmDataContext } = useFarmContext()
   const { prices } = usePriceFeedFarm()
   const { getUIAmount } = useAccounts()
-  const { publicKey } = useWallet()
+  const { wallet } = useWallet()
   const { getTokenInfoForFarming } = useTokenRegistry()
-  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
+  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, wallet?.adapter?.publicKey])
   const userTokenBalance = useMemo(
-    () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
-    [tokenInfo?.address, getUIAmount, publicKey]
+    () => (wallet?.adapter?.publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
+    [tokenInfo?.address, getUIAmount, wallet?.adapter?.publicKey]
   )
   const [stakeAmt, setStakeAmt] = useState<number | undefined>()
 
@@ -287,9 +285,9 @@ export const StakeButtons: FC<{
 
   return (
     <>
-      {wallet.publicKey && !checkMobile() ? (
+      {wallet?.adapter?.publicKey && !checkMobile() ? (
         <>
-          <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
+          <STYLED_LEFT_CONTENT className={`${wallet?.adapter?.publicKey ? 'connected' : 'disconnected'}`}>
             <div className="left-inner">
               <STYLED_STAKED_EARNED_CONTENT>
                 <div className="info-item">
@@ -297,7 +295,7 @@ export const StakeButtons: FC<{
                   <div className="value">{`${tokenData.rewards.toFixed(3)} ${name}`}</div>
                   <div className="price">{`$${(current * tokenData.rewards).toFixed(3)} USDC`}</div>
                 </div>
-                {wallet.publicKey && (
+                {wallet?.adapter?.publicKey && (
                   <STYLED_DESC>
                     <div className="text">{name} Wallet Balance:</div>
                     <div className="value">
@@ -308,7 +306,7 @@ export const StakeButtons: FC<{
               </STYLED_STAKED_EARNED_CONTENT>
             </div>
           </STYLED_LEFT_CONTENT>
-          <STYLED_RIGHT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
+          <STYLED_RIGHT_CONTENT className={`${wallet?.adapter?.publicKey ? 'connected' : 'disconnected'}`}>
             <div className="right-inner">
               <div className="SOL-item">
                 <STYLED_SOL>
@@ -359,10 +357,9 @@ export const StakeButtons: FC<{
             </div>
           </STYLED_RIGHT_CONTENT>
         </>
-      ) : checkMobile() && wallet.publicKey ? (
+      ) : checkMobile() && wallet?.adapter?.publicKey ? (
         <ExpandedContent
           name={name}
-          wallet={wallet}
           stakeRef={stakeRef}
           unstakeRef={unstakeRef}
           onClickHalf={onClickHalf}
@@ -385,7 +382,6 @@ export const StakeButtons: FC<{
 }
 
 export const SSLButtons: FC<{
-  wallet: any
   name: string
   stakeRef: any
   unstakeRef: any
@@ -401,7 +397,6 @@ export const SSLButtons: FC<{
   isUnstakeLoading?: boolean
   rowData: any
 }> = ({
-  wallet,
   name,
   stakeRef,
   unstakeRef,
@@ -422,7 +417,7 @@ export const SSLButtons: FC<{
   const { farmDataSSLContext, operationPending } = useFarmContext()
   const tokenData = farmDataSSLContext.find((farmData) => farmData.name === name)
   const { getUIAmount } = useAccounts()
-  const { publicKey } = useWallet()
+  const { wallet } = useWallet()
   const { getTokenInfoForFarming } = useTokenRegistry()
   const { network } = useConnectionConfig()
 
@@ -437,10 +432,10 @@ export const SSLButtons: FC<{
     return prices[`${name.toUpperCase()}/USDC`]
   }, [prices[`${name.toUpperCase()}/USDC`]])
 
-  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, publicKey])
+  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, wallet?.adapter?.publicKey])
   let userTokenBalance = useMemo(
-    () => (publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
-    [tokenInfo?.address, getUIAmount, publicKey]
+    () => (wallet?.adapter?.publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
+    [tokenInfo?.address, getUIAmount, wallet?.adapter?.publicKey]
   )
 
   const onClickMax = (buttonId: string) => {
@@ -505,9 +500,9 @@ export const SSLButtons: FC<{
   }
   return (
     <>
-      {wallet.publicKey && !checkMobile() ? (
+      {wallet?.adapter?.publicKey && !checkMobile() ? (
         <>
-          <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
+          <STYLED_LEFT_CONTENT className={`${wallet?.adapter?.publicKey ? 'connected' : 'disconnected'}`}>
             <div className="left-inner">
               <STYLED_STAKED_EARNED_CONTENT>
                 {tokenPrice && (
@@ -529,7 +524,7 @@ export const SSLButtons: FC<{
               </STYLED_STAKED_EARNED_CONTENT>
             </div>
           </STYLED_LEFT_CONTENT>
-          <STYLED_RIGHT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
+          <STYLED_RIGHT_CONTENT className={`${wallet?.adapter?.publicKey ? 'connected' : 'disconnected'}`}>
             <div className="right-inner">
               <div className="SOL-item">
                 <STYLED_SOL>
@@ -585,11 +580,10 @@ export const SSLButtons: FC<{
             </div>
           </STYLED_RIGHT_CONTENT>
         </>
-      ) : checkMobile() && wallet.publicKey ? (
+      ) : checkMobile() && wallet?.adapter?.publicKey ? (
         <ExpandedContent
           isSsl={true}
           name={name.toString()}
-          wallet={wallet}
           stakeRef={stakeRef}
           unstakeRef={unstakeRef}
           onClickDeposit={onClickDeposit}

@@ -34,10 +34,10 @@ const WRAPPER = styled.div`
 `
 
 export const CreatorWrapper: FC = () => {
-  const wallet = useWallet()
+  const { connected } = useWallet()
   const { isAllowed } = useNFTCreator()
 
-  return !wallet.connected ? (
+  return !connected ? (
     <WRAPPER>
       <img src="/img/assets/launchpad-logo.svg" alt="Launchpad Logo" />
       <div className="first-line">Welcome to GFX Launchpad!</div>

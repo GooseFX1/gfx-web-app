@@ -88,7 +88,8 @@ const WRAPPER = styled.div<{ $navCollapsed; $lastRefreshedClass }>`
 const CustomTableList: FC = () => {
   const { prices, priceFetched, refreshTokenData, setStatsData } = usePriceFeedFarm()
   const { network, connection } = useConnectionConfig()
-  const wallet = useWallet()
+  const wal = useWallet()
+  const { wallet } = useWallet()
   const {
     counter,
     showDeposited,
@@ -158,16 +159,16 @@ const CustomTableList: FC = () => {
   }, [volume7daySum, sslVolume, stakeVolume, totalVolumeTrade])
 
   useEffect(() => {
-    if (wallet.publicKey) {
+    if (wallet?.adapter?.publicKey) {
       if (accountKey === undefined) {
-        getStakingAccountKey(wallet, network).then((accountKey) => setAccountKey(accountKey))
+        getStakingAccountKey(wal, network).then((accountKey) => setAccountKey(accountKey))
       }
     } else {
       setAccountKey(undefined)
     }
 
     return null
-  }, [wallet.publicKey, connection])
+  }, [wallet?.adapter?.publicKey, connection])
 
   const getTokenPrice = (name) => {
     if (name === TOKEN_NAMES.USDC) {
@@ -222,8 +223,10 @@ const CustomTableList: FC = () => {
         apr,
         volume,
         liquidity: tokenPrice ? tokenPrice * (Number(liquidity) / Math.pow(10, sslData.decimals)) : 0,
-        currentlyStaked: wallet.publicKey ? Number(amountDeposited) / Math.pow(10, sslData.decimals) : undefined,
-        earned: wallet.publicKey ? Number(earned) / Math.pow(10, sslData.decimals) : undefined,
+        currentlyStaked: wallet?.adapter?.publicKey
+          ? Number(amountDeposited) / Math.pow(10, sslData.decimals)
+          : undefined,
+        earned: wallet?.adapter?.publicKey ? Number(earned) / Math.pow(10, sslData.decimals) : undefined,
         userLiablity: Number(userLiablity),
         ptMinted: Number(ptMinted) / Math.pow(10, 9)
       }
@@ -254,15 +257,15 @@ const CustomTableList: FC = () => {
           try {
             const tokenMint = ADDRESSES[network].sslPool[SSLTokenNames[i]].address
             SSLAccountKeys.push(await getSslAccountKey(tokenMint, network))
-            liquidityAccountKeys.push(await getLiquidityAccountKey(wallet, tokenMint, network))
+            liquidityAccountKeys.push(await getLiquidityAccountKey(wal, tokenMint, network))
             mainVaultKeys.push(await getMainVaultKey(tokenMint, network))
           } catch (err) {
             console.log(err)
           }
         }
 
-        fetchAllSSLAmountStaked(connection, SSLAccountKeys, wallet, liquidityAccountKeys, mainVaultKeys).then(
-          (res) => calculateBalances(res.sslData, res.mainVault, res.liquidityData, SSLTokenNames)
+        fetchAllSSLAmountStaked(connection, SSLAccountKeys, wal, liquidityAccountKeys, mainVaultKeys).then((res) =>
+          calculateBalances(res.sslData, res.mainVault, res.liquidityData, SSLTokenNames)
         )
       }
     })()
@@ -294,7 +297,7 @@ const CustomTableList: FC = () => {
         if (tokenName.includes(searchFilter.toLowerCase())) return true
       })
 
-    if (showDeposited && wallet.publicKey)
+    if (showDeposited && wallet?.adapter?.publicKey)
       farmDataStaked = farmDataStaked.filter((fData) => fData.currentlyStaked > 0)
     if (sortColumn !== undefined) {
       const sortedData = farmDataStaked.sort((a, b) => {
@@ -318,7 +321,7 @@ const CustomTableList: FC = () => {
       const DR = Number(dailyReward / LAMPORTS_PER_SOL)
       const APR: number = (1 / liqidity) * DR * 365
       // user account data
-      const accountData = await fetchCurrentAmountStaked(connection, network, wallet)
+      const accountData = await fetchCurrentAmountStaked(connection, network, wal)
       const currentlyStaked = liqidity
         ? accountData.tokenStaked !== undefined
           ? accountData.tokenStaked

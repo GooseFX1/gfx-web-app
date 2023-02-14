@@ -15,7 +15,7 @@ export const PlaceOrder: FC = () => {
   const { getAskSymbolFromPair, getSymbolFromPair, selectedCrypto } = useCrypto()
   const { loading, order, placeOrder } = useOrder()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
-  const { connect, publicKey, wallet } = useWallet()
+  const { connect, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
   const ask = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
@@ -24,7 +24,7 @@ export const PlaceOrder: FC = () => {
   const state = useMemo(() => {
     const tokenInfo = getTokenInfoFromSymbol(getSymbolFromPair(selectedCrypto.pair, order.side))
 
-    if (!publicKey) {
+    if (!wallet?.adapter?.publicKey) {
       return State.Connect
     }
 
@@ -37,7 +37,14 @@ export const PlaceOrder: FC = () => {
     }
 
     return State.CanPlaceOrder
-  }, [getSymbolFromPair, getTokenInfoFromSymbol, getUIAmount, order, publicKey, selectedCrypto.pair])
+  }, [
+    getSymbolFromPair,
+    getTokenInfoFromSymbol,
+    getUIAmount,
+    order,
+    wallet?.adapter?.publicKey,
+    selectedCrypto.pair
+  ])
 
   const buttonStatus = useMemo(() => {
     switch (state) {
@@ -78,7 +85,13 @@ export const PlaceOrder: FC = () => {
       onClick={handleClick}
       status={buttonStatus}
       width="100%"
-      className={!publicKey ? 'not-connected' : buttonStatus === 'action' ? order.side + ' button' : 'color-style'}
+      className={
+        !wallet?.adapter?.publicKey
+          ? 'not-connected'
+          : buttonStatus === 'action'
+          ? order.side + ' button'
+          : 'color-style'
+      }
     >
       <span>{content}</span>
     </MainButton>

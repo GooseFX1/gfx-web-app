@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from 'react'
+import React, { useState, useEffect, useMemo, FC } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params.d'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -81,8 +81,10 @@ export const Profile: FC = (): JSX.Element => {
     setNonSessionProfile,
     setNonSessionUserParsedAccounts
   } = useNFTProfile()
-  const { connected, publicKey } = useWallet()
-  const [isSessionUser, setIsSessionUser] = useState<boolean>()
+  const { connected, wallet } = useWallet()
+  const [isSessionUser, setIsSessionUser] = useState<boolean | null>(null)
+
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
 
   useEffect(() => {
     if (params.userAddress === undefined) history.push(`/NFTs`)
@@ -105,7 +107,7 @@ export const Profile: FC = (): JSX.Element => {
   }, [sessionUser, publicKey, connected, params.userAddress])
 
   return (
-    isSessionUser !== undefined && (
+    isSessionUser !== null && (
       <PROFILE_CONTAINER>
         <HeaderProfile isSessionUser={isSessionUser} />
         <ContentProfile isSessionUser={isSessionUser} />

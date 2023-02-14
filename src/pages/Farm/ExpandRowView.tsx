@@ -40,14 +40,14 @@ import {
 
 const ExpandRowView: FC<{ farm: IFarmData; index: number }> = ({ farm, index }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const { publicKey } = useWallet()
+  const { wallet } = useWallet()
 
   return (
     <>
       <TABLE_ROW
         isOpen={isOpen}
         checkMobile={checkMobile()}
-        publicKey={publicKey}
+        publicKey={wallet?.adapter?.publicKey}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {checkMobile() ? (
@@ -70,7 +70,8 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
   const { name, earned, currentlyStaked, type } = farm
   const isSSL = type === 'SSL'
 
-  const wallet = useWallet()
+  const wal = useWallet()
+  const { wallet } = useWallet()
   const { farmDataContext, farmDataSSLContext, counter, setCounter, setOperationPending } = useFarmContext()
   const { prices, stakeAccountKey, stakeProgram, SSLProgram } = usePriceFeedFarm()
   const { network, connection } = useConnectionConfig()
@@ -94,11 +95,11 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
   }, [prices[`${name.toUpperCase()}/USDC`]])
 
   const { getTokenInfoForFarming } = useTokenRegistry()
-  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, wallet.publicKey])
+  const tokenInfo = useMemo(() => getTokenInfoForFarming(name), [name, wallet?.adapter?.publicKey])
 
   let userTokenBalance = useMemo(
-    () => (wallet.publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
-    [tokenInfo?.address, getUIAmount, wallet.publicKey, counter]
+    () => (wallet?.adapter?.publicKey && tokenInfo ? getUIAmount(tokenInfo.address) : 0),
+    [tokenInfo?.address, getUIAmount, wallet?.adapter?.publicKey, counter]
   )
   const availableToMint =
     tokenData?.ptMinted >= 0 ? tokenData.currentlyStaked + tokenData.earned - tokenData.ptMinted : 0
@@ -127,11 +128,11 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
       : parseFloat(userTokenBalance?.toFixed(3)) === 0
 
   useEffect(() => {
-    if (wallet.publicKey && name === TOKEN_NAMES.SOL) {
-      const SOL = connection.getAccountInfo(wallet.publicKey)
+    if (wallet?.adapter?.publicKey && name === TOKEN_NAMES.SOL) {
+      const SOL = connection.getAccountInfo(wallet?.adapter?.publicKey)
       SOL.then((res) => setSOLBalance(res.lamports / LAMPORTS_PER_SOL)).catch((err) => console.log(err))
     }
-  }, [counter, getUIAmount, wallet.publicKey, userSOLBalance])
+  }, [counter, getUIAmount, wallet?.adapter?.publicKey, userSOLBalance])
 
   useEffect(() => {
     let tokenBalance = userTokenBalance
@@ -197,7 +198,7 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
     setIsUnstakeLoading(true)
     try {
       //const confirm =
-      executeWithdraw(SSLProgram, wallet, connection, network, name, amount).then((con) => {
+      executeWithdraw(SSLProgram, wal, connection, network, name, amount).then((con) => {
         setIsUnstakeLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
@@ -260,7 +261,7 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
       const confirm = executeUnstakeAndClaim(
         stakeProgram,
         stakeAccountKey,
-        wallet,
+        wal,
         connection,
         network,
         tokenInPercent
@@ -299,7 +300,7 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
     try {
       setIsStakeLoading(true)
       setOperationPending(true)
-      const confirm = executeDeposit(SSLProgram, wallet, connection, network, amount, name)
+      const confirm = executeDeposit(SSLProgram, wal, connection, network, amount, name)
       confirm.then((con) => {
         setOperationPending(false)
         setIsStakeLoading(false)
@@ -327,7 +328,7 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
       setIsStakeLoading(true)
       let amount = stakeAmt
       if (amount === parseFloat(userTokenBalance.toFixed(3))) amount = userTokenBalance
-      const confirm = executeStake(stakeProgram, stakeAccountKey, wallet, connection, network, amount)
+      const confirm = executeStake(stakeProgram, stakeAccountKey, wal, connection, network, amount)
       confirm.then((con) => {
         setIsStakeLoading(false)
         const { confirm, signature } = con
@@ -378,11 +379,11 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
   ) : (
     <TOKEN_OPERATIONS_CONTAINER colSpan={7} onClick={() => setIsOpen((prev) => !prev)}>
       <div className="availableToMint">
-        {wallet.publicKey ? (
+        {wallet?.adapter?.publicKey ? (
           <>
-            <STYLED_LEFT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
+            <STYLED_LEFT_CONTENT className={`${wallet?.adapter?.publicKey ? 'connected' : 'disconnected'}`}>
               <div className="leftInner" onClick={preventClose}>
-                {wallet.publicKey && (
+                {wallet?.adapter?.publicKey && (
                   <STYLED_STAKED_EARNED_CONTENT>
                     {isSSL ? (
                       <AvailableToMintComp
@@ -404,7 +405,7 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
                 )}
               </div>
             </STYLED_LEFT_CONTENT>
-            <STYLED_RIGHT_CONTENT className={`${wallet.publicKey ? 'connected' : 'disconnected'}`}>
+            <STYLED_RIGHT_CONTENT className={`${wallet?.adapter?.publicKey ? 'connected' : 'disconnected'}`}>
               <div className="rightInner" onClick={preventClose}>
                 <div>
                   <INPUT_CONTAINER>

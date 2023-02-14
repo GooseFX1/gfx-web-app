@@ -61,7 +61,8 @@ const historyUrl = 'https://api.raydium.io/v1/dex/trade/address?market='
 export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
   const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
-  const wallet = useWallet()
+  const wal = useWallet()
+  const { wallet } = useWallet()
   const [loading, setLoading] = useState(false)
   const [openOrders, setOpenOrders] = useState<OpenOrders[]>([])
   const [orders, setOrders] = useState<IOrder[]>([])
@@ -88,34 +89,34 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   }, [selectedCrypto.market])
 
   const fetchBalances = useCallback(async () => {
-    if (wallet.publicKey && selectedCrypto.market) {
+    if (wallet?.adapter?.publicKey && selectedCrypto.market) {
       try {
         const openOrders = await serum.getOpenOrders(
           connection,
           selectedCrypto.market,
-          wallet.publicKey as PublicKey
+          wallet?.adapter?.publicKey as PublicKey
         )
         setOpenOrders(openOrders)
       } catch (e: any) {
         await notify({ type: 'error', message: `Error fetching balances from serum market`, icon: 'error' }, e)
       }
     }
-  }, [connection, selectedCrypto.market, wallet.publicKey])
+  }, [connection, selectedCrypto.market, wallet?.adapter?.publicKey])
 
   const fetchOpenOrders = useCallback(async () => {
-    if (wallet.publicKey && selectedCrypto.market) {
+    if (wallet?.adapter?.publicKey && selectedCrypto.market) {
       try {
         const marketsOrders = await serum.getOrders(
           connection,
           selectedCrypto.market,
-          wallet.publicKey as PublicKey
+          wallet?.adapter?.publicKey as PublicKey
         )
         setOrders(marketsOrders.map((marketOrder) => ({ order: marketOrder, name: selectedCrypto.pair })))
       } catch (e: any) {
         await notify({ type: 'error', message: `Error fetching open orders from serum market`, icon: 'error' }, e)
       }
     }
-  }, [connection, selectedCrypto.market, selectedCrypto.pair, wallet.publicKey])
+  }, [connection, selectedCrypto.market, selectedCrypto.pair, wallet?.adapter?.publicKey])
 
   const getPairFromMarketAddress = (address: PublicKey) => serum.getMarketFromAddress(address)?.name
 
@@ -124,7 +125,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
 
     if (selectedCrypto.market) {
       try {
-        const signature = await crypto.cancelOrder(connection, selectedCrypto.market, order.order, wallet)
+        const signature = await crypto.cancelOrder(connection, selectedCrypto.market, order.order, wal)
         const ask = getAskSymbolFromPair(selectedCrypto.pair)
         const { price, side, size } = order.order
         await notify({
@@ -154,7 +155,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
       setLoading(true)
 
       try {
-        const signature = await crypto.settleFunds(connection, selectedCrypto.market, openOrder, wallet)
+        const signature = await crypto.settleFunds(connection, selectedCrypto.market, openOrder, wal)
         const baseTokens = baseAvailable && `${baseAvailable} ${baseSymbol}`
         const quoteTokens = quoteAvailable && `${quoteAvailable} ${quoteSymbol}`
         await notify({

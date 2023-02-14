@@ -351,11 +351,12 @@ const ConfirmMint = ({ nestQuestData, setPhase }: MintProps) => {
 
 const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintProps) => {
   const { mode } = useDarkMode()
-  const wallet = useWallet()
+  const wal = useWallet()
+  const { wallet } = useWallet()
   const { connection, network } = useConnectionConfig()
 
   useEffect(() => {
-    if (wallet.publicKey && connection) {
+    if (wallet?.adapter?.publicKey && connection) {
       fetchAvailableNft(connection, network)
         .then((res) => {
           if (res) {
@@ -370,15 +371,15 @@ const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintP
           setPhase(1)
         })
     }
-  }, [wallet.publicKey, connection, network])
+  }, [wallet?.adapter?.publicKey, connection, network])
 
   console.log({ gatewayToken, gatewayStatus, stat: GatewayStatus.ACTIVE })
 
   const purchase = (token: string, nft: any) => {
     const buyFunction =
       token === 'SOL'
-        ? buyWithSOL(wallet, connection, network, nft, gatewayToken?.publicKey)
-        : buyWithGOFX(wallet, connection, network, nft, gatewayToken?.publicKey)
+        ? buyWithSOL(wal, connection, network, nft, gatewayToken?.publicKey)
+        : buyWithGOFX(wal, connection, network, nft, gatewayToken?.publicKey)
 
     buyFunction
       .then((result) => {
@@ -427,7 +428,7 @@ const LoadBuy = ({ nestQuestData, setPhase, gatewayToken, gatewayStatus }: MintP
 }
 
 const SuccessBuy = () => {
-  const wallet = useWallet()
+  const { wallet } = useWallet()
 
   return (
     <LoadStyle>
@@ -455,9 +456,7 @@ const SuccessBuy = () => {
       <ShareInternal socials={['twitter', 'telegram', 'facebook', 'copy link']} handleShare={onShare} />
       <STYLED_CREATE_BTN
         className="collection-button"
-        onClick={() => {
-          window.location.href = `/NFTs/profile/${wallet.publicKey}`
-        }}
+        onClick={() => (window.location.href = `/NFTs/profile/${wallet?.adapter?.publicKey}`)}
       >
         Go to collection
       </STYLED_CREATE_BTN>

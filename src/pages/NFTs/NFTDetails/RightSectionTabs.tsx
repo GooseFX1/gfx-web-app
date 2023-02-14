@@ -246,7 +246,8 @@ export const RightSectionTabs: FC<{
   const { general, nftMetadata, ask, bids, removeNFTListing, removeBidOnSingleNFT, setAsk } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
   const { connection, network } = useConnectionConfig()
-  const wallet = useWallet()
+  const wal = useWallet()
+  const { wallet } = wal
   const [bidModal, setBidModal] = useState<boolean>(false)
   const [isBuying, setIsBuying] = useState<string>()
   const [removeAskModal, setRemoveAskModal] = useState<boolean>(false)
@@ -261,10 +262,12 @@ export const RightSectionTabs: FC<{
     CANCEL_BID = 'cancel-bid'
   }
 
-  const userRecentBid: INFTBid | undefined = useMemo(() => {
-    if (bids.length === 0 || !wallet.publicKey) return undefined
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
 
-    const usersBids = bids.filter((bid: INFTBid) => bid.wallet_key === wallet.publicKey.toBase58())
+  const userRecentBid: INFTBid | undefined = useMemo(() => {
+    if (bids.length === 0 || !publicKey) return undefined
+
+    const usersBids = bids.filter((bid: INFTBid) => bid.wallet_key === publicKey.toBase58())
     if (usersBids.length === 1) return usersBids[0]
 
     let delta = Infinity
@@ -277,7 +280,7 @@ export const RightSectionTabs: FC<{
       }
     })
     return res
-  }, [bids, wallet.publicKey])
+  }, [bids, publicKey])
 
   const nftData = useMemo(
     () =>
@@ -311,7 +314,7 @@ export const RightSectionTabs: FC<{
   const derivePDAsForInstruction = async () => {
     const buyerPrice: BN = new BN(ask.buyer_price)
 
-    const tradeState: [PublicKey, number] = await tradeStatePDA(wallet.publicKey, general, bnTo8(buyerPrice))
+    const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
 
     if (!tradeState) {
       throw Error(`Could not derive values for instructions`)
@@ -329,13 +332,7 @@ export const RightSectionTabs: FC<{
     const { tradeState, buyerPrice } = await derivePDAsForInstruction()
 
     try {
-      const { signature, confirm } = await callCancelInstruction(
-        wallet,
-        connection,
-        general,
-        tradeState,
-        buyerPrice
-      )
+      const { signature, confirm } = await callCancelInstruction(wal, connection, general, tradeState, buyerPrice)
       setPendingTxSig(signature)
       if (confirm.value.err === null) {
         setRemoveAskModal(false)
@@ -414,7 +411,7 @@ export const RightSectionTabs: FC<{
 
     const buyerPrice: BN = new BN(userRecentBid.buyer_price)
     console.log(buyerPrice)
-    const tradeState: [PublicKey, number] = await tradeStatePDA(wallet.publicKey, general, bnTo8(buyerPrice))
+    const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
 
     const cancelInstructionArgs: CancelInstructionArgs = {
       buyerPrice: buyerPrice,
@@ -422,7 +419,7 @@ export const RightSectionTabs: FC<{
     }
 
     const cancelInstructionAccounts: CancelInstructionAccounts = {
-      wallet: wallet.publicKey,
+      wallet: publicKey,
       tokenAccount: new PublicKey(general.token_account),
       tokenMint: new PublicKey(general.mint_address),
       authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
@@ -437,7 +434,7 @@ export const RightSectionTabs: FC<{
     )
 
     const transaction = new Transaction().add(cancelIX)
-    const signature = await wallet.sendTransaction(transaction, connection)
+    const signature = await wal.sendTransaction(transaction, connection)
     console.log(signature)
     setPendingTxSig(signature)
     const confirm = await connection.confirmTransaction(signature, 'finalized')
@@ -461,12 +458,12 @@ export const RightSectionTabs: FC<{
 
   const callAuctionHouseWithdraw = async (amount: BN) => {
     const escrowPaymentAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
-      [Buffer.from(AUCTION_HOUSE_PREFIX), toPublicKey(AUCTION_HOUSE).toBuffer(), wallet.publicKey.toBuffer()],
+      [Buffer.from(AUCTION_HOUSE_PREFIX), toPublicKey(AUCTION_HOUSE).toBuffer(), publicKey.toBuffer()],
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
     )
 
     const { withdrawInstructionAccounts, withdrawInstructionArgs } = await callWithdrawInstruction(
-      wallet.publicKey,
+      publicKey,
       escrowPaymentAccount,
       amount
     )
@@ -478,7 +475,7 @@ export const RightSectionTabs: FC<{
 
     const transaction = new Transaction().add(withdrawIX)
     try {
-      const signature = await wallet.sendTransaction(transaction, connection)
+      const signature = await wal.sendTransaction(transaction, connection)
       console.log(signature)
 
       const confirm = await connection.confirmTransaction(signature, 'confirmed')
@@ -569,10 +566,10 @@ export const RightSectionTabs: FC<{
           </TabPane>
         </>
       </Tabs>
-      {wallet.publicKey && (
+      {publicKey && (
         <SpaceBetweenDiv className="rst-footer">
           {sessionUser && sessionUser.uuid ? (
-            wallet.publicKey.toBase58() === general.owner ? (
+            publicKey.toBase58() === general.owner ? (
               <>
                 <button
                   className={`rst-footer-button rst-footer-button-${ask === undefined ? 'sell' : 'flat'}`}
@@ -591,7 +588,7 @@ export const RightSectionTabs: FC<{
               </>
             ) : !checkMobile() ? (
               <SpaceBetweenDiv style={{ flexGrow: 1 }}>
-                {bids.find((bid) => bid.wallet_key === wallet.publicKey.toBase58()) && (
+                {bids.find((bid) => bid.wallet_key === publicKey.toBase58()) && (
                   <button
                     onClick={() => handleSetBid(NFT_ACTIONS.CANCEL_BID)}
                     className="rst-footer-button rst-footer-button-flat"
@@ -617,7 +614,7 @@ export const RightSectionTabs: FC<{
             ) : (
               <>
                 <div>
-                  {bids.find((bid) => bid.wallet_key === wallet.publicKey.toBase58()) && (
+                  {bids.find((bid) => bid.wallet_key === publicKey.toBase58()) && (
                     <button
                       onClick={() => handleSetBid(NFT_ACTIONS.CANCEL_BID)}
                       className="rst-footer-button rst-footer-button-flat last-bid"
@@ -647,7 +644,7 @@ export const RightSectionTabs: FC<{
           ) : (
             <button
               className="rst-footer-button rst-footer-button-bid"
-              onClick={() => history.push(`/NFTs/profile/${wallet.publicKey.toBase58()}`)}
+              onClick={() => history.push(`/NFTs/profile/${publicKey.toBase58()}`)}
             >
               Complete profile
             </button>

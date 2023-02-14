@@ -215,18 +215,18 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
   const [candyMachine, setCandyMachine] = useState<CandyMachineAccount>(null)
   const [cmValues, setCmValues] = useState(null)
   const params = useParams<IProjectParams>()
-  const wallet = useWallet()
+  const { wallet, connected, signAllTransactions, signTransaction } = useWallet()
   const { connection } = useConnectionConfig()
 
   const anchorWallet = useMemo(() => {
-    if (!wallet || !wallet.publicKey || !wallet.signAllTransactions || !wallet.signTransaction) {
+    if (!wallet || !wallet?.adapter?.publicKey || signAllTransactions || signTransaction) {
       return
     }
 
     return {
-      publicKey: wallet.publicKey,
-      signAllTransactions: wallet.signAllTransactions,
-      signTransaction: wallet.signTransaction
+      publicKey: wallet?.adapter?.publicKey,
+      signAllTransactions,
+      signTransaction
     } as anchor.Wallet
   }, [wallet])
 
@@ -397,7 +397,7 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
 
           cndyState['tiers'] = tiers
 
-          const whitelistInfo = await getWhitelistInfo(candyM.program, wallet.publicKey)
+          const whitelistInfo = await getWhitelistInfo(candyM.program, wallet?.adapter?.publicKey)
           cndyState['whitelistInfo'] = whitelistInfo
           cndyState['isWhiteListUser'] = false
 
@@ -440,18 +440,18 @@ export const NFTLPSelectedProvider: FC<{ children: ReactNode }> = ({ children })
     if (selectedProject && selectedProject.candyMachine) {
       refreshCandyMachineState(null)
     }
-  }, [wallet.connected, selectedProject])
+  }, [connected, selectedProject])
 
   useEffect(() => {
     ;(function loop() {
       setTimeout(() => {
-        if (selectedProject && selectedProject.candyMachine && wallet.connected) {
+        if (selectedProject && selectedProject.candyMachine && connected) {
           refreshCandyMachineState(null)
         }
         loop()
       }, 20000)
     })()
-  }, [selectedProject, wallet.connected, wallet.publicKey])
+  }, [selectedProject, connected, wallet?.adapter?.publicKey])
 
   return (
     <NFTLPSelectedContext.Provider

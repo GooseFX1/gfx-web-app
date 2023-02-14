@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, MouseEventHandler } from 'react'
+import React, { useState, useEffect, useMemo, useCallback, MouseEventHandler } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useDarkMode, useWalletModal, useNavCollapse } from '../../../context'
@@ -156,11 +156,13 @@ export const Header = ({
   const history = useHistory()
   const { sessionUser, setUserCurrency } = useNFTProfile()
   const { isCollapsed } = useNavCollapse()
-  const { connected, publicKey, connect } = useWallet()
+  const { connected, connect, wallet } = useWallet()
   const [visibleCompletePopup, setVisibleCompletePopup] = useState<boolean>(false)
   const { setVisible: setModalVisible } = useWalletModal()
   const { mode } = useDarkMode()
   const [isHeaderData, setIsHeaderData] = useState<boolean>(false)
+
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
 
   useEffect(() => {
     setTimeout(() => setIsHeaderData(true), 1000)

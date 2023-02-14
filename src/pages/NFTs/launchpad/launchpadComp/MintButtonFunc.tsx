@@ -96,7 +96,7 @@ export const MintButtonFunc: FC<{
   isWhitelist: boolean
   cndyValues: any
 }> = ({ onMint, candyMachine, isMinting, setIsMinting, isActive, isLive, isWhitelist, cndyValues }) => {
-  const wallet = useWallet()
+  const { wallet } = useWallet()
   const [verified, setVerified] = useState(false)
   const { requestGatewayToken, gatewayStatus } = useGateway()
   const [webSocketSubscriptionId, setWebSocketSubscriptionId] = useState(-1)
@@ -184,7 +184,7 @@ export const MintButtonFunc: FC<{
   return (
     <MINT_BUTTON_BAR>
       {handleShareClick()}
-      {isLive && wallet.wallet ? (
+      {isLive && wallet ? (
         <>
           <MINT_BTN
             active={!isMinting && isActive}
@@ -204,7 +204,7 @@ export const MintButtonFunc: FC<{
                   setClicked(true)
                   const gatewayToken = await findGatewayToken(
                     connection,
-                    wallet.publicKey,
+                    wallet?.adapter?.publicKey,
                     candyMachine.state.gatekeeper.gatekeeperNetwork
                   )
 
@@ -214,7 +214,7 @@ export const MintButtonFunc: FC<{
                     window.open(`https://verify.encore.fans/?gkNetwork=${network}`, '_blank')
 
                     const gatewayTokenAddress = await getGatewayTokenAddressForOwnerAndGatekeeperNetwork(
-                      wallet.publicKey,
+                      wallet?.adapter?.publicKey,
                       candyMachine.state.gatekeeper.gatekeeperNetwork
                     )
 
@@ -238,7 +238,7 @@ export const MintButtonFunc: FC<{
             <WHITELIST_SPOTS>{'You have ' + getWhitelistSpots() + ' spots left!'}</WHITELIST_SPOTS>
           )}
         </>
-      ) : !wallet.wallet ? (
+      ) : !wallet ? (
         <CONNECT_WRAPPER>
           <Connect />
         </CONNECT_WRAPPER>

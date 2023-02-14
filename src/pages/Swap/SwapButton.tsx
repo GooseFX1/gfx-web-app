@@ -18,11 +18,11 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
   const { mode } = useDarkMode()
   const { network } = useConnectionConfig()
   const { inTokenAmount, loading, swapTokens, tokenA, tokenB } = useSwap()
-  const { connect, publicKey, wallet } = useWallet()
+  const { connect, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
   const state = useMemo(() => {
-    if (!wallet || !publicKey) {
+    if (!wallet || !wallet?.adapter?.publicKey) {
       return State.Connect
     } else if (!tokenA || !tokenB) {
       return State.Enter
@@ -33,7 +33,7 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
     } else {
       return State.CanSwap
     }
-  }, [getAmount, inTokenAmount, network, publicKey, tokenA, tokenB, wallet])
+  }, [getAmount, inTokenAmount, network, tokenA, tokenB, wallet, wallet?.adapter?.publicKey])
 
   const buttonStatus = useMemo(() => {
     switch (state) {

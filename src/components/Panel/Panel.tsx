@@ -58,7 +58,7 @@ export const Panel: FC<{
   underlinePositions,
   underlineWidths
 }) => {
-  const { connect, publicKey, wallet } = useWallet()
+  const { connect, wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
@@ -88,7 +88,7 @@ export const Panel: FC<{
         underlineWidths={underlineWidths}
       />
       <BODY>
-        {publicKey ? (
+        {wallet?.adapter?.publicKey ? (
           children
         ) : (
           <CONNECT>

@@ -66,10 +66,10 @@ const SVGModeAdjust = styled.img`
 `
 
 const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ setArrowRotation }) => {
-  const { disconnect, publicKey, wallet } = useWallet()
+  const { disconnect, wallet } = useWallet()
   const { setVisible: setWalletModalVisible } = useWalletModal()
 
-  const base58 = useMemo(() => publicKey?.toBase58(), [publicKey])
+  const base58 = useMemo(() => wallet?.adapter?.publicKey?.toBase58(), [wallet?.adapter?.publicKey])
 
   return (
     <Menu>
@@ -111,12 +111,13 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
 }
 
 export const Connect: FC = () => {
-  const { connect, select, wallet, publicKey, connected } = useWallet()
+  const { connect, select, wallet, connected } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
   const [arrowRotation, setArrowRotation] = useState(false)
   const [visible, setVisible] = useState(false)
 
-  const base58 = useMemo(() => publicKey?.toBase58(), [publicKey])
+  const base58 = useMemo(() => wallet?.adapter?.publicKey?.toBase58(), [wallet?.adapter?.publicKey])
+
   useEffect(() => {
     if (connected) logData('wallet_connected')
   }, [connected])
@@ -133,7 +134,7 @@ export const Connect: FC = () => {
     } else {
       return truncateAddress(base58)
     }
-  }, [wallet, base58])
+  }, [wallet, wallet?.adapter?.publicKey])
 
   const onSpanClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {

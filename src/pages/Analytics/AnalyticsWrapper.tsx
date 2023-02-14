@@ -39,19 +39,21 @@ const WRAPPER = styled.div`
 `
 
 export const AnalyticsWrapper: FC = () => {
-  const wallet = useWallet()
+  const { wallet, connected } = useWallet()
   const { toggleCollapse } = useNavCollapse()
   const [adminAllowed, setAdminAllowed] = useState<boolean>(false)
+
   useEffect(() => {
     toggleCollapse(true)
     ;(async () => {
-      if (wallet && wallet?.publicKey) {
-        const data = await isAdminAllowed(wallet.publicKey.toString())
+      if (wallet?.adapter?.publicKey) {
+        const data = await isAdminAllowed(wallet?.adapter?.publicKey.toString())
         setAdminAllowed(data.allowed)
       }
     })()
-  }, [wallet.publicKey])
-  return !wallet.connected ? (
+  }, [wallet?.adapter?.publicKey])
+
+  return !connected ? (
     <CONNECT_WALLET_WRAPPER>
       <img className="gooseLogo" src="/img/assets/GOFX-icon.svg" alt="Goose" />
       <div className="first-line">Welcome to NFT Analytics page!</div>
