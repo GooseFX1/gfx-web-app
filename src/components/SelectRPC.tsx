@@ -8,7 +8,8 @@ import {
   useDarkMode,
   RPC,
   RPC_HEALTH,
-  GFX_RPC_NAMES
+  GFX_RPC_NAMES,
+  DEFAULT_MAINNET_RPC
 } from '../context'
 import { ArrowDropdown } from './ArrowDropdown'
 import { SpaceBetweenDiv } from '../styles'
@@ -63,7 +64,7 @@ const Overlay = ({
     () =>
       process.env.NODE_ENV === 'development'
         ? Object.values(ENDPOINTS).filter(
-            (rpc: RPC) => rpc.name === GFX_RPC_NAMES.MONKE_RPC || rpc.name === GFX_RPC_NAMES.SOLANA_RPC_DEV
+            (rpc: RPC) => rpc.name === DEFAULT_MAINNET_RPC || rpc.name === GFX_RPC_NAMES.SOLANA_RPC_DEV
           )
         : Object.values(ENDPOINTS)
             .filter((rpc: RPC) => !unhealthRPCs.includes(rpc.name))
