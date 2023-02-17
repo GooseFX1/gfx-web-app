@@ -116,7 +116,7 @@ const INPUT_WRAPPER = styled.div`
   ${tw`flex justify-center items-start w-full flex-col h-full px-3`}
   .label {
     ${tw`pb-1 text-tiny font-semibold`}
-    color: ${({ theme }) => theme.text29};
+    color: ${({ theme }) => theme.text37};
   }
   img {
     height: 20px;
@@ -124,7 +124,7 @@ const INPUT_WRAPPER = styled.div`
   }
   .suffixText {
     ${tw`text-tiny font-semibold`}
-    color: ${({ theme }) => theme.text29};
+    color: ${({ theme }) => theme.text37};
   }
   .ant-input {
     ${tw`text-left font-medium`}

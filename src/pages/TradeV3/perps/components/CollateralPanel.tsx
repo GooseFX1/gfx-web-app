@@ -115,7 +115,7 @@ const FEES = styled.div<{ $height: boolean }>`
   }
   .value {
     ${tw`text-tiny font-semibold`}
-    color: ${({ theme }) => theme.text29};
+    color: ${({ theme }) => theme.text37};
   }
   .tier {
     ${tw`text-tiny font-semibold mb-[5px]`}
