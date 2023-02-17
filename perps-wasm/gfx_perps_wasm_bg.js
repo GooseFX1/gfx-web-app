@@ -1,6 +1,10 @@
-import * as wasm from './gfx_perps_wasm_bg.wasm';
+let wasm;
+export function __wbg_set_wasm(val) {
+    wasm = val;
+}
 
-const heap = new Array(32).fill(undefined);
+
+const heap = new Array(128).fill(undefined);
 
 heap.push(undefined, null, true, false);
 
@@ -9,7 +13,7 @@ function getObject(idx) { return heap[idx]; }
 let heap_next = heap.length;
 
 function dropObject(idx) {
-    if (idx < 36) return;
+    if (idx < 132) return;
     heap[idx] = heap_next;
     heap_next = idx;
 }
@@ -20,16 +24,20 @@ function takeObject(idx) {
     return ret;
 }
 
-let WASM_VECTOR_LEN = 0;
-
-let cachedUint8Memory0 = new Uint8Array();
+let cachedUint8Memory0 = null;
 
 function getUint8Memory0() {
-    if (cachedUint8Memory0.byteLength === 0) {
+    if (cachedUint8Memory0 === null || cachedUint8Memory0.byteLength === 0) {
         cachedUint8Memory0 = new Uint8Array(wasm.memory.buffer);
     }
     return cachedUint8Memory0;
 }
+
+function getArrayU8FromWasm0(ptr, len) {
+    return getUint8Memory0().subarray(ptr / 1, ptr / 1 + len);
+}
+
+let WASM_VECTOR_LEN = 0;
 
 const lTextEncoder = typeof TextEncoder === 'undefined' ? (0, module.require)('util').TextEncoder : TextEncoder;
 
@@ -90,10 +98,10 @@ function isLikeNone(x) {
     return x === undefined || x === null;
 }
 
-let cachedInt32Memory0 = new Int32Array();
+let cachedInt32Memory0 = null;
 
 function getInt32Memory0() {
-    if (cachedInt32Memory0.byteLength === 0) {
+    if (cachedInt32Memory0 === null || cachedInt32Memory0.byteLength === 0) {
         cachedInt32Memory0 = new Int32Array(wasm.memory.buffer);
     }
     return cachedInt32Memory0;
@@ -108,10 +116,10 @@ function addHeapObject(obj) {
     return idx;
 }
 
-let cachedFloat64Memory0 = new Float64Array();
+let cachedFloat64Memory0 = null;
 
 function getFloat64Memory0() {
-    if (cachedFloat64Memory0.byteLength === 0) {
+    if (cachedFloat64Memory0 === null || cachedFloat64Memory0.byteLength === 0) {
         cachedFloat64Memory0 = new Float64Array(wasm.memory.buffer);
     }
     return cachedFloat64Memory0;
@@ -216,8 +224,8 @@ function makeMutClosure(arg0, arg1, dtor, f) {
 
     return real;
 }
-function __wbg_adapter_30(arg0, arg1, arg2) {
-    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hf00fc0e3d61bda87(arg0, arg1, addHeapObject(arg2));
+function __wbg_adapter_32(arg0, arg1, arg2) {
+    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h531de189d4431127(arg0, arg1, addHeapObject(arg2));
 }
 
 function passArray8ToWasm0(arg, malloc) {
@@ -287,14 +295,12 @@ export function find_max(data, callback_info_len, slot_size) {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         var ptr0 = passArray8ToWasm0(data, wasm.__wbindgen_malloc);
         var len0 = WASM_VECTOR_LEN;
-        wasm.find_max(retptr, ptr0, len0, callback_info_len, slot_size);
+        wasm.find_max(retptr, ptr0, len0, addHeapObject(data), callback_info_len, slot_size);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         return r0 === 0 ? undefined : r1 >>> 0;
     } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
-        data.set(getUint8Memory0().subarray(ptr0 / 1, ptr0 / 1 + len0));
-        wasm.__wbindgen_free(ptr0, len0 * 1);
     }
 }
 
@@ -309,21 +315,19 @@ export function find_min(data, callback_info_len, slot_size) {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         var ptr0 = passArray8ToWasm0(data, wasm.__wbindgen_malloc);
         var len0 = WASM_VECTOR_LEN;
-        wasm.find_min(retptr, ptr0, len0, callback_info_len, slot_size);
+        wasm.find_min(retptr, ptr0, len0, addHeapObject(data), callback_info_len, slot_size);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         return r0 === 0 ? undefined : r1 >>> 0;
     } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
-        data.set(getUint8Memory0().subarray(ptr0 / 1, ptr0 / 1 + len0));
-        wasm.__wbindgen_free(ptr0, len0 * 1);
     }
 }
 
-let cachedBigUint64Memory0 = new BigUint64Array();
+let cachedBigUint64Memory0 = null;
 
 function getBigUint64Memory0() {
-    if (cachedBigUint64Memory0.byteLength === 0) {
+    if (cachedBigUint64Memory0 === null || cachedBigUint64Memory0.byteLength === 0) {
         cachedBigUint64Memory0 = new BigUint64Array(wasm.memory.buffer);
     }
     return cachedBigUint64Memory0;
@@ -345,7 +349,7 @@ export function find_l2_depth(data, callback_info_len, slot_size, depth, increas
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         var ptr0 = passArray8ToWasm0(data, wasm.__wbindgen_malloc);
         var len0 = WASM_VECTOR_LEN;
-        wasm.find_l2_depth(retptr, ptr0, len0, callback_info_len, slot_size, depth, increasing);
+        wasm.find_l2_depth(retptr, ptr0, len0, addHeapObject(data), callback_info_len, slot_size, depth, increasing);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var v1 = getArrayU64FromWasm0(r0, r1).slice();
@@ -353,15 +357,13 @@ export function find_l2_depth(data, callback_info_len, slot_size, depth, increas
         return v1;
     } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
-        data.set(getUint8Memory0().subarray(ptr0 / 1, ptr0 / 1 + len0));
-        wasm.__wbindgen_free(ptr0, len0 * 1);
     }
 }
 
-let cachedUint32Memory0 = new Uint32Array();
+let cachedUint32Memory0 = null;
 
 function getUint32Memory0() {
-    if (cachedUint32Memory0.byteLength === 0) {
+    if (cachedUint32Memory0 === null || cachedUint32Memory0.byteLength === 0) {
         cachedUint32Memory0 = new Uint32Array(wasm.memory.buffer);
     }
     return cachedUint32Memory0;
@@ -377,7 +379,7 @@ function passArrayJsValueToWasm0(array, malloc) {
     return ptr;
 }
 
-let stack_pointer = 32;
+let stack_pointer = 128;
 
 function addBorrowedObject(obj) {
     if (stack_pointer == 1) throw new Error('out of js stack');
@@ -449,8 +451,8 @@ export function __wbgtest_console_error(args) {
     }
 }
 
-function __wbg_adapter_60(arg0, arg1) {
-    wasm.wasm_bindgen__convert__closures__invoke0_mut__h10fdcdce2e90ab45(arg0, arg1);
+function __wbg_adapter_62(arg0, arg1) {
+    wasm.wasm_bindgen__convert__closures__invoke0_mut__h5099afc3f75fbbe5(arg0, arg1);
 }
 
 function handleError(f, args) {
@@ -460,16 +462,12 @@ function handleError(f, args) {
         wasm.__wbindgen_exn_store(addHeapObject(e));
     }
 }
-function __wbg_adapter_89(arg0, arg1, arg2, arg3, arg4) {
-    wasm.wasm_bindgen__convert__closures__invoke3_mut__h01785b9a230246c5(arg0, arg1, addHeapObject(arg2), arg3, addHeapObject(arg4));
+function __wbg_adapter_91(arg0, arg1, arg2, arg3, arg4) {
+    wasm.wasm_bindgen__convert__closures__invoke3_mut__h129ead944ac25281(arg0, arg1, addHeapObject(arg2), arg3, addHeapObject(arg4));
 }
 
-function __wbg_adapter_118(arg0, arg1, arg2, arg3) {
-    wasm.wasm_bindgen__convert__closures__invoke2_mut__h48cb17673b70c4e7(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
-}
-
-function getArrayU8FromWasm0(ptr, len) {
-    return getUint8Memory0().subarray(ptr / 1, ptr / 1 + len);
+function __wbg_adapter_120(arg0, arg1, arg2, arg3) {
+    wasm.wasm_bindgen__convert__closures__invoke2_mut__h854abd88de8e9ee0(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
 }
 
 function _assertClass(instance, klass) {
@@ -481,8 +479,8 @@ function _assertClass(instance, klass) {
 /**
 * Initialize Javascript logging and panic handler
 */
-export function init() {
-    wasm.init();
+export function solana_program_init() {
+    wasm.solana_program_init();
 }
 
 /**
@@ -542,6 +540,16 @@ export class Fractional {
     }
 }
 /**
+* A hash; the 32-byte output of a hashing algorithm.
+*
+* This struct is used most often in `solana-sdk` and related crates to contain
+* a [SHA-256] hash, but may instead contain a [blake3] hash, as created by the
+* [`blake3`] module (and used in [`Message::hash`]).
+*
+* [SHA-256]: https://en.wikipedia.org/wiki/SHA-2
+* [blake3]: https://github.com/BLAKE3-team/BLAKE3
+* [`blake3`]: crate::blake3
+* [`Message::hash`]: crate::message::Message::hash
 */
 export class Hash {
 
@@ -792,8 +800,7 @@ export class Instructions {
     */
     push(instruction) {
         _assertClass(instruction, Instruction);
-        var ptr0 = instruction.ptr;
-        instruction.ptr = 0;
+        var ptr0 = instruction.__destroy_into_raw();
         wasm.instructions_push(this.ptr, ptr0);
     }
 }
@@ -948,12 +955,25 @@ export class Message {
     */
     set recent_blockhash(arg0) {
         _assertClass(arg0, Hash);
-        var ptr0 = arg0.ptr;
-        arg0.ptr = 0;
+        var ptr0 = arg0.__destroy_into_raw();
         wasm.__wbg_set_message_recent_blockhash(this.ptr, ptr0);
     }
 }
 /**
+* The address of a [Solana account][acc].
+*
+* Some account addresses are [ed25519] public keys, with corresponding secret
+* keys that are managed off-chain. Often, though, account addresses do not
+* have corresponding secret keys &mdash; as with [_program derived
+* addresses_][pdas] &mdash; or the secret key is not relevant to the operation
+* of a program, and may have even been disposed of. As running Solana programs
+* can not safely create or manage secret keys, the full [`Keypair`] is not
+* defined in `solana-program` but in `solana-sdk`.
+*
+* [acc]: https://docs.solana.com/developing/programming-model/accounts
+* [ed25519]: https://ed25519.cr.yp.to/
+* [pdas]: https://docs.solana.com/developing/programming-model/calling-between-programs#program-derived-addresses
+* [`Keypair`]: https://docs.rs/solana-sdk/latest/solana_sdk/signer/keypair/struct.Keypair.html
 */
 export class Pubkey {
 
@@ -1361,13 +1381,11 @@ export class Transaction {
     */
     constructor(instructions, payer) {
         _assertClass(instructions, Instructions);
-        var ptr0 = instructions.ptr;
-        instructions.ptr = 0;
+        var ptr0 = instructions.__destroy_into_raw();
         let ptr1 = 0;
         if (!isLikeNone(payer)) {
             _assertClass(payer, Pubkey);
-            ptr1 = payer.ptr;
-            payer.ptr = 0;
+            ptr1 = payer.__destroy_into_raw();
         }
         const ret = wasm.transaction_constructor(ptr0, ptr1);
         return Transaction.__wrap(ret);
@@ -1547,6 +1565,10 @@ export function __wbg_matherror_new(arg0) {
     return addHeapObject(ret);
 };
 
+export function __wbindgen_copy_to_typed_array(arg0, arg1, arg2) {
+    new Uint8Array(getObject(arg2).buffer, getObject(arg2).byteOffset, getObject(arg2).byteLength).set(getArrayU8FromWasm0(arg0, arg1));
+};
+
 export function __wbg_log_537e3ef66b6a39be(arg0, arg1) {
     console.log(getStringFromWasm0(arg0, arg1));
 };
@@ -1593,7 +1615,7 @@ export function __wbg_wbgtestinvoke_1a19031fd0724979() { return handleError(func
             const a = state0.a;
             state0.a = 0;
             try {
-                return __wbg_adapter_60(a, state0.b, );
+                return __wbg_adapter_62(a, state0.b, );
             } finally {
                 state0.a = a;
             }
@@ -1785,7 +1807,7 @@ export function __wbg_forEach_ce1177df15902e0c(arg0, arg1, arg2) {
             const a = state0.a;
             state0.a = 0;
             try {
-                return __wbg_adapter_89(a, state0.b, arg0, arg1, arg2);
+                return __wbg_adapter_91(a, state0.b, arg0, arg1, arg2);
             } finally {
                 state0.a = a;
             }
@@ -1833,7 +1855,7 @@ export function __wbg_new_9962f939219f1820(arg0, arg1) {
             const a = state0.a;
             state0.a = 0;
             try {
-                return __wbg_adapter_118(a, state0.b, arg0, arg1);
+                return __wbg_adapter_120(a, state0.b, arg0, arg1);
             } finally {
                 state0.a = a;
             }
@@ -1970,18 +1992,18 @@ export function __wbg_getRandomValues_307049345d0bd88c(arg0) {
     return addHeapObject(ret);
 };
 
-export function __wbg_pubkey_new(arg0) {
-    const ret = Pubkey.__wrap(arg0);
-    return addHeapObject(ret);
-};
-
 export function __wbg_instruction_new(arg0) {
     const ret = Instruction.__wrap(arg0);
     return addHeapObject(ret);
 };
 
-export function __wbindgen_closure_wrapper263(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 75, __wbg_adapter_30);
+export function __wbg_pubkey_new(arg0) {
+    const ret = Pubkey.__wrap(arg0);
+    return addHeapObject(ret);
+};
+
+export function __wbindgen_closure_wrapper264(arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 75, __wbg_adapter_32);
     return addHeapObject(ret);
 };
 
