@@ -126,7 +126,7 @@ const HEADER = styled.div`
 
     .btn {
       ${tw`flex items-center justify-center text-tiny font-semibold w-full h-full`}
-      color: ${({ theme }) => theme.text30};
+      color: ${({ theme }) => theme.text35};
     }
 
     .gradient-bg {

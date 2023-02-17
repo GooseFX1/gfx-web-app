@@ -9,8 +9,8 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { Order } from 'openbook-ts/serum/lib/market'
-import { OpenOrders } from 'openbook-ts/serum'
+import { Order } from '@project-serum/serum/lib/market'
+import { OpenOrders } from '@project-serum/serum'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
 import { useCrypto } from './crypto'
@@ -62,8 +62,7 @@ const historyUrl = 'https://api.raydium.io/v1/dex/trade/address?market='
 export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
   const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
-  const wal = useWallet()
-  const { wallet } = useWallet()
+  const wallet = useWallet()
   const [loading, setLoading] = useState(false)
   const [openOrders, setOpenOrders] = useState<OpenOrders[]>([])
   const [orders, setOrders] = useState<IOrder[]>([])
@@ -91,7 +90,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   }, [selectedCrypto.market])
 
   const fetchBalances = useCallback(async () => {
-    if (wallet?.adapter?.publicKey && selectedCrypto.market) {
+    if (wallet?.publicKey && selectedCrypto.market) {
       try {
         const allOrders = await selectedCrypto.market.loadFills(connection, 1000)
         const openOrders = await selectedCrypto.market.findOpenOrdersAccountsForOwner(connection, wallet.publicKey)
@@ -103,7 +102,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
         await notify({ type: 'error', message: `Error fetching balances from serum market`, icon: 'error' }, e)
       }
     }
-  }, [connection, selectedCrypto.market, wallet?.adapter?.publicKey])
+  }, [connection, selectedCrypto.market, wallet?.publicKey])
 
   const fetchTradeHistory = useCallback(async () => {
     if (wallet.publicKey && selectedCrypto.market) {
@@ -124,19 +123,19 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
   }, [connection, selectedCrypto.market, wallet.publicKey])
 
   const fetchOpenOrders = useCallback(async () => {
-    if (wallet?.adapter?.publicKey && selectedCrypto.market) {
+    if (wallet?.publicKey && selectedCrypto.market) {
       try {
         const marketsOrders = await serum.getOrders(
           connection,
           selectedCrypto.market,
-          wallet?.adapter?.publicKey as PublicKey
+          wallet?.publicKey as PublicKey
         )
         setOrders(marketsOrders.map((marketOrder) => ({ order: marketOrder, name: selectedCrypto.pair })))
       } catch (e: any) {
         await notify({ type: 'error', message: `Error fetching open orders from serum market`, icon: 'error' }, e)
       }
     }
-  }, [connection, selectedCrypto.market, selectedCrypto.pair, wallet?.adapter?.publicKey])
+  }, [connection, selectedCrypto.market, selectedCrypto.pair, wallet?.publicKey])
 
   const getPairFromMarketAddress = (address: PublicKey) => serum.getMarketFromAddress(address)?.name
 
@@ -145,7 +144,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
 
     if (selectedCrypto.market) {
       try {
-        const signature = await crypto.cancelOrder(connection, selectedCrypto.market, order.order, wal)
+        const signature = await crypto.cancelOrder(connection, selectedCrypto.market, order.order, wallet)
         const ask = getAskSymbolFromPair(selectedCrypto.pair)
         const { price, side, size } = order.order
         await notify({
@@ -175,7 +174,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
       setLoading(true)
 
       try {
-        const signature = await crypto.settleFunds(connection, selectedCrypto.market, openOrder, wal)
+        const signature = await crypto.settleFunds(connection, selectedCrypto.market, openOrder, wallet)
         const baseTokens = baseAvailable && `${baseAvailable} ${baseSymbol}`
         const quoteTokens = quoteAvailable && `${quoteAvailable} ${quoteSymbol}`
         await notify({

@@ -20,7 +20,7 @@ const WRAPPER = styled.div`
 
   .percentage-num {
     ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center justify-center h-full text-[16px]`}
-    color: ${({ theme }) => theme.text30};
+    color: ${({ theme }) => theme.text35};
   }
 
   .selected {
@@ -75,7 +75,7 @@ const COIN_INFO = styled.div`
 
   .market-add {
     ${tw`text-[16px] font-semibold`}
-    color: ${({ theme }) => theme.text31};
+    color: ${({ theme }) => theme.text36};
   }
 
   .coin {
@@ -101,7 +101,7 @@ const INPUT = styled.div`
   }
 
   .input-amt::placeholder {
-    color: ${({ theme }) => theme.text30};
+    color: ${({ theme }) => theme.text35};
   }
 
   input::-webkit-outer-spin-button,
