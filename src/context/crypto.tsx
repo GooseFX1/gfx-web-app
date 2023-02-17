@@ -94,6 +94,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (pairs.length > 0) {
+      console.log('is spot in crupto context: ', selectedCrypto)
       setSelectedCrypto(pairs[0])
     }
     setFilteredSearchPairs(pairs)

@@ -66,6 +66,7 @@ export const ENDPOINTS: ENDPOINTS = {
 interface ISettingsConfig {
   chainId: ENV
   connection: Connection
+  devnetConnection: Connection
   endpoint: string
   endpointName: string
   network: WalletAdapterNetwork
@@ -98,14 +99,17 @@ export function useConnectionConfig(): ISettingsConfig {
     throw new Error('Missing settings context')
   }
 
-  const { chainId, connection, endpoint, network, endpointName, setEndpointName } = context
-  return { chainId, connection, endpoint, network, endpointName, setEndpointName }
+  const { chainId, connection, endpoint, network, endpointName, setEndpointName, devnetConnection } = context
+  return { chainId, connection, endpoint, network, endpointName, setEndpointName, devnetConnection }
 }
 
 type IRPC_CACHE = null | USER_CONFIG_CACHE
 
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
+  const devnetConnection = new Connection(
+    'https://omniscient-frequent-wish.solana-devnet.quiknode.pro/8b6a255ef55a6dbe95332ebe4f6d1545eae4d128/'
+  )
   const { rpcHealth } = useRPCContext()
   const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
@@ -151,29 +155,19 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [endpointName])
 
-  //  const connection = useMemo(() => {
-  //    // sets rpc info to cache
-  //    window.localStorage.setItem(
-  //      'gfx-user-cache',
-  //      JSON.stringify({
-  //        ...existingUserCache,
-  //        endpoint: existingUserCache.endpointName === 'Custom' ? endpoint : null
-  //      })
-  //    )
+  const connection = useMemo(() => {
+    // sets rpc info to cache
+    window.localStorage.setItem(
+      'gfx-user-cache',
+      JSON.stringify({
+        ...existingUserCache,
+        endpoint: existingUserCache.endpointName === 'Custom' ? endpoint : null
+      })
+    )
 
-  //    // creates connection
-  //    return new Connection(endpoint, 'confirmed')
-  //  }, [endpoint])
-  const connection = useMemo(
-    () =>
-      new Connection(
-        'https://api.devnet.solana.com',
-        // eslint-disable-next-line max-len
-        //'https://monke9e00d723218b4f1bbb2e80ecb49f360a.xyz2.hyperplane.dev',
-        'confirmed'
-      ),
-    [endpoint]
-  )
+    // creates connection
+    return new Connection(endpoint, 'confirmed')
+  }, [endpoint])
 
   return (
     <SettingsContext.Provider
@@ -185,7 +179,8 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         endpointName,
         setEndpointName,
         setSlippage: (val: number) => setSlippage(val),
-        slippage: slippage
+        slippage: slippage,
+        devnetConnection
       }}
     >
       {children}
