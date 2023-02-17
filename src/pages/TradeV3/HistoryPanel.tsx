@@ -140,8 +140,8 @@ const POSITIONS = styled.div`
 `
 
 const OPEN_ORDER = styled.div`
-  ${tw`w-full`}
-  height: calc(100% - 80px);
+  ${tw`w-full overflow-y-auto`}
+  height: calc(100% - 60px);
 
   div {
     ${tw`w-full h-[45px] py-0 pr-0 pl-3 flex justify-between items-center text-sm font-medium`}
@@ -333,7 +333,7 @@ export const HistoryPanel: FC = () => {
   )
 
   const handleClosePosition = () => {
-    closePosition(orderBook)
+    setClosePositionModal(true)
   }
 
   const addNumbers = (arg1, arg2, arg3) => {

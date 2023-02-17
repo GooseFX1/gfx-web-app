@@ -325,7 +325,7 @@ export const PlaceOrder: FC = () => {
 
   const perpsBidBalance: number = useMemo(() => {
     if (!traderInfo || !traderInfo.balances || !traderInfo.traderRiskGroup) return 0
-    const balanceBid = Number(displayFractional(traderInfo?.traderRiskGroup.cashBalance))
+    const balanceBid = Number(traderInfo.marginAvailable)
     return balanceBid
   }, [traderInfo])
 
@@ -349,7 +349,6 @@ export const PlaceOrder: FC = () => {
       if (!connected) return ButtonState.Connect
       if (!traderInfo?.traderRiskGroupKey) return ButtonState.CreateAccount
       if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
-      const balanceBid = Number(displayFractional(traderInfo?.traderRiskGroup.cashBalance))
       if (order.side === 'buy' && order.total > perpsBidBalance) return ButtonState.BalanceExceeded
       if (order.side === 'sell' && order.size > perpsAskBalance) return ButtonState.BalanceExceeded
       return ButtonState.CanPlaceOrder

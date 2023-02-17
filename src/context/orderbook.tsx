@@ -10,6 +10,9 @@ import { loadBidsSlab } from '../pages/TradeV3/perps/utils'
 import { useTraderConfig } from './trader_risk_group'
 import * as anchor from '@project-serum/anchor'
 import { PublicKey } from '@solana/web3.js'
+import { httpClient } from '../api'
+import { NFT_LAUNCHPAD_API_BASE, NFT_LAUNCHPAD_API_ENDPOINTS } from '../api/NFTLaunchpad'
+import { GET_OPEN_ORDERS, GET_ORDERBOOK } from '../pages/TradeV3/perps/perpsConstants'
 
 export type OrderBook = {
   [x in MarketSide]: [number, number, BN, BN, string?][]
@@ -58,15 +61,12 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
     } else if (selectedCrypto.type === 'perps' && marketProductGroup) {
       const refreshOrderbook = async () => {
         await fetchPerpsOrderBook()
+        traderInfo.traderRiskGroupKey && (await fetchPerpsOpenOrders())
       }
       const t = setInterval(refreshOrderbook, 1000)
       return () => clearInterval(t) // clear
     }
   }, [selectedCrypto.pair, marketProductGroup, selectedCrypto.type])
-
-  useEffect(() => {
-    if (traderInfo.traderRiskGroupKey && orderbookResponse.bids && orderbookResponse.asks) fetchPerpsOpenOrders()
-  }, [traderInfo, orderbookResponse])
 
   const convertBidsAsks = (bids: IOrderbookType[], asks: IOrderbookType[]) => {
     const bidReturn: [number, number, BN, BN, string, string][] = bids.map((item) => {
@@ -129,51 +129,30 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   }
 
   const fetchPerpsOrderBook = async () => {
-    const bidResponse = await loadBidsSlab(connection, activeProduct.bids)
-    const askResponse = await loadBidsSlab(connection, activeProduct.asks)
-    const bidDepth = bidResponse.getL2DepthJS(10, true)
-    const askDepth = askResponse.getL2DepthJS(10, true)
-    const setBook = convertBidsAsksOld(bidDepth, askDepth)
-    setOrderbookResponse({
-      bids: bidResponse,
-      asks: askResponse
+    const res = await httpClient('nft-launchpad').post(`${GET_ORDERBOOK}`, {
+      API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
+      pairName: 'SOL-PERPS'
     })
-    setOrderBook((prevState) => ({ ...prevState, asks: setBook[1], bids: setBook[0] }))
+    const orderbookBids = res.data?.bids.map((item) => [item.price, item.size])
+    const orderbookAsks = res.data?.asks.map((item) => [item.price, item.size])
+    setOrderBook((prevState) => ({ ...prevState, asks: orderbookAsks, bids: orderbookBids }))
   }
 
   const fetchPerpsOpenOrders = async () => {
-    const bids: IOrderbookType[] = []
-    const asks: IOrderbookType[] = []
-    for (const bid of orderbookResponse.bids.items(false)) {
-      const callbackBuffer = bid.callbackInfo
-      bids.push({
-        price: BigInt(bid.leafNode.getPrice().toString()),
-        size: BigInt(bid.leafNode.baseQuantity.toString()),
-        user: new PublicKey(callbackBuffer.slice(0, 32)).toBase58(),
-        orderId: bid.leafNode.key.toString()
-      })
-    }
-    for (const ask of orderbookResponse.asks.items(false)) {
-      const callbackBuffer = ask.callbackInfo
-      asks.push({
-        price: BigInt(ask.leafNode.getPrice().toString()),
-        size: BigInt(ask.leafNode.baseQuantity.toString()),
-        user: new PublicKey(callbackBuffer.slice(0, 32)).toBase58(),
-        orderId: ask.leafNode.key.toString()
-      })
-    }
-    const setBook = convertBidsAsks(bids, asks)
+    const res = await httpClient('nft-launchpad').post(`${GET_OPEN_ORDERS}`, {
+      API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
+      pairName: 'SOL-PERPS'
+    })
+
     const perpsOrders = []
     const user = traderInfo.traderRiskGroupKey.toBase58()
-    for (const ask of setBook[1]) {
-      for (const i of ask) {
-        if (i === user) perpsOrders.push({ order: { side: 'sell', price: ask[0], size: ask[1], orderId: ask[5] } })
-      }
+    for (const ask of res.data.asks) {
+      if (ask.user === user)
+        perpsOrders.push({ order: { side: 'sell', price: ask.price, size: ask.size, orderId: ask.orderId } })
     }
-    for (const bid of setBook[0]) {
-      for (const i of bid) {
-        if (i === user) perpsOrders.push({ order: { side: 'buy', price: bid[0], size: bid[1], orderId: bid[5] } })
-      }
+    for (const bid of res.data.bids) {
+      if (bid.user === user)
+        perpsOrders.push({ order: { side: 'buy', price: bid.price, size: bid.size, orderId: bid.orderId } })
     }
     setPerpsOpenOrders(perpsOrders)
     //console.log('orders', perpsOrders, traderInfo.traderRiskGroupKey.toBase58())

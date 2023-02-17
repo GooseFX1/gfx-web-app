@@ -124,6 +124,7 @@ export const DepositWithdraw: FC<{
   setDepositWithdrawModal: Dispatch<SetStateAction<boolean>>
 }> = ({ tradeType, setDepositWithdrawModal }) => {
   const { balances } = useAccounts()
+  const { traderInfo } = useTraderConfig()
   const { mode } = useDarkMode()
   const [amount, setAmount] = useState('')
   const perpTokenList = PERPS_COLLATERAL
@@ -142,16 +143,30 @@ export const DepositWithdraw: FC<{
   )
   const handlePercentageChange = (e: React.MouseEvent<HTMLElement>, index: number) => {
     setPercentageindex(index)
-    if (!tokenAmount) {
-      setAmount('0.00')
-      return
+    if (tradeType === 'deposit') {
+      if (!tokenAmount) {
+        setAmount('0.00')
+        return
+      }
+      let result = 0
+      if (index === 0) result = (+tokenAmount.uiAmountString * 25) / 100
+      else if (index === 1) result = (+tokenAmount.uiAmountString * 50) / 100
+      else if (index === 2) result = (+tokenAmount.uiAmountString * 75) / 100
+      else result = +tokenAmount.uiAmountString
+      setAmount(String(result))
+    } else {
+      const avail = traderInfo.marginAvailable
+      if (!avail) {
+        setAmount('0.00')
+        return
+      }
+      let result = 0
+      if (index === 0) result = (+avail * 25) / 100
+      else if (index === 1) result = (+avail * 50) / 100
+      else if (index === 2) result = (+avail * 75) / 100
+      else result = +avail
+      setAmount(result.toFixed(2))
     }
-    let result = 0
-    if (index === 0) result = (+tokenAmount.uiAmountString * 25) / 100
-    else if (index === 1) result = (+tokenAmount.uiAmountString * 50) / 100
-    else if (index === 2) result = (+tokenAmount.uiAmountString * 75) / 100
-    else result = +tokenAmount.uiAmountString
-    setAmount(String(result))
   }
   const handleInputChange = (e) => {
     const t = e.target.value
@@ -203,7 +218,15 @@ export const DepositWithdraw: FC<{
             <div className="market-add">{trunMarketAddress}</div>
           </COIN_INFO>
           <div className="dropdown">
-            <div className="available-bal">{tokenAmount ? tokenAmount.uiAmountString : '0.00'}</div>
+            <div className="available-bal">
+              {tradeType === 'deposit'
+                ? tokenAmount
+                  ? tokenAmount.uiAmountString
+                  : '0.00'
+                : traderInfo.marginAvailable
+                ? traderInfo.marginAvailable
+                : '0.00'}
+            </div>
             <img
               src={mode === 'lite' ? '/img/assets/arrow.svg' : '/img/assets/arrow-down.svg'}
               alt="arrow-icon"
@@ -239,7 +262,15 @@ export const DepositWithdraw: FC<{
           ))}
         </div>
       </div>
-      <button className="submit-btn" onClick={handleSubmit}>
+      <button
+        className="submit-btn"
+        onClick={handleSubmit}
+        disabled={
+          tradeType !== 'deposit'
+            ? +traderInfo.marginAvailable < +amount || !amount
+            : +tokenAmount.uiAmountString < +amount || !amount
+        }
+      >
         {tradeType === 'deposit' ? 'Deposit' : 'Withdraw'}
       </button>
     </WRAPPER>
