@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
 import BN from 'bn.js'
-import { Orderbook } from 'openbook-ts/serum'
+import { Orderbook, Market } from 'openbook-ts/serum'
 import { useConnectionConfig } from './settings'
 import { notify } from '../utils'
 import { serum } from '../web3'
@@ -39,34 +39,36 @@ const DEFAULT_ORDER_BOOK = { asks: [], bids: [] }
 const OrderBookContext = createContext<IOrderBookConfig | null>(null)
 
 export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { selectedCrypto } = useCrypto()
+  const { selectedCrypto, isSpot } = useCrypto()
   const { connection } = useConnectionConfig()
   const [orderBook, setOrderBook] = useState<OrderBook>(DEFAULT_ORDER_BOOK)
   const [openOrders, setOpenOrders] = useState([])
   const [perpsOpenOrders, setPerpsOpenOrders] = useState([])
-  const [orderbookResponse, setOrderbookResponse] = useState({
-    bids: null,
-    asks: null
-  })
   const { activeProduct, marketProductGroup, traderInfo } = useTraderConfig()
 
   useEffect(() => {
     if (selectedCrypto.type === 'crypto') {
-      const subscriptions: number[] = []
-      fetchOrderBook(subscriptions)
-      return () => {
-        setOrderBook(DEFAULT_ORDER_BOOK)
-        subscriptions.forEach((sub) => connection.removeAccountChangeListener(sub))
+      setOrderBook(DEFAULT_ORDER_BOOK)
+      const { address, programId } = serum.getMarketFromAddress(new PublicKey(selectedCrypto.marketAddress))
+
+      const refreshSpotOrderbook = async () => {
+        if (selectedCrypto.type === 'crypto') {
+          const market = await Market.load(connection, address, undefined, programId)
+          await fetchOrderBook(market)
+          selectedCrypto.marketAddress && (await fetchOrderBook(market))
+        }
       }
+      const int = setInterval(refreshSpotOrderbook, 1000)
+      return () => clearInterval(int)
     } else if (selectedCrypto.type === 'perps' && marketProductGroup) {
       const refreshOrderbook = async () => {
         await fetchPerpsOrderBook()
         traderInfo.traderRiskGroupKey && (await fetchPerpsOpenOrders())
       }
-      const t = setInterval(refreshOrderbook, 1000)
-      return () => clearInterval(t) // clear
+      const t2 = setInterval(refreshOrderbook, 1000)
+      return () => clearInterval(t2) // clear
     }
-  }, [selectedCrypto.pair, marketProductGroup, selectedCrypto.type])
+  }, [selectedCrypto.pair, marketProductGroup, isSpot, selectedCrypto.type])
 
   const convertBidsAsks = (bids: IOrderbookType[], asks: IOrderbookType[]) => {
     const bidReturn: [number, number, BN, BN, string, string][] = bids.map((item) => {
@@ -158,25 +160,11 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
     //console.log('orders', perpsOrders, traderInfo.traderRiskGroupKey.toBase58())
   }
 
-  const fetchOrderBook = async (subscriptions: number[]) => {
+  const fetchOrderBook = async (market: Market) => {
     try {
-      const market = selectedCrypto.market ?? (await serum.getMarket(connection, selectedCrypto.pair))
       const asks = await market.loadAsks(connection)
       const bids = await market.loadBids(connection)
       setOrderBook((prevState) => ({ ...prevState, asks: asks.getL2(20), bids: bids.getL2(20) }))
-
-      const subs = await Promise.all([
-        serum.subscribeToOrderBook(connection, market, 'asks', (account, market) => {
-          const asks = Orderbook.decode(market, account.data).getL2(20)
-          setOrderBook((prevState) => ({ ...prevState, asks }))
-        }),
-        serum.subscribeToOrderBook(connection, market, 'bids', (account, market) => {
-          const bids = Orderbook.decode(market, account.data).getL2(20)
-          setOrderBook((prevState) => ({ ...prevState, bids }))
-        })
-      ])
-
-      subs.forEach((sub) => subscriptions.push(sub))
     } catch (e: any) {
       await notify({ type: 'error', message: 'Error fetching serum order book', icon: 'rate_error' }, e)
     }

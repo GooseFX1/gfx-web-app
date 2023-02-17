@@ -231,7 +231,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { order, setOrder } = useOrder()
 
   const wallet = useWallet()
-  const { connection } = useConnectionConfig()
+  const { devnetConnection: connection } = useConnectionConfig()
 
   const refreshTraderRiskGroup = async () => {
     const traderRiskGroupAccount = await getTraderRiskGroupAccount(wallet, connection)

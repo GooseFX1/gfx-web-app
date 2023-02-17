@@ -349,8 +349,7 @@ export const PlaceOrder: FC = () => {
       if (!connected) return ButtonState.Connect
       if (!traderInfo?.traderRiskGroupKey) return ButtonState.CreateAccount
       if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
-      if (order.side === 'buy' && order.total > perpsBidBalance) return ButtonState.BalanceExceeded
-      if (order.side === 'sell' && order.size > perpsAskBalance) return ButtonState.BalanceExceeded
+      if (order.total > perpsBidBalance) return ButtonState.BalanceExceeded
       return ButtonState.CanPlaceOrder
     }
   }, [connected, selectedCrypto.pair, order, isSpot, traderInfo])
@@ -410,19 +409,12 @@ export const PlaceOrder: FC = () => {
         setOrder((prev) => ({ ...prev, total: 0 }))
       }
     } else {
-      const finalValue =
-        order.side === 'buy'
-          ? removeFloatingPointError(value * +perpsBidBalance)
-          : removeFloatingPointError(value * +perpsAskBalance)
+      const finalValue = removeFloatingPointError(value * +perpsBidBalance)
       if (finalValue) {
         setSelectedTotal(value)
-        if (order.side === 'buy') {
-          setFocused('total')
-          setOrder((prev) => ({ ...prev, total: finalValue }))
-        } else {
-          setFocused('size')
-          setOrder((prev) => ({ ...prev, size: finalValue }))
-        }
+
+        setFocused('total')
+        setOrder((prev) => ({ ...prev, total: finalValue }))
       } else if (!finalValue && value === 0) {
         setSelectedTotal(value)
         setFocused('total')

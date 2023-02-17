@@ -220,13 +220,6 @@ function __wbg_adapter_30(arg0, arg1, arg2) {
     wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hf00fc0e3d61bda87(arg0, arg1, addHeapObject(arg2));
 }
 
-function _assertClass(instance, klass) {
-    if (!(instance instanceof klass)) {
-        throw new Error(`expected instance of ${klass.name}`);
-    }
-    return instance.ptr;
-}
-
 function passArray8ToWasm0(arg, malloc) {
     const ptr = malloc(arg.length * 1);
     getUint8Memory0().set(arg, ptr / 1);
@@ -271,32 +264,6 @@ export function margin_available(market_product_group, trader_risk_group) {
         const ptr1 = passArray8ToWasm0(trader_risk_group, wasm.__wbindgen_malloc);
         const len1 = WASM_VECTOR_LEN;
         wasm.margin_available(retptr, ptr0, len0, ptr1, len1);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return Fractional.__wrap(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-}
-
-/**
-* @param {Uint8Array} market_product_group
-* @param {Uint8Array} trader_risk_group
-* @param {number} productIndex
-* @returns {Fractional}
-*/
-export function get_liquidation_price(market_product_group, trader_risk_group, productIndex) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        const ptr0 = passArray8ToWasm0(market_product_group, wasm.__wbindgen_malloc);
-        const len0 = WASM_VECTOR_LEN;
-        const ptr1 = passArray8ToWasm0(trader_risk_group, wasm.__wbindgen_malloc);
-        const len1 = WASM_VECTOR_LEN;
-        wasm.get_liquidation_price(retptr, ptr0, len0, ptr1, len1, productIndex);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -482,7 +449,7 @@ export function __wbgtest_console_error(args) {
     }
 }
 
-function __wbg_adapter_73(arg0, arg1) {
+function __wbg_adapter_60(arg0, arg1) {
     wasm.wasm_bindgen__convert__closures__invoke0_mut__h10fdcdce2e90ab45(arg0, arg1);
 }
 
@@ -493,16 +460,23 @@ function handleError(f, args) {
         wasm.__wbindgen_exn_store(addHeapObject(e));
     }
 }
-function __wbg_adapter_102(arg0, arg1, arg2, arg3, arg4) {
+function __wbg_adapter_89(arg0, arg1, arg2, arg3, arg4) {
     wasm.wasm_bindgen__convert__closures__invoke3_mut__h01785b9a230246c5(arg0, arg1, addHeapObject(arg2), arg3, addHeapObject(arg4));
 }
 
-function __wbg_adapter_131(arg0, arg1, arg2, arg3) {
+function __wbg_adapter_118(arg0, arg1, arg2, arg3) {
     wasm.wasm_bindgen__convert__closures__invoke2_mut__h48cb17673b70c4e7(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
 }
 
 function getArrayU8FromWasm0(ptr, len) {
     return getUint8Memory0().subarray(ptr / 1, ptr / 1 + len);
+}
+
+function _assertClass(instance, klass) {
+    if (!(instance instanceof klass)) {
+        throw new Error(`expected instance of ${klass.name}`);
+    }
+    return instance.ptr;
 }
 /**
 * Initialize Javascript logging and panic handler
@@ -565,185 +539,6 @@ export class Fractional {
     */
     set exp(arg0) {
         wasm.__wbg_set_fractional_exp(this.ptr, arg0);
-    }
-    /**
-    * @param {bigint} m
-    * @param {bigint} e
-    */
-    constructor(m, e) {
-        const ret = wasm.fractional_new(m, e);
-        return Fractional.__wrap(ret);
-    }
-    /**
-    * @param {string} s
-    * @returns {Fractional}
-    */
-    static from_str(s) {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            const ptr0 = passStringToWasm0(s, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            const len0 = WASM_VECTOR_LEN;
-            wasm.fractional_from_str(retptr, ptr0, len0);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            var r2 = getInt32Memory0()[retptr / 4 + 2];
-            if (r2) {
-                throw takeObject(r1);
-            }
-            return Fractional.__wrap(r0);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-        }
-    }
-    /**
-    * @returns {boolean}
-    */
-    is_negative() {
-        const ret = wasm.fractional_is_negative(this.ptr);
-        return ret !== 0;
-    }
-    /**
-    * @returns {number}
-    */
-    sign() {
-        const ret = wasm.fractional_sign(this.ptr);
-        return ret;
-    }
-    /**
-    * @param {Fractional} other
-    * @returns {Fractional}
-    */
-    min(other) {
-        _assertClass(other, Fractional);
-        var ptr0 = other.ptr;
-        other.ptr = 0;
-        const ret = wasm.fractional_min(this.ptr, ptr0);
-        return Fractional.__wrap(ret);
-    }
-    /**
-    * @param {Fractional} other
-    * @returns {Fractional}
-    */
-    max(other) {
-        _assertClass(other, Fractional);
-        var ptr0 = other.ptr;
-        other.ptr = 0;
-        const ret = wasm.fractional_max(this.ptr, ptr0);
-        return Fractional.__wrap(ret);
-    }
-    /**
-    * @param {Fractional} other
-    * @returns {Fractional}
-    */
-    checked_add(other) {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertClass(other, Fractional);
-            var ptr0 = other.ptr;
-            other.ptr = 0;
-            wasm.fractional_checked_add(retptr, this.ptr, ptr0);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            var r2 = getInt32Memory0()[retptr / 4 + 2];
-            if (r2) {
-                throw takeObject(r1);
-            }
-            return Fractional.__wrap(r0);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-        }
-    }
-    /**
-    * @param {Fractional} other
-    * @returns {Fractional}
-    */
-    checked_sub(other) {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertClass(other, Fractional);
-            var ptr0 = other.ptr;
-            other.ptr = 0;
-            wasm.fractional_checked_sub(retptr, this.ptr, ptr0);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            var r2 = getInt32Memory0()[retptr / 4 + 2];
-            if (r2) {
-                throw takeObject(r1);
-            }
-            return Fractional.__wrap(r0);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-        }
-    }
-    /**
-    * @param {Fractional} other
-    * @returns {Fractional}
-    */
-    checked_mul(other) {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertClass(other, Fractional);
-            var ptr0 = other.ptr;
-            other.ptr = 0;
-            wasm.fractional_checked_mul(retptr, this.ptr, ptr0);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            var r2 = getInt32Memory0()[retptr / 4 + 2];
-            if (r2) {
-                throw takeObject(r1);
-            }
-            return Fractional.__wrap(r0);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-        }
-    }
-    /**
-    * @param {Fractional} other
-    * @returns {Fractional}
-    */
-    checked_div(other) {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            _assertClass(other, Fractional);
-            var ptr0 = other.ptr;
-            other.ptr = 0;
-            wasm.fractional_checked_div(retptr, this.ptr, ptr0);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            var r2 = getInt32Memory0()[retptr / 4 + 2];
-            if (r2) {
-                throw takeObject(r1);
-            }
-            return Fractional.__wrap(r0);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-        }
-    }
-    /**
-    * @param {number} digits
-    * @returns {Fractional}
-    */
-    round_unchecked(digits) {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            wasm.fractional_round_unchecked(retptr, this.ptr, digits);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            var r2 = getInt32Memory0()[retptr / 4 + 2];
-            if (r2) {
-                throw takeObject(r1);
-            }
-            return Fractional.__wrap(r0);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-        }
-    }
-    /**
-    * @returns {Fractional}
-    */
-    abs() {
-        const ret = wasm.fractional_abs(this.ptr);
-        return Fractional.__wrap(ret);
     }
 }
 /**
@@ -1342,7 +1137,7 @@ export class SystemInstruction {
 
     free() {
         const ptr = this.__destroy_into_raw();
-        console.log(ptr);
+        wasm.__wbg_systeminstruction_free(ptr);
     }
     /**
     * @param {Pubkey} from_pubkey
@@ -1743,13 +1538,13 @@ export class WasmBindgenTestContext {
     }
 }
 
+export function __wbindgen_object_drop_ref(arg0) {
+    takeObject(arg0);
+};
+
 export function __wbg_matherror_new(arg0) {
     const ret = MathError.__wrap(arg0);
     return addHeapObject(ret);
-};
-
-export function __wbindgen_object_drop_ref(arg0) {
-    takeObject(arg0);
 };
 
 export function __wbg_log_537e3ef66b6a39be(arg0, arg1) {
@@ -1798,7 +1593,7 @@ export function __wbg_wbgtestinvoke_1a19031fd0724979() { return handleError(func
             const a = state0.a;
             state0.a = 0;
             try {
-                return __wbg_adapter_73(a, state0.b, );
+                return __wbg_adapter_60(a, state0.b, );
             } finally {
                 state0.a = a;
             }
@@ -1990,7 +1785,7 @@ export function __wbg_forEach_ce1177df15902e0c(arg0, arg1, arg2) {
             const a = state0.a;
             state0.a = 0;
             try {
-                return __wbg_adapter_102(a, state0.b, arg0, arg1, arg2);
+                return __wbg_adapter_89(a, state0.b, arg0, arg1, arg2);
             } finally {
                 state0.a = a;
             }
@@ -2038,7 +1833,7 @@ export function __wbg_new_9962f939219f1820(arg0, arg1) {
             const a = state0.a;
             state0.a = 0;
             try {
-                return __wbg_adapter_131(a, state0.b, arg0, arg1);
+                return __wbg_adapter_118(a, state0.b, arg0, arg1);
             } finally {
                 state0.a = a;
             }
@@ -2185,8 +1980,8 @@ export function __wbg_instruction_new(arg0) {
     return addHeapObject(ret);
 };
 
-export function __wbindgen_closure_wrapper287(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 76, __wbg_adapter_30);
+export function __wbindgen_closure_wrapper263(arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 75, __wbg_adapter_30);
     return addHeapObject(ret);
 };
 
