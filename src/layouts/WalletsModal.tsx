@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC, useCallback, useState, useEffect } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base'
@@ -29,11 +28,9 @@ const WALLET_MODAL = styled.div`
   ${tw`mr-[15px] h-[135px] sm:h-[100px] rounded-[10px] cursor-pointer`}
   background-color:${({ theme }) => theme.timePanelBackground};
   width: 115px !important;
-
   @media (max-width: 500px) {
     width: 80px !important;
   }
-
   &:hover {
     background-color: ${({ theme }) => theme.secondary2};
     ${tw`text-white`}
@@ -42,9 +39,8 @@ const WALLET_MODAL = styled.div`
     ${tw`h-[35px] w-[35px] sm:w-[25px] rounded-full sm:h-[25px] m-auto mt-5 sm:mt-[18px]`}
   }
 `
-const WALLET_DETECTED = styled.div`
-  ${tw`!block mx-[auto] h-[180px] rounded-[10px]
-    duration-500 border-2 cursor-pointer bg-white dark:bg-black-1 `}
+const WALLET_DETECTED = styled(SpaceBetweenDiv)`
+  ${tw`mr-[15px] h-[180px] rounded-[10px] flex flex-col border-2 cursor-pointer bg-white dark:bg-black-1 `}
   background-color: ${({ theme }) => theme.timePanelBackground};
   width: 160px !important;
   border: 1px solid #636363;
@@ -59,47 +55,35 @@ const STYLED_POPUP = styled(PopupCustom)`
   color: ${({ theme }) => theme.text11};
   ${tw`dark:text-[pink] text-[10px]`}
   .ant-modal-body {
-    ${tw`py-6 px-0`}
+    ${tw`py-6 px-0 pr-1`}
   }
   &.ant-modal {
     ${tw`dark:text-[20px]   text-[10px]`}
     background-color: ${({ theme }) => theme.walletModalWallet};
   }
   .otherWallet {
-    ${tw`text-[15px] font-semibold mb-2 ml-5`}
+    ${tw`text-[15px] pl-4  font-semibold mb-2 text-[#636363] dark:text-[#b5b5b5]`}
     color: ${({ theme }) => theme.text28};
-  }
-  .customNext {
-    ${tw`w-10 h-10 right-2 z-[100] absolute cursor-pointer`}
-  }
-  .customPrev {
-    transform: rotate(180deg);
-    ${tw`w-10 h-10 left-2 absolute z-[100] mt-[-26px] cursor-pointer`}
+    .slick-list {
+      border: 1px solid !important;
+    }
+    .slick-track {
+      border: 1px solid;
+    }
   }
   .slick-prev,
   .slick-next {
-    ${tw`w-[42px] h-[42px] `}
+    ${tw`w-[42px] h-[42px] mr-8`}
     z-index: 200;
     &.slick-disabled {
       opacity: 0;
     }
   }
-  .slick-next {
-    ${tw` mr-7`}
-  }
   .slick-prev {
     transform: rotate(180deg);
-    ${tw`mt-[-28px] ml-8`}
+    ${tw`mt-[-32px] ml-8`}
   }
-  .prevWallet {
-    ${tw`left-2 absolute duration-500`}
-  }
-  .currentWallet {
-    ${tw`left-[160px] absolute duration-500`}
-  }
-  .nextWallet {
-    ${tw`right-[-80px] absolute duration-500`}
-  }
+
   .ant-modal-close-x {
     height: 20px !important;
     width: 20px !important;
@@ -108,12 +92,10 @@ const STYLED_POPUP = styled(PopupCustom)`
   .titleContainer {
     ${tw`flex items-center text-[25px] text-center sm:text-[20px] justify-center font-semibold leading-7`}
   }
-
   .detectedWallet {
-    ${tw`flex mt-[36px] h-[230px] `}
-
+    ${tw`mt-[36px] h-[230px]  `}
     .slick-track {
-      ${tw`h-[230px] pl-[100px] sm:pl-[50px] `}
+      ${tw`flex justify-center  h-[230px] ml-10 pl-[100px] sm:pl-[50px] `}
     }
   }
 
@@ -121,30 +103,21 @@ const STYLED_POPUP = styled(PopupCustom)`
     ${tw`text-[15px] font-semibold ml-[-20px] mt-2 justify-center flex`}
     color: ${({ theme }) => theme.text29};
   }
-
-  .otherWallets {
-    .slick-track {
-      ${tw`flex ml-5`}
-    }
-    .slick-slide {
-      ${tw`!w-[130px]`}
-    }
-  }
-
   .suggestWallet {
-    ${tw`font-semibold sm:absolute sm:text-[12px] text-[14px] mt-8 flex items-center text-[#636363] justify-center`}
+    ${tw`font-semibold sm:absolute sm:ml-4 
+     sm:text-[12px] text-[14px] mt-8 flex items-center text-[#636363] justify-center`}
     u {
       color: ${({ theme }) => theme.text30};
     }
   }
   .stepsContainer {
-    ${tw`text-center absolute text-[#636363] font-semibold text-[15px]`}
+    ${tw`text-center absolute sm:ml-4 text-[#636363] font-semibold text-[15px]`}
     strong {
       color: ${({ theme }) => theme.text30};
     }
   }
   .textDetected {
-    ${tw`text-center mt-[50px] text-[15px] font-semibold `}
+    ${tw`ml-[40px] mt-[50px] text-[15px] font-semibold `}
     color: ${({ theme }) => theme.text31};
   }
   .termsConditions {
@@ -159,7 +132,6 @@ const STYLED_POPUP = styled(PopupCustom)`
 const settings = {
   infinite: false,
   speed: 500,
-  centerMode: true,
   swipeToSlide: true,
   snapCenter: true,
   initialSlide: 0,
@@ -169,9 +141,6 @@ const settings = {
   nextArrow: <img src={`/img/assets/home-slider-next.svg`} alt="banner-next" />,
   prevArrow: <img src={`/img/assets/home-slider-next.svg`} alt="banner-previous" />
 }
-
-const otherWalletSlideSettings = { ...settings, centerMode: false }
-
 export const WalletsModal: FC = () => {
   const { wallets, select } = useWallet()
   const { setVisible, visible } = useWalletModal()
@@ -232,45 +201,45 @@ export const WalletsModal: FC = () => {
           </div>
         </>
       )}
-
-      <Slider {...settings} slidesToShow={1.99} slidesToScroll={1} className="detectedWallet">
-        {detectedWallets.length > 0 ? (
-          detectedWallets.map((wallet, index) => (
-            <WALLET_DETECTED
-              key={`${wallet.adapter.name}-${index}`}
-              onClick={(event) => handleWalletClick(event, wallet.adapter.name)}
-            >
-              <img src={wallet.adapter.icon} alt="icon" />
-              <DETECTED_NAME>
-                {wallet.adapter.name.replace('(Extension)', '')} <br /> Wallet
-              </DETECTED_NAME>
-              <div className="textDetected">Detected</div>
-            </WALLET_DETECTED>
-          ))
-        ) : (
-          <NAME tw="text-[25px] mt-14">No wallets detected</NAME>
-        )}
-      </Slider>
+      <div>
+        <div className="detectedWallet">
+          <Slider {...settings} slidesToShow={1.7} slidesToScroll={1}>
+            {detectedWallets.length ? (
+              detectedWallets.map((wallet, index) => (
+                <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
+                  <img src={wallet.adapter.icon} alt="icon" />
+                  <DETECTED_NAME>
+                    {wallet.adapter.name.replace('(Extension)', '')} <br /> Wallet
+                  </DETECTED_NAME>
+                  <div className="textDetected">Detected</div>
+                </WALLET_DETECTED>
+              ))
+            ) : (
+              <NAME tw="text-[25px] mt-14">No wallets detected</NAME>
+            )}
+          </Slider>
+        </div>
+      </div>
 
       <div className="otherWallet">Other wallet</div>
-      <Slider {...otherWalletSlideSettings} slidesToShow={checkMobile() ? 3.5 : 4} className="otherWallets">
-        {wallets
-          .filter(
-            ({ readyState }) =>
-              readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
-          )
-          .map((wallet, index) => (
-            <WALLET_MODAL
-              key={`${wallet.adapter.name}-${index + 15}`}
-              onClick={(event) => handleWalletClick(event, wallet.adapter.name)}
-            >
-              <img src={wallet.adapter.icon} alt="icon" />
-              <NAME>
-                {wallet.adapter.name.replace('(Extension)', '')} <br /> Wallet
-              </NAME>
-            </WALLET_MODAL>
-          ))}
-      </Slider>
+      <div tw="ml-4">
+        <Slider {...settings} slidesToShow={checkMobile() ? 3.5 : 4}>
+          {wallets
+            .filter(
+              ({ readyState }) =>
+                readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
+            )
+            .map((wallet, index) => (
+              <WALLET_MODAL key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
+                <img src={wallet.adapter.icon} alt="icon" />
+                <NAME>
+                  {wallet.adapter.name.replace('(Extension)', '')} <br /> Wallet
+                </NAME>
+              </WALLET_MODAL>
+            ))}
+        </Slider>
+      </div>
+
       <div className="suggestWallet">
         <pre>
           Can’t find your wallet? {checkMobile() && <br />} <u>Suggest new wallet</u>
