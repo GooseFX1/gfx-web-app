@@ -478,3 +478,24 @@ export const getPerpsPrice = (orderbook: OrderBook): number => {
   if (bids.length) return bids[0][0]
   return 0
 }
+
+export const getClosePositionPrice = (qty: string, orderbook) => {
+  let qtyNum = Number(qty)
+  const orderbookSide = qtyNum < 0 ? orderbook.asks : orderbook.bids
+  qtyNum = qtyNum < 0 ? qtyNum * -1 : qtyNum
+  for (let i = 0; i < orderbookSide.length; i++) {
+    if (qtyNum < orderbookSide[i][1]) return orderbookSide[i][0]
+    qtyNum -= orderbookSide[i][1]
+  }
+  return null
+}
+
+export const getExitQuntity = (traderBalances, activeProduct) => {
+  let qtyToExit: Fractional | null = null
+  traderBalances.map((item) => {
+    if (item.productKey.toBase58() === activeProduct.id) {
+      qtyToExit = item.balanceFractional
+    }
+  })
+  return qtyToExit
+}

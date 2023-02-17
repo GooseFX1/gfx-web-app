@@ -5,7 +5,15 @@ import { useTraderConfig } from '../../context/trader_risk_group'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Button } from '../../components/Button'
-import { getPerpsPrice } from './perps/utils'
+import {
+  displayFractional,
+  getClosePositionPrice,
+  getExitQuntity,
+  getPerpsPrice,
+  mulFractionals
+} from './perps/utils'
+import { Fractional } from './perps/dexterity/types'
+import * as anchor from '@project-serum/anchor'
 
 const WRAPPER = styled.div`
   .percentage {
@@ -35,14 +43,36 @@ const ROW = styled.div`
   }
 `
 
+const percentDetails = [
+  {
+    index: 0,
+    display: 25,
+    value: new Fractional({ m: new anchor.BN(25), exp: new anchor.BN(2) })
+  },
+  {
+    index: 1,
+    display: 50,
+    value: new Fractional({ m: new anchor.BN(5), exp: new anchor.BN(1) })
+  },
+  {
+    index: 2,
+    display: 75,
+    value: new Fractional({ m: new anchor.BN(75), exp: new anchor.BN(2) })
+  },
+  {
+    index: 3,
+    display: 100,
+    value: new Fractional({ m: new anchor.BN(1), exp: new anchor.BN(0) })
+  }
+]
+
 export const ClosePosition: FC<{}> = () => {
-  const { traderInfo } = useTraderConfig()
+  const { traderInfo, activeProduct } = useTraderConfig()
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const { orderBook } = useOrderBook()
   const price = getPerpsPrice(orderBook)
-  const percentageArr = [25, 50, 75, 100]
   const [percentageIndex, setPercentageindex] = useState<number>(0)
-  const [percent, setPercent] = useState<number>(25)
+  const { closePosition } = useTraderConfig()
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
     [getAskSymbolFromPair, selectedCrypto.pair]
@@ -54,21 +84,37 @@ export const ClosePosition: FC<{}> = () => {
 
   const handlePercentageChange = (e: React.MouseEvent<HTMLElement>, index: number) => {
     setPercentageindex(index)
-    setPercent(percentageArr[index])
+  }
+
+  const totalExitQty = useMemo(() => {
+    return getExitQuntity(traderInfo.balances, activeProduct)
+  }, [traderInfo, activeProduct])
+
+  const selectedExitQty = useMemo(() => {
+    const multiplier = percentDetails[percentageIndex].value
+    return mulFractionals(multiplier, totalExitQty)
+  }, [totalExitQty, percentageIndex])
+
+  const exitPrice = useMemo(() => {
+    return getClosePositionPrice(displayFractional(selectedExitQty), orderBook)
+  }, [selectedExitQty, orderBook])
+
+  const closePositionFn = () => {
+    closePosition(orderBook, selectedExitQty)
   }
 
   return (
     <WRAPPER>
       <div tw="flex items-center mt-8 mb-7">
         <span tw="text-lg font-semibold text-grey-1 dark:text-grey-2">
-          {traderInfo?.averagePosition.quantity} {symbol}
+          {displayFractional(selectedExitQty)} {symbol}
         </span>
         <img tw="ml-2.5" src={assetIcon} alt={symbol} height="28px" width="28px" />
         <span tw="ml-auto text-average font-semibold text-black-4 dark:text-grey-5">${price}</span>
         <span tw="text-average font-semibold text-grey-1">(Market Price)</span>
       </div>
       <div className="percentage">
-        {percentageArr.map((elem, index) => (
+        {percentDetails.map((elem, index) => (
           <div
             className={percentageIndex === index ? 'percentage-num selected' : 'percentage-num'}
             onClick={(e) => {
@@ -76,14 +122,14 @@ export const ClosePosition: FC<{}> = () => {
             }}
             key={index}
           >
-            {elem}%
+            {elem.display}%
           </div>
         ))}
       </div>
       <div tw="mb-6 mt-8">
         <ROW>
-          <span>Est. Exist Price</span>
-          <span className="value">$23.29</span>
+          <span>Est. Exit Price</span>
+          <span className="value">${exitPrice}</span>
         </ROW>
         <ROW>
           <span>Est. Slippage</span>
@@ -92,10 +138,6 @@ export const ClosePosition: FC<{}> = () => {
         <ROW>
           <span>New Est. Liquidation Price</span>
           <span className="value">None</span>
-        </ROW>
-        <ROW>
-          <span>Leverage Ratio After Close</span>
-          <span className="value">0x</span>
         </ROW>
         <ROW>
           <span>Est. Realised P&L</span>
@@ -107,7 +149,9 @@ export const ClosePosition: FC<{}> = () => {
         width="100%"
         cssStyle={tw`bg-blue-1 dark:text-white font-semibold border-0 rounded-circle text-regular`}
       >
-        {`Close ${percent}% of the position`}
+        <span
+          onClick={closePositionFn}
+        >{`Close ${percentDetails[percentageIndex].display}% of the position`}</span>
       </Button>
     </WRAPPER>
   )
