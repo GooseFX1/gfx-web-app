@@ -68,20 +68,20 @@ export function __wbgtest_console_error(args: Array<any>): void;
 /**
 * Initialize Javascript logging and panic handler
 */
-export function init(): void;
+export function solana_program_init(): void;
 /**
 */
 export enum HealthStatus {
-  Healthy,
-  Unhealthy,
-  Liquidatable,
-  NotLiquidatable,
+  Healthy = 0,
+  Unhealthy = 1,
+  Liquidatable = 2,
+  NotLiquidatable = 3,
 }
 /**
 */
 export enum ActionStatus {
-  Approved,
-  NotApproved,
+  Approved = 0,
+  NotApproved = 1,
 }
 /**
 * Fractional Operations
@@ -96,6 +96,16 @@ export class Fractional {
   m: bigint;
 }
 /**
+* A hash; the 32-byte output of a hashing algorithm.
+*
+* This struct is used most often in `solana-sdk` and related crates to contain
+* a [SHA-256] hash, but may instead contain a [blake3] hash, as created by the
+* [`blake3`] module (and used in [`Message::hash`]).
+*
+* [SHA-256]: https://en.wikipedia.org/wiki/SHA-2
+* [blake3]: https://github.com/BLAKE3-team/BLAKE3
+* [`blake3`]: crate::blake3
+* [`Message::hash`]: crate::message::Message::hash
 */
 export class Hash {
   free(): void;
@@ -265,6 +275,20 @@ export class Message {
   recent_blockhash: Hash;
 }
 /**
+* The address of a [Solana account][acc].
+*
+* Some account addresses are [ed25519] public keys, with corresponding secret
+* keys that are managed off-chain. Often, though, account addresses do not
+* have corresponding secret keys &mdash; as with [_program derived
+* addresses_][pdas] &mdash; or the secret key is not relevant to the operation
+* of a program, and may have even been disposed of. As running Solana programs
+* can not safely create or manage secret keys, the full [`Keypair`] is not
+* defined in `solana-program` but in `solana-sdk`.
+*
+* [acc]: https://docs.solana.com/developing/programming-model/accounts
+* [ed25519]: https://ed25519.cr.yp.to/
+* [pdas]: https://docs.solana.com/developing/programming-model/calling-between-programs#program-derived-addresses
+* [`Keypair`]: https://docs.rs/solana-sdk/latest/solana_sdk/signer/keypair/struct.Keypair.html
 */
 export class Pubkey {
   free(): void;
