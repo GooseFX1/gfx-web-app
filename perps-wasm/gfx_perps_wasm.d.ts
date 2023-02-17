@@ -11,7 +11,14 @@ export function risk_checks(market_product_group: Uint8Array, trader_risk_group:
 * @param {Uint8Array} trader_risk_group
 * @returns {Fractional}
 */
-export function max_withrawable(market_product_group: Uint8Array, trader_risk_group: Uint8Array): Fractional;
+export function margin_available(market_product_group: Uint8Array, trader_risk_group: Uint8Array): Fractional;
+/**
+* @param {Uint8Array} market_product_group
+* @param {Uint8Array} trader_risk_group
+* @param {number} productIndex
+* @returns {Fractional}
+*/
+export function get_liquidation_price(market_product_group: Uint8Array, trader_risk_group: Uint8Array, productIndex: number): Fractional;
 /**
 * @param {Uint8Array} data
 * @param {bigint} callback_info_len

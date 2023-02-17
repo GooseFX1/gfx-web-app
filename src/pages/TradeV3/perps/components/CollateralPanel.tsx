@@ -203,7 +203,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>
         <span className="key">Margin Available</span>
-        <span className="value">0.23</span>
+        <span className="value">{Number(traderInfo.marginAvailable).toFixed(2)}</span>
       </ACCOUNT_ROW>
       {isSolAccount && (
         <ACCOUNT_ROW $height={height}>

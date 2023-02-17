@@ -181,3 +181,5 @@ export const ZERO_FRACTIONAL = new Fractional({ m: new anchor.BN(0), exp: new an
 export const ALPHA = new Fractional({ m: new anchor.BN(9), exp: new anchor.BN(1) })
 export const BETA = new Fractional({ m: new anchor.BN(2), exp: new anchor.BN(1) })
 export const GAMMA = new Fractional({ m: new anchor.BN(1), exp: new anchor.BN(1) })
+export const GET_ORDERBOOK = '/perps-apis/getOrderBook'
+export const GET_OPEN_ORDERS = '/perps-apis/getAllOpenOrders'

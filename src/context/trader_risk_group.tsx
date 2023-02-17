@@ -39,6 +39,7 @@ import {
   convertToFractional,
   displayFractional,
   divFractional,
+  getClosePositionPrice,
   getFeeConfigAcct,
   getLiquidationPrice,
   getMarketSigner,
@@ -118,6 +119,7 @@ interface ITraderRiskGroup {
   averagePosition: ITraderHistory
   tradeHistory: ITraderHistory[]
   balances?: ITraderBalances[]
+  marginAvailable: string
 }
 
 interface ICollateralInfo {
@@ -135,7 +137,7 @@ interface IPerpsInfo {
   traderInfo: ITraderRiskGroup
   marketProductGroupKey: PublicKey
   newOrder: () => Promise<void>
-  closePosition: (orderbook: OrderBook) => Promise<void>
+  closePosition: (orderbook: OrderBook, qtyToExit: Fractional) => Promise<void>
   cancelOrder: (orderId: string) => Promise<void>
   depositFunds: (amount: Fractional) => Promise<DepositIx | void>
   withdrawFunds: (amount: Fractional) => Promise<void>
@@ -211,6 +213,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     mpg: AccountInfo<Buffer>
     trg: AccountInfo<Buffer>
   }>({ mpg: null, trg: null })
+  const [marginAvail, setMarginAvail] = useState<string>('0')
   const [activeProduct, setActiveProduct] = useState<IActiveProduct>(MPs[0])
   const [focused, setFocused] = useState<OrderInput>(undefined)
   const [loading, setLoading] = useState<boolean>(false)
@@ -268,13 +271,13 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   const perpsWasm = async () => {
-    const ww = await import('perps-wasm')
+    const wasm = await import('perps-wasm')
     const mpg = rawData.mpg
-
     const trg = rawData.trg
 
-    const res = ww.max_withrawable(mpg.data, trg.data)
-    console.log('wasm result: ', res)
+    const res = wasm.margin_available(mpg.data, trg.data)
+    const avail = new Fractional({ m: new anchor.BN(res.m.toString()), exp: new anchor.BN(res.exp.toString()) })
+    setMarginAvail(displayFractional(avail))
   }
 
   const parseTraderInfo = async () => {
@@ -374,31 +377,14 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [traderRiskGroup, order, marketProductGroup])
 
   const closePosition = useCallback(
-    async (orderbook: OrderBook) => {
-      function getClosePositionPrice(qty: string) {
-        let qtyNum = Number(qty)
-        const orderbookSide = qtyNum < 0 ? orderbook.asks : orderbook.bids
-        qtyNum = qtyNum < 0 ? qtyNum * -1 : qtyNum
-        for (let i = 0; i < orderbookSide.length; i++) {
-          if (qtyNum < orderbookSide[i][1]) return orderbookSide[i][0]
-          qtyNum -= orderbookSide[i][1]
-        }
-        return null
-      }
-      let qtyToExit: Fractional | null = null,
-        priceToExit = null
-      traderBalances.map((item) => {
-        if (item.productKey.toBase58() === activeProduct.id) {
-          qtyToExit = item.balanceFractional
-          priceToExit = getClosePositionPrice(displayFractional(qtyToExit))
-        }
-      })
+    async (orderbook: OrderBook, qtyToExit: Fractional) => {
+      const priceToExit = getClosePositionPrice(displayFractional(qtyToExit), orderbook)
+      let qty = qtyToExit
       if (qtyToExit && priceToExit) {
         let orderSide: any = new Ask().toEncodable()
-        console.log(qtyToExit.toJSON())
-        if (qtyToExit.m.toString()[0] === '-') {
+        if (qty.m.toString()[0] === '-') {
           orderSide = new Bid().toEncodable()
-          qtyToExit = mulFractionals(qtyToExit, new Fractional({ m: new anchor.BN(-1), exp: new anchor.BN(0) }))
+          qty = mulFractionals(qty, new Fractional({ m: new anchor.BN(-1), exp: new anchor.BN(0) }))
         }
         const newOrderAccounts: INewOrderAccounts = {
             user: wallet.publicKey,
@@ -423,7 +409,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
             riskAndFeeSigner: getRiskAndFeeSigner(new PublicKey(MPG_ID))
           },
           newOrderParams = {
-            maxBaseQty: qtyToExit,
+            maxBaseQty: qty,
             side: orderSide,
             selfTradeBehavior: new DecrementTake().toEncodable(),
             matchLimit: new anchor.BN(10),
@@ -536,7 +522,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           collateralAvailable,
           balances: traderBalances,
           averagePosition: averagePosition,
-          tradeHistory: traderHistory
+          tradeHistory: traderHistory,
+          marginAvailable: marginAvail
         },
         marketProductGroup: marketProductGroup,
         marketProductGroupKey: currentMPG,
