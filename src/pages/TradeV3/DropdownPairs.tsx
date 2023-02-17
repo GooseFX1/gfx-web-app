@@ -58,7 +58,7 @@ const DROPDOWN_MODAL = styled(Modal)`
     }
     > input::placeholder {
       ${tw`text-tiny font-medium`}
-      color: ${({ theme }) => theme.text31};
+      color: ${({ theme }) => theme.text36};
     }
   }
 
