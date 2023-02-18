@@ -35,9 +35,6 @@ const SettleCard: FC = () => {
     const pair = getPairFromMarketAddress(openOrder.market)
     const baseAvailable = market?.baseSplSizeToNumber(openOrder.baseTokenFree)
     const quoteAvailable = market?.quoteSplSizeToNumber(openOrder.quoteTokenFree)
-    console.log('OPEN ORDERS', openOrders)
-    console.log('base', baseAvailable)
-    console.log('qoute', quoteAvailable)
 
     if (quoteAvailable ?? 0) {
       const bidSettleButton = (
@@ -97,9 +94,8 @@ const SettleCard: FC = () => {
 }
 
 export const SettlePanel: FC = () => {
-  const { openOrders } = useTradeHistory()
+  //const { openOrders } = useTradeHistory()
   const { mode } = useDarkMode()
-  console.log('control here', openOrders)
   const comps = <SettleCard />
   return comps.type() === null ? (
     <div className="no-positions-found">

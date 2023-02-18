@@ -40,6 +40,14 @@ const ROW = styled.div`
 
   .value {
     ${tw`text-black-4 dark:text-white`}
+    .positive {
+      color: green;
+      ${tw` font-medium`}
+    }
+    .negative {
+      color: red;
+      ${tw` font-medium`}
+    }
   }
 `
 
@@ -99,6 +107,17 @@ export const ClosePosition: FC<{}> = () => {
     return getClosePositionPrice(displayFractional(selectedExitQty), orderBook)
   }, [selectedExitQty, orderBook])
 
+  const pnlEstimate = useMemo(() => {
+    const pnl = traderInfo.pnl
+    if (!pnl) return <span>-</span>
+    const pnlEst =
+      (Number(pnl) / Number(displayFractional(totalExitQty))) * Number(displayFractional(selectedExitQty))
+    const isNegative = pnlEst < 0
+    return (
+      <span className={isNegative ? 'negative' : 'positive'}>{(!isNegative ? '+' : '') + pnlEst.toFixed(2)}</span>
+    )
+  }, [traderInfo, selectedExitQty])
+
   const closePositionFn = () => {
     closePosition(orderBook, selectedExitQty)
   }
@@ -141,7 +160,7 @@ export const ClosePosition: FC<{}> = () => {
         </ROW>
         <ROW>
           <span>Est. Realised P&L</span>
-          <span className="value">0.00 USD</span>
+          <span className="value">{pnlEstimate} USD</span>
         </ROW>
       </div>
       <Button

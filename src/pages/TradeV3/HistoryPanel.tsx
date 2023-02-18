@@ -316,7 +316,7 @@ export const HistoryPanel: FC = () => {
   const { getUIAmount } = useAccounts()
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const { mode } = useDarkMode()
-  const { traderInfo, closePosition } = useTraderConfig()
+  const { traderInfo } = useTraderConfig()
   const perpsPrice = useMemo(() => getPerpsPrice(orderBook), [orderBook])
   const notionalSize = useMemo(
     () => (Number(traderInfo.averagePosition.quantity) * perpsPrice).toFixed(2),

@@ -101,6 +101,14 @@ const ACCOUNT_ROW = styled.div<{ $height: boolean }>`
       ${tw`text-right mb-[2px]`}
     }
   }
+  .positive {
+    color: green;
+    ${tw`text-regular font-black`}
+  }
+  .negative {
+    color: red;
+    ${tw`text-regular font-black`}
+  }
 `
 
 const FEES = styled.div<{ $height: boolean }>`
@@ -150,6 +158,16 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
     return balance + ' ' + ask
   }, [traderInfo, activeProduct])
 
+  const pnl = useMemo(() => {
+    if (traderInfo.pnl === '0' || !Number(traderInfo.pnl)) return <span>0.00</span>
+    const isNegative = traderInfo.pnl[0] === '-'
+    return (
+      <span className={isNegative ? 'negative' : 'positive'}>
+        {(!isNegative ? '+' : '') + Number(traderInfo.pnl).toFixed(2)} $
+      </span>
+    )
+  }, [traderInfo])
+
   const getHealthData = () => {
     //DELETE: hardcoded percent
     const percent = 31
@@ -195,15 +213,15 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>
         <span className="key">Unrealized P&L</span>
-        <span className="value">-</span>
+        <span className="value">{pnl}</span>
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>
         <span className="key">Collateral Available</span>
-        <span className="value">{Number(traderInfo.collateralAvailable).toFixed(2)}</span>
+        <span className="value">{Number(traderInfo.collateralAvailable).toFixed(2)} $</span>
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>
         <span className="key">Margin Available</span>
-        <span className="value">{Number(traderInfo.marginAvailable).toFixed(2)}</span>
+        <span className="value">{Number(traderInfo.marginAvailable).toFixed(2)} $</span>
       </ACCOUNT_ROW>
       {isSolAccount && (
         <ACCOUNT_ROW $height={height}>
