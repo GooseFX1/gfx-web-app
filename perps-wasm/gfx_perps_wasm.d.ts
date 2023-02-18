@@ -13,6 +13,13 @@ export function risk_checks(market_product_group: Uint8Array, trader_risk_group:
 */
 export function margin_available(market_product_group: Uint8Array, trader_risk_group: Uint8Array): Fractional;
 /**
+* @param {Uint8Array} market_product_group
+* @param {Uint8Array} trader_risk_group
+* @param {bigint} product_index
+* @returns {Fractional}
+*/
+export function unrealised_pnl(market_product_group: Uint8Array, trader_risk_group: Uint8Array, product_index: bigint): Fractional;
+/**
 * @param {Uint8Array} data
 * @param {bigint} callback_info_len
 * @param {bigint} slot_size
@@ -88,6 +95,63 @@ export enum ActionStatus {
 */
 export class Fractional {
   free(): void;
+/**
+* @param {bigint} m
+* @param {bigint} e
+*/
+  constructor(m: bigint, e: bigint);
+/**
+* @param {string} s
+* @returns {Fractional}
+*/
+  static from_str(s: string): Fractional;
+/**
+* @returns {boolean}
+*/
+  is_negative(): boolean;
+/**
+* @returns {number}
+*/
+  sign(): number;
+/**
+* @param {Fractional} other
+* @returns {Fractional}
+*/
+  min(other: Fractional): Fractional;
+/**
+* @param {Fractional} other
+* @returns {Fractional}
+*/
+  max(other: Fractional): Fractional;
+/**
+* @param {Fractional} other
+* @returns {Fractional}
+*/
+  checked_add(other: Fractional): Fractional;
+/**
+* @param {Fractional} other
+* @returns {Fractional}
+*/
+  checked_sub(other: Fractional): Fractional;
+/**
+* @param {Fractional} other
+* @returns {Fractional}
+*/
+  checked_mul(other: Fractional): Fractional;
+/**
+* @param {Fractional} other
+* @returns {Fractional}
+*/
+  checked_div(other: Fractional): Fractional;
+/**
+* @param {number} digits
+* @returns {Fractional}
+*/
+  round_unchecked(digits: number): Fractional;
+/**
+* @returns {Fractional}
+*/
+  abs(): Fractional;
 /**
 */
   exp: bigint;

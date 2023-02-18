@@ -55,12 +55,11 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
         if (selectedCrypto.type === 'crypto') {
           const market = await Market.load(connection, address, undefined, programId)
           await fetchOrderBook(market)
-          selectedCrypto.marketAddress && (await fetchOrderBook(market))
         }
       }
       const int = setInterval(refreshSpotOrderbook, 1000)
       return () => clearInterval(int)
-    } else if (selectedCrypto.type === 'perps' && marketProductGroup) {
+    } else if (selectedCrypto.type === 'perps') {
       const refreshOrderbook = async () => {
         await fetchPerpsOrderBook()
         traderInfo.traderRiskGroupKey && (await fetchPerpsOpenOrders())
@@ -68,7 +67,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
       const t2 = setInterval(refreshOrderbook, 1000)
       return () => clearInterval(t2) // clear
     }
-  }, [selectedCrypto.pair, marketProductGroup, isSpot, selectedCrypto.type])
+  }, [selectedCrypto.pair, isSpot, selectedCrypto.type, traderInfo])
 
   const convertBidsAsks = (bids: IOrderbookType[], asks: IOrderbookType[]) => {
     const bidReturn: [number, number, BN, BN, string, string][] = bids.map((item) => {
