@@ -120,6 +120,7 @@ interface ITraderRiskGroup {
   tradeHistory: ITraderHistory[]
   balances?: ITraderBalances[]
   marginAvailable: string
+  pnl: string
 }
 
 interface ICollateralInfo {
@@ -214,6 +215,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     trg: AccountInfo<Buffer>
   }>({ mpg: null, trg: null })
   const [marginAvail, setMarginAvail] = useState<string>('0')
+  const [pnl, setPnl] = useState<string>('0')
   const [activeProduct, setActiveProduct] = useState<IActiveProduct>(MPs[0])
   const [focused, setFocused] = useState<OrderInput>(undefined)
   const [loading, setLoading] = useState<boolean>(false)
@@ -251,15 +253,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })
 
     refreshTraderRiskGroup()
-
-    //if (traderRiskGroupAccount) {
-    //  setTraderRiskGroup(traderRiskGroupAccount.pubkey)
-    //  const riskStateAcct = new PublicKey([].slice.call(traderRiskGroupAccount.account.data).slice(2096, 2128))
-    //  const feeState = new PublicKey([].slice.call(traderRiskGroupAccount.account.data).slice(2128, 2160))
-    //  setTraderFeeStateAcct(feeState)
-    //  console.log(feeState.toBase58())
-    //  setTraderRiskStateAcct(riskStateAcct)
-    //}
   }
 
   const setCollateralPrice = async () => {
@@ -277,6 +270,9 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     const res = wasm.margin_available(mpg.data, trg.data)
     const avail = new Fractional({ m: new anchor.BN(res.m.toString()), exp: new anchor.BN(res.exp.toString()) })
+    const pnl = wasm.unrealised_pnl(mpg.data, trg.data, BigInt(0))
+    const pnlFrac = new Fractional({ m: new anchor.BN(pnl.m.toString()), exp: new anchor.BN(pnl.exp.toString()) })
+    setPnl(displayFractional(pnlFrac))
     setMarginAvail(displayFractional(avail))
   }
 
@@ -295,8 +291,11 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (wallet.connected) {
-      if (!marketProductGroup) setMPGDetails()
-      if (marketProductGroup) testing()
+      const refreshData = async () => {
+        await setMPGDetails()
+      }
+      const t2 = setInterval(refreshData, 3000)
+      return () => clearInterval(t2)
     } else {
       setTraderRiskGroup(null)
     }
@@ -523,7 +522,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           balances: traderBalances,
           averagePosition: averagePosition,
           tradeHistory: traderHistory,
-          marginAvailable: marginAvail
+          marginAvailable: marginAvail,
+          pnl: pnl
         },
         marketProductGroup: marketProductGroup,
         marketProductGroupKey: currentMPG,

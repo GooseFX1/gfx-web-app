@@ -235,7 +235,7 @@ export const OrderBook: FC = () => {
   const bid = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
   const ask = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
   const { tradeHistory } = useTradeHistory()
-  const [spreadIndex, setSpreadIndex] = useState<number>(2)
+  const [spreadIndex, setSpreadIndex] = useState<number>(0)
   const lastTradedPrice = {
     price: tradeHistory[0] && tradeHistory[0].price,
     side: tradeHistory[0] && tradeHistory[0].side

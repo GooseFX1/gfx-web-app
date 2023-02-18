@@ -475,7 +475,9 @@ export const getPythPrice = async (connection: Connection, tokenName: string) =>
 
 export const getPerpsPrice = (orderbook: OrderBook): number => {
   const bids = orderbook.bids
-  if (bids.length) return bids[0][0]
+  const asks = orderbook.asks
+  if (bids.length && bids[0] && asks.length && asks[0]) return Math.round((bids[0][0] + asks[0][0]) * 50) / 100
+  else if (bids.length) return bids[0][0]
   return 0
 }
 
