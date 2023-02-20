@@ -2202,8 +2202,8 @@ export function __wbg_pubkey_new(arg0) {
     return addHeapObject(ret);
 };
 
-export function __wbindgen_closure_wrapper291(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 77, __wbg_adapter_32);
+export function __wbindgen_closure_wrapper290(arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 76, __wbg_adapter_32);
     return addHeapObject(ret);
 };
 
