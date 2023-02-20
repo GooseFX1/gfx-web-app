@@ -34,7 +34,7 @@ interface IOrderbookType {
   orderId: string
 }
 
-const DEFAULT_ORDER_BOOK = { asks: [], bids: [] }
+export const DEFAULT_ORDER_BOOK = { asks: [], bids: [] }
 
 const OrderBookContext = createContext<IOrderBookConfig | null>(null)
 
@@ -44,7 +44,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   const [orderBook, setOrderBook] = useState<OrderBook>(DEFAULT_ORDER_BOOK)
   const [openOrders, setOpenOrders] = useState([])
   const [perpsOpenOrders, setPerpsOpenOrders] = useState([])
-  const { activeProduct, marketProductGroup, traderInfo } = useTraderConfig()
+  const { activeProduct, marketProductGroup, traderInfo, setOrderBook: setOrderBookCopy } = useTraderConfig()
 
   useEffect(() => {
     if (selectedCrypto.type === 'crypto') {
@@ -136,6 +136,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
     const orderbookBids = res.data?.bids.map((item) => [item.price, item.size])
     const orderbookAsks = res.data?.asks.map((item) => [item.price, item.size])
     setOrderBook((prevState) => ({ ...prevState, asks: orderbookAsks, bids: orderbookBids }))
+    setOrderBookCopy((prevState) => ({ ...prevState, asks: orderbookAsks, bids: orderbookBids }))
   }
 
   const fetchPerpsOpenOrders = async () => {
