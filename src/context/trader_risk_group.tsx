@@ -83,7 +83,7 @@ import {
   initializeMarketProductGroup,
   updateFeesIx
 } from '../pages/TradeV3/perps/adminUtils'
-import { OrderBook } from './orderbook'
+import { DEFAULT_ORDER_BOOK, OrderBook, useOrderBook } from './orderbook'
 
 export const AVAILABLE_ORDERS_PERPS = [
   {
@@ -148,6 +148,7 @@ interface IPerpsInfo {
   setFocused: Dispatch<SetStateAction<OrderInput>>
   loading: boolean
   collateralInfo: ICollateralInfo
+  setOrderBook: Dispatch<SetStateAction<OrderBook>>
 }
 
 export interface IActiveProduct {
@@ -185,7 +186,8 @@ export function useTraderConfig() {
     setOrder,
     setFocused,
     loading,
-    collateralInfo
+    collateralInfo,
+    setOrderBook
   } = context
   return {
     traderInfo,
@@ -201,7 +203,8 @@ export function useTraderConfig() {
     setOrder,
     setFocused,
     loading,
-    collateralInfo
+    collateralInfo,
+    setOrderBook
   }
 }
 
@@ -230,6 +233,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     quantity: '',
     side: null
   })
+  const [orderBookCopy, setOrderBook] = useState<OrderBook>(DEFAULT_ORDER_BOOK)
   const { order, setOrder } = useOrder()
 
   const wallet = useWallet()
@@ -510,6 +514,17 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [rawData])
 
+  useEffect(() => {
+    if (order.display === 'market') {
+      const qty = order.size ?? 0
+      const priceMarket = getClosePositionPrice(qty.toString(), orderBookCopy)
+      setOrder((prevState) => ({
+        ...prevState,
+        price: priceMarket
+      }))
+    }
+  }, [order.display, order.size, order.total, orderBookCopy])
+
   const collateralAvailable: string = useMemo(
     () => (traderRiskGroup && traderRiskGroup.cashBalance ? displayFractional(traderRiskGroup.cashBalance) : '0'),
     [traderRiskGroup]
@@ -530,6 +545,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         },
         marketProductGroup: marketProductGroup,
         marketProductGroupKey: currentMPG,
+        setOrderBook,
         newOrder: newOrder,
         closePosition: closePosition,
         cancelOrder: cancelOrder,

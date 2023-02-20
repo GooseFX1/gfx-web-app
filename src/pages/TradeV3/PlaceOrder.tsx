@@ -530,18 +530,20 @@ export const PlaceOrder: FC = () => {
                 />
               </div>
             </INPUT_WRAPPER>
-            <INPUT_WRAPPER>
-              <div className="label">Price</div>
-              <Input
-                suffix={<span className="suffixText">{bid}</span>}
-                onFocus={() => setFocused('price')}
-                maxLength={15}
-                onBlur={() => setFocused(undefined)}
-                value={order.price ? order.price : ''}
-                onChange={(e) => numberCheck(e.target.value, 'price')}
-                placeholder={'0.00'}
-              />
-            </INPUT_WRAPPER>
+            {order.display !== 'market' && (
+              <INPUT_WRAPPER>
+                <div className="label">Price</div>
+                <Input
+                  suffix={<span className="suffixText">{bid}</span>}
+                  onFocus={() => setFocused('price')}
+                  maxLength={15}
+                  onBlur={() => setFocused(undefined)}
+                  value={order.price ? order.price : ''}
+                  onChange={(e) => numberCheck(e.target.value, 'price')}
+                  placeholder={'0.00'}
+                />
+              </INPUT_WRAPPER>
+            )}
           </div>
           <div className="inputRow">
             <INPUT_WRAPPER>
