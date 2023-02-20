@@ -2,7 +2,7 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNavCollapse, useCrypto, useDarkMode } from '../../context'
 import { OrderbookTabs } from './OrderbookTabs'
-import { TVChartContainer } from '../Crypto/TradingView'
+import { TVChartContainer } from '../Crypto/TradingView/TradingView'
 import { Responsive, WidthProvider } from 'react-grid-layout'
 import _ from 'lodash'
 import tw, { styled } from 'twin.macro'
