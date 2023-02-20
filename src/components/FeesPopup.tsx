@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Table } from 'antd'
-import { dataSource } from '../pages/TradeV2/constants/feesConstants'
+import { dataSource } from '../pages/TradeV3/constants/feesConstants'
 import Column from 'antd/lib/table/Column'
 import moment from 'moment'
 import { useWallet } from '@solana/wallet-adapter-react'
