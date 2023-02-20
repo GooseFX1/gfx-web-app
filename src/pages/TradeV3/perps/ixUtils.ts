@@ -79,6 +79,7 @@ export const newOrderIx = async (
         message: 'Order placed Successfully!'
       })
     }
+    return response
   } catch (e) {
     console.log(e)
     notify({
@@ -86,7 +87,7 @@ export const newOrderIx = async (
       type: 'error'
     })
   }
-  //return response
+  return null
 }
 
 export const cancelOrderIx = async (
@@ -229,12 +230,14 @@ export const withdrawFundsIx = async (
         message: 'Funds withdrawn Successfully!'
       })
     }
+    return response
   } catch (e) {
     console.log(e)
     notify({
       message: 'Withdrawl failed. Please try again with a smaller amount',
       type: 'error'
     })
+    return null
   }
 }
 

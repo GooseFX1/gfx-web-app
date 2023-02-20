@@ -48,7 +48,6 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
 
   useEffect(() => {
     if (selectedCrypto.type === 'crypto') {
-      setOrderBook(DEFAULT_ORDER_BOOK)
       const { address, programId } = serum.getMarketFromAddress(new PublicKey(selectedCrypto.marketAddress))
 
       const refreshSpotOrderbook = async () => {
@@ -57,14 +56,14 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
           await fetchOrderBook(market)
         }
       }
-      const int = setInterval(refreshSpotOrderbook, 1000)
+      const int = setInterval(refreshSpotOrderbook, 500)
       return () => clearInterval(int)
     } else if (selectedCrypto.type === 'perps') {
       const refreshOrderbook = async () => {
         await fetchPerpsOrderBook()
         traderInfo.traderRiskGroupKey && (await fetchPerpsOpenOrders())
       }
-      const t2 = setInterval(refreshOrderbook, 1000)
+      const t2 = setInterval(refreshOrderbook, 500)
       return () => clearInterval(t2) // clear
     }
   }, [selectedCrypto.pair, isSpot, selectedCrypto.type, traderInfo])

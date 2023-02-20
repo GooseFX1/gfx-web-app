@@ -138,10 +138,10 @@ interface IPerpsInfo {
   traderInfo: ITraderRiskGroup
   marketProductGroupKey: PublicKey
   newOrder: () => Promise<void>
-  closePosition: (orderbook: OrderBook, qtyToExit: Fractional) => Promise<void>
+  closePosition: (orderbook: OrderBook, qtyToExit: Fractional) => Promise<DepositIx | void>
   cancelOrder: (orderId: string) => Promise<void>
   depositFunds: (amount: Fractional) => Promise<DepositIx | void>
-  withdrawFunds: (amount: Fractional) => Promise<void>
+  withdrawFunds: (amount: Fractional) => Promise<DepositIx | void>
   activeProduct: any
   order: IOrder
   setOrder: Dispatch<SetStateAction<IOrder>>
@@ -416,7 +416,9 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
             limitPrice: convertToFractional(priceToExit.toString())
           }
         const response = await newOrderIx(newOrderAccounts, newOrderParams, wallet, connection)
+        return response
       }
+      return null
     },
     [traderRiskGroup, traderBalances, marketProductGroup]
   )
@@ -491,6 +493,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
       const response = await withdrawFundsIx(withdrawFundsAccounts, { quantity: amount }, wallet, connection)
       refreshTraderRiskGroup()
+      return response
     },
     [traderRiskGroup, marketProductGroup]
   )
