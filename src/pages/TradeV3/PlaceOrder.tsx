@@ -306,7 +306,7 @@ export const PlaceOrder: FC = () => {
   const [selectedTotal, setSelectedTotal] = useState<number>(null)
   const [arrowRotation, setArrowRotation] = useState(false)
   const [dropdownVisible, setDropdownVisible] = useState(false)
-  const [confirmationModal, setConfirmationModal] = useState<boolean>(true)
+  const [confirmationModal, setConfirmationModal] = useState<boolean>(false)
   const [perpsEndModal, setPerpsEndModal] = useState<boolean>(false)
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { connected } = useWallet()
