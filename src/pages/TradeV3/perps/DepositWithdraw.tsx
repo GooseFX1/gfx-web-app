@@ -144,7 +144,7 @@ export const DepositWithdraw: FC<{
   const handlePercentageChange = (e: React.MouseEvent<HTMLElement>, index: number) => {
     setPercentageindex(index)
     if (tradeType === 'deposit') {
-      if (!tokenAmount) {
+      if (!tokenAmount || !tokenAmount.uiAmountString) {
         setAmount('0.00')
         return
       }
@@ -220,7 +220,7 @@ export const DepositWithdraw: FC<{
           <div className="dropdown">
             <div className="available-bal">
               {tradeType === 'deposit'
-                ? tokenAmount
+                ? tokenAmount && tokenAmount.uiAmountString
                   ? tokenAmount.uiAmountString
                   : '0.00'
                 : traderInfo.marginAvailable
@@ -267,8 +267,8 @@ export const DepositWithdraw: FC<{
         onClick={handleSubmit}
         disabled={
           tradeType !== 'deposit'
-            ? +traderInfo.marginAvailable < +amount || !amount
-            : +tokenAmount.uiAmountString < +amount || !amount
+            ? !traderInfo.marginAvailable || +traderInfo.marginAvailable < +amount || !amount
+            : !tokenAmount || !tokenAmount.uiAmountString || +tokenAmount.uiAmountString < +amount || !amount
         }
       >
         {tradeType === 'deposit' ? 'Deposit' : 'Withdraw'}
