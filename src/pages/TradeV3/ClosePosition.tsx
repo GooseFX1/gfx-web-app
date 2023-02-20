@@ -74,7 +74,9 @@ const percentDetails = [
   }
 ]
 
-export const ClosePosition: FC<{}> = () => {
+export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateAction<any>> }> = ({
+  setVisibleState
+}) => {
   const { traderInfo, activeProduct } = useTraderConfig()
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const { orderBook } = useOrderBook()
@@ -118,8 +120,9 @@ export const ClosePosition: FC<{}> = () => {
     )
   }, [traderInfo, selectedExitQty])
 
-  const closePositionFn = () => {
-    closePosition(orderBook, selectedExitQty)
+  const closePositionFn = async () => {
+    const response = await closePosition(orderBook, selectedExitQty)
+    if (response && response.txid) setVisibleState(false)
   }
 
   return (

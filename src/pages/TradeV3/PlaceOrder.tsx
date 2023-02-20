@@ -21,7 +21,7 @@ import { Checkbox } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ArrowDropdown, Tooltip } from '../../components'
 import { useTraderConfig } from '../../context/trader_risk_group'
-import { displayFractional } from './perps/utils'
+import { displayFractional, getPerpsPrice } from './perps/utils'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import { TradeConfirmation } from './TradeConfirmation'
 import { PerpsEndModal } from './PerpsEndModal'
@@ -281,7 +281,7 @@ const TOTAL_VALUES = [
   },
   {
     display: '100%',
-    value: 1,
+    value: 0.9999,
     key: 4
   }
 ]
@@ -302,10 +302,11 @@ export const PlaceOrder: FC = () => {
   const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isSpot } = useCrypto()
   const { order, setOrder, setFocused, placeOrder } = useOrder()
   const { newOrder, traderInfo } = useTraderConfig()
+  const { orderBook } = useOrderBook()
   const [selectedTotal, setSelectedTotal] = useState<number>(null)
   const [arrowRotation, setArrowRotation] = useState(false)
   const [dropdownVisible, setDropdownVisible] = useState(false)
-  const [confirmationModal, setConfirmationModal] = useState<boolean>(false)
+  const [confirmationModal, setConfirmationModal] = useState<boolean>(true)
   const [perpsEndModal, setPerpsEndModal] = useState<boolean>(false)
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { connected } = useWallet()
@@ -409,16 +410,18 @@ export const PlaceOrder: FC = () => {
         setOrder((prev) => ({ ...prev, total: 0 }))
       }
     } else {
+      const price = order.price ?? getPerpsPrice(orderBook)
+
       const finalValue = removeFloatingPointError(value * +perpsBidBalance)
       if (finalValue) {
         setSelectedTotal(value)
 
         setFocused('total')
-        setOrder((prev) => ({ ...prev, total: finalValue }))
+        setOrder((prev) => ({ ...prev, price, total: finalValue }))
       } else if (!finalValue && value === 0) {
         setSelectedTotal(value)
         setFocused('total')
-        setOrder((prev) => ({ ...prev, total: 0 }))
+        setOrder((prev) => ({ ...prev, price, total: 0 }))
       }
     }
   }

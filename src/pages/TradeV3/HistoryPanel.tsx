@@ -385,7 +385,7 @@ export const HistoryPanel: FC = () => {
                 }
                 className={mode === 'dark' ? 'dark' : ''}
               >
-                <ClosePosition />
+                <ClosePosition setVisibleState={setClosePositionModal} />
               </SETTING_MODAL>
             </>
           )}
