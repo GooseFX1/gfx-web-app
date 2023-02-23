@@ -53,6 +53,19 @@ export const updateNFTUser = async (updatedUser: INFTProfile): Promise<any> => {
   }
 }
 
+export const fetchSingleCollectionAction = async (endpoint: string, paramValue: string): Promise<any> => {
+  const isUUID: boolean = validateUUID(paramValue)
+
+  try {
+    const res = await apiClient(NFT_API_BASE).get(
+      `${endpoint}?${isUUID ? 'collection_id' : 'collection_name'}=${paramValue}`
+    )
+    return await res
+  } catch (err) {
+    return err
+  }
+}
+
 export const fetchSingleCollectionBySalesType = async (endpoint: string, paramValue: string): Promise<any> => {
   const isUUID: boolean = validateUUID(paramValue)
 
