@@ -83,7 +83,7 @@ const NFTTableRow = ({ allItems }: any) => {
         <tr
           className="tableRow"
           key={index}
-          onClick={() => history.push(`/NFTAgg/collection/${item.collection_name.replaceAll(' ', '_')}`)}
+          onClick={() => history.push(`/nfts/collection/${item.collection_name.replaceAll(' ', '_')}`)}
         >
           <td className="nftNameColumn">
             {item?.collection_name ? (

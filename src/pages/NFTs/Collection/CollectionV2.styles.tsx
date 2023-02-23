@@ -173,7 +173,8 @@ export const NFT_COLLECTIONS_GRID = styled.div`
         background: linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0.4) 100%)
       }
       .loadingNFT {
-        ${tw`absolute opacity-100 mt-[-10px] z-50 duration-300 flex items-center w-[190px] h-[280px] rounded-[8px] pl-1`}
+        ${tw`absolute opacity-100 mt-[-10px] z-50 duration-300 
+          flex items-center w-[190px] h-[280px] rounded-[8px] pl-1`}
         background: linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0.4) 120%)
       }
     }

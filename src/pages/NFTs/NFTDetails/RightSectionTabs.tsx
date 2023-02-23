@@ -388,7 +388,7 @@ export const RightSectionTabs: FC<{
   })
 
   const handleUpdateAsk = (action: string) => {
-    action === 'remove' ? setRemoveAskModal(true) : history.push(`/NFTs/sell/${general.mint_address}`)
+    action === 'remove' ? setRemoveAskModal(true) : history.push(`/nfts/sell/${general.mint_address}`)
   }
 
   const handleSetBid = (type: string) => {
@@ -655,7 +655,7 @@ export const RightSectionTabs: FC<{
           ) : (
             <button
               className="rst-footer-button rst-footer-button-bid"
-              onClick={() => history.push(`/NFTs/profile/${publicKey.toBase58()}`)}
+              onClick={() => history.push(`/nfts/profile/${wallet.publicKey.toBase58()}`)}
             >
               Complete profile
             </button>
