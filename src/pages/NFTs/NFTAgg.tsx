@@ -30,10 +30,10 @@ const NFTAgg = (): ReactElement => {
               <Route exact path={path}>
                 <NFTLandingPageV2 />
               </Route>
-              <Route exact path="/NFTAgg/collection/:collectionName">
+              <Route exact path="/nfts/collection/:collectionName">
                 <CollectionV2 />
               </Route>
-              <Route exact path={['/NFTAgg/profile', '/NFTAgg/profile/:userAddress']}>
+              <Route exact path={['/nfts/profile', '/nfts/profile/:userAddress']}>
                 <Profile />
               </Route>
             </Switch>

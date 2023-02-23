@@ -158,7 +158,7 @@ const NFTLandingPageV2 = (): ReactElement => {
       <MyNFTBag />
       {!checkMobile() && (
         <BannerContainer showBanner={showBanner}>
-          <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} />
+          {/* <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} /> */}
           <NFTBanners showBanner={showBanner} />
         </BannerContainer>
       )}
@@ -183,7 +183,7 @@ const FiltersContainer = ({ setCurrency }: any) => {
   const { mode } = useDarkMode()
 
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
-  const goProfile = () => history.push(`/NFTs/profile/${publicKey.toBase58()}`)
+  const goProfile = () => history.push(`/nfts/profile/${publicKey.toBase58()}`)
 
   useEffect(() => {
     if (connected && publicKey) {
@@ -361,7 +361,7 @@ const SearchResultContainer = ({ searchFilter }: any) => {
         <div
           className="searchResultRow"
           key={index}
-          onClick={() => history.push(`/NFTAgg/collection/${data.collection_name.replaceAll(' ', '_')}`)}
+          onClick={() => history.push(`/nfts/collection/${data.collection_name.replaceAll(' ', '_')}`)}
         >
           <img src={data.profile_pic_link} alt="" />
           <div className="searchText">{data.collection_name}</div>
@@ -371,14 +371,14 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   )
 }
 
-const StatsContainer = ({ showBanner, setShowBanner }: any) => (
-  <NFT_STATS_CONTAINER>
-    <StatsButton title={'Total volume traded:'} data={'2332'} />
-    <StatsButton title={'Total traded:'} data={'2332'} />
-    <StatsButton title={'Total Volume:'} data={'2010'} />
-    <ShowBannerEye showBanner={showBanner} setShowBanner={setShowBanner} />
-  </NFT_STATS_CONTAINER>
-)
+// const StatsContainer = ({ showBanner, setShowBanner }: any) => (
+//   <NFT_STATS_CONTAINER>
+//     <StatsButton title={'Total volume traded:'} data={'2332'} />
+//     <StatsButton title={'Total traded:'} data={'2332'} />
+//     <StatsButton title={'Total Volume:'} data={'2010'} />
+//     <ShowBannerEye showBanner={showBanner} setShowBanner={setShowBanner} />
+//   </NFT_STATS_CONTAINER>
+// )
 const StatsButton: FC<{ title: string; data: string | number }> = ({ title, data }) => (
   <STATS_BTN>
     <div className="innerCover">
