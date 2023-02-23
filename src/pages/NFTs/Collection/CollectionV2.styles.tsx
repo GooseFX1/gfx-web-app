@@ -121,21 +121,43 @@ export const NFT_COLLECTIONS_GRID = styled.div`
   background: ${({ theme }) => theme.bg23};
   ${({ theme }) => theme.customScrollBar('4px')}
   overflow-y: auto;
+  .profile-content-loading {
+    position: relative;
+    height: calc(100vh - 260px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    div {
+      position: relative;
+      height: 1px;
+      width: 1px;
+    }
+  }
   .gridContainer {
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
     ${tw`grid pl-3 sm:grid-cols-2 rounded-xl`}
+  }
+  .gridContainerProfile {
+    grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+    ${tw`grid pl-3 sm:grid-cols-2 rounded-xl overflow-y-auto`}
+    ${({ theme }) => theme.customScrollBar('2px')}
   }
   .pinkGradient {
     background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
   }
+  .gridItem:last-child {
+    ${tw`mb-[220px]`}
+  }
+
   .gridItem {
     ${tw`h-[275px] w-[190px] rounded-[12px] dark:bg-[#131313] bg-[#fff] duration-500 cursor-pointer`}
     margin: 20px 13px 0px 0px;
 
     .gridItemContainer {
-      ${tw`flex pt-[10px] justify-center `}
+      ${tw`flex pt-[10px] justify-center relative `}
       .nftImg {
-        ${tw`w-[170px] h-[170px] `}
+        ${tw`w-[170px] h-[170px]`}
       }
       .hoverAddToBag {
         ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
@@ -143,18 +165,16 @@ export const NFT_COLLECTIONS_GRID = styled.div`
       .hoverButtons {
         ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-between w-[96%] px-2`}
       }
-      :hover {
-        div {
-          ${tw`absolute opacity-100 duration-300 w-[190px] h-[170px] rounded-[8px] pl-1`}
-          background: linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0.4) 100%)
-        }
-      }
       div {
         ${tw`absolute opacity-0`}
       }
       .hoverNFT {
-        ${tw`absolute opacity-100 duration-300 w-[190px] h-[170px] rounded-[8px] pl-1`}
+        ${tw`opacity-100 duration-300 z-10 w-[190px] h-[170px] rounded-[8px] pl-1`}
         background: linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0.4) 100%)
+      }
+      .loadingNFT {
+        ${tw`absolute opacity-100 mt-[-10px] z-50 duration-300 flex items-center w-[190px] h-[280px] rounded-[8px] pl-1`}
+        background: linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0.4) 120%)
       }
     }
     .nftTextContainer {

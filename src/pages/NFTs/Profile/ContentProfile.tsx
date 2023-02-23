@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useMemo, FC } from 'react'
 import { useNFTProfile } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
@@ -16,7 +17,7 @@ type Props = {
 }
 
 const WRAPPER = styled.div<{ background?: string }>`
-  ${tw`flex h-[715px]`}
+  ${tw`flex h-[50vh]`}
 `
 
 export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {

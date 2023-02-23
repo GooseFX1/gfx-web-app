@@ -1,5 +1,7 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 const CONTAINER = styled.div`
@@ -9,6 +11,7 @@ const CONTAINER = styled.div`
   display: flex;
   flex-wrap: wrap;
   background-color: ${({ theme }) => `${theme.bg2}`};
+  ${tw`bg-black-1`}
   z-index: 10;
 `
 
@@ -33,7 +36,7 @@ const ITEM = styled.div`
 
 const Loading: FC = () => (
   <CONTAINER>
-    {[...Array(8)].map((_, index) => (
+    {[...Array(12)].map((_, index) => (
       <ITEM key={index}>
         <SkeletonCommon width="100px" height="100px" style={{ marginRight: '30px' }} />
 

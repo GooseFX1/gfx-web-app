@@ -1,17 +1,18 @@
 import { Dropdown } from 'antd'
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactElement, useState, FC } from 'react'
-import { useParams } from 'react-router-dom'
-import tw from 'twin.macro'
-import { SearchBar } from '../../../components'
+import React, { ReactElement, useState, FC, useEffect } from 'react'
+import { useHistory, useParams } from 'react-router-dom'
+import { Loader, SearchBar } from '../../../components'
 import { Button } from '../../../components/Button'
-import { useDarkMode, useNavCollapse, useNFTAggregator } from '../../../context'
+import { useDarkMode, useNavCollapse, useNFTAggregator, useNFTCollections } from '../../../context'
 import { ICON } from '../../../layouts'
 import { IAppParams } from '../../../types/app_params'
 import { checkMobile } from '../../../utils'
+import { GenericNotFound } from '../../InvalidUrl'
 import { GradientText } from '../adminPage/components/UpcomingMints'
 import { CurrencySwitch } from '../Home/NFTLandingPageV2'
 import MyNFTBag from '../MyNFTBag'
+import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import ActivityNFTSection from './ActivityNFTSection'
 import AdditionalFilters from './AdditionalFilters'
 import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
@@ -24,12 +25,53 @@ import {
 } from './CollectionV2.styles'
 import { DetailViewNFT } from './SingleViewNFT'
 import SweepCollectionDrawer from './SweepCollectionDrawer'
+import tw from 'twin.macro'
+import 'styled-components/macro'
+import { LAMPORTS_PER_SOL } from '../../../constants'
+import { NFTCollectionsGrid } from './NFTCollectionsGrid'
 
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
   const { isCollapsed } = useNavCollapse()
+  const {
+    singleCollection,
+    fetchSingleCollection,
+    setSingleCollection,
+    setFixedPriceWithinCollection,
+    setOpenBidWithinCollection,
+    setCollectionOwners,
+    nftMenuPopup,
+    setNFTMenuPopup
+  } = useNFTCollections()
+  const [err, setErr] = useState(false)
+  const [filter, setFilter] = useState('')
+  const [collapse, setCollapse] = useState(true)
 
-  return (
+  useEffect(
+    () => () => {
+      setSingleCollection(undefined)
+      setFixedPriceWithinCollection(undefined)
+      setOpenBidWithinCollection(undefined)
+      setCollectionOwners(undefined)
+    },
+    []
+  )
+
+  useEffect(() => {
+    const curColNameParam = params.collectionName.replaceAll('_', ' ')
+
+    if (!singleCollection || singleCollection.collection.collection_name !== curColNameParam) {
+      fetchSingleCollection(curColNameParam).then((res) => setErr(res && res.status === 200 ? false : true))
+    }
+
+    return null
+  }, [fetchSingleCollection, params.collectionName])
+  //had to remove singleCollection useState trigger as it leads to
+  // infinite loop as setSingleCollection is called in fecthSingleCollection
+
+  return err ? (
+    <GenericNotFound />
+  ) : (
     <COLLECTION_VIEW_WRAPPER id="nft-aggerator-container" navCollapsed={isCollapsed}>
       <MyNFTBag />
       <NFTStatsContainer />
@@ -37,16 +79,22 @@ const CollectionV2 = (): ReactElement => {
     </COLLECTION_VIEW_WRAPPER>
   )
 }
+
 const NFTStatsContainer = () => {
   const { mode } = useDarkMode()
+  const { singleCollection } = useNFTCollections()
   const [sweepCollection, setSweepCollection] = useState<boolean>(false)
-  const logo =
-    'https://beta.api.solanalysis.com/images/filters:' +
-    'frames(,0)/https://storage.googleapis.com/feliz-crypto/project_photos/degodslogo.jpg'
+  const collection = singleCollection ? singleCollection.collection[0] : undefined
+  const collectionFloor = singleCollection
+    ? singleCollection.collection_floor / parseInt(LAMPORTS_PER_SOL.toString())
+    : 0
+  const logo = singleCollection ? singleCollection.collection[0].profile_pic_link : undefined
+  const collectionName = singleCollection ? singleCollection.collection[0].collection_name : undefined
+  const history = useHistory()
   return (
     <div className="nftStatsContainer">
       {!checkMobile() && (
-        <div className="backBtn">
+        <div className="backBtn" onClick={() => history.goBack()}>
           <img src="/img/assets/arrow-leftdark.svg" />
         </div>
       )}
@@ -54,10 +102,20 @@ const NFTStatsContainer = () => {
 
       <div className="collectionNameContainer">
         <div className="collectionName">
-          <img src={logo} />
+          {logo ? (
+            <img src={logo} />
+          ) : (
+            <SkeletonCommon style={{ marginLeft: 20 }} width="65px" height="65px" borderRadius="50%" />
+          )}
           <div className="title">
-            De Gods
-            <img style={{ height: 25, width: 25, marginLeft: 8 }} src="/img/assets/Aggregator/verifiedNFT.svg" />
+            {collectionName ? (
+              collectionName
+            ) : (
+              <SkeletonCommon width="200px" height="30px" style={{ marginTop: '20px', marginLeft: 10 }} />
+            )}
+            {logo && (
+              <img style={{ height: 25, width: 25, marginLeft: 8 }} src="/img/assets/Aggregator/verifiedNFT.svg" />
+            )}
           </div>
           {checkMobile() && (
             <div className="title" style={{ display: 'flex', marginLeft: 'auto' }}>
@@ -81,13 +139,13 @@ const NFTStatsContainer = () => {
           </div>
 
           <div className="wrapper">
-            <div className="titleText"> 180 SOL </div>
+            <div className="titleText">{collectionFloor ? collectionFloor : 0} SOL</div>
             <div className="subTitleText">Floor Price</div>
           </div>
           {!checkMobile() && (
             <div className="wrapper">
-              <div className="titleText">112/10K</div>
-              <div className="subTitleText"> Listed</div>
+              <div className="titleText">112/{collection?.size}</div>
+              <div className="subTitleText">Listed</div>
             </div>
           )}
           <div className="wrapper">
@@ -124,7 +182,8 @@ export const NFTGridContainer = (): ReactElement => {
       <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
       <div className="flexContainer">
         <AdditionalFilters open={open} setOpen={setOpen} />
-        {displayIndex !== 2 && <NFTCollectionsGrid />}
+        {displayIndex === 0 && <NFTCollectionsGrid />}
+        {displayIndex === 1 && <NFTCollectionsGrid />}
         {displayIndex === 2 && <ActivityNFTSection />}
       </div>
     </GRID_CONTAINER>
@@ -159,60 +218,7 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
   )
 }
 
-const NFTCollectionsGrid = (): ReactElement => {
-  const { nftCollections, setSelectedNFT, buyNowClicked, bidNowClicked, setNftInBag } = useNFTAggregator()
-
-  const addNftToBag = (e, nftItem) => {
-    setNftInBag((prev) => {
-      const id = prev.filter((item) => item.uid === nftItem.uid)
-      if (!id.length) return [...prev, nftItem]
-      return prev
-    })
-    e.stopPropagation()
-  }
-  return (
-    <NFT_COLLECTIONS_GRID>
-      {<DetailViewNFT />}
-      {buyNowClicked && <BuyNFTModal />}
-      {bidNowClicked && <BidNFTModal />}
-      <div className="gridContainer">
-        {nftCollections &&
-          nftCollections.map((item, index) => <SingleNFT item={item} index={index} addNftToBag={addNftToBag} />)}
-      </div>
-    </NFT_COLLECTIONS_GRID>
-  )
-}
-
-const SingleNFT: FC<{ item: any; index: number; addNftToBag: any }> = ({ item, index, addNftToBag }) => {
-  const { setSelectedNFT } = useNFTAggregator()
-  const [hover, setHover] = useState<boolean>(false)
-
-  return (
-    <div className="gridItem" key={index} onClick={() => setSelectedNFT(item)}>
-      <div className="gridItemContainer" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-        <img className="nftImg" src={item.nft_url} alt="nft" />
-        {hover && <HoverOnNFT item={item} addNftToBag={addNftToBag} />}
-      </div>
-      <div className="nftTextContainer">
-        <div className="collectionId">
-          {item.collectionId}#
-          <img src="/img/assets/Aggregator/verifiedNFT.svg" />
-        </div>
-        <GradientText text={item.collectionName} fontSize={15} fontWeight={600} />
-        <div className="nftPrice">
-          {item.nftPrice}
-          <img src={`/img/crypto/${item.currency}.svg`} alt={item.currency} />
-        </div>
-        <div className="apprisalPrice">
-          {item.nftPrice}
-          <img src={`/img/assets/Aggregator/Tooltip.svg`} alt={item.currency} />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-const HoverOnNFT: FC<{ addNftToBag: any; item: any }> = ({ addNftToBag, item }): ReactElement => {
+export const HoverOnNFT: FC<{ addNftToBag: any; item: any }> = ({ addNftToBag, item }): ReactElement => {
   const { setBidNow, setBuyNow } = useNFTAggregator()
   return (
     <div className="hoverNFT">

@@ -9,6 +9,7 @@ import { NFTColumnsTitleWeb } from './NFTTableColumns'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { useHistory } from 'react-router-dom'
 
 const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   const { isCollapsed } = useNavCollapse()
@@ -46,7 +47,11 @@ const editString = (str: string) => {
 const NFTTableRowMobile = ({ allItems }: any) => (
   <>
     {allItems.map((item, index) => (
-      <tr className="tableRow" key={index}>
+      <tr
+        className="tableRow"
+        key={index}
+        onClick={() => history.push(`/NFTs/collection/${item.collection_name.replaceAll(' ', '_')}`)}
+      >
         <td className="index"> {index + 1}</td>
         <td className="nftNameColumn">
           {item?.collection_name ? (
@@ -70,39 +75,55 @@ const NFTTableRowMobile = ({ allItems }: any) => (
   </>
 )
 
-const NFTTableRow = ({ allItems }: any) => (
-  <>
-    {allItems.map((item, index) => (
-      <tr className="tableRow" key={index}>
-        <td className="nftNameColumn">
-          {item?.collection_name ? (
-            <>
-              <img src={item.profile_pic_link} alt="" />
-              <div className="nftCollectionName">{item?.collection_name}</div>
-            </>
-          ) : (
-            <div className="nftCollectionName">
+const NFTTableRow = ({ allItems }: any) => {
+  const history = useHistory()
+  return (
+    <>
+      {allItems.map((item, index) => (
+        <tr
+          className="tableRow"
+          key={index}
+          onClick={() => history.push(`/NFTAgg/collection/${item.collection_name.replaceAll(' ', '_')}`)}
+        >
+          <td className="nftNameColumn">
+            {item?.collection_name ? (
+              <>
+                <img src={item.profile_pic_link} alt="" />
+                <div className="nftCollectionName">{item?.collection_name}</div>
+              </>
+            ) : (
+              <div className="nftCollectionName">
+                <Loader />
+              </div>
+            )}
+          </td>
+          <td className="tdItem">
+            {item?.collection_name ? (
+              <PriceWithToken price={200} token={'SOL'} cssStyle={tw`h-5 w-5`} />
+            ) : (
               <Loader />
-            </div>
-          )}
-        </td>
-        <td className="tdItem">
-          {item?.collection_name ? (
-            <PriceWithToken price={121} token={'SOL'} cssStyle={tw`h-5 w-5`} />
-          ) : (
-            <Loader />
-          )}
-        </td>
-        <td className="tdItem">
-          {item?.collection_name ? (
-            <PriceWithToken price={109} token={'SOL'} cssStyle={tw`h-5 w-5`} />
-          ) : (
-            <Loader />
-          )}
-        </td>
-      </tr>
-    ))}
-  </>
-)
+            )}
+          </td>
+          <td className="tdItem">
+            {item?.collection_name ? (
+              <PriceWithToken price={109} token={'SOL'} cssStyle={tw`h-5 w-5`} />
+            ) : (
+              <Loader />
+            )}
+          </td>
+          <td className="tdItem">
+            {item?.collection_name ? <div className="comingSoon">Coming soon</div> : <Loader />}
+          </td>
+          <td className="tdItem">
+            {item?.collection_name ? <div className="comingSoon">Coming soon</div> : <Loader />}
+          </td>
+          <td className="tdItem">
+            {item?.collection_name ? <div className="comingSoon">Coming soon</div> : <Loader />}
+          </td>
+        </tr>
+      ))}
+    </>
+  )
+}
 
 export default NFTCollectionsTable

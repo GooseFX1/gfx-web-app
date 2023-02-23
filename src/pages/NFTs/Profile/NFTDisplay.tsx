@@ -16,6 +16,8 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { CenteredDiv } from '../../../styles'
 import { GRID_CONTAINER, NFT_COLLECTIONS_GRID } from '../Collection/CollectionV2.styles'
+import Loading from '../Home/Loading'
+import NFTLoading from '../Home/NFTLoading'
 
 const WRAPPER = styled.div`
   background-color: ${({ theme }) => theme.primary3};
@@ -152,14 +154,16 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
 
   useEffect(() => {
     if (collectedItems) {
-      if (search.length > 0) {
-        const filteredData = collectedItems.filter(({ nft_name }) =>
-          nft_name.toLowerCase().includes(search.trim().toLowerCase())
-        )
-        setFilteredCollectedItems(filteredData)
-      } else {
-        setFilteredCollectedItems(collectedItems)
-      }
+      setTimeout(() => {
+        if (search.length > 0) {
+          const filteredData = collectedItems.filter(({ nft_name }) =>
+            nft_name.toLowerCase().includes(search.trim().toLowerCase())
+          )
+          setFilteredCollectedItems(filteredData)
+        } else {
+          setFilteredCollectedItems(collectedItems)
+        }
+      }, 400)
     }
 
     return () => setFilteredCollectedItems(undefined)
@@ -230,49 +234,25 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
       }
     }
   }
-  const { isCollapsed } = useNavCollapse()
+  console.log(filteredCollectedItems)
   return (
     <NFT_COLLECTIONS_GRID>
-      {!checkMobile() && (
-        <>
-          {/* <div className="actions-group">
-            <SearchBar className={'profile-search-bar'} filter={search} setFilter={setSearch} />
-          </div> */}
-          {/* <WRAPPER>
-            <ArrowDropdown
-              measurements="16px"
-              offset={[4, 8]}
-              placement="bottom"
-              overlay={<Menu nftFilterArr={nftFilterArr} setNftFilter={setNftFilter} />}
-              onVisibleChange={() => {
-                console.log('haha')
-                //TODO
-              }}
-            >
-              <div className="active">{nftFilterArr[nftFilter]}</div>
-            </ArrowDropdown>
-          </WRAPPER> */}
-          <REFRESH>
-            <img src="/img/assets/refreshButton.png" alt="refresh" />
-          </REFRESH>
-          <Toggle $mode={isSol} onClick={toggleSol}>
-            <div />
-          </Toggle>
-        </>
-      )}
       {filteredCollectedItems === undefined ? (
-        <div className="profile-content-loading">
-          <div>
-            <Loader />
-          </div>
-        </div>
-      ) : filteredCollectedItems && filteredCollectedItems.length > 0 ? (
-        <div className="gridContainer">
-          {[...filteredCollectedItems, ...filteredCollectedItems, ...filteredCollectedItems].map(
-            (nft: ISingleNFT) => (
-              <Card singleNFT={nft} />
-            )
-          )}
+        <>
+          <NFTLoading />
+        </>
+      ) : filteredCollectedItems.length ? (
+        <div className="gridContainerProfile" tw="h-[75vh]">
+          {[
+            ...filteredCollectedItems,
+            ...filteredCollectedItems,
+            ...filteredCollectedItems,
+            ...filteredCollectedItems,
+            ...filteredCollectedItems,
+            ...filteredCollectedItems
+          ].map((nft: ISingleNFT) => (
+            <Card singleNFT={nft} />
+          ))}
         </div>
       ) : (
         <NoContent type={props.type} />

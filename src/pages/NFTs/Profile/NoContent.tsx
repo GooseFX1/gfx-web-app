@@ -1,22 +1,15 @@
 import React from 'react'
-import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useDarkMode } from '../../../context'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 const NO_CONTENT = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: calc(100% - 66px);
+  ${tw`flex items-center justify-center`}
+  height: calc(100vh - 260px);
   text-align: center;
-  padding: 16px 0;
-
-  .spacing {
-    margin-top: 250px;
-    @media (max-width: 500px) {
-      margin-top: 100px;
-    }
-  }
+  padding: 10px 0;
 
   .no-data-image {
     max-width: 160px;
