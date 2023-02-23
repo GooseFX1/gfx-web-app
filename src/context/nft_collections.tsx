@@ -10,7 +10,12 @@ import {
   NFTBaseCollection
 } from '../types/nft_collections.d'
 import apiClient from '../api'
-import { NFT_API_BASE, NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../api/NFTs'
+import {
+  NFT_API_BASE,
+  NFT_API_ENDPOINTS,
+  fetchSingleCollectionBySalesType,
+  fetchSingleCollectionAction
+} from '../api/NFTs'
 
 export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [singleCollection, setSingleCollection] = useState<NFTCollection>()
@@ -44,7 +49,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
 
   const _fetchCollectionDetails = async (collectionUUID: string) => {
     try {
-      const res = await fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.SINGLE_COLLECTION, collectionUUID)
+      const res = await fetchSingleCollectionAction(NFT_API_ENDPOINTS.SINGLE_COLLECTION, collectionUUID)
       return res.data
     } catch (error) {
       console.error('Failed to fetch single collection details')
@@ -73,7 +78,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
 
   const fetchSingleCollection = useCallback(async (paramValue: string): Promise<any> => {
     try {
-      const res = await fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.SINGLE_COLLECTION, paramValue)
+      const res = await fetchSingleCollectionAction(NFT_API_ENDPOINTS.SINGLE_COLLECTION, paramValue)
       const collectionData = await res.data
       if (collectionData.collection === null) return null
 

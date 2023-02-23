@@ -38,6 +38,7 @@ export const Router: FC = () => (
                   <TraderProvider>
                     <OrderBookProvider>
                       <CryptoContent />
+<<<<<<< HEAD
                     </OrderBookProvider>
                   </TraderProvider>
                 </OrderProvider>
@@ -74,3 +75,46 @@ export const Router: FC = () => (
     </NavCollapseProvider>
   </BrowserRouter>
 )
+=======
+                    </OrderProvider>
+                  </TradeHistoryProvider>
+                </PriceFeedProvider>
+              )}
+            </Route>
+            <Route path="/nfts/launchpad">
+              <Launchpad />
+            </Route>
+            <Route path="/nfts/Creator">
+              <Creator />
+            </Route>
+            <Route path="/nfts/admin">
+              <NFTAdminProvider>
+                <AdminWrapper />
+              </NFTAdminProvider>
+            </Route>
+            <Route path="/nfts-v1">
+              <NFTProfileProvider>
+                <NFTs />
+              </NFTProfileProvider>
+            </Route>
+            <Route path="/nfts">
+              <NFTCollectionProvider>
+                <NFTAgg />
+              </NFTCollectionProvider>
+            </Route>
+            <Route exact path="/farm">
+              <Farm />
+            </Route>
+            <Route exact path="/analytics">
+              <AnalyticsWrapper />
+            </Route>
+            <Route>
+              <GenericNotFound />
+            </Route>
+          </Switch>
+        </AppLayout>
+      </NavCollapseProvider>
+    </BrowserRouter>
+  )
+}
+>>>>>>> de3930f0 (updates routes from `/nftagg` to `nfts`)
