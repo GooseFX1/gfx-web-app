@@ -25,7 +25,6 @@ const RIGHT_SECTION = styled.div`
 
     color: ${theme.text1};
     text-align: left;
-    height: 100%;
 
     .rs-title {
       font-size: 18px;

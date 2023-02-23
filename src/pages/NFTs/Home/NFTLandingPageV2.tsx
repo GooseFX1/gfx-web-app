@@ -56,6 +56,9 @@ const WRAPPER = styled.div<{ $navCollapsed; $currency }>`
     transition: 0.5s ease;
     ${tw`sm:w-0`}
   }
+  .comingSoon {
+    ${tw`text-grey-3`}
+  }
   .flexContainer {
     ${tw`h-[40px] flex ml-[10px] mb-4`}
   }
@@ -254,7 +257,7 @@ const FiltersContainer = ({ setCurrency }: any) => {
             ))}
           </ButtonContainer>
 
-          {/* {searchFilter && <SearchResultContainer searchFilter={searchFilter} />} */}
+          {searchFilter && <SearchResultContainer searchFilter={searchFilter} />}
         </FILTERS_CONTAINER>
         <div className="flexContainer" style={{ marginBottom: 20 }}>
           <ButtonContainer $poolIndex={timelineIndex}>
@@ -342,18 +345,24 @@ export const CurrencySwitch = (): ReactElement => {
 const SearchResultContainer = ({ searchFilter }: any) => {
   const { allCollections } = useNFTCollections()
   const searchResultArr = useMemo(() => {
-    if (!searchFilter) return allCollections
+    if (!searchFilter || searchFilter.length < 3) return allCollections
     const searchFiltered = allCollections.filter((result) => {
-      const collectionName = result.collection_name.toLowerCase()
-      if (collectionName.includes(searchFilter.toLowerCase())) return true
+      const collectionName = result.collection_name ? result.collection_name.toLowerCase() : ''
+      if (collectionName.includes(searchFilter && searchFilter.toLowerCase())) return true
     })
     return searchFiltered
   }, [searchFilter])
 
+  const history = useHistory()
+
   return (
     <SEARCH_RESULT_CONTAINER>
       {searchResultArr.map((data, index) => (
-        <div className="searchResultRow" key={index}>
+        <div
+          className="searchResultRow"
+          key={index}
+          onClick={() => history.push(`/NFTAgg/collection/${data.collection_name.replaceAll(' ', '_')}`)}
+        >
           <img src={data.profile_pic_link} alt="" />
           <div className="searchText">{data.collection_name}</div>
         </div>

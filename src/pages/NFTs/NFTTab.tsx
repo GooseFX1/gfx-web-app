@@ -37,7 +37,7 @@ export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }): ReactEl
   const [displayIndex, setDisplayIndex] = useState<number>(0)
 
   return (
-    <GRID_CONTAINER tw="w-[77vw] mt-10">
+    <GRID_CONTAINER tw="w-[77vw] sm:w-[100vw] mt-10" navCollapsed={isCollapsed}>
       <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
       {tabPanes[displayIndex].component}
     </GRID_CONTAINER>
@@ -51,7 +51,7 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
     <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none">
       <div className="flitersFlexContainer">
         {/* {!checkMobile() && <OffersDropdown />} */}
-        {checkMobile() && <CurrencySwitch />}
+        {/* {checkMobile() && <CurrencySwitch />} */}
       </div>
 
       <div className="flitersViewCategory" tw="mr-[10px] sm:mr-0">
@@ -75,7 +75,7 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
           Activity
         </div>
       </div>
-      <TokenToggle tokenA="" tokenB="" toggleToken={() => console.log('first')} icons={true} />
+      {!checkMobile() && <TokenToggle tokenA="" tokenB="" toggleToken={() => console.log('f')} icons={true} />}
     </NFT_FILTERS_CONTAINER>
   )
 }

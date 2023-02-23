@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useAccounts, useDarkMode, useNFTProfile } from '../../../context'
+import { useAccounts, useDarkMode, useNavCollapse, useNFTProfile } from '../../../context'
 import { checkMobile, notify, truncateAddress } from '../../../utils'
 import { PopupProfile } from './PopupProfile'
 import { Share } from '../Share'
@@ -12,9 +13,16 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 
-const PROFILE = styled.div`
-${tw`w-[23vw] h-[708px] bg-[#eee] dark:bg-[#1c1c1c]`}
+const PROFILE = styled.div<{ navCollapsed: boolean }>`
+${tw`w-[23vw] bg-[#eee] dark:bg-[#1c1c1c]`}
   border-top-right-radius: 20px;
+  ${({ theme }) => theme.customScrollBar('1px')}
+  height: ${({ navCollapsed }) => (navCollapsed ? '85vh' : '80vh')};
+  .profileContent {
+    ${tw`overflow-y-auto`}
+    ${({ theme }) => theme.customScrollBar('2px')}
+    height: ${({ navCollapsed }) => (navCollapsed ? '720px' : '640px')};
+  }
 
   .profile-pic {
     ${tw`flex relative h-[100px]`}
@@ -83,9 +91,8 @@ ${tw`w-[23vw] h-[708px] bg-[#eee] dark:bg-[#1c1c1c]`}
 
   .bio {
     color: ${({ theme }) => theme.text20};
-    font-size: 15px;
-    font-weight: 600;
     margin: 20px 25px 35px;
+    ${tw`text-[15px] font-semibold`}
   }
 
   .graphic-img{
@@ -123,7 +130,6 @@ const SCAN_SHARE = styled.div`
     color: ${({ theme }) => theme.text7};
     font-weight: 600;
   }
-
   .solscan-img {
     height: 40px;
     width: 40px;
@@ -139,10 +145,8 @@ const SCAN_SHARE = styled.div`
 `
 
 const SOL = styled.div`
-  width: 90%;
+  ${tw`font-semibold text-[20px] w-[90%]`}
   margin: 0 auto;
-  font-size: 20px;
-  font-weight: 600;
   color: ${({ theme }) => theme.text4};
 
   > div {
@@ -192,6 +196,7 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
   const [telegramHover, setTelegramHover] = useState<boolean>(false)
   const [discordHover, setDiscordHover] = useState<boolean>(false)
   const params = useParams<IAppParams>()
+  const { isCollapsed } = useNavCollapse()
 
   const handleModal = () => {
     if (profileModal) {
@@ -262,7 +267,7 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
   }
 
   return (
-    <PROFILE>
+    <PROFILE navCollapsed={isCollapsed}>
       {handleModal()}
       <div className="profile-pic">
         {!checkMobile() && (
@@ -288,7 +293,7 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
             {isSessionUser && currentUserProfile && currentUserProfile.profile_pic_link ? (
               <img
                 className="icon"
-                src={`/img/assets/edit.svg`}
+                src={`/img/assets/Aggregator/editBtn.svg`}
                 alt="edit-image"
                 onClick={() => setProfileModal(true)}
               />
@@ -377,43 +382,48 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
           </div>
         )}
       </div>
-      {params && params.userAddress && (
-        <SCAN_SHARE>
-          <span>{truncateAddress(params.userAddress)}</span>
-          <a href={`https://solscan.io/account/${params.userAddress}`} target="_blank" rel="noreferrer">
-            <img src="/img/assets/solscanBlack.svg" alt="solscan-icon" className="solscan-img" />
-          </a>
-          <div onClick={() => setShareModal(true)} className="share-img">
-            <img src="/img/assets/shareBlue.svg" height="40px" width="40px" />
+      <div className="profileContent">
+        {params && params.userAddress && (
+          <SCAN_SHARE>
+            <span>{truncateAddress(params.userAddress)}</span>
+            <a href={`https://solscan.io/account/${params.userAddress}`} target="_blank" rel="noreferrer">
+              <img src="/img/assets/solscanBlack.svg" alt="solscan-icon" className="solscan-img" />
+            </a>
+            <div onClick={() => setShareModal(true)} className="share-img">
+              <img src="/img/assets/shareBlue.svg" height="40px" width="40px" />
+            </div>
+          </SCAN_SHARE>
+        )}
+        {currentUserProfile && currentUserProfile.bio ? (
+          <div className="bio">{currentUserProfile.bio}</div>
+        ) : (
+          <div className="bio">
+            Add your bio and share with the <br /> world who you are!
           </div>
-        </SCAN_SHARE>
-      )}
-      {currentUserProfile && currentUserProfile.bio ? (
-        <div className="bio">{currentUserProfile.bio}</div>
-      ) : (
-        <div className="bio">
-          Add your bio and share with the <br /> world who you are!
+        )}
+        <img src="/img/assets/profileGraphic.png" alt="profile-graphic" className="graphic-img" />
+        <div className="portfolio">
+          <span>Portfolio Value</span>{' '}
+          <div tw="inline-block">
+            <span tw="text-[#b5b5b5] text-[15px] font-semibold ">(Coming soon)</span>
+          </div>
+          <div className="track-portfolio">
+            Track your colection portfolio like <br /> never before!
+          </div>
         </div>
-      )}
-      <img src="/img/assets/profileGraphic.png" alt="profile-graphic" className="graphic-img" />
-      <div className="portfolio">
-        <span>Portfolio Value</span>{' '}
-        <div tw="inline-block">
-          <span tw="text-[#b5b5b5] text-[15px] font-semibold 	">(Coming soon)</span>
-        </div>
-        <div className="track-portfolio">
-          Track your colection portfolio like <br /> never before!
-        </div>
-      </div>
 
-      {isSessionUser && (
-        <SOL>
-          <div>Wallet Ballance</div>
-          <span>{userSol ? userSol : '0.00'}</span>
-          <span className="sol">SOL</span>
-          <img src="/img/crypto/sol.png" alt="sol-icon" />
-        </SOL>
-      )}
+        {isSessionUser ? (
+          <SOL>
+            <div>Wallet Ballance</div>
+            <span>{userSol ? userSol : '0.00'}</span>
+            <span className="sol">SOL</span>
+            <img src="/img/crypto/sol.png" alt="sol-icon" />
+          </SOL>
+        ) : (
+          <div tw="h-20"> </div>
+        )}
+        <div tw="h-14"></div>
+      </div>
     </PROFILE>
   )
 }

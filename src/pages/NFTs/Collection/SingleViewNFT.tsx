@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { FC, ReactElement, useEffect, useState } from 'react'
-import { Button, Drawer, Tabs } from 'antd'
+import { FC, ReactElement, useEffect, useMemo, useState } from 'react'
+import { Button, Col, Drawer, Row, Tabs } from 'antd'
 import { ImageShowcase } from '../NFTDetails/ImageShowcase'
 import { RightSection } from '../NFTDetails/RightSection'
-import { checkMobile } from '../../../utils'
-import { useNFTAggregator } from '../../../context'
+import { checkMobile, truncateAddress } from '../../../utils'
+import { useNFTAggregator, useNFTDetails } from '../../../context'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -13,6 +13,8 @@ import { AppraisalValue } from '../../../utils/GenericDegsin'
 import TabPane from 'antd/lib/tabs/TabPane'
 import Item from 'antd/lib/list/Item'
 import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
+import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
+import { AttributesTabContent } from '../NFTDetails/AttributesTabContent'
 
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme }) => css`
@@ -24,7 +26,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
         height: 60px !important;
 
         .ant-tabs-nav-wrap {
-          /* background-color: #1f1f1f; */
+          ${tw`bg-[#3c3c3c]`}
           border-radius: 15px 15px 15px 15px;
           width: 100%;
           .ant-tabs-nav-list {
@@ -65,14 +67,10 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
       }
 
       .ant-tabs-tab {
-        color: #616161;
-        font-size: 14px;
-        font-weight: 500;
-        ${tw`sm:!m-0 sm:!p-0`}
+        ${tw`text-[#636363] text-[15px] font-semibold sm:!m-0 sm:!p-0`}
 
         .ant-tabs-tab-btn {
-          ${tw`sm:text-tiny sm:!my-0 sm:!mx-5`}
-          font-size: 17px;
+          ${tw`sm:text-tiny sm:!my-0 sm:!mx-5 text-[17px]`}
 
           &:before {
             content: '' !important;
@@ -87,15 +85,11 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
         }
       }
 
-     
-      
 
       .ant-tabs-content-holder {
-        ${tw`sm:mb-12 sm:rounded-none`}
-        height: 230px;
-        background-color: #131313;
+        ${tw`sm:mb-12 sm:rounded-none h-[230px] mt-8`}
+        background-color: ${({ theme }) => theme.bgForNFTCollection};
         transform: translateY(-32px);
-        margin-top: 32px;
         padding: 15px 0;
         border-radius: 0 0 25px 25px;
 
@@ -134,6 +128,13 @@ const WRAPPER = styled.div`
     .buyNowButton {
       background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     }
+    .general-item-title {
+      ${tw`text-[15px] font-semibold leading-9	ml-4 text-[#636363]`}
+    }
+    .general-item-value {
+      ${tw`text-[15px] font-semibold leading-9	mr-4`}
+      color: ${({ theme }) => theme.text32};
+    }
 
     .close-icon-holder {
       height: 30px;
@@ -163,7 +164,8 @@ const WRAPPER = styled.div`
     }
     .infoText {
       color: ${({ theme }) => theme.text20};
-      ${tw`text-[15px] font-medium mt-2.5`}
+      max-height: 60px;
+      ${tw`text-[15px] font-medium mt-2.5 overflow-y-auto	`}
     }
     .titleContainer {
     }
@@ -250,6 +252,9 @@ export const DetailViewNFT: FC = (): JSX.Element => {
 const ImageViewer = ({ setBuyNow, buyNowClicked, setBidNow, bidNowClicked }: any): ReactElement => {
   const [activeTab, setActiveTab] = useState('1')
   const { selectedNFT, setSelectedNFT } = useNFTAggregator()
+  const collectionName = selectedNFT ? selectedNFT.nft_name.split('#')[0] : 'Unknown'
+  const nftId = selectedNFT ? selectedNFT.nft_name.split('#')[1] : 'Unknown'
+  const { nftMetadata } = useNFTDetails()
 
   return (
     <WRAPPER>
@@ -261,16 +266,16 @@ const ImageViewer = ({ setBuyNow, buyNowClicked, setBidNow, bidNowClicked }: any
       >
         <img src="/img/assets/close-white-icon.svg" alt="" height="12px" width="12px" />
       </div>
-      <img className="ls-image" height={'100%'} src={selectedNFT?.nft_url} alt="the-nft" />
+      <img className="ls-image" height={'100%'} src={selectedNFT?.image_url} alt="the-nft" />
       <div className="infoContainer">
         <div tw="flex flex-col">
           <div tw="flex items-center">
-            <div tw="text-[20px] font-semibold"> #{selectedNFT?.collectionId}</div>
+            <div tw="text-[20px] font-semibold"> #{nftId}</div>
             <img tw="h-[22px] w-[22px] ml-2.5" src="/img/assets/Aggregator/magicEden.svg" />
           </div>
           <div>
             {' '}
-            <GradientText text={selectedNFT?.collectionName} fontSize={20} fontWeight={600} />
+            <GradientText text={collectionName} fontSize={20} fontWeight={600} />
           </div>
         </div>
         <div className="iconsContainer">
@@ -279,10 +284,7 @@ const ImageViewer = ({ setBuyNow, buyNowClicked, setBidNow, bidNowClicked }: any
           <img tw="h-10 w-10" src={`/img/assets/shareBlue.svg`} />
         </div>
       </div>
-      <div className="infoText">
-        DeGods is a digital art collection and global community of creators, developers, entrepreneurs, athletes,
-        artists, experimenters and innovators.
-      </div>
+      <div className="infoText">{selectedNFT?.nft_description}</div>
 
       <AppraisalValue />
       <img tw="h-[390px] w-[100%]" src="/img/assets/Aggregator/priceHistory.svg" />
@@ -292,10 +294,10 @@ const ImageViewer = ({ setBuyNow, buyNowClicked, setBidNow, bidNowClicked }: any
             <>dasd </>
           </TabPane>
           <TabPane tab="Attributes" key="2">
-            <>Trading his</>
+            <AttributesTabContent data={nftMetadata.attributes} />
           </TabPane>
           <TabPane tab="Details" key="3">
-            <> attributes </>
+            <NFTDetailsTab />
           </TabPane>
         </Tabs>
       </RIGHT_SECTION_TABS>
@@ -323,5 +325,52 @@ const ButtonContainer = ({ setBuyNow, buyNowClicked, bidNowClicked, setBidNow }:
       </Button>
     </div>
   )
+}
+
+const NFTDetailsTab = (): ReactElement => {
+  const { selectedNFT } = useNFTAggregator()
+  const { nftMetadata, general } = useNFTDetails()
+
+  const nftData = useMemo(
+    () => [
+      {
+        title: 'Mint address',
+        value: truncateAddress(general.mint_address)
+      },
+      {
+        title: 'Token Address',
+        value: general.token_account ? truncateAddress(general.token_account) : ''
+      },
+      {
+        title: 'Owner',
+        value: general.owner ? truncateAddress(general.owner) : ''
+      },
+      {
+        title: 'Artist Royalties',
+        value: `${(nftMetadata.seller_fee_basis_points / 100).toFixed(2)}%`
+      },
+      {
+        title: 'Transaction Fee',
+        value: `${NFT_MARKET_TRANSACTION_FEE}%`
+      }
+    ],
+    [general]
+  )
+
+  return (
+    <div>
+      {nftData.map((item, index) => (
+        <Row justify="space-between" align="middle" className="dtc-item" key={index}>
+          <Col className="general-item-title">{item.title}</Col>
+          <Col className="general-item-value">{item.value}</Col>
+        </Row>
+      ))}
+    </div>
+  )
+}
+
+const AttributesTab = (): ReactElement => {
+  console.log('attri')
+  return <div>attributes</div>
 }
 export default DetailViewNFT

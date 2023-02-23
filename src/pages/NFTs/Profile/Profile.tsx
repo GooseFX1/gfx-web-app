@@ -13,6 +13,10 @@ import 'styled-components/macro'
 //#region styles
 const PROFILE_CONTAINER = styled.div<{ background?: string }>`
   ${tw`-mt-20 pt-20 flex flex-col`}
+  .ant-drawer-body {
+    ${({ theme }) => theme.customScrollBar('4px')}
+    background: ${({ theme }) => theme.bg2};
+  }
   ${({ background }) => `
   background : url(${background});
   background-repeat: no-repeat;
@@ -20,11 +24,13 @@ const PROFILE_CONTAINER = styled.div<{ background?: string }>`
   @media(max-width: 500px){
     background-size: 100% 100%;
   }
+
+
   .ant-drawer-content {
     background: #1c1c1c !important;
   }
   .ant-drawer-content-wrapper{
-    height: 90% !important;
+    height: 93vh !important;
   }
   .ant-tabs-top {
     overflow: initial;

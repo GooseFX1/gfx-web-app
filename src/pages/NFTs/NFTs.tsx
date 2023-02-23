@@ -27,7 +27,7 @@ import { logData } from '../../api/analytics'
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
   width: 100vw;
-  min-height: calc(100vh - 58px);
+  min-height: 100vh;
   overflow-y: hidden;
   overflow-x: hidden;
   padding-top: calc(80px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
