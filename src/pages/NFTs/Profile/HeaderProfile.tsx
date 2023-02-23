@@ -320,24 +320,6 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
         </div>
       )}
 
-      {/* {!checkMobile() && (
-        <div className="avatar-profile-wrap">
-          <Image
-            className="avatar-profile"
-            fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-            src={
-              currentUserProfile
-                ? currentUserProfile.profile_pic_link
-                : `/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`
-            }
-            preview={false}
-            alt={currentUserProfile ? currentUserProfile.nickname : 'loading'}
-          />
-          {connected && currentUserProfile && isSessionUser && (
-            <img className="edit-icon" src={`/img/assets/edit.svg`} alt="" onClick={() => setProfileModal(true)} />
-          )}
-        </div>
-      )} */}
       {checkMobile() && (
         <div
           style={{
@@ -347,6 +329,27 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
             height: '35px'
           }}
         >
+          <div className="avatar-profile-wrap">
+            <Image
+              className="avatar-profile"
+              fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+              src={
+                currentUserProfile
+                  ? currentUserProfile.profile_pic_link
+                  : `/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`
+              }
+              preview={false}
+              alt={currentUserProfile ? currentUserProfile.nickname : 'loading'}
+            />
+            {connected && currentUserProfile && isSessionUser && (
+              <img
+                className="edit-icon"
+                src={`/img/assets/Aggregator/editBtn.svg`}
+                alt=""
+                onClick={() => setProfileModal(true)}
+              />
+            )}
+          </div>
           <div className="name-wrap">
             {currentUserProfile === undefined ? (
               <SkeletonCommon width="100%" height="75px" borderRadius="10px" />

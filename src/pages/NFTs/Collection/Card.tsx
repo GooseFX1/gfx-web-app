@@ -1,5 +1,6 @@
+/* eslint-disable arrow-body-style */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect, useMemo, FC } from 'react'
+import React, { useState, useEffect, useMemo, FC, ReactElement } from 'react'
 import axios from 'axios'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Row } from 'antd'
@@ -111,20 +112,12 @@ const LIGHT_TEXT = styled.span`
   color: ${({ theme }) => theme.hintInputColor};
 `
 
-const COVER = styled.div<{ $mode: boolean }>`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ $mode }) => ($mode ? 'rgb(0 0 0 / 66%)' : 'rgb(202 202 202 / 71%)')};
-  z-index: 1000;
-  cursor: default;
-  ${({ theme }) => theme.largeBorderRadius}
-
-  div {
-    border: 1px solid;
-    top: 10%;
-  }
+const COVER = styled.div`
+  width: 190px;
+  height: 270px;
+  border: 1px solid;
+  background: pink;
+  z-index: 200;
 `
 //#endregion
 
@@ -139,7 +132,7 @@ export const Card: FC<ICard> = (props) => {
   const { mode } = useDarkMode()
   const { connection } = useConnectionConfig()
   const { sessionUser, sessionUserParsedAccounts, likeDislike, userCurrency } = useNFTProfile()
-  const { prices } = usePriceFeed()
+  // const { prices } = usePriceFeed()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   /** setters are only for populating context before location change to details page */
   const { setGeneral, setNftMetadata, setBids, setAsk, setTotalLikes } = useNFTDetails()
@@ -238,7 +231,7 @@ export const Card: FC<ICard> = (props) => {
   }
 
   const dynamicPriceValue = (currency: string, priceFeed: any, value: number) => {
-    const val = currency === 'USD' ? value * priceFeed['SOL/USDC']?.current : value
+    //const val = currency === 'USD' ? value * priceFeed['SOL/USDC']?.current : value
     return `${moneyFormatter(parseFloat(displayPrice))}`
   }
   return (
@@ -246,11 +239,7 @@ export const Card: FC<ICard> = (props) => {
       {showSingleNFT && <BuySellNFTs setShowSingleNFT={setShowSingleNFT} />}
       <div className="gridItem">
         <div className="gridItemContainer" onClick={() => (localSingleNFT !== undefined ? goToDetails() : null)}>
-          {isLoadingBeforeRelocate && (
-            <COVER $mode={mode === 'dark'}>
-              <Loader />
-            </COVER>
-          )}
+          {isLoadingBeforeRelocate && <LoadingDiv />}
 
           <img
             className="nftImg"
@@ -277,7 +266,7 @@ export const Card: FC<ICard> = (props) => {
                   <LIGHT_TEXT>No Bids</LIGHT_TEXT>
                 ) : (
                   <div className="nftPrice">
-                    {dynamicPriceValue(userCurrency, prices, parseFloat(displayPrice) / LAMPORTS_PER_SOL)}
+                    {dynamicPriceValue(userCurrency, [], parseFloat(displayPrice) / LAMPORTS_PER_SOL)}
                     <img src={`/img/crypto/SOL.svg`} alt={'SOL'} />
                   </div>
                 )}
@@ -286,7 +275,7 @@ export const Card: FC<ICard> = (props) => {
               <SkeletonCommon width="64px" height="24px" />
             )}
             <div className="apprisalPrice">
-              {dynamicPriceValue(userCurrency, prices, parseFloat(displayPrice) / LAMPORTS_PER_SOL)}
+              {dynamicPriceValue(userCurrency, [], parseFloat(displayPrice) / LAMPORTS_PER_SOL)}
               <img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'tooltip'} />
             </div>
           </div>
@@ -295,3 +284,4 @@ export const Card: FC<ICard> = (props) => {
     </>
   )
 }
+export const LoadingDiv = (): ReactElement => <div className="loadingNFT" />

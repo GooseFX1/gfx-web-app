@@ -7,7 +7,7 @@ import 'styled-components/macro'
 export const StyledHeaderProfile = styled.div<{ mode?: string; background?: string }>`
   ${tw`flex items-end p-[24px] pb-[84px] justify-start`}
   @media(max-width: 500px) {
-    ${tw`flex flex-col justify-between pb-[20px] h-[50vh]`}
+    ${tw`flex flex-col justify-between pb-[20px] h-[50vh] sm:h-[180px]`}
     align-items: inherit;
     background: url(${({ background }) => background});
     background-repeat: no-repeat;
@@ -38,27 +38,18 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
 
   .avatar-profile-wrap {
     position: relative;
-    width: 80px;
+    ${tw`w-[60px] h-[60px]`}
     margin: 0 15px 0 0;
     .avatar-profile {
-      ${tw`w-[80px] h-20 rounded-[50%]`}
+      ${tw`w-[80px] h-[60px]  h-20 ml-[-5px] mt-[-25px] rounded-[50%]`}
+      border: 5px solid #131313;
     }
     .edit-icon {
-      position: absolute;
-      width: 40px;
-      height: 40px;
-      bottom: -5px;
-      right: -1px;
-      cursor: pointer;
+      ${tw`absolute cursor-pointer h-[30px] bottom-[0px] right-[-20px] w-[30px]`}
     }
   }
   .name-wrap {
-    @media (max-width: 500px) {
-      margin-left: 0;
-    }
-    display: flex;
-    align-items: start;
-    margin-left: ${({ theme }) => theme.margin(1)};
+    ${tw`mt-[100px] ml-[-170px]`}
   }
   .name {
     @media (max-width: 500px) {

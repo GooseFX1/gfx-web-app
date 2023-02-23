@@ -137,6 +137,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   }
   .tableRow {
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
+    ${tw`cursor-pointer`}
   }
 
   .borderRow2 {
@@ -157,7 +158,7 @@ export const SEARCH_RESULT_CONTAINER = styled.div`
 
   overflow-y: scroll;
   .searchResultRow {
-    ${tw`h-[50px] text-[15px] font-semibold `}
+    ${tw`h-[50px] text-[15px] font-semibold cursor-pointer `}
     color: ${({ theme }) => theme.text1};
     display: flex;
     align-items: center;
