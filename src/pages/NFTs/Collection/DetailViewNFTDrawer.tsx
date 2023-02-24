@@ -313,6 +313,7 @@ const ImageViewer = ({ setBuyNow, buyNowClicked, setBidNow, bidNowClicked }: any
 
 const ButtonContainer = ({ setBuyNow, buyNowClicked, bidNowClicked, setBidNow }: any): ReactElement => {
   const { selectedNFT } = useNFTAggregator()
+
   return (
     <div className="buttonContainer">
       {buyNowClicked && <BuyNFTModal />}
@@ -369,8 +370,4 @@ const NFTDetailsTab = (): ReactElement => {
   )
 }
 
-const AttributesTab = (): ReactElement => {
-  console.log('attri')
-  return <div>attributes</div>
-}
 export default DetailViewNFT

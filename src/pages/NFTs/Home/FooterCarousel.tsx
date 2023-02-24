@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, FC } from 'react'
 import styled from 'styled-components'
 import { Image } from 'antd'
@@ -28,21 +29,7 @@ const FooterCarousel: FC = () => {
     setNfts(allCollections)
   }, [allCollections])
 
-  return (
-    <FOOTER_LIST_CARD>
-      {nfts.length === 0
-        ? Array.apply('null', Array(12)).map((num, i) => (
-            <div key={i} style={{ margin: '0 24px' }}>
-              <SkeletonCommon width="110px" height="110px" borderRadius="10px" />
-            </div>
-          ))
-        : nfts.map((collection: NFTBaseCollection) => (
-            <div key={collection.uuid}>
-              <FOOTER_IMAGE preview={false} src={collection.profile_pic_link} />
-            </div>
-          ))}
-    </FOOTER_LIST_CARD>
-  )
+  return <FOOTER_LIST_CARD></FOOTER_LIST_CARD>
 }
 
 export default FooterCarousel

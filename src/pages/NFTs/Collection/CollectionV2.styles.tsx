@@ -213,6 +213,9 @@ export const DROPDOWN_CONTAINER = styled.div`
     ${tw`flex items-center justify-center`}
     border: 1px solid;
   }
+  .marketImg {
+    ${tw`w-[30px] h-[30px]`}
+  }
   .option {
     ${tw`flex cursor-pointer items-center justify-between p-1`}
     input {
@@ -275,7 +278,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       transform: rotate(180deg);
       margin-left: ${index * 280 + `px`};
       @media (max-width: 500px) {
-        margin-left: ${index * 260 + `px`};
+        margin-left: ${index * 280 + `px`};
       }
     }
     .activeItemProfile {

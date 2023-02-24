@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Dropdown, Switch } from 'antd'
+import { Checkbox, Dropdown, Switch } from 'antd'
 import React, { ReactElement, useMemo, useState, FC, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
@@ -27,22 +27,24 @@ import MyNFTBag from '../MyNFTBag'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import { Image } from 'antd'
+import { AH_PROGRAM_IDS } from '../../../web3/agg_program_ids'
 
 const CURRENCY_SWITCH = styled.div<{ $currency }>`
   .ant-switch {
-    ${tw`h-[40px] sm:h-[35px] sm:w-[65px] w-[75px] ml-auto mr-3`}
+    ${tw`h-[26px] sm:h-[26px] sm:w-[50px] w-[50px] ml-auto mr-3`}
     background: linear-gradient(90.95deg, #F7931A 25.41%, #AC1CC7 99.19%) !important;
   }
   .ant-switch-handle {
-    ${tw`w-[40px] h-[40px] left-[2px] top-[1px]`}
+    ${tw`h-[26px] w-[26px] left-[-2px]  top-[0px]`}
     ::before {
-      ${tw`w-[38px] h-[38px] sm:w-[32px] sm:h-[32px] rounded-[40px] duration-500`}
-      background:url(${({ $currency }) => `/img/crypto/${$currency}.svg`}) no-repeat center;
+      ${tw`h-[26px] w-[26px] rounded-[40px] duration-500`}
+      background-size: 26px;
+      background: url(${({ $currency }) => `/img/crypto/${$currency}.svg`}) center;
     }
   }
   .ant-switch-checked {
     .ant-switch-handle {
-      left: calc(100% - 35px);
+      left: calc(100% - 25px);
     }
     background: linear-gradient(90.95deg, #f7931a 25.41%, #ac1cc7 99.19%) !important;
   }
@@ -158,7 +160,7 @@ const NFTLandingPageV2 = (): ReactElement => {
       <MyNFTBag />
       {!checkMobile() && (
         <BannerContainer showBanner={showBanner}>
-          {/* <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} /> */}
+          <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} />
           <NFTBanners showBanner={showBanner} />
         </BannerContainer>
       )}
@@ -347,7 +349,9 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   const searchResultArr = useMemo(() => {
     if (!searchFilter || searchFilter.length < 3) return allCollections
     const searchFiltered = allCollections.filter((result) => {
-      const collectionName = result.collection_name ? result.collection_name.toLowerCase() : ''
+      const collectionName = result.collection?.collection_name
+        ? result.collection.collection_name.toLowerCase()
+        : ''
       if (collectionName.includes(searchFilter && searchFilter.toLowerCase())) return true
     })
     return searchFiltered
@@ -361,24 +365,24 @@ const SearchResultContainer = ({ searchFilter }: any) => {
         <div
           className="searchResultRow"
           key={index}
-          onClick={() => history.push(`/nfts/collection/${data.collection_name.replaceAll(' ', '_')}`)}
+          onClick={() => history.push(`/nfts/collection/${data.collection.collection_name.replaceAll(' ', '_')}`)}
         >
-          <img src={data.profile_pic_link} alt="" />
-          <div className="searchText">{data.collection_name}</div>
+          <img src={data.collection.profile_pic_link} alt="" />
+          <div className="searchText">{data.collection.collection_name}</div>
         </div>
       ))}
     </SEARCH_RESULT_CONTAINER>
   )
 }
 
-// const StatsContainer = ({ showBanner, setShowBanner }: any) => (
-//   <NFT_STATS_CONTAINER>
-//     <StatsButton title={'Total volume traded:'} data={'2332'} />
-//     <StatsButton title={'Total traded:'} data={'2332'} />
-//     <StatsButton title={'Total Volume:'} data={'2010'} />
-//     <ShowBannerEye showBanner={showBanner} setShowBanner={setShowBanner} />
-//   </NFT_STATS_CONTAINER>
-// )
+const StatsContainer = ({ showBanner, setShowBanner }: any) => (
+  <NFT_STATS_CONTAINER>
+    <StatsButton title={'Total volume traded:'} data={'2332'} />
+    <StatsButton title={'Total traded:'} data={'2332'} />
+    <StatsButton title={'Total Volume:'} data={'2010'} />
+    <ShowBannerEye showBanner={showBanner} setShowBanner={setShowBanner} />
+  </NFT_STATS_CONTAINER>
+)
 const StatsButton: FC<{ title: string; data: string | number }> = ({ title, data }) => (
   <STATS_BTN>
     <div className="innerCover">
@@ -431,8 +435,28 @@ const MarketDropdownContents = ({ setArrow }: any): ReactElement => {
       setArrow(false)
     }
   }, [])
+  const arr = []
+  const { mode } = useDarkMode()
+  for (const property in AH_PROGRAM_IDS) {
+    arr.push(
+      <div tw="flex p-2 items-center ">
+        <div>
+          <Image
+            className="marketImg"
+            fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+            src={`/img/assets/Aggregator/${AH_PROGRAM_IDS[property].replaceAll(' ', '')}.svg`}
+            preview={false}
+          />
+        </div>
+        <div tw="ml-2">{AH_PROGRAM_IDS[property]}</div>
+        <div tw="ml-auto">
+          <Checkbox />
+        </div>
+      </div>
+    )
+  }
 
-  return <DROPDOWN_CONTAINER tw="w-[173px] h-[211px]">List of markets</DROPDOWN_CONTAINER>
+  return <DROPDOWN_CONTAINER tw="w-[173px] h-[211px] overflow-y-auto">{arr}</DROPDOWN_CONTAINER>
 }
 
 const TimelineDropdownContents = ({ setArrow }: any): ReactElement => {

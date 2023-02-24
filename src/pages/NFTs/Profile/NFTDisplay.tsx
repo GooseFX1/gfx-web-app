@@ -19,34 +19,6 @@ import { GRID_CONTAINER, NFT_COLLECTIONS_GRID } from '../Collection/CollectionV2
 import Loading from '../Home/Loading'
 import NFTLoading from '../Home/NFTLoading'
 
-const WRAPPER = styled.div`
-  background-color: ${({ theme }) => theme.primary3};
-  position: absolute;
-  left: 367px;
-  border: 1px solid;
-  height: 40px;
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: 600;
-  width: 115px;
-  border-radius: 59px;
-  display: flex;
-  justify-content: center;
-
-  .ant-row {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-  }
-`
-
-const REFRESH = styled.div`
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  right: 110px;
-  cursor: pointer;
-`
 const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
   ${tw`h-[25px] w-[50px] rounded-[40px] cursor-pointer`}
   border-radius: 30px;
@@ -234,7 +206,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
       }
     }
   }
-  console.log(filteredCollectedItems)
+
   return (
     <NFT_COLLECTIONS_GRID>
       {filteredCollectedItems === undefined ? (
@@ -243,15 +215,8 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
         </>
       ) : filteredCollectedItems.length ? (
         <div className="gridContainerProfile" tw="h-[75vh]">
-          {[
-            ...filteredCollectedItems,
-            ...filteredCollectedItems,
-            ...filteredCollectedItems,
-            ...filteredCollectedItems,
-            ...filteredCollectedItems,
-            ...filteredCollectedItems
-          ].map((nft: ISingleNFT) => (
-            <Card singleNFT={nft} />
+          {filteredCollectedItems.map((nft: ISingleNFT, index: number) => (
+            <Card singleNFT={nft} key={index} />
           ))}
         </div>
       ) : (

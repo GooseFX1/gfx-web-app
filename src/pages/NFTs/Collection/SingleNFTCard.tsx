@@ -4,13 +4,17 @@ import { useConnectionConfig, useNFTAggregator, useNFTDetails } from '../../../c
 import { GradientText } from '../adminPage/components/UpcomingMints'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { HoverOnNFT } from './CollectionV2'
-import { INFTAsk, INFTBid, INFTGeneralData } from '../../../types/nft_details.d'
+import { INFTAsk, INFTBid, INFTGeneralData } from '../../../types/nft_details'
 import { fetchSingleNFT } from '../../../api/NFTs'
 import { getParsedAccountByMint, StringPublicKey } from '../../../web3'
 import axios from 'axios'
 import { LoadingDiv } from './Card'
 
-export const SingleNFT: FC<{ item: any; index: number; addNftToBag: any }> = ({ item, index, addNftToBag }) => {
+export const SingleNFTCard: FC<{ item: any; index: number; addNftToBag: any }> = ({
+  item,
+  index,
+  addNftToBag
+}) => {
   const { setSelectedNFT } = useNFTAggregator()
   const [hover, setHover] = useState<boolean>(false)
   const nftId = item ? item.nft_name.split('#')[1] : null
