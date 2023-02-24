@@ -40,9 +40,27 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
     }
   }, [])
 
+  const fetchAllCollectionsByPages = async (offset: number, limit: number) => {
+    try {
+      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS, {
+        params: {
+          offset: offset,
+          limit: limit
+        }
+      })
+      setAllCollections((prev) => [...prev, ...res.data])
+      return res.data
+    } catch (err) {
+      console.error(err)
+      return []
+    }
+  }
+
   const fetchAllCollectionDetails = async (collections: NFTBaseCollection[]) => {
     const collectionsDetails = await Promise.all(
-      collections.map(async (collection: NFTBaseCollection) => await _fetchCollectionDetails(collection.uuid))
+      collections.map(
+        async (collection: NFTBaseCollection) => await _fetchCollectionDetails(collection.collection.uuid)
+      )
     )
     setAllDetailedCollections(collectionsDetails === null ? [] : collectionsDetails)
   }
@@ -136,6 +154,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
         featuredCollections,
         upcomingCollections,
         fetchAllCollections,
+        fetchAllCollectionsByPages,
         fetchAllCollectionDetails,
         fetchFeaturedCollections,
         fetchUpcomingCollections,
@@ -174,6 +193,7 @@ export const useNFTCollections = (): INFTCollectionConfig => {
     featuredCollections: context.featuredCollections,
     upcomingCollections: context.upcomingCollections,
     fetchAllCollections: context.fetchAllCollections,
+    fetchAllCollectionsByPages: context.fetchAllCollectionsByPages,
     fetchAllCollectionDetails: context.fetchAllCollectionDetails,
     fetchFeaturedCollections: context.fetchFeaturedCollections,
     fetchUpcomingCollections: context.fetchUpcomingCollections,

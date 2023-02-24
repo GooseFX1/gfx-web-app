@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useState, useEffect, FC } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
@@ -45,11 +46,6 @@ const NFTLandingPage: FC = (): JSX.Element => {
   }, [])
 
   const find = useCallback((col: string | string[], search: string) => col.includes(search), [])
-
-  useEffect(() => {
-    const filtered = allCollections.filter((i) => find(i.collection_name.toLowerCase(), search.toLowerCase()))
-    setFilteredCollections(filtered.slice(0, 5))
-  }, [search])
 
   const displayMenu = () => {
     if (nftMenuPopup) return <ModalSlide modalType={MODAL_TYPES.NFT_MENU} rewardToggle={setNFTMenuPopup} />

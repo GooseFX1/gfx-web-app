@@ -7,22 +7,31 @@ export enum COLLECTION_TYPES {
 }
 
 export type NFTBaseCollection = {
-  uuid: string
-  collection_id: number
-  collection_name: string
-  collection_description: string
-  profile_pic_link: string
-  banner_link: string | null
-  banner_2_link: string | null
-  banner_3_link: string | null
-  title: string
-  tagline: string
-  size: number
-  category_tags: string
-  is_verified: boolean
+  collection_vol: {
+    daily: number
+    weekly: number
+    monthly: number
+    yearly: number
+  }
+  collection: {
+    uuid: string
+    collection_id: number
+    collection_name: string
+    collection_description: string
+    profile_pic_link: string
+    banner_link: string | null
+    banner_2_link: string | null
+    banner_3_link: string | null
+    title: string
+    tagline: string
+    size: number
+    category_tags: string
+    is_verified: boolean
+  }
 }
 
 export type NFTCollection = {
+  collection?: any
   collection_id: number
   collection_floor: null | number
   collection_vol: {
@@ -78,6 +87,7 @@ export interface INFTCollectionConfig {
   allCollections: NFTBaseCollection[]
   detailedCollections: NFTCollection[]
   collectionOwners: CollectionOwner[]
+  fetchAllCollectionsByPages: any
   fetchCollectionOwners: (collectionId: string) => Promise<any>
   featuredCollections: NFTFeaturedCollection[]
   upcomingCollections: NFTUpcomingCollection[]
