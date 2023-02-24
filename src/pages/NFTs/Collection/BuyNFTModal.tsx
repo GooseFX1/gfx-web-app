@@ -80,7 +80,6 @@ const STYLED_POPUP = styled(PopupCustom)`
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const BuyNFTModal = (): ReactElement => {
   const { selectedNFT, setSelectedNFT, buyNowClicked, setBuyNow } = useNFTAggregator()
-  console.log(buyNowClicked)
   return (
     <STYLED_POPUP
       height={checkMobile() ? '600px' : '780px'}
@@ -93,10 +92,10 @@ export const BuyNFTModal = (): ReactElement => {
       <div className="buyTitle">
         You are about to buy <br />
         <strong>#{buyNowClicked.collectionId} </strong> {checkMobile() ? <br /> : 'by'}
-        <strong> {'De Gods'}</strong>
+        <strong> {buyNowClicked.nft_name}</strong>
       </div>
       <div className="vContainer">
-        <img className="nftImg" src={buyNowClicked.nft_url} alt="" />
+        <img className="nftImg" src={buyNowClicked.image_url} alt="" />
       </div>
 
       <div className="vContainer">
@@ -142,6 +141,7 @@ export const BuyNFTModal = (): ReactElement => {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const BidNFTModal = (): ReactElement => {
   const { selectedNFT, setSelectedNFT, bidNowClicked, setBidNow } = useNFTAggregator()
+  console.log(selectedNFT)
 
   return (
     <STYLED_POPUP
@@ -155,7 +155,7 @@ export const BidNFTModal = (): ReactElement => {
       <div className="buyTitle">
         You are about to Bid <br />
         <strong>#{bidNowClicked.collectionId} </strong> {checkMobile() ? <br /> : 'by'}
-        <strong> {'De Gods'}</strong>
+        <strong> {selectedNFT?.collection_name}</strong>
       </div>
       <div className="vContainer">
         <img className="nftImgBid" src={bidNowClicked.nft_url} alt="" />

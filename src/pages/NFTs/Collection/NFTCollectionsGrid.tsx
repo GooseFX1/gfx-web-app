@@ -1,17 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ReactElement, useEffect, useRef, useState } from 'react'
-import { useNFTAggregator, useNFTCollections } from '../../../context'
+import { ENDPOINTS, useNFTAggregator, useNFTCollections } from '../../../context'
 import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
 import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
-import DetailViewNFT from './SingleViewNFT'
+import DetailViewNFT from './DetailViewNFTDrawer'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { debounce } from 'lodash'
-import { SingleNFT } from './SingleNFT'
+import { SingleNFTCard } from './SingleNFTCard'
+import { fetchSingleCollectionBySalesType, NFT_API_ENDPOINTS } from '../../../api/NFTs'
+import { useParams } from 'react-router-dom'
+import { IAppParams } from '../../../types/app_params'
 
 export const NFTCollectionsGrid = (): ReactElement => {
   const { nftCollections, buyNowClicked, bidNowClicked, setNftInBag } = useNFTAggregator()
-  const { openBidWithinCollection } = useNFTCollections()
-  const paginationNum = 25
+  const { openBidWithinCollection, fetchAllCollectionsByPages } = useNFTCollections()
+  const paginationNum = 20
 
   const [fileredLocalOpenBid, _setFilteredLocalOpenBid] = useState<Array<ISingleNFT>>(Array(21).fill(null))
   const [shortfilteredLocalOpenBid, _setShortFilteredLocalOpenBid] = useState<Array<ISingleNFT>>(
@@ -20,6 +23,7 @@ export const NFTCollectionsGrid = (): ReactElement => {
   const [level, _setLevel] = useState<number>(0)
   const [loading, _setLoading] = useState<boolean>(false)
   const filter = ''
+  // const params = useParams<IAppParams>()
 
   // define a ref
   const activePointRef = useRef(fileredLocalOpenBid)
@@ -90,17 +94,17 @@ export const NFTCollectionsGrid = (): ReactElement => {
     }
   }
 
-  const addToList = () => {
-    const total = activePointRef.current
-    const newLevel = activePointLevel.current + 1
-
-    if (total?.length > newLevel * paginationNum) {
-      setLoading(true)
-      const nextData = total.slice(newLevel * paginationNum, (newLevel + 1) * paginationNum)
-      setShortFilteredLocalOpenBid([...activePointshortFilter.current, ...nextData])
-      setLevel(newLevel)
-      setLoading(false)
-    }
+  const addToList = async () => {
+    // const curColNameParam = params.collectionName.replaceAll('_', ' ')
+    // const total = activePointRef.current
+    // const newLevel = activePointLevel.current + 1
+    // if (total?.length > newLevel * paginationNum) {
+    //   setLoading(true)
+    //   const nextData = await fetchAllCollectionsByPages(newLevel * paginationNum, (newLevel + 1) * paginationNum)
+    //   setShortFilteredLocalOpenBid([...activePointshortFilter.current, ...nextData])
+    //   setLevel(newLevel)
+    //   setLoading(false)
+    // } working on it now
   }
 
   const addNftToBag = (e, nftItem) => {
@@ -119,7 +123,7 @@ export const NFTCollectionsGrid = (): ReactElement => {
       <div className="gridContainer">
         {shortfilteredLocalOpenBid &&
           shortfilteredLocalOpenBid.map((item, index) => (
-            <SingleNFT item={item} key={index} index={index} addNftToBag={addNftToBag} />
+            <SingleNFTCard item={item} key={index} index={index} addNftToBag={addNftToBag} />
           ))}
       </div>
     </NFT_COLLECTIONS_GRID>

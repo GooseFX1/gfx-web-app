@@ -131,13 +131,14 @@ const settings = {
   infinite: false,
   speed: 500,
   swipeToSlide: true,
+  slidesToShow: 3,
   slidesToScroll: 1,
   snapCenter: true,
   initialSlide: 0,
   arrows: true,
-  variableWidth: checkMobile() ? false : true
-  // nextArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-next" />
-  //prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-previous" />
+  variableWidth: checkMobile() ? false : true,
+  nextArrow: <img src={`/img/assets/home-slider-next.svg`} alt="banner-next" />,
+  prevArrow: <img src={`/img/assets/home-slider-next.svg`} alt="banner-previous" />
 }
 
 export const NFTBanners = ({ showBanner }: any) => {

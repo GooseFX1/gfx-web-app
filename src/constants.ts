@@ -183,4 +183,5 @@ export const generateListOfSSLTokens = (network: WalletAdapterNetwork): IFarmDat
 export const NQ_GOFX_PRICE = 500
 export const NQ_SOL_PRICE = 1
 export const LAMPORTS_PER_SOL = BigInt(1000000000)
+export const LAMPORTS_PER_SOL_NUMBER = 1000000000
 export const ZERO = BigInt(0)

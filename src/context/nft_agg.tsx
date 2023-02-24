@@ -53,23 +53,6 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
   const [bidNowClicked, setBidNow] = useState<boolean | any>(undefined)
 
   useEffect(() => {
-    const collections = []
-    for (let i = 0; i < 45; i++) {
-      collections.push({
-        key: i,
-        uid: i,
-        name: 'Some random collection',
-        nft_url: 'https://ca.slack-edge.com/T021XPFKRQV-U02R0LLQ8KX-1cd23a0ef132-512',
-        collectionId: i + 1000,
-        collectionName: 'DeGods',
-        nftPrice: i * 50,
-        currency: 'SOL'
-      })
-    }
-    setCollections(collections)
-  }, [])
-
-  useEffect(() => {
     const sortedData = [...nftCollections]
     sortedData.sort((a, b) => (sortingAsc ? a.nftPrice - b.nftPrice : b.nftPrice - a.nftPrice))
     sortedData.length && setCollections(sortedData)
