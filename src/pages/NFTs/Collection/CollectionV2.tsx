@@ -23,7 +23,7 @@ import {
   NFT_COLLECTIONS_GRID,
   DROPDOWN_CONTAINER
 } from './CollectionV2.styles'
-import { DetailViewNFT } from './SingleViewNFT'
+import { DetailViewNFT } from './DetailViewNFTDrawer'
 import SweepCollectionDrawer from './SweepCollectionDrawer'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -60,7 +60,7 @@ const CollectionV2 = (): ReactElement => {
   useEffect(() => {
     const curColNameParam = params.collectionName.replaceAll('_', ' ')
 
-    if (!singleCollection || singleCollection.collection.collection_name !== curColNameParam) {
+    if (!singleCollection || singleCollection.collection[0].collection_name !== curColNameParam) {
       fetchSingleCollection(curColNameParam).then((res) => setErr(res && res.status === 200 ? false : true))
     }
 
@@ -83,13 +83,14 @@ const CollectionV2 = (): ReactElement => {
 const NFTStatsContainer = () => {
   const { mode } = useDarkMode()
   const { singleCollection } = useNFTCollections()
+  console.log(singleCollection)
   const [sweepCollection, setSweepCollection] = useState<boolean>(false)
   const collection = singleCollection ? singleCollection.collection[0] : undefined
   const collectionFloor = singleCollection
     ? singleCollection.collection_floor / parseInt(LAMPORTS_PER_SOL.toString())
     : 0
   const logo = singleCollection ? singleCollection.collection[0].profile_pic_link : undefined
-  const collectionName = singleCollection ? singleCollection.collection[0].collection_name : undefined
+  const collectionName = singleCollection ? singleCollection.collection[0].collection_name : null
   const history = useHistory()
   return (
     <div className="nftStatsContainer">
@@ -203,14 +204,14 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
       </div>
 
       <div className="flitersViewCategory">
-        <div className={displayIndex === 0 ? 'selected' : 'flexItemProfile'} onClick={() => setDisplayIndex(0)}>
+        <div className={displayIndex === 0 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(0)}>
           Listed (243)
           <div className="activeItem" />
         </div>
-        <div className={displayIndex === 1 ? 'selected' : 'flexItemProfile'} onClick={() => setDisplayIndex(1)}>
+        <div className={displayIndex === 1 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(1)}>
           All items (10K)
         </div>
-        <div className={displayIndex === 2 ? 'selected' : 'flexItemProfile'} onClick={() => setDisplayIndex(2)}>
+        <div className={displayIndex === 2 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(2)}>
           Activity
         </div>
       </div>

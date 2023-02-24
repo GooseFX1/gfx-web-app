@@ -11,6 +11,7 @@ import styled from 'styled-components'
 import { ProfilePageSidebar } from './ProfilePageSidebar'
 import { checkMobile } from '../../../utils'
 import tw from 'twin.macro'
+import ActivityNFTSection from '../Collection/ActivityNFTSection'
 
 type Props = {
   isSessionUser: boolean
@@ -73,7 +74,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
       {
         order: 2,
         name: 'Activity',
-        component: <Activity data={userActivity ? userActivity : []} />
+        component: <ActivityNFTSection />
       }
     ],
     [currentUserParsedAccounts, createdItems, userActivity, favoritedItems]
