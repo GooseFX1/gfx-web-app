@@ -74,7 +74,7 @@ import {
   withdrawFundsIx
 } from '../pages/TradeV3/perps/ixUtils'
 import { OrderDisplayType, OrderType, OrderInput, useOrder, IOrder, OrderSide } from './order'
-import { removeFloatingPointError } from '../utils'
+import { notify, removeFloatingPointError } from '../utils'
 import { pyth } from '../web3/pyth'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import {
@@ -137,9 +137,9 @@ interface IPerpsInfo {
   marketProductGroup: MarketProductGroup
   traderInfo: ITraderRiskGroup
   marketProductGroupKey: PublicKey
-  newOrder: () => Promise<void>
+  newOrder: () => Promise<DepositIx | void>
   closePosition: (orderbook: OrderBook, qtyToExit: Fractional) => Promise<DepositIx | void>
-  cancelOrder: (orderId: string) => Promise<void>
+  cancelOrder: (orderId: string) => Promise<DepositIx | void>
   depositFunds: (amount: Fractional) => Promise<DepositIx | void>
   withdrawFunds: (amount: Fractional) => Promise<DepositIx | void>
   activeProduct: any
@@ -377,6 +377,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       newOrderParams = getNewOrderParams()
     const response = await newOrderIx(newOrderAccounts, newOrderParams, wallet, connection)
     refreshTraderRiskGroup()
+    return response
   }, [traderRiskGroup, order, marketProductGroup])
 
   const closePosition = useCallback(
@@ -420,7 +421,13 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
             limitPrice: convertToFractional(priceToExit.toString())
           }
         const response = await newOrderIx(newOrderAccounts, newOrderParams, wallet, connection)
+        refreshTraderRiskGroup()
         return response
+      } else {
+        notify({
+          message: 'price changed!',
+          description: 'fail'
+        })
       }
       return null
     },
@@ -454,6 +461,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         connection
       )
       refreshTraderRiskGroup()
+      return response
     },
     [traderRiskGroup, marketProductGroup]
   )

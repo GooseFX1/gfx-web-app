@@ -4,7 +4,7 @@ import * as anchor from '@project-serum/anchor'
 import { Connection, SystemProgram } from '@solana/web3.js'
 import { INSTRUMENTS_ID } from '../perpsConstants'
 import { Program } from '@project-serum/anchor'
-import { sendTransaction } from '../../../NFTs/launchpad/candyMachine/connection'
+import { sendPerpsTransaction } from '../../../NFTs/launchpad/candyMachine/connection'
 
 const getInstrumentsProgram = async (connection: Connection, wallet: any) => {
   const provider = new anchor.Provider(connection, wallet, anchor.Provider.defaultOptions())
@@ -26,6 +26,6 @@ export const initializeDerivative = async (accounts, params, wallet: any, connec
     }
   })
 
-  const response = await sendTransaction(connection, wallet, [ix], [])
+  const response = await sendPerpsTransaction(connection, wallet, [ix], [])
   return response
 }

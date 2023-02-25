@@ -67,11 +67,12 @@ interface INotifyParams {
   type?: string
   styles?: IStyles
   network?: string
+  notificationDuration?: number
 }
 const NOTIFICATION_TIMER = 5 * 1000
 
 export const notify = async (
-  { description: desc, icon, message, txid, type = 'info', styles, network }: INotifyParams,
+  { description: desc, icon, message, txid, type = 'info', styles, network, notificationDuration }: INotifyParams,
   e?: Error
 ): Promise<void> => {
   let description = desc
@@ -105,7 +106,7 @@ export const notify = async (
 
   setTimeout(() => {
     notification.close(key)
-  }, NOTIFICATION_TIMER)
+  }, notificationDuration ?? NOTIFICATION_TIMER)
   ;(notification as any)[type]({
     closeIcon: <CLOSE />,
     description: description && (
