@@ -133,7 +133,8 @@ export const getTraderRiskGroupAccount = async (wallet: any, connection: Connect
           bytes: MPG_ID
         }
       }
-    ]
+    ],
+    commitment: 'processed'
   })
   if (response.length >= 1) return response[0]
   else return null

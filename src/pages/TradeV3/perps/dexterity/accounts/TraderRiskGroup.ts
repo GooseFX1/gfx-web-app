@@ -118,7 +118,7 @@ export class TraderRiskGroup {
   }
 
   static async fetch(c: Connection, address: PublicKey): Promise<[TraderRiskGroup, any] | null> {
-    const info = await c.getAccountInfo(address)
+    const info = await c.getAccountInfo(address, 'processed')
 
     if (info === null) {
       return null
