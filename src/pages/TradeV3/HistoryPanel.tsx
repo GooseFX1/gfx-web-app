@@ -215,11 +215,15 @@ const OpenOrdersComponent: FC = () => {
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const { cancelOrder: perpsCancelOrder } = useTraderConfig()
   const { mode } = useDarkMode()
+  const [removedOrderIds, setremoved] = useState<string[]>([])
 
   const openOrderUI = isSpot ? orders : perpsOpenOrders
 
-  const cancelOrderFn = (orderId: string) => {
-    perpsCancelOrder(orderId)
+  const cancelOrderFn = async (orderId: string) => {
+    const res = await perpsCancelOrder(orderId)
+    const arr = removedOrderIds
+    arr.push(orderId)
+    if (res && res.txid) setremoved(arr)
   }
 
   const content = useMemo(
@@ -227,19 +231,21 @@ const OpenOrdersComponent: FC = () => {
       <OPEN_ORDER>
         {openOrderUI &&
           openOrderUI.length > 0 &&
-          openOrderUI.map((order, index) => (
-            <div key={index}>
-              <span className={order.order.side}>{order.order.side}</span>
-              <span>{order.order.size}</span>
-              <span>${order.order.price}</span>
-              <span>{(order.order.size * order.order.price).toFixed(2)}</span>
-              <span>
-                <Button loading={loading} onClick={() => cancelOrderFn(order.order.orderId)}>
-                  Cancel
-                </Button>
-              </span>
-            </div>
-          ))}
+          openOrderUI.map((order, index) =>
+            !removedOrderIds.includes(order.order.orderId) ? (
+              <div key={index}>
+                <span className={order.order.side}>{order.order.side}</span>
+                <span>{order.order.size}</span>
+                <span>${order.order.price}</span>
+                <span>{(order.order.size * order.order.price).toFixed(2)}</span>
+                <span>
+                  <Button loading={loading} onClick={() => cancelOrderFn(order.order.orderId)}>
+                    Cancel
+                  </Button>
+                </span>
+              </div>
+            ) : null
+          )}
       </OPEN_ORDER>
     ),
     [cancelOrder, formatPair, loading, orders, perpsOpenOrders, isSpot]

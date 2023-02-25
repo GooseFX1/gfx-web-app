@@ -11,7 +11,7 @@ import {
   IConsumeOB,
   ICancelOrderAccounts
 } from '../../../types/dexterity_instructions'
-import { sendTransaction } from '../../NFTs/launchpad/candyMachine/connection'
+import { sendPerpsTransaction } from '../../NFTs/launchpad/candyMachine/connection'
 import {
   displayFractional,
   getDexProgram,
@@ -73,12 +73,16 @@ export const newOrderIx = async (
     })
   )
   try {
-    const response = await sendTransaction(connection, wallet, instructions, [])
-    if (response && response.txid) {
-      notify({
-        message: 'Order placed Successfully!'
-      })
-    }
+    const response = await sendPerpsTransaction(
+      connection,
+      wallet,
+      instructions,
+      [],
+      'placing new order',
+      'order placed successfully'
+    )
+    //if (response && response.txid) {
+    //}
     return response
   } catch (e) {
     console.log(e)
@@ -121,18 +125,20 @@ export const cancelOrderIx = async (
     })
   )
   try {
-    const response = await sendTransaction(connection, wallet, instructions, [])
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [])
     if (response && response.txid) {
       notify({
         message: 'Order canceled Successfully!'
       })
     }
+    return response
   } catch (e) {
     console.log(e)
     notify({
       message: 'Order cancel failed!',
       type: 'error'
     })
+    return null
   }
 }
 
@@ -157,7 +163,7 @@ export const depositFundsIx = async (
     })
   )
   try {
-    const response = await sendTransaction(connection, wallet, instructions, [])
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [])
     if (response && response.txid) {
       notify({
         message: 'Deposit of ' + displayFractional(depositFundsParams.quantity) + ' successful'
@@ -194,7 +200,7 @@ export const initTrgDepositIx = async (
       }
     })
   )
-  const response = await sendTransaction(connection, wallet, instructions, signers)
+  const response = await sendPerpsTransaction(connection, wallet, instructions, signers)
   return response
 }
 
@@ -224,7 +230,7 @@ export const withdrawFundsIx = async (
     })
   )
   try {
-    const response = await sendTransaction(connection, wallet, instructions, [])
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [])
     if (response && response.txid) {
       notify({
         message: 'Funds withdrawn Successfully!'
@@ -314,7 +320,7 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
         mint // mint
       )
     )
-    //const res = await sendTransaction(connection, wallet, instructions, [])
+    //const res = await sendPerpsTransaction(connection, wallet, instructions, [])
     //console.log(res)
   }
   instructions = []
@@ -356,8 +362,8 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
 
 export const initializeTRG = async (wallet: any, connection: Connection) => {
   const [instructions, signers] = await initTrgIx(connection, wallet)
-  const res = await sendTransaction(connection, wallet, instructions, signers)
-  //const res = await sendTransaction(connection, wallet, instructions, [])
+  const res = await sendPerpsTransaction(connection, wallet, instructions, signers)
+  //const res = await sendPerpsTransaction(connection, wallet, instructions, [])
   console.log(res)
   return res
 }

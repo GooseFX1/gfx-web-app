@@ -31,7 +31,7 @@ import {
   IInitializeMarketProductAccounts,
   IInitializeMarketProductParams
 } from '../../../types/dexterity_instructions'
-import { sendTransaction } from '../../NFTs/launchpad/candyMachine/connection'
+import { sendPerpsTransaction } from '../../NFTs/launchpad/candyMachine/connection'
 import { struct, u8, u32 } from '@solana/buffer-layout'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { initializeDerivative } from './instructions/derivativeIx'
@@ -103,7 +103,7 @@ export const initializeMarketProductGroup = async (
       programId: new PublicKey(FEES_ID)
     })
   )
-  const res = await sendTransaction(connection, wallet, instructions, [
+  const res = await sendPerpsTransaction(connection, wallet, instructions, [
     initializeProductGroupAccounts.marketProductGroup,
     initializeProductGroupAccounts.riskOutputRegister,
     initializeProductGroupAccounts.feeOutputRegister
@@ -129,7 +129,7 @@ export const initializeMarketProduct = async (
       }
     })
   )
-  const res = await sendTransaction(connection, wallet, instructions, [])
+  const res = await sendPerpsTransaction(connection, wallet, instructions, [])
   console.log(res)
   return res
   //authority as signer
@@ -309,7 +309,7 @@ export const createAAMarket = async (wallet: any, connection: Connection, caller
     )
   )
 
-  const response = await sendTransaction(connection, wallet, instructions, [eventQueue, market, bids, asks])
+  const response = await sendPerpsTransaction(connection, wallet, instructions, [eventQueue, market, bids, asks])
   console.log(response)
   return market
 }
@@ -447,7 +447,7 @@ export const updateFeesIx = async (wallet: any, connection: Connection, args: an
       data: createInstructionData()
     })
   )
-  const res = await sendTransaction(connection, wallet, instructions, [])
+  const res = await sendPerpsTransaction(connection, wallet, instructions, [])
   console.log(res)
   return res
 }

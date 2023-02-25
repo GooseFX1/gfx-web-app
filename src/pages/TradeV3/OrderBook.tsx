@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { FC, ReactNode, useMemo, useState, useEffect } from 'react'
+import React, { FC, ReactNode, useMemo, useState, useEffect, useRef } from 'react'
 import { Dropdown, Menu, Skeleton } from 'antd'
 import { DownOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
@@ -112,7 +112,7 @@ const ORDER_BUY = styled.div`
       cursor: pointer;
       text-align: right;
       padding-right: 10px;
-      color: #50bb35;
+      color: ${({ theme }) => theme.bidColor};
       &:hover {
         font-weight: bold;
       }
@@ -148,7 +148,7 @@ const ORDER_SELL = styled.div`
       text-align: left;
       cursor: pointer;
       padding-left: 10px;
-      color: #f06565;
+      color: ${({ theme }) => theme.askColor};
       &:hover {
         font-weight: bold;
       }
@@ -170,17 +170,17 @@ const ORDER_SELL = styled.div`
   }
 `
 
-const SIZE_BUY = styled.span<{ $side: MarketSide }>`
+const SIZE_BUY = styled.span`
   position: absolute;
   right: 0;
   height: 100%;
-  background-color: ${({ theme, $side }) => theme[$side]}50;
+  background-color: #71c25d;
 `
-const SIZE_SELL = styled.span<{ $side: MarketSide }>`
+const SIZE_SELL = styled.span`
   position: absolute;
   left: 0;
   height: 100%;
-  background-color: ${({ theme, $side }) => theme[$side]}50;
+  background-color: #f06565;
 `
 const WRAPPER = styled.div`
   position: relative;
@@ -226,6 +226,14 @@ const Loader: FC = () => (
   </>
 )
 
+function usePrevious(value) {
+  const ref = useRef()
+  useEffect(() => {
+    ref.current = value
+  })
+  return ref.current
+}
+
 export const OrderBook: FC = () => {
   const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto } = useCrypto()
   const { order, setFocused, setOrder } = useOrder()
@@ -236,6 +244,11 @@ export const OrderBook: FC = () => {
   const ask = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
   const { tradeHistory } = useTradeHistory()
   const [spreadIndex, setSpreadIndex] = useState<number>(0)
+  const prevOrderBook: any = usePrevious(orderBook)
+  const [neworders, setNewOrders] = useState<{ bids: number[]; asks: number[] }>({
+    bids: [],
+    asks: []
+  })
   const lastTradedPrice = {
     price: tradeHistory[0] && tradeHistory[0].price,
     side: tradeHistory[0] && tradeHistory[0].side
@@ -311,6 +324,53 @@ export const OrderBook: FC = () => {
     } else setAskOrderBookDisplay([])
   }, [orderBook, spreadIndex, selectedCrypto.pair])
 
+  useEffect(() => {
+    if (prevOrderBook) {
+      const newBids = [],
+        newAsks = []
+      if (prevOrderBook.bids.length) {
+        for (let i = 0; i < orderBook.bids.length; i++) {
+          if (prevOrderBook.bids.length < i + 1) {
+            newBids.push(i)
+          } else if (
+            prevOrderBook.bids[i][0] !== orderBook.bids[i][0] ||
+            prevOrderBook.bids[i][1] !== orderBook.bids[i][1]
+          ) {
+            newBids.push(i)
+          }
+        }
+      }
+      if (prevOrderBook.asks.length) {
+        for (let i = 0; i < orderBook.asks.length; i++) {
+          if (prevOrderBook.asks.length < i + 1) {
+            newAsks.push(i)
+          } else if (
+            prevOrderBook.asks[i][0] !== orderBook.asks[i][0] ||
+            prevOrderBook.asks[i][1] !== orderBook.asks[i][1]
+          ) {
+            newAsks.push(i)
+          }
+        }
+      }
+      setNewOrders({ bids: newBids, asks: newAsks })
+    }
+  }, [orderBook])
+
+  function timeout(delay: number) {
+    return new Promise((res) => setTimeout(res, delay))
+  }
+
+  const setDefaultIndex = async () => {
+    if (neworders.bids.length || neworders.asks.length) {
+      await timeout(1000)
+      setNewOrders({ bids: [], asks: [] })
+    }
+  }
+
+  useEffect(() => {
+    setDefaultIndex()
+  }, [neworders])
+
   const slicedOrderBookBids = useMemo(
     () => (bidOrderBookDisplay.length > 8 ? bidOrderBookDisplay.slice(0, 8) : bidOrderBookDisplay),
     [bidOrderBookDisplay]
@@ -385,8 +445,10 @@ export const OrderBook: FC = () => {
                         <span onClick={() => handleSetPrice(price)}>${removeFloatingPointError(price)}</span>
 
                         <SIZE_BUY
-                          style={{ width: `${(acc.totalValue / totalOrderBookValueBids) * 100}%` }}
-                          $side={bids}
+                          style={{
+                            width: `${(acc.totalValue / totalOrderBookValueBids) * 100}%`,
+                            opacity: neworders.bids.includes(index) ? '1' : '0.3'
+                          }}
                         />
                       </ORDER_BUY>
                     )
@@ -407,8 +469,10 @@ export const OrderBook: FC = () => {
                         <span onClick={() => handleSetPrice(price)}>${removeFloatingPointError(price)}</span>
                         <span onClick={() => handleSetSize(size)}>{removeFloatingPointError(size)}</span>
                         <SIZE_SELL
-                          style={{ width: `${(acc.totalValue / totalOrderBookValueAsks) * 100}%` }}
-                          $side={asks}
+                          style={{
+                            width: `${(acc.totalValue / totalOrderBookValueAsks) * 100}%`,
+                            opacity: neworders.asks.includes(index) ? '1' : '0.3'
+                          }}
                         />
                       </ORDER_SELL>
                     )
