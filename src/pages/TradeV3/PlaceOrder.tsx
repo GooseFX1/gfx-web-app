@@ -148,7 +148,7 @@ const INPUT_WRAPPER = styled.div`
   }
   .dropdownContainer {
     ${tw`w-full h-[30px] flex justify-between items-center px-2 text-red-100 
-    font-semibold text-tiny border border-solid rounded-[5px]`}
+    font-semibold text-tiny border border-solid rounded-[5px] cursor-pointer`}
     color: ${({ theme }) => theme.text21};
     border-color: ${({ theme }) => theme.tokenBorder};
     background: ${({ theme }) => theme.bg2};
@@ -359,9 +359,14 @@ export const PlaceOrder: FC = () => {
     if (buttonState === ButtonState.BalanceExceeded) return 'Insufficient Balance'
     else if (buttonState === ButtonState.Connect) return 'Connect Wallet'
     else if (buttonState === ButtonState.CreateAccount) return 'Create Account!'
-    if (order.side === 'buy') return 'BUY ' + symbol
-    else return 'SELL ' + symbol
-  }, [buttonState, order.side])
+    if (selectedCrypto.type === 'crypto') {
+      if (order.side === 'buy') return 'BUY ' + symbol
+      else return 'SELL ' + symbol
+    } else {
+      if (order.side === 'buy') return 'BID ' + symbol
+      else return 'ASK ' + symbol
+    }
+  }, [buttonState, order.side, selectedCrypto.type])
 
   const displayedOrder = useMemo(
     () => AVAILABLE_ORDERS.find(({ display, side }) => display === order.display && side === order.side),
@@ -496,13 +501,13 @@ export const PlaceOrder: FC = () => {
             className={order.side === 'buy' ? 'selected gradientBorder' : 'gradientBorder'}
             onClick={() => handleOrderSide('buy')}
           >
-            <div className="overlayBorder buy">Buy</div>
+            <div className="overlayBorder buy">{selectedCrypto.type === 'crypto' ? 'Buy' : 'Bid'}</div>
           </div>
           <div
             className={order.side === 'sell' ? 'selected gradientBorder' : 'gradientBorder'}
             onClick={() => handleOrderSide('sell')}
           >
-            <div className="overlayBorder sell">Sell</div>
+            <div className="overlayBorder sell">{selectedCrypto.type === 'crypto' ? 'Sell' : 'Ask'}</div>
           </div>
         </div>
       </HEADER>
@@ -511,12 +516,12 @@ export const PlaceOrder: FC = () => {
           <div className="inputRow">
             <INPUT_WRAPPER>
               <div className="label">Order Type</div>
-              <div className={`dropdownContainer ${mode}`}>
+              <div className={`dropdownContainer ${mode}`} onClick={handleDropdownClick}>
                 <div>{displayedOrder?.text}</div>
                 <ArrowDropdown
                   arrowRotation={arrowRotation}
                   offset={[-125, 15]}
-                  onVisibleChange={handleDropdownClick}
+                  onVisibleChange={null}
                   placement="bottomLeft"
                   overlay={
                     <Overlay
@@ -530,20 +535,20 @@ export const PlaceOrder: FC = () => {
                 />
               </div>
             </INPUT_WRAPPER>
-            {order.display !== 'market' && (
-              <INPUT_WRAPPER>
-                <div className="label">Price</div>
-                <Input
-                  suffix={<span className="suffixText">{bid}</span>}
-                  onFocus={() => setFocused('price')}
-                  maxLength={15}
-                  onBlur={() => setFocused(undefined)}
-                  value={order.price ? order.price : ''}
-                  onChange={(e) => numberCheck(e.target.value, 'price')}
-                  placeholder={'0.00'}
-                />
-              </INPUT_WRAPPER>
-            )}
+            <INPUT_WRAPPER>
+              <div className="label">Price</div>
+              <Input
+                suffix={<span className="suffixText">{bid}</span>}
+                onFocus={() => setFocused('price')}
+                maxLength={15}
+                onBlur={() => setFocused(undefined)}
+                value={order.price ? order.price : ''}
+                onChange={(e) => numberCheck(e.target.value, 'price')}
+                placeholder={'0.00'}
+                disabled={order.display === 'market'}
+                style={order.display === 'market' ? { border: '1px solid #f06565' } : null}
+              />
+            </INPUT_WRAPPER>
           </div>
           <div className="inputRow">
             <INPUT_WRAPPER>

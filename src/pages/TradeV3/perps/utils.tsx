@@ -166,8 +166,10 @@ export const displayFractional = (val: Fractional): string => {
   if (Number(base) === 0) return '0.00'
   const decimals = Number(val.exp.toString())
   if (decimals === 0) return base
-  else if (base.length === decimals) return '0.' + base
   else if (base[0] === '-' && base.length - 1 === decimals) return '-0.' + base.slice(1, base.length)
+  else if (base[0] === '-' && base.length - 1 < decimals)
+    return '-0.' + '0'.repeat(decimals - base.length + 1) + base.slice(1, base.length)
+  else if (base.length === decimals) return '0.' + base
   else if (base.length < decimals) return '0.' + '0'.repeat(decimals - base.length) + base
   return base.slice(0, -decimals) + '.' + base.slice(-decimals)
 }

@@ -73,6 +73,12 @@ const WRAPPER = styled.div<{ $height: boolean }>`
   .red {
     ${tw`bg-[#F06565]`}
   }
+  .greenText {
+    ${tw`!text-[#71C25D]`}
+  }
+  .redText {
+    ${tw`!text-[#F06565]`}
+  }
   .yellow {
     ${tw`bg-[#F0B865]`}
   }
@@ -162,7 +168,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
     if (traderInfo.pnl === '0' || !Number(traderInfo.pnl)) return <span>0.00</span>
     const isNegative = traderInfo.pnl[0] === '-'
     return (
-      <span className={isNegative ? 'negative' : 'positive'}>
+      <span className={isNegative ? 'redText' : 'greenText'}>
         {(!isNegative ? '+' : '') + Number(traderInfo.pnl).toFixed(2)} $
       </span>
     )
@@ -212,7 +218,17 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
         )}
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>
-        <span className="key">Unrealized P&L</span>
+        <span
+          className={
+            (traderInfo && traderInfo.pnl && Number(traderInfo.pnl)
+              ? traderInfo.pnl[0] === '-'
+                ? 'redText '
+                : 'greenText '
+              : ' ') + 'key '
+          }
+        >
+          Unrealized P&L
+        </span>
         <span className="value">{pnl}</span>
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>

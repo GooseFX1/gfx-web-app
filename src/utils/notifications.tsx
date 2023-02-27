@@ -9,7 +9,7 @@ const CLOSE = styled.div`
 const CONTENT_ICON = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center
+  align-items: center;
   height: 16px;
   width: 16px;
 
