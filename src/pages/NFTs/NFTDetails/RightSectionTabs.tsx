@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, FC, useMemo, useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
@@ -577,91 +578,6 @@ export const RightSectionTabs: FC<{
           </TabPane>
         </>
       </Tabs>
-      {publicKey && (
-        <SpaceBetweenDiv className="rst-footer">
-          {sessionUser && sessionUser.uuid ? (
-            publicKey.toBase58() === general.owner ? (
-              <>
-                <button
-                  className={`rst-footer-button rst-footer-button-${ask === undefined ? 'sell' : 'flat'}`}
-                  onClick={() => handleUpdateAsk('list')}
-                >
-                  {ask === undefined ? 'List Item' : 'Edit Ask Price'}
-                </button>
-                {ask && (
-                  <button
-                    className="rst-footer-button rst-footer-button-sell"
-                    onClick={() => handleUpdateAsk('remove')}
-                  >
-                    Remove Ask Price
-                  </button>
-                )}
-              </>
-            ) : (
-              <SpaceBetweenDiv style={{ flexGrow: 1 }}>
-                {bids.find((bid) => bid.wallet_key === publicKey.toBase58()) && (
-                  <button
-                    onClick={() => handleSetBid(NFT_ACTIONS.CANCEL_BID)}
-                    className="rst-footer-button rst-footer-button-flat"
-                  >
-                    Cancel Last Bid
-                  </button>
-                )}
-                <button
-                  onClick={() => handleSetBid(NFT_ACTIONS.BID)}
-                  className={'rst-footer-button rst-footer-button-bid'}
-                >
-                  Bid
-                </button>
-                {ask && (
-                  <button
-                    onClick={() => handleSetBid(NFT_ACTIONS.BUY)}
-                    className="rst-footer-button rst-footer-button-buy"
-                  >
-                    Buy Now
-                  </button>
-                )}
-              </SpaceBetweenDiv>
-            ) : (
-              <>
-                <div>
-                  {bids.find((bid) => bid.wallet_key === publicKey.toBase58()) && (
-                    <button
-                      onClick={() => handleSetBid(NFT_ACTIONS.CANCEL_BID)}
-                      className="rst-footer-button rst-footer-button-flat last-bid"
-                    >
-                      Cancel Last Bid
-                    </button>
-                  )}
-                </div>
-                <SpaceBetweenDiv style={{ flexGrow: 1 }}>
-                  <button
-                    onClick={() => handleSetBid(NFT_ACTIONS.BID)}
-                    className={'rst-footer-button rst-footer-button-bid'}
-                  >
-                    Bid
-                  </button>
-                  {ask && (
-                    <button
-                      onClick={() => handleSetBid(NFT_ACTIONS.BUY)}
-                      className="rst-footer-button rst-footer-button-buy"
-                    >
-                      Buy Now
-                    </button>
-                  )}
-                </SpaceBetweenDiv>
-              </>
-            )
-          ) : (
-            <button
-              className="rst-footer-button rst-footer-button-bid"
-              onClick={() => history.push(`/nfts/profile/${wallet.publicKey.toBase58()}`)}
-            >
-              Complete profile
-            </button>
-          )}
-        </SpaceBetweenDiv>
-      )}
     </RIGHT_SECTION_TABS>
   )
 }

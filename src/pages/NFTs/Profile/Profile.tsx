@@ -121,6 +121,10 @@ export const Profile: FC = (): JSX.Element => {
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
 
   useEffect(() => {
+    console.log(wallet?.adapter)
+  }, [wallet])
+
+  useEffect(() => {
     if (params.userAddress === undefined || !isValidSolanaAddress(params.userAddress)) history.push(`/nfts`)
 
     // asserts there is no wallet connection and no session user
@@ -129,8 +133,8 @@ export const Profile: FC = (): JSX.Element => {
       setParsedAccounts([])
     }
 
-    if (publicKey !== null) {
-      setIsSessionUser(params.userAddress === publicKey.toBase58())
+    if (publicKey !== null || publicKey !== undefined) {
+      setIsSessionUser(params.userAddress === publicKey?.toBase58())
     }
 
     return () => {
