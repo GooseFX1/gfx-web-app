@@ -9,15 +9,17 @@ import { fetchSingleNFT } from '../../../api/NFTs'
 import { getParsedAccountByMint, StringPublicKey } from '../../../web3'
 import axios from 'axios'
 import { LoadingDiv } from './Card'
+import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 
-export const SingleNFTCard: FC<{ item: any; index: number; addNftToBag: any }> = ({
+export const SingleNFTCard: FC<{ item: any; index: number; addNftToBag: any; lastCardRef: any }> = ({
   item,
   index,
-  addNftToBag
+  addNftToBag,
+  lastCardRef
 }) => {
   const { setSelectedNFT } = useNFTAggregator()
   const [hover, setHover] = useState<boolean>(false)
-  const nftId = item ? item.nft_name.split('#')[1] : null
+  const nftId = item ? (item.nft_name.includes('#') ? item.nft_name.split('#')[1] : -1) : null
   const nftName = item ? item.nft_name.split('#')[0] : null
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
   const [localAsk, setLocalAsk] = useState<INFTAsk>()
@@ -75,7 +77,7 @@ export const SingleNFTCard: FC<{ item: any; index: number; addNftToBag: any }> =
   }, [item])
 
   return (
-    <div className="gridItem" key={index} onClick={() => goToDetails(item)}>
+    <div className="gridItem" key={index} onClick={() => goToDetails(item)} ref={lastCardRef}>
       <div className="gridItemContainer" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
         {hover && <HoverOnNFT item={item} addNftToBag={addNftToBag} />}
         {isLoadingBeforeRelocate && <LoadingDiv />}
@@ -87,8 +89,12 @@ export const SingleNFTCard: FC<{ item: any; index: number; addNftToBag: any }> =
       </div>
       <div className="nftTextContainer">
         <div className="collectionId">
-          {nftId ? '#' + nftId : <SkeletonCommon width="50px" height="20px" style={{ marginTop: 10 }} />}
-          <img src="/img/assets/Aggregator/verifiedNFT.svg" />
+          {nftId !== -1 && (
+            <div>
+              {nftId ? '#' + nftId : <SkeletonCommon width="50px" height="20px" style={{ marginTop: 10 }} />}
+            </div>
+          )}
+          {/* <img src="/img/assets/Aggregator/verifiedNFT.svg" /> */}
         </div>
         {item ? (
           <GradientText text={nftName} fontSize={15} fontWeight={600} />
@@ -96,7 +102,7 @@ export const SingleNFTCard: FC<{ item: any; index: number; addNftToBag: any }> =
           <SkeletonCommon width="100px" height="20px" style={{ marginTop: 10 }} />
         )}
         <div className="nftPrice">
-          {item?.nftPrice ? item.nftPrice : 'No Bids'}
+          {localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 'No Bids'}
           {item && <img src={`/img/crypto/SOL.svg`} alt={item?.currency} />}
         </div>
         <div className="apprisalPrice">

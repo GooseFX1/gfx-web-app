@@ -116,11 +116,11 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
     }
   }
   .nftCollectionName {
-    ${tw`sm:-mt-11 sm:ml-[60px] ml-[15px]`}
+    ${tw`sm:ml-[10px] ml-[15px]`}
     padding-top: 0!important;
   }
   .nftCollectionFloor {
-    ${tw`ml-16 -mt-7 sm:-mt-0 sm:ml-[60px] flex text-[15px] font-semibold`}
+    ${tw`ml-16 -mt-10  sm:ml-[60px] flex text-[15px] font-semibold`}
     padding-top: 0!important;
   }
   .grey {
