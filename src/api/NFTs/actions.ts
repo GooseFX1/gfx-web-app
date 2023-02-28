@@ -79,6 +79,34 @@ export const fetchSingleCollectionBySalesType = async (endpoint: string, paramVa
   }
 }
 
+export const fetchOpenBidByPages = async (paramValue: string, offset: number, limit: number): Promise<any> => {
+  const isUUID: boolean = validateUUID(paramValue)
+
+  try {
+    const res = await apiClient(NFT_API_BASE).get(
+      `${NFT_API_ENDPOINTS.OPEN_BID}?${
+        isUUID ? 'collection_id' : 'collection_name'
+      }=${paramValue}&offset=${offset}&limit=${limit}`
+    )
+    return await res
+  } catch (err) {
+    return err
+  }
+}
+
+export const fetchFixedPriceByPages = async (paramValue: string, offset: number, limit: number): Promise<any> => {
+  const isUUID: boolean = validateUUID(paramValue)
+  try {
+    const res = await apiClient(NFT_API_BASE).get(
+      `${NFT_API_ENDPOINTS.FIXED_PRICE}?${
+        isUUID ? 'collection_id' : 'collection_name'
+      }=${paramValue}&offset=${offset}&limit=${limit}`
+    )
+    return await res
+  } catch (err) {
+    return err
+  }
+}
 export const fetchSingleNFT = async (address: string): Promise<any> => {
   try {
     const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?mint_address=${address}`)

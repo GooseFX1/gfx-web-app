@@ -84,7 +84,8 @@ export type NFTUpcomingCollection = {
 }
 
 export interface INFTCollectionConfig {
-  allCollections: NFTBaseCollection[]
+  allCollections: NFTBaseCollection[] | number[]
+  allCollectionLoading: boolean
   detailedCollections: NFTCollection[]
   collectionOwners: CollectionOwner[]
   fetchAllCollectionsByPages: any

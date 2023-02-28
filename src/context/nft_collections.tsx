@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react'
 import {
   INFTCollectionConfig,
@@ -22,7 +23,8 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
   const [collectionOwners, setCollectionOwners] = useState<CollectionOwner[]>([])
   const [fixedPriceWithinCollection, setFixedPriceWithinCollection] = useState<IFixedPriceWithinCollection>()
   const [openBidWithinCollection, setOpenBidWithinCollection] = useState<IOpenBidWithinCollection>()
-  const [allCollections, setAllCollections] = useState<NFTBaseCollection[]>([])
+  const [allCollections, setAllCollections] = useState<NFTBaseCollection[] | number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9])
+  const [allCollectionLoading, setLoading] = useState<boolean>(false)
   const [detailedCollections, setAllDetailedCollections] = useState<NFTCollection[]>([])
   const [featuredCollections, setFeaturedCollections] = useState<NFTFeaturedCollection[]>([])
   const [upcomingCollections, setUpcomingCollections] = useState<NFTUpcomingCollection[]>([])
@@ -42,13 +44,16 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
 
   const fetchAllCollectionsByPages = async (offset: number, limit: number) => {
     try {
+      setLoading(true)
       const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS, {
         params: {
           offset: offset,
           limit: limit
         }
       })
-      setAllCollections((prev) => [...prev, ...res.data])
+      if (offset === 0) setAllCollections(res.data)
+      else setAllCollections((prev) => [...prev, ...res.data])
+      setLoading(false)
       return res.data
     } catch (err) {
       console.error(err)
@@ -101,10 +106,10 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
       if (collectionData.collection === null) return null
 
       setSingleCollection(collectionData)
-      const fpData = await fetchFixedPriceWithinCollection(collectionData.collection[0].uuid)
-      setFixedPriceWithinCollection(fpData)
-      const obData = await fetchOpenBidsWithinCollection(collectionData.collection[0].uuid)
-      setOpenBidWithinCollection(obData)
+      // const fpData = await fetchFixedPriceWithinCollection(collectionData.collection[0].uuid)
+      // setFixedPriceWithinCollection(fpData)
+      // const obData = await fetchOpenBidsWithinCollection(collectionData.collection[0].uuid)
+      // setOpenBidWithinCollection(obData)
       const ownersData = await fetchCollectionOwners(collectionData.collection[0].uuid)
       setCollectionOwners(ownersData)
 
@@ -149,6 +154,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
   return (
     <NFTCollectionContext.Provider
       value={{
+        allCollectionLoading,
         allCollections,
         detailedCollections,
         featuredCollections,
@@ -186,6 +192,7 @@ export const useNFTCollections = (): INFTCollectionConfig => {
   }
 
   return {
+    allCollectionLoading: context.allCollectionLoading,
     allCollections: context.allCollections,
     detailedCollections: context.detailedCollections,
     collectionOwners: context.collectionOwners,
