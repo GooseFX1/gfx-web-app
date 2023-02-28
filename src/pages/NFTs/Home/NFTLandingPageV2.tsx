@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { SearchBar } from '../../../components'
-import { NFTAggTerms } from '../../../components/NFTAggWelcome'
+import NFTAggWelcome, { NFTAggTerms } from '../../../components/NFTAggWelcome'
 import {
   useConnectionConfig,
   useDarkMode,
@@ -28,6 +28,8 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import { Image } from 'antd'
 import { AH_PROGRAM_IDS } from '../../../web3/agg_program_ids'
+import { ModalSlide } from '../../../components/ModalSlide'
+import { MODAL_TYPES } from '../../../constants'
 
 const CURRENCY_SWITCH = styled.div<{ $currency }>`
   .ant-switch {
@@ -149,14 +151,15 @@ const timelineVolume = [{ name: '24h' }, { name: '7d' }, { name: '30d' }, { name
 
 const NFTLandingPageV2 = (): ReactElement => {
   const { isCollapsed } = useNavCollapse()
-  const [showBanner, setShowBanner] = useState<boolean>(true)
-  const [showPopup, setShowPopup] = useState<boolean>(false)
+  const [showBanner, setShowBanner] = useState<boolean>(false)
+  const [showPopup, setShowPopup] = useState<boolean>(true)
   const [showTerms, setShowTerms] = useState<boolean>(false)
   const [currency, setCurrency] = useState<'SOL' | 'USDC'>('SOL')
 
   return (
     <WRAPPER $navCollapsed={isCollapsed} $currency={currency}>
-      {/* {<NFTAggTerms setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={setShowPopup} />} */}
+      {<NFTAggTerms setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={setShowPopup} />}
+      {showPopup && <ModalSlide modalType={MODAL_TYPES.NFT_AGG_WELCOME} rewardToggle={setShowPopup} />}
       <MyNFTBag />
       {!checkMobile() && (
         <BannerContainer showBanner={showBanner}>

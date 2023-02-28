@@ -151,13 +151,13 @@ export const NFT_COLLECTIONS_GRID = styled.div`
   }
 
   .gridItem {
-    ${tw`h-[275px] w-[190px] rounded-[12px] dark:bg-[#131313] bg-[#fff] duration-500 cursor-pointer`}
+    ${tw`h-[275px] w-[190px] sm:w-[185px] rounded-[12px] dark:bg-[#131313] bg-[#fff] duration-500 cursor-pointer`}
     margin: 20px 13px 0px 0px;
 
     .gridItemContainer {
       ${tw`flex pt-[10px] justify-center relative `}
       .nftImg {
-        ${tw`w-[170px] h-[170px]`}
+        ${tw`w-[170px] h-[170px] `}
       }
       .hoverAddToBag {
         ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}

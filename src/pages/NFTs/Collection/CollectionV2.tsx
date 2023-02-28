@@ -28,7 +28,8 @@ import SweepCollectionDrawer from './SweepCollectionDrawer'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { LAMPORTS_PER_SOL } from '../../../constants'
-import { NFTCollectionsGrid } from './NFTCollectionsGrid'
+import { OpenBidNFTs } from './OpenBidNFTs'
+import { FixedPriceNFTs } from './FixedPriceNFTs'
 
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
@@ -83,7 +84,6 @@ const CollectionV2 = (): ReactElement => {
 const NFTStatsContainer = () => {
   const { mode } = useDarkMode()
   const { singleCollection } = useNFTCollections()
-  console.log(singleCollection)
   const [sweepCollection, setSweepCollection] = useState<boolean>(false)
   const collection = singleCollection ? singleCollection.collection[0] : undefined
   const collectionFloor = singleCollection
@@ -183,8 +183,8 @@ export const NFTGridContainer = (): ReactElement => {
       <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
       <div className="flexContainer">
         <AdditionalFilters open={open} setOpen={setOpen} />
-        {displayIndex === 0 && <NFTCollectionsGrid />}
-        {displayIndex === 1 && <NFTCollectionsGrid />}
+        {displayIndex === 0 && <FixedPriceNFTs />}
+        {displayIndex === 1 && <OpenBidNFTs />}
         {displayIndex === 2 && <ActivityNFTSection />}
       </div>
     </GRID_CONTAINER>
