@@ -12,6 +12,7 @@ import 'styled-components/macro'
 import { useHistory } from 'react-router-dom'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { NFTBaseCollection } from '../../../types/nft_collections'
+import { Image } from 'antd'
 
 const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   const { isCollapsed } = useNavCollapse()
@@ -116,7 +117,16 @@ const NFTTableRow = ({ allItems, lastRowElementRef }: any) => {
           <td className="nftNameColumn">
             {item?.collection?.collection_name ? (
               <>
-                <img src={item?.collection?.profile_pic_link} alt="" />
+                {console.log(item)}
+                <Image
+                  fallback={'/img/assets/Aggregator/Unknown.svg'}
+                  src={`${
+                    item.collection.profile_pic_link.length === 0
+                      ? '/img/assets/Aggregator/Unknown.svg'
+                      : item.collection.profile_pic_link
+                  }`}
+                  alt=""
+                />
                 <div className="nftCollectionName">{item?.collection?.collection_name}</div>
               </>
             ) : (
