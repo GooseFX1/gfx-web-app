@@ -32,6 +32,7 @@ import {
 } from '../../../web3'
 import BN from 'bn.js'
 import tw from 'twin.macro'
+import { NFTTabSections } from '../Collection/DetailViewNFTDrawer'
 
 const { TabPane } = Tabs
 
@@ -553,31 +554,5 @@ export const RightSectionTabs: FC<{
     }
   }, [pendingTxSig, removeAskModal, userRecentBid, removeBidModal, bidModal])
 
-  return isLoading ? (
-    <div></div>
-  ) : (
-    <RIGHT_SECTION_TABS activeTab={activeTab} {...rest}>
-      {handleModal()}
-      <Tabs defaultActiveKey="1" centered onChange={(key) => setActiveTab(key)}>
-        <>
-          <TabPane tab="Details" key="1">
-            <DETAILS_TAB_CONTENT {...rest}>
-              {nftData.map((item, index) => (
-                <Row justify="space-between" align="middle" className="dtc-item" key={index}>
-                  <Col className="dtc-item-title">{item.title}</Col>
-                  <Col className="dtc-item-value">{item.value}</Col>
-                </Row>
-              ))}
-            </DETAILS_TAB_CONTENT>
-          </TabPane>
-          <TabPane tab="Trading History" key="2">
-            <TradingHistoryTabContent />
-          </TabPane>
-          <TabPane tab="Attributes" key="3">
-            <AttributesTabContent data={nftMetadata.attributes} />
-          </TabPane>
-        </>
-      </Tabs>
-    </RIGHT_SECTION_TABS>
-  )
+  return isLoading ? <div></div> : <NFTTabSections activeTab={activeTab} setActiveTab={setActiveTab} />
 }

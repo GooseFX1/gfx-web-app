@@ -105,22 +105,22 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   .index {
     ${tw`sm:w-[5%] flex items-center ml-[6px]`}
   }
+  .nftNameImg {
+    ${tw`w-10 h-10 sm:mt-0 sm:h-[42px] sm:w-[42px] ml-4  rounded-full sm:ml-[8px]`}
+  }
   .nftNameColumn {
     text-align: left;
     ${tw`w-[25%] sm:w-[60%] flex items-center  `}
-    img {
-      ${tw`w-10 h-10  sm:h-[42px] sm:w-[42px] ml-4  rounded-full sm:mt-[18px] sm:ml-[8px]`}
-    }
     span {
       ${tw` ml-[6px] font-semibold text-[15px]`}
     }
   }
   .nftCollectionName {
-    ${tw`sm:ml-[10px] ml-[15px]`}
+    ${tw`sm:ml-[10px] ml-[15px] flex flex-col items-start justify-start`}
     padding-top: 0!important;
   }
   .nftCollectionFloor {
-    ${tw`ml-16 -mt-10  sm:ml-[60px] flex text-[15px] font-semibold`}
+    ${tw`ml-16 -mt-10  sm:ml-0 sm:mt-[0px] sm:ml-0 flex text-[15px] items-center font-semibold`}
     padding-top: 0!important;
   }
   .grey {

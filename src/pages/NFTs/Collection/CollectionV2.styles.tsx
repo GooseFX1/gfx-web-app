@@ -116,7 +116,7 @@ export const GRID_CONTAINER = styled.div<{ navCollapsed?: boolean }>`
   `}
 `
 
-export const NFT_COLLECTIONS_GRID = styled.div`
+export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   ${tw`w-full`}
   background: ${({ theme }) => theme.bg23};
   ${({ theme }) => theme.customScrollBar('4px')}
@@ -135,11 +135,11 @@ export const NFT_COLLECTIONS_GRID = styled.div`
     }
   }
   .gridContainer {
-    grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
     ${tw`grid pl-3 sm:grid-cols-2 rounded-xl`}
   }
   .gridContainerProfile {
-    grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
     ${tw`grid pl-3 sm:grid-cols-2 rounded-xl overflow-y-auto`}
     ${({ theme }) => theme.customScrollBar('2px')}
   }
@@ -173,12 +173,12 @@ export const NFT_COLLECTIONS_GRID = styled.div`
         ${tw`absolute opacity-0`}
       }
       .hoverNFT {
-        ${tw`opacity-100 duration-300 z-10 w-full h-full rounded-[8px] pl-1`}
+        ${tw`opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[15px] pl-1`}
         background: linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0.4) 100%)
       }
       .loadingNFT {
-        ${tw`absolute opacity-100 mt-[-10px] z-50 duration-300 
-          flex items-center w-[190px] h-[280px] rounded-[8px] pl-1`}
+        ${tw`absolute opacity-100 mt-[-8px] z-50 duration-300 
+          flex items-center w-[190px] h-[295px] rounded-[15px] pl-1`}
         background: linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0.4) 120%)
       }
     }
@@ -286,7 +286,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       transform: rotate(180deg);
       margin-left: ${index * 280 + `px`};
       @media (max-width: 500px) {
-        margin-left: ${index * 280 + `px`};
+        margin-left: ${index * 260 + `px`};
       }
     }
     .activeItemProfile {

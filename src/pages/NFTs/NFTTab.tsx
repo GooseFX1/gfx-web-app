@@ -38,13 +38,18 @@ export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }): ReactEl
 
   return (
     <GRID_CONTAINER tw="w-[77vw] sm:w-[100vw] mt-10" navCollapsed={isCollapsed}>
-      <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
+      <FiltersContainer
+        collections={tabPanes[0].name}
+        favourited={tabPanes[1].name}
+        displayIndex={displayIndex}
+        setDisplayIndex={setDisplayIndex}
+      />
       {tabPanes[displayIndex].component}
     </GRID_CONTAINER>
   )
 }
 
-const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): ReactElement => {
+const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayIndex }: any): ReactElement => {
   const { mode } = useDarkMode()
 
   return (
@@ -59,14 +64,14 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
           className={displayIndex === 0 ? 'selectedProfile' : 'flexItemProfile'}
           onClick={() => setDisplayIndex(0)}
         >
-          Collection (243)
+          {collections}
           <div className="activeItemProfile" />
         </div>
         <div
           className={displayIndex === 1 ? 'selectedProfile' : 'flexItemProfile'}
           onClick={() => setDisplayIndex(1)}
         >
-          Favourited (10K)
+          {favourited}
         </div>
         <div
           className={displayIndex === 2 ? 'selectedProfile' : 'flexItemProfile'}

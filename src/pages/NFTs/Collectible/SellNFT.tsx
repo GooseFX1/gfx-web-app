@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useMemo, useState, useEffect, FC } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -434,10 +435,7 @@ export const SellNFT: FC = () => {
     }
 
     try {
-      const res =
-        ask === undefined
-          ? await sellNFT(sellObject)
-          : await patchNFTAsk({ ...sellObject, ask_id: ask.ask_id, uuid: ask.uuid })
+      const res = await sellNFT(sellObject)
 
       if (res.isAxiosError) {
         notify({
