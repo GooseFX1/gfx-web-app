@@ -219,45 +219,6 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
   )
 }
 
-export const HoverOnNFT: FC<{ addNftToBag: any; item: any }> = ({ addNftToBag, item }): ReactElement => {
-  const { setBidNow, setBuyNow } = useNFTAggregator()
-  return (
-    <div className="hoverNFT">
-      <img
-        className="hoverAddToBag"
-        src={`/img/assets/Aggregator/addToBag.svg`}
-        alt=""
-        onClick={(e) => addNftToBag(e, item)}
-      />
-      <span className="hoverButtons">
-        <Button
-          height="28px"
-          width="75px"
-          cssStyle={tw`bg-[#5855ff] text-[13px] font-semibold`}
-          onClick={(e) => {
-            setBidNow(item)
-            e.stopPropagation()
-          }}
-        >
-          Bid
-        </Button>
-        <Button
-          height="28px"
-          width="75px"
-          className="pinkGradient"
-          cssStyle={tw`text-[13px] font-semibold`}
-          onClick={(e) => {
-            setBuyNow(item)
-            e.stopPropagation()
-          }}
-        >
-          Buy now
-        </Button>
-      </span>
-    </div>
-  )
-}
-
 const SortDropdown = () => {
   const { sortingAsc } = useNFTAggregator()
 

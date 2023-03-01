@@ -1,33 +1,45 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState, FC, useEffect } from 'react'
-import { useConnectionConfig, useNFTAggregator, useNFTDetails } from '../../../context'
+import { useState, FC, useEffect, useMemo } from 'react'
+import axios from 'axios'
+import {
+  useConnectionConfig,
+  useNFTCollections,
+  useNFTAggregator,
+  useNFTDetails,
+  useNFTProfile
+} from '../../../context'
 import { GradientText } from '../adminPage/components/UpcomingMints'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
-import { HoverOnNFT } from './CollectionV2'
 import { INFTAsk, INFTBid, INFTGeneralData } from '../../../types/nft_details'
 import { fetchSingleNFT } from '../../../api/NFTs'
-import { getParsedAccountByMint, StringPublicKey } from '../../../web3'
-import axios from 'axios'
+import { getParsedAccountByMint, StringPublicKey, AH_PROGRAM_IDS } from '../../../web3'
 import { LoadingDiv } from './Card'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
+import { Button } from '../../../components/Button'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
-export const SingleNFTCard: FC<{ item: any; index: number; addNftToBag: any; lastCardRef: any }> = ({
+export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any; lastCardRef: any }> = ({
   item,
   index,
   addNftToBag,
   lastCardRef
 }) => {
+  const { sessionUser } = useNFTProfile()
   const { setSelectedNFT } = useNFTAggregator()
+  const { connection } = useConnectionConfig()
+  const { singleCollection } = useNFTCollections()
+  const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral } = useNFTDetails()
+
   const [hover, setHover] = useState<boolean>(false)
-  const nftId = item ? (item.nft_name.includes('#') ? item.nft_name.split('#')[1] : -1) : null
-  const nftName = item ? item.nft_name.split('#')[0] : null
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
-  const [localAsk, setLocalAsk] = useState<INFTAsk>()
+  const [localAsk, setLocalAsk] = useState<INFTAsk>(null)
   const [localTotalLikes, setLocalTotalLikes] = useState<number>()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
-  const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral } = useNFTDetails()
-  const { connection } = useConnectionConfig()
+
+  const nftId = item ? (item.nft_name.includes('#') ? item.nft_name.split('#')[1] : -1) : null
+
+  const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item.uuid) : false), [item])
 
   const setNFTDetailsBeforeLocate = async () => {
     await setBids(localBids)
@@ -79,12 +91,12 @@ export const SingleNFTCard: FC<{ item: any; index: number; addNftToBag: any; las
   return (
     <div className="gridItem" key={index} onClick={() => goToDetails(item)} ref={lastCardRef}>
       <div className="gridItemContainer" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-        {hover && <HoverOnNFT item={item} addNftToBag={addNftToBag} />}
+        {hover && <HoverOnNFT item={item} addNftToBag={addNftToBag} hasAsk={localAsk !== null} />}
         {isLoadingBeforeRelocate && <LoadingDiv />}
         {item ? (
           <img className="nftImg" src={item.image_url} alt="nft" />
         ) : (
-          <SkeletonCommon width="170px" height="170px" />
+          <SkeletonCommon width="100%" height="auto" />
         )}
       </div>
       <div className="nftTextContainer">
@@ -92,24 +104,94 @@ export const SingleNFTCard: FC<{ item: any; index: number; addNftToBag: any; las
           {nftId !== -1 && (
             <div>
               {nftId ? '#' + nftId : <SkeletonCommon width="50px" height="20px" style={{ marginTop: 10 }} />}
+              {item.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
             </div>
           )}
-          {/* <img src="/img/assets/Aggregator/verifiedNFT.svg" /> */}
+
+          {localAsk && (
+            <img
+              className="ah-name"
+              src={`/img/assets/Aggregator/${AH_PROGRAM_IDS[localAsk.auction_house_key]}.svg`}
+            />
+          )}
         </div>
-        {item ? (
-          <GradientText text={nftName} fontSize={15} fontWeight={600} />
+
+        {singleCollection ? (
+          <GradientText text={singleCollection.collection[0].collection_name} fontSize={15} fontWeight={600} />
         ) : (
           <SkeletonCommon width="100px" height="20px" style={{ marginTop: 10 }} />
         )}
+
         <div className="nftPrice">
-          {localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 'No Bids'}
-          {item && <img src={`/img/crypto/SOL.svg`} alt={item?.currency} />}
+          {localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 'No Ask'}
+          {localAsk && <img src={`/img/crypto/SOL.svg`} alt={item?.currency} />}
         </div>
         <div className="apprisalPrice">
-          {item && item.nftPrice}
-          {item && <img src={`/img/assets/Aggregator/Tooltip.svg`} alt={item?.currency} />}
+          {'NA'}
+          {localAsk && <img src={`/img/assets/Aggregator/Tooltip.svg`} alt={item?.currency} />}
         </div>
+        {sessionUser &&
+          (isFavorite ? (
+            <img
+              className="ls-favorite-heart"
+              src={`/img/assets/heart-red.svg`}
+              alt="heart-red"
+              onClick={() => console.log('unlike')}
+            />
+          ) : (
+            <img
+              className="ls-favorite-heart"
+              src={`/img/assets/heart-empty.svg`}
+              alt="heart-empty"
+              onClick={() => console.log('like')}
+            />
+          ))}
       </div>
+    </div>
+  )
+}
+
+const HoverOnNFT: FC<{ addNftToBag: any; item: BaseNFT; hasAsk: boolean }> = ({
+  addNftToBag,
+  item,
+  hasAsk
+}): ReactElement => {
+  const { setSelectedNFT } = useNFTAggregator()
+  return (
+    <div className="hoverNFT">
+      <img
+        className="hoverAddToBag"
+        src={`/img/assets/Aggregator/addToBag.svg`}
+        alt=""
+        onClick={(e) => addNftToBag(e, item)}
+      />
+      <span className="hoverButtons">
+        <Button
+          height="28px"
+          width="75px"
+          cssStyle={tw`bg-[#5855ff] text-[13px] font-semibold`}
+          onClick={(e) => {
+            setSelectedNFT(item)
+            e.stopPropagation()
+          }}
+        >
+          Bid
+        </Button>
+        {hasAsk && (
+          <Button
+            height="28px"
+            width="75px"
+            className="pinkGradient"
+            cssStyle={tw`text-[13px] font-semibold`}
+            onClick={(e) => {
+              setSelectedNFT(item)
+              e.stopPropagation()
+            }}
+          >
+            Buy now
+          </Button>
+        )}
+      </span>
     </div>
   )
 }

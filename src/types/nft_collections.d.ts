@@ -58,8 +58,8 @@ export type CollectionOwner = {
 export interface IFixedPriceWithinCollection {
   collection_floor: null | number
   collection_id: number
-  nft_data: any[]
-  nft_prices: any[]
+  nft_data: BaseNFT[]
+  nft_prices: string[]
 }
 
 export interface IOpenBidWithinCollection {
