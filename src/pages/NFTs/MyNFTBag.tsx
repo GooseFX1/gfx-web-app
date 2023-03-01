@@ -144,14 +144,14 @@ const BagTokenBalanceRow: FC<{ title: string; amount: number }> = ({ title, amou
 const ItemsPresentInBag = (): ReactElement => {
   const { nftInBag, setNftInBag } = useNFTAggregator()
   const removeNft = (clickedNft) => {
-    const removedBag = nftInBag.filter((nft) => nft.uid !== clickedNft.uid)
+    const removedBag = nftInBag.filter((nft) => nft.uuid !== clickedNft.uuid)
     setNftInBag(removedBag)
   }
   return (
     <div className="bagContentContainer">
       {nftInBag.map((nft, index) => (
         <div tw="flex items-center mt-[15px]" key={index}>
-          <img className="nftImage" src={nft.nft_url} alt="img" />
+          <img className="nftImage" src={nft.image_url} alt="img" />
           <img
             className="closeImg"
             onClick={() => removeNft(nft)}
@@ -161,13 +161,13 @@ const ItemsPresentInBag = (): ReactElement => {
           <div tw="flex flex-col text-[15px] font-semibold text-[#636363] dark:text-[#fff]">
             <div>#{nft.collectionId}</div>
             <div>
-              <GradientText text={nft.collectionName} fontSize={16} fontWeight={600} />
+              <GradientText text={nft.nft_name} fontSize={16} fontWeight={600} />
             </div>
           </div>
           <div tw="ml-auto">
             <PriceWithToken
-              price={nft.nftPrice}
-              token={nft.currency}
+              price={nft?.price}
+              token={'SOL'}
               cssStyle={tw`h-5 w-5 text-[#636363] dark:text-[#ffffff]`}
             />
           </div>

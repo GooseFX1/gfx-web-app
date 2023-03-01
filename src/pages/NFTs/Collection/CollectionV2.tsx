@@ -182,7 +182,7 @@ export const NFTGridContainer = (): ReactElement => {
     <GRID_CONTAINER navCollapsed={isCollapsed}>
       <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
       <div className="flexContainer">
-        <AdditionalFilters open={open} setOpen={setOpen} />
+        {/* <AdditionalFilters open={open} setOpen={setOpen} /> */}
         {displayIndex === 0 && <FixedPriceNFTs />}
         {displayIndex === 1 && <OpenBidNFTs />}
         {displayIndex === 2 && <ActivityNFTSection />}
@@ -193,23 +193,24 @@ export const NFTGridContainer = (): ReactElement => {
 
 const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): ReactElement => {
   const { mode } = useDarkMode()
+  const { openBidWithinCollection, fixedPriceWithinCollection } = useNFTCollections()
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
       <div className="flitersFlexContainer">
-        <img onClick={() => setOpen((prev) => !prev)} src={`/img/assets/Aggregator/filtersIcon${mode}.svg`} />
-        <SearchBar placeholder={checkMobile() ? `Search by nft ` : `Search by nft o owner`} />
-        {!checkMobile() && <SortDropdown />}
+        {/* <img onClick={() => setOpen((prev) => !prev)} src={`/img/assets/Aggregator/filtersIcon${mode}.svg`} />
+        <SearchBar placeholder={checkMobile() ? `Search by nft ` : `Search by nft o owner`} /> 
+  {!checkMobile() && <SortDropdown />} */}
         {checkMobile() && <CurrencySwitch />}
       </div>
 
       <div className="flitersViewCategory">
         <div className={displayIndex === 0 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(0)}>
-          Listed (243)
+          Listed ({fixedPriceWithinCollection ? fixedPriceWithinCollection.total_count : 'loading...'})
           <div className="activeItem" />
         </div>
         <div className={displayIndex === 1 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(1)}>
-          All items (10K)
+          All items ({openBidWithinCollection ? openBidWithinCollection.total_count : 'Load..'})
         </div>
         <div className={displayIndex === 2 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(2)}>
           Activity

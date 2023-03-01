@@ -14,6 +14,8 @@ import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { NFTBaseCollection } from '../../../types/nft_collections'
 import { Image } from 'antd'
 
+const STYLE = styled.div``
+
 const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   const { isCollapsed } = useNavCollapse()
   const { fetchAllCollections, fetchAllCollectionsByPages, allCollections, allCollectionLoading } =
@@ -40,7 +42,7 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
 
   useEffect(() => {
     ;(async () => {
-      await fetchAllCollectionsByPages(pageNumber * paginationNumber, (pageNumber + 1) * paginationNumber)
+      await fetchAllCollectionsByPages(pageNumber * paginationNumber, paginationNumber)
     })()
   }, [pageNumber])
 
@@ -69,25 +71,45 @@ const editString = (str: string) => {
   return str
 }
 
-const NFTTableRowMobile = ({ allItems }: any): ReactElement => {
+const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement => {
   const history = useHistory()
+  const {} = useNFTCollections()
   return (
     <>
       {allItems.map((item, index) => (
         <tr
+          ref={index + 1 === allItems.length ? lastRowElementRef : null}
           className="tableRow"
           key={index}
-          onClick={() => history.push(`/NFTs/collection/${item.collection_name.replaceAll(' ', '_')}`)}
+          onClick={() => history.push(`/NFTs/collection/${item.collection.collection_name.replaceAll(' ', '_')}`)}
         >
           <td className="index"> {index + 1}</td>
           <td className="nftNameColumn">
             {item?.collection?.collection_name ? (
               <>
-                <img src={item?.collection?.profile_pic_link} alt="" />
-                <div className="nftCollectionName">{editString(item?.collection?.collection_name)}</div>
-                <div className="nftCollectionFloor">
-                  <div className="grey">Floor: </div>
-                  <div> 250 </div>
+                <Image
+                  className="nftNameImg"
+                  fallback={'/img/assets/Aggregator/Unknown.svg'}
+                  src={`${
+                    item.collection.profile_pic_link.length === 0
+                      ? '/img/assets/Aggregator/Unknown.svg'
+                      : item.collection.profile_pic_link
+                  }`}
+                  alt=""
+                />
+                <div className="nftCollectionName">
+                  {editString(item?.collection?.collection_name)}
+                  <div className="nftCollectionFloor">
+                    <div className="grey">Floor: </div>
+                    <div>
+                      {' '}
+                      <PriceWithToken
+                        price={item?.collection_floor / LAMPORTS_PER_SOL_NUMBER}
+                        token="SOL"
+                        cssStyle={tw`w-5 h-5`}
+                      />
+                    </div>
+                  </div>
                 </div>
               </>
             ) : (
@@ -96,7 +118,16 @@ const NFTTableRowMobile = ({ allItems }: any): ReactElement => {
               </div>
             )}
           </td>
-          <td className="tdItem">{item?.collection_name ? <> 0 </> : <Loader />}</td>
+          <td className="tdItem">
+            {item?.collection_vol?.daily !== undefined ? (
+              <div tw="flex flex-col items-center justify-center">
+                <PriceWithToken price={item?.collection_vol?.daily} token="SOL" cssStyle={tw`h-5 w-5`} />
+                <div className="grey">24h volume </div>
+              </div>
+            ) : (
+              <Loader />
+            )}
+          </td>
         </tr>
       ))}
     </>
@@ -117,8 +148,8 @@ const NFTTableRow = ({ allItems, lastRowElementRef }: any) => {
           <td className="nftNameColumn">
             {item?.collection?.collection_name ? (
               <>
-                {console.log(item)}
                 <Image
+                  className="nftNameImg"
                   fallback={'/img/assets/Aggregator/Unknown.svg'}
                   src={`${
                     item.collection.profile_pic_link.length === 0
