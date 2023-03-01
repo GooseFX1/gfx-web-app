@@ -7,7 +7,6 @@ import { fetchAllSingleNFTs } from '../../../api/NFTs'
 import { Header } from './Header'
 import { NFTHomeSlider } from '../Slider/NFTHomeSlider'
 import AnalyticsTabs from './Tab'
-import NFTFooter from './NFTFooter'
 import CollectionCarousel from './CollectionCarousel'
 import OneOfOnesNFTs from './OneOfOnesNFTs'
 import { COLLECTION_TYPES, NFTBaseCollection } from '../../../types/nft_collections.d'
@@ -70,7 +69,6 @@ const NFTLandingPage: FC = (): JSX.Element => {
           isLoading={isAllLoading}
         />
         <OneOfOnesNFTs items={oneOfOnes} title={'1 of 1 Listings'} />
-        <NFTFooter />
       </div>
 
       <NFT_MENU onClick={() => setNFTMenuPopup((prev) => !prev)} />

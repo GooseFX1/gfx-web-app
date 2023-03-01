@@ -65,7 +65,7 @@ export type INFTMetadata = {
   update_authority?: string
 }
 
-export type ISingleNFT = {
+export type BaseNFT = {
   uuid: string
   non_fungible_id: number | null
   nft_name: string
@@ -75,6 +75,10 @@ export type ISingleNFT = {
   image_url: string | null
   animation_url: string | null
   collection_id: number | null
+  is_verified: boolean
+}
+
+export type ISingleNFT = BaseNFT & {
   token_account: string | null
   owner: string | null
 }
@@ -107,8 +111,8 @@ export type INFTBid = {
 }
 
 export type INFTAsk = {
-  uuid: string
   ask_id: number
+  uuid: string
   clock: string
   tx_sig: string
   wallet_key: string
@@ -120,8 +124,10 @@ export type INFTAsk = {
   token_size: string
   non_fungible_id: number
   collection_id: number
-  user_id: number
-  event?: string
+  user_id: string | null
+  seller_trade_state: string
+  auction_house_authority: string
+  auction_house_fee_account: string
 }
 
 export interface INFTGeneralData {

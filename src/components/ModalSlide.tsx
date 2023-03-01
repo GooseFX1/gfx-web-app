@@ -52,7 +52,7 @@ const closeRewardModal = (e, rewardToggle) => {
   }
 }
 
-export const ModalSlide: FC<IModalSlide> = (props) => (
+export const ModalSlide: FC<IModalSlide> = (props: IModalSlide) => (
   <WRAPPER id="wrapper-background" onClick={(e) => closeRewardModal(e, props.rewardToggle)}>
     <MODAL id="modal">
       {props.modalType === MODAL_TYPES.REWARDS && <RewardsPopup />}

@@ -30,6 +30,7 @@ import { Image } from 'antd'
 import { AH_PROGRAM_IDS } from '../../../web3/agg_program_ids'
 import { ModalSlide } from '../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../constants'
+import { USER_CONFIG_CACHE } from '../../../types/app_params'
 
 const CURRENCY_SWITCH = styled.div<{ $currency }>`
   .ant-switch {
@@ -150,16 +151,30 @@ const poolTypes = [{ name: 'Popular' }, { name: 'Trending' }]
 const timelineVolume = [{ name: '24h' }, { name: '7d' }, { name: '30d' }, { name: 'All' }]
 
 const NFTLandingPageV2 = (): ReactElement => {
+  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+
   const { isCollapsed } = useNavCollapse()
   const [showBanner, setShowBanner] = useState<boolean>(false)
-  const [showPopup, setShowPopup] = useState<boolean>(true)
+  const [hasOnboarded, setHasOnboarded] = useState<boolean>(!existingUserCache.hasAggOnboarded)
   const [showTerms, setShowTerms] = useState<boolean>(false)
   const [currency, setCurrency] = useState<'SOL' | 'USDC'>('SOL')
 
+  const handleHasOnboarded = (res: boolean) => {
+    setHasOnboarded(false)
+
+    window.localStorage.setItem(
+      'gfx-user-cache',
+      JSON.stringify({
+        ...existingUserCache,
+        hasAggOnboarded: true
+      })
+    )
+  }
+
   return (
     <WRAPPER $navCollapsed={isCollapsed} $currency={currency}>
-      {<NFTAggTerms setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={setShowPopup} />}
-      {showPopup && <ModalSlide modalType={MODAL_TYPES.NFT_AGG_WELCOME} rewardToggle={setShowPopup} />}
+      {<NFTAggTerms setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={handleHasOnboarded} />}
+      {hasOnboarded && <ModalSlide modalType={MODAL_TYPES.NFT_AGG_WELCOME} rewardToggle={handleHasOnboarded} />}
       <MyNFTBag />
       {!checkMobile() && (
         <BannerContainer showBanner={showBanner}>
@@ -351,13 +366,13 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   const { allCollections } = useNFTCollections()
   const searchResultArr = useMemo(() => {
     if (!searchFilter || searchFilter.length < 3) return allCollections
-    const searchFiltered = allCollections.filter((result) => {
-      const collectionName = result.collection?.collection_name
-        ? result.collection.collection_name.toLowerCase()
-        : ''
-      if (collectionName.includes(searchFilter && searchFilter.toLowerCase())) return true
-    })
-    return searchFiltered
+    // const searchFiltered = allCollections.filter((result) => {
+    //   const collectionName = result.collection?.collection_name
+    //     ? result.collection.collection_name.toLowerCase()
+    //     : ''
+    //   if (collectionName.includes(searchFilter && searchFilter.toLowerCase())) return true
+    // })
+    return allCollections
   }, [searchFilter])
 
   const history = useHistory()
@@ -432,34 +447,39 @@ const MarketDropdown = (): ReactElement => {
   )
 }
 const MarketDropdownContents = ({ setArrow }: any): ReactElement => {
+  const { mode } = useDarkMode()
+
   useEffect(() => {
     setArrow(true)
-    return () => {
-      setArrow(false)
-    }
+    return () => setArrow(false)
   }, [])
-  const arr = []
-  const { mode } = useDarkMode()
-  for (const property in AH_PROGRAM_IDS) {
-    arr.push(
-      <div tw="flex p-2 items-center ">
-        <div>
-          <Image
-            className="marketImg"
-            fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-            src={`/img/assets/Aggregator/${AH_PROGRAM_IDS[property].replaceAll(' ', '')}.svg`}
-            preview={false}
-          />
-        </div>
-        <div tw="ml-2">{AH_PROGRAM_IDS[property]}</div>
-        <div tw="ml-auto">
-          <Checkbox />
-        </div>
-      </div>
-    )
-  }
 
-  return <DROPDOWN_CONTAINER tw="w-[173px] h-[211px] overflow-y-auto">{arr}</DROPDOWN_CONTAINER>
+  return (
+    <DROPDOWN_CONTAINER tw="w-[173px] h-[211px] overflow-y-auto">
+      {Object.keys(AH_PROGRAM_IDS)
+        .filter((addr) => AH_PROGRAM_IDS[addr] !== 'Unknown')
+        .map((addr) => (
+          <div
+            tw="flex p-2 items-center cursor-pointer hover:opacity-80"
+            key={addr}
+            onClick={() => console.log(AH_PROGRAM_IDS[addr])}
+          >
+            <div>
+              <Image
+                className="marketImg"
+                fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+                src={`/img/assets/Aggregator/${AH_PROGRAM_IDS[addr]}.svg`}
+                preview={false}
+              />
+            </div>
+            <div tw="ml-2">{AH_PROGRAM_IDS[addr]}</div>
+            <div tw="ml-auto">
+              <Checkbox />
+            </div>
+          </div>
+        ))}
+    </DROPDOWN_CONTAINER>
+  )
 }
 
 const TimelineDropdownContents = ({ setArrow }: any): ReactElement => {

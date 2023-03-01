@@ -151,13 +151,17 @@ export const NFT_COLLECTIONS_GRID = styled.div`
   }
 
   .gridItem {
-    ${tw`h-[275px] w-[190px] sm:w-[185px] rounded-[12px] dark:bg-[#131313] bg-[#fff] duration-500 cursor-pointer`}
+    ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white duration-500 cursor-pointer`}
     margin: 20px 13px 0px 0px;
+    img {
+      ${tw`h-[140px] rounded-[15px] w-[92.5%]`}
+    }
 
     .gridItemContainer {
-      ${tw`flex pt-[10px] justify-center relative `}
+      ${tw`flex p-[8px] pb-0 justify-center relative `}
+
       .nftImg {
-        ${tw`w-[170px] h-[170px] `}
+        ${tw`w-full h-auto `}
       }
       .hoverAddToBag {
         ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
@@ -169,7 +173,7 @@ export const NFT_COLLECTIONS_GRID = styled.div`
         ${tw`absolute opacity-0`}
       }
       .hoverNFT {
-        ${tw`opacity-100 duration-300 z-10 w-[190px] h-[170px] rounded-[8px] pl-1`}
+        ${tw`opacity-100 duration-300 z-10 w-full h-full rounded-[8px] pl-1`}
         background: linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0.4) 100%)
       }
       .loadingNFT {
@@ -179,16 +183,20 @@ export const NFT_COLLECTIONS_GRID = styled.div`
       }
     }
     .nftTextContainer {
-      ${tw`pl-2 pr-2 pt-1`}
+      ${tw`relative p-[8px]`}
     }
     .collectionId {
-      ${tw`text-[13px] font-semibold flex items-center`}
-      img {
-        ${tw` ml-2 w-[15px] h-[15px]`}
+      ${tw`text-[13px] font-semibold flex items-center justify-between`}
+      .isVerified {
+        ${tw` ml-2 w-[12px] h-[12px]`}
+      }
+
+      .ah-name {
+        ${tw`w-[22px] h-[22px]`}
       }
     }
     .nftPrice {
-      ${tw`font-semibold text-[15px]  flex items-center`}
+      ${tw`font-semibold text-[15px] flex items-center pt-2`}
       img {
         ${tw`w-5 h-5 ml-2.5`}
       }
@@ -199,9 +207,9 @@ export const NFT_COLLECTIONS_GRID = styled.div`
         ${tw`w-[20px] h-[20px] ml-2.5`}
       }
     }
-    img {
-      ${tw`h-[140px]  w-[92.5%]`}
-      border-radius: 12px !important;
+
+    .ls-favorite-heart {
+      ${tw`absolute right-[10px] bottom-[10px] w-[20px] h-[20px]`}
     }
   }
 `

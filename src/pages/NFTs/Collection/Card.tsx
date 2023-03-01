@@ -251,7 +251,7 @@ export const Card: FC<ICard> = (props) => {
         <div className={'nftTextContainer'}>
           <div className="collectionId">
             {localSingleNFT?.uuid ? localSingleNFT.uuid : '#8989'}
-            <img src="/img/assets/Aggregator/verifiedNFT.svg" />
+            <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />
           </div>
           {localSingleNFT ? (
             <GradientText text={localSingleNFT.nft_name.substring(0, 13) + '...'} fontSize={15} fontWeight={600} />

@@ -4,7 +4,7 @@ import { useNFTAggregator, useNFTCollections } from '../../../context'
 import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
 import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
 import DetailViewNFT from './DetailViewNFTDrawer'
-import { ISingleNFT } from '../../../types/nft_details'
+import { BaseNFT, ISingleNFT } from '../../../types/nft_details'
 import { SingleNFTCard } from './SingleNFTCard'
 import { fetchFixedPriceByPages, fetchOpenBidByPages } from '../../../api/NFTs'
 import NFTLoading from '../Home/NFTLoading'
@@ -13,7 +13,7 @@ import { debounce } from '../../../utils'
 export const FixedPriceNFTs = (): ReactElement => {
   const { buyNowClicked, bidNowClicked, setNftInBag } = useNFTAggregator()
   const { singleCollection, fixedPriceWithinCollection, setFixedPriceWithinCollection } = useNFTCollections()
-  const [fixedPriceArr, setFixedPriceArr] = useState<any[]>([])
+  const [fixedPriceArr, setFixedPriceArr] = useState<BaseNFT[]>([])
   const paginationNum = 30
   const [pageNumber, setPageNumber] = useState<number>(0)
   const [stopCalling, setStopCalling] = useState<boolean>(false)
@@ -55,6 +55,32 @@ export const FixedPriceNFTs = (): ReactElement => {
     }
   }, [pageNumber, singleCollection])
 
+  useEffect(() => {
+    const UUID = singleCollection ? singleCollection?.collection[0].uuid : undefined
+    if (UUID) {
+      fetchFixedPriceNFTs()
+    }
+  }, [pageNumber, singleCollection])
+
+  const fetchFixedPriceNFTs = async () => {
+    setFixedPriceLoading(true)
+
+    try {
+      const fpData = await fetchFixedPriceByPages(
+        UUID,
+        pageNumber * paginationNum,
+        (pageNumber + 1) * paginationNum
+      )
+      setFixedPriceWithinCollection(fpData.data)
+      if (fpData.data.nft_data.length < paginationNum) setStopCalling(true)
+      setFixedPriceArr((prev) => [...prev, ...fpData.data.nft_data])
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setFixedPriceLoading(false)
+    }
+  }
+
   const addNftToBag = (e, nftItem) => {
     setNftInBag((prev) => {
       const id = prev.filter((item) => item.uid === nftItem.uid)
@@ -63,6 +89,7 @@ export const FixedPriceNFTs = (): ReactElement => {
     })
     e.stopPropagation()
   }
+
   return (
     <NFT_COLLECTIONS_GRID id="border">
       {<DetailViewNFT />}
