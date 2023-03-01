@@ -28,6 +28,9 @@ const WRAPPER = styled.div`
     content: 'Next';
     color: ${({ theme }) => theme.text1};
   }
+  .slick-dots {
+    ${tw`w-[65%] ml-[75px]`}
+  }
   .slick-next {
     ${tw`mt-[260px] pr-12`}
   }
@@ -62,7 +65,7 @@ const WRAPPER = styled.div`
   .slide {
     h3 {
       color: ${({ theme }) => theme.text7};
-      ${tw`text-xl font-semibold text-center`}
+      ${tw`text-xl font-semibold text-center text-[20px] `}
     }
     .subText {
       ${tw`text-xl font-medium text-center text-[15px] p-1`}
