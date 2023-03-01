@@ -165,6 +165,9 @@ const OPEN_ORDER = styled.div`
       }
     }
   }
+  .cancelButton {
+    ${tw`bg-[#f06565]`}
+  }
 `
 
 const TRADE_HISTORY = styled.div`
@@ -239,7 +242,11 @@ const OpenOrdersComponent: FC = () => {
                 <span>${order.order.price}</span>
                 <span>{(order.order.size * order.order.price).toFixed(2)}</span>
                 <span>
-                  <Button loading={loading} onClick={() => cancelOrderFn(order.order.orderId)}>
+                  <Button
+                    className="cancelButton"
+                    loading={loading}
+                    onClick={() => cancelOrderFn(order.order.orderId)}
+                  >
                     Cancel
                   </Button>
                 </span>
@@ -374,11 +381,11 @@ export const HistoryPanel: FC = () => {
                 title={
                   <div tw="flex items-center">
                     <span tw="font-semibold text-black-4 text-lg dark:text-grey-5">Close Position</span>
-                    <img
+                    {/*<img
                       src="/img/assets/refresh.svg"
                       alt="refresh-icon"
                       tw="ml-auto ml-auto h-10 w-10 cursor-pointer mr-10"
-                    />
+                    />*/}
                   </div>
                 }
                 closeIcon={

@@ -35,6 +35,7 @@ import { findAssociatedTokenAddress } from '../../../web3'
 import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
 import { struct, u8 } from '@solana/buffer-layout'
 import { notify } from '../../../utils'
+import { perpsNotify } from '../../../utils/perpsNotifications'
 
 export const newOrderIx = async (
   newOrderAccounts: INewOrderAccounts,
@@ -73,6 +74,12 @@ export const newOrderIx = async (
     })
   )
   try {
+    perpsNotify({
+      action: 'open',
+      message: 'placing order hehehe',
+      key: 12,
+      styles: {}
+    })
     const response = await sendPerpsTransaction(
       connection,
       wallet,
@@ -81,8 +88,14 @@ export const newOrderIx = async (
       'placing new order',
       'order placed successfully'
     )
-    //if (response && response.txid) {
-    //}
+    if (response && response.txid) {
+      perpsNotify({
+        action: 'close',
+        message: 'Order placed Successfully!',
+        key: 12,
+        styles: {}
+      })
+    }
     return response
   } catch (e) {
     console.log(e)
@@ -127,8 +140,11 @@ export const cancelOrderIx = async (
   try {
     const response = await sendPerpsTransaction(connection, wallet, instructions, [])
     if (response && response.txid) {
-      notify({
-        message: 'Order canceled Successfully!'
+      perpsNotify({
+        action: 'open',
+        message: 'Order canceled Successfully!',
+        key: 12,
+        styles: {}
       })
     }
     return response

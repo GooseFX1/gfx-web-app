@@ -484,7 +484,7 @@ export const getPerpsPrice = (orderbook: OrderBook): number => {
   return 0
 }
 
-export const getClosePositionPrice = (qty: string, orderbook) => {
+export const getClosePositionPrice = (qty: string, orderbook: OrderBook) => {
   let qtyNum = Number(qty)
   const orderbookSide = qtyNum < 0 ? orderbook.asks : orderbook.bids
   qtyNum = qtyNum < 0 ? qtyNum * -1 : qtyNum
