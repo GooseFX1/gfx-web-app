@@ -122,20 +122,20 @@ const HEADER = styled.div`
   ${tw`flex items-center`}
 
   .cta {
-    ${tw`rounded-bigger w-[120px] h-[30px] mr-[13px] cursor-pointer`}
+    ${tw`rounded-bigger w-[120px] h-[40px] mr-[13px] cursor-pointer`}
 
     .btn {
-      ${tw`flex items-center justify-center text-tiny font-semibold w-full h-full`}
-      color: ${({ theme }) => theme.text35};
+      ${tw`flex items-center justify-center text-regular font-semibold w-full h-full`}
+      color: ${({ theme }) => theme.text37};
     }
 
     .gradient-bg {
-      ${tw`h-full w-full rounded-bigger`}
+      ${tw`h-full w-full rounded-bigger `}
       background-image: linear-gradient(to right, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
     }
   }
 
-  .white-background {
+  .background-container {
     ${tw`h-full w-full rounded-bigger`}
   }
 
@@ -144,12 +144,11 @@ const HEADER = styled.div`
     background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
 
     .btn {
-      background-color: ${({ theme }) => theme.bg25};
-      color: ${({ theme }) => theme.text28};
+      color: ${({ theme }) => theme.text32};
     }
 
     .white-background {
-      background-color: white;
+      background-color: ${({ theme }) => theme.white};
     }
   }
 
@@ -163,21 +162,24 @@ const Loader: FC = () => <Skeleton.Button active size="small" style={{ display: 
 const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: string }> = ({
   setTradeType,
   tradeType
-}) => (
-  <HEADER>
-    <div className={tradeType === 'deposit' ? 'active cta' : 'cta'} onClick={() => setTradeType('deposit')}>
-      <div className="white-background">
-        <div className={tradeType === 'deposit' ? 'gradient-bg btn' : 'btn'}>Deposit</div>
+}) => {
+  const { mode } = useDarkMode()
+  return (
+    <HEADER>
+      <div className={tradeType === 'deposit' ? 'active cta' : 'cta'} onClick={() => setTradeType('deposit')}>
+        <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
+          <div className={tradeType === 'deposit' ? 'gradient-bg btn' : 'btn'}>Deposit</div>
+        </div>
       </div>
-    </div>
-    <div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('withdraw')}>
-      <div className="white-background">
-        <div className={tradeType === 'withdraw' ? 'gradient-bg btn' : 'btn'}>Withdraw</div>
+      <div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('withdraw')}>
+        <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
+          <div className={tradeType === 'withdraw' ? 'gradient-bg btn' : 'btn'}>Withdraw</div>
+        </div>
       </div>
-    </div>
-    <img src="/img/assets/refresh.svg" alt="refresh-icon" />
-  </HEADER>
-)
+      <img src="/img/assets/refresh.svg" alt="refresh-icon" />
+    </HEADER>
+  )
+}
 
 export const InfoBanner: FC<{
   isLocked: boolean

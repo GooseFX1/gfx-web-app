@@ -20,7 +20,7 @@ const WRAPPER = styled.div`
 
   .percentage-num {
     ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center justify-center h-full text-[16px]`}
-    color: ${({ theme }) => theme.text35};
+    color: ${({ theme }) => theme.text37};
   }
 
   .selected {
@@ -30,8 +30,8 @@ const WRAPPER = styled.div`
 
   .submit-btn {
     ${tw`block h-[50px] w-[222px] rounded-circle mx-auto mt-6 mb-0 font-semibold 
-      text-tiny border-0 border-none bg-[#5855ff]`}
-    color: ${({ theme }) => theme.text2};
+      text-average border-0 border-none bg-[#5855ff]`}
+    color: ${({ theme }) => theme.white};
     outline: none;
   }
 `
