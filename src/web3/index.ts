@@ -1,5 +1,6 @@
 export * from './account'
 export * from './auction-house'
+export * from './agg_program_ids'
 export * from './crypto'
 export * from './ids'
 export * from './nestquest'
