@@ -57,14 +57,15 @@ export const OpenBidNFTs = (): ReactElement => {
 
   const addNftToBag = (e, nftItem) => {
     setNftInBag((prev) => {
-      const id = prev.filter((item) => item.uid === nftItem.uid)
+      const id = prev.filter((item) => item.uuid === nftItem.uuid)
       if (!id.length) return [...prev, nftItem]
       return prev
     })
     e.stopPropagation()
   }
+  const gridType = openBidArr?.length > 10 ? '1fr' : '210px'
   return (
-    <NFT_COLLECTIONS_GRID id="border">
+    <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
       {<DetailViewNFT />}
       {buyNowClicked && <BuyNFTModal />}
       {bidNowClicked && <BidNFTModal />}

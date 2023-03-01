@@ -31,6 +31,7 @@ import { AH_PROGRAM_IDS } from '../../../web3/agg_program_ids'
 import { ModalSlide } from '../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../constants'
 import { USER_CONFIG_CACHE } from '../../../types/app_params'
+import { NFTBaseCollection } from '../../../types/nft_collections'
 
 const CURRENCY_SWITCH = styled.div<{ $currency }>`
   .ant-switch {
@@ -196,7 +197,7 @@ const FiltersContainer = ({ setCurrency }: any) => {
   const [poolFilter, setPoolFilter] = useState<string>('Popular')
   const [searchFilter, setSearchFilter] = useState<string>(undefined)
   const [searchPopup, setSearchPopup] = useState<boolean>(false)
-  const [menuPopup, setMenuPopup] = useState<boolean>(true)
+  const [menuPopup, setMenuPopup] = useState<boolean>(false)
   const { connected, publicKey } = useWallet()
   const { connection } = useConnectionConfig()
   const history = useHistory()
@@ -259,9 +260,14 @@ const FiltersContainer = ({ setCurrency }: any) => {
             <div className="iconImg" onClick={() => setMenuPopup(true)}>
               <img src={`/img/assets/Aggregator/menu.svg`} />
             </div>
-            <div className="iconImg">
-              <img src={`/img/assets/Aggregator/menu.svg`} />
-            </div>
+            {publicKey && (
+              <AVATAR_NFT
+                fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+                src={sessionUser ? sessionUser.profile_pic_link : ''}
+                preview={false}
+                onClick={goProfile}
+              />
+            )}
           </div>
           <ButtonContainer $poolIndex={poolIndex} style={{ marginLeft: 'auto' }}>
             <div className="slider-animation"></div>
@@ -366,20 +372,20 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   const { allCollections } = useNFTCollections()
   const searchResultArr = useMemo(() => {
     if (!searchFilter || searchFilter.length < 3) return allCollections
-    // const searchFiltered = allCollections.filter((result) => {
-    //   const collectionName = result.collection?.collection_name
-    //     ? result.collection.collection_name.toLowerCase()
-    //     : ''
-    //   if (collectionName.includes(searchFilter && searchFilter.toLowerCase())) return true
-    // })
-    return allCollections
+    const searchFiltered = [...allCollections].filter((result: NFTBaseCollection) => {
+      const collectionName = result.collection?.collection_name
+        ? result.collection.collection_name.toLowerCase()
+        : ''
+      if (collectionName.includes(searchFilter && searchFilter.toLowerCase())) return true
+    })
+    return searchFiltered
   }, [searchFilter])
 
   const history = useHistory()
 
   return (
     <SEARCH_RESULT_CONTAINER>
-      {searchResultArr.map((data, index) => (
+      {searchResultArr.map((data: NFTBaseCollection, index) => (
         <div
           className="searchResultRow"
           key={index}

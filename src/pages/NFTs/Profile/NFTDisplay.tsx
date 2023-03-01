@@ -206,21 +206,21 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
       }
     }
   }
-
+  const gridType = filteredCollectedItems?.length > 7 ? '1fr' : '210px'
   return (
-    <NFT_COLLECTIONS_GRID>
+    <NFT_COLLECTIONS_GRID gridType={gridType}>
       {filteredCollectedItems === undefined ? (
         <>
           <NFTLoading />
         </>
-      ) : filteredCollectedItems.length ? (
+      ) : filteredCollectedItems.length === 0 ? (
+        <NoContent type={props.type} />
+      ) : (
         <div className="gridContainerProfile" tw="h-[75vh]">
           {filteredCollectedItems.map((nft: ISingleNFT, index: number) => (
             <Card singleNFT={nft} key={index} />
           ))}
         </div>
-      ) : (
-        <NoContent type={props.type} />
       )}
     </NFT_COLLECTIONS_GRID>
   )

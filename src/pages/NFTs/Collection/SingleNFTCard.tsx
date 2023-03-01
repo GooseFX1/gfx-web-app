@@ -1,4 +1,4 @@
-import { useState, FC, useEffect, useMemo } from 'react'
+import { useState, FC, useEffect, useMemo, ReactElement } from 'react'
 import axios from 'axios'
 import {
   useConnectionConfig,
@@ -9,7 +9,7 @@ import {
 } from '../../../context'
 import { GradientText } from '../adminPage/components/UpcomingMints'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
-import { INFTAsk, INFTBid, INFTGeneralData } from '../../../types/nft_details'
+import { BaseNFT, INFTAsk, INFTBid, INFTGeneralData } from '../../../types/nft_details'
 import { fetchSingleNFT } from '../../../api/NFTs'
 import { getParsedAccountByMint, StringPublicKey, AH_PROGRAM_IDS } from '../../../web3'
 import { LoadingDiv } from './Card'
@@ -124,11 +124,11 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
 
         <div className="nftPrice">
           {localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 'No Ask'}
-          {localAsk && <img src={`/img/crypto/SOL.svg`} alt={item?.currency} />}
+          {localAsk && <img src={`/img/crypto/SOL.svg`} alt={'SOL'} />}
         </div>
         <div className="apprisalPrice">
           {'NA'}
-          {localAsk && <img src={`/img/assets/Aggregator/Tooltip.svg`} alt={item?.currency} />}
+          {localAsk && <img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'SOL'} />}
         </div>
         {sessionUser &&
           (isFavorite ? (

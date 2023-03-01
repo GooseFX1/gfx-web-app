@@ -254,7 +254,6 @@ const ImageViewer = ({ setBuyNow, buyNowClicked, setBidNow, bidNowClicked }: any
   const { selectedNFT, setSelectedNFT } = useNFTAggregator()
   const collectionName = selectedNFT ? selectedNFT.nft_name.split('#')[0] : 'Unknown'
   const nftId = selectedNFT ? selectedNFT.nft_name.split('#')[1] : 'Unknown'
-  const { nftMetadata } = useNFTDetails()
 
   return (
     <WRAPPER>
@@ -288,19 +287,7 @@ const ImageViewer = ({ setBuyNow, buyNowClicked, setBidNow, bidNowClicked }: any
 
       <AppraisalValue />
       <img tw="h-[390px] w-[100%]" src="/img/assets/Aggregator/priceHistory.svg" />
-      <RIGHT_SECTION_TABS activeTab={activeTab}>
-        <Tabs defaultActiveKey="1" centered onChange={(key) => setActiveTab(key)}>
-          <TabPane tab="Activity" key="1">
-            <>dasd </>
-          </TabPane>
-          <TabPane tab="Attributes" key="2">
-            <AttributesTabContent data={nftMetadata.attributes} />
-          </TabPane>
-          <TabPane tab="Details" key="3">
-            <NFTDetailsTab />
-          </TabPane>
-        </Tabs>
-      </RIGHT_SECTION_TABS>
+      <NFTTabSections activeTab={activeTab} setActiveTab={setActiveTab} />
       <ButtonContainer
         setBuyNow={setBuyNow}
         buyNowClicked={buyNowClicked}
@@ -367,6 +354,32 @@ const NFTDetailsTab = (): ReactElement => {
         </Row>
       ))}
     </div>
+  )
+}
+
+export const NFTTabSections: FC<{ activeTab: string; setActiveTab: any }> = ({
+  activeTab,
+  setActiveTab
+}): ReactElement => {
+  const { nftMetadata } = useNFTDetails()
+
+  return (
+    <RIGHT_SECTION_TABS activeTab={activeTab}>
+      <Tabs defaultActiveKey="1" centered onChange={(key) => setActiveTab(key)}>
+        <TabPane tab="Activity" key="1">
+          <div className="general-item-value" tw="text-[15px] font-semibold pr-2 pl-4 ">
+            <div tw="flex items-center justify-center">Open Bids</div>
+            No bids so far, be the first to bid for this amazing piece.
+          </div>
+        </TabPane>
+        <TabPane tab="Attributes" key="2">
+          <AttributesTabContent data={nftMetadata.attributes} />
+        </TabPane>
+        <TabPane tab="Details" key="3">
+          <NFTDetailsTab />
+        </TabPane>
+      </Tabs>
+    </RIGHT_SECTION_TABS>
   )
 }
 
