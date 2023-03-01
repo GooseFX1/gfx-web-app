@@ -22,7 +22,7 @@ const WRAPPER = styled.div`
 
   .percentage-num {
     ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center justify-center h-full 
-        text-[16px] dark:text-black-4 text-grey-1`}
+        text-[16px] text-grey-1`}
   }
 
   .selected {
@@ -110,13 +110,19 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
   }, [selectedExitQty, orderBook])
 
   const pnlEstimate = useMemo(() => {
-    const pnl = traderInfo.pnl
-    if (!pnl) return <span>-</span>
-    const pnlEst =
-      (Number(pnl) / Number(displayFractional(totalExitQty))) * Number(displayFractional(selectedExitQty))
-    const isNegative = pnlEst < 0
+    if (!traderInfo.averagePosition.price) return <span>-</span>
+    const averagePrice = traderInfo.averagePosition.price,
+      sellPrice = exitPrice
+    if (!sellPrice || !Number(averagePrice)) return <span>-</span>
+    const side = traderInfo.averagePosition.side
+    const difference = side === 'sell' ? sellPrice - Number(averagePrice) : Number(averagePrice) - sellPrice
+    const totalPnl = difference * Number(displayFractional(totalExitQty))
+
+    const isNegative = totalPnl < 0
     return (
-      <span className={isNegative ? 'negative' : 'positive'}>{(!isNegative ? '+' : '') + pnlEst.toFixed(2)}</span>
+      <span className={isNegative ? 'negative' : 'positive'}>
+        {(!isNegative ? '+' : '') + totalPnl.toFixed(2)}
+      </span>
     )
   }, [traderInfo, selectedExitQty])
 

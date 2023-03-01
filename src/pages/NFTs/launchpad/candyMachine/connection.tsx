@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Keypair,
   Commitment,
@@ -330,13 +331,13 @@ export const sendPerpsTransaction = async (
     skipPreflight: true,
     commitment
   }
-  if (startMessage) {
-    notify({
-      description: 'New Order..',
-      message: startMessage,
-      notificationDuration: 10 * 1000
-    })
-  }
+  //  if (startMessage) {
+  //    notify({
+  //      description: 'New Order..',
+  //      message: startMessage,
+  //      notificationDuration: 10 * 1000
+  //    })
+  //  }
   const txid = await connection.sendRawTransaction(rawTransaction, options)
 
   let slot = 0
@@ -355,13 +356,13 @@ export const sendPerpsTransaction = async (
     }
   }
 
-  if (endMessage) {
-    notify({
-      description: 'message',
-      message: endMessage,
-      notificationDuration: 5 * 1000
-    })
-  }
+  //  if (endMessage) {
+  //    notify({
+  //      description: 'message',
+  //      message: endMessage,
+  //      notificationDuration: 5 * 1000
+  //    })
+  //  }
   return { txid, slot }
 }
 
