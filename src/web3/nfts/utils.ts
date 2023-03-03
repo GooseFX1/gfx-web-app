@@ -12,7 +12,7 @@ export const decodeTokenMetadata = async (buffer: Buffer): Promise<MetaplexMetad
 
 /**
  * Get Addresses of Metadata account assosiated with Mint Token
- */
+ **/
 export async function getSolanaMetadataAddress(tokenMint: PublicKey): Promise<PublicKey> {
   const metaProgamPublicKey = new PublicKey(METADATA_PROGRAM)
   return (
@@ -21,6 +21,11 @@ export async function getSolanaMetadataAddress(tokenMint: PublicKey): Promise<Pu
       metaProgamPublicKey
     )
   )[0]
+}
+
+export const minimizeTheString = (str: string): string => {
+  if (str.length > 12) return str.substring(0, 12) + '...'
+  return str
 }
 
 const getDaysArray = function (start, end) {

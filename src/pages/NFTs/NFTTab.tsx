@@ -55,8 +55,8 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none">
       <div className="flitersFlexContainer">
-        {/* {!checkMobile() && <OffersDropdown />} */}
-        {/* {checkMobile() && <CurrencySwitch />} */}
+        {/* {!checkMobile() && <OffersDropdown />} 
+        {checkMobile() && <CurrencySwitch />}  */}
       </div>
 
       <div className="flitersViewCategory" tw="mr-[10px] sm:mr-0">

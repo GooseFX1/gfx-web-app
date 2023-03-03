@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Modal } from 'antd'
 import React, { ReactElement, useState } from 'react'
-import { useNFTAggregator } from '../../../context'
+import { useNFTAggregator, useNFTDetails } from '../../../context'
 import { checkMobile } from '../../../utils'
 import { AppraisalValue } from '../../../utils/GenericDegsin'
 import { PopupCustom } from '../Popup/PopupCustom'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 
 const STYLED_POPUP = styled(PopupCustom)`
   ${tw`flex flex-col `}
@@ -105,13 +106,17 @@ input::-webkit-inner-spin-button {
   }
 
   .buyBtnContainer {
-    ${tw`flex items-center justify-center`}
+    ${tw`flex items-center justify-center  mt-8 `}
   }
 `
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const BuyNFTModal = (): ReactElement => {
   const { selectedNFT, setSelectedNFT, buyNowClicked, setBuyNow } = useNFTAggregator()
+  const { ask } = useNFTDetails()
+  const buyerPrice = parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER
+  const servicePrice = 0.01
+
   return (
     <STYLED_POPUP
       height={checkMobile() ? '600px' : '780px'}
@@ -141,7 +146,7 @@ export const BuyNFTModal = (): ReactElement => {
 
       <div className="vContainer">
         <div className="priceNumber">
-          {buyNowClicked.nftPrice} <img src={`/img/crypto/${buyNowClicked.currency}.svg`} />
+          {buyerPrice} <img src={`/img/crypto/SOL.svg`} />
         </div>
       </div>
       <AppraisalValue width={360} />
@@ -149,19 +154,19 @@ export const BuyNFTModal = (): ReactElement => {
       <div className="hContainer" style={{ height: 160 }}>
         <div className="rowContainer">
           <div className="leftAlign">Price</div>
-          <div className="rightAlign">1000 SOL</div>
+          <div className="rightAlign">{buyerPrice} SOL</div>
         </div>
         <div className="rowContainer">
           <div className="leftAlign">Service Fee</div>
-          <div className="rightAlign">0.01 SOL</div>
+          <div className="rightAlign"> {servicePrice} SOL</div>
         </div>
         <div className="rowContainer">
           <div className="leftAlign">Total Price</div>
-          <div className="rightAlign"> 1000.01 SOL</div>
+          <div className="rightAlign"> {buyerPrice + servicePrice} SOL</div>
         </div>
         <div className="rowContainer">
           <div className="leftAlign">Total Price</div>
-          <div className="rightAlign"> 1000.01 SOL</div>
+          <div className="rightAlign"> {buyerPrice + servicePrice} SOL</div>
         </div>
       </div>
       <div className="buyBtnContainer">
@@ -173,10 +178,16 @@ export const BuyNFTModal = (): ReactElement => {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const BidNFTModal = (): ReactElement => {
   const { selectedNFT, setSelectedNFT, bidNowClicked, setBidNow } = useNFTAggregator()
-  const [bidValue, setBidValue] = useState<number | undefined>(undefined)
-
+  const [bidValue, setBidValue] = useState<number | undefined>(0)
+  const { ask } = useNFTDetails()
+  const [selectedBtn, setSelectedBtn] = useState<number | undefined>(undefined)
+  const buyerPrice = parseFloat(ask?.buyer_price ? ask?.buyer_price : '0') / LAMPORTS_PER_SOL_NUMBER
   const updateBidValue = (e) => {
     setBidValue(e.target.value)
+  }
+  const handleBtnClicked = (value: number, index: number) => {
+    setBidValue(value)
+    setSelectedBtn(index)
   }
 
   return (
@@ -193,24 +204,30 @@ export const BidNFTModal = (): ReactElement => {
         <strong>{bidNowClicked.nft_name} </strong> {checkMobile() ? <br /> : ''}
         <strong> {bidNowClicked?.collection_name}</strong>
       </div>
-      <div className="vContainer">
+      <div className="vContainer" tw="flex">
         <img className="nftImgBid" src={bidNowClicked.image_url} alt="" />
-        <div className="currentBid">Current Bid</div>
+        <div tw="flex flex-col">
+          <div className="currentBid">Current Bid</div>
+          <div className="priceNumber" tw="ml-4 mt-2">
+            {bidValue} <img src={`/img/crypto/SOL.svg`} />
+          </div>
+        </div>
       </div>
 
-      <div className="vContainer">
+      {/* <div className="vContainer">
         <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
         <div className="verifiedText">This is a verified {checkMobile() && <br />} Creator</div>
-      </div>
+      </div> 
 
       <div className="vContainer">
         <div className="priceText">Price</div>
       </div>
+       */}
 
       <div className="vContainer">
-        <div className="priceNumber">
-          {bidNowClicked.nftPrice} <img src={`/img/crypto/${bidNowClicked.currency}.svg`} />
-        </div>
+        {/* <div className="priceNumber">
+           {bidValue} <img src={`/img/crypto/SOL.svg`} />
+        </div> */}
       </div>
       <AppraisalValue width={360} />
       <div className="vContainer">
@@ -230,14 +247,29 @@ export const BidNFTModal = (): ReactElement => {
       </div>
 
       <div className="vContainer" tw="mt-4">
-        <div className="bidButton">2000</div>
-        <div className="bidButtonSelected">3000</div>
-        <div className="bidButton">4000</div>
+        <div
+          className={selectedBtn === 0 ? 'bidButtonSelected' : 'bidButton'}
+          onClick={() => handleBtnClicked(buyerPrice + 10, 0)}
+        >
+          {buyerPrice + 10}
+        </div>
+        <div
+          className={selectedBtn === 1 ? 'bidButtonSelected' : 'bidButton'}
+          onClick={() => handleBtnClicked(buyerPrice + 20, 1)}
+        >
+          {buyerPrice + 20}
+        </div>
+        <div
+          className={selectedBtn === 2 ? 'bidButtonSelected' : 'bidButton'}
+          onClick={() => handleBtnClicked(buyerPrice + 30, 2)}
+        >
+          {buyerPrice + 30}
+        </div>
       </div>
 
-      {/* <div className="buyBtnContainer">
-        <div className="buyButton">Buy Now</div>
-      </div> */}
+      <div className="buyBtnContainer">
+        <div className="buyButton">Review Offer</div>
+      </div>
     </STYLED_POPUP>
   )
 }

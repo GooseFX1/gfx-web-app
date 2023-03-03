@@ -13,6 +13,7 @@ import { useHistory } from 'react-router-dom'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { NFTBaseCollection } from '../../../types/nft_collections'
 import { Image } from 'antd'
+import { minimizeTheString } from '../../../web3/nfts/utils'
 
 const STYLE = styled.div``
 
@@ -66,11 +67,6 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   )
 }
 
-const editString = (str: string) => {
-  if (str.length > 12) return str.substring(0, 12) + '...'
-  return str
-}
-
 const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement => {
   const history = useHistory()
   const {} = useNFTCollections()
@@ -98,7 +94,7 @@ const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement =
                   alt=""
                 />
                 <div className="nftCollectionName">
-                  {editString(item?.collection?.collection_name)}
+                  {minimizeTheString(item?.collection?.collection_name)}
                   <div className="nftCollectionFloor">
                     <div className="grey">Floor: </div>
                     <div>
