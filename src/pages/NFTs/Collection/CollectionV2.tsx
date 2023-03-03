@@ -30,6 +30,7 @@ import 'styled-components/macro'
 import { LAMPORTS_PER_SOL } from '../../../constants'
 import { OpenBidNFTs } from './OpenBidNFTs'
 import { FixedPriceNFTs } from './FixedPriceNFTs'
+import { Image } from 'antd'
 
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
@@ -83,9 +84,10 @@ const CollectionV2 = (): ReactElement => {
 
 const NFTStatsContainer = () => {
   const { mode } = useDarkMode()
-  const { singleCollection } = useNFTCollections()
+  const { singleCollection, fixedPriceWithinCollection } = useNFTCollections()
   const [sweepCollection, setSweepCollection] = useState<boolean>(false)
   const collection = singleCollection ? singleCollection.collection[0] : undefined
+  console.log(collection)
   const collectionFloor = singleCollection
     ? singleCollection.collection_floor / parseInt(LAMPORTS_PER_SOL.toString())
     : 0
@@ -103,8 +105,12 @@ const NFTStatsContainer = () => {
 
       <div className="collectionNameContainer">
         <div className="collectionName">
-          {logo ? (
-            <img src={logo} />
+          {collectionName ? (
+            <Image
+              fallback={'/img/assets/Aggregator/Unknown.svg'}
+              src={`${logo === undefined ? '/img/assets/Aggregator/Unknown.svg' : logo}`}
+              alt=""
+            />
           ) : (
             <SkeletonCommon style={{ marginLeft: 20 }} width="65px" height="65px" borderRadius="50%" />
           )}
@@ -145,7 +151,9 @@ const NFTStatsContainer = () => {
           </div>
           {!checkMobile() && (
             <div className="wrapper">
-              <div className="titleText">112/{collection?.size}</div>
+              <div className="titleText">
+                {fixedPriceWithinCollection?.total_count}/{collection?.size ? collection?.size : 0}
+              </div>
               <div className="subTitleText">Listed</div>
             </div>
           )}
@@ -193,7 +201,8 @@ export const NFTGridContainer = (): ReactElement => {
 
 const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): ReactElement => {
   const { mode } = useDarkMode()
-  const { openBidWithinCollection, fixedPriceWithinCollection } = useNFTCollections()
+  const { openBidWithinCollection, fixedPriceWithinCollection, singleCollection } = useNFTCollections()
+  console.log(singleCollection?.collection[0])
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
@@ -201,7 +210,7 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
         {/* <img onClick={() => setOpen((prev) => !prev)} src={`/img/assets/Aggregator/filtersIcon${mode}.svg`} />
         <SearchBar placeholder={checkMobile() ? `Search by nft ` : `Search by nft o owner`} /> 
   {!checkMobile() && <SortDropdown />} */}
-        {checkMobile() && <CurrencySwitch />}
+        {/* {checkMobile() && <CurrencySwitch />} */}
       </div>
 
       <div className="flitersViewCategory">
@@ -210,7 +219,8 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
           <div className="activeItem" />
         </div>
         <div className={displayIndex === 1 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(1)}>
-          All items ({openBidWithinCollection ? openBidWithinCollection.total_count : 'Load..'})
+          All items (
+          {openBidWithinCollection ? openBidWithinCollection.total_count : singleCollection?.collection[0]?.size})
         </div>
         <div className={displayIndex === 2 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(2)}>
           Activity
