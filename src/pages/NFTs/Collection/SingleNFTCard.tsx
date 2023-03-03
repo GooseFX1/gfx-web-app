@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, FC, useEffect, useMemo, ReactElement } from 'react'
 import axios from 'axios'
 import {
@@ -17,6 +18,7 @@ import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { Button } from '../../../components/Button'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { minimizeTheString } from '../../../web3/nfts/utils'
 
 export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any; lastCardRef: any }> = ({
   item,
@@ -32,7 +34,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
 
   const [hover, setHover] = useState<boolean>(false)
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
-  const [localAsk, setLocalAsk] = useState<INFTAsk>(null)
+  const [localAsk, setLocalAsk] = useState<INFTAsk>(undefined)
   const [localTotalLikes, setLocalTotalLikes] = useState<number>()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
@@ -91,7 +93,14 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   return (
     <div className="gridItem" key={index} onClick={() => goToDetails(item)} ref={lastCardRef}>
       <div className="gridItemContainer" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-        {hover && <HoverOnNFT item={item} addNftToBag={addNftToBag} hasAsk={localAsk !== null} />}
+        {hover && (
+          <HoverOnNFT
+            item={item}
+            setNFTDetailsBeforeLocate={setNFTDetailsBeforeLocate}
+            addNftToBag={addNftToBag}
+            hasAsk={localAsk !== undefined}
+          />
+        )}
         {isLoadingBeforeRelocate && <LoadingDiv />}
         {item ? (
           <img className="nftImg" src={item.image_url} alt="nft" />
@@ -117,7 +126,11 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
         </div>
 
         {singleCollection ? (
-          <GradientText text={singleCollection.collection[0].collection_name} fontSize={15} fontWeight={600} />
+          <GradientText
+            text={minimizeTheString(singleCollection.collection[0].collection_name)}
+            fontSize={15}
+            fontWeight={600}
+          />
         ) : (
           <SkeletonCommon width="100px" height="20px" style={{ marginTop: 10 }} />
         )}
@@ -151,14 +164,26 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   )
 }
 
-const HoverOnNFT: FC<{ addNftToBag: any; item: BaseNFT; hasAsk: boolean }> = ({
+const HoverOnNFT: FC<{ addNftToBag: any; item: BaseNFT; hasAsk: boolean; setNFTDetailsBeforeLocate: any }> = ({
   addNftToBag,
   item,
-  hasAsk
+  hasAsk,
+  setNFTDetailsBeforeLocate
 }): ReactElement => {
-  const { setSelectedNFT } = useNFTAggregator()
+  const { setBidNow, setBuyNow } = useNFTAggregator()
+  const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
+
+  const goToDetailsForModal = async (e, type) => {
+    e.stopPropagation()
+    setIsLoadingBeforeRelocate(true)
+    await setNFTDetailsBeforeLocate()
+    setIsLoadingBeforeRelocate(false)
+    if (type === 'bid') setBidNow(item)
+    else setBuyNow(item)
+  }
   return (
     <div className="hoverNFT">
+      {isLoadingBeforeRelocate && <LoadingDiv />}
       <img
         className="hoverAddToBag"
         src={`/img/assets/Aggregator/addToBag.svg`}
@@ -169,10 +194,9 @@ const HoverOnNFT: FC<{ addNftToBag: any; item: BaseNFT; hasAsk: boolean }> = ({
         <Button
           height="28px"
           width="75px"
-          cssStyle={tw`bg-[#5855ff] text-[13px] font-semibold`}
+          cssStyle={tw`bg-[#5855ff] text-[13px] font-semibold mr-2 ml-2`}
           onClick={(e) => {
-            setSelectedNFT(item)
-            e.stopPropagation()
+            goToDetailsForModal(e, 'bid')
           }}
         >
           Bid
@@ -182,11 +206,8 @@ const HoverOnNFT: FC<{ addNftToBag: any; item: BaseNFT; hasAsk: boolean }> = ({
             height="28px"
             width="75px"
             className="pinkGradient"
-            cssStyle={tw`text-[13px] font-semibold`}
-            onClick={(e) => {
-              setSelectedNFT(item)
-              e.stopPropagation()
-            }}
+            cssStyle={tw`text-[13px] font-semibold ml-2 `}
+            onClick={(e) => goToDetailsForModal(e, 'buy')}
           >
             Buy now
           </Button>
