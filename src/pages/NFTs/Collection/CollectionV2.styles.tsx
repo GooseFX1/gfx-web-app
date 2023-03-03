@@ -167,7 +167,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
         ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
       }
       .hoverButtons {
-        ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-between w-[96%] px-2`}
+        ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[96%] px-2`}
       }
       div {
         ${tw`absolute opacity-0`}
@@ -234,7 +234,7 @@ export const DROPDOWN_CONTAINER = styled.div`
 `
 export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
   ${({ index }) => css`
-    ${tw`duration-500 items-center flex h-[70px] sm:h-[100px] sm:flex-col `}
+    ${tw`duration-500 items-center flex h-[70px] sm:h-[58px] sm:flex-col `}
     border-radius: 30px 30px 0 0;
     background: ${({ theme }) => theme.bg23};
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
@@ -269,7 +269,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
     .selectedProfile {
       color: ${({ theme }) => theme.text4};
-      ${tw`w-[180px] mb-4 items-center sm:mt-1
+      ${tw`w-[170px] mb-4 items-center sm:mt-1
        font-semibold  flex justify-between flex-col cursor-pointer`}
     }
     }
@@ -277,7 +277,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       ${tw` w-[140px] sm:w-[130px] mb-4 sm:mt-1 items-center flex justify-between flex-col cursor-pointer`}
     }
     .flexItemProfile {
-      ${tw`w-[180px] sm:w-[150px] mb-4 sm:mt-1 items-center flex justify-between flex-col cursor-pointer`}
+      ${tw`w-[170px] sm:w-[140px] mb-4 sm:mt-1 items-center flex justify-between flex-col cursor-pointer`}
     }
     .activeItem {
       ${tw`h-2  block mt-3 sm:mt-2 rounded-b-circle font-semibold duration-500 bg-[#5855ff] w-[70%]`}
@@ -290,12 +290,12 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       }
     }
     .activeItemProfile {
-      ${tw`h-2  block mt-3 sm:mt-2 rounded-b-circle font-semibold duration-500 bg-[#5855ff] w-[75%] `}
+      ${tw`h-2  block mt-3 sm:mt-2 rounded-b-circle font-semibold duration-500 bg-[#5855ff] w-[68%] `}
       content: '';
       transform: rotate(180deg);
       margin-left: ${index * 365 + `px`};
       @media (max-width: 500px) {
-        margin-left: ${index * 310 + `px`};
+        margin-left: ${index * 300 + `px`};
       }
     }
   `}

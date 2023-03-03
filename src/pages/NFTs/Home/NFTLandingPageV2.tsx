@@ -299,7 +299,7 @@ const FiltersContainer = ({ setCurrency }: any) => {
               </STYLED_BUTTON>
             ))}
           </ButtonContainer>
-          <CurrencySwitch />
+          {/* <CurrencySwitch /> */}
         </div>
       </div>
     )
