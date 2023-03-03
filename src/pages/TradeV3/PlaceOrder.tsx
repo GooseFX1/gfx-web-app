@@ -26,6 +26,7 @@ import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import { TradeConfirmation } from './TradeConfirmation'
 import { PerpsEndModal } from './PerpsEndModal'
 import 'styled-components/macro'
+import { RotatingLoader } from '../../components/RotatingLoader'
 
 enum ButtonState {
   Connect = 0,
@@ -311,6 +312,7 @@ export const PlaceOrder: FC = () => {
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { connected } = useWallet()
   const { mode } = useDarkMode()
+  const [loading, setLoading] = useState<boolean>(false)
 
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
@@ -435,6 +437,13 @@ export const PlaceOrder: FC = () => {
     setArrowRotation(!arrowRotation)
     setDropdownVisible(!dropdownVisible)
   }
+
+  const handlePlaceOrder = async () => {
+    setLoading(true)
+    await newOrder()
+    setLoading(false)
+  }
+
   return (
     <WRAPPER>
       <HEADER>
@@ -610,10 +619,10 @@ export const PlaceOrder: FC = () => {
         </ORDER_CATEGORY>
         <PLACE_ORDER_BUTTON
           $action={buttonState === ButtonState.CanPlaceOrder}
-          onClick={() => (isSpot ? placeOrder() : newOrder())}
+          onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
           $orderSide={order.side}
         >
-          {buttonText}
+          {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
         </PLACE_ORDER_BUTTON>
         <FEES>
           <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
@@ -628,6 +637,9 @@ export const PlaceOrder: FC = () => {
 
 const SELECTOR = styled.div`
   ${tw`bg-black-4 dark:bg-[#555555] w-[160px] h-16 rounded-[5px] pt-2 pb-3 pl-2.5`}
+  .selectorDropdown {
+    ${tw`cursor-pointer`}
+  }
   > div {
     ${tw`flex items-center mb-2`}
     > span {
@@ -660,7 +672,7 @@ const Overlay: FC<{
   return (
     <SELECTOR>
       {AVAILABLE_ORDERS.filter(({ side: x }) => x === side).map((item, index) => (
-        <div key={index}>
+        <div key={index} onClick={() => handleChange(item.display)} className="selectorDropdown">
           <span>{item.text}</span>
           <input
             type="radio"

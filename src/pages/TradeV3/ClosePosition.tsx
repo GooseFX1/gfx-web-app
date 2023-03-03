@@ -14,6 +14,7 @@ import {
 } from './perps/utils'
 import { Fractional } from './perps/dexterity/types'
 import * as anchor from '@project-serum/anchor'
+import { RotatingLoader } from '../../components/RotatingLoader'
 
 const WRAPPER = styled.div`
   .percentage {
@@ -82,6 +83,8 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
   const { orderBook } = useOrderBook()
   const price = getPerpsPrice(orderBook)
   const [percentageIndex, setPercentageindex] = useState<number>(0)
+  const [loading, setLoading] = useState<boolean>(false)
+
   const { closePosition } = useTraderConfig()
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
@@ -127,8 +130,12 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
   }, [traderInfo, selectedExitQty])
 
   const closePositionFn = async () => {
+    setLoading(true)
     const response = await closePosition(orderBook, selectedExitQty)
-    if (response && response.txid) setVisibleState(false)
+    if (response && response.txid) {
+      setVisibleState(false)
+    }
+    setLoading(false)
   }
 
   return (
@@ -177,9 +184,13 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
         width="100%"
         cssStyle={tw`bg-blue-1 dark:text-white font-semibold border-0 rounded-circle text-regular`}
       >
-        <span
-          onClick={closePositionFn}
-        >{`Close ${percentDetails[percentageIndex].display}% of the position`}</span>
+        <span onClick={closePositionFn}>
+          {loading ? (
+            <RotatingLoader text="" textSize={12} iconSize={30} iconColor="white" />
+          ) : (
+            `Close ${percentDetails[percentageIndex].display}% of the position`
+          )}
+        </span>
       </Button>
     </WRAPPER>
   )

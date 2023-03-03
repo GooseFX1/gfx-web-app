@@ -17,6 +17,7 @@ import { getPerpsPrice } from './perps/utils'
 import { ClosePosition } from './ClosePosition'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import 'styled-components/macro'
+import { RotatingLoader } from '../../components/RotatingLoader'
 
 const tabs = ['Positions', 'Open Orders', 'Trade History', 'SOL Unsettled P&L']
 
@@ -214,19 +215,24 @@ const SETTING_MODAL = styled(PopupCustom)`
 
 const OpenOrdersComponent: FC = () => {
   const { formatPair, isSpot } = useCrypto()
-  const { cancelOrder, loading, orders } = useTradeHistory()
+  const { cancelOrder, orders } = useTradeHistory()
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const { cancelOrder: perpsCancelOrder } = useTraderConfig()
   const { mode } = useDarkMode()
   const [removedOrderIds, setremoved] = useState<string[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
 
   const openOrderUI = isSpot ? orders : perpsOpenOrders
 
   const cancelOrderFn = async (orderId: string) => {
+    setLoading(true)
     const res = await perpsCancelOrder(orderId)
+    setLoading(false)
     const arr = removedOrderIds
-    arr.push(orderId)
-    if (res && res.txid) setremoved(arr)
+    if (res && res.txid) {
+      arr.push(orderId)
+      setremoved(arr)
+    }
   }
 
   const content = useMemo(
@@ -244,10 +250,10 @@ const OpenOrdersComponent: FC = () => {
                 <span>
                   <Button
                     className="cancelButton"
-                    loading={loading}
+                    loading={false}
                     onClick={() => cancelOrderFn(order.order.orderId)}
                   >
-                    Cancel
+                    {loading ? <RotatingLoader text="" textSize={8} iconSize={16} /> : 'Cancel'}
                   </Button>
                 </span>
               </div>
@@ -255,7 +261,7 @@ const OpenOrdersComponent: FC = () => {
           )}
       </OPEN_ORDER>
     ),
-    [cancelOrder, formatPair, loading, orders, perpsOpenOrders, isSpot]
+    [cancelOrder, formatPair, orders, perpsOpenOrders, isSpot]
   )
   return (
     <>
