@@ -73,34 +73,41 @@ interface INotifyParams {
 const NOTIFICATION_TIMER = 5 * 1000
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const perpsNotify = ({ action, message, styles, key }) => {
+export const perpsNotify = async ({ action, message, styles, key }) => {
+  const openNotification = () => {
+    notification.open({
+      closeIcon: <CLOSE />,
+      description: message,
+      icon: <div style={{ display: 'none' }} />,
+      key,
+      duration: 10,
+      message:
+        typeof message === 'string' ? (
+          <MESSAGE>
+            <span>{message}</span>
+          </MESSAGE>
+        ) : (
+          message
+        ),
+      onClick: () => notification.close(key),
+      placement: 'bottomLeft',
+      style: {
+        backgroundColor: '#3735bb',
+        borderRadius: '20px',
+        padding: '32px 16px',
+        minWidth: '320px',
+        ...styles
+      }
+    })
+  }
   try {
-    if (action === 'close') notification.close(key)
-    else if (action === 'open') {
-      notification.open({
-        closeIcon: <CLOSE />,
-        description: 'this is a test description',
-        icon: <div style={{ display: 'none' }} />,
-        key,
-        duration: 10,
-        message:
-          typeof message === 'string' ? (
-            <MESSAGE>
-              <span>{message}</span>
-            </MESSAGE>
-          ) : (
-            message
-          ),
-        onClick: () => notification.close(key),
-        placement: 'bottomLeft',
-        style: {
-          backgroundColor: '#3735bb',
-          borderRadius: '20px',
-          padding: '32px 16px',
-          minWidth: '320px',
-          ...styles
-        }
-      })
+    if (action === 'close') {
+      openNotification()
+      setTimeout(function () {
+        notification.close(key)
+      }, NOTIFICATION_TIMER)
+    } else if (action === 'open') {
+      openNotification()
     }
   } catch (e) {
     console.log('could not close')
