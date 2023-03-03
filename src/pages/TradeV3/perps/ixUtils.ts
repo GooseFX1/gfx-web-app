@@ -74,35 +74,33 @@ export const newOrderIx = async (
     })
   )
   try {
-    perpsNotify({
-      action: 'open',
-      message: 'placing order hehehe',
-      key: 12,
-      styles: {}
+    //perpsNotify({
+    //  action: 'open',
+    //  message: 'placing order hehehe',
+    //  key: 12,
+    //  styles: {}
+    //})
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
+      startMessage: 'Placing order...',
+      progressMessage: 'Confirming order...',
+      endMessage: 'Order Placed Successfully',
+      errorMessage: 'Error in placing order'
     })
-    const response = await sendPerpsTransaction(
-      connection,
-      wallet,
-      instructions,
-      [],
-      'placing new order',
-      'order placed successfully'
-    )
     if (response && response.txid) {
-      perpsNotify({
-        action: 'close',
-        message: 'Order placed Successfully!',
-        key: 12,
-        styles: {}
-      })
+      //  perpsNotify({
+      //    action: 'close',
+      //    message: 'Order placed Successfully!',
+      //    key: 12,
+      //    styles: {}
+      //  })
     }
     return response
   } catch (e) {
     console.log(e)
-    notify({
-      message: 'Order failed!',
-      type: 'error'
-    })
+    //notify({
+    //  message: 'Order failed!',
+    //  type: 'error'
+    //})
   }
   return null
 }
