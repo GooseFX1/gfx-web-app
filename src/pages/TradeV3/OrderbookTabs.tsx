@@ -47,8 +47,7 @@ const HEADER_WRAPPER = styled.div`
       }
     }
     .individualTabs {
-      ${tw`w-5/12 text-center h-7 flex justify-center items-center`}
-      color: ${({ theme }) => theme.text1} !important;
+      ${tw`w-5/12 text-center h-7 flex justify-center items-center dark:text-[#B5B5B5] text-[#636363]`}
     }
     .activeTab {
       border: none;

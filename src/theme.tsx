@@ -84,7 +84,7 @@ export function colors(mode: string): Colors {
     text37: mode === 'dark' ? '#b5b5b5' : '#636363',
     text35: mode === 'dark' ? '#3c3c3c' : '#636363',
     text36: mode === 'dark' ? '#3c3c3c' : '#9C9C9C',
-    bidColor: mode === 'dark' ? '#eeeeee' : '#71c25d',
+    bidColor: mode === 'dark' ? '#eeeeee' : '#50bb35',
     askColor: mode === 'dark' ? '#eeeeee' : '#f06565',
 
     textWhitePurple: mode === 'dark' ? '#fff' : '#8d4cdd',

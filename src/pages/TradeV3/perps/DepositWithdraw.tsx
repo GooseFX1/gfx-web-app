@@ -124,7 +124,6 @@ export const DepositWithdraw: FC<{
   setDepositWithdrawModal: Dispatch<SetStateAction<boolean>>
 }> = ({ tradeType, setDepositWithdrawModal }) => {
   const { devnetBalances: balances } = useAccounts()
-  console.log('balances', balances)
   const { traderInfo } = useTraderConfig()
   const { mode } = useDarkMode()
   const [amount, setAmount] = useState('')

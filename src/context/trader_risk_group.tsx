@@ -298,7 +298,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const refreshData = async () => {
         await setMPGDetails()
       }
-      const t2 = setInterval(refreshData, 3000)
+      const t2 = setInterval(refreshData, 300)
       return () => clearInterval(t2)
     } else {
       setTraderRiskGroup(null)
@@ -308,11 +308,11 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const testing = async () => {
     // const res1 = await adminInitialiseMPG(connection, wallet)
     // console.log(res1)
-    // const res2 = await adminCreateMarket(connection, wallet)
-    // console.log(res2)
-    // const res3 = await updateFeesIx(wallet, connection, {
-    //   feeModelConfigAcct: marketProductGroup.feeModelConfigurationAcct
-    // })
+    //const res2 = await adminCreateMarket(connection, wallet)
+    //console.log(res2)
+    //const res3 = await updateFeesIx(wallet, connection, {
+    //  feeModelConfigAcct: marketProductGroup.feeModelConfigurationAcct
+    //})
     // console.log(res3)
   }
   useEffect(() => {
@@ -484,7 +484,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       refreshTraderRiskGroup()
       return response
     },
-    [traderRiskGroup, marketProductGroup]
+    [traderRiskGroup, marketProductGroup, wallet]
   )
 
   const withdrawFunds = useCallback(
@@ -513,6 +513,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     if (traderRiskGroup && marketProductGroup) {
       parseTraderInfo()
+      //testing()
     }
   }, [traderRiskGroup, marketProductGroup])
 

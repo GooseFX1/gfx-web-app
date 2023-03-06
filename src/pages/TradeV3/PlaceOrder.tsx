@@ -165,7 +165,7 @@ const TOTAL_SELECTOR = styled.div`
   ${tw`flex mt-[3px] justify-between items-center px-3`}
   .valueSelector {
     ${tw`cursor-pointer flex justify-center items-center rounded-[36px] w-14 h-[30px] text-tiny 
-    text-gray-2 font-semibold`}
+    dark:text-[#B5B5B5] text-[#636363] font-semibold`}
     background: ${({ theme }) => theme.bg23};
     &.selected {
       background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
@@ -187,7 +187,7 @@ const ORDER_CATEGORY = styled.div`
       ${tw`bg-[#5855ff]`}
     }
     .orderCategoryName {
-      ${tw`text-tiny font-semibold ml-2 text-gray-2`}
+      ${tw`text-tiny font-semibold ml-2 dark:text-[#B5B5B5] text-[#636363]`}
     }
   }
 `
