@@ -26,12 +26,11 @@ const TABS_WRAPPER = styled.div<{ $isLocked: boolean }>`
       ${tw`!p-px !border-none !border-0`}
       background: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
       .ant-tabs-tab-btn {
-        color: ${({ theme }) => theme.text11};
+        ${tw`text-[#3C3C3C] dark:text-[#EEEEEE]`}
       }
     }
     .ant-tabs-tab-btn {
-      ${tw`text-tiny font-semibold h-full w-full flex justify-center items-center`}
-      color: ${({ theme }) => theme.text17};
+      ${tw`text-tiny font-semibold h-full w-full flex justify-center items-center text-[#636363] dark:text-[#B5B5B5]`}
       background: ${({ theme }) => theme.bg20};
     }
     .ant-tabs-tab {
@@ -95,11 +94,10 @@ const ACCOUNT_ROW = styled.div<{ $height: boolean }>`
   margin-bottom: ${({ $height }) => ($height > 900 ? '18px' : '12px')};
   line-height: normal;
   .key {
-    ${tw`text-tiny font-semibold text-gray-2`}
+    ${tw`text-tiny font-semibold text-[#636363] dark:text-[#B5B5B5]`}
   }
   .value {
-    ${tw`text-tiny font-semibold`}
-    color: ${({ theme }) => theme.text28};
+    ${tw`text-tiny font-semibold text-[#3C3C3C] dark:text-[#EEEEEE]`}
   }
   .balances {
     ${tw`text-right`}

@@ -1,10 +1,11 @@
 import { Skeleton } from 'antd'
 import React, { FC, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
-import { useCrypto, usePriceFeed, useDarkMode } from '../../context'
+import { useCrypto, usePriceFeed, useDarkMode, useOrderBook } from '../../context'
 import { DropdownPairs } from './DropdownPairs'
 import { DepositWithdraw } from './perps/DepositWithdraw'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
+import { getPerpsPrice } from './perps/utils'
 
 const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[356px] !w-[628px] rounded-half`}
@@ -71,13 +72,6 @@ const INFO_STATS = styled.div`
   }
 `
 
-const REFRESH_DATA = styled.div`
-  ${tw`h-10 w-10 rounded-circle bg-[#5855ff] text-center cursor-pointer ml-auto mr-3.75`}
-  img {
-    ${tw`h-10 w-10`}
-  }
-`
-
 const LOCK_LAYOUT_CTN = styled.div<{ $isLocked: boolean }>`
   ${tw`h-10 w-[65px] ml-3.75 rounded-[36px] text-center cursor-pointer pt-px pl-px`}
   height: 40px;
@@ -97,7 +91,7 @@ const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
   }
 `
 const DEPOSIT_WRAPPER = styled.div`
-  ${tw`w-[158px] h-10 rounded-[36px] flex items-center justify-center cursor-pointer p-px`}
+  ${tw`w-[158px] h-10 rounded-[36px] flex items-center justify-center cursor-pointer p-px ml-auto`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
 `
 
@@ -176,7 +170,7 @@ const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: st
           <div className={tradeType === 'withdraw' ? 'gradient-bg btn' : 'btn'}>Withdraw</div>
         </div>
       </div>
-      <img src="/img/assets/refresh.svg" alt="refresh-icon" />
+      {/*<img src="/img/assets/refresh.svg" alt="refresh-icon" />*/}
     </HEADER>
   )
 }
@@ -187,7 +181,8 @@ export const InfoBanner: FC<{
   resetLayout: () => void
 }> = ({ isLocked, setIsLocked, resetLayout }) => {
   const { selectedCrypto, isSpot, setIsSpot } = useCrypto()
-  const { prices, tokenInfo, refreshTokenData } = usePriceFeed()
+  const { prices, tokenInfo } = usePriceFeed()
+  const { orderBook } = useOrderBook()
   const { mode } = useDarkMode()
   const [tradeType, setTradeType] = useState<string>('deposit')
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
@@ -237,6 +232,15 @@ export const InfoBanner: FC<{
   if (changeValue && changeValue.substring(0, 1) === '-') classNameChange = 'down24h'
   else if (changeValue && changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
 
+  const tokenPrice = useMemo(() => {
+    if (isSpot) {
+      return !marketData || !marketData.current ? <Loader /> : <div>$ {marketData.current}</div>
+    } else {
+      const oPrice = getPerpsPrice(orderBook)
+      return !oPrice ? <Loader /> : <div>$ {oPrice}</div>
+    }
+  }, [isSpot, selectedCrypto, orderBook])
+
   const handleToggle = (e) => {
     if (e === 'spot') setIsSpot(true)
     else setIsSpot(false)
@@ -282,7 +286,7 @@ export const InfoBanner: FC<{
       <INFO_STATS>
         <>
           <div>Price</div>
-          {!marketData || !marketData.current ? <Loader /> : <div>$ {marketData.current}</div>}
+          {tokenPrice}
         </>
       </INFO_STATS>
       <INFO_STATS>
@@ -325,18 +329,16 @@ export const InfoBanner: FC<{
           </div>
         )}
       </INFO_STATS>
-      {isLocked ? (
-        <REFRESH_DATA onClick={() => refreshTokenData(null)}>
-          <img src={`/img/assets/refresh.svg`} alt="refresh" />
-        </REFRESH_DATA>
-      ) : (
+      {isLocked ? null : (
         <RESET_LAYOUT_BUTTON_CTN>
           <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>
         </RESET_LAYOUT_BUTTON_CTN>
       )}
-      <DEPOSIT_WRAPPER>
-        <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
-      </DEPOSIT_WRAPPER>
+      {!isSpot && (
+        <DEPOSIT_WRAPPER>
+          <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
+        </DEPOSIT_WRAPPER>
+      )}
       <LOCK_LAYOUT_CTN $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
         <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
           <img src={isLocked ? `/img/assets/${mode}_lock.svg` : `/img/assets/${mode}_unlock.svg`} alt="lock" />

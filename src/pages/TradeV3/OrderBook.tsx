@@ -14,8 +14,7 @@ const HEADER = styled.div`
   border-top: none;
   border-color: #3c3c3c;
   & div {
-    ${tw`flex justify-between items-center h-full px-2`}
-    color: #636363;
+    ${tw`flex justify-between items-center h-full px-2 dark:text-[#B5B5B5] text-[#636363]`}
 
     span {
       ${tw`inline-block w-1/3 text-xs font-medium`}
