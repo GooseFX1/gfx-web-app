@@ -68,7 +68,7 @@ const HEADER = styled.div`
       .count {
         ${tw`h-[18px] w-[18px] font-semibold ml-2.5 rounded-circle text-center text-tiny`}
         background-image: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
-        color: ${({ theme }) => theme.text1};
+        color: ${({ theme }) => theme.white};
       }
     }
     .gradient-border {
@@ -76,11 +76,11 @@ const HEADER = styled.div`
       border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
       .tab {
         ${tw`cursor-pointer h-full w-full flex flex-row items-center 
-        justify-center font-semibold cursor-pointer text-tiny text-gray-2`}
+        justify-center font-semibold cursor-pointer text-tiny text-[#636363] dark:text-[#B5B5B5]`}
         background-color: ${({ theme }) => theme.bg2};
       }
       .tab.active {
-        color: ${({ theme }) => theme.text28};
+        color: ${({ theme }) => theme.text32};
         background-image: linear-gradient(to right, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
       }
       .white-background {
@@ -100,7 +100,7 @@ const HEADER = styled.div`
     border-left: ${({ theme }) => '1px solid ' + theme.tokenBorder};
 
     span {
-      ${tw`text-tiny font-semibold w-[12.5%] inline-block text-[#b5b5b5]`}
+      ${tw`text-tiny font-semibold w-[12.5%] inline-block text-[#636363] dark:text-[#B5B5B5]`}
     }
   }
   .headers.Open-Orders > span {

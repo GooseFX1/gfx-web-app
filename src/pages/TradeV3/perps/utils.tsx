@@ -60,7 +60,6 @@ export const getDerivativeKey = (args): anchor.web3.PublicKey => {
     int64to8(args.minimumFundingPeriod)
   ]
   const address = anchor.web3.PublicKey.findProgramAddressSync(seeds, new PublicKey(INSTRUMENTS_ID))[0]
-  console.log(address.toBase58())
   return address
 }
 
@@ -393,6 +392,7 @@ export const tradeHistoryInfo = (
   for (let i = startingIndex; !(count > 0 && i === startingIndex); ) {
     const item = traderRiskGroup.tradeHistory[productIndex].price[i]
     const qty = traderRiskGroup.tradeHistory[productIndex].qty[i]
+    if (!item || !qty) continue
     const price = Number(displayFractional(item)) / activeProduct.tick_size
 
     if (item.m.toNumber() !== 0 || qty.m.toNumber() !== 0) {

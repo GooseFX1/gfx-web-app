@@ -90,48 +90,24 @@ export const PERPS_COLLATERAL = [
 ]
 
 //export const MPs = [
-//  {
-//    id: 'FchYNgp9knsVWuv9WEYcidpHaNqwS2jQKEsc29EKokbh',
-//    orderbook_id: 'AzHnotqZ23EqqMCXSt1ZTEQUZDDguBdYucaVNQhSrJE6',
-//    bids: 'HFQtaDnaXbS9JQUuvuVkyvGK77qDZEuXXvxuvqJMStBY',
-//    asks: 'Gh6xsRf99FkZh4TENEeWhHTmWRBp8JuVHYRh32W4MBUC',
-//    event_queue: 'CM7gqpuCKoHtshguh7mXGLLXKXDb9tcFpyY6mHiyVuaH',
-//    tick_size: 0.01,
-//    decimals: 7
-//  }
-//]
-
-// export const MPs = [
-//   {
-//     id: '9gVLq3Gg6M1NxhM25rKTS4njhfMx1NoGXX7ktvvHWs4k',
-//     orderbook_id: 'EWi9j1bPPM7KjudL3RsigRAg8uMLd1pPBULM2MvUFNQC',
-//     bids: '4pfS4oeuwWXvmecuE7YypC3N2DcYaoYgVdewRtPHYvZy',
-//     asks: '9jE7rJTUyhgtbf8Vsyyq8kcnJc9NcHigqzoa23fMjzWN',
-//     event_queue: 'Hj7LiqPd8Uqkyvz8VntBjNFEWSV3JmD44zQNwA5eTcfW',
-//     tick_size: 100,
-//     decimals: 7
-//   }
-// ]
-
-// export const MPs = [
-//   {
-//     id: 'FAywzzHNxt7snJwM145uDFhv81SbeXTDSiebQUjx7SMg',
-//     orderbook_id: '4soawRtgsNp1VVw2DXUEnFAv6E36mQDkvDHz6qX4NPVe',
-//     bids: '91WyAc56BbjQTVrsm4YKA2NcryJ3AozFJsSKC2CAPcbD',
-//     asks: '14Ty2G1wDyQsuARePQooQBC53nZ5GCvzoUTWMFkXYG4h',
-//     event_queue: '36G7UgfijGecvZEXUiwhmUaivb2a2RRikj446SjP5Y97',
-//     tick_size: 100,
-//     decimals: 7
-//   }
-// ]
+//    {
+//      id: '8kbdxTuwRbNnGzjgkyNh6P2VjqC6KrkgVjh9pQuKJifz',
+//      orderbook_id: 'GJsUqB5wmBUMsfJXJCVyUP5NV9TanwkrLQfsUnqW5uUF',
+//      bids: 'F6fZs5XeJPGWJC3LUiAZnS8uvUfSfRAgTBV7cttDc9Fi',
+//      asks: 'JA9T2Fd5zpfz8Z6NAyrn2D68kP4PcucGMrzBahcZw1DT',
+//      event_queue: '6wQqi6Ud3NNazAin8y4RHffivyMncDG9RciEiei97CSv',
+//      tick_size: 100,
+//      decimals: 7
+//    }
+//  ]
 
 export const MPs = [
   {
-    id: '8kbdxTuwRbNnGzjgkyNh6P2VjqC6KrkgVjh9pQuKJifz',
-    orderbook_id: 'GJsUqB5wmBUMsfJXJCVyUP5NV9TanwkrLQfsUnqW5uUF',
-    bids: 'F6fZs5XeJPGWJC3LUiAZnS8uvUfSfRAgTBV7cttDc9Fi',
-    asks: 'JA9T2Fd5zpfz8Z6NAyrn2D68kP4PcucGMrzBahcZw1DT',
-    event_queue: '6wQqi6Ud3NNazAin8y4RHffivyMncDG9RciEiei97CSv',
+    id: 'H8nx4ZrFyFMmWmgNc1hpLVxoLFJsKjoZA59zggXqmXS3',
+    orderbook_id: '2Z8JoowzFF9wxXgF9UBbT7fv4C4TUmnTiPErqqQbri4J',
+    bids: '6ExoHfg6WXXycQEJzFREVKo5D2bqLm73vkRB86bfygFr',
+    asks: '312kQJKQziBuyYwGVkWBbrfzdiFFhbnDQvipvjF8zjjy',
+    event_queue: 'G8vnBXgDGoKzo9u8L3Y8ozktAddchGrQ3ZDKin2K7aiD',
     tick_size: 100,
     decimals: 7
   }

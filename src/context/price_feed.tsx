@@ -43,7 +43,7 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
 
   const refreshTokenData = async (coinGeckoId) => {
     if (!coinGeckoId) {
-      const cryptoMarkets = pairs.filter(({ type }) => type === 'crypto')
+      const cryptoMarkets = pairs.filter(({ type }) => type === 'crypto' || type === 'perps')
       const response =
         cryptoMarkets.length &&
         (await axios.post(
