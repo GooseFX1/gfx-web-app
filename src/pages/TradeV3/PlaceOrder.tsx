@@ -174,6 +174,8 @@ const TOTAL_SELECTOR = styled.div`
   }
 `
 
+const LEVERAGE_WRAPPER = styled.div``
+
 const ORDER_CATEGORY = styled.div`
   ${tw`flex justify-center items-center mt-3.75 h-5`}
   .orderCategoryCheckboxWrapper {
@@ -591,17 +593,24 @@ export const PlaceOrder: FC = () => {
             </INPUT_WRAPPER>
           </div>
         </INPUT_GRID_WRAPPER>
-        <TOTAL_SELECTOR>
-          {TOTAL_VALUES.map((item) => (
-            <div
-              key={item.key}
-              className={'valueSelector ' + (item.value === selectedTotal ? 'selected' : '')}
-              onClick={() => handleClick(item.value)}
-            >
-              {item.display}
-            </div>
-          ))}
-        </TOTAL_SELECTOR>
+        {isSpot ? (
+          <TOTAL_SELECTOR>
+            {TOTAL_VALUES.map((item) => (
+              <div
+                key={item.key}
+                className={'valueSelector ' + (item.value === selectedTotal ? 'selected' : '')}
+                onClick={() => handleClick(item.value)}
+              >
+                {item.display}
+              </div>
+            ))}
+          </TOTAL_SELECTOR>
+        ) : (
+          <LEVERAGE_WRAPPER>
+            <div>Leverage</div>
+            <div>Slider here</div>
+          </LEVERAGE_WRAPPER>
+        )}
         <ORDER_CATEGORY>
           {ORDER_CATEGORY_TYPE.map((item) => (
             <div key={item.id} className="orderCategoryCheckboxWrapper">
