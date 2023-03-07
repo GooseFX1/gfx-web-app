@@ -17,7 +17,7 @@ import {
 } from '../../context'
 import { Input } from 'antd'
 import { removeFloatingPointError } from '../../utils'
-import { Checkbox } from 'antd'
+import { Checkbox, Slider } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ArrowDropdown, Tooltip } from '../../components'
 import { useTraderConfig } from '../../context/trader_risk_group'
@@ -27,6 +27,7 @@ import { TradeConfirmation } from './TradeConfirmation'
 import { PerpsEndModal } from './PerpsEndModal'
 import 'styled-components/macro'
 import { RotatingLoader } from '../../components/RotatingLoader'
+import { Picker } from './Picker'
 
 enum ButtonState {
   Connect = 0,
@@ -174,7 +175,12 @@ const TOTAL_SELECTOR = styled.div`
   }
 `
 
-const LEVERAGE_WRAPPER = styled.div``
+const LEVERAGE_WRAPPER = styled.div`
+  ${tw`pl-2 w-11/12`}
+  .ant-slider-rail {
+    left: 3%;
+  }
+`
 
 const ORDER_CATEGORY = styled.div`
   ${tw`flex justify-center items-center mt-3.75 h-5`}
@@ -446,6 +452,10 @@ export const PlaceOrder: FC = () => {
     setLoading(false)
   }
 
+  const handleSliderChange = async (e) => {
+    setOrder((prev) => ({ ...prev, total: e }))
+  }
+
   return (
     <WRAPPER>
       <HEADER>
@@ -608,7 +618,55 @@ export const PlaceOrder: FC = () => {
         ) : (
           <LEVERAGE_WRAPPER>
             <div>Leverage</div>
-            <div>Slider here</div>
+            <div>
+              <Picker>
+                <Slider
+                  max={100}
+                  min={0}
+                  onChange={(e) => handleSliderChange(e)}
+                  step={selectedCrypto.market?.tickSize}
+                  value={Number(order.total)}
+                  trackStyle={{
+                    height: '6px'
+                  }}
+                  handleStyle={{
+                    height: '20px',
+                    width: '20px',
+                    background: 'white',
+                    border: '2px solid #FFFFFF',
+                    position: 'relative',
+                    bottom: '2px'
+                  }}
+                  //  marks={{
+                  //    0: '0°C',
+                  //    26: '26°C',
+                  //    37: {
+                  //      style: {
+                  //        color: '#f50',
+                  //        paddingTop: '8px',
+                  //        fontSize: '13px',
+                  //        fontWeight: '600'
+                  //      },
+                  //      label: <strong>5x</strong>
+                  //    },
+                  //    100: {
+                  //      style: {
+                  //        color: '#f50'
+                  //      },
+                  //      label: <strong>100°C</strong>
+                  //    }
+                  //  }}
+                />
+                {/*<span
+            onClick={() => {
+              setFocused('total')
+              setOrder((prevState) => ({ ...prevState, total: userBalance }))
+            }}
+          >
+            Use Max
+          </span>*/}
+              </Picker>
+            </div>
           </LEVERAGE_WRAPPER>
         )}
         <ORDER_CATEGORY>
