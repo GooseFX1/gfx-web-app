@@ -13,8 +13,8 @@ import { getPerpsPrice } from './perps/utils'
 
 const TAB_NAMES = [
   { display: 'Orderbook', key: 'orderbook' },
-  { display: 'Recent Trades', key: 'trades' },
-  { display: '', key: 'price' }
+  { display: 'Recent Trades', key: 'trades' }
+  //{ display: '', key: 'price' }
 ]
 
 const WRAPPER = styled.div`
@@ -47,7 +47,7 @@ const HEADER_WRAPPER = styled.div`
       }
     }
     .individualTabs {
-      ${tw`w-5/12 text-center h-7 flex justify-center items-center dark:text-[#B5B5B5] text-[#636363]`}
+      ${tw`w-1/2 text-center h-7 flex justify-center items-center dark:text-[#B5B5B5] text-[#636363]`}
     }
     .activeTab {
       border: none;
@@ -88,19 +88,10 @@ export const OrderbookTabs: React.FC = () => {
             <Radio.Button
               key={item.key}
               value={item.key}
-              className={
-                (item.key !== 'price' ? 'individualTabs ' : 'priceTab ') +
-                (item.key === selectedTab ? 'activeTab' : 'inactiveTab')
-              }
+              className={'individualTabs ' + (item.key === selectedTab ? 'activeTab' : 'inactiveTab')}
               disabled={item.key === 'price'}
             >
-              {item.key !== 'price' ? (
-                item.display
-              ) : !perpsPrice ? (
-                ''
-              ) : (
-                <div onClick={setOrderPrice}>${perpsPrice}</div>
-              )}
+              {item.display}
             </Radio.Button>
           ))}
         </Radio.Group>
