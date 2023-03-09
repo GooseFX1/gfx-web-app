@@ -176,9 +176,12 @@ const TOTAL_SELECTOR = styled.div`
 `
 
 const LEVERAGE_WRAPPER = styled.div`
-  ${tw`pl-2 w-11/12`}
+  ${tw`pl-2 w-11/12 text-left mt-[-8px]`}
   .ant-slider-rail {
     left: 3%;
+  }
+  .leverageText {
+    ${tw`text-regular dark:text-[#B5B5B5] text-[#636363] pl-2 font-semibold`}
   }
 `
 
@@ -515,7 +518,7 @@ export const PlaceOrder: FC = () => {
             <img src={`/img/crypto/${symbol}.svg`} alt="" />
             {symbol + '/' + bid}
           </div>
-          {selectedCrypto.type !== 'crypto' ? <div className="pairLeverage">20x</div> : null}
+          {selectedCrypto.type !== 'crypto' ? <div className="pairLeverage">10x</div> : null}
         </div>
         <div className="orderSide">
           <div
@@ -617,7 +620,7 @@ export const PlaceOrder: FC = () => {
           </TOTAL_SELECTOR>
         ) : (
           <LEVERAGE_WRAPPER>
-            <div>Leverage</div>
+            <div className="leverageText">Leverage</div>
             <div>
               <Picker>
                 <Slider
@@ -691,12 +694,14 @@ export const PlaceOrder: FC = () => {
         >
           {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
         </PLACE_ORDER_BUTTON>
-        <FEES>
-          <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
-            Solana network fee, is the fee you pay in order to make transaction over the solana blockchain.
-          </Tooltip>
-          <span>SOL network fee: ~ 0.03</span>
-        </FEES>
+        {isSpot && (
+          <FEES>
+            <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+              Solana network fee, is the fee you pay in order to make transaction over the solana blockchain.
+            </Tooltip>
+            <span>SOL network fee: ~ 0.03</span>
+          </FEES>
+        )}
       </BODY>
     </WRAPPER>
   )

@@ -240,7 +240,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
       {isSolAccount && (
         <ACCOUNT_ROW $height={height}>
           <span className="key">{ask + ' Liquidation Price'}</span>
-          <span className="value">100%</span>
+          <span className="value">{Number(traderInfo.liquidationPrice).toFixed(2)} $</span>
         </ACCOUNT_ROW>
       )}
     </WRAPPER>
