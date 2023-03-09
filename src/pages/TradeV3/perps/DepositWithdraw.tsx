@@ -67,7 +67,7 @@ const SELECTED_COIN = styled.div`
 `
 
 const COIN_INFO = styled.div`
-  ${tw`flex items-center mr-auto`}
+  ${tw`flex items-center mr-auto h-[50px]`}
 
   > * {
     ${tw`mr-2.5`}
