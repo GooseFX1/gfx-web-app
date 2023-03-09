@@ -43,6 +43,7 @@ import {
   getFeeConfigAcct,
   getLiquidationPrice,
   getMarketSigner,
+  getPerpsMarketOrderPrice,
   getPythPrice,
   getRiskAndFeeSigner,
   getRiskSigner,
@@ -348,7 +349,9 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     selfTradeBehavior: new DecrementTake().toEncodable(),
     matchLimit: new anchor.BN(10),
     orderType:
-      order.type === 'limit'
+      order.display === 'market'
+        ? { market: {} }
+        : order.type === 'limit'
         ? new Limit().toEncodable()
         : order.type === 'ioc'
         ? new ImmediateOrCancel().toEncodable()
@@ -531,13 +534,13 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     if (order.display === 'market') {
       const qty = order.size ?? 0
-      const priceMarket = getClosePositionPrice(qty.toString(), orderBookCopy)
+      const priceMarket = getPerpsMarketOrderPrice(orderBookCopy, order.side, qty.toString())
       setOrder((prevState) => ({
         ...prevState,
         price: priceMarket
       }))
     }
-  }, [order.display, order.size, order.total, orderBookCopy])
+  }, [order.display, order.size, order.total, orderBookCopy, order.side])
 
   const collateralAvailable: string = useMemo(
     () => (traderRiskGroup && traderRiskGroup.cashBalance ? displayFractional(traderRiskGroup.cashBalance) : '0'),

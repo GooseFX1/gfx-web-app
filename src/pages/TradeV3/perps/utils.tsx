@@ -484,6 +484,26 @@ export const getPerpsPrice = (orderbook: OrderBook): number => {
   return 0
 }
 
+export const getPerpsMarketOrderPrice = (orderbook: OrderBook, side: 'buy' | 'sell', orderQty: string): number => {
+  const bids = orderbook.bids
+  const asks = orderbook.asks
+  const qty = Number(orderQty)
+
+  const orderbookSide = side === 'buy' ? asks : bids
+  if (!orderbookSide || !orderbookSide.length) return 0
+  if (!qty) return orderbookSide[0][0]
+
+  if (qty === 0) return orderbookSide[0][0]
+  let tempQty = qty,
+    i = 0
+  while (tempQty > 0) {
+    if (tempQty < orderbookSide[i][1]) return orderbookSide[i][0]
+    tempQty = tempQty - orderbookSide[i][1]
+    i++
+  }
+  return 0
+}
+
 export const getClosePositionPrice = (qty: string, orderbook: OrderBook) => {
   let qtyNum = Number(qty)
   const orderbookSide = qtyNum < 0 ? orderbook.asks : orderbook.bids
