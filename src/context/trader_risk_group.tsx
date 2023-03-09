@@ -121,6 +121,7 @@ interface ITraderRiskGroup {
   balances?: ITraderBalances[]
   marginAvailable: string
   pnl: string
+  liquidationPrice: string
 }
 
 interface ICollateralInfo {
@@ -234,6 +235,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     side: null
   })
   const [orderBookCopy, setOrderBook] = useState<OrderBook>(DEFAULT_ORDER_BOOK)
+  const [liquidationPrice, setLiquidationPrice] = useState('0')
   const { order, setOrder } = useOrder()
 
   const wallet = useWallet()
@@ -274,10 +276,13 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     const res = wasm.margin_available(mpg.data, trg.data)
     const avail = new Fractional({ m: new anchor.BN(res.m.toString()), exp: new anchor.BN(res.exp.toString()) })
+    setMarginAvail(displayFractional(avail))
     const pnl = wasm.unrealised_pnl(mpg.data, trg.data, BigInt(0))
     const pnlFrac = new Fractional({ m: new anchor.BN(pnl.m.toString()), exp: new anchor.BN(pnl.exp.toString()) })
     setPnl(displayFractional(pnlFrac))
-    setMarginAvail(displayFractional(avail))
+    const res2 = wasm.get_liquidation_price(mpg.data, trg.data, BigInt(0))
+    const liq = new Fractional({ m: new anchor.BN(res2.m.toString()), exp: new anchor.BN(res2.exp.toString()) })
+    setLiquidationPrice(displayFractional(liq))
   }
 
   const parseTraderInfo = async () => {
@@ -298,7 +303,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const refreshData = async () => {
         await setMPGDetails()
       }
-      const t2 = setInterval(refreshData, 300)
+      const t2 = setInterval(refreshData, 1000)
       return () => clearInterval(t2)
     } else {
       setTraderRiskGroup(null)
@@ -550,7 +555,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           averagePosition: averagePosition,
           tradeHistory: traderHistory,
           marginAvailable: marginAvail,
-          pnl: pnl
+          pnl: pnl,
+          liquidationPrice: liquidationPrice
         },
         marketProductGroup: marketProductGroup,
         marketProductGroupKey: currentMPG,

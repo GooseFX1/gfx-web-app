@@ -27,9 +27,9 @@ const columns = [
       'Side',
       'Position size',
       'Notional Size',
-      'Liquidation Price',
+      'Est. Liquidation Price',
       'Market Price',
-      'Entry Price',
+      'Avg. Entry Price',
       'Break Even Price'
     ]
   },
@@ -103,6 +103,11 @@ const HEADER = styled.div`
       ${tw`text-tiny font-semibold w-[12.5%] inline-block text-[#636363] dark:text-[#B5B5B5]`}
     }
   }
+  .headers.Positions {
+    span:first-child {
+      ${tw`pl-3`}
+    }
+  }
   .headers.Open-Orders > span {
     ${tw`w-1/5`}
   }
@@ -130,6 +135,9 @@ const POSITIONS = styled.div`
       ${tw`h-[30px] rounded-[12px] text-tiny font-semibold border-none m-[5px] text-white`}
       background: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
       outline: none;
+    }
+    span:first-child {
+      ${tw`text-tiny pl-3`}
     }
     .long {
       ${tw`text-[#71c25d] text-tiny pl-1`}
@@ -444,7 +452,7 @@ export const HistoryPanel: FC = () => {
                   </span>
                   <span>{traderInfo.averagePosition.quantity}</span>
                   <span>{notionalSize}</span>
-                  <span>{baseAvailable ? baseAvailable : 0}</span>
+                  <span>{Number(traderInfo.liquidationPrice).toFixed(2)}</span>
                   <span>{perpsPrice}</span>
                   <span>{traderInfo.averagePosition.price}</span>
                   <span>{traderInfo.averagePosition.price}</span>
