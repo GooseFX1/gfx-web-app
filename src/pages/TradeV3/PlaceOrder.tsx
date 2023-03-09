@@ -180,6 +180,9 @@ const LEVERAGE_WRAPPER = styled.div`
   .ant-slider-rail {
     left: 3%;
   }
+  .ant-slider-with-marks {
+    ${tw`mb-2`}
+  }
   .leverageText {
     ${tw`text-regular dark:text-[#B5B5B5] text-[#636363] pl-2 font-semibold`}
   }
@@ -313,7 +316,7 @@ export const PlaceOrder: FC = () => {
   const { getUIAmount, balances } = useAccounts()
   const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isSpot } = useCrypto()
   const { order, setOrder, setFocused, placeOrder } = useOrder()
-  const { newOrder, traderInfo } = useTraderConfig()
+  const { newOrder, traderInfo, activeProduct } = useTraderConfig()
   const { orderBook } = useOrderBook()
   const [selectedTotal, setSelectedTotal] = useState<number>(null)
   const [arrowRotation, setArrowRotation] = useState(false)
@@ -456,7 +459,17 @@ export const PlaceOrder: FC = () => {
   }
 
   const handleSliderChange = async (e) => {
+    setFocused('total')
     setOrder((prev) => ({ ...prev, total: e }))
+  }
+
+  const getMarks = () => {
+    const markObj = {}
+    const marginAvail = Number(traderInfo.marginAvailable)
+    for (let i = 2; i <= 10; i = i + 2) {
+      markObj[(marginAvail / 10) * i] = i + 'x'
+    }
+    return markObj
   }
 
   return (
@@ -624,10 +637,10 @@ export const PlaceOrder: FC = () => {
             <div>
               <Picker>
                 <Slider
-                  max={100}
+                  max={perpsBidBalance}
                   min={0}
                   onChange={(e) => handleSliderChange(e)}
-                  step={selectedCrypto.market?.tickSize}
+                  step={isSpot ? selectedCrypto.market?.tickSize : activeProduct.tickSize}
                   value={Number(order.total)}
                   trackStyle={{
                     height: '6px'
@@ -640,6 +653,7 @@ export const PlaceOrder: FC = () => {
                     position: 'relative',
                     bottom: '2px'
                   }}
+                  marks={getMarks()}
                   //  marks={{
                   //    0: '0°C',
                   //    26: '26°C',
