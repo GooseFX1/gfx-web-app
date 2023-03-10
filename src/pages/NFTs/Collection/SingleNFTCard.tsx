@@ -19,6 +19,7 @@ import { Button } from '../../../components/Button'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
+import { useHistory } from 'react-router-dom'
 
 export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any; lastCardRef: any }> = ({
   item,
@@ -38,6 +39,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   const [localTotalLikes, setLocalTotalLikes] = useState<number>()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
+  const history = useHistory()
 
   const nftId = item ? (item.nft_name.includes('#') ? item.nft_name.split('#')[1] : -1) : null
 
@@ -66,6 +68,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   }
 
   const goToDetails = async (item): Promise<void> => {
+    history.push(`${history.location.pathname}?address=${item.mint_address}`)
     setIsLoadingBeforeRelocate(true)
     setHover(false)
     await setNFTDetailsBeforeLocate()
