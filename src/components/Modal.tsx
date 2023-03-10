@@ -68,7 +68,7 @@ export const Modal: FC<{
     <ANTMODAL
       bodyStyle={{
         borderRadius: '20px',
-        maxHeight: '95vh',
+        maxHeight: '85vh',
         fontFamily: 'Montserrat',
         ...style
       }}
