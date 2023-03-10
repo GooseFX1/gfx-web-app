@@ -34,17 +34,21 @@ const TEXT_AREA = styled.div`
   }
 `
 
-const CAPTION = styled.div`
-  ${tw`absolute bottom-[96px]`}
-  color: ${({ theme }) => theme.text5};
-`
+// const CAPTION = styled.div`
+//   ${tw`absolute bottom-[96px]`}
+//   color: ${({ theme }) => theme.text5};
+// `
 
 const TOS_MODAL = styled(Modal)`
   ${tw`w-[600px]! sm:w-full! p-0!`}
+
+  .ant-modal-body {
+    ${tw`sm:px-3!`}
+  }
 `
 
 const CONFIRM = styled.div`
-  ${tw`flex p-2 mt-8`}
+  ${tw`flex p-2 mt-8 sm:mt-0!`}
 `
 
 const MAINBUTTON = styled.button<{ checked }>`
@@ -83,7 +87,7 @@ export const TermsOfService: FC<{
 
   const [toShow, setToShow] = useState<boolean>(!!visible && true)
   const [checked, setChecked] = useState<boolean>(false)
-  const [isRead, setRead] = useState<boolean>(false)
+  // const [isRead, setRead] = useState<boolean>(false)
 
   useEffect(() => {
     setToShow(blacklisted ? false : !existingUserCache.hasSignedTC && true)
@@ -113,13 +117,13 @@ export const TermsOfService: FC<{
     setVisible?.(state)
   }
 
-  const confirmReading = (e) => {
-    const scrollHeight = e.target.scrollHeight
-    const scrollTop = e.target.scrollTop
-    if (scrollTop + 500 > scrollHeight) {
-      setRead(true)
-    }
-  }
+  // const confirmReading = (e) => {
+  //   const scrollHeight = e.target.scrollHeight
+  //   const scrollTop = e.target.scrollTop
+  //   if (scrollTop + 500 > scrollHeight) {
+  //     setRead(true)
+  //   }
+  // }
 
   return (
     <TOS_MODAL
@@ -131,7 +135,8 @@ export const TermsOfService: FC<{
       maskClosable={false}
     >
       <TEXT_AREA>
-        <div className={'text-area-inner'} onScroll={confirmReading}>
+        {/* <div className={'text-area-inner'} onScroll={confirmReading}> */}
+        <div className={'text-area-inner'}>
           <span>
             <h3>General</h3>
             <p>
@@ -450,14 +455,10 @@ export const TermsOfService: FC<{
         </div>
       </TEXT_AREA>
 
-      {!isRead && <CAPTION>*Please read all the information to unlock the checkbox</CAPTION>}
+      {/* {!isRead && <CAPTION>*Please read all the information to unlock the checkbox</CAPTION>} */}
 
       <CONFIRM>
-        <TOS_CHECKBOX
-          checked={checked}
-          onChange={(e) => isRead && setChecked(e.target.checked)}
-          disabled={!isRead}
-        >
+        <TOS_CHECKBOX checked={checked} onChange={(e) => setChecked(e.target.checked)}>
           I agree to GooseFX terms and conditions and protocol disclaimer.
         </TOS_CHECKBOX>
         <MAINBUTTON onClick={accept} disabled={!checked} checked={checked}>
