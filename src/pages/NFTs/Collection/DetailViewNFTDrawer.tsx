@@ -4,7 +4,7 @@ import { Button, Col, Drawer, Row, Tabs } from 'antd'
 import { ImageShowcase } from '../NFTDetails/ImageShowcase'
 import { RightSection } from '../NFTDetails/RightSection'
 import { checkMobile, truncateAddress } from '../../../utils'
-import { useNFTAggregator, useNFTDetails } from '../../../context'
+import { useConnectionConfig, useNFTAggregator, useNFTDetails } from '../../../context'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -15,6 +15,10 @@ import Item from 'antd/lib/list/Item'
 import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { AttributesTabContent } from '../NFTDetails/AttributesTabContent'
+import { useHistory } from 'react-router-dom'
+import { fetchSingleNFT } from '../../../api/NFTs'
+import { INFTGeneralData } from '../../../types/nft_details'
+import axios from 'axios'
 
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme }) => css`
@@ -214,11 +218,8 @@ const WRAPPER = styled.div`
         width: 40px;
         cursor: pointer;
       }
-
       .share-icon {
-        width: 40px;
-        height: 40px;
-        cursor: pointer;
+        ${tw`w-10 h-10 cursor-pointer`}
       }
     }
   `}
@@ -226,15 +227,56 @@ const WRAPPER = styled.div`
 
 export const DetailViewNFT: FC = (): JSX.Element => {
   const { selectedNFT, setSelectedNFT, bidNowClicked, buyNowClicked, setBidNow, setBuyNow } = useNFTAggregator()
-
   const elem = document.getElementById('nft-aggerator-container') //TODO-PROFILE: Stop background scroll
+  const urlSearchParams = new URLSearchParams(window.location.search)
+  const params = Object.fromEntries(urlSearchParams.entries())
+  const history = useHistory()
+
+  const { setBids, setAsk, setGeneral, setNftMetadata, nftMetadata, setTotalLikes } = useNFTDetails()
+
+  useEffect(() => {
+    if (params.address && (nftMetadata === null || nftMetadata === undefined)) {
+      fetchSingleNFT(params.address).then((res) => {
+        if (res && res.status === 200) {
+          res.data.data.length > 0 ? setGeneral(res.data.data[0]) : setGeneral(selectedNFT)
+          const nft: INFTGeneralData = res.data
+          ;(async () => {
+            const metaData = await axios.get(res.data.data[0].metadata_url)
+            await setNftMetadata(metaData.data)
+            setSelectedNFT(res.data.data[0])
+          })()
+          setBids(nft.bids)
+          setAsk(nft.asks[0])
+          setTotalLikes(nft.total_likes)
+        }
+      })
+    }
+  }, [params.address])
+
+  useEffect(() => {
+    if (selectedNFT === false) {
+      history.replace({
+        pathname: location.pathname,
+        search: ''
+      })
+    }
+  }, [selectedNFT])
+  const closeTheDrawer = () => {
+    if (!buyNowClicked) {
+      setSelectedNFT(false)
+      setNftMetadata(null)
+    }
+  }
+
   return (
     <Drawer
       title={null}
       placement={checkMobile() ? 'bottom' : 'right'}
       closable={false}
       height={checkMobile() ? '90%' : 'auto'}
-      onClose={() => !buyNowClicked && setSelectedNFT(false)}
+      onClose={() => {
+        closeTheDrawer()
+      }}
       getContainer={elem}
       visible={selectedNFT ? true : false}
       width={checkMobile() ? '100%' : '450px'}
@@ -252,6 +294,7 @@ export const DetailViewNFT: FC = (): JSX.Element => {
 const ImageViewer = ({ setBuyNow, buyNowClicked, setBidNow, bidNowClicked }: any): ReactElement => {
   const [activeTab, setActiveTab] = useState('1')
   const { selectedNFT, setSelectedNFT } = useNFTAggregator()
+  const { setNftMetadata } = useNFTDetails()
   const collectionName = selectedNFT ? selectedNFT.nft_name.split('#')[0] : 'Unknown'
   const nftId = selectedNFT ? selectedNFT.nft_name.split('#')[1] : 'Unknown'
 
@@ -261,6 +304,7 @@ const ImageViewer = ({ setBuyNow, buyNowClicked, setBidNow, bidNowClicked }: any
         className="close-icon-holder"
         onClick={() => {
           setSelectedNFT(false)
+          setNftMetadata(null)
         }}
       >
         <img src="/img/assets/close-white-icon.svg" alt="" height="12px" width="12px" />
@@ -373,7 +417,7 @@ export const NFTTabSections: FC<{ activeTab: string; setActiveTab: any }> = ({
           </div>
         </TabPane>
         <TabPane tab="Attributes" key="2">
-          <AttributesTabContent data={nftMetadata.attributes} />
+          <AttributesTabContent data={nftMetadata ? nftMetadata.attributes : []} />
         </TabPane>
         <TabPane tab="Details" key="3">
           <NFTDetailsTab />
