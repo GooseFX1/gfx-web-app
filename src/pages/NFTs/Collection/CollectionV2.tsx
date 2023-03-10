@@ -87,7 +87,6 @@ const NFTStatsContainer = () => {
   const { singleCollection, fixedPriceWithinCollection } = useNFTCollections()
   const [sweepCollection, setSweepCollection] = useState<boolean>(false)
   const collection = singleCollection ? singleCollection.collection[0] : undefined
-  console.log(collection)
   const collectionFloor = singleCollection
     ? singleCollection.collection_floor / parseInt(LAMPORTS_PER_SOL.toString())
     : 0
@@ -202,7 +201,6 @@ export const NFTGridContainer = (): ReactElement => {
 const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): ReactElement => {
   const { mode } = useDarkMode()
   const { openBidWithinCollection, fixedPriceWithinCollection, singleCollection } = useNFTCollections()
-  console.log(singleCollection?.collection[0])
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
