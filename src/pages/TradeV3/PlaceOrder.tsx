@@ -76,27 +76,26 @@ const HEADER = styled.div`
       color: #636363;
       background-color: #3c3c3c;
       &.selected {
-        //border-color: green; //change to gradient here
-        background: linear-gradient(55.89deg, #f7931a 21.49%, #ac1cc7 88.89%);
+        background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
+        padding: 2px;
         color: ${({ theme }) => theme.text1};
       }
+      .holder {
+        background: ${({ theme }) => theme.bg20};
+        height: 100%;
+        width: 100%;
+      }
       .overlayBorder {
-        height: calc(100% - 2px);
-        width: calc(100% - 2px);
+        height: 100%;
+        width: 100%;
         background: ${({ theme }) => theme.bg2};
         ${tw`flex justify-center items-center`}
       }
-    }
-    .gradientBorder:first-child {
-      border-bottom-left-radius: 14px;
-      .overlayBorder.buy {
-        border-bottom-left-radius: 14px;
+      .active {
+        background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
       }
-    }
-    .gradientBorder:nth-child(2) {
-      border-bottom-right-radius: 14px;
-      .overlayBorder.sell {
-        border-bottom-right-radius: 14px;
+      .inactive {
+        border: 1px solid rgb(60, 60, 60);
       }
     }
   }
@@ -158,6 +157,15 @@ const INPUT_WRAPPER = styled.div`
   .dropdownContainer.lite {
     .arrow-icon {
       filter: invert(28%) sepia(88%) saturate(1781%) hue-rotate(230deg) brightness(99%) contrast(105%);
+    }
+  }
+  .focus-border {
+    background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
+    border-radius: 5px;
+    padding: 1px;
+
+    .ant-input-affix-wrapper {
+      height: 28px;
     }
   }
 `
@@ -315,8 +323,8 @@ const ORDER_CATEGORY_TYPE = [
 export const PlaceOrder: FC = () => {
   const { getUIAmount, balances } = useAccounts()
   const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isSpot } = useCrypto()
-  const { order, setOrder, setFocused, placeOrder } = useOrder()
-  const { newOrder, traderInfo, activeProduct } = useTraderConfig()
+  const { order, setOrder, focused, setFocused, placeOrder } = useOrder()
+  const { newOrder, traderInfo } = useTraderConfig()
   const { orderBook } = useOrderBook()
   const [selectedTotal, setSelectedTotal] = useState<number>(null)
   const [arrowRotation, setArrowRotation] = useState(false)
@@ -569,13 +577,21 @@ export const PlaceOrder: FC = () => {
             className={order.side === 'buy' ? 'selected gradientBorder' : 'gradientBorder'}
             onClick={() => handleOrderSide('buy')}
           >
-            <div className="overlayBorder buy">{selectedCrypto.type === 'crypto' ? 'Buy' : 'Bid'}</div>
+            <div className="holder">
+              <div className={order.side === 'buy' ? 'active overlayBorder buy' : 'inactive overlayBorder buy'}>
+                {selectedCrypto.type === 'crypto' ? 'Buy' : 'Bid'}
+              </div>
+            </div>
           </div>
           <div
             className={order.side === 'sell' ? 'selected gradientBorder' : 'gradientBorder'}
             onClick={() => handleOrderSide('sell')}
           >
-            <div className="overlayBorder sell">{selectedCrypto.type === 'crypto' ? 'Sell' : 'Ask'}</div>
+            <div className="holder">
+              <div className={order.side === 'sell' ? 'active overlayBorder sell' : 'inactive overlayBorder sell'}>
+                {selectedCrypto.type === 'crypto' ? 'Sell' : 'Ask'}
+              </div>
+            </div>
           </div>
         </div>
       </HEADER>
@@ -605,48 +621,54 @@ export const PlaceOrder: FC = () => {
             </INPUT_WRAPPER>
             <INPUT_WRAPPER>
               <div className="label">Price</div>
-              <Input
-                suffix={<span className="suffixText">{bid}</span>}
-                onFocus={() => setFocused('price')}
-                maxLength={15}
-                onBlur={() => setFocused(undefined)}
-                value={order.price ? order.price : ''}
-                onChange={(e) => numberCheck(e.target.value, 'price')}
-                placeholder={'0.00'}
-                disabled={order.display === 'market'}
-                style={order.display === 'market' ? { border: '1px solid #f06565' } : null}
-              />
+              <div className={focused === 'price' ? 'focus-border' : ''}>
+                <Input
+                  suffix={<span className="suffixText">{bid}</span>}
+                  onFocus={() => setFocused('price')}
+                  maxLength={15}
+                  onBlur={() => setFocused(undefined)}
+                  value={order.price ? order.price : ''}
+                  onChange={(e) => numberCheck(e.target.value, 'price')}
+                  placeholder={'0.00'}
+                  disabled={order.display === 'market'}
+                  style={order.display === 'market' ? { border: '1px solid #f06565' } : null}
+                />
+              </div>
             </INPUT_WRAPPER>
           </div>
           <div className="inputRow">
             <INPUT_WRAPPER>
               <div className="label">Size</div>
-              <Input
-                suffix={
-                  <>
-                    <img src={`/img/crypto/${symbol}.svg`} alt="" />
-                    <span className="suffixText">{symbol}</span>
-                  </>
-                }
-                placeholder={'0.00'}
-                onFocus={() => setFocused('size')}
-                maxLength={15}
-                onBlur={() => setFocused(undefined)}
-                value={order.size ? order.size : ''}
-                onChange={(e) => numberCheck(e.target.value, 'size')}
-              />
+              <div className={focused === 'size' ? 'focus-border' : ''}>
+                <Input
+                  suffix={
+                    <>
+                      <img src={`/img/crypto/${symbol}.svg`} alt="" />
+                      <span className="suffixText">{symbol}</span>
+                    </>
+                  }
+                  placeholder={'0.00'}
+                  onFocus={() => setFocused('size')}
+                  maxLength={15}
+                  onBlur={() => setFocused(undefined)}
+                  value={order.size ? order.size : ''}
+                  onChange={(e) => numberCheck(e.target.value, 'size')}
+                />
+              </div>
             </INPUT_WRAPPER>
             <INPUT_WRAPPER>
               <div className="label">Amount</div>
-              <Input
-                suffix={<span className="suffixText">{bid}</span>}
-                onFocus={() => setFocused('total')}
-                maxLength={15}
-                onBlur={() => setFocused(undefined)}
-                value={order.total ? order.total : ''}
-                onChange={(e) => numberCheck(e.target.value, 'total')}
-                placeholder={'0.00'}
-              />
+              <div className={focused === 'total' ? 'focus-border' : ''}>
+                <Input
+                  suffix={<span className="suffixText">{bid}</span>}
+                  onFocus={() => setFocused('total')}
+                  maxLength={15}
+                  onBlur={() => setFocused(undefined)}
+                  value={order.total ? order.total : ''}
+                  onChange={(e) => numberCheck(e.target.value, 'total')}
+                  placeholder={'0.00'}
+                />
+              </div>
             </INPUT_WRAPPER>
           </div>
         </INPUT_GRID_WRAPPER>
