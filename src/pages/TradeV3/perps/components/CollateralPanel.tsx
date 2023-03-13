@@ -1,5 +1,5 @@
-import { FC, useMemo } from 'react'
-import { Tabs, Row, Col } from 'antd'
+import { FC, useMemo, useState } from 'react'
+import { Row, Col } from 'antd'
 import tw, { styled } from 'twin.macro'
 import { Tooltip } from '../../../../components/Tooltip'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
@@ -8,39 +8,45 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useCrypto, useDarkMode } from '../../../../context'
 import useWindowSize from '../../../../utils/useWindowSize'
 
-const { TabPane } = Tabs
-
 const TABS_WRAPPER = styled.div<{ $isLocked: boolean }>`
+  .header-wrapper {
+    display: flex;
+    height: 30px;
+
+    > div {
+      width: 34%;
+      height: 100%;
+    }
+  }
+  .tab {
+    border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
+    border-top: none;
+    cursor: pointer;
+  }
+  .active {
+    ${tw`text-[#3C3C3C] dark:text-[#EEEEEE]`}
+    background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
+    padding: 2px;
+  }
+  .white-background {
+    background-color: ${({ theme }) => theme.bg2};
+    width: 100%;
+    height: 100%;
+  }
+  .activeTab {
+    background-image: linear-gradient(to right, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
+  }
+  .field {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    height: 100%;
+  }
   ${tw`h-full w-full relative overflow-y-hidden`}
   filter: blur(${({ $wallet }) => ($wallet ? 0 : 3)}px) !important;
-  border-right: ${({ theme }) => '1px solid ' + theme.tokenBorder};
-  border-bottom: ${({ theme }) => '1px solid ' + theme.tokenBorder};
-  border-left: ${({ theme }) => '1px solid ' + theme.tokenBorder};
-  .ant-tabs-nav {
-    ${tw`mb-0`}
-  }
-  .ant-tabs-nav-list {
-    ${tw`w-full items-center h-[31px]`}
-    background: ${({ theme }) => theme.bg20};
-    .ant-tabs-tab-active {
-      ${tw`!p-px !border-none !border-0`}
-      background: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
-      .ant-tabs-tab-btn {
-        ${tw`text-[#3C3C3C] dark:text-[#EEEEEE]`}
-      }
-    }
-    .ant-tabs-tab-btn {
-      ${tw`text-tiny font-semibold h-full w-full flex justify-center items-center text-[#636363] dark:text-[#B5B5B5]`}
-      background: ${({ theme }) => theme.bg20};
-    }
-    .ant-tabs-tab {
-      ${tw`w-1/3 block text-center m-0 h-full flex justify-center items-center p-0`}
-      border: 1px solid ${({ theme }) => theme.rowSeparator};
-    }
-    .ant-tabs-ink-bar {
-      ${tw`hidden`}
-    }
-  }
+  border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
 `
 
 const WRAPPER = styled.div<{ $height: boolean }>`
@@ -283,20 +289,32 @@ const Fees = () => {
 
 export const CollateralPanel: FC = (): JSX.Element => {
   const { wallet } = useWallet()
+  const tabs = ['SOL Account', 'All Accounts', 'Fees']
+  const [activeTab, setActiveTab] = useState(0)
+
   return (
     <>
       <TABS_WRAPPER $wallet={wallet}>
-        <Tabs defaultActiveKey={'1'}>
-          <TabPane tab="SOL Account" key="1">
-            <Accounts isSolAccount={true} />
-          </TabPane>
-          <TabPane tab="All Accounts" key="2">
-            <Accounts isSolAccount={false} />
-          </TabPane>
-          <TabPane tab="Fees" key="3">
-            <Fees />
-          </TabPane>
-        </Tabs>
+        <div className="header-wrapper">
+          {tabs.map((item, index) => (
+            <div
+              key={index}
+              className={index === activeTab ? 'active tab' : 'tab'}
+              onClick={() => setActiveTab(index)}
+            >
+              <div className="white-background">
+                <div className={index === activeTab ? 'field activeTab' : 'field'}>{item}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+        {activeTab === 0 ? (
+          <Accounts isSolAccount={true} />
+        ) : activeTab === 1 ? (
+          <Accounts isSolAccount={false} />
+        ) : activeTab === 2 ? (
+          <Fees />
+        ) : null}
       </TABS_WRAPPER>
     </>
   )
