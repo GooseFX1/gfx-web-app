@@ -58,9 +58,10 @@ const HEADER_WRAPPER = styled.div`
       ${tw`h-7 w-2/12 flex justify-center items-center text-xs`}
     }
     .container {
-      ${tw`h-full w-full p-0.5`}
+      ${tw`h-full w-full py-0.5`}
     }
     .active-field {
+      ${tw`p-0.5`}
       background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
     }
   }
