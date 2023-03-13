@@ -27,6 +27,37 @@ export function unrealised_pnl(market_product_group: Uint8Array, trader_risk_gro
 */
 export function get_liquidation_price(market_product_group: Uint8Array, trader_risk_group: Uint8Array, prod_index: bigint): Fractional;
 /**
+* @param {Uint8Array} market_product_group
+* @param {bigint} prod_index
+* @returns {Fractional}
+*/
+export function get_on_chain_price(market_product_group: Uint8Array, prod_index: bigint): Fractional;
+/**
+* @param {Uint8Array} market_product_group
+* @param {Uint8Array} trader_risk_group
+* @returns {Fractional}
+*/
+export function get_leverage_used(market_product_group: Uint8Array, trader_risk_group: Uint8Array): Fractional;
+/**
+* @param {Uint8Array} market_product_group
+* @param {Uint8Array} trader_risk_group
+* @returns {Fractional}
+*/
+export function get_leverage_available(market_product_group: Uint8Array, trader_risk_group: Uint8Array): Fractional;
+/**
+* @param {Uint8Array} market_product_group_byte
+* @param {Uint8Array} trader_risk_group_byte
+* @param {bigint} prod_index
+* @returns {Fractional}
+*/
+export function get_max_quantity(market_product_group_byte: Uint8Array, trader_risk_group_byte: Uint8Array, prod_index: bigint): Fractional;
+/**
+* @param {Uint8Array} market_product_group_byte
+* @param {bigint} prod_index
+* @returns {Fractional}
+*/
+export function get_open_interests(market_product_group_byte: Uint8Array, prod_index: bigint): Fractional;
+/**
 * @param {Uint8Array} data
 * @param {bigint} callback_info_len
 * @param {bigint} slot_size
@@ -130,6 +161,11 @@ export class Fractional {
 * @returns {Fractional}
 */
   max(other: Fractional): Fractional;
+/**
+* @param {number} digits
+* @returns {bigint}
+*/
+  round_up(digits: number): bigint;
 /**
 * @param {Fractional} other
 * @returns {Fractional}

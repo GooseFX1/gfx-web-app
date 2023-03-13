@@ -459,18 +459,49 @@ export const PlaceOrder: FC = () => {
   }
 
   const handleSliderChange = async (e) => {
-    setFocused('total')
-    setOrder((prev) => ({ ...prev, total: e }))
+    if (!order.price) {
+      setFocused('price')
+      setOrder((prev) => ({ ...prev, price: traderInfo.onChainPrice }))
+    }
+    if (Number(order.price) <= Number(traderInfo.onChainPrice)) {
+      const initLeverage = Number(traderInfo.currentLeverage)
+      const newLev = e - initLeverage
+      if (newLev < 0) return
+      setFocused('size')
+      const availLeverage = Number(traderInfo.availableLeverage)
+      const maxQty = Number(traderInfo.maxQuantity)
+      const percentage2 = (newLev / availLeverage) * maxQty
+
+      setOrder((prev) => ({ ...prev, size: percentage2.toFixed(2) }))
+    } else {
+      const initLeverage = Number(traderInfo.currentLeverage)
+      const newLev = e - initLeverage
+      if (newLev < 0) return
+      setFocused('total')
+      const availLeverage = Number(traderInfo.availableLeverage)
+      const maxMargin = Number(traderInfo.marginAvailable)
+      const percentage2 = (newLev / availLeverage) * maxMargin
+
+      setOrder((prev) => ({ ...prev, total: percentage2.toFixed(2) }))
+    }
   }
 
   const getMarks = () => {
     const markObj = {}
-    const marginAvail = Number(traderInfo.marginAvailable)
     for (let i = 2; i <= 10; i = i + 2) {
-      markObj[(marginAvail / 10) * i] = i + 'x'
+      markObj[i] = i + 'x'
     }
     return markObj
   }
+
+  const sliderValue = useMemo(() => {
+    const initLeverage = Number(traderInfo.currentLeverage)
+    const availLeverage = Number(traderInfo.availableLeverage)
+    const percentage = (Number(order.size) / Number(traderInfo.maxQuantity)) * availLeverage
+    //console.log('max qty: ', availLeverage)
+
+    return Number((initLeverage + percentage).toFixed(2))
+  }, [order.size, traderInfo])
 
   return (
     <WRAPPER>
@@ -637,11 +668,11 @@ export const PlaceOrder: FC = () => {
             <div>
               <Picker>
                 <Slider
-                  max={perpsBidBalance}
-                  min={0}
+                  max={10}
+                  //min={minLeverage}
                   onChange={(e) => handleSliderChange(e)}
-                  step={isSpot ? selectedCrypto.market?.tickSize : activeProduct.tickSize}
-                  value={Number(order.total)}
+                  step={0.01}
+                  value={sliderValue}
                   trackStyle={{
                     height: '6px'
                   }}
