@@ -4,12 +4,11 @@
 import React, { useMemo, useState } from 'react'
 import type { RadioChangeEvent } from 'antd'
 import { Radio, Tabs } from 'antd'
-import styled from 'styled-components'
-import tw from 'twin.macro'
 import { OrderBook } from './OrderBook'
 import { useCrypto, useOrder, useOrderBook, usePriceFeed } from '../../context'
 import { Loader } from '../../components'
 import { getPerpsPrice } from './perps/utils'
+import tw, { styled } from 'twin.macro'
 
 const TAB_NAMES = [
   { display: 'Orderbook', key: 'orderbook' },
@@ -33,13 +32,9 @@ const HEADER_WRAPPER = styled.div`
       color: ${({ theme }) => theme.text1} !important;
     }
     .ant-radio-button-wrapper-checked:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper {
-      background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%) !important;
       position: relative;
       color: ${({ theme }) => theme.text1} !important;
       .ant-radio-button.ant-radio-button-checked {
-        height: calc(100% - 2px);
-        width: calc(100% - 2px);
-        background: ${({ theme }) => theme.bg2};
         top: 1px;
         left: 1px;
 
@@ -47,16 +42,26 @@ const HEADER_WRAPPER = styled.div`
       }
     }
     .individualTabs {
-      ${tw`w-1/2 text-center h-7 flex justify-center items-center dark:text-[#B5B5B5] text-[#636363]`}
+      ${tw`w-full text-center h-7 flex justify-center items-center dark:text-[#B5B5B5] text-[#636363]`}
+      background: ${({ theme }) => theme.bg20} !important;
     }
     .activeTab {
       border: none;
+      .ant-radio-button-checked {
+        background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
+      }
     }
     .inactiveTab {
       //border: none;
     }
     .priceTab {
       ${tw`h-7 w-2/12 flex justify-center items-center text-xs`}
+    }
+    .container {
+      ${tw`h-full w-full p-0.5`}
+    }
+    .active-field {
+      background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
     }
   }
 `
@@ -85,14 +90,16 @@ export const OrderbookTabs: React.FC = () => {
       <HEADER_WRAPPER>
         <Radio.Group value={selectedTab} onChange={onChange} className="tabGroup">
           {TAB_NAMES.map((item) => (
-            <Radio.Button
-              key={item.key}
-              value={item.key}
-              className={'individualTabs ' + (item.key === selectedTab ? 'activeTab' : 'inactiveTab')}
-              disabled={item.key === 'price'}
-            >
-              {item.display}
-            </Radio.Button>
+            <div className={'container ' + (item.key === selectedTab ? 'active-field' : '')}>
+              <Radio.Button
+                key={item.key}
+                value={item.key}
+                className={'individualTabs ' + (item.key === selectedTab ? 'activeTab' : 'inactiveTab')}
+                disabled={item.key === 'price'}
+              >
+                {item.display}
+              </Radio.Button>
+            </div>
           ))}
         </Radio.Group>
       </HEADER_WRAPPER>
