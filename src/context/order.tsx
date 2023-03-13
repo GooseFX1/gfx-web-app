@@ -92,6 +92,7 @@ export const AVAILABLE_ORDERS: IOrderDisplay[] = [
 interface IOrderConfig {
   loading: boolean
   order: IOrder
+  focused: string
   placeOrder: () => void
   setFocused: Dispatch<SetStateAction<OrderInput>>
   setOrder: Dispatch<SetStateAction<IOrder>>
@@ -212,6 +213,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       value={{
         loading,
         order,
+        focused,
         placeOrder,
         setFocused,
         setOrder
@@ -228,6 +230,6 @@ export const useOrder = (): IOrderConfig => {
     throw new Error('Missing order context')
   }
 
-  const { loading, order, placeOrder, setFocused, setOrder } = context
-  return { loading, order, placeOrder, setFocused, setOrder }
+  const { loading, order, focused, placeOrder, setFocused, setOrder } = context
+  return { loading, order, focused, placeOrder, setFocused, setOrder }
 }

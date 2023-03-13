@@ -37,7 +37,6 @@ const columns = [
 ]
 const WRAPPER = styled.div`
   ${tw`h-full w-full overflow-y-hidden`}
-  border-right: ${({ theme }) => '1px solid ' + theme.tokenBorder};
   border-bottom: ${({ theme }) => '1px solid ' + theme.tokenBorder};
   .no-positions-found {
     padding-top: 40px;
@@ -83,12 +82,14 @@ const HEADER = styled.div`
       background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
       border: none;
     }
+    .gradient-border:last-child {
+      border-right: none;
+    }
   }
 
   .headers {
     ${tw`h-[26px]`}
     border-bottom: ${({ theme }) => '1px solid ' + theme.tokenBorder};
-    border-right: ${({ theme }) => '1px solid ' + theme.tokenBorder};
     border-left: ${({ theme }) => '1px solid ' + theme.tokenBorder};
 
     span {
