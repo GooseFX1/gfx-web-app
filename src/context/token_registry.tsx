@@ -41,114 +41,118 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
           decimals: obj[key].decimals
         })
       }
-      const newList = await (await fetch(TOKEN_LIST_URL[network])).json()
-      const manualList = newList.filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
-      const jupiterList = newList.filter(({ symbol }) => !SUPPORTED_TOKEN_LIST.includes(symbol))
-      const splList = [
-        ...manualList,
-        ...jupiterList,
-        {
-          address: '6LNeTYMqtNm1pBFN8PfhQaoLyegAH8GD32WmHU9erXKN',
-          decimals: 8,
-          name: 'Aptos Coin (Wormhole)',
-          symbol: 'APT',
-          chainId: 101
+      try {
+        const newList = await (await fetch(TOKEN_LIST_URL[network])).json()
+        const manualList = newList.filter(({ symbol }) => SUPPORTED_TOKEN_LIST.includes(symbol))
+        const jupiterList = newList.filter(({ symbol }) => !SUPPORTED_TOKEN_LIST.includes(symbol))
+        const splList = [
+          ...manualList,
+          ...jupiterList,
+          {
+            address: '6LNeTYMqtNm1pBFN8PfhQaoLyegAH8GD32WmHU9erXKN',
+            decimals: 8,
+            name: 'Aptos Coin (Wormhole)',
+            symbol: 'APT',
+            chainId: 101
+          }
+        ]
+
+        let farmSupportedList = myList.filter(({ symbol }) => FARM_SUPPORTED_TOKEN_LIST.includes(symbol))
+        //TODO: Add filteredList from solana-spl-registry back
+        if (chainId === ENV.Devnet) {
+          farmSupportedList = []
+          farmSupportedList.push({
+            address: '2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6',
+            chainId,
+            decimals: 9,
+            name: 'GooseFX',
+            symbol: 'GOFX'
+          })
+
+          farmSupportedList.push({
+            address: ADDRESSES.devnet.sslPool.USDC.address.toString(),
+            chainId,
+            decimals: 9,
+            name: 'USD Coin',
+            symbol: 'USDC'
+          })
+
+          farmSupportedList.push({
+            address: ADDRESSES.devnet.sslPool.SOL.address.toString(),
+            chainId,
+            decimals: 9,
+            name: 'SOLANA',
+            symbol: 'SOL'
+          })
+
+          farmSupportedList.push({
+            address: ADDRESSES.devnet.sslPool.ETH.address.toString(),
+            chainId,
+            decimals: 9,
+            name: 'ETH',
+            symbol: 'ETH'
+          })
+          setFarmingTokens(farmSupportedList)
+        } else setFarmingTokens(farmSupportedList)
+
+        let filteredList = [...splList].map((i) => {
+          if (i.symbol === 'SOL') {
+            return { ...i, name: 'SOLANA' }
+          } else if (i.address === 'APTtJyaRX5yGTsJU522N4VYWg3vCvSb65eam5GrPT5Rt') {
+            return { ...i, symbol: 'APRT' }
+          } else {
+            return i
+          }
+        })
+
+        if (chainId === ENV.Devnet) {
+          filteredList = []
+          filteredList.push({
+            address: ADDRESSES.devnet.mints.GOFX.address.toString(),
+            chainId,
+            decimals: 9,
+            name: 'GooseFX',
+            symbol: 'GOFX'
+          })
+
+          filteredList.push({
+            address: ADDRESSES.devnet.mints.gUSD.address.toString(),
+            chainId,
+            decimals: 9,
+            name: 'GFX USD Coin',
+            symbol: 'gUSDC'
+          })
+
+          filteredList.push({
+            address: ADDRESSES.devnet.mints.gSOL.address.toString(),
+            chainId,
+            decimals: 9,
+            name: 'GFX SOLANA',
+            symbol: 'gSOL'
+          })
+
+          filteredList.push({
+            address: ADDRESSES.devnet.mints.gETH.address.toString(),
+            chainId,
+            decimals: 9,
+            name: 'GFX ETH',
+            symbol: 'gETH'
+          })
+
+          filteredList.push({
+            address: ADDRESSES.devnet.mints.gAVAX.address.toString(),
+            chainId,
+            decimals: 9,
+            name: 'GFX AVAX',
+            symbol: 'gAVAX'
+          })
         }
-      ]
 
-      let farmSupportedList = myList.filter(({ symbol }) => FARM_SUPPORTED_TOKEN_LIST.includes(symbol))
-      //TODO: Add filteredList from solana-spl-registry back
-      if (chainId === ENV.Devnet) {
-        farmSupportedList = []
-        farmSupportedList.push({
-          address: '2uig6CL6aQNS8wPL9YmfRNUNcQMgq9purmXK53pzMaQ6',
-          chainId,
-          decimals: 9,
-          name: 'GooseFX',
-          symbol: 'GOFX'
-        })
-
-        farmSupportedList.push({
-          address: ADDRESSES.devnet.sslPool.USDC.address.toString(),
-          chainId,
-          decimals: 9,
-          name: 'USD Coin',
-          symbol: 'USDC'
-        })
-
-        farmSupportedList.push({
-          address: ADDRESSES.devnet.sslPool.SOL.address.toString(),
-          chainId,
-          decimals: 9,
-          name: 'SOLANA',
-          symbol: 'SOL'
-        })
-
-        farmSupportedList.push({
-          address: ADDRESSES.devnet.sslPool.ETH.address.toString(),
-          chainId,
-          decimals: 9,
-          name: 'ETH',
-          symbol: 'ETH'
-        })
-        setFarmingTokens(farmSupportedList)
-      } else setFarmingTokens(farmSupportedList)
-
-      let filteredList = [...splList].map((i) => {
-        if (i.symbol === 'SOL') {
-          return { ...i, name: 'SOLANA' }
-        } else if (i.address === 'APTtJyaRX5yGTsJU522N4VYWg3vCvSb65eam5GrPT5Rt') {
-          return { ...i, symbol: 'APRT' }
-        } else {
-          return i
-        }
-      })
-
-      if (chainId === ENV.Devnet) {
-        filteredList = []
-        filteredList.push({
-          address: ADDRESSES.devnet.mints.GOFX.address.toString(),
-          chainId,
-          decimals: 9,
-          name: 'GooseFX',
-          symbol: 'GOFX'
-        })
-
-        filteredList.push({
-          address: ADDRESSES.devnet.mints.gUSD.address.toString(),
-          chainId,
-          decimals: 9,
-          name: 'GFX USD Coin',
-          symbol: 'gUSDC'
-        })
-
-        filteredList.push({
-          address: ADDRESSES.devnet.mints.gSOL.address.toString(),
-          chainId,
-          decimals: 9,
-          name: 'GFX SOLANA',
-          symbol: 'gSOL'
-        })
-
-        filteredList.push({
-          address: ADDRESSES.devnet.mints.gETH.address.toString(),
-          chainId,
-          decimals: 9,
-          name: 'GFX ETH',
-          symbol: 'gETH'
-        })
-
-        filteredList.push({
-          address: ADDRESSES.devnet.mints.gAVAX.address.toString(),
-          chainId,
-          decimals: 9,
-          name: 'GFX AVAX',
-          symbol: 'gAVAX'
-        })
+        filteredList.sort(({ symbol: a }, { symbol: b }) => a.localeCompare(b))
+        setTokens(filteredList)
+      } catch (e) {
+        console.log(e)
       }
-
-      filteredList.sort(({ symbol: a }, { symbol: b }) => a.localeCompare(b))
-      setTokens(filteredList)
     })()
   }, [chainId])
 

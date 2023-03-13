@@ -23,15 +23,7 @@ const tabs = ['Positions', 'Open Orders', 'Trade History', 'SOL Unsettled P&L']
 
 const columns = [
   {
-    Positions: [
-      'Side',
-      'Position size',
-      'Notional Size',
-      'Est. Liquidation Price',
-      'Market Price',
-      'Avg. Entry Price',
-      'Break Even Price'
-    ]
+    Positions: ['Market', 'Side', 'Entry Price', 'Quantity', 'Market Price', 'Value', 'Est. Liq Price', 'PNL']
   },
   {
     'Open Orders': ['Side', 'Size', 'Price', 'USD Value', 'Condition']
@@ -107,6 +99,9 @@ const HEADER = styled.div`
     span:first-child {
       ${tw`pl-3`}
     }
+    span {
+      ${tw`w-[11.1%]`}
+    }
   }
   .headers.Open-Orders > span {
     ${tw`w-1/5`}
@@ -126,10 +121,9 @@ const POSITIONS = styled.div`
   height: calc(100% - 57px);
 
   .positions {
-    ${tw`w-full h-10 p-0 text-sm font-semibold`}
-    color: ${({ theme }) => theme.text28};
+    ${tw`w-full h-10 p-0 text-sm font-semibold dark:text-[#EEEEEE] text-[#3C3C3C]`}
     span {
-      ${tw`w-[12.5%] inline-block`}
+      ${tw`w-[11.1%] inline-block`}
     }
     button {
       ${tw`h-[30px] rounded-[12px] text-tiny font-semibold border-none m-[5px] text-white`}
@@ -140,10 +134,10 @@ const POSITIONS = styled.div`
       ${tw`text-tiny pl-3`}
     }
     .long {
-      ${tw`text-[#71c25d] text-tiny pl-1`}
+      ${tw`text-[#71c25d] text-tiny`}
     }
     .short {
-      ${tw`text-[#f06565] text-tiny pl-1`}
+      ${tw`text-[#f06565] text-tiny`}
     }
   }
 `
@@ -372,6 +366,11 @@ export const HistoryPanel: FC = () => {
     return sum
   }
 
+  const pnl = useMemo(() => {
+    if (!Number(traderInfo.pnl)) return 0
+    return Number(traderInfo.pnl)
+  }, [traderInfo])
+
   const { market } = selectedCrypto
   let openOrder, baseAvailable, baseBalance, quoteAvailable, quoteBalance
   if (openOrders.length > 0) {
@@ -447,15 +446,16 @@ export const HistoryPanel: FC = () => {
             <POSITIONS>
               {traderInfo.averagePosition.side ? (
                 <div className="positions">
+                  <span>{selectedCrypto.pair}</span>
                   <span className={traderInfo.averagePosition.side === 'buy' ? 'long' : 'short'}>
                     {traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}
                   </span>
+                  <span>{traderInfo.averagePosition.price}</span>
                   <span>{traderInfo.averagePosition.quantity}</span>
+                  <span>{perpsPrice}</span>
                   <span>{notionalSize}</span>
                   <span>{Number(traderInfo.liquidationPrice).toFixed(2)}</span>
-                  <span>{perpsPrice}</span>
-                  <span>{traderInfo.averagePosition.price}</span>
-                  <span>{traderInfo.averagePosition.price}</span>
+                  <span className={pnl <= 0 ? 'short' : 'long'}>$ {traderInfo.pnl}</span>
                   <button onClick={handleClosePosition}>Close Position</button>
                   {/*<button onClick={() => setClosePosition(true)}>Close Position</button>*/}
                 </div>

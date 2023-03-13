@@ -85,6 +85,8 @@ import {
   updateFeesIx
 } from '../pages/TradeV3/perps/adminUtils'
 import { DEFAULT_ORDER_BOOK, OrderBook, useOrderBook } from './orderbook'
+import { useCrypto } from './crypto'
+import { get_leverage_used } from 'perps-wasm'
 
 export const AVAILABLE_ORDERS_PERPS = [
   {
@@ -123,6 +125,11 @@ interface ITraderRiskGroup {
   marginAvailable: string
   pnl: string
   liquidationPrice: string
+  maxQuantity: string
+  currentLeverage: string
+  availableLeverage: string
+  onChainPrice: string
+  openInterests: string
 }
 
 interface ICollateralInfo {
@@ -237,29 +244,44 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   })
   const [orderBookCopy, setOrderBook] = useState<OrderBook>(DEFAULT_ORDER_BOOK)
   const [liquidationPrice, setLiquidationPrice] = useState('0')
+  const [currentLeverage, setLeverage] = useState<string>('0')
+  const [availableLeverage, setAvailLeverage] = useState<string>('0')
+  const [maxQty, setMaxQty] = useState<string>('0.1')
+  const [onChainPrice, setOnChainPrice] = useState<string>('0')
+  const [openInterests, setOpenInterests] = useState<string>('0')
+
   const { order, setOrder } = useOrder()
+  const { isSpot } = useCrypto()
 
   const wallet = useWallet()
   const { devnetConnection: connection } = useConnectionConfig()
 
   const refreshTraderRiskGroup = async () => {
-    const traderRiskGroupAccount = await getTraderRiskGroupAccount(wallet, connection)
-    if (traderRiskGroupAccount && traderRiskGroupAccount.pubkey) {
-      setTRG(traderRiskGroupAccount.pubkey)
-      TraderRiskGroup.fetch(connection, traderRiskGroupAccount.pubkey).then((trg) => {
-        trg ? setTraderRiskGroup(trg[0]) : setTraderRiskGroup(null)
-        trg && setRawData((prevState) => ({ ...prevState, trg: trg[1] }))
-      })
+    let trgAccount = null,
+      trgFetch = null
+    if (!currentTRG) {
+      trgAccount = await getTraderRiskGroupAccount(wallet, connection)
+      setTRG(trgAccount.pubkey)
+      trgFetch = trgAccount.pubkey
+    } else {
+      trgFetch = currentTRG
     }
+
+    TraderRiskGroup.fetch(connection, trgFetch).then((trg) => {
+      trg ? setTraderRiskGroup(trg[0]) : setTraderRiskGroup(null)
+      trg && setRawData((prevState) => ({ ...prevState, trg: trg[1] }))
+    })
   }
 
   const setMPGDetails = async () => {
-    MarketProductGroup.fetch(connection, new PublicKey(MPG_ID)).then((mpgRes) => {
-      mpgRes ? setMarketProductGroup(mpgRes[0]) : setMarketProductGroup(null)
-      mpgRes && setRawData((prevState) => ({ ...prevState, mpg: mpgRes[1] }))
-    })
+    if (!isSpot) {
+      MarketProductGroup.fetch(connection, new PublicKey(MPG_ID)).then((mpgRes) => {
+        mpgRes ? setMarketProductGroup(mpgRes[0]) : setMarketProductGroup(null)
+        mpgRes && setRawData((prevState) => ({ ...prevState, mpg: mpgRes[1] }))
+      })
 
-    refreshTraderRiskGroup()
+      refreshTraderRiskGroup()
+    }
   }
 
   const setCollateralPrice = async () => {
@@ -274,16 +296,58 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const wasm = await import('perps-wasm')
     const mpg = rawData.mpg
     const trg = rawData.trg
-
-    const res = wasm.margin_available(mpg.data, trg.data)
-    const avail = new Fractional({ m: new anchor.BN(res.m.toString()), exp: new anchor.BN(res.exp.toString()) })
-    setMarginAvail(displayFractional(avail))
+    try {
+      const res = wasm.margin_available(mpg.data, trg.data)
+      const avail = new Fractional({ m: new anchor.BN(res.m.toString()), exp: new anchor.BN(res.exp.toString()) })
+      setMarginAvail(displayFractional(avail))
+    } catch (e) {
+      console.log('margin available error: ', e)
+    }
     const pnl = wasm.unrealised_pnl(mpg.data, trg.data, BigInt(0))
     const pnlFrac = new Fractional({ m: new anchor.BN(pnl.m.toString()), exp: new anchor.BN(pnl.exp.toString()) })
     setPnl(displayFractional(pnlFrac))
-    const res2 = wasm.get_liquidation_price(mpg.data, trg.data, BigInt(0))
-    const liq = new Fractional({ m: new anchor.BN(res2.m.toString()), exp: new anchor.BN(res2.exp.toString()) })
-    setLiquidationPrice(displayFractional(liq))
+    try {
+      const res2 = wasm.get_liquidation_price(mpg.data, trg.data, BigInt(0))
+      const liq = new Fractional({ m: new anchor.BN(res2.m.toString()), exp: new anchor.BN(res2.exp.toString()) })
+      setLiquidationPrice(displayFractional(liq))
+    } catch (e) {
+      console.log('liquidation price error: ', e)
+    }
+    try {
+      const re = wasm.get_max_quantity(mpg.data, trg.data, BigInt(0))
+      const re2 = new Fractional({ m: new anchor.BN(re.m.toString()), exp: new anchor.BN(re.exp.toString()) })
+      setMaxQty(displayFractional(re2))
+    } catch (e) {
+      console.log(e)
+    }
+    try {
+      const re = wasm.get_leverage_used(mpg.data, trg.data)
+      const re2 = new Fractional({ m: new anchor.BN(re.m.toString()), exp: new anchor.BN(re.exp.toString()) })
+      setLeverage(displayFractional(re2))
+    } catch (e) {
+      console.log(e)
+    }
+    try {
+      const re = wasm.get_leverage_available(mpg.data, trg.data)
+      const re2 = new Fractional({ m: new anchor.BN(re.m.toString()), exp: new anchor.BN(re.exp.toString()) })
+      setAvailLeverage(displayFractional(re2))
+    } catch (e) {
+      console.log(e)
+    }
+    try {
+      const re = wasm.get_on_chain_price(mpg.data, BigInt(0))
+      const re2 = new Fractional({ m: new anchor.BN(re.m.toString()), exp: new anchor.BN(re.exp.toString()) })
+      setOnChainPrice(displayFractional(re2))
+    } catch (e) {
+      console.log(e)
+    }
+    try {
+      const re = wasm.get_open_interests(mpg.data, BigInt(0))
+      const re2 = new Fractional({ m: new anchor.BN(re.m.toString()), exp: new anchor.BN(re.exp.toString()) })
+      setOpenInterests(displayFractional(re2))
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   const parseTraderInfo = async () => {
@@ -300,7 +364,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   useEffect(() => {
-    if (wallet.connected) {
+    if (wallet.connected && !isSpot) {
       const refreshData = async () => {
         await setMPGDetails()
       }
@@ -309,7 +373,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } else {
       setTraderRiskGroup(null)
     }
-  }, [wallet.connected, marketProductGroup])
+  }, [wallet.connected, marketProductGroup, isSpot])
 
   const testing = async () => {
     // const res1 = await adminInitialiseMPG(connection, wallet)
@@ -559,7 +623,12 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           tradeHistory: traderHistory,
           marginAvailable: marginAvail,
           pnl: pnl,
-          liquidationPrice: liquidationPrice
+          liquidationPrice: liquidationPrice,
+          currentLeverage: currentLeverage,
+          maxQuantity: maxQty,
+          onChainPrice: onChainPrice,
+          availableLeverage: availableLeverage,
+          openInterests: openInterests
         },
         marketProductGroup: marketProductGroup,
         marketProductGroupKey: currentMPG,

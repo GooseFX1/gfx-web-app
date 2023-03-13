@@ -6,6 +6,7 @@ import { DropdownPairs } from './DropdownPairs'
 import { DepositWithdraw } from './perps/DepositWithdraw'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import { getPerpsPrice } from './perps/utils'
+import { useTraderConfig } from '../../context/trader_risk_group'
 
 const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[356px] !w-[628px] rounded-half`}
@@ -52,7 +53,7 @@ const INFO_STATS = styled.div`
     color: ${({ theme }) => theme.text22};
   }
   div:nth-child(2) {
-    ${tw`text-tiny font-semibold text-center flex`}
+    ${tw`text-regular font-semibold text-center flex`}
     color: ${({ theme }) => theme.text21};
     span:nth-child(2) {
       ${tw`mx-2.5 text-center flex`}
@@ -184,6 +185,7 @@ export const InfoBanner: FC<{
   const { prices, tokenInfo } = usePriceFeed()
   const { orderBook } = useOrderBook()
   const { mode } = useDarkMode()
+  const { traderInfo } = useTraderConfig()
   const [tradeType, setTradeType] = useState<string>('deposit')
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
@@ -234,10 +236,10 @@ export const InfoBanner: FC<{
 
   const tokenPrice = useMemo(() => {
     if (isSpot) {
-      return !marketData || !marketData.current ? <Loader /> : <div>$ {marketData.current}</div>
+      return !marketData || !marketData.current ? <Loader /> : <span>$ {marketData.current}</span>
     } else {
       const oPrice = getPerpsPrice(orderBook)
-      return !oPrice ? <Loader /> : <div>$ {oPrice}</div>
+      return !oPrice ? <Loader /> : <span>$ {oPrice}</span>
     }
   }, [isSpot, selectedCrypto, orderBook])
 
@@ -285,8 +287,11 @@ export const InfoBanner: FC<{
       <DropdownPairs />
       <INFO_STATS>
         <>
-          <div>Price</div>
-          {tokenPrice}
+          <span>Price</span>
+          <div>
+            {tokenPrice}
+            <span className={classNameChange}>{' (' + changeValue + '%)'}</span>
+          </div>
         </>
       </INFO_STATS>
       <INFO_STATS>
@@ -295,7 +300,8 @@ export const InfoBanner: FC<{
           {!displayVolume ? <Loader /> : <div>$ {displayVolume}</div>}
         </>
       </INFO_STATS>
-      <INFO_STATS>
+
+      {/*<INFO_STATS>
         <>
           <div>24hr Change</div>
           {!changeValue ? (
@@ -311,7 +317,7 @@ export const InfoBanner: FC<{
             </div>
           )}
         </>
-      </INFO_STATS>
+      </INFO_STATS>*/}
       <INFO_STATS>
         <div>Daily Range</div>
         {!range ? (
@@ -328,6 +334,12 @@ export const InfoBanner: FC<{
             <span>$ {range.max}</span>
           </div>
         )}
+      </INFO_STATS>
+      <INFO_STATS>
+        <>
+          <div>Open Interest</div>
+          {!traderInfo.openInterests ? <Loader /> : <div>$ {traderInfo.openInterests}</div>}
+        </>
       </INFO_STATS>
       {isLocked ? null : (
         <RESET_LAYOUT_BUTTON_CTN>
