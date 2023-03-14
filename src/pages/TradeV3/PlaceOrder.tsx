@@ -387,8 +387,8 @@ export const PlaceOrder: FC = () => {
       if (order.side === 'buy') return 'BUY ' + symbol
       else return 'SELL ' + symbol
     } else {
-      if (order.side === 'buy') return 'BID ' + symbol
-      else return 'ASK ' + symbol
+      if (order.side === 'buy') return 'LONG ' + symbol
+      else return 'SHORT ' + symbol
     }
   }, [buttonState, order.side, selectedCrypto.type])
 
@@ -506,9 +506,9 @@ export const PlaceOrder: FC = () => {
     const initLeverage = Number(traderInfo.currentLeverage)
     const availLeverage = Number(traderInfo.availableLeverage)
     const percentage = (Number(order.size) / Number(traderInfo.maxQuantity)) * availLeverage
-    //console.log('max qty: ', availLeverage)
-
-    return Number((initLeverage + percentage).toFixed(2))
+    console.log('added leverage: ', percentage)
+    if (Number(percentage)) return Number((initLeverage + percentage).toFixed(2))
+    return Number(initLeverage.toFixed(2))
   }, [order.size, traderInfo])
 
   return (

@@ -166,7 +166,8 @@ const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: st
           <div className={tradeType === 'deposit' ? 'gradient-bg btn' : 'btn'}>Deposit</div>
         </div>
       </div>
-      <div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('withdraw')}>
+      <div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('deposit')}>
+        {/*<div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('withdraw')}>*/}
         <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
           <div className={tradeType === 'withdraw' ? 'gradient-bg btn' : 'btn'}>Withdraw</div>
         </div>
@@ -242,6 +243,15 @@ export const InfoBanner: FC<{
       return !oPrice ? <Loader /> : <span>$ {oPrice}</span>
     }
   }, [isSpot, selectedCrypto, orderBook])
+
+  const openInterest = useMemo(() => {
+    if (isSpot) return '0'
+    else {
+      const oPrice = getPerpsPrice(orderBook)
+      const amt = (Number(traderInfo.openInterests) * oPrice).toFixed(4)
+      return amt
+    }
+  }, [traderInfo.openInterests, orderBook, isSpot])
 
   const handleToggle = (e) => {
     if (e === 'spot') setIsSpot(true)
@@ -335,12 +345,14 @@ export const InfoBanner: FC<{
           </div>
         )}
       </INFO_STATS>
-      <INFO_STATS>
-        <>
-          <div>Open Interest</div>
-          {!traderInfo.openInterests ? <Loader /> : <div>$ {traderInfo.openInterests}</div>}
-        </>
-      </INFO_STATS>
+      {!isSpot && (
+        <INFO_STATS>
+          <>
+            <div>Open Interest</div>
+            {!traderInfo.openInterests ? <Loader /> : <div>$ {openInterest}</div>}
+          </>
+        </INFO_STATS>
+      )}
       {isLocked ? null : (
         <RESET_LAYOUT_BUTTON_CTN>
           <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>

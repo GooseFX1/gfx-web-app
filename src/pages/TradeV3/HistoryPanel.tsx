@@ -104,11 +104,19 @@ const HEADER = styled.div`
       ${tw`w-[11.1%]`}
     }
   }
+  .headers.Open-Orders {
+    span:first-child {
+      ${tw`pl-3`}
+    }
+  }
   .headers.Open-Orders > span {
     ${tw`w-1/5`}
   }
   .headers.Trade-History {
     ${tw`pl-1`}
+    span:first-child {
+      ${tw`pl-3`}
+    }
     > span {
       ${tw`w-1/4`}
     }

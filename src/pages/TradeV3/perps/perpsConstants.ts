@@ -52,11 +52,11 @@ export const VAULT_MINT = 'Bg2f3jstf2Co4Hkrxsn7evzvRwLbWYmuzaLUPGnjCwAA'
 // export const FEE_OUTPUT_REGISTER = '8wca9RPSqBURHo2VU2gDaz5pmnYpj2dXPkS88mVdfoTy'
 // export const RISK_MODEL_CONFIG_ACCT = '9uEGTZRoDwZa4N1asf1p1pnF4HEuUtG2BZBVY26feBDM'
 
-export const MPG_ID = '82iVHHceAWNQig1MQnka149pVGkyc4GvQ6hE8fjVRASd'
+export const MPG_ID = 'EYf7AMGJXDnDAM9hMtpAvoqaDxQDv29X97vYtmACnQTz'
 
-export const RISK_OUTPUT_REGISTER = '7BDdpHxVx88y6N9Z4AypLYj8VQVVXyAWB1eKiKUTR2F1'
-export const FEE_OUTPUT_REGISTER = 'HNPBKzjAWH1b4WUgoCo211HKqdKtLTitvQN5xUc7ZWxN'
-export const RISK_MODEL_CONFIG_ACCT = 'H7CrwxNuUgpAZgD5ELThogUz1b6J6kQCXoSnQdaQ6qkL'
+export const RISK_OUTPUT_REGISTER = 'EdB3fvtB5azp9QbXQT7BGMF7SiQ7Zwz6VKbQsLaP4jFS'
+export const FEE_OUTPUT_REGISTER = 'E1TqmVkSo97iGjubSBAu2josfPAy6o2QsVrputWoC6u4'
+export const RISK_MODEL_CONFIG_ACCT = '29f4nYUhCrKVTsGrgY8MmowJRzTRJZsxZAEJ9DQ2tj8r'
 
 export const MPG_ACCOUNT_SIZE = 143864
 export const OUT_REGISTER_SIZE = 432
@@ -89,29 +89,29 @@ export const PERPS_COLLATERAL = [
   // }
 ]
 
-export const MPs = [
-  {
-    id: '8kbdxTuwRbNnGzjgkyNh6P2VjqC6KrkgVjh9pQuKJifz',
-    orderbook_id: 'GJsUqB5wmBUMsfJXJCVyUP5NV9TanwkrLQfsUnqW5uUF',
-    bids: 'F6fZs5XeJPGWJC3LUiAZnS8uvUfSfRAgTBV7cttDc9Fi',
-    asks: 'JA9T2Fd5zpfz8Z6NAyrn2D68kP4PcucGMrzBahcZw1DT',
-    event_queue: '6wQqi6Ud3NNazAin8y4RHffivyMncDG9RciEiei97CSv',
-    tick_size: 100,
-    decimals: 7
-  }
-]
-
 //export const MPs = [
 //  {
-//    id: 'H8nx4ZrFyFMmWmgNc1hpLVxoLFJsKjoZA59zggXqmXS3',
-//    orderbook_id: '2Z8JoowzFF9wxXgF9UBbT7fv4C4TUmnTiPErqqQbri4J',
-//    bids: '6ExoHfg6WXXycQEJzFREVKo5D2bqLm73vkRB86bfygFr',
-//    asks: '312kQJKQziBuyYwGVkWBbrfzdiFFhbnDQvipvjF8zjjy',
-//    event_queue: 'G8vnBXgDGoKzo9u8L3Y8ozktAddchGrQ3ZDKin2K7aiD',
+//    id: '8kbdxTuwRbNnGzjgkyNh6P2VjqC6KrkgVjh9pQuKJifz',
+//    orderbook_id: 'GJsUqB5wmBUMsfJXJCVyUP5NV9TanwkrLQfsUnqW5uUF',
+//    bids: 'F6fZs5XeJPGWJC3LUiAZnS8uvUfSfRAgTBV7cttDc9Fi',
+//    asks: 'JA9T2Fd5zpfz8Z6NAyrn2D68kP4PcucGMrzBahcZw1DT',
+//    event_queue: '6wQqi6Ud3NNazAin8y4RHffivyMncDG9RciEiei97CSv',
 //    tick_size: 100,
 //    decimals: 7
 //  }
 //]
+
+export const MPs = [
+  {
+    id: '9dotty85PU6nmyXoNpZcQ8Xnmhg9ggpgf4Xveg7nVpZA',
+    orderbook_id: '2KJK8x4FLaEbpax3rz2HyU9bqB2vKZ32bBgr67NkJPUR',
+    bids: '8PVPppfFCkh5c7ELxQ7pjdfB5GsKZRjoNuQJxUw6iZ19',
+    asks: 'FD74QnvXvaD5CNjdch8pTVbFc7re6L3V9NdmeAPjSjre',
+    event_queue: 'HHmyyYdAa1t6KGYXeBQ24PaxqCoBVx1ER7eZpypg2wsW',
+    tick_size: 100,
+    decimals: 5
+  }
+]
 
 export const PERPS_FEES = [
   {
