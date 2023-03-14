@@ -103,7 +103,7 @@ export class SlabHeader {
   rootNode: number
   leafCount: number
 
-  static LEN: number = 40
+  static LEN = 40
 
   static schema: Schema = new Map([
     [
@@ -165,8 +165,8 @@ export class Slab {
   callBackInfoLen: number
   orderCapacity: number
 
-  static NODE_SIZE: number = 32
-  static NODE_TAG_SIZE: number = 8
+  static NODE_SIZE = 32
+  static NODE_TAG_SIZE = 8
   static SLOT_SIZE: number = Slab.NODE_TAG_SIZE + Slab.NODE_SIZE
   static INNER_FLAG: number = 1 << 31
 

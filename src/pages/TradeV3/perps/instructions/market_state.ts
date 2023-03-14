@@ -36,7 +36,7 @@ export class MarketState {
   tickSize: BN
   callbackInfoLen!: number
 
-  static LEN: number = 120
+  static LEN = 120
 
   static schema: Schema = new Map([
     [

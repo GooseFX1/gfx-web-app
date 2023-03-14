@@ -431,10 +431,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       convertToFractional(order.size.toString()),
       new Fractional({ m: new anchor.BN(n), exp: new anchor.BN(0) })
     )
-    const decimalAdjustedPrice = mulFractionals(
-      convertToFractional(order.price.toString()),
-      new Fractional({ m: new anchor.BN(1), exp: new anchor.BN(activeProduct.decimals) })
-    )
+
     return {
       maxBaseQty: decimalAdjustedQty,
       side: order.side === 'buy' ? new Bid().toEncodable() : new Ask().toEncodable(),
@@ -484,13 +481,15 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const closePosition = useCallback(
     async (orderbook: OrderBook, qtyToExit: Fractional) => {
       const priceToExit = getClosePositionPrice(displayFractional(qtyToExit), orderbook)
-      let qty = mulFractionals(qtyToExit, new Fractional({ m: new anchor.BN(100000), exp: new anchor.BN(0) }))
+      let qty = mulFractionals(qtyToExit, new Fractional({ m: new anchor.BN('100000'), exp: new anchor.BN(0) }))
       if (qtyToExit && priceToExit) {
         let orderSide: any = new Ask().toEncodable()
         if (qty.m.toString()[0] === '-') {
           orderSide = new Bid().toEncodable()
           qty = mulFractionals(qty, new Fractional({ m: new anchor.BN(-1), exp: new anchor.BN(0) }))
         }
+        const finalQty = displayFractional(qty)
+        const qq = convertToFractional(finalQty)
         const newOrderAccounts: INewOrderAccounts = {
             user: wallet.publicKey,
             traderRiskGroup: currentTRG,
@@ -514,7 +513,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
             riskAndFeeSigner: getRiskAndFeeSigner(new PublicKey(MPG_ID))
           },
           newOrderParams = {
-            maxBaseQty: qty,
+            maxBaseQty: qq,
             side: orderSide,
             selfTradeBehavior: new DecrementTake().toEncodable(),
             matchLimit: new anchor.BN(10),
