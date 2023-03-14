@@ -3,10 +3,10 @@ import { Button, Switch, Tooltip } from 'antd'
 import React, { ReactElement, FC, useState, useMemo } from 'react'
 import styled from 'styled-components'
 import tw, { css } from 'twin.macro'
+import { TokenToggleNFT } from '../../../components'
 import { checkMobile } from '../../../utils'
 import { HeaderTooltip } from '../../../utils/GenericDegsin'
 import { FiltersNFTPopupMobile } from '../Home/MenuNFTPopup'
-import { CurrencySwitch } from '../Home/NFTLandingPageV2'
 import { PopupCustom } from '../Popup/PopupCustom'
 import { ArrowIcon } from './CollectionV2.styles'
 
@@ -57,7 +57,7 @@ const STYLED_INPUT = styled.input`
 export const LISTING_TYPE = styled.div<{ isOpen }>`
   ${({ isOpen }) => css`
     .listItemCurreny {
-      ${tw`duration-500 items-center text-[15px]  justify-between font-semibold flex pl-3`}
+      ${tw`duration-500 items-center text-[15px]  justify-between font-semibold flex pl-3 pr-3`}
       height: ${isOpen ? '53px' : 0};
       color: ${({ theme }) => theme.text20};
       opacity: ${isOpen ? 1 : 0};
@@ -197,7 +197,7 @@ const PriceRange = (): ReactElement => {
       </div>
       <div className="listItemCurreny">
         Currency
-        <CurrencySwitch />
+        <TokenToggleNFT toggleToken={() => console.log('first')} tokenA="SOL" tokenB="USDC" />
       </div>
       <div className="listItem">
         <div className="inputContainer">

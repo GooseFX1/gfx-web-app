@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, FC, useEffect, useMemo, ReactElement } from 'react'
 import axios from 'axios'
 import {
@@ -8,6 +7,7 @@ import {
   useNFTDetails,
   useNFTProfile
 } from '../../../context'
+
 import { GradientText } from '../adminPage/components/UpcomingMints'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { BaseNFT, INFTAsk, INFTBid, INFTGeneralData } from '../../../types/nft_details'
@@ -20,6 +20,8 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { useHistory } from 'react-router-dom'
+import { notify } from '../../../utils'
+import { genericErrMsg } from '../../Farm/FarmClickHandler'
 
 export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any; lastCardRef: any }> = ({
   item,
@@ -40,39 +42,42 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const history = useHistory()
-
   const nftId = item ? (item.nft_name.includes('#') ? item.nft_name.split('#')[1] : -1) : null
-
   const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item.uuid) : false), [item])
 
-  const setNFTDetailsBeforeLocate = async () => {
-    await setBids(localBids)
-    await setAsk(localAsk)
-    await setTotalLikes(localTotalLikes)
-    const res = await axios.get(localSingleNFT.metadata_url)
-    const metaData = await res.data
-    await setNftMetadata(metaData)
-    const parsedAccounts = await getParsedAccountByMint({
-      mintAddress: localSingleNFT.mint_address as StringPublicKey,
-      connection: connection
-    })
+  const setNFTDetailsBeforeLocate = async (item) => {
+    try {
+      const res = await axios.get(localSingleNFT.metadata_url)
+      await setBids(localBids)
+      await setAsk(localAsk)
+      await setTotalLikes(localTotalLikes)
+      const metaData = await res.data
+      await setNftMetadata(metaData)
+      const parsedAccounts = await getParsedAccountByMint({
+        mintAddress: localSingleNFT.mint_address as StringPublicKey,
+        connection: connection
+      })
 
-    const accountInfo = {
-      token_account: parsedAccounts !== undefined ? parsedAccounts.pubkey : null,
-      owner: parsedAccounts !== undefined ? parsedAccounts.owner : null
+      const accountInfo = {
+        token_account: parsedAccounts !== undefined ? parsedAccounts.pubkey : null,
+        owner: parsedAccounts !== undefined ? parsedAccounts.owner : null
+      }
+
+      await setGeneral({ ...localSingleNFT, ...accountInfo })
+      setIsLoadingBeforeRelocate(false)
+      setSelectedNFT(item)
+      return true
+    } catch (err) {
+      setIsLoadingBeforeRelocate(false)
+      notify(genericErrMsg('Error fetching NFT Metadata'))
     }
-
-    await setGeneral({ ...localSingleNFT, ...accountInfo })
-    setIsLoadingBeforeRelocate(false)
-    return true
   }
 
   const goToDetails = async (item): Promise<void> => {
     history.push(`${history.location.pathname}?address=${item.mint_address}`)
     setIsLoadingBeforeRelocate(true)
     setHover(false)
-    await setNFTDetailsBeforeLocate()
-    setSelectedNFT(item)
+    await setNFTDetailsBeforeLocate(item)
   }
 
   useEffect(() => {
