@@ -199,6 +199,9 @@ export const adminInitialiseMPG = async (connection: Connection, wallet: any) =>
   const riskOutputRegister = anchor.web3.Keypair.generate()
 
   console.log('Market product group is: ', marketProductGroupss.publicKey.toBase58())
+  console.log('Risk output register is: ', riskOutputRegister.publicKey.toBase58())
+  console.log('Fee output register is: ', feeOutputRegister.publicKey.toBase58())
+  console.log('riskModelConfigurationAcct is: ', riskModelConfigurationAcct.toBase58())
   const accountObj = {
     authority: wallet.publicKey,
     marketProductGroup: marketProductGroupss,
@@ -292,7 +295,7 @@ export const createAAMarket = async (wallet: any, connection: Connection, caller
   instructions.push(
     await dexProgram.instruction.createMarket(
       {
-        minBaseOrderSize: new anchor.BN(1),
+        minBaseOrderSize: new anchor.BN(1000),
         tickSize: new anchor.BN(1)
       },
       {
@@ -386,7 +389,7 @@ export const adminCreateMP = async (
       m: new anchor.BN(100),
       exp: new anchor.BN(4)
     }),
-    baseDecimals: new anchor.BN(7),
+    baseDecimals: new anchor.BN(5),
     priceOffset: new Fractional({
       m: new anchor.BN(0),
       exp: new anchor.BN(0)

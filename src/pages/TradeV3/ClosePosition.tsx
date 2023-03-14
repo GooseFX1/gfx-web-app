@@ -138,11 +138,20 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
     setLoading(false)
   }
 
+  const displayExitQty = useMemo(() => {
+    const qt = Number(displayFractional(selectedExitQty))
+    if (qt) {
+      const qty = qt.toFixed(2)
+      return qty
+    }
+    return '0.0'
+  }, [selectedExitQty])
+
   return (
     <WRAPPER>
       <div tw="flex items-center mt-8 mb-7">
         <span tw="text-lg font-semibold text-grey-1 dark:text-grey-2">
-          {displayFractional(selectedExitQty)} {symbol}
+          {displayExitQty} {symbol}
         </span>
         <img tw="ml-2.5" src={assetIcon} alt={symbol} height="28px" width="28px" />
         <span tw="ml-auto text-average font-semibold text-black-4 dark:text-grey-5">${price}</span>

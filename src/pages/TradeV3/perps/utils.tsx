@@ -183,7 +183,7 @@ export const addFractionals = (a: Fractional, b: Fractional): Fractional => {
   } else {
     num2 = num2 * BigInt(10 ** Number(diff))
   }
-  const finalM = new anchor.BN(Number(num1 + num2))
+  const finalM = new anchor.BN((num1 + num2).toString())
   return new Fractional({
     m: finalM,
     exp: finalExp
@@ -211,7 +211,7 @@ export const mulFractionals = (a: Fractional, b: Fractional): Fractional => {
   const num1 = BigInt(a.m.toString())
   const num2 = BigInt(b.m.toString())
   const finalExp = a.exp.add(b.exp)
-  const finalM = new anchor.BN(Number(num1 * num2))
+  const finalM = new anchor.BN(BigInt(num1 * num2).toString())
   return new Fractional({
     m: finalM,
     exp: finalExp
@@ -334,8 +334,11 @@ export const computeHealth = (traderRiskGroup: TraderRiskGroup, marketProductGro
     const traderPos = traderRiskGroup.traderPositions[i]
     balancesArray.push({
       productKey: traderPos.productKey,
-      balance: displayFractional(traderPos.position),
-      balanceFractional: traderPos.position
+      balance: (Number(displayFractional(traderPos.position)) / 100000).toFixed(2),
+      balanceFractional: new Fractional({
+        m: traderPos.position.m,
+        exp: new anchor.BN(Number(traderPos.position.exp) + 5)
+      })
     })
     const idx = traderPos.productIndex.toJSON().userAccount
     const price = fetchPrice(marketProductGroup, Number(idx))
@@ -378,7 +381,12 @@ export const tradeHistoryInfo = (
   })
   if (productIndex === null) return null
   const price = displayFractional(traderRiskGroup.avgPosition[productIndex].price)
-  const qty = displayFractional(traderRiskGroup.avgPosition[productIndex].qty)
+  const qty = displayFractional(
+    new Fractional({
+      m: new anchor.BN(traderRiskGroup.avgPosition[productIndex].qty.m),
+      exp: new anchor.BN((Number(traderRiskGroup.avgPosition[productIndex].qty.exp) + 5).toString())
+    })
+  )
   const avgPrice = Number(price) / activeProduct.tick_size
   const averagePosition: ITraderHistory = {
     price: handleDecimalPrice(avgPrice),
@@ -391,7 +399,11 @@ export const tradeHistoryInfo = (
   let count = 0
   for (let i = startingIndex; !(count > 0 && i === startingIndex); ) {
     const item = traderRiskGroup.tradeHistory[productIndex].price[i]
-    const qty = traderRiskGroup.tradeHistory[productIndex].qty[i]
+    const qty = new Fractional({
+      m: new anchor.BN(traderRiskGroup.tradeHistory[productIndex].qty[i].m),
+      exp: new anchor.BN((Number(traderRiskGroup.tradeHistory[productIndex].qty[i].exp) + 5).toString())
+    })
+
     if (!item || !qty) continue
     const price = Number(displayFractional(item)) / activeProduct.tick_size
 
@@ -497,6 +509,7 @@ export const getPerpsMarketOrderPrice = (orderbook: OrderBook, side: 'buy' | 'se
   let tempQty = qty,
     i = 0
   while (tempQty > 0) {
+    if (orderbookSide.length - 1 < i) return orderbookSide[i - 1][0]
     if (tempQty < orderbookSide[i][1]) return orderbookSide[i][0]
     tempQty = tempQty - orderbookSide[i][1]
     i++

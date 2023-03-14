@@ -250,6 +250,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [onChainPrice, setOnChainPrice] = useState<string>('0')
   const [openInterests, setOpenInterests] = useState<string>('0')
 
+  const [initTesting, setInitTesting] = useState<boolean>(false)
+
   const { order, setOrder } = useOrder()
   const { isSpot } = useCrypto()
 
@@ -261,16 +263,19 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       trgFetch = null
     if (!currentTRG) {
       trgAccount = await getTraderRiskGroupAccount(wallet, connection)
-      setTRG(trgAccount.pubkey)
-      trgFetch = trgAccount.pubkey
+      if (trgAccount) {
+        setTRG(trgAccount.pubkey)
+        trgFetch = trgAccount.pubkey
+      }
     } else {
       trgFetch = currentTRG
     }
 
-    TraderRiskGroup.fetch(connection, trgFetch).then((trg) => {
-      trg ? setTraderRiskGroup(trg[0]) : setTraderRiskGroup(null)
-      trg && setRawData((prevState) => ({ ...prevState, trg: trg[1] }))
-    })
+    trgFetch &&
+      TraderRiskGroup.fetch(connection, trgFetch).then((trg) => {
+        trg ? setTraderRiskGroup(trg[0]) : setTraderRiskGroup(null)
+        trg && setRawData((prevState) => ({ ...prevState, trg: trg[1] }))
+      })
   }
 
   const setMPGDetails = async () => {
@@ -298,13 +303,19 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const trg = rawData.trg
     try {
       const res = wasm.margin_available(mpg.data, trg.data)
-      const avail = new Fractional({ m: new anchor.BN(res.m.toString()), exp: new anchor.BN(res.exp.toString()) })
+      const avail = new Fractional({
+        m: new anchor.BN(res.m.toString()),
+        exp: new anchor.BN(Number(res.exp.toString()) + 5)
+      })
       setMarginAvail(displayFractional(avail))
     } catch (e) {
       console.log('margin available error: ', e)
     }
     const pnl = wasm.unrealised_pnl(mpg.data, trg.data, BigInt(0))
-    const pnlFrac = new Fractional({ m: new anchor.BN(pnl.m.toString()), exp: new anchor.BN(pnl.exp.toString()) })
+    const pnlFrac = new Fractional({
+      m: new anchor.BN(pnl.m.toString()),
+      exp: new anchor.BN(Number(pnl.exp.toString()) + 5)
+    })
     setPnl(displayFractional(pnlFrac))
     try {
       const res2 = wasm.get_liquidation_price(mpg.data, trg.data, BigInt(0))
@@ -315,7 +326,10 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     try {
       const re = wasm.get_max_quantity(mpg.data, trg.data, BigInt(0))
-      const re2 = new Fractional({ m: new anchor.BN(re.m.toString()), exp: new anchor.BN(re.exp.toString()) })
+      const re2 = new Fractional({
+        m: new anchor.BN(re.m.toString()),
+        exp: new anchor.BN(Number(re.exp.toString()) + 5)
+      })
       setMaxQty(displayFractional(re2))
     } catch (e) {
       console.log(e)
@@ -343,7 +357,10 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     try {
       const re = wasm.get_open_interests(mpg.data, BigInt(0))
-      const re2 = new Fractional({ m: new anchor.BN(re.m.toString()), exp: new anchor.BN(re.exp.toString()) })
+      const re2 = new Fractional({
+        m: new anchor.BN(re.m.toString()),
+        exp: new anchor.BN(Number(re.exp.toString()) + 5)
+      })
       setOpenInterests(displayFractional(re2))
     } catch (e) {
       console.log(e)
@@ -376,8 +393,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [wallet.connected, marketProductGroup, isSpot])
 
   const testing = async () => {
-    // const res1 = await adminInitialiseMPG(connection, wallet)
-    // console.log(res1)
+    //const res1 = await adminInitialiseMPG(connection, wallet)
+    //console.log(res1)
     //const res2 = await adminCreateMarket(connection, wallet)
     //console.log(res2)
     //const res3 = await updateFeesIx(wallet, connection, {
@@ -407,21 +424,33 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [focused, order.price, order.size, order.total, activeProduct])
 
-  const getNewOrderParams = () => ({
-    maxBaseQty: convertToFractional(order.size.toString()),
-    side: order.side === 'buy' ? new Bid().toEncodable() : new Ask().toEncodable(),
-    selfTradeBehavior: new DecrementTake().toEncodable(),
-    matchLimit: new anchor.BN(10),
-    orderType:
-      order.display === 'market'
-        ? { market: {} }
-        : order.type === 'limit'
-        ? new Limit().toEncodable()
-        : order.type === 'ioc'
-        ? new ImmediateOrCancel().toEncodable()
-        : new PostOnly().toEncodable(),
-    limitPrice: convertToFractional(order.price.toString())
-  })
+  const getNewOrderParams = () => {
+    let n = '1'
+    for (let i = 0; i < activeProduct.decimals; i++) n = n + '0'
+    const decimalAdjustedQty = mulFractionals(
+      convertToFractional(order.size.toString()),
+      new Fractional({ m: new anchor.BN(n), exp: new anchor.BN(0) })
+    )
+    const decimalAdjustedPrice = mulFractionals(
+      convertToFractional(order.price.toString()),
+      new Fractional({ m: new anchor.BN(1), exp: new anchor.BN(activeProduct.decimals) })
+    )
+    return {
+      maxBaseQty: decimalAdjustedQty,
+      side: order.side === 'buy' ? new Bid().toEncodable() : new Ask().toEncodable(),
+      selfTradeBehavior: new DecrementTake().toEncodable(),
+      matchLimit: new anchor.BN(10),
+      orderType:
+        order.display === 'market'
+          ? { market: {} }
+          : order.type === 'limit'
+          ? new Limit().toEncodable()
+          : order.type === 'ioc'
+          ? new ImmediateOrCancel().toEncodable()
+          : new PostOnly().toEncodable(),
+      limitPrice: convertToFractional(order.price.toString())
+    }
+  }
 
   const newOrder = useCallback(async () => {
     const newOrderAccounts: INewOrderAccounts = {
@@ -455,7 +484,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const closePosition = useCallback(
     async (orderbook: OrderBook, qtyToExit: Fractional) => {
       const priceToExit = getClosePositionPrice(displayFractional(qtyToExit), orderbook)
-      let qty = qtyToExit
+      let qty = mulFractionals(qtyToExit, new Fractional({ m: new anchor.BN(100000), exp: new anchor.BN(0) }))
       if (qtyToExit && priceToExit) {
         let orderSide: any = new Ask().toEncodable()
         if (qty.m.toString()[0] === '-') {
@@ -489,7 +518,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
             side: orderSide,
             selfTradeBehavior: new DecrementTake().toEncodable(),
             matchLimit: new anchor.BN(10),
-            orderType: new Limit().toEncodable(),
+            orderType: { market: {} },
             limitPrice: convertToFractional(priceToExit.toString())
           }
         const response = await newOrderIx(newOrderAccounts, newOrderParams, wallet, connection)
@@ -550,6 +579,19 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           new PublicKey(DEX_ID)
         )[0]
       }
+      if (traderRiskGroup) {
+        if (traderRiskGroup.totalDeposited.m.toString()) {
+          const amt = Number(traderRiskGroup.totalDeposited.m.toString())
+          if (amt > 0) {
+            notify({
+              message: 'Failed to deposit',
+              description: 'You have already deposited 500$! Cannot deposit more.',
+              type: 'error'
+            })
+            return null
+          }
+        }
+      }
       const response = traderRiskGroup
         ? await depositFundsIx(depositFundsAccounts, { quantity: amount }, wallet, connection)
         : await initTrgDepositIx(depositFundsAccounts, { quantity: amount }, wallet, connection, newTrg)
@@ -590,6 +632,13 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [traderRiskGroup, marketProductGroup])
 
   useEffect(() => {
+    if (marketProductGroup && !initTesting) {
+      setInitTesting(true)
+      testing()
+    }
+  }, [marketProductGroup])
+
+  useEffect(() => {
     if (rawData.mpg && rawData.trg) {
       perpsWasm()
     }
@@ -606,10 +655,16 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [order.display, order.size, order.total, orderBookCopy, order.side])
 
-  const collateralAvailable: string = useMemo(
-    () => (traderRiskGroup && traderRiskGroup.cashBalance ? displayFractional(traderRiskGroup.cashBalance) : '0'),
-    [traderRiskGroup]
-  )
+  const collateralAvailable: string = useMemo(() => {
+    if (traderRiskGroup && traderRiskGroup.cashBalance) {
+      const balance = Number(displayFractional(traderRiskGroup.cashBalance))
+      if (balance) {
+        return (balance / 100000).toFixed(2)
+      } else return '0'
+    } else {
+      return '0'
+    }
+  }, [traderRiskGroup])
 
   return (
     <TraderContext.Provider

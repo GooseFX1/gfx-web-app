@@ -126,7 +126,8 @@ export const DepositWithdraw: FC<{
   const { devnetBalances: balances } = useAccounts()
   const { traderInfo } = useTraderConfig()
   const { mode } = useDarkMode()
-  const [amount, setAmount] = useState('')
+  //const [amount, setAmount] = useState('')
+  const [amount, setAmount] = useState('500')
   const perpTokenList = PERPS_COLLATERAL
   const percentageArr = [25, 50, 75, 100]
   const defualtPerpToken = perpTokenList[0]
@@ -141,6 +142,7 @@ export const DepositWithdraw: FC<{
     () => `/img/crypto/${perpToken.type === 'synth' ? `g${symbol}` : symbol}.svg`,
     [symbol, perpToken.type]
   )
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handlePercentageChange = (e: React.MouseEvent<HTMLElement>, index: number) => {
     setPercentageindex(index)
     if (tradeType === 'deposit') {
@@ -168,6 +170,7 @@ export const DepositWithdraw: FC<{
       setAmount(result.toFixed(2))
     }
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleInputChange = (e) => {
     const t = e.target.value
     if (!isNaN(+t)) {
@@ -244,7 +247,8 @@ export const DepositWithdraw: FC<{
             placeholder="0.00"
             type="text"
             value={amount}
-            onChange={handleInputChange}
+            //onChange={handleInputChange}
+            onChange={null}
           />
           <span className="token">{perpToken.token}</span>
         </INPUT>
@@ -252,9 +256,9 @@ export const DepositWithdraw: FC<{
           {percentageArr.map((elem, index) => (
             <div
               className={percentageIndex === index ? 'percentage-num selected' : 'percentage-num'}
-              onClick={(e) => {
-                handlePercentageChange(e, index)
-              }}
+              //  onClick={(e) => {
+              //    handlePercentageChange(e, index)
+              //  }}
               key={index}
             >
               {elem}%
