@@ -69,7 +69,6 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
 
 const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement => {
   const history = useHistory()
-  const {} = useNFTCollections()
   return (
     <>
       {allItems.map((item, index) => (
