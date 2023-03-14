@@ -464,7 +464,7 @@ export const HistoryPanel: FC = () => {
                   <span>{perpsPrice}</span>
                   <span>{notionalSize}</span>
                   <span>{Number(traderInfo.liquidationPrice).toFixed(2)}</span>
-                  <span className={pnl <= 0 ? 'short' : 'long'}>$ {traderInfo.pnl}</span>
+                  <span className={pnl <= 0 ? 'short' : 'long'}>$ {pnl.toFixed(4)}</span>
                   <button onClick={handleClosePosition}>Close Position</button>
                   {/*<button onClick={() => setClosePosition(true)}>Close Position</button>*/}
                 </div>

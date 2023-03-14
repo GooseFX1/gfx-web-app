@@ -90,8 +90,8 @@ export const OrderbookTabs: React.FC = () => {
     <WRAPPER>
       <HEADER_WRAPPER>
         <Radio.Group value={selectedTab} onChange={onChange} className="tabGroup">
-          {TAB_NAMES.map((item) => (
-            <div className={'container ' + (item.key === selectedTab ? 'active-field' : '')}>
+          {TAB_NAMES.map((item, index) => (
+            <div className={'container ' + (item.key === selectedTab ? 'active-field' : '')} key={index}>
               <Radio.Button
                 key={item.key}
                 value={item.key}

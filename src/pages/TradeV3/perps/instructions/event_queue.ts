@@ -26,8 +26,8 @@ export class EventQueueHeader {
   eventSize: BN
   seqNum: BN
 
-  static LEN: number = 33
-  static REGISTER_SIZE: number = 42
+  static LEN = 33
+  static REGISTER_SIZE = 42
 
   /**
    * @param callBackInfoLen number of bytes in the callback info

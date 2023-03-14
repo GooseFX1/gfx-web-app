@@ -506,7 +506,6 @@ export const PlaceOrder: FC = () => {
     const initLeverage = Number(traderInfo.currentLeverage)
     const availLeverage = Number(traderInfo.availableLeverage)
     const percentage = (Number(order.size) / Number(traderInfo.maxQuantity)) * availLeverage
-    console.log('added leverage: ', percentage)
     if (Number(percentage)) return Number((initLeverage + percentage).toFixed(2))
     return Number(initLeverage.toFixed(2))
   }, [order.size, traderInfo])
