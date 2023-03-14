@@ -96,7 +96,7 @@ const NFTStatsContainer = () => {
   return (
     <div className="nftStatsContainer">
       {!checkMobile() && (
-        <div className="backBtn" onClick={() => history.goBack()}>
+        <div className="backBtn" onClick={() => history.push('/nfts')}>
           <img src="/img/assets/arrow-leftdark.svg" />
         </div>
       )}
@@ -106,6 +106,7 @@ const NFTStatsContainer = () => {
         <div className="collectionName">
           {collectionName ? (
             <Image
+              preview={false}
               fallback={'/img/assets/Aggregator/Unknown.svg'}
               src={`${logo === undefined ? '/img/assets/Aggregator/Unknown.svg' : logo}`}
               alt=""

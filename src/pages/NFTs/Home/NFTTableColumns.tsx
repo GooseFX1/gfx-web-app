@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
+import { TokenToggleNFT } from '../../../components'
 import { TableHeaderTitle } from '../../../utils/GenericDegsin'
-import { CurrencySwitch } from './NFTLandingPageV2'
 
 export const NFTColumnsTitleWeb = (): ReactElement => (
   <tr>
@@ -12,7 +12,7 @@ export const NFTColumnsTitleWeb = (): ReactElement => (
       <th>{TableHeaderTitle('Marketcap', '', true)}</th>
       <th>{TableHeaderTitle('24h Volume', '', true)}</th>
       <th className="borderRow2">
-        <CurrencySwitch />
+        <TokenToggleNFT tokenA="SOL" tokenB="USDC" toggleToken={() => console.log('changed')} />
       </th>
     </>
   </tr>
