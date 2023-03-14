@@ -1,17 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, ReactElement, useEffect, useMemo, useState } from 'react'
 import { Button, Col, Drawer, Row, Tabs } from 'antd'
-import { ImageShowcase } from '../NFTDetails/ImageShowcase'
-import { RightSection } from '../NFTDetails/RightSection'
-import { checkMobile, truncateAddress } from '../../../utils'
-import { useConnectionConfig, useNFTAggregator, useNFTDetails } from '../../../context'
+import { checkMobile, notify, truncateAddress } from '../../../utils'
+import { useNFTAggregator, useNFTDetails } from '../../../context'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { GradientText } from '../adminPage/components/UpcomingMints'
 import { AppraisalValue } from '../../../utils/GenericDegsin'
 import TabPane from 'antd/lib/tabs/TabPane'
-import Item from 'antd/lib/list/Item'
 import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { AttributesTabContent } from '../NFTDetails/AttributesTabContent'
@@ -19,6 +15,7 @@ import { useHistory } from 'react-router-dom'
 import { fetchSingleNFT } from '../../../api/NFTs'
 import { INFTGeneralData } from '../../../types/nft_details'
 import axios from 'axios'
+import { genericErrMsg } from '../../Farm/FarmClickHandler'
 
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme }) => css`
@@ -34,8 +31,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
           border-radius: 15px 15px 15px 15px;
           width: 100%;
           .ant-tabs-nav-list {
-            display: flex;
-            border-radius: 40px;
+            ${tw`flex rounded-[40px]`}
             justify-content: space-around;
             width: 100% !important;
             padding-right: 0 !important;
@@ -47,10 +43,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
         &:before {
           content: '';
           position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
+          ${tw`absolute top-0  left-0 w-[100%] h-[100%]`}
           background-color: ${theme.tabContentBidBackground};
           border-radius: 15px 15px 0 0;
         }
@@ -141,18 +134,8 @@ const WRAPPER = styled.div`
     }
 
     .close-icon-holder {
-      height: 30px;
-      width: 30px;
-      border-radius: 50%;
-      background: #131313;
-      position: absolute;
-      position: absolute;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      top: 12px;
-      left: 12px;
-      cursor: pointer;
+      ${tw`h-[30px] w-[30px] rounded-[50%] top-[12px] left-[12px] cursor-pointer
+       bg-[#131313] absolute flex items-center justify-center`}
     }
 
     .ls-image {
@@ -241,26 +224,36 @@ export const DetailViewNFT: FC = (): JSX.Element => {
           res.data.data.length > 0 ? setGeneral(res.data.data[0]) : setGeneral(selectedNFT)
           const nft: INFTGeneralData = res.data
           ;(async () => {
-            const metaData = await axios.get(res.data.data[0].metadata_url)
-            await setNftMetadata(metaData.data)
-            setSelectedNFT(res.data.data[0])
+            try {
+              const metaData = await axios.get(res.data.data[0].metadata_url)
+              await setNftMetadata(metaData.data)
+              setSelectedNFT(res.data.data[0])
+              setBids(nft.bids)
+              setAsk(nft.asks[0])
+              setTotalLikes(nft.total_likes)
+            } catch (err) {
+              goBackToNFTCollections()
+              notify(genericErrMsg('Error! Failed to load NFT metadata'))
+            }
           })()
-          setBids(nft.bids)
-          setAsk(nft.asks[0])
-          setTotalLikes(nft.total_likes)
         }
       })
     }
   }, [params.address])
 
+  const goBackToNFTCollections = () => {
+    history.replace({
+      pathname: location.pathname,
+      search: ''
+    })
+  }
+
   useEffect(() => {
     if (selectedNFT === false) {
-      history.replace({
-        pathname: location.pathname,
-        search: ''
-      })
+      goBackToNFTCollections()
     }
   }, [selectedNFT])
+
   const closeTheDrawer = () => {
     if (!buyNowClicked) {
       setSelectedNFT(false)
@@ -360,7 +353,6 @@ const ButtonContainer = ({ setBuyNow, buyNowClicked, bidNowClicked, setBidNow }:
 }
 
 const NFTDetailsTab = (): ReactElement => {
-  const { selectedNFT } = useNFTAggregator()
   const { nftMetadata, general } = useNFTDetails()
 
   const nftData = useMemo(
