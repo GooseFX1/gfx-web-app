@@ -2,12 +2,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import React, { ReactElement, FC, useState } from 'react'
-import styled from 'styled-components'
-import tw from 'twin.macro'
 import Slider from 'react-slick'
 import { PopupCustom } from '../pages/NFTs/Popup/PopupCustom'
 import { Button, Checkbox } from 'antd'
 import { checkMobile } from '../utils'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 const WRAPPER = styled.div`
   ${tw`flex items-center justify-center -mt-14`}
@@ -73,6 +74,36 @@ const WRAPPER = styled.div`
     }
   }
 `
+
+export const GFXApprisalPopup: FC<{ showTerms: boolean; setShowTerms: any }> = ({ showTerms, setShowTerms }) => (
+  <STYLED_POPUP
+    height={checkMobile() ? '553px' : '630px'}
+    width={checkMobile() ? '354px' : '500px'}
+    title={null}
+    visible={showTerms ? true : false}
+    onCancel={() => setShowTerms(false)}
+    footer={null}
+  >
+    <WRAPPER tw="!mt-2">
+      <div className="slide">
+        <h3>
+          <div className="flexContainer">
+            <div>
+              <img src={'/img/assets/AppracialValueIcon.png'} alt="" />
+            </div>
+            <div>GFX Appraisal Value</div>
+          </div>
+        </h3>
+        <img className="trackNFTImg" src={'/img/assets/GFXappraisalGraphic.png'} alt="" />
+        <h3 tw="mt-8 sm:mt-4">Track NFT collections like never before!</h3>
+        <div className="subText">
+          Make the best decisions using the GFX Appraisal Value. Our model emphasizes executed sales data, not
+          listing prices.
+        </div>
+      </div>
+    </WRAPPER>
+  </STYLED_POPUP>
+)
 
 const NFTAggWelcome: FC<{ rewardToggle: any }> = ({ rewardToggle }): ReactElement => {
   const settings = {

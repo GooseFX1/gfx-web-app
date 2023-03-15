@@ -7,7 +7,13 @@ export const NFTColumnsTitleWeb = (): ReactElement => (
     <>
       <th className="borderRow">{TableHeaderTitle('Collection Name', '', true)}</th>
       <th>{TableHeaderTitle('Floor Price', '', true)}</th>
-      <th>{TableHeaderTitle('GFX Appraisal', '', true)}</th>
+      <th>
+        {TableHeaderTitle(
+          'GFX Appraisal',
+          'The GFX Appraisal Value' + 'emphasizes executed sales data, not floor prices.',
+          true
+        )}
+      </th>
       <th>{TableHeaderTitle('24h Change', '', true)}</th>
       <th>{TableHeaderTitle('Marketcap', '', true)}</th>
       <th>{TableHeaderTitle('24h Volume', '', true)}</th>

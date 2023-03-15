@@ -6,14 +6,15 @@ import { checkMobile } from '../../../utils'
 import { Loader } from '../../Farm/Columns'
 import { WRAPPER_TABLE } from './NFTAggregator.styles'
 import { NFTColumnsTitleWeb } from './NFTTableColumns'
-import styled from 'styled-components'
-import tw from 'twin.macro'
-import 'styled-components/macro'
 import { useHistory } from 'react-router-dom'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { NFTBaseCollection } from '../../../types/nft_collections'
 import { Image } from 'antd'
 import { minimizeTheString } from '../../../web3/nfts/utils'
+import { Arrow } from '../../../components/common/Arrow'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 const STYLE = styled.div``
 
@@ -193,6 +194,17 @@ const NFTTableRow = ({ allItems, lastRowElementRef }: any) => {
             ) : (
               <Loader />
             )}
+          </td>
+          <td
+            style={{
+              width: '5%',
+              justifyContent: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              rotate: '270deg'
+            }}
+          >
+            <Arrow height="16px" width="8px" invert={false} />
           </td>
         </tr>
       ))}

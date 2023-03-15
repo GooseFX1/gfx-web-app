@@ -136,7 +136,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
   .gridContainer {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
-    ${tw`grid pl-3 sm:grid-cols-2 rounded-xl`}
+    ${tw`grid pl-3 sm:pl-1 sm:grid-cols-2 rounded-xl`}
   }
   .gridContainerProfile {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
@@ -264,7 +264,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
     .selected {
       color: ${({ theme }) => theme.text4};
-      ${tw`w-[140px] sm:w-[125px] mb-4 items-center sm:mt-1
+      ${tw`w-[140px] sm:w-[128px] mb-4 items-center sm:mt-1 text-[14px]
        font-semibold  flex justify-between flex-col cursor-pointer`}
     }
     .selectedProfile {
