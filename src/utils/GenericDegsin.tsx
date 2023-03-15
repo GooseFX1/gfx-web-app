@@ -23,7 +23,7 @@ const WRAPPER = styled.div<{ $width }>`
   }
   .outerCover {
     width: ${({ $width }) => ($width ? $width + 'px' : '100%')} !important;
-    ${tw`w-[100%] sm:w-[100%] h-[68px] rounded-xl flex items-center justify-center mt-[30px]`}
+    ${tw`w-[100%] sm:w-[100%] h-[68px] rounded-xl flex items-center justify-center`}
     background: linear-gradient(96.79deg, #5855FF 4.25%, #DC1FFF 97.61%);
   }
   .appraisalResult {
