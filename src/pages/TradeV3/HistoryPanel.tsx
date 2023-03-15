@@ -37,7 +37,8 @@ const columns = [
 ]
 const WRAPPER = styled.div`
   ${tw`h-full w-full overflow-y-hidden`}
-  border-bottom: ${({ theme }) => '1px solid ' + theme.tokenBorder};
+  border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
+  border-top: none;
   .no-positions-found {
     padding-top: 40px;
     text-align: center;
@@ -57,9 +58,12 @@ const HEADER = styled.div`
     .open-order-header {
       ${tw`flex flex-row`}
       .count {
-        ${tw`h-[18px] w-[18px] font-semibold ml-2.5 rounded-circle text-center text-tiny`}
+        ${tw`h-[18px] w-[18px] font-semibold ml-2.5 rounded-circle text-tiny`}
         background-image: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
         color: ${({ theme }) => theme.white};
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
     }
     .gradient-border {

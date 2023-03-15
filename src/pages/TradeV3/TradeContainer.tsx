@@ -105,9 +105,7 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean; $
     z-index: 100;
   }
   .space-cont {
-    // background: pink;
-    // padding: 3px;
-    // border: 1px solid #3C3C3C;
+    padding: 2.5px;
   }
 `
 

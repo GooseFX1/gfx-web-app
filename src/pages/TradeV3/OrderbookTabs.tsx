@@ -68,6 +68,8 @@ const HEADER_WRAPPER = styled.div`
 `
 const BODY_WRAPPER = styled.div`
   ${tw`w-full flex flex-row h-full`}
+  border: 1px solid #3c3c3c;
+  border-top: none;
 `
 
 export const OrderbookTabs: React.FC = () => {

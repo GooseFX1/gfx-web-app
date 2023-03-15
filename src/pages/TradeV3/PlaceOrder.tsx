@@ -40,7 +40,6 @@ enum ButtonState {
 const WRAPPER = styled.div`
   ${tw`h-full w-full overflow-y-hidden`}
   border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
-  border-bottom-width: 0;
   background: ${({ theme }) => theme.bg2};
 `
 
