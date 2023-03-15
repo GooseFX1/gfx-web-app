@@ -58,7 +58,7 @@ const WRAPPER = styled.div<{ $height: boolean }>`
     ${tw`ml-2`}
   }
   .tooltipIcon {
-    ${tw`w-4 h-4 ml-0 cursor-pointer`}
+    ${tw`!w-3.5 !h-3.5 ml-0 cursor-pointer`}
   }
   .health-icon {
     ${tw`flex items-center`}
@@ -119,14 +119,18 @@ const ACCOUNT_ROW = styled.div<{ $height: boolean }>`
     color: red;
     ${tw`text-regular font-black`}
   }
+  .tooltip-row {
+    display: flex;
+    align-items: center;
+  }
 `
 
 const FEES = styled.div<{ $height: boolean }>`
-  padding: ${({ $height }) => ($height > 900 ? '20px' : '8px 20px')};
+  padding: ${({ $height }) => ($height > 900 ? '20px' : '4px 20px')};
   .tier-info {
     ${tw`text-center mb-2`}
     line-height: normal;
-    margin-bottom: ${({ $height }) => ($height > 900 ? '14px' : '10px')};
+    margin-bottom: ${({ $height }) => ($height > 900 ? '12px' : '8px')};
   }
   .spacing {
     ${tw`mb-1`}
@@ -204,13 +208,18 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
           <span className="key">Health</span>
           <img src="/img/assets/heart-red.svg" alt="heart-icon" width="19" height="17" className="heart-icon" />
           <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
-            The heath graph represents, how close you are to be liquidated.{' '}
+            The health bar shows how close you are to being liquidated.{' '}
           </Tooltip>
         </div>
         {getHealthData()}
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>
-        <span className="key">{isSolAccount ? 'Balance' : 'Balances'}</span>
+        <div className="tooltip-row">
+          <span className="key">{isSolAccount ? 'Balance' : 'Balances'}</span>
+          {/* <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+              The health bar shows how close you are to being liquidated.{' '}
+          </Tooltip> */}
+        </div>
         {isSolAccount ? (
           <span className="value">{currentMarketBalance}</span>
         ) : (
@@ -222,30 +231,56 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
         )}
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>
-        <span
-          className={
-            (traderInfo && traderInfo.pnl && Number(traderInfo.pnl)
-              ? traderInfo.pnl[0] === '-'
-                ? 'redText '
-                : 'greenText '
-              : ' ') + 'key '
-          }
-        >
-          Unrealized P&L
-        </span>
+        <div className="tooltip-row">
+          <span
+            className={
+              (traderInfo && traderInfo.pnl && Number(traderInfo.pnl)
+                ? traderInfo.pnl[0] === '-'
+                  ? 'redText '
+                  : 'greenText '
+                : ' ') + 'key '
+            }
+          >
+            Unrealized P&L
+          </span>
+          <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+            The total profit and loss from your positions in your account{' '}
+          </Tooltip>
+        </div>
         <span className="value">{pnl}</span>
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>
-        <span className="key">Collateral Available</span>
+        <div className="tooltip-row">
+          <span className="key">Collateral Available</span>
+          <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+            Balance refers to the total value of your cash balance that you can use as collateral for opening new
+            positions or maintaining existing ones.{' '}
+          </Tooltip>
+        </div>
         <span className="value">{Number(traderInfo.collateralAvailable).toFixed(2)} $</span>
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>
-        <span className="key">Margin Available</span>
+        <div className="tooltip-row">
+          <span className="key">Margin Available</span>
+          <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+            Margin Available is the amount of funds available in your account that can be used to open new
+            positions or increase your position size. This is calculated based on your Balance and the margin
+            requirements for the specific assets you are trading{' '}
+          </Tooltip>
+        </div>
         <span className="value">{Number(traderInfo.marginAvailable).toFixed(2)} $</span>
       </ACCOUNT_ROW>
       {isSolAccount && (
         <ACCOUNT_ROW $height={height}>
-          <span className="key">{ask + ' Liquidation Price'}</span>
+          <div className="tooltip-row">
+            <span className="key">{ask + ' Liquidation Price'}</span>
+            <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+              The Liquidation Price is the price at which your position will be automatically closed out by the
+              trading platform if your margin falls below a certain threshold. The Liquidation Price is calculated
+              based on the current market price, your position size, and the margin requirements for the specific
+              assets you are trading.{' '}
+            </Tooltip>
+          </div>
           <span className="value">{Number(traderInfo.liquidationPrice).toFixed(2)} $</span>
         </ACCOUNT_ROW>
       )}
