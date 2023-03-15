@@ -73,13 +73,14 @@ const INFO_STATS = styled.div`
   }
 `
 
-const LOCK_LAYOUT_CTN = styled.div<{ $isLocked: boolean }>`
+const LOCK_LAYOUT_CTN = styled.div<{ $isLocked: boolean; isSpot: boolean }>`
   ${tw`h-10 w-[65px] ml-3.75 rounded-[36px] text-center cursor-pointer pt-px pl-px`}
   height: 40px;
   width: 65px;
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
   background: ${({ $isLocked }) =>
     $isLocked ? '' : 'linear-gradient(90deg, rgba(247, 147, 26, 0.3) 12.88%, rgba(220, 31, 255, 0.3) 100%)'};
+  margin-left: ${({ $isSpot }) => ($isSpot ? 'auto' : '15px')};
 `
 
 const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
@@ -363,7 +364,7 @@ export const InfoBanner: FC<{
           <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
         </DEPOSIT_WRAPPER>
       )}
-      <LOCK_LAYOUT_CTN $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
+      <LOCK_LAYOUT_CTN $isLocked={isLocked} $isSpot={isSpot} onClick={() => setIsLocked(!isLocked)}>
         <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
           <img src={isLocked ? `/img/assets/${mode}_lock.svg` : `/img/assets/${mode}_unlock.svg`} alt="lock" />
         </LOCK_LAYOUT>

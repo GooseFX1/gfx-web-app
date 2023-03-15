@@ -10,13 +10,12 @@ import { InfoBanner } from './InfoBanner'
 import { PlaceOrder } from './PlaceOrder'
 import { CollateralPanel } from './perps/components/CollateralPanel'
 import { useWallet } from '@solana/wallet-adapter-react'
-//import { Connect } from '../../layouts/Connect'
+import { Connect } from '../../layouts/Connect'
 import { HistoryPanel } from '../TradeV3/HistoryPanel'
 import useBlacklisted from '../../utils/useBlacklisted'
 import useWindowSize from '../../utils/useWindowSize'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
-//import { Connect } from '../../layouts/App/Connect'
 
 const ReactGridLayout = WidthProvider(Responsive)
 
@@ -105,6 +104,11 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean; $
     border-color: #ff8c00;
     z-index: 100;
   }
+  .space-cont {
+    // background: pink;
+    // padding: 3px;
+    // border: 1px solid #3C3C3C;
+  }
 `
 
 const UNLOCKED_OVERLAY = styled.div<{ $isGeoBlocked?: boolean }>`
@@ -158,11 +162,36 @@ const UNLOCKED_OVERLAY = styled.div<{ $isGeoBlocked?: boolean }>`
   button {
     height: 40px;
     width: 165px;
-    margin-top: 40px;
+    margin-top: 20px;
     span {
       font-size: 15px;
       font-weight: 600;
     }
+  }
+  .overlay-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+  }
+`
+const PERPS_INFO = styled.div<{ $wallet: boolean; $isLocked: boolean }>`
+  height: 100%;
+  width: 100%;
+  filter: blur(${({ $wallet, $isLocked }) => (!$isLocked ? 3 : $wallet ? 0 : 3)}px) !important;
+  border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+
+  > div {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 18px;
+    text-align: center;
+    margin-top: 32px;
+    color: #b5b5b5;
   }
 `
 
@@ -176,12 +205,12 @@ export const CryptoContent: FC = () => {
   const { selectedCrypto } = useCrypto()
   const { wallet } = useWallet()
 
-  useEffect(() => {
-    if (selectedCrypto.type === 'perps') setLayout({ lg: componentDimensions })
-    else {
-      setLayout({ lg: componentDimensions.slice(0, 4) })
-    }
-  }, [selectedCrypto])
+  // useEffect(() => {
+  //   if (selectedCrypto.type === 'perps') setLayout({ lg: componentDimensions })
+  //   else {
+  //     setLayout({ lg: componentDimensions.slice(0, 4) })
+  //   }
+  // }, [selectedCrypto])
 
   const chartContainer = useMemo(
     () => <TVChartContainer symbol={selectedCrypto.pair} visible={true} />,
@@ -205,7 +234,7 @@ export const CryptoContent: FC = () => {
     _.map(_.range(layout.lg.length), function (i) {
       if (i === 0)
         return (
-          <div key={i}>
+          <div key={i} className="space-cont">
             {chartContainer}
             {!isLocked ? (
               <UNLOCKED_OVERLAY>
@@ -221,7 +250,7 @@ export const CryptoContent: FC = () => {
         )
       if (i === 1)
         return (
-          <div key={i}>
+          <div key={i} className="space-cont">
             <>
               <OrderbookTabs />
               {!isLocked ? (
@@ -239,7 +268,7 @@ export const CryptoContent: FC = () => {
         )
       if (i === 2) {
         return (
-          <div key={i} className={isGeoBlocked ? 'filtering' : ''}>
+          <div key={i} className={isGeoBlocked ? 'space-cont filtering' : 'space-cont'}>
             <>
               <PlaceOrder />
               {isGeoBlocked ? (
@@ -272,7 +301,7 @@ export const CryptoContent: FC = () => {
       }
       if (i === 3)
         return (
-          <div key={i}>
+          <div key={i} className="space-cont">
             <HistoryPanel />
             {!isLocked ? (
               <UNLOCKED_OVERLAY>
@@ -288,8 +317,17 @@ export const CryptoContent: FC = () => {
         )
       if (i === 4)
         return (
-          <div key={i} className={isGeoBlocked ? 'filtering' : ''}>
-            <CollateralPanel />
+          <div key={i} className={isGeoBlocked ? 'space-cont filtering' : 'space-cont'}>
+            {selectedCrypto.type === 'perps' ? (
+              <CollateralPanel />
+            ) : (
+              <PERPS_INFO $wallet={wallet} $isLocked={isLocked}>
+                <img src="/img/assets/perpsInfo.png" alt="perps-info" />
+                <div>
+                  See your account details <br /> exclusively on Perps.
+                </div>
+              </PERPS_INFO>
+            )}
             {isGeoBlocked ? (
               <UNLOCKED_OVERLAY $isGeoBlocked={isGeoBlocked}>
                 <span className="geo-msg">
@@ -313,7 +351,7 @@ export const CryptoContent: FC = () => {
                 <div className="overlay-text">
                   See all our <br /> amazing features!
                 </div>
-                {/* <Connect /> */}
+                <Connect />
               </UNLOCKED_OVERLAY>
             ) : null}
           </div>
