@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { FC, useMemo, useState } from 'react'
 import { Row, Col } from 'antd'
 import tw, { styled } from 'twin.macro'
@@ -16,6 +17,10 @@ const TABS_WRAPPER = styled.div<{ $isLocked: boolean }>`
     > div {
       width: 34%;
       height: 100%;
+    }
+
+    .disable {
+      cursor: not-allowed;
     }
   }
   .tab {
@@ -97,7 +102,7 @@ const WRAPPER = styled.div<{ $height: boolean }>`
 
 const ACCOUNT_ROW = styled.div<{ $height: boolean }>`
   ${tw`flex flex-row justify-between items-start`}
-  margin-bottom: ${({ $height }) => ($height > 900 ? '18px' : '12px')};
+  margin-bottom: ${({ $height }) => ($height > 900 ? '18px' : '16px')};
   line-height: normal;
   .key {
     ${tw`text-tiny font-semibold text-[#636363] dark:text-[#B5B5B5]`}
@@ -150,7 +155,7 @@ const FEES = styled.div<{ $height: boolean }>`
     }
   }
   .disclaimer {
-    ${tw`text-[9px] font-medium mb-3 text-gray-2`}
+    ${tw`text-[9px] font-medium mb-2 text-gray-2`}
   }
 `
 
@@ -213,12 +218,12 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
         </div>
         {getHealthData()}
       </ACCOUNT_ROW>
-      <ACCOUNT_ROW $height={height}>
+      {/* <ACCOUNT_ROW $height={height}>
         <div className="tooltip-row">
           <span className="key">{isSolAccount ? 'Balance' : 'Balances'}</span>
-          {/* <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+          <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
               The health bar shows how close you are to being liquidated.{' '}
-          </Tooltip> */}
+          </Tooltip>
         </div>
         {isSolAccount ? (
           <span className="value">{currentMarketBalance}</span>
@@ -229,7 +234,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
             <span className="value">1,888.55 USDC</span>
           </div>
         )}
-      </ACCOUNT_ROW>
+      </ACCOUNT_ROW> */}
       <ACCOUNT_ROW $height={height}>
         <div className="tooltip-row">
           <span
@@ -251,7 +256,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>
         <div className="tooltip-row">
-          <span className="key">Collateral Available</span>
+          <span className="key">Balance</span>
           <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
             Balance refers to the total value of your cash balance that you can use as collateral for opening new
             positions or maintaining existing ones.{' '}
@@ -334,8 +339,14 @@ export const CollateralPanel: FC = (): JSX.Element => {
           {tabs.map((item, index) => (
             <div
               key={index}
-              className={index === activeTab ? 'active tab' : 'tab'}
-              onClick={() => setActiveTab(index)}
+              className={index === activeTab ? 'active tab' : index === 1 ? 'tab disable' : 'tab'}
+              onClick={
+                index === 1
+                  ? () => {
+                      null
+                    }
+                  : () => setActiveTab(index)
+              }
             >
               <div className="white-background">
                 <div className={index === activeTab ? 'field activeTab' : 'field'}>{item}</div>

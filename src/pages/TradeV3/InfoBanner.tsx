@@ -74,43 +74,56 @@ const INFO_STATS = styled.div`
 `
 
 const LOCK_LAYOUT_CTN = styled.div<{ $isLocked: boolean; isSpot: boolean }>`
-  ${tw`h-10 w-[65px] ml-3.75 rounded-[36px] text-center cursor-pointer pt-px pl-px`}
+  ${tw`h-10 w-[65px] ml-3.75 rounded-[36px] text-center cursor-pointer p-0.5`}
   height: 40px;
   width: 65px;
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-  background: ${({ $isLocked }) =>
-    $isLocked ? '' : 'linear-gradient(90deg, rgba(247, 147, 26, 0.3) 12.88%, rgba(220, 31, 255, 0.3) 100%)'};
+  background: 'linear-gradient(90deg, rgba(247, 147, 26, 0.3) 12.88%, rgba(220, 31, 255, 0.3) 100%)'};
   margin-left: ${({ $isSpot }) => ($isSpot ? 'auto' : '15px')};
+
+  .white-background{
+    ${tw`h-full w-full rounded-[36px]`}
+    background: ${({ theme }) => theme.bg20};
+  }
 `
 
 const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
   ${tw`w-[63px] leading-[38px] rounded-[36px] text-center`}
   background-color: ${({ theme }) => theme.bg20};
-  background: ${({ $isLocked }) =>
-    $isLocked ? '' : 'linear-gradient(90deg, rgba(247, 147, 26, 0.3) 12.88%, rgba(220, 31, 255, 0.3) 100%)'};
+  background: linear-gradient(90deg, rgba(247, 147, 26, 0.3) 12.88%, rgba(220, 31, 255, 0.3) 100%);
   img {
     ${tw`relative bottom-0.5`}
   }
 `
 const DEPOSIT_WRAPPER = styled.div`
-  ${tw`w-[158px] h-10 rounded-[36px] flex items-center justify-center cursor-pointer p-px ml-auto`}
+  ${tw`w-[158px] h-10 rounded-[36px] flex items-center justify-center cursor-pointer p-0.5 ml-auto`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
+
+  .white-background {
+    ${tw`h-full w-full rounded-[36px]`}
+    background: ${({ theme }) => theme.bg20};
+  }
 `
 
 const DEPOSIT_BTN = styled.div`
   ${tw`w-full h-full rounded-[36px] flex items-center justify-center text-tiny font-semibold`}
-  background: ${({ theme }) => theme.bg20};
+  background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
   color: ${({ theme }) => theme.text11};
 `
 
 const RESET_LAYOUT_BUTTON_CTN = styled.div`
-  ${tw`w-[130px] cursor-pointer h-10 p-px rounded-[36px] flex items-center justify-center ml-auto mr-3.75`}
+  ${tw`w-[130px] cursor-pointer h-10 p-0.5 rounded-[36px] flex items-center justify-center ml-auto mr-3.75`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
+
+  .white-background {
+    ${tw`h-full w-full rounded-[36px]`}
+    background: ${({ theme }) => theme.bg20};
+  }
 `
 
 const RESET_LAYOUT_BUTTON = styled.div`
   ${tw`h-[38px] w-full rounded-[36px] text-tiny flex items-center justify-center font-semibold`}
-  background: ${({ theme }) => theme.bg20};
+  background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
   color: ${({ theme }) => theme.text11};
 `
 
@@ -356,18 +369,24 @@ export const InfoBanner: FC<{
       )}
       {isLocked ? null : (
         <RESET_LAYOUT_BUTTON_CTN>
-          <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>
+          <div className="white-background">
+            <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>
+          </div>
         </RESET_LAYOUT_BUTTON_CTN>
       )}
       {!isSpot && (
         <DEPOSIT_WRAPPER>
-          <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
+          <div className="white-background">
+            <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
+          </div>
         </DEPOSIT_WRAPPER>
       )}
       <LOCK_LAYOUT_CTN $isLocked={isLocked} $isSpot={isSpot} onClick={() => setIsLocked(!isLocked)}>
-        <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
-          <img src={isLocked ? `/img/assets/${mode}_lock.svg` : `/img/assets/${mode}_unlock.svg`} alt="lock" />
-        </LOCK_LAYOUT>
+        <div className="white-background">
+          <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
+            <img src={isLocked ? `/img/assets/${mode}_lock.svg` : `/img/assets/${mode}_unlock.svg`} alt="lock" />
+          </LOCK_LAYOUT>
+        </div>
       </LOCK_LAYOUT_CTN>
     </INFO_WRAPPER>
   )

@@ -29,7 +29,7 @@ const WRAPPER = styled.div`
   }
 
   .submit-btn {
-    ${tw`block h-[50px] w-[222px] rounded-circle mx-auto mt-6 mb-0 font-semibold 
+    ${tw`block h-[50px] w-[222px] rounded-circle mx-auto my-3.5 font-semibold 
       text-average border-0 border-none bg-[#5855ff]`}
     color: ${({ theme }) => theme.white};
     outline: none;
