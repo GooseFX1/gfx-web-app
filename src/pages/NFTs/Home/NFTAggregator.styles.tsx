@@ -89,13 +89,13 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
     ${({ theme }) => theme.customScrollBar('4px')}
   }
   th {
-    color: #636363 !important;
-    background: #1e1e1e;
+    /* color: #636363 !important; */
+    ${tw`dark:bg-[#1e1e1e] bg-[#3c3c3c] dark:text-[#636363] text-[#b5b5b5]`}
     padding-top: 15px;
   }
   td {
     text-align: center;
-    ${tw`text-[15px] font-semibold`}
+    ${tw`text-[15px] font-semibold text-center`}
     color: ${({ theme }) => theme.text29};
     /* padding-top: 25px; */
   }

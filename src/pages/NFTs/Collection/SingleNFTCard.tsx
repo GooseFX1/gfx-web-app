@@ -22,6 +22,7 @@ import { minimizeTheString } from '../../../web3/nfts/utils'
 import { useHistory } from 'react-router-dom'
 import { notify } from '../../../utils'
 import { genericErrMsg } from '../../Farm/FarmClickHandler'
+import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 
 export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any; lastCardRef: any }> = ({
   item,
@@ -34,6 +35,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   const { connection } = useConnectionConfig()
   const { singleCollection } = useNFTCollections()
   const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral } = useNFTDetails()
+  const [apprisalPopup, setGFXApprisalPopup] = useState<boolean>(false)
 
   const [hover, setHover] = useState<boolean>(false)
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
@@ -98,77 +100,90 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
     }
   }, [item])
 
-  return (
-    <div className="gridItem" key={index} onClick={() => goToDetails(item)} ref={lastCardRef}>
-      <div className="gridItemContainer" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-        {hover && (
-          <HoverOnNFT
-            item={item}
-            setNFTDetailsBeforeLocate={setNFTDetailsBeforeLocate}
-            addNftToBag={addNftToBag}
-            hasAsk={localAsk !== undefined}
-          />
-        )}
-        {isLoadingBeforeRelocate && <LoadingDiv />}
-        {item ? (
-          <img className="nftImg" src={item.image_url} alt="nft" />
-        ) : (
-          <SkeletonCommon width="100%" height="auto" />
-        )}
-      </div>
-      <div className="nftTextContainer">
-        <div className="collectionId">
-          {nftId !== -1 && (
-            <div>
-              {nftId ? '#' + nftId : <SkeletonCommon width="50px" height="20px" style={{ marginTop: 10 }} />}
-              {item.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
-            </div>
-          )}
+  const handleInfoIconClicked = (e) => {
+    setGFXApprisalPopup(true)
+    e.stopPropagation()
+    e.preventDefault()
+  }
 
-          {localAsk && (
-            <img
-              className="ah-name"
-              src={`/img/assets/Aggregator/${AH_PROGRAM_IDS[localAsk.auction_house_key]}.svg`}
+  return (
+    <>
+      <GFXApprisalPopup showTerms={apprisalPopup} setShowTerms={setGFXApprisalPopup} />
+      <div className="gridItem" key={index} onClick={() => goToDetails(item)} ref={lastCardRef}>
+        <div
+          className="gridItemContainer"
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+        >
+          {hover && (
+            <HoverOnNFT
+              item={item}
+              setNFTDetailsBeforeLocate={setNFTDetailsBeforeLocate}
+              addNftToBag={addNftToBag}
+              hasAsk={localAsk !== undefined}
             />
           )}
+          {isLoadingBeforeRelocate && <LoadingDiv />}
+          {item ? (
+            <img className="nftImg" src={item.image_url} alt="nft" />
+          ) : (
+            <SkeletonCommon width="100%" height="auto" />
+          )}
         </div>
+        <div className="nftTextContainer">
+          <div className="collectionId">
+            {nftId !== -1 && (
+              <div>
+                {nftId ? '#' + nftId : <SkeletonCommon width="50px" height="20px" style={{ marginTop: 10 }} />}
+                {item.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
+              </div>
+            )}
 
-        {singleCollection ? (
-          <GradientText
-            text={minimizeTheString(singleCollection.collection[0].collection_name)}
-            fontSize={15}
-            fontWeight={600}
-          />
-        ) : (
-          <SkeletonCommon width="100px" height="20px" style={{ marginTop: 10 }} />
-        )}
+            {localAsk && (
+              <img
+                className="ah-name"
+                src={`/img/assets/Aggregator/${AH_PROGRAM_IDS[localAsk.auction_house_key]}.svg`}
+              />
+            )}
+          </div>
 
-        <div className="nftPrice">
-          {localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 'No Ask'}
-          {localAsk && <img src={`/img/crypto/SOL.svg`} alt={'SOL'} />}
-        </div>
-        <div className="apprisalPrice">
-          {'NA'}
-          {localAsk && <img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'SOL'} />}
-        </div>
-        {sessionUser &&
-          (isFavorite ? (
-            <img
-              className="ls-favorite-heart"
-              src={`/img/assets/heart-red.svg`}
-              alt="heart-red"
-              onClick={() => console.log('unlike')}
+          {singleCollection ? (
+            <GradientText
+              text={minimizeTheString(singleCollection.collection[0].collection_name)}
+              fontSize={15}
+              fontWeight={600}
             />
           ) : (
-            <img
-              className="ls-favorite-heart"
-              src={`/img/assets/heart-empty.svg`}
-              alt="heart-empty"
-              onClick={() => console.log('like')}
-            />
-          ))}
+            <SkeletonCommon width="100px" height="20px" style={{ marginTop: 10 }} />
+          )}
+
+          <div className="nftPrice">
+            {localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 'No Ask'}
+            {localAsk && <img src={`/img/crypto/SOL.svg`} alt={'SOL'} />}
+          </div>
+          <div className="apprisalPrice" onClick={(e) => handleInfoIconClicked(e)}>
+            {'NA'}
+            {localAsk && <img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'SOL'} />}
+          </div>
+          {sessionUser &&
+            (isFavorite ? (
+              <img
+                className="ls-favorite-heart"
+                src={`/img/assets/heart-red.svg`}
+                alt="heart-red"
+                onClick={() => console.log('unlike')}
+              />
+            ) : (
+              <img
+                className="ls-favorite-heart"
+                src={`/img/assets/heart-empty.svg`}
+                alt="heart-empty"
+                onClick={() => console.log('like')}
+              />
+            ))}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
