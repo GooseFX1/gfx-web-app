@@ -5,7 +5,7 @@ import { useCrypto, usePriceFeed, useDarkMode, useOrderBook } from '../../contex
 import { DropdownPairs } from './DropdownPairs'
 import { DepositWithdraw } from './perps/DepositWithdraw'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
-import { getPerpsPrice } from './perps/utils'
+import { getPerpsPrice, truncateBigNumber } from './perps/utils'
 import { useTraderConfig } from '../../context/trader_risk_group'
 
 const SETTING_MODAL = styled(PopupCustom)`
@@ -207,20 +207,28 @@ export const InfoBanner: FC<{
   const tokenInfos = useMemo(() => tokenInfo[selectedCrypto.pair], [tokenInfo[selectedCrypto.pair]])
   const formatDisplayVolume = (volume) => {
     if (!volume) return null
-    const stringLength = volume.length
-    if (stringLength < 6) return volume
-    else {
-      const [numberBeforeDecimal, numberAfterDecimal] = volume.split('.'),
-        reverseNumber = numberBeforeDecimal.split('').reverse().join('')
-      let answer = ''
-      for (let i = 0; i < reverseNumber.length; i++) {
-        answer += reverseNumber.substring(i, i + 1)
-        if (i % 3 === 2 && i !== reverseNumber.length - 1) answer = answer + ','
-      }
-      const reversedResult = answer.split('').reverse().join('')
-      return reversedResult + '.' + numberAfterDecimal
-    }
+    //const stringLength = volume.length
+    //if (stringLength < 6) return volume
+    //else {
+    //  const [numberBeforeDecimal, numberAfterDecimal] = volume.split('.'),
+    //    reverseNumber = numberBeforeDecimal.split('').reverse().join('')
+    //  let answer = ''
+    //  for (let i = 0; i < reverseNumber.length; i++) {
+    //    answer += reverseNumber.substring(i, i + 1)
+    //    if (i % 3 === 2 && i !== reverseNumber.length - 1) answer = answer + ','
+    //  }
+    //  const reversedResult = answer.split('').reverse().join('')
+    //  return reversedResult + '.' + numberAfterDecimal
+    return truncateBigNumber(volume)
   }
+
+  const openInterestFormatted = useMemo(() => {
+    if (!isSpot) {
+      const num = Number(traderInfo.openInterests)
+      if (!num) return '0.00'
+      else return truncateBigNumber(num)
+    } else return '0.00'
+  }, [traderInfo.openInterests, isSpot])
 
   const calculateRangeValue = (range, marketData) => {
     if (!range || !range.min || !range.max || !marketData || !marketData.current) return { bars: 0 }
@@ -257,15 +265,6 @@ export const InfoBanner: FC<{
       return !oPrice ? <Loader /> : <span>$ {oPrice}</span>
     }
   }, [isSpot, selectedCrypto, orderBook])
-
-  const openInterest = useMemo(() => {
-    if (isSpot) return '0'
-    else {
-      const oPrice = getPerpsPrice(orderBook)
-      const amt = (Number(traderInfo.openInterests) * oPrice).toFixed(4)
-      return amt
-    }
-  }, [traderInfo.openInterests, orderBook, isSpot])
 
   const handleToggle = (e) => {
     if (e === 'spot') setIsSpot(true)
@@ -363,7 +362,7 @@ export const InfoBanner: FC<{
         <INFO_STATS>
           <>
             <div>Open Interest</div>
-            {!traderInfo.openInterests ? <Loader /> : <div>$ {openInterest}</div>}
+            {!traderInfo.openInterests ? <Loader /> : <div>$ {openInterestFormatted}</div>}
           </>
         </INFO_STATS>
       )}
