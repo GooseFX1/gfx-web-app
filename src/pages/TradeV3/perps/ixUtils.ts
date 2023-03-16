@@ -317,7 +317,7 @@ export const initializeTraderFeeAcctIx = (args) => {
 }
 
 export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Keypair) => {
-  let instructions = []
+  const instructions = []
   const riskStateAccount = anchor.web3.Keypair.generate()
   const traderRiskGroup = trgKey ?? anchor.web3.Keypair.generate()
   const traderFeeAcct = getTraderFeeAcct(traderRiskGroup.publicKey)
@@ -325,7 +325,8 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
 
   const mint = new PublicKey(VAULT_MINT)
   const associatedTokenAddress = await findAssociatedTokenAddress(wallet.publicKey, mint)
-  if (!associatedTokenAddress) {
+  const res = await connection.getAccountInfo(associatedTokenAddress)
+  if (!res) {
     instructions.push(
       createAssociatedTokenAccountInstruction(
         wallet.publicKey, // payer
@@ -337,7 +338,7 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
     //const res = await sendPerpsTransaction(connection, wallet, instructions, [])
     //console.log(res)
   }
-  instructions = []
+  //instructions = []
   instructions.push(
     initializeTraderFeeAcctIx({
       payer: wallet.publicKey,
