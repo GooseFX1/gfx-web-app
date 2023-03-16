@@ -181,10 +181,22 @@ const TOTAL_SELECTOR = styled.div`
 const LEVERAGE_WRAPPER = styled.div`
   ${tw`pl-2 w-11/12 text-left mt-[-8px]`}
   .ant-slider-rail {
-    left: 3%;
+    ${tw`h-[6px]`}
   }
   .ant-slider-with-marks {
     ${tw`mb-2`}
+  }
+  .ant-slider-step {
+    .ant-slider-dot {
+      margin-left: 0px !important;
+      height: 9px !important;
+      width: 9px !important;
+    }
+  }
+  .ant-slider-mark {
+    .ant-slider-mark-text {
+      margin-left: 0px;
+    }
   }
   .leverageText {
     ${tw`text-regular dark:text-[#B5B5B5] text-[#636363] pl-2 font-semibold`}
@@ -319,7 +331,7 @@ export const PlaceOrder: FC = () => {
   const { getUIAmount } = useAccounts()
   const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isSpot } = useCrypto()
   const { order, setOrder, focused, setFocused, placeOrder } = useOrder()
-  const { newOrder, traderInfo } = useTraderConfig()
+  const { traderInfo } = useTraderConfig()
   const { orderBook } = useOrderBook()
   const [selectedTotal, setSelectedTotal] = useState<number>(null)
   const [arrowRotation, setArrowRotation] = useState(false)
@@ -467,9 +479,12 @@ export const PlaceOrder: FC = () => {
       setFocused('price')
       setOrder((prev) => ({ ...prev, price: traderInfo.onChainPrice }))
     }
+    let newE = e
+    if (e > 9.7) newE = e * 0.97
     if (Number(order.price) <= Number(traderInfo.onChainPrice)) {
       const initLeverage = Number(traderInfo.currentLeverage)
-      let newLev = e - initLeverage
+
+      let newLev = newE - initLeverage
       if (newLev < 0) return
       setFocused('size')
       const availLeverage = Number(traderInfo.availableLeverage)
@@ -479,7 +494,7 @@ export const PlaceOrder: FC = () => {
       setOrder((prev) => ({ ...prev, size: percentage2.toFixed(2) }))
     } else {
       const initLeverage = Number(traderInfo.currentLeverage)
-      let newLev = e - initLeverage
+      let newLev = newE - initLeverage
       if (newLev < 0) return
       setFocused('total')
       const availLeverage = Number(traderInfo.availableLeverage)

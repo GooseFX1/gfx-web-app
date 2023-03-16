@@ -313,12 +313,16 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } catch (e) {
       console.log('margin available error: ', e)
     }
-    const pnl = wasm.unrealised_pnl(mpg.data, trg.data, BigInt(0))
-    const pnlFrac = new Fractional({
-      m: new anchor.BN(pnl.m.toString()),
-      exp: new anchor.BN(Number(pnl.exp.toString()) + 5)
-    })
-    setPnl(displayFractional(pnlFrac))
+    try {
+      const pnl = wasm.unrealised_pnl(mpg.data, trg.data, BigInt(0))
+      const pnlFrac = new Fractional({
+        m: new anchor.BN(pnl.m.toString()),
+        exp: new anchor.BN(Number(pnl.exp.toString()) + 5)
+      })
+      setPnl(displayFractional(pnlFrac))
+    } catch (e) {
+      console.log('error in pnl: ', e)
+    }
     try {
       const res2 = wasm.get_liquidation_price(mpg.data, trg.data, BigInt(0))
       const liq = new Fractional({ m: new anchor.BN(res2.m.toString()), exp: new anchor.BN(res2.exp.toString()) })
