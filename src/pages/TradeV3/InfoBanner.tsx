@@ -48,6 +48,10 @@ const INFO_WRAPPER = styled.div`
 `
 const INFO_STATS = styled.div`
   ${tw`ml-[30px] leading-5`}
+  .barContainer {
+    display: inline-flex;
+    align-items: center;
+  }
   div:first-child {
     ${tw`text-tiny font-medium`}
     color: ${({ theme }) => theme.text22};
@@ -220,10 +224,18 @@ export const InfoBanner: FC<{
   }, [traderInfo.openInterests, isSpot])
 
   const calculateRangeValue = (range, marketData) => {
-    if (!range || !range.min || !range.max || !marketData || !marketData.current) return { bars: 0 }
+    const priceO = isSpot ? marketData : getPerpsPrice(orderBook)
+    if (
+      !range ||
+      !range.min ||
+      !range.max ||
+      (isSpot && (!marketData || !marketData.current)) ||
+      (!isSpot && !priceO)
+    )
+      return { bars: 0 }
     const difference = +range.max - +range.min,
       size = difference / 6,
-      price = marketData.current
+      price = isSpot ? marketData.current : priceO
     let bars = 0
 
     for (let i = 0; i < 6; i++) {
@@ -239,7 +251,7 @@ export const InfoBanner: FC<{
   const displayVolume = useMemo(() => formatDisplayVolume(volume), [selectedCrypto.pair, volume])
 
   const range = tokenInfos && tokenInfos.range,
-    bars = useMemo(() => calculateRangeValue(range, marketData), [selectedCrypto.pair, range])
+    bars = useMemo(() => calculateRangeValue(range, marketData), [selectedCrypto.pair, range, isSpot, orderBook])
 
   const changeValue = tokenInfos ? tokenInfos.change : ' '
   let classNameChange = ''
@@ -337,7 +349,7 @@ export const InfoBanner: FC<{
         ) : (
           <div>
             <span>$ {range.min}</span>
-            <span>
+            <span className="barContainer">
               {[0, 1, 2, 3, 4, 5].map((item, index) => {
                 if (item < bars) return <div key={index} className="verticalLines coloured"></div>
                 else return <div key={index} className="verticalLines grey"></div>
