@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import { useNavCollapse, useCrypto, useDarkMode } from '../../context'
 import { OrderbookTabs } from './OrderbookTabs'
 import { TVChartContainer } from '../Crypto/TradingView/TradingView'
@@ -103,6 +103,7 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean; $
     ${tw`border-solid border-2 p-0 rounded-[10px]`}
     border-color: #ff8c00;
     z-index: 100;
+    border-bottom-right-radius: 0;
   }
   .space-cont {
     padding: 2.5px;
@@ -202,13 +203,6 @@ export const CryptoContent: FC = () => {
   const { mode } = useDarkMode()
   const { selectedCrypto } = useCrypto()
   const { wallet } = useWallet()
-
-  // useEffect(() => {
-  //   if (selectedCrypto.type === 'perps') setLayout({ lg: componentDimensions })
-  //   else {
-  //     setLayout({ lg: componentDimensions.slice(0, 4) })
-  //   }
-  // }, [selectedCrypto])
 
   const chartContainer = useMemo(
     () => <TVChartContainer symbol={selectedCrypto.pair} visible={true} />,
@@ -320,7 +314,7 @@ export const CryptoContent: FC = () => {
               <CollateralPanel />
             ) : (
               <PERPS_INFO $wallet={wallet} $isLocked={isLocked}>
-                <img src="/img/assets/perpsInfo.png" alt="perps-info" />
+                <img src="/img/assets/perpsInfo.svg" alt="perps-info" />
                 <div>
                   See your account details <br /> exclusively on Perps.
                 </div>

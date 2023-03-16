@@ -78,10 +78,10 @@ const LOCK_LAYOUT_CTN = styled.div<{ $isLocked: boolean; isSpot: boolean }>`
   height: 40px;
   width: 65px;
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-  background: 'linear-gradient(90deg, rgba(247, 147, 26, 0.3) 12.88%, rgba(220, 31, 255, 0.3) 100%)'};
-  margin-left: ${({ $isSpot }) => ($isSpot ? 'auto' : '15px')};
+  margin-left: ${({ $isSpot, $isLocked }) =>
+    $isSpot && $isLocked ? 'auto' : $isSpot && !$isLocked ? '10px' : '15px'};
 
-  .white-background{
+  .white-background {
     ${tw`h-full w-full rounded-[36px]`}
     background: ${({ theme }) => theme.bg20};
   }
@@ -89,7 +89,6 @@ const LOCK_LAYOUT_CTN = styled.div<{ $isLocked: boolean; isSpot: boolean }>`
 
 const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
   ${tw`w-[63px] leading-[38px] rounded-[36px] text-center`}
-  background-color: ${({ theme }) => theme.bg20};
   background: linear-gradient(90deg, rgba(247, 147, 26, 0.3) 12.88%, rgba(220, 31, 255, 0.3) 100%);
   img {
     ${tw`relative bottom-0.5`}
@@ -98,6 +97,7 @@ const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
 const DEPOSIT_WRAPPER = styled.div`
   ${tw`w-[158px] h-10 rounded-[36px] flex items-center justify-center cursor-pointer p-0.5 ml-auto`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
+  margin-left: ${({ $isLocked }) => ($isLocked ? 'auto' : '0')};
 
   .white-background {
     ${tw`h-full w-full rounded-[36px]`}
@@ -111,19 +111,8 @@ const DEPOSIT_BTN = styled.div`
   color: ${({ theme }) => theme.text11};
 `
 
-const RESET_LAYOUT_BUTTON_CTN = styled.div`
-  ${tw`w-[130px] cursor-pointer h-10 p-0.5 rounded-[36px] flex items-center justify-center ml-auto mr-3.75`}
-  background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-
-  .white-background {
-    ${tw`h-full w-full rounded-[36px]`}
-    background: ${({ theme }) => theme.bg20};
-  }
-`
-
 const RESET_LAYOUT_BUTTON = styled.div`
-  ${tw`h-[38px] w-full rounded-[36px] text-tiny flex items-center justify-center font-semibold`}
-  background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
+  ${tw`h-[38px] text-tiny text-center flex items-center font-semibold underline cursor-pointer ml-auto`}
   color: ${({ theme }) => theme.text11};
 `
 
@@ -366,15 +355,9 @@ export const InfoBanner: FC<{
           </>
         </INFO_STATS>
       )}
-      {isLocked ? null : (
-        <RESET_LAYOUT_BUTTON_CTN>
-          <div className="white-background">
-            <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>
-          </div>
-        </RESET_LAYOUT_BUTTON_CTN>
-      )}
+      {isLocked ? null : <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>}
       {!isSpot && (
-        <DEPOSIT_WRAPPER>
+        <DEPOSIT_WRAPPER $isLocked={isLocked}>
           <div className="white-background">
             <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
           </div>

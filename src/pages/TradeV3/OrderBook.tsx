@@ -10,9 +10,8 @@ import tw from 'twin.macro'
 const SPREADS = [1 / 100, 5 / 100, 1 / 10, 5 / 10, 1]
 
 const HEADER = styled.div`
-  ${tw`h-[31px] w-full p-0 text-xs h-7 border-solid border-r border-b border-l`}
-  border-top: none;
-  border-color: #3c3c3c;
+  ${tw`h-[31px] w-full p-0 text-xs h-7`}
+  border-bottom: 1px solid #3c3c3c;
   & div {
     ${tw`flex justify-between items-center h-full px-2 dark:text-[#B5B5B5] text-[#636363]`}
 

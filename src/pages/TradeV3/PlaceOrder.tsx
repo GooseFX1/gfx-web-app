@@ -162,10 +162,6 @@ const INPUT_WRAPPER = styled.div`
     background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
     border-radius: 5px;
     padding: 1px;
-
-    .ant-input-affix-wrapper {
-      height: 28px;
-    }
   }
 `
 
