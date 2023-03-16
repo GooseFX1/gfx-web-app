@@ -44,7 +44,8 @@ export const TradeConfirmation: FC<{ setVisibility: any }> = ({ setVisibility })
   }, [notionalValue])
 
   const total = useMemo(() => {
-    if (Number(notionalValue) && Number(fee)) return (Number(notionalValue) + Number(fee)).toFixed(2)
+    if (Number(notionalValue) && !Number.isNaN(Number(fee)))
+      return (Number(notionalValue) + Number(fee)).toFixed(2)
     else return '-'
   }, [notionalValue, fee])
 

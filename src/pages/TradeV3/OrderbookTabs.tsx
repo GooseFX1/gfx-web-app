@@ -35,14 +35,14 @@ const HEADER_WRAPPER = styled.div`
       position: relative;
       color: ${({ theme }) => theme.text1} !important;
       .ant-radio-button.ant-radio-button-checked {
-        top: 1px;
-        left: 1px;
+        //top: 1px;
+        //left: 1px;
 
         ${tw`flex justify-center items-center absolute`}
       }
     }
     .individualTabs {
-      ${tw`w-full text-center h-7 flex justify-center items-center dark:text-[#B5B5B5] text-[#636363]`}
+      ${tw`w-full text-center h-full flex justify-center items-center dark:text-[#B5B5B5] text-[#636363]`}
       background: ${({ theme }) => theme.bg20} !important;
     }
     .activeTab {
@@ -58,10 +58,10 @@ const HEADER_WRAPPER = styled.div`
       ${tw`h-7 w-2/12 flex justify-center items-center text-xs`}
     }
     .container {
-      ${tw`h-full w-full py-0.5`}
+      ${tw`h-8 w-full py-[1px]`}
     }
     .active-field {
-      ${tw`p-0.5`}
+      ${tw`p-[2px]`}
       background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
     }
   }
