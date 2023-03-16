@@ -187,9 +187,14 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
     )
   }, [traderInfo])
 
+  const accountHealth = useMemo(() => {
+    const health = Number(traderInfo.health)
+    if (health) return health
+    return 100
+  }, [traderInfo.health])
+
   const getHealthData = () => {
-    //DELETE: hardcoded percent
-    const percent = 31
+    const percent = accountHealth
     let barColour = ''
     if (percent <= 20) barColour = 'red'
     else if (percent > 20 && percent <= 80) barColour = 'yellow'

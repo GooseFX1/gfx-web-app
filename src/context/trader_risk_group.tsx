@@ -130,6 +130,7 @@ interface ITraderRiskGroup {
   availableLeverage: string
   onChainPrice: string
   openInterests: string
+  health: string
 }
 
 interface ICollateralInfo {
@@ -249,6 +250,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [maxQty, setMaxQty] = useState<string>('0.1')
   const [onChainPrice, setOnChainPrice] = useState<string>('0')
   const [openInterests, setOpenInterests] = useState<string>('0')
+  const [accountHealth, setAccountHealth] = useState<string>('100')
 
   const [initTesting, setInitTesting] = useState<boolean>(false)
 
@@ -364,6 +366,19 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setOpenInterests(displayFractional(re2))
     } catch (e) {
       console.log(e)
+    }
+    try {
+      const re = wasm.get_health(mpg.data, trg.data)
+      const re2 = new Fractional({
+        m: new anchor.BN(re.m.toString()),
+        exp: new anchor.BN(re.exp.toString())
+      })
+      const lessHealth = Number(displayFractional(re2))
+      if (lessHealth && lessHealth < 0) {
+        setAccountHealth((100 + lessHealth).toFixed(2))
+      }
+    } catch (e) {
+      //console.log('health error:', e)
     }
   }
 
@@ -682,7 +697,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           maxQuantity: maxQty,
           onChainPrice: onChainPrice,
           availableLeverage: availableLeverage,
-          openInterests: openInterests
+          openInterests: openInterests,
+          health: accountHealth
         },
         marketProductGroup: marketProductGroup,
         marketProductGroupKey: currentMPG,

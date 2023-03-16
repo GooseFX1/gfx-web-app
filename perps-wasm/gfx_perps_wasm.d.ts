@@ -58,6 +58,12 @@ export function get_max_quantity(market_product_group_byte: Uint8Array, trader_r
 */
 export function get_open_interests(market_product_group_byte: Uint8Array, prod_index: bigint): Fractional;
 /**
+* @param {Uint8Array} market_product_group_byte
+* @param {Uint8Array} trader_risk_group_byte
+* @returns {Fractional}
+*/
+export function get_health(market_product_group_byte: Uint8Array, trader_risk_group_byte: Uint8Array): Fractional;
+/**
 * @param {Uint8Array} data
 * @param {bigint} callback_info_len
 * @param {bigint} slot_size

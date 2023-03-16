@@ -272,7 +272,8 @@ export const DepositWithdraw: FC<{
         disabled={
           tradeType !== 'deposit'
             ? !traderInfo.marginAvailable || +traderInfo.marginAvailable < +amount || !amount
-            : !tokenAmount || !tokenAmount.uiAmountString || +tokenAmount.uiAmountString < +amount || !amount
+            : //: !tokenAmount || !tokenAmount.uiAmountString || +tokenAmount.uiAmountString < +amount || !amount
+              false
         }
       >
         {tradeType === 'deposit' ? 'Deposit' : 'Withdraw'}

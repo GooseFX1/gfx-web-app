@@ -15,6 +15,7 @@ export function get_leverage_used(a: number, b: number, c: number, d: number, e:
 export function get_leverage_available(a: number, b: number, c: number, d: number, e: number): void;
 export function get_max_quantity(a: number, b: number, c: number, d: number, e: number, f: number): void;
 export function get_open_interests(a: number, b: number, c: number, d: number): void;
+export function get_health(a: number, b: number, c: number, d: number, e: number): void;
 export function find_max(a: number, b: number, c: number, d: number, e: number, f: number): void;
 export function find_min(a: number, b: number, c: number, d: number, e: number, f: number): void;
 export function find_l2_depth(a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number): void;

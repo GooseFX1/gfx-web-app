@@ -118,9 +118,10 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
       sellPrice = exitPrice
     if (!sellPrice || !Number(averagePrice)) return <span>-</span>
     const side = traderInfo.averagePosition.side
-    const difference = side === 'sell' ? sellPrice - Number(averagePrice) : Number(averagePrice) - sellPrice
-    const totalPnl = difference * Number(displayFractional(totalExitQty))
+    const difference = side === 'buy' ? sellPrice - Number(averagePrice) : Number(averagePrice) - sellPrice
+    let totalPnl = difference * Number(displayFractional(totalExitQty))
 
+    totalPnl = side === 'sell' ? totalPnl * -1 : totalPnl
     const isNegative = totalPnl < 0
     return (
       <span className={isNegative ? 'negative' : 'positive'}>
@@ -189,11 +190,12 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
         </ROW>
       </div>
       <Button
+        onClick={closePositionFn}
         height="50px"
         width="100%"
         cssStyle={tw`bg-blue-1 dark:text-white font-semibold border-0 rounded-circle text-regular`}
       >
-        <span onClick={closePositionFn}>
+        <span>
           {loading ? (
             <RotatingLoader text="" textSize={12} iconSize={30} iconColor="white" />
           ) : (

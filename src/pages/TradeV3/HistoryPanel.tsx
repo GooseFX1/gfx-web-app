@@ -353,7 +353,7 @@ export const HistoryPanel: FC = () => {
   const { traderInfo } = useTraderConfig()
   const perpsPrice = useMemo(() => getPerpsPrice(orderBook), [orderBook])
   const notionalSize = useMemo(
-    () => (Number(traderInfo.averagePosition.quantity) * perpsPrice).toFixed(2),
+    () => (Number(traderInfo.averagePosition.quantity) * perpsPrice).toFixed(3),
     [perpsPrice, traderInfo.averagePosition.quantity]
   )
 
@@ -393,6 +393,13 @@ export const HistoryPanel: FC = () => {
     quoteAvailable = market?.quoteSplSizeToNumber(openOrder.quoteTokenFree)
     quoteBalance = market?.quoteSplSizeToNumber(openOrder.quoteTokenTotal.sub(openOrder.quoteTokenFree))
   }
+
+  const roundedSize = useMemo(() => {
+    const size = Number(traderInfo.averagePosition.quantity)
+    if (size) {
+      return size.toFixed(3)
+    }
+  }, [traderInfo])
 
   return (
     <>
@@ -464,7 +471,7 @@ export const HistoryPanel: FC = () => {
                     {traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}
                   </span>
                   <span>{traderInfo.averagePosition.price}</span>
-                  <span>{traderInfo.averagePosition.quantity}</span>
+                  <span>{roundedSize}</span>
                   <span>{perpsPrice}</span>
                   <span>{notionalSize}</span>
                   <span>{Number(traderInfo.liquidationPrice).toFixed(2)}</span>

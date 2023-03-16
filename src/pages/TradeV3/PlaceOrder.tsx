@@ -320,7 +320,7 @@ const ORDER_CATEGORY_TYPE = [
 ]
 
 export const PlaceOrder: FC = () => {
-  const { getUIAmount, balances } = useAccounts()
+  const { getUIAmount } = useAccounts()
   const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isSpot } = useCrypto()
   const { order, setOrder, focused, setFocused, placeOrder } = useOrder()
   const { newOrder, traderInfo } = useTraderConfig()
@@ -461,34 +461,37 @@ export const PlaceOrder: FC = () => {
 
   const handlePlaceOrder = async () => {
     setLoading(true)
-    await newOrder()
+    setConfirmationModal(true)
+    //await newOrder()
     setLoading(false)
   }
 
   const handleSliderChange = async (e) => {
-    if (!order.price) {
+    if (!order.price || order.price === '0') {
       setFocused('price')
       setOrder((prev) => ({ ...prev, price: traderInfo.onChainPrice }))
     }
     if (Number(order.price) <= Number(traderInfo.onChainPrice)) {
       const initLeverage = Number(traderInfo.currentLeverage)
-      const newLev = e - initLeverage
+      let newLev = e - initLeverage
       if (newLev < 0) return
       setFocused('size')
       const availLeverage = Number(traderInfo.availableLeverage)
       const maxQty = Number(traderInfo.maxQuantity)
       const percentage2 = (newLev / availLeverage) * maxQty
-
+      if (newLev > availLeverage) return
       setOrder((prev) => ({ ...prev, size: percentage2.toFixed(2) }))
     } else {
       const initLeverage = Number(traderInfo.currentLeverage)
-      const newLev = e - initLeverage
+      let newLev = e - initLeverage
       if (newLev < 0) return
       setFocused('total')
       const availLeverage = Number(traderInfo.availableLeverage)
       const maxMargin = Number(traderInfo.marginAvailable)
+      if (newLev > availLeverage) {
+        newLev = availLeverage
+      }
       const percentage2 = (newLev / availLeverage) * maxMargin
-
       setOrder((prev) => ({ ...prev, total: percentage2.toFixed(2) }))
     }
   }
@@ -504,10 +507,15 @@ export const PlaceOrder: FC = () => {
   const sliderValue = useMemo(() => {
     const initLeverage = Number(traderInfo.currentLeverage)
     const availLeverage = Number(traderInfo.availableLeverage)
-    const percentage = (Number(order.size) / Number(traderInfo.maxQuantity)) * availLeverage
+    const availMargin = Number(traderInfo.marginAvailable)
+    let percentage = 0
+    if (Number(order.size) >= Number(traderInfo.maxQuantity)) percentage = availLeverage
+    else if (order.total < availMargin) percentage = (Number(order.total) / Number(availMargin)) * availLeverage
+    else percentage = availLeverage
+    //else percentage = (Number(order.size) / Number(traderInfo.maxQuantity)) * availLeverage
     if (Number(percentage)) return Number((initLeverage + percentage).toFixed(2))
     return Number(initLeverage.toFixed(2))
-  }, [order.size, traderInfo])
+  }, [order.size, traderInfo, order.total])
 
   return (
     <WRAPPER>
@@ -545,7 +553,10 @@ export const PlaceOrder: FC = () => {
               footer={null}
               title={
                 <>
-                  <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold">Market Long</span>
+                  <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold">
+                    {order.display === 'limit' ? 'Limit ' : 'Market '}
+                    {order.side === 'buy' ? 'Long' : 'Short'}
+                  </span>
                   <TITLE>SOL-PERP</TITLE>
                 </>
               }
@@ -559,7 +570,7 @@ export const PlaceOrder: FC = () => {
               }
               className={mode === 'dark' ? 'dark' : ''}
             >
-              <TradeConfirmation />
+              <TradeConfirmation setVisibility={setConfirmationModal} />
             </SETTING_MODAL>
           </>
         )}

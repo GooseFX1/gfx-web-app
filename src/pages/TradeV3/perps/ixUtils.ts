@@ -84,7 +84,7 @@ export const newOrderIx = async (
       startMessage: 'Placing order...',
       progressMessage: 'Confirming order...',
       endMessage: 'Order Placed Successfully',
-      errorMessage: 'Error in placing order'
+      errorMessage: 'Error in placing order. Please try a smaller quantity for this price!'
     })
     if (response && response.txid) {
       //  perpsNotify({
