@@ -56,9 +56,7 @@ const HEADER = styled.div`
     .pairName {
       color: ${({ theme }) => theme.text32};
       img {
-        height: 20px;
-        width: 20px;
-        margin-right: 10px;
+        ${tw`h-5 w-5 mr-2.5 mt-[-2px]`}
       }
     }
     .pairLeverage {
@@ -265,7 +263,7 @@ const SETTING_MODAL = styled(PopupCustom)`
 const TITLE = styled.span`
   font-size: 25px;
   font-weight: 600;
-  background: -webkit-linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
+  background-image: -webkit-linear-gradient(0deg, #f7931a 0%, #ac1cc7 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   line-height: 30px;

@@ -264,7 +264,8 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
           <span className="key">Balance</span>
           <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
             Balance refers to the total value of your cash balance that you can use as collateral for opening new
-            positions or maintaining existing ones.{' '}
+            positions or maintaining existing ones. A negative balance indicates a notional position size greater
+            than the amount deposited.{' '}
           </Tooltip>
         </div>
         <span className="value">{Number(traderInfo.collateralAvailable).toFixed(2)} $</span>

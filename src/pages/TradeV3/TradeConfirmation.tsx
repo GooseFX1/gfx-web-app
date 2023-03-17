@@ -11,7 +11,7 @@ const ROW = styled.div`
   ${tw`flex flex-row justify-between items-start mb-2.5`}
 
   > span {
-    ${tw`text-average font-semibold text-grey-1`}
+    ${tw`text-average font-semibold text-grey-2`}
   }
 
   .value {

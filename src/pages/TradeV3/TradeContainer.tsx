@@ -100,10 +100,9 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean; $
     }
   }
   .react-draggable-dragging {
-    ${tw`border-solid border-2 p-0 rounded-[10px]`}
+    ${tw`border-solid border-2 p-0`}
     border-color: #ff8c00;
     z-index: 100;
-    border-bottom-right-radius: 0;
   }
   .space-cont {
     padding: 2.5px;

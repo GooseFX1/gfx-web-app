@@ -139,18 +139,17 @@ const POSITIONS = styled.div`
       ${tw`w-[11.1%] inline-block`}
     }
     button {
-      ${tw`h-[30px] rounded-[12px] text-tiny font-semibold border-none m-[5px] text-white`}
-      background: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
+      ${tw`h-[30px] w-[75px] bg-red-1 rounded-tiny text-tiny font-semibold border-none m-[5px] text-white`}
       outline: none;
     }
     span:first-child {
       ${tw`text-tiny pl-3`}
     }
     .long {
-      ${tw`text-[#71c25d] text-tiny`}
+      ${tw`text-green-2 text-tiny`}
     }
     .short {
-      ${tw`text-[#f06565] text-tiny`}
+      ${tw`text-red-1 text-tiny`}
     }
   }
 `
@@ -476,7 +475,7 @@ export const HistoryPanel: FC = () => {
                   <span>{notionalSize}</span>
                   <span>{Number(traderInfo.liquidationPrice).toFixed(2)}</span>
                   <span className={pnl <= 0 ? 'short' : 'long'}>$ {pnl.toFixed(4)}</span>
-                  <button onClick={handleClosePosition}>Close Position</button>
+                  <button onClick={handleClosePosition}>Close</button>
                   {/*<button onClick={() => setClosePosition(true)}>Close Position</button>*/}
                 </div>
               ) : (
