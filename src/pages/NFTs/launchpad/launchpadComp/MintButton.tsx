@@ -35,6 +35,10 @@ const MESSAGE = styled.div`
     width: 20.5px;
     height: 20px;
   }
+  .mIcon {
+    width: 20.5px;
+    height: 20px;
+  }
 `
 
 export const MintButton: FC<{ isLive: boolean }> = ({ isLive }) => {
