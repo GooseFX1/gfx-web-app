@@ -26,8 +26,8 @@ const LOADER = () => (
 Pass all the css styles as tailwind classes in cssStyle prop */
 export const Button: FC<{
   children: ReactNode
-  height: string
-  width: string
+  height?: string
+  width?: string
   cssStyle?: TwStyle
   loading?: boolean
   disabled?: boolean
