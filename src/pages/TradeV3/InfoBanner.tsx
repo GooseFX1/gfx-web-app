@@ -101,7 +101,7 @@ const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
 const DEPOSIT_WRAPPER = styled.div`
   ${tw`w-[158px] h-10 rounded-[36px] flex items-center justify-center cursor-pointer p-0.5 ml-auto`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-  margin-left: ${({ $isLocked }) => ($isLocked ? 'auto' : '0')};
+  margin-left: ${({ $isLocked }) => ($isLocked ? 'auto' : '15px')};
 
   .white-background {
     ${tw`h-full w-full rounded-[36px]`}

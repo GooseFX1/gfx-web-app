@@ -1,57 +1,21 @@
 [
   {
     "pair": "SOL/USDC",
+    "type": "perps",
+    "coinGecko": "solana",
+    "marketAddress": "9dotty85PU6nmyXoNpZcQ8Xnmhg9ggpgf4Xveg7nVpZA"
+  },
+  {
+    "pair": "SOL/USDC",
     "type": "crypto",
     "coinGecko": "solana",
     "marketAddress": "8BnEgHoWFysVcuFFX7QztDmzuH8r5ZFvyP3sYwn1XTh6"
-  },
-  {
-    "pair": "GOFX/USDC",
-    "type": "crypto",
-    "coinGecko": "goosefx",
-    "marketAddress": "ACgDPLf4v6HqouPyAcqFo8nMogVo6axn9jmHo58rw6ox"
   },
   {
     "pair": "ETH/USDC",
     "type": "crypto",
     "coinGecko": "ethereum",
     "marketAddress": "BbJgE7HZMaDp5NTYvRh5jZSkQPVDTU8ubPFtpogUkEj4"
-  },
-  {
-    "pair": "mSOL/USDC",
-    "type": "crypto",
-    "coinGecko": "msol",
-    "marketAddress": "9Lyhks5bQQxb9EyyX55NtgKQzpM4WK7JCmeaWuQ5MoXD"
-  },
-  {
-    "pair": "scnSOL/USDC",
-    "type": "crypto",
-    "coinGecko": "socean-staked-sol",
-    "marketAddress": "3vtRgLDesutQdwotnoUuSMuKKj8YJAE85s938mGKfxXZ"
-  },
-  {
-    "pair": "stSOL/USDC",
-    "type": "crypto",
-    "coinGecko": "lido-staked-sol",
-    "marketAddress": "JCKa72xFYGWBEVJZ7AKZ2ofugWPBfrrouQviaGaohi3R"
-  },
-  {
-    "pair": "MNGO/USDC",
-    "type": "crypto",
-    "coinGecko": "mango-marketAddresss",
-    "marketAddress": "3NnxQvDcZXputNMxaxsGvqiKpqgPfSYXpNigZNFcknmD"
-  },
-  {
-    "pair": "RAY/USDC",
-    "type": "crypto",
-    "coinGecko": "raydium",
-    "marketAddress": "DZjbn4XC8qoHKikZqzmhemykVzmossoayV9ffbsUqxVj"
-  },
-  {
-    "pair": "RAY/USDT",
-    "type": "crypto",
-    "coinGecko": "raydium",
-    "marketAddress": "GpHbiJJ9VHiuHVXeoet121Utrbm1CSNNzYrBKB8Xz2oz"
   },
   {
     "pair": "SOL/USDT",
@@ -64,17 +28,5 @@
     "type": "crypto",
     "coinGecko": "",
     "marketAddress": "B2na8Awyd7cpC59iEU43FagJAPLigr3AP3s38KM982bu"
-  },
-  {
-    "pair": "SLND/USDC",
-    "type": "crypto",
-    "coinGecko": "solend",
-    "marketAddress": "HTHMfoxePjcXFhrV74pfCUNoWGe374ecFwiDjPGTkzHr"
-  },
-  {
-    "pair": "SOL/USDC",
-    "type": "perps",
-    "coinGecko": "solana",
-    "marketAddress": "9dotty85PU6nmyXoNpZcQ8Xnmhg9ggpgf4Xveg7nVpZA"
   }
 ]

@@ -33,7 +33,7 @@ const WRAPPER = styled.div`
 `
 
 const ROW = styled.div`
-  ${tw`flex flex-row justify-between items-start mb-2.5`}
+  ${tw`flex flex-row justify-between items-start mb-5`}
 
   > span {
     ${tw`text-average font-semibold text-grey-1`}
@@ -42,12 +42,10 @@ const ROW = styled.div`
   .value {
     ${tw`text-black-4 dark:text-white`}
     .positive {
-      color: green;
-      ${tw` font-medium`}
+      ${tw`text-green-2 font-medium`}
     }
     .negative {
-      color: red;
-      ${tw` font-medium`}
+      ${tw`text-red-1 font-medium`}
     }
   }
 `
@@ -151,7 +149,7 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
   return (
     <WRAPPER>
       <div tw="flex items-center mt-8 mb-7">
-        <span tw="text-lg font-semibold text-grey-1 dark:text-grey-2">
+        <span tw="text-lg font-semibold text-grey-1 dark:text-grey-5">
           {displayExitQty} {symbol}
         </span>
         <img tw="ml-2.5" src={assetIcon} alt={symbol} height="28px" width="28px" />
@@ -171,7 +169,7 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
           </div>
         ))}
       </div>
-      <div tw="mb-6 mt-8">
+      <div tw="mb-9 mt-8">
         <ROW>
           <span>Est. Exit Price</span>
           <span className="value">${exitPrice}</span>
@@ -193,7 +191,7 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
         onClick={closePositionFn}
         height="50px"
         width="100%"
-        cssStyle={tw`bg-blue-1 dark:text-white font-semibold border-0 rounded-circle text-regular`}
+        cssStyle={tw`bg-blue-1 dark:text-white font-semibold border-0 rounded-circle text-average`}
       >
         <span>
           {loading ? (

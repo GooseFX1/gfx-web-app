@@ -20,12 +20,12 @@ const SELECTED_PAIR = styled.div`
 `
 
 const GRADIENT_BACKGROUND = styled.div`
-  ${tw`h-full w-full rounded-[36px] flex justify-around items-center`}
+  ${tw`h-full w-full rounded-[36px] text-white text-regular font-semibold flex justify-around items-center`}
   background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
 `
 
 const DROPDOWN_PAIR_DIV = styled.div<{ $hoverBorder: boolean }>`
-  ${tw`h-12.5 flex items-center text-regular font-semibold cursor-pointer`}
+  ${tw`h-12.5 flex rounded-tiny items-center text-regular font-semibold cursor-pointer`}
   background-color: ${({ theme, $hoverBorder }) => ($hoverBorder ? theme.bg2 : theme.bg20)};
 
   .asset-icon {
@@ -103,7 +103,7 @@ const DROPDOWN_MODAL = styled(Modal)`
 `
 
 const GRADIENT_BORDER = styled.div<{ $hoverBorder: boolean }>`
-  ${tw`p-px`}
+  ${tw`p-px rounded-tiny`}
   background: ${({ $hoverBorder, theme }) =>
     $hoverBorder ? 'linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);' : theme.bg20};
 `
