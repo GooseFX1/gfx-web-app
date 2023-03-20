@@ -103,7 +103,7 @@ const OrderContext = createContext<IOrderConfig | null>(null)
 export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { fetchAccounts } = useAccounts()
   const { connection } = useConnectionConfig()
-  const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
+  const { getAskSymbolFromPair, selectedCrypto, isSpot } = useCrypto()
   const { prices } = usePriceFeed()
   const { fetchOpenOrders } = useTradeHistory()
   const wallet = useWallet()
@@ -169,7 +169,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const marketPrice = useMemo(() => prices[selectedCrypto.pair]?.current, [prices, selectedCrypto.pair])
   useEffect(() => {
     !order.price && marketPrice && setOrder((prevState) => ({ ...prevState, price: marketPrice }))
-  }, [marketPrice, order.price])
+  }, [marketPrice, order.price, isSpot])
 
   const placeOrder = useCallback(async () => {
     setLoading(true)

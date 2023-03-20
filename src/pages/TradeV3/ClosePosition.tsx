@@ -80,7 +80,7 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const { orderBook } = useOrderBook()
   const price = getPerpsPrice(orderBook)
-  const [percentageIndex, setPercentageindex] = useState<number>(0)
+  const [percentageIndex, setPercentageindex] = useState<number>(3)
   const [loading, setLoading] = useState<boolean>(false)
 
   const { closePosition } = useTraderConfig()

@@ -29,6 +29,7 @@ import 'styled-components/macro'
 import { RotatingLoader } from '../../components/RotatingLoader'
 import { Picker } from './Picker'
 import useBlacklisted from '../../utils/useBlacklisted'
+import useWindowSize from '../../utils/useWindowSize'
 
 enum ButtonState {
   Connect = 0,
@@ -192,14 +193,33 @@ const LEVERAGE_WRAPPER = styled.div`
       height: 9px !important;
       width: 9px !important;
     }
+    .ant-slider-dot-active {
+      display: none;
+    }
   }
   .ant-slider-mark {
     .ant-slider-mark-text {
       margin-left: 0px;
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+    .markSpan {
+      ${tw`dark:text-[#B5B5B5] text-[#636363] text-tiny`}
+      margin-left: 0px;
     }
   }
   .leverageText {
-    ${tw`text-regular dark:text-[#B5B5B5] text-[#636363] pl-2 font-semibold`}
+    ${tw`text-regular dark:text-[#B5B5B5] text-[#636363] pl-2 font-semibold mt-[5%]`}
+  }
+  .smallScreenLeverageText {
+    ${tw``}
+  }
+
+  .leverageBar {
+    ${tw`mt-[-5px] mb-[30px]`}
+  }
+  .smallScreenLeverageBar {
+    ${tw`!mb-[20px]`}
   }
 `
 
@@ -341,6 +361,7 @@ export const PlaceOrder: FC = () => {
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { connected } = useWallet()
   const { mode } = useDarkMode()
+  const { height } = useWindowSize()
   const [loading, setLoading] = useState<boolean>(false)
   const geoBlocked = useBlacklisted()
 
@@ -523,7 +544,7 @@ export const PlaceOrder: FC = () => {
   const getMarks = () => {
     const markObj = {}
     for (let i = 2; i <= 10; i = i + 2) {
-      markObj[i] = i + 'x'
+      markObj[i] = <span className="markSpan">{i + 'x'}</span>
     }
     return markObj
   }
@@ -624,7 +645,7 @@ export const PlaceOrder: FC = () => {
           >
             <div className="holder">
               <div className={order.side === 'buy' ? 'active overlayBorder buy' : 'inactive overlayBorder buy'}>
-                {selectedCrypto.type === 'crypto' ? 'Buy' : 'Bid'}
+                {'Buy'}
               </div>
             </div>
           </div>
@@ -634,7 +655,7 @@ export const PlaceOrder: FC = () => {
           >
             <div className="holder">
               <div className={order.side === 'sell' ? 'active overlayBorder sell' : 'inactive overlayBorder sell'}>
-                {selectedCrypto.type === 'crypto' ? 'Sell' : 'Ask'}
+                {'Sell'}
               </div>
             </div>
           </div>
@@ -731,8 +752,8 @@ export const PlaceOrder: FC = () => {
           </TOTAL_SELECTOR>
         ) : (
           <LEVERAGE_WRAPPER>
-            <div className="leverageText">Leverage</div>
-            <div>
+            <div className={height > 790 ? 'leverageText' : 'smallScreenLeverageText'}>Leverage</div>
+            <div className={height > 790 ? 'leverageBar' : 'smallScreenLeverageBar'}>
               <Picker>
                 <Slider
                   max={10}

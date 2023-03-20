@@ -64,7 +64,7 @@ const DROPDOWN_MODAL = styled(Modal)`
   }
 
   .popular {
-    ${tw`font-semibold text-regular my-2.5 mx-0`}
+    ${tw`font-semibold text-regular my-2.5 mx-2`}
     color: ${({ theme }) => theme.text11};
   }
 
@@ -72,7 +72,7 @@ const DROPDOWN_MODAL = styled(Modal)`
     ${tw`flex flex-row items-center justify-around flex-wrap`}
   }
   .allPairContainer {
-    ${tw`overflow-y-scroll`}
+    ${tw`overflow-y-auto`}
     height: calc(100% - 160px);
   }
 

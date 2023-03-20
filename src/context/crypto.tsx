@@ -59,7 +59,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const getPairWithMarketAddress = () => {
     let pairSet = pairsToset[0]
-    let isSpotCheck = true
+    let isSpotCheck = false
     try {
       const paths = window.location.href.split('/')
       const marketAddress = paths[4]
@@ -67,6 +67,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (marketAddress === item.marketAddress) {
           pairSet = item
           if (item.type === 'perps') isSpotCheck = false
+          if (item.type === 'crypto') isSpotCheck = true
         }
       })
       return { set: pairSet, isSpot: isSpotCheck }

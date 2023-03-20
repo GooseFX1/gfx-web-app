@@ -199,10 +199,10 @@ const TRADE_HISTORY = styled.div`
       ${tw`w-1/4 inline-block capitalize`}
     }
     .Long {
-      ${tw`text-[#71c25d] text-tiny pl-1`}
+      ${tw`text-[#71c25d] text-tiny pl-3`}
     }
     .Short {
-      ${tw`text-[#f06565] text-tiny pl-1`}
+      ${tw`text-[#f06565] text-tiny pl-3`}
     }
   }
 `
