@@ -361,11 +361,17 @@ export const PlaceOrder: FC = () => {
     return balanceBid
   }, [traderInfo])
 
-  const perpsAskBalance: number = useMemo(() => {
-    if (!traderInfo || !traderInfo.balances || !traderInfo.balances[0] || !traderInfo.traderRiskGroup) return 0
-    const balanceAsk = Math.abs(Number(traderInfo.balances[0].balance))
-    return balanceAsk
-  }, [traderInfo])
+  const maxQtyNum: number = useMemo(() => {
+    const maxQty = Number(traderInfo.maxQuantity)
+    if (Number.isNaN(maxQty)) return 0
+    return maxQty
+  }, [traderInfo.maxQuantity, order.size])
+
+  //  const perpsAskBalance: number = useMemo(() => {
+  //    if (!traderInfo || !traderInfo.balances || !traderInfo.balances[0] || !traderInfo.traderRiskGroup) return 0
+  //    const balanceAsk = Math.abs(Number(traderInfo.balances[0].balance))
+  //    return balanceAsk
+  //  }, [traderInfo])
 
   const buttonState = useMemo(() => {
     if (isSpot) {
@@ -381,7 +387,8 @@ export const PlaceOrder: FC = () => {
       if (!connected) return ButtonState.Connect
       if (!traderInfo?.traderRiskGroupKey) return ButtonState.CreateAccount
       if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
-      if (order.total > perpsBidBalance) return ButtonState.BalanceExceeded
+      if (order.size > maxQtyNum) return ButtonState.BalanceExceeded
+      //if (order.total > perpsBidBalance) return ButtonState.BalanceExceeded
       return ButtonState.CanPlaceOrder
     }
   }, [connected, selectedCrypto.pair, order, isSpot, traderInfo])
@@ -468,10 +475,12 @@ export const PlaceOrder: FC = () => {
   }
 
   const handlePlaceOrder = async () => {
-    setLoading(true)
-    setConfirmationModal(true)
-    //await newOrder()
-    setLoading(false)
+    if (buttonState === ButtonState.CanPlaceOrder) {
+      setLoading(true)
+      setConfirmationModal(true)
+      //await newOrder()
+      setLoading(false)
+    }
   }
 
   const handleSliderChange = async (e) => {
@@ -480,31 +489,32 @@ export const PlaceOrder: FC = () => {
       setOrder((prev) => ({ ...prev, price: traderInfo.onChainPrice }))
     }
     let newE = e
-    if (e > 9.7) newE = e * 0.97
-    if (Number(order.price) <= Number(traderInfo.onChainPrice)) {
-      const initLeverage = Number(traderInfo.currentLeverage)
+    //if (e > 9.7) newE = e * 0.97
+    //if (Number(order.price) <= Number(traderInfo.onChainPrice)) {
+    const initLeverage = Number(traderInfo.currentLeverage)
 
-      let newLev = newE - initLeverage
-      if (newLev < 0) return
-      setFocused('size')
-      const availLeverage = Number(traderInfo.availableLeverage)
-      const maxQty = Number(traderInfo.maxQuantity)
-      const percentage2 = (newLev / availLeverage) * maxQty
-      if (newLev > availLeverage) return
-      setOrder((prev) => ({ ...prev, size: percentage2.toFixed(2) }))
-    } else {
-      const initLeverage = Number(traderInfo.currentLeverage)
-      let newLev = newE - initLeverage
-      if (newLev < 0) return
-      setFocused('total')
-      const availLeverage = Number(traderInfo.availableLeverage)
-      const maxMargin = Number(traderInfo.marginAvailable)
-      if (newLev > availLeverage) {
-        newLev = availLeverage
-      }
-      const percentage2 = (newLev / availLeverage) * maxMargin
-      setOrder((prev) => ({ ...prev, total: percentage2.toFixed(2) }))
-    }
+    let newLev = newE - initLeverage
+    if (newLev < 0) return
+    setFocused('size')
+    const availLeverage = Number(traderInfo.availableLeverage)
+    const maxQty = Number(traderInfo.maxQuantity)
+    const percentage2 = (newLev / availLeverage) * maxQty
+    if (newLev > availLeverage) return
+    if (percentage2 > 1) setOrder((prev) => ({ ...prev, size: Math.floor(percentage2) }))
+    else setOrder((prev) => ({ ...prev, size: percentage2 }))
+    //} else {
+    //  const initLeverage = Number(traderInfo.currentLeverage)
+    //  let newLev = newE - initLeverage
+    //  if (newLev < 0) return
+    //  setFocused('total')
+    //  const availLeverage = Number(traderInfo.availableLeverage)
+    //  const maxMargin = Number(traderInfo.marginAvailable)
+    //  if (newLev > availLeverage) {
+    //    newLev = availLeverage
+    //  }
+    //  const percentage2 = (newLev / availLeverage) * maxMargin
+    //  setOrder((prev) => ({ ...prev, total: percentage2.toFixed(2) }))
+    //}
   }
 
   const getMarks = () => {
@@ -515,18 +525,30 @@ export const PlaceOrder: FC = () => {
     return markObj
   }
 
+  //  const sliderValue = useMemo(() => {
+  //    const initLeverage = Number(traderInfo.currentLeverage)
+  //    const availLeverage = Number(traderInfo.availableLeverage)
+  //    const availMargin = Number(traderInfo.marginAvailable)
+  //    let percentage = 0
+  //    if (Number(order.size) >= Number(traderInfo.maxQuantity)) percentage = availLeverage
+  //    else if (order.total < availMargin) percentage = (Number(order.total) / Number(availMargin)) * availLeverage
+  //    else percentage = availLeverage
+  //    //else percentage = (Number(order.size) / Number(traderInfo.maxQuantity)) * availLeverage
+  //    if (Number(percentage)) return Number((initLeverage + percentage).toFixed(2))
+  //    return Number(initLeverage.toFixed(2))
+  //  }, [order.size, traderInfo, order.total])
+
   const sliderValue = useMemo(() => {
     const initLeverage = Number(traderInfo.currentLeverage)
     const availLeverage = Number(traderInfo.availableLeverage)
-    const availMargin = Number(traderInfo.marginAvailable)
+    const qty = maxQtyNum
+    //const availMargin = Number(traderInfo.marginAvailable)
     let percentage = 0
-    if (Number(order.size) >= Number(traderInfo.maxQuantity)) percentage = availLeverage
-    else if (order.total < availMargin) percentage = (Number(order.total) / Number(availMargin)) * availLeverage
-    else percentage = availLeverage
-    //else percentage = (Number(order.size) / Number(traderInfo.maxQuantity)) * availLeverage
-    if (Number(percentage)) return Number((initLeverage + percentage).toFixed(2))
-    return Number(initLeverage.toFixed(2))
-  }, [order.size, traderInfo, order.total])
+    percentage = (Number(order.size) / qty) * availLeverage
+    //else if (order.total < availMargin) percentage = (Number(order.total) / Number(availMargin)) * availLeverage
+    return Number((initLeverage + percentage).toFixed(2))
+    //return Number(initLeverage.toFixed(2))
+  }, [maxQtyNum, order.size])
 
   return (
     <WRAPPER>

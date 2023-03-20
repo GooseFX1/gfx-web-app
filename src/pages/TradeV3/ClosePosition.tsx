@@ -119,7 +119,7 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
     if (!sellPrice || !Number(averagePrice)) return <span>-</span>
     const side = traderInfo.averagePosition.side
     const difference = side === 'buy' ? sellPrice - Number(averagePrice) : Number(averagePrice) - sellPrice
-    let totalPnl = difference * Number(displayFractional(totalExitQty))
+    let totalPnl = difference * Number(displayFractional(selectedExitQty))
 
     totalPnl = side === 'sell' ? totalPnl * -1 : totalPnl
     const isNegative = totalPnl < 0
