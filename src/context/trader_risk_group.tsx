@@ -303,88 +303,103 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const wasm = await import('perps-wasm')
     const mpg = rawData.mpg
     const trg = rawData.trg
-    try {
-      const res = wasm.margin_available(mpg.data, trg.data)
-      const avail = new Fractional({
-        m: new anchor.BN(res.m.toString()),
-        exp: new anchor.BN(Number(res.exp.toString()) + 5)
-      })
-      setMarginAvail(displayFractional(avail))
-    } catch (e) {
-      console.log('margin available error: ', e)
-    }
-    try {
-      const pnl = wasm.unrealised_pnl(mpg.data, trg.data, BigInt(0))
-      const pnlFrac = new Fractional({
-        m: new anchor.BN(pnl.m.toString()),
-        exp: new anchor.BN(Number(pnl.exp.toString()) + 5)
-      })
-      setPnl(displayFractional(pnlFrac))
-    } catch (e) {
-      console.log('error in pnl: ', e)
-    }
-    try {
-      const res2 = wasm.get_liquidation_price(mpg.data, trg.data, BigInt(0))
-      const liq = new Fractional({ m: new anchor.BN(res2.m.toString()), exp: new anchor.BN(res2.exp.toString()) })
-      setLiquidationPrice(displayFractional(liq))
-    } catch (e) {
-      console.log('liquidation price error: ', e)
-    }
-    try {
-      const re = wasm.get_max_quantity(mpg.data, trg.data, BigInt(0))
-      const re2 = new Fractional({
-        m: new anchor.BN(re.m.toString()),
-        exp: new anchor.BN(Number(re.exp.toString()) + 5)
-      })
-      setMaxQty(displayFractional(re2))
-    } catch (e) {
-      console.log(e)
-    }
-    try {
-      const re = wasm.get_leverage_used(mpg.data, trg.data)
-      const re2 = new Fractional({ m: new anchor.BN(re.m.toString()), exp: new anchor.BN(re.exp.toString()) })
-      setLeverage(displayFractional(re2))
-    } catch (e) {
-      console.log(e)
-    }
-    try {
-      const re = wasm.get_leverage_available(mpg.data, trg.data)
-      const re2 = new Fractional({ m: new anchor.BN(re.m.toString()), exp: new anchor.BN(re.exp.toString()) })
-      setAvailLeverage(displayFractional(re2))
-    } catch (e) {
-      console.log(e)
-    }
-    try {
-      const re = wasm.get_on_chain_price(mpg.data, BigInt(0))
-      const re2 = new Fractional({ m: new anchor.BN(re.m.toString()), exp: new anchor.BN(re.exp.toString()) })
-      setOnChainPrice(displayFractional(re2))
-    } catch (e) {
-      console.log(e)
-    }
-    try {
-      const re = wasm.get_open_interests(mpg.data, BigInt(0))
-      const re2 = new Fractional({
-        m: new anchor.BN(re.m.toString()),
-        exp: new anchor.BN(Number(re.exp.toString()) + 5)
-      })
-      setOpenInterests(displayFractional(re2))
-    } catch (e) {
-      console.log(e)
-    }
-    try {
-      const re = wasm.get_health(mpg.data, trg.data)
-      const re2 = new Fractional({
-        m: new anchor.BN(re.m.toString()),
-        exp: new anchor.BN(re.exp.toString())
-      })
-      const lessHealth = Number(displayFractional(re2))
-      if (lessHealth && lessHealth < 0) {
-        setAccountHealth((100 + lessHealth).toFixed(2))
+    if (mpg) {
+      try {
+        const re = wasm.get_on_chain_price(mpg.data, BigInt(0))
+        const re2 = new Fractional({ m: new anchor.BN(re.m.toString()), exp: new anchor.BN(re.exp.toString()) })
+        //console.log('on chain price is: ', displayFractional(re2))
+        setOnChainPrice(displayFractional(re2))
+      } catch (e) {
+        console.log(e)
       }
-    } catch (e) {
-      //console.log('health error:', e)
+      try {
+        const re = wasm.get_open_interests(mpg.data, BigInt(0))
+        const re2 = new Fractional({
+          m: new anchor.BN(re.m.toString()),
+          exp: new anchor.BN(Number(re.exp.toString()) + 5)
+        })
+        setOpenInterests(displayFractional(re2))
+      } catch (e) {
+        console.log(e)
+      }
+      if (trg) {
+        try {
+          const res = wasm.margin_available(mpg.data, trg.data)
+          const avail = new Fractional({
+            m: new anchor.BN(res.m.toString()),
+            exp: new anchor.BN(Number(res.exp.toString()) + 5)
+          })
+          setMarginAvail(displayFractional(avail))
+        } catch (e) {
+          console.log('margin available error: ', e)
+        }
+        try {
+          const pnl = wasm.unrealised_pnl(mpg.data, trg.data, BigInt(0))
+          const pnlFrac = new Fractional({
+            m: new anchor.BN(pnl.m.toString()),
+            exp: new anchor.BN(Number(pnl.exp.toString()) + 5)
+          })
+          setPnl(displayFractional(pnlFrac))
+        } catch (e) {
+          console.log('error in pnl: ', e)
+        }
+        try {
+          const res2 = wasm.get_liquidation_price(mpg.data, trg.data, BigInt(0))
+          const liq = new Fractional({
+            m: new anchor.BN(res2.m.toString()),
+            exp: new anchor.BN(res2.exp.toString())
+          })
+          setLiquidationPrice(displayFractional(liq))
+        } catch (e) {
+          console.log('liquidation price error: ', e)
+        }
+        try {
+          const re = wasm.get_max_quantity(mpg.data, trg.data, BigInt(0))
+          const re2 = new Fractional({
+            m: new anchor.BN(re.m.toString()),
+            exp: new anchor.BN(Number(re.exp.toString()) + 5)
+          })
+          setMaxQty(displayFractional(re2))
+        } catch (e) {
+          console.log(e)
+        }
+        try {
+          const re = wasm.get_leverage_used(mpg.data, trg.data)
+          const re2 = new Fractional({ m: new anchor.BN(re.m.toString()), exp: new anchor.BN(re.exp.toString()) })
+          setLeverage(displayFractional(re2))
+        } catch (e) {
+          console.log(e)
+        }
+        try {
+          const re = wasm.get_leverage_available(mpg.data, trg.data)
+          const re2 = new Fractional({ m: new anchor.BN(re.m.toString()), exp: new anchor.BN(re.exp.toString()) })
+          //setAvailLeverage(displayFractional(re2))
+        } catch (e) {
+          console.log(e)
+        }
+
+        try {
+          const re = wasm.get_health(mpg.data, trg.data)
+          const re2 = new Fractional({
+            m: new anchor.BN(re.m.toString()),
+            exp: new anchor.BN(re.exp.toString())
+          })
+          const lessHealth = Number(displayFractional(re2))
+          if (lessHealth && lessHealth < 0) {
+            setAccountHealth((100 + lessHealth).toFixed(2))
+          }
+        } catch (e) {
+          //console.log('health error:', e)
+        }
+      }
     }
   }
+
+  useEffect(() => {
+    const current = Number(currentLeverage)
+    if (Number.isNaN(current)) setAvailLeverage('0')
+    return setAvailLeverage((10 - current).toString())
+  }, [currentLeverage])
 
   const parseTraderInfo = async () => {
     const res = computeHealth(traderRiskGroup, marketProductGroup)
@@ -657,9 +672,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [marketProductGroup])
 
   useEffect(() => {
-    if (rawData.mpg && rawData.trg) {
-      perpsWasm()
-    }
+    perpsWasm()
   }, [rawData])
 
   useEffect(() => {

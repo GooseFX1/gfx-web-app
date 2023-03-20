@@ -223,11 +223,11 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
         </div>
         {getHealthData()}
       </ACCOUNT_ROW>
-      {/* <ACCOUNT_ROW $height={height}>
+      {/*<ACCOUNT_ROW $height={height}>
         <div className="tooltip-row">
           <span className="key">{isSolAccount ? 'Balance' : 'Balances'}</span>
           <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
-              The health bar shows how close you are to being liquidated.{' '}
+            The health bar shows how close you are to being liquidated.{' '}
           </Tooltip>
         </div>
         {isSolAccount ? (
@@ -239,7 +239,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
             <span className="value">1,888.55 USDC</span>
           </div>
         )}
-      </ACCOUNT_ROW> */}
+      </ACCOUNT_ROW>*/}
       <ACCOUNT_ROW $height={height}>
         <div className="tooltip-row">
           <span
