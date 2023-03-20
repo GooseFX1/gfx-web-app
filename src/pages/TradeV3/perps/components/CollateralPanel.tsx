@@ -72,22 +72,22 @@ const WRAPPER = styled.div<{ $height: boolean }>`
     ${tw`flex`}
   }
   .bars {
-    ${tw`h-5 w-1.5 mr-2.5 inline-block rounded-[15px] `}
+    ${tw`h-5 w-1.5 mr-2.5 inline-block rounded-average`}
   }
   .bars:last-child {
     ${tw`mr-4`}
   }
   .green {
-    ${tw`bg-[#71C25D]`}
+    ${tw`bg-green-2`}
   }
   .red {
-    ${tw`bg-[#F06565]`}
+    ${tw`bg-red-1`}
   }
   .greenText {
-    ${tw`!text-[#71C25D]`}
+    ${tw`!text-green-2`}
   }
   .redText {
-    ${tw`!text-[#F06565]`}
+    ${tw`!text-red-1`}
   }
   .yellow {
     ${tw`bg-[#F0B865]`}
@@ -117,16 +117,13 @@ const ACCOUNT_ROW = styled.div<{ $height: boolean }>`
     }
   }
   .positive {
-    color: green;
-    ${tw`text-regular font-black`}
+    ${tw`text-regular font-black text-green-2`}
   }
   .negative {
-    color: red;
-    ${tw`text-regular font-black`}
+    ${tw`text-regular font-black text-red-1`}
   }
   .tooltip-row {
-    display: flex;
-    align-items: center;
+    ${tw`flex items-center`}
   }
 `
 
@@ -346,13 +343,7 @@ export const CollateralPanel: FC = (): JSX.Element => {
             <div
               key={index}
               className={index === activeTab ? 'active tab' : index === 1 ? 'tab disable' : 'tab'}
-              onClick={
-                index === 1
-                  ? () => {
-                      null
-                    }
-                  : () => setActiveTab(index)
-              }
+              onClick={index === 1 ? null : () => setActiveTab(index)}
             >
               <div className="white-background">
                 <div className={index === activeTab ? 'field activeTab' : 'field'}>{item}</div>

@@ -7,6 +7,8 @@ import { DepositWithdraw } from './perps/DepositWithdraw'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import { getPerpsPrice, truncateBigNumber } from './perps/utils'
 import { useTraderConfig } from '../../context/trader_risk_group'
+import useBlacklisted from '../../utils/useBlacklisted'
+import 'styled-components/macro'
 
 const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[356px] !w-[628px] rounded-half`}
@@ -45,6 +47,9 @@ const INFO_WRAPPER = styled.div`
     font-size: 16px;
     color: ${({ theme }) => theme.text16};
   }
+  .spot-toggle .geoblocked {
+    cursor: not-allowed;
+  }
 `
 const INFO_STATS = styled.div`
   ${tw`ml-[30px] leading-5`}
@@ -55,6 +60,9 @@ const INFO_STATS = styled.div`
   div:first-child {
     ${tw`text-tiny font-medium`}
     color: ${({ theme }) => theme.text22};
+  }
+  .price {
+    ${tw`text-tiny font-semibold text-grey-1 dark:text-grey-2`}
   }
   div:nth-child(2) {
     ${tw`text-regular font-semibold text-center flex`}
@@ -194,6 +202,7 @@ export const InfoBanner: FC<{
   const { orderBook } = useOrderBook()
   const { mode } = useDarkMode()
   const { traderInfo } = useTraderConfig()
+  const geoBlocked = useBlacklisted()
   const [tradeType, setTradeType] = useState<string>('deposit')
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
@@ -301,9 +310,9 @@ export const InfoBanner: FC<{
           Spot
         </span>
         <span
-          className={'perps toggle ' + (!isSpot ? 'selected' : '')}
+          className={'perps toggle ' + (geoBlocked ? 'geoblocked' : !isSpot ? 'selected' : '')}
           key="perps"
-          onClick={() => handleToggle('perps')}
+          onClick={geoBlocked ? null : () => handleToggle('perps')}
         >
           Perps
         </span>
@@ -311,7 +320,7 @@ export const InfoBanner: FC<{
       <DropdownPairs />
       <INFO_STATS>
         <>
-          <span>Price</span>
+          <span className="price">Price</span>
           <div>
             {tokenPrice}
             <span className={classNameChange}>{' (' + changeValue + '%)'}</span>
@@ -367,7 +376,15 @@ export const InfoBanner: FC<{
           </>
         </INFO_STATS>
       )}
-      {isLocked ? null : <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>}
+      {isSpot && geoBlocked && (
+        <div tw="flex ml-auto relative top-[23px]">
+          <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />
+          <div tw="ml-2 text-tiny font-semibold dark:text-grey-5 text-grey-1">
+            GooseFX DEX is unavailable <br /> in your location.
+          </div>
+        </div>
+      )}
+      {!isLocked && <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>}
       {!isSpot && (
         <DEPOSIT_WRAPPER $isLocked={isLocked}>
           <div className="white-background">
@@ -378,7 +395,12 @@ export const InfoBanner: FC<{
       <LOCK_LAYOUT_CTN $isLocked={isLocked} $isSpot={isSpot} onClick={() => setIsLocked(!isLocked)}>
         <div className="white-background">
           <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
-            <img src={isLocked ? `/img/assets/${mode}_lock.svg` : `/img/assets/${mode}_unlock.svg`} alt="lock" />
+            <img
+              src={isLocked ? `/img/assets/${mode}_lock.svg` : `/img/assets/${mode}_unlock.svg`}
+              alt="lock"
+              width="16px"
+              height="20px"
+            />
           </LOCK_LAYOUT>
         </div>
       </LOCK_LAYOUT_CTN>

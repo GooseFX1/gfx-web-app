@@ -1,5 +1,4 @@
-/* eslint-disable */
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNavCollapse, useCrypto, useDarkMode } from '../../context'
 import { OrderbookTabs } from './OrderbookTabs'
 import { TVChartContainer } from '../Crypto/TradingView/TradingView'
@@ -19,7 +18,7 @@ import 'react-resizable/css/styles.css'
 
 const ReactGridLayout = WidthProvider(Responsive)
 
-const componentDimensions = [
+const componentDimensionsLg = [
   {
     x: 0,
     y: 0,
@@ -62,6 +61,92 @@ const componentDimensions = [
   }
 ]
 
+const componentDimensionsMd = [
+  {
+    x: 0,
+    y: 0,
+    i: '0',
+    h: 17.5,
+    w: 2,
+    autoSize: true
+  },
+  {
+    x: 0,
+    y: 2,
+    i: '1',
+    h: 17.5,
+    w: 2,
+    autoSize: true
+  },
+  {
+    x: 2,
+    y: 20,
+    i: '2',
+    h: 17.5,
+    w: 2,
+    autoSize: true
+  },
+  {
+    x: 2,
+    y: 20,
+    i: '4',
+    h: 17.5,
+    w: 2,
+    autoSize: true
+  },
+  {
+    x: 0,
+    y: 40,
+    i: '3',
+    h: 11.5,
+    w: 4,
+    autoSize: true
+  }
+]
+
+// const componentDimensionsSM = [
+//   {
+//     x: 0,
+//     y: 0,
+//     i: '0',
+//     h: 17.5,
+//     w: 4,
+//     autoSize: true
+//   },
+//   {
+//     x: 4,
+//     y: 0,
+//     i: '1',
+//     h: 17.5,
+//     w: 2,
+//     autoSize: true
+//   },
+//   {
+//     x: 6,
+//     y: 0,
+//     i: '2',
+//     h: 17.5,
+//     w: 2,
+//     autoSize: true
+//   },
+//   {
+//     x: 0,
+//     y: 20,
+//     i: '3',
+//     h: 11.5,
+//     w: 6,
+//     autoSize: true
+//   },
+//   {
+//     x: 6,
+//     y: 20,
+//     i: '4',
+//     h: 11.5,
+//     w: 2,
+//     autoSize: true
+//   }
+// ]
+
 const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean; $mode: string }>`
   ${tw`relative flex w-screen h-screen flex-col overflow-y-scroll overflow-x-hidden`}
   padding-top: calc(112px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
@@ -81,7 +166,7 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean; $
     }
     .filtering {
       div:first-child {
-        filter: blur(3px);
+        filter: blur(3px) !important;
       }
     }
     .react-resizable-handle-se {
@@ -100,12 +185,12 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean; $
     }
   }
   .react-draggable-dragging {
-    ${tw`border-solid border-2 p-0`}
+    ${tw`border-solid border-2 !p-0`}
     border-color: #ff8c00;
     z-index: 100;
   }
   .space-cont {
-    padding: 2.5px;
+    ${tw`p-[2.5px]`}
   }
 `
 
@@ -141,10 +226,16 @@ const UNLOCKED_OVERLAY = styled.div<{ $isGeoBlocked?: boolean }>`
     position: absolute;
     bottom: 20px;
   }
-  .unavailable-msg {
+  .georestricted {
+    width: 142px;
+    height: 40px;
+    border-radius: 40px;
     font-weight: 600;
     font-size: 15px;
-    color: ${({ theme }) => theme.text28};
+    background: #3c3c3c;
+    color: white;
+    outline: none;
+    border: none;
   }
   .header-text {
     font-weight: 600;
@@ -162,43 +253,30 @@ const UNLOCKED_OVERLAY = styled.div<{ $isGeoBlocked?: boolean }>`
     width: 165px;
     margin-top: 20px;
     span {
-      font-size: 15px;
-      font-weight: 600;
+      ${tw`text-regular font-semibold text-white`}
     }
   }
   .overlay-text {
-    font-size: 15px;
-    font-weight: 600;
-    color: white;
+    ${tw`text-regular font-semibold dark:text-grey-5 text-black-4`}
   }
 `
 const PERPS_INFO = styled.div<{ $wallet: boolean; $isLocked: boolean }>`
-  height: 100%;
-  width: 100%;
+  ${tw`h-full w-full flex flex-col text-center justify-center items-center`}
   filter: blur(${({ $wallet, $isLocked }) => (!$isLocked ? 3 : $wallet ? 0 : 3)}px) !important;
   border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
 
   > div {
-    font-weight: 500;
-    font-size: 15px;
+    ${tw`font-medium text-regular dark:text-grey-2 text-grey-1 text-center mt-8`}
     line-height: 18px;
-    text-align: center;
-    margin-top: 32px;
-    color: #b5b5b5;
   }
 `
 
 export const CryptoContent: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const [isLocked, setIsLocked] = useState(true)
-  const [layout, setLayout] = useState({ lg: componentDimensions })
+  const [layout, setLayout] = useState({ lg: componentDimensionsLg, md: componentDimensionsMd })
   const isGeoBlocked = useBlacklisted()
-  const { height } = useWindowSize()
+  const { height, width } = useWindowSize()
   const { mode } = useDarkMode()
   const { selectedCrypto } = useCrypto()
   const { wallet } = useWallet()
@@ -208,9 +286,11 @@ export const CryptoContent: FC = () => {
     [selectedCrypto.pair]
   )
 
-  const getRowHeight = (height: number) => {
-    return height < 800 ? 20 : height / 38
-  }
+  useEffect(() => {
+    resetLayout()
+  }, [width])
+
+  const getRowHeight = (height: number) => (height < 800 ? 20 : height / 38)
 
   const defaultProps = {
     className: 'layout',
@@ -259,24 +339,10 @@ export const CryptoContent: FC = () => {
         )
       if (i === 2) {
         return (
-          <div key={i} className={isGeoBlocked ? 'space-cont filtering' : 'space-cont'}>
+          <div key={i} className={isGeoBlocked ? 'space-cont' : 'space-cont'}>
             <>
               <PlaceOrder />
-              {isGeoBlocked ? (
-                <UNLOCKED_OVERLAY $isGeoBlocked={isGeoBlocked}>
-                  <img
-                    src={
-                      mode === 'dark' ? `/img/assets/georestricted_dark.png` : `/img/assets/georestricted_lite.png`
-                    }
-                    alt="reposition"
-                    className="geoblocked"
-                  />
-                  <span className="header-text">We’re sorry.</span>
-                  <span className="unavailable-msg">
-                    GooseFX DEX is unavailable <br /> in your location.
-                  </span>
-                </UNLOCKED_OVERLAY>
-              ) : !isLocked ? (
+              {!isLocked ? (
                 <UNLOCKED_OVERLAY>
                   <img
                     src={mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
@@ -321,12 +387,7 @@ export const CryptoContent: FC = () => {
             )}
             {isGeoBlocked ? (
               <UNLOCKED_OVERLAY $isGeoBlocked={isGeoBlocked}>
-                <span className="geo-msg">
-                  Access is prohibited for Belarus, Central African Republic, Democratic Republic of Congo,
-                  Democratic People’s Republic of Korea, Crimea, Cuba, Iran, Libya, Somalia, Sudan, South Sudan,
-                  Syria, Thailand, UK, US, Yemen, Zimbabwe and any other jurisdiction in which accessing or using
-                  this website is prohibited.
-                </span>
+                <button className="georestricted">Georestricted</button>
               </UNLOCKED_OVERLAY>
             ) : !isLocked ? (
               <UNLOCKED_OVERLAY>
@@ -351,11 +412,11 @@ export const CryptoContent: FC = () => {
     })
 
   const onLayoutChange = (layout) => {
-    setLayout({ lg: layout })
+    setLayout({ lg: layout, md: layout })
   }
 
   const resetLayout = () => {
-    setLayout({ lg: componentDimensions })
+    setLayout({ lg: componentDimensionsLg, md: componentDimensionsMd })
   }
   return (
     <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked} $mode={mode}>

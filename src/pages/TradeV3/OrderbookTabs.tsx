@@ -52,7 +52,7 @@ const HEADER_WRAPPER = styled.div`
       }
     }
     .inactiveTab {
-      height: 100%;
+      ${tw`h-full !bg-grey-5 dark:!bg-black-1`}
     }
     .priceTab {
       ${tw`h-7 w-2/12 flex justify-center items-center text-xs`}
