@@ -20,7 +20,8 @@ const SELECTED_PAIR = styled.div`
 `
 
 const GRADIENT_BACKGROUND = styled.div`
-  ${tw`h-full w-full rounded-[36px] text-white text-regular font-semibold flex justify-around items-center`}
+  ${tw`h-full w-full rounded-[36px] dark:text-white text-black-4 
+    text-regular font-semibold flex justify-around items-center`}
   background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
 `
 
@@ -38,14 +39,14 @@ const DROPDOWN_PAIR_DIV = styled.div<{ $hoverBorder: boolean }>`
 `
 
 const DROPDOWN_MODAL = styled(Modal)`
-  ${tw`!h-[528px] !w-[528px] rounded-[22px]`}
+  ${tw`!h-[425px] !w-[528px] rounded-[22px]`}
   background-color: ${({ theme }) => theme.bg20} !important;
 
   .ant-modal-content {
     ${tw`h-full overflow-y-hidden overflow-x-hidden`}
 
     .ant-modal-body {
-      ${tw`pb-0 pt-[16px]`}
+      ${tw`pb-0 pt-4`}
     }
   }
 

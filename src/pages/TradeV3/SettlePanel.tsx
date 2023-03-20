@@ -1,7 +1,7 @@
 import { Button } from 'antd'
 import React, { FC } from 'react'
-import styled from 'styled-components'
 import { useCrypto, useDarkMode, useTradeHistory } from '../../context'
+import tw, { styled } from 'twin.macro'
 
 const SETTLE_CONTAINER = styled.div`
   padding: 10px 0 0 10px;
@@ -13,9 +13,7 @@ const SETTLE_CARD = styled.div`
   position: relative;
 
   .settleAllButton {
-    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-    border-radius: 36px;
-    margin-left: auto;
+    ${tw`bg-red-1 ml-auto`}
     position: absolute;
     right: 10px;
     top: -5px;

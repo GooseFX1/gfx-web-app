@@ -28,13 +28,15 @@ import { PerpsEndModal } from './PerpsEndModal'
 import 'styled-components/macro'
 import { RotatingLoader } from '../../components/RotatingLoader'
 import { Picker } from './Picker'
+import useBlacklisted from '../../utils/useBlacklisted'
 
 enum ButtonState {
   Connect = 0,
   CanPlaceOrder = 1,
   NullAmount = 2,
   BalanceExceeded = 3,
-  CreateAccount = 4
+  CreateAccount = 4,
+  isGeoBlocked = 5
 }
 
 const WRAPPER = styled.div`
@@ -340,6 +342,7 @@ export const PlaceOrder: FC = () => {
   const { connected } = useWallet()
   const { mode } = useDarkMode()
   const [loading, setLoading] = useState<boolean>(false)
+  const geoBlocked = useBlacklisted()
 
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
@@ -373,6 +376,7 @@ export const PlaceOrder: FC = () => {
 
   const buttonState = useMemo(() => {
     if (isSpot) {
+      if (geoBlocked) return ButtonState.isGeoBlocked
       if (!connected) return ButtonState.Connect
       if (
         (order.side === 'buy' && order.total > userBalance) ||
@@ -394,6 +398,7 @@ export const PlaceOrder: FC = () => {
   const buttonText = useMemo(() => {
     if (buttonState === ButtonState.BalanceExceeded) return 'Insufficient Balance'
     else if (buttonState === ButtonState.Connect) return 'Connect Wallet'
+    else if (buttonState === ButtonState.isGeoBlocked) return 'Georestricted'
     else if (buttonState === ButtonState.CreateAccount) return 'Create Account!'
     if (selectedCrypto.type === 'crypto') {
       if (order.side === 'buy') return 'BUY ' + symbol
