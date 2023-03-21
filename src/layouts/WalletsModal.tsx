@@ -40,9 +40,9 @@ const WALLET_MODAL = styled.div`
   }
 `
 const WALLET_DETECTED = styled(SpaceBetweenDiv)`
-  ${tw`mr-[15px] h-[180px] rounded-[10px] flex flex-col border-2 cursor-pointer bg-white dark:bg-black-1 `}
+  ${tw`mr-[15px] h-[170px] rounded-[10px] flex flex-col border-2 cursor-pointer bg-white dark:bg-black-1 `}
   background-color: ${({ theme }) => theme.timePanelBackground};
-  width: 160px !important;
+  width: 150px !important;
   border: 1px solid #636363;
   &:hover {
     border: 1px solid ${({ theme }) => theme.text30};
@@ -73,7 +73,7 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
   .slick-prev,
   .slick-next {
-    ${tw`w-[42px] h-[42px] mr-8`}
+    ${tw`w-[50px] h-[50px] mr-8`}
     z-index: 200;
     &.slick-disabled {
       opacity: 0;
@@ -93,9 +93,9 @@ const STYLED_POPUP = styled(PopupCustom)`
     ${tw`flex items-center text-[25px] text-center sm:text-[20px] justify-center font-semibold leading-7`}
   }
   .detectedWallet {
-    ${tw`mt-[36px] h-[230px]  `}
+    ${tw`mt-[36px] h-[230px] ml-4 `}
     .slick-track {
-      ${tw`flex justify-center  h-[230px] ml-10 pl-[100px] sm:pl-[50px] `}
+      ${tw`flex justify-center  h-[230px] sm:pl-[50px] `}
     }
   }
 
@@ -117,7 +117,7 @@ const STYLED_POPUP = styled(PopupCustom)`
     }
   }
   .textDetected {
-    ${tw`ml-[40px] mt-[50px] text-[15px] font-semibold `}
+    ${tw`ml-[38px] mt-[40px] text-[15px] font-semibold `}
     color: ${({ theme }) => theme.text31};
   }
   .termsConditions {
@@ -203,7 +203,7 @@ export const WalletsModal: FC = () => {
       )}
       <div>
         <div className="detectedWallet">
-          <Slider {...settings} slidesToShow={1.7} slidesToScroll={1}>
+          <Slider {...settings} slidesToShow={checkMobile() ? 2.1 : 3} slidesToScroll={1}>
             {detectedWallets.length ? (
               detectedWallets.map((wallet, index) => (
                 <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
