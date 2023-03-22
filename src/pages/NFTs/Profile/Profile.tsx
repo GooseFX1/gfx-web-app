@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useMemo, FC } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params.d'
@@ -9,6 +10,7 @@ import { isValidSolanaAddress } from '../../../web3'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { SellNFTModal } from '../Collection/SellNFTModal'
 
 //#region styles
 const PROFILE_CONTAINER = styled.div<{ background?: string }>`
@@ -158,6 +160,7 @@ export const Profile: FC = (): JSX.Element => {
     isSessionUser !== undefined && (
       <PROFILE_CONTAINER id="nft-profile-container" background={randomBackground}>
         <HeaderProfile isSessionUser={isSessionUser} />
+        <SellNFTModal />
         <ContentProfile isSessionUser={isSessionUser} />
       </PROFILE_CONTAINER>
     )

@@ -174,6 +174,10 @@ export function colors(mode: string): Colors {
     searchbarBackground: mode === 'dark' ? '#1e1e1e' : '#fff',
     searchbarSmallBackground: mode === 'dark' ? '#404040' : 'white',
     collectionHeader: mode === 'dark' ? 'linear-gradient(0, #131313 0%, transparent 100%)' : '#fff',
+    hoverGradient:
+      mode === 'dark'
+        ? 'linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0) 100%)'
+        : 'linear-gradient(360deg, #fff 0%, rgba(255, 255, 255, 0) 100%)',
 
     // card
     cardBg: mode === 'dark' ? '#171717' : 'rgba(114, 114, 114, 1)',

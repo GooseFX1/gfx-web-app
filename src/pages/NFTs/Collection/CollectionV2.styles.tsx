@@ -174,12 +174,12 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
       }
       .hoverNFT {
         ${tw`opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[15px] pl-1`}
-        background: linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0.4) 100%)
+        background: ${({ theme }) => theme.hoverGradient};
       }
       .loadingNFT {
         ${tw`absolute opacity-100 mt-[-8px] z-50 duration-300 
           flex items-center w-[190px] h-[295px] rounded-[15px] pl-1`}
-        background: linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0.4) 120%)
+        background: ${({ theme }) => theme.hoverGradient};
       }
     }
     .nftTextContainer {
