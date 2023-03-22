@@ -40,12 +40,12 @@ export const TVChartContainer: FC<{ symbol: string; visible: boolean }> = ({ sym
   try {
     convertResolutionToApi(resolution)
   } catch (e) {
-    resolution = '60'
+    resolution = '5'
   }
 
   const defaultProps: ChartContainerProps = {
     symbol: symbol,
-    interval: resolution ? resolution : '60',
+    interval: resolution ? resolution : '5',
     auto_save_delay: 5,
     containerId: 'tv_chart_container',
     libraryPath: '/charting_library/',
