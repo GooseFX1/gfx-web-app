@@ -370,7 +370,7 @@ export const OrderBook: FC = () => {
   }, [neworders])
 
   const slicedOrderBookBids = useMemo(
-    () => (bidOrderBookDisplay.length > 8 ? bidOrderBookDisplay.slice(0, 8) : bidOrderBookDisplay),
+    () => (bidOrderBookDisplay.length > 14 ? bidOrderBookDisplay.slice(0, 14) : bidOrderBookDisplay),
     [bidOrderBookDisplay]
   )
 
@@ -380,7 +380,7 @@ export const OrderBook: FC = () => {
   )
 
   const slicedOrderBookAsks = useMemo(
-    () => (askOrderBookDisplay.length > 8 ? askOrderBookDisplay.slice(0, 8) : askOrderBookDisplay),
+    () => (askOrderBookDisplay.length > 14 ? askOrderBookDisplay.slice(0, 14) : askOrderBookDisplay),
     [askOrderBookDisplay]
   )
   const totalOrderBookValueAsks = useMemo(
