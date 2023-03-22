@@ -2,16 +2,15 @@
 import React, { FC, ReactNode, useMemo, useState, useEffect, useRef } from 'react'
 import { Dropdown, Menu, Skeleton } from 'antd'
 import { DownOutlined } from '@ant-design/icons'
-import styled from 'styled-components'
 import { MarketSide, useCrypto, useOrder, useOrderBook, useTradeHistory } from '../../context'
 import { removeFloatingPointError } from '../../utils'
-import tw from 'twin.macro'
+import tw, { styled } from 'twin.macro'
 
 const SPREADS = [1 / 100, 5 / 100, 1 / 10, 5 / 10, 1]
 
 const HEADER = styled.div`
   ${tw`h-[31px] w-full p-0 text-xs h-7`}
-  border-bottom: 1px solid #3c3c3c;
+  border-bottom: 1px solid ${({ theme }) => theme.tokenBorder};
   & div {
     ${tw`flex justify-between items-center h-full px-2 dark:text-[#B5B5B5] text-[#636363]`}
 
@@ -169,16 +168,16 @@ const ORDER_SELL = styled.div`
 `
 
 const SIZE_BUY = styled.span`
+  ${tw`dark:bg-[#58ce3b] bg-[#71c25d]`}
   position: absolute;
   right: 0;
   height: 100%;
-  background-color: #71c25d;
 `
 const SIZE_SELL = styled.span`
+  ${tw`dark:bg-[#f24244] bg-[#f06565]`}
   position: absolute;
   left: 0;
   height: 100%;
-  background-color: #f06565;
 `
 const WRAPPER = styled.div`
   position: relative;

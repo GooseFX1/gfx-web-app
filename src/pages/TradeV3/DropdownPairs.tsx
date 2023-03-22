@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Dropdown } from 'antd'
 import React, { FC, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -196,7 +197,7 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
 
 export const DropdownPairs: FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
-  const { selectedCrypto, getAskSymbolFromPair, formatPair, setFilteredSearchPairs, pairs } = useCrypto()
+  const { selectedCrypto, getAskSymbolFromPair, formatPair, setFilteredSearchPairs, pairs, isSpot } = useCrypto()
   const formattedPair = useMemo(() => formatPair(selectedCrypto.pair), [formatPair, selectedCrypto.pair])
   const { mode } = useDarkMode()
   const symbol = useMemo(
@@ -247,7 +248,7 @@ export const DropdownPairs: FC = () => {
           <SELECTED_PAIR>
             <GRADIENT_BACKGROUND>
               <img className="asset-icon" src={assetIcon} alt="asset-icon" />
-              {formattedPair}
+              {isSpot ? formattedPair : `${symbol} / PERP`}
               <img
                 src={mode === 'lite' ? '/img/assets/arrow.svg' : '/img/assets/arrow-down.svg'}
                 alt="arrow-icon"

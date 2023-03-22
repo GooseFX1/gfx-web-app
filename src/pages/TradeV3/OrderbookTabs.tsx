@@ -31,6 +31,9 @@ const HEADER_WRAPPER = styled.div`
       background: ${({ theme }) => theme.bg2} !important;
       color: ${({ theme }) => theme.text1} !important;
     }
+    .ant-radio-button-wrapper:last-child {
+      border-radius: 0 !important;
+    }
     .ant-radio-button-wrapper-checked:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper {
       position: relative;
       color: ${({ theme }) => theme.text1} !important;
@@ -53,12 +56,13 @@ const HEADER_WRAPPER = styled.div`
     }
     .inactiveTab {
       ${tw`h-full !bg-grey-5 dark:!bg-black-1`}
+      border: 1px solid ${({ theme }) => theme.tokenBorder};
     }
     .priceTab {
       ${tw`h-7 w-2/12 flex justify-center items-center text-xs`}
     }
     .container {
-      ${tw`h-8 w-full py-[1px]`}
+      ${tw`h-8 w-full pt-px`}
     }
     .active-field {
       ${tw`p-[2px]`}
@@ -67,8 +71,7 @@ const HEADER_WRAPPER = styled.div`
   }
 `
 const BODY_WRAPPER = styled.div`
-  ${tw`w-full flex flex-row h-full`}
-  border: 1px solid #3c3c3c;
+  ${tw`w-full flex flex-row h-full border-[1px] border-solid dark:border-[#3c3c3c] border-[#CACACA]`}
   border-top: none;
 `
 

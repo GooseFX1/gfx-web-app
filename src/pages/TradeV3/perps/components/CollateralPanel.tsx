@@ -42,12 +42,7 @@ const TABS_WRAPPER = styled.div<{ $isLocked: boolean }>`
     background-image: linear-gradient(to right, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
   }
   .field {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 13px;
-    font-weight: 600;
-    height: 100%;
+    ${tw`dark:text-grey-5 text-grey-1 flex justify-center items-center text-tiny font-semibold h-full`}
   }
   ${tw`h-full w-full relative overflow-y-hidden`}
   filter: blur(${({ $wallet }) => ($wallet ? 0 : 3)}px) !important;

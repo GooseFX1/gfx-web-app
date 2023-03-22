@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable */
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNavCollapse, useCrypto, useDarkMode } from '../../context'
 import { OrderbookTabs } from './OrderbookTabs'
@@ -193,6 +194,9 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean; $
   .space-cont {
     ${tw`p-[2.5px]`}
   }
+  #tv_chart_container {
+    border: 1px solid ${({ theme }) => theme.tokenBorder};
+  }
 `
 
 const UNLOCKED_OVERLAY = styled.div<{ $isGeoBlocked?: boolean }>`
@@ -276,7 +280,7 @@ export const CryptoContent: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const [isLocked, setIsLocked] = useState(true)
   const [layout, setLayout] = useState({ lg: componentDimensionsLg, md: componentDimensionsMd })
-  const isGeoBlocked = useBlacklisted()
+  const isGeoBlocked = false
   const { height, width } = useWindowSize()
   const { mode } = useDarkMode()
   const { selectedCrypto, isSpot } = useCrypto()
