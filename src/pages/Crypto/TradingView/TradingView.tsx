@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import * as saveLoadAdapter from './save-load-adapter'
-import { useTvDataFeed, convertResolutionToApi } from './Datafeed'
+import { convertResolutionToApi, DataFeedWrapper } from './Datafeed'
 import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget } from '../../../charting_library'
 import { useDarkMode } from '../../../context'
 import { flatten } from '../../../utils'
@@ -34,7 +34,7 @@ export interface ChartContainerProps {
 
 export const TVChartContainer: FC<{ symbol: string; visible: boolean }> = ({ symbol, visible }) => {
   const { mode } = useDarkMode()
-  const datafeed = useTvDataFeed()
+  const datafeed = DataFeedWrapper()
   let resolution = window.localStorage.getItem('resolution') ?? '60'
 
   try {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useNavCollapse, useCrypto, useDarkMode } from '../../context'
 import { OrderbookTabs } from './OrderbookTabs'
@@ -278,13 +279,17 @@ export const CryptoContent: FC = () => {
   const isGeoBlocked = useBlacklisted()
   const { height, width } = useWindowSize()
   const { mode } = useDarkMode()
-  const { selectedCrypto } = useCrypto()
+  const { selectedCrypto, isSpot } = useCrypto()
   const { wallet } = useWallet()
+  const [chartContainer, setChartContainer] = useState<any>()
 
-  const chartContainer = useMemo(
-    () => <TVChartContainer symbol={selectedCrypto.pair} visible={true} />,
-    [selectedCrypto.pair]
-  )
+  useEffect(() => {
+    setChartContainer(<TVChartContainer symbol={selectedCrypto.pair} visible={true} />)
+    setTimeout(() => {
+      setChartContainer(<></>)
+      setChartContainer(<TVChartContainer symbol={selectedCrypto.pair} visible={true} />)
+    }, 300)
+  }, [isSpot, selectedCrypto, mode])
 
   useEffect(() => {
     resetLayout()

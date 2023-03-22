@@ -1,10 +1,14 @@
 import { useMemo } from 'react'
-import { AVAILABLE_MARKETS } from '../../../context'
+import { AVAILABLE_MARKETS, useCrypto } from '../../../context'
 import { sleep, getUnixTs } from '../../../utils/misc'
 
-const URL_SERVER = 'https://api.raydium.io/tv/'
+const URL_SERVER = 'https://trading-view.goosefx.io/tradingview/'
 
-export const useTvDataFeed = (): any => useMemo(() => makeDataFeed(), [])
+export const DataFeedWrapper = (): any => {
+  const { selectedCrypto, isSpot } = useCrypto()
+  const dataFeed = useMemo(() => makeDataFeed(), [selectedCrypto, isSpot])
+  return dataFeed
+}
 
 const makeDataFeed = () => {
   const subscriptions = {}
@@ -67,7 +71,8 @@ const makeDataFeed = () => {
         return
       }
 
-      const result = await apiFetchHandler(`${URL_SERVER}symbols?market=${marketInfo.address.toString()}`)
+      const result = await apiFetchHandler(`${URL_SERVER}symbols?symbol=${marketInfo.name.toString()}`)
+
       if (!result) {
         onResolveErrorCallback()
         return
@@ -110,7 +115,7 @@ const makeDataFeed = () => {
       //eslint-disable-next-line
       if (from < 1609459200) from = 1609459200
 
-      const key = `${symbolInfo.market}--${resolution}`
+      const key = `${symbolInfo.name}--${resolution}`
 
       if (overTime[key] && overTime[key] > from) {
         onHistoryCallback([], { nodeData: false })
@@ -119,10 +124,10 @@ const makeDataFeed = () => {
 
       try {
         const result = await apiFetchHandler(
-          `${URL_SERVER}history?market=${symbolInfo.market}&resolution=${resolution}&from_time=${from}&to_time=${to}`
+          `${URL_SERVER}history?symbol=${symbolInfo.name}&resolution=${resolution}&from=${from}&to=${to}`
         )
 
-        if (result.c.length === 0) {
+        if (result.close.length === 0) {
           overTime[key] = to
         }
 
@@ -165,8 +170,7 @@ const makeDataFeed = () => {
           lastReqTime[subscriberUID] = new Date().getTime()
 
           const candle = await apiFetchHandler(
-            `${URL_SERVER}history?market=${symbolInfo.market}&
-            resolution=${resolutionApi}&from_time=${from}&to_time=${to}`
+            `${URL_SERVER}history?symbol=${symbolInfo.name}&resolution=${resolutionApi}&from=${from}&to=${to}`
           )
 
           for (const item of parseCandles(candle)) {
@@ -211,28 +215,30 @@ const makeDataFeed = () => {
 const minTs = (minCount: number, resolutionTv: string) => {
   const ts = getUnixTs()
   switch (resolutionTv) {
-    case '1min':
+    case '1':
       return ts - 60 * 1 * minCount
-    case '3min':
+    case '3':
       return ts - 60 * 3 * minCount
-    case '5min':
+    case '5':
       return ts - 60 * 5 * minCount
-    case '15min':
+    case '15':
       return ts - 60 * 15 * minCount
-    case '30min':
+    case '30':
       return ts - 60 * 30 * minCount
-    case '45min':
+    case '45':
       return ts - 60 * 45 * minCount
-    case '1h':
+    case '60':
       return ts - 60 * 60 * minCount
-    case '2h':
+    case '120':
       return ts - 60 * 120 * minCount
-    case '4h':
+    case '240':
       return ts - 60 * 240 * minCount
-    case '12h':
+    case '720':
       return ts - 60 * 720 * minCount
     case '1d':
       return ts - 3600 * 24 * minCount
+    case 'D':
+      return ts - 3600 * 24 * 31 * 12 * minCount
     case '2d':
       return ts - 3600 * 24 * 2 * minCount
     case '3d':
@@ -306,45 +312,45 @@ const reduceTs = (ts: number, resolutionTv: string) => {
 export const convertResolutionToApi = (resolution: string): string => {
   switch (resolution) {
     case '1':
-      return '1min'
+      return '1'
     case '3':
-      return '3min'
+      return '3'
     case '5':
-      return '5min'
+      return '5'
     case '15':
-      return '15min'
+      return '15'
     case '30':
-      return '30min'
+      return '30'
     case '45':
-      return '45min'
+      return '60'
     case '60':
-      return '1h'
+      return '60'
     case '120':
-      return '2h'
+      return '120'
     case '240':
-      return '4h'
+      return '240'
     case '720':
-      return '12h'
+      return '720'
     case '1D':
-      return '1d'
+      return 'D'
     case '2D':
-      return '2d'
+      return 'D'
     case '3D':
-      return '3d'
+      return 'D'
     case '5D':
-      return '5d'
+      return 'D'
     case '7D':
-      return '7d'
+      return 'D'
     case '1M':
-      return '1m'
+      return 'D'
     case '2M':
-      return '2m'
+      return 'D'
     case '3M':
-      return '3m'
+      return 'D'
     case '6M':
-      return '6m'
+      return 'D'
     case '1Y':
-      return '1y'
+      return 'D'
     default:
       throw Error(`convertResolutionToApi resolution error: ${resolution}`)
   }
@@ -352,12 +358,12 @@ export const convertResolutionToApi = (resolution: string): string => {
 
 interface rawCandles {
   s: string
-  c: Array<number>
-  o: Array<number>
-  l: Array<number>
-  h: Array<number>
-  t: Array<number>
-  v: Array<number>
+  close: Array<number>
+  open: Array<number>
+  low: Array<number>
+  high: Array<number>
+  time: Array<number>
+  volume: Array<number>
 }
 
 interface bar {
@@ -371,14 +377,14 @@ interface bar {
 
 const parseCandles = (candles: rawCandles) => {
   const result: Array<bar> = []
-  for (let i = 0; i < candles.t.length; i++) {
+  for (let i = 0; i < candles.time.length; i++) {
     result.push({
-      time: candles.t[i] * 1000,
-      close: candles.c[i],
-      open: candles.o[i],
-      high: candles.h[i],
-      low: candles.l[i],
-      volume: candles.v[i]
+      time: candles.time[i] * 1000,
+      close: candles.close[i],
+      open: candles.open[i],
+      high: candles.high[i],
+      low: candles.low[i],
+      volume: candles.volume[i]
     })
   }
   return result

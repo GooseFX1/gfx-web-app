@@ -57,7 +57,7 @@ interface ITradeHistoryConfig {
 }
 
 const TradeHistoryContext = createContext<ITradeHistoryConfig | null>(null)
-const historyUrl = 'https://api.raydium.io/v1/dex/trade/address?market='
+const historyUrl = 'https://dry-ravine-67635.herokuapp.com/trades/address/'
 
 export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
@@ -85,7 +85,7 @@ export const TradeHistoryProvider: FC<{ children: ReactNode }> = ({ children }) 
         setTradeHistory([])
       }
     } catch (e) {
-      await notify({ type: 'error', message: `Error fetching market trades`, icon: 'error' }, e)
+      //await notify({ type: 'error', message: `Error fetching market trades`, icon: 'error' }, e)
     }
   }, [selectedCrypto.market])
 
