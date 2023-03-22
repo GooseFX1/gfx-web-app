@@ -8,12 +8,12 @@ import {
   NFT_COLLECTIONS_GRID,
   NFT_FILTERS_CONTAINER
 } from './Collection/CollectionV2.styles'
-import { useDarkMode, useNavCollapse } from '../../context'
+import { useDarkMode, useNavCollapse, useNFTAggregator } from '../../context'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { checkMobile } from '../../utils'
-import { SearchBar, TokenToggle } from '../../components'
+import { SearchBar, TokenToggle, TokenToggleNFT } from '../../components'
 import NFTDisplay from './Profile/NFTDisplay'
 
 const NFT_TAB = styled.div``
@@ -50,6 +50,7 @@ export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }): ReactEl
 
 const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayIndex }: any): ReactElement => {
   const { mode } = useDarkMode()
+  const { setCurrency } = useNFTAggregator()
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none">
@@ -79,7 +80,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
           Activity
         </div>
       </div>
-      {!checkMobile() && <TokenToggle tokenA="" tokenB="" toggleToken={() => console.log('f')} icons={true} />}
+      <div tw="mr-6">{!checkMobile() && <TokenToggleNFT toggleToken={setCurrency} />}</div>
     </NFT_FILTERS_CONTAINER>
   )
 }

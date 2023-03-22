@@ -361,10 +361,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                 </span>
               ))}
             </div>
-          ) : currentUserProfile.twitter_link &&
-            currentUserProfile.instagram_link &&
-            currentUserProfile.telegram_link &&
-            currentUserProfile.youtube_link ? (
+          ) : currentUserProfile.twitter_link && currentUserProfile.telegram_link ? (
             <div className="social-list">
               {currentUserProfile.twitter_link && (
                 <a
@@ -376,16 +373,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   <img className="social-icon" src={`/img/assets/twitter.svg`} alt="" />
                 </a>
               )}
-              {currentUserProfile.instagram_link && (
-                <a
-                  className="social-item"
-                  href={validExternalLink(currentUserProfile.instagram_link)}
-                  target={'_blank'}
-                  rel={'noreferrer'}
-                >
-                  <img className="social-icon" src={`/img/assets/instagram.svg`} alt="" />
-                </a>
-              )}
+
               {currentUserProfile.telegram_link && (
                 <a
                   className="social-item"
@@ -394,16 +382,6 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   rel={'noreferrer'}
                 >
                   <img className="social-icon" src={`/img/assets/facebook.svg`} alt="" />
-                </a>
-              )}
-              {currentUserProfile.youtube_link && (
-                <a
-                  className="social-item-yt"
-                  href={validExternalLink(currentUserProfile.youtube_link)}
-                  target={'_blank'}
-                  rel={'noreferrer'}
-                >
-                  <img className="social-icon" src={`/img/assets/youtube.png`} alt="" />
                 </a>
               )}
             </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, ReactElement, useEffect, useMemo, useState } from 'react'
 import { Button, Col, Drawer, Row, Tabs } from 'antd'
 import { checkMobile, notify, truncateAddress } from '../../../utils'
@@ -18,6 +19,10 @@ import axios from 'axios'
 import { genericErrMsg } from '../../Farm/FarmClickHandler'
 
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
+  .generalItemValue {
+    color: ${({ theme }) => theme.text32};
+    ${tw`text-[15px] leading-9 font-semibold pr-2 pl-4`}
+  }
   ${({ theme }) => css`
     position: relative;
  
@@ -49,6 +54,9 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
         }
       }
 
+      .general-item-title {
+      ${tw`text-[15px] font-semibold leading-9	ml-4 text-[#636363]`}
+    }
       .ant-tabs-ink-bar {
         display: none;
       }
@@ -125,13 +133,6 @@ const WRAPPER = styled.div`
     .buyNowButton {
       background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     }
-    .general-item-title {
-      ${tw`text-[15px] font-semibold leading-9	ml-4 text-[#636363]`}
-    }
-    .general-item-value {
-      ${tw`text-[15px] font-semibold leading-9	mr-4`}
-      color: ${({ theme }) => theme.text32};
-    }
 
     .close-icon-holder {
       ${tw`h-[30px] w-[30px] rounded-[50%] top-[12px] left-[12px] cursor-pointer
@@ -154,8 +155,7 @@ const WRAPPER = styled.div`
       max-height: 60px;
       ${tw`text-[15px] font-medium mt-2.5 overflow-y-auto	`}
     }
-    .titleContainer {
-    }
+
     .ls-bottom-panel {
       margin-top: ${theme.margin(2.5)};
       display: flex;
@@ -326,7 +326,7 @@ const ImageViewer = ({ setBuyNow, buyNowClicked, setBidNow, bidNowClicked }: any
         <AppraisalValue width={360} />
       </div>
       <img tw="h-[390px] w-[100%]" src="/img/assets/Aggregator/priceHistory.svg" />
-      <NFTTabSections activeTab={activeTab} setActiveTab={setActiveTab} />
+      {/* <NFTTabSections activeTab={activeTab} setActiveTab={setActiveTab} /> */}
       <ButtonContainer
         setBuyNow={setBuyNow}
         buyNowClicked={buyNowClicked}
@@ -405,7 +405,7 @@ export const NFTTabSections: FC<{ activeTab: string; setActiveTab: any }> = ({
     <RIGHT_SECTION_TABS activeTab={activeTab}>
       <Tabs defaultActiveKey="1" centered onChange={(key) => setActiveTab(key)}>
         <TabPane tab="Activity" key="1">
-          <div className="general-item-value" tw="text-[15px] font-semibold pr-2 pl-4 ">
+          <div className="generalItemValue">
             <div tw="flex items-center justify-center">Open Bids</div>
             No bids so far, be the first to bid for this amazing piece.
           </div>

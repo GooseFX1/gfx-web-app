@@ -7,7 +7,7 @@ import { ParsedAccount } from '../../../web3'
 import { Card } from '../Collection/Card'
 import NoContent from './NoContent'
 import { SearchBar, Loader, ArrowDropdown } from '../../../components'
-import { useNavCollapse, useNFTProfile } from '../../../context'
+import { useNavCollapse, useNFTAggregator, useNFTProfile } from '../../../context'
 import { StyledTabContent } from './TabContent.styled'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import debounce from 'lodash.debounce'
@@ -18,6 +18,7 @@ import { CenteredDiv } from '../../../styles'
 import { GRID_CONTAINER, NFT_COLLECTIONS_GRID } from '../Collection/CollectionV2.styles'
 import Loading from '../Home/Loading'
 import NFTLoading from '../Home/NFTLoading'
+import { SellNFTModal } from '../Collection/SellNFTModal'
 
 const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
   ${tw`h-[25px] w-[50px] rounded-[40px] cursor-pointer`}
@@ -164,16 +165,6 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     return nfts
   }
 
-  useEffect(() => {
-    window.addEventListener('scroll', scrolling, true)
-
-    return () => window.removeEventListener('scroll', scrolling, true)
-  }, [])
-
-  const scrolling = debounce(() => {
-    handleScroll()
-  }, 100)
-
   const Menu: FC<Props> = ({ nftFilterArr, setNftFilter }): JSX.Element => (
     <>
       <DROPDOWN_WRAPPER>
@@ -195,17 +186,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     </>
   )
 
-  const handleScroll = () => {
-    const border = document.getElementById('border')
-    if (border !== null) {
-      const mainHeight = window.innerHeight
-      const totalscroll = mainHeight + border.scrollTop + 100
-
-      if (Math.ceil(totalscroll) < border.scrollHeight || activePointLoader.current) {
-        setLoading(false)
-      }
-    }
-  }
+  const { sellNFTClicked } = useNFTAggregator()
   const gridType = filteredCollectedItems?.length > 7 ? '1fr' : '210px'
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType}>
