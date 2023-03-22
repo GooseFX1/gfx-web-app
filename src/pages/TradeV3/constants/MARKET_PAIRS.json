@@ -3,30 +3,21 @@
     "pair": "SOL/USDC",
     "type": "perps",
     "coinGecko": "solana",
-    "marketAddress": "DYnDVhsPqLyxLAmdJzwPYrQrq7TAhQLeK6YVQpYGWUoo"
+    "marketAddress": "DYnDVhsPqLyxLAmdJzwPYrQrq7TAhQLeK6YVQpYGWUoo",
+    "display": "SOL-PERP"
   },
   {
     "pair": "SOL/USDC",
     "type": "crypto",
     "coinGecko": "solana",
-    "marketAddress": "8BnEgHoWFysVcuFFX7QztDmzuH8r5ZFvyP3sYwn1XTh6"
+    "marketAddress": "8BnEgHoWFysVcuFFX7QztDmzuH8r5ZFvyP3sYwn1XTh6",
+    "display": "SOL/USDC"
   },
   {
     "pair": "ETH/USDC",
     "type": "crypto",
     "coinGecko": "ethereum",
-    "marketAddress": "BbJgE7HZMaDp5NTYvRh5jZSkQPVDTU8ubPFtpogUkEj4"
-  },
-  {
-    "pair": "SOL/USDT",
-    "type": "crypto",
-    "coinGecko": "solana",
-    "marketAddress": "2AdaV97p6SfkuMQJdu8DHhBhmJe7oWdvbm52MJfYQmfA"
-  },
-  {
-    "pair": "USDT/USDC",
-    "type": "crypto",
-    "coinGecko": "",
-    "marketAddress": "B2na8Awyd7cpC59iEU43FagJAPLigr3AP3s38KM982bu"
+    "marketAddress": "BbJgE7HZMaDp5NTYvRh5jZSkQPVDTU8ubPFtpogUkEj4",
+    "display": "ETH/USDC"
   }
 ]

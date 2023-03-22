@@ -188,7 +188,7 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
         $hoverBorder={hoverBorder}
       >
         <img className="asset-icon" src={assetIcon} alt="" />
-        <div className="spacing">{formattedPair}</div>
+        <div className="spacing">{pair}</div>
         {changeValue !== ' ' ? <div className={classNameChange}>{changeValue}%</div> : <div />}
       </DROPDOWN_PAIR_DIV>
     </GRADIENT_BORDER>
@@ -198,7 +198,10 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
 export const DropdownPairs: FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
   const { selectedCrypto, getAskSymbolFromPair, formatPair, setFilteredSearchPairs, pairs, isSpot } = useCrypto()
-  const formattedPair = useMemo(() => formatPair(selectedCrypto.pair), [formatPair, selectedCrypto.pair])
+  //const formattedPair = useMemo(() => formatPair(selectedCrypto.pair), [formatPair, selectedCrypto.pair])
+  const displayPair = useMemo(() => {
+    return selectedCrypto.display
+  }, [selectedCrypto.pair, selectedCrypto.type])
   const { mode } = useDarkMode()
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
@@ -248,7 +251,7 @@ export const DropdownPairs: FC = () => {
           <SELECTED_PAIR>
             <GRADIENT_BACKGROUND>
               <img className="asset-icon" src={assetIcon} alt="asset-icon" />
-              {isSpot ? formattedPair : `${symbol} / PERP`}
+              {displayPair}
               <img
                 src={mode === 'lite' ? '/img/assets/arrow.svg' : '/img/assets/arrow-down.svg'}
                 alt="arrow-icon"

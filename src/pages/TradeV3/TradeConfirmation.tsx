@@ -98,10 +98,10 @@ export const TradeConfirmation: FC<{ setVisibility: any }> = ({ setVisibility })
             {total} USDC
           </span>
         </ROW>
-        <ROW>
+        {/* <ROW>
           <span>Est. Liquidation Price</span>
           <span className="value">$14.9628</span>
-        </ROW>
+        </ROW> */}
       </div>
       <Button onClick={() => handleClick()} width="100%" height="50px" cssStyle={cssStyle}>
         {order.side === 'buy' ? 'Long' : 'Short'} {order.size} {symbol}

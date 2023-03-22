@@ -37,7 +37,8 @@ enum ButtonState {
   NullAmount = 2,
   BalanceExceeded = 3,
   CreateAccount = 4,
-  isGeoBlocked = 5
+  isGeoBlocked = 5,
+  OrderTooSmall = 6
 }
 
 const WRAPPER = styled.div`
@@ -411,6 +412,7 @@ export const PlaceOrder: FC = () => {
       if (!traderInfo?.traderRiskGroupKey) return ButtonState.CreateAccount
       if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
       if (order.size > maxQtyNum) return ButtonState.BalanceExceeded
+      if (order.size < 0.01) return ButtonState.OrderTooSmall
       //if (order.total > perpsBidBalance) return ButtonState.BalanceExceeded
       return ButtonState.CanPlaceOrder
     }
@@ -421,6 +423,7 @@ export const PlaceOrder: FC = () => {
     else if (buttonState === ButtonState.Connect) return 'Connect Wallet'
     else if (buttonState === ButtonState.isGeoBlocked) return 'Georestricted'
     else if (buttonState === ButtonState.CreateAccount) return 'Create Account!'
+    else if (buttonState === ButtonState.OrderTooSmall) return 'Minimum size 0.01'
     if (selectedCrypto.type === 'crypto') {
       if (order.side === 'buy') return 'BUY ' + symbol
       else return 'SELL ' + symbol
@@ -574,6 +577,10 @@ export const PlaceOrder: FC = () => {
     //return Number(initLeverage.toFixed(2))
   }, [maxQtyNum, order.size])
 
+  const displayPair = useMemo(() => {
+    return selectedCrypto.display
+  }, [selectedCrypto.pair, selectedCrypto.type])
+
   return (
     <WRAPPER>
       <HEADER>
@@ -634,7 +641,7 @@ export const PlaceOrder: FC = () => {
         <div className="pairInfo">
           <div className="pairName">
             <img src={`/img/crypto/${symbol}.svg`} alt="" />
-            {symbol + '/' + bid}
+            {displayPair}
           </div>
           {selectedCrypto.type !== 'crypto' ? <div className="pairLeverage">10x</div> : null}
         </div>

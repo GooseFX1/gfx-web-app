@@ -19,6 +19,7 @@ interface ICrypto {
   type?: MarketType
   coinGecko?: any
   marketAddress: string
+  display: string
 }
 
 export type MarketSide = 'asks' | 'bids'
