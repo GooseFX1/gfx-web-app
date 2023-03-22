@@ -22,7 +22,7 @@ const AggCommingSoon = (): ReactElement => {
   return (
     <WRAPPER>
       <GradientText text={'NFT Aggregator'} fontSize={28} fontWeight={600} />
-      <div className="commingSoon">Comming Soon...</div>
+      <div className="commingSoon">Coming Soon...</div>
       <img tw="mt-10 w-[579px] h-[361px] mt-14" src={`${`/img/assets/Aggregator/aggCommingSoon${mode}.webp`}`} />
 
       <div className="desc">For collectors, investors, and enthusiasts</div>
