@@ -106,6 +106,7 @@ export interface Colors {
   darkButton: Color
   scrollBarColor: Color
   opacity: Color
+  hoverGradient: Color
 
   // speciality colors
   appLayoutFooterBorder: Color

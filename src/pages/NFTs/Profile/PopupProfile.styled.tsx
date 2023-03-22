@@ -137,9 +137,11 @@ export const StyledFormProfile = styled(Form)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
+  .ant-upload-span {
+    display: none !important;
+  }
   .profile-pic-upload-zone {
-    max-width: 100%;
+    max-width: 10%;
     .ant-upload-list-text {
       display: none;
     }
@@ -271,12 +273,15 @@ export const STYLED_PROFILE_POPUP = styled(PopupCustom)`
     ${tw`dark:text-[20px] mt-12 sm:mt-0  text-[10px]`}
     background-color: ${({ theme }) => theme.walletModalWallet};
   }
+  .ant-upload-span {
+    display: none !important;
+  }
   .optional {
     ${tw`text-[15px] font-semibold`}
     color: ${({ theme }) => theme.text34};
   }
   .inputContainer {
-    ${tw`bg-none text-[15px] font-semibold mb-2`}
+    ${tw`bg-none text-[15px] w-[90%] font-semibold mb-1 mt-0.5`}
     border: none;
     background: none;
     :focus {
@@ -284,15 +289,23 @@ export const STYLED_PROFILE_POPUP = styled(PopupCustom)`
     }
   }
   .underLine {
-    background: #636363;
+    background: #b5b5b5;
     ${tw`text-[#b5b5b5] h-[2px]`}
   }
   .publicURLText {
     ${tw`text-[13px] font-semibold mt-2 text-[#636363]`}
   }
+  .publicURLWhiteText {
+    ${tw`text-[13px] font-semibold mt-2 text-[#ffffff]`}
+  }
+
   .titleHeader {
     color: ${({ theme }) => theme.text30};
-    ${tw`text-[18px] font-semibold mt-4`}
+    ${tw`text-[18px] font-semibold mt-3 leading-[23px]`}
+  }
+  .titleHeaderBlue {
+    color: ${({ theme }) => theme.text31};
+    ${tw`text-[18px] font-semibold mt-3 leading-[23px]`}
   }
   .profilePicText {
     ${tw`text-[13px] mt-[10px] font-semibold text-[#b5b5b5]`}
@@ -304,7 +317,16 @@ export const STYLED_PROFILE_POPUP = styled(PopupCustom)`
     color: ${({ theme }) => theme.text30};
     ${tw`text-[20px] font-semibold`}
   }
-
+  .saveChanges {
+    ${tw`w-[440px] sm:h-[50px] sm:text-[15px]  cursor-pointer mt-[28px] rounded-[50px] border-none
+     h-[53px] text-white text-[20px] font-semibold flex items-center justify-center`}
+    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+    :disabled {
+      cursor: not-allowed;
+      ${tw`text-[#636363]`}
+      background: ${({ theme }) => theme.bg22};
+    }
+  }
   .profile-image-upload {
     ${tw`w-[100px] h-[100px] rounded-[50%] cursor-pointer`}
   }

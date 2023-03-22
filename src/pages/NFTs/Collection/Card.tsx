@@ -6,16 +6,17 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Row } from 'antd'
 import { moneyFormatter } from '../../../utils'
 import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nft_details.d'
-import { useNFTProfile, useNFTDetails, useConnectionConfig, useDarkMode, usePriceFeed } from '../../../context'
+import { useNFTProfile, useNFTDetails, useConnectionConfig, useDarkMode, useNFTAggregator } from '../../../context'
 import { fetchSingleNFT } from '../../../api/NFTs'
 import { getParsedAccountByMint, StringPublicKey, ParsedAccount } from '../../../web3'
-import { Loader } from '../../../components'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { BuySellNFTs } from '../Profile/BuySellNFTs'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { GradientText } from '../adminPage/components/UpcomingMints'
+import { HoverOnNFT } from './SingleNFTCard'
+import { SellNFTModal } from './SellNFTModal'
 
 //#region styles
 const CARD = styled.div`
@@ -142,6 +143,7 @@ export const Card: FC<ICard> = (props) => {
   const [isFavorited, setIsFavorited] = useState<boolean>(false)
   const [showSingleNFT, setShowSingleNFT] = useState<boolean>(false)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
+  const [hover, setHover] = useState<boolean>(false)
 
   const displayPrice: string = useMemo(
     () =>
@@ -238,9 +240,20 @@ export const Card: FC<ICard> = (props) => {
     <>
       {showSingleNFT && <BuySellNFTs setShowSingleNFT={setShowSingleNFT} />}
       <div className="gridItem">
-        <div className="gridItemContainer" onClick={() => (localSingleNFT !== undefined ? goToDetails() : null)}>
+        <div
+          className="gridItemContainer"
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          onClick={() => (localSingleNFT !== undefined ? goToDetails() : null)}
+        >
           {isLoadingBeforeRelocate && <LoadingDiv />}
-
+          {hover && (
+            <HoverOnNFT
+              buttonType="sell"
+              item={localSingleNFT}
+              setNFTDetailsBeforeLocate={setNFTDetailsBeforeLocate}
+            />
+          )}
           <img
             className="nftImg"
             src={localSingleNFT ? localSingleNFT.image_url : `${window.origin}/img/assets/nft-preview-${mode}.svg`}

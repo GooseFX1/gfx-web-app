@@ -167,8 +167,6 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
 
           <div className="nftPrice">
             {localAsk ? <PriceWithToken price={displayPrice} token={currencyView} /> : 'No Ask'}
-            {/* {localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 'No Ask'}
-            {localAsk && <img src={`/img/crypto/SOL.svg`} alt={'SOL'} />} */}
           </div>
           <div className="apprisalPrice" onClick={(e) => handleInfoIconClicked(e)}>
             {'NA'}
@@ -196,13 +194,14 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   )
 }
 
-const HoverOnNFT: FC<{ addNftToBag: any; item: BaseNFT; hasAsk: boolean; setNFTDetailsBeforeLocate: any }> = ({
-  addNftToBag,
-  item,
-  hasAsk,
-  setNFTDetailsBeforeLocate
-}): ReactElement => {
-  const { setBidNow, setBuyNow } = useNFTAggregator()
+export const HoverOnNFT: FC<{
+  addNftToBag?: any
+  item: BaseNFT
+  hasAsk?: boolean
+  buttonType?: string
+  setNFTDetailsBeforeLocate: any
+}> = ({ addNftToBag, item, hasAsk, setNFTDetailsBeforeLocate, buttonType }): ReactElement => {
+  const { setBidNow, setBuyNow, setSellNFT } = useNFTAggregator()
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
 
   const goToDetailsForModal = async (e, type) => {
@@ -211,28 +210,41 @@ const HoverOnNFT: FC<{ addNftToBag: any; item: BaseNFT; hasAsk: boolean; setNFTD
     await setNFTDetailsBeforeLocate()
     setIsLoadingBeforeRelocate(false)
     if (type === 'bid') setBidNow(item)
+    else if (type === 'sell') setSellNFT(item)
     else setBuyNow(item)
   }
   return (
     <div className="hoverNFT">
       {isLoadingBeforeRelocate && <LoadingDiv />}
-      <img
-        className="hoverAddToBag"
-        src={`/img/assets/Aggregator/addToBag.svg`}
-        alt=""
-        onClick={(e) => addNftToBag(e, item)}
-      />
+      {addNftToBag && (
+        <img
+          className="hoverAddToBag"
+          src={`/img/assets/Aggregator/addToBag.svg`}
+          alt=""
+          onClick={(e) => addNftToBag(e, item)}
+        />
+      )}
       <span className="hoverButtons">
-        <Button
-          height="28px"
-          width="75px"
-          cssStyle={tw`bg-[#5855ff] text-[13px] font-semibold mr-2 ml-2`}
-          onClick={(e) => {
-            goToDetailsForModal(e, 'bid')
-          }}
-        >
-          Bid
-        </Button>
+        {buttonType === 'sell' ? (
+          <Button
+            cssStyle={tw`bg-[#f06565] h-[28px] w-[75px] text-[13px] font-semibold mr-2 ml-2`}
+            onClick={(e) => {
+              goToDetailsForModal(e, 'sell')
+            }}
+          >
+            Sell
+          </Button>
+        ) : (
+          <Button
+            cssStyle={tw`bg-[#5855ff]   h-[28px] w-[75px] text-[13px] font-semibold mr-2 ml-2`}
+            onClick={(e) => {
+              goToDetailsForModal(e, 'bid')
+            }}
+          >
+            Bid
+          </Button>
+        )}
+
         {hasAsk && (
           <Button
             height="28px"

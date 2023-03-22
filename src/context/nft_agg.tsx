@@ -17,6 +17,8 @@ interface INFTAggConfig {
   bidNowClicked: any
   setCurrency?: any
   currencyView: string
+  sellNFTClicked?: any
+  setSellNFT?: any
 }
 
 interface NFTAgg {
@@ -34,6 +36,8 @@ interface NFTAgg {
   bidNowClicked: any
   currencyView: string
   setCurrency?: any
+  sellNFTClicked?: any
+  setSellNFT?: any
 }
 
 const NFTAggContext = createContext<INFTAggConfig>(null)
@@ -44,6 +48,7 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
   const [selectedNFT, setSelectedNFT] = useState<number | undefined>()
   const [buyNowClicked, setBuyNow] = useState<boolean | any>(undefined)
   const [bidNowClicked, setBidNow] = useState<boolean | any>(undefined)
+  const [sellNFTClicked, setSellNFT] = useState<any>(undefined)
   const [currencyView, setCurrencyView] = useState<'SOL' | 'USDC'>('SOL')
 
   const setCurrency = () => {
@@ -71,7 +76,9 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
         nftInBag: nftInBag,
         setNftInBag: setNftInBag,
         currencyView: currencyView,
-        setCurrency: setCurrency
+        setCurrency: setCurrency,
+        sellNFTClicked: sellNFTClicked,
+        setSellNFT: setSellNFT
       }}
     >
       {children}
@@ -98,7 +105,9 @@ export const useNFTAggregator = (): NFTAgg => {
     nftInBag,
     setNftInBag,
     currencyView,
-    setCurrency
+    setCurrency,
+    setSellNFT,
+    sellNFTClicked
   } = context
   return {
     sortingAsc,
@@ -113,6 +122,8 @@ export const useNFTAggregator = (): NFTAgg => {
     nftInBag,
     setNftInBag,
     currencyView,
-    setCurrency
+    setCurrency,
+    setSellNFT,
+    sellNFTClicked
   }
 }

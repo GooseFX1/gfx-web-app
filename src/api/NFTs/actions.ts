@@ -38,13 +38,14 @@ export const updateNFTUser = async (updatedUser: INFTProfile): Promise<any> => {
       user_id: updatedUser.uuid,
       new_user_data: {
         nickname: updatedUser.nickname,
-        email: updatedUser.email,
         bio: updatedUser.bio,
         instagram_link: updatedUser.instagram_link,
         twitter_link: updatedUser.twitter_link,
         youtube_link: updatedUser.youtube_link,
         telegram_link: updatedUser.telegram_link,
-        profile_pic_link: updatedUser.profile_pic_link
+        profile_pic_link: updatedUser.profile_pic_link,
+        website_link: updatedUser.website_link,
+        discord_profile: updatedUser.discord_profile
       }
     })
     return await res
