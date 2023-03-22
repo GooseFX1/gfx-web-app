@@ -209,7 +209,7 @@ export const FarmFilter: FC = () => {
         <GeneralStatsBarMobile />
         {/* TEMP_DEP_DISABLE */}
         <CenteredDiv>
-          <TEMP_BANNER>⚠️ SSL Pools Have Temporarily Disabled Deposits</TEMP_BANNER>
+          <TEMP_BANNER>⚠️ SSL v2 Pools Will Relaunch to the Public Soon</TEMP_BANNER>
         </CenteredDiv>
         <STYLED_FARM_HEADER>
           <ButtonContainer $poolIndex={poolIndex}>
@@ -239,7 +239,7 @@ export const FarmFilter: FC = () => {
       <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
       {/* TEMP_DEP_DISABLE */}
       <CenteredDiv>
-        <TEMP_BANNER>⚠️ SSL Pools Have Temporarily Disabled Deposits</TEMP_BANNER>
+        <TEMP_BANNER>⚠️ SSL v2 Pools Will Relaunch to the Public Soon</TEMP_BANNER>
       </CenteredDiv>
       <WRAPPER>
         <div
