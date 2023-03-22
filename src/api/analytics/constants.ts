@@ -6,7 +6,7 @@ export enum ANALYTICS_API_ENDPOINTS {
   META_DATA = '/meta?token=',
   GET_LIQUIDITY = '/getLiquidityData',
   LOG_DATA = '/logData',
-  NFT_LAUNCHPAD_API_BASE = 'https://nft-launchpad.goosefx.io',
+  NFT_LAUNCHPAD_API_BASE = 'https://api-services.goosefx.io',
   GET_ALL_LAUNCHES = '/nft-launchpad/getAllLaunches',
   GET_SELECTED_LAUNCH = '/nft-launchpad/getOneLaunch',
   IS_CREATOR_ALLOWED = '/nft-launchpad/isUserAllowed',
