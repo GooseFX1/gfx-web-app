@@ -16,7 +16,7 @@ export const BuySellNFTs: FC<{
       onClose={() => setShowSingleNFT(false)}
       getContainer={elem}
       visible={true}
-      width={checkMobile() ? '100%' : '32%'}
+      width={checkMobile() ? '100%' : '460px'}
     >
       <ImageShowcase setShowSingleNFT={setShowSingleNFT} />
       <RightSection status={''} />

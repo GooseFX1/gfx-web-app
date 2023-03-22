@@ -46,7 +46,7 @@ import {
 } from '../../../web3'
 import { Button } from '../../../components/Button'
 const TEN_MILLION = 10000000
-const STYLED_POPUP = styled(PopupCustom)`
+export const STYLED_POPUP = styled(PopupCustom)`
   ${tw`flex flex-col `}
   .ant-modal-close-x {
     img {
@@ -133,6 +133,14 @@ const STYLED_POPUP = styled(PopupCustom)`
     ${tw`text-[25px] font-semibold mt-[15px]`}
     color: ${({ theme }) => theme.text12};
   }
+  .sellButton {
+    ${tw`w-[520px] sm:h-[50px] sm:text-[15px]  cursor-pointer text-[#EEEEEE] rounded-[50px] border-none
+     h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F24244] justify-center`}
+    :disabled {
+      ${tw`text-[#636363] cursor-not-allowed`}
+      background: ${({ theme }) => theme.bg22} !important;
+    }
+  }
 
   .buyButton {
     ${tw`w-[520px] sm:h-[50px] sm:text-[15px]  cursor-pointer rounded-[50px] border-none
@@ -193,7 +201,6 @@ export const BidNFTModal = (): ReactElement => {
   // first review then place the bid
 
   const updateBidValue = (e) => {
-    console.log(e.target.value, parseFloat(e.target.value) < TEN_MILLION)
     if (parseFloat(e.target.value) < TEN_MILLION) setBidValue(e.target.value)
     handleBtnClicked(e.target.value, -1)
   }

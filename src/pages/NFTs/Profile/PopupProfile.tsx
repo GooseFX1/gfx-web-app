@@ -1,18 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useMemo, FC } from 'react'
-import { Form, Input, Button, Upload, UploadProps, Image } from 'antd'
+import { Form, Upload, UploadProps, Image, Button } from 'antd'
 import { uploadFile } from 'react-s3'
-import { StyledPopupProfile, StyledFormProfile, STYLED_PROFILE_POPUP } from './PopupProfile.styled'
+import { STYLED_PROFILE_POPUP } from './PopupProfile.styled'
 import { useNFTProfile, useDarkMode } from '../../../context'
-import { SVGDynamicReverseMode } from '../../../styles'
 import { INFTProfile } from '../../../types/nft_profile.d'
 import { completeNFTUserProfile, updateNFTUser } from '../../../api/NFTs'
-import { Loader } from '../../../components'
 import { CenteredDiv } from '../../../styles'
-import { PopupCustom } from '../Popup/PopupCustom'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { Loader } from '../../../components'
 
 const config = {
   bucketName: 'gfx-nest-image-resources',
@@ -35,10 +33,24 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [profileImage, setProfileImage] = useState<File>()
   const { mode } = useDarkMode()
-  //const [imageLink, setImageLink] = useState<string>('')
+  const [username, setUsername] = useState<string>()
+  const [bio, setBio] = useState<string | undefined>()
+  //social links
+  const [twitterLink, setTwitterLink] = useState<string>()
+  const [discordLink, setDiscordLink] = useState<string>()
+  const [telegramLink, setTelegramLink] = useState<string>()
+  const [websiteLink, setWebsiteLink] = useState<string>()
 
   useEffect(() => {
     form.setFieldsValue(sessionUser)
+    if (sessionUser) {
+      setUsername(sessionUser.nickname ? sessionUser.nickname : '')
+      setBio(sessionUser.bio ? sessionUser.nickname : '')
+      setTwitterLink(sessionUser.twitter_link ? sessionUser.twitter_link : '')
+      setDiscordLink(sessionUser.discord_profile ? sessionUser.discord_profile : '')
+      setWebsiteLink(sessionUser.website_link ? sessionUser.website_link : '')
+      setTelegramLink(sessionUser.telegram_link ? sessionUser.telegram_link : '')
+    }
 
     return () => form.setFieldsValue(undefined)
   }, [sessionUser])
@@ -60,7 +72,15 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
           ...formattedProfile,
           user_id: sessionUser.user_id,
           uuid: sessionUser.uuid,
-          profile_pic_link: imageLink
+          nickname: username,
+          profile_pic_link: imageLink !== '' ? imageLink : sessionUser.profile_pic_link,
+          bio: bio,
+          twitter_link: twitterLink,
+          telegram_link: telegramLink,
+          is_verified: sessionUser.is_verified,
+          user_likes: sessionUser.user_likes,
+          website_link: websiteLink ? websiteLink : null,
+          discord_profile: discordLink ? discordLink : null
         }
         await updateProfile(updatedProfile)
       }
@@ -107,14 +127,18 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
   const updateProfile = async (updatedProfile: INFTProfile) => {
     updateNFTUser(updatedProfile).then((res) => {
       if (res && res.status === 200 && res.data === true) {
-        setIsLoading(false)
         setSessionUser(updatedProfile)
         setVisible(false)
+        setIsLoading(false)
       } else {
         setIsLoading(false)
         console.error(`Error Updating user ${sessionUser.nickname}`)
       }
     })
+  }
+  const checkIfDisabled = () => {
+    if (username || bio || twitterLink || telegramLink || websiteLink || discordLink) return false
+    return true
   }
 
   const beforeChange = (file: File) => {
@@ -157,12 +181,13 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
               beforeUpload={beforeChange}
               onChange={handleUpload}
               maxCount={1}
+              name=""
               className={'profile-pic-upload-zone'}
               onPreview={() => false}
               accept="image/png, image/jpeg, image/jpg, image/svg+xml, gif"
             >
               <img
-                tw="mt-[15px] z-10 ml-[-30px] absolute"
+                tw="mt-[15px] z-10 ml-[-30px] absolute cursor-pointer"
                 className="icon"
                 src={`/img/assets/Aggregator/editBtn.svg`}
                 alt="edit-image"
@@ -174,10 +199,16 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
               Username <OptionalText />
             </div>
             <div>
-              <InputContainer />
+              <InputContainer setVariableState={setUsername} stateVariable={username} />
             </div>
             <UnderLine width={260} />
-            <PublicURLText />
+            <div tw="flex justify-between items-center">
+              <PublicURLText />
+              <div tw="flex">
+                <div className="publicURLText">{username ? username?.length : 0} </div>
+                <div className="publicURLWhiteText"> /30</div>
+              </div>
+            </div>
           </div>
         </div>
         <div className="profilePicText">Profile Pitcure</div>
@@ -186,18 +217,25 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
             Bio <OptionalText />
           </div>
           <div>
-            <InputContainer />
+            <InputContainer setVariableState={setBio} stateVariable={bio} />
           </div>
-          <UnderLine width={400} />
+          <UnderLine width={438} />
+          <div tw="flex justify-between items-center">
+            <div className="publicURLText">Share with the world who you are!</div>
+            <div tw="flex">
+              <div className="publicURLText">{bio ? bio.length : 0}</div>{' '}
+              <div className="publicURLWhiteText"> /100</div>
+            </div>
+          </div>
         </div>
-        <div className="titleHeader" tw="!text-[20px]">
+        <div className="titleHeaderBlue" tw="!text-[20px]">
           Social Media Links
         </div>
         <div tw="flex">
           <div className="titleHeader">
             Twitter <OptionalText />
             <div>
-              <InputContainer />
+              <InputContainer setVariableState={setTwitterLink} stateVariable={twitterLink} />
             </div>
             <UnderLine width={200} />
             <PublicURLText />
@@ -205,7 +243,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
           <div className="titleHeader" tw="ml-4">
             Discord <OptionalText />
             <div>
-              <InputContainer />
+              <InputContainer setVariableState={setDiscordLink} stateVariable={discordLink} />
             </div>
             <UnderLine width={200} />
             <PublicURLText />
@@ -215,7 +253,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
           <div className="titleHeader">
             Telegram <OptionalText />
             <div>
-              <InputContainer />
+              <InputContainer setVariableState={setTelegramLink} stateVariable={telegramLink} />
             </div>
             <UnderLine width={200} />
             <PublicURLText />
@@ -223,12 +261,20 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
           <div className="titleHeader" tw="ml-4">
             Website <OptionalText />
             <div>
-              <InputContainer />
+              <InputContainer setVariableState={setWebsiteLink} stateVariable={websiteLink} />
             </div>
             <UnderLine width={200} />
             <PublicURLText />
           </div>
         </div>
+        <Button
+          className="saveChanges"
+          loading={isLoading}
+          disabled={checkIfDisabled() || isLoading}
+          onClick={onFinish}
+        >
+          Save Changes
+        </Button>
       </STYLED_PROFILE_POPUP>
     </>
   )
@@ -343,4 +389,23 @@ const PublicURLText = () => <div className="publicURLText">Will be used as Publi
 const UnderLine: FC<{ width: number }> = ({ width }) => (
   <div className="underLine" style={{ width: width, height: 2 }} />
 )
-const InputContainer = () => <input type={'text'} className="inputContainer" />
+const InputContainer: FC<{ setVariableState: any; stateVariable: any; maxLength?: number }> = ({
+  setVariableState,
+  stateVariable,
+  maxLength
+}) => {
+  const handleChange = (e) => {
+    if (maxLength && e.target.value.length < maxLength) setVariableState(e.target.value)
+    if (!maxLength) setVariableState(e.target.value)
+  }
+  return (
+    <div>
+      <input
+        type="text"
+        value={stateVariable ? stateVariable : ''}
+        className="inputContainer"
+        onChange={(e) => handleChange(e)}
+      />
+    </div>
+  )
+}

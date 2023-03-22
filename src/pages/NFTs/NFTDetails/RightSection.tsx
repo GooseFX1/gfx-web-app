@@ -4,7 +4,7 @@ import { Col, Row } from 'antd'
 import styled, { css } from 'styled-components'
 import { moneyFormatter } from '../../../utils'
 import { RightSectionTabs } from './RightSectionTabs'
-import { useNFTDetails } from '../../../context'
+import { useNFTDetails, usePriceFeedFarm } from '../../../context'
 import { MintItemViewStatus } from '../../../types/nft_details'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import tw from 'twin.macro'
@@ -109,7 +109,7 @@ export const RightSection: FC<{
   status: MintItemViewStatus
 }> = ({ status, ...rest }) => {
   const { general, nftMetadata, curHighestBid, ask } = useNFTDetails()
-  // const { prices } = usePriceFeed()
+  const { prices } = usePriceFeedFarm()
 
   const price: number | null = useMemo(() => {
     if (ask) {
@@ -119,7 +119,7 @@ export const RightSection: FC<{
     }
   }, [curHighestBid, ask])
 
-  const marketData = { current: 24 } //useMemo(() => prices['SOL/USDC'], [prices])
+  const marketData = useMemo(() => prices['SOL/USDC'], [prices])
 
   const fiat = `${marketData && price ? (marketData.current * price).toFixed(3) : ''} USD`
   const isForCharity = false
