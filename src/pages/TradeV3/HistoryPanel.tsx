@@ -397,7 +397,7 @@ export const HistoryPanel: FC = () => {
     const size = Number(traderInfo.averagePosition.quantity)
     if (size) {
       return size.toFixed(3)
-    }
+    } else return 0
   }, [traderInfo])
 
   return (
@@ -463,7 +463,7 @@ export const HistoryPanel: FC = () => {
         {activeTab === 0 ? (
           <>
             <POSITIONS>
-              {traderInfo.averagePosition.side ? (
+              {traderInfo.averagePosition.side && Number(roundedSize) ? (
                 <div className="positions">
                   <span>{selectedCrypto.pair}</span>
                   <span className={traderInfo.averagePosition.side === 'buy' ? 'long' : 'short'}>
