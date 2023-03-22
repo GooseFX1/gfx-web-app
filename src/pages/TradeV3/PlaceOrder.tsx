@@ -95,7 +95,7 @@ const HEADER = styled.div`
         background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
       }
       .inactive {
-        border: 1px solid rgb(60, 60, 60);
+        border: 1px solid ${({ theme }) => theme.tokenBorder};
       }
     }
   }
@@ -182,7 +182,7 @@ const TOTAL_SELECTOR = styled.div`
 const LEVERAGE_WRAPPER = styled.div`
   ${tw`pl-2 w-11/12 text-left mt-[-8px]`}
   .ant-slider-rail {
-    ${tw`h-[6px]`}
+    ${tw`h-[6px] dark:bg-[#262626] bg-grey-1`}
   }
   .ant-slider-with-marks {
     ${tw`mb-2`}
@@ -212,7 +212,7 @@ const LEVERAGE_WRAPPER = styled.div`
     ${tw`text-regular dark:text-[#B5B5B5] text-[#636363] pl-2 font-semibold mt-[5%]`}
   }
   .smallScreenLeverageText {
-    ${tw``}
+    ${tw`dark:text-[#B5B5B5] text-[#636363] pl-2 font-semibold`}
   }
 
   .leverageBar {
@@ -363,7 +363,7 @@ export const PlaceOrder: FC = () => {
   const { mode } = useDarkMode()
   const { height } = useWindowSize()
   const [loading, setLoading] = useState<boolean>(false)
-  const geoBlocked = useBlacklisted()
+  const geoBlocked = false
 
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),

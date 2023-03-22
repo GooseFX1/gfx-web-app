@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Skeleton } from 'antd'
 import React, { FC, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
@@ -70,7 +71,7 @@ const INFO_STATS = styled.div`
     span:nth-child(2) {
       ${tw`mx-2.5 text-center flex`}
       .verticalLines {
-        ${tw`h-3 w-[3px] ml-[3px]`}
+        ${tw`h-3 w-[3px] ml-[3px] rounded-tiny`}
       }
       .coloured {
         background: linear-gradient(88.42deg, #f7931a 4.59%, #e649ae 98.77%);
@@ -202,7 +203,7 @@ export const InfoBanner: FC<{
   const { orderBook } = useOrderBook()
   const { mode } = useDarkMode()
   const { traderInfo } = useTraderConfig()
-  const geoBlocked = useBlacklisted()
+  const geoBlocked = false
   const [tradeType, setTradeType] = useState<string>('deposit')
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
@@ -395,12 +396,7 @@ export const InfoBanner: FC<{
       <LOCK_LAYOUT_CTN $isLocked={isLocked} $isSpot={isSpot} onClick={() => setIsLocked(!isLocked)}>
         <div className="white-background">
           <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
-            <img
-              src={isLocked ? `/img/assets/${mode}_lock.svg` : `/img/assets/${mode}_unlock.svg`}
-              alt="lock"
-              width="16px"
-              height="20px"
-            />
+            <img src={isLocked ? `/img/assets/${mode}_lock.svg` : `/img/assets/${mode}_unlock.svg`} alt="lock" />
           </LOCK_LAYOUT>
         </div>
       </LOCK_LAYOUT_CTN>
