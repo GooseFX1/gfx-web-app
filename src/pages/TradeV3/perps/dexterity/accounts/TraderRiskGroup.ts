@@ -24,6 +24,7 @@ export interface TraderRiskGroupFields {
   openOrders: types.OpenOrdersFields
   tradeHistory: Array<types.TradeHistoryFields>
   avgPosition: Array<types.AveragePositionFields>
+  totalTradedVolume: types.FractionalFields
 }
 
 export interface TraderRiskGroupJSON {
@@ -46,6 +47,7 @@ export interface TraderRiskGroupJSON {
   openOrders: types.OpenOrdersJSON
   tradeHistory: Array<types.TradeHistoryJSON>
   avgPosition: Array<types.AveragePositionJSON>
+  totalTradedVolume: types.FractionalJSON
 }
 
 export class TraderRiskGroup {
@@ -68,6 +70,7 @@ export class TraderRiskGroup {
   readonly openOrders: types.OpenOrders
   readonly tradeHistory: Array<types.TradeHistory>
   readonly avgPosition: Array<types.AveragePosition>
+  readonly totalTradedVolume: types.Fractional
 
   static readonly discriminator = Buffer.from([121, 228, 110, 56, 254, 207, 245, 168])
 
@@ -90,7 +93,8 @@ export class TraderRiskGroup {
     borsh.u128('clientOrderId'),
     types.OpenOrders.layout('openOrders'),
     borsh.array(types.TradeHistory.layout(), 64, 'tradeHistory'),
-    borsh.array(types.AveragePosition.layout(), 64, 'avgPosition')
+    borsh.array(types.AveragePosition.layout(), 64, 'avgPosition'),
+    types.Fractional.layout('totalTradedVolume'),
   ])
 
   constructor(fields: TraderRiskGroupFields) {
@@ -115,6 +119,9 @@ export class TraderRiskGroup {
     this.openOrders = new types.OpenOrders({ ...fields.openOrders })
     this.tradeHistory = fields.tradeHistory.map((item) => new types.TradeHistory({ ...item }))
     this.avgPosition = fields.avgPosition.map((item) => new types.AveragePosition({ ...item }))
+    this.totalTradedVolume = new types.Fractional({
+      ...fields.totalTradedVolume
+    })
   }
 
   static async fetch(c: Connection, address: PublicKey): Promise<[TraderRiskGroup, any] | null> {
@@ -179,7 +186,8 @@ export class TraderRiskGroup {
       ),
       avgPosition: dec.avgPosition.map((item: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) =>
         types.AveragePosition.fromDecoded(item)
-      )
+      ),
+      totalTradedVolume: types.Fractional.fromDecoded(dec.totalTradedVolume)
     })
   }
 
@@ -203,7 +211,8 @@ export class TraderRiskGroup {
       clientOrderId: this.clientOrderId.toString(),
       openOrders: this.openOrders.toJSON(),
       tradeHistory: this.tradeHistory.map((item) => item.toJSON()),
-      avgPosition: this.avgPosition.map((item) => item.toJSON())
+      avgPosition: this.avgPosition.map((item) => item.toJSON()),
+      totalTradedVolume: this.totalTradedVolume.toJSON()
     }
   }
 
@@ -227,7 +236,8 @@ export class TraderRiskGroup {
       clientOrderId: new BN(obj.clientOrderId),
       openOrders: types.OpenOrders.fromJSON(obj.openOrders),
       tradeHistory: obj.tradeHistory.map((item) => types.TradeHistory.fromJSON(item)),
-      avgPosition: obj.avgPosition.map((item) => types.AveragePosition.fromJSON(item))
+      avgPosition: obj.avgPosition.map((item) => types.AveragePosition.fromJSON(item)),
+      totalTradedVolume: types.Fractional.fromJSON(obj.totalTradedVolume)
     })
   }
 }
