@@ -372,7 +372,7 @@ export const InfoBanner: FC<{
         <INFO_STATS>
           <>
             <div>Open Interest</div>
-            {!traderInfo.openInterests ? <Loader /> : <div>$ {openInterestFormatted}</div>}
+            {!traderInfo.openInterests ? <Loader /> : <div> {openInterestFormatted} SOL</div>}
           </>
         </INFO_STATS>
       )}
