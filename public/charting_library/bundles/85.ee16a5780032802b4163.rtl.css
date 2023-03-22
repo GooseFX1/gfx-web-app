@@ -14,7 +14,7 @@
 }
 html.theme-dark .bottom-widgetbar-content.backtesting .button {
   color: #758696;
-  background: #131722;
+  background: #131313;
   border-color: #363c4e;
 }
 .symbol-search-dialog .symbol-block input,
@@ -33,7 +33,7 @@ html.theme-dark .symbol-search-dialog .symbol-block input,
 html.theme-dark input.symbol-edit {
   color: #c5cbce;
   border-color: #363c4e;
-  background-color: #131722;
+  background-color: #131313;
 }
 .symbol-search-dialog input.incomplete,
 input.symbol-edit.incomplete {
@@ -66,7 +66,7 @@ div.symbol-edit-popup {
 }
 html.theme-dark div.symbol-edit-popup {
   background: rgba(30, 34, 45, 0.9);
-  border-color: #131722;
+  border-color: #131313;
 }
 div.symbol-edit-popup .table-wrapper {
   border-top: 1px solid;
@@ -360,7 +360,7 @@ html.theme-dark .symbol-edit-notification a:visited {
   background: #fff;
 }
 html.theme-dark .symbol-search-dialog .symbol-block .spread-actions {
-  background: #131722;
+  background: #131313;
 }
 .symbol-search-dialog .symbol-block .spread-actions:empty {
   border: none;
@@ -521,7 +521,7 @@ html.theme-dark .symbol-search-dialog .results::-webkit-scrollbar-thumb {
   margin: 0;
 }
 html.theme-dark .spread-actions {
-  background: #131722;
+  background: #131313;
   border-color: #363c4e;
 }
 .spread-actions button {
@@ -693,7 +693,7 @@ div.symbol-edit-popup .tradable-filter {
 html.theme-dark .bottom-widgetbar-content.backtesting .button.active,
 html.theme-dark .bottom-widgetbar-content.backtesting .button:active {
   color: #f7f8fa;
-  background: #131722;
+  background: #131313;
 }
 .button.iconed {
   padding: 6px 10px 8px;

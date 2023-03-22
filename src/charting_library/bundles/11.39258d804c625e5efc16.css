@@ -18,7 +18,7 @@
   font-size: 20px;
   font-weight: 700;
   line-height: 28px;
-  color: #131722;
+  color: #131313;
   min-width: 0;
 }
 html.theme-dark .title-TQFObfxW {
@@ -47,7 +47,7 @@ html.theme-dark .title-TQFObfxW {
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
   .close-3NTwKnT_:hover {
-    color: #131722;
+    color: #131313;
     background-color: #f0f3fa;
   }
 }

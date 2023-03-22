@@ -77,7 +77,7 @@ html.theme-dark button._tv-button {
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
   ._tv-button:hover {
     background-position: 0 -26px;
-    color: #131722;
+    color: #131313;
   }
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
@@ -426,7 +426,7 @@ html.theme-dark .tvcolorpicker-widget {
 }
 html.theme-dark .tvcolorpicker-popup {
   border-color: #363c4e;
-  background: #131722;
+  background: #131313;
 }
 .tvcolorpicker-table {
   border-collapse: collapse;
@@ -575,7 +575,7 @@ div .tvcolorpicker-container:last-of-type {
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
   html.theme-dark .widgetbar-widgetheader .colorpicker-widget:not(.disabled):not(.selected):not(.disabled):hover {
-    border-color: #131722;
+    border-color: #131313;
   }
 }
 .charts-popup-list {

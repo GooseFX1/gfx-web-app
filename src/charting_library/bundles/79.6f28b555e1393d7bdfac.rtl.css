@@ -34,7 +34,7 @@ html.theme-dark .autocomplete-S6SpJGmW .caret-3fqF_ykE {
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
   .autocomplete-S6SpJGmW .caret-3fqF_ykE:hover .icon-1POgzoN_ {
-    color: #131722;
+    color: #131313;
   }
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
@@ -47,7 +47,7 @@ html.theme-dark .autocomplete-S6SpJGmW .caret-3fqF_ykE {
 }
 .autocomplete-S6SpJGmW .textInput-1mZnCCcA input {
   font-size: 14px;
-  color: #131722;
+  color: #131313;
   background-color: #fff;
   border-color: #d1d4dc;
   padding-left: 52px;
@@ -244,7 +244,7 @@ html.theme-dark .container-3QIqByoJ::-webkit-scrollbar-thumb {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
-  color: #131722;
+  color: #131313;
   padding-top: 8px;
   font-size: 14px;
   line-height: 21px;

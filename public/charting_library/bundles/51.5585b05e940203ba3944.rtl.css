@@ -23,7 +23,7 @@
 .bar-37_AfcZG {
   width: 50px;
   height: 0;
-  border: 0 solid #131722;
+  border: 0 solid #131313;
 }
 html.theme-dark .bar-37_AfcZG {
   border: 0 solid #b2b5be;
@@ -151,7 +151,7 @@ html.theme-dark .bar-37_AfcZG.isActive-dohf9HfR {
   height: 34px;
   border-radius: 4px;
   border: 1px solid #d1d4dc;
-  color: #131722;
+  color: #131313;
 }
 html.theme-dark .container-1sHZXWOS {
   color: #b2b5be;
@@ -219,7 +219,7 @@ html.theme-dark .container-1sHZXWOS.disabled-1s7-KBqG {
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
   .container-1sHZXWOS:hover {
-    color: #131722;
+    color: #131313;
     border-color: #787b86;
   }
 }

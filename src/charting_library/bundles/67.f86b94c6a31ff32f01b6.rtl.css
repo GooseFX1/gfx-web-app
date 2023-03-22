@@ -11,8 +11,8 @@
   padding: 0 7px;
   height: 100%;
   font-size: 14px;
-  color: #131722;
-  color: var(--tv-color-toolbar-button-text, #131722);
+  color: #131313;
+  color: var(--tv-color-toolbar-button-text, #131313);
   position: relative;
   z-index: 0;
 }
@@ -155,8 +155,8 @@ html.theme-dark .slider-1ealLtjI .inner-3lmAEIjy {
   align-items: center;
   margin-right: 9px;
   padding: 0 7px;
-  color: #131722;
-  color: var(--tv-color-toolbar-button-text, #131722);
+  color: #131313;
+  color: var(--tv-color-toolbar-button-text, #131313);
   position: relative;
   z-index: 0;
 }
@@ -244,8 +244,8 @@ html.theme-dark .button-2gir_Bbb:active:before {
   margin: 0;
   background-color: transparent;
   cursor: default;
-  color: #131722;
-  color: var(--tv-color-toolbar-button-text, #131722);
+  color: #131313;
+  color: var(--tv-color-toolbar-button-text, #131313);
   position: relative;
   z-index: 0;
 }

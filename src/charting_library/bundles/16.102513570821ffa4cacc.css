@@ -630,7 +630,7 @@ html.theme-dark .appearance-stroke-12lxiUSM.intent-success-25a4XZXM:focus:after 
 .appearance-stroke-12lxiUSM.intent-default-2ZbSqQDs,
 .appearance-stroke-12lxiUSM.intent-default-2ZbSqQDs:link,
 .appearance-stroke-12lxiUSM.intent-default-2ZbSqQDs:visited {
-  color: #131722;
+  color: #131313;
   background-color: transparent;
   border-color: #9598a1;
 }
@@ -1038,7 +1038,7 @@ html.theme-dark .appearance-text-DqKJVT3U.intent-success-25a4XZXM:focus:after {
 .appearance-text-DqKJVT3U.intent-default-2ZbSqQDs,
 .appearance-text-DqKJVT3U.intent-default-2ZbSqQDs:link,
 .appearance-text-DqKJVT3U.intent-default-2ZbSqQDs:visited {
-  color: #131722;
+  color: #131313;
   background-color: transparent;
   border-color: transparent;
 }
@@ -1051,7 +1051,7 @@ html.theme-dark .appearance-text-DqKJVT3U.intent-default-2ZbSqQDs:visited {
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
   .appearance-text-DqKJVT3U.intent-default-2ZbSqQDs:hover:not(:disabled):not([aria-disabled='true']) {
-    color: #131722;
+    color: #131313;
     border-color: #787b86;
     background-color: transparent;
   }
@@ -1095,7 +1095,7 @@ html.theme-dark .appearance-text-DqKJVT3U.intent-default-2ZbSqQDs[aria-disabled=
   color: #5d606b;
 }
 .appearance-text-DqKJVT3U.intent-default-2ZbSqQDs:focus {
-  border-color: #131722;
+  border-color: #131313;
 }
 html.theme-dark .appearance-text-DqKJVT3U.intent-default-2ZbSqQDs:focus {
   border-color: #d1d4dc;

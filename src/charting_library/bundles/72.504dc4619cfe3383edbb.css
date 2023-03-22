@@ -7,7 +7,7 @@
 .title-34aDs39w {
   margin-left: 4px;
   font-size: 14px;
-  color: #131722;
+  color: #131313;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -41,12 +41,12 @@ html.theme-dark .title-34aDs39w.disabled-17IgfIYd {
   color: #787b86;
 }
 .actionIcon-3jB28-_s:active {
-  color: #131722;
+  color: #131313;
   background-color: #e0e3eb;
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
   .actionIcon-3jB28-_s:hover {
-    color: #131722;
+    color: #131313;
     background-color: #e0e3eb;
   }
 }
@@ -219,7 +219,7 @@ html.theme-dark .author-3sD2DZRV {
 .likes-17ztM5mP {
   flex-basis: 50px;
   min-width: 50px;
-  color: #131722;
+  color: #131313;
   margin-left: 24px;
   overflow: hidden;
   text-overflow: ellipsis;
