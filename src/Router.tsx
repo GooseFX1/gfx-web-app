@@ -1,10 +1,10 @@
 import React, { FC } from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { AppLayout } from './layouts'
-import { Farm, NFTs, Swap } from './pages'
+import { Farm, Swap } from './pages'
 import {
   NavCollapseProvider,
-  NFTProfileProvider,
+  // NFTProfileProvider,
   OrderProvider,
   PriceFeedProvider,
   TradeHistoryProvider,
@@ -18,6 +18,7 @@ import { Creator } from './pages/NFTs/CreatorPage/Creator'
 import { AdminWrapper } from './pages/NFTs/adminPage/components/AdminWrapper'
 import { AnalyticsWrapper } from './pages/Analytics/AnalyticsWrapper'
 import { TraderProvider } from './context/trader_risk_group'
+import AggCommingSoon from './pages/NFTs/Home/AggCommingSoon'
 
 export const Router: FC = () => (
   <BrowserRouter>
@@ -54,9 +55,7 @@ export const Router: FC = () => (
             </NFTAdminProvider>
           </Route>
           <Route path="/NFTs">
-            <NFTProfileProvider>
-              <NFTs />
-            </NFTProfileProvider>
+            <AggCommingSoon />
           </Route>
           <Route exact path="/farm">
             <Farm />

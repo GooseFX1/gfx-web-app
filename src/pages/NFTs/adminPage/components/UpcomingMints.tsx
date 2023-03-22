@@ -135,6 +135,7 @@ const GRADIENT_TEXT = styled.span`
   background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  font-family: Montserrat !important;
   background-clip: text;
   text-fill-color: transparent;
   width: fit-content;
