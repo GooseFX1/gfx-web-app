@@ -479,7 +479,7 @@ html.theme-dark .tv-favorited-drawings-toolbar__widget {
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
   .tv-favorited-drawings-toolbar__widget:hover {
-    color: #131722;
+    color: #131313;
   }
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {

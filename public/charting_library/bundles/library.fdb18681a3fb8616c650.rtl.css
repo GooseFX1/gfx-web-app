@@ -202,7 +202,7 @@ th {
   font-size: 14px;
   margin-bottom: 12px;
   line-height: 1.6;
-  color: #131722;
+  color: #131313;
 }
 html.theme-dark .tv-text ol,
 html.theme-dark .tv-text p,
@@ -638,11 +638,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 html.theme-dark body {
-  background-color: #131722;
+  background-color: #131313;
 }
 body.tv-body--bg_superdark,
 html.theme-dark body.tv-body--bg_superdark {
-  background: #131722;
+  background: #131313;
 }
 body.tv-body--bg_contrast {
   background-color: #fff;
@@ -735,7 +735,7 @@ html.theme-dark .chart-page {
   z-index: 0;
 }
 html.theme-dark .chart-page .chart-container-border {
-  background-color: #131722;
+  background-color: #131313;
 }
 .chart-page .chart-container.multiple.active:after {
   content: '';
@@ -2859,7 +2859,7 @@ html.theme-dark .container-2BvS3Fpg {
   background-color: #fff;
 }
 html.theme-dark .container-2BvS3Fpg .inner-3YzQuyJx {
-  background-color: #131722;
+  background-color: #131313;
 }
 .container-2BvS3Fpg.border-left-LYAXTdyL {
   padding-right: 4px;
@@ -3034,7 +3034,7 @@ td.chart-markup-table {
 }
 html.theme-dark .chart-data-window {
   color: #c5cbce;
-  background-color: #131722;
+  background-color: #131313;
 }
 .chart-data-window .box {
   margin: 3px;
@@ -3394,14 +3394,14 @@ html.theme-dark .published-charts-tooltip .text {
   border-right-color: #fff;
 }
 html.theme-dark .published-charts-tooltip:not(.right):after {
-  border-right-color: #131722;
+  border-right-color: #131313;
 }
 .published-charts-tooltip.right:after {
   border-color: hsla(0, 0%, 100%, 0);
   border-left-color: #fff;
 }
 html.theme-dark .published-charts-tooltip.right:after {
-  border-left-color: #131722;
+  border-left-color: #131313;
 }
 .published-charts-tooltip.right:before {
   right: -2.2em;
@@ -3456,8 +3456,8 @@ html.theme-dark .published-charts-tooltip.right:after {
   background-color: var(--tv-color-pane-background, #fff);
 }
 html.theme-dark .chart-controls-bar {
-  background-color: #131722;
-  background-color: var(--tv-color-pane-background, #131722);
+  background-color: #131313;
+  background-color: var(--tv-color-pane-background, #131313);
   border-color: #2a2e39;
   border-color: var(--tv-color-platform-background, #2a2e39);
 }
@@ -3661,7 +3661,7 @@ html.theme-dark .price-axis-stub-3MoqVLRB .wrapper-1tN_aWXZ .label-NpaJWak6 .sym
 }
 .price-axis-stub-3MoqVLRB .wrapper-1tN_aWXZ .label-NpaJWak6 .gear-3B_8TAjc svg,
 html.theme-dark .price-axis-stub-3MoqVLRB .wrapper-1tN_aWXZ .label-NpaJWak6 .gear-3B_8TAjc svg {
-  fill: #131722;
+  fill: #131313;
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
   .price-axis-stub-3MoqVLRB:hover .wrapper-1tN_aWXZ .label-NpaJWak6 {
@@ -3989,12 +3989,12 @@ html.theme-dark
   background: #fff;
   padding: 15px 20px;
   box-shadow: 0 2px 7px rgba(0, 0, 0, 0.25);
-  color: #131722;
+  color: #131313;
 }
 html.theme-dark .tv-chart-events-source__tooltip__item {
   color: #d1d4dc;
   box-shadow: 0 2px 7px rgba(107, 121, 136, 0.25);
-  background: #131722;
+  background: #131313;
 }
 .tv-chart-events-source__tooltip__item.tv-chart-events-source__tooltip__item--importance-normal {
   background: #fff;

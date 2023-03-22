@@ -64,7 +64,7 @@ html.theme-dark .tv-tabs:before {
   height: 53px;
   font-size: 15px;
   line-height: 53px;
-  color: #131722;
+  color: #131313;
   cursor: pointer;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -131,7 +131,7 @@ html.theme-dark .tv-tabs__tab[disabled] {
   font-size: 18px;
   height: 46px;
   line-height: 46px;
-  color: #131722;
+  color: #131313;
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
   .tv-tabs--category-header .tv-tabs__tab:hover,

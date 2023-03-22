@@ -10,12 +10,12 @@
   color: #787b86;
 }
 .button-1scLo53s:active {
-  color: #131722;
+  color: #131313;
   background-color: #e0e3eb;
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
   .button-1scLo53s:hover {
-    color: #131722;
+    color: #131313;
     background-color: #e0e3eb;
   }
 }

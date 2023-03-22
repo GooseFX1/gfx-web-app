@@ -13,8 +13,8 @@
   cursor: default;
 }
 html.theme-dark .group-wWM3zP_M {
-  background-color: #131722;
-  background-color: var(--tv-color-pane-background, #131722);
+  background-color: #131313;
+  background-color: var(--tv-color-pane-background, #131313);
 }
 .group-wWM3zP_M:first-child {
   border-bottom-right-radius: 0;
@@ -136,7 +136,7 @@ html.theme-dark .toolbar-2n2cwgp5.isHidden-GTob3P_C {
   height: 38px;
 }
 .customButton--jqJTfH5 {
-  color: #131722;
+  color: #131313;
   padding: 0 10px;
 }
 html.theme-dark .customButton--jqJTfH5 {

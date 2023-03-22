@@ -149,7 +149,7 @@ html.theme-dark .scrollRight-2SEqCpTf {
   transform: translateX(-100%);
 }
 html.theme-dark .fadeLeft-244lj3pA {
-  background-image: linear-gradient(270deg, rgba(19, 23, 34, 0), #131722);
+  background-image: linear-gradient(270deg, rgba(19, 23, 34, 0), #131313);
 }
 .fadeRight-1JnS42hI {
   right: 0;
@@ -157,5 +157,5 @@ html.theme-dark .fadeLeft-244lj3pA {
   transform: translateX(100%);
 }
 html.theme-dark .fadeRight-1JnS42hI {
-  background-image: linear-gradient(90deg, rgba(19, 23, 34, 0), #131722);
+  background-image: linear-gradient(90deg, rgba(19, 23, 34, 0), #131313);
 }

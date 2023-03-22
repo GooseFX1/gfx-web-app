@@ -141,7 +141,7 @@ html.theme-dark ._tv-dialog--open-a-chart a:visited {
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
   html.theme-dark ._tv-dialog .colorpicker-widget:not(.disabled):not(.selected):not(.disabled):hover {
-    border-color: #131722;
+    border-color: #131313;
   }
 }
 ._tv-dialog.ui-resizable {
@@ -195,7 +195,7 @@ html.theme-dark ._tv-dialog-title {
   }
 }
 ._tv-dialog-content {
-  color: #131722;
+  color: #131313;
   max-width: 100%;
 }
 html.theme-dark ._tv-dialog-content {
