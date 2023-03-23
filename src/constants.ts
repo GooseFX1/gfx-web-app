@@ -26,7 +26,8 @@ export const MODAL_TYPES = {
   SUBMIT: 'SUBMIT',
   RELAX: 'RELAX',
   APPROVE_PROJECT: 'APPROVE_PROJECT',
-  REJECT_PROJECT: 'REJECT_PROJECT'
+  REJECT_PROJECT: 'REJECT_PROJECT',
+  NFT_AGG_WELCOME: 'NFT_AGG_WELCOME'
 }
 export const CAROUSEL = [
   { name: 'Create', id: 0, position: 1, redirect: 'NFTs/create' },
