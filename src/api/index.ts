@@ -1,6 +1,5 @@
-import { ANALYTICS_API_ENDPOINTS } from './analytics/constants'
+import { ANALYTICS_ENDPOINTS, ANALYTICS_BASE } from './analytics/constants'
 import axios from 'axios'
-import { NFT_LAUNCHPAD_API_ENDPOINTS } from './NFTLaunchpad'
 
 const DOMAIN = () => {
   const sub =
@@ -43,31 +42,6 @@ export const customClient = (customURL: string, collectionId?: number) => {
       'Content-Type': 'application/json'
     }
   })
-}
-
-export const logData = async (event: string) => {
-  try {
-    if (process.env.NODE_ENV === 'production') {
-      const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + ANALYTICS_API_ENDPOINTS.LOG_DATA
-      const dataToSend = JSON.stringify({
-        event: event
-      })
-      const response = await axios({
-        method: 'POST',
-        url: url,
-        data: dataToSend,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      return response.data
-    }
-    return null
-  } catch (e) {
-    return {
-      status: 'failed'
-    }
-  }
 }
 
 export default apiClient

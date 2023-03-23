@@ -18,7 +18,7 @@ import { Loader } from '../components'
 import { WalletName } from '@solana/wallet-adapter-base'
 import { truncateAddress } from '../utils'
 import tw from 'twin.macro'
-import { logData } from '../api'
+import { logData } from '../api/analytics'
 import { SolanaMobileWalletAdapterWalletName } from '@solana-mobile/wallet-adapter-mobile'
 
 const WALLET_ICON = styled(CenteredImg)`

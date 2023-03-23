@@ -8,7 +8,7 @@ import React, {
   Dispatch,
   SetStateAction
 } from 'react'
-import { logData } from '../api'
+import { logData } from '../api/analytics'
 
 interface INavCollapseConfig {
   isCollapsed: boolean

@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react'
 import styled from 'styled-components'
-import { logData } from '../../../../api'
+import { logData } from '../../../../api/analytics'
 import LaunchImg from '../../../../assets/launch.svg'
 import { SOCIAL_MEDIAS } from '../../../../constants'
 

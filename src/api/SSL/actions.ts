@@ -1,5 +1,5 @@
-import { NFT_LAUNCHPAD_API_ENDPOINTS } from './../NFTLaunchpad/constants'
-import { getDateInISOFormat } from './../../utils/misc'
+import { ANALYTICS_BASE } from '../analytics'
+import { getDateInISOFormat } from '../../utils/misc'
 import { httpClient } from '../../api'
 import { SSL_API_BASE, SSL_API_ENDPOINTS } from '../SSL/constants'
 import axios from 'axios'
@@ -55,9 +55,7 @@ export type TotalVolumeRes = {
 
 export const fetchTotalVolumeTrade = async (): Promise<TotalVolumeRes> => {
   try {
-    const res = await axios.get(
-      `${NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE}${SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE}`
-    )
+    const res = await axios.get(`${ANALYTICS_BASE}${SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE}`)
     // const res = await axios.get('http://localhost:4000' + SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE)
     return res.data.data
   } catch (err) {
@@ -68,10 +66,7 @@ export const fetchTotalVolumeTrade = async (): Promise<TotalVolumeRes> => {
 export const fetchTotalVolumeTradeChart = async (walletAddress: PublicKey): Promise<any> => {
   try {
     const res = await axios.get(
-      NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE +
-        SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE_CHART +
-        '?wallet=' +
-        walletAddress
+      ANALYTICS_BASE + SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE_CHART + '?wallet=' + walletAddress
     )
     // const res = await axios.get(
     //   'http://localhost:4000' + SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE_CHART + '?wallet=' + walletAddress
@@ -88,7 +83,7 @@ export const saveLiquidityVolume = async (
   liqObj: Record<string, number>
 ): Promise<unknown> => {
   try {
-    const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.SAVE_LIQUIDITY_DATA
+    const url = ANALYTICS_BASE + SSL_API_ENDPOINTS.SAVE_LIQUIDITY_DATA
     const dataToSend = JSON.stringify({
       date: getDateInISOFormat(),
       updatedTime: new Date().getTime(),
@@ -120,7 +115,7 @@ export const getVolumeApr = async (
   controllerStr: string
 ): Promise<VolumeAprRecord> => {
   try {
-    const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.GET_VOLUME_APR_DATA
+    const url = ANALYTICS_BASE + SSL_API_ENDPOINTS.GET_VOLUME_APR_DATA
     const dataToSend = JSON.stringify({
       tokens: tokenList,
       SSLTokenNames: SSLTokenNames,
@@ -143,7 +138,7 @@ export const getVolumeApr = async (
 
 export const getFarmTokenPrices = async (): Promise<any> => {
   try {
-    const url = NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + SSL_API_ENDPOINTS.GET_TOKEN_PRICES
+    const url = ANALYTICS_BASE + SSL_API_ENDPOINTS.GET_TOKEN_PRICES
     const dataToSend = JSON.stringify({})
     const response = await axios({
       method: 'POST',

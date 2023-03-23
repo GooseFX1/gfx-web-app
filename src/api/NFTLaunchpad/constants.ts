@@ -1,8 +1,7 @@
-export const NFT_LAUNCHPAD_API_BASE = 'nest-api'
+export const NFT_LAUNCHPAD_API_BASE = 'https://api-services.goosefx.io'
 
 export enum NFT_LAUNCHPAD_API_ENDPOINTS {
   SESSION_USER = '/user',
-  NFT_LAUNCHPAD_API_BASE = 'https://api-services.goosefx.io',
   GET_ALL_LAUNCHES = '/nft-launchpad/getAllLaunches',
   GET_SELECTED_LAUNCH = '/nft-launchpad/getOneLaunch',
   IS_CREATOR_ALLOWED = '/nft-launchpad/isUserAllowed',

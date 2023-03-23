@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import { useDarkMode } from '../../context'
 import { SVGDynamicReverseMode } from '../../styles'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { logData } from '../../api'
+import { logData } from '../../api/analytics'
 import { checkMobile } from '../../utils'
 
 const WRAPPER = styled.div`

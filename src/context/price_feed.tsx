@@ -5,7 +5,7 @@ import { serum } from '../web3'
 import { useConnectionConfig } from '../context'
 import axios from 'axios'
 import { useHistory, useLocation } from 'react-router-dom'
-import { NFT_LAUNCHPAD_API_ENDPOINTS } from '../api/NFTLaunchpad'
+import { NFT_LAUNCHPAD_API_BASE, NFT_LAUNCHPAD_API_ENDPOINTS } from '../api/NFTLaunchpad'
 
 interface IPrices {
   [x: string]: {
@@ -47,7 +47,7 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
       const response =
         cryptoMarkets.length &&
         (await axios.post(
-          NFT_LAUNCHPAD_API_ENDPOINTS.NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.GET_TOKEN_INFO,
+          NFT_LAUNCHPAD_API_BASE + NFT_LAUNCHPAD_API_ENDPOINTS.GET_TOKEN_INFO,
           JSON.stringify({ tokens: cryptoMarkets }),
           {
             headers: {

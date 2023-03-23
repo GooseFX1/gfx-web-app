@@ -12,7 +12,7 @@ import { useHistory } from 'react-router-dom'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { checkMobile } from '../../../../utils'
-import { logData } from '../../../../api'
+import { logData } from '../../../../api/analytics'
 
 export const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${({ theme }) => css`

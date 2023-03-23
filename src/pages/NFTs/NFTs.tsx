@@ -22,7 +22,7 @@ import {
   useConnectionConfig
 } from '../../context'
 import { GenericNotFound } from '../InvalidUrl'
-import { logData } from '../../api'
+import { logData } from '../../api/analytics'
 
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   position: relative;

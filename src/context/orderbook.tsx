@@ -11,7 +11,6 @@ import { useTraderConfig } from './trader_risk_group'
 import * as anchor from '@project-serum/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { httpClient } from '../api'
-import { NFT_LAUNCHPAD_API_BASE, NFT_LAUNCHPAD_API_ENDPOINTS } from '../api/NFTLaunchpad'
 import { GET_OPEN_ORDERS, GET_ORDERBOOK } from '../pages/TradeV3/perps/perpsConstants'
 
 export type OrderBook = {

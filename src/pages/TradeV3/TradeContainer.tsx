@@ -15,7 +15,7 @@ import { Connect } from '../../layouts/Connect'
 import { HistoryPanel } from '../TradeV3/HistoryPanel'
 import useBlacklisted from '../../utils/useBlacklisted'
 import useWindowSize from '../../utils/useWindowSize'
-import { logData } from '../../api'
+import { logData } from '../../api/analytics'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 

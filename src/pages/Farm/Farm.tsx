@@ -10,7 +10,7 @@ import {
   PriceFeedFarmProvider
 } from '../../context'
 import { notify } from '../../utils' //checkMobile
-import { logData } from '../../api'
+import { logData } from '../../api/analytics'
 import CustomTableList from './CustomTableList'
 // import { Banner } from '../../components/Banner'
 // import { GFX_LINK } from '../../styles'

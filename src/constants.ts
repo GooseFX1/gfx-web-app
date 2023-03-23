@@ -13,6 +13,8 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
     'https://docs.google.com/forms/d/e/1FAIpQLSeg1OzYlHdNqWiAEPl2QUZj7XwLvEpXAkGtWd4-H9SyyQe1DQ/viewform'
 }
 
+export const SOLSCAN_BASE = 'https://api.solscan.io'
+
 export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'SRM', 'ETH', 'GMT', 'mSOL', 'APT']
 export const FARM_SUPPORTED_TOKEN_LIST = ['GOFX']
 export const MODAL_TYPES = {
