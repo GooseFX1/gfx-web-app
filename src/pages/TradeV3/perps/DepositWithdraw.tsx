@@ -14,7 +14,7 @@ const WRAPPER = styled.div`
   }
 
   .percentage {
-    ${tw`w-[280px] ml-auto rounded-circle flex flex-row`}
+    ${tw`w-[280px] ml-auto rounded-circle flex flex-row sm:hidden`}
     background: ${({ theme }) => theme.bg22};
   }
 
