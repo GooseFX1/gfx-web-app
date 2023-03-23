@@ -1,7 +1,13 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useEffect } from 'react'
 import { Route, Switch, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
-import { NFTAggregatorProvider, NFTDetailsProvider, NFTProfileProvider, useNavCollapse } from '../../context'
+import {
+  NFTAggregatorProvider,
+  NFTDetailsProvider,
+  NFTProfileProvider,
+  useNavCollapse,
+  usePriceFeedFarm
+} from '../../context'
 import CollectionV2 from './Collection/CollectionV2'
 import NFTLandingPageV2 from './Home/NFTLandingPageV2'
 import { Profile } from './Profile'
@@ -20,8 +26,13 @@ const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
 const NFTAgg = (): ReactElement => {
   const { isCollapsed } = useNavCollapse()
   const { path } = useRouteMatch()
+  const { prices, refreshTokenData } = usePriceFeedFarm()
 
-  return (
+  useEffect(() => {
+    refreshTokenData()
+  }, [])
+
+  return Object.keys(prices) ? (
     <BODY_NFT $navCollapsed={isCollapsed}>
       <NFTDetailsProvider>
         <NFTAggregatorProvider>
@@ -41,6 +52,8 @@ const NFTAgg = (): ReactElement => {
         </NFTAggregatorProvider>
       </NFTDetailsProvider>
     </BODY_NFT>
+  ) : (
+    <></>
   )
 }
 

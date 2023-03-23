@@ -10,6 +10,7 @@ import {
   useConnectionConfig,
   useDarkMode,
   useNavCollapse,
+  useNFTAggregator,
   useNFTCollections,
   useNFTDetails,
   useNFTProfile
@@ -158,7 +159,8 @@ const NFTLandingPageV2 = (): ReactElement => {
   const [showBanner, setShowBanner] = useState<boolean>(false)
   const [hasOnboarded, setHasOnboarded] = useState<boolean>(!existingUserCache.hasAggOnboarded)
   const [showTerms, setShowTerms] = useState<boolean>(false)
-  const [currency, setCurrency] = useState<'SOL' | 'USDC'>('SOL')
+  // const [currency, setCurrency] = useState<'SOL' | 'USDC'>('SOL')
+  const { currencyView } = useNFTAggregator()
 
   const handleHasOnboarded = (res: boolean) => {
     setHasOnboarded(false)
@@ -173,7 +175,7 @@ const NFTLandingPageV2 = (): ReactElement => {
   }
 
   return (
-    <WRAPPER $navCollapsed={isCollapsed} $currency={currency}>
+    <WRAPPER $navCollapsed={isCollapsed} $currency={currencyView}>
       {<NFTAggTerms setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={handleHasOnboarded} />}
       {hasOnboarded && <ModalSlide modalType={MODAL_TYPES.NFT_AGG_WELCOME} rewardToggle={handleHasOnboarded} />}
       <MyNFTBag />
@@ -183,14 +185,14 @@ const NFTLandingPageV2 = (): ReactElement => {
           <NFTBanners showBanner={showBanner} />
         </BannerContainer>
       )}
-      <FiltersContainer setCurrency={setCurrency} />
+      <FiltersContainer />
 
       <NFTCollectionsTable showBanner={showBanner} />
     </WRAPPER>
   )
 }
 
-const FiltersContainer = ({ setCurrency }: any) => {
+const FiltersContainer = () => {
   const [poolIndex, setPoolIndex] = useState<number>(0)
   const [timelineIndex, setTimelineIndex] = useState<number>(0)
   const [timelineName, setTimelineName] = useState<string>('24h')
@@ -356,7 +358,7 @@ const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
     </EYE_CONTAINER>
   )
 }
-export const CurrencySwitch = (): ReactElement => {
+const CurrencySwitch = (): ReactElement => {
   const [currency, setCurrency] = useState<'SOL' | 'USDC'>('SOL')
 
   const changeCurrency = () => {

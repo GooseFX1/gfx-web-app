@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState, FC, ReactElement, useRef, useCallback } from 'react'
+import React, { useEffect, useState, FC, ReactElement, useRef, useCallback, useMemo } from 'react'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
-import { useNavCollapse, useNFTCollections } from '../../../context'
+import { useNavCollapse, useNFTAggregator, useNFTCollections, usePriceFeedFarm } from '../../../context'
 import { checkMobile } from '../../../utils'
 import { Loader } from '../../Farm/Columns'
 import { WRAPPER_TABLE } from './NFTAggregator.styles'
@@ -130,86 +130,100 @@ const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement =
   )
 }
 
-const NFTTableRow = ({ allItems, lastRowElementRef }: any) => {
+const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
+  const { currencyView } = useNFTAggregator()
   const history = useHistory()
+  const { prices } = usePriceFeedFarm()
+  const solPrice = prices['SOL/USDC']?.current
+  const price = item?.collection_floor / LAMPORTS_PER_SOL_NUMBER
+  let floorPrice = currencyView === 'USDC' ? solPrice * (price > 0 ? price : 0) : price
+  floorPrice = floorPrice ? parseFloat(floorPrice.toFixed(2)) : 0
+
+  let volume = currencyView === 'USDC' ? item?.collection_vol?.daily * solPrice : item?.collection_vol?.daily
+  volume = volume ? parseFloat(volume.toFixed(2)) : 0
+
   return (
-    <>
-      {allItems.map((item, index) => (
-        <tr
-          ref={index + 1 === allItems.length ? lastRowElementRef : null}
-          className="tableRow"
-          key={index}
-          onClick={() => history.push(`/nfts/collection/${item.collection.collection_name.replaceAll(' ', '_')}`)}
-        >
-          <td className="nftNameColumn">
-            {item?.collection?.collection_name ? (
-              <>
-                <Image
-                  className="nftNameImg"
-                  fallback={'/img/assets/Aggregator/Unknown.svg'}
-                  src={`${
-                    item.collection.profile_pic_link.length === 0
-                      ? '/img/assets/Aggregator/Unknown.svg'
-                      : item.collection.profile_pic_link
-                  }`}
-                  alt=""
-                />
-                <div className="nftCollectionName">{item?.collection?.collection_name}</div>
-              </>
-            ) : (
-              <div className="nftCollectionName">
-                <Loader />
-              </div>
-            )}
-          </td>
-          <td className="tdItem">
-            {item?.collection_floor !== null ? (
-              <PriceWithToken
-                price={item?.collection_floor / LAMPORTS_PER_SOL_NUMBER}
-                token={'SOL'}
-                cssStyle={tw`h-5 w-5`}
-              />
-            ) : item?.collection_floor === null ? (
-              <PriceWithToken price={0} token={'SOL'} cssStyle={tw`h-5 w-5`} />
-            ) : (
-              <Loader />
-            )}
-          </td>
-          <td className="tdItem">
-            {item?.collection?.collection_name ? (
-              <PriceWithToken price={109} token={'SOL'} cssStyle={tw`h-5 w-5`} />
-            ) : (
-              <Loader />
-            )}
-          </td>
-          <td className="tdItem">
-            {item?.collection?.collection_name ? <div className="comingSoon">Coming soon</div> : <Loader />}
-          </td>
-          <td className="tdItem">
-            {item?.collection?.collection_name ? <div className="comingSoon">Coming soon</div> : <Loader />}
-          </td>
-          <td className="tdItem">
-            {item?.collection_vol !== undefined ? (
-              <PriceWithToken price={item?.collection_vol?.daily} token={'SOL'} cssStyle={tw`h-5 w-5`} />
-            ) : (
-              <Loader />
-            )}
-          </td>
-          <td
-            style={{
-              width: '5%',
-              justifyContent: 'center',
-              display: 'flex',
-              alignItems: 'center',
-              rotate: '270deg'
-            }}
-          >
-            <Arrow height="16px" width="8px" invert={false} />
-          </td>
-        </tr>
-      ))}
-    </>
+    <tr
+      ref={lastRowElementRef}
+      className="tableRow"
+      key={index}
+      onClick={() => history.push(`/nfts/collection/${item.collection.collection_name.replaceAll(' ', '_')}`)}
+    >
+      <td className="nftNameColumn">
+        {item?.collection?.collection_name ? (
+          <>
+            <Image
+              className="nftNameImg"
+              fallback={'/img/assets/Aggregator/Unknown.svg'}
+              src={`${
+                item.collection.profile_pic_link.length === 0
+                  ? '/img/assets/Aggregator/Unknown.svg'
+                  : item.collection.profile_pic_link
+              }`}
+              alt=""
+            />
+            <div className="nftCollectionName">{item?.collection?.collection_name}</div>
+          </>
+        ) : (
+          <div className="nftCollectionName">
+            <Loader />
+          </div>
+        )}
+      </td>
+      <td className="tdItem">
+        {item?.collection_floor !== null ? (
+          <PriceWithToken price={floorPrice} token={currencyView} cssStyle={tw`h-5 w-5`} />
+        ) : item?.collection_floor === null ? (
+          <PriceWithToken price={0} token={currencyView} cssStyle={tw`h-5 w-5`} />
+        ) : (
+          <Loader />
+        )}
+      </td>
+      <td className="tdItem">
+        {item?.collection?.collection_name ? (
+          <PriceWithToken price={109} token={currencyView} cssStyle={tw`h-5 w-5`} />
+        ) : (
+          <Loader />
+        )}
+      </td>
+      <td className="tdItem">
+        {item?.collection?.collection_name ? <div className="comingSoon">Coming soon</div> : <Loader />}
+      </td>
+      <td className="tdItem">
+        {item?.collection?.collection_name ? <div className="comingSoon">Coming soon</div> : <Loader />}
+      </td>
+      <td className="tdItem">
+        {item?.collection_vol !== undefined ? (
+          <PriceWithToken price={volume} token={currencyView} cssStyle={tw`h-5 w-5`} />
+        ) : (
+          <Loader />
+        )}
+      </td>
+      <td
+        style={{
+          width: '5%',
+          justifyContent: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          rotate: '270deg'
+        }}
+      >
+        <Arrow height="16px" width="8px" invert={false} />
+      </td>
+    </tr>
   )
 }
+const NFTTableRow = ({ allItems, lastRowElementRef }: any) => (
+  <>
+    {allItems.map((item, index) => (
+      <NFTRowItem
+        item={item}
+        key={index}
+        index={index}
+        lastRowElementRef={index + 1 === allItems.length ? lastRowElementRef : null}
+      />
+    ))}
+  </>
+)
 
 export default NFTCollectionsTable

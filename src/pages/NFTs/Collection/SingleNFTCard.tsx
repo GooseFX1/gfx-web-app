@@ -5,7 +5,8 @@ import {
   useNFTCollections,
   useNFTAggregator,
   useNFTDetails,
-  useNFTProfile
+  useNFTProfile,
+  usePriceFeedFarm
 } from '../../../context'
 
 import { GradientText } from '../adminPage/components/UpcomingMints'
@@ -23,6 +24,7 @@ import { useHistory } from 'react-router-dom'
 import { notify } from '../../../utils'
 import { genericErrMsg } from '../../Farm/FarmClickHandler'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
+import { PriceWithToken } from '../../../components/common/PriceWithToken'
 
 export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any; lastCardRef: any }> = ({
   item,
@@ -46,6 +48,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   const history = useHistory()
   const nftId = item ? (item.nft_name.includes('#') ? item.nft_name.split('#')[1] : -1) : null
   const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item.uuid) : false), [item])
+  const { currencyView } = useNFTAggregator()
 
   const setNFTDetailsBeforeLocate = async (item) => {
     try {
@@ -105,6 +108,11 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
     e.stopPropagation()
     e.preventDefault()
   }
+  const { prices } = usePriceFeedFarm()
+  const solPrice = prices['SOL/USDC'].current
+  const nftNativePrice = localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 0
+  let displayPrice = currencyView === 'USDC' ? nftNativePrice * solPrice : nftNativePrice
+  displayPrice = parseFloat(displayPrice.toFixed(2))
 
   return (
     <>
@@ -158,8 +166,9 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
           )}
 
           <div className="nftPrice">
-            {localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 'No Ask'}
-            {localAsk && <img src={`/img/crypto/SOL.svg`} alt={'SOL'} />}
+            {localAsk ? <PriceWithToken price={displayPrice} token={currencyView} /> : 'No Ask'}
+            {/* {localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 'No Ask'}
+            {localAsk && <img src={`/img/crypto/SOL.svg`} alt={'SOL'} />} */}
           </div>
           <div className="apprisalPrice" onClick={(e) => handleInfoIconClicked(e)}>
             {'NA'}
