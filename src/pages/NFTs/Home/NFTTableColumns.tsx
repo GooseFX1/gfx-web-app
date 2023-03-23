@@ -1,7 +1,8 @@
 import { Switch } from 'antd'
+import { ReactElement } from 'react'
 import { TableHeaderTitle } from '../../../utils/GenericDegsin'
 
-export const NFTColumnsTitleWeb = () => (
+export const NFTColumnsTitleWeb = (): ReactElement => (
   <tr>
     <>
       <th className="borderRow">{TableHeaderTitle('Collection Name', '', true)}</th>

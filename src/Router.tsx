@@ -4,12 +4,12 @@ import { AppLayout } from './layouts'
 import { Farm, Swap } from './pages'
 import {
   NavCollapseProvider,
-  NFTProfileProvider,
   OrderProvider,
   PriceFeedProvider,
   TradeHistoryProvider,
   NFTAdminProvider,
-  OrderBookProvider
+  OrderBookProvider,
+  NFTCollectionProvider
 } from './context'
 import { GenericNotFound } from './pages/InvalidUrl'
 import { CryptoContent } from './pages/TradeV3/TradeContainer'
@@ -18,7 +18,8 @@ import { Creator } from './pages/NFTs/CreatorPage/Creator'
 import { AdminWrapper } from './pages/NFTs/adminPage/components/AdminWrapper'
 import { AnalyticsWrapper } from './pages/Analytics/AnalyticsWrapper'
 import { TraderProvider } from './context/trader_risk_group'
-import { NFTs } from './pages/NFTs/Home/NFTLandingPageV2'
+// import NFTLandingPageV2 from './pages/NFTs/Home/NFTLandingPageV2'
+import NFTAgg from './pages/NFTs/NFTAgg'
 
 export const Router: FC = () => (
   <BrowserRouter>
@@ -55,9 +56,9 @@ export const Router: FC = () => (
             </NFTAdminProvider>
           </Route>
           <Route path="/NFTs">
-            <NFTProfileProvider>
-              <NFTs />
-            </NFTProfileProvider>
+            <NFTCollectionProvider>
+              <NFTAgg />
+            </NFTCollectionProvider>
           </Route>
           <Route exact path="/farm">
             <Farm />
