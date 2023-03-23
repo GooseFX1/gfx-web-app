@@ -1,18 +1,20 @@
 import { Dropdown } from 'antd'
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
 import React, { ReactElement, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import tw from 'twin.macro'
 import { SearchBar } from '../../../components'
+import { Button } from '../../../components/Button'
 import { useDarkMode, useNavCollapse, useNFTAggregator } from '../../../context'
 import { ICON } from '../../../layouts'
 import { IAppParams } from '../../../types/app_params'
 import { checkMobile } from '../../../utils'
 import { GradientText } from '../adminPage/components/UpcomingMints'
 import { CurrencySwitch } from '../Home/NFTLandingPageV2'
+import MyNFTBag from '../MyNFTBag'
 import ActivityNFTSection from './ActivityNFTSection'
 import AdditionalFilters from './AdditionalFilters'
-import { BuyNFTModal } from './BuyNFTModal'
+import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
 import {
   COLLECTION_VIEW_WRAPPER,
   GRID_CONTAINER,
@@ -29,6 +31,7 @@ const CollectionV2 = (): ReactElement => {
 
   return (
     <COLLECTION_VIEW_WRAPPER id="nft-aggerator-container" navCollapsed={isCollapsed}>
+      <MyNFTBag />
       <NFTStatsContainer />
       <NFTGridContainer />
     </COLLECTION_VIEW_WRAPPER>
@@ -36,7 +39,7 @@ const CollectionV2 = (): ReactElement => {
 }
 const NFTStatsContainer = () => {
   const { mode } = useDarkMode()
-  const [sweepCollection, setSweepCollection] = useState<boolean>(true)
+  const [sweepCollection, setSweepCollection] = useState<boolean>(false)
   const logo =
     'https://beta.api.solanalysis.com/images/filters:' +
     'frames(,0)/https://storage.googleapis.com/feliz-crypto/project_photos/degodslogo.jpg'
@@ -162,17 +165,61 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
 }
 
 const NFTCollectionsGrid = (): ReactElement => {
-  const { nftCollections, selectedNFT, setSelectedNFT } = useNFTAggregator()
+  const { nftCollections, setSelectedNFT, setBuyNow, setBidNow, buyNowClicked, bidNowClicked, setNftInBag } =
+    useNFTAggregator()
+
+  const addNftToBag = (e, nftItem) => {
+    setNftInBag((prev) => {
+      const id = prev.filter((item) => item.uid === nftItem.uid)
+      if (!id.length) return [...prev, nftItem]
+      return prev
+    })
+    e.stopPropagation()
+  }
   return (
     <NFT_COLLECTIONS_GRID>
-      {<SingleViewNFT selectedNFT={selectedNFT} setSelectedNFT={setSelectedNFT} />}
-
+      {<SingleViewNFT />}
+      {buyNowClicked && <BuyNFTModal />}
+      {bidNowClicked && <BidNFTModal />}
       <div className="gridContainer">
         {nftCollections &&
           nftCollections.map((item, index) => (
             <div className="gridItem" key={index} onClick={() => setSelectedNFT(item)}>
               <div className="gridItemContainer">
-                <img src={item.nft_url} alt="nft" />
+                <img className="nftImg" src={item.nft_url} alt="nft" />
+                <div>
+                  <img
+                    className="hoverAddToBag"
+                    src={`/img/assets/Aggregator/addToBag.svg`}
+                    alt=""
+                    onClick={(e) => addNftToBag(e, item)}
+                  />
+                  <span className="hoverButtons">
+                    <Button
+                      height="28px"
+                      width="75px"
+                      cssStyle={tw`bg-[#5855ff] text-[13px] font-semibold`}
+                      onClick={(e) => {
+                        setBidNow(item)
+                        e.stopPropagation()
+                      }}
+                    >
+                      Bid
+                    </Button>
+                    <Button
+                      height="28px"
+                      width="75px"
+                      className="pinkGradient"
+                      cssStyle={tw`text-[13px] font-semibold`}
+                      onClick={(e) => {
+                        setBuyNow(item)
+                        e.stopPropagation()
+                      }}
+                    >
+                      Buy now
+                    </Button>
+                  </span>
+                </div>
               </div>
               <div className="nftTextContainer">
                 <div className="collectionId">

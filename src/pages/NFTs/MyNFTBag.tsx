@@ -6,12 +6,14 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Connect } from '../../layouts'
-import { useConnectionConfig } from '../../context'
+import { useConnectionConfig, useNavCollapse, useNFTAggregator } from '../../context'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { GradientText } from './adminPage/components/UpcomingMints'
 
 const BAG_WRAPPER = styled.div`
   .zeroItemBag {
-    ${tw`w-[26px] h-[30px] cursor-pointer -mr-2`}
+    ${tw`w-[26px] h-[30px] cursor-pointer -mr-2 fixed top-6 right-24 `}
+    z-index: 1000;
   }
   * {
     animation-duration: 0s !important;
@@ -38,7 +40,11 @@ const MY_BAG = styled(Menu)`
     ${tw`flex items-center gap-4 sm:justify-between`}
   }
   .bagContentContainer {
-    ${tw`h-[230px] sm:h-auto mb-20`}
+    ${tw`h-[250px] flex flex-col sm:h-auto mb-20 mt-[15px] `}
+    .nftImage {
+      ${tw`h-[60px] w-[60px] left-0 `}
+    }
+    overflow-y: auto;
   }
   .myBagText {
     ${tw`font-semibold text-[18px] `}
@@ -74,9 +80,12 @@ const MY_BAG = styled(Menu)`
   }
 `
 
-const MyNFTBag = (): ReactElement => {
+export const MyNFTBag = (): ReactElement => {
   const { publicKey } = useWallet()
-  const itemsPresentInBag = true // no items in the bag
+  const { nftInBag } = useNFTAggregator()
+  const { isCollapsed } = useNavCollapse()
+  const itemsPresentInBag = nftInBag.length // no items in the bag
+  if (isCollapsed) return <></>
   return (
     <BAG_WRAPPER>
       <Dropdown
@@ -86,8 +95,8 @@ const MyNFTBag = (): ReactElement => {
         trigger={['click']}
       >
         {publicKey && itemsPresentInBag ? (
-          <div>
-            <div className="noOfItemsInBag">2</div>
+          <div className="zeroItemBag">
+            <div className="noOfItemsInBag">{nftInBag.length}</div>
             <img className="itemsPresentBag" src="/img/assets/Aggregator/itemsInBag.svg" alt="bag" />
           </div>
         ) : (
@@ -98,13 +107,14 @@ const MyNFTBag = (): ReactElement => {
   )
 }
 const MyBagContent = (): ReactElement => {
-  const itemsPresentInBag = true // no items in the bag
+  const { nftInBag } = useNFTAggregator()
+  const itemsPresentInBag = nftInBag.length // no items in the bag
 
   return (
     <MY_BAG>
       <div className="bagContainer">
         <div className="headerContainer">
-          <div className="myBagText">My Bag (0)</div>
+          <div className="myBagText">My Bag ({nftInBag.length})</div>
           <div className="clearText">Clear</div>
         </div>
         {itemsPresentInBag ? <ItemsPresentInBag /> : <EmptyBagDisplay />}
@@ -126,15 +136,26 @@ const BagTokenBalanceRow: FC<{ title: string; amount: number }> = ({ title, amou
   </div>
 )
 const ItemsPresentInBag = (): ReactElement => {
-  console.log('no items')
-  return <div className="bagContentContainer">items</div>
+  const { nftInBag } = useNFTAggregator()
+  return (
+    <div className="bagContentContainer">
+      {nftInBag.map((nft, index) => (
+        <div tw="flex items-center" key={index}>
+          <img className="nftImage" src={nft.nft_url} alt="img" />
+          <div tw="flex flex-col ml-2 text-[15px] font-semibold">
+            <div>#{nft.collectionId}</div>
+            <div>
+              <GradientText text={nft.collectionName} fontSize={16} fontWeight={600} />
+            </div>
+          </div>
+          <div>{nft.nftPrice}</div>
+        </div>
+      ))}
+    </div>
+  )
 }
 const EmptyBagDisplay = (): ReactElement => (
-  <div
-    style={{}}
-    tw="flex 
-items-center sm:h-auto flex-col sm:flex-row sm:mb-[100px] h-[230px] justify-center"
-  >
+  <div tw="flex items-center sm:h-auto flex-col sm:flex-row sm:mb-[100px] h-[230px] justify-center">
     <div>
       <img src="/img/assets/Aggregator/bagAnimationDark.svg" tw="h-[65px] w-[73px] mt-2 mr-5" />
     </div>
@@ -173,7 +194,7 @@ const ButtonContainerForBag = (): ReactElement => {
         <>
           <BagTokenBalanceRow title="Your Balance:" amount={0} />
           <div className="connectWallet">
-            <Connect />
+            <Connect width="225px" />
           </div>
         </>
       )}

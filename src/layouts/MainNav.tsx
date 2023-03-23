@@ -13,7 +13,6 @@ import { MODAL_TYPES } from '../constants'
 import { checkMobile } from '../utils'
 import { ThemeToggle } from '../components/ThemeToggle'
 import tw from 'twin.macro'
-import MyNFTBag from '../pages/NFTs/MyNFTBag'
 
 const BRAND = styled.a`
   ${tw`absolute flex justify-center items-center text-lg 
@@ -141,8 +140,6 @@ export const MainNav: FC = () => {
     setMobile(mobile)
   }, [])
 
-  const checkIfNFT = (): boolean => true
-
   if (checkMobile()) {
     return (
       <MobileWrapper id="menu">
@@ -151,7 +148,6 @@ export const MainNav: FC = () => {
         </BRAND>
         <AlignCenterDiv>
           <Connect />
-          {checkIfNFT && <MyNFTBag />}
           <ResponsiveDropdown logoAnimationTime={2} />
         </AlignCenterDiv>
       </MobileWrapper>
@@ -169,7 +165,6 @@ export const MainNav: FC = () => {
             <BUTTONS>
               <RewardsButton />
               <Connect />
-              {checkIfNFT && <MyNFTBag />}
               <More />
             </BUTTONS>
           </>

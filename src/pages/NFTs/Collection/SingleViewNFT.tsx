@@ -222,12 +222,8 @@ const WRAPPER = styled.div`
   `}
 `
 
-export const SingleViewNFT: FC<{
-  setSelectedNFT: any
-  selectedNFT: any
-}> = ({ setSelectedNFT, selectedNFT }): JSX.Element => {
-  const [buyNowClicked, setBuyNow] = useState<boolean>(false)
-  const [bidNowClicked, setBidNow] = useState<boolean>(false)
+export const SingleViewNFT: FC = (): JSX.Element => {
+  const { selectedNFT, setSelectedNFT, bidNowClicked, buyNowClicked, setBidNow, setBuyNow } = useNFTAggregator()
 
   const elem = document.getElementById('nft-aggerator-container') //TODO-PROFILE: Stop background scroll
   return (
@@ -254,13 +250,6 @@ export const SingleViewNFT: FC<{
 const ImageViewer = ({ setBuyNow, buyNowClicked, setBidNow, bidNowClicked }: any): ReactElement => {
   const [activeTab, setActiveTab] = useState('1')
   const { selectedNFT, setSelectedNFT } = useNFTAggregator()
-
-  const [loading, setLoading] = useState<boolean>(true)
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false)
-    }, 3000)
-  }, [])
 
   return (
     <WRAPPER>
@@ -321,17 +310,15 @@ const ImageViewer = ({ setBuyNow, buyNowClicked, setBidNow, bidNowClicked }: any
 }
 
 const ButtonContainer = ({ setBuyNow, buyNowClicked, bidNowClicked, setBidNow }: any): ReactElement => {
-  console.log('object')
-
+  const { selectedNFT } = useNFTAggregator()
   return (
     <div className="buttonContainer">
-      {buyNowClicked && <BuyNFTModal buyNowClicked={buyNowClicked} setBuyNow={setBuyNow} />}
-      {bidNowClicked && <BidNFTModal bidNowClicked={bidNowClicked} setBidNow={setBidNow} />}
-      <Button className="bidButton" onClick={() => setBidNow(true)}>
-        {' '}
+      {buyNowClicked && <BuyNFTModal />}
+      {bidNowClicked && <BidNFTModal />}
+      <Button className="bidButton" onClick={() => setBidNow(selectedNFT)}>
         Bid
       </Button>
-      <Button className="buyNowButton" onClick={() => setBuyNow(true)}>
+      <Button className="buyNowButton" onClick={() => setBuyNow(selectedNFT)}>
         Buy Now
       </Button>
     </div>
