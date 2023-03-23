@@ -15,6 +15,7 @@ import { Connect } from '../../layouts/Connect'
 import { HistoryPanel } from '../TradeV3/HistoryPanel'
 import useBlacklisted from '../../utils/useBlacklisted'
 import useWindowSize from '../../utils/useWindowSize'
+import { logData } from '../../api'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 
@@ -286,6 +287,10 @@ export const CryptoContent: FC = () => {
   const { selectedCrypto, isSpot } = useCrypto()
   const { wallet } = useWallet()
   const [chartContainer, setChartContainer] = useState<any>()
+
+  useEffect(() => {
+    logData('trade_page')
+  }, [])
 
   useEffect(() => {
     setChartContainer(<TVChartContainer symbol={selectedCrypto.pair} visible={true} />)
