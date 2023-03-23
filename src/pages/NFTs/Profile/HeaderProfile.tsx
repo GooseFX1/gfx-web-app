@@ -299,18 +299,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
               <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
             </FloatingActionButton>
           </div>
-          <div>
-            <DROPDOWN
-              overlay={menu}
-              trigger={['click']}
-              placement="bottomRight"
-              getPopupContainer={() => document.getElementById('row')}
-            >
-              <Button style={{ height: 'auto' }}>
-                <img className="collection-more-icon" src={`/img/assets/more_icon.svg`} alt="more" />
-              </Button>
-            </DROPDOWN>
-          </div>
+          <div></div>
         </div>
       ) : (
         <div style={{ position: 'absolute', top: isCollapsed ? '24px' : '104px', left: '24px' }}>

@@ -1,5 +1,8 @@
-import styled from 'styled-components'
 import { Form, Modal } from 'antd'
+import { PopupCustom } from '../Popup/PopupCustom'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 export const StyledPopupProfile = styled(Modal)`
   @media (max-width: 500px) {
@@ -261,4 +264,48 @@ export const StyledFormProfile = styled(Form)`
     }
   }
 `}
+`
+
+export const STYLED_PROFILE_POPUP = styled(PopupCustom)`
+  &.ant-modal {
+    ${tw`dark:text-[20px] mt-12 sm:mt-0  text-[10px]`}
+    background-color: ${({ theme }) => theme.walletModalWallet};
+  }
+  .optional {
+    ${tw`text-[15px] font-semibold`}
+    color: ${({ theme }) => theme.text34};
+  }
+  .inputContainer {
+    ${tw`bg-none text-[15px] font-semibold mb-2`}
+    border: none;
+    background: none;
+    :focus {
+      outline: none;
+    }
+  }
+  .underLine {
+    background: #636363;
+    ${tw`text-[#b5b5b5] h-[2px]`}
+  }
+  .publicURLText {
+    ${tw`text-[13px] font-semibold mt-2 text-[#636363]`}
+  }
+  .titleHeader {
+    color: ${({ theme }) => theme.text30};
+    ${tw`text-[18px] font-semibold mt-4`}
+  }
+  .profilePicText {
+    ${tw`text-[13px] mt-[10px] font-semibold text-[#b5b5b5]`}
+  }
+  .ant-modal-body {
+    ${tw`py-6 px-[30px]`}
+  }
+  .title {
+    color: ${({ theme }) => theme.text30};
+    ${tw`text-[20px] font-semibold`}
+  }
+
+  .profile-image-upload {
+    ${tw`w-[100px] h-[100px] rounded-[50%] cursor-pointer`}
+  }
 `

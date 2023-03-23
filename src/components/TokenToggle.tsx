@@ -3,6 +3,7 @@ import { useState, FC, useMemo } from 'react'
 import styled from 'styled-components'
 import { CenteredImg, SpaceBetweenDiv, CenteredDiv } from '../styles'
 import tw from 'twin.macro'
+import { useNFTAggregator } from '../context'
 
 const TOGGLE_WRAPPER = styled.div<{ position: number }>`
   .background {
@@ -50,9 +51,9 @@ const Toggle = styled(CenteredImg)<{ $mode: number }>`
 `
 
 interface ITokenToggle {
-  tokenA: string
-  tokenB: string
-  toggleToken: (token: string) => void
+  tokenA?: string
+  tokenB?: string
+  toggleToken: (token?: string) => void
   icons?: boolean
 }
 
@@ -78,17 +79,16 @@ export const TokenToggle: FC<ITokenToggle> = ({ tokenA, tokenB, toggleToken, ico
 }
 
 export const TokenToggleNFT: FC<ITokenToggle> = ({ tokenA, tokenB, toggleToken, icons }: ITokenToggle) => {
-  const [position, setPosition] = useState<number>(0)
-  const currentToken = useMemo(() => (position === 0 ? tokenA : tokenB), [position])
+  const { currencyView } = useNFTAggregator()
 
   const handleToggle = () => {
-    toggleToken(position === 0 ? tokenA : tokenB)
-    setPosition((prev) => (prev === 0 ? 1 : 0))
+    toggleToken()
   }
+  const position = useMemo(() => (currencyView === 'SOL' ? 0 : 1), [currencyView])
   return (
     <TOGGLE_WRAPPER position={position} onClick={handleToggle}>
       <div className="background">
-        <img src={`/img/crypto/${currentToken}.svg`} className="tokenImg" />
+        <img src={`/img/crypto/${currencyView}.svg`} className="tokenImg" />
       </div>
     </TOGGLE_WRAPPER>
   )

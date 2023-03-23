@@ -2,7 +2,7 @@ import { Dropdown } from 'antd'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { ReactElement, useState, FC, useEffect } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import { Loader, SearchBar } from '../../../components'
+import { Loader, SearchBar, TokenToggleNFT } from '../../../components'
 import { Button } from '../../../components/Button'
 import { useDarkMode, useNavCollapse, useNFTAggregator, useNFTCollections } from '../../../context'
 import { ICON } from '../../../layouts'
@@ -10,7 +10,6 @@ import { IAppParams } from '../../../types/app_params'
 import { checkMobile } from '../../../utils'
 import { GenericNotFound } from '../../InvalidUrl'
 import { GradientText } from '../adminPage/components/UpcomingMints'
-import { CurrencySwitch } from '../Home/NFTLandingPageV2'
 import MyNFTBag from '../MyNFTBag'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import ActivityNFTSection from './ActivityNFTSection'
@@ -202,6 +201,7 @@ export const NFTGridContainer = (): ReactElement => {
 const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): ReactElement => {
   const { mode } = useDarkMode()
   const { openBidWithinCollection, fixedPriceWithinCollection, singleCollection } = useNFTCollections()
+  const { setCurrency } = useNFTAggregator()
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
@@ -223,6 +223,9 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
         </div>
         <div className={displayIndex === 2 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(2)}>
           Activity
+        </div>
+        <div tw="mr-[16px]">
+          <TokenToggleNFT toggleToken={setCurrency} />
         </div>
       </div>
     </NFT_FILTERS_CONTAINER>
