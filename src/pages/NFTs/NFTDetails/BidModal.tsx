@@ -208,7 +208,7 @@ const PURCHASE_MODAL = styled(Modal)`
   }
 `
 
-const MESSAGE = styled.div`
+export const MESSAGE = styled.div`
   margin: -12px 0;
   font-size: 12px;
   font-weight: 700;

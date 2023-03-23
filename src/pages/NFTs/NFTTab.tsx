@@ -14,7 +14,6 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { checkMobile } from '../../utils'
 import { SearchBar, TokenToggle } from '../../components'
-import { CurrencySwitch } from './Home/NFTLandingPageV2'
 import NFTDisplay from './Profile/NFTDisplay'
 
 const NFT_TAB = styled.div``

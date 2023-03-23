@@ -4,6 +4,7 @@ import React, { ReactElement, FC, useState, useMemo } from 'react'
 import styled from 'styled-components'
 import tw, { css } from 'twin.macro'
 import { TokenToggleNFT } from '../../../components'
+import { useNFTAggregator } from '../../../context'
 import { checkMobile } from '../../../utils'
 import { HeaderTooltip } from '../../../utils/GenericDegsin'
 import { FiltersNFTPopupMobile } from '../Home/MenuNFTPopup'
@@ -187,8 +188,8 @@ const PriceRange = (): ReactElement => {
   const [isOpen, setIsOpen] = useState<boolean>(true)
   const [minValue, setMinValue] = useState<number>(0)
   const [maxValue, setMaxValue] = useState<number>(0)
-  const [currency, setCurrency] = useState<'SOL' | 'USDC'>('SOL')
-  const isSol = useMemo(() => currency === 'SOL', [currency])
+  const { currencyView, setCurrency } = useNFTAggregator()
+
   return (
     <LISTING_TYPE isOpen={isOpen}>
       <div className="filtersTitleItem">
@@ -197,7 +198,7 @@ const PriceRange = (): ReactElement => {
       </div>
       <div className="listItemCurreny">
         Currency
-        <TokenToggleNFT toggleToken={() => console.log('first')} tokenA="SOL" tokenB="USDC" />
+        <TokenToggleNFT toggleToken={setCurrency} />
       </div>
       <div className="listItem">
         <div className="inputContainer">

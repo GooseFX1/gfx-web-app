@@ -322,7 +322,9 @@ const ImageViewer = ({ setBuyNow, buyNowClicked, setBidNow, bidNowClicked }: any
       </div>
       <div className="infoText">{selectedNFT?.nft_description}</div>
 
-      <AppraisalValue />
+      <div tw="mt-[30px]">
+        <AppraisalValue width={360} />
+      </div>
       <img tw="h-[390px] w-[100%]" src="/img/assets/Aggregator/priceHistory.svg" />
       <NFTTabSections activeTab={activeTab} setActiveTab={setActiveTab} />
       <ButtonContainer

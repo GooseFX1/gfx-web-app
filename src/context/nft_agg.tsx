@@ -15,12 +15,8 @@ interface INFTAggConfig {
   setNftInBag: any
   buyNowClicked: any
   bidNowClicked: any
-  currentStep?: number
-  previousStep?: () => void
-  nextStep?: () => void
-  saveDataForStep?: (d: any) => void
-  creatorData?: ICreatorData
-  submit?: () => Promise<boolean>
+  setCurrency?: any
+  currencyView: string
 }
 
 interface NFTAgg {
@@ -36,11 +32,8 @@ interface NFTAgg {
   nftInBag: any
   setNftInBag: any
   bidNowClicked: any
-  saveDataForStep?: (d: any) => void
-  creatorData?: ICreatorData
-  previousStep?: () => void
-  nextStep?: () => void
-  submit?: () => Promise<boolean>
+  currencyView: string
+  setCurrency?: any
 }
 
 const NFTAggContext = createContext<INFTAggConfig>(null)
@@ -51,6 +44,11 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
   const [selectedNFT, setSelectedNFT] = useState<number | undefined>()
   const [buyNowClicked, setBuyNow] = useState<boolean | any>(undefined)
   const [bidNowClicked, setBidNow] = useState<boolean | any>(undefined)
+  const [currencyView, setCurrencyView] = useState<'SOL' | 'USDC'>('SOL')
+
+  const setCurrency = () => {
+    setCurrencyView((prev) => (prev === 'USDC' ? 'SOL' : 'USDC'))
+  }
 
   useEffect(() => {
     const sortedData = [...nftCollections]
@@ -71,7 +69,9 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
         setBidNow: setBidNow,
         setBuyNow: setBuyNow,
         nftInBag: nftInBag,
-        setNftInBag: setNftInBag
+        setNftInBag: setNftInBag,
+        currencyView: currencyView,
+        setCurrency: setCurrency
       }}
     >
       {children}
@@ -96,7 +96,9 @@ export const useNFTAggregator = (): NFTAgg => {
     bidNowClicked,
     setBidNow,
     nftInBag,
-    setNftInBag
+    setNftInBag,
+    currencyView,
+    setCurrency
   } = context
   return {
     sortingAsc,
@@ -109,6 +111,8 @@ export const useNFTAggregator = (): NFTAgg => {
     bidNowClicked,
     setBuyNow,
     nftInBag,
-    setNftInBag
+    setNftInBag,
+    currencyView,
+    setCurrency
   }
 }
