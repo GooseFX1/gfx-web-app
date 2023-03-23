@@ -46,6 +46,7 @@ export interface Colors {
   text36: Color
   text32: Color
   text33: Color
+  text34: Color
   text37: Color
   bidColor: Color
   askColor: Color
@@ -74,6 +75,7 @@ export interface Colors {
   bg14: Color
   bg15: Color
   bg16: Color
+  bg17: Color
   bg18: Color
   bg19: Color
   bg20: Color

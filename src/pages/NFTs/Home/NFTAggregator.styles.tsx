@@ -6,14 +6,19 @@ export const NFT_STATS_CONTAINER = styled.div`
 `
 
 export const STATS_BTN = styled.div`
-  ${tw`flex items-center rounded-full p-[2px] ml-1 mr-1`}
+  ${tw`flex items-center rounded-full h-[36px] p-[1px] ml-1 mr-[45px]`}
   background: linear-gradient(94deg, #f7931a 1%, #ac1cc7 100%);
-
   .innerCover {
-    background: ${({ theme }) => theme.bg1};
-    color: ${({ theme }) => theme.text28};
-    height: 100%;
-    ${tw` rounded-full p-1.5 font-semibold text-[15px] `}
+    background: ${({ theme }) => theme.bg2};
+    ${tw`rounded-full p-[4.5px] text-[15px] flex `}
+    .innerTitle {
+      ${tw`ml-1`}
+      color: ${({ theme }) => theme.text20} !important;
+    }
+    .innerData {
+      ${tw`font-semibold ml-2 mr-1`}
+      color: ${({ theme }) => theme.text1};
+    }
   }
 `
 export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
@@ -31,7 +36,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
       height: calc(100vh - 230px);
       ${tw`sticky mt-[0px]`}
     }
-    ${tw`mt-[25px] w-full  `}
+    ${tw`mt-[10px] w-full  `}
     background: ${({ theme }) => theme.bg17};
     border-radius: 20px 20px 0 0;
   }

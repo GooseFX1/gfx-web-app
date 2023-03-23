@@ -7,6 +7,9 @@ import { useDarkMode } from '../../../context'
 export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
   ${({ navCollapsed }) => css`
     color: ${({ theme }) => theme.text30};
+    .ant-drawer-content {
+      background: ${({ theme }) => theme.bg26} !important;
+    }
 
     .nftStatsContainer {
       ${tw`mt-[20px] mb-[20px] ml-4 sm:ml-2 sm:mr-2 mr-5 flex items-center`}
@@ -116,13 +119,17 @@ export const GRID_CONTAINER = styled.div<{ navCollapsed }>`
 
 export const NFT_COLLECTIONS_GRID = styled.div`
   ${tw`w-full`}
+
   background: ${({ theme }) => theme.bg23};
   overflow-y: auto;
   .gridContainer {
-    ${tw`grid-cols-7 grid pl-3 sm:grid-cols-2 rounded-xl`}
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+
+    ${tw`grid pl-3 sm:grid-cols-2 rounded-xl`}
   }
   .gridItem {
     height: 240px;
+
     background-color: ${({ theme }) => theme.bgForNFTCollection};
     margin: 20px 13px 0px 0px;
     border-radius: 12px;
@@ -151,10 +158,14 @@ export const NFT_COLLECTIONS_GRID = styled.div`
     }
   }
 `
-export const SORT_CONTAINER = styled.div`
+export const DROPDOWN_CONTAINER = styled.div`
   ${tw`rounded-md p-1 -mt-1 sm:w-[185px] text-[15px] font-semibold`}
   background-color: ${({ theme }) => theme.dropdownBackground};
   color: ${({ theme }) => theme.text1};
+  .number {
+    ${tw`flex items-center justify-center`}
+    border: 1px solid;
+  }
   .option {
     ${tw`flex cursor-pointer items-center justify-between p-1`}
     input {

@@ -18,15 +18,17 @@ import {
   GRID_CONTAINER,
   NFT_FILTERS_CONTAINER,
   NFT_COLLECTIONS_GRID,
-  SORT_CONTAINER
+  DROPDOWN_CONTAINER
 } from './CollectionV2.styles'
+import SingleViewNFT from './SingleViewNFT'
+import SweepCollectionDrawer from './SweepCollectionDrawer'
 
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
   const { isCollapsed } = useNavCollapse()
 
   return (
-    <COLLECTION_VIEW_WRAPPER navCollapsed={isCollapsed}>
+    <COLLECTION_VIEW_WRAPPER id="nft-aggerator-container" navCollapsed={isCollapsed}>
       <NFTStatsContainer />
       <NFTGridContainer />
     </COLLECTION_VIEW_WRAPPER>
@@ -34,6 +36,7 @@ const CollectionV2 = (): ReactElement => {
 }
 const NFTStatsContainer = () => {
   const { mode } = useDarkMode()
+  const [sweepCollection, setSweepCollection] = useState<boolean>(true)
   const logo =
     'https://beta.api.solanalysis.com/images/filters:' +
     'frames(,0)/https://storage.googleapis.com/feliz-crypto/project_photos/degodslogo.jpg'
@@ -44,6 +47,7 @@ const NFTStatsContainer = () => {
           <img src="/img/assets/arrow-leftdark.svg" />
         </div>
       )}
+      <SweepCollectionDrawer sweepCollection={sweepCollection} setSweepCollection={setSweepCollection} />
 
       <div className="collectionNameContainer">
         <div className="collectionName">
@@ -54,7 +58,7 @@ const NFTStatsContainer = () => {
           </div>
           {checkMobile() && (
             <div className="title" style={{ display: 'flex', marginLeft: 'auto' }}>
-              <div>
+              <div onClick={() => setSweepCollection(true)}>
                 <img className="sweepMobile" src="/img/assets/Aggregator/sweepButtonMobile.svg" />
               </div>
               <div>
@@ -93,7 +97,7 @@ const NFTStatsContainer = () => {
             <div>
               <img src="/img/assets/refreshButton.png" />
             </div>
-            <div className="sweepBtn">
+            <div className="sweepBtn" onClick={() => setSweepCollection(true)}>
               <img src="/img/assets/Aggregator/sweepButton.svg" alt="" />
             </div>
             <div>
@@ -122,7 +126,7 @@ const NFTGridContainer = (): ReactElement => {
       />
       <div className="flexContainer">
         <AdditionalFilters open={open} setOpen={setOpen} />
-        {displayIndex !== 2 && <NFTCollectionsGrid open={open} />}
+        {displayIndex !== 2 && <NFTCollectionsGrid />}
         {displayIndex === 2 && <ActivityNFTSection />}
       </div>
     </GRID_CONTAINER>
@@ -161,7 +165,7 @@ const NFTCollectionsGrid = (): ReactElement => {
   const { nftCollections, selectedNFT, setSelectedNFT } = useNFTAggregator()
   return (
     <NFT_COLLECTIONS_GRID>
-      {selectedNFT && <BuyNFTModal />}
+      {<SingleViewNFT selectedNFT={selectedNFT} setSelectedNFT={setSelectedNFT} />}
 
       <div className="gridContainer">
         {nftCollections &&
@@ -216,7 +220,7 @@ const OverlayOptions = () => {
   const { sortingAsc, setSortAsc } = useNFTAggregator()
 
   return (
-    <SORT_CONTAINER>
+    <DROPDOWN_CONTAINER>
       <div className="option" onClick={() => setSortAsc(true)}>
         Price: Ascending <input type={'radio'} checked={sortingAsc} name="sort" value="asc" />
       </div>
@@ -224,7 +228,7 @@ const OverlayOptions = () => {
         Price: Descending <input type={'radio'} checked={!sortingAsc} name="sort" value="desc" />
       </div>
       {checkMobile() && <div className="option">Share</div>}
-    </SORT_CONTAINER>
+    </DROPDOWN_CONTAINER>
   )
 }
 export default CollectionV2

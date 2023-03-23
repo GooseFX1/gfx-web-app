@@ -82,12 +82,12 @@ export function colors(mode: string): Colors {
     text31: mode === 'dark' ? '#636363' : '#8d4cdd',
     text32: mode === 'dark' ? '#eeeeee' : '#3C3C3C',
     text33: mode === 'dark' ? '#b5b5b5' : '#3c3c3c',
+    text34: mode === 'dark' ? '#636363' : '#b5b5b5',
     text37: mode === 'dark' ? '#b5b5b5' : '#636363',
     text35: mode === 'dark' ? '#3c3c3c' : '#636363',
     text36: mode === 'dark' ? '#3c3c3c' : '#9C9C9C',
     bidColor: mode === 'dark' ? '#eeeeee' : '#50bb35',
     askColor: mode === 'dark' ? '#eeeeee' : '#f06565',
-
     textWhitePurple: mode === 'dark' ? '#fff' : '#8d4cdd',
 
     text1h: '#7d7d7d',
@@ -118,6 +118,7 @@ export function colors(mode: string): Colors {
     bg14: mode === 'dark' ? '#1b1b1b' : '#555555',
     bg15: mode === 'dark' ? '#191919' : '#555555',
     bg16: mode === 'dark' ? '#1E1E1E' : '#EEEEEE',
+    bg17: mode === 'dark' ? '#272727' : '#e2e2e2',
     bg18: mode === 'dark' ? '#2a2a2a' : '#dadada',
     bg19: mode === 'dark' ? '#131313' : '#3c3c3c',
     bg20: mode === 'dark' ? '#1c1c1c' : white,
