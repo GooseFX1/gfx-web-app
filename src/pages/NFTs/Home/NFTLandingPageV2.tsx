@@ -1,5 +1,4 @@
-import React, { useMemo, useState } from 'react'
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { ReactElement, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import { SearchBar } from '../../../components'
@@ -12,7 +11,7 @@ import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'
 
 const WRAPPER = styled.div<{ $navCollapsed }>`
-  /* padding-top: ${({ $navCollapsed }) => ($navCollapsed ? '0px' : '0px')}; */
+  /* padding-top: ${({ $navCollapsed }) => ($navCollapsed ? '0px' : '80px')}; */
   transition: 0.5s ease;
   font-family: 'Montserrat';
   font-style: normal;
@@ -64,10 +63,10 @@ export const ButtonContainer = styled.div<{ $poolIndex: number }>`
 
 const poolTypes = [{ name: 'Popular' }, { name: 'Trending' }]
 
-const NFTLandingPageV2 = () => {
+const NFTLandingPageV2 = (): ReactElement => {
   const { isCollapsed } = useNavCollapse()
   const [showBanner, setShowBanner] = useState<boolean>(true)
-  const [showPopup, setShowPopup] = useState<boolean>(true)
+  const [showPopup, setShowPopup] = useState<boolean>(false)
 
   return (
     <WRAPPER $navCollapsed={isCollapsed}>
