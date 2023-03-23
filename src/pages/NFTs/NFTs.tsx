@@ -23,7 +23,6 @@ import {
 } from '../../context'
 import { GenericNotFound } from '../InvalidUrl'
 import { logData } from '../../api/analytics'
-import NFTLandingPageV2 from './Home/NFTLandingPageV2'
 
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
@@ -89,9 +88,6 @@ export const NFTs: FC = () => {
                 </Route>
                 <Route exact path={['/NFTs/profile', '/NFTs/profile/:userAddress']}>
                   <Profile />
-                </Route>
-                <Route path="/NFTs/Agg">
-                  <NFTLandingPageV2 />
                 </Route>
                 <Route exact path="/NFTs/collection/:collectionName">
                   <Collection />
