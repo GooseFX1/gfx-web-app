@@ -8,7 +8,13 @@ interface INFTAggConfig {
   nftCollections: any[]
   setSortAsc: any
   setSelectedNFT: Dispatch<SetStateAction<any>>
+  setBuyNow: Dispatch<SetStateAction<any>>
+  setBidNow: Dispatch<SetStateAction<any>>
   selectedNFT: any
+  nftInBag: any
+  setNftInBag: any
+  buyNowClicked: any
+  bidNowClicked: any
   currentStep?: number
   previousStep?: () => void
   nextStep?: () => void
@@ -23,7 +29,13 @@ interface NFTAgg {
   setSortAsc: any
   currentStep?: number
   setSelectedNFT: Dispatch<SetStateAction<any>>
+  setBuyNow: Dispatch<SetStateAction<any>>
+  setBidNow: Dispatch<SetStateAction<any>>
   selectedNFT: any
+  buyNowClicked: any
+  nftInBag: any
+  setNftInBag: any
+  bidNowClicked: any
   saveDataForStep?: (d: any) => void
   creatorData?: ICreatorData
   previousStep?: () => void
@@ -35,13 +47,17 @@ const NFTAggContext = createContext<INFTAggConfig>(null)
 export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [sortingAsc, setSortAsc] = useState<boolean>(true)
   const [nftCollections, setCollections] = useState<any[]>([])
+  const [nftInBag, setNftInBag] = useState<any[]>([])
   const [selectedNFT, setSelectedNFT] = useState<number | undefined>()
+  const [buyNowClicked, setBuyNow] = useState<boolean | any>(undefined)
+  const [bidNowClicked, setBidNow] = useState<boolean | any>(undefined)
 
   useEffect(() => {
     const collections = []
     for (let i = 0; i < 45; i++) {
       collections.push({
         key: i,
+        uid: i,
         name: 'Some random collection',
         nft_url: 'https://ca.slack-edge.com/T021XPFKRQV-U02R0LLQ8KX-1cd23a0ef132-512',
         collectionId: i + 1000,
@@ -66,7 +82,13 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
         setSortAsc: setSortAsc,
         nftCollections: nftCollections,
         selectedNFT: selectedNFT,
-        setSelectedNFT: setSelectedNFT
+        setSelectedNFT: setSelectedNFT,
+        buyNowClicked: buyNowClicked,
+        bidNowClicked: bidNowClicked,
+        setBidNow: setBidNow,
+        setBuyNow: setBuyNow,
+        nftInBag: nftInBag,
+        setNftInBag: setNftInBag
       }}
     >
       {children}
@@ -80,6 +102,30 @@ export const useNFTAggregator = (): NFTAgg => {
   if (!context) {
     throw new Error('Missing NFT Aggregator context')
   }
-  const { sortingAsc, setSortAsc, nftCollections, selectedNFT, setSelectedNFT } = context
-  return { sortingAsc, setSortAsc, nftCollections, selectedNFT, setSelectedNFT }
+  const {
+    sortingAsc,
+    setSortAsc,
+    nftCollections,
+    selectedNFT,
+    setSelectedNFT,
+    buyNowClicked,
+    setBuyNow,
+    bidNowClicked,
+    setBidNow,
+    nftInBag,
+    setNftInBag
+  } = context
+  return {
+    sortingAsc,
+    setSortAsc,
+    nftCollections,
+    selectedNFT,
+    setSelectedNFT,
+    buyNowClicked,
+    setBidNow,
+    bidNowClicked,
+    setBuyNow,
+    nftInBag,
+    setNftInBag
+  }
 }

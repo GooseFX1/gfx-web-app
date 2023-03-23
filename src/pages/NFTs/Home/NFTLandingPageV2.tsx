@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Switch } from 'antd'
-import React, { ReactElement, useMemo, useState, FC } from 'react'
+import { Dropdown, Switch } from 'antd'
+import React, { ReactElement, useMemo, useState, FC, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
+import 'styled-components/macro'
 import { SearchBar } from '../../../components'
-import { ModalSlide } from '../../../components/ModalSlide'
 import { NFTAggTerms } from '../../../components/NFTAggWelcome'
-import { MODAL_TYPES } from '../../../constants'
-import { useNavCollapse, useNFTCollections } from '../../../context'
+import { useNavCollapse, useNFTAggregator, useNFTCollections } from '../../../context'
 import { checkMobile } from '../../../utils'
 import { STYLED_BUTTON } from '../../Farm/FarmFilterHeader'
 import MenuNFTPopup from './MenuNFTPopup'
@@ -15,6 +14,9 @@ import { NFT_STATS_CONTAINER, SEARCH_RESULT_CONTAINER, STATS_BTN } from './NFTAg
 import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'
 import SearchNFTMobile from './SearchNFTMobile'
+import { Arrow } from '../../../components/common/Arrow'
+import { DROPDOWN_CONTAINER } from '../Collection/CollectionV2.styles'
+import MyNFTBag from '../MyNFTBag'
 
 const CURRENCY_SWITCH = styled.div<{ $currency }>`
   .ant-switch {
@@ -61,16 +63,27 @@ const BannerContainer = styled.div<{ showBanner: boolean }>`
 `
 
 const EYE_CONTAINER = styled.div`
-  width: 90px;
-  right: 2%;
-  ${tw`text-[15px] ml-2 flex absolute font-semibold  duration-500 cursor-pointer mt-1`}
+  ${tw`text-[15px] ml-2 flex w-[90px] right-[2%] absolute font-semibold  duration-500 cursor-pointer mt-1`}
   img {
     ${tw` mr-2 h-[25px] w-[25px] duration-500  `}
   }
 `
 const FILTERS_CONTAINER = styled.div`
   ${tw`flex mt-[15px] sm:mt-[20px]`}
+  .dropdownBtn {
+    ${tw`rounded-full flex justify-center border-none dark:bg-[#1f1f1f] justify-between p-1 pr-2 cursor-pointer
+      bg-white items-center text-[#3c3c3c] mx-2 dark:text-[#fff] font-semibold text-[15px]`}
+  }
+  &.ant-dropdown {
+    ${tw`dark:bg-[#3c3c3c] h-[50px] w-[100px] bg-[pink]
+      bg-white items-center text-[#3c3c3c] mx-2 dark:text-[#fff] font-semibold text-[15px]`}
+  }
+  .dropdownContainer {
+    ${tw`dark:bg-[#3c3c3c] h-[50px] w-[100px] bg-[pink]
+      bg-white items-center text-[#3c3c3c] mx-2 dark:text-[#fff] font-semibold text-[15px]`}
+  }
 `
+
 export const ButtonContainer = styled.div<{ $poolIndex: number }>`
   ${tw`relative z-0 mr-1`}
   .slider-animation-timeline {
@@ -92,8 +105,7 @@ export const ButtonContainer = styled.div<{ $poolIndex: number }>`
     transition: left 500ms ease-in-out;
   }
   .selectedBackground {
-    ${tw`text-white`}
-    transition: 500ms ease-in-out;
+    ${tw`text-white duration-500`}
     @media (max-width: 500px) {
       background: none;
     }
@@ -123,10 +135,8 @@ const NFTLandingPageV2 = (): ReactElement => {
 
   return (
     <WRAPPER $navCollapsed={isCollapsed} $currency={currency}>
-      {<NFTAggTerms setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={setShowPopup} />}
-      {/* {showPopup && (
-        <ModalSlide modalType={MODAL_TYPES.NFT_AGG_WELCOME} rewardToggle={setShowPopup} rewardModal={showBanner} />
-      )} */}
+      {/* {<NFTAggTerms setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={setShowPopup} />} */}
+      <MyNFTBag />
       {!checkMobile() && (
         <BannerContainer showBanner={showBanner}>
           <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} />
@@ -234,6 +244,18 @@ const FiltersContainer = ({ setCurrency }: any) => {
           ))}
         </ButtonContainer>
         {searchFilter && <SearchResultContainer searchFilter={searchFilter} />}
+        <div tw="flex items-center mr-6 ml-auto">
+          <MarketDropdown />
+          <TimeLineDropdown />
+          <div>
+            {' '}
+            <img tw="mr-2" src="/img/assets/refresh.svg" />{' '}
+          </div>
+          <div>
+            {' '}
+            <img tw="mr-2" src="/img/assets/refresh.svg" />{' '}
+          </div>
+        </div>
       </FILTERS_CONTAINER>
     )
 }
@@ -299,5 +321,63 @@ const StatsButton: FC<{ title: string; data: string | number }> = ({ title, data
     </div>
   </STATS_BTN>
 )
+
+const TimeLineDropdown = (): ReactElement => {
+  const [arrow, setArrow] = useState<boolean>(false)
+  return (
+    <Dropdown
+      align={{ offset: [0, 16] }}
+      destroyPopupOnHide
+      overlay={<TimelineDropdownContents setArrow={setArrow} />}
+      placement="bottomRight"
+      trigger={['click']}
+    >
+      <div className="dropdownBtn" tw="h-[44px] w-[104px] ">
+        <div tw="ml-6">All</div>
+        <Arrow height="9px" width="18px" invert={arrow} />
+      </div>
+    </Dropdown>
+  )
+}
+
+const MarketDropdown = (): ReactElement => {
+  const [arrow, setArrow] = useState<boolean>(false)
+  return (
+    <Dropdown
+      align={{ offset: [0, 16] }}
+      destroyPopupOnHide
+      overlay={<MarketDropdownContents setArrow={setArrow} />}
+      placement="bottomRight"
+      trigger={['click']}
+    >
+      <div className="dropdownBtn" tw="h-[44px] w-[173px]">
+        <img src="/img/assets/Aggregator/menu.svg" />
+        <div>All</div>
+        <Arrow height="9px" width="18px" invert={arrow} />
+      </div>
+    </Dropdown>
+  )
+}
+const MarketDropdownContents = ({ setArrow }: any): ReactElement => {
+  useEffect(() => {
+    setArrow(true)
+    return () => {
+      setArrow(false)
+    }
+  }, [])
+
+  return <DROPDOWN_CONTAINER tw="w-[173px] h-[211px]">List of markets</DROPDOWN_CONTAINER>
+}
+
+const TimelineDropdownContents = ({ setArrow }: any): ReactElement => {
+  useEffect(() => {
+    setArrow(true)
+    return () => {
+      setArrow(false)
+    }
+  }, [])
+
+  return <DROPDOWN_CONTAINER tw="w-[173px] h-[211px]">List of time line</DROPDOWN_CONTAINER>
+}
 
 export default NFTLandingPageV2

@@ -78,24 +78,25 @@ const STYLED_POPUP = styled(PopupCustom)`
 `
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const BuyNFTModal = ({ setBuyNow, buyNowClicked }: any): ReactElement => {
-  const { selectedNFT, setSelectedNFT } = useNFTAggregator()
+export const BuyNFTModal = (): ReactElement => {
+  const { selectedNFT, setSelectedNFT, buyNowClicked, setBuyNow } = useNFTAggregator()
+  console.log(buyNowClicked)
   return (
     <STYLED_POPUP
       height={checkMobile() ? '600px' : '780px'}
       width={checkMobile() ? '100%' : '580px'}
       title={null}
       visible={buyNowClicked ? true : false}
-      onCancel={() => setBuyNow(false)}
+      onCancel={() => setBuyNow(undefined)}
       footer={null}
     >
       <div className="buyTitle">
         You are about to buy <br />
-        <strong>#{selectedNFT.collectionId} </strong> {checkMobile() ? <br /> : 'by'}
+        <strong>#{buyNowClicked.collectionId} </strong> {checkMobile() ? <br /> : 'by'}
         <strong> {'De Gods'}</strong>
       </div>
       <div className="vContainer">
-        <img className="nftImg" src={selectedNFT.nft_url} alt="" />
+        <img className="nftImg" src={buyNowClicked.nft_url} alt="" />
       </div>
 
       <div className="vContainer">
@@ -109,7 +110,7 @@ export const BuyNFTModal = ({ setBuyNow, buyNowClicked }: any): ReactElement => 
 
       <div className="vContainer">
         <div className="priceNumber">
-          {selectedNFT.nftPrice * 212} <img src={`/img/crypto/${selectedNFT.currency}.svg`} />
+          {buyNowClicked.nftPrice} <img src={`/img/crypto/${buyNowClicked.currency}.svg`} />
         </div>
       </div>
       <AppraisalValue width={360} />
@@ -139,8 +140,9 @@ export const BuyNFTModal = ({ setBuyNow, buyNowClicked }: any): ReactElement => 
   )
 }
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const BidNFTModal = ({ bidNowClicked, setBidNow }: any): ReactElement => {
-  const { selectedNFT, setSelectedNFT } = useNFTAggregator()
+export const BidNFTModal = (): ReactElement => {
+  const { selectedNFT, setSelectedNFT, bidNowClicked, setBidNow } = useNFTAggregator()
+
   return (
     <STYLED_POPUP
       height={checkMobile() ? '600px' : '780px'}
@@ -152,11 +154,11 @@ export const BidNFTModal = ({ bidNowClicked, setBidNow }: any): ReactElement => 
     >
       <div className="buyTitle">
         You are about to Bid <br />
-        <strong>#{selectedNFT.collectionId} </strong> {checkMobile() ? <br /> : 'by'}
+        <strong>#{bidNowClicked.collectionId} </strong> {checkMobile() ? <br /> : 'by'}
         <strong> {'De Gods'}</strong>
       </div>
       <div className="vContainer">
-        <img className="nftImgBid" src={selectedNFT.nft_url} alt="" />
+        <img className="nftImgBid" src={bidNowClicked.nft_url} alt="" />
         <div className="currentBid">Current Bid</div>
       </div>
 
@@ -171,7 +173,7 @@ export const BidNFTModal = ({ bidNowClicked, setBidNow }: any): ReactElement => 
 
       <div className="vContainer">
         <div className="priceNumber">
-          {selectedNFT.nftPrice * 212} <img src={`/img/crypto/${selectedNFT.currency}.svg`} />
+          {bidNowClicked.nftPrice} <img src={`/img/crypto/${bidNowClicked.currency}.svg`} />
         </div>
       </div>
       <AppraisalValue width={360} />

@@ -23,7 +23,6 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
       <table>
         {!checkMobile() && (
           <thead className="tableHeader">
-            {' '}
             <NFTColumnsTitleWeb />
           </thead>
         )}

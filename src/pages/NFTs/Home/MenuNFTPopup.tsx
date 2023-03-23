@@ -6,7 +6,7 @@ import { PopupCustom } from '../Popup/PopupCustom'
 
 const STYLED_POPUP = styled(PopupCustom)`
   &.ant-modal {
-    ${tw`max-w-full bottom-0 mt-auto absolute`}
+    ${tw`max-w-full bottom-[-10px] mt-auto absolute`}
   }
   .wrapper {
     ${tw`flex flex-col text-[15px] w-[75%] ml-[12%]  font-semibold`}

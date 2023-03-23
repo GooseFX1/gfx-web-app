@@ -60,11 +60,10 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   }
   tbody {
     height: calc(
-      100vh - ${({ showBanner }) => (showBanner ? '410px' : '200px')} -
+      100vh - ${({ showBanner }) => (showBanner ? '425px' : '215px')} -
         ${({ $navCollapsed }) => (!$navCollapsed ? '80px' : '0px')}
     );
     overflow-y: auto;
-    transition: 0.5s ease;
     @media (max-width: 500px) {
       height: calc(100vh - 280px);
     }
