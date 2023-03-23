@@ -20,7 +20,7 @@ const PROFILE_CONTAINER = styled.div<{ background?: string }>`
     background-size: 100% 100%;
   }
   .ant-drawer-content {
-    background: #1c1c1c;
+    background: #1c1c1c !important;
   }
   .ant-drawer-content-wrapper{
     height: 90% !important;
