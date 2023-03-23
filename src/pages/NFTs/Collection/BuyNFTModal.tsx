@@ -4,20 +4,26 @@ import React, { ReactElement } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { useNFTAggregator } from '../../../context'
+import { checkMobile } from '../../../utils'
 import { PopupCustom } from '../Popup/PopupCustom'
 
 const STYLED_POPUP = styled(PopupCustom)`
-  ${tw`flex flex-col`}
+  ${tw`flex flex-col `}
+  &.ant-modal {
+    ${tw`max-w-full sm:bottom-[-10px] sm:mt-auto sm:absolute sm:h-[600px]`}
+    background-color: ${({ theme }) => theme.bg26};
+  }
   color: ${({ theme }) => theme.text20};
   .buyTitle {
-    ${tw`text-[25px] font-medium text-center`}
+    ${tw`text-[25px] sm:ml-[140px] sm:mt-1 sm:text-[14px] sm:absolute sm:pt-2 font-medium text-center sm:text-left `}
     color: ${({ theme }) => theme.text20};
     strong {
+      ${tw`sm:text-[25px] sm:mt-[-10px] leading-6`}
       color: ${({ theme }) => theme.text28};
     }
   }
   .verifiedText {
-    ${tw`font-semibold text-[16px] mt-[15px]`}
+    ${tw`font-semibold text-[16px] mt-[15px] sm:text-left sm:ml-[80px] sm:mt-[95px]`}
   }
   .hContainer {
     ${tw`flex flex-col items-center justify-center`}
@@ -26,7 +32,7 @@ const STYLED_POPUP = styled(PopupCustom)`
     ${tw`flex items-center justify-center relative`}
   }
   .verifiedImg {
-    ${tw`h-[35px] w-[35px] mr-2 mt-[15px]`}
+    ${tw`h-[35px] sm:w-[18px] sm:absolute sm:mt-[115px] sm:ml-[115px] sm:h-[18px] w-[35px] mr-2 mt-[15px]`}
   }
   .rowContainer {
     ${tw`flex items-center justify-between w-[90%]`}
@@ -39,7 +45,7 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
 
   .nftImg {
-    ${tw`w-[165px] h-[165px] mt-[25px]`}
+    ${tw`w-[165px] h-[165px] sm:mt-[150px] mt-[25px] sm:h-[125px] sm:w-[125px] sm:left-0 sm:absolute`}
   }
   .appraisalResult {
     color: ${({ theme }) => theme.text7};
@@ -55,7 +61,7 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
 
   .buyButton {
-    ${tw`w-[520px]  cursor-pointer 
+    ${tw`w-[520px] sm:h-[50px] sm:text-[15px]  cursor-pointer 
      h-[60px] text-white text-[20px] font-semibold flex items-center justify-center`}
     border-radius: 50px;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
@@ -68,14 +74,14 @@ const STYLED_POPUP = styled(PopupCustom)`
     }
   }
   .outerCover {
-    ${tw`w-[360px] h-[68px] rounded-xl flex items-center justify-center mt-[30px]`}
+    ${tw`w-[360px] sm:w-[100%] h-[68px] rounded-xl flex items-center justify-center mt-[30px]`}
     background: linear-gradient(96.79deg, #5855FF 4.25%, #DC1FFF 97.61%);
   }
   .buyBtnContainer {
     ${tw`flex items-center justify-center`}
   }
   .innerCover {
-    ${tw`p-1 rounded-xl w-[357px] h-[65px] flex items-center justify-between`}
+    ${tw`p-1 sm:p-2 rounded-xl sm:w-[98.5%] w-[357px] h-[65px] flex items-center justify-between`}
     background-color: ${({ theme }) => theme.bg3};
     img {
       ${tw`w-[34px] h-[34px] m-2`}
@@ -87,25 +93,25 @@ export const BuyNFTModal = (): ReactElement => {
   const { selectedNFT, setSelectedNFT } = useNFTAggregator()
   return (
     <STYLED_POPUP
-      height={'780px'}
-      width={'580px'}
+      height={checkMobile() ? '600px' : '780px'}
+      width={checkMobile() ? '100%' : '580px'}
       title={null}
       visible={selectedNFT ? true : false}
       onCancel={() => setSelectedNFT(undefined)}
       footer={null}
     >
       <div className="buyTitle">
-        you are about to buy <br />
-        <strong>#{selectedNFT.collectionId} </strong> by <strong> {'De Gods'}</strong>
+        You are about to buy <br />
+        <strong>#{selectedNFT.collectionId} </strong> {checkMobile() ? <br /> : 'by'}
+        <strong> {'De Gods'}</strong>
+      </div>
+      <div className="vContainer">
+        <img className="nftImg" src={selectedNFT.nft_url} alt="" />
       </div>
 
       <div className="vContainer">
         <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
-        <div className="verifiedText">This is a verified Creator</div>
-      </div>
-
-      <div className="vContainer">
-        <img className="nftImg" src={selectedNFT.nft_url} alt="" />
+        <div className="verifiedText">This is a verified {checkMobile() && <br />} Creator</div>
       </div>
 
       <div className="vContainer">
