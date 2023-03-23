@@ -4,11 +4,16 @@ import 'styled-components/macro'
 import { Loader } from './Loader'
 
 const BUTTON = styled.button<{ $cssStyle: TwStyle; $height: string; $width: string; $disabled: boolean }>`
-  ${tw`flex justify-center items-center`}
+  ${tw`flex justify-center border-none rounded-full items-center `}
   ${({ $cssStyle }) => $cssStyle};
   height: ${({ $height }) => $height};
   width: ${({ $width }) => $width};
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+
+  .pinkGradient {
+    border: 10px solid;
+    background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
+  }
 `
 
 const LOADER = () => (

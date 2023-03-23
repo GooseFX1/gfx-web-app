@@ -119,23 +119,39 @@ export const GRID_CONTAINER = styled.div<{ navCollapsed }>`
 
 export const NFT_COLLECTIONS_GRID = styled.div`
   ${tw`w-full`}
-
   background: ${({ theme }) => theme.bg23};
   overflow-y: auto;
   .gridContainer {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
     ${tw`grid pl-3 sm:grid-cols-2 rounded-xl`}
   }
+  .pinkGradient {
+    background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
+  }
   .gridItem {
-    height: 240px;
-
-    background-color: ${({ theme }) => theme.bgForNFTCollection};
+    ${tw`h-[270px] w-[190px] rounded-[12px] dark:bg-[#131313] bg-[#fff] duration-500 cursor-pointer`}
     margin: 20px 13px 0px 0px;
-    border-radius: 12px;
 
     .gridItemContainer {
-      ${tw`flex pt-2 justify-center`}
+      ${tw`flex pt-2 justify-center `}
+      .nftImg {
+        ${tw`w-[170px] h-[170px] `}
+      }
+      .hoverAddToBag {
+        ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
+      }
+      .hoverButtons {
+        ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-between w-[100%] px-2`}
+      }
+      div {
+        ${tw`absolute opacity-0`}
+      }
+      :hover {
+        div {
+          ${tw`absolute opacity-100 duration-300 w-[170px] h-[170px] rounded-[8px]`}
+          background: linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0.4) 100%)
+        }
+      }
     }
     .nftTextContainer {
       ${tw`pl-2 pr-2 pt-2`}
