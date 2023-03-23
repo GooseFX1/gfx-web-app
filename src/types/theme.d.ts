@@ -54,7 +54,7 @@ export interface Colors {
   tableBorder: Color
   borderBottom: Color
   multiplierBorder: Color
-
+  bgForNFTCollection: Color
   // backgrounds / greys
   bg0: Color
   bg1: Color
@@ -83,6 +83,7 @@ export interface Colors {
   lpbg: Color
   pbbg: Color
   goBtn: Color
+  backBtnBg: Color
   innerCircle: Color
   circleBoxShadow: Color
   swapSides1: Color
