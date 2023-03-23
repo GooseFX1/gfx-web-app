@@ -7,8 +7,8 @@ interface INFTAggConfig {
   sortingAsc: boolean
   nftCollections: any[]
   setSortAsc: any
-  setSelectedNFT: Dispatch<SetStateAction<number>>
-  selectedNFT: number
+  setSelectedNFT: Dispatch<SetStateAction<any>>
+  selectedNFT: any
   currentStep?: number
   previousStep?: () => void
   nextStep?: () => void

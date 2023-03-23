@@ -17,3 +17,15 @@ export const NFTColumnsTitleWeb = (): ReactElement => (
     </>
   </tr>
 )
+
+export const NFTActivitySectionWeb = (): ReactElement => (
+  <tr>
+    <th>Item</th>
+    <th>Type</th>
+    <th>Price</th>
+    <th>Market</th>
+    <th>Buyer</th>
+    <th>Seller</th>
+    <th>Time</th>
+  </tr>
+)

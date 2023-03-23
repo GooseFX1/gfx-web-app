@@ -140,8 +140,8 @@ export const NFT_COLLECTIONS_GRID = styled.div`
     }
   }
 `
-export const NFT_FILTERS_CONTAINER = styled.div<{ open }>`
-  ${({ open }) => css`
+export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
+  ${({ index }) => css`
     ${tw`duration-500 items-center flex h-[70px]`}
     border-radius: 30px 30px 0 0;
     background: ${({ theme }) => theme.bg23};
@@ -154,18 +154,25 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ open }>`
       ${tw`h-10 w-10 ml-3 cursor-pointer`}
     }
     .flexContainer {
-      ${tw`h-[100px] right-[2%] absolute flex items-center`}
+      margin-left: auto;
+      height: fit-content;
+      color: ${({ theme }) => theme.text12};
+      ${tw`mt-10 text-[15px] font-medium`}
+    }
+    .selected {
+      color: ${({ theme }) => theme.text4};
+      ${tw`w-[140px] mb-4 items-center font-semibold  flex justify-between flex-col cursor-pointer`}
     }
     .flexItem {
-      ${tw`text-[15px] font-medium pl-10 pr-10 flex justify-between flex-col`}
-
-      .activeItem {
-        ${tw`bottom-4 pt-2 h-2  rounded-b-circle font-semibold`}
-        content: '';
-        background: #5855ff;
-        transform: rotate(180deg);
-        transition: left ${({ theme }) => theme.mainTransitionTime} ease-in-out;
-      }
+      ${tw` w-[140px] mb-4 items-center  flex justify-between flex-col cursor-pointer`}
+    }
+    .activeItem {
+      ${tw`h-2  block mt-3 rounded-b-circle font-semibold duration-500 	`}
+      content: '';
+      width: 70%;
+      background: #5855ff;
+      transform: rotate(180deg);
+      margin-left: ${index * 280 + `px`};
     }
   `}
 `

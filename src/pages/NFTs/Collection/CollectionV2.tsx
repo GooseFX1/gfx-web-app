@@ -7,6 +7,7 @@ import { useDarkMode, useNavCollapse, useNFTAggregator } from '../../../context'
 import { ICON } from '../../../layouts'
 import { IAppParams } from '../../../types/app_params'
 import { GradientText } from '../adminPage/components/UpcomingMints'
+import ActivityNFTSection from './ActivityNFTSection'
 import AdditionalFilters from './AdditionalFilters'
 import { BuyNFTModal } from './BuyNFTModal'
 import {
@@ -68,7 +69,6 @@ const NFTStatsContainer = () => {
             <div className="subTitleText"> 24h volume </div>
           </div>
         </div>
-
         <div className="moreOptions">
           <div>
             <img src="/img/assets/refreshButton.png" />
@@ -89,14 +89,15 @@ const NFTStatsContainer = () => {
 const NFTGridContainer = (): ReactElement => {
   const { isCollapsed } = useNavCollapse()
   const [open, setOpen] = useState<boolean>(true)
-  const [displayIndex, setDisplayIndex] = useState<number>(0)
+  const [displayIndex, setDisplayIndex] = useState<number>(2)
 
   return (
     <GRID_CONTAINER navCollapsed={isCollapsed}>
       <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
       <div className="flexContainer">
         <AdditionalFilters open={open} />
-        <NFTCollectionsGrid open={open} />
+        {displayIndex !== 2 && <NFTCollectionsGrid open={open} />}
+        {displayIndex === 2 && <ActivityNFTSection />}
       </div>
     </GRID_CONTAINER>
   )
@@ -105,10 +106,6 @@ const NFTGridContainer = (): ReactElement => {
 const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): ReactElement => {
   const { mode } = useDarkMode()
   const { sortingAsc, setSortAsc } = useNFTAggregator()
-  const items = [
-    { label: 'Tab 1', key: 'item-1', children: 'Content 1' }, // remember to pass the key prop
-    { label: 'Tab 2', key: 'item-2', children: 'Content 2' }
-  ]
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
       <img onClick={() => setOpen((prev) => !prev)} src={`/img/assets/Aggregator/filtersIcon${mode}.svg`} />
@@ -117,9 +114,19 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
         Price: {sortingAsc ? 'Ascending' : 'Descending'}
       </div>
       <div className="flexContainer">
-        <div className="flexItem">Listed (243)</div>
-        <div className="flexItem activeItem">All items (10K)</div>
-        <div className="flexItem">Activity</div>
+        <div className={displayIndex === 0 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(0)}>
+          {' '}
+          Listed (243)
+          <div className="activeItem" />
+        </div>
+        <div className={displayIndex === 1 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(1)}>
+          {' '}
+          All items (10K){' '}
+        </div>
+        <div className={displayIndex === 2 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(2)}>
+          {' '}
+          Activity{' '}
+        </div>
       </div>
     </NFT_FILTERS_CONTAINER>
   )
