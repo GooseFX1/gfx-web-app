@@ -12,7 +12,7 @@ import { ArrowIcon } from './CollectionV2.styles'
 
 export const ADDITIONAL_FILTERS = styled.div<{ open }>`
   ${({ open }) => css`
-    ${tw`duration-700 flex h-full flex-col`}
+    ${tw`duration-500 flex h-full flex-col`}
     width: ${open ? '16%' : '0px'} !important;
     min-width: ${open ? '248px' : '0px'} !important;
     background: ${({ theme }) => theme.bg23};
