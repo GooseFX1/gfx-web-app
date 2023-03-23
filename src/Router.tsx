@@ -4,7 +4,7 @@ import { AppLayout } from './layouts'
 import { Farm, Swap } from './pages'
 import {
   NavCollapseProvider,
-  // NFTProfileProvider,
+  NFTProfileProvider,
   OrderProvider,
   PriceFeedProvider,
   TradeHistoryProvider,
@@ -18,7 +18,7 @@ import { Creator } from './pages/NFTs/CreatorPage/Creator'
 import { AdminWrapper } from './pages/NFTs/adminPage/components/AdminWrapper'
 import { AnalyticsWrapper } from './pages/Analytics/AnalyticsWrapper'
 import { TraderProvider } from './context/trader_risk_group'
-import AggCommingSoon from './pages/NFTs/Home/AggCommingSoon'
+import NFTLandingPageV2 from './pages/NFTs/Home/NFTLandingPageV2'
 
 export const Router: FC = () => (
   <BrowserRouter>
@@ -55,7 +55,9 @@ export const Router: FC = () => (
             </NFTAdminProvider>
           </Route>
           <Route path="/NFTs">
-            <AggCommingSoon />
+            <NFTProfileProvider>
+              <NFTLandingPageV2 />
+            </NFTProfileProvider>
           </Route>
           <Route exact path="/farm">
             <Farm />
