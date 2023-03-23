@@ -10,6 +10,7 @@ import { getPerpsPrice, truncateBigNumber } from './perps/utils'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import useBlacklisted from '../../utils/useBlacklisted'
 import 'styled-components/macro'
+import { checkMobile } from '../../utils'
 
 const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[356px] !w-[628px] rounded-half`}
@@ -32,7 +33,7 @@ const SETTING_MODAL = styled(PopupCustom)`
 `
 
 const INFO_WRAPPER = styled.div`
-  ${tw`py-0 px-[30px] flex flex-row`}
+  ${tw`py-0 px-[30px] flex flex-row sm:justify-center`}
   .spot-toggle .perps {
     ${tw`cursor-pointer mr-[35px]`}
   }
@@ -108,7 +109,7 @@ const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
   }
 `
 const DEPOSIT_WRAPPER = styled.div`
-  ${tw`w-[158px] h-10 rounded-[36px] flex items-center justify-center cursor-pointer p-0.5 ml-auto`}
+  ${tw`w-[158px] h-10 rounded-[36px] flex items-center justify-center cursor-pointer p-0.5 ml-auto sm:ml-0`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
   margin-left: ${({ $isLocked }) => ($isLocked ? 'auto' : '15px')};
 
@@ -302,38 +303,44 @@ export const InfoBanner: FC<{
           <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
         </SETTING_MODAL>
       )}
-      <div className="spot-toggle">
-        <span
-          className={'spot toggle ' + (isSpot ? 'selected' : '')}
-          key="spot"
-          onClick={() => handleToggle('spot')}
-        >
-          Spot
-        </span>
-        <span
-          className={'perps toggle ' + (geoBlocked ? 'geoblocked' : !isSpot ? 'selected' : '')}
-          key="perps"
-          onClick={geoBlocked ? null : () => handleToggle('perps')}
-        >
-          Perps
-        </span>
-      </div>
-      <DropdownPairs />
-      <INFO_STATS>
+      {!checkMobile() && (
+        <div className="spot-toggle">
+          <span
+            className={'spot toggle ' + (isSpot ? 'selected' : '')}
+            key="spot"
+            onClick={() => handleToggle('spot')}
+          >
+            Spot
+          </span>
+          <span
+            className={'perps toggle ' + (geoBlocked ? 'geoblocked' : !isSpot ? 'selected' : '')}
+            key="perps"
+            onClick={geoBlocked ? null : () => handleToggle('perps')}
+          >
+            Perps
+          </span>
+        </div>
+      )}
+      {/* <DropdownPairs /> */}
+      {!checkMobile() && (
         <>
-          <span className="price">Price</span>
-          <div>
-            {tokenPrice}
-            <span className={classNameChange}>{' (' + changeValue + '%)'}</span>
-          </div>
+          <INFO_STATS>
+            <>
+              <span className="price">Price</span>
+              <div>
+                {tokenPrice}
+                <span className={classNameChange}>{' (' + changeValue + '%)'}</span>
+              </div>
+            </>
+          </INFO_STATS>
+          <INFO_STATS>
+            <>
+              <div>24hr Volume</div>
+              {!displayVolume ? <Loader /> : <div>$ {displayVolume}</div>}
+            </>
+          </INFO_STATS>
         </>
-      </INFO_STATS>
-      <INFO_STATS>
-        <>
-          <div>24hr Volume</div>
-          {!displayVolume ? <Loader /> : <div>$ {displayVolume}</div>}
-        </>
-      </INFO_STATS>
+      )}
 
       {/*<INFO_STATS>
         <>
@@ -351,25 +358,27 @@ export const InfoBanner: FC<{
             </div>
           )}
         </>
-      </INFO_STATS>*/}
-      <INFO_STATS>
-        <div>Daily Range</div>
-        {!range ? (
-          <Loader />
-        ) : (
-          <div>
-            <span>$ {range.min}</span>
-            <span className="barContainer">
-              {[0, 1, 2, 3, 4, 5].map((item, index) => {
-                if (item < bars) return <div key={index} className="verticalLines coloured"></div>
-                else return <div key={index} className="verticalLines grey"></div>
-              })}
-            </span>
-            <span>$ {range.max}</span>
-          </div>
-        )}
-      </INFO_STATS>
-      {!isSpot && (
+         </INFO_STATS> */}
+      {!checkMobile() && (
+        <INFO_STATS>
+          <div>Daily Range</div>
+          {!range ? (
+            <Loader />
+          ) : (
+            <div>
+              <span>$ {range.min}</span>
+              <span className="barContainer">
+                {[0, 1, 2, 3, 4, 5].map((item, index) => {
+                  if (item < bars) return <div key={index} className="verticalLines coloured"></div>
+                  else return <div key={index} className="verticalLines grey"></div>
+                })}
+              </span>
+              <span>$ {range.max}</span>
+            </div>
+          )}
+        </INFO_STATS>
+      )}
+      {!checkMobile() && !isSpot && (
         <INFO_STATS>
           <>
             <div>Open Interest</div>
@@ -377,7 +386,7 @@ export const InfoBanner: FC<{
           </>
         </INFO_STATS>
       )}
-      {isSpot && geoBlocked && (
+      {!checkMobile() && isSpot && geoBlocked && (
         <div tw="flex ml-auto relative top-[23px]">
           <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />
           <div tw="ml-2 text-tiny font-semibold dark:text-grey-5 text-grey-1">
@@ -385,7 +394,9 @@ export const InfoBanner: FC<{
           </div>
         </div>
       )}
-      {!isLocked && <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>}
+      {!checkMobile() && !isLocked && (
+        <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>
+      )}
       {!isSpot && (
         <DEPOSIT_WRAPPER $isLocked={isLocked}>
           <div className="white-background">
@@ -393,13 +404,15 @@ export const InfoBanner: FC<{
           </div>
         </DEPOSIT_WRAPPER>
       )}
-      <LOCK_LAYOUT_CTN $isLocked={isLocked} $isSpot={isSpot} onClick={() => setIsLocked(!isLocked)}>
-        <div className="white-background">
-          <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
-            <img src={isLocked ? `/img/assets/${mode}_lock.svg` : `/img/assets/${mode}_unlock.svg`} alt="lock" />
-          </LOCK_LAYOUT>
-        </div>
-      </LOCK_LAYOUT_CTN>
+      {!checkMobile() && (
+        <LOCK_LAYOUT_CTN $isLocked={isLocked} $isSpot={isSpot} onClick={() => setIsLocked(!isLocked)}>
+          <div className="white-background">
+            <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
+              <img src={isLocked ? `/img/assets/${mode}_lock.svg` : `/img/assets/${mode}_unlock.svg`} alt="lock" />
+            </LOCK_LAYOUT>
+          </div>
+        </LOCK_LAYOUT_CTN>
+      )}
     </INFO_WRAPPER>
   )
 }
