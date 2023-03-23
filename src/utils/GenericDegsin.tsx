@@ -1,8 +1,9 @@
+import { ReactElement } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { Tooltip } from '../components'
 
-export const HeaderTooltip = (text: string) =>
+export const HeaderTooltip = (text: string): ReactElement =>
   <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
     <Tooltip dark placement="bottomLeft" color="#000000">
       <span>{text}</span>
@@ -29,7 +30,12 @@ export const STYLED_TITLE = styled.div`
     margin-right: 8px;
   }
 `
-export const TableHeaderTitle = (text: string, infoText: string, isArrowDown: boolean, invert?: boolean) => (
+export const TableHeaderTitle = (
+  text: string,
+  infoText: string,
+  isArrowDown: boolean,
+  invert?: boolean
+): ReactElement => (
   <STYLED_TITLE>
     <div className="textTitle">{text}</div>
     {infoText && HeaderTooltip(infoText)}

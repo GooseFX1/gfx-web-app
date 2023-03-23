@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import React from 'react'
+import React, { ReactElement, FC } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import Slider from 'react-slick'
@@ -42,7 +42,7 @@ const WRAPPER = styled.div`
   }
 `
 
-const NFTAggWelcome = ({ rewardToggle }: any) => {
+const NFTAggWelcome: FC<{ rewardToggle: any }> = ({ rewardToggle }): ReactElement => {
   const settings = {
     dots: true,
     infinite: false,
