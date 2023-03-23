@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Switch } from 'antd'
-import React, { ReactElement, useMemo, useState } from 'react'
+import React, { ReactElement, useMemo, useState, FC } from 'react'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import { SearchBar } from '../../../components'
@@ -43,7 +43,6 @@ const WRAPPER = styled.div<{ $navCollapsed; $currency }>`
   .search-bar {
     transition: 0.5s ease;
     ${tw`sm:w-0`}
-    border: 1px solid;
   }
   .flexContainer {
     ${tw`h-[40px] flex ml-[10px] mb-4`}
@@ -56,25 +55,21 @@ const WRAPPER = styled.div<{ $navCollapsed; $currency }>`
 `
 const BannerContainer = styled.div<{ showBanner: boolean }>`
   ${({ showBanner }) => css`
-    height: ${showBanner ? '290px' : '80px'};
-    transition: 0.5s ease;
-    @media (max-width: 500px) {
-      ${tw`h-[100px] mt-[90px]`}
-      border: 1px solid;
-    }
+    height: 'fit-content';
+    ${tw`mt-[35px] duration-500`}
   `}
 `
 
 const EYE_CONTAINER = styled.div`
-  width: fit-content;
+  width: 90px;
   right: 2%;
-  ${tw`text-[15px] font-semibold absolute duration-500 cursor-pointer mt-1`}
+  ${tw`text-[15px] ml-2 flex absolute font-semibold  duration-500 cursor-pointer mt-1`}
   img {
-    ${tw`mr-2 duration-500`}
+    ${tw` mr-2 h-[25px] w-[25px] duration-500  `}
   }
 `
 const FILTERS_CONTAINER = styled.div`
-  ${tw`flex mt-4 sm:mt-[20px]`}
+  ${tw`flex mt-[15px] sm:mt-[20px]`}
 `
 export const ButtonContainer = styled.div<{ $poolIndex: number }>`
   ${tw`relative z-0 mr-1`}
@@ -129,16 +124,16 @@ const NFTLandingPageV2 = (): ReactElement => {
   return (
     <WRAPPER $navCollapsed={isCollapsed} $currency={currency}>
       {<NFTAggTerms setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={setShowPopup} />}
-      {showPopup && (
+      {/* {showPopup && (
         <ModalSlide modalType={MODAL_TYPES.NFT_AGG_WELCOME} rewardToggle={setShowPopup} rewardModal={showBanner} />
-      )}
+      )} */}
       {!checkMobile() && (
         <BannerContainer showBanner={showBanner}>
           <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} />
           <NFTBanners showBanner={showBanner} />
         </BannerContainer>
       )}
-      {/* <FiltersContainer setCurrency={setCurrency} /> */}
+      <FiltersContainer setCurrency={setCurrency} />
 
       <NFTCollectionsTable showBanner={showBanner} />
     </WRAPPER>
@@ -243,7 +238,7 @@ const FiltersContainer = ({ setCurrency }: any) => {
     )
 }
 const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
-  const eyeImg = `/img/assets/${showBanner ? 'show' : 'hide'} Eye.svg`
+  const eyeImg = `/img/assets/${showBanner ? `show` : `hide`}Eye.svg`
   return (
     <EYE_CONTAINER onClick={() => setShowBanner((prev) => !prev)}>
       <div>
@@ -290,16 +285,18 @@ const SearchResultContainer = ({ searchFilter }: any) => {
 
 const StatsContainer = ({ showBanner, setShowBanner }: any) => (
   <NFT_STATS_CONTAINER>
-    <StatsButton data={'Total volume traded: 2332'} />
-    <StatsButton data={'Total volume traded: 2332'} />
-    <StatsButton data={'Total Volume: 2010'} />
+    <StatsButton title={'Total volume traded:'} data={'2332'} />
+    <StatsButton title={'Total traded:'} data={'2332'} />
+    <StatsButton title={'Total Volume:'} data={'2010'} />
     <ShowBannerEye showBanner={showBanner} setShowBanner={setShowBanner} />
   </NFT_STATS_CONTAINER>
 )
-
-const StatsButton = ({ data }: any) => (
+const StatsButton: FC<{ title: string; data: string | number }> = ({ title, data }) => (
   <STATS_BTN>
-    <span className="innerCover">{data}</span>
+    <div className="innerCover">
+      <div className="innerTitle">{title}</div>
+      <div className="innerData">{data}</div>
+    </div>
   </STATS_BTN>
 )
 

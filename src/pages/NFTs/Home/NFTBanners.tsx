@@ -45,14 +45,7 @@ const CAROUSEL_WRAPPER = styled.div<{ showBanner: boolean }>`
   }
 
   .slick-slide {
-    margin-right: ${({ theme }) => theme.margin(2)};
-    width: 450px;
-
-    @media (max-width: 500px) {
-      min-width: 275px;
-      width: 32% !important;
-      margin-right: 1%;
-    }
+    margin-right: 40px;
   }
 `
 
@@ -62,18 +55,12 @@ const SLIDER_ITEM = styled.div<{ $url: string }>`
     background-size: auto 101%;
     background-position: center;
   }
-  ${tw`sm:rounded-average`}
-  position: relative;
-  width: 370px !important ;
-  min-height: 190px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  ${tw`sm:rounded-average relative flex items-center  h-[182px] justify-center`}
+  width: 365px !important;
   background: ${({ $url }) => `url(${$url})`}, center;
   background-size: auto 101%;
   background-position: center;
   background-repeat: no-repeat;
-  border-radius: 20px;
 
   .home-slider-image {
     border-radius: 10px;
@@ -93,7 +80,6 @@ const SLIDER_ITEM = styled.div<{ $url: string }>`
   }
 
   .home-slider-content {
-    /* width: 100%; */
     text-align: center;
     position: absolute;
     top: 50%;
@@ -147,7 +133,6 @@ const settings = {
   swipeToSlide: true,
   slidesToScroll: 1,
   snapCenter: true,
-  slidesToShow: 3,
   initialSlide: 0,
   arrows: true,
   variableWidth: checkMobile() ? false : true
