@@ -56,6 +56,7 @@ export interface Colors {
   borderBottom: Color
   multiplierBorder: Color
   bgForNFTCollection: Color
+  dropdownBackground: Color
   // backgrounds / greys
   bg0: Color
   bg1: Color
@@ -81,6 +82,7 @@ export interface Colors {
   bg23: Color
   bg24: Color
   bg25: Color
+  bg26: Color
   lpbg: Color
   pbbg: Color
   goBtn: Color

@@ -138,7 +138,7 @@ const NFTLandingPageV2 = (): ReactElement => {
           <NFTBanners showBanner={showBanner} />
         </BannerContainer>
       )}
-      <FiltersContainer setCurrency={setCurrency} />
+      {/* <FiltersContainer setCurrency={setCurrency} /> */}
 
       <NFTCollectionsTable showBanner={showBanner} />
     </WRAPPER>
@@ -163,7 +163,6 @@ const FiltersContainer = ({ setCurrency }: any) => {
     setTimelineIndex(index)
     setTimelineName(poolName)
   }
-  // const {} = wall
   if (checkMobile())
     return (
       <div>
@@ -261,7 +260,7 @@ export const CurrencySwitch = (): ReactElement => {
     setCurrency((prev) => (prev === 'SOL' ? 'USDC' : 'SOL'))
   }
   return (
-    <CURRENCY_SWITCH $currency={currency} style={{ marginLeft: 'auto', marginRight: 15 }}>
+    <CURRENCY_SWITCH $currency={currency} style={{ marginLeft: 'auto' }}>
       <Switch onChange={changeCurrency} />
     </CURRENCY_SWITCH>
   )

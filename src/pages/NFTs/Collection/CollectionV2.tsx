@@ -1,6 +1,7 @@
+import { Dropdown } from 'antd'
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Button, Modal } from 'antd'
-import React, { ReactElement, useEffect, useState } from 'react'
+
+import React, { ReactElement, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { SearchBar } from '../../../components'
 import { useDarkMode, useNavCollapse, useNFTAggregator } from '../../../context'
@@ -16,8 +17,10 @@ import {
   COLLECTION_VIEW_WRAPPER,
   GRID_CONTAINER,
   NFT_FILTERS_CONTAINER,
-  NFT_COLLECTIONS_GRID
+  NFT_COLLECTIONS_GRID,
+  SORT_CONTAINER
 } from './CollectionV2.styles'
+
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
   const { isCollapsed } = useNavCollapse()
@@ -50,11 +53,13 @@ const NFTStatsContainer = () => {
             <img style={{ height: 25, width: 25, marginLeft: 8 }} src="/img/assets/Aggregator/verifiedNFT.svg" />
           </div>
           {checkMobile() && (
-            <div className="title" style={{ marginLeft: 'auto', marginRight: 20 }}>
+            <div className="title" style={{ display: 'flex', marginLeft: 'auto' }}>
               <div>
                 <img className="sweepMobile" src="/img/assets/Aggregator/sweepButtonMobile.svg" />
               </div>
-              <div></div>
+              <div>
+                <SortDropdown />
+              </div>
             </div>
           )}
         </div>
@@ -105,13 +110,18 @@ const NFTStatsContainer = () => {
 const NFTGridContainer = (): ReactElement => {
   const { isCollapsed } = useNavCollapse()
   const [open, setOpen] = useState<boolean>(true)
-  const [displayIndex, setDisplayIndex] = useState<number>(2)
+  const [displayIndex, setDisplayIndex] = useState<number>(0)
 
   return (
     <GRID_CONTAINER navCollapsed={isCollapsed}>
-      <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
+      <FiltersContainer
+        open={open}
+        setOpen={setOpen}
+        displayIndex={displayIndex}
+        setDisplayIndex={setDisplayIndex}
+      />
       <div className="flexContainer">
-        {!checkMobile() && <AdditionalFilters open={open} />}
+        <AdditionalFilters open={open} setOpen={setOpen} />
         {displayIndex !== 2 && <NFTCollectionsGrid open={open} />}
         {displayIndex === 2 && <ActivityNFTSection />}
       </div>
@@ -121,18 +131,13 @@ const NFTGridContainer = (): ReactElement => {
 
 const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): ReactElement => {
   const { mode } = useDarkMode()
-  const { sortingAsc, setSortAsc } = useNFTAggregator()
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
       <div className="flitersFlexContainer">
         <img onClick={() => setOpen((prev) => !prev)} src={`/img/assets/Aggregator/filtersIcon${mode}.svg`} />
         <SearchBar placeholder={checkMobile() ? `Search by nft ` : `Search by nft o owner`} />
-        {!checkMobile() && (
-          <div className="sortingBtn" onClick={() => setSortAsc((prev) => !prev)}>
-            Price: {sortingAsc ? 'Ascending' : 'Descending'}
-          </div>
-        )}
+        {!checkMobile() && <SortDropdown />}
         {checkMobile() && <CurrencySwitch />}
       </div>
 
@@ -152,7 +157,7 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
   )
 }
 
-const NFTCollectionsGrid = ({ open }: any): ReactElement => {
+const NFTCollectionsGrid = (): ReactElement => {
   const { nftCollections, selectedNFT, setSelectedNFT } = useNFTAggregator()
   return (
     <NFT_COLLECTIONS_GRID>
@@ -183,4 +188,43 @@ const NFTCollectionsGrid = ({ open }: any): ReactElement => {
   )
 }
 
+const SortDropdown = () => {
+  const { sortingAsc } = useNFTAggregator()
+
+  return (
+    <div>
+      <Dropdown
+        align={{ offset: [0, 16] }}
+        destroyPopupOnHide
+        overlay={<OverlayOptions />}
+        placement="bottomRight"
+        trigger={checkMobile() ? ['click'] : ['hover']}
+      >
+        {checkMobile() ? (
+          <div>
+            <img className="shareBtn" src="/img/assets/Aggregator/shareBtn.svg" />
+          </div>
+        ) : (
+          <div className="sortingBtn">Price: {sortingAsc ? 'Ascending' : 'Descending'}</div>
+        )}
+      </Dropdown>
+    </div>
+  )
+}
+
+const OverlayOptions = () => {
+  const { sortingAsc, setSortAsc } = useNFTAggregator()
+
+  return (
+    <SORT_CONTAINER>
+      <div className="option" onClick={() => setSortAsc(true)}>
+        Price: Ascending <input type={'radio'} checked={sortingAsc} name="sort" value="asc" />
+      </div>
+      <div className="option" onClick={() => setSortAsc(false)}>
+        Price: Descending <input type={'radio'} checked={!sortingAsc} name="sort" value="desc" />
+      </div>
+      {checkMobile() && <div className="option">Share</div>}
+    </SORT_CONTAINER>
+  )
+}
 export default CollectionV2

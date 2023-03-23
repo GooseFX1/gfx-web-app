@@ -20,7 +20,7 @@ const WIDTH_FROM = {
 const mediaWidthTemplatesUpTo: {
   [width in keyof typeof WIDTH_UP_TO]: typeof css
 } = Object.keys(WIDTH_UP_TO).reduce((accumulator, size) => {
-  ; (accumulator as any)[size] = (a: any, b: any, c: any) => css`
+  ;(accumulator as any)[size] = (a: any, b: any, c: any) => css`
     @media (max-width: ${(WIDTH_UP_TO as any)[size]}px) {
       ${css(a, b, c)}
     }
@@ -31,7 +31,7 @@ const mediaWidthTemplatesUpTo: {
 const mediaWidthTemplatesFrom: {
   [width in keyof typeof WIDTH_FROM]: typeof css
 } = Object.keys(WIDTH_FROM).reduce((accumulator, size) => {
-  ; (accumulator as any)[size] = (a: any, b: any, c: any) => css`
+  ;(accumulator as any)[size] = (a: any, b: any, c: any) => css`
     @media (min-width: ${(WIDTH_FROM as any)[size]}px) {
       ${css(a, b, c)}
     }
@@ -126,6 +126,7 @@ export function colors(mode: string): Colors {
     bg23: mode === 'dark' ? '#1c1c1c' : '#cacaca',
     bg24: mode === 'dark' ? '#2A2A2A' : '#cacaca',
     bg25: mode === 'dark' ? '#1c1c1c' : '#eeeeee',
+    bg26: mode === 'dark' ? '#1c1c1c' : '#eeeeee',
     bgForNFTCollection: mode === 'dark' ? '#131313' : '#ffffff',
     backBtnBg: mode === 'dark' ? '#2a2a2a' : '#5855ff',
     tableHeader: mode === 'dark' ? '#1c1c1c' : '#636363',
@@ -176,6 +177,7 @@ export function colors(mode: string): Colors {
     // card
     cardBg: mode === 'dark' ? '#171717' : 'rgba(114, 114, 114, 1)',
     tableBorder: mode === 'dark' ? '#3C3C3C' : '#eeeeee',
+    dropdownBackground: mode === 'dark' ? '#3C3C3C' : '#ffffff',
 
     //color changing options
     blackToGrey: mode === 'dark' ? '' : 'invert(30%)',

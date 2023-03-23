@@ -5,7 +5,11 @@ import styled from 'styled-components'
 import tw, { css } from 'twin.macro'
 import { checkMobile } from '../../../utils'
 import { HeaderTooltip } from '../../../utils/GenericDegsin'
+import { FiltersNFTPopupMobile } from '../Home/MenuNFTPopup'
+import { CurrencySwitch } from '../Home/NFTLandingPageV2'
+import { PopupCustom } from '../Popup/PopupCustom'
 import { ArrowIcon } from './CollectionV2.styles'
+
 export const ADDITIONAL_FILTERS = styled.div<{ open }>`
   ${({ open }) => css`
     ${tw`duration-700 flex h-full flex-col`}
@@ -52,11 +56,40 @@ const STYLED_INPUT = styled.input`
 
 export const LISTING_TYPE = styled.div<{ isOpen }>`
   ${({ isOpen }) => css`
-    .listItem {
-      ${tw`duration-500 items-center text-[15px] pr-3 justify-between font-semibold flex pl-3`}
+    .listItemCurreny {
+      ${tw`duration-500 items-center text-[15px]  justify-between font-semibold flex pl-3`}
       height: ${isOpen ? '53px' : 0};
       color: ${({ theme }) => theme.text20};
       opacity: ${isOpen ? 1 : 0};
+    }
+    .listItem {
+      ${tw`duration-500 items-center text-[15px]  justify-between font-semibold flex pl-3`}
+      height: ${isOpen ? '53px' : 0};
+      color: ${({ theme }) => theme.text20};
+      opacity: ${isOpen ? 1 : 0};
+      .ant-switch {
+        ${tw`h-[40px] sm:h-[35px] w-[37px] h-[18px] sm:w-[65px] sm:w-[75px] ml-auto mr-3`}
+      }
+      .ant-switch-handle {
+        ${tw`w-[40px] h-[40px] left-[0px] top-[0px] sm:left-[1px] sm:top-[1px]`}
+        ::before {
+          ${tw`sm:w-[38px] sm:h-[38px] h-[18px] w-[18px] rounded-[40px] duration-500`}
+        }
+      }
+      .ant-switch-checked {
+        .ant-switch-handle {
+          left: calc(100% - 18px);
+          @media (max-width: 500px) {
+            left: calc(100% - 35px);
+          }
+        }
+        background: linear-gradient(101deg, #f7931a 4%, #ac1cc7 98%);
+      }
+    }
+
+    .filtersTitleItem {
+      ${tw`text-[20px] font-semibold h-[50px]  duration-1000 flex items-center duration-1000 justify-between pl-3 pr-3`}
+      border-bottom:  1px solid ${({ theme }) => theme.borderBottom};
     }
     .inputContainer {
       ${tw`flex flex-col`}
@@ -73,19 +106,57 @@ export const LISTING_TYPE = styled.div<{ isOpen }>`
     }
   `}
 `
+const STYLED_POPUP = styled(PopupCustom)`
+  color: ${({ theme }) => theme.text30};
 
-const AdditionalFilters: FC<{ open: boolean }> = ({ open }: any): ReactElement => {
-  console.log(checkMobile())
-  return (
-    <ADDITIONAL_FILTERS open={open}>
-      <>
-        <div className="filtersTitle">Filters</div>
-        {!checkMobile() && <ListingType />}
-        <PriceRange />
-        <Attributes />
-      </>
-    </ADDITIONAL_FILTERS>
-  )
+  &.ant-modal {
+    ${tw`max-w-full bottom-[-10px] mt-auto absolute`}
+    background-color: ${({ theme }) => theme.bg26};
+  }
+  .ant-modal-body {
+    ${tw`p-0`}
+  }
+  .wrapper {
+    ${tw`flex flex-col`}
+  }
+  .filtersTitle {
+    ${tw`font-semibold h-[50px] text-[22px] sm:mt-3 flex items-center pl-3 sm:pl-4 duration-1000`}
+  }
+  .filtersTitleItem {
+    ${tw`text-[20px] font-semibold h-[50px]  duration-1000 flex items-center duration-1000 justify-between pl-3 pr-3`}
+  }
+`
+
+const AdditionalFilters: FC<{ open: boolean; setOpen: any }> = ({ open, setOpen }): ReactElement => {
+  if (checkMobile())
+    return (
+      <STYLED_POPUP
+        height={'480px'}
+        width={'100vw'}
+        title={null}
+        visible={open ? true : false}
+        onCancel={() => setOpen(false)}
+        footer={null}
+      >
+        <div className="wrapper">
+          <div className="filtersTitle">Filters</div>
+          <ListingType />
+          <PriceRange />
+          <Attributes />
+        </div>
+      </STYLED_POPUP>
+    )
+  else
+    return (
+      <ADDITIONAL_FILTERS open={open}>
+        <>
+          <div className="filtersTitle">Filters</div>
+          <ListingType />
+          <PriceRange />
+          <Attributes />
+        </>
+      </ADDITIONAL_FILTERS>
+    )
 }
 
 const ListingType = (): ReactElement => {
@@ -110,7 +181,7 @@ const ListingType = (): ReactElement => {
   )
 }
 const PriceRange = (): ReactElement => {
-  const [isOpen, setIsOpen] = useState<boolean>()
+  const [isOpen, setIsOpen] = useState<boolean>(true)
   const [minValue, setMinValue] = useState<number>(0)
   const [maxValue, setMaxValue] = useState<number>(0)
   const [currency, setCurrency] = useState<'SOL' | 'USDC'>('SOL')
@@ -121,9 +192,9 @@ const PriceRange = (): ReactElement => {
         Price Range
         <ArrowIcon isOpen={isOpen} setIsOpen={setIsOpen} />
       </div>
-      <div className="listItem">
+      <div className="listItemCurreny">
         Currency
-        <Switch />
+        <CurrencySwitch />
       </div>
       <div className="listItem">
         <div className="inputContainer">
