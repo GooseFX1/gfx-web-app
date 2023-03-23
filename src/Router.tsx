@@ -18,7 +18,7 @@ import { Creator } from './pages/NFTs/CreatorPage/Creator'
 import { AdminWrapper } from './pages/NFTs/adminPage/components/AdminWrapper'
 import { AnalyticsWrapper } from './pages/Analytics/AnalyticsWrapper'
 import { TraderProvider } from './context/trader_risk_group'
-import NFTLandingPageV2 from './pages/NFTs/Home/NFTLandingPageV2'
+import { NFTs } from './pages/NFTs/Home/NFTLandingPageV2'
 
 export const Router: FC = () => (
   <BrowserRouter>
@@ -56,7 +56,7 @@ export const Router: FC = () => (
           </Route>
           <Route path="/NFTs">
             <NFTProfileProvider>
-              <NFTLandingPageV2 />
+              <NFTs />
             </NFTProfileProvider>
           </Route>
           <Route exact path="/farm">
