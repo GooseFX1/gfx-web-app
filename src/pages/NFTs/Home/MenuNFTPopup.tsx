@@ -60,4 +60,40 @@ const MenuNFTPopup: FC<{ menuPopup: boolean; setMenuPopup: any }> = ({
   )
 }
 
+export const FiltersNFTPopupMobile: FC<{ filtersPopup: boolean; setFiltersPopup: any }> = ({
+  filtersPopup,
+  setFiltersPopup
+}): ReactElement => {
+  console.log('first')
+  return (
+    <STYLED_POPUP
+      height={'40vh'}
+      width={'100vw'}
+      title={null}
+      visible={filtersPopup ? true : false}
+      onCancel={() => setFiltersPopup(false)}
+      footer={null}
+    >
+      <div className="wrapper">
+        <div className="marketRow">
+          <img src="/img/assets/Aggregator/menu.svg" />
+          <div>All</div>
+          <div className="checkbox">
+            <Switch />
+          </div>
+        </div>
+        {markets.map((market, index) => (
+          <div className="marketRow" key={index}>
+            <img src="/img/assets/Aggregator/menu.svg" />
+            <div>{market}</div>
+            <div className="checkbox">
+              <Checkbox />
+            </div>
+          </div>
+        ))}
+      </div>
+    </STYLED_POPUP>
+  )
+}
+
 export default MenuNFTPopup
