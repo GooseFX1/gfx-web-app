@@ -13,6 +13,7 @@ import { MODAL_TYPES } from '../constants'
 import { checkMobile } from '../utils'
 import { ThemeToggle } from '../components/ThemeToggle'
 import tw from 'twin.macro'
+import MyNFTBag from '../pages/NFTs/MyNFTBag'
 
 const BRAND = styled.a`
   ${tw`absolute flex justify-center items-center text-lg 
@@ -38,7 +39,7 @@ const BUTTONS = styled(CenteredDiv)`
 `
 
 const WRAPPER = styled.nav`
-  ${tw`fixed w-full rounded-b-circle z-[300] md:flex-nowrap 
+  ${tw`fixed w-full rounded-b-circle z-[300] md:flex-nowrap sm:w-[100vw]
   md:flex md:h-auto md:p-2 min-md:flex min-md:items-center min-md:justify-center`}
   background-color: ${({ theme }) => theme.bg20};
   ${({ theme }) => theme.smallShadow}
@@ -140,6 +141,8 @@ export const MainNav: FC = () => {
     setMobile(mobile)
   }, [])
 
+  const checkIfNFT = (): boolean => true
+
   if (checkMobile()) {
     return (
       <MobileWrapper id="menu">
@@ -148,6 +151,7 @@ export const MainNav: FC = () => {
         </BRAND>
         <AlignCenterDiv>
           <Connect />
+          {checkIfNFT && <MyNFTBag />}
           <ResponsiveDropdown logoAnimationTime={2} />
         </AlignCenterDiv>
       </MobileWrapper>
@@ -165,7 +169,7 @@ export const MainNav: FC = () => {
             <BUTTONS>
               <RewardsButton />
               <Connect />
-
+              {checkIfNFT && <MyNFTBag />}
               <More />
             </BUTTONS>
           </>

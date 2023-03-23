@@ -33,7 +33,7 @@ export const ADDITIONAL_FILTERS = styled.div<{ open }>`
       ${tw`text-[20px] font-semibold h-[50px]  duration-1000 flex items-center duration-1000 justify-between pl-3 pr-3`}
       border-bottom:  1px solid ${({ theme }) => theme.borderBottom};
       visibility: ${open ? 'visible' : 'hidden'};
-      font-size: ${open ? '20px' : '10px'};
+      font-size: ${open ? '20px' : '1px'};
     }
   `}
 `
@@ -90,6 +90,8 @@ export const LISTING_TYPE = styled.div<{ isOpen }>`
     .filtersTitleItem {
       ${tw`text-[20px] font-semibold h-[50px]  duration-1000 flex items-center duration-1000 justify-between pl-3 pr-3`}
       border-bottom:  1px solid ${({ theme }) => theme.borderBottom};
+      visibility: ${open ? 'visible' : 'hidden'};
+      font-size: ${open ? '20px' : '10px'};
     }
     .inputContainer {
       ${tw`flex flex-col`}
@@ -124,6 +126,9 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
   .filtersTitleItem {
     ${tw`text-[20px] font-semibold h-[50px]  duration-1000 flex items-center duration-1000 justify-between pl-3 pr-3`}
+    border-bottom:  1px solid ${({ theme }) => theme.borderBottom};
+    visibility: ${open ? 'visible' : 'hidden'};
+    font-size: ${open ? '20px' : '10px'};
   }
 `
 
@@ -149,12 +154,10 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any }> = ({ open, setOpen 
   else
     return (
       <ADDITIONAL_FILTERS open={open}>
-        <>
-          <div className="filtersTitle">Filters</div>
-          <ListingType />
-          <PriceRange />
-          <Attributes />
-        </>
+        <div className="filtersTitle">Filters</div>
+        <ListingType />
+        <PriceRange />
+        <Attributes />
       </ADDITIONAL_FILTERS>
     )
 }

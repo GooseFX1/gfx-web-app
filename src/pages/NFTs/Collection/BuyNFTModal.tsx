@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import { useNFTAggregator } from '../../../context'
 import { checkMobile } from '../../../utils'
+import { AppraisalValue } from '../../../utils/GenericDegsin'
 import { PopupCustom } from '../Popup/PopupCustom'
 
 const STYLED_POPUP = styled(PopupCustom)`
@@ -47,14 +48,11 @@ const STYLED_POPUP = styled(PopupCustom)`
   .nftImg {
     ${tw`w-[165px] h-[165px] sm:mt-[150px] mt-[25px] sm:h-[125px] sm:w-[125px] sm:left-0 sm:absolute`}
   }
-  .appraisalResult {
-    color: ${({ theme }) => theme.text7};
-    ${tw`text-[18px] font-semibold`}
+  .nftImgBid {
+    border: 1px solid;
+    ${tw`w-[165px] h-[165px] sm:mt-[150px] left-0 mt-[25px] sm:h-[125px] sm:w-[125px] sm:left-0 sm:absolute`}
   }
-  .appraisal {
-    ${tw`text-[18px] font-semibold`}
-    color: ${({ theme }) => theme.text12};
-  }
+
   .priceText {
     ${tw`text-[25px] font-semibold mt-[15px]`}
     color: ${({ theme }) => theme.text12};
@@ -73,31 +71,22 @@ const STYLED_POPUP = styled(PopupCustom)`
       ${tw`h-[25px] w-[25px] ml-3`}
     }
   }
-  .outerCover {
-    ${tw`w-[360px] sm:w-[100%] h-[68px] rounded-xl flex items-center justify-center mt-[30px]`}
-    background: linear-gradient(96.79deg, #5855FF 4.25%, #DC1FFF 97.61%);
-  }
+
   .buyBtnContainer {
     ${tw`flex items-center justify-center`}
   }
-  .innerCover {
-    ${tw`p-1 sm:p-2 rounded-xl sm:w-[98.5%] w-[357px] h-[65px] flex items-center justify-between`}
-    background-color: ${({ theme }) => theme.bg3};
-    img {
-      ${tw`w-[34px] h-[34px] m-2`}
-    }
-  }
 `
 
-export const BuyNFTModal = (): ReactElement => {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const BuyNFTModal = ({ setBuyNow, buyNowClicked }: any): ReactElement => {
   const { selectedNFT, setSelectedNFT } = useNFTAggregator()
   return (
     <STYLED_POPUP
       height={checkMobile() ? '600px' : '780px'}
       width={checkMobile() ? '100%' : '580px'}
       title={null}
-      visible={selectedNFT ? true : false}
-      onCancel={() => setSelectedNFT(undefined)}
+      visible={buyNowClicked ? true : false}
+      onCancel={() => setBuyNow(false)}
       footer={null}
     >
       <div className="buyTitle">
@@ -123,22 +112,7 @@ export const BuyNFTModal = (): ReactElement => {
           {selectedNFT.nftPrice * 212} <img src={`/img/crypto/${selectedNFT.currency}.svg`} />
         </div>
       </div>
-      <div className="vContainer">
-        <div className="outerCover">
-          <div className="innerCover">
-            <div>
-              <img src={'/img/assets/Aggregator/gooseLogo.svg'} />
-            </div>
-            <div className="hContainer">
-              <div className="appraisal">Apprasial Value</div>
-              <div className="appraisalResult">8000 SOL</div>
-            </div>
-            <div>
-              <img src={'/img/assets/info.svg'} alt="" style={{ height: 30 }} />
-            </div>
-          </div>
-        </div>
-      </div>
+      <AppraisalValue width={360} />
 
       <div className="hContainer" style={{ height: 160 }}>
         <div className="rowContainer">
@@ -158,6 +132,50 @@ export const BuyNFTModal = (): ReactElement => {
           <div className="rightAlign"> 1000.01 SOL</div>
         </div>
       </div>
+      <div className="buyBtnContainer">
+        <div className="buyButton">Buy Now</div>
+      </div>
+    </STYLED_POPUP>
+  )
+}
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const BidNFTModal = ({ bidNowClicked, setBidNow }: any): ReactElement => {
+  const { selectedNFT, setSelectedNFT } = useNFTAggregator()
+  return (
+    <STYLED_POPUP
+      height={checkMobile() ? '600px' : '780px'}
+      width={checkMobile() ? '100%' : '580px'}
+      title={null}
+      visible={bidNowClicked ? true : false}
+      onCancel={() => setBidNow(false)}
+      footer={null}
+    >
+      <div className="buyTitle">
+        You are about to Bid <br />
+        <strong>#{selectedNFT.collectionId} </strong> {checkMobile() ? <br /> : 'by'}
+        <strong> {'De Gods'}</strong>
+      </div>
+      <div className="vContainer">
+        <img className="nftImgBid" src={selectedNFT.nft_url} alt="" />
+        <div className="currentBid">Current Bid</div>
+      </div>
+
+      <div className="vContainer">
+        <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+        <div className="verifiedText">This is a verified {checkMobile() && <br />} Creator</div>
+      </div>
+
+      <div className="vContainer">
+        <div className="priceText">Price</div>
+      </div>
+
+      <div className="vContainer">
+        <div className="priceNumber">
+          {selectedNFT.nftPrice * 212} <img src={`/img/crypto/${selectedNFT.currency}.svg`} />
+        </div>
+      </div>
+      <AppraisalValue width={360} />
+
       <div className="buyBtnContainer">
         <div className="buyButton">Buy Now</div>
       </div>
