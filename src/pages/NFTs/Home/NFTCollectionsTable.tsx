@@ -24,7 +24,7 @@ const WRAPPER = styled.div<{ $navCollapsed; showBanner }>`
     }
     padding: 0px 20px;
     width: 100%;
-    margin-top: 10px;
+    margin-top: 25px;
     background: ${({ theme }) => theme.bg17};
     border-radius: 20px 20px 0 0;
   }
@@ -49,7 +49,7 @@ const WRAPPER = styled.div<{ $navCollapsed; showBanner }>`
   }
   tbody {
     height: calc(
-      100vh - ${({ showBanner }) => (showBanner ? '400px' : '160px')} -
+      100vh - ${({ showBanner }) => (showBanner ? '400px' : '190px')} -
         ${({ $navCollapsed }) => (!$navCollapsed ? '80px' : '0px')}
     );
     overflow-y: auto;
@@ -76,6 +76,8 @@ const WRAPPER = styled.div<{ $navCollapsed; showBanner }>`
   }
   td {
     text-align: center;
+    ${tw`text-[15px] font-semibold`}
+    color: ${({ theme }) => theme.text29};
     /* padding-top: 25px; */
   }
   .tableHeader {
@@ -129,14 +131,13 @@ const WRAPPER = styled.div<{ $navCollapsed; showBanner }>`
 
 const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   const { isCollapsed } = useNavCollapse()
-  console.log(showBanner)
   const [allItems, setAllItems] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9])
   useEffect(() => {
     ;(async () => {
       const res = await fetchAllSingleNFTs()
       setTimeout(() => {
         setAllItems(res)
-      }, 200)
+      }, 2000)
     })()
   }, [])
 
@@ -159,17 +160,17 @@ const NFTTableRow = ({ allItems }: any) => (
     {allItems.map((item, index) => (
       <tr className="tableRow" key={index}>
         <td className="nftNameColumn">
-          {item.nft_name ? (
+          {item?.nft_name ? (
             <div>
               <img src={item.image_url} alt="" />
-              <div className="nftCollectionName">{item.nft_name}</div>
+              <div className="nftCollectionName">{item?.nft_name}</div>
             </div>
           ) : (
             <Loader />
           )}
         </td>
-        <td className="tdItem">{item.nft_name ? <>{item.nft_name} </> : <Loader />}</td>
-        <td className="tdItem">{item.nft_name ? <>{item.nft_name} </> : <Loader />}</td>
+        <td className="tdItem">{item?.nft_name ? <>{item.nft_name} </> : <Loader />}</td>
+        <td className="tdItem">{item?.nft_name ? <>{item.nft_name} </> : <Loader />}</td>
       </tr>
     ))}
   </>

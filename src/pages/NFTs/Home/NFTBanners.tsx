@@ -4,23 +4,16 @@ import tw from 'twin.macro'
 
 const BANNER_CONTAINER = styled.div<{ showBanner: boolean }>`
   ${({ showBanner }) => css`
-     ${tw`flex items-center justify-center `}
-     margin-top: ${showBanner ? '48px' : 0};
-    
+     ${tw`flex items-center justify-center`}
+     margin-top: ${showBanner ? '15px' : 0};
      .showBanner {
+        height: ${showBanner ? '180px' : '0px'};
         visibility: ${showBanner ? 'visibility' : 'hidden'};
         opacity: ${showBanner ? 1 : 0};
+        transition: visibility 0s, opacity 0.5s linear;
         }
     }
-  }
-   
-    .showBanner {
-    height: ${showBanner ? '180px' : '0px'};
-    visibility: ${showBanner ? 'visibility' : 'hidden'};
-    opacity: ${showBanner ? 1 : 0};
-    margin-top: ${showBanner ? '48px' : 0};
-    transition: visibility 0s, opacity 0.5s linear;
-    }
+ 
     `}
 `
 
@@ -40,6 +33,7 @@ const NFTBanners: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   return (
     <>
       <BANNER_CONTAINER className={showBanner ? 'showBanner' : 'closeBanner'} showBanner={showBanner}>
+        <BANNER showBanner={showBanner} />
         <BANNER showBanner={showBanner} />
         <BANNER showBanner={showBanner} />
         <BANNER showBanner={showBanner} />
