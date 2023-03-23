@@ -289,7 +289,6 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
                 width="116px"
               />
             )}
-
             {isSessionUser && currentUserProfile && currentUserProfile.profile_pic_link ? (
               <img
                 className="icon"

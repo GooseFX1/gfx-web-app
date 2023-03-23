@@ -1,13 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useMemo, FC } from 'react'
 import { Form, Input, Button, Upload, UploadProps, Image } from 'antd'
 import { uploadFile } from 'react-s3'
-import { StyledPopupProfile, StyledFormProfile } from './PopupProfile.styled'
+import { StyledPopupProfile, StyledFormProfile, STYLED_PROFILE_POPUP } from './PopupProfile.styled'
 import { useNFTProfile, useDarkMode } from '../../../context'
 import { SVGDynamicReverseMode } from '../../../styles'
 import { INFTProfile } from '../../../types/nft_profile.d'
 import { completeNFTUserProfile, updateNFTUser } from '../../../api/NFTs'
 import { Loader } from '../../../components'
 import { CenteredDiv } from '../../../styles'
+import { PopupCustom } from '../Popup/PopupCustom'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 const config = {
   bucketName: 'gfx-nest-image-resources',
@@ -20,6 +25,8 @@ interface Props {
   setVisible: (value: boolean) => void
   handleCancel: () => void
 }
+
+const WRAP = styled.div``
 
 export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) => {
   const { sessionUser, setSessionUser } = useNFTProfile()
@@ -128,106 +135,212 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
 
   return (
     <>
-      <StyledPopupProfile
-        title={isCompletingProfile ? 'Complete profile' : 'Edit profile'}
-        visible={visible}
-        footer={null}
-        maskClosable
+      <STYLED_PROFILE_POPUP
+        height={'630px'}
+        width={'500px'}
+        title={null}
+        visible={visible ? true : false}
         onCancel={onCancel}
-        closeIcon={
-          <div>
-            <SVGDynamicReverseMode src={`/img/assets/close-white-icon.svg`} alt="close" />
-          </div>
-        }
+        footer={null}
       >
-        <StyledFormProfile
-          form={form}
-          layout="vertical"
-          requiredMark="optional"
-          initialValues={sessionUser}
-          onFinish={onFinish}
-        >
-          <section>
-            <CenteredDiv>
-              <Image
-                fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-                src={profileImage ? URL?.createObjectURL(profileImage) : sessionUser.profile_pic_link}
-                preview={false}
-                className="profile-image-upload"
+        <div className="title">Profile</div>
+        <div tw="flex mt-5">
+          <CenteredDiv>
+            <Image
+              fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+              src={profileImage ? URL?.createObjectURL(profileImage) : sessionUser.profile_pic_link}
+              preview={false}
+              className="profile-image-upload"
+            />
+
+            <Upload
+              beforeUpload={beforeChange}
+              onChange={handleUpload}
+              maxCount={1}
+              className={'profile-pic-upload-zone'}
+              onPreview={() => false}
+              accept="image/png, image/jpeg, image/jpg, image/svg+xml, gif"
+            >
+              <img
+                tw="mt-[15px] z-10 ml-[-30px] absolute"
+                className="icon"
+                src={`/img/assets/Aggregator/editBtn.svg`}
+                alt="edit-image"
               />
-            </CenteredDiv>
-
-            <CenteredDiv style={{ margin: '32px 0' }}>
-              <Upload
-                beforeUpload={beforeChange}
-                onChange={handleUpload}
-                maxCount={1}
-                className={'profile-pic-upload-zone'}
-                onPreview={() => false}
-                accept="image/png, image/jpeg, image/jpg, image/svg+xml, gif"
-              >
-                Update Profile Picture
-              </Upload>
-            </CenteredDiv>
-
-            <div className="full-width">
-              <div className="half-width">
-                <Form.Item
-                  name="nickname"
-                  label="Name"
-                  rules={[{ required: true, message: 'Please input create name!' }]}
-                >
-                  <Input />
-                </Form.Item>
-              </div>
-              <div className="half-width">
-                <Form.Item label="Email" name="email">
-                  <Input />
-                </Form.Item>
-                <div className="hint">Will be used for notifications</div>
-              </div>
+            </Upload>
+          </CenteredDiv>
+          <div tw="ml-20">
+            <div className="titleHeader">
+              Username <OptionalText />
             </div>
-            <Form.Item name="bio" label="Bio">
-              <Input />
-            </Form.Item>
-          </section>
-          <br />
-          <section>
-            <div className="section-label">Social media links</div>
-            <div className="full-width">
-              <div className="half-width">
-                <Form.Item label="Instagram" name="instagram_link">
-                  <Input />
-                </Form.Item>
-                <div className="hint">Will be used as public URL</div>
-              </div>
-              <div className="half-width">
-                <Form.Item label="Twitter" name="twitter_link">
-                  <Input />
-                </Form.Item>
-                <div className="hint">Will be used as public URL</div>
-              </div>
+            <div>
+              <InputContainer />
             </div>
-            <div className="full-width">
-              <div className="half-width">
-                <Form.Item label="Telegram" name="telegram_link">
-                  <Input />
-                </Form.Item>
-                <div className="hint">Will be used as public URL</div>
-              </div>
-              <div className="half-width">
-                <Form.Item label="Youtube" name="youtube_link">
-                  <Input />
-                </Form.Item>
-                <div className="hint">Will be used as public URL</div>
-              </div>
+            <UnderLine width={260} />
+            <PublicURLText />
+          </div>
+        </div>
+        <div className="profilePicText">Profile Pitcure</div>
+        <div>
+          <div className="titleHeader">
+            Bio <OptionalText />
+          </div>
+          <div>
+            <InputContainer />
+          </div>
+          <UnderLine width={400} />
+        </div>
+        <div className="titleHeader" tw="!text-[20px]">
+          Social Media Links
+        </div>
+        <div tw="flex">
+          <div className="titleHeader">
+            Twitter <OptionalText />
+            <div>
+              <InputContainer />
             </div>
-            <Button className="btn-save" type="primary" htmlType="submit" disabled={isLoading}>
-              {isLoading ? <Loader /> : 'Save changes'}
-            </Button>
-          </section>
-        </StyledFormProfile>
-      </StyledPopupProfile>
+            <UnderLine width={200} />
+            <PublicURLText />
+          </div>
+          <div className="titleHeader" tw="ml-4">
+            Discord <OptionalText />
+            <div>
+              <InputContainer />
+            </div>
+            <UnderLine width={200} />
+            <PublicURLText />
+          </div>
+        </div>
+        <div tw="flex">
+          <div className="titleHeader">
+            Telegram <OptionalText />
+            <div>
+              <InputContainer />
+            </div>
+            <UnderLine width={200} />
+            <PublicURLText />
+          </div>
+          <div className="titleHeader" tw="ml-4">
+            Website <OptionalText />
+            <div>
+              <InputContainer />
+            </div>
+            <UnderLine width={200} />
+            <PublicURLText />
+          </div>
+        </div>
+      </STYLED_PROFILE_POPUP>
     </>
   )
+  // return (
+  //   <>
+  //     <StyledPopupProfile
+  //       title={isCompletingProfile ? 'Complete profile' : 'Edit profile'}
+  //       visible={visible}
+  //       footer={null}
+  //       maskClosable
+  //       onCancel={onCancel}
+  //       closeIcon={
+  //         <div>
+  //           <SVGDynamicReverseMode src={`/img/assets/close-white-icon.svg`} alt="close" />
+  //         </div>
+  //       }
+  //     >
+  //       <StyledFormProfile
+  //         form={form}
+  //         layout="vertical"
+  //         requiredMark="optional"
+  //         initialValues={sessionUser}
+  //         onFinish={onFinish}
+  //       >
+  //         <section>
+  //           <CenteredDiv>
+  //             <Image
+  //               fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+  //               src={profileImage ? URL?.createObjectURL(profileImage) : sessionUser.profile_pic_link}
+  //               preview={false}
+  //               className="profile-image-upload"
+  //             />
+  //           </CenteredDiv>
+
+  //           <CenteredDiv style={{ margin: '32px 0' }}>
+  //             <Upload
+  //               beforeUpload={beforeChange}
+  //               onChange={handleUpload}
+  //               maxCount={1}
+  //               className={'profile-pic-upload-zone'}
+  //               onPreview={() => false}
+  //               accept="image/png, image/jpeg, image/jpg, image/svg+xml, gif"
+  //             >
+  //               Update Profile Picture
+  //             </Upload>
+  //           </CenteredDiv>
+
+  //           <div className="full-width">
+  //             <div className="half-width">
+  // <Form.Item
+  //   name="nickname"
+  //   label="Name"
+  //   rules={[{ required: true, message: 'Please input create name!' }]}
+  // >
+  //   <Input />
+  // </Form.Item>
+  //             </div>
+  //             <div className="half-width">
+  // <Form.Item label="Email" name="email">
+  //   <Input />
+  // </Form.Item>
+  //               <div className="hint">Will be used for notifications</div>
+  //             </div>
+  //           </div>
+  //           <Form.Item name="bio" label="Bio">
+  //             <Input />
+  //           </Form.Item>
+  //         </section>
+  //         <br />
+  //         <section>
+  //           <div className="section-label">Social media links</div>
+  //           <div className="full-width">
+  //             <div className="half-width">
+  //               <Form.Item label="Instagram" name="instagram_link">
+  //                 <Input />
+  //               </Form.Item>
+  //               <div className="hint">Will be used as public URL</div>
+  //             </div>
+  //             <div className="half-width">
+  //               <Form.Item label="Twitter" name="twitter_link">
+  //                 <Input />
+  //               </Form.Item>
+  //               <div className="hint">Will be used as public URL</div>
+  //             </div>
+  //           </div>
+  //           <div className="full-width">
+  //             <div className="half-width">
+  //               <Form.Item label="Telegram" name="telegram_link">
+  //                 <Input />
+  //               </Form.Item>
+  //               <div className="hint">Will be used as public URL</div>
+  //             </div>
+  //             <div className="half-width">
+  //               <Form.Item label="Youtube" name="youtube_link">
+  //                 <Input />
+  //               </Form.Item>
+  //               <div className="hint">Will be used as public URL</div>
+  //             </div>
+  //           </div>
+  //           <Button className="btn-save" type="primary" htmlType="submit" disabled={isLoading}>
+  //             {isLoading ? <Loader /> : 'Save changes'}
+  //           </Button>
+  //         </section>
+  //       </StyledFormProfile>
+  //     </StyledPopupProfile>
+  //   </>
+  // )
 }
+
+const OptionalText = () => <span className="optional">(optional)</span>
+const PublicURLText = () => <div className="publicURLText">Will be used as Public URL</div>
+const UnderLine: FC<{ width: number }> = ({ width }) => (
+  <div className="underLine" style={{ width: width, height: 2 }} />
+)
+const InputContainer = () => <input type={'text'} className="inputContainer" />
