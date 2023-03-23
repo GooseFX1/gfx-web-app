@@ -93,6 +93,7 @@ const FiltersContainer = () => {
     setPoolIndex(index)
     setPoolFilter(poolName)
   }
+  console.log(searchFilter)
   return (
     <FILTERS_CONTAINER>
       <SearchBar
