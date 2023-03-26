@@ -46,7 +46,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const history = useHistory()
-  const nftId = item ? (item.nft_name.includes('#') ? item.nft_name.split('#')[1] : -1) : null
+  const nftId = item ? (item.nft_name.includes('#') ? item.nft_name.split('#')[1] : item.nft_name) : null
   const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item.uuid) : false), [item])
   const { currencyView } = useNFTAggregator()
 
@@ -140,13 +140,10 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
         </div>
         <div className="nftTextContainer">
           <div className="collectionId">
-            {nftId !== -1 && (
-              <div>
-                {nftId ? '#' + nftId : <SkeletonCommon width="50px" height="20px" style={{ marginTop: 10 }} />}
-                {item.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
-              </div>
-            )}
-
+            <div>
+              {nftId && nftId}
+              {item.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
+            </div>
             {localAsk && (
               <img
                 className="ah-name"
@@ -162,7 +159,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
               fontWeight={600}
             />
           ) : (
-            <SkeletonCommon width="100px" height="20px" style={{ marginTop: 10 }} />
+            <SkeletonCommon width="100px" height="20px" />
           )}
 
           <div className="nftPrice">
