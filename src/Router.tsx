@@ -22,7 +22,7 @@ import { AnalyticsWrapper } from './pages/Analytics/AnalyticsWrapper'
 import { TraderProvider } from './context/trader_risk_group'
 // import NFTLandingPageV2 from './pages/NFTs/Home/NFTLandingPageV2'
 import NFTAgg from './pages/NFTs/NFTAgg'
-import NFTs from './pages/NFTs/NFTs'
+import { NFTs } from './pages/NFTs/NFTs'
 
 export const Router: FC = () => (
   <BrowserRouter>

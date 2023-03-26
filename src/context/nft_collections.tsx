@@ -63,9 +63,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
 
   const fetchAllCollectionDetails = async (collections: NFTBaseCollection[]) => {
     const collectionsDetails = await Promise.all(
-      collections.map(
-        async (collection: NFTBaseCollection) => await _fetchCollectionDetails(collection.collection.uuid)
-      )
+      collections.map(async (collection: NFTBaseCollection) => await _fetchCollectionDetails(collection.uuid))
     )
     setAllDetailedCollections(collectionsDetails === null ? [] : collectionsDetails)
   }

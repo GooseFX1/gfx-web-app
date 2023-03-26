@@ -257,7 +257,7 @@ const Activity: FC<IProps> = (props) => {
             </ArrowDropdown>
           </WRAPPER>
           <REFRESH>
-            <img src="/img/assets/refreshButton.png" alt="refresh" />
+            <img src="/img/assets/refresh.svg" alt="refresh" />
           </REFRESH>
           <Toggle $mode={isSol} onClick={toggleSol}>
             <div />
