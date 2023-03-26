@@ -375,9 +375,7 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   const searchResultArr = useMemo(() => {
     if (!searchFilter || searchFilter.length < 3) return allCollections
     const searchFiltered = [...allCollections].filter((result: NFTBaseCollection) => {
-      const collectionName = result.collection?.collection_name
-        ? result.collection.collection_name.toLowerCase()
-        : ''
+      const collectionName = result.collection_name ? result.collection_name.toLowerCase() : ''
       if (collectionName.includes(searchFilter && searchFilter.toLowerCase())) return true
     })
     return searchFiltered
@@ -391,10 +389,10 @@ const SearchResultContainer = ({ searchFilter }: any) => {
         <div
           className="searchResultRow"
           key={index}
-          onClick={() => history.push(`/nfts/collection/${data.collection.collection_name.replaceAll(' ', '_')}`)}
+          onClick={() => history.push(`/nfts/collection/${data.collection_name.replaceAll(' ', '_')}`)}
         >
-          <img src={data.collection.profile_pic_link} alt="" />
-          <div className="searchText">{data.collection.collection_name}</div>
+          <img src={data.profile_pic_link} alt="" />
+          <div className="searchText">{data.collection_name}</div>
         </div>
       ))}
     </SEARCH_RESULT_CONTAINER>

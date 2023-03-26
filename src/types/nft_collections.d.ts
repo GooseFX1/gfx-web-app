@@ -7,31 +7,27 @@ export enum COLLECTION_TYPES {
 }
 
 export type NFTBaseCollection = {
-  collection_vol: {
-    daily: number
-    weekly: number
-    monthly: number
-    yearly: number
-  }
-  collection: {
-    uuid: string
-    collection_id: number
-    collection_name: string
-    collection_description: string
-    profile_pic_link: string
-    banner_link: string | null
-    banner_2_link: string | null
-    banner_3_link: string | null
-    title: string
-    tagline: string
-    size: number
-    category_tags: string
-    is_verified: boolean
-  }
+  uuid: string
+  collection_id: number
+  collection_name: string
+  collection_address: string
+  collection_description: string
+  profile_pic_link: string
+  banner_link: string | null
+  banner_2_link: string | null
+  banner_3_link: string | null
+  title: string | null
+  tagline: string | null
+  size: number | null
+  category_tags: string | null
+  is_verified: boolean
+  collection_address_type: string
+  gfx_appraisal_supported: boolean
+  is_agg: boolean
 }
 
 export type NFTCollection = {
-  collection?: any
+  collection: NFTBaseCollection[]
   collection_id: number
   collection_floor: null | number
   collection_vol: {
@@ -40,7 +36,6 @@ export type NFTCollection = {
     weekly: number
     yearly: number
   }
-  collection: NFTBaseCollection
 }
 
 export type CollectionOwner = {
@@ -60,6 +55,7 @@ export interface IFixedPriceWithinCollection {
   collection_id: number
   nft_data: BaseNFT[]
   nft_prices: string[]
+  total_count: number
 }
 
 export interface IOpenBidWithinCollection {
