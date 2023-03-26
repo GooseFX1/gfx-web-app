@@ -50,6 +50,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
         }
         .generalStats {
           ${tw`flex items-center ml-4 sm:w-[100%] sm:ml-0 sm:flex sm:justify-between sm:mt-2`}
+
           .wrapper {
             ${tw`flex flex-col ml-4 mr-4 sm:mr-1 sm:ml-1`}
           }
@@ -187,12 +188,13 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     }
     .collectionId {
       ${tw`text-[13px] font-semibold flex items-center justify-between`}
+
       .isVerified {
         ${tw` ml-2 w-[12px] h-[12px]`}
       }
 
       .ah-name {
-        ${tw`w-[22px] h-[22px]`}
+        ${tw`w-[22px] h-[22px] absolute top-[8px] right-[8px]`}
       }
     }
     .nftPrice {

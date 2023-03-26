@@ -1,12 +1,13 @@
-import { Dropdown } from 'antd'
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactElement, useState, FC, useEffect } from 'react'
+import React, { ReactElement, useState, useEffect, useMemo } from 'react'
+import { Dropdown } from 'antd'
 import { useHistory, useParams } from 'react-router-dom'
 import { Loader, SearchBar, TokenToggleNFT } from '../../../components'
 import { Button } from '../../../components/Button'
 import { useDarkMode, useNavCollapse, useNFTAggregator, useNFTCollections } from '../../../context'
 import { ICON } from '../../../layouts'
 import { IAppParams } from '../../../types/app_params'
+import { NFTBaseCollection } from '../../../types/nft_collections'
 import { checkMobile } from '../../../utils'
 import { GenericNotFound } from '../../InvalidUrl'
 import { GradientText } from '../adminPage/components/UpcomingMints'
@@ -26,7 +27,7 @@ import { DetailViewNFT } from './DetailViewNFTDrawer'
 import SweepCollectionDrawer from './SweepCollectionDrawer'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { LAMPORTS_PER_SOL } from '../../../constants'
+import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { OpenBidNFTs } from './OpenBidNFTs'
 import { FixedPriceNFTs } from './FixedPriceNFTs'
 import { Image } from 'antd'
@@ -82,16 +83,20 @@ const CollectionV2 = (): ReactElement => {
 }
 
 const NFTStatsContainer = () => {
+  const history = useHistory()
   const { mode } = useDarkMode()
   const { singleCollection, fixedPriceWithinCollection } = useNFTCollections()
   const [sweepCollection, setSweepCollection] = useState<boolean>(false)
-  const collection = singleCollection ? singleCollection.collection[0] : undefined
-  const collectionFloor = singleCollection
-    ? singleCollection.collection_floor / parseInt(LAMPORTS_PER_SOL.toString())
-    : 0
-  const logo = singleCollection ? singleCollection.collection[0].profile_pic_link : undefined
-  const collectionName = singleCollection ? singleCollection.collection[0].collection_name : null
-  const history = useHistory()
+
+  const collection: NFTBaseCollection | undefined = useMemo(
+    () => (singleCollection ? singleCollection.collection[0] : undefined),
+    [singleCollection]
+  )
+  const collectionFloor: number = useMemo(() => {
+    singleCollection ? singleCollection.collection_floor / LAMPORTS_PER_SOL_NUMBER : 0
+    return 0
+  }, [collection])
+
   return (
     <div className="nftStatsContainer">
       {!checkMobile() && (
@@ -103,23 +108,27 @@ const NFTStatsContainer = () => {
 
       <div className="collectionNameContainer">
         <div className="collectionName">
-          {collectionName ? (
+          {collection ? (
             <Image
               preview={false}
               fallback={'/img/assets/Aggregator/Unknown.svg'}
-              src={`${logo === undefined ? '/img/assets/Aggregator/Unknown.svg' : logo}`}
-              alt=""
+              src={`${
+                collection.profile_pic_link === undefined
+                  ? '/img/assets/Aggregator/Unknown.svg'
+                  : collection.profile_pic_link
+              }`}
+              alt="collection-image"
             />
           ) : (
             <SkeletonCommon style={{ marginLeft: 20 }} width="65px" height="65px" borderRadius="50%" />
           )}
           <div className="title">
-            {collectionName ? (
-              collectionName
+            {collection ? (
+              collection.collection_name
             ) : (
               <SkeletonCommon width="200px" height="30px" style={{ marginTop: '20px', marginLeft: 10 }} />
             )}
-            {logo && (
+            {collection && collection.is_verified && (
               <img style={{ height: 25, width: 25, marginLeft: 8 }} src="/img/assets/Aggregator/verifiedNFT.svg" />
             )}
           </div>
@@ -136,35 +145,44 @@ const NFTStatsContainer = () => {
         </div>
 
         <div className="generalStats">
-          <div className="wrapper">
-            <div className="titleText">
-              <img src={`/img/assets/Aggregator/gooseLogo.svg`} />
-              1.5K SOL
+          <div tw="flex items-center">
+            <img tw="h-[20px] w-[20px]" src="/img/assets/Aggregator/Tooltip.svg" alt="appraisal-icon" />
+            <div className="wrapper" style={{ marginLeft: 8 }}>
+              <div className="titleText" tw="leading-none">
+                Apprasial
+              </div>
+              <div className="subTitleText">
+                {collection && collection.gfx_appraisal_supported ? 'Supported' : 'Not Supported'}
+              </div>
             </div>
-            <div className="subTitleText"> Apprasial Value </div>
           </div>
 
           <div className="wrapper">
-            <div className="titleText">{collectionFloor ? collectionFloor : 0} SOL</div>
+            <div className="titleText" tw="leading-none">
+              {collectionFloor} SOL
+            </div>
             <div className="subTitleText">Floor Price</div>
           </div>
           {!checkMobile() && (
             <div className="wrapper">
-              <div className="titleText">
+              <div className="titleText" tw="leading-none">
                 {fixedPriceWithinCollection?.total_count}/{collection?.size ? collection?.size : 0}
               </div>
               <div className="subTitleText">Listed</div>
             </div>
           )}
           <div className="wrapper">
-            <div className="titleText"> 1800 SOL </div>
+            <div className="titleText" tw="leading-none">
+              {' '}
+              1800 SOL{' '}
+            </div>
             <div className="subTitleText"> 24h volume </div>
           </div>
         </div>
         {!checkMobile() && (
           <div className="moreOptions">
             <div>
-              <img src="/img/assets/refreshButton.png" />
+              <img src="/img/assets/refresh.svg" />
             </div>
             <div className="sweepBtn" onClick={() => setSweepCollection(true)}>
               <img src="/img/assets/Aggregator/sweepButton.svg" alt="" />
@@ -214,7 +232,7 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
 
       <div className="flitersViewCategory">
         <div className={displayIndex === 0 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(0)}>
-          Listed ({fixedPriceWithinCollection ? fixedPriceWithinCollection.total_count : 'loading...'})
+          Listed ({fixedPriceWithinCollection && fixedPriceWithinCollection.total_count})
           <div className="activeItem" />
         </div>
         <div className={displayIndex === 1 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(1)}>
