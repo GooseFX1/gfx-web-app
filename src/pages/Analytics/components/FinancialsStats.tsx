@@ -1,11 +1,13 @@
-import { PublicKey } from '@solana/web3.js'
-import React, { useEffect, useState, FC } from 'react'
-import { getFarmTokenPrices } from '../../../api/SSL'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
+import { useState, FC, useEffect } from 'react'
 import { useConnectionConfig } from '../../../context'
-import { TOKEN_PROGRAM_ID } from '../../../web3'
-import { revenueCol, TOKEN_PAIRS } from '../constants'
+import { revenueCol } from '../constants'
 import { Table } from 'antd'
 import { moneyFormatterWithComma } from '../../../utils'
+import { ANALYTICS_BASE, ANALYTICS_ENDPOINTS, getSOLPrice, getTokenDetails } from '../../../api/analytics'
+import RevenueGraph from './RevenueGraph'
 
 export interface IAccounts {
   [mint: string]: IAccount
@@ -20,61 +22,63 @@ export type IAccount = {
 export const FinancialsStats: FC = () => <SSLRevenue />
 
 export const SSLRevenue: FC = () => {
-  const [revenueObj, setRevenueObj] = useState<any>()
   const [tokenPrices, setTokenprices] = useState<any>()
   const [dataSource, setDataSource] = useState<any>()
-  const [dollarSum, setDollarSum] = useState<number>(0)
-  //const [revenueUsingName, setRevenueUsingName] = useState<any>();
-  const publicKey = new PublicKey('GFXSwpZBSU9LF1gHRpRv2u967ACKKncFnfy3VKyQqwhp')
   const { connection } = useConnectionConfig()
+  const [totalSol, setTotalSol] = useState<number>(0)
+  const [totalTokenValue, setTotalTokenValue] = useState<number>(0)
+  const getSOLBalance = async () => {
+    let sol = await connection.getBalance(new PublicKey(ANALYTICS_ENDPOINTS.GFX_WALLET))
+    sol = sol / LAMPORTS_PER_SOL
+    const solPrice = await getSOLPrice()
+    setTotalSol(sol * solPrice)
+    return {
+      token_name: 'Solana',
+      token_symbol: 'SOL',
+      amount: '$ ' + sol.toFixed(2),
+      price: '$ ' + solPrice,
+      value: '$ ' + (sol * solPrice).toFixed(2)
+    }
+  }
+
   useEffect(() => {
     ;(async () => {
-      const [parsedAccounts] = await Promise.all([
-        connection.getParsedTokenAccountsByOwner(publicKey, { programId: TOKEN_PROGRAM_ID })
-        //connection.getBalance(publicKey)
-      ])
-      const accounts = parsedAccounts.value.reduce((acc: IAccounts, { account }) => {
-        const { mint, tokenAmount } = account.data.parsed.info
-        acc[mint] = tokenAmount
-        return acc
-      }, {})
-      const { data } = await getFarmTokenPrices()
-      setTokenprices(data)
-      setRevenueObj(accounts)
+      const { data } = await getTokenDetails()
+      const arr = []
+      arr.push(await getSOLBalance())
+      data.data.token.map((ar) =>
+        arr.push({
+          token_name: ar.token_name,
+          token_symbol: ar.token_symbol,
+          amount: `$ ` + ar.amount.toFixed(2),
+          price: `$ ` + ar.price.toFixed(2),
+          value: `$ ` + ar.value.toFixed(2)
+        })
+      )
+      setTotalTokenValue(data.totalTokenValue)
+      setDataSource(arr)
     })()
   }, [])
-
-  useEffect(() => {
-    if (revenueObj && tokenPrices) getpairInfo(revenueObj)
-  }, [revenueObj, tokenPrices])
-
-  const getpairInfo = (revenueObj: any) => {
-    const arr = []
-    let sum = 0
-    for (const mint in revenueObj) {
-      if (!TOKEN_PAIRS[mint]) continue
-      const mintPrice = tokenPrices[TOKEN_PAIRS[mint].pair]['current']
-        ? tokenPrices[TOKEN_PAIRS[mint].pair]['current']
-        : 0
-      const mintRevenue = revenueObj && revenueObj[mint].uiAmount
-      sum += mintRevenue * mintPrice
-      arr.push({
-        token: TOKEN_PAIRS[mint].name,
-        price: '$ ' + mintPrice,
-        native: mintRevenue,
-        dollar: '$ ' + moneyFormatterWithComma(mintRevenue * mintPrice)
-      })
-      setDollarSum(sum)
-    }
-    setDataSource(arr)
-  }
 
   return (
     <div>
       <h1>
         SSL Revenue
-        <div>{moneyFormatterWithComma(dollarSum, '$')}</div>
+        <a
+          href="https://solscan.io/assets/GFXSwpZBSU9LF1gHRpRv2u967ACKKncFnfy3VKyQqwhp"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <img
+            style={{ height: 35, width: 35, marginLeft: 10 }}
+            src={`/img/assets/solscan.png`}
+            alt="solscan-icon"
+          />
+        </a>
+        <div>{moneyFormatterWithComma(totalSol + totalTokenValue, '$')}</div>
+        <h6>The Graph data is taken from Solscan</h6>
       </h1>
+      <RevenueGraph today={totalSol + totalTokenValue} />
       <Table columns={revenueCol} dataSource={dataSource} />
     </div>
   )

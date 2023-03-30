@@ -17,6 +17,7 @@
     "typecheck": "tsc --noEmit --incremental false"
   },
   "dependencies": {
+    "@ant-design/plots": "^1.2.5",
     "@civic/solana-gateway-react": "^0.7.5",
     "@craco/craco": "^6.2.0",
     "@jup-ag/react-hook": "^2.0.0-beta.8",

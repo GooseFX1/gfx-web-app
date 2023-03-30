@@ -51,23 +51,23 @@ export const TOKEN_PAIRS = {
 
 export const revenueCol = [
   {
-    title: 'Token Name',
-    dataIndex: 'token',
-    key: 'token'
+    title: 'Asset',
+    dataIndex: 'token_name',
+    key: 'asset'
   },
   {
-    title: 'Token Price',
+    title: 'Quantity',
+    dataIndex: 'amount',
+    key: 'quantity'
+  },
+  {
+    title: 'Price',
     dataIndex: 'price',
     key: 'price'
   },
   {
-    title: 'in native',
-    dataIndex: 'native',
-    key: 'native'
-  },
-  {
-    title: 'in Dollars',
-    dataIndex: 'dollar',
-    key: 'dollar'
+    title: 'Value',
+    dataIndex: 'value',
+    key: 'value'
   }
 ]
