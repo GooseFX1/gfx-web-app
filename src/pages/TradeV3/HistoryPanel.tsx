@@ -18,8 +18,25 @@ import { ClosePosition } from './ClosePosition'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import 'styled-components/macro'
 import { RotatingLoader } from '../../components/RotatingLoader'
+import { PerpsEndModal } from './PerpsEndModal'
 
 const tabs = ['Positions', 'Open Orders', 'Trade History', 'SOL Unsettled P&L']
+
+const END_MODAL = styled(PopupCustom)`
+  ${tw`!h-[450px] !w-[500px] rounded-bigger`}
+  background-color: ${({ theme }) => theme.bg25};
+
+  .ant-modal-header {
+    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
+    background-color: ${({ theme }) => theme.bg25};
+  }
+  .ant-modal-content {
+    ${tw`shadow-none`}
+  }
+  .ant-modal-body {
+    ${tw`py-0 px-[25px]`}
+  }
+`
 
 const columns = [
   {
@@ -343,6 +360,22 @@ const TradeHistoryComponent: FC = () => {
 export const HistoryPanel: FC = () => {
   const [activeTab, setActiveTab] = useState(0)
   const [closePositionModal, setClosePositionModal] = useState<boolean>(false)
+  const [perpsEndModal, setPerpsEndModal] = useState<boolean>(false)
+  const [summaryData, setSummaryData] = useState<{
+    profit: boolean
+    entryPrice: string
+    exitPrice: string
+    leverage: string
+    pnl: string
+    percentageChange: string
+  }>({
+    profit: true,
+    entryPrice: '',
+    exitPrice: '',
+    leverage: '',
+    pnl: '',
+    percentageChange: ''
+  })
   const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto, isSpot } = useCrypto()
   const { openOrders } = useTradeHistory()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
@@ -430,8 +463,45 @@ export const HistoryPanel: FC = () => {
                 }
                 className={mode === 'dark' ? 'dark' : ''}
               >
-                <ClosePosition setVisibleState={setClosePositionModal} />
+                <ClosePosition
+                  setVisibleState={setClosePositionModal}
+                  setSummaryData={setSummaryData}
+                  setPerpsEndModal={setPerpsEndModal}
+                />
               </SETTING_MODAL>
+            </>
+          )}
+          {perpsEndModal && (
+            <>
+              <END_MODAL
+                visible={true}
+                centered={true}
+                footer={null}
+                title={
+                  <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold mb-4.5">
+                    {summaryData.profit ? 'Fortune Favours The Bold!' : 'Better Luck Next Time!'}
+                  </span>
+                }
+                closeIcon={
+                  <img
+                    src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+                    height="20px"
+                    width="20px"
+                    onClick={() => setPerpsEndModal(false)}
+                  />
+                }
+                className={mode === 'dark' ? 'dark' : ''}
+              >
+                <PerpsEndModal
+                  profit={summaryData.profit}
+                  side={traderInfo.averagePosition.side === 'buy' ? 'buy' : 'sell'}
+                  entryPrice={summaryData.entryPrice}
+                  currentPrice={summaryData.exitPrice}
+                  leverage={summaryData.leverage}
+                  pnlAmount={summaryData.pnl}
+                  percentageChange={summaryData.percentageChange}
+                />
+              </END_MODAL>
             </>
           )}
           <div className="header-wrapper">
