@@ -1,19 +1,11 @@
 import React, { Dispatch, ReactNode, SetStateAction, useContext, useMemo, useState, FC } from 'react'
 import { ENV } from '@solana/spl-token-registry'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { Connection, clusterApiUrl } from '@solana/web3.js'
-import { useRPCContext } from './rpc_context'
+import { Connection } from '@solana/web3.js'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 // import { useLocalStorageState } from '../utils'
 
-export enum GFX_RPC_NAMES {
-  QUICKNODE = 'QuickNode Pro',
-  MONKE_RPC = 'Monke DAO',
-  SYNDICA = 'Syndica',
-  TRITON = 'Triton',
-  HELIUS = 'Helius',
-  SOLANA_RPC_DEV = 'Solana'
-}
+export const DEFAULT_SLIPPAGE = 0.005
 
 export type RPC = {
   chainId: ENV
@@ -22,46 +14,14 @@ export type RPC = {
   network: WalletAdapterNetwork
 }
 
-type ENDPOINTS = { [key: string]: RPC }
-
-export const ENDPOINTS: ENDPOINTS = {
-  [GFX_RPC_NAMES.SOLANA_RPC_DEV]: {
-    chainId: ENV.Devnet,
-    name: GFX_RPC_NAMES.SOLANA_RPC_DEV,
-    endpoint: clusterApiUrl('devnet'),
-    network: WalletAdapterNetwork.Devnet
-  },
-  [GFX_RPC_NAMES.QUICKNODE]: {
-    chainId: ENV.MainnetBeta,
-    name: GFX_RPC_NAMES.QUICKNODE,
-    endpoint: `https://green-little-wind.solana-mainnet.quiknode.pro/${process.env.REACT_APP_QUICKNODE_TOKEN}`,
-    network: WalletAdapterNetwork.Mainnet
-  },
-  [GFX_RPC_NAMES.MONKE_RPC]: {
-    chainId: ENV.MainnetBeta,
-    name: GFX_RPC_NAMES.MONKE_RPC,
-    endpoint: `https://${process.env.REACT_APP_MONKE_RPC}.xyz2.hyperplane.dev`,
-    network: WalletAdapterNetwork.Mainnet
-  },
-  [GFX_RPC_NAMES.TRITON]: {
-    chainId: ENV.MainnetBeta,
-    name: GFX_RPC_NAMES.TRITON,
-    endpoint: `https://goosefx-mainnet-7f4e.mainnet.rpcpool.com/`,
-    network: WalletAdapterNetwork.Mainnet
-  },
-  [GFX_RPC_NAMES.HELIUS]: {
-    chainId: ENV.MainnetBeta,
-    name: GFX_RPC_NAMES.HELIUS,
-    endpoint: `https://rpc.helius.xyz/?api-key=${process.env.REACT_APP_HELUIS_TOKEN}`,
-    network: WalletAdapterNetwork.Mainnet
-  },
-  [GFX_RPC_NAMES.SYNDICA]: {
-    chainId: ENV.MainnetBeta,
-    name: GFX_RPC_NAMES.SYNDICA,
-    endpoint: `https://solana-api.syndica.io/access-token/${process.env.REACT_APP_SYNDICA_TOKEN}/rpc`,
-    network: WalletAdapterNetwork.Mainnet
-  }
+export const APP_RPC: RPC = {
+  chainId: ENV.MainnetBeta,
+  name: 'GooseFX',
+  endpoint: `https://rpc-pool.goosefx.io/rpc`,
+  network: WalletAdapterNetwork.Mainnet
 }
+
+type IRPC_CACHE = null | USER_CONFIG_CACHE
 
 interface ISettingsConfig {
   chainId: ENV
@@ -74,9 +34,6 @@ interface ISettingsConfig {
   setSlippage?: Dispatch<SetStateAction<number>>
   slippage?: number
 }
-
-export const DEFAULT_MAINNET_RPC = GFX_RPC_NAMES.SYNDICA
-export const DEFAULT_SLIPPAGE = 0.005
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
 
@@ -103,44 +60,21 @@ export function useConnectionConfig(): ISettingsConfig {
   return { chainId, connection, endpoint, network, endpointName, setEndpointName, devnetConnection }
 }
 
-type IRPC_CACHE = null | USER_CONFIG_CACHE
-
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
   const devnetConnection = new Connection(
     'https://omniscient-frequent-wish.solana-devnet.quiknode.pro/8b6a255ef55a6dbe95332ebe4f6d1545eae4d128/',
     'processed'
   )
-  const { rpcHealth } = useRPCContext()
+
   const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
-  // returns endpoint name id as string
-  const init = (): string => {
-    if (process.env.NODE_ENV === 'development')
-      return existingUserCache.endpoint === null ? DEFAULT_MAINNET_RPC : 'Custom'
-
-    const healthyRPCS: string[] = rpcHealth.map((rpc) => rpc.name)
-
-    if (healthyRPCS.includes(existingUserCache.endpointName)) {
-      return existingUserCache.endpointName
-    } else if (existingUserCache.endpointName === null || existingUserCache.endpoint === null) {
-      return healthyRPCS.includes(DEFAULT_MAINNET_RPC) ? DEFAULT_MAINNET_RPC : healthyRPCS[0]
-    } else {
-      return 'Custom'
-    }
-  }
-
-  const [endpointName, setEndpointName] = useState<string>(init())
-
-  const chainId = useMemo(
-    () => (endpointName in ENDPOINTS ? ENDPOINTS[endpointName].chainId : ENV.MainnetBeta),
-    [endpointName]
+  const [endpointName, setEndpointName] = useState<string>(
+    existingUserCache.endpointName === null || existingUserCache.endpoint === null ? APP_RPC.name : 'Custom'
   )
 
-  const network = useMemo(
-    () => (endpointName in ENDPOINTS ? ENDPOINTS[endpointName].network : WalletAdapterNetwork.Mainnet),
-    [endpointName]
-  )
+  const chainId = useMemo(() => APP_RPC.chainId, [endpointName])
+  const network = useMemo(() => APP_RPC.network, [endpointName])
 
   const endpoint = useMemo(() => {
     if (existingUserCache.endpoint !== null) {
@@ -148,10 +82,10 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } else {
       // asserts 'Custom' is cached with a null enpoint value - results in default reset
       if (endpointName === 'Custom') {
-        setEndpointName(DEFAULT_MAINNET_RPC)
-        return ENDPOINTS[DEFAULT_MAINNET_RPC].endpoint
+        setEndpointName(APP_RPC.name)
+        return APP_RPC.endpoint
       } else {
-        return ENDPOINTS[endpointName].endpoint
+        return APP_RPC.endpoint
       }
     }
   }, [endpointName])
@@ -162,6 +96,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       'gfx-user-cache',
       JSON.stringify({
         ...existingUserCache,
+        endpointName: endpointName,
         endpoint: existingUserCache.endpointName === 'Custom' ? endpoint : null
       })
     )

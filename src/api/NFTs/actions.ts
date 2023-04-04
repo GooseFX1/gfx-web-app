@@ -1,5 +1,5 @@
 import apiClient from '../../api'
-import { NFT_API_ENDPOINTS, NFT_API_BASE } from '../NFTs/constants'
+import { NFT_API_ENDPOINTS, NFT_API_BASE } from './constants'
 import { INFTProfile } from '../../types/nft_profile.d'
 import { IRegisterNFT } from '../../types/nft_details.d'
 import { validateUUID } from '../../utils'

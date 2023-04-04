@@ -2,13 +2,7 @@ import React, { FC, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { FarmHeader } from './FarmHeader'
-import {
-  useNavCollapse,
-  FarmProvider,
-  useConnectionConfig,
-  DEFAULT_MAINNET_RPC,
-  PriceFeedFarmProvider
-} from '../../context'
+import { useNavCollapse, FarmProvider, useConnectionConfig, APP_RPC, PriceFeedFarmProvider } from '../../context'
 import { notify } from '../../utils' //checkMobile
 import { logData } from '../../api/analytics'
 import CustomTableList from './CustomTableList'
@@ -54,7 +48,7 @@ export const Farm: FC = () => {
     logData('farm_page')
     if (network === 'devnet') {
       notify({ message: 'Switched to mainnet' })
-      setEndpointName(DEFAULT_MAINNET_RPC)
+      setEndpointName(APP_RPC.name)
     }
   }, [])
 

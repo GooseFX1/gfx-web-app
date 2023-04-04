@@ -55,7 +55,7 @@ export const sendTransactionWithRetry = async (
 
   let transaction = new Transaction()
   instructions.forEach((instruction) => transaction.add(instruction))
-  transaction.recentBlockhash = (block || (await connection.getRecentBlockhash(commitment))).blockhash
+  transaction.recentBlockhash = (block || (await connection.getLatestBlockhash(commitment))).blockhash
 
   if (includesFeePayer) {
     transaction.setSigners(...signers.map((s) => s.publicKey))
@@ -98,7 +98,7 @@ export const sendTransactionWithRetryWithKeypair = async (
 ): Promise<TransactionResult> => {
   const transaction = new Transaction()
   instructions.forEach((instruction) => transaction.add(instruction))
-  transaction.recentBlockhash = (block || (await connection.getRecentBlockhash(commitment))).blockhash
+  transaction.recentBlockhash = (block || (await connection.getLatestBlockhash(commitment))).blockhash
 
   if (includesFeePayer) {
     transaction.setSigners(...signers.map((s) => s.publicKey))

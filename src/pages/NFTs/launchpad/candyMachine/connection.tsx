@@ -9,8 +9,6 @@ import {
   Transaction,
   TransactionInstruction,
   TransactionSignature,
-  Blockhash,
-  FeeCalculator,
   SystemProgram,
   NONCE_ACCOUNT_LENGTH,
   NonceAccount,
@@ -24,8 +22,8 @@ import { notify } from '../../../../utils'
 import { perpsNotify } from '../../../../utils/perpsNotifications'
 
 interface BlockhashAndFeeCalculator {
-  blockhash: Blockhash
-  feeCalculator: FeeCalculator
+  blockhash: string
+  lastValidBlockHeight: number
 }
 
 export const DEFAULT_TIMEOUT = 60000
@@ -150,7 +148,7 @@ export const sendTransactions = async (
 
   if (!block) {
     //eslint-disable-next-line
-    block = await connection.getRecentBlockhash(commitment)
+    block = await connection.getLatestBlockhash(commitment)
   }
 
   for (let i = 0; i < instructionSet.length; i++) {
@@ -242,7 +240,7 @@ export const sendTransaction = async (
   } else {
     transaction = new Transaction()
     instructions.forEach((instruction) => transaction.add(instruction))
-    transaction.recentBlockhash = (block || (await connection.getRecentBlockhash(commitment))).blockhash
+    transaction.recentBlockhash = (block || (await connection.getLatestBlockhash(commitment))).blockhash
 
     if (includesFeePayer) {
       transaction.setSigners(...signers.map((s) => s.publicKey))
@@ -321,7 +319,7 @@ export const sendPerpsTransaction = async (
   } else {
     transaction = new Transaction()
     instructions.forEach((instruction) => transaction.add(instruction))
-    transaction.recentBlockhash = (await connection.getRecentBlockhash(commitment)).blockhash
+    transaction.recentBlockhash = (await connection.getLatestBlockhash(commitment)).blockhash
 
     if (includesFeePayer) {
       transaction.setSigners(...signers.map((s) => s.publicKey))
@@ -406,7 +404,7 @@ export const sendTransactionWithRetry = async (
 
   let transaction = new Transaction()
   instructions.forEach((instruction) => transaction.add(instruction))
-  transaction.recentBlockhash = (block || (await connection.getRecentBlockhash(commitment))).blockhash
+  transaction.recentBlockhash = (block || (await connection.getLatestBlockhash(commitment))).blockhash
 
   if (includesFeePayer) {
     transaction.setSigners(...signers.map((s) => s.publicKey))
