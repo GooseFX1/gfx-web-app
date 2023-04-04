@@ -74,9 +74,11 @@ const percentDetails = [
   }
 ]
 
-export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateAction<any>> }> = ({
-  setVisibleState
-}) => {
+export const ClosePosition: FC<{
+  setVisibleState: React.Dispatch<React.SetStateAction<any>>
+  setSummaryData: React.Dispatch<React.SetStateAction<any>>
+  setPerpsEndModal: React.Dispatch<React.SetStateAction<any>>
+}> = ({ setVisibleState, setSummaryData, setPerpsEndModal }) => {
   const { traderInfo, activeProduct } = useTraderConfig()
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const { orderBook } = useOrderBook()
@@ -98,6 +100,10 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
     setPercentageindex(index)
   }
 
+  const entryPrice = useMemo(() => {
+    return traderInfo.averagePosition.price
+  }, [traderInfo, activeProduct])
+
   const totalExitQty = useMemo(() => {
     return getExitQuntity(traderInfo.balances, activeProduct)
   }, [traderInfo, activeProduct])
@@ -111,29 +117,54 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
     return getClosePositionPrice(displayFractional(selectedExitQty), orderBook)
   }, [selectedExitQty, orderBook])
 
-  const pnlEstimate = useMemo(() => {
-    if (!traderInfo.averagePosition.price) return <span>-</span>
+  const pnlNumber = useMemo(() => {
+    if (!traderInfo.averagePosition.price) return '-'
     const averagePrice = traderInfo.averagePosition.price,
       sellPrice = exitPrice
-    if (!sellPrice || !Number(averagePrice)) return <span>-</span>
+    if (!sellPrice || !Number(averagePrice)) return '-'
     const side = traderInfo.averagePosition.side
     const difference = side === 'buy' ? sellPrice - Number(averagePrice) : Number(averagePrice) - sellPrice
     let totalPnl = difference * Number(displayFractional(selectedExitQty))
 
     totalPnl = side === 'sell' ? totalPnl * -1 : totalPnl
-    const isNegative = totalPnl < 0
+    return totalPnl
+  }, [traderInfo, selectedExitQty])
+
+  const pnlEstimate = useMemo(() => {
+    if (pnlNumber === '-') return <span>-</span>
+
+    const isNegative = pnlNumber < 0
     return (
       <span className={isNegative ? 'negative' : 'positive'}>
-        {(!isNegative ? '+' : '') + totalPnl.toFixed(2)}
+        {(!isNegative ? '+' : '') + pnlNumber.toFixed(2)}
       </span>
     )
-  }, [traderInfo, selectedExitQty])
+  }, [pnlNumber])
+
+  const percentageChange = useMemo(() => {
+    const exitPriceNum = Number(exitPrice)
+    const entry = Number(traderInfo.averagePosition.price)
+    if (Number.isNaN(exitPriceNum) || Number.isNaN(entry)) return 0
+    else {
+      const percent = ((exitPriceNum - entry) / entry) * 100
+      return Math.abs(percent).toFixed(1)
+    }
+  }, [pnlNumber])
 
   const closePositionFn = async () => {
     setLoading(true)
     const response = await closePosition(orderBook, selectedExitQty)
     if (response && response.txid) {
       setVisibleState(false)
+      setPerpsEndModal(true)
+      setSummaryData({
+        entryPrice: entryPrice,
+        exitPrice: exitPrice,
+        pnl: pnlNumber !== '-' ? Math.abs(pnlNumber).toFixed(2) : '-',
+        profit: pnlNumber !== '-' ? !(pnlNumber < 0) : false,
+        leverage: '10',
+        percentageChange: percentageChange
+      })
     }
     setLoading(false)
   }

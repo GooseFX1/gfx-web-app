@@ -24,7 +24,6 @@ import { useTraderConfig } from '../../context/trader_risk_group'
 import { displayFractional, getPerpsPrice } from './perps/utils'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import { TradeConfirmation } from './TradeConfirmation'
-import { PerpsEndModal } from './PerpsEndModal'
 import 'styled-components/macro'
 import { RotatingLoader } from '../../components/RotatingLoader'
 import { Picker } from './Picker'
@@ -297,22 +296,6 @@ const TITLE = styled.span`
   margin-left: 8px;
 `
 
-const END_MODAL = styled(PopupCustom)`
-  ${tw`!h-[450px] !w-[500px] rounded-bigger`}
-  background-color: ${({ theme }) => theme.bg25};
-
-  .ant-modal-header {
-    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
-    background-color: ${({ theme }) => theme.bg25};
-  }
-  .ant-modal-content {
-    ${tw`shadow-none`}
-  }
-  .ant-modal-body {
-    ${tw`py-0 px-[25px]`}
-  }
-`
-
 const TOTAL_VALUES = [
   {
     display: '0%',
@@ -366,7 +349,6 @@ export const PlaceOrder: FC = () => {
   const [stopLoss, setStopLoss] = useState(false)
   const [stopLossArrow, setStopLossArrow] = useState(false)
   const [confirmationModal, setConfirmationModal] = useState<boolean>(false)
-  const [perpsEndModal, setPerpsEndModal] = useState<boolean>(false)
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { connected } = useWallet()
   const { mode } = useDarkMode()
@@ -606,31 +588,6 @@ export const PlaceOrder: FC = () => {
   return (
     <WRAPPER>
       <HEADER>
-        {perpsEndModal && (
-          <>
-            <END_MODAL
-              visible={true}
-              centered={true}
-              footer={null}
-              title={
-                <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold mb-4.5">
-                  Fortune Favours The Bold!
-                </span>
-              }
-              closeIcon={
-                <img
-                  src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
-                  height="20px"
-                  width="20px"
-                  onClick={() => setPerpsEndModal(false)}
-                />
-              }
-              className={mode === 'dark' ? 'dark' : ''}
-            >
-              <PerpsEndModal />
-            </END_MODAL>
-          </>
-        )}
         {confirmationModal && (
           <>
             <SETTING_MODAL
