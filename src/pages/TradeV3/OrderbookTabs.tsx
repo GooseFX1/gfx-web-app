@@ -74,6 +74,10 @@ const BODY_WRAPPER = styled.div`
   ${tw`w-full flex flex-row h-full border-[1px] border-solid dark:border-[#3c3c3c] border-[#CACACA]`}
   border-top: none;
 `
+const FOOTER_WRAPPER = styled.div`
+  ${tw`w-full flex flex-row h-7 border-[1px] border-solid dark:border-[#3c3c3c] border-[#CACACA]`}
+  border-top: none;
+`
 
 export const OrderbookTabs: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<'orderbook' | 'trades' | 'price'>('orderbook')
@@ -110,6 +114,7 @@ export const OrderbookTabs: React.FC = () => {
         </Radio.Group>
       </HEADER_WRAPPER>
       <BODY_WRAPPER>{selectedTab === 'orderbook' ? <OrderBook /> : null}</BODY_WRAPPER>
+      {/*<FOOTER_WRAPPER>Hello</FOOTER_WRAPPER>*/}
     </WRAPPER>
   )
 }

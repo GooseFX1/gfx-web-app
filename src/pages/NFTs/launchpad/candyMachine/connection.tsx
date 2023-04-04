@@ -292,10 +292,22 @@ export const sendPerpsTransaction = async (
   instructions: TransactionInstruction[] | Transaction,
   signers: Keypair[],
   messages?: {
-    startMessage?: string
-    endMessage?: string
-    progressMessage?: string
-    errorMessage?: string
+    startMessage?: {
+      header: string
+      description: string
+    }
+    endMessage?: {
+      header: string
+      description: string
+    }
+    progressMessage?: {
+      header: string
+      description: string
+    }
+    errorMessage?: {
+      header: string
+      description: string
+    }
   }
 ): Promise<{ txid: string; slot: number }> => {
   const commitment: Commitment = 'processed',
