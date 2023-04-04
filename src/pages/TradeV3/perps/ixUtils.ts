@@ -81,10 +81,22 @@ export const newOrderIx = async (
     //  styles: {}
     //})
     const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
-      startMessage: 'Placing order...',
-      progressMessage: 'Confirming order...',
-      endMessage: 'Order Placed Successfully',
-      errorMessage: 'Error in placing order. Please try a smaller quantity for this price!'
+      startMessage: {
+        header: 'New Order',
+        description: 'Sign the transaction to place a new order!'
+      },
+      progressMessage: {
+        header: 'New Order',
+        description: 'Submitting new order on the network..'
+      },
+      endMessage: {
+        header: 'New Order',
+        description: 'New order successfully placed'
+      },
+      errorMessage: {
+        header: 'New Order',
+        description: 'There was an error in placeing the order'
+      }
     })
     if (response && response.txid) {
       //  perpsNotify({
@@ -136,15 +148,24 @@ export const cancelOrderIx = async (
     })
   )
   try {
-    const response = await sendPerpsTransaction(connection, wallet, instructions, [])
-    if (response && response.txid) {
-      perpsNotify({
-        action: 'open',
-        message: 'Order canceled Successfully!',
-        key: 12,
-        styles: {}
-      })
-    }
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
+      startMessage: {
+        header: 'Cancel Order',
+        description: 'Sign the transaction to cancel the order!'
+      },
+      progressMessage: {
+        header: 'Cancel Order',
+        description: 'Cancelling order on the network..'
+      },
+      endMessage: {
+        header: 'Cancel Order',
+        description: 'Order cancelled'
+      },
+      errorMessage: {
+        header: 'Cancel Order',
+        description: 'There was an error in cancelling the order'
+      }
+    })
     return response
   } catch (e) {
     console.log(e)
@@ -177,18 +198,30 @@ export const depositFundsIx = async (
     })
   )
   try {
-    const response = await sendPerpsTransaction(connection, wallet, instructions, [])
-    if (response && response.txid) {
-      notify({
-        message: 'Deposit of ' + displayFractional(depositFundsParams.quantity) + ' successful'
-      })
-    }
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
+      startMessage: {
+        header: 'Deposit funds',
+        description: 'Sign the transaction to deposit funds!'
+      },
+      progressMessage: {
+        header: 'Deposit funds',
+        description: 'Depositing funds to your account..'
+      },
+      endMessage: {
+        header: 'Deposit funds',
+        description: 'Funds successfully deposited'
+      },
+      errorMessage: {
+        header: 'Deposit funds',
+        description: 'There was an error in depositing the funds'
+      }
+    })
     return response
   } catch (e) {
-    notify({
-      message: 'Deposit of ' + displayFractional(depositFundsParams.quantity) + ' failed',
-      type: 'error'
-    })
+    //notify({
+    //  message: 'Deposit of ' + displayFractional(depositFundsParams.quantity) + ' failed',
+    //  type: 'error'
+    //})
     return e
   }
 }
