@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import React, { ReactElement, FC, useState } from 'react'
+import React, { ReactElement, FC, useState, MouseEventHandler } from 'react'
 import Slider from 'react-slick'
 import { PopupCustom } from '../pages/NFTs/Popup/PopupCustom'
 import { Button, Checkbox } from 'antd'
@@ -13,28 +13,27 @@ import 'styled-components/macro'
 const WRAPPER = styled.div`
   ${tw`flex items-center justify-center -mt-14`}
   color: ${({ theme }) => theme.text7};
+
   .slick-prev {
-    ${tw`mt-[260px] pl-4`}
-  }
-  .slick-prev:before {
-    ${tw`text-[15px] font-semibold`}
-    font-family: 'Monserrat';
-    content: 'Previous';
+    ${tw`w-auto top-[105%] left-[10px] text-[15px] font-semibold leading-normal`}
     color: ${({ theme }) => theme.text1};
+    &:before {
+      display: none;
+    }
   }
 
-  .slick-next:before {
-    ${tw`text-[15px] font-semibold`}
-    font-family: 'Monserrat';
-    content: 'Next';
+  .slick-next {
+    ${tw`w-auto top-[105%] right-[10px] text-[15px] font-semibold leading-normal`}
     color: ${({ theme }) => theme.text1};
+    &:before {
+      display: none;
+    }
   }
+
   .slick-dots {
     ${tw`w-[65%] ml-[75px]`}
   }
-  .slick-next {
-    ${tw`mt-[260px] pr-12`}
-  }
+
   .closeBtn {
     ${tw`absolute -top-8 mr-[420px] h-5 w-5 cursor-pointer `}
   }
@@ -44,8 +43,9 @@ const WRAPPER = styled.div`
   }
   .sliderContainer {
     ${tw`h-5/6 w-11/12 sm:h-[90%]`}
+
     img {
-      ${tw`w-[285px] sm:w-[265px] h-[283px] m-auto `}
+      ${tw`h-[300px] w-auto sm:h-[280px] m-auto `}
     }
   }
   .flexContainer {
@@ -56,20 +56,26 @@ const WRAPPER = styled.div`
   }
 
   .trackNFTImg {
-    height: 320px !important;
-    width: 420px !important;
     @media (max-width: 500px) {
       height: 246px !important;
       width: 310px !important;
     }
   }
+
   .slide {
-    h3 {
+    * {
+      ${tw`font-semibold text-center`}
       color: ${({ theme }) => theme.text7};
-      ${tw`text-xl font-semibold text-center text-[20px] `}
+    }
+
+    h2 {
+      ${tw`text-[20px]`}
+    }
+    h3 {
+      ${tw`text-[18px] `}
     }
     .subText {
-      ${tw`text-xl font-medium text-center text-[15px] p-1`}
+      ${tw`font-medium text-[15px] p-1`}
       color: ${({ theme }) => theme.text20};
     }
   }
@@ -87,15 +93,10 @@ export const GFXApprisalPopup: FC<{ showTerms: boolean; setShowTerms: any }> = (
     <WRAPPER tw="!mt-2">
       <div className="slide">
         <h3>
-          <div className="flexContainer">
-            <div>
-              <img src={'/img/assets/AppracialValueIcon.png'} alt="" />
-            </div>
-            <div>GFX Appraisal Value</div>
-          </div>
+          <div>Track NFT collections like never before!</div>
         </h3>
         <img className="trackNFTImg" src={'/img/assets/GFXappraisalGraphic.png'} alt="" />
-        <h3 tw="mt-8 sm:mt-4">Track NFT collections like never before!</h3>
+        <h3 tw="mt-8 sm:mt-4">For individual assets in a collection</h3>
         <div className="subText">
           Make the best decisions using the GFX Appraisal Value. Our model emphasizes executed sales data, not
           listing prices.
@@ -107,11 +108,13 @@ export const GFXApprisalPopup: FC<{ showTerms: boolean; setShowTerms: any }> = (
 
 const NFTAggWelcome: FC<{ rewardToggle: any }> = ({ rewardToggle }): ReactElement => {
   const settings = {
-    dots: true,
+    dots: false,
     infinite: false,
     speed: 500,
     slidesToShow: 1,
-    slidesToScroll: 1
+    slidesToScroll: 1,
+    nextArrow: <div> Next</div>,
+    prevArrow: <div> Prev</div>
   }
   return (
     <WRAPPER>
@@ -126,27 +129,23 @@ const NFTAggWelcome: FC<{ rewardToggle: any }> = ({ rewardToggle }): ReactElemen
         <div className="sliderContainer">
           <Slider {...settings}>
             <div className="slide">
-              <h3>
-                Welcome to our <br /> NFT Aggregator!{' '}
-              </h3>
+              <h2>
+                Welcome to our <br /> NFT Aggregator!
+              </h2>
               <img src={'/img/assets/welcomeGraphic.png'} alt="" />
-              <h3></h3>
               <div className="subText">
                 Explore, Buy and Compare thousands of NFTs in a single platform or Mint from our exclusive
                 launches.
               </div>
             </div>
             <div className="slide">
-              <h3>
-                <div className="flexContainer">
-                  <div>
-                    <img src={'/img/assets/AppracialValueIcon.png'} alt="" />
-                  </div>
-                  <div>GFX Appraisal Value</div>
-                </div>
-              </h3>
+              <h2>
+                Track NFT collections
+                <br />
+                like never before!
+              </h2>
               <img className="trackNFTImg" src={'/img/assets/GFXappraisalGraphic.png'} alt="" />
-              <h3>Track NFT collections like never before!</h3>
+              <h3 style={{ fontSize: '18px', fontWeight: '600' }}>*For individual assets in a collection</h3>
               <div className="subText">
                 Make the best decisions using the GFX Appraisal Value. Our model emphasizes executed sales data,
                 not listing prices.
@@ -154,7 +153,7 @@ const NFTAggWelcome: FC<{ rewardToggle: any }> = ({ rewardToggle }): ReactElemen
             </div>
             {!checkMobile() && (
               <div className="slide">
-                <h3>Unique Features!</h3>
+                <h2>Unique Features!</h2>
                 <img src={'/img/assets/uniqueFeaturesGraphic.png'} alt="" />
                 <h3>Explore our Unique Features!</h3>
                 <div className="subText">
@@ -164,7 +163,7 @@ const NFTAggWelcome: FC<{ rewardToggle: any }> = ({ rewardToggle }): ReactElemen
               </div>
             )}
             <div className="slide">
-              <h3>GFX Platform Token</h3>
+              <h2>GFX Platform Token</h2>
               <img src={'/img/assets/GOFXrewardsGraphic.png'} alt="" />
               <h3>Get Rewarded!</h3>
               <div className="subText">For every sale through our marketplace, you can earn $GOFX</div>

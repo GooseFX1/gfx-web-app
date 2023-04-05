@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, ReactElement, useEffect, useMemo, useState } from 'react'
-import { Button, Col, Drawer, Row, Tabs } from 'antd'
-import { checkMobile, notify, truncateAddress } from '../../../utils'
-import { useNFTAggregator, useNFTDetails } from '../../../context'
-import styled, { css } from 'styled-components'
-import tw from 'twin.macro'
-import 'styled-components/macro'
+import { Col, Drawer, Row, Tabs } from 'antd'
+import { Button } from '../../../components/Button'
+import { useNFTProfile, useNFTAggregator, useNFTDetails, useConnectionConfig } from '../../../context'
+import { checkMobile, truncateAddress } from '../../../utils'
 import { GradientText } from '../adminPage/components/UpcomingMints'
 import { AppraisalValue } from '../../../utils/GenericDegsin'
 import TabPane from 'antd/lib/tabs/TabPane'
@@ -13,10 +10,13 @@ import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { AttributesTabContent } from '../NFTDetails/AttributesTabContent'
 import { useHistory } from 'react-router-dom'
-import { fetchSingleNFT } from '../../../api/NFTs'
-import { INFTGeneralData } from '../../../types/nft_details'
-import axios from 'axios'
-import { genericErrMsg } from '../../Farm/FarmClickHandler'
+
+// import { INFTGeneralData } from '../../../types/nft_details'
+// import { genericErrMsg } from '../../Farm/FarmClickHandler'
+import { AH_PROGRAM_IDS } from '../../../web3/agg_program_ids'
+import styled, { css } from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   .generalItemValue {
@@ -109,135 +109,19 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
     
   `}
 `
-const WRAPPER = styled.div`
-  ${({ theme }) => css`
-    ${tw`flex flex-col justify-between relative`}
-    color: ${theme.text1};
-    .buttonContainer {
-      ${tw`h-[65px] w-[100%] flex items-center justify-between `}
-      border-top: 1px solid;
-      button {
-        ${tw`h-[56px] w-[185px] sm:w-[165px] sm:h-[45px] rounded-[60px] border-none mt-6`}
-        span {
-          ${tw`text-[16px] font-semibold`}
-        }
-        :hover,
-        :focus {
-          ${tw`text-white`}
-        }
-      }
-    }
-    .bidButton {
-      ${tw`bg-[#5855ff]`}
-    }
-    .buyNowButton {
-      background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-    }
-
-    .close-icon-holder {
-      ${tw`h-[30px] w-[30px] rounded-[50%] top-[12px] left-[12px] cursor-pointer
-       bg-[#131313] absolute flex items-center justify-center`}
-    }
-
-    .ls-image {
-      border-radius: 20px;
-      ${tw`w-[390px] h-[390px] sm:h-[100%] sm:w-[100%]`}
-      box-shadow: 3px 3px 14px 0px rgb(0 0 0 / 43%);
-    }
-    .infoContainer {
-      ${tw`mt-4 flex items-center`}
-    }
-    .iconsContainer {
-      ${tw`flex items-center gap-4 absolute right-0`}
-    }
-    .infoText {
-      color: ${({ theme }) => theme.text20};
-      max-height: 60px;
-      ${tw`text-[15px] font-medium mt-2.5 overflow-y-auto	`}
-    }
-
-    .ls-bottom-panel {
-      margin-top: ${theme.margin(2.5)};
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      .img-holder {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .ls-end-text {
-        font-size: 12px;
-        font-weight: 600;
-        color: ${theme.text7};
-      }
-
-      .ls-favorite {
-        margin-bottom: ${theme.margin(2)};
-      }
-
-      .ls-favorite-number {
-        font-size: 18px;
-        font-weight: 600;
-        color: #4b4b4b;
-        margin-right: 12px;
-      }
-
-      .ls-favorite-number-highlight {
-        color: ${theme.text1};
-        margin-right: 12px;
-      }
-
-      .ls-action-button {
-        color: ${theme.text1};
-        margin-right: auto;
-      }
-
-      .solscan-icon {
-        margin-right: 12px;
-        height: 40px;
-        width: 40px;
-        cursor: pointer;
-      }
-      .share-icon {
-        ${tw`w-10 h-10 cursor-pointer`}
-      }
-    }
-  `}
-`
 
 export const DetailViewNFT: FC = (): JSX.Element => {
-  const { selectedNFT, setSelectedNFT, bidNowClicked, buyNowClicked, setBidNow, setBuyNow } = useNFTAggregator()
+  const { bidNowClicked, buyNowClicked, setBidNow, setBuyNow } = useNFTAggregator()
   const elem = document.getElementById('nft-aggerator-container') //TODO-PROFILE: Stop background scroll
   const urlSearchParams = new URLSearchParams(window.location.search)
   const params = Object.fromEntries(urlSearchParams.entries())
   const history = useHistory()
-
-  const { setBids, setAsk, setGeneral, setNftMetadata, nftMetadata, setTotalLikes } = useNFTDetails()
+  const { general, setNftMetadata, nftMetadata, setGeneral, fetchGeneral } = useNFTDetails()
+  const { connection } = useConnectionConfig()
 
   useEffect(() => {
-    if (params.address && (nftMetadata === null || nftMetadata === undefined)) {
-      fetchSingleNFT(params.address).then((res) => {
-        if (res && res.status === 200) {
-          res.data.data.length > 0 ? setGeneral(res.data.data[0]) : setGeneral(selectedNFT)
-          const nft: INFTGeneralData = res.data
-          ;(async () => {
-            try {
-              const metaData = await axios.get(res.data.data[0].metadata_url)
-              await setNftMetadata(metaData.data)
-              setSelectedNFT(res.data.data[0])
-              setBids(nft.bids)
-              setAsk(nft.asks[0])
-              setTotalLikes(nft.total_likes)
-            } catch (err) {
-              goBackToNFTCollections()
-              notify(genericErrMsg('Error! Failed to load NFT metadata'))
-            }
-          })()
-        }
-      })
+    if ((params.address && general === null) || nftMetadata === null) {
+      fetchGeneral(params.address, connection)
     }
   }, [params.address])
 
@@ -248,15 +132,12 @@ export const DetailViewNFT: FC = (): JSX.Element => {
     })
   }
 
-  useEffect(() => {
-    if (selectedNFT === false) {
-      goBackToNFTCollections()
-    }
-  }, [selectedNFT])
+  useEffect(() => general === null && goBackToNFTCollections(), [general])
 
   const closeTheDrawer = () => {
     if (!buyNowClicked) {
-      setSelectedNFT(false)
+      // resets nft detail context
+      setGeneral(null)
       setNftMetadata(null)
     }
   }
@@ -267,95 +148,112 @@ export const DetailViewNFT: FC = (): JSX.Element => {
       placement={checkMobile() ? 'bottom' : 'right'}
       closable={false}
       height={checkMobile() ? '90%' : 'auto'}
-      onClose={() => {
-        closeTheDrawer()
-      }}
+      onClose={() => closeTheDrawer()}
       getContainer={elem}
-      visible={selectedNFT ? true : false}
+      visible={general !== null && nftMetadata !== null}
       width={checkMobile() ? '100%' : '450px'}
+      bodyStyle={{ padding: '0' }}
     >
-      <ImageViewer
-        setBuyNow={setBuyNow}
-        setBidNow={setBidNow}
-        bidNowClicked={bidNowClicked}
-        buyNowClicked={buyNowClicked}
-      />
-    </Drawer>
-  )
-}
-
-const ImageViewer = ({ setBuyNow, buyNowClicked, setBidNow, bidNowClicked }: any): ReactElement => {
-  const [activeTab, setActiveTab] = useState('1')
-  const { selectedNFT, setSelectedNFT } = useNFTAggregator()
-  const { setNftMetadata } = useNFTDetails()
-  const collectionName = selectedNFT ? selectedNFT.nft_name.split('#')[0] : 'Unknown'
-  const nftId = selectedNFT ? selectedNFT.nft_name.split('#')[1] : 'Unknown'
-
-  return (
-    <WRAPPER>
-      <div
-        className="close-icon-holder"
-        onClick={() => {
-          setSelectedNFT(false)
-          setNftMetadata(null)
-        }}
-      >
-        <img src="/img/assets/close-white-icon.svg" alt="" height="12px" width="12px" />
-      </div>
-      <img className="ls-image" height={'100%'} src={selectedNFT?.image_url} alt="the-nft" />
-      <div className="infoContainer">
-        <div tw="flex flex-col">
-          <div tw="flex items-center">
-            <div tw="text-[20px] font-semibold"> #{nftId}</div>
-            <img tw="h-[22px] w-[22px] ml-2.5" src="/img/assets/Aggregator/magicEden.svg" />
-          </div>
-          <div>
-            {' '}
-            <GradientText text={collectionName} fontSize={20} fontWeight={600} />
-          </div>
-        </div>
-        <div className="iconsContainer">
-          <img tw="h-7 w-8" src={`/img/assets/heart-red.svg`} />
-          <img tw="h-10 w-10" src={`/img/assets/solscanBlack.svg`} />
-          <img tw="h-10 w-10" src={`/img/assets/shareBlue.svg`} />
-        </div>
-      </div>
-      <div className="infoText">{selectedNFT?.nft_description}</div>
-
-      <div tw="mt-[30px]">
-        <AppraisalValue width={360} />
-      </div>
-      <img tw="h-[390px] w-[100%]" src="/img/assets/Aggregator/priceHistory.svg" />
-      {/* <NFTTabSections activeTab={activeTab} setActiveTab={setActiveTab} /> */}
+      <ImageViewer />
       <ButtonContainer
         setBuyNow={setBuyNow}
         buyNowClicked={buyNowClicked}
         bidNowClicked={bidNowClicked}
         setBidNow={setBidNow}
       />
-    </WRAPPER>
+    </Drawer>
   )
 }
 
-const ButtonContainer = ({ setBuyNow, buyNowClicked, bidNowClicked, setBidNow }: any): ReactElement => {
-  const { selectedNFT } = useNFTAggregator()
+const ImageViewer = (): ReactElement => {
+  const [activeTab, setActiveTab] = useState('1')
+  const { general, setNftMetadata, ask, setGeneral } = useNFTDetails()
+  const { sessionUser } = useNFTProfile()
 
-  return (
-    <div className="buttonContainer">
-      {buyNowClicked && <BuyNFTModal />}
-      {bidNowClicked && <BidNFTModal />}
-      <Button className="bidButton" onClick={() => setBidNow(selectedNFT)}>
-        Bid
-      </Button>
-      <Button className="buyNowButton" onClick={() => setBuyNow(selectedNFT)}>
-        Buy Now
-      </Button>
+  return general ? (
+    <div tw="flex flex-col justify-between relative h-full dark:text-white text-black px-[30px]">
+      <div
+        tw="h-[30px] w-[30px] rounded-[50%] top-[8px] left-[8px] cursor-pointer
+          bg-black-1 absolute flex items-center justify-center"
+        onClick={() => {
+          setGeneral(null)
+          setNftMetadata(null)
+        }}
+      >
+        <img src="/img/assets/close-white-icon.svg" alt="" height="12px" width="12px" />
+      </div>
+      <div tw="h-[calc(100vh - 86px)] overflow-y-scroll">
+        <img
+          tw="w-[390px] h-[390px] mt-[30px] sm:h-[100%] sm:w-[100%] 
+            rounded-[20px] shadow-[3px 3px 14px 0px rgb(0 0 0 / 43%)]"
+          height={'100%'}
+          src={general.image_url}
+          alt="the-nft"
+        />
+        <div tw="mt-4 flex items-center justify-between">
+          <div tw="flex flex-col">
+            <div tw="flex items-center">
+              <div tw="text-[20px] font-semibold"> {general.nft_name}</div>
+              {ask && (
+                <img
+                  tw="h-[22px] w-[22px] ml-2.5"
+                  src={`/img/assets/Aggregator/${AH_PROGRAM_IDS[ask.auction_house_key]}.svg`}
+                  alt={`${AH_PROGRAM_IDS[ask.auction_house_key]}-icon`}
+                  style={{ height: 30 }}
+                />
+              )}
+            </div>
+            <div>
+              <GradientText text={general.collection_name} fontSize={20} fontWeight={600} />
+            </div>
+          </div>
+          <div tw="flex items-center">
+            {sessionUser && <img tw="h-7 w-8 mr-[12px]" src={`/img/assets/heart-red.svg`} />}
+            <img tw="h-10 w-10 mr-[12px]" src={`/img/assets/solscanBlack.svg`} />
+            <img tw="h-10 w-10" src={`/img/assets/shareBlue.svg`} />
+          </div>
+        </div>
+        <div>{general.nft_description}</div>
+
+        <div tw="mt-[30px]">
+          <AppraisalValue
+            text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
+            label={general.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
+          />
+        </div>
+        <img tw="h-[390px] w-[100%]" src="/img/assets/Aggregator/priceHistory.svg" />
+        <NFTTabSections activeTab={activeTab} setActiveTab={setActiveTab} />
+      </div>
     </div>
+  ) : (
+    <></>
   )
 }
+
+const ButtonContainer = ({ setBuyNow, buyNowClicked, bidNowClicked, setBidNow }: any): ReactElement => (
+  <div
+    tw="absolute left-0 right-0 bottom-0 h-[86px] w-[100%] 
+        dark:bg-black-2 bg-grey-5 px-[30px] flex items-center justify-between
+        border-solid border-b-0 border-l-0 border-r-0 dark:border-black-4 border-grey-4"
+  >
+    {buyNowClicked && <BuyNFTModal />}
+    {bidNowClicked && <BidNFTModal />}
+    <Button height="56px" width="185px" cssStyle={tw`bg-blue-1`} onClick={() => setBidNow('general')}>
+      <span tw="text-regular font-semibold text-white">Bid</span>
+    </Button>
+    <Button
+      height="56px"
+      width="185px"
+      cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2`}
+      onClick={() => setBuyNow('general')}
+    >
+      <span tw="text-regular font-semibold text-white">Buy Now</span>
+    </Button>
+  </div>
+)
 
 const NFTDetailsTab = (): ReactElement => {
-  const { nftMetadata, general } = useNFTDetails()
+  const { general, nftMetadata } = useNFTDetails()
 
   const nftData = useMemo(
     () => [
@@ -380,7 +278,7 @@ const NFTDetailsTab = (): ReactElement => {
         value: `${NFT_MARKET_TRANSACTION_FEE}%`
       }
     ],
-    [general]
+    [nftMetadata, general]
   )
 
   return (

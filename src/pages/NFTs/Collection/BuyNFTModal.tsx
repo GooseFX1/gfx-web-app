@@ -170,7 +170,7 @@ export const STYLED_POPUP = styled(PopupCustom)`
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const BuyNFTModal = (): ReactElement => {
-  const { selectedNFT, setSelectedNFT, buyNowClicked, setBuyNow } = useNFTAggregator()
+  const { buyNowClicked, setBuyNow } = useNFTAggregator()
   const { ask } = useNFTDetails()
   const buyerPrice = parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER
   const servicePrice = 0.01
@@ -190,7 +190,7 @@ export const BuyNFTModal = (): ReactElement => {
 }
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const BidNFTModal = (): ReactElement => {
-  const { selectedNFT, setSelectedNFT, bidNowClicked, setBidNow } = useNFTAggregator()
+  const { bidNowClicked, setBidNow } = useNFTAggregator()
   const [selectedBtn, setSelectedBtn] = useState<number | undefined>(undefined)
   const [reviewBtnClicked, setReviewClicked] = useState<boolean>(false)
   const { ask } = useNFTDetails()
@@ -240,7 +240,7 @@ const ReviewBid: FC<{
   setReviewClicked: any
 }> = ({ bidValue, updateBidValue, handleBtnClicked, selectedBtn, setReviewClicked }) => {
   const { bidNowClicked } = useNFTAggregator()
-  const { ask } = useNFTDetails()
+  const { general, ask } = useNFTDetails()
   const buyerPrice = parseFloat(ask?.buyer_price ? ask?.buyer_price : '0') / LAMPORTS_PER_SOL_NUMBER
 
   return (
@@ -269,7 +269,11 @@ const ReviewBid: FC<{
       </div>
 
       <div tw="mt-[30px]">
-        <AppraisalValue width={360} />
+        <AppraisalValue
+          text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
+          label={general.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
+          width={360}
+        />
       </div>
       <div className="vContainer">
         <div className="maxBid" tw="mt-4 sm:mt-[20px]">
@@ -339,7 +343,7 @@ const FinalPlaceBid: FC<{ bidValue: number }> = ({ bidValue }) => {
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
 
   const creator = useMemo(() => {
-    if (nftMetadata === undefined) return null
+    if (nftMetadata === null) return null
     if (nftMetadata.properties.creators.length > 0) {
       const addr = nftMetadata.properties.creators[0].address
       return truncateAddress(addr)
@@ -650,7 +654,11 @@ const FinalPlaceBid: FC<{ bidValue: number }> = ({ bidValue }) => {
         </div>
       </div>
       <div tw="mt-8">
-        <AppraisalValue width={360} />
+        <AppraisalValue
+          text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
+          label={general.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
+          width={360}
+        />
       </div>
 
       <div className="hContainer" style={{ height: 150 }}>
