@@ -160,7 +160,7 @@ export const Profile: FC = (): JSX.Element => {
     isSessionUser !== undefined && (
       <PROFILE_CONTAINER id="nft-profile-container" background={randomBackground}>
         <HeaderProfile isSessionUser={isSessionUser} />
-        <SellNFTModal />
+        {/* <SellNFTModal /> */}
         <ContentProfile isSessionUser={isSessionUser} />
       </PROFILE_CONTAINER>
     )
