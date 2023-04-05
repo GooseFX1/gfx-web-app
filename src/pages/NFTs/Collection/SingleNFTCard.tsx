@@ -40,7 +40,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
 
   const [hover, setHover] = useState<boolean>(false)
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
-  const [localAsk, setLocalAsk] = useState<INFTAsk>(undefined)
+  const [localAsk, setLocalAsk] = useState<INFTAsk | null>(null)
   const [localTotalLikes, setLocalTotalLikes] = useState<number>()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
@@ -143,7 +143,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
               {nftId && nftId}
               {item.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
             </div>
-            {localAsk && (
+            {localAsk !== null && (
               <img
                 className="ah-name"
                 src={`/img/assets/Aggregator/${AH_PROGRAM_IDS[localAsk.auction_house_key]}.svg`}

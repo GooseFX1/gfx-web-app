@@ -138,20 +138,20 @@ export const Card: FC<ICard> = (props) => {
   /** setters are only for populating context before location change to details page */
   const { setGeneral, setNftMetadata, setBids, setAsk, setTotalLikes } = useNFTDetails()
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
-  const [localAsk, setLocalAsk] = useState<INFTAsk>()
+  const [localAsk, setLocalAsk] = useState<INFTAsk | null>(null)
   const [localTotalLikes, setLocalTotalLikes] = useState<number>()
   const [isFavorited, setIsFavorited] = useState<boolean>(false)
   const [showSingleNFT, setShowSingleNFT] = useState<boolean>(false)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const [hover, setHover] = useState<boolean>(false)
 
-  const displayPrice: string = useMemo(
+  const displayPrice: string | null = useMemo(
     () =>
       localAsk !== null
         ? localAsk.buyer_price
         : localBids.length > 0
         ? localBids[localBids.length - 1].buyer_price
-        : '123',
+        : null,
     [localAsk, localBids, sessionUser]
   )
 
@@ -171,7 +171,7 @@ export const Card: FC<ICard> = (props) => {
           res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(props.singleNFT)
           const nft: INFTGeneralData = res.data
           setLocalBids(nft.bids)
-          setLocalAsk(nft.asks[0])
+          setLocalAsk(nft.asks.length > 0 ? nft.asks[0] : null)
           setLocalTotalLikes(nft.total_likes)
         }
       })
@@ -234,8 +234,9 @@ export const Card: FC<ICard> = (props) => {
 
   const dynamicPriceValue = (currency: string, priceFeed: any, value: number) => {
     //const val = currency === 'USD' ? value * priceFeed['SOL/USDC']?.current : value
-    return `${moneyFormatter(parseFloat(displayPrice))}`
+    return `${moneyFormatter(value)}`
   }
+
   return (
     <>
       {showSingleNFT && <BuySellNFTs setShowSingleNFT={setShowSingleNFT} />}
@@ -275,20 +276,19 @@ export const Card: FC<ICard> = (props) => {
           <div>
             {localSingleNFT ? (
               <div>
-                {displayPrice === '0' ? (
-                  <LIGHT_TEXT>No Bids</LIGHT_TEXT>
-                ) : (
-                  <div className="nftPrice">
-                    {dynamicPriceValue(userCurrency, [], parseFloat(displayPrice) / LAMPORTS_PER_SOL)}
-                    <img src={`/img/crypto/SOL.svg`} alt={'SOL'} />
-                  </div>
-                )}
+                <div className="nftPrice">
+                  {displayPrice !== null
+                    ? dynamicPriceValue(userCurrency, [], parseFloat(displayPrice) / LAMPORTS_PER_SOL)
+                    : 'No price'}
+                  <img src={`/img/crypto/SOL.svg`} alt={'SOL'} />
+                </div>
               </div>
             ) : (
               <SkeletonCommon width="64px" height="24px" />
             )}
             <div className="apprisalPrice">
-              {dynamicPriceValue(userCurrency, [], parseFloat(displayPrice) / LAMPORTS_PER_SOL)}
+              {/* {dynamicPriceValue(userCurrency, [], parseFloat(displayPrice) / LAMPORTS_PER_SOL)} */}
+              NA
               <img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'tooltip'} />
             </div>
           </div>
