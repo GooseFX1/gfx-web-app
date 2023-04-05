@@ -52,7 +52,7 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
     <WRAPPER_TABLE $navCollapsed={isCollapsed} showBanner={showBanner}>
       <table>
         {!checkMobile() && (
-          <thead className="tableHeader">
+          <thead>
             <NFTColumnsTitleWeb />
           </thead>
         )}
@@ -75,7 +75,6 @@ const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement =
       {allItems.map((item, index) => (
         <tr
           ref={index + 1 === allItems.length ? lastRowElementRef : null}
-          className="tableRow"
           key={index}
           onClick={() => history.push(`/NFTs/collection/${item.collection.collection_name.replaceAll(' ', '_')}`)}
         >
@@ -98,7 +97,6 @@ const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement =
                   <div className="nftCollectionFloor">
                     <div className="grey">Floor: </div>
                     <div>
-                      {' '}
                       <PriceWithToken
                         price={item?.collection_floor / LAMPORTS_PER_SOL_NUMBER}
                         token="SOL"
@@ -147,22 +145,28 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
       ref={lastRowElementRef}
       className="tableRow"
       key={index}
-      onClick={() => history.push(`/nfts/collection/${item.collection.collection_name.replaceAll(' ', '_')}`)}
+      onClick={() =>
+        history.push(
+          `/nfts/collection/${encodeURIComponent(item.collection.collection_name).replaceAll('%20', '_')}`
+        )
+      }
     >
       <td className="nftNameColumn">
-        {item?.collection?.collection_name ? (
+        {item ? (
           <>
             <Image
               className="nftNameImg"
               fallback={'/img/assets/Aggregator/Unknown.svg'}
               src={`${
-                item.collection.profile_pic_link.length === 0
+                item.collection?.profile_pic_link.length === 0
                   ? '/img/assets/Aggregator/Unknown.svg'
-                  : item.collection.profile_pic_link
+                  : item.collection?.profile_pic_link
               }`}
-              alt=""
+              alt="collection-icon"
             />
-            <div className="nftCollectionName">{item?.collection?.collection_name}</div>
+            <div className="nftCollectionName">
+              {item.collection?.collection_name ? item.collection?.collection_name.replaceAll('"', '') : ''}
+            </div>
           </>
         ) : (
           <div className="nftCollectionName">
@@ -180,18 +184,10 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
         )}
       </td>
       <td className="tdItem">
-        {item?.collection?.collection_name ? (
-          <PriceWithToken price={109} token={currencyView} cssStyle={tw`h-5 w-5`} />
-        ) : (
-          <Loader />
-        )}
+        {item ? <PriceWithToken price={109} token={currencyView} cssStyle={tw`h-5 w-5`} /> : <Loader />}
       </td>
-      <td className="tdItem">
-        {item?.collection?.collection_name ? <div className="comingSoon">Coming soon</div> : <Loader />}
-      </td>
-      <td className="tdItem">
-        {item?.collection?.collection_name ? <div className="comingSoon">Coming soon</div> : <Loader />}
-      </td>
+      <td className="tdItem">{item ? <div className="comingSoon">Coming soon</div> : <Loader />}</td>
+      <td className="tdItem">{item ? <div className="comingSoon">Coming soon</div> : <Loader />}</td>
       <td className="tdItem">
         {item?.collection_vol !== undefined ? (
           <PriceWithToken price={volume} token={currencyView} cssStyle={tw`h-5 w-5`} />
@@ -208,7 +204,7 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
           rotate: '270deg'
         }}
       >
-        <Arrow height="16px" width="8px" invert={false} />
+        <Arrow height="8px" width="16px" invert={false} />
       </td>
     </tr>
   )

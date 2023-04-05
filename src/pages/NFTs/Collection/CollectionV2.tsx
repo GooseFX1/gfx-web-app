@@ -4,7 +4,7 @@ import { Dropdown } from 'antd'
 import { useHistory, useParams } from 'react-router-dom'
 import { Loader, SearchBar, TokenToggleNFT } from '../../../components'
 import { Button } from '../../../components/Button'
-import { useDarkMode, useNavCollapse, useNFTAggregator, useNFTCollections } from '../../../context'
+import { useDarkMode, useNFTProfile, useNavCollapse, useNFTAggregator, useNFTCollections } from '../../../context'
 import { ICON } from '../../../layouts'
 import { IAppParams } from '../../../types/app_params'
 import { NFTBaseCollection } from '../../../types/nft_collections'
@@ -48,19 +48,17 @@ const CollectionV2 = (): ReactElement => {
   const [err, setErr] = useState(false)
   const [filter, setFilter] = useState('')
   const [collapse, setCollapse] = useState(true)
-
-  useEffect(
-    () => () => {
-      setSingleCollection(undefined)
-      setFixedPriceWithinCollection(undefined)
-      setOpenBidWithinCollection(undefined)
-      setCollectionOwners(undefined)
-    },
-    []
-  )
+  const { sessionUser } = useNFTProfile()
 
   useEffect(() => {
-    const curColNameParam = params.collectionName.replaceAll('_', ' ')
+    setSingleCollection(undefined)
+    setFixedPriceWithinCollection(undefined)
+    setOpenBidWithinCollection(undefined)
+    setCollectionOwners(undefined)
+  }, [])
+
+  useEffect(() => {
+    const curColNameParam = decodeURIComponent(params.collectionName.replaceAll('_', '%20'))
 
     if (!singleCollection || singleCollection.collection[0].collection_name !== curColNameParam) {
       fetchSingleCollection(curColNameParam).then((res) => setErr(res && res.status === 200 ? false : true))

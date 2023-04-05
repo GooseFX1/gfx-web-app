@@ -33,7 +33,6 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   lastCardRef
 }) => {
   const { sessionUser } = useNFTProfile()
-  const { setSelectedNFT } = useNFTAggregator()
   const { connection } = useConnectionConfig()
   const { singleCollection } = useNFTCollections()
   const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral } = useNFTDetails()
@@ -50,7 +49,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item.uuid) : false), [item])
   const { currencyView } = useNFTAggregator()
 
-  const setNFTDetailsBeforeLocate = async (item) => {
+  const setNFTDetailsBeforeLocate = async (): Promise<boolean> => {
     try {
       const res = await axios.get(localSingleNFT.metadata_url)
       await setBids(localBids)
@@ -70,11 +69,11 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
 
       await setGeneral({ ...localSingleNFT, ...accountInfo })
       setIsLoadingBeforeRelocate(false)
-      setSelectedNFT(item)
       return true
     } catch (err) {
       setIsLoadingBeforeRelocate(false)
       notify(genericErrMsg('Error fetching NFT Metadata'))
+      return false
     }
   }
 
@@ -82,7 +81,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
     history.push(`${history.location.pathname}?address=${item.mint_address}`)
     setIsLoadingBeforeRelocate(true)
     setHover(false)
-    await setNFTDetailsBeforeLocate(item)
+    await setNFTDetailsBeforeLocate()
   }
 
   useEffect(() => {
@@ -128,7 +127,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
               item={item}
               setNFTDetailsBeforeLocate={setNFTDetailsBeforeLocate}
               addNftToBag={addNftToBag}
-              hasAsk={localAsk !== undefined}
+              hasAsk={localAsk !== null}
             />
           )}
           {isLoadingBeforeRelocate && <LoadingDiv />}
