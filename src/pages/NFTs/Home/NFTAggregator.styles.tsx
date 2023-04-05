@@ -8,6 +8,7 @@ export const NFT_STATS_CONTAINER = styled.div`
 export const STATS_BTN = styled.div`
   ${tw`flex items-center rounded-full h-[36px] p-[1px] ml-1 mr-[45px]`}
   background: linear-gradient(94deg, #f7931a 1%, #ac1cc7 100%);
+
   .innerCover {
     background: ${({ theme }) => theme.bg2};
     ${tw`rounded-full p-[4.5px] text-[15px] flex `}
@@ -26,20 +27,24 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   overflow-x: hidden;
   padding: 0px 20px;
   ${({ theme }) => theme.customScrollBar('0px')}
+
   @media(max-width: 500px) {
     height: calc(100vh - 240px);
     padding: 0;
   }
+
   table {
+    ${tw`dark:bg-black-3 bg-white mt-[10px] w-full `}
+    border-radius: 20px 20px 0 0;
+    overflow-x: hidden;
+
     @media (max-width: 500px) {
       width: 100vw;
       height: calc(100vh - 230px);
       ${tw`sticky mt-[0px]`}
     }
-    ${tw`mt-[10px] w-full  `}
-    background: ${({ theme }) => theme.bg17};
-    border-radius: 20px 20px 0 0;
   }
+
   thead,
   tbody,
   tr,
@@ -48,60 +53,70 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
     display: block;
   }
 
-  tr:after {
-    content: ' ';
-    display: block;
-    visibility: hidden;
-    clear: both;
+  thead {
+    ${tw`dark:bg-black-2 bg-black-4 text-base font-semibold h-[64px] sm:h-[52px] rounded-[20px 20px 5px 5px]`}
+
+    tr {
+      ${tw`h-full`}
+
+      th {
+        ${tw`h-full dark:text-grey-1 text-grey-2 text-center`}
+
+        & > div {
+          ${tw`h-full `}
+        }
+      }
+    }
   }
-  thead th {
-    height: 60px;
-    text-align: center;
-  }
+
   tbody {
     height: calc(
       100vh - ${({ showBanner }) => (showBanner ? '425px' : '215px')} -
         ${({ $navCollapsed }) => (!$navCollapsed ? '80px' : '0px')}
     );
-    overflow-y: auto;
+    ${({ theme }) => theme.customScrollBar('4px')}
+    overflow-x: hidden;
+
     @media (max-width: 500px) {
       height: calc(100vh - 280px);
     }
+
+    tr {
+      ${tw`dark:bg-black-4 bg-white cursor-pointer`}
+      border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
+
+      &:hover {
+        ${tw`dark:bg-grey-1 bg-grey-5`}
+      }
+
+      &:after {
+        content: ' ';
+        display: block;
+        visibility: hidden;
+        clear: both;
+      }
+    }
+    td {
+      ${tw`h-[76px] sm:h-[78px] text-[15px] font-semibold text-center dark:text-grey-5 text-grey-1`}
+      text-align: center;
+    }
   }
-  td {
-    ${tw`h-[76px] sm:h-[78px]`}
-  }
+
   tbody td,
   thead th {
     width: 14%;
     float: left;
     text-align: center;
+
     @media (max-width: 500px) {
       ${tw`w-[33%] `}
     }
   }
+
   .tdItem {
     ${tw`text-center flex items-center justify-center sm:w-[30%]`}
   }
 
-  tbody {
-    overflow-y: auto;
-    ${({ theme }) => theme.customScrollBar('4px')}
-  }
-  th {
-    /* color: #636363 !important; */
-    ${tw`dark:bg-[#1e1e1e] bg-[#3c3c3c] dark:text-[#636363] text-[#b5b5b5]`}
-    padding-top: 15px;
-  }
-  td {
-    text-align: center;
-    ${tw`text-[15px] font-semibold text-center`}
-    color: ${({ theme }) => theme.text29};
-    /* padding-top: 25px; */
-  }
-  .tableHeader {
-    ${tw`text-base font-semibold h-[64px] sm:h-[52px]`}
-  }
   .index {
     ${tw`sm:w-[5%] flex items-center ml-[6px]`}
   }
@@ -135,15 +150,10 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
       ${tw`w-[42%] h-[52px] pr-0`}
     }
   }
-  .tableRow {
-    border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
-    ${tw`cursor-pointer`}
-  }
 
   .borderRow2 {
-    border-radius: 0px 20px 25px 0px;
-    ${tw`w-[5%]`}
-    color: ${({ theme }) => theme.tableHeader};
+    ${tw`w-[5%] dark:text-black-2 text-grey-1`}
+
     @media (max-width: 500px) {
       ${tw`w-[26%] h-[52px]`}
     }

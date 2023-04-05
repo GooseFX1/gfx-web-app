@@ -41,7 +41,7 @@ export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ d
       {data.map((item, index) => (
         <PILL_SECONDARY $mode={`${mode}`} key={index}>
           <div className="layer">
-            <div tw="text-[13px] font-medium">{item.trait_type} </div>
+            <div tw="text-[13px] font-medium text-grey-2">{item.trait_type} </div>
             <div>{trimString(item.value)}</div>
           </div>
         </PILL_SECONDARY>
@@ -51,19 +51,15 @@ export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ d
 }
 
 const PILL_SECONDARY = styled.div<{ $mode: string }>`
+  ${tw`rounded-[5px] h-[45px] p-[2px] text-[#fff] w-full`}
   background: ${({ $mode }) =>
     $mode === 'dark'
       ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)'
       : `linear-gradient(to bottom, rgba(116, 116, 116, 0.2), rgba(116, 116, 116, 0.2)), 
       linear-gradient(to right, #f7931a 1%, #e03cff 100%), linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)`};
-  ${tw`rounded-[5px] h-[45px] p-[2px] text-[#fff] w-[174px]`}
 
   .layer {
-    height: 100%;
-    ${tw`flex flex-col font-semibold text-[15px] items-start pl-2 w-[170px] leading-[18px]`}
-    align-items: left;
-    background: ${({ $mode }) => ($mode === 'dark' ? '#3c3b3ba6' : '#ffffff57')};
-    border-radius: 5px;
-    filter: drop-shadow(0px 6px 9px rgba(36, 36, 36, 0.15));
+    ${tw`h-full flex flex-col font-semibold text-[15px] items-start pl-2 w-full leading-[18px]
+       dark:bg-[#1c1c1cb3] bg-[#ffffff57] rounded-[5px]`}
   }
 `
