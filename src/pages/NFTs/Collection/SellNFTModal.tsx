@@ -285,7 +285,7 @@ export const SellNFTModal = (): ReactElement => {
 
     let removeAskIX: TransactionInstruction | undefined = undefined
     // if ask exists
-    if (ask !== undefined) {
+    if (ask !== null) {
       // make web3 cancel
       removeAskIX = await createRemoveAskIX()
     }
@@ -357,7 +357,11 @@ export const SellNFTModal = (): ReactElement => {
         </div>
 
         <div tw="mt-8">
-          <AppraisalValue width={360} />
+          <AppraisalValue
+            text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
+            label={general.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
+            width={360}
+          />
         </div>
 
         <div className="hContainer" style={{ height: 145 }}>

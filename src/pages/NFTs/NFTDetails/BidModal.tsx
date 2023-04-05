@@ -249,7 +249,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
 
   const creator = useMemo(() => {
-    if (nftMetadata === undefined) return null
+    if (nftMetadata === null) return null
     if (nftMetadata.properties.creators.length > 0) {
       const addr = nftMetadata.properties.creators[0].address
       return truncateAddress(addr)

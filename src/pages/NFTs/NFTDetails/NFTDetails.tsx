@@ -33,7 +33,7 @@ export const NFTDetails: FC<{
   const params = useParams<IAppParams>()
 
   useEffect(() => {
-    if (general === undefined && nftMetadata === undefined) {
+    if (general === null && nftMetadata === null) {
       fetchGeneral(params.nftMintAddress, connection)
     }
 
