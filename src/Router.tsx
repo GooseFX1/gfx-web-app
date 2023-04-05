@@ -66,7 +66,9 @@ export const Router: FC = () => (
           <Route path="/nfts">
             <NFTCollectionProvider>
               <PriceFeedFarmProvider>
-                <NFTAgg />
+                <NFTProfileProvider>
+                  <NFTAgg />
+                </NFTProfileProvider>
               </PriceFeedFarmProvider>
             </NFTCollectionProvider>
           </Route>
