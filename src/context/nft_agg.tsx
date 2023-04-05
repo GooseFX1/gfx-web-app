@@ -7,35 +7,14 @@ interface INFTAggConfig {
   sortingAsc: boolean
   nftCollections: any[]
   setSortAsc: any
-  setSelectedNFT: Dispatch<SetStateAction<any>>
   setBuyNow: Dispatch<SetStateAction<any>>
   setBidNow: Dispatch<SetStateAction<any>>
-  selectedNFT: any
   nftInBag: any
   setNftInBag: any
   buyNowClicked: any
   bidNowClicked: any
   setCurrency?: any
   currencyView: string
-  sellNFTClicked?: any
-  setSellNFT?: any
-}
-
-interface NFTAgg {
-  sortingAsc: boolean
-  nftCollections: any[]
-  setSortAsc: any
-  currentStep?: number
-  setSelectedNFT: Dispatch<SetStateAction<any>>
-  setBuyNow: Dispatch<SetStateAction<any>>
-  setBidNow: Dispatch<SetStateAction<any>>
-  selectedNFT: any
-  buyNowClicked: any
-  nftInBag: any
-  setNftInBag: any
-  bidNowClicked: any
-  currencyView: string
-  setCurrency?: any
   sellNFTClicked?: any
   setSellNFT?: any
 }
@@ -45,7 +24,6 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
   const [sortingAsc, setSortAsc] = useState<boolean>(true)
   const [nftCollections, setCollections] = useState<any[]>([])
   const [nftInBag, setNftInBag] = useState<any[]>([])
-  const [selectedNFT, setSelectedNFT] = useState<number | undefined>()
   const [buyNowClicked, setBuyNow] = useState<boolean | any>(undefined)
   const [bidNowClicked, setBidNow] = useState<boolean | any>(undefined)
   const [sellNFTClicked, setSellNFT] = useState<any>(undefined)
@@ -67,8 +45,6 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
         sortingAsc: sortingAsc,
         setSortAsc: setSortAsc,
         nftCollections: nftCollections,
-        selectedNFT: selectedNFT,
-        setSelectedNFT: setSelectedNFT,
         buyNowClicked: buyNowClicked,
         bidNowClicked: bidNowClicked,
         setBidNow: setBidNow,
@@ -86,44 +62,26 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
   )
 }
 
-export const useNFTAggregator = (): NFTAgg => {
+export const useNFTAggregator = (): INFTAggConfig => {
   const context = useContext(NFTAggContext)
 
   if (!context) {
     throw new Error('Missing NFT Aggregator context')
   }
-  const {
-    sortingAsc,
-    setSortAsc,
-    nftCollections,
-    selectedNFT,
-    setSelectedNFT,
-    buyNowClicked,
-    setBuyNow,
-    bidNowClicked,
-    setBidNow,
-    nftInBag,
-    setNftInBag,
-    currencyView,
-    setCurrency,
-    setSellNFT,
-    sellNFTClicked
-  } = context
+
   return {
-    sortingAsc,
-    setSortAsc,
-    nftCollections,
-    selectedNFT,
-    setSelectedNFT,
-    buyNowClicked,
-    setBidNow,
-    bidNowClicked,
-    setBuyNow,
-    nftInBag,
-    setNftInBag,
-    currencyView,
-    setCurrency,
-    setSellNFT,
-    sellNFTClicked
+    sortingAsc: context.sortingAsc,
+    setSortAsc: context.setSortAsc,
+    nftCollections: context.nftCollections,
+    buyNowClicked: context.buyNowClicked,
+    setBidNow: context.setBidNow,
+    bidNowClicked: context.bidNowClicked,
+    setBuyNow: context.setBuyNow,
+    nftInBag: context.nftInBag,
+    setNftInBag: context.setNftInBag,
+    currencyView: context.currencyView,
+    setCurrency: context.setCurrency,
+    setSellNFT: context.setSellNFT,
+    sellNFTClicked: context.sellNFTClicked
   }
 }
