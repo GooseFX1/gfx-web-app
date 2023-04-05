@@ -59,7 +59,7 @@ export const fetchSingleCollectionAction = async (endpoint: string, paramValue: 
 
   try {
     const res = await apiClient(NFT_API_BASE).get(
-      `${endpoint}?${isUUID ? 'collection_id' : 'collection_name'}=${paramValue}`
+      `${endpoint}?${isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`}`
     )
     return await res
   } catch (err) {
@@ -72,7 +72,7 @@ export const fetchSingleCollectionBySalesType = async (endpoint: string, paramVa
 
   try {
     const res = await apiClient(NFT_API_BASE).get(
-      `${endpoint}?${isUUID ? 'collection_id' : 'collection_name'}=${paramValue}`
+      `${endpoint}?${isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`}`
     )
     return await res
   } catch (err) {
@@ -86,8 +86,8 @@ export const fetchOpenBidByPages = async (paramValue: string, offset: number, li
   try {
     const res = await apiClient(NFT_API_BASE).get(
       `${NFT_API_ENDPOINTS.OPEN_BID}?${
-        isUUID ? 'collection_id' : 'collection_name'
-      }=${paramValue}&offset=${offset}&limit=${limit}`
+        isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`
+      }&offset=${offset}&limit=${limit}`
     )
     return await res
   } catch (err) {
@@ -100,8 +100,8 @@ export const fetchFixedPriceByPages = async (paramValue: string, offset: number,
   try {
     const res = await apiClient(NFT_API_BASE).get(
       `${NFT_API_ENDPOINTS.FIXED_PRICE}?${
-        isUUID ? 'collection_id' : 'collection_name'
-      }=${paramValue}&offset=${offset}&limit=${limit}`
+        isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`
+      }&offset=${offset}&limit=${limit}`
     )
     return await res
   } catch (err) {
