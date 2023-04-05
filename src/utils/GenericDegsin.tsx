@@ -1,6 +1,7 @@
 import { FC, ReactElement } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
+import 'styled-components/macro'
 import { Tooltip } from '../components'
 
 export const HeaderTooltip = (text: string): ReactElement =>
@@ -12,8 +13,9 @@ export const HeaderTooltip = (text: string): ReactElement =>
 const WRAPPER = styled.div<{ $width }>`
   ${tw`flex items-center justify-center relative`}
   .innerCover {
-    ${tw`p-1 sm:p-2 rounded-xl sm:w-[98.5%] w-[98.8%] h-[64px] flex items-center justify-between`}
-    background-color: ${({ theme }) => theme.bg3};
+    ${tw`relative dark:bg-black-2 bg-grey-5 p-1 sm:p-2 
+      rounded-xl sm:w-[98.5%] w-[98.8%] h-[64px] flex items-center justify-center`}
+
     img {
       ${tw`w-[34px] h-[34px] m-2`}
     }
@@ -71,19 +73,22 @@ export const TableHeaderTitle = (
   </STYLED_TITLE>
 )
 
-export const AppraisalValue: FC<{ width?: number }> = ({ width }): ReactElement => (
+interface IAppraisalValue {
+  text: string | null
+  label?: string
+  width?: number
+}
+
+export const AppraisalValue: FC<IAppraisalValue> = ({ text, label, width }): ReactElement => (
   <WRAPPER $width={width}>
     <div className="outerCover">
       <div className="innerCover">
-        <div>
-          <img src={'/img/assets/Aggregator/gooseLogo.svg'} />
+        <div tw="absolute left-0">
+          <img src={'/img/assets/Aggregator/Tooltip.svg'} alt="gfx-appraisal-icon" style={{ height: 30 }} />
         </div>
         <div className="hContainer">
-          <div className="appraisal">Apprasial Value</div>
-          <div className="appraisalResult">8000 SOL</div>
-        </div>
-        <div>
-          <img src={'/img/assets/info.svg'} alt="" style={{ height: 30 }} />
+          <div tw="text-average font-semibold dark:text-grey-2 text-grey-1">{label}</div>
+          <div tw="text-average font-semibold dark:text-grey-5 text-black-4">{text}</div>
         </div>
       </div>
     </div>
