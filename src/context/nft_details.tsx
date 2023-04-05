@@ -19,21 +19,21 @@ const NFTDetailsContext = createContext<INFTDetailsConfig | null>(null)
 
 export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { network } = useConnectionConfig()
-  const [general, setGeneral] = useState<ISingleNFT>()
-  const [nftMetadata, setNftMetadata] = useState<INFTMetadata | null>()
+  const [general, setGeneral] = useState<ISingleNFT | null>(null)
+  const [nftMetadata, setNftMetadata] = useState<INFTMetadata | null>(null)
   const [nftMintingData, setNftMintingData] = useState<IMetadataContext>()
   const [bids, setBids] = useState<INFTBid[]>([])
   const [ask, setAsk] = useState<INFTAsk>()
-  const [totalLikes, setTotalLikes] = useState<number>()
-  const initialState = {
+  const [totalLikes, setTotalLikes] = useState<number | null>(null)
+
+  const reducer = (state, newState) => ({ ...state, ...newState })
+  const [userInput, setUserInput] = useReducer(reducer, {
     type: 'fixed-price',
     expiration: '1',
     bid: '0',
     price: '0',
     royalties: '3'
-  }
-  const reducer = (state, newState) => ({ ...state, ...newState })
-  const [userInput, setUserInput] = useReducer(reducer, initialState)
+  })
 
   const curHighestBid: INFTBid | undefined = useMemo(() => {
     if (bids.length === 0) return undefined

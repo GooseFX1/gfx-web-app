@@ -147,7 +147,7 @@ export const Card: FC<ICard> = (props) => {
 
   const displayPrice: string = useMemo(
     () =>
-      localAsk !== undefined
+      localAsk !== null
         ? localAsk.buyer_price
         : localBids.length > 0
         ? localBids[localBids.length - 1].buyer_price
@@ -204,9 +204,9 @@ export const Card: FC<ICard> = (props) => {
 
   const getButtonText = (isOwner: boolean, ask: INFTAsk | undefined): string => {
     if (isOwner) {
-      return ask === undefined ? 'Sell' : 'Edit Ask'
+      return ask === null ? 'Sell' : 'Edit Ask'
     } else {
-      return ask === undefined ? 'Bid' : 'Buy Now'
+      return ask === null ? 'Bid' : 'Buy Now'
     }
   }
 

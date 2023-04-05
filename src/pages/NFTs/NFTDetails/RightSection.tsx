@@ -128,7 +128,7 @@ export const RightSection: FC<{
     return <div>Error loading metadata</div>
   }
 
-  const isLoading = nftMetadata === undefined || general === undefined
+  const isLoading = nftMetadata === null || general === null
 
   return (
     <RIGHT_SECTION {...rest}>
