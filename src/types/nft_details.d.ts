@@ -75,6 +75,9 @@ export type BaseNFT = {
   image_url: string | null
   animation_url: string | null
   collection_id: number | null
+  collection_name: string | null
+  collection_address: string
+  gfx_appraisal_value: null | number
   is_verified: boolean
 }
 
