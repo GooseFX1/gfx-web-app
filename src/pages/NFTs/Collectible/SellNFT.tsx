@@ -221,7 +221,7 @@ export const SellNFT: FC = () => {
   )
 
   const creator = useMemo(() => {
-    if (nftMetadata === undefined) return null
+    if (nftMetadata === null) return null
     if (nftMetadata.properties.creators.length > 0) {
       const addr = nftMetadata.properties.creators[0].address
       return truncateAddress(addr)
@@ -367,7 +367,7 @@ export const SellNFT: FC = () => {
 
     let removeAskIX: TransactionInstruction | undefined = undefined
     // if ask exists
-    if (ask !== undefined) {
+    if (ask !== null) {
       // make web3 cancel
       removeAskIX = await createRemoveAskIX()
     }
@@ -622,8 +622,8 @@ export const SellNFT: FC = () => {
                 <SellCategory setCategory={setCategory} category={category} />
 
                 <SECTION_TITLE>
-                  {ask === undefined ? 'Set' : 'Edit'} Asking Price:{' '}
-                  {ask !== undefined && <PRICE> {parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL} SOL</PRICE>}
+                  {ask === null ? 'Set' : 'Edit'} Asking Price:{' '}
+                  {ask !== null && <PRICE> {parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL} SOL</PRICE>}
                 </SECTION_TITLE>
                 <STYLED_FORM form={form} layout="vertical" initialValues={{}}>
                   {category === 'open-bid' && (
@@ -659,8 +659,7 @@ export const SellNFT: FC = () => {
                         data={[
                           {
                             id: 'minimumBid',
-                            defaultValue:
-                              ask === undefined ? '' : `${parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL}`,
+                            defaultValue: ask === null ? '' : `${parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL}`,
                             placeholder: 'Enter asking price',
                             hint: (
                               <div>
