@@ -267,7 +267,7 @@ export const RightSectionTabs: FC<{
   const [removeBidModal, setRemoveBidModal] = useState<boolean>(false)
   const [pendingTxSig, setPendingTxSig] = useState<string>()
 
-  const isLoading = general === undefined || nftMetadata === undefined
+  const isLoading = general === null || nftMetadata === null
 
   enum NFT_ACTIONS {
     BID = 'bid',
