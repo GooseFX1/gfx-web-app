@@ -71,7 +71,7 @@ export const NFTs: FC = () => {
         })
       }
     } else {
-      setSessionUser(undefined)
+      setSessionUser(null)
     }
     return null
   }, [wallet?.adapter?.publicKey, connected])

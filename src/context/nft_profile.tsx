@@ -9,7 +9,7 @@ import { completeNFTUserProfile } from '../api/NFTs'
 export type UserFetchType = 'address' | 'user_id' | 'nickname'
 
 export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [sessionUser, setSessionUser] = useState<INFTProfile>()
+  const [sessionUser, setSessionUser] = useState<INFTProfile | null>(null)
   const [nonSessionProfile, setNonSessionProfile] = useState<INFTProfile>()
   const [userActivity, setUserActivity] = useState<INFTUserActivity[]>([])
   const [sessionUserParsedAccounts, setParsedAccounts] = useState<ParsedAccount[]>([])

@@ -10,7 +10,7 @@ import { useNFTProfile, useNFTDetails, useConnectionConfig, useDarkMode, useNFTA
 import { fetchSingleNFT } from '../../../api/NFTs'
 import { getParsedAccountByMint, StringPublicKey, ParsedAccount } from '../../../web3'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
-import { BuySellNFTs } from '../Profile/BuySellNFTs'
+import { ProfileItemDetails } from '../Profile/ProfileItemDetails'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -239,7 +239,7 @@ export const Card: FC<ICard> = (props) => {
 
   return (
     <>
-      {showSingleNFT && <BuySellNFTs setShowSingleNFT={setShowSingleNFT} />}
+      {showSingleNFT && <ProfileItemDetails setShowSingleNFT={setShowSingleNFT} />}
       <div className="gridItem">
         <div
           className="gridItemContainer"
@@ -264,14 +264,14 @@ export const Card: FC<ICard> = (props) => {
 
         <div className={'nftTextContainer'}>
           <div className="collectionId">
-            {localSingleNFT?.uuid ? localSingleNFT.uuid : '#8989'}
+            {localSingleNFT && localSingleNFT.nft_name}
             <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />
           </div>
-          {localSingleNFT ? (
-            <GradientText text={localSingleNFT.nft_name.substring(0, 13) + '...'} fontSize={15} fontWeight={600} />
+          {/* {localSingleNFT ? (
+            <GradientText text={'collection'} fontSize={15} fontWeight={600} />
           ) : (
             <SkeletonCommon width="130px" height="25px" />
-          )}
+          )} */}
 
           <div>
             {localSingleNFT ? (

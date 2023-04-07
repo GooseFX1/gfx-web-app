@@ -1,13 +1,18 @@
-import React, { useMemo, FC } from 'react'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useState, useEffect, useMemo, FC } from 'react'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Col, Row } from 'antd'
 import styled, { css } from 'styled-components'
-import { moneyFormatter } from '../../../utils'
+// import { moneyFormatter } from '../../../utils'
 import { RightSectionTabs } from './RightSectionTabs'
-import { useNFTDetails, usePriceFeedFarm } from '../../../context'
+import { useNFTDetails, useNFTProfile, usePriceFeedFarm } from '../../../context'
 import { MintItemViewStatus } from '../../../types/nft_details'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import { notify } from '../../../utils'
+import { generateTinyURL } from '../../../api/tinyUrl'
+import { Share } from '../Share'
 import tw from 'twin.macro'
+import 'styled-components/macro'
 
 //#region styles
 const RIGHT_SECTION = styled.div`
@@ -108,55 +113,114 @@ const RIGHT_SECTION = styled.div`
 export const RightSection: FC<{
   status: MintItemViewStatus
 }> = ({ status, ...rest }) => {
-  const { general, nftMetadata, curHighestBid, ask } = useNFTDetails()
-  const { prices } = usePriceFeedFarm()
+  const { sessionUser, likeDislike } = useNFTProfile()
+  const { general, nftMetadata, curHighestBid, ask, totalLikes } = useNFTDetails()
+  // const { prices } = usePriceFeedFarm()
+  const [isFavorited, setIsFavorited] = useState<boolean>(false)
+  const [likes, setLikes] = useState<number>(0)
+  const [shareModal, setShareModal] = useState<boolean>(false)
 
-  const price: number | null = useMemo(() => {
-    if (ask) {
-      return parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL
-    } else {
-      return curHighestBid ? parseFloat(curHighestBid.buyer_price) / LAMPORTS_PER_SOL : null
+  // const price: number | null = useMemo(() => {
+  //   if (ask) {
+  //     return parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL
+  //   } else {
+  //     return curHighestBid ? parseFloat(curHighestBid.buyer_price) / LAMPORTS_PER_SOL : null
+  //   }
+  // }, [curHighestBid, ask])
+
+  // const marketData = useMemo(() => prices['SOL/USDC'], [prices])
+
+  // const fiatCalc: string = useMemo(
+  //   () => `${marketData && bidPrice ? (marketData.current * bidPrice).toFixed(3) : ''}`,
+  //   [marketData, bidPrice]
+  // )
+
+  useEffect(() => {
+    if (general && sessionUser) {
+      setIsFavorited(sessionUser.user_likes.includes(general.uuid))
     }
-  }, [curHighestBid, ask])
+  }, [sessionUser, general])
 
-  const marketData = useMemo(() => prices['SOL/USDC'], [prices])
-
-  const fiat = `${marketData && price ? (marketData.current * price).toFixed(3) : ''} USD`
-  const isForCharity = false
+  useEffect(() => {
+    setLikes(totalLikes)
+  }, [totalLikes])
 
   if (nftMetadata === null) {
     return <div>Error loading metadata</div>
   }
 
+  const handleToggleLike = () => {
+    if (sessionUser) {
+      likeDislike(sessionUser.uuid, general.uuid).then(() => {
+        setLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
+      })
+    }
+  }
+
   const isLoading = nftMetadata === null || general === null
+
+  const onShare = async (social: string): Promise<void> => {
+    if (social === 'copy link') {
+      copyToClipboard()
+      return
+    }
+
+    const res = await generateTinyURL(
+      `https://${process.env.NODE_ENV !== 'production' ? 'app.staging.goosefx.io' : window.location.host}${
+        window.location.pathname
+      }`,
+      ['gfx', 'nest-exchange', social]
+    )
+
+    if (res.status !== 200) {
+      notify({ type: 'error', message: 'Error creating sharing url' })
+      return
+    }
+
+    const tinyURL = res.data.data.tiny_url
+
+    switch (social) {
+      case 'twitter':
+        window.open(
+          `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%
+          20Exchange&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
+        )
+        break
+      case 'telegram':
+        window.open(
+          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange`
+        )
+        break
+      case 'facebook':
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${tinyURL}`)
+        break
+      default:
+        break
+    }
+  }
+
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(window.location.href)
+  }
+
+  const handleModal = () => {
+    if (shareModal) {
+      return (
+        <Share
+          visible={shareModal}
+          handleCancel={() => setShareModal(false)}
+          socials={['twitter', 'telegram', 'facebook', 'copy link']}
+          handleShare={onShare}
+        />
+      )
+    } else {
+      return false
+    }
+  }
 
   return (
     <RIGHT_SECTION {...rest}>
-      {isLoading ? (
-        <>
-          <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
-          <br />
-        </>
-      ) : (
-        <div className="price-row">
-          <Row justify="space-between">
-            <Col className="rs-title">
-              {price ? `Current ${ask ? 'Asking Price' : 'Bid'}` : 'No Current Bids'}{' '}
-            </Col>
-          </Row>
-          {price && (
-            <Row align="middle" gutter={8} className="rs-prices">
-              <Col>
-                <img className="rs-solana-logo" src={`/img/assets/solana-logo.png`} alt="" />
-              </Col>
-              <Col className="rs-price">{`${moneyFormatter(price)} SOL`}</Col>
-              <Col>
-                <span className="rs-fiat">{`${fiat}`}</span>
-              </Col>
-            </Row>
-          )}
-        </div>
-      )}
+      {handleModal()}
 
       {isLoading ? (
         <>
@@ -164,51 +228,52 @@ export const RightSection: FC<{
           <br />
         </>
       ) : (
-        <Row justify="space-between" align="middle">
-          <Col span={24}>
-            <div className="name-icon-row">
-              <div className="rs-name">{general?.nft_name || nftMetadata?.name}</div>
-              {/* {checkMobile() && general.uuid ? (
-                <>
-                  {sessionUser && isFavorited ? (
-                    <img
-                      className="ls-favorite-heart"
-                      src={`/img/assets/heart-red.svg`}
-                      alt="heart-red"
-                      onClick={handleToggleLike}
-                      height="23px"
-                      width="25px"
-                    />
-                  ) : (
-                    <img
-                      className="ls-favorite-heart"
-                      src={`/img/assets/heart-empty.svg`}
-                      alt="heart-empty"
-                      onClick={handleToggleLike}
-                      height="23px"
-                      width="25px"
-                    />
-                  )}
-                  <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
-                    {likes}
-                  </span>
-                </>
-              ) : (
-                <></>
-              )} */}
+        <div>
+          <div tw="flex justify-between my-5">
+            <div>
+              {/* TODO: Fetch Collection Name */}
+              <div className="rs-name">{general?.nft_name}</div>
             </div>
-            <div className="rs-intro">{nftMetadata.description}</div>
-          </Col>
-          <Col span={24}>
-            {isForCharity && (
-              <Row align="middle" wrap={false}>
-                <img src={`/img/assets/heart-charity.svg`} alt="charity-icon" style={{ marginRight: '12px' }} />
-                <div className="rs-charity-text">Auction for charity</div>
-              </Row>
-            )}
-          </Col>
-        </Row>
+
+            <div className="ls-bottom-panel">
+              <div className="img-holder">
+                {sessionUser && isFavorited ? (
+                  <img
+                    className="ls-favorite-heart"
+                    src={`/img/assets/heart-red.svg`}
+                    alt="heart-red"
+                    onClick={handleToggleLike}
+                  />
+                ) : (
+                  <img
+                    className="ls-favorite-heart"
+                    src={`/img/assets/heart-empty.svg`}
+                    alt="heart-empty"
+                    onClick={handleToggleLike}
+                  />
+                )}
+
+                <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
+                  {likes}
+                </span>
+                <a href={`https://solscan.io/token/${general.mint_address}`} target="_blank" rel="noreferrer">
+                  <img src="/img/assets/solScanBlack.svg" alt="solscan-icon" className="solscan-icon" />
+                </a>
+                <img
+                  src="/img/assets/shareBlue.svg"
+                  alt="share-icon"
+                  className="share-icon"
+                  onClick={() => {
+                    setShareModal(true)
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+          <div tw="my-5 text-regular">{nftMetadata.description}</div>
+        </div>
       )}
+
       {/* {isLoading ? (
         <SkeletonCommon width="100%" height="300px" borderRadius="10px" />
       ) : !checkMobile() ? (
