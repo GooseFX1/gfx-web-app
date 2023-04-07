@@ -31,9 +31,7 @@ const PROFILE_CONTAINER = styled.div<{ background?: string }>`
   .ant-drawer-content {
     background: #1c1c1c !important;
   }
-  .ant-drawer-content-wrapper{
-    height: 93vh !important;
-  }
+
   .ant-tabs-top {
     overflow: initial;
     position: relative;
@@ -130,7 +128,7 @@ export const Profile: FC = (): JSX.Element => {
     if (params.userAddress === undefined || !isValidSolanaAddress(params.userAddress)) history.push(`/nfts`)
 
     // asserts there is no wallet connection and no session user
-    if (sessionUser === undefined || !connected || publicKey === null) {
+    if (sessionUser === null || !connected || publicKey === null) {
       setIsSessionUser(false)
       setParsedAccounts([])
     }

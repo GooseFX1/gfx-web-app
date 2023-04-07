@@ -179,7 +179,7 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
   const currentUserProfile = useMemo(() => {
     if (nonSessionProfile !== undefined && !isSessionUser) {
       return nonSessionProfile
-    } else if (sessionUser !== undefined && isSessionUser) {
+    } else if (sessionUser !== null && isSessionUser) {
       return sessionUser
     } else {
       return undefined

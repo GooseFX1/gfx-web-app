@@ -45,8 +45,8 @@ const NFTAgg: FC = (): ReactElement => {
   }, [location])
 
   useEffect(() => {
-    if (wallet?.adapter?.connected) {
-      if (!sessionUser || sessionUser.pubkey !== wallet?.adapter?.publicKey.toBase58()) {
+    if (wallet && wallet.adapter.connected) {
+      if (sessionUser === null || sessionUser.pubkey !== wallet?.adapter?.publicKey.toBase58()) {
         fetchSessionUser('address', wallet?.adapter?.publicKey.toBase58(), connection).then((res) => {
           if (res && res.status === 200) {
             const userProfileStatus = localStorage.getItem(wallet?.adapter?.publicKey.toBase58())
@@ -67,10 +67,10 @@ const NFTAgg: FC = (): ReactElement => {
         })
       }
     } else {
-      setSessionUser(undefined)
+      setSessionUser(null)
     }
     return null
-  }, [wallet])
+  }, [wallet?.adapter?.connected])
 
   return Object.keys(prices) ? (
     <BODY_NFT $navCollapsed={isCollapsed}>

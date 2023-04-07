@@ -214,7 +214,7 @@ export const Collectible = (): JSX.Element => {
         </UPLOAD_SECTION>
         <br />
 
-        {sessionUser === undefined ? (
+        {sessionUser === null ? (
           <ConnectWrapper>
             <Connect />
           </ConnectWrapper>

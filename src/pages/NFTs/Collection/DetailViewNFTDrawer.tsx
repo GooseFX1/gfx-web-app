@@ -120,7 +120,7 @@ export const DetailViewNFT: FC = (): JSX.Element => {
   const { connection } = useConnectionConfig()
 
   useEffect(() => {
-    if ((params.address && general === null) || nftMetadata === null) {
+    if (params.address && (general === null || nftMetadata === null)) {
       fetchGeneral(params.address, connection)
     }
   }, [params.address])
@@ -208,9 +208,14 @@ const ImageViewer = (): ReactElement => {
             </div>
           </div>
           <div tw="flex items-center">
-            {sessionUser && <img tw="h-7 w-8 mr-[12px]" src={`/img/assets/heart-red.svg`} />}
-            <img tw="h-10 w-10 mr-[12px]" src={`/img/assets/solscanBlack.svg`} />
-            <img tw="h-10 w-10" src={`/img/assets/shareBlue.svg`} />
+            {sessionUser !== null && (
+              <img
+                tw="h-7 w-8 mr-[12px] cursor-pointer"
+                src={`/img/assets/heart-${sessionUser.user_likes.includes(general.uuid) ? 'red' : 'empty'}.svg`}
+              />
+            )}
+            <img tw="h-10 w-10 mr-[12px] cursor-pointer" src={`/img/assets/solscanBlack.svg`} />
+            <img tw="h-10 w-10 cursor-pointer" src={`/img/assets/shareBlue.svg`} />
           </div>
         </div>
         <div>{general.nft_description}</div>
