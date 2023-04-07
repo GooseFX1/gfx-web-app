@@ -220,6 +220,12 @@ export const DROPDOWN_CONTAINER = styled.div`
   ${tw`rounded-md p-1 -mt-1 sm:w-[185px] text-[15px] font-semibold`}
   background-color: ${({ theme }) => theme.dropdownBackground};
   color: ${({ theme }) => theme.text1};
+  .checkboxContainer {
+    ${tw`ml-auto`}
+    input {
+      ${tw`w-[18px] h-[18px]`}
+    }
+  }
   .number {
     ${tw`flex items-center justify-center`}
     border: 1px solid;
@@ -230,8 +236,7 @@ export const DROPDOWN_CONTAINER = styled.div`
   .option {
     ${tw`flex cursor-pointer items-center justify-between p-1`}
     input {
-      ${tw`w-[18px] h-[18px]`}
-      color: ${({ theme }) => theme.bg26};
+      /* color: ${({ theme }) => theme.bg26}; */
     }
   }
 `

@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import styled, { css } from 'styled-components'
 import { MainButton } from '../../../components/MainButton'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { checkMobile } from '../../../utils'
+import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
+import 'styled-components/macro'
 import { CreatorsLanding } from '../launchpad/pages/CreatorsLanding'
 
 //#region styles
@@ -49,16 +50,16 @@ const CAROUSEL_WRAPPER = styled.div<{ showBanner: boolean }>`
   }
 `
 
-const SLIDER_ITEM = styled.div<{ $url: string }>`
+const SLIDER_ITEM = styled.div<{ $url: string; $bg?: boolean }>`
   @media (max-width: 500px) {
     background: ${({ $url }) => `url(${$url})`}, center;
     background-size: auto 101%;
     background-position: center;
   }
-  ${tw`sm:rounded-average relative flex items-center  h-[182px] justify-center`}
+  ${tw`sm:rounded-average relative flex items-center rounded-[10px]  h-[182px] justify-center`}
   width: 365px !important;
   background: ${({ $url }) => `url(${$url})`}, center;
-  background-size: auto 101%;
+  background-size: ${({ $bg }) => ($bg ? '' : 'auto 115%')};
   background-position: center;
   background-repeat: no-repeat;
 
@@ -191,11 +192,12 @@ export const NFTBanners = ({ showBanner }: any) => {
               </TERTIERY_BTN>
             </div>
           </SLIDER_ITEM>
-          <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/multiChainBg.png`}>
+          <SLIDER_ITEM $bg={true} $url={`${process.env.PUBLIC_URL}/img/assets/multiChainBg.png`}>
             <div className="home-slider-content">
               <h1 className="home-slider-title">
                 <div className="logoCenter">
                   <img
+                    tw="rounded-[10px]"
                     style={{ width: 52, height: 48 }}
                     src={`${process.env.PUBLIC_URL}/img/assets/multiChainLogo.png`}
                     alt=""

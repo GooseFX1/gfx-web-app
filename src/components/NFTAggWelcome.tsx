@@ -15,16 +15,14 @@ const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text7};
 
   .slick-prev {
-    ${tw`w-auto top-[105%] left-[10px] text-[15px] font-semibold leading-normal`}
-    color: ${({ theme }) => theme.text1};
+    ${tw`w-auto top-[105%] left-[10px] dark:text-white text-[#3c3c3c] text-[15px] font-semibold leading-normal`}
     &:before {
       display: none;
     }
   }
 
   .slick-next {
-    ${tw`w-auto top-[105%] right-[10px] text-[15px] font-semibold leading-normal`}
-    color: ${({ theme }) => theme.text1};
+    ${tw`w-auto top-[105%] right-[10px] text-[15px] dark:text-white text-[#3c3c3c] font-semibold leading-normal`}
     &:before {
       display: none;
     }
