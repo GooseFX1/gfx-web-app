@@ -221,6 +221,9 @@ const TRADE_HISTORY = styled.div`
     .Short {
       ${tw`text-[#f06565] text-tiny pl-3`}
     }
+    .Liquidation {
+      ${tw`text-[#f06565] text-tiny pl-3`}
+    }
   }
 `
 
@@ -319,10 +322,15 @@ const TradeHistoryComponent: FC = () => {
 
   const perpsHistory = useMemo(() => {
     return traderInfo.tradeHistory.map((item) => {
+      const pr = Number(item.price)
+      let liquidation = false
+      if (pr < 0) {
+        liquidation = true
+      }
       return {
-        price: Number(item.price),
+        price: Math.abs(pr),
         size: Number(item.quantity),
-        side: item.side === 'buy' ? 'Long' : 'Short'
+        side: liquidation ? 'Liquidation' : item.side === 'buy' ? 'Long' : 'Short'
       }
     })
   }, [traderInfo.tradeHistory])

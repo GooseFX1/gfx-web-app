@@ -127,7 +127,7 @@ export const DepositWithdraw: FC<{
   const { traderInfo } = useTraderConfig()
   const { mode } = useDarkMode()
   //const [amount, setAmount] = useState('')
-  const [amount, setAmount] = useState('500')
+  const [amount, setAmount] = useState('')
   const perpTokenList = PERPS_COLLATERAL
   const percentageArr = [25, 50, 75, 100]
   const defualtPerpToken = perpTokenList[0]
@@ -247,8 +247,8 @@ export const DepositWithdraw: FC<{
             placeholder="0.00"
             type="text"
             value={amount}
-            //onChange={handleInputChange}
-            onChange={null}
+            onChange={handleInputChange}
+            //onChange={null}
           />
           <span className="token">{perpToken.token}</span>
         </INPUT>
