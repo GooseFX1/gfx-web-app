@@ -73,11 +73,11 @@ interface INotifyParams {
 const NOTIFICATION_TIMER = 5 * 1000
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const perpsNotify = async ({ action, message, styles, key }) => {
+export const perpsNotify = async ({ action, message, description, styles, key }) => {
   const openNotification = () => {
     notification.open({
       closeIcon: <CLOSE />,
-      description: message,
+      description: description,
       icon: <div style={{ display: 'none' }} />,
       key,
       duration: 10,

@@ -612,19 +612,19 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           new PublicKey(DEX_ID)
         )[0]
       }
-      if (traderRiskGroup) {
-        if (traderRiskGroup.totalDeposited.m.toString()) {
-          const amt = Number(traderRiskGroup.totalDeposited.m.toString())
-          if (amt > 0) {
-            notify({
-              message: 'Failed to deposit',
-              description: 'You have already deposited 500$! Cannot deposit more.',
-              type: 'error'
-            })
-            return null
-          }
-        }
-      }
+      //  if (traderRiskGroup) {
+      //    if (traderRiskGroup.totalDeposited.m.toString()) {
+      //      const amt = Number(traderRiskGroup.totalDeposited.m.toString())
+      //      if (amt < 0) {
+      //        notify({
+      //          message: 'Failed to deposit',
+      //          description: 'You have already deposited 500$! Cannot deposit more.',
+      //          type: 'error'
+      //        })
+      //        return null
+      //      }
+      //    }
+      //  }
       const response = traderRiskGroup
         ? await depositFundsIx(depositFundsAccounts, { quantity: amount }, wallet, connection)
         : await initTrgDepositIx(depositFundsAccounts, { quantity: amount }, wallet, connection, newTrg)
