@@ -12,7 +12,7 @@ const TOGGLE_WRAPPER = styled.div<{ position: number }>`
   }
   .tokenImg {
     ${tw`h-[27px] w-[27px] rounded-[50%] duration-500`}
-    margin-left: ${({ position }) => (position ? '24px' : 0)};
+    margin-left: ${({ position }) => (position ? '24px' : '-1px')};
   }
 `
 const WRAPPER = styled(SpaceBetweenDiv)`

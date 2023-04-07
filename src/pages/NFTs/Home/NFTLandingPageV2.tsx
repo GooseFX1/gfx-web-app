@@ -34,6 +34,9 @@ import { MODAL_TYPES } from '../../../constants'
 import { SVGToPrimary2 } from '../../../styles'
 import { USER_CONFIG_CACHE } from '../../../types/app_params'
 import { NFTBaseCollection } from '../../../types/nft_collections'
+import ShowEyeLite from '../../../animations/showEyelite.json'
+import ShowEyeDark from '../../../animations/showEyedark.json'
+import Lottie from 'lottie-react'
 
 const CURRENCY_SWITCH = styled.div<{ $currency }>`
   .ant-switch {
@@ -85,9 +88,13 @@ const BannerContainer = styled.div<{ showBanner: boolean }>`
 
 const EYE_CONTAINER = styled.div`
   ${tw`dark:text-white text-blue-1 text-[15px] ml-2 flex w-[90px] right-[2%] 
-    absolute font-semibold  duration-500 cursor-pointer mt-1`}
-  img {
-    ${tw` mr-2 h-[25px] w-[25px] duration-500  `}
+    absolute font-semibold flex items-center duration-500 cursor-pointer mt-1`}
+  .showHideClass {
+    ${tw`mt-1 mr-2 h-[25px] w-[25px] duration-500  `}
+  }
+  .showAnimation {
+    ${tw`ml-[-35px] h-[80px] w-[80px] duration-500 mr-[-18px] `}
+    transform: scale(1.6);
   }
 `
 const FILTERS_CONTAINER = styled.div`
@@ -322,13 +329,24 @@ const FiltersContainer = () => {
 
 const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
   const { mode } = useDarkMode()
-  const eyeImg = `/img/assets/${showBanner ? `hide` : `show`}Eye.svg`
+  const eyeImg = `/img/assets/hideEye.svg`
   return (
     <EYE_CONTAINER onClick={() => setShowBanner((prev) => !prev)}>
-      <div>
-        {mode === 'dark' ? <img src={eyeImg} alt="eye-image" /> : <SVGToPrimary2 src={eyeImg} alt="eye-image" />}
-        {showBanner ? 'Hide' : 'Show'}
-      </div>
+      {!showBanner ? (
+        <Lottie
+          className="showAnimation"
+          tw="scale-150"
+          animationData={mode === 'dark' ? ShowEyeDark : ShowEyeLite}
+        />
+      ) : mode === 'dark' ? (
+        <img className="showHideClass" src={eyeImg} alt="eye-image" />
+      ) : (
+        <SVGToPrimary2 className="showHideClass" src={eyeImg} alt="eye-image" />
+      )}
+
+      {/* {mode === 'dark' ? <img className='showHideClass' src={eyeImg} alt="eye-image" /> :
+          <SVGToPrimary2 src={eyeImg} alt="eye-image" />} */}
+      {showBanner ? 'Hide' : 'Show'}
     </EYE_CONTAINER>
   )
 }
@@ -376,9 +394,9 @@ const SearchResultContainer = ({ searchFilter }: any) => {
 
 const StatsContainer = ({ showBanner, setShowBanner }: any) => (
   <NFT_STATS_CONTAINER>
-    <StatsButton title={'Total volume traded:'} data={'2332'} />
-    <StatsButton title={'Total traded:'} data={'2332'} />
-    <StatsButton title={'Total Volume:'} data={'2010'} />
+    <StatsButton title={'Total volume traded:'} data={'22M'} />
+    <StatsButton title={'Total traded:'} data={'22M'} />
+    <StatsButton title={'Total Volume:'} data={'5M'} />
     <ShowBannerEye showBanner={showBanner} setShowBanner={setShowBanner} />
   </NFT_STATS_CONTAINER>
 )
@@ -455,8 +473,8 @@ const MarketDropdownContents = ({ setArrow }: any): ReactElement => {
               />
             </div>
             <div tw="ml-2">{AH_PROGRAM_IDS[addr]}</div>
-            <div tw="ml-auto">
-              <Checkbox />
+            <div className="checkboxContainer">
+              <input type="checkbox" onClick={() => console.log('s')} />
             </div>
           </div>
         ))}

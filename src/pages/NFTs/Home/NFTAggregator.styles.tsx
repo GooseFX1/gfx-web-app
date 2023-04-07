@@ -2,23 +2,23 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 
 export const NFT_STATS_CONTAINER = styled.div`
-  ${tw`h-[36px] mt-4 ml-6 flex`}
+  ${tw`h-[36px] mt-4 ml-6 flex items-center justify-start`}
 `
 
 export const STATS_BTN = styled.div`
-  ${tw`flex items-center rounded-full h-[36px] p-[1px] ml-1 mr-[45px]`}
+  ${tw`flex items-center justify-center pl-[2px] pr-[1.5px] rounded-full h-[36px] pt-[1px] pb-[1px]
+   ml-1 mr-[45px]`}
   background: linear-gradient(94deg, #f7931a 1%, #ac1cc7 100%);
 
   .innerCover {
     background: ${({ theme }) => theme.bg2};
-    ${tw`rounded-full p-[4.5px] text-[15px] flex `}
+    ${tw`rounded-full p-[4.5px] text-[15px]  flex dark:`}
     .innerTitle {
-      ${tw`ml-1`}
+      ${tw`ml-1.5`}
       color: ${({ theme }) => theme.text20} !important;
     }
     .innerData {
-      ${tw`font-semibold ml-2 mr-1`}
-      color: ${({ theme }) => theme.text1};
+      ${tw`font-semibold ml-2 mr-1 dark:text-[#fff] text-[#3c3c3c]`}
     }
   }
 `
