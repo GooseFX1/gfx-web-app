@@ -50,12 +50,15 @@ const CollectionV2 = (): ReactElement => {
   const [collapse, setCollapse] = useState(true)
   const { sessionUser } = useNFTProfile()
 
-  useEffect(() => {
-    setSingleCollection(undefined)
-    setFixedPriceWithinCollection(undefined)
-    setOpenBidWithinCollection(undefined)
-    setCollectionOwners(undefined)
-  }, [])
+  useEffect(
+    () => () => {
+      setSingleCollection(undefined)
+      setFixedPriceWithinCollection(undefined)
+      setOpenBidWithinCollection(undefined)
+      setCollectionOwners(undefined)
+    },
+    []
+  )
 
   useEffect(() => {
     const curColNameParam = decodeURIComponent(params.collectionName.replaceAll('_', '%20'))
@@ -98,9 +101,9 @@ const NFTStatsContainer = () => {
   return (
     <div className="nftStatsContainer">
       {!checkMobile() && (
-        <div className="backBtn" onClick={() => history.push('/nfts')}>
+        <button className="backBtn" onClick={(e) => history.push('/nfts')} tw="border-0">
           <img src="/img/assets/arrow-leftdark.svg" />
-        </div>
+        </button>
       )}
       <SweepCollectionDrawer sweepCollection={sweepCollection} setSweepCollection={setSweepCollection} />
 

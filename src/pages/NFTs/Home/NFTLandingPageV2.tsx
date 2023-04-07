@@ -67,9 +67,7 @@ const WRAPPER = styled.div<{ $navCollapsed; $currency }>`
     transition: 0.5s ease;
     ${tw`sm:w-0`}
   }
-  .comingSoon {
-    ${tw`text-grey-1`}
-  }
+
   .flexContainer {
     ${tw`h-[40px] flex ml-[10px] mb-4`}
   }

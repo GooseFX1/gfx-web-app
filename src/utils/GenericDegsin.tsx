@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Tooltip } from '../components'
+import { useDarkMode } from '../context'
 
 export const HeaderTooltip = (text: string): ReactElement =>
   <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
@@ -10,11 +11,12 @@ export const HeaderTooltip = (text: string): ReactElement =>
       <span>{text}</span>
     </Tooltip>
   )
-const WRAPPER = styled.div<{ $width }>`
+const WRAPPER = styled.div<{ $width; $mode }>`
   ${tw`flex items-center justify-center relative`}
   .innerCover {
-    ${tw`relative dark:bg-black-2 bg-grey-5 p-1 sm:p-2 
+    ${tw`relative p-1 sm:p-2 
       rounded-xl sm:w-[98.5%] w-[98.8%] h-[64px] flex items-center justify-center`}
+    background-color: ${({ $mode }) => ($mode === 'dark' ? '#1C1C1C' : '#EEEEEE')};
 
     img {
       ${tw`w-[34px] h-[34px] m-2`}
@@ -79,18 +81,21 @@ interface IAppraisalValue {
   width?: number
 }
 
-export const AppraisalValue: FC<IAppraisalValue> = ({ text, label, width }): ReactElement => (
-  <WRAPPER $width={width}>
-    <div className="outerCover">
-      <div className="innerCover">
-        <div tw="absolute left-0">
-          <img src={'/img/assets/Aggregator/Tooltip.svg'} alt="gfx-appraisal-icon" style={{ height: 30 }} />
-        </div>
-        <div className="hContainer">
-          <div tw="text-average font-semibold dark:text-grey-2 text-grey-1">{label}</div>
-          <div tw="text-average font-semibold dark:text-grey-5 text-black-4">{text}</div>
+export const AppraisalValue: FC<IAppraisalValue> = ({ text, label, width }): ReactElement => {
+  const { mode } = useDarkMode()
+  return (
+    <WRAPPER $width={width} $mode={mode}>
+      <div className="outerCover">
+        <div className="innerCover">
+          <div tw="absolute left-0">
+            <img src={'/img/assets/Aggregator/Tooltip.svg'} alt="gfx-appraisal-icon" style={{ height: 30 }} />
+          </div>
+          <div className="hContainer">
+            <div tw="text-average font-semibold dark:text-grey-2 text-grey-1">{label}</div>
+            <div tw="text-average font-semibold dark:text-grey-5 text-black-4">{text}</div>
+          </div>
         </div>
       </div>
-    </div>
-  </WRAPPER>
-)
+    </WRAPPER>
+  )
+}

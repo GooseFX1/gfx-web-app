@@ -37,7 +37,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
   const currentUserProfile = useMemo(() => {
     if (nonSessionProfile !== undefined && !isSessionUser) {
       return nonSessionProfile
-    } else if (sessionUser !== undefined && isSessionUser) {
+    } else if (sessionUser !== null && isSessionUser) {
       return sessionUser
     } else {
       return undefined
