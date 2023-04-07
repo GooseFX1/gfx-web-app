@@ -20,7 +20,7 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
         <th>{TableHeaderTitle('24h Change', '', true)}</th>
         <th>{TableHeaderTitle('Marketcap', '', true)}</th>
         <th>{TableHeaderTitle('24h Volume', '', true)}</th>
-        <th className="borderRow2">
+        <th className="borderRow2" tw="mt-2">
           <TokenToggleNFT toggleToken={setCurrency} />
         </th>
       </>
