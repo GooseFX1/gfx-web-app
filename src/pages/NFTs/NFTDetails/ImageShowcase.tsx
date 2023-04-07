@@ -1,12 +1,8 @@
-import { FC, useState, useEffect } from 'react'
+import { FC } from 'react'
 import styled, { css } from 'styled-components'
-import { useNFTDetails, useNFTProfile } from '../../../context'
+import { useNFTDetails } from '../../../context'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
-import { Share } from '../Share'
-import { ReactComponent as FixedPriceIcon } from '../../../assets/fixed-price.svg'
-import { ReactComponent as OpenBidIcon } from '../../../assets/open-bid.svg'
-import { generateTinyURL } from '../../../api/tinyUrl'
-import { checkMobile, notify } from '../../../utils'
+import { checkMobile } from '../../../utils'
 
 //#region styles
 const LEFT_SECTION = styled.div`
@@ -16,13 +12,13 @@ const LEFT_SECTION = styled.div`
     justify-content: space-between;
     color: ${theme.text1};
     position: relative;
+    margin-top: 30px;
 
     .close-icon-holder {
       height: 30px;
       width: 30px;
       border-radius: 50%;
       background: #131313;
-      position: absolute;
       position: absolute;
       display: flex;
       align-items: center;
@@ -98,96 +94,13 @@ const LEFT_SECTION = styled.div`
     }
   `}
 `
-
 //#endregion
 
 export const ImageShowcase: FC<{ setShowSingleNFT?: any }> = ({ setShowSingleNFT, ...rest }) => {
-  const { general, nftMetadata, totalLikes, ask } = useNFTDetails()
-  const [isFavorited, setIsFavorited] = useState(false)
-  const { sessionUser, likeDislike } = useNFTProfile()
-  const [shareModal, setShareModal] = useState(false)
-  const [likes, setLikes] = useState(0)
-
-  useEffect(() => {
-    if (general && sessionUser) {
-      setIsFavorited(sessionUser.user_likes.includes(general.uuid))
-    }
-  }, [sessionUser, general])
-
-  useEffect(() => {
-    setLikes(totalLikes)
-  }, [totalLikes])
-
-  const handleToggleLike = () => {
-    if (sessionUser) {
-      likeDislike(sessionUser.uuid, general.uuid).then(() => {
-        setLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
-      })
-    }
-  }
-
-  const onShare = async (social: string): Promise<void> => {
-    if (social === 'copy link') {
-      copyToClipboard()
-      return
-    }
-
-    const res = await generateTinyURL(
-      `https://${process.env.NODE_ENV !== 'production' ? 'app.staging.goosefx.io' : window.location.host}${
-        window.location.pathname
-      }`,
-      ['gfx', 'nest-exchange', social]
-    )
-
-    if (res.status !== 200) {
-      notify({ type: 'error', message: 'Error creating sharing url' })
-      return
-    }
-
-    const tinyURL = res.data.data.tiny_url
-
-    switch (social) {
-      case 'twitter':
-        window.open(
-          `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%
-          20Exchange&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
-        )
-        break
-      case 'telegram':
-        window.open(
-          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange`
-        )
-        break
-      case 'facebook':
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${tinyURL}`)
-        break
-      default:
-        break
-    }
-  }
-
-  const copyToClipboard = async () => {
-    await navigator.clipboard.writeText(window.location.href)
-  }
-
-  const handleModal = () => {
-    if (shareModal) {
-      return (
-        <Share
-          visible={shareModal}
-          handleCancel={() => setShareModal(false)}
-          socials={['twitter', 'telegram', 'facebook', 'copy link']}
-          handleShare={onShare}
-        />
-      )
-    } else {
-      return false
-    }
-  }
+  const { general, nftMetadata } = useNFTDetails()
 
   return general && nftMetadata ? (
     <LEFT_SECTION {...rest}>
-      {handleModal()}
       <div
         className="close-icon-holder"
         onClick={() => {
@@ -196,43 +109,8 @@ export const ImageShowcase: FC<{ setShowSingleNFT?: any }> = ({ setShowSingleNFT
       >
         <img src="/img/assets/close-white-icon.svg" alt="" height="12px" width="12px" />
       </div>
+
       <img className="ls-image" height={'100%'} src={general?.image_url || nftMetadata?.image} alt="the-nft" />
-      <div className="ls-bottom-panel">
-        {ask ? <FixedPriceIcon className="ls-action-button" /> : <OpenBidIcon className="ls-action-button" />}
-        {general.uuid && (
-          <div className="img-holder">
-            {sessionUser && isFavorited ? (
-              <img
-                className="ls-favorite-heart"
-                src={`/img/assets/heart-red.svg`}
-                alt="heart-red"
-                onClick={handleToggleLike}
-              />
-            ) : (
-              <img
-                className="ls-favorite-heart"
-                src={`/img/assets/heart-empty.svg`}
-                alt="heart-empty"
-                onClick={handleToggleLike}
-              />
-            )}
-            <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
-              {likes}
-            </span>
-            <a href={`https://solscan.io/token/${general.mint_address}`} target="_blank" rel="noreferrer">
-              <img src="/img/assets/solScanBlack.svg" alt="solscan-icon" className="solscan-icon" />
-            </a>
-            <img
-              src="/img/assets/shareBlue.svg"
-              alt="share-icon"
-              className="share-icon"
-              onClick={() => {
-                setShareModal(true)
-              }}
-            />
-          </div>
-        )}
-      </div>
     </LEFT_SECTION>
   ) : (
     <SkeletonCommon width="100%" height={checkMobile() ? '360px' : '500px'} borderRadius="10px" />

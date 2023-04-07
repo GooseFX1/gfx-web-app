@@ -146,7 +146,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
             {localAsk !== null && (
               <img
                 className="ah-name"
-                src={`/img/assets/Aggregator/${AH_PROGRAM_IDS[localAsk.auction_house_key]}.svg`}
+                src={`/img/assets/Aggregator/${AH_PROGRAM_IDS[localAsk?.auction_house_key]}.svg`}
               />
             )}
           </div>

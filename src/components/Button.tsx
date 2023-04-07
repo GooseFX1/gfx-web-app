@@ -34,7 +34,14 @@ export const Button: FC<{
   [x: string]: any
 }> = ({ height, width, cssStyle, disabled, children, loading, ...props }) => (
   <>
-    <BUTTON $cssStyle={cssStyle} $height={height} $width={width} $disabled={disabled} {...props}>
+    <BUTTON
+      $cssStyle={cssStyle}
+      $height={height}
+      $width={width}
+      $disabled={disabled}
+      disabled={disabled}
+      {...props}
+    >
       {loading ? <LOADER /> : children}
     </BUTTON>
   </>
