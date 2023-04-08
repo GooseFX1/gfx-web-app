@@ -232,11 +232,11 @@ export const ExpandedContentMobile: FC<{
             <ROW>
               <Tooltip_holder>
                 <span className="details">Total Earned</span>
-                {HeaderTooltip(
-                  `The total profit and loss from SSL and is measured by comparing the total 
-                    value of a pool’s assets (
-                  excluding trading fees) to their value if they had not been traded and instead were just held`
-                )}
+                <HeaderTooltip
+                  text={`The total profit and loss from SSL and is measured by 
+                  comparing the total value of a pool’s assets (
+                  excluding trading fees) to their value if they had not been traded and instead were just held`}
+                />
               </Tooltip_holder>
               <span className="details">
                 {' '}
@@ -246,7 +246,7 @@ export const ExpandedContentMobile: FC<{
             <ROW>
               <Tooltip_holder>
                 <span className="details">Liquidity</span>
-                {HeaderTooltip("Total value of funds in this farm's liquidity pool.")}
+                <HeaderTooltip text="Total value of funds in this farm's liquidity pool." />
               </Tooltip_holder>
               <span className="details">
                 {farm?.liquidity >= 0 ? `$ ${moneyFormatter(farm?.liquidity)}` : <Loader />}

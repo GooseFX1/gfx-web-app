@@ -4,6 +4,7 @@ export const ANALYTICS_SUBDOMAIN = 'api-services'
 
 export enum ANALYTICS_ENDPOINTS {
   GOFX_TOKEN = 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD',
+  GFX_WALLET = 'GFXSwpZBSU9LF1gHRpRv2u967ACKKncFnfy3VKyQqwhp',
   META_DATA = '/meta?token=',
   GET_LIQUIDITY = '/getLiquidityData',
   LOG_DATA = '/logData',

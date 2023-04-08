@@ -68,7 +68,7 @@ const FinancialSection: FC = () => {
   const [expand, setExpand] = useState<boolean>(false)
   return (
     <div className="title" style={{ height: expand ? 'fit-content' : '80px' }}>
-      <GradientText text={'Financials'} fontSize={40} fontWeight={600} />
+      <GradientText text={'Financial'} fontSize={40} fontWeight={600} />
       <span>
         <img
           onClick={() => arrowDownClicked()}
