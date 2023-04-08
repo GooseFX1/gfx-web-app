@@ -56,3 +56,23 @@ export const getWorkingRPCEndpoints = async (): Promise<any> => {
     return err
   }
 }
+
+export const getTokenDetails = async (): Promise<any> => {
+  try {
+    const { data } = await axios.get(
+      `https://pro-api.solscan.io/v1.0/wallet/info/${ANALYTICS_ENDPOINTS.GFX_WALLET}`
+    )
+    return data
+  } catch (err) {
+    return err
+  }
+}
+
+export const getSOLPrice = async (): Promise<any> => {
+  try {
+    const { data } = await axios.get(`https://api.solscan.io/market?symbol=SOL&cluster=`)
+    return data.data.priceUsdt
+  } catch (err) {
+    return err
+  }
+}

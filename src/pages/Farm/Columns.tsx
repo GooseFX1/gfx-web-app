@@ -93,17 +93,21 @@ export const Loader: FC = () => (
   <Skeleton.Button active size="small" style={{ display: 'flex', height: '15px', borderRadius: '5px' }} />
 )
 
-export const HeaderTooltip = (text: string): JSX.Element =>
-  <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
-    <Tooltip dark placement="bottomLeft" color="#000000">
-      <span>{text}</span>
-    </Tooltip>
+export const HeaderTooltip: FC<{ text: string }> = ({ text }): JSX.Element => {
+  const { mode } = useDarkMode()
+  return (
+    <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
+      <Tooltip dark placement="bottomLeft" color={mode === 'dark' ? '#eeeeee' : '#000'}>
+        <span>{text}</span>
+      </Tooltip>
+    )
   )
+}
 
 const Title = (text: string, infoText: string, isArrowDown: boolean, invert?: boolean) => (
   <STYLED_TITLE>
     <div className="textTitle">{text}</div>
-    {infoText && HeaderTooltip(infoText)}
+    {infoText && <HeaderTooltip text={infoText} />}
     {isArrowDown && (
       <img className={'arrowDown' + (invert ? ' invert' : '')} src={`/img/assets/arrow-down.svg`} alt="" />
     )}
