@@ -124,7 +124,7 @@ export const STYLED_POPUP = styled(PopupCustom)`
     color: ${({ theme }) => theme.text20}
   }
   .enterBid {
-    ${tw`h-12 mt-4  w-[220px] bg-none sm:h-[48px]
+    ${tw`h-12 mt-2  w-[220px] bg-none sm:h-[48px]
     sm:mt-0 border-none text-center rounded-[25px] text-[40px]  font-semibold`}
     background: ${({ theme }) => theme.bg26};
     color: ${({ theme }) => theme.text30};
@@ -135,7 +135,7 @@ export const STYLED_POPUP = styled(PopupCustom)`
   }
 
   .priceText {
-    ${tw`text-[25px] font-semibold mt-[15px]`}
+    ${tw`text-[25px] font-semibold mt-2`}
     color: ${({ theme }) => theme.text12};
   }
   .sellButton {

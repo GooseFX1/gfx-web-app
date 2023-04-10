@@ -115,10 +115,10 @@ export const Profile: FC = (): JSX.Element => {
     setNonSessionProfile,
     setNonSessionUserParsedAccounts
   } = useNFTProfile()
-  const { connected, wallet } = useWallet()
+  const { wallet } = useWallet()
   const [isSessionUser, setIsSessionUser] = useState<boolean | null>(null)
 
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
+  const publicKey = useMemo(() => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null), [wallet])
 
   useEffect(() => {
     console.log(wallet?.adapter)
@@ -128,12 +128,12 @@ export const Profile: FC = (): JSX.Element => {
     if (params.userAddress === undefined || !isValidSolanaAddress(params.userAddress)) history.push(`/nfts`)
 
     // asserts there is no wallet connection and no session user
-    if (sessionUser === null || !connected || publicKey === null) {
+    if (sessionUser === null || !wallet?.adapter?.connected || publicKey === null) {
       setIsSessionUser(false)
       setParsedAccounts([])
     }
 
-    if (publicKey !== null || publicKey !== undefined) {
+    if (publicKey !== null || publicKey !== null) {
       setIsSessionUser(params.userAddress === publicKey?.toBase58())
     }
 
@@ -142,7 +142,7 @@ export const Profile: FC = (): JSX.Element => {
       setNonSessionUserParsedAccounts([])
       setUserActivity([])
     }
-  }, [sessionUser, publicKey, connected, params.userAddress])
+  }, [sessionUser, publicKey, wallet?.adapter?.connected, params.userAddress])
 
   useEffect(() => {
     const backgroundArray = [
