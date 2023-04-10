@@ -1,31 +1,39 @@
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { Drawer } from 'antd'
+import { useNFTDetails } from '../../../context'
 import { ImageShowcase } from '../NFTDetails/ImageShowcase'
 import { RightSection } from '../NFTDetails/RightSection'
 import { Button } from '../../../components'
 import { checkMobile } from '../../../utils'
-import { useNFTDetails } from '../../../context'
+import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 
 export const ProfileItemDetails: FC<{
-  setShowSingleNFT: any
-}> = ({ setShowSingleNFT }): JSX.Element => {
+  visible: boolean
+  setDrawerSingleNFT: any
+  setSellModal: any
+}> = ({ visible, setDrawerSingleNFT, setSellModal }): JSX.Element => {
   const { ask } = useNFTDetails()
   const elem = document.getElementById('nft-profile-container') //TODO-PROFILE: Stop background scroll
+  const currentAsk: number | null = useMemo(
+    () => (ask ? parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER : null),
+    [ask]
+  )
+
   return (
     <Drawer
       title={null}
       placement={checkMobile() ? 'bottom' : 'right'}
       closable={false}
-      onClose={() => setShowSingleNFT(false)}
+      onClose={() => setDrawerSingleNFT(false)}
       getContainer={elem}
-      visible={true}
+      visible={visible}
       width={checkMobile() ? '100%' : '460px'}
       bodyStyle={{ padding: '0' }}
     >
       <div tw="px-[30px]">
-        <ImageShowcase setShowSingleNFT={setShowSingleNFT} />
+        <ImageShowcase setShowSingleNFT={setDrawerSingleNFT} />
         <RightSection status={''} />
       </div>
       <div
@@ -35,8 +43,11 @@ export const ProfileItemDetails: FC<{
       >
         {ask && (
           <div>
-            <div>On Sale for:</div>
-            <div>{ask}</div>
+            <label tw="dark:text-grey-1 text-black-3 font-semibold text-average">On Sale for:</label>
+            <div tw="flex items-center text-lg dark:text-grey-5 text-black-2 font-semibold">
+              <span>{currentAsk}</span>
+              <img src={`/img/crypto/SOL.svg`} alt={'SOL'} tw="h-[20px] ml-2" />
+            </div>
           </div>
         )}
         <Button
@@ -44,7 +55,8 @@ export const ProfileItemDetails: FC<{
           width={ask ? '185px' : '100%'}
           cssStyle={tw`bg-red-1`}
           onClick={() => {
-            setShowSingleNFT(false)
+            setDrawerSingleNFT(false)
+            setSellModal(true)
           }}
         >
           <span tw="text-regular font-semibold text-white">{ask ? 'Modify Price' : 'List Item'}</span>
