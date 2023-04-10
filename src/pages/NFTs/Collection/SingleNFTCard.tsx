@@ -49,7 +49,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item.uuid) : false), [item])
   const { currencyView } = useNFTAggregator()
 
-  const setNFTDetailsBeforeLocate = async (): Promise<boolean> => {
+  const setNFTDetails = async (): Promise<boolean> => {
     try {
       const res = await axios.get(localSingleNFT.metadata_url)
       await setBids(localBids)
@@ -81,7 +81,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
     history.push(`${history.location.pathname}?address=${item.mint_address}`)
     setIsLoadingBeforeRelocate(true)
     setHover(false)
-    await setNFTDetailsBeforeLocate()
+    await setNFTDetails()
   }
 
   useEffect(() => {
@@ -125,7 +125,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
           {hover && (
             <HoverOnNFT
               item={item}
-              setNFTDetailsBeforeLocate={setNFTDetailsBeforeLocate}
+              setNFTDetails={setNFTDetails}
               addNftToBag={addNftToBag}
               hasAsk={localAsk !== null}
             />
@@ -171,14 +171,14 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
           {sessionUser &&
             (isFavorite ? (
               <img
-                className="ls-favorite-heart"
+                tw="absolute right-[10px] bottom-[10px] w-[20px] h-[20px]"
                 src={`/img/assets/heart-red.svg`}
                 alt="heart-red"
                 onClick={() => console.log('unlike')}
               />
             ) : (
               <img
-                className="ls-favorite-heart"
+                tw="absolute right-[10px] bottom-[10px] w-[20px] h-[20px]"
                 src={`/img/assets/heart-empty.svg`}
                 alt="heart-empty"
                 onClick={() => console.log('like')}
@@ -195,20 +195,21 @@ export const HoverOnNFT: FC<{
   item: BaseNFT
   hasAsk?: boolean
   buttonType?: string
-  setNFTDetailsBeforeLocate: any
-}> = ({ addNftToBag, item, hasAsk, setNFTDetailsBeforeLocate, buttonType }): ReactElement => {
+  setNFTDetails: any
+}> = ({ addNftToBag, item, hasAsk, setNFTDetails, buttonType }): ReactElement => {
   const { setBidNow, setBuyNow, setSellNFT } = useNFTAggregator()
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
 
   const goToDetailsForModal = async (e, type) => {
     e.stopPropagation()
     setIsLoadingBeforeRelocate(true)
-    await setNFTDetailsBeforeLocate()
+    await setNFTDetails()
     setIsLoadingBeforeRelocate(false)
     if (type === 'bid') setBidNow(item)
     else if (type === 'sell') setSellNFT(item)
     else setBuyNow(item)
   }
+
   return (
     <div className="hoverNFT">
       {isLoadingBeforeRelocate && <LoadingDiv />}
