@@ -90,7 +90,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const [search, setSearch] = useState<string>('')
   const [loading, _setLoading] = useState<boolean>(false)
   const [isSol, setIsSol] = useState<boolean>(true)
-  const nftFilterArr = ['All', 'Offers', 'On Sell']
+  const nftFilterArr = ['All', 'Offers', 'On Sale']
   const [nftFilter, setNftFilter] = useState<number>(0)
 
   const activePointRef = useRef(collectedItems)
@@ -142,19 +142,25 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     return () => setFilteredCollectedItems(undefined)
   }, [search, collectedItems])
   const fetchNFTData = async (parsedAccounts: ParsedAccount[]) => {
-    const nfts = []
+    const nfts: ISingleNFT[] = []
     for (let i = 0; i < parsedAccounts.length; i++) {
       try {
         const val = await axios.get(parsedAccounts[i].data.uri)
+
         nfts.push({
+          uuid: null,
           non_fungible_id: null,
           nft_name: val.data.name,
           nft_description: val.data.description,
           mint_address: parsedAccounts[i].mint,
           metadata_url: parsedAccounts[i].data.uri,
           image_url: val.data.image,
-          animation_url: '',
+          animation_url: val.data.properties?.files > 0 ? val.data.properties?.files[0].uri : '',
           collection_id: null,
+          collection_name: val.data.collection ? val.data.collection.name : null,
+          collection_address: null,
+          gfx_appraisal_value: null,
+          is_verified: false,
           token_account: null,
           owner: nonSessionProfile === undefined ? sessionUser.pubkey : nonSessionProfile.pubkey
         })
