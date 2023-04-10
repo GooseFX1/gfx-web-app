@@ -161,7 +161,7 @@ const Activity: FC<IProps> = (props) => {
   const { sessionUser, nonSessionProfile } = useNFTProfile()
   const { connection } = useConnectionConfig()
   const [isSol, setIsSol] = useState<boolean>(true)
-  const nftFilterArr = ['All', 'Offers', 'On Sell']
+  const nftFilterArr = ['All', 'Offers', 'On Sale']
   const [nftFilter, setNftFilter] = useState<number>(0)
 
   const toggleSol = () => {

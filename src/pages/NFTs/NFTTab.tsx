@@ -116,7 +116,7 @@ const OverlayOptions = () => (
       Offer <input type={'radio'} name="sort" value="desc" />
     </div>
     <div className="option">
-      On Sell <input type={'radio'} name="sort" value="desc" />
+      On Sale <input type={'radio'} name="sort" value="desc" />
     </div>
     {checkMobile() && <div className="option">Share</div>}
   </DROPDOWN_CONTAINER>
