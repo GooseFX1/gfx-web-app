@@ -39,7 +39,7 @@ export const FixedPriceNFTs = (): ReactElement => {
   )
 
   useEffect(() => {
-    const UUID = singleCollection ? singleCollection?.collection[0].uuid : undefined
+    const UUID = singleCollection ? singleCollection[0].uuid : undefined
     if (UUID) {
       fetchFixedPriceNFTs(UUID)
     }
