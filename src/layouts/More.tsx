@@ -12,7 +12,7 @@ import { useConnectionConfig } from '../context'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { Button } from '../components'
 
-const ICON = styled(CenteredImg)<{ $mode: boolean }>`
+export const ICON = styled(CenteredImg)<{ $mode: boolean }>`
   ${tw`h-[36px] w-[36px] cursor-pointer`}
 
   img {
