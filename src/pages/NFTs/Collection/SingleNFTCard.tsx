@@ -85,7 +85,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   }
 
   useEffect(() => {
-    if (item) {
+    if (item.mint_address) {
       fetchSingleNFT(item.mint_address).then((res) => {
         if (res && res.status === 200) {
           res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(item)
@@ -153,7 +153,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
 
           {singleCollection ? (
             <GradientText
-              text={minimizeTheString(singleCollection.collection[0].collection_name)}
+              text={minimizeTheString(singleCollection[0].collection_name)}
               fontSize={15}
               fontWeight={600}
             />

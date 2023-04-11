@@ -82,11 +82,11 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
     }
 
     tr {
-      ${tw`dark:bg-black-4 bg-white cursor-pointer`}
+      ${tw`dark:bg-black-3 bg-white cursor-pointer`}
       border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
 
       &:hover {
-        ${tw`dark:bg-grey-1 bg-grey-5`}
+        ${tw`dark:bg-black-4 bg-grey-5`}
       }
 
       &:after {
@@ -145,7 +145,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
 
   .borderRow {
     border-radius: 20px 0px 0px 25px;
-    ${tw`w-[25%] pr-[10%] `}
+    ${tw`w-[25%] pr-[10%] cursor-pointer`}
     @media(max-width: 500px) {
       ${tw`w-[42%] h-[52px] pr-0`}
     }

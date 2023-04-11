@@ -6,9 +6,8 @@ import { match } from 'ts-pattern'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useFarmContext, useAccounts, useTokenRegistry } from '../../context'
 import tw from 'twin.macro'
-import { Loader } from '../Farm/Columns'
+import { HeaderTooltipMode, Loader } from '../Farm/Columns'
 import { moneyFormatter } from '../../utils/math'
-import { HeaderTooltip } from '../Farm/Columns'
 import { Connect } from '../../layouts'
 import { IFarmData } from './CustomTableList'
 
@@ -232,10 +231,10 @@ export const ExpandedContentMobile: FC<{
             <ROW>
               <Tooltip_holder>
                 <span className="details">Total Earned</span>
-                <HeaderTooltip
+                <HeaderTooltipMode
                   text={`The total profit and loss from SSL and is measured by 
-                  comparing the total value of a pool’s assets (
-                  excluding trading fees) to their value if they had not been traded and instead were just held`}
+                  comparing the total value of a pool’s assets (excluding trading 
+                    fees) to their value if they had not been traded and instead were just held`}
                 />
               </Tooltip_holder>
               <span className="details">
@@ -246,7 +245,7 @@ export const ExpandedContentMobile: FC<{
             <ROW>
               <Tooltip_holder>
                 <span className="details">Liquidity</span>
-                <HeaderTooltip text="Total value of funds in this farm's liquidity pool." />
+                <HeaderTooltipMode text={"Total value of funds in this farm's liquidity pool."} />
               </Tooltip_holder>
               <span className="details">
                 {farm?.liquidity >= 0 ? `$ ${moneyFormatter(farm?.liquidity)}` : <Loader />}

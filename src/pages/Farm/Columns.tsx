@@ -104,6 +104,17 @@ export const HeaderTooltip: FC<{ text: string }> = ({ text }): JSX.Element => {
   )
 }
 
+export const HeaderTooltipMode: FC<{ text: string }> = ({ text }): JSX.Element => {
+  const { mode } = useDarkMode()
+  return (
+    <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
+      <Tooltip dark placement="bottomLeft" color={mode === 'dark' ? '#eeeeee' : '#000'}>
+        <span>{text}</span>
+      </Tooltip>
+    )
+  )
+}
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const Title = (text: string, infoText: string, isArrowDown: boolean, invert?: boolean) => (
   <STYLED_TITLE>

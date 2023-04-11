@@ -42,11 +42,18 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
     }
   }, [])
 
-  const fetchAllCollectionsByPages = async (offset: number, limit: number) => {
+  const fetchAllCollectionsByPages = async (
+    offset: number,
+    limit: number,
+    filterColumn?: string,
+    sortPref?: string
+  ) => {
     try {
       setLoading(true)
       const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS, {
         params: {
+          filter: filterColumn ? filterColumn : null,
+          sort: sortPref ? sortPref : null,
           offset: offset,
           limit: limit
         }
@@ -156,6 +163,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
         allCollections,
         detailedCollections,
         featuredCollections,
+        setAllCollections,
         upcomingCollections,
         fetchAllCollections,
         fetchAllCollectionsByPages,
@@ -192,6 +200,7 @@ export const useNFTCollections = (): INFTCollectionConfig => {
   return {
     allCollectionLoading: context.allCollectionLoading,
     allCollections: context.allCollections,
+    setAllCollections: context.setAllCollections,
     detailedCollections: context.detailedCollections,
     collectionOwners: context.collectionOwners,
     fetchCollectionOwners: context.fetchAllCollections,

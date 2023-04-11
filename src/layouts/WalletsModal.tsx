@@ -138,8 +138,8 @@ const settings = {
   slidesToScroll: 2,
   arrows: checkMobile() ? false : true,
   variableWidth: false,
-  nextArrow: <img src={`/img/assets/home-slider-next.svg`} alt="banner-next" />,
-  prevArrow: <img src={`/img/assets/home-slider-next.svg`} alt="banner-previous" />
+  nextArrow: <img src={`/img/assets/Aggregator/home-slider-next.svg`} alt="banner-next" />,
+  prevArrow: <img src={`/img/assets/Aggregator/home-slider-next.svg`} alt="banner-previous" />
 }
 export const WalletsModal: FC = () => {
   const { wallets, select } = useWallet()
