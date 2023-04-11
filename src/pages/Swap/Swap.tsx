@@ -956,8 +956,6 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
   return (
     <SWAP_ROUTES less={less || details.length < 4}>
       <div className="swap-content">
-        {console.log(routes)}
-
         {routes?.length < 1
           ? Array(2)
               .fill(1)

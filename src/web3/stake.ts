@@ -22,7 +22,7 @@ import { CONTROLLER_LAYOUT, STAKING_ACCOUNT_LAYOUT } from 'goosefx-ssl-sdk'
 export interface TxnReturn {
   error?: Error
   confirm?: RpcResponseAndContext<SignatureResult>
-  signature: string
+  signature: string | null
 }
 
 interface FetchCurrentAmountStaked {
@@ -69,9 +69,9 @@ export const executeStake = async (
       const createStakingIX = await createStakingAccountIX(network, program, stakingAccountKey, wallet)
       return stakeAmount(network, amountInBN, program, stakingAccountKey, wallet, connection, createStakingIX)
     }
-  } catch (err) {
-    console.log(err)
-    return err
+  } catch (error) {
+    console.log(error)
+    return { error, signature: null }
   }
 }
 
@@ -117,7 +117,7 @@ const stakeAmount = async (
     console.log(confirm, 'stake amount')
     return { confirm, signature }
   } catch (error) {
-    console.log(error, 'stake error')
+    console.error(error, 'stake error')
     return { error, signature }
   }
 }
@@ -146,20 +146,20 @@ export const executeUnstakeAndClaim = async (
     userWallet: wallet.publicKey,
     tokenProgram: TOKEN_PROGRAM_ID
   }
-  let signature
+
   try {
     const unstakeAmountIX: TransactionInstruction = await program.instruction.unstake(new BN(percent * 100), {
       accounts: unstakeAmountInstruction
     })
     const unstakeAmountTX: Transaction = new Transaction().add(unstakeAmountIX)
-    signature = await wallet.sendTransaction(unstakeAmountTX, connection, { skipPreflight: true })
+    const signature = await wallet.sendTransaction(unstakeAmountTX, connection, { skipPreflight: true })
     console.log(signature)
     const confirm = await connection.confirmTransaction(signature, 'processed')
     console.log(confirm)
 
     return { confirm, signature }
   } catch (error) {
-    return { error, signature }
+    return { error, signature: null }
   }
 }
 

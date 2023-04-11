@@ -43,7 +43,7 @@ export const errorHandlingMessage = (
   msg: string,
   name: string,
   supportTxt: string,
-  signature: string,
+  signature: string | null,
   network: WalletAdapterNetwork
 ): Message => ({
   type: 'error',
