@@ -57,8 +57,6 @@ export const AVAILABLE_MARKETS = (
   const markets = MARKETS.filter(({ deprecated, name }) => {
     const ask = (name: string) => name.slice(0, name.indexOf('/'))
     const isWrappedStableCoin = name[name.indexOf('/') + 1] === 'W'
-    console.log(SUPPORTED_TOKEN_LIST)
-
     return !deprecated && !isWrappedStableCoin && supportedTokenList.find((token) => ask(name) === token)
   })
   markets.push({
