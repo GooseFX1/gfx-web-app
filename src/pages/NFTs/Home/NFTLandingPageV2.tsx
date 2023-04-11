@@ -68,11 +68,10 @@ const WRAPPER = styled.div<{ $navCollapsed; $currency }>`
     transition: 0.5s ease;
     ${tw`sm:w-0`}
   }
-  <<<<<<< HEAD ======= .comingSoon {
+  .comingSoon {
     ${tw`text-grey-2`}
   }
-  >>>>>>>6c376c19... global search integrated,
-  sort functionality added .flexContainer {
+  .flexContainer {
     ${tw`h-[40px] flex ml-[10px] mb-4`}
   }
   .iconImg {
