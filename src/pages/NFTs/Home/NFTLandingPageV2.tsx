@@ -37,6 +37,7 @@ import { NFTBaseCollection } from '../../../types/nft_collections'
 import ShowEyeLite from '../../../animations/showEyelite.json'
 import ShowEyeDark from '../../../animations/showEyedark.json'
 import Lottie from 'lottie-react'
+import { fetchGlobalSearchNFT } from '../../../api/NFTs'
 
 const CURRENCY_SWITCH = styled.div<{ $currency }>`
   .ant-switch {
@@ -67,8 +68,11 @@ const WRAPPER = styled.div<{ $navCollapsed; $currency }>`
     transition: 0.5s ease;
     ${tw`sm:w-0`}
   }
-
-  .flexContainer {
+  <<<<<<< HEAD ======= .comingSoon {
+    ${tw`text-grey-2`}
+  }
+  >>>>>>>6c376c19... global search integrated,
+  sort functionality added .flexContainer {
     ${tw`h-[40px] flex ml-[10px] mb-4`}
   }
   .iconImg {
@@ -213,7 +217,6 @@ const FiltersContainer = () => {
 
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
   const goProfile = () => sessionUser && history.push(`/nfts/profile/${sessionUser.pubkey}`)
-
   const handleClick = (poolName, index) => {
     setPoolIndex(index)
     setPoolFilter(poolName)
@@ -308,7 +311,6 @@ const FiltersContainer = () => {
           <MarketDropdown />
           <TimeLineDropdown />
           <div>
-            {' '}
             <img className="profilePic" src="/img/assets/refresh.svg" />{' '}
           </div>
 
@@ -363,29 +365,33 @@ const CurrencySwitch = (): ReactElement => {
 }
 const SearchResultContainer = ({ searchFilter }: any) => {
   const { allCollections } = useNFTCollections()
-  const searchResultArr = useMemo(() => {
-    if (!searchFilter || searchFilter.length < 3) return allCollections
-    const searchFiltered = [...allCollections].filter((result: NFTBaseCollection) => {
-      const collectionName = result.collection_name ? result.collection_name.toLowerCase() : ''
-      if (collectionName.includes(searchFilter && searchFilter.toLowerCase())) return true
-    })
-    return searchFiltered
+  const [searchResultArr, setSearchResult] = useState<any>([...allCollections])
+
+  useEffect(() => {
+    if (searchFilter && searchFilter.length > 1) {
+      fetchGlobalSearchNFT(searchFilter)
+        .then((res) => {
+          setSearchResult(res.collections)
+        })
+        .catch((err) => console.log(err))
+    }
   }, [searchFilter])
 
   const history = useHistory()
 
   return (
     <SEARCH_RESULT_CONTAINER>
-      {searchResultArr.map((data: NFTBaseCollection, index) => (
-        <div
-          className="searchResultRow"
-          key={index}
-          onClick={() => history.push(`/nfts/collection/${data.collection_name.replaceAll(' ', '_')}`)}
-        >
-          <img src={data.profile_pic_link} alt="" />
-          <div className="searchText">{data.collection_name}</div>
-        </div>
-      ))}
+      {searchResultArr &&
+        searchResultArr.map((data: NFTBaseCollection, index) => (
+          <div
+            className="searchResultRow"
+            key={index}
+            onClick={() => history.push(`/nfts/collection/${data.collection_name.replaceAll(' ', '_')}`)}
+          >
+            <img src={data.profile_pic_link} alt="" />
+            <div className="searchText">{data.collection_name}</div>
+          </div>
+        ))}
     </SEARCH_RESULT_CONTAINER>
   )
 }

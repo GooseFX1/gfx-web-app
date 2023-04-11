@@ -31,6 +31,7 @@ import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { OpenBidNFTs } from './OpenBidNFTs'
 import { FixedPriceNFTs } from './FixedPriceNFTs'
 import { Image } from 'antd'
+import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
@@ -63,15 +64,14 @@ const CollectionV2 = (): ReactElement => {
   useEffect(() => {
     const curColNameParam = decodeURIComponent(params.collectionName.replaceAll('_', '%20'))
 
-    if (!singleCollection || singleCollection.collection[0].collection_name !== curColNameParam) {
-      fetchSingleCollection(curColNameParam).then((res) => setErr(res && res.status === 200 ? false : true))
+    if (!singleCollection || singleCollection[0].collection_name !== curColNameParam) {
+      fetchSingleCollection(curColNameParam).then((res) => setErr(res && res.status === 200 ? false : false))
     }
 
     return null
   }, [fetchSingleCollection, params.collectionName])
   //had to remove singleCollection useState trigger as it leads to
   // infinite loop as setSingleCollection is called in fecthSingleCollection
-
   return err ? (
     <GenericNotFound />
   ) : (
@@ -86,20 +86,23 @@ const CollectionV2 = (): ReactElement => {
 const NFTStatsContainer = () => {
   const history = useHistory()
   const { mode } = useDarkMode()
-  const { singleCollection, fixedPriceWithinCollection } = useNFTCollections()
+  const { singleCollection, fixedPriceWithinCollection, openBidWithinCollection } = useNFTCollections()
   const [sweepCollection, setSweepCollection] = useState<boolean>(false)
+  const [appraisalPopup, setGFXAppraisalPopup] = useState<boolean>(false)
 
   const collection: NFTBaseCollection | undefined = useMemo(
-    () => (singleCollection ? singleCollection.collection[0] : undefined),
+    () => (singleCollection ? singleCollection[0] : undefined),
     [singleCollection]
   )
-  const collectionFloor: number = useMemo(() => {
-    singleCollection ? singleCollection.collection_floor / LAMPORTS_PER_SOL_NUMBER : 0
-    return 0
-  }, [collection])
+  const collectionFloor: number = useMemo(
+    () => (singleCollection ? singleCollection[0].floor_price / LAMPORTS_PER_SOL_NUMBER : 0),
+    [collection]
+  )
 
   return (
     <div className="nftStatsContainer">
+      <GFXApprisalPopup showTerms={appraisalPopup} setShowTerms={setGFXAppraisalPopup} />
+
       {!checkMobile() && (
         <button className="backBtn" onClick={(e) => history.push('/nfts')} tw="border-0">
           <img src="/img/assets/arrow-leftdark.svg" />
@@ -147,10 +150,15 @@ const NFTStatsContainer = () => {
 
         <div className="generalStats">
           <div tw="flex items-center">
-            <img tw="h-[20px] w-[20px]" src="/img/assets/Aggregator/Tooltip.svg" alt="appraisal-icon" />
+            <img
+              onClick={() => setGFXAppraisalPopup(true)}
+              tw="h-[20px] w-[20px] cursor-pointer"
+              src="/img/assets/Aggregator/Tooltip.svg"
+              alt="appraisal-icon"
+            />
             <div className="wrapper" style={{ marginLeft: 8 }}>
               <div className="titleText" tw="leading-none">
-                Apprasial
+                Appraisal
               </div>
               <div className="subTitleText">
                 {collection && collection.gfx_appraisal_supported ? 'Supported' : 'Not Supported'}
@@ -167,15 +175,17 @@ const NFTStatsContainer = () => {
           {!checkMobile() && (
             <div className="wrapper">
               <div className="titleText" tw="leading-none">
-                {fixedPriceWithinCollection?.total_count}/{collection?.size ? collection?.size : 0}
+                {fixedPriceWithinCollection?.total_count}/
+                {fixedPriceWithinCollection?.total_count
+                  ? fixedPriceWithinCollection?.total_count
+                  : openBidWithinCollection?.total_count}
               </div>
               <div className="subTitleText">Listed</div>
             </div>
           )}
           <div className="wrapper">
             <div className="titleText" tw="leading-none">
-              {' '}
-              1800 SOL{' '}
+              {singleCollection ? singleCollection[0].daily_volume / LAMPORTS_PER_SOL_NUMBER : 0}
             </div>
             <div className="subTitleText"> 24h volume </div>
           </div>
@@ -238,7 +248,8 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
         </div>
         <div className={displayIndex === 1 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(1)}>
           All items (
-          {openBidWithinCollection ? openBidWithinCollection.total_count : singleCollection?.collection[0]?.size})
+          {openBidWithinCollection ? openBidWithinCollection.total_count : fixedPriceWithinCollection?.total_count}
+          )
         </div>
         <div className={displayIndex === 2 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(2)}>
           Activity
