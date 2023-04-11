@@ -1,4 +1,4 @@
-import React, { Dispatch, ReactNode, SetStateAction, useContext, useMemo, useState, FC } from 'react'
+import React, { Dispatch, ReactNode, SetStateAction, useEffect, useContext, useMemo, useState, FC } from 'react'
 import { ENV } from '@solana/spl-token-registry'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Connection } from '@solana/web3.js'
@@ -69,9 +69,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
-  const [endpointName, setEndpointName] = useState<string>(
-    existingUserCache.endpointName === null || existingUserCache.endpoint === null ? APP_RPC.name : 'Custom'
-  )
+  const [endpointName, setEndpointName] = useState<string | null>(null)
 
   const chainId = useMemo(() => APP_RPC.chainId, [endpointName])
   const network = useMemo(() => APP_RPC.network, [endpointName])
@@ -103,7 +101,15 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     // creates connection
     return new Connection(endpoint, 'confirmed')
-  }, [endpoint])
+  }, [endpointName, endpoint])
+
+  useEffect(() => {
+    if (endpointName === null) {
+      setEndpointName(
+        existingUserCache.endpointName === null || existingUserCache.endpoint === null ? APP_RPC.name : 'Custom'
+      )
+    }
+  }, [])
 
   return (
     <SettingsContext.Provider

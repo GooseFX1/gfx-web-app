@@ -1,4 +1,5 @@
 export * from './ArrowDropdown'
+export * from './Button'
 export * from './Categories'
 export * from './Expand'
 export * from './Loader'

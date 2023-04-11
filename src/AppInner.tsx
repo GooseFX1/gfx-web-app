@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Router } from './Router'
 import {
   AccountsProvider,
@@ -15,9 +15,11 @@ import { USER_CONFIG_CACHE } from './types/app_params'
 
 export default function AppInner(): JSX.Element {
   const existingUserCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const [init, setInit] = useState<boolean | null>(null)
 
   useEffect(() => {
     if (existingUserCache === null) {
+      setInit(true)
       window.localStorage.setItem(
         'gfx-user-cache',
         JSON.stringify({
@@ -30,6 +32,8 @@ export default function AppInner(): JSX.Element {
       )
     }
   }, [])
+
+  useEffect(() => console.log('** GFX Application Init **'), [init])
 
   return (
     existingUserCache !== null && (

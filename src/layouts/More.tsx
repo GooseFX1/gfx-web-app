@@ -6,10 +6,11 @@ import tw from 'twin.macro'
 import { CenteredImg } from '../styles'
 import { Menu, MenuItem } from './shared'
 import { notify } from '../utils'
-import { useDarkMode } from '../context'
+import { APP_RPC, useDarkMode } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { useConnectionConfig } from '../context'
 import { USER_CONFIG_CACHE } from '../types/app_params'
+import { Button } from '../components'
 
 const ICON = styled(CenteredImg)<{ $mode: boolean }>`
   ${tw`h-[36px] w-[36px] cursor-pointer`}
@@ -69,60 +70,72 @@ const INPUT = styled.input`
   }
 `
 
-const Button = styled.button`
+const SetButton = styled.button`
   ${tw`h-[40px] w-[44px] flex justify-center items-center font-semibold 
-      text-regular bg-purple-1 cursor-pointer border-transparent rounded-r-full`}
+      text-regular bg-blue-1 cursor-pointer border-transparent rounded-r-full`}
 `
 
 const Overlay = () => {
-  const { endpoint, network, endpointName, setEndpointName } = useConnectionConfig()
+  const { endpoint, endpointName, setEndpointName } = useConnectionConfig()
   const [nodeURL, setNodeURL] = useState<string>(endpoint.split('/')[0] + '//' + endpoint.split('/')[2])
-  const [isCustomNode, setIsCustomNode] = useState<boolean>(endpointName === 'Custom')
 
-  const saveHandler = (e: BaseSyntheticEvent) => {
+  const saveHandler = (e: BaseSyntheticEvent, type: string) => {
     e.preventDefault()
-    if (nodeURL.length === 0 || nodeURL === ' ') return
 
+    if (nodeURL.length === 0 || nodeURL === ' ' || nodeURL === endpoint) return
     const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+
     window.localStorage.setItem(
       'gfx-user-cache',
       JSON.stringify({
         ...existingUserCache,
-        endpointName: isCustomNode ? 'Custom' : endpointName,
-        endpoint: isCustomNode ? nodeURL : null
+        endpointName: type === 'custom' ? 'Custom' : APP_RPC.name,
+        endpoint: type === 'custom' ? nodeURL : null
       })
     )
 
-    if (isCustomNode) {
+    if (type === 'custom') {
       setEndpointName('Custom')
       notify({ message: 'Switched to Custom' })
     } else {
-      setEndpointName(endpointName)
-      notify({ message: `Switched to  ${endpointName} (${network})` })
+      setEndpointName(APP_RPC.name)
+      notify({ message: `Switched to ${APP_RPC.name} (${APP_RPC.network})` })
     }
   }
 
-  const nodeURLHandler = ({ target }) => {
-    setNodeURL(target.value)
-    setIsCustomNode(endpoint !== target.value)
-  }
+  const nodeURLHandler = ({ target }) => setNodeURL(target.value)
 
   return (
     <NewMenu>
       <ITEM>
         <ThemeToggle />
       </ITEM>
-      <small>Custom RPC URL</small>
-      <ITEM>
-        <INPUT
-          id="nodeURL"
-          onChange={(x: BaseSyntheticEvent) => nodeURLHandler(x)}
-          placeholder={'Enter Custom RPC'}
-          value={undefined}
-          autoComplete={'off'}
-        />
-        <Button onClick={saveHandler}>Set</Button>
-      </ITEM>
+      {endpointName === 'Custom' ? (
+        <Button
+          height="36px"
+          width="100%"
+          cssStyle={tw`bg-blue-1 rounded-circle border-0 mt-3`}
+          onClick={(e) => saveHandler(e, 'reset')}
+        >
+          <span style={{ fontWeight: 600 }}>Reset GFX RPC</span>
+        </Button>
+      ) : (
+        <form onSubmit={(e) => saveHandler(e, 'custom')}>
+          <small>Custom RPC URL</small>
+          <ITEM>
+            <INPUT
+              id="nodeURL"
+              onChange={(x: BaseSyntheticEvent) => nodeURLHandler(x)}
+              placeholder={'Enter Custom RPC'}
+              value={undefined}
+              autoComplete={'off'}
+            />
+            <SetButton type="submit" onClick={(e) => saveHandler(e, 'custom')}>
+              Set
+            </SetButton>
+          </ITEM>
+        </form>
+      )}
     </NewMenu>
   )
 }
