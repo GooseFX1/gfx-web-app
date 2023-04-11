@@ -22,7 +22,6 @@ import { capitalizeFirstLetter, floorValue, notify, removeFloatingPointError } f
 import { crypto } from '../web3'
 import { useAccounts } from './accounts'
 import { PublicKey } from '@solana/web3.js'
-import { SUPPORTED_TOKEN_LIST } from '../constants'
 
 export type OrderInput = undefined | 'price' | 'size' | 'total'
 export type OrderDisplayType = 'market' | 'limit'
