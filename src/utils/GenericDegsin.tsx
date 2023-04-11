@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Tooltip } from '../components'
+import { HeaderTooltipMode } from '../pages/Farm/Columns'
 import { useDarkMode } from '../context'
 
 export const HeaderTooltip = (text: string): ReactElement =>
@@ -14,11 +15,10 @@ export const HeaderTooltip = (text: string): ReactElement =>
 const WRAPPER = styled.div<{ $width; $mode }>`
   ${tw`flex items-center justify-center relative`}
   .innerCover {
+    background: ${({ theme }) => theme.bg26};
+    text: ${({ theme }) => theme.text20};
     ${tw`relative p-1 sm:p-2 
-      rounded-xl sm:w-[98.5%] w-[98.8%] h-[64px] flex items-center justify-center`}
-    background-color: ${({ $mode }) => ($mode === 'dark' ? '#1C1C1C' : '#EEEEEE')};
-
-    img {
+      rounded-xl sm:w-[98.5%] w-[98.8%] h-[64px] flex items-center justify-center`} img {
       ${tw`w-[34px] h-[34px] m-2`}
     }
   }
@@ -53,6 +53,7 @@ export const STYLED_TITLE = styled.div`
     transform: scale(1.3);
   }
   .invert {
+    ${tw`h-[10px]`}
     transform: rotate(180deg);
     transition: transform 500ms ease-out;
   }
@@ -68,7 +69,7 @@ export const TableHeaderTitle = (
 ): ReactElement => (
   <STYLED_TITLE>
     <div className="textTitle">{text}</div>
-    {infoText && HeaderTooltip(infoText)}
+    {infoText && <HeaderTooltipMode text={infoText} />}
     {isArrowDown && (
       <img className={'arrowDown' + (invert ? ' invert' : '')} src={`/img/assets/arrow-down-grey.svg`} alt="" />
     )}

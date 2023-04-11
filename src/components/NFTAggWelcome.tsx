@@ -54,6 +54,7 @@ const WRAPPER = styled.div`
   }
 
   .trackNFTImg {
+    ${tw`h-[340px] w-[403px] mt-8`}
     @media (max-width: 500px) {
       height: 246px !important;
       width: 310px !important;

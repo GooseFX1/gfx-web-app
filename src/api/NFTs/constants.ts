@@ -1,5 +1,9 @@
 export const NFT_API_BASE = 'nest-api'
 
+export enum NFT_COL_FILTER_OPTIONS {
+  COLLECTION_NAME = 'CollectionName',
+  FLOOR_PRICE = 'FloorPrice'
+}
 export enum NFT_API_ENDPOINTS {
   SESSION_USER = '/user',
   NON_SESSION_USER = '/user',
@@ -21,5 +25,6 @@ export enum NFT_API_ENDPOINTS {
   ALL_USER_LIKES = '/all-likes',
   REWARDS = '/rewards',
   OWNERS = '/owners',
-  DRAFTS = '/nft_drafts'
+  DRAFTS = '/nft_drafts',
+  SEARCH = '/search'
 }

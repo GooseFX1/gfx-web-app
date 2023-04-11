@@ -29,7 +29,8 @@ export type NFTBaseCollection = {
 export type NFTCollection = {
   collection: NFTBaseCollection[]
   collection_id: number
-  collection_floor: null | number
+  floor_price?: null | number
+  collection_floor?: null | number
   collection_vol: {
     daily: number
     monthly: number
@@ -81,6 +82,7 @@ export type NFTUpcomingCollection = {
 
 export interface INFTCollectionConfig {
   allCollections: NFTBaseCollection[] | number[]
+  setAllCollections: any
   allCollectionLoading: boolean
   detailedCollections: NFTCollection[]
   collectionOwners: CollectionOwner[]

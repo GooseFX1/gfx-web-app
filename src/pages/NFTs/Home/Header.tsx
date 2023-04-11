@@ -97,7 +97,7 @@ const RIGHTARROWICON = styled.img`
   filter: ${({ theme }) => theme.filterBackIcon};
 `
 
-const AVATAR_WRAPPER = styled.div`
+export const AVATAR_WRAPPER = styled.div`
   ${tw`sm:justify-evenly`}
   display: flex;
   justify-content: flex-start;

@@ -11,7 +11,8 @@ import {
   useConnectionConfig,
   NFTAggregatorProvider,
   NFTDetailsProvider,
-  usePriceFeedFarm
+  usePriceFeedFarm,
+  NFTAggFiltersProvider
 } from '../../context'
 import { logData } from '../../api/analytics'
 import styled from 'styled-components'
@@ -33,7 +34,7 @@ const NFTAgg: FC = (): ReactElement => {
   const { prices, refreshTokenData } = usePriceFeedFarm()
   const location = useLocation<ILocationState>()
   const { connection } = useConnectionConfig()
-  const { wallet } = useWallet()
+  const { wallet, connected } = useWallet()
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
 
   useEffect(() => {
@@ -45,8 +46,8 @@ const NFTAgg: FC = (): ReactElement => {
   }, [location])
 
   useEffect(() => {
-    if (wallet && wallet.adapter.connected) {
-      if (sessionUser === null || sessionUser.pubkey !== wallet?.adapter?.publicKey.toBase58()) {
+    if (connected) {
+      if (!sessionUser || sessionUser.pubkey !== wallet?.adapter?.publicKey.toBase58()) {
         fetchSessionUser('address', wallet?.adapter?.publicKey.toBase58(), connection).then((res) => {
           if (res && res.status === 200) {
             const userProfileStatus = localStorage.getItem(wallet?.adapter?.publicKey.toBase58())
@@ -70,23 +71,25 @@ const NFTAgg: FC = (): ReactElement => {
       setSessionUser(null)
     }
     return null
-  }, [wallet?.adapter?.connected])
+  }, [wallet, connected])
 
   return Object.keys(prices) ? (
     <BODY_NFT $navCollapsed={isCollapsed}>
       <NFTDetailsProvider>
         <NFTAggregatorProvider>
-          <Switch>
-            <Route exact path={path}>
-              <NFTLandingPageV2 />
-            </Route>
-            <Route exact path="/nfts/collection/:collectionName">
-              <CollectionV2 />
-            </Route>
-            <Route exact path={['/nfts/profile', '/nfts/profile/:userAddress']}>
-              <Profile />
-            </Route>
-          </Switch>
+          <NFTAggFiltersProvider>
+            <Switch>
+              <Route exact path={path}>
+                <NFTLandingPageV2 />
+              </Route>
+              <Route exact path="/nfts/collection/:collectionName">
+                <CollectionV2 />
+              </Route>
+              <Route exact path={['/nfts/profile', '/nfts/profile/:userAddress']}>
+                <Profile />
+              </Route>
+            </Switch>
+          </NFTAggFiltersProvider>
         </NFTAggregatorProvider>
       </NFTDetailsProvider>
     </BODY_NFT>
