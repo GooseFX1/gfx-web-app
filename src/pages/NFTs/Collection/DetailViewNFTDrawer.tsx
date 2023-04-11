@@ -156,6 +156,7 @@ export const DetailViewNFT: FC = (): JSX.Element => {
     >
       <ImageViewer />
       <ButtonContainer
+        general={general}
         setBuyNow={setBuyNow}
         buyNowClicked={buyNowClicked}
         bidNowClicked={bidNowClicked}
@@ -235,7 +236,7 @@ const ImageViewer = (): ReactElement => {
   )
 }
 
-const ButtonContainer = ({ setBuyNow, buyNowClicked, bidNowClicked, setBidNow }: any): ReactElement => (
+const ButtonContainer = ({ general, setBuyNow, buyNowClicked, bidNowClicked, setBidNow }: any): ReactElement => (
   <div
     tw="absolute left-0 right-0 bottom-0 h-[86px] w-[100%] 
         dark:bg-black-2 bg-grey-5 px-[30px] flex items-center justify-between
@@ -243,14 +244,14 @@ const ButtonContainer = ({ setBuyNow, buyNowClicked, bidNowClicked, setBidNow }:
   >
     {buyNowClicked && <BuyNFTModal />}
     {bidNowClicked && <BidNFTModal />}
-    <Button height="56px" width="185px" cssStyle={tw`bg-blue-1`} onClick={() => setBidNow('general')}>
+    <Button height="56px" width="185px" cssStyle={tw`bg-blue-1`} onClick={() => setBidNow(general)}>
       <span tw="text-regular font-semibold text-white">Bid</span>
     </Button>
     <Button
       height="56px"
       width="185px"
       cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2`}
-      onClick={() => setBuyNow('general')}
+      onClick={() => setBuyNow(general)}
     >
       <span tw="text-regular font-semibold text-white">Buy Now</span>
     </Button>

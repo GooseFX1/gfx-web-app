@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, FC, ReactElement, useRef, useCallback, useMemo } from 'react'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
-import { useNavCollapse, useNFTAggregator, useNFTCollections, usePriceFeedFarm } from '../../../context'
+import {
+  useNavCollapse,
+  useNFTAggregator,
+  useNFTAggregatorFilters,
+  useNFTCollections,
+  usePriceFeedFarm
+} from '../../../context'
 import { checkMobile } from '../../../utils'
 import { Loader } from '../../Farm/Columns'
 import { WRAPPER_TABLE } from './NFTAggregator.styles'
@@ -20,14 +26,17 @@ const STYLE = styled.div``
 
 const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   const { isCollapsed } = useNavCollapse()
-  const { fetchAllCollections, fetchAllCollectionsByPages, allCollections, allCollectionLoading } =
-    useNFTCollections()
-
+  const {
+    fetchAllCollections,
+    fetchAllCollectionsByPages,
+    allCollections,
+    allCollectionLoading,
+    setAllCollections
+  } = useNFTCollections()
+  const { sortFilter, sortType, pageNumber, setPageNumber } = useNFTAggregatorFilters()
   const [allItems, setAllItems] = useState<NFTBaseCollection[] | number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9])
-  const [pageNumber, setPageNumber] = useState<number>(0)
   const paginationNumber = 20
   const observer = useRef<any>()
-
   const lastRowElementRef = useCallback(
     (node) => {
       if (allCollectionLoading) return
@@ -43,8 +52,16 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   )
 
   useEffect(() => {
+    if (sortFilter) {
+      fetchAllCollectionsByPages(pageNumber * paginationNumber, paginationNumber, sortFilter, sortType)
+    }
+  }, [sortFilter, sortType])
+
+  useEffect(() => {
     ;(async () => {
-      await fetchAllCollectionsByPages(pageNumber * paginationNumber, paginationNumber)
+      if (sortFilter)
+        await fetchAllCollectionsByPages(pageNumber * paginationNumber, paginationNumber, sortFilter, sortType)
+      else await fetchAllCollectionsByPages(pageNumber * paginationNumber, paginationNumber)
     })()
   }, [pageNumber])
 
@@ -80,7 +97,7 @@ const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement =
         >
           <td className="index"> {index + 1}</td>
           <td className="nftNameColumn">
-            {item?.collection?.collection_name ? (
+            {item?.collection_name ? (
               <>
                 <Image
                   className="nftNameImg"
@@ -93,7 +110,7 @@ const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement =
                   alt=""
                 />
                 <div className="nftCollectionName">
-                  {minimizeTheString(item?.collection?.collection_name)}
+                  {minimizeTheString(item?.collection_name)}
                   <div className="nftCollectionFloor">
                     <div className="grey">Floor: </div>
                     <div>
@@ -113,9 +130,9 @@ const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement =
             )}
           </td>
           <td className="tdItem">
-            {item?.collection_vol?.daily !== undefined ? (
+            {item?.daily_volume !== undefined ? (
               <div tw="flex flex-col items-center justify-center">
-                <PriceWithToken price={item?.collection_vol?.daily} token="SOL" cssStyle={tw`h-5 w-5`} />
+                <PriceWithToken price={item?.daily_volume} token="SOL" cssStyle={tw`h-5 w-5`} />
                 <div className="grey">24h volume </div>
               </div>
             ) : (
@@ -133,11 +150,11 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
   const history = useHistory()
   const { prices } = usePriceFeedFarm()
   const solPrice = prices['SOL/USDC']?.current
-  const price = item?.collection_floor / LAMPORTS_PER_SOL_NUMBER
+  const price = item?.floor_price / LAMPORTS_PER_SOL_NUMBER
   let floorPrice = currencyView === 'USDC' ? solPrice * (price > 0 ? price : 0) : price
   floorPrice = floorPrice ? parseFloat(floorPrice.toFixed(2)) : 0
 
-  let volume = currencyView === 'USDC' ? item?.collection_vol?.daily * solPrice : item?.collection_vol?.daily
+  let volume = currencyView === 'USDC' ? item?.daily_volume * solPrice : item?.daily_volume
   volume = volume ? parseFloat(volume.toFixed(2)) : 0
 
   return (
@@ -146,9 +163,7 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
       className="tableRow"
       key={index}
       onClick={() =>
-        history.push(
-          `/nfts/collection/${encodeURIComponent(item.collection.collection_name).replaceAll('%20', '_')}`
-        )
+        history.push(`/nfts/collection/${encodeURIComponent(item.collection_name).replaceAll('%20', '_')}`)
       }
     >
       <td className="nftNameColumn">
@@ -158,14 +173,12 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
               className="nftNameImg"
               fallback={'/img/assets/Aggregator/Unknown.svg'}
               src={`${
-                item.collection?.profile_pic_link.length === 0
-                  ? '/img/assets/Aggregator/Unknown.svg'
-                  : item.collection?.profile_pic_link
+                item?.profile_pic_link === undefined ? '/img/assets/Aggregator/Unknown.svg' : item.profile_pic_link
               }`}
               alt="collection-icon"
             />
             <div className="nftCollectionName">
-              {item.collection?.collection_name ? item.collection?.collection_name.replaceAll('"', '') : ''}
+              {item?.collection_name ? item?.collection_name.replaceAll('"', '') : ''}
             </div>
           </>
         ) : (
@@ -189,7 +202,7 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
       <td className="tdItem">{item ? <div tw="text-grey-2">Coming soon</div> : <Loader />}</td>
       <td className="tdItem">{item ? <div tw="text-grey-2">Coming soon</div> : <Loader />}</td>
       <td className="tdItem">
-        {item?.collection_vol !== undefined ? (
+        {item?.daily_volume !== undefined ? (
           <PriceWithToken price={volume} token={currencyView} cssStyle={tw`h-5 w-5`} />
         ) : (
           <Loader />

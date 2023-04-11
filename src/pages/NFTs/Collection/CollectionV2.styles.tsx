@@ -118,8 +118,7 @@ export const GRID_CONTAINER = styled.div<{ navCollapsed?: boolean }>`
 `
 
 export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
-  ${tw`w-full`}
-  background: ${({ theme }) => theme.bg23};
+  ${tw`w-full bg-[#e2e2e2] dark:bg-black-2`}
   ${({ theme }) => theme.customScrollBar('4px')}
   overflow-y: auto;
   .profile-content-loading {
@@ -137,7 +136,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
   .gridContainer {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
-    ${tw`grid sm:pl-1 sm:grid-cols-2 rounded-xl`}
+    ${tw`grid sm:pl-1 sm:grid-cols-2 rounded-xl `}
   }
   .gridContainerProfile {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
@@ -163,7 +162,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
       ${tw`flex p-[8px] pb-0 justify-center relative `}
 
       .nftImg {
-        ${tw`w-full h-auto `}
+        ${tw`w-full h-[170px] `}
       }
       .hoverAddToBag {
         ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
@@ -220,6 +219,7 @@ export const DROPDOWN_CONTAINER = styled.div`
   ${tw`rounded-md p-1 -mt-1 sm:w-[185px] text-[15px] font-semibold`}
   background-color: ${({ theme }) => theme.dropdownBackground};
   color: ${({ theme }) => theme.text1};
+  ${({ theme }) => theme.customScrollBar('4px')}
   .checkboxContainer {
     ${tw`ml-auto`}
     input {
@@ -236,15 +236,14 @@ export const DROPDOWN_CONTAINER = styled.div`
   .option {
     ${tw`flex cursor-pointer items-center justify-between p-1`}
     input {
-      /* color: ${({ theme }) => theme.bg26}; */
+      color: ${({ theme }) => theme.bg26};
     }
   }
 `
 export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
   ${({ index }) => css`
-    ${tw`duration-500 items-center flex h-[70px] sm:h-[58px] sm:flex-col `}
+    ${tw`duration-500 items-center flex  bg-[#e2e2e2] dark:bg-black-2 h-[70px] sm:h-[58px] sm:flex-col `}
     border-radius: 30px 30px 0 0;
-    background: ${({ theme }) => theme.bg23};
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
     .sortingBtn {
       ${tw`w-[185px] text-white h-[40px] bg-[#5855ff] rounded-3xl	font-semibold text-[15px]

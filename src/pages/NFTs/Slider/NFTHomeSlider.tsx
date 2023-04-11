@@ -178,8 +178,12 @@ const settings = {
   initialSlide: 0,
   arrows: true,
   variableWidth: checkMobile() ? false : true,
-  nextArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-next" />,
-  prevArrow: <img src={`${process.env.PUBLIC_URL}/img/assets/home-slider-next.svg`} alt="banner-previous" />
+  nextArrow: (
+    <img src={`${process.env.PUBLIC_URL}/img/assets/Aggregator/home-slider-next.svg`} alt="banner-next" />
+  ),
+  prevArrow: (
+    <img src={`${process.env.PUBLIC_URL}/img/assets/Aggregator/home-slider-next.svg`} alt="banner-previous" />
+  )
 }
 
 export const NFTHomeSlider: FC = () => {

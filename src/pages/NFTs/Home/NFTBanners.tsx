@@ -28,7 +28,7 @@ const CAROUSEL_WRAPPER = styled.div<{ showBanner: boolean }>`
   }
   .slick-prev,
   .slick-next {
-    ${tw`w-[65px] h-[65px] z-10`}
+    ${tw`w-[30px] h-[30px] z-10`}
     &.slick-disabled {
       opacity: 0;
     }
@@ -36,7 +36,7 @@ const CAROUSEL_WRAPPER = styled.div<{ showBanner: boolean }>`
 
   .slick-prev {
     ${tw`sm:left-1`}
-    top: calc(50% - 56px);
+    top: calc(50% - 25px);
     left: 25px;
     transform: rotate(180deg);
   }
@@ -138,8 +138,8 @@ const settings = {
   initialSlide: 0,
   arrows: true,
   variableWidth: checkMobile() ? false : true,
-  nextArrow: <img src={`/img/assets/home-slider-next.svg`} alt="banner-next" />,
-  prevArrow: <img src={`/img/assets/home-slider-next.svg`} alt="banner-previous" />
+  nextArrow: <img src={`/img/assets/Aggregator/home-slider-next.svg`} alt="banner-next" />,
+  prevArrow: <img src={`/img/assets/Aggregator/home-slider-next.svg`} alt="banner-previous" />
 }
 
 export const NFTBanners = ({ showBanner }: any) => {

@@ -109,9 +109,18 @@ export const fetchFixedPriceByPages = async (paramValue: string, offset: number,
   }
 }
 export const fetchSingleNFT = async (address: string): Promise<any> => {
+  if (!address) return
   try {
     const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?mint_address=${address}`)
     return await res
+  } catch (err) {
+    return err
+  }
+}
+export const fetchGlobalSearchNFT = async (collectionName: string): Promise<any> => {
+  try {
+    const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SEARCH}?collection_name=${collectionName}`)
+    return await res.data
   } catch (err) {
     return err
   }
