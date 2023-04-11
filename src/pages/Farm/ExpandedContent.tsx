@@ -196,8 +196,8 @@ export const ExpandedContent: FC<{
             <Tooltip_holder>
               <span className="details">Total Earned</span>
               <HeaderTooltip
-                text={`The total profit and loss from SSL and is measured by comparing the total value of a pool’s assets (
-                  excluding trading fees) to their value if they had not been traded and instead were just held`}
+                text={`The total profit and loss from SSL and is measured by comparing the total value of a pool’s 
+                assets (excluding trading fees) to their value if they had not been traded and instead were just held`}
               />
             </Tooltip_holder>
             <span className="details">

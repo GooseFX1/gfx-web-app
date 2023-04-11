@@ -291,7 +291,7 @@ export const ExpandedDynamicContent: FC<IExpandedContent> = ({
       confirm.then((con) => {
         const { confirm, signature } = con
         setIsUnstakeLoading(false)
-        if (confirm && confirm?.value && confirm.value.err === null) {
+        if (confirm && confirm?.value && confirm.value.err === null && signature !== null) {
           updateStakedValue()
           notify(successfulMessage(getSuccessUnstakeMsg(), signature, unstakeRef.current.value, name, network))
           setCounter((prev) => prev + 1)

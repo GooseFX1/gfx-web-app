@@ -2,6 +2,7 @@ import { Market, MARKETS, OpenOrders } from 'openbook-ts/serum'
 import { Order } from 'openbook-ts/serum/lib/market'
 import { AccountInfo, Connection, PublicKey } from '@solana/web3.js'
 import { AVAILABLE_MARKETS, MarketSide } from '../context'
+import { SUPPORTED_TOKEN_LIST } from '../constants'
 
 export interface MarketInfo {
   address: PublicKey
@@ -21,7 +22,7 @@ const getMarket = async (connection: Connection, pair: string, canBeDeprecated =
 }
 
 const getMarketFromAddress = (address: PublicKey): MarketInfo | undefined =>
-  AVAILABLE_MARKETS.find(({ address: x }) => x.toString() === address.toString())
+  AVAILABLE_MARKETS(SUPPORTED_TOKEN_LIST).find(({ address: x }) => x.toString() === address.toString())
 
 const getMarketInfo = (pair: string, canBeDeprecated = false): MarketInfo => {
   if (pair === 'GOFX/USDC') {

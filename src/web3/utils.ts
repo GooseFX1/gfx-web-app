@@ -52,7 +52,7 @@ export const signAndSendRawTransaction = async (
   try {
     const transaction: Transaction = transactionData
     transaction.feePayer = wallet.publicKey
-    transaction.recentBlockhash = (await connection.getRecentBlockhash('max')).blockhash
+    transaction.recentBlockhash = (await connection.getLatestBlockhash('max')).blockhash
 
     signers.forEach((signer) => transaction.partialSign(signer))
 
@@ -89,7 +89,7 @@ export const simulateTransaction = async (
 ): Promise<RpcResponseAndContext<SimulatedTransactionResponse>> => {
   const transaction = transactionData
   transaction.feePayer = wallet.publicKey
-  transaction.recentBlockhash = (await connection.getRecentBlockhash('max')).blockhash
+  transaction.recentBlockhash = (await connection.getLatestBlockhash('max')).blockhash
 
   signers.forEach((signer) => transaction.partialSign(signer))
 

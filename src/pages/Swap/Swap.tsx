@@ -16,7 +16,7 @@ import {
   useSwap,
   SwapProvider,
   useSlippageConfig,
-  DEFAULT_MAINNET_RPC,
+  APP_RPC,
   useConnectionConfig,
   useNavCollapse,
   useTokenRegistry
@@ -382,7 +382,7 @@ const SwapContent: FC<{
     logData('swap_page')
 
     if (network === 'devnet') {
-      setEndpointName(DEFAULT_MAINNET_RPC)
+      setEndpointName(APP_RPC.name)
       notify({ message: `Switched to mainnet` })
     }
   }, [location])
@@ -479,7 +479,7 @@ const SwapContent: FC<{
       <HEADER_WRAPPER $iconSize="40px">
         <HEADER_TITLE>
           <span>{checkMobile() ? 'Swap' : dateString(new Date())}</span>
-          <img src={`/img/crypto/jup_${mode}.svg`} alt="jupiter-icon" className={' jup-icon'} />
+          <img src={`/img/crypto/jup_${mode}.svg`} alt="jupiter-icon" className={'jup-icon'} />
         </HEADER_TITLE>
 
         <div>

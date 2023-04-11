@@ -270,7 +270,7 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
         const { confirm, signature } = con
         setIsUnstakeLoading(false)
         setOperationPending(false)
-        if (confirm && confirm?.value && confirm.value.err === null) {
+        if (confirm && confirm?.value && confirm.value.err === null && signature !== null) {
           updateStakedValue()
           notify(successfulMessage(getSuccessUnstakeMsg(), signature, unstakeAmt.toString(), name, network))
           setCounter((prev) => prev + 1)

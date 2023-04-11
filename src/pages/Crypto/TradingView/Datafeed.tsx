@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { SUPPORTED_TOKEN_LIST } from '../../../constants'
 import { AVAILABLE_MARKETS, useCrypto } from '../../../context'
 import { sleep, getUnixTs } from '../../../utils/misc'
 
@@ -60,7 +61,9 @@ const makeDataFeed = () => {
       } catch (e) {
         console.log('error', e)
       }
-      let marketInfo = AVAILABLE_MARKETS.find((item) => item.name === symbolName && !item.deprecated)
+      let marketInfo = AVAILABLE_MARKETS(SUPPORTED_TOKEN_LIST).find(
+        (item) => item.name === symbolName && !item.deprecated
+      )
 
       if (!marketInfo) {
         marketInfo = customMarket.find((item) => item.name === symbolName || item.userName === symbolName)
@@ -190,7 +193,7 @@ const makeDataFeed = () => {
     },
     //eslint-disable-next-line
     async searchSymbols(userInput: string, exchange: string, symbolType: string, onResult: Function) {
-      const marketList: any[] = AVAILABLE_MARKETS.filter(
+      const marketList: any[] = AVAILABLE_MARKETS(SUPPORTED_TOKEN_LIST).filter(
         (item) => item.name.includes(userInput) && !item.deprecated
       )
       const reList = []
