@@ -219,8 +219,8 @@ export const DROPDOWN_CONTAINER = styled.div`
   ${tw`rounded-md p-1 -mt-1 sm:w-[185px] text-[15px] font-semibold`}
   background-color: ${({ theme }) => theme.dropdownBackground};
   color: ${({ theme }) => theme.text1};
-  <<<<<<< HEAD ======= ${({ theme }) => theme.customScrollBar('4px')}>>>>>>>6c376c19... global search integrated,
-  sort functionality added .checkboxContainer {
+  ${({ theme }) => theme.customScrollBar('4px')}
+  .checkboxContainer {
     ${tw`ml-auto`}
     input {
       ${tw`w-[18px] h-[18px]`}
