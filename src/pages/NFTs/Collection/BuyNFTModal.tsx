@@ -373,7 +373,6 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
     [curBid]
   )
   const orderTotal: number = useMemo(() => Number(curBid) + Number(servicePriceCalc), [curBid])
-
   const marketData = useMemo(() => prices['SOL/USDC'], [prices])
   const fiatCalc: string = useMemo(
     () => `${marketData && curBid ? (marketData.current * curBid).toFixed(3) : ''}`,
@@ -487,8 +486,10 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
       buyerPrice: buyerPrice,
       tokenSize: tokenSize
     }
+    console.log(curBid, new BN(curBid * LAMPORTS_PER_SOL_NUMBER))
 
     // All bids will be placed on GFX AH Instance - Buys will be built with "ask" payload
+    console.log(ask)
     const buyInstructionAccounts: BuyInstructionAccounts = {
       wallet: publicKey,
       paymentAccount: publicKey,
@@ -497,25 +498,54 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
       tokenAccount: new PublicKey(general.token_account),
       metadata: new PublicKey(metaDataAccount),
       escrowPaymentAccount: escrowPaymentAccount[0],
-      authority: new PublicKey(isBuyingNow ? ask.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
-      auctionHouse: new PublicKey(isBuyingNow ? ask.auction_house_key : AUCTION_HOUSE),
-      auctionHouseFeeAccount: new PublicKey(isBuyingNow ? ask.auction_house_fee_account : AH_FEE_ACCT),
+      authority: new PublicKey(
+        isBuyingNow
+          ? ask?.auction_house_authority
+            ? ask?.auction_house_authority
+            : AUCTION_HOUSE_AUTHORITY
+          : AUCTION_HOUSE_AUTHORITY
+      ),
+      auctionHouse: new PublicKey(
+        isBuyingNow ? (ask?.auction_house_key ? ask?.auction_house_key : AUCTION_HOUSE) : AUCTION_HOUSE
+      ),
+      auctionHouseFeeAccount: new PublicKey(
+        isBuyingNow ? (ask?.auction_house_fee_account ? ask.auction_house_fee_account : AH_FEE_ACCT) : AH_FEE_ACCT
+      ),
       buyerTradeState: buyerTradeState[0]
     }
 
     const buyIX: TransactionInstruction = await createBuyInstruction(buyInstructionAccounts, buyInstructionArgs)
     console.log(buyIX)
-
     const transaction = new Transaction().add(buyIX)
     try {
       const signature = await sendTransaction(transaction, connection)
       console.log(signature)
       setPendingTxSig(signature)
+      setTimeout(() => {
+        postBidToAPI(signature, new BN(curBid * LAMPORTS_PER_SOL_NUMBER), tokenSize).then((res) => {
+          console.log(res)
+
+          notify(successfulListingMessage(signature, nftMetadata, curBid.toString()))
+
+          if (res === 'Error') {
+            callCancelInstruction()
+            setIsLoading(false)
+          } else if (res.data.bid_matched && res.data.tx_sig) {
+            fetchUser(publicKey.toBase58())
+            notify(successBidMatchedMessage(res.data.tx_sig, nftMetadata, curBid.toString()))
+            setTimeout(() => history.push(`/NFTs/profile/${publicKey.toBase58()}`), 2000)
+          }
+        })
+      }, 30 * 1000)
 
       const confirm = await connection.confirmTransaction(signature, 'finalized')
-      console.log(confirm)
+      console.log(confirm, 'confoirming')
 
+      // if buyer price === ask?.buyer_price the api mey need to be called
       if (confirm.value.err === null) {
+        // ask kiran about this
+        // i have to test for excute sale hapening
+        //only execute api request if buy now is set to true , we dont need this for bid
         postBidToAPI(signature, buyerPrice, tokenSize).then((res) => {
           console.log(res)
 
@@ -538,7 +568,7 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
         message: (
           <MESSAGE>
             <Row justify="space-between" align="middle">
-              <Col>NFT Biding error!</Col>
+              <Col>NFT {isBuyingNow ? 'Buying' : 'Biding'} error!</Col>
               <Col>
                 <img className="mIcon" src={`/img/assets/close-white-icon.svg`} alt="" />
               </Col>

@@ -1,4 +1,6 @@
 import { Button } from 'antd'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import React, { ReactElement, useState, FC, useMemo } from 'react'
 import {
   // useAccounts,
@@ -75,7 +77,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     ask ? parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER : null
   )
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [pendingTxSig, setPendingTxSig] = useState<Transaction | null>(null)
+  const [pendingTxSig, setPendingTxSig] = useState<any>(null)
 
   const totalToReceive = useMemo(() => (askPrice ? askPrice : 0.0) - NFT_MARKET_TRANSACTION_FEE / 100, [askPrice])
 
@@ -291,7 +293,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     transaction.add(sellIX)
 
     try {
-      const signature = await signTransaction(transaction)
+      const signature = await wal.sendTransaction(transaction, connection)
       console.log(signature)
       setPendingTxSig(signature)
       attemptConfirmTransaction(buyerPrice, tradeState, signature)
@@ -319,6 +321,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     }
 
     const curAskingPrice: BN = new BN(parseFloat(ask.buyer_price))
+    console.log(curAskingPrice)
     const tradeState: [PublicKey, number] = await tradeStatePDA(usrAddr, general, bnTo8(curAskingPrice))
     const cancelInstructionArgs: CancelInstructionArgs = {
       buyerPrice: curAskingPrice,

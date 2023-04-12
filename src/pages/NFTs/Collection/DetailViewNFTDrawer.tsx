@@ -8,7 +8,7 @@ import { AppraisalValue } from '../../../utils/GenericDegsin'
 import TabPane from 'antd/lib/tabs/TabPane'
 import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
-import { AttributesTabContent } from '../NFTDetails/AttributesTabContent'
+import { AsksAndBidsForNFT, AttributesTabContent } from '../NFTDetails/AttributesTabContent'
 import { useHistory } from 'react-router-dom'
 
 // import { INFTGeneralData } from '../../../types/nft_details'
@@ -304,15 +304,11 @@ export const NFTTabSections: FC<{ activeTab: string; setActiveTab: any }> = ({
   setActiveTab
 }): ReactElement => {
   const { nftMetadata } = useNFTDetails()
-
   return (
     <RIGHT_SECTION_TABS activeTab={activeTab}>
       <Tabs defaultActiveKey="1" centered onChange={(key) => setActiveTab(key)}>
         <TabPane tab="Activity" key="1">
-          <div className="generalItemValue">
-            <div tw="flex items-center justify-center">Open Bids</div>
-            No bids so far, be the first to bid for this amazing piece.
-          </div>
+          <AsksAndBidsForNFT />
         </TabPane>
         <TabPane tab="Attributes" key="2">
           <AttributesTabContent data={nftMetadata ? nftMetadata.attributes : []} />
