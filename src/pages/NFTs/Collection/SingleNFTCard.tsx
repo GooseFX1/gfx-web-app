@@ -201,7 +201,6 @@ export const HoverOnNFT: FC<{
 }> = ({ addNftToBag, item, hasAsk, setNFTDetails, buttonType }): ReactElement => {
   const { setBidNow, setBuyNow, setSellNFT } = useNFTAggregator()
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
-
   const goToDetailsForModal = async (e, type) => {
     e.stopPropagation()
     setIsLoadingBeforeRelocate(true)

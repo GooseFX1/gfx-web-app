@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { FC } from 'react'
+import { FC, ReactElement } from 'react'
 import styled, { css } from 'styled-components'
 import { IAttributesTabItemData } from '../../../types/nft_details'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { useDarkMode } from '../../../context'
+import { useDarkMode, useNFTDetails, usePriceFeedFarm } from '../../../context'
+import { truncateAddress } from '../../../utils'
+import { PriceWithToken } from '../../../components/common/PriceWithToken'
+import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 
 const ATTRIBUTES_TAB_CONTENT = styled.div`
   ${({ theme }) => css`
@@ -47,6 +50,58 @@ export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ d
         </PILL_SECONDARY>
       ))}
     </ATTRIBUTES_TAB_CONTENT>
+  )
+}
+
+export const AsksAndBidsForNFT = (): ReactElement => {
+  const { ask, bids } = useNFTDetails()
+  if (!ask && !bids.length)
+    return (
+      <div className="generalItemValue">
+        <div tw="flex items-center justify-center">Open Bids</div>
+        No bids so far, be the first to bid for this amazing piece.
+      </div>
+    )
+  const { prices } = usePriceFeedFarm()
+  const solPrice = prices['SOL/USDC']?.current
+  return (
+    <div>
+      <div tw="flex-col px-[25px] py-2">
+        {bids.length &&
+          bids.map((bid) => (
+            <div tw="flex items-center justify-between mt-1">
+              <div>
+                Bid by <span tw="text-[#fff] font-semibold">{truncateAddress(bid.wallet_key)} </span>
+                <div>{new Date(parseInt(bid.clock) * 1000).toString().substring(0, 16)}</div>
+              </div>
+              <div>
+                <PriceWithToken
+                  token="SOL"
+                  cssStyle={tw`h-[18px] w-[18px]`}
+                  price={parseFloat(bid.buyer_price) / LAMPORTS_PER_SOL_NUMBER}
+                />
+                <div>{((parseFloat(bid.buyer_price) / LAMPORTS_PER_SOL_NUMBER) * solPrice).toFixed(1)} USDC</div>
+              </div>
+            </div>
+          ))}
+      </div>
+      <div tw="flex items-center justify-between px-[25px] py-2">
+        <>
+          <div>
+            Ask by <span tw="text-[#fff] font-semibold">{truncateAddress(ask.wallet_key)} </span>
+            <div>{new Date(parseInt(ask.clock)).toString().substring(0, 16)}</div>
+          </div>
+          <div>
+            <PriceWithToken
+              token="SOL"
+              cssStyle={tw`h-[18px] w-[18px]`}
+              price={parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER}
+            />
+            <div>{((parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER) * solPrice).toFixed(1)} USDC</div>
+          </div>
+        </>
+      </div>
+    </div>
   )
 }
 

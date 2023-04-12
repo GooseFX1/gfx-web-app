@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, FC, ReactElement } from 'react'
 import axios from 'axios'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { moneyFormatter } from '../../../utils'
 import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nft_details.d'
@@ -15,6 +17,7 @@ import { SellNFTModal } from './SellNFTModal'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { BidNFTModal } from './BuyNFTModal'
 
 //#region styles
 // const CARD = styled.div`
@@ -140,13 +143,15 @@ export const Card: FC<ICard> = (props) => {
   const [localTotalLikes, setLocalTotalLikes] = useState<number>()
   const [isFavorited, setIsFavorited] = useState<boolean>(false)
   const [showDrawerSingleNFT, setDrawerSingleNFT] = useState<boolean>(false)
+  const [showBidNFTModal, setShowBidNFTModal] = useState<boolean>(false)
   const [showSellNFTModal, setShowSellNFTModal] = useState<boolean>(false)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const [hover, setHover] = useState<boolean>(false)
 
   enum MODAL_TARGET {
     DRAWER = 'drawer',
-    SELL = 'sell'
+    SELL = 'sell',
+    BID = 'bid'
   }
 
   const displayPrice: string | null = useMemo(
@@ -205,6 +210,7 @@ export const Card: FC<ICard> = (props) => {
     await setNFTDetails()
     if (target === MODAL_TARGET.SELL) setShowSellNFTModal(true)
     if (target === MODAL_TARGET.DRAWER) setDrawerSingleNFT(true)
+    if (target === MODAL_TARGET.BID) setShowBidNFTModal(true)
   }
 
   // const getButtonText = (isOwner: boolean, ask: INFTAsk | undefined): string => {
@@ -241,6 +247,9 @@ export const Card: FC<ICard> = (props) => {
   const dynamicPriceValue = (currency: string, priceFeed: any, value: number) => `${moneyFormatter(value)}`
 
   const handleModal = useCallback(() => {
+    if (showBidNFTModal) {
+      return <BidNFTModal />
+    }
     if (showSellNFTModal) {
       return <SellNFTModal visible={showSellNFTModal} handleClose={() => setShowSellNFTModal(false)} />
     } else if (showDrawerSingleNFT) {
@@ -267,9 +276,10 @@ export const Card: FC<ICard> = (props) => {
           {isLoadingBeforeRelocate && <LoadingDiv />}
           {hover && (
             <HoverOnNFT
-              buttonType={isOwner ? 'sell' : null}
+              buttonType={isOwner ? 'sell' : 'bid'}
               item={localSingleNFT}
-              setNFTDetails={() => openDetails(MODAL_TARGET.SELL)}
+              hasAsk={displayPrice !== null}
+              setNFTDetails={() => (isOwner ? openDetails(MODAL_TARGET.SELL) : openDetails(MODAL_TARGET.BID))}
             />
           )}
           <img

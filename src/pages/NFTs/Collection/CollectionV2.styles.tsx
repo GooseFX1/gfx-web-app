@@ -148,7 +148,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
 
   .gridItem {
-    ${tw`h-auto w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
+    ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
       duration-500 cursor-pointer mt-[20px] mx-auto`}
 
     img {
@@ -165,7 +165,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
         ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
       }
       .hoverButtons {
-        ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[96%] px-2`}
+        ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[96%] pr-2`}
       }
       div {
         ${tw`absolute opacity-0`}
