@@ -34,7 +34,7 @@ const NFTAgg: FC = (): ReactElement => {
   const { prices, refreshTokenData } = usePriceFeedFarm()
   const location = useLocation<ILocationState>()
   const { connection } = useConnectionConfig()
-  const { wallet, connected } = useWallet()
+  const { wallet } = useWallet()
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const NFTAgg: FC = (): ReactElement => {
   }, [location])
 
   useEffect(() => {
-    if (connected) {
+    if (wallet?.adapter?.connected) {
       if (!sessionUser || sessionUser.pubkey !== wallet?.adapter?.publicKey.toBase58()) {
         fetchSessionUser('address', wallet?.adapter?.publicKey.toBase58(), connection).then((res) => {
           if (res && res.status === 200) {
@@ -71,7 +71,7 @@ const NFTAgg: FC = (): ReactElement => {
       setSessionUser(null)
     }
     return null
-  }, [wallet, connected])
+  }, [wallet])
 
   return Object.keys(prices) ? (
     <BODY_NFT $navCollapsed={isCollapsed}>

@@ -69,7 +69,7 @@ export const AsksAndBidsForNFT = (): ReactElement => {
       <div tw="flex-col px-[25px] py-2">
         {bids.length &&
           bids.map((bid) => (
-            <div tw="flex items-center justify-between mt-1">
+            <div tw="flex items-center justify-between mt-1" key={bid.clock}>
               <div>
                 Bid by <span tw="text-[#fff] font-semibold">{truncateAddress(bid.wallet_key)} </span>
                 <div>{new Date(parseInt(bid.clock) * 1000).toString().substring(0, 16)}</div>
@@ -85,22 +85,24 @@ export const AsksAndBidsForNFT = (): ReactElement => {
             </div>
           ))}
       </div>
-      <div tw="flex items-center justify-between px-[25px] py-2">
-        <>
-          <div>
-            Ask by <span tw="text-[#fff] font-semibold">{truncateAddress(ask.wallet_key)} </span>
-            <div>{new Date(parseInt(ask.clock)).toString().substring(0, 16)}</div>
-          </div>
-          <div>
-            <PriceWithToken
-              token="SOL"
-              cssStyle={tw`h-[18px] w-[18px]`}
-              price={parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER}
-            />
-            <div>{((parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER) * solPrice).toFixed(1)} USDC</div>
-          </div>
-        </>
-      </div>
+      {ask && (
+        <div tw="flex items-center justify-between px-[25px] py-2">
+          <>
+            <div>
+              Ask by <span tw="text-[#fff] font-semibold">{truncateAddress(ask.wallet_key)} </span>
+              <div>{new Date(parseInt(ask.clock)).toString().substring(0, 16)}</div>
+            </div>
+            <div>
+              <PriceWithToken
+                token="SOL"
+                cssStyle={tw`h-[18px] w-[18px]`}
+                price={parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER}
+              />
+              <div>{((parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER) * solPrice).toFixed(1)} USDC</div>
+            </div>
+          </>
+        </div>
+      )}
     </div>
   )
 }
