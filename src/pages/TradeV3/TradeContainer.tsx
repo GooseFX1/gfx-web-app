@@ -18,6 +18,8 @@ import useWindowSize from '../../utils/useWindowSize'
 import { logData } from '../../api/analytics'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
+import { checkMobile } from '../../utils'
+import { DexhomeMobi } from './mobile/DexhomeMobi'
 
 const ReactGridLayout = WidthProvider(Responsive)
 
@@ -432,7 +434,7 @@ export const CryptoContent: FC = () => {
   const resetLayout = () => {
     setLayout({ lg: componentDimensionsLg, md: componentDimensionsMd })
   }
-  return (
+  return !checkMobile() ? (
     <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked} $mode={mode}>
       <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} />
       <ReactGridLayout
@@ -447,5 +449,7 @@ export const CryptoContent: FC = () => {
         {generateDOM()}
       </ReactGridLayout>
     </DEX_CONTAINER>
+  ) : (
+    <DexhomeMobi />
   )
 }
