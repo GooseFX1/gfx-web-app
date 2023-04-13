@@ -129,7 +129,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
               item={item}
               setNFTDetails={setNFTDetails}
               addNftToBag={addNftToBag}
-              hasAsk={localAsk !== null}
+              ask={localAsk ? localAsk : null}
             />
           )}
           {isLoadingBeforeRelocate && <LoadingDiv />}
@@ -195,10 +195,10 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
 export const HoverOnNFT: FC<{
   addNftToBag?: any
   item: BaseNFT
-  hasAsk?: boolean
+  ask: INFTAsk | null
   buttonType?: string
   setNFTDetails: any
-}> = ({ addNftToBag, item, hasAsk, setNFTDetails, buttonType }): ReactElement => {
+}> = ({ addNftToBag, item, ask, setNFTDetails, buttonType }): ReactElement => {
   const { setBidNow, setBuyNow, setSellNFT } = useNFTAggregator()
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const goToDetailsForModal = async (e, type) => {
@@ -243,7 +243,7 @@ export const HoverOnNFT: FC<{
           </Button>
         )}
 
-        {hasAsk && (
+        {ask && (
           <Button
             height="28px"
             width="75px"
