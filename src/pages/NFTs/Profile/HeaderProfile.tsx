@@ -55,7 +55,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   const history = useHistory()
   const params = useParams<IAppParams>()
   const { connection, network } = useConnectionConfig()
-  const { connected, sendTransaction, wallet, publicKey } = useWallet()
+  const { sendTransaction, wallet } = useWallet()
   const { sessionUser, nonSessionProfile, fetchNonSessionProfile } = useNFTProfile()
   const { mode } = useDarkMode()
   const [userEscrowBalance, setUserEscrowBalance] = useState<number>()
@@ -65,6 +65,15 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   const [settleBalanceModal, setSettleBalanceModal] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const handleCancel = () => setProfileModal(false)
+
+  const publicKey: PublicKey | null = useMemo(
+    () => (wallet?.adapter ? wallet?.adapter?.publicKey : null),
+    [wallet?.adapter]
+  )
+  const connected: boolean = useMemo(
+    () => (wallet?.adapter ? wallet?.adapter?.connected : false),
+    [wallet?.adapter]
+  )
 
   const currentUserProfile = useMemo(() => {
     if (nonSessionProfile !== undefined && !isSessionUser) {

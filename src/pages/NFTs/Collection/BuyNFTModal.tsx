@@ -372,7 +372,7 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
     () => (curBid ? parseFloat(((NFT_MARKET_TRANSACTION_FEE / 100) * curBid).toFixed(3)) : 0),
     [curBid]
   )
-  const orderTotal: number = useMemo(() => Number(curBid) + Number(servicePriceCalc), [curBid])
+  const orderTotal: number = useMemo(() => curBid, [curBid])
   const marketData = useMemo(() => prices['SOL/USDC'], [prices])
   const fiatCalc: string = useMemo(
     () => `${marketData && curBid ? (marketData.current * curBid).toFixed(3) : ''}`,

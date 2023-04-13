@@ -225,6 +225,11 @@ const FiltersContainer = () => {
     setTimelineIndex(index)
     setTimelineName(poolName)
   }
+
+  useEffect(() => {
+    if (sessionUser) console.log('Session user - ' + sessionUser.pubkey)
+  }, [sessionUser])
+
   if (checkMobile())
     return (
       <div>
