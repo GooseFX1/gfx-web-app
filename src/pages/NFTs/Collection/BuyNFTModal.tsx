@@ -270,7 +270,7 @@ const ReviewBid: FC<{
           <strong>{general.nft_name} </strong> {checkMobile() ? <br /> : 'by'}
           <strong> {general?.collection_name}</strong>
         </div>
-        {singleCollection && singleCollection?.collection[0].is_verified && (
+        {singleCollection && singleCollection.is_verified && (
           <div className="verifiedText">
             {!checkMobile() && (
               <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />

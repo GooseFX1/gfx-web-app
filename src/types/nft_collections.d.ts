@@ -6,7 +6,7 @@ export enum COLLECTION_TYPES {
   NFT_UPCOMING_COLLECTION = 'NFTUpcomingCollection'
 }
 
-export type NFTBaseCollection = {
+export type NFTCollection = {
   uuid: string
   collection_id: number
   collection_name: string
@@ -23,20 +23,15 @@ export type NFTBaseCollection = {
   is_verified: boolean
   collection_address_type: string
   gfx_appraisal_supported: boolean
-  is_agg: boolean
-}
-
-export type NFTCollection = {
-  collection: NFTBaseCollection[]
-  collection_id: number
-  floor_price?: null | number
-  collection_floor?: null | number
-  collection_vol: {
-    daily: number
-    monthly: number
-    weekly: number
-    yearly: number
-  }
+  floor_price: number
+  daily_volume: number
+  weekly_volume: number
+  monthly_volume: number
+  yearly_volume: number
+  total_volume: number
+  marketcap: number | null
+  daily_change: number | null
+  nfts_count: number
 }
 
 export type CollectionOwner = {
@@ -81,7 +76,7 @@ export type NFTUpcomingCollection = {
 }
 
 export interface INFTCollectionConfig {
-  allCollections: NFTBaseCollection[] | number[]
+  allCollections: NFTCollection[] | number[]
   setAllCollections: any
   allCollectionLoading: boolean
   detailedCollections: NFTCollection[]
@@ -91,7 +86,6 @@ export interface INFTCollectionConfig {
   featuredCollections: NFTFeaturedCollection[]
   upcomingCollections: NFTUpcomingCollection[]
   fetchAllCollections: any
-  fetchAllCollectionDetails: (collections: NFTBaseCollection[]) => Promise<void>
   fetchFeaturedCollections: any
   fetchUpcomingCollections: any
   singleCollection: NFTCollection

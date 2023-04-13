@@ -14,7 +14,7 @@ import { WRAPPER_TABLE } from './NFTAggregator.styles'
 import { NFTColumnsTitleWeb } from './NFTTableColumns'
 import { useHistory } from 'react-router-dom'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
-import { NFTBaseCollection } from '../../../types/nft_collections'
+import { NFTCollection } from '../../../types/nft_collections'
 import { Image } from 'antd'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { Arrow } from '../../../components/common/Arrow'
@@ -26,15 +26,10 @@ const STYLE = styled.div``
 
 const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   const { isCollapsed } = useNavCollapse()
-  const {
-    fetchAllCollections,
-    fetchAllCollectionsByPages,
-    allCollections,
-    allCollectionLoading,
-    setAllCollections
-  } = useNFTCollections()
+  const { fetchAllCollectionsByPages, allCollections, allCollectionLoading, setAllCollections } =
+    useNFTCollections()
   const { sortFilter, sortType, pageNumber, setPageNumber } = useNFTAggregatorFilters()
-  const [allItems, setAllItems] = useState<NFTBaseCollection[] | number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9])
+  const [allItems, setAllItems] = useState<NFTCollection[] | number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9])
   const paginationNumber = 20
   const observer = useRef<any>()
   const lastRowElementRef = useCallback(
@@ -115,7 +110,7 @@ const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement =
                     <div className="grey">Floor: </div>
                     <div>
                       <PriceWithToken
-                        price={item?.collection_floor / LAMPORTS_PER_SOL_NUMBER}
+                        price={item?.floor_price / LAMPORTS_PER_SOL_NUMBER}
                         token="SOL"
                         cssStyle={tw`w-5 h-5`}
                       />
@@ -188,9 +183,9 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
         )}
       </td>
       <td className="tdItem">
-        {item?.collection_floor !== null ? (
+        {item?.floor_price !== null ? (
           <PriceWithToken price={floorPrice} token={currencyView} cssStyle={tw`h-5 w-5`} />
-        ) : item?.collection_floor === null ? (
+        ) : item?.floor_price === null ? (
           <PriceWithToken price={0} token={currencyView} cssStyle={tw`h-5 w-5`} />
         ) : (
           <Loader />
