@@ -7,8 +7,7 @@ import {
   NFTCollection,
   CollectionOwner,
   NFTFeaturedCollection,
-  NFTUpcomingCollection,
-  NFTBaseCollection
+  NFTUpcomingCollection
 } from '../types/nft_collections.d'
 import apiClient from '../api'
 import {
@@ -23,7 +22,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
   const [collectionOwners, setCollectionOwners] = useState<CollectionOwner[]>([])
   const [fixedPriceWithinCollection, setFixedPriceWithinCollection] = useState<IFixedPriceWithinCollection>()
   const [openBidWithinCollection, setOpenBidWithinCollection] = useState<IOpenBidWithinCollection>()
-  const [allCollections, setAllCollections] = useState<NFTBaseCollection[] | any[]>([1, 2, 3, 4, 5, 6, 7, 8, 9])
+  const [allCollections, setAllCollections] = useState<NFTCollection[]>([])
   const [allCollectionLoading, setLoading] = useState<boolean>(false)
   const [detailedCollections, setAllDetailedCollections] = useState<NFTCollection[]>([])
   const [featuredCollections, setFeaturedCollections] = useState<NFTFeaturedCollection[]>([])
@@ -65,23 +64,6 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
     } catch (err) {
       console.error(err)
       return []
-    }
-  }
-
-  const fetchAllCollectionDetails = async (collections: NFTBaseCollection[]) => {
-    const collectionsDetails = await Promise.all(
-      collections.map(async (collection: NFTBaseCollection) => await _fetchCollectionDetails(collection.uuid))
-    )
-    setAllDetailedCollections(collectionsDetails === null ? [] : collectionsDetails)
-  }
-
-  const _fetchCollectionDetails = async (collectionUUID: string) => {
-    try {
-      const res = await fetchSingleCollectionAction(NFT_API_ENDPOINTS.SINGLE_COLLECTION, collectionUUID)
-      return res.data
-    } catch (error) {
-      console.error('Failed to fetch single collection details')
-      return null
     }
   }
 
@@ -167,7 +149,6 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
         upcomingCollections,
         fetchAllCollections,
         fetchAllCollectionsByPages,
-        fetchAllCollectionDetails,
         fetchFeaturedCollections,
         fetchUpcomingCollections,
         singleCollection,
@@ -208,7 +189,6 @@ export const useNFTCollections = (): INFTCollectionConfig => {
     upcomingCollections: context.upcomingCollections,
     fetchAllCollections: context.fetchAllCollections,
     fetchAllCollectionsByPages: context.fetchAllCollectionsByPages,
-    fetchAllCollectionDetails: context.fetchAllCollectionDetails,
     fetchFeaturedCollections: context.fetchFeaturedCollections,
     fetchUpcomingCollections: context.fetchUpcomingCollections,
     singleCollection: context.singleCollection,

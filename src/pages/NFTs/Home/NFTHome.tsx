@@ -7,9 +7,9 @@ import { fetchAllSingleNFTs } from '../../../api/NFTs'
 import { Header } from './Header'
 import { NFTHomeSlider } from '../Slider/NFTHomeSlider'
 import AnalyticsTabs from './Tab'
-import CollectionCarousel from './CollectionCarousel'
+
 import OneOfOnesNFTs from './OneOfOnesNFTs'
-import { COLLECTION_TYPES, NFTBaseCollection } from '../../../types/nft_collections.d'
+import { COLLECTION_TYPES, NFTCollection } from '../../../types/nft_collections.d'
 import Loading from './Loading'
 import { ModalSlide } from '../../../components/ModalSlide'
 import { Banner } from '../../../components/Banner'
@@ -28,21 +28,20 @@ const BETA_BANNER = styled.div`
 `
 
 const NFTLandingPage: FC = (): JSX.Element => {
-  const { allCollections, fetchAllCollections, fetchAllCollectionDetails, setNFTMenuPopup, nftMenuPopup } =
-    useNFTCollections()
+  const { allCollections, setNFTMenuPopup, nftMenuPopup } = useNFTCollections()
   const [filteredCollections, setFilteredCollections] = useState([])
   const [oneOfOnes, setAllOneOfOnes] = useState([])
   const [isAllLoading, setIsAllLoading] = useState<boolean>(true)
   const [betaBanner, setBetaBanner] = useState<boolean>(true)
   const [search, setSearch] = useState<string>('')
 
-  useEffect(() => {
-    fetchAllCollections().then((collections: NFTBaseCollection[]) => {
-      fetchAllCollectionDetails(collections).then(() => setIsAllLoading(false))
-    })
-    fetchAllSingleNFTs().then((res) => setAllOneOfOnes(res != null ? res.slice(0, 20) : []))
-    return null
-  }, [])
+  // useEffect(() => {
+  //   fetchAllCollections().then((collections: NFTCollection[]) => {
+  //     fetchAllCollectionDetails(collections).then(() => setIsAllLoading(false))
+  //   })
+  //   fetchAllSingleNFTs().then((res) => setAllOneOfOnes(res != null ? res.slice(0, 20) : []))
+  //   return null
+  // }, [])
 
   const find = useCallback((col: string | string[], search: string) => col.includes(search), [])
 
@@ -62,12 +61,6 @@ const NFTLandingPage: FC = (): JSX.Element => {
       </div>
       <br />
       <div>
-        <CollectionCarousel
-          collectionType={COLLECTION_TYPES.NFT_COLLECTION}
-          title="Popular Collections"
-          isLaunch
-          isLoading={isAllLoading}
-        />
         <OneOfOnesNFTs items={oneOfOnes} title={'1 of 1 Listings'} />
       </div>
 

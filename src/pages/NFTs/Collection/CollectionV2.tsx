@@ -7,7 +7,7 @@ import { Button } from '../../../components/Button'
 import { useDarkMode, useNFTProfile, useNavCollapse, useNFTAggregator, useNFTCollections } from '../../../context'
 import { ICON } from '../../../layouts'
 import { IAppParams } from '../../../types/app_params'
-import { NFTBaseCollection } from '../../../types/nft_collections'
+import { NFTCollection } from '../../../types/nft_collections'
 import { checkMobile } from '../../../utils'
 import { GenericNotFound } from '../../InvalidUrl'
 import { GradientText } from '../adminPage/components/UpcomingMints'
@@ -90,7 +90,7 @@ const NFTStatsContainer = () => {
   const [sweepCollection, setSweepCollection] = useState<boolean>(false)
   const [appraisalPopup, setGFXAppraisalPopup] = useState<boolean>(false)
 
-  const collection: NFTBaseCollection | undefined = useMemo(
+  const collection: NFTCollection | undefined = useMemo(
     () => (singleCollection ? singleCollection[0] : undefined),
     [singleCollection]
   )

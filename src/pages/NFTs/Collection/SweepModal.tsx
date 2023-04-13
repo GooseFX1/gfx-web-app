@@ -1111,7 +1111,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
       return
     }
 
-    const collectionName = singleCollection.collection[0].collection_name
+    const collectionName = singleCollection.collection_name
 
     const res = await generateTinyURL(
       `https://${process.env.NODE_ENV !== 'production' ? 'app.staging.goosefx.io' : window.location.host}${
@@ -1201,13 +1201,9 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
                   />
                 </div>
                 <Row justify="center" align="middle" className="rowTwo">
-                  <img
-                    className="small-image"
-                    src={singleCollection.collection[0].profile_pic_link}
-                    alt="the-nft"
-                  />
-                  <span className="collection-name-sweeper">{singleCollection.collection[0].collection_name}</span>
-                  {singleCollection.collection[0].is_verified && (
+                  <img className="small-image" src={singleCollection.profile_pic_link} alt="the-nft" />
+                  <span className="collection-name-sweeper">{singleCollection.collection_name}</span>
+                  {singleCollection.is_verified && (
                     <img className="verified-tick" src={`/img/assets/check-icon.svg`} alt="" />
                   )}
                 </Row>
@@ -1229,13 +1225,9 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
                   from:
                 </div>
                 <Row justify="center" align="middle" className="rowTwo">
-                  <img
-                    className="small-image"
-                    src={singleCollection.collection[0].profile_pic_link}
-                    alt="the-nft"
-                  />
-                  <span className="collection-name-sweeper">{singleCollection.collection[0].collection_name}</span>
-                  {singleCollection.collection[0].is_verified && (
+                  <img className="small-image" src={singleCollection.profile_pic_link} alt="the-nft" />
+                  <span className="collection-name-sweeper">{singleCollection.collection_name}</span>
+                  {singleCollection.is_verified && (
                     <img className="verified-tick" src={`/img/assets/check-icon.svg`} alt="" />
                   )}
                 </Row>
