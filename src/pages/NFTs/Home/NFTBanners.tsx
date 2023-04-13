@@ -14,7 +14,7 @@ import { CreatorsLanding } from '../launchpad/pages/CreatorsLanding'
 //#region styles
 const CAROUSEL_WRAPPER = styled.div<{ showBanner: boolean }>`
   ${({ showBanner }) => css`
-    ${tw`sm:px-0  ml-1 relative duration-500 pl-8 `}
+    ${tw`sm:px-0  ml-1 relative duration-500 pl-[20px] `}
     margin-top: ${showBanner ? '20px' : '0px'};
     height: ${showBanner ? 'fit-cotent' : '0px'};
     visibility: ${showBanner ? 'visible' : 'hidden'};

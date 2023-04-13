@@ -1,10 +1,6 @@
 import styled from 'styled-components'
 import tw from 'twin.macro'
 
-export const NFT_STATS_CONTAINER = styled.div`
-  ${tw`h-[36px] mt-4 ml-6 flex items-center justify-start`}
-`
-
 export const STATS_BTN = styled.div`
   ${tw`flex items-center justify-center pl-[2px] pr-[1.5px] rounded-full h-[36px] pt-[1px] pb-[1px]
    ml-1 mr-[45px]`}
@@ -71,7 +67,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
 
   tbody {
     height: calc(
-      100vh - ${({ showBanner }) => (showBanner ? '425px' : '215px')} -
+      100vh - ${({ showBanner }) => (showBanner ? '425px' : '236px')} -
         ${({ $navCollapsed }) => (!$navCollapsed ? '80px' : '0px')}
     );
     ${({ theme }) => theme.customScrollBar('4px')}

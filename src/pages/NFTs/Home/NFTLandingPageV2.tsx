@@ -4,7 +4,7 @@ import React, { ReactElement, useMemo, useState, FC, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { SearchBar } from '../../../components'
+import { Pill, SearchBar } from '../../../components'
 import NFTAggWelcome, { NFTAggTerms } from '../../../components/NFTAggWelcome'
 import {
   useConnectionConfig,
@@ -18,7 +18,7 @@ import {
 import { checkMobile } from '../../../utils'
 import { STYLED_BUTTON } from '../../Farm/FarmFilterHeader'
 import MenuNFTPopup from './MenuNFTPopup'
-import { NFT_STATS_CONTAINER, SEARCH_RESULT_CONTAINER, STATS_BTN } from './NFTAggregator.styles'
+import { SEARCH_RESULT_CONTAINER, STATS_BTN } from './NFTAggregator.styles'
 import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'
 import SearchNFTMobile from './SearchNFTMobile'
@@ -33,7 +33,7 @@ import { ModalSlide } from '../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../constants'
 import { SVGToPrimary2 } from '../../../styles'
 import { USER_CONFIG_CACHE } from '../../../types/app_params'
-import { NFTBaseCollection } from '../../../types/nft_collections'
+import { NFTCollection } from '../../../types/nft_collections'
 import ShowEyeLite from '../../../animations/showEyelite.json'
 import ShowEyeDark from '../../../animations/showEyedark.json'
 import Lottie from 'lottie-react'
@@ -381,7 +381,7 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   return (
     <SEARCH_RESULT_CONTAINER>
       {searchResultArr &&
-        searchResultArr.map((data: NFTBaseCollection, index) => (
+        searchResultArr.map((data: NFTCollection, index) => (
           <div
             className="searchResultRow"
             key={index}
@@ -396,21 +396,15 @@ const SearchResultContainer = ({ searchFilter }: any) => {
 }
 
 const StatsContainer = ({ showBanner, setShowBanner }: any) => (
-  <NFT_STATS_CONTAINER>
-    <StatsButton title={'Total volume traded:'} data={'22M'} />
-    <StatsButton title={'Total traded:'} data={'22M'} />
-    <StatsButton title={'Total Volume:'} data={'5M'} />
-    <ShowBannerEye showBanner={showBanner} setShowBanner={setShowBanner} />
-  </NFT_STATS_CONTAINER>
-)
-
-const StatsButton: FC<{ title: string; data: string | number }> = ({ title, data }) => (
-  <STATS_BTN>
-    <div className="innerCover">
-      <div className="innerTitle">{title}</div>
-      <div className="innerData">{data}</div>
+  <div tw="h-[36px] my-[20px] ml-[20px] flex items-center justify-between">
+    <div tw="flex justify-between items-center w-[60vw] xl:w-[80vw]">
+      <Pill loading={false} label={'Collection'} value={'9155'} />
+      <Pill loading={false} label={'Market Cap:'} value={'12.33M'} />
+      <Pill loading={false} label={'24h Volume:'} value={'22M'} />
+      <Pill loading={false} label={'Total volume traded:'} value={'127.82M'} />
     </div>
-  </STATS_BTN>
+    <ShowBannerEye showBanner={showBanner} setShowBanner={setShowBanner} />
+  </div>
 )
 
 const TimeLineDropdown = (): ReactElement => {

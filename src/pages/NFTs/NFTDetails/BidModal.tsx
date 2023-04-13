@@ -450,10 +450,12 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
   }
 
   const postBidToAPI = async (txSig: any, buyerPrice: BN, tokenSize: BN) => {
+    if (!publicKey) return
+
     const bidObject = {
       clock: Date.now().toString(),
       tx_sig: txSig,
-      wallet_key: publicKey.toBase58(),
+      wallet_key: publicKey?.toBase58(),
       auction_house_key: AUCTION_HOUSE,
       token_account_key: general.token_account,
       auction_house_treasury_mint_key: TREASURY_MINT,

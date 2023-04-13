@@ -281,14 +281,14 @@ export const CollectionHeader: FC<{
       case 'twitter':
         window.open(
           `https://twitter.com/intent/tweet?text=Check%20out%20the%20
-          ${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%
+          ${singleCollection.collection_name}%20collection%20on%20Nest%20NFT%
           20Exchange%20&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
         )
         break
       case 'telegram':
         window.open(
           `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20the%20
-          ${singleCollection.collection[0].collection_name}%20collection%20on%20Nest%20NFT%20Exchange%20`
+          ${singleCollection.collection_name}%20collection%20on%20Nest%20NFT%20Exchange%20`
         )
         break
       case 'facebook':
@@ -335,11 +335,7 @@ export const CollectionHeader: FC<{
       {sweeperModal && <SweepModal visible={sweeperModal} setVisible={setSweeperModal}></SweepModal>}
       {!isCollectionItemEmpty && (
         <BANNER
-          $url={
-            singleCollection.collection[0].banner_link
-              ? singleCollection.collection[0].banner_link
-              : singleCollection.collection[0].profile_pic_link
-          }
+          $url={singleCollection.banner_link ? singleCollection.banner_link : singleCollection.profile_pic_link}
         ></BANNER>
       )}
       <div className="collection-header-content">
@@ -350,20 +346,20 @@ export const CollectionHeader: FC<{
                 {isCollectionItemEmpty ? (
                   <SkeletonCommon width="147px" height="43px" />
                 ) : (
-                  <span>{singleCollection.collection[0].collection_name}</span>
+                  <span>{singleCollection.collection_name}</span>
                 )}
               </span>
             }
             {isCollectionItemEmpty ? (
               <SkeletonCommon width="40px" height="40px" borderRadius="50%" />
             ) : (
-              singleCollection.collection[0].is_verified && <img src={`/img/assets/check-icon.svg`} alt="" />
+              singleCollection.is_verified && <img src={`/img/assets/check-icon.svg`} alt="" />
             )}
           </div>
           {isCollectionItemEmpty ? (
             <SkeletonCommon width="548px" height="26px" />
           ) : (
-            <div className="desc">{singleCollection.collection[0].collection_description}</div>
+            <div className="desc">{singleCollection.collection_description}</div>
           )}
         </div>
         <div className="categories">
@@ -373,11 +369,7 @@ export const CollectionHeader: FC<{
                 <SkeletonCommon width="106px" height="25px" />
               ) : (
                 <span>
-                  {dynamicPriceValue(
-                    userCurrency,
-                    prices,
-                    singleCollection.collection_floor / LAMPORTS_PER_SOL || 0
-                  )}
+                  {dynamicPriceValue(userCurrency, prices, singleCollection.floor_price / LAMPORTS_PER_SOL || 0)}
                 </span>
               )}
             </div>
@@ -390,9 +382,7 @@ export const CollectionHeader: FC<{
               {isCollectionItemEmpty ? (
                 <SkeletonCommon width="106px" height="25px" />
               ) : (
-                <span>
-                  {singleCollection.collection_vol ? singleCollection.collection_vol.weekly.toFixed(3) : '0.00'}
-                </span>
+                <span>{singleCollection.weekly_volume ? singleCollection.weekly_volume.toFixed(3) : '0.00'}</span>
               )}
             </div>
             <div className="text">
