@@ -6,7 +6,6 @@ const LOADER = styled.div<{ $color }>`
   position: absolute;
   top: 0;
   height: 8px;
-  border: 10px solid;
   width: 8px;
   border-radius: 50%;
   font-size: 12px;
@@ -14,13 +13,12 @@ const LOADER = styled.div<{ $color }>`
   text-indent: -9999em;
   -webkit-animation-fill-mode: both;
   animation-fill-mode: both;
-  -webkit-animation: loader 1.8s infinite ease-in-out;
-  animation: loader 1.8s infinite ease-in-out;
+  -webkit-animation: 1.8s ease-in-out -0.16s infinite normal none running loader;
+  animation: 1.8s ease-in-out -0.16s infinite normal none running loader;
   -webkit-transform: translateZ(0);
   -ms-transform: translateZ(0);
-  transform: translateY(-8px);
   -webkit-animation-delay: -0.16s;
-  animation-delay: -0.16s;
+  transform: translateY(-8px);
 
   &:before,
   &:after {
@@ -32,8 +30,8 @@ const LOADER = styled.div<{ $color }>`
     width: 8px;
     -webkit-animation-fill-mode: both;
     animation-fill-mode: both;
-    -webkit-animation: loader 1.8s infinite ease-in-out;
-    animation: loader 1.8s infinite ease-in-out;
+    -webkit-animation: 1.8s ease-in-out -0.16s infinite normal none running loader;
+    animation: 1.8s ease-in-out -0.16s infinite normal none running loader;
   }
 
   &:before {
