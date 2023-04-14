@@ -8,7 +8,8 @@ import {
   useNFTAggregator,
   useNFTDetails,
   useNFTProfile,
-  usePriceFeedFarm
+  usePriceFeedFarm,
+  useWalletModal
 } from '../../../context'
 import { SuccessfulListingMsg } from '../../../components'
 
@@ -186,7 +187,18 @@ export const STYLED_POPUP = styled(PopupCustom)`
 export const BuyNFTModal = (): ReactElement => {
   const { buyNowClicked, setBuyNow } = useNFTAggregator()
   const { ask } = useNFTDetails()
+  const { connected } = useWallet()
+  const { setVisible } = useWalletModal()
   const sellerPrice: number = parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER
+
+  useEffect(() => {
+    if (buyNowClicked) {
+      if (!connected) {
+        setVisible(true)
+        setBuyNow(false)
+      }
+    }
+  }, [buyNowClicked])
 
   return (
     <STYLED_POPUP
@@ -209,12 +221,21 @@ export const BidNFTModal = (): ReactElement => {
   const [reviewBtnClicked, setReviewClicked] = useState<boolean>(false)
   const purchasePrice = useMemo(() => parseFloat(ask ? ask?.buyer_price : '0') / LAMPORTS_PER_SOL_NUMBER, [ask])
   const [curBid, setCurBid] = useState<number | undefined>(purchasePrice ? purchasePrice : 0)
-
+  const { connected } = useWallet()
+  const { setVisible } = useWalletModal()
   const updateBidValue = (e) => {
     if (parseFloat(e.target.value) < TEN_MILLION) setCurBid(e.target.value)
     handleSetCurBid(e.target.value, -1)
   }
 
+  useEffect(() => {
+    if (bidNowClicked) {
+      if (!connected) {
+        setVisible(true)
+        setBidNow(false)
+      }
+    }
+  }, [bidNowClicked])
   const handleSetCurBid = (value: number, index: number) => {
     setCurBid(value)
     setSelectedBtn(index)
@@ -270,7 +291,7 @@ const ReviewBid: FC<{
           <strong>{general.nft_name} </strong> {checkMobile() ? <br /> : 'by'}
           <strong> {general?.collection_name}</strong>
         </div>
-        {singleCollection && singleCollection.is_verified && (
+        {singleCollection && singleCollection[0]?.is_verified && (
           <div className="verifiedText">
             {!checkMobile() && (
               <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
@@ -373,7 +394,6 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
     [curBid]
   )
   const orderTotal: number = useMemo(() => Number(curBid) + Number(servicePriceCalc), [curBid])
-
   const marketData = useMemo(() => prices['SOL/USDC'], [prices])
   const fiatCalc: string = useMemo(
     () => `${marketData && curBid ? (marketData.current * curBid).toFixed(3) : ''}`,
@@ -497,25 +517,52 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
       tokenAccount: new PublicKey(general.token_account),
       metadata: new PublicKey(metaDataAccount),
       escrowPaymentAccount: escrowPaymentAccount[0],
-      authority: new PublicKey(isBuyingNow ? ask.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
-      auctionHouse: new PublicKey(isBuyingNow ? ask.auction_house_key : AUCTION_HOUSE),
-      auctionHouseFeeAccount: new PublicKey(isBuyingNow ? ask.auction_house_fee_account : AH_FEE_ACCT),
+      authority: new PublicKey(
+        isBuyingNow
+          ? ask?.auction_house_authority
+            ? ask?.auction_house_authority
+            : AUCTION_HOUSE_AUTHORITY
+          : AUCTION_HOUSE_AUTHORITY
+      ),
+      auctionHouse: new PublicKey(
+        isBuyingNow ? (ask?.auction_house_key ? ask?.auction_house_key : AUCTION_HOUSE) : AUCTION_HOUSE
+      ),
+      auctionHouseFeeAccount: new PublicKey(
+        isBuyingNow ? (ask?.auction_house_fee_account ? ask.auction_house_fee_account : AH_FEE_ACCT) : AH_FEE_ACCT
+      ),
       buyerTradeState: buyerTradeState[0]
     }
 
     const buyIX: TransactionInstruction = await createBuyInstruction(buyInstructionAccounts, buyInstructionArgs)
     console.log(buyIX)
-
     const transaction = new Transaction().add(buyIX)
     try {
       const signature = await sendTransaction(transaction, connection)
       console.log(signature)
       setPendingTxSig(signature)
+      setTimeout(() => {
+        postBidToAPI(signature, new BN(curBid * LAMPORTS_PER_SOL_NUMBER), tokenSize).then((res) => {
+          console.log(res)
+
+          notify(successfulListingMessage(signature, nftMetadata, curBid.toString()))
+
+          if (res === 'Error') {
+            callCancelInstruction()
+            setIsLoading(false)
+          } else if (res.data.bid_matched && res.data.tx_sig) {
+            fetchUser(publicKey.toBase58())
+            notify(successBidMatchedMessage(res.data.tx_sig, nftMetadata, curBid.toString()))
+            setTimeout(() => history.push(`/NFTs/profile/${publicKey.toBase58()}`), 2000)
+          }
+        })
+      }, 35 * 1000)
 
       const confirm = await connection.confirmTransaction(signature, 'finalized')
-      console.log(confirm)
 
       if (confirm.value.err === null) {
+        // ask kiran about this
+        // i have to test for excute sale hapening
+        //only execute api request if buy now is set to true , we dont need this for bid
         postBidToAPI(signature, buyerPrice, tokenSize).then((res) => {
           console.log(res)
 
@@ -538,7 +585,7 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
         message: (
           <MESSAGE>
             <Row justify="space-between" align="middle">
-              <Col>NFT Biding error!</Col>
+              <Col>NFT {isBuyingNow ? 'Buying' : 'Biding'} error!</Col>
               <Col>
                 <img className="mIcon" src={`/img/assets/close-white-icon.svg`} alt="" />
               </Col>
