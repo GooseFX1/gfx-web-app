@@ -118,7 +118,7 @@ export const GRID_CONTAINER = styled.div<{ navCollapsed?: boolean }>`
 `
 
 export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
-  ${tw`w-full bg-[#e2e2e2] dark:bg-black-2`}
+  ${tw`w-full bg-[#e2e2e2] dark:bg-[#272727]`}
   ${({ theme }) => theme.customScrollBar('4px')}
   overflow-y: auto;
   .profile-content-loading {
@@ -136,7 +136,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
   .gridContainer {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
-    ${tw`grid sm:pl-1 sm:grid-cols-2 rounded-xl pb-[300px]`}
+    ${tw`grid sm:pl-1 sm:grid-cols-2 rounded-xl z-[0] pb-[300px]`}
   }
   .gridContainerProfile {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
@@ -148,15 +148,15 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
 
   .gridItem {
-    ${tw`h-auto w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
-      duration-500 cursor-pointer mt-[20px] mx-auto`}
+    ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
+    duration-500 cursor-pointer mt-[20px] mx-auto z-[0]`}
 
     img {
-      ${tw`h-[140px] rounded-[15px] w-[92.5%]`}
+      ${tw`rounded-[15px] w-[92.5%]`}
     }
 
     .gridItemContainer {
-      ${tw`flex p-[8px] pb-0 justify-center relative `}
+      ${tw`flex p-[8px] pb-0 justify-center relative z-[1] `}
 
       .nftImg {
         ${tw`w-full h-[170px] `}
@@ -165,7 +165,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
         ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
       }
       .hoverButtons {
-        ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[96%] px-2`}
+        ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[96%] pr-2`}
       }
       div {
         ${tw`absolute opacity-0`}
@@ -175,8 +175,8 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
         background: ${({ theme }) => theme.hoverGradient};
       }
       .loadingNFT {
-        ${tw`absolute opacity-100 mt-[-8px] z-50 duration-300 
-          flex items-center w-[190px] h-auto rounded-[15px] pl-1`}
+        ${tw`absolute opacity-100 mt-[-8px] z-[1000] duration-300 
+          flex items-center w-[190px] h-[295px] rounded-[15px] pl-1`}
         background: ${({ theme }) => theme.hoverGradient};
       }
     }
@@ -239,7 +239,7 @@ export const DROPDOWN_CONTAINER = styled.div`
 `
 export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
   ${({ index }) => css`
-    ${tw`duration-500 items-center flex  bg-[#e2e2e2] dark:bg-black-2 h-[70px] sm:h-[58px] sm:flex-col `}
+    ${tw`duration-500 items-center flex  bg-[#e2e2e2] dark:bg-[#272727] h-[70px] sm:h-[58px] sm:flex-col `}
     border-radius: 30px 30px 0 0;
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
     .sortingBtn {
@@ -272,8 +272,8 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
        font-semibold  flex justify-between flex-col cursor-pointer`}
     }
     .selectedProfile {
-      color: ${({ theme }) => theme.text4};
-      ${tw`w-[170px] mb-4 items-center sm:mt-1
+      /* color: ${({ theme }) => theme.text4}; */
+      ${tw`w-[170px] mb-4 items-center sm:mt-1 text-[#5855ff] dark:text-white
        font-semibold  flex justify-between flex-col cursor-pointer`}
     }
     }
@@ -281,7 +281,8 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       ${tw` w-[140px] sm:w-[130px] mb-4 sm:mt-1 items-center flex justify-between flex-col cursor-pointer`}
     }
     .flexItemProfile {
-      ${tw`w-[170px] sm:w-[140px] mb-4 sm:mt-1 items-center flex justify-between flex-col cursor-pointer`}
+      ${tw`w-[170px] sm:w-[140px] mb-4 sm:mt-1 dark:text-grey-1  text-[#9c9c9c]
+      items-center flex justify-between flex-col cursor-pointer`}
     }
     .activeItem {
       ${tw`h-2  block mt-3 sm:mt-2 rounded-b-circle font-semibold duration-500 bg-[#5855ff] w-[70%]`}
@@ -297,7 +298,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       ${tw`h-2  block mt-3 sm:mt-2 rounded-b-circle font-semibold duration-500 bg-[#5855ff] w-[68%] `}
       content: '';
       transform: rotate(180deg);
-      margin-left: ${index * 365 + `px`};
+      margin-left: ${index * 340 + `px`};
       @media (max-width: 500px) {
         margin-left: ${index * 300 + `px`};
       }
