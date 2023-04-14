@@ -13,7 +13,7 @@ import { GradientText } from '../adminPage/components/UpcomingMints'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { BaseNFT, INFTAsk, INFTBid, INFTGeneralData } from '../../../types/nft_details'
 import { fetchSingleNFT } from '../../../api/NFTs'
-import { getParsedAccountByMint, StringPublicKey, AH_PROGRAM_IDS } from '../../../web3'
+import { getParsedAccountByMint, StringPublicKey, AH_NAME } from '../../../web3'
 import { LoadingDiv } from './Card'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { Button } from '../../../components/Button'
@@ -90,8 +90,10 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
         if (res && res.status === 200) {
           res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(item)
           const nft: INFTGeneralData = res.data
+          console.log(nft)
+
           setLocalBids(nft.bids)
-          setLocalAsk(nft.asks[0])
+          setLocalAsk(nft.asks.length > 0 ? nft.asks[0] : null)
           setLocalTotalLikes(nft.total_likes)
         }
       })
@@ -146,7 +148,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
             {localAsk !== null && (
               <img
                 className="ah-name"
-                src={`/img/assets/Aggregator/${AH_PROGRAM_IDS[localAsk?.auction_house_key]}.svg`}
+                src={`/img/assets/Aggregator/${AH_NAME(localAsk?.auction_house_key)}.svg`}
               />
             )}
           </div>
