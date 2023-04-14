@@ -136,11 +136,11 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
   .gridContainer {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
-    ${tw`grid sm:pl-1 sm:grid-cols-2 rounded-xl pb-[96px]`}
+    ${tw`grid sm:pl-1 sm:grid-cols-2 rounded-xl pb-[300px]`}
   }
   .gridContainerProfile {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
-    ${tw`grid pl-3 sm:grid-cols-2 rounded-xl overflow-y-auto`}
+    ${tw`grid pl-3 sm:grid-cols-2 rounded-xl overflow-y-auto pb-[300px]`}
     ${({ theme }) => theme.customScrollBar('2px')}
   }
   .pinkGradient {

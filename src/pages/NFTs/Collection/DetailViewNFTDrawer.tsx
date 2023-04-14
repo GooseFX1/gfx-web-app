@@ -13,7 +13,7 @@ import { useHistory } from 'react-router-dom'
 
 // import { INFTGeneralData } from '../../../types/nft_details'
 // import { genericErrMsg } from '../../Farm/FarmClickHandler'
-import { AH_PROGRAM_IDS } from '../../../web3/agg_program_ids'
+import { AH_NAME } from '../../../web3/agg_program_ids'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -198,8 +198,8 @@ const ImageViewer = (): ReactElement => {
               {ask && (
                 <img
                   tw="h-[22px] w-[22px] ml-2.5"
-                  src={`/img/assets/Aggregator/${AH_PROGRAM_IDS[ask.auction_house_key]}.svg`}
-                  alt={`${AH_PROGRAM_IDS[ask.auction_house_key]}-icon`}
+                  src={`/img/assets/Aggregator/${AH_NAME(ask.auction_house_key)}.svg`}
+                  alt={`${AH_NAME(ask.auction_house_key)}-icon`}
                   style={{ height: 30 }}
                 />
               )}
