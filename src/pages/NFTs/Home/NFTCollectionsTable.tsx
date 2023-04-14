@@ -192,7 +192,15 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
         )}
       </td>
       <td className="tdItem">
-        {item ? <PriceWithToken price={109} token={currencyView} cssStyle={tw`h-5 w-5`} /> : <Loader />}
+        {item ? (
+          <PriceWithToken
+            price={item?.gfx_appraisal_supported ? 50 : 0}
+            token={currencyView}
+            cssStyle={tw`h-5 w-5`}
+          />
+        ) : (
+          <Loader />
+        )}
       </td>
       <td className="tdItem">{item ? <div tw="text-grey-2">Coming soon</div> : <Loader />}</td>
       <td className="tdItem">{item ? <div tw="text-grey-2">Coming soon</div> : <Loader />}</td>

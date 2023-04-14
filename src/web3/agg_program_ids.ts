@@ -32,3 +32,6 @@ export const AH_PROGRAM_IDS = {
   Fmi98rgkH9jU4mEwp9ZEkaNMEdWpj97U9xXuRcVjCP9p: 'Unknown',
   H58RPwoTqa2FvySxD7w8PMV4c9V9RCU7cHb5msDbUrv1: 'Unknown'
 }
+
+export const AH_NAME = (prop: string): string =>
+  Object.hasOwn(AH_PROGRAM_IDS, prop) ? AH_PROGRAM_IDS[prop] : 'Unknown'

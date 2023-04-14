@@ -5,7 +5,7 @@ import React, { FC, ReactElement } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { useDarkMode } from '../../../context'
-import { AH_PROGRAM_IDS } from '../../../web3'
+import { AH_PROGRAM_IDS, AH_NAME } from '../../../web3'
 import { PopupCustom } from '../Popup/PopupCustom'
 
 const STYLED_POPUP = styled(PopupCustom)`
@@ -51,17 +51,17 @@ const MenuNFTPopup: FC<{ menuPopup: boolean; setMenuPopup: any }> = ({
           </div>
         </div> */}
         {Object.keys(AH_PROGRAM_IDS)
-          .filter((addr) => AH_PROGRAM_IDS[addr] !== 'Unknown')
+          .filter((addr) => AH_NAME(addr) !== 'Unknown')
           .map((addr, index) => (
             <div className="marketRow" key={index}>
               <div>
                 <img
                   className="marketImg"
                   // fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-                  src={`/img/assets/Aggregator/${AH_PROGRAM_IDS[addr]}.svg`}
+                  src={`/img/assets/Aggregator/${AH_NAME(addr)}.svg`}
                 />
               </div>
-              <div>{AH_PROGRAM_IDS[addr]}</div>
+              <div>{AH_NAME(addr)}</div>
               <div className="checkbox">
                 <Checkbox />
               </div>

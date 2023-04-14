@@ -28,7 +28,7 @@ import MyNFTBag from '../MyNFTBag'
 import { useConnection } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import { Image } from 'antd'
-import { AH_PROGRAM_IDS } from '../../../web3/agg_program_ids'
+import { AH_PROGRAM_IDS, AH_NAME } from '../../../web3/agg_program_ids'
 import { ModalSlide } from '../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../constants'
 import { SVGToPrimary2 } from '../../../styles'
@@ -454,22 +454,22 @@ const MarketDropdownContents = ({ setArrow }: any): ReactElement => {
   return (
     <DROPDOWN_CONTAINER tw="w-[173px] h-[211px] overflow-y-auto">
       {Object.keys(AH_PROGRAM_IDS)
-        .filter((addr) => AH_PROGRAM_IDS[addr] !== 'Unknown')
+        .filter((addr) => AH_NAME(addr) !== 'Unknown')
         .map((addr) => (
           <div
             tw="flex p-2 items-center cursor-pointer hover:opacity-80"
             key={addr}
-            onClick={() => console.log(AH_PROGRAM_IDS[addr])}
+            onClick={() => console.log(AH_NAME(addr))}
           >
             <div>
               <Image
                 className="marketImg"
                 fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-                src={`/img/assets/Aggregator/${AH_PROGRAM_IDS[addr]}.svg`}
+                src={`/img/assets/Aggregator/${AH_NAME(addr)}.svg`}
                 preview={false}
               />
             </div>
-            <div tw="ml-2">{AH_PROGRAM_IDS[addr]}</div>
+            <div tw="ml-2">{AH_NAME(addr)}</div>
             <div className="checkboxContainer">
               <input type="checkbox" onClick={() => console.log('s')} />
             </div>
