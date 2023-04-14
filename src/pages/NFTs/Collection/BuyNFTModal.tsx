@@ -8,7 +8,8 @@ import {
   useNFTAggregator,
   useNFTDetails,
   useNFTProfile,
-  usePriceFeedFarm
+  usePriceFeedFarm,
+  useWalletModal
 } from '../../../context'
 import { SuccessfulListingMsg } from '../../../components'
 
@@ -186,7 +187,18 @@ export const STYLED_POPUP = styled(PopupCustom)`
 export const BuyNFTModal = (): ReactElement => {
   const { buyNowClicked, setBuyNow } = useNFTAggregator()
   const { ask } = useNFTDetails()
+  const { connected } = useWallet()
+  const { setVisible } = useWalletModal()
   const sellerPrice: number = parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER
+
+  useEffect(() => {
+    if (buyNowClicked) {
+      if (!connected) {
+        setVisible(true)
+        setBuyNow(false)
+      }
+    }
+  }, [buyNowClicked])
 
   return (
     <STYLED_POPUP
@@ -209,12 +221,21 @@ export const BidNFTModal = (): ReactElement => {
   const [reviewBtnClicked, setReviewClicked] = useState<boolean>(false)
   const purchasePrice = useMemo(() => parseFloat(ask ? ask?.buyer_price : '0') / LAMPORTS_PER_SOL_NUMBER, [ask])
   const [curBid, setCurBid] = useState<number | undefined>(purchasePrice ? purchasePrice : 0)
-
+  const { connected } = useWallet()
+  const { setVisible } = useWalletModal()
   const updateBidValue = (e) => {
     if (parseFloat(e.target.value) < TEN_MILLION) setCurBid(e.target.value)
     handleSetCurBid(e.target.value, -1)
   }
 
+  useEffect(() => {
+    if (bidNowClicked) {
+      if (!connected) {
+        setVisible(true)
+        setBidNow(false)
+      }
+    }
+  }, [bidNowClicked])
   const handleSetCurBid = (value: number, index: number) => {
     setCurBid(value)
     setSelectedBtn(index)
@@ -270,7 +291,7 @@ const ReviewBid: FC<{
           <strong>{general.nft_name} </strong> {checkMobile() ? <br /> : 'by'}
           <strong> {general?.collection_name}</strong>
         </div>
-        {singleCollection && singleCollection.is_verified && (
+        {singleCollection && singleCollection[0]?.is_verified && (
           <div className="verifiedText">
             {!checkMobile() && (
               <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
@@ -372,6 +393,7 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
     () => (curBid ? parseFloat(((NFT_MARKET_TRANSACTION_FEE / 100) * curBid).toFixed(3)) : 0),
     [curBid]
   )
+
   const orderTotal: number = useMemo(() => curBid, [curBid])
   const marketData = useMemo(() => prices['SOL/USDC'], [prices])
   const fiatCalc: string = useMemo(
@@ -536,10 +558,9 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
             setTimeout(() => history.push(`/NFTs/profile/${publicKey.toBase58()}`), 2000)
           }
         })
-      }, 30 * 1000)
+      }, 35 * 1000)
 
       const confirm = await connection.confirmTransaction(signature, 'finalized')
-      console.log(confirm, 'confoirming')
 
       // if buyer price === ask?.buyer_price the api mey need to be called
       if (confirm.value.err === null) {

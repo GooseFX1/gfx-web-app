@@ -40,17 +40,19 @@ const WRAPPER = styled.div<{ $width; $mode }>`
   }
 `
 
-export const STYLED_TITLE = styled.div`
+export const STYLED_TITLE = styled.div<{ $focus: boolean }>`
   ${tw`flex flex-row items-center justify-center`}
   .textTitle {
     ${tw`font-semibold text-base`}
+    color: ${({ $focus }) => ($focus ? '#fff' : '')} !important;
   }
   .info-icon {
     ${tw`w-[20px] h-[20px] block ml-2`}
   }
   .arrowDown {
     ${tw`sm:w-[17px] cursor-pointer sm:h-[8px] w-[18px] h-[7px] ml-[10px] duration-500`}
-    transform: scale(1.3);
+    transform: scale(1.5);
+    opacity: ${({ $focus }) => ($focus ? 0.9 : 0.35)};
   }
   .invert {
     ${tw`h-[10px]`}
@@ -65,13 +67,14 @@ export const TableHeaderTitle = (
   text: string,
   infoText: string,
   isArrowDown: boolean,
-  invert?: boolean
+  invert?: boolean,
+  focus?: boolean
 ): ReactElement => (
-  <STYLED_TITLE>
+  <STYLED_TITLE $focus={focus}>
     <div className="textTitle">{text}</div>
     {infoText && <HeaderTooltipMode text={infoText} />}
     {isArrowDown && (
-      <img className={'arrowDown' + (invert ? ' invert' : '')} src={`/img/assets/arrow-down-grey.svg`} alt="" />
+      <img className={'arrowDown' + (invert ? ' invert' : '')} src={`/img/assets/arrow-down-dark.svg`} alt="" />
     )}
   </STYLED_TITLE>
 )

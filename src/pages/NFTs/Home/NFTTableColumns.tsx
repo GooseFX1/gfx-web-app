@@ -30,8 +30,9 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
           {TableHeaderTitle(
             'Collection Name',
             '',
-            sortFilter === NFT_COL_FILTER_OPTIONS.COLLECTION_NAME || !sortFilter,
-            sortType === 'DESC'
+            true,
+            (sortFilter === NFT_COL_FILTER_OPTIONS.COLLECTION_NAME || !sortFilter) && sortType === 'DESC',
+            sortFilter === NFT_COL_FILTER_OPTIONS.COLLECTION_NAME || !sortFilter
           )}
         </th>
         <th
@@ -41,8 +42,9 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
           {TableHeaderTitle(
             'Floor Price',
             '',
-            sortFilter === NFT_COL_FILTER_OPTIONS.FLOOR_PRICE,
-            sortType === 'DESC'
+            true,
+            sortFilter === NFT_COL_FILTER_OPTIONS.FLOOR_PRICE && sortType === 'DESC',
+            sortFilter === NFT_COL_FILTER_OPTIONS.FLOOR_PRICE
           )}
         </th>
         <th>
