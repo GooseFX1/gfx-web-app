@@ -7,6 +7,9 @@ import { useTraderConfig } from '../../../context/trader_risk_group'
 import { SettlePanel } from '../SettlePanel'
 import { getPerpsPrice } from '../perps/utils'
 import { CollateralPanelMobi } from './CollateralPanelMobi'
+import { PopupCustom } from '../../NFTs/Popup/PopupCustom'
+import { DepositWithdraw } from '../perps/DepositWithdraw'
+import { ClosePosition } from '../ClosePosition'
 
 const WRAPPER = styled.div`
   .no-positions-found {
@@ -15,6 +18,26 @@ const WRAPPER = styled.div`
     > div {
       ${tw`mt-3.75 text-gray-2 text-tiny font-semibold`}
     }
+  }
+`
+
+const SETTING_MODAL = styled(PopupCustom)`
+  ${tw`!h-[402px] !w-11/12 rounded-half`}
+  background-color: ${({ theme }) => theme.bg25};
+
+  .ant-modal-header {
+    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-4 pb-0 border-b-0`}
+    background-color: ${({ theme }) => theme.bg25};
+  }
+  .ant-modal-content {
+    ${tw`shadow-none`}
+
+    .ant-modal-close {
+      ${tw`top-[30px]`}
+    }
+  }
+  .ant-modal-body {
+    ${tw`py-0 px-[25px]`}
   }
 `
 
@@ -116,6 +139,45 @@ const TRADE_HISTORY = styled.div`
   }
 `
 
+const HEADER = styled.div`
+  ${tw`flex items-center`}
+
+  .cta {
+    ${tw`rounded-bigger w-[120px] h-[40px] mr-[13px] cursor-pointer`}
+
+    .btn {
+      ${tw`flex items-center justify-center text-regular font-semibold w-full h-full`}
+      color: ${({ theme }) => theme.text37};
+    }
+
+    .gradient-bg {
+      ${tw`h-full w-full rounded-bigger `}
+      background-image: linear-gradient(to right, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
+    }
+  }
+
+  .background-container {
+    ${tw`h-full w-full rounded-bigger`}
+  }
+
+  .active {
+    ${tw`p-0.5 cursor-auto`}
+    background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
+
+    .btn {
+      color: ${({ theme }) => theme.text32};
+    }
+
+    .white-background {
+      background-color: ${({ theme }) => theme.white};
+    }
+  }
+
+  img {
+    ${tw`ml-auto h-10 w-10 cursor-pointer mr-[50px]`}
+  }
+`
+
 const FIXED_BOTTOM = styled.div`
   ${tw`fixed bottom-0 left-0 w-full h-[75px] `}
   border-top: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
@@ -177,7 +239,7 @@ const OpenOrders: FC = () => {
                   </div>
                   <div tw="flex flex-col">
                     <span className="label">Condition</span>
-                    <span className="value" tw="text-[#80CE00]">
+                    <span className="value" tw="!text-[#80CE00]">
                       Open
                     </span>
                   </div>
@@ -284,6 +346,7 @@ const Positions = () => {
     return Number(traderInfo.pnl)
   }, [traderInfo])
   const perpsPrice = useMemo(() => getPerpsPrice(orderBook), [orderBook])
+  const [closePositionModal, setClosePositionModal] = useState<boolean>(false)
   const notionalSize = useMemo(
     () => (Number(traderInfo.averagePosition.quantity) * perpsPrice).toFixed(3),
     [perpsPrice, traderInfo.averagePosition.quantity]
@@ -291,6 +354,36 @@ const Positions = () => {
 
   return traderInfo.averagePosition.side && Number(roundedSize) ? (
     <POSITION_WRAPPER>
+      {closePositionModal && (
+        <>
+          <SETTING_MODAL
+            visible={true}
+            centered={true}
+            footer={null}
+            title={
+              <div tw="flex items-center">
+                <span tw="font-semibold text-black-4 text-lg dark:text-grey-5">Close Position</span>
+                {/*<img
+                    src="/img/assets/refresh.svg"
+                    alt="refresh-icon"
+                    tw="ml-auto ml-auto h-10 w-10 cursor-pointer mr-10"
+                />*/}
+              </div>
+            }
+            closeIcon={
+              <img
+                src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+                height="20px"
+                width="20px"
+                onClick={() => setClosePositionModal(false)}
+              />
+            }
+            className={mode === 'dark' ? 'dark' : ''}
+          >
+            <ClosePosition setVisibleState={setClosePositionModal} />
+          </SETTING_MODAL>
+        </>
+      )}
       <div tw="flex flex-row justify-between items-center mb-2">
         <div>
           <span tw="mr-2 font-semibold text-regular dark:text-grey-5 text-grey-1">SOL/USDC</span>
@@ -301,7 +394,13 @@ const Positions = () => {
             {traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}
           </span>
         </div>
-        <button onClick={null}>Close</button>
+        <button
+          onClick={() => {
+            setClosePositionModal(true)
+          }}
+        >
+          Close
+        </button>
       </div>
       <div tw="flex flex-row mb-3">
         <div tw="flex flex-col w-1/3">
@@ -340,14 +439,58 @@ const Positions = () => {
   )
 }
 
+const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: string }> = ({
+  setTradeType,
+  tradeType
+}) => {
+  const { mode } = useDarkMode()
+  return (
+    <HEADER>
+      <div className={tradeType === 'deposit' ? 'active cta' : 'cta'} onClick={() => setTradeType('deposit')}>
+        <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
+          <div className={tradeType === 'deposit' ? 'gradient-bg btn' : 'btn'}>Deposit</div>
+        </div>
+      </div>
+      <div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('deposit')}>
+        {/*<div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('withdraw')}>*/}
+        <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
+          <div className={tradeType === 'withdraw' ? 'gradient-bg btn' : 'btn'}>Withdraw</div>
+        </div>
+      </div>
+      {/*<img src="/img/assets/refresh.svg" alt="refresh-icon" />*/}
+    </HEADER>
+  )
+}
+
 export const UserProfile = ({ setUserProfile }) => {
   const tabs = ['Positions', 'Open Orders', 'Trade History', 'Sol Unsettled']
-  const { formatPair, isSpot } = useCrypto()
+  const { isSpot } = useCrypto()
   const [activeTab, setActiveTab] = useState(0)
+  const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
+  const [tradeType, setTradeType] = useState<string>('deposit')
+  const { mode } = useDarkMode()
 
   return (
     <WRAPPER>
-      {true ? (
+      {depositWithdrawModal && (
+        <SETTING_MODAL
+          visible={true}
+          centered={true}
+          footer={null}
+          title={<ModalHeader setTradeType={setTradeType} tradeType={tradeType} />}
+          closeIcon={
+            <img
+              src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+              height="20px"
+              width="20px"
+              onClick={() => setDepositWithdrawModal(false)}
+            />
+          }
+        >
+          <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
+        </SETTING_MODAL>
+      )}
+      {!isSpot ? (
         <CollateralPanelMobi setUserProfile={setUserProfile} />
       ) : (
         <div>
@@ -392,9 +535,9 @@ export const UserProfile = ({ setUserProfile }) => {
         <SettlePanel />
       ) : null}
       <FIXED_BOTTOM>
-        <div className="deposit-wrapper">
+        <div className="deposit-wrapper" onClick={() => setDepositWithdrawModal(true)}>
           <div className="white-background">
-            <div className="deposit-btn">Deposit/Withdraw </div>
+            <div className="deposit-btn">Deposit/Withdraw</div>
           </div>
         </div>
       </FIXED_BOTTOM>

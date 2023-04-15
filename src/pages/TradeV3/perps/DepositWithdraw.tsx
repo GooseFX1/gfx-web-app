@@ -10,11 +10,11 @@ import 'styled-components/macro'
 
 const WRAPPER = styled.div`
   .input-row {
-    ${tw`flex flex-row h-12.5`}
+    ${tw`flex flex-row h-12.5 sm:block sm:w-full sm:h-auto`}
   }
 
   .percentage {
-    ${tw`w-[280px] ml-auto rounded-circle flex flex-row sm:hidden`}
+    ${tw`w-[280px] ml-auto rounded-circle flex flex-row sm:w-full sm:mb-[25px] sm:h-[45px]`}
     background: ${({ theme }) => theme.bg22};
   }
 
@@ -30,7 +30,7 @@ const WRAPPER = styled.div`
 
   .submit-btn {
     ${tw`block h-[50px] w-[222px] rounded-circle mx-auto my-3.5 font-semibold 
-      text-average border-0 border-none bg-[#5855ff]`}
+      text-average border-0 border-none bg-[#5855ff] sm:h-[45px] sm:w-full`}
     color: ${({ theme }) => theme.white};
     outline: none;
   }
@@ -47,7 +47,7 @@ const DROPDOWN_PAIR_DIV = styled.div`
 `
 
 const SELECTED_COIN = styled.div`
-  ${tw`leading-[40px] rounded-[36px] flex items-center text-center cursor-pointer pl-3 font-medium text-[16px]`}
+  ${tw`h-[45px] rounded-[36px] flex items-center text-center cursor-pointer pl-3 font-medium text-[16px]`}
   background-color: ${({ theme }) => theme.bg22};
   .anticon-down {
     ${tw`mr-1.5 w-3.5`}
@@ -85,12 +85,12 @@ const COIN_INFO = styled.div`
 `
 
 const LABEL = styled.div`
-  ${tw`text-[20px] font-semibold mx-0 mb-2.5 mt-4.5`}
+  ${tw`text-lg font-semibold mx-0 mb-2.5 mt-4.5 sm:text-regular sm:mb-2 sm:mt-3.75`}
   color: ${({ theme }) => theme.text1};
 `
 
 const INPUT = styled.div`
-  ${tw`w-[280px] rounded-circle py-2.5 px-5`}
+  ${tw`w-[280px] rounded-circle py-2.5 px-5 sm:w-full sm:mb-[25px] sm:h-[45px]`}
   background: ${({ theme }) => theme.bg22};
 
   .input-amt {
@@ -207,7 +207,7 @@ export const DepositWithdraw: FC<{
       <div tw="flex flex-row items-center justify-between">
         <LABEL>Asset</LABEL>
         {tradeType === 'deposit' && (
-          <span tw="text-regular font-semibold dark:text-grey-2 text-grey-1 mt-3.75">
+          <span tw="text-regular font-semibold dark:text-grey-2 text-grey-1 mt-3.75 sm:text-tiny">
             {' '}
             Deposit Limit: $1,000,000.00{' '}
           </span>
@@ -256,9 +256,9 @@ export const DepositWithdraw: FC<{
           {percentageArr.map((elem, index) => (
             <div
               className={percentageIndex === index ? 'percentage-num selected' : 'percentage-num'}
-              //  onClick={(e) => {
-              //    handlePercentageChange(e, index)
-              //  }}
+              onClick={(e) => {
+                handlePercentageChange(e, index)
+              }}
               key={index}
             >
               {elem}%

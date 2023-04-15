@@ -18,6 +18,9 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import useBlacklisted from '../../../utils/useBlacklisted'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import 'styled-components/macro'
+import { Tooltip } from '../../../components'
+import { TradeConfirmation } from '../TradeConfirmation'
+import { PopupCustom } from '../../NFTs/Popup/PopupCustom'
 
 enum ButtonState {
   Connect = 0,
@@ -128,7 +131,7 @@ const INPUT_WRAPPER = styled.div`
   }
   .ant-input-affix-wrapper {
     ${tw`font-medium rounded-[5px] border border-solid h-[45px]`}
-    background: ${({ theme }) => theme.bg2};
+    background: ${({ theme }) => theme.bg20};
     border-color: ${({ theme }) => theme.tokenBorder};
   }
   .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
@@ -139,17 +142,38 @@ const INPUT_WRAPPER = styled.div`
     box-shadow: none;
   }
   .drawer {
-    ${tw`w-full h-[45px] flex justify-between items-center px-2 text-red-100 
-    font-semibold text-tiny border border-solid rounded-[5px] cursor-pointer`}
+    ${tw`w-full h-[45px] flex justify-between items-center px-2 font-semibold text-tiny rounded-[10px]`}
     color: ${({ theme }) => theme.text21};
-    border-color: ${({ theme }) => theme.tokenBorder};
-    background: ${({ theme }) => theme.bg2};
+    border: 1.5px solid ${({ theme }) => theme.text28};
+    background: ${({ theme }) => theme.bg20};
   }
   .holder {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
+    ${tw`flex items-center justify-between w-full`}
+  }
+`
+const TITLE = styled.span`
+  font-size: 20px;
+  font-weight: 600;
+  background-image: -webkit-linear-gradient(0deg, #f7931a 0%, #ac1cc7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 30px;
+  margin-left: 8px;
+`
+
+const SETTING_MODAL = styled(PopupCustom)`
+  ${tw`!h-[392px] !w-11/12 rounded-bigger`}
+  background-color: ${({ theme }) => theme.bg25};
+
+  .ant-modal-header {
+    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0 mb-2.5`}
+    background-color: ${({ theme }) => theme.bg25};
+  }
+  .ant-modal-content {
+    ${tw`shadow-none`}
+  }
+  .ant-modal-body {
+    ${tw`py-0 px-[25px]`}
   }
 `
 
@@ -339,12 +363,13 @@ export const PlaceOrderMobi = () => {
   const bid = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
   const { getUIAmount } = useAccounts()
   const [loading, setLoading] = useState<boolean>(false)
+  const [confirmationModal, setConfirmationModal] = useState<boolean>(false)
   const [showMarketDrawer, setShowMarketDrawer] = useState<boolean>(false)
   const [showProfitLossDrawer, setShowProfitLossDrawer] = useState<boolean>(false)
   const [drawerType, setDrawerType] = useState<number>(0)
   const elem = document.getElementById('dex-mobi-home')
   const { mode } = useDarkMode()
-  const geoBlocked = false
+  const geoBlocked = useBlacklisted()
 
   const handleOrderSide = (side) => {
     if (side !== order.side) {
@@ -391,7 +416,7 @@ export const PlaceOrderMobi = () => {
   const handlePlaceOrder = async () => {
     if (buttonState === ButtonState.CanPlaceOrder) {
       setLoading(true)
-      //setConfirmationModal(true)
+      setConfirmationModal(true)
       //await newOrder()
       setLoading(false)
     }
@@ -570,11 +595,48 @@ export const PlaceOrderMobi = () => {
           <TakeProfitStopLoss isTakeProfit={drawerType === 0 ? true : false} />
         </Drawer>
       )}
+      {confirmationModal && (
+        <>
+          <SETTING_MODAL
+            visible={true}
+            centered={true}
+            footer={null}
+            title={
+              <>
+                <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold">
+                  {order.display === 'limit' ? 'Limit ' : 'Market '}
+                  {order.side === 'buy' ? 'Long' : 'Short'}
+                </span>
+                <TITLE>SOL-PERP</TITLE>
+              </>
+            }
+            closeIcon={
+              <img
+                src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+                height="20px"
+                width="20px"
+                onClick={() => setConfirmationModal(false)}
+              />
+            }
+            className={mode === 'dark' ? 'dark' : ''}
+          >
+            <TradeConfirmation setVisibility={setConfirmationModal} />
+          </SETTING_MODAL>
+        </>
+      )}
       <div tw="flex flex-row mb-3">
         <INPUT_WRAPPER>
-          <div className="drawer" onClick={() => setShowMarketDrawer(true)}>
-            <div tw="text-regular font-semibold text-grey-5">{displayedOrder?.text}</div>
-            <img src={`/img/assets/arrow-down.svg`} alt="arrow" />
+          <div className="drawer">
+            <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+              Limit order is executed only when the market reaches the amount you specify.{' '}
+            </Tooltip>
+            <div
+              tw="text-regular font-semibold text-grey-5 w-1/2 text-center"
+              onClick={() => setShowMarketDrawer(true)}
+            >
+              {displayedOrder?.text}
+            </div>
+            <img src={`/img/assets/arrow-down.svg`} alt="arrow" onClick={() => setShowMarketDrawer(true)} />
           </div>
         </INPUT_WRAPPER>
         <div className="orderSide">
@@ -626,19 +688,21 @@ export const PlaceOrderMobi = () => {
             />
           </div>
         </INPUT_WRAPPER>
-        <INPUT_WRAPPER>
-          <div className="label width">
-            <span tw="text-regular font-semibold text-grey-5 mr-1">Take Profit</span>
-            <span tw="text-regular font-semibold text-grey-5 mr-1">/</span>
-            <span tw="text-regular font-semibold text-grey-5">Stop loss</span>
-          </div>
-          <div className="drawer" onClick={() => setShowProfitLossDrawer(true)}>
-            <span tw="text-regular font-semibold text-grey-5 mr-1">100%</span>
-            <span tw="text-regular font-semibold text-grey-5 mr-1">/</span>
-            <span tw="text-regular font-semibold text-grey-5">25%</span>
-            <img src={`/img/assets/arrow-down.svg`} alt="arrow" />
-          </div>
-        </INPUT_WRAPPER>
+        {!isSpot && (
+          <INPUT_WRAPPER>
+            <div className="label width">
+              <span tw="text-regular font-semibold text-grey-5 mr-1">Take Profit</span>
+              <span tw="text-regular font-semibold text-grey-5 mr-1">/</span>
+              <span tw="text-regular font-semibold text-grey-5">Stop loss</span>
+            </div>
+            <div className="drawer" onClick={() => setShowProfitLossDrawer(true)}>
+              <span tw="text-regular font-semibold text-grey-5 mr-1">100%</span>
+              <span tw="text-regular font-semibold text-grey-5 mr-1">/</span>
+              <span tw="text-regular font-semibold text-grey-5">25%</span>
+              <img src={`/img/assets/arrow-down.svg`} alt="arrow" />
+            </div>
+          </INPUT_WRAPPER>
+        )}
       </div>
       <div tw="flex flex-row">
         <INPUT_WRAPPER>
