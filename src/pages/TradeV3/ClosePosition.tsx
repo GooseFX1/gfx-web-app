@@ -15,15 +15,16 @@ import {
 import { Fractional } from './perps/dexterity/types'
 import * as anchor from '@project-serum/anchor'
 import { RotatingLoader } from '../../components/RotatingLoader'
+import { checkMobile } from '../../utils'
 
 const WRAPPER = styled.div`
   .percentage {
-    ${tw`w-full h-12.5 rounded-circle flex flex-row dark:bg-black-1 bg-grey-4`}
+    ${tw`w-full h-12.5 rounded-circle flex flex-row dark:bg-black-1 bg-grey-4 sm:h-[45px]`}
   }
 
   .percentage-num {
     ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center justify-center h-full 
-        text-[16px] text-grey-1`}
+        text-[16px] text-grey-1 sm:text-regular`}
   }
 
   .selected {
@@ -33,10 +34,10 @@ const WRAPPER = styled.div`
 `
 
 const ROW = styled.div`
-  ${tw`flex flex-row justify-between items-start mb-5`}
+  ${tw`flex flex-row justify-between items-start mb-5 sm:mb-2.5`}
 
   > span {
-    ${tw`text-average font-semibold text-grey-1`}
+    ${tw`text-average font-semibold text-grey-1 sm:text-regular`}
   }
 
   .value {
@@ -148,13 +149,19 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
 
   return (
     <WRAPPER>
-      <div tw="flex items-center mt-8 mb-7">
-        <span tw="text-lg font-semibold text-grey-1 dark:text-grey-5">
+      <div tw="flex items-center mt-8 mb-7 sm:mt-[22px] sm:mb-5">
+        <span tw="text-lg font-semibold text-grey-1 dark:text-grey-5 sm:text-regular">
           {displayExitQty} {symbol}
         </span>
-        <img tw="ml-2.5" src={assetIcon} alt={symbol} height="28px" width="28px" />
-        <span tw="ml-auto text-average font-semibold text-black-4 dark:text-grey-5">${price}</span>
-        <span tw="text-average font-semibold text-grey-1">(Market Price)</span>
+        <img
+          tw="ml-2.5"
+          src={assetIcon}
+          alt={symbol}
+          height={checkMobile() ? '20px' : '28px'}
+          width={checkMobile() ? '20px' : '28px'}
+        />
+        <span tw="ml-auto text-average font-semibold text-black-4 dark:text-grey-5 sm:text-tiny">${price}</span>
+        <span tw="text-average font-semibold text-grey-1 sm:text-tiny">(Market Price)</span>
       </div>
       <div className="percentage">
         {percentDetails.map((elem, index) => (
@@ -169,7 +176,7 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
           </div>
         ))}
       </div>
-      <div tw="mb-9 mt-8">
+      <div tw="mb-9 mt-8 sm:my-[25px] ">
         <ROW>
           <span>Est. Exit Price</span>
           <span className="value">${exitPrice}</span>
@@ -191,7 +198,7 @@ export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateA
         onClick={closePositionFn}
         height="50px"
         width="100%"
-        cssStyle={tw`bg-blue-1 dark:text-white font-semibold border-0 rounded-circle text-average`}
+        cssStyle={tw`bg-blue-1 dark:text-white font-semibold border-0 rounded-circle text-average sm:text-tiny`}
       >
         <span>
           {loading ? (
