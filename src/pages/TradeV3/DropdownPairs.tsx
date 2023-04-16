@@ -232,7 +232,7 @@ const ModalHeader = ({ handleDropdownSearch }) => {
 const ModalHeaderMobi = ({ handleDropdownSearch }) => {
   const { isSpot, setIsSpot } = useCrypto()
 
-  const handleToggle = (e) => {
+  const handleToggle = (e: string) => {
     if (e === 'spot') setIsSpot(true)
     else setIsSpot(false)
   }
@@ -240,10 +240,10 @@ const ModalHeaderMobi = ({ handleDropdownSearch }) => {
   return (
     <div className="header-wrapper">
       <MODAL_TITLE>
-        <div className={isSpot ? 'active btn' : 'btn'} onClick={() => handleToggle('spot')}>
+        <div onClick={() => handleToggle('spot')} className={isSpot ? 'active btn' : 'btn'}>
           Spot
         </div>
-        <div className={!isSpot ? 'active btn' : 'btn'} onClick={() => handleToggle('perps')}>
+        <div onClick={() => handleToggle('perps')} className={!isSpot ? 'active btn' : 'btn'}>
           Perps
         </div>
       </MODAL_TITLE>

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { useMemo, useState } from 'react'
+import { MouseEventHandler, useCallback, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { Input, Checkbox, Slider, Drawer } from 'antd'
 import {
@@ -10,7 +10,9 @@ import {
   useOrder,
   useTokenRegistry,
   OrderDisplayType,
-  useDarkMode
+  useDarkMode,
+  useOrderBook,
+  useWalletModal
 } from '../../../context'
 import { RotatingLoader } from '../../../components/RotatingLoader'
 import { Picker } from '../Picker'
@@ -22,6 +24,8 @@ import { Tooltip } from '../../../components'
 import { TradeConfirmation } from '../TradeConfirmation'
 import { PopupCustom } from '../../NFTs/Popup/PopupCustom'
 import { Connect } from '../../../layouts'
+import { removeFloatingPointError } from '../../../utils'
+import { getPerpsPrice } from '../perps/utils'
 
 enum ButtonState {
   Connect = 0,
@@ -155,6 +159,11 @@ const INPUT_WRAPPER = styled.div<{ $rotateArrow: boolean }>`
   .holder {
     ${tw`flex items-center justify-between w-full`}
   }
+  // .focus-border {
+  //   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
+  //   border-radius: 5px;
+  //   padding: 1px;
+  // }
 `
 const TITLE = styled.span`
   font-size: 20px;
@@ -326,6 +335,8 @@ const HEADER = styled.div`
       background-color: ${({ theme }) => theme.text0};
     }
   }
+  .disable {
+  }
 `
 
 const TAKEPROFITWRAPPER = styled.div`
@@ -342,6 +353,15 @@ const TAKEPROFITWRAPPER = styled.div`
 
 const TakeProfitStopLoss = ({ isTakeProfit }) => {
   const percentArray = isTakeProfit ? ['25%', '50%', '75%', '100%'] : ['None', '10%', '25%', '75%']
+  const [takeProfitAmt, setTakeProfitAmt] = useState<number>(0)
+  const [takeProfitIndex, setTakeProfitIndex] = useState<number>(3)
+
+  const isNumber = (e) => {
+    const inputAmt = +e.target.value
+    if (!isNaN(inputAmt)) {
+      isTakeProfit ? setTakeProfitAmt(inputAmt) : null
+    }
+  }
 
   return (
     <TAKEPROFITWRAPPER>
@@ -356,13 +376,13 @@ const TakeProfitStopLoss = ({ isTakeProfit }) => {
               type="radio"
               name={isTakeProfit ? 'take-profit' : 'stop-loss'}
               value={item}
-              checked={true}
-              //onChange={() => handleChange(item.display)}
+              checked={takeProfitIndex === index}
+              onChange={() => setTakeProfitIndex(index)}
             />
           </div>
         ))}
       </TAKEPROFITSELECTOR>
-      <input type="number" />
+      <input type="number" onChange={isNumber} />
     </TAKEPROFITWRAPPER>
   )
 }
@@ -370,12 +390,15 @@ const TakeProfitStopLoss = ({ isTakeProfit }) => {
 export const PlaceOrderMobi = () => {
   const { order, setOrder, focused, setFocused, placeOrder } = useOrder()
   const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isSpot } = useCrypto()
-  const { connected, wallet } = useWallet()
+  const { connect, connected, wallet, publicKey } = useWallet()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
+  const { setVisible: setModalVisible } = useWalletModal()
   const { traderInfo } = useTraderConfig()
   const bid = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
   const { getUIAmount } = useAccounts()
   const [loading, setLoading] = useState<boolean>(false)
+  const [selectedTotal, setSelectedTotal] = useState<number>(null)
+  const { orderBook } = useOrderBook()
   const [confirmationModal, setConfirmationModal] = useState<boolean>(false)
   const [showMarketDrawer, setShowMarketDrawer] = useState<boolean>(false)
   const [showProfitLossDrawer, setShowProfitLossDrawer] = useState<boolean>(false)
@@ -387,13 +410,13 @@ export const PlaceOrderMobi = () => {
   const handleOrderSide = (side) => {
     if (side !== order.side) {
       setOrder((prevState) => ({ ...prevState, side }))
-      //setSelectedTotal(null)
+      setSelectedTotal(null)
     }
   }
 
   const numberCheck = (input: string, source: string) => {
     if (!isNaN(+input)) {
-      //setSelectedTotal(null)
+      setSelectedTotal(null)
       switch (source) {
         case 'size':
           setOrder((prev) => ({ ...prev, size: input }))
@@ -420,6 +443,12 @@ export const PlaceOrderMobi = () => {
 
   const userBalance = useMemo(() => (tokenInfo ? getUIAmount(tokenInfo.address) : 0), [tokenInfo, getUIAmount])
 
+  const getTokenSymbol = useMemo(
+    () =>
+      order.side === 'buy' ? getBidSymbolFromPair(selectedCrypto.pair) : getAskSymbolFromPair(selectedCrypto.pair),
+    [order, selectedCrypto]
+  )
+
   const maxQtyNum: number = useMemo(() => {
     const maxQty = Number(traderInfo.maxQuantity)
     if (Number.isNaN(maxQty)) return 0
@@ -434,6 +463,12 @@ export const PlaceOrderMobi = () => {
       setLoading(false)
     }
   }
+
+  const handleWalletModal = useCallback(() => {
+    if (!connected && !publicKey) {
+      setModalVisible(true)
+    }
+  }, [setModalVisible, publicKey, connected])
 
   const displayedOrder = useMemo(
     () => AVAILABLE_ORDERS.find(({ display, side }) => display === order.display && side === order.side),
@@ -486,7 +521,7 @@ export const PlaceOrderMobi = () => {
       if (order.side === 'buy') return 'LONG ' + symbol
       else return 'SHORT ' + symbol
     }
-  }, [buttonState, order.side, selectedCrypto.type])
+  }, [connected, wallet, buttonState, order.side, selectedCrypto.type])
 
   const handleSliderChange = async (e) => {
     if (!order.price || order.price === '0') {
@@ -536,6 +571,44 @@ export const PlaceOrderMobi = () => {
   const handleChange = (display: OrderDisplayType) => {
     setOrder((prevState) => ({ ...prevState, display }))
     setShowMarketDrawer(false)
+  }
+
+  const perpsBidBalance: number = useMemo(() => {
+    if (!traderInfo || !traderInfo.balances || !traderInfo.traderRiskGroup) return 0
+    const balanceBid = Number(traderInfo.marginAvailable)
+    return balanceBid
+  }, [traderInfo])
+
+  const handleClick = (value: number) => {
+    if (isSpot) {
+      const finalValue = removeFloatingPointError(value * userBalance)
+      if (finalValue) {
+        setSelectedTotal(value)
+        if (order.side === 'buy') {
+          setFocused('total')
+          setOrder((prev) => ({ ...prev, total: finalValue }))
+        } else {
+          setFocused('size')
+          setOrder((prev) => ({ ...prev, size: finalValue }))
+        }
+      } else if (!finalValue && value === 0) {
+        setSelectedTotal(value)
+        setFocused('total')
+        setOrder((prev) => ({ ...prev, total: 0 }))
+      }
+    } else {
+      const price = order.price ?? getPerpsPrice(orderBook)
+      const finalValue = removeFloatingPointError(value * +perpsBidBalance)
+      if (finalValue) {
+        setSelectedTotal(value)
+        setFocused('total')
+        setOrder((prev) => ({ ...prev, price, total: finalValue }))
+      } else if (!finalValue && value === 0) {
+        setSelectedTotal(value)
+        setFocused('total')
+        setOrder((prev) => ({ ...prev, price, total: 0 }))
+      }
+    }
   }
 
   return (
@@ -591,7 +664,7 @@ export const PlaceOrderMobi = () => {
                 <div className={drawerType === 0 ? 'gradient-bg btn' : 'btn'}>Take Profit</div>
               </div>
             </div>
-            <div className={drawerType === 1 ? 'active cta' : 'cta'} onClick={() => setDrawerType(1)}>
+            <div className={drawerType === 1 ? 'active cta' : 'cta disable'} onClick={() => setDrawerType(0)}>
               <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
                 <div className={drawerType === 1 ? 'gradient-bg btn' : 'btn'}>Stop loss</div>
               </div>
@@ -685,8 +758,22 @@ export const PlaceOrderMobi = () => {
           <div className="label holder">
             <span>Size</span>
             <div>
-              <span tw="mr-2.5 text-average font-semibold dark:text-grey-5 text-blue-1">Half</span>
-              <span tw="text-average font-semibold dark:text-grey-5 text-blue-1">Max</span>
+              <span
+                tw="mr-2.5 text-average font-semibold dark:text-grey-5 text-blue-1"
+                onClick={() => {
+                  handleClick(0.5)
+                }}
+              >
+                Half
+              </span>
+              <span
+                tw="text-average font-semibold dark:text-grey-5 text-blue-1"
+                onClick={() => {
+                  handleClick(0.999)
+                }}
+              >
+                Max
+              </span>
             </div>
           </div>
           <div className={focused === 'size' ? 'focus-border space' : 'space'}>
@@ -794,22 +881,33 @@ export const PlaceOrderMobi = () => {
           </div>
         ))}
       </ORDER_CATEGORY>
-      {buttonState === ButtonState.Connect ? (
-        <CONNECT>
-          <Connect />
-        </CONNECT>
-      ) : (
-        <PLACE_ORDER_BUTTON
-          $action={buttonState === ButtonState.CanPlaceOrder}
-          onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
-          $orderSide={order.side}
-        >
-          {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
-        </PLACE_ORDER_BUTTON>
-      )}
-      <div tw="flex flex-row justify-between my-2 mx-[15px]">
-        <span tw="text-regular font-semibold dark:text-grey-2">Available balance:</span>
-        <span tw="text-regular font-semibold dark:text-grey-5">4271.23 USD</span>
+      <PLACE_ORDER_BUTTON
+        $action={buttonState === ButtonState.CanPlaceOrder}
+        onClick={() => {
+          buttonState === ButtonState.Connect ? null : isSpot ? placeOrder() : handlePlaceOrder()
+        }}
+        $orderSide={order.side}
+      >
+        {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
+      </PLACE_ORDER_BUTTON>
+      <div tw="flex flex-row justify-between my-2 mx-5">
+        {isSpot ? (
+          <>
+            {' '}
+            <span tw="text-regular font-semibold dark:text-grey-2">Available balance:</span>
+            <span tw="text-regular font-semibold dark:text-grey-5">
+              {userBalance && userBalance.toFixed(4)} {getTokenSymbol}
+            </span>
+          </>
+        ) : (
+          <>
+            {' '}
+            <span tw="text-regular font-semibold dark:text-grey-2">Available margin:</span>
+            <span tw="text-regular font-semibold dark:text-grey-5">
+              {Number(traderInfo.marginAvailable).toFixed(2)} $
+            </span>
+          </>
+        )}
       </div>
     </WRAPPER>
   )
