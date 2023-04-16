@@ -86,7 +86,7 @@ export const Header = () => {
       )}
       {!tokenPrice ? (
         <div tw="w-full">
-          <SkeletonCommon width="100%" height="60px" />
+          <SkeletonCommon width="100%" height="50px" />
         </div>
       ) : (
         <>
