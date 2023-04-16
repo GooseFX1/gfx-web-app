@@ -557,13 +557,15 @@ export const UserProfile = ({ setUserProfile }) => {
       ) : activeTab === 3 ? (
         <SettlePanel />
       ) : null}
-      <FIXED_BOTTOM>
-        <div className="deposit-wrapper" onClick={() => setDepositWithdrawModal(true)}>
-          <div className="white-background">
-            <div className="deposit-btn">Deposit/Withdraw</div>
+      {!isSpot && (
+        <FIXED_BOTTOM>
+          <div className="deposit-wrapper" onClick={() => setDepositWithdrawModal(true)}>
+            <div className="white-background">
+              <div className="deposit-btn">Deposit/Withdraw</div>
+            </div>
           </div>
-        </div>
-      </FIXED_BOTTOM>
+        </FIXED_BOTTOM>
+      )}
     </WRAPPER>
   )
 }
