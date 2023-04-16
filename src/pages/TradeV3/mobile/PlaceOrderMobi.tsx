@@ -176,6 +176,7 @@ const SETTING_MODAL = styled(PopupCustom)`
   }
   .ant-modal-content {
     ${tw`shadow-none`}
+    background-color: ${({ theme }) => theme.bg25};
   }
   .ant-modal-body {
     ${tw`py-0 px-[25px]`}
@@ -258,12 +259,13 @@ const CONNECT = styled.div`
 
 const SELECTOR = styled.div`
   > .selectorDropdown {
-    ${tw`mb-7 ml-[75px]`}
+    ${tw`mb-7 ml-[75px] `};
     > span {
-      ${tw`text-white text-regular font-semibold`}
+      ${tw`text-regular font-semibold`}
+      color: ${({ theme }) => theme.text4};
     }
     > input[type='radio'] {
-      ${tw`appearance-none absolute right-[80px] h-[30px] w-[30px] bg-black-1 rounded-circle cursor-pointer`}
+      ${tw`appearance-none absolute right-[80px] h-[30px] w-[30px] bg-grey-4 dark:bg-black-1  rounded-circle cursor-pointer`}
     }
     > input[type='radio']:checked:after {
       ${tw`rounded-circle w-[24px] h-[24px] relative top-[3px] left-[3px] inline-block`}
@@ -644,7 +646,7 @@ export const PlaceOrderMobi = () => {
               Limit order is executed only when the market reaches the amount you specify.{' '}
             </Tooltip>
             <div
-              tw="text-regular font-semibold text-grey-5 w-1/2 text-center"
+              tw="text-regular font-semibold text-black-4 dark:text-grey-5 w-1/2 text-center"
               onClick={() => setShowMarketDrawer(true)}
             >
               {displayedOrder?.text}
@@ -724,7 +726,9 @@ export const PlaceOrderMobi = () => {
       </div>
       <div tw="flex flex-row">
         <INPUT_WRAPPER>
-          <div className="label">Price</div>
+          <div className="label">
+            <span>Price</span>
+          </div>
           <div className={focused === 'price' ? 'focus-border' : ''}>
             <Input
               suffix={<span className="suffixText">{bid}</span>}
@@ -740,7 +744,10 @@ export const PlaceOrderMobi = () => {
           </div>
         </INPUT_WRAPPER>
         <INPUT_WRAPPER>
-          <div className="label">Amount</div>
+          <div className="label">
+            {' '}
+            <span> Amount</span>{' '}
+          </div>
           <div className={focused === 'total' ? 'focus-border' : ''}>
             <Input
               suffix={<span className="suffixText">{bid}</span>}
@@ -808,8 +815,8 @@ export const PlaceOrderMobi = () => {
         </PLACE_ORDER_BUTTON>
       )}
       <div tw="flex flex-row justify-between my-2 mx-[15px]">
-        <span tw="text-regular font-semibold dark:text-grey-2">Available balance:</span>
-        <span tw="text-regular font-semibold dark:text-grey-5">4271.23 USD</span>
+        <span tw="text-regular font-semibold dark:text-grey-2 text-grey-1">Available balance:</span>
+        <span tw="text-regular font-semibold dark:text-grey-5 text-grey-1">4271.23 USD</span>
       </div>
     </WRAPPER>
   )

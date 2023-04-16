@@ -18,13 +18,11 @@ const WRAPPER = styled.div`
   }
   .ant-drawer-content {
     border-radius: 25px 25px 0 0;
+    background: ${({ theme }) => theme.bg20} !important;
   }
   .user-profile-drawer {
     .ant-drawer-body {
       padding: 0;
-    }
-    .ant-drawer-content {
-      background: ${({ theme }) => theme.bg20};
     }
   }
 `

@@ -15,7 +15,7 @@ const WRAPPER = styled.div<{ $index: number }>`
   .active {
     font-size: 15px;
     font-weight: 600;
-    color: #eeeeee;
+    color: ${({ theme }) => theme.text32};
   }
   .inactive {
     font-size: 15px;
