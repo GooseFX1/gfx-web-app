@@ -65,9 +65,9 @@ export const getDerivativeKey = (args): anchor.web3.PublicKey => {
 
 export const getPythOracleAndClock = (connection: Connection): [anchor.web3.PublicKey, anchor.web3.PublicKey] => {
   if (connection.rpcEndpoint.includes('devnet')) {
-    return [new PublicKey(PYTH_DEVNET), new PublicKey(PYTH_DEVNET)]
+    return [new PublicKey(PYTH_DEVNET), new PublicKey('SysvarC1ock11111111111111111111111111111111')]
   } else {
-    return [new PublicKey(PYTH_MAINNET), new PublicKey(PYTH_MAINNET)]
+    return [new PublicKey(PYTH_MAINNET), new PublicKey('SysvarC1ock11111111111111111111111111111111')]
   }
 }
 

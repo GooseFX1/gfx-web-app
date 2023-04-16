@@ -12,30 +12,13 @@ import {
   ICancelOrderAccounts
 } from '../../../types/dexterity_instructions'
 import { sendPerpsTransaction } from '../../NFTs/launchpad/candyMachine/connection'
-import {
-  displayFractional,
-  getDexProgram,
-  getFeeModelConfigAcct,
-  getMarketSigner,
-  getRiskSigner,
-  getTraderFeeAcct
-} from './utils'
+import { getDexProgram, getFeeModelConfigAcct, getMarketSigner, getRiskSigner, getTraderFeeAcct } from './utils'
 import * as anchor from '@project-serum/anchor'
-import {
-  DEX_ID,
-  FEES_ID,
-  FEE_OUTPUT_REGISTER,
-  MPG_ID,
-  MPs,
-  ORDERBOOK_P_ID,
-  RISK_ID,
-  VAULT_MINT
-} from './perpsConstants'
+import { DEX_ID, FEES_ID, MPG_ID, RISK_ID, VAULT_MINT } from './perpsConstants'
 import { findAssociatedTokenAddress } from '../../../web3'
 import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
 import { struct, u8 } from '@solana/buffer-layout'
 import { notify } from '../../../utils'
-import { perpsNotify } from '../../../utils/perpsNotifications'
 
 export const newOrderIx = async (
   newOrderAccounts: INewOrderAccounts,
@@ -113,6 +96,95 @@ export const newOrderIx = async (
     //  message: 'Order failed!',
     //  type: 'error'
     //})
+  }
+  return null
+}
+
+export const newTakeProfitOrderIx = async (
+  newOrderAccounts: INewOrderAccounts,
+  newOrderParams,
+  newTakeProfitOrderParams,
+  wallet,
+  connection: Connection
+) => {
+  const instructions = []
+  const dexProgram = await getDexProgram(connection, wallet)
+
+  //instructions.push(await consumeOBIx(wallet, connection, consumeAccounts))
+  instructions.push(
+    await dexProgram.instruction.newOrder(newOrderParams, {
+      accounts: {
+        user: wallet.publicKey,
+        traderRiskGroup: newOrderAccounts.traderRiskGroup,
+        marketProductGroup: newOrderAccounts.marketProductGroup,
+        product: newOrderAccounts.product,
+        aaobProgram: newOrderAccounts.aaobProgram,
+        orderbook: newOrderAccounts.orderbook,
+        marketSigner: newOrderAccounts.marketSigner,
+        eventQueue: newOrderAccounts.eventQueue,
+        bids: newOrderAccounts.bids,
+        asks: newOrderAccounts.asks,
+        systemProgram: newOrderAccounts.systemProgram,
+        feeModelProgram: newOrderAccounts.feeModelProgram,
+        feeModelConfigurationAcct: newOrderAccounts.feeModelConfigurationAcct,
+        traderFeeStateAcct: newOrderAccounts.traderFeeStateAcct,
+        feeOutputRegister: newOrderAccounts.feeOutputRegister,
+        riskEngineProgram: newOrderAccounts.riskEngineProgram,
+        riskModelConfigurationAcct: newOrderAccounts.riskModelConfigurationAcct,
+        riskOutputRegister: newOrderAccounts.riskOutputRegister,
+        traderRiskStateAcct: newOrderAccounts.traderRiskStateAcct,
+        riskAndFeeSigner: newOrderAccounts.riskAndFeeSigner
+      }
+    })
+  )
+  instructions.push(
+    await dexProgram.instruction.newOrder(newTakeProfitOrderParams, {
+      accounts: {
+        user: wallet.publicKey,
+        traderRiskGroup: newOrderAccounts.traderRiskGroup,
+        marketProductGroup: newOrderAccounts.marketProductGroup,
+        product: newOrderAccounts.product,
+        aaobProgram: newOrderAccounts.aaobProgram,
+        orderbook: newOrderAccounts.orderbook,
+        marketSigner: newOrderAccounts.marketSigner,
+        eventQueue: newOrderAccounts.eventQueue,
+        bids: newOrderAccounts.bids,
+        asks: newOrderAccounts.asks,
+        systemProgram: newOrderAccounts.systemProgram,
+        feeModelProgram: newOrderAccounts.feeModelProgram,
+        feeModelConfigurationAcct: newOrderAccounts.feeModelConfigurationAcct,
+        traderFeeStateAcct: newOrderAccounts.traderFeeStateAcct,
+        feeOutputRegister: newOrderAccounts.feeOutputRegister,
+        riskEngineProgram: newOrderAccounts.riskEngineProgram,
+        riskModelConfigurationAcct: newOrderAccounts.riskModelConfigurationAcct,
+        riskOutputRegister: newOrderAccounts.riskOutputRegister,
+        traderRiskStateAcct: newOrderAccounts.traderRiskStateAcct,
+        riskAndFeeSigner: newOrderAccounts.riskAndFeeSigner
+      }
+    })
+  )
+  try {
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
+      startMessage: {
+        header: 'New Order',
+        description: 'Sign the transaction to place a new order!'
+      },
+      progressMessage: {
+        header: 'New Order',
+        description: 'Submitting new order on the network..'
+      },
+      endMessage: {
+        header: 'New Order',
+        description: 'New order successfully placed'
+      },
+      errorMessage: {
+        header: 'New Order',
+        description: 'There was an error in placeing the order'
+      }
+    })
+    return response
+  } catch (e) {
+    console.log(e)
   }
   return null
 }
@@ -385,8 +457,8 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
     SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
       newAccountPubkey: traderRiskGroup.publicKey,
-      lamports: await connection.getMinimumBalanceForRentExemption(34464), //Need to change
-      space: 34464, //Need to change
+      lamports: await connection.getMinimumBalanceForRentExemption(13744), //Need to change
+      space: 13744, //Need to change
       programId: new PublicKey(DEX_ID)
     })
   )

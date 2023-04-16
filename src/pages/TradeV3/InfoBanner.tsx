@@ -384,6 +384,14 @@ export const InfoBanner: FC<{
           </>
         </INFO_STATS>
       )}
+      {!isSpot && (
+        <INFO_STATS>
+          <>
+            <div>Funding Rate</div>
+            {!traderInfo.fundingRate ? <Loader /> : <div> {traderInfo.fundingRate}%</div>}
+          </>
+        </INFO_STATS>
+      )}
       {isSpot && geoBlocked && (
         <div tw="flex ml-auto relative top-[23px]">
           <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />
