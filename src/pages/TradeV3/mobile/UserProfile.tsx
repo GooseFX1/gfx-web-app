@@ -69,6 +69,17 @@ const TABS = styled.div`
     width: 150%;
     -ms-overflow-style: none;
     scrollbar-width: none;
+    .open-order-header {
+      ${tw`flex flex-row`}
+      .count {
+        ${tw`h-[18px] w-[18px] font-semibold ml-2.5 rounded-circle text-tiny`}
+        background-image: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
+        color: ${({ theme }) => theme.white};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
     > div {
       width: 34%;
       height: 100%;
@@ -465,6 +476,7 @@ const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: st
 export const UserProfile = ({ setUserProfile }) => {
   const tabs = ['Positions', 'Open Orders', 'Trade History', 'Sol Unsettled']
   const { isSpot } = useCrypto()
+  const { perpsOpenOrders, orderBook } = useOrderBook()
   const [activeTab, setActiveTab] = useState(0)
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
   const [tradeType, setTradeType] = useState<string>('deposit')
@@ -519,7 +531,18 @@ export const UserProfile = ({ setUserProfile }) => {
               onClick={() => setActiveTab(index)}
             >
               <div className="white-background">
-                <div className={index === activeTab ? 'field activeTab' : 'field'}>{item}</div>
+                <div className={index === activeTab ? 'field activeTab' : 'field'}>
+                  {index === 1 ? (
+                    <div className="open-order-header">
+                      <div>{item}</div>
+                      {!isSpot && (
+                        <div className="count">{perpsOpenOrders.length > 0 ? perpsOpenOrders.length : 0}</div>
+                      )}
+                    </div>
+                  ) : (
+                    item
+                  )}
+                </div>
               </div>
             </div>
           ))}
