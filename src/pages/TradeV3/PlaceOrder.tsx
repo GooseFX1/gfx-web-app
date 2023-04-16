@@ -108,9 +108,9 @@ const BODY = styled.div`
 `
 
 const INPUT_GRID_WRAPPER = styled.div`
-  ${tw`flex justify-center items-center flex-col py-2`}
+  ${tw`flex justify-center items-center flex-col py-[2px]`}
   .inputRow {
-    ${tw`flex justify-between items-center w-full h-16`}
+    ${tw`flex justify-between items-center w-full h-16 mt-[-4px]`}
   }
 `
 
@@ -165,6 +165,9 @@ const INPUT_WRAPPER = styled.div`
     border-radius: 5px;
     padding: 1px;
   }
+  .stop-loss {
+    cursor: not-allowed;
+  }
 `
 
 const TOTAL_SELECTOR = styled.div`
@@ -186,7 +189,7 @@ const LEVERAGE_WRAPPER = styled.div`
     ${tw`h-[6px] dark:bg-[#262626] bg-grey-1`}
   }
   .ant-slider-with-marks {
-    ${tw`mb-2`}
+    ${tw`mb-2 my-[5px]`}
   }
   .ant-slider-step {
     .ant-slider-dot {
@@ -220,7 +223,7 @@ const LEVERAGE_WRAPPER = styled.div`
     ${tw`mt-[-5px] mb-[30px]`}
   }
   .smallScreenLeverageBar {
-    ${tw`!mb-[20px]`}
+    ${tw`!mb-5`}
   }
 `
 
@@ -237,13 +240,13 @@ const ORDER_CATEGORY = styled.div`
       ${tw`bg-[#5855ff]`}
     }
     .orderCategoryName {
-      ${tw`text-tiny font-semibold ml-2 dark:text-[#B5B5B5] text-[#636363]`}
+      ${tw`text-tiny font-semibold ml-1 dark:text-[#B5B5B5] text-[#636363]`}
     }
   }
 `
 
 const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean; $orderSide: string }>`
-  ${tw`w-11/12 mt-3 rounded-[30px] h-[30px] text-tiny font-semibold border-0 border-none`}
+  ${tw`w-[55%] mt-3 rounded-[30px] h-[30px] text-tiny font-semibold border-0 border-none`}
   background: ${({ $action, $orderSide, theme }) =>
     $action ? ($orderSide === 'buy' ? '#71C25D' : '#F06565') : theme.bg23};
   color: ${({ $action }) => ($action ? 'white' : '#636363')};
@@ -357,6 +360,10 @@ export const PlaceOrder: FC = () => {
   const [selectedTotal, setSelectedTotal] = useState<number>(null)
   const [arrowRotation, setArrowRotation] = useState(false)
   const [dropdownVisible, setDropdownVisible] = useState(false)
+  const [takeProfit, setTakeProfit] = useState(false)
+  const [takeProfitArrow, setTakeProfitArrow] = useState(false)
+  const [stopLoss, setStopLoss] = useState(false)
+  const [stopLossArrow, setStopLossArrow] = useState(false)
   const [confirmationModal, setConfirmationModal] = useState<boolean>(false)
   const [perpsEndModal, setPerpsEndModal] = useState<boolean>(false)
   const { getTokenInfoFromSymbol } = useTokenRegistry()
@@ -499,6 +506,20 @@ export const PlaceOrder: FC = () => {
   const handleDropdownClick = () => {
     setArrowRotation(!arrowRotation)
     setDropdownVisible(!dropdownVisible)
+  }
+
+  const takeProfitClick = (e) => {
+    setTakeProfitArrow(!takeProfitArrow)
+    setTakeProfit(!takeProfit)
+  }
+
+  const letSee = (e) => {
+    setTakeProfit(true)
+  }
+
+  const stopLossClick = () => {
+    setStopLossArrow(!stopLossArrow)
+    setStopLoss(!stopLoss)
   }
 
   const handlePlaceOrder = async () => {
@@ -678,7 +699,9 @@ export const PlaceOrder: FC = () => {
                 <ArrowDropdown
                   arrowRotation={arrowRotation}
                   offset={[-125, 15]}
-                  onVisibleChange={null}
+                  onVisibleChange={() => {
+                    setDropdownVisible(true)
+                  }}
                   placement="bottomLeft"
                   overlay={
                     <Overlay
@@ -812,28 +835,103 @@ export const PlaceOrder: FC = () => {
             </div>
           </LEVERAGE_WRAPPER>
         )}
-        <ORDER_CATEGORY>
-          {ORDER_CATEGORY_TYPE.map((item) => (
-            <div key={item.id} className="orderCategoryCheckboxWrapper">
-              <Checkbox
-                checked={order.type === item.id}
-                onChange={(e) =>
-                  e.target.checked
-                    ? setOrder((prev) => ({ ...prev, type: item.id as OrderType }))
-                    : setOrder((prev) => ({ ...prev, type: 'limit' }))
-                }
-              />
-              <div className="orderCategoryName">{item.display}</div>
+        {isSpot ? (
+          <>
+            <ORDER_CATEGORY>
+              {ORDER_CATEGORY_TYPE.map((item) => (
+                <div key={item.id} className="orderCategoryCheckboxWrapper">
+                  <Checkbox
+                    checked={order.type === item.id}
+                    onChange={(e) =>
+                      e.target.checked
+                        ? setOrder((prev) => ({ ...prev, type: item.id as OrderType }))
+                        : setOrder((prev) => ({ ...prev, type: 'limit' }))
+                    }
+                  />
+                  <div className="orderCategoryName">{item.display}</div>
+                </div>
+              ))}
+            </ORDER_CATEGORY>
+            <PLACE_ORDER_BUTTON
+              $action={buttonState === ButtonState.CanPlaceOrder}
+              onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
+              $orderSide={order.side}
+            >
+              {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
+            </PLACE_ORDER_BUTTON>
+          </>
+        ) : (
+          <>
+            <div tw="flex flex-row">
+              <INPUT_WRAPPER>
+                <div className="label">Take Profit</div>
+                <div className={`dropdownContainer ${mode}`} onClick={takeProfitClick}>
+                  <div>{displayedOrder?.text}</div>
+                  <ArrowDropdown
+                    arrowRotation={takeProfitArrow}
+                    offset={[-125, 15]}
+                    onVisibleChange={letSee}
+                    placement="bottomLeft"
+                    overlay={
+                      <TakeProfitStopLoss
+                        setArrowRotation={setTakeProfitArrow}
+                        setDropdownVisible={setTakeProfit}
+                        type={0}
+                      />
+                    }
+                    visible={takeProfit}
+                    measurements="11px !important"
+                  />
+                </div>
+              </INPUT_WRAPPER>
+              <INPUT_WRAPPER>
+                <div className="label">Stop Loss</div>
+                <div className={`dropdownContainer ${mode} stop-loss`} onClick={null}>
+                  <div>{displayedOrder?.text}</div>
+                  <ArrowDropdown
+                    arrowRotation={stopLossArrow}
+                    offset={[-125, 15]}
+                    onVisibleChange={null}
+                    placement="bottomLeft"
+                    overlay={
+                      <TakeProfitStopLoss
+                        setArrowRotation={setStopLossArrow}
+                        setDropdownVisible={setStopLoss}
+                        type={1}
+                      />
+                    }
+                    visible={stopLoss}
+                    measurements="11px !important"
+                  />
+                </div>
+              </INPUT_WRAPPER>
             </div>
-          ))}
-        </ORDER_CATEGORY>
-        <PLACE_ORDER_BUTTON
-          $action={buttonState === ButtonState.CanPlaceOrder}
-          onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
-          $orderSide={order.side}
-        >
-          {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
-        </PLACE_ORDER_BUTTON>
+            <div tw="flex flex-row mt-[-6px]">
+              <ORDER_CATEGORY>
+                {ORDER_CATEGORY_TYPE.map((item) => (
+                  <div key={item.id} className="orderCategoryCheckboxWrapper">
+                    <Checkbox
+                      checked={order.type === item.id}
+                      onChange={(e) =>
+                        e.target.checked
+                          ? setOrder((prev) => ({ ...prev, type: item.id as OrderType }))
+                          : setOrder((prev) => ({ ...prev, type: 'limit' }))
+                      }
+                    />
+                    <div className="orderCategoryName">{item.display}</div>
+                  </div>
+                ))}
+              </ORDER_CATEGORY>
+              <PLACE_ORDER_BUTTON
+                $action={buttonState === ButtonState.CanPlaceOrder}
+                onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
+                $orderSide={order.side}
+              >
+                {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
+              </PLACE_ORDER_BUTTON>
+            </div>
+          </>
+        )}
         {isSpot && (
           <FEES>
             <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
@@ -867,6 +965,164 @@ const SELECTOR = styled.div`
     }
   }
 `
+const SELECTOR_WRAPPER = styled.div`
+  .dropdown-input {
+    ${tw`bg-black-1 dark:text-grey-5 text-grey-2 p-1 text-regular font-semibold border-[1.5px] border-solid dark:border-grey-1 border-grey-4`}
+    outline: none;
+    height: 24px;
+    width: 135px;
+    border-radius: 5px;
+    ::placeholder {
+      ${tw`text-grey-2 text-tiny font-semibold`}
+    }
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+`
+
+const SELECTOR_PROFITLOSS = styled.div`
+  ${tw`w-[160px] h-[132px] rounded-[5px] pt-[5px] pb-[5px] pl-[5px]`}
+  background-color: ${({ theme }) => theme.bg20};
+  .dropdown-items {
+    ${tw`cursor-pointer`}
+  }
+  > div {
+    ${tw`flex items-center mb-2`}
+    > span {
+      ${tw`text-white text-tiny font-semibold`}
+    }
+    > input[type='radio'] {
+      ${tw`appearance-none absolute right-3 h-[15px] w-[15px] bg-black-2 rounded-small cursor-pointer`}
+    }
+    > input[type='radio']:checked:after {
+      ${tw`rounded-small w-[9px] h-[9px] relative top-[-4px] left-[3px] inline-block`}
+      background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
+      content: '';
+    }
+  }
+  .green {
+    ${tw`text-[#80CE00]`}
+  }
+  .red {
+    ${tw`text-[#F35355]`}
+  }
+`
+
+const TakeProfitStopLoss: FC<{
+  setArrowRotation: Dispatch<SetStateAction<boolean>>
+  setDropdownVisible: Dispatch<SetStateAction<boolean>>
+  type: number
+}> = ({ setArrowRotation, setDropdownVisible, type }) => {
+  const [takeProfitAmount, setTakeProfitAmount] = useState<number>(0)
+  const [takeProfitIndex, setTakeProfitIndex] = useState<number>(3)
+  const [stopLossAmount, setStopLossAmount] = useState<number>(0)
+  const [stopLossIndex, setStopLossIndex] = useState<number>(0)
+
+  const isNumber = (e) => {
+    setDropdownVisible(true)
+    const inputAmt = +e.target.value
+
+    if (!isNaN(inputAmt)) {
+      type === 0 ? setTakeProfitIndex(inputAmt) : setStopLossAmount(inputAmt)
+    }
+  }
+
+  const calcTakeProfit = (value, index) => {
+    setTakeProfitIndex(index)
+  }
+
+  const calcStopLoss = (value, index) => {
+    setStopLossIndex(index)
+  }
+
+  const percentArray =
+    type === 0
+      ? [
+          {
+            display: '25%',
+            value: 0.25,
+            key: 1
+          },
+          {
+            display: '50%',
+            value: 0.5,
+            key: 2
+          },
+          {
+            display: '75%',
+            value: 0.75,
+            key: 3
+          },
+          {
+            display: '100%',
+            value: 1,
+            key: 4
+          }
+        ]
+      : [
+          {
+            display: 'None',
+            value: 0,
+            key: 0
+          },
+          {
+            display: '-10%%',
+            value: 0.1,
+            key: 1
+          },
+          {
+            display: '-25%',
+            value: 0.25,
+            key: 2
+          },
+          {
+            display: '-75%',
+            value: 0.75,
+            key: 3
+          }
+        ]
+
+  return (
+    <SELECTOR_WRAPPER>
+      <SELECTOR_PROFITLOSS>
+        {percentArray.map((item, index) => (
+          <div
+            key={index}
+            className="dropdown-items"
+            onClick={() => {
+              setDropdownVisible(true)
+            }}
+          >
+            <span tw="mr-2 font-semibold text-tiny dark:text-grey-5 text-black-4">{item.display}</span>
+            <span className={type === 0 ? 'green' : 'red'} tw="font-semibold text-regular">
+              {type === 0 ? '($980)' : '($230)'}
+            </span>
+            <input
+              type="radio"
+              name={type === 0 ? 'take-profit' : 'stop-loss'}
+              value={item.value}
+              checked={type === 0 ? takeProfitIndex === index : stopLossIndex === index}
+              onChange={() => (type === 0 ? calcTakeProfit(item.value, index) : calcStopLoss(item.value, index))}
+            />
+          </div>
+        ))}
+        <input
+          type="number"
+          onChange={isNumber}
+          placeholder="Enter Price"
+          onFocus={isNumber}
+          className="dropdown-input"
+        />
+      </SELECTOR_PROFITLOSS>
+    </SELECTOR_WRAPPER>
+  )
+}
 
 const Overlay: FC<{
   setArrowRotation: Dispatch<SetStateAction<boolean>>
