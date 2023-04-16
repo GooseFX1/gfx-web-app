@@ -21,6 +21,7 @@ import 'styled-components/macro'
 import { Tooltip } from '../../../components'
 import { TradeConfirmation } from '../TradeConfirmation'
 import { PopupCustom } from '../../NFTs/Popup/PopupCustom'
+import { Connect } from '../../../layouts'
 
 enum ButtonState {
   Connect = 0,
@@ -97,7 +98,7 @@ const WRAPPER = styled.div`
   }
 `
 
-const INPUT_WRAPPER = styled.div`
+const INPUT_WRAPPER = styled.div<{ $rotateArrow: boolean }>`
   ${tw`flex justify-center items-start w-full flex-col h-full px-3`}
   .label {
     ${tw`pb-1 flex flex-row justify-evenly`}
@@ -128,6 +129,10 @@ const INPUT_WRAPPER = styled.div`
   .ant-input::placeholder {
     ${tw`text-tiny font-semibold`}
     color: ${({ theme }) => theme.text20};
+  }
+  .arrow-icon {
+    ${({ $rotateArrow }) => $rotateArrow && 'transform: rotateZ(180deg);'}
+    transition: transform 400ms ease-in-out;
   }
   .ant-input-affix-wrapper {
     ${tw`font-medium rounded-[5px] border border-solid h-[45px]`}
@@ -241,6 +246,14 @@ const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean; $orderSide: string 
   background: ${({ $action, $orderSide, theme }) =>
     $action ? ($orderSide === 'buy' ? '#71C25D' : '#F06565') : theme.bg23};
   color: ${({ $action }) => ($action ? 'white' : '#636363')};
+`
+
+const CONNECT = styled.div`
+  ${tw`w-[95%] mt-3 rounded-[30px] h-[45px] text-tiny font-semibold border-0 border-none mx-auto block`}
+
+  > button {
+    ${tw`w-full h-[45px]`}
+  }
 `
 
 const SELECTOR = styled.div`
@@ -625,7 +638,7 @@ export const PlaceOrderMobi = () => {
         </>
       )}
       <div tw="flex flex-row mb-3">
-        <INPUT_WRAPPER>
+        <INPUT_WRAPPER $rotateArrow={showMarketDrawer}>
           <div className="drawer">
             <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
               Limit order is executed only when the market reaches the amount you specify.{' '}
@@ -636,7 +649,12 @@ export const PlaceOrderMobi = () => {
             >
               {displayedOrder?.text}
             </div>
-            <img src={`/img/assets/arrow-down.svg`} alt="arrow" onClick={() => setShowMarketDrawer(true)} />
+            <img
+              className="arrow-icon"
+              src={`/img/assets/arrow-down.svg`}
+              alt="arrow"
+              onClick={() => setShowMarketDrawer(true)}
+            />
           </div>
         </INPUT_WRAPPER>
         <div className="orderSide">
@@ -689,7 +707,7 @@ export const PlaceOrderMobi = () => {
           </div>
         </INPUT_WRAPPER>
         {!isSpot && (
-          <INPUT_WRAPPER>
+          <INPUT_WRAPPER $rotateArrow={showProfitLossDrawer}>
             <div className="label width">
               <span tw="text-regular font-semibold text-grey-5 mr-1">Take Profit</span>
               <span tw="text-regular font-semibold text-grey-5 mr-1">/</span>
@@ -699,7 +717,7 @@ export const PlaceOrderMobi = () => {
               <span tw="text-regular font-semibold text-grey-5 mr-1">100%</span>
               <span tw="text-regular font-semibold text-grey-5 mr-1">/</span>
               <span tw="text-regular font-semibold text-grey-5">25%</span>
-              <img src={`/img/assets/arrow-down.svg`} alt="arrow" />
+              <img src={`/img/assets/arrow-down.svg`} className="arrow-icon" alt="arrow" />
             </div>
           </INPUT_WRAPPER>
         )}
@@ -776,13 +794,19 @@ export const PlaceOrderMobi = () => {
           </div>
         ))}
       </ORDER_CATEGORY>
-      <PLACE_ORDER_BUTTON
-        $action={buttonState === ButtonState.CanPlaceOrder}
-        onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
-        $orderSide={order.side}
-      >
-        {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
-      </PLACE_ORDER_BUTTON>
+      {buttonState === ButtonState.Connect ? (
+        <CONNECT>
+          <Connect />
+        </CONNECT>
+      ) : (
+        <PLACE_ORDER_BUTTON
+          $action={buttonState === ButtonState.CanPlaceOrder}
+          onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
+          $orderSide={order.side}
+        >
+          {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
+        </PLACE_ORDER_BUTTON>
+      )}
       <div tw="flex flex-row justify-between my-2 mx-[15px]">
         <span tw="text-regular font-semibold dark:text-grey-2">Available balance:</span>
         <span tw="text-regular font-semibold dark:text-grey-5">4271.23 USD</span>

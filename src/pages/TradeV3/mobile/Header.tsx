@@ -9,6 +9,7 @@ import { Loader } from '../../../components'
 import 'styled-components/macro'
 import { Drawer } from 'antd'
 import { UserProfile } from './UserProfile'
+import { SkeletonCommon } from '../../NFTs/Skeleton/SkeletonCommon'
 
 const HEADER = styled.div`
   display: flex;
@@ -27,12 +28,25 @@ const HEADER = styled.div`
   .ant-drawer-body {
     padding: 0;
   }
+  .open-orders {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #ffffff;
+    height: 18px;
+    width: 18px;
+    background: linear-gradient(127.87deg, #f7931a 9.69%, #dc1fff 111.25%);
+    text-align: center;
+    border-radius: 50%;
+  }
 `
 
 export const Header = () => {
   const { connected, wallet } = useWallet()
   const { selectedCrypto, isSpot } = useCrypto()
-  const { orderBook } = useOrderBook()
+  const { perpsOpenOrders, orderBook } = useOrderBook()
   const { prices, tokenInfo } = usePriceFeed()
   const [userProfile, setUserProfile] = useState<boolean>(false)
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
@@ -47,10 +61,10 @@ export const Header = () => {
 
   const tokenPrice = useMemo(() => {
     if (isSpot) {
-      return !marketData || !marketData.current ? <Loader /> : <span>$ {marketData.current}</span>
+      return !marketData || !marketData.current ? null : marketData.current
     } else {
       const oPrice = getPerpsPrice(orderBook)
-      return !oPrice ? <Loader /> : <span>$ {oPrice}</span>
+      return !oPrice ? null : oPrice
     }
   }, [isSpot, selectedCrypto, orderBook])
 
@@ -70,32 +84,43 @@ export const Header = () => {
           <UserProfile setUserProfile={setUserProfile} />
         </Drawer>
       )}
-      <div tw="flex flex-row">
-        {connected && publicKey && (
-          <div
-            onClick={() => {
-              setUserProfile(true)
-            }}
-            tw="h-10 w-10 rounded-circle flex items-center justify-center border-[#cacaca] border border-solid text-grey-4 mr-2.5"
-          >
-            {publicKeyUi}
-          </div>
-        )}
-        <DropdownPairs />
-      </div>
-      <div tw="flex flex-col">
-        <span tw="text-lg text-grey-5 font-semibold">{tokenPrice}</span>
-        <div tw="flex flex-row items-center">
-          {classNameChange === 'up24h' ? (
-            <img className="change-icn" src="/img/assets/24hourup.png" height="10" alt="up-icon" />
-          ) : (
-            <img className="change-icn" src="/img/assets/24hourdown.svg" height="10" alt="down-icon" />
-          )}
-          <span className={classNameChange} tw="text-tiny text-grey-5 font-semibold">
-            {' (' + changeValue + '%)'}
-          </span>
+      {!tokenPrice ? (
+        <div tw="w-full">
+          <SkeletonCommon width="100%" height="60px" />
         </div>
-      </div>
+      ) : (
+        <>
+          <div tw="flex flex-row">
+            {connected && publicKey && (
+              <div
+                onClick={() => {
+                  setUserProfile(true)
+                }}
+                tw="h-10 w-10 rounded-circle flex items-center justify-center border-[#cacaca] border border-solid text-grey-4 mr-2.5 font-semibold relative"
+              >
+                {publicKeyUi}{' '}
+                {!isSpot && (
+                  <span className="open-orders">{perpsOpenOrders.length > 0 ? perpsOpenOrders.length : 0}</span>
+                )}
+              </div>
+            )}
+            <DropdownPairs />
+          </div>
+          <div tw="flex flex-col">
+            <span tw="text-lg text-grey-5 font-semibold">$ {tokenPrice}</span>
+            <div tw="flex flex-row items-center">
+              {classNameChange === 'up24h' ? (
+                <img className="change-icn" src="/img/assets/24hourup.png" height="10" alt="up-icon" />
+              ) : (
+                <img className="change-icn" src="/img/assets/24hourdown.svg" height="10" alt="down-icon" />
+              )}
+              <span className={classNameChange} tw="text-tiny text-grey-5 font-semibold">
+                {' (' + changeValue + '%)'}
+              </span>
+            </div>
+          </div>
+        </>
+      )}
     </HEADER>
   )
 }
