@@ -1,14 +1,12 @@
 /* eslint-disable */
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { OrderBook } from '../OrderBook'
 
 const WRAPPER = styled.div<{ $index: number }>`
   background: ${({ theme }) => theme.bg20};
-  // position: absolute;
-  // height: 100%;
-  // width: 100%;
+  top: 500px;
 
   .header {
     ${tw`flex flex-row justify-around items-center h-[49px] relative`}
@@ -38,6 +36,12 @@ const WRAPPER = styled.div<{ $index: number }>`
 
 export const OrderBookMobi = () => {
   const [selectedTab, setSelectedTab] = useState<number>(0)
+  const [a, setA] = useState<boolean>(true)
+  const [initial, setInitial] = useState<number>(0)
+
+  // useEffect(()=>{
+  //   setInitial
+  // })
 
   // const handleOrderbookScroll = (e) => {
   //   document.addEventListener('mousemove', eleMouseMove, false)
@@ -67,10 +71,38 @@ export const OrderBookMobi = () => {
   //   document.removeEventListener('mouseup', eleMouseUp, false)
   // }
 
+  const handleScroll = (e) => {
+    console.log('haha', e.pageY, initial)
+    if (initial === 0) {
+      setInitial(e.pageY)
+    }
+    const orderbookContainer = document.getElementById('orderbook-wrapper')
+    orderbookContainer.style.position = 'absolute'
+    orderbookContainer.style.width = '100%'
+    orderbookContainer.style.height = 'calc(100% - 160px)'
+    orderbookContainer.style.zIndex = '100'
+    orderbookContainer.style.transition = 'top 400ms ease-in-out'
+
+    if (initial === 0) {
+      orderbookContainer.style.top = '160px'
+    } else {
+      console.log('here')
+      orderbookContainer.style.top = 'calc(100vh - 25px)'
+      setInitial(0)
+    }
+  }
+
   return (
     <WRAPPER $index={selectedTab} id="orderbook-wrapper">
       <div className="header">
-        <div tw="absolute h-[5px] w-[34px] top-[7px] bg-[#636363] rounded-bigger"></div>
+        {
+          <div
+            tw="absolute h-[5px] w-[34px] top-[7px] bg-[#636363] rounded-bigger"
+            onClick={(e) => {
+              handleScroll(e)
+            }}
+          ></div>
+        }
         <span className={selectedTab === 0 ? 'tab active' : 'tab inactive'} onClick={() => setSelectedTab(0)}>
           Orderbook
         </span>
