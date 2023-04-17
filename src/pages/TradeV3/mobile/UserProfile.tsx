@@ -391,7 +391,7 @@ const Positions = () => {
             }
             className={mode === 'dark' ? 'dark' : ''}
           >
-            <ClosePosition setVisibleState={setClosePositionModal} />
+            <ClosePosition setVisibleState={setClosePositionModal} setPerpsEndModal={null} setSummaryData={null} />
           </SETTING_MODAL>
         </>
       )}
