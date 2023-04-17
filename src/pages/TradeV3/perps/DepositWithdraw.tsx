@@ -142,7 +142,7 @@ export const DepositWithdraw: FC<{
     () => `/img/crypto/${perpToken.type === 'synth' ? `g${symbol}` : symbol}.svg`,
     [symbol, perpToken.type]
   )
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const handlePercentageChange = (e: React.MouseEvent<HTMLElement>, index: number) => {
     setPercentageindex(index)
     if (tradeType === 'deposit') {
