@@ -75,13 +75,18 @@ export const OrderBookMobi = () => {
     }
     setIsScollUp((prev) => !prev)
     const orderbookContainer = document.getElementById('orderbook-wrapper')
-    orderbookContainer.style.position = 'absolute'
     orderbookContainer.style.width = '100%'
-    orderbookContainer.style.height = 'calc(100% - 160px)'
     orderbookContainer.style.zIndex = '100'
     orderbookContainer.style.transition = 'top 400ms ease-in-out'
-    if (initial === 0 || isScollUp === true) orderbookContainer.style.top = '160px'
-    else orderbookContainer.style.top = initial + 'px'
+    if (initial === 0 || isScollUp === true) {
+      orderbookContainer.style.position = 'absolute'
+      orderbookContainer.style.height = 'calc(100% - 160px)'
+      orderbookContainer.style.top = '160px'
+    } else {
+      orderbookContainer.style.height = '100vh'
+      orderbookContainer.style.top = initial + 'px'
+      orderbookContainer.style.position = 'fixed'
+    }
   }
 
   return (
