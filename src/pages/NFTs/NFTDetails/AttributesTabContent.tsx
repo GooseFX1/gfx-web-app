@@ -74,14 +74,6 @@ export const AsksAndBidsForNFT = (): ReactElement => {
                 Bid by <span tw="text-[#fff] font-semibold">{truncateAddress(bid.wallet_key)} </span>
                 <div>{new Date(parseInt(bid.clock) * 1000).toString().substring(0, 16)}</div>
               </div>
-              <div>
-                <PriceWithToken
-                  token="SOL"
-                  cssStyle={tw`h-[18px] w-[18px]`}
-                  price={parseFloat(bid.buyer_price) / LAMPORTS_PER_SOL_NUMBER}
-                />
-                <div>{((parseFloat(bid.buyer_price) / LAMPORTS_PER_SOL_NUMBER) * solPrice).toFixed(1)} USDC</div>
-              </div>
             </div>
           ))}
       </div>

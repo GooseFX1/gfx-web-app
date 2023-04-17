@@ -17,7 +17,7 @@ const PRICE = styled.div<{ $cssStyle: TwStyle }>`
 
 export const PriceWithToken: FC<{
   token: string
-  price: number
+  price: number | string
   cssStyle?: TwStyle
   [x: string]: any
 }> = ({ cssStyle, token, price, ...props }) => {

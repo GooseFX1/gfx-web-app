@@ -292,7 +292,9 @@ const NFTDetailsTab = (): ReactElement => {
       {nftData.map((item, index) => (
         <Row justify="space-between" align="middle" className="dtc-item" key={index}>
           <Col className="general-item-title">{item.title}</Col>
-          <Col className="general-item-value">{item.value}</Col>
+          <Col className="general-item-value" tw="font-semibold">
+            {item.value}
+          </Col>
         </Row>
       ))}
     </div>

@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { FC, ReactElement, useState } from 'react'
+import React, { FC, ReactElement, useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import { fetchGlobalSearchNFT } from '../../../api/NFTs'
+import { SearchBar } from '../../../components'
+import { PriceWithToken } from '../../../components/common/PriceWithToken'
+import { PopupCustom } from '../Popup/PopupCustom'
 import styled from 'styled-components'
 import tw from 'twin.macro'
-import { SearchBar } from '../../../components'
-import { PopupCustom } from '../Popup/PopupCustom'
+import 'styled-components/macro'
 
 const STYLED_POPUP = styled(PopupCustom)`
   &.ant-modal {
@@ -30,7 +34,7 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
   .greyText {
     line-height: 14px;
-    ${tw`ml-2 text-[#636363] font-semibold text-[15px]`}
+    ${tw`ml-2 text-[#636363] font-semibold flex items-center  text-[15px]`}
   }
   .searchGraphic {
     ${tw`flex flex-col  text-center mt-[35%]  ml-[5%] text-[18px] font-semibold text-[#636363]`}
@@ -45,9 +49,9 @@ const STYLED_POPUP = styled(PopupCustom)`
     }
   }
   .displayRow {
-    ${tw`flex mt-2 mb-2 `}
+    ${tw`flex mt-2.5 mb-2 `}
     .nftImg {
-      ${tw`w-[35px] h-[35px] mt-1`}
+      ${tw`w-[35px] rounded-[5px] h-[35px] mt-1`}
     }
   }
   .searchWrapper {
@@ -65,6 +69,16 @@ const SearchNFTMobile: FC<{ searchPopup: boolean; setSearchPopup: any }> = ({
 }): ReactElement => {
   const [searchFilter, setSearchFilter] = useState<string>('')
   const [prevSearches, setPrevSearches] = useState<any>('undefined')
+  const [searchResult, setSearchResult] = useState<any>([])
+  useEffect(() => {
+    if (searchFilter && searchFilter.length > 1) {
+      fetchGlobalSearchNFT(searchFilter)
+        .then((res) => {
+          setSearchResult(res.collections)
+        })
+        .catch((err) => console.log(err))
+    }
+  }, [searchFilter])
   return (
     <STYLED_POPUP
       height={'100vh'}
@@ -80,7 +94,7 @@ const SearchNFTMobile: FC<{ searchPopup: boolean; setSearchPopup: any }> = ({
           placeholder="Search by collection or item"
           setSearchFilter={setSearchFilter}
         />
-        {!prevSearches && (
+        {!searchFilter && (
           <div className="searchGraphic">
             <img src="/img/assets/Aggregator/searchGraphic.png" />
             Find your favourite NFT's <br />
@@ -88,39 +102,19 @@ const SearchNFTMobile: FC<{ searchPopup: boolean; setSearchPopup: any }> = ({
           </div>
         )}
 
-        <RecentNFT />
-        <RecentCollection />
+        {/* <RecentNFT /> */}
+        {searchFilter && <RecentCollection searchResult={searchResult} />}
       </div>
     </STYLED_POPUP>
   )
 }
 
-const arr = [
-  {
-    collectionName: 'SMB',
-    item: '#2044',
-    volume: '8000 SOL',
-    itemsListed: 8000,
-    price: 4000,
-    currency: 'SOL',
-    img: 'https://ca.slack-edge.com/T021XPFKRQV-U028SL6BUCT-3b38dffe3712-512'
-  },
-  {
-    collectionName: 'Y00ts',
-    item: '#1234',
-    volume: '9800 SOL',
-    itemsListed: 6000,
-    price: 4000,
-    currency: 'USDC',
-    img: 'https://ca.slack-edge.com/T021XPFKRQV-U028SL6BUCT-3b38dffe3712-512'
-  }
-]
 const RecentNFT = () => {
-  console.log('object')
+  console.log('recent')
   return (
     <div className="searchWrapper">
       <div className="recentTitle">Recent</div>
-      {arr.map((ar, index) => (
+      {[].map((ar, index) => (
         <div className="displayRow" key={index}>
           <img className="nftImg" src={ar.img} alt="" />
           <div>
@@ -137,21 +131,37 @@ const RecentNFT = () => {
   )
 }
 
-const RecentCollection = () => {
-  console.log('object')
+const RecentCollection: FC<{ searchResult: any }> = ({ searchResult }) => {
+  console.log(searchResult)
+  const history = useHistory()
   return (
     <div className="searchWrapper">
       <div className="recentTitle">Collections</div>
-      {arr.map((ar, index) => (
-        <div className="displayRow" key={index}>
-          <img className="nftImg" src={ar.img} alt="" />
-          <div>
-            <div className="title">{ar.collectionName}</div>
-            <div className="greyText">24h Volume: {ar.volume}</div>
+      {searchResult &&
+        searchResult.map((ar, index) => (
+          <div
+            className="displayRow"
+            key={index}
+            onClick={() =>
+              history.push(`/nfts/collection/${encodeURIComponent(ar.collection_name).replaceAll('%20', '_')}`)
+            }
+          >
+            <img className="nftImg" src={ar.profile_pic_link} alt="" />
+            <div>
+              <div className="title">
+                {ar.collection_name}
+                {ar.is_verified && (
+                  <img tw="w-[18px] h-[18px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
+                )}
+              </div>
+              <div className="greyText">
+                24h Volume:{' '}
+                <PriceWithToken token="SOL" price={ar.daily_volume} cssStyle={tw`ml-1 text-white w-5 h-5`} />
+              </div>
+            </div>
+            {/* <div className="alignRight">{ar.itemsListed} Listed</div> */}
           </div>
-          <div className="alignRight">{ar.itemsListed} Listed</div>
-        </div>
-      ))}
+        ))}
     </div>
   )
 }
