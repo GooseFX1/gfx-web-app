@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState, useCallback } from 'react'
+import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { Connect } from './Connect'
 import { More } from './More'
@@ -12,6 +13,7 @@ import { useRewardToggle } from '../context/reward_toggle'
 import { MODAL_TYPES } from '../constants'
 import { checkMobile } from '../utils'
 import { ThemeToggle } from '../components/ThemeToggle'
+import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
 import tw from 'twin.macro'
 
 const BRAND = styled.a`
@@ -27,7 +29,7 @@ const BUTTONS = styled(CenteredDiv)`
   ${tw`absolute md:relative min-md:right-[58px] min-md:h-12.5`}
 
   > *:not(:last-child) {
-    ${tw`mr-6`}
+    ${tw`mr-[12px]`}
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -114,6 +116,7 @@ const ResponsiveDropdown: FC<{ logoAnimationTime?: number }> = () => {
 }
 
 export const MainNav: FC = () => {
+  const { pathname } = useLocation()
   const { isCollapsed, toggleCollapse } = useNavCollapse()
   const { rewardModal, rewardToggle } = useRewardToggle()
   const { mode } = useDarkMode()
@@ -165,6 +168,7 @@ export const MainNav: FC = () => {
             <BUTTONS>
               <RewardsButton />
               <Connect />
+              {pathname.split('/')[1] === 'nfts' && <MyNFTBag />}
               <More />
             </BUTTONS>
           </>

@@ -9,8 +9,6 @@ import {
   useNFTProfile,
   useNavCollapse,
   useConnectionConfig,
-  NFTAggregatorProvider,
-  NFTDetailsProvider,
   usePriceFeedFarm,
   NFTAggFiltersProvider
 } from '../../context'
@@ -71,27 +69,23 @@ const NFTAgg: FC = (): ReactElement => {
       setSessionUser(null)
     }
     return null
-  }, [wallet])
+  }, [wallet?.adapter?.publicKey])
 
   return Object.keys(prices) ? (
     <BODY_NFT $navCollapsed={isCollapsed}>
-      <NFTDetailsProvider>
-        <NFTAggregatorProvider>
-          <NFTAggFiltersProvider>
-            <Switch>
-              <Route exact path={path}>
-                <NFTLandingPageV2 />
-              </Route>
-              <Route exact path="/nfts/collection/:collectionName">
-                <CollectionV2 />
-              </Route>
-              <Route exact path={['/nfts/profile', '/nfts/profile/:userAddress']}>
-                <Profile />
-              </Route>
-            </Switch>
-          </NFTAggFiltersProvider>
-        </NFTAggregatorProvider>
-      </NFTDetailsProvider>
+      <NFTAggFiltersProvider>
+        <Switch>
+          <Route exact path={path}>
+            <NFTLandingPageV2 />
+          </Route>
+          <Route exact path="/nfts/collection/:collectionName">
+            <CollectionV2 />
+          </Route>
+          <Route exact path={['/nfts/profile', '/nfts/profile/:userAddress']}>
+            <Profile />
+          </Route>
+        </Switch>
+      </NFTAggFiltersProvider>
     </BODY_NFT>
   ) : (
     <></>

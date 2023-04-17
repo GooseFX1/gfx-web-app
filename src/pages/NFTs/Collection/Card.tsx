@@ -176,7 +176,7 @@ export const Card: FC<ICard> = (props) => {
             <HoverOnNFT
               buttonType={isOwner ? 'sell' : 'bid'}
               item={localSingleNFT}
-              hasAsk={!isOwner && displayPrice !== null}
+              ask={!isOwner && localAsk ? localAsk : null}
               setNFTDetails={() => (isOwner ? openDetails(MODAL_TARGET.SELL) : openDetails(MODAL_TARGET.BID))}
             />
           )}

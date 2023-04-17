@@ -90,6 +90,7 @@ export const MyNFTBag = (): ReactElement => {
   const { isCollapsed } = useNavCollapse()
   const itemsPresentInBag = nftInBag.length // no items in the bag
   if (isCollapsed) return <></>
+
   return (
     <BAG_WRAPPER>
       <Dropdown

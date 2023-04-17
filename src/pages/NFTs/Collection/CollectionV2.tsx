@@ -11,7 +11,6 @@ import { NFTCollection } from '../../../types/nft_collections'
 import { checkMobile } from '../../../utils'
 import { GenericNotFound } from '../../InvalidUrl'
 import { GradientText } from '../adminPage/components/UpcomingMints'
-import MyNFTBag from '../MyNFTBag'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import ActivityNFTSection from './ActivityNFTSection'
 import AdditionalFilters from './AdditionalFilters'
@@ -76,7 +75,6 @@ const CollectionV2 = (): ReactElement => {
     <GenericNotFound />
   ) : (
     <COLLECTION_VIEW_WRAPPER id="nft-aggerator-container" navCollapsed={isCollapsed}>
-      <MyNFTBag />
       <NFTStatsContainer />
       <NFTGridContainer />
     </COLLECTION_VIEW_WRAPPER>
