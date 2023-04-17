@@ -555,3 +555,11 @@ export const truncateBigNumber = (bigNumber: number) => {
   }
   return bigNumber
 }
+
+export const getProfitAmount = (quantity: string, price: string, percentage: number) => {
+  const qty = Number(quantity)
+  const pr = Number(price)
+  const value = qty * pr
+  const profitAmount = value * percentage
+  return profitAmount
+}
