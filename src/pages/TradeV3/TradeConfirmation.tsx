@@ -24,10 +24,10 @@ const ROW = styled.div`
   }
 `
 
-export const TradeConfirmation: FC<{ setVisibility: any }> = ({ setVisibility }) => {
+export const TradeConfirmation: FC<{ setVisibility: any; takeProfit?: any }> = ({ setVisibility, takeProfit }) => {
   const { order } = useOrder()
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
-  const { newOrder } = useTraderConfig()
+  const { newOrder, newOrderTakeProfit } = useTraderConfig()
 
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
@@ -51,7 +51,7 @@ export const TradeConfirmation: FC<{ setVisibility: any }> = ({ setVisibility })
   }, [notionalValue, fee])
 
   const handleClick = async () => {
-    await newOrder()
+    !takeProfit ? await newOrder() : await newOrderTakeProfit(takeProfit.toString())
     setVisibility(false)
   }
 

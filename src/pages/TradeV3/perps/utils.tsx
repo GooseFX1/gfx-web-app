@@ -28,7 +28,7 @@ import { MarketProductGroup, TraderRiskGroup } from './dexterity/accounts'
 import { pyth, SYSTEM } from '../../../web3'
 import { Slab } from './instructions/Agnostic'
 import { IActiveProduct, ITraderHistory } from '../../../context/trader_risk_group'
-import { OrderBook } from '../../../context'
+import { OrderBook, OrderSide } from '../../../context'
 
 export const getDexProgram = async (connection: Connection, wallet: any): Promise<anchor.Program> => {
   const provider = new anchor.Provider(connection, wallet, anchor.Provider.defaultOptions())
@@ -556,10 +556,8 @@ export const truncateBigNumber = (bigNumber: number) => {
   return bigNumber
 }
 
-export const getProfitAmount = (quantity: string, price: string, percentage: number) => {
-  const qty = Number(quantity)
+export const getProfitAmount = (side: OrderSide, price: string | number, percentage: number) => {
   const pr = Number(price)
-  const value = qty * pr
-  const profitAmount = value * percentage
-  return profitAmount
+  const profitAmount = pr * percentage
+  return side === 'buy' ? pr + profitAmount : pr - profitAmount
 }
