@@ -144,7 +144,11 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     )
   })
 
-  const attemptConfirmTransaction = async (buyerPrice: BN, tradeState: [PublicKey, number], signature: any) => {
+  const attemptConfirmTransaction = async (
+    buyerPrice: BN,
+    tradeState: [PublicKey, number],
+    signature: any
+  ): Promise<void> => {
     try {
       const confirm = await connection.confirmTransaction(signature, 'finalized')
       console.log(confirm)
@@ -152,7 +156,6 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       if (confirm.value.err === null) {
         setIsLoading(false)
         notify(successfulListingMsg(signature, nftMetadata, askPrice.toFixed(2)))
-        setIsLoading(false)
         setTimeout(() => handleClose(false), 1000)
 
         // history.push(`/NFTs/profile/${wallet?.adapter?.publicKey.toBase58()}`)
@@ -297,6 +300,8 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       console.log(signature)
       setPendingTxSig(signature)
       attemptConfirmTransaction(buyerPrice, tradeState, signature)
+        .then((res) => console.log('TX Confirmed', res))
+        .catch((err) => console.error(err))
     } catch (error) {
       console.log('User exited signing transaction to list fixed price')
       notify({
