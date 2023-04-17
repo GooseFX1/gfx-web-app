@@ -14,7 +14,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 
 const PROFILE = styled.div<{ navCollapsed: boolean }>`
-${tw`w-[23vw] bg-[#eee] dark:bg-[#272727]`}
+${tw`w-[23vw] bg-white dark:bg-black-1`}
   border-top-right-radius: 20px;
   ${({ theme }) => theme.customScrollBar('1px')}
   height: ${({ navCollapsed }) => (navCollapsed ? '85vh' : '80vh')};
@@ -32,9 +32,10 @@ ${tw`w-[23vw] bg-[#eee] dark:bg-[#272727]`}
       bottom: 50px;
       left: 28px;
       .avatar-profile {
+        ${tw`dark:border-black-1 border-white`}
         width: 116px;
         border-radius: 50%;
-        border: 8px solid ${({ theme }) => theme.bg17};
+        border: 8px solid;
       }
       .icon {
         ${tw`h-10 w-10 absolute bottom-[-5px] right-[-1px] cursor-pointer`}

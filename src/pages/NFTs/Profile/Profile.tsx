@@ -7,29 +7,26 @@ import { HeaderProfile } from './HeaderProfile'
 import { ContentProfile } from './ContentProfile'
 import { useNFTProfile } from '../../../context'
 import { isValidSolanaAddress } from '../../../web3'
+import { SellNFTModal } from '../Collection/SellNFTModal'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { SellNFTModal } from '../Collection/SellNFTModal'
 
 //#region styles
 const PROFILE_CONTAINER = styled.div<{ background?: string }>`
   ${tw`-mt-20 pt-20 flex flex-col`}
   .ant-drawer-body {
+    ${tw`dark:!bg-black-2 bg-grey-4`}
     ${({ theme }) => theme.customScrollBar('4px')}
-    background: ${({ theme }) => theme.bg2};
   }
+
   ${({ background }) => `
   background : url(${background});
   background-repeat: no-repeat;
-  background-size: 100%;
+  background-size: 100% 500px;
+  
   @media(max-width: 500px){
     background-size: 100% 100%;
-  }
-
-
-  .ant-drawer-content {
-    background: #1c1c1c !important;
   }
 
   .ant-tabs-top {
@@ -117,7 +114,10 @@ export const Profile: FC = (): JSX.Element => {
   } = useNFTProfile()
   const { wallet } = useWallet()
 
-  const publicKey = useMemo(() => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null), [wallet])
+  const publicKey = useMemo(
+    () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
+    [wallet?.adapter?.publicKey]
+  )
   const isSessionUser = useMemo(
     () => (publicKey !== null ? params.userAddress === publicKey?.toBase58() : false),
     [publicKey]
@@ -151,8 +151,6 @@ export const Profile: FC = (): JSX.Element => {
     const randomImage = backgroundArray[Math.floor(Math.random() * backgroundArray.length)]
     setRandomBackground(randomImage)
   }, [])
-
-  console.log('isSessionUser', params.userAddress, publicKey?.toBase58())
 
   return (
     isSessionUser !== undefined && (

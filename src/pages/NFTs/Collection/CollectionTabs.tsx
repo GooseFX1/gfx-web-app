@@ -7,6 +7,7 @@ import { FixedPriceTabContent } from './FixedPriceTabContent'
 import { OpenBidsTabContent } from './OpenBidsTabContent'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { OwnersTabContent } from './OwnersTabContent'
+import tw from 'twin.macro'
 
 const { TabPane } = Tabs
 
@@ -58,14 +59,14 @@ const COLLECTION_TABS = styled.div<{ $height: string }>`
   }
 
   .ant-tabs-nav {
+    ${tw`dark:bg-black-2 bg-grey-4 border-grey-2`}
     padding: 0 !important;
-    background-color: ${({ theme }) => theme.bg3};
-    border-bottom: 1px solid ${({ theme }) => theme.tabDivider} !important;
+    border-bottom: 1px solid;
     border-radius: 20px 30px 0 0;
   }
 
   .ant-tabs-content {
-    background-color: ${({ theme }) => theme.bg3};
+    ${tw`dark:bg-black-2 bg-grey-4`}
     min-height: calc(70vh - 156px);
   }
 

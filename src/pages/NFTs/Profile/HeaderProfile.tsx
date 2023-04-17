@@ -1,14 +1,14 @@
-/* eslint-disable */
-import React, { useState, useEffect, useMemo, FC } from 'react'
+import React, { useState, useEffect, useMemo, useCallback, FC } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { TransactionInstruction, PublicKey, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
-import { Image, Button, Dropdown, Menu } from 'antd'
-import styled from 'styled-components'
+import { Image } from 'antd'
+// import styled from 'styled-components'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { generateTinyURL } from '../../../api/tinyUrl'
 import { useNFTProfile, useDarkMode, useConnectionConfig, useNavCollapse } from '../../../context'
 import { ILocationState } from '../../../types/app_params.d'
+import { Button } from '../../../components'
 import { PopupProfile } from './PopupProfile'
 import { Share } from '../Share'
 import {
@@ -21,30 +21,32 @@ import {
 import { callWithdrawInstruction } from '../actions'
 import { MainButton, SuccessfulListingMsg, FloatingActionButton } from '../../../components'
 import { checkMobile, notify } from '../../../utils'
-import { StyledHeaderProfile, StyledMenu, SETTLE_BALANCE_MODAL, MARGIN_VERTICAL } from './HeaderProfile.styled'
+import { StyledHeaderProfile, SETTLE_BALANCE_MODAL, MARGIN_VERTICAL } from './HeaderProfile.styled'
 import BN from 'bn.js'
 import { IAppParams } from '../../../types/app_params.d'
 import { FLOATING_ACTION_ICON } from '../../../styles'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
-const DROPDOWN = styled(Dropdown)`
-  width: auto;
-  padding: 0;
-  border: none;
-  background: transparent;
-  margin-left: ${({ theme }) => theme.margin(3)};
+// const DROPDOWN = styled(Dropdown)`
+//   width: auto;
+//   padding: 0;
+//   border: none;
+//   background: transparent;
+//   margin-left: ${({ theme }) => theme.margin(3)};
 
-  .collection-more-icon {
-    @media (max-width: 500px) {
-      transform: rotate(90deg);
-    }
-    width: 43px;
-    height: 41px;
-  }
+//   .collection-more-icon {
+//     @media (max-width: 500px) {
+//       transform: rotate(90deg);
+//     }
+//     width: 43px;
+//     height: 41px;
+//   }
 
-  &:after {
-    content: none;
-  }
-`
+//   &:after {
+//     content: none;
+//   }
+// `
 
 type Props = {
   isSessionUser: boolean
@@ -54,6 +56,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   const location = useLocation<ILocationState>()
   const history = useHistory()
   const params = useParams<IAppParams>()
+  const { isCollapsed } = useNavCollapse()
   const { connection, network } = useConnectionConfig()
   const { sendTransaction, wallet } = useWallet()
   const { sessionUser, nonSessionProfile, fetchNonSessionProfile } = useNFTProfile()
@@ -238,7 +241,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
     )
   })
 
-  const handleModal = () => {
+  const handleModal = useCallback(() => {
     if (profileModal) {
       return <PopupProfile visible={profileModal} setVisible={setProfileModal} handleCancel={handleCancel} />
     } else if (shareModal) {
@@ -284,25 +287,24 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
     } else {
       return false
     }
-  }
+  }, [profileModal, settleBalanceModal])
 
-  const menu = (
-    <StyledMenu>
-      <Menu.Item onClick={() => setProfileModal(true)}>
-        <div>Edit profile</div>
-      </Menu.Item>
-      <Menu.Item onClick={() => setShareModal(true)}>
-        <div>Share Profile</div>
-      </Menu.Item>
-    </StyledMenu>
-  )
-  const { isCollapsed } = useNavCollapse()
+  // const menu = (
+  //   <StyledMenu>
+  //     <Menu.Item onClick={() => setProfileModal(true)}>
+  //       <div>Edit profile</div>
+  //     </Menu.Item>
+  //     <Menu.Item onClick={() => setShareModal(true)}>
+  //       <div>Share Profile</div>
+  //     </Menu.Item>
+  //   </StyledMenu>
+  // )
 
   return (
     <StyledHeaderProfile mode={mode}>
       {handleModal()}
       {checkMobile() ? (
-        <div className="row" id="row">
+        <div tw="flex justify-between" id="row">
           <div style={{ position: checkMobile() ? 'static' : 'absolute', top: '18px', left: '24px' }}>
             <FloatingActionButton height={40} onClick={() => history.goBack()}>
               <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
@@ -402,20 +404,31 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
         </div>
       )}
       {!checkMobile() && (
-        <div className="action-wrap">
-          {isSessionUser && connected && publicKey ? (
-            <button className="btn-purple" onClick={() => setSettleBalanceModal(true)}>
-              <span>
-                Settle Balance: <strong>{userEscrowBalance ? userEscrowBalance.toFixed(2) : 0}</strong>
-              </span>
-            </button>
-          ) : (
-            <span></span>
-          )}
+        <div tw="absolute bottom-0 right-[22px] flex">
           {isSessionUser && connected && publicKey && (
-            <div className="complete-profile" onClick={() => setProfileModal(true)}>
-              Complete Profile
-            </div>
+            <Button
+              height={'44px'}
+              width={'200px'}
+              cssStyle={tw`bg-purple-1 mr-[12px]`}
+              onClick={() => setSettleBalanceModal(true)}
+              loading={settleBalanceModal}
+            >
+              <span tw="font-semibold text-regular">
+                Settle Balance:{' '}
+                <strong tw="font-bold text-white">{userEscrowBalance ? userEscrowBalance.toFixed(2) : 0}</strong>
+              </span>
+            </Button>
+          )}
+
+          {isSessionUser && connected && publicKey && (
+            <Button
+              height={'44px'}
+              cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2 px-4`}
+              onClick={() => setProfileModal(true)}
+              loading={profileModal}
+            >
+              <span tw="font-semibold text-regular text-white">Complete Profile</span>
+            </Button>
           )}
           {/* {isSessionUser && connected && publicKey && (
             <button className="btn-create" onClick={() => history.push('/NFTs/create')}>

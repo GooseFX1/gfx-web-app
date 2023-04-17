@@ -8,7 +8,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
   ${({ navCollapsed }) => css`
     color: ${({ theme }) => theme.text30};
     .ant-drawer-content {
-      background: ${({ theme }) => theme.bg26} !important;
+      ${tw`dark:bg-black-2 bg-grey-4`}
     }
 
     .nftStatsContainer {
@@ -118,7 +118,7 @@ export const GRID_CONTAINER = styled.div<{ navCollapsed?: boolean }>`
 `
 
 export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
-  ${tw`w-full bg-[#e2e2e2] dark:bg-[#272727]`}
+  ${tw`w-full dark:bg-black-2 bg-grey-4`}
   ${({ theme }) => theme.customScrollBar('4px')}
   overflow-y: auto;
   .profile-content-loading {
@@ -181,7 +181,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
       }
     }
     .nftTextContainer {
-      ${tw`relative p-[8px]`}
+      ${tw`relative p-[8px] dark:text-white text-black-4`}
     }
     .collectionId {
       ${tw`text-[13px] font-semibold flex items-center justify-between`}
@@ -201,7 +201,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
       }
     }
     .apprisalPrice {
-      ${tw`font-semibold text-[15px] mt-[-2px] text-[#636363] flex items-center`}
+      ${tw`font-semibold text-[15px] mt-[-2px] text-grey-1 flex items-center`}
       img {
         ${tw`w-[20px] h-[20px] ml-2.5`}
       }
@@ -239,7 +239,7 @@ export const DROPDOWN_CONTAINER = styled.div`
 `
 export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
   ${({ index }) => css`
-    ${tw`duration-500 items-center flex  bg-[#e2e2e2] dark:bg-[#272727] h-[70px] sm:h-[58px] sm:flex-col `}
+    ${tw`duration-500 items-center flex dark:bg-black-2 bg-grey-4 h-[70px] sm:h-[58px] sm:flex-col `}
     border-radius: 30px 30px 0 0;
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
     .sortingBtn {
