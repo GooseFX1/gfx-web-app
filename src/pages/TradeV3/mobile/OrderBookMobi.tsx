@@ -69,7 +69,7 @@ export const OrderBookMobi = () => {
   // }
 
   const handleOrderbookScroll = (e) => {
-    console.log(e.pageY)
+    //console.log(e.pageY)
     if (initial === 0) {
       setInitial(e.pageY)
     }

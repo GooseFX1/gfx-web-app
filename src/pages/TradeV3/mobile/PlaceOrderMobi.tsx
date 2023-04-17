@@ -250,19 +250,11 @@ const ORDER_CATEGORY = styled.div`
   }
 `
 
-const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean; $orderSide: string }>`
+const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean; $orderSide: string; connected: boolean }>`
   ${tw`w-[95%] mt-3 rounded-[30px] h-[45px] text-tiny font-semibold border-0 border-none mx-auto block`}
-  background: ${({ $action, $orderSide, theme }) =>
-    $action ? ($orderSide === 'buy' ? '#71C25D' : '#F06565') : theme.bg23};
-  color: ${({ $action }) => ($action ? 'white' : '#636363')};
-`
-
-const CONNECT = styled.div`
-  ${tw`w-[95%] mt-3 rounded-[30px] h-[45px] text-tiny font-semibold border-0 border-none mx-auto block`}
-
-  > button {
-    ${tw`w-full h-[45px]`}
-  }
+  background: ${({ $action, $orderSide, $connected, theme }) =>
+    $action ? ($orderSide === 'buy' ? '#71C25D' : '#F06565') : !$connected ? '#8d4cdd' : theme.bg23};
+  color: ${({ $action, $connected }) => ($action || !$connected ? 'white' : '#636363')};
 `
 
 const SELECTOR = styled.div`
@@ -884,9 +876,10 @@ export const PlaceOrderMobi = () => {
       <PLACE_ORDER_BUTTON
         $action={buttonState === ButtonState.CanPlaceOrder}
         onClick={() => {
-          buttonState === ButtonState.Connect ? null : isSpot ? placeOrder() : handlePlaceOrder()
+          buttonState === ButtonState.Connect ? handleWalletModal() : isSpot ? placeOrder() : handlePlaceOrder()
         }}
         $orderSide={order.side}
+        $connected={connected}
       >
         {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
       </PLACE_ORDER_BUTTON>
