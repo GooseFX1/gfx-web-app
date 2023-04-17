@@ -5,7 +5,14 @@ import axios from 'axios'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { moneyFormatter } from '../../../utils'
 import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nft_details.d'
-import { useNFTProfile, useNFTDetails, useConnectionConfig, useDarkMode } from '../../../context'
+import {
+  useNFTProfile,
+  useNFTDetails,
+  useConnectionConfig,
+  useDarkMode,
+  useNFTAggregator,
+  usePriceFeedFarm
+} from '../../../context'
 import { fetchSingleNFT } from '../../../api/NFTs'
 import { getParsedAccountByMint, StringPublicKey, ParsedAccount } from '../../../web3'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
@@ -15,12 +22,15 @@ import { GradientText } from '../adminPage/components/UpcomingMints'
 import { HoverOnNFT } from './SingleNFTCard'
 import { SellNFTModal } from './SellNFTModal'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { BidNFTModal } from './BuyNFTModal'
+import { PriceWithToken } from '../../../components/common/PriceWithToken'
+import { minimizeTheString } from '../../../web3/nfts/utils'
+import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { BidNFTModal } from './BuyNFTModal'
 
 //#region styles
-
+const DIVV = styled.div``
 type ICard = {
   singleNFT: ISingleNFT
   className?: string
@@ -34,6 +44,7 @@ export const Card: FC<ICard> = (props) => {
   const { sessionUser, sessionUserParsedAccounts, likeDislike, userCurrency } = useNFTProfile()
   // const { prices } = usePriceFeed()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
+  const { setBidNow } = useNFTAggregator()
   /** setters are only for populating context before location change to details page */
   const { setGeneral, setNftMetadata, setBids, setAsk, setTotalLikes } = useNFTDetails()
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
@@ -45,6 +56,9 @@ export const Card: FC<ICard> = (props) => {
   const [showSellNFTModal, setShowSellNFTModal] = useState<boolean>(false)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const [hover, setHover] = useState<boolean>(false)
+  const { currencyView } = useNFTAggregator()
+  const { prices } = usePriceFeedFarm()
+  const solPrice = prices['SOL/USDC']?.current
 
   enum MODAL_TARGET {
     DRAWER = 'drawer',
@@ -142,7 +156,10 @@ export const Card: FC<ICard> = (props) => {
   }
 
   //const val = currency === 'USD' ? value * priceFeed['SOL/USDC']?.current : value
-  const dynamicPriceValue = (currency: string, priceFeed: any, value: number) => `${moneyFormatter(value)}`
+  const dynamicPriceValue = (value: number) => {
+    if (currencyView === 'USDC') return `${(value * solPrice).toFixed(2)}`
+    return `${value.toFixed(2)}`
+  }
 
   const handleModal = useCallback(() => {
     if (showBidNFTModal) {
@@ -176,7 +193,7 @@ export const Card: FC<ICard> = (props) => {
             <HoverOnNFT
               buttonType={isOwner ? 'sell' : 'bid'}
               item={localSingleNFT}
-              hasAsk={!isOwner && displayPrice !== null}
+              ask={!isOwner && displayPrice !== null}
               setNFTDetails={() => (isOwner ? openDetails(MODAL_TARGET.SELL) : openDetails(MODAL_TARGET.BID))}
             />
           )}
@@ -186,30 +203,41 @@ export const Card: FC<ICard> = (props) => {
             alt="nft"
           />
         </div>
-
         <div className={'nftTextContainer'}>
           <div className="collectionId">
-            {localSingleNFT && localSingleNFT.nft_name}
+            {localSingleNFT && localSingleNFT?.is_verified}
+            {localSingleNFT ? '#' + localSingleNFT?.nft_name?.split('#')[1] : '# NFT'}
             <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />
+            {/* <img className="isVerified" tw="!ml-auto" src="/img/assets/Aggregator/verifiedNFT.svg" /> */}
           </div>
-          {localSingleNFT && localSingleNFT.collection_name !== null && (
-            <GradientText text={localSingleNFT.collection_name} fontSize={15} fontWeight={600} />
+          {localSingleNFT && localSingleNFT?.nft_name !== null && (
+            <GradientText
+              text={minimizeTheString(localSingleNFT.nft_name.split('#')[0])}
+              fontSize={15}
+              fontWeight={600}
+            />
           )}
 
           <div>
             {localSingleNFT ? (
               <div>
                 <div className="nftPrice">
-                  {displayPrice !== null
-                    ? dynamicPriceValue(userCurrency, [], parseFloat(displayPrice) / LAMPORTS_PER_SOL_NUMBER)
-                    : 'No price'}
-                  <img src={`/img/crypto/SOL.svg`} alt={'SOL'} />
+                  {displayPrice !== null ? (
+                    <PriceWithToken
+                      cssStyle={tw``}
+                      price={dynamicPriceValue(parseFloat(displayPrice) / LAMPORTS_PER_SOL_NUMBER)}
+                      token={currencyView}
+                    />
+                  ) : (
+                    'No price'
+                  )}
+                  {/* <img src={`/img/crypto/SOL.svg`} alt={'SOL'} /> */}
                 </div>
               </div>
             ) : (
               <SkeletonCommon width="64px" height="24px" />
             )}
-            <div className="apprisalPrice">
+            <div className="apprisalPriceProfile">
               {/* {dynamicPriceValue(userCurrency, [], parseFloat(displayPrice) / LAMPORTS_PER_SOL_NUMBER)} */}
               NA
               <img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'tooltip'} />

@@ -198,7 +198,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
 export const HoverOnNFT: FC<{
   addNftToBag?: any
   item: BaseNFT
-  ask: INFTAsk | null
+  ask: INFTAsk | null | boolean
   buttonType?: string
   setNFTDetails: any
 }> = ({ addNftToBag, item, ask, setNFTDetails, buttonType }): ReactElement => {

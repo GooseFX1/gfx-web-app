@@ -19,7 +19,7 @@ import { GRID_CONTAINER, NFT_COLLECTIONS_GRID } from '../Collection/CollectionV2
 import Loading from '../Home/Loading'
 import NFTLoading from '../Home/NFTLoading'
 import { SellNFTModal } from '../Collection/SellNFTModal'
-import { BuyNFTModal } from '../Collection/BuyNFTModal'
+import { BidNFTModal, BuyNFTModal } from '../Collection/BuyNFTModal'
 
 const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
   ${tw`h-[25px] w-[50px] rounded-[40px] cursor-pointer`}
@@ -201,6 +201,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType}>
       <BuyNFTModal />
+      <BidNFTModal />
       {filteredCollectedItems === undefined ? (
         <>
           <NFTLoading />

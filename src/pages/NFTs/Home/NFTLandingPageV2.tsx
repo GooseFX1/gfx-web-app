@@ -2,15 +2,15 @@
 import { Checkbox, Dropdown, Switch } from 'antd'
 import React, { ReactElement, useMemo, useState, FC, useEffect } from 'react'
 import styled, { css } from 'styled-components'
-import tw from 'twin.macro'
 import 'styled-components/macro'
-import { Pill, SearchBar } from '../../../components'
+import { Pill, SearchBar, TokenToggleNFT } from '../../../components'
 import NFTAggWelcome, { NFTAggTerms } from '../../../components/NFTAggWelcome'
 import {
   useConnectionConfig,
   useDarkMode,
   useNavCollapse,
   useNFTAggregator,
+  useNFTAggregatorFilters,
   useNFTCollections,
   useNFTDetails,
   useNFTProfile
@@ -38,6 +38,8 @@ import ShowEyeLite from '../../../animations/showEyelite.json'
 import ShowEyeDark from '../../../animations/showEyedark.json'
 import Lottie from 'lottie-react'
 import { fetchGlobalSearchNFT } from '../../../api/NFTs'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 const CURRENCY_SWITCH = styled.div<{ $currency }>`
   .ant-switch {
@@ -169,7 +171,6 @@ const NFTLandingPageV2 = (): ReactElement => {
   const [showBanner, setShowBanner] = useState<boolean>(false)
   const [hasOnboarded, setHasOnboarded] = useState<boolean>(!existingUserCache.hasAggOnboarded)
   const [showTerms, setShowTerms] = useState<boolean>(false)
-  // const [currency, setCurrency] = useState<'SOL' | 'USDC'>('SOL')
   const { currencyView } = useNFTAggregator()
 
   const handleHasOnboarded = (res: boolean) => {
@@ -210,9 +211,11 @@ const FiltersContainer = () => {
   const [searchFilter, setSearchFilter] = useState<string>(undefined)
   const [searchPopup, setSearchPopup] = useState<boolean>(false)
   const [menuPopup, setMenuPopup] = useState<boolean>(false)
-  const { connection } = useConnectionConfig()
   const history = useHistory()
+  const { setCurrency } = useNFTAggregator()
+
   const { mode } = useDarkMode()
+  const { setTimelineDisplay } = useNFTAggregatorFilters()
 
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
   const goProfile = () => sessionUser && history.push(`/nfts/profile/${sessionUser.pubkey}`)
@@ -224,6 +227,7 @@ const FiltersContainer = () => {
   const handleClickTimeline = (poolName, index) => {
     setTimelineIndex(index)
     setTimelineName(poolName)
+    setTimelineDisplay(poolName)
   }
 
   useEffect(() => {
@@ -241,7 +245,7 @@ const FiltersContainer = () => {
               <img
                 style={{ height: '20px', width: '20px' }}
                 onClick={() => setSearchPopup(true)}
-                src={`/img/assets/search.svg`}
+                src={`/img/assets/search_${mode}.svg`}
               />
             </div>
             <div className="iconImg" onClick={() => setMenuPopup(true)}>
@@ -286,7 +290,9 @@ const FiltersContainer = () => {
               </STYLED_BUTTON>
             ))}
           </ButtonContainer>
-          {/* <CurrencySwitch /> */}
+          <div tw="ml-auto mt-2.5 mr-2.5">
+            <TokenToggleNFT toggleToken={setCurrency} />
+          </div>
         </div>
       </div>
     )
@@ -393,7 +399,12 @@ const SearchResultContainer = ({ searchFilter }: any) => {
             onClick={() => history.push(`/nfts/collection/${data.collection_name.replaceAll(' ', '_')}`)}
           >
             <img src={data.profile_pic_link} alt="" />
-            <div className="searchText">{data.collection_name}</div>
+            <div className="searchText">
+              {data.collection_name}
+              {data.is_verified && (
+                <img tw="w-[15px] h-[15px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
+              )}
+            </div>
           </div>
         ))}
     </SEARCH_RESULT_CONTAINER>
@@ -414,16 +425,17 @@ const StatsContainer = ({ showBanner, setShowBanner }: any) => (
 
 const TimeLineDropdown = (): ReactElement => {
   const [arrow, setArrow] = useState<boolean>(false)
+  const { timelineDisplay } = useNFTAggregatorFilters()
   return (
     <Dropdown
       align={{ offset: [0, 16] }}
       destroyPopupOnHide
       overlay={<TimelineDropdownContents setArrow={setArrow} />}
       placement="bottomRight"
-      trigger={['click']}
+      trigger={[checkMobile() ? 'click' : 'hover']}
     >
       <div className="dropdownBtn" tw="h-[44px] w-[104px] ">
-        <div tw="ml-6">All</div>
+        <div tw="ml-6">{timelineDisplay}</div>
         <Arrow height="9px" width="18px" invert={arrow} />
       </div>
     </Dropdown>
@@ -485,6 +497,7 @@ const MarketDropdownContents = ({ setArrow }: any): ReactElement => {
 }
 
 const TimelineDropdownContents = ({ setArrow }: any): ReactElement => {
+  const { setTimelineDisplay, timelineDisplay } = useNFTAggregatorFilters()
   useEffect(() => {
     setArrow(true)
     return () => {
@@ -492,7 +505,19 @@ const TimelineDropdownContents = ({ setArrow }: any): ReactElement => {
     }
   }, [])
 
-  return <DROPDOWN_CONTAINER tw="w-[173px] h-[211px]">List of time line</DROPDOWN_CONTAINER>
+  return (
+    <DROPDOWN_CONTAINER tw="w-[104px] h-[120px]">
+      <div className="option" onClick={() => setTimelineDisplay('24h')}>
+        24h <input type={'radio'} name="sort" checked={timelineDisplay === '24h'} value="asc" />
+      </div>
+      <div className="option" onClick={() => setTimelineDisplay('7d')}>
+        7d <input type={'radio'} name="sort" checked={timelineDisplay === '7d'} value="desc" />
+      </div>
+      <div className="option" onClick={() => setTimelineDisplay('30d')}>
+        30d <input type={'radio'} name="sort" checked={timelineDisplay === '30d'} value="desc" />
+      </div>
+    </DROPDOWN_CONTAINER>
+  )
 }
 
 export default NFTLandingPageV2

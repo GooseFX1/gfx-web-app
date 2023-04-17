@@ -24,6 +24,13 @@ import 'styled-components/macro'
 
 const STYLE = styled.div``
 
+const volumeDict = {
+  '24d': 'daily_volume',
+  '7d': 'weekly_volume',
+  '30d': 'monthly_volume',
+  all: 'total_volume'
+}
+
 const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   const { isCollapsed } = useNavCollapse()
   const { fetchAllCollectionsByPages, allCollections, allCollectionLoading, setAllCollections } =
@@ -81,76 +88,103 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
 }
 
 const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement => {
-  const history = useHistory()
+  console.log('object')
   return (
     <>
       {allItems.map((item, index) => (
-        <tr
-          ref={index + 1 === allItems.length ? lastRowElementRef : null}
+        <NFTRowMobileItem
+          item={item}
           key={index}
-          onClick={() => history.push(`/NFTs/collection/${item.collection.collection_name.replaceAll(' ', '_')}`)}
-        >
-          <td className="index"> {index + 1}</td>
-          <td className="nftNameColumn">
-            {item?.collection_name ? (
-              <>
-                <Image
-                  className="nftNameImg"
-                  fallback={'/img/assets/Aggregator/Unknown.svg'}
-                  src={`${
-                    item.collection.profile_pic_link.length === 0
-                      ? '/img/assets/Aggregator/Unknown.svg'
-                      : item.collection.profile_pic_link
-                  }`}
-                  alt=""
-                />
-                <div className="nftCollectionName">
-                  {minimizeTheString(item?.collection_name)}
-                  <div className="nftCollectionFloor">
-                    <div className="grey">Floor: </div>
-                    <div>
-                      <PriceWithToken
-                        price={item?.floor_price / LAMPORTS_PER_SOL_NUMBER}
-                        token="SOL"
-                        cssStyle={tw`w-5 h-5`}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div>
-                <Loader />
-              </div>
-            )}
-          </td>
-          <td className="tdItem">
-            {item?.daily_volume !== undefined ? (
-              <div tw="flex flex-col items-center justify-center">
-                <PriceWithToken price={item?.daily_volume} token="SOL" cssStyle={tw`h-5 w-5`} />
-                <div className="grey">24h volume </div>
-              </div>
-            ) : (
-              <Loader />
-            )}
-          </td>
-        </tr>
+          index={index}
+          lastRowElementRef={index + 1 === allItems.length ? lastRowElementRef : null}
+        />
       ))}
     </>
   )
 }
-
-const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
+const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
+  const { timelineDisplay } = useNFTAggregatorFilters()
   const { currencyView } = useNFTAggregator()
   const history = useHistory()
   const { prices } = usePriceFeedFarm()
   const solPrice = prices['SOL/USDC']?.current
+  const { floorPrice, volume } = getDisplayPrice(currencyView, solPrice, item, timelineDisplay)
+
+  return (
+    <>
+      <tr
+        ref={lastRowElementRef}
+        key={index}
+        onClick={() => history.push(`/NFTs/collection/${item.collection_name.replaceAll(' ', '_')}`)}
+      >
+        <td className="index"> {index + 1}</td>
+        <td className="nftNameColumn">
+          {item?.collection_name !== undefined ? (
+            <>
+              <Image
+                className="nftNameImg"
+                fallback={'/img/assets/Aggregator/Unknown.svg'}
+                src={`${
+                  item?.profile_pic_link.length === 0
+                    ? '/img/assets/Aggregator/Unknown.svg'
+                    : item.profile_pic_link
+                }`}
+                alt=""
+              />
+              <div className="nftCollectionName">
+                <div tw="flex items-center">
+                  {minimizeTheString(item?.collection_name)}
+                  {item.is_verified && (
+                    <img tw="w-[18px] h-[18px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
+                  )}
+                </div>
+
+                <div className="nftCollectionFloor">
+                  <div className="grey">Floor: </div>
+                  <div>
+                    <PriceWithToken price={floorPrice} token={currencyView} cssStyle={tw`w-5 h-5`} />
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div>
+              <Loader />
+            </div>
+          )}
+        </td>
+        <td className="tdItem">
+          {item?.daily_volume !== undefined ? (
+            <div tw="flex flex-col items-center justify-center">
+              <PriceWithToken price={volume} token={currencyView} cssStyle={tw`h-5 w-5`} />
+              <div className="grey">{timelineDisplay} volume </div>
+            </div>
+          ) : (
+            <Loader />
+          )}
+        </td>
+      </tr>
+    </>
+  )
+}
+
+const getDisplayPrice = (currencyView: string, solPrice: number, item: any, timelineDisplay: string) => {
   const price = item?.floor_price / LAMPORTS_PER_SOL_NUMBER
   let floorPrice = currencyView === 'USDC' ? solPrice * (price > 0 ? price : 0) : price
   floorPrice = floorPrice ? parseFloat(floorPrice.toFixed(2)) : 0
 
-  let volume = currencyView === 'USDC' ? item?.daily_volume * solPrice : item?.daily_volume
+  let volume =
+    currencyView === 'USDC' ? item[volumeDict[timelineDisplay]] * solPrice : item[volumeDict[timelineDisplay]]
   volume = volume ? parseFloat(volume.toFixed(2)) : 0
+  return { floorPrice, volume }
+}
+const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
+  const { currencyView } = useNFTAggregator()
+  const history = useHistory()
+  const { timelineDisplay } = useNFTAggregatorFilters()
+  const { prices } = usePriceFeedFarm()
+  const solPrice = prices['SOL/USDC']?.current
+  const { floorPrice, volume } = getDisplayPrice(currencyView, solPrice, item, timelineDisplay)
 
   return (
     <tr

@@ -184,10 +184,10 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
       ${tw`relative p-[8px]`}
     }
     .collectionId {
-      ${tw`text-[13px] font-semibold flex items-center justify-between`}
+      ${tw`text-[13px] font-semibold flex items-center `}
 
       .isVerified {
-        ${tw` ml-2 w-[12px] h-[12px]`}
+        ${tw` ml-2 w-[15px] h-[15px]`}
       }
 
       .ah-name {
@@ -202,6 +202,12 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     }
     .apprisalPrice {
       ${tw`font-semibold text-[15px] mt-[-2px] text-[#636363] flex items-center`}
+      img {
+        ${tw`w-[20px] h-[20px] ml-2.5`}
+      }
+    }
+    .apprisalPriceProfile {
+      ${tw`font-semibold text-[15px] mt-[8px] text-[#636363] flex items-center`}
       img {
         ${tw`w-[20px] h-[20px] ml-2.5`}
       }
@@ -234,6 +240,20 @@ export const DROPDOWN_CONTAINER = styled.div`
     ${tw`flex cursor-pointer items-center justify-between p-1`}
     input {
       color: ${({ theme }) => theme.bg26};
+    }
+  }
+  > div {
+    ${tw`flex items-center mb-2`}
+    > span {
+      ${tw`text-white text-regular font-semibold`}
+    }
+    > input[type='radio'] {
+      ${tw`appearance-none absolute right-3 h-[15px] w-[15px] bg-black-2 rounded-small cursor-pointer`}
+    }
+    > input[type='radio']:checked:after {
+      ${tw`rounded-small w-[10px] h-[10px] relative top-[-4px] left-[2.3px] inline-block`}
+      background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
+      content: '';
     }
   }
 `
