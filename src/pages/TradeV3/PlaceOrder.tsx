@@ -245,11 +245,12 @@ const ORDER_CATEGORY = styled.div`
   }
 `
 
-const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean; $orderSide: string }>`
-  ${tw`w-[55%] mt-3 rounded-[30px] h-[30px] text-tiny font-semibold border-0 border-none`}
+const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean; $orderSide: string; $isSpot: boolean }>`
+  ${tw`mt-3 rounded-[30px] h-[30px] text-tiny font-semibold border-0 border-none`}
   background: ${({ $action, $orderSide, theme }) =>
     $action ? ($orderSide === 'buy' ? '#71C25D' : '#F06565') : theme.bg23};
   color: ${({ $action }) => ($action ? 'white' : '#636363')};
+  width: ${({ $isSpot }) => ($isSpot ? '90%' : '55%')};
 `
 
 const FEES = styled.div`
@@ -856,6 +857,7 @@ export const PlaceOrder: FC = () => {
               $action={buttonState === ButtonState.CanPlaceOrder}
               onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
               $orderSide={order.side}
+              $isSpot={isSpot}
             >
               {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
             </PLACE_ORDER_BUTTON>
@@ -926,6 +928,7 @@ export const PlaceOrder: FC = () => {
                 $action={buttonState === ButtonState.CanPlaceOrder}
                 onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
                 $orderSide={order.side}
+                $isSpot={isSpot}
               >
                 {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
               </PLACE_ORDER_BUTTON>
