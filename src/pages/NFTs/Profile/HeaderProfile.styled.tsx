@@ -5,22 +5,13 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 
 export const StyledHeaderProfile = styled.div<{ mode?: string; background?: string }>`
-  ${tw`flex items-end p-[24px] pb-[84px] justify-start`}
+  ${tw`relative h-[112px]`}
   @media(max-width: 500px) {
     ${tw`flex flex-col justify-between pb-[20px] h-[50vh] sm:h-[180px]`}
     align-items: inherit;
     background: url(${({ background }) => background});
     background-repeat: no-repeat;
     background-size: cover;
-  }
-
-  .row {
-    display: flex;
-    justify-content: space-between;
-
-    .ant-dropdown {
-      z-index: 0;
-    }
   }
 
   .back-icon {
@@ -40,9 +31,10 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
     position: relative;
     ${tw`w-[60px] h-[60px]`}
     margin: 0 15px 0 0;
+
     .avatar-profile {
-      ${tw`w-[80px] h-[60px]  h-20 ml-[-5px] mt-[-25px] rounded-[50%]`}
-      border: 5px solid #131313;
+      ${tw`w-[80px] h-[60px]  h-20 ml-[-5px] mt-[-25px] rounded-[50%] dark:border-black-1 border-white`}
+      border: 5px solid;
     }
     .edit-icon {
       ${tw`absolute cursor-pointer h-[30px] bottom-[0px] right-[-20px] w-[30px]`}
@@ -101,46 +93,12 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
     }
   }
   .complete-profile {
-    ${tw`w-[160px] h-[44px] flex items-center rounded-[45px] justify-center relative bottom-[-100px]
+    ${tw`w-[160px] h-[44px] flex items-center rounded-[45px] justify-center relative
      font-semibold text-[15px] text-white cursor-pointer`}
     background-image: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
     @media (max-width: 500px) {
       font-size: 14px;
       position: static;
-    }
-  }
-  .action-wrap {
-    margin-left: auto;
-    display: flex;
-    justify-content: flex-end;
-    align-items: end;
-
-    .btn-create {
-      color: ${({ theme }) => theme.white};
-      background-color: #3735bb;
-      height: 43px;
-      min-width: 132px;
-      font-size: 17px;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      ${({ theme }) => theme.roundedBorders}
-    }
-    .btn-create2 {
-      background-color: #bb3535;
-      margin-right: 10px;
-    }
-    .btn-purple {
-      ${tw`w-[160px] h-[44px] flex items-center rounded-[45px] justify-center relative bottom-[-100px]
-      font-semibold text-[15px] text-white cursor-pointer`}
-
-      margin-right: 12px;
-      color: ${({ theme }) => theme.white};
-      background-color: ${({ theme }) => theme.secondary3};
-      border: none;
-      cursor: pointer;
-      ${({ theme }) => theme.roundedBorders};
-      position: relative;
     }
   }
 `

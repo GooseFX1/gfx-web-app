@@ -204,15 +204,16 @@ export const HoverOnNFT: FC<{
 }> = ({ addNftToBag, item, ask, setNFTDetails, buttonType }): ReactElement => {
   const { setBidNow, setBuyNow, setSellNFT } = useNFTAggregator()
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
-  const { connected } = useWallet()
+  const { wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
   const goToDetailsForModal = async (e, type) => {
     e.stopPropagation()
-    if (!connected) {
+    if (!wallet?.adapter?.connected) {
       setVisible(true)
       return
     }
+
     setIsLoadingBeforeRelocate(true)
     await setNFTDetails()
     setIsLoadingBeforeRelocate(false)

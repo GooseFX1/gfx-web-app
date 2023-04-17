@@ -67,7 +67,7 @@ export const AsksAndBidsForNFT = (): ReactElement => {
   return (
     <div>
       <div tw="flex-col px-[25px] py-2">
-        {bids.length &&
+        {bids.length > 0 &&
           bids.map((bid) => (
             <div tw="flex items-center justify-between mt-1" key={bid.clock}>
               <div>

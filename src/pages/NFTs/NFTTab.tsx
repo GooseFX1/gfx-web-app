@@ -36,7 +36,7 @@ export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }): ReactEl
   const [displayIndex, setDisplayIndex] = useState<number>(0)
 
   return (
-    <GRID_CONTAINER tw="w-[77vw] sm:w-[100vw] mt-10" navCollapsed={isCollapsed}>
+    <GRID_CONTAINER tw="h-[calc(80vh - 32px)] w-[77vw] sm:w-[100vw] mt-[32px]" navCollapsed={isCollapsed}>
       <FiltersContainer
         collections={tabPanes[0].name}
         favourited={tabPanes[1].name}

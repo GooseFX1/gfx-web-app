@@ -76,7 +76,7 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
     <Button
       height="50px"
       width="220px"
-      loading={loading}
+      loading={!loading}
       onClick={handleClick}
       cssStyle={
         buttonStatus === 'action'

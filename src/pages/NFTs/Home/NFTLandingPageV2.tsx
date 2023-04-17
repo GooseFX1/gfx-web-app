@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Checkbox, Dropdown, Switch } from 'antd'
-import React, { ReactElement, useMemo, useState, FC, useEffect } from 'react'
+import React, { ReactElement, useMemo, useState, FC, useEffect, useCallback } from 'react'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -24,7 +24,6 @@ import NFTCollectionsTable from './NFTCollectionsTable'
 import SearchNFTMobile from './SearchNFTMobile'
 import { Arrow } from '../../../components/common/Arrow'
 import { DROPDOWN_CONTAINER } from '../Collection/CollectionV2.styles'
-import MyNFTBag from '../MyNFTBag'
 import { useConnection } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import { Image } from 'antd'
@@ -188,7 +187,7 @@ const NFTLandingPageV2 = (): ReactElement => {
     <WRAPPER $navCollapsed={isCollapsed} $currency={currencyView}>
       {<NFTAggTerms setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={handleHasOnboarded} />}
       {hasOnboarded && <ModalSlide modalType={MODAL_TYPES.NFT_AGG_WELCOME} rewardToggle={handleHasOnboarded} />}
-      <MyNFTBag />
+
       {!checkMobile() && (
         <BannerContainer showBanner={showBanner}>
           <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} />
@@ -227,7 +226,7 @@ const FiltersContainer = () => {
   }
 
   useEffect(() => {
-    if (sessionUser) console.log('Session user - ' + sessionUser.pubkey)
+    console.log(sessionUser ? 'LANDING - Session user - ' + sessionUser.pubkey : ' LANDING NO SESSION USER')
   }, [sessionUser])
 
   if (checkMobile())
@@ -369,6 +368,7 @@ const CurrencySwitch = (): ReactElement => {
 }
 const SearchResultContainer = ({ searchFilter }: any) => {
   const { allCollections } = useNFTCollections()
+  const history = useHistory()
   const [searchResultArr, setSearchResult] = useState<any>([...allCollections])
 
   useEffect(() => {
@@ -380,8 +380,6 @@ const SearchResultContainer = ({ searchFilter }: any) => {
         .catch((err) => console.log(err))
     }
   }, [searchFilter])
-
-  const history = useHistory()
 
   return (
     <SEARCH_RESULT_CONTAINER>
@@ -448,6 +446,7 @@ const MarketDropdown = (): ReactElement => {
     </Dropdown>
   )
 }
+
 const MarketDropdownContents = ({ setArrow }: any): ReactElement => {
   const { mode } = useDarkMode()
 
@@ -456,30 +455,35 @@ const MarketDropdownContents = ({ setArrow }: any): ReactElement => {
     return () => setArrow(false)
   }, [])
 
+  const renderDropdownItems = useCallback(
+    (addr) => (
+      <div
+        tw="flex p-2 items-center cursor-pointer hover:opacity-80"
+        key={addr}
+        onClick={() => console.log(AH_NAME(addr))}
+      >
+        <div>
+          <Image
+            className="marketImg"
+            fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+            src={`/img/assets/Aggregator/${AH_NAME(addr)}.svg`}
+            preview={false}
+          />
+        </div>
+        <div tw="ml-2">{AH_NAME(addr)}</div>
+        <div className="checkboxContainer">
+          <input type="checkbox" onClick={() => console.log('s')} />
+        </div>
+      </div>
+    ),
+    []
+  )
+
   return (
     <DROPDOWN_CONTAINER tw="w-[173px] h-[211px] overflow-y-auto">
       {Object.keys(AH_PROGRAM_IDS)
         .filter((addr) => AH_NAME(addr) !== 'Unknown')
-        .map((addr) => (
-          <div
-            tw="flex p-2 items-center cursor-pointer hover:opacity-80"
-            key={addr}
-            onClick={() => console.log(AH_NAME(addr))}
-          >
-            <div>
-              <Image
-                className="marketImg"
-                fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-                src={`/img/assets/Aggregator/${AH_NAME(addr)}.svg`}
-                preview={false}
-              />
-            </div>
-            <div tw="ml-2">{AH_NAME(addr)}</div>
-            <div className="checkboxContainer">
-              <input type="checkbox" onClick={() => console.log('s')} />
-            </div>
-          </div>
-        ))}
+        .map(renderDropdownItems)}
     </DROPDOWN_CONTAINER>
   )
 }
