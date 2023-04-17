@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { MouseEventHandler, useCallback, useMemo, useState } from 'react'
+import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { Input, Checkbox, Slider, Drawer } from 'antd'
 import {
@@ -26,6 +26,7 @@ import { PopupCustom } from '../../NFTs/Popup/PopupCustom'
 import { Connect } from '../../../layouts'
 import { removeFloatingPointError } from '../../../utils'
 import { getPerpsPrice } from '../perps/utils'
+import { getProfitAmount } from '../perps/utils'
 
 enum ButtonState {
   Connect = 0,
@@ -110,6 +111,16 @@ const INPUT_WRAPPER = styled.div<{ $rotateArrow: boolean }>`
       ${tw`text-tiny font-semibold`}
       color: ${({ theme }) => theme.text37};
     }
+  }
+  .label2 {
+    ${tw`pb-1`}
+    > span {
+      ${tw`text-tiny font-semibold`}
+      color: ${({ theme }) => theme.text37};
+    }
+  }
+  .width2 {
+    width: 100%;
   }
   .width {
     margin-left: -5%;
@@ -343,38 +354,91 @@ const TAKEPROFITWRAPPER = styled.div`
   }
 `
 
-const TakeProfitStopLoss = ({ isTakeProfit }) => {
+const TAKE_PROFIT_ARRAY = [
+  {
+    display: '25%',
+    value: 0.25
+  },
+  {
+    display: '50%',
+    value: 0.5
+  },
+  {
+    display: '75%',
+    value: 0.75
+  },
+  {
+    display: '100%',
+    value: 1
+  }
+]
+
+const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, setVisibility }) => {
   const percentArray = isTakeProfit ? ['25%', '50%', '75%', '100%'] : ['None', '10%', '25%', '75%']
-  const [takeProfitAmt, setTakeProfitAmt] = useState<number>(0)
+  const [takeProfitAmt, setTakeProfitAmt] = useState<number>(null)
   const [takeProfitIndex, setTakeProfitIndex] = useState<number>(3)
+  const [profits, setProfits] = useState<any>(['', '', '', ''])
+
+  const { order } = useOrder()
+
+  useEffect(() => {
+    setTakeProfitIndex(index)
+    setTakeProfitAmt(input)
+  }, [])
+
+  useEffect(() => {
+    const obj = []
+    TAKE_PROFIT_ARRAY.map((item) => {
+      if (Number.isNaN(+order.price)) obj.push('')
+      else {
+        const profit = getProfitAmount(order.side, order.price, item.value)
+        obj.push(profit)
+      }
+    })
+    setProfits(obj)
+  }, [order])
 
   const isNumber = (e) => {
-    const inputAmt = +e.target.value
-    if (!isNaN(inputAmt)) {
-      isTakeProfit ? setTakeProfitAmt(inputAmt) : null
+    const inputAmt = e.target.value
+    if (!inputAmt || inputAmt === '') setTakeProfitAmt(null)
+    else if (!isNaN(+inputAmt)) {
+      if (isTakeProfit) {
+        setTakeProfitAmt(+inputAmt)
+        setInput(+inputAmt)
+        setTakeProfitIndex(null)
+        setIndex(null)
+      }
     }
+  }
+
+  const handleClicks = (index) => {
+    setTakeProfitAmt(0)
+    setInput(0)
+    setIndex(index)
+    setTakeProfitIndex(index)
+    setVisibility(false)
   }
 
   return (
     <TAKEPROFITWRAPPER>
       <TAKEPROFITSELECTOR>
-        {percentArray.map((item, index) => (
+        {TAKE_PROFIT_ARRAY.map((item, index) => (
           <div key={index} className="selectorDropdown">
-            <span tw="mr-2 font-semibold text-regular dark:text-grey-5 text-black-4">{item}</span>
+            <span tw="mr-2 font-semibold text-regular dark:text-grey-5 text-black-4">{item.display}</span>
             <span className={isTakeProfit ? 'green' : 'red'} tw="font-semibold text-regular">
-              {isTakeProfit ? '($980)' : '($230)'}
+              {'($' + profits[index] + ')'}
             </span>
             <input
               type="radio"
               name={isTakeProfit ? 'take-profit' : 'stop-loss'}
-              value={item}
+              value={item.display}
               checked={takeProfitIndex === index}
-              onChange={() => setTakeProfitIndex(index)}
+              onChange={() => handleClicks(index)}
             />
           </div>
         ))}
       </TAKEPROFITSELECTOR>
-      <input type="number" onChange={isNumber} />
+      <input value={takeProfitAmt} onChange={isNumber} />
     </TAKEPROFITWRAPPER>
   )
 }
@@ -395,6 +459,10 @@ export const PlaceOrderMobi = () => {
   const [showMarketDrawer, setShowMarketDrawer] = useState<boolean>(false)
   const [showProfitLossDrawer, setShowProfitLossDrawer] = useState<boolean>(false)
   const [drawerType, setDrawerType] = useState<number>(0)
+
+  const [profitIndex, setProfitIndex] = useState<number>(null)
+  const [profitPrice, setProfitPrice] = useState<number>(0)
+
   const elem = document.getElementById('dex-mobi-home')
   const { mode } = useDarkMode()
   const geoBlocked = useBlacklisted()
@@ -603,6 +671,22 @@ export const PlaceOrderMobi = () => {
     }
   }
 
+  const getTakeProfitParam = () => {
+    if (profitIndex !== null) {
+      const numPrice = +order.price
+      if (Number.isNaN(numPrice)) return null
+
+      const profitPrice =
+        numPrice +
+        (order.side === 'buy'
+          ? TAKE_PROFIT_ARRAY[profitIndex].value * numPrice
+          : -TAKE_PROFIT_ARRAY[profitIndex].value * numPrice)
+      return profitPrice
+    } else if (profitPrice > 0) {
+      return profitPrice
+    } else return null
+  }
+
   return (
     <WRAPPER>
       {showMarketDrawer && (
@@ -670,7 +754,14 @@ export const PlaceOrderMobi = () => {
             width="18px"
             onClick={() => setShowProfitLossDrawer(false)}
           />
-          <TakeProfitStopLoss isTakeProfit={drawerType === 0 ? true : false} />
+          <TakeProfitStopLoss
+            isTakeProfit={drawerType === 0 ? true : false}
+            index={profitIndex}
+            setIndex={setProfitIndex}
+            input={profitPrice}
+            setInput={setProfitPrice}
+            setVisibility={setShowProfitLossDrawer}
+          />
         </Drawer>
       )}
       {confirmationModal && (
@@ -698,7 +789,7 @@ export const PlaceOrderMobi = () => {
             }
             className={mode === 'dark' ? 'dark' : ''}
           >
-            <TradeConfirmation setVisibility={setConfirmationModal} />
+            <TradeConfirmation setVisibility={setConfirmationModal} takeProfit={getTakeProfitParam()} />
           </SETTING_MODAL>
         </>
       )}
@@ -787,15 +878,22 @@ export const PlaceOrderMobi = () => {
         </INPUT_WRAPPER>
         {!isSpot && (
           <INPUT_WRAPPER $rotateArrow={showProfitLossDrawer}>
-            <div className="label width">
+            {/*<div className="label width">*/}
+            <div className="label2 width2">
               <span tw="text-regular font-semibold text-grey-5 mr-1">Take Profit</span>
-              <span tw="text-regular font-semibold text-grey-5 mr-1">/</span>
-              <span tw="text-regular font-semibold text-grey-5">Stop loss</span>
+              {/*<span tw="text-regular font-semibold text-grey-5 mr-1">/</span>
+              <span tw="text-regular font-semibold text-grey-5">Stop loss</span>*/}
             </div>
             <div className="drawer" onClick={() => setShowProfitLossDrawer(true)}>
-              <span tw="text-regular font-semibold text-grey-5 mr-1">100%</span>
-              <span tw="text-regular font-semibold text-grey-5 mr-1">/</span>
-              <span tw="text-regular font-semibold text-grey-5">25%</span>
+              <span tw="text-regular font-semibold text-grey-5 mr-1">
+                {profitIndex !== null
+                  ? TAKE_PROFIT_ARRAY[profitIndex].display
+                  : profitPrice > 0
+                  ? '$' + profitPrice
+                  : 'N/A'}
+              </span>
+              {/*<span tw="text-regular font-semibold text-grey-5 mr-1">/</span>
+              <span tw="text-regular font-semibold text-grey-5">25%</span>*/}
               <img src={`/img/assets/arrow-down.svg`} className="arrow-icon" alt="arrow" />
             </div>
           </INPUT_WRAPPER>
