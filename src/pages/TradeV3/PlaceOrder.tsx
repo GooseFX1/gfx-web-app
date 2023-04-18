@@ -46,6 +46,43 @@ const WRAPPER = styled.div`
   background: ${({ theme }) => theme.bg2};
 `
 
+const DROPDOWN_ITEMS = styled.div`
+  .green {
+    ${tw`text-[#80CE00]`}
+  }
+  > input[type='radio'] {
+    ${tw`appearance-none absolute right-3 h-[15px] w-[15px] bg-black-1 rounded-small cursor-pointer`}
+  }
+  > input[type='radio']:checked:after {
+    ${tw`rounded-small w-[9px] h-[9px] relative top-[-2px] left-[3px] inline-block`}
+    background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
+    content: '';
+  }
+`
+
+const DROPDOWN_INPUT = styled.div`
+  ${tw`relative w-[135px] h-6 rounded-[5px] border border-solid border-grey-1 mx-[5px]`}
+  background: ${({ theme }) => theme.bg20};
+  .dropdown-input {
+    ${tw`w-[70%] h-full pl-1 pr-2 rounded-[5px] py-[5px] text-grey-2 text-tiny font-semibold border-0`}
+    background: ${({ theme }) => theme.bg20};
+    outline: none;
+    ::placeholder {
+      ${tw`text-grey-2 text-tiny font-semibold`}
+    }
+  }
+`
+
+const DROPDOWN_SAVE = styled.div`
+  &.save-disable {
+    ${tw`text-tiny text-grey-1 font-semibold cursor-not-allowed absolute bottom-[10px] right-[10px] z-[100]`}
+    pointer-events: none;
+  }
+  &.save-enable {
+    ${tw`text-tiny text-white font-semibold cursor-pointer absolute bottom-[10px] right-[10px] z-[100]`}
+  }
+`
+
 const HEADER = styled.div`
   ${tw`h-16 w-full flex flex-col items-center`}
   background: ${({ theme }) => theme.bg2};
@@ -113,8 +150,9 @@ const INPUT_GRID_WRAPPER = styled.div`
   }
 `
 
-const INPUT_WRAPPER = styled.div`
-  ${tw`flex justify-center items-start w-full flex-col h-full px-3`}
+const INPUT_WRAPPER = styled.div<{ $halfWidth?: boolean }>`
+  ${tw`flex justify-center items-start flex-col h-full px-3`}
+  width: ${({ $halfWidth }) => ($halfWidth ? '50%' : '100%')};
   .label {
     ${tw`pb-1 text-tiny font-semibold`}
     color: ${({ theme }) => theme.text37};
@@ -149,10 +187,16 @@ const INPUT_WRAPPER = styled.div`
   }
   .dropdownContainer {
     ${tw`w-full h-[30px] flex justify-between items-center px-2 text-red-100 
-    font-semibold text-tiny border border-solid rounded-[5px] cursor-pointer`}
+    font-semibold text-tiny border border-solid rounded-[5px] cursor-pointer relative`}
     color: ${({ theme }) => theme.text21};
     border-color: ${({ theme }) => theme.tokenBorder};
     background: ${({ theme }) => theme.bg2};
+    .green {
+      ${tw`text-[#80CE00]`}
+    }
+    .red {
+      ${tw`text-[#F35355]`}
+    }
   }
   .dropdownContainer.lite {
     .arrow-icon {
@@ -164,8 +208,14 @@ const INPUT_WRAPPER = styled.div`
     border-radius: 5px;
     padding: 1px;
   }
+  .take-profit {
+    ${tw`cursor-auto`}
+  }
   .stop-loss {
-    cursor: not-allowed;
+    ${tw`cursor-not-allowed`}
+  }
+  .disable {
+    ${tw`cursor-not-allowed`}
   }
 `
 
@@ -344,10 +394,6 @@ export const PlaceOrder: FC = () => {
   const [selectedTotal, setSelectedTotal] = useState<number>(null)
   const [arrowRotation, setArrowRotation] = useState(false)
   const [dropdownVisible, setDropdownVisible] = useState(false)
-  const [takeProfit, setTakeProfit] = useState(false)
-  const [takeProfitArrow, setTakeProfitArrow] = useState(false)
-  const [stopLoss, setStopLoss] = useState(false)
-  const [stopLossArrow, setStopLossArrow] = useState(false)
   const [confirmationModal, setConfirmationModal] = useState<boolean>(false)
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { connected } = useWallet()
@@ -355,6 +401,17 @@ export const PlaceOrder: FC = () => {
   const { height } = useWindowSize()
   const [loading, setLoading] = useState<boolean>(false)
   const geoBlocked = false
+  const [type, setType] = useState<number>(0)
+
+  const [takeProfitAmount, setTakeProfitAmount] = useState<number>(null)
+  const [takeProfitIndex, setTakeProfitIndex] = useState<number>(3)
+  const [takeProfit, setTakeProfit] = useState(false)
+  const [takeProfitArrow, setTakeProfitArrow] = useState(false)
+  const [stopLossAmount, setStopLossAmount] = useState<number>(null)
+  const [stopLossIndex, setStopLossIndex] = useState<number>(0)
+  const [open, setOpen] = useState(false)
+  const [stopLossArrow, setStopLossArrow] = useState(false)
+  const [saveAmount, setSaveAmount] = useState<number>(null)
 
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
@@ -496,15 +553,6 @@ export const PlaceOrder: FC = () => {
     setTakeProfit(!takeProfit)
   }
 
-  const letSee = (e) => {
-    setTakeProfit(true)
-  }
-
-  const stopLossClick = () => {
-    setStopLossArrow(!stopLossArrow)
-    setStopLoss(!stopLoss)
-  }
-
   const handlePlaceOrder = async () => {
     if (buttonState === ButtonState.CanPlaceOrder) {
       setLoading(true)
@@ -556,18 +604,123 @@ export const PlaceOrder: FC = () => {
     return markObj
   }
 
-  //  const sliderValue = useMemo(() => {
-  //    const initLeverage = Number(traderInfo.currentLeverage)
-  //    const availLeverage = Number(traderInfo.availableLeverage)
-  //    const availMargin = Number(traderInfo.marginAvailable)
-  //    let percentage = 0
-  //    if (Number(order.size) >= Number(traderInfo.maxQuantity)) percentage = availLeverage
-  //    else if (order.total < availMargin) percentage = (Number(order.total) / Number(availMargin)) * availLeverage
-  //    else percentage = availLeverage
-  //    //else percentage = (Number(order.size) / Number(traderInfo.maxQuantity)) * availLeverage
-  //    if (Number(percentage)) return Number((initLeverage + percentage).toFixed(2))
-  //    return Number(initLeverage.toFixed(2))
-  //  }, [order.size, traderInfo, order.total])
+  const handleMenuClick = (e) => {
+    if (e.key !== '4') {
+      setTakeProfit(false)
+      setTakeProfitArrow(false)
+    } else setOpen(true)
+  }
+
+  const handleOpenChange = (flag, str) => {
+    console.log(flag, str)
+    setTakeProfitArrow(!takeProfitArrow)
+    setTakeProfit(flag)
+  }
+
+  const handleDropdownInput = (e) => {
+    const inputAmt = e.target.value.replace(/[^0-9]/g, '')
+    if (!isNaN(inputAmt)) setTakeProfitAmount(inputAmt)
+    setTakeProfitIndex(null)
+    //setSaveAmount(saveAmount)
+  }
+
+  const handleSave = (e) => {
+    setTakeProfitIndex(null)
+    setTakeProfitArrow(false)
+    setTakeProfit(false)
+    //setSaveAmount(null)
+  }
+
+  const calcTakeProfit = (value, index) => {
+    setTakeProfitIndex(index)
+    setTakeProfitArrow(!takeProfitArrow)
+    setTakeProfitAmount(null)
+  }
+
+  const calcStopLoss = (value, index) => {
+    setStopLossIndex(index)
+    setStopLossArrow(!stopLossArrow)
+  }
+
+  const percentArray = [
+    {
+      display: '25%',
+      value: 0.25,
+      key: 1
+    },
+    {
+      display: '50%',
+      value: 0.5,
+      key: 2
+    },
+    {
+      display: '75%',
+      value: 0.75,
+      key: 3
+    },
+    {
+      display: '100%',
+      value: 1,
+      key: 4
+    }
+  ]
+
+  const getItems = () => {
+    let items = []
+    items = percentArray.map((item, index) => {
+      const html = (
+        <DROPDOWN_ITEMS
+          className="dropdown-items"
+          tw="mb-2 flex flex-row px-[5px]"
+          onClick={() => (type === 0 ? calcTakeProfit(item.value, index) : calcStopLoss(item.value, index))}
+        >
+          <span tw="mr-2 font-semibold text-tiny text-grey-5">{item.display}</span>
+          <span className={type === 0 ? 'green' : 'red'} tw="font-semibold text-tiny mr-auto">
+            {type === 0 ? '($980)' : '($230)'}
+          </span>
+          <input
+            type="radio"
+            name={type === 0 ? 'take-profit' : 'stop-loss'}
+            value={item.value}
+            checked={type === 0 ? takeProfitIndex === index : stopLossIndex === index}
+            onChange={() => (type === 0 ? calcTakeProfit(item.value, index) : calcStopLoss(item.value, index))}
+          />
+        </DROPDOWN_ITEMS>
+      )
+      return {
+        label: html,
+        key: index
+      }
+    })
+    const inputHTML = (
+      <DROPDOWN_INPUT>
+        <input
+          type="number"
+          onChange={handleDropdownInput}
+          placeholder="Enter Price"
+          className="dropdown-input"
+          value={takeProfitAmount}
+        />
+      </DROPDOWN_INPUT>
+    )
+    items.push({
+      label: inputHTML,
+      key: 4
+    })
+    const saveBtnHTML = (
+      <DROPDOWN_SAVE
+        className={takeProfitAmount ? 'save-enable' : 'save-disable'}
+        onClick={takeProfitAmount ? handleSave : null}
+      >
+        Save
+      </DROPDOWN_SAVE>
+    )
+    items.push({
+      label: saveBtnHTML,
+      key: 5
+    })
+    return items
+  }
 
   const sliderValue = useMemo(() => {
     const initLeverage = Number(traderInfo.currentLeverage)
@@ -745,7 +898,6 @@ export const PlaceOrder: FC = () => {
               <Picker>
                 <Slider
                   max={10}
-                  //min={minLeverage}
                   onChange={(e) => handleSliderChange(e)}
                   step={0.01}
                   value={sliderValue}
@@ -761,34 +913,7 @@ export const PlaceOrder: FC = () => {
                     bottom: '2px'
                   }}
                   marks={getMarks()}
-                  //  marks={{
-                  //    0: '0°C',
-                  //    26: '26°C',
-                  //    37: {
-                  //      style: {
-                  //        color: '#f50',
-                  //        paddingTop: '8px',
-                  //        fontSize: '13px',
-                  //        fontWeight: '600'
-                  //      },
-                  //      label: <strong>5x</strong>
-                  //    },
-                  //    100: {
-                  //      style: {
-                  //        color: '#f50'
-                  //      },
-                  //      label: <strong>100°C</strong>
-                  //    }
-                  //  }}
                 />
-                {/*<span
-            onClick={() => {
-              setFocused('total')
-              setOrder((prevState) => ({ ...prevState, total: userBalance }))
-            }}
-          >
-            Use Max
-          </span>*/}
               </Picker>
             </div>
           </LEVERAGE_WRAPPER>
@@ -822,48 +947,46 @@ export const PlaceOrder: FC = () => {
         ) : (
           <>
             <div tw="flex flex-row">
-              <INPUT_WRAPPER>
+              <INPUT_WRAPPER $halfWidth={true}>
                 <div className="label">Take Profit</div>
-                <div className={`dropdownContainer ${mode}`} onClick={takeProfitClick}>
-                  <div>{displayedOrder?.text}</div>
+                <div className={`dropdownContainer ${mode} take-profit`}>
+                  {/* <span>{takeProfitIndex !== null ? percentArray[takeProfitIndex]?.display : 'N/A'}</span> */}
+                  <span className="green">
+                    ${takeProfitIndex !== null ? percentArray[takeProfitIndex].display : takeProfitAmount}
+                  </span>
                   <ArrowDropdown
                     arrowRotation={takeProfitArrow}
-                    offset={[-125, 15]}
-                    onVisibleChange={letSee}
-                    placement="bottomLeft"
-                    overlay={
-                      <TakeProfitStopLoss
-                        setArrowRotation={setTakeProfitArrow}
-                        setDropdownVisible={setTakeProfit}
-                        type={0}
-                      />
-                    }
-                    visible={takeProfit}
-                    measurements="11px !important"
-                  />
-                </div>
-              </INPUT_WRAPPER>
-              <INPUT_WRAPPER>
-                <div className="label">Stop Loss</div>
-                <div className={`dropdownContainer ${mode} stop-loss`} onClick={null}>
-                  <div>{displayedOrder?.text}</div>
-                  <ArrowDropdown
-                    arrowRotation={stopLossArrow}
-                    offset={[-125, 15]}
+                    overlayClassName="takep-stopl-container"
+                    offset={[-120, 15]}
                     onVisibleChange={null}
                     placement="bottomLeft"
-                    overlay={
-                      <TakeProfitStopLoss
-                        setArrowRotation={setStopLossArrow}
-                        setDropdownVisible={setStopLoss}
-                        type={1}
-                      />
-                    }
-                    visible={stopLoss}
+                    menu={{ items: getItems(), onClick: handleMenuClick }}
+                    overlay={<></>}
                     measurements="11px !important"
+                    onOpenChange={handleOpenChange}
+                    open={takeProfit}
                   />
                 </div>
               </INPUT_WRAPPER>
+              {/* <INPUT_WRAPPER>
+                <div className="label disable">Stop Loss</div>
+                <div className={`dropdownContainer ${mode} stop-loss`} onClick={()=>setType(1)}>
+                  <span className='red'>None</span>
+                  <span className='green'>{takeProfitIndex  !==null ? percentArray[takeProfitIndex].display : takeProfitAmount}</span>
+                  <ArrowDropdown
+                    arrowRotation={false}
+                    overlayClassName="takep-stopl-container"
+                    offset={[-120, 15]}
+                    onVisibleChange={null}
+                    placement="bottomLeft"
+                    menu={{ getItems, onClick: handleMenuClick }}
+                    overlay={<></>}
+                    measurements="11px !important"
+                    onOpenChange={null}
+                    open={false}
+                  />
+                </div>
+              </INPUT_WRAPPER> */}
             </div>
             <div tw="flex flex-row mt-[-6px]">
               <ORDER_CATEGORY>
@@ -925,164 +1048,6 @@ const SELECTOR = styled.div`
     }
   }
 `
-const SELECTOR_WRAPPER = styled.div`
-  .dropdown-input {
-    ${tw`bg-black-1 dark:text-grey-5 text-grey-2 p-1 text-regular font-semibold border-[1.5px] border-solid dark:border-grey-1 border-grey-4`}
-    outline: none;
-    height: 24px;
-    width: 135px;
-    border-radius: 5px;
-    ::placeholder {
-      ${tw`text-grey-2 text-tiny font-semibold`}
-    }
-  }
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  input[type='number'] {
-    -moz-appearance: textfield;
-  }
-`
-
-const SELECTOR_PROFITLOSS = styled.div`
-  ${tw`w-[160px] h-[132px] rounded-[5px] pt-[5px] pb-[5px] pl-[5px]`}
-  background-color: ${({ theme }) => theme.bg20};
-  .dropdown-items {
-    ${tw`cursor-pointer`}
-  }
-  > div {
-    ${tw`flex items-center mb-2`}
-    > span {
-      ${tw`text-white text-tiny font-semibold`}
-    }
-    > input[type='radio'] {
-      ${tw`appearance-none absolute right-3 h-[15px] w-[15px] bg-black-2 rounded-small cursor-pointer`}
-    }
-    > input[type='radio']:checked:after {
-      ${tw`rounded-small w-[9px] h-[9px] relative top-[-4px] left-[3px] inline-block`}
-      background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
-      content: '';
-    }
-  }
-  .green {
-    ${tw`text-[#80CE00]`}
-  }
-  .red {
-    ${tw`text-[#F35355]`}
-  }
-`
-
-const TakeProfitStopLoss: FC<{
-  setArrowRotation: Dispatch<SetStateAction<boolean>>
-  setDropdownVisible: Dispatch<SetStateAction<boolean>>
-  type: number
-}> = ({ setArrowRotation, setDropdownVisible, type }) => {
-  const [takeProfitAmount, setTakeProfitAmount] = useState<number>(0)
-  const [takeProfitIndex, setTakeProfitIndex] = useState<number>(3)
-  const [stopLossAmount, setStopLossAmount] = useState<number>(0)
-  const [stopLossIndex, setStopLossIndex] = useState<number>(0)
-
-  const isNumber = (e) => {
-    setDropdownVisible(true)
-    const inputAmt = +e.target.value
-
-    if (!isNaN(inputAmt)) {
-      type === 0 ? setTakeProfitIndex(inputAmt) : setStopLossAmount(inputAmt)
-    }
-  }
-
-  const calcTakeProfit = (value, index) => {
-    setTakeProfitIndex(index)
-  }
-
-  const calcStopLoss = (value, index) => {
-    setStopLossIndex(index)
-  }
-
-  const percentArray =
-    type === 0
-      ? [
-          {
-            display: '25%',
-            value: 0.25,
-            key: 1
-          },
-          {
-            display: '50%',
-            value: 0.5,
-            key: 2
-          },
-          {
-            display: '75%',
-            value: 0.75,
-            key: 3
-          },
-          {
-            display: '100%',
-            value: 1,
-            key: 4
-          }
-        ]
-      : [
-          {
-            display: 'None',
-            value: 0,
-            key: 0
-          },
-          {
-            display: '-10%%',
-            value: 0.1,
-            key: 1
-          },
-          {
-            display: '-25%',
-            value: 0.25,
-            key: 2
-          },
-          {
-            display: '-75%',
-            value: 0.75,
-            key: 3
-          }
-        ]
-
-  return (
-    <SELECTOR_WRAPPER>
-      <SELECTOR_PROFITLOSS>
-        {percentArray.map((item, index) => (
-          <div
-            key={index}
-            className="dropdown-items"
-            onClick={() => {
-              setDropdownVisible(true)
-            }}
-          >
-            <span tw="mr-2 font-semibold text-tiny dark:text-grey-5 text-black-4">{item.display}</span>
-            <span className={type === 0 ? 'green' : 'red'} tw="font-semibold text-regular">
-              {type === 0 ? '($980)' : '($230)'}
-            </span>
-            <input
-              type="radio"
-              name={type === 0 ? 'take-profit' : 'stop-loss'}
-              value={item.value}
-              checked={type === 0 ? takeProfitIndex === index : stopLossIndex === index}
-              onChange={() => (type === 0 ? calcTakeProfit(item.value, index) : calcStopLoss(item.value, index))}
-            />
-          </div>
-        ))}
-        <input
-          type="number"
-          onChange={isNumber}
-          placeholder="Enter Price"
-          onFocus={isNumber}
-          className="dropdown-input"
-        />
-      </SELECTOR_PROFITLOSS>
-    </SELECTOR_WRAPPER>
-  )
-}
 
 const Overlay: FC<{
   setArrowRotation: Dispatch<SetStateAction<boolean>>
