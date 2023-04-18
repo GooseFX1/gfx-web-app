@@ -20,7 +20,7 @@ export const FEES_ID = '2o2VABUDicRrLSzb5U4VvBrnVbtnDdCMowrMg9x7RGnD'
 
 export const RISK_ID = 'GW31SEFBLtoEhBYFJi2KUdmdnBG4xapjE7ARBWB5MQT2'
 
-export const ORDERBOOK_P_ID = 'A83oDxWdJBDE5LdDXDDcZeuZZSQtV1X1YnbFRDHQjBeZ'
+export const ORDERBOOK_P_ID = 'Cet4WZvLjJJFfPCfFsGjH8aHHCLgoUWWYXXunf28eAFT'
 
 export const VAULT_SEED = 'market_vault'
 
