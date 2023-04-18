@@ -372,9 +372,31 @@ export const sendPerpsTransaction = async (
         styles: {}
       })
     }
-    const confirmation = await awaitTransactionSignatureConfirmation(txid, DEFAULT_TIMEOUT, connection, commitment)
+    let confirmation = null
+    if (messages && messages.errorMessage) {
+      confirmation = await awaitTransactionSignatureConfirmation(
+        txid,
+        DEFAULT_TIMEOUT,
+        connection,
+        commitment,
+        false,
+        { ...messages.errorMessage, key }
+      )
+    } else {
+      confirmation = await awaitTransactionSignatureConfirmation(txid, DEFAULT_TIMEOUT, connection, commitment)
+    }
 
-    if (!confirmation) throw new Error('Timed out awaiting confirmation on transaction')
+    if (!confirmation) {
+      console.log('in error notifier')
+      perpsNotify({
+        message: messages.errorMessage.header,
+        description: messages.errorMessage.description,
+        action: 'close',
+        key,
+        styles: {}
+      })
+      throw new Error('Timed out awaiting confirmation on transaction')
+    }
     slot = confirmation?.slot || 0
 
     if (confirmation?.err) {
@@ -561,7 +583,12 @@ async function awaitTransactionSignatureConfirmation(
   timeout: number,
   connection: Connection,
   commitment: Commitment = 'recent',
-  queryStatus = false
+  queryStatus = false,
+  errorMessage?: {
+    header: string
+    description: string
+    key: any
+  }
 ): Promise<SignatureStatus | null | void> {
   let done = false
   let status: SignatureStatus | null | void = {
@@ -594,6 +621,13 @@ async function awaitTransactionSignatureConfirmation(
           }
           if (result.err) {
             console.log('Rejected via websocket', result.err)
+            perpsNotify({
+              message: errorMessage.header,
+              description: errorMessage.description,
+              action: 'close',
+              key: errorMessage.key,
+              styles: {}
+            })
             reject(status)
           } else {
             console.log('Resolved via websocket', result)

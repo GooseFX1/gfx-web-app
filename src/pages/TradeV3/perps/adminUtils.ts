@@ -320,8 +320,8 @@ export const adminCreateMarket = async (connection: Connection, wallet: any) => 
       m: new anchor.BN(1),
       exp: new anchor.BN(0)
     }),
-    fullFundingPeriod = 120,
-    minimumFundingPeriod = 30,
+    fullFundingPeriod = 3600,
+    minimumFundingPeriod = 600,
     initializationTime = Math.floor(new Date().getTime() / 1000) + 60
   //oracleType = 1
 
@@ -384,7 +384,7 @@ export const adminCreateMP = async (
       m: new anchor.BN(100),
       exp: new anchor.BN(4)
     }),
-    baseDecimals: new anchor.BN(5),
+    baseDecimals: new anchor.BN(7),
     priceOffset: new Fractional({
       m: new anchor.BN(0),
       exp: new anchor.BN(0)

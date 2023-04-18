@@ -39,7 +39,8 @@ export const FIND_FEES_DISCRIMINANT = 0
 export const FIND_FEES_DISCRIMINANT_LEN = 1
 export const MINT_DECIMALS = 6
 
-export const VAULT_MINT = 'Bg2f3jstf2Co4Hkrxsn7evzvRwLbWYmuzaLUPGnjCwAA'
+//export const VAULT_MINT = 'Bg2f3jstf2Co4Hkrxsn7evzvRwLbWYmuzaLUPGnjCwAA'
+export const VAULT_MINT = '3Q6dz8cLd4BW1kyuGyUaS7qhTtFP7tGS55Y7fybCUfNy'
 
 //export const MPG_ID = '7EUw8KH3KHoNNtMrKGswab3gWwM5tBqBbHKZ8eUiSQWP'
 //export const MPG_ID = '33dgY7mZmMybc5CKEmnPk9G5T2Njr1oBJTeiG9aVfoRB'
@@ -52,11 +53,11 @@ export const VAULT_MINT = 'Bg2f3jstf2Co4Hkrxsn7evzvRwLbWYmuzaLUPGnjCwAA'
 // export const FEE_OUTPUT_REGISTER = '8wca9RPSqBURHo2VU2gDaz5pmnYpj2dXPkS88mVdfoTy'
 // export const RISK_MODEL_CONFIG_ACCT = '9uEGTZRoDwZa4N1asf1p1pnF4HEuUtG2BZBVY26feBDM'
 
-export const MPG_ID = 'BdACSWNxJ8xy5FHUyhavtN7g4No9cm6hqsKQL3UmTibD'
+export const MPG_ID = '92EYZvPa5VQ1xfpkprAjsPVus4jocWBQVEdVa7xEzU9F'
 
-export const RISK_OUTPUT_REGISTER = 'EhpBDUcbsGAYtadcaGK6j7ct2nTLV4o4r8bJqUiSPQ5i'
-export const FEE_OUTPUT_REGISTER = 'Bb8SHavTXGBamJvpFtek8AJBthjjzxXGtLm6SMVoq6aT'
-export const RISK_MODEL_CONFIG_ACCT = 'AQGuDX3HZywfC5LcDVmjXNEFMtAghgBvGEQiAf9odscA'
+export const RISK_OUTPUT_REGISTER = '9g8nR38vBSkCNnjL4q5tGnfCXUQNXMiirw2hGWaKofcp'
+export const FEE_OUTPUT_REGISTER = 'FLAW3LunnLDX66XfbasQAsGPiopZMcD9Qf98SGgfk1qb'
+export const RISK_MODEL_CONFIG_ACCT = 'HA6UqidGkM6MB6qfgHx7dtBsLP2nTUWWBz25steZYGcw'
 
 export const MPG_ACCOUNT_SIZE = 143864
 export const OUT_REGISTER_SIZE = 432
@@ -69,7 +70,7 @@ export const PERPS_COLLATERAL = [
   {
     token: 'USDC',
     type: 'perps' as MarketType,
-    marketAddress: 'Bg2f3jstf2Co4Hkrxsn7evzvRwLbWYmuzaLUPGnjCwAA',
+    marketAddress: '3Q6dz8cLd4BW1kyuGyUaS7qhTtFP7tGS55Y7fybCUfNy',
     pythProduct: 'Crypto.USDT/USD'
   }
   // {
@@ -103,11 +104,11 @@ export const PERPS_COLLATERAL = [
 
 export const MPs = [
   {
-    id: '4EDpky681yAyqWqpEKKsv6NBXhrgWWsPSozLygM4BqK1',
-    orderbook_id: 'GFYnh6hoFGYaReZde5mohMGsbn5sEbHpyNVbNQWpz8q1',
-    bids: 'qmzH75hNAVHoB7aivANhvzLnbV2xYK51h5pi2N2a4m5',
-    asks: '5esLVYePbEpGet1GXopnP6uPPS749uTaax5cxhx19eoz',
-    event_queue: '2SHLvBpjKzvtGUMVBLZ4BvNznESe8sSEfK6AhwpuWAX4',
+    id: '77PnuBZKSGSVVsQ85TwRPH8gCq6eGMuaVRCANsw9m1Gb',
+    orderbook_id: 'JBLu7JYDVuyoQjTgYEaH4W48UEqmEDCLXmYLruaqQqvR',
+    bids: '9RyoWboQWgnQPAPKjQJGJq38J1TzNzMCxF4JXHFkJVPN',
+    asks: 'EaFJBX3RYGhFes7XUnxUucYTmqSRFxEN1TZveMhGvqwy',
+    event_queue: 'ETkcKwAYwtZBc4DXHcZTc59WAmZzLCrgN5aXJiG3Gagc',
     tick_size: 100,
     decimals: 5
   }

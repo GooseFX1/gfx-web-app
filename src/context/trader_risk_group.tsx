@@ -114,6 +114,7 @@ interface ITraderRiskGroup {
   openInterests: string
   health: string
   fundingRate: string
+  maxWithdrawable: string
 }
 
 interface ICollateralInfo {
@@ -239,6 +240,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [openInterests, setOpenInterests] = useState<string>('0')
   const [accountHealth, setAccountHealth] = useState<string>('100')
   const [fundingRate, setFundingRate] = useState<string>('0')
+  const [maxWithdrawable, setMaxWithdrawable] = useState<string>('0')
 
   const [initTesting, setInitTesting] = useState<boolean>(false)
 
@@ -311,6 +313,16 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         console.log(e)
       }
       if (trg) {
+        try {
+          const maxAmount = wasm.max_withdrawable(mpg.data, trg.data)
+          const avail = new Fractional({
+            m: new anchor.BN(maxAmount.m.toString()),
+            exp: new anchor.BN(Number(maxAmount.exp.toString()) + 5)
+          })
+          setMaxWithdrawable(displayFractional(avail))
+        } catch (e) {
+          console.log('Error in calculating max withdrawable amount: ', e)
+        }
         try {
           const res = wasm.margin_available(mpg.data, trg.data)
           const avail = new Fractional({
@@ -404,7 +416,10 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const parseMPG = async () => {
     const res = marketProductGroup.marketProducts.array[0].value.outright.cumFundingPerShare
-    setFundingRate(displayFractional(res))
+    const price = onChainPrice
+    if (!price || Number.isNaN(+price) || Number.isNaN(+displayFractional(res))) return null
+    const percent = (+displayFractional(res) / +price) * 100
+    setFundingRate(percent.toFixed(4))
   }
 
   useEffect(() => {
@@ -772,7 +787,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           availableLeverage: availableLeverage,
           openInterests: openInterests,
           health: accountHealth,
-          fundingRate: fundingRate
+          fundingRate: fundingRate,
+          maxWithdrawable: maxWithdrawable
         },
         marketProductGroup: marketProductGroup,
         marketProductGroupKey: currentMPG,
