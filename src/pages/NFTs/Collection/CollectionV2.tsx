@@ -124,7 +124,7 @@ const NFTStatsContainer = () => {
           ) : (
             <SkeletonCommon style={{ marginLeft: 20 }} width="65px" height="65px" borderRadius="50%" />
           )}
-          <div className="title">
+          <div tw="text-[30px] sm:text-[22px] ml-3 font-bold">
             {collection ? (
               collection.collection_name
             ) : (
