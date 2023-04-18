@@ -97,7 +97,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     )
 
     // creates connection
-    return new Connection(endpoint, 'confirmed')
+    return new Connection(endpoint, { commitment: 'confirmed', wsEndpoint: 'wss://api.mainnet-beta.solana.com' })
   }, [endpointName, endpoint])
 
   useEffect(() => {
