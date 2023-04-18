@@ -157,8 +157,8 @@ export const DepositWithdraw: FC<{
       else result = +tokenAmount.uiAmountString
       setAmount(String(result))
     } else {
-      const avail = traderInfo.marginAvailable
-      if (!avail) {
+      const avail = traderInfo.maxWithdrawable
+      if (!avail || Number.isNaN(+avail)) {
         setAmount('0.00')
         return
       }
@@ -167,7 +167,7 @@ export const DepositWithdraw: FC<{
       else if (index === 1) result = (+avail * 50) / 100
       else if (index === 2) result = (+avail * 75) / 100
       else result = +avail
-      setAmount(result.toFixed(2))
+      setAmount((Math.floor(result * 1000) / 1000).toString())
     }
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -226,8 +226,8 @@ export const DepositWithdraw: FC<{
                 ? tokenAmount && tokenAmount.uiAmountString
                   ? tokenAmount.uiAmountString
                   : '0.00'
-                : traderInfo.marginAvailable
-                ? traderInfo.marginAvailable
+                : traderInfo.maxWithdrawable
+                ? traderInfo.maxWithdrawable
                 : '0.00'}
             </div>
             <img

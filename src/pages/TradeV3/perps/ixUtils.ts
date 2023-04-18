@@ -349,19 +349,36 @@ export const withdrawFundsIx = async (
     })
   )
   try {
-    const response = await sendPerpsTransaction(connection, wallet, instructions, [])
-    if (response && response.txid) {
-      notify({
-        message: 'Funds withdrawn Successfully!'
-      })
-    }
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
+      startMessage: {
+        header: 'Withdraw funds',
+        description: 'Sign the transaction to withdraw funds!'
+      },
+      progressMessage: {
+        header: 'Withdraw funds',
+        description: 'Withdrawing funds to your account..'
+      },
+      endMessage: {
+        header: 'Withdraw funds',
+        description: 'Funds successfully withdrawn'
+      },
+      errorMessage: {
+        header: 'Withdraw funds',
+        description: 'There was an error in withdrawing the funds'
+      }
+    })
+    //if (response && response.txid) {
+    //  notify({
+    //    message: 'Funds withdrawn Successfully!'
+    //  })
+    //}
     return response
   } catch (e) {
     console.log(e)
-    notify({
-      message: 'Withdrawl failed. Please try again with a smaller amount',
-      type: 'error'
-    })
+    //notify({
+    //  message: 'Withdrawl failed. Please try again with a smaller amount',
+    //  type: 'error'
+    //})
     return null
   }
 }
