@@ -69,9 +69,17 @@ export const AsksAndBidsForNFT = (): ReactElement => {
       {bids.length > 0 &&
         bids.map((bid) => (
           <div tw="flex items-center justify-between mt-1 dark:text-grey-5 text-grey-1" key={bid.clock}>
-            <div>
-              Bid by <span tw="text-[#fff] font-semibold">{truncateAddress(bid.wallet_key)} </span>
+            <div tw="ml-6">
+              Bid by <span className="bidBy">{truncateAddress(bid.wallet_key)} </span>
               <div>{new Date(parseInt(bid.clock) * 1000).toString().substring(0, 16)}</div>
+            </div>
+            <div tw="mr-6">
+              <PriceWithToken
+                token="SOL"
+                cssStyle={tw`h-[18px] w-[18px]`}
+                price={parseFloat(bid.buyer_price) / LAMPORTS_PER_SOL_NUMBER}
+              />
+              <div>{((parseFloat(bid.buyer_price) / LAMPORTS_PER_SOL_NUMBER) * solPrice).toFixed(1)} USDC</div>
             </div>
           </div>
         ))}
@@ -79,7 +87,7 @@ export const AsksAndBidsForNFT = (): ReactElement => {
       {ask && (
         <div tw="flex items-center justify-between px-[25px] py-2 dark:text-grey-5 text-grey-1">
           <div>
-            Ask by <span tw="text-[#fff] font-semibold">{truncateAddress(ask.wallet_key)} </span>
+            Ask by <span className="bidBy">{truncateAddress(ask.wallet_key)} </span>
             <div>{new Date(parseInt(ask.clock)).toString().substring(0, 16)}</div>
           </div>
           <div>

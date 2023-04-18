@@ -257,11 +257,17 @@ export const RightSection: FC<{
                   {likes ? likes : null}
                 </span>
                 <a href={`https://solscan.io/token/${general.mint_address}`} target="_blank" rel="noreferrer">
-                  <img src="/img/assets/solScanBlack.svg" alt="solscan-icon" className="solscan-icon" />
+                  <img
+                    src="/img/assets/solScanBlack.svg"
+                    alt="solscan-icon"
+                    tw="ml-5 h-10 w-10"
+                    className="solscan-icon"
+                  />
                 </a>
                 <img
                   src="/img/assets/shareBlue.svg"
                   alt="share-icon"
+                  tw="ml-5 h-10 w-10"
                   className="share-icon"
                   onClick={() => {
                     setShareModal(true)
