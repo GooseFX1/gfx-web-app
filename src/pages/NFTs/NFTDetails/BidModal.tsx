@@ -1,13 +1,13 @@
 import { FC, useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
-import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
+import { PublicKey, TransactionInstruction, Transaction } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
 import { Col, Row } from 'antd'
 import { MainButton, Modal, SuccessfulListingMsg } from '../../../components'
 import { checkMobile, notify, truncateAddress } from '../../../utils'
 import { useNFTProfile, usePriceFeed, useNFTDetails, useConnectionConfig, useAccounts } from '../../../context'
-import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
+import { NFT_MARKET_TRANSACTION_FEE, LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import BN from 'bn.js'
 import {
   AUCTION_HOUSE,
@@ -241,7 +241,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
 
   const [mode, setMode] = useState<string>(purchasePrice ? 'review' : 'bid')
   const [bidPriceInput, setBidPriceInput] = useState<string>(
-    purchasePrice ? `${parseFloat(purchasePrice) / LAMPORTS_PER_SOL}` : ''
+    purchasePrice ? `${parseFloat(purchasePrice) / LAMPORTS_PER_SOL_NUMBER}` : ''
   )
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [pendingTxSig, setPendingTxSig] = useState<string>()
@@ -329,7 +329,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
   }
 
   const derivePDAsForInstruction = async () => {
-    const buyerPriceInLamports = bidPrice * LAMPORTS_PER_SOL
+    const buyerPriceInLamports = bidPrice * LAMPORTS_PER_SOL_NUMBER
     const buyerPrice: BN = new BN(buyerPriceInLamports)
 
     const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
@@ -339,7 +339,14 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
     )
 
-    const buyerTradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
+    const buyerTradeState: [PublicKey, number] = await tradeStatePDA(
+      publicKey,
+      purchasePrice ? ask?.auction_house_key : AUCTION_HOUSE,
+      general.token_account,
+      general.mint_address,
+      purchasePrice ? ask?.auction_house_treasury_mint_key : TREASURY_MINT,
+      bnTo8(buyerPrice)
+    )
 
     if (!metaDataAccount || !escrowPaymentAccount || !buyerTradeState) {
       return {
@@ -566,7 +573,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
     <PURCHASE_MODAL setVisible={setVisible} title="" visible={visible} onCancel={onCancel}>
       <div className="bm-title">
         You are about to{' '}
-        {purchasePrice && `${parseFloat(bidPriceInput) * LAMPORTS_PER_SOL}` === ask.buyer_price
+        {purchasePrice && `${parseFloat(bidPriceInput) * LAMPORTS_PER_SOL_NUMBER}` === ask.buyer_price
           ? 'purchase'
           : 'bid on'}{' '}
       </div>

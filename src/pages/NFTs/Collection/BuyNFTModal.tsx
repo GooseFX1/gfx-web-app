@@ -456,7 +456,14 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
     )
 
-    const buyerTradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
+    const buyerTradeState: [PublicKey, number] = await tradeStatePDA(
+      publicKey,
+      isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE,
+      general.token_account,
+      general.mint_address,
+      isBuyingNow ? ask?.auction_house_treasury_mint_key : TREASURY_MINT,
+      bnTo8(buyerPrice)
+    )
 
     if (!metaDataAccount || !escrowPaymentAccount || !buyerTradeState) {
       return {
@@ -519,19 +526,9 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
       tokenAccount: new PublicKey(general.token_account),
       metadata: new PublicKey(metaDataAccount),
       escrowPaymentAccount: escrowPaymentAccount[0],
-      authority: new PublicKey(
-        isBuyingNow
-          ? ask?.auction_house_authority
-            ? ask?.auction_house_authority
-            : AUCTION_HOUSE_AUTHORITY
-          : AUCTION_HOUSE_AUTHORITY
-      ),
-      auctionHouse: new PublicKey(
-        isBuyingNow ? (ask?.auction_house_key ? ask?.auction_house_key : AUCTION_HOUSE) : AUCTION_HOUSE
-      ),
-      auctionHouseFeeAccount: new PublicKey(
-        isBuyingNow ? (ask?.auction_house_fee_account ? ask?.auction_house_fee_account : AH_FEE_ACCT) : AH_FEE_ACCT
-      ),
+      authority: new PublicKey(isBuyingNow ? ask?.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
+      auctionHouse: new PublicKey(isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE),
+      auctionHouseFeeAccount: new PublicKey(isBuyingNow ? ask?.auction_house_fee_account : AH_FEE_ACCT),
       buyerTradeState: buyerTradeState[0]
     }
 
@@ -540,6 +537,7 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
     const transaction = new Transaction().add(buyIX)
     try {
       const signature = await sendTransaction(transaction, connection)
+
       console.log(signature)
       setPendingTxSig(signature)
       setTimeout(() => {

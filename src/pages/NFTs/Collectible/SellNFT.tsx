@@ -279,9 +279,13 @@ export const SellNFT: FC = () => {
     const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
     const tradeState: [PublicKey, number] = await tradeStatePDA(
       wallet?.adapter?.publicKey,
-      general,
+      AUCTION_HOUSE,
+      general.token_account,
+      general.mint_address,
+      TREASURY_MINT,
       bnTo8(buyerPrice)
     )
+
     const freeTradeState: [PublicKey, number] = await freeSellerTradeStatePDA(wallet?.adapter?.publicKey, general)
     const programAsSignerPDA: [PublicKey, number] = await PublicKey.findProgramAddress(
       [Buffer.from(AUCTION_HOUSE_PREFIX), Buffer.from('signer')],
@@ -466,7 +470,15 @@ export const SellNFT: FC = () => {
     }
 
     const curAskingPrice: BN = new BN(parseFloat(ask.buyer_price))
-    const tradeState: [PublicKey, number] = await tradeStatePDA(usrAddr, general, bnTo8(curAskingPrice))
+    const tradeState: [PublicKey, number] = await tradeStatePDA(
+      usrAddr,
+      AUCTION_HOUSE,
+      general.token_account,
+      general.mint_address,
+      TREASURY_MINT,
+      bnTo8(curAskingPrice)
+    )
+
     const cancelInstructionArgs: CancelInstructionArgs = {
       buyerPrice: curAskingPrice,
       tokenSize: tokenSize
