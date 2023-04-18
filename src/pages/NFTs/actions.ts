@@ -35,7 +35,10 @@ export const tokenSize: BN = new BN(1)
 
 export const tradeStatePDA = async (
   publicKey: PublicKey,
-  general: ISingleNFT,
+  auctionHouse: StringPublicKey,
+  tokenAccount: string,
+  mintAddress: string,
+  treasuryMint: StringPublicKey,
   buyerPrice: Uint8Array
 ): Promise<undefined | [PublicKey, number]> => {
   try {
@@ -43,10 +46,10 @@ export const tradeStatePDA = async (
       [
         Buffer.from(AUCTION_HOUSE_PREFIX),
         publicKey.toBuffer(),
-        toPublicKey(AUCTION_HOUSE).toBuffer(),
-        toPublicKey(general.token_account).toBuffer(),
-        toPublicKey(TREASURY_MINT).toBuffer(),
-        toPublicKey(general.mint_address).toBuffer(),
+        toPublicKey(auctionHouse).toBuffer(),
+        toPublicKey(tokenAccount).toBuffer(),
+        toPublicKey(treasuryMint).toBuffer(),
+        toPublicKey(mintAddress).toBuffer(),
         buyerPrice,
         bnTo8(tokenSize)
       ],

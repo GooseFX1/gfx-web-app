@@ -22,6 +22,7 @@ import {
   AUCTION_HOUSE_PREFIX,
   AUCTION_HOUSE_AUTHORITY,
   AUCTION_HOUSE_PROGRAM_ID,
+  TREASURY_MINT,
   AH_FEE_ACCT,
   CancelInstructionArgs,
   CancelInstructionAccounts,
@@ -327,7 +328,14 @@ export const RightSectionTabs: FC<{
   const derivePDAsForInstruction = async () => {
     const buyerPrice: BN = new BN(ask.buyer_price)
 
-    const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
+    const tradeState: [PublicKey, number] = await tradeStatePDA(
+      publicKey,
+      isBuying ? ask?.auction_house_key : AUCTION_HOUSE,
+      general.token_account,
+      general.mint_address,
+      isBuying ? ask?.auction_house_treasury_mint_key : TREASURY_MINT,
+      bnTo8(buyerPrice)
+    )
 
     if (!tradeState) {
       throw Error(`Could not derive values for instructions`)
@@ -424,7 +432,14 @@ export const RightSectionTabs: FC<{
 
     const buyerPrice: BN = new BN(userRecentBid.buyer_price)
     console.log(buyerPrice)
-    const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
+    const tradeState: [PublicKey, number] = await tradeStatePDA(
+      publicKey,
+      isBuying ? ask?.auction_house_key : AUCTION_HOUSE,
+      general.token_account,
+      general.mint_address,
+      isBuying ? ask?.auction_house_treasury_mint_key : TREASURY_MINT,
+      bnTo8(buyerPrice)
+    )
 
     const cancelInstructionArgs: CancelInstructionArgs = {
       buyerPrice: buyerPrice,
