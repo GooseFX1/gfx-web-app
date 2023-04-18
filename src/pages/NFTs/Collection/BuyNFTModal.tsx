@@ -48,6 +48,7 @@ import {
 } from '../../../web3'
 import { Button } from '../../../components/Button'
 import { GFX_LINK } from '../../../styles'
+import { HoldTight } from './HoldTight'
 const TEN_MILLION = 10000000
 
 export const STYLED_POPUP = styled(PopupCustom)`
@@ -288,7 +289,7 @@ const ReviewBid: FC<{
         <div className="buyTitle">
           You are about to bid for:
           <br />
-          <strong>{general.nft_name} </strong> {checkMobile() ? <br /> : 'by'}
+          <strong>{general?.nft_name} </strong> {checkMobile() ? <br /> : 'by'}
           <strong> {general?.collection_name}</strong>
         </div>
         {singleCollection && singleCollection[0]?.is_verified && (
@@ -304,7 +305,7 @@ const ReviewBid: FC<{
         )}
       </div>
       <div className="vContainer" tw="flex">
-        {!checkMobile() && <img className="nftImgBid" src={general.image_url} alt="" />}
+        {!checkMobile() && <img className="nftImgBid" src={general?.image_url} alt="" />}
         <div tw="flex flex-col">
           <div className="currentBid">Current Bid</div>
           <div className="priceNumber" tw="ml-4 mt-2 flex items-center">
@@ -316,13 +317,13 @@ const ReviewBid: FC<{
 
       <div tw="mt-[30px]">
         <AppraisalValue
-          text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
-          label={general.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
+          text={general?.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
+          label={general?.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
           width={360}
         />
       </div>
       <div className="vContainer">
-        <div className="maxBid" tw="mt-4 sm:mt-[20px]">
+        <div className="maxBid" tw="mt-8 sm:mt-[20px]">
           Enter Maxium Bid
         </div>
       </div>
@@ -336,7 +337,7 @@ const ReviewBid: FC<{
         />
         <img src="/img/crypto/SOL.svg" tw="w-8 h-8 mt-3 ml-[-30px] sm:mt-0 " />
       </div>
-      <div className="vContainer" tw="mt-[40px] sm:mt-[30px]">
+      <div className="vContainer" tw="mt-[70px] sm:mt-[30px]">
         <div
           className={selectedBtn === 0 ? 'bidButtonSelected' : 'bidButton'}
           onClick={() => handleSetCurBid(buyerPrice + 10, 0)}
@@ -359,7 +360,7 @@ const ReviewBid: FC<{
         )}
       </div>
 
-      <div className="buyBtnContainer" tw="!mt-12">
+      <div className="buyBtnContainer" tw="!mt-14">
         <Button className="buyButton" disabled={curBid <= 0} onClick={() => setReviewClicked(true)}>
           Review Offer
         </Button>
@@ -379,7 +380,7 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
   const { general, nftMetadata, bidOnSingleNFT, ask } = useNFTDetails()
 
   const [mode, setMode] = useState<string>(curBid ? 'review' : 'bid')
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [pendingTxSig, setPendingTxSig] = useState<string | null>(null)
 
   const publicKey: PublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
@@ -514,10 +515,8 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
       buyerPrice: buyerPrice,
       tokenSize: tokenSize
     }
-    console.log(curBid, new BN(curBid * LAMPORTS_PER_SOL_NUMBER))
 
     // All bids will be placed on GFX AH Instance - Buys will be built with "ask" payload
-    console.log(ask)
     const buyInstructionAccounts: BuyInstructionAccounts = {
       wallet: publicKey,
       paymentAccount: publicKey,
@@ -697,80 +696,86 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
     )
   })
 
-  return (
-    <>
-      <div tw="flex flex-col items-center justify-center">
-        <div className="buyTitle">
-          You are about to {isBuyingNow ? 'buy' : 'bid for'}: <br />
-          <strong>{general.nft_name} </strong> {checkMobile() ? <br /> : 'by'}
-          <strong> {general.collection_name}</strong>
+  if (isLoading) return <HoldTight isLoading={isLoading} setLoading={setIsLoading} />
+  else
+    return (
+      <>
+        <div tw="flex flex-col items-center justify-center">
+          <div className="buyTitle">
+            You are about to {isBuyingNow ? 'buy' : 'bid for'}: <br />
+            <strong>{general?.nft_name} </strong> {checkMobile() ? <br /> : 'by'}
+            <strong> {general?.collection_name}</strong>
+          </div>
+          <div className="verifiedText">
+            {!checkMobile() && (
+              <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+            )}
+            This is a verified {checkMobile() && <br />} Creator
+            {checkMobile() && (
+              <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+            )}
+          </div>
         </div>
-        <div className="verifiedText">
-          {!checkMobile() && <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />}
-          This is a verified {checkMobile() && <br />} Creator
-          {checkMobile() && <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />}
-        </div>
-      </div>
 
-      <div className="vContainer">
-        <img className="nftImg" src={general.image_url} alt="" />
-      </div>
+        <div className="vContainer">
+          <img className="nftImg" src={general?.image_url} alt="" />
+        </div>
 
-      <div className="vContainer">
-        <div className="priceText">Price</div>
-      </div>
+        <div className="vContainer">
+          <div className="priceText">Price</div>
+        </div>
 
-      <div className="vContainer">
-        <div className="priceNumber">
-          {curBid} <img src={`/img/crypto/SOL.svg`} />
+        <div className="vContainer">
+          <div className="priceNumber">
+            {curBid} <img src={`/img/crypto/SOL.svg`} />
+          </div>
         </div>
-      </div>
 
-      <div tw="mt-4">
-        <AppraisalValue
-          text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
-          label={general.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
-          width={360}
-        />
-      </div>
-      {pendingTxSig && (
-        <div className="bm-title">
-          <span>
-            <img
-              style={{ height: '26px', marginRight: '6px' }}
-              src={`/img/assets/solscan.png`}
-              alt="solscan-icon"
-            />
-          </span>
-          <GFX_LINK
-            href={`https://solscan.io/tx/${pendingTxSig}?cluster=${network}`}
-            target={'_blank'}
-            rel="noreferrer"
-          >
-            View Transaction
-          </GFX_LINK>
+        <div tw="mt-4">
+          <AppraisalValue
+            text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
+            label={general.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
+            width={360}
+          />
         </div>
-      )}
+        {pendingTxSig && (
+          <div className="bm-title">
+            <span>
+              <img
+                style={{ height: '26px', marginRight: '6px' }}
+                src={`/img/assets/solscan.png`}
+                alt="solscan-icon"
+              />
+            </span>
+            <GFX_LINK
+              href={`https://solscan.io/tx/${pendingTxSig}?cluster=${network}`}
+              target={'_blank'}
+              rel="noreferrer"
+            >
+              View Transaction
+            </GFX_LINK>
+          </div>
+        )}
 
-      <div className="hContainer" style={{ height: 150 }}>
-        <div className="rowContainer">
-          <div className="leftAlign">My Bid</div>
-          <div className="rightAlign">{curBid} SOL</div>
+        <div className="hContainer" style={{ height: pendingTxSig ? 120 : 160 }}>
+          <div className="rowContainer">
+            <div className="leftAlign">My Bid</div>
+            <div className="rightAlign">{curBid} SOL</div>
+          </div>
+          <div className="rowContainer">
+            <div className="leftAlign">Service Fee</div>
+            <div className="rightAlign"> {servicePriceCalc} SOL</div>
+          </div>
+          <div className="rowContainer">
+            <div className="leftAlign">Total Price</div>
+            <div className="rightAlign">{orderTotal} SOL</div>
+          </div>
         </div>
-        <div className="rowContainer">
-          <div className="leftAlign">Service Fee</div>
-          <div className="rightAlign"> {servicePriceCalc} SOL</div>
+        <div className="buyBtnContainer">
+          <Button className="buyButton" disabled={notEnough} onClick={callBuyInstruction} loading={isLoading}>
+            {notEnough ? 'Insufficient SOL' : isBuyingNow ? 'Buy Now' : 'Place Bid'}
+          </Button>
         </div>
-        <div className="rowContainer">
-          <div className="leftAlign">Total Price</div>
-          <div className="rightAlign">{orderTotal} SOL</div>
-        </div>
-      </div>
-      <div className="buyBtnContainer">
-        <Button className="buyButton" disabled={notEnough} onClick={callBuyInstruction} loading={isLoading}>
-          {notEnough ? 'Insufficient SOL' : isBuyingNow ? 'Buy Now' : 'Place Bid'}
-        </Button>
-      </div>
-    </>
-  )
+      </>
+    )
 }
