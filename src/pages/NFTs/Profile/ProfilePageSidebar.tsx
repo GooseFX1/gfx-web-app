@@ -14,7 +14,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 
 const PROFILE = styled.div<{ navCollapsed: boolean }>`
-${tw`w-[23vw] bg-white dark:bg-black-1`}
+${tw`w-[23vw] bg-white dark:bg-black-2`}
   border-top-right-radius: 20px;
   ${({ theme }) => theme.customScrollBar('1px')}
   height: ${({ navCollapsed }) => (navCollapsed ? '85vh' : '80vh')};
@@ -401,7 +401,7 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
             Add your bio and share with the <br /> world who you are!
           </div>
         )}
-        <img src="/img/assets/profileGraphic.png" alt="profile-graphic" className="graphic-img" />
+        <img src="/img/assets/profileGraphic.svg" alt="profile-graphic" className="graphic-img" />
         <div className="portfolio">
           <span>Portfolio Value</span>{' '}
           <div tw="inline-block">

@@ -23,6 +23,10 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
     color: ${({ theme }) => theme.text32};
     ${tw`text-[15px] leading-9 font-semibold pr-2 pl-4`}
   }
+  .bidBy {
+    ${tw`font-semibold`}
+    color: ${({ theme }) => theme.text32};
+  }
   ${({ theme }) => css`
     position: relative;
  
@@ -213,11 +217,13 @@ const ImageViewer = (): ReactElement => {
                 src={`/img/assets/heart-${sessionUser.user_likes.includes(general.uuid) ? 'red' : 'empty'}.svg`}
               />
             )}
-            <img tw="h-10 w-10 mr-[12px] cursor-pointer" src={`/img/assets/solscanBlack.svg`} />
-            <img tw="h-10 w-10 cursor-pointer" src={`/img/assets/shareBlue.svg`} />
+            <div tw="flex items-center">
+              <img tw="h-20 w-20 mr-[12px] ml-4 cursor-pointer" src={`/img/assets/solscanBlack.svg`} />
+              <img tw="h-10 w-10 cursor-pointer" src={`/img/assets/shareBlue.svg`} />
+            </div>
           </div>
         </div>
-        <div>{general.nft_description}</div>
+        <div>{general?.nft_description}</div>
 
         <div tw="mt-[30px]">
           <AppraisalValue
@@ -290,7 +296,7 @@ const NFTDetailsTab = (): ReactElement => {
       {nftData.map((item, index) => (
         <Row justify="space-between" align="middle" className="dtc-item" key={index}>
           <Col tw="text-[15px] font-semibold leading-9 ml-4 dark:text-white text-grey-1">{item.title}</Col>
-          <Col tw="dark:text-white text-black-4 font-semibold">{item.value}</Col>
+          <Col tw="dark:text-white text-black-4 font-semibold mr-4">{item.value}</Col>
         </Row>
       ))}
     </div>
