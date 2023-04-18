@@ -206,7 +206,11 @@ export const Card: FC<ICard> = (props) => {
         <div className={'nftTextContainer'}>
           <div className="collectionId">
             {localSingleNFT && localSingleNFT?.is_verified}
-            {localSingleNFT ? '#' + localSingleNFT?.nft_name?.split('#')[1] : '# NFT'}
+            {localSingleNFT
+              ? localSingleNFT?.nft_name?.split('#')[1]
+                ? minimizeTheString(localSingleNFT?.nft_name?.split('#')[1])
+                : '# NFT'
+              : '# NFT'}
             <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />
             {/* <img className="isVerified" tw="!ml-auto" src="/img/assets/Aggregator/verifiedNFT.svg" /> */}
           </div>
