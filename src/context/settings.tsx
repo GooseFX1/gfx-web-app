@@ -63,7 +63,7 @@ export function useConnectionConfig(): ISettingsConfig {
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
   const devnetConnection = new Connection(
-    'https://omniscient-frequent-wish.solana-devnet.quiknode.pro/8b6a255ef55a6dbe95332ebe4f6d1545eae4d128/',
+    'https://solana-api.syndica.io/access-token/uekcYQXufiP6U54AuGKFjzUtiuhIfPWuTh0XXfvL0wYJFAG8kTgcsrs0PbJQkFcm/rpc',
     'processed'
   )
 

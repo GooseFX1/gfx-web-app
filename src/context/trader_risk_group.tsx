@@ -736,11 +736,11 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [marketProductGroup])
 
   useEffect(() => {
-    if (marketProductGroup && !initTesting) {
+    if (marketProductGroup && wallet.connected && !initTesting) {
       setInitTesting(true)
       testing()
     }
-  }, [marketProductGroup])
+  }, [marketProductGroup, wallet])
 
   useEffect(() => {
     perpsWasm()
