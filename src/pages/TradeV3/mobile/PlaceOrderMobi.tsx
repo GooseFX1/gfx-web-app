@@ -106,16 +106,16 @@ const WRAPPER = styled.div`
 const INPUT_WRAPPER = styled.div<{ $rotateArrow: boolean }>`
   ${tw`flex justify-center items-start w-full flex-col h-full px-3`}
   .label {
-    ${tw`pb-1 flex flex-row justify-evenly`}
+    ${tw`pb-1 flex flex-row justify-evenly text-regular font-semibold dark:text-grey-2 text-grey-1`}
     > span {
-      ${tw`text-tiny font-semibold`}
+      ${tw`text-regular font-semibold`}
       color: ${({ theme }) => theme.text37};
     }
   }
   .label2 {
     ${tw`pb-1`}
     > span {
-      ${tw`text-tiny font-semibold`}
+      ${tw`text-regular font-semibold`}
       color: ${({ theme }) => theme.text37};
     }
   }
@@ -285,8 +285,13 @@ const SELECTOR = styled.div`
   }
 `
 const TAKEPROFITSELECTOR = styled.div`
+  ${tw`flex flex-row mb-6 mx-10`}
+  > .active {
+    ${tw`rounded-half text-white`}
+    background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
+  }
   > .selectorDropdown {
-    ${tw`mb-3.5 ml-[75px]`}
+    ${tw`w-1/4 text-center flex flex-row justify-center items-center h-10`}
     > input[type='radio'] {
       ${tw`appearance-none absolute right-[80px] h-[30px] w-[30px] bg-black-1 rounded-circle`}
     }
@@ -305,10 +310,10 @@ const TAKEPROFITSELECTOR = styled.div`
 `
 
 const HEADER = styled.div`
-  ${tw`flex items-center justify-center mb-4`}
+  ${tw`flex items-center justify-center mb-6`}
 
   .cta {
-    ${tw`rounded-bigger w-[120px] h-[40px] mr-[13px] cursor-pointer`}
+    ${tw`rounded-bigger w-[120px] h-[35px] mr-[13px] cursor-pointer`}
 
     .btn {
       ${tw`flex items-center justify-center text-regular font-semibold w-full h-full`}
@@ -343,14 +348,20 @@ const HEADER = styled.div`
 `
 
 const TAKEPROFITWRAPPER = styled.div`
+  ${tw`relative`}
   > input {
-    ${tw`bg-white dark:bg-black-1 dark:text-grey-5 text-black-4 p-3 text-regular font-semibold`}
-    margin-left: 75px;
+    ${tw`bg-white dark:bg-black-1 dark:text-grey-5 text-black-4 p-3 text-regular font-semibold ml-10 w-4/5 h-[45px] rounded-[10px]`}
     outline: none;
     border: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
-    height: 45px;
-    width: 65%;
-    border-radius: 10px;
+  }
+  .selected-val {
+    ${tw`dark:text-grey-5 text-black-4 text-average font-semibold text-center mb-7`}
+  }
+  .save-disable {
+    ${tw`text-tiny text-grey-1 font-semibold absolute bottom-[15px] right-[50px] z-[100]`}
+  }
+  .save-enable {
+    ${tw`text-tiny text-white font-semibold absolute bottom-[15px] right-[50px] z-[100]`}
   }
 `
 
@@ -421,24 +432,43 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
 
   return (
     <TAKEPROFITWRAPPER>
+      <div className="selected-val">
+        <span>
+          {takeProfitIndex !== null
+            ? TAKE_PROFIT_ARRAY[takeProfitIndex].display
+            : takeProfitAmt > 0
+            ? '$' + takeProfitAmt
+            : 'N/A'}
+        </span>
+        {!takeProfitAmt && (
+          <span tw="!text-[#80CE00] ml-2">{profits[index] ? '($' + profits[index] + ')' : '(-)'}</span>
+        )}
+      </div>
       <TAKEPROFITSELECTOR>
         {TAKE_PROFIT_ARRAY.map((item, index) => (
-          <div key={index} className="selectorDropdown">
-            <span tw="mr-2 font-semibold text-regular dark:text-grey-5 text-black-4">{item.display}</span>
-            <span className={isTakeProfit ? 'green' : 'red'} tw="font-semibold text-regular">
-              {'($' + profits[index] + ')'}
-            </span>
-            <input
-              type="radio"
-              name={isTakeProfit ? 'take-profit' : 'stop-loss'}
-              value={item.display}
-              checked={takeProfitIndex === index}
-              onChange={() => handleClicks(index)}
-            />
+          <div
+            key={index}
+            className={takeProfitIndex === index ? 'active selectorDropdown' : 'selectorDropdown'}
+            onClick={() => handleClicks(index)}
+          >
+            <span tw="font-semibold text-regular dark:text-grey-5 text-black-4">{item.display}</span>
           </div>
         ))}
       </TAKEPROFITSELECTOR>
-      <input value={takeProfitAmt} onChange={isNumber} />
+      <span tw="ml-10">Custom Price</span>
+      <input value={takeProfitAmt} onChange={isNumber} placeholder="$0.00" />
+      <span
+        className={takeProfitAmt ? 'save-enable' : 'save-disable'}
+        onClick={
+          takeProfitAmt
+            ? () => {
+                setVisibility(false)
+              }
+            : null
+        }
+      >
+        Save
+      </span>
     </TAKEPROFITWRAPPER>
   )
 }
@@ -733,6 +763,7 @@ export const PlaceOrderMobi = () => {
           open={true}
           getContainer={elem}
           height="276px"
+          className="takep-stopl-container"
         >
           <HEADER>
             <div className={drawerType === 0 ? 'active cta' : 'cta'} onClick={() => setDrawerType(0)}>
@@ -740,11 +771,11 @@ export const PlaceOrderMobi = () => {
                 <div className={drawerType === 0 ? 'gradient-bg btn' : 'btn'}>Take Profit</div>
               </div>
             </div>
-            <div className={drawerType === 1 ? 'active cta' : 'cta disable'} onClick={() => setDrawerType(0)}>
+            {/* <div className={drawerType === 1 ? 'active cta' : 'cta disable'} onClick={() => setDrawerType(0)}>
               <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
                 <div className={drawerType === 1 ? 'gradient-bg btn' : 'btn'}>Stop loss</div>
               </div>
-            </div>
+            </div> */}
           </HEADER>
           <img
             src={`/img/assets/close-gray-icon.svg`}
@@ -901,7 +932,7 @@ export const PlaceOrderMobi = () => {
       </div>
       <div tw="flex flex-row">
         <INPUT_WRAPPER>
-          <div className="label">Price</div>
+          <span className="label">Price</span>
           <div className={focused === 'price' ? 'focus-border' : ''}>
             <Input
               suffix={<span className="suffixText">{bid}</span>}
@@ -917,7 +948,7 @@ export const PlaceOrderMobi = () => {
           </div>
         </INPUT_WRAPPER>
         <INPUT_WRAPPER>
-          <div className="label">Amount</div>
+          <span className="label">Amount</span>
           <div className={focused === 'total' ? 'focus-border' : ''}>
             <Input
               suffix={<span className="suffixText">{bid}</span>}

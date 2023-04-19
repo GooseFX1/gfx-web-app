@@ -27,6 +27,12 @@ const WRAPPER = styled.div`
       background: ${({ theme }) => theme.bg20};
     }
   }
+  .takep-stopl-container {
+    .ant-drawer-body {
+      padding-top: 12px;
+      padding-bottom: 0;
+    }
+  }
 `
 
 export const DexhomeMobi = () => {
