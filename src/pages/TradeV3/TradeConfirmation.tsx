@@ -110,7 +110,7 @@ export const TradeConfirmation: FC<{ setVisibility: any; takeProfit?: any }> = (
         height={checkMobile() ? '45px' : '50px'}
         cssStyle={cssStyle}
       >
-        {order.side === 'buy' ? 'Long' : 'Short'} {order.size} {symbol}
+        {order.side === 'buy' ? 'Long' : 'Short'} {Number(order.size).toFixed(3)} {symbol}
       </Button>
     </WRAPPER>
   )
