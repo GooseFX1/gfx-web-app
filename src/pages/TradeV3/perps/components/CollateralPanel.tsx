@@ -260,7 +260,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>
         <div className="tooltip-row">
-          <span className="key">Your Volume</span>
+          <span className="key">User Volume</span>
           <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
             User volume refers to the total volume of trades made by you. The higher your volume, the greater your
             chances of receiving rewards in the competition{' '}
