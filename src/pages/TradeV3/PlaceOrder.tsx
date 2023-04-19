@@ -21,7 +21,7 @@ import { Checkbox, Slider } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ArrowDropdown, Tooltip } from '../../components'
 import { useTraderConfig } from '../../context/trader_risk_group'
-import { displayFractional, getPerpsPrice } from './perps/utils'
+import { displayFractional, getPerpsPrice, getProfitAmount } from './perps/utils'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import { TradeConfirmation } from './TradeConfirmation'
 import 'styled-components/macro'
@@ -193,6 +193,9 @@ const INPUT_WRAPPER = styled.div<{ $halfWidth?: boolean }>`
     background: ${({ theme }) => theme.bg2};
     .green {
       ${tw`text-[#80CE00]`}
+      width: 90%;
+      overflow-y: scroll;
+      text-align: left;
     }
     .red {
       ${tw`text-[#F35355]`}
@@ -210,6 +213,9 @@ const INPUT_WRAPPER = styled.div<{ $halfWidth?: boolean }>`
   }
   .take-profit {
     ${tw`cursor-pointer border-[1.5px] border-solid border dark:border-grey-2 border-grey-1`}
+    .ant-dropdown-trigger {
+      ${tw`w-full h-full justify-end absolute right-[10px]`}
+    }
   }
   .stop-loss {
     ${tw`cursor-not-allowed border-[1.5px] border-solid border dark:border-grey-2 border-grey-1`}
@@ -403,15 +409,28 @@ export const PlaceOrder: FC = () => {
   const geoBlocked = false
   const [type, setType] = useState<number>(0)
 
+  const [takeProfitDropdown, setTakeProfitDropdown] = useState(false)
   const [takeProfitAmount, setTakeProfitAmount] = useState<number>(null)
   const [takeProfitIndex, setTakeProfitIndex] = useState<number>(3)
-  const [takeProfit, setTakeProfit] = useState(false)
   const [takeProfitArrow, setTakeProfitArrow] = useState(false)
+  const [saveAmount, setSaveAmount] = useState<number>(null)
+  const [profits, setProfits] = useState<any>(['', '', '', ''])
+
   const [stopLossAmount, setStopLossAmount] = useState<number>(null)
   const [stopLossIndex, setStopLossIndex] = useState<number>(0)
-  const [open, setOpen] = useState(false)
   const [stopLossArrow, setStopLossArrow] = useState(false)
-  const [saveAmount, setSaveAmount] = useState<number>(null)
+
+  useEffect(() => {
+    const obj = []
+    percentArray.map((item) => {
+      if (Number.isNaN(+order.price)) obj.push('')
+      else {
+        const profit = getProfitAmount(order.side, order.price, item.value)
+        obj.push(profit)
+      }
+    })
+    setProfits(obj)
+  }, [order])
 
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
@@ -548,11 +567,6 @@ export const PlaceOrder: FC = () => {
     setDropdownVisible(!dropdownVisible)
   }
 
-  const takeProfitClick = (e) => {
-    setTakeProfitArrow(!takeProfitArrow)
-    setTakeProfit(!takeProfit)
-  }
-
   const handlePlaceOrder = async () => {
     if (buttonState === ButtonState.CanPlaceOrder) {
       setLoading(true)
@@ -606,34 +620,29 @@ export const PlaceOrder: FC = () => {
 
   const handleMenuClick = (e) => {
     if (e.key !== '4') {
-      setTakeProfit(false)
+      setTakeProfitDropdown(false)
       setTakeProfitArrow(false)
-    } else setOpen(true)
+    } else setTakeProfitDropdown(true)
   }
 
-  const handleOpenChange = (flag, str) => {
-    //console.log(flag, str)
-    //setTakeProfitArrow(!takeProfitArrow)
-    //setTakeProfit(flag)
+  const handleOpenChange = (flag) => {
+    setTakeProfitArrow(!takeProfitArrow)
+    setTakeProfitDropdown(flag)
   }
 
   const handleDropdownInput = (e) => {
     const inputAmt = e.target.value.replace(/[^0-9]/g, '')
-    if (!isNaN(inputAmt)) setTakeProfitAmount(inputAmt)
+    if (!isNaN(inputAmt)) setTakeProfitAmount(+inputAmt)
     setTakeProfitIndex(null)
+    console.log('check:', takeProfitAmount)
     //setSaveAmount(saveAmount)
   }
 
   const handleSave = (e) => {
     setTakeProfitIndex(null)
     setTakeProfitArrow(false)
-    setTakeProfit(false)
-    //setSaveAmount(null)
-  }
-
-  const openDropdown = () => {
-    setTakeProfit(!takeProfit)
-    setTakeProfitArrow(!takeProfitArrow)
+    setTakeProfitDropdown(false)
+    setTakeProfitAmount(null)
   }
 
   const calcTakeProfit = (value, index) => {
@@ -681,7 +690,7 @@ export const PlaceOrder: FC = () => {
         >
           <span tw="mr-2 font-semibold text-tiny text-grey-5">{item.display}</span>
           <span className={type === 0 ? 'green' : 'red'} tw="font-semibold text-tiny mr-auto">
-            {type === 0 ? '($980)' : '($230)'}
+            {profits[index] ? '($' + profits[index] + ')' : '(-)'}
           </span>
           <input
             type="radio"
@@ -717,7 +726,7 @@ export const PlaceOrder: FC = () => {
         className={takeProfitAmount ? 'save-enable' : 'save-disable'}
         onClick={takeProfitAmount ? handleSave : null}
       >
-        Save
+        Clear
       </DROPDOWN_SAVE>
     )
     items.push({
@@ -725,6 +734,22 @@ export const PlaceOrder: FC = () => {
       key: 5
     })
     return items
+  }
+
+  const getTakeProfitParam = () => {
+    if (takeProfitIndex !== null) {
+      const numPrice = +order.price
+      if (Number.isNaN(numPrice)) return null
+
+      const profitPrice =
+        numPrice +
+        (order.side === 'buy'
+          ? percentArray[takeProfitIndex].value * numPrice
+          : -percentArray[takeProfitIndex].value * numPrice)
+      return profitPrice
+    } else if (takeProfitAmount > 0) {
+      return takeProfitAmount
+    } else return null
   }
 
   const sliderValue = useMemo(() => {
@@ -771,7 +796,7 @@ export const PlaceOrder: FC = () => {
               }
               className={mode === 'dark' ? 'dark' : ''}
             >
-              <TradeConfirmation setVisibility={setConfirmationModal} />
+              <TradeConfirmation setVisibility={setConfirmationModal} takeProfit={getTakeProfitParam()} />
             </SETTING_MODAL>
           </>
         )}
@@ -954,22 +979,26 @@ export const PlaceOrder: FC = () => {
             <div tw="flex flex-row">
               <INPUT_WRAPPER $halfWidth={true}>
                 <div className="label">Take Profit</div>
-                <div className={`dropdownContainer ${mode} take-profit`} onClick={() => openDropdown()}>
-                  {/* <span>{takeProfitIndex !== null ? percentArray[takeProfitIndex]?.display : 'N/A'}</span> */}
+                <div className={`dropdownContainer ${mode} take-profit`}>
                   <span className="green">
-                    ${takeProfitIndex !== null ? percentArray[takeProfitIndex].display : takeProfitAmount}
+                    $
+                    {takeProfitIndex !== null
+                      ? profits[takeProfitIndex]
+                        ? profits[takeProfitIndex]
+                        : '(-)'
+                      : takeProfitAmount}
                   </span>
                   <ArrowDropdown
                     arrowRotation={takeProfitArrow}
                     overlayClassName="takep-stopl-container"
-                    offset={[-120, 15]}
+                    offset={[15, 15]}
                     onVisibleChange={null}
                     placement="bottomLeft"
                     menu={{ items: getItems(), onClick: handleMenuClick }}
                     overlay={<></>}
                     measurements="11px !important"
                     onOpenChange={handleOpenChange}
-                    open={takeProfit}
+                    open={takeProfitDropdown}
                   />
                 </div>
               </INPUT_WRAPPER>

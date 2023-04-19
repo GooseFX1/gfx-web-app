@@ -3,7 +3,7 @@ import React, { FC, ReactNode, useMemo, useState, useEffect, useRef } from 'reac
 import { Dropdown, Menu, Skeleton } from 'antd'
 import { DownOutlined } from '@ant-design/icons'
 import { MarketSide, useCrypto, useOrder, useOrderBook, useTradeHistory } from '../../context'
-import { removeFloatingPointError } from '../../utils'
+import { checkMobile, removeFloatingPointError } from '../../utils'
 import tw, { styled } from 'twin.macro'
 
 const SPREADS = [1 / 100, 5 / 100, 1 / 10, 5 / 10, 1]
@@ -487,20 +487,22 @@ export const OrderBook: FC = () => {
           </ORDERBOOK_CONTAINER>
         )}
       </ORDERS>
-      <SPREAD_FOOTER>
-        <div>{'Spread'}</div>
-        <div>{spreadAbsolute[1]}%</div>
-        <div>
-          {
-            <Dropdown overlay={SPREAD_DROPDOWN} trigger={['click']}>
-              <div className="spreadDropdown">
-                {SPREADS[spreadIndex]}
-                <DownOutlined />
-              </div>
-            </Dropdown>
-          }
-        </div>
-      </SPREAD_FOOTER>
+      {!checkMobile() && (
+        <SPREAD_FOOTER>
+          <div>{'Spread'}</div>
+          <div>{spreadAbsolute[1]}%</div>
+          <div>
+            {
+              <Dropdown overlay={SPREAD_DROPDOWN} trigger={['click']}>
+                <div className="spreadDropdown">
+                  {SPREADS[spreadIndex]}
+                  <DownOutlined />
+                </div>
+              </Dropdown>
+            }
+          </div>
+        </SPREAD_FOOTER>
+      )}
     </WRAPPER>
   )
 }
