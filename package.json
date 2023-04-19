@@ -40,7 +40,7 @@
     "@solana/wallet-adapter-base": "^0.9.20",
     "@solana/wallet-adapter-react": "^0.15.28",
     "@solana/wallet-adapter-wallets": "^0.19.10",
-    "@solana/web3.js": "^1.58.0",
+    "@solana/web3.js": "^1.75.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.2.1",
@@ -141,7 +141,7 @@
     "yarn-upgrade-all": "^0.5.4"
   },
   "resolutions": {
-    "@solana/web3.js": "^1.58.0",
+    "@solana/web3.js": "^1.75.0",
     "@types/react": "^17.0.50",
     "@types/react-dom": "^17.0.17",
     "goosefx-ssl-sdk/@solana/spl-token": "0.2.0",
