@@ -209,7 +209,7 @@ const INPUT_WRAPPER = styled.div<{ $halfWidth?: boolean }>`
     padding: 1px;
   }
   .take-profit {
-    ${tw`cursor-auto border-[1.5px] border-solid border dark:border-grey-2 border-grey-1`}
+    ${tw`cursor-pointer border-[1.5px] border-solid border dark:border-grey-2 border-grey-1`}
   }
   .stop-loss {
     ${tw`cursor-not-allowed border-[1.5px] border-solid border dark:border-grey-2 border-grey-1`}
@@ -612,9 +612,9 @@ export const PlaceOrder: FC = () => {
   }
 
   const handleOpenChange = (flag, str) => {
-    console.log(flag, str)
-    setTakeProfitArrow(!takeProfitArrow)
-    setTakeProfit(flag)
+    //console.log(flag, str)
+    //setTakeProfitArrow(!takeProfitArrow)
+    //setTakeProfit(flag)
   }
 
   const handleDropdownInput = (e) => {
@@ -629,6 +629,11 @@ export const PlaceOrder: FC = () => {
     setTakeProfitArrow(false)
     setTakeProfit(false)
     //setSaveAmount(null)
+  }
+
+  const openDropdown = () => {
+    setTakeProfit(!takeProfit)
+    setTakeProfitArrow(!takeProfitArrow)
   }
 
   const calcTakeProfit = (value, index) => {
@@ -949,7 +954,7 @@ export const PlaceOrder: FC = () => {
             <div tw="flex flex-row">
               <INPUT_WRAPPER $halfWidth={true}>
                 <div className="label">Take Profit</div>
-                <div className={`dropdownContainer ${mode} take-profit`}>
+                <div className={`dropdownContainer ${mode} take-profit`} onClick={() => openDropdown()}>
                   {/* <span>{takeProfitIndex !== null ? percentArray[takeProfitIndex]?.display : 'N/A'}</span> */}
                   <span className="green">
                     ${takeProfitIndex !== null ? percentArray[takeProfitIndex].display : takeProfitAmount}
