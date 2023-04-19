@@ -194,7 +194,7 @@ const INPUT_WRAPPER = styled.div<{ $halfWidth?: boolean }>`
     .green {
       ${tw`text-[#80CE00]`}
       width: 90%;
-      overflow-y: scroll;
+      overflow-y: hidden;
       text-align: left;
     }
     .red {

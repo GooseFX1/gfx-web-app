@@ -430,6 +430,14 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
     setVisibility(false)
   }
 
+  const handleSave = () => {
+    setTakeProfitAmt(null)
+    setInput(null)
+    setIndex(null)
+    setTakeProfitIndex(null)
+    setVisibility(false)
+  }
+
   return (
     <TAKEPROFITWRAPPER>
       <div className="selected-val">
@@ -457,17 +465,8 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
       </TAKEPROFITSELECTOR>
       <span tw="ml-10">Custom Price</span>
       <input value={takeProfitAmt} onChange={isNumber} placeholder="$0.00" />
-      <span
-        className={takeProfitAmt ? 'save-enable' : 'save-disable'}
-        onClick={
-          takeProfitAmt
-            ? () => {
-                setVisibility(false)
-              }
-            : null
-        }
-      >
-        Save
+      <span className={takeProfitAmt ? 'save-enable' : 'save-disable'} onClick={takeProfitAmt ? handleSave : null}>
+        Clear
       </span>
     </TAKEPROFITWRAPPER>
   )
