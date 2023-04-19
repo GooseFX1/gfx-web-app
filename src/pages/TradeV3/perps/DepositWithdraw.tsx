@@ -226,10 +226,10 @@ export const DepositWithdraw: FC<{
             <div className="available-bal">
               {tradeType === 'deposit'
                 ? tokenAmount && tokenAmount.uiAmountString
-                  ? tokenAmount.uiAmountString
+                  ? Number(tokenAmount.uiAmountString).toFixed(2)
                   : '0.00'
                 : traderInfo.maxWithdrawable
-                ? traderInfo.maxWithdrawable
+                ? Number(traderInfo.maxWithdrawable).toFixed(2)
                 : '0.00'}
             </div>
             <img

@@ -380,7 +380,7 @@ export const InfoBanner: FC<{
         <INFO_STATS>
           <>
             <div>Open Interest</div>
-            {!traderInfo.openInterests ? <Loader /> : <div> {openInterestFormatted} SOL</div>}
+            {!traderInfo.openInterests ? <Loader /> : <div> {Number(openInterestFormatted).toFixed(3)} SOL</div>}
           </>
         </INFO_STATS>
       )}

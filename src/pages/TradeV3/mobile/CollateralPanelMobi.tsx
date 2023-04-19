@@ -257,7 +257,7 @@ export const CollateralPanelMobi = ({ setUserProfile }) => {
         <img
           src={`/img/assets/close-gray-icon.svg`}
           alt="close-icon"
-          tw="absolute top-5 right-5"
+          tw="absolute top-5 right-5 z-10"
           height="18px"
           width="18px"
           onClick={() => setUserProfile(false)}

@@ -148,6 +148,9 @@ const TRADE_HISTORY = styled.div`
   .Short {
     ${tw`text-[#F35355]`}
   }
+  .wrapper:last-child {
+    padding-bottom: 70px;
+  }
 `
 
 const HEADER = styled.div`
@@ -509,7 +512,7 @@ export const UserProfile = ({ setUserProfile }) => {
           <img
             src={`/img/assets/close-gray-icon.svg`}
             alt="close-icon"
-            tw="absolute top-5 right-5"
+            tw="absolute top-5 right-5 z-10"
             height="18px"
             width="18px"
             onClick={() => setUserProfile(false)}

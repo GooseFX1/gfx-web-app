@@ -968,11 +968,11 @@ export const PlaceOrder: FC = () => {
                   />
                 </div>
               </INPUT_WRAPPER>
-              {/* <INPUT_WRAPPER $halfWidth={true}>
+              <INPUT_WRAPPER $halfWidth={true}>
                 <div className="label disable">Stop Loss</div>
-                <div className={`dropdownContainer ${mode} stop-loss`} onClick={()=>setType(1)}>
-                  <span className='red'>None</span>
-                  <span className='green'>{takeProfitIndex  !==null ? percentArray[takeProfitIndex].display : takeProfitAmount}</span>
+                <div className={`dropdownContainer ${mode} stop-loss`}>
+                  <span className="red">None</span>
+                  {/* <span className='green'>{takeProfitIndex  !==null ? percentArray[takeProfitIndex].display : takeProfitAmount}</span> */}
                   <ArrowDropdown
                     arrowRotation={false}
                     overlayClassName="takep-stopl-container"
@@ -986,7 +986,7 @@ export const PlaceOrder: FC = () => {
                     open={false}
                   />
                 </div>
-              </INPUT_WRAPPER> */}
+              </INPUT_WRAPPER>
             </div>
             <div tw="flex flex-row mt-[-6px]">
               <ORDER_CATEGORY>
