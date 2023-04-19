@@ -16,6 +16,7 @@ import { useLocalStorage } from '../utils'
 import { NETWORK_CONSTANTS } from '../constants'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 
+const SECONDS_30 = 30 * 1000
 export const SOL_TLD_AUTHORITY = new PublicKey('58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx')
 
 export const isValidSolanaAddress = (address: string): boolean => {
@@ -24,6 +25,34 @@ export const isValidSolanaAddress = (address: string): boolean => {
   } catch (error) {
     return false
   }
+}
+
+const gfxConfirmTransaction = async (
+  connection: Connection,
+  sig: string,
+  statusType: string,
+  startTime: number
+): Promise<any> => {
+  const res = await connection.getSignatureStatuses([sig])
+  const currentTime = new Date().getTime()
+  if (currentTime - startTime >= SECONDS_30) {
+    throw new Error('Transaction timeout error!')
+  }
+  if (res.value[0]?.confirmationStatus === statusType) {
+    const confirm = { value: { err: null } }
+    return confirm
+  } else {
+    await new Promise((resolve) => setTimeout(() => resolve(true), 500))
+    return gfxConfirmTransaction(connection, sig, statusType, startTime)
+  }
+}
+export const confirmTransaction = async (
+  connection: Connection,
+  sig: string,
+  statusType: string
+): Promise<any> => {
+  const startTime = new Date().getTime()
+  return gfxConfirmTransaction(connection, sig, statusType, startTime)
 }
 
 export const createAssociatedTokenAccountIx = (

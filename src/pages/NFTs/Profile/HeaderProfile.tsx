@@ -16,7 +16,8 @@ import {
   AUCTION_HOUSE_PREFIX,
   AUCTION_HOUSE_PROGRAM_ID,
   toPublicKey,
-  createWithdrawInstruction
+  createWithdrawInstruction,
+  confirmTransaction
 } from '../../../web3'
 import { callWithdrawInstruction } from '../actions'
 import { MainButton, SuccessfulListingMsg, FloatingActionButton } from '../../../components'
@@ -152,7 +153,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
       const signature = await sendTransaction(transaction, connection)
       console.log(signature)
 
-      const confirm = await connection.confirmTransaction(signature, 'confirmed')
+      const confirm = await confirmTransaction(connection, signature, 'confirmed')
       console.log(confirm)
 
       if (confirm.value.err === null) {

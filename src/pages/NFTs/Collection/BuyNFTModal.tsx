@@ -44,7 +44,8 @@ import {
   CancelInstructionAccounts,
   StringPublicKey,
   toPublicKey,
-  bnTo8
+  bnTo8,
+  confirmTransaction
 } from '../../../web3'
 import { Button } from '../../../components/Button'
 import { GFX_LINK } from '../../../styles'
@@ -540,24 +541,21 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
 
       console.log(signature)
       setPendingTxSig(signature)
-      setTimeout(() => {
-        postBidToAPI(signature, new BN(curBid * LAMPORTS_PER_SOL_NUMBER), tokenSize).then((res) => {
-          console.log(res)
+      postBidToAPI(signature, new BN(curBid * LAMPORTS_PER_SOL_NUMBER), tokenSize).then((res) => {
+        console.log(res)
+        notify(successfulListingMessage(signature, nftMetadata, curBid.toString()))
 
-          notify(successfulListingMessage(signature, nftMetadata, curBid.toString()))
+        if (res === 'Error') {
+          callCancelInstruction()
+          setIsLoading(false)
+        } else if (res.data.bid_matched && res.data.tx_sig) {
+          fetchUser(publicKey.toBase58())
+          notify(successBidMatchedMessage(res.data.tx_sig, nftMetadata, curBid.toString()))
+          setTimeout(() => history.push(`/NFTs/profile/${publicKey.toBase58()}`), 2000)
+        }
+      })
 
-          if (res === 'Error') {
-            callCancelInstruction()
-            setIsLoading(false)
-          } else if (res.data.bid_matched && res.data.tx_sig) {
-            fetchUser(publicKey.toBase58())
-            notify(successBidMatchedMessage(res.data.tx_sig, nftMetadata, curBid.toString()))
-            setTimeout(() => history.push(`/NFTs/profile/${publicKey.toBase58()}`), 2000)
-          }
-        })
-      }, 35 * 1000)
-
-      const confirm = await connection.confirmTransaction(signature, 'finalized')
+      const confirm = await confirmTransaction(connection, signature, 'confirmed')
 
       // if buyer price === ask?.buyer_price the api mey need to be called
       if (confirm.value.err === null) {
@@ -670,7 +668,7 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
     const transaction = new Transaction().add(cancelIX)
     const signature = await sendTransaction(transaction, connection)
     console.log(signature)
-    const confirm = await connection.confirmTransaction(signature, 'finalized')
+    const confirm = await confirmTransaction(connection, signature, 'confirmed')
     console.log(confirm)
   }
 
