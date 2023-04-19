@@ -8,6 +8,7 @@ const WRAPPER = styled.div<{ $index: number }>`
   background: ${({ theme }) => theme.bg20};
   top: 500px; //do not remove
   height: 100vh;
+  border-radius: 25px 25px 0px 0px;
 
   .header {
     ${tw`flex flex-row justify-around items-center h-[49px] relative`}

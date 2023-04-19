@@ -7,6 +7,7 @@ import { convertToFractional } from './utils'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { PERPS_COLLATERAL } from './perpsConstants'
 import 'styled-components/macro'
+import { checkMobile } from '../../../utils'
 
 const WRAPPER = styled.div`
   .input-row {
@@ -42,7 +43,7 @@ const DROPDOWN_PAIR_DIV = styled.div`
     ${tw`h-7 w-7`}
   }
   .available-bal {
-    ${tw`mr-3.75 text-[16px] font-semibold`}
+    ${tw`mr-3.75 text-[16px] font-semibold sm:text-regular`}
   }
 `
 
@@ -74,12 +75,12 @@ const COIN_INFO = styled.div`
   }
 
   .market-add {
-    ${tw`text-[16px] font-semibold`}
+    ${tw`text-[16px] font-semibold sm:text-tiny`}
     color: ${({ theme }) => theme.text36};
   }
 
   .coin {
-    ${tw`text-[16px] font-semibold`}
+    ${tw`text-[16px] font-semibold sm:text-regular`}
     color: ${({ theme }) => theme.text11};
   }
 `
@@ -134,8 +135,9 @@ export const DepositWithdraw: FC<{
   const [percentageIndex, setPercentageindex] = useState(null)
   const [perpToken, setPerpToken] = useState(defualtPerpToken)
   const { depositFunds, withdrawFunds } = useTraderConfig()
-  const truncateAddress = (address: string): string => `${address.substr(0, 5)}..${address.substr(-5, 5)}`
-  const trunMarketAddress = truncateAddress(perpToken.marketAddress)
+  const truncateAddress = (address: string, lengthToTruncate): string =>
+    `${address.substr(0, lengthToTruncate)}..${address.substr(-5, lengthToTruncate)}`
+  const trunMarketAddress = truncateAddress(perpToken.marketAddress, checkMobile() ? 3 : 5)
   const symbol = perpToken.token
   const tokenAmount = balances[perpToken.marketAddress]
   const assetIcon = useMemo(
