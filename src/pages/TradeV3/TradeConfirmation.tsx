@@ -4,29 +4,30 @@ import 'styled-components/macro'
 import { Button } from '../../components/Button'
 import { useCrypto, useOrder } from '../../context'
 import { useTraderConfig } from '../../context/trader_risk_group'
+import { checkMobile } from '../../utils'
 
 const WRAPPER = styled.div``
 
 const ROW = styled.div`
-  ${tw`flex flex-row justify-between items-start mb-2.5`}
+  ${tw`flex flex-row justify-between items-start mb-2.5 sm:mb-2`}
 
   > span {
-    ${tw`text-average font-semibold text-grey-2`}
+    ${tw`text-average font-semibold text-grey-2 sm:text-regular`}
   }
 
   .value {
-    ${tw`text-black-4 dark:text-white`}
+    ${tw`text-black-4 dark:text-white font-semibold sm:text-regular`}
   }
 
   .spacing {
-    ${tw`mb-[25px]`}
+    ${tw`mb-[25px] sm:mb-3.75`}
   }
 `
 
-export const TradeConfirmation: FC<{ setVisibility: any }> = ({ setVisibility }) => {
+export const TradeConfirmation: FC<{ setVisibility: any; takeProfit?: any }> = ({ setVisibility, takeProfit }) => {
   const { order } = useOrder()
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
-  const { newOrder } = useTraderConfig()
+  const { newOrder, newOrderTakeProfit } = useTraderConfig()
 
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
@@ -50,7 +51,7 @@ export const TradeConfirmation: FC<{ setVisibility: any }> = ({ setVisibility })
   }, [notionalValue, fee])
 
   const handleClick = async () => {
-    await newOrder()
+    !takeProfit ? await newOrder() : await newOrderTakeProfit(takeProfit.toString())
     setVisibility(false)
   }
 
@@ -61,7 +62,7 @@ export const TradeConfirmation: FC<{ setVisibility: any }> = ({ setVisibility })
 
   return (
     <WRAPPER>
-      <div tw="mt-[30px] mb-7">
+      <div tw="mt-[30px] mb-7 sm:my-0">
         <ROW>
           <span>Order Type</span>
           <span className="value">{order.display === 'limit' ? 'Limit' : 'Market'}</span>
@@ -103,8 +104,13 @@ export const TradeConfirmation: FC<{ setVisibility: any }> = ({ setVisibility })
           <span className="value">$14.9628</span>
         </ROW> */}
       </div>
-      <Button onClick={() => handleClick()} width="100%" height="50px" cssStyle={cssStyle}>
-        {order.side === 'buy' ? 'Long' : 'Short'} {order.size} {symbol}
+      <Button
+        onClick={() => handleClick()}
+        width="100%"
+        height={checkMobile() ? '45px' : '50px'}
+        cssStyle={cssStyle}
+      >
+        {order.side === 'buy' ? 'Long' : 'Short'} {Number(order.size).toFixed(3)} {symbol}
       </Button>
     </WRAPPER>
   )

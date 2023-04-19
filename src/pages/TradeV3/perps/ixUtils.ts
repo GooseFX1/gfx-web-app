@@ -12,30 +12,13 @@ import {
   ICancelOrderAccounts
 } from '../../../types/dexterity_instructions'
 import { sendPerpsTransaction } from '../../NFTs/launchpad/candyMachine/connection'
-import {
-  displayFractional,
-  getDexProgram,
-  getFeeModelConfigAcct,
-  getMarketSigner,
-  getRiskSigner,
-  getTraderFeeAcct
-} from './utils'
+import { getDexProgram, getFeeModelConfigAcct, getMarketSigner, getRiskSigner, getTraderFeeAcct } from './utils'
 import * as anchor from '@project-serum/anchor'
-import {
-  DEX_ID,
-  FEES_ID,
-  FEE_OUTPUT_REGISTER,
-  MPG_ID,
-  MPs,
-  ORDERBOOK_P_ID,
-  RISK_ID,
-  VAULT_MINT
-} from './perpsConstants'
+import { DEX_ID, FEES_ID, MPG_ID, RISK_ID, VAULT_MINT } from './perpsConstants'
 import { findAssociatedTokenAddress } from '../../../web3'
 import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
 import { struct, u8 } from '@solana/buffer-layout'
 import { notify } from '../../../utils'
-import { perpsNotify } from '../../../utils/perpsNotifications'
 
 export const newOrderIx = async (
   newOrderAccounts: INewOrderAccounts,
@@ -81,10 +64,22 @@ export const newOrderIx = async (
     //  styles: {}
     //})
     const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
-      startMessage: 'Placing order...',
-      progressMessage: 'Confirming order...',
-      endMessage: 'Order Placed Successfully',
-      errorMessage: 'Error in placing order. Please try a smaller quantity for this price!'
+      startMessage: {
+        header: 'New Order',
+        description: 'Sign the transaction to place a new order!'
+      },
+      progressMessage: {
+        header: 'New Order',
+        description: 'Submitting new order on the network..'
+      },
+      endMessage: {
+        header: 'New Order',
+        description: 'New order successfully placed'
+      },
+      errorMessage: {
+        header: 'New Order',
+        description: 'There was an error in placeing the order'
+      }
     })
     if (response && response.txid) {
       //  perpsNotify({
@@ -101,6 +96,95 @@ export const newOrderIx = async (
     //  message: 'Order failed!',
     //  type: 'error'
     //})
+  }
+  return null
+}
+
+export const newTakeProfitOrderIx = async (
+  newOrderAccounts: INewOrderAccounts,
+  newOrderParams,
+  newTakeProfitOrderParams,
+  wallet,
+  connection: Connection
+) => {
+  const instructions = []
+  const dexProgram = await getDexProgram(connection, wallet)
+
+  //instructions.push(await consumeOBIx(wallet, connection, consumeAccounts))
+  instructions.push(
+    await dexProgram.instruction.newOrder(newOrderParams, {
+      accounts: {
+        user: wallet.publicKey,
+        traderRiskGroup: newOrderAccounts.traderRiskGroup,
+        marketProductGroup: newOrderAccounts.marketProductGroup,
+        product: newOrderAccounts.product,
+        aaobProgram: newOrderAccounts.aaobProgram,
+        orderbook: newOrderAccounts.orderbook,
+        marketSigner: newOrderAccounts.marketSigner,
+        eventQueue: newOrderAccounts.eventQueue,
+        bids: newOrderAccounts.bids,
+        asks: newOrderAccounts.asks,
+        systemProgram: newOrderAccounts.systemProgram,
+        feeModelProgram: newOrderAccounts.feeModelProgram,
+        feeModelConfigurationAcct: newOrderAccounts.feeModelConfigurationAcct,
+        traderFeeStateAcct: newOrderAccounts.traderFeeStateAcct,
+        feeOutputRegister: newOrderAccounts.feeOutputRegister,
+        riskEngineProgram: newOrderAccounts.riskEngineProgram,
+        riskModelConfigurationAcct: newOrderAccounts.riskModelConfigurationAcct,
+        riskOutputRegister: newOrderAccounts.riskOutputRegister,
+        traderRiskStateAcct: newOrderAccounts.traderRiskStateAcct,
+        riskAndFeeSigner: newOrderAccounts.riskAndFeeSigner
+      }
+    })
+  )
+  instructions.push(
+    await dexProgram.instruction.newOrder(newTakeProfitOrderParams, {
+      accounts: {
+        user: wallet.publicKey,
+        traderRiskGroup: newOrderAccounts.traderRiskGroup,
+        marketProductGroup: newOrderAccounts.marketProductGroup,
+        product: newOrderAccounts.product,
+        aaobProgram: newOrderAccounts.aaobProgram,
+        orderbook: newOrderAccounts.orderbook,
+        marketSigner: newOrderAccounts.marketSigner,
+        eventQueue: newOrderAccounts.eventQueue,
+        bids: newOrderAccounts.bids,
+        asks: newOrderAccounts.asks,
+        systemProgram: newOrderAccounts.systemProgram,
+        feeModelProgram: newOrderAccounts.feeModelProgram,
+        feeModelConfigurationAcct: newOrderAccounts.feeModelConfigurationAcct,
+        traderFeeStateAcct: newOrderAccounts.traderFeeStateAcct,
+        feeOutputRegister: newOrderAccounts.feeOutputRegister,
+        riskEngineProgram: newOrderAccounts.riskEngineProgram,
+        riskModelConfigurationAcct: newOrderAccounts.riskModelConfigurationAcct,
+        riskOutputRegister: newOrderAccounts.riskOutputRegister,
+        traderRiskStateAcct: newOrderAccounts.traderRiskStateAcct,
+        riskAndFeeSigner: newOrderAccounts.riskAndFeeSigner
+      }
+    })
+  )
+  try {
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
+      startMessage: {
+        header: 'New Order',
+        description: 'Sign the transaction to place a new order!'
+      },
+      progressMessage: {
+        header: 'New Order',
+        description: 'Submitting new order on the network..'
+      },
+      endMessage: {
+        header: 'New Order',
+        description: 'New order successfully placed'
+      },
+      errorMessage: {
+        header: 'New Order',
+        description: 'There was an error in placeing the order'
+      }
+    })
+    return response
+  } catch (e) {
+    console.log(e)
   }
   return null
 }
@@ -136,15 +220,24 @@ export const cancelOrderIx = async (
     })
   )
   try {
-    const response = await sendPerpsTransaction(connection, wallet, instructions, [])
-    if (response && response.txid) {
-      perpsNotify({
-        action: 'open',
-        message: 'Order canceled Successfully!',
-        key: 12,
-        styles: {}
-      })
-    }
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
+      startMessage: {
+        header: 'Cancel Order',
+        description: 'Sign the transaction to cancel the order!'
+      },
+      progressMessage: {
+        header: 'Cancel Order',
+        description: 'Cancelling order on the network..'
+      },
+      endMessage: {
+        header: 'Cancel Order',
+        description: 'Order cancelled'
+      },
+      errorMessage: {
+        header: 'Cancel Order',
+        description: 'There was an error in cancelling the order'
+      }
+    })
     return response
   } catch (e) {
     console.log(e)
@@ -177,18 +270,30 @@ export const depositFundsIx = async (
     })
   )
   try {
-    const response = await sendPerpsTransaction(connection, wallet, instructions, [])
-    if (response && response.txid) {
-      notify({
-        message: 'Deposit of ' + displayFractional(depositFundsParams.quantity) + ' successful'
-      })
-    }
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
+      startMessage: {
+        header: 'Deposit funds',
+        description: 'Sign the transaction to deposit funds!'
+      },
+      progressMessage: {
+        header: 'Deposit funds',
+        description: 'Depositing funds to your account..'
+      },
+      endMessage: {
+        header: 'Deposit funds',
+        description: 'Funds successfully deposited'
+      },
+      errorMessage: {
+        header: 'Deposit funds',
+        description: 'There was an error in depositing the funds'
+      }
+    })
     return response
   } catch (e) {
-    notify({
-      message: 'Deposit of ' + displayFractional(depositFundsParams.quantity) + ' failed',
-      type: 'error'
-    })
+    //notify({
+    //  message: 'Deposit of ' + displayFractional(depositFundsParams.quantity) + ' failed',
+    //  type: 'error'
+    //})
     return e
   }
 }
@@ -244,19 +349,36 @@ export const withdrawFundsIx = async (
     })
   )
   try {
-    const response = await sendPerpsTransaction(connection, wallet, instructions, [])
-    if (response && response.txid) {
-      notify({
-        message: 'Funds withdrawn Successfully!'
-      })
-    }
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
+      startMessage: {
+        header: 'Withdraw funds',
+        description: 'Sign the transaction to withdraw funds!'
+      },
+      progressMessage: {
+        header: 'Withdraw funds',
+        description: 'Withdrawing funds to your account..'
+      },
+      endMessage: {
+        header: 'Withdraw funds',
+        description: 'Funds successfully withdrawn'
+      },
+      errorMessage: {
+        header: 'Withdraw funds',
+        description: 'There was an error in withdrawing the funds'
+      }
+    })
+    //if (response && response.txid) {
+    //  notify({
+    //    message: 'Funds withdrawn Successfully!'
+    //  })
+    //}
     return response
   } catch (e) {
     console.log(e)
-    notify({
-      message: 'Withdrawl failed. Please try again with a smaller amount',
-      type: 'error'
-    })
+    //notify({
+    //  message: 'Withdrawl failed. Please try again with a smaller amount',
+    //  type: 'error'
+    //})
     return null
   }
 }
@@ -352,8 +474,8 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
     SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
       newAccountPubkey: traderRiskGroup.publicKey,
-      lamports: await connection.getMinimumBalanceForRentExemption(34464), //Need to change
-      space: 34464, //Need to change
+      lamports: await connection.getMinimumBalanceForRentExemption(13744), //Need to change
+      space: 13744, //Need to change
       programId: new PublicKey(DEX_ID)
     })
   )

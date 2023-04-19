@@ -3,7 +3,7 @@ import React, { FC, ReactNode, useMemo, useState, useEffect, useRef } from 'reac
 import { Dropdown, Menu, Skeleton } from 'antd'
 import { DownOutlined } from '@ant-design/icons'
 import { MarketSide, useCrypto, useOrder, useOrderBook, useTradeHistory } from '../../context'
-import { removeFloatingPointError } from '../../utils'
+import { checkMobile, removeFloatingPointError } from '../../utils'
 import tw, { styled } from 'twin.macro'
 
 const SPREADS = [1 / 100, 5 / 100, 1 / 10, 5 / 10, 1]
@@ -25,10 +25,6 @@ const HEADER = styled.div`
     }
     div:nth-child(3) {
       ${tw`text-right w-1/3 justify-end`}
-      .spreadDropdown {
-        ${tw`justify-end cursor-pointer w-12 text-tiny w-12.5 rounded-[5px]`}
-        background: linear-gradient(90.62deg, #f48537 2.36%, #a72ebd 99.71%);
-      }
     }
   }
   div:nth-child(2) {
@@ -69,6 +65,7 @@ const LOADER = styled(Skeleton.Input)`
 
 const ORDERS = styled.div<{ $visible: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
+  height: calc(100% - 60px);
   justify-content: space-between;
   align-items: center;
   max-height: ${({ $visible }) => ($visible ? '328px' : 'auto')};
@@ -199,9 +196,13 @@ const ORDERBOOK_CONTAINER = styled.div`
 
 const SPREAD_FOOTER = styled.div`
   display: flex;
-  justify-content: center;
-  position: relative;
-  top: 8px;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  position: absolute;
+  padding-left: 5px;
+  padding-right: 5px;
+  bottom: 0px;
   //background-color: ${({ theme }) => theme.bg13};
   div {
     color: ${({ theme }) => theme.text1};
@@ -213,6 +214,10 @@ const SPREAD_FOOTER = styled.div`
       margin-left: 10px;
     }
   }
+  ${tw`h-8 border-t-[1px] border-solid dark:border-[#3c3c3c] border-[#CACACA] w-full`}
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
 `
 
 const Loader: FC = () => (
@@ -482,14 +487,22 @@ export const OrderBook: FC = () => {
           </ORDERBOOK_CONTAINER>
         )}
       </ORDERS>
-      {/*<SPREAD_FOOTER>
-        <div>
-          Spread
-          <span>
-            {spreadAbsolute[0]}, {spreadAbsolute[1]}%
-          </span>
-        </div>
-      </SPREAD_FOOTER>*/}
+      {!checkMobile() && (
+        <SPREAD_FOOTER>
+          <div>{'Spread'}</div>
+          <div>{spreadAbsolute[1]}%</div>
+          <div>
+            {
+              <Dropdown overlay={SPREAD_DROPDOWN} trigger={['click']}>
+                <div className="spreadDropdown">
+                  {SPREADS[spreadIndex]}
+                  <DownOutlined />
+                </div>
+              </Dropdown>
+            }
+          </div>
+        </SPREAD_FOOTER>
+      )}
     </WRAPPER>
   )
 }

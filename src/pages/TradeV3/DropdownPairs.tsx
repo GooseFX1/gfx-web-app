@@ -5,6 +5,8 @@ import { useHistory } from 'react-router-dom'
 import { MarketType, useCrypto, useDarkMode, usePriceFeed } from '../../context'
 import { Modal, SearchBar } from '../../components'
 import tw, { styled } from 'twin.macro'
+import { checkMobile } from '../../utils'
+import 'styled-components/macro'
 
 const SELECTED_PAIR_CTN = styled.div`
   ${tw`h-10 w-[180px] rounded-[36px] cursor-pointer p-0.5`}
@@ -47,20 +49,30 @@ const DROPDOWN_MODAL = styled(Modal)`
     ${tw`h-full overflow-y-hidden overflow-x-hidden`}
 
     .ant-modal-body {
-      ${tw`pb-0 pt-4`}
+      ${tw`pb-0 pt-4 sm:px-3`}
+
+      .header-wrapper {
+        ${tw`pb-3`}
+        border-bottom: ${({ theme }) => '1px solid ' + theme.tokenBorder};
+      }
+
+      > div {
+        > span {
+          ${tw`w-full`}
+        }
+      }
     }
   }
 
   .dropdown-modal-search {
-    ${tw`w-[440px] m-0`}
+    ${tw`w-[440px] m-0 sm:w-full`}
     background-color: ${({ theme }) => theme.bg2} !important;
 
     > input {
       background-color: ${({ theme }) => theme.bg2} !important;
     }
     > input::placeholder {
-      ${tw`text-tiny font-medium`}
-      color: ${({ theme }) => theme.text36};
+      ${tw`text-regular font-medium dark:text-grey-1 text-grey-2`}
     }
   }
 
@@ -78,7 +90,7 @@ const DROPDOWN_MODAL = styled(Modal)`
   }
 
   .popular-container:after {
-    ${tw`flex w-[528px] m-0 p-0 h-[1.5px]`}
+    ${tw`flex w-[528px] m-0 p-0 h-[1.5px] sm:h-0`}
     background-color: ${({ theme }) => theme.tokenBorder};
     content: '';
   }
@@ -99,7 +111,7 @@ const DROPDOWN_MODAL = styled(Modal)`
   }
 
   .no-result-found {
-    ${tw`text-center text-regular font-medium mt-[150px]`}
+    ${tw`text-center text-regular font-medium mt-[150px] sm:mt-[50px]`}
     color: ${({ theme }) => theme.text1};
   }
 `
@@ -108,6 +120,18 @@ const GRADIENT_BORDER = styled.div<{ $hoverBorder: boolean }>`
   ${tw`p-px rounded-tiny`}
   background: ${({ $hoverBorder, theme }) =>
     $hoverBorder ? 'linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);' : theme.bg20};
+`
+
+const MODAL_TITLE = styled.div`
+  ${tw`flex flex-row justify-center items-center`}
+
+  .btn {
+    ${tw`flex flex-row justify-center items-center mr-6 text-regular font-semibold text-grey-2 w-[90px] h-9 mb-3.75`}
+  }
+  .active {
+    ${tw`!text-white w-[90px] h-9 text-regular font-semibold border border-solid border-black rounded-[40px]`}
+    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+  }
 `
 
 const MostPopularCrypto: FC<{ pair: string; type: MarketType }> = ({ pair, type }) => {
@@ -195,6 +219,43 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
   )
 }
 
+const ModalHeader = ({ handleDropdownSearch }) => {
+  return (
+    <SearchBar
+      className="dropdown-modal-search"
+      placeholder="Search by name"
+      setSearchFilter={handleDropdownSearch}
+    />
+  )
+}
+
+const ModalHeaderMobi = ({ handleDropdownSearch }) => {
+  const { isSpot, setIsSpot } = useCrypto()
+
+  const handleToggle = (e: string) => {
+    if (e === 'spot') setIsSpot(true)
+    else setIsSpot(false)
+  }
+
+  return (
+    <div className="header-wrapper">
+      <MODAL_TITLE>
+        <div onClick={() => handleToggle('spot')} className={isSpot ? 'active btn' : 'btn'}>
+          Spot
+        </div>
+        <div onClick={() => handleToggle('perps')} className={!isSpot ? 'active btn' : 'btn'}>
+          Perps
+        </div>
+      </MODAL_TITLE>
+      <SearchBar
+        className="dropdown-modal-search"
+        placeholder="Search by name"
+        setSearchFilter={handleDropdownSearch}
+      />
+    </div>
+  )
+}
+
 export const DropdownPairs: FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
   const { selectedCrypto, getAskSymbolFromPair, formatPair, setFilteredSearchPairs, pairs, isSpot } = useCrypto()
@@ -230,11 +291,11 @@ export const DropdownPairs: FC = () => {
           bigTitle={false}
           visible={true}
           title={
-            <SearchBar
-              className="dropdown-modal-search"
-              placeholder="Search by name"
-              setSearchFilter={handleDropdownSearch}
-            />
+            checkMobile() ? (
+              <ModalHeaderMobi handleDropdownSearch={handleDropdownSearch} />
+            ) : (
+              <ModalHeader handleDropdownSearch={handleDropdownSearch} />
+            )
           }
         >
           <SelectCryptoModal setShowModal={setShowModal} />

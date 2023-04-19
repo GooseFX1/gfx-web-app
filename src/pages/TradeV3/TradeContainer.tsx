@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable */
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavCollapse, useCrypto, useDarkMode } from '../../context'
 import { OrderbookTabs } from './OrderbookTabs'
 import { TVChartContainer } from '../Crypto/TradingView/TradingView'
@@ -18,6 +18,8 @@ import useWindowSize from '../../utils/useWindowSize'
 import { logData } from '../../api/analytics'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
+import { checkMobile } from '../../utils'
+import { DexhomeMobi } from './mobile/DexhomeMobi'
 
 const ReactGridLayout = WidthProvider(Responsive)
 
@@ -277,10 +279,22 @@ const PERPS_INFO = styled.div<{ $wallet: boolean; $isLocked: boolean }>`
   }
 `
 
+function getInitLayout() {
+  const lg = localStorage.getItem('lg')
+  const md = localStorage.getItem('md')
+  if (lg && md) {
+    return {
+      lg: JSON.parse(lg),
+      md: JSON.parse(md)
+    }
+  }
+  return { lg: componentDimensionsLg, md: componentDimensionsMd }
+}
+
 export const CryptoContent: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const [isLocked, setIsLocked] = useState(true)
-  const [layout, setLayout] = useState({ lg: componentDimensionsLg, md: componentDimensionsMd })
+  const [layout, setLayout] = useState(getInitLayout())
   const isGeoBlocked = false
   const { height, width } = useWindowSize()
   const { mode } = useDarkMode()
@@ -300,9 +314,9 @@ export const CryptoContent: FC = () => {
     }, 300)
   }, [isSpot, selectedCrypto, mode])
 
-  useEffect(() => {
-    resetLayout()
-  }, [width])
+  //  useEffect(() => {
+  //    //resetLayout()
+  //  }, [width])
 
   const getRowHeight = (height: number) => (height < 800 ? 20 : height / 38)
 
@@ -426,13 +440,15 @@ export const CryptoContent: FC = () => {
     })
 
   const onLayoutChange = (layout) => {
+    localStorage.setItem('lg', JSON.stringify(layout))
+    localStorage.setItem('md', JSON.stringify(layout))
     setLayout({ lg: layout, md: layout })
   }
 
   const resetLayout = () => {
     setLayout({ lg: componentDimensionsLg, md: componentDimensionsMd })
   }
-  return (
+  return !checkMobile() ? (
     <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked} $mode={mode}>
       <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} />
       <ReactGridLayout
@@ -447,5 +463,7 @@ export const CryptoContent: FC = () => {
         {generateDOM()}
       </ReactGridLayout>
     </DEX_CONTAINER>
+  ) : (
+    <DexhomeMobi />
   )
 }

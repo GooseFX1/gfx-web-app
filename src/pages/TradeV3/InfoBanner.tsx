@@ -10,7 +10,6 @@ import { getPerpsPrice, truncateBigNumber } from './perps/utils'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import useBlacklisted from '../../utils/useBlacklisted'
 import 'styled-components/macro'
-import { checkMobile } from '../../utils'
 
 const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[356px] !w-[628px] rounded-half`}
@@ -183,8 +182,7 @@ const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: st
           <div className={tradeType === 'deposit' ? 'gradient-bg btn' : 'btn'}>Deposit</div>
         </div>
       </div>
-      <div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('deposit')}>
-        {/*<div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('withdraw')}>*/}
+      <div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('withdraw')}>
         <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
           <div className={tradeType === 'withdraw' ? 'gradient-bg btn' : 'btn'}>Withdraw</div>
         </div>
@@ -204,7 +202,7 @@ export const InfoBanner: FC<{
   const { orderBook } = useOrderBook()
   const { mode } = useDarkMode()
   const { traderInfo } = useTraderConfig()
-  const geoBlocked = false
+  const geoBlocked = useBlacklisted()
   const [tradeType, setTradeType] = useState<string>('deposit')
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
@@ -303,7 +301,7 @@ export const InfoBanner: FC<{
           <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
         </SETTING_MODAL>
       )}
-      {!checkMobile() && (
+      {
         <div className="spot-toggle">
           <span
             className={'spot toggle ' + (isSpot ? 'selected' : '')}
@@ -320,9 +318,9 @@ export const InfoBanner: FC<{
             Perps
           </span>
         </div>
-      )}
-      {/* <DropdownPairs /> */}
-      {!checkMobile() && (
+      }
+      <DropdownPairs />
+      {
         <>
           <INFO_STATS>
             <>
@@ -340,7 +338,7 @@ export const InfoBanner: FC<{
             </>
           </INFO_STATS>
         </>
-      )}
+      }
 
       {/*<INFO_STATS>
         <>
@@ -359,7 +357,7 @@ export const InfoBanner: FC<{
           )}
         </>
          </INFO_STATS> */}
-      {!checkMobile() && (
+      {
         <INFO_STATS>
           <div>Daily Range</div>
           {!range ? (
@@ -377,8 +375,8 @@ export const InfoBanner: FC<{
             </div>
           )}
         </INFO_STATS>
-      )}
-      {!checkMobile() && !isSpot && (
+      }
+      {!isSpot && (
         <INFO_STATS>
           <>
             <div>Open Interest</div>
@@ -386,7 +384,15 @@ export const InfoBanner: FC<{
           </>
         </INFO_STATS>
       )}
-      {!checkMobile() && isSpot && geoBlocked && (
+      {!isSpot && (
+        <INFO_STATS>
+          <>
+            <div>Funding Rate</div>
+            {!traderInfo.fundingRate ? <Loader /> : <div> {Number(traderInfo.fundingRate).toFixed(4)}%</div>}
+          </>
+        </INFO_STATS>
+      )}
+      {isSpot && geoBlocked && (
         <div tw="flex ml-auto relative top-[23px]">
           <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />
           <div tw="ml-2 text-tiny font-semibold dark:text-grey-5 text-grey-1">
@@ -394,9 +400,7 @@ export const InfoBanner: FC<{
           </div>
         </div>
       )}
-      {!checkMobile() && !isLocked && (
-        <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>
-      )}
+      {!isLocked && <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>}
       {!isSpot && (
         <DEPOSIT_WRAPPER $isLocked={isLocked}>
           <div className="white-background">
@@ -404,7 +408,7 @@ export const InfoBanner: FC<{
           </div>
         </DEPOSIT_WRAPPER>
       )}
-      {!checkMobile() && (
+      {
         <LOCK_LAYOUT_CTN $isLocked={isLocked} $isSpot={isSpot} onClick={() => setIsLocked(!isLocked)}>
           <div className="white-background">
             <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
@@ -412,7 +416,7 @@ export const InfoBanner: FC<{
             </LOCK_LAYOUT>
           </div>
         </LOCK_LAYOUT_CTN>
-      )}
+      }
     </INFO_WRAPPER>
   )
 }

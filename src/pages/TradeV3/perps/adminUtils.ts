@@ -8,7 +8,6 @@ import {
   FIND_FEES_DISCRIMINANT_LEN,
   MPG_ACCOUNT_SIZE,
   MPG_ID,
-  //ORDERBOOK_P_ID,
   RISK_ID,
   VALIDATE_ACCOUNT_HEALTH_DISCRIMINANT,
   VALIDATE_ACCOUNT_HEALTH_DISCRIMINANT_LEN,
@@ -81,10 +80,6 @@ export const initializeMarketProductGroup = async (
       }
     })
   )
-  console.log('riskOutputRegister: ', initializeProductGroupAccounts.riskOutputRegister.publicKey.toBase58())
-  console.log('feeOutputRegister: ', initializeProductGroupAccounts.feeOutputRegister.publicKey.toBase58())
-  console.log('riskModelConfigurationAcct: ', initializeProductGroupAccounts.riskModelConfigurationAcct.toBase58())
-
   instructions.push(
     SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
@@ -218,7 +213,7 @@ export const adminInitialiseMPG = async (connection: Connection, wallet: any) =>
   }
   SYSVAR_RENT_PUBKEY
   const paramsObject = {
-    name: Buffer.from('GFXTEST'),
+    name: Buffer.from('GOOSEFX'),
     validateAccountDiscriminantLen: new anchor.BN(VALIDATE_ACCOUNT_HEALTH_DISCRIMINANT_LEN),
     findFeesDiscriminantLen: new anchor.BN(FIND_FEES_DISCRIMINANT_LEN),
     validateAccountHealthDiscriminant: VALIDATE_ACCOUNT_HEALTH_DISCRIMINANT,
@@ -318,10 +313,6 @@ export const createAAMarket = async (wallet: any, connection: Connection, caller
 }
 
 export const adminCreateMarket = async (connection: Connection, wallet: any) => {
-  const product_key = anchor.web3.Keypair.generate().publicKey
-  console.log('market product is: ', product_key.toBase58())
-  const marketSigner = await getMarketSigner(product_key)
-  console.log('market isgner is: ', marketSigner.toBase58())
   const [priceOracle, clock] = getPythOracleAndClock(connection)
 
   const instrumentType = 1,
@@ -330,8 +321,8 @@ export const adminCreateMarket = async (connection: Connection, wallet: any) => 
       exp: new anchor.BN(0)
     }),
     fullFundingPeriod = 3600,
-    minimumFundingPeriod = 30,
-    initializationTime = Math.floor(new Date().getTime() / 1000)
+    minimumFundingPeriod = 600,
+    initializationTime = Math.floor(new Date().getTime() / 1000) + 60
   //oracleType = 1
 
   const derivativeMetadata = getDerivativeKey({
@@ -360,6 +351,10 @@ export const adminCreateMarket = async (connection: Connection, wallet: any) => 
     oracleType: { pyth: {} }
     //closeAuthority: wallet.publicKey
   }
+  const product_key = derivativeMetadata
+  console.log('market product is: ', product_key.toBase58())
+  const marketSigner = await getMarketSigner(product_key)
+  console.log('market isgner is: ', marketSigner.toBase58())
 
   const response = await initializeDerivative(accountsToSend, paramsToSend, wallet, connection)
   console.log('init derevative: ', response)
@@ -384,12 +379,12 @@ export const adminCreateMP = async (
     orderbook: new PublicKey(orderbookId)
   }
   const paramObj = {
-    name: Buffer.from('SOL-PERPS'),
+    name: Buffer.from('SOL-PERP'),
     tickSize: new Fractional({
       m: new anchor.BN(100),
       exp: new anchor.BN(4)
     }),
-    baseDecimals: new anchor.BN(5),
+    baseDecimals: new anchor.BN(7),
     priceOffset: new Fractional({
       m: new anchor.BN(0),
       exp: new anchor.BN(0)
