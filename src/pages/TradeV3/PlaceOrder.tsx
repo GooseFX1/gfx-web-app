@@ -730,7 +730,7 @@ export const PlaceOrder: FC = () => {
       key: 4
     })
     const saveBtnHTML = (
-      <DROPDOWN_SAVE className={takeProfitAmount ? 'save-enable' : 'save-disable'} onClick={handleSave}>
+      <DROPDOWN_SAVE className={'save-enable'} onClick={handleSave}>
         Clear
       </DROPDOWN_SAVE>
     )
