@@ -474,7 +474,7 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
       </TAKEPROFITSELECTOR>
       <span tw="ml-10">Custom Price</span>
       <input value={takeProfitAmt} onChange={isNumber} placeholder="$0.00" type="number" />
-      <span className={takeProfitAmt ? 'save-enable' : 'save-disable'} onClick={takeProfitAmt ? handleSave : null}>
+      <span className={'save-enable'} onClick={handleSave}>
         Clear
       </span>
     </TAKEPROFITWRAPPER>
