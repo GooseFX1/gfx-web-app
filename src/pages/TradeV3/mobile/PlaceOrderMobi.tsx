@@ -403,7 +403,7 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
       if (Number.isNaN(+order.price)) obj.push('')
       else {
         const profit = getProfitAmount(order.side, order.price, item.value)
-        obj.push(profit)
+        obj.push(profit.toFixed(2))
       }
     })
     setProfits(obj)
