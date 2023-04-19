@@ -436,7 +436,7 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
     setInput(0)
     setIndex(index)
     setTakeProfitIndex(index)
-    setVisibility(false)
+    //setVisibility(false)
   }
 
   const handleSave = () => {

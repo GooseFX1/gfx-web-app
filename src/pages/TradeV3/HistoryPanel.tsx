@@ -547,11 +547,11 @@ export const HistoryPanel: FC = () => {
                   <span className={traderInfo.averagePosition.side === 'buy' ? 'long' : 'short'}>
                     {traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}
                   </span>
-                  <span>{traderInfo.averagePosition.price}</span>
+                  <span>${traderInfo.averagePosition.price}</span>
                   <span>{roundedSize}</span>
-                  <span>{perpsPrice}</span>
-                  <span>{notionalSize}</span>
-                  <span>{Number(traderInfo.liquidationPrice).toFixed(2)}</span>
+                  <span>${perpsPrice}</span>
+                  <span>${notionalSize}</span>
+                  <span>${Number(traderInfo.liquidationPrice).toFixed(2)}</span>
                   <span className={pnl <= 0 ? 'short' : 'long'}>$ {pnl.toFixed(4)}</span>
                   <button onClick={handleClosePosition}>Close</button>
                   {/*<button onClick={() => setClosePosition(true)}>Close Position</button>*/}

@@ -115,6 +115,7 @@ interface ITraderRiskGroup {
   health: string
   fundingRate: string
   maxWithdrawable: string
+  traderVolume: string
 }
 
 interface ICollateralInfo {
@@ -241,6 +242,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [accountHealth, setAccountHealth] = useState<string>('100')
   const [fundingRate, setFundingRate] = useState<string>('0')
   const [maxWithdrawable, setMaxWithdrawable] = useState<string>('0')
+  const [traderVolume, setTraderVolume] = useState<string>('0')
 
   const [initTesting, setInitTesting] = useState<boolean>(false)
 
@@ -423,6 +425,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setAveragePosition(res2.averagePosition)
       setTraderHistory(res2.traderHistory)
     }
+    const traderVolume = traderRiskGroup.totalTradedVolume
+    setTraderVolume(displayFractional(traderVolume))
 
     // const liquidationP = getLiquidationPrice(res.traderPortfolioValue)
   }
@@ -801,7 +805,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           openInterests: openInterests,
           health: accountHealth,
           fundingRate: fundingRate,
-          maxWithdrawable: maxWithdrawable
+          maxWithdrawable: maxWithdrawable,
+          traderVolume
         },
         marketProductGroup: marketProductGroup,
         marketProductGroupKey: currentMPG,
