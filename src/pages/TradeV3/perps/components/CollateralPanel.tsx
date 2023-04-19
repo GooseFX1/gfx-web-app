@@ -185,6 +185,13 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
     return 100
   }, [traderInfo.health])
 
+  const userVolume = useMemo(() => {
+    const vol = traderInfo.traderVolume
+    if (Number.isNaN(vol)) return '0.00'
+    const rounded = (+vol).toFixed(2)
+    return rounded
+  }, [traderInfo.traderVolume])
+
   const getHealthData = () => {
     const percent = accountHealth
     let barColour = ''
@@ -250,6 +257,16 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
           </Tooltip>
         </div>
         <span className="value">{pnl}</span>
+      </ACCOUNT_ROW>
+      <ACCOUNT_ROW $height={height}>
+        <div className="tooltip-row">
+          <span className="key">Your Volume</span>
+          <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+            User volume refers to the total volume of trades made by you. The higher your volume, the greater your
+            chances of receiving rewards in the competition{' '}
+          </Tooltip>
+        </div>
+        <span className="value">{userVolume} $</span>
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>
         <div className="tooltip-row">

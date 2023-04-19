@@ -78,7 +78,7 @@ export const newOrderIx = async (
       },
       errorMessage: {
         header: 'New Order',
-        description: 'There was an error in placeing the order'
+        description: 'There was an error in placing the order'
       }
     })
     if (response && response.txid) {
