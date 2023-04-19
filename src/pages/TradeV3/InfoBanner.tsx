@@ -388,7 +388,7 @@ export const InfoBanner: FC<{
         <INFO_STATS>
           <>
             <div>Funding Rate</div>
-            {!traderInfo.fundingRate ? <Loader /> : <div> {Number(traderInfo.fundingRate).toFixed(2)}%</div>}
+            {!traderInfo.fundingRate ? <Loader /> : <div> {Number(traderInfo.fundingRate).toFixed(4)}%</div>}
           </>
         </INFO_STATS>
       )}

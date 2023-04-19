@@ -295,6 +295,19 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const trg = rawData.trg
     if (mpg) {
       try {
+        const res = wasm.get_funding_rate(mpg.data, BigInt(0))
+        setFundingRate(
+          displayFractional(
+            new Fractional({
+              m: new anchor.BN(res.m.toString()),
+              exp: new anchor.BN(res.exp.toString())
+            })
+          )
+        )
+      } catch (e) {
+        console.log('error in funding rate: ', e)
+      }
+      try {
         const re = wasm.get_on_chain_price(mpg.data, BigInt(0))
         const re2 = new Fractional({ m: new anchor.BN(re.m.toString()), exp: new anchor.BN(re.exp.toString()) })
         //console.log('on chain price is: ', displayFractional(re2))
@@ -415,11 +428,11 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   const parseMPG = async () => {
-    const res = marketProductGroup.marketProducts.array[0].value.outright.cumFundingPerShare
-    const price = onChainPrice
-    if (!price || Number.isNaN(+price) || Number.isNaN(+displayFractional(res))) return null
-    const percent = (+displayFractional(res) / +price) * 100
-    setFundingRate(percent.toFixed(4))
+    //const res = marketProductGroup.marketProducts.array[0].value.outright.cumFundingPerShare
+    //const price = onChainPrice
+    //if (!price || Number.isNaN(+price) || Number.isNaN(+displayFractional(res))) return null
+    //const percent = (+displayFractional(res) / +price) * 100
+    //setFundingRate(percent.toFixed(4))
   }
 
   useEffect(() => {

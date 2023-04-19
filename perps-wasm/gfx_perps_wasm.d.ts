@@ -13,6 +13,12 @@ export function risk_checks(market_product_group: Uint8Array, trader_risk_group:
 */
 export function max_withdrawable(market_product_group_byte: Uint8Array, trader_risk_group_byte: Uint8Array): Fractional;
 /**
+* @param {Uint8Array} market_product_group_byte
+* @param {bigint} product_index
+* @returns {Fractional}
+*/
+export function get_funding_rate(market_product_group_byte: Uint8Array, product_index: bigint): Fractional;
+/**
 * @param {Uint8Array} market_product_group
 * @param {Uint8Array} trader_risk_group
 * @returns {Fractional}

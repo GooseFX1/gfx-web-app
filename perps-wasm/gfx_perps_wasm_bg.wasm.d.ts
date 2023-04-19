@@ -8,6 +8,7 @@ export function __wbg_get_healthinfo_action(a: number): number;
 export function __wbg_set_healthinfo_action(a: number, b: number): void;
 export function risk_checks(a: number, b: number, c: number, d: number, e: number): void;
 export function max_withdrawable(a: number, b: number, c: number, d: number, e: number): void;
+export function get_funding_rate(a: number, b: number, c: number, d: number): void;
 export function margin_available(a: number, b: number, c: number, d: number, e: number): void;
 export function unrealised_pnl(a: number, b: number, c: number, d: number, e: number, f: number): void;
 export function get_liquidation_price(a: number, b: number, c: number, d: number, e: number, f: number): void;
