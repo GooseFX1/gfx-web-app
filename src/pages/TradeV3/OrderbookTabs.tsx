@@ -73,6 +73,7 @@ const HEADER_WRAPPER = styled.div`
 const BODY_WRAPPER = styled.div`
   ${tw`w-full flex flex-row h-full border-[1px] border-solid dark:border-[#3c3c3c] border-[#CACACA]`}
   border-top: none;
+  height: calc(100% - 32px);
 `
 const FOOTER_WRAPPER = styled.div`
   ${tw`w-full flex flex-row h-7 border-[1px] border-solid dark:border-[#3c3c3c] border-[#CACACA]`}

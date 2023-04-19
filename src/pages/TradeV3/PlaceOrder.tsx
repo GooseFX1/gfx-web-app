@@ -209,10 +209,10 @@ const INPUT_WRAPPER = styled.div<{ $halfWidth?: boolean }>`
     padding: 1px;
   }
   .take-profit {
-    ${tw`cursor-auto`}
+    ${tw`cursor-auto border-[1.5px] border-solid border dark:border-grey-2 border-grey-1`}
   }
   .stop-loss {
-    ${tw`cursor-not-allowed`}
+    ${tw`cursor-not-allowed border-[1.5px] border-solid border dark:border-grey-2 border-grey-1`}
   }
   .disable {
     ${tw`cursor-not-allowed`}
@@ -277,7 +277,7 @@ const LEVERAGE_WRAPPER = styled.div`
 `
 
 const ORDER_CATEGORY = styled.div`
-  ${tw`flex justify-center items-center mt-3.75 h-5`}
+  ${tw`flex justify-center items-center mt-3.75 h-5 mr-auto`}
   .orderCategoryCheckboxWrapper {
     ${tw`mx-3 flex items-center justify-center`}
     .ant-checkbox-wrapper {
@@ -295,11 +295,11 @@ const ORDER_CATEGORY = styled.div`
 `
 
 const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean; $orderSide: string; $isSpot: boolean }>`
-  ${tw`mt-3 rounded-[30px] h-[30px] text-tiny font-semibold border-0 border-none`}
+  ${tw`mt-3 rounded-[30px] h-[30px] text-tiny font-semibold border-0 border-none mr-[5px]`}
   background: ${({ $action, $orderSide, theme }) =>
     $action ? ($orderSide === 'buy' ? '#71C25D' : '#F06565') : theme.bg23};
   color: ${({ $action }) => ($action ? 'white' : '#636363')};
-  width: ${({ $isSpot }) => ($isSpot ? '90%' : '55%')};
+  width: ${({ $isSpot }) => ($isSpot ? '95%' : '50%')};
 `
 
 const FEES = styled.div`
@@ -968,7 +968,7 @@ export const PlaceOrder: FC = () => {
                   />
                 </div>
               </INPUT_WRAPPER>
-              {/* <INPUT_WRAPPER>
+              {/* <INPUT_WRAPPER $halfWidth={true}>
                 <div className="label disable">Stop Loss</div>
                 <div className={`dropdownContainer ${mode} stop-loss`} onClick={()=>setType(1)}>
                   <span className='red'>None</span>

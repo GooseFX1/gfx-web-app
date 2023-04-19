@@ -65,6 +65,7 @@ const LOADER = styled(Skeleton.Input)`
 
 const ORDERS = styled.div<{ $visible: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
+  height: calc(100% - 60px);
   justify-content: space-between;
   align-items: center;
   max-height: ${({ $visible }) => ($visible ? '328px' : 'auto')};
