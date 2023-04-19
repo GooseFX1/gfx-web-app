@@ -35,7 +35,7 @@ export class OpenOrders {
       [
         types.usize.layout('freeListHead'),
         borsh.u64('totalOpenOrders'),
-        borsh.array(types.OpenOrdersMetadata.layout(), 16, 'products'),
+        borsh.array(types.OpenOrdersMetadata.layout(), 64, 'products'),
         borsh.array(types.OpenOrdersNode.layout(), 128, 'orders')
       ],
       property

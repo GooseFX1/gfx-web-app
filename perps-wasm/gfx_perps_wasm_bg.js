@@ -260,54 +260,6 @@ export function risk_checks(market_product_group, trader_risk_group) {
 }
 
 /**
-* @param {Uint8Array} market_product_group_byte
-* @param {Uint8Array} trader_risk_group_byte
-* @returns {Fractional}
-*/
-export function max_withdrawable(market_product_group_byte, trader_risk_group_byte) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        const ptr0 = passArray8ToWasm0(market_product_group_byte, wasm.__wbindgen_malloc);
-        const len0 = WASM_VECTOR_LEN;
-        const ptr1 = passArray8ToWasm0(trader_risk_group_byte, wasm.__wbindgen_malloc);
-        const len1 = WASM_VECTOR_LEN;
-        wasm.max_withdrawable(retptr, ptr0, len0, ptr1, len1);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return Fractional.__wrap(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-}
-
-/**
-* @param {Uint8Array} market_product_group_byte
-* @param {bigint} product_index
-* @returns {Fractional}
-*/
-export function get_funding_rate(market_product_group_byte, product_index) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        const ptr0 = passArray8ToWasm0(market_product_group_byte, wasm.__wbindgen_malloc);
-        const len0 = WASM_VECTOR_LEN;
-        wasm.get_funding_rate(retptr, ptr0, len0, product_index);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return Fractional.__wrap(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-}
-
-/**
 * @param {Uint8Array} market_product_group
 * @param {Uint8Array} trader_risk_group
 * @returns {Fractional}
@@ -532,53 +484,6 @@ export function get_health(market_product_group_byte, trader_risk_group_byte) {
 }
 
 /**
-* @param {Uint8Array} trader_risk_group_byte
-* @returns {Fractional}
-*/
-export function get_volume(trader_risk_group_byte) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        const ptr0 = passArray8ToWasm0(trader_risk_group_byte, wasm.__wbindgen_malloc);
-        const len0 = WASM_VECTOR_LEN;
-        wasm.get_volume(retptr, ptr0, len0);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return Fractional.__wrap(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-}
-
-/**
-* @param {Uint8Array} market_product_group_byte
-* @param {Uint8Array} trader_risk_group_byte
-* @returns {Fractional}
-*/
-export function get_portfolio_value(market_product_group_byte, trader_risk_group_byte) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        const ptr0 = passArray8ToWasm0(market_product_group_byte, wasm.__wbindgen_malloc);
-        const len0 = WASM_VECTOR_LEN;
-        const ptr1 = passArray8ToWasm0(trader_risk_group_byte, wasm.__wbindgen_malloc);
-        const len1 = WASM_VECTOR_LEN;
-        wasm.get_portfolio_value(retptr, ptr0, len0, ptr1, len1);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return Fractional.__wrap(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-}
-
-/**
 * @param {Uint8Array} data
 * @param {bigint} callback_info_len
 * @param {bigint} slot_size
@@ -761,7 +666,7 @@ export function __wbgtest_console_error(args) {
     }
 }
 
-function __wbg_adapter_87(arg0, arg1) {
+function __wbg_adapter_83(arg0, arg1) {
     wasm.wasm_bindgen__convert__closures__invoke0_mut__h5099afc3f75fbbe5(arg0, arg1);
 }
 
@@ -772,11 +677,11 @@ function handleError(f, args) {
         wasm.__wbindgen_exn_store(addHeapObject(e));
     }
 }
-function __wbg_adapter_116(arg0, arg1, arg2, arg3, arg4) {
+function __wbg_adapter_112(arg0, arg1, arg2, arg3, arg4) {
     wasm.wasm_bindgen__convert__closures__invoke3_mut__h129ead944ac25281(arg0, arg1, addHeapObject(arg2), arg3, addHeapObject(arg4));
 }
 
-function __wbg_adapter_145(arg0, arg1, arg2, arg3) {
+function __wbg_adapter_141(arg0, arg1, arg2, arg3) {
     wasm.wasm_bindgen__convert__closures__invoke2_mut__h854abd88de8e9ee0(arg0, arg1, addHeapObject(arg2), addHeapObject(arg3));
 }
 
@@ -2111,7 +2016,7 @@ export function __wbg_wbgtestinvoke_1a19031fd0724979() { return handleError(func
             const a = state0.a;
             state0.a = 0;
             try {
-                return __wbg_adapter_87(a, state0.b, );
+                return __wbg_adapter_83(a, state0.b, );
             } finally {
                 state0.a = a;
             }
@@ -2303,7 +2208,7 @@ export function __wbg_forEach_ce1177df15902e0c(arg0, arg1, arg2) {
             const a = state0.a;
             state0.a = 0;
             try {
-                return __wbg_adapter_116(a, state0.b, arg0, arg1, arg2);
+                return __wbg_adapter_112(a, state0.b, arg0, arg1, arg2);
             } finally {
                 state0.a = a;
             }
@@ -2351,7 +2256,7 @@ export function __wbg_new_9962f939219f1820(arg0, arg1) {
             const a = state0.a;
             state0.a = 0;
             try {
-                return __wbg_adapter_145(a, state0.b, arg0, arg1);
+                return __wbg_adapter_141(a, state0.b, arg0, arg1);
             } finally {
                 state0.a = a;
             }
@@ -2498,8 +2403,8 @@ export function __wbg_pubkey_new(arg0) {
     return addHeapObject(ret);
 };
 
-export function __wbindgen_closure_wrapper318(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 75, __wbg_adapter_32);
+export function __wbindgen_closure_wrapper316(arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 80, __wbg_adapter_32);
     return addHeapObject(ret);
 };
 

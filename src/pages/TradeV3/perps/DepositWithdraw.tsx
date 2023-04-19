@@ -7,15 +7,14 @@ import { convertToFractional } from './utils'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { PERPS_COLLATERAL } from './perpsConstants'
 import 'styled-components/macro'
-import { checkMobile } from '../../../utils'
 
 const WRAPPER = styled.div`
   .input-row {
-    ${tw`flex flex-row h-12.5 sm:block sm:w-full sm:h-auto`}
+    ${tw`flex flex-row h-12.5`}
   }
 
   .percentage {
-    ${tw`w-[280px] ml-auto rounded-circle flex flex-row sm:w-full sm:mb-[25px] sm:h-[45px]`}
+    ${tw`w-[280px] ml-auto rounded-circle flex flex-row sm:hidden`}
     background: ${({ theme }) => theme.bg22};
   }
 
@@ -31,7 +30,7 @@ const WRAPPER = styled.div`
 
   .submit-btn {
     ${tw`block h-[50px] w-[222px] rounded-circle mx-auto my-3.5 font-semibold 
-      text-average border-0 border-none bg-[#5855ff] sm:h-[45px] sm:w-full`}
+      text-average border-0 border-none bg-[#5855ff]`}
     color: ${({ theme }) => theme.white};
     outline: none;
   }
@@ -43,12 +42,12 @@ const DROPDOWN_PAIR_DIV = styled.div`
     ${tw`h-7 w-7`}
   }
   .available-bal {
-    ${tw`mr-3.75 text-[16px] font-semibold sm:text-regular`}
+    ${tw`mr-3.75 text-[16px] font-semibold`}
   }
 `
 
 const SELECTED_COIN = styled.div`
-  ${tw`h-[45px] rounded-[36px] flex items-center text-center cursor-pointer pl-3 font-medium text-[16px]`}
+  ${tw`leading-[40px] rounded-[36px] flex items-center text-center cursor-pointer pl-3 font-medium text-[16px]`}
   background-color: ${({ theme }) => theme.bg22};
   .anticon-down {
     ${tw`mr-1.5 w-3.5`}
@@ -75,23 +74,23 @@ const COIN_INFO = styled.div`
   }
 
   .market-add {
-    ${tw`text-[16px] font-semibold sm:text-tiny`}
+    ${tw`text-[16px] font-semibold`}
     color: ${({ theme }) => theme.text36};
   }
 
   .coin {
-    ${tw`text-[16px] font-semibold sm:text-regular`}
+    ${tw`text-[16px] font-semibold`}
     color: ${({ theme }) => theme.text11};
   }
 `
 
 const LABEL = styled.div`
-  ${tw`text-lg font-semibold mx-0 mb-2.5 mt-4.5 sm:text-regular sm:mb-2 sm:mt-3.75`}
+  ${tw`text-[20px] font-semibold mx-0 mb-2.5 mt-4.5`}
   color: ${({ theme }) => theme.text1};
 `
 
 const INPUT = styled.div`
-  ${tw`w-[280px] rounded-circle py-2.5 px-5 sm:w-full sm:mb-[25px] sm:h-[45px]`}
+  ${tw`w-[280px] rounded-circle py-2.5 px-5`}
   background: ${({ theme }) => theme.bg22};
 
   .input-amt {
@@ -128,23 +127,22 @@ export const DepositWithdraw: FC<{
   const { traderInfo } = useTraderConfig()
   const { mode } = useDarkMode()
   //const [amount, setAmount] = useState('')
-  const [amount, setAmount] = useState('')
+  const [amount, setAmount] = useState('500')
   const perpTokenList = PERPS_COLLATERAL
   const percentageArr = [25, 50, 75, 100]
   const defualtPerpToken = perpTokenList[0]
   const [percentageIndex, setPercentageindex] = useState(null)
   const [perpToken, setPerpToken] = useState(defualtPerpToken)
   const { depositFunds, withdrawFunds } = useTraderConfig()
-  const truncateAddress = (address: string, lengthToTruncate): string =>
-    `${address.substr(0, lengthToTruncate)}..${address.substr(-5, lengthToTruncate)}`
-  const trunMarketAddress = truncateAddress(perpToken.marketAddress, checkMobile() ? 3 : 5)
+  const truncateAddress = (address: string): string => `${address.substr(0, 5)}..${address.substr(-5, 5)}`
+  const trunMarketAddress = truncateAddress(perpToken.marketAddress)
   const symbol = perpToken.token
   const tokenAmount = balances[perpToken.marketAddress]
   const assetIcon = useMemo(
     () => `/img/crypto/${perpToken.type === 'synth' ? `g${symbol}` : symbol}.svg`,
     [symbol, perpToken.type]
   )
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handlePercentageChange = (e: React.MouseEvent<HTMLElement>, index: number) => {
     setPercentageindex(index)
     if (tradeType === 'deposit') {
@@ -159,8 +157,8 @@ export const DepositWithdraw: FC<{
       else result = +tokenAmount.uiAmountString
       setAmount(String(result))
     } else {
-      const avail = traderInfo.maxWithdrawable
-      if (!avail || Number.isNaN(+avail)) {
+      const avail = traderInfo.marginAvailable
+      if (!avail) {
         setAmount('0.00')
         return
       }
@@ -169,7 +167,7 @@ export const DepositWithdraw: FC<{
       else if (index === 1) result = (+avail * 50) / 100
       else if (index === 2) result = (+avail * 75) / 100
       else result = +avail
-      setAmount((Math.floor(result * 1000) / 1000).toString())
+      setAmount(result.toFixed(2))
     }
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -209,7 +207,7 @@ export const DepositWithdraw: FC<{
       <div tw="flex flex-row items-center justify-between">
         <LABEL>Asset</LABEL>
         {tradeType === 'deposit' && (
-          <span tw="text-regular font-semibold dark:text-grey-2 text-grey-1 mt-3.75 sm:text-tiny">
+          <span tw="text-regular font-semibold dark:text-grey-2 text-grey-1 mt-3.75">
             {' '}
             Deposit Limit: $1,000,000.00{' '}
           </span>
@@ -226,10 +224,10 @@ export const DepositWithdraw: FC<{
             <div className="available-bal">
               {tradeType === 'deposit'
                 ? tokenAmount && tokenAmount.uiAmountString
-                  ? Number(tokenAmount.uiAmountString).toFixed(2)
+                  ? tokenAmount.uiAmountString
                   : '0.00'
-                : traderInfo.maxWithdrawable
-                ? Number(traderInfo.maxWithdrawable).toFixed(2)
+                : traderInfo.marginAvailable
+                ? traderInfo.marginAvailable
                 : '0.00'}
             </div>
             <img
@@ -249,8 +247,8 @@ export const DepositWithdraw: FC<{
             placeholder="0.00"
             type="text"
             value={amount}
-            onChange={handleInputChange}
-            //onChange={null}
+            //onChange={handleInputChange}
+            onChange={null}
           />
           <span className="token">{perpToken.token}</span>
         </INPUT>
@@ -258,9 +256,9 @@ export const DepositWithdraw: FC<{
           {percentageArr.map((elem, index) => (
             <div
               className={percentageIndex === index ? 'percentage-num selected' : 'percentage-num'}
-              onClick={(e) => {
-                handlePercentageChange(e, index)
-              }}
+              //  onClick={(e) => {
+              //    handlePercentageChange(e, index)
+              //  }}
               key={index}
             >
               {elem}%

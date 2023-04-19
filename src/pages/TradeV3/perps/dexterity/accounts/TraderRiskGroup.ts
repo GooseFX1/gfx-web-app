@@ -78,7 +78,7 @@ export class TraderRiskGroup {
     types.AccountTag.layout('tag'),
     borsh.publicKey('marketProductGroup'),
     borsh.publicKey('owner'),
-    borsh.array(borsh.u8(), 16, 'activeProducts'),
+    borsh.array(borsh.u8(), 128, 'activeProducts'),
     types.Fractional.layout('totalDeposited'),
     types.Fractional.layout('totalWithdrawn'),
     types.Fractional.layout('cashBalance'),
@@ -92,9 +92,9 @@ export class TraderRiskGroup {
     borsh.publicKey('feeStateAccount'),
     borsh.u128('clientOrderId'),
     types.OpenOrders.layout('openOrders'),
-    borsh.array(types.TradeHistory.layout(), 16, 'tradeHistory'),
-    borsh.array(types.AveragePosition.layout(), 16, 'avgPosition'),
-    types.Fractional.layout('totalTradedVolume')
+    borsh.array(types.TradeHistory.layout(), 64, 'tradeHistory'),
+    borsh.array(types.AveragePosition.layout(), 64, 'avgPosition'),
+    types.Fractional.layout('totalTradedVolume'),
   ])
 
   constructor(fields: TraderRiskGroupFields) {

@@ -292,22 +292,10 @@ export const sendPerpsTransaction = async (
   instructions: TransactionInstruction[] | Transaction,
   signers: Keypair[],
   messages?: {
-    startMessage?: {
-      header: string
-      description: string
-    }
-    endMessage?: {
-      header: string
-      description: string
-    }
-    progressMessage?: {
-      header: string
-      description: string
-    }
-    errorMessage?: {
-      header: string
-      description: string
-    }
+    startMessage?: string
+    endMessage?: string
+    progressMessage?: string
+    errorMessage?: string
   }
 ): Promise<{ txid: string; slot: number }> => {
   const commitment: Commitment = 'processed',
@@ -320,8 +308,7 @@ export const sendPerpsTransaction = async (
 
   if (messages && messages.startMessage) {
     perpsNotify({
-      message: messages.startMessage.header,
-      description: messages.startMessage.description,
+      message: messages.startMessage,
       action: 'open',
       key,
       styles: {}
@@ -365,38 +352,15 @@ export const sendPerpsTransaction = async (
   if (awaitConfirmation) {
     if (messages && messages.progressMessage) {
       perpsNotify({
-        message: messages.progressMessage.header,
-        description: messages.progressMessage.description,
+        message: messages.progressMessage,
         action: 'open',
         key,
         styles: {}
       })
     }
-    let confirmation = null
-    if (messages && messages.errorMessage) {
-      confirmation = await awaitTransactionSignatureConfirmation(
-        txid,
-        DEFAULT_TIMEOUT,
-        connection,
-        commitment,
-        false,
-        { ...messages.errorMessage, key }
-      )
-    } else {
-      confirmation = await awaitTransactionSignatureConfirmation(txid, DEFAULT_TIMEOUT, connection, commitment)
-    }
+    const confirmation = await awaitTransactionSignatureConfirmation(txid, DEFAULT_TIMEOUT, connection, commitment)
 
-    if (!confirmation) {
-      console.log('in error notifier')
-      perpsNotify({
-        message: messages.errorMessage.header,
-        description: messages.errorMessage.description,
-        action: 'close',
-        key,
-        styles: {}
-      })
-      throw new Error('Timed out awaiting confirmation on transaction')
-    }
+    if (!confirmation) throw new Error('Timed out awaiting confirmation on transaction')
     slot = confirmation?.slot || 0
 
     if (confirmation?.err) {
@@ -405,8 +369,7 @@ export const sendPerpsTransaction = async (
       console.log(errors)
       if (messages && messages.errorMessage) {
         perpsNotify({
-          message: messages.errorMessage.header,
-          description: messages.errorMessage.description,
+          message: messages.errorMessage,
           action: 'close',
           key,
           styles: {}
@@ -418,8 +381,7 @@ export const sendPerpsTransaction = async (
 
   if (messages && messages.endMessage) {
     perpsNotify({
-      message: messages.endMessage.header,
-      description: messages.endMessage.description,
+      message: messages.endMessage,
       action: 'close',
       key,
       styles: {}
@@ -583,12 +545,7 @@ async function awaitTransactionSignatureConfirmation(
   timeout: number,
   connection: Connection,
   commitment: Commitment = 'recent',
-  queryStatus = false,
-  errorMessage?: {
-    header: string
-    description: string
-    key: any
-  }
+  queryStatus = false
 ): Promise<SignatureStatus | null | void> {
   let done = false
   let status: SignatureStatus | null | void = {
@@ -621,13 +578,6 @@ async function awaitTransactionSignatureConfirmation(
           }
           if (result.err) {
             console.log('Rejected via websocket', result.err)
-            perpsNotify({
-              message: errorMessage.header,
-              description: errorMessage.description,
-              action: 'close',
-              key: errorMessage.key,
-              styles: {}
-            })
             reject(status)
           } else {
             console.log('Resolved via websocket', result)

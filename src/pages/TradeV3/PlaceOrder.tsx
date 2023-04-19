@@ -21,9 +21,10 @@ import { Checkbox, Slider } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ArrowDropdown, Tooltip } from '../../components'
 import { useTraderConfig } from '../../context/trader_risk_group'
-import { displayFractional, getPerpsPrice, getProfitAmount } from './perps/utils'
+import { displayFractional, getPerpsPrice } from './perps/utils'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import { TradeConfirmation } from './TradeConfirmation'
+import { PerpsEndModal } from './PerpsEndModal'
 import 'styled-components/macro'
 import { RotatingLoader } from '../../components/RotatingLoader'
 import { Picker } from './Picker'
@@ -44,52 +45,6 @@ const WRAPPER = styled.div`
   ${tw`h-full w-full overflow-y-hidden`}
   border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
   background: ${({ theme }) => theme.bg2};
-`
-
-const DROPDOWN_ITEMS = styled.div`
-  .green {
-    ${tw`text-[#80CE00]`}
-  }
-  > input[type='radio'] {
-    ${tw`appearance-none absolute right-3 h-[15px] w-[15px] bg-black-1 rounded-small cursor-pointer`}
-  }
-  > input[type='radio']:checked:after {
-    ${tw`rounded-small w-[9px] h-[9px] relative top-[-2px] left-[3px] inline-block`}
-    background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
-    content: '';
-  }
-`
-
-const DROPDOWN_INPUT = styled.div`
-  ${tw`relative w-[135px] h-6 rounded-[5px] border border-solid border-grey-1 mx-[5px]`}
-  background: ${({ theme }) => theme.bg20};
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  /* Firefox */
-  input[type='number'] {
-    -moz-appearance: textfield;
-  }
-  .dropdown-input {
-    ${tw`w-[70%] h-full pl-1 pr-2 rounded-[5px] py-[5px] text-grey-2 text-tiny font-semibold border-0`}
-    background: ${({ theme }) => theme.bg20};
-    outline: none;
-    ::placeholder {
-      ${tw`text-grey-2 text-tiny font-semibold`}
-    }
-  }
-`
-
-const DROPDOWN_SAVE = styled.div`
-  &.save-disable {
-    ${tw`text-tiny text-grey-1 font-semibold cursor-not-allowed absolute bottom-[10px] right-[10px] z-[100]`}
-    pointer-events: none;
-  }
-  &.save-enable {
-    ${tw`text-tiny text-white font-semibold cursor-pointer absolute bottom-[10px] right-[10px] z-[100]`}
-  }
 `
 
 const HEADER = styled.div`
@@ -153,15 +108,14 @@ const BODY = styled.div`
 `
 
 const INPUT_GRID_WRAPPER = styled.div`
-  ${tw`flex justify-center items-center flex-col py-[2px]`}
+  ${tw`flex justify-center items-center flex-col py-2`}
   .inputRow {
-    ${tw`flex justify-between items-center w-full h-16 mt-[-4px]`}
+    ${tw`flex justify-between items-center w-full h-16`}
   }
 `
 
-const INPUT_WRAPPER = styled.div<{ $halfWidth?: boolean }>`
-  ${tw`flex justify-center items-start flex-col h-full px-3`}
-  width: ${({ $halfWidth }) => ($halfWidth ? '50%' : '100%')};
+const INPUT_WRAPPER = styled.div`
+  ${tw`flex justify-center items-start w-full flex-col h-full px-3`}
   .label {
     ${tw`pb-1 text-tiny font-semibold`}
     color: ${({ theme }) => theme.text37};
@@ -196,19 +150,10 @@ const INPUT_WRAPPER = styled.div<{ $halfWidth?: boolean }>`
   }
   .dropdownContainer {
     ${tw`w-full h-[30px] flex justify-between items-center px-2 text-red-100 
-    font-semibold text-tiny border border-solid rounded-[5px] cursor-pointer relative`}
+    font-semibold text-tiny border border-solid rounded-[5px] cursor-pointer`}
     color: ${({ theme }) => theme.text21};
     border-color: ${({ theme }) => theme.tokenBorder};
     background: ${({ theme }) => theme.bg2};
-    .green {
-      ${tw`text-[#80CE00]`}
-      width: 90%;
-      overflow-y: hidden;
-      text-align: left;
-    }
-    .red {
-      ${tw`text-[#F35355]`}
-    }
   }
   .dropdownContainer.lite {
     .arrow-icon {
@@ -219,18 +164,6 @@ const INPUT_WRAPPER = styled.div<{ $halfWidth?: boolean }>`
     background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
     border-radius: 5px;
     padding: 1px;
-  }
-  .take-profit {
-    ${tw`cursor-pointer border-[1.5px] border-solid border dark:border-grey-2 border-grey-1`}
-    .ant-dropdown-trigger {
-      ${tw`w-full h-full justify-end absolute right-[10px]`}
-    }
-  }
-  .stop-loss {
-    ${tw`cursor-not-allowed border-[1.5px] border-solid border dark:border-grey-2 border-grey-1`}
-  }
-  .disable {
-    ${tw`cursor-not-allowed`}
   }
 `
 
@@ -253,7 +186,7 @@ const LEVERAGE_WRAPPER = styled.div`
     ${tw`h-[6px] dark:bg-[#262626] bg-grey-1`}
   }
   .ant-slider-with-marks {
-    ${tw`mb-2 my-[5px]`}
+    ${tw`mb-2`}
   }
   .ant-slider-step {
     .ant-slider-dot {
@@ -287,12 +220,12 @@ const LEVERAGE_WRAPPER = styled.div`
     ${tw`mt-[-5px] mb-[30px]`}
   }
   .smallScreenLeverageBar {
-    ${tw`!mb-5`}
+    ${tw`!mb-[20px]`}
   }
 `
 
 const ORDER_CATEGORY = styled.div`
-  ${tw`flex justify-center items-center mt-3.75 h-5 mr-auto`}
+  ${tw`flex justify-center items-center mt-3.75 h-5`}
   .orderCategoryCheckboxWrapper {
     ${tw`mx-3 flex items-center justify-center`}
     .ant-checkbox-wrapper {
@@ -304,17 +237,16 @@ const ORDER_CATEGORY = styled.div`
       ${tw`bg-[#5855ff]`}
     }
     .orderCategoryName {
-      ${tw`text-tiny font-semibold ml-1 dark:text-[#B5B5B5] text-[#636363]`}
+      ${tw`text-tiny font-semibold ml-2 dark:text-[#B5B5B5] text-[#636363]`}
     }
   }
 `
 
-const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean; $orderSide: string; $isSpot: boolean }>`
-  ${tw`mt-3 rounded-[30px] h-[30px] text-tiny font-semibold border-0 border-none mr-[5px]`}
+const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean; $orderSide: string }>`
+  ${tw`w-11/12 mt-3 rounded-[30px] h-[30px] text-tiny font-semibold border-0 border-none`}
   background: ${({ $action, $orderSide, theme }) =>
     $action ? ($orderSide === 'buy' ? '#71C25D' : '#F06565') : theme.bg23};
   color: ${({ $action }) => ($action ? 'white' : '#636363')};
-  width: ${({ $isSpot }) => ($isSpot ? '95%' : '50%')};
 `
 
 const FEES = styled.div`
@@ -359,6 +291,22 @@ const TITLE = styled.span`
   -webkit-text-fill-color: transparent;
   line-height: 30px;
   margin-left: 8px;
+`
+
+const END_MODAL = styled(PopupCustom)`
+  ${tw`!h-[450px] !w-[500px] rounded-bigger`}
+  background-color: ${({ theme }) => theme.bg25};
+
+  .ant-modal-header {
+    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
+    background-color: ${({ theme }) => theme.bg25};
+  }
+  .ant-modal-content {
+    ${tw`shadow-none`}
+  }
+  .ant-modal-body {
+    ${tw`py-0 px-[25px]`}
+  }
 `
 
 const TOTAL_VALUES = [
@@ -410,36 +358,13 @@ export const PlaceOrder: FC = () => {
   const [arrowRotation, setArrowRotation] = useState(false)
   const [dropdownVisible, setDropdownVisible] = useState(false)
   const [confirmationModal, setConfirmationModal] = useState<boolean>(false)
+  const [perpsEndModal, setPerpsEndModal] = useState<boolean>(false)
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { connected } = useWallet()
   const { mode } = useDarkMode()
   const { height } = useWindowSize()
   const [loading, setLoading] = useState<boolean>(false)
   const geoBlocked = false
-  const [type, setType] = useState<number>(0)
-
-  const [takeProfitDropdown, setTakeProfitDropdown] = useState(false)
-  const [takeProfitAmount, setTakeProfitAmount] = useState<number>(null)
-  const [takeProfitIndex, setTakeProfitIndex] = useState<number>(3)
-  const [takeProfitArrow, setTakeProfitArrow] = useState(false)
-  const [saveAmount, setSaveAmount] = useState<number>(null)
-  const [profits, setProfits] = useState<any>(['', '', '', ''])
-
-  const [stopLossAmount, setStopLossAmount] = useState<number>(null)
-  const [stopLossIndex, setStopLossIndex] = useState<number>(0)
-  const [stopLossArrow, setStopLossArrow] = useState(false)
-
-  useEffect(() => {
-    const obj = []
-    percentArray.map((item) => {
-      if (Number.isNaN(+order.price)) obj.push('')
-      else {
-        const profit = getProfitAmount(order.side, order.price, item.value)
-        obj.push(profit.toFixed(2))
-      }
-    })
-    setProfits(obj)
-  }, [order])
 
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
@@ -627,135 +552,18 @@ export const PlaceOrder: FC = () => {
     return markObj
   }
 
-  const handleMenuClick = (e) => {
-    if (e.key !== '4') {
-      setTakeProfitDropdown(false)
-      setTakeProfitArrow(false)
-    } else setTakeProfitDropdown(true)
-  }
-
-  const handleOpenChange = (flag) => {
-    setTakeProfitArrow(!takeProfitArrow)
-    setTakeProfitDropdown(flag)
-  }
-
-  const handleDropdownInput = (e) => {
-    const inputAmt = e.target.value.replace(/[^0-9]\./g, '')
-    if (!isNaN(inputAmt)) setTakeProfitAmount(+inputAmt)
-    setTakeProfitIndex(null)
-    //setSaveAmount(saveAmount)
-  }
-
-  const handleSave = (e) => {
-    setTakeProfitIndex(null)
-    setTakeProfitArrow(false)
-    setTakeProfitDropdown(false)
-    setTakeProfitAmount(null)
-  }
-
-  const calcTakeProfit = (value, index) => {
-    setTakeProfitIndex(index)
-    setTakeProfitArrow(!takeProfitArrow)
-    setTakeProfitAmount(null)
-  }
-
-  const calcStopLoss = (value, index) => {
-    setStopLossIndex(index)
-    setStopLossArrow(!stopLossArrow)
-  }
-
-  const percentArray = [
-    {
-      display: '25%',
-      value: 0.25,
-      key: 1
-    },
-    {
-      display: '50%',
-      value: 0.5,
-      key: 2
-    },
-    {
-      display: '75%',
-      value: 0.75,
-      key: 3
-    },
-    {
-      display: '100%',
-      value: 1,
-      key: 4
-    }
-  ]
-
-  const getItems = () => {
-    let items = []
-    items = percentArray.map((item, index) => {
-      const html = (
-        <DROPDOWN_ITEMS
-          className="dropdown-items"
-          tw="mb-2 flex flex-row px-[5px]"
-          onClick={() => (type === 0 ? calcTakeProfit(item.value, index) : calcStopLoss(item.value, index))}
-        >
-          <span tw="mr-2 font-semibold text-tiny text-grey-5">{item.display}</span>
-          <span className={type === 0 ? 'green' : 'red'} tw="font-semibold text-tiny mr-auto">
-            {profits[index] ? '($' + profits[index] + ')' : '(-)'}
-          </span>
-          <input
-            type="radio"
-            name={type === 0 ? 'take-profit' : 'stop-loss'}
-            value={item.value}
-            checked={type === 0 ? takeProfitIndex === index : stopLossIndex === index}
-            onChange={() => (type === 0 ? calcTakeProfit(item.value, index) : calcStopLoss(item.value, index))}
-          />
-        </DROPDOWN_ITEMS>
-      )
-      return {
-        label: html,
-        key: index
-      }
-    })
-    const inputHTML = (
-      <DROPDOWN_INPUT>
-        <input
-          type="number"
-          onChange={handleDropdownInput}
-          placeholder="Price"
-          className="dropdown-input"
-          value={takeProfitAmount}
-        />
-      </DROPDOWN_INPUT>
-    )
-    items.push({
-      label: inputHTML,
-      key: 4
-    })
-    const saveBtnHTML = (
-      <DROPDOWN_SAVE className={takeProfitAmount ? 'save-enable' : 'save-disable'} onClick={handleSave}>
-        Clear
-      </DROPDOWN_SAVE>
-    )
-    items.push({
-      label: saveBtnHTML,
-      key: 5
-    })
-    return items
-  }
-
-  const getTakeProfitParam = () => {
-    if (takeProfitIndex !== null) {
-      const numPrice = +order.price
-      if (Number.isNaN(numPrice)) return null
-
-      const profitPrice =
-        numPrice +
-        (order.side === 'buy'
-          ? percentArray[takeProfitIndex].value * numPrice
-          : -percentArray[takeProfitIndex].value * numPrice)
-      return profitPrice
-    } else if (takeProfitAmount > 0) {
-      return takeProfitAmount
-    } else return null
-  }
+  //  const sliderValue = useMemo(() => {
+  //    const initLeverage = Number(traderInfo.currentLeverage)
+  //    const availLeverage = Number(traderInfo.availableLeverage)
+  //    const availMargin = Number(traderInfo.marginAvailable)
+  //    let percentage = 0
+  //    if (Number(order.size) >= Number(traderInfo.maxQuantity)) percentage = availLeverage
+  //    else if (order.total < availMargin) percentage = (Number(order.total) / Number(availMargin)) * availLeverage
+  //    else percentage = availLeverage
+  //    //else percentage = (Number(order.size) / Number(traderInfo.maxQuantity)) * availLeverage
+  //    if (Number(percentage)) return Number((initLeverage + percentage).toFixed(2))
+  //    return Number(initLeverage.toFixed(2))
+  //  }, [order.size, traderInfo, order.total])
 
   const sliderValue = useMemo(() => {
     const initLeverage = Number(traderInfo.currentLeverage)
@@ -776,6 +584,31 @@ export const PlaceOrder: FC = () => {
   return (
     <WRAPPER>
       <HEADER>
+        {perpsEndModal && (
+          <>
+            <END_MODAL
+              visible={true}
+              centered={true}
+              footer={null}
+              title={
+                <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold mb-4.5">
+                  Fortune Favours The Bold!
+                </span>
+              }
+              closeIcon={
+                <img
+                  src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+                  height="20px"
+                  width="20px"
+                  onClick={() => setPerpsEndModal(false)}
+                />
+              }
+              className={mode === 'dark' ? 'dark' : ''}
+            >
+              <PerpsEndModal />
+            </END_MODAL>
+          </>
+        )}
         {confirmationModal && (
           <>
             <SETTING_MODAL
@@ -801,7 +634,7 @@ export const PlaceOrder: FC = () => {
               }
               className={mode === 'dark' ? 'dark' : ''}
             >
-              <TradeConfirmation setVisibility={setConfirmationModal} takeProfit={getTakeProfitParam()} />
+              <TradeConfirmation setVisibility={setConfirmationModal} />
             </SETTING_MODAL>
           </>
         )}
@@ -845,9 +678,7 @@ export const PlaceOrder: FC = () => {
                 <ArrowDropdown
                   arrowRotation={arrowRotation}
                   offset={[-125, 15]}
-                  onVisibleChange={() => {
-                    setDropdownVisible(true)
-                  }}
+                  onVisibleChange={null}
                   placement="bottomLeft"
                   overlay={
                     <Overlay
@@ -933,6 +764,7 @@ export const PlaceOrder: FC = () => {
               <Picker>
                 <Slider
                   max={10}
+                  //min={minLeverage}
                   onChange={(e) => handleSliderChange(e)}
                   step={0.01}
                   value={sliderValue}
@@ -948,112 +780,60 @@ export const PlaceOrder: FC = () => {
                     bottom: '2px'
                   }}
                   marks={getMarks()}
+                  //  marks={{
+                  //    0: '0°C',
+                  //    26: '26°C',
+                  //    37: {
+                  //      style: {
+                  //        color: '#f50',
+                  //        paddingTop: '8px',
+                  //        fontSize: '13px',
+                  //        fontWeight: '600'
+                  //      },
+                  //      label: <strong>5x</strong>
+                  //    },
+                  //    100: {
+                  //      style: {
+                  //        color: '#f50'
+                  //      },
+                  //      label: <strong>100°C</strong>
+                  //    }
+                  //  }}
                 />
+                {/*<span
+            onClick={() => {
+              setFocused('total')
+              setOrder((prevState) => ({ ...prevState, total: userBalance }))
+            }}
+          >
+            Use Max
+          </span>*/}
               </Picker>
             </div>
           </LEVERAGE_WRAPPER>
         )}
-        {isSpot ? (
-          <>
-            <ORDER_CATEGORY>
-              {ORDER_CATEGORY_TYPE.map((item) => (
-                <div key={item.id} className="orderCategoryCheckboxWrapper">
-                  <Checkbox
-                    checked={order.type === item.id}
-                    onChange={(e) =>
-                      e.target.checked
-                        ? setOrder((prev) => ({ ...prev, type: item.id as OrderType }))
-                        : setOrder((prev) => ({ ...prev, type: 'limit' }))
-                    }
-                  />
-                  <div className="orderCategoryName">{item.display}</div>
-                </div>
-              ))}
-            </ORDER_CATEGORY>
-            <PLACE_ORDER_BUTTON
-              $action={buttonState === ButtonState.CanPlaceOrder}
-              onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
-              $orderSide={order.side}
-              $isSpot={isSpot}
-            >
-              {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
-            </PLACE_ORDER_BUTTON>
-          </>
-        ) : (
-          <>
-            <div tw="flex flex-row">
-              <INPUT_WRAPPER $halfWidth={true}>
-                <div className="label">Take Profit</div>
-                <div className={`dropdownContainer ${mode} take-profit`}>
-                  <span className="green">
-                    $
-                    {takeProfitIndex !== null
-                      ? profits[takeProfitIndex]
-                        ? profits[takeProfitIndex]
-                        : '(-)'
-                      : takeProfitAmount}
-                  </span>
-                  <ArrowDropdown
-                    arrowRotation={takeProfitArrow}
-                    overlayClassName="takep-stopl-container"
-                    offset={[15, 15]}
-                    onVisibleChange={null}
-                    placement="bottomLeft"
-                    menu={{ items: getItems(), onClick: handleMenuClick }}
-                    overlay={<></>}
-                    measurements="11px !important"
-                    onOpenChange={handleOpenChange}
-                    open={takeProfitDropdown}
-                  />
-                </div>
-              </INPUT_WRAPPER>
-              <INPUT_WRAPPER $halfWidth={true}>
-                <div className="label disable">Stop Loss</div>
-                <div className={`dropdownContainer ${mode} stop-loss`}>
-                  <span className="red">None</span>
-                  {/* <span className='green'>{takeProfitIndex  !==null ? percentArray[takeProfitIndex].display : takeProfitAmount}</span> */}
-                  <ArrowDropdown
-                    arrowRotation={false}
-                    overlayClassName="takep-stopl-container"
-                    offset={[-120, 15]}
-                    onVisibleChange={null}
-                    placement="bottomLeft"
-                    menu={{ getItems, onClick: handleMenuClick }}
-                    overlay={<></>}
-                    measurements="11px !important"
-                    onOpenChange={null}
-                    open={false}
-                  />
-                </div>
-              </INPUT_WRAPPER>
+        <ORDER_CATEGORY>
+          {ORDER_CATEGORY_TYPE.map((item) => (
+            <div key={item.id} className="orderCategoryCheckboxWrapper">
+              <Checkbox
+                checked={order.type === item.id}
+                onChange={(e) =>
+                  e.target.checked
+                    ? setOrder((prev) => ({ ...prev, type: item.id as OrderType }))
+                    : setOrder((prev) => ({ ...prev, type: 'limit' }))
+                }
+              />
+              <div className="orderCategoryName">{item.display}</div>
             </div>
-            <div tw="flex flex-row mt-[-6px]">
-              <ORDER_CATEGORY>
-                {ORDER_CATEGORY_TYPE.map((item) => (
-                  <div key={item.id} className="orderCategoryCheckboxWrapper">
-                    <Checkbox
-                      checked={order.type === item.id}
-                      onChange={(e) =>
-                        e.target.checked
-                          ? setOrder((prev) => ({ ...prev, type: item.id as OrderType }))
-                          : setOrder((prev) => ({ ...prev, type: 'limit' }))
-                      }
-                    />
-                    <div className="orderCategoryName">{item.display}</div>
-                  </div>
-                ))}
-              </ORDER_CATEGORY>
-              <PLACE_ORDER_BUTTON
-                $action={buttonState === ButtonState.CanPlaceOrder}
-                onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
-                $orderSide={order.side}
-                $isSpot={isSpot}
-              >
-                {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
-              </PLACE_ORDER_BUTTON>
-            </div>
-          </>
-        )}
+          ))}
+        </ORDER_CATEGORY>
+        <PLACE_ORDER_BUTTON
+          $action={buttonState === ButtonState.CanPlaceOrder}
+          onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
+          $orderSide={order.side}
+        >
+          {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
+        </PLACE_ORDER_BUTTON>
         {isSpot && (
           <FEES>
             <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>

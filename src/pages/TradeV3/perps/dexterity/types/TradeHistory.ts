@@ -29,8 +29,8 @@ export class TradeHistory {
   static layout(property?: string) {
     return borsh.struct(
       [
-        borsh.array(types.Fractional.layout(), 8, 'qty'),
-        borsh.array(types.Fractional.layout(), 8, 'price'),
+        borsh.array(types.Fractional.layout(), 10, 'qty'),
+        borsh.array(types.Fractional.layout(), 10, 'price'),
         types.usize.layout('latestIdx')
       ],
       property

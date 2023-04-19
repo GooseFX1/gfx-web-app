@@ -3,20 +3,7 @@ import { FC } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 
-const WRAPPER = styled.div`
-  .orderType {
-    ${tw`text-average font-semibold`}
-  }
-  .redShade {
-    ${tw`text-[#F24244]`}
-  }
-  .greenShade {
-    ${tw`text-[#71C25D]`}
-  }
-  .pnlChange {
-    ${tw`text-[30px] font-semibold mr-2`}
-  }
-`
+const WRAPPER = styled.div``
 
 const COL = styled.div`
   ${tw`flex flex-col`}
@@ -29,15 +16,7 @@ const COL = styled.div`
     ${tw`text-average font-semibold text-black-4 dark:text-grey-5`}
   }
 `
-export const PerpsEndModal: FC<{
-  profit: boolean
-  side: 'buy' | 'sell'
-  entryPrice: string
-  currentPrice: string
-  leverage: string
-  pnlAmount
-  percentageChange: string
-}> = ({ profit, side, entryPrice, currentPrice, leverage, pnlAmount, percentageChange }) => {
+export const PerpsEndModal: FC = () => {
   const socials = ['twitter', 'telegram', 'facebook', 'download']
 
   return (
@@ -51,37 +30,29 @@ export const PerpsEndModal: FC<{
           </a>
         </COL>
       </div>
-      <img
-        src={'/img/assets/' + (profit ? 'graphicSuccess.png' : 'graphicFailure.png')}
-        alt="graphic"
-        width="100%"
-      />
+      <img src="/img/assets/graphicSuccess.png" alt="graphic" width="100%" />
       <div tw="mb-5 relative top-[-50px]">
         <div tw="mb-1.5">
-          <span tw="dark:text-grey-2 text-black-4 text-lg font-semibold mr-1.5">SOL-PERP</span>
-          <span className={'orderType ' + (side === 'buy' ? 'greenShade' : 'redShade')}>
-            {side === 'buy' ? 'Long' : 'Short'}
-          </span>
+          <span tw="dark:text-grey-2 text-black-4 text-lg font-semibold mr-1.5">SOL/PERP</span>
+          <span tw="text-[#71C25D] text-average font-semibold">Long</span>
         </div>
         <div>
-          <span className={'pnlChange ' + (profit ? 'greenShade' : 'redShade')}>
-            {(profit ? '+' : '-') + '$' + pnlAmount}
-          </span>
-          <span tw="text-grey-1 dark:text-grey-2 text-average font-semibold">({percentageChange}%)</span>
+          <span tw="text-[#71C25D] text-[30px] font-semibold mr-2">+$1,275</span>
+          <span tw="text-grey-1 dark:text-grey-2 text-average font-semibold">(300%)</span>
         </div>
       </div>
       <div tw="flex flex-row justify-between relative top-[-50px] mb-7">
         <COL>
-          <span className="key">Entry Price</span>
-          <span className="value">${entryPrice}</span>
+          <span className="key">Entry Point</span>
+          <span className="value">$25.67</span>
         </COL>
         <COL>
-          <span className="key">Exit Price</span>
-          <span className="value">${currentPrice}</span>
+          <span className="key">Current Price</span>
+          <span className="value">$23.08</span>
         </COL>
         <COL>
           <span className="key">Leverage</span>
-          <span className="value">{leverage}x</span>
+          <span className="value">20.00x</span>
         </COL>
       </div>
       <div tw="dark:text-grey-5 text-black-4 text-lg font-semibold mx-auto mb-3.75 relative top-[-50px] text-center">

@@ -28,7 +28,7 @@ import { MarketProductGroup, TraderRiskGroup } from './dexterity/accounts'
 import { pyth, SYSTEM } from '../../../web3'
 import { Slab } from './instructions/Agnostic'
 import { IActiveProduct, ITraderHistory } from '../../../context/trader_risk_group'
-import { OrderBook, OrderSide } from '../../../context'
+import { OrderBook } from '../../../context'
 
 export const getDexProgram = async (connection: Connection, wallet: any): Promise<anchor.Program> => {
   const provider = new anchor.Provider(connection, wallet, anchor.Provider.defaultOptions())
@@ -64,11 +64,10 @@ export const getDerivativeKey = (args): anchor.web3.PublicKey => {
 }
 
 export const getPythOracleAndClock = (connection: Connection): [anchor.web3.PublicKey, anchor.web3.PublicKey] => {
-  return [new PublicKey(PYTH_MAINNET), new PublicKey('SysvarC1ock11111111111111111111111111111111')]
   if (connection.rpcEndpoint.includes('devnet')) {
-    return [new PublicKey(PYTH_DEVNET), new PublicKey('SysvarC1ock11111111111111111111111111111111')]
+    return [new PublicKey(PYTH_DEVNET), new PublicKey(PYTH_DEVNET)]
   } else {
-    return [new PublicKey(PYTH_MAINNET), new PublicKey('SysvarC1ock11111111111111111111111111111111')]
+    return [new PublicKey(PYTH_MAINNET), new PublicKey(PYTH_MAINNET)]
   }
 }
 
@@ -554,11 +553,5 @@ export const truncateBigNumber = (bigNumber: number) => {
     else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
     return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'K'
   }
-  return Number(bigNumber.toFixed(3))
-}
-
-export const getProfitAmount = (side: OrderSide, price: string | number, percentage: number) => {
-  const pr = Number(price)
-  const profitAmount = pr * percentage
-  return side === 'buy' ? pr + profitAmount : pr - profitAmount
+  return bigNumber
 }

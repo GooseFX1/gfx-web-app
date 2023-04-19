@@ -2,8 +2,6 @@ import { Button } from 'antd'
 import React, { FC } from 'react'
 import { useCrypto, useDarkMode, useTradeHistory } from '../../context'
 import tw, { styled } from 'twin.macro'
-import { checkMobile } from '../../utils'
-import { SettleCardMobi } from './mobile/SettleCardMobi'
 
 const SETTLE_CONTAINER = styled.div`
   padding: 10px 0 0 10px;
@@ -96,7 +94,7 @@ const SettleCard: FC = () => {
 export const SettlePanel: FC = () => {
   //const { openOrders } = useTradeHistory()
   const { mode } = useDarkMode()
-  const comps = !checkMobile() ? <SettleCard /> : <SettleCardMobi />
+  const comps = <SettleCard />
   return comps.type() === null ? (
     <div className="no-positions-found">
       <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-positions-found" />

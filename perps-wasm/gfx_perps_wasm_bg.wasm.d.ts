@@ -7,8 +7,6 @@ export function __wbg_set_healthinfo_health(a: number, b: number): void;
 export function __wbg_get_healthinfo_action(a: number): number;
 export function __wbg_set_healthinfo_action(a: number, b: number): void;
 export function risk_checks(a: number, b: number, c: number, d: number, e: number): void;
-export function max_withdrawable(a: number, b: number, c: number, d: number, e: number): void;
-export function get_funding_rate(a: number, b: number, c: number, d: number): void;
 export function margin_available(a: number, b: number, c: number, d: number, e: number): void;
 export function unrealised_pnl(a: number, b: number, c: number, d: number, e: number, f: number): void;
 export function get_liquidation_price(a: number, b: number, c: number, d: number, e: number, f: number): void;
@@ -18,8 +16,6 @@ export function get_leverage_available(a: number, b: number, c: number, d: numbe
 export function get_max_quantity(a: number, b: number, c: number, d: number, e: number, f: number): void;
 export function get_open_interests(a: number, b: number, c: number, d: number): void;
 export function get_health(a: number, b: number, c: number, d: number, e: number): void;
-export function get_volume(a: number, b: number, c: number): void;
-export function get_portfolio_value(a: number, b: number, c: number, d: number, e: number): void;
 export function find_max(a: number, b: number, c: number, d: number, e: number, f: number): void;
 export function find_min(a: number, b: number, c: number, d: number, e: number, f: number): void;
 export function find_l2_depth(a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number): void;

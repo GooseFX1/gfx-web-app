@@ -15,16 +15,15 @@ import {
 import { Fractional } from './perps/dexterity/types'
 import * as anchor from '@project-serum/anchor'
 import { RotatingLoader } from '../../components/RotatingLoader'
-import { checkMobile } from '../../utils'
 
 const WRAPPER = styled.div`
   .percentage {
-    ${tw`w-full h-12.5 rounded-circle flex flex-row dark:bg-black-1 bg-grey-4 sm:h-[45px]`}
+    ${tw`w-full h-12.5 rounded-circle flex flex-row dark:bg-black-1 bg-grey-4`}
   }
 
   .percentage-num {
     ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center justify-center h-full 
-        text-[16px] text-grey-1 sm:text-regular`}
+        text-[16px] text-grey-1`}
   }
 
   .selected {
@@ -34,10 +33,10 @@ const WRAPPER = styled.div`
 `
 
 const ROW = styled.div`
-  ${tw`flex flex-row justify-between items-start mb-5 sm:mb-2.5`}
+  ${tw`flex flex-row justify-between items-start mb-5`}
 
   > span {
-    ${tw`text-average font-semibold text-grey-1 sm:text-regular`}
+    ${tw`text-average font-semibold text-grey-1`}
   }
 
   .value {
@@ -74,11 +73,9 @@ const percentDetails = [
   }
 ]
 
-export const ClosePosition: FC<{
-  setVisibleState: React.Dispatch<React.SetStateAction<any>>
-  setSummaryData: React.Dispatch<React.SetStateAction<any>>
-  setPerpsEndModal: React.Dispatch<React.SetStateAction<any>>
-}> = ({ setVisibleState, setSummaryData, setPerpsEndModal }) => {
+export const ClosePosition: FC<{ setVisibleState: React.Dispatch<React.SetStateAction<any>> }> = ({
+  setVisibleState
+}) => {
   const { traderInfo, activeProduct } = useTraderConfig()
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const { orderBook } = useOrderBook()
@@ -100,10 +97,6 @@ export const ClosePosition: FC<{
     setPercentageindex(index)
   }
 
-  const entryPrice = useMemo(() => {
-    return traderInfo.averagePosition.price
-  }, [traderInfo, activeProduct])
-
   const totalExitQty = useMemo(() => {
     return getExitQuntity(traderInfo.balances, activeProduct)
   }, [traderInfo, activeProduct])
@@ -117,54 +110,29 @@ export const ClosePosition: FC<{
     return getClosePositionPrice(displayFractional(selectedExitQty), orderBook)
   }, [selectedExitQty, orderBook])
 
-  const pnlNumber = useMemo(() => {
-    if (!traderInfo.averagePosition.price) return '-'
+  const pnlEstimate = useMemo(() => {
+    if (!traderInfo.averagePosition.price) return <span>-</span>
     const averagePrice = traderInfo.averagePosition.price,
       sellPrice = exitPrice
-    if (!sellPrice || !Number(averagePrice)) return '-'
+    if (!sellPrice || !Number(averagePrice)) return <span>-</span>
     const side = traderInfo.averagePosition.side
     const difference = side === 'buy' ? sellPrice - Number(averagePrice) : Number(averagePrice) - sellPrice
     let totalPnl = difference * Number(displayFractional(selectedExitQty))
 
     totalPnl = side === 'sell' ? totalPnl * -1 : totalPnl
-    return totalPnl
-  }, [traderInfo, selectedExitQty])
-
-  const pnlEstimate = useMemo(() => {
-    if (pnlNumber === '-') return <span>-</span>
-
-    const isNegative = pnlNumber < 0
+    const isNegative = totalPnl < 0
     return (
       <span className={isNegative ? 'negative' : 'positive'}>
-        {(!isNegative ? '+' : '') + pnlNumber.toFixed(2)}
+        {(!isNegative ? '+' : '') + totalPnl.toFixed(2)}
       </span>
     )
-  }, [pnlNumber])
-
-  const percentageChange = useMemo(() => {
-    const exitPriceNum = Number(exitPrice)
-    const entry = Number(traderInfo.averagePosition.price)
-    if (Number.isNaN(exitPriceNum) || Number.isNaN(entry)) return 0
-    else {
-      const percent = ((exitPriceNum - entry) / entry) * 100
-      return Math.abs(percent).toFixed(1)
-    }
-  }, [pnlNumber])
+  }, [traderInfo, selectedExitQty])
 
   const closePositionFn = async () => {
     setLoading(true)
     const response = await closePosition(orderBook, selectedExitQty)
     if (response && response.txid) {
       setVisibleState(false)
-      setPerpsEndModal(true)
-      setSummaryData({
-        entryPrice: entryPrice,
-        exitPrice: exitPrice,
-        pnl: pnlNumber !== '-' ? Math.abs(pnlNumber).toFixed(2) : '-',
-        profit: pnlNumber !== '-' ? !(pnlNumber < 0) : false,
-        leverage: '10',
-        percentageChange: percentageChange
-      })
     }
     setLoading(false)
   }
@@ -180,19 +148,13 @@ export const ClosePosition: FC<{
 
   return (
     <WRAPPER>
-      <div tw="flex items-center mt-8 mb-7 sm:mt-[22px] sm:mb-5">
-        <span tw="text-lg font-semibold text-grey-1 dark:text-grey-5 sm:text-regular">
+      <div tw="flex items-center mt-8 mb-7">
+        <span tw="text-lg font-semibold text-grey-1 dark:text-grey-5">
           {displayExitQty} {symbol}
         </span>
-        <img
-          tw="ml-2.5"
-          src={assetIcon}
-          alt={symbol}
-          height={checkMobile() ? '20px' : '28px'}
-          width={checkMobile() ? '20px' : '28px'}
-        />
-        <span tw="ml-auto text-average font-semibold text-black-4 dark:text-grey-5 sm:text-tiny">${price}</span>
-        <span tw="text-average font-semibold text-grey-1 sm:text-tiny">(Market Price)</span>
+        <img tw="ml-2.5" src={assetIcon} alt={symbol} height="28px" width="28px" />
+        <span tw="ml-auto text-average font-semibold text-black-4 dark:text-grey-5">${price}</span>
+        <span tw="text-average font-semibold text-grey-1">(Market Price)</span>
       </div>
       <div className="percentage">
         {percentDetails.map((elem, index) => (
@@ -207,7 +169,7 @@ export const ClosePosition: FC<{
           </div>
         ))}
       </div>
-      <div tw="mb-9 mt-8 sm:my-[25px] ">
+      <div tw="mb-9 mt-8">
         <ROW>
           <span>Est. Exit Price</span>
           <span className="value">${exitPrice}</span>
@@ -229,7 +191,7 @@ export const ClosePosition: FC<{
         onClick={closePositionFn}
         height="50px"
         width="100%"
-        cssStyle={tw`bg-blue-1 dark:text-white font-semibold border-0 rounded-circle text-average sm:text-tiny`}
+        cssStyle={tw`bg-blue-1 dark:text-white font-semibold border-0 rounded-circle text-average`}
       >
         <span>
           {loading ? (
