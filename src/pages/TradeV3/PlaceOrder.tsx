@@ -63,6 +63,15 @@ const DROPDOWN_ITEMS = styled.div`
 const DROPDOWN_INPUT = styled.div`
   ${tw`relative w-[135px] h-6 rounded-[5px] border border-solid border-grey-1 mx-[5px]`}
   background: ${({ theme }) => theme.bg20};
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  /* Firefox */
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
   .dropdown-input {
     ${tw`w-[70%] h-full pl-1 pr-2 rounded-[5px] py-[5px] text-grey-2 text-tiny font-semibold border-0`}
     background: ${({ theme }) => theme.bg20};
@@ -631,10 +640,9 @@ export const PlaceOrder: FC = () => {
   }
 
   const handleDropdownInput = (e) => {
-    const inputAmt = e.target.value.replace(/[^0-9]/g, '')
+    const inputAmt = e.target.value.replace(/[^0-9]\./g, '')
     if (!isNaN(inputAmt)) setTakeProfitAmount(+inputAmt)
     setTakeProfitIndex(null)
-    console.log('check:', takeProfitAmount)
     //setSaveAmount(saveAmount)
   }
 
@@ -711,7 +719,7 @@ export const PlaceOrder: FC = () => {
         <input
           type="number"
           onChange={handleDropdownInput}
-          placeholder="Enter Price"
+          placeholder="Price"
           className="dropdown-input"
           value={takeProfitAmount}
         />

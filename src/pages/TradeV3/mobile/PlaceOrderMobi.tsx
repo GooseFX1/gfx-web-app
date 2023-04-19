@@ -349,6 +349,15 @@ const HEADER = styled.div`
 
 const TAKEPROFITWRAPPER = styled.div`
   ${tw`relative`}
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  /* Firefox */
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
   > input {
     ${tw`bg-white dark:bg-black-1 dark:text-grey-5 text-black-4 p-3 text-regular font-semibold ml-10 w-4/5 h-[45px] rounded-[10px]`}
     outline: none;
@@ -386,7 +395,7 @@ const TAKE_PROFIT_ARRAY = [
 
 const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, setVisibility }) => {
   const percentArray = isTakeProfit ? ['25%', '50%', '75%', '100%'] : ['None', '10%', '25%', '75%']
-  const [takeProfitAmt, setTakeProfitAmt] = useState<number>(null)
+  const [takeProfitAmt, setTakeProfitAmt] = useState<string>(null)
   const [takeProfitIndex, setTakeProfitIndex] = useState<number>(3)
   const [profits, setProfits] = useState<any>(['', '', '', ''])
 
@@ -410,11 +419,11 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
   }, [order])
 
   const isNumber = (e) => {
-    const inputAmt = e.target.value
+    const inputAmt = e.target.value.replace(/[^0-9]\./g, '')
     if (!inputAmt || inputAmt === '') setTakeProfitAmt(null)
-    else if (!isNaN(+inputAmt)) {
+    else if (!isNaN(inputAmt)) {
       if (isTakeProfit) {
-        setTakeProfitAmt(+inputAmt)
+        setTakeProfitAmt(inputAmt)
         setInput(+inputAmt)
         setTakeProfitIndex(null)
         setIndex(null)
@@ -423,7 +432,7 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
   }
 
   const handleClicks = (index) => {
-    setTakeProfitAmt(0)
+    setTakeProfitAmt(null)
     setInput(0)
     setIndex(index)
     setTakeProfitIndex(index)
@@ -444,7 +453,7 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
         <span>
           {takeProfitIndex !== null
             ? TAKE_PROFIT_ARRAY[takeProfitIndex].display
-            : takeProfitAmt > 0
+            : Number(takeProfitAmt) > 0
             ? '$' + takeProfitAmt
             : 'N/A'}
         </span>
@@ -464,7 +473,7 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
         ))}
       </TAKEPROFITSELECTOR>
       <span tw="ml-10">Custom Price</span>
-      <input value={takeProfitAmt} onChange={isNumber} placeholder="$0.00" />
+      <input value={takeProfitAmt} onChange={isNumber} placeholder="$0.00" type="number" />
       <span className={takeProfitAmt ? 'save-enable' : 'save-disable'} onClick={takeProfitAmt ? handleSave : null}>
         Clear
       </span>
