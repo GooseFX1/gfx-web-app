@@ -6,8 +6,10 @@ import {
   useNFTAggregator,
   useNFTDetails,
   useNFTProfile,
-  usePriceFeedFarm
+  usePriceFeedFarm,
+  useWalletModal
 } from '../../../context'
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { GradientText } from '../adminPage/components/UpcomingMints'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
@@ -25,6 +27,7 @@ import { notify } from '../../../utils'
 import { genericErrMsg } from '../../Farm/FarmClickHandler'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any; lastCardRef: any }> = ({
   item,
@@ -110,7 +113,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
     e.preventDefault()
   }
   const { prices } = usePriceFeedFarm()
-  const solPrice = prices['SOL/USDC'].current
+  const solPrice = prices['SOL/USDC']?.current
   const nftNativePrice = localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 0
   let displayPrice = currencyView === 'USDC' ? nftNativePrice * solPrice : nftNativePrice
   displayPrice = parseFloat(displayPrice.toFixed(2))
@@ -201,8 +204,15 @@ export const HoverOnNFT: FC<{
 }> = ({ addNftToBag, item, ask, setNFTDetails, buttonType }): ReactElement => {
   const { setBidNow, setBuyNow, setSellNFT } = useNFTAggregator()
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
+  const { connected } = useWallet()
+  const { setVisible } = useWalletModal()
+
   const goToDetailsForModal = async (e, type) => {
     e.stopPropagation()
+    if (!connected) {
+      setVisible(true)
+      return
+    }
     setIsLoadingBeforeRelocate(true)
     await setNFTDetails()
     setIsLoadingBeforeRelocate(false)
@@ -226,18 +236,14 @@ export const HoverOnNFT: FC<{
         {buttonType === 'sell' ? (
           <Button
             cssStyle={tw`bg-[#f06565] h-[28px] w-[75px] text-[13px] font-semibold mr-2 ml-2`}
-            onClick={(e) => {
-              goToDetailsForModal(e, 'sell')
-            }}
+            onClick={(e) => goToDetailsForModal(e, 'sell')}
           >
             Sell
           </Button>
         ) : (
           <Button
             cssStyle={tw`bg-[#5855ff]   h-[28px] w-[75px] text-[13px] font-semibold mr-2 ml-2`}
-            onClick={(e) => {
-              goToDetailsForModal(e, 'bid')
-            }}
+            onClick={(e) => goToDetailsForModal(e, 'bid')}
           >
             Bid
           </Button>
