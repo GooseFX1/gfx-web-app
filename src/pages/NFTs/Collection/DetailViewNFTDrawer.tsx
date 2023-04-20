@@ -54,9 +54,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
         }
       }
 
-      .general-item-title {
-      ${tw`text-[15px] font-semibold leading-9	ml-4 text-[#636363]`}
-    }
+
       .ant-tabs-ink-bar {
         display: none;
       }
@@ -291,10 +289,8 @@ const NFTDetailsTab = (): ReactElement => {
     <div>
       {nftData.map((item, index) => (
         <Row justify="space-between" align="middle" className="dtc-item" key={index}>
-          <Col className="general-item-title">{item.title}</Col>
-          <Col className="general-item-value" tw="font-semibold">
-            {item.value}
-          </Col>
+          <Col tw="text-[15px] font-semibold leading-9 ml-4 dark:text-white text-grey-1">{item.title}</Col>
+          <Col tw="dark:text-white text-black-4 font-semibold">{item.value}</Col>
         </Row>
       ))}
     </div>

@@ -16,7 +16,7 @@ import 'styled-components/macro'
 const PROFILE_CONTAINER = styled.div<{ background?: string }>`
   ${tw`-mt-20 pt-20 flex flex-col`}
   .ant-drawer-body {
-    ${tw`dark:!bg-black-2 bg-grey-4`}
+    ${tw`dark:bg-black-2 bg-grey-4`}
     ${({ theme }) => theme.customScrollBar('4px')}
   }
 
