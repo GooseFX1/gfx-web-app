@@ -16,7 +16,7 @@ import {
   useNFTProfile
 } from '../../../context'
 import { checkMobile } from '../../../utils'
-import { STYLED_BUTTON } from '../../Farm/FarmFilterHeader'
+import { LastRefreshedAnimation, RefreshIcon, STYLED_BUTTON } from '../../Farm/FarmFilterHeader'
 import MenuNFTPopup from './MenuNFTPopup'
 import { SEARCH_RESULT_CONTAINER, STATS_BTN } from './NFTAggregator.styles'
 import NFTBanners from './NFTBanners'
@@ -65,6 +65,26 @@ const WRAPPER = styled.div<{ $navCollapsed; $currency }>`
   transition: 0.5s ease;
   font-family: 'Montserrat';
   font-style: normal;
+  .lastRefreshed {
+    ${tw`flex flex-col h-[0px] justify-end items-center w-full sm:text-sm`}
+    color: ${({ theme }) => theme.tabNameColor};
+    animation: openAnimation 3s ease-in-out;
+  }
+
+  @keyframes openAnimation {
+    0% {
+      height: 0px;
+    }
+    30% {
+      height: 64px;
+    }
+    50% {
+      height: 64px;
+    }
+    100% {
+      height: 0px;
+    }
+  }
   .search-bar {
     transition: 0.5s ease;
     ${tw`sm:w-0`}
@@ -84,8 +104,28 @@ const WRAPPER = styled.div<{ $navCollapsed; $currency }>`
 const BannerContainer = styled.div<{ showBanner: boolean }>`
   ${({ showBanner }) => css`
     height: 'fit-content';
-    ${tw`mt-[35px] duration-500`}
+    ${tw`mt-[15px] duration-500`}
   `}
+  .lastRefreshed {
+    ${tw`flex flex-col h-[0px] mt-[-10px] justify-end items-center w-full sm:text-sm`}
+    color: ${({ theme }) => theme.tabNameColor};
+    animation: openAnimation 3s ease-in-out;
+  }
+
+  @keyframes openAnimation {
+    0% {
+      height: 0px;
+    }
+    30% {
+      height: 64px;
+    }
+    50% {
+      height: 64px;
+    }
+    100% {
+      height: 0px;
+    }
+  }
 `
 
 const EYE_CONTAINER = styled.div`
@@ -165,12 +205,28 @@ const timelineVolume = [{ name: '24h' }, { name: '7d' }, { name: '30d' }, { name
 
 const NFTLandingPageV2 = (): ReactElement => {
   const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
-
+  const [firstLoad, setFirstPageLoad] = useState<boolean>(true)
   const { isCollapsed } = useNavCollapse()
   const [showBanner, setShowBanner] = useState<boolean>(false)
   const [hasOnboarded, setHasOnboarded] = useState<boolean>(!existingUserCache.hasAggOnboarded)
   const [showTerms, setShowTerms] = useState<boolean>(false)
-  const { currencyView } = useNFTAggregator()
+  const { currencyView, lastRefreshedClass, refreshClass, setLastRefreshedClass } = useNFTAggregator()
+
+  useEffect(() => {
+    setFirstPageLoad(false)
+  }, [])
+
+  useEffect(() => {
+    if (refreshClass === '' && !firstLoad) {
+      setLastRefreshedClass('lastRefreshed')
+    }
+  }, [refreshClass])
+
+  useEffect(() => {
+    if (lastRefreshedClass !== ' ' && !firstLoad) {
+      setTimeout(() => setLastRefreshedClass(' '), 3000)
+    }
+  }, [lastRefreshedClass])
 
   const handleHasOnboarded = (res: boolean) => {
     setHasOnboarded(false)
@@ -188,12 +244,19 @@ const NFTLandingPageV2 = (): ReactElement => {
     <WRAPPER $navCollapsed={isCollapsed} $currency={currencyView}>
       {<NFTAggTerms setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={handleHasOnboarded} />}
       {hasOnboarded && <ModalSlide modalType={MODAL_TYPES.NFT_AGG_WELCOME} rewardToggle={handleHasOnboarded} />}
-
+      {console.log(lastRefreshedClass)}
       {!checkMobile() && (
-        <BannerContainer showBanner={showBanner}>
-          <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} />
-          <NFTBanners showBanner={showBanner} />
-        </BannerContainer>
+        <>
+          <BannerContainer showBanner={showBanner}>
+            {
+              <div tw="flex justify-center">
+                <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
+              </div>
+            }
+            <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} />
+            <NFTBanners showBanner={showBanner} />
+          </BannerContainer>
+        </>
       )}
       <FiltersContainer />
 
@@ -320,7 +383,7 @@ const FiltersContainer = () => {
           <MarketDropdown />
           <TimeLineDropdown />
           <div>
-            <img className="profilePic" src="/img/assets/refresh.svg" />{' '}
+            <RefreshBtnWithAnimationNFT />
           </div>
 
           {sessionUser && (
@@ -334,6 +397,21 @@ const FiltersContainer = () => {
         </div>
       </FILTERS_CONTAINER>
     )
+}
+export const RefreshBtnWithAnimationNFT: FC = () => {
+  const { refreshClass, setRefreshClass, setRefreshClicked } = useNFTAggregator()
+  const refreshFeed = () => {
+    setRefreshClass('rotateRefreshBtn')
+    setRefreshClicked((prev) => prev + 1)
+    setTimeout(() => {
+      setRefreshClass('')
+    }, 1000)
+  }
+  return (
+    <RefreshIcon onClick={() => refreshFeed()}>
+      <img src={'/img/assets/refresh.svg'} tw="ml-2 mr-3 h-11 w-11" className={refreshClass} alt="refresh" />
+    </RefreshIcon>
+  )
 }
 
 const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
@@ -400,7 +478,7 @@ const SearchResultContainer = ({ searchFilter }: any) => {
             <div className="searchText">
               {data.collection_name}
               {data.is_verified && (
-                <img tw="w-[15px] h-[15px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
+                <img tw="!w-[15px] !h-[15px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
               )}
             </div>
           </div>

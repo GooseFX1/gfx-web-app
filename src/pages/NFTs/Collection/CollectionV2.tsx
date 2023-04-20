@@ -2,8 +2,6 @@
 import React, { ReactElement, useState, useEffect, useMemo } from 'react'
 import { Dropdown } from 'antd'
 import { useHistory, useParams } from 'react-router-dom'
-import { Loader, SearchBar, TokenToggleNFT } from '../../../components'
-import { Button } from '../../../components/Button'
 import { useDarkMode, useNFTProfile, useNavCollapse, useNFTAggregator, useNFTCollections } from '../../../context'
 import { ICON } from '../../../layouts'
 import { IAppParams } from '../../../types/app_params'
@@ -31,6 +29,8 @@ import { OpenBidNFTs } from './OpenBidNFTs'
 import { FixedPriceNFTs } from './FixedPriceNFTs'
 import { Image } from 'antd'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
+import { RefreshBtnWithAnimationNFT } from '../Home/NFTLandingPageV2'
+import { LastRefreshedAnimation } from '../../Farm/FarmFilterHeader'
 
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
@@ -41,34 +41,25 @@ const CollectionV2 = (): ReactElement => {
     setSingleCollection,
     setFixedPriceWithinCollection,
     setOpenBidWithinCollection,
-    setCollectionOwners,
-    nftMenuPopup,
-    setNFTMenuPopup
+    setCollectionOwners
   } = useNFTCollections()
   const [err, setErr] = useState(false)
-  const [filter, setFilter] = useState('')
-  const [collapse, setCollapse] = useState(true)
-  const { sessionUser } = useNFTProfile()
+  const { refreshClicked } = useNFTAggregator()
 
-  useEffect(
-    () => () => {
-      setSingleCollection(undefined)
-      setFixedPriceWithinCollection(undefined)
-      setOpenBidWithinCollection(undefined)
-      setCollectionOwners(undefined)
-    },
-    []
-  )
+  useEffect(() => {
+    setSingleCollection(undefined)
+    setFixedPriceWithinCollection(undefined)
+    setOpenBidWithinCollection(undefined)
+    setCollectionOwners(undefined)
+  }, [])
 
   useEffect(() => {
     const curColNameParam = decodeURIComponent(params.collectionName.replaceAll('_', '%20'))
-
-    if (!singleCollection || singleCollection[0].collection_name !== curColNameParam) {
-      fetchSingleCollection(curColNameParam).then((res) => setErr(res && res.status === 200 ? false : false))
-    }
+    fetchSingleCollection(curColNameParam).then((res) => setErr(res && res.status === 200 ? false : false))
 
     return null
-  }, [fetchSingleCollection, params.collectionName])
+  }, [fetchSingleCollection, params.collectionName, refreshClicked])
+
   //had to remove singleCollection useState trigger as it leads to
   // infinite loop as setSingleCollection is called in fecthSingleCollection
   return err ? (
@@ -84,9 +75,16 @@ const CollectionV2 = (): ReactElement => {
 const NFTStatsContainer = () => {
   const history = useHistory()
   const { mode } = useDarkMode()
-  const { singleCollection, fixedPriceWithinCollection, openBidWithinCollection } = useNFTCollections()
+  const {
+    singleCollection,
+    fixedPriceWithinCollection,
+    setOpenBidWithinCollection,
+    setFixedPriceWithinCollection
+  } = useNFTCollections()
+  const { lastRefreshedClass, refreshClass, setLastRefreshedClass } = useNFTAggregator()
   const [sweepCollection, setSweepCollection] = useState<boolean>(false)
   const [appraisalPopup, setGFXAppraisalPopup] = useState<boolean>(false)
+  const [firstLoad, setFirstPageLoad] = useState<boolean>(true)
 
   const collection: NFTCollection | undefined = useMemo(
     () => (singleCollection ? singleCollection[0] : undefined),
@@ -97,112 +95,134 @@ const NFTStatsContainer = () => {
     [collection]
   )
 
+  useEffect(() => {
+    setFirstPageLoad(false)
+  }, [])
+
+  useEffect(() => {
+    if (refreshClass === '' && !firstLoad) {
+      setLastRefreshedClass('lastRefreshed')
+    }
+  }, [refreshClass])
+
+  useEffect(() => {
+    if (lastRefreshedClass !== ' ' && !firstLoad) {
+      setTimeout(() => setLastRefreshedClass(' '), 3000)
+    }
+  }, [lastRefreshedClass])
   return (
-    <div className="nftStatsContainer">
-      <GFXApprisalPopup showTerms={appraisalPopup} setShowTerms={setGFXAppraisalPopup} />
+    <div tw="flex flex-col">
+      <div tw="flex justify-center">
+        <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
+      </div>
 
-      {!checkMobile() && (
-        <button className="backBtn" onClick={(e) => history.push('/nfts')} tw="border-0">
-          <img src="/img/assets/arrow-leftdark.svg" />
-        </button>
-      )}
-      <SweepCollectionDrawer sweepCollection={sweepCollection} setSweepCollection={setSweepCollection} />
+      <div className="nftStatsContainer">
+        <GFXApprisalPopup showTerms={appraisalPopup} setShowTerms={setGFXAppraisalPopup} />
+        {!checkMobile() && (
+          <button className="backBtn" onClick={(e) => history.push('/nfts')} tw="border-0">
+            <img src="/img/assets/arrow-leftdark.svg" />
+          </button>
+        )}
+        <SweepCollectionDrawer sweepCollection={sweepCollection} setSweepCollection={setSweepCollection} />
 
-      <div className="collectionNameContainer">
-        <div className="collectionName">
-          {collection ? (
-            <Image
-              preview={false}
-              fallback={'/img/assets/Aggregator/Unknown.svg'}
-              src={`${
-                collection.profile_pic_link === undefined
-                  ? '/img/assets/Aggregator/Unknown.svg'
-                  : collection.profile_pic_link
-              }`}
-              alt="collection-image"
-            />
-          ) : (
-            <SkeletonCommon style={{ marginLeft: 20 }} width="65px" height="65px" borderRadius="50%" />
-          )}
-          <div tw="text-[30px] sm:text-[22px] ml-3 font-bold">
+        <div className="collectionNameContainer">
+          <div className="collectionName">
             {collection ? (
-              collection.collection_name
+              <Image
+                preview={false}
+                fallback={'/img/assets/Aggregator/Unknown.svg'}
+                src={`${
+                  collection.profile_pic_link === undefined
+                    ? '/img/assets/Aggregator/Unknown.svg'
+                    : collection.profile_pic_link
+                }`}
+                alt="collection-image"
+              />
             ) : (
-              <SkeletonCommon width="200px" height="30px" style={{ marginTop: '20px', marginLeft: 10 }} />
+              <SkeletonCommon style={{ marginLeft: 20 }} width="65px" height="65px" borderRadius="50%" />
             )}
-            {collection && collection.is_verified && (
-              <img style={{ height: 25, width: 25, marginLeft: 8 }} src="/img/assets/Aggregator/verifiedNFT.svg" />
+            <div tw="text-[30px] sm:text-[22px] ml-3 font-bold">
+              {collection ? (
+                collection.collection_name
+              ) : (
+                <SkeletonCommon width="200px" height="30px" style={{ marginTop: '20px', marginLeft: 10 }} />
+              )}
+              {collection && collection.is_verified && (
+                <img
+                  style={{ height: 25, width: 25, marginLeft: 8 }}
+                  src="/img/assets/Aggregator/verifiedNFT.svg"
+                />
+              )}
+            </div>
+            {checkMobile() && (
+              <div className="title" style={{ display: 'flex', marginLeft: 'auto' }}>
+                <div onClick={() => setSweepCollection(true)}>
+                  <img className="sweepMobile" src="/img/assets/Aggregator/sweepButtonMobile.svg" />
+                </div>
+                <div>
+                  <SortDropdown />
+                </div>
+              </div>
             )}
-          </div>
-          {checkMobile() && (
-            <div className="title" style={{ display: 'flex', marginLeft: 'auto' }}>
-              <div onClick={() => setSweepCollection(true)}>
-                <img className="sweepMobile" src="/img/assets/Aggregator/sweepButtonMobile.svg" />
-              </div>
-              <div>
-                <SortDropdown />
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="generalStats">
-          <div tw="flex items-center">
-            <img
-              onClick={() => setGFXAppraisalPopup(true)}
-              tw="h-[20px] w-[20px] cursor-pointer"
-              src="/img/assets/Aggregator/Tooltip.svg"
-              alt="appraisal-icon"
-            />
-            <div className="wrapper" style={{ marginLeft: 8 }}>
-              <div className="titleText" tw="leading-none">
-                Appraisal
-              </div>
-              <div className="subTitleText">
-                {collection && collection.gfx_appraisal_supported ? 'Supported' : 'Not Supported'}
-              </div>
-            </div>
           </div>
 
-          <div className="wrapper">
-            <div className="titleText" tw="leading-none">
-              {collectionFloor} SOL
+          <div className="generalStats">
+            <div tw="flex items-center">
+              <img
+                onClick={() => setGFXAppraisalPopup(true)}
+                tw="h-[20px] w-[20px] cursor-pointer"
+                src="/img/assets/Aggregator/Tooltip.svg"
+                alt="appraisal-icon"
+              />
+              <div className="wrapper" style={{ marginLeft: 8 }}>
+                <div className="titleText" tw="leading-none">
+                  Appraisal
+                </div>
+                <div className="subTitleText">
+                  {collection && collection.gfx_appraisal_supported ? 'Supported' : 'Not Supported'}
+                </div>
+              </div>
             </div>
-            <div className="subTitleText">Floor Price</div>
-          </div>
-          {!checkMobile() && (
+
             <div className="wrapper">
               <div className="titleText" tw="leading-none">
-                {fixedPriceWithinCollection?.total_count}/
-                {fixedPriceWithinCollection?.total_count
-                  ? fixedPriceWithinCollection?.total_count
-                  : openBidWithinCollection?.total_count}
+                {collectionFloor.toFixed(2)} SOL
               </div>
-              <div className="subTitleText">Listed</div>
+              <div className="subTitleText">Floor Price</div>
+            </div>
+            {!checkMobile() && (
+              <div className="wrapper">
+                <div className="titleText" tw="leading-none">
+                  {fixedPriceWithinCollection?.total_count +
+                    '/' +
+                    (singleCollection ? singleCollection[0]?.nfts_count : 0)}
+                </div>
+                <div className="subTitleText">Listed</div>
+              </div>
+            )}
+            <div className="wrapper">
+              <div className="titleText" tw="leading-none">
+                {singleCollection ? singleCollection[0].daily_volume / LAMPORTS_PER_SOL_NUMBER : 0}
+              </div>
+              <div className="subTitleText"> 24h volume </div>
+            </div>
+          </div>
+          {!checkMobile() && (
+            <div className="moreOptions">
+              <div>
+                <RefreshBtnWithAnimationNFT />
+              </div>
+              <div className="sweepBtn" onClick={() => setSweepCollection(true)}>
+                <img src="/img/assets/Aggregator/sweepButton.svg" alt="" />
+              </div>
+              <div>
+                <ICON $mode={mode === 'dark'}>
+                  <img src={`/img/assets/more_icon.svg`} alt="more" />
+                </ICON>
+              </div>
             </div>
           )}
-          <div className="wrapper">
-            <div className="titleText" tw="leading-none">
-              {singleCollection ? singleCollection[0].daily_volume / LAMPORTS_PER_SOL_NUMBER : 0}
-            </div>
-            <div className="subTitleText"> 24h volume </div>
-          </div>
         </div>
-        {!checkMobile() && (
-          <div className="moreOptions">
-            <div>
-              <img src="/img/assets/refresh.svg" />
-            </div>
-            <div className="sweepBtn" onClick={() => setSweepCollection(true)}>
-              <img src="/img/assets/Aggregator/sweepButton.svg" alt="" />
-            </div>
-            <div>
-              <ICON $mode={mode === 'dark'}>
-                <img src={`/img/assets/more_icon.svg`} alt="more" />
-              </ICON>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )
@@ -226,10 +246,7 @@ export const NFTGridContainer = (): ReactElement => {
 }
 
 const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): ReactElement => {
-  const { mode } = useDarkMode()
-  const { openBidWithinCollection, fixedPriceWithinCollection, singleCollection } = useNFTCollections()
-  const { setCurrency } = useNFTAggregator()
-
+  const { fixedPriceWithinCollection, singleCollection } = useNFTCollections()
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
       <div className="flitersFlexContainer">
@@ -239,15 +256,13 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
         {!checkMobile() && <SortDropdown />}
       </div>
 
-      <div className="flitersViewCategory">
+      <div className="filtersViewCategory">
         <div className={displayIndex === 0 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(0)}>
           Listed ({fixedPriceWithinCollection && fixedPriceWithinCollection.total_count})
           <div className="activeItem" />
         </div>
         <div className={displayIndex === 1 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(1)}>
-          All items (
-          {openBidWithinCollection ? openBidWithinCollection.total_count : fixedPriceWithinCollection?.total_count}
-          )
+          All items ({singleCollection ? singleCollection[0].nfts_count : 0})
         </div>
         <div className={displayIndex === 2 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(2)}>
           Activity

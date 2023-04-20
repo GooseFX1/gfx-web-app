@@ -17,6 +17,12 @@ interface INFTAggConfig {
   currencyView: string
   sellNFTClicked?: any
   setSellNFT?: any
+  refreshClass?: string
+  setRefreshClass?: any
+  refreshClicked?: number
+  setRefreshClicked?: any
+  lastRefreshedClass?: string
+  setLastRefreshedClass?: any
 }
 
 const NFTAggContext = createContext<INFTAggConfig>(null)
@@ -28,6 +34,9 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
   const [bidNowClicked, setBidNow] = useState<boolean | any>(undefined)
   const [sellNFTClicked, setSellNFT] = useState<any>(undefined)
   const [currencyView, setCurrencyView] = useState<'SOL' | 'USDC'>('SOL')
+  const [refreshClass, setRefreshClass] = useState<string>('')
+  const [refreshClicked, setRefreshClicked] = useState<number>(0)
+  const [lastRefreshedClass, setLastRefreshClass] = useState<string>()
 
   const setCurrency = () => {
     setCurrencyView((prev) => (prev === 'USDC' ? 'SOL' : 'USDC'))
@@ -54,7 +63,13 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
         currencyView: currencyView,
         setCurrency: setCurrency,
         sellNFTClicked: sellNFTClicked,
-        setSellNFT: setSellNFT
+        setSellNFT: setSellNFT,
+        refreshClass: refreshClass,
+        setRefreshClicked: setRefreshClicked,
+        refreshClicked: refreshClicked,
+        setRefreshClass: setRefreshClass,
+        lastRefreshedClass: lastRefreshedClass,
+        setLastRefreshedClass: setLastRefreshClass
       }}
     >
       {children}
@@ -82,6 +97,12 @@ export const useNFTAggregator = (): INFTAggConfig => {
     currencyView: context.currencyView,
     setCurrency: context.setCurrency,
     setSellNFT: context.setSellNFT,
-    sellNFTClicked: context.sellNFTClicked
+    sellNFTClicked: context.sellNFTClicked,
+    refreshClass: context.refreshClass,
+    refreshClicked: context.refreshClicked,
+    setRefreshClicked: context.setRefreshClicked,
+    setRefreshClass: context.setRefreshClass,
+    lastRefreshedClass: context.lastRefreshedClass,
+    setLastRefreshedClass: context.setLastRefreshedClass
   }
 }

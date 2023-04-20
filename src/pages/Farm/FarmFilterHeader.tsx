@@ -1,4 +1,4 @@
-import React, { useEffect, useState, FC } from 'react'
+import React, { useEffect, useState, FC, ReactElement } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -10,27 +10,6 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { CenteredDiv } from '../../styles'
 
 const ABSTRACT = styled.div`
-  .lastRefreshed {
-    ${tw`flex flex-col h-[0px] justify-end items-center w-full sm:text-sm`}
-    color: ${({ theme }) => theme.tabNameColor};
-    animation: openAnimation 3s ease-in-out;
-  }
-
-  @keyframes openAnimation {
-    0% {
-      height: 0px;
-    }
-    30% {
-      height: 64px;
-    }
-    50% {
-      height: 64px;
-    }
-    100% {
-      height: 0px;
-    }
-  }
-
   .generalStatsBg {
     display: flex;
     ${tw`overflow-hidden h-9 whitespace-nowrap font-semibold text-sm mb-1`}
@@ -118,7 +97,7 @@ export const ButtonContainer = styled.div<{ $poolIndex: number }>`
   }
 `
 
-const RefreshIcon = styled.button`
+export const RefreshIcon = styled.button`
   ${tw`cursor-pointer  sm:ml-10 rounded-full border-0 p-0 bg-transparent`}
   .rotateRefreshBtn {
     -webkit-animation: cog 1s infinite;
@@ -306,7 +285,7 @@ export const FarmFilter: FC = () => {
   )
 }
 
-export const RefreshBtnWithAnimation: FC = () => {
+export const RefreshBtnWithAnimation: FC = (): ReactElement => {
   const { refreshClass, setRefreshClass, setCounter } = useFarmContext()
   const refreshFeed = () => {
     setRefreshClass('rotateRefreshBtn')
@@ -318,7 +297,9 @@ export const RefreshBtnWithAnimation: FC = () => {
     </RefreshIcon>
   )
 }
-const LastRefreshedAnimation = ({ lastRefreshedClass }: any) => (
+export const LastRefreshedAnimation: FC<{ lastRefreshedClass: string }> = ({
+  lastRefreshedClass
+}): ReactElement => (
   <div className={lastRefreshedClass}>
     {lastRefreshedClass === 'lastRefreshed' && (
       <strong>
