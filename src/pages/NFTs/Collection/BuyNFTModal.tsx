@@ -385,7 +385,7 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
   const publicKey: PublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
 
   const isBuyingNow: boolean = useMemo(
-    () => parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER === curBid,
+    () => parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER === curBid,
     [curBid]
   )
 
@@ -450,7 +450,7 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
     const escrowPaymentAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
       [
         Buffer.from(AUCTION_HOUSE_PREFIX),
-        toPublicKey(isBuyingNow ? ask.auction_house_key : AUCTION_HOUSE).toBuffer(),
+        toPublicKey(isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE).toBuffer(),
         publicKey.toBuffer()
       ],
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
@@ -515,7 +515,7 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
       wallet: publicKey,
       paymentAccount: publicKey,
       transferAuthority: publicKey,
-      treasuryMint: new PublicKey(isBuyingNow ? ask.auction_house_treasury_mint_key : TREASURY_MINT),
+      treasuryMint: new PublicKey(isBuyingNow ? ask?.auction_house_treasury_mint_key : TREASURY_MINT),
       tokenAccount: new PublicKey(general.token_account),
       metadata: new PublicKey(metaDataAccount),
       escrowPaymentAccount: escrowPaymentAccount[0],
@@ -530,7 +530,7 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
         isBuyingNow ? (ask?.auction_house_key ? ask?.auction_house_key : AUCTION_HOUSE) : AUCTION_HOUSE
       ),
       auctionHouseFeeAccount: new PublicKey(
-        isBuyingNow ? (ask?.auction_house_fee_account ? ask.auction_house_fee_account : AH_FEE_ACCT) : AH_FEE_ACCT
+        isBuyingNow ? (ask?.auction_house_fee_account ? ask?.auction_house_fee_account : AH_FEE_ACCT) : AH_FEE_ACCT
       ),
       buyerTradeState: buyerTradeState[0]
     }
@@ -607,9 +607,9 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
       clock: Date.now().toString(),
       tx_sig: txSig,
       wallet_key: publicKey.toBase58(),
-      auction_house_key: isBuyingNow ? ask.auction_house_key : AUCTION_HOUSE,
+      auction_house_key: isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE,
       token_account_key: general.token_account,
-      auction_house_treasury_mint_key: isBuyingNow ? ask.auction_house_treasury_mint_key : TREASURY_MINT,
+      auction_house_treasury_mint_key: isBuyingNow ? ask?.auction_house_treasury_mint_key : TREASURY_MINT,
       token_account_mint_key: general.mint_address,
       buyer_price: buyerPrice.toString(),
       token_size: tokenSize.toString(),

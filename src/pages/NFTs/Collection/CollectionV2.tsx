@@ -235,8 +235,8 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
       <div className="flitersFlexContainer">
         {/* <img onClick={() => setOpen((prev) => !prev)} src={`/img/assets/Aggregator/filtersIcon${mode}.svg`} />
         <SearchBar placeholder={checkMobile() ? `Search by nft ` : `Search by nft o owner`} /> 
-  {!checkMobile() && <SortDropdown />} */}
         {/* {checkMobile() && <CurrencySwitch />} */}
+        {!checkMobile() && <SortDropdown />}
       </div>
 
       <div className="flitersViewCategory">
@@ -251,9 +251,6 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
         </div>
         <div className={displayIndex === 2 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(2)}>
           Activity
-        </div>
-        <div tw="mr-[16px]">
-          <TokenToggleNFT toggleToken={setCurrency} />
         </div>
       </div>
     </NFT_FILTERS_CONTAINER>

@@ -254,7 +254,7 @@ export const RightSection: FC<{
                 )}
 
                 <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
-                  {likes}
+                  {likes ? likes : null}
                 </span>
                 <a href={`https://solscan.io/token/${general.mint_address}`} target="_blank" rel="noreferrer">
                   <img src="/img/assets/solScanBlack.svg" alt="solscan-icon" className="solscan-icon" />
