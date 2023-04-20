@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, FC, useMemo } from 'react'
+import React, { BaseSyntheticEvent, FC, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { Input } from 'antd'
 import { Selector } from './Selector'
@@ -60,39 +60,42 @@ const LABEL = styled.span`
 export const SwapFrom: FC<{ height: string }> = ({ height }) => {
   const { getUIAmount, getUIAmountString } = useAccounts()
   const { wallet } = useWallet()
-  const { inTokenAmount, pool, setFocused, setInTokenAmount, setTokenA, tokenA, tokenB, connection } = useSwap()
+  const { inTokenAmount, pool, setFocused, setInTokenAmount, tokenA } = useSwap()
 
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
-
-  const setHalf = () => {
+  const setHalf = useCallback(() => {
     if (tokenA) {
       setFocused('from')
       setInTokenAmount(parseFloat((getUIAmount(tokenA.address) / 2 + '').slice(0, Math.min(tokenA.decimals, 8))))
     }
-  }
+  }, [tokenA, getUIAmount])
 
-  const setMax = () => {
+  const setMax = useCallback(() => {
     if (tokenA) {
       setFocused('from')
       setInTokenAmount(parseFloat(getUIAmountString(tokenA.address).slice(0, Math.min(tokenA.decimals, 8))))
     }
-  }
+  }, [tokenA, getUIAmountString])
 
   const balance = useMemo(() => {
     if (!tokenA) return 0
-    if (!publicKey) return 0
+    if (!wallet?.adapter?.publicKey) return 0
 
     const { address, decimals } = tokenA
     return parseFloat(getUIAmountString(address).slice(0, Math.min(decimals, 8)))
-  }, [getUIAmountString, tokenA, publicKey])
-
-  const showQuickSelect = useMemo(() => balance > 0, [balance])
+  }, [getUIAmountString, tokenA, wallet])
 
   const value = useMemo(
     () => inTokenAmount && pool.inValue && `${(pool.inValue * inTokenAmount).toString().slice(0, 8)} USDC`,
     [inTokenAmount, pool.inValue]
   )
-
+  const resetFocus = useCallback(() => setFocused(undefined), [])
+  const handleOnChange = useCallback(
+    (e: BaseSyntheticEvent) => {
+      tokenA && !isNaN(e.target.value) && setInTokenAmount(e.target.value)
+    },
+    [tokenA, setInTokenAmount]
+  )
+  const setFocusedFrom = useCallback(() => setFocused('from'), [setFocused])
   return (
     <WRAPPER>
       <INNER_WRAPPER>
@@ -100,7 +103,7 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
           <LABEL>You Pay</LABEL>
         </div>
 
-        {showQuickSelect && (
+        {balance > 0 && (
           <QUICK_SELECT>
             <span onClick={setHalf}>HALF</span>
             <span onClick={setMax}>MAX</span>
@@ -114,24 +117,15 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
         $value={value || undefined}
         $down={false}
       >
-        <Selector
-          balance={balance}
-          height={height}
-          otherToken={tokenB}
-          setToken={setTokenA}
-          token={tokenA}
-          connection={connection}
-        />
+        <Selector balance={balance} height={height} />
         <Input
           maxLength={15}
-          onBlur={() => setFocused(undefined)}
-          onChange={(x: BaseSyntheticEvent) =>
-            tokenA && !isNaN(x.target.value) && setInTokenAmount(x.target.value)
-          }
-          onFocus={() => setFocused('from')}
+          onBlur={resetFocus}
+          onChange={handleOnChange}
+          onFocus={setFocusedFrom}
           pattern="\d+(\.\d+)?"
           placeholder={'0'}
-          value={inTokenAmount === 0 ? '' : inTokenAmount}
+          value={inTokenAmount ?? ''}
           className={'swap-input'}
         />
       </AmountField>
