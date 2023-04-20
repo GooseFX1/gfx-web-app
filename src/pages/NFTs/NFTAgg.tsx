@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react'
 import { Route, Switch, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
-import { useNavCollapse } from '../../context'
+import { NFTAggregatorProvider, useNavCollapse } from '../../context'
 import CollectionV2 from './Collection/CollectionV2'
 import NFTLandingPageV2 from './Home/NFTLandingPageV2'
 
@@ -22,14 +22,16 @@ const NFTAgg = (): ReactElement => {
 
   return (
     <BODY_NFT $navCollapsed={isCollapsed}>
-      <Switch>
-        <Route exact path={path}>
-          <NFTLandingPageV2 />
-        </Route>
-        <Route exact path="/NFTAgg/collection/:collectionName">
-          <CollectionV2 />
-        </Route>
-      </Switch>
+      <NFTAggregatorProvider>
+        <Switch>
+          <Route exact path={path}>
+            <NFTLandingPageV2 />
+          </Route>
+          <Route exact path="/NFTAgg/collection/:collectionName">
+            <CollectionV2 />
+          </Route>
+        </Switch>
+      </NFTAggregatorProvider>
     </BODY_NFT>
   )
 }
