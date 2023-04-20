@@ -12,9 +12,7 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   useEffect(() => {
     ;(async () => {
       const res = await fetchAllCollections()
-      setTimeout(() => {
-        setAllItems(res)
-      }, 2000)
+      setAllItems(res)
     })()
   }, [])
 
