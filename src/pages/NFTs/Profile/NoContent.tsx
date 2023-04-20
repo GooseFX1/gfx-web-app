@@ -16,15 +16,10 @@ const NO_CONTENT = styled.div`
     margin-bottom: 20px;
   }
   .main-text {
-    font-size: 17px;
-    font-weight: 600;
-    color: ${({ theme }) => theme.text32};
-    margin-bottom: 5px;
+    ${tw`text-[20px] font-semibold mb-1.5 text-black-4 dark:text-grey-5`}
   }
   .sub-text {
-    font-size: 13px;
-    font-weight: 500;
-    color: ${({ theme }) => theme.text30};
+    ${tw`text-[15px] font-medium text-grey-1 dark:text-grey-2`}
   }
   .btn {
     min-width: 132px;
