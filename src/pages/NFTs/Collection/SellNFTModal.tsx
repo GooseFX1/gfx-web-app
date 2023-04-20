@@ -6,8 +6,6 @@ import {
   // useAccounts,
   useConnectionConfig,
   useNFTDetails
-  // useNFTProfile
-  // usePriceFeedFarm
 } from '../../../context'
 // import { INFTAsk } from '../../../types/nft_details.d'
 import { SuccessfulListingMsg, TransactionErrorMsg } from '../../../components'
@@ -44,7 +42,8 @@ import {
   CancelInstructionAccounts,
   getMetadata,
   StringPublicKey,
-  bnTo8
+  bnTo8,
+  confirmTransaction
 } from '../../../web3'
 import { GFX_LINK } from '../../../styles'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -150,7 +149,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     signature: any
   ): Promise<void> => {
     try {
-      const confirm = await connection.confirmTransaction(signature, 'finalized')
+      const confirm = await confirmTransaction(connection, signature, 'confirmed')
       console.log(confirm)
       // successfully list nft
       if (confirm.value.err === null) {

@@ -44,7 +44,8 @@ import {
   CancelInstructionAccounts,
   StringPublicKey,
   toPublicKey,
-  bnTo8
+  bnTo8,
+  confirmTransaction
 } from '../../../web3'
 import { Button } from '../../../components/Button'
 import { GFX_LINK } from '../../../styles'
@@ -670,7 +671,7 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
     const transaction = new Transaction().add(cancelIX)
     const signature = await sendTransaction(transaction, connection)
     console.log(signature)
-    const confirm = await connection.confirmTransaction(signature, 'finalized')
+    const confirm = await confirmTransaction(connection, signature, 'confirmed')
     console.log(confirm)
   }
 
