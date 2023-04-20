@@ -8,8 +8,6 @@ import { Col, Row, Tabs } from 'antd'
 import { SpaceBetweenDiv } from '../../../styles'
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { MintItemViewStatus, INFTBid } from '../../../types/nft_details'
-import { TradingHistoryTabContent } from './TradingHistoryTabContent'
-import { AttributesTabContent } from './AttributesTabContent'
 import RemoveModalContent from './RemoveModalContent'
 import { Modal, SuccessfulListingMsg } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
@@ -29,7 +27,8 @@ import {
   createCancelInstruction,
   createWithdrawInstruction,
   toPublicKey,
-  bnTo8
+  bnTo8,
+  confirmTransaction
 } from '../../../web3'
 import BN from 'bn.js'
 import tw from 'twin.macro'
@@ -465,7 +464,8 @@ export const RightSectionTabs: FC<{
     const signature = await wal.sendTransaction(transaction, connection)
     console.log(signature)
     setPendingTxSig(signature)
-    const confirm = await connection.confirmTransaction(signature, 'finalized')
+
+    const confirm = await confirmTransaction(connection, signature, 'confirmed')
     console.log(confirm)
 
     if (confirm.value.err === null) {
@@ -506,7 +506,7 @@ export const RightSectionTabs: FC<{
       const signature = await wal.sendTransaction(transaction, connection)
       console.log(signature)
 
-      const confirm = await connection.confirmTransaction(signature, 'confirmed')
+      const confirm = await confirmTransaction(connection, signature, 'confirmed')
       console.log(confirm)
 
       if (confirm.value.err === null) {

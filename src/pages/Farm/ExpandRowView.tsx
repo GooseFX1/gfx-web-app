@@ -1,5 +1,7 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import React, { FC, useMemo, useState, useEffect, useRef } from 'react'
 import { TOKEN_NAMES } from '../../constants'
 import {
@@ -330,6 +332,7 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
       if (amount === parseFloat(userTokenBalance.toFixed(3))) amount = userTokenBalance
       const confirm = executeStake(stakeProgram, stakeAccountKey, wal, connection, network, amount)
       confirm.then((con) => {
+        console.log(con)
         setIsStakeLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
@@ -339,7 +342,7 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
           setTimeout(() => setStakeAmt(0), 500)
         } else {
           const { signature, error } = con
-          notify(errorHandlingMessage(getErrStakeMsg(), name, error?.message, signature, network))
+          notify(errorHandlingMessage(error?.message, name, error?.message, signature, network))
           return
         }
       })
