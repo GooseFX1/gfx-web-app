@@ -308,6 +308,12 @@ export const NFTTabSections: FC<{ activeTab: string; setActiveTab: any }> = ({
   setActiveTab
 }): ReactElement => {
   const { nftMetadata } = useNFTDetails()
+
+  const hasAttributes: boolean = useMemo(
+    () => nftMetadata && nftMetadata.attributes && nftMetadata.attributes.length > 0,
+    [nftMetadata]
+  )
+
   return (
     <RIGHT_SECTION_TABS activeTab={activeTab}>
       <Tabs defaultActiveKey="1" centered onChange={(key) => setActiveTab(key)}>
@@ -315,7 +321,7 @@ export const NFTTabSections: FC<{ activeTab: string; setActiveTab: any }> = ({
           <AsksAndBidsForNFT />
         </TabPane>
         <TabPane tab="Attributes" key="2">
-          <AttributesTabContent data={nftMetadata ? nftMetadata.attributes : []} />
+          <AttributesTabContent data={hasAttributes ? nftMetadata.attributes : []} />
         </TabPane>
         <TabPane tab="Details" key="3">
           <NFTDetailsTab />
