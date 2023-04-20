@@ -23,10 +23,8 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
       .collectionNameContainer {
         ${tw`flex items-center sm:items-start	w-full justify-between sm:flex-col`}
         .collectionName {
-          ${tw`flex items-center sm:w-[100%]`}
-          .title {
-            ${tw`text-[30px] sm:text-[22px] ml-3 font-bold`}
-          }
+          ${tw`flex items-center sm:w-[100%] dark:text-grey-5 text-black-4`}
+
           .sweepMobile {
             ${tw`h-[48px] w-[48px] ml-auto`}
           }
@@ -278,7 +276,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       ${tw`text-[15px] flex font-medium ml-auto sm:ml-0 sm:mt-1 mt-10`}
     }
     .flitersFlexContainer {
-      ${tw`text-[15px] flex font-medium mt-2`}
+      ${tw`text-[15px] flex font-medium mt-2 ml-5`}
     }
     .flexContainer {
       margin-left: auto;
