@@ -14,6 +14,7 @@ export const OpenBidNFTs = (): ReactElement => {
   const { buyNowClicked, bidNowClicked, setNftInBag } = useNFTAggregator()
   const { openBidWithinCollection, setOpenBidWithinCollection, singleCollection } = useNFTCollections()
   const [openBidArr, setOpenBidArr] = useState<any[]>([])
+  const { refreshClicked } = useNFTAggregator()
   const paginationNum = 30
   const [pageNumber, setPageNumber] = useState<number>(0)
   const [stopCalling, setStopCalling] = useState<boolean>(false)
@@ -54,6 +55,10 @@ export const OpenBidNFTs = (): ReactElement => {
       })()
     }
   }, [pageNumber, singleCollection])
+
+  useEffect(() => {
+    setOpenBidArr([])
+  }, [refreshClicked])
 
   const addNftToBag = (e, nftItem) => {
     setNftInBag((prev) => {

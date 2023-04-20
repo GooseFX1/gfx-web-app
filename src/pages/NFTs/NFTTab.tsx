@@ -59,7 +59,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
         {checkMobile() && <CurrencySwitch />}  */}
       </div>
 
-      <div className="flitersViewCategory" tw="mr-[10px] sm:mr-0">
+      <div className="filtersViewCategory" tw="mr-[10px] sm:mr-0">
         <div
           className={displayIndex === 0 ? 'selectedProfile' : 'flexItemProfile'}
           onClick={() => setDisplayIndex(0)}

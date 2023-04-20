@@ -16,10 +16,15 @@ export const FixedPriceNFTs = (): ReactElement => {
   const { singleCollection, fixedPriceWithinCollection, setFixedPriceWithinCollection } = useNFTCollections()
   const [fixedPriceArr, setFixedPriceArr] = useState<BaseNFT[]>([])
   const paginationNum = 30
+  const { refreshClicked } = useNFTAggregator()
   const [pageNumber, setPageNumber] = useState<number>(0)
   const [stopCalling, setStopCalling] = useState<boolean>(false)
   const [fixedPriceLoading, setFixedPriceLoading] = useState<boolean>(false)
   const observer = useRef<any>()
+
+  useEffect(() => {
+    setFixedPriceArr([])
+  }, [refreshClicked])
 
   const lastCardRef = useCallback(
     (node) => {
