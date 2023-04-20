@@ -6,7 +6,14 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { SearchBar } from '../../../components'
 import { NFTAggTerms } from '../../../components/NFTAggWelcome'
-import { useNavCollapse, useNFTAggregator, useNFTCollections } from '../../../context'
+import {
+  useConnectionConfig,
+  useDarkMode,
+  useNavCollapse,
+  useNFTCollections,
+  useNFTDetails,
+  useNFTProfile
+} from '../../../context'
 import { checkMobile } from '../../../utils'
 import { STYLED_BUTTON } from '../../Farm/FarmFilterHeader'
 import MenuNFTPopup from './MenuNFTPopup'
@@ -17,6 +24,9 @@ import SearchNFTMobile from './SearchNFTMobile'
 import { Arrow } from '../../../components/common/Arrow'
 import { DROPDOWN_CONTAINER } from '../Collection/CollectionV2.styles'
 import MyNFTBag from '../MyNFTBag'
+import { useConnection, useWallet } from '@solana/wallet-adapter-react'
+import { useHistory } from 'react-router-dom'
+import { Image } from 'antd'
 
 const CURRENCY_SWITCH = styled.div<{ $currency }>`
   .ant-switch {
@@ -70,6 +80,9 @@ const EYE_CONTAINER = styled.div`
 `
 const FILTERS_CONTAINER = styled.div`
   ${tw`flex mt-[15px] sm:mt-[20px]`}
+  .profilePic {
+    ${tw`w-11 mr-5 ml-2 h-11 rounded-full cursor-pointer`}
+  }
   .dropdownBtn {
     ${tw`rounded-full flex justify-center border-none dark:bg-[#1f1f1f] justify-between p-1 pr-2 cursor-pointer
       bg-white items-center text-[#3c3c3c] mx-2 dark:text-[#fff] font-semibold text-[15px]`}
@@ -84,6 +97,9 @@ const FILTERS_CONTAINER = styled.div`
   }
 `
 
+const AVATAR_NFT = styled(Image)`
+  ${tw`h-11 w-11 rounded-full cursor-pointer mr-5`}
+`
 export const ButtonContainer = styled.div<{ $poolIndex: number }>`
   ${tw`relative z-0 mr-1`}
   .slider-animation-timeline {
@@ -117,7 +133,7 @@ const MOBILE_FILTERS_HEADER = styled.div`
     ${tw`h-[40px] flex ml-[10px] mb-4`}
   }
   .iconImg {
-    ${tw`h-[40px] w-[40px] rounded flex items-center justify-center rounded-full	mr-3 `}
+    ${tw`h-[40px] w-[40px] rounded flex items-center justify-center rounded-full mr-3`}
     border: 1px solid #cacaca;
     background: ${({ theme }) => theme.bg0};
   }
@@ -158,6 +174,41 @@ const FiltersContainer = ({ setCurrency }: any) => {
   const [searchFilter, setSearchFilter] = useState<string>(undefined)
   const [searchPopup, setSearchPopup] = useState<boolean>(false)
   const [menuPopup, setMenuPopup] = useState<boolean>(true)
+  const { connected, publicKey } = useWallet()
+  const { connection } = useConnectionConfig()
+  const history = useHistory()
+  const { mode } = useDarkMode()
+
+  const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
+  const goProfile = () => history.push(`/NFTs/profile/${publicKey.toBase58()}`)
+
+  useEffect(() => {
+    if (connected && publicKey) {
+      if (!sessionUser || sessionUser.pubkey !== publicKey.toBase58()) {
+        fetchSessionUser('address', publicKey.toBase58(), connection).then((res) => {
+          if (res && res.status === 200) {
+            const userProfileStatus = localStorage.getItem(publicKey.toBase58())
+            if (res.data.length === 0 && userProfileStatus === null) {
+              localStorage.setItem(
+                publicKey.toBase58(),
+                JSON.stringify({ pubKey: publicKey.toBase58(), isNew: true })
+              )
+            } else {
+              localStorage.setItem(
+                publicKey.toBase58(),
+                JSON.stringify({ pubKey: publicKey.toBase58(), isNew: false })
+              )
+            }
+          } else {
+            console.error(res)
+          }
+        })
+      }
+    } else {
+      setSessionUser(undefined)
+    }
+    return null
+  }, [publicKey, connected])
 
   const handleClick = (poolName, index) => {
     setPoolIndex(index)
@@ -249,16 +300,22 @@ const FiltersContainer = ({ setCurrency }: any) => {
           <TimeLineDropdown />
           <div>
             {' '}
-            <img tw="mr-2" src="/img/assets/refresh.svg" />{' '}
+            <img className="profilePic" src="/img/assets/refresh.svg" />{' '}
           </div>
-          <div>
-            {' '}
-            <img tw="mr-2" src="/img/assets/refresh.svg" />{' '}
-          </div>
+
+          {publicKey && (
+            <AVATAR_NFT
+              fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+              src={sessionUser ? sessionUser.profile_pic_link : ''}
+              preview={false}
+              onClick={goProfile}
+            />
+          )}
         </div>
       </FILTERS_CONTAINER>
     )
 }
+
 const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
   const eyeImg = `/img/assets/${showBanner ? `show` : `hide`}Eye.svg`
   return (

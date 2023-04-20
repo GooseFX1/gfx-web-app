@@ -9,14 +9,14 @@ import Activity from './Activity'
 import styled from 'styled-components'
 import { ProfilePageSidebar } from './ProfilePageSidebar'
 import { checkMobile } from '../../../utils'
+import tw from 'twin.macro'
 
 type Props = {
   isSessionUser: boolean
 }
 
 const WRAPPER = styled.div<{ background?: string }>`
-  display: flex;
-  height: 715px;
+  ${tw`flex h-[715px]`}
 `
 
 export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
@@ -55,7 +55,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
   const tabPanes = useMemo(
     () => [
       {
-        order: '1',
+        order: 1,
         name: `Collection (${currentUserParsedAccounts ? currentUserParsedAccounts.length : 0})`,
         component: <NFTDisplay parsedAccounts={currentUserParsedAccounts} type={'collected'} />
       },
@@ -65,12 +65,12 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
       //   component: <NFTDisplay parsedAccounts={createdItems} type={'created'} />
       // },
       {
-        order: '3',
+        order: 1,
         name: `Favorited (${favoritedItems ? favoritedItems.length : 0})`,
         component: <NFTDisplay singleNFTs={favoritedItems ? favoritedItems : []} type={'favorited'} />
       },
       {
-        order: '4',
+        order: 2,
         name: 'Activity',
         component: <Activity data={userActivity ? userActivity : []} />
       }

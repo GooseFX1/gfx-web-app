@@ -2,17 +2,18 @@ import React, { useState, useEffect, useMemo, FC } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params.d'
 import { useWallet } from '@solana/wallet-adapter-react'
-import styled from 'styled-components'
 import { HeaderProfile } from './HeaderProfile'
 import { ContentProfile } from './ContentProfile'
 import { useNFTProfile } from '../../../context'
 import { isValidSolanaAddress } from '../../../web3'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 //#region styles
 const PROFILE_CONTAINER = styled.div<{ background?: string }>`
+  ${tw`-mt-20 pt-20 flex flex-col`}
   ${({ background }) => `
-  display: flex;
-  flex-direction: column;
   background : url(${background});
   background-repeat: no-repeat;
   background-size: 100%;

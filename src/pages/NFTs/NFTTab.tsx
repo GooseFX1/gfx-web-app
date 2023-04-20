@@ -1,69 +1,27 @@
-import React, { ReactNode, FC } from 'react'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { ReactNode, FC, ReactElement, useState } from 'react'
+import { Dropdown, Tabs } from 'antd'
+import { NFTGridContainer } from './Collection/CollectionV2'
+import {
+  DROPDOWN_CONTAINER,
+  GRID_CONTAINER,
+  NFT_COLLECTIONS_GRID,
+  NFT_FILTERS_CONTAINER
+} from './Collection/CollectionV2.styles'
+import { useDarkMode, useNavCollapse } from '../../context'
 import styled from 'styled-components'
-import { Tabs } from 'antd'
+import tw from 'twin.macro'
+import 'styled-components/macro'
+import { checkMobile } from '../../utils'
+import { SearchBar, TokenToggle } from '../../components'
+import { CurrencySwitch } from './Home/NFTLandingPageV2'
+import NFTDisplay from './Profile/NFTDisplay'
 
-const { TabPane } = Tabs
-
-const NFT_TAB = styled.div`
-  min-height: 650px;
-  z-index: 3;
-  margin-top: 65px;
-  width: 75vw;
-
-  @media (max-width: 500px) {
-    width: 100vw;
-    min-height: auto;
-    margin-top: 0;
-  }
-
-  .profile-tab-container,
-  .profile-tab-pane,
-  .ant-tabs-content {
-    background: ${({ theme }) => theme.profileTabContainerBg};
-    height: 100%;
-    border-radius: 0 20px 0 0;
-    overflow-x: hidden;
-    overflow-y: scroll;
-
-    .ant-tabs-nav-wrap {
-      width: 50%;
-    }
-  }
-
-  .ant-tabs-ink-bar {
-    display: none;
-  }
-  .ant-tabs-top {
-    > .ant-tabs-nav {
-      margin-bottom: 0;
-      &::before {
-        border: none;
-      }
-    }
-  }
-  .ant-tabs-tab {
-    color: #616161;
-    font-size: 18px;
-    .ant-tabs-tab-btn {
-      font-weight: 500;
-      font-family: Montserrat;
-      font-size: 17px;
-    }
-    + .ant-tabs-tab {
-      margin: 0 ${({ theme }) => theme.margin(2)};
-    }
-    &.ant-tabs-tab-active {
-      .ant-tabs-tab-btn {
-        color: ${({ theme }) => theme.text7};
-        font-weight: 600;
-      }
-    }
-  }
-`
+const NFT_TAB = styled.div``
 
 type TabPanesType = {
   name: string
-  order: string
+  order: number
   component: ReactNode
 }
 
@@ -73,14 +31,88 @@ type Props = {
   isExplore?: boolean
 }
 
-export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }) => (
-  <NFT_TAB>
-    <Tabs defaultActiveKey={defaultActiveKey} centered className="profile-tab-container">
-      {tabPanes.map((tab) => (
-        <TabPane tab={tab.name} key={tab.order} className="profile-tab-pane">
-          {tab.component}
-        </TabPane>
-      ))}
-    </Tabs>
-  </NFT_TAB>
+export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }): ReactElement => {
+  const { isCollapsed } = useNavCollapse()
+  const [open, setOpen] = useState<boolean>(true)
+  const [displayIndex, setDisplayIndex] = useState<number>(0)
+
+  return (
+    <GRID_CONTAINER tw="w-[77vw] mt-10">
+      <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
+      {tabPanes[displayIndex].component}
+    </GRID_CONTAINER>
+  )
+}
+
+const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): ReactElement => {
+  const { mode } = useDarkMode()
+
+  return (
+    <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none">
+      <div className="flitersFlexContainer">
+        {/* {!checkMobile() && <OffersDropdown />} */}
+        {checkMobile() && <CurrencySwitch />}
+      </div>
+
+      <div className="flitersViewCategory" tw="mr-[10px] sm:mr-0">
+        <div
+          className={displayIndex === 0 ? 'selectedProfile' : 'flexItemProfile'}
+          onClick={() => setDisplayIndex(0)}
+        >
+          Collection (243)
+          <div className="activeItemProfile" />
+        </div>
+        <div
+          className={displayIndex === 1 ? 'selectedProfile' : 'flexItemProfile'}
+          onClick={() => setDisplayIndex(1)}
+        >
+          Favourited (10K)
+        </div>
+        <div
+          className={displayIndex === 2 ? 'selectedProfile' : 'flexItemProfile'}
+          onClick={() => setDisplayIndex(2)}
+        >
+          Activity
+        </div>
+      </div>
+      <TokenToggle tokenA="" tokenB="" toggleToken={() => console.log('first')} icons={true} />
+    </NFT_FILTERS_CONTAINER>
+  )
+}
+
+const OffersDropdown = () => {
+  console.log('')
+  return (
+    <div>
+      <Dropdown
+        align={{ offset: [0, 16] }}
+        destroyPopupOnHide
+        overlay={<OverlayOptions />}
+        placement="bottomRight"
+        trigger={checkMobile() ? ['click'] : ['hover']}
+      >
+        {checkMobile() ? (
+          <div>
+            <img className="shareBtn" src="/img/assets/Aggregator/shareBtn.svg" />
+          </div>
+        ) : (
+          <div className="offerBtn">All</div>
+        )}
+      </Dropdown>
+    </div>
+  )
+}
+const OverlayOptions = () => (
+  <DROPDOWN_CONTAINER>
+    <div className="option">
+      All <input type={'radio'} name="sort" value="asc" />
+    </div>
+    <div className="option">
+      Offer <input type={'radio'} name="sort" value="desc" />
+    </div>
+    <div className="option">
+      On Sell <input type={'radio'} name="sort" value="desc" />
+    </div>
+    {checkMobile() && <div className="option">Share</div>}
+  </DROPDOWN_CONTAINER>
 )

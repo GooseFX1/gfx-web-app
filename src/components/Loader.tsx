@@ -5,6 +5,7 @@ const LOADER = styled.div<{ $color }>`
   position: absolute;
   top: 0;
   height: 8px;
+  border: 10px solid;
   width: 8px;
   border-radius: 50%;
   font-size: 12px;

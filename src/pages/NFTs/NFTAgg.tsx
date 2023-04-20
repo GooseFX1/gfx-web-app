@@ -1,9 +1,10 @@
 import React, { ReactElement } from 'react'
 import { Route, Switch, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
-import { NFTAggregatorProvider, useNavCollapse } from '../../context'
+import { NFTAggregatorProvider, NFTDetailsProvider, NFTProfileProvider, useNavCollapse } from '../../context'
 import CollectionV2 from './Collection/CollectionV2'
 import NFTLandingPageV2 from './Home/NFTLandingPageV2'
+import { Profile } from './Profile'
 
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
@@ -22,16 +23,23 @@ const NFTAgg = (): ReactElement => {
 
   return (
     <BODY_NFT $navCollapsed={isCollapsed}>
-      <NFTAggregatorProvider>
-        <Switch>
-          <Route exact path={path}>
-            <NFTLandingPageV2 />
-          </Route>
-          <Route exact path="/NFTAgg/collection/:collectionName">
-            <CollectionV2 />
-          </Route>
-        </Switch>
-      </NFTAggregatorProvider>
+      <NFTDetailsProvider>
+        <NFTAggregatorProvider>
+          <NFTProfileProvider>
+            <Switch>
+              <Route exact path={path}>
+                <NFTLandingPageV2 />
+              </Route>
+              <Route exact path="/NFTAgg/collection/:collectionName">
+                <CollectionV2 />
+              </Route>
+              <Route exact path={['/NFTAgg/profile', '/NFTAgg/profile/:userAddress']}>
+                <Profile />
+              </Route>
+            </Switch>
+          </NFTProfileProvider>
+        </NFTAggregatorProvider>
+      </NFTDetailsProvider>
     </BODY_NFT>
   )
 }

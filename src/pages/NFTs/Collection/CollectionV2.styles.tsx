@@ -98,14 +98,13 @@ export const ArrowIcon: FC<{ isOpen: boolean; setIsOpen: any }> = ({ isOpen, set
     </ICON_WRAPPER_TD>
   )
 }
-export const GRID_CONTAINER = styled.div<{ navCollapsed }>`
+export const GRID_CONTAINER = styled.div<{ navCollapsed?: boolean }>`
   ${({ navCollapsed }) => css`
     height: calc(100vh - 110px - ${navCollapsed ? '0px' : '80px'});
     ${tw`duration-500`}
     @media(max-width: 500px) {
       height: auto;
     }
-
     .flexContainer {
       ${tw`flex h-screen`}
     }
@@ -120,6 +119,7 @@ export const GRID_CONTAINER = styled.div<{ navCollapsed }>`
 export const NFT_COLLECTIONS_GRID = styled.div`
   ${tw`w-full`}
   background: ${({ theme }) => theme.bg23};
+  ${({ theme }) => theme.customScrollBar('4px')}
   overflow-y: auto;
   .gridContainer {
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -129,11 +129,11 @@ export const NFT_COLLECTIONS_GRID = styled.div`
     background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
   }
   .gridItem {
-    ${tw`h-[270px] w-[190px] rounded-[12px] dark:bg-[#131313] bg-[#fff] duration-500 cursor-pointer`}
+    ${tw`h-[275px] w-[190px] rounded-[12px] dark:bg-[#131313] bg-[#fff] duration-500 cursor-pointer`}
     margin: 20px 13px 0px 0px;
 
     .gridItemContainer {
-      ${tw`flex pt-2 justify-center `}
+      ${tw`flex pt-[10px] justify-center `}
       .nftImg {
         ${tw`w-[170px] h-[170px] `}
       }
@@ -141,20 +141,24 @@ export const NFT_COLLECTIONS_GRID = styled.div`
         ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
       }
       .hoverButtons {
-        ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-between w-[100%] px-2`}
+        ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-between w-[96%] px-2`}
+      }
+      :hover {
+        div {
+          ${tw`absolute opacity-100 duration-300 w-[190px] h-[170px] rounded-[8px] pl-1`}
+          background: linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0.4) 100%)
+        }
       }
       div {
         ${tw`absolute opacity-0`}
       }
-      :hover {
-        div {
-          ${tw`absolute opacity-100 duration-300 w-[170px] h-[170px] rounded-[8px]`}
-          background: linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0.4) 100%)
-        }
+      .hoverNFT {
+        ${tw`absolute opacity-100 duration-300 w-[190px] h-[170px] rounded-[8px] pl-1`}
+        background: linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0.4) 100%)
       }
     }
     .nftTextContainer {
-      ${tw`pl-2 pr-2 pt-2`}
+      ${tw`pl-2 pr-2 pt-1`}
     }
     .collectionId {
       ${tw`text-[13px] font-semibold flex items-center`}
@@ -163,9 +167,15 @@ export const NFT_COLLECTIONS_GRID = styled.div`
       }
     }
     .nftPrice {
-      ${tw`font-semibold text-[15px] mt-2 flex items-center`}
+      ${tw`font-semibold text-[15px]  flex items-center`}
       img {
         ${tw`w-5 h-5 ml-2.5`}
+      }
+    }
+    .apprisalPrice {
+      ${tw`font-semibold text-[15px] mt-[-2px] text-[#636363] flex items-center`}
+      img {
+        ${tw`w-[20px] h-[20px] ml-2.5`}
       }
     }
     img {
@@ -200,6 +210,10 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       ${tw`w-[185px] text-white h-[40px] bg-[#5855ff] rounded-3xl	font-semibold text-[15px]
        flex items-center justify-center cursor-pointer`}
     }
+    .offerBtn {
+      ${tw`w-[115px] ml-2 text-white h-[40px] bg-[#5855ff] rounded-3xl	font-semibold text-[15px]
+       flex items-center justify-center cursor-pointer`}
+    }
     img {
       ${tw`h-10 w-10 ml-3 cursor-pointer`}
     }
@@ -221,18 +235,35 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       ${tw`w-[140px] sm:w-[125px] mb-4 items-center sm:mt-1
        font-semibold  flex justify-between flex-col cursor-pointer`}
     }
+    .selectedProfile {
+      color: ${({ theme }) => theme.text4};
+      ${tw`w-[180px] mb-4 items-center sm:mt-1
+       font-semibold  flex justify-between flex-col cursor-pointer`}
+    }
+    }
     .flexItem {
       ${tw` w-[140px] sm:w-[130px] mb-4 sm:mt-1 items-center flex justify-between flex-col cursor-pointer`}
     }
+    .flexItemProfile {
+      ${tw`w-[180px] sm:w-[150px] mb-4 sm:mt-1 items-center flex justify-between flex-col cursor-pointer`}
+    }
     .activeItem {
-      ${tw`h-2  block mt-3 sm:mt-2 rounded-b-circle font-semibold duration-500 	`}
+      ${tw`h-2  block mt-3 sm:mt-2 rounded-b-circle font-semibold duration-500 bg-[#5855ff] w-[70%]`}
       content: '';
       width: 70%;
-      background: #5855ff;
       transform: rotate(180deg);
       margin-left: ${index * 280 + `px`};
       @media (max-width: 500px) {
         margin-left: ${index * 260 + `px`};
+      }
+    }
+    .activeItemProfile {
+      ${tw`h-2  block mt-3 sm:mt-2 rounded-b-circle font-semibold duration-500 bg-[#5855ff] w-[75%] `}
+      content: '';
+      transform: rotate(180deg);
+      margin-left: ${index * 365 + `px`};
+      @media (max-width: 500px) {
+        margin-left: ${index * 310 + `px`};
       }
     }
   `}

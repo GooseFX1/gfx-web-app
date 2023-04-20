@@ -9,6 +9,7 @@ import { Connect } from '../../layouts'
 import { useConnectionConfig, useNavCollapse, useNFTAggregator } from '../../context'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { GradientText } from './adminPage/components/UpcomingMints'
+import { PriceWithToken } from '../../components/common/PriceWithToken'
 
 const BAG_WRAPPER = styled.div`
   .zeroItemBag {
@@ -22,7 +23,7 @@ const BAG_WRAPPER = styled.div`
     ${tw`w-[26px] h-[30px] cursor-pointer -mr-2`}
   }
   .noOfItemsInBag {
-    ${tw`absolute text-[15px] mt-1.5 ml-2 font-semibold cursor-pointer`}
+    ${tw`absolute text-[15px] mt-1.5 ml-2 text-[#fff] font-semibold cursor-pointer`}
   }
 `
 const MY_BAG = styled(Menu)`
@@ -40,9 +41,13 @@ const MY_BAG = styled(Menu)`
     ${tw`flex items-center gap-4 sm:justify-between`}
   }
   .bagContentContainer {
-    ${tw`h-[250px] flex flex-col sm:h-auto mb-20 mt-[15px] `}
+    ${({ theme }) => theme.customScrollBar('2px')}
+    ${tw`h-[230px] flex flex-col sm:h-auto mb-20`}
     .nftImage {
-      ${tw`h-[60px] w-[60px] left-0 `}
+      ${tw`h-[60px] w-[60px] left-0 rounded-[5px] `}
+    }
+    .closeImg {
+      ${tw`relative h-5 w-5  mt-[-50px] ml-[-10px] cursor-pointer `}
     }
     overflow-y: auto;
   }
@@ -75,13 +80,12 @@ const MY_BAG = styled(Menu)`
     }
   }
   .clearText {
-    ${tw`text-[15px] font-semibold sm:mr-4`}
+    ${tw`text-[15px] font-semibold sm:mr-4 cursor-pointer`}
     color: ${({ theme }) => theme.text34}
   }
 `
 
 export const MyNFTBag = (): ReactElement => {
-  const { publicKey } = useWallet()
   const { nftInBag } = useNFTAggregator()
   const { isCollapsed } = useNavCollapse()
   const itemsPresentInBag = nftInBag.length // no items in the bag
@@ -94,7 +98,7 @@ export const MyNFTBag = (): ReactElement => {
         overlay={<MyBagContent />}
         trigger={['click']}
       >
-        {publicKey && itemsPresentInBag ? (
+        {itemsPresentInBag ? (
           <div className="zeroItemBag">
             <div className="noOfItemsInBag">{nftInBag.length}</div>
             <img className="itemsPresentBag" src="/img/assets/Aggregator/itemsInBag.svg" alt="bag" />
@@ -107,7 +111,7 @@ export const MyNFTBag = (): ReactElement => {
   )
 }
 const MyBagContent = (): ReactElement => {
-  const { nftInBag } = useNFTAggregator()
+  const { nftInBag, setNftInBag } = useNFTAggregator()
   const itemsPresentInBag = nftInBag.length // no items in the bag
 
   return (
@@ -115,7 +119,9 @@ const MyBagContent = (): ReactElement => {
       <div className="bagContainer">
         <div className="headerContainer">
           <div className="myBagText">My Bag ({nftInBag.length})</div>
-          <div className="clearText">Clear</div>
+          <div className="clearText" onClick={() => setNftInBag([])}>
+            Clear
+          </div>
         </div>
         {itemsPresentInBag ? <ItemsPresentInBag /> : <EmptyBagDisplay />}
         <ButtonContainerForBag />
@@ -136,19 +142,35 @@ const BagTokenBalanceRow: FC<{ title: string; amount: number }> = ({ title, amou
   </div>
 )
 const ItemsPresentInBag = (): ReactElement => {
-  const { nftInBag } = useNFTAggregator()
+  const { nftInBag, setNftInBag } = useNFTAggregator()
+  const removeNft = (clickedNft) => {
+    const removedBag = nftInBag.filter((nft) => nft.uid !== clickedNft.uid)
+    setNftInBag(removedBag)
+  }
   return (
     <div className="bagContentContainer">
       {nftInBag.map((nft, index) => (
-        <div tw="flex items-center" key={index}>
+        <div tw="flex items-center mt-[15px]" key={index}>
           <img className="nftImage" src={nft.nft_url} alt="img" />
-          <div tw="flex flex-col ml-2 text-[15px] font-semibold">
+          <img
+            className="closeImg"
+            onClick={() => removeNft(nft)}
+            src={`/img/assets/Aggregator/closeRed.svg`}
+            alt="img"
+          />
+          <div tw="flex flex-col text-[15px] font-semibold text-[#636363] dark:text-[#fff]">
             <div>#{nft.collectionId}</div>
             <div>
               <GradientText text={nft.collectionName} fontSize={16} fontWeight={600} />
             </div>
           </div>
-          <div>{nft.nftPrice}</div>
+          <div tw="ml-auto">
+            <PriceWithToken
+              price={nft.nftPrice}
+              token={nft.currency}
+              cssStyle={tw`h-5 w-5 text-[#636363] dark:text-[#ffffff]`}
+            />
+          </div>
         </div>
       ))}
     </div>
@@ -168,11 +190,12 @@ const EmptyBagDisplay = (): ReactElement => (
 
 const ButtonContainerForBag = (): ReactElement => {
   const { publicKey } = useWallet()
+  const { nftInBag } = useNFTAggregator()
   const disabled = false
-  const enoughFunds = true
-  const itemsInBag = false
+  const itemsInBag = nftInBag.length
   const { connection } = useConnectionConfig()
   const [userSOLBalance, setUserSOLBalance] = useState<number>(0)
+
   useEffect(() => {
     const SOL = connection.getAccountInfo(publicKey)
     SOL.then((res) => setUserSOLBalance(parseFloat((res.lamports / LAMPORTS_PER_SOL).toFixed(3)))).catch((err) =>
@@ -180,13 +203,20 @@ const ButtonContainerForBag = (): ReactElement => {
     )
   }, [publicKey])
 
+  const totalCost = useMemo(() => {
+    let sum = 0
+    for (const nft of nftInBag) sum += nft.nftPrice
+    return sum
+  }, [nftInBag])
+  const enoughFunds = totalCost < userSOLBalance
+
   return (
     <div className="buttonContainer">
       {publicKey ? (
         <>
-          {itemsInBag && <BagTokenBalanceRow title="You pay:" amount={250} />}
+          {itemsInBag ? <BagTokenBalanceRow title="You pay:" amount={totalCost} /> : <></>}
           <BagTokenBalanceRow title="Your Balance:" amount={userSOLBalance} />
-          <Button className="button" disabled={disabled}>
+          <Button className="button" disabled={!enoughFunds}>
             {enoughFunds ? 'Buy now' : 'Insufficient SOL'}
           </Button>
         </>
