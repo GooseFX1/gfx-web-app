@@ -1,6 +1,5 @@
 import { FC, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import styled from 'styled-components'
 import { useAccounts, useDarkMode, useNFTProfile } from '../../../context'
 import { checkMobile, notify, truncateAddress } from '../../../utils'
 import { PopupProfile } from './PopupProfile'
@@ -9,16 +8,16 @@ import { generateTinyURL } from '../../../api/tinyUrl'
 import { WRAPPED_SOL_MINT } from '@jup-ag/core'
 import { formatNumber } from '../launchpad/candyMachine/utils'
 import { IAppParams } from '../../../types/app_params'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 const PROFILE = styled.div`
-  width: 25vw;
-  background: ${({ theme }) => theme.bg25};
+${tw`w-[23vw] h-[708px] bg-[#eee] dark:bg-[#1c1c1c]`}
   border-top-right-radius: 20px;
 
   .profile-pic {
-    display: flex;
-    position: relative;
-    height: 100px;
+    ${tw`flex relative h-[100px]`}
     .avatar-profile-wrap {
       position: relative;
       width: 116px;
@@ -30,12 +29,7 @@ const PROFILE = styled.div`
         border: 8px solid #131313;
       }
       .icon {
-        width: 40px;
-        height: 40px;
-        position: absolute;
-        bottom: -5px;
-        right: -1px;
-        cursor: pointer;
+        ${tw`h-10 w-10 absolute bottom-[-5px] right-[-1px] cursor-pointer`}
       }
     }
 
@@ -113,10 +107,7 @@ const PROFILE = styled.div`
     }
 
     .track-portfolio{
-        font-size: 15px;
-        margin-top: 12px;
-        margin-bottom: 35px;
-
+        ${tw`text-[15px] font-semibold mb-8 mt-[11px]`}
     }
   }
 }
@@ -406,11 +397,15 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
       )}
       <img src="/img/assets/profileGraphic.png" alt="profile-graphic" className="graphic-img" />
       <div className="portfolio">
-        <span>Portfolio Value</span> (Coming soon)
+        <span>Portfolio Value</span>{' '}
+        <div tw="inline-block">
+          <span tw="text-[#b5b5b5] text-[15px] font-semibold 	">(Coming soon)</span>
+        </div>
         <div className="track-portfolio">
           Track your colection portfolio like <br /> never before!
         </div>
       </div>
+
       {isSessionUser && (
         <SOL>
           <div>Wallet Ballance</div>

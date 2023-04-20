@@ -73,7 +73,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   }
   tbody td,
   thead th {
-    width: 12.5%;
+    width: 14%;
     float: left;
     text-align: center;
     @media (max-width: 500px) {
@@ -81,7 +81,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
     }
   }
   .tdItem {
-    ${tw`align-top text-center pt-[28px] sm:w-[30%]`}
+    ${tw`text-center flex items-center justify-center sm:w-[30%]`}
   }
 
   tbody {
@@ -107,16 +107,16 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   }
   .nftNameColumn {
     text-align: left;
-    ${tw`w-[25%] sm:w-[60%]`}
+    ${tw`w-[25%] sm:w-[60%] flex items-center  `}
     img {
-      ${tw`w-10 h-10  sm:h-[42px] sm:w-[42px] ml-4 mt-5 rounded-full sm:mt-[18px] sm:ml-[8px]`}
+      ${tw`w-10 h-10  sm:h-[42px] sm:w-[42px] ml-4  rounded-full sm:mt-[18px] sm:ml-[8px]`}
     }
     span {
       ${tw` ml-[6px] font-semibold text-[15px]`}
     }
   }
   .nftCollectionName {
-    ${tw`ml-16 -mt-7 sm:-mt-11 sm:ml-[60px] `}
+    ${tw`sm:-mt-11 sm:ml-[60px] ml-[15px]`}
     padding-top: 0!important;
   }
   .nftCollectionFloor {
@@ -141,6 +141,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
 
   .borderRow2 {
     border-radius: 0px 20px 25px 0px;
+    ${tw`w-[5%]`}
     color: ${({ theme }) => theme.tableHeader};
     @media (max-width: 500px) {
       ${tw`w-[26%] h-[52px]`}

@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, FC } from 'react'
+import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { useNavCollapse, useNFTCollections } from '../../../context'
 import { checkMobile } from '../../../utils'
 import { Loader } from '../../Farm/Columns'
 import { WRAPPER_TABLE } from './NFTAggregator.styles'
 import { NFTColumnsTitleWeb } from './NFTTableColumns'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   const { isCollapsed } = useNavCollapse()
@@ -72,18 +76,30 @@ const NFTTableRow = ({ allItems }: any) => (
       <tr className="tableRow" key={index}>
         <td className="nftNameColumn">
           {item?.collection_name ? (
-            <div>
+            <>
               <img src={item.profile_pic_link} alt="" />
               <div className="nftCollectionName">{item?.collection_name}</div>
-            </div>
+            </>
           ) : (
-            <div>
+            <div className="nftCollectionName">
               <Loader />
             </div>
           )}
         </td>
-        <td className="tdItem">{item?.collection_name ? <>{item.collection_name} </> : <Loader />}</td>
-        <td className="tdItem">{item?.collection_name ? <>{item.collection_name} </> : <Loader />}</td>
+        <td className="tdItem">
+          {item?.collection_name ? (
+            <PriceWithToken price={121} token={'SOL'} cssStyle={tw`h-5 w-5`} />
+          ) : (
+            <Loader />
+          )}
+        </td>
+        <td className="tdItem">
+          {item?.collection_name ? (
+            <PriceWithToken price={109} token={'SOL'} cssStyle={tw`h-5 w-5`} />
+          ) : (
+            <Loader />
+          )}
+        </td>
       </tr>
     ))}
   </>

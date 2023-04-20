@@ -1,6 +1,6 @@
 import { Dropdown } from 'antd'
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useState, FC } from 'react'
 import { useParams } from 'react-router-dom'
 import tw from 'twin.macro'
 import { SearchBar } from '../../../components'
@@ -22,7 +22,7 @@ import {
   NFT_COLLECTIONS_GRID,
   DROPDOWN_CONTAINER
 } from './CollectionV2.styles'
-import SingleViewNFT from './SingleViewNFT'
+import { DetailViewNFT } from './SingleViewNFT'
 import SweepCollectionDrawer from './SweepCollectionDrawer'
 
 const CollectionV2 = (): ReactElement => {
@@ -114,19 +114,14 @@ const NFTStatsContainer = () => {
     </div>
   )
 }
-const NFTGridContainer = (): ReactElement => {
+export const NFTGridContainer = (): ReactElement => {
   const { isCollapsed } = useNavCollapse()
   const [open, setOpen] = useState<boolean>(true)
   const [displayIndex, setDisplayIndex] = useState<number>(0)
 
   return (
     <GRID_CONTAINER navCollapsed={isCollapsed}>
-      <FiltersContainer
-        open={open}
-        setOpen={setOpen}
-        displayIndex={displayIndex}
-        setDisplayIndex={setDisplayIndex}
-      />
+      <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
       <div className="flexContainer">
         <AdditionalFilters open={open} setOpen={setOpen} />
         {displayIndex !== 2 && <NFTCollectionsGrid />}
@@ -149,14 +144,14 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
       </div>
 
       <div className="flitersViewCategory">
-        <div className={displayIndex === 0 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(0)}>
+        <div className={displayIndex === 0 ? 'selected' : 'flexItemProfile'} onClick={() => setDisplayIndex(0)}>
           Listed (243)
           <div className="activeItem" />
         </div>
-        <div className={displayIndex === 1 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(1)}>
+        <div className={displayIndex === 1 ? 'selected' : 'flexItemProfile'} onClick={() => setDisplayIndex(1)}>
           All items (10K)
         </div>
-        <div className={displayIndex === 2 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(2)}>
+        <div className={displayIndex === 2 ? 'selected' : 'flexItemProfile'} onClick={() => setDisplayIndex(2)}>
           Activity
         </div>
       </div>
@@ -165,8 +160,7 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
 }
 
 const NFTCollectionsGrid = (): ReactElement => {
-  const { nftCollections, setSelectedNFT, setBuyNow, setBidNow, buyNowClicked, bidNowClicked, setNftInBag } =
-    useNFTAggregator()
+  const { nftCollections, setSelectedNFT, buyNowClicked, bidNowClicked, setNftInBag } = useNFTAggregator()
 
   const addNftToBag = (e, nftItem) => {
     setNftInBag((prev) => {
@@ -178,64 +172,82 @@ const NFTCollectionsGrid = (): ReactElement => {
   }
   return (
     <NFT_COLLECTIONS_GRID>
-      {<SingleViewNFT />}
+      {<DetailViewNFT />}
       {buyNowClicked && <BuyNFTModal />}
       {bidNowClicked && <BidNFTModal />}
       <div className="gridContainer">
         {nftCollections &&
-          nftCollections.map((item, index) => (
-            <div className="gridItem" key={index} onClick={() => setSelectedNFT(item)}>
-              <div className="gridItemContainer">
-                <img className="nftImg" src={item.nft_url} alt="nft" />
-                <div>
-                  <img
-                    className="hoverAddToBag"
-                    src={`/img/assets/Aggregator/addToBag.svg`}
-                    alt=""
-                    onClick={(e) => addNftToBag(e, item)}
-                  />
-                  <span className="hoverButtons">
-                    <Button
-                      height="28px"
-                      width="75px"
-                      cssStyle={tw`bg-[#5855ff] text-[13px] font-semibold`}
-                      onClick={(e) => {
-                        setBidNow(item)
-                        e.stopPropagation()
-                      }}
-                    >
-                      Bid
-                    </Button>
-                    <Button
-                      height="28px"
-                      width="75px"
-                      className="pinkGradient"
-                      cssStyle={tw`text-[13px] font-semibold`}
-                      onClick={(e) => {
-                        setBuyNow(item)
-                        e.stopPropagation()
-                      }}
-                    >
-                      Buy now
-                    </Button>
-                  </span>
-                </div>
-              </div>
-              <div className="nftTextContainer">
-                <div className="collectionId">
-                  {item.collectionId}#
-                  <img src="/img/assets/Aggregator/verifiedNFT.svg" />
-                </div>
-                <GradientText text={item.collectionName} fontSize={15} fontWeight={600} />
-                <div className="nftPrice">
-                  {item.nftPrice}
-                  <img src={`/img/crypto/${item.currency}.svg`} alt={item.currency} />
-                </div>
-              </div>
-            </div>
-          ))}
+          nftCollections.map((item, index) => <SingleNFT item={item} index={index} addNftToBag={addNftToBag} />)}
       </div>
     </NFT_COLLECTIONS_GRID>
+  )
+}
+
+const SingleNFT: FC<{ item: any; index: number; addNftToBag: any }> = ({ item, index, addNftToBag }) => {
+  const { setSelectedNFT } = useNFTAggregator()
+  const [hover, setHover] = useState<boolean>(false)
+
+  return (
+    <div className="gridItem" key={index} onClick={() => setSelectedNFT(item)}>
+      <div className="gridItemContainer" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+        <img className="nftImg" src={item.nft_url} alt="nft" />
+        {hover && <HoverOnNFT item={item} addNftToBag={addNftToBag} />}
+      </div>
+      <div className="nftTextContainer">
+        <div className="collectionId">
+          {item.collectionId}#
+          <img src="/img/assets/Aggregator/verifiedNFT.svg" />
+        </div>
+        <GradientText text={item.collectionName} fontSize={15} fontWeight={600} />
+        <div className="nftPrice">
+          {item.nftPrice}
+          <img src={`/img/crypto/${item.currency}.svg`} alt={item.currency} />
+        </div>
+        <div className="apprisalPrice">
+          {item.nftPrice}
+          <img src={`/img/assets/Aggregator/Tooltip.svg`} alt={item.currency} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const HoverOnNFT: FC<{ addNftToBag: any; item: any }> = ({ addNftToBag, item }): ReactElement => {
+  const { setBidNow, setBuyNow } = useNFTAggregator()
+  return (
+    <div className="hoverNFT">
+      <img
+        className="hoverAddToBag"
+        src={`/img/assets/Aggregator/addToBag.svg`}
+        alt=""
+        onClick={(e) => addNftToBag(e, item)}
+      />
+      <span className="hoverButtons">
+        <Button
+          height="28px"
+          width="75px"
+          cssStyle={tw`bg-[#5855ff] text-[13px] font-semibold`}
+          onClick={(e) => {
+            setBidNow(item)
+            e.stopPropagation()
+          }}
+        >
+          Bid
+        </Button>
+        <Button
+          height="28px"
+          width="75px"
+          className="pinkGradient"
+          cssStyle={tw`text-[13px] font-semibold`}
+          onClick={(e) => {
+            setBuyNow(item)
+            e.stopPropagation()
+          }}
+        >
+          Buy now
+        </Button>
+      </span>
+    </div>
   )
 }
 
