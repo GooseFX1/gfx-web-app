@@ -8,7 +8,8 @@ import 'styled-components/macro'
 export const NFTColumnsTitleWeb = (): ReactElement => {
   const { setCurrency } = useNFTAggregator()
   const { setAllCollections } = useNFTCollections()
-  const { sortFilter, setSortFilter, setSortType, setPageNumber, sortType } = useNFTAggregatorFilters()
+  const { sortFilter, setSortFilter, setSortType, setPageNumber, sortType, timelineDisplay } =
+    useNFTAggregatorFilters()
   const handleSortFilterChange = (sortFilterRequest) => {
     setPageNumber(0)
     setAllCollections([])
@@ -56,7 +57,7 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
         </th>
         <th>{TableHeaderTitle('24h Change', '24 hours change based on the GFX Appraisal Value.', false)}</th>
         <th>{TableHeaderTitle('Marketcap', '', false)}</th>
-        <th>{TableHeaderTitle('24h Volume', '', false)}</th>
+        <th>{TableHeaderTitle(`${timelineDisplay} Volume`, '', false)}</th>
         <th className="borderRow2" tw="mt-2">
           <div style={{ marginTop: 17 }}>
             <TokenToggleNFT toggleToken={setCurrency} />
