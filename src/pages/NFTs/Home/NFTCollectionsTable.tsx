@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+
 import React, { useEffect, useState, FC, ReactElement, useRef, useCallback, useMemo } from 'react'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import {
@@ -35,9 +36,11 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   const { isCollapsed } = useNavCollapse()
   const { fetchAllCollectionsByPages, allCollections, allCollectionLoading, setAllCollections } =
     useNFTCollections()
+  const { refreshClicked, setRefreshClass } = useNFTAggregator()
   const { sortFilter, sortType, pageNumber, setPageNumber } = useNFTAggregatorFilters()
   const [allItems, setAllItems] = useState<NFTCollection[] | number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9])
   const paginationNumber = 20
+  const [firstLoad, setFirstLoad] = useState<boolean>(true)
   const observer = useRef<any>()
   const lastRowElementRef = useCallback(
     (node) => {
@@ -52,9 +55,21 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
     },
     [allCollectionLoading]
   )
+  useEffect(() => {
+    setFirstLoad(false)
+  }, [])
 
   useEffect(() => {
-    if (sortFilter) {
+    if (sortFilter && !firstLoad) {
+      setTimeout(() => {
+        setAllCollections([])
+        fetchAllCollectionsByPages(0, paginationNumber, sortFilter, sortType)
+      }, 1000)
+    }
+  }, [refreshClicked])
+
+  useEffect(() => {
+    if (sortFilter && !firstLoad) {
       fetchAllCollectionsByPages(pageNumber * paginationNumber, paginationNumber, sortFilter, sortType)
     }
   }, [sortFilter, sortType])

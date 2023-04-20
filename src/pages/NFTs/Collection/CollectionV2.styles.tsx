@@ -11,6 +11,27 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
       ${tw`dark:bg-black-2 bg-grey-4`}
     }
 
+    .lastRefreshed {
+      ${tw`flex flex-col h-[0px] justify-end items-center w-full sm:text-sm`}
+      color: ${({ theme }) => theme.tabNameColor};
+      animation: openAnimation 3s ease-in-out;
+    }
+
+    @keyframes openAnimation {
+      0% {
+        height: 0px;
+      }
+      30% {
+        height: 64px;
+      }
+      50% {
+        height: 64px;
+      }
+      100% {
+        height: 0px;
+      }
+    }
+
     .nftStatsContainer {
       ${tw`mt-[20px] mb-[20px] ml-4 sm:ml-2 sm:mr-2 mr-5 flex items-center`}
       .backBtn {
@@ -272,7 +293,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       ${tw`h-10 w-10 ml-3 cursor-pointer`}
     }
 
-    .flitersViewCategory {
+    .filtersViewCategory {
       ${tw`text-[15px] flex font-medium ml-auto sm:ml-0 sm:mt-1 mt-10`}
     }
     .flitersFlexContainer {
