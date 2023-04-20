@@ -39,7 +39,7 @@ const trimString = (str: string) => (str.length > 20 ? str.substring(0, 20) + '.
 
 export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ data, ...rest }) => {
   const { mode } = useDarkMode()
-  return (
+  return data.length > 0 ? (
     <ATTRIBUTES_TAB_CONTENT {...rest}>
       {data.map((item, index) => (
         <PILL_SECONDARY $mode={`${mode}`} key={index}>
@@ -50,6 +50,8 @@ export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ d
         </PILL_SECONDARY>
       ))}
     </ATTRIBUTES_TAB_CONTENT>
+  ) : (
+    <div tw="flex justify-center">No Attributes</div>
   )
 }
 
