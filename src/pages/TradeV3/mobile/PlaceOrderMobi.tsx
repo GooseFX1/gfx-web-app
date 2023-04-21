@@ -376,6 +376,10 @@ const TAKEPROFITWRAPPER = styled.div`
 
 const TAKE_PROFIT_ARRAY = [
   {
+    display: 'None',
+    value: 0
+  },
+  {
     display: '25%',
     value: 0.25
   },
@@ -384,35 +388,34 @@ const TAKE_PROFIT_ARRAY = [
     value: 0.5
   },
   {
-    display: '75%',
-    value: 0.75
-  },
-  {
     display: '100%',
     value: 1
   }
 ]
 
 const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, setVisibility }) => {
-  const percentArray = isTakeProfit ? ['25%', '50%', '75%', '100%'] : ['None', '10%', '25%', '75%']
-  const [takeProfitAmt, setTakeProfitAmt] = useState<string>(null)
-  const [takeProfitIndex, setTakeProfitIndex] = useState<number>(3)
+  const [takeProfitInput, setTakeProfitInput] = useState<number>(null)
+  const [takeProfitAmount, setTakeProfitAmount] = useState<number>(null)
+  const [takeProfitIndex, setTakeProfitIndex] = useState<number>(0)
   const [profits, setProfits] = useState<any>(['', '', '', ''])
-
   const { order } = useOrder()
 
   useEffect(() => {
     setTakeProfitIndex(index)
-    setTakeProfitAmt(input)
+    setTakeProfitInput(input)
+    setTakeProfitAmount(input)
   }, [])
 
   useEffect(() => {
     const obj = []
-    TAKE_PROFIT_ARRAY.map((item) => {
+    TAKE_PROFIT_ARRAY.map((item, index) => {
       if (Number.isNaN(+order.price)) obj.push('')
       else {
-        const profit = getProfitAmount(order.side, order.price, item.value)
-        obj.push(profit.toFixed(2))
+        if (index === 0) obj.push('')
+        else {
+          const profit = getProfitAmount(order.side, order.price, item.value)
+          obj.push(profit.toFixed(2))
+        }
       }
     })
     setProfits(obj)
@@ -420,30 +423,28 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
 
   const isNumber = (e) => {
     const inputAmt = e.target.value.replace(/[^0-9]\./g, '')
-    if (!inputAmt || inputAmt === '') setTakeProfitAmt(null)
+    if (!inputAmt || inputAmt === '') setTakeProfitInput(null)
     else if (!isNaN(inputAmt)) {
       if (isTakeProfit) {
-        setTakeProfitAmt(inputAmt)
+        setTakeProfitInput(+inputAmt)
         setInput(+inputAmt)
-        setTakeProfitIndex(null)
-        setIndex(null)
       }
     }
   }
 
   const handleClicks = (index) => {
-    setTakeProfitAmt(null)
-    setInput(0)
+    setTakeProfitInput(null)
+    setTakeProfitAmount(null)
+    setInput(null)
     setIndex(index)
     setTakeProfitIndex(index)
-    //setVisibility(false)
   }
 
   const handleSave = () => {
-    setTakeProfitAmt(null)
-    setInput(null)
     setIndex(null)
     setTakeProfitIndex(null)
+    setTakeProfitAmount(+takeProfitInput)
+    setInput(+takeProfitInput)
     setVisibility(false)
   }
 
@@ -453,12 +454,14 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
         <span>
           {takeProfitIndex !== null
             ? TAKE_PROFIT_ARRAY[takeProfitIndex].display
-            : Number(takeProfitAmt) > 0
-            ? '$' + takeProfitAmt
-            : 'N/A'}
+            : takeProfitAmount > 0
+            ? '$' + takeProfitAmount
+            : 'None'}
         </span>
-        {!takeProfitAmt && (
-          <span tw="!text-[#80CE00] ml-2">{profits[index] ? '($' + profits[index] + ')' : '(-)'}</span>
+        {!takeProfitAmount && (
+          <span tw="!text-[#80CE00] ml-2">
+            {takeProfitIndex === 0 ? '' : profits[index] ? '($' + profits[index] + ')' : '(-)'}
+          </span>
         )}
       </div>
       <TAKEPROFITSELECTOR>
@@ -473,9 +476,17 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
         ))}
       </TAKEPROFITSELECTOR>
       <span tw="ml-10">Custom Price</span>
-      <input value={takeProfitAmt} onChange={isNumber} placeholder="$0.00" type="number" />
-      <span className={'save-enable'} onClick={handleSave}>
-        Clear
+      <input
+        value={takeProfitInput ? takeProfitInput : ''}
+        onChange={isNumber}
+        placeholder="$0.00"
+        type="number"
+      />
+      <span
+        className={takeProfitInput ? 'save-enable' : 'save-disable'}
+        onClick={takeProfitInput ? handleSave : null}
+      >
+        Save
       </span>
     </TAKEPROFITWRAPPER>
   )
@@ -498,8 +509,8 @@ export const PlaceOrderMobi = () => {
   const [showProfitLossDrawer, setShowProfitLossDrawer] = useState<boolean>(false)
   const [drawerType, setDrawerType] = useState<number>(0)
 
-  const [profitIndex, setProfitIndex] = useState<number>(null)
-  const [profitPrice, setProfitPrice] = useState<number>(0)
+  const [profitIndex, setProfitIndex] = useState<number>(0)
+  const [profitPrice, setProfitPrice] = useState<number>(null)
 
   const elem = document.getElementById('dex-mobi-home')
   const { mode } = useDarkMode()
@@ -710,6 +721,7 @@ export const PlaceOrderMobi = () => {
   }
 
   const getTakeProfitParam = () => {
+    if (profitIndex === 0) return null
     if (profitIndex !== null) {
       const numPrice = +order.price
       if (Number.isNaN(numPrice)) return null
