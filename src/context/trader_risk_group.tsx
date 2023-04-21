@@ -253,23 +253,27 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { devnetConnection: connection } = useConnectionConfig()
 
   const refreshTraderRiskGroup = async () => {
-    let trgAccount = null,
-      trgFetch = null
-    if (!currentTRG) {
-      trgAccount = await getTraderRiskGroupAccount(wallet, connection)
-      if (trgAccount) {
-        setTRG(trgAccount.pubkey)
-        trgFetch = trgAccount.pubkey
+    if (wallet.connected) {
+      let trgAccount = null,
+        trgFetch = null
+      if (!currentTRG) {
+        trgAccount = await getTraderRiskGroupAccount(wallet, connection)
+        if (trgAccount) {
+          setTRG(trgAccount.pubkey)
+          trgFetch = trgAccount.pubkey
+        }
+      } else {
+        trgFetch = currentTRG
       }
-    } else {
-      trgFetch = currentTRG
-    }
 
-    trgFetch &&
-      TraderRiskGroup.fetch(connection, trgFetch).then((trg) => {
-        trg ? setTraderRiskGroup(trg[0]) : setTraderRiskGroup(null)
-        trg && setRawData((prevState) => ({ ...prevState, trg: trg[1] }))
-      })
+      trgFetch &&
+        TraderRiskGroup.fetch(connection, trgFetch).then((trg) => {
+          trg ? setTraderRiskGroup(trg[0]) : setTraderRiskGroup(null)
+          trg && setRawData((prevState) => ({ ...prevState, trg: trg[1] }))
+        })
+    } else {
+      setDefaults()
+    }
   }
 
   const setMPGDetails = async () => {
@@ -439,8 +443,37 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     //setFundingRate(percent.toFixed(4))
   }
 
+  const setDefaults = async () => {
+    setTRG(null)
+    setTraderRiskGroup(null)
+    setRawData((prevState) => ({
+      ...prevState,
+      trg: null
+    }))
+    setMarginAvail('0')
+    setPnl('0')
+    setTraderBalances([])
+
+    setTraderHistory([])
+    setAveragePosition({
+      price: '',
+      quantity: '',
+      side: null
+    })
+    setLiquidationPrice('0')
+    setLeverage('0')
+    setAvailLeverage('0')
+    setMaxQty('0.1')
+    setOnChainPrice('0')
+    setOpenInterests('0')
+    setAccountHealth('100')
+    setFundingRate('0')
+    setMaxWithdrawable('0')
+    setTraderVolume('0')
+  }
+
   useEffect(() => {
-    if (wallet.connected && !isSpot) {
+    if (!isSpot) {
       const refreshData = async () => {
         await setMPGDetails()
       }
@@ -449,7 +482,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } else {
       setTraderRiskGroup(null)
     }
-  }, [wallet.connected, marketProductGroup, isSpot])
+  }, [isSpot, wallet.connected, wallet.publicKey])
 
   const testing = async () => {
     //const res1 = await adminInitialiseMPG(connection, wallet)
