@@ -10,6 +10,7 @@ import { getPerpsPrice, truncateBigNumber } from './perps/utils'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import useBlacklisted from '../../utils/useBlacklisted'
 import 'styled-components/macro'
+import useWindowSize from '../../utils/useWindowSize'
 
 const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[356px] !w-[628px] rounded-half`}
@@ -205,6 +206,7 @@ export const InfoBanner: FC<{
   const geoBlocked = useBlacklisted()
   const [tradeType, setTradeType] = useState<string>('deposit')
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
+  const { height, width } = useWindowSize()
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
   const tokenInfos = useMemo(() => tokenInfo[selectedCrypto.pair], [tokenInfo[selectedCrypto.pair]])
   const formatDisplayVolume = (volume) => {
@@ -357,7 +359,7 @@ export const InfoBanner: FC<{
           )}
         </>
          </INFO_STATS> */}
-      {
+      {width > 1400 && (
         <INFO_STATS>
           <div>Daily Range</div>
           {!range ? (
@@ -375,7 +377,7 @@ export const InfoBanner: FC<{
             </div>
           )}
         </INFO_STATS>
-      }
+      )}
       {!isSpot && (
         <INFO_STATS>
           <>

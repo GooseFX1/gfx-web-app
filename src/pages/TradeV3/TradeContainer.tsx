@@ -314,9 +314,9 @@ export const CryptoContent: FC = () => {
     }, 300)
   }, [isSpot, selectedCrypto, mode])
 
-  //  useEffect(() => {
-  //    //resetLayout()
-  //  }, [width])
+  useEffect(() => {
+    resetLayout()
+  }, [width])
 
   const getRowHeight = (height: number) => (height < 800 ? 20 : height / 38)
 

@@ -19,6 +19,7 @@ import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import 'styled-components/macro'
 import { RotatingLoader } from '../../components/RotatingLoader'
 import { PerpsEndModal } from './PerpsEndModal'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const tabs = ['Positions', 'Open Orders', 'Trade History', 'SOL Unsettled P&L']
 
@@ -314,6 +315,7 @@ const OpenOrdersComponent: FC = () => {
 const TradeHistoryComponent: FC = () => {
   const { tradeHistoryNew } = useTradeHistory()
   const { selectedCrypto } = useCrypto()
+  const wallet = useWallet()
   const { mode } = useDarkMode()
   const { prices } = usePriceFeed()
   const { traderInfo } = useTraderConfig()
@@ -333,11 +335,11 @@ const TradeHistoryComponent: FC = () => {
         side: liquidation ? 'Liquidation' : item.side === 'buy' ? 'Long' : 'Short'
       }
     })
-  }, [traderInfo.tradeHistory])
+  }, [traderInfo.tradeHistory, wallet.connected, wallet.publicKey])
 
   const historyData = useMemo(
     () => (selectedCrypto.type === 'crypto' ? tradeHistoryNew : perpsHistory),
-    [selectedCrypto, tradeHistoryNew]
+    [selectedCrypto, tradeHistoryNew, perpsHistory]
   )
 
   return (
@@ -390,11 +392,12 @@ export const HistoryPanel: FC = () => {
   const { getUIAmount } = useAccounts()
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const { mode } = useDarkMode()
+  const wallet = useWallet()
   const { traderInfo } = useTraderConfig()
   const perpsPrice = useMemo(() => getPerpsPrice(orderBook), [orderBook])
   const notionalSize = useMemo(
     () => (Number(traderInfo.averagePosition.quantity) * perpsPrice).toFixed(3),
-    [perpsPrice, traderInfo.averagePosition.quantity]
+    [perpsPrice, traderInfo.averagePosition.quantity, wallet.connected]
   )
 
   const tokenInfoAsk = useMemo(
@@ -422,7 +425,7 @@ export const HistoryPanel: FC = () => {
   const pnl = useMemo(() => {
     if (!Number(traderInfo.pnl)) return 0
     return Number(traderInfo.pnl)
-  }, [traderInfo])
+  }, [traderInfo, wallet.connected])
 
   const { market } = selectedCrypto
   let openOrder, baseAvailable, baseBalance, quoteAvailable, quoteBalance
@@ -439,7 +442,7 @@ export const HistoryPanel: FC = () => {
     if (size) {
       return size.toFixed(3)
     } else return 0
-  }, [traderInfo])
+  }, [traderInfo, wallet.connected])
 
   return (
     <>

@@ -12,6 +12,7 @@ import * as anchor from '@project-serum/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { httpClient } from '../api'
 import { GET_OPEN_ORDERS, GET_ORDERBOOK } from '../pages/TradeV3/perps/perpsConstants'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 export type OrderBook = {
   [x in MarketSide]: [number, number, BN, BN, string?][]
@@ -43,6 +44,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   const [orderBook, setOrderBook] = useState<OrderBook>(DEFAULT_ORDER_BOOK)
   const [openOrders, setOpenOrders] = useState([])
   const [perpsOpenOrders, setPerpsOpenOrders] = useState([])
+  const wallet = useWallet()
   const { activeProduct, marketProductGroup, traderInfo, setOrderBook: setOrderBookCopy } = useTraderConfig()
 
   useEffect(() => {
@@ -60,12 +62,16 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
     } else if (selectedCrypto.type === 'perps') {
       const refreshOrderbook = async () => {
         await fetchPerpsOrderBook()
-        traderInfo.traderRiskGroupKey && (await fetchPerpsOpenOrders())
+        if (wallet.connected && traderInfo.traderRiskGroupKey) {
+          await fetchPerpsOpenOrders()
+        } else {
+          setPerpsOpenOrders([])
+        }
       }
       const t2 = setInterval(refreshOrderbook, 500)
       return () => clearInterval(t2) // clear
     }
-  }, [selectedCrypto.pair, isSpot, selectedCrypto.type, traderInfo])
+  }, [selectedCrypto.pair, isSpot, selectedCrypto.type, traderInfo, wallet.connected])
 
   const convertBidsAsks = (bids: IOrderbookType[], asks: IOrderbookType[]) => {
     const bidReturn: [number, number, BN, BN, string, string][] = bids.map((item) => {
