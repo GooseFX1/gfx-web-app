@@ -389,6 +389,29 @@ const TOTAL_VALUES = [
   }
 ]
 
+const TAKE_PROFIT_ARRAY = [
+  {
+    display: 'None',
+    value: 0,
+    key: 0
+  },
+  {
+    display: '25%',
+    value: 0.25,
+    key: 1
+  },
+  {
+    display: '50%',
+    value: 0.5,
+    key: 2
+  },
+  {
+    display: '100%',
+    value: 1,
+    key: 3
+  }
+]
+
 const ORDER_CATEGORY_TYPE = [
   {
     id: 'postOnly',
@@ -415,27 +438,25 @@ export const PlaceOrder: FC = () => {
   const { mode } = useDarkMode()
   const { height } = useWindowSize()
   const [loading, setLoading] = useState<boolean>(false)
-  const geoBlocked = false
-  const [type, setType] = useState<number>(0)
-
-  const [takeProfitDropdown, setTakeProfitDropdown] = useState(false)
-  const [takeProfitAmount, setTakeProfitAmount] = useState<number>(null)
-  const [takeProfitIndex, setTakeProfitIndex] = useState<number>(3)
+  const geoBlocked = useBlacklisted()
+  //Take profit state:
+  const [takeProfitVisible, setTakeProfitVisible] = useState(false)
   const [takeProfitArrow, setTakeProfitArrow] = useState(false)
-  const [saveAmount, setSaveAmount] = useState<number>(null)
+  const [takeProfitAmount, setTakeProfitAmount] = useState<number>(null)
+  const [takeProfitIndex, setTakeProfitIndex] = useState<number>(0)
+  const [takeProfitInput, setTakeProfitInput] = useState<number>(null)
   const [profits, setProfits] = useState<any>(['', '', '', ''])
-
-  const [stopLossAmount, setStopLossAmount] = useState<number>(null)
-  const [stopLossIndex, setStopLossIndex] = useState<number>(0)
-  const [stopLossArrow, setStopLossArrow] = useState(false)
 
   useEffect(() => {
     const obj = []
-    percentArray.map((item) => {
+    TAKE_PROFIT_ARRAY.map((item, index) => {
       if (Number.isNaN(+order.price)) obj.push('')
       else {
-        const profit = getProfitAmount(order.side, order.price, item.value)
-        obj.push(profit.toFixed(2))
+        if (index === 0) obj.push('')
+        else {
+          const profit = getProfitAmount(order.side, order.price, item.value)
+          obj.push(profit.toFixed(2))
+        }
       }
     })
     setProfits(obj)
@@ -629,83 +650,53 @@ export const PlaceOrder: FC = () => {
 
   const handleMenuClick = (e) => {
     if (e.key !== '4') {
-      setTakeProfitDropdown(false)
+      setTakeProfitVisible(false)
       setTakeProfitArrow(false)
-    } else setTakeProfitDropdown(true)
+    } else setTakeProfitVisible(true)
   }
 
   const handleOpenChange = (flag) => {
     setTakeProfitArrow(!takeProfitArrow)
-    setTakeProfitDropdown(flag)
+    setTakeProfitVisible(flag)
   }
 
   const handleDropdownInput = (e) => {
     const inputAmt = e.target.value.replace(/[^0-9]\./g, '')
-    if (!isNaN(inputAmt)) setTakeProfitAmount(+inputAmt)
-    setTakeProfitIndex(null)
-    //setSaveAmount(saveAmount)
+    if (!isNaN(+inputAmt)) setTakeProfitInput(+inputAmt)
   }
 
   const handleSave = (e) => {
     setTakeProfitIndex(null)
     setTakeProfitArrow(false)
-    setTakeProfitDropdown(false)
-    setTakeProfitAmount(null)
+    setTakeProfitVisible(false)
+    setTakeProfitAmount(takeProfitInput)
   }
 
   const calcTakeProfit = (value, index) => {
     setTakeProfitIndex(index)
     setTakeProfitArrow(!takeProfitArrow)
-    setTakeProfitAmount(null)
+    setTakeProfitInput(null)
   }
 
-  const calcStopLoss = (value, index) => {
-    setStopLossIndex(index)
-    setStopLossArrow(!stopLossArrow)
-  }
-
-  const percentArray = [
-    {
-      display: '25%',
-      value: 0.25,
-      key: 1
-    },
-    {
-      display: '50%',
-      value: 0.5,
-      key: 2
-    },
-    {
-      display: '75%',
-      value: 0.75,
-      key: 3
-    },
-    {
-      display: '100%',
-      value: 1,
-      key: 4
-    }
-  ]
-
-  const getItems = () => {
+  const getTakeProfitItems = () => {
     let items = []
-    items = percentArray.map((item, index) => {
+    items = TAKE_PROFIT_ARRAY.map((item, index) => {
       const html = (
         <DROPDOWN_ITEMS
           className="dropdown-items"
           tw="mb-2 flex flex-row px-[5px]"
-          onClick={() => (type === 0 ? calcTakeProfit(item.value, index) : calcStopLoss(item.value, index))}
+          onClick={() => calcTakeProfit(item.value, index)}
         >
           <span tw="mr-2 font-semibold text-tiny text-grey-5">{item.display}</span>
-          <span className={type === 0 ? 'green' : 'red'} tw="font-semibold text-tiny mr-auto">
-            {profits[index] ? '($' + profits[index] + ')' : '(-)'}
+          <span className="green" tw="font-semibold text-tiny mr-auto">
+            {index === 0 ? '' : profits[index] ? '($' + profits[index] + ')' : '(-)'}
           </span>
           <input
             type="radio"
-            name={type === 0 ? 'take-profit' : 'stop-loss'}
+            name="take-profit"
             value={item.value}
-            checked={type === 0 ? takeProfitIndex === index : stopLossIndex === index}
-            onChange={() => (type === 0 ? calcTakeProfit(item.value, index) : calcStopLoss(item.value, index))}
+            checked={takeProfitIndex === index}
+            onChange={() => calcTakeProfit(item.value, index)}
           />
         </DROPDOWN_ITEMS>
       )
@@ -721,7 +712,7 @@ export const PlaceOrder: FC = () => {
           onChange={handleDropdownInput}
           placeholder="Price"
           className="dropdown-input"
-          value={takeProfitAmount}
+          value={takeProfitInput ? takeProfitInput : ''}
         />
       </DROPDOWN_INPUT>
     )
@@ -730,8 +721,11 @@ export const PlaceOrder: FC = () => {
       key: 4
     })
     const saveBtnHTML = (
-      <DROPDOWN_SAVE className={'save-enable'} onClick={handleSave}>
-        Clear
+      <DROPDOWN_SAVE
+        className={takeProfitInput ? 'save-enable' : 'save-disable'}
+        onClick={takeProfitInput ? handleSave : null}
+      >
+        Save
       </DROPDOWN_SAVE>
     )
     items.push({
@@ -742,6 +736,7 @@ export const PlaceOrder: FC = () => {
   }
 
   const getTakeProfitParam = () => {
+    if (takeProfitIndex === 0) return null
     if (takeProfitIndex !== null) {
       const numPrice = +order.price
       if (Number.isNaN(numPrice)) return null
@@ -749,8 +744,8 @@ export const PlaceOrder: FC = () => {
       const profitPrice =
         numPrice +
         (order.side === 'buy'
-          ? percentArray[takeProfitIndex].value * numPrice
-          : -percentArray[takeProfitIndex].value * numPrice)
+          ? TAKE_PROFIT_ARRAY[takeProfitIndex].value * numPrice
+          : -TAKE_PROFIT_ARRAY[takeProfitIndex].value * numPrice)
       return profitPrice
     } else if (takeProfitAmount > 0) {
       return takeProfitAmount
@@ -986,12 +981,13 @@ export const PlaceOrder: FC = () => {
                 <div className="label">Take Profit</div>
                 <div className={`dropdownContainer ${mode} take-profit`}>
                   <span className="green">
-                    $
-                    {takeProfitIndex !== null
+                    {takeProfitIndex === 0
+                      ? 'None'
+                      : takeProfitIndex !== null
                       ? profits[takeProfitIndex]
-                        ? profits[takeProfitIndex]
+                        ? '$' + profits[takeProfitIndex]
                         : '(-)'
-                      : takeProfitAmount}
+                      : '$' + takeProfitAmount}
                   </span>
                   <ArrowDropdown
                     arrowRotation={takeProfitArrow}
@@ -999,11 +995,11 @@ export const PlaceOrder: FC = () => {
                     offset={[15, 15]}
                     onVisibleChange={null}
                     placement="bottomLeft"
-                    menu={{ items: getItems(), onClick: handleMenuClick }}
+                    menu={{ items: getTakeProfitItems(), onClick: handleMenuClick }}
                     overlay={<></>}
                     measurements="11px !important"
                     onOpenChange={handleOpenChange}
-                    open={takeProfitDropdown}
+                    open={takeProfitVisible}
                   />
                 </div>
               </INPUT_WRAPPER>
@@ -1011,14 +1007,13 @@ export const PlaceOrder: FC = () => {
                 <div className="label disable">Stop Loss</div>
                 <div className={`dropdownContainer ${mode} stop-loss`}>
                   <span className="red">None</span>
-                  {/* <span className='green'>{takeProfitIndex  !==null ? percentArray[takeProfitIndex].display : takeProfitAmount}</span> */}
                   <ArrowDropdown
                     arrowRotation={false}
                     overlayClassName="takep-stopl-container"
                     offset={[-120, 15]}
                     onVisibleChange={null}
                     placement="bottomLeft"
-                    menu={{ getItems, onClick: handleMenuClick }}
+                    menu={{ getTakeProfitItems, onClick: handleMenuClick }}
                     overlay={<></>}
                     measurements="11px !important"
                     onOpenChange={null}
