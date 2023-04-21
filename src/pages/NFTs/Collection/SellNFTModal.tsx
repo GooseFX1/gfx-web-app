@@ -5,6 +5,7 @@ import React, { ReactElement, useState, FC, useMemo } from 'react'
 import {
   // useAccounts,
   useConnectionConfig,
+  useNFTCollections,
   useNFTDetails
 } from '../../../context'
 // import { INFTAsk } from '../../../types/nft_details.d'
@@ -77,6 +78,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
   )
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [pendingTxSig, setPendingTxSig] = useState<any>(null)
+  const { singleCollection } = useNFTCollections()
 
   const totalToReceive = useMemo(() => (askPrice ? askPrice : 0.0) - NFT_MARKET_TRANSACTION_FEE / 100, [askPrice])
 
@@ -385,12 +387,16 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
             {/* <strong> {general?.nft_name}</strong> */}
           </div>
           <div className="verifiedText">
-            {!checkMobile() && (
-              <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
-            )}
-            This is a verified {checkMobile() && <br />} Creator
-            {checkMobile() && (
-              <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+            {singleCollection && singleCollection[0]?.is_verified && (
+              <div>
+                {!checkMobile() && (
+                  <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+                )}
+                This is a verified {checkMobile() && <br />} Creator
+                {checkMobile() && (
+                  <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -439,7 +445,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
           </div>
         )}
 
-        <div className="hContainer" style={{ height: 118 }}>
+        <div className="hContainer" style={{ height: pendingTxSig ? 135 : 175 }}>
           <div className="rowContainer">
             <div className="leftAlign">Price</div>
             <div className="rightAlign">{askPrice >= 0 ? askPrice : 0} SOL</div>

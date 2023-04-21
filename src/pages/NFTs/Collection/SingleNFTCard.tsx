@@ -127,6 +127,8 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}
         >
+          {isLoadingBeforeRelocate && <div className="loadingNFT" tw="mt-[-8px]" />}
+
           {hover && (
             <HoverOnNFT
               item={item}
@@ -135,7 +137,6 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
               ask={localAsk ? localAsk : null}
             />
           )}
-          {isLoadingBeforeRelocate && <LoadingDiv />}
           {item ? (
             <img className="nftImg" src={item.image_url} alt="nft" />
           ) : (
@@ -224,7 +225,7 @@ export const HoverOnNFT: FC<{
 
   return (
     <div className="hoverNFT">
-      {isLoadingBeforeRelocate && <LoadingDiv />}
+      {isLoadingBeforeRelocate && <div className="loadingNFT" tw="ml-[-4px]" />}
       {addNftToBag && (
         <img
           className="hoverAddToBag"
