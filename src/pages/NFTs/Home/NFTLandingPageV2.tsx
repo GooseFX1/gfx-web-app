@@ -135,8 +135,8 @@ const EYE_CONTAINER = styled.div`
     ${tw`mt-1 mr-2 h-[25px] w-[25px] duration-500  `}
   }
   .showAnimation {
-    ${tw`ml-[-35px] h-[80px] w-[80px] duration-500 mr-[-18px] `}
-    transform: scale(1.6);
+    ${tw`ml-[-30px] h-[60px] w-[60px] duration-500 mr-[-8px] `}
+    transform: scale(2);
   }
 `
 const FILTERS_CONTAINER = styled.div`
