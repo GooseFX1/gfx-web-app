@@ -148,9 +148,6 @@ const TRADE_HISTORY = styled.div`
   .Short {
     ${tw`text-[#F35355]`}
   }
-  .wrapper:last-child {
-    padding-bottom: 70px;
-  }
 `
 
 const HEADER = styled.div`
@@ -193,23 +190,20 @@ const HEADER = styled.div`
 `
 
 const FIXED_BOTTOM = styled.div`
-  ${tw`fixed bottom-0 left-0 w-full h-[75px] `}
+  ${tw`fixed bottom-0 left-0 w-full h-[75px] dark:bg-black-2 bg-white`}
   border-top: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
-  background: ${({ theme }) => theme.bg0};
 
   .deposit-wrapper {
     ${tw`w-11/12 h-[45px] rounded-[36px] flex items-center justify-center p-0.5 mx-2.5 my-3.75`}
     background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
 
     .white-background {
-      ${tw`h-full w-full rounded-[36px]`}
-      background: ${({ theme }) => theme.bg20};
+      ${tw`h-full w-full rounded-[36px] dark:bg-black-2 bg-white`}
     }
 
     .deposit-btn {
-      ${tw`w-full h-full rounded-[36px] flex items-center justify-center text-tiny font-semibold`}
+      ${tw`w-full h-full rounded-[36px] flex items-center justify-center text-tiny font-semibold dark:text-grey-5 text-grey-1`}
       background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
-      color: ${({ theme }) => theme.text11};
     }
   }
 `
@@ -377,11 +371,6 @@ const Positions = () => {
             title={
               <div tw="flex items-center">
                 <span tw="font-semibold text-black-4 text-lg dark:text-grey-5">Close Position</span>
-                {/*<img
-                    src="/img/assets/refresh.svg"
-                    alt="refresh-icon"
-                    tw="ml-auto ml-auto h-10 w-10 cursor-pointer mr-10"
-                />*/}
               </div>
             }
             closeIcon={
