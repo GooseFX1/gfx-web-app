@@ -1,5 +1,7 @@
 import { FC, ReactElement, useEffect, useMemo, useState } from 'react'
 import { Col, Drawer, Row, Tabs } from 'antd'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { Button } from '../../../components/Button'
 import { useNFTProfile, useNFTAggregator, useNFTDetails, useConnectionConfig } from '../../../context'
 import { checkMobile, truncateAddress } from '../../../utils'
@@ -19,6 +21,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
+  ${tw`h-[400px]`}
   .generalItemValue {
     color: ${({ theme }) => theme.text32};
     ${tw`text-[15px] leading-9 font-semibold pr-2 pl-4`}
@@ -157,13 +160,7 @@ export const DetailViewNFT: FC = (): JSX.Element => {
       bodyStyle={{ padding: '0' }}
     >
       <ImageViewer />
-      <ButtonContainer
-        general={general}
-        setBuyNow={setBuyNow}
-        buyNowClicked={buyNowClicked}
-        bidNowClicked={bidNowClicked}
-        setBidNow={setBidNow}
-      />
+      <ButtonContainer general={general} setBuyNow={setBuyNow} setBidNow={setBidNow} />
     </Drawer>
   )
 }
@@ -218,7 +215,9 @@ const ImageViewer = (): ReactElement => {
               />
             )}
             <div tw="flex items-center">
-              <img tw="h-20 w-20 mr-[12px] ml-4 cursor-pointer" src={`/img/assets/solscanBlack.svg`} />
+              <a href={`https://solscan.io/token/${general.mint_address}`} target="_blank" rel="noreferrer">
+                <img tw="h-10 w-10 mr-[12px] ml-4 cursor-pointer" src={`/img/assets/solscanBlack.svg`} />
+              </a>
               <img tw="h-10 w-10 cursor-pointer" src={`/img/assets/shareBlue.svg`} />
             </div>
           </div>
@@ -240,27 +239,29 @@ const ImageViewer = (): ReactElement => {
   )
 }
 
-const ButtonContainer = ({ general, setBuyNow, buyNowClicked, bidNowClicked, setBidNow }: any): ReactElement => (
-  <div
-    tw="absolute left-0 right-0 bottom-0 h-[86px] w-[100%] 
-        dark:bg-black-2 bg-grey-5 px-[30px] flex items-center justify-between
+const ButtonContainer = ({ general, setBuyNow, setBidNow }: any): ReactElement => {
+  const { ask } = useNFTDetails()
+  return (
+    <div
+      tw="absolute left-0 right-0 bottom-0 h-[86px] w-[100%] 
+        dark:bg-black-2 bg-grey-5 px-[30px] flex items-center justify-center
         border-solid border-b-0 border-l-0 border-r-0 dark:border-black-4 border-grey-4"
-  >
-    {buyNowClicked && <BuyNFTModal />}
-    {bidNowClicked && <BidNFTModal />}
-    <Button height="56px" width="185px" cssStyle={tw`bg-blue-1`} onClick={() => setBidNow(general)}>
-      <span tw="text-regular font-semibold text-white">Bid</span>
-    </Button>
-    <Button
-      height="56px"
-      width="185px"
-      cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2`}
-      onClick={() => setBuyNow(general)}
     >
-      <span tw="text-regular font-semibold text-white">Buy Now</span>
-    </Button>
-  </div>
-)
+      <Button width={ask ? '185px' : '100%'} cssStyle={tw`h-[56px] bg-blue-1`} onClick={() => setBidNow(general)}>
+        <span tw="text-regular font-semibold text-white">Bid</span>
+      </Button>
+      {ask && (
+        <Button
+          width="185px"
+          cssStyle={tw`bg-gradient-to-r h-[56px] from-secondary-gradient-1 to-secondary-gradient-2`}
+          onClick={() => setBuyNow(general)}
+        >
+          <span tw="text-regular font-semibold text-white">Buy Now</span>
+        </Button>
+      )}
+    </div>
+  )
+}
 
 const NFTDetailsTab = (): ReactElement => {
   const { general, nftMetadata } = useNFTDetails()

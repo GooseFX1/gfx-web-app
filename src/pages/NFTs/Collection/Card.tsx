@@ -67,12 +67,7 @@ export const Card: FC<ICard> = (props) => {
   }
 
   const displayPrice: string | null = useMemo(
-    () =>
-      localAsk !== null
-        ? localAsk.buyer_price
-        : localBids.length > 0
-        ? localBids[localBids.length - 1].buyer_price
-        : null,
+    () => (localAsk !== null ? localAsk.buyer_price : null),
     [localAsk, localBids, sessionUser]
   )
 
@@ -120,6 +115,7 @@ export const Card: FC<ICard> = (props) => {
   const openDetails = async (target: string): Promise<void> => {
     setIsLoadingBeforeRelocate(true)
     await setNFTDetails()
+    console.log(target)
     if (target === MODAL_TARGET.SELL) setShowSellNFTModal(true)
     if (target === MODAL_TARGET.DRAWER) setDrawerSingleNFT(true)
     if (target === MODAL_TARGET.BID) setShowBidNFTModal(true)
@@ -162,9 +158,6 @@ export const Card: FC<ICard> = (props) => {
   }
 
   const handleModal = useCallback(() => {
-    if (showBidNFTModal) {
-      return <BidNFTModal />
-    }
     if (showSellNFTModal) {
       return <SellNFTModal visible={showSellNFTModal} handleClose={() => setShowSellNFTModal(false)} />
     } else if (showDrawerSingleNFT) {
@@ -173,11 +166,11 @@ export const Card: FC<ICard> = (props) => {
           visible={showDrawerSingleNFT}
           setDrawerSingleNFT={setDrawerSingleNFT}
           setSellModal={setShowSellNFTModal}
+          singleNFT={props.singleNFT}
         />
       )
     }
   }, [showSellNFTModal, showDrawerSingleNFT, setShowSellNFTModal, setDrawerSingleNFT])
-
   return (
     <>
       {handleModal()}
