@@ -208,18 +208,18 @@ const NFTStatsContainer = () => {
             </div>
           </div>
           {!checkMobile() && (
-            <div className="moreOptions">
+            <div tw="ml-auto" className="moreOptions">
               <div>
                 <RefreshBtnWithAnimationNFT />
               </div>
-              <div className="sweepBtn" onClick={() => setSweepCollection(true)}>
+              {/* <div className="sweepBtn" onClick={() => setSweepCollection(true)}>
                 <img src="/img/assets/Aggregator/sweepButton.svg" alt="" />
-              </div>
+              </div>   
               <div>
-                <ICON $mode={mode === 'dark'}>
+                 <ICON $mode={mode === 'dark'}>
                   <img src={`/img/assets/more_icon.svg`} alt="more" />
-                </ICON>
-              </div>
+                </ICON> 
+              </div>  */}
             </div>
           )}
         </div>

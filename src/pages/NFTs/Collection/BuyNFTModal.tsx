@@ -77,8 +77,8 @@ export const STYLED_POPUP = styled(PopupCustom)<{ lockModal: boolean }>`
     }
   }
   .verifiedText {
-    ${tw`font-semibold text-[16px] text-[#fff] sm:text-[15px] mt-4
-        sm:text-left sm:ml-[140px] sm:mt-[5px]`}
+    ${tw`font-semibold text-[16px] text-[#fff] sm:text-[15px] mt-2 mb-3
+        sm:text-left sm:ml-[140px] sm:mt-[5px] h-4`}
   }
   .hContainer {
     ${tw`flex flex-col items-center justify-center`}
@@ -98,12 +98,12 @@ export const STYLED_POPUP = styled(PopupCustom)<{ lockModal: boolean }>`
   }
   .bidButton {
     ${tw`w-[160px] h-[60px] sm:h-[50px] rounded-[50px] items-center cursor-pointer
-    justify-center flex mr-4 text-[20px] font-semibold`}
+    justify-center flex  text-[20px] font-semibold`}
     background: ${({ theme }) => theme.bg22};
   }
   .bidButtonSelected {
     ${tw`w-[160px] h-[60px] sm:h-[50px] rounded-[50px] items-center cursor-pointer bg-[#5858ff] text-[#fff]
-    justify-center flex mr-4 text-[20px] font-semibold`}
+    justify-center flex  text-[20px] font-semibold`}
   }
   .verifiedImg {
     ${tw`h-[35px] sm:w-[18px]  sm:h-[18px] w-[35px] mr-2 sm:mt-0 sm:ml-2`}
@@ -306,17 +306,19 @@ const ReviewBid: FC<{
           <strong>{general?.nft_name} </strong> {checkMobile() ? <br /> : 'by'}
           <strong> {general?.collection_name}</strong>
         </div>
-        {singleCollection && singleCollection[0]?.is_verified && (
-          <div className="verifiedText">
-            {!checkMobile() && (
-              <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
-            )}
-            This is a verified {checkMobile() && <br />} Creator
-            {checkMobile() && (
-              <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
-            )}
-          </div>
-        )}
+        <div className="verifiedText">
+          {singleCollection && singleCollection[0]?.is_verified && (
+            <div>
+              {!checkMobile() && (
+                <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+              )}
+              This is a verified {checkMobile() && <br />} Creator
+              {checkMobile() && (
+                <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+              )}
+            </div>
+          )}
+        </div>
       </div>
       <div className="vContainer" tw="flex">
         {!checkMobile() && <img className="nftImgBid" src={general?.image_url} alt="" />}
@@ -351,7 +353,7 @@ const ReviewBid: FC<{
         />
         <img src="/img/crypto/SOL.svg" tw="w-8 h-8 mt-3 ml-[-30px] sm:mt-0 " />
       </div>
-      <div className="vContainer" tw="mt-[70px] sm:mt-[30px]">
+      <div className="vContainer" tw="mt-[55px] sm:mt-[30px] flex items-center !justify-between">
         <div
           className={selectedBtn === 0 ? 'bidButtonSelected' : 'bidButton'}
           onClick={() => handleSetCurBid(buyerPrice + 10, 0)}
@@ -374,7 +376,7 @@ const ReviewBid: FC<{
         )}
       </div>
 
-      <div className="buyBtnContainer" tw="!mt-14">
+      <div className="buyBtnContainer" tw="!mt-10">
         <Button className="buyButton" disabled={curBid <= 0} onClick={() => setReviewClicked(true)}>
           Review Offer
         </Button>
@@ -389,6 +391,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   setIsLoading
 }) => {
   const { setBidNow } = useNFTAggregator()
+  const { singleCollection } = useNFTCollections()
   const { prices } = usePriceFeedFarm()
   const { getUIAmount } = useAccounts()
   const history = useHistory()
