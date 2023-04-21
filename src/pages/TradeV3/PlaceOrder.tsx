@@ -389,29 +389,6 @@ const TOTAL_VALUES = [
   }
 ]
 
-const TAKE_PROFIT_ARRAY = [
-  {
-    display: 'None',
-    value: 0,
-    key: 0
-  },
-  {
-    display: '25%',
-    value: 0.25,
-    key: 1
-  },
-  {
-    display: '50%',
-    value: 0.5,
-    key: 2
-  },
-  {
-    display: '100%',
-    value: 1,
-    key: 3
-  }
-]
-
 const ORDER_CATEGORY_TYPE = [
   {
     id: 'postOnly',
@@ -446,6 +423,35 @@ export const PlaceOrder: FC = () => {
   const [takeProfitIndex, setTakeProfitIndex] = useState<number>(0)
   const [takeProfitInput, setTakeProfitInput] = useState<number>(null)
   const [profits, setProfits] = useState<any>(['', '', '', ''])
+
+  const TAKE_PROFIT_ARRAY = [
+    {
+      display: 'None',
+      value: 0,
+      key: 0
+    },
+    {
+      display: '25%',
+      value: 0.25,
+      key: 1
+    },
+    {
+      display: '50%',
+      value: 0.5,
+      key: 2
+    },
+    order.side === 'buy'
+      ? {
+          display: '100%',
+          value: 1,
+          key: 3
+        }
+      : {
+          display: '75%',
+          value: 0.75,
+          key: 3
+        }
+  ]
 
   useEffect(() => {
     const obj = []
@@ -672,6 +678,13 @@ export const PlaceOrder: FC = () => {
     setTakeProfitAmount(takeProfitInput)
   }
 
+  const checkDisabled = () => {
+    if (!+order.price) return true
+    if (order.side === 'buy' && takeProfitInput < +order.price) return true
+    if (order.side === 'sell' && takeProfitInput > +order.price) return true
+    if (!takeProfitInput) return true
+  }
+
   const calcTakeProfit = (value, index) => {
     setTakeProfitIndex(index)
     setTakeProfitArrow(!takeProfitArrow)
@@ -722,8 +735,8 @@ export const PlaceOrder: FC = () => {
     })
     const saveBtnHTML = (
       <DROPDOWN_SAVE
-        className={takeProfitInput ? 'save-enable' : 'save-disable'}
-        onClick={takeProfitInput ? handleSave : null}
+        className={checkDisabled() ? 'save-disable' : 'save-enable'}
+        onClick={!checkDisabled() && handleSave}
       >
         Save
       </DROPDOWN_SAVE>

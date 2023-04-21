@@ -5,32 +5,30 @@ import { OrderBookMobi } from './OrderBookMobi'
 import { PlaceOrderMobi } from './PlaceOrderMobi'
 
 const WRAPPER = styled.div`
-  margin-top: 100px;
+  ${tw`mt-[100px] overflow-hidden`}
   height: calc(100vh - 100px);
-  overflow: hidden;
 
   .ant-drawer-body {
-    padding-top: 18px;
-    padding-bottom: 0;
+    ${tw`pt-[18px] pb-0`}
   }
   .ant-drawer-content-wrapper {
-    border-radius: 25px 25px 0 0;
+    ${tw`rounded-tl-half rounded-tr-half`}
   }
   .ant-drawer-content {
-    border-radius: 25px 25px 0 0;
+    ${tw`rounded-tl-half rounded-tr-half`}
   }
   .user-profile-drawer {
     .ant-drawer-body {
-      padding: 0;
+      ${tw`p-0`}
     }
     .ant-drawer-content {
-      background: ${({ theme }) => theme.bg20};
+      ${tw`dark:bg-black-2 bg-white`}
+      height: calc(100% - 75px);
     }
   }
   .takep-stopl-container {
     .ant-drawer-body {
-      padding-top: 12px;
-      padding-bottom: 0;
+      ${tw`pt-3 pb-0`}
     }
   }
 `

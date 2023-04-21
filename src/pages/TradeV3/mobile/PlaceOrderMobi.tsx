@@ -374,31 +374,36 @@ const TAKEPROFITWRAPPER = styled.div`
   }
 `
 
-const TAKE_PROFIT_ARRAY = [
-  {
-    display: 'None',
-    value: 0
-  },
-  {
-    display: '25%',
-    value: 0.25
-  },
-  {
-    display: '50%',
-    value: 0.5
-  },
-  {
-    display: '100%',
-    value: 1
-  }
-]
-
 const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, setVisibility }) => {
   const [takeProfitInput, setTakeProfitInput] = useState<number>(null)
   const [takeProfitAmount, setTakeProfitAmount] = useState<number>(null)
   const [takeProfitIndex, setTakeProfitIndex] = useState<number>(0)
   const [profits, setProfits] = useState<any>(['', '', '', ''])
   const { order } = useOrder()
+
+  const TAKE_PROFIT_ARRAY = [
+    {
+      display: 'None',
+      value: 0
+    },
+    {
+      display: '25%',
+      value: 0.25
+    },
+    {
+      display: '50%',
+      value: 0.5
+    },
+    order.side === 'buy'
+      ? {
+          display: '100%',
+          value: 1
+        }
+      : {
+          display: '75%',
+          value: 0.75
+        }
+  ]
 
   useEffect(() => {
     setTakeProfitIndex(index)
@@ -427,7 +432,6 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
     else if (!isNaN(inputAmt)) {
       if (isTakeProfit) {
         setTakeProfitInput(+inputAmt)
-        setInput(+inputAmt)
       }
     }
   }
@@ -446,6 +450,13 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
     setTakeProfitAmount(+takeProfitInput)
     setInput(+takeProfitInput)
     setVisibility(false)
+  }
+
+  const checkDisabled = () => {
+    if (!+order.price) return true
+    if (order.side === 'buy' && takeProfitInput < +order.price) return true
+    if (order.side === 'sell' && takeProfitInput > +order.price) return true
+    if (!takeProfitInput) return true
   }
 
   return (
@@ -482,10 +493,7 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
         placeholder="$0.00"
         type="number"
       />
-      <span
-        className={takeProfitInput ? 'save-enable' : 'save-disable'}
-        onClick={takeProfitInput ? handleSave : null}
-      >
+      <span className={checkDisabled() ? 'save-disable' : 'save-enable'} onClick={!checkDisabled() && handleSave}>
         Save
       </span>
     </TAKEPROFITWRAPPER>
@@ -593,6 +601,30 @@ export const PlaceOrderMobi = () => {
       id: 'ioc',
       display: 'IOC'
     }
+  ]
+
+  const TAKE_PROFIT_ARRAY = [
+    {
+      display: 'None',
+      value: 0
+    },
+    {
+      display: '25%',
+      value: 0.25
+    },
+    {
+      display: '50%',
+      value: 0.5
+    },
+    order.side === 'buy'
+      ? {
+          display: '100%',
+          value: 1
+        }
+      : {
+          display: '75%',
+          value: 0.75
+        }
   ]
 
   const buttonState = useMemo(() => {
