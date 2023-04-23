@@ -26,7 +26,8 @@ export const Tooltip: FC<{
   color?: string
   children: ReactNode
   notInherit?: boolean
-}> = ({ dark, lite, placement = 'topLeft', color = '#4b4b4b', children, notInherit }) => {
+  [x: string]: any
+}> = ({ dark, lite, placement = 'topLeft', color = '#4b4b4b', children, notInherit, ...props }) => {
   const { mode } = useDarkMode()
 
   const icon = `/img/assets/tooltip_${dark ? 'dark' : lite ? 'lite' : mode}_mode_icon.svg`
@@ -44,6 +45,7 @@ export const Tooltip: FC<{
       }}
       placement={placement}
       title={<TEXT>{children}</TEXT>}
+      {...props}
     >
       <ICON notDoxxed={!!notInherit}>
         <img className="tooltipIcon" src={icon} alt="tooltip" />

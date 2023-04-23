@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { Input, Checkbox, Slider, Drawer } from 'antd'
 import {
@@ -23,7 +23,6 @@ import 'styled-components/macro'
 import { Tooltip } from '../../../components'
 import { TradeConfirmation } from '../TradeConfirmation'
 import { PopupCustom } from '../../NFTs/Popup/PopupCustom'
-import { Connect } from '../../../layouts'
 import { removeFloatingPointError } from '../../../utils'
 import { getPerpsPrice } from '../perps/utils'
 import { getProfitAmount } from '../perps/utils'
@@ -154,7 +153,8 @@ const INPUT_WRAPPER = styled.div<{ $rotateArrow: boolean }>`
     box-shadow: none;
   }
   .drawer {
-    ${tw`w-full h-[45px] flex justify-between items-center px-2 font-semibold text-tiny rounded-[10px] dark:bg-black-2 bg-white`}
+    ${tw`w-full h-[45px] flex justify-between items-center px-2 font-semibold 
+      text-tiny rounded-[10px] dark:bg-black-2 bg-white`}
     color: ${({ theme }) => theme.text21};
     border: 1.5px solid ${({ theme }) => theme.text28};
   }
@@ -244,6 +244,12 @@ const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean; $orderSide: string;
   background: ${({ $action, $orderSide, $connected, theme }) =>
     $action ? ($orderSide === 'buy' ? '#71C25D' : '#F06565') : !$connected ? '#8d4cdd' : theme.bg23};
   color: ${({ $action, $connected }) => ($action || !$connected ? 'white' : '#636363')};
+  > div {
+    ${tw`inline-block relative bottom-0.5`}
+    .tooltipIcon {
+      ${tw`ml-0`}
+    }
+  }
 `
 
 const SELECTOR = styled.div`
@@ -253,7 +259,8 @@ const SELECTOR = styled.div`
       ${tw`dark:text-white text-grey-1 text-average font-semibold`}
     }
     > input[type='radio'] {
-      ${tw`appearance-none absolute right-[80px] h-[30px] w-[30px] dark:bg-black-1 bg-grey-4 rounded-circle cursor-pointer`}
+      ${tw`appearance-none absolute right-[80px] h-[30px] w-[30px] dark:bg-black-1 
+        bg-grey-4 rounded-circle cursor-pointer`}
     }
     > input[type='radio']:checked:after {
       ${tw`rounded-circle w-[24px] h-[24px] relative top-[3px] left-[3px] inline-block`}
@@ -329,7 +336,8 @@ const TAKEPROFITWRAPPER = styled.div`
     -moz-appearance: textfield;
   }
   > input {
-    ${tw`bg-white dark:bg-black-1 dark:text-grey-5 text-black-4 p-3 text-regular font-semibold ml-10 w-4/5 h-[45px] rounded-small`}
+    ${tw`bg-white dark:bg-black-1 dark:text-grey-5 text-black-4 p-3 text-regular 
+    font-semibold ml-10 w-4/5 h-[45px] rounded-small`}
     outline: none;
     border: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
   }
@@ -476,7 +484,7 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
 export const PlaceOrderMobi = () => {
   const { order, setOrder, focused, setFocused, placeOrder } = useOrder()
   const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isSpot } = useCrypto()
-  const { connect, connected, wallet, publicKey } = useWallet()
+  const { connected, wallet, publicKey } = useWallet()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { setVisible: setModalVisible } = useWalletModal()
   const { traderInfo } = useTraderConfig()
@@ -493,7 +501,7 @@ export const PlaceOrderMobi = () => {
   const [profitPrice, setProfitPrice] = useState<number>(null)
   const elem = document.getElementById('dex-mobi-home')
   const { mode } = useDarkMode()
-  const geoBlocked = useBlacklisted()
+  const isGeoBlocked = useBlacklisted()
 
   const handleOrderSide = (side) => {
     if (side !== order.side) {
@@ -600,7 +608,7 @@ export const PlaceOrderMobi = () => {
 
   const buttonState = useMemo(() => {
     if (isSpot) {
-      if (geoBlocked) return ButtonState.isGeoBlocked
+      if (isGeoBlocked) return ButtonState.isGeoBlocked
       if (!connected) return ButtonState.Connect
       if (
         (order.side === 'buy' && order.total > userBalance) ||
@@ -610,6 +618,7 @@ export const PlaceOrderMobi = () => {
       if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
       return ButtonState.CanPlaceOrder
     } else {
+      if (isGeoBlocked) return ButtonState.isGeoBlocked
       if (!connected) return ButtonState.Connect
       if (!traderInfo?.traderRiskGroupKey) return ButtonState.CreateAccount
       if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
@@ -1032,12 +1041,29 @@ export const PlaceOrderMobi = () => {
       <PLACE_ORDER_BUTTON
         $action={buttonState === ButtonState.CanPlaceOrder}
         onClick={() => {
-          buttonState === ButtonState.Connect ? handleWalletModal() : isSpot ? placeOrder() : handlePlaceOrder()
+          buttonState === ButtonState.Connect
+            ? handleWalletModal()
+            : buttonState !== ButtonState.CanPlaceOrder
+            ? null
+            : isSpot
+            ? placeOrder()
+            : handlePlaceOrder()
         }}
         $orderSide={order.side}
         $connected={connected}
       >
         {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
+        {isGeoBlocked && (
+          <Tooltip overlayClassName={`georestricted-dropdown ${mode}`} placement="top" arrow={false}>
+            <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />
+            <div
+              style={{ color: mode === 'dark' ? 'white' : 'black', fontWeight: 600, fontSize: '13px' }}
+              color="linear-gradient(101.7deg, rgba(247, 147, 26, 0.18) 7.47%, rgba(220, 31, 255, 0.12) 87.05%);"
+            >
+              GooseFX DEX is unavailable <br /> in your location.
+            </div>
+          </Tooltip>
+        )}
       </PLACE_ORDER_BUTTON>
       <div tw="flex flex-row justify-between my-2 mx-5">
         {isSpot ? (

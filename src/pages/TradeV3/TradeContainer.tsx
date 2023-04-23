@@ -295,7 +295,7 @@ export const CryptoContent: FC = () => {
   const { isCollapsed } = useNavCollapse()
   const [isLocked, setIsLocked] = useState(true)
   const [layout, setLayout] = useState(getInitLayout())
-  const isGeoBlocked = false
+  const isGeoBlocked = useBlacklisted()
   const { height, width } = useWindowSize()
   const { mode } = useDarkMode()
   const { selectedCrypto, isSpot } = useCrypto()
@@ -367,7 +367,7 @@ export const CryptoContent: FC = () => {
         )
       if (i === 2) {
         return (
-          <div key={i} className={isGeoBlocked ? 'space-cont' : 'space-cont'}>
+          <div key={i} className="space-cont">
             <>
               <PlaceOrder />
               {!isLocked ? (
@@ -402,7 +402,7 @@ export const CryptoContent: FC = () => {
         )
       if (i === 4)
         return (
-          <div key={i} className={isGeoBlocked ? 'space-cont filtering' : 'space-cont'}>
+          <div key={i} className={`space-cont ${isGeoBlocked ? ' filtering' : ''}`}>
             {selectedCrypto.type === 'perps' ? (
               <CollateralPanel />
             ) : (

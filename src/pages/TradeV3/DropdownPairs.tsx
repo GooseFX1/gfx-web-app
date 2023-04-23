@@ -7,6 +7,7 @@ import { Modal, SearchBar } from '../../components'
 import tw, { styled } from 'twin.macro'
 import { checkMobile } from '../../utils'
 import 'styled-components/macro'
+import useBlacklisted from '../../utils/useBlacklisted'
 
 const SELECTED_PAIR_CTN = styled.div`
   ${tw`h-10 w-[180px] rounded-[36px] cursor-pointer p-0.5`}
@@ -227,6 +228,7 @@ const ModalHeader = ({ handleDropdownSearch }) => {
 
 const ModalHeaderMobi = ({ handleDropdownSearch }) => {
   const { isSpot, setIsSpot } = useCrypto()
+  const isGeoBlocked = useBlacklisted()
 
   const handleToggle = (e: string) => {
     if (e === 'spot') setIsSpot(true)
@@ -239,7 +241,10 @@ const ModalHeaderMobi = ({ handleDropdownSearch }) => {
         <div onClick={() => handleToggle('spot')} className={isSpot ? 'active btn' : 'btn'}>
           Spot
         </div>
-        <div onClick={() => handleToggle('perps')} className={!isSpot ? 'active btn' : 'btn'}>
+        <div
+          onClick={isGeoBlocked ? null : () => handleToggle('perps')}
+          className={!isSpot ? 'active btn' : 'btn'}
+        >
           Perps
         </div>
       </MODAL_TITLE>
