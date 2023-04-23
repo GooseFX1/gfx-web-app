@@ -316,6 +316,7 @@ const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean; $orderSide: string;
     $action ? ($orderSide === 'buy' ? '#71C25D' : '#F06565') : theme.bg23};
   color: ${({ $action }) => ($action ? 'white' : '#636363')};
   width: ${({ $isSpot }) => ($isSpot ? '95%' : '50%')};
+  cursor: ${({ $action }) => ($action ? 'pointer' : 'not-allowed')};
 `
 
 const FEES = styled.div`
@@ -511,6 +512,7 @@ export const PlaceOrder: FC = () => {
       if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
       return ButtonState.CanPlaceOrder
     } else {
+      if (geoBlocked) return ButtonState.isGeoBlocked
       if (!connected) return ButtonState.Connect
       if (!traderInfo?.traderRiskGroupKey) return ButtonState.CreateAccount
       if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
@@ -979,7 +981,7 @@ export const PlaceOrder: FC = () => {
             </ORDER_CATEGORY>
             <PLACE_ORDER_BUTTON
               $action={buttonState === ButtonState.CanPlaceOrder}
-              onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
+              onClick={() => (buttonState !== ButtonState.CanPlaceOrder ? null : placeOrder())}
               $orderSide={order.side}
               $isSpot={isSpot}
             >
@@ -1052,7 +1054,7 @@ export const PlaceOrder: FC = () => {
               </ORDER_CATEGORY>
               <PLACE_ORDER_BUTTON
                 $action={buttonState === ButtonState.CanPlaceOrder}
-                onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
+                onClick={() => (buttonState !== ButtonState.CanPlaceOrder ? null : handlePlaceOrder())}
                 $orderSide={order.side}
                 $isSpot={isSpot}
               >
