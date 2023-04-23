@@ -450,7 +450,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
           </div>
           <div className="rowContainer">
             <div className="leftAlign">Total amount to receive</div>
-            <div className="rightAlign"> {totalToReceive} SOL</div>
+            <div className="rightAlign"> {totalToReceive.toFixed(2)} SOL</div>
           </div>
         </div>
         <div className="buyBtnContainer">

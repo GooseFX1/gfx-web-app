@@ -124,10 +124,6 @@ export const Profile: FC = (): JSX.Element => {
   )
 
   useEffect(() => {
-    console.log(wallet?.adapter)
-  }, [wallet])
-
-  useEffect(() => {
     if (params.userAddress === undefined || !isValidSolanaAddress(params.userAddress)) history.push(`/nfts`)
 
     // asserts there is no wallet connection and no session user

@@ -68,10 +68,10 @@ export const FixedPriceNFTs = (): ReactElement => {
     }
   }
 
-  const addNftToBag = (e, nftItem) => {
+  const addNftToBag = (e, nftItem, ask) => {
     setNftInBag((prev) => {
       const id = prev.filter((item) => item.uuid === nftItem.uuid)
-      if (!id.length) return [...prev, nftItem]
+      if (!id.length) return [...prev, { ...nftItem, ...ask }]
       return prev
     })
     e.stopPropagation()

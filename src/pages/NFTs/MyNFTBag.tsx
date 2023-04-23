@@ -1,20 +1,29 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useWallet } from '@solana/wallet-adapter-react'
+import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
 import { Button, Dropdown, Menu } from 'antd'
 import React, { ReactElement, FC, useMemo, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Connect } from '../../layouts'
-import { useConnectionConfig, useNavCollapse, useNFTAggregator } from '../../context'
+import { useConnectionConfig, useDarkMode, useNavCollapse, useNFTAggregator } from '../../context'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { GradientText } from './adminPage/components/UpcomingMints'
 import { PriceWithToken } from '../../components/common/PriceWithToken'
+import { minimizeTheString } from '../../web3/nfts/utils'
+import { LAMPORTS_PER_SOL_NUMBER } from '../../constants'
+import Lottie from 'lottie-react'
+import EmptyBagDark from '../../animations/emptyBag-dark.json'
+import EmptyBagLite from '../../animations/EmptyBag-lite.json'
+import { WalletAccountError } from '@solana/wallet-adapter-base'
 
 const BAG_WRAPPER = styled.div`
   .zeroItemBag {
     ${tw`w-[26px] h-[30px] cursor-pointer -mr-2 fixed top-6 right-24 `}
     z-index: 1000;
+  }
+  .nftNumber {
+    color: ${({ theme }) => theme.text11} !important;
   }
   * {
     animation-duration: 0s !important;
@@ -31,18 +40,25 @@ const MY_BAG = styled(Menu)`
   ${tw`w-[245px] h-[394px] rounded-[10px] sm:w-[100vw] sm:h-[auto] sm:fixed sm:left-0 sm:border-none sm:bottom-0 `}
   background-color: ${({ theme }) => theme.bg20};
   .bagContainer {
-    ${tw`flex flex-col pt-3 px-[10px]`}
+    ${tw`flex flex-col pt-1 px-[10px]`}
+  }
+  .emptyBag {
+    transform: scale(3.2);
   }
   .nothingHere {
-    ${tw`text-center text-[15px] font-semibold mt-8 sm:gap-5 sm:mt-0`}
+    ${tw`text-center text-[15px] mt-[-20px] font-semibold sm:gap-5 sm:mt-0`}
     color: ${({ theme }) => theme.text33};
   }
   .headerContainer {
     ${tw`flex items-center gap-4 sm:justify-between`}
   }
   .bagContentContainer {
+    ${tw`h-[233px] flex flex-col sm:h-auto mb-20`}
     ${({ theme }) => theme.customScrollBar('2px')}
-    ${tw`h-[230px] flex flex-col sm:h-auto mb-20`}
+
+    .nftNumber {
+      color: ${({ theme }) => theme.text4} !important;
+    }
     .nftImage {
       ${tw`h-[60px] w-[60px] left-0 rounded-[5px] `}
     }
@@ -83,6 +99,10 @@ const MY_BAG = styled(Menu)`
     ${tw`text-[15px] font-semibold sm:mr-4 cursor-pointer`}
     color: ${({ theme }) => theme.text34}
   }
+  .clearTextActive {
+    ${tw`text-[15px] font-semibold sm:mr-4 cursor-pointer`}
+    color: ${({ theme }) => theme.textWhitePurple}
+  }
 `
 
 export const MyNFTBag = (): ReactElement => {
@@ -114,17 +134,17 @@ export const MyNFTBag = (): ReactElement => {
 const MyBagContent = (): ReactElement => {
   const { nftInBag, setNftInBag } = useNFTAggregator()
   const itemsPresentInBag = nftInBag.length // no items in the bag
-
+  const { wallet } = useWallet()
   return (
     <MY_BAG>
       <div className="bagContainer">
         <div className="headerContainer">
           <div className="myBagText">My Bag ({nftInBag.length})</div>
-          <div className="clearText" onClick={() => setNftInBag([])}>
+          <div className={nftInBag.length ? 'clearTextActive' : 'clearText'} onClick={() => setNftInBag([])}>
             Clear
           </div>
         </div>
-        {itemsPresentInBag ? <ItemsPresentInBag /> : <EmptyBagDisplay />}
+        {itemsPresentInBag ? <ItemsPresentInBag wallet={wallet} /> : <EmptyBagDisplay />}
         <ButtonContainerForBag />
       </div>
     </MY_BAG>
@@ -142,14 +162,16 @@ const BagTokenBalanceRow: FC<{ title: string; amount: number }> = ({ title, amou
     </div>
   </div>
 )
-const ItemsPresentInBag = (): ReactElement => {
+const ItemsPresentInBag: FC<{ wallet: any }> = ({ wallet }): ReactElement => {
   const { nftInBag, setNftInBag } = useNFTAggregator()
   const removeNft = (clickedNft) => {
     const removedBag = nftInBag.filter((nft) => nft.uuid !== clickedNft.uuid)
     setNftInBag(removedBag)
   }
+  console.log(wallet)
+
   return (
-    <div className="bagContentContainer">
+    <div className="bagContentContainer" style={{ height: wallet ? '233px' : '280px' }}>
       {nftInBag.map((nft, index) => (
         <div tw="flex items-center mt-[15px]" key={index}>
           <img className="nftImage" src={nft.image_url} alt="img" />
@@ -159,17 +181,21 @@ const ItemsPresentInBag = (): ReactElement => {
             src={`/img/assets/Aggregator/closeRed.svg`}
             alt="img"
           />
-          <div tw="flex flex-col text-[15px] font-semibold text-[#636363] dark:text-[#fff]">
-            <div>#{nft.collectionId}</div>
+          <div tw="flex flex-col text-[15px] font-semibold">
+            <div className="nftNumber">#{nft?.nft_name?.split('#')[1]}</div>
             <div>
-              <GradientText text={nft.nft_name} fontSize={16} fontWeight={600} />
+              <GradientText
+                text={minimizeTheString(nft?.nft_name?.split('#')[0], 8)}
+                fontSize={16}
+                fontWeight={600}
+              />
             </div>
           </div>
           <div tw="ml-auto">
             <PriceWithToken
-              price={nft?.price}
+              price={parseFloat(nft?.buyer_price) / LAMPORTS_PER_SOL_NUMBER}
               token={'SOL'}
-              cssStyle={tw`h-5 w-5 text-[#636363] dark:text-[#ffffff]`}
+              cssStyle={tw`h-5 w-5`}
             />
           </div>
         </div>
@@ -177,17 +203,24 @@ const ItemsPresentInBag = (): ReactElement => {
     </div>
   )
 }
-const EmptyBagDisplay = (): ReactElement => (
-  <div tw="flex items-center sm:h-auto flex-col sm:flex-row sm:mb-[100px] h-[230px] justify-center">
-    <div>
-      <img src="/img/assets/Aggregator/bagAnimationDark.svg" tw="h-[65px] w-[73px] mt-2 mr-5" />
+const EmptyBagDisplay = (): ReactElement => {
+  const { mode } = useDarkMode()
+  return (
+    <div tw="flex items-center sm:h-auto flex-col sm:flex-row sm:mb-[100px] h-[230px] justify-center">
+      <div>
+        {mode === 'dark' ? (
+          <Lottie className="emptyBag" animationData={EmptyBagDark} />
+        ) : (
+          <Lottie className="emptyBag" animationData={EmptyBagLite} />
+        )}
+      </div>
+      <div className="nothingHere">
+        Whoops.. <br />
+        Nothing in here!
+      </div>
     </div>
-    <div className="nothingHere">
-      Whoops.. <br />
-      Nothing in here!
-    </div>
-  </div>
-)
+  )
+}
 
 const ButtonContainerForBag = (): ReactElement => {
   const { publicKey } = useWallet()
@@ -206,7 +239,7 @@ const ButtonContainerForBag = (): ReactElement => {
 
   const totalCost = useMemo(() => {
     let sum = 0
-    for (const nft of nftInBag) sum += nft.nftPrice
+    for (const nft of nftInBag) sum += parseFloat(nft.buyer_price) / LAMPORTS_PER_SOL_NUMBER
     return sum
   }, [nftInBag])
   const enoughFunds = totalCost < userSOLBalance

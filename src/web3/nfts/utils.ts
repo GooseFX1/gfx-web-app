@@ -23,8 +23,9 @@ export async function getSolanaMetadataAddress(tokenMint: PublicKey): Promise<Pu
   )[0]
 }
 
-export const minimizeTheString = (str: string): string => {
-  if (str.length > 12) return str.substring(0, 12) + '...'
+export const minimizeTheString = (str: string, neededLength?: number): string => {
+  if (str.length > (neededLength ? neededLength : 12))
+    return str.substring(0, neededLength ? neededLength : 12) + '...'
   return str
 }
 
