@@ -239,11 +239,25 @@ const ORDER_CATEGORY = styled.div`
   }
 `
 
-const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean; $orderSide: string; connected: boolean }>`
+const PLACE_ORDER_BUTTON = styled.button<{
+  $action: boolean
+  $orderSide: string
+  connected: boolean
+  isGeoBlocked: boolean
+}>`
   ${tw`w-[95%] mt-3 rounded-[30px] h-[45px] text-tiny font-semibold border-0 border-none mx-auto block`}
-  background: ${({ $action, $orderSide, $connected, theme }) =>
-    $action ? ($orderSide === 'buy' ? '#71C25D' : '#F06565') : !$connected ? '#8d4cdd' : theme.bg23};
-  color: ${({ $action, $connected }) => ($action || !$connected ? 'white' : '#636363')};
+  background: ${({ $action, $orderSide, $connected, $isGeoBlocked, theme }) =>
+    $action
+      ? $orderSide === 'buy'
+        ? '#71C25D'
+        : '#F06565'
+      : $isGeoBlocked
+      ? theme.bg23
+      : !$connected
+      ? '#8d4cdd'
+      : theme.bg23};
+  color: ${({ $action, $connected, $isGeoBlocked }) =>
+    $isGeoBlocked ? '#636363' : $action || !$connected ? 'white' : '#636363'};
   > div {
     ${tw`inline-block relative bottom-0.5`}
     .tooltipIcon {
@@ -1051,6 +1065,7 @@ export const PlaceOrderMobi = () => {
         }}
         $orderSide={order.side}
         $connected={connected}
+        $isGeoBlocked={isGeoBlocked}
       >
         {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
         {isGeoBlocked && (

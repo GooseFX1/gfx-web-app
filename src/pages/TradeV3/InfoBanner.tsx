@@ -203,7 +203,7 @@ export const InfoBanner: FC<{
   const { orderBook } = useOrderBook()
   const { mode } = useDarkMode()
   const { traderInfo } = useTraderConfig()
-  const isGeoBlocked = true
+  const isGeoBlocked = useBlacklisted()
   const [tradeType, setTradeType] = useState<string>('deposit')
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
   const { height, width } = useWindowSize()
