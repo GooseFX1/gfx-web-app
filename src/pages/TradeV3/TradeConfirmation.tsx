@@ -10,15 +10,12 @@ const WRAPPER = styled.div``
 
 const ROW = styled.div`
   ${tw`flex flex-row justify-between items-start mb-2.5 sm:mb-2`}
-
   > span {
     ${tw`text-average font-semibold text-grey-2 sm:text-regular`}
   }
-
   .value {
     ${tw`text-black-4 dark:text-white font-semibold sm:text-regular`}
   }
-
   .spacing {
     ${tw`mb-[25px] sm:mb-3.75`}
   }
@@ -56,8 +53,8 @@ export const TradeConfirmation: FC<{ setVisibility: any; takeProfit?: any }> = (
   }
 
   const cssStyle = useMemo(() => {
-    if (order.side === 'buy') return tw`bg-[#71C25D] text-white font-semibold border-0 rounded-circle text-regular`
-    else return tw`bg-[#f06565] text-white font-semibold border-0 rounded-circle text-regular`
+    if (order.side === 'buy') return tw`bg-green-3 text-white font-semibold border-0 rounded-circle text-regular`
+    else return tw`bg-red-2 text-white font-semibold border-0 rounded-circle text-regular`
   }, [order.side])
 
   return (

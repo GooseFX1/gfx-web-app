@@ -37,7 +37,7 @@ const DROPDOWN_PAIR_DIV = styled.div<{ $hoverBorder: boolean }>`
   }
   .spacing {
     ${tw`mr-auto text-regular font-semibold`}
-    color: ${({ theme }) => theme.text11};
+    color: ${({ theme }) => theme.text32};
   }
 `
 
@@ -55,7 +55,6 @@ const DROPDOWN_MODAL = styled(Modal)`
         ${tw`pb-3`}
         border-bottom: ${({ theme }) => '1px solid ' + theme.tokenBorder};
       }
-
       > div {
         > span {
           ${tw`w-full`}
@@ -67,7 +66,6 @@ const DROPDOWN_MODAL = styled(Modal)`
   .dropdown-modal-search {
     ${tw`w-[440px] m-0 sm:w-full`}
     background-color: ${({ theme }) => theme.bg2} !important;
-
     > input {
       background-color: ${({ theme }) => theme.bg2} !important;
     }
@@ -75,7 +73,6 @@ const DROPDOWN_MODAL = styled(Modal)`
       ${tw`text-regular font-medium dark:text-grey-1 text-grey-2`}
     }
   }
-
   .popular {
     ${tw`font-semibold text-regular my-2.5 mx-2`}
     color: ${({ theme }) => theme.text11};
@@ -96,7 +93,7 @@ const DROPDOWN_MODAL = styled(Modal)`
   }
 
   .popular-tokens {
-    ${tw`rounded-[27px] flex flex-row justify-center items-center h-[42px] mb-3 py-0 px-2.5 cursor-pointer`}
+    ${tw`rounded-half flex flex-row justify-center items-center h-[42px] mb-3 py-0 px-2.5 cursor-pointer`}
     background: ${({ theme }) => theme.bg2};
     border: 1.5px solid ${({ theme }) => theme.tokenBorder};
 
@@ -105,7 +102,7 @@ const DROPDOWN_MODAL = styled(Modal)`
     }
 
     .pair {
-      ${tw`font-semibold text-tiny`}
+      ${tw`font-semibold text-regular`}
       color: ${({ theme }) => theme.text11};
     }
   }
@@ -124,12 +121,11 @@ const GRADIENT_BORDER = styled.div<{ $hoverBorder: boolean }>`
 
 const MODAL_TITLE = styled.div`
   ${tw`flex flex-row justify-center items-center`}
-
   .btn {
     ${tw`flex flex-row justify-center items-center mr-6 text-regular font-semibold text-grey-2 w-[90px] h-9 mb-3.75`}
   }
   .active {
-    ${tw`!text-white w-[90px] h-9 text-regular font-semibold border border-solid border-black rounded-[40px]`}
+    ${tw`!text-white w-[90px] h-9 text-regular font-semibold rounded-[40px]`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   }
 `
