@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect, useRef, FC } from 'react'
+import React, { useState, useEffect, useRef, FC, useCallback } from 'react'
 import axios from 'axios'
 import { Row, Col } from 'antd'
 import { checkMobile } from '../../../utils'
@@ -7,7 +7,7 @@ import { ParsedAccount } from '../../../web3'
 import { Card } from '../Collection/Card'
 import NoContent from './NoContent'
 import { SearchBar, Loader, ArrowDropdown } from '../../../components'
-import { useNavCollapse, useNFTAggregator, useNFTProfile } from '../../../context'
+import { useNavCollapse, useNFTAggregator, useNFTDetails, useNFTProfile } from '../../../context'
 import { StyledTabContent } from './TabContent.styled'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import debounce from 'lodash.debounce'
@@ -20,6 +20,7 @@ import Loading from '../Home/Loading'
 import NFTLoading from '../Home/NFTLoading'
 import { SellNFTModal } from '../Collection/SellNFTModal'
 import { BidNFTModal, BuyNFTModal } from '../Collection/BuyNFTModal'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
   ${tw`h-[25px] w-[50px] rounded-[40px] cursor-pointer`}
@@ -93,10 +94,15 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const [isSol, setIsSol] = useState<boolean>(true)
   const nftFilterArr = ['All', 'Offers', 'On Sale']
   const [nftFilter, setNftFilter] = useState<number>(0)
+  const { general, nftMetadata } = useNFTDetails()
+  const { buyNowClicked, bidNowClicked } = useNFTAggregator()
 
   const activePointRef = useRef(collectedItems)
   const activePointLoader = useRef(loading)
 
+  useEffect(() => {
+    setFilteredCollectedItems(collectedItems)
+  }, [collectedItems])
   // in place of original `setActivePoint`
   const setCollectedItemsPag = (x) => {
     activePointRef.current = x // keep updated
@@ -126,22 +132,6 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     return () => setCollectedItemsPag(undefined)
   }, [props.singleNFTs, props.parsedAccounts])
 
-  useEffect(() => {
-    if (collectedItems) {
-      setTimeout(() => {
-        if (search.length > 0) {
-          const filteredData = collectedItems.filter(({ nft_name }) =>
-            nft_name.toLowerCase().includes(search.trim().toLowerCase())
-          )
-          setFilteredCollectedItems(filteredData)
-        } else {
-          setFilteredCollectedItems(collectedItems)
-        }
-      }, 400)
-    }
-
-    return () => setFilteredCollectedItems(undefined)
-  }, [search, collectedItems])
   const fetchNFTData = async (parsedAccounts: ParsedAccount[]) => {
     const nfts: ISingleNFT[] = []
     for (let i = 0; i < parsedAccounts.length; i++) {
@@ -193,15 +183,16 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     </>
   )
 
-  const { sellNFTClicked, buyNowClicked } = useNFTAggregator()
   const gridType = filteredCollectedItems?.length > 7 ? '1fr' : '210px'
-  useEffect(() => {
-    console.log(buyNowClicked)
-  }, [buyNowClicked])
+
+  const handleModalClick = useCallback(() => {
+    if (buyNowClicked) return <BuyNFTModal />
+    if (bidNowClicked) return <BidNFTModal />
+  }, [buyNowClicked, bidNowClicked, general, nftMetadata])
+
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType}>
-      <BuyNFTModal />
-      <BidNFTModal />
+      {handleModalClick()}
       {filteredCollectedItems === undefined ? (
         <>
           <NFTLoading />

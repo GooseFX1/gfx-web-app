@@ -55,7 +55,7 @@ export const ProfileItemDetails: FC<{
               dark:bg-black-2 bg-grey-5 px-[30px] flex items-center justify-between
               border-solid border-b-0 border-l-0 border-r-0 dark:border-black-4 border-grey-4"
       >
-        {ask && (
+        {/* {ask && (
           <div>
             <label tw="dark:text-grey-1 text-black-3 font-semibold text-average">On Sale for:</label>
             <div tw="flex items-center text-lg dark:text-grey-5 text-black-2 font-semibold">
@@ -63,12 +63,12 @@ export const ProfileItemDetails: FC<{
               <img src={`/img/crypto/SOL.svg`} alt={'SOL'} tw="h-[20px] ml-2" />
             </div>
           </div>
-        )}
+        )} */}
         {isOwner ? (
           <Button
             height="56px"
             width={ask ? '185px' : '100%'}
-            cssStyle={tw`bg-red-1`}
+            cssStyle={tw`bg-red-1 mr-2`}
             onClick={() => {
               setDrawerSingleNFT(false)
               setSellModal(true)
@@ -81,7 +81,7 @@ export const ProfileItemDetails: FC<{
             <Button
               height="56px"
               width={ask ? '185px' : '100%'}
-              cssStyle={tw`bg-blue-1`}
+              cssStyle={tw`bg-blue-1 mr-2`}
               onClick={() => setBidNow(general)}
             >
               <span tw="text-regular font-semibold text-white">Bid</span>

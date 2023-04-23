@@ -181,7 +181,7 @@ export const Card: FC<ICard> = (props) => {
           onMouseLeave={() => setHover(false)}
           onClick={() => (localSingleNFT !== undefined ? openDetails(MODAL_TARGET.DRAWER) : null)}
         >
-          {isLoadingBeforeRelocate && <LoadingDiv />}
+          {isLoadingBeforeRelocate && <div className="loadingNFT" tw="mt-[-8px]" />}
           {hover && (
             <HoverOnNFT
               buttonType={isOwner ? 'sell' : 'bid'}
@@ -245,7 +245,7 @@ export const Card: FC<ICard> = (props) => {
                 className="card-like"
                 src={`/img/assets/heart-${isFavorited ? 'red' : 'empty'}.svg`}
                 alt="heart-red"
-                onClick={() => handleToggleLike()}
+                // onClick={() => handleToggleLike()}
               />
             )}
           </div>

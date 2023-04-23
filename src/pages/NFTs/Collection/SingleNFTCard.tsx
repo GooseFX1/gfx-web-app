@@ -93,8 +93,6 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
         if (res && res.status === 200) {
           res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(item)
           const nft: INFTGeneralData = res.data
-          console.log(nft)
-
           setLocalBids(nft.bids)
           setLocalAsk(nft.asks.length > 0 ? nft.asks[0] : null)
           setLocalTotalLikes(nft.total_likes)
@@ -127,6 +125,8 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}
         >
+          {isLoadingBeforeRelocate && <div className="loadingNFT" tw="mt-[-8px]" />}
+
           {hover && (
             <HoverOnNFT
               item={item}
@@ -135,9 +135,8 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
               ask={localAsk ? localAsk : null}
             />
           )}
-          {isLoadingBeforeRelocate && <LoadingDiv />}
           {item ? (
-            <img className="nftImg" src={item.image_url} alt="nft" />
+            <img className="nftImg" src={item?.image_url} alt="nft" />
           ) : (
             <SkeletonCommon width="100%" height="auto" />
           )}
@@ -224,13 +223,13 @@ export const HoverOnNFT: FC<{
 
   return (
     <div className="hoverNFT">
-      {isLoadingBeforeRelocate && <LoadingDiv />}
-      {addNftToBag && (
+      {isLoadingBeforeRelocate && <div className="loadingNFT" tw="ml-[-4px]" />}
+      {addNftToBag && ask && (
         <img
           className="hoverAddToBag"
           src={`/img/assets/Aggregator/addToBag.svg`}
           alt=""
-          onClick={(e) => addNftToBag(e, item)}
+          onClick={(e) => addNftToBag(e, item, ask)}
         />
       )}
       <span className="hoverButtons">

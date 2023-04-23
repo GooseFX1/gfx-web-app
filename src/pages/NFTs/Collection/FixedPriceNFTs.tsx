@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
-import { useNFTAggregator, useNFTCollections } from '../../../context'
+import { useNFTAggregator, useNFTCollections, useNFTDetails } from '../../../context'
 import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
 import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
 import DetailViewNFT from './DetailViewNFTDrawer'
@@ -21,6 +21,7 @@ export const FixedPriceNFTs = (): ReactElement => {
   const [stopCalling, setStopCalling] = useState<boolean>(false)
   const [fixedPriceLoading, setFixedPriceLoading] = useState<boolean>(false)
   const observer = useRef<any>()
+  const { general, nftMetadata } = useNFTDetails()
 
   useEffect(() => {
     setFixedPriceArr([])
@@ -68,22 +69,26 @@ export const FixedPriceNFTs = (): ReactElement => {
     }
   }
 
-  const addNftToBag = (e, nftItem) => {
+  const addNftToBag = (e, nftItem, ask) => {
     setNftInBag((prev) => {
       const id = prev.filter((item) => item.uuid === nftItem.uuid)
-      if (!id.length) return [...prev, nftItem]
+      if (!id.length) return [...prev, { ...nftItem, ...ask }]
       return prev
     })
     e.stopPropagation()
   }
 
+  const handleModalClick = useCallback(() => {
+    if (buyNowClicked) return <BuyNFTModal />
+    if (bidNowClicked) return <BidNFTModal />
+    if (general !== null && nftMetadata !== null) return <DetailViewNFT />
+  }, [buyNowClicked, bidNowClicked, general, nftMetadata])
+
   const gridType = fixedPriceArr?.length > 10 ? '1fr' : '210px'
 
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
-      {<DetailViewNFT />}
-      {buyNowClicked && <BuyNFTModal />}
-      {bidNowClicked && <BidNFTModal />}
+      {handleModalClick()}
       {fixedPriceWithinCollection && fixedPriceWithinCollection.total_count === 0 ? (
         <NoContent type="collected" />
       ) : (

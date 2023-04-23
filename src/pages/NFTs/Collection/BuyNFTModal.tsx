@@ -50,11 +50,13 @@ import {
 import { Button } from '../../../components/Button'
 import { GFX_LINK } from '../../../styles'
 import { HoldTight } from './HoldTight'
+import MissionAccomplishedModal from './MissionAcomplishedModal'
 const TEN_MILLION = 10000000
 
-export const STYLED_POPUP = styled(PopupCustom)`
+export const STYLED_POPUP = styled(PopupCustom)<{ lockModal: boolean }>`
   ${tw`flex flex-col `}
   .ant-modal-close-x {
+    visibility: ${({ lockModal }) => (lockModal ? 'hidden' : 'visible')};
     img {
       ${tw`w-5 h-5 mt-[-5px] ml-2`}
     }
@@ -75,8 +77,8 @@ export const STYLED_POPUP = styled(PopupCustom)`
     }
   }
   .verifiedText {
-    ${tw`font-semibold text-[16px] text-[#fff] sm:text-[15px] mt-4
-        sm:text-left sm:ml-[140px] sm:mt-[5px]`}
+    ${tw`font-semibold text-[16px] text-[#fff] sm:text-[15px] mt-2 mb-3
+        sm:text-left sm:ml-[140px] sm:mt-[5px] h-4`}
   }
   .hContainer {
     ${tw`flex flex-col items-center justify-center`}
@@ -96,12 +98,12 @@ export const STYLED_POPUP = styled(PopupCustom)`
   }
   .bidButton {
     ${tw`w-[160px] h-[60px] sm:h-[50px] rounded-[50px] items-center cursor-pointer
-    justify-center flex mr-4 text-[20px] font-semibold`}
+    justify-center flex  text-[20px] font-semibold`}
     background: ${({ theme }) => theme.bg22};
   }
   .bidButtonSelected {
     ${tw`w-[160px] h-[60px] sm:h-[50px] rounded-[50px] items-center cursor-pointer bg-[#5858ff] text-[#fff]
-    justify-center flex mr-4 text-[20px] font-semibold`}
+    justify-center flex  text-[20px] font-semibold`}
   }
   .verifiedImg {
     ${tw`h-[35px] sm:w-[18px]  sm:h-[18px] w-[35px] mr-2 sm:mt-0 sm:ml-2`}
@@ -190,6 +192,7 @@ export const BuyNFTModal = (): ReactElement => {
   const { buyNowClicked, setBuyNow } = useNFTAggregator()
   const { ask } = useNFTDetails()
   const { connected } = useWallet()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const { setVisible } = useWalletModal()
   const sellerPrice: number = parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER
 
@@ -204,14 +207,15 @@ export const BuyNFTModal = (): ReactElement => {
 
   return (
     <STYLED_POPUP
+      lockModal={isLoading}
       height={checkMobile() ? '655px' : '780px'}
       width={checkMobile() ? '100%' : '580px'}
       title={null}
       visible={buyNowClicked ? true : false}
-      onCancel={() => setBuyNow(undefined)}
+      onCancel={() => !isLoading && setBuyNow(undefined)}
       footer={null}
     >
-      <FinalPlaceBid curBid={sellerPrice} />
+      <FinalPlaceBid curBid={sellerPrice} isLoading={isLoading} setIsLoading={setIsLoading} />
     </STYLED_POPUP>
   )
 }
@@ -222,8 +226,10 @@ export const BidNFTModal = (): ReactElement => {
   const [selectedBtn, setSelectedBtn] = useState<number | undefined>(undefined)
   const [reviewBtnClicked, setReviewClicked] = useState<boolean>(false)
   const purchasePrice = useMemo(() => parseFloat(ask ? ask?.buyer_price : '0') / LAMPORTS_PER_SOL_NUMBER, [ask])
-  const [curBid, setCurBid] = useState<number | undefined>(purchasePrice ? purchasePrice : 0)
+  const [curBid, setCurBid] = useState<number | undefined>(purchasePrice ? purchasePrice : undefined)
   const { connected } = useWallet()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
   const { setVisible } = useWalletModal()
   const updateBidValue = (e) => {
     if (parseFloat(e.target.value) < TEN_MILLION) setCurBid(e.target.value)
@@ -251,15 +257,16 @@ export const BidNFTModal = (): ReactElement => {
 
   return (
     <STYLED_POPUP
+      lockModal={isLoading}
       height={checkMobile() ? '600px' : '780px'}
       width={checkMobile() ? '100%' : '580px'}
       title={null}
       visible={bidNowClicked ? true : false}
-      onCancel={() => handleModalClose()}
+      onCancel={() => !isLoading && handleModalClose()}
       footer={null}
     >
       {reviewBtnClicked ? (
-        <FinalPlaceBid curBid={curBid} />
+        <FinalPlaceBid curBid={curBid} isLoading={isLoading} setIsLoading={setIsLoading} />
       ) : (
         <ReviewBid
           curBid={curBid}
@@ -299,17 +306,19 @@ const ReviewBid: FC<{
           <strong>{general?.nft_name} </strong> {checkMobile() ? <br /> : 'by'}
           <strong> {general?.collection_name}</strong>
         </div>
-        {singleCollection && singleCollection[0]?.is_verified && (
-          <div className="verifiedText">
-            {!checkMobile() && (
-              <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
-            )}
-            This is a verified {checkMobile() && <br />} Creator
-            {checkMobile() && (
-              <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
-            )}
-          </div>
-        )}
+        <div className="verifiedText">
+          {singleCollection && singleCollection[0]?.is_verified && (
+            <div>
+              {!checkMobile() && (
+                <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+              )}
+              This is a verified {checkMobile() && <br />} Creator
+              {checkMobile() && (
+                <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+              )}
+            </div>
+          )}
+        </div>
       </div>
       <div className="vContainer" tw="flex">
         {!checkMobile() && <img className="nftImgBid" src={general?.image_url} alt="" />}
@@ -325,13 +334,13 @@ const ReviewBid: FC<{
       <div tw="mt-[30px]">
         <AppraisalValue
           text={general?.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
-          label={general?.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
+          label={general?.gfx_appraisal_value ? 'Appraisal Value' : 'Appraisal Not Supported'}
           width={360}
         />
       </div>
       <div className="vContainer">
         <div className="maxBid" tw="mt-8 sm:mt-[20px]">
-          Enter Maxium Bid
+          Enter Maximum Bid
         </div>
       </div>
       <div className="vContainer">
@@ -339,12 +348,12 @@ const ReviewBid: FC<{
           className="enterBid"
           placeholder="0.0"
           type="number"
-          value={curBid}
+          value={curBid >= 0 ? curBid : undefined}
           onChange={(e) => updateBidValue(e)}
         />
         <img src="/img/crypto/SOL.svg" tw="w-8 h-8 mt-3 ml-[-30px] sm:mt-0 " />
       </div>
-      <div className="vContainer" tw="mt-[70px] sm:mt-[30px]">
+      <div className="vContainer" tw="mt-[55px] sm:mt-[30px] flex items-center !justify-between">
         <div
           className={selectedBtn === 0 ? 'bidButtonSelected' : 'bidButton'}
           onClick={() => handleSetCurBid(buyerPrice + 10, 0)}
@@ -367,7 +376,7 @@ const ReviewBid: FC<{
         )}
       </div>
 
-      <div className="buyBtnContainer" tw="!mt-14">
+      <div className="buyBtnContainer" tw="!mt-10">
         <Button className="buyButton" disabled={curBid <= 0} onClick={() => setReviewClicked(true)}>
           Review Offer
         </Button>
@@ -376,8 +385,13 @@ const ReviewBid: FC<{
   )
 }
 
-const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
+const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any }> = ({
+  curBid,
+  isLoading,
+  setIsLoading
+}) => {
   const { setBidNow } = useNFTAggregator()
+  const { singleCollection } = useNFTCollections()
   const { prices } = usePriceFeedFarm()
   const { getUIAmount } = useAccounts()
   const history = useHistory()
@@ -385,9 +399,9 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
   const { connected, wallet, sendTransaction } = useWallet()
   const { connection, network } = useConnectionConfig()
   const { general, nftMetadata, bidOnSingleNFT, ask } = useNFTDetails()
+  const [missionAccomplished, setMissionAccomplished] = useState<boolean>(false)
 
   const [mode, setMode] = useState<string>(curBid ? 'review' : 'bid')
-  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [pendingTxSig, setPendingTxSig] = useState<string | null>(null)
 
   const publicKey: PublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
@@ -542,46 +556,29 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
 
       console.log(signature)
       setPendingTxSig(signature)
-      setTimeout(() => {
-        postBidToAPI(signature, new BN(curBid * LAMPORTS_PER_SOL_NUMBER), tokenSize).then((res) => {
-          console.log(res)
-
-          notify(successfulListingMessage(signature, nftMetadata, curBid.toString()))
-
-          if (res === 'Error') {
-            callCancelInstruction()
-            setIsLoading(false)
-          } else if (res.data.bid_matched && res.data.tx_sig) {
-            fetchUser(publicKey.toBase58())
-            notify(successBidMatchedMessage(res.data.tx_sig, nftMetadata, curBid.toString()))
-            setTimeout(() => history.push(`/NFTs/profile/${publicKey.toBase58()}`), 2000)
-          }
-        })
-      }, 30 * 1000)
-
-      const confirm = await connection.confirmTransaction(signature, 'finalized')
-      console.log(confirm, 'confoirming')
+      const confirm = await confirmTransaction(connection, signature, 'finalized')
+      console.log(confirm, 'confirming')
 
       // if buyer price === ask?.buyer_price the api mey need to be called
       if (confirm.value.err === null) {
         if (isBuyingNow) {
-          console.log('object')
           postBidToAPI(signature, buyerPrice, tokenSize).then((res) => {
             console.log(res)
-
-            notify(successfulListingMessage(signature, nftMetadata, curBid.toString()))
+            setMissionAccomplished(true)
+            setIsLoading(false)
+            notify(successBidMatchedMessage(signature, nftMetadata, curBid.toString()))
 
             if (res === 'Error') {
               callCancelInstruction()
               setIsLoading(false)
             } else if (res.data.bid_matched && res.data.tx_sig) {
               fetchUser(publicKey.toBase58())
-              notify(successBidMatchedMessage(res.data.tx_sig, nftMetadata, curBid.toString()))
-              setTimeout(() => history.push(`/NFTs/profile/${publicKey.toBase58()}`), 2000)
             }
           })
         } else {
           setBidNow(undefined)
+          setIsLoading(false)
+          notify(successfulListingMessage(signature, nftMetadata, curBid.toString()))
         }
         // ask kiran about this
         // i have to test for excute sale hapening
@@ -703,83 +700,91 @@ const FinalPlaceBid: FC<{ curBid: number }> = ({ curBid }) => {
       />
     )
   })
+  if (missionAccomplished) return <MissionAccomplishedModal />
+  else if (isLoading && isBuyingNow && pendingTxSig) return <HoldTight />
+  else
+    return (
+      <div>
+        <div tw="flex flex-col items-center justify-center">
+          <div className="buyTitle">
+            You are about to {isBuyingNow ? 'buy' : 'bid for'}: <br />
+            <strong>{general?.nft_name} </strong> {checkMobile() ? <br /> : 'by'}
+            <strong> {general?.collection_name}</strong>
+          </div>
+          <div className="verifiedText">
+            {singleCollection && singleCollection[0]?.is_verified && (
+              <div>
+                {!checkMobile() && (
+                  <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+                )}
+                This is a verified {checkMobile() && <br />} Creator
+                {checkMobile() && (
+                  <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+                )}
+              </div>
+            )}
+          </div>
+        </div>
 
-  return isLoading ? (
-    <HoldTight />
-  ) : (
-    <div>
-      <div tw="flex flex-col items-center justify-center">
-        <div className="buyTitle">
-          You are about to {isBuyingNow ? 'buy' : 'bid for'}: <br />
-          <strong>{general?.nft_name} </strong> {checkMobile() ? <br /> : 'by'}
-          <strong> {general?.collection_name}</strong>
+        <div className="vContainer">
+          <img className="nftImg" src={general?.image_url} alt="" />
         </div>
-        <div className="verifiedText">
-          {!checkMobile() && <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />}
-          This is a verified {checkMobile() && <br />} Creator
-          {checkMobile() && <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />}
-        </div>
-      </div>
 
-      <div className="vContainer">
-        <img className="nftImg" src={general?.image_url} alt="" />
-      </div>
+        <div className="vContainer">
+          <div className="priceText">Price</div>
+        </div>
 
-      <div className="vContainer">
-        <div className="priceText">Price</div>
-      </div>
+        <div className="vContainer">
+          <div className="priceNumber">
+            {curBid} <img src={`/img/crypto/SOL.svg`} />
+          </div>
+        </div>
 
-      <div className="vContainer">
-        <div className="priceNumber">
-          {curBid} <img src={`/img/crypto/SOL.svg`} />
+        <div tw="mt-4">
+          <AppraisalValue
+            text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
+            label={general.gfx_appraisal_value ? 'Appraisal Value' : 'Appraisal Not Supported'}
+            width={360}
+          />
         </div>
-      </div>
+        {pendingTxSig && (
+          <div className="bm-title">
+            <span>
+              <img
+                style={{ height: '26px', marginRight: '6px' }}
+                src={`/img/assets/solscan.png`}
+                alt="solscan-icon"
+              />
+            </span>
+            <GFX_LINK
+              href={`https://solscan.io/tx/${pendingTxSig}?cluster=${network}`}
+              target={'_blank'}
+              rel="noreferrer"
+            >
+              View Transaction
+            </GFX_LINK>
+          </div>
+        )}
 
-      <div tw="mt-4">
-        <AppraisalValue
-          text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
-          label={general.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
-          width={360}
-        />
-      </div>
-      {pendingTxSig && (
-        <div className="bm-title">
-          <span>
-            <img
-              style={{ height: '26px', marginRight: '6px' }}
-              src={`/img/assets/solscan.png`}
-              alt="solscan-icon"
-            />
-          </span>
-          <GFX_LINK
-            href={`https://solscan.io/tx/${pendingTxSig}?cluster=${network}`}
-            target={'_blank'}
-            rel="noreferrer"
-          >
-            View Transaction
-          </GFX_LINK>
+        <div className="hContainer" style={{ height: pendingTxSig ? 140 : 185 }}>
+          <div className="rowContainer">
+            <div className="leftAlign">My Bid</div>
+            <div className="rightAlign">{curBid} SOL</div>
+          </div>
+          <div className="rowContainer">
+            <div className="leftAlign">Service Fee</div>
+            <div className="rightAlign"> {servicePriceCalc} SOL</div>
+          </div>
+          <div className="rowContainer">
+            <div className="leftAlign">Total Price</div>
+            <div className="rightAlign">{orderTotal} SOL</div>
+          </div>
         </div>
-      )}
-
-      <div className="hContainer" style={{ height: pendingTxSig ? 120 : 160 }}>
-        <div className="rowContainer">
-          <div className="leftAlign">My Bid</div>
-          <div className="rightAlign">{curBid} SOL</div>
-        </div>
-        <div className="rowContainer">
-          <div className="leftAlign">Service Fee</div>
-          <div className="rightAlign"> {servicePriceCalc} SOL</div>
-        </div>
-        <div className="rowContainer">
-          <div className="leftAlign">Total Price</div>
-          <div className="rightAlign">{orderTotal} SOL</div>
+        <div className="buyBtnContainer" tw="!mt-auto">
+          <Button className="buyButton" disabled={notEnough} onClick={callBuyInstruction} loading={isLoading}>
+            {notEnough ? 'Insufficient SOL' : isBuyingNow ? 'Buy Now' : 'Place Bid'}
+          </Button>
         </div>
       </div>
-      <div className="buyBtnContainer">
-        <Button className="buyButton" disabled={notEnough} onClick={callBuyInstruction} loading={isLoading}>
-          {notEnough ? 'Insufficient SOL' : isBuyingNow ? 'Buy Now' : 'Place Bid'}
-        </Button>
-      </div>
-    </div>
-  )
+    )
 }

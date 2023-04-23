@@ -21,7 +21,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
-  ${tw`h-[400px]`}
+  ${tw`h-[390px]`}
   .generalItemValue {
     color: ${({ theme }) => theme.text32};
     ${tw`text-[15px] leading-9 font-semibold pr-2 pl-4`}
@@ -244,7 +244,7 @@ const ButtonContainer = ({ general, setBuyNow, setBidNow }: any): ReactElement =
   return (
     <div
       tw="absolute left-0 right-0 bottom-0 h-[86px] w-[100%] 
-        dark:bg-black-2 bg-grey-5 px-[30px] flex items-center justify-center
+        dark:bg-black-2 bg-grey-5 px-[30px] flex items-center justify-between
         border-solid border-b-0 border-l-0 border-r-0 dark:border-black-4 border-grey-4"
     >
       <Button width={ask ? '185px' : '100%'} cssStyle={tw`h-[56px] bg-blue-1`} onClick={() => setBidNow(general)}>
