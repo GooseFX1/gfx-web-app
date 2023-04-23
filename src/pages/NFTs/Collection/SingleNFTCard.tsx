@@ -28,6 +28,7 @@ import { genericErrMsg } from '../../Farm/FarmClickHandler'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { Tooltip } from 'antd'
 
 export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any; lastCardRef: any }> = ({
   item,
@@ -48,7 +49,11 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const history = useHistory()
-  const nftId = item ? (item.nft_name.includes('#') ? item.nft_name.split('#')[1] : item.nft_name) : null
+  const nftId = item
+    ? item.nft_name.includes('#')
+      ? '#' + item.nft_name.split('#')[1]
+      : minimizeTheString(item.nft_name)
+    : null
   const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item.uuid) : false), [item])
   const { currencyView } = useNFTAggregator()
 
@@ -144,15 +149,17 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
         <div className="nftTextContainer">
           <div className="collectionId">
             <div>
-              {nftId && nftId}
+              {nftId ? nftId : '# Nft'}
               {item.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
             </div>
-            {localAsk !== null && (
-              <img
-                className="ah-name"
-                src={`/img/assets/Aggregator/${AH_NAME(localAsk?.auction_house_key)}.svg`}
-              />
-            )}
+            <Tooltip title={AH_NAME(localAsk?.auction_house_key)}>
+              {localAsk !== null && (
+                <img
+                  className="ah-name"
+                  src={`/img/assets/Aggregator/${AH_NAME(localAsk?.auction_house_key)}.svg`}
+                />
+              )}
+            </Tooltip>
           </div>
 
           {singleCollection ? (
@@ -233,12 +240,12 @@ export const HoverOnNFT: FC<{
         />
       )}
       <span className="hoverButtons">
-        {buttonType === 'sell' ? (
+        {buttonType === 'Sell' || buttonType === 'Modify' ? (
           <Button
             cssStyle={tw`bg-[#f06565] h-[28px] w-[75px] text-[13px] font-semibold mr-2 ml-2`}
             onClick={(e) => goToDetailsForModal(e, 'sell')}
           >
-            Sell
+            {buttonType}
           </Button>
         ) : (
           <Button

@@ -78,6 +78,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const fetchMetaData = useCallback(async (url: string): Promise<any> => {
     try {
+      console.log(url)
       const res = await customFetch(url)
       const nftMetadata = await res
       setNftMetadata(nftMetadata)

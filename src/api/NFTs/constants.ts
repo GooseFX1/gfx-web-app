@@ -2,7 +2,8 @@ export const NFT_API_BASE = 'nest-api'
 
 export enum NFT_COL_FILTER_OPTIONS {
   COLLECTION_NAME = 'CollectionName',
-  FLOOR_PRICE = 'FloorPrice'
+  FLOOR_PRICE = 'FloorPrice',
+  VOLUME = 'Volume'
 }
 export enum NFT_API_ENDPOINTS {
   SESSION_USER = '/user',

@@ -382,7 +382,7 @@ const FiltersContainer = () => {
         </ButtonContainer>
         {searchFilter && <SearchResultContainer searchFilter={searchFilter} />}
         <div tw="flex items-center mr-6 ml-auto">
-          <MarketDropdown />
+          {/* <MarketDropdown /> */}
           <TimeLineDropdown />
           <div>
             <RefreshBtnWithAnimationNFT />

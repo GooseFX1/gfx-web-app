@@ -1,11 +1,11 @@
-import { useDarkMode } from '../../../context'
+import { useDarkMode } from '../../../../context'
 import React, { FC } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import Lottie from 'lottie-react'
-import MintAnimationLite from '../../../animations/mint-animation-lite.json'
-import MintAnimationDark from '../../../animations/mint-animation-dark.json'
+import MintAnimationLite from '../../../../animations/mint-animation-lite.json'
+import MintAnimationDark from '../../../../animations/mint-animation-dark.json'
 
 export const HOLD_TIGHT = styled.div`
   ${tw`flex flex-col `}

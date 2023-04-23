@@ -1,5 +1,5 @@
 import { FC, ReactElement, useEffect, useMemo, useState } from 'react'
-import { Col, Drawer, Row, Tabs } from 'antd'
+import { Col, Drawer, Row, Tabs, Tooltip } from 'antd'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { Button } from '../../../components/Button'
@@ -193,15 +193,19 @@ const ImageViewer = (): ReactElement => {
         <div tw="mt-4 flex items-center justify-between">
           <div tw="flex flex-col">
             <div tw="flex items-center">
-              <div tw="text-[20px] font-semibold"> {general.nft_name}</div>
-              {ask && (
-                <img
-                  tw="h-[22px] w-[22px] ml-2.5"
-                  src={`/img/assets/Aggregator/${AH_NAME(ask.auction_house_key)}.svg`}
-                  alt={`${AH_NAME(ask.auction_house_key)}-icon`}
-                  style={{ height: 30 }}
-                />
-              )}
+              <div tw="text-[20px] font-semibold">
+                {general?.nft_name?.split('#')[1] ? '#' + general?.nft_name?.split('#')[1] : '# Nft'}
+              </div>
+              <Tooltip title={AH_NAME(ask.auction_house_key)}>
+                {ask && (
+                  <img
+                    tw="h-[22px] w-[22px] ml-2.5"
+                    src={`/img/assets/Aggregator/${AH_NAME(ask.auction_house_key)}.svg`}
+                    alt={`${AH_NAME(ask.auction_house_key)}-icon`}
+                    style={{ height: 30 }}
+                  />
+                )}
+              </Tooltip>
             </div>
             <div>
               <GradientText text={general.collection_name} fontSize={20} fontWeight={600} />

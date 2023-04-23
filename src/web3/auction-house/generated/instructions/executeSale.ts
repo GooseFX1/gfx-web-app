@@ -42,7 +42,12 @@ export type ExecuteSaleInstructionAccounts = {
   buyerTradeState: web3.PublicKey
   sellerTradeState: web3.PublicKey
   freeTradeState: web3.PublicKey
+  tokenProgram?: web3.PublicKey
+  systemProgram?: web3.PublicKey
+  ataProgram?: web3.PublicKey
   programAsSigner: web3.PublicKey
+  rent?: web3.PublicKey
+  anchorRemainingAccounts?: web3.AccountMeta[]
 }
 
 const executeSaleInstructionDiscriminator = [37, 74, 217, 157, 79, 49, 35, 6]
@@ -74,7 +79,8 @@ export function createExecuteSaleInstruction(
     buyerTradeState,
     sellerTradeState,
     freeTradeState,
-    programAsSigner
+    programAsSigner,
+    anchorRemainingAccounts
   } = accounts
 
   const [data] = executeSaleStruct.serialize({
@@ -186,9 +192,24 @@ export function createExecuteSaleInstruction(
       pubkey: web3.SYSVAR_RENT_PUBKEY,
       isWritable: false,
       isSigner: false
+    },
+    {
+      pubkey: new web3.PublicKey('A8TUczDQSmdrH2Mr8CFSAxoa5grzVfnHbuiwGji5QrRB'),
+      isWritable: false,
+      isSigner: false
+    },
+    {
+      pubkey: new web3.PublicKey('8egJKnneyx649wBZ1oPFBP8uPVjRkPUjgrvrcwVRsTsY'),
+      isWritable: false,
+      isSigner: false
+    },
+    {
+      pubkey: new web3.PublicKey('28qQQrVeJRdF5BqQ2VPwNxBSbCZHUpt9d932J3SxLpiS'),
+      isWritable: false,
+      isSigner: false
     }
   ]
-
+  // anchorRemainingAccounts.map((creator) => keys.push(creator))
   const ix = new web3.TransactionInstruction({
     programId: new web3.PublicKey(AUCTION_HOUSE_PROGRAM_ID),
     keys,
