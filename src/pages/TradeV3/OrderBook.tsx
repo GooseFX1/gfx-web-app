@@ -12,10 +12,9 @@ const HEADER = styled.div`
   ${tw`h-[31px] w-full p-0 text-xs h-7`}
   border-bottom: 1px solid ${({ theme }) => theme.tokenBorder};
   & div {
-    ${tw`flex justify-between items-center h-full px-2 dark:text-[#B5B5B5] text-[#636363]`}
-
+    ${tw`flex justify-between items-center h-full px-2 dark:text-grey-2 text-grey-1`}
     span {
-      ${tw`inline-block w-1/3 text-xs font-medium`}
+      ${tw`inline-block w-1/3 text-tiny font-medium`}
     }
     span:nth-child(2) {
       ${tw`text-center`}
@@ -28,7 +27,6 @@ const HEADER = styled.div`
     }
   }
   div:nth-child(2) {
-    color: ${({ theme }) => theme.text23};
     ${tw`mt-3.75`}
     span {
       ${tw`text-smallest`}

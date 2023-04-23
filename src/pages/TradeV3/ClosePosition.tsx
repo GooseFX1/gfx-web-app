@@ -21,14 +21,12 @@ const WRAPPER = styled.div`
   .percentage {
     ${tw`w-full h-12.5 rounded-circle flex flex-row dark:bg-black-1 bg-grey-4 sm:h-[45px]`}
   }
-
   .percentage-num {
     ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center justify-center h-full 
         text-[16px] text-grey-1 sm:text-regular`}
   }
-
   .selected {
-    ${tw`rounded-half text-white dark:text-white`}
+    ${tw`rounded-half text-white dark:text-grey-5`}
     background-image: linear-gradient(105deg, #f7931a 6%, #ac1cc7 96%);
   }
 `
@@ -238,14 +236,16 @@ export const ClosePosition: FC<{
         </ROW>
         <ROW>
           <span>Est. Realised P&L</span>
-          <span className="value">{pnlEstimate} USD</span>
+          <span className="value">
+            {pnlEstimate} {pnlNumber === '-' ? ' ' : 'USD'}
+          </span>
         </ROW>
       </div>
       <Button
         onClick={closePositionFn}
         height="50px"
         width="100%"
-        cssStyle={tw`bg-blue-1 dark:text-white font-semibold border-0 rounded-circle text-average sm:text-tiny`}
+        cssStyle={tw`bg-blue-1 text-grey-5 font-semibold border-0 rounded-circle text-average sm:text-regular`}
       >
         <span>
           {loading ? (

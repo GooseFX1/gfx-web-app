@@ -15,14 +15,10 @@ const WRAPPER = styled.div<{ $index: number }>`
     border-bottom: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
   }
   .active {
-    font-size: 15px;
-    font-weight: 600;
-    color: #eeeeee;
+    ${tw`font-semibold text-regular dark:text-grey-5 text-black-4`}
   }
   .inactive {
-    font-size: 15px;
-    font-weight: 500;
-    color: #b5b5b5;
+    ${tw`font-medium text-regular dark:text-grey-2 text-grey-1`}
   }
 
   .tab {

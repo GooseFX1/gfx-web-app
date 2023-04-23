@@ -34,7 +34,7 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
     color: ${({ theme }) => theme.white};
 
     .text-primary {
-      ${tw`sm:w-[50px] sm:text-[15px]`}
+      ${tw`sm:w-12.5 sm:text-[15px]`}
       ${({ theme }) => theme.ellipse}
     }
 

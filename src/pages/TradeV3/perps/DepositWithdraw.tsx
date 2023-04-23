@@ -13,24 +13,27 @@ const WRAPPER = styled.div`
   .input-row {
     ${tw`flex flex-row h-12.5 sm:block sm:w-full sm:h-auto`}
   }
-
+  .deposit {
+    ${tw`text-regular font-semibold mt-3.75 sm:text-tiny`}
+    color: ${({ theme }) => theme.text37};
+  }
   .percentage {
     ${tw`w-[280px] ml-auto rounded-circle flex flex-row sm:w-full sm:mb-[25px] sm:h-[45px]`}
     background: ${({ theme }) => theme.bg22};
   }
 
   .percentage-num {
-    ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center justify-center h-full text-[16px]`}
-    color: ${({ theme }) => theme.text37};
+    ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center 
+    justify-center h-full text-[16px] sm:text-regular text-grey-1`}
   }
 
   .selected {
-    ${tw`rounded-half text-white`}
+    ${tw`rounded-half text-grey-5`}
     background-image: linear-gradient(105deg, #f7931a 6%, #ac1cc7 96%);
   }
 
   .submit-btn {
-    ${tw`block h-[50px] w-[222px] rounded-circle mx-auto my-3.5 font-semibold 
+    ${tw`block h-12.5 w-[222px] rounded-circle mx-auto my-3.5 font-semibold 
       text-average border-0 border-none bg-[#5855ff] sm:h-[45px] sm:w-full`}
     color: ${({ theme }) => theme.white};
     outline: none;
@@ -61,14 +64,14 @@ const SELECTED_COIN = styled.div`
     ${tw`flex items-center mr-2.5`}
 
     .available-bal {
-      ${tw`mr-3.75 text-[16px] font-semibold`}
-      color: ${({ theme }) => theme.text28};
+      ${tw`mr-3.75 text-[16px] font-semibold sm:text-regular`}
+      color: ${({ theme }) => theme.text32};
     }
   }
 `
 
 const COIN_INFO = styled.div`
-  ${tw`flex items-center mr-auto h-[50px]`}
+  ${tw`flex items-center mr-auto h-12.5`}
 
   > * {
     ${tw`mr-2.5`}
@@ -87,7 +90,7 @@ const COIN_INFO = styled.div`
 
 const LABEL = styled.div`
   ${tw`text-lg font-semibold mx-0 mb-2.5 mt-4.5 sm:text-regular sm:mb-2 sm:mt-3.75`}
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text11};
 `
 
 const INPUT = styled.div`
@@ -115,7 +118,7 @@ const INPUT = styled.div`
     -moz-appearance: textfield;
   }
   .token {
-    ${tw`text-[16px] font-semibold`}
+    ${tw`text-[16px] font-semibold sm:text-regular`}
     color: ${({ theme }) => theme.text11}
   }
 `
@@ -208,12 +211,7 @@ export const DepositWithdraw: FC<{
     <WRAPPER>
       <div tw="flex flex-row items-center justify-between">
         <LABEL>Asset</LABEL>
-        {tradeType === 'deposit' && (
-          <span tw="text-regular font-semibold dark:text-grey-2 text-grey-1 mt-3.75 sm:text-tiny">
-            {' '}
-            Deposit Limit: $1,000,000.00{' '}
-          </span>
-        )}
+        {tradeType === 'deposit' && <span className="deposit"> Deposit Limit: $1,000,000.00 </span>}
       </div>
       <Dropdown overlay={menus} trigger={['click']} placement="bottom" align={{ offset: [0, 10] }}>
         <SELECTED_COIN>

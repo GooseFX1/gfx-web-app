@@ -108,50 +108,42 @@ const INPUT_WRAPPER = styled.div<{ $rotateArrow: boolean }>`
   .label {
     ${tw`pb-1 flex flex-row justify-evenly text-regular font-semibold dark:text-grey-2 text-grey-1`}
     > span {
-      ${tw`text-regular font-semibold`}
-      color: ${({ theme }) => theme.text37};
+      ${tw`text-regular font-semibold dark:text-grey-2 text-grey-1`}
     }
   }
   .label2 {
     ${tw`pb-1`}
     > span {
-      ${tw`text-regular font-semibold`}
-      color: ${({ theme }) => theme.text37};
+      ${tw`text-regular font-semibold dark:text-grey-2 text-grey-1`}
     }
   }
   .width2 {
-    width: 100%;
+    ${tw`w-full`}
   }
   .width {
-    margin-left: -5%;
-    width: 100%;
+    ${tw`w-full ml-[-5%]`}
   }
   .space {
-    width: 100%;
+    ${tw`w-full`}
   }
   img {
-    height: 20px;
-    width: 20px;
+    ${tw`h-5 w-5`}
   }
   .suffixText {
-    ${tw`text-tiny font-semibold`}
-    color: ${({ theme }) => theme.text37};
+    ${tw`text-tiny font-semibold dark:text-grey-2 text-grey-1`}
   }
   .ant-input {
-    ${tw`text-left font-medium`}
-    color: ${({ theme }) => theme.text1};
+    ${tw`text-left font-medium dark:text-white text-black`}
   }
   .ant-input::placeholder {
-    ${tw`text-tiny font-semibold`}
-    color: ${({ theme }) => theme.text20};
+    ${tw`text-regular font-semibold text-grey-2`}
   }
   .arrow-icon {
     ${({ $rotateArrow }) => $rotateArrow && 'transform: rotateZ(180deg);'}
     transition: transform 400ms ease-in-out;
   }
   .ant-input-affix-wrapper {
-    ${tw`font-medium rounded-[5px] border border-solid h-[45px]`}
-    background: ${({ theme }) => theme.bg20};
+    ${tw`font-medium rounded-tiny border border-solid h-[45px] dark:bg-black-2 bg-white`}
     border-color: ${({ theme }) => theme.tokenBorder};
   }
   .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
@@ -162,28 +154,20 @@ const INPUT_WRAPPER = styled.div<{ $rotateArrow: boolean }>`
     box-shadow: none;
   }
   .drawer {
-    ${tw`w-full h-[45px] flex justify-between items-center px-2 font-semibold text-tiny rounded-[10px]`}
+    ${tw`w-full h-[45px] flex justify-between items-center px-2 font-semibold text-tiny rounded-[10px] dark:bg-black-2 bg-white`}
     color: ${({ theme }) => theme.text21};
     border: 1.5px solid ${({ theme }) => theme.text28};
-    background: ${({ theme }) => theme.bg20};
   }
   .holder {
     ${tw`flex items-center justify-between w-full`}
   }
-  // .focus-border {
-  //   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
-  //   border-radius: 5px;
-  //   padding: 1px;
-  // }
 `
 const TITLE = styled.span`
-  font-size: 20px;
-  font-weight: 600;
+  ${tw`text-lg font-semibold ml-2`}
   background-image: -webkit-linear-gradient(0deg, #f7931a 0%, #ac1cc7 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   line-height: 30px;
-  margin-left: 8px;
 `
 
 const SETTING_MODAL = styled(PopupCustom)`
@@ -205,39 +189,33 @@ const SETTING_MODAL = styled(PopupCustom)`
 const LEVERAGE_WRAPPER = styled.div`
   ${tw`pl-[5px] w-[95%] text-left mt-[-8px]`}
   .ant-slider-rail {
-    ${tw`h-[6px] dark:bg-[#262626] bg-grey-1`}
+    ${tw`h-1.5 dark:bg-black-4 bg-grey-2`}
   }
   .ant-slider-with-marks {
     ${tw`mb-2`}
   }
   .ant-slider-step {
     .ant-slider-dot {
-      margin-left: 0px !important;
-      height: 9px !important;
-      width: 9px !important;
+      ${tw`!ml-0 !h-[9px] !w-[9px]`}
     }
     .ant-slider-dot-active {
-      display: none;
+      ${tw`hidden`}
     }
   }
   .ant-slider-mark {
     .ant-slider-mark-text {
-      margin-left: 0px;
-      margin-top: 4px;
-      margin-bottom: 4px;
+      ${tw`ml-0 my-1`}
     }
     .markSpan {
-      ${tw`dark:text-[#B5B5B5] text-[#636363] text-tiny`}
-      margin-left: 0px;
+      ${tw`dark:text-grey-2 text-grey-1 text-tiny font-semibold ml-0`}
     }
   }
   .leverageText {
-    ${tw`text-regular dark:text-[#B5B5B5] text-[#636363] pl-2 font-semibold mt-[5%]`}
+    ${tw`text-regular dark:text-grey-2 text-grey-1 pl-2 font-semibold mt-[5%]`}
   }
   .smallScreenLeverageText {
-    ${tw`dark:text-[#B5B5B5] text-[#636363] pl-2 font-semibold`}
+    ${tw`dark:text-grey-2 text-grey-1 pl-2 font-semibold`}
   }
-
   .leverageBar {
     ${tw`mt-[-5px] mb-[30px]`}
   }
@@ -253,10 +231,10 @@ const ORDER_CATEGORY = styled.div`
       }
     }
     .ant-checkbox-checked .ant-checkbox-inner {
-      ${tw`bg-[#5855ff]`}
+      ${tw`bg-blue-1`}
     }
     .orderCategoryName {
-      ${tw`text-tiny font-semibold ml-2 dark:text-[#B5B5B5] text-[#636363]`}
+      ${tw`text-regular font-semibold ml-2 dark:text-grey-2 text-grey-1`}
     }
   }
 `
@@ -272,10 +250,10 @@ const SELECTOR = styled.div`
   > .selectorDropdown {
     ${tw`mb-7 ml-[75px]`}
     > span {
-      ${tw`text-white text-regular font-semibold`}
+      ${tw`dark:text-white text-grey-1 text-average font-semibold`}
     }
     > input[type='radio'] {
-      ${tw`appearance-none absolute right-[80px] h-[30px] w-[30px] bg-black-1 rounded-circle cursor-pointer`}
+      ${tw`appearance-none absolute right-[80px] h-[30px] w-[30px] dark:bg-black-1 bg-grey-4 rounded-circle cursor-pointer`}
     }
     > input[type='radio']:checked:after {
       ${tw`rounded-circle w-[24px] h-[24px] relative top-[3px] left-[3px] inline-block`}
@@ -287,8 +265,11 @@ const SELECTOR = styled.div`
 const TAKEPROFITSELECTOR = styled.div`
   ${tw`flex flex-row mb-6 mx-10`}
   > .active {
-    ${tw`rounded-half text-white`}
+    ${tw`rounded-half`}
     background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
+    > span {
+      ${tw`text-white`}
+    }
   }
   > .selectorDropdown {
     ${tw`w-1/4 text-center flex flex-row justify-center items-center h-10`}
@@ -302,48 +283,38 @@ const TAKEPROFITSELECTOR = styled.div`
     }
   }
   .green {
-    ${tw`text-[#80CE00]`}
+    ${tw`text-green-3`}
   }
   .red {
-    ${tw`text-[#F35355]`}
+    ${tw`text-red-2`}
   }
 `
 
 const HEADER = styled.div`
   ${tw`flex items-center justify-center mb-6`}
-
   .cta {
-    ${tw`rounded-bigger w-[120px] h-[35px] mr-[13px] cursor-pointer`}
-
+    ${tw`rounded-bigger w-[120px] h-[35px] mr-[13px]`}
     .btn {
       ${tw`flex items-center justify-center text-regular font-semibold w-full h-full`}
       color: ${({ theme }) => theme.text37};
     }
-
     .gradient-bg {
       ${tw`h-full w-full rounded-bigger`}
       background-image: linear-gradient(to right, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
     }
   }
-
   .background-container {
     ${tw`h-full w-full rounded-bigger`}
   }
-
   .active {
-    ${tw`p-0.5 cursor-auto`}
+    ${tw`p-0.5`}
     background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-
     .btn {
-      color: ${({ theme }) => theme.text32};
+      ${tw`dark:text-grey-5 text-black-4`}
     }
-
     .background-container {
-      ${tw`h-full w-full rounded-bigger`}
-      background-color: ${({ theme }) => theme.text0};
+      ${tw`h-full w-full rounded-bigger dark:bg-black bg-white`}
     }
-  }
-  .disable {
   }
 `
 
@@ -354,23 +325,25 @@ const TAKEPROFITWRAPPER = styled.div`
     -webkit-appearance: none;
     margin: 0;
   }
-  /* Firefox */
   input[type='number'] {
     -moz-appearance: textfield;
   }
   > input {
-    ${tw`bg-white dark:bg-black-1 dark:text-grey-5 text-black-4 p-3 text-regular font-semibold ml-10 w-4/5 h-[45px] rounded-[10px]`}
+    ${tw`bg-white dark:bg-black-1 dark:text-grey-5 text-black-4 p-3 text-regular font-semibold ml-10 w-4/5 h-[45px] rounded-small`}
     outline: none;
     border: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
   }
   .selected-val {
-    ${tw`dark:text-grey-5 text-black-4 text-average font-semibold text-center mb-7`}
+    ${tw`text-center mb-7`}
+    > span {
+      ${tw`dark:text-grey-5 text-black-4 text-average font-semibold`}
+    }
   }
   .save-disable {
-    ${tw`text-tiny text-grey-1 font-semibold absolute bottom-[15px] right-[50px] z-[100]`}
+    ${tw`text-regular text-grey-1 font-semibold absolute bottom-[15px] right-[50px] z-[100]`}
   }
   .save-enable {
-    ${tw`text-tiny text-white font-semibold absolute bottom-[15px] right-[50px] z-[100]`}
+    ${tw`text-regular dark:text-white text-blue-1 font-semibold absolute bottom-[15px] right-[50px] z-[100]`}
   }
 `
 
@@ -470,7 +443,7 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
             : 'None'}
         </span>
         {!takeProfitAmount && (
-          <span tw="!text-[#80CE00] ml-2">
+          <span tw="!text-green-3 ml-2">
             {takeProfitIndex === 0 ? '' : profits[index] ? '($' + profits[index] + ')' : '(-)'}
           </span>
         )}
@@ -482,11 +455,11 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
             className={takeProfitIndex === index ? 'active selectorDropdown' : 'selectorDropdown'}
             onClick={() => handleClicks(index)}
           >
-            <span tw="font-semibold text-regular dark:text-grey-5 text-black-4">{item.display}</span>
+            <span tw="font-semibold text-regular text-grey-1">{item.display}</span>
           </div>
         ))}
       </TAKEPROFITSELECTOR>
-      <span tw="ml-10">Custom Price</span>
+      <span tw="ml-10 text-regular font-semibold dark:text-grey-5 text-grey-1">Custom Price</span>
       <input
         value={takeProfitInput ? takeProfitInput : ''}
         onChange={isNumber}
@@ -516,10 +489,8 @@ export const PlaceOrderMobi = () => {
   const [showMarketDrawer, setShowMarketDrawer] = useState<boolean>(false)
   const [showProfitLossDrawer, setShowProfitLossDrawer] = useState<boolean>(false)
   const [drawerType, setDrawerType] = useState<number>(0)
-
   const [profitIndex, setProfitIndex] = useState<number>(0)
   const [profitPrice, setProfitPrice] = useState<number>(null)
-
   const elem = document.getElementById('dex-mobi-home')
   const { mode } = useDarkMode()
   const geoBlocked = useBlacklisted()
@@ -781,7 +752,7 @@ export const PlaceOrderMobi = () => {
           getContainer={elem}
           height="182px"
         >
-          <div tw="text-center text-average font-semibold dark:text-grey-2 text-black-4 mb-7">Order Type</div>
+          <div tw="text-center text-average font-semibold dark:text-grey-5 text-black-4 mb-7">Order Type</div>
           <img
             src={`/img/assets/close-gray-icon.svg`}
             alt="close-icon"
@@ -855,7 +826,7 @@ export const PlaceOrderMobi = () => {
             footer={null}
             title={
               <>
-                <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold">
+                <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold sm:text-lg">
                   {order.display === 'limit' ? 'Limit ' : 'Market '}
                   {order.side === 'buy' ? 'Long' : 'Short'}
                 </span>
@@ -883,14 +854,14 @@ export const PlaceOrderMobi = () => {
               Limit order is executed only when the market reaches the amount you specify.{' '}
             </Tooltip>
             <div
-              tw="text-regular font-semibold text-grey-5 w-1/2 text-center"
+              tw="text-regular font-semibold dark:text-grey-5 text-black-4 w-1/2 text-center"
               onClick={() => setShowMarketDrawer(true)}
             >
               {displayedOrder?.text}
             </div>
             <img
               className="arrow-icon"
-              src={`/img/assets/arrow-down.svg`}
+              src={mode === 'dark' ? `/img/assets/arrow-down.svg` : `/img/assets/arrow.svg`}
               alt="arrow"
               onClick={() => setShowMarketDrawer(true)}
             />
@@ -963,12 +934,12 @@ export const PlaceOrderMobi = () => {
           <INPUT_WRAPPER $rotateArrow={showProfitLossDrawer}>
             {/*<div className="label width">*/}
             <div className="label2 width2">
-              <span tw="text-regular font-semibold text-grey-5 mr-1">Take Profit</span>
+              <span tw="text-regular font-semibold dark:text-grey-5 mr-1">Take Profit</span>
               {/*<span tw="text-regular font-semibold text-grey-5 mr-1">/</span>
               <span tw="text-regular font-semibold text-grey-5">Stop loss</span>*/}
             </div>
             <div className="drawer" onClick={() => setShowProfitLossDrawer(true)}>
-              <span tw="text-regular font-semibold text-grey-5 mr-1">
+              <span tw="text-regular font-semibold dark:text-white text-black-4 mr-1">
                 {profitIndex !== null
                   ? TAKE_PROFIT_ARRAY[profitIndex].display
                   : profitPrice > 0
@@ -977,7 +948,11 @@ export const PlaceOrderMobi = () => {
               </span>
               {/*<span tw="text-regular font-semibold text-grey-5 mr-1">/</span>
               <span tw="text-regular font-semibold text-grey-5">25%</span>*/}
-              <img src={`/img/assets/arrow-down.svg`} className="arrow-icon" alt="arrow" />
+              <img
+                src={mode === 'dark' ? `/img/assets/arrow-down.svg` : `/img/assets/arrow.svg`}
+                className="arrow-icon"
+                alt="arrow"
+              />
             </div>
           </INPUT_WRAPPER>
         )}
@@ -1068,16 +1043,16 @@ export const PlaceOrderMobi = () => {
         {isSpot ? (
           <>
             {' '}
-            <span tw="text-regular font-semibold dark:text-grey-2">Available balance:</span>
-            <span tw="text-regular font-semibold dark:text-grey-5">
+            <span tw="text-regular font-semibold dark:text-grey-2 text-grey-1">Available balance:</span>
+            <span tw="text-regular font-semibold dark:text-grey-5 text-black-4">
               {userBalance && userBalance.toFixed(4)} {getTokenSymbol}
             </span>
           </>
         ) : (
           <>
             {' '}
-            <span tw="text-regular font-semibold dark:text-grey-2">Available margin:</span>
-            <span tw="text-regular font-semibold dark:text-grey-5">
+            <span tw="text-regular font-semibold dark:text-grey-2 text-grey-1">Available margin:</span>
+            <span tw="text-regular font-semibold dark:text-grey-5 text-black-4">
               {Number(traderInfo.marginAvailable).toFixed(2)} $
             </span>
           </>
