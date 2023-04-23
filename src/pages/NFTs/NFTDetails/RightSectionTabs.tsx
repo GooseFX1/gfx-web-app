@@ -227,6 +227,7 @@ export const DETAILS_TAB_CONTENT = styled.div`
 const REMOVE_MODAL = styled(Modal)`
   &.ant-modal {
     width: 501px !important;
+    border-radius: 15px;
   }
 
   .ant-modal-body {

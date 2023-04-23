@@ -245,7 +245,7 @@ export const Card: FC<ICard> = (props) => {
                 className="card-like"
                 src={`/img/assets/heart-${isFavorited ? 'red' : 'empty'}.svg`}
                 alt="heart-red"
-                onClick={() => handleToggleLike()}
+                // onClick={() => handleToggleLike()}
               />
             )}
           </div>

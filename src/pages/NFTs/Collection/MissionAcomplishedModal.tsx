@@ -2,7 +2,7 @@ import React, { ReactElement, useEffect } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { useNFTDetails } from '../../../context'
+import { useNFTAggregator, useNFTDetails } from '../../../context'
 import { Button } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
@@ -47,9 +47,15 @@ const MissionAccomplishedModal = (): ReactElement => {
   const nftId = '#' + general?.nft_name.split('#')[1]
   const nftName = general?.nft_name.split('#')[0]
   const { publicKey } = useWallet()
+  const { setBuyNow } = useNFTAggregator()
   const history = useHistory()
   useEffect(() => {
-    setTimeout(() => history.push(`/NFTs/profile/${publicKey.toBase58()}`), 4000)
+    setTimeout(() => {
+      setBuyNow(undefined)
+    }, 4000)
+    setTimeout(() => {
+      history.push(`/nfts/profile/${publicKey.toBase58()}`)
+    }, 5000)
   }, [])
 
   return (

@@ -210,10 +210,12 @@ const NFTLandingPageV2 = (): ReactElement => {
   const [showBanner, setShowBanner] = useState<boolean>(false)
   const [hasOnboarded, setHasOnboarded] = useState<boolean>(!existingUserCache.hasAggOnboarded)
   const [showTerms, setShowTerms] = useState<boolean>(false)
+  const { setGeneral } = useNFTDetails()
   const { currencyView, lastRefreshedClass, refreshClass, setLastRefreshedClass } = useNFTAggregator()
 
   useEffect(() => {
     setFirstPageLoad(false)
+    setGeneral(null)
   }, [])
 
   useEffect(() => {

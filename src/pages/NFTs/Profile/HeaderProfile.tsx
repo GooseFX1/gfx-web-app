@@ -28,6 +28,7 @@ import { IAppParams } from '../../../types/app_params.d'
 import { FLOATING_ACTION_ICON } from '../../../styles'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 
 // const DROPDOWN = styled(Dropdown)`
 //   width: auto;
@@ -72,11 +73,11 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
 
   const publicKey: PublicKey | null = useMemo(
     () => (wallet?.adapter ? wallet?.adapter?.publicKey : null),
-    [wallet?.adapter]
+    [wallet?.adapter, wallet?.adapter?.publicKey]
   )
   const connected: boolean = useMemo(
     () => (wallet?.adapter ? wallet?.adapter?.connected : false),
-    [wallet?.adapter]
+    [wallet?.adapter, wallet?.adapter?.connected]
   )
 
   const currentUserProfile = useMemo(() => {
@@ -95,6 +96,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   }, [])
 
   useEffect(() => {
+    console.log(isSessionUser, params.userAddress)
     if (
       !isSessionUser &&
       params.userAddress &&
@@ -235,7 +237,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
     message: (
       <SuccessfulListingMsg
         title={`Successful Escrow Withdrawal`}
-        itemName={`Amount: ${amount}`}
+        itemName={`Amount: ${parseFloat(amount) / LAMPORTS_PER_SOL_NUMBER}`}
         supportText={`Remaining balance: 0`}
         tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
       />
@@ -426,7 +428,6 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
               height={'44px'}
               cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2 px-4`}
               onClick={() => setProfileModal(true)}
-              loading={profileModal}
             >
               <span tw="font-semibold text-regular text-white">Complete Profile</span>
             </Button>

@@ -224,9 +224,9 @@ export const BidNFTModal = (): ReactElement => {
   const { ask } = useNFTDetails()
   const { bidNowClicked, setBidNow } = useNFTAggregator()
   const [selectedBtn, setSelectedBtn] = useState<number | undefined>(undefined)
-  const [reviewBtnClicked, setReviewClicked] = useState<boolean>(true)
+  const [reviewBtnClicked, setReviewClicked] = useState<boolean>(false)
   const purchasePrice = useMemo(() => parseFloat(ask ? ask?.buyer_price : '0') / LAMPORTS_PER_SOL_NUMBER, [ask])
-  const [curBid, setCurBid] = useState<number | undefined>(purchasePrice ? purchasePrice : 0)
+  const [curBid, setCurBid] = useState<number | undefined>(purchasePrice ? purchasePrice : undefined)
   const { connected } = useWallet()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -346,7 +346,7 @@ const ReviewBid: FC<{
           className="enterBid"
           placeholder="0.0"
           type="number"
-          value={curBid}
+          value={curBid >= 0 ? curBid : undefined}
           onChange={(e) => updateBidValue(e)}
         />
         <img src="/img/crypto/SOL.svg" tw="w-8 h-8 mt-3 ml-[-30px] sm:mt-0 " />
@@ -570,11 +570,12 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
               setIsLoading(false)
             } else if (res.data.bid_matched && res.data.tx_sig) {
               fetchUser(publicKey.toBase58())
-              notify(successBidMatchedMessage(res.data.tx_sig, nftMetadata, curBid.toString()))
             }
           })
         } else {
           setBidNow(undefined)
+          setIsLoading(false)
+          notify(successfulListingMessage(signature, nftMetadata, curBid.toString()))
         }
         // ask kiran about this
         // i have to test for excute sale hapening
@@ -697,7 +698,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     )
   })
   if (missionAccomplished) return <MissionAccomplishedModal />
-  else if (isLoading) return <HoldTight />
+  else if (isLoading && isBuyingNow && pendingTxSig) return <HoldTight />
   else
     return (
       <div>
@@ -762,7 +763,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           </div>
         )}
 
-        <div className="hContainer" style={{ height: pendingTxSig ? 120 : 185 }}>
+        <div className="hContainer" style={{ height: pendingTxSig ? 140 : 185 }}>
           <div className="rowContainer">
             <div className="leftAlign">My Bid</div>
             <div className="rightAlign">{curBid} SOL</div>

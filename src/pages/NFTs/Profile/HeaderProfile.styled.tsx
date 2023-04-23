@@ -156,6 +156,7 @@ export const StyledMenu = styled(Menu)`
 export const SETTLE_BALANCE_MODAL = styled(Modal)`
   &.ant-modal {
     width: 501px !important;
+    border-radius: 15px;
   }
 
   .ant-modal-body {
