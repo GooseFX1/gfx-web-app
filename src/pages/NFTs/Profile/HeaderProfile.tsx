@@ -6,7 +6,7 @@ import { Image } from 'antd'
 // import styled from 'styled-components'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { generateTinyURL } from '../../../api/tinyUrl'
-import { useNFTProfile, useDarkMode, useConnectionConfig, useNavCollapse } from '../../../context'
+import { useNFTProfile, useDarkMode, useConnectionConfig } from '../../../context'
 import { ILocationState } from '../../../types/app_params.d'
 import { Button } from '../../../components'
 import { PopupProfile } from './PopupProfile'
@@ -58,7 +58,6 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   const location = useLocation<ILocationState>()
   const history = useHistory()
   const params = useParams<IAppParams>()
-  const { isCollapsed } = useNavCollapse()
   const { connection, network } = useConnectionConfig()
   const { sendTransaction, wallet } = useWallet()
   const { sessionUser, nonSessionProfile, fetchNonSessionProfile } = useNFTProfile()
@@ -316,7 +315,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
           <div></div>
         </div>
       ) : (
-        <div style={{ position: 'absolute', top: isCollapsed ? '24px' : '104px', left: '24px' }}>
+        <div tw="absolute top-[12px] left-[12px]">
           <FloatingActionButton height={40} onClick={() => history.goBack()}>
             <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
           </FloatingActionButton>

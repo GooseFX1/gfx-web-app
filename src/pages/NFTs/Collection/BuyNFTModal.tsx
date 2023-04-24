@@ -139,7 +139,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     ${tw`w-[165px] h-[165px] sm:mt-[150px] mt-[25px] rounded-[5px] sm:h-[125px] sm:w-[125px] sm:left-0 sm:absolute`}
   }
   .currentBid {
-    ${tw`text-[25px] font-semibold ml-4 sm:mt-[10px] text-[#636363] `}
+    ${tw`text-[14px] font-semibold ml-4 sm:mt-[10px] text-[#636363] `}
   }
   .maxBid {
     ${tw`text-[25px] sm:text-[20px] font-semibold leading-7 sm:mt-[20px]	`}
@@ -159,6 +159,10 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   .priceText {
     ${tw`text-[25px] font-semibold mt-2`}
     color: ${({ theme }) => theme.text12};
+  }
+  .priceValue {
+    ${tw`text-xl font-semibold leading-none`}
+    color: ${({ theme }) => theme.text7};
   }
   .sellButton {
     ${tw`w-[520px] sm:h-[50px] sm:text-[15px]  cursor-pointer text-[#EEEEEE] rounded-[50px] border-none
@@ -183,7 +187,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
   .priceNumber {
     ${tw`text-[40px] font-semibold flex items-center mt-[-12px] justify-center `}
-    color: ${({ theme }) => theme.text7};
+    color: ${({ theme }) => theme.text31};
     img {
       ${tw`h-[25px] w-[25px] ml-3`}
     }
@@ -574,14 +578,11 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         <div tw="flex flex-col items-center justify-center">
           <div className="buyTitle">
             You are about to {isBuyingNow ? 'buy' : 'bid for'}: <br />
-            <strong>#{general?.nft_name.split('#')[1] ? general?.nft_name.split('#')[1] : '# Nft'} </strong>{' '}
-            {checkMobile() ? <br /> : 'by'}
-            <strong>
-              {general?.collection_name ? general?.collection_name : general?.nft_name.split('#')[0]}
-            </strong>
+            <strong>{general?.nft_name} </strong> {checkMobile() && <br />}
+            <strong>{general?.collection_name && `by ${general?.collection_name}`}</strong>
           </div>
-          <div className="verifiedText">
-            {singleCollection && singleCollection[0]?.is_verified && (
+          {singleCollection && singleCollection[0]?.is_verified && (
+            <div className="verifiedText">
               <div>
                 {!checkMobile() && (
                   <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
@@ -591,8 +592,8 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
                   <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
                 )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         <div className="vContainer">
@@ -604,8 +605,8 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         </div>
 
         <div className="vContainer">
-          <div className="priceNumber">
-            {curBid} <img src={`/img/crypto/SOL.svg`} />
+          <div className={'priceValue'}>
+            {curBid} <img tw="h-[25px] w-[25px]" src={`/img/crypto/SOL.svg`} />
           </div>
         </div>
 

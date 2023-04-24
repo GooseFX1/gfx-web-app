@@ -35,11 +35,11 @@ export const ReviewBidModal: FC<{
         <div className="buyTitle">
           You are about to bid for:
           <br />
-          <strong>{'#' + general?.nft_name.split('#')[1]} </strong> {checkMobile() ? <br /> : 'by'}
-          <strong>{general?.collection_name}</strong>
+          <strong>{general?.nft_name} </strong> {checkMobile() && <br />}
+          <strong>{general?.collection_name && `by ${general?.collection_name}`}</strong>
         </div>
-        <div className="verifiedText">
-          {singleCollection && singleCollection[0]?.is_verified && (
+        {singleCollection && singleCollection[0]?.is_verified && (
+          <div className="verifiedText">
             <div>
               {!checkMobile() && (
                 <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
@@ -49,14 +49,15 @@ export const ReviewBidModal: FC<{
                 <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
               )}
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
       <div className="vContainer" tw="flex">
         {!checkMobile() && <img className="nftImgBid" src={general?.image_url} alt="" />}
         <div tw="flex flex-col">
-          <div className="currentBid">Current Bid</div>
-          <div className="priceNumber" tw="ml-4 mt-2 flex items-center">
+          <div className="currentBid">Existing </div>
+          <div className="currentBid">Hightest Bid</div>
+          <div className="priceNumber" tw=" ml-4 mt-2 flex items-center">
             {highestBid}
             <img src={`/img/crypto/SOL.svg`} />
           </div>

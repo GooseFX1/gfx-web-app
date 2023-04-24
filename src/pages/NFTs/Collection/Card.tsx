@@ -67,7 +67,7 @@ export const Card: FC<ICard> = (props) => {
   const [hover, setHover] = useState<boolean>(false)
   const { currencyView } = useNFTAggregator()
   const { prices } = usePriceFeedFarm()
-  const solPrice = prices['SOL/USDC']?.current
+  const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
 
   enum MODAL_TARGET {
     DRAWER = 'drawer',
@@ -161,10 +161,13 @@ export const Card: FC<ICard> = (props) => {
   }
 
   //const val = currency === 'USD' ? value * priceFeed['SOL/USDC']?.current : value
-  const dynamicPriceValue = (value: number) => {
-    if (currencyView === 'USDC') return `${(value * solPrice).toFixed(2)}`
-    return `${value.toFixed(2)}`
-  }
+  const dynamicPriceValue = useCallback(
+    (value: number) => {
+      if (currencyView === 'USDC') return `${(value * solPrice).toFixed(2)}`
+      return `${value.toFixed(2)}`
+    },
+    [currencyView, solPrice]
+  )
 
   const handleModal = useCallback(() => {
     if (showSellNFTModal) {
@@ -207,18 +210,17 @@ export const Card: FC<ICard> = (props) => {
         </div>
         <div className={'nftTextContainer'}>
           <div className="collectionId">
-            {localSingleNFT && localSingleNFT?.is_verified}
-            {localSingleNFT
-              ? localSingleNFT?.nft_name?.split('#')[1]
-                ? minimizeTheString(localSingleNFT?.nft_name?.split('#')[1])
-                : '# NFT'
-              : '# NFT'}
-            <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />
-            {/* <img className="isVerified" tw="!ml-auto" src="/img/assets/Aggregator/verifiedNFT.svg" /> */}
+            {localSingleNFT && localSingleNFT.is_verified && (
+              <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />
+            )}
+            {localSingleNFT && localSingleNFT.nft_name && localSingleNFT.nft_name}
           </div>
-          {localSingleNFT && localSingleNFT?.nft_name !== null && (
+          {localSingleNFT && (
             <GradientText
-              text={minimizeTheString(localSingleNFT.nft_name.split('#')[0])}
+              text={minimizeTheString(
+                localSingleNFT?.collection_name !== null ? localSingleNFT?.collection_name : 'No Collection Name',
+                18
+              )}
               fontSize={15}
               fontWeight={600}
             />
