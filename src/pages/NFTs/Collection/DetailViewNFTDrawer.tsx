@@ -196,12 +196,12 @@ const ImageViewer = (): ReactElement => {
               <div tw="text-[20px] font-semibold">
                 {general?.nft_name?.split('#')[1] ? '#' + general?.nft_name?.split('#')[1] : '# Nft'}
               </div>
-              <Tooltip title={AH_NAME(ask.auction_house_key)}>
+              <Tooltip title={AH_NAME(ask?.auction_house_key)}>
                 {ask && (
                   <img
                     tw="h-[22px] w-[22px] ml-2.5"
-                    src={`/img/assets/Aggregator/${AH_NAME(ask.auction_house_key)}.svg`}
-                    alt={`${AH_NAME(ask.auction_house_key)}-icon`}
+                    src={`/img/assets/Aggregator/${AH_NAME(ask?.auction_house_key)}.svg`}
+                    alt={`${AH_NAME(ask?.auction_house_key)}-icon`}
                     style={{ height: 30 }}
                   />
                 )}

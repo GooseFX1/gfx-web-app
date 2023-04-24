@@ -410,7 +410,9 @@ const FiltersContainer = () => {
 }
 export const RefreshBtnWithAnimationNFT: FC = () => {
   const { refreshClass, setRefreshClass, setRefreshClicked } = useNFTAggregator()
+  const { setPageNumber } = useNFTAggregatorFilters()
   const refreshFeed = () => {
+    setPageNumber(0)
     setRefreshClass('rotateRefreshBtn')
     setRefreshClicked((prev) => prev + 1)
     setTimeout(() => {
