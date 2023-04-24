@@ -159,18 +159,19 @@ export const SEARCH_RESULT_CONTAINER = styled.div`
   ${tw`absolute w-[420px] max-h-[290px] min-h-[50px] z-20 mt-14 ml-8`}
   border-radius: 10px;
   box-shadow: -3px 9px 8px 0 rgba(0, 0, 0, 0.2);
-  background: ${({ theme }) => theme.bg2};
+  background: ${({ theme }) => theme.bg20};
   ${({ theme }) => theme.customScrollBar('4px')};
 
   overflow-y: scroll;
   .searchResultRow {
-    ${tw`h-[50px] text-[15px] font-semibold cursor-pointer `}
+    ${tw`h-[50px] mt-0.5 text-[15px] font-semibold cursor-pointer `}
     color: ${({ theme }) => theme.text1};
     display: flex;
     align-items: center;
-    img {
+    .searchImg {
       ${tw`w-[35px] h-[35px] ml-2  rounded-full`}
     }
+
     .searchText {
       ${tw`ml-4`}
     }

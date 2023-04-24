@@ -31,25 +31,30 @@ export const FixedPriceNFTs = (): ReactElement => {
     setFixedPriceArr([])
   }, [refreshClicked])
 
-  useEffect(() => {
-    if (sortingAsc && fixedPriceArr) {
-      const ascSorted = [...fixedPriceArr].sort((a, b) => a?.nft_price - b?.nft_price)
-      setFilteredFixPriced(ascSorted)
-    } else if (!sortingAsc && fixedPriceArr) {
-      const decSorted = [...fixedPriceArr].sort((a, b) => b?.nft_price - a?.nft_price)
-      setFilteredFixPriced(decSorted)
+  const sortAndUpdateState = (sortArr: BaseNFT[]) => {
+    let sortedArray
+    if (sortingAsc) {
+      sortedArray = sortArr.sort((a, b) => a?.nft_price - b?.nft_price)
     }
-  }, [sortingAsc, fixedPriceArr])
+    if (!sortingAsc) {
+      sortedArray = sortArr.sort((a, b) => b?.nft_price - a?.nft_price)
+    }
+    return sortedArray
+  }
+
+  useEffect(() => {
+    setFilteredFixPriced(sortAndUpdateState([...fixedPriceArr]))
+  }, [sortingAsc])
 
   useEffect(() => {
     if (!searchInsideCollection || !searchInsideCollection.length || searchInsideCollection === '') {
-      setFilteredFixPriced(fixedPriceArr)
+      setFilteredFixPriced(sortAndUpdateState(fixedPriceArr))
     }
     if (searchInsideCollection && searchInsideCollection.length) {
       const filteredData = fixedPriceArr.filter((fixedPriceNFT: ISingleNFT) =>
         fixedPriceNFT.nft_name.includes(searchInsideCollection)
       )
-      setFilteredFixPriced(filteredData)
+      setFilteredFixPriced(sortAndUpdateState(filteredData))
     }
   }, [searchInsideCollection, fixedPriceArr])
 

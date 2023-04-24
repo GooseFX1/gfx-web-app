@@ -18,8 +18,8 @@ interface INFTAggConfig {
 
 const NFTAggFiltersContext = createContext<INFTAggConfig>(null)
 export const NFTAggFiltersProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [sortFilter, setSortFilter] = useState<string | null>(NFT_COL_FILTER_OPTIONS.COLLECTION_NAME)
-  const [sortType, setSortType] = useState<'ASC' | 'DESC' | null>('ASC')
+  const [sortFilter, setSortFilter] = useState<string | null>(NFT_COL_FILTER_OPTIONS.DAILY_VOLUME)
+  const [sortType, setSortType] = useState<'ASC' | 'DESC' | null>('DESC')
   const [pageNumber, setPageNumber] = useState<number>(0)
   const [timelineDisplay, setTimelineDisplay] = useState('24h')
   const [searchInsideCollection, setSearchInsideCollection] = useState<string | undefined>(undefined)

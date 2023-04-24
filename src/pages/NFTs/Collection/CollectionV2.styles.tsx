@@ -294,7 +294,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
 
     .filtersViewCategory {
-      ${tw`text-[15px] flex font-medium ml-auto sm:ml-0 sm:mt-1 mt-10`}
+      ${tw`text-[15px] flex font-semibold ml-auto sm:ml-0 sm:mt-1 mt-10`}
     }
     .flitersFlexContainer {
       ${tw`text-[15px] flex font-medium mt-2 items-center `}
