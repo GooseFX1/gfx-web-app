@@ -88,14 +88,18 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
     () => inTokenAmount && pool.inValue && `${(pool.inValue * inTokenAmount).toString().slice(0, 8)} USDC`,
     [inTokenAmount, pool.inValue]
   )
-  const resetFocus = useCallback(() => setFocused(undefined), [])
+  const resetFocus = useCallback(() => {
+    setFocused(undefined)
+  }, [inTokenAmount])
   const handleOnChange = useCallback(
     (e: BaseSyntheticEvent) => {
       tokenA && !isNaN(e.target.value) && setInTokenAmount(e.target.value)
     },
     [tokenA, setInTokenAmount]
   )
-  const setFocusedFrom = useCallback(() => setFocused('from'), [setFocused])
+  const setFocusedFrom = useCallback(() => {
+    setFocused('from')
+  }, [setFocused, inTokenAmount])
   return (
     <WRAPPER>
       <INNER_WRAPPER>
@@ -125,7 +129,6 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
           onFocus={setFocusedFrom}
           pattern="\d+(\.\d+)?"
           placeholder={'0'}
-          value={inTokenAmount ?? ''}
           className={'swap-input'}
         />
       </AmountField>

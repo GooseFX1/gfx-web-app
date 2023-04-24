@@ -26,7 +26,7 @@ import { JupiterProvider, useJupiter } from '@jup-ag/react-hook'
 import { PublicKey } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ILocationState } from '../../types/app_params.d'
-import { notify, moneyFormatter, nFormatter, checkMobile } from '../../utils'
+import { notify, moneyFormatter, nFormatter, checkMobile, clamp } from '../../utils'
 import { CURRENT_SUPPORTED_TOKEN_LIST } from '../../constants'
 import { useParams } from 'react-router-dom'
 import { logData } from '../../api/analytics'
@@ -94,7 +94,7 @@ const RefreshAlert = styled.div<{ $active: boolean; $isMobile: boolean; $navColl
 const INNERWRAPPER = styled.div<{ $desktop: boolean; $navCollapsed: boolean }>`
   ${tw`flex items-center w-screen mb-[42px] sm:justify-start sm:flex-col sm:items-center sm:h-full`}
 
-  margin-top: ${({ $navCollapsed }) => ($navCollapsed ? '42px' : '142px')};
+  margin-top: ${({ $navCollapsed }) => ($navCollapsed ? '35px' : '142px')};
   color: ${({ theme }) => theme.text1};
   justify-content: ${({ $desktop }) => ($desktop ? 'space-between' : 'space-around')};
 
@@ -261,10 +261,11 @@ const Socials = styled.div`
 `
 const SocialsIcon = styled.div<{ $image: string }>`
   ${tw`w-8 h-8`}
-  background-image: url(${({ $image }) => $image});
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  -webkit-mask-image: url(${({ $image }) => $image});
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-position-content: bottom;
+  background: ${({ theme }) => theme.text20};
   &:hover {
     -webkit-mask-image: url(${({ $image }) => $image});
     -webkit-mask-size: contain;
@@ -779,7 +780,6 @@ const TokenContent: FC = () => {
       )),
     [socials]
   )
-  console.log(tokenDetailItems, tokenDetailItemsB)
   return (
     <TOKEN_WRAPPER>
       <TokenHeader>
@@ -831,18 +831,18 @@ const PriceContent: FC = () => {
   const [cheap, setCheap] = useState(true)
 
   const getPriceDetails = useCallback(
-    (num: number, out: number, route: any) => {
-      const totalLp = route.marketInfos[num].lpFee.amount / 10 ** tokenA.decimals || 0.0
-      let percent = route.marketInfos[num].lpFee.pct || +((totalLp / inTokenAmount) * 100)?.toFixed(4) || 0.0
+    (out: number, route: any) => {
+      const totalLp = route.lpFee.amount / 10 ** tokenA.decimals || 0.0
+      let percent = route.lpFee.pct || +((totalLp / inTokenAmount) * 100)?.toFixed(4) || 0.0
       percent = isFinite(percent) ? percent : 0.0
-      const totalLpB = route.marketInfos[num].lpFee.amount / 10 ** tokenB.decimals || 0.0
+      const totalLpB = route.lpFee.amount / 10 ** tokenB.decimals || 0.0
       let percentB = +((totalLpB / out) * 100)?.toFixed(4) || 0.0
       percentB = isFinite(percentB) ? percentB : 0.0
 
-      const token = tokenMap.get(route.marketInfos[num].lpFee.mint)
+      const token = tokenMap.get(route.lpFee.mint)
       return { totalLp, totalLpB, percent, percentB, token }
     },
-    [tokenMap]
+    [tokenMap, tokenA, inTokenAmount]
   )
   useEffect(() => {
     const route = routes?.[clickNo]
@@ -861,9 +861,9 @@ const PriceContent: FC = () => {
       }
     ]
 
-    for (let i = 0; i < Math.min(Math.max(route?.marketInfos.length ?? 0, 0), 3); i++) {
+    for (let i = 0; i < clamp(route?.marketInfos.length ?? 0, 0, 3); i++) {
       const market = route.marketInfos[i]
-      const calculatedPriceDetails = getPriceDetails(i, out, route)
+      const calculatedPriceDetails = getPriceDetails(out, market)
       priceDetails.push({
         name: `Fees paid to ${market.amm.label || 'GooseFX'} LP`,
         value: `${nFormatter(
@@ -889,7 +889,7 @@ const PriceContent: FC = () => {
       return []
     }
     return details.map((detail) => (
-      <AltTokenDetail key={detail.name}>
+      <AltTokenDetail key={detail.name + detail.value}>
         <TokenTitleFees>
           {detail.name}{' '}
           {detail.icon && (
@@ -1028,11 +1028,11 @@ const AlternativesContent: FC = () => {
       details: renderDetails,
       lessDetails: renderDetails.slice(0, 2)
     }
-  }, [routes, tokenA.symbol, tokenB.symbol, tokenMap, outTokenAmount])
+  }, [routes, tokenA.symbol, tokenB.symbol, tokenMap, outTokenAmount, mode])
   const toggleSetLess = useCallback(() => {
     setLess((prev) => !prev)
   }, [])
-
+  console.log(routes)
   return (
     <SWAP_ROUTES less={less || details.length < 4}>
       <div className="swap-content">
@@ -1065,7 +1065,7 @@ const AlternativesContent: FC = () => {
           details
         )}
       </div>
-      {routes.length > 2 && (
+      {routes.length > 3 && (
         <div className="action">
           <div onClick={toggleSetLess}>{less ? 'Show More' : 'Show Less'}</div>
         </div>
@@ -1130,7 +1130,7 @@ export const SwapMain: FC = () => {
 
       if (newRoutes.length > 0) {
         // setting length cuts off unneeded routes - instead of using .slice to be conservative of ops/mem
-        newRoutes.length = Math.max(0, Math.min(newRoutes.length, supported ? 3 : 4))
+        newRoutes.length = clamp(newRoutes.length, 0, supported && tokenB ? 2 : 3)
       }
 
       if (tokenB && newRoutes.length > 0 && supported) {

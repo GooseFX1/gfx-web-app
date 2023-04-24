@@ -284,8 +284,23 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }, 5000)
     return () => clearInterval(interval)
   }, [])
-  const marketInfoFormat = useCallback(
-    (mkt: any) => ({
+  const marketInfoFormat = useCallback((mkt: any, toNumber?: boolean) => {
+    if (toNumber) {
+      return {
+        ...mkt,
+        inAmount: JSBI.toNumber(mkt.inAmount),
+        outAmount: JSBI.toNumber(mkt.outAmount),
+        lpFee: {
+          ...mkt.lpFee,
+          amount: JSBI.toNumber(mkt.lpFee.amount)
+        },
+        platformFee: {
+          ...mkt.platformFee,
+          amount: JSBI.toNumber(mkt.platformFee.amount)
+        }
+      }
+    }
+    return {
       ...mkt,
       inAmount: JSBI.BigInt(mkt.inAmount),
       outAmount: JSBI.BigInt(mkt.outAmount),
@@ -297,20 +312,20 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         ...mkt.platformFee,
         amount: JSBI.BigInt(mkt.platformFee.amount)
       }
-    }),
-    []
-  )
+    }
+  }, [])
 
   const revertRoute = useCallback((route: any, toNumber?: boolean) => {
     //toNumber for display - BigInt for calculations
     if (toNumber) {
+      // propogate to marketInfoFormat call
       return {
         ...route,
         inAmount: JSBI.toNumber(route.inAmount),
         outAmount: JSBI.toNumber(route.outAmount),
         amount: JSBI.toNumber(route.amount),
         outAmountWithSlippage: JSBI.toNumber(route.otherAmountThreshold),
-        marketInfos: route.marketInfos.map((mkt) => marketInfoFormat(mkt))
+        marketInfos: route.marketInfos.map((mkt) => marketInfoFormat(mkt, true))
       }
     }
     return {

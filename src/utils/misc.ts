@@ -164,3 +164,5 @@ export const getDateInISOFormat = (): string => {
 }
 
 export const truncateAddress = (address: string): string => `${address.substr(0, 4)}..${address.substr(-4, 4)}`
+
+export const clamp = (num: number, min: number, max: number): number => Math.min(Math.max(num, min), max)
