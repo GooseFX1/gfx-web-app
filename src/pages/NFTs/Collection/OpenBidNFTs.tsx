@@ -49,7 +49,7 @@ export const OpenBidNFTs = (): ReactElement => {
           (pageNumber + 1) * paginationNum
         )
         setOpenBidWithinCollection(obData.data)
-        if (obData.data.open_bid.length < paginationNum) setStopCalling(true)
+        if (obData.data.open_bid && obData.data.open_bid.length < paginationNum) setStopCalling(true)
         setOpenBidLoading(false)
         setOpenBidArr((prev) => [...prev, ...obData.data.open_bid])
       })()
@@ -58,7 +58,7 @@ export const OpenBidNFTs = (): ReactElement => {
 
   useEffect(() => {
     setOpenBidArr([])
-  }, [refreshClicked])
+  }, [refreshClicked, window.location])
 
   const addNftToBag = (e, nftItem) => {
     setNftInBag((prev) => {

@@ -1,4 +1,13 @@
-import React, { useState, useEffect, useCallback, useMemo, FC, ReactElement } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  FC,
+  ReactElement,
+  SetStateAction,
+  Dispatch
+} from 'react'
 import axios from 'axios'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -28,6 +37,7 @@ import { minimizeTheString } from '../../../web3/nfts/utils'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 
 //#region styles
 const DIVV = styled.div``
@@ -36,15 +46,14 @@ type ICard = {
   className?: string
   listingType?: string
   userId?: string
+  setGfxAppraisal?: Dispatch<SetStateAction<boolean>>
 }
 
 export const Card: FC<ICard> = (props) => {
   const { mode } = useDarkMode()
   const { connection } = useConnectionConfig()
   const { sessionUser, sessionUserParsedAccounts, likeDislike, userCurrency } = useNFTProfile()
-  // const { prices } = usePriceFeed()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
-  const { setBidNow } = useNFTAggregator()
   /** setters are only for populating context before location change to details page */
   const { setGeneral, setNftMetadata, setBids, setAsk, setTotalLikes } = useNFTDetails()
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
@@ -114,8 +123,8 @@ export const Card: FC<ICard> = (props) => {
 
   const openDetails = async (target: string): Promise<void> => {
     setIsLoadingBeforeRelocate(true)
+    setHover(false)
     await setNFTDetails()
-    console.log(target)
     if (target === MODAL_TARGET.SELL) setShowSellNFTModal(true)
     if (target === MODAL_TARGET.DRAWER) setDrawerSingleNFT(true)
     if (target === MODAL_TARGET.BID) setShowBidNFTModal(true)
@@ -184,7 +193,7 @@ export const Card: FC<ICard> = (props) => {
           {isLoadingBeforeRelocate && <div className="loadingNFT" tw="mt-[-8px]" />}
           {hover && (
             <HoverOnNFT
-              buttonType={isOwner ? 'sell' : 'bid'}
+              buttonType={isOwner ? (localAsk?.buyer_price ? 'Modify' : 'Sell') : 'bid'}
               item={localSingleNFT}
               ask={!isOwner && localAsk ? localAsk : null}
               setNFTDetails={() => (isOwner ? openDetails(MODAL_TARGET.SELL) : openDetails(MODAL_TARGET.BID))}
@@ -235,9 +244,12 @@ export const Card: FC<ICard> = (props) => {
               <SkeletonCommon width="64px" height="24px" />
             )}
             <div className="apprisalPriceProfile">
-              {/* {dynamicPriceValue(userCurrency, [], parseFloat(displayPrice) / LAMPORTS_PER_SOL_NUMBER)} */}
               NA
-              <img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'tooltip'} />
+              <img
+                src={`/img/assets/Aggregator/Tooltip.svg`}
+                alt={'tooltip'}
+                onClick={() => props.setGfxAppraisal(true)}
+              />
             </div>
 
             {sessionUser && !isOwner && (

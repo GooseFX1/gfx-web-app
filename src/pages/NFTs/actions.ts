@@ -60,7 +60,32 @@ export const tradeStatePDA = async (
     return undefined
   }
 }
+export const freeSellerTradeStatePDAAgg = async (
+  publicKey: PublicKey,
+  auctionHouse: StringPublicKey,
+  tokenAccount: string,
+  mintAddress: string
+): Promise<undefined | [PublicKey, number]> => {
+  try {
+    const pda = await PublicKey.findProgramAddress(
+      [
+        Buffer.from(AUCTION_HOUSE_PREFIX),
+        publicKey.toBuffer(),
+        toPublicKey(auctionHouse).toBuffer(),
+        toPublicKey(tokenAccount).toBuffer(),
+        toPublicKey(TREASURY_MINT).toBuffer(),
+        toPublicKey(mintAddress).toBuffer(),
+        bnTo8(new BN(0)),
+        bnTo8(tokenSize)
+      ],
+      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
+    )
 
+    return pda
+  } catch (err) {
+    return undefined
+  }
+}
 export const freeSellerTradeStatePDA = async (
   publicKey: PublicKey,
   general: ISingleNFT

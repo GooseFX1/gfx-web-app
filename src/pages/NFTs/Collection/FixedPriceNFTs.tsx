@@ -25,7 +25,8 @@ export const FixedPriceNFTs = (): ReactElement => {
 
   useEffect(() => {
     setFixedPriceArr([])
-  }, [refreshClicked])
+    console.log('setting to 0')
+  }, [refreshClicked, window.location])
 
   const lastCardRef = useCallback(
     (node) => {

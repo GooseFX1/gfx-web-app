@@ -1,8 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { ReactElement, useState, useEffect, useMemo } from 'react'
-import { Dropdown } from 'antd'
+import { Dropdown, Tooltip } from 'antd'
 import { useHistory, useParams } from 'react-router-dom'
-import { useDarkMode, useNFTProfile, useNavCollapse, useNFTAggregator, useNFTCollections } from '../../../context'
+import {
+  useDarkMode,
+  useNFTProfile,
+  useNavCollapse,
+  useNFTAggregator,
+  useNFTCollections,
+  useNFTDetails
+} from '../../../context'
 import { ICON } from '../../../layouts'
 import { IAppParams } from '../../../types/app_params'
 import { NFTCollection } from '../../../types/nft_collections'
@@ -31,6 +38,7 @@ import { Image } from 'antd'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { RefreshBtnWithAnimationNFT } from '../Home/NFTLandingPageV2'
 import { LastRefreshedAnimation } from '../../Farm/FarmFilterHeader'
+import { minimizeTheString } from '../../../web3/nfts/utils'
 
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
@@ -141,9 +149,14 @@ const NFTStatsContainer = () => {
             ) : (
               <SkeletonCommon style={{ marginLeft: 20 }} width="65px" height="65px" borderRadius="50%" />
             )}
-            <div tw="text-[30px] sm:text-[22px] ml-3 font-bold">
+            <div
+              tw="sm:text-[22px] ml-3 font-bold flex items-center"
+              style={{ fontSize: collection?.collection_name?.length > 20 ? '25px' : '35px' }}
+            >
               {collection ? (
-                collection.collection_name
+                <Tooltip title={collection.collection_name}>
+                  <div tw="sm:text-[22px] ml-3 font-bold">{minimizeTheString(collection.collection_name, 20)}</div>
+                </Tooltip>
               ) : (
                 <SkeletonCommon width="200px" height="30px" style={{ marginTop: '20px', marginLeft: 10 }} />
               )}
@@ -159,9 +172,9 @@ const NFTStatsContainer = () => {
                 <div onClick={() => setSweepCollection(true)}>
                   <img className="sweepMobile" src="/img/assets/Aggregator/sweepButtonMobile.svg" />
                 </div>
-                <div>
+                {/* <div>
                   <SortDropdown />
-                </div>
+                </div> */}
               </div>
             )}
           </div>
@@ -202,7 +215,7 @@ const NFTStatsContainer = () => {
             )}
             <div className="wrapper">
               <div className="titleText" tw="leading-none">
-                {singleCollection ? singleCollection[0].daily_volume / LAMPORTS_PER_SOL_NUMBER : 0}
+                {singleCollection ? singleCollection[0].daily_volume : 0}
               </div>
               <div className="subTitleText"> 24h volume </div>
             </div>
@@ -230,6 +243,7 @@ const NFTStatsContainer = () => {
 export const NFTGridContainer = (): ReactElement => {
   const { isCollapsed } = useNavCollapse()
   const [open, setOpen] = useState<boolean>(true)
+  const { general } = useNFTDetails()
   const [displayIndex, setDisplayIndex] = useState<number>(0)
 
   return (
@@ -253,7 +267,7 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
         {/* <img onClick={() => setOpen((prev) => !prev)} src={`/img/assets/Aggregator/filtersIcon${mode}.svg`} />
         <SearchBar placeholder={checkMobile() ? `Search by nft ` : `Search by nft o owner`} /> 
         {/* {checkMobile() && <CurrencySwitch />} */}
-        {!checkMobile() && <SortDropdown />}
+        {/* {!checkMobile() && <SortDropdown />} */}
       </div>
 
       <div className="filtersViewCategory">

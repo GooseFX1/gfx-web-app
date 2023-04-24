@@ -21,6 +21,7 @@ import NFTLoading from '../Home/NFTLoading'
 import { SellNFTModal } from '../Collection/SellNFTModal'
 import { BidNFTModal, BuyNFTModal } from '../Collection/BuyNFTModal'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 
 const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
   ${tw`h-[25px] w-[50px] rounded-[40px] cursor-pointer`}
@@ -92,6 +93,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const [search, setSearch] = useState<string>('')
   const [loading, _setLoading] = useState<boolean>(false)
   const [isSol, setIsSol] = useState<boolean>(true)
+  const [gfxAppraisalPopup, setGfxAppraisal] = useState<boolean>(false)
   const nftFilterArr = ['All', 'Offers', 'On Sale']
   const [nftFilter, setNftFilter] = useState<number>(0)
   const { general, nftMetadata } = useNFTDetails()
@@ -188,7 +190,8 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const handleModalClick = useCallback(() => {
     if (buyNowClicked) return <BuyNFTModal />
     if (bidNowClicked) return <BidNFTModal />
-  }, [buyNowClicked, bidNowClicked, general, nftMetadata])
+    if (gfxAppraisalPopup) return <GFXApprisalPopup setShowTerms={setGfxAppraisal} showTerms={gfxAppraisalPopup} />
+  }, [buyNowClicked, bidNowClicked, general, nftMetadata, gfxAppraisalPopup])
 
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType}>
@@ -202,7 +205,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
       ) : (
         <div className="gridContainerProfile" tw="h-[75vh]">
           {filteredCollectedItems.map((nft: ISingleNFT, index: number) => (
-            <Card singleNFT={nft} key={index} />
+            <Card singleNFT={nft} key={index} setGfxAppraisal={setGfxAppraisal} />
           ))}
         </div>
       )}

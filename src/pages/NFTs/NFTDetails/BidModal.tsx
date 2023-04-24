@@ -372,21 +372,6 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
     const { metaDataAccount, escrowPaymentAccount, buyerTradeState, buyerPrice } = await derivePDAsForInstruction()
 
     if (!metaDataAccount || !escrowPaymentAccount || !buyerTradeState) {
-      notify({
-        type: 'error',
-        message: (
-          <MESSAGE>
-            <Row className="m-title" justify="space-between" align="middle">
-              <Col>Open bid error!</Col>
-              <Col>
-                <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-              </Col>
-            </Row>
-            <div>Could not derive values for buy instructions</div>
-          </MESSAGE>
-        )
-      })
-
       setTimeout(() => setVisible(false), 1000)
       return
     }
@@ -572,7 +557,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
   return (
     <PURCHASE_MODAL setVisible={setVisible} title="" visible={visible} onCancel={onCancel}>
       <div className="bm-title">
-        You are about to{' '}
+        You are about to
         {purchasePrice && `${parseFloat(bidPriceInput) * LAMPORTS_PER_SOL_NUMBER}` === ask.buyer_price
           ? 'purchase'
           : 'bid on'}{' '}

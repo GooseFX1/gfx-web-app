@@ -53,7 +53,7 @@ import 'styled-components/macro'
 
 const TEN_MILLION = 10000000
 
-import { STYLED_POPUP } from '../Collection/BuyNFTModal'
+import { STYLED_POPUP_BUY_MODAL } from '../Collection/BuyNFTModal'
 
 export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
   visible,
@@ -369,9 +369,10 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       setAskPrice(parseFloat(e.target.value))
     }
   }
+  const nftID = general?.nft_name.split('#')[1]
 
   return (
-    <STYLED_POPUP
+    <STYLED_POPUP_BUY_MODAL
       height={checkMobile() ? '655px' : '780px'}
       width={checkMobile() ? '100%' : '580px'}
       title={null}
@@ -383,8 +384,8 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
         <div tw="flex flex-col items-center justify-center">
           <div className="buyTitle">
             You are about to sell <br />
-            <strong>{general?.nft_name} </strong> {checkMobile() && <br />}
-            {/* <strong> {general?.nft_name}</strong> */}
+            <strong>{nftID ? '#' + nftID : '# Nft'} </strong> by {checkMobile() && <br />}
+            <strong> {general?.collection_name}</strong>
           </div>
           <div className="verifiedText">
             {singleCollection && singleCollection[0]?.is_verified && (
@@ -474,6 +475,6 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
           </Button>
         </div>
       </>
-    </STYLED_POPUP>
+    </STYLED_POPUP_BUY_MODAL>
   )
 }
