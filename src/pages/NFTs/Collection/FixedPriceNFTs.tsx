@@ -18,9 +18,9 @@ export const FixedPriceNFTs = (): ReactElement => {
     useNFTCollections()
   const [fixedPriceArr, setFixedPriceArr] = useState<BaseNFT[]>([])
   const paginationNum = 30
-  const { searchInsideCollection, setSearchInsideCollection, pageNumber, setPageNumber } =
-    useNFTAggregatorFilters()
+  const { searchInsideCollection, setSearchInsideCollection } = useNFTAggregatorFilters()
   const { refreshClicked } = useNFTAggregator()
+  const [pageNumber, setPageNumber] = useState<number>(0)
   const [stopCalling, setStopCalling] = useState<boolean>(false)
   const [fixedPriceLoading, setFixedPriceLoading] = useState<boolean>(false)
   const [filteredFixedPrice, setFilteredFixPriced] = useState<BaseNFT[] | undefined>(null)

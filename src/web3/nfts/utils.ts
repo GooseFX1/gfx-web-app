@@ -59,15 +59,20 @@ export const getDateInArray = (): string[] => {
 }
 
 export const getNFTMetadata = async (metadataAccountPublicKey: String, connection: Connection): Promise<any> => {
-  const metadataAddress = new PublicKey(metadataAccountPublicKey)
-  const metadataAccount = await connection.getAccountInfo(metadataAddress)
+  try {
+    const metadataAddress = new PublicKey(metadataAccountPublicKey)
+    const metadataAccount = await connection.getAccountInfo(metadataAddress)
 
-  if (metadataAccount) {
-    // Decode metadata account data
-    const metadata = decodeMetadata(metadataAccount.data)
-    return metadata
-  } else {
-    console.log('Metadata account not found')
-    return null
+    if (metadataAccount) {
+      // Decode metadata account data
+      const metadata = decodeMetadata(metadataAccount.data)
+      return metadata
+    } else {
+      console.log('Metadata account not found')
+      return null
+    }
+  } catch (err) {
+    console.error(err)
+    return err
   }
 }

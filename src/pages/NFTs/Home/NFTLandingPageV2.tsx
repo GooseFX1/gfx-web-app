@@ -3,7 +3,7 @@ import { Checkbox, Dropdown, Switch } from 'antd'
 import React, { ReactElement, useMemo, useState, FC, useEffect, useCallback } from 'react'
 import styled, { css } from 'styled-components'
 import 'styled-components/macro'
-import { ArrowClickerWhite, Pill, SearchBar, TokenToggleNFT } from '../../../components'
+import { Pill, SearchBar, TokenToggleNFT } from '../../../components'
 import NFTAggWelcome, { NFTAggTerms } from '../../../components/NFTAggWelcome'
 import {
   useConnectionConfig,
@@ -23,8 +23,7 @@ import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'
 import SearchNFTMobile from './SearchNFTMobile'
 import { Arrow } from '../../../components/common/Arrow'
-import { ArrowIcon, DROPDOWN_CONTAINER } from '../Collection/CollectionV2.styles'
-import { useConnection } from '@solana/wallet-adapter-react'
+import { DROPDOWN_CONTAINER } from '../Collection/CollectionV2.styles'
 import { useHistory } from 'react-router-dom'
 import { Image } from 'antd'
 import { AH_PROGRAM_IDS, AH_NAME } from '../../../web3/agg_program_ids'
@@ -32,7 +31,6 @@ import { ModalSlide } from '../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../constants'
 import { SVGToPrimary2 } from '../../../styles'
 import { USER_CONFIG_CACHE } from '../../../types/app_params'
-import { NFTCollection } from '../../../types/nft_collections'
 import ShowEyeLite from '../../../animations/showEyelite.json'
 import ShowEyeDark from '../../../animations/showEyedark.json'
 import Lottie from 'lottie-react'
@@ -277,10 +275,22 @@ const FiltersContainer = () => {
   const { setCurrency } = useNFTAggregator()
 
   const { mode } = useDarkMode()
-  const { setTimelineDisplay, setSortFilter, setSortType } = useNFTAggregatorFilters()
+  const { setTimelineDisplay, setSortFilter, setSortType, sortType, timelineDisplay } = useNFTAggregatorFilters()
 
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
   const goProfile = () => sessionUser && history.push(`/nfts/profile/${sessionUser.pubkey}`)
+
+  useEffect(() => {
+    if (timelineDisplay === '7d' && sortType === 'DESC') {
+      setPoolIndex(1)
+      setPoolFilter('Trending')
+    }
+    if (timelineDisplay === '24h' && sortType === 'DESC') {
+      setPoolIndex(0)
+      setPoolFilter('Popular')
+    }
+  }, [sortType, timelineDisplay])
+
   const handleClick = (poolName, index) => {
     setPoolIndex(index)
     setPoolFilter(poolName)
@@ -450,18 +460,6 @@ const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
   )
 }
 
-const CurrencySwitch = (): ReactElement => {
-  const [currency, setCurrency] = useState<'SOL' | 'USDC'>('SOL')
-
-  const changeCurrency = () => {
-    setCurrency((prev) => (prev === 'SOL' ? 'USDC' : 'SOL'))
-  }
-  return (
-    <CURRENCY_SWITCH $currency={currency} style={{ marginLeft: 'auto' }}>
-      <Switch onChange={changeCurrency} />
-    </CURRENCY_SWITCH>
-  )
-}
 const SearchResultContainer = ({ searchFilter }: any) => {
   const { allCollections } = useNFTCollections()
   const history = useHistory()
