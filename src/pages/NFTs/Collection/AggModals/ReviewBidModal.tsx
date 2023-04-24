@@ -86,7 +86,7 @@ export const ReviewBidModal: FC<{
         />
         <img src="/img/crypto/SOL.svg" tw="w-8 h-8 mt-3 ml-[-30px] sm:mt-0 " />
       </div>
-      <div className="vContainer" tw="mt-[55px] sm:mt-[30px] flex items-center !justify-between">
+      <div className="vContainer" tw="mt-[40px] sm:mt-[30px] flex items-center !justify-between">
         <div
           className={selectedBtn === 0 ? 'bidButtonSelected' : 'bidButton'}
           onClick={() => handleSetCurBid(buyerPrice + 10, 0)}
@@ -109,7 +109,7 @@ export const ReviewBidModal: FC<{
         )}
       </div>
 
-      <div className="buyBtnContainer" tw="!mt-10">
+      <div className="buyBtnContainer">
         <Button className="buyButton" disabled={curBid <= 0} onClick={() => setReviewClicked(true)}>
           Review Offer
         </Button>
