@@ -26,10 +26,10 @@ import 'styled-components/macro'
 const STYLE = styled.div``
 
 const volumeDict = {
-  '24d': 'daily_volume',
+  '24h': 'daily_volume',
   '7d': 'weekly_volume',
   '30d': 'monthly_volume',
-  all: 'total_volume'
+  All: 'total_volume'
 }
 
 const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
@@ -190,7 +190,7 @@ const getDisplayPrice = (currencyView: string, solPrice: number, item: any, time
 
   let volume =
     currencyView === 'USDC' ? item[volumeDict[timelineDisplay]] * solPrice : item[volumeDict[timelineDisplay]]
-  volume = volume ? parseFloat(volume.toFixed(2)) : 0
+  volume = volume > 0 ? parseFloat(volume.toFixed(2)) : 0
   return { floorPrice, volume }
 }
 const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {

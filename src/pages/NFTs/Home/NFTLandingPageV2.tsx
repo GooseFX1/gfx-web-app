@@ -3,7 +3,7 @@ import { Checkbox, Dropdown, Switch } from 'antd'
 import React, { ReactElement, useMemo, useState, FC, useEffect, useCallback } from 'react'
 import styled, { css } from 'styled-components'
 import 'styled-components/macro'
-import { Pill, SearchBar, TokenToggleNFT } from '../../../components'
+import { ArrowClickerWhite, Pill, SearchBar, TokenToggleNFT } from '../../../components'
 import NFTAggWelcome, { NFTAggTerms } from '../../../components/NFTAggWelcome'
 import {
   useConnectionConfig,
@@ -23,7 +23,7 @@ import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'
 import SearchNFTMobile from './SearchNFTMobile'
 import { Arrow } from '../../../components/common/Arrow'
-import { DROPDOWN_CONTAINER } from '../Collection/CollectionV2.styles'
+import { ArrowIcon, DROPDOWN_CONTAINER } from '../Collection/CollectionV2.styles'
 import { useConnection } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import { Image } from 'antd'
@@ -36,7 +36,7 @@ import { NFTCollection } from '../../../types/nft_collections'
 import ShowEyeLite from '../../../animations/showEyelite.json'
 import ShowEyeDark from '../../../animations/showEyedark.json'
 import Lottie from 'lottie-react'
-import { fetchGlobalSearchNFT } from '../../../api/NFTs'
+import { fetchGlobalSearchNFT, NFT_COL_FILTER_OPTIONS } from '../../../api/NFTs'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 
@@ -241,7 +241,6 @@ const NFTLandingPageV2 = (): ReactElement => {
       })
     )
   }
-  console.log()
   return (
     <WRAPPER $navCollapsed={isCollapsed} $currency={currencyView}>
       {<NFTAggTerms setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={handleHasOnboarded} />}
@@ -278,13 +277,23 @@ const FiltersContainer = () => {
   const { setCurrency } = useNFTAggregator()
 
   const { mode } = useDarkMode()
-  const { setTimelineDisplay } = useNFTAggregatorFilters()
+  const { setTimelineDisplay, setSortFilter, setSortType } = useNFTAggregatorFilters()
 
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
   const goProfile = () => sessionUser && history.push(`/nfts/profile/${sessionUser.pubkey}`)
   const handleClick = (poolName, index) => {
     setPoolIndex(index)
     setPoolFilter(poolName)
+    if (poolName === 'Trending') {
+      setSortFilter(NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME)
+      setSortType('DESC')
+      setTimelineDisplay('7d')
+    }
+    if (poolName === 'Popular') {
+      setSortFilter(NFT_COL_FILTER_OPTIONS.DAILY_VOLUME)
+      setSortType('DESC')
+      setTimelineDisplay('24h')
+    }
   }
 
   const handleClickTimeline = (poolName, index) => {
@@ -454,6 +463,7 @@ const CurrencySwitch = (): ReactElement => {
 const SearchResultContainer = ({ searchFilter }: any) => {
   const { allCollections } = useNFTCollections()
   const history = useHistory()
+  const { mode } = useDarkMode()
   const [searchResultArr, setSearchResult] = useState<any>([...allCollections])
 
   const globalSearchCall = () => {
@@ -468,7 +478,6 @@ const SearchResultContainer = ({ searchFilter }: any) => {
       globalSearchCall()
     }
   }, [searchFilter])
-  console.log(searchResultArr)
   return (
     <SEARCH_RESULT_CONTAINER>
       {searchResultArr &&
@@ -487,12 +496,23 @@ const SearchResultContainer = ({ searchFilter }: any) => {
                   )
                 }
               >
-                <img src={data?.collection?.profile_pic_link} alt="" />
-                <div className="searchText">
-                  {data?.collection?.collection_name}
-                  {data?.collection?.is_verified && (
-                    <img tw="!w-[15px] !h-[15px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
-                  )}
+                <img className="searchImg" src={data?.collection?.profile_pic_link} alt="" />
+                <div className="searchText" tw="flex flex-col leading-[19px]">
+                  <div>
+                    {data?.collection?.collection_name}
+                    {data?.collection?.is_verified && (
+                      <img tw="!w-[15px] !h-[15px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
+                    )}
+                  </div>
+                  <div tw="text-[#636363] text-[15px] font-semibold">
+                    24h volume: {data?.collection?.daily_volume.toFixed(2)} SOL
+                  </div>
+                </div>
+                <div tw="text-[#b5b5b5] text-[13px] font-semibold ml-auto items-center mr-[10px] flex">
+                  <div>{data?.listed_count} Listed</div>
+                  <div>
+                    <img tw="w-4 h-4 ml-1" src={`/img/assets/Aggregator/arrow-right-${mode}.svg`} alt="arrow" />{' '}
+                  </div>
                 </div>
               </div>
             )
