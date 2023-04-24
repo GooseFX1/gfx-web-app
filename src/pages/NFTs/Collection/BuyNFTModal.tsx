@@ -63,6 +63,7 @@ import {
   couldNotFetchNFTMetaData,
   couldNotFetchUserData,
   MESSAGE,
+  pleaseTryAgain,
   successBidMatchedMessage,
   successfulListingMessage
 } from './AggModals/AggNotifications'
@@ -70,7 +71,7 @@ import { getNFTMetadata } from '../../../web3/nfts/utils'
 const TEN_MILLION = 10000000
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
-  ${tw`flex flex-col `}
+  ${tw`flex flex-col mt-[-30px] `}
   .ant-modal-close-x {
     visibility: ${({ lockModal }) => (lockModal ? 'hidden' : 'visible')};
     img {
@@ -488,18 +489,18 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       const { freeTradeStateAgg, programAsSignerPDA } = await derivePDAForExecuteSale()
 
       const onChainNFTMetadata = await getNFTMetadata(metaDataAccount, connection)
-      const creatorAccounts: web3.AccountMeta[] = []
       if (!onChainNFTMetadata) {
         couldNotFetchNFTMetaData()
+        setIsLoading(false)
         return
       }
-      onChainNFTMetadata.data.creators.map((creator) =>
-        creatorAccounts.push({
-          pubkey: new PublicKey(creator.address),
-          isWritable: true,
-          isSigner: false
-        })
-      )
+
+      const creatorAccounts: web3.AccountMeta[] = onChainNFTMetadata.data.creators.map((creator) => ({
+        pubkey: new PublicKey(creator.address),
+        isWritable: true,
+        isSigner: false
+      }))
+
       const executeSaleInstructionArgs: ExecuteSaleInstructionArgs = {
         escrowPaymentBump: escrowPaymentAccount[1],
         freeTradeStateBump: freeTradeStateAgg[1],
@@ -546,8 +547,8 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       setPendingTxSig(signature)
       const confirm = await confirmTransaction(connection, signature, 'finalized')
       console.log(confirm, 'confirming')
+      setIsLoading(false)
       if (confirm.value.err === null) {
-        setIsLoading(false)
         if (isBuyingNow) {
           setMissionAccomplished(true)
           notify(
@@ -561,97 +562,8 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       }
     } catch (error) {
       setIsLoading(false)
-      notify({
-        type: 'error',
-        message: (
-          <MESSAGE>
-            <Row justify="space-between" align="middle">
-              <Col>NFT {isBuyingNow ? 'Buying' : 'Biding'} error!</Col>
-              <Col>
-                <img className="mIcon" src={`/img/assets/close-white-icon.svg`} alt="" />
-              </Col>
-            </Row>
-            <div>{error.message}</div>
-            <div>Please try again, if the error persists please contact support.</div>
-          </MESSAGE>
-        )
-      })
+      pleaseTryAgain(isBuyingNow, error?.message)
     }
-  }
-
-  const postBidToAPI = async (txSig: any, buyerPrice: BN, tokenSize: BN) => {
-    const bidObject = {
-      clock: Date.now().toString(),
-      tx_sig: txSig,
-      wallet_key: publicKey.toBase58(),
-      auction_house_key: isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE,
-      token_account_key: general.token_account,
-      auction_house_treasury_mint_key: isBuyingNow ? ask?.auction_house_treasury_mint_key : TREASURY_MINT,
-      token_account_mint_key: general.mint_address,
-      buyer_price: buyerPrice.toString(),
-      token_size: tokenSize.toString(),
-      non_fungible_id: general.non_fungible_id,
-      collection_id: general.collection_id,
-      user_id: sessionUser.user_id
-    }
-
-    try {
-      const res = await bidOnSingleNFT(bidObject)
-      if (res.isAxiosError) {
-        notify({
-          type: 'error',
-          message: (
-            <MESSAGE>
-              <Row justify="space-between" align="middle">
-                <Col>NFT Biding error!</Col>
-                <Col>
-                  <img className="mIcon" src={`/img/assets/close-white-icon.svg`} alt="" />
-                </Col>
-              </Row>
-              <div>Please try again, if the error persists please contact support.</div>
-            </MESSAGE>
-          )
-        })
-        return 'Error'
-      } else {
-        setMode('bid')
-        return res
-      }
-    } catch (error) {
-      console.dir(error)
-      setIsLoading(false)
-      return 'Error'
-    }
-  }
-
-  const callCancelInstruction = async () => {
-    const { buyerTradeState, buyerPrice } = await derivePDAsForInstruction()
-
-    const cancelInstructionArgs: CancelInstructionArgs = {
-      buyerPrice: buyerPrice,
-      tokenSize: tokenSize
-    }
-
-    const cancelInstructionAccounts: CancelInstructionAccounts = {
-      wallet: publicKey,
-      tokenAccount: new PublicKey(general.token_account),
-      tokenMint: new PublicKey(general.mint_address),
-      authority: new PublicKey(isBuyingNow ? ask?.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
-      auctionHouse: new PublicKey(isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE),
-      auctionHouseFeeAccount: new PublicKey(isBuyingNow ? ask?.auction_house_fee_account : AH_FEE_ACCT),
-      tradeState: buyerTradeState[0]
-    }
-
-    const cancelIX: TransactionInstruction = await createCancelInstruction(
-      cancelInstructionAccounts,
-      cancelInstructionArgs
-    )
-
-    const transaction = new Transaction().add(cancelIX)
-    const signature = await sendTransaction(transaction, connection)
-    console.log(signature)
-    const confirm = await confirmTransaction(connection, signature, 'confirmed')
-    console.log(confirm)
   }
 
   if (missionAccomplished) return <MissionAccomplishedModal />

@@ -236,14 +236,14 @@ export const HoverOnNFT: FC<{
   return (
     <div className="hoverNFT">
       {isLoadingBeforeRelocate && <div className="loadingNFT" tw="ml-[-4px]" />}
-      {addNftToBag && ask && (
+      {/* {addNftToBag && ask && (
         <img
           className="hoverAddToBag"
           src={`/img/assets/Aggregator/addToBag.svg`}
           alt=""
           onClick={(e) => addNftToBag(e, item, ask)}
         />
-      )}
+      )} */}
       <span className="hoverButtons">
         {buttonType === 'Sell' || buttonType === 'Modify' ? (
           <Button

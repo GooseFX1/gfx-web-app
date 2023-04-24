@@ -77,13 +77,13 @@ const NoContent = ({ type }: Props) => {
   const handleNoContentClick = () => {
     switch (type) {
       case 'collected':
-        history.push('/NFTs')
+        history.push('/nfts')
         break
       case 'created':
         history.push('/NFTs/create')
         break
       case 'favorited':
-        history.push('/NFTs')
+        history.push('/nfts')
         break
       default:
         console.error('Profile button issue')
