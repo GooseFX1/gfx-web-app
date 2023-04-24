@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
-import { useNFTAggregator, useNFTCollections } from '../../../context'
+import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections } from '../../../context'
 import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
 import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
 import DetailViewNFT from './DetailViewNFTDrawer'
-import { ISingleNFT } from '../../../types/nft_details'
+import { BaseNFT, ISingleNFT } from '../../../types/nft_details'
 import { SingleNFTCard } from './SingleNFTCard'
 import { fetchOpenBidByPages } from '../../../api/NFTs'
 import NFTLoading from '../Home/NFTLoading'
@@ -16,10 +16,24 @@ export const OpenBidNFTs = (): ReactElement => {
   const [openBidArr, setOpenBidArr] = useState<any[]>([])
   const { refreshClicked } = useNFTAggregator()
   const paginationNum = 30
+  const { searchInsideCollection, setSearchInsideCollection } = useNFTAggregatorFilters()
+  const [filteredOpenBid, setFilteredOpenBid] = useState<BaseNFT[]>(null)
+
   const [pageNumber, setPageNumber] = useState<number>(0)
   const [stopCalling, setStopCalling] = useState<boolean>(false)
   const [openBidLoading, setOpenBidLoading] = useState<boolean>(false)
   const observer = useRef<any>()
+  useEffect(() => {
+    if (!searchInsideCollection || !searchInsideCollection.length || searchInsideCollection === '') {
+      setFilteredOpenBid(openBidArr)
+    }
+    if (searchInsideCollection && searchInsideCollection.length) {
+      const filteredData = openBidArr.filter((fixedPriceNFT: ISingleNFT) =>
+        fixedPriceNFT.nft_name.includes(searchInsideCollection)
+      )
+      setFilteredOpenBid(filteredData)
+    }
+  }, [searchInsideCollection, openBidArr])
 
   const lastCardRef = useCallback(
     (node) => {
@@ -68,19 +82,19 @@ export const OpenBidNFTs = (): ReactElement => {
     })
     e.stopPropagation()
   }
-  const gridType = openBidArr?.length > 10 ? '1fr' : '210px'
+  const gridType = filteredOpenBid?.length > 10 ? '1fr' : '210px'
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
       {<DetailViewNFT />}
       {buyNowClicked && <BuyNFTModal />}
       {bidNowClicked && <BidNFTModal />}
       <div className="gridContainer">
-        {openBidArr.length ? (
-          openBidArr.map((item, index) => (
+        {filteredOpenBid !== null ? (
+          filteredOpenBid.map((item, index) => (
             <SingleNFTCard
               item={item}
               key={index}
-              lastCardRef={index + 1 === openBidArr.length ? lastCardRef : null}
+              lastCardRef={index + 1 === filteredOpenBid.length ? lastCardRef : null}
               index={index}
               addNftToBag={addNftToBag}
             />

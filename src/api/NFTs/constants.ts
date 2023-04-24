@@ -3,7 +3,16 @@ export const NFT_API_BASE = 'nest-api'
 export enum NFT_COL_FILTER_OPTIONS {
   COLLECTION_NAME = 'CollectionName',
   FLOOR_PRICE = 'FloorPrice',
-  VOLUME = 'Volume'
+  DAILY_VOLUME = 'DailyVolume',
+  WEEKLY_VOLUME = 'WeeklyVolume',
+  MONTHLY_VOLUME = 'MonthlyVolume',
+  TOTAL_VOLUME = 'TotalVolume'
+}
+export const NFT_VOLUME_OPTIONS = {
+  '7d': 'WeeklyVolume',
+  '30d': 'MonthlyVolume',
+  '24h': 'DailyVolume',
+  All: 'TotalVolume'
 }
 export enum NFT_API_ENDPOINTS {
   SESSION_USER = '/user',

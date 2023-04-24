@@ -79,6 +79,7 @@ export type BaseNFT = {
   collection_address: string
   gfx_appraisal_value: null | number
   is_verified: boolean
+  nft_price?: number
 }
 
 export type ISingleNFT = BaseNFT & {

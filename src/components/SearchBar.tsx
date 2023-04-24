@@ -1,12 +1,12 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
 import { SpaceBetweenDiv } from '../styles'
-import tw from 'twin.macro'
 import { useDarkMode } from '../context'
+import tw from 'twin.macro'
 
 const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)`
 ${tw`sm:w-3/4 sm:!h-[45px]`}
-  width: 50%;
+width: 50%;
   max-width: 583px;
   height: 44px !important;
   padding-bottom: 20px;

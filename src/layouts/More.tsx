@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, FC, useEffect, useState } from 'react'
+import { BaseSyntheticEvent, FC, useState } from 'react'
 import { Dropdown } from 'antd'
 import styled from 'styled-components'
 import tw from 'twin.macro'
@@ -143,9 +143,6 @@ const Overlay = () => {
 export const More: FC = () => {
   const { mode } = useDarkMode()
   const checkIfNFT = window.location.href.toLowerCase().includes('nfts')
-  useEffect(() => {
-    console.log(window.location.href, checkIfNFT)
-  }, [window.location.href])
 
   return (
     <Dropdown

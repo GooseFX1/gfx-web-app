@@ -1,5 +1,5 @@
 import { ReactElement } from 'react'
-import { NFT_COL_FILTER_OPTIONS } from '../../../api/NFTs'
+import { NFT_COL_FILTER_OPTIONS, NFT_VOLUME_OPTIONS } from '../../../api/NFTs'
 import { TokenToggleNFT } from '../../../components'
 import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections } from '../../../context'
 import { TableHeaderTitle } from '../../../utils/GenericDegsin'
@@ -10,6 +10,19 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
   const { setAllCollections } = useNFTCollections()
   const { sortFilter, setSortFilter, setSortType, setPageNumber, sortType, timelineDisplay } =
     useNFTAggregatorFilters()
+
+  const handleSortChangeForVolume = (sortFilterRequest: string) => {
+    if (NFT_VOLUME_OPTIONS[sortFilterRequest] === sortFilter) {
+      setPageNumber(0)
+      setAllCollections([])
+      setSortType((prev) => (prev === 'DESC' ? 'ASC' : 'DESC'))
+      return
+    }
+    if (sortFilterRequest === '24h') setSortFilter(NFT_COL_FILTER_OPTIONS.DAILY_VOLUME)
+    if (sortFilterRequest === '7d') setSortFilter(NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME)
+    if (sortFilterRequest === '30d') setSortFilter(NFT_COL_FILTER_OPTIONS.MONTHLY_VOLUME)
+    if (sortFilterRequest === 'All') setSortFilter(NFT_COL_FILTER_OPTIONS.TOTAL_VOLUME)
+  }
   const handleSortFilterChange = (sortFilterRequest) => {
     setPageNumber(0)
     setAllCollections([])
@@ -23,6 +36,16 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
       setSortType('ASC')
       setSortFilter(sortFilterRequest)
     }
+  }
+  const checkIfVolumeSelected = () => {
+    if (
+      sortFilter === NFT_COL_FILTER_OPTIONS.DAILY_VOLUME ||
+      sortFilter === NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME ||
+      sortFilter === NFT_COL_FILTER_OPTIONS.MONTHLY_VOLUME ||
+      sortFilter === NFT_COL_FILTER_OPTIONS.TOTAL_VOLUME
+    )
+      return true
+    return false
   }
   return (
     <tr>
@@ -57,7 +80,15 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
         </th>
         <th>{TableHeaderTitle('24h Change', '24 hours change based on the GFX Appraisal Value.', false)}</th>
         <th>{TableHeaderTitle('Marketcap', '', false)}</th>
-        <th>{TableHeaderTitle(`${timelineDisplay} Volume`, '', false)}</th>
+        <th onClick={() => handleSortChangeForVolume(timelineDisplay)}>
+          {TableHeaderTitle(
+            `${timelineDisplay} Volume`,
+            '',
+            true,
+            checkIfVolumeSelected() && sortType === 'DESC',
+            checkIfVolumeSelected()
+          )}
+        </th>
         <th className="borderRow2" tw="mt-2">
           <div style={{ marginTop: 17 }}>
             <TokenToggleNFT toggleToken={setCurrency} />
