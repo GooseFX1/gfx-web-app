@@ -371,6 +371,22 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     })
   }
 
+  const derivePDAForExecuteSale = async () => {
+    const programAsSignerPDA: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [Buffer.from(AUCTION_HOUSE_PREFIX), Buffer.from('signer')],
+      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
+    )
+    const freeTradeStateAgg: [PublicKey, number] = await freeSellerTradeStatePDAAgg(
+      new PublicKey(ask?.wallet_key),
+      isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE,
+      general.token_account,
+      general.mint_address
+    )
+    return {
+      freeTradeStateAgg,
+      programAsSignerPDA
+    }
+  }
   const derivePDAsForInstruction = async () => {
     const buyerPriceInLamports = orderTotal * LAMPORTS_PER_SOL_NUMBER
     const buyerPrice: BN = new BN(buyerPriceInLamports)
@@ -388,7 +404,6 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     )
 
     const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
-
     const escrowPaymentAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
       [
         Buffer.from(AUCTION_HOUSE_PREFIX),
@@ -396,16 +411,6 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         publicKey.toBuffer()
       ],
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
-    )
-    const programAsSignerPDA: [PublicKey, number] = await PublicKey.findProgramAddress(
-      [Buffer.from(AUCTION_HOUSE_PREFIX), Buffer.from('signer')],
-      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
-    )
-    const freeTradeStateAgg: [PublicKey, number] = await freeSellerTradeStatePDAAgg(
-      new PublicKey(ask?.wallet_key),
-      isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE,
-      general.token_account,
-      general.mint_address
     )
 
     const buyerTradeState: [PublicKey, number] = await tradeStatePDA(
@@ -431,8 +436,6 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       escrowPaymentAccount,
       buyerTradeState,
       buyerPrice,
-      freeTradeStateAgg,
-      programAsSignerPDA,
       buyerReceiptTokenAccount,
       auctionHouseTreasuryAddress
     }
@@ -447,14 +450,13 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       escrowPaymentAccount,
       buyerTradeState,
       buyerPrice,
-      freeTradeStateAgg,
-      programAsSignerPDA,
       buyerReceiptTokenAccount,
       auctionHouseTreasuryAddress
     } = await derivePDAsForInstruction()
 
     if (!metaDataAccount || !escrowPaymentAccount || !buyerTradeState) {
       couldNotDeriveValueForBuyInstruction()
+      return
     }
 
     const buyInstructionArgs: BuyInstructionArgs = {
@@ -483,8 +485,9 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 
     const transaction = new Transaction().add(buyIX)
     if (isBuyingNow) {
-      const onChainNFTMetadata = await getNFTMetadata(metaDataAccount, connection)
+      const { freeTradeStateAgg, programAsSignerPDA } = await derivePDAForExecuteSale()
 
+      const onChainNFTMetadata = await getNFTMetadata(metaDataAccount, connection)
       const creatorAccounts: web3.AccountMeta[] = []
       if (!onChainNFTMetadata) {
         couldNotFetchNFTMetaData()
@@ -545,8 +548,16 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       console.log(confirm, 'confirming')
       if (confirm.value.err === null) {
         setIsLoading(false)
-        if (isBuyingNow) notify(successBidMatchedMessage(signature, nftMetadata, buyerPrice.toString()))
-        else notify(successfulListingMessage(signature, nftMetadata, buyerPrice.toString()))
+        if (isBuyingNow) {
+          setMissionAccomplished(true)
+          notify(
+            successBidMatchedMessage(
+              signature,
+              nftMetadata,
+              (parseFloat(buyerPrice) / LAMPORTS_PER_SOL_NUMBER).toString()
+            )
+          )
+        } else notify(successfulListingMessage(signature, nftMetadata, buyerPrice.toString()))
       }
     } catch (error) {
       setIsLoading(false)
