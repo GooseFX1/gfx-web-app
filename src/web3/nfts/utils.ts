@@ -1,7 +1,7 @@
 import { deserializeUnchecked } from 'borsh'
-import { PublicKey } from '@solana/web3.js'
+import { Connection, PublicKey } from '@solana/web3.js'
 import { METADATA_PREFIX, METADATA_PROGRAM, MetaplexMetadata } from '../metaplex'
-import { PARSE_NFT_ACCOUNT_SCHEMA } from './metadata'
+import { decodeMetadata, PARSE_NFT_ACCOUNT_SCHEMA } from './metadata'
 
 const metaProgamPublicKey = new PublicKey(METADATA_PROGRAM)
 const metaProgamPublicKeyBuffer = metaProgamPublicKey.toBuffer()
@@ -56,4 +56,18 @@ export const getDateInArray = (): string[] => {
   let daylist = getDaysArray(new Date(new Date()), new Date(todayObj.setDate(todayObj.getDate() + 20)))
   daylist = daylist.map((v) => formatDate(v.toISOString().slice(0, 10)))
   return daylist
+}
+
+export const getNFTMetadata = async (metadataAccountPublicKey: String, connection: Connection): Promise<any> => {
+  const metadataAddress = new PublicKey(metadataAccountPublicKey)
+  const metadataAccount = await connection.getAccountInfo(metadataAddress)
+
+  if (metadataAccount) {
+    // Decode metadata account data
+    const metadata = decodeMetadata(metadataAccount.data)
+    return metadata
+  } else {
+    console.log('Metadata account not found')
+    return null
+  }
 }

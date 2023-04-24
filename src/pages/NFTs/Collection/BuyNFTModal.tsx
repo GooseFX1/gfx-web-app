@@ -60,11 +60,13 @@ import { HoldTight } from './AggModals/HoldTight'
 import MissionAccomplishedModal from './AggModals/MissionAcomplishedModal'
 import {
   couldNotDeriveValueForBuyInstruction,
+  couldNotFetchNFTMetaData,
   couldNotFetchUserData,
   MESSAGE,
   successBidMatchedMessage,
   successfulListingMessage
 } from './AggModals/AggNotifications'
+import { getNFTMetadata } from '../../../web3/nfts/utils'
 const TEN_MILLION = 10000000
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
@@ -481,9 +483,14 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 
     const transaction = new Transaction().add(buyIX)
     if (isBuyingNow) {
-      console.log(nftMetadata)
+      const onChainNFTMetadata = await getNFTMetadata(metaDataAccount, connection)
+
       const creatorAccounts: web3.AccountMeta[] = []
-      nftMetadata.properties.creators.map((creator) =>
+      if (!onChainNFTMetadata) {
+        couldNotFetchNFTMetaData()
+        return
+      }
+      onChainNFTMetadata.data.creators.map((creator) =>
         creatorAccounts.push({
           pubkey: new PublicKey(creator.address),
           isWritable: true,
@@ -517,7 +524,8 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         systemProgram: SystemProgram.programId,
         programAsSigner: programAsSignerPDA[0],
         rent: new PublicKey('SysvarRent111111111111111111111111111111111'),
-        ataProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
+        ataProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
+        anchorRemainingAccounts: creatorAccounts
       }
 
       const executeSaleIX: TransactionInstruction = await createExecuteSaleInstruction(
@@ -645,7 +653,9 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
             You are about to {isBuyingNow ? 'buy' : 'bid for'}: <br />
             <strong>#{general?.nft_name.split('#')[1] ? general?.nft_name.split('#')[1] : '# Nft'} </strong>{' '}
             {checkMobile() ? <br /> : 'by'}
-            <strong> {general?.collection_name}</strong>
+            <strong>
+              {general?.collection_name ? general?.collection_name : general?.nft_name.split('#')[0]}
+            </strong>
           </div>
           <div className="verifiedText">
             {singleCollection && singleCollection[0]?.is_verified && (

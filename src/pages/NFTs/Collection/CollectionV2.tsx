@@ -215,7 +215,7 @@ const NFTStatsContainer = () => {
             )}
             <div className="wrapper">
               <div className="titleText" tw="leading-none">
-                {singleCollection ? singleCollection[0].daily_volume / LAMPORTS_PER_SOL_NUMBER : 0}
+                {singleCollection ? singleCollection[0].daily_volume : 0}
               </div>
               <div className="subTitleText"> 24h volume </div>
             </div>

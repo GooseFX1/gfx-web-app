@@ -19,6 +19,21 @@ export const MESSAGE = styled.div`
   }
 `
 
+export const couldNotFetchNFTMetaData = (): any =>
+  notify({
+    type: 'error',
+    message: (
+      <MESSAGE>
+        <Row className="m-title" justify="space-between" align="middle">
+          <Col>Buy error!</Col>
+          <Col>
+            <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+          </Col>
+        </Row>
+        <div>Could not fetch NFT metadata for buy instructions</div>
+      </MESSAGE>
+    )
+  })
 export const couldNotDeriveValueForBuyInstruction = (): any =>
   notify({
     type: 'error',
