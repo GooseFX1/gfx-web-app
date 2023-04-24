@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useWallet } from '@solana/wallet-adapter-react'
-import { createContext, ReactNode, useContext, useState, FC, useEffect, SetStateAction } from 'react'
+import { createContext, ReactNode, useContext, useState, FC, useEffect, SetStateAction, Dispatch } from 'react'
 import { NFT_COL_FILTER_OPTIONS } from '../api/NFTs'
 
 interface INFTAggConfig {
@@ -12,6 +12,8 @@ interface INFTAggConfig {
   setPageNumber: any
   timelineDisplay: string
   setTimelineDisplay: any
+  searchInsideCollection?: string | undefined
+  setSearchInsideCollection?: Dispatch<SetStateAction<string | undefined>>
 }
 
 const NFTAggFiltersContext = createContext<INFTAggConfig>(null)
@@ -20,6 +22,7 @@ export const NFTAggFiltersProvider: FC<{ children: ReactNode }> = ({ children })
   const [sortType, setSortType] = useState<'ASC' | 'DESC' | null>('ASC')
   const [pageNumber, setPageNumber] = useState<number>(0)
   const [timelineDisplay, setTimelineDisplay] = useState('24h')
+  const [searchInsideCollection, setSearchInsideCollection] = useState<string | undefined>(undefined)
 
   // this is for advace filters only
 
@@ -33,7 +36,9 @@ export const NFTAggFiltersProvider: FC<{ children: ReactNode }> = ({ children })
         pageNumber: pageNumber,
         setPageNumber: setPageNumber,
         timelineDisplay: timelineDisplay,
-        setTimelineDisplay: setTimelineDisplay
+        setTimelineDisplay: setTimelineDisplay,
+        searchInsideCollection: searchInsideCollection,
+        setSearchInsideCollection: setSearchInsideCollection
       }}
     >
       {children}
@@ -55,7 +60,9 @@ export const useNFTAggregatorFilters = (): INFTAggConfig => {
     pageNumber,
     setPageNumber,
     timelineDisplay,
-    setTimelineDisplay
+    setTimelineDisplay,
+    searchInsideCollection,
+    setSearchInsideCollection
   } = context
   return {
     sortFilter,
@@ -65,6 +72,8 @@ export const useNFTAggregatorFilters = (): INFTAggConfig => {
     pageNumber,
     setPageNumber,
     timelineDisplay,
-    setTimelineDisplay
+    setTimelineDisplay,
+    searchInsideCollection,
+    setSearchInsideCollection
   }
 }

@@ -8,7 +8,8 @@ import {
   useNavCollapse,
   useNFTAggregator,
   useNFTCollections,
-  useNFTDetails
+  useNFTDetails,
+  useNFTAggregatorFilters
 } from '../../../context'
 import { ICON } from '../../../layouts'
 import { IAppParams } from '../../../types/app_params'
@@ -39,10 +40,12 @@ import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { RefreshBtnWithAnimationNFT } from '../Home/NFTLandingPageV2'
 import { LastRefreshedAnimation } from '../../Farm/FarmFilterHeader'
 import { minimizeTheString } from '../../../web3/nfts/utils'
+import { SearchBar } from '../../../components'
 
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
   const { isCollapsed } = useNavCollapse()
+
   const {
     singleCollection,
     fetchSingleCollection,
@@ -53,13 +56,15 @@ const CollectionV2 = (): ReactElement => {
   } = useNFTCollections()
   const [err, setErr] = useState(false)
   const { refreshClicked } = useNFTAggregator()
-
-  useEffect(() => {
-    setSingleCollection(undefined)
-    setFixedPriceWithinCollection(undefined)
-    setOpenBidWithinCollection(undefined)
-    setCollectionOwners(undefined)
-  }, [])
+  useEffect(
+    () => () => {
+      setSingleCollection(undefined)
+      setFixedPriceWithinCollection(undefined)
+      setOpenBidWithinCollection(undefined)
+      setCollectionOwners(undefined)
+    },
+    []
+  )
 
   useEffect(() => {
     const curColNameParam = decodeURIComponent(params.collectionName.replaceAll('_', '%20'))
@@ -261,13 +266,18 @@ export const NFTGridContainer = (): ReactElement => {
 
 const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): ReactElement => {
   const { fixedPriceWithinCollection, singleCollection } = useNFTCollections()
+  const { setSearchInsideCollection } = useNFTAggregatorFilters()
+  const { mode } = useDarkMode()
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
       <div className="flitersFlexContainer">
-        {/* <img onClick={() => setOpen((prev) => !prev)} src={`/img/assets/Aggregator/filtersIcon${mode}.svg`} />
-        <SearchBar placeholder={checkMobile() ? `Search by nft ` : `Search by nft o owner`} /> 
-        {/* {checkMobile() && <CurrencySwitch />} */}
-        {/* {!checkMobile() && <SortDropdown />} */}
+        {/* <img onClick={() => setOpen((prev) => !prev)} src={`/img/assets/Aggregator/filtersIcon${mode}.svg`} /> */}
+        <SearchBar
+          setSearchFilter={setSearchInsideCollection}
+          style={{ width: 332 }}
+          placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
+        />
+        {!checkMobile() && <SortDropdown />}
       </div>
 
       <div className="filtersViewCategory">

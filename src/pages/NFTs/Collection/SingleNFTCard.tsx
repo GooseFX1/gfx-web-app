@@ -54,6 +54,11 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
       ? '#' + item.nft_name.split('#')[1]
       : minimizeTheString(item.nft_name)
     : null
+  const nftCollectionName = item
+    ? item.nft_name.includes('#')
+      ? '#' + item.nft_name.split('#')[0]
+      : minimizeTheString(item.nft_name)
+    : null
   const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item.uuid) : false), [item])
   const { currencyView } = useNFTAggregator()
 

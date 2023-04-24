@@ -68,7 +68,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
           }
         }
         .generalStats {
-          ${tw`flex items-center sm:w-[100%] sm:ml-0 ml-[30%] absolute sm:flex sm:justify-between sm:mt-2`}
+          ${tw`flex items-center sm:w-[100%] sm:ml-0 ml-[32%] absolute sm:flex sm:justify-between sm:mt-2`}
 
           .wrapper {
             ${tw`flex flex-col ml-4 mr-4 sm:mr-1 sm:ml-1`}
@@ -297,7 +297,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       ${tw`text-[15px] flex font-medium ml-auto sm:ml-0 sm:mt-1 mt-10`}
     }
     .flitersFlexContainer {
-      ${tw`text-[15px] flex font-medium mt-2 ml-5`}
+      ${tw`text-[15px] flex font-medium mt-2 items-center `}
     }
     .flexContainer {
       margin-left: auto;

@@ -241,12 +241,11 @@ const NFTLandingPageV2 = (): ReactElement => {
       })
     )
   }
-
+  console.log()
   return (
     <WRAPPER $navCollapsed={isCollapsed} $currency={currencyView}>
       {<NFTAggTerms setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={handleHasOnboarded} />}
       {hasOnboarded && <ModalSlide modalType={MODAL_TYPES.NFT_AGG_WELCOME} rewardToggle={handleHasOnboarded} />}
-      {console.log(lastRefreshedClass)}
       {!checkMobile() && (
         <>
           <BannerContainer showBanner={showBanner}>
@@ -457,34 +456,47 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   const history = useHistory()
   const [searchResultArr, setSearchResult] = useState<any>([...allCollections])
 
+  const globalSearchCall = () => {
+    fetchGlobalSearchNFT(searchFilter)
+      .then((res) => {
+        setSearchResult(res.collections)
+      })
+      .catch((err) => console.log(err))
+  }
   useEffect(() => {
     if (searchFilter && searchFilter.length > 1) {
-      fetchGlobalSearchNFT(searchFilter)
-        .then((res) => {
-          setSearchResult(res.collections)
-        })
-        .catch((err) => console.log(err))
+      globalSearchCall()
     }
   }, [searchFilter])
-
+  console.log(searchResultArr)
   return (
     <SEARCH_RESULT_CONTAINER>
       {searchResultArr &&
-        searchResultArr.map((data: NFTCollection, index) => (
-          <div
-            className="searchResultRow"
-            key={index}
-            onClick={() => history.push(`/nfts/collection/${data.collection_name.replaceAll(' ', '_')}`)}
-          >
-            <img src={data.profile_pic_link} alt="" />
-            <div className="searchText">
-              {data.collection_name}
-              {data.is_verified && (
-                <img tw="!w-[15px] !h-[15px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
-              )}
-            </div>
-          </div>
-        ))}
+        searchResultArr.map(
+          (data: any, index) =>
+            data?.collection && (
+              <div
+                className="searchResultRow"
+                key={index}
+                onClick={() =>
+                  history.push(
+                    `/nfts/collection/${encodeURIComponent(data?.collection?.collection_name).replaceAll(
+                      '%20',
+                      '_'
+                    )}`
+                  )
+                }
+              >
+                <img src={data?.collection?.profile_pic_link} alt="" />
+                <div className="searchText">
+                  {data?.collection?.collection_name}
+                  {data?.collection?.is_verified && (
+                    <img tw="!w-[15px] !h-[15px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
+                  )}
+                </div>
+              </div>
+            )
+        )}
     </SEARCH_RESULT_CONTAINER>
   )
 }
@@ -590,7 +602,7 @@ const TimelineDropdownContents = ({ setArrow }: any): ReactElement => {
   }, [])
 
   return (
-    <DROPDOWN_CONTAINER tw="w-[104px] h-[120px]">
+    <DROPDOWN_CONTAINER tw="w-[104px] h-[155px]">
       <div className="option" onClick={() => setTimelineDisplay('24h')}>
         24h <input type={'radio'} name="sort" checked={timelineDisplay === '24h'} value="asc" />
       </div>
@@ -599,6 +611,9 @@ const TimelineDropdownContents = ({ setArrow }: any): ReactElement => {
       </div>
       <div className="option" onClick={() => setTimelineDisplay('30d')}>
         30d <input type={'radio'} name="sort" checked={timelineDisplay === '30d'} value="desc" />
+      </div>
+      <div className="option" onClick={() => setTimelineDisplay('All')}>
+        All <input type={'radio'} name="sort" checked={timelineDisplay === 'All'} value="desc" />
       </div>
     </DROPDOWN_CONTAINER>
   )
