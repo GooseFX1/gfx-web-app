@@ -72,6 +72,9 @@ const TEN_MILLION = 10000000
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
   ${tw`flex flex-col mt-[-30px] `}
+  .ant-modal-content {
+    height: 100%;
+  }
   .ant-modal-close-x {
     visibility: ${({ lockModal }) => (lockModal ? 'hidden' : 'visible')};
     img {
@@ -94,7 +97,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     }
   }
   .verifiedText {
-    ${tw`font-semibold text-[16px] text-[#fff] sm:text-[15px] mt-2 mb-3
+    ${tw`font-semibold text-[16px] text-[#fff] sm:text-[15px] mt-2 mb-1
         sm:text-left sm:ml-[140px] sm:mt-[5px] h-4`}
   }
   .hContainer {
@@ -165,7 +168,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     color: ${({ theme }) => theme.text7};
   }
   .sellButton {
-    ${tw`w-[520px] sm:h-[50px] sm:text-[15px]  cursor-pointer text-[#EEEEEE] rounded-[50px] border-none
+    ${tw`w-[520px] sm:h-[50px] sm:text-[15px] absolute bottom-4 cursor-pointer text-[#EEEEEE] rounded-[50px] border-none
      h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F24244] justify-center`}
     :disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
@@ -174,7 +177,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
 
   .buyButton {
-    ${tw`w-[520px] sm:h-[50px] sm:text-[15px]  cursor-pointer rounded-[50px] border-none
+    ${tw`w-[520px] sm:h-[50px] sm:text-[15px] absolute bottom-4 cursor-pointer rounded-[50px] border-none
      h-[60px] text-white text-[20px] font-semibold flex items-center justify-center`}
 
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
@@ -197,7 +200,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     ${tw`h-[2px] w-[100vw] `}
   }
   .buyBtnContainer {
-    ${tw`flex items-center justify-center mt-0 sm:mt-[20px] `}
+    ${tw`flex items-center justify-center sm:mt-[20px] `}
   }
 
   .bm-title {

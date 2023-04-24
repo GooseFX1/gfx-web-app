@@ -59,20 +59,10 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
   visible,
   handleClose
 }): ReactElement => {
-  // const history = useHistory()
   const { connection, network } = useConnectionConfig()
-  // const { sessionUser } = useNFTProfile()
-  const {
-    general,
-    setGeneral,
-    ask,
-    nftMetadata
-    // updateUserInput,
-    // sellNFT
-    // patchNFTAsk
-  } = useNFTDetails()
+  const { general, setGeneral, ask, nftMetadata } = useNFTDetails()
   const wal = useWallet()
-  const { wallet, signTransaction } = wal
+  const { wallet } = wal
   const [askPrice, setAskPrice] = useState<number | null>(
     ask ? parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER : null
   )
@@ -384,8 +374,13 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
         <div tw="flex flex-col items-center justify-center">
           <div className="buyTitle">
             You are about to sell <br />
-            <strong>{nftID ? '#' + nftID : '# Nft'} </strong> by {checkMobile() && <br />}
-            <strong> {general?.collection_name}</strong>
+            <strong> {general?.nft_name}</strong>
+            {checkMobile() && <br />}
+            {general?.collection_name && (
+              <>
+                {' by '} <strong> {general?.collection_name}</strong>
+              </>
+            )}
           </div>
           <div className="verifiedText">
             {singleCollection && singleCollection[0]?.is_verified && (
@@ -419,7 +414,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
           <img src="/img/crypto/SOL.svg" tw="w-8 h-8 mt-3 ml-[-30px] sm:mt-0 " />
         </div>
 
-        <div tw="mt-6">
+        <div tw="mt-4">
           <AppraisalValue
             text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
             label={general.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
@@ -446,7 +441,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
           </div>
         )}
 
-        <div className="hContainer" style={{ height: pendingTxSig ? 135 : 175 }}>
+        <div className="hContainer" tw="mt-8">
           <div className="rowContainer">
             <div className="leftAlign">Price</div>
             <div className="rightAlign">{askPrice >= 0 ? askPrice : 0} SOL</div>
