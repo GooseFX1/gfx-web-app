@@ -77,7 +77,7 @@ export type BaseNFT = {
   collection_id: number | null
   collection_name: string | null
   collection_address: string
-  gfx_appraisal_value: null | number
+  gfx_appraisal_value?: string
   is_verified: boolean
   nft_price?: number
 }

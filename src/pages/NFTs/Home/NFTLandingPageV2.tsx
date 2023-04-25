@@ -37,6 +37,7 @@ import Lottie from 'lottie-react'
 import { fetchGlobalSearchNFT, NFT_COL_FILTER_OPTIONS } from '../../../api/NFTs'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { minimizeTheString } from '../../../web3/nfts/utils'
 
 const CURRENCY_SWITCH = styled.div<{ $currency }>`
   .ant-switch {
@@ -499,7 +500,7 @@ const SearchResultContainer = ({ searchFilter }: any) => {
                 <img className="searchImg" src={data?.collection?.profile_pic_link} alt="" />
                 <div className="searchText" tw="flex flex-col leading-[19px]">
                   <div>
-                    {data?.collection?.collection_name}
+                    {minimizeTheString(data?.collection?.collection_name, 30)}
                     {data?.collection?.is_verified && (
                       <img tw="!w-[15px] !h-[15px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
                     )}

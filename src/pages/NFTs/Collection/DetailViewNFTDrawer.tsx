@@ -1,14 +1,12 @@
 import { FC, ReactElement, useEffect, useMemo, useState } from 'react'
 import { Col, Drawer, Row, Tabs, Tooltip } from 'antd'
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { Button } from '../../../components/Button'
 import { useNFTProfile, useNFTAggregator, useNFTDetails, useConnectionConfig } from '../../../context'
-import { checkMobile, truncateAddress } from '../../../utils'
+import { checkMobile, formatSOLDisplay, truncateAddress } from '../../../utils'
 import { GradientText } from '../adminPage/components/UpcomingMints'
 import { AppraisalValue } from '../../../utils/GenericDegsin'
 import TabPane from 'antd/lib/tabs/TabPane'
-import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { AsksAndBidsForNFT, AttributesTabContent } from '../NFTDetails/AttributesTabContent'
 import { useHistory } from 'react-router-dom'
@@ -19,6 +17,7 @@ import { AH_NAME } from '../../../web3/agg_program_ids'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${tw`h-[390px]`}
@@ -116,7 +115,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
 `
 
 export const DetailViewNFT: FC = (): JSX.Element => {
-  const { bidNowClicked, buyNowClicked, setBidNow, setBuyNow } = useNFTAggregator()
+  const { buyNowClicked } = useNFTAggregator()
   const elem = document.getElementById('nft-aggerator-container') //TODO-PROFILE: Stop background scroll
   const urlSearchParams = new URLSearchParams(window.location.search)
   const params = Object.fromEntries(urlSearchParams.entries())
@@ -160,7 +159,7 @@ export const DetailViewNFT: FC = (): JSX.Element => {
       bodyStyle={{ padding: '0' }}
     >
       <ImageViewer />
-      <ButtonContainer general={general} setBuyNow={setBuyNow} setBidNow={setBidNow} />
+      <ButtonContainer />
     </Drawer>
   )
 }
@@ -182,7 +181,7 @@ const ImageViewer = (): ReactElement => {
       >
         <img src="/img/assets/close-white-icon.svg" alt="" height="12px" width="12px" />
       </div>
-      <div tw="h-[calc(100vh - 86px)] overflow-y-scroll">
+      <div tw="h-[calc(100vh - 6px)] overflow-y-scroll">
         <img
           tw="w-[390px] h-[390px] mt-[30px] sm:h-[100%] sm:w-[100%] 
             rounded-[20px] shadow-[3px 3px 14px 0px rgb(0 0 0 / 43%)]"
@@ -243,25 +242,71 @@ const ImageViewer = (): ReactElement => {
   )
 }
 
-const ButtonContainer = ({ general, setBuyNow, setBidNow }: any): ReactElement => {
+export const ButtonContainer = (): ReactElement => {
   const { ask } = useNFTDetails()
+  const { wallet } = useWallet()
+  const { setSellNFT, setBidNow, setBuyNow } = useNFTAggregator()
+  const pubKey = wallet?.adapter?.publicKey
+  const { general } = useNFTDetails()
+  const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
+  const isOwner: boolean = useMemo(() => {
+    if (ask) {
+      if (ask?.wallet_key === pubKey.toString()) return true
+    }
+    return false
+  }, [sessionUser, sessionUserParsedAccounts, ask, wallet?.adapter?.publicKey])
+
   return (
     <div
-      tw="absolute left-0 right-0 bottom-0 h-[86px] w-[100%] 
+      tw="absolute left-0 z-10 right-0 bottom-0 h-[86px] w-[100%] 
         dark:bg-black-2 bg-grey-5 px-[30px] flex items-center justify-between
         border-solid border-b-0 border-l-0 border-r-0 dark:border-black-4 border-grey-4"
     >
-      <Button width={ask ? '185px' : '100%'} cssStyle={tw`h-[56px] bg-blue-1`} onClick={() => setBidNow(general)}>
-        <span tw="text-regular font-semibold text-white">Bid</span>
-      </Button>
-      {ask && (
-        <Button
-          width="185px"
-          cssStyle={tw`bg-gradient-to-r h-[56px] from-secondary-gradient-1 to-secondary-gradient-2`}
-          onClick={() => setBuyNow(general)}
-        >
-          <span tw="text-regular font-semibold text-white">Buy Now</span>
-        </Button>
+      {isOwner ? (
+        <>
+          {ask && (
+            <div>
+              <label tw="dark:text-grey-1 text-black-3 font-semibold text-average">On Sale for:</label>
+              <div tw="flex items-center text-lg dark:text-grey-5 text-black-2 font-semibold">
+                <span>{formatSOLDisplay(ask.buyer_price)}</span>
+                <img src={`/img/crypto/SOL.svg`} alt={'SOL'} tw="h-[20px] ml-2" />
+              </div>
+            </div>
+          )}
+          <Button
+            height="56px"
+            width={ask ? '250px' : '100%'}
+            cssStyle={tw`bg-red-1 mr-2`}
+            onClick={() => {
+              console.log('set sell ')
+              //setDrawerSingleNFT(false)
+              setSellNFT(true)
+            }}
+          >
+            <span tw="text-regular font-semibold text-white">{ask ? 'Modify Price' : 'List Item'}</span>
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button
+            height="56px"
+            width={ask ? '185px' : '100%'}
+            cssStyle={tw`bg-blue-1 mr-2`}
+            onClick={() => setBidNow(general)}
+          >
+            <span tw="text-regular font-semibold text-white">Bid</span>
+          </Button>
+          {ask && (
+            <Button
+              height="56px"
+              width="185px"
+              cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2`}
+              onClick={() => setBuyNow(general)}
+            >
+              <span tw="text-regular font-semibold text-white">Buy Now</span>
+            </Button>
+          )}
+        </>
       )}
     </div>
   )

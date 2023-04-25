@@ -88,7 +88,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   color: ${({ theme }) => theme.text20};
 
   .buyTitle {
-    ${tw`text-[25px] sm:ml-[140px] sm:mt-1 sm:text-[15px] sm:pt-2 font-medium text-center sm:text-left `}
+    ${tw`text-[24px] sm:ml-[140px] sm:mt-1 sm:text-[15px] sm:pt-2 font-medium text-center sm:text-left `}
     color: ${({ theme }) => theme.text20};
 
     strong {

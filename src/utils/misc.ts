@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { LAMPORTS_PER_SOL_NUMBER } from '../constants'
 
 export type ConditionalData<T> = 'not-supported' | 'loading' | T
 
@@ -131,6 +132,13 @@ export function debounce(callback: any, wait: number): (x: any) => void {
     clearTimeout(timeout)
     timeout = setTimeout(() => callback.apply(this, args), wait)
   }
+}
+
+export const formatSOLDisplay = (solValue: string | number): string => {
+  if (typeof solValue === 'string') {
+    return (parseFloat(solValue) / LAMPORTS_PER_SOL_NUMBER).toFixed(2)
+  } else if (solValue < 10000000) return solValue.toFixed(2)
+  else return (solValue / LAMPORTS_PER_SOL_NUMBER).toFixed(2)
 }
 
 export const createUUID = (): string =>

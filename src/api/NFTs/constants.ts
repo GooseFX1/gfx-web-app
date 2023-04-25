@@ -8,6 +8,11 @@ export enum NFT_COL_FILTER_OPTIONS {
   MONTHLY_VOLUME = 'MonthlyVolume',
   TOTAL_VOLUME = 'TotalVolume'
 }
+export enum NFT_ACTIVITY_ENDPOINT {
+  WALLET_ADDRESS = 'wallet_address',
+  MINT_ADDRESS = 'mint_address',
+  COLLECTION_ADDRESS = 'collection_address'
+}
 export const NFT_VOLUME_OPTIONS = {
   '7d': 'WeeklyVolume',
   '30d': 'MonthlyVolume',
@@ -36,5 +41,6 @@ export enum NFT_API_ENDPOINTS {
   REWARDS = '/rewards',
   OWNERS = '/owners',
   DRAFTS = '/nft_drafts',
-  SEARCH = '/search'
+  SEARCH = '/search',
+  ACTIVITY = '/activity'
 }

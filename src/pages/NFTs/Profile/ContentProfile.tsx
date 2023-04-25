@@ -6,12 +6,14 @@ import { ParsedAccount } from '../../../web3'
 import { fetchNFTById } from '../../../api/NFTs/actions'
 import { NFTTab } from '../NFTTab'
 import NFTDisplay from './NFTDisplay'
-import Activity from './Activity'
 import styled from 'styled-components'
 import { ProfilePageSidebar } from './ProfilePageSidebar'
 import { checkMobile } from '../../../utils'
 import tw from 'twin.macro'
 import ActivityNFTSection from '../Collection/ActivityNFTSection'
+import { NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
+import { useParams } from 'react-router-dom'
+import { IAppParams } from '../../../types/app_params'
 
 type Props = {
   isSessionUser: boolean
@@ -33,7 +35,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
   } = useNFTProfile()
   const [createdItems, setCreatedItems] = useState<ParsedAccount[]>()
   const [favoritedItems, setFavoritedItems] = useState<ISingleNFT[]>()
-
+  const params = useParams<IAppParams>()
   const currentUserProfile = useMemo(() => {
     if (nonSessionProfile !== undefined && !isSessionUser) {
       return nonSessionProfile
@@ -74,7 +76,9 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
       {
         order: 2,
         name: 'Activity',
-        component: <ActivityNFTSection />
+        component: (
+          <ActivityNFTSection address={params.userAddress} typeOfAddress={NFT_ACTIVITY_ENDPOINT.WALLET_ADDRESS} />
+        )
       }
     ],
     [currentUserParsedAccounts, createdItems, userActivity, favoritedItems]

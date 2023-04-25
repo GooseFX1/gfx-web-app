@@ -180,3 +180,12 @@ export const fetchAllSingleNFTs = async (): Promise<any> => {
     return error
   }
 }
+
+export const fetchActivityOfAddress = async (address: string, typeOfAddress: string): Promise<any> => {
+  try {
+    const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ACTIVITY}?${typeOfAddress}=${address}`)
+    return res.data
+  } catch (error) {
+    return error
+  }
+}

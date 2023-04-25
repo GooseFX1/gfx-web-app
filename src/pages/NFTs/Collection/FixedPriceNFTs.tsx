@@ -11,9 +11,10 @@ import NFTLoading from '../Home/NFTLoading'
 import { debounce } from '../../../utils'
 import NoContent from '../Profile/NoContent'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
+import { SellNFTModal } from './SellNFTModal'
 
 export const FixedPriceNFTs = (): ReactElement => {
-  const { buyNowClicked, bidNowClicked, setNftInBag, sortingAsc, refreshClass } = useNFTAggregator()
+  const { buyNowClicked, bidNowClicked, setNftInBag, sortingAsc, setSellNFT, sellNFTClicked } = useNFTAggregator()
   const { singleCollection, fixedPriceWithinCollection, setFixedPriceWithinCollection, setSingleCollection } =
     useNFTCollections()
   const [fixedPriceArr, setFixedPriceArr] = useState<BaseNFT[]>([])
@@ -129,8 +130,9 @@ export const FixedPriceNFTs = (): ReactElement => {
   const handleModalClick = useCallback(() => {
     if (buyNowClicked) return <BuyNFTModal />
     if (bidNowClicked) return <BidNFTModal />
+    if (sellNFTClicked) return <SellNFTModal visible={sellNFTClicked} handleClose={() => setSellNFT(false)} />
     if (general !== null && nftMetadata !== null) return <DetailViewNFT />
-  }, [buyNowClicked, bidNowClicked, general, nftMetadata])
+  }, [buyNowClicked, bidNowClicked, general, nftMetadata, sellNFTClicked])
 
   const gridType = filteredFixedPrice?.length > 10 ? '1fr' : '210px'
 

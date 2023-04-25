@@ -1,12 +1,44 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactElement, useEffect, useState } from 'react'
-import styled from 'styled-components'
-import tw from 'twin.macro'
+import React, { FC, ReactElement, useEffect, useState } from 'react'
+import { fetchActivityOfAddress, fetchSingleNFT, NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
 import { Loader } from '../../../components'
+import { PriceWithToken } from '../../../components/common/PriceWithToken'
+import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { useNavCollapse } from '../../../context'
-import { checkMobile } from '../../../utils'
+import { checkMobile, truncateAddress } from '../../../utils'
 import { GradientText } from '../adminPage/components/UpcomingMints'
 import { NFTActivitySectionWeb } from '../Home/NFTTableColumns'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
+import { AH_NAME } from '../../../web3'
+import { minimizeTheString } from '../../../web3/nfts/utils'
+import { Tooltip } from 'antd'
+export interface IActivity {
+  activity_id: number
+  uuid: string
+  tx_sig: string
+  kind: string
+  auction_house: string
+  clock: number
+  user_id: any
+  non_fungible_id: number
+  non_fungible_uuid: string
+  buyer_wallet: any
+  seller_wallet: string
+  price: string
+  collection_id: number
+  collection_address?: string
+  mint_address?: string
+}
+
+const ACTIVITY_KIND = {
+  EXECUTED_SALE: 'Sell',
+  BUY: 'Buy',
+  BID: 'Bid',
+  SELL: 'Sell',
+  CANCEL: 'Cancel'
+}
 
 export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
   overflow-x: hidden;
@@ -51,7 +83,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
   }
   tbody td,
   thead th {
-    width: 14%;
+    width: 13.5%;
     float: left;
     text-align: center;
   }
@@ -82,7 +114,8 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
   }
   .nftNameColumn {
     text-align: left;
-    img {
+    width: 17%;
+    .nftNameImg {
       border-radius: 5px;
       ${tw`w-10 h-10 sm:mt-3 ml-4 mt-5`}
     }
@@ -114,24 +147,21 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
     ${tw`flex flex-col w-[42%]`}
   }
 `
-const ActivityNFTSection = (): ReactElement => {
-  const [activityData, setActivityData] = useState<any[]>()
+const ActivityNFTSection: FC<{ address?: string; typeOfAddress?: string }> = ({
+  address,
+  typeOfAddress
+}): ReactElement => {
+  const [activityData, setActivityData] = useState<IActivity[]>([])
+
   useEffect(() => {
-    const arr = []
-    for (let i = 1; i < 25; i++) {
-      arr.push({
-        collectionId: '#' + i * 20,
-        collectionName: 'DeGods',
-        type: i % 2 === 0 ? 'Sell' : 'Buy',
-        price: i * 10,
-        buyer: 'Lorem, ipsum.',
-        img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGDjdpLSpGgAdpvFjjmgtkdhCeH6vSUrxLOA&usqp=CAU',
-        seller: 'Lorem, ipsum',
-        time: '14:52 pm'
-      })
-    }
-    setActivityData(arr)
+    ;(async () => {
+      if (address && typeOfAddress) {
+        const data = await fetchActivityOfAddress(address, typeOfAddress)
+        setActivityData(data)
+      }
+    })()
   }, [])
+
   const { isCollapsed } = useNavCollapse()
   return (
     <WRAPPER_TABLE $navCollapsed={isCollapsed}>
@@ -183,7 +213,7 @@ const NFTActivityRowMobile = ({ activityData }: any): any => (
               <img src="/img/crypto/SOL.png" />
             </div>
             <div className="secondaryText">
-              <div>{item?.time}</div>
+              <div>{item?.clock}</div>
             </div>
           </div>
 
@@ -197,32 +227,123 @@ const NFTActivityRowMobile = ({ activityData }: any): any => (
 )
 const NFTActivityRowWeb = ({ activityData }: any): any => (
   <>
-    {activityData.map((item, index) => (
-      <tr className="tableRow" key={index}>
-        <td className="nftNameColumn">
-          {item?.collectionId ? (
-            <div>
-              <img src={item.img} alt="" />
-              <div className="nftCollectionName">{item?.collectionId}</div>
-              <div className="collectionName">
-                <GradientText text={item?.collectionName} fontSize={18} fontWeight={600} />
-              </div>
-            </div>
-          ) : (
-            <div>
-              <Loader />
-            </div>
-          )}
-        </td>
-        <td className="tdItem">{item?.type ? <>{item.type} </> : <Loader />}</td>
-        <td className="tdItem">{item?.price ? <>{item.price} </> : <Loader />}</td>
-        <td className="tdItem">{item?.collectionName ? <>{item.collectionName} </> : <Loader />}</td>
-        <td className="tdItem">{item?.buyer ? <>{item.buyer} </> : <Loader />}</td>
-        <td className="tdItem">{item?.seller ? <>{item.seller} </> : <Loader />}</td>
-        <td className="tdItem">{item?.time ? <>{item.time} </> : <Loader />}</td>
-      </tr>
+    {activityData.map((activity: IActivity, index: number) => (
+      <NFTActivityRowWebContents activity={activity} index={index} />
     ))}
   </>
 )
+const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({ activity, index }) => {
+  const [nftDetails, setNFTDetails] = useState<any>()
+  useEffect(() => {
+    ;(async () => {
+      const { data } = await fetchSingleNFT(activity?.mint_address)
+      console.log(data.data[0])
+      setNFTDetails(data.data[0])
+    })()
+  }, [])
+  return (
+    <tr className="tableRow" key={index}>
+      <td className="nftNameColumn">
+        {nftDetails?.nft_name ? (
+          <div tw="flex">
+            <img className="nftNameImg" src={nftDetails.image_url} alt="" />
+            <div tw="flex flex-col mt-4.5 ml-2">
+              <Tooltip title={nftDetails?.nft_name}>
+                <div tw="flex items-center ">
+                  <div>{minimizeTheString(nftDetails?.nft_name)}</div>
+                  <a target="_blank" href={`https://solscan.io/tx/${activity?.tx_sig}`} rel="noreferrer">
+                    <img src="/img/assets/solscan.png" alt="solscan" tw="!h-5 !w-5 ml-1" />
+                  </a>
+                </div>
+              </Tooltip>
+
+              <GradientText
+                text={minimizeTheString(
+                  nftDetails?.collection_name ? nftDetails?.collection_name : nftDetails?.nft_name
+                )}
+                fontSize={18}
+                fontWeight={600}
+              />
+            </div>
+
+            {/* <div className="collectionName">
+            </div> */}
+          </div>
+        ) : (
+          <div>
+            <Loader />
+          </div>
+        )}
+      </td>
+      <td className="tdItem" tw="dark:text-white text-grey-1">
+        {activity?.kind ? <>{ACTIVITY_KIND[activity?.kind]} </> : <Loader />}
+      </td>
+      <td className="tdItem" tw="flex items-center justify-center">
+        {activity?.price ? (
+          <div tw="flex items-center justify-center pl-2">
+            {(parseFloat(activity?.price) / LAMPORTS_PER_SOL_NUMBER).toFixed(2)}
+            <img src={'/img/crypto/SOL.svg'} tw="w-5 h-5 ml-1" />
+          </div>
+        ) : (
+          <Loader />
+        )}
+      </td>
+      <td className="tdItem">
+        {activity?.auction_house ? (
+          <div tw="flex items-center justify-center pl-2">
+            {AH_NAME(activity?.auction_house)}
+            <img
+              tw="h-5 w-5 ml-1"
+              src={`/img/assets/Aggregator/${AH_NAME(activity?.auction_house)}.svg`}
+              alt={`${AH_NAME(activity?.auction_house)}-icon`}
+              style={{ height: 30 }}
+            />
+          </div>
+        ) : (
+          <Loader />
+        )}
+      </td>
+      <td className="tdItem">
+        {activity?.buyer_wallet ? (
+          <>
+            <a
+              href={`https://solscan.io/account/${activity?.buyer_wallet}`}
+              tw="text-white font-semibold underline cursor-pointer"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {truncateAddress(activity.buyer_wallet)}
+            </a>
+          </>
+        ) : (
+          <Loader />
+        )}
+      </td>
+      <td className="tdItem">
+        {activity?.seller_wallet ? (
+          <>
+            <a
+              href={`https://solscan.io/account/${activity?.seller_wallet}`}
+              tw="text-white font-semibold underline cursor-pointer"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {truncateAddress(activity.seller_wallet)}
+            </a>
+          </>
+        ) : (
+          <Loader />
+        )}
+      </td>
+      <td className="tdItem">
+        {activity?.clock ? (
+          <>{new Date(activity?.clock * 1000)?.toLocaleTimeString().substring(0, 5)}</>
+        ) : (
+          <Loader />
+        )}
+      </td>
+    </tr>
+  )
+}
 
 export default ActivityNFTSection

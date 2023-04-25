@@ -15,7 +15,7 @@ import { GradientText } from '../adminPage/components/UpcomingMints'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { BaseNFT, INFTAsk, INFTBid, INFTGeneralData } from '../../../types/nft_details'
 import { fetchSingleNFT } from '../../../api/NFTs'
-import { getParsedAccountByMint, StringPublicKey, AH_NAME } from '../../../web3'
+import { getParsedAccountByMint, StringPublicKey, AH_NAME, ParsedAccount } from '../../../web3'
 import { LoadingDiv } from './Card'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { Button } from '../../../components/Button'
@@ -23,7 +23,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { useHistory } from 'react-router-dom'
-import { notify } from '../../../utils'
+import { formatSOLDisplay, notify } from '../../../utils'
 import { genericErrMsg } from '../../Farm/FarmClickHandler'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
@@ -36,7 +36,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   addNftToBag,
   lastCardRef
 }) => {
-  const { sessionUser } = useNFTProfile()
+  const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
   const { connection } = useConnectionConfig()
   const { singleCollection } = useNFTCollections()
   const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral } = useNFTDetails()
@@ -49,16 +49,21 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const history = useHistory()
+
+  const isOwner: boolean = useMemo(() => {
+    const findAccount: undefined | ParsedAccount =
+      item && sessionUserParsedAccounts !== undefined
+        ? sessionUserParsedAccounts.find((acct) => acct.mint === item.mint_address)
+        : undefined
+    return findAccount === undefined ? false : true
+  }, [sessionUser, sessionUserParsedAccounts])
+
   const nftId = item
     ? item.nft_name.includes('#')
       ? '#' + item.nft_name.split('#')[1]
       : minimizeTheString(item.nft_name)
     : null
-  const nftCollectionName = item
-    ? item.nft_name.includes('#')
-      ? '#' + item.nft_name.split('#')[0]
-      : minimizeTheString(item.nft_name)
-    : null
+
   const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item.uuid) : false), [item])
   const { currencyView } = useNFTAggregator()
 
@@ -140,9 +145,10 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
           {hover && (
             <HoverOnNFT
               item={item}
+              buttonType={isOwner ? (localAsk ? 'Modify' : 'Sell') : null}
               setNFTDetails={setNFTDetails}
               addNftToBag={addNftToBag}
-              ask={localAsk ? localAsk : null}
+              ask={isOwner ? null : localAsk ? localAsk : null}
             />
           )}
           {item ? (
@@ -180,9 +186,9 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
           <div className="nftPrice">
             {localAsk ? <PriceWithToken price={displayPrice} token={currencyView} /> : 'No Ask'}
           </div>
-          <div className="apprisalPrice" onClick={(e) => handleInfoIconClicked(e)}>
-            {'NA'}
-            {localAsk && <img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'SOL'} />}
+          <div className="apprisalPrice" tw="flex items-center" onClick={(e) => handleInfoIconClicked(e)}>
+            {item?.gfx_appraisal_value ? item?.gfx_appraisal_value.substring(0, 4) : 'NA'}
+            {<img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'SOL'} />}
           </div>
           {sessionUser &&
             (isFavorite ? (

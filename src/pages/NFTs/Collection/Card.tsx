@@ -38,6 +38,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
+import { Tooltip } from 'antd'
 
 //#region styles
 const DIVV = styled.div``
@@ -210,10 +211,13 @@ export const Card: FC<ICard> = (props) => {
         </div>
         <div className={'nftTextContainer'}>
           <div className="collectionId">
+            <Tooltip title={localSingleNFT?.nft_name}>
+              <div className="collectionId">{localSingleNFT && minimizeTheString(localSingleNFT.nft_name)}</div>
+            </Tooltip>
+
             {localSingleNFT && localSingleNFT.is_verified && (
               <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />
             )}
-            {localSingleNFT && localSingleNFT.nft_name && localSingleNFT.nft_name}
           </div>
           {localSingleNFT && (
             <GradientText

@@ -1,10 +1,11 @@
 import { Button } from 'antd'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import React, { ReactElement, useState, FC, useMemo } from 'react'
+import React, { ReactElement, useState, FC, useMemo, useEffect } from 'react'
 import {
   // useAccounts,
   useConnectionConfig,
+  useNFTAggregator,
   useNFTCollections,
   useNFTDetails
 } from '../../../context'
@@ -61,6 +62,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
 }): ReactElement => {
   const { connection, network } = useConnectionConfig()
   const { general, setGeneral, ask, nftMetadata } = useNFTDetails()
+  const { setSellNFT } = useNFTAggregator()
   const wal = useWallet()
   const { wallet } = wal
   const [askPrice, setAskPrice] = useState<number | null>(
@@ -80,6 +82,13 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       message: <TransactionErrorMsg title={`NFT Listing error!`} itemName={itemName} supportText={error} />
     })
   }
+
+  useEffect(
+    () => () => {
+      setSellNFT(false)
+    },
+    []
+  )
 
   // const postAskToAPI = async (txSig: any, buyerPrice: BN, tokenSize: BN, ask: INFTAsk | undefined) => {
   //   console.log(ask)
@@ -416,8 +425,8 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
 
         <div tw="mt-4">
           <AppraisalValue
-            text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
-            label={general.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
+            text={general?.gfx_appraisal_value ? `${general?.gfx_appraisal_value} SOL` : null}
+            label={general?.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
             width={360}
           />
         </div>

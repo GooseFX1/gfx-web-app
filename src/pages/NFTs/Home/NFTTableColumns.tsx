@@ -101,7 +101,7 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
 
 export const NFTActivitySectionWeb = (): ReactElement => (
   <tr>
-    <th>Item</th>
+    <th style={{ width: '17%' }}>Item</th>
     <th>Type</th>
     <th>Price</th>
     <th>Market</th>
