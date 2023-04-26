@@ -89,7 +89,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { tokenMap } = useTokenRegistry()
   const wal = useWallet()
   const { sendTransaction, signAllTransactions, signTransaction, wallet } = useWallet()
-  const [inTokenAmount, setInTokenAmount] = useState(0)
+  const [inTokenAmount, setInTokenAmount] = useState<null | number>(null)
   const [loading, setLoading] = useState(true)
   const [outTokenAmount, setOutTokenAmount] = useState(0)
   const [gofxOutAmount, setGofxOutAmount] = useState(0)
